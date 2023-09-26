@@ -1,0 +1,25 @@
+// Google Web Fonts
+/* stylelint-disable function-comma-newline-after */
+@import '~sass-web-fonts/web-fonts';
+$web-font-path: web-fonts-url(
+  ('Roboto': (300, 400, 500, 700)),
+  ('Poppins': (300, 400, 500, 700))
+);
+
+@import url($web-font-path);
+/* stylelint-enable */
+
+// MDI
+$mdi-font-path: '~@mdi/font/fonts';
+
+@import '~@mdi/font/scss/materialdesignicons';
+
+// Common stylesheets
+@import 'common/all';
+@import 'common/assessments/all';
+
+// Tailor core components
+@import "~@tailor-cms/core-components/style.css";
+
+// Vuetify
+@import "~vuetify/dist/vuetify.css";

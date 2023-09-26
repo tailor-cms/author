@@ -1,0 +1,5 @@
+{
+  "name": "sse-event-types",
+  "type": "module",
+  "main": "index.js"
+}

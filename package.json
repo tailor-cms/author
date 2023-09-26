@@ -1,0 +1,14 @@
+{
+  "name": "tailor-next",
+  "version": "0.0.1",
+  "description": "Next-gen tailor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "underscope@gmail.com",
+  "license": "GPLv3",
+  "devDependencies": {
+    "turbo": "1.3.1"
+  }
+}
