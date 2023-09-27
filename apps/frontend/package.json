@@ -9,7 +9,7 @@
     "postinstall": "if [ $BUILD_ASSETS ]; then npm run build; fi",
     "postshrinkwrap": "rewrite-lockfile package-lock.json",
     "start": "node --import ./server/script/preflight.js ./server/index.js",
-    "dev:client": "vite serve",
+    "dev": "vite serve",
     "build": "del-cli node_modules/.vite && vite build",
     "packages:bootstrap": "lerna bootstrap",
     "packages:build": "lerna run build --",

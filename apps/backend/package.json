@@ -17,7 +17,7 @@
     "packages:setup": "npm run packages:bootstrap && npm run packages:build && npm run packages:link",
     "packages:publish": "lerna publish --",
     "clean": "del-cli dist/* !dist/.gitkeep",
-    "dev:server": "nodemon --import ./script/preflight.js ./index.js | bunyan-pretty",
+    "dev": "nodemon --import ./script/preflight.js ./index.js | bunyan-pretty",
     "debug:server": "nodemon --inspect --import ./script/preflight.js ./index.js",
     "lint:js": "eslint --ext .js,.vue .",
     "lint:scss": "stylelint \"client/**/*.vue\" \"client/**/*.scss\"",
