@@ -24,6 +24,9 @@ const getDefine = env => ({
 const getServer = env => ({
   host: env.HOSTNAME || '0.0.0.0',
   port: env.REVERSE_PROXY_PORT || 8080,
+  fs: {
+    allow: ['../../..']
+  },
   hrm: true,
   proxy: {
     // Needs to exclude files from `cilent/api` folder, as they shouldn't be proxied
