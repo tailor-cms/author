@@ -43,23 +43,23 @@ const alias = [
   },
   {
     find: '@/',
-    replacement: path.join(_dirname, 'client/')
+    replacement: path.join(_dirname, 'src/')
   },
   {
     find: 'client/',
-    replacement: path.join(_dirname, 'client/')
+    replacement: path.join(_dirname, 'src/')
   },
   {
     find: 'components/',
-    replacement: path.join(_dirname, 'client/components/')
+    replacement: path.join(_dirname, 'src/components/')
   },
   {
     find: 'utils/',
-    replacement: path.join(_dirname, 'client/utils/')
+    replacement: path.join(_dirname, 'src/utils/')
   },
   {
     find: 'assets/',
-    replacement: path.join(_dirname, 'client/assets/')
+    replacement: path.join(_dirname, 'src/assets/')
   },
   {
     find: 'shared/',
@@ -90,7 +90,7 @@ export default defineConfig(({ mode }) => {
   return {
     base: './',
     publicDir: 'assets/img',
-    root: path.join(_dirname, 'client'),
+    root: path.join(_dirname, 'src'),
     optimizeDeps: {
       include: ['tailor-config'],
     },
