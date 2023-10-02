@@ -1,5 +1,5 @@
 import ComponentRegistry from './ComponentRegistry';
-import elementList from 'shared/core-elements';
+import elementList from 'tailor-config-shared/src/core-elements.js';
 import { getComponentName as getName } from '@tailor-cms/utils';
 
 const getCondition = type => it => it.subtype === type || it.type === type;

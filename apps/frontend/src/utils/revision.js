@@ -3,7 +3,7 @@ import { assessment } from '@tailor-cms/utils';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
-import { schema } from 'tailor-config';
+import { schema } from 'tailor-config-shared';
 
 const describe = {
   REPOSITORY: describeRepositoryRevision,

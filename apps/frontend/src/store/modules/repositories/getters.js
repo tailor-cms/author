@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import isString from 'lodash/isString';
 import orderBy from 'lodash/orderBy';
 import reduce from 'lodash/reduce';
-import { role } from 'shared';
+import { role } from 'tailor-config-shared';
 
 const processSortAttr = val => isString(val) ? val.toLowerCase() : val;
 const isRepositoryAdmin = it => {

@@ -1,5 +1,5 @@
 import { Model, Op } from 'sequelize';
-import { schema, workflow } from '../config/shared/tailor.loader.js';
+import { schema, workflow } from 'tailor-config-shared';
 import calculatePosition from '../shared/util/calculatePosition.js';
 import { Activity as Events } from 'sse-event-types';
 import hooks from './hooks.js';

@@ -1,5 +1,5 @@
 import { Model } from 'sequelize';
-import { repository as role } from '../config/shared/role.js';
+import { repository as role } from 'tailor-config-shared/src/role.js';
 
 class RepositoryUser extends Model {
   static fields({ BOOLEAN, DATE, ENUM, INTEGER }) {

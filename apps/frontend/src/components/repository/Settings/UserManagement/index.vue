@@ -11,7 +11,7 @@
 <script>
 import AddUserDialog from './AddUserDialog.vue';
 import map from 'lodash/map';
-import { role } from 'shared';
+import { role } from 'tailor-config-shared';
 import { title as titleCase } from 'to-case';
 import UserList from './UserList.vue';
 

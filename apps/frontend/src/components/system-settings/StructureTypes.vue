@@ -24,7 +24,7 @@
 
 <script>
 import cuid from 'cuid';
-import { SCHEMAS } from 'tailor-config';
+import { SCHEMAS } from 'tailor-config-shared';
 import without from 'lodash/without';
 
 const buildTree = (type, structure) => {

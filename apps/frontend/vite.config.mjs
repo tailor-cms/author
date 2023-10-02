@@ -3,7 +3,7 @@ import { defineConfig, loadEnv } from 'vite';
 import { fileURLToPath } from 'node:url';
 import htmlReplace from './build/plugins/vite/html-replace.js';
 import path from 'node:path';
-import { origin as serverUrl } from './config/server/index.js';
+import resolveUrl from 'tailor-config-shared/src/url.js';
 import vue from '@vitejs/plugin-vue2';
 import yn from 'yn';
 
@@ -21,21 +21,25 @@ const getDefine = env => ({
   'BRAND_CONFIG.LOGO_COMPACT': JSON.stringify(brandConfig.logo.compact),
   'BRAND_CONFIG.LOGO_FULL': JSON.stringify(brandConfig.logo.full)
 });
-const getServer = env => ({
-  host: env.HOSTNAME || '0.0.0.0',
-  port: env.REVERSE_PROXY_PORT || 8080,
-  fs: {
-    allow: ['../../..']
-  },
-  hrm: true,
-  proxy: {
-    // Needs to exclude files from `cilent/api` folder, as they shouldn't be proxied
-    // eslint-disable-next-line no-useless-escape
-    '^\/api\/(?![A-Za-z]+\.js)': serverUrl,
-    '/proxy': serverUrl,
-    ...(env.STORAGE_PATH ? { '/repository': serverUrl } : {})
+
+const getServer = env => {
+  const { origin } = resolveUrl(env);
+  return {
+    host: env.HOSTNAME || '0.0.0.0',
+    port: env.REVERSE_PROXY_PORT || 8080,
+    fs: {
+      allow: ['../../..']
+    },
+    hrm: true,
+    proxy: {
+      // Needs to exclude files from `cilent/api` folder, as they shouldn't be proxied
+      // eslint-disable-next-line no-useless-escape
+      '^\/api\/(?![A-Za-z]+\.js)': origin,
+      '/proxy': origin,
+      ...(env.STORAGE_PATH ? { '/repository': origin } : {})
+    }
   }
-});
+};
 const alias = [
   {
     find: '~',
@@ -62,14 +66,6 @@ const alias = [
     replacement: path.join(_dirname, 'src/assets/')
   },
   {
-    find: 'shared/',
-    replacement: path.join(_dirname, 'config/shared/')
-  },
-  {
-    find: 'tailor-config',
-    replacement: path.join(_dirname, 'config/shared/tailor.loader.js')
-  },
-  {
     find: /^~.+/,
     replacement: val => val.replace(/^~/, '')
   }
@@ -92,7 +88,7 @@ export default defineConfig(({ mode }) => {
     publicDir: 'assets/img',
     root: path.join(_dirname, 'src'),
     optimizeDeps: {
-      include: ['tailor-config'],
+      include: ['tailor-config-shared'],
     },
     build: {
       outDir: '../dist',

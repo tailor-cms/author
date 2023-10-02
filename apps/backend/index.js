@@ -25,7 +25,7 @@ const runApp = promisify(app.listen.bind(app));
 
 database.initialize()
   .then(() => logger.info('Database initialized'))
-  .then(() => import('./config/shared/tailor.loader.js'))
+  .then(() => import('tailor-config-shared'))
   .then(() => contentPluginRegistry.initialize())
   .then(() => runApp(config.port))
   .then(() => {

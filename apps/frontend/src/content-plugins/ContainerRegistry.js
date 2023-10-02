@@ -1,8 +1,8 @@
 import ComponentRegistry from './ComponentRegistry';
-import containerList from 'shared/core-containers';
+import containerList from 'tailor-config-shared/src/core-containers.js';
 import get from 'lodash/get';
 import { getContainerName as getName } from '@tailor-cms/utils';
-import { schema } from 'tailor-config';
+import { schema } from 'tailor-config-shared';
 import { service as ValidationService } from './validation';
 
 const { getContainerTemplateId: getId } = schema;

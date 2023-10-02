@@ -10,7 +10,7 @@ import omit from 'lodash/omit.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import randomstring from 'randomstring';
-import { role as roles } from '../config/shared/index.js';
+import { role as roles } from 'tailor-config-shared';
 
 const { user: { ADMIN, USER, INTEGRATION } } = roles;
 const gravatarConfig = { size: 130, default: 'identicon' };

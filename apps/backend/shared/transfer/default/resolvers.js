@@ -2,7 +2,7 @@ import db from '../../database/index.js';
 import mapKeys from 'lodash/mapKeys.js';
 import miss from 'mississippi';
 import QueryStream from 'pg-query-stream';
-import { schema } from '../../../config/shared/tailor.loader.js';
+import { schema } from 'tailor-config-shared';
 import { stringify } from 'JSONStream';
 
 const { Activity, ContentElement, Repository } = db;

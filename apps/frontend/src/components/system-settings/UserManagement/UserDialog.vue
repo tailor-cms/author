@@ -86,7 +86,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import humanize from 'humanize-string';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
-import { user as roles } from 'shared/role';
+import { user as roles } from 'tailor-config-shared/src/role.js';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 
 const resetUser = () => ({

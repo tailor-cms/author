@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { workflow } from 'tailor-config';
+import { workflow } from 'tailor-config-shared';
 
 export default {
   name: 'select-priority',

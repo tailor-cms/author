@@ -9,8 +9,8 @@ import omit from 'lodash/omit.js';
 import { parse } from 'JSONStream';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
-import roleConfig from '../../../config/shared/role.js';
-import { SCHEMAS } from '../../../config/shared/tailor.loader.js';
+import roleConfig from 'tailor-config-shared/src/role.js';
+import { SCHEMAS } from 'tailor-config-shared';
 import zipObject from 'lodash/zipObject.js';
 
 const {

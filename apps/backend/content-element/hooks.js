@@ -5,7 +5,7 @@ import hash from 'hash-obj';
 import PluginRegistry from '../shared/content-plugins/index.js';
 import Promise from 'bluebird';
 import { resolveStatics } from '../shared/storage/helpers.js';
-import { schema } from '../config/shared/tailor.loader.js';
+import { schema } from 'tailor-config-shared';
 import sse from '../shared/sse/index.js';
 
 const { elementRegistry } = PluginRegistry;

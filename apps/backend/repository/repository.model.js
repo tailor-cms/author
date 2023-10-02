@@ -1,7 +1,7 @@
 import { Model } from 'sequelize';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import { schema } from '../config/shared/tailor.loader.js';
+import { schema } from 'tailor-config-shared';
 
 const { getRepositoryRelationships, getSchema } = schema;
 

@@ -67,7 +67,7 @@ import { loader } from '@tailor-cms/core-components';
 import pluralize from 'pluralize';
 import Promise from 'bluebird';
 import RepositoryTree from './RepositoryTree.vue';
-import { SCHEMAS } from 'tailor-config';
+import { SCHEMAS } from 'tailor-config-shared';
 import sortBy from 'lodash/sortBy';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 

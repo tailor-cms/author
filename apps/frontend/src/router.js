@@ -1,7 +1,7 @@
 /* eslint-disable sort-imports */
 import { numeric as numericParser } from 'client/utils/paramsParser';
 import Router from 'vue-router';
-import { role } from '@/../config/shared';
+import { role } from 'tailor-config-shared';
 import Vue from 'vue';
 
 import Auth from './components/auth/Container.vue';

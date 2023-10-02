@@ -13,7 +13,7 @@ import PluginRegistry from '../content-plugins/index.js';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
 import { resolveStatics } from '../storage/helpers.js';
-import { schema } from '../../config/shared/tailor.loader.js';
+import { schema } from 'tailor-config-shared';
 import storage from '../../repository/storage.js';
 import without from 'lodash/without.js';
 

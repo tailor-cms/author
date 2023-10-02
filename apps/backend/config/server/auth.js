@@ -1,4 +1,4 @@
-import roleConfig from '../shared/role.js';
+import { role as roleConfig } from 'tailor-config-shared';
 import yn from 'yn';
 
 const { env } = process;

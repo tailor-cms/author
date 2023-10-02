@@ -1,6 +1,6 @@
 import forEach from 'lodash/forEach.js';
 import groupBy from 'lodash/groupBy.js';
-import { schema } from '../config/shared/tailor.loader.js';
+import { schema } from 'tailor-config-shared';
 import sse from '../shared/sse/index.js';
 
 const { isOutlineActivity } = schema;

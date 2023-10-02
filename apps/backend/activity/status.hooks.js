@@ -2,7 +2,7 @@ import forEach from 'lodash/forEach.js';
 import get from 'lodash/get.js';
 import mail from '../shared/mail/index.js';
 import { Op } from 'sequelize';
-import { schema } from '../config/shared/tailor.loader.js';
+import { schema } from 'tailor-config-shared';
 import sse from '../shared/sse/index.js';
 
 const add = (ActivityStatus, Hooks, { Activity }) => {

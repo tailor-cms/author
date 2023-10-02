@@ -1,0 +1,13 @@
+{
+  "name": "tailor-config-shared",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "src/index.js",
+  "dependencies": {
+    "@tailor-cms/config": "workspace:*",
+    "is-localhost": "0.0.2",
+    "url-parse": "^1.5.10"
+  }
+}

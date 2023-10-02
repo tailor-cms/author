@@ -1,5 +1,5 @@
 import get from 'lodash/get';
-import { role } from 'shared';
+import { role } from 'tailor-config-shared';
 
 export const isAdmin = ({ user }) => get(user, 'role') === role.user.ADMIN;
 

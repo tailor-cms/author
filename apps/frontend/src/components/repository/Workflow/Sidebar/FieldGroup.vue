@@ -71,7 +71,7 @@ import { DatePicker } from '@tailor-cms/core-components';
 import EditorField from '@/components/common/EditorField.vue';
 import SelectPriority from '@/components/repository/common/SelectPriority.vue';
 import SelectStatus from '../SelectStatus.vue';
-import { workflow } from 'tailor-config';
+import { workflow } from 'tailor-config-shared';
 
 const defaultPriority = workflow.priorities.find(it => it.default);
 

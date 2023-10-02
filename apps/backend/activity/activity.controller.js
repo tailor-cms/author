@@ -6,7 +6,7 @@ import pick from 'lodash/pick.js';
 import { previewUrl } from '../config/server/index.js';
 import publishingService from '../shared/publishing/publishing.service.js';
 import request from 'axios';
-import { schema } from '../config/shared/tailor.loader.js';
+import { schema } from 'tailor-config-shared';
 
 const { Activity } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
