@@ -1,10 +1,12 @@
 import { brandConfig, brandStyles } from './config/client/brand.loader.js';
 import { defineConfig, loadEnv } from 'vite';
 import { fileURLToPath } from 'node:url';
+import Components from 'unplugin-vue-components/vite';
 import htmlReplace from './build/plugins/vite/html-replace.js';
 import path from 'node:path';
 import resolveUrl from 'tailor-config-shared/src/url.js';
 import vue from '@vitejs/plugin-vue2';
+import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
 import yn from 'yn';
 
 const _dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -72,6 +74,9 @@ const alias = [
 ];
 const plugins = [
   vue(),
+  Components({
+    resolvers: [VuetifyResolver()]
+  }),
   htmlReplace({
     defaults: true,
     replacements: { ...brandConfig }
@@ -88,10 +93,7 @@ export default defineConfig(({ mode }) => {
     publicDir: 'assets/img',
     root: path.join(_dirname, 'src'),
     build: {
-      outDir: '../dist',
-      commonjsOptions: {
-        include: [/tailor\.config\.js/, /node_modules/]
-      }
+      outDir: '../dist'
     },
     resolve: {
       alias

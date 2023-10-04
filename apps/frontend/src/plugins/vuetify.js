@@ -1,7 +1,7 @@
 import activityIcons from '@/components/repository/Outline/icons';
 import colors from 'vuetify/es5/util/colors';
 import Vue from 'vue';
-import Vuetify from 'vuetify';
+import Vuetify from 'vuetify/lib';
 import VuetifySnackbar from '@/plugins/vuetify-snackbar';
 import workflowIcons from '@/components/repository/Workflow/icons';
 

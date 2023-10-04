@@ -40,7 +40,7 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(auth.initialize());
 app.use(origin());
-app.use(express.static(path.join(__dirname, '../dist/')));
+app.use(express.static(path.join(__dirname, '../frontend/dist/')));
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 if (storageProxy.isSelfHosted) {
   const { default: proxyMw } = await import('./shared/storage/proxy/mw.js');
