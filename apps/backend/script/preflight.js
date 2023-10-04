@@ -1,9 +1,11 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import boxen from 'boxen';
 import { readPackageUpSync } from 'read-pkg-up';
 import semver from 'semver';
 
 const { packageJson: pkg } = readPackageUpSync();
+
+dotenv.config({ path: './../../.env' });
 
 (function preflight() {
   const engines = pkg.engines || {};

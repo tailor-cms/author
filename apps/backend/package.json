@@ -6,9 +6,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "nodemon --import ./script/preflight.js -r dotenv/config ./index.js dotenv_config_path=./../../.env | bunyan-pretty",
-    "start": "node --import ./script/preflight.js ./index.js dotenv_config_path=./../../.env",
-    "debug:server": "nodemon --inspect --import ./script/preflight.js ./index.js dotenv_config_path=./../../.env",
+    "dev": "nodemon --import ./script/preflight.js ./index.js | bunyan-pretty",
+    "start": "node --import ./script/preflight.js ./index.js",
+    "debug:server": "nodemon --inspect --import ./script/preflight.js ./index.js",
     "lint": "eslint --ext .js .",
     "db": "node --import ./script/preflight.js ./script/sequelize.js",
     "db:reset": "npm run db drop && npm run db create && npm run db migrate",

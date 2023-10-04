@@ -87,9 +87,6 @@ export default defineConfig(({ mode }) => {
     base: './',
     publicDir: 'assets/img',
     root: path.join(_dirname, 'src'),
-    optimizeDeps: {
-      include: ['tailor-config-shared'],
-    },
     build: {
       outDir: '../dist',
       commonjsOptions: {
