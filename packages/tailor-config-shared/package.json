@@ -4,10 +4,16 @@
   "files": [
     "src"
   ],
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rollup --config rollup.config.js"
+  },
   "dependencies": {
     "@tailor-cms/config": "workspace:*",
     "is-localhost": "0.0.2",
     "url-parse": "^1.5.10"
+  },
+  "devDependencies": {
+    "rollup": "^3.29.4"
   }
 }
