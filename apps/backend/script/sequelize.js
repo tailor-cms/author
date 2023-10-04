@@ -15,9 +15,9 @@ const actions = [
 const isAction = cmd => actions.some(it => cmd.startsWith(it));
 
 // Load config.
-const config = safeRequire(path.join(process.cwd(), 'sequelize.config.js'));
+const config = safeRequire(path.join(process.cwd(), 'sequelize.config.cjs'));
 if (!config) {
-  console.error('Error: `sequelize.config.js` not found');
+  console.error('Error: `sequelize.config.cjs` not found');
   process.exit(1);
 }
 
