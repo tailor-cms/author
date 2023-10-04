@@ -21,7 +21,7 @@ times(5, i => {
 
 module.exports = {
   up(queryInterface) {
-    return import('../../../../config/server/index.js')
+    return import('../../../config/server/index.js')
       .then(({ auth: config }) => (
         Promise.map(users, user => encryptPassword(user, config.saltRounds))
       ))
