@@ -55,7 +55,7 @@ Configurable headless CMS for complex content structures.
 
 ### Development
 
-`pnpm run dev`
+`pnpm dev`
 
 ### Production
 
