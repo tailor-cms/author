@@ -1,4 +1,5 @@
 import { brandConfig, brandStyles } from './config/client/brand.loader.js';
+import dotenv from 'dotenv';
 import { defineConfig, loadEnv } from 'vite';
 import { fileURLToPath } from 'node:url';
 import Components from 'unplugin-vue-components/vite';
@@ -24,8 +25,11 @@ const getDefine = env => ({
   'BRAND_CONFIG.LOGO_FULL': JSON.stringify(brandConfig.logo.full)
 });
 
-const getServer = env => {
-  const { origin } = resolveUrl(env);
+const getServer = (env, mode) => {
+  const { hostname, port, protocol, origin } = resolveUrl(env);
+  const serverUrl = mode === 'development'
+    ? `${protocol}://${hostname}:${port}`
+    : origin;
   return {
     host: env.HOSTNAME || '0.0.0.0',
     port: env.REVERSE_PROXY_PORT || 8080,
@@ -36,9 +40,9 @@ const getServer = env => {
     proxy: {
       // Needs to exclude files from `cilent/api` folder, as they shouldn't be proxied
       // eslint-disable-next-line no-useless-escape
-      '^\/api\/(?![A-Za-z]+\.js)': origin,
-      '/proxy': origin,
-      ...(env.STORAGE_PATH ? { '/repository': origin } : {})
+      '^\/api\/(?![A-Za-z]+\.js)': serverUrl,
+      '/proxy': serverUrl,
+      ...(env.STORAGE_PATH ? { '/repository': serverUrl } : {})
     }
   }
 };
@@ -84,6 +88,7 @@ const plugins = [
 ];
 
 export default defineConfig(({ mode }) => {
+  dotenv.config({ path: './../../.env' });
   const env = loadEnv(mode, process.cwd(), '');
   /**
    * @type {import('vite').UserConfig}
@@ -109,7 +114,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
-    server: getServer(env),
+    server: getServer(env, mode),
     plugins
   };
 });
