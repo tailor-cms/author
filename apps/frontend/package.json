@@ -9,7 +9,7 @@
     "build": "del-cli node_modules/.vite && vite build",
     "clean": "del-cli dist/* !dist/.gitkeep",
     "lint:js": "eslint --ext .js,.vue .",
-    "lint:scss": "stylelint \"client/**/*.vue\" \"client/**/*.scss\"",
+    "lint:scss": "stylelint \"src/**/*.vue\" \"src/**/*.scss\"",
     "lint": "npm run lint:js && npm run lint:scss"
   },
   "dependencies": {

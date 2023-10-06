@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
 import boxen from 'boxen';
+import dotenv from 'dotenv';
 import { readPackageUpSync } from 'read-pkg-up';
 import semver from 'semver';
 

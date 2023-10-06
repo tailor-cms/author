@@ -1,4 +1,5 @@
 import {
+  role,
   schema as schemaConfig,
   workflow as workflowConfig
 } from 'tailor-config-shared';
@@ -7,7 +8,6 @@ import find from 'lodash/find';
 import get from 'lodash/get';
 import Hashids from 'hashids';
 import map from 'lodash/map';
-import { role } from 'tailor-config-shared';
 import values from 'lodash/values';
 
 const { getOutlineLevels, getSchema } = schemaConfig;

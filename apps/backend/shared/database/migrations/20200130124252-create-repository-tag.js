@@ -1,3 +1,4 @@
+// eslint-disable-next-line strict
 'use strict';
 
 const TABLE_NAME = 'repository_tag';

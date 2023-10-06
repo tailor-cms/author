@@ -8,6 +8,7 @@
     "dev": "node ./scripts/boot.js",
     "build": "pnpm -r build",
     "start": "cd ./apps/backend && pnpm start",
+    "lint": "pnpm -r lint",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "underscope@gmail.com",
