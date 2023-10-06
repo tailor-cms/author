@@ -92,7 +92,6 @@
   "devDependencies": {
     "@extensionengine/eslint-config": "^3.0.1",
     "@extensionengine/stylelint-config": "^1.1.1",
-    "@testing-library/cypress": "^9.0.0",
     "@types/eslint": "^8.40.2",
     "@vitejs/plugin-vue2": "^2.2.0",
     "dargs": "^8.1.0",
@@ -101,7 +100,6 @@
     "eslint": "^8.43.0",
     "eslint-config-semistandard": "^17.0.0",
     "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-cypress": "^2.13.3",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-node": "^11.1.0",
