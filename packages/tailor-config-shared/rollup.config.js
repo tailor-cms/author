@@ -5,4 +5,5 @@ export default {
     format: "es",
     inlineDynamicImports: true,
   },
+  external: ['@tailor-cms/config']
 };
