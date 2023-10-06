@@ -18,8 +18,5 @@ $mdi-font-path: '~@mdi/font/fonts';
 @import 'common/all';
 @import 'common/assessments/all';
 
-// Tailor core components
-@import "~@tailor-cms/core-components/style.css";
-
 // Vuetify
 @import "~vuetify/dist/vuetify.css";

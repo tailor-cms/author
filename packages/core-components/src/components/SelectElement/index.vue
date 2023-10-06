@@ -56,7 +56,7 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
 import ContentPreview from '../ContentPreview/index.vue';
 import flatMap from 'lodash/flatMap';
-import loader from '@/loader';
+import loader from '../../loader';
 import map from 'lodash/map';
 import SelectActivity from './SelectActivity.vue';
 import SelectRepository from './SelectRepository.vue';
