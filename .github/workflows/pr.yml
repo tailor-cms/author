@@ -13,3 +13,5 @@ jobs:
         uses: ./.github/actions/setup
       - name: Run linter
         run: pnpm lint
+      - name: Build app
+        run: pnpm build
