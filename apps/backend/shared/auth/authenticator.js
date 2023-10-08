@@ -4,7 +4,6 @@ import { Authenticator } from 'passport';
 import autobind from 'auto-bind';
 import { auth as config } from '../../config/server/index.js';
 import { IncomingMessage } from 'http';
-import storageProxy from '../../repository/proxy.js';
 
 const isFunction = arg => typeof arg === 'function';
 
@@ -58,11 +57,9 @@ class Auth extends Authenticator {
   }
 
   logout({ middleware = false } = {}) {
-    const storageCookies = storageProxy.getCookieNames();
     return (_, res, next) => {
       res.clearCookie(config.jwt.cookie.name);
       res.clearCookie('auth');
-      storageCookies.forEach(name => res.clearCookie(name));
       return middleware ? next() : res.end();
     };
   }
