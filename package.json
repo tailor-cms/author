@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "concurrently": "^8.2.1",
+    "dotenv": "^16.3.1",
     "fkill": "^8.1.1",
     "pid-port": "^0.2.0"
   }
