@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url';
 import helmet from 'helmet';
 import origin from './shared/origin.js';
 import path from 'node:path';
-import storage from './repository/storage.js';
 
 /* eslint-disable */
 await import('express-async-errors');
