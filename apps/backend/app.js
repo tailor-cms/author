@@ -6,8 +6,6 @@ import { fileURLToPath } from 'node:url';
 import helmet from 'helmet';
 import origin from './shared/origin.js';
 import path from 'node:path';
-import storage from './repository/storage.js';
-import storageProxy from './repository/proxy.js';
 
 /* eslint-disable */
 await import('express-async-errors');
@@ -42,11 +40,6 @@ app.use(auth.initialize());
 app.use(origin());
 app.use(express.static(path.join(__dirname, '../frontend/dist/')));
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
-if (storageProxy.isSelfHosted) {
-  const { default: proxyMw } = await import('./shared/storage/proxy/mw.js');
-  const { proxy: middleware } = proxyMw(storage, storageProxy);
-  app.use(storageProxy.path, middleware);
-}
 
 // Mount main router.
 app.use('/api', requestLogger, router);

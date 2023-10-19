@@ -6,7 +6,6 @@ import elementsList from 'tailor-config-shared/src/core-elements.js';
 import hooks from './elementHooks.js';
 import pick from 'lodash/pick.js';
 import storage from '../../repository/storage.js';
-import storageProxy from '../../repository/proxy.js';
 import toCase from 'to-case';
 
 const EXTENSIONS_LIST = '../../../../extensions/content-elements/index.js';
@@ -35,7 +34,7 @@ class ElementsRegistry extends BaseRegistry {
   getHook(type, hook) {
     const elementHooks = this._hooks[type];
     if (!elementHooks || !elementHooks[hook]) return;
-    const services = { config, storage, storageProxy };
+    const services = { config, storage };
     return (element, options) => elementHooks[hook](element, services, options);
   }
 

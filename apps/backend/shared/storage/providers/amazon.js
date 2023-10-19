@@ -10,6 +10,7 @@ import {
   S3Client
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import mime from 'mime-types';
 import miss from 'mississippi';
 import path from 'node:path';
 import { Upload } from '@aws-sdk/lib-storage';
@@ -70,8 +71,13 @@ class Amazon {
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/getobjectcommand.html
   async createReadStream(key, options = {}) {
-    const params = Object.assign(options, { Bucket: this.bucket, Key: key });
     const throughStream = miss.through();
+    const params = Object.assign(options, {
+      Bucket: this.bucket,
+      Key: key,
+      Body: throughStream,
+      ContentType: options.ContentType || mime.lookup(key)
+    });
     const s3Item = await this.client.send(new GetObjectCommand(params));
     s3Item.Body.pipe(throughStream);
     return throughStream;

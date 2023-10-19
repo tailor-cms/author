@@ -8,10 +8,6 @@ import feed from './feed/index.js';
 import multer from 'multer';
 import path from 'node:path';
 import processQuery from '../shared/util/processListQuery.js';
-import proxy from './proxy.js';
-import proxyMw from '../shared/storage/proxy/mw.js';
-import storage from './storage.js';
-
 /* eslint-disable */
 import activity from '../activity/index.js';
 import comment from '../comment/index.js';
@@ -22,7 +18,6 @@ import storageRouter from '../shared/storage/storage.router.js';
 
 const { Repository } = db;
 const router = express.Router();
-const { setSignedCookies } = proxyMw(storage, proxy);
 
 // NOTE: disk storage engine expects an object to be passed as the first argument
 // https://github.com/expressjs/multer/blob/6b5fff5/storage/disk.js#L17-L18
@@ -33,7 +28,7 @@ router
 
 router
   .param('repositoryId', getRepository)
-  .use('/:repositoryId', hasAccess, setSignedCookies);
+  .use('/:repositoryId', hasAccess);
 
 router.route('/')
   .get(processQuery({ limit: 100 }), ctrl.index)
