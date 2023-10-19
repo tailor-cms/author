@@ -3,7 +3,7 @@ import get from 'lodash/get.js';
 import PluginRegistry from '../content-plugins/index.js';
 import Promise from 'bluebird';
 import set from 'lodash/set.js';
-import storage from '../../repository/storage';
+import storage from '../../repository/storage.js';
 import toPairs from 'lodash/toPairs.js';
 import values from 'lodash/values.js';
 
