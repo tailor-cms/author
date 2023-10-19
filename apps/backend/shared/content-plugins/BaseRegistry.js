@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 
 const PATHS = {
   DEFAULT: '../../../client/components',
-  EXTENSION: '../../../extensions'
+  EXTENSION: '../../../../extensions'
 };
 
 export default class {

@@ -49,7 +49,7 @@ export default class ComponentRegistry {
     const { _registry, _type, _attrs, Vue } = this;
     const { position = _registry.length, isExtension } = options;
     const element = isExtension
-      ? (await import(`../../extensions/${_type}s/${path}/index.js`)
+      ? (await import(`../../../../extensions/${_type}s/${path}/index.js`)
       ).default
       : (await import(`../components/${_type}s/${path}/index.js`)
       ).default;
@@ -74,7 +74,7 @@ export default class ComponentRegistry {
   }
 
   loadExtensionList() {
-    return import(`../../extensions/${this._type}s/index.js`)
+    return import(`../../../../extensions/${this._type}s/index.js`)
       .then(module => module.default)
       .catch(() => console.log(`No ${this._name} extensions loaded!`) || []);
   }
