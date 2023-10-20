@@ -1,4 +1,5 @@
 // TODO: Add to schema after installation
+import inquirer from "inquirer";
 import shell from "shelljs";
 
 // Prompt for element name and package names
