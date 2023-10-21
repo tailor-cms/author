@@ -1,6 +1,7 @@
 // TODO: Add to schema after installation
 import inquirer from "inquirer";
 import shell from "shelljs";
+import jsonfile from 'jsonfile'
 
 // Prompt for element name and package names
 const { name, clientPackage, serverPackage } = await inquirer.prompt([
@@ -32,3 +33,7 @@ await shell.exec(
 await shell.exec(
   `npx hygen server-package new ${name} --packageName ${serverPackage}`
 );
+// Add to registry
+const elements = await jsonfile.readFile('./registry.json');
+elements.push({ name, clientPackage, serverPackage });
+await jsonfile.writeFile('./registry.json', elements);
