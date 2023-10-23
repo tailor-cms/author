@@ -14,5 +14,3 @@ https://github.com/jondot/hygen
 ```
 
 console.log(hello)
-
-
