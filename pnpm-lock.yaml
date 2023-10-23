@@ -678,13 +678,6 @@ importers:
         version: 2.7.14
 
   extensions/content-elements:
-    dependencies:
-      '@tailor-cms/tce-counter-edit':
-        specifier: ^0.0.1
-        version: 0.0.1(vue@2.7.14)
-      '@tailor-cms/tce-counter-server':
-        specifier: ^0.0.1
-        version: 0.0.1
     devDependencies:
       hygen:
         specifier: ^6.2.11
@@ -2729,18 +2722,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /@tailor-cms/tce-counter-edit@0.0.1(vue@2.7.14):
-    resolution: {integrity: sha512-MM2S1zD6h3A5x+fvzFIECu1eUb2ENv7iqA56Q3QSw3xSp5NN+9WwZ+JFVa7K3xSsjh6Hp9weWiD6HkWwPJbXOQ==}
-    peerDependencies:
-      vue: ^2.7.13
-    dependencies:
-      vue: 2.7.14
-    dev: false
-
-  /@tailor-cms/tce-counter-server@0.0.1:
-    resolution: {integrity: sha512-Ahn48HFQVhCV4HB3jy6ccEYvoidathpBKha5NlywM+5Vd3t4GsrbqAMSuj1ohHqHHcrutZ9E5eC0MsJd9bW7lg==}
-    dev: false
 
   /@types/argparse@1.0.38:
     resolution: {integrity: sha512-ebDJ9b0e702Yr7pWgB0jzm+CX4Srzz8RcXtLJDJB+BSccqMa36uyH/zUsSYao5+BD1ytv3k3rPYCq4mAE1hsXA==}
