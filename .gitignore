@@ -22,3 +22,7 @@ node_modules
 
 # Config
 .env
+.env.dev
+
+# Tailor storage data
+apps/backend/data
