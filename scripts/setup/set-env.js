@@ -12,7 +12,8 @@ const setTailorEnv = (opts) => ({
     const isCreated = await createDatabase(opts.client, opts.dbName);
     const projectDir = await packageDirectory();
     if (isCreated) {
-      await shell.exec(`cd ${projectDir}/apps/backend && pnpm run db:reset`);
+      await shell.exec('pnpm db:migrate');
+      await shell.exec('pnpm seed');
     }
     return {
       DATABASE_NAME: opts.dbName,
