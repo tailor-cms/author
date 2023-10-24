@@ -46,6 +46,7 @@ export async function createDatabase(client, name) {
   const checkIfExists = await client.query(
     `SELECT COUNT(*) from pg_catalog.pg_database WHERE datname = '${name}'`
   );
-  if (checkIfExists.rows[0].count !== '0') return;
-  return client.query(`CREATE DATABASE '${name}'`);
+  if (checkIfExists.rows[0].count !== '0') return false;
+  await client.query(`CREATE DATABASE "${name}"`);
+  return true;
 }

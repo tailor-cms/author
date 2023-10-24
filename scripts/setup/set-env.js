@@ -9,12 +9,16 @@ const getDBName = (name, prefix) => (prefix ? `${prefix}_${name}` : name);
 const setTailorEnv = (opts) => ({
   path: './',
   preflight: async () => {
-    await createDatabase(opts.client, opts.dbName);
+    const isCreated = await createDatabase(opts.client, opts.dbName);
+    const projectDir = await packageDirectory();
+    if (isCreated) {
+      await shell.exec(`cd ${projectDir}/apps/backend && pnpm run db:reset`);
+    }
     return {
       DATABASE_NAME: opts.dbName,
       DATABASE_USER: opts.user,
       DATABASE_PASSWORD: opts.password,
-      STORAGE_PATH: `${await packageDirectory()}/apps/backend/data`
+      STORAGE_PATH: `${projectDir}/apps/backend/data`
     };
   },
 });

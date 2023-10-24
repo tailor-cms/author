@@ -21,7 +21,7 @@ console.log(
 
 log(`◦ 🟡 Initialising ${envLabel} setup`);
 log('◦ 🤫 Setup environment variables');
-await setEnv({ dbPrefix: argv.dbPrefix, ci: !!argv.ci });
+await setEnv({ dbPrefix: argv.dbPrefix });
 log('\n◦ ✅ Environment successfully configured!');
 log('◦ 📦 Installing dependencies');
 await execaCommand('pnpm i --prefer-offline');
