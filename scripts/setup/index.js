@@ -28,7 +28,7 @@ log('◦ 🤫 Setup environment variables');
 await setEnv({ dbPrefix: argv.dbPrefix });
 log('◦ ✅ Environment successfully configured!');
 log('◦ 📦 Installing dependencies');
-await execaCommand('pnpm i --prefer-offline');
+await execaCommand('pnpm i');
 log('◦ ✅ Installed dependencies');
 log('◦ 🏗️  Build');
 await execaCommand('pnpm build');
