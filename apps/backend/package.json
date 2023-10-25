@@ -108,6 +108,7 @@
     "sse-event-types": "workspace:*",
     "strip-json-comments": "^5.0.0",
     "tailor-config-shared": "workspace:^",
+    "tailor-seed": "workspace:*",
     "tar-fs": "^3.0.3",
     "tmp": "0.2.1",
     "to-case": "^2.0.0",

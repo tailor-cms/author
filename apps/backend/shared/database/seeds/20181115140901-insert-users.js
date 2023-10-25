@@ -3,28 +3,19 @@
 
 const bcrypt = require('bcrypt');
 const Promise = require('bluebird');
-
-const times = (length, cb) => Array.from({ length }, (_, i) => cb(i));
-
-const now = new Date();
-const users = [];
-
-times(5, i => {
-  const suffix = i || '';
-  users.push({
-    email: `admin${suffix}@example.com`,
-    password: 'admin123.',
-    role: 'ADMIN',
-    created_at: now,
-    updated_at: now
-  });
-});
+const users = require('tailor-seed/user.json');
 
 module.exports = {
   up(queryInterface) {
+    const now = new Date();
+    const rows = users.map(user => ({
+      ...user,
+      created_at: now,
+      updated_at: now
+    }));
     return import('../../../config/server/index.js')
       .then(({ auth: config }) => (
-        Promise.map(users, user => encryptPassword(user, config.saltRounds))
+        Promise.map(rows, user => encryptPassword(user, config.saltRounds))
       ))
       .then(users => queryInterface.bulkInsert('user', users));
   },

@@ -1,0 +1,12 @@
+[
+  {
+    "email": "admin@gostudion.com",
+    "password": "gostudion",
+    "role": "ADMIN"
+  },
+  {
+    "email": "user@gostudion.com",
+    "password": "gostudion",
+    "role": "ADMIN"
+  }
+]
