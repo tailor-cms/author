@@ -12,7 +12,7 @@
     "lint": "eslint --ext .js .",
     "db": "node --import ./script/preflight.js ./script/sequelize.js",
     "db:reset": "pnpm db drop && pnpm db create && pnpm db migrate",
-    "db:seed": "npm run db seed:all",
+    "db:seed": "pnpm db seed:all",
     "add:admin": "node --import ./script/preflight.js ./script/addAdmin.js",
     "invite:admin": "node --import ./script/preflight.js ./script/inviteAdmin.js",
     "integration:add": "node --import ./script/preflight.js ./script/addIntegration.js",
