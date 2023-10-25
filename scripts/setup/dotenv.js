@@ -13,7 +13,13 @@ function addEnvVariable(key, value) {
   return `${key}=${escapeNewlines(processedValue)}`;
 }
 
-const loadConfig = async (path) => dotenv.parse(await fs.readFile(path, 'utf-8'));
+const loadConfig = async (path) => {
+  try {
+    return dotenv.parse(await fs.readFile(path, 'utf-8'));
+  } catch {
+    return {};
+  }
+};
 export const loadDevConfig = () => loadConfig(DEV_CONFIG_PATH);
 
 export async function saveConfig(path, config) {
