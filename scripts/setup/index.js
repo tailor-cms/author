@@ -35,7 +35,7 @@ await execaCommand('pnpm build');
 log(`◦ ✅ App built`);
 log('◦ 🎆 Good to go!');
 log(`
-  To start the app in development mode run: ${chalk.green('pnpm dev')}
+  To start the app in the development mode run: ${chalk.green('pnpm dev')}
   Sign in with the following credentials:
   username: ${chalk.green(defaultUser.email)}
   password: ${chalk.green(defaultUser.password)}`);
