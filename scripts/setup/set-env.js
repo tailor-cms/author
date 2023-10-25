@@ -43,7 +43,7 @@ export default async function ({ dbPrefix }) {
         const config = beforeHookResponse.env || {};
         await generateConfig(path, config);
         if (beforeHookResponse.afterHook) {
-          afterHooks.push(preflightRes.afterHook);
+          afterHooks.push(beforeHookResponse.afterHook);
         }
       })
     );
