@@ -7,6 +7,8 @@ import safeRequire from 'safe-require';
 
 dotenv.config({ path: './../../../.env' });
 
+console.log('env', process.env);
+
 const require = createRequire(import.meta.url);
 
 const actions = [
