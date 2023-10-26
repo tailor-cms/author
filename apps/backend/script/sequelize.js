@@ -4,8 +4,18 @@ import dotenv from 'dotenv';
 import minimist from 'minimist';
 import path from 'node:path';
 import safeRequire from 'safe-require';
+import { packageDirectory } from 'pkg-dir';
 
-dotenv.config({ path: './../../../.env' });
+// App root
+const appDirectory = await packageDirectory();
+// Monorepo root
+const projectDirectory = await packageDirectory({
+  cwd: path.join(appDirectory, '..'),
+});
+
+const dotenvLocation = path.join(projectDirectory, '.env');
+console.log('dotenvLocation seq', dotenvLocation);
+dotenv.config({ path: dotenvLocation });
 
 console.log('env', process.env);
 

@@ -14,7 +14,9 @@ const projectDirectory = await packageDirectory({
   cwd: path.join(appDirectory, '..'),
 });
 
-dotenv.config({ path: path.join(projectDirectory, '.env') });
+const dotenvLocation = path.join(projectDirectory, '.env');
+console.log('dotenvLocation', dotenvLocation);
+dotenv.config({ path: dotenvLocation });
 
 (function preflight() {
   const engines = pkg.engines || {};
