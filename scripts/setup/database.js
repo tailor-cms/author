@@ -9,7 +9,7 @@ export const getDatabaseClient = async () => {
     const creds = await getDatabaseCredentials();
     const client = new Client({
       database: 'postgres',
-      host: '127.0.0.1',
+      host: 'localhost',
       port: 5432,
       ...creds,
     });
