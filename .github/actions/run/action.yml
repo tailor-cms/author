@@ -27,6 +27,12 @@ runs:
     uses: isbang/compose-action@v1.3.2
     with:
       compose-file: docker-compose.dev.yaml
+  - name: Migrate DB
+    shell: bash
+    run: pnpm db:migrate
+  - name: Seed DB
+    shell: bash
+    run: pnpm seed
   - name: Configure env and build
     shell: bash
     run: pnpm setup:dev
