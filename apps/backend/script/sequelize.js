@@ -5,6 +5,15 @@ import minimist from 'minimist';
 import path from 'node:path';
 import safeRequire from 'safe-require';
 import { packageDirectory } from 'pkg-dir';
+import fs from 'node:fs/promises';
+
+const loadConfig = async (path) => {
+  try {
+    return dotenv.parse(await fs.readFile(path, 'utf-8'));
+  } catch {
+    return {};
+  }
+};
 
 // App root
 const appDirectory = await packageDirectory();
@@ -14,7 +23,9 @@ const projectDirectory = await packageDirectory({
 });
 
 const dotenvLocation = path.join(projectDirectory, '.env');
+const dotenvConfig = await loadConfig(dotenvLocation);
 console.log('dotenvLocation seq', dotenvLocation);
+console.log('dotenvConfig', dotenvConfig);
 dotenv.config({ path: dotenvLocation });
 
 console.log('env', process.env);
