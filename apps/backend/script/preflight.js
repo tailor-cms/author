@@ -3,9 +3,16 @@ import dotenv from 'dotenv';
 import { readPackageUpSync } from 'read-pkg-up';
 import semver from 'semver';
 
-const { packageJson: pkg } = readPackageUpSync();
+import { packageDirectory } from 'pkg-dir';
 
-dotenv.config({ path: './../../../.env' });
+// App root
+const appDirectory = await packageDirectory();
+// Monorepo root
+const projectDirectory = await packageDirectory({
+  cwd: path.join(appDirectory, '..'),
+});
+
+dotenv.config({ path: path.join(projectDirectory, '.env') });
 
 (function preflight() {
   const engines = pkg.engines || {};
@@ -24,7 +31,7 @@ function warn(range, current = process.version, name = pkg.name) {
     padding: 1,
     margin: 1,
     float: 'left',
-    align: 'center'
+    align: 'center',
   };
   const message = `🚨  ${name} requires node ${range}\n current version is ${current}`;
   console.error(boxen(message, options));
