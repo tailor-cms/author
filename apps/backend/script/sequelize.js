@@ -1,8 +1,11 @@
 import { createRequire } from 'node:module';
 import dargs from 'dargs';
+import dotenv from 'dotenv';
 import minimist from 'minimist';
 import path from 'node:path';
 import safeRequire from 'safe-require';
+
+dotenv.config({ path: './../../../.env' });
 
 const require = createRequire(import.meta.url);
 
