@@ -5,7 +5,7 @@ import semver from 'semver';
 
 const { packageJson: pkg } = readPackageUpSync();
 
-dotenv.config({ path: './../../.env' });
+dotenv.config({ path: './../../../.env' });
 
 (function preflight() {
   const engines = pkg.engines || {};
