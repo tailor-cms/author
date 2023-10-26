@@ -26,7 +26,7 @@ runs:
   - name: Run service deps via Docker
     uses: isbang/compose-action@v1.3.2
     with:
-      compose-file: docker-compose.dev.yml
+      compose-file: docker-compose.dev.yaml
   - name: Configure env and build
     shell: bash
     run: pnpm setup:dev
