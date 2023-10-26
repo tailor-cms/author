@@ -275,6 +275,9 @@ importers:
       pg-query-stream:
         specifier: ^4.5.0
         version: 4.5.0(pg@8.11.0)
+      pkg-dir:
+        specifier: ^7.0.0
+        version: 7.0.0
       pluralize:
         specifier: ^8.0.0
         version: 8.0.0
@@ -8380,7 +8383,6 @@ packages:
     engines: {node: '>=14.16'}
     dependencies:
       find-up: 6.3.0
-    dev: true
 
   /pluralize@8.0.0:
     resolution: {integrity: sha512-Nc3IT5yHzflTfbjgqWcCPpo7DaKy4FnpB0l/zCAW0Tc7jxAiuqSxHasntB3D7887LSrA93kDJ9IXovxJYxyLCA==}
