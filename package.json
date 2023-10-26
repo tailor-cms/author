@@ -11,7 +11,7 @@
     "lint": "pnpm -r lint",
     "seed": "cd ./apps/backend && pnpm db:seed",
     "test": "cd tests && pnpm e2e",
-    "setup:dev": "node ./scripts/setup/index.js",
+    "setup:dev": "pnpm i && node ./scripts/setup/index.js",
     "db:migrate": "cd ./apps/backend && pnpm db migrate",
     "ce:add": "cd ./extensions/content-elements && pnpm ce:add"
   },
