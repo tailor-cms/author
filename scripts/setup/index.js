@@ -25,7 +25,7 @@ console.log(
 
 log(`◦ 🟡 Initialising ${envLabel} setup`);
 log('◦ 🤫 Setup environment variables');
-await setEnv({ dbPrefix: argv.dbPrefix });
+const afterAllHooks = await setEnv({ dbPrefix: argv.dbPrefix }) || [];
 log('◦ ✅ Environment successfully configured!');
 log('◦ 📦 Installing dependencies');
 await execaCommand('pnpm i');
@@ -33,6 +33,9 @@ log('◦ ✅ Installed dependencies');
 log('◦ 🏗️  Build');
 await execaCommand('pnpm build');
 log(`◦ ✅ App built`);
+for (const afterHook of afterAllHooks) {
+  await afterHook();
+}
 log('◦ 🎆 Good to go!');
 log(`
   To start the app in the development mode run: ${chalk.green('pnpm dev')}

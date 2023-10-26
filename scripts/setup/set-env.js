@@ -47,9 +47,7 @@ export default async function ({ dbPrefix }) {
         }
       })
     );
-    for (const afterHook of afterHooks) {
-      await afterHook();
-    }
+    return afterHooks;
   } catch (err) {
     log('🚨 Unable to configure .env!');
     log(err);
