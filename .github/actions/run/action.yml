@@ -32,7 +32,7 @@ runs:
     run: pnpm setup:dev
   - name: Run
     shell: bash
-    run: pnpm dev & sleep 20
+    run: pnpm dev & sleep 40
   - name: Check if Tailor is available
     uses: fjogeleit/http-request-action@v1
     with:
