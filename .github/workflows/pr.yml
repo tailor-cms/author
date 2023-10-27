@@ -29,4 +29,7 @@ jobs:
       - name: Install, build, seed, and start server
         uses: ./.github/actions/run
       - name: Run E2E tests
-        run: pnpm test
+        shell: bash
+        run: |
+          cd tests
+          pnpm playwright test
