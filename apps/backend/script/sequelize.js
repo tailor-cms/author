@@ -1,8 +1,19 @@
 import { createRequire } from 'node:module';
 import dargs from 'dargs';
+import dotenv from 'dotenv';
 import minimist from 'minimist';
+import { packageDirectory } from 'pkg-dir';
 import path from 'node:path';
 import safeRequire from 'safe-require';
+
+// App root
+const appDirectory = await packageDirectory();
+// Monorepo root
+const projectDirectory = await packageDirectory({
+  cwd: path.join(appDirectory, '..')
+});
+const dotenvLocation = path.join(projectDirectory, '.env');
+dotenv.config({ path: dotenvLocation });
 
 const require = createRequire(import.meta.url);
 

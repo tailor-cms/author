@@ -6,7 +6,7 @@
     "e2e": "pnpm playwright test"
   },
   "devDependencies": {
-    "@playwright/test": "^1.39.0",
+    "@playwright/test": "1.39.0",
     "@types/node": "^20.8.7"
   }
 }

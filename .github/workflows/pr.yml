@@ -1,4 +1,6 @@
 name: PR checks
+env:
+  PLAYWRIGHT_VERSION: 1.39.0
 on:
   push:
     branches: [ main, develop ]
@@ -13,5 +15,21 @@ jobs:
         uses: ./.github/actions/setup
       - name: Run linter
         run: pnpm lint
-      - name: Build app
-        run: pnpm build
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Create setup script config
+        run: |
+          touch ./scripts/setup/.env
+          echo "DB_USERNAME=dev" >> ./scripts/setup/.env
+          echo "DB_PASSWORD=dev" >> ./scripts/setup/.env
+      - name: Install, build, seed, and start server
+        uses: ./.github/actions/run
+      - name: Run E2E tests
+        shell: bash
+        run: |
+          cd tests
+          pnpm playwright test

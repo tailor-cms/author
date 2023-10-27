@@ -1,11 +1,21 @@
 import boxen from 'boxen';
 import dotenv from 'dotenv';
+import { packageDirectory } from 'pkg-dir';
+import path from 'node:path';
 import { readPackageUpSync } from 'read-pkg-up';
 import semver from 'semver';
 
 const { packageJson: pkg } = readPackageUpSync();
 
-dotenv.config({ path: './../../.env' });
+// App root
+const appDirectory = await packageDirectory();
+// Monorepo root
+const projectDirectory = await packageDirectory({
+  cwd: path.join(appDirectory, '..')
+});
+
+const dotenvLocation = path.join(projectDirectory, '.env');
+dotenv.config({ path: dotenvLocation });
 
 (function preflight() {
   const engines = pkg.engines || {};

@@ -1,0 +1,41 @@
+name: Setup Tailor for E2E testing
+runs:
+  using: composite
+  steps:
+  - uses: pnpm/action-setup@v2
+    with:
+      version: 8.6.12
+  - uses: actions/setup-node@v3
+    with:
+      node-version: 20.6
+      cache: 'pnpm'
+      cache-dependency-path: './pnpm-lock.yaml'
+  - name: Install dependencies
+    shell: bash
+    run: pnpm i
+  - uses: actions/cache@v3
+    name: Check Playwright cache
+    id: playwright-cache
+    with:
+      path: ~/.cache/ms-playwright
+      key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+  - name: Install Playwright
+    shell: bash
+    run: pnpm dlx playwright@${{ env.PLAYWRIGHT_VERSION }} install --with-deps
+    if: steps.playwright-cache.outputs.cache-hit != 'true'
+  - name: Run service deps via Docker
+    uses: isbang/compose-action@v1.3.2
+    with:
+      compose-file: docker-compose.dev.yaml
+  - name: Configure env and build
+    shell: bash
+    run: pnpm setup:dev
+  - name: Migrate DB
+    shell: bash
+    run: pnpm db:migrate
+  - name: Seed DB
+    shell: bash
+    run: pnpm seed
+  - name: Run
+    shell: bash
+    run: pnpm dev & sleep 5
