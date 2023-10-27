@@ -2,33 +2,18 @@ import { createRequire } from 'node:module';
 import dargs from 'dargs';
 import dotenv from 'dotenv';
 import minimist from 'minimist';
+import { packageDirectory } from 'pkg-dir';
 import path from 'node:path';
 import safeRequire from 'safe-require';
-import { packageDirectory } from 'pkg-dir';
-import fs from 'node:fs/promises';
-
-const loadConfig = async (path) => {
-  try {
-    return dotenv.parse(await fs.readFile(path, 'utf-8'));
-  } catch {
-    return {};
-  }
-};
 
 // App root
 const appDirectory = await packageDirectory();
 // Monorepo root
 const projectDirectory = await packageDirectory({
-  cwd: path.join(appDirectory, '..'),
+  cwd: path.join(appDirectory, '..')
 });
-
 const dotenvLocation = path.join(projectDirectory, '.env');
-const dotenvConfig = await loadConfig(dotenvLocation);
-console.log('dotenvLocation seq', dotenvLocation);
-console.log('dotenvConfig', dotenvConfig);
 dotenv.config({ path: dotenvLocation });
-
-console.log('env', process.env);
 
 const require = createRequire(import.meta.url);
 

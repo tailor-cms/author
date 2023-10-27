@@ -11,11 +11,10 @@ const { packageJson: pkg } = readPackageUpSync();
 const appDirectory = await packageDirectory();
 // Monorepo root
 const projectDirectory = await packageDirectory({
-  cwd: path.join(appDirectory, '..'),
+  cwd: path.join(appDirectory, '..')
 });
 
 const dotenvLocation = path.join(projectDirectory, '.env');
-console.log('dotenvLocation', dotenvLocation);
 dotenv.config({ path: dotenvLocation });
 
 (function preflight() {
@@ -35,7 +34,7 @@ function warn(range, current = process.version, name = pkg.name) {
     padding: 1,
     margin: 1,
     float: 'left',
-    align: 'center',
+    align: 'center'
   };
   const message = `🚨  ${name} requires node ${range}\n current version is ${current}`;
   console.error(boxen(message, options));

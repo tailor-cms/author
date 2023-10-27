@@ -38,13 +38,4 @@ runs:
     run: pnpm seed
   - name: Run
     shell: bash
-    run: pnpm dev & sleep 40
-  - name: Check if Tailor is available
-    uses: fjogeleit/http-request-action@v1
-    with:
-      url: 'http://localhost:8080'
-      method: 'GET'
-      contentType: text/html
-      retry: 5
-      retryWait: 4000
-      timeout: 20000
+    run: pnpm dev & sleep 20

@@ -4,8 +4,7 @@ import { packageDirectory } from 'pkg-dir';
 import shell from 'shelljs';
 
 const log = (msg) => console.log(` ${msg}`);
-const projectDir = await packageDirectory();
-console.log('using absolute dir', projectDir);
+const PROJECT_DIR = await packageDirectory();
 
 // DB helpers
 const getDBName = (name, prefix) => (prefix ? `${prefix}_${name}` : name);
@@ -15,14 +14,14 @@ const initDatabase = async () => {
 };
 
 const setTailorEnv = (opts) => ({
-  path: projectDir,
+  path: PROJECT_DIR,
   beforeHook: async () => {
     const isCreated = await createDatabase(opts.client, opts.dbName);
     const env = {
       DATABASE_NAME: opts.dbName,
       DATABASE_USER: opts.user,
       DATABASE_PASSWORD: opts.password,
-      STORAGE_PATH: `${projectDir}/apps/backend/data`
+      STORAGE_PATH: `${PROJECT_DIR}/apps/backend/data`
     };
     return {
       env,
