@@ -1,4 +1,6 @@
 name: Setup Tailor for E2E testing
+env:
+  PLAYWRIGHT_VERSION: 1.39.0
 runs:
   using: composite
   steps:
