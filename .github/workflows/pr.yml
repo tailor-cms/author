@@ -1,4 +1,6 @@
 name: PR checks
+env:
+  PLAYWRIGHT_VERSION: 1.39.0
 on:
   push:
     branches: [ main, develop ]
