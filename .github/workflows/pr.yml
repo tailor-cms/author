@@ -32,4 +32,4 @@ jobs:
         shell: bash
         run: |
           cd tests
-          npx playwright test
+          pnpm playwright test
