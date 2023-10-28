@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    // ensure that nobody can accidentally use this config for a build
+    "noEmit": true
+  },
+  "include": [
+    "apps",
+    "extensions",
+    "packages",
+    "scripts",
+    "tests",
+    "tailor.config.js",
+    ".eslintrc.cjs",
+  ]
+}
