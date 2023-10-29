@@ -1,3 +1,1 @@
-export default [
-  'tcc-default'
-];
+export default ['tcc-default'];
