@@ -5,7 +5,7 @@ import autobind from 'auto-bind';
 import { auth as config } from '../../config/server/index.js';
 import { IncomingMessage } from 'http';
 
-const isFunction = arg => typeof arg === 'function';
+const isFunction = (arg) => typeof arg === 'function';
 
 class Auth extends Authenticator {
   constructor() {
@@ -15,7 +15,7 @@ class Auth extends Authenticator {
 
   initialize(options = {}) {
     Object.defineProperty(IncomingMessage.prototype, 'passport', {
-      get: () => this
+      get: () => this,
     });
     return super.initialize(options);
   }
@@ -43,7 +43,7 @@ class Auth extends Authenticator {
       const { user } = req;
       const token = user.createToken({
         audience: Audience.Scope.Access,
-        expiresIn: '5 days'
+        expiresIn: '5 days',
       });
       const { name, signed, secure, httpOnly } = config.jwt.cookie;
       const expires = addDays(new Date(), 5);
@@ -67,7 +67,9 @@ class Auth extends Authenticator {
   strategy(strategyName) {
     const strategy = this._strategy(strategyName);
     if (!strategy) {
-      throw new Error(`Error: Unknown authentication strategy "${strategyName}"`);
+      throw new Error(
+        `Error: Unknown authentication strategy "${strategyName}"`,
+      );
     }
     return strategy;
   }

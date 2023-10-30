@@ -18,14 +18,16 @@ export default {
   ...config,
   migrationStorageTableName,
   benchmark,
-  logging
+  logging,
 };
 
 function parseConfig(config = process.env) {
   const DATABASE_URI = config.DATABASE_URI || config.POSTGRES_URI;
   if (DATABASE_URI) return { url: DATABASE_URI };
   if (!config.DATABASE_NAME) {
-    throw new TypeError(`Invalid \`DATABASE_NAME\` provided: ${config.DATABASE_NAME}`);
+    throw new TypeError(
+      `Invalid \`DATABASE_NAME\` provided: ${config.DATABASE_NAME}`,
+    );
   }
   return {
     database: config.DATABASE_NAME,
@@ -33,6 +35,6 @@ function parseConfig(config = process.env) {
     password: config.DATABASE_PASSWORD,
     host: config.DATABASE_HOST,
     port: config.DATABASE_PORT,
-    dialect: config.DATABASE_ADAPTER || 'postgres'
+    dialect: config.DATABASE_ADAPTER || 'postgres',
   };
 }

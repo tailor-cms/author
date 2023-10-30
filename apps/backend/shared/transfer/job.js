@@ -4,10 +4,12 @@ import DefaultAdapter from './default/index.js';
 import EventEmitter from 'events';
 import Promise from 'bluebird';
 
-const tmp = Promise.promisifyAll((await import('tmp')).default, { multiArgs: true });
+const tmp = Promise.promisifyAll((await import('tmp')).default, {
+  multiArgs: true,
+});
 
 const adapters = {
-  default: DefaultAdapter
+  default: DefaultAdapter,
 };
 
 class TransferJob extends EventEmitter {
@@ -27,7 +29,7 @@ class TransferJob extends EventEmitter {
     const blobStore = await createBlobStore();
     return this._run(blobStore)
       .then(() => this.emit('success'))
-      .catch(err => this.emit('error', err))
+      .catch((err) => this.emit('error', err))
       .finally(() => blobStore.cleanup());
   }
 
@@ -36,7 +38,7 @@ class TransferJob extends EventEmitter {
     return new Promise((resolve, reject) => {
       // NOTE: should also remove other event listener
       this.once('success', () => resolve(this));
-      this.once('error', err => reject(err));
+      this.once('error', (err) => reject(err));
     });
   }
 
@@ -45,7 +47,7 @@ class TransferJob extends EventEmitter {
       id: this.id,
       filepath: this.filepath,
       options: this.options,
-      type: this.type
+      type: this.type,
     };
   }
 }
@@ -53,7 +55,8 @@ class TransferJob extends EventEmitter {
 class ExportJob extends TransferJob {
   _run(blobStore) {
     const { adapter, filepath, options } = this;
-    return adapter.export(blobStore, options)
+    return adapter
+      .export(blobStore, options)
       .then(() => adapter.pack(blobStore, filepath, options));
   }
 }
@@ -61,15 +64,13 @@ class ExportJob extends TransferJob {
 class ImportJob extends TransferJob {
   _run(blobStore) {
     const { adapter, filepath, options } = this;
-    return adapter.unpack(filepath, blobStore, options)
+    return adapter
+      .unpack(filepath, blobStore, options)
       .then(() => adapter.import(blobStore, options));
   }
 }
 
-export {
-  ExportJob,
-  ImportJob
-};
+export { ExportJob, ImportJob };
 
 async function createBlobStore() {
   const options = { unsafeCleanup: true };

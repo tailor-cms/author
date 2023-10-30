@@ -8,14 +8,14 @@ const some = require('lodash/some');
 const TABLE_NAME = 'repository';
 const COLUMN_NAME = 'has_unpublished_changes';
 
-const isModified = it => it.modifiedAt > it.publishedAt;
+const isModified = (it) => it.modifiedAt > it.publishedAt;
 
 exports.up = async (qi, { BOOLEAN }) => {
   await qi.addColumn(TABLE_NAME, COLUMN_NAME, { type: BOOLEAN });
   await updateColumnValues(qi);
 };
 
-exports.down = queryInterface => {
+exports.down = (queryInterface) => {
   return queryInterface.removeColumn(TABLE_NAME, COLUMN_NAME);
 };
 

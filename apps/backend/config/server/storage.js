@@ -11,9 +11,9 @@ export const amazon = {
   key: process.env.STORAGE_KEY,
   secret: process.env.STORAGE_SECRET,
   region: process.env.STORAGE_REGION,
-  bucket: process.env.STORAGE_BUCKET
+  bucket: process.env.STORAGE_BUCKET,
 };
 
 export const filesystem = {
-  path: process.env.STORAGE_PATH
+  path: process.env.STORAGE_PATH,
 };

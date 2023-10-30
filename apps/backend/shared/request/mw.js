@@ -12,13 +12,13 @@ class Store {
     this.cache = new Tapster({
       ...options[provider],
       store: provider,
-      namespace: 'request-limiter'
+      namespace: 'request-limiter',
     });
   }
 
   async incr(key, cb) {
     const initialState = { hits: 0 };
-    const { hits, ...record } = await this.cache.has(key)
+    const { hits, ...record } = (await this.cache.has(key))
       ? await this.cache.get(key)
       : initialState;
     await this.cache.set(key, { ...record, hits: hits + 1 });
@@ -26,7 +26,7 @@ class Store {
   }
 
   async decrement(key) {
-    const { hits, ...record } = await this.cache.get(key) || {};
+    const { hits, ...record } = (await this.cache.get(key)) || {};
     if (!hits) return;
     return this.cache.set(key, { ...record, hits: hits - 1 });
   }

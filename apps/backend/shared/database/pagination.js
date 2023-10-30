@@ -4,7 +4,7 @@ import pick from 'lodash/pick.js';
 const parseOptions = ({ limit, offset, sortOrder }) => ({
   limit: parseInt(limit, 10) || 100,
   offset: parseInt(offset, 10) || 0,
-  sortOrder: sortOrder || 'ASC'
+  sortOrder: sortOrder || 'ASC',
 });
 
 function processPagination(Model) {
@@ -20,6 +20,4 @@ function processPagination(Model) {
   };
 }
 
-export {
-  processPagination
-};
+export { processPagination };

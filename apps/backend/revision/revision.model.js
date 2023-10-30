@@ -14,40 +14,40 @@ class Revision extends Model {
         type: UUID,
         unique: true,
         allowNull: false,
-        defaultValue: UUIDV4
+        defaultValue: UUIDV4,
       },
       entity: {
         type: ENUM,
         values: ['ACTIVITY', 'REPOSITORY', 'CONTENT_ELEMENT'],
-        allowNull: false
+        allowNull: false,
       },
       operation: {
         type: ENUM,
         values: ['CREATE', 'UPDATE', 'REMOVE'],
-        allowNull: false
+        allowNull: false,
       },
       state: {
         type: JSONB,
         allowNull: true,
-        validate: { notEmpty: true }
+        validate: { notEmpty: true },
       },
       createdAt: {
         type: DATE,
-        field: 'created_at'
+        field: 'created_at',
       },
       updatedAt: {
         type: DATE,
-        field: 'updated_at'
-      }
+        field: 'updated_at',
+      },
     };
   }
 
   static associate({ User, Repository }) {
     this.belongsTo(Repository, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.belongsTo(User, {
-      foreignKey: { name: 'userId', field: 'user_id' }
+      foreignKey: { name: 'userId', field: 'user_id' },
     });
   }
 
@@ -63,17 +63,17 @@ class Revision extends Model {
           // Explicit raw attributes are added to enforce
           // order within SELECT (DISTINCT ON must be first).
           literal(`DISTINCT ON (${entityIdRawField}) 1`),
-          ...Object.keys(this.rawAttributes)
+          ...Object.keys(this.rawAttributes),
         ],
-        order: [[literal(entityIdRawField)], ['createdAt', 'DESC']]
-      }
+        order: [[literal(entityIdRawField)], ['createdAt', 'DESC']],
+      },
     };
   }
 
   static options() {
     return {
       modelName: 'revision',
-      freezeTableName: true
+      freezeTableName: true,
     };
   }
 
@@ -87,7 +87,7 @@ class Revision extends Model {
       return revision.applyFetchHooks();
     }
     const revisions = await this.findAll(query);
-    return Promise.map(revisions, it => it.applyFetchHooks());
+    return Promise.map(revisions, (it) => it.applyFetchHooks());
   }
 
   async applyFetchHooks() {

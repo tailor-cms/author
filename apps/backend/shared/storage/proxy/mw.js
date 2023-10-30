@@ -14,7 +14,7 @@ export default (storage, proxy) => {
     if (!hasValidCookies) return res.status(FORBIDDEN).end();
     res.type(path.extname(key));
     const stream = await storage.createReadStream(key);
-    miss.pipe(stream, res, err => {
+    miss.pipe(stream, res, (err) => {
       if (err) return next(err);
       res.end();
     });

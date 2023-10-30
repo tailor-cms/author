@@ -11,14 +11,14 @@ const transform = require('lodash/transform');
 const TABLE = 'activity';
 const COLUMN = 'modified_at';
 
-const isOutlineActivity = it => /\//.test(it.type);
+const isOutlineActivity = (it) => /\//.test(it.type);
 
 exports.up = async (qi, { DATE }) => {
   await qi.addColumn(TABLE, COLUMN, { type: DATE });
   await updateColumnValues(qi);
 };
 
-exports.down = qi => qi.removeColumn(TABLE, COLUMN);
+exports.down = (qi) => qi.removeColumn(TABLE, COLUMN);
 
 async function updateColumnValues({ sequelize }) {
   const transaction = await sequelize.transaction();
@@ -26,7 +26,7 @@ async function updateColumnValues({ sequelize }) {
   await Promise.each(repositories, async ({ id: repositoryId }) => {
     const [activities, revisions] = await Promise.all([
       getActivities(sequelize, repositoryId, transaction),
-      getRevisions(sequelize, repositoryId, transaction)
+      getRevisions(sequelize, repositoryId, transaction),
     ]);
     const cache = buildModifiedAtCache(activities, revisions);
     const outlineActivities = filter(activities, isOutlineActivity);
@@ -103,10 +103,14 @@ function setModifiedAt(sequelize, data, transaction) {
 
 function buildModifiedAtCache(activities, revisions) {
   const keyedActivities = keyBy(activities, 'id');
-  return transform(revisions, (acc, { activityId, createdAt }) => {
-    const id = getOutlineParentId(activityId, keyedActivities);
-    acc[id] = max([createdAt, acc[id]]);
-  }, {});
+  return transform(
+    revisions,
+    (acc, { activityId, createdAt }) => {
+      const id = getOutlineParentId(activityId, keyedActivities);
+      acc[id] = max([createdAt, acc[id]]);
+    },
+    {},
+  );
 }
 
 function getOutlineParentId(activityId, activities) {

@@ -9,11 +9,11 @@ import { pathExists } from 'path-exists';
 import Promise from 'bluebird';
 import { validateConfig } from '../validation.js';
 
-const isNotFound = err => err.code === 'ENOENT';
-const resolvePath = str => path.resolve(expandPath(str));
+const isNotFound = (err) => err.code === 'ENOENT';
+const resolvePath = (str) => path.resolve(expandPath(str));
 
 export const schema = yup.object().shape({
-  path: yup.string().required()
+  path: yup.string().required(),
 });
 
 class FilesystemStorage {
@@ -32,11 +32,10 @@ class FilesystemStorage {
   }
 
   getFile(key, options = {}) {
-    return fsp.readFile(this.path(key), options)
-      .catch(err => {
-        if (isNotFound(err)) return null;
-        return Promise.reject(err);
-      });
+    return fsp.readFile(this.path(key), options).catch((err) => {
+      if (isNotFound(err)) return null;
+      return Promise.reject(err);
+    });
   }
 
   createReadStream(key, options = {}) {
@@ -45,8 +44,9 @@ class FilesystemStorage {
 
   saveFile(key, data, options = {}) {
     const filePath = this.path(key);
-    return mkdirp(path.dirname(filePath))
-      .then(() => fsp.writeFile(filePath, data, options));
+    return mkdirp(path.dirname(filePath)).then(() =>
+      fsp.writeFile(filePath, data, options),
+    );
   }
 
   createWriteStream(key, options = {}) {
@@ -60,13 +60,13 @@ class FilesystemStorage {
   copyFile(key, newKey) {
     const src = this.path(key);
     const dest = this.path(newKey);
-    return mkdirp(path.dirname(dest))
-      .then(() => fsp.copyFile(src, dest));
+    return mkdirp(path.dirname(dest)).then(() => fsp.copyFile(src, dest));
   }
 
   moveFile(key, newKey) {
-    return this.copyFile(key, newKey)
-      .then(file => this.deleteFile(key).then(() => file));
+    return this.copyFile(key, newKey).then((file) =>
+      this.deleteFile(key).then(() => file),
+    );
   }
 
   deleteFile(key) {
@@ -74,13 +74,14 @@ class FilesystemStorage {
   }
 
   deleteFiles(keys) {
-    return Promise.map(keys, key => this.deleteFile(key));
+    return Promise.map(keys, (key) => this.deleteFile(key));
   }
 
   listFiles(key, options = {}) {
-    return fsp.readdir(this.path(key), options)
-      .map(fileName => `${key}/${fileName}`)
-      .catch(err => {
+    return fsp
+      .readdir(this.path(key), options)
+      .map((fileName) => `${key}/${fileName}`)
+      .catch((err) => {
         if (isNotFound(err)) return null;
         return Promise.reject(err);
       });

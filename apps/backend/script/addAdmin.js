@@ -20,11 +20,11 @@ const email = args[0];
 const password = args[1];
 
 User.create({ email, password, role: role.ADMIN })
-  .then(user => {
+  .then((user) => {
     console.log(`Administrator created: ${user.email}`);
     process.exit(0);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err.message);
     process.exit(1);
   });

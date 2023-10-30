@@ -5,24 +5,27 @@ import Promise from 'bluebird';
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
 
-const useTar = Adapter => class extends Adapter {
-  static pack(blobStore, outFile, { gzip = true } = {}) {
-    return miss.pipeAsync(...[
-      createTar(blobStore.path),
-      gzip && createGzip(),
-      createWriteStream(outFile)
-    ].filter(Boolean));
-  }
+const useTar = (Adapter) =>
+  class extends Adapter {
+    static pack(blobStore, outFile, { gzip = true } = {}) {
+      return miss.pipeAsync(
+        ...[
+          createTar(blobStore.path),
+          gzip && createGzip(),
+          createWriteStream(outFile),
+        ].filter(Boolean),
+      );
+    }
 
-  static unpack(inFile, blobStore, { gunzip = true } = {}) {
-    return miss.pipeAsync(...[
-      createReadStream(inFile),
-      gunzip && createGunzip(),
-      createUntar(blobStore.path)
-    ].filter(Boolean));
-  }
-};
+    static unpack(inFile, blobStore, { gunzip = true } = {}) {
+      return miss.pipeAsync(
+        ...[
+          createReadStream(inFile),
+          gunzip && createGunzip(),
+          createUntar(blobStore.path),
+        ].filter(Boolean),
+      );
+    }
+  };
 
-export {
-  useTar
-};
+export { useTar };

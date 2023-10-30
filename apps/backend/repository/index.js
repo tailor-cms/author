@@ -23,18 +23,17 @@ const router = express.Router();
 // https://github.com/expressjs/multer/blob/6b5fff5/storage/disk.js#L17-L18
 const upload = multer({ storage: multer.diskStorage({}) });
 
-router
-  .post('/import', authorize(), upload.single('archive'), ctrl.import);
+router.post('/import', authorize(), upload.single('archive'), ctrl.import);
+
+router.param('repositoryId', getRepository).use('/:repositoryId', hasAccess);
 
 router
-  .param('repositoryId', getRepository)
-  .use('/:repositoryId', hasAccess);
-
-router.route('/')
+  .route('/')
   .get(processQuery({ limit: 100 }), ctrl.index)
   .post(authorize(), ctrl.create);
 
-router.route('/:repositoryId')
+router
+  .route('/:repositoryId')
   .get(ctrl.get)
   .patch(ctrl.patch)
   .delete(ctrl.remove);
@@ -59,13 +58,19 @@ mount(router, '/:repositoryId', comment);
 mount(router, '/:repositoryId', storageRouter);
 
 function mount(router, mountPath, subrouter) {
-  return router.use(path.posix.join(mountPath, subrouter.path), subrouter.router);
+  return router.use(
+    path.posix.join(mountPath, subrouter.path),
+    subrouter.router,
+  );
 }
 
 function getRepository(req, _res, next, repositoryId) {
   return Repository.findByPk(repositoryId, { paranoid: false })
-    .then(repository => repository || createError(NOT_FOUND, 'Repository not found'))
-    .then(repository => {
+    .then(
+      (repository) =>
+        repository || createError(NOT_FOUND, 'Repository not found'),
+    )
+    .then((repository) => {
       req.repository = repository;
       next();
     });
@@ -74,9 +79,10 @@ function getRepository(req, _res, next, repositoryId) {
 function hasAccess(req, _res, next) {
   const { user, repository } = req;
   if (user.isAdmin()) return next();
-  return repository.getUser(user)
-    .then(user => user || createError(UNAUTHORIZED, 'Access restricted'))
-    .then(user => {
+  return repository
+    .getUser(user)
+    .then((user) => user || createError(UNAUTHORIZED, 'Access restricted'))
+    .then((user) => {
       req.repositoryRole = user.repositoryUser.role;
       next();
     });
@@ -84,5 +90,5 @@ function hasAccess(req, _res, next) {
 
 export default {
   path: '/repositories',
-  router
+  router,
 };

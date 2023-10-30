@@ -9,11 +9,13 @@ import pickBy from 'lodash/pickBy.js';
 import Storage from '../../repository/storage.js';
 
 const { getFileUrl, getPath, saveFile } = Storage;
-const getStorageUrl = key => `${config.protocol}${key}`;
+const getStorageUrl = (key) => `${config.protocol}${key}`;
 
 function getUrl(req, res) {
-  const { query: { key } } = req;
-  return getFileUrl(key).then(url => res.json({ url }));
+  const {
+    query: { key },
+  } = req;
+  return getFileUrl(key).then((url) => res.json({ url }));
 }
 
 async function upload({ file, body, user, repository }, res) {
@@ -31,7 +33,7 @@ async function upload({ file, body, user, repository }, res) {
 
 export default {
   getUrl,
-  upload
+  upload,
 };
 
 async function uploadFile(repositoryId, file, name) {
@@ -48,13 +50,15 @@ async function uploadFile(repositoryId, file, name) {
 async function uploadArchiveContent(repositoryId, archive, name) {
   const buffer = await readFile(archive);
   const content = await JSZip.loadAsync(buffer);
-  const files = pickBy(content.files, it => !it.dir);
-  const keys = await Promise.all(Object.keys(files).map(async src => {
-    const key = path.join(getPath(repositoryId), name, src);
-    const file = await content.file(src).async('uint8array');
-    const mimeType = mime.lookup(src);
-    await saveFile(key, Buffer.from(file), { ContentType: mimeType });
-    return [key, getStorageUrl(key)];
-  }));
+  const files = pickBy(content.files, (it) => !it.dir);
+  const keys = await Promise.all(
+    Object.keys(files).map(async (src) => {
+      const key = path.join(getPath(repositoryId), name, src);
+      const file = await content.file(src).async('uint8array');
+      const mimeType = mime.lookup(src);
+      await saveFile(key, Buffer.from(file), { ContentType: mimeType });
+      return [key, getStorageUrl(key)];
+    }),
+  );
   return fromPairs(keys);
 }

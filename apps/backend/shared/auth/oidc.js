@@ -26,11 +26,13 @@ export default class OIDCStrategy extends BaseOIDCStrategy {
 
   logoutUrl({ oidcData, ...params } = {}) {
     const { client } = this;
-    const url = new URL(client.endSessionUrl({
-      ...params,
-      client_id: client.client_id,
-      id_token_hint: oidcData.tokenSet.id_token
-    }));
+    const url = new URL(
+      client.endSessionUrl({
+        ...params,
+        client_id: client.client_id,
+        id_token_hint: oidcData.tokenSet.id_token,
+      }),
+    );
     const customRedirectUriKey = this.options.postLogoutUriKey;
     if (!customRedirectUriKey) return url.href;
     const redirectUri = url.searchParams.get('post_logout_redirect_uri');
@@ -54,7 +56,7 @@ function createIssuer(options) {
     authorization_endpoint: options.authorizationEndpoint,
     token_endpoint: options.tokenEndpoint,
     userinfo_endpoint: options.userInfoEndpoint,
-    end_session_endpoint: options.logoutEndpoint
+    end_session_endpoint: options.logoutEndpoint,
   });
 }
 
@@ -67,7 +69,7 @@ function createClient(issuer, { callbackURL, clientID, clientSecret }) {
     client_secret: clientSecret,
     redirect_uris: [redirectUri.href],
     post_logout_redirect_uris: [postLogoutRedirectUri.href],
-    response_types: ['code']
+    response_types: ['code'],
   });
 }
 
@@ -78,6 +80,6 @@ function parseUserInfo(userInfo) {
     email: userInfo.email,
     firstName: userInfo.given_name,
     lastName: userInfo.family_name,
-    verified: userInfo.email_verified
+    verified: userInfo.email_verified,
   };
 }

@@ -8,89 +8,89 @@ exports.up = async (queryInterface, Sequelize) => {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     uid: {
       type: Sequelize.UUID,
       unique: true,
       allowNull: false,
-      defaultValue: Sequelize.literal('uuid_generate_v4()')
+      defaultValue: Sequelize.literal('uuid_generate_v4()'),
     },
     authorId: {
       type: Sequelize.INTEGER,
       field: 'author_id',
-      references: { model: 'user', key: 'id' }
+      references: { model: 'user', key: 'id' },
     },
     assigneeId: {
       type: Sequelize.INTEGER,
       field: 'assignee_id',
-      references: { model: 'user', key: 'id' }
+      references: { model: 'user', key: 'id' },
     },
     repositoryId: {
       type: Sequelize.INTEGER,
       field: 'repository_id',
-      references: { model: 'repository', key: 'id' }
+      references: { model: 'repository', key: 'id' },
     },
     activityId: {
       type: Sequelize.INTEGER,
       field: 'activity_id',
-      references: { model: 'activity', key: 'id' }
+      references: { model: 'activity', key: 'id' },
     },
     status: {
       type: Sequelize.STRING(50),
-      allowNull: false
+      allowNull: false,
     },
     priority: {
       type: Sequelize.ENUM(['TRIVIAL', 'LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
-      allowNull: false
+      allowNull: false,
     },
     column_position: {
       type: Sequelize.FLOAT,
-      allowNull: false
+      allowNull: false,
     },
     description: {
-      type: Sequelize.TEXT
+      type: Sequelize.TEXT,
     },
     dueDate: {
       type: Sequelize.DATE,
-      field: 'due_date'
+      field: 'due_date',
     },
     archivedAt: {
       type: Sequelize.DATE,
-      field: 'archived_at'
+      field: 'archived_at',
     },
     createdAt: {
       type: Sequelize.DATE,
       field: 'created_at',
-      allowNull: false
+      allowNull: false,
     },
     updatedAt: {
       type: Sequelize.DATE,
       field: 'updated_at',
-      allowNull: false
+      allowNull: false,
     },
     deletedAt: {
       type: Sequelize.DATE,
-      field: 'deleted_at'
-    }
+      field: 'deleted_at',
+    },
   });
-  return queryInterface.addIndex(TABLE_NAME, [
-    'column_position',
-    'status',
-    'repository_id'
-  ], {
-    unique: true,
-    where: { archived_at: null }
-  });
+  return queryInterface.addIndex(
+    TABLE_NAME,
+    ['column_position', 'status', 'repository_id'],
+    {
+      unique: true,
+      where: { archived_at: null },
+    },
+  );
 };
 
-exports.down = async queryInterface => {
+exports.down = async (queryInterface) => {
   await queryInterface.dropTable(TABLE_NAME);
-  return queryInterface.removeIndex(TABLE_NAME, [
-    'column_position',
-    'status',
-    'repository_id'
-  ], {
-    unique: true
-  });
+  return queryInterface.removeIndex(
+    TABLE_NAME,
+    ['column_position', 'status', 'repository_id'],
+    {
+      unique: true,
+    },
+  );
 };

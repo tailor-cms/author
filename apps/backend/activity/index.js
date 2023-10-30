@@ -11,11 +11,10 @@ const processQuery = processListQuery({ order: [['position']] });
 
 router.param('activityId', getActivity);
 
-router.route('/')
-  .get(processQuery, ctrl.list)
-  .post(ctrl.create);
+router.route('/').get(processQuery, ctrl.list).post(ctrl.create);
 
-router.route('/:activityId')
+router
+  .route('/:activityId')
   .get(ctrl.show)
   .patch(ctrl.patch)
   .delete(ctrl.remove);
@@ -29,8 +28,10 @@ router
 
 function getActivity(req, _res, next, activityId) {
   return Activity.findByPk(activityId, { paranoid: false })
-    .then(activity => activity || createError(NOT_FOUND, 'Activity not found'))
-    .then(activity => {
+    .then(
+      (activity) => activity || createError(NOT_FOUND, 'Activity not found'),
+    )
+    .then((activity) => {
       req.activity = activity;
       next();
     });
@@ -38,5 +39,5 @@ function getActivity(req, _res, next, activityId) {
 
 export default {
   path: '/activities',
-  router
+  router,
 };

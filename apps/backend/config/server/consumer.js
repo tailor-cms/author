@@ -15,5 +15,5 @@ export default {
   clientId,
   clientSecret,
   tokenHost,
-  tokenPath
+  tokenPath,
 };

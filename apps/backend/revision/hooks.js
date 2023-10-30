@@ -2,7 +2,7 @@ import createLogger from '../shared/logger.js';
 import forEach from 'lodash/forEach.js';
 import toCase from 'to-case';
 
-const castArray = arg => Array.isArray(arg) ? arg : [arg];
+const castArray = (arg) => (Array.isArray(arg) ? arg : [arg]);
 const { constant } = toCase;
 const logger = createLogger('db');
 
@@ -11,11 +11,12 @@ function add(Revision, Hooks, { Repository, Activity, ContentElement }) {
     [Hooks.afterCreate]: 'CREATE',
     [Hooks.afterUpdate]: 'UPDATE',
     [Hooks.afterDestroy]: 'REMOVE',
-    [Hooks.afterBulkCreate]: 'CREATE'
+    [Hooks.afterBulkCreate]: 'CREATE',
   };
 
-  const addHook = (Model, type, hook) => Model.addHook(type, Hooks.withType(type, hook));
-  const isRepository = model => model instanceof Repository;
+  const addHook = (Model, type, hook) =>
+    Model.addHook(type, Hooks.withType(type, hook));
+  const isRepository = (model) => model instanceof Repository;
 
   // TODO: Repositories are soft deleted already?
   // When repository is removed, its id is no longer valid and cannot be saved
@@ -40,20 +41,27 @@ function add(Revision, Hooks, { Repository, Activity, ContentElement }) {
 
   function getRevision(hookType, instance, context = {}) {
     if (!context.userId) return;
-    const repositoryId = isRepository(instance) ? instance.id : instance.repositoryId;
+    const repositoryId = isRepository(instance)
+      ? instance.id
+      : instance.repositoryId;
     const entity = constant(instance.constructor.name);
     const operation = hooks[hookType];
-    logger.info(`[Revision] ${entity}#${hookType}`, { entity, operation, id: instance.id, repositoryId });
+    logger.info(`[Revision] ${entity}#${hookType}`, {
+      entity,
+      operation,
+      id: instance.id,
+      repositoryId,
+    });
     return {
       repositoryId,
       entity,
       operation,
       state: instance.toJSON(),
-      userId: context.userId
+      userId: context.userId,
     };
   }
 }
 
 export default {
-  add
+  add,
 };

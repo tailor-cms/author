@@ -5,7 +5,7 @@ const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
 const loginRequestLimiter = requestLimiter({
   windowMs: ONE_HOUR_IN_MS,
-  keyGenerator: req => req.userKey
+  keyGenerator: (req) => req.userKey,
 });
 
 function setLoginLimitKey(req, res, next) {
@@ -15,12 +15,7 @@ function setLoginLimitKey(req, res, next) {
 }
 
 function resetLoginAttempts(req, res, next) {
-  return loginRequestLimiter.resetKey(req.userKey)
-    .then(() => next());
+  return loginRequestLimiter.resetKey(req.userKey).then(() => next());
 }
 
-export {
-  loginRequestLimiter,
-  setLoginLimitKey,
-  resetLoginAttempts
-};
+export { loginRequestLimiter, setLoginLimitKey, resetLoginAttempts };

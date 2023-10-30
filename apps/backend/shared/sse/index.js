@@ -2,7 +2,7 @@ import channels from './channels.js';
 import cuid from 'cuid';
 import { EventEmitter } from 'events';
 
-const SSE_TIMEOUT_MARGIN = 0.10;
+const SSE_TIMEOUT_MARGIN = 0.1;
 const SSE_DEFAULT_TIMEOUT = 60000; /* ms */
 const SSE_HEADERS = {
   'Content-Type': 'text/event-stream',
@@ -11,7 +11,7 @@ const SSE_HEADERS = {
   'Transfer-Encoding': 'identity',
   // NOTE: This controls nginx proxy buffering
   // https://nginx.com/resources/wiki/start/topics/examples/x-accel/#x-accel-buffering
-  'X-Accel-Buffering': 'no'
+  'X-Accel-Buffering': 'no',
 };
 
 const hasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
@@ -78,14 +78,12 @@ class SSEConnection extends EventEmitter {
   }
 
   send(event, data = '') {
-    const id = this._lastEventId += 1;
+    const id = (this._lastEventId += 1);
     this.emit('data', { id, event, data });
     const json = JSON.stringify(data);
-    const payload = [
-      `id: ${id}`,
-      `event: ${event}`,
-      `data: ${json}`
-    ].join('\n');
+    const payload = [`id: ${id}`, `event: ${event}`, `data: ${json}`].join(
+      '\n',
+    );
     this.write(payload);
     if (hasProp(this.query, 'debug')) {
       this.debug({ id, type: event, data });

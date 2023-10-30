@@ -4,7 +4,7 @@
 const head = require('lodash/head');
 const Promise = require('bluebird');
 
-exports.up = async qi => {
+exports.up = async (qi) => {
   const comments = await getComments(qi);
   if (!comments.length) return;
   return updateColumnValues(comments, qi);

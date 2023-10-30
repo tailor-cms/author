@@ -7,7 +7,7 @@ import {
   HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
-  S3Client
+  S3Client,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import mime from 'mime-types';
@@ -17,14 +17,14 @@ import { Upload } from '@aws-sdk/lib-storage';
 import { validateConfig } from '../validation.js';
 
 const noop = () => {};
-const isNotFound = err => err.Code === 'NoSuchKey';
+const isNotFound = (err) => err.Code === 'NoSuchKey';
 const DEFAULT_EXPIRATION_TIME = 3600; // seconds
 
 export const schema = yup.object().shape({
   region: yup.string().required(),
   bucket: yup.string().required(),
   key: yup.string().required(),
-  secret: yup.string().required()
+  secret: yup.string().required(),
 });
 
 class Amazon {
@@ -35,11 +35,11 @@ class Amazon {
       signatureVersion: 'v4',
       credentials: {
         accessKeyId: config.key,
-        secretAccessKey: config.secret
+        secretAccessKey: config.secret,
       },
       region: config.region,
       apiVersion: '2006-03-01',
-      maxRetries: 3
+      maxRetries: 3,
     };
 
     this.bucket = config.bucket;
@@ -63,7 +63,7 @@ class Amazon {
       .send(new GetObjectCommand(params))
       .then(({ Body: data }) => data.transformToByteArray())
       .then(Buffer.from)
-      .catch(err => {
+      .catch((err) => {
         if (isNotFound(err)) return null;
         return Promise.reject(err);
       });
@@ -76,7 +76,7 @@ class Amazon {
       Bucket: this.bucket,
       Key: key,
       Body: throughStream,
-      ContentType: options.ContentType || mime.lookup(key)
+      ContentType: options.ContentType || mime.lookup(key),
     });
     const s3Item = await this.client.send(new GetObjectCommand(params));
     s3Item.Body.pipe(throughStream);
@@ -85,14 +85,22 @@ class Amazon {
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/putobjectcommand.html
   saveFile(key, data, options = {}) {
-    const params = Object.assign(options, { Bucket: this.bucket, Key: key, Body: data });
+    const params = Object.assign(options, {
+      Bucket: this.bucket,
+      Key: key,
+      Body: data,
+    });
     return this.client.send(new PutObjectCommand(params));
   }
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/classes/_aws_sdk_lib_storage.Upload.html
   createWriteStream(key, options = {}) {
     const throughStream = miss.through();
-    const params = Object.assign(options, { Bucket: this.bucket, Key: key, Body: throughStream });
+    const params = Object.assign(options, {
+      Bucket: this.bucket,
+      Key: key,
+      Body: throughStream,
+    });
     const upload = new Upload({ client: this.client, params });
     upload.done().catch(noop);
     return throughStream;
@@ -103,18 +111,23 @@ class Amazon {
     const { base, ...rest } = path.parse(key);
     const encodedSource = path.format({
       base: encodeURIComponent(base),
-      ...rest
+      ...rest,
     });
-    const params = Object.assign(options, { Bucket: this.bucket }, {
-      CopySource: this.path(`/${encodedSource}`),
-      Key: newKey
-    });
+    const params = Object.assign(
+      options,
+      { Bucket: this.bucket },
+      {
+        CopySource: this.path(`/${encodedSource}`),
+        Key: newKey,
+      },
+    );
     return this.client.send(new CopyObjectCommand(params));
   }
 
   moveFile(key, newKey, options = {}) {
-    return this.copyFile(key, newKey, options)
-      .then(result => this.deleteFile(key).then(() => result));
+    return this.copyFile(key, newKey, options).then((result) =>
+      this.deleteFile(key).then(() => result),
+    );
   }
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/deleteobjectcommand.html
@@ -125,9 +138,12 @@ class Amazon {
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/deleteobjectscommand.html
   deleteFiles(keys, options = {}) {
-    const objects = keys.map(key => ({ Key: key }));
+    const objects = keys.map((key) => ({ Key: key }));
     if (!keys.length) return Promise.resolve();
-    const params = Object.assign(options, { Bucket: this.bucket, Delete: { Objects: objects } });
+    const params = Object.assign(options, {
+      Bucket: this.bucket,
+      Delete: { Objects: objects },
+    });
     return this.client.send(new DeleteObjectsCommand(params));
   }
 
@@ -136,13 +152,13 @@ class Amazon {
     const params = Object.assign(options, { Bucket: this.bucket, Prefix: key });
     return this.client
       .send(new ListObjectsV2Command(params))
-      .then(({ Contents: files }) => files.map(file => file.Key));
+      .then(({ Contents: files }) => files.map((file) => file.Key));
   }
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/headobjectcommand.html
   fileExists(key, options = {}) {
     const params = { Bucket: this.bucket, Key: key };
-    return this.client.send(new HeadObjectCommand(params)).catch(err => {
+    return this.client.send(new HeadObjectCommand(params)).catch((err) => {
       if (isNotFound(err)) return null;
       return Promise.reject(err);
     });

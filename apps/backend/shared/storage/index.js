@@ -77,10 +77,13 @@ export default Storage;
 
 async function loadProvider(name) {
   try {
-    const Provider = await import(path.join(__dirname, './providers/', `${name}.js`));
+    const Provider = await import(
+      path.join(__dirname, './providers/', `${name}.js`)
+    );
     return Provider;
   } catch (err) {
-    if (err.code === 'MODULE_NOT_FOUND') throw new Error('Unsupported provider');
+    if (err.code === 'MODULE_NOT_FOUND')
+      throw new Error('Unsupported provider');
     throw err;
   }
 }

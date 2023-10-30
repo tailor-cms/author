@@ -21,12 +21,12 @@ const email = args[0];
 const mailing = new Deferred();
 
 User.invite({ email, role: role.ADMIN }, mailing.callback)
-  .then(user => Promise.all([user, mailing.promise]))
+  .then((user) => Promise.all([user, mailing.promise]))
   .then(([user]) => {
     console.log(`Invitation sent to ${user.email} for Admin role.`);
     process.exit(0);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err.message);
     process.exit(1);
   });

@@ -3,7 +3,7 @@ import crypto from 'node:crypto';
 
 function sha256(...args) {
   const hash = crypto.createHash('sha256');
-  args.forEach(arg => hash.update(arg));
+  args.forEach((arg) => hash.update(arg));
   return hash.digest('hex');
 }
 
@@ -12,7 +12,4 @@ function readFile(file) {
   return fsp.readFile(file.path);
 }
 
-export {
-  sha256,
-  readFile
-};
+export { sha256, readFile };

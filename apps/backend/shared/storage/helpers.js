@@ -8,8 +8,8 @@ import toPairs from 'lodash/toPairs.js';
 import values from 'lodash/values.js';
 
 const { elementRegistry } = PluginRegistry;
-const isPrimitive = element => !get(element, 'data.embeds');
-const isQuestion = element => get(element, 'data.question');
+const isPrimitive = (element) => !get(element, 'data.embeds');
+const isQuestion = (element) => get(element, 'data.question');
 
 // TODO: Temp patch until asset embeding is unified
 function resolveStatics(item) {
@@ -20,9 +20,7 @@ function resolveStatics(item) {
 }
 
 function defaultStaticsResolver(item) {
-  return isQuestion(item)
-    ? resolveQuestion(item)
-    : resolveAsset(item);
+  return isQuestion(item) ? resolveQuestion(item) : resolveAsset(item);
 }
 
 async function resolveAssetsMap(element) {
@@ -58,10 +56,9 @@ function resolvePrimitive(primitive) {
 
 async function resolveComposite(composite) {
   await resolveAssetsMap(composite);
-  return Promise.each(values(composite.data.embeds), resolvePrimitive)
-    .then(() => composite);
+  return Promise.each(values(composite.data.embeds), resolvePrimitive).then(
+    () => composite,
+  );
 }
 
-export {
-  resolveStatics
-};
+export { resolveStatics };

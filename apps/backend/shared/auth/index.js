@@ -12,37 +12,58 @@ import path from 'node:path';
 const { User } = db;
 const options = {
   usernameField: 'email',
-  session: false
+  session: false,
 };
 
-auth.use(new LocalStrategy(options, (email, password, done) => {
-  return User.unscoped().findOne({ where: { email } })
-    .then(user => user && user.authenticate(password))
-    .then(user => done(null, user || false))
-    .error(err => done(err, false));
-}));
+auth.use(
+  new LocalStrategy(options, (email, password, done) => {
+    return User.unscoped()
+      .findOne({ where: { email } })
+      .then((user) => user && user.authenticate(password))
+      .then((user) => done(null, user || false))
+      .error((err) => done(err, false));
+  }),
+);
 
-auth.use(new JwtStrategy({
-  ...config.jwt,
-  audience: Audience.Scope.Access,
-  jwtFromRequest: ExtractJwt.fromExtractors([
-    extractJwtFromCookie,
-    ExtractJwt.fromBodyField('token')
-  ]),
-  secretOrKey: config.jwt.secret
-}, verifyJWT));
+auth.use(
+  new JwtStrategy(
+    {
+      ...config.jwt,
+      audience: Audience.Scope.Access,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        extractJwtFromCookie,
+        ExtractJwt.fromBodyField('token'),
+      ]),
+      secretOrKey: config.jwt.secret,
+    },
+    verifyJWT,
+  ),
+);
 
-auth.use('token', new JwtStrategy({
-  ...config.jwt,
-  audience: Audience.Scope.Setup,
-  jwtFromRequest: ExtractJwt.fromBodyField('token'),
-  secretOrKeyProvider
-}, verifyJWT));
+auth.use(
+  'token',
+  new JwtStrategy(
+    {
+      ...config.jwt,
+      audience: Audience.Scope.Setup,
+      jwtFromRequest: ExtractJwt.fromBodyField('token'),
+      secretOrKeyProvider,
+    },
+    verifyJWT,
+  ),
+);
 
-config.oidc.enabled && auth.use('oidc', new OIDCStrategy({
-  ...config.oidc,
-  callbackURL: apiUrl('/oidc/callback')
-}, verifyOIDC));
+config.oidc.enabled &&
+  auth.use(
+    'oidc',
+    new OIDCStrategy(
+      {
+        ...config.oidc,
+        callbackURL: apiUrl('/oidc/callback'),
+      },
+      verifyOIDC,
+    ),
+  );
 
 auth.serializeUser((user, done) => done(null, user));
 auth.deserializeUser((user, done) => done(null, user));
@@ -50,18 +71,19 @@ auth.deserializeUser((user, done) => done(null, user));
 export default auth;
 
 function verifyJWT(payload, done) {
-  return User.unscoped().findByPk(payload.id)
-    .then(user => done(null, user || false))
-    .error(err => done(err, false));
+  return User.unscoped()
+    .findByPk(payload.id)
+    .then((user) => done(null, user || false))
+    .error((err) => done(err, false));
 }
 
 function verifyOIDC(tokenSet, profile, done) {
   return findOrCreateOIDCUser(profile)
-    .then(user => {
+    .then((user) => {
       user.authData = { tokenSet };
       done(null, user);
     })
-    .catch(err => done(Object.assign(err, { email: profile.email }), false));
+    .catch((err) => done(Object.assign(err, { email: profile.email }), false));
 }
 
 function extractJwtFromCookie(req) {
@@ -71,10 +93,11 @@ function extractJwtFromCookie(req) {
 
 function secretOrKeyProvider(_, rawToken, done) {
   const { id } = jwt.decode(rawToken) || {};
-  return User.unscoped().findByPk(id, { rejectOnEmpty: true })
-    .then(user => user.getTokenSecret())
-    .then(secret => done(null, secret))
-    .catch(err => done(err));
+  return User.unscoped()
+    .findByPk(id, { rejectOnEmpty: true })
+    .then((user) => user.getTokenSecret())
+    .then((secret) => done(null, secret))
+    .catch((err) => done(err));
 }
 
 function apiUrl(pathname) {
@@ -86,6 +109,7 @@ function findOrCreateOIDCUser({ email, firstName, lastName }) {
     return User.findOne({ where: { email }, rejectOnEmpty: true });
   }
   const defaults = { firstName, lastName, role: config.oidc.defaultRole };
-  return User.findOrCreate({ where: { email }, defaults })
-    .then(([user]) => user);
+  return User.findOrCreate({ where: { email }, defaults }).then(
+    ([user]) => user,
+  );
 }

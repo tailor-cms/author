@@ -11,15 +11,17 @@ const TABLE_NAMES = [
   'comment',
   'revision',
   'repository_user',
-  'teaching_element'
+  'teaching_element',
 ];
 
-exports.up = queryInterface => {
-  return Promise.each(TABLE_NAMES,
-    tableName => queryInterface.renameColumn(tableName, SRC_COL, DST_COL));
+exports.up = (queryInterface) => {
+  return Promise.each(TABLE_NAMES, (tableName) =>
+    queryInterface.renameColumn(tableName, SRC_COL, DST_COL),
+  );
 };
 
-exports.down = queryInterface => {
-  return Promise.each(TABLE_NAMES,
-    tableName => queryInterface.renameColumn(tableName, DST_COL, SRC_COL));
+exports.down = (queryInterface) => {
+  return Promise.each(TABLE_NAMES, (tableName) =>
+    queryInterface.renameColumn(tableName, DST_COL, SRC_COL),
+  );
 };

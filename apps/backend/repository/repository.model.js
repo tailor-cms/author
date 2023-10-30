@@ -12,73 +12,79 @@ class Repository extends Model {
       uid: {
         type: UUID,
         unique: true,
-        defaultValue: UUIDV4
+        defaultValue: UUIDV4,
       },
       schema: {
         type: STRING,
-        validate: { notEmpty: true, len: [2, 20] }
+        validate: { notEmpty: true, len: [2, 20] },
       },
       name: {
         type: STRING,
-        validate: { notEmpty: true, len: [2, 250] }
+        validate: { notEmpty: true, len: [2, 250] },
       },
       description: {
         type: TEXT,
-        validate: { notEmpty: true, len: [2, 2000] }
+        validate: { notEmpty: true, len: [2, 2000] },
       },
       data: {
         type: JSONB,
-        defaultValue: {}
+        defaultValue: {},
       },
       hasUnpublishedChanges: {
         type: BOOLEAN,
-        field: 'has_unpublished_changes'
+        field: 'has_unpublished_changes',
       },
       createdAt: {
         type: DATE,
-        field: 'created_at'
+        field: 'created_at',
       },
       updatedAt: {
         type: DATE,
-        field: 'updated_at'
+        field: 'updated_at',
       },
       deletedAt: {
         type: DATE,
-        field: 'deleted_at'
-      }
+        field: 'deleted_at',
+      },
     };
   }
 
   static associate(db) {
     const {
-      Activity, Comment, RepositoryUser, Revision,
-      ContentElement, User, Tag, RepositoryTag
+      Activity,
+      Comment,
+      RepositoryUser,
+      Revision,
+      ContentElement,
+      User,
+      Tag,
+      RepositoryTag,
     } = db;
     this.hasMany(Activity, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.hasMany(Comment, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.hasMany(ContentElement, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.hasMany(Revision, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.hasMany(RepositoryUser, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.hasMany(RepositoryTag, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.belongsToMany(Tag, {
       through: RepositoryTag,
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.belongsToMany(User, {
       through: RepositoryUser,
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
   }
 
@@ -88,15 +94,17 @@ class Repository extends Model {
       underscored: true,
       timestamps: true,
       paranoid: true,
-      freezeTableName: true
+      freezeTableName: true,
     };
   }
 
   static hooks(Hooks) {
-    [Hooks.beforeCreate, Hooks.beforeUpdate, Hooks.beforeDestroy]
-      .forEach(type => this.addHook(type, (repository, { context }) => {
-        if (context) repository.hasUnpublishedChanges = true;
-      }));
+    [Hooks.beforeCreate, Hooks.beforeUpdate, Hooks.beforeDestroy].forEach(
+      (type) =>
+        this.addHook(type, (repository, { context }) => {
+          if (context) repository.hasUnpublishedChanges = true;
+        }),
+    );
   }
 
   /**
@@ -111,13 +119,19 @@ class Repository extends Model {
     const opts = { where: { repositoryId: this.id }, transaction };
     const relationships = getRepositoryRelationships(this.schema);
     const [activities, elements] = await Promise.all([
-      Activity.scope({ method: ['withReferences', relationships] }).findAll(opts),
-      ContentElement.scope('withReferences').findAll(opts)
+      Activity.scope({ method: ['withReferences', relationships] }).findAll(
+        opts,
+      ),
+      ContentElement.scope('withReferences').findAll(opts),
     ]);
     return Promise.join(
-      Promise.map(activities, it => it.mapClonedReferences(mappings, relationships, transaction)),
-      Promise.map(elements, it => it.mapClonedReferences(mappings, transaction)),
-      (activities, elements) => ({ activities, elements })
+      Promise.map(activities, (it) =>
+        it.mapClonedReferences(mappings, relationships, transaction),
+      ),
+      Promise.map(elements, (it) =>
+        it.mapClonedReferences(mappings, transaction),
+      ),
+      (activities, elements) => ({ activities, elements }),
     );
   }
 
@@ -126,20 +140,26 @@ class Repository extends Model {
     const Activity = this.sequelize.model('Activity');
     const srcAttributes = pick(this, ['schema', 'data']);
     const dstAttributes = Object.assign(srcAttributes, { name, description });
-    return this.sequelize.transaction(async transaction => {
-      const dst = await Repository.create(dstAttributes, { context, transaction });
-      const src = await Activity.findAll({
-        where: { repositoryId: this.id, parentId: null }, transaction
+    return this.sequelize.transaction(async (transaction) => {
+      const dst = await Repository.create(dstAttributes, {
+        context,
+        transaction,
       });
-      const idMap = await Activity.cloneActivities(src, dst.id, null, { context, transaction });
+      const src = await Activity.findAll({
+        where: { repositoryId: this.id, parentId: null },
+        transaction,
+      });
+      const idMap = await Activity.cloneActivities(src, dst.id, null, {
+        context,
+        transaction,
+      });
       await dst.mapClonedReferences(idMap, transaction);
       return dst;
     });
   }
 
   getUser(user) {
-    return this.getUsers({ where: { id: user.id } })
-      .then(users => users[0]);
+    return this.getUsers({ where: { id: user.id } }).then((users) => users[0]);
   }
 
   getSchemaConfig() {

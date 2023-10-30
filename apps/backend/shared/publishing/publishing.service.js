@@ -3,7 +3,7 @@ import {
   publishRepositoryDetails,
   unpublishActivity,
   updatePublishingStatus,
-  updateRepositoryCatalog
+  updateRepositoryCatalog,
 } from './helpers.js';
 import PromiseQueue from 'promise-queue';
 import webhook from '../webhookProvider.js';
@@ -18,7 +18,9 @@ class PublishingService {
   }
 
   publishRepoDetails(repository) {
-    return this.queue.add(createPublishJob(publishRepositoryDetails, repository));
+    return this.queue.add(
+      createPublishJob(publishRepositoryDetails, repository),
+    );
   }
 
   unpublishActivity(repository, activity) {
