@@ -6,12 +6,13 @@ const router = express.Router();
 
 router.get('/subscribe', sse, ctrl.subscribe);
 
-router.route('/')
+router
+  .route('/')
   .get(ctrl.fetchUserActivities)
   .post(ctrl.addUserActivity)
   .delete(ctrl.removeUserActivity);
 
 export default {
   path: '/feed',
-  router
+  router,
 };

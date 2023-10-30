@@ -23,7 +23,8 @@ const capitalize = toCase.capital;
 const logger = getLogger();
 const runApp = promisify(app.listen.bind(app));
 
-database.initialize()
+database
+  .initialize()
   .then(() => logger.info('Database initialized'))
   .then(() => import('tailor-config-shared'))
   .then(() => contentPluginRegistry.initialize())
@@ -32,16 +33,17 @@ database.initialize()
     logger.info(`Server listening on port ${config.port}`);
     welcome(pkg.name, pkg.version);
   })
-  .catch(err => logger.error({ err }));
+  .catch((err) => logger.error({ err }));
 
-const message = (name, version) => `
-${capitalize(name)} v${version}
+const message = (name, version) =>
+  `
+    ${capitalize(name)} v${version}
 
-It's aliveeeee 🚀
+    It's aliveeeee 🚀
 
-📘  Readme: https://git.io/vxrlj
-🐛  Report bugs: https://git.io/vxr8U
-`.trim();
+    📘  Readme: https://git.io/vxrlj
+    🐛  Report bugs: https://git.io/vxr8U
+    `.trim();
 
 function welcome(name, version) {
   const options = {
@@ -49,7 +51,7 @@ function welcome(name, version) {
     margin: 1,
     borderStyle: 'double',
     borderColor: 'blue',
-    align: 'left'
+    align: 'left',
   };
   console.error(boxen(message(name, version), options));
 }

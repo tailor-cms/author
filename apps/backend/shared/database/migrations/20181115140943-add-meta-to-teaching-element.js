@@ -10,10 +10,10 @@ module.exports = {
     if (table.meta) return;
     return queryInterface.addColumn(TABLE_NAME, COLUMN_NAME, {
       type: Sequelize.JSONB,
-      defaultValue: {}
+      defaultValue: {},
     });
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return queryInterface.removeColumn(TABLE_NAME, COLUMN_NAME);
-  }
+  },
 };

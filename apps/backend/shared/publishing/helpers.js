@@ -17,30 +17,26 @@ import { schema } from 'tailor-config-shared';
 import storage from '../../repository/storage.js';
 import without from 'lodash/without.js';
 
-const {
-  Activity,
-  ContentElement,
-  Sequelize,
-  sequelize
-} = db;
+const { Activity, ContentElement, Sequelize, sequelize } = db;
 const { containerRegistry } = PluginRegistry;
 const { Op } = Sequelize;
-const {
-  getLevelRelationships,
-  getOutlineLevels,
-  getSupportedContainers
-} = schema;
+const { getLevelRelationships, getOutlineLevels, getSupportedContainers } =
+  schema;
 const { FLAT_REPO_STRUCTURE } = process.env;
 
 const CC_ATTRS = ['id', 'uid', 'type', 'position', 'createdAt', 'updatedAt'];
 
 function publishActivity(activity) {
-  return getStructureData(activity).then(data => {
+  return getStructureData(activity).then((data) => {
     const { repository, predecessors, spine } = data;
     const activityStructure = find(spine.structure, { id: activity.id });
-    const prevPublishedContainers = get(activityStructure, 'contentContainers', []);
+    const prevPublishedContainers = get(
+      activityStructure,
+      'contentContainers',
+      [],
+    );
 
-    predecessors.forEach(it => {
+    predecessors.forEach((it) => {
       const exists = find(spine.structure, { id: it.id });
       if (!exists) addToSpine(spine, it);
     });
@@ -49,36 +45,42 @@ function publishActivity(activity) {
     addToSpine(spine, activity);
 
     return publishContainers(activity)
-      .then(async containers => {
-        await unpublishDeletedContainers(activity, prevPublishedContainers, containers);
+      .then(async (containers) => {
+        await unpublishDeletedContainers(
+          activity,
+          prevPublishedContainers,
+          containers,
+        );
         return containers;
       })
-      .then(containers => {
+      .then((containers) => {
         const publishedData = find(spine.structure, { id: activity.id });
         return attachContainerSummary(publishedData, containers);
       })
       .then(() => saveSpine(spine))
-      .then(savedSpine => updateRepositoryCatalog(repository, savedSpine.publishedAt))
+      .then((savedSpine) =>
+        updateRepositoryCatalog(repository, savedSpine.publishedAt),
+      )
       .then(() => updatePublishingStatus(repository, activity))
       .then(() => activity.save());
   });
 }
 
 function getRepositoryCatalog() {
-  return storage.getFile('repository/index.json').then(buffer => {
+  return storage.getFile('repository/index.json').then((buffer) => {
     if (!buffer) return [];
     return JSON.parse(buffer.toString('utf8'));
   });
 }
 
 function updateRepositoryCatalog(repository, publishedAt) {
-  return getRepositoryCatalog().then(catalog => {
+  return getRepositoryCatalog().then((catalog) => {
     const existing = find(catalog, { id: repository.id });
     if (!existing && repository.deletedAt) return;
     const repositoryData = {
       ...getRepositoryAttrs(repository),
       publishedAt: publishedAt || existing.publishedAt,
-      detachedAt: repository.deletedAt
+      detachedAt: repository.deletedAt,
     };
     if (existing) {
       Object.assign(existing, omit(repositoryData, ['id']));
@@ -100,37 +102,45 @@ async function publishRepositoryDetails(repository) {
 }
 
 function unpublishActivity(repository, activity) {
-  return getPublishedStructure(repository).then(spine => {
+  return getPublishedStructure(repository).then((spine) => {
     const spineActivity = find(spine.structure, { id: activity.id });
     if (!spineActivity) return;
 
     const deleted = getSpineChildren(spine, activity).concat(spineActivity);
-    return Promise
-      .map(deleted, it => {
-        const baseUrl = getBaseUrl(repository.id, it.id);
-        const filePaths = getContainersFilePaths(baseUrl, it.contentContainers);
-        return storage.deleteFiles(filePaths);
-      })
+    return Promise.map(deleted, (it) => {
+      const baseUrl = getBaseUrl(repository.id, it.id);
+      const filePaths = getContainersFilePaths(baseUrl, it.contentContainers);
+      return storage.deleteFiles(filePaths);
+    })
       .then(() => {
-        spine.structure = filter(spine.structure, ({ id }) => !find(deleted, { id }));
+        spine.structure = filter(
+          spine.structure,
+          ({ id }) => !find(deleted, { id }),
+        );
         return saveSpine(spine);
       })
-      .then(savedSpine => updateRepositoryCatalog(repository, savedSpine.publishedAt))
+      .then((savedSpine) =>
+        updateRepositoryCatalog(repository, savedSpine.publishedAt),
+      )
       .then(() => activity.save());
   });
 }
 
 function getStructureData(activity) {
-  const repoData = activity.getRepository().then(repository => {
-    return getPublishedStructure(repository).then(spine => ({ repository, spine }));
+  const repoData = activity.getRepository().then((repository) => {
+    return getPublishedStructure(repository).then((spine) => ({
+      repository,
+      spine,
+    }));
   });
-  return Promise.all([repoData, activity.predecessors()])
-    .spread((repoData, predecessors) => Object.assign(repoData, { predecessors }));
+  return Promise.all([repoData, activity.predecessors()]).spread(
+    (repoData, predecessors) => Object.assign(repoData, { predecessors }),
+  );
 }
 
 function getPublishedStructure(repository) {
   const storageKey = `repository/${repository.id}/index.json`;
-  return storage.getFile(storageKey).then(buffer => {
+  return storage.getFile(storageKey).then((buffer) => {
     const data = buffer && JSON.parse(buffer.toString('utf8'));
     return data || { ...getRepositoryAttrs(repository), structure: [] };
   });
@@ -143,13 +153,12 @@ async function fetchActivityContent(activity, signed = false) {
 }
 
 function publishContainers(parent) {
-  return fetchContainers(parent)
-    .map(async it => {
-      const { id, publishedAs = 'container' } = it;
-      await saveFile(parent, `${id}.${publishedAs}`, it);
+  return fetchContainers(parent).map(async (it) => {
+    const { id, publishedAs = 'container' } = it;
+    await saveFile(parent, `${id}.${publishedAs}`, it);
 
-      return it;
-    });
+    return it;
+  });
 }
 
 function fetchContainers(parent) {
@@ -157,10 +166,9 @@ function fetchContainers(parent) {
 
   return Promise.all([
     fetchDefaultContainers(parent, typeConfigs),
-    fetchCustomContainers(parent, typeConfigs)
-  ])
-  .reduce((containers, groupedContainers) => {
-    const mappedContainers = groupedContainers.map(it => {
+    fetchCustomContainers(parent, typeConfigs),
+  ]).reduce((containers, groupedContainers) => {
+    const mappedContainers = groupedContainers.map((it) => {
       const config = find(typeConfigs, { type: it.type });
       const publishedAs = get(config, 'publishedAs', 'container');
       return { ...it, publishedAs, templateId: config.templateId };
@@ -172,14 +180,14 @@ function fetchContainers(parent) {
 function fetchDefaultContainers(parent, config) {
   const include = [{ model: ContentElement.scope('publish') }];
   const types = config
-    .filter(it => !containerRegistry.getPublishStructureBuilder(it))
-    .map(it => it.type);
+    .filter((it) => !containerRegistry.getPublishStructureBuilder(it))
+    .map((it) => it.type);
   const where = { type: types };
   const order = [[ContentElement, 'position', 'ASC']];
 
   return parent
     .getChildren({ attributes: CC_ATTRS, where, include, order })
-    .map(container => {
+    .map((container) => {
       const { ContentElements: ces, ...data } = container.toJSON();
       const elements = map(ces, (it, pos) => ({ ...it, position: pos + 1 }));
       return { ...data, elements };
@@ -188,12 +196,16 @@ function fetchDefaultContainers(parent, config) {
 
 async function fetchCustomContainers(parent, config) {
   const include = [{ model: ContentElement.scope('publish') }];
-  return Promise.reduce(config, async (containers, it) => {
-    const builder = containerRegistry.getPublishStructureBuilder(it);
-    if (!builder) return containers;
-    const customContainers = await builder(parent, it.type, { include });
-    return containers.concat(customContainers);
-  }, []);
+  return Promise.reduce(
+    config,
+    async (containers, it) => {
+      const builder = containerRegistry.getPublishStructureBuilder(it);
+      if (!builder) return containers;
+      const customContainers = await builder(parent, it.type, { include });
+      return containers.concat(customContainers);
+    },
+    [],
+  );
 }
 
 function unpublishDeletedContainers(parent, prevContainers, containers) {
@@ -201,7 +213,8 @@ function unpublishDeletedContainers(parent, prevContainers, containers) {
   const prevFilePaths = getContainersFilePaths(baseUrl, prevContainers);
   const filePaths = getContainersFilePaths(baseUrl, containers);
   const deletedContainerFiles = differenceWith(prevFilePaths, filePaths);
-  if (deletedContainerFiles.length) return storage.deleteFiles(deletedContainerFiles);
+  if (deletedContainerFiles.length)
+    return storage.deleteFiles(deletedContainerFiles);
 }
 
 function resolveContainer(container) {
@@ -218,7 +231,10 @@ function saveFile(parent, key, data) {
 }
 
 function saveSpine(spine) {
-  const hashProperties = pick(spine, without(keys(spine), ['version', 'publishedAt']));
+  const hashProperties = pick(
+    spine,
+    without(keys(spine), ['version', 'publishedAt']),
+  );
   const version = hash(hashProperties, { algorithm: 'sha1' });
   const updatedSpine = { ...spine, version, publishedAt: new Date() };
   const spineData = Buffer.from(JSON.stringify(updatedSpine), 'utf8');
@@ -230,11 +246,19 @@ function addToSpine(spine, activity) {
   const relationships = getLevelRelationships(activity.type);
   activity = Object.assign(
     pick(activity, [
-      'id', 'uid', 'parentId', 'type', 'position', 'data',
-      'publishedAt', 'updatedAt', 'createdAt'
-    ]), {
-      relationships: mapRelationships(relationships, activity)
-    }
+      'id',
+      'uid',
+      'parentId',
+      'type',
+      'position',
+      'data',
+      'publishedAt',
+      'updatedAt',
+      'createdAt',
+    ]),
+    {
+      relationships: mapRelationships(relationships, activity),
+    },
   );
   renameKey(activity, 'data', 'meta');
   const index = findIndex(spine.structure, { id: activity.id });
@@ -248,9 +272,15 @@ function addToSpine(spine, activity) {
 function getSpineChildren(spine, parent) {
   const children = filter(spine.structure, { parentId: parent.id });
   if (!children.length) return [];
-  return children.concat(reduce(children, (acc, it) => {
-    return acc.concat(getSpineChildren(spine, it));
-  }, []));
+  return children.concat(
+    reduce(
+      children,
+      (acc, it) => {
+        return acc.concat(getSpineChildren(spine, it));
+      },
+      [],
+    ),
+  );
 }
 
 function getRepositoryAttrs(repository) {
@@ -276,7 +306,7 @@ function defaultSummaryBuilder({ id, uid, type, publishedAs, elements = [] }) {
 }
 
 function getContainersFilePaths(baseUrl, containers = []) {
-  return containers.map(it => `${baseUrl}/${it.id}.${it.publishedAs}.json`);
+  return containers.map((it) => `${baseUrl}/${it.id}.${it.publishedAs}.json`);
 }
 
 function renameKey(obj, key, newKey) {
@@ -306,8 +336,8 @@ async function updatePublishingStatus(repository, activity) {
     detached: false,
     [Op.or]: {
       publishedAt: { [Op.eq]: null },
-      modifiedAt: { [Op.gt]: sequelize.col('published_at') }
-    }
+      modifiedAt: { [Op.gt]: sequelize.col('published_at') },
+    },
   };
   if (activity) where.id = { [Op.ne]: activity.id };
   const unpublishedCount = await Activity.count({ where });
@@ -322,5 +352,5 @@ export {
   updateRepositoryCatalog,
   updatePublishingStatus,
   fetchActivityContent,
-  getRepositoryAttrs
+  getRepositoryAttrs,
 };

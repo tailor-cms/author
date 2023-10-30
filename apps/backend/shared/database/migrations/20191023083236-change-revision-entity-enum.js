@@ -12,28 +12,43 @@ const OLD_ROLES = { TEACHING_ELEMENT: 'TEACHING_ELEMENT' };
 const NEW_ROLES = { CONTENT_ELEMENT: 'CONTENT_ELEMENT' };
 const ROLES = { ...COMMON_ROLES, ...OLD_ROLES, ...NEW_ROLES };
 
-const changeTypeEnum = (queryInterface, values) => replaceEnum({
-  queryInterface,
-  tableName: TABLE_NAME,
-  columnName: COLUMN_NAME,
-  enumName: ENUM_NAME,
-  newValues: values
-});
+const changeTypeEnum = (queryInterface, values) =>
+  replaceEnum({
+    queryInterface,
+    tableName: TABLE_NAME,
+    columnName: COLUMN_NAME,
+    enumName: ENUM_NAME,
+    newValues: values,
+  });
 
-exports.up = async queryInterface => {
+exports.up = async (queryInterface) => {
   const { sequelize } = queryInterface;
   await changeTypeEnum(queryInterface, Object.values(ROLES));
-  await updateType(sequelize, [NEW_ROLES.CONTENT_ELEMENT, OLD_ROLES.TEACHING_ELEMENT]);
-  await changeTypeEnum(queryInterface, Object.values({ ...COMMON_ROLES, ...NEW_ROLES }));
+  await updateType(sequelize, [
+    NEW_ROLES.CONTENT_ELEMENT,
+    OLD_ROLES.TEACHING_ELEMENT,
+  ]);
+  await changeTypeEnum(
+    queryInterface,
+    Object.values({ ...COMMON_ROLES, ...NEW_ROLES }),
+  );
 };
 
-exports.down = async queryInterface => {
+exports.down = async (queryInterface) => {
   const { sequelize } = queryInterface;
   await changeTypeEnum(queryInterface, Object.values(ROLES));
-  await updateType(sequelize, [OLD_ROLES.TEACHING_ELEMENT, NEW_ROLES.CONTENT_ELEMENT]);
-  await changeTypeEnum(queryInterface, Object.values({ ...COMMON_ROLES, ...OLD_ROLES }));
+  await updateType(sequelize, [
+    OLD_ROLES.TEACHING_ELEMENT,
+    NEW_ROLES.CONTENT_ELEMENT,
+  ]);
+  await changeTypeEnum(
+    queryInterface,
+    Object.values({ ...COMMON_ROLES, ...OLD_ROLES }),
+  );
 };
 
 function updateType(db, replacements) {
-  return db.query('UPDATE "revision" SET entity=? WHERE entity=?', { replacements });
+  return db.query('UPDATE "revision" SET entity=? WHERE entity=?', {
+    replacements,
+  });
 }

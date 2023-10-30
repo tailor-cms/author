@@ -8,10 +8,10 @@ module.exports = {
   up: (queryInterface, { BOOLEAN }) => {
     return queryInterface.addColumn(TABLE_NAME, COLUMN_NAME, {
       type: BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     });
   },
-  down: queryInterface => {
+  down: (queryInterface) => {
     return queryInterface.removeColumn(TABLE_NAME, COLUMN_NAME);
-  }
+  },
 };

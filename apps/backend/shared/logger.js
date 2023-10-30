@@ -7,7 +7,7 @@ const pkg = require('../package.json');
 
 const isProduction = process.env.NODE_ENV === 'production';
 const isWin32 = process.platform === 'win32';
-const supportsEmoji = !isWin32 && (process.env.TERM === 'xterm-256color');
+const supportsEmoji = !isWin32 && process.env.TERM === 'xterm-256color';
 
 const Level = uppercaseLevelNames(Bunyan.levelFromName);
 const loggers = {};
@@ -35,24 +35,25 @@ function createLogger(name, options = {}) {
 
 Object.assign(createLogger, Logger, { Level, createLogger, enabled: true });
 
-export {
-  createLogger,
-  Level
-};
+export { createLogger, Level };
 
 export default createLogger;
 
 function uppercaseLevelNames(levels) {
   const keys = Object.keys(levels);
-  return keys.reduce((acc, it) => ({ ...acc, [it.toUpperCase()]: levels[it] }), {});
+  return keys.reduce(
+    (acc, it) => ({ ...acc, [it.toUpperCase()]: levels[it] }),
+    {},
+  );
 }
 
 function processOutputStream(loggerStream) {
-  if ((loggerStream.stream !== process.stdout) || supportsEmoji) return loggerStream;
+  if (loggerStream.stream !== process.stdout || supportsEmoji)
+    return loggerStream;
   const stripEmoji = safeRequire('emoji-strip');
   const split = safeRequire('split2');
   if (!stripEmoji || !split) return loggerStream;
-  loggerStream.stream = split(line => stripEmoji(line) + '\n');
+  loggerStream.stream = split((line) => stripEmoji(line) + '\n');
   loggerStream.stream.pipe(process.stdout);
   return loggerStream;
 }

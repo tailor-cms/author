@@ -6,8 +6,8 @@ const { user: role } = roleConfig;
 
 export const corsAllowedOrigins = (env.CORS_ALLOWED_ORIGINS || '')
   .split(',')
-  .filter(s => s)
-  .map(s => s.trim());
+  .filter((s) => s)
+  .map((s) => s.trim());
 
 export const saltRounds = parseInt(env.AUTH_SALT_ROUNDS, 10) || 10;
 
@@ -17,10 +17,10 @@ export const jwt = {
     secret: env.AUTH_JWT_COOKIE_SECRET,
     signed: !!env.AUTH_JWT_COOKIE_SECRET,
     secure: env.PROTOCOL === 'https' && env.HOSTNAME !== 'localhost',
-    httpOnly: true
+    httpOnly: true,
   },
   secret: env.AUTH_JWT_SECRET,
-  issuer: env.AUTH_JWT_ISSUER
+  issuer: env.AUTH_JWT_ISSUER,
 };
 
 export const oidc = {
@@ -35,8 +35,8 @@ export const oidc = {
   logoutEndpoint: env.OIDC_LOGOUT_ENDPOINT,
   postLogoutUriKey: env.OIDC_POST_LOGOUT_URI_KEY,
   enableSignup: yn(env.OIDC_ALLOW_SIGNUP),
-  defaultRole: Object.values(role)
-    .find(it => it === env.OIDC_DEFAULT_ROLE) || role.USER
+  defaultRole:
+    Object.values(role).find((it) => it === env.OIDC_DEFAULT_ROLE) || role.USER,
 };
 
 export const session = {
@@ -44,5 +44,5 @@ export const session = {
   saveUninitialized: false,
   secret: env.SESSION_SECRET,
   proxy: true,
-  cookie: { secure: false }
+  cookie: { secure: false },
 };

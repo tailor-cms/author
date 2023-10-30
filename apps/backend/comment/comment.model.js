@@ -10,7 +10,7 @@ class Comment extends Model {
         type: UUID,
         unique: true,
         allowNull: false,
-        defaultValue: UUIDV4
+        defaultValue: UUIDV4,
       },
       content: {
         type: TEXT,
@@ -20,28 +20,28 @@ class Comment extends Model {
           const deletedAt = this.getDataValue('deletedAt');
           if (deletedAt) return 'This comment has been deleted';
           return this.getDataValue('content');
-        }
+        },
       },
       resolvedAt: {
         type: DATE,
-        field: 'resolved_at'
+        field: 'resolved_at',
       },
       editedAt: {
         type: DATE,
-        field: 'edited_at'
+        field: 'edited_at',
       },
       createdAt: {
         type: DATE,
-        field: 'created_at'
+        field: 'created_at',
       },
       updatedAt: {
         type: DATE,
-        field: 'updated_at'
+        field: 'updated_at',
       },
       deletedAt: {
         type: DATE,
-        field: 'deleted_at'
-      }
+        field: 'deleted_at',
+      },
     };
   }
 
@@ -51,18 +51,18 @@ class Comment extends Model {
 
   static associate({ Activity, ContentElement, Repository, User }) {
     this.belongsTo(Activity, {
-      foreignKey: { name: 'activityId', field: 'activity_id' }
+      foreignKey: { name: 'activityId', field: 'activity_id' },
     });
     this.belongsTo(ContentElement, {
       as: 'contentElement',
-      foreignKey: { name: 'contentElementId', field: 'content_element_id' }
+      foreignKey: { name: 'contentElementId', field: 'content_element_id' },
     });
     this.belongsTo(Repository, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.belongsTo(User, {
       as: 'author',
-      foreignKey: { name: 'authorId', field: 'author_id' }
+      foreignKey: { name: 'authorId', field: 'author_id' },
     });
   }
 
@@ -71,7 +71,7 @@ class Comment extends Model {
       modelName: 'comment',
       timestamps: true,
       paranoid: true,
-      freezeTableName: true
+      freezeTableName: true,
     };
   }
 

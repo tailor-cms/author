@@ -19,7 +19,7 @@ class ContainerRegistry extends BaseRegistry {
   }
 
   buildLookups() {
-    this._registry.forEach(it => {
+    this._registry.forEach((it) => {
       const id = getId(it);
 
       Object.assign(this._publishStructureBuilder, { [id]: it.fetch });

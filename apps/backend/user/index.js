@@ -1,4 +1,8 @@
-import { loginRequestLimiter, resetLoginAttempts, setLoginLimitKey } from './mw.js';
+import {
+  loginRequestLimiter,
+  resetLoginAttempts,
+  setLoginLimitKey,
+} from './mw.js';
 import { ACCEPTED } from 'http-status-codes';
 import { authorize } from '../shared/auth/mw.js';
 import authService from '../shared/auth/index.js';
@@ -19,7 +23,7 @@ router
     loginRequestLimiter,
     authService.authenticate('local', { setCookie: true }),
     resetLoginAttempts,
-    ctrl.getProfile
+    ctrl.getProfile,
   )
   .post('/forgot-password', ctrl.forgotPassword)
   .use('/reset-password', requestLimiter(), authService.authenticate('token'))
@@ -40,5 +44,5 @@ router
 
 export default {
   path: '/users',
-  router
+  router,
 };

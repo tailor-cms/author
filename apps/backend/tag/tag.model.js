@@ -7,21 +7,21 @@ class Tag extends Model {
         type: UUID,
         unique: true,
         allowNull: false,
-        defaultValue: UUIDV4
+        defaultValue: UUIDV4,
       },
       name: {
         type: STRING,
         allowNull: false,
         unique: true,
-        validate: { notEmpty: true, len: [2, 20] }
-      }
+        validate: { notEmpty: true, len: [2, 20] },
+      },
     };
   }
 
   static associate({ Repository, RepositoryTag }) {
     this.belongsToMany(Repository, {
       through: RepositoryTag,
-      foreignKey: { name: 'tagId', field: 'tag_id' }
+      foreignKey: { name: 'tagId', field: 'tag_id' },
     });
   }
 
@@ -33,10 +33,12 @@ class Tag extends Model {
       model: Repository,
       as: 'repositories',
       attributes: ['id'],
-      required: true
+      required: true,
     };
     if (user && !user.isAdmin()) {
-      includeRepository.include = [{ model: User, attributes: ['id'], where: { id: user.id } }];
+      includeRepository.include = [
+        { model: User, attributes: ['id'], where: { id: user.id } },
+      ];
     }
     return Tag.findAll({ include: [includeRepository] });
   }
@@ -46,7 +48,7 @@ class Tag extends Model {
       modelName: 'tag',
       underscored: true,
       freezeTableName: true,
-      timestamps: false
+      timestamps: false,
     };
   }
 }

@@ -7,10 +7,7 @@ import mjml2html from 'mjml';
 import mustache from 'mustache';
 import { paramCase } from 'change-case';
 
-export {
-  renderHtml,
-  renderText
-};
+export { renderHtml, renderText };
 
 function renderHtml(templatePath, data, style) {
   const template = fs.readFileSync(templatePath, 'utf8');
@@ -32,8 +29,10 @@ function renderText(templatePath, data) {
 }
 
 function getAttributes($, style = {}) {
-  return map(style, (declarations, name) => $('<mj-class>').attr({
-    name,
-    ...mapKeys(declarations, (_, key) => paramCase(key))
-  }));
+  return map(style, (declarations, name) =>
+    $('<mj-class>').attr({
+      name,
+      ...mapKeys(declarations, (_, key) => paramCase(key)),
+    }),
+  );
 }

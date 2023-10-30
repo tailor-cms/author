@@ -10,20 +10,15 @@ import safeRequire from 'safe-require';
 const appDirectory = await packageDirectory();
 // Monorepo root
 const projectDirectory = await packageDirectory({
-  cwd: path.join(appDirectory, '..')
+  cwd: path.join(appDirectory, '..'),
 });
 const dotenvLocation = path.join(projectDirectory, '.env');
 dotenv.config({ path: dotenvLocation });
 
 const require = createRequire(import.meta.url);
 
-const actions = [
-  'migrate',
-  'seed',
-  'create',
-  'drop'
-];
-const isAction = cmd => actions.some(it => cmd.startsWith(it));
+const actions = ['migrate', 'seed', 'create', 'drop'];
+const isAction = (cmd) => actions.some((it) => cmd.startsWith(it));
 
 // Load config.
 const config = safeRequire(path.join(process.cwd(), 'sequelize.config.cjs'));
@@ -55,10 +50,14 @@ function getArgs(argv) {
 }
 
 function getOptions(argv) {
-  return reduce(argv, (acc, val, key) => {
-    if (['_', '--'].includes(key)) return acc;
-    return Object.assign(acc, { [key]: val });
-  }, {});
+  return reduce(
+    argv,
+    (acc, val, key) => {
+      if (['_', '--'].includes(key)) return acc;
+      return Object.assign(acc, { [key]: val });
+    },
+    {},
+  );
 }
 
 function reduce(obj, callback, initialValue) {

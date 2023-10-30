@@ -7,13 +7,13 @@ import { validateConfig } from '../../validation.js';
 const storageCookies = {
   SIGNATURE: 'CloudFront-Signature',
   POLICY: 'CloudFront-Policy',
-  KEY_PAIR_ID: 'CloudFront-Key-Pair-Id'
+  KEY_PAIR_ID: 'CloudFront-Key-Pair-Id',
 };
 
 const schema = yup.object().shape({
   privateKey: yup.string().pkcs1().required(),
   keyPairId: yup.string().required(),
-  host: yup.string().required()
+  host: yup.string().required(),
 });
 
 class CloudFront {
@@ -38,7 +38,7 @@ class CloudFront {
     return {
       [storageCookies.POLICY]: policy,
       [storageCookies.SIGNATURE]: signature,
-      [storageCookies.KEY_PAIR_ID]: this.keyPairId
+      [storageCookies.KEY_PAIR_ID]: this.keyPairId,
     };
   }
 
@@ -47,7 +47,7 @@ class CloudFront {
   }
 
   hasCookies(cookies) {
-    return every(storageCookies, cookie => cookies[cookie]);
+    return every(storageCookies, (cookie) => cookies[cookie]);
   }
 
   getFileUrl(key) {
@@ -63,12 +63,14 @@ export const create = CloudFront.create.bind(CloudFront);
 
 function createPolicy(resource, expires) {
   return JSON.stringify({
-    Statement: [{
-      Resource: resource,
-      Condition: {
-        DateLessThan: { 'AWS:EpochTime': expires }
-      }
-    }]
+    Statement: [
+      {
+        Resource: resource,
+        Condition: {
+          DateLessThan: { 'AWS:EpochTime': expires },
+        },
+      },
+    ],
   });
 }
 

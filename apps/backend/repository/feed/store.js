@@ -8,7 +8,7 @@ const store = new Tapster({
   ...options[provider],
   store: provider,
   namespace: 'active-users',
-  ttl: 40
+  ttl: 40,
 });
 
 async function addContext(user, context) {
@@ -20,15 +20,14 @@ async function addContext(user, context) {
 async function removeContext(user, predicate) {
   const record = await store.get(user.id);
   if (!record) return;
-  const contexts = record.contexts.filter(it => !predicate(it));
+  const contexts = record.contexts.filter((it) => !predicate(it));
   if (!contexts.length) return store.delete(user.id);
   return store.set(user.id, { ...record, contexts });
 }
 
 async function getActiveUsers() {
   const activeUserKeys = await store.getKeys();
-  return Promise
-    .map(activeUserKeys, key => store.get(key))
+  return Promise.map(activeUserKeys, (key) => store.get(key))
     .filter(Boolean)
     .reduce((acc, user) => ({ ...acc, [user.id]: user }), {});
 }

@@ -26,7 +26,7 @@ class Channel extends EventEmitter {
   }
 
   send(_event, _data) {
-    this._connections.forEach(connection => connection.send(...arguments));
+    this._connections.forEach((connection) => connection.send(...arguments));
     return this;
   }
 }
@@ -34,7 +34,7 @@ class Channel extends EventEmitter {
 export default {
   getChannel,
   addConnection,
-  removeConnection
+  removeConnection,
 };
 
 function getChannel(channelId) {

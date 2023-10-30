@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 const config = {
   url: process.env.POSTGRES_URI,
-  dialect: 'postgres'
+  dialect: 'postgres',
 };
 
 export const development = config;

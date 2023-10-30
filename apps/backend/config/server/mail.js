@@ -2,7 +2,7 @@ import yn from 'yn';
 
 export const sender = {
   name: process.env.EMAIL_SENDER_NAME,
-  address: process.env.EMAIL_SENDER_ADDRESS
+  address: process.env.EMAIL_SENDER_ADDRESS,
 };
 
 export const user = process.env.EMAIL_USER;

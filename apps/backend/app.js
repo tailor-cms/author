@@ -20,18 +20,21 @@ const { STORAGE_PATH } = process.env;
 const logger = getLogger();
 const app = express();
 
-config.auth.oidc.enabled && await (async () => {
-  const { default: consolidate } = await import('consolidate');
-  const { default: session } = await import('express-session');
-  app.engine('mustache', consolidate.mustache);
-  app.set('view engine', 'mustache');
-  app.use(session(config.auth.session));
-})();
+config.auth.oidc.enabled &&
+  (await (async () => {
+    const { default: consolidate } = await import('consolidate');
+    const { default: session } = await import('express-session');
+    app.engine('mustache', consolidate.mustache);
+    app.set('view engine', 'mustache');
+    app.use(session(config.auth.session));
+  })());
 
-app.use(helmet({
-  // TODO: Reevaluate and enable, for now, disabled as it breaks a lot of things
-  contentSecurityPolicy: false
-}));
+app.use(
+  helmet({
+    // TODO: Reevaluate and enable, for now, disabled as it breaks a lot of things
+    contentSecurityPolicy: false,
+  }),
+);
 app.use(cors({ origin: config.auth.corsAllowedOrigins, credentials: true }));
 app.use(cookieParser(config.auth.jwt.cookie.secret));
 app.use(bodyParser.json({ limit: '50mb' }));

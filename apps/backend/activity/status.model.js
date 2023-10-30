@@ -4,36 +4,36 @@ import { Model } from 'sequelize';
 import { workflow } from 'tailor-config-shared';
 
 const { priorities } = workflow;
-const priorityIds = priorities.map(it => it.id);
+const priorityIds = priorities.map((it) => it.id);
 
 class ActivityStatus extends Model {
   static fields({ DATE, ENUM, STRING, TEXT, FLOAT, UUID, UUIDV4 }) {
     return {
       status: {
         type: STRING,
-        allowNull: false
+        allowNull: false,
       },
       priority: {
         type: ENUM(priorityIds),
-        allowNull: false
+        allowNull: false,
       },
       description: {
-        type: TEXT
+        type: TEXT,
       },
       dueDate: {
-        type: DATE
+        type: DATE,
       },
       createdAt: {
         type: DATE,
-        allowNull: false
+        allowNull: false,
       },
       updatedAt: {
         type: DATE,
-        allowNull: false
+        allowNull: false,
       },
       deletedAt: {
-        type: DATE
-      }
+        type: DATE,
+      },
     };
   }
 
@@ -41,7 +41,7 @@ class ActivityStatus extends Model {
     this.belongsTo(Activity);
     this.belongsTo(User, {
       as: 'assignee',
-      foreignKey: { name: 'assigneeId', field: 'assignee_id' }
+      foreignKey: { name: 'assigneeId', field: 'assignee_id' },
     });
   }
 
@@ -50,8 +50,8 @@ class ActivityStatus extends Model {
       defaultScope: {
         include: [{ model: User, as: 'assignee' }],
         order: [['createdAt', 'DESC']],
-        limit: 1
-      }
+        limit: 1,
+      },
     };
   }
 
@@ -62,7 +62,7 @@ class ActivityStatus extends Model {
       timestamps: true,
       paranoid: true,
       freezeTableName: true,
-      underscored: true
+      underscored: true,
     };
   }
 

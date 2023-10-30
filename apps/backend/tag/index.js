@@ -3,10 +3,9 @@ import express from 'express';
 
 const router = express.Router();
 
-router
-  .get('/', ctrl.list);
+router.get('/', ctrl.list);
 
 export default {
   path: '/tags',
-  router
+  router,
 };

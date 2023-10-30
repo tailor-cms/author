@@ -8,14 +8,14 @@ exports.up = (queryInterface, Sequelize) => {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     name: {
       type: Sequelize.STRING(20),
       unique: true,
-      allowNull: false
-    }
+      allowNull: false,
+    },
   });
 };
 
-exports.down = queryInterface => queryInterface.dropTable(TABLE_NAME);
+exports.down = (queryInterface) => queryInterface.dropTable(TABLE_NAME);

@@ -1,4 +1,7 @@
-import { getEntityRemovesSinceMoment, getLastState } from './revision.service.js';
+import {
+  getEntityRemovesSinceMoment,
+  getLastState,
+} from './revision.service.js';
 import db from '../shared/database/index.js';
 import map from 'lodash/map.js';
 
@@ -11,13 +14,15 @@ function index({ repository, query, opts }, res) {
     where.entity = entity;
     where.state = { id: entityId };
   }
-  const include = [{
-    model: User,
-    paranoid: false,
-    attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'label']
-  }];
+  const include = [
+    {
+      model: User,
+      paranoid: false,
+      attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'label'],
+    },
+  ];
   Object.assign(opts, { where, include });
-  return Revision.findAll(opts).then(data => res.json({ data }));
+  return Revision.findAll(opts).then((data) => res.json({ data }));
 }
 
 async function getStateAtMoment({ query }, res) {
@@ -37,5 +42,5 @@ function get({ revision }, res) {
 export default {
   index,
   getStateAtMoment,
-  get
+  get,
 };

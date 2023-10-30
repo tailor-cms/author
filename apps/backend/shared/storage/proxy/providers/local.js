@@ -8,11 +8,11 @@ import { validateConfig } from '../../validation.js';
 const PROXY_PATH = '/proxy';
 const storageCookies = {
   SIGNATURE: 'Storage-Signature',
-  EXPIRES: 'Storage-Expires'
+  EXPIRES: 'Storage-Expires',
 };
 
 const schema = yup.object().shape({
-  privateKey: yup.string().pkcs1().required()
+  privateKey: yup.string().pkcs1().required(),
 });
 
 class Local {
@@ -34,7 +34,7 @@ class Local {
     const signature = this.signer.encrypt({ resource, expires }, 'base64');
     return {
       [storageCookies.SIGNATURE]: signature,
-      [storageCookies.EXPIRES]: expires
+      [storageCookies.EXPIRES]: expires,
     };
   }
 
@@ -43,12 +43,13 @@ class Local {
     const expiresCookie = Number(cookies[storageCookies.EXPIRES]);
     if (!signatureCookie || !expiresCookie) return false;
     const { resource, expires } = this.signer.decrypt(signatureCookie, 'json');
-    const isExpired = expiresCookie !== expires || expires < new Date().getTime();
+    const isExpired =
+      expiresCookie !== expires || expires < new Date().getTime();
     return !isExpired && key.startsWith(resource);
   }
 
   hasCookies(cookies) {
-    return every(storageCookies, cookie => cookies[cookie]);
+    return every(storageCookies, (cookie) => cookies[cookie]);
   }
 
   getFileUrl(key) {

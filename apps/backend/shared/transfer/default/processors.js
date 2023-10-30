@@ -13,12 +13,7 @@ import roleConfig from 'tailor-config-shared/src/role.js';
 import { SCHEMAS } from 'tailor-config-shared';
 import zipObject from 'lodash/zipObject.js';
 
-const {
-  Activity,
-  ContentElement,
-  Repository,
-  RepositoryUser
-} = db;
+const { Activity, ContentElement, Repository, RepositoryUser } = db;
 const { repository: role } = roleConfig;
 const noop = Function.prototype;
 
@@ -54,7 +49,7 @@ export default {
   createActivitiesProcessor,
   createElementsProcessor,
   createManifestProcessor,
-  createAssetProcessor
+  createAssetProcessor,
 };
 
 function processManifest(manifest, _enc, { context }) {
@@ -78,25 +73,25 @@ async function processRepository(repository, _enc, { context, transaction }) {
 
 async function processActivities(activities, _enc, options) {
   const withRefs = [];
-  activities = map(activities, it => normalize(it, Activity));
+  activities = map(activities, (it) => normalize(it, Activity));
   await Promise.each(groupByDepth(activities), async (group, depth) => {
     const inserted = await insertActivities(group, depth, options);
     const mappings = zipObject(map(group, 'id'), map(inserted, 'id'));
     Object.assign(options.context.activityIdMap, mappings);
-    forEach(inserted, activity => {
+    forEach(inserted, (activity) => {
       if (isEmpty(activity.refs)) return;
       withRefs.push(activity);
     });
   });
-  await Promise.map(withRefs, it => remapActivityRefs(it, options));
+  await Promise.map(withRefs, (it) => remapActivityRefs(it, options));
 }
 
 async function processElements(elements, _enc, options) {
-  elements = map(elements, it => normalize(it, ContentElement));
+  elements = map(elements, (it) => normalize(it, ContentElement));
   const inserted = await insertElements(elements, options);
   const mappings = zipObject(map(elements, 'id'), map(inserted, 'id'));
   Object.assign(options.context.elementIdMap, mappings);
-  await Promise.map(inserted, it => {
+  await Promise.map(inserted, (it) => {
     if (isEmpty(it.refs)) return;
     return remapElementRefs(it, options);
   });
@@ -105,7 +100,7 @@ async function processElements(elements, _enc, options) {
 function insertActivities(activities, depth, { context, transaction }) {
   const { userId, repositoryId } = context;
   if (!repositoryId) throw new Error('Invalid repository id');
-  const activityRecords = map(activities, it => {
+  const activityRecords = map(activities, (it) => {
     const parentId = context.activityIdMap[it.parentId];
     if (!parentId && depth) throw new Error('Invalid parent id');
     Object.assign(it, { parentId, repositoryId });
@@ -132,7 +127,7 @@ function remapActivityRefs(activity, { context, transaction }) {
 function insertElements(elements, { context, transaction }) {
   const { activityIdMap, repositoryId, userId } = context;
   if (!repositoryId) throw new Error('Invalid repository id');
-  const elementRecords = map(elements, it => {
+  const elementRecords = map(elements, (it) => {
     const activityId = activityIdMap[it.activityId];
     if (!activityId) throw new Error('Invalid activity id');
     Object.assign(it, { activityId, repositoryId });
@@ -160,7 +155,7 @@ function remapElementRefs(element, { context, transaction }) {
 }
 
 function groupByDepth(activities) {
-  const rootActivities = filter(activities, it => !it.parentId);
+  const rootActivities = filter(activities, (it) => !it.parentId);
   const groupedByDepth = [rootActivities];
   let children;
 
@@ -173,18 +168,22 @@ function groupByDepth(activities) {
 
   function getImmediateChildren(parentNodes) {
     const parentIds = map(parentNodes, 'id');
-    return filter(activities, it => {
+    return filter(activities, (it) => {
       return parentIds.includes(it.parentId);
     });
   }
 }
 
 function normalize(it, Model) {
-  return reduce(it, (acc, value, key) => {
-    const { fieldName } = Model.fieldRawAttributesMap[key];
-    acc[fieldName] = value;
-    return acc;
-  }, {});
+  return reduce(
+    it,
+    (acc, value, key) => {
+      const { fieldName } = Model.fieldRawAttributesMap[key];
+      acc[fieldName] = value;
+      return acc;
+    },
+    {},
+  );
 }
 
 function createProcessor(transform = noop, flush = noop, options = {}) {
@@ -192,11 +191,16 @@ function createProcessor(transform = noop, flush = noop, options = {}) {
     options = flush;
     flush = noop;
   }
-  return miss.through.obj(function (chunk, enc, cb) {
-    return Promise.try(transform.bind(this, chunk, enc, options))
-      .asCallback(err => cb(err));
-  }, function (cb) {
-    return Promise.try(flush.bind(this, options))
-      .asCallback(err => cb(err));
-  });
+  return miss.through.obj(
+    function (chunk, enc, cb) {
+      return Promise.try(transform.bind(this, chunk, enc, options)).asCallback(
+        (err) => cb(err),
+      );
+    },
+    function (cb) {
+      return Promise.try(flush.bind(this, options)).asCallback((err) =>
+        cb(err),
+      );
+    },
+  );
 }

@@ -8,8 +8,9 @@ import { stringify } from 'JSONStream';
 const { Activity, ContentElement, Repository } = db;
 const reStorage = /^storage:\/\//;
 
-const isString = arg => typeof arg === 'string';
-const prependStorage = it => it.replace(/^(?!(?:storage:)?\/\/)(?=repository\/)/, 'storage://');
+const isString = (arg) => typeof arg === 'string';
+const prependStorage = (it) =>
+  it.replace(/^(?!(?:storage:)?\/\/)(?=repository\/)/, 'storage://');
 
 function createRepositoryResolver({ context, transaction }) {
   const where = { id: context.repositoryId };
@@ -28,7 +29,7 @@ function createElementsResolver({ context, transaction }) {
   const where = { repositoryId: context.repositoryId };
   const srcStream = queryStream(ContentElement, { where, transaction });
   const assetParser = createAssetParser();
-  assetParser.on('asset', asset => context.assets.push(asset));
+  assetParser.on('asset', (asset) => context.assets.push(asset));
   return miss.pipe(srcStream, assetParser, stringify());
 }
 
@@ -37,7 +38,7 @@ function createManifestResolver({ context }) {
   const manifest = {
     assets,
     schema: schema.getSchema(schemaId),
-    date: new Date()
+    date: new Date(),
   };
   return miss.pipe(miss.from.obj([manifest]), stringify(false /* isArray */));
 }
@@ -51,7 +52,7 @@ export default {
   createActivitiesResolver,
   createElementsResolver,
   createManifestResolver,
-  createAssetResolver
+  createAssetResolver,
 };
 
 function createAssetParser(assets) {

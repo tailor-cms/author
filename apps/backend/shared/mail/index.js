@@ -19,9 +19,13 @@ logger.info(getConfig(client), '📧  SMTP client created');
 const send = (...args) => client.sendAsync(...args);
 const templatesDir = path.join(__dirname, './templates/');
 
-const resetUrl = token => urlJoin(origin, '/#/reset-password/', token);
+const resetUrl = (token) => urlJoin(origin, '/#/reset-password/', token);
 const activityStatusUrl = (repositoryId, activityId) =>
-  urlJoin(origin, '/#/repository', `${repositoryId}/progress?activityId=${activityId}`);
+  urlJoin(
+    origin,
+    '/#/repository',
+    `${repositoryId}/progress?activityId=${activityId}`,
+  );
 const activityUrl = ({ repositoryId, activityId }) =>
   urlJoin(origin, '/#/repository', `${repositoryId}?activityId=${activityId}`);
 const elementUrl = ({ repositoryId, activityId, elementUid }) => {
@@ -34,7 +38,7 @@ export default {
   invite,
   resetPassword,
   sendCommentNotification,
-  sendAssigneeNotification
+  sendAssigneeNotification,
 };
 
 function invite(user, token) {
@@ -45,13 +49,17 @@ function invite(user, token) {
   const data = { href, origin, hostname, recipientName };
   const html = renderHtml(path.join(templatesDir, 'welcome.mjml'), data);
   const text = renderText(path.join(templatesDir, 'welcome.txt'), data);
-  logger.info({ recipient, sender: from }, '📧  Sending invite email to:', recipient);
+  logger.info(
+    { recipient, sender: from },
+    '📧  Sending invite email to:',
+    recipient,
+  );
   return send({
     from,
     to: recipient,
     subject: 'Invite',
     text,
-    attachment: [{ data: html, alternative: true }]
+    attachment: [{ data: html, alternative: true }],
   });
 }
 
@@ -62,13 +70,17 @@ function resetPassword(user, token) {
   const data = { href, recipientName, origin };
   const html = renderHtml(path.join(templatesDir, 'reset.mjml'), data);
   const text = renderText(path.join(templatesDir, 'reset.txt'), data);
-  logger.info({ recipient, sender: from }, '📧  Sending reset password email to:', recipient);
+  logger.info(
+    { recipient, sender: from },
+    '📧  Sending reset password email to:',
+    recipient,
+  );
   return send({
     from,
     to: recipient,
     subject: 'Reset password',
     text,
-    attachment: [{ data: html, alternative: true }]
+    attachment: [{ data: html, alternative: true }],
   });
 }
 
@@ -79,18 +91,23 @@ function sendCommentNotification(users, comment) {
   const data = {
     href,
     origin,
-    getInitials: () => (text, render) => render(text).substr(0, 2).toUpperCase(),
-    ...comment
+    getInitials: () => (text, render) =>
+      render(text).substr(0, 2).toUpperCase(),
+    ...comment,
   };
   const html = renderHtml(path.join(templatesDir, 'comment.mjml'), data);
   const text = renderText(path.join(templatesDir, 'comment.txt'), data);
-  logger.info({ recipients, sender: from }, '📧  Sending notification email to:', recipients);
+  logger.info(
+    { recipients, sender: from },
+    '📧  Sending notification email to:',
+    recipients,
+  );
   return send({
     from,
     to: recipients,
     subject: `${author.label} ${action} a comment on ${repositoryName} - ${topic}`,
     text,
-    attachment: [{ data: html, alternative: true }]
+    attachment: [{ data: html, alternative: true }],
   });
 }
 
@@ -99,17 +116,21 @@ function sendAssigneeNotification(assignee, activity) {
   const data = {
     ...activity,
     origin,
-    href: activityStatusUrl(activity.repositoryId, activity.id)
+    href: activityStatusUrl(activity.repositoryId, activity.id),
   };
   const html = renderHtml(path.join(templatesDir, 'assignee.mjml'), data);
   const text = renderText(path.join(templatesDir, 'assignee.txt'), data);
-  logger.info({ recipients, sender: from }, '📧  Sending notification email to:', recipients);
+  logger.info(
+    { recipients, sender: from },
+    '📧  Sending notification email to:',
+    recipients,
+  );
   return send({
     from,
     to: recipients,
     subject: `You've been assigned to the ${activity.label} "${activity.data.name}".`,
     text,
-    attachment: [{ data: html, alternative: true }]
+    attachment: [{ data: html, alternative: true }],
   });
 }
 
@@ -117,8 +138,12 @@ function getConfig(client) {
   // NOTE: List public keys:
   // https://github.com/eleith/emailjs/blob/7fddabe/smtp/smtp.js#L86
   return pick(client.smtp, [
-    'host', 'port', 'domain',
-    'authentication', 'ssl', 'tls',
-    'timeout'
+    'host',
+    'port',
+    'domain',
+    'authentication',
+    'ssl',
+    'tls',
+    'timeout',
   ]);
 }

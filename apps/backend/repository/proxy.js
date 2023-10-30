@@ -3,7 +3,7 @@ import { storage as config } from '../config/server/index.js';
 import path from 'node:path';
 
 const storageCookies = {
-  REPOSITORY: 'Storage-Repository'
+  REPOSITORY: 'Storage-Repository',
 };
 
 class Proxy extends BaseProxy {
@@ -11,7 +11,7 @@ class Proxy extends BaseProxy {
     const resource = path.join('repository', `${repositoryId}`);
     return {
       ...super.getSignedCookies(resource, maxAge),
-      [storageCookies.REPOSITORY]: repositoryId
+      [storageCookies.REPOSITORY]: repositoryId,
     };
   }
 
@@ -22,10 +22,7 @@ class Proxy extends BaseProxy {
   }
 
   getCookieNames() {
-    return [
-      ...super.getCookieNames(),
-      ...Object.values(storageCookies)
-    ];
+    return [...super.getCookieNames(), ...Object.values(storageCookies)];
   }
 }
 

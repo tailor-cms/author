@@ -25,9 +25,8 @@ class ElementsRegistry extends BaseRegistry {
 
   registerHooks() {
     const hookTypes = Object.values(hooks);
-    this._registry.forEach(it => Object.assign(
-      this._hooks,
-      { [it.type]: pick(it, hookTypes) })
+    this._registry.forEach((it) =>
+      Object.assign(this._hooks, { [it.type]: pick(it, hookTypes) }),
     );
   }
 
@@ -41,8 +40,8 @@ class ElementsRegistry extends BaseRegistry {
   buildStaticsHandler() {
     const { _registry: registry, _staticsHandler: handler } = this;
     registry
-      .filter(it => it.handleStatics)
-      .forEach(it => {
+      .filter((it) => it.handleStatics)
+      .forEach((it) => {
         deprecateHandleStatics(it);
         Object.assign(handler, { [it.type]: it.handleStatics });
       });

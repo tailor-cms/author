@@ -12,66 +12,66 @@ class ContentElement extends Model {
       uid: {
         type: UUID,
         unique: true,
-        defaultValue: UUIDV4
+        defaultValue: UUIDV4,
       },
       type: {
-        type: STRING
+        type: STRING,
       },
       position: {
         type: DOUBLE,
-        validate: { min: 0, max: 1000000 }
+        validate: { min: 0, max: 1000000 },
       },
       contentId: {
         type: UUID,
         field: 'content_id',
-        defaultValue: UUIDV4
+        defaultValue: UUIDV4,
       },
       contentSignature: {
         type: STRING(40),
         field: 'content_signature',
-        validate: { notEmpty: true }
+        validate: { notEmpty: true },
       },
       data: {
-        type: JSONB
+        type: JSONB,
       },
       meta: {
-        type: JSONB
+        type: JSONB,
       },
       refs: {
         type: JSONB,
-        defaultValue: {}
+        defaultValue: {},
       },
       linked: {
         type: BOOLEAN,
         defaultValue: false,
-        allowNull: false
+        allowNull: false,
       },
       detached: {
         type: BOOLEAN,
         defaultValue: false,
-        allowNull: false
+        allowNull: false,
       },
       createdAt: {
         type: DATE,
-        field: 'created_at'
+        field: 'created_at',
       },
       updatedAt: {
         type: DATE,
-        field: 'updated_at'
+        field: 'updated_at',
       },
       deletedAt: {
         type: DATE,
-        field: 'deleted_at'
-      }
+        field: 'deleted_at',
+      },
     };
   }
 
   static associate({ Activity, Repository }) {
     this.belongsTo(Activity, {
-      foreignKey: { name: 'activityId', field: 'activity_id' }
+      foreignKey: { name: 'activityId', field: 'activity_id' },
     });
     this.belongsTo(Repository, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
   }
 
@@ -85,11 +85,20 @@ class ContentElement extends Model {
       withReferences: { where: { 'refs.objectiveId': notNull } },
       publish: {
         attributes: [
-          'id', 'uid', 'type', 'contentId', 'contentSignature',
-          'position', 'data', 'meta', 'refs', 'createdAt', 'updatedAt'
+          'id',
+          'uid',
+          'type',
+          'contentId',
+          'contentSignature',
+          'position',
+          'data',
+          'meta',
+          'refs',
+          'createdAt',
+          'updatedAt',
         ],
-        order: [['position', 'ASC']]
-      }
+        order: [['position', 'ASC']],
+      },
     };
   }
 
@@ -99,7 +108,7 @@ class ContentElement extends Model {
       tableName: 'content_element',
       underscored: true,
       timestamps: true,
-      paranoid: true
+      paranoid: true,
     };
   }
 
@@ -109,24 +118,32 @@ class ContentElement extends Model {
 
   static fetch(opt) {
     return isNumber(opt)
-      ? ContentElement.findByPk(opt).then(it => it && hooks.applyFetchHooks(it))
+      ? ContentElement.findByPk(opt).then(
+          (it) => it && hooks.applyFetchHooks(it),
+        )
       : ContentElement.findAll(opt).map(hooks.applyFetchHooks);
   }
 
   static cloneElements(src, container, options) {
     const { id: activityId, repositoryId } = container;
     const { context, transaction } = options;
-    return this.bulkCreate(src.map(it => {
-      return Object.assign(pick(it, [
-        'type',
-        'position',
-        'data',
-        'contentId',
-        'contentSignature',
-        'refs',
-        'meta'
-      ]), { activityId, repositoryId });
-    }), { returning: true, context, transaction });
+    return this.bulkCreate(
+      src.map((it) => {
+        return Object.assign(
+          pick(it, [
+            'type',
+            'position',
+            'data',
+            'contentId',
+            'contentSignature',
+            'refs',
+            'meta',
+          ]),
+          { activityId, repositoryId },
+        );
+      }),
+      { returning: true, context, transaction },
+    );
   }
 
   /**
@@ -148,10 +165,10 @@ class ContentElement extends Model {
   }
 
   reorder(index) {
-    return this.sequelize.transaction(t => {
+    return this.sequelize.transaction((t) => {
       return this.getReorderFilter()
-        .then(filter => this.siblings(filter))
-        .then(siblings => {
+        .then((filter) => this.siblings(filter))
+        .then((siblings) => {
           this.position = calculatePosition(this.id, index, siblings);
           return this.save({ transaction: t });
         });
@@ -159,7 +176,7 @@ class ContentElement extends Model {
   }
 
   getReorderFilter() {
-    return this.getActivity().then(parent => {
+    return this.getActivity().then((parent) => {
       if (parent.type !== 'ASSESSMENT_GROUP') return {};
       if (this.type === 'ASSESSMENT') return { type: 'ASSESSMENT' };
       return { type: { [Op.not]: 'ASSESSMENT' } };

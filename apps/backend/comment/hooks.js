@@ -10,38 +10,47 @@ const add = (Comment, Hooks, db) => {
   const { Repository, RepositoryUser, Activity, ContentElement, User } = db;
 
   const includeElement = {
-    model: ContentElement, as: 'contentElement', attributes: ['uid', 'type']
+    model: ContentElement,
+    as: 'contentElement',
+    attributes: ['uid', 'type'],
   };
 
-  Comment.addHook(Hooks.afterCreate, async comment => {
+  Comment.addHook(Hooks.afterCreate, async (comment) => {
     const includeAuthor = {
       model: User,
       as: 'author',
       attributes: [
-        'id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl'
-      ]
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'fullName',
+        'label',
+        'imgUrl',
+      ],
     };
     const include = [includeAuthor, includeElement];
     const { author, contentElement } = await comment.reload({ include });
-    sse.channel(comment.repositoryId)
+    sse
+      .channel(comment.repositoryId)
       .send(Events.Create, { ...comment.toJSON(), author, contentElement });
     sendEmailNotification(comment);
   });
 
-  Comment.addHook(Hooks.afterUpdate, comment => {
+  Comment.addHook(Hooks.afterUpdate, (comment) => {
     sse.channel(comment.repositoryId).send(Events.Update, comment);
     sendEmailNotification(comment, { isCreate: false });
   });
 
   Comment.addHook(Hooks.afterBulkUpdate, async ({ where }) => {
     const comments = await Comment.findAll({ where, paranoid: false });
-    comments.forEach(comment => {
+    comments.forEach((comment) => {
       sse.channel(comment.repositoryId).send(Events.Update, comment);
     });
   });
 
-  Comment.addHook(Hooks.afterDestroy, comment => {
-    Comment.findByPk(comment.id, { paranoid: false }).then(comment => {
+  Comment.addHook(Hooks.afterDestroy, (comment) => {
+    Comment.findByPk(comment.id, { paranoid: false }).then((comment) => {
       sse.channel(comment.repositoryId).send(Events.Delete, comment);
     });
   });
@@ -51,21 +60,23 @@ const add = (Comment, Hooks, db) => {
       include: [
         {
           model: Repository,
-          include: [{ model: RepositoryUser, include: { model: User } }]
+          include: [{ model: RepositoryUser, include: { model: User } }],
         },
         { model: Activity, attributes: ['id', 'type', 'data'] },
         { model: User, as: 'author' },
-        includeElement
-      ]
+        includeElement,
+      ],
     });
     const { author, repository, activity, contentElement } = comment;
     const options = {
       offset: 1,
       limit: 3,
       order: [['createdAt', 'DESC']],
-      include: [{ model: User, as: 'author' }]
+      include: [{ model: User, as: 'author' }],
     };
-    const previousComments = isCreate ? await activity.getComments(options) : [];
+    const previousComments = isCreate
+      ? await activity.getComments(options)
+      : [];
     const data = {
       repositoryId: repository.id,
       repositoryName: repository.name,
@@ -76,7 +87,7 @@ const add = (Comment, Hooks, db) => {
       author: author.profile,
       previousComments,
       action: isCreate ? 'left' : 'updated',
-      ...pick(comment, ['id', 'content', 'createdAt'])
+      ...pick(comment, ['id', 'content', 'createdAt']),
     };
     const collaborators = map(repository.repositoryUsers, 'user.email');
     const recipients = without(collaborators, author.email);
@@ -85,5 +96,5 @@ const add = (Comment, Hooks, db) => {
 };
 
 export default {
-  add
+  add,
 };

@@ -16,7 +16,9 @@ import { snakeCase } from 'change-case';
 import TransferService from '../shared/transfer/transfer.service.js';
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
-const tmp = Promise.promisifyAll((await import('tmp')).default, { multiArgs: true });
+const tmp = Promise.promisifyAll((await import('tmp')).default, {
+  multiArgs: true,
+});
 
 const {
   Repository,
@@ -25,7 +27,7 @@ const {
   Revision,
   sequelize,
   Tag,
-  User
+  User,
 } = db;
 
 const DEFAULT_COLORS = ['#689F38', '#FF5722', '#2196F3'];
@@ -33,32 +35,41 @@ const lowercaseName = sequelize.fn('lower', sequelize.col('repository.name'));
 
 const JobCache = new Map();
 
-const getFilter = search => {
+const getFilter = (search) => {
   const term = search.length < 3 ? `${search}%` : `%${search}%`;
   return { [Op.iLike]: term };
 };
 
 const includeLastRevision = () => ({
   model: Revision,
-  include: [{
-    model: User,
-    paranoid: false,
-    attributes: [
-      'id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl'
-    ]
-  }],
+  include: [
+    {
+      model: User,
+      paranoid: false,
+      attributes: [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'fullName',
+        'label',
+        'imgUrl',
+      ],
+    },
+  ],
   order: [['createdAt', 'DESC']],
-  limit: 1
+  limit: 1,
 });
 
 const includeRepositoryUser = (user, query) => {
-  const options = query && query.pinned
-    ? { where: { userId: user.id, pinned: true }, required: true }
-    : { where: { userId: user.id }, required: false };
+  const options =
+    query && query.pinned
+      ? { where: { userId: user.id, pinned: true }, required: true }
+      : { where: { userId: user.id }, required: false };
   return { model: RepositoryUser, ...options };
 };
 
-const includeRepositoryTags = query => {
+const includeRepositoryTags = (query) => {
   const include = [{ model: Tag }];
   return query.tagIds
     ? [...include, { model: RepositoryTag, where: { tagId: query.tagIds } }]
@@ -74,40 +85,48 @@ function index({ query, user, opts }, res) {
   opts.include = [
     includeLastRevision(),
     includeRepositoryUser(user, query),
-    ...includeRepositoryTags(query)
+    ...includeRepositoryTags(query),
   ];
   const repositories = user.isAdmin()
     ? Repository.findAll(opts)
     : user.getRepositories(opts);
-  return repositories.then(data => res.json({ data }));
+  return repositories.then((data) => res.json({ data }));
 }
 
 async function create({ user, body }, res) {
   const defaultMeta = getVal(schema.getSchema(body.schema), 'defaultMeta', {});
   const data = { color: sample(DEFAULT_COLORS), ...defaultMeta, ...body.data };
-  const repository = await Repository.create({ ...body, data }, {
-    isNewRecord: true,
-    returning: true,
-    context: { userId: user.id }
-  });
+  const repository = await Repository.create(
+    { ...body, data },
+    {
+      isNewRecord: true,
+      returning: true,
+      context: { userId: user.id },
+    },
+  );
   await RepositoryUser.create({
     repositoryId: repository.id,
     userId: user.id,
-    role: role.ADMIN
+    role: role.ADMIN,
   });
   return res.json({ data: repository });
 }
 
 async function get({ repository, user }, res) {
-  const include = [includeLastRevision(), includeRepositoryUser(user), { model: Tag }];
+  const include = [
+    includeLastRevision(),
+    includeRepositoryUser(user),
+    { model: Tag },
+  ];
   await repository.reload({ include });
   return res.json({ data: repository });
 }
 
 function patch({ user, repository, body }, res) {
   const data = pick(body, ['name', 'description', 'data']);
-  return repository.update(data, { context: { userId: user.id } })
-    .then(repository => res.json({ data: repository }));
+  return repository
+    .update(data, { context: { userId: user.id } })
+    .then((repository) => res.json({ data: repository }));
 }
 
 async function remove({ user, repository }, res) {
@@ -127,35 +146,44 @@ async function pin({ user, repository, body }, res) {
 function clone({ user, repository, body }, res) {
   const { name, description } = body;
   const context = { userId: user.id };
-  return repository.clone(name, description, context)
-    .then(repository => res.json({ data: repository }));
+  return repository
+    .clone(name, description, context)
+    .then((repository) => res.json({ data: repository }));
 }
 
 function publishRepoInfo({ repository }, res) {
-  return publishingService.publishRepoDetails(repository)
-    .then(data => res.json({ data }));
+  return publishingService
+    .publishRepoDetails(repository)
+    .then((data) => res.json({ data }));
 }
 
 function getUsers(req, res) {
-  return req.repository.getUsers()
-    .then(users => res.json({
-      data: map(users, it => ({ ...it.profile, repositoryRole: it.repositoryUser.role }))
-    }));
+  return req.repository.getUsers().then((users) =>
+    res.json({
+      data: map(users, (it) => ({
+        ...it.profile,
+        repositoryRole: it.repositoryUser.role,
+      })),
+    }),
+  );
 }
 
 function upsertUser({ repository, body }, res) {
   const { email, role } = body;
   return User.inviteOrUpdate({ email })
-    .then(user => findOrCreateRole(repository, user, role))
-    .then(user => ({ ...user.profile, repositoryRole: role }))
-    .then(user => res.json({ data: { user } }));
+    .then((user) => findOrCreateRole(repository, user, role))
+    .then((user) => ({ ...user.profile, repositoryRole: role }))
+    .then((user) => res.json({ data: { user } }));
 }
 
 function removeUser(req, res) {
-  const { repository, params: { userId } } = req;
+  const {
+    repository,
+    params: { userId },
+  } = req;
   const where = { userId, repositoryId: repository.id };
   return User.findByPk(userId)
-    .then(user => user || createError(NOT_FOUND, 'User not found'))
+    .then((user) => user || createError(NOT_FOUND, 'User not found'))
     .then(() => RepositoryUser.destroy({ where, force: true }))
     .then(() => res.end());
 }
@@ -164,15 +192,15 @@ function findOrCreateRole(repository, user, role) {
   return RepositoryUser.findOrCreate({
     where: { repositoryId: repository.id, userId: user.id },
     defaults: { repositoryId: repository.id, userId: user.id, role },
-    paranoid: false
+    paranoid: false,
   })
-  .then(([cu, created]) => created ? cu : cu.update({ role }))
-  .then(cu => cu.deletedAt ? cu.restore() : cu)
-  .then(() => user);
+    .then(([cu, created]) => (created ? cu : cu.update({ role })))
+    .then((cu) => (cu.deletedAt ? cu.restore() : cu))
+    .then(() => user);
 }
 
 function addTag({ body: { name }, repository }, res) {
-  return sequelize.transaction(async transaction => {
+  return sequelize.transaction(async (transaction) => {
     const [tag] = await Tag.findOrCreate({ where: { name }, transaction });
     await repository.addTags([tag], { transaction });
     return res.json({ data: tag });
@@ -188,10 +216,9 @@ async function removeTag({ params: { tagId, repositoryId } }, res) {
 async function initiateExportJob({ repository }, res) {
   const [outFile] = await tmp.fileAsync();
   const options = { repositoryId: repository.id, schemaId: repository.schema };
-  return TransferService
-    .createExportJob(outFile, options)
+  return TransferService.createExportJob(outFile, options)
     .toPromise()
-    .then(job => {
+    .then((job) => {
       // TODO: unlink job.filepath after timeout
       JobCache.set(job.id, job);
       res.json({ data: job.id });
@@ -208,19 +235,17 @@ function exportRepository({ repository, params }, res) {
   if (!job) return createError(NOT_FOUND);
   res.attachment(`${snakeCase(repository.name)}.tgz`);
   const exportStream = fs.createReadStream(job.filepath);
-  return miss.pipeAsync(exportStream, res)
-    .then(() => {
-      JobCache.delete(jobId);
-      return fsp.unlink(job.filepath);
-    });
+  return miss.pipeAsync(exportStream, res).then(() => {
+    JobCache.delete(jobId);
+    return fsp.unlink(job.filepath);
+  });
 }
 
 function importRepository({ body, file, user }, res) {
   const { path } = file;
   const { description, name } = body;
   const options = { description, name, userId: user.id };
-  return TransferService
-    .createImportJob(path, options)
+  return TransferService.createImportJob(path, options)
     .toPromise()
     .finally(() => {
       fs.unlink(path);
@@ -244,5 +269,5 @@ export default {
   removeUser,
   publishRepoInfo,
   addTag,
-  removeTag
+  removeTag,
 };

@@ -12,11 +12,13 @@ function add(Activity, Hooks, Models) {
     [Hooks.afterCreate]: [sseCreate, touchRepository, touchOutline],
     [Hooks.afterUpdate]: [sseUpdate, touchRepository, touchOutline],
     [Hooks.afterBulkUpdate]: [afterTransaction(sseBulkUpdate)],
-    [Hooks.afterDestroy]: [sseDelete, touchRepository, touchOutline]
+    [Hooks.afterDestroy]: [sseDelete, touchRepository, touchOutline],
   };
 
   forEach(mappings, (hooks, type) => {
-    forEach(hooks, hook => Activity.addHook(type, Hooks.withType(type, hook)));
+    forEach(hooks, (hook) =>
+      Activity.addHook(type, Hooks.withType(type, hook)),
+    );
   });
 
   function sseCreate(_, activity) {
@@ -40,7 +42,7 @@ function add(Activity, Hooks, Models) {
     sse.channel(activity.repositoryId).send(Events.Delete, activity);
   }
 
-  const isRepository = it => it instanceof Models.Repository;
+  const isRepository = (it) => it instanceof Models.Repository;
 
   function touchRepository(hookType, activity, { context = {} }) {
     if (!isRepository(context.repository)) return Promise.resolve();
@@ -60,11 +62,11 @@ function add(Activity, Hooks, Models) {
   }
 }
 
-const afterTransaction = method => (type, opts) => {
+const afterTransaction = (method) => (type, opts) => {
   if (!opts.transaction) return method(type, opts);
   opts.transaction.afterCommit(() => method(type, opts));
 };
 
 export default {
-  add
+  add,
 };

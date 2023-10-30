@@ -1,9 +1,9 @@
 export default {
-  input: "src/index.js",
+  input: 'src/index.js',
   output: {
-    file: "dist/index.js",
-    format: "es",
+    file: 'dist/index.js',
+    format: 'es',
     inlineDynamicImports: true,
   },
-  external: ['@tailor-cms/config']
+  external: ['@tailor-cms/config'],
 };

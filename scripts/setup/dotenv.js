@@ -7,6 +7,7 @@ const DEV_CONFIG_PATH = './scripts/setup/.env';
 
 function addEnvVariable(key, value) {
   const escapeNewlines = (str) => str.replace(/\n/g, '\\n');
+  // prettier-ignore
   const processedValue = isString(value)
     ? value
     : isNil(value) ? '' : value.toString();
@@ -24,7 +25,7 @@ export const loadDevConfig = () => loadConfig(DEV_CONFIG_PATH);
 
 export async function saveConfig(path, config) {
   const data = Object.keys(config)
-    .map(key => addEnvVariable(key, config[key]))
+    .map((key) => addEnvVariable(key, config[key]))
     .join('\n');
   await fs.writeFile(path, data);
 }
@@ -33,7 +34,7 @@ export async function saveDevConfig(config) {
   const existing = await loadDevConfig();
   return saveConfig(DEV_CONFIG_PATH, {
     ...existing,
-    ...config
+    ...config,
   });
 }
 

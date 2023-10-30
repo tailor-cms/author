@@ -13,7 +13,7 @@ export default () => {
 
 function middleware(req, _, next) {
   Object.defineProperty(req, 'origin', {
-    get: () => `${req.protocol}://${hostname || req.get('host')}`
+    get: () => `${req.protocol}://${hostname || req.get('host')}`,
   });
   next();
 }

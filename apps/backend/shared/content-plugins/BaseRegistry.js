@@ -2,7 +2,7 @@ import Promise from 'bluebird';
 
 const PATHS = {
   DEFAULT: '../../../client/components',
-  EXTENSION: '../../../../extensions'
+  EXTENSION: '../../../../extensions',
 };
 
 export default class {
@@ -14,9 +14,9 @@ export default class {
   }
 
   async initialize() {
-    await Promise.map(this._extensions, path => this.load(path));
+    await Promise.map(this._extensions, (path) => this.load(path));
     const extensions = await this.loadExtensionList();
-    await Promise.map(extensions, path => this.load(path, true));
+    await Promise.map(extensions, (path) => this.load(path, true));
   }
 
   async load(path, isExtension) {

@@ -6,22 +6,16 @@ import last from 'lodash/last.js';
 import mapValues from 'lodash/mapValues.js';
 
 const { SequelizeMethod } = Utils;
-const isFunction = arg => typeof arg === 'function';
-const notEmpty = input => input.length > 0;
+const isFunction = (arg) => typeof arg === 'function';
+const notEmpty = (input) => input.length > 0;
 const sql = { concat, where };
 
-export {
-  sql,
-  getValidator,
-  setLogging,
-  wrapMethods,
-  parsePath
-};
+export { sql, getValidator, setLogging, wrapMethods, parsePath };
 
 export function build(Model) {
   return {
     column: (col, model) => dbColumn(col, model || Model),
-    ...mapValues(sqlFunctions, it => buildSqlFunc(it, Model))
+    ...mapValues(sqlFunctions, (it) => buildSqlFunc(it, Model)),
   };
 }
 
@@ -44,7 +38,7 @@ const sqlFunctions = {
   average: 'AVG',
   count: 'COUNT',
   distinct: 'DISTINCT',
-  sum: 'SUM'
+  sum: 'SUM',
 };
 
 function buildSqlFunc(name, Model) {
@@ -58,8 +52,10 @@ function getValidator(Model, attribute) {
       return notEmpty(input) || `"${attribute}" can not be empty`;
     }
     const [min, max] = validator.len;
-    return inRange(input.length, min, max) ||
-      `"${attribute}" must be between ${min} and ${max} characters long`;
+    return (
+      inRange(input.length, min, max) ||
+      `"${attribute}" must be between ${min} and ${max} characters long`
+    );
   };
 }
 
@@ -87,7 +83,9 @@ function wrapMethods(Model, Promise) {
   do {
     const methods = getMethods(Ctor.prototype);
     const staticMethods = getMethods(Ctor);
-    [...methods, ...staticMethods].forEach(method => wrapMethod(method, Promise));
+    [...methods, ...staticMethods].forEach((method) =>
+      wrapMethod(method, Promise),
+    );
     Ctor = Object.getPrototypeOf(Ctor);
   } while (Ctor !== Sequelize.Model && Ctor !== Function.prototype);
   return Model;
@@ -102,12 +100,13 @@ function wrapMethod({ key, value, target }, Promise) {
 }
 
 function getMethods(object) {
-  return getProperties(object)
-    .filter(({ key, value }) => isFunction(value) && key !== 'constructor');
+  return getProperties(object).filter(
+    ({ key, value }) => isFunction(value) && key !== 'constructor',
+  );
 }
 
 function getProperties(object) {
-  return Reflect.ownKeys(object).map(key => {
+  return Reflect.ownKeys(object).map((key) => {
     const { value } = Reflect.getOwnPropertyDescriptor(object, key);
     return { key, value, target: object };
   });

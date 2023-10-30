@@ -27,6 +27,10 @@ class TransferService {
 export default new TransferService();
 
 function setupLogging(job) {
-  job.once('success', () => logger.info({ job: job.toJSON() }, 'Job completed successfully'));
-  job.once('error', err => logger.error({ job: job.toJSON(), err }, 'Job failed to complete'));
+  job.once('success', () =>
+    logger.info({ job: job.toJSON() }, 'Job completed successfully'),
+  );
+  job.once('error', (err) =>
+    logger.error({ job: job.toJSON(), err }, 'Job failed to complete'),
+  );
 }

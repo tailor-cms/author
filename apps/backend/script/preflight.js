@@ -11,7 +11,7 @@ const { packageJson: pkg } = readPackageUpSync();
 const appDirectory = await packageDirectory();
 // Monorepo root
 const projectDirectory = await packageDirectory({
-  cwd: path.join(appDirectory, '..')
+  cwd: path.join(appDirectory, '..'),
 });
 
 const dotenvLocation = path.join(projectDirectory, '.env');
@@ -25,7 +25,7 @@ dotenv.config({ path: dotenvLocation });
   warn(engines.node);
   console.error(' ✋  Exiting due to engine requirement check failure...\n');
   process.exit(1);
-}());
+})();
 
 function warn(range, current = process.version, name = pkg.name) {
   const options = {
@@ -34,7 +34,7 @@ function warn(range, current = process.version, name = pkg.name) {
     padding: 1,
     margin: 1,
     float: 'left',
-    align: 'center'
+    align: 'center',
   };
   const message = `🚨  ${name} requires node ${range}\n current version is ${current}`;
   console.error(boxen(message, options));

@@ -9,11 +9,11 @@ const add = (ActivityStatus, Hooks, { Activity }) => {
   const { Events } = ActivityStatus;
 
   const mappings = {
-    [Hooks.afterCreate]: [withActivity(sseUpdate, notifyAssignee)]
+    [Hooks.afterCreate]: [withActivity(sseUpdate, notifyAssignee)],
   };
 
   forEach(mappings, (hooks, type) => {
-    forEach(hooks, hook => {
+    forEach(hooks, (hook) => {
       ActivityStatus.addHook(type, Hooks.withType(type, hook));
     });
   });
@@ -29,9 +29,9 @@ const add = (ActivityStatus, Hooks, { Activity }) => {
     const previousStatus = await ActivityStatus.findOne({
       where: {
         [Op.not]: { id: status.id },
-        activityId: status.activityId
+        activityId: status.activityId,
       },
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
     });
     const isUnchanged = previousStatus.assigneeId === status.assigneeId;
     const isSelfAssign = status.assigneeId === userId;
@@ -40,8 +40,12 @@ const add = (ActivityStatus, Hooks, { Activity }) => {
   }
 
   function withActivity(...hooks) {
-    const invokeHooks = (type, status, opts) => status.getActivity()
-      .then(activity => hooks.forEach(hook => hook(type, activity, opts)));
+    const invokeHooks = (type, status, opts) =>
+      status
+        .getActivity()
+        .then((activity) =>
+          hooks.forEach((hook) => hook(type, activity, opts)),
+        );
     return afterTransaction(invokeHooks);
   }
 };
@@ -51,15 +55,15 @@ async function sendEmailNotification(activity) {
   const [status] = activity.status;
   mail.sendAssigneeNotification(status.assignee.email, {
     ...activity.toJSON(),
-    label: label.toLowerCase()
+    label: label.toLowerCase(),
   });
 }
 
-const afterTransaction = method => (type, status, opts) => {
+const afterTransaction = (method) => (type, status, opts) => {
   if (!opts.transaction) return method(type, status, opts);
   opts.transaction.afterCommit(() => method(type, status, opts));
 };
 
 export default {
-  add
+  add,
 };

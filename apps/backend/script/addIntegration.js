@@ -11,17 +11,17 @@ const { User } = db;
 const { user: role } = roleConfig;
 
 User.findOne({ where: { role: role.INTEGRATION } })
-  .then(user => {
+  .then((user) => {
     if (!user) return true;
     console.log('Integration already exists');
     process.exit(0);
   })
   .then(() => User.create({ role: role.INTEGRATION }))
-  .then(user => {
+  .then((user) => {
     console.log(`Integration user created: ${user.id}`);
     process.exit(0);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error(err.message);
     process.exit(1);
   });

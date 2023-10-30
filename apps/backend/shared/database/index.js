@@ -40,35 +40,48 @@ function initialize() {
     context: sequelize.getQueryInterface(),
     storage: new SequelizeStorage({
       sequelize,
-      tableName: config.migrationStorageTableName
+      tableName: config.migrationStorageTableName,
     }),
     migrations: {
-      glob: path.join(migrationsPath, '*.js')
+      glob: path.join(migrationsPath, '*.js'),
     },
-    logger: message => {
+    logger: (message) => {
       if (message.startsWith('==')) return;
       if (message.startsWith('File:')) {
         const file = message.split(/\s+/g)[1];
         return logger.info({ file }, message);
       }
       return logger.info(message);
-    }
+    },
   });
 
-  umzug.on('migrating', m => logger.info({ migration: m }, '⬆️  Migrating:', m));
-  umzug.on('migrated', m => logger.info({ migration: m }, '⬆️  Migrated:', m));
-  umzug.on('reverting', m => logger.info({ migration: m }, '⬇️  Reverting:', m));
-  umzug.on('reverted', m => logger.info({ migration: m }, '⬇️  Reverted:', m));
+  umzug.on('migrating', (m) =>
+    logger.info({ migration: m }, '⬆️  Migrating:', m),
+  );
+  umzug.on('migrated', (m) =>
+    logger.info({ migration: m }, '⬆️  Migrated:', m),
+  );
+  umzug.on('reverting', (m) =>
+    logger.info({ migration: m }, '⬇️  Reverting:', m),
+  );
+  umzug.on('reverted', (m) =>
+    logger.info({ migration: m }, '⬇️  Reverted:', m),
+  );
 
-  return sequelize.authenticate()
+  return sequelize
+    .authenticate()
     .then(() => logger.info(getConfig(sequelize), '🗄️  Connected to database'))
     .then(() => checkPostgreVersion(sequelize))
     .then(() => !isProduction && umzug.up())
     .then(() => umzug.executed())
-    .then(migrations => {
-      const files = migrations.map(it => it.name);
+    .then((migrations) => {
+      const files = migrations.map((it) => it.name);
       if (!files.length) return;
-      logger.info({ migrations: files }, '🗄️  Executed migrations:\n', files.join('\n'));
+      logger.info(
+        { migrations: files },
+        '🗄️  Executed migrations:\n',
+        files.join('\n'),
+      );
     });
 }
 
@@ -87,7 +100,7 @@ const models = {
   Revision: defineModel(Revision),
   ContentElement: defineModel(ContentElement),
   Comment: defineModel(Comment),
-  Tag: defineModel(Tag)
+  Tag: defineModel(Tag),
 };
 
 function defineModel(Model, connection = sequelize) {
@@ -98,7 +111,7 @@ function defineModel(Model, connection = sequelize) {
   return Model.init(fields, options);
 }
 
-forEach(models, model => {
+forEach(models, (model) => {
   invoke(model, 'associate', models);
   addHooks(model, Hooks, models);
   addScopes(model, models);
@@ -119,12 +132,12 @@ const db = {
   Sequelize,
   sequelize,
   initialize,
-  ...models
+  ...models,
 };
 
 wrapMethods(Sequelize.Model, Promise);
 // Patch Sequelize#method to support getting models by class name.
-sequelize.model = name => sequelize.models[name] || db[name];
+sequelize.model = (name) => sequelize.models[name] || db[name];
 
 function createConnection(config) {
   if (!config.url) return new Sequelize(config);
@@ -134,34 +147,36 @@ function createConnection(config) {
 function getConfig(sequelize) {
   // NOTE: List public fields: https://git.io/fxVG2
   return pick(sequelize.config, [
-    'database', 'username', 'host', 'port', 'protocol',
+    'database',
+    'username',
+    'host',
+    'port',
+    'protocol',
     'pool',
     'native',
     'ssl',
     'replication',
     'dialectModulePath',
     'keepDefaultTimezone',
-    'dialectOptions'
+    'dialectOptions',
   ]);
 }
 
 function checkPostgreVersion(sequelize) {
-  return sequelize.getQueryInterface().databaseVersion().then(version => {
-    logger.info({ version }, 'PostgreSQL version:', version);
-    const range = pkg.engines && pkg.engines.postgres;
-    if (!range) return;
-    if (semver.satisfies(semver.coerce(version), range)) return;
-    const err = new Error(`"${pkg.name}" requires PostgreSQL ${range}`);
-    logger.error({ version, required: range }, err.message);
-    return Promise.reject(err);
-  });
+  return sequelize
+    .getQueryInterface()
+    .databaseVersion()
+    .then((version) => {
+      logger.info({ version }, 'PostgreSQL version:', version);
+      const range = pkg.engines && pkg.engines.postgres;
+      if (!range) return;
+      if (semver.satisfies(semver.coerce(version), range)) return;
+      const err = new Error(`"${pkg.name}" requires PostgreSQL ${range}`);
+      logger.error({ version, required: range }, err.message);
+      return Promise.reject(err);
+    });
 }
 
-export {
-  Sequelize,
-  sequelize,
-  initialize,
-  models
-};
+export { Sequelize, sequelize, initialize, models };
 
 export default db;

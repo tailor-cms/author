@@ -20,7 +20,4 @@ function extractAuthData(req, res, next) {
   return next();
 }
 
-export {
-  authorize,
-  extractAuthData
-};
+export { authorize, extractAuthData };

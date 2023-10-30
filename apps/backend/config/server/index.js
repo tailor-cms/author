@@ -21,7 +21,7 @@ export {
   previewUrl,
   consumer,
   store,
-  tce
+  tce,
 };
 
 export default {
@@ -35,5 +35,5 @@ export default {
   previewUrl,
   consumer,
   store,
-  tce
+  tce,
 };

@@ -11,10 +11,7 @@ const router = express.Router();
 
 const ACCESS_DENIED_ROUTE = '/#/login?accessDenied=';
 
-const OIDCErrors = [
-  OIDCError.OPError,
-  OIDCError.RPError
-];
+const OIDCErrors = [OIDCError.OPError, OIDCError.RPError];
 const scope = ['openid', 'profile', 'email'].join(' ');
 
 const isSilentAuth = ({ query }) => query.silent === 'true';
@@ -22,13 +19,13 @@ const isResign = ({ query }) => query.resign === 'true';
 const isLogoutRequest = ({ query }) => query.action === 'logout';
 const isActiveStrategy = ({ authData = {} }) => authData.strategy === 'oidc';
 
-const getPromptParams = req => {
+const getPromptParams = (req) => {
   if (isResign(req)) return { prompt: 'login' };
   if (isSilentAuth(req)) return { prompt: 'none' };
   return {};
 };
 
-const getSilentAuthParams = req => {
+const getSilentAuthParams = (req) => {
   if (!isSilentAuth(req)) return {};
   const strategy = req.passport.strategy('oidc');
   const callbackUri = new URL(strategy.options.callbackURL);
@@ -37,7 +34,7 @@ const getSilentAuthParams = req => {
   return { redirect_uri: callbackUri.href, id_token_hint: idToken };
 };
 
-const isOIDCError = err => OIDCErrors.some(Ctor => err instanceof Ctor);
+const isOIDCError = (err) => OIDCErrors.some((Ctor) => err instanceof Ctor);
 
 router
   .get('/', authRequestHandler)
@@ -46,7 +43,7 @@ router
 
 export default {
   path: '/oidc',
-  router
+  router,
 };
 
 // Initiate login and logout actions
@@ -57,7 +54,7 @@ function authRequestHandler(req, res, next) {
     session: true,
     scope,
     ...getPromptParams(req),
-    ...getSilentAuthParams(req)
+    ...getSilentAuthParams(req),
   };
   return authenticate('oidc', params)(req, res, next);
 }
@@ -88,9 +85,9 @@ function login(req, res, next) {
   const params = {
     session: true,
     setCookie: true,
-    ...(isSilentAuth(req) && getSilentAuthParams(req))
+    ...(isSilentAuth(req) && getSilentAuthParams(req)),
   };
-  authenticate('oidc', params)(req, res, err => {
+  authenticate('oidc', params)(req, res, (err) => {
     if (err) return next(err);
     if (!isSilentAuth(req)) return res.redirect('/');
     const template = path.resolve(__dirname, './authenticated.mustache');

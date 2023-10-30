@@ -5,7 +5,12 @@ export default function (env) {
   const hostname = resolveHostname(env);
   const protocol = env.PROTOCOL ? env.PROTOCOL : resolveProtocol(hostname);
   const port = resolvePort(env);
-  const origin = resolveOrigin(hostname, protocol, port, env.REVERSE_PROXY_PORT);
+  const origin = resolveOrigin(
+    hostname,
+    protocol,
+    port,
+    env.REVERSE_PROXY_PORT,
+  );
   return { hostname, protocol, port, origin };
 }
 
@@ -36,10 +41,10 @@ function resolveOrigin(
   hostname = 'localhost',
   protocol = 'http',
   port = 3000,
-  reverseProxyPort
+  reverseProxyPort,
 ) {
   return `${protocol}://${hostname}${resolveOriginPort(
     port,
-    reverseProxyPort
+    reverseProxyPort,
   )}`;
 }

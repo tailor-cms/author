@@ -7,23 +7,23 @@ class RepositoryTag extends Model {
         type: INTEGER,
         field: 'repository_id',
         primaryKey: true,
-        unique: 'repository_tag_pkey'
+        unique: 'repository_tag_pkey',
       },
       tagId: {
         type: INTEGER,
         field: 'tag_id',
         primaryKey: true,
-        unique: 'repository_tag_pkey'
-      }
+        unique: 'repository_tag_pkey',
+      },
     };
   }
 
   static associate({ Repository, Tag }) {
     this.belongsTo(Repository, {
-      foreignKey: { name: 'repositoryId', field: 'repository_id' }
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.belongsTo(Tag, {
-      foreignKey: { name: 'tagId', field: 'tag_id' }
+      foreignKey: { name: 'tagId', field: 'tag_id' },
     });
   }
 
@@ -32,7 +32,7 @@ class RepositoryTag extends Model {
       modelName: 'RepositoryTag',
       tableName: 'repository_tag',
       underscored: true,
-      timestamps: false
+      timestamps: false,
     };
   }
 }

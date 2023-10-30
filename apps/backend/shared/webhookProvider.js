@@ -8,22 +8,17 @@ const schema = yup.object().shape({
   clientId: yup.string().required(),
   clientSecret: yup.string().required(),
   tokenHost: yup.string().url().required(),
-  tokenPath: yup.string().required()
+  tokenPath: yup.string().required(),
 });
 
 function createWebhookProvider() {
   if (!config.webhookUrl) return { isConnected: false };
-  const {
-    clientId,
-    clientSecret,
-    tokenHost,
-    tokenPath,
-    webhookUrl
-  } = schema.validateSync(config, { stripUnknown: true });
+  const { clientId, clientSecret, tokenHost, tokenPath, webhookUrl } =
+    schema.validateSync(config, { stripUnknown: true });
 
   const client = new ClientCredentials({
     client: { id: clientId, secret: clientSecret },
-    auth: { tokenHost, tokenPath }
+    auth: { tokenHost, tokenPath },
   });
   let accessToken;
 
@@ -36,14 +31,17 @@ function createWebhookProvider() {
       await getAccessToken();
     }
     return request.post(webhookUrl, payload, {
-      headers: { Authorization: `Bearer ${accessToken.token.access_token}` }
+      headers: { Authorization: `Bearer ${accessToken.token.access_token}` },
     });
   }
 
   function getAccessToken() {
-    return client.getToken()
-      .then(token => { accessToken = token; })
-      .catch(error => console.error('Access Token Error', error.message));
+    return client
+      .getToken()
+      .then((token) => {
+        accessToken = token;
+      })
+      .catch((error) => console.error('Access Token Error', error.message));
   }
 }
 

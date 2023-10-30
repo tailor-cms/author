@@ -11,31 +11,42 @@ const { EmptyResultError } = Sequelize;
 
 const defaultListQuery = {
   order: [['createdAt', 'DESC']],
-  paranoid: false
+  paranoid: false,
 };
 
 router.param('commentId', getComment);
 
-router.route('/')
+router
+  .route('/')
   .get(processQuery(defaultListQuery), ctrl.list)
   .post(ctrl.create);
 
-router.route('/:commentId')
+router
+  .route('/:commentId')
   .patch(canEdit, ctrl.patch)
   .delete(canEdit, ctrl.remove);
 
 router.post('/resolve', ctrl.updateResolvement);
 
 function getComment(req, _res, next, commentId) {
-  const include = [{
-    model: User,
-    as: 'author',
-    attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'imgUrl']
-  }];
+  const include = [
+    {
+      model: User,
+      as: 'author',
+      attributes: [
+        'id',
+        'email',
+        'firstName',
+        'lastName',
+        'fullName',
+        'imgUrl',
+      ],
+    },
+  ];
   const options = { include, paranoid: false, rejectOnEmpty: true };
   return Comment.findByPk(commentId, options)
     .catch(EmptyResultError, () => createError(NOT_FOUND, 'Comment not found'))
-    .then(comment => {
+    .then((comment) => {
       req.comment = comment;
       next();
     });
@@ -48,5 +59,5 @@ function canEdit({ user, comment }, _res, next) {
 
 export default {
   path: '/comments',
-  router
+  router,
 };

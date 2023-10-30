@@ -1,6 +1,6 @@
 export default {
   Scope: {
     Access: 'scope:access',
-    Setup: 'scope:setup'
-  }
+    Setup: 'scope:setup',
+  },
 };

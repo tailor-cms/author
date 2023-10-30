@@ -15,10 +15,11 @@ router.use(extractAuthData);
 router.use(user.path, user.router);
 
 // SSO routes:
-authConfig.oidc.enabled && await (async () => {
-  const { default: oidc } = await import('./oidc/index.js');
-  router.use(oidc.path, oidc.router);
-})();
+authConfig.oidc.enabled &&
+  (await (async () => {
+    const { default: oidc } = await import('./oidc/index.js');
+    router.use(oidc.path, oidc.router);
+  })());
 
 // Protected routes:
 router.use(authenticate('jwt'));
