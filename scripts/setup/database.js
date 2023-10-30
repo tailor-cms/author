@@ -24,7 +24,8 @@ export const getDatabaseClient = async () => {
 const getDatabaseCredentials = async () => {
   const config = await loadDevConfig();
   const isConfigured = config.DB_USERNAME && config.DB_PASSWORD;
-  if (isConfigured) return { user: config.DB_USERNAME, password: config.DB_PASSWORD };
+  if (isConfigured)
+    return { user: config.DB_USERNAME, password: config.DB_PASSWORD };
   const input = await inquirer.prompt([
     {
       type: 'input',
@@ -44,7 +45,7 @@ const getDatabaseCredentials = async () => {
 
 export async function createDatabase(client, name) {
   const checkIfExists = await client.query(
-    `SELECT COUNT(*) from pg_catalog.pg_database WHERE datname = '${name}'`
+    `SELECT COUNT(*) from pg_catalog.pg_database WHERE datname = '${name}'`,
   );
   if (checkIfExists.rows[0].count !== '0') return false;
   await client.query(`CREATE DATABASE "${name}"`);

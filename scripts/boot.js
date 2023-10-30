@@ -1,7 +1,7 @@
-import "dotenv/config";
-import concurrently from "concurrently";
-import fkill from "fkill";
-import { portToPid } from "pid-port";
+import 'dotenv/config';
+import concurrently from 'concurrently';
+import fkill from 'fkill';
+import { portToPid } from 'pid-port';
 
 const { PORT, REVERSE_PROXY_PORT } = process.env;
 if (
@@ -9,7 +9,7 @@ if (
   REVERSE_PROXY_PORT === undefined ||
   PORT === REVERSE_PROXY_PORT
 ) {
-  throw new Error("PORT and REVERSE_PROXY_PORT must be defined and different");
+  throw new Error('PORT and REVERSE_PROXY_PORT must be defined and different');
 }
 
 // Kill running services occupying app ports
@@ -21,13 +21,13 @@ for (const port of [PORT, REVERSE_PROXY_PORT]) {
 }
 
 const appCommands = await Promise.all(
-  ["backend", "frontend"].map(async (name, index) => {
+  ['backend', 'frontend'].map(async (name, index) => {
     return {
       name,
-      prefixColor: ["blue", "green"][index],
+      prefixColor: ['blue', 'green'][index],
       command: `cd ./apps/${name} && pnpm dev`,
     };
-  })
+  }),
 );
 
 concurrently(appCommands);

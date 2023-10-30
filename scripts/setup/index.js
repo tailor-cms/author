@@ -20,12 +20,12 @@ console.log(
     padding: 2,
     margin: 1,
     borderColor: 'green',
-  })
+  }),
 );
 
 log(`◦ 🟡 Initialising ${envLabel} setup`);
 log('◦ 🤫 Setup environment variables');
-const afterAllHooks = await setEnv({ dbPrefix: argv.dbPrefix }) || [];
+const afterAllHooks = (await setEnv({ dbPrefix: argv.dbPrefix })) || [];
 log('◦ ✅ Environment successfully configured!');
 log('◦ 🏗️  Build');
 await execaCommand('pnpm build');

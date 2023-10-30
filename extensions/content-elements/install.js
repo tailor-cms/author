@@ -28,10 +28,10 @@ await shell.exec(`pnpm add ${clientPackage}`);
 if (serverPackage) shell.exec(`pnpm add ${serverPackage}`);
 // Generate integration files
 await shell.exec(
-  `npx hygen edit-package new ${name} --packageName ${clientPackage}`
+  `npx hygen edit-package new ${name} --packageName ${clientPackage}`,
 );
 await shell.exec(
-  `npx hygen server-package new ${name} --packageName ${serverPackage}`
+  `npx hygen server-package new ${name} --packageName ${serverPackage}`,
 );
 // Add to the content element registry
 const elements = await jsonfile.readFile('./registry.json');
