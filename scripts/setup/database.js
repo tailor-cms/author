@@ -4,9 +4,9 @@ import pg from 'pg';
 
 const { Client } = pg;
 
-export const getDatabaseClient = async () => {
+export const getDatabaseClient = async (forceCredentials = false) => {
   try {
-    const creds = await getDatabaseCredentials();
+    const creds = await getDatabaseCredentials(forceCredentials);
     const client = new Client({
       database: 'postgres',
       host: 'localhost',
@@ -16,16 +16,20 @@ export const getDatabaseClient = async () => {
     await client.connect();
     return { client, ...creds };
   } catch (e) {
-    console.log('Unable to connect, please try again...', e);
-    return getDatabaseClient();
+    console.error(`◦ ❗️ Postgres error: ${e.message}!\n`);
+    // Force credentials on retry
+    return getDatabaseClient(true);
   }
 };
 
-const getDatabaseCredentials = async () => {
-  const config = await loadDevConfig();
-  const isConfigured = config.DB_USERNAME && config.DB_PASSWORD;
-  if (isConfigured)
-    return { user: config.DB_USERNAME, password: config.DB_PASSWORD };
+const getDatabaseCredentials = async (forceCredentials = false) => {
+  if (!forceCredentials) {
+    const config = await loadDevConfig();
+    const { DB_USERNAME, DB_PASSWORD } = config;
+    // Password is optional, username is required
+    const isConfigured = DB_USERNAME || DB_PASSWORD;
+    if (isConfigured) return { user: DB_USERNAME, password: DB_PASSWORD };
+  }
   const input = await inquirer.prompt([
     {
       type: 'input',
