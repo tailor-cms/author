@@ -1,7 +1,7 @@
 const EXAMPLE_WORKFLOW = {
   id: 'EXAMPLE_WORKFLOW',
   statuses: [
-    { id: 'TODO', label: 'Todo', default: true, color: '#E91E63' },
+    { id: 'TODO', label: 'Todo', default: true, color: '#e91e63' },
     { id: 'IN_PROGRESS', label: 'In progress', color: '#ff0000' },
     { id: 'REVIEW', label: 'Review', color: '#ff0000' },
     { id: 'DONE', label: 'Done', color: '#ff0000' },
@@ -36,7 +36,7 @@ const SECTION_CONTAINER = {
   type: ACTIVITY_TYPE.SECTION,
   label: 'Section',
   multiple: true,
-  types: ['JODIT_HTML', 'IMAGE', 'VIDEO', 'EMBED', 'PDF'],
+  types: ['JODIT_HTML', 'IMAGE', 'EMBED', 'PDF'],
 };
 
 const EXAMPLE_SCHEMA = {
