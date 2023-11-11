@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -126,8 +130,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1
       axios:
-        specifier: ^1.4.0
-        version: 1.4.0(debug@4.3.4)
+        specifier: ^1.6.0
+        version: 1.6.0(debug@4.3.4)
       bcrypt:
         specifier: ^5.1.0
         version: 5.1.0
@@ -457,8 +461,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1
       axios:
-        specifier: ^1.4.0
-        version: 1.4.0(debug@4.3.4)
+        specifier: ^1.6.0
+        version: 1.6.0(debug@4.3.4)
       bcrypt:
         specifier: ^5.1.0
         version: 5.1.0
@@ -3390,8 +3394,8 @@ packages:
       - debug
     dev: true
 
-  /axios@1.4.0(debug@4.3.4):
-    resolution: {integrity: sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==}
+  /axios@1.6.0(debug@4.3.4):
+    resolution: {integrity: sha512-EZ1DYihju9pwVB+jg67ogm+Tmqc6JmhamRN6I4Zt8DfZu5lbcQGw3ozH9lFejSJgs/ibaef3A9PMXPLeefFGJg==}
     dependencies:
       follow-redirects: 1.15.3(debug@4.3.4)
       form-data: 4.0.0
@@ -6395,6 +6399,7 @@ packages:
 
   /glob@6.0.4:
     resolution: {integrity: sha512-MKZeRNyYZAVVVG1oZeLaWie1uweH40m9AZwIwxyPbTSX4hHrVYSzLg0Ro5Z5R7XKkIX+Cc6oD1rqeDJnwsB8/A==}
+    requiresBuild: true
     dependencies:
       inflight: 1.0.6
       inherits: 2.0.4
@@ -8268,6 +8273,7 @@ packages:
 
   /nan@2.18.0:
     resolution: {integrity: sha512-W7tfG7vMOGtD30sHoZSSc/JVYiyDPEyQVso/Zz+/uQd0B0L46gtC+pHha5FFMRpil6fm/AoEcRWyOVi4+E/f8w==}
+    requiresBuild: true
     optional: true
 
   /nanoclone@0.2.1:
@@ -8286,6 +8292,7 @@ packages:
   /ncp@2.0.0:
     resolution: {integrity: sha512-zIdGUrPRFTUELUvr3Gmc7KZ2Sw/h1PiVM0Af/oHB6zgnV1ikqSfRk+TOufi79aHYCW3NiOXmr1BP5nWbzojLaA==}
     hasBin: true
+    requiresBuild: true
     optional: true
 
   /negotiator@0.6.3:
@@ -9548,6 +9555,7 @@ packages:
   /rimraf@2.4.5:
     resolution: {integrity: sha512-J5xnxTyqaiw06JjMftq7L9ouA448dw/E7dKghkP9WpKNuwmARNNg+Gk8/u5ryb9N/Yo2+z3MCwuqFK/+qPOPfQ==}
     hasBin: true
+    requiresBuild: true
     dependencies:
       glob: 6.0.4
     optional: true
