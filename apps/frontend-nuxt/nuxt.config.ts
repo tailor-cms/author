@@ -5,4 +5,8 @@ export default defineNuxtConfig({
     // TODO: Baked in until frontend is migrated to Nuxt
     port: 8081,
   },
+  css: ['vuetify/lib/styles/main.sass'],
+  build: {
+    transpile: ['vuetify'],
+  },
 });

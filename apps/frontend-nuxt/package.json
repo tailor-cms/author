@@ -10,8 +10,13 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "autoprefixer": "^10.4.16",
     "nuxt": "^3.8.1",
+    "sass": "^1.69.5",
     "vue": "^3.3.8",
     "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "vuetify": "3.4.0"
   }
 }
