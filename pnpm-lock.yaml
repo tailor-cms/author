@@ -718,6 +718,9 @@ importers:
 
   apps/frontend-nuxt:
     dependencies:
+      '@mdi/font':
+        specifier: ^7.2.96
+        version: 7.2.96
       vuetify:
         specifier: 3.4.0
         version: 3.4.0(typescript@5.2.2)(vue@3.3.8)
