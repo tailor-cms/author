@@ -5,18 +5,17 @@ import * as directives from 'vuetify/directives';
 import { createVuetify } from 'vuetify';
 
 const defaultTheme: ThemeDefinition = {
-  dark: false,
   colors: {
-    primary: '#607D8B',
-    secondary: '#E91E63',
+    primary: '#607d8b',
+    secondary: '#e91e63',
   },
 };
 
 export default defineNuxtPlugin((nuxt) => {
   const vuetify = createVuetify({
+    ssr: true,
     components,
     directives,
-    ssr: true,
     theme: {
       defaultTheme: 'default',
       themes: {

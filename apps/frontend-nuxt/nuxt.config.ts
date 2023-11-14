@@ -5,11 +5,11 @@ export default defineNuxtConfig({
     // TODO: Baked in until frontend is migrated to Nuxt
     port: 8081,
   },
+  build: {
+    transpile: ['vuetify'],
+  },
   css: [
     'vuetify/lib/styles/main.sass',
     '@mdi/font/css/materialdesignicons.min.css',
   ],
-  build: {
-    transpile: ['vuetify'],
-  },
 });
