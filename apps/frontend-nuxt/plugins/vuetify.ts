@@ -1,8 +1,7 @@
-import type { ThemeDefinition } from 'vuetify';
-
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { createVuetify } from 'vuetify';
+import type { ThemeDefinition } from 'vuetify';
 
 const defaultTheme: ThemeDefinition = {
   colors: {
