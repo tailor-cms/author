@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="180" src="./client/assets/img/default-logo-compact.svg">
+  <img width="180" src="./apps/frontend/src/assets/img/default-logo-compact.svg">
 </div>
 
 # Tailor CMS
@@ -26,7 +26,7 @@ Configurable headless CMS for complex content structures.
 
 ### Development
 
-- Run `pnpm setup:dev` in the project directory and enter the required details.
+- Run `pnpm setup:dev` in the project directory and enter the required details
 - Run `pnpm dev` to start the dev server
 
 ### Production

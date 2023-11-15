@@ -5,6 +5,7 @@ infrastructure
 
 # Environment (contains sensitive data)
 .env
+.env.dev
 .env.example
 
 # Files not required for production

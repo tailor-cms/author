@@ -1,0 +1,1 @@
+# Tailor Nuxt frontend
