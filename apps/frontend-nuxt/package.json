@@ -26,6 +26,7 @@
     "@vee-validate/nuxt": "4.12.2",
     "@vee-validate/yup": "^4.12.2",
     "axios": "^1.4.0",
+    "bluebird": "^3.7.2",
     "pinia": "^2.1.7",
     "sse-event-types": "workspace:*",
     "tailor-config-shared": "workspace:*",

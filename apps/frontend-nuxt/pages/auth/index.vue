@@ -42,7 +42,7 @@
       />
       <div class="d-flex mt-1">
         <VSpacer />
-        <VBtn color="primary-darken-4" type="submit" block rounded>
+        <VBtn variant="tonal" type="submit" block rounded>
           Log in
         </VBtn>
       </div>

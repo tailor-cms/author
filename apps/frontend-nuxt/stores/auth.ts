@@ -20,6 +20,10 @@ export const useAuthStore = defineStore('auth', () => {
     return api.logout().then(() => $reset());
   }
 
+  function forgotPassword({ email }: { email: string }) {
+    return api.forgotPassword(email);
+  }
+
   function changePassword({
     currentPassword,
     newPassword,
@@ -47,6 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     login,
     logout,
+    forgotPassword,
     changePassword,
     fetchUserInfo,
     updateInfo,
