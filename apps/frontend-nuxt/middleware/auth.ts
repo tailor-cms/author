@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth';
 
 export default async function (to: RouteLocationNormalized) {
   if (to.name === 'auth') return;
-  const isAuthenticated = useCookie('isAuthenticated');
+  const isAuthenticated = useCookie('is-authenticated');
   const authStore = useAuthStore();
   if (isAuthenticated.value && authStore.user) return;
   const { data } = await authAPI.getUserInfo();

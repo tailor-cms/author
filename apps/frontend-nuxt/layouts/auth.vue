@@ -3,7 +3,7 @@
     <div class="auth-panel-container">
       <VSheet class="auth-panel" elevation="0" rounded>
         <div class="auth-header d-flex flex-column align-center py-9">
-          <VAvatar class="elevation-3" color="primary-darken-4" size="120">
+          <VAvatar class="elevation-3" color="primary-darken-4" size="108">
             <div class="pt-2">
               <img :src="logo" alt="Logo" class="logo" />
             </div>

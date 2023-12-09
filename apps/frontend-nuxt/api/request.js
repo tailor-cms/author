@@ -29,7 +29,7 @@ client.interceptors.response.use(
   (res) => res,
   (err) => {
     if (isAuthError(err)) {
-      const isAuthenticated = useCookie('isAuthenticated');
+      const isAuthenticated = useCookie('is-authenticated');
       isAuthenticated.value = false;
       const authRoute = '/auth';
       if (process.server) return navigateTo(authRoute);
