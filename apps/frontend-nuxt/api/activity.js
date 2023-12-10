@@ -6,9 +6,7 @@ const urls = {
 };
 
 function getActivities(repositoryId, params) {
-  return request
-    .get(urls.root(repositoryId), { params })
-    .then(extractData);
+  return request.get(urls.root(repositoryId), { params }).then(extractData);
 }
 
 function createPreview(repositoryId, activityId) {

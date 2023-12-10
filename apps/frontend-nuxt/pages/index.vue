@@ -1,13 +1,11 @@
 <template>
   <VContainer>
-    <VAlert color="teal">
-      Hello {{ store?.user?.email }}!
-    </VAlert>
+    <VAlert color="teal">Hello {{ store?.user?.email }}!</VAlert>
   </VContainer>
 </template>
 
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth';
 
 definePageMeta({ middleware: ['auth'] });
 

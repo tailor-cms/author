@@ -42,9 +42,7 @@
       />
       <div class="d-flex mt-1">
         <VSpacer />
-        <VBtn variant="tonal" type="submit" block rounded>
-          Log in
-        </VBtn>
+        <VBtn variant="tonal" type="submit" block rounded>Log in</VBtn>
       </div>
       <div class="options">
         <NuxtLink to="/auth/forgot-password">Forgot password?</NuxtLink>

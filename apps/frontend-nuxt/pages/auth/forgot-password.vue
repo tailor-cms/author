@@ -41,9 +41,9 @@
 </template>
 
 <script lang="ts" setup>
+import { object, string } from 'yup';
 import { delay } from 'bluebird';
 import { useForm } from 'vee-validate';
-import { object, string } from 'yup';
 
 const authStore = useAuthStore();
 

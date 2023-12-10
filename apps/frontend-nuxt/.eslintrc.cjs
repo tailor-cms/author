@@ -24,5 +24,6 @@ module.exports = {
   globals: {
     NuxtLayout: true,
     NuxtLink: true,
+    NuxtPage: true,
   },
 };
