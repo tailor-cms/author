@@ -1,15 +1,15 @@
 <template>
   <NuxtLayout name="auth">
     <VAlert
-      :model-value="!!showMessage"
       :color="error ? 'pink-lighten-1' : 'grey-darken-4'"
+      :model-value="!!showMessage"
       class="mb-8"
       density="compact"
       variant="tonal"
     >
       {{ error || 'Sending reset email...' }}
     </VAlert>
-    <form v-if="!error" @submit.prevent="submit" novalidate>
+    <form v-if="!error" novalidate @submit.prevent="submit">
       <VTextField
         v-model="emailInput"
         :error-messages="errors.email"
@@ -31,7 +31,7 @@
         >
           Send reset email
         </VBtn>
-        <VBtn to="/" variant="text" class="mt-7">
+        <VBtn to="/" class="mt-7" variant="text">
           <VIcon class="pr-2">mdi-arrow-left</VIcon>Back
         </VBtn>
       </div>
