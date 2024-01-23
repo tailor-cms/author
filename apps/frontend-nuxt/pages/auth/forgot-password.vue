@@ -36,7 +36,7 @@
         </VBtn>
       </div>
     </form>
-    <VBtn v-else @click.stop="resetInput" variant="text"> Retry </VBtn>
+    <VBtn v-else @click.stop="resetInput" variant="text">Retry</VBtn>
   </NuxtLayout>
 </template>
 

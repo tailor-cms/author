@@ -28,7 +28,7 @@ function resetPassword(token, password) {
 }
 
 function validateResetToken(token) {
-  return request.post(urls.resetTokenStatus(), { token });
+  return request.base.post(urls.resetTokenStatus(), { token });
 }
 
 function changePassword(currentPassword, newPassword) {

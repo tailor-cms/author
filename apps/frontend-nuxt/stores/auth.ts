@@ -24,6 +24,16 @@ export const useAuthStore = defineStore('auth', () => {
     return api.forgotPassword(email);
   }
 
+  function resetPassword({
+    password,
+    token,
+  }: {
+    password: string;
+    token: string;
+  }) {
+    return api.resetPassword(token, password);
+  }
+
   function changePassword({
     currentPassword,
     newPassword,
@@ -52,6 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     forgotPassword,
+    resetPassword,
     changePassword,
     fetchUserInfo,
     updateInfo,
