@@ -1,20 +1,14 @@
 <template>
   <NuxtLayout name="auth">
     <VAlert
-      v-if="errorMessage"
+      v-if="localError"
       class="mb-7 text-left"
       color="pink-lighten-1"
       density="compact"
       closable
     >
-      {{ errorMessage }}
+      {{ localError }}
     </VAlert>
-    <template v-if="oidcEnabled">
-      <VBtn color="pink-accent-4" block rounded @click="signInWithOIDC">
-        {{ oidcLoginText }}
-      </VBtn>
-      <VDivider class="auth-divider" />
-    </template>
     <form @submit.prevent="signIn">
       <VTextField
         v-model="emailInput"
@@ -41,7 +35,6 @@
         variant="outlined"
       />
       <div class="d-flex mt-1">
-        <VSpacer />
         <VBtn type="submit" variant="tonal" block rounded>Log in</VBtn>
       </div>
       <div class="options">
@@ -64,29 +57,7 @@ const TOO_MANY_REQ_CODE = 429;
 const TOO_MANY_REQ_ERR_MESSAGE =
   'Too many login attempts. Please try again later.';
 
-const getOidcErrorMessage = (email: string, buttonLabel: string) =>
-  `Account with email ${email} does not exist.
-  Click "${buttonLabel}" to try with a different account.`;
-
-const oidcEnabled = computed((vm) => vm?.$oidc?.enabled);
-const oidcLoginText = computed(
-  () => process.env?.OIDC_LOGIN_TEXT || 'Login with OAuth',
-);
-
-const accessDenied = computed((vm) => vm?.$route?.query?.accessDenied);
-const oidcError = computed(
-  () =>
-    accessDenied.value &&
-    getOidcErrorMessage(accessDenied.value, oidcLoginText.value),
-);
-
 const localError = ref('');
-const errorMessage = computed(() => oidcError.value || localError.value);
-
-const signInWithOIDC = () => {
-  const action = oidcError.value ? 'reauthenticate' : 'authenticate';
-  this?.$oidc?.[action]();
-};
 
 const { defineField, handleSubmit, errors } = useForm({
   validationSchema: object({
