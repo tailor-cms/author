@@ -1,12 +1,12 @@
 <template>
   <svg
     :style="{ height }"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    viewBox="0 24 150 28"
+    class="waves"
     preserveAspectRatio="none"
     shape-rendering="auto"
-    class="waves"
+    viewBox="0 24 150 28"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
   >
     <defs>
       <path
@@ -18,9 +18,9 @@
       <use
         v-for="(wave, index) in waves"
         :key="index"
+        :fill="wave.color"
         :x="wave.x"
         :y="wave.y"
-        :fill="wave.color"
         xlink:href="#wave"
       ></use>
     </g>
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-  name: 'wave-animation',
+  name: 'WaveAnimation',
   props: {
     color: { type: String, default: '255,255,255' },
     height: { type: String, default: '6rem' },

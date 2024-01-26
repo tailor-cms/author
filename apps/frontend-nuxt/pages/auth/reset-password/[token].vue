@@ -20,35 +20,35 @@
         <VIcon class="pr-2">mdi-arrow-left</VIcon>Back to login page
       </VBtn>
     </div>
-    <form v-else @submit.prevent="submit" novalidate>
+    <form v-else novalidate @submit.prevent="submit">
       <VTextField
         v-model="passwordInput"
         :error-messages="errors.password"
-        type="password"
-        name="password"
+        class="required mb-3"
         label="Password"
+        name="password"
         placeholder="Password"
         prepend-inner-icon="mdi-lock"
+        type="password"
         variant="outlined"
-        class="required mb-3"
       />
       <VTextField
         v-model="passwordConfirmationInput"
         :error-messages="errors.passwordConfirmation"
-        type="password"
-        name="passwordConfirmation"
+        class="required mb-4"
         label="Re-enter password"
+        name="passwordConfirmation"
         placeholder="Password confirmation"
         prepend-inner-icon="mdi-lock-outline"
+        type="password"
         variant="outlined"
-        class="required mb-4"
       />
       <VBtn
-        type="submit"
         color="primary-darken-4"
+        type="submit"
         variant="tonal"
-        rounded
         block
+        rounded
       >
         Change password
       </VBtn>
@@ -57,10 +57,11 @@
 </template>
 
 <script lang="ts" setup>
-import { object, ref as yupRef, string } from 'yup';
-import { auth as api } from '@/api';
+import { object, string, ref as yupRef } from 'yup';
 import { delay } from 'bluebird';
 import { useForm } from 'vee-validate';
+
+import { auth as api } from '@/api';
 
 const ERRORS = {
   default: 'An error has occurred!',

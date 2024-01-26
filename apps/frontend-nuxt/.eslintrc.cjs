@@ -13,6 +13,17 @@ module.exports = {
   ],
   overrides: [
     {
+      files: '*.vue',
+      rules: {
+        'vue/no-undef-components': [
+          'error',
+          {
+            ignorePatterns: ['Nuxt*', 'V[A-Z]*'],
+          },
+        ],
+      },
+    },
+    {
       files: ['layouts/*.vue', 'pages/**/*.vue', 'error.vue'],
       rules: { 'vue/multi-word-component-names': 'off' },
     },
@@ -21,9 +32,4 @@ module.exports = {
       parserOptions: { parser: '@typescript-eslint/parser' },
     },
   ],
-  globals: {
-    NuxtLayout: true,
-    NuxtLink: true,
-    NuxtPage: true,
-  },
 };

@@ -31,12 +31,12 @@
         >
           Send reset email
         </VBtn>
-        <VBtn to="/" class="mt-7" variant="text">
+        <VBtn class="mt-7" to="/" variant="text">
           <VIcon class="pr-2">mdi-arrow-left</VIcon>Back
         </VBtn>
       </div>
     </form>
-    <VBtn v-else @click.stop="resetInput" variant="text">Retry</VBtn>
+    <VBtn v-else variant="text" @click.stop="resetInput">Retry</VBtn>
   </NuxtLayout>
 </template>
 
