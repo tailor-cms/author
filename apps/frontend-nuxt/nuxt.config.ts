@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   ssr: false,
   debug: true,
-  modules: ['@pinia/nuxt', '@vee-validate/nuxt'],
+  modules: ['@pinia/nuxt'],
   build: {
     transpile: ['vuetify'],
   },
@@ -22,8 +22,5 @@ export default defineNuxtConfig({
   ],
   pinia: {
     storesDirs: ['./stores/**'],
-  },
-  veeValidate: {
-    autoImports: true,
   },
 });

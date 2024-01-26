@@ -23,8 +23,6 @@
     "@mdi/font": "^7.2.96",
     "@pinia/nuxt": "^0.5.1",
     "@tailor-cms/utils": "workspace:*",
-    "@vee-validate/nuxt": "4.12.2",
-    "@vee-validate/yup": "^4.12.2",
     "axios": "^1.4.0",
     "bluebird": "^3.7.2",
     "pinia": "^2.1.7",
