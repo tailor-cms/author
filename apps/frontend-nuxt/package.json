@@ -9,7 +9,11 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@tailor-cms/eslint-config": "^0.0.2",
+    "@typescript-eslint/parser": "^6.9.0",
     "autoprefixer": "^10.4.16",
+    "eslint-config-prettier": ">=9.0.0",
     "nuxt": "^3.8.1",
     "sass": "^1.69.5",
     "vue": "^3.3.8",
@@ -17,6 +21,15 @@
   },
   "dependencies": {
     "@mdi/font": "^7.2.96",
-    "vuetify": "3.4.0"
+    "@pinia/nuxt": "^0.5.1",
+    "@tailor-cms/utils": "workspace:*",
+    "axios": "^1.4.0",
+    "bluebird": "^3.7.2",
+    "pinia": "^2.1.7",
+    "sse-event-types": "workspace:*",
+    "tailor-config-shared": "workspace:*",
+    "vee-validate": "4.12.2",
+    "vuetify": "3.4.0",
+    "yup": "^1.3.2"
   }
 }

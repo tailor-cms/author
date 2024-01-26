@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <v-btn color="secondary">
-      <v-icon class="pr-2" icon="mdi-account" />
-      Test
-    </v-btn>
-  </div>
+  <VApp id="app">
+    <NuxtPage />
+  </VApp>
 </template>
