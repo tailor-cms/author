@@ -3,8 +3,8 @@ import { auth as api } from '@/api';
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null);
 
-  function $reset({ user = null } = {}) {
-    user.value = user;
+  function $reset({ user: userData = null } = {}) {
+    user.value = userData;
   }
 
   function login(credentials: {
@@ -48,7 +48,9 @@ export const useAuthStore = defineStore('auth', () => {
     return api
       .getUserInfo()
       .then(({ data: { user } }) => $reset({ user }))
-      .catch(() => $reset());
+      .catch(() => {
+        $reset();
+      });
   }
 
   function updateInfo(payload: any) {
