@@ -7,8 +7,12 @@ export interface Repository {
   data: any;
   tags: any[];
   revisions: Revision[];
+  lastChange?: Revision;
   repositoryUsers: RepositoryUser[];
+  // Current user's repositoryUser
+  repositoryUser?: RepositoryUser;
   hasUnpublishedChanges: boolean;
+  hasAdminAccess?: boolean;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;

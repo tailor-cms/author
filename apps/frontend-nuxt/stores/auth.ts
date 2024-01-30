@@ -2,6 +2,7 @@ import { auth as api } from '@/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null);
+  const isAdmin = computed(() => user.value?.role === 'ADMIN');
 
   function $reset({ user: userData = null } = {}) {
     user.value = userData;
@@ -61,6 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
+    isAdmin,
     login,
     logout,
     forgotPassword,

@@ -5,6 +5,7 @@ const urls = {
   root: '/repositories',
   import: () => `${urls.root}/import`,
   resource: (id) => `${urls.root}/${id}`,
+  pin: (id) => `${urls.resource(id)}/pin`,
   publish: (id) => `${urls.resource(id)}/publish`,
   exportInit: (id) => `${urls.resource(id)}/export/setup`,
   export: (id, jobId) => `${urls.resource(id)}/export/${jobId}`,
@@ -22,6 +23,10 @@ function get(repositoryId, params) {
 
 function getRepositories(params) {
   return request.get(urls.root, { params }).then(extractData);
+}
+
+function pin(repositoryId, pin) {
+  return request.post(urls.pin(repositoryId), { pin }).then(extractData);
 }
 
 function getUsers(repositoryId, params) {
@@ -73,6 +78,7 @@ export default {
   getUsers,
   upsertUser,
   removeUser,
+  pin,
   publishRepositoryMeta,
   addTag,
   removeTag,
