@@ -1,5 +1,5 @@
 <template>
-  <VApp id="app">
+  <VApp>
     <NuxtPage />
   </VApp>
 </template>
