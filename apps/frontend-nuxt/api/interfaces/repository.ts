@@ -60,12 +60,12 @@ export interface Revision {
   updatedAt: string;
 }
 
-interface RepositoryTag {
+export interface RepositoryTag {
   repositoryId: number;
   tagId: number;
 }
 
-interface Tag {
+export interface Tag {
   id: number;
   uid: string;
   name: string;

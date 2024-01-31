@@ -37,17 +37,17 @@
       </template>
       Add tag
     </VTooltip>
-    <!-- <AddTag
+    <AddTag
       v-if="showTagDialog"
       @close="showTagDialog = false"
-      :repository="props.repository" /> -->
+      :repository="repository" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { Repository } from '@/api/interfaces/repository';
 
-// import AddTag from './AddTag.vue';
+import AddTag from './AddTag.vue';
 import clamp from 'lodash/clamp';
 import get from 'lodash/get';
 import map from 'lodash/map';

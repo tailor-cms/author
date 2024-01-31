@@ -28,9 +28,9 @@
 <script lang="ts" setup>
 export interface Props {
   headerIcon?: string;
-  width: number | string;
-  paddingless: boolean;
-  dataTestid: string;
+  width?: number | string;
+  paddingless?: boolean;
+  dataTestid?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
