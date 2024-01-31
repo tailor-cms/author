@@ -5,7 +5,7 @@ export interface Repository {
   name: string;
   description: string;
   data: any;
-  tags: any[];
+  tags: Tag[];
   revisions: Revision[];
   lastChange?: Revision;
   repositoryUsers: RepositoryUser[];
@@ -58,4 +58,16 @@ export interface Revision {
   };
   createdAt: string;
   updatedAt: string;
+}
+
+interface RepositoryTag {
+  repositoryId: number;
+  tagId: number;
+}
+
+interface Tag {
+  id: number;
+  uid: string;
+  name: string;
+  RepositoryTag: RepositoryTag;
 }

@@ -52,10 +52,11 @@
               <VBtn
                 v-bind="props"
                 @click.stop="navigateTo(`repository/${repository.id}/settings`)"
-                color="primary-darken-3"
+                color="primary-darken-1"
                 aria-label="Repository settings"
                 class="repo-info mr-2"
                 icon="mdi-cog"
+                variant="text"
                 size="small"
               >
               </VBtn>
@@ -97,7 +98,7 @@
           </template>
           {{ isPinned ? 'Unpin' : 'Pin' }} {{ schemaName }}
         </VTooltip>
-        <!-- <Tags :repository="repository" /> -->
+        <Tags :repository="repository" />
       </VCardActions>
     </VCard>
   </VHover>
@@ -112,7 +113,7 @@ import first from 'lodash/first';
 import get from 'lodash/get';
 import { useRepositoryStore } from '@/stores/repository';
 import { useTimeAgo } from '@vueuse/core';
-// import Tags from './Tags/index.vue';
+import Tags from './Tags/index.vue';
 import truncate from 'lodash/truncate';
 
 const props = defineProps<{ repository: Repository }>();
