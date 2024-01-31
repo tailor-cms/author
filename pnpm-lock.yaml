@@ -743,6 +743,9 @@ importers:
       bluebird:
         specifier: ^3.7.2
         version: 3.7.2
+      mitt:
+        specifier: ^3.0.1
+        version: 3.0.1
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.3.3)(vue@3.3.11)
@@ -10685,6 +10688,10 @@ packages:
       pumpify: 1.5.1
       stream-each: 1.2.3
       through2: 3.0.2
+    dev: false
+
+  /mitt@3.0.1:
+    resolution: {integrity: sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==}
     dev: false
 
   /mjml-accordion@4.14.1:

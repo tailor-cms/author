@@ -27,6 +27,7 @@
     "@vueuse/core": "^10.7.2",
     "axios": "^1.4.0",
     "bluebird": "^3.7.2",
+    "mitt": "^3.0.1",
     "pinia": "^2.1.7",
     "sse-event-types": "workspace:*",
     "tailor-config-shared": "workspace:*",
