@@ -4,13 +4,13 @@
     <VMain class="view">
       <slot></slot>
     </VMain>
-    <!-- <ConfirmationModal /> -->
+    <ConfirmationDialog />
   </div>
 </template>
 
 <script lang="ts" setup>
 import AppBar  from '@/components/common/AppBar.vue';
-// import ConfirmationModal from 'components/common/ConfirmationModal.vue';
+import ConfirmationDialog from '@/components/common/ConfirmationDialog.vue';
 
 import { useAuthStore } from '@/stores/auth';
 
