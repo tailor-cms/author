@@ -1,5 +1,8 @@
 <template>
   <VDialog :width="props.width" v-bind="$attrs">
+    <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
+      <slot :name="slot" v-bind="scope"/>
+    </template>
     <VCard :data-testid="dataTestid">
       <VCardTitle class="dialog-title bg-primary-darken-3 pa-5">
         <VAvatar
