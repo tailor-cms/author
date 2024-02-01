@@ -746,6 +746,9 @@ importers:
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
+      p-min-delay:
+        specifier: ^4.0.1
+        version: 4.0.2
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.3.3)(vue@3.3.11)
