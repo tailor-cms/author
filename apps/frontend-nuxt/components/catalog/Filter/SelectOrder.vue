@@ -18,9 +18,9 @@
       </template>
       <VList class="py-0">
         <VListItem
-          v-for="{ text, field, order } in options"
+          v-for="{ text, field, direction } in options"
           :key="field"
-          @click="update({ field, order })"
+          @click="update({ field, direction })"
           :class="{ 'bg-secondary-lighten-5': props.sortBy.field === field }"
         >
           <VListItemTitle class="pr-3 text-left">{{ text }}</VListItemTitle>
@@ -34,7 +34,7 @@
           @click="toggleOrder"
           color="primary-lighten-2"
           :icon="`mdi-sort-${
-            sortBy?.order === 'ASC' ? 'ascending' : 'descending'
+            sortBy?.direction === 'ASC' ? 'ascending' : 'descending'
           }`"
           variant="text"
           class="my-1"
@@ -48,17 +48,17 @@
 
 <script lang="ts" setup>
 export interface Props {
-  sortBy: { field: string; order: string };
+  sortBy: { field: string; direction: string };
 }
 
 const emit = defineEmits(['update']);
 const props = withDefaults(defineProps<Props>(), {
-  sortBy: { field: 'createdAt', order: 'DESC' },
+  sortBy: { field: 'createdAt', direction: 'DESC' },
 });
 
 const options = computed(() => [
-  { text: 'Creation date', field: 'createdAt', order: 'DESC' },
-  { text: 'Name', field: 'name', order: 'ASC' },
+  { text: 'Creation date', field: 'createdAt', direction: 'DESC' },
+  { text: 'Name', field: 'name', direction: 'ASC' },
 ]);
 
 const update = (sortOption) => {
@@ -66,8 +66,8 @@ const update = (sortOption) => {
 };
 
 const toggleOrder = () => {
-  const order = props.sortBy.order === 'ASC' ? 'DESC' : 'ASC';
-  emit('update', { ...props.sortBy, order });
+  const direction = props.sortBy.direction === 'ASC' ? 'DESC' : 'ASC';
+  emit('update', { ...props.sortBy, direction });
 };
 </script>
 
