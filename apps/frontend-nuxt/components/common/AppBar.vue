@@ -1,16 +1,21 @@
 <template>
-  <VAppBar class="elevation-0" color="primary-darken-3" density="compact">
-    <NuxtLink to="/" class="app-brand pl-4">
+  <VAppBar class="elevation-0" color="primary-darken-3">
+    <NuxtLink to="/" class="app-brand pl-4 pt-1">
       <img
         src="/img/default-logo-full.svg"
-        width="36px"
-        height="36px"
+        width="44"
+        height="44"
         alt="Tailor logo"
         class="pt-2"
       />
-      <VAppBarTitle class="app-name">
+      <VAppBarTitle class="app-name py-1 pl-1">
         Tailor
-        <span class="text-caption text-uppercase">author</span>
+        <span class="text-caption font-weight-bold">
+          <span class="text-primary-lighten-2 text-uppercase">
+            authoring meets
+          </span>
+          <span class="text-secondary-lighten-2">AI</span>
+        </span>
       </VAppBarTitle>
     </NuxtLink>
     <template v-slot:append>
@@ -73,7 +78,7 @@ const routes = computed(() => {
   if (repository.value) {
     items.unshift({
       name: `${repository.value.name} structure`,
-      to: `repository/${repository.value?.id}`
+      to: `repository/${repository.value?.id}`,
     });
   }
   return items;
