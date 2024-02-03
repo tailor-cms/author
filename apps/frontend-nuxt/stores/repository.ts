@@ -122,6 +122,10 @@ export const useRepositoryStore = defineStore('repositories', () => {
   function $reset() {
     $items.clear();
     $tags.clear();
+    resetQueryParams();
+  }
+
+  function resetQueryParams() {
     Object.assign(queryParams, getDefaultQueryParams());
   }
 
@@ -144,6 +148,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     get,
     fetch,
     queryParams,
+    resetQueryParams,
     fetchTags,
     addTag,
     removeTag,
