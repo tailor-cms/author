@@ -46,7 +46,7 @@ html {
 }
 
 .v-main {
-  // background-color: $bg-color-default;
+  background: #37474f;
 }
 
 .v-main .view {
