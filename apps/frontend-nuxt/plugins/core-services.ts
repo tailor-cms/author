@@ -1,5 +1,6 @@
-import { asset as assetApi, exposedApi } from '@/api';
 import { schema } from 'tailor-config-shared';
+
+import { asset as assetApi, exposedApi } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
 export default defineNuxtPlugin({
@@ -13,6 +14,6 @@ export default defineNuxtPlugin({
       nuxtApp.provide('api', exposedApi);
       // $teRegistry: contentPluginRegistry.elementRegistry,
       // $ccRegistry: contentPluginRegistry.containerRegistry,
-    }
-  }
+    },
+  },
 });

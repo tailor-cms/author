@@ -1,12 +1,12 @@
 <template>
   <VAppBar class="elevation-0" color="primary-darken-3">
-    <NuxtLink to="/" class="app-brand pl-4 pt-1">
+    <NuxtLink class="app-brand pl-4 pt-1" to="/">
       <img
-        src="/img/default-logo-full.svg"
-        width="44"
-        height="44"
         alt="Tailor logo"
         class="pt-2"
+        height="44"
+        src="/img/default-logo-full.svg"
+        width="44"
       />
       <VAppBarTitle class="app-name py-1 pl-1">
         Tailor
@@ -18,7 +18,7 @@
         </span>
       </VAppBarTitle>
     </NuxtLink>
-    <template v-slot:append>
+    <template #append>
       <VBtn
         v-for="{ name, to } in routes"
         :key="name"
@@ -36,10 +36,10 @@
         z-index="1000"
         offset-y
       >
-        <template v-slot:activator="{ props }">
-          <VBtn v-bind="props" icon class="mx-2">
-            <VAvatar size="36" color="teal-accent-4">
-              <img :src="user.imgUrl" width="34" />
+        <template #activator="{ props }">
+          <VBtn v-bind="props" class="mx-2" icon>
+            <VAvatar color="teal-accent-4" size="36">
+              <img :src="user.imgUrl" alt="User avatar" width="34" />
             </VAvatar>
           </VBtn>
         </template>
@@ -61,6 +61,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+
 import { useAuthStore } from '@/stores/auth';
 
 defineProps<{ user: any }>();

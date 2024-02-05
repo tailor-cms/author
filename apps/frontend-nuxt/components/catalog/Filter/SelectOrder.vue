@@ -1,9 +1,9 @@
 <template>
   <span>
     <VMenu offset="10">
-      <template v-slot:activator="{ props: menuProps }">
-        <VTooltip open-delay="800" location="top">
-          <template v-slot:activator="{ props: tooltipProps }">
+      <template #activator="{ props: menuProps }">
+        <VTooltip location="top" open-delay="800">
+          <template #activator="{ props: tooltipProps }">
             <VBtn
               v-bind="{ ...menuProps, ...tooltipProps }"
               class="my-1"
@@ -20,24 +20,24 @@
         <VListItem
           v-for="{ text, field, direction } in options"
           :key="field"
-          @click="update({ field, direction })"
           :class="{ 'bg-secondary-lighten-5': props.sortBy.field === field }"
+          @click="update({ field, direction })"
         >
           <VListItemTitle class="pr-3 text-left">{{ text }}</VListItemTitle>
         </VListItem>
       </VList>
     </VMenu>
-    <VTooltip open-delay="800" location="top">
-      <template v-slot:activator="{ props }">
+    <VTooltip location="top" open-delay="800">
+      <template #activator="{ props: tooltipProps }">
         <VBtn
-          v-bind="props"
-          @click="toggleOrder"
-          color="primary-lighten-2"
+          v-bind="tooltipProps"
           :icon="`mdi-sort-${
             sortBy?.direction === 'ASC' ? 'ascending' : 'descending'
           }`"
-          variant="text"
           class="my-1"
+          color="primary-lighten-2"
+          variant="text"
+          @click="toggleOrder"
         >
         </VBtn>
       </template>

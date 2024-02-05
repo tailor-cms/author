@@ -1,26 +1,26 @@
 <template>
   <TailorDialog
-    @click:outside="emit('close')"
     :model-value="true"
     header-icon="mdi-tag-outline"
+    @click:outside="emit('close')"
   >
     <template #header>Add Tag</template>
     <template #body>
-      <form @submit.prevent="submitForm" novalidate>
+      <form novalidate @submit.prevent="submitForm">
         <VCombobox
           v-model="tagInput"
-          @updateTagName:search-input="(v: string) => (tagInput = v)"
-          @keydown.enter="submitForm"
-          :items="availableTags"
           :error-messages="errors.tag"
-          name="tag"
-          label="Select a tag or add a new one"
-          variant="outlined"
+          :items="availableTags"
           class="required"
+          label="Select a tag or add a new one"
+          name="tag"
+          variant="outlined"
+          @keydown.enter="submitForm"
+          @update-tag-name:search-input="(v: string) => (tagInput = v)"
         />
         <div class="d-flex justify-end">
-          <VBtn @click="hide" variant="text">Cancel</VBtn>
-          <VBtn type="submit" color="primary-darken-4" variant="text">
+          <VBtn variant="text" @click="hide">Cancel</VBtn>
+          <VBtn color="primary-darken-4" type="submit" variant="text">
             Save
           </VBtn>
         </div>
@@ -30,15 +30,15 @@
 </template>
 
 <script lang="ts" setup>
-import type { Repository, Tag } from '@/api/interfaces/repository';
-
-import { tag as api } from '@/api';
 import differenceBy from 'lodash/differenceBy';
 import map from 'lodash/map';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useForm } from 'vee-validate';
-import { useRepositoryStore } from '@/stores/repository';
 import { object, string } from 'yup';
+
+import type { Repository, Tag } from '@/api/interfaces/repository';
+import { tag as api } from '@/api';
+import TailorDialog from '@/components/common/TailorDialog.vue';
+import { useRepositoryStore } from '@/stores/repository';
 
 const props = defineProps<{ repository: Repository }>();
 const emit = defineEmits(['close']);

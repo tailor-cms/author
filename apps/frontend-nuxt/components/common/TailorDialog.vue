@@ -1,15 +1,15 @@
 <template>
   <VDialog :width="props.width" v-bind="$attrs">
-    <template v-for="(_, slot) of $slots" v-slot:[slot]="scope">
-      <slot :name="slot" v-bind="scope"/>
+    <template v-for="(_, slot) of $slots" #[slot]="scope">
+      <slot :name="slot" v-bind="scope" />
     </template>
     <VCard :data-testid="dataTestid">
       <VCardTitle class="dialog-title bg-primary-darken-3 pa-5">
         <VAvatar
           v-if="props.headerIcon"
+          class="mr-3"
           color="secondary"
           size="38"
-          class="mr-3"
         >
           <VIcon size="26">{{ props.headerIcon }}</VIcon>
         </VAvatar>
@@ -37,6 +37,7 @@ export interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  headerIcon: 'mdi-alert',
   width: 500,
   paddingless: false,
   dataTestid: 'tailorDialog',

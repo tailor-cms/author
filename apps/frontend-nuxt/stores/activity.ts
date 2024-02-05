@@ -1,5 +1,4 @@
 import type { Activity } from '@/api/interfaces/activity';
-
 import { activity as api } from '@/api';
 
 export const useActivityStore = defineStore('activities', () => {

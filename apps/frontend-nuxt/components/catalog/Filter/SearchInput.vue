@@ -2,17 +2,19 @@
   <div class="repo-search">
     <div :style="{ width: isExpanded ? '98%' : '85%' }">
       <VTextField
-        v-focus="isExpanded"
-        @focus="isExpanded = true"
-        @blur="isExpanded = false"
-        @update:modelValue="emitChange"
         v-model="internalValue"
+        v-focus="isExpanded"
         :bg-color="`primary-darken-${isExpanded ? 1 : 2}`"
-        prepend-inner-icon="mdi-magnify"
+        class="pb-5"
         placeholder="Search..."
+        prepend-inner-icon="mdi-magnify"
         variant="tonal"
-        clearable hide-details
-        class="pb-5" />
+        clearable
+        hide-details
+        @blur="isExpanded = false"
+        @focus="isExpanded = true"
+        @update:model-value="emitChange"
+      />
     </div>
   </div>
 </template>

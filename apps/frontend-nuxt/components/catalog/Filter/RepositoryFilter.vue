@@ -1,12 +1,12 @@
 <template>
   <VMenu
-    @update:model-value="search = ''"
     :close-on-content-click="false"
     offset="10"
+    @update:model-value="search = ''"
   >
-    <template v-slot:activator="{ props: menuProps }">
-      <VTooltip open-delay="800" location="top">
-        <template v-slot:activator="{ props: tooltipProps }">
+    <template #activator="{ props: menuProps }">
+      <VTooltip location="top" open-delay="800">
+        <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="{ ...menuProps, ...tooltipProps }"
             :icon="icon"
@@ -23,8 +23,8 @@
         v-model="search"
         :label="`Filter ${props.label}...`"
         variant="outlined"
-        hide-details
         clearable
+        hide-details
       />
     </VSheet>
     <VList v-if="filteredOptions.length" elevation="0" rounded="0">
@@ -34,23 +34,23 @@
         :ripple="false"
         @click.stop="emit('update', option)"
       >
-        <template v-slot:prepend>
+        <template #prepend>
           <v-list-item-action start>
-            <VCheckboxBtn
-              :model-value="option.isSelected"
-              readonly
-            />
+            <VCheckboxBtn :model-value="option.isSelected" readonly />
           </v-list-item-action>
         </template>
-        <v-list-item-title v-text="option.name"></v-list-item-title>
+        <v-list-item-title>{{ option.name }}</v-list-item-title>
       </VListItem>
     </VList>
-    <div v-else class="bg-white pa-5 text-body-2">No {{ props.label }} found</div>
+    <div v-else class="bg-white pa-5 text-body-2">
+      No {{ props.label }} found
+    </div>
   </VMenu>
 </template>
 
 <script lang="ts" setup>
-import { orderBy, filter as filterBy } from 'lodash';
+import filterBy from 'lodash/filter';
+import orderBy from 'lodash/orderBy';
 
 export interface Props {
   label: string;

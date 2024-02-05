@@ -1,6 +1,5 @@
 // event emitter with channel support
 import type { Emitter, EventHandlerMap, EventType, Handler } from 'mitt';
-
 import mitt from 'mitt';
 
 const isFunction = (arg: any) => typeof arg === 'function';
@@ -9,7 +8,7 @@ const noop = () => {};
 const requestEvent = (id: string) => `request->${id}`;
 const replyEvent = (id: string) => `reply->${id}`;
 
-type Events = Emitter<Record<EventType, unknown>>
+type Events = Emitter<Record<EventType, unknown>>;
 
 interface ExtendedMitt extends Events {
   once<Key extends keyof Events>(
@@ -72,6 +71,7 @@ class Channel {
 }
 
 export default class Radio {
+  // eslint-disable-next-line no-use-before-define
   private static instance: Radio;
   private static channels = new Map();
   private static bus = extendedMitt();

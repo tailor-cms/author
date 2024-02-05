@@ -4,34 +4,35 @@
       <VChip
         v-for="{ id, name, truncatedName } in tags"
         :key="id"
-        @click:close="showDeleteConfirmation(id, name)"
         class="mr-2 mb-1"
         close-icon="mdi-close-circle"
         close-label="Remove tag"
         color="primary-lighten-1"
         variant="tonal"
-        closable label
+        closable
+        label
+        @click:close="showDeleteConfirmation(id, name)"
       >
         <VTooltip
           :disabled="name.length === truncatedName.length"
-          open-delay="100"
           location="bottom"
+          open-delay="100"
         >
-          <template v-slot:activator="{ props }">
-            <div v-bind="props">{{ truncatedName }}</div>
+          <template #activator="{ props: tooltipProps }">
+            <div v-bind="tooltipProps">{{ truncatedName }}</div>
           </template>
           <span>{{ name }}</span>
         </VTooltip>
       </VChip>
     </div>
-    <VTooltip v-if="!exceededTagLimit" open-delay="400" location="bottom">
-      <template v-slot:activator="{ props }">
+    <VTooltip v-if="!exceededTagLimit" location="bottom" open-delay="400">
+      <template #activator="{ props: tooltipProps }">
         <VBtn
-          v-bind="props"
-          @click.stop="showTagDialog = true"
-          color="primary-lighten-3"
+          v-bind="tooltipProps"
           aria-label="Add tag"
+          color="primary-lighten-3"
           icon="mdi-tag-plus"
+          @click.stop="showTagDialog = true"
         >
         </VBtn>
       </template>
@@ -39,19 +40,20 @@
     </VTooltip>
     <AddTag
       v-if="showTagDialog"
+      :repository="repository"
       @close="showTagDialog = false"
-      :repository="repository" />
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { Repository } from '@/api/interfaces/repository';
-
-import AddTag from './AddTag.vue';
 import clamp from 'lodash/clamp';
 import get from 'lodash/get';
 import map from 'lodash/map';
 import truncate from 'lodash/truncate';
+
+import AddTag from './AddTag.vue';
+import type { Repository } from '@/api/interfaces/repository';
 import { useRepositoryStore } from '@/stores/repository';
 
 const props = defineProps<{ repository: Repository }>();
@@ -80,7 +82,7 @@ const showDeleteConfirmation = (tagId: number, tagName: string) => {
   $eventBus.channel('app').emit('showConfirmationModal', {
     title: 'Delete tag',
     message: `Are you sure you want to delete tag ${tagName}?`,
-    action: () => repositoryStore.removeTag(props.repository.id, tagId)
+    action: () => repositoryStore.removeTag(props.repository.id, tagId),
   });
 };
 </script>

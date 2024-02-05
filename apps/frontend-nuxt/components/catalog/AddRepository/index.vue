@@ -6,7 +6,7 @@
     paddingless
     persistent
   >
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <VBtn
         v-bind="props"
         aria-label="Add repository"
@@ -30,14 +30,14 @@
         <VTab :value="NEW_TAB">New</VTab>
         <VTab :value="IMPORT_TAB">Import</VTab>
       </VTabs>
-      <form @submit.prevent="createRepository" novalidate class="mt-4 pa-4">
+      <form class="mt-4 pa-4" novalidate @submit.prevent="createRepository">
         <VAlert
-          @click:close="serverError = ''"
           :model-value="!!serverError"
+          class="mb-12"
           color="secondary"
           icon="mdi-alert"
           closable
-          class="mb-12"
+          @click:close="serverError = ''"
         >
           {{ serverError }}
         </VAlert>
@@ -45,10 +45,10 @@
           <v-window-item :value="NEW_TAB" class="pt-1">
             <VSelect
               v-model="schemaInput"
-              :items="SCHEMAS"
               :error-messages="errors.schema"
-              item-value="id"
+              :items="SCHEMAS"
               item-title="name"
+              item-value="id"
               label="Type"
               variant="outlined"
             />
@@ -56,8 +56,8 @@
           <v-window-item :value="IMPORT_TAB" class="pt-1">
             <VFileInput
               v-model="archiveInput"
-              :error-messages="errors.archive"
               :clearable="false"
+              :error-messages="errors.archive"
               :label="archive ? 'Selected archive' : 'Select archive'"
               prepend-icon=""
               prepend-inner-icon="mdi-paperclip"
@@ -67,9 +67,9 @@
         </v-window>
         <RepositoryNameField
           v-model="nameInput"
+          class="mb-2"
           name="name"
           placeholder="Enter name..."
-          class="mb-2"
         />
         <VTextarea
           v-model.trim="descriptionInput"
@@ -79,15 +79,15 @@
           variant="outlined"
         />
         <div class="d-flex justify-end">
-          <VBtn @click="hide" :disabled="showLoader" variant="text">
+          <VBtn :disabled="showLoader" variant="text" @click="hide">
             Cancel
           </VBtn>
           <VBtn
             :loading="showLoader"
-            type="submit"
-            color="primary-darken-4"
-            variant="text"
             class="px-1"
+            color="primary-darken-4"
+            type="submit"
+            variant="text"
           >
             Create
           </VBtn>
@@ -98,12 +98,13 @@
 </template>
 
 <script lang="ts" setup>
-import { useForm } from 'vee-validate';
 import { array, object, string } from 'yup';
+import { SCHEMAS } from 'tailor-config-shared';
+import { useForm } from 'vee-validate';
 import pMinDelay from 'p-min-delay';
+
 import { repository as api } from '@/api';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
-import { SCHEMAS } from 'tailor-config-shared';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
@@ -123,14 +124,14 @@ const archive = ref();
 
 const { defineField, errors, handleSubmit } = useForm({
   validationSchema: object({
-    schema: string().when(([], schema) => {
+    schema: string().when((_, schema) => {
       return selectedTab.value === NEW_TAB
         ? schema.required()
         : schema.notRequired();
     }),
     name: string().required().min(2).max(2000),
     description: string().required().min(2).max(2000),
-    archive: array().when(([], schema) => {
+    archive: array().when((_, schema) => {
       return selectedTab.value === IMPORT_TAB
         ? schema.required()
         : schema.notRequired();

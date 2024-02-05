@@ -1,5 +1,9 @@
 <template>
-  <TailorDialog v-model="isVisible" @click:outside="close" header-icon="mdi-alert">
+  <TailorDialog
+    v-model="isVisible"
+    header-icon="mdi-alert"
+    @click:outside="close"
+  >
     <template #header>{{ context.title }}</template>
     <template #body>
       <div class="text-body-1 text-left">
@@ -7,8 +11,13 @@
       </div>
     </template>
     <template #actions>
-      <VBtn @click="close" variant="text">Close</VBtn>
-      <VBtn v-focus="isVisible" @click="confirm" color="secondary" variant="text">
+      <VBtn variant="text" @click="close">Close</VBtn>
+      <VBtn
+        v-focus="isVisible"
+        color="secondary"
+        variant="text"
+        @click="confirm"
+      >
         Confirm
       </VBtn>
     </template>
@@ -17,6 +26,7 @@
 
 <script lang="ts" setup>
 import invoke from 'lodash/invoke';
+
 import TailorDialog from '@/components/common/TailorDialog.vue';
 
 const { $eventBus } = useNuxtApp() as any;

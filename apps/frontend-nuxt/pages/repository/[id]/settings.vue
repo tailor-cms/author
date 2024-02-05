@@ -1,5 +1,5 @@
 <template>
-  <VAlert color="secondary" class="ma-10">Hi from repository settings!</VAlert>
+  <VAlert class="ma-10" color="secondary">Hi from repository settings!</VAlert>
 </template>
 
 <script setup lang="ts">

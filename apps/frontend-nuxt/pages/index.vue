@@ -1,60 +1,60 @@
 <template>
-  <NuxtLayout name="main" class="catalog-wrapper">
+  <NuxtLayout class="catalog-wrapper" name="main">
     <VContainer :class="{ 'catalog-empty': !hasRepositories }" class="catalog">
-      <VRow no-gutters class="catalog-actions">
+      <VRow class="catalog-actions" no-gutters>
         <AddRepository :is-admin="authStore.isAdmin" @done="onRepositoryAdd" />
-        <VCol md="4" sm="10" offset-md="4" offset-sm="1">
-          <Search
-            @update="onSearchInput"
+        <VCol md="4" offset-md="4" offset-sm="1" sm="10">
+          <SearchInput
             :search-input="repositoryStore.queryParams.search"
+            @update="onSearchInput"
           />
         </VCol>
-        <VCol md="3" sm="1" class="text-sm-left pl-2">
+        <VCol class="text-sm-left pl-2" md="3" sm="1">
           <VTooltip location="top" open-delay="400">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <VBtn
                 v-bind="props"
-                @click="togglePinFilter"
                 :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-1'"
                 :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                 class="my-1"
                 variant="tonal"
+                @click="togglePinFilter"
               >
               </VBtn>
             </template>
             <span>{{ arePinnedShown ? 'Show all' : 'Show pinned' }}</span>
           </VTooltip>
           <SelectOrder
-            @update="updateSort"
             :sort-by="queryParams.sortBy"
             class="pl-2"
+            @update="updateSort"
           />
           <RepositoryFilter
             v-for="filter in filters"
             :key="filter.type"
-            @update="onFilterChange"
             v-bind="filter"
+            @update="onFilterChange"
           />
         </VCol>
       </VRow>
       <RepositoryFilterSelection
-        @close="onFilterChange"
         @clear:all="onFilterChange"
+        @close="onFilterChange"
       />
       <VInfiniteScroll
         v-if="hasRepositories"
-        @load="loadMore"
         class="d-flex ma-0 pa-0"
         color="primary-lighten-2"
         empty-text=""
         mode="manual"
+        @load="loadMore"
       >
         <VRow>
           <VCol
             v-for="repository in repositoryStore.items"
             :key="repository.uid"
-            cols="4"
             class="px-2 pb-5"
+            cols="4"
           >
             <RepositoryCard :repository="repository" />
           </VCol>
@@ -65,17 +65,18 @@
 </template>
 
 <script setup lang="ts">
-import AddRepository from '@/components/catalog/AddRepository/index.vue';
 import find from 'lodash/find';
 import map from 'lodash/map';
-import Search from '@/components/catalog/Filter/Search.vue';
-import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
-import RepositoryCard from '@/components/catalog/Card/index.vue';
-import RepositoryFilter from '~/components/catalog/Filter/RepositoryFilter.vue';
-import RepositoryFilterSelection from '@/components/catalog/Filter/RepositoryFilterSelection/index.vue';
-import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
 import { SCHEMAS } from 'tailor-config-shared';
 import { storeToRefs } from 'pinia';
+
+import AddRepository from '@/components/catalog/AddRepository/index.vue';
+import RepositoryCard from '@/components/catalog/Card/index.vue';
+import RepositoryFilter from '~/components/catalog/Filter/RepositoryFilter.vue';
+import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
+import RepositoryFilterSelection from '@/components/catalog/Filter/RepositoryFilterSelection/index.vue';
+import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
+import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRepositoryStore } from '@/stores/repository';
 

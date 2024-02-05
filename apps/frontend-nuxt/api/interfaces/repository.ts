@@ -1,31 +1,13 @@
-export interface Repository {
-  id: number;
-  uid: string;
-  schema: string;
-  name: string;
-  description: string;
-  data: any;
-  tags: Tag[];
-  revisions: Revision[];
-  lastChange?: Revision;
-  repositoryUsers: RepositoryUser[];
-  // Current user's repositoryUser
-  repositoryUser?: RepositoryUser;
-  hasUnpublishedChanges: boolean;
-  hasAdminAccess?: boolean;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
+export interface RepositoryTag {
+  repositoryId: number;
+  tagId: number;
 }
 
-export interface RepositoryUser {
-  userId: number;
-  repositoryId: number;
-  role: string;
-  pinned: boolean;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
+export interface Tag {
+  id: number;
+  uid: string;
+  name: string;
+  RepositoryTag: RepositoryTag;
 }
 
 export interface Revision {
@@ -60,14 +42,32 @@ export interface Revision {
   updatedAt: string;
 }
 
-export interface RepositoryTag {
+export interface RepositoryUser {
+  userId: number;
   repositoryId: number;
-  tagId: number;
+  role: string;
+  pinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
 }
 
-export interface Tag {
+export interface Repository {
   id: number;
   uid: string;
+  schema: string;
   name: string;
-  RepositoryTag: RepositoryTag;
+  description: string;
+  data: any;
+  tags: Tag[];
+  revisions: Revision[];
+  lastChange?: Revision;
+  repositoryUsers: RepositoryUser[];
+  // Current user's repositoryUser
+  repositoryUser?: RepositoryUser;
+  hasUnpublishedChanges: boolean;
+  hasAdminAccess?: boolean;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
 }

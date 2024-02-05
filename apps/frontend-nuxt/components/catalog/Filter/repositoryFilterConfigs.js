@@ -3,12 +3,12 @@ export default {
     type: 'TAG',
     label: 'tags',
     queryParam: 'tagIds',
-    icon: 'mdi-tag-outline'
+    icon: 'mdi-tag-outline',
   },
   SCHEMA: {
     type: 'SCHEMA',
     label: 'schemas',
     queryParam: 'schemas',
-    icon: 'mdi-file-tree'
-  }
+    icon: 'mdi-file-tree',
+  },
 };

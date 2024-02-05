@@ -1,10 +1,9 @@
+import { repository as api, tag as tagApi } from '@/api';
 import type {
   Repository,
   RepositoryUser,
   Tag,
 } from '@/api/interfaces/repository';
-
-import { repository as api, tag as tagApi } from '@/api';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
 import { useAuthStore } from './auth';
 

@@ -9,9 +9,8 @@
 </template>
 
 <script lang="ts" setup>
-import AppBar  from '@/components/common/AppBar.vue';
+import AppBar from '@/components/common/AppBar.vue';
 import ConfirmationDialog from '@/components/common/ConfirmationDialog.vue';
-
 import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();
@@ -20,7 +19,8 @@ const store = useAuthStore();
 <style lang="scss">
 // @import '@/assets/stylesheets/main';
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
 }
@@ -30,7 +30,7 @@ html {
 }
 
 #app {
-  --text-color-default: rgba(0,0,0,0.87);
+  --text-color-default: rgba(0, 0, 0, 0.87);
   height: 100vh;
   color: var(--text-color-default);
   // font-family: $font-family-primary;
@@ -40,7 +40,10 @@ html {
   overflow: hidden;
 }
 
-.application, .v-application--wrap, .v-main, .view {
+.application,
+.v-application--wrap,
+.v-main,
+.view {
   width: 100%;
   height: 100%;
 }

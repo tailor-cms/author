@@ -1,28 +1,28 @@
 <template>
   <VHover v-slot="{ isHovering: isCardHovered }">
     <VCard
-      @click="navigateTo(`repository/${repository.id}`)"
       :elevation="isCardHovered ? 24 : 1"
       :ripple="false"
+      class="repository-card d-flex flex-column justify-space-between text-left"
       color="primary-darken-4"
       data-testid="catalog__repositoryCard"
-      class="repository-card d-flex flex-column justify-space-between text-left"
+      @click="navigateTo(`repository/${repository.id}`)"
     >
       <div class="card-body">
         <div class="d-flex align-center mt-1 ml-3 mr-1 mb-1">
           <VChip
             :color="repository.data.color"
-            size="x-small"
             class="readonly px-1"
+            size="x-small"
           />
           <VTooltip
             :disabled="!isSchemaTruncated"
-            open-delay="300"
             location="top"
+            open-delay="300"
           >
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props: tooltipProps }">
               <span
-                v-bind="props"
+                v-bind="tooltipProps"
                 ref="schema"
                 class="schema-name flex-grow-1 mx-2 text-truncate text-uppercase"
               >
@@ -31,33 +31,33 @@
             </template>
             {{ schemaName }}
           </VTooltip>
-          <VTooltip open-delay="100" location="top">
-            <template v-slot:activator="{ props }">
+          <VTooltip location="top" open-delay="100">
+            <template #activator="{ props: tooltipProps }">
               <VBadge
-                v-bind="props"
+                v-bind="tooltipProps"
                 :color="repository.hasUnpublishedChanges ? 'orange' : 'green'"
-                inline
-                dot
                 class="pa-1"
+                dot
+                inline
               />
             </template>
             {{ publishingInfo }}
           </VTooltip>
           <VTooltip
             v-if="repository?.hasAdminAccess"
-            open-delay="400"
             location="top"
+            open-delay="400"
           >
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props: tooltipProps }">
               <VBtn
-                v-bind="props"
-                @click.stop="navigateTo(`repository/${repository.id}/settings`)"
-                color="primary-darken-1"
+                v-bind="tooltipProps"
                 aria-label="Repository settings"
                 class="repo-info mr-2"
+                color="primary-darken-1"
                 icon="mdi-cog"
-                variant="text"
                 size="small"
+                variant="text"
+                @click.stop="navigateTo(`repository/${repository.id}/settings`)"
               >
               </VBtn>
             </template>
@@ -69,7 +69,7 @@
         </VCardTitle>
         <div class="d-flex justify-start px-4 primary--text text--lighten-4">
           <VAvatar size="38">
-            <img :src="lastActivity.user.imgUrl" width="38" />
+            <img :src="lastActivity.user.imgUrl" alt="User avatar" width="38" />
           </VAvatar>
           <div class="ml-3 overflow-hidden">
             <div class="text-caption">
@@ -85,14 +85,14 @@
       </div>
       <VSpacer />
       <VCardActions class="pb-2 px-2">
-        <VTooltip open-delay="400" location="bottom">
-          <template v-slot:activator="{ props }">
+        <VTooltip location="bottom" open-delay="400">
+          <template #activator="{ props: tooltipProps }">
             <VBtn
-              v-bind="props"
-              @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
+              v-bind="tooltipProps"
               :color="isPinned ? 'lime accent-4' : 'primary lighten-3'"
               :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
               class="mr-1"
+              @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
             >
             </VBtn>
           </template>
@@ -105,16 +105,16 @@
 </template>
 
 <script lang="ts" setup>
-import type { Repository, Revision } from '@/api/interfaces/repository';
-
-import { defineProps, computed, watch, onMounted, nextTick } from 'vue';
-import { useDisplay } from 'vuetify';
+import { computed, defineProps, nextTick, onMounted, watch } from 'vue';
 import first from 'lodash/first';
 import get from 'lodash/get';
-import { useRepositoryStore } from '@/stores/repository';
-import { useTimeAgo } from '@vueuse/core';
-import Tags from './Tags/index.vue';
 import truncate from 'lodash/truncate';
+import { useDisplay } from 'vuetify';
+import { useTimeAgo } from '@vueuse/core';
+
+import type { Repository, Revision } from '@/api/interfaces/repository';
+import Tags from './Tags/index.vue';
+import { useRepositoryStore } from '@/stores/repository';
 
 const props = defineProps<{ repository: Repository }>();
 
