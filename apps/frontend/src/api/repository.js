@@ -21,7 +21,7 @@ function get(repositoryId, params) {
 }
 
 function getRepositories(params) {
-  return request.get(urls.root, { params }).then(extractData);
+  return request.get(urls.root, { params }).then(({ data }) => data.items);
 }
 
 function getUsers(repositoryId, params) {

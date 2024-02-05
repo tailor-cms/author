@@ -27,6 +27,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
   const $tags = reactive(new Map<string, Tag>());
   const tags = computed(() => Array.from($tags.values()));
 
+  const areAllItemsFetched = ref(false);
   const queryParams = reactive(getDefaultQueryParams());
 
   const query = computed(() => {
@@ -78,9 +79,15 @@ export const useRepositoryStore = defineStore('repositories', () => {
   }
 
   async function fetch(): Promise<Repository[]> {
-    const repositories: Repository[] = await api.getRepositories(query.value);
+    const {
+      items: repositories,
+      total,
+    }: { items: Repository[]; total: number } = await api.getRepositories(
+      query.value,
+    );
     if (query.value.offset === 0) $items.clear();
     repositories.forEach((it) => add(it));
+    areAllItemsFetched.value = total <= query.value.offset + query.value.limit;
     return repositories;
   }
 
@@ -120,11 +127,18 @@ export const useRepositoryStore = defineStore('repositories', () => {
   function $reset() {
     $items.clear();
     $tags.clear();
+    areAllItemsFetched.value = false;
     resetQueryParams();
   }
 
   function resetQueryParams() {
     Object.assign(queryParams, getDefaultQueryParams());
+    areAllItemsFetched.value = false;
+  }
+
+  function resetPaginationParams() {
+    queryParams.offset = 0;
+    areAllItemsFetched.value = false;
   }
 
   function processRepository(repository: Repository) {
@@ -138,6 +152,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
   return {
     $items,
     items,
+    areAllItemsFetched,
     $tags,
     tags,
     findById,
@@ -147,6 +162,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     fetch,
     queryParams,
     resetQueryParams,
+    resetPaginationParams,
     fetchTags,
     addTag,
     removeTag,

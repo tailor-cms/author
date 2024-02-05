@@ -38,7 +38,7 @@
         </VCol>
       </VRow>
       <RepositoryFilterSelection
-        @clear:all="onFilterChange"
+        @clear:all="(queryParams.filter = []) && refetchRepositories()"
         @close="onFilterChange"
       />
       <VInfiniteScroll
@@ -59,6 +59,14 @@
             <RepositoryCard :repository="repository" />
           </VCol>
         </VRow>
+        <template v-slot:load-more="{ props }">
+          <v-btn
+            v-if="!areAllItemsFetched"
+            variant="tonal"
+            v-bind="props">
+            Load more
+          </v-btn>
+      </template>`
       </VInfiniteScroll>
     </VContainer>
   </NuxtLayout>
@@ -92,13 +100,18 @@ await authStore.fetchUserInfo();
 await repositoryStore.fetch();
 await repositoryStore.fetchTags();
 
-const { queryParams, items: repositories, tags } = storeToRefs(repositoryStore);
+const {
+  queryParams,
+  items: repositories,
+  tags,
+  areAllItemsFetched,
+} = storeToRefs(repositoryStore);
 const hasRepositories = computed(() => !!repositories.value.length);
 
 const arePinnedShown = computed(() => queryParams.value.pinned);
 const togglePinFilter = () => {
   queryParams.value.pinned = !arePinnedShown.value;
-  repositoryStore.fetch();
+  refetchRepositories();
 };
 
 const filters = computed(() => {
@@ -124,7 +137,7 @@ const updateSort = (val: any) => {
 
 const onSearchInput = (val: string) => {
   queryParams.value.search = val;
-  repositoryStore.fetch();
+  refetchRepositories();
 };
 
 const onFilterChange = (val: any) => {
@@ -135,12 +148,17 @@ const onFilterChange = (val: any) => {
     queryParams.value.filter = catalogFilter.filter(
       (it: any) => it.id !== val.id,
     );
-  repositoryStore.fetch();
+  refetchRepositories();
 };
 
 const onRepositoryAdd = async () => {
   repositoryStore.resetQueryParams();
   await repositoryStore.fetch();
+};
+
+const refetchRepositories = () => {
+  repositoryStore.resetPaginationParams();
+  repositoryStore.fetch();
 };
 
 const loadMore = async ({ done }: { done: Function }) => {
