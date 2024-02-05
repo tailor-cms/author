@@ -1,6 +1,6 @@
 <template>
   <VAppBar class="elevation-0" color="primary-darken-3">
-    <a href="/" class="app-brand pl-4 pt-1">
+    <a class="app-brand pl-4 pt-1" href="/">
       <img
         alt="Tailor logo"
         class="pt-2"
