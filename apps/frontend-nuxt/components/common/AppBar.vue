@@ -60,16 +60,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/auth';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps<{ user: any }>();
 
 const authStore = useAuthStore();
+const currentRepositoryStore = useCurrentRepository();
+const { repository } = storeToRefs(currentRepositoryStore);
 
-// TODO: To be implemented
-const repository = computed(() => null) as any;
 const routes = computed(() => {
   const items = [
     { name: 'Catalog', to: '/' },
@@ -79,7 +80,7 @@ const routes = computed(() => {
   if (repository.value) {
     items.unshift({
       name: `${repository.value.name} structure`,
-      to: `repository/${repository.value?.id}`,
+      to: `repository/${repository.value?.id}/structure`,
     });
   }
   return items;
