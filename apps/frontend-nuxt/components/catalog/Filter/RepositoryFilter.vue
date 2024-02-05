@@ -32,14 +32,14 @@
         v-for="option in filteredOptions"
         :key="option.id"
         :ripple="false"
-        @click.stop="emit('update', option)"
+        @mousedown.stop="emit('update', option)"
       >
         <template #prepend>
-          <v-list-item-action start>
-            <VCheckboxBtn :model-value="option.isSelected" readonly />
-          </v-list-item-action>
+          <VListItemAction start>
+            <VIcon v-if="option.isSelected" color="primary" icon="mdi-check"></VIcon>
+          </VListItemAction>
         </template>
-        <v-list-item-title>{{ option.name }}</v-list-item-title>
+        <VListItemTitle>{{ option.name }}</VListItemTitle>
       </VListItem>
     </VList>
     <div v-else class="bg-white pa-5 text-body-2">
@@ -87,5 +87,13 @@ const filteredOptions = computed(() => {
   max-height: 18.75rem;
   border-radius: 0;
   overflow-y: auto;
+
+  .v-list-item {
+    cursor: pointer;
+  }
+}
+
+::v-deep .v-list-item-action {
+  min-width: 1.75rem;
 }
 </style>
