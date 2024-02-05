@@ -6,7 +6,7 @@
       class="repository-card d-flex flex-column justify-space-between text-left"
       color="primary-darken-4"
       data-testid="catalog__repositoryCard"
-      @click="navigateTo(`repository/${repository.id}`)"
+      @click="navigateTo(`repository/${repository.id}/structure`)"
     >
       <div class="card-body">
         <div class="d-flex align-center mt-1 ml-3 mr-1 mb-1">
@@ -105,7 +105,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, nextTick, onMounted, watch } from 'vue';
 import first from 'lodash/first';
 import get from 'lodash/get';
 import truncate from 'lodash/truncate';
@@ -138,19 +137,17 @@ const isPinned = computed(() =>
 );
 
 const publishingInfo = computed(() =>
-  getPublishingInfo(props.repository.hasUnpublishedChanges),
+  props.repository.hasUnpublishedChanges
+    ? 'Has unpublished changes.'
+    : 'Published.',
 );
-const getPublishingInfo = (hasChanges: boolean) =>
-  hasChanges ? 'Has unpublished changes.' : 'Published.';
 
 const detectSchemaTruncation = () => {
   const { clientWidth, scrollWidth } = schema.value as any;
   isSchemaTruncated.value = clientWidth < scrollWidth;
 };
 watch(() => innerWidth.value, detectSchemaTruncation);
-onMounted(() => {
-  nextTick(detectSchemaTruncation);
-});
+onMounted(() => nextTick(detectSchemaTruncation));
 </script>
 
 <style lang="scss" scoped>
