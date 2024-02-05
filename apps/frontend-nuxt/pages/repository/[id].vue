@@ -38,7 +38,6 @@ const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 
 await authStore.fetchUserInfo();
-await currentRepositoryStore.initialize();
 
 const getTabItems = ({
   hasWorkflow,
@@ -89,6 +88,10 @@ const tabs = computed(() => {
     hasActivities,
     query: {},
   });
+});
+
+onMounted(async () => {
+  await currentRepositoryStore.initialize();
 });
 </script>
 
