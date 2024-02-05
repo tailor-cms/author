@@ -58,7 +58,7 @@
               v-model="archiveInput"
               :clearable="false"
               :error-messages="errors.archive"
-              :label="archive ? 'Selected archive' : 'Select archive'"
+              :label="archiveInput ? 'Selected archive' : 'Select archive'"
               prepend-icon=""
               prepend-inner-icon="mdi-paperclip"
               variant="outlined"
@@ -120,7 +120,6 @@ const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isVisible = ref(false);
 const showLoader = ref(false);
 const serverError = ref('');
-const archive = ref();
 
 const { defineField, errors, handleSubmit } = useForm({
   validationSchema: object({
