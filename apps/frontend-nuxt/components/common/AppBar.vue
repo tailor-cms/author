@@ -1,6 +1,6 @@
 <template>
   <VAppBar class="elevation-0" color="primary-darken-3">
-    <NuxtLink class="app-brand pl-4 pt-1" to="/">
+    <a href="/" class="app-brand pl-4 pt-1">
       <img
         alt="Tailor logo"
         class="pt-2"
@@ -17,7 +17,7 @@
           <span class="text-secondary-lighten-2">AI</span>
         </span>
       </VAppBarTitle>
-    </NuxtLink>
+    </a>
     <template #append>
       <VBtn
         v-for="{ name, to } in routes"
