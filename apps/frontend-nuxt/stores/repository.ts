@@ -9,7 +9,7 @@ import { useAuthStore } from './auth';
 
 const getDefaultQueryParams = () => ({
   offset: 0,
-  limit: 12,
+  limit: 18,
   search: '',
   sortBy: {
     field: 'updatedAt',
