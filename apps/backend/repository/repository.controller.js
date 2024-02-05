@@ -65,7 +65,7 @@ const includeRepositoryUser = (user, query) => {
   const options =
     query && query.pinned
       ? { where: { userId: user.id, pinned: true }, required: true }
-      : { where: { userId: user.id }, required: false };
+      : { where: { userId: user.id }, required: !user.isAdmin() };
   return { model: RepositoryUser, ...options };
 };
 
@@ -76,7 +76,7 @@ const includeRepositoryTags = (query) => {
     : include;
 };
 
-function index({ query, user, opts }, res) {
+async function index({ query, user, opts }, res) {
   const { search, name, schemas } = query;
   if (search) opts.where.name = getFilter(search);
   if (name) opts.where.name = name;
@@ -87,10 +87,9 @@ function index({ query, user, opts }, res) {
     includeRepositoryUser(user, query),
     ...includeRepositoryTags(query),
   ];
-  const repositories = user.isAdmin()
-    ? Repository.findAll(opts)
-    : user.getRepositories(opts);
-  return repositories.then((data) => res.json({ data }));
+  opts.distinct = true;
+  const { rows, count } = await Repository.findAndCountAll(opts);
+  res.json({ total: count, items: rows });
 }
 
 async function create({ user, body }, res) {
