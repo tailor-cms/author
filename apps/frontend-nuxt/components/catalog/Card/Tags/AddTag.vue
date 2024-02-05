@@ -2,7 +2,7 @@
   <TailorDialog
     :model-value="true"
     header-icon="mdi-tag-outline"
-    @click:outside="emit('close')"
+    @click:outside="hide"
   >
     <template #header>Add Tag</template>
     <template #body>
