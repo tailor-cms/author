@@ -6,6 +6,7 @@
     :label="props.label"
     :messages="warning"
     class="required"
+    name="name"
     variant="outlined"
     @change="update"
   >
@@ -33,29 +34,29 @@ const props = defineProps({
   value: { type: String, default: '' },
   label: { type: String, default: 'Name' },
   repositoryId: { type: Number, default: null },
+  isValidated: { type: Boolean, default: true },
 });
 const emit = defineEmits(['change']);
 
-const existingRepoNames = ref([]);
+const existingRepositories = ref([]);
 const warning = ref('');
 
-const { defineField, handleSubmit, errors } = useForm({
+const { defineField, handleSubmit, errors, validate, resetForm } = useForm({
   validationSchema: object({
-    internalValue: string().required().min(2).max(250),
+    name: string().required().min(2).max(250),
   }),
 });
 const [nameInput] = defineField('name');
-nameInput.value = props.value;
 
 const update = handleSubmit(() => {
-  if (errors?.name) return;
   emit('change', nameInput.value);
 });
 
+watch(() => props.isValidated, (val) => val ? validate() : resetForm());
 watch(
   nameInput,
   debounce((val) => {
-    const isDuplicate = existingRepoNames.value.some(
+    const isDuplicate = existingRepositories.value.some(
       (repo) => repo.name === val,
     );
     warning.value = isDuplicate ? EXISTING_NAME_MSG : '';
@@ -64,6 +65,9 @@ watch(
 
 onMounted(async () => {
   const params = props.repositoryId ? { repositoryId: props.repositoryId } : {};
-  existingRepoNames.value = await api.getRepositories(params);
+  const { items: repositories } = await api.getRepositories(params);
+  existingRepositories.value = repositories
+  nameInput.value = props.value;
+  resetForm();
 });
 </script>

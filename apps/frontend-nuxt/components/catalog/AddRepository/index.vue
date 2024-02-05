@@ -42,7 +42,7 @@
           {{ serverError }}
         </VAlert>
         <v-window v-model="selectedTab">
-          <v-window-item :value="NEW_TAB" class="pt-1">
+          <v-window-item :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
               :error-messages="errors.schema"
@@ -67,6 +67,7 @@
         </v-window>
         <RepositoryNameField
           v-model="nameInput"
+          :is-validated="!!errors.name?.length"
           class="mb-2"
           name="name"
           placeholder="Enter name..."
@@ -121,7 +122,7 @@ const isVisible = ref(false);
 const showLoader = ref(false);
 const serverError = ref('');
 
-const { defineField, errors, handleSubmit } = useForm({
+const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
     schema: string().when((_, schema) => {
       return selectedTab.value === NEW_TAB
@@ -184,6 +185,7 @@ const hide = () => {
   isVisible.value = false;
   serverError.value = '';
   resetData();
+  resetForm();
 };
 </script>
 
