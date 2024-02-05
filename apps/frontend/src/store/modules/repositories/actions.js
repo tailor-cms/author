@@ -18,7 +18,7 @@ const {
 const fetch = ({ getters, commit }) => {
   const params = getters.repositoryQueryParams;
   const mutation = params.offset === 0 ? 'reset' : 'fetch';
-  return repositoryApi.getRepositories(params).then((items) => {
+  return repositoryApi.getRepositories(params).then(items => {
     forEach(items, processRepository);
     commit(mutation, items);
     commit('setPagination', { offset: params.offset + params.limit });

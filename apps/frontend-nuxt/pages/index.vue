@@ -59,14 +59,11 @@
             <RepositoryCard :repository="repository" />
           </VCol>
         </VRow>
-        <template v-slot:load-more="{ props }">
-          <v-btn
-            v-if="!areAllItemsFetched"
-            variant="tonal"
-            v-bind="props">
+        <template #load-more="{ props }">
+          <v-btn v-if="!areAllItemsFetched" variant="tonal" v-bind="props">
             Load more
           </v-btn>
-      </template>`
+        </template>
       </VInfiniteScroll>
     </VContainer>
   </NuxtLayout>

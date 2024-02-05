@@ -36,7 +36,11 @@
       >
         <template #prepend>
           <VListItemAction start>
-            <VIcon v-if="option.isSelected" color="primary" icon="mdi-check"></VIcon>
+            <VIcon
+              v-if="option.isSelected"
+              color="primary"
+              icon="mdi-check"
+            />
           </VListItemAction>
         </template>
         <VListItemTitle>{{ option.name }}</VListItemTitle>

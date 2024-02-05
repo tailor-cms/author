@@ -52,7 +52,10 @@ const update = handleSubmit(() => {
   emit('change', nameInput.value);
 });
 
-watch(() => props.isValidated, (val) => val ? validate() : resetForm());
+watch(
+  () => props.isValidated,
+  (val) => (val ? validate() : resetForm()),
+);
 watch(
   nameInput,
   debounce((val) => {
@@ -66,7 +69,7 @@ watch(
 onMounted(async () => {
   const params = props.repositoryId ? { repositoryId: props.repositoryId } : {};
   const { items: repositories } = await api.getRepositories(params);
-  existingRepositories.value = repositories
+  existingRepositories.value = repositories;
   nameInput.value = props.value;
   resetForm();
 });
