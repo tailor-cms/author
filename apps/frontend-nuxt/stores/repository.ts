@@ -73,7 +73,6 @@ export const useRepositoryStore = defineStore('repositories', () => {
 
   async function get(id: number): Promise<Repository> {
     const repository: Repository = await api.get(id);
-    processRepository(repository);
     add(repository);
     return repository;
   }

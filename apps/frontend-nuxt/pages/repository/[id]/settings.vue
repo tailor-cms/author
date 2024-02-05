@@ -4,6 +4,6 @@
 
 <script setup lang="ts">
 definePageMeta({
-  name: 'repository-info',
+  name: 'repository-settings',
 });
 </script>
