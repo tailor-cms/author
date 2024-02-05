@@ -99,9 +99,9 @@
 
 <script lang="ts" setup>
 import { array, object, string } from 'yup';
+import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from 'tailor-config-shared';
 import { useForm } from 'vee-validate';
-import pMinDelay from 'p-min-delay';
 
 import { repository as api } from '@/api';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';

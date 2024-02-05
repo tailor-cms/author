@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-import filter from 'lodash/filter';
+import filterBy from 'lodash/filter';
 import flatMap from 'lodash/flatMap';
 
 import filterConfigs from '../repositoryFilterConfigs';
@@ -36,7 +36,7 @@ const store = useRepositoryStore();
 const repositoryFilter = computed(() => store.queryParams.filter);
 const orderedFilters = computed(() => {
   return flatMap(filterConfigs, ({ type }) =>
-    filter(repositoryFilter.value, { type }),
+    filterBy(repositoryFilter.value, { type }),
   );
 });
 </script>

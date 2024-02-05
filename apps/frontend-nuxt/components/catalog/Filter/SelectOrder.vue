@@ -53,7 +53,7 @@ export interface Props {
 
 const emit = defineEmits(['update']);
 const props = withDefaults(defineProps<Props>(), {
-  sortBy: { field: 'createdAt', direction: 'DESC' },
+  sortBy: () => ({ field: 'createdAt', direction: 'DESC' }),
 });
 
 const options = computed(() => [
