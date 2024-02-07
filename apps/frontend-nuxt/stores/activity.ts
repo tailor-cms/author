@@ -4,21 +4,26 @@ import {
   InsertLocation,
 } from '@tailor-cms/utils';
 import findIndex from 'lodash/findIndex';
+import Hashids from 'hashids';
 import { schema } from 'tailor-config-shared';
 
 import type { Activity } from '@/api/interfaces/activity';
 import { activity as api } from '@/api';
 
 type Id = number | string;
-type FoundActivity = Activity | undefined
+type StoreActivity = Activity & { shortId: string };
+type FoundActivity = StoreActivity | undefined;
+
+const HASH_ALPHABET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+const hashids = new Hashids('', 0, HASH_ALPHABET);
 
 export const useActivityStore = defineStore('activities', () => {
-  const $items = reactive(new Map<string, Activity>());
+  const $items = reactive(new Map<string, StoreActivity>());
   const items = computed(() => Array.from($items.values()));
 
   function findById(id: Id): FoundActivity {
     if (typeof id === 'string') return $items.get(id);
-    return items.value.find((it: Activity) => it.id === id);
+    return items.value.find((it: StoreActivity) => it.id === id);
   }
 
   const getParent = (id: Id): FoundActivity => {
@@ -26,49 +31,55 @@ export const useActivityStore = defineStore('activities', () => {
     return activity?.parentId ? findById(activity.parentId) : undefined;
   };
 
-  function getDescendants(id: Id): Activity[] {
+  function getDescendants(id: Id): StoreActivity[] {
     const activity = findById(id);
     return activity ? activityUtils.getDescendants(items.value, activity) : [];
   }
 
-  function getAncestors(id: Id): Activity[] {
+  function getAncestors(id: Id): StoreActivity[] {
     const activity = findById(id);
     return activityUtils.getAncestors(items.value, activity);
   }
 
-  function getLineage(id: Id): Activity[] {
+  function getLineage(id: Id): StoreActivity[] {
     const activity = findById(id);
     const ancestors = activityUtils.getAncestors(items.value, activity);
     const descendants = activityUtils.getDescendants(items.value, activity);
     return [...ancestors, ...descendants];
   }
 
-  function where(predicate: (activity: Activity) => boolean): Activity[] {
+  function where(
+    predicate: (activity: StoreActivity) => boolean,
+  ): StoreActivity[] {
     return items.value.filter(predicate);
   }
 
-  function add(item: Activity): Activity {
-    $items.set(item.uid, item);
-    return item;
+  function add(item: Activity): StoreActivity {
+    $items.set(item.uid, {
+      ...item,
+      shortId: `A-${hashids.encode(item.id)}`,
+      // status: getActivityStatus(it)
+    });
+    return $items.get(item.uid) as StoreActivity;
   }
 
-  async function fetch(repositoryId: number): Promise<Activity[]> {
+  async function fetch(repositoryId: number): Promise<StoreActivity[]> {
     const activities: Activity[] = await api.getActivities(repositoryId);
     $items.clear();
     activities.forEach((it) => add(it));
-    return activities;
+    return items.value;
   }
 
-  async function save(payload: any): Promise<Activity> {
+  async function save(payload: any): Promise<StoreActivity> {
     const activity = await api.save(payload);
     add(activity);
-    return activity;
+    return $items.get(activity.uid) as StoreActivity;
   }
 
   function calculateInsertPosition(
-    activity: Activity,
+    activity: StoreActivity,
     action: string,
-    anchor: Activity,
+    anchor: StoreActivity,
   ) {
     const children = schema.getOutlineChildren(items.value, activity.parentId);
     const context = { items: children, action } as any;
