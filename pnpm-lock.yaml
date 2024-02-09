@@ -731,6 +731,9 @@ importers:
       '@pinia/nuxt':
         specifier: ^0.5.1
         version: 0.5.1(typescript@5.3.3)(vue@3.3.11)
+      '@tailor-cms/meta-element-collection':
+        specifier: workspace:^
+        version: link:../../extensions/meta-inputs
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -743,6 +746,9 @@ importers:
       bluebird:
         specifier: ^3.7.2
         version: 3.7.2
+      hashids:
+        specifier: ^2.3.0
+        version: 2.3.0
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
@@ -761,6 +767,9 @@ importers:
       vee-validate:
         specifier: 4.12.2
         version: 4.12.2(vue@3.3.11)
+      vuedraggable:
+        specifier: 4.1.0
+        version: 4.1.0(vue@3.3.11)
       vuetify:
         specifier: 3.4.0
         version: 3.4.0(typescript@5.3.3)(vue@3.3.11)
@@ -813,6 +822,25 @@ importers:
       jsonfile:
         specifier: ^6.1.0
         version: 6.1.0
+      shelljs:
+        specifier: ^0.8.5
+        version: 0.8.5
+
+  extensions/meta-inputs:
+    dependencies:
+      '@tailor-cms/tme-textarea':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-textarea
+    devDependencies:
+      inquirer:
+        specifier: ^9.2.11
+        version: 9.2.12
+      jsonfile:
+        specifier: ^6.1.0
+        version: 6.1.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       shelljs:
         specifier: ^0.8.5
         version: 0.8.5
@@ -883,6 +911,15 @@ importers:
       stylelint:
         specifier: ^13.8.0
         version: 13.13.1
+
+  packages/core-extensions/meta-inputs/meta-textarea:
+    dependencies:
+      vue:
+        specifier: ^3.3.4
+        version: 3.3.11(typescript@5.3.3)
+      vuetify:
+        specifier: ^3.3.5
+        version: 3.4.0(typescript@5.3.3)(vue@3.3.11)
 
   packages/sse-event-types: {}
 
@@ -13813,6 +13850,10 @@ packages:
     resolution: {integrity: sha512-YkPGufevysvfwn5rfdlGyrGjt7/CRHwvRPogD/lC+TnvcN29jDpCifKP+rBqf+LRldfXSTh+0CGLcSg0VIxq3A==}
     dev: false
 
+  /sortablejs@1.14.0:
+    resolution: {integrity: sha512-pBXvQCs5/33fdN1/39pPL0NZF20LeRbLQ5jtnheIPN9JQAaufGjKdWduZn4U7wCtVuzKhmRkI0DFYHYRbB2H1w==}
+    dev: false
+
   /source-map-js@1.0.2:
     resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
@@ -15575,6 +15616,15 @@ packages:
     resolution: {integrity: sha512-6/HDXi92GzB+Hcs9fC6PAAozK1RLt1ewPTLjK0anTYguXLAeySDmcnqE8IC0xa7shvSzRjQXq3/+dsZ7ETGF3g==}
     dependencies:
       sortablejs: 1.10.2
+    dev: false
+
+  /vuedraggable@4.1.0(vue@3.3.11):
+    resolution: {integrity: sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww==}
+    peerDependencies:
+      vue: ^3.0.1
+    dependencies:
+      sortablejs: 1.14.0
+      vue: 3.3.11(typescript@5.3.3)
     dev: false
 
   /vuetify@2.7.1(vue@2.7.15):
