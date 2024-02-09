@@ -1,6 +1,6 @@
 <template>
   <VSelect
-    :v-model="value"
+    :model-value="value"
     :items="options"
     :disabled="props.disabled"
     :menu-props="{ offset: 10, maxHeight: 220 }"
@@ -10,6 +10,7 @@
     label="Type"
     variant="outlined"
     class="required"
+    @update:model-value="$emit('change', $event)"
   >
     <template v-slot:item="{ props, item: { raw } }">
       <VListItem
