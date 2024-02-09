@@ -1,0 +1,18 @@
+{
+  "name": "@tailor-cms/meta-element-collection",
+  "type": "module",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "meta:add": "node ./install.js"
+  },
+  "devDependencies": {
+    "inquirer": "^9.2.11",
+    "jsonfile": "^6.1.0",
+    "lodash": "^4.17.21",
+    "shelljs": "^0.8.5"
+  },
+  "dependencies": {
+    "@tailor-cms/tme-textarea": "workspace:^"
+  }
+}
