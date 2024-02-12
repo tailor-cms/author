@@ -72,7 +72,6 @@ import { useActivityStore } from '@/stores/activity';
 const props = defineProps({
   repositoryId: { type: Number, required: true },
   anchor: { type: Object, default: null },
-  levels: { type: Array, required: true },
   heading: { type: String, default: '' },
   action: { type: String, default: InsertLocation.ADD_AFTER },
   showActivator: { type: Boolean, default: false },
