@@ -1,5 +1,7 @@
 <template>
-  <VAlert class="ma-10" color="secondary">Hi from repository settings!</VAlert>
+  <VContainer>
+    <VAlert class="my-5" color="indigo">Hi from Repository settings!</VAlert>
+  </VContainer>
 </template>
 
 <script setup lang="ts">
