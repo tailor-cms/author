@@ -1,8 +1,8 @@
 import { computed } from 'vue';
 import get from 'lodash/get';
 import InsertLocation from '@/lib/InsertLocation';
-import uniqBy from 'lodash/uniqBy';
 import type { StoreActivity } from '@/stores/activity';
+import uniqBy from 'lodash/uniqBy';
 
 import { useCurrentRepository } from '@/stores/current-repository';
 
