@@ -52,13 +52,13 @@ import { useSelectedActivity } from '#imports';
 const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
-const selectedActivity = useSelectedActivity();
 
 const props = defineProps({
   activity: { type: Object, required: true },
 });
 
 const { $eventBus } = useNuxtApp() as any;
+const selectedActivity = useSelectedActivity(props.activity);
 
 const showCreateDialog = ref(false);
 const showCopyDialog = ref(false);
