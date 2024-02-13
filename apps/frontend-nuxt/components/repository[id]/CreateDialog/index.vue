@@ -84,7 +84,7 @@ const props = defineProps({
 const emit = defineEmits(['close', 'created', 'expand']);
 
 const activityStore = useActivityStore();
-const selectedActivity = useSelectedActivity();
+const selectedActivity = useSelectedActivity(props.anchor);
 const { $schemaService } = useNuxtApp() as any;
 
 const initActivityState = () => {
