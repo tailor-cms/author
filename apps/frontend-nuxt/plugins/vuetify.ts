@@ -1,6 +1,9 @@
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import { createVuetify } from 'vuetify';
+import { md3 } from 'vuetify/blueprints';
+import { mdi } from 'vuetify/iconsets/mdi';
+import outlineIconset from '@/components/repository[id]/Outline/icons/iconset';
 import type { ThemeDefinition } from 'vuetify';
 
 const defaultTheme: ThemeDefinition = {
@@ -31,12 +34,20 @@ const defaultTheme: ThemeDefinition = {
 export default defineNuxtPlugin((nuxt) => {
   const vuetify = createVuetify({
     ssr: true,
+    blueprint: md3,
     components,
     directives,
     theme: {
       defaultTheme: 'default',
       themes: {
         default: defaultTheme,
+      },
+    },
+    icons: {
+      defaultSet: 'mdi',
+      sets: {
+        mdi,
+        add: outlineIconset,
       },
     },
   });
