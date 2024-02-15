@@ -68,22 +68,12 @@ export const useSelectedActivity = (activity: StoreActivity) => {
     return heading[action];
   };
 
-  const reorder = (
-    { newIndex: newPosition }: { newIndex: number },
-    items: any[],
-  ) => {
-    const activity = items[newPosition];
-    const context = { items, newPosition };
-    return activityStore.reorder(activity, context);
-  };
-
   return {
     isEditable,
     parent,
     levels,
     sameLevel,
     subLevels,
-    reorder,
     getAddDialogHeading,
     isOutlineItemExpanded,
     toggleOutlineItemExpand,
