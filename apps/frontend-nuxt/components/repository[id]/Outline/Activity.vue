@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <VHover class="activity-wrapper">
+  <div class="activity-wrapper">
+    <VHover>
       <template v-slot:default="{ isHovering, props }">
         <VSheet
           v-bind="props"
