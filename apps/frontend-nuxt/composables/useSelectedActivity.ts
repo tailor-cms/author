@@ -12,15 +12,18 @@ export const useSelectedActivity = (activity: StoreActivity) => {
   const activityStore = useActivityStore();
 
   const isEditable = computed(() => {
+    if (!activity) return false;
     return $schemaService.isEditable(activity.type);
   });
 
   const parent = computed(() => {
+    if (!activity) return;
     const { parentId } = activity;
     return repoStore.outlineActivities.find((it) => it.id === parentId);
   });
 
   const sameLevel = computed(() => {
+    if (!repoStore.taxonomy) return [];
     if (!parent.value)
       return repoStore.taxonomy.filter((it: any) => it.rootLevel);
     const { type } = parent.value;
@@ -32,6 +35,7 @@ export const useSelectedActivity = (activity: StoreActivity) => {
   });
 
   const subLevels = computed(() => {
+    if (!repoStore.taxonomy || !activity) return [];
     const { type } = activity;
     const config = repoStore.taxonomy.find((it: any) => it.type === type);
     const configuredSubLevels = get(config, 'subLevels', []);
@@ -40,9 +44,12 @@ export const useSelectedActivity = (activity: StoreActivity) => {
     );
   });
 
-  const levels = computed(() =>
-    uniqBy(sameLevel.value.concat(subLevels.value), 'type'),
-  );
+  const levels = computed(() => {
+    return uniqBy(sameLevel.value.concat(subLevels.value), 'type');
+  });
+
+  const isOutlineItemExpanded = (id: string | number) =>
+    repoStore.isOutlineItemExpanded(id);
 
   const toggleOutlineItemExpand = (uid: string, expand: boolean) =>
     repoStore.toggleOutlineItemExpand(uid, expand);
@@ -68,7 +75,8 @@ export const useSelectedActivity = (activity: StoreActivity) => {
     sameLevel,
     subLevels,
     getAddDialogHeading,
+    isOutlineItemExpanded,
     toggleOutlineItemExpand,
     expandOutlineItemParent,
   };
-}
+};
