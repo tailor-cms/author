@@ -1,11 +1,30 @@
 <template>
   <NuxtLayout name="main">
-    <div class="repo-container">
-      <div class="primary-darken-3 elevation-2">
+    <div v-if="isLoading" class="pt-16">
+      <VProgressCircular
+        bg-color="primary"
+        color="primary-darken-4"
+        size="68"
+        indeterminate
+      >
+        <template #default>
+          <img
+            alt="Tailor logo"
+            class="pt-1"
+            height="52"
+            src="/img/default-logo-full.svg"
+            width="32"
+          />
+        </template>
+      </VProgressCircular>
+    </div>
+    <div v-else class="repo-container">
+      <div class="primary-darken-2 elevation-1 mb-1">
         <VTabs
           bg-color="primary-darken-3"
           class="text-primary-lighten-3"
           color="primary-lighten-1"
+          elevation="2"
           height="64"
           slider-color="primary-lighten-3"
         >
@@ -33,21 +52,26 @@
 <script lang="ts" setup>
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { promiseTimeout } from '@vueuse/core';
+
+definePageMeta({
+  middleware: ['auth'],
+});
 
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 
-await authStore.fetchUserInfo();
+const isLoading = ref(true);
 
 const getTabItems = ({
-  hasWorkflow,
-  hasSettingsAvailable,
   hasActivities,
+  hasSettingsAvailable,
+  hasWorkflow,
   query,
 }: {
-  hasWorkflow: boolean;
-  hasSettingsAvailable: boolean;
   hasActivities: boolean;
+  hasSettingsAvailable: boolean;
+  hasWorkflow: boolean;
   query: any;
 }) =>
   [
@@ -77,21 +101,23 @@ const getTabItems = ({
     .map((tab) => ({ ...tab, query }));
 
 const tabs = computed(() => {
-  const hasSettingsAvailable =
-    !!currentRepositoryStore.repository?.hasAdminAccess;
-  const hasActivities = !!currentRepositoryStore.activities.length;
-  // const activityId = get(lastSelectedActivity.value, 'id');
-  // const query = { ...$route.query, ...activityId && { activityId } };
   return getTabItems({
-    hasSettingsAvailable,
+    hasSettingsAvailable: !!currentRepositoryStore.repository?.hasAdminAccess,
     hasWorkflow: false,
-    hasActivities,
+    hasActivities: !!currentRepositoryStore.activities.length,
     query: {},
   });
 });
 
 onMounted(async () => {
-  await currentRepositoryStore.initialize();
+  const route = useRoute();
+  const repositoryId = parseInt(route.params.id as string, 10);
+  await Promise.all([
+    authStore.fetchUserInfo(),
+    currentRepositoryStore.initialize(repositoryId),
+    await promiseTimeout(1500),
+  ]);
+  isLoading.value = false;
 });
 </script>
 
