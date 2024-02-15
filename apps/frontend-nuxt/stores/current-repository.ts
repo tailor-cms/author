@@ -33,12 +33,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const outlineActivities = computed(() => {
     if (!taxonomy.value) return [];
-    const outlineTypes = taxonomy.value.map((it: any) => it.type);
+    const outlineTypes: string[] = taxonomy.value.map((it: any) => it.type);
     return activities.value.filter((it) => outlineTypes.includes(it.type));
   });
 
   const rootActivities = computed(() => {
-    return outlineActivities.value.filter((it) => !it.parentId);
+    const items = outlineActivities.value.filter((it) => !it.parentId);
+    return items.sort((a, b) => a.position - b.position);
   });
 
   const selectedActivity = computed(() => {
@@ -56,12 +57,16 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const isOutlineExpanded = computed(() => {
     const totalItems = outlineActivities.value.length;
-    const expandedItems = filter(
-      outlineState.expanded.values(),
-      (it) => it,
-    ).length;
+    const toggleState = outlineState.expanded.values();
+    const expandedItems = Array.from(toggleState).filter(Boolean).length;
     return expandedItems >= totalItems;
   });
+
+  const isOutlineItemExpanded = (id: Id) => {
+    const activity = Activity.findById(id);
+    if (!activity) return false;
+    return !!outlineState.expanded.get(activity.uid);
+  };
 
   const toggleOutlineItemExpand = (
     uid: string,
@@ -75,7 +80,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const toggleOutlineExpand = () => {
     const expand = !isOutlineExpanded.value;
     outlineActivities.value.forEach((it) =>
-      toggleOutlineItemExpand(it.uid, expand),
+      outlineState.expanded.set(it.uid, expand),
     );
   };
 
@@ -84,9 +89,9 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     ancestors.forEach((it) => toggleOutlineItemExpand(it.uid, true));
   };
 
-  const initialize = async () => {
-    await Repository.get(repositoryId.value);
-    await Activity.fetch(repositoryId.value);
+  const initialize = async (repositoryId: number) => {
+    await Repository.get(repositoryId);
+    await Activity.fetch(repositoryId);
   };
 
   function $reset() {
@@ -106,6 +111,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     selectActivity,
     selectedActivity,
     isOutlineExpanded,
+    isOutlineItemExpanded,
     toggleOutlineItemExpand,
     toggleOutlineExpand,
     expandOutlineParents,
