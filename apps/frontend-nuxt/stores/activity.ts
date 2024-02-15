@@ -10,9 +10,9 @@ import { schema } from 'tailor-config-shared';
 import type { Activity } from '@/api/interfaces/activity';
 import { activity as api } from '@/api';
 
-type Id = number | string;
-type StoreActivity = Activity & { shortId: string };
-type FoundActivity = StoreActivity | undefined;
+export type Id = number | string;
+export type StoreActivity = Activity & { shortId: string };
+export type FoundActivity = StoreActivity | undefined;
 
 const HASH_ALPHABET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
 const hashids = new Hashids('', 0, HASH_ALPHABET);
@@ -76,6 +76,43 @@ export const useActivityStore = defineStore('activities', () => {
     return $items.get(activity.uid) as StoreActivity;
   }
 
+  async function update(payload: any): Promise<FoundActivity> {
+    const activity = findById(payload.id);
+    if (!activity) return;
+    const updatedActivity = await api.patch({
+      ...payload,
+      id: activity.id,
+      repositoryId: activity.repositoryId,
+    });
+    Object.assign(activity, updatedActivity);
+    return activity;
+  }
+
+  async function remove(id: Id): Promise<undefined> {
+    const activity = findById(id);
+    if (!activity) return;
+    await api.remove(activity.repositoryId, activity.id);
+    $items.delete(activity.uid);
+  }
+
+  const reorder = async (reorderdActivity: StoreActivity, context: any) => {
+    const activity = findById(reorderdActivity.uid);
+    if (!activity) return;
+    const position = calculatePosition(context) as number;
+    activity.position = position;
+    const payload = { position };
+    const data = await api.reorder(activity.repositoryId, activity.id, payload);
+    Object.assign(activity, data);
+  };
+
+  const publish = async (activity: StoreActivity) => {
+    const { publishedAt } = await api.publish(
+      activity.repositoryId,
+      activity.id,
+    );
+    activity.publishedAt = publishedAt;
+  };
+
   function calculateInsertPosition(
     activity: StoreActivity,
     action: string,
@@ -105,6 +142,10 @@ export const useActivityStore = defineStore('activities', () => {
     add,
     fetch,
     save,
+    update,
+    remove,
+    publish,
+    reorder,
     calculateInsertPosition,
     $reset,
   };
