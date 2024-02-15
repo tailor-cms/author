@@ -13,10 +13,15 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
 
-  const outlineState = reactive({ expanded: new Map<string, boolean>() });
+  const outlineState = reactive({
+    selectedActivityId: null as Id | null,
+    expanded: new Map<string, boolean>()
+  });
 
-  const repositoryId = computed(() => Number(route.params.id));
-  const repository = computed(() => Repository.findById(repositoryId.value));
+  const repositoryId = ref<number | null>(null);
+  const repository = computed(
+    () => repositoryId.value && Repository.findById(repositoryId.value),
+  );
 
   const schemaName = computed(() => {
     return repository.value && getSchema(repository.value.schema).name;
@@ -43,19 +48,19 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   });
 
   const selectedActivity = computed(() => {
-    const { activityId } = route.query;
-    if (!activityId) return;
-    const id = parseInt(activityId as string, 10);
+    const id = outlineState.selectedActivityId;
     return outlineActivities.value.find((it) => it.id === id);
   });
 
   function selectActivity(activityId: number) {
     const activity = Activity.findById(activityId);
     if (!activity || selectedActivity.value?.id === activity.id) return;
+    outlineState.selectedActivityId = activity.id;
     navigateTo({ query: { ...route.query, activityId } });
   }
 
   const isOutlineExpanded = computed(() => {
+    if (!repository.value) return false;
     const totalItems = outlineActivities.value.length;
     const toggleState = outlineState.expanded.values();
     const expandedItems = Array.from(toggleState).filter(Boolean).length;
@@ -89,9 +94,10 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     ancestors.forEach((it) => toggleOutlineItemExpand(it.uid, true));
   };
 
-  const initialize = async (repositoryId: number) => {
-    await Repository.get(repositoryId);
-    await Activity.fetch(repositoryId);
+  const initialize = async (repoId: number) => {
+    repositoryId.value = repoId;
+    await Repository.get(repoId);
+    await Activity.fetch(repoId);
   };
 
   function $reset() {
