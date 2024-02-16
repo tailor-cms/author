@@ -1,15 +1,14 @@
 <template>
-  <VToolbar color="transparent"  class="toolbar">
+  <VToolbar color="transparent" class="toolbar">
     <VTextField
-      @input="$emit('search', $event)"
-      @click:clear="$emit('search', '')"
-      :value="search"
+      v-model="searchInput"
       bg-color="primary-darken-2"
       prepend-inner-icon="mdi-magnify"
       placeholder="Search by name or id..."
-      variant="tonal"
+      variant="solo"
       clearable
       hide-details
+      @click:clear="resetInput"
     />
     <VSpacer />
     <VBtn
@@ -32,7 +31,19 @@ const props = defineProps({
   isFlat: { type: Boolean, default: false },
 });
 
+const emit = defineEmits(['search']);
+
 const currentRepositoryStore = useCurrentRepository();
+const searchInput = ref('');
+
+const resetInput = () => {
+  searchInput.value = '';
+  emit('search', '');
+};
+
+watch(() => searchInput.value, (value) => {
+  emit('search', value);
+});
 </script>
 
 <style lang="scss" scoped>
