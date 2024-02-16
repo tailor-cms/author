@@ -42,7 +42,7 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
-import { delay } from 'bluebird';
+import Promise from 'bluebird';
 import { useForm } from 'vee-validate';
 
 const authStore = useAuthStore();
@@ -60,7 +60,7 @@ const [emailInput] = defineField('email');
 
 const submit = handleSubmit(({ email }) => {
   showMessage.value = true;
-  Promise.all([authStore.forgotPassword({ email }), delay(5000)])
+  Promise.all([authStore.forgotPassword({ email }), Promise.delay(5000)])
     .then((): any => navigateTo('/'))
     .catch(() => (error.value = 'Something went wrong!'));
 });

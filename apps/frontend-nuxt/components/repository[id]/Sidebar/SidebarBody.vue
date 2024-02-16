@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import ActivityRelationship from './Relationship.vue';
+import ActivityRelationship from './ActivityRelationship.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
 import { useActivityStore } from '@/stores/activity';

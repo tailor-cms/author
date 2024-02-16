@@ -42,7 +42,7 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
 import fecha from 'fecha';
 
-import PublishingBadge from './Badge.vue';
+import PublishingBadge from './PublishingBadge.vue';
 
 const props = defineProps<{
   activity: StoreActivity;

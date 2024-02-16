@@ -58,7 +58,7 @@
 
 <script lang="ts" setup>
 import { object, string, ref as yupRef } from 'yup';
-import { delay } from 'bluebird';
+import Promise from 'bluebird';
 import { useForm } from 'vee-validate';
 
 import { auth as api } from '@/api';
@@ -94,7 +94,7 @@ const submit = handleSubmit(async ({ password }) => {
     });
     isError.value = false;
     message.value = 'Password changed successfully. Redirecting...';
-    await delay(2000);
+    await Promise.delay(2000);
     navigateTo('/');
   } catch {
     isError.value = true;

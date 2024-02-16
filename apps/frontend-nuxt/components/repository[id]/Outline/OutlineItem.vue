@@ -77,7 +77,7 @@
         @update="(data) => reorder(data, children)"
       >
         <template #item="{ element, index }">
-          <OutlineActivity
+          <OutlineItem
             v-bind="element"
             :activities="activities"
             :index="index + 1"
@@ -94,9 +94,9 @@ import Draggable from 'vuedraggable';
 import filter from 'lodash/filter';
 import size from 'lodash/size';
 
-import OptionsMenu from '@/components/common/ActivityOptions/Menu.vue';
-import OutlineActivity from '@/components/repository[id]/Outline/Activity.vue';
-import OutlineItemToolbar from '@/components/common/ActivityOptions/Toolbar.vue';
+import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
+import OutlineItem from '@/components/repository[id]/Outline/OutlineItem.vue';
+import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 

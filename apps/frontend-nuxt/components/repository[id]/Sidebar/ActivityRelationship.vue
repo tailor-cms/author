@@ -81,11 +81,11 @@ const { defineField, errors } = useForm({
 });
 const [input] = defineField('value');
 
-const onRelationshipChanged = async (value: any) => {
+const onRelationshipChanged = (value: any) => {
   const associations = compact(castArray(value));
   const key = `refs.${props.type}`;
   const payload = { id: props.activity.id, [key]: map(associations, 'id') };
-  activityStore.update(payload);
+  return activityStore.update(payload);
 };
 
 const selectPlaceholder = computed(() => {

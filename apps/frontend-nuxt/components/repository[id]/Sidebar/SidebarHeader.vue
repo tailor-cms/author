@@ -14,7 +14,7 @@
       <VIcon class="mr-2">mdi-page-next-outline</VIcon>
       Open
     </VBtn>
-    <Publishing
+    <ActivityPublishing
       v-if="store.repository?.hasAdminAccess"
       :activity="activity"
       :outline-activities="store.outlineActivities"
@@ -25,8 +25,8 @@
 <script lang="ts" setup>
 import get from 'lodash/get';
 
-import ActivityOptions from '@/components/common/ActivityOptions/Menu.vue';
-import Publishing from './Publishing.vue';
+import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';
+import ActivityPublishing from './ActivityPublishing.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps({

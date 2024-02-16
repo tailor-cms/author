@@ -13,7 +13,7 @@
       </VAlert>
       <CreateDialog
         :anchor="anchor"
-        :repository-id="repositoryId"
+        :repository-id="repositoryId as number"
         activator-color="primary-lighten-4"
         test-id-prefix="repository__createRootActivity"
         show-activator

@@ -51,7 +51,7 @@ export const useSelectedActivity = (activity: StoreActivity) => {
   const isOutlineItemExpanded = (id: string | number) =>
     repoStore.isOutlineItemExpanded(id);
 
-  const toggleOutlineItemExpand = (uid: string, expand: boolean) =>
+  const toggleOutlineItemExpand = (uid: string, expand?: boolean) =>
     repoStore.toggleOutlineItemExpand(uid, expand);
 
   const expandOutlineItemParent = (item: any) => {

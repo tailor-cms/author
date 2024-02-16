@@ -2,7 +2,7 @@
   <VLayout class="structure-page">
     <VMain class="structure-container">
       <div ref="structureEl" class="structure d-flex flex-column justify-start">
-        <StructureToolbar
+        <OutlineToolbar
           v-if="hasActivities"
           :is-flat="isFlat"
           :search="search"
@@ -17,8 +17,8 @@
             item-key="uid"
             @update="(data) => reorder(data, rootActivities)"
           >
-            <template #item="{ element, index }">
-              <Activity
+            <template #item="{ element }">
+              <OutlineItem
                 v-bind="element"
                 :activities="outlineActivities"
                 :level="1"
@@ -62,12 +62,12 @@ import find from 'lodash/find';
 import map from 'lodash/map';
 import { storeToRefs } from 'pinia';
 
-import Activity from '@/components/repository[id]/Outline/Activity.vue';
 import OutlineFooter from '@/components/repository[id]/Outline/OutlineFooter.vue';
+import OutlineItem from '@/components/repository[id]/Outline/OutlineItem.vue';
+import OutlineToolbar from '@/components/repository[id]/Outline/OutlineToolbar.vue';
 import SearchResult from '@/components/repository[id]/Outline/SearchResult.vue';
 import Sidebar from '@/components/repository[id]/Sidebar/index.vue';
 import type { StoreActivity } from '@/stores/activity';
-import StructureToolbar from '@/components/repository[id]/Outline/Toolbar.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 definePageMeta({
@@ -110,14 +110,14 @@ const goTo = async (activity: StoreActivity) => {
 
 const scrollToActivity = (activity: StoreActivity, timeout = 500) => {
   repositoryStore.expandOutlineParents(activity.id);
-  setTimeout(async () => {
+  setTimeout(() => {
     const elementId = `#activity_${activity.uid}`;
     const element = structureEl.value.querySelector(elementId);
     element.scrollIntoView();
   }, timeout);
 };
 
-onMounted(async () => {
+onMounted(() => {
   const route = useRoute();
   const { activityId } = route.query;
   if (activityId) {

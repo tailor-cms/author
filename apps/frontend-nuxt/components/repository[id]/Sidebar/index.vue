@@ -26,8 +26,8 @@
 </template>
 
 <script lang="ts" setup>
-import SidebarBody from './Body.vue';
-import SidebarHeader from './Header.vue';
+import SidebarBody from './SidebarBody.vue';
+import SidebarHeader from './SidebarHeader.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps({
