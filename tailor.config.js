@@ -21,6 +21,19 @@ const MODULE = {
   label: 'Module',
   color: '#5187C7',
   subLevels: [ACTIVITY_TYPE.MODULE, ACTIVITY_TYPE.PAGE],
+  relationships: [
+    {
+      type: 'prerequisites',
+      label: 'Prerequisites',
+      multiple: true,
+      searchable: true,
+      allowEmpty: true,
+      placeholder: 'Click to select',
+      allowCircularLinks: false,
+      allowInsideLineage: true,
+      allowedTypes: [ACTIVITY_TYPE.MODULE],
+    },
+  ],
 };
 
 const PAGE = {
