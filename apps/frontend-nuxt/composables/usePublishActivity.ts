@@ -31,7 +31,7 @@ export const usePublishActivity = (activity: StoreActivity) => {
     }).finally(() => (status.value = initialStatus()));
   };
 
-  const confirmPublishing = (activities = [activity]) => {
+  const confirmPublishing = (activities: StoreActivity[]) => {
     confirmationDialog({
       title: 'Publish content',
       message: getPublishMessage(activities.length),

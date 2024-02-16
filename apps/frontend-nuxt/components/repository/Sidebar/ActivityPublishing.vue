@@ -14,7 +14,7 @@
         </VBtn>
       </template>
       <VList class="text-left px-2">
-        <VListItem @click="publishingUtils.confirmPublishing">
+        <VListItem @click="publishingUtils.confirmPublishing([activity])">
           <VListItemTitle>{{ config.label }}</VListItemTitle>
         </VListItem>
         <VListItem
