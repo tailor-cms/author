@@ -100,7 +100,7 @@ export const useActivityStore = defineStore('activities', () => {
     if (!activity) return;
     const position = calculatePosition(context) as number;
     activity.position = position;
-    const payload = { position };
+    const payload = { position: context.newPosition };
     const data = await api.reorder(activity.repositoryId, activity.id, payload);
     Object.assign(activity, data);
   };
