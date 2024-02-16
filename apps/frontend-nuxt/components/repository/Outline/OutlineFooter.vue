@@ -26,7 +26,7 @@
 import last from 'lodash/last';
 import { storeToRefs } from 'pinia';
 
-import CreateDialog from '@/components/repository/CreateDialog/index.vue';
+import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const store = useCurrentRepository();

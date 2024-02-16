@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import CreateDialog from '@/components/repository/CreateDialog/index.vue';
+import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
 import { useSelectedActivity } from '#imports';
 
