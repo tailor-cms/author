@@ -5,7 +5,7 @@ import { md3 } from 'vuetify/blueprints';
 import { mdi } from 'vuetify/iconsets/mdi';
 import type { ThemeDefinition } from 'vuetify';
 
-import outlineIconset from '@/components/repository[id]/Outline/icons/iconset';
+import outlineIconset from '~/components/repository/Outline/icons/iconset';
 
 const defaultTheme: ThemeDefinition = {
   colors: {

@@ -44,7 +44,7 @@
 import first from 'lodash/first';
 import sortBy from 'lodash/sortBy';
 
-import CreateDialog from '@/components/repository[id]/CreateDialog/index.vue';
+import CreateDialog from '@/components/repository/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';

@@ -62,11 +62,11 @@ import find from 'lodash/find';
 import map from 'lodash/map';
 import { storeToRefs } from 'pinia';
 
-import OutlineFooter from '@/components/repository[id]/Outline/OutlineFooter.vue';
-import OutlineItem from '@/components/repository[id]/Outline/OutlineItem.vue';
-import OutlineToolbar from '@/components/repository[id]/Outline/OutlineToolbar.vue';
-import SearchResult from '@/components/repository[id]/Outline/SearchResult.vue';
-import Sidebar from '@/components/repository[id]/Sidebar/index.vue';
+import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
+import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
+import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
+import SearchResult from '@/components/repository/Outline/SearchResult.vue';
+import Sidebar from '@/components/repository/Sidebar/index.vue';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 

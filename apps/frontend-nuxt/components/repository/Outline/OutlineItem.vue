@@ -95,7 +95,7 @@ import filter from 'lodash/filter';
 import size from 'lodash/size';
 
 import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
-import OutlineItem from '@/components/repository[id]/Outline/OutlineItem.vue';
+import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
