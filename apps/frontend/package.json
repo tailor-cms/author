@@ -6,7 +6,6 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "del-cli node_modules/.vite && vite build",
     "clean": "del-cli dist/* !dist/.gitkeep",
     "lint:js": "eslint --ext .js,.vue .",
     "lint:scss": "stylelint \"src/**/*.vue\" \"src/**/*.scss\"",
