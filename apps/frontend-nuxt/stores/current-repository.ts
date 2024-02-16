@@ -1,4 +1,3 @@
-import filter from 'lodash/filter';
 import { schema as schemaConfig } from 'tailor-config-shared';
 
 import { useActivityStore } from './activity';
@@ -56,7 +55,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     const activity = Activity.findById(activityId);
     if (!activity || selectedActivity.value?.id === activity.id) return;
     outlineState.selectedActivityId = activity.id;
-    navigateTo({ query: { ...route.query, activityId } });
+    return navigateTo({ query: { ...route.query, activityId } });
   }
 
   const isOutlineExpanded = computed(() => {
