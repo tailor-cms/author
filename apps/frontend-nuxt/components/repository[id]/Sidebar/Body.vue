@@ -1,0 +1,98 @@
+<template>
+  <div class="body">
+    <VSheet class="d-flex align-center my-5 pa-1" color="transparent">
+      <div class="d-flex align-center text-body-2 font-weight-bold">
+        <VIcon :color="config.color" class="mr-1" size="22">mdi-label</VIcon>
+        <span>{{ config.label.toUpperCase() }}</span>
+      </div>
+      <VDivider class="my-2 ml-3" vertical />
+      <VTooltip open-delay="100" location="bottom">
+        <template #activator="{ props: tooltipProps }">
+          <LabelChip v-bind="tooltipProps">{{ activity.shortId }}</LabelChip>
+        </template>
+        {{ config.label }} ID
+      </VTooltip>
+      <VSpacer />
+      <VBtn
+        v-clipboard:copy="activity.shortId"
+        v-clipboard:error="() => notify('Not able to copy the ID')"
+        v-clipboard:success="
+          () => notify('ID copied to the clipboard', { immediate: true })
+        "
+        class="mr-2 px-0"
+        color="lime-lighten-4"
+        variant="tonal"
+      >
+        <VIcon class="mr-1" small>mdi-content-copy</VIcon>
+        <VIcon dense>mdi-identifier</VIcon>
+      </VBtn>
+      <VBtn
+        v-clipboard:copy="activityUrl"
+        v-clipboard:error="() => notify('Not able to copy the link')"
+        v-clipboard:success="
+          () => notify('Link copied to the clipboard', { immediate: true })
+        "
+        class="px-0"
+        color="lime-lighten-4"
+        variant="tonal"
+      >
+        <VIcon class="mr-1" small>mdi-content-copy</VIcon>
+        <VIcon dense>mdi-link</VIcon>
+      </VBtn>
+    </VSheet>
+    <div class="meta-elements">
+      <MetaInput
+        v-for="it in metadata"
+        :key="`${activity.uid}.${it.key}`"
+        :meta="it"
+        @update="updateActivity"
+      />
+    </div>
+    <div>
+      <ActivityRelationship
+        v-for="relationship in config.relationships"
+        :key="`${activity.uid}.${relationship.type}`"
+        :activity="activity"
+        v-bind="relationship"
+      />
+    </div>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import ActivityRelationship from './Relationship.vue';
+import LabelChip from '@/components/common/LabelChip.vue';
+import MetaInput from '@/components/common/MetaInput.vue';
+import { useActivityStore } from '@/stores/activity';
+
+const props = defineProps({
+  activity: { type: Object, required: true },
+});
+
+const { $schemaService } = useNuxtApp() as any;
+const store = useActivityStore();
+const notify = useNotification();
+
+const activityUrl = computed(() => window.location.href);
+const config = computed(() => $schemaService.getLevel(props.activity.type));
+const metadata = computed(() =>
+  $schemaService.getActivityMetadata(props.activity),
+);
+
+const updateActivity = async (key: string, value: any) => {
+  const data = { ...props.activity.data, [key]: value };
+  await store.update({ id: props.activity.id, uid: props.activity.uid, data });
+  notify(`${config.value.label} saved`, { immediate: true });
+};
+</script>
+
+<style lang="scss" scoped>
+.body {
+  position: relative;
+  padding: 0.375rem 1rem;
+}
+
+.meta-elements {
+  padding-top: 0.625rem;
+}
+</style>
