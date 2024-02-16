@@ -5,7 +5,7 @@
     header-icon="mdi-folder-plus-outline"
   >
     <template v-if="showActivator" #activator="{ props: activatorProps }">
-      <VButton
+      <VBtn
         v-bind="activatorProps"
         :color="activatorColor"
         :data-testid="`${props.testIdPrefix}Btn`"
@@ -14,7 +14,7 @@
       >
         <VIcon class="pr-1">{{ props.activatorIcon }}</VIcon>
         {{ activatorLabel || defaultModalHeading }}
-      </VButton>
+      </VBtn>
     </template>
     <template #header>{{ heading || defaultModalHeading }}</template>
     <template #body>
@@ -43,10 +43,10 @@
         />
         <VSpacer />
         <div class="d-flex justify-end pt-5 pb-3">
-          <VButton class="px-4" variant="text" @click="visible = false">
+          <VBtn class="px-4" variant="text" @click="visible = false">
             Cancel
-          </VButton>
-          <VButton
+          </VBtn>
+          <VBtn
             :disabled="submitting"
             :loading="submitting"
             color="primary-darken-4"
@@ -54,7 +54,7 @@
             variant="tonal"
             @click="submitForm">
             Create
-          </VButton>
+          </VBtn>
         </div>
       </form>
     </template>
