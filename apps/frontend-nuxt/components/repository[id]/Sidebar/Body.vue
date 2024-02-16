@@ -6,7 +6,7 @@
         <span>{{ config.label.toUpperCase() }}</span>
       </div>
       <VDivider class="my-2 ml-3" vertical />
-      <VTooltip open-delay="100" location="bottom">
+      <VTooltip location="bottom" open-delay="100">
         <template #activator="{ props: tooltipProps }">
           <LabelChip v-bind="tooltipProps">{{ activity.shortId }}</LabelChip>
         </template>

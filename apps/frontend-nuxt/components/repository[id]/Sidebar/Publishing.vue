@@ -1,6 +1,6 @@
 <template>
   <span class="publish-container">
-    <VMenu position="left" offset="10">
+    <VMenu offset="10" position="left">
       <template #activator="{ props }">
         <VBtn
           :loading="publishingUtils.isPublishing.value"
@@ -41,6 +41,7 @@
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
 import fecha from 'fecha';
+
 import PublishingBadge from './Badge.vue';
 
 const props = defineProps<{

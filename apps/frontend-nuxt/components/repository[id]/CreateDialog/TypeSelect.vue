@@ -1,18 +1,18 @@
 <template>
   <VSelect
-    :model-value="value"
-    :items="options"
     :disabled="props.disabled"
+    :items="options"
     :menu-props="{ offset: 10, maxHeight: 220 }"
+    :model-value="value"
+    class="required"
     item-title="label"
     item-value="type"
-    name="type"
     label="Type"
+    name="type"
     variant="outlined"
-    class="required"
     @update:model-value="$emit('change', $event)"
   >
-    <template v-slot:item="{ props, item: { raw } }">
+    <template #item="{ props, item: { raw } }">
       <VListItem
         v-bind="props"
         :prepend-icon="`mdi-${hasSubtypes(raw) ? 'folder' : 'file-outline'}`"

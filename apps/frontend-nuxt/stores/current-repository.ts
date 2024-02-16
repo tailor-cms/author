@@ -15,7 +15,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const outlineState = reactive({
     selectedActivityId: null as Id | null,
-    expanded: new Map<string, boolean>()
+    expanded: new Map<string, boolean>(),
   });
 
   const repositoryId = ref<number | null>(null);

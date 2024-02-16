@@ -18,7 +18,8 @@ function save(activity) {
 }
 
 function patch({ repositoryId, id, ...payload }) {
-  return request.patch(urls.resource(repositoryId, id), payload)
+  return request
+    .patch(urls.resource(repositoryId, id), payload)
     .then(extractData);
 }
 

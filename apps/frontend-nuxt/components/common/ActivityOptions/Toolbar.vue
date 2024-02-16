@@ -18,13 +18,13 @@
     </VTooltip>
     <CreateDialog
       v-if="showCreateDialog"
-      @close="showCreateDialog = false"
-      :repository-id="activity.repositoryId"
-      :anchor="activity"
       :action="action"
+      :anchor="activity"
       :heading="`${selectedActivity?.getAddDialogHeading(action)}: ${
         activity.data.name
       }`"
+      :repository-id="activity.repositoryId"
+      @close="showCreateDialog = false"
     />
   </div>
 </template>

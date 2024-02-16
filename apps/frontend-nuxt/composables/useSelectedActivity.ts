@@ -1,9 +1,9 @@
 import { computed } from 'vue';
 import get from 'lodash/get';
-import InsertLocation from '@/lib/InsertLocation';
-import type { StoreActivity } from '@/stores/activity';
 import uniqBy from 'lodash/uniqBy';
 
+import InsertLocation from '@/lib/InsertLocation';
+import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 export const useSelectedActivity = (activity: StoreActivity) => {

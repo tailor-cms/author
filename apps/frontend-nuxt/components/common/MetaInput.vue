@@ -2,9 +2,9 @@
   <div>
     <component
       :is="componentName"
-      @update="(key: string, value: any) => $emit('update', key, value)"
-      :meta="meta"
       :class="{ required: get(meta, 'validate.required') }"
+      :meta="meta"
+      @update="(key: string, value: any) => $emit('update', key, value)"
     />
   </div>
 </template>

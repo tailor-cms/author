@@ -7,8 +7,8 @@
       v-show="isEditable"
       class="px-4 mr-3 btn-open"
       color="teal-accent-1"
-      variant="tonal"
       size="small"
+      variant="tonal"
       @click.stop="edit"
     >
       <VIcon class="mr-2">mdi-page-next-outline</VIcon>
@@ -23,8 +23,9 @@
 </template>
 
 <script lang="ts" setup>
-import ActivityOptions from '@/components/common/ActivityOptions/Menu.vue';
 import get from 'lodash/get';
+
+import ActivityOptions from '@/components/common/ActivityOptions/Menu.vue';
 import Publishing from './Publishing.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 

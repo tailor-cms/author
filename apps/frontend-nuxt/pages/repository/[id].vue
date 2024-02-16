@@ -50,9 +50,10 @@
 </template>
 
 <script lang="ts" setup>
+import { promiseTimeout } from '@vueuse/core';
+
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
-import { promiseTimeout } from '@vueuse/core';
 
 definePageMeta({
   middleware: ['auth'],

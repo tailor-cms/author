@@ -1,5 +1,5 @@
 <template>
-  <VTooltip max-width="300" open-delay="100" location="left">
+  <VTooltip location="left" max-width="300" open-delay="100">
     <template #activator="{ props }">
       <span v-bind="props">
         <VBadge :color="badgeColor" dot inline />
@@ -16,6 +16,7 @@ import countBy from 'lodash/countBy';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import pluralize from 'pluralize';
+
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
@@ -57,7 +58,6 @@ const changedDescendants = computed(() =>
   filter(getDescendants(store.outlineActivities, props.activity), isChanged),
 );
 const subtreeHasChanges = computed(() => !!changedDescendants.value.length);
-
 
 const activityInfo = computed(() =>
   getActivityInfo(hasChanges.value, label.value),

@@ -6,9 +6,9 @@
         :color="`primary${isSelected || isHovering ? '' : '-darken-4'}`"
         :ripple="false"
         class="mt-6 py-1 text-left"
-        variant="tonal"
         min-height="160"
         rounded="6"
+        variant="tonal"
         @click="$emit('select')"
       >
         <VCardSubtitle class="pt-5 d-flex align-center">
@@ -24,9 +24,9 @@
           <VChip
             class="readonly px-4 text-subtitle-2"
             color="teal-accent-2"
-            rounded
             size="small"
             variant="tonal"
+            rounded
           >
             {{ activity.shortId }}
           </VChip>
@@ -36,12 +36,12 @@
         </VCardTitle>
         <VCardActions class="py-1 pl-3">
           <VBtn
-            @mousedown.stop="$emit('show')"
-            variant="text"
             color="secondary-lighten-3"
+            variant="text"
+            @mousedown.stop="$emit('show')"
           >
             Go to
-            <VIcon small class="pl-1">mdi-arrow-right</VIcon>
+            <VIcon class="pl-1" small>mdi-arrow-right</VIcon>
           </VBtn>
         </VCardActions>
       </VCard>
@@ -51,6 +51,7 @@
 
 <script lang="ts" setup>
 import find from 'lodash/find';
+
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps({

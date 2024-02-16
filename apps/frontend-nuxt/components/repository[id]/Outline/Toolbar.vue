@@ -1,10 +1,10 @@
 <template>
-  <VToolbar color="transparent" class="toolbar">
+  <VToolbar class="toolbar" color="transparent">
     <VTextField
       v-model="searchInput"
       bg-color="primary-darken-2"
-      prepend-inner-icon="mdi-magnify"
       placeholder="Search by name or id..."
+      prepend-inner-icon="mdi-magnify"
       variant="solo"
       clearable
       hide-details
@@ -13,10 +13,10 @@
     <VSpacer />
     <VBtn
       v-if="!isFlat"
-      @click="currentRepositoryStore.toggleOutlineExpand"
       :disabled="!!props.search"
       color="primary-lighten-3"
       variant="text"
+      @click="currentRepositoryStore.toggleOutlineExpand"
     >
       Toggle all
     </VBtn>
@@ -41,9 +41,12 @@ const resetInput = () => {
   emit('search', '');
 };
 
-watch(() => searchInput.value, (value) => {
-  emit('search', value);
-});
+watch(
+  () => searchInput.value,
+  (value) => {
+    emit('search', value);
+  },
+);
 </script>
 
 <style lang="scss" scoped>

@@ -9,7 +9,7 @@ export const useNotification = () => {
     opts = opts || {};
     $eventBus.channel('app').emit('showNotificationSnackbar', {
       message,
-      ...opts
+      ...opts,
     });
   };
 };

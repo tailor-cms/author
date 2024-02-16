@@ -1,4 +1,5 @@
 import Promise from 'bluebird';
+
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 

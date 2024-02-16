@@ -47,9 +47,10 @@ import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import { object } from 'yup';
 import pluralize from 'pluralize';
-import { useActivityStore, type StoreActivity } from '@/stores/activity';
-import { useCurrentRepository } from '@/stores/current-repository';
 import { useForm } from 'vee-validate';
+
+import { type StoreActivity, useActivityStore } from '@/stores/activity';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
   activity: StoreActivity;

@@ -1,15 +1,15 @@
 <template>
   <div class="activity-wrapper">
     <VHover>
-      <template v-slot:default="{ isHovering, props }">
+      <template #default="{ isHovering, props }">
         <VSheet
           v-bind="props"
-          @mousedown="currentRepositoryStore.selectActivity(id)"
           :id="`activity_${uid}`"
           :class="{ selected: isSelected, highlighted: isHovering }"
           :style="{ 'border-left-color': config.color }"
           class="activity"
           data-testid="repository__structureActivity"
+          @mousedown="currentRepositoryStore.selectActivity(id)"
         >
           <VBtn
             v-if="hasSubtypes"
@@ -71,10 +71,10 @@
     </VHover>
     <div v-if="isExpanded && hasChildren">
       <Draggable
-        @update="(data) => reorder(data, children)"
         :list="children"
         v-bind="{ handle: '.activity' }"
         item-key="uid"
+        @update="(data) => reorder(data, children)"
       >
         <template #item="{ element, index }">
           <OutlineActivity
@@ -92,10 +92,11 @@
 <script lang="ts" setup>
 import Draggable from 'vuedraggable';
 import filter from 'lodash/filter';
+import size from 'lodash/size';
+
 import OptionsMenu from '@/components/common/ActivityOptions/Menu.vue';
 import OutlineActivity from '@/components/repository[id]/Outline/Activity.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/Toolbar.vue';
-import size from 'lodash/size';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 

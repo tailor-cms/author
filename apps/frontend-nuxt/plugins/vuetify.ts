@@ -3,8 +3,9 @@ import * as directives from 'vuetify/directives';
 import { createVuetify } from 'vuetify';
 import { md3 } from 'vuetify/blueprints';
 import { mdi } from 'vuetify/iconsets/mdi';
-import outlineIconset from '@/components/repository[id]/Outline/icons/iconset';
 import type { ThemeDefinition } from 'vuetify';
+
+import outlineIconset from '@/components/repository[id]/Outline/icons/iconset';
 
 const defaultTheme: ThemeDefinition = {
   colors: {

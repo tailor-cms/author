@@ -12,8 +12,8 @@
         Click on the button below in order to create your first item!
       </VAlert>
       <CreateDialog
-        :repository-id="repositoryId"
         :anchor="anchor"
+        :repository-id="repositoryId"
         activator-color="primary-lighten-4"
         test-id-prefix="repository__createRootActivity"
         show-activator
@@ -23,9 +23,10 @@
 </template>
 
 <script lang="ts" setup>
-import CreateDialog from '@/components/repository[id]/CreateDialog/index.vue';
 import last from 'lodash/last';
 import { storeToRefs } from 'pinia';
+
+import CreateDialog from '@/components/repository[id]/CreateDialog/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const store = useCurrentRepository();

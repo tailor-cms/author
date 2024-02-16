@@ -20,8 +20,8 @@
             <template #item="{ element, index }">
               <Activity
                 v-bind="element"
-                :level="1"
                 :activities="outlineActivities"
+                :level="1"
               />
             </template>
           </Draggable>
@@ -30,8 +30,8 @@
         <template v-else>
           <SearchResult
             v-for="activity in filteredActivities"
-            :activity="activity"
             :key="activity.uid"
+            :activity="activity"
             :is-selected="repositoryStore.selectedActivity?.id === activity.id"
             @select="repositoryStore.selectActivity(activity.id)"
             @show="goTo(activity)"

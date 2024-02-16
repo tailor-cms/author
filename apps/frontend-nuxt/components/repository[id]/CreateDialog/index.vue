@@ -9,8 +9,8 @@
         v-bind="activatorProps"
         :color="activatorColor"
         :data-testid="`${props.testIdPrefix}Btn`"
-        variant="text"
         class="px-1"
+        variant="text"
       >
         <VIcon class="pr-1">{{ props.activatorIcon }}</VIcon>
         {{ activatorLabel || defaultModalHeading }}
@@ -18,7 +18,7 @@
     </template>
     <template #header>{{ heading || defaultModalHeading }}</template>
     <template #body>
-      <form @submit.prevent="submitForm" class="activity-form">
+      <form class="activity-form" @submit.prevent="submitForm">
         <TypeSelect
           :disabled="hasSingleTypeOption"
           :options="taxonomyLevels"
@@ -52,7 +52,8 @@
             color="primary-darken-4"
             type="submit"
             variant="tonal"
-            @click="submitForm">
+            @click="submitForm"
+          >
             Create
           </VBtn>
         </div>
@@ -93,7 +94,7 @@ const initActivityState = () => {
     repositoryId: props.repositoryId,
     type: levels.length > 1 ? levels[0]?.type : null,
     data: {},
-  }
+  };
 };
 
 const visible = ref(false);

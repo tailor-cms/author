@@ -28,23 +28,24 @@
     </VMenu>
     <CreateDialog
       v-if="showCreateDialog"
-      :repository-id="activity.repositoryId"
-      :anchor="activity"
       :action="action"
-      :visible="showCreateDialog"
+      :anchor="activity"
       :heading="`${selectedActivity?.getAddDialogHeading(action)}: ${
         activity.data.name
       }`"
+      :repository-id="activity.repositoryId"
+      :visible="showCreateDialog"
       @close="showCreateDialog = false"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import CreateDialog from '@/components/repository[id]/CreateDialog/index.vue';
 import first from 'lodash/first';
-import InsertLocation from '@/lib/InsertLocation';
 import sortBy from 'lodash/sortBy';
+
+import CreateDialog from '@/components/repository[id]/CreateDialog/index.vue';
+import InsertLocation from '@/lib/InsertLocation';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useSelectedActivity } from '#imports';
