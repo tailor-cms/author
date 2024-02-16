@@ -151,6 +151,7 @@ watch(visible, (val) => {
 
 onMounted(() => {
   visible.value = !props.showActivator;
+  activity.value = initActivityState();
 });
 </script>
 
