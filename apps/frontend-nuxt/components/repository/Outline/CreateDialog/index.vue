@@ -127,7 +127,7 @@ const submitForm = async () => {
       action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId;
   }
   activity.value.position = await activityStore.calculateInsertPosition(
-    activity,
+    activity.value,
     action,
     anchor as StoreActivity,
   );
