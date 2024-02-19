@@ -66,11 +66,12 @@ const options = computed(() => {
     });
   }
   if (isEditable.value) {
-    const { id: activityId } = props.activity;
+    const { id: activityId, repositoryId } = props.activity;
+    const params = { repositoryId, activityId };
     items.push({
       name: 'Open',
       icon: 'mdi-page-next-outline',
-      action: () => navigateTo({ name: 'editor', params: { activityId } }),
+      action: () => navigateTo({ name: 'editor', params }),
     });
   }
   return items;

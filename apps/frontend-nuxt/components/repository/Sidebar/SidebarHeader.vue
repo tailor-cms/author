@@ -43,9 +43,10 @@ const isEditable = computed(() => {
 
 const edit = () => {
   if (!isEditable?.value) return;
+  const { repositoryId, id: activityId } = props.activity;
   navigateTo({
     name: 'editor',
-    params: { activityId: props.activity.id },
+    params: { repositoryId, activityId },
   });
 };
 </script>

@@ -72,6 +72,7 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 definePageMeta({
   name: 'repository',
+  middleware: ['auth'],
 });
 
 const repositoryStore = useCurrentRepository();

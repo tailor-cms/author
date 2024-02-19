@@ -7,5 +7,6 @@
 <script lang="ts" setup>
 definePageMeta({
   name: 'editor',
+  middleware: ['auth'],
 });
 </script>

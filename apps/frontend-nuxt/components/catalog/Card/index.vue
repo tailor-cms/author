@@ -6,7 +6,7 @@
       class="repository-card d-flex flex-column justify-space-between text-left"
       color="primary-darken-4"
       data-testid="catalog__repositoryCard"
-      @click="navigateTo(`repository/${repository.id}/structure`)"
+      @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
     >
       <div class="card-body">
         <div class="d-flex align-center mt-1 ml-3 mr-1 mb-1">
