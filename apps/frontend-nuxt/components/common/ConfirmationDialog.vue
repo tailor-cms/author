@@ -13,7 +13,7 @@
     <template #actions>
       <VBtn variant="text" @click="close">Close</VBtn>
       <VBtn
-        v-focus="isVisible"
+        :focus="isVisible"
         color="secondary"
         variant="text"
         @click="confirm"

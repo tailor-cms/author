@@ -1,6 +1,10 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
-    <VContainer :class="{ 'catalog-empty': !hasRepositories }" class="catalog">
+    <VContainer
+      v-if="!isLoading"
+      :class="{ 'catalog-empty': !hasRepositories }"
+      class="catalog"
+    >
       <VRow class="catalog-actions" no-gutters>
         <AddRepository :is-admin="authStore.isAdmin" @done="onRepositoryAdd" />
         <VCol md="4" offset-md="4" offset-sm="1" sm="10">
@@ -92,10 +96,7 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
-
-await authStore.fetchUserInfo();
-await repositoryStore.fetch();
-await repositoryStore.fetchTags();
+const isLoading = ref(true);
 
 const {
   queryParams,
@@ -169,6 +170,13 @@ const loadMore = async ({ done }: { done: Function }) => {
   // Infinite loader cb
   done(status);
 };
+
+onBeforeMount(async () => {
+  await authStore.fetchUserInfo();
+  await repositoryStore.fetch();
+  await repositoryStore.fetchTags();
+  isLoading.value = false;
+});
 </script>
 
 <style lang="scss" scoped>

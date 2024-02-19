@@ -5,20 +5,20 @@
       <slot></slot>
     </VMain>
     <ConfirmationDialog />
+    <NotificationSnackbar />
   </div>
 </template>
 
 <script lang="ts" setup>
 import AppBar from '@/components/common/AppBar.vue';
 import ConfirmationDialog from '@/components/common/ConfirmationDialog.vue';
+import NotificationSnackbar from '@/components/common/NotificationSnackbar.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();
 </script>
 
 <style lang="scss">
-// @import '@/assets/stylesheets/main';
-
 html,
 body {
   width: 100%;
@@ -46,6 +46,14 @@ html {
 .view {
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .v-main {

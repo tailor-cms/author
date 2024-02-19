@@ -1,5 +1,7 @@
 packages:
   - 'apps/*'
   - 'packages/*'
+  - 'packages/core-extensions/meta-inputs/*'
   - 'tests'
   - 'extensions/content-elements'
+  - 'extensions/meta-inputs'

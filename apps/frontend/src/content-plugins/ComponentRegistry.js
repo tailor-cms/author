@@ -38,11 +38,6 @@ export default class ComponentRegistry {
     await Promise.map(this._extensions, (path, index) => {
       return this.load(path, { position: index });
     });
-    const extensions = await this.loadExtensionList();
-    await Promise.map(extensions, (path, index) => {
-      const position = this._extensions.length + index;
-      return this.load(path, { position, isExtension: true });
-    });
   }
 
   async load(path, options) {
