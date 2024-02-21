@@ -11,5 +11,9 @@
     "inquirer": "^9.2.11",
     "jsonfile": "^6.1.0",
     "shelljs": "^0.8.5"
+  },
+  "dependencies": {
+    "@tailor-cms/ce-html-default-edit": "^0.0.1",
+    "@tailor-cms/ce-html-default-server": "^0.0.1"
   }
 }
