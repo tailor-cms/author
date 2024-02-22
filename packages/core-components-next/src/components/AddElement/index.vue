@@ -43,7 +43,7 @@
             <VBtnToggle
               v-model="elementWidth"
               class="bg-primary-darken-3"
-              color="secondary-lighten-2"
+              color="lime-lighten-2"
               rounded="small"
               variant="tonal"
               divided
