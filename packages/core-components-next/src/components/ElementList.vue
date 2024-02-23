@@ -38,13 +38,16 @@
       >
         <AddElement
           :activity="activity"
+          :color="addElementOptions.color"
+          :icon="addElementOptions.icon"
           :include="supportedTypes"
           :items="elements"
           :label="addElementOptions.label"
           :large="addElementOptions.large"
           :layout="layout"
           :position="props.elements.length"
-          class="mt-1"
+          :variant="addElementOptions.variant"
+          class="mt-6"
           @add="emit('add', $event)"
         />
       </slot>

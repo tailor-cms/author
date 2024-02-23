@@ -3,12 +3,12 @@
     <slot>
       <VBtn
         v-if="large"
+        :color="color"
+        :variant="variant"
         class="mt-3 mb-4"
-        color="primary-darken-4"
-        variant="text"
         @click.stop="showElementPicker"
       >
-        <VIcon class="pr-2">{{ icon }}</VIcon>
+        <VIcon class="pr-3">{{ icon }}</VIcon>
         {{ label }}
       </VBtn>
       <VBtn
@@ -106,6 +106,8 @@ const props = defineProps({
   large: { type: Boolean, default: false },
   label: { type: String, default: 'Add content' },
   icon: { type: String, default: 'mdi-plus' },
+  color: { type: String, default: 'primary-darken-4' },
+  variant: { type: String, default: 'tonal' },
 });
 
 const registry = useNuxtApp().$ceRegistry.all as any[];
