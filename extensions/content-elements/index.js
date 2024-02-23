@@ -1,5 +1,6 @@
-import managedPackages from './registry.json' assert { type: 'json' };
+import pkg0 from '@tailor-cms/ce-html-default-edit';
 
-const packages = [...managedPackages.map(({ name }) => name)];
-
-export default packages;
+// prettier-ignore
+export const elements = [
+  pkg0,
+];
