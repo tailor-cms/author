@@ -967,9 +967,6 @@ importers:
 
   packages/core-components-next:
     dependencies:
-      '@extensionengine/vue-radio':
-        specifier: workspace:*
-        version: link:../vue-radio
       '@tailor-cms/core-components-next':
         specifier: workspace:*
         version: 'link:'
@@ -979,12 +976,6 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
-      p-min-delay:
-        specifier: ^4.0.1
-        version: 4.0.2
-      pluralize:
-        specifier: ^8.0.0
-        version: 8.0.0
       vue:
         specifier: ^3.3.4
         version: 3.3.11(typescript@5.3.3)
