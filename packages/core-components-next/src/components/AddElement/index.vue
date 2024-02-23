@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { getPositions, isQuestion, uuid } from '@tailor-cms/utils';
 import flatMap from 'lodash/flatMap';
 import intersection from 'lodash/intersection';
@@ -110,7 +110,7 @@ const props = defineProps({
   variant: { type: String, default: 'tonal' },
 });
 
-const registry = useNuxtApp().$ceRegistry.all as any[];
+const registry = inject('$ceRegistry').all as any[];
 
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);

@@ -47,7 +47,7 @@ export const useEditorStore = defineStore('editor', () => {
     }, []);
   });
 
-  const initialize = async (activityId: number) => {
+  const initialize = (activityId: number) => {
     selectedActivityId.value = activityId;
   };
 

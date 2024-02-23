@@ -109,6 +109,8 @@ const showElementDrawer = (position) => {
   addElementComponent.value.click();
 };
 
+// TODO: Missing implementation
+// eslint-disable-next-line no-unused-vars
 const onHiddenElementDrawer = () => {
   isElementDrawerVisible.value = false;
   insertPosition.value = Infinity;

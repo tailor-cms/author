@@ -56,7 +56,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     $items.delete(element.uid);
   }
 
-  const reorder = async ({
+  const reorder = ({
     element,
     context,
   }: {

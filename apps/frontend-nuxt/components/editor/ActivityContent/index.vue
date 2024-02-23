@@ -1,4 +1,5 @@
 <template>
+  <!-- eslint-disable-next-line -->
   <div
     ref="activityContentEl"
     class="activity-content"
@@ -38,14 +39,14 @@
 </template>
 
 <script lang="ts" setup>
-import { getElementId } from '@tailor-cms/utils';
 import find from 'lodash/find';
 import get from 'lodash/get';
+import { getElementId } from '@tailor-cms/utils';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
 
 import ContentContainers from './ContainerList.vue';
-import ContentLoader from './Loader.vue';
+import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useContentElementStore } from '@/stores/content-elements';
@@ -81,8 +82,7 @@ const emit = defineEmits(['selected']);
 
 const route = useRoute();
 
-const { $schemaService } = useNuxtApp() as any;
-const { $eventBus } = useNuxtApp() as any;
+const { $eventBus, $ceRegistry, $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useCurrentRepository();
 const authStore = useAuthStore();
@@ -92,6 +92,7 @@ const contentElementStore = useContentElementStore();
 const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
+provide('$ceRegistry', $ceRegistry);
 
 const isLoading = ref(true);
 const focusedElement = ref(null);
