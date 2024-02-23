@@ -2,6 +2,8 @@ packages:
   - 'apps/*'
   - 'packages/*'
   - 'packages/core-extensions/meta-inputs/*'
+  - 'packages/core-extensions/content-containers/*'
   - 'tests'
   - 'extensions/content-elements'
   - 'extensions/meta-inputs'
+  - 'extensions/content-containers'
