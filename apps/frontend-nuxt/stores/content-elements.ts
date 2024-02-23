@@ -1,4 +1,5 @@
 import { calculatePosition } from '@tailor-cms/utils';
+
 import { contentElement as api } from '@/api';
 
 export type Id = number | string;
@@ -22,7 +23,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
 
   function add(item: StoreContentElement): StoreContentElement {
     $items.set(item.uid, item);
-    return $items.get(item.uid) as StoreContentElement;
+    return $items.get(item.uid);
   }
 
   async function fetch(

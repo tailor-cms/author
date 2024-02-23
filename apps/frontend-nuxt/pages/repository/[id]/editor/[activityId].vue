@@ -16,7 +16,7 @@
         :key="editorStore.selectedActivity.id"
         :activity="editorStore.selectedActivity"
         :content-containers="editorStore.contentContainers"
-        :repository="(repositoryStore.repository as Repository)"
+        :repository="repositoryStore.repository as Repository"
         :root-container-groups="editorStore.rootContainerGroups"
         class="activity-content"
         @selected="selectElement"
@@ -27,9 +27,10 @@
 
 <script lang="ts" setup>
 import { getElementId } from '@tailor-cms/utils';
+
 import type { Repository } from '@/api/interfaces/repository';
-import { useEditorStore } from '@/stores/editor';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useEditorStore } from '@/stores/editor';
 import VActivityContent from '@/components/editor/ActivityContent/index.vue';
 
 // TODO: Publish diff, Toolbar and Sidebar need to be migrated

@@ -18,7 +18,7 @@
         :activity-id="editorStore.selectedActivity.id"
         :container-groups="rootContainerGroups"
         :elements="elementsWithComments"
-        :publish-timestamp="(editorStore.selectedActivity.publishedAt as string)"
+        :publish-timestamp="editorStore.selectedActivity.publishedAt as string"
         :repository-id="repositoryStore.repository.id"
         :show-diff="showPublishDiff"
       >
@@ -30,7 +30,7 @@
           :parent-id="editorStore.selectedActivity.id"
           :processed-activities="processedActivities"
           :processed-elements="processedElements"
-          @focusoutElement="focusoutElement"
+          @focusout-element="focusoutElement"
         />
       </PublishDiffProvider>
     </div>

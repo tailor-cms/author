@@ -11,9 +11,9 @@
     </slot>
     <slot
       v-else
-      :processed-elements="elements"
-      :processed-container-groups="containerGroups"
       :processed-activities="activities"
+      :processed-container-groups="containerGroups"
+      :processed-elements="elements"
     >
     </slot>
   </div>

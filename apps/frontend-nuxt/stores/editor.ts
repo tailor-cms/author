@@ -28,10 +28,14 @@ export const useEditorStore = defineStore('editor', () => {
     if (!selectedActivity.value) return {};
     const { id, type } = selectedActivity.value;
     const containers = schema.getSupportedContainers(type);
-    return reduce(containers, (acc: any, { type }) => {
-      acc[type] = filter(repositoryStore.activities, { parentId: id, type });
-      return acc;
-    }, {});
+    return reduce(
+      containers,
+      (acc: any, { type }) => {
+        acc[type] = filter(repositoryStore.activities, { parentId: id, type });
+        return acc;
+      },
+      {},
+    );
   });
 
   const contentContainers = computed(() => {
