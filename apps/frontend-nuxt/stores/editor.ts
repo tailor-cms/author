@@ -4,6 +4,7 @@ import flatMap from 'lodash/flatMap';
 import reduce from 'lodash/reduce';
 import { schema } from 'tailor-config-shared';
 
+import type { StoreContentElement } from './content-elements';
 import { useActivityStore } from './activity';
 import { useCurrentRepository } from './current-repository';
 
@@ -15,6 +16,8 @@ export const useEditorStore = defineStore('editor', () => {
 
   const repositoryId = computed(() => repositoryStore.repositoryId);
   const selectedActivityId = ref<number | null>(null);
+  const selectedContentElementId = ref<number | null>(null);
+  const selectedContentElement = ref<StoreContentElement | null>(null);
 
   const selectedActivity = computed(() => {
     if (!selectedActivityId.value) return null;
@@ -32,8 +35,9 @@ export const useEditorStore = defineStore('editor', () => {
   });
 
   const contentContainers = computed(() => {
-    const parents = flatMap(rootContainerGroups);
-    return parents.reduce((acc, parent) => {
+    if (!selectedActivity.value) return [];
+    const parents = flatMap(rootContainerGroups.value);
+    return parents.reduce((acc: any[], parent) => {
       acc.push(parent, ...getDescendants(repositoryStore.activities, parent));
       return acc;
     }, []);
@@ -50,7 +54,9 @@ export const useEditorStore = defineStore('editor', () => {
   return {
     repositoryId,
     selectedActivityId,
+    selectedContentElementId,
     selectedActivity,
+    selectedContentElement,
     rootContainerGroups,
     contentContainers,
     initialize,
