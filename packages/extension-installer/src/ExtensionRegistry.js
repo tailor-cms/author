@@ -74,6 +74,13 @@ export class ExtensionRegistry {
     return this.elements.find(({ name }) => name === packageName);
   }
 
+  areDependenciesInstalled({ clientPackage: fePkg, serverPackage: bePkg }) {
+    const { elements } = this;
+    const clientPkgExists = elements.find((it) => it.clientPackage === fePkg);
+    const serverPkgExists = elements.find((it) => it.serverPackage === bePkg);
+    return clientPkgExists || serverPkgExists;
+  }
+
   async add() {
     const {
       name: packageName,
@@ -85,7 +92,16 @@ export class ExtensionRegistry {
       shell.echo(`Reinstalling the ${packageName}...`);
       await this.remove(packageName);
     }
+    // If subpackages are installed, but the extension name is different
+    if (this.areDependenciesInstalled({ clientPackage, serverPackage })) {
+      shell.echo(
+        `❌ The package(s) you are trying to add already exist! Please remove them first.`,
+      );
+      return;
+    }
     this.elements.push({ name: packageName, clientPackage, serverPackage });
+    await shell.exec(`pnpm add ${clientPackage}`);
+    if (serverPackage) await shell.exec(`pnpm add ${serverPackage}`);
     this.onRegistryUpdate();
   }
 
@@ -93,8 +109,16 @@ export class ExtensionRegistry {
     packageName =
       packageName || (await selectExtension(this.list(), this.extensionType));
     const { clientPackage, serverPackage } = this.find(packageName);
-    await shell.exec(`pnpm remove ${clientPackage}`);
-    if (serverPackage) await shell.exec(`pnpm remove ${serverPackage}`);
+    try {
+      await shell.exec(`pnpm remove ${clientPackage}`);
+    } catch (e) {
+      shell.echo(`❌ Error removing the client package:`, e);
+    }
+    try {
+      if (serverPackage) await shell.exec(`pnpm remove ${serverPackage}`);
+    } catch (e) {
+      shell.echo(`❌ Error removing the server package:`, e);
+    }
     this.elements = this.elements.filter(({ name }) => name !== packageName);
     this.onRegistryUpdate();
   }
@@ -110,7 +134,10 @@ export class ExtensionRegistry {
       serverPackages,
     } = this;
     shell.echo('Updating the registry file...');
-    jsonfile.writeFileSync(registryLocation, elements);
+    jsonfile.writeFileSync(registryLocation, elements, {
+      spaces: 2,
+      EOL: '\r\n',
+    });
     shell.echo('Generating export modules...');
     fs.writeFileSync(clientExportsLocation, getExportModule(clientPackages));
     if (hasServerPackages) {
