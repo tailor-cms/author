@@ -1,9 +1,10 @@
 import { calculatePosition } from '@tailor-cms/utils';
 
 import { contentElement as api } from '@/api';
+import type { ContentElement } from '@/api/interfaces/content-element';
 
 export type Id = number | string;
-export type StoreContentElement = any;
+export type StoreContentElement = ContentElement;
 export type FoundContentElement = StoreContentElement | undefined;
 
 export const useContentElementStore = defineStore('contentElements', () => {
@@ -12,7 +13,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
 
   function findById(id: Id): FoundContentElement {
     if (typeof id === 'string') return $items.get(id);
-    return items.value.find((it: StoreActivity) => it.id === id);
+    return items.value.find((it: StoreContentElement) => it.id === id);
   }
 
   function where(
@@ -21,9 +22,9 @@ export const useContentElementStore = defineStore('contentElements', () => {
     return items.value.filter(predicate);
   }
 
-  function add(item: StoreContentElement): StoreContentElement {
+  function add(item: ContentElement): StoreContentElement {
     $items.set(item.uid, item);
-    return $items.get(item.uid);
+    return $items.get(item.uid) as StoreContentElement;
   }
 
   async function fetch(
@@ -31,7 +32,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     activityIds: number[],
   ): Promise<StoreContentElement[]> {
     const params = { ids: activityIds };
-    const contentElements: StoreContentElement[] = await api.fetch(
+    const contentElements: ContentElement[] = await api.fetch(
       repositoryId,
       params,
     );
@@ -45,8 +46,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     const contentElement = await (id
       ? api.patch(repositoryId, id, rest)
       : api.create(payload));
-    add(contentElement);
-    return $items.get(contentElement.uid);
+    return add(contentElement);
   }
 
   async function remove(repositoryId: number, id: number): Promise<undefined> {
@@ -65,7 +65,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
   }) => {
     const storeElement = findById(element.id);
     if (!storeElement) throw new Error('Element not found');
-    const position = calculatePosition(context);
+    const position = calculatePosition(context) as number;
     storeElement.position = position;
     const { repositoryId, id } = element;
     return api
