@@ -4,7 +4,7 @@ import jsonfile from 'jsonfile';
 import path from 'node:path';
 import shell from 'shelljs';
 
-import { getInstallationInfo, selectExtension } from './prompts';
+import { getInstallationInfo, selectExtension } from './prompts.js';
 
 export class ExtensionRegistry {
   extensionType = '';
@@ -16,7 +16,7 @@ export class ExtensionRegistry {
     this.location = location;
     this.extensionType = extensionType;
     this.hasServerPackages = hasServerPackages;
-    this.elements = this.load();
+    this.load();
   }
 
   get clientPackages() {
@@ -37,7 +37,7 @@ export class ExtensionRegistry {
   }
 
   get clientExportsLocation() {
-    return path.join(this.location, 'index.js');
+    return path.join(this.location, 'client.js');
   }
 
   get serverExportsLocation() {
@@ -46,9 +46,13 @@ export class ExtensionRegistry {
 
   load() {
     try {
-      this.elements = jsonfile.readFileSync(this.location);
+      shell.echo(`📦 Loading the registry from: ${this.registryLocation}\n`);
+      this.elements = jsonfile.readFileSync(this.registryLocation);
+      shell.echo(
+        `✅ Loaded ${this.elements.length} ${this.extensionType} extensions.\n`,
+      );
     } catch (e) {
-      shell.echo(`Error loading the ${this.extensionType} registry:`, e);
+      shell.echo(`❌ Error loading the ${this.extensionType} registry:`, e);
     }
   }
 
@@ -56,11 +60,14 @@ export class ExtensionRegistry {
     return this.elements.map(({ name }) => name);
   }
 
-  printList() {
-    const formattedList = this.list()
-      .map((name) => `· ${name}`)
-      .join('\n');
-    shell.echo(formattedList);
+  printList(verbose = false) {
+    shell.echo(`📦 Installed ${this.extensionType} extensions:\n`);
+    const list = verbose
+      ? this.elements
+      : this.list()
+          .map((name) => `· ${name}`)
+          .join('\n');
+    shell.echo(list);
   }
 
   find(packageName) {
@@ -82,8 +89,9 @@ export class ExtensionRegistry {
     this.onRegistryUpdate();
   }
 
-  async remove() {
-    const packageName = await selectExtension(this.list, this.extensionType);
+  async remove(packageName) {
+    packageName =
+      packageName || (await selectExtension(this.list(), this.extensionType));
     const { clientPackage, serverPackage } = this.find(packageName);
     await shell.exec(`pnpm remove ${clientPackage}`);
     if (serverPackage) await shell.exec(`pnpm remove ${serverPackage}`);
@@ -92,16 +100,18 @@ export class ExtensionRegistry {
   }
 
   onRegistryUpdate() {
-    shell.echo('Updating the registry file...');
-    jsonfile.writeFileSync(this.location, this.elements);
-    shell.echo('Generating export modules...');
     const {
       clientExportsLocation,
       clientPackages,
+      elements,
       hasServerPackages,
+      registryLocation,
       serverExportsLocation,
       serverPackages,
     } = this;
+    shell.echo('Updating the registry file...');
+    jsonfile.writeFileSync(registryLocation, elements);
+    shell.echo('Generating export modules...');
     fs.writeFileSync(clientExportsLocation, getExportModule(clientPackages));
     if (hasServerPackages) {
       fs.writeFileSync(serverExportsLocation, getExportModule(serverPackages));
