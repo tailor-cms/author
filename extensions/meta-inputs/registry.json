@@ -1,1 +1,6 @@
-[{"name":"@tailor-cms/tme-textarea"}]
+[
+  {
+    "name": "@tailor-cms/tme-textarea",
+    "clientPackage": "@tailor-cms/tme-textarea"
+  }
+]

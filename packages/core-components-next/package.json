@@ -1,0 +1,23 @@
+{
+  "name": "@tailor-cms/core-components-next",
+  "description": "Reusable Tailor UI components",
+  "author": "Studion <info@gostudion.com>",
+  "license": "MIT",
+  "version": "0.0.1",
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "main": "./src/index.js",
+  "peerDependencies": {
+    "vue": "^3.3.4",
+    "vuetify": "^3.3.5",
+    "@tailor-cms/utils": "workspace:*",
+    "@tailor-cms/core-components-next": "workspace:*",
+    "vuedraggable": "^4.1.0",
+    "lodash": "^4.17.21"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "@tailor-cms/meta-element-collection",
+  "name": "@tailor-cms/content-container-collection",
   "type": "module",
   "version": "0.0.1",
   "files": ["client.js", "server.js"],
@@ -11,6 +11,6 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
-    "@tailor-cms/tme-textarea": "workspace:^"
+    "@tailor-cms/tcc-page": "workspace:^"
   }
 }

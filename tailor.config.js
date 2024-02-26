@@ -47,9 +47,10 @@ const PAGE = {
 
 const SECTION_CONTAINER = {
   type: ACTIVITY_TYPE.SECTION,
+  templateId: 'DEFAULT',
   label: 'Section',
   multiple: true,
-  types: ['JODIT_HTML', 'IMAGE', 'EMBED', 'PDF'],
+  types: ['JODIT_HTML', 'IMAGE', 'EMBED', 'PDF', 'CE_HTML_DEFAULT'],
 };
 
 const EXAMPLE_SCHEMA = {

@@ -125,6 +125,9 @@ onMounted(() => {
     repositoryStore.selectActivity(parseInt(activityId as string, 10));
   } else if (rootActivities.value.length) {
     repositoryStore.selectActivity(rootActivities.value[0].id);
+  } else {
+    // If there are no activities
+    return;
   }
   const isFirstActivitySelected =
     selectedActivity.value &&

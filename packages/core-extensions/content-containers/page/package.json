@@ -1,0 +1,17 @@
+{
+  "name": "@tailor-cms/tcc-page",
+  "version": "0.0.1",
+  "description": "Tailor page content container",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "peerDependencies": {
+    "vue": "^3.3.4",
+    "vuetify": "^3.3.5",
+    "lodash": "*",
+    "@tailor-cms/core-components-next": "workspace:*"
+  }
+}

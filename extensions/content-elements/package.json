@@ -1,15 +1,17 @@
 {
-  "name": "content-element-extensions",
+  "name": "@tailor-cms/content-element-collection",
   "type": "module",
   "version": "0.0.1",
-  "main": "index.js",
+  "files": ["client.js", "server.js"],
+  "main": "client.js",
   "scripts": {
-    "ce:add": "node ./install.js"
+    "cli": "node ./cli.js"
   },
   "devDependencies": {
-    "hygen": "^6.2.11",
-    "inquirer": "^9.2.11",
-    "jsonfile": "^6.1.0",
-    "shelljs": "^0.8.5"
+    "@tailor-cms/extension-installer": "workspace:^"
+  },
+  "dependencies": {
+    "@tailor-cms/ce-html-default-edit": "^0.0.1",
+    "@tailor-cms/ce-html-default-server": "^0.0.1"
   }
 }
