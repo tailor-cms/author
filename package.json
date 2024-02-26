@@ -13,8 +13,9 @@
     "test": "cd tests && pnpm e2e",
     "setup:dev": "pnpm i && node ./scripts/setup/index.js",
     "db:migrate": "cd ./apps/backend && pnpm db migrate",
-    "tce:add": "cd ./extensions/content-elements && pnpm ce:add",
-    "tme:add": "cd ./extensions/meta-inputs && pnpm meta:add"
+    "cc": "cd ./extensions/content-containers && pnpm cli",
+    "ce": "cd ./extensions/content-elements && pnpm cli",
+    "mi": "cd ./extensions/meta-inputs && pnpm cli"
   },
   "devDependencies": {
     "@tailor-cms/eslint-config": "^0.0.2",
