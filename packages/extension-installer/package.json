@@ -1,0 +1,11 @@
+{
+  "name": "@tailor-cms/extension-installer",
+  "type": "module",
+  "main": "src/index.js",
+  "dependencies": {
+    "inquirer": "^9.2.11",
+    "jsonfile": "^6.1.0",
+    "lodash": "^4.17.21",
+    "shelljs": "^0.8.5"
+  }
+}
