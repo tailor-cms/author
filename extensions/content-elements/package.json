@@ -2,7 +2,10 @@
   "name": "@tailor-cms/content-element-collection",
   "type": "module",
   "version": "0.0.1",
-  "files": ["client.js", "server.js"],
+  "files": [
+    "client.js",
+    "server.js"
+  ],
   "main": "client.js",
   "scripts": {
     "cli": "node ./cli.js"
@@ -12,6 +15,8 @@
   },
   "dependencies": {
     "@tailor-cms/ce-html-default-edit": "^0.0.1",
-    "@tailor-cms/ce-html-default-server": "^0.0.1"
+    "@tailor-cms/ce-html-default-server": "^0.0.1",
+    "@tailor-cms/ce-image-edit": "^0.0.1",
+    "@tailor-cms/ce-image-server": "^0.0.1"
   }
 }
