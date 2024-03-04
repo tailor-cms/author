@@ -45,9 +45,12 @@ import { getElementId } from '@tailor-cms/utils';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
 
+import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
+import type { Repository } from '@/api/interfaces/repository';
+import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -87,12 +90,32 @@ const { $eventBus, $ceRegistry, $schemaService } = useNuxtApp() as any;
 const repositoryStore = useCurrentRepository();
 const authStore = useAuthStore();
 const editorStore = useEditorStore();
+const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
+
+const doTheMagic = () => {
+  const ancestors = activityStore.getAncestors(props.activity?.id);
+  const location = ancestors.length
+    ? ancestors.reduce(
+        (acc, it) => acc + (acc === '' ? it.data.name : `, ${it.data.name}`),
+        '',
+      )
+    : '';
+  const { name, description, schema } = props.repository as Repository;
+  return aiAPI.getContentSuggestion({
+    name,
+    description,
+    schemaId: schema,
+    location,
+    topic: props.activity?.data?.name,
+  });
+};
 
 const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$ceRegistry', $ceRegistry);
+provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);
 const focusedElement = ref(null);
@@ -151,7 +174,10 @@ const onClick = (e: any) => {
 };
 
 const loadContents = async () => {
-  if (containerIds.value.length <= 0) return;
+  if (containerIds.value.length <= 0) {
+    isLoading.value = false;
+    return;
+  }
   await contentElementStore.fetch(
     repositoryStore.repositoryId as number,
     containerIds.value,
