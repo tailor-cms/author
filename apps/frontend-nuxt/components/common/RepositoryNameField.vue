@@ -1,6 +1,6 @@
 <template>
   <VTextField
-    v-model.trim="nameInput"
+    v-model="nameInput"
     v-bind="$attrs"
     :error-messages="errors.name"
     :label="props.label"
