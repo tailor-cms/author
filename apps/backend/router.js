@@ -1,3 +1,4 @@
+import ai from './shared/ai/index.js';
 import { auth as authConfig } from './config/server/index.js';
 import authenticator from './shared/auth/index.js';
 import express from 'express';
@@ -25,6 +26,7 @@ authConfig.oidc.enabled &&
 router.use(authenticate('jwt'));
 router.use(repository.path, repository.router);
 router.use(tag.path, tag.router);
+router.use(ai.path, ai.router);
 
 export default router;
 
