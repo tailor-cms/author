@@ -91,7 +91,9 @@ const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
 
 const editorBus = inject('$editorBus') as any;
 const eventBus = inject('$eventBus') as any;
-const elementBus = computed(() => eventBus.channel(`element:${id.value}`));
+const elementBus = eventBus.channel(`element:${props.element.id}`);
+
+provide('$elementBus', elementBus);
 
 const isFocused = ref(false);
 const isSaving = ref(false);
@@ -121,13 +123,11 @@ const focus = () => {
 };
 
 onMounted(() => {
-  provide('$elementBus', elementBus.value);
-
-  elementBus.value.on('delete', () => emit('delete'));
-  elementBus.value.on('save:meta', (meta) => emit('save:meta', meta));
+  elementBus.on('delete', () => emit('delete'));
+  elementBus.on('save:meta', (meta) => emit('save:meta', meta));
 
   const deferSaveFlag = () => setTimeout(() => (isSaving.value = false), 1000);
-  elementBus.value.on('saved', deferSaveFlag);
+  elementBus.on('saved', deferSaveFlag);
 
   editorBus.on('element:select', ({ elementId, isSelected = true, user }) => {
     if (id.value !== elementId) return;
