@@ -114,7 +114,7 @@ const isGenerating = ref(false);
 
 const generateContent = async () => {
   isGenerating.value = true;
-  const elements = await doTheMagic();
+  const elements = await doTheMagic({ type: props.container.type });
   elements.forEach((element: any, index: number) => {
     emit('save:element', {
       ...element,

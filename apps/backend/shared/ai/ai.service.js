@@ -7,7 +7,13 @@ import { ai as aiConfig } from '../../config/server/index.js';
 import createLogger from '../logger.js';
 
 const logger = createLogger('ai');
-const { getOutlineLevels, getSchema, getLevel } = schemaConfig;
+const {
+  getLevel,
+  getOutlineLevels,
+  getSchema,
+  getSchemaId,
+  getSupportedContainers,
+} = schemaConfig;
 
 const parseResponse = (val) => {
   const content = val?.choices?.[0]?.message?.content;
@@ -39,9 +45,12 @@ const generateTaxonomyDesc = (schemaId) => {
     const desc = `${label} contains the following sublevels: ${subLevelsLabel}.`;
     const withoutRecursion =
       subLevels?.filter((it) => it.type !== activityTypeConfig.type) || [];
-    return (
-      desc + withoutRecursion?.map((it) => generateTaxonDesc(it)).join(' ')
-    );
+    const structureDesc =
+      desc + withoutRecursion?.map((it) => generateTaxonDesc(it)).join(' ');
+    const nodeDesc = outlineLevels
+      .map((it) => it?.ai?.definition || '')
+      .join(' ');
+    return `${structureDesc} ${nodeDesc}`;
   };
   const rootLevels = outlineLevels.filter((level) => level?.rootLevel);
   // TODO: Add content holder desc.
@@ -53,8 +62,8 @@ const generateTaxonomyDesc = (schemaId) => {
 };
 
 const systemPrompt = `
-  Asistant is a bot desinged to help users to create content structures like
-  courses, lessons, articles.
+  Asistant is a bot desinged to help users to create content for
+  Courses, Q&A content, Knowledge base, etc.
 
   Rules:
   - Use the User rules to generate the content
@@ -77,6 +86,7 @@ class AIService {
     repositoryDescription,
     tags = [],
   ) {
+    if (!schemaId || !repositoryName || !repositoryDescription) return '';
     const schema = getSchema(schemaId);
     if (!schema) throw new Error('Schema not found');
     const prompt = `
@@ -147,33 +157,42 @@ class AIService {
     return this.requestCompletion(userPrompt);
   }
 
-  async suggestContent(
-    schemaId,
+  async suggestContent({
     repositoryName,
     repositoryDescription,
     topic,
+    outlineActivityType,
+    containerType,
     location,
     level = 'medium',
-  ) {
+  }) {
+    const schemaId = getSchemaId(outlineActivityType);
+    if (!schemaId) throw new Error('Schema not found');
+    const containerConfig = getSupportedContainers(outlineActivityType).find(
+      (it) => it.type === containerType,
+    );
+    if (!containerConfig) throw new Error('Container type not found');
+    const introPrompt = this.baseRepositoryPrompt(
+      schemaId,
+      repositoryName,
+      repositoryDescription,
+    );
+    const outputRules = containerConfig?.ai?.outputRules || {};
     const [htmlElements, imageElement] = await Promise.all([
-      this.generateHTMLElementsForTopic(
-        schemaId,
-        repositoryName,
-        repositoryDescription,
+      this.generateHTMLElementsForTopic({
         topic,
         location,
         level,
-      ),
-      this.generateImageElementForTopic(
-        schemaId,
-        repositoryName,
-        repositoryDescription,
-        topic,
-        location,
-      ),
+        introPrompt,
+        outputRules,
+      }),
+      outputRules.useDalle
+        ? this.generateImageElementForTopic({ introPrompt, topic, location })
+        : Promise.resolve(null),
     ]);
     const [firstElement, ...restElements] = htmlElements;
-    return [firstElement, ...shuffle([...restElements, imageElement])];
+    if (imageElement) restElements.push(imageElement);
+    return [firstElement, ...shuffle(restElements)];
   }
 
   async requestCompletion(prompt) {
@@ -191,34 +210,26 @@ class AIService {
     return parseResponse(completion);
   }
 
-  async generateHTMLElementsForTopic(
-    schemaId,
-    repositoryName,
-    repositoryDesc,
+  async generateHTMLElementsForTopic({
     topic,
     location,
     level,
-  ) {
-    const schema = getSchema(schemaId);
+    introPrompt = '',
+    outputRules = {},
+  }) {
+    const promptEnd = outputRules?.prompt
+      ? `The following rules should be followed: ${outputRules.prompt}`
+      : '';
     const userPrompt = `
-      ${this.baseRepositoryPrompt(schemaId, repositoryName, repositoryDesc)}
-      Generate a page of content explaining the "${topic}".
-      The page is located in the "${location}" section of the "${schema.name}".
+      ${introPrompt}
+      Generate content explaining the "${topic}".
+      The content is located in the "${location}".
       The targeted audience expertese level is "${level}".
       Return the response as a JSON object such that you:
         - Use { elements: [{ "content": "" }] } format;
           where content is the text of the page.
-        - Split the content contextually to couple of { "content": "" } blocks
-          based on the context. Headings might be a good place to split.
-          Dont include more than 3 headings.
-        - Use at least 1000 words and don't exceed 2000 words.
-        - Format the content as a HTML with suitable tags and headings.
-        - Apply the folllowing classes to the tags:
-          - Apply text-body-2 mb-5 to the paragraphs
-          - Apply text-h3 and mb-7 to the headings
-      You are trying to teach the audience, so make sure the content is easy to
-      understand, has a friendly tone and is engaging to the reader.
-      Make sure to include the latest relevant information on the topic.`;
+        - Format the content as a HTML with suitable tags
+      ${promptEnd}`;
     const { elements = [] } = await this.requestCompletion(userPrompt);
     const htmlElements = elements.map((it) => ({
       type: 'CE_HTML_DEFAULT',
@@ -228,22 +239,11 @@ class AIService {
     return htmlElements;
   }
 
-  async generateImageElementForTopic(
-    schemaId,
-    repositoryName,
-    repositoryDescription,
-    topic,
-    location,
-  ) {
-    const schema = getSchema(schemaId);
+  async generateImageElementForTopic({ topic, location, introPrompt = '' }) {
     const promptQuery = `
-      ${this.baseRepositoryPrompt(
-        schemaId,
-        repositoryName,
-        repositoryDescription,
-      )}
+      ${introPrompt}
       I am generating content explaining the "${topic}".
-      The page is located in the "${location}" of the "${schema.name}".
+      The page is located in the "${location}".
       Generate a DALL·E 3 prompt for the related topic that would
       generate appropriate image for the given context.
       Return the prompt as JSON respecting the following format:

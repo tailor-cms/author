@@ -30,14 +30,22 @@ async function getTopicOutlineRecommendation(req, res) {
 }
 
 async function getContentSuggestion(req, res) {
-  const { schemaId, name, description, location, topic } = req.body;
-  const data = await AIService.suggestContent(
-    schemaId,
-    name,
-    description,
+  const {
+    repositoryName,
+    repositoryDescription,
+    outlineActivityType,
+    containerType,
+    location,
+    topic,
+  } = req.body;
+  const data = await AIService.suggestContent({
+    repositoryName,
+    repositoryDescription,
+    outlineActivityType,
+    containerType,
     topic,
     location,
-  );
+  });
   res.json({ data });
 }
 

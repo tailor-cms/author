@@ -93,7 +93,8 @@ const editorStore = useEditorStore();
 const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
 
-const doTheMagic = () => {
+const doTheMagic = ({ type }: { type: string }) => {
+  if (!type) throw new Error('Type is required');
   const ancestors = activityStore.getAncestors(props.activity?.id);
   const location = ancestors.length
     ? ancestors.reduce(
@@ -101,11 +102,12 @@ const doTheMagic = () => {
         '',
       )
     : '';
-  const { name, description, schema } = props.repository as Repository;
+  const { name, description } = props.repository as Repository;
   return aiAPI.getContentSuggestion({
-    name,
-    description,
-    schemaId: schema,
+    repositoryName: name,
+    repositoryDescription: description,
+    outlineActivityType: props.activity?.type,
+    containerType: type,
     location,
     topic: props.activity?.data?.name,
   });
