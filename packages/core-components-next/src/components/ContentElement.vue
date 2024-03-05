@@ -130,20 +130,21 @@ onMounted(() => {
   elementBus.on('saved', deferSaveFlag);
 
   editorBus.on('element:select', ({ elementId, isSelected = true, user }) => {
-    if (id.value !== elementId) return;
-    if (!user || user.id === currentUser.value?.id) {
-      isFocused.value = isSelected;
-      if (isSelected) focus();
-      return;
-    }
-    if (isSelected && !activeUsers.value.find((it: any) => it.id === user.id)) {
-      activeUsers.value.push(user);
-    } else if (
-      !isSelected &&
-      activeUsers.value.find((it) => it.id === user.id)
-    ) {
-      activeUsers.value = activeUsers.value.filter((it) => it.id !== user.id);
-    }
+    isFocused.value = id.value === elementId;
+    // // TODO: Add upon user activity tracking implementation
+    // if (!user || user.id === currentUser.value?.id) {
+    //   isFocused.value = isSelected;
+    //   if (isSelected) focus();
+    //   return;
+    // }
+    // if (isSelected && !activeUsers.value.find((it: any) => it.id === user.id)) {
+    //   activeUsers.value.push(user);
+    // } else if (
+    //   !isSelected &&
+    //   activeUsers.value.find((it) => it.id === user.id)
+    // ) {
+    //   activeUsers.value = activeUsers.value.filter((it) => it.id !== user.id);
+    // }
   });
 
   editorBus.on('element:focus', (element) => {
