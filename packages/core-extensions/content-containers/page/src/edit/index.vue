@@ -1,6 +1,11 @@
 <template>
-  <VSheet class="content-container mb-5" elevation="3" rounded="lg">
-    <div class="d-flex justify-end ma-3">
+  <VSheet
+    :color="isGenerating ? 'primary-darken-4' : 'white'"
+    class="content-container mb-5"
+    elevation="3"
+    rounded="lg"
+  >
+    <div v-if="!isGenerating" class="d-flex justify-end ma-3">
       <VBtn
         :loading="isGenerating"
         class="mr-3"
@@ -35,7 +40,7 @@
     </VAlert>
     <VSheet
       v-else-if="isGenerating"
-      class="bg-primary-darken-3 py-15 text-subtitle-2 rounded-lg"
+      class="bg-transparent pt-16 text-subtitle-2 rounded-lg"
     >
       <CircularProgress />
       <div class="pt-3 text-primary-lighten-4 font-weight-bold">
