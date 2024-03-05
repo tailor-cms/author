@@ -57,7 +57,7 @@
                 icon="mdi-cog"
                 size="small"
                 variant="text"
-                @click.stop="navigateTo(`repository/${repository.id}/settings`)"
+                @click.stop="navigateTo(`/repository/${repository.id}/root/settings`)"
               >
               </VBtn>
             </template>
