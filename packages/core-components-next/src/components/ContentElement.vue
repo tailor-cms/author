@@ -63,6 +63,8 @@
       class="save-indicator"
       color="teal accent-2"
       height="2"
+      location="bottom"
+      absolute
       indeterminate
     />
   </div>
@@ -91,7 +93,7 @@ const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
 
 const editorBus = inject('$editorBus') as any;
 const eventBus = inject('$eventBus') as any;
-const elementBus = eventBus.channel(`element:${props.element.id}`);
+const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 
 provide('$elementBus', elementBus);
 
@@ -105,7 +107,7 @@ const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 // TODO: Add upon collab feature implementation
 // const hasComments = computed(() => !!props.element.comments?.length);
-const currentUser = computed(() => null); // $getCurrentUser()
+// const currentUser = computed(() => null); // $getCurrentUser()
 
 const onSelect = (e) => {
   if (props.isDisabled || e.component) return; // || editorState.isPublishDiff
@@ -231,7 +233,6 @@ onMounted(() => {
 
 .save-indicator {
   position: absolute;
-  bottom: -0.125rem;
   left: 0;
 }
 
