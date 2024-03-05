@@ -80,7 +80,7 @@ const routes = computed(() => {
   if (repository.value) {
     items.unshift({
       name: `${repository.value.name} structure`,
-      to: `repository/${repository.value?.id}/structure`,
+      to: `/repository/${repository.value?.id}/root/structure`,
     });
   }
   return items;
