@@ -80,6 +80,7 @@
           variant="outlined"
         />
         <AIAssistance
+          v-if="runtimeConfig.public.aiUiEnabled"
           :schemaId="schemaInput"
           :name="nameInput"
           :description="descriptionInput"
@@ -128,6 +129,7 @@ const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
 
 const { $schemaService } = useNuxtApp() as any;
+const runtimeConfig = useRuntimeConfig();
 const store = useRepositoryStore();
 const activityStore = useActivityStore();
 

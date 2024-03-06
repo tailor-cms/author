@@ -8,7 +8,8 @@ import { portToPid } from 'pid-port';
 const configLocation = path.join(process.cwd(), '.env');
 const config = await fs.readFile(configLocation, 'utf-8');
 
-const { PORT, REVERSE_PROXY_PORT } = dotenv.parse(config);
+const { PORT, REVERSE_PROXY_PORT, NUXT_PUBLIC_AI_UI_ENABLED } =
+  dotenv.parse(config);
 
 if (
   PORT === undefined ||
@@ -31,6 +32,9 @@ for (const port of [PORT, REVERSE_PROXY_PORT, NUXT_FRONTEND_PORT]) {
     if (pid) await fkill(pid, { force: true });
   } catch {}
 }
+
+// Proxy public environment variables
+process.env.NUXT_PUBLIC_AI_UI_ENABLED = NUXT_PUBLIC_AI_UI_ENABLED;
 
 const appCommands = await Promise.all(
   ['backend', 'frontend', 'frontend-nuxt'].map(async (name, index) => {
