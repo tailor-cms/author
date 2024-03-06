@@ -12,11 +12,11 @@
         aria-label="Add repository"
         class="add-repo"
         color="secondary"
-        icon="mdi-plus"
+        prepend-icon="mdi-plus"
         position="absolute"
-        size="x-large"
         variant="elevated"
       >
+        Add
       </VBtn>
     </template>
     <template #header>Add</template>
@@ -86,12 +86,16 @@
           @structure="aiSuggestedOutline = $event"
         />
         <div class="d-flex justify-end">
-          <VBtn :disabled="showLoader" variant="text" @click="hide">
+          <VBtn
+            :disabled="showLoader"
+            color="primary-darken-4"
+            variant="text"
+            @click="hide"
+          >
             Cancel
           </VBtn>
           <VBtn
             :loading="showLoader"
-            class="px-1"
             color="primary-darken-4"
             type="submit"
             variant="text"
