@@ -205,8 +205,8 @@ onBeforeMount(async () => {
   padding-top: 0.75rem;
 
   ::v-deep .add-repo {
-    top: 0.5rem;
-    right: 0.75rem;
+    top: 1.25rem;
+    right: 0.25rem;
   }
 }
 
