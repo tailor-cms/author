@@ -48,16 +48,16 @@ const generateTaxonomyDesc = (schemaId) => {
     const structureDesc =
       desc + withoutRecursion?.map((it) => generateTaxonDesc(it)).join(' ');
     const nodeDesc = outlineLevels
-      .map((it) => it?.ai?.definition || '')
+      .map((it) => (it?.ai?.definition || '').trim())
       .join(' ');
-    return `${structureDesc} ${nodeDesc}`;
+    return `${structureDesc.trim()} ${nodeDesc.trim()}`;
   };
   const rootLevels = outlineLevels.filter((level) => level?.rootLevel);
   // TODO: Add content holder desc.
   return `
     In the root level of the taxonomy, the following node types are available:
-    ${rootLevels.map((level) => level.label).join(', ')}.
-    ${rootLevels.map(generateTaxonDesc).join(' ')}
+      ${rootLevels.map((level) => level.label).join(', ')}.
+      ${rootLevels.map(generateTaxonDesc).join(' ')}
   `;
 };
 
@@ -145,7 +145,7 @@ class AIService {
       ${this.baseRepositoryPrompt(schemaId, repoName, repoDescription, tags)}
       Can you generate a structure/outline for this content.
       The structure should be created by following the taxonomy of the
-      "${schema.name}" specified as: ${generateTaxonomyDesc(schemaId)}
+      "${schema.name}" specified as: ${generateTaxonomyDesc(schemaId).trim()}
       The targeted audience expertese level is ${level}.
       Return the response as a JSON object with the following format:
       { "name": "", "type": "", children: [] }
