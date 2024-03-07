@@ -1,91 +1,10 @@
-const EXAMPLE_WORKFLOW = {
-  id: 'EXAMPLE_WORKFLOW',
-  statuses: [
-    { id: 'TODO', label: 'Todo', default: true, color: '#e91e63' },
-    { id: 'IN_PROGRESS', label: 'In progress', color: '#ff0000' },
-    { id: 'REVIEW', label: 'Review', color: '#ff0000' },
-    { id: 'DONE', label: 'Done', color: '#ff0000' },
-  ],
-};
+import { DEFAULT_WORKFLOW } from './schemas/default-workflow';
+import { SCHEMA as CourseSchema } from './schemas/course-schema';
+import { SCHEMA as KnowledgeBase } from './schemas/knowledge-base';
+import { SCHEMA as QASchema } from './schemas/q&a-schema';
 
-const ACTIVITY_TYPE = {
-  MODULE: 'MODULE',
-  PAGE: 'PAGE',
-  SECTION: 'SECTION',
-};
-
-const MODULE = {
-  type: ACTIVITY_TYPE.MODULE,
-  rootLevel: true,
-  isTrackedInWorkflow: true,
-  label: 'Module',
-  color: '#5187C7',
-  subLevels: [ACTIVITY_TYPE.MODULE, ACTIVITY_TYPE.PAGE],
-  relationships: [
-    {
-      type: 'prerequisites',
-      label: 'Prerequisites',
-      multiple: true,
-      searchable: true,
-      allowEmpty: true,
-      placeholder: 'Click to select',
-      allowCircularLinks: false,
-      allowInsideLineage: true,
-      allowedTypes: [ACTIVITY_TYPE.MODULE],
-    },
-  ],
-};
-
-const PAGE = {
-  type: ACTIVITY_TYPE.PAGE,
-  rootLevel: true,
-  isTrackedInWorkflow: true,
-  label: 'Page',
-  color: '#08A9AD',
-  contentContainers: [ACTIVITY_TYPE.SECTION],
-};
-
-const SECTION_CONTAINER = {
-  type: ACTIVITY_TYPE.SECTION,
-  templateId: 'DEFAULT',
-  label: 'Section',
-  multiple: true,
-  types: ['JODIT_HTML', 'IMAGE', 'EMBED', 'PDF', 'CE_HTML_DEFAULT'],
-};
-
-const EXAMPLE_SCHEMA = {
-  id: 'EXAMPLE_SCHEMA',
-  workflowId: EXAMPLE_WORKFLOW.id,
-  name: 'Course',
-  meta: [
-    {
-      key: 'posterImage',
-      type: 'FILE',
-      label: 'Poster image',
-      placeholder: 'Click to upload a poster image',
-      validate: {
-        ext: ['jpg', 'jpeg', 'png'],
-      },
-    },
-  ],
-  structure: [MODULE, PAGE],
-  contentContainers: [SECTION_CONTAINER],
-  elementMeta: [
-    {
-      type: 'IMAGE',
-      inputs: [
-        {
-          key: 'alt',
-          type: 'TEXTAREA',
-          label: 'Alt text',
-        },
-      ],
-    },
-  ],
-};
-
-export const SCHEMAS = [EXAMPLE_SCHEMA];
-export const WORKFLOWS = [EXAMPLE_WORKFLOW];
+export const SCHEMAS = [CourseSchema, KnowledgeBase, QASchema];
+export const WORKFLOWS = [DEFAULT_WORKFLOW];
 
 export default {
   SCHEMAS,

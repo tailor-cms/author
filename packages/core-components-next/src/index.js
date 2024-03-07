@@ -1,3 +1,4 @@
+export { default as CircularProgress } from './components/CircularProgress.vue';
 export { default as ContainedContent } from './components/ContainedContent.vue';
 export { default as ContentElement } from './components/ContentElement.vue';
 export { default as ElementList } from './components/ElementList.vue';

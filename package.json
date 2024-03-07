@@ -13,6 +13,7 @@
     "test": "cd tests && pnpm e2e",
     "setup:dev": "pnpm i && node ./scripts/setup/index.js",
     "db:migrate": "cd ./apps/backend && pnpm db migrate",
+    "db:reset": "cd ./apps/backend && pnpm db:reset",
     "cc": "cd ./extensions/content-containers && pnpm cli",
     "ce": "cd ./extensions/content-elements && pnpm cli",
     "mi": "cd ./extensions/meta-inputs && pnpm cli"

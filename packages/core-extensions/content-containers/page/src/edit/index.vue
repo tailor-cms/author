@@ -1,6 +1,22 @@
 <template>
-  <VSheet class="content-container mb-5" elevation="3" rounded="lg">
-    <div class="d-flex justify-end ma-3">
+  <VSheet
+    :color="isAiGeneratingContent ? 'primary-darken-4' : 'white'"
+    class="content-container mb-5"
+    elevation="3"
+    rounded="lg"
+  >
+    <div v-if="!isAiGeneratingContent" class="d-flex justify-end ma-3">
+      <VBtn
+        v-if="isAiEnabled"
+        class="mr-3"
+        color="teal-darken-1"
+        size="small"
+        variant="tonal"
+        @click="generateContent"
+      >
+        Do the magic
+        <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
+      </VBtn>
       <VBtn
         v-if="!isDisabled"
         color="secondary"
@@ -12,17 +28,27 @@
       </VBtn>
     </div>
     <VAlert
-      v-if="!containerElements.length"
+      v-if="!containerElements.length && !isAiGeneratingContent"
       class="mt-7 mb-5 mx-4"
-      color="primary-darken-2"
+      color="primary-darken-1"
       density="comfortable"
       icon="mdi-information-outline"
-      variant="outlined"
+      variant="tonal"
       prominent
     >
       Click the button below to add content.
     </VAlert>
+    <VSheet
+      v-else-if="isAiGeneratingContent"
+      class="bg-transparent pt-16 text-subtitle-2 rounded-lg"
+    >
+      <CircularProgress />
+      <div class="pt-3 text-primary-lighten-4 font-weight-bold">
+        <span>Content generation in progress...</span>
+      </div>
+    </VSheet>
     <ElementList
+      v-else
       :activity="container"
       :add-element-options="{
         large: true,
@@ -62,12 +88,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, ref } from 'vue';
 import {
+  CircularProgress,
   ContainedContent,
   ElementList,
   InlineActivator,
 } from '@tailor-cms/core-components-next';
+import { computed, defineProps, inject, ref } from 'vue';
 import filter from 'lodash/filter';
 import sortBy from 'lodash/sortBy';
 
@@ -87,6 +114,24 @@ const emit = defineEmits([
   'save:element',
 ]);
 
+const doTheMagic = inject('$doTheMagic') as any;
+const isAiEnabled = computed(() => !!doTheMagic);
+const isAiGeneratingContent = ref(false);
+
+const generateContent = async () => {
+  isAiGeneratingContent.value = true;
+  const elements = await doTheMagic({ type: props.container.type });
+  elements.forEach((element: any, index: number) => {
+    emit('save:element', {
+      ...element,
+      position: index,
+      activityId: props.container.id,
+      repositoryId: props.container.repositoryId,
+    });
+  });
+  isAiGeneratingContent.value = false;
+};
+
 const insertPosition = ref(Infinity);
 const isElementDrawerVisible = ref(false);
 const addElementComponent = ref();
@@ -101,9 +146,7 @@ const reorder = ({ newPosition }) => {
 };
 
 const showElementDrawer = (position) => {
-  console.log('aaa', addElementComponent);
   if (props.isDisabled) return;
-  console.log('eo me brate');
   insertPosition.value = position;
   isElementDrawerVisible.value = true;
   addElementComponent.value.click();

@@ -37,7 +37,7 @@
             <template #activator="{ on }">
               <v-btn
                 v-on="on"
-                @click.stop="navigateTo('repository-info')"
+                @click.stop="navigateTo('repository-settings')"
                 color="primary darken-1"
                 aria-label="Repository settings"
                 icon

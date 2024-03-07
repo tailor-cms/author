@@ -1,3 +1,4 @@
+import * as ai from './ai.js';
 import * as auth from './auth.js';
 import * as consumer from './consumer.js';
 import * as mail from './mail.js';
@@ -22,6 +23,7 @@ export {
   consumer,
   store,
   tce,
+  ai,
 };
 
 export default {
@@ -36,4 +38,5 @@ export default {
   consumer,
   store,
   tce,
+  ai,
 };

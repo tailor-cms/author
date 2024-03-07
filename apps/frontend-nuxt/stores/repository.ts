@@ -60,7 +60,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     return item;
   }
 
-  const create = async ({
+  const create = ({
     schema,
     name,
     description,
@@ -69,7 +69,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     name: string;
     description: string;
   }) => {
-    await api.save({ schema, name, description });
+    return api.save({ schema, name, description });
   };
 
   async function get(id: number): Promise<Repository> {

@@ -12,11 +12,11 @@
         aria-label="Add repository"
         class="add-repo"
         color="secondary"
-        icon="mdi-plus"
         position="absolute"
-        size="x-large"
+        prepend-icon="mdi-plus"
         variant="elevated"
       >
+        Add
       </VBtn>
     </template>
     <template #header>Add</template>
@@ -73,19 +73,30 @@
           placeholder="Enter name..."
         />
         <VTextarea
-          v-model.trim="descriptionInput"
+          v-model="descriptionInput"
           :error-messages="errors.description"
           label="Description"
           placeholder="Enter description..."
           variant="outlined"
         />
+        <AIAssistance
+          v-if="runtimeConfig.public.aiUiEnabled"
+          :description="descriptionInput"
+          :name="nameInput"
+          :schema-id="schemaInput"
+          @structure="aiSuggestedOutline = $event"
+        />
         <div class="d-flex justify-end">
-          <VBtn :disabled="showLoader" variant="text" @click="hide">
+          <VBtn
+            :disabled="showLoader"
+            color="primary-darken-4"
+            variant="text"
+            @click="hide"
+          >
             Cancel
           </VBtn>
           <VBtn
             :loading="showLoader"
-            class="px-1"
             color="primary-darken-4"
             type="submit"
             variant="text"
@@ -104,9 +115,11 @@ import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from 'tailor-config-shared';
 import { useForm } from 'vee-validate';
 
+import AIAssistance from './AIAssistance.vue';
 import { repository as api } from '@/api';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
+import { useActivityStore } from '@/stores/activity';
 import { useRepositoryStore } from '@/stores/repository';
 
 defineProps<{ isAdmin: boolean }>();
@@ -115,12 +128,17 @@ const emit = defineEmits(['done']);
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
 
-const store = useRepositoryStore();
+const { $schemaService } = useNuxtApp() as any;
+const runtimeConfig = useRuntimeConfig();
+const repositoryStore = useRepositoryStore();
+const activityStore = useActivityStore();
+
 const selectedTab = ref(NEW_TAB);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isVisible = ref(false);
 const showLoader = ref(false);
 const serverError = ref('');
+const aiSuggestedOutline = ref([]);
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
@@ -168,7 +186,30 @@ const create = async (formPayload: {
   name: string;
   description: string;
 }) => {
-  await store.create(formPayload);
+  const repository = await repositoryStore.create(formPayload);
+  createActvities(repository.id, aiSuggestedOutline.value);
+};
+
+const createActvities = (
+  repositoryId: number,
+  items: any,
+  parentId = null as null | number,
+) => {
+  const outlineLevels = $schemaService.getOutlineLevels(schemaInput.value);
+  items.forEach(async (activity: any, index: number) => {
+    const type = outlineLevels.find(
+      (it: any) => it.label === activity.type,
+    ).type;
+    const item = await activityStore.save({
+      repositoryId,
+      parentId,
+      type,
+      data: { name: activity.name },
+      position: index,
+    });
+    if (activity.children)
+      createActvities(repositoryId, activity.children, item.id);
+  });
 };
 
 const importRepository = async ({ archive, name, description }: any) => {

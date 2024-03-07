@@ -3,5 +3,10 @@
     "name": "html-default",
     "clientPackage": "@tailor-cms/ce-html-default-edit",
     "serverPackage": "@tailor-cms/ce-html-default-server"
+  },
+  {
+    "name": "@tailor-cms/ce-image",
+    "clientPackage": "@tailor-cms/ce-image-edit",
+    "serverPackage": "@tailor-cms/ce-image-server"
   }
 ]

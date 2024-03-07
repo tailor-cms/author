@@ -63,6 +63,8 @@
       class="save-indicator"
       color="teal accent-2"
       height="2"
+      location="bottom"
+      absolute
       indeterminate
     />
   </div>
@@ -91,7 +93,9 @@ const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
 
 const editorBus = inject('$editorBus') as any;
 const eventBus = inject('$eventBus') as any;
-const elementBus = computed(() => eventBus.channel(`element:${id.value}`));
+const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
+
+provide('$elementBus', elementBus);
 
 const isFocused = ref(false);
 const isSaving = ref(false);
@@ -103,7 +107,7 @@ const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 // TODO: Add upon collab feature implementation
 // const hasComments = computed(() => !!props.element.comments?.length);
-const currentUser = computed(() => null); // $getCurrentUser()
+// const currentUser = computed(() => null); // $getCurrentUser()
 
 const onSelect = (e) => {
   if (props.isDisabled || e.component) return; // || editorState.isPublishDiff
@@ -121,29 +125,28 @@ const focus = () => {
 };
 
 onMounted(() => {
-  provide('$elementBus', elementBus.value);
-
-  elementBus.value.on('delete', () => emit('delete'));
-  elementBus.value.on('save:meta', (meta) => emit('save:meta', meta));
+  elementBus.on('delete', () => emit('delete'));
+  elementBus.on('save:meta', (meta) => emit('save:meta', meta));
 
   const deferSaveFlag = () => setTimeout(() => (isSaving.value = false), 1000);
-  elementBus.value.on('saved', deferSaveFlag);
+  elementBus.on('saved', deferSaveFlag);
 
   editorBus.on('element:select', ({ elementId, isSelected = true, user }) => {
-    if (id.value !== elementId) return;
-    if (!user || user.id === currentUser.value?.id) {
-      isFocused.value = isSelected;
-      if (isSelected) focus();
-      return;
-    }
-    if (isSelected && !activeUsers.value.find((it: any) => it.id === user.id)) {
-      activeUsers.value.push(user);
-    } else if (
-      !isSelected &&
-      activeUsers.value.find((it) => it.id === user.id)
-    ) {
-      activeUsers.value = activeUsers.value.filter((it) => it.id !== user.id);
-    }
+    isFocused.value = id.value === elementId;
+    // // TODO: Add upon user activity tracking implementation
+    // if (!user || user.id === currentUser.value?.id) {
+    //   isFocused.value = isSelected;
+    //   if (isSelected) focus();
+    //   return;
+    // }
+    // if (isSelected && !activeUsers.value.find((it: any) => it.id === user.id)) {
+    //   activeUsers.value.push(user);
+    // } else if (
+    //   !isSelected &&
+    //   activeUsers.value.find((it) => it.id === user.id)
+    // ) {
+    //   activeUsers.value = activeUsers.value.filter((it) => it.id !== user.id);
+    // }
   });
 
   editorBus.on('element:focus', (element) => {
@@ -228,7 +231,6 @@ onMounted(() => {
 
 .save-indicator {
   position: absolute;
-  bottom: -0.125rem;
   left: 0;
 }
 

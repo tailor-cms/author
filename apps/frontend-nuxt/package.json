@@ -22,7 +22,7 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
-    "@mdi/font": "^7.2.96",
+    "@mdi/font": "7.4.47",
     "@pinia/nuxt": "^0.5.1",
     "@tailor-cms/content-container-collection": "workspace:^",
     "@tailor-cms/content-element-collection": "workspace:^",
@@ -44,8 +44,9 @@
     "tailor-config-shared": "workspace:*",
     "v-clipboard": "3.0.0-next.1",
     "vee-validate": "4.12.2",
+    "vue3-tree-vue": "^2.0.9",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.5.4",
+    "vuetify": "3.5.7",
     "yup": "^1.3.2"
   }
 }
