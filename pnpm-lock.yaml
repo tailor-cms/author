@@ -857,11 +857,11 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-html-default-edit':
-        specifier: ^0.0.2
-        version: 0.0.2(@tiptap/core@2.2.4)(vue@3.3.11)
+        specifier: ^0.0.3
+        version: 0.0.3(@tiptap/core@2.2.4)(vue@3.3.11)
       '@tailor-cms/ce-html-default-server':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.3
+        version: 0.0.3
       '@tailor-cms/ce-image-edit':
         specifier: ^0.0.1
         version: 0.0.1(vue@3.3.11)
@@ -4257,8 +4257,8 @@ packages:
       - supports-color
     dev: true
 
-  /@tailor-cms/ce-html-default-edit@0.0.2(@tiptap/core@2.2.4)(vue@3.3.11):
-    resolution: {integrity: sha512-Hp9YFsQ5OGAoRmvMP/+jWJC+Eiqhau5OZKpyjaX97kSTlDGdL/OZ9874iD5qVF1Bzm7+PtjA2GDq6a21jEV/hw==}
+  /@tailor-cms/ce-html-default-edit@0.0.3(@tiptap/core@2.2.4)(vue@3.3.11):
+    resolution: {integrity: sha512-RfQ7VtNPhXDviCRWSY2GcPWV98acbend3fXxS3gihQ5LTgJCn5at7sW8r6rDAVNmpmDHGlSazVm31sgozcdiaw==}
     peerDependencies:
       vue: ^3.3.4
     dependencies:
@@ -4267,6 +4267,7 @@ packages:
       '@tiptap/extension-highlight': 2.2.4(@tiptap/core@2.2.4)
       '@tiptap/extension-image': 2.2.4(@tiptap/core@2.2.4)
       '@tiptap/extension-link': 2.2.4(@tiptap/core@2.2.4)(@tiptap/pm@2.2.4)
+      '@tiptap/extension-paragraph': 2.2.4(@tiptap/core@2.2.4)
       '@tiptap/extension-placeholder': 2.2.4(@tiptap/core@2.2.4)(@tiptap/pm@2.2.4)
       '@tiptap/extension-subscript': 2.2.4(@tiptap/core@2.2.4)
       '@tiptap/extension-superscript': 2.2.4(@tiptap/core@2.2.4)
@@ -4287,8 +4288,8 @@ packages:
       - '@tiptap/core'
     dev: false
 
-  /@tailor-cms/ce-html-default-server@0.0.2:
-    resolution: {integrity: sha512-VqvaBzHk7x6izIxw+lOWKnAP3Vcgcv5zxQ9pHco2RBuqiIUGMuubegjQ/OchER4apAGI3amMfULXsPXQJAuLCw==}
+  /@tailor-cms/ce-html-default-server@0.0.3:
+    resolution: {integrity: sha512-eN6ytYT9h0lxdQncLgy6PrngWUfB0MZ2FDBrWRtGBnQyIPygLCzbRhDrf9JPsj0PF/4oMNKgEheNk+VMW2syiw==}
     dev: false
 
   /@tailor-cms/ce-image-edit@0.0.1(vue@3.3.11):
