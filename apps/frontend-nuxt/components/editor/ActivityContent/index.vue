@@ -85,6 +85,7 @@ const emit = defineEmits(['selected']);
 
 const route = useRoute();
 
+const runtimeConfig = useRuntimeConfig();
 const { $eventBus, $ceRegistry, $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useCurrentRepository();
@@ -117,7 +118,7 @@ const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$ceRegistry', $ceRegistry);
-provide('$doTheMagic', doTheMagic);
+if (runtimeConfig.public.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);
 const focusedElement = ref(null);

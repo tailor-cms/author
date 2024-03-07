@@ -1,13 +1,13 @@
 <template>
   <VSheet
-    :color="isGenerating ? 'primary-darken-4' : 'white'"
+    :color="isAiGeneratingContent ? 'primary-darken-4' : 'white'"
     class="content-container mb-5"
     elevation="3"
     rounded="lg"
   >
-    <div v-if="!isGenerating" class="d-flex justify-end ma-3">
+    <div v-if="!isAiGeneratingContent" class="d-flex justify-end ma-3">
       <VBtn
-        :loading="isGenerating"
+        v-if="isAiEnabled"
         class="mr-3"
         color="teal-darken-1"
         size="small"
@@ -28,7 +28,7 @@
       </VBtn>
     </div>
     <VAlert
-      v-if="!containerElements.length && !isGenerating"
+      v-if="!containerElements.length && !isAiGeneratingContent"
       class="mt-7 mb-5 mx-4"
       color="primary-darken-1"
       density="comfortable"
@@ -39,7 +39,7 @@
       Click the button below to add content.
     </VAlert>
     <VSheet
-      v-else-if="isGenerating"
+      v-else-if="isAiGeneratingContent"
       class="bg-transparent pt-16 text-subtitle-2 rounded-lg"
     >
       <CircularProgress />
@@ -115,10 +115,11 @@ const emit = defineEmits([
 ]);
 
 const doTheMagic = inject('$doTheMagic') as any;
-const isGenerating = ref(false);
+const isAiEnabled = computed(() => !!doTheMagic);
+const isAiGeneratingContent = ref(false);
 
 const generateContent = async () => {
-  isGenerating.value = true;
+  isAiGeneratingContent.value = true;
   const elements = await doTheMagic({ type: props.container.type });
   elements.forEach((element: any, index: number) => {
     emit('save:element', {
@@ -128,7 +129,7 @@ const generateContent = async () => {
       repositoryId: props.container.repositoryId,
     });
   });
-  isGenerating.value = false;
+  isAiGeneratingContent.value = false;
 };
 
 const insertPosition = ref(Infinity);

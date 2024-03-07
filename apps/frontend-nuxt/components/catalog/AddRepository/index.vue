@@ -130,7 +130,7 @@ const IMPORT_TAB = 'import';
 
 const { $schemaService } = useNuxtApp() as any;
 const runtimeConfig = useRuntimeConfig();
-const store = useRepositoryStore();
+const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
 
 const selectedTab = ref(NEW_TAB);
@@ -186,7 +186,7 @@ const create = async (formPayload: {
   name: string;
   description: string;
 }) => {
-  const repository = await store.create(formPayload);
+  const repository = await repositoryStore.create(formPayload);
   createActvities(repository.id, aiSuggestedOutline.value);
 };
 

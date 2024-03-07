@@ -159,8 +159,6 @@ onMounted(() => {
 @import '../mixins';
 
 .content-element {
-  text-align: left;
-
   $accent-1: #1de9b6;
   $accent-2: #ff4081;
 
