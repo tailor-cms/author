@@ -12,8 +12,8 @@
         aria-label="Add repository"
         class="add-repo"
         color="secondary"
-        prepend-icon="mdi-plus"
         position="absolute"
+        prepend-icon="mdi-plus"
         variant="elevated"
       >
         Add
@@ -81,9 +81,9 @@
         />
         <AIAssistance
           v-if="runtimeConfig.public.aiUiEnabled"
-          :schemaId="schemaInput"
-          :name="nameInput"
           :description="descriptionInput"
+          :name="nameInput"
+          :schema-id="schemaInput"
           @structure="aiSuggestedOutline = $event"
         />
         <div class="d-flex justify-end">

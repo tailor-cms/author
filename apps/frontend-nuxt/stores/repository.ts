@@ -60,7 +60,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     return item;
   }
 
-  const create = async ({
+  const create = ({
     schema,
     name,
     description,

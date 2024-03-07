@@ -10,28 +10,19 @@ const urls = {
 };
 
 function resolveAmbiguity(payload) {
-  return request
-    .post(urls.ambiguity(), payload)
-    .then(extractData);
+  return request.post(urls.ambiguity(), payload).then(extractData);
 }
 
 function getTopicStyleRecommendations(payload) {
-  return request
-    .post(urls.style(), payload)
-    .then(extractData);
+  return request.post(urls.style(), payload).then(extractData);
 }
 
-
 function getTopicOutlineRecommendation(payload) {
-  return request
-    .post(urls.outline(), payload)
-    .then(extractData);
+  return request.post(urls.outline(), payload).then(extractData);
 }
 
 function getContentSuggestion(payload) {
-  return request
-    .post(urls.content(), payload)
-    .then(extractData);
+  return request.post(urls.content(), payload).then(extractData);
 }
 
 export default {

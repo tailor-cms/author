@@ -5,7 +5,7 @@
     color="primary-darken-2"
     label="AI assisted"
   >
-    <template v-slot:label>
+    <template #label>
       AI assisted
       <VProgressCircular
         v-if="isFetchingData && !topicTagOptions.length"
@@ -88,9 +88,9 @@
     </div>
     <VueTreeView
       v-if="outlineTree.length"
+      :hide-guide-lines="false"
+      :is-checkable="false"
       :items="outlineTree"
-      :hideGuideLines="false"
-      :isCheckable="false"
       class="explorer-container mb-8"
     />
     <div v-if="statusMessage" class="my-7 text-body-2 text-center">
