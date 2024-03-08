@@ -1,5 +1,6 @@
 import { schema as schemaConfig } from 'tailor-config-shared';
 
+import { repository as repositoryApi } from '@/api';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
 
@@ -11,6 +12,9 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
+
+  const $users = reactive(new Map<string, any>());
+  const users = computed(() => Array.from($users.values()));
 
   const outlineState = reactive({
     selectedActivityId: null as Id | null,
@@ -101,12 +105,36 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   function $reset() {
     outlineState.expanded.clear();
+    $users.clear();
   }
+
+  const getUsers = () => {
+    if (!repositoryId.value) throw new Error('Repository not initialized!');
+    return repositoryApi
+      .getUsers(repositoryId.value)
+      .then((users) => users.forEach((it: any) => $users.set(it.id, it)));
+  };
+
+  const upsertUser = (email: string, role: string) => {
+    if (!repositoryId.value) throw new Error('Repository not initialized!');
+    return repositoryApi
+      .upsertUser(repositoryId.value, { email, role })
+      .then((user) => $users.set(user.id, user));
+  };
+
+  const removeUser = (userId: number) => {
+    if (!repositoryId.value) throw new Error('Repository not initialized!');
+    return repositoryApi
+      .removeUser(repositoryId.value, userId)
+      .then(() => $users.delete(userId.toString()));
+  };
 
   return {
     initialize,
     repositoryId,
     repository,
+    $users,
+    users,
     outlineState,
     schemaName,
     taxonomy,
@@ -120,6 +148,9 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     toggleOutlineItemExpand,
     toggleOutlineExpand,
     expandOutlineParents,
+    getUsers,
+    upsertUser,
+    removeUser,
     $reset,
   };
 });
