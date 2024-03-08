@@ -68,7 +68,7 @@ const getTabItems = ({
     },
     hasSettingsAvailable && {
       name: 'Settings',
-      route: 'repository-settings',
+      route: 'repository-settings-general',
       icon: 'cog',
     },
   ]
