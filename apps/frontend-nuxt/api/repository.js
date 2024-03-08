@@ -13,16 +13,24 @@ const urls = {
   tags: (id, tagId = '') => `${urls.resource(id)}/tags/${tagId}`,
 };
 
-function save(repository) {
-  return request.post(urls.root, repository).then(extractData);
-}
-
 function get(repositoryId, params) {
   return request.get(urls.resource(repositoryId), { params }).then(extractData);
 }
 
 function getRepositories(params) {
   return request.get(urls.root, { params }).then(({ data }) => data);
+}
+
+function create(repository) {
+  return request.post(urls.root, repository).then(extractData);
+}
+
+function patch(repositoryId, data) {
+  return request.patch(urls.resource(repositoryId), data).then(extractData);
+}
+
+function remove(repositoryId) {
+  return request.delete(urls.resource(repositoryId));
 }
 
 function pin(repositoryId, pin) {
@@ -74,7 +82,9 @@ function importRepository(data, options) {
 export default {
   get,
   getRepositories,
-  save,
+  create,
+  patch,
+  remove,
   getUsers,
   upsertUser,
   removeUser,
