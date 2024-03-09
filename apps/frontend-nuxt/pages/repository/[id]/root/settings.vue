@@ -12,7 +12,10 @@
     </VRow>
     <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
     <ExportDialog v-if="showExportModal" @close="showExportModal = false" />
-    <ProgressDialog :show="isPublishing" :status="publishPercentage" />
+    <ProgressDialog
+      :show="publishUtils.isPublishing.value"
+      :status="publishPercentage"
+    />
   </VContainer>
   <AppFooter />
 </template>
