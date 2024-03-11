@@ -3,14 +3,13 @@
     v-if="!isLoading"
     :headers="headers"
     :items="store.users"
-    no-data-text="No assigned users."
-    hide-default-footer
     class="px-6"
+    no-data-text="No assigned users."
   >
     <template #item="{ item }">
       <tr>
         <td class="text-left">
-          <VAvatar size="40" :image="item.imgUrl" variant="tonal" />
+          <VAvatar :image="item.imgUrl" size="40" variant="tonal" />
         </td>
         <td class="text-left">{{ item.email }}</td>
         <td class="text-left text-truncate">
@@ -18,13 +17,13 @@
         </td>
         <td class="role-select">
           <VSelect
-            @change="(role: string) => changeRole(item.email, role)"
-            :value="item.repositoryRole"
             :items="roles"
+            :value="item.repositoryRole"
             density="compact"
             rounded="lg"
             variant="plain"
             hide-details
+            @change="(role: string) => changeRole(item.email, role)"
           />
         </td>
         <td class="actions">
@@ -43,10 +42,11 @@
 
 <script lang="ts" setup>
 import debounce from 'lodash/debounce';
+
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const props = defineProps({
+defineProps({
   roles: { type: Array, required: true },
 });
 

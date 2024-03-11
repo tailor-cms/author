@@ -9,10 +9,10 @@
     <template #actions>
       <VBtn color="primary-darken-4" variant="text" @click="close">Cancel</VBtn>
       <VBtn
-        @click="exportRepository"
         :disabled="!jobId"
         color="primary-darken-4"
         variant="text"
+        @click="exportRepository"
       >
         Download
       </VBtn>

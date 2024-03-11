@@ -35,7 +35,9 @@ function remove(repositoryId) {
 }
 
 function clone(repositoryId, name, description) {
-  return request.post(urls.clone(repositoryId), { name, description }).then(extractData);
+  return request
+    .post(urls.clone(repositoryId), { name, description })
+    .then(extractData);
 }
 
 function pin(repositoryId, pin) {

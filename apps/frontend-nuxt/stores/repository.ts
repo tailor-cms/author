@@ -91,7 +91,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     return api.create({ schema, name, description });
   };
 
-  async function update(payload: any): Promise<Repository|undefined> {
+  async function update(payload: any): Promise<Repository | undefined> {
     const repository = findById(payload.id);
     if (!repository) return;
     const { id, ...rest } = payload;

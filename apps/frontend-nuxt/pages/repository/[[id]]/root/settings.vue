@@ -1,27 +1,29 @@
 <template>
-  <VContainer class="h-100 pt-10">
-    <VRow>
-      <VCol cols="3">
-        <Sidebar @action="onActionClick" />
-      </VCol>
-      <VCol class="pl-8" cols="9">
-        <VSheet color="transparent" rounded="lg">
-          <NuxtPage />
-        </VSheet>
-      </VCol>
-    </VRow>
-    <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
-    <ExportDialog
-      v-if="showExportModal"
-      :repository="currentRepositoryStore.repository as Repository"
-      @close="showExportModal = false"
-    />
-    <ProgressDialog
-      :show="publishUtils.isPublishing.value"
-      :status="publishPercentage"
-    />
-  </VContainer>
-  <AppFooter />
+  <div>
+    <VContainer class="h-100 pt-10">
+      <VRow>
+        <VCol cols="3">
+          <SettingsSidebar @action="onActionClick" />
+        </VCol>
+        <VCol class="pl-8" cols="9">
+          <VSheet color="transparent" rounded="lg">
+            <NuxtPage />
+          </VSheet>
+        </VCol>
+      </VRow>
+      <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
+      <ExportDialog
+        v-if="showExportModal"
+        :repository="currentRepositoryStore.repository as Repository"
+        @close="showExportModal = false"
+      />
+      <ProgressDialog
+        :show="publishUtils.isPublishing.value"
+        :status="publishPercentage"
+      />
+    </VContainer>
+    <AppFooter />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -29,9 +31,8 @@ import AppFooter from '@/components/common/AppFooter.vue';
 import CloneModal from '@/components/repository/Settings/CloneModal.vue';
 import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
 import ProgressDialog from '@/components/common/ProgressDialog.vue';
-import Sidebar from '@/components/repository/Settings/Sidebar.vue';
-
 import type { Repository } from '~/api/interfaces/repository';
+import SettingsSidebar from '@/components/repository/Settings/SettingsSidebar.vue';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { usePublishActivity } from '@/composables/usePublishActivity';
@@ -80,7 +81,7 @@ const showDeleteConfirmation = () => {
 const onActionClick = (name: string) => {
   const actions = {
     publish: publishRepository,
-    clone: clone,
+    clone,
     export: exportRepository,
     delete: showDeleteConfirmation,
   } as any;

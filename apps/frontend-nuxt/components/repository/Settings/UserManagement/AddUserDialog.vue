@@ -15,14 +15,14 @@
     </template>
     <template #header>Add user</template>
     <template #body>
-      <form @submit.prevent="submit" novalidate>
+      <form novalidate @submit.prevent="submit">
         <VCombobox
           v-model="emailInput"
           :error-messages="errors.email"
           :items="suggestedUsers"
+          class="required"
           item-title="email"
           item-value="email"
-          class="required"
           label="Email"
           placeholder="Enter email..."
           variant="outlined"
@@ -54,11 +54,12 @@
 </template>
 
 <script lang="ts" setup>
-import { user as api } from '~/api';
 import { object, string } from 'yup';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import throttle from 'lodash/throttle';
 import { useForm } from 'vee-validate';
+
+import { user as api } from '~/api';
+import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps({

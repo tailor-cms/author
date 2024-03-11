@@ -2,12 +2,12 @@
   <VSheet class="settings" rounded="lg">
     <div class="actions">
       <VBtn
-        @click="publish"
         :loading="isPublishing"
         class="float-right"
         color="teal-accent-4"
         size="small"
         variant="tonal"
+        @click="publish"
       >
         <VIcon class="mr-2">mdi-cloud-upload-outline</VIcon>
         Publish info
@@ -36,15 +36,16 @@
 </template>
 
 <script lang="ts" setup>
-import { repository as api } from '@/api';
 import cloneDeep from 'lodash/cloneDeep';
 import find from 'lodash/find';
+import set from 'lodash/set';
+
+import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
-import set from 'lodash/set';
 import { useCurrentRepository } from '@/stores/current-repository';
-import { useRepositoryStore } from '@/stores/repository';
 import { useNotification } from '@/composables/useNotification';
+import { useRepositoryStore } from '@/stores/repository';
 
 definePageMeta({
   name: 'repository-settings-general',

@@ -2,9 +2,9 @@
   <VSheet color="transparent">
     <VList
       active-class="bg-white"
-      color="primary-darken-4"
       bg-color="primary-darken-4"
       class="text-primary-lighten-4 text-left mb-6 py-0"
+      color="primary-darken-4"
       elevation="3"
       rounded="lg"
     >

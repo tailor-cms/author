@@ -1,7 +1,7 @@
 <template>
   <VSheet rounded="lg">
     <div class="d-flex justify-end pt-7 pr-8">
-      <AddUserDialog :roles="roles"/>
+      <AddUserDialog :roles="roles" />
     </div>
     <UserList :roles="roles" />
   </VSheet>

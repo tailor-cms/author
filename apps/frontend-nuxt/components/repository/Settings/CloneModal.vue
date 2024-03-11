@@ -6,24 +6,24 @@
       </div>
     </template>
     <template #body>
-      <form @submit.prevent="submit" novalidate>
+      <form novalidate @submit.prevent="submit">
         <VTextField
           v-model="nameInput"
-          :error-messages="errors.name"
           :disabled="inProgress"
+          :error-messages="errors.name"
+          class="required mb-4"
           label="Name"
           placeholder="Enter name..."
           variant="outlined"
-          class="required mb-4"
         />
         <VTextarea
           v-model="descriptionInput"
-          :error-messages="errors.description"
           :disabled="inProgress"
+          :error-messages="errors.description"
+          class="required mb-4"
           label="Description"
           placeholder="Enter description..."
           variant="outlined"
-          class="required mb-4"
         />
         <div class="d-flex justify-end mb-2">
           <VBtn
@@ -82,11 +82,7 @@ const close = () => {
 const submit = handleSubmit(async () => {
   inProgress.value = true;
   const { id } = currentRepositoryStore?.repository;
-  await repositoryStore.clone(
-    id,
-    nameInput.value,
-    descriptionInput.value,
-  );
+  await repositoryStore.clone(id, nameInput.value, descriptionInput.value);
   close();
 });
 </script>
