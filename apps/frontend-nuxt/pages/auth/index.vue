@@ -14,7 +14,7 @@
         v-model="emailInput"
         :error-messages="errors.email"
         autocomplete="username"
-        class="required mb-1"
+        class="required mb-3"
         label="Email"
         name="email"
         placeholder="Email"
@@ -34,7 +34,7 @@
         type="password"
         variant="outlined"
       />
-      <div class="d-flex mt-1">
+      <div class="d-flex mt-2">
         <VBtn type="submit" variant="tonal" block rounded>Log in</VBtn>
       </div>
       <div class="options">

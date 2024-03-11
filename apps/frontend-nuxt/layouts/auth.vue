@@ -1,16 +1,20 @@
 <template>
   <div class="auth-container fill-height">
     <div class="auth-panel-container">
-      <VSheet class="auth-panel" elevation="0" rounded>
-        <div class="auth-header d-flex flex-column align-center py-9">
-          <VAvatar class="elevation-3" color="primary-darken-4" size="108">
-            <div class="pt-2">
-              <img :src="logo" alt="Logo" class="logo" />
-            </div>
-          </VAvatar>
-          <h1 class="ma-4 text-h5">{{ title }}</h1>
+      <VSheet
+        class="auth-panel bg-primary-darken-4 d-flex"
+        elevation="2"
+        rounded="lg"
+      >
+        <div
+          class="auth-header d-flex justify-start align-start w-50 pt-4 pl-7"
+        >
+          <div class="d-flex align-center justify-center">
+            <img :src="logo" alt="Logo" class="logo" width="36" />
+            <h1 class="ma-4 text-h6">{{ title }}</h1>
+          </div>
         </div>
-        <div class="auth-body">
+        <div class="auth-body w-50 py-7">
           <slot></slot>
         </div>
       </VSheet>
@@ -28,8 +32,8 @@ export default {
   name: 'AuthContainer',
   components: { Waves },
   computed: {
-    title: () => 'Tailor',
-    logo: () => '/img/default-logo-compact.svg',
+    title: () => 'Tailor CMS',
+    logo: () => '/img/default-logo-full.svg',
   },
 };
 </script>
@@ -41,7 +45,7 @@ export default {
 
 .auth-container .auth-panel-container {
   position: relative;
-  width: 26rem;
+  width: 48rem;
   min-height: 41rem;
   margin: 4% auto;
 }
@@ -49,16 +53,10 @@ export default {
 .auth-container .auth-panel.v-sheet {
   position: absolute;
   width: 100%;
-  background: rgba($color: #e1e1e1, $alpha: 0.3);
-  border: 1px dashed #777;
   z-index: 1;
 
   .auth-header {
     padding-bottom: 0;
-
-    .logo {
-      max-width: 3.5rem;
-    }
   }
 
   .auth-body {
