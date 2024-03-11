@@ -11,7 +11,11 @@
       </VCol>
     </VRow>
     <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
-    <ExportDialog v-if="showExportModal" @close="showExportModal = false" />
+    <ExportDialog
+      v-if="showExportModal"
+      :repository="currentRepositoryStore.repository as Repository"
+      @close="showExportModal = false"
+    />
     <ProgressDialog
       :show="publishUtils.isPublishing.value"
       :status="publishPercentage"
@@ -42,7 +46,6 @@ const currentRepositoryStore = useCurrentRepository();
 const publishUtils = usePublishActivity();
 const confirmationDialog = useConfirmationDialog();
 
-const isPublishing = ref(false);
 const showCloneModal = ref(false);
 const showExportModal = ref(false);
 const publishPercentage = computed(
@@ -63,12 +66,13 @@ const exportRepository = () => {
 
 const showDeleteConfirmation = () => {
   const repository = currentRepositoryStore.repository as Repository;
+  const { id, name } = repository;
   confirmationDialog({
     title: 'Delete repository?',
-    message: `Are you sure you want to delete repository ${repository.name}?`,
+    message: `Are you sure you want to delete repository ${name}?`,
     action: async () => {
-      await repositoryStore.remove(repository.id);
-      navigateTo({ name: 'catalog' });
+      await repositoryStore.remove(id);
+      navigateTo('/');
     },
   });
 };
