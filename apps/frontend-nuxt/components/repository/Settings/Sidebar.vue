@@ -1,7 +1,8 @@
 <template>
   <VSheet color="transparent">
     <VList
-      active-class="bg-teal-lighten-4 text-primary-4 "
+      active-class="bg-white"
+      color="primary-darken-4"
       bg-color="primary-darken-4"
       class="text-primary-lighten-4 text-left mb-6 py-0"
       elevation="3"

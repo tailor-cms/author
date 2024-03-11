@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="settings" color="primary-lighten-5" rounded="lg">
+  <VSheet class="settings" rounded="lg">
     <div class="actions">
       <VBtn
         @click="publish"
