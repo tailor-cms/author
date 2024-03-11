@@ -788,6 +788,9 @@ importers:
       tailor-config-shared:
         specifier: workspace:*
         version: link:../../packages/tailor-config-shared
+      to-case:
+        specifier: ^2.0.0
+        version: 2.0.0
       v-clipboard:
         specifier: 3.0.0-next.1
         version: 3.0.0-next.1(typescript@5.4.2)

@@ -42,6 +42,7 @@
     "promise-queue": "^2.2.5",
     "sse-event-types": "workspace:*",
     "tailor-config-shared": "workspace:*",
+    "to-case": "^2.0.0",
     "v-clipboard": "3.0.0-next.1",
     "vee-validate": "4.12.5",
     "vue3-tree-vue": "^2.0.9",

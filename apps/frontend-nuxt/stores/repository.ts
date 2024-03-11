@@ -60,24 +60,6 @@ export const useRepositoryStore = defineStore('repositories', () => {
     return item;
   }
 
-  const create = ({
-    schema,
-    name,
-    description,
-  }: {
-    schema: string;
-    name: string;
-    description: string;
-  }) => {
-    return api.save({ schema, name, description });
-  };
-
-  async function get(id: number): Promise<Repository> {
-    const repository: Repository = await api.get(id);
-    add(repository);
-    return repository;
-  }
-
   async function fetch(): Promise<Repository[]> {
     const {
       items: repositories,
@@ -90,6 +72,41 @@ export const useRepositoryStore = defineStore('repositories', () => {
     areAllItemsFetched.value = total <= query.value.offset + query.value.limit;
     return repositories;
   }
+
+  async function get(id: number): Promise<Repository> {
+    const repository: Repository = await api.get(id);
+    add(repository);
+    return repository;
+  }
+
+  const create = ({
+    schema,
+    name,
+    description,
+  }: {
+    schema: string;
+    name: string;
+    description: string;
+  }) => {
+    return api.create({ schema, name, description });
+  };
+
+  async function update(payload: any): Promise<Repository | undefined> {
+    const repository = findById(payload.id);
+    if (!repository) return;
+    const { id, ...rest } = payload;
+    const updatedRepository = await api.patch(id, rest);
+    Object.assign(repository, updatedRepository);
+    return repository;
+  }
+
+  function remove(id: number): Promise<any> {
+    return api.remove(id);
+  }
+
+  const clone = (id: number, name: string, description: string) => {
+    return api.clone(id, name, description);
+  };
 
   async function fetchTags(opts = { associated: true }) {
     const tags: Tag[] = await tagApi.fetch(opts);
@@ -157,9 +174,12 @@ export const useRepositoryStore = defineStore('repositories', () => {
     tags,
     findById,
     add,
-    create,
     get,
     fetch,
+    create,
+    update,
+    remove,
+    clone,
     queryParams,
     resetQueryParams,
     resetPaginationParams,

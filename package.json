@@ -1,6 +1,7 @@
 {
   "name": "tailor-cms",
   "version": "7.0.0",
+  "codename": "X",
   "description": "Next-gen Tailor",
   "license": "MIT",
   "type": "module",

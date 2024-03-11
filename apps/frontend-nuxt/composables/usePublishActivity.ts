@@ -1,12 +1,12 @@
 import Promise from 'bluebird';
 
-import { useActivityStore } from '@/stores/activity';
+import { type StoreActivity, useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const initialStatus = () => ({ progress: 0, message: '' });
 const prefix = (msg: string) => `Are you sure you want to publish ${msg}`;
 
-export const usePublishActivity = (activity: StoreActivity) => {
+export const usePublishActivity = (anchorActivity?: StoreActivity) => {
   const currentRepository = useCurrentRepository();
   const activityStore = useActivityStore();
   const confirmationDialog = useConfirmationDialog();
@@ -14,12 +14,12 @@ export const usePublishActivity = (activity: StoreActivity) => {
   const status = ref(initialStatus());
   const isPublishing = computed(() => status.value.progress > 0);
 
-  const getPublishMessage = (activityCount: number) => {
-    const { name } = activity.data;
+  const getPublishMessage = (items: StoreActivity[]) => {
+    const activityCount = items.length;
     const totalActivities = currentRepository.outlineActivities.length;
-    if (activityCount === 1) return prefix(`${name} activity?`);
+    if (activityCount === 1) return prefix(`${items[0].data.name} activity?`);
     if (activityCount === totalActivities) return prefix('all activities?');
-    return prefix(`${name} and all its descendants?`);
+    return prefix(`${anchorActivity?.data.name} and all its descendants?`);
   };
 
   const publish = (activities: StoreActivity[]) => {
@@ -34,7 +34,7 @@ export const usePublishActivity = (activity: StoreActivity) => {
   const confirmPublishing = (activities: StoreActivity[]) => {
     confirmationDialog({
       title: 'Publish content',
-      message: getPublishMessage(activities.length),
+      message: getPublishMessage(activities),
       action: () => publish(activities),
     });
   };
