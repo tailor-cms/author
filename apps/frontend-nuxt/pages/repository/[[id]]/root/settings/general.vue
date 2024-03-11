@@ -75,7 +75,7 @@ const updateKey = async (key: string, value: any) => {
   const data: any = cloneDeep(repository.value);
   set(data, key, value);
   await repositoryStore.update(data);
-  notify('Saved', { class: 'mb-12' });
+  notify('Saved', { immediate: true });
 };
 
 const publish = async () => {
