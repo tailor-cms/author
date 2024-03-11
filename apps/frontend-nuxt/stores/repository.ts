@@ -100,11 +100,13 @@ export const useRepositoryStore = defineStore('repositories', () => {
     return repository;
   }
 
-  async function remove(id: number): Promise<void> {
-    await api.remove(id);
-    const repository = findById(id);
-    if (repository) $items.delete(repository.uid);
+  function remove(id: number): Promise<any> {
+    return api.remove(id);
   }
+
+  const clone = (id: number, name: string, description: string) => {
+    return api.clone(id, name, description);
+  };
 
   async function fetchTags(opts = { associated: true }) {
     const tags: Tag[] = await tagApi.fetch(opts);
@@ -177,6 +179,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     create,
     update,
     remove,
+    clone,
     queryParams,
     resetQueryParams,
     resetPaginationParams,

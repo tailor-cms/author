@@ -5,6 +5,7 @@ const urls = {
   root: '/repositories',
   import: () => `${urls.root}/import`,
   resource: (id) => `${urls.root}/${id}`,
+  clone: (id) => `${urls.resource(id)}/clone`,
   pin: (id) => `${urls.resource(id)}/pin`,
   publish: (id) => `${urls.resource(id)}/publish`,
   exportInit: (id) => `${urls.resource(id)}/export/setup`,
@@ -31,6 +32,10 @@ function patch(repositoryId, data) {
 
 function remove(repositoryId) {
   return request.delete(urls.resource(repositoryId));
+}
+
+function clone(repositoryId, name, description) {
+  return request.post(urls.clone(repositoryId), { name, description }).then(extractData);
 }
 
 function pin(repositoryId, pin) {
@@ -88,6 +93,7 @@ export default {
   getUsers,
   upsertUser,
   removeUser,
+  clone,
   pin,
   publishRepositoryMeta,
   addTag,
