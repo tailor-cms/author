@@ -3,6 +3,7 @@
     vuejs-accessibility/click-events-have-key-events,
     vuejs-accessibility/no-static-element-interactions -->
   <li>
+    <!-- TODO: Migrate expansion once we have elements with disabled state -->
     <div
       :class="{ isExpanded, expandable: false && isContentElement }"
       :style="{ cursor: false && isContentElement ? 'pointer' : 'auto' }"
