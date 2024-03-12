@@ -7,7 +7,7 @@ import map from 'lodash/map.js';
 
 const { Activity, Revision, User } = db;
 
-function index({ repository, query, opts }, res) {
+async function index({ repository, query, opts }, res) {
   const { entity, entityId } = query;
   const where = { repositoryId: repository.id };
   if (entity) {
@@ -22,7 +22,8 @@ function index({ repository, query, opts }, res) {
     },
   ];
   Object.assign(opts, { where, include });
-  return Revision.findAll(opts).then((data) => res.json({ data }));
+  const { rows, count } = await Revision.findAndCountAll(opts);
+  return res.json({ total: count, items: rows });
 }
 
 async function getStateAtMoment({ query }, res) {

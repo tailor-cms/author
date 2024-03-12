@@ -9,7 +9,9 @@ const urls = {
 };
 
 function fetch(repositoryId, params) {
-  return request.get(urls.root(repositoryId), { params }).then(extractData);
+  return request
+    .get(urls.root(repositoryId), { params })
+    .then((res) => res.data);
 }
 
 function getStateAtMoment(repositoryId, params) {
