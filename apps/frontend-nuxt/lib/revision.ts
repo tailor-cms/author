@@ -4,6 +4,7 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
 import { schema } from 'tailor-config-shared';
+
 import type { Activity } from '@/api/interfaces/activity';
 import type { Revision } from '@/api/interfaces/revision';
 

@@ -1,4 +1,7 @@
 <template>
+  <!-- eslint-disable
+    vuejs-accessibility/click-events-have-key-events,
+    vuejs-accessibility/no-static-element-interactions -->
   <li>
     <div
       :class="{ isExpanded, expandable: false && isContentElement }"
@@ -24,13 +27,14 @@
 </template>
 
 <script lang="ts" setup>
+import fecha from 'fecha';
+import find from 'lodash/find';
+
 import {
   getFormatDescription,
   getRevisionAcronym,
   getRevisionColor,
 } from '@/lib/revision';
-import fecha from 'fecha';
-import find from 'lodash/find';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
