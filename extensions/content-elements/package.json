@@ -16,7 +16,7 @@
   "dependencies": {
     "@tailor-cms/ce-html-default-edit": "^0.0.3",
     "@tailor-cms/ce-html-default-server": "^0.0.3",
-    "@tailor-cms/ce-image-edit": "^0.0.1",
+    "@tailor-cms/ce-image-edit": "^0.0.3",
     "@tailor-cms/ce-image-server": "^0.0.1"
   }
 }
