@@ -1,22 +1,25 @@
 <template>
   <div>
-    <!-- TODO: Toolbar needs to be migrated -->
-    <!-- <VToolbar :element="selectedElement.value" :active-users="activeUsers" /> -->
+    <VToolbar
+      v-if="editorStore.selectedActivity"
+      :key="editorStore.selectedContentElementId as number"
+      :element="editorStore.selectedContentElement as ContentElement"
+      :active-users="activeUsers"
+    />
     <div class="editor-content-container">
-      <!-- TODO: Sidebar needs to be migrated -->
-      <!-- <VSidebar
-        :repository="repository.value"
-        :activities="outlineActivities.value"
-        :selected-activity="activity.value"
-        :selected-element="selectedElement.value"
+      <VSidebar
+        :repository="repositoryStore.repository as Repository"
+        :activities="repositoryStore.outlineActivities as Activity[]"
+        :selected-activity="repositoryStore.selectedActivity as Activity"
+        :selected-element="editorStore.selectedContentElement as ContentElement"
         class="sidebar"
-      /> -->
+      />
       <VActivityContent
         v-if="editorStore.selectedActivity"
         :key="editorStore.selectedActivity.id"
+        :repository="repositoryStore.repository as Repository"
         :activity="editorStore.selectedActivity"
         :content-containers="editorStore.contentContainers"
-        :repository="repositoryStore.repository as Repository"
         :root-container-groups="editorStore.rootContainerGroups"
         class="activity-content"
         @selected="selectElement"
@@ -28,38 +31,22 @@
 <script lang="ts" setup>
 import { getElementId } from '@tailor-cms/utils';
 
+import type { Activity } from '@/api/interfaces/activity';
+import type { ContentElement } from '@/api/interfaces/content-element';
 import type { Repository } from '@/api/interfaces/repository';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
 import VActivityContent from '@/components/editor/ActivityContent/index.vue';
-
-// TODO: Publish diff, Toolbar and Sidebar need to be migrated
-// import VSidebar from './VSidebar/index.vue';
-// import VToolbar from './VToolbar/index.vue';
-// const showPublishDiff = computed(() => store.state.editor.showPublishDiff);
-// const togglePublishDiff = () => store.commit('editor/togglePublishDiff');
-// const closePublishDiff = () => {
-//   togglePublishDiff(false);
-// };
-// onBeforeUnmount(() => {
-//   closePublishDiff();
-// });
-//
-// watch(
-//   () => props.activityId,
-//   () => {
-//     selectedElement.value = null;
-//     closePublishDiff();
-//   },
-// );
-
-const editorStore = useEditorStore();
-const repositoryStore = useCurrentRepository();
+import VSidebar from '@/components/editor/Sidebar/index.vue';
+import VToolbar from '@/components/editor/Toolbar/index.vue';
 
 definePageMeta({
   name: 'editor',
   middleware: ['auth'],
 });
+
+const repositoryStore = useCurrentRepository();
+const editorStore = useEditorStore();
 
 const selectElement = (element: any) => {
   const route = useRoute();
@@ -68,15 +55,31 @@ const selectElement = (element: any) => {
   editorStore.selectedContentElement = element;
   const { elementId: queryElementId, ...query } = route.query;
   if (editorStore.selectedContentElementId === queryElementId) return;
+  // Can be deselected
   if (selectedElementId) query.elementId = selectedElementId;
   navigateTo({ query });
 };
 
-onMounted(() => {
-  const route = useRoute();
-  const { activityId } = route.params;
-  editorStore.initialize(parseInt(activityId as string, 10));
-});
+// TODO: Needs to be implemented
+const activeUsers: any = [];
+
+// TODO: Publish diff, Toolbar and Sidebar need to be migrated
+// import VSidebar from './VSidebar/index.vue';
+// const showPublishDiff = computed(() => store.state.editor.showPublishDiff);
+// const togglePublishDiff = () => store.commit('editor/togglePublishDiff');
+// const closePublishDiff = () => {
+//   togglePublishDiff(false);
+// };
+// onBeforeUnmount(() => {
+//   closePublishDiff();
+// });
+// watch(
+//   () => props.activityId,
+//   () => {
+//     selectedElement.value = null;
+//     closePublishDiff();
+//   },
+// );
 </script>
 
 <style lang="scss" scoped>
