@@ -56,7 +56,7 @@ const props = defineProps<{
 
 const searchInput = ref('');
 
-const attachActivityAttrs = (activity: any) => ({
+const attachActivityAttrs = (activity: Activity) => ({
   id: activity.id,
   title: activity.data.name,
   isEditable: $schemaService.isEditable(activity.type),
