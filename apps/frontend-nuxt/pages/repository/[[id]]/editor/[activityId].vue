@@ -10,7 +10,7 @@
       <VSidebar
         :repository="repositoryStore.repository as Repository"
         :activities="repositoryStore.outlineActivities as Activity[]"
-        :selected-activity="repositoryStore.selectedActivity as Activity"
+        :selected-activity="editorStore.selectedActivity as Activity"
         :selected-element="editorStore.selectedContentElement as ContentElement"
         class="sidebar"
       />
@@ -45,6 +45,8 @@ definePageMeta({
   middleware: ['auth'],
 });
 
+const props = defineProps<{ activityId: number }>();
+
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 
@@ -60,9 +62,12 @@ const selectElement = (element: any) => {
   navigateTo({ query });
 };
 
+onBeforeMount(() => {
+  editorStore.initialize(props.activityId);
+});
+
 // TODO: Needs to be implemented
 const activeUsers: any = [];
-
 // TODO: Publish diff, Toolbar and Sidebar need to be migrated
 // import VSidebar from './VSidebar/index.vue';
 // const showPublishDiff = computed(() => store.state.editor.showPublishDiff);
