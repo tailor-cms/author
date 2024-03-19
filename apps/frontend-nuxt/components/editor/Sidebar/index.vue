@@ -5,13 +5,7 @@
     elevation="5"
     width="440"
   >
-    <div
-      :class="{
-        'toolbar-visible': selectedElement,
-        'toolbar-composite': selectedElement?.parent,
-      }"
-      class="sidebar-container"
-    >
+    <div class="sidebar-container">
       <VWindow v-model="selectedTab">
         <VWindowItem :value="BROWSER_TAB">
           <ActivityNavigation
@@ -154,14 +148,6 @@ watch(props.selectedElement, () => {
 
 .sidebar-container {
   height: 100%;
-
-  &.toolbar-visible {
-    padding-top: 4.75rem;
-
-    &.toolbar-composite {
-      padding-top: 8.75rem;
-    }
-  }
 
   ::v-deep .activity-discussion {
     margin: 1rem 0;
