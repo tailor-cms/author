@@ -1,35 +1,41 @@
 <template>
   <div class="toolbar-wrapper elevation-3">
-    <div
-      v-if="activity"
-      :class="[showPublishDiff ? 'bg-primary-darken-2' : 'bg-primary-darken-4']"
-      class="activity-toolbar px-3 align-center"
-    >
-      <ActivityActions class="ml-1"/>
-      <h1 class="py-2 px-6 text-h5 text-truncate">
-        <span>{{ config.label }}</span>
-        <span class="px-2 text-grey">|</span>
-        <span class="text-secondary-lighten-3">
-          {{ activity.data.name }}
-        </span>
-        <template v-if="showPublishDiff">
+    <div>
+      <div
+        v-if="activity && !element"
+        :class="[showPublishDiff ? 'bg-primary-darken-2' : 'bg-primary-darken-4']"
+        class="activity-toolbar px-3 align-center w-100"
+      >
+        <ActivityActions class="ml-1" />
+        <h1 class="py-2 px-6 text-h5 text-truncate">
+          <span>{{ config.label }}</span>
           <span class="px-2 text-grey">|</span>
-          <span class="text-white">comparing with published</span>
-          <span class="px-2 text-grey">@</span>
-          <VChip
-            color="primary-lighten-4"
-            textColor="grey-darken-4"
-            small
-            label
-            class="readonly"
-          >
-            {{ activity.publishedAt }}
-          </VChip>
-        </template>
-      </h1>
-      <!-- <ActiveUsers v-if="!showPublishDiff" :users="activeUsers" class="mx-6" /> -->
+          <span class="text-secondary-lighten-3">
+            {{ activity.data.name }}
+          </span>
+          <template v-if="showPublishDiff">
+            <span class="px-2 text-grey">|</span>
+            <span class="text-white">comparing with published</span>
+            <span class="px-2 text-grey">@</span>
+            <VChip
+              color="primary-lighten-4"
+              textColor="grey-darken-4"
+              small
+              label
+              class="readonly"
+            >
+              {{ activity.publishedAt }}
+            </VChip>
+          </template>
+        </h1>
+        <!-- <ActiveUsers v-if="!showPublishDiff" :users="activeUsers" class="mx-6" /> -->
+      </div>
+      <ElementToolbarContainer
+        v-if="element"
+        :element="element"
+        class="element-container"
+      />
     </div>
-    <ElementToolbarContainer v-if="element" :element="element" />
   </div>
 </template>
 
@@ -59,7 +65,20 @@ const config = computed(
 
 <style lang="scss" scoped>
 .toolbar-wrapper {
+  position: relative;
   width: 100%;
+
+  > div {
+    display: flex;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 27.5rem;
+    margin-top: 5rem;
+    min-height: 5.5rem;
+    max-height: 9rem;
+    z-index: 99;
+  }
 
   ::v-deep .v-text-field__details {
     margin: 0 !important;
@@ -82,7 +101,7 @@ const config = computed(
 
 .activity-toolbar {
   display: flex;
-  height: 4.5rem;
+  height: 5.625rem;
   z-index: 999;
 
   h1 {

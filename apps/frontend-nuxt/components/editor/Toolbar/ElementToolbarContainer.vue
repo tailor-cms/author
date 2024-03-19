@@ -1,5 +1,5 @@
 <template>
-  <div :key="getElementId(element)">
+  <div :key="getElementId(element)" elevation="6">
     <ElementToolbar
       v-if="element.parent"
       :element="element.parent"

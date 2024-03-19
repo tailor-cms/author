@@ -1,8 +1,8 @@
 <template>
   <VSheet
     :key="id"
-    class="element-toolbar-wrapper bg-primary-darken-3 elevation-3"
-    elevation="0"
+    class="element-toolbar-wrapper bg-primary-darken-4 elevation-3 h-100"
+    elevation="1"
   >
     <template v-if="componentExists">
       <component
