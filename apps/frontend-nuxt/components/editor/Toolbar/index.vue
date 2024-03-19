@@ -1,12 +1,12 @@
 <template>
-  <div class="toolbar-wrapper">
+  <div class="toolbar-wrapper elevation-3">
     <div
       v-if="activity"
-      :class="[showPublishDiff ? 'primary-darken-4' : 'primary-darken-3']"
-      class="activity-toolbar"
+      :class="[showPublishDiff ? 'bg-primary-darken-2' : 'bg-primary-darken-4']"
+      class="activity-toolbar px-3 align-center"
     >
-      <!-- <ActivityActions class="d-flex flex-grow-0" /> -->
-      <h1 class="pt-2 text-h5 text-truncate">
+      <ActivityActions class="ml-1"/>
+      <h1 class="py-2 px-6 text-h5 text-truncate">
         <span>{{ config.label }}</span>
         <span class="px-2 text-grey">|</span>
         <span class="text-secondary-lighten-3">
@@ -34,8 +34,9 @@
 </template>
 
 <script lang="ts" setup>
-// import ActivityActions from './ActivityActions.vue';
+// TODO: Needs to be implemented
 // import ActiveUsers from '@tailor-cms/core-components';
+import ActivityActions from './ActivityActions.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import { useEditorStore } from '@/stores/editor';
 
@@ -81,8 +82,7 @@ const config = computed(
 
 .activity-toolbar {
   display: flex;
-  height: 3.5rem;
-  padding: 0.25rem 0 0;
+  height: 4.5rem;
   z-index: 999;
 
   h1 {
