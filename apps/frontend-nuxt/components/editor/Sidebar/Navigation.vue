@@ -1,9 +1,9 @@
 <template>
   <div class="navigation-container">
-    <div class="navigation-header px-2 py-3 bg-primary-darken-3 elevation-2">
+    <div class="navigation-header px-1 pt-3 pb-0 bg-primary-darken-2">
       <VTextField
         v-model="searchInput"
-        class="mt-1 mb-3 mx-4"
+        class="mt-1 mx-4"
         clear-icon="mdi-close"
         label="Search..."
         prepend-inner-icon="mdi-magnify"

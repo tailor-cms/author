@@ -860,11 +860,11 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-html-default-edit':
-        specifier: ^0.0.3
-        version: 0.0.3(@tiptap/core@2.2.4)(vue@3.4.21)
+        specifier: ^0.0.5
+        version: 0.0.5(@tiptap/core@2.2.4)(vue@3.4.21)
       '@tailor-cms/ce-html-default-server':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.5
+        version: 0.0.5
       '@tailor-cms/ce-image-edit':
         specifier: ^0.0.3
         version: 0.0.3(vue@3.4.21)
@@ -4848,11 +4848,12 @@ packages:
       - supports-color
     dev: true
 
-  /@tailor-cms/ce-html-default-edit@0.0.3(@tiptap/core@2.2.4)(vue@3.4.21):
-    resolution: {integrity: sha512-RfQ7VtNPhXDviCRWSY2GcPWV98acbend3fXxS3gihQ5LTgJCn5at7sW8r6rDAVNmpmDHGlSazVm31sgozcdiaw==}
+  /@tailor-cms/ce-html-default-edit@0.0.5(@tiptap/core@2.2.4)(vue@3.4.21):
+    resolution: {integrity: sha512-f5BETjoz6pLfE/S0UlE13R0t0AJJrD38/+R8UhU0TMQ1nYF2qtstdo32cv337vCGTxB8vnrpEyHpktn+lQhKBw==}
     peerDependencies:
       vue: ^3.3.4
     dependencies:
+      '@tiptap/extension-character-count': 2.2.4(@tiptap/core@2.2.4)(@tiptap/pm@2.2.4)
       '@tiptap/extension-color': 2.2.4(@tiptap/core@2.2.4)(@tiptap/extension-text-style@2.2.4)
       '@tiptap/extension-font-family': 2.2.4(@tiptap/core@2.2.4)(@tiptap/extension-text-style@2.2.4)
       '@tiptap/extension-highlight': 2.2.4(@tiptap/core@2.2.4)
@@ -4879,8 +4880,8 @@ packages:
       - '@tiptap/core'
     dev: false
 
-  /@tailor-cms/ce-html-default-server@0.0.3:
-    resolution: {integrity: sha512-eN6ytYT9h0lxdQncLgy6PrngWUfB0MZ2FDBrWRtGBnQyIPygLCzbRhDrf9JPsj0PF/4oMNKgEheNk+VMW2syiw==}
+  /@tailor-cms/ce-html-default-server@0.0.5:
+    resolution: {integrity: sha512-QwQyySPdtC4x0WE59cg0aIu2JHcEhGLjSjE9cWy75n9njxDpwVrQXQvzA07BTUoS4YWRDxZ5RIqPq9YD2RM1Vg==}
     dev: false
 
   /@tailor-cms/ce-image-edit@0.0.3(vue@3.4.21):
@@ -4966,6 +4967,16 @@ packages:
       '@tiptap/core': ^2.0.0
     dependencies:
       '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
+    dev: false
+
+  /@tiptap/extension-character-count@2.2.4(@tiptap/core@2.2.4)(@tiptap/pm@2.2.4):
+    resolution: {integrity: sha512-gUeWiIB3Y2+6CuEUq2hKS7BEgvj7l6zAx/xPWlKCbfIyhpQh58m7QLB2OEmdw1EJnGA9VgxqrqOkvdZp8E6vEA==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
+      '@tiptap/pm': 2.2.4
     dev: false
 
   /@tiptap/extension-code-block@2.2.4(@tiptap/core@2.2.4)(@tiptap/pm@2.2.4):
