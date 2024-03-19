@@ -34,6 +34,7 @@
         v-model="selectedTab"
         bg-color="primary-darken-4"
         color="secondary-lighten-4"
+        height="76"
         fixed-tabs
         stacked
       >
@@ -42,7 +43,6 @@
           :value="tab.name"
           :disabled="tab.disabled"
         >
-          {{ tab.label }}
           <VIcon class="ma-1">mdi-{{ tab.icon }}</VIcon>
           <VBadge
             v-if="tab.badgeData"
@@ -51,6 +51,7 @@
             offsetY="18"
             offsetX="-16"
           />
+          <span class="py-1">{{ tab.label }}</span>
         </VTab>
       </VTabs>
     </template>
