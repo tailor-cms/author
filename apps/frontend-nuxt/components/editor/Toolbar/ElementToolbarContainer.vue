@@ -23,10 +23,6 @@ const props = defineProps({
   embed: { type: Object, default: null },
 });
 
-const { $eventBus } = useNuxtApp() as any;
-
-const channelName = `element:${getElementId(props.element.id)}`;
-const elementBus = $eventBus.channel(channelName);
-
+const elementBus = useContentElementBus(props.element);
 provide('$elementBus', elementBus);
 </script>
