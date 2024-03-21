@@ -32,6 +32,10 @@ definePageMeta({
   middleware: ['auth'],
 });
 
+const { $eventBus } = useNuxtApp() as any;
+// Expose $eventBus via Vue provide/inject to external components
+provide('$eventBus', $eventBus);
+
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 
