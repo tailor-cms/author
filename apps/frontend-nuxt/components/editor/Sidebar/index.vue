@@ -11,13 +11,11 @@
           <ActivityNavigation
             :repository="repository"
             :activities="activities"
-            :selected="selectedActivity" />
+            :selected="selectedActivity"
+          />
         </VWindowItem>
         <VWindowItem :value="COMMENTS_TAB">
-          TODO: Implement comments tab
-          <!-- <ActivityDiscussion
-            v-show="discussionTabVisible.value"
-            :activity="props.selectedActivity" /> -->
+          <ActivityDiscussion :activity="selectedActivity" />
         </VWindowItem>
         <VWindowItem :value="ELEMENT_TAB">
           <ElementSidebar
@@ -38,11 +36,7 @@
         fixed-tabs
         stacked
       >
-        <VTab
-          v-for="tab in tabs"
-          :value="tab.name"
-          :disabled="tab.disabled"
-        >
+        <VTab v-for="tab in tabs" :value="tab.name" :disabled="tab.disabled">
           <VIcon class="ma-1">mdi-{{ tab.icon }}</VIcon>
           <VBadge
             v-if="tab.badgeData"
@@ -60,7 +54,7 @@
 
 <script lang="ts" setup>
 // TODO: Need to migrate
-// import ActivityDiscussion from '@/components/repository/common/ActivityDiscussion.vue';
+import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import ActivityNavigation from './Navigation.vue';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
@@ -138,7 +132,7 @@ watch(props.selectedElement, () => {
   text-align: left;
 
   ::v-deep .v-navigation-drawer__content {
-    -ms-overflow-style: none !important;  /* IE and Edge */
+    -ms-overflow-style: none !important; /* IE and Edge */
     scrollbar-width: none !important; /* Firefox */
 
     &::-webkit-scrollbar {
