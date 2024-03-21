@@ -4,7 +4,7 @@
       :img-url="comment.author.imgUrl"
       :size="36"
       class="ml-1 mt-2"
-      color="teal-lighten-3"
+      color="secondary-lighten-2"
       rounded="lg"
     />
     <div class="info-container">
@@ -13,7 +13,7 @@
           <template #activator="{ props: tooltipProps }">
             <span
               v-bind="tooltipProps"
-              class="author text-teal-lighten-4 text-truncate"
+              class="author text-teal-lighten-5 text-truncate"
             >
               {{ comment.author.label }}
             </span>
