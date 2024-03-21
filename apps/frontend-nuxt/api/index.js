@@ -11,6 +11,7 @@ export const exposedApi = {
 export { default as activity } from './activity';
 export { default as asset } from './asset';
 export { default as auth } from './auth';
+export { default as comment } from './comment';
 export { default as contentElement } from './contentElement';
 export { default as feed } from './feed';
 export { default as repository } from './repository';
