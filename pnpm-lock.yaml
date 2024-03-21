@@ -961,9 +961,18 @@ importers:
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../utils
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      pluralize:
+        specifier: ^8.0.0
+        version: 8.0.0
+      vee-validate:
+        specifier: ^4.12.6
+        version: 4.12.6(vue@3.3.11)
       vue:
         specifier: ^3.3.4
         version: 3.3.11(typescript@5.4.2)
@@ -973,6 +982,9 @@ importers:
       vuetify:
         specifier: ^3.3.5
         version: 3.5.4(typescript@5.4.2)(vue@3.3.11)
+      yup:
+        specifier: ^1.4.0
+        version: 1.4.0
 
   packages/core-extensions/content-containers/page:
     dependencies:
@@ -7670,6 +7682,10 @@ packages:
 
   /date-fns@3.3.1:
     resolution: {integrity: sha512-y8e109LYGgoQDveiEBD3DYXKba1jWf5BA8YU1FL5Tvm0BTdEfy54WLCwnuYWZNnzzvALy/QQ4Hov+Q9RVRv+Zw==}
+    dev: false
+
+  /date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
     dev: false
 
   /de-indent@1.0.2:
@@ -16684,6 +16700,16 @@ packages:
       '@vue/devtools-api': 6.5.1
       type-fest: 4.8.3
       vue: 3.4.21(typescript@5.4.2)
+    dev: false
+
+  /vee-validate@4.12.6(vue@3.3.11):
+    resolution: {integrity: sha512-EKM3YHy8t1miPh30d5X6xOrfG/Ctq0nbN4eMpCK7ezvI6T98/S66vswP+ihL4QqAK/k5KqreWOxof09+JG7N/A==}
+    peerDependencies:
+      vue: ^3.3.11
+    dependencies:
+      '@vue/devtools-api': 6.5.1
+      type-fest: 4.8.3
+      vue: 3.3.11(typescript@5.4.2)
     dev: false
 
   /vfile-message@2.0.4:
