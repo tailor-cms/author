@@ -30,14 +30,22 @@
           counter
         />
         <span class="d-flex justify-end">
-          <VBtn variant="text" small @click="reset">Cancel</VBtn>
           <VBtn
-            color="green-darken-1"
+            class="mr-2"
+            color="grey-lighten-2"
             size="small"
-            variant="text"
+            variant="tonal"
+            @click="reset"
+          >
+            Cancel
+          </VBtn>
+          <VBtn
+            color="green-lighten-2"
+            size="small"
+            variant="tonal"
             @click="save"
           >
-            <VIcon class="pr-1">mdi-check</VIcon> Save
+            <VIcon class="pr-1">mdi-check</VIcon>Save
           </VBtn>
         </span>
       </template>
