@@ -49,7 +49,7 @@ const lastCommentAt = computed(() =>
 
 const sheetStyles = computed(() =>
   props.panel
-    ? { color: 'blue-grey lighten-5', elevation: 1 }
+    ? { color: 'primary-darken-3', elevation: 1 }
     : { color: 'transparent', elevation: 0 },
 );
 

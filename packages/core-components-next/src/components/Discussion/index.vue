@@ -13,18 +13,18 @@
         Show {{ showAll ? 'less' : 'more' }}
       </VBtn>
     </div>
-    <div v-if="showHeading" class="header d-flex text-grey-lighten-4 pl-1">
+    <div v-if="showHeading" class="header d-flex text-teal-lighten-5 pl-1">
       <VIcon class="mr-2">mdi-forum-outline</VIcon>
       Comments
     </div>
     <VAlert
       v-if="!commentsCount && showNotifications"
-      class="alert"
-      color="primary-lighten-5"
+      class="alert mb-4"
+      color="teal-lighten-5"
       icon="mdi-keyboard-outline"
       prominent
     >
-      <span class="px-1 subtitle-2">Be the First to Comment</span>
+      <span class="px-1 subtitle-2">Be the First to Comment!</span>
     </VAlert>
     <DiscussionThread
       v-if="thread.length"
@@ -203,7 +203,7 @@ watch(
   }
 
   .header {
-    margin: 0.875rem 0 1.625rem 0;
+    margin: 0.75rem 0 1.25rem 0;
     font-size: 1.125rem;
     font-weight: 400;
   }
