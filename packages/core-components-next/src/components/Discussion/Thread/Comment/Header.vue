@@ -128,7 +128,6 @@ const options = computed(() => {
 
     .edited,
     .time {
-      color: #888;
       font-size: 0.75rem;
     }
 
