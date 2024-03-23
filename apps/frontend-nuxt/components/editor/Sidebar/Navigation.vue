@@ -12,38 +12,16 @@
         hide-details
       />
     </div>
-    <VTreeview
-      :items="activityTreeData"
-      :search="searchInput"
-      class="pt-4"
-      item-value="id"
-      open-all
-      @update:selected="navigateToActivity"
-    >
-      <template #prepend="{ item, open }">
-        <VIcon v-if="!item?.isEditable" color="primary-lighten-2" class="mr-2">
-          {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-        </VIcon>
-      </template>
-      <template #append="{ item }">
-        <VIcon
-          v-if="item?.isEditable"
-          class="ml-2 mr-3 open-icon"
-          color="secondary-lighten-4"
-        >
-          mdi-page-next-outline
-        </VIcon>
-      </template>
-    </VTreeview>
+    <TailorTreeview :items="activityTreeData" @edit="navigateToActivity" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
-import { VTreeview } from 'vuetify/labs/VTreeview';
 
 import type { Activity } from '@/api/interfaces/activity';
 import type { Repository } from '@/api/interfaces/repository';
+import { TailorTreeview } from '@tailor-cms/core-components-next';
 
 const { toTreeFormat } = activityUtils;
 const { $schemaService } = useNuxtApp() as any;
@@ -59,25 +37,21 @@ const searchInput = ref('');
 const attachActivityAttrs = (activity: Activity) => ({
   id: activity.id,
   title: activity.data.name,
-  isEditable: $schemaService.isEditable(activity.type),
+  isEditable: !!$schemaService.isEditable(activity.type),
 });
 
 const activityTreeData = computed(() =>
   toTreeFormat(props.activities, { processNodeFn: attachActivityAttrs }),
 );
 
-const navigateToActivity = ([activityId]: number[]) => {
+const navigateToActivity = (activityId: number) => {
   if (activityId === props.selected.id) return;
   const activity = props.activities.find((it) => it.id === activityId);
-  if (!activity || !isActivityEditable(activity)) return;
+  if (!activity) return;
   navigateTo({
     name: 'editor',
     params: { id: props.repository.id, activityId },
   });
-};
-
-const isActivityEditable = (activity: Activity) => {
-  return $schemaService.isEditable(activity.type);
 };
 
 // TODO: Implement once VTreeView is officially released (lab version used here)
