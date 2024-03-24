@@ -8,11 +8,17 @@
     <ItemGroup
       v-for="subItem in item.children"
       :key="subItem.id"
+      :active-item-id="activeItemId"
       :item="subItem"
       @edit="emit('edit', $event)"
     />
   </VListGroup>
-  <ListItem v-else v-bind="item" @edit="emit('edit', $event)" />
+  <ListItem
+    v-else
+    v-bind="item"
+    :is-active="activeItemId === item?.id"
+    @edit="emit('edit', $event)"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -23,6 +29,7 @@ import ListItem from './Item.vue';
 
 defineProps<{
   item: any;
+  activeItemId: number;
 }>();
 
 const emit = defineEmits(['edit']);

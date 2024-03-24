@@ -15,6 +15,7 @@
       v-for="item in processedItems"
       :key="item.id"
       :item="item"
+      :activeItemId="activeItemId"
       @edit="emit('edit', $event)"
     />
   </VList>

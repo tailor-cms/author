@@ -1,6 +1,7 @@
 <template>
   <VListItem
     v-bind="$attrs"
+    :class="{ 'text-secondary-lighten-4': isActive }"
     :title="title"
     class="list-item"
     @click="onItemClick"
@@ -9,6 +10,9 @@
       <VIcon v-if="isGroup" :color="prependColor">
         {{ prependIcon }}
       </VIcon>
+    </template>
+    <template #title>
+      <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
     </template>
     <template #append>
       <VIcon v-if="isEditable" color="secondary-lighten-4">
@@ -27,6 +31,7 @@ const props = defineProps<{
   isGroup?: boolean;
   isEditable?: boolean;
   isOpen?: boolean;
+  isActive?: boolean;
 }>();
 
 const emit = defineEmits(['edit']);
