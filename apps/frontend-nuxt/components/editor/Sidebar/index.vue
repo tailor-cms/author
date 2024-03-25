@@ -9,8 +9,8 @@
       <VWindow v-model="selectedTab">
         <VWindowItem :value="BROWSER_TAB">
           <ActivityNavigation
-            :repository="repository"
             :activities="activities"
+            :repository="repository"
             :selected="selectedActivity"
           />
         </VWindowItem>
@@ -36,14 +36,19 @@
         fixed-tabs
         stacked
       >
-        <VTab v-for="tab in tabs" :value="tab.name" :disabled="tab.disabled">
+        <VTab
+          v-for="tab in tabs"
+          :key="tab.name"
+          :disabled="tab.disabled"
+          :value="tab.name"
+        >
           <VIcon class="ma-1">mdi-{{ tab.icon }}</VIcon>
           <VBadge
             v-if="tab.badgeData"
             :content="tab.badgeData"
             color="secondary"
-            offsetY="18"
-            offsetX="-16"
+            offset-x="-16"
+            offset-y="18"
           />
           <span class="py-1">{{ tab.label }}</span>
         </VTab>
@@ -54,12 +59,12 @@
 
 <script lang="ts" setup>
 // TODO: Need to migrate
-import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
-import ActivityNavigation from './Navigation.vue';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
 
 import type { Activity } from '@/api/interfaces/activity';
+import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
+import ActivityNavigation from './ActivityNavigation.vue';
 import type { ContentElement } from '@/api/interfaces/content-element';
 import ElementSidebar from './ElementSidebar/index.vue';
 import type { Repository } from '@/api/interfaces/repository';

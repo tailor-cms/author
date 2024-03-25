@@ -3,8 +3,8 @@
     <ActivityDiscussion
       v-bind="{ comments, unseenComments, showHeading, user }"
       scroll-target="inputContainer"
-      show-notifications
       is-activity-thread
+      show-notifications
       @remove="remove"
       @save="saveComment"
       @seen="setLastSeenComment"
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, computed } from 'vue';
+import { computed, defineProps } from 'vue';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components-next';
 import get from 'lodash/get';
 import orderBy from 'lodash/orderBy';

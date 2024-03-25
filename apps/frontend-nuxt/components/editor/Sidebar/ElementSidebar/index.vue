@@ -10,6 +10,7 @@
 
 <script lang="ts" setup>
 import { getElementId, getSidebarName } from '@tailor-cms/utils';
+
 import ElementMeta from './ElementMeta/index.vue';
 
 const props = defineProps({
@@ -17,7 +18,6 @@ const props = defineProps({
   metadata: { type: Object, default: () => ({}) },
 });
 
-const editorBus = inject('$editorBus') as any;
 const eventBus = inject('$eventBus') as any;
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);

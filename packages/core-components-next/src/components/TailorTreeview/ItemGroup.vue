@@ -25,7 +25,7 @@
 import { defineEmits, defineProps } from 'vue';
 
 import ItemGroup from './ItemGroup.vue';
-import ListItem from './Item.vue';
+import ListItem from './ListItem.vue';
 
 defineProps<{
   item: any;

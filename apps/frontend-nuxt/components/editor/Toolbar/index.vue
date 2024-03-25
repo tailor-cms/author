@@ -3,7 +3,9 @@
     <div>
       <div
         v-if="activity && !element"
-        :class="[showPublishDiff ? 'bg-primary-darken-2' : 'bg-primary-darken-4']"
+        :class="[
+          showPublishDiff ? 'bg-primary-darken-2' : 'bg-primary-darken-4',
+        ]"
         class="activity-toolbar px-3 align-center w-100"
       >
         <ActivityActions class="ml-1" />
@@ -18,11 +20,11 @@
             <span class="text-white">comparing with published</span>
             <span class="px-2 text-grey">@</span>
             <VChip
-              color="primary-lighten-4"
-              textColor="grey-darken-4"
-              small
-              label
               class="readonly"
+              color="primary-lighten-4"
+              text-color="grey-darken-4"
+              label
+              small
             >
               {{ activity.publishedAt }}
             </VChip>

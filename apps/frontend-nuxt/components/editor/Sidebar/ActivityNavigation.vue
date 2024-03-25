@@ -13,9 +13,9 @@
       />
     </div>
     <TailorTreeview
+      :active-item-id="selected?.id"
       :items="activityTreeData"
       :search="searchInput"
-      :active-item-id="selected?.id"
       @edit="navigateToActivity"
     />
   </div>
@@ -23,10 +23,10 @@
 
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
+import { TailorTreeview } from '@tailor-cms/core-components-next';
 
 import type { Activity } from '@/api/interfaces/activity';
 import type { Repository } from '@/api/interfaces/repository';
-import { TailorTreeview } from '@tailor-cms/core-components-next';
 
 const { $schemaService } = useNuxtApp() as any;
 

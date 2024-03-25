@@ -3,9 +3,9 @@
     <VActivityContent
       v-if="editorStore.selectedActivity"
       :key="editorStore.selectedActivity.id"
-      :repository="repositoryStore.repository"
       :activity="editorStore.selectedActivity"
       :content-containers="editorStore.contentContainers"
+      :repository="repositoryStore.repository"
       :root-container-groups="editorStore.rootContainerGroups"
       @selected="selectElement"
     />

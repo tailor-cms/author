@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import ElementInputs from './Inputs.vue';
+import ElementInputs from './MetaInputs.vue';
 // import ElementRelationships from './Relationships/index.vue';
 
 const props = defineProps({

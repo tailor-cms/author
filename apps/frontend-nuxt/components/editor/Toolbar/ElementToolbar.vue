@@ -2,8 +2,8 @@
   <VSheet
     :key="id"
     class="element-toolbar-wrapper h-100 d-flex align-center justify-center"
-    elevation="1"
     color="#fff"
+    elevation="1"
   >
     <template v-if="componentExists">
       <component
@@ -60,7 +60,7 @@ const save = () => null; // store.dispatch('repository/contentElements/save');
   min-height: 3.5rem;
   padding-right: 2.75rem;
   z-index: 99;
-  border-bottom: 4px solid #CFD8DC;
+  border-bottom: 4px solid #cfd8dc;
 
   .actions-container {
     position: absolute;

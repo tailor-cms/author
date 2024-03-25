@@ -19,6 +19,7 @@
         @unresolve="$emit('unresolve', comment)"
       />
       <template v-else>
+        <!-- eslint-disable vuejs-accessibility/no-autofocus -->
         <VTextarea
           v-model.trim="content"
           class="comment-editor"
@@ -29,6 +30,7 @@
           clearable
           counter
         />
+        <!-- eslint-enable vuejs-accessibility/no-autofocus -->
         <span class="d-flex justify-end">
           <VBtn
             class="mr-2"
@@ -56,8 +58,8 @@
 <script lang="ts" setup>
 import { computed, defineEmits, defineProps, ref, watch } from 'vue';
 
-import CommentHeader from './Header.vue';
-import CommentPreview from './Preview.vue';
+import CommentHeader from './CommentHeader.vue';
+import CommentPreview from './CommentPreview.vue';
 
 const props = defineProps({
   comment: { type: Object, required: true },

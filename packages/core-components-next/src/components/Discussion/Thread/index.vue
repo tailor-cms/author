@@ -42,7 +42,7 @@ import { computed, defineEmits, defineProps, nextTick, ref, watch } from 'vue';
 import partition from 'lodash/partition';
 import takeRight from 'lodash/takeRight';
 
-import ThreadList from './List.vue';
+import ThreadList from './ThreadList.vue';
 import UnseenDivider from './UnseenDivider.vue';
 
 const props = defineProps({

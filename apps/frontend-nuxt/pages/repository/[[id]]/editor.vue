@@ -3,13 +3,13 @@
     <VToolbar
       v-if="editorStore.selectedActivity"
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
-      :element="editorStore.selectedContentElement as ContentElement"
       :active-users="activeUsers"
+      :element="editorStore.selectedContentElement as ContentElement"
     />
     <div class="editor-content-container">
       <VSidebar
-        :repository="repositoryStore.repository as Repository"
         :activities="repositoryStore.outlineActivities as Activity[]"
+        :repository="repositoryStore.repository as Repository"
         :selected-activity="editorStore.selectedActivity as Activity"
         :selected-element="editorStore.selectedContentElement as ContentElement"
         class="sidebar"
@@ -17,7 +17,7 @@
       <NuxtPage
         v-if="activityId"
         :key="activityId"
-        :activityId="activityId"
+        :activity-id="activityId"
         class="activity-content"
       />
     </div>

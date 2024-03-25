@@ -36,13 +36,13 @@ export function getAncestors(activities, activity) {
 
 export function toTreeFormat(
   activities,
-  { filterNodesFn = (it) => it, processNodeFn },
-  _internals = {},
+  { filterNodesFn = it => it, processNodeFn },
+  _internals = {}
 ) {
   const { parentId = null, level = 1, maxLevel = 20 } = _internals;
   if (level > maxLevel) throw new Error('Max level exceeded');
   const parentActivities = filter(activities, { parentId });
-  return filterNodesFn(parentActivities).map((it) => ({
+  return filterNodesFn(parentActivities).map(it => ({
     id: it.id,
     name: it.data.name,
     level,
@@ -53,8 +53,8 @@ export function toTreeFormat(
       {
         ..._internals,
         parentId: it.id,
-        level: level + 1,
-      },
-    ),
+        level: level + 1
+      }
+    )
   }));
 }
