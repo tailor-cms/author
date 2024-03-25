@@ -12,7 +12,12 @@
         hide-details
       />
     </div>
-    <TailorTreeview :items="activityTreeData" @edit="navigateToActivity" />
+    <TailorTreeview
+      :items="activityTreeData"
+      :search="searchInput"
+      :active-item-id="selected?.id"
+      @edit="navigateToActivity"
+    />
   </div>
 </template>
 
@@ -23,7 +28,6 @@ import type { Activity } from '@/api/interfaces/activity';
 import type { Repository } from '@/api/interfaces/repository';
 import { TailorTreeview } from '@tailor-cms/core-components-next';
 
-const { toTreeFormat } = activityUtils;
 const { $schemaService } = useNuxtApp() as any;
 
 const props = defineProps<{
@@ -40,9 +44,11 @@ const attachActivityAttrs = (activity: Activity) => ({
   isEditable: !!$schemaService.isEditable(activity.type),
 });
 
-const activityTreeData = computed(() =>
-  toTreeFormat(props.activities, { processNodeFn: attachActivityAttrs }),
-);
+const activityTreeData = computed(() => {
+  return activityUtils.toTreeFormat(props.activities, {
+    processNodeFn: attachActivityAttrs,
+  });
+});
 
 const navigateToActivity = (activityId: number) => {
   if (activityId === props.selected.id) return;
