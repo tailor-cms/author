@@ -14,8 +14,8 @@
     <ItemGroup
       v-for="item in processedItems"
       :key="item.id"
+      :active-item-id="activeItemId"
       :item="item"
-      :activeItemId="activeItemId"
       @edit="emit('edit', $event)"
     />
   </VList>
@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, ref, watch } from 'vue';
+import { computed, defineProps, onBeforeMount, ref, watch } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 
 import ItemGroup from './ItemGroup.vue';
@@ -49,15 +49,15 @@ const processedItems = computed(() => {
   if (!props.search) return props.items;
   // clone the items to avoid modifying the original
   const items = cloneDeep(props.items);
-  return items.filter(findRecursive);
+  return items.filter(searchRecursive);
 });
 
 const doesTitleMatchSearch = (title: string) =>
   title.toLowerCase().includes(props.search.toLowerCase());
 
-const findRecursive = (item: any): any => {
+const searchRecursive = (item: any): any => {
   if (doesTitleMatchSearch(item.title)) return item;
-  if (item.children) return item.children.some(findRecursive);
+  if (item.children) return item.children.some(searchRecursive);
   item.isVisible = false;
   return false;
 };
@@ -76,10 +76,28 @@ const toggleExpand = () => {
   expanded.value = getGroupIds(processedItems.value);
 };
 
+const findAncestors = (items: any, id: number, parents: any[] = []): any[] => {
+  const item = items.find((it: any) => it.id === id);
+  if (item) return [...parents, item];
+  return items
+    .map((it: any) =>
+      it.children?.length
+        ? findAncestors(it.children, id, [...parents, it])
+        : [],
+    )
+    .flat()
+    .filter(Boolean);
+};
+
 watch(
   () => props.search,
   () => {
     expanded.value = getGroupIds(processedItems.value);
   },
 );
+
+onBeforeMount(() => {
+  const ancestors = findAncestors(props.items, props.activeItemId);
+  expanded.value = getGroupIds(ancestors);
+});
 </script>
