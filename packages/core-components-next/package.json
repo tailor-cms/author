@@ -10,12 +10,16 @@
   "type": "module",
   "main": "./src/index.js",
   "peerDependencies": {
-    "vue": "^3.3.4",
-    "vuetify": "^3.3.5",
-    "@tailor-cms/utils": "workspace:*",
     "@tailor-cms/core-components-next": "workspace:*",
+    "@tailor-cms/utils": "workspace:*",
+    "date-fns": "^3.6.0",
+    "lodash": "^4.17.21",
+    "pluralize": "^8.0.0",
+    "vee-validate": "^4.12.6",
+    "vue": "^3.3.4",
     "vuedraggable": "^4.1.0",
-    "lodash": "^4.17.21"
+    "vuetify": "^3.3.5",
+    "yup": "^1.4.0"
   },
   "publishConfig": {
     "access": "public"

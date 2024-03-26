@@ -56,10 +56,17 @@
         v-bind="relationship"
       />
     </div>
+    <ActivityDiscussion
+      :activity="activity"
+      class="mt-2 mb-5 mx-1"
+      panel
+      show-heading
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
+import ActivityDiscussion from '../Discussion/index.vue';
 import ActivityRelationship from './ActivityRelationship.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 import MetaInput from '@/components/common/MetaInput.vue';

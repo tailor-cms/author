@@ -804,8 +804,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(vue@3.4.21)
       vuetify:
-        specifier: 3.5.8
-        version: 3.5.8(typescript@5.4.2)(vue@3.4.21)
+        specifier: 3.5.9
+        version: 3.5.9(typescript@5.4.2)(vue@3.4.21)
       yup:
         specifier: ^1.4.0
         version: 1.4.0
@@ -860,14 +860,14 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-html-default-edit':
-        specifier: ^0.0.3
-        version: 0.0.3(@tiptap/core@2.2.4)(vue@3.4.21)
+        specifier: ^0.0.5
+        version: 0.0.5(@tiptap/core@2.2.4)(vue@3.4.21)
       '@tailor-cms/ce-html-default-server':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.5
+        version: 0.0.5
       '@tailor-cms/ce-image-edit':
-        specifier: ^0.0.1
-        version: 0.0.1(vue@3.4.21)
+        specifier: ^0.0.3
+        version: 0.0.3(vue@3.4.21)
       '@tailor-cms/ce-image-server':
         specifier: ^0.0.1
         version: 0.0.1
@@ -961,9 +961,18 @@ importers:
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../utils
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      pluralize:
+        specifier: ^8.0.0
+        version: 8.0.0
+      vee-validate:
+        specifier: ^4.12.6
+        version: 4.12.6(vue@3.3.11)
       vue:
         specifier: ^3.3.4
         version: 3.3.11(typescript@5.4.2)
@@ -973,6 +982,9 @@ importers:
       vuetify:
         specifier: ^3.3.5
         version: 3.5.4(typescript@5.4.2)(vue@3.3.11)
+      yup:
+        specifier: ^1.4.0
+        version: 1.4.0
 
   packages/core-extensions/content-containers/page:
     dependencies:
@@ -4848,11 +4860,12 @@ packages:
       - supports-color
     dev: true
 
-  /@tailor-cms/ce-html-default-edit@0.0.3(@tiptap/core@2.2.4)(vue@3.4.21):
-    resolution: {integrity: sha512-RfQ7VtNPhXDviCRWSY2GcPWV98acbend3fXxS3gihQ5LTgJCn5at7sW8r6rDAVNmpmDHGlSazVm31sgozcdiaw==}
+  /@tailor-cms/ce-html-default-edit@0.0.5(@tiptap/core@2.2.4)(vue@3.4.21):
+    resolution: {integrity: sha512-f5BETjoz6pLfE/S0UlE13R0t0AJJrD38/+R8UhU0TMQ1nYF2qtstdo32cv337vCGTxB8vnrpEyHpktn+lQhKBw==}
     peerDependencies:
       vue: ^3.3.4
     dependencies:
+      '@tiptap/extension-character-count': 2.2.4(@tiptap/core@2.2.4)(@tiptap/pm@2.2.4)
       '@tiptap/extension-color': 2.2.4(@tiptap/core@2.2.4)(@tiptap/extension-text-style@2.2.4)
       '@tiptap/extension-font-family': 2.2.4(@tiptap/core@2.2.4)(@tiptap/extension-text-style@2.2.4)
       '@tiptap/extension-highlight': 2.2.4(@tiptap/core@2.2.4)
@@ -4879,12 +4892,12 @@ packages:
       - '@tiptap/core'
     dev: false
 
-  /@tailor-cms/ce-html-default-server@0.0.3:
-    resolution: {integrity: sha512-eN6ytYT9h0lxdQncLgy6PrngWUfB0MZ2FDBrWRtGBnQyIPygLCzbRhDrf9JPsj0PF/4oMNKgEheNk+VMW2syiw==}
+  /@tailor-cms/ce-html-default-server@0.0.5:
+    resolution: {integrity: sha512-QwQyySPdtC4x0WE59cg0aIu2JHcEhGLjSjE9cWy75n9njxDpwVrQXQvzA07BTUoS4YWRDxZ5RIqPq9YD2RM1Vg==}
     dev: false
 
-  /@tailor-cms/ce-image-edit@0.0.1(vue@3.4.21):
-    resolution: {integrity: sha512-25RuXmOL+SnyitubGhGA204NlTBKY5/AzLJIvRvM9cbJ+Q4M0R7nMkGZ375KPhySTfbasBrE/KXWU1+bPGiyVA==}
+  /@tailor-cms/ce-image-edit@0.0.3(vue@3.4.21):
+    resolution: {integrity: sha512-lEDZQ/Eeb9eVPPhM3Zzgp/pJsfRAuGsPsAlmnZb+IYjyjo4sgyG4NmNLb1kNjCw7ksELiIt9GRzp3DX3gg1FTw==}
     peerDependencies:
       vue: ^3.3.4
     dependencies:
@@ -4966,6 +4979,16 @@ packages:
       '@tiptap/core': ^2.0.0
     dependencies:
       '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
+    dev: false
+
+  /@tiptap/extension-character-count@2.2.4(@tiptap/core@2.2.4)(@tiptap/pm@2.2.4):
+    resolution: {integrity: sha512-gUeWiIB3Y2+6CuEUq2hKS7BEgvj7l6zAx/xPWlKCbfIyhpQh58m7QLB2OEmdw1EJnGA9VgxqrqOkvdZp8E6vEA==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+      '@tiptap/pm': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
+      '@tiptap/pm': 2.2.4
     dev: false
 
   /@tiptap/extension-code-block@2.2.4(@tiptap/core@2.2.4)(@tiptap/pm@2.2.4):
@@ -7661,6 +7684,10 @@ packages:
     resolution: {integrity: sha512-y8e109LYGgoQDveiEBD3DYXKba1jWf5BA8YU1FL5Tvm0BTdEfy54WLCwnuYWZNnzzvALy/QQ4Hov+Q9RVRv+Zw==}
     dev: false
 
+  /date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
+    dev: false
+
   /de-indent@1.0.2:
     resolution: {integrity: sha512-e/1zu3xH5MQryN2zdVaF0OrdNLUbvWxzMbi+iNA6Bky7l1RoP8a2fIbRocyHclXt/arDrrR6lL3TqFD9pMQTsg==}
     dev: true
@@ -8974,7 +9001,7 @@ packages:
       eslint: 8.43.0
       eslint-plugin-es: 4.1.0(eslint@8.43.0)
       eslint-utils: 3.0.0(eslint@8.43.0)
-      ignore: 5.3.1
+      ignore: 5.3.0
       is-core-module: 2.13.1
       minimatch: 3.1.2
       resolve: 1.22.8
@@ -16675,6 +16702,16 @@ packages:
       vue: 3.4.21(typescript@5.4.2)
     dev: false
 
+  /vee-validate@4.12.6(vue@3.3.11):
+    resolution: {integrity: sha512-EKM3YHy8t1miPh30d5X6xOrfG/Ctq0nbN4eMpCK7ezvI6T98/S66vswP+ihL4QqAK/k5KqreWOxof09+JG7N/A==}
+    peerDependencies:
+      vue: ^3.3.11
+    dependencies:
+      '@vue/devtools-api': 6.5.1
+      type-fest: 4.8.3
+      vue: 3.3.11(typescript@5.4.2)
+    dev: false
+
   /vfile-message@2.0.4:
     resolution: {integrity: sha512-DjssxRGkMvifUOJre00juHoP9DPWuzjxKuMDrhNbk2TdaYYBNMStsNhEOt3idrtI12VQYM/1+iM0KOzXi4pxwQ==}
     dependencies:
@@ -17272,8 +17309,8 @@ packages:
       vue: 3.3.11(typescript@5.4.2)
     dev: false
 
-  /vuetify@3.5.8(typescript@5.4.2)(vue@3.4.21):
-    resolution: {integrity: sha512-8nGS+lKejZkev55HFwIfsRt+9fOqbeDQNmXxfmLKAlnUT8FtynVwbjAwHMtX/OQAQ3ZwRaR1ptqQQmx3OgxzbQ==}
+  /vuetify@3.5.9(typescript@5.4.2)(vue@3.4.21):
+    resolution: {integrity: sha512-tA3N2uWZFNSZRFNnXN841x4rWozYXKC0fGW/mJIwcKkQiI0+gmVCETtjF8bnOS7L1s0buWzw94uYTlXQa5AQ4w==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
