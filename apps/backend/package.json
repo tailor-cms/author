@@ -1,9 +1,8 @@
 {
   "name": "tailor-server",
   "version": "7.0.0-alpha.1",
-  "codename": "wool",
+  "codename": "X",
   "author": "ExtensionEngine <info@extensionengine.com>",
-  "private": true,
   "type": "module",
   "scripts": {
     "dev": "nodemon --import ./script/preflight.js ./index.js | bunyan-pretty",
