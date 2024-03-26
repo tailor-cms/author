@@ -1,10 +1,6 @@
 <template>
   <div class="element-metadata">
-    <ElementInputs
-      v-if="inputs.length"
-      :element="element"
-      :inputs="inputs"
-    />
+    <ElementInputs v-if="inputs.length" :element="element" :inputs="inputs" />
     <!-- TODO: Needs to be implemented once element selection is implemented
     <ElementRelationships
       v-if="props.relationships.length && props.element.activityId"
@@ -18,7 +14,7 @@
 import ElementInputs from './MetaInputs.vue';
 // import ElementRelationships from './Relationships/index.vue';
 
-const props = defineProps({
+defineProps({
   element: { type: Object, required: true },
   inputs: { type: Array, default: () => [] },
   relationships: { type: Array, default: () => [] },
