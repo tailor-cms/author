@@ -2,8 +2,8 @@
   <div class="element-metadata">
     <ElementInputs
       v-if="inputs.length"
-      :element="props.element"
-      :inputs="props.inputs"
+      :element="element"
+      :inputs="inputs"
     />
     <!-- TODO: Needs to be implemented once element selection is implemented
     <ElementRelationships

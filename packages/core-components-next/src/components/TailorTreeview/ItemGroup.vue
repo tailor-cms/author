@@ -1,5 +1,5 @@
 <template>
-  <VListGroup v-if="item?.children?.length" :value="item?.id">
+  <VListGroup v-if="item.children?.length" :value="item.id">
     <template #activator="{ props: activatorProps, isOpen }">
       <ListItem
         v-bind="{ ...activatorProps, ...item, isOpen, isGroup: true }"

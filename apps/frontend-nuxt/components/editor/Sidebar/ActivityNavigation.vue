@@ -60,7 +60,7 @@ const navigateToActivity = (activityId: number) => {
   });
 };
 
-// TODO: Implement once VTreeView is officially released (lab version used here)
+// TODO: Implement once VTreeView is officially released
 // onMounted(() => {
 // nextTick(() => {
 //   const activityTreeEl = $refs.activityTree.$el;

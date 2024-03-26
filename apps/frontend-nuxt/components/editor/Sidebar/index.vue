@@ -58,7 +58,6 @@
 </template>
 
 <script lang="ts" setup>
-// TODO: Need to migrate
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
 
@@ -114,14 +113,17 @@ const metadata = computed(() => {
   return $schemaService.getElementMetadata(schemaId, props.selectedElement);
 });
 
-watch(props.selectedElement, () => {
-  if (elementSidebarEnabled.value) {
-    selectedTab.value = ELEMENT_TAB;
-    return;
-  }
-  if (selectedTab.value !== ELEMENT_TAB) return;
-  selectedTab.value = BROWSER_TAB;
-});
+watch(
+  () => props.selectedElement,
+  () => {
+    if (elementSidebarEnabled.value) {
+      selectedTab.value = ELEMENT_TAB;
+      return;
+    }
+    if (selectedTab.value !== ELEMENT_TAB) return;
+    selectedTab.value = BROWSER_TAB;
+  },
+);
 
 // TODO: Need to migrate
 // watch(unseenComments, debounce((val) => {
