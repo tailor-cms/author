@@ -17,7 +17,7 @@
         <span>Unresolve comment</span>
       </VTooltip>
     </div>
-    <pre><span>{{ content }}</span><br /></pre>
+    <pre class="text-left"><span>{{ content }}</span><br /></pre>
   </div>
 </template>
 
