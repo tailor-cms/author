@@ -315,7 +315,7 @@ onBeforeMount(async () => {
 });
 
 onBeforeUnmount(() => {
-  editorChannel.clear();
+  editorChannel.destroy();
 });
 </script>
 
