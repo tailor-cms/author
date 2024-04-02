@@ -111,10 +111,15 @@ watch(() => props.unseenCount, revealUnseen, { immediate: true });
 
   &.scroll-container {
     max-height: 31.25rem;
+    box-sizing: content-box;
     overflow-y: scroll;
     overflow-x: hidden;
-    padding-right: 1.5rem;
-    box-sizing: content-box;
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+
+    &::-webkit-scrollbar {
+      display: none !important;
+    }
   }
 
   .fade-enter-active,

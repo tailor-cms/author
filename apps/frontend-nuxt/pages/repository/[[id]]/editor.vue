@@ -29,12 +29,14 @@ import type { Activity } from '@/api/interfaces/activity';
 import type { ContentElement } from '@/api/interfaces/content-element';
 import type { Repository } from '@/api/interfaces/repository';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useCommentStore } from '@/stores/comments';
 import { useEditorStore } from '@/stores/editor';
 import VSidebar from '@/components/editor/Sidebar/index.vue';
 import VToolbar from '@/components/editor/Toolbar/index.vue';
 
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
+const commentStore = useCommentStore();
 const route = useRoute();
 
 const activityId = ref<number | null>(null);
@@ -44,14 +46,26 @@ const activeUsers: any = [];
 const parseActivityId = () => {
   if (!route.params.activityId) navigateTo({ name: 'catalog' });
   activityId.value = parseInt(route.params.activityId as string, 10);
+  return activityId.value;
 };
 
-onBeforeMount(() => {
-  parseActivityId();
-  editorStore.initialize(activityId.value as number);
+const initializeCommentStore = (activityId: number) => {
+  return commentStore.fetch(editorStore.repositoryId as number, { activityId });
+};
+
+onBeforeMount(async () => {
+  const activityId = parseActivityId();
+  editorStore.initialize(activityId);
+  initializeCommentStore(activityId);
 });
 
-watch(() => route.params?.activityId, parseActivityId);
+watch(
+  () => route.params?.activityId,
+  async () => {
+    const activityId = parseActivityId();
+    initializeCommentStore(activityId);
+  },
+);
 </script>
 
 <style lang="scss" scoped>

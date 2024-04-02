@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column w-100">
-    <VActivityContent
+    <ActivityContent
       v-if="editorStore.selectedActivity"
       :key="editorStore.selectedActivity.id"
       :activity="editorStore.selectedActivity"
@@ -15,9 +15,10 @@
 <script lang="ts" setup>
 import { getElementId } from '@tailor-cms/utils';
 
+import ActivityContent from '@/components/editor/ActivityContent/index.vue';
+import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
-import VActivityContent from '@/components/editor/ActivityContent/index.vue';
 
 definePageMeta({
   name: 'editor',
@@ -26,8 +27,11 @@ definePageMeta({
 
 const props = defineProps<{ activityId: number }>();
 
+const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
+
+provide('$getCurrentUser', () => authStore.user);
 
 const selectElement = (element: any) => {
   const route = useRoute();
@@ -44,7 +48,6 @@ const selectElement = (element: any) => {
 onBeforeMount(() => {
   editorStore.initialize(props.activityId);
 });
-
 // TODO: Publish diff, Toolbar and Sidebar need to be migrated
 // import VSidebar from './VSidebar/index.vue';
 // const showPublishDiff = computed(() => store.state.editor.showPublishDiff);

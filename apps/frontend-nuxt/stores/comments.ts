@@ -40,16 +40,17 @@ export const useCommentStore = defineStore('comments', () => {
     if (!params.activityId && !params.contentElementId)
       throw new Error('Invalid params');
     const comments: Comment[] = await api.fetch(repositoryId, params);
-    $items.clear();
     comments.forEach((it) => add(it));
     return items.value;
   }
 
   async function save(payload: any): Promise<Comment> {
     const { id, repositoryId, ...rest } = payload;
-    const comment = await (id
-      ? api.patch(repositoryId, id, rest)
-      : api.create(payload));
+    const comment = id
+      ? await api.patch(repositoryId, id, rest)
+      : await api.create(payload);
+    // TODO: Check if this is needed
+    // if (!hasUnresolvedComments) this.fetchComments({ elementId });
     return add(comment);
   }
 
