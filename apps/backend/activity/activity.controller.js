@@ -13,6 +13,11 @@ const { getOutlineLevels, isOutlineActivity } = schema;
 
 function list({ repository, query, opts }, res) {
   if (!query.detached) opts.where = { detached: false };
+  if (query.outlineOnly) {
+    opts.where = {
+      type: getOutlineLevels(repository.schema).map((it) => it.type),
+    };
+  }
   return repository.getActivities(opts).then((data) => res.json({ data }));
 }
 

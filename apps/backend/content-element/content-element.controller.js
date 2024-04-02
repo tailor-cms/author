@@ -10,7 +10,7 @@ function list({ query, opts }, res) {
   if (!detached) opts.where = { detached: false };
   if (ids) {
     const where = { id: ids.map(Number) };
-    opts.include = { model: Activity, attributes: [], where };
+    opts.include = { model: Activity.unscoped(), attributes: [], where };
   }
 
   return ContentElement.fetch(opts).then((data) => res.json({ data }));

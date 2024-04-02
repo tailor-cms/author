@@ -63,8 +63,8 @@ export const useActivityStore = defineStore('activities', () => {
     return $items.get(item.uid) as StoreActivity;
   }
 
-  async function fetch(repositoryId: number): Promise<StoreActivity[]> {
-    const activities: Activity[] = await api.getActivities(repositoryId);
+  async function fetch(repositoryId: number, params = {}): Promise<StoreActivity[]> {
+    const activities: Activity[] = await api.getActivities(repositoryId, params);
     $items.clear();
     activities.forEach((it) => add(it));
     return items.value;

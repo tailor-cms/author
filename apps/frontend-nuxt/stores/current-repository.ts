@@ -100,7 +100,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const initialize = async (repoId: number) => {
     repositoryId.value = repoId;
     await Repository.get(repoId);
-    await Activity.fetch(repoId);
+    await Activity.fetch(repoId, { outlineOnly: true });
   };
 
   function $reset() {
