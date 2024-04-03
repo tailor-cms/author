@@ -14,7 +14,7 @@ export const useEditorStore = defineStore('editor', () => {
   const repositoryStore = useCurrentRepository();
   const activityStore = useActivityStore();
 
-  const repositoryId = computed(() => repositoryStore.repositoryId);
+  const repositoryId = computed(() => repositoryStore.repositoryId as number);
   const selectedActivityId = ref<number | null>(null);
   const selectedContentElementId = ref<number | null>(null);
   const selectedContentElement = ref<StoreContentElement | null>(null);
@@ -47,7 +47,8 @@ export const useEditorStore = defineStore('editor', () => {
     }, []);
   });
 
-  const initialize = (activityId: number) => {
+  const initialize = async (activityId: number) => {
+    await activityStore.fetch(repositoryId.value, { activityId })
     selectedActivityId.value = activityId;
   };
 
