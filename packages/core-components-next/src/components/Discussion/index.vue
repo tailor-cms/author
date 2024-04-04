@@ -15,15 +15,16 @@
         Show {{ showAll ? 'less' : 'more' }}
       </VBtn>
     </div>
-    <div v-if="showHeading" class="header d-flex text-teal-lighten-5 pl-1">
+    <div v-if="showHeading" class="header d-flex text-primary-lighten-3 pl-1">
       <VIcon class="mr-2">mdi-forum-outline</VIcon>
       Comments
     </div>
     <VAlert
       v-if="!commentsCount && showNotifications"
       class="alert mb-4"
-      color="teal-lighten-5"
+      color="primary-lighten-3"
       icon="mdi-keyboard-outline"
+      variant="tonal"
       prominent
     >
       <span class="px-1 subtitle-2">Be the First to Comment!</span>
