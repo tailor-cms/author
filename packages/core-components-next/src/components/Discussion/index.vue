@@ -1,6 +1,8 @@
 <template>
   <div ref="containerEl" class="embedded-discussion">
-    <ResolveButton v-if="showResolveButton" @click="resolveAll" />
+    <div v-if="showResolveButton" class="d-flex justify-center">
+      <ResolveButton class="mb-2" @click="resolveAll" />
+    </div>
     <div :class="{ 'pb-7': !showHeading && hasHiddenComments }">
       <VBtn
         v-if="hasHiddenComments"
@@ -13,15 +15,20 @@
         Show {{ showAll ? 'less' : 'more' }}
       </VBtn>
     </div>
-    <div v-if="showHeading" class="header d-flex text-teal-lighten-5 pl-1">
-      <VIcon class="mr-2">mdi-forum-outline</VIcon>
+    <VChip
+      v-if="showHeading"
+      class="mt-4 mb-4 text-subtitle-2"
+      color="teal-lighten-4"
+      pill
+    >
       Comments
-    </div>
+    </VChip>
     <VAlert
       v-if="!commentsCount && showNotifications"
       class="alert mb-4"
-      color="teal-lighten-5"
+      color="primary-lighten-3"
       icon="mdi-keyboard-outline"
+      variant="tonal"
       prominent
     >
       <span class="px-1 subtitle-2">Be the First to Comment!</span>

@@ -30,9 +30,11 @@ defineProps({
 
 const ceRegistry = inject('$ceRegistry') as any;
 
-const getElementLabel = (comment) => {
-  if (!comment.contentElement) return;
-  return ceRegistry.get(comment.contentElement.type)?.name;
+const getElementLabel = (comment: any) => {
+  if (!comment.contentElement?.type) return;
+  return ceRegistry?.get
+    ? ceRegistry.get(comment.contentElement.type)?.name
+    : '';
 };
 </script>
 

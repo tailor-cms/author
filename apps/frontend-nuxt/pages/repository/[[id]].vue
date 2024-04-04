@@ -26,6 +26,7 @@
 import { promiseTimeout } from '@vueuse/core';
 
 import { useAuthStore } from '@/stores/auth';
+import { useCommentStore } from '@/stores/comments';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 definePageMeta({
@@ -38,6 +39,7 @@ provide('$eventBus', $eventBus);
 
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
+const commentStore = useCommentStore();
 
 const isLoading = ref(true);
 
@@ -49,6 +51,7 @@ onMounted(async () => {
     currentRepositoryStore.initialize(repositoryId),
     await promiseTimeout(1200),
   ]);
+  commentStore.$reset();
   isLoading.value = false;
 });
 </script>

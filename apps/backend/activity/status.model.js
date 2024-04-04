@@ -48,9 +48,8 @@ class ActivityStatus extends Model {
   static scopes({ User }) {
     return {
       defaultScope: {
-        include: [{ model: User, as: 'assignee' }],
+        include: [{ model: User, as: 'assignee', required: false }],
         order: [['createdAt', 'DESC']],
-        limit: 1,
       },
     };
   }

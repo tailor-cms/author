@@ -9,7 +9,7 @@
         user,
       }"
       @remove="remove"
-      @resolve="emit('resolve', comment)"
+      @resolve="resolveComment"
       @toggle-edit="toggleEdit"
     />
     <div class="comment-body">
@@ -28,10 +28,9 @@
           auto-grow
           autofocus
           clearable
-          counter
         />
         <!-- eslint-enable vuejs-accessibility/no-autofocus -->
-        <span class="d-flex justify-end">
+        <span class="d-flex justify-end mt-2">
           <VBtn
             class="mr-2"
             color="grey-lighten-2"
@@ -42,7 +41,7 @@
             Cancel
           </VBtn>
           <VBtn
-            color="green-lighten-2"
+            color="teal-lighten-4"
             size="small"
             variant="tonal"
             @click="save"
@@ -86,6 +85,10 @@ const save = () => {
 
 const remove = () => {
   emit('remove', props.comment);
+};
+
+const resolveComment = () => {
+  emit('resolve', props.comment);
 };
 
 const reset = () => {

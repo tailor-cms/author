@@ -34,11 +34,11 @@
           </span>
         </VTooltip>
         <template v-if="isActivityThread && elementLabel">
-          <VDivider vertical />
           <EditorLink
             :activity-id="comment.activityId"
             :element-uid="elementUid"
             :label="elementLabel"
+            class="ml-1"
           />
         </template>
       </div>
@@ -80,7 +80,7 @@ const getOptions = () => ({
   resolve: {
     action: 'resolve',
     icon: 'checkbox-outline',
-    color: 'teal accent-4',
+    color: 'primary-lighten-3',
   },
   edit: {
     action: 'toggleEdit',

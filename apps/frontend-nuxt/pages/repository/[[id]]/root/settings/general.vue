@@ -4,7 +4,7 @@
       <VBtn
         :loading="isPublishing"
         class="float-right"
-        color="teal-accent-4"
+        color="primary-darken-3"
         size="small"
         variant="tonal"
         @click="publish"

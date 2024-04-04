@@ -43,11 +43,12 @@
     />
     <div v-if="!props.isDisabled" class="element-actions">
       <!-- TODO: Add upon Discussion implementation -->
-      <!-- <div
-        v-if="props.showDiscussion"
-        :class="{ 'is-visible': isHighlighted.value || hasComments.value }">
-        <Discussion @open="focus" v-bind="element" :user="currentUser.value" />
-      </div> -->
+      <div
+        v-if="showDiscussion"
+        :class="{ 'is-visible': isHighlighted || hasComments }"
+      >
+        <ElementDiscussion v-bind="element" :user="currentUser" @open="focus" />
+      </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
           color="pink lighten-1"
@@ -71,11 +72,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, inject, onMounted, provide, ref } from 'vue';
+import {
+  computed,
+  defineEmits,
+  inject,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  ref,
+} from 'vue';
 import { getComponentName, getElementId } from '@tailor-cms/utils';
+
+import ElementDiscussion from './ElementDiscussion.vue';
 // TODO: Add upon user activity tracking & discussion implementation
 // import ActiveUsers from './ActiveUsers.vue';
-// import Discussion from './ElementDiscussion.vue';
 // import PublishDiffChip from './PublishDiffChip.vue';
 
 const props = defineProps({
@@ -93,12 +103,14 @@ const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
 
 const editorBus = inject('$editorBus') as any;
 const eventBus = inject('$eventBus') as any;
-const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
+const getCurrentUser = inject('$getCurrentUser') as any;
 
+const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
 
 const isFocused = ref(false);
 const isSaving = ref(false);
+const currentUser = getCurrentUser();
 const activeUsers = ref<any[]>([]);
 
 const id = computed(() => getElementId(props.element));
@@ -106,8 +118,11 @@ const componentName = computed(() => getComponentName(props.element.type));
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 // TODO: Add upon collab feature implementation
-// const hasComments = computed(() => !!props.element.comments?.length);
-// const currentUser = computed(() => null); // $getCurrentUser()
+const hasComments = computed(() => !!props.element.comments?.length);
+
+onBeforeUnmount(() => {
+  elementBus.destroy();
+});
 
 const onSelect = (e) => {
   if (props.isDisabled || e.component) return; // || editorState.isPublishDiff

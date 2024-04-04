@@ -38,12 +38,11 @@
         @add="addElements"
       >
         <template #header>
-          <div v-if="layout" class="mr-6 text-primary-lighten-3">
+          <div v-if="layout" class="mr-6 text-primary-darken-4">
             <div class="pb-2 text-subtitle-2 text-left">Element width</div>
             <VBtnToggle
               v-model="elementWidth"
-              class="bg-primary-darken-3"
-              color="lime-lighten-2"
+              color="teal-darken-2"
               rounded="small"
               variant="tonal"
               divided

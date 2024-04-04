@@ -28,9 +28,9 @@
         <VAlert
           v-if="!metadata"
           class="my-3"
-          color="primary-darken-2"
+          color="primary-darken-3"
           icon="mdi-information"
-          variant="text"
+          variant="tonal"
           prominent
         >
           Please select the item type you want to add to edit its properties
@@ -88,11 +88,10 @@ const activityStore = useActivityStore();
 const selectedActivity = useSelectedActivity(props.anchor);
 const { $schemaService } = useNuxtApp() as any;
 
-const initActivityState = () => {
-  const { value: levels }: any = selectedActivity.levels;
+const initActivityState = (type: string) => {
   return {
     repositoryId: props.repositoryId,
-    type: levels.length > 1 ? levels[0]?.type : null,
+    type,
     data: {},
   };
 };
@@ -108,7 +107,7 @@ const defaultModalHeading = computed(() => {
   return hasSingleTypeOption.value ? `Add ${firstTaxonomyOption.label}` : 'Add';
 });
 
-const activity = ref(initActivityState()) as any;
+const activity = ref(initActivityState(taxonomyLevels.value?.[0]?.type)) as any;
 
 const metadata = computed(() => {
   if (!activity.value.type) return null;
@@ -134,7 +133,7 @@ const submitForm = async () => {
   try {
     const item = await activityStore.save(activity.value);
     if (anchor && anchor.id === activity.value?.parentId) {
-      selectedActivity.expandParent(item);
+      selectedActivity.expandOutlineItemParent(item);
     }
     emit('created', item);
     visible.value = false;
@@ -147,12 +146,11 @@ const submitForm = async () => {
 watch(visible, (val) => {
   if (val) return;
   emit('close');
-  activity.value = initActivityState();
+  activity.value = initActivityState(taxonomyLevels.value?.[0]?.type);
 });
 
 onMounted(() => {
   visible.value = !props.showActivator;
-  activity.value = initActivityState();
 });
 </script>
 

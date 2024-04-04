@@ -63,9 +63,21 @@ export const useActivityStore = defineStore('activities', () => {
     return $items.get(item.uid) as StoreActivity;
   }
 
-  async function fetch(repositoryId: number): Promise<StoreActivity[]> {
-    const activities: Activity[] = await api.getActivities(repositoryId);
-    $items.clear();
+  async function fetch(
+    repositoryId: number,
+    params = {},
+  ): Promise<StoreActivity[]> {
+    const activities: Activity[] = await api.getActivities(
+      repositoryId,
+      params,
+    );
+    // Reset if repository is changed
+    if (
+      items.value.length > 0 &&
+      items.value[0].repositoryId !== repositoryId
+    ) {
+      $items.clear();
+    }
     activities.forEach((it) => add(it));
     return items.value;
   }

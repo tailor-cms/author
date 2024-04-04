@@ -33,24 +33,34 @@ class Channel {
   private id: string;
   private bus: ExtendedMitt;
   private repliers: Map<unknown, unknown>;
+  private listeners: any[];
+  private onDestroy: () => void;
 
-  constructor(bus: ExtendedMitt, id: string) {
+  constructor(bus: ExtendedMitt, id: string, onDestroy: () => void) {
     this.id = id;
     this.bus = bus;
     this.repliers = new Map();
+    this.listeners = [];
+    this.onDestroy = onDestroy;
   }
 
   emit = (eventName: string, data: unknown) =>
     this.bus.emit(this.resolveEventName(eventName), data);
 
-  on = (eventName: string, fn: any) =>
+  on = (eventName: string, fn: any) => {
+    this.listeners.push({ eventName, fn });
     this.bus.on(this.resolveEventName(eventName), fn);
+  };
 
-  off = (eventName: string, fn: any) =>
+  off = (eventName: string, fn: any) => {
+    this.listeners = this.listeners.filter((it) => it.eventName !== eventName);
     this.bus.off(this.resolveEventName(eventName), fn);
+  };
 
-  once = (eventName: string, fn: any) =>
+  once = (eventName: string, fn: any) => {
+    this.listeners.push({ eventName, fn });
     this.bus.once(this.resolveEventName(eventName) as keyof Events, fn);
+  };
 
   request(id: string, ...args: any[]) {
     const onReply = isFunction(last(args)) ? args.pop() : noop;
@@ -63,6 +73,12 @@ class Channel {
     const onRequest = (...args: any[]) => listener(...args, callback);
     this.repliers.set(listener, onRequest);
     this.on(requestEvent(id), onRequest);
+  }
+
+  destroy() {
+    this.listeners.forEach((it) => this.off(it.eventName, it.fn));
+    this.repliers.clear();
+    this.onDestroy();
   }
 
   // Prefix event name with channel id
@@ -79,9 +95,15 @@ export default class Radio {
   channel(id: string) {
     const { bus, channels } = Radio;
     if (channels.has(id)) return channels.get(id);
-    const channel = new Channel(bus, id);
+    const channel = new Channel(bus, id, () => channels.delete(id));
     channels.set(id, channel);
     return channel;
+  }
+
+  destroyChannel(id: string) {
+    const channel = Radio.channels.get(id);
+    if (!channel) return;
+    channel.destroy();
   }
 
   static getInstance() {

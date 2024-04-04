@@ -1,11 +1,11 @@
 <template>
-  <VBottomSheet>
-    <div class="element-container bg-primary-darken-3">
+  <VBottomSheet class="mx-5">
+    <div class="element-container bg-primary-lighten-5">
       <div class="d-flex align-center pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
       <div v-for="group in library as any" :key="group.name">
-        <div class="group-heading text-primary-lighten-3">
+        <div class="group-heading text-primary-darken-3">
           {{ group.name }}
         </div>
         <div class="group-elements">
@@ -14,9 +14,9 @@
               <template #default="{ isHovering, props: hoverProps }">
                 <VBtn
                   v-bind="hoverProps"
-                  :color="isHovering ? 'lime-lighten-1' : 'primary-lighten-3'"
+                  :color="isHovering ? 'teal-darken-2' : 'primary-darken-4'"
                   :disabled="!isAllowed(element.type)"
-                  class="add-element"
+                  class="add-element mr-3"
                   variant="tonal"
                   @click.stop="emitAdd(element)"
                 >

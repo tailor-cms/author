@@ -32,7 +32,8 @@ import { useEditorStore } from '@/stores/editor';
 
 const currentRepositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
-const showPublishDiff = computed(() => false);
+// TODO: Publish diff needs to be implemented
+// const showPublishDiff = computed(() => false);
 
 const actions = computed(() => {
   const items = [
@@ -51,17 +52,18 @@ const actions = computed(() => {
       icon: 'eye',
       action: () => preview(),
     },
-    {
-      title: showPublishDiff.value
-        ? 'Stop comparing with published'
-        : 'Compare with published',
-      icon: 'plus-minus',
-      active: showPublishDiff.value,
-      disabled: !editorStore.selectedActivity?.publishedAt,
-      // TODO: Needs to be implemented
-      // store.commit('editor/togglePublishDiff')
-      action: () => null,
-    },
+    // TODO: Needs to be implemented
+    // {
+    //   title: showPublishDiff.value
+    //     ? 'Stop comparing with published'
+    //     : 'Compare with published',
+    //   icon: 'plus-minus',
+    //   active: showPublishDiff.value,
+    //   disabled: !editorStore.selectedActivity?.publishedAt,
+    //   // TODO: Needs to be implemented
+    //   // store.commit('editor/togglePublishDiff')
+    //   action: () => null,
+    // },
   ];
   if (!currentRepositoryStore.repository?.hasAdminAccess) return items;
   return items.concat({
