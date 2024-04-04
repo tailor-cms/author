@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column w-100">
     <ActivityContent
-      v-if="editorStore.selectedActivity"
+      v-if="editorStore.selectedActivity?.id"
       :key="editorStore.selectedActivity.id"
       :activity="editorStore.selectedActivity"
       :content-containers="editorStore.contentContainers"

@@ -6,9 +6,10 @@
         <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="tooltipProps"
-            color="secondary"
+            class="ml-1"
+            color="secondary-lighten-5"
             size="x-small"
-            variant="text"
+            variant="tonal"
             @click="emit('unresolve')"
           >
             Undo

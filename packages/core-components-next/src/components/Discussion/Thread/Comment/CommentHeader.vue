@@ -80,7 +80,7 @@ const getOptions = () => ({
   resolve: {
     action: 'resolve',
     icon: 'checkbox-outline',
-    color: 'teal accent-4',
+    color: 'primary-lighten-3',
   },
   edit: {
     action: 'toggleEdit',

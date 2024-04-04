@@ -1,4 +1,5 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
+import { Events } from '@tailor-cms/utils';
 import filter from 'lodash/filter';
 import flatMap from 'lodash/flatMap';
 import reduce from 'lodash/reduce';
@@ -7,12 +8,14 @@ import { schema } from 'tailor-config-shared';
 import type { StoreContentElement } from './content-elements';
 import { useActivityStore } from './activity';
 import { useCurrentRepository } from './current-repository';
+import { useCommentStore } from './comments';
 
 const { getDescendants } = activityUtils;
 
 export const useEditorStore = defineStore('editor', () => {
   const repositoryStore = useCurrentRepository();
   const activityStore = useActivityStore();
+  const commentStore = useCommentStore();
 
   const repositoryId = computed(() => repositoryStore.repositoryId as number);
   const selectedActivityId = ref<number | null>(null);
@@ -48,8 +51,32 @@ export const useEditorStore = defineStore('editor', () => {
   });
 
   const initialize = async (activityId: number) => {
-    await activityStore.fetch(repositoryId.value, { activityId })
+    await activityStore.fetch(repositoryId.value, { activityId });
     selectedActivityId.value = activityId;
+  };
+
+  const processCommentEvent = ({
+    action,
+    payload,
+  }: {
+    action: string;
+    payload: any;
+  }) => {
+    const { SAVE, REMOVE, SET_LAST_SEEN, RESOLVE } = Events.Discussion;
+    const editorContext = {
+      repositoryId: repositoryId.value,
+      activityId: selectedActivityId.value,
+    };
+    const resolvedAction = {
+      [SAVE]: (payload: any) =>
+        commentStore.save({ ...payload, ...editorContext }),
+      [REMOVE]: (id: number) => commentStore.remove(repositoryId.value, id),
+      [SET_LAST_SEEN]: (payload: any) => commentStore.markSeenComments(payload),
+      [RESOLVE]: (payload: any) =>
+        commentStore.updateResolvement(repositoryId.value, payload),
+    }[action];
+    if (!resolvedAction) return;
+    return resolvedAction(payload);
   };
 
   function $reset() {
@@ -65,6 +92,7 @@ export const useEditorStore = defineStore('editor', () => {
     rootContainerGroups,
     contentContainers,
     initialize,
+    processCommentEvent,
     $reset,
   };
 });

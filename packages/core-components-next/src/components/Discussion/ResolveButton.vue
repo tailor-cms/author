@@ -4,14 +4,11 @@
       <template #activator="{ props: tooltipProps }">
         <VBtn
           v-bind="{ ...$attrs, ...tooltipProps }"
-          class="px-1"
-          color="teal-accent-4"
+          color="teal-lighten-5"
           size="small"
-          variant="text"
+          variant="tonal"
         >
-          <VIcon class="mr-2" color="teal-accent-4" size="24">
-            mdi-checkbox-outline
-          </VIcon>
+          <VIcon class="mr-2">mdi-checkbox-outline</VIcon>
           Resolve All
         </VBtn>
       </template>

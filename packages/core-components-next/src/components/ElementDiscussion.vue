@@ -39,10 +39,11 @@
         }"
         v-model:confirmation-active="isConfirmationActive"
         class="pa-2"
-        @remove="editorBus.emit(Events.Discussion.REMOVE, $event)"
-        @resolve="resolve"
+        @remove="removeComment"
+        @resolve="updateResolvement"
         @save="save"
         @seen="setLastSeen"
+        @unresolve="updateResolvement"
         @update="save"
       />
     </VSheet>
@@ -111,30 +112,48 @@ const activator = computed(() => {
 });
 
 const save = (data: any) => {
-  return editorBus.emit(Events.Discussion.SAVE, {
-    ...data,
-    author: props.user,
-    activityId: props.activityId,
-    repositoryId: props.repositoryId,
-    contentElementId: props.id,
-    hasUnresolvedComments: props.hasUnresolvedComments,
+  return editorBus.emit('comment', {
+    action: Events.Discussion.SAVE,
+    payload: {
+      ...data,
+      author: props.user,
+      contentElementId: props.id,
+      hasUnresolvedComments: props.hasUnresolvedComments,
+    },
   });
 };
 
 const setLastSeen = (timeout: number) => {
-  const options = {
-    elementUid: props.uid,
-    lastCommentAt: lastCommentAt.value,
-    timeout,
-  };
-  editorBus.emit(Events.Discussion.SET_LAST_SEEN, options);
+  editorBus.emit('comment', {
+    action: Events.Discussion.SET_LAST_SEEN,
+    payload: {
+      elementUid: props.uid,
+      lastCommentAt: lastCommentAt.value,
+      timeout,
+    },
+  });
 };
 
-const resolve = ({ id, resolvedAt } = {}) => {
-  editorBus.emit(Events.Discussion.RESOLVE, {
-    id,
-    contentElementId: props.id,
-    resolvedAt,
+const updateResolvement = ({
+  id,
+  resolvedAt,
+}: {
+  id: number;
+  resolvedAt: number;
+}) => {
+  editorBus.emit('comment', {
+    action: Events.Discussion.RESOLVE,
+    payload: {
+      id,
+      contentElementId: props.id,
+    },
+  });
+};
+
+const removeComment = (payload: any) => {
+  editorBus.emit('comment', {
+    action: Events.Discussion.REMOVE,
+    payload,
   });
 };
 </script>

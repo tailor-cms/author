@@ -1,6 +1,8 @@
 <template>
   <div ref="containerEl" class="embedded-discussion">
-    <ResolveButton v-if="showResolveButton" @click="resolveAll" />
+    <div v-if="showResolveButton" class="d-flex justify-center">
+      <ResolveButton class="mb-2" @click="resolveAll" />
+    </div>
     <div :class="{ 'pb-7': !showHeading && hasHiddenComments }">
       <VBtn
         v-if="hasHiddenComments"

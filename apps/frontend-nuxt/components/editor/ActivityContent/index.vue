@@ -39,7 +39,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Events } from '@tailor-cms/utils';
 import find from 'lodash/find';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
@@ -291,27 +290,12 @@ watch(showPublishDiff, (isOn) => {
 
 // TODO: Confirmation for comment deletion
 // TODO: Delay mark seen comments
-function initCommentEventListeners(activityId: number) {
-  const commentStore = useCommentStore();
-  const { SAVE, REMOVE, SET_LAST_SEEN, RESOLVE } = Events.Discussion;
-  const COMMENT_EVENTS = [
-    { event: SAVE, action: 'save' },
-    { event: REMOVE, action: 'remove' },
-    { event: SET_LAST_SEEN, action: 'markSeenComments' },
-    { event: RESOLVE, action: 'updateResolvement' },
-  ];
-  COMMENT_EVENTS.forEach(({ event, action }) => {
-    editorChannel.on(event, (e: any) =>
-      commentStore[action]({ ...e, activityId }),
-    );
-  });
-}
+editorChannel.on('comment', val => editorStore.processCommentEvent(val));
 
 onBeforeMount(async () => {
   await loadContents();
   initElementFocusListener();
   initElementChangeWatcher();
-  initCommentEventListeners(props.activity?.id);
 });
 
 onBeforeUnmount(() => {
