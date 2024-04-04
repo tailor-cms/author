@@ -60,7 +60,7 @@ class Channel {
   once = (eventName: string, fn: any) => {
     this.listeners.push({ eventName, fn });
     this.bus.once(this.resolveEventName(eventName) as keyof Events, fn);
-  }
+  };
 
   request(id: string, ...args: any[]) {
     const onReply = isFunction(last(args)) ? args.pop() : noop;

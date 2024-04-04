@@ -26,8 +26,8 @@
 import { promiseTimeout } from '@vueuse/core';
 
 import { useAuthStore } from '@/stores/auth';
-import { useCurrentRepository } from '@/stores/current-repository';
 import { useCommentStore } from '@/stores/comments';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 definePageMeta({
   middleware: ['auth'],

@@ -32,7 +32,8 @@ import { useEditorStore } from '@/stores/editor';
 
 const currentRepositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
-const showPublishDiff = computed(() => false);
+// TODO: Publish diff needs to be implemented
+// const showPublishDiff = computed(() => false);
 
 const actions = computed(() => {
   const items = [

@@ -1,5 +1,4 @@
-import { activity as activityUtils } from '@tailor-cms/utils';
-import { Events } from '@tailor-cms/utils';
+import { activity as activityUtils, Events } from '@tailor-cms/utils';
 import filter from 'lodash/filter';
 import flatMap from 'lodash/flatMap';
 import reduce from 'lodash/reduce';
@@ -7,8 +6,8 @@ import { schema } from 'tailor-config-shared';
 
 import type { StoreContentElement } from './content-elements';
 import { useActivityStore } from './activity';
-import { useCurrentRepository } from './current-repository';
 import { useCommentStore } from './comments';
+import { useCurrentRepository } from './current-repository';
 
 const { getDescendants } = activityUtils;
 

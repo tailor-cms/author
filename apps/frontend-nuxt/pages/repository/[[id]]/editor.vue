@@ -28,8 +28,8 @@
 import type { Activity } from '@/api/interfaces/activity';
 import type { ContentElement } from '@/api/interfaces/content-element';
 import type { Repository } from '@/api/interfaces/repository';
-import { useCurrentRepository } from '@/stores/current-repository';
 import { useCommentStore } from '@/stores/comments';
+import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
 import VSidebar from '@/components/editor/Sidebar/index.vue';
 import VToolbar from '@/components/editor/Toolbar/index.vue';
@@ -53,7 +53,7 @@ const initializeCommentStore = (activityId: number) => {
   return commentStore.fetch(editorStore.repositoryId as number, { activityId });
 };
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
   const activityId = parseActivityId();
   editorStore.initialize(activityId);
   initializeCommentStore(activityId);
@@ -61,7 +61,7 @@ onBeforeMount(async () => {
 
 watch(
   () => route.params?.activityId,
-  async () => {
+  () => {
     const activityId = parseActivityId();
     initializeCommentStore(activityId);
   },

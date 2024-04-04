@@ -287,9 +287,8 @@ watch(showPublishDiff, (isOn) => {
 //   });
 // });
 
-// TODO: Confirmation for comment deletion
 // TODO: Delay mark seen comments
-editorChannel.on('comment', val => editorStore.processCommentEvent(val));
+editorChannel.on('comment', (val) => editorStore.processCommentEvent(val));
 
 onBeforeMount(async () => {
   await loadContents();
