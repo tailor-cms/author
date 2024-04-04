@@ -15,10 +15,14 @@
         Show {{ showAll ? 'less' : 'more' }}
       </VBtn>
     </div>
-    <div v-if="showHeading" class="header d-flex text-primary-lighten-3 pl-1">
-      <VIcon class="mr-2">mdi-forum-outline</VIcon>
+    <VChip
+      v-if="showHeading"
+      class="mt-4 mb-4 text-subtitle-2"
+      color="teal-lighten-4"
+      pill
+    >
       Comments
-    </div>
+    </VChip>
     <VAlert
       v-if="!commentsCount && showNotifications"
       class="alert mb-4"

@@ -19,8 +19,9 @@
         v-clipboard:success="
           () => notify('ID copied to the clipboard', { immediate: true })
         "
-        class="mr-2 px-0"
-        color="lime-lighten-4"
+        class="mr-2 px-4"
+        color="teal-lighten-4"
+        size="small"
         variant="tonal"
       >
         <VIcon class="mr-1" small>mdi-content-copy</VIcon>
@@ -32,8 +33,9 @@
         v-clipboard:success="
           () => notify('Link copied to the clipboard', { immediate: true })
         "
-        class="px-0"
-        color="lime-lighten-4"
+        class="px-4"
+        color="teal-lighten-4"
+        size="small"
         variant="tonal"
       >
         <VIcon class="mr-1" small>mdi-content-copy</VIcon>
