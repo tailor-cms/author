@@ -51,10 +51,12 @@
       v-if="!isAiGeneratingContent"
       :activity="container"
       :add-element-options="{
+        show: isElementDrawerVisible,
         large: true,
         label: 'Add content',
         icon: 'mdi-plus',
         color: 'primary-lighten-5',
+        position: insertPosition,
         variant: 'elevated',
       }"
       :elements="containerElements"
@@ -62,7 +64,7 @@
       :layout="layout"
       :supported-types="types"
       class="element-list"
-      @add="emit('save:element', $event)"
+      @add="onElementAdd"
       @update="reorder"
     >
       <template #default="{ element, position, isDragged }">
@@ -152,14 +154,13 @@ const showElementDrawer = (position) => {
   addElementComponent.value.click();
 };
 
-// TODO: Missing implementation
-// eslint-disable-next-line no-unused-vars
-const onHiddenElementDrawer = () => {
+const onElementAdd = (element: any) => {
+  emit('save:element', element);
   isElementDrawerVisible.value = false;
-  insertPosition.value = Infinity;
+  insertPosition.value = 0;
 };
 
-const saveElement = (element, key, data) => {
+const saveElement = (element: any, key: string, data: any) => {
   emit('save:element', {
     ...element,
     [key]: data,
