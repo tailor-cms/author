@@ -48,7 +48,7 @@
       </div>
     </VSheet>
     <ElementList
-      v-else
+      v-if="!isAiGeneratingContent"
       :activity="container"
       :add-element-options="{
         large: true,
