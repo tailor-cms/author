@@ -88,7 +88,7 @@ const emit = defineEmits(['selected']);
 const route = useRoute();
 
 const runtimeConfig = useRuntimeConfig();
-const { $eventBus, $ceRegistry, $schemaService } = useNuxtApp() as any;
+const { $eventBus, $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useCurrentRepository();
 const authStore = useAuthStore();
@@ -120,7 +120,6 @@ const doTheMagic = ({ type }: { type: string }) => {
 const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
-provide('$ceRegistry', $ceRegistry);
 if (runtimeConfig.public.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);

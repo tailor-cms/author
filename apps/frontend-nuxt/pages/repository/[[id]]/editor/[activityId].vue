@@ -31,6 +31,9 @@ const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 
+const { $ceRegistry } = useNuxtApp() as any;
+
+provide('$ceRegistry', $ceRegistry);
 provide('$getCurrentUser', () => authStore.user);
 
 const selectElement = (element: any) => {

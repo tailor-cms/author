@@ -1,6 +1,6 @@
 <template>
   <div :class="{ resolved: isResolved }" class="content">
-    <div v-if="isResolved" class="resolvement-options">
+    <div v-if="isResolved" class="resolvement-options mt-3">
       <span class="font-italic mr-1">Marked as resolved.</span>
       <VTooltip location="right" open-delay="800">
         <template #activator="{ props: tooltipProps }">

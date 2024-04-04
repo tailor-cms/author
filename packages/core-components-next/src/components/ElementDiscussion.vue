@@ -134,13 +134,7 @@ const setLastSeen = (timeout: number) => {
   });
 };
 
-const updateResolvement = ({
-  id,
-  resolvedAt,
-}: {
-  id: number;
-  resolvedAt: number;
-}) => {
+const updateResolvement = ({ id }: { id: number }) => {
   editorBus.emit('comment', {
     action: Events.Discussion.RESOLVE,
     payload: {

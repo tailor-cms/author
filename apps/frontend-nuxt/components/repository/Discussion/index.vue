@@ -29,6 +29,9 @@ const props = defineProps({
   showHeading: { type: Boolean, default: false },
 });
 
+const { $ceRegistry } = useNuxtApp() as any;
+provide('$ceRegistry', $ceRegistry);
+
 const authStore = useAuthStore();
 const commentStore = useCommentStore();
 

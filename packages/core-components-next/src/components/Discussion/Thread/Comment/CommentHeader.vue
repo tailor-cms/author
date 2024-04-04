@@ -34,11 +34,11 @@
           </span>
         </VTooltip>
         <template v-if="isActivityThread && elementLabel">
-          <VDivider vertical />
           <EditorLink
             :activity-id="comment.activityId"
             :element-uid="elementUid"
             :label="elementLabel"
+            class="ml-1"
           />
         </template>
       </div>
