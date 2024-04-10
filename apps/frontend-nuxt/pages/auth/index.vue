@@ -3,13 +3,14 @@
     <VAlert
       v-if="localError"
       class="mb-7 text-left"
-      color="pink-lighten-1"
+      color="pink-lighten-4"
       density="compact"
+      variant="tonal"
       closable
     >
       {{ localError }}
     </VAlert>
-    <form @submit.prevent="signIn">
+    <form @submit.prevent="signIn" novalidate>
       <VTextField
         v-model="emailInput"
         :error-messages="errors.email"
@@ -35,10 +36,18 @@
         variant="outlined"
       />
       <div class="d-flex mt-2">
-        <VBtn type="submit" variant="tonal" block rounded>Log in</VBtn>
+        <VBtn
+          color="primary-lighten-2"
+          @click="signIn"
+          variant="tonal"
+          block
+          rounded
+        >
+          Sign in
+        </VBtn>
       </div>
       <div class="options">
-        <NuxtLink to="/auth/forgot-password">Forgot password?</NuxtLink>
+        <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       </div>
     </form>
   </NuxtLayout>
@@ -49,6 +58,15 @@ import { object, string } from 'yup';
 import { useForm } from 'vee-validate';
 
 import { useAuthStore } from '@/stores/auth';
+
+definePageMeta({
+  name: 'sign-in',
+});
+
+useHead({
+  title: 'Sign in',
+  meta: [{ name: 'description', content: 'Tailor CMS - Sign in page' }],
+});
 
 const authStore = useAuthStore();
 
@@ -85,22 +103,12 @@ const signIn = handleSubmit(({ email, password }) => {
 </script>
 
 <style lang="scss" scoped>
-.auth-divider {
-  position: relative;
-  margin: 2rem 0;
-
-  &::after {
-    content: 'OR';
-    position: absolute;
-    top: -0.7rem;
-    left: calc(50% - 1rem);
-    width: 2rem;
-    background: #ececec;
-  }
-}
-
 .options {
   padding: 0.875rem 0 0.25rem;
   text-align: right;
+}
+
+.v-alert ::v-deep .mdi-close {
+  color: #eee;
 }
 </style>
