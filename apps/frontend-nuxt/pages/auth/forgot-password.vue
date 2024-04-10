@@ -1,19 +1,20 @@
 <template>
   <NuxtLayout name="auth">
     <VAlert
-      :color="error ? 'pink-lighten-1' : 'grey-darken-4'"
-      :model-value="!!showMessage"
-      class="mb-8"
-      density="compact"
+      :color="errorMessage ? 'pink-lighten-4' : 'teal-lighten-4'"
+      :model-value="showMessage"
+      class="mb-8 pa-4 text-subtitle-2"
       variant="tonal"
+      prominent
     >
-      {{ error || 'Sending reset email...' }}
+      {{ errorMessage || 'Sending reset email...' }}
     </VAlert>
-    <form v-if="!error" novalidate @submit.prevent="submit">
+    <form v-if="!errorMessage" novalidate @submit.prevent="submit">
       <VTextField
         v-model="emailInput"
+        :class="errors.email?.length ? 'mb-3' : 'mb-1'"
+        :disabled="showMessage"
         :error-messages="errors.email"
-        class="required"
         label="Email"
         placeholder="Email"
         prepend-inner-icon="mdi-email-outline"
@@ -23,7 +24,7 @@
       <div>
         <VBtn
           v-if="!showMessage"
-          color="primary darken-4"
+          color="primary-lighten-2"
           type="submit"
           variant="tonal"
           block
@@ -31,12 +32,25 @@
         >
           Send reset email
         </VBtn>
-        <VBtn class="mt-7" to="/" variant="text">
+        <VBtn
+          :to="{ name: 'sign-in' }"
+          class="mt-7"
+          color="primary-lighten-3"
+          variant="text"
+        >
           <VIcon class="pr-2">mdi-arrow-left</VIcon>Back
         </VBtn>
       </div>
     </form>
-    <VBtn v-else variant="text" @click.stop="resetInput">Retry</VBtn>
+    <VBtn
+      v-else
+      color="primary-lighten-2"
+      variant="tonal"
+      block
+      rounded
+      @click.stop="resetInput">
+      Retry
+    </VBtn>
   </NuxtLayout>
 </template>
 
@@ -45,27 +59,42 @@ import { object, string } from 'yup';
 import Promise from 'bluebird';
 import { useForm } from 'vee-validate';
 
+definePageMeta({
+  name: 'forgot-password',
+});
+
+useHead({
+  title: 'Request password reset',
+  meta: [
+    {
+      name: 'description',
+      content: 'Tailor CMS - Request password reset page',
+    },
+  ],
+});
+
 const authStore = useAuthStore();
 
+const errorMessage = ref('');
 const showMessage = ref(false);
-const error = ref('');
 
 const { defineField, handleSubmit, errors } = useForm({
   validationSchema: object({
     email: string().required().email(),
   }),
 });
-
 const [emailInput] = defineField('email');
 
 const submit = handleSubmit(({ email }) => {
   showMessage.value = true;
   Promise.all([authStore.forgotPassword({ email }), Promise.delay(5000)])
     .then((): any => navigateTo('/'))
-    .catch(() => (error.value = 'Something went wrong!'));
+    .catch(() => (errorMessage.value = 'Something went wrong!'));
 });
 
 const resetInput = () => {
   emailInput.value = '';
+  errorMessage.value = '';
+  showMessage.value = false;
 };
 </script>
