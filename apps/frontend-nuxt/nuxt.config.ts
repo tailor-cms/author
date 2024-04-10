@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
   ssr: false,
   debug: true,
-  modules: ['@pinia/nuxt'],
+  modules: ['@nuxtjs/google-fonts', '@pinia/nuxt'],
   build: {
     transpile: ['vuetify'],
   },
@@ -22,6 +22,12 @@ export default defineNuxtConfig({
   ],
   pinia: {
     storesDirs: ['./stores/**'],
+  },
+  googleFonts: {
+    families: {
+      Roboto: true,
+      Poppins: true,
+    }
   },
   runtimeConfig: {
     public: {
