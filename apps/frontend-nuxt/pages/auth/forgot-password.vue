@@ -48,7 +48,8 @@
       variant="tonal"
       block
       rounded
-      @click.stop="resetInput">
+      @click.stop="resetInput"
+    >
       Retry
     </VBtn>
   </NuxtLayout>

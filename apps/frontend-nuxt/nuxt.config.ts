@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     families: {
       Roboto: true,
       Poppins: true,
-    }
+    },
   },
   runtimeConfig: {
     public: {

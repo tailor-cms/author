@@ -9,7 +9,7 @@ const {
   MAILTRAP_INBOX_NAME,
 } = process.env;
 
-const timeout = (ms: number) => new Promise((res) => setTimeout(res, ms));
+const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const client = new MailtrapClient({
   accountId: parseInt(MAILTRAP_ACCOUNT_ID, 10),
   token: MAILTRAP_TOKEN,

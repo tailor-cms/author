@@ -79,7 +79,7 @@ useHead({
   meta: [{ name: 'description', content: 'Tailor CMS - Reset password page' }],
 });
 
-const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const ERRORS = {
   default: 'An error has occurred!',
   resetToken: 'Invalid reset password token!',

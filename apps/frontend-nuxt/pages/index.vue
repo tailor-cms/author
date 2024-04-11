@@ -96,9 +96,7 @@ definePageMeta({
 
 useHead({
   title: 'Catalog',
-  meta: [
-    { name: 'description', content: 'Tailor CMS - Repository catalog' }
-  ],
+  meta: [{ name: 'description', content: 'Tailor CMS - Repository catalog' }],
 });
 
 const authStore = useAuthStore();

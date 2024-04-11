@@ -10,7 +10,7 @@
     >
       {{ localError }}
     </VAlert>
-    <form @submit.prevent="signIn" novalidate>
+    <form novalidate @submit.prevent="signIn">
       <VTextField
         v-model="emailInput"
         :error-messages="errors.email"
@@ -38,10 +38,10 @@
       <div class="d-flex mt-2">
         <VBtn
           color="primary-lighten-2"
-          @click="signIn"
           variant="tonal"
           block
           rounded
+          @click="signIn"
         >
           Sign in
         </VBtn>
