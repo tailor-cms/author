@@ -27,7 +27,7 @@
 import WavesSvg from '@/components/auth/Waves.vue';
 
 const title = 'Tailor CMS';
-const logoPath = '/img/default-logo-full.svg';
+const logoPath = '/img/logo-alt-a.svg';
 </script>
 
 <style lang="scss">
