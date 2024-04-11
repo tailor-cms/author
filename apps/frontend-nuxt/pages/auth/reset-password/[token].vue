@@ -9,7 +9,7 @@
       {{ notificationText }}
     </VAlert>
     <div v-if="isLoading" class="d-flex justify-center pt-14 pb-16">
-      <VProgressCircular color="primary-lighten-1" size="56" indeterminate />
+      <VProgressCircular color="primary-lighten-1" size="54" indeterminate />
     </div>
     <div v-else-if="isError" class="d-flex flex-column justify-center">
       <NuxtLink
