@@ -26,6 +26,13 @@ jobs:
           touch ./scripts/setup/.env
           echo "DB_USERNAME=dev" >> ./scripts/setup/.env
           echo "DB_PASSWORD=dev" >> ./scripts/setup/.env
+      - name: Create E2E testing config
+        run: |
+          touch ./tests/.env
+          echo "MAILTRAP_ACCOUNT_ID=${{ secrets.MAILTRAP_ACCOUNT_ID }}" >> ./tests/.env
+          echo "MAILTRAP_TOKEN=${{ secrets.MAILTRAP_TOKEN }}" >> ./tests/.env
+          echo "MAILTRAP_INBOX_ID=${{ secrets.MAILTRAP_INBOX_ID }}" >> ./tests/.env
+          echo "MAILTRAP_INBOX_NAME=e2e" >> ./tests/.env
       - name: Install, build, seed, and start server
         uses: ./.github/actions/run
       - name: Run E2E tests
