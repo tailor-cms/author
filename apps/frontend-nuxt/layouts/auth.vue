@@ -8,7 +8,7 @@
       >
         <div class="d-flex justify-start align-start w-50 pt-4 pl-7">
           <div class="d-flex align-center justify-center pt-4">
-            <img :src="logoPath" alt="Logo" class="logo" width="50" />
+            <img :src="logoPath" alt="Logo" class="logo" width="52" />
             <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
           </div>
         </div>
