@@ -9,7 +9,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   devServer: {
     // TODO: Baked in until frontend is migrated to Nuxt
-    port: 8081,
+    port: 8080,
   },
   routeRules: {
     '/api/**': {
