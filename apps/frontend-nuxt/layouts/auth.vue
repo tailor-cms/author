@@ -9,7 +9,7 @@
         <div class="d-flex justify-start align-start w-50 pt-4 pl-7">
           <div class="d-flex align-center justify-center pt-4">
             <img :src="logoPath" alt="Logo" class="logo" width="50" />
-            <h1 class="app-title ml-5 text-primary-lighten-4">{{ title }}</h1>
+            <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
           </div>
         </div>
         <div class="auth-body w-50 py-8">
@@ -26,7 +26,11 @@
 <script lang="ts" setup>
 import WavesSvg from '@/components/auth/Waves.vue';
 
-const title = 'Tailor CMS';
+const props = defineProps<{
+  title: string;
+}>();
+
+const title = props.title || 'Tailor CMS';
 const logoPath = '/img/logo-alt-a.svg';
 </script>
 

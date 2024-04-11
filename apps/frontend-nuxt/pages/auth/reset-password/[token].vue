@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="auth">
+  <NuxtLayout name="auth" title="Reset password">
     <VAlert
       v-if="notificationText"
       :color="isError ? 'pink-lighten-4' : 'teal-lighten-4'"

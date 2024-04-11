@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="auth">
+  <NuxtLayout name="auth" title="Sign in">
     <VAlert
       v-if="localError"
       class="mb-7 text-left"

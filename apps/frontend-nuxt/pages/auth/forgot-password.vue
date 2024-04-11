@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout name="auth">
+  <NuxtLayout name="auth" title="Forgot password?">
     <VAlert
       :color="errorMessage ? 'pink-lighten-4' : 'teal-lighten-4'"
       :model-value="showMessage"
