@@ -35,6 +35,7 @@ const props = defineProps({
   element: { type: Object, required: true },
   isDisabled: { type: Boolean, default: false },
   isDragged: { type: Boolean, default: false },
+  showDiscussion: { type: Boolean, default: false },
   setWidth: { type: Boolean, default: true },
   dense: { type: Boolean, default: false },
 });
@@ -51,12 +52,13 @@ const emit = defineEmits([
 const isHovered = ref(false);
 
 const bindings = computed(() => {
-  const { element, isDisabled, isDragged, dense } = props;
+  const { element, isDisabled, isDragged, dense, showDiscussion } = props;
   return {
     element,
     isDisabled,
     isDragged,
     isHovered: isHovered.value,
+    showDiscussion,
     dense,
   };
 });

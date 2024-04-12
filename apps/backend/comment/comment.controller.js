@@ -47,7 +47,7 @@ function patch({ comment, body }, res) {
   const { content } = body;
   return comment
     .update({ content, editedAt: new Date() })
-    .then((comment) => comment.reload({ include: [author] }))
+    .then((comment) => comment.reload({ include: [author, element] }))
     .then((data) => res.json({ data }));
 }
 

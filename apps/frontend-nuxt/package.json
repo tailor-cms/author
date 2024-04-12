@@ -10,6 +10,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@nuxtjs/google-fonts": "^3.2.0",
     "@tailor-cms/eslint-config": "^0.0.2",
     "@types/bluebird": "^3.5.42",
     "@types/lodash": "^4.14.202",
@@ -47,7 +48,7 @@
     "vee-validate": "4.12.5",
     "vue3-tree-vue": "^2.0.9",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.5.8",
+    "vuetify": "3.5.9",
     "yup": "^1.4.0"
   }
 }

@@ -34,7 +34,11 @@ export function resolveElementType(type) {
 }
 
 export function getToolbarName(type) {
-  return `${toCase.slug(type)}-toolbar`;
+  return `tce-${toCase.slug(type)}-toolbar`;
+}
+
+export function getSidebarName(type) {
+  return `tce-${toCase.slug(type)}-sidebar`;
 }
 
 export function getElementId(element) {

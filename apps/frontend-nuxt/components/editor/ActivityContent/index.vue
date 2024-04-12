@@ -42,16 +42,19 @@
 import find from 'lodash/find';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
+import max from 'lodash/max';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
 
 import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
+import type { ContentElement } from '~/api/interfaces/content-element';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
 import type { Repository } from '@/api/interfaces/repository';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
+import { useCommentStore } from '@/stores/comments';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
@@ -61,7 +64,6 @@ import { useEditorStore } from '@/stores/editor';
 // import isEqual from 'lodash/isEqual';
 // import { isQuestion } from '@tailor-cms/utils';
 // import { loader } from '@tailor-cms/core-components';
-// import max from 'lodash/max';
 // import commentEventListeners from 'components/common/mixins/commentEventListeners';
 // const CE_MODULE = 'repository/contentElements';
 // const ELEMENT_MUTATIONS = [
@@ -86,13 +88,14 @@ const emit = defineEmits(['selected']);
 const route = useRoute();
 
 const runtimeConfig = useRuntimeConfig();
-const { $eventBus, $ceRegistry, $schemaService } = useNuxtApp() as any;
+const { $eventBus, $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useCurrentRepository();
 const authStore = useAuthStore();
 const editorStore = useEditorStore();
 const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
+const commentStore = useCommentStore();
 
 const doTheMagic = ({ type }: { type: string }) => {
   if (!type) throw new Error('Type is required');
@@ -117,7 +120,6 @@ const doTheMagic = ({ type }: { type: string }) => {
 const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
-provide('$ceRegistry', $ceRegistry);
 if (runtimeConfig.public.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);
@@ -127,10 +129,7 @@ const mousedownCaptured = ref<boolean | null>(null);
 
 // TODO: Update once collab feature is implemented
 // const collaboratorSelections = useGetter('editor', 'collaboratorSelections');
-// const getComments = useGetter('repository/comments', 'getComments');
-// const seen = useState('repository/comments', 'seen');
 // const user = useState((state) => state.auth.user);
-// const fetchComments = useAction('repository/comments', 'fetch');
 const showPublishDiff = computed(() => false); // useState('editor', 'showPublishDiff');
 
 const elements = computed(() => contentElementStore.items);
@@ -141,20 +140,20 @@ const containerIds = computed(
 const elementsWithComments = computed(() => {
   return transform(
     elements.value,
-    (acc: any, it) => {
-      // TODO: Implement once collab feature is implemented
-      // getComments({ activityId, contentElementId: it.id });
-      // const lastSeen = max([
-      //   seen.contentElement[it.uid],
-      //   seen.activity[activityUid],
-      // ]);
-      const comments = [] as any[];
-      const hasUnresolvedComments = false; // !!comments.length;
-      acc[it.uid] = {
-        ...it,
+    (elementMap: { [key: string]: any }, element: ContentElement) => {
+      const comments = commentStore.where(
+        (comment) => comment.contentElement?.uid === element.uid,
+      );
+      const lastSeen = max([
+        commentStore.$seen.contentElement.get(element.uid) || 0,
+        commentStore.$seen.activity.get(props.activity?.uid) || 0,
+      ]);
+      const hasUnresolvedComments = !!comments.length;
+      elementMap[element.uid] = {
+        ...element,
         comments,
         hasUnresolvedComments,
-        lastSeen: 0, // lastSeen || 0,
+        lastSeen: lastSeen || 0,
       };
     },
     {},
@@ -288,17 +287,24 @@ watch(showPublishDiff, (isOn) => {
 //   });
 // });
 
+// TODO: Delay mark seen comments
+editorChannel.on('comment', (val) => editorStore.processCommentEvent(val));
+
 onBeforeMount(async () => {
   await loadContents();
   initElementFocusListener();
   initElementChangeWatcher();
+});
+
+onBeforeUnmount(() => {
+  editorChannel.destroy();
 });
 </script>
 
 <style lang="scss" scoped>
 .activity-content {
   min-height: 100%;
-  padding: 1.25rem 2.5rem 0 1.5625rem;
+  padding: 4rem 2.5rem 0 1.5625rem;
   overflow-y: scroll;
   overflow-y: overlay;
   overflow-x: hidden;

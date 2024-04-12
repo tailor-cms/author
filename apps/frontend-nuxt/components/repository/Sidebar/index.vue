@@ -14,10 +14,14 @@
       <SidebarBody :activity="store.selectedActivity" />
     </div>
     <div v-else class="placeholder text-primary-lighten-5">
-      <h4 class="text-lime-lighten-3">Outline Sidebar</h4>
+      <h4 class="text-h6 text-primary-lighten-4">Outline Sidebar</h4>
       <div class="d-flex align-center">
-        <VIcon color="lime-lighten-3">mdi-arrow-left-circle</VIcon>
-        <VAlert class="info-content ml-2" variant="tonal">
+        <VIcon color="primary-lighten-3">mdi-arrow-left-circle</VIcon>
+        <VAlert
+          class="info-content ml-2"
+          color="primary-lighten-4"
+          variant="tonal"
+        >
           {{ props.emptyMessage }}
         </VAlert>
       </div>
@@ -47,15 +51,12 @@ const store = useCurrentRepository();
 }
 
 .placeholder {
-  margin-top: 4.375rem;
+  margin-top: 1.75rem;
   padding: 0 1rem;
 
   h4 {
     padding: 0.5rem 0 1.125rem;
     text-align: center;
-    font-size: 1.25rem;
-    font-weight: 500;
-    letter-spacing: 0.0625rem;
   }
 
   .v-icon {

@@ -5,14 +5,14 @@ export default defineNuxtConfig({
     options: { hashMode: true },
   },
   debug: true,
-  modules: ['@pinia/nuxt'],
+  modules: ['@nuxtjs/google-fonts', '@pinia/nuxt'],
   build: {
     transpile: ['vuetify'],
   },
   devtools: { enabled: true },
   devServer: {
     // TODO: Baked in until frontend is migrated to Nuxt
-    port: 8081,
+    port: 8080,
   },
   routeRules: {
     '/api/**': {
@@ -25,6 +25,12 @@ export default defineNuxtConfig({
   ],
   pinia: {
     storesDirs: ['./stores/**'],
+  },
+  googleFonts: {
+    families: {
+      Roboto: true,
+      Poppins: true,
+    },
   },
   runtimeConfig: {
     public: {

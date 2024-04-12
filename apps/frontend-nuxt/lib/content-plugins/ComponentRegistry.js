@@ -1,5 +1,6 @@
 import {
   getToolbarName,
+  getSidebarName,
   isQuestion,
   processAnswerType,
 } from '@tailor-cms/utils';
@@ -44,7 +45,12 @@ export default class ComponentRegistry {
     const componentName = this._getName(id);
     registry.push({ ...pick(element, attrs), componentName, position });
     app.component(componentName, element.Edit);
-    if (element.Toolbar) app.component(getToolbarName(id), element.Toolbar);
+    if (element.TopToolbar) {
+      app.component(getToolbarName(id), element.TopToolbar);
+    }
+    if (element.SideToolbar) {
+      app.component(getSidebarName(id), element.SideToolbar);
+    }
   }
 
   get all() {

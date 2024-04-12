@@ -4,8 +4,10 @@ import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 
 export function isChanged(activity) {
-  return !activity.publishedAt ||
-    (new Date(activity.modifiedAt) > new Date(activity.publishedAt));
+  return (
+    !activity.publishedAt ||
+    new Date(activity.modifiedAt) > new Date(activity.publishedAt)
+  );
 }
 
 export function getParent(activities, activity) {
@@ -32,19 +34,27 @@ export function getAncestors(activities, activity) {
   return [...ancestors, parent];
 }
 
-export function toTreeFormat(activities, { filterNodesFn, processNodeFn }, _internals = {}) {
+export function toTreeFormat(
+  activities,
+  { filterNodesFn = it => it, processNodeFn },
+  _internals = {}
+) {
   const { parentId = null, level = 1, maxLevel = 20 } = _internals;
   if (level > maxLevel) throw new Error('Max level exceeded');
   const parentActivities = filter(activities, { parentId });
-  return filterNodesFn(parentActivities).map(activity => ({
-    ...activity,
-    name: activity.data.name,
+  return filterNodesFn(parentActivities).map(it => ({
+    id: it.id,
+    name: it.data.name,
     level,
-    children: toTreeFormat(activities, { filterNodesFn, processNodeFn }, {
-      ..._internals,
-      parentId: activity.id,
-      level: level + 1
-    }),
-    ...processNodeFn && processNodeFn(activity)
+    ...(processNodeFn && processNodeFn(it)),
+    children: toTreeFormat(
+      activities,
+      { filterNodesFn, processNodeFn },
+      {
+        ..._internals,
+        parentId: it.id,
+        level: level + 1
+      }
+    )
   }));
 }

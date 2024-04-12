@@ -13,7 +13,7 @@ export const initialize = async (store, id) => {
   // Initialize repository state
   return Promise.all([
     dispatch('repositories/get', id, { root: true }),
-    dispatch('activities/reset'),
+    dispatch('activities/reset', { outlineOnly: true }),
     dispatch('getUsers'),
     dispatch('userTracking/fetch', id)]);
 };

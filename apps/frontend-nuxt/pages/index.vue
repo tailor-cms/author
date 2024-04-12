@@ -94,6 +94,11 @@ definePageMeta({
   middleware: ['auth'],
 });
 
+useHead({
+  title: 'Catalog',
+  meta: [{ name: 'description', content: 'Tailor CMS - Repository catalog' }],
+});
+
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 const isLoading = ref(true);

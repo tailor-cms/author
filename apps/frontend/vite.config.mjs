@@ -32,7 +32,8 @@ const getServer = (env, mode) => {
     : origin;
   return {
     host: env.HOSTNAME || '0.0.0.0',
-    port: env.REVERSE_PROXY_PORT || 8080,
+    // NOTE: Scheduled for removal in Tailor v7
+    port: 8081,
     fs: {
       allow: ['../../..']
     },
