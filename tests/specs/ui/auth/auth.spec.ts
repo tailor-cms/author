@@ -28,7 +28,9 @@ const createUser = async (page): Promise<UserData> => {
   return userData;
 };
 
-test.beforeAll(async ({ baseURL }) => {
+test.beforeAll(async ({ baseURL, page }) => {
+  await page.goto('/');
+  await page.waitForLoadState('domcontentloaded');
   userAPI = await getEndpointClient(baseURL, '/api/users');
 });
 
