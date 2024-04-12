@@ -10,6 +10,7 @@
     >
       {{ localError }}
     </VAlert>
+    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions-->
     <form novalidate @keydown.enter="signIn" @submit.prevent="signIn">
       <VTextField
         v-model="emailInput"
