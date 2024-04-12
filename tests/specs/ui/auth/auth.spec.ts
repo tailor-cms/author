@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
+import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
 
 import { EndpointClient, getEndpointClient } from '../../../api/client';
 import { ForgotPassword, ResetPassword, SignIn } from '../../../pom/auth';
@@ -15,6 +16,7 @@ const getMockUserData = (): UserData => ({
 });
 
 let userAPI: EndpointClient;
+const DEFAULT_USER = userSeed[0];
 
 const createUser = async (page): Promise<UserData> => {
   const initialLocation = page.url();
@@ -46,14 +48,14 @@ test('sign in page has a title set', async ({ page }) => {
 test('should be able to sign in', async ({ page }) => {
   const signInPage = new SignIn(page);
   await signInPage.visit();
-  await signInPage.signIn('admin@gostudion.com', 'gostudion');
+  await signInPage.signIn(DEFAULT_USER.email, DEFAULT_USER.password);
   await expect(page).toHaveTitle('Catalog');
 });
 
 test('sign in should fail in case of wrong credentials', async ({ page }) => {
   const signInPage = new SignIn(page);
   await signInPage.visit();
-  await signInPage.signIn('admin@gostudion.com', 'qwejlkj313jk1lk');
+  await signInPage.signIn(DEFAULT_USER.email, faker.internet.password());
   await expect(
     page.getByText('The email or password you entered is incorrect.'),
   ).toBeVisible();

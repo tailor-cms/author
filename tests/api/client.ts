@@ -1,4 +1,5 @@
 import * as Playwright from '@playwright/test';
+import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
 
 export interface EndpointResponse {
   status: number;
@@ -28,11 +29,12 @@ export const getEndpointClient = async (
 ): Promise<EndpointClient> => {
   const ENDPOINT_URL = new URL(endpointPath, baseUrl).href;
   const req = await Playwright.request.newContext();
+  const defaultUser = userSeed[0];
 
   // Login as admin user, default seed user data
   await req.post(new URL('/api/users/login', baseUrl).href, {
     headers: { 'Content-Type': 'application/json' },
-    data: { email: 'admin@gostudion.com', password: 'gostudion' },
+    data: { email: defaultUser.email, password: defaultUser.password },
   });
 
   // Store created entity ids for clean up later; see dispose() method

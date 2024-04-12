@@ -30,7 +30,8 @@ export const getFirstEmail = async (
   if (!inboxId) return '';
   const messagesClient = client.testing.messages;
   const messages = await messagesClient.get(inboxId);
-  if (!messages?.length) return '';
+  if (!messages?.length && retries)
+    return getFirstEmail(toEmailAddress, retries - 1);
   const message = toEmailAddress
     ? messages.find((it) => it.to_email === toEmailAddress.toLowerCase())
     : messages[0];

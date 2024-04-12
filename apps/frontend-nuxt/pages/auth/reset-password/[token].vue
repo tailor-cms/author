@@ -28,7 +28,7 @@
         <VIcon class="pr-2">mdi-arrow-left</VIcon>Sign in
       </VBtn>
     </div>
-    <form v-else novalidate @submit.prevent="submit">
+    <form v-else novalidate @keydown.enter="submit" @submit.prevent="submit">
       <VTextField
         v-model="passwordInput"
         :error-messages="errors.password"

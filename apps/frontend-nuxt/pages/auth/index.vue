@@ -10,7 +10,7 @@
     >
       {{ localError }}
     </VAlert>
-    <form novalidate @submit.prevent="signIn">
+    <form novalidate @keydown.enter="signIn" @submit.prevent="signIn">
       <VTextField
         v-model="emailInput"
         :error-messages="errors.email"

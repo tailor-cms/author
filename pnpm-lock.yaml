@@ -1175,6 +1175,9 @@ importers:
       mailtrap:
         specifier: ^3.3.0
         version: 3.3.0
+      tailor-seed:
+        specifier: workspace:^
+        version: link:../packages/tailor-seed
     devDependencies:
       '@playwright/test':
         specifier: 1.39.0

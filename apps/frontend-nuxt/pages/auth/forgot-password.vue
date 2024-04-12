@@ -9,7 +9,12 @@
     >
       {{ errorMessage || 'Sending reset email...' }}
     </VAlert>
-    <form v-if="!errorMessage" novalidate @submit.prevent="submit">
+    <form
+      v-if="!errorMessage"
+      novalidate
+      @keydown.enter="submit"
+      @submit.prevent="submit"
+    >
       <VTextField
         v-model="emailInput"
         :class="errors.email?.length ? 'mb-3' : 'mb-1'"

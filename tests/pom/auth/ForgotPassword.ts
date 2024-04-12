@@ -27,7 +27,7 @@ export class ForgotPassword {
     await this.submitBtn.click();
   }
 
-  async fetchResetLink(email) {
+  async fetchResetLink(email: string) {
     const linkTitle = 'Reset password';
     const resetLink = await getAnchorFromLastRecievedEmail(email, linkTitle);
     expect(resetLink.textContent).toBe(linkTitle);
