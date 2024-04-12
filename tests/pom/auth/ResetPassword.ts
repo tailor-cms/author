@@ -34,9 +34,6 @@ export class ResetPassword {
     const linkTitle = 'Complete registration';
     const resetLink = await getAnchorFromLastRecievedEmail(email, linkTitle);
     expect(resetLink.textContent).toBe(linkTitle);
-    // TODO: Old frontend routing, remove once old frontend is removed
-    return resetLink.href
-      .replace('8080', '8081')
-      .replace('#/reset-password/', 'auth/reset-password/');
+    return resetLink.href;
   }
 }

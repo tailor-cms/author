@@ -31,9 +31,6 @@ export class ForgotPassword {
     const linkTitle = 'Reset password';
     const resetLink = await getAnchorFromLastRecievedEmail(email, linkTitle);
     expect(resetLink.textContent).toBe(linkTitle);
-    // TODO: Old frontend routing, remove once the old frontend is removed
-    return resetLink.href
-      .replace('8080', '8081')
-      .replace('#/reset-password/', 'auth/reset-password/');
+    return resetLink.href;
   }
 }
