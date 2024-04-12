@@ -23,9 +23,12 @@ jobs:
         uses: actions/checkout@v3
       - name: Create setup script config
         run: |
-          touch ./scripts/setup/.env
-          echo "DB_USERNAME=dev" >> ./scripts/setup/.env
-          echo "DB_PASSWORD=dev" >> ./scripts/setup/.env
+          touch .env
+          echo "EMAIL_SENDER_NAME=Tailor" >> ./scripts/setup/.env
+          echo "EMAIL_SENDER_ADDRESS=tailor@gostudion.com" >> ./scripts/setup/.env
+          echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> ./scripts/setup/.env
+          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> ./scripts/setup/.env
+          echo "EMAIL_HOST=sandbox.smtp.mailtrap.io" >> ./scripts/setup/.env
       - name: Create E2E testing config
         run: |
           touch ./tests/.env
