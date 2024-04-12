@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Create setup script config
+      - name: Setup script .env
         run: |
           touch ./scripts/setup/.env
           echo "DB_USERNAME=dev" >> ./scripts/setup/.env
@@ -34,7 +34,7 @@ jobs:
           echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env
           echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
           echo "EMAIL_HOST=sandbox.smtp.mailtrap.io" >> .env
-      - name: Create E2E env
+      - name: Setup E2E .env
         run: |
           touch ./tests/.env
           echo "MAILTRAP_ACCOUNT_ID=${{ secrets.MAILTRAP_ACCOUNT_ID }}" >> ./tests/.env

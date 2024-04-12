@@ -29,9 +29,12 @@ const createUser = async (page): Promise<UserData> => {
 };
 
 test.beforeAll(async ({ baseURL, page }) => {
-  await page.goto('/');
-  await page.waitForLoadState('domcontentloaded');
   userAPI = await getEndpointClient(baseURL, '/api/users');
+});
+
+test.beforeEach(async ({ page }) => {
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
 });
 
 test('sign in page has a title set', async ({ page }) => {
