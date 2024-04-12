@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
+import userSeed from 'tailor-seed/user.json';
 
 import { EndpointClient, getEndpointClient } from '../../../api/client';
 import { ForgotPassword, ResetPassword, SignIn } from '../../../pom/auth';

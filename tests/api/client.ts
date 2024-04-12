@@ -1,5 +1,5 @@
 import * as Playwright from '@playwright/test';
-import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
+import userSeed from 'tailor-seed/user.json';
 
 export interface EndpointResponse {
   status: number;
