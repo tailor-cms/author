@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit';
 import Tapster from '@extensionengine/tapster';
 
 const { provider, ...options } = config;
-const DEFAULT_WINDOW_MS = 15 * 60 * 1000; // every 15 minutes
+const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 
 // Store must be implemented using the following interface:
 // https://github.com/nfriedly/express-rate-limit/blob/master/README.md#store
@@ -39,7 +39,7 @@ class Store {
 const defaultStore = new Store();
 
 function requestLimiter({
-  max = 10,
+  max = 30,
   windowMs = DEFAULT_WINDOW_MS,
   store = defaultStore,
   ...opts

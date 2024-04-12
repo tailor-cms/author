@@ -32,8 +32,9 @@ client.interceptors.response.use(
       const isAuthenticated = useCookie('is-authenticated');
       isAuthenticated.value = false;
       const authRoute = '/auth';
+      if (window.location.pathname === authRoute) return;
       if (process.server) return navigateTo(authRoute);
-      return window.location.replace('/auth');
+      return window.location.replace(authRoute);
     }
     throw err;
   },

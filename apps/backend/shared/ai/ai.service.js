@@ -272,4 +272,4 @@ class AIService {
   }
 }
 
-export default new AIService();
+export default aiConfig.secretKey ? new AIService() : {};
