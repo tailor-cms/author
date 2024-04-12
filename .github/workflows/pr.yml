@@ -24,11 +24,11 @@ jobs:
       - name: Create setup script config
         run: |
           touch .env
-          echo "EMAIL_SENDER_NAME=Tailor" >> ./scripts/setup/.env
-          echo "EMAIL_SENDER_ADDRESS=tailor@gostudion.com" >> ./scripts/setup/.env
-          echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> ./scripts/setup/.env
-          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> ./scripts/setup/.env
-          echo "EMAIL_HOST=sandbox.smtp.mailtrap.io" >> ./scripts/setup/.env
+          echo "EMAIL_SENDER_NAME=Tailor" >> .env
+          echo "EMAIL_SENDER_ADDRESS=tailor@gostudion.com" >> .env
+          echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env
+          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
+          echo "EMAIL_HOST=sandbox.smtp.mailtrap.io" >> .env
       - name: Create E2E testing config
         run: |
           touch ./tests/.env
