@@ -6,7 +6,7 @@ dotenv.config();
 // See https://playwright.dev/docs/test-configuration.
 export default defineConfig({
   testDir: './specs',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   // Opt out of parallel tests on CI.
@@ -19,8 +19,17 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'chrome',
+      testDir: './specs/ui',
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth.json',
+      },
+    },
+    {
+      name: 'setup',
+      testMatch: 'setup.spec.ts',
     },
   ],
 });
