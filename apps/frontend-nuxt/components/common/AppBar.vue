@@ -8,7 +8,7 @@
         src="/img/default-logo-full.svg"
         width="44"
       />
-      <VAppBarTitle class="app-name py-1 pl-1">
+      <VAppBarTitle class="app-name py-1 pl-1 text-primary-lighten-3">
         Tailor
         <span class="text-caption font-weight-bold">
           <span class="text-primary-lighten-2 text-uppercase">
@@ -117,9 +117,9 @@ $font-color: #333;
 
   .app-name {
     margin: 0.125rem 0 0 0.375rem;
-    color: #fafafa;
-    font-size: 1.25rem;
-    font-weight: 400;
+    font-family: Poppins, Roboto, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
     letter-spacing: 1px;
     line-height: $container-height;
     text-transform: uppercase;
