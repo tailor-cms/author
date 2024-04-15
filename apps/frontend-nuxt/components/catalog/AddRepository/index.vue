@@ -27,8 +27,8 @@
         slider-color="secondary-lighten-2"
         grow
       >
-        <VTab :value="NEW_TAB">New</VTab>
-        <VTab :value="IMPORT_TAB">Import</VTab>
+        <VTab :value="NEW_TAB" aria-label="New repository">New</VTab>
+        <VTab :value="IMPORT_TAB" aria-label="Import repository">Import</VTab>
       </VTabs>
       <form class="mt-4 pa-4" novalidate @submit.prevent="createRepository">
         <VAlert
@@ -41,15 +41,18 @@
         >
           {{ serverError }}
         </VAlert>
-        <v-window v-model="selectedTab">
+        <v-window v-model="selectedTab" id="addDialogWindow">
           <v-window-item :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
               :error-messages="errors.schema"
+              :menu-props="{ attach: '#addDialogWindow' }"
               :items="SCHEMAS"
+              data-testid="type-input"
               item-title="name"
               item-value="id"
               label="Type"
+              placeholder="Select type..."
               variant="outlined"
             />
           </v-window-item>
