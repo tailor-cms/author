@@ -22,8 +22,8 @@
       <VBtn
         v-for="{ name, to } in routes"
         :key="name"
+        :rounded="false"
         :to="to"
-        class="mr-2"
         color="secondary-lighten-4"
         height="100"
         variant="text"
@@ -34,7 +34,7 @@
         min-width="220px"
         transition="slide-y-transition"
         z-index="1000"
-        offset-y
+        offset="24"
       >
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mx-2" icon>
