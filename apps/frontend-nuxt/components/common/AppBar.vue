@@ -42,7 +42,7 @@
         transition="slide-y-transition"
       >
         <template #activator="{ props }">
-          <VBtn v-bind="props" class="mx-2" icon>
+          <VBtn v-bind="props" class="mx-5" icon>
             <VAvatar color="teal-accent-4" size="36">
               <img :src="user.imgUrl" alt="User avatar" width="34" />
             </VAvatar>
@@ -52,7 +52,7 @@
           <VListItem>
             <VListItemTitle>{{ user.email }}</VListItemTitle>
           </VListItem>
-          <VListItem to="/">
+          <VListItem :to="{ name: 'user-profile' }">
             <VListItemTitle>Profile</VListItemTitle>
           </VListItem>
           <VListItem @click="logout">
@@ -79,7 +79,7 @@ const { repository } = storeToRefs(currentRepositoryStore);
 const routes = computed(() => {
   const items = [
     { name: 'Catalog', to: '/' },
-    { name: 'Admin', to: '/admin' },
+    { name: 'Admin', to: { name: 'admin' } },
   ];
   if (!authStore.isAdmin) items.pop();
   if (repository.value) {
