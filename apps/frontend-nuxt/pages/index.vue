@@ -69,6 +69,16 @@
           </v-btn>
         </template>
       </VInfiniteScroll>
+      <VAlert
+        v-else-if="noRepositoriesMessage"
+        color="primary-lighten-3"
+        icon="mdi-alert-circle-outline"
+        rounded="lg"
+        variant="tonal"
+        prominent
+      >
+        {{ noRepositoriesMessage }}
+      </VAlert>
     </VContainer>
   </NuxtLayout>
 </template>
@@ -175,6 +185,14 @@ const loadMore = async ({ done }: { done: Function }) => {
   // Infinite loader cb
   done(status);
 };
+
+const noRepositoriesMessage = computed(() => {
+  if (isLoading.value) return;
+  if (hasRepositories.value) return;
+  if (queryParams.value.search) return 'No matches found';
+  if (arePinnedShown.value) return '0 pinned items';
+  return '0 available repositories';
+});
 
 onBeforeMount(async () => {
   await authStore.fetchUserInfo();
