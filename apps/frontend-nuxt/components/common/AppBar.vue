@@ -1,5 +1,10 @@
 <template>
-  <VAppBar class="elevation-0" color="primary-darken-3" height="80">
+  <VAppBar
+    id="mainAppBar"
+    class="elevation-0"
+    color="primary-darken-3"
+    height="80"
+  >
     <a class="app-brand pl-4 pt-1" href="/">
       <img
         alt="Tailor logo"
@@ -31,10 +36,10 @@
         <span class="toolbar-route text-truncate">{{ name }}</span>
       </VBtn>
       <VMenu
+        attach="#mainAppBar"
         min-width="220px"
+        offset="10"
         transition="slide-y-transition"
-        z-index="1000"
-        offset="24"
       >
         <template #activator="{ props }">
           <VBtn v-bind="props" class="mx-2" icon>
