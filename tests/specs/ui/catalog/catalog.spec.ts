@@ -32,6 +32,14 @@ test('should be able to create a new repository', async ({ page }) => {
   await dialog.createRepository();
 });
 
+test('should be able to import a repository', async ({ page }) => {
+  const dialog = new AddRepositoryDialog(page);
+  await dialog.open();
+  const { name } = await dialog.importRepository();
+  await page.reload();
+  await expect(page.getByText(name)).toBeVisible({ timeout: 10000 });
+});
+
 test.afterAll(async () => {
   // TODO: Cleanup
 });

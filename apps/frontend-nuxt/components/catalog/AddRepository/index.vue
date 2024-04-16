@@ -62,6 +62,7 @@
               :clearable="false"
               :error-messages="errors.archive"
               :label="archiveInput ? 'Selected archive' : 'Select archive'"
+              name="archive"
               prepend-icon=""
               prepend-inner-icon="mdi-paperclip"
               variant="outlined"

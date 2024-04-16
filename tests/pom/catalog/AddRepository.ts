@@ -10,6 +10,7 @@ export class AddRepositoryDialog {
   readonly typeInput: Locator;
   readonly nameInput: Locator;
   readonly descriptionInput: Locator;
+  readonly archiveInput: Locator;
   readonly createRepositoryBtn: Locator;
 
   constructor(page: Page) {
@@ -24,6 +25,7 @@ export class AddRepositoryDialog {
     this.typeInput = dialog.getByTestId('type-input');
     this.nameInput = dialog.getByLabel('Name');
     this.descriptionInput = dialog.getByLabel('Description');
+    this.archiveInput = page.locator('input[name="archive"]');
     this.createRepositoryBtn = dialog.getByRole('button', { name: 'Create' });
   }
 
@@ -43,6 +45,20 @@ export class AddRepositoryDialog {
     await this.createRepositoryBtn.click();
     await expect(this.page.getByText(name)).toBeVisible();
     return { type, name, description };
+  }
+
+  async importRepository(
+    name = `${faker.lorem.words(2)} ${new Date().getTime()}`,
+    description = faker.lorem.words(4),
+  ) {
+    await this.importTab.click();
+    await this.archiveInput.click();
+    await this.archiveInput.setInputFiles('./fixtures/pizza.tgz');
+    await this.nameInput.fill(name);
+    await this.descriptionInput.fill(description);
+    await this.createRepositoryBtn.click();
+    await this.page.waitForTimeout(5000);
+    return { name, description };
   }
 
   async selectRepositoryType(type: string) {
