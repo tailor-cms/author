@@ -20,7 +20,7 @@ const formatResponse = async (
   res: Playwright.APIResponse,
 ): Promise<EndpointResponse> => {
   const body = (await res.text()) ? await res.json() : null;
-  return { status: res.status(), data: body.data };
+  return { status: res.status(), data: body?.data || body };
 };
 
 export const getEndpointClient = async (
