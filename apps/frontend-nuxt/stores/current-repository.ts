@@ -104,6 +104,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   };
 
   function $reset() {
+    repositoryId.value = null;
     outlineState.expanded.clear();
     $users.clear();
   }
