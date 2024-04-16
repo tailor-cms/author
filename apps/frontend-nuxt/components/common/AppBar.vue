@@ -44,8 +44,11 @@
         <template #activator="{ props }">
           <UserAvatar v-bind="props" :img-url="user.imgUrl" class="mx-5" />
         </template>
-        <VList class="text-left">
-          <VListItem>
+        <VList class="text-left pt-0">
+          <VListItem
+            class="py-5 bg-primary-lighten-4"
+            disabled
+          >
             <VListItemTitle>{{ user.email }}</VListItemTitle>
           </VListItem>
           <VListItem :to="{ name: 'user-profile' }">
