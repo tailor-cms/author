@@ -11,3 +11,10 @@
     </VContainer>
   </NuxtLayout>
 </template>
+
+<script setup lang="ts">
+definePageMeta({
+  name: 'admin',
+  middleware: ['auth'],
+});
+</script>
