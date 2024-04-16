@@ -42,11 +42,7 @@
         transition="slide-y-transition"
       >
         <template #activator="{ props }">
-          <VBtn v-bind="props" class="mx-5" icon>
-            <VAvatar color="teal-accent-4" size="36">
-              <img :src="user.imgUrl" alt="User avatar" width="34" />
-            </VAvatar>
-          </VBtn>
+          <UserAvatar v-bind="props" :img-url="user.imgUrl" class="mx-5" />
         </template>
         <VList class="text-left">
           <VListItem>
@@ -66,6 +62,7 @@
 
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
+import { UserAvatar } from '@tailor-cms/core-components-next';
 
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
