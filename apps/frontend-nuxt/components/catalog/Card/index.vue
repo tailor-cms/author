@@ -1,42 +1,49 @@
 <template>
-  <VHover v-slot="{ isHovering: isCardHovered }">
+  <VHover v-slot="{ isHovering: isCardHovered, props: hoverProps }">
     <VCard
-      :elevation="isCardHovered ? 24 : 1"
+      v-bind="hoverProps"
+      :data-testid="`repositoryCard_${repository.id}`"
+      :elevation="isCardHovered ? 4 : 1"
       :ripple="false"
       class="repository-card d-flex flex-column justify-space-between text-left"
       color="primary-darken-4"
-      data-testid="catalog__repositoryCard"
       @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
     >
       <div class="card-body">
-        <div class="d-flex align-center mt-1 ml-3 mr-1 mb-1">
-          <VChip
-            :color="repository.data.color"
-            class="readonly px-1"
-            size="x-small"
-          />
+        <div class="d-flex align-center mt-1 mr-1 mb-1 ml-3">
+          <VChip :color="repository.data.color" class="px-1" size="x-small" />
           <VTooltip
-            :disabled="!isSchemaTruncated"
+            :disabled="!isSchemaNameTruncated"
+            content-class="bg-primary-darken-4"
             location="top"
+            offset="26"
             open-delay="300"
           >
             <template #activator="{ props: tooltipProps }">
-              <span
+              <div
                 v-bind="tooltipProps"
                 ref="schema"
                 class="schema-name flex-grow-1 mx-2 text-truncate text-uppercase"
               >
                 {{ schemaName }}
-              </span>
+              </div>
             </template>
             {{ schemaName }}
           </VTooltip>
-          <VTooltip location="top" open-delay="100">
+          <VTooltip
+            content-class="bg-primary-darken-4"
+            location="top"
+            offset="28"
+            open-delay="100"
+          >
             <template #activator="{ props: tooltipProps }">
               <VBadge
                 v-bind="tooltipProps"
-                :color="repository.hasUnpublishedChanges ? 'orange' : 'green'"
-                class="pa-1"
+                :color="
+                  repository.hasUnpublishedChanges ? 'orange-lighten-3' : 'teal'
+                "
+                aria-label="Publishing status"
+                class="mr-2"
                 dot
                 inline
               />
@@ -45,7 +52,9 @@
           </VTooltip>
           <VTooltip
             v-if="repository?.hasAdminAccess"
+            content-class="bg-primary-darken-4"
             location="top"
+            offset="20"
             open-delay="400"
           >
             <template #activator="{ props: tooltipProps }">
@@ -53,12 +62,14 @@
                 v-bind="tooltipProps"
                 aria-label="Repository settings"
                 class="repo-info mr-2"
-                color="primary-darken-1"
                 icon="mdi-cog"
                 size="small"
                 variant="text"
                 @click.stop="
-                  navigateTo(`/repository/${repository.id}/root/settings`)
+                  navigateTo({
+                    name: 'repository-settings-general',
+                    params: { id: repository.id },
+                  })
                 "
               >
               </VBtn>
@@ -66,13 +77,11 @@
             Open settings
           </VTooltip>
         </div>
-        <VCardTitle class="pt-0 primary--text text--lighten-4 text-break">
+        <VCardTitle class="pt-0 text-primary-lighten-5 text-break">
           {{ truncate(repository.name, { length: lgAndUp ? 60 : 40 }) }}
         </VCardTitle>
-        <div class="d-flex justify-start px-4 primary--text text--lighten-4">
-          <VAvatar size="38">
-            <img :src="lastActivity.user.imgUrl" alt="User avatar" width="38" />
-          </VAvatar>
+        <div class="d-flex justify-start px-4 text-primary-lighten-4">
+          <UserAvatar :img-url="lastActivity.user.imgUrl" :size="38" />
           <div class="ml-3 overflow-hidden">
             <div class="text-caption">
               Edited
@@ -87,16 +96,21 @@
       </div>
       <VSpacer />
       <VCardActions class="pb-2 px-2">
-        <VTooltip location="bottom" open-delay="400">
+        <VTooltip
+          content-class="bg-primary-darken-4"
+          location="bottom"
+          offset="20"
+          open-delay="400"
+        >
           <template #activator="{ props: tooltipProps }">
             <VBtn
               v-bind="tooltipProps"
-              :color="isPinned ? 'lime accent-4' : 'primary lighten-3'"
+              :color="isPinned ? 'lime-lighten-2' : 'primary'"
               :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
+              aria-label="Pin repository"
               class="mr-1"
               @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
-            >
-            </VBtn>
+            />
           </template>
           {{ isPinned ? 'Unpin' : 'Pin' }} {{ schemaName }}
         </VTooltip>
@@ -111,26 +125,28 @@ import first from 'lodash/first';
 import get from 'lodash/get';
 import truncate from 'lodash/truncate';
 import { useDisplay } from 'vuetify';
+import { UserAvatar } from '@tailor-cms/core-components-next';
 import { useTimeAgo } from '@vueuse/core';
 
 import type { Repository, Revision } from '@/api/interfaces/repository';
 import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
+const { $schemaService } = useNuxtApp() as any;
+const store = useRepositoryStore();
+
 const props = defineProps<{ repository: Repository }>();
 
-const store = useRepositoryStore();
-const { $schemaService } = useNuxtApp() as any;
-const { width: innerWidth, lgAndUp } = useDisplay();
-
+// Template ref
 const schema = ref(null);
+
+const isSchemaNameTruncated = ref(false);
 const schemaName = computed(
   () => $schemaService.getSchema(props.repository.schema).name,
 );
-const isSchemaTruncated = ref(false);
 
 const lastActivity = computed(() =>
-  first(props.repository.revisions),
+  first(props.repository.revisions) as Revision,
 ) as ComputedRef<Revision>;
 const lastActivityTimeago = useTimeAgo(lastActivity.value.createdAt);
 
@@ -146,9 +162,12 @@ const publishingInfo = computed(() =>
 
 const detectSchemaTruncation = () => {
   const { clientWidth, scrollWidth } = schema.value as any;
-  isSchemaTruncated.value = clientWidth < scrollWidth;
+  isSchemaNameTruncated.value = clientWidth < scrollWidth;
 };
+
+const { width: innerWidth, lgAndUp } = useDisplay();
 watch(() => innerWidth.value, detectSchemaTruncation);
+
 onMounted(() => nextTick(detectSchemaTruncation));
 </script>
 
@@ -167,14 +186,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
   padding: 0.375rem 0 0;
 
   .schema-name {
-    color: #fafafa;
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 1px;
-  }
-
-  .v-card__title {
-    line-height: 1.75rem;
   }
 
   .v-avatar {
@@ -182,7 +196,7 @@ onMounted(() => nextTick(detectSchemaTruncation));
   }
 }
 
-.repo-info.v-btn:not(.v-btn--text):not(.v-btn--outlined):hover::before {
-  opacity: 0.2;
+.v-card:hover ::v-deep > .v-card__overlay {
+  opacity: 0.01;
 }
 </style>
