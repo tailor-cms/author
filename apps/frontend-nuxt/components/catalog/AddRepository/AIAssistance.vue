@@ -45,7 +45,7 @@
       </VBtn>
     </div>
     <div v-if="styleTagOptions.length">
-      <div class="text-body-2 font-weight-bold my-4">
+      <div class="my-4 text-body-2 font-weight-bold">
         Select a perspectives you are interested in:
       </div>
       <VChipGroup v-model="selectedStyleTags" column multiple>
@@ -83,16 +83,15 @@
         Next
       </VBtn>
     </div>
-    <div v-if="outlineTree.length" class="my-4 text-body-2 font-weight-bold">
-      Suggested outline:
-    </div>
-    <VueTreeView
-      v-if="outlineTree.length"
-      :hide-guide-lines="false"
-      :is-checkable="false"
-      :items="outlineTree"
-      class="explorer-container mb-8"
-    />
+    <template v-if="outlineTree.length">
+      <div class="my-4 text-body-2 font-weight-bold">Suggested outline:</div>
+      <VueTreeView
+        :hide-guide-lines="false"
+        :is-checkable="false"
+        :items="outlineTree"
+        class="explorer-container mb-8"
+      />
+    </template>
     <div v-if="statusMessage" class="my-7 text-body-2 text-center">
       {{ statusMessage }}
     </div>
@@ -110,6 +109,8 @@ const props = defineProps({
   description: String,
 });
 
+const emit = defineEmits(['structure']);
+
 const isAssistaceEnabled = ref(false);
 const isFetchingData = ref(false);
 const topicTagOptions = ref([]);
@@ -122,10 +123,8 @@ const difficultyOptions = {
   2: 'Expert',
 };
 const selectedDifficulty = ref(1);
-const outlineTree = ref([]);
+const outlineTree = ref<any>([]);
 const statusMessage = ref('');
-
-const emit = defineEmits(['structure']);
 
 watch(isAssistaceEnabled, (value) => {
   if (!value) {
@@ -159,7 +158,7 @@ const fetchOutline = () => {
     (index) => topicTagOptions.value[index],
   );
   const styleTags = selectedStyleTags.value.map(
-    (i) => styleTagOptions.value[i],
+    (index) => styleTagOptions.value[index],
   );
   const payload = {
     ...props,
