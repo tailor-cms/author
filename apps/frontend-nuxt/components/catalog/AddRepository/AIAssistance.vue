@@ -117,7 +117,7 @@ const topicTagOptions = ref([]);
 const selectedTopicTags = ref([]);
 const styleTagOptions = ref([]);
 const selectedStyleTags = ref([]);
-const difficultyOptions = {
+const difficultyOptions: { [key: number]: string } = {
   0: 'Beginner',
   1: 'Intermediate',
   2: 'Expert',
