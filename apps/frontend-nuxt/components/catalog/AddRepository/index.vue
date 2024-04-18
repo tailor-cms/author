@@ -10,7 +10,7 @@
       <VBtn
         v-bind="props"
         aria-label="Add repository"
-        class="add-repo"
+        class="add-repository-btn"
         color="secondary"
         position="absolute"
         prepend-icon="mdi-plus"
@@ -160,7 +160,7 @@ const IMPORT_TAB = 'import';
 
 defineProps<{ isAdmin: boolean }>();
 
-const emit = defineEmits(['done']);
+const emit = defineEmits(['created']);
 
 const isVisible = ref(false);
 const selectedTab = ref(NEW_TAB);
@@ -203,7 +203,7 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   const action = isCreate.value ? create : importRepository;
   try {
     await pMinDelay(action(formPayload), 2000);
-    emit('done');
+    emit('created');
     hide();
   } catch {
     serverError.value = 'An error has occurred!';
@@ -260,6 +260,7 @@ const hide = () => {
   isVisible.value = false;
   isSubmitting.value = false;
   serverError.value = '';
+  resetData();
   resetForm();
 };
 </script>

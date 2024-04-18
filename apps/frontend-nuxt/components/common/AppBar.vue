@@ -5,15 +5,14 @@
     color="primary-darken-3"
     height="80"
   >
-    <a class="app-brand pl-4 pt-1" href="/">
+    <a class="app-brand pt-2 pl-7" href="/">
       <img
         alt="Tailor logo"
-        class="pt-2"
         height="44"
         src="/img/default-logo-full.svg"
         width="44"
       />
-      <VAppBarTitle class="app-name py-1 pl-1 text-primary-lighten-3">
+      <VAppBarTitle class="app-name text-primary-lighten-3">
         Tailor
         <span class="text-caption font-weight-bold">
           <span class="text-primary-lighten-2 text-uppercase">
@@ -116,12 +115,11 @@ $font-color: #333;
 
 .app-brand {
   display: flex;
-  padding-bottom: 0.125rem;
   text-decoration: none;
   cursor: pointer;
 
   .app-name {
-    margin: 0.125rem 0 0 0.375rem;
+    margin: 0.125rem 0 0 0.75rem;
     font-family: Poppins, Roboto, sans-serif;
     font-size: 1.5rem;
     font-weight: 600;

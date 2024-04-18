@@ -16,7 +16,7 @@ const getDefaultQueryParams = () => ({
     direction: 'DESC',
   },
   pinned: false,
-  filter: [],
+  filter: [] as any[],
 });
 
 export const useRepositoryStore = defineStore('repositories', () => {

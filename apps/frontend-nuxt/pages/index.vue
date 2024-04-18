@@ -1,12 +1,13 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
     <VContainer
-      v-if="!isLoading"
-      :class="{ 'catalog-empty': !hasRepositories }"
-      class="catalog"
+      :class="{ 'catalog-empty': !hasRepositories, catalog: true }"
     >
-      <VRow class="catalog-actions" no-gutters>
-        <AddRepository :is-admin="authStore.isAdmin" @done="onRepositoryAdd" />
+      <VRow class="catalog-actions pb-5" no-gutters>
+        <AddRepository
+          :is-admin="authStore.isAdmin"
+          @created="onRepositoryAdd"
+        />
         <VCol md="4" offset-md="4" offset-sm="1" sm="10">
           <SearchInput
             :search-input="repositoryStore.queryParams.search"
@@ -14,17 +15,20 @@
           />
         </VCol>
         <VCol class="text-sm-left pl-2" md="3" sm="1">
-          <VTooltip location="top" open-delay="400">
-            <template #activator="{ props }">
+          <VTooltip
+            content-class="bg-primary-darken-4"
+            location="top"
+            open-delay="400"
+          >
+            <template #activator="{ props: tooltipProps }">
               <VBtn
-                v-bind="props"
+                v-bind="tooltipProps"
                 :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-1'"
                 :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                 class="my-1"
                 variant="tonal"
                 @click="togglePinFilter"
-              >
-              </VBtn>
+              />
             </template>
             <span>{{ arePinnedShown ? 'Show all' : 'Show pinned' }}</span>
           </VTooltip>
@@ -46,7 +50,7 @@
         @close="onFilterChange"
       />
       <VInfiniteScroll
-        v-if="hasRepositories"
+        v-if="!isLoading && hasRepositories"
         class="d-flex ma-0 pa-0"
         color="primary-lighten-2"
         empty-text=""
@@ -57,20 +61,21 @@
           <VCol
             v-for="repository in repositoryStore.items"
             :key="repository.uid"
-            class="px-2 pb-5"
+            class="px-3 pb-5"
             cols="4"
           >
             <RepositoryCard :repository="repository" />
           </VCol>
         </VRow>
-        <template #load-more="{ props }">
-          <v-btn v-if="!areAllItemsFetched" variant="tonal" v-bind="props">
+        <template #load-more="{ props: loadProps }">
+          <v-btn v-if="!areAllItemsFetched" variant="tonal" v-bind="loadProps">
             Load more
           </v-btn>
         </template>
       </VInfiniteScroll>
       <VAlert
         v-else-if="noRepositoriesMessage"
+        class="mt-4"
         color="primary-lighten-3"
         icon="mdi-alert-circle-outline"
         rounded="lg"
@@ -111,6 +116,7 @@ useHead({
 
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
+
 const isLoading = ref(true);
 
 const {
@@ -119,9 +125,10 @@ const {
   tags,
   areAllItemsFetched,
 } = storeToRefs(repositoryStore);
-const hasRepositories = computed(() => !!repositories.value.length);
 
+const hasRepositories = computed(() => !!repositories.value.length);
 const arePinnedShown = computed(() => queryParams.value.pinned);
+
 const togglePinFilter = () => {
   queryParams.value.pinned = !arePinnedShown.value;
   refetchRepositories();
@@ -140,26 +147,26 @@ const filters = computed(() => {
   });
 });
 
-const updateSort = (val: any) => {
+const updateSort = (payload: any) => {
   queryParams.value.sortBy = {
     ...queryParams.value.sortBy,
-    ...val,
+    ...payload,
   };
   repositoryStore.fetch();
 };
 
-const onSearchInput = (val: string) => {
-  queryParams.value.search = val;
+const onSearchInput = (searchInput: string) => {
+  queryParams.value.search = searchInput;
   refetchRepositories();
 };
 
-const onFilterChange = (val: any) => {
+const onFilterChange = (payload: any) => {
   const { filter: catalogFilter } = queryParams.value;
-  const existing = find(catalogFilter, { id: val.id });
-  if (!existing) queryParams.value.filter.push(val);
+  const existing = find(catalogFilter, { id: payload.id });
+  if (!existing) queryParams.value.filter.push(payload);
   else
     queryParams.value.filter = catalogFilter.filter(
-      (it: any) => it.id !== val.id,
+      (it: any) => it.id !== payload.id,
     );
   refetchRepositories();
 };
@@ -169,9 +176,11 @@ const onRepositoryAdd = async () => {
   await repositoryStore.fetch();
 };
 
-const refetchRepositories = () => {
+const refetchRepositories = async () => {
+  isLoading.value = true;
   repositoryStore.resetPaginationParams();
-  repositoryStore.fetch();
+  await repositoryStore.fetch();
+  isLoading.value = false;
 };
 
 const loadMore = async ({ done }: { done: Function }) => {
@@ -195,7 +204,8 @@ const noRepositoriesMessage = computed(() => {
 });
 
 onBeforeMount(async () => {
-  await authStore.fetchUserInfo();
+  // Refetch user info to get the latest permissions
+  authStore.fetchUserInfo();
   await repositoryStore.fetch();
   await repositoryStore.fetchTags();
   isLoading.value = false;
@@ -227,7 +237,7 @@ onBeforeMount(async () => {
   position: relative;
   padding-top: 0.75rem;
 
-  ::v-deep .add-repo {
+  ::v-deep .add-repository-btn {
     top: 1.25rem;
     right: 0.25rem;
   }
