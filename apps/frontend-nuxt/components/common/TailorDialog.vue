@@ -2,7 +2,7 @@
   <VDialog
     :width="props.width"
     v-bind="$attrs"
-    @update:modelValue="onModelUpdate"
+    @update:model-value="onModelUpdate"
   >
     <template v-for="(_, slot) of $slots" #[slot]="scope">
       <slot :name="slot" v-bind="scope" />

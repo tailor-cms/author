@@ -1,8 +1,6 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
-    <VContainer
-      :class="{ 'catalog-empty': !hasRepositories, catalog: true }"
-    >
+    <VContainer :class="{ 'catalog-empty': !hasRepositories, catalog: true }">
       <VRow class="catalog-actions pb-5" no-gutters>
         <AddRepository
           :is-admin="authStore.isAdmin"

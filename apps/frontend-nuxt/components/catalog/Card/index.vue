@@ -145,8 +145,8 @@ const schemaName = computed(
   () => $schemaService.getSchema(props.repository.schema).name,
 );
 
-const lastActivity = computed(() =>
-  first(props.repository.revisions) as Revision,
+const lastActivity = computed(
+  () => first(props.repository.revisions) as Revision,
 ) as ComputedRef<Revision>;
 const lastActivityTimeago = useTimeAgo(lastActivity.value.createdAt);
 

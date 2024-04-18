@@ -47,8 +47,8 @@
       v-if="!exceededTagLimit"
       content-class="bg-primary-darken-4"
       location="bottom"
-      open-delay="400"
       offset="20"
+      open-delay="400"
     >
       <template #activator="{ props: tooltipProps }">
         <VBtn

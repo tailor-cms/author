@@ -74,8 +74,11 @@ const submitForm = handleSubmit(async () => {
   closeAddTagDialog();
 });
 
-watch(() => props.isVisible, (isVisible) => {
-  if (!isVisible) return;
-  api.fetch().then((fetchedTags) => (tags.value = fetchedTags));
-});
+watch(
+  () => props.isVisible,
+  (isVisible) => {
+    if (!isVisible) return;
+    api.fetch().then((fetchedTags) => (tags.value = fetchedTags));
+  },
+);
 </script>

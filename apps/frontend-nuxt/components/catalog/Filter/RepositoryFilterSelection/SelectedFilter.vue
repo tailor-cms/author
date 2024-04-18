@@ -1,9 +1,9 @@
 <template>
   <VChip
     class="mx-2 mb-1 px-5"
+    close-icon="mdi-close"
     color="primary-lighten-2"
     variant="tonal"
-    close-icon="mdi-close"
     closable
     @click:close="emit('close')"
   >

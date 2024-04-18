@@ -62,7 +62,7 @@
         >
           {{ serverError }}
         </VAlert>
-        <VWindow v-model="selectedTab" id="addDialogWindow">
+        <VWindow id="addDialogWindow" v-model="selectedTab">
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"

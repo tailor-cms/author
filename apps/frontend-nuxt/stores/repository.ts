@@ -33,7 +33,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
   const query = computed(() => {
     const { sortBy, pinned, filter, ...rest } = queryParams;
     const filters = filter.reduce((acc, { id, type }) => {
-      const filterTypeConfig = repositoryFilterConfigs[type] as any;
+      const filterTypeConfig = repositoryFilterConfigs[type];
       acc[filterTypeConfig.queryParam] ||= [];
       acc[filterTypeConfig.queryParam].push(id);
       return acc;
