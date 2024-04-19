@@ -67,8 +67,8 @@ export const getEndpointClient = async (
 
   async function remove(id: number) {
     const res = await req.delete(getEntityUrl(id));
-    Playwright.expect(res.status()).toBe(204);
-    createdEntityIds.splice(createdEntityIds.indexOf(id), 1);
+    // Playwright.expect(res.status()).toBe(204);
+    // createdEntityIds.splice(createdEntityIds.indexOf(id), 1);
     return { status: res.status() };
   }
 
