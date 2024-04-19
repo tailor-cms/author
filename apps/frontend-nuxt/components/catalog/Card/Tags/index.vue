@@ -5,6 +5,7 @@
         v-for="{ id, name, truncatedName } in tags"
         :key="id"
         class="mr-2"
+        close-label="Remove tag"
         color="primary-lighten-1"
         variant="tonal"
         label

@@ -23,6 +23,7 @@
                 v-bind="tooltipProps"
                 :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-1'"
                 :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
+                aria-label="Toggle pinned items filter"
                 class="my-1"
                 variant="tonal"
                 @click="togglePinFilter"
