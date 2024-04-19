@@ -32,6 +32,10 @@ export class Catalog {
     return this.page.locator('.repository-card');
   }
 
+  getFirstRepositoryCard() {
+    return this.getRepositoryCards().nth(0);
+  }
+
   findRepositoryCard(hasText: string) {
     return this.getRepositoryCards().filter({ hasText });
   }
