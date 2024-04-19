@@ -8,7 +8,6 @@ import origin from './shared/origin.js';
 import path from 'node:path';
 
 /* eslint-disable */
-await import('express-async-errors');
 import auth from './shared/auth/index.js';
 import config from './config/server/index.js';
 import getLogger from './shared/logger.js';
@@ -60,10 +59,10 @@ function requestLogger(req, res, next) {
   next();
 }
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, _req, res, _next) {
   if (!err.status || err.status === 500) {
-    res.status(500).end();
     logger.error({ err });
+    res.status(500).end();
     return;
   }
   const { status, message } = err;
