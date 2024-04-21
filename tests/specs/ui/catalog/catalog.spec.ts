@@ -30,6 +30,12 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/');
 });
 
+test.afterEach(async () => {
+  const { data } = await REPOSITORY_API.list();
+  const { items: repositories } = data;
+  if (repositories.length) await cleanupCatalog(repositories);
+});
+
 test('catalog page has a page title set', async ({ page }) => {
   await expect(page).toHaveTitle(/Catalog/);
 });
