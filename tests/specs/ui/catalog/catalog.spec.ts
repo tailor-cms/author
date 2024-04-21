@@ -24,16 +24,11 @@ test.beforeAll(async ({ baseURL }) => {
 });
 
 test.beforeEach(async ({ page }) => {
-  const { data } = await REPOSITORY_API.list();
-  const { items: repositories } = data;
-  if (repositories.length) await cleanupCatalog(repositories);
   await page.goto('/');
-});
-
-test.afterEach(async () => {
   const { data } = await REPOSITORY_API.list();
   const { items: repositories } = data;
   if (repositories.length) await cleanupCatalog(repositories);
+  await page.reload();
 });
 
 test('catalog page has a page title set', async ({ page }) => {
