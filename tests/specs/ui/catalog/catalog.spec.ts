@@ -15,20 +15,21 @@ const seedCatalog = async () => {
 };
 
 const cleanupCatalog = async (repositories) => {
-  return Promise.all(repositories.map((it) => REPOSITORY_API.remove(it.id)));
+  for (const repository of repositories) {
+    await REPOSITORY_API.remove(repository.id);
+  }
 };
 
 test.beforeAll(async ({ baseURL }) => {
   if (!baseURL) throw new Error('baseURL is required');
-  REPOSITORY_API = await getEndpointClient(baseURL, '/api/repositories');
+  REPOSITORY_API = await getEndpointClient(baseURL, '/api/repositories/');
 });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/');
   const { data } = await REPOSITORY_API.list();
   const { items: repositories } = data;
   if (repositories.length) await cleanupCatalog(repositories);
-  await page.reload();
+  await page.goto('/');
 });
 
 test('catalog page has a page title set', async ({ page }) => {

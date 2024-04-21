@@ -27,7 +27,7 @@ export const getEndpointClient = async (
   baseUrl: string,
   endpointPath: string,
 ): Promise<EndpointClient> => {
-  const ENDPOINT_URL = new URL(endpointPath, baseUrl).href;
+  const ENDPOINT_URL = new URL(endpointPath, baseUrl).toString();
   const req = await Playwright.request.newContext();
   const defaultUser = userSeed[0];
 
@@ -39,7 +39,7 @@ export const getEndpointClient = async (
 
   // Store created entity ids for clean up later; see dispose() method
   const createdEntityIds: number[] = [];
-  const getEntityUrl = (id) => `${ENDPOINT_URL}/${id}`;
+  const getEntityUrl = (id) => new URL(id.toString(), ENDPOINT_URL).toString();
 
   async function list() {
     const res = await req.get(ENDPOINT_URL);
@@ -67,8 +67,8 @@ export const getEndpointClient = async (
 
   async function remove(id: number) {
     const res = await req.delete(getEntityUrl(id));
-    // Playwright.expect(res.status()).toBe(204);
-    // createdEntityIds.splice(createdEntityIds.indexOf(id), 1);
+    Playwright.expect(res.status()).toBe(204);
+    createdEntityIds.splice(createdEntityIds.indexOf(id), 1);
     return { status: res.status() };
   }
 
