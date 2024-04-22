@@ -27,7 +27,8 @@ export const getEndpointClient = async (
   baseUrl: string,
   endpointPath: string,
 ): Promise<EndpointClient> => {
-  const ENDPOINT_URL = new URL(endpointPath, baseUrl).toString();
+  const ENDPOINT_URL = new URL(endpointPath, baseUrl);
+  ENDPOINT_URL.port = '3000';
   const req = await Playwright.request.newContext();
   const defaultUser = userSeed[0];
 
@@ -42,7 +43,7 @@ export const getEndpointClient = async (
   const getEntityUrl = (id) => new URL(id.toString(), ENDPOINT_URL).toString();
 
   async function list() {
-    const res = await req.get(ENDPOINT_URL);
+    const res = await req.get(ENDPOINT_URL.toString());
     return formatResponse(res);
   }
 
@@ -52,7 +53,7 @@ export const getEndpointClient = async (
   }
 
   async function create(data: Map<string, any>) {
-    const res = await req.post(ENDPOINT_URL, { data });
+    const res = await req.post(ENDPOINT_URL.toString(), { data });
     const formattedResponse = await formatResponse(res);
     Playwright.expect([200, 201]).toContain(formattedResponse.status);
     if (formattedResponse?.data?.id)
