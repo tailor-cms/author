@@ -4,6 +4,7 @@ import cors from 'cors';
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import helmet from 'helmet';
+import history from 'connect-history-api-fallback';
 import origin from './shared/origin.js';
 import path from 'node:path';
 
@@ -40,7 +41,19 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(auth.initialize());
 app.use(origin());
-app.use(express.static(path.join(__dirname, '../frontend/dist/')));
+app.use(
+  history({
+    rewrites: [
+      {
+        from: /^\/api\/.*$/,
+        to: (context) => context.parsedUrl.path,
+      },
+    ],
+  }),
+);
+app.use(
+  express.static(path.join(__dirname, '../frontend-nuxt/.output/public')),
+);
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
 // Mount main router.
