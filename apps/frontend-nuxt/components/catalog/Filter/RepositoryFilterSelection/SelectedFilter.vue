@@ -1,13 +1,13 @@
 <template>
   <VChip
-    class="mx-2 mb-1 px-4"
+    class="mx-2 mb-1 px-5"
+    close-icon="mdi-close"
     color="primary-lighten-2"
     variant="tonal"
     closable
-    label
     @click:close="emit('close')"
   >
-    <VIcon start>{{ props.icon }}</VIcon>
+    <VIcon class="mr-3" start>{{ props.icon }}</VIcon>
     {{ props.name }}
   </VChip>
 </template>

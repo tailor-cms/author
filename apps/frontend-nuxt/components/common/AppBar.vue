@@ -1,14 +1,18 @@
 <template>
-  <VAppBar class="elevation-0" color="primary-darken-3" height="80">
-    <a class="app-brand pl-4 pt-1" href="/">
+  <VAppBar
+    id="mainAppBar"
+    class="elevation-0"
+    color="primary-darken-3"
+    height="80"
+  >
+    <a class="app-brand pt-2 pl-7" href="/">
       <img
         alt="Tailor logo"
-        class="pt-2"
         height="44"
         src="/img/default-logo-full.svg"
         width="44"
       />
-      <VAppBarTitle class="app-name py-1 pl-1">
+      <VAppBarTitle class="app-name text-primary-lighten-3">
         Tailor
         <span class="text-caption font-weight-bold">
           <span class="text-primary-lighten-2 text-uppercase">
@@ -22,8 +26,8 @@
       <VBtn
         v-for="{ name, to } in routes"
         :key="name"
+        :rounded="false"
         :to="to"
-        class="mr-2"
         color="secondary-lighten-4"
         height="100"
         variant="text"
@@ -31,23 +35,19 @@
         <span class="toolbar-route text-truncate">{{ name }}</span>
       </VBtn>
       <VMenu
+        attach="#mainAppBar"
         min-width="220px"
+        offset="10"
         transition="slide-y-transition"
-        z-index="1000"
-        offset-y
       >
         <template #activator="{ props }">
-          <VBtn v-bind="props" class="mx-2" icon>
-            <VAvatar color="teal-accent-4" size="36">
-              <img :src="user.imgUrl" alt="User avatar" width="34" />
-            </VAvatar>
-          </VBtn>
+          <UserAvatar v-bind="props" :img-url="user.imgUrl" class="mx-5" />
         </template>
-        <VList class="text-left">
-          <VListItem>
+        <VList class="text-left pt-0">
+          <VListItem class="py-5 bg-primary-lighten-4" disabled>
             <VListItemTitle>{{ user.email }}</VListItemTitle>
           </VListItem>
-          <VListItem to="/">
+          <VListItem :to="{ name: 'user-profile' }">
             <VListItemTitle>Profile</VListItemTitle>
           </VListItem>
           <VListItem @click="logout">
@@ -61,6 +61,7 @@
 
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
+import { UserAvatar } from '@tailor-cms/core-components-next';
 
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -74,7 +75,7 @@ const { repository } = storeToRefs(currentRepositoryStore);
 const routes = computed(() => {
   const items = [
     { name: 'Catalog', to: '/' },
-    { name: 'Admin', to: '/admin' },
+    { name: 'Admin', to: { name: 'admin' } },
   ];
   if (!authStore.isAdmin) items.pop();
   if (repository.value) {
@@ -111,15 +112,14 @@ $font-color: #333;
 
 .app-brand {
   display: flex;
-  padding-bottom: 0.125rem;
   text-decoration: none;
   cursor: pointer;
 
   .app-name {
-    margin: 0.125rem 0 0 0.375rem;
-    color: #fafafa;
-    font-size: 1.25rem;
-    font-weight: 400;
+    margin: 0.125rem 0 0 0.75rem;
+    font-family: Poppins, Roboto, sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
     letter-spacing: 1px;
     line-height: $container-height;
     text-transform: uppercase;

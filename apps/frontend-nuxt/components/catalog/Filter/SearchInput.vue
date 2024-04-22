@@ -1,10 +1,11 @@
 <template>
   <div class="repo-search">
-    <div :style="{ width: isExpanded ? '98%' : '85%' }">
+    <div :style="{ width: isExpanded ? '92%' : '85%' }">
       <VTextField
         v-model="internalValue"
         v-focus="isExpanded"
         :bg-color="`primary-darken-${isExpanded ? 1 : 2}`"
+        aria-label="Search repositories"
         class="pb-5"
         placeholder="Search..."
         prepend-inner-icon="mdi-magnify"
@@ -23,7 +24,7 @@
 import debounce from 'lodash/debounce';
 
 export interface Props {
-  searchInput: String;
+  searchInput: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {

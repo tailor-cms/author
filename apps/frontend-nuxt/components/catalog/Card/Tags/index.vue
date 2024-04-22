@@ -1,47 +1,70 @@
 <template>
   <div class="tags-container">
-    <div class="tag-list d-flex align-center">
+    <div class="tag-list mb-1 d-flex align-center">
       <VChip
         v-for="{ id, name, truncatedName } in tags"
         :key="id"
-        class="mr-2 mb-1"
-        close-icon="mdi-close-circle"
+        class="mr-2"
         close-label="Remove tag"
         color="primary-lighten-1"
         variant="tonal"
-        closable
         label
-        @click:close="showDeleteConfirmation(id, name)"
       >
         <VTooltip
           :disabled="name.length === truncatedName.length"
+          content-class="bg-primary-darken-4"
           location="bottom"
+          offset="34"
           open-delay="100"
         >
-          <template #activator="{ props: tooltipProps }">
-            <div v-bind="tooltipProps">{{ truncatedName }}</div>
+          <template #activator="{ props: nameTooltipProps }">
+            <div v-bind="nameTooltipProps">{{ truncatedName }}</div>
           </template>
           <span>{{ name }}</span>
         </VTooltip>
+        <template #close>
+          <VTooltip
+            content-class="bg-primary-darken-4"
+            location="bottom"
+            offset="20"
+            open-delay="100"
+          >
+            <template #activator="{ props: closeTooltipProps }">
+              <VBtn
+                v-bind="closeTooltipProps"
+                :ripple="false"
+                color="primary-lighten-1"
+                icon="mdi-close-circle"
+                variant="plain"
+                @click.stop="showTagDeleteConfirmation(id, name)"
+              />
+            </template>
+            Delete tag
+          </VTooltip>
+        </template>
       </VChip>
     </div>
-    <VTooltip v-if="!exceededTagLimit" location="bottom" open-delay="400">
+    <VTooltip
+      v-if="!exceededTagLimit"
+      content-class="bg-primary-darken-4"
+      location="bottom"
+      offset="20"
+      open-delay="400"
+    >
       <template #activator="{ props: tooltipProps }">
         <VBtn
           v-bind="tooltipProps"
           aria-label="Add tag"
-          color="primary-lighten-3"
           icon="mdi-tag-plus"
           @click.stop="showTagDialog = true"
-        >
-        </VBtn>
+        />
       </template>
       Add tag
     </VTooltip>
     <AddTag
-      v-if="showTagDialog"
+      :is-visible="showTagDialog"
       :repository="repository"
-      @close="showTagDialog = false"
+      @close="closeAddTagDialog"
     />
   </div>
 </template>
@@ -54,15 +77,16 @@ import truncate from 'lodash/truncate';
 
 import AddTag from './AddTag.vue';
 import type { Repository } from '@/api/interfaces/repository';
+import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useRepositoryStore } from '@/stores/repository';
 
-const props = defineProps<{ repository: Repository }>();
-
 const TAG_LIMIT = 3;
-const { $eventBus } = useNuxtApp() as any;
+
+const props = defineProps<{ repository: Repository }>();
 const repositoryStore = useRepositoryStore();
 
 const showTagDialog = ref(false);
+
 const tagCount = computed(() => get(props.repository, 'tags.length', 0));
 const exceededTagLimit = computed(() => tagCount.value >= TAG_LIMIT);
 const maxTagNameLength = computed(
@@ -70,16 +94,19 @@ const maxTagNameLength = computed(
 );
 
 const tags = computed(() => {
-  return map(props.repository.tags, (tag) => {
-    const truncatedName = truncate(tag.name, {
-      length: maxTagNameLength.value,
-    });
-    return { ...tag, truncatedName };
+  return map(props.repository.tags, ({ name, ...rest }) => {
+    const truncatedName = truncate(name, { length: maxTagNameLength.value });
+    return { ...rest, name, truncatedName };
   });
 });
 
-const showDeleteConfirmation = (tagId: number, tagName: string) => {
-  $eventBus.channel('app').emit('showConfirmationModal', {
+const closeAddTagDialog = () => {
+  showTagDialog.value = false;
+};
+
+const showTagDeleteConfirmation = (tagId: number, tagName: string) => {
+  const showConfirmationDialog = useConfirmationDialog();
+  showConfirmationDialog({
     title: 'Delete tag',
     message: `Are you sure you want to delete tag ${tagName}?`,
     action: () => repositoryStore.removeTag(props.repository.id, tagId),

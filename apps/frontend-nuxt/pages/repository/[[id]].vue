@@ -54,4 +54,9 @@ onMounted(async () => {
   commentStore.$reset();
   isLoading.value = false;
 });
+
+onUnmounted(() => {
+  currentRepositoryStore.$reset();
+  commentStore.$reset();
+});
 </script>

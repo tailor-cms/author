@@ -1,19 +1,22 @@
 <template>
   <VMenu
     :close-on-content-click="false"
-    offset="10"
+    offset="14"
     @update:model-value="search = ''"
   >
     <template #activator="{ props: menuProps }">
-      <VTooltip location="top" open-delay="800">
+      <VTooltip
+        content-class="bg-primary-darken-4"
+        location="top"
+        open-delay="500"
+      >
         <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="{ ...menuProps, ...tooltipProps }"
             :icon="icon"
             color="primary-lighten-2"
             variant="text"
-          >
-          </VBtn>
+          />
         </template>
         <span class="text-capitalize">{{ props.label }}</span>
       </VTooltip>
@@ -35,7 +38,7 @@
         @mousedown.stop="emit('update', option)"
       >
         <template #prepend>
-          <VListItemAction start>
+          <VListItemAction>
             <VIcon v-if="option.isSelected" color="primary" icon="mdi-check" />
           </VListItemAction>
         </template>
@@ -58,12 +61,13 @@ export interface Props {
   values: any;
 }
 
-const emit = defineEmits(['update']);
 const props = withDefaults(defineProps<Props>(), {
   label: '',
   icon: 'mdi-tag',
   values: [],
 });
+
+const emit = defineEmits(['update']);
 
 const search = ref('');
 

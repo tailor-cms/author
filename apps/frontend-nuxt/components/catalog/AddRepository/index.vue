@@ -10,30 +10,51 @@
       <VBtn
         v-bind="props"
         aria-label="Add repository"
-        class="add-repo"
+        class="add-repository-btn"
         color="secondary"
         position="absolute"
         prepend-icon="mdi-plus"
         variant="elevated"
       >
-        Add
+        New
       </VBtn>
     </template>
-    <template #header>Add</template>
+    <template #header>Create</template>
     <template #body>
-      <VTabs
-        v-model="selectedTab"
-        bg-color="primary-darken-3"
-        slider-color="secondary-lighten-2"
-        grow
+      <div class="bg-primary-darken-3 px-5 pb-6">
+        <VTabs
+          v-model="selectedTab"
+          bg-color="primary-darken-3"
+          selected-class="bg-primary-darken-2"
+          grow
+          hide-slider
+        >
+          <VTab
+            :value="NEW_TAB"
+            aria-label="New repository"
+            class="mr-2"
+            color="primary-lighten-5"
+          >
+            New
+          </VTab>
+          <VTab
+            :value="IMPORT_TAB"
+            aria-label="Import repository"
+            class="ml-2"
+            color="primary-lighten-5"
+          >
+            Import
+          </VTab>
+        </VTabs>
+      </div>
+      <form
+        class="pa-4 bg-primary-lighten-5"
+        novalidate
+        @submit.prevent="createRepository"
       >
-        <VTab :value="NEW_TAB">New</VTab>
-        <VTab :value="IMPORT_TAB">Import</VTab>
-      </VTabs>
-      <form class="mt-4 pa-4" novalidate @submit.prevent="createRepository">
         <VAlert
           :model-value="!!serverError"
-          class="mb-12"
+          class="mt-3 mb-5"
           color="secondary"
           icon="mdi-alert"
           closable
@@ -41,30 +62,35 @@
         >
           {{ serverError }}
         </VAlert>
-        <v-window v-model="selectedTab">
-          <v-window-item :value="NEW_TAB" class="pt-1 pb-2">
+        <VWindow id="addDialogWindow" v-model="selectedTab">
+          <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
               :error-messages="errors.schema"
               :items="SCHEMAS"
+              :menu-props="{ attach: '#addDialogWindow' }"
+              data-testid="type-input"
               item-title="name"
               item-value="id"
               label="Type"
+              placeholder="Select type..."
               variant="outlined"
             />
-          </v-window-item>
-          <v-window-item :value="IMPORT_TAB" class="pt-1">
+          </VWindowItem>
+          <VWindowItem :value="IMPORT_TAB" class="pt-1">
             <VFileInput
               v-model="archiveInput"
               :clearable="false"
               :error-messages="errors.archive"
               :label="archiveInput ? 'Selected archive' : 'Select archive'"
+              class="mb-2"
+              name="archive"
               prepend-icon=""
               prepend-inner-icon="mdi-paperclip"
               variant="outlined"
             />
-          </v-window-item>
-        </v-window>
+          </VWindowItem>
+        </VWindow>
         <RepositoryNameField
           v-model="nameInput"
           :is-validated="!!errors.name?.length"
@@ -88,7 +114,7 @@
         />
         <div class="d-flex justify-end">
           <VBtn
-            :disabled="showLoader"
+            :disabled="isSubmitting"
             color="primary-darken-4"
             variant="text"
             @click="hide"
@@ -96,10 +122,11 @@
             Cancel
           </VBtn>
           <VBtn
-            :loading="showLoader"
-            color="primary-darken-4"
+            :loading="isSubmitting"
+            class="ml-2"
+            color="primary-darken-2"
             type="submit"
-            variant="text"
+            variant="tonal"
           >
             Create
           </VBtn>
@@ -122,21 +149,23 @@ import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useRepositoryStore } from '@/stores/repository';
 
-defineProps<{ isAdmin: boolean }>();
-const emit = defineEmits(['done']);
-
-const NEW_TAB = 'schema';
-const IMPORT_TAB = 'import';
-
 const { $schemaService } = useNuxtApp() as any;
+
 const runtimeConfig = useRuntimeConfig();
 const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
 
+const NEW_TAB = 'schema';
+const IMPORT_TAB = 'import';
+
+defineProps<{ isAdmin: boolean }>();
+
+const emit = defineEmits(['created']);
+
+const isVisible = ref(false);
 const selectedTab = ref(NEW_TAB);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
-const isVisible = ref(false);
-const showLoader = ref(false);
+const isSubmitting = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
@@ -169,14 +198,14 @@ const resetData = () => {
   archiveInput.value = null;
 };
 
-const createRepository = handleSubmit(async (formPayload) => {
-  showLoader.value = true;
+const createRepository = handleSubmit(async (formPayload: any) => {
+  isSubmitting.value = true;
   const action = isCreate.value ? create : importRepository;
   try {
     await pMinDelay(action(formPayload), 2000);
-    emit('done');
+    emit('created');
     hide();
-  } catch (error) {
+  } catch {
     serverError.value = 'An error has occurred!';
   }
 });
@@ -187,6 +216,8 @@ const create = async (formPayload: {
   description: string;
 }) => {
   const repository = await repositoryStore.create(formPayload);
+  if (!aiSuggestedOutline.value.length) return;
+  // Trigger creation without waiting for completion
   createActvities(repository.id, aiSuggestedOutline.value);
 };
 
@@ -213,17 +244,21 @@ const createActvities = (
 };
 
 const importRepository = async ({ archive, name, description }: any) => {
-  const form = new FormData();
-  form.append('archive', archive[0]);
-  form.append('name', name);
-  form.append('description', description);
-  const headers = { 'content-type': 'multipart/form-data' };
-  await api.importRepository(form, { headers });
+  try {
+    const form = new FormData();
+    form.append('archive', archive[0]);
+    form.append('name', name);
+    form.append('description', description);
+    const headers = { 'content-type': 'multipart/form-data' };
+    await api.importRepository(form, { headers });
+  } catch {
+    serverError.value = 'An error has occurred!';
+  }
 };
 
 const hide = () => {
-  showLoader.value = false;
   isVisible.value = false;
+  isSubmitting.value = false;
   serverError.value = '';
   resetData();
   resetForm();
@@ -231,7 +266,7 @@ const hide = () => {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .v-list.v-sheet {
-  text-align: left;
+.v-alert ::v-deep .mdi-close {
+  color: #eee;
 }
 </style>

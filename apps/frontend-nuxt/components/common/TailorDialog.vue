@@ -1,19 +1,18 @@
 <template>
-  <VDialog :width="props.width" v-bind="$attrs">
+  <VDialog
+    :width="props.width"
+    v-bind="$attrs"
+    @update:model-value="onModelUpdate"
+  >
     <template v-for="(_, slot) of $slots" #[slot]="scope">
       <slot :name="slot" v-bind="scope" />
     </template>
     <VCard :data-testid="dataTestid">
-      <VCardTitle class="dialog-title bg-primary-darken-3 pa-5">
-        <VAvatar
-          v-if="props.headerIcon"
-          class="mr-3"
-          color="secondary"
-          size="38"
-        >
-          <VIcon size="26">{{ props.headerIcon }}</VIcon>
-        </VAvatar>
-        <div class="text-truncate">
+      <VCardTitle class="dialog-title pa-5 align-center bg-primary-darken-3">
+        <VIcon class="pa-5 mr-1" color="teal-lighten-4" size="26">
+          {{ props.headerIcon }}
+        </VIcon>
+        <div class="text-truncate text-primary-lighten-4">
           <slot name="header"></slot>
         </div>
       </VCardTitle>
@@ -42,6 +41,12 @@ const props = withDefaults(defineProps<Props>(), {
   paddingless: false,
   dataTestid: 'tailorDialog',
 });
+
+const emit = defineEmits(['open', 'close']);
+
+const onModelUpdate = (val: boolean) => {
+  emit(val ? 'open' : 'close');
+};
 </script>
 
 <style lang="scss" scoped>

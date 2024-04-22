@@ -11,4 +11,4 @@ export default {
     queryParam: 'schemas',
     icon: 'mdi-file-tree',
   },
-};
+} as any;
