@@ -10,7 +10,7 @@
     "@percy/cli": "^1.28.3",
     "@percy/playwright": "^1.0.5",
     "@playwright/test": "1.39.0",
-    "@types/node": "^20.8.7"
+    "@types/node": "^20.12.7"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
