@@ -51,9 +51,7 @@ app.use(
     ],
   }),
 );
-app.use(
-  express.static(path.join(__dirname, '../frontend/.output/public')),
-);
+app.use(express.static(path.join(__dirname, '../frontend/.output/public')));
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
 // Mount main router.
