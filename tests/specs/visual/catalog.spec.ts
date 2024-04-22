@@ -37,18 +37,11 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Should take a snapshot of an empty catalog', async ({ page }) => {
-  const signInPage = new SignIn(page);
-  await signInPage.visit();
-  await signInPage.signIn(DEFAULT_USER.email, DEFAULT_USER.password);
-  await page.goto('/', { waitUntil: 'networkidle' });
   await percySnapshot(page, 'Empty catalog page');
 });
 
 test('Should take a snapshot of an seeded catalog', async ({ page }) => {
   await seedCatalog();
-  const signInPage = new SignIn(page);
-  await signInPage.visit();
-  await signInPage.signIn(DEFAULT_USER.email, DEFAULT_USER.password);
-  await page.goto('/', { waitUntil: 'networkidle' });
+  await page.reload({ waitUntil: 'networkidle' });
   await percySnapshot(page, 'Seeded catalog page');
 });
