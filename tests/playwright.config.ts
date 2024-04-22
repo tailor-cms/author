@@ -20,11 +20,18 @@ export default defineConfig({
   projects: [
     {
       name: 'chrome',
-      testDir: './specs/ui',
+      testDir: './specs/functional',
       dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],
         storageState: '.auth.json',
+      },
+    },
+    {
+      name: 'visual',
+      testDir: './specs/visual',
+      use: {
+        ...devices['Desktop Chrome'],
       },
     },
     {

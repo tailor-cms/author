@@ -41,13 +41,15 @@ jobs:
           echo "MAILTRAP_TOKEN=${{ secrets.MAILTRAP_TOKEN }}" >> ./tests/.env
           echo "MAILTRAP_INBOX_ID=${{ secrets.MAILTRAP_INBOX_ID }}" >> ./tests/.env
           echo "MAILTRAP_INBOX_NAME=e2e" >> ./tests/.env
+          echo "PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}" >> ./tests/.env
       - name: Install, build, seed, and start server
         uses: ./.github/actions/run
-      - name: Run E2E tests
+      - name: Run functional tests
         shell: bash
-        run: |
-          cd tests
-          pnpm playwright test
+        run: pnpm e2e:functional
+      - name: Run visual tests
+        shell: bash
+        run: pnpm e2e:visual
       - uses: actions/upload-artifact@v3
         if: always()
         with:

@@ -1,0 +1,16 @@
+version: 2
+snapshot:
+  widths:
+    - 1400
+  minHeight: 1200
+  percyCSS: ""
+  disableShadowDOM: false
+  enable-javascript: false
+discovery:
+  allowedHostnames: []
+  disallowedHostnames: []
+  networkIdleTimeout: 500
+upload:
+  files: "**/*.{png,jpg,jpeg}"
+  ignore: ""
+  stripExtensions: false

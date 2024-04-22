@@ -37,7 +37,14 @@ Configurable headless CMS for complex content structures.
 - Bundle client by issuing `pnpm build`
 - To run app execute: `pnpm start`
 
-## Content repository structure
+## Content repository structure configuration
 
 Repository structure can be altered using the Tailor configuration file, 
 which must be placed inside the root directory and named `tailor.config.js`.
+
+## Testing
+
+- `pnpm e2e:functional`
+- `pnpm e2e:visual`
+
+This project is tested with BrowserStack.
