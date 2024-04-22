@@ -28,6 +28,13 @@ export default defineConfig({
       },
     },
     {
+      name: 'visual',
+      testDir: './specs/visual',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    {
       name: 'setup',
       testMatch: 'setup.spec.ts',
     },
