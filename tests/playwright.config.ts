@@ -20,7 +20,7 @@ export default defineConfig({
   projects: [
     {
       name: 'chrome',
-      testDir: './specs/ui',
+      testDir: './specs/functional',
       dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],
