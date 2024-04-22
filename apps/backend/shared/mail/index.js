@@ -19,7 +19,8 @@ logger.info(getConfig(client), '📧  SMTP client created');
 const send = (...args) => client.sendAsync(...args);
 const templatesDir = path.join(__dirname, './templates/');
 
-const resetUrl = (token) => urlJoin(origin, '/auth/reset-password/', token);
+const resetUrl = (token) =>
+  urlJoin(origin, '/auth/reset-password/', token, '/');
 const activityStatusUrl = (repositoryId, activityId) =>
   urlJoin(
     origin,
