@@ -52,7 +52,7 @@ app.use(
   }),
 );
 app.use(
-  express.static(path.join(__dirname, '../frontend-nuxt/.output/public')),
+  express.static(path.join(__dirname, '../frontend/.output/public')),
 );
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
