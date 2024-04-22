@@ -82,7 +82,7 @@ test('should be able to order by name', async ({ page }) => {
   const catalog = new Catalog(page);
   await catalog.orderByName();
   await page.waitForTimeout(1000);
-  expect(await catalog.getRepositoryCards().nth(0).textContent()).toContain(
+  expect(await catalog.getFirstRepositoryCard().textContent()).toContain(
     'Astronomy',
   );
 });
@@ -165,6 +165,7 @@ test('should be able to delete a tag', async ({ page }) => {
   await repositoryCard.addTag('tag1');
   await expect(repositoryCard.el.getByText('tag1')).toBeVisible();
   await repositoryCard.removeTag('tag1');
+  // TODO: Check why reload is needed for the CI run
   await page.reload();
   await expect(page.getByText('tag1')).not.toBeVisible();
 });
