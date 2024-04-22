@@ -34,7 +34,6 @@ jobs:
           echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env
           echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
           echo "EMAIL_HOST=sandbox.smtp.mailtrap.io" >> .env
-          echo "REVERSE_PROXY_PORT=3000" >> .env
       - name: Setup E2E .env
         run: |
           touch ./tests/.env
