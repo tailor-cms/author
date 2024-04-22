@@ -28,6 +28,7 @@ runs:
     with:
       compose-file: docker-compose.dev.yaml
   - name: Update .env.dev config
+    shell: bash
     run: |
       echo "REVERSE_PROXY_PORT=3000" >> .env.dev
   - name: Configure env and build
