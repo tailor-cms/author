@@ -41,13 +41,24 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(auth.initialize());
 app.use(origin());
-app.use(history());
-// Mount main router.
-app.use('/api', requestLogger, router);
+app.use(
+  history({
+    rewrites: [
+      {
+        from: /^\/api\/.*$/,
+        to: function (context) {
+          return context.parsedUrl.path;
+        },
+      },
+    ],
+  }),
+);
 app.use(
   express.static(path.join(__dirname, '../frontend-nuxt/.output/public')),
 );
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
+// Mount main router.
+app.use('/api', requestLogger, router);
 
 // Global error handler.
 app.use(errorHandler);
