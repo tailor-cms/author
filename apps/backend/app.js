@@ -42,13 +42,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(auth.initialize());
 app.use(origin());
 app.use(history());
+// Mount main router.
+app.use('/api', requestLogger, router);
 app.use(
   express.static(path.join(__dirname, '../frontend-nuxt/.output/public')),
 );
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
-
-// Mount main router.
-app.use('/api', requestLogger, router);
 
 // Global error handler.
 app.use(errorHandler);
