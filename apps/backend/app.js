@@ -46,9 +46,7 @@ app.use(
     rewrites: [
       {
         from: /^\/api\/.*$/,
-        to: function (context) {
-          return context.parsedUrl.path;
-        },
+        to: (context) => context.parsedUrl.path,
       },
     ],
   }),
@@ -57,6 +55,7 @@ app.use(
   express.static(path.join(__dirname, '../frontend-nuxt/.output/public')),
 );
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
+
 // Mount main router.
 app.use('/api', requestLogger, router);
 
