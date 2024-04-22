@@ -165,6 +165,7 @@ test('should be able to delete a tag', async ({ page }) => {
   await repositoryCard.addTag('tag1');
   await expect(repositoryCard.el.getByText('tag1')).toBeVisible();
   await repositoryCard.removeTag('tag1');
+  await page.waitForTimeout(500);
   await expect(repositoryCard.el.getByText('tag1')).not.toBeVisible();
 });
 
