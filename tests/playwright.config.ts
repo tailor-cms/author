@@ -12,8 +12,7 @@ export default defineConfig({
   workers: 1,
   reporter: 'html',
   use: {
-    // Base URL to use in actions like `await page.goto('/')`.
-    baseURL: 'http://localhost:8080',
+    baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
     video: 'on-first-retry',
   },

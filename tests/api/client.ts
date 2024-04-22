@@ -28,8 +28,6 @@ export const getEndpointClient = async (
   endpointPath: string,
 ): Promise<EndpointClient> => {
   const ENDPOINT_URL = new URL(endpointPath, baseUrl);
-  // TODO: Temporary, while Nuxt is running in dev mode in CI
-  ENDPOINT_URL.port = '3000';
   const req = await Playwright.request.newContext();
   const defaultUser = userSeed[0];
 

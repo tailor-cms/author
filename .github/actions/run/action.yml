@@ -38,4 +38,4 @@ runs:
     run: pnpm seed
   - name: Run
     shell: bash
-    run: pnpm dev & sleep 15
+    run: pnpm start & sleep 15
