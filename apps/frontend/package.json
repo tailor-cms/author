@@ -13,14 +13,14 @@
     "@nuxtjs/google-fonts": "^3.2.0",
     "@tailor-cms/eslint-config": "^0.0.2",
     "@types/bluebird": "^3.5.42",
-    "@types/lodash": "^4.14.202",
+    "@types/lodash": "^4.17.0",
     "@typescript-eslint/parser": "^6.9.0",
-    "autoprefixer": "^10.4.18",
+    "autoprefixer": "^10.4.19",
     "eslint-config-prettier": ">=9.1.0",
     "nuxt": "^3.10.3",
-    "sass": "^1.71.1",
-    "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "sass": "^1.75.0",
+    "vue": "^3.4.23",
+    "vue-router": "^4.3.2"
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
@@ -31,9 +31,9 @@
     "@tailor-cms/meta-element-collection": "workspace:^",
     "@tailor-cms/utils": "workspace:*",
     "@vueuse/core": "^10.9.0",
-    "axios": "^1.6.7",
+    "axios": "^1.6.8",
     "bluebird": "^3.7.2",
-    "date-fns": "^3.3.1",
+    "date-fns": "^3.6.0",
     "fecha": "^4.2.3",
     "hashids": "^2.3.0",
     "mitt": "^3.0.1",
@@ -45,10 +45,10 @@
     "tailor-config-shared": "workspace:*",
     "to-case": "^2.0.0",
     "v-clipboard": "3.0.0-next.1",
-    "vee-validate": "4.12.5",
-    "vue3-tree-vue": "^2.0.9",
+    "vee-validate": "4.12.6",
+    "vue3-tree-vue": "^2.0.10",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.5.15",
+    "vuetify": "3.5.16",
     "yup": "^1.4.0"
   }
 }
