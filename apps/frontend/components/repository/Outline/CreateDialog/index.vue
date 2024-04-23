@@ -1,7 +1,8 @@
 <template>
   <TailorDialog
     v-model="visible"
-    :data-testid="`${props.testIdPrefix}Dialog`"
+    :id="dialogTestId"
+    :data-testid="dialogTestId"
     header-icon="mdi-folder-plus-outline"
   >
     <template v-if="showActivator" #activator="{ props: activatorProps }">
@@ -23,6 +24,7 @@
           :disabled="hasSingleTypeOption"
           :options="taxonomyLevels"
           :value="activity.type"
+          :container-id="`#${dialogTestId}`"
           @change="activity.type = $event"
         />
         <VAlert
@@ -99,6 +101,7 @@ const initActivityState = (type: string) => {
 const visible = ref(false);
 const submitting = ref(false);
 
+const dialogTestId = computed(() => `${props.testIdPrefix}Dialog`)
 const taxonomyLevels = ref(selectedActivity.levels);
 const hasSingleTypeOption = computed(() => taxonomyLevels.value.length === 1);
 
