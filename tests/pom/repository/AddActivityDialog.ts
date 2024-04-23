@@ -13,7 +13,7 @@ export class AddActivityDialog {
     this.createBtn = el.getByRole('button', { name: 'Create' });
   }
 
-  async addActivity(type: string, name: string) {
+  async create(type: string, name: string) {
     await this.selectActivityType(type);
     await this.nameInput.fill(name);
     await this.createBtn.click();
