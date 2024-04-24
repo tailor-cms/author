@@ -1,16 +1,18 @@
-import { Locator } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
-export class AddActivityDialog {
+export class AddItemDialog {
+  readonly page: Page;
   readonly el: Locator;
   readonly typeSelect: Locator;
   readonly nameInput: Locator;
   readonly createBtn: Locator;
 
-  constructor(el: Locator) {
-    this.el = el;
-    this.typeSelect = el.getByTestId('type-select');
-    this.nameInput = el.getByLabel(/Name/);
-    this.createBtn = el.getByRole('button', { name: 'Create' });
+  constructor(page: Page) {
+    this.page = page;
+    this.el = this.page.locator('div[role="dialog"]');
+    this.typeSelect = this.el.getByTestId('type-select');
+    this.nameInput = this.el.getByLabel(/Name/);
+    this.createBtn = this.el.getByRole('button', { name: 'Create' });
   }
 
   async create(type: string, name: string) {
