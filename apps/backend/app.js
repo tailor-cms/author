@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import history from 'connect-history-api-fallback';
 import origin from './shared/origin.js';
 import path from 'node:path';
+import qs from 'qs';
 
 /* eslint-disable */
 import auth from './shared/auth/index.js';
@@ -35,6 +36,14 @@ app.use(
     contentSecurityPolicy: false,
   }),
 );
+
+// Patch Express 5 query parser (not parsing arrays properly).
+app.use((req, _res, next) => {
+  const { query } = req;
+  if (query) Object.defineProperty(req, 'query', { value: qs.parse(query) });
+  next();
+});
+
 app.use(cors({ origin: config.auth.corsAllowedOrigins, credentials: true }));
 app.use(cookieParser(config.auth.jwt.cookie.secret));
 app.use(bodyParser.json({ limit: '50mb' }));
