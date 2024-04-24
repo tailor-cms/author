@@ -14,6 +14,7 @@
       <VBtn color="primary-darken-4" variant="text" @click="close">Close</VBtn>
       <VBtn
         :focus="isVisible"
+        class="px-3"
         color="primary-darken-2"
         variant="tonal"
         @click="confirm"
