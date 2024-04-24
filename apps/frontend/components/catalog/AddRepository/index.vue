@@ -91,27 +91,29 @@
             />
           </VWindowItem>
         </VWindow>
-        <RepositoryNameField
-          v-model="nameInput"
-          :is-validated="!!errors.name?.length"
-          class="mb-2"
-          name="name"
-          placeholder="Enter name..."
-        />
-        <VTextarea
-          v-model="descriptionInput"
-          :error-messages="errors.description"
-          label="Description"
-          placeholder="Enter description..."
-          variant="outlined"
-        />
-        <AIAssistance
-          v-if="runtimeConfig.public.aiUiEnabled"
-          :description="descriptionInput"
-          :name="nameInput"
-          :schema-id="schemaInput"
-          @structure="aiSuggestedOutline = $event"
-        />
+        <div class="dialog-subcontainer">
+          <RepositoryNameField
+            v-model="nameInput"
+            :is-validated="!!errors.name?.length"
+            class="mb-2"
+            name="name"
+            placeholder="Enter name..."
+          />
+          <VTextarea
+            v-model="descriptionInput"
+            :error-messages="errors.description"
+            label="Description"
+            placeholder="Enter description..."
+            variant="outlined"
+          />
+          <AIAssistance
+            v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
+            :description="descriptionInput"
+            :name="nameInput"
+            :schema-id="schemaInput"
+            @structure="aiSuggestedOutline = $event"
+          />
+        </div>
         <div class="d-flex justify-end">
           <VBtn
             :disabled="isSubmitting"
@@ -268,5 +270,9 @@ const hide = () => {
 <style lang="scss" scoped>
 .v-alert ::v-deep .mdi-close {
   color: #eee;
+}
+
+.dialog-subcontainer {
+  min-height: 21.5rem;
 }
 </style>
