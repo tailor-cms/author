@@ -11,11 +11,11 @@
       </div>
     </template>
     <template #actions>
-      <VBtn variant="text" @click="close">Close</VBtn>
+      <VBtn color="primary-darken-4" variant="text" @click="close">Close</VBtn>
       <VBtn
         :focus="isVisible"
-        color="secondary"
-        variant="text"
+        color="primary-darken-2"
+        variant="tonal"
         @click="confirm"
       >
         Confirm
@@ -48,9 +48,12 @@ const open = (contextValue) => {
 };
 
 const close = () => {
-  invoke(context.value, 'onClose');
   isVisible.value = false;
-  context.value = createContext();
+  invoke(context.value, 'onClose');
+  // Wait for transition to end before resetting context
+  setTimeout(() => {
+    context.value = createContext();
+  }, 200);
 };
 
 const confirm = () => {
