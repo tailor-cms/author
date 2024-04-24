@@ -151,7 +151,7 @@ const updateSort = (payload: any) => {
     ...queryParams.value.sortBy,
     ...payload,
   };
-  repositoryStore.fetch();
+  refetchRepositories();
 };
 
 const onSearchInput = (searchInput: string) => {
