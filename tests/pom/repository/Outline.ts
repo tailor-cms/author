@@ -1,5 +1,7 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
+
 import { AddActivityDialog } from './AddActivityDialog';
+import { OutlineItem } from './OutlineItem';
 
 export class ActivityOutline {
   readonly page: Page;
@@ -27,11 +29,16 @@ export class ActivityOutline {
     await addActivityDialog.create(type, name);
   }
 
-  getOutlineItems() {
-    return this.el.locator('.activity-wrapper');
+  async getOutlineItems() {
+    const items = await this.el.locator('.activity-wrapper').all();
+    return items.map((item) => new OutlineItem(item));
   }
 
   getOutlineItemByName(name: string) {
-    return this.getOutlineItems().filter({ hasText: name });
+    const item = this.el
+      .locator('.activity-wrapper')
+      .filter({ hasText: name })
+      .first();
+    return new OutlineItem(item);
   }
 }
