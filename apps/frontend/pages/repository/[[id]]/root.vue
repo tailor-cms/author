@@ -32,11 +32,16 @@
 <script lang="ts" setup>
 import { useCurrentRepository } from '@/stores/current-repository';
 
+const currentRepositoryStore = useCurrentRepository();
+
 definePageMeta({
   middleware: ['auth'],
 });
 
-const currentRepositoryStore = useCurrentRepository();
+useHead({
+  title: currentRepositoryStore.repository?.name,
+  meta: [{ name: 'description', content: 'Tailor CMS - Repository page' }],
+});
 
 const getTabItems = ({
   hasActivities,

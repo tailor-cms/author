@@ -1,7 +1,8 @@
 <template>
   <TailorDialog
+    :id="dialogTestId"
     v-model="visible"
-    :data-testid="`${props.testIdPrefix}Dialog`"
+    :data-testid="dialogTestId"
     header-icon="mdi-folder-plus-outline"
   >
     <template v-if="showActivator" #activator="{ props: activatorProps }">
@@ -20,6 +21,7 @@
     <template #body>
       <form class="activity-form" @submit.prevent="submitForm">
         <TypeSelect
+          :container-id="`#${dialogTestId}`"
           :disabled="hasSingleTypeOption"
           :options="taxonomyLevels"
           :value="activity.type"
@@ -99,6 +101,7 @@ const initActivityState = (type: string) => {
 const visible = ref(false);
 const submitting = ref(false);
 
+const dialogTestId = computed(() => `${props.testIdPrefix}Dialog`);
 const taxonomyLevels = ref(selectedActivity.levels);
 const hasSingleTypeOption = computed(() => taxonomyLevels.value.length === 1);
 

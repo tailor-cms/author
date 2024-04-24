@@ -2,9 +2,10 @@
   <VSelect
     :disabled="props.disabled"
     :items="options"
-    :menu-props="{ offset: 10, maxHeight: 220 }"
+    :menu-props="{ attach: containerId }"
     :model-value="value"
     class="required"
+    data-testid="type-select"
     item-title="label"
     item-value="type"
     label="Type"
@@ -12,9 +13,9 @@
     variant="outlined"
     @update:model-value="$emit('change', $event)"
   >
-    <template #item="{ props, item: { raw } }">
+    <template #item="{ props: itemProps, item: { raw } }">
       <VListItem
-        v-bind="props"
+        v-bind="itemProps"
         :prepend-icon="`mdi-${hasSubtypes(raw) ? 'folder' : 'file-outline'}`"
       />
     </template>
@@ -26,6 +27,7 @@ const props = defineProps({
   value: { type: String, default: null },
   options: { type: Array, required: true },
   disabled: { type: Boolean, default: false },
+  containerId: { type: String, default: '' },
 });
 
 const hasSubtypes = (outlineItemConfig: any) => {
