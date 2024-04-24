@@ -83,6 +83,7 @@
               :clearable="false"
               :error-messages="errors.archive"
               :label="archiveInput ? 'Selected archive' : 'Select archive'"
+              accept=".tgz"
               class="mb-2"
               name="archive"
               prepend-icon=""
