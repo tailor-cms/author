@@ -4,7 +4,7 @@
       <template #activator="{ props }">
         <VBtn
           :loading="publishingUtils.isPublishing.value"
-          color="secondary-lighten-4"
+          color="primary-lighten-4"
           size="small"
           variant="tonal"
           v-bind="props"
@@ -74,6 +74,6 @@ const activityWithDescendants = computed(() => {
 .publish-status {
   display: flex;
   align-items: center;
-  padding: 1.125rem 0.375rem 0 0.25rem;
+  padding: 2rem 0.375rem 0 0.25rem;
 }
 </style>
