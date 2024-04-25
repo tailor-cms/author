@@ -146,13 +146,13 @@ onMounted(() => {
 .structure-container {
   position: relative;
   height: 100%;
-  padding-right: 28.125rem;
+  padding-right: 29rem;
 }
 
 .structure {
   position: relative;
   height: 100%;
-  padding: 3.125rem 5.625rem 0 3.75rem;
+  padding: 2rem 5.625rem 0 3.75rem;
   overflow-y: scroll;
   overflow-y: overlay;
   -ms-overflow-style: none;

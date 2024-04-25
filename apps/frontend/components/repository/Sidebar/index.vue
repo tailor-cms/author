@@ -5,7 +5,7 @@
     color="primary-darken-2"
     elevation="2"
     location="right"
-    width="450"
+    width="480"
     absolute
     permanent
   >
