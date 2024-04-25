@@ -15,7 +15,7 @@
         <div class="text-subtitle-1 text-truncate text-primary-lighten-4">
           {{ description }}
         </div>
-        <div class="text-body-1 text-primary-lighten-2">
+        <div class="text-body-2 text-primary-lighten-2">
           {{ date }} {{ revision.user.label }}
         </div>
       </div>
