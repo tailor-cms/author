@@ -6,7 +6,7 @@
     <VBtn
       v-show="isEditable"
       class="px-4 mr-3 btn-open"
-      color="teal-accent-1"
+      color="teal-lighten-4"
       size="small"
       variant="tonal"
       @click.stop="edit"
