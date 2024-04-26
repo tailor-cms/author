@@ -1,10 +1,10 @@
 <template>
-  <VSheet class="settings" rounded="lg">
+  <div class="pa-8">
     <div class="actions">
       <VBtn
         :loading="isPublishing"
         class="float-right"
-        color="primary-darken-3"
+        color="primary-darken-2"
         size="small"
         variant="tonal"
         @click="publish"
@@ -32,7 +32,7 @@
       class="meta-input"
       @update="updateKey"
     />
-  </VSheet>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -98,6 +98,7 @@ const publish = async () => {
 
 .actions {
   min-height: 2.25rem;
+  margin-bottom: 1.25rem;
 
   .btn {
     padding: 0.5rem 0.75rem;

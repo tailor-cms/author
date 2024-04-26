@@ -1,14 +1,20 @@
 <template>
   <div class="body">
     <VSheet class="d-flex align-center my-5 pa-1" color="transparent">
-      <div class="d-flex align-center text-body-2 font-weight-bold">
-        <VIcon :color="config.color" class="mr-1" size="22">mdi-label</VIcon>
+      <div class="d-flex align-center mr-1 text-body-2 font-weight-bold">
+        <VIcon :color="config.color" class="mr-2" size="26">mdi-label</VIcon>
         <span>{{ config.label.toUpperCase() }}</span>
       </div>
       <VDivider class="my-2 ml-3" vertical />
       <VTooltip location="bottom" open-delay="100">
         <template #activator="{ props: tooltipProps }">
-          <LabelChip v-bind="tooltipProps">{{ activity.shortId }}</LabelChip>
+          <LabelChip
+            v-bind="tooltipProps"
+            color="primary-lighten-5"
+            density="compact"
+          >
+            {{ activity.shortId }}
+          </LabelChip>
         </template>
         {{ config.label }} ID
       </VTooltip>
@@ -20,7 +26,7 @@
           () => notify('ID copied to the clipboard', { immediate: true })
         "
         class="mr-2 px-4"
-        color="teal-lighten-4"
+        color="primary-lighten-3"
         size="small"
         variant="tonal"
       >
@@ -34,7 +40,7 @@
           () => notify('Link copied to the clipboard', { immediate: true })
         "
         class="px-4"
-        color="teal-lighten-4"
+        color="primary-lighten-3"
         size="small"
         variant="tonal"
       >

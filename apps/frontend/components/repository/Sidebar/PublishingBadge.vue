@@ -50,7 +50,9 @@ const getDescendantsInfo = (
 
 const label = computed(() => $schemaService.getActivityLabel(props.activity));
 const badgeColor = computed(() =>
-  hasChanges.value || subtreeHasChanges.value ? 'orange' : 'green',
+  hasChanges.value || subtreeHasChanges.value
+    ? 'orange-lighten-3'
+    : 'teal-lighten-2',
 );
 
 const hasChanges = computed(() => isChanged(props.activity));

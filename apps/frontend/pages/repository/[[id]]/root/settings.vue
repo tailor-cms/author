@@ -1,16 +1,22 @@
 <template>
   <div>
-    <VContainer class="h-100 pt-10">
-      <VRow>
-        <VCol cols="3">
-          <SettingsSidebar @action="onActionClick" />
-        </VCol>
-        <VCol class="pl-8" cols="9">
-          <VSheet color="transparent" rounded="lg">
-            <NuxtPage />
-          </VSheet>
-        </VCol>
-      </VRow>
+    <VContainer class="h-100 pt-14">
+      <VSheet color="primary-lighten-4" rounded="lg">
+        <VRow>
+          <VCol cols="3">
+            <SettingsSidebar class="ml-4 my-3" @action="onActionClick" />
+          </VCol>
+          <VCol class="pl-8 pb-7" cols="9">
+            <VSheet
+              class="my-2 mr-5 h-100"
+              color="primary-lighten-5"
+              rounded="lg"
+            >
+              <NuxtPage />
+            </VSheet>
+          </VCol>
+        </VRow>
+      </VSheet>
       <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
       <ExportDialog
         v-if="showExportModal"

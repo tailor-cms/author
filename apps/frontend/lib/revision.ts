@@ -91,14 +91,14 @@ export function getRevisionAcronym(rev: Revision) {
 }
 
 export function getRevisionColor(rev: Revision) {
-  const DEFAULT_COLOR = 'secondary-lighten-4';
+  const DEFAULT_COLOR = 'primary-lighten-4';
   switch (rev.entity) {
     case 'ACTIVITY': {
       const config = schema.getLevel(rev.state.type);
       return !isEmpty(config) ? config.color : DEFAULT_COLOR;
     }
     case 'REPOSITORY':
-      return 'primary-lighten-3';
+      return 'primary-lighten-4';
     case 'CONTENT_ELEMENT':
       return 'teal-lighten-4';
     default:

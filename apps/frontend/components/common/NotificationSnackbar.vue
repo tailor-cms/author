@@ -3,15 +3,18 @@
     v-model="isVisible"
     :color="context.color"
     :timeout="context.timeout"
-    class="ma-8"
+    class="ma-8 text-subtitle-2"
     location="bottom right"
     multi-line
   >
     {{ context.message }}
     <template #actions>
-      <VBtn color="secondary-lighten-2" variant="text" @click="close">
-        Close
-      </VBtn>
+      <VBtn
+        color="primary-lighten-3"
+        icon="mdi-close"
+        variant="tonal"
+        @click="close"
+      />
     </template>
   </VSnackbar>
 </template>

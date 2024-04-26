@@ -5,7 +5,7 @@
     color="primary-darken-2"
     elevation="2"
     location="right"
-    width="450"
+    width="480"
     absolute
     permanent
   >
@@ -14,7 +14,6 @@
       <SidebarBody :activity="store.selectedActivity" />
     </div>
     <div v-else class="placeholder text-primary-lighten-5">
-      <h4 class="text-h6 text-primary-lighten-4">Outline Sidebar</h4>
       <div class="d-flex align-center">
         <VIcon color="primary-lighten-3">mdi-arrow-left-circle</VIcon>
         <VAlert
@@ -51,7 +50,7 @@ const store = useCurrentRepository();
 }
 
 .placeholder {
-  margin-top: 1.75rem;
+  margin-top: 4.125rem;
   padding: 0 1rem;
 
   h4 {

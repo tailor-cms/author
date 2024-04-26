@@ -1,5 +1,5 @@
 <template>
-  <VSheet v-bind="sheetStyles" class="activity-discussion py-2 px-4">
+  <VSheet v-bind="sheetStyles" class="activity-discussion py-2">
     <ActivityDiscussion
       v-bind="{ comments, unseenComments, showHeading, user }"
       scroll-target="inputContainer"
@@ -51,9 +51,7 @@ const lastCommentAt = computed(() =>
 );
 
 const sheetStyles = computed(() =>
-  props.panel
-    ? { color: 'primary-darken-3', elevation: 1 }
-    : { color: 'transparent', elevation: 0 },
+  props.panel ? { color: 'primary-darken-2' } : { color: 'transparent' },
 );
 
 const saveComment = (comment: any) => {
