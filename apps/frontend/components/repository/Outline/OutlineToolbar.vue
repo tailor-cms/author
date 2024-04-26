@@ -1,21 +1,29 @@
 <template>
   <VToolbar class="toolbar" color="transparent">
-    <VTextField
-      v-model="searchInput"
-      bg-color="primary-darken-2"
-      placeholder="Search by name or id..."
-      prepend-inner-icon="mdi-magnify"
-      variant="solo"
-      clearable
-      hide-details
-      @click:clear="resetInput"
-    />
     <VSpacer />
+    <VHover>
+      <template v-slot:default="{ isHovering, props: hoverProps }">
+        <VTextField
+          v-bind="hoverProps"
+          v-model="searchInput"
+          :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
+          :class="{ 'mr-6': !isFlat }"
+          density="comfortable"
+          placeholder="Search by name or id..."
+          prepend-inner-icon="mdi-magnify"
+          rounded="xl"
+          variant="outlined"
+          clearable
+          hide-details
+          @click:clear="resetInput"
+        />
+      </template>
+    </VHover>
     <VBtn
       v-if="!isFlat"
       :disabled="!!props.search"
       color="primary-lighten-3"
-      variant="text"
+      variant="tonal"
       @click="currentRepositoryStore.toggleOutlineExpand"
     >
       Toggle all
@@ -52,5 +60,10 @@ watch(
 <style lang="scss" scoped>
 .toolbar {
   z-index: 1;
+}
+
+.v-text-field {
+  max-width: 28rem;
+  transition: all 1s;
 }
 </style>
