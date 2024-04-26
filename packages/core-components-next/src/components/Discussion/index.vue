@@ -15,23 +15,20 @@
         Show {{ showAll ? 'less' : 'more' }}
       </VBtn>
     </div>
-    <VChip
-      v-if="showHeading"
-      class="mt-4 mb-4 text-subtitle-2"
-      color="teal-lighten-4"
-      pill
-    >
+    <div v-if="showHeading" class="discussion-heading text-primary-lighten-3">
       Comments
-    </VChip>
+    </div>
     <VAlert
       v-if="!commentsCount && showNotifications"
-      class="alert mb-4"
-      color="primary-lighten-3"
+      class="alert mt-1 mb-4"
+      color="primary-lighten-2"
       icon="mdi-keyboard-outline"
       variant="tonal"
       prominent
     >
-      <span class="px-1 subtitle-2">Be the First to Comment!</span>
+      <span class="px-1 text-primary-lighten-4 text-body-2">
+        Be the First to Comment!
+      </span>
     </VAlert>
     <DiscussionThread
       v-if="thread.length"
@@ -62,7 +59,7 @@
         variant="outlined"
         auto-grow
         clearable
-        counter
+        hide-details
         @focus="emit('seen')"
       />
       <VBtn
@@ -202,6 +199,14 @@ watch(
 <style lang="scss" scoped>
 .embedded-discussion {
   font-family: Roboto, Arial, sans-serif;
+
+  .discussion-heading {
+    padding: 0 0 0.5rem 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 
   .resolve-btn-container {
     display: flex;

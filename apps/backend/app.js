@@ -4,11 +4,12 @@ import cors from 'cors';
 import express from 'express';
 import { fileURLToPath } from 'node:url';
 import helmet from 'helmet';
+import history from 'connect-history-api-fallback';
 import origin from './shared/origin.js';
 import path from 'node:path';
+import qs from 'qs';
 
 /* eslint-disable */
-await import('express-async-errors');
 import auth from './shared/auth/index.js';
 import config from './config/server/index.js';
 import getLogger from './shared/logger.js';
@@ -35,6 +36,14 @@ app.use(
     contentSecurityPolicy: false,
   }),
 );
+
+// Patch Express 5 query parser (not parsing arrays properly).
+app.use((req, _res, next) => {
+  const { query } = req;
+  if (query) Object.defineProperty(req, 'query', { value: qs.parse(query) });
+  next();
+});
+
 app.use(cors({ origin: config.auth.corsAllowedOrigins, credentials: true }));
 app.use(cookieParser(config.auth.jwt.cookie.secret));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -42,8 +51,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(auth.initialize());
 app.use(origin());
 app.use(
-  express.static(path.join(__dirname, '../frontend-nuxt/.output/public')),
+  history({
+    rewrites: [
+      {
+        from: /^\/api\/.*$/,
+        to: (context) => context.parsedUrl.path,
+      },
+    ],
+  }),
 );
+app.use(express.static(path.join(__dirname, '../frontend/.output/public')));
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
 // Mount main router.
@@ -62,10 +79,10 @@ function requestLogger(req, res, next) {
   next();
 }
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, _req, res, _next) {
   if (!err.status || err.status === 500) {
-    res.status(500).end();
     logger.error({ err });
+    res.status(500).end();
     return;
   }
   const { status, message } = err;

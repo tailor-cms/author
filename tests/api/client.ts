@@ -20,14 +20,14 @@ const formatResponse = async (
   res: Playwright.APIResponse,
 ): Promise<EndpointResponse> => {
   const body = (await res.text()) ? await res.json() : null;
-  return { status: res.status(), data: body.data };
+  return { status: res.status(), data: body?.data || body };
 };
 
 export const getEndpointClient = async (
   baseUrl: string,
   endpointPath: string,
 ): Promise<EndpointClient> => {
-  const ENDPOINT_URL = new URL(endpointPath, baseUrl).href;
+  const ENDPOINT_URL = new URL(endpointPath, baseUrl);
   const req = await Playwright.request.newContext();
   const defaultUser = userSeed[0];
 
@@ -39,10 +39,10 @@ export const getEndpointClient = async (
 
   // Store created entity ids for clean up later; see dispose() method
   const createdEntityIds: number[] = [];
-  const getEntityUrl = (id) => `${ENDPOINT_URL}/${id}`;
+  const getEntityUrl = (id) => new URL(id.toString(), ENDPOINT_URL).toString();
 
   async function list() {
-    const res = await req.get(ENDPOINT_URL);
+    const res = await req.get(ENDPOINT_URL.toString());
     return formatResponse(res);
   }
 
@@ -52,7 +52,7 @@ export const getEndpointClient = async (
   }
 
   async function create(data: Map<string, any>) {
-    const res = await req.post(ENDPOINT_URL, { data });
+    const res = await req.post(ENDPOINT_URL.toString(), { data });
     const formattedResponse = await formatResponse(res);
     Playwright.expect([200, 201]).toContain(formattedResponse.status);
     if (formattedResponse?.data?.id)
@@ -67,9 +67,11 @@ export const getEndpointClient = async (
 
   async function remove(id: number) {
     const res = await req.delete(getEntityUrl(id));
-    Playwright.expect(res.status()).toBe(204);
+    const formattedResponse = await formatResponse(res);
+    Playwright.expect(formattedResponse.data).toBe(null);
+    Playwright.expect(formattedResponse.status).toBe(204);
     createdEntityIds.splice(createdEntityIds.indexOf(id), 1);
-    return { status: res.status() };
+    return formattedResponse;
   }
 
   async function dispose() {

@@ -27,6 +27,10 @@ runs:
     uses: isbang/compose-action@v1.3.2
     with:
       compose-file: docker-compose.dev.yaml
+  - name: Update .env.dev config
+    shell: bash
+    run: |
+      echo "REVERSE_PROXY_PORT=3000" >> .env.dev
   - name: Configure env and build
     shell: bash
     run: pnpm setup:dev
@@ -38,4 +42,4 @@ runs:
     run: pnpm seed
   - name: Run
     shell: bash
-    run: pnpm dev & sleep 15
+    run: pnpm start & sleep 15
