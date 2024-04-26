@@ -10,10 +10,10 @@
         v-bind="activatorProps"
         :color="activatorColor"
         :data-testid="`${props.testIdPrefix}Btn`"
-        class="px-1"
+        class="px-2"
         variant="text"
       >
-        <VIcon class="pr-1">{{ props.activatorIcon }}</VIcon>
+        <VIcon class="mr-2">{{ props.activatorIcon }}</VIcon>
         {{ activatorLabel || defaultModalHeading }}
       </VBtn>
     </template>
@@ -45,13 +45,18 @@
         />
         <VSpacer />
         <div class="d-flex justify-end pt-5 pb-3">
-          <VBtn class="px-4" variant="text" @click="visible = false">
+          <VBtn
+            class="mr-2 px-4"
+            color="primary-darken-4"
+            variant="text"
+            @click="visible = false"
+          >
             Cancel
           </VBtn>
           <VBtn
             :disabled="submitting"
             :loading="submitting"
-            color="primary-darken-4"
+            color="primary-darken-2"
             type="submit"
             variant="tonal"
             @click="submitForm"
@@ -79,7 +84,7 @@ const props = defineProps({
   action: { type: String, default: InsertLocation.ADD_AFTER },
   showActivator: { type: Boolean, default: false },
   activatorLabel: { type: String, default: '' },
-  activatorColor: { type: String, default: 'grey darken-3' },
+  activatorColor: { type: String, default: 'primary-darken-3' },
   activatorIcon: { type: String, default: 'mdi-folder-plus' },
   testIdPrefix: { type: String, default: 'repository__createActivity' },
 });
