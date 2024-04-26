@@ -1,17 +1,16 @@
 <template>
-  <VSheet color="transparent">
+  <VSheet class="overflow-hidden" color="primary-lighten-4" rounded="lg">
     <VList
-      active-class="bg-primary-lighten-3"
-      bg-color="primary-darken-4"
-      class="text-primary-lighten-4 text-left mb-6 py-0"
-      color="primary-darken-4"
-      elevation="3"
-      rounded="lg"
+      bg-color="transparent"
+      class="text-left mb-6"
     >
       <VListItem
         v-for="{ name, label, icon, query } in routes"
         :key="name"
         :to="{ name, query }"
+        active-class="bg-primary-lighten-4 text-primary-darken-4"
+        class="mb-2 pa-4"
+        rounded="lg"
       >
         <template #prepend>
           <VIcon>mdi-{{ icon }}</VIcon>
@@ -21,26 +20,20 @@
         </VListItemTitle>
       </VListItem>
     </VList>
-    <VList
-      bg-color="primary-darken-4"
-      class="text-left text-primary-lighten-4"
-      elevation="3"
-      rounded="lg"
-    >
-      <VListSubheader class="text-primary-lighten-5">Actions</VListSubheader>
+    <VList bg-color="transparent" class="text-left">
+      <VListSubheader class="text-primary-darken-4">Actions</VListSubheader>
       <VListItem
-        v-for="{ label, name, icon, color } in actions"
+        v-for="{ color, icon, label, name } in actions"
         :key="name"
         @click="$emit('action', name)"
+        class="pa-4"
       >
         <template #prepend>
-          <VIcon :color="color ? color : 'primary-lighten-5'">
+          <VIcon :color="color ? color : 'primary-darken-5'">
             mdi-{{ icon }}
           </VIcon>
         </template>
-        <VListItemTitle>
-          {{ label }}
-        </VListItemTitle>
+        <VListItemTitle>{{ label }}</VListItemTitle>
       </VListItem>
     </VList>
   </VSheet>
@@ -60,6 +53,6 @@ const actions = computed(() => [
   { label: 'Clone', icon: 'content-copy', name: 'clone' },
   { label: 'Publish', icon: 'upload', name: 'publish' },
   { label: 'Export', icon: 'export', name: 'export' },
-  { label: 'Delete', icon: 'delete', name: 'delete', color: 'red-lighten-3' },
+  { label: 'Delete', icon: 'delete', name: 'delete', color: 'red-darken-4' },
 ]);
 </script>

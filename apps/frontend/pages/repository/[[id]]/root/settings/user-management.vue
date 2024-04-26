@@ -1,10 +1,10 @@
 <template>
-  <VSheet rounded="lg">
-    <div class="d-flex justify-end pt-7 pr-8">
+  <div class="py-8 pr-4">
+    <div class="d-flex justify-end pr-4">
       <AddUserDialog :roles="roles" />
     </div>
     <UserList :roles="roles" />
-  </VSheet>
+  </div>
 </template>
 
 <script lang="ts" setup>

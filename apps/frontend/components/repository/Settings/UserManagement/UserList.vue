@@ -3,7 +3,7 @@
     v-if="!isLoading"
     :headers="headers"
     :items="store.users"
-    class="px-6"
+    class="px-6 bg-transparent"
     no-data-text="No assigned users."
   >
     <template #item="{ item }">
