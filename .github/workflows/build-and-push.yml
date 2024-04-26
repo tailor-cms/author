@@ -2,7 +2,7 @@ name: Build and push Docker image to the GitHub Packages
 
 on:
   push:
-    branches: ['develop', 'chore/init-infra']
+    branches: ['main', 'chore/init-infra']
 
 env:
   REGISTRY: ghcr.io
