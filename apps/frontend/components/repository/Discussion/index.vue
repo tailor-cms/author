@@ -51,9 +51,7 @@ const lastCommentAt = computed(() =>
 );
 
 const sheetStyles = computed(() =>
-  props.panel
-    ? { color: 'primary-darken-2' }
-    : { color: 'transparent' },
+  props.panel ? { color: 'primary-darken-2' } : { color: 'transparent' },
 );
 
 const saveComment = (comment: any) => {

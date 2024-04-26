@@ -2,7 +2,7 @@
   <VToolbar class="toolbar" color="transparent">
     <VSpacer />
     <VHover>
-      <template v-slot:default="{ isHovering, props: hoverProps }">
+      <template #default="{ isHovering, props: hoverProps }">
         <VTextField
           v-bind="hoverProps"
           v-model="searchInput"

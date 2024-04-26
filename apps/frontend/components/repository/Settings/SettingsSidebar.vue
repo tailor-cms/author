@@ -1,9 +1,6 @@
 <template>
   <VSheet class="overflow-hidden" color="primary-lighten-4" rounded="lg">
-    <VList
-      bg-color="transparent"
-      class="text-left mb-6"
-    >
+    <VList bg-color="transparent" class="text-left mb-6">
       <VListItem
         v-for="{ name, label, icon, query } in routes"
         :key="name"
@@ -25,8 +22,8 @@
       <VListItem
         v-for="{ color, icon, label, name } in actions"
         :key="name"
-        @click="$emit('action', name)"
         class="pa-4"
+        @click="$emit('action', name)"
       >
         <template #prepend>
           <VIcon :color="color ? color : 'primary-darken-5'">
