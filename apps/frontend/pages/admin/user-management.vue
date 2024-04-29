@@ -52,7 +52,7 @@
           <td class="text-truncate text-left">{{ item.lastName || '/' }}</td>
           <td class="text-no-wrap text-left">{{ item.role }}</td>
           <td class="text-no-wrap text-left">
-            {{ item.createdAt }}
+            {{ formatDate(item.createdAt, 'MM/dd/yy HH:mm') }}
           </td>
           <td class="text-no-wrap text-center">
             <VBtn
@@ -94,6 +94,7 @@
 
 <script lang="ts" setup>
 import { user as api } from '@/api';
+import formatDate from 'date-fns/format';
 import humanize from 'humanize-string';
 import throttle from 'lodash/throttle';
 import UserDialog from '@/components/admin/UserDialog.vue';
