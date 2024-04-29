@@ -32,15 +32,20 @@
         />
       </VCol>
     </VRow>
-    <VDataTable
-      v-if="!isLoading"
-      v-show="!!totalItems"
-      :footer-props="{ itemsPerPageOptions: [10, 20, 50, 100] }"
+    <VDataTableServer
       :headers="headers"
       :items="users"
-      :must-sort="true"
-      :options="dataTable"
-      :server-items-length="totalItems"
+      :items-length="totalItems"
+      :items-per-page="dataTable.itemsPerPage"
+      :items-per-page-options="[10, 25, 50, 100]"
+      :loading="isLoading"
+      :page="dataTable.page"
+      :sort-by="dataTable.sortBy"
+      class="pt-4"
+      item-value="id"
+      must-sort
+      @update:options="fetch"
+      @update:sort-by="$event => dataTable.sortBy = $event"
     >
       <template #item="{ item }">
         <tr :key="item.id">
@@ -73,14 +78,7 @@
           </td>
         </tr>
       </template>
-    </VDataTable>
-    <VProgressCircular
-      v-else
-      indeterminate
-      class="my-14"
-      color="primary-darken-3"
-      size="44"
-    />
+    </VDataTableServer>
     <UserDialog
       @updated="fetch(defaultPage)"
       @created="fetch(defaultPage)"
@@ -96,7 +94,6 @@
 import { user as api } from '@/api';
 import formatDate from 'date-fns/format';
 import humanize from 'humanize-string';
-import throttle from 'lodash/throttle';
 import UserDialog from '@/components/admin/UserDialog.vue';
 import { useAuthStore } from '@/stores/auth';
 
@@ -107,20 +104,19 @@ definePageMeta({
 const authStore = useAuthStore();
 
 const defaultPage = () => ({
-  sortBy: ['updatedAt'],
-  sortDesc: [true],
+  sortBy: [{ key: 'createdAt', order: 'desc' }],
   page: 1,
   itemsPerPage: 10,
 });
 
 const headers = [
-  { text: 'User', sortable: false },
-  { text: 'Email', value: 'email' },
-  { text: 'First Name', value: 'firstName' },
-  { text: 'Last Name', value: 'lastName' },
-  { text: 'Role', value: 'role' },
-  { text: 'Date Created', value: 'createdAt' },
-  { text: 'Actions', value: 'email', sortable: false },
+  { title: 'User', sortable: false },
+  { title: 'Email', value: 'email', sortable: true },
+  { title: 'First Name', value: 'firstName', sortable: true },
+  { title: 'Last Name', value: 'lastName', sortable: true },
+  { title: 'Role', value: 'role', sortable: true },
+  { title: 'Date Created', value: 'createdAt', sortable: true },
+  { title: 'Actions', value: 'email', sortable: false },
 ];
 
 const actions = {
@@ -131,7 +127,7 @@ const actions = {
 const isLoading = ref(true);
 const users = ref([]);
 const filter = ref('');
-const dataTable = ref(defaultPage());
+const dataTable = reactive(defaultPage());
 const totalItems = ref(0);
 const isUserDialogVisible = ref(false);
 const editedUser = ref(null);
@@ -144,22 +140,21 @@ const showUserDialog = (user = null) => {
   editedUser.value = user;
 };
 
-const fetch = throttle(async (opts = {}) => {
+const fetch = async (opts = {}) => {
+  Object.assign(dataTable, opts);
   isLoading.value = true;
-  Object.assign(dataTable.value, opts);
   const { items, total } = await api.fetch({
-    sortBy: dataTable.value.sortBy[0],
-    sortOrder: dataTable.value.sortDesc[0] ? 'DESC' : 'ASC',
-    offset: (dataTable.value.page - 1) * dataTable.value.itemsPerPage,
-    limit: dataTable.value.itemsPerPage,
+    sortBy: dataTable.sortBy[0].key,
+    sortOrder: dataTable.sortBy[0].order === 'desc' ? 'DESC' : 'ASC',
+    offset: (dataTable.page - 1) * dataTable.itemsPerPage,
+    limit: dataTable.itemsPerPage,
     filter: filter.value,
     archived: showArchived.value || undefined,
   });
-  console.log(items);
   users.value = items;
   totalItems.value = total;
   isLoading.value = false;
-}, 400);
+};
 
 const archiveOrRestore = (user: any) => {
   const action = user.deletedAt ? 'restore' : 'archive';
@@ -172,11 +167,8 @@ const archiveOrRestore = (user: any) => {
   dialog(confirmation);
 };
 
-watch(dataTable, () => fetch());
 watch(filter, () => fetch());
 watch(showArchived, () => fetch());
-
-onBeforeMount(() => fetch());
 </script>
 
 <style lang="scss" scoped>
