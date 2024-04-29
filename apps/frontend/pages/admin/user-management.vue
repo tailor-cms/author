@@ -3,10 +3,10 @@
     <div class="d-flex py-6 px-4">
       <VSpacer />
       <VBtn
-        @click.stop="showUserDialog"
         class="px-3"
         color="primary-darken-3"
         variant="tonal"
+        @click.stop="showUserDialog"
       >
         <VIcon class="px-4">mdi-account-multiple-plus</VIcon>
         Add user
@@ -24,8 +24,8 @@
       <VCol>
         <VTextField
           v-model="filter"
-          prepend-inner-icon="mdi-magnify"
           label="Search"
+          prepend-inner-icon="mdi-magnify"
           variant="outlined"
           clearable
           hide-details
@@ -45,7 +45,7 @@
       item-value="id"
       must-sort
       @update:options="fetch"
-      @update:sort-by="$event => dataTable.sortBy = $event"
+      @update:sort-by="($event) => (dataTable.sortBy = $event)"
     >
       <template #item="{ item }">
         <tr :key="item.id">
@@ -61,41 +61,42 @@
           </td>
           <td class="text-no-wrap text-center">
             <VBtn
-              @click="showUserDialog(item)"
               color="primary-darken-4"
               icon="mdi-pencil"
               size="small"
               variant="text"
+              @click="showUserDialog(item)"
             />
             <VBtn
-              @click="archiveOrRestore(item)"
               :disabled="currentUser?.id === item?.id"
               :icon="`mdi-account-${item.deletedAt ? 'convert' : 'off'}`"
               color="primary-darken-4"
               size="small"
               variant="text"
+              @click="archiveOrRestore(item)"
             />
           </td>
         </tr>
       </template>
     </VDataTableServer>
     <UserDialog
-      @updated="fetch(defaultPage)"
-      @created="fetch(defaultPage)"
-      @update:visible="isUserDialogVisible = $event"
-      :visible="isUserDialogVisible"
       :user-data="editedUser"
       :users="users"
+      :visible="isUserDialogVisible"
+      @created="fetch(defaultPage)"
+      @update:visible="isUserDialogVisible = $event"
+      @updated="fetch(defaultPage)"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { user as api } from '@/api';
 import formatDate from 'date-fns/format';
 import humanize from 'humanize-string';
-import UserDialog from '@/components/admin/UserDialog.vue';
+
+import { user as api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
+import UserDialog from '@/components/admin/UserDialog.vue';
 
 definePageMeta({
   name: 'system-user-management',

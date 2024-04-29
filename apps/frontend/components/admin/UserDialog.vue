@@ -71,13 +71,14 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
-import { useForm } from 'vee-validate';
-import { user as api } from '@/api';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import { role } from 'tailor-config-shared';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import { title as titleCase } from 'to-case';
+import { useForm } from 'vee-validate';
+
+import { user as api } from '@/api';
+import TailorDialog from '@/components/common/TailorDialog.vue';
 
 const props = defineProps({
   visible: { type: Boolean, default: false },
