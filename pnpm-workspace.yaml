@@ -7,3 +7,4 @@ packages:
   - 'extensions/content-elements'
   - 'extensions/meta-inputs'
   - 'extensions/content-containers'
+  - 'infrastructure'

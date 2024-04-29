@@ -1,0 +1,7 @@
+config:
+  aws:region: us-east-1
+  aws:accountId: xxxxxxxx
+  aws:hostedZoneId: xxxxxxxxx
+  aws:namePrefix: xxxxxxxx
+  aws:ssmNamePrefix: tailor-cms/dev
+  app:baseDomain: tailor-cms.com
