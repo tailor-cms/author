@@ -36,6 +36,7 @@
     "date-fns": "^3.6.0",
     "fecha": "^4.2.3",
     "hashids": "^2.3.0",
+    "humanize-string": "^3.0.0",
     "mitt": "^3.0.1",
     "p-min-delay": "^4.0.2",
     "pinia": "^2.1.7",

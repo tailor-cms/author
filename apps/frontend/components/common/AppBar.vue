@@ -75,7 +75,7 @@ const { repository } = storeToRefs(currentRepositoryStore);
 const routes = computed(() => {
   const items = [
     { name: 'Catalog', to: '/' },
-    { name: 'Admin', to: { name: 'admin' } },
+    { name: 'Admin', to: { name: 'system-user-management' } },
   ];
   if (!authStore.isAdmin) items.pop();
   if (repository.value) {
