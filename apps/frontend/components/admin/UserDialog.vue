@@ -1,5 +1,5 @@
 <template>
-  <TailorDialog v-model="show" header-icon="mdi-account" persistent>
+  <TailorDialog v-model="isDialogVisible" header-icon="mdi-account" persistent>
     <template #header>{{ isNewUser ? 'Create' : 'Edit' }} User</template>
     <template #body>
       <VBtn
@@ -79,29 +79,33 @@ import { useForm } from 'vee-validate';
 
 import { user as api } from '@/api';
 import TailorDialog from '@/components/common/TailorDialog.vue';
+import type { User } from '@/api/interfaces/user';
 
-const props = defineProps({
-  visible: { type: Boolean, default: false },
-  userData: { type: Object, default: () => ({}) },
-  users: { type: Array, default: () => [] },
+export interface Props {
+  visible: boolean;
+  userData: any;
+  users: Array<User>;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  visible: false,
+  userData: {},
 });
 
 const emit = defineEmits(['created', 'updated', 'update:visible']);
 
-const isReinviting = ref(false);
-
-const roles = computed(() =>
-  map(role.repository, (value) => ({ title: titleCase(value), value })),
-);
-
-const show = computed({
+const isDialogVisible = computed({
   get: () => props.visible,
   set(value) {
     if (!value) close();
   },
 });
 
+const isReinviting = ref(false);
 const isNewUser = computed(() => !props.userData?.id);
+const roles = computed(() =>
+  map(role.repository, (value) => ({ title: titleCase(value), value })),
+);
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
@@ -120,7 +124,7 @@ const [firstNameInput] = defineField('firstName');
 const [lastNameInput] = defineField('lastName');
 const [roleInput] = defineField('role');
 
-watch(show, (val) => {
+watch(isDialogVisible, (val) => {
   if (!val) return;
   if (!isEmpty(props.userData)) {
     emailInput.value = props.userData.email;

@@ -4,7 +4,7 @@
       <VSpacer />
       <VBtn
         class="px-3"
-        color="primary-darken-3"
+        color="primary-darken-2"
         variant="tonal"
         @click.stop="showUserDialog"
       >
@@ -15,7 +15,7 @@
     <VRow class="filters">
       <VCol>
         <VSwitch
-          v-model="showArchived"
+          v-model="showArchiveToggle"
           color="primary-darken-3"
           label="Archived"
           hide-details
@@ -96,6 +96,7 @@ import humanize from 'humanize-string';
 
 import { user as api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
+import type { User } from '@/api/interfaces/user';
 import UserDialog from '@/components/admin/UserDialog.vue';
 
 definePageMeta({
@@ -126,13 +127,13 @@ const actions = {
 };
 
 const isLoading = ref(true);
-const users = ref([]);
-const filter = ref('');
+const users = ref<User[]>([]);
 const dataTable = reactive(defaultPage());
 const totalItems = ref(0);
+const filter = ref('');
 const isUserDialogVisible = ref(false);
 const editedUser = ref(null);
-const showArchived = ref(false);
+const showArchiveToggle = ref(false);
 
 const currentUser = computed(() => authStore.user);
 
@@ -150,7 +151,7 @@ const fetch = async (opts = {}) => {
     offset: (dataTable.page - 1) * dataTable.itemsPerPage,
     limit: dataTable.itemsPerPage,
     filter: filter.value,
-    archived: showArchived.value || undefined,
+    archived: showArchiveToggle.value || undefined,
   });
   users.value = items;
   totalItems.value = total;
@@ -159,17 +160,17 @@ const fetch = async (opts = {}) => {
 
 const archiveOrRestore = (user: any) => {
   const action = user.deletedAt ? 'restore' : 'archive';
-  const dialog = useConfirmationDialog();
+  const showDialog = useConfirmationDialog();
   const confirmation = {
     title: `${humanize(action)} user`,
     message: `Are you sure you want to ${action} user "${user.email}"?`,
     action: () => actions[action](user).then(() => fetch()),
   };
-  dialog(confirmation);
+  showDialog(confirmation);
 };
 
 watch(filter, () => fetch());
-watch(showArchived, () => fetch());
+watch(showArchiveToggle, () => fetch());
 </script>
 
 <style lang="scss" scoped>
