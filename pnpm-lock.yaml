@@ -475,6 +475,9 @@ importers:
       hashids:
         specifier: ^2.3.0
         version: 2.3.0
+      humanize-string:
+        specifier: ^3.0.0
+        version: 3.0.0
       mitt:
         specifier: ^3.0.1
         version: 3.0.1
