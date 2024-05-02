@@ -29,6 +29,13 @@ function parseConfig(config = process.env) {
       `Invalid \`DATABASE_NAME\` provided: ${config.DATABASE_NAME}`,
     );
   }
+  const dialectOptions =
+    config.DATABASE_SSL === 'true'
+      ? {
+          require: true,
+          rejectUnauthorized: false,
+        }
+      : {};
   return {
     database: config.DATABASE_NAME,
     username: config.DATABASE_USER,
@@ -36,8 +43,6 @@ function parseConfig(config = process.env) {
     host: config.DATABASE_HOST,
     port: config.DATABASE_PORT,
     dialect: config.DATABASE_ADAPTER || 'postgres',
-    dialectOptions: {
-      ssl: config.DATABASE_SSL === 'true',
-    },
+    dialectOptions,
   };
 }
