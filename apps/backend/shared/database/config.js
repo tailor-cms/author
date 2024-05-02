@@ -31,10 +31,7 @@ function parseConfig(config = process.env) {
   }
   const dialectOptions =
     config.DATABASE_SSL === 'true'
-      ? {
-          require: true,
-          rejectUnauthorized: false,
-        }
+      ? { ssl: { require: true, rejectUnauthorized: false } }
       : {};
   return {
     database: config.DATABASE_NAME,
