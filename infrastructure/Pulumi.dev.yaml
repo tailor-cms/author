@@ -1,7 +1,8 @@
 config:
-  aws:region: us-east-1
-  aws:accountId: xxxxxxxx
-  aws:hostedZoneId: xxxxxxxxx
-  aws:namePrefix: xxxxxxxx
-  aws:ssmNamePrefix: tailor-cms/dev
   app:baseDomain: tailor-cms.com
+  aws:accountId:
+    secure: AAABANQCUPIL+J8yi06H7jiybo/rVmptVOolG8XAmi1oRj3iUJRJ3edvjyM=
+  aws:hostedZoneId: Z1042476S7RM57FM4WWG
+  aws:namePrefix: studion-tools
+  aws:region: us-east-1
+  aws:ssmNamePrefix: tailor-cms/dev
