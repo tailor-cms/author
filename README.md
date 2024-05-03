@@ -11,8 +11,8 @@ Configurable headless CMS for complex content structures.
 
 ## Dependencies
 
-- Node.js (>= 20.x)
-- pnpm (>= 8.3.1)
+- Node.js (>= 22.x)
+- pnpm (>= 9.x)
 - PostgreSQL (>= 9.4)
 
 ## Installation
