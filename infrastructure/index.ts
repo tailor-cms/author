@@ -81,6 +81,7 @@ const webServer = new studion.WebServer(`${fullPrefix}-server`, {
     { name: 'AUTH_SALT_ROUNDS', value: '10' },
     { name: 'NUXT_PUBLIC_AI_UI_ENABLED', value: 'true' },
     { name: 'EMAIL_SENDER_NAME', value: 'Tailor' },
+    { name: 'EMAIL_SENDER_ADDRESS', value: 'tailor@extensionengine.com' },
     { name: 'EMAIL_HOST', value: 'email-smtp.us-east-1.amazonaws.com' },
     { name: 'EMAIL_SSL', value: '1' },
     { name: 'AI_MODEL_ID', value: 'gpt-4-0125-preview' },
