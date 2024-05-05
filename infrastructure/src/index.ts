@@ -42,6 +42,7 @@ const cluster = new aws.ecs.Cluster(`${fullPrefix}-ecs-cluster`, {
   name: `${fullPrefix}-ecs-cluster`,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const webServer = new studion.WebServer(`${fullPrefix}-server`, {
   image: serverImage,
   port: 3000,

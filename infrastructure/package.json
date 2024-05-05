@@ -1,6 +1,6 @@
 {
   "name": "@tailor-cms/infrastucture",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "devDependencies": {
     "@types/node": "^20"
   },
