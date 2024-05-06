@@ -12,5 +12,5 @@
     "noEmit": true,
     "forceConsistentCasingInFileNames": true
   },
-  "files": ["./src/**"]
+  "exclude": ["node_modules"]
 }
