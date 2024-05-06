@@ -17,6 +17,7 @@ WORKDIR /app
 # TODO: Copy and install deps first, then copy the rest; once turborepo is added
 COPY ./ ./
 RUN pnpm i
+ENV NUXT_PUBLIC_AI_UI_ENABLED=true
 RUN pnpm build
 EXPOSE 3000
 CMD ["pnpm", "start"]
