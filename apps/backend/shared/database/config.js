@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import yn from 'yn';
+
 import { createLogger, Level } from '../logger.js';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -29,10 +31,9 @@ function parseConfig(config = process.env) {
       `Invalid \`DATABASE_NAME\` provided: ${config.DATABASE_NAME}`,
     );
   }
-  const dialectOptions =
-    config.DATABASE_SSL === 'true'
-      ? { ssl: { require: true, rejectUnauthorized: false } }
-      : {};
+  const dialectOptions = yn(config.DATABASE_SSL)
+    ? { ssl: { require: true, rejectUnauthorized: false } }
+    : {};
   return {
     database: config.DATABASE_NAME,
     username: config.DATABASE_USER,
