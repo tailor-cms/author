@@ -3,26 +3,31 @@ import * as studion from '@studion/infra-code-blocks';
 
 const config = new pulumi.Config();
 const awsConfig = new pulumi.Config('aws');
+const dnsConfig = new pulumi.Config('dns');
 const ssmConfig = new pulumi.Config('ssm');
 
 function getSsmParam(key: string) {
   const accountId = config.getSecret('accountId');
   const region = awsConfig.require('region');
-  const ssmKeyPrefix = ssmConfig.require('keyPrefix');
-  return pulumi.interpolate`arn:aws:ssm:${region}:${accountId}:parameter/${ssmKeyPrefix}/${key}`;
+  const prefix = ssmConfig.require('keyPrefix');
+  const baseArn = `arn:aws:ssm:${region}`;
+  return pulumi.interpolate`${baseArn}:${accountId}:parameter/${prefix}/${key}`;
 }
 
 export const getEnvVariables = (db: studion.Database) => [
   // Will trigger DB migrations on startup
   { name: 'NODE_ENV', value: 'development' },
   { name: 'LOG_LEVEL', value: 'INFO' },
-  { name: 'HOSTNAME', value: 'tailor-cms.com' },
+  { name: 'HOSTNAME', value: dnsConfig.require('domain') },
   { name: 'PROTOCOL', value: 'https' },
   // Internal service port
   { name: 'PORT', value: '3000' },
   // Outward facing port
   { name: 'REVERSE_PROXY_PORT', value: '443' },
-  { name: 'CORS_ALLOWED_ORIGINS', value: 'https://tailor-cms.com' },
+  {
+    name: 'CORS_ALLOWED_ORIGINS',
+    value: `https://${dnsConfig.require('domain')}`,
+  },
   { name: 'DATABASE_HOST', value: db.instance.address },
   {
     name: 'DATABASE_PORT',
@@ -34,17 +39,18 @@ export const getEnvVariables = (db: studion.Database) => [
   { name: 'DATABASE_ADAPTER', value: 'postgres' },
   { name: 'STORAGE_PROVIDER', value: 'amazon' },
   { name: 'STORAGE_REGION', value: 'eu-central-1' },
+  // Create a bucket in the AWS console and set the name here
   { name: 'STORAGE_BUCKET', value: 'tailor-cms-dev' },
   { name: 'AUTH_JWT_ISSUER', value: 'tailor' },
   { name: 'AUTH_JWT_COOKIE_NAME', value: 'access_token' },
   { name: 'AUTH_SALT_ROUNDS', value: '10' },
   { name: 'EMAIL_HOST', value: 'email-smtp.us-east-1.amazonaws.com' },
-  { name: 'EMAIL_SSL', value: '1' },
+  { name: 'EMAIL_SSL', value: 'true' },
   { name: 'EMAIL_SENDER_NAME', value: 'Tailor' },
   { name: 'EMAIL_SENDER_ADDRESS', value: 'tailor@extensionengine.com' },
   { name: 'AI_MODEL_ID', value: 'gpt-4-0125-preview' },
   { name: 'NUXT_PUBLIC_AI_UI_ENABLED', value: 'true' },
-  { name: 'FLAT_REPO_STRUCTURE', value: '1' },
+  { name: 'FLAT_REPO_STRUCTURE', value: 'true' },
 ];
 
 export const getSecrets = (db: studion.Database) => [
