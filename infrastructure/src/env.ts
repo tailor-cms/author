@@ -49,7 +49,6 @@ export const getEnvVariables = (db: studion.Database) => [
   { name: 'EMAIL_SENDER_NAME', value: 'Tailor' },
   { name: 'EMAIL_SENDER_ADDRESS', value: 'tailor@extensionengine.com' },
   { name: 'AI_MODEL_ID', value: 'gpt-4-0125-preview' },
-  { name: 'NUXT_PUBLIC_AI_UI_ENABLED', value: 'true' },
   { name: 'FLAT_REPO_STRUCTURE', value: 'true' },
 ];
 
