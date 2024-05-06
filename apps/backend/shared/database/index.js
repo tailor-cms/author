@@ -56,14 +56,7 @@ function initialize() {
         };
       },
     },
-    logger: (message) => {
-      if (message.startsWith('==')) return;
-      if (message.startsWith('File:')) {
-        const file = message.split(/\s+/g)[1];
-        return logger.info({ file }, message);
-      }
-      return logger.info(message);
-    },
+    logger,
   });
 
   umzug.on('migrating', (m) =>
