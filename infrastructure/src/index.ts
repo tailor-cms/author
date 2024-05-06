@@ -14,8 +14,8 @@ const STACK = pulumi.getStack();
 const resourceNamePrefix = config.require('resourceNamePrefix');
 const fullPrefix = `${resourceNamePrefix}-${STACK}`;
 
-export const serverImage = process.env.SERVER_IMAGE;
-if (!serverImage) throw new Error('Server image env is required');
+export const tailorImage = process.env.TAILOR_DOCKER_IMAGE;
+if (!tailorImage) throw new Error('Missing Tailor Docker image env variable!');
 
 const vpc = new awsx.ec2.Vpc(`${PROJECT_NAME}-vpc`, {
   enableDnsHostnames: true,
@@ -35,7 +35,7 @@ const db = new studion.Database(`${fullPrefix}-tailor-db`, {
   username: 'tailor_cms',
   vpcId: vpc.vpcId,
   vpcCidrBlock: vpc.vpc.cidrBlock,
-  isolatedSubnetIds: vpc.publicSubnetIds,
+  isolatedSubnetIds: vpc.isolatedSubnetIds,
 });
 
 const cluster = new aws.ecs.Cluster(`${fullPrefix}-ecs-cluster`, {
@@ -44,7 +44,7 @@ const cluster = new aws.ecs.Cluster(`${fullPrefix}-ecs-cluster`, {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const webServer = new studion.WebServer(`${fullPrefix}-server`, {
-  image: serverImage,
+  image: tailorImage,
   port: 3000,
   domain: dnsConfig.require('domain'),
   vpcId: vpc.vpcId,
