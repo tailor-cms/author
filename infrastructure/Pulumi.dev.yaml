@@ -1,6 +1,11 @@
 config:
+  ai:modelId: gpt-4-0125-preview
   aws:region: us-east-1
   dns:domain: tailor-cms.com
   dns:hostedZoneId: Z1042476S7RM57FM4WWG
+  s3:bucket: tailor-cms-dev
+  s3:region: eu-central-1
+  email:host: email-smtp.us-east-1.amazonaws.com
+  email:senderAddress: tailor@extensionengine.com
   ssm:keyPrefix: tailor/dev
   tailor-cms:resourceNamePrefix: tools

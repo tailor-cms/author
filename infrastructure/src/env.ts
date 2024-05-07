@@ -2,8 +2,11 @@ import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import * as studion from '@studion/infra-code-blocks';
 
+const aiConfig = new pulumi.Config('ai');
 const awsConfig = new pulumi.Config('aws');
+const emailConfig = new pulumi.Config('email');
 const dnsConfig = new pulumi.Config('dns');
+const s3Config = new pulumi.Config('s3');
 const ssmConfig = new pulumi.Config('ssm');
 const accountId = aws.getCallerIdentityOutput().accountId;
 
@@ -38,17 +41,17 @@ export const getEnvVariables = (db: studion.Database) => [
   { name: 'DATABASE_NAME', value: db.instance.dbName },
   { name: 'DATABASE_ADAPTER', value: 'postgres' },
   { name: 'STORAGE_PROVIDER', value: 'amazon' },
-  { name: 'STORAGE_REGION', value: 'eu-central-1' },
+  { name: 'STORAGE_REGION', value: s3Config.require('region') },
   // Create a bucket in the AWS console and set the name here
-  { name: 'STORAGE_BUCKET', value: 'tailor-cms-dev' },
+  { name: 'STORAGE_BUCKET', value: s3Config.require('bucket') },
   { name: 'AUTH_JWT_ISSUER', value: 'tailor' },
   { name: 'AUTH_JWT_COOKIE_NAME', value: 'access_token' },
   { name: 'AUTH_SALT_ROUNDS', value: '10' },
-  { name: 'EMAIL_HOST', value: 'email-smtp.us-east-1.amazonaws.com' },
+  { name: 'EMAIL_HOST', value: emailConfig.require('host') },
   { name: 'EMAIL_SSL', value: 'true' },
   { name: 'EMAIL_SENDER_NAME', value: 'Tailor' },
-  { name: 'EMAIL_SENDER_ADDRESS', value: 'tailor@extensionengine.com' },
-  { name: 'AI_MODEL_ID', value: 'gpt-4-0125-preview' },
+  { name: 'EMAIL_SENDER_ADDRESS', value: emailConfig.require('senderAddress') },
+  { name: 'AI_MODEL_ID', value: aiConfig.require('modelId') },
   { name: 'FLAT_REPO_STRUCTURE', value: 'true' },
 ];
 
