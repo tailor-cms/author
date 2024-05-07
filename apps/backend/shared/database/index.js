@@ -44,15 +44,19 @@ function initialize() {
     }),
     migrations: {
       glob: path.join(migrationsPath, '*.js'),
+      resolve: ({ name, path, context }) => {
+        // Sequilize-CLI generates migrations that require
+        // two parameters be passed to the up and down methods
+        // but by default Umzug will only pass the first
+        const migration = require(path || '');
+        return {
+          name,
+          up: async () => migration.up(context, Sequelize),
+          down: async () => migration.down(context, Sequelize),
+        };
+      },
     },
-    logger: (message) => {
-      if (message.startsWith('==')) return;
-      if (message.startsWith('File:')) {
-        const file = message.split(/\s+/g)[1];
-        return logger.info({ file }, message);
-      }
-      return logger.info(message);
-    },
+    logger,
   });
 
   umzug.on('migrating', (m) =>

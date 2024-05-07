@@ -1,7 +1,7 @@
 ARG PNPM_HOME="/root/.local/share/pnpm"
-ARG PNPM_VERSION="8.8.0"
+ARG PNPM_VERSION="9.0.6"
 
-FROM node:20.8.0-alpine3.17
+FROM node:22.1.0-alpine3.18
 # Prerequisites
 ARG PNPM_HOME
 ARG PNPM_VERSION
@@ -17,6 +17,7 @@ WORKDIR /app
 # TODO: Copy and install deps first, then copy the rest; once turborepo is added
 COPY ./ ./
 RUN pnpm i
+ENV NUXT_PUBLIC_AI_UI_ENABLED=true
 RUN pnpm build
 EXPOSE 3000
 CMD ["pnpm", "start"]

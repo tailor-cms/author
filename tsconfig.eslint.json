@@ -6,6 +6,7 @@
   "include": [
     "apps",
     "extensions",
+    "infrastructure",
     "packages",
     "scripts",
     "tests",

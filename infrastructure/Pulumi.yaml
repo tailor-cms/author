@@ -1,0 +1,3 @@
+name: tailor-cms
+description: Infrastructure provisioning for the tailor-cms application
+runtime: nodejs

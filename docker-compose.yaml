@@ -27,7 +27,7 @@ services:
     env_file:
       - .env
     environment:
-      NODE_ENV: "production"
+      NODE_ENV: "development"
       PROTOCOL: "http"
       HOSTNAME: "localhost"
       PORT: 3000
