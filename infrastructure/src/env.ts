@@ -1,13 +1,13 @@
+import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
 import * as studion from '@studion/infra-code-blocks';
 
-const config = new pulumi.Config();
 const awsConfig = new pulumi.Config('aws');
 const dnsConfig = new pulumi.Config('dns');
 const ssmConfig = new pulumi.Config('ssm');
+const accountId = aws.getCallerIdentityOutput().accountId;
 
 function getSsmParam(key: string) {
-  const accountId = config.getSecret('accountId');
   const region = awsConfig.require('region');
   const prefix = ssmConfig.require('keyPrefix');
   const baseArn = `arn:aws:ssm:${region}`;

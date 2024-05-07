@@ -3,6 +3,4 @@ config:
   dns:domain: tailor-cms.com
   dns:hostedZoneId: Z1042476S7RM57FM4WWG
   ssm:keyPrefix: tailor/dev
-  tailor-cms:accountId:
-    secure: AAABANVPwEfwD5vAFHWoyLd8Daikg/vlEocOLIw/UzRTKg/icZH7kp1Cs2U=
   tailor-cms:resourceNamePrefix: tools
