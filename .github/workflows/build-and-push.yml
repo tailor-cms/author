@@ -1,7 +1,7 @@
-name: Create Docker image, provision infra and deploy
+name: Publish Docker image, provision infra and deploy
 on:
   push:
-    branches: ['main', 'chore/init-infra']
+    branches: ['main']
 
 env:
   REGISTRY: ghcr.io
