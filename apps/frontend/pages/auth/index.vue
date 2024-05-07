@@ -92,7 +92,12 @@ const signIn = handleSubmit(({ email, password }) => {
   localError.value = '';
   authStore
     .login({ email, password })
-    .then((): any => navigateTo('/'))
+    .then(async () => {
+      const isAuthenticated = useCookie('is-authenticated');
+      isAuthenticated.value = 'true';
+      await authStore.fetchUserInfo();
+      navigateTo('/');
+    })
     .catch((err) => {
       const code = err?.response?.status;
       localError.value =
