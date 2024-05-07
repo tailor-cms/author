@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="180" src="./apps/frontend/src/assets/img/default-logo-compact.svg">
+  <img width="180" src="./apps/frontend/public/img/default-logo-compact.svg">
 </div>
 
 # Tailor CMS
