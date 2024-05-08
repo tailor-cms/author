@@ -23,7 +23,7 @@
       v-if="!isFlat"
       :disabled="!!props.search"
       class="px-5"
-      color="primary-lighten-4"
+      color="primary-lighten-3"
       height="42"
       variant="tonal"
       @click="currentRepositoryStore.toggleOutlineExpand"
