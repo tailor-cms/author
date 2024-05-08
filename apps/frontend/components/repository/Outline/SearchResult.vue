@@ -3,40 +3,29 @@
     <template #default="{ isHovering, props }">
       <VCard
         v-bind="props"
-        :color="`primary${isSelected || isHovering ? '' : '-darken-4'}`"
+        :color="isSelected || isHovering ? '' : 'primary-darken-3'"
         :ripple="false"
-        class="mt-6 py-1 text-left"
+        class="mt-4 py-1 text-left"
         min-height="160"
         rounded="6"
         variant="tonal"
         @click="$emit('select')"
       >
         <VCardSubtitle class="pt-5 d-flex align-center">
-          <VChip
-            :color="color"
-            class="readonly mr-2 text-body-2"
-            size="small"
-            variant="flat"
-            rounded
-          >
+          <LabelChip color="primary-lighten-5" variant="flat">
             {{ typeLabel }}
-          </VChip>
-          <VChip
-            class="readonly px-4 text-subtitle-2"
-            color="teal-accent-2"
-            size="small"
-            variant="tonal"
-            rounded
-          >
+          </LabelChip>
+          <LabelChip class="ml-3" color="teal-accent-2" variant="flat">
             {{ activity.shortId }}
-          </VChip>
+          </LabelChip>
         </VCardSubtitle>
-        <VCardTitle class="pt-3 pl-5 text-h5 text-primary-lighten-4">
+        <VCardTitle class="pt-3 pl-5 text-h5 text-primary-lighten-5">
           {{ activity.data.name }}
         </VCardTitle>
-        <VCardActions class="py-1 pl-3">
+        <VCardActions class="pb-2 pl-3">
           <VBtn
-            color="secondary-lighten-3"
+            class="px-2"
+            color="teal-lighten-4"
             variant="text"
             @mousedown.stop="$emit('show')"
           >
@@ -52,6 +41,7 @@
 <script lang="ts" setup>
 import find from 'lodash/find';
 
+import LabelChip from '@/components/common/LabelChip.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps({
@@ -70,5 +60,9 @@ const typeLabel = computed(() => config.value.label);
 <style lang="scss" scoped>
 .v-card {
   transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.v-card:hover ::v-deep > .v-card__overlay {
+  opacity: 0.01;
 }
 </style>
