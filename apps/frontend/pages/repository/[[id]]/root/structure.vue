@@ -76,6 +76,7 @@ definePageMeta({
 });
 
 const repositoryStore = useCurrentRepository();
+
 const { outlineActivities, rootActivities, selectedActivity, taxonomy } =
   storeToRefs(repositoryStore);
 

@@ -16,9 +16,9 @@
         />
       </ul>
       <template #load-more="{ props }">
-        <v-btn v-if="!areAllItemsFetched" variant="tonal" v-bind="props">
+        <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="props">
           Load more
-        </v-btn>
+        </VBtn>
       </template>
     </VInfiniteScroll>
     <VAlert
@@ -41,6 +41,7 @@ import uniqBy from 'lodash/uniqBy';
 
 import api from '@/api/revision';
 import { isSameInstance } from '@/lib/revision';
+import type { Revision } from '~/api/interfaces/repository';
 import RevisionItem from '@/components/repository/Revisions/RevisionItem.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -51,7 +52,7 @@ definePageMeta({
 const currentRepositoryStore = useCurrentRepository();
 
 const isFetching = ref(true);
-const revisions = ref([]);
+const revisions = ref<Revision[]>([]);
 const queryParams = reactive({ offset: 0, limit: 100 });
 const areAllItemsFetched = ref(false);
 
