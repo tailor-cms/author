@@ -16,12 +16,13 @@ test.beforeEach(async ({ page }) => {
   await page.waitForLoadState('networkidle');
 });
 
-test('Take a snapshot of repository structure page', async ({ page }) => {
+test('Take a snapshot of the repository structure page', async ({ page }) => {
   await percySnapshot(page, 'Repository structure page');
 });
 
-test('Take a snapshot of settings page', async ({ page }) => {
-  await page.getByRole('button', { name: 'Settings' }).click();
+test.only('Take a snapshot of the settings page', async ({ page }) => {
+  const tabNavigation = page.getByTestId('repositoryRoot_nav');
+  await tabNavigation.getByText('Settings').click();
   await page.waitForLoadState('networkidle');
-  await percySnapshot(page, 'Repository structure page');
+  await percySnapshot(page, 'Repository settings page');
 });

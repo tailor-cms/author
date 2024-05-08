@@ -5,6 +5,7 @@
         bg-color="primary-darken-3"
         class="text-primary-lighten-3"
         color="primary-lighten-1"
+        data-testid="repositoryRoot_nav"
         elevation="1"
         height="64"
         slider-color="primary-lighten-3"
