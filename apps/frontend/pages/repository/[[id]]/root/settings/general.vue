@@ -15,7 +15,7 @@
     </div>
     <RepositoryNameField
       v-model="repository.name"
-      :repository-id="repositoryId"
+      :repository-id="repository.id"
       class="my-2"
       @change="updateKey('name', $event)"
     />
@@ -42,6 +42,7 @@ import set from 'lodash/set';
 
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
+import type { Repository } from '~/api/interfaces/repository';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useNotification } from '@/composables/useNotification';
@@ -52,13 +53,17 @@ definePageMeta({
 });
 
 const { $schemaService } = useNuxtApp() as any;
+
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
+
 const notify = useNotification();
 
 const isPublishing = ref(false);
 
-const repository = computed(() => currentRepositoryStore.repository);
+const repository = computed(
+  () => currentRepositoryStore.repository as Repository,
+);
 const metadata = computed(() =>
   $schemaService.getRepositoryMetadata(repository.value),
 );
@@ -99,9 +104,5 @@ const publish = async () => {
 .actions {
   min-height: 2.25rem;
   margin-bottom: 1.25rem;
-
-  .btn {
-    padding: 0.5rem 0.75rem;
-  }
 }
 </style>
