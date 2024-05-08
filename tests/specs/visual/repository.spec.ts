@@ -16,8 +16,12 @@ test.beforeEach(async ({ page }) => {
   await page.waitForLoadState('networkidle');
 });
 
-test('Should take a snapshot of repository structure page', async ({
-  page,
-}) => {
+test('Take a snapshot of repository structure page', async ({ page }) => {
+  await percySnapshot(page, 'Repository structure page');
+});
+
+test('Take a snapshot of settings page', async ({ page }) => {
+  await page.getByRole('button', { name: 'Settings' }).click();
+  await page.waitForLoadState('networkidle');
   await percySnapshot(page, 'Repository structure page');
 });
