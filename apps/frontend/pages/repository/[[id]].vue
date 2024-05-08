@@ -1,28 +1,14 @@
 <template>
   <NuxtLayout name="main">
     <div v-if="isLoading" class="pt-16">
-      <VProgressCircular
-        bg-color="primary"
-        color="primary-darken-4"
-        size="68"
-        indeterminate
-      >
-        <template #default>
-          <img
-            alt="Tailor logo"
-            class="pt-1"
-            height="52"
-            src="/img/default-logo-full.svg"
-            width="32"
-          />
-        </template>
-      </VProgressCircular>
+      <CircularProgress />
     </div>
     <NuxtPage v-else />
   </NuxtLayout>
 </template>
 
 <script lang="ts" setup>
+import { CircularProgress } from '@tailor-cms/core-components-next';
 import { promiseTimeout } from '@vueuse/core';
 
 import { useAuthStore } from '@/stores/auth';
@@ -49,7 +35,7 @@ onMounted(async () => {
   await Promise.all([
     authStore.fetchUserInfo(),
     currentRepositoryStore.initialize(repositoryId),
-    await promiseTimeout(1200),
+    promiseTimeout(1200),
   ]);
   commentStore.$reset();
   isLoading.value = false;

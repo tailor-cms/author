@@ -1,11 +1,11 @@
 <template>
   <div class="repo-container">
-    <div class="primary-darken-2 elevation-1 mb-1">
+    <div class="mb-1 primary-darken-2 elevation-1">
       <VTabs
         bg-color="primary-darken-3"
         class="text-primary-lighten-3"
         color="primary-lighten-1"
-        elevation="2"
+        elevation="1"
         height="64"
         slider-color="primary-lighten-3"
       >
@@ -13,10 +13,10 @@
           v-for="tab in tabs"
           :key="tab.name"
           :to="{ name: tab.route, query: tab.query }"
-          class="px-8"
+          class="px-10"
           color="primary-lighten-3"
         >
-          <VIcon class="text-primary-lighten-1" start>
+          <VIcon class="text-primary-lighten-2" start>
             mdi-{{ tab.icon }}
           </VIcon>
           {{ tab.name }}
@@ -32,11 +32,11 @@
 <script lang="ts" setup>
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const currentRepositoryStore = useCurrentRepository();
-
 definePageMeta({
   middleware: ['auth'],
 });
+
+const currentRepositoryStore = useCurrentRepository();
 
 useHead({
   title: currentRepositoryStore.repository?.name,
