@@ -29,8 +29,10 @@ export default defineConfig({
     {
       name: 'visual',
       testDir: './specs/visual',
+      dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],
+        storageState: '.auth.json',
       },
     },
     {
