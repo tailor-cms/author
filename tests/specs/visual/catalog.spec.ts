@@ -1,12 +1,9 @@
 import { test } from '@playwright/test';
-import userSeed from 'tailor-seed/user.json';
 
 import { EndpointClient, getEndpointClient } from '../../api/client';
 import { repositories as mockRepositories } from '../../fixtures/repositories';
 import { percySnapshot } from '../../utils/percy.ts';
-import { SignIn } from './../../pom/auth';
 
-const DEFAULT_USER = userSeed[0];
 let REPOSITORY_API: EndpointClient;
 
 const seedCatalog = async () => {
@@ -30,9 +27,6 @@ test.beforeEach(async ({ page }) => {
   const { data } = await REPOSITORY_API.list();
   const { items: repositories } = data;
   if (repositories.length) await cleanupCatalog(repositories);
-  const signInPage = new SignIn(page);
-  await signInPage.visit();
-  await signInPage.signIn(DEFAULT_USER.email, DEFAULT_USER.password);
   await page.goto('/', { waitUntil: 'networkidle' });
 });
 
