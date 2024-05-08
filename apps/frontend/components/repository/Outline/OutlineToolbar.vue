@@ -7,7 +7,7 @@
           v-bind="hoverProps"
           v-model="searchInput"
           :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-          :class="{ 'mr-6': !isFlat }"
+          :class="{ 'mr-4': !isFlat }"
           density="comfortable"
           placeholder="Search by name or id..."
           prepend-inner-icon="mdi-magnify"
@@ -22,7 +22,9 @@
     <VBtn
       v-if="!isFlat"
       :disabled="!!props.search"
-      color="primary-lighten-3"
+      class="px-5"
+      color="primary-lighten-4"
+      height="42"
       variant="tonal"
       @click="currentRepositoryStore.toggleOutlineExpand"
     >
@@ -63,7 +65,11 @@ watch(
 }
 
 .v-text-field {
-  max-width: 28rem;
+  max-width: 24rem;
   transition: all 1s;
+
+  ::v-deep .v-field__outline {
+    display: none;
+  }
 }
 </style>
