@@ -31,7 +31,7 @@ const props = defineProps<{
 }>();
 
 const title = props.title || 'Tailor CMS';
-const logoPath = '/img/logo-alt-a.svg';
+const logoPath = '/img/default-logo-full.svg';
 </script>
 
 <style lang="scss">

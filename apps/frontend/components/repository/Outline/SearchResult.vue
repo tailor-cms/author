@@ -53,7 +53,6 @@ const store = useCurrentRepository();
 const config = computed(() =>
   find(store.taxonomy, { type: props.activity.type }),
 );
-const color = computed(() => config.value.color);
 const typeLabel = computed(() => config.value.label);
 </script>
 
