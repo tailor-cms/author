@@ -15,6 +15,9 @@ export default defineNuxtConfig({
     '/api/**': {
       proxy: 'http://localhost:3000/api/**',
     },
+    '/repository/assets/**': {
+      proxy: 'http://localhost:3000/repository/assets/**',
+    },
   },
   css: [
     '@mdi/font/css/materialdesignicons.min.css',
