@@ -2,6 +2,7 @@ import isString from 'lodash/isString.js';
 import OpenAI from 'openai';
 import { schema as schemaConfig } from 'tailor-config-shared';
 import shuffle from 'lodash/shuffle.js';
+import StorageService from '../storage/storage.service.js';
 
 import { ai as aiConfig } from '../../config/server/index.js';
 import createLogger from '../logger.js';
@@ -249,11 +250,13 @@ class AIService {
       Return the prompt as JSON respecting the following format:
       { 'prompt': '' }`;
     const { prompt: dallePrompt } = await this.requestCompletion(promptQuery);
-    logger.info('DALL·E 3 prompt', dallePrompt);
-    const url = await this.generateImage(dallePrompt);
+    const imgUrl = await this.generateImage(dallePrompt);
+    const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
     const imageElement = {
       type: 'CE_IMAGE',
-      data: { url },
+      data: {
+        assets: { url: imgInternalUrl },
+      },
     };
     logger.info('Generated image element', imageElement);
     return imageElement;
@@ -268,7 +271,8 @@ class AIService {
       size: '1024x1024',
       style: 'natural',
     });
-    return data[0].url;
+    const url = new URL(data[0].url);
+    return url;
   }
 }
 
