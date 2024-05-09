@@ -48,8 +48,7 @@ class StorageService {
     const res = await request.get(url, { responseType: 'arraybuffer' });
     const filename = path.join(
       getPath(),
-      `${uuidv4()}__`,
-      url.pathname.split('/').pop(),
+      `${uuidv4()}__${url.pathname.split('/').pop()}`,
     );
     await Storage.saveFile(filename, res.data);
     return getStorageUrl(filename);
