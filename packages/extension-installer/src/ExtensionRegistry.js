@@ -148,7 +148,8 @@ export class ExtensionRegistry {
 
 // prettier-ignore
 const exportModuleTemplate = _.template(
-`<% _.forEach(entries, function(it, index) { %>import pkg<%- index %> from '<%- it %>';<%}); %>
+`<% _.forEach(entries, function(it, index) { %>import pkg<%- index %> from '<%- it %>';
+<%});%>
 // prettier-ignore
 export const elements = [
   <% entries.forEach(function(it, index) { %>pkg<%- index %>,
