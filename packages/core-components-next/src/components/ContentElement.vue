@@ -142,6 +142,7 @@ const focus = () => {
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));
   elementBus.on('save:meta', (meta) => emit('save:meta', meta));
+  elementBus.on('save', (data) => emit('save', onSave(data)));
 
   const deferSaveFlag = () => setTimeout(() => (isSaving.value = false), 1000);
   elementBus.on('saved', deferSaveFlag);

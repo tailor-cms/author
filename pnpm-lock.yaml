@@ -583,11 +583,11 @@ importers:
         specifier: ^0.0.5
         version: 0.0.5
       '@tailor-cms/ce-image-edit':
-        specifier: ^0.0.3
-        version: 0.0.3(vue@3.4.23(typescript@5.4.5))
+        specifier: ^1.0.0
+        version: 1.0.0(vue@3.4.23(typescript@5.4.5))
       '@tailor-cms/ce-image-server':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^1.0.0
+        version: 1.0.0
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -2811,13 +2811,16 @@ packages:
   '@tailor-cms/ce-html-default-server@0.0.5':
     resolution: {integrity: sha512-QwQyySPdtC4x0WE59cg0aIu2JHcEhGLjSjE9cWy75n9njxDpwVrQXQvzA07BTUoS4YWRDxZ5RIqPq9YD2RM1Vg==}
 
-  '@tailor-cms/ce-image-edit@0.0.3':
-    resolution: {integrity: sha512-lEDZQ/Eeb9eVPPhM3Zzgp/pJsfRAuGsPsAlmnZb+IYjyjo4sgyG4NmNLb1kNjCw7ksELiIt9GRzp3DX3gg1FTw==}
+  '@tailor-cms/ce-image-edit@1.0.0':
+    resolution: {integrity: sha512-bPEZqyJByOVP1onGiTrVGNm+RICgiDKw0DewJ1xGvd5Pjgs1F0A+I9O8KRjCGF0Zt2Md6iytbnPPQsCy1073EQ==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-image-server@0.0.1':
-    resolution: {integrity: sha512-wQdiGKlRMjOpwAPqlMFTRXsTAqppc4+RPnVUqU3m6wtAk8KOUhAa9vPAsvRjIYLylkfnI8jNFTuIoI0caQqWLA==}
+  '@tailor-cms/ce-image-server@1.0.0':
+    resolution: {integrity: sha512-l4cZmdHQ+TDRzHCSp7TrWrlIIq01ApbaJZuqwJu6MzctstFDhUdMY25TU+35TEDRjcL+odob6KP5uO44McH5Dg==}
+
+  '@tailor-cms/cek-common@0.0.3':
+    resolution: {integrity: sha512-QZGKfGb8sdmS/4U2ZdbG8VKD816Q2AoL4t23/WGXyo5wgpdjw4n9eNYNTwv8kp/pE02LzSBG+CUOMTb3UAqPoA==}
 
   '@tailor-cms/eslint-config@0.0.2':
     resolution: {integrity: sha512-hFp01eUgxULxgbT33K5Y6NGKhwHGMQVL8Qa5ZT39614r4WA7/+JGNwlrvsZI5oH2PZgjDBv4BPGK88U0m+QX4A==}
@@ -12815,11 +12818,14 @@ snapshots:
 
   '@tailor-cms/ce-html-default-server@0.0.5': {}
 
-  '@tailor-cms/ce-image-edit@0.0.3(vue@3.4.23(typescript@5.4.5))':
+  '@tailor-cms/ce-image-edit@1.0.0(vue@3.4.23(typescript@5.4.5))':
     dependencies:
+      '@tailor-cms/cek-common': 0.0.3
       vue: 3.4.23(typescript@5.4.5)
 
-  '@tailor-cms/ce-image-server@0.0.1': {}
+  '@tailor-cms/ce-image-server@1.0.0': {}
+
+  '@tailor-cms/cek-common@0.0.3': {}
 
   ? '@tailor-cms/eslint-config@0.0.2(@typescript-eslint/eslint-plugin@6.13.2(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5))(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint-config-semistandard@17.0.0(eslint-config-standard@17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-n@15.7.0(eslint@8.57.0))(eslint-plugin-promise@6.1.1(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-n@15.7.0(eslint@8.57.0))(eslint-plugin-promise@6.1.1(eslint@8.57.0))(eslint@8.57.0))(eslint-config-standard@17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-n@15.7.0(eslint@8.57.0))(eslint-plugin-promise@6.1.1(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-import-resolver-typescript@3.6.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-plugin-import@2.29.1)(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-n@15.7.0(eslint@8.57.0))(eslint-plugin-prettier@5.1.3(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint@8.57.0)(prettier@3.1.1))(eslint-plugin-promise@6.1.1(eslint@8.57.0))(eslint-plugin-vue@9.25.0(eslint@8.57.0))(eslint-plugin-vuejs-accessibility@2.3.0(eslint@8.57.0))(eslint@8.57.0)'
   : dependencies:
