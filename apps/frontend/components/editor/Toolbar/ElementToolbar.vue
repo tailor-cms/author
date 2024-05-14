@@ -26,12 +26,13 @@ import * as utils from '@tailor-cms/utils';
 
 import DefaultToolbar from './DefaultToolbar.vue';
 
+const { $ceRegistry } = useNuxtApp() as any;
+const elementBus = inject('$elementBus') as any;
+
 const props = defineProps({
   element: { type: Object, required: true },
   embed: { type: Object, default: null },
 });
-
-const { $ceRegistry } = useNuxtApp() as any;
 
 const componentName = computed(() => {
   const { type } = props.element;
@@ -50,7 +51,7 @@ const config = computed(() => {
 });
 
 const componentExists = computed(() => !!$ceRegistry.get(props.element.type));
-const save = () => null; // store.dispatch('repository/contentElements/save');
+const save = (data: any) => elementBus.emit('save', data);
 </script>
 
 <style lang="scss" scoped>
