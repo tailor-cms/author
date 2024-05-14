@@ -1,10 +1,10 @@
 <template>
   <div class="element-sidebar">
-    <div class="pb-3 text-body-2 font-weight-bold text-primary-lighten-4">
+    <div class="pb-8 text-body-2 font-weight-bold text-primary-lighten-4">
       Additional settings
     </div>
-    <ElementMeta :element="element" v-bind="metadata" />
     <component :is="sidebarName" :element="element" @save="onSave" />
+    <ElementMeta :element="element" v-bind="metadata" />
   </div>
 </template>
 
