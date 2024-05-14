@@ -11,6 +11,7 @@
 
 <script lang="ts" setup>
 import MetaInput from '@/components/common/MetaInput.vue';
+import { getElementId } from '@tailor-cms/utils';
 
 const props = defineProps({
   element: { type: Object, required: true },
