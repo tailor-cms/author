@@ -1,6 +1,10 @@
 <template>
-  <div v-if="hasItems" class="d-flex flex-column align-end">
+  <div
+    v-if="hasItems"
+    :class="{ 'd-flex flex-column align-end': true, 'mt-5': search }"
+  >
     <VBtn
+      v-if="!search"
       class="mr-5"
       color="teal-lighten-4"
       size="x-small"
