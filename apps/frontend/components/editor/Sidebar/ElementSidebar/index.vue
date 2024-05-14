@@ -4,7 +4,7 @@
       Additional settings
     </div>
     <ElementMeta :element="element" v-bind="metadata" />
-    <component :is="sidebarName" :element="element" />
+    <component :is="sidebarName" :element="element" @save="onSave" />
   </div>
 </template>
 
@@ -26,6 +26,8 @@ provide('$elementBus', elementBus);
 provide('$storageService', storageService);
 
 const sidebarName = getSidebarName(props.element?.type);
+
+const onSave = (data: any) => elementBus.emit('save', data);
 </script>
 
 <style lang="scss" scoped>
