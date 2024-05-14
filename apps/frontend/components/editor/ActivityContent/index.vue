@@ -96,6 +96,7 @@ const editorStore = useEditorStore();
 const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
 const commentStore = useCommentStore();
+const storageService = useStorageService();
 
 const doTheMagic = ({ type }: { type: string }) => {
   if (!type) throw new Error('Type is required');
@@ -120,6 +121,7 @@ const doTheMagic = ({ type }: { type: string }) => {
 const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
+provide('$storageService', storageService);
 if (runtimeConfig.public.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);

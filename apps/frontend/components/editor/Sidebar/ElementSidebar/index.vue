@@ -13,15 +13,17 @@ import { getElementId, getSidebarName } from '@tailor-cms/utils';
 
 import ElementMeta from './ElementMeta/index.vue';
 
+const eventBus = inject('$eventBus') as any;
+const storageService = useStorageService();
+
 const props = defineProps({
   element: { type: Object, required: true },
   metadata: { type: Object, default: () => ({}) },
 });
 
-const eventBus = inject('$eventBus') as any;
-
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
+provide('$storageService', storageService);
 
 const sidebarName = getSidebarName(props.element?.type);
 </script>
