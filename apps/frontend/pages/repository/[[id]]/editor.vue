@@ -69,7 +69,7 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-$sidebar-width: 25rem;
+$sidebar-width: 30rem;
 
 .editor-content-container {
   display: flex;
