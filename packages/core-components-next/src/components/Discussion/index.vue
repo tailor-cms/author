@@ -64,7 +64,8 @@
       />
       <VBtn
         :disabled="isTextEditorEmpty || error"
-        color="teal-lighten-4"
+        class="mt-3"
+        color="teal-lighten-5"
         icon="mdi-send"
         variant="text"
         @click="post"
