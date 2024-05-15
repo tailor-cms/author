@@ -1,7 +1,7 @@
 <template>
   <VSheet
     :color="isAiGeneratingContent ? 'primary-darken-4' : 'white'"
-    class="content-container mb-5"
+    class="content-container mb-5 pr-4"
     elevation="3"
     rounded="lg"
   >
