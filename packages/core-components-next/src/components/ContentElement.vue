@@ -51,10 +51,11 @@
       </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
+          class="mt-2"
           color="pink lighten-1"
           icon="mdi-delete-outline"
-          size="small"
-          variant="text"
+          size="x-small"
+          variant="tonal"
           @click="emit('delete')"
         />
       </div>
@@ -222,8 +223,8 @@ onMounted(() => {
   flex-direction: column;
   position: absolute;
   top: -0.0625rem;
-  right: -1.25rem;
-  width: 1.5rem;
+  right: -2.5rem;
+  width: 3rem;
   height: 100%;
   padding-left: 0.75rem;
 
