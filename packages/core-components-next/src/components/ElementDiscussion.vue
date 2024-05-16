@@ -134,7 +134,8 @@ const setLastSeen = (timeout: number) => {
   });
 };
 
-const updateResolvement = ({ id }: { id: number }) => {
+// Resolve all if id is not provided
+const updateResolvement = ({ id }: { id?: number } = {}) => {
   editorBus.emit('comment', {
     action: Events.Discussion.RESOLVE,
     payload: {
