@@ -158,6 +158,7 @@ const post = handleSubmit(() => {
     updatedAt: Date.now(),
   };
   emit('save', payload);
+  contentInput.value = '';
   const scrollOptions = { block: 'center', behavior: 'smooth' };
   nextTick(() => scrollTargetRef.value?.$el?.scrollIntoView(scrollOptions));
 });
