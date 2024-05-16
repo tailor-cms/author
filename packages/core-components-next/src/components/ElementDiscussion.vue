@@ -165,6 +165,10 @@ const removeComment = (payload: any) => {
   }
 }
 
+::v-deep .comment-body {
+  padding: 0 0.25rem 0 3.9375rem;
+}
+
 .unseen {
   font-size: 0.75rem;
 }
