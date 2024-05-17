@@ -135,12 +135,16 @@ const setLastSeen = (timeout: number) => {
 };
 
 // Resolve all if id is not provided
-const updateResolvement = ({ id }: { id?: number } = {}) => {
+const updateResolvement = ({
+  id,
+  resolvedAt,
+}: { id?: number; resolvedAt?: number } = {}) => {
   editorBus.emit('comment', {
     action: Events.Discussion.RESOLVE,
     payload: {
       id,
       contentElementId: props.id,
+      resolvedAt,
     },
   });
 };
