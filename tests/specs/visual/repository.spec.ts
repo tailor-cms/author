@@ -27,6 +27,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Take a snapshot of the repository structure page', async ({ page }) => {
+  await page.waitForTimeout(2000);
   await percySnapshot(page, 'Repository structure page');
 });
 
