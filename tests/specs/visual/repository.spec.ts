@@ -40,7 +40,7 @@ test('Take a snapshot of the settings page', async ({ page }) => {
 test.afterEach(async () => {
   const { data } = await REPOSITORY_API.list();
   const { items: repositories } = data;
-  if (!repositories.length) return
+  if (!repositories.length) return;
   for (const repository of repositories) {
     await REPOSITORY_API.remove(repository.id);
   }
