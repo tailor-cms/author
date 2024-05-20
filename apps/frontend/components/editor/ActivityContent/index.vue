@@ -43,6 +43,7 @@ import find from 'lodash/find';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
 import max from 'lodash/max';
+import pMinDelay from 'p-min-delay';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
 
@@ -182,9 +183,12 @@ const loadContents = async () => {
     isLoading.value = false;
     return;
   }
-  await contentElementStore.fetch(
-    repositoryStore.repositoryId as number,
-    containerIds.value,
+  await pMinDelay(
+    contentElementStore.fetch(
+      repositoryStore.repositoryId as number,
+      containerIds.value,
+    ),
+    1000,
   );
   // TODO: Add once collab feature is implemented
   // fetchComments({ activityId }),
