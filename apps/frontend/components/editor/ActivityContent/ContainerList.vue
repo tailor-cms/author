@@ -74,7 +74,7 @@ const props = defineProps({
   displayHeading: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['focusoutElement']);
+const emit = defineEmits(['focusoutElement', 'createdContainer']);
 
 const { $schemaService, $ccRegistry } = useNuxtApp() as any;
 const eventBus = inject('$eventBus') as any;
@@ -108,15 +108,17 @@ const nextPosition = computed(() => {
   return last + 1;
 });
 
-const addContainer = (payload = {}) => {
+const addContainer = async (data = {}) => {
   const { type, parentId } = props;
-  activityStore.save({
+  const payload = {
     type,
     repositoryId: currentRepository.repositoryId,
     parentId,
     position: nextPosition.value,
-    ...payload,
-  });
+    ...data,
+  };
+  await activityStore.save(payload);
+  emit('createdContainer', payload);
 };
 
 const saveContentElements = (elements: any) => {

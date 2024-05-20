@@ -42,7 +42,7 @@
             <div class="pb-2 text-subtitle-2 text-left">Element width</div>
             <VBtnToggle
               v-model="elementWidth"
-              color="teal-darken-2"
+              color="primary-darken-3"
               rounded="small"
               variant="tonal"
               divided

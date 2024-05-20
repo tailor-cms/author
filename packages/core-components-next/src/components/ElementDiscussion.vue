@@ -17,7 +17,7 @@
             :class="activator?.class"
             :icon="activator?.icon"
             size="x-small"
-            variant="text"
+            variant="tonal"
           >
             <div v-if="activator.text" class="unseen">{{ activator.text }}</div>
             <VIcon v-else :color="activator.color" size="18">
@@ -59,18 +59,18 @@ import Discussion from './Discussion/index.vue';
 
 const getActivatorOptions = (unseenComments: any) => ({
   unseen: {
-    class: 'teal accent-4 white--text',
+    class: 'teal-accent-4 text-white',
     tooltip: 'View new comments',
     text: unseenComments.length,
   },
   preview: {
     icon: 'mdi-comment-text-multiple-outline',
-    color: 'primary darken-4',
+    color: 'primary-darken-2',
     tooltip: 'View comments',
   },
   post: {
     icon: 'mdi-message-plus-outline',
-    color: 'primary darken-4',
+    color: 'primary-darken-2',
     tooltip: 'Post a comment',
   },
 });
@@ -134,12 +134,17 @@ const setLastSeen = (timeout: number) => {
   });
 };
 
-const updateResolvement = ({ id }: { id: number }) => {
+// Resolve all if id is not provided
+const updateResolvement = ({
+  id,
+  resolvedAt,
+}: { id?: number; resolvedAt?: number } = {}) => {
   editorBus.emit('comment', {
     action: Events.Discussion.RESOLVE,
     payload: {
       id,
       contentElementId: props.id,
+      resolvedAt,
     },
   });
 };
@@ -163,6 +168,10 @@ const removeComment = (payload: any) => {
   .comment .author {
     font-size: 0.875rem;
   }
+}
+
+::v-deep .comment-body {
+  padding: 0 0.25rem 0 3.9375rem;
 }
 
 .unseen {

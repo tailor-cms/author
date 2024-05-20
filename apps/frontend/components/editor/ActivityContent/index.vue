@@ -9,7 +9,8 @@
     <div class="content-containers-wrapper">
       <ContentLoader v-if="isLoading" class="loader" />
       <PublishDiffProvider
-        v-else-if="repositoryStore.repository && editorStore.selectedActivity"
+        v-if="repositoryStore.repository && editorStore.selectedActivity"
+        v-show="!isLoading"
         v-slot="{
           processedElements,
           processedActivities,
@@ -31,6 +32,7 @@
           :parent-id="editorStore.selectedActivity.id"
           :processed-activities="processedActivities"
           :processed-elements="processedElements"
+          @created-container="handleContainerInit"
           @focusout-element="focusoutElement"
         />
       </PublishDiffProvider>
@@ -43,6 +45,7 @@ import find from 'lodash/find';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
 import max from 'lodash/max';
+import pMinDelay from 'p-min-delay';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
 
@@ -179,16 +182,27 @@ const onClick = (e: any) => {
 
 const loadContents = async () => {
   if (containerIds.value.length <= 0) {
-    isLoading.value = false;
     return;
   }
-  await contentElementStore.fetch(
-    repositoryStore.repositoryId as number,
-    containerIds.value,
+  await pMinDelay(
+    contentElementStore.fetch(
+      repositoryStore.repositoryId as number,
+      containerIds.value,
+    ),
+    600,
   );
   // TODO: Add once collab feature is implemented
   // fetchComments({ activityId }),
   isLoading.value = false;
+};
+
+// If container is added upon opening the page
+const handleContainerInit = () => {
+  if (!isLoading.value) return;
+  // Delay to avoid loader glitch; require min loader display time
+  setTimeout(() => {
+    isLoading.value = false;
+  }, 500);
 };
 
 const initElementChangeWatcher = () => {

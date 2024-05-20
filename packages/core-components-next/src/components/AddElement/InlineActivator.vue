@@ -1,8 +1,8 @@
 <template>
   <button class="inline-activator">
     <hr />
-    <VAvatar color="primary-darken-4" size="20">
-      <VIcon size="16">mdi-plus</VIcon>
+    <VAvatar color="primary-darken-2" size="20">
+      <VIcon size="20">mdi-plus</VIcon>
     </VAvatar>
     <hr />
   </button>
@@ -39,12 +39,12 @@ defineProps({
     flex: 1;
     display: inline-flex;
     margin: 0;
-    border-top: 0.0625rem solid #37474f;
+    border-top: 0.0625rem solid #455a64;
   }
 
   &:hover,
   &:focus {
-    padding: 0.75rem 0;
+    padding: 0 0 1.25rem 0;
     opacity: 1;
     outline: none;
     transition:

@@ -1,7 +1,7 @@
 <template>
   <div ref="containerEl" class="embedded-discussion">
     <div v-if="showResolveButton" class="d-flex justify-center">
-      <ResolveButton class="mb-2" @click="resolveAll" />
+      <ResolveButton class="mb-2" @click.stop="resolveAll" />
     </div>
     <div :class="{ 'pb-7': !showHeading && hasHiddenComments }">
       <VBtn
@@ -64,7 +64,8 @@
       />
       <VBtn
         :disabled="isTextEditorEmpty || error"
-        color="teal-lighten-4"
+        class="mt-3"
+        color="teal-lighten-5"
         icon="mdi-send"
         variant="text"
         @click="post"
@@ -157,6 +158,7 @@ const post = handleSubmit(() => {
     updatedAt: Date.now(),
   };
   emit('save', payload);
+  contentInput.value = '';
   const scrollOptions = { block: 'center', behavior: 'smooth' };
   nextTick(() => scrollTargetRef.value?.$el?.scrollIntoView(scrollOptions));
 });

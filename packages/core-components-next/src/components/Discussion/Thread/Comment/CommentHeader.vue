@@ -35,6 +35,7 @@
         </VTooltip>
         <template v-if="isActivityThread && elementLabel">
           <EditorLink
+            v-if="!isDeleted"
             :activity-id="comment.activityId"
             :element-uid="elementUid"
             :label="elementLabel"

@@ -3,7 +3,7 @@
     class="sidebar"
     color="primary-darken-2"
     elevation="5"
-    width="440"
+    width="480"
   >
     <div class="sidebar-container">
       <VWindow v-model="selectedTab">
