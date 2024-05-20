@@ -4,15 +4,24 @@ import { AddRepositoryDialog } from '../../pom/catalog/AddRepository';
 import { Catalog } from '../../pom/catalog/Catalog';
 import { percySnapshot } from '../../utils/percy.ts';
 
-test.beforeEach(async ({ page }) => {
+const TEST_REPOSITORY_NAME = 'Visual test imported repository';
+
+test.beforeAll(async ({ page }) => {
   const catalog = new Catalog(page);
   await catalog.visit();
   const dialog = new AddRepositoryDialog(page);
   await dialog.open();
-  const { name } = await dialog.importRepository();
+  await dialog.importRepository(TEST_REPOSITORY_NAME, 'Test description');
   await page.reload();
-  await expect(page.getByText(name)).toBeVisible({ timeout: 10000 });
-  await catalog.findRepositoryCard(name).click();
+});
+
+test.beforeEach(async ({ page }) => {
+  const catalog = new Catalog(page);
+  await catalog.visit();
+  await expect(page.getByText(TEST_REPOSITORY_NAME)).toBeVisible({
+    timeout: 10000,
+  });
+  await catalog.findRepositoryCard(TEST_REPOSITORY_NAME).click();
   await page.waitForLoadState('networkidle');
 });
 
