@@ -116,7 +116,7 @@ const addContainer = async (data = {}) => {
     parentId,
     position: nextPosition.value,
     ...data,
-  }
+  };
   await activityStore.save(payload);
   emit('createdContainer', payload);
 };

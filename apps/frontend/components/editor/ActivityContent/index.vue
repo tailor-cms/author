@@ -203,7 +203,7 @@ const handleContainerInit = () => {
   setTimeout(() => {
     isLoading.value = false;
   }, 500);
-}
+};
 
 const initElementChangeWatcher = () => {
   // TODO: Add once collab and composite element feature is added
