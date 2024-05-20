@@ -188,7 +188,7 @@ const loadContents = async () => {
       repositoryStore.repositoryId as number,
       containerIds.value,
     ),
-    1000,
+    600,
   );
   // TODO: Add once collab feature is implemented
   // fetchComments({ activityId }),
