@@ -88,7 +88,7 @@
       </template>
     </ElementList>
     <AddElement
-      v-if="!isDisabled"
+      v-if="!isDisabled && !isAiGeneratingContent"
       :activity="container"
       :include="types"
       :items="containerElements"
