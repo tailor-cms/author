@@ -25,6 +25,3 @@ node_modules
 
 # Tailor storage data
 apps/backend/data
-
-# Vitepress
-docs/.vitepress
