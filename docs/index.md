@@ -3,8 +3,8 @@
 layout: home
 
 hero:
-  name: 'Tailor'
-  text: 'Author complex content structures with joy'
+  name: Tailor
+  text: Author complex content structures with joy
   tagline: With unparalleled configurability and extensibility, Tailor CMS puts you in control. Enjoy an intuitive authoring experience that makes managing your content a breeze.
   actions:
     - theme: brand
