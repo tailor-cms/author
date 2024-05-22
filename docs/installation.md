@@ -25,8 +25,16 @@ pnpm setup:dev
 
 You'll be prompted to enter some details. Make sure to provide the required information.
 
-3. Finally, start the development server by running:
+3. Seed the database by executing the following command:
+
+```sh
+pnpm seed
+```
+
+4. Finally, start the development server by running:
 
 ```sh
 pnpm dev
 ```
+
+And that's it! You've successfully set up your development environment!
