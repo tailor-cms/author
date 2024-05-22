@@ -93,22 +93,13 @@ export const SCHEMA = {
   // old frontend is removed
   elementMeta: [
     {
-      type: 'IMAGE',
-      inputs: [
-        {
-          key: 'alt',
-          type: 'TEXTAREA',
-          label: 'Alt text',
-        },
-      ],
-    },
-    {
       type: 'CE_IMAGE',
       inputs: [
         {
-          key: 'alt',
+          key: 'captions',
           type: 'TEXTAREA',
-          label: 'Alt text',
+          label: 'Captions',
+          placeholder: 'Enter captions...',
         },
       ],
     },

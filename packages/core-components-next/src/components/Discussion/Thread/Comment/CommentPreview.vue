@@ -10,7 +10,7 @@
             color="secondary-lighten-5"
             size="x-small"
             variant="tonal"
-            @click="emit('unresolve')"
+            @click.stop="emit('unresolve')"
           >
             Undo
           </VBtn>

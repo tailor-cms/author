@@ -1,7 +1,7 @@
 <template>
   <VSheet
     :color="isAiGeneratingContent ? 'primary-darken-4' : 'white'"
-    class="content-container mb-5"
+    class="content-container mb-5 pr-4"
     elevation="3"
     rounded="lg"
   >
@@ -60,6 +60,7 @@
         variant: 'elevated',
       }"
       :elements="containerElements"
+      :enable-add="false"
       :is-disabled="isDisabled"
       :layout="layout"
       :supported-types="types"
@@ -86,11 +87,29 @@
         />
       </template>
     </ElementList>
+    <AddElement
+      v-if="!isDisabled && !isAiGeneratingContent"
+      :activity="container"
+      :include="types"
+      :items="containerElements"
+      :large="true"
+      :layout="layout"
+      :position="insertPosition ? insertPosition : containerElements.length"
+      :show="isElementDrawerVisible"
+      class="my-4"
+      color="primary-lighten-5"
+      icon="mdi-plus"
+      label="Add content"
+      variant="elevated"
+      @add="onElementAdd"
+      @hidden="onElementDrawerClose"
+    />
   </VSheet>
 </template>
 
 <script lang="ts" setup>
 import {
+  AddElement,
   CircularProgress,
   ContainedContent,
   ElementList,
@@ -134,24 +153,27 @@ const generateContent = async () => {
   isAiGeneratingContent.value = false;
 };
 
-const insertPosition = ref(Infinity);
-const isElementDrawerVisible = ref(false);
-const addElementComponent = ref();
-
 const id = computed(() => props.container.id);
 const containerElements = computed(() => {
   return sortBy(filter(props.elements, { activityId: id.value }), 'position');
 });
 
+const insertPosition = ref(0);
+const isElementDrawerVisible = ref(false);
+
 const reorder = ({ newPosition }) => {
   emit('reorder:element', { items: containerElements.value, newPosition });
 };
 
-const showElementDrawer = (position) => {
-  if (props.isDisabled) return;
-  insertPosition.value = position;
+const showElementDrawer = (elementIndex: number) => {
+  if (props.isDisabled || !elementIndex) return;
+  insertPosition.value = elementIndex;
   isElementDrawerVisible.value = true;
-  addElementComponent.value.click();
+};
+
+const onElementDrawerClose = () => {
+  isElementDrawerVisible.value = false;
+  insertPosition.value = 0;
 };
 
 const onElementAdd = (element: any) => {

@@ -9,14 +9,14 @@
         user,
       }"
       @remove="remove"
-      @resolve="resolveComment"
+      @resolve="handleResolvementUpdate"
       @toggle-edit="toggleEdit"
     />
     <div class="comment-body">
       <CommentPreview
         v-if="!isEditing"
         v-bind="{ content, isResolved }"
-        @unresolve="$emit('unresolve', comment)"
+        @unresolve="handleResolvementUpdate"
       />
       <template v-else>
         <!-- eslint-disable vuejs-accessibility/no-autofocus -->
@@ -87,8 +87,8 @@ const remove = () => {
   emit('remove', props.comment);
 };
 
-const resolveComment = () => {
-  emit('resolve', props.comment);
+const handleResolvementUpdate = () => {
+  emit(isResolved.value ? 'unresolve' : 'resolve', props.comment);
 };
 
 const reset = () => {

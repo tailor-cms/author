@@ -75,7 +75,7 @@ const config = computed(
     position: fixed;
     top: 0;
     right: 0;
-    left: 27.5rem;
+    left: 30rem;
     margin-top: 5rem;
     min-height: 5.5rem;
     max-height: 9rem;

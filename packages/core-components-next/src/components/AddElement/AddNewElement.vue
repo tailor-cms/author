@@ -14,9 +14,10 @@
               <template #default="{ isHovering, props: hoverProps }">
                 <VBtn
                   v-bind="hoverProps"
-                  :color="isHovering ? 'teal-darken-2' : 'primary-darken-4'"
+                  :color="isHovering ? 'primary-darken-4' : 'primary-darken-3'"
                   :disabled="!isAllowed(element.type)"
-                  class="add-element mr-3"
+                  class="add-element mr-5"
+                  rounded="lg"
                   variant="tonal"
                   @click.stop="emitAdd(element)"
                 >
@@ -75,7 +76,7 @@ const emitAdd = (element) => emit('add', [element]);
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  padding: 0 1.875rem;
+  padding: 0 2.25rem;
 }
 
 .add-element {

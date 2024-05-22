@@ -1,6 +1,7 @@
 import { test } from '@playwright/test';
 
 import { EndpointClient, getEndpointClient } from '../../api/client';
+import { Catalog } from '../../pom/catalog/Catalog';
 import { repositories as mockRepositories } from '../../fixtures/repositories';
 import { percySnapshot } from '../../utils/percy.ts';
 
@@ -37,5 +38,8 @@ test('Should take a snapshot of an empty catalog', async ({ page }) => {
 test('Should take a snapshot of an seeded catalog', async ({ page }) => {
   await seedCatalog();
   await page.reload({ waitUntil: 'networkidle' });
+  const catalog = new Catalog(page);
+  await catalog.orderByName();
+  await page.waitForTimeout(2000);
   await percySnapshot(page, 'Seeded catalog page');
 });

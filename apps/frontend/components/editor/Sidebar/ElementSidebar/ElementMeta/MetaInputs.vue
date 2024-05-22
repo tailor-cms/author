@@ -10,6 +10,8 @@
 </template>
 
 <script lang="ts" setup>
+import { getElementId } from '@tailor-cms/utils';
+
 import MetaInput from '@/components/common/MetaInput.vue';
 
 const props = defineProps({

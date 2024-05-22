@@ -1,6 +1,10 @@
 <template>
-  <div v-if="hasItems" class="d-flex flex-column align-end">
+  <div
+    v-if="hasItems"
+    :class="{ 'd-flex flex-column align-end': true, 'mt-5': search }"
+  >
     <VBtn
+      v-if="!search"
       class="mr-5"
       color="teal-lighten-4"
       size="x-small"
@@ -30,8 +34,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, onBeforeMount, ref, watch } from 'vue';
+import { computed, defineProps, ref, watch } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
+import uniq from 'lodash/uniq';
 
 import ItemGroup from './ItemGroup.vue';
 
@@ -96,8 +101,13 @@ watch(
   },
 );
 
-onBeforeMount(() => {
-  const ancestors = findAncestors(props.items, props.activeItemId);
-  expanded.value = getGroupIds(ancestors);
-});
+watch(
+  () => props.items,
+  () => {
+    if (expanded.value.length) return;
+    const ancestors = findAncestors(props.items, props.activeItemId);
+    expanded.value = uniq([...expanded.value, ...getGroupIds(ancestors)]);
+  },
+  { deep: true },
+);
 </script>
