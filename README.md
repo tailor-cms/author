@@ -9,19 +9,13 @@ Love](https://badgen.net/badge/Open%20Source/%E2%9D%A4/3eaf8e)](https://github.c
 
 Configurable headless CMS for complex content structures.
 
-## Dependencies
-
-- Node.js (>= 22.x)
-- pnpm (>= 9.x)
-- PostgreSQL (>= 9.4)
-
 ## Installation
 
 ### Prerequisites
 
-- Node.js: https://nodejs.org/en/download/
-- pnpm: https://pnpm.io/installation
-- PostgreSQL: https://www.postgresql.org/download/
+- Node.js (>= 22.x): https://nodejs.org/en/download/
+- pnpm (>= 9.0.6): https://pnpm.io/installation
+- PostgreSQL (>= 9.4): https://www.postgresql.org/download/
 - Clone this repo
 
 ### Development
