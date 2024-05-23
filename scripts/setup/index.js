@@ -35,6 +35,7 @@ for (const afterHook of afterAllHooks) {
 }
 log('◦ 🎆 Good to go!');
 log(`
+  If DB is not initialized, seed it by running: ${chalk.green('pnpm seed')}
   To start the app in the development mode run: ${chalk.green('pnpm dev')}
   Sign in with the following credentials:
   username: ${chalk.green(defaultUser.email)}
