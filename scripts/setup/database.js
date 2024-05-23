@@ -3,22 +3,41 @@ import inquirer from 'inquirer';
 import pg from 'pg';
 
 const { Client } = pg;
+const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const _getDatabaseClient = async (forceCredentials = false) => {
+  const creds = await getDatabaseCredentials(forceCredentials);
+  const client = new Client({
+    database: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    ...creds,
+  });
+  await client.connect();
+  return { client, ...creds };
+};
+
+export const testDatabaseConnection = async (times = 20, backoff = 2000) => {
+  try {
+    await _getDatabaseClient();
+    return true;
+  } catch (e) {
+    if (times > 0) {
+      await timeout(backoff);
+      return testDatabaseConnection(times - 1, backoff + 2000);
+    }
+    console.error(`❗️ Could not connect to Postgres!\n`);
+    return false;
+  }
+};
 
 export const getDatabaseClient = async (forceCredentials = false) => {
   try {
-    const creds = await getDatabaseCredentials(forceCredentials);
-    const client = new Client({
-      database: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      ...creds,
-    });
-    await client.connect();
-    return { client, ...creds };
+    return _getDatabaseClient(forceCredentials);
   } catch (e) {
     console.error(`◦ ❗️ Postgres error: ${e.message}!\n`);
     // Force credentials on retry
-    return getDatabaseClient(true);
+    return _getDatabaseClient(true);
   }
 };
 
