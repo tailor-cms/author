@@ -1,6 +1,6 @@
 import select from '@inquirer/select';
 
-export function isUsingComposeSpec() {
+export function shouldUseComposeSpec() {
   return select({
     message: 'Select the database setup method:',
     choices: [

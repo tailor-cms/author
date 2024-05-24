@@ -33,7 +33,7 @@ runs:
       echo "REVERSE_PROXY_PORT=3000" >> .env.dev
   - name: Configure env and build
     shell: bash
-    run: pnpm setup:dev
+    run: pnpm setup:dev --ci
   - name: Migrate DB
     shell: bash
     run: pnpm db:migrate
