@@ -53,7 +53,7 @@ log('◦ 🏗️  Build');
 await execaCommand('pnpm build');
 log(`◦ ✅ App built`);
 
-const hasUserRequestedSeed = await shouldSeedTheDatabase();
+const hasUserRequestedSeed = !hasCiFlag && (await shouldSeedTheDatabase());
 if (hasUserRequestedSeed) {
   log('\n◦ 🌱 Seeding the database...');
   try {
