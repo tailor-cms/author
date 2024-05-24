@@ -43,12 +43,20 @@ export default class ComponentRegistry {
     // this._validator(element);
     const id = getIdentifier(element);
     const componentName = this._getName(id);
-    registry.push({ ...pick(element, attrs), componentName, position });
+    const hasSideToolbar = !!element.SideToolbar;
+    const hasTopToolbar = !!element.TopToolbar;
+    registry.push({
+      ...pick(element, attrs),
+      componentName,
+      position,
+      hasSideToolbar,
+      hasTopToolbar,
+    });
     app.component(componentName, element.Edit);
-    if (element.TopToolbar) {
+    if (hasTopToolbar) {
       app.component(getToolbarName(id), element.TopToolbar);
     }
-    if (element.SideToolbar) {
+    if (hasSideToolbar) {
       app.component(getSidebarName(id), element.SideToolbar);
     }
   }

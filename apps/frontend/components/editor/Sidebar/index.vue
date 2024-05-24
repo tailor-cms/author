@@ -79,7 +79,7 @@ const BROWSER_TAB = 'BROWSER_TAB';
 const COMMENTS_TAB = 'COMMENTS_TAB';
 const ELEMENT_TAB = 'ELEMENT_TAB';
 
-const { $schemaService } = useNuxtApp() as any;
+const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 
 const selectedTab = ref(BROWSER_TAB);
 const tabs = computed(() => [
@@ -105,7 +105,10 @@ const tabs = computed(() => [
 ]);
 
 const elementSidebarEnabled = computed(
-  () => props.selectedElement && !metadata.value.isEmpty,
+  () =>
+    props.selectedElement &&
+    (!metadata.value.isEmpty ||
+      $ceRegistry.get(props.selectedElement.type)?.hasSideToolbar),
 );
 
 const metadata = computed(() => {
@@ -139,8 +142,10 @@ watch(
   text-align: left;
 
   ::v-deep .v-navigation-drawer__content {
-    -ms-overflow-style: none !important; /* IE and Edge */
-    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important;
+    /* IE and Edge */
+    scrollbar-width: none !important;
+    /* Firefox */
 
     &::-webkit-scrollbar {
       display: none !important;
