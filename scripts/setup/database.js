@@ -37,7 +37,7 @@ export const getDatabaseClient = async (forceCredentials = false) => {
   } catch (e) {
     console.error(`◦ ❗️ Postgres error: ${e.message}!\n`);
     // Force credentials on retry
-    return _getDatabaseClient(true);
+    return getDatabaseClient(true);
   }
 };
 
