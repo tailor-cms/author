@@ -52,6 +52,7 @@
     "vue-eslint-parser": "^9.4.2"
   },
   "dependencies": {
+    "@inquirer/select": "^2.3.4",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "fkill": "^8.1.1",
