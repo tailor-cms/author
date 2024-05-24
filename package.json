@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "node ./scripts/boot.js",
+    "dc": "docker compose -f docker-compose.dev.yaml up & pnpm dev",
     "build": "pnpm -r build",
     "start": "cd ./apps/backend && pnpm start",
     "lint": "eslint --ext .js,.ts,.vue .",
@@ -43,6 +44,7 @@
     "inquirer": "^9.2.19",
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
+    "ora": "^8.0.1",
     "pg": "^8.11.5",
     "pkg-dir": "^7.0.0",
     "shelljs": "^0.8.5",
@@ -52,6 +54,7 @@
     "vue-eslint-parser": "^9.4.2"
   },
   "dependencies": {
+    "@inquirer/select": "^2.3.4",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
     "fkill": "^8.1.1",
