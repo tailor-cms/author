@@ -1,15 +1,19 @@
+import { portToPid } from 'pid-port';
 import select from '@inquirer/select';
 
-export function shouldUseComposeSpec() {
+export async function shouldUseComposeSpec() {
+  const dbPid = await portToPid(5432).catch(() => null);
+  const portActiveMsg = !dbPid ? 'Port 5432 already in use!' : '';
   return select({
     message: 'Select the database setup method:',
     choices: [
       {
-        name: 'Use Docker to provide DB service',
+        name: `Configure Docker to provide DB service. ${portActiveMsg}`,
         value: true,
+        disabled: !dbPid,
       },
       {
-        name: 'I have my own setup',
+        name: 'I already have a DB service running',
         value: false,
       },
     ],
