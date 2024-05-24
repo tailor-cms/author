@@ -1,6 +1,6 @@
 [
   {
-    "name": "@tailor-cms/ce-html",
+    "name": "@tailor-cms/ce-html-default",
     "clientPackage": "@tailor-cms/ce-html-default-edit",
     "serverPackage": "@tailor-cms/ce-html-default-server"
   },
