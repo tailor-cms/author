@@ -51,7 +51,7 @@ const SECTION_CONTAINER = {
   templateId: 'DEFAULT',
   label: 'Section',
   multiple: true,
-  types: ['JODIT_HTML', 'IMAGE', 'EMBED', 'PDF', 'CE_HTML_DEFAULT', 'CE_IMAGE'],
+  types: ['CE_HTML_DEFAULT', 'CE_IMAGE'],
   ai: {
     definition: 'Sections are a way to organize content within a Page.',
     outputRules: {
