@@ -2,17 +2,19 @@
   <NuxtLayout class="catalog-wrapper" name="main">
     <VContainer :class="{ 'catalog-empty': !hasRepositories, catalog: true }">
       <VRow class="catalog-actions pb-5" no-gutters>
-        <AddRepository
-          :is-admin="authStore.isAdmin"
-          @created="onRepositoryAdd"
-        />
-        <VCol md="4" offset-md="4" offset-sm="1" sm="10">
+        <VCol cols="12" lg="4" md="12" offset-lg="4" sm="12">
           <SearchInput
             :search-input="repositoryStore.queryParams.search"
             @update="onSearchInput"
           />
         </VCol>
-        <VCol class="text-sm-left pl-2" md="3" sm="1">
+        <VCol
+          class="d-flex justify-end align-bottom pl-2 text-sm-left"
+          cols="12"
+          lg="4"
+          md="12"
+          sm="12"
+        >
           <VTooltip
             content-class="bg-primary-darken-4"
             location="top"
@@ -36,12 +38,20 @@
             class="pl-2"
             @update="updateSort"
           />
-          <RepositoryFilter
-            v-for="filter in filters"
-            :key="filter.type"
-            v-bind="filter"
-            @update="onFilterChange"
-          />
+          <span class="py-1">
+            <RepositoryFilter
+              v-for="filter in filters"
+              :key="filter.type"
+              v-bind="filter"
+              @update="onFilterChange"
+            />
+          </span>
+          <span class="my-2 ml-5">
+            <AddRepository
+              :is-admin="authStore.isAdmin"
+              @created="onRepositoryAdd"
+            />
+          </span>
         </VCol>
       </VRow>
       <RepositoryFilterSelection
@@ -61,7 +71,10 @@
             v-for="repository in repositoryStore.items"
             :key="repository.uid"
             class="px-3 pb-5"
-            cols="4"
+            cols="12"
+            lg="4"
+            md="6"
+            sm="12"
           >
             <RepositoryCard :repository="repository" />
           </VCol>
@@ -235,11 +248,6 @@ onBeforeMount(async () => {
 .catalog-actions {
   position: relative;
   padding-top: 0.75rem;
-
-  ::v-deep .add-repository-btn {
-    top: 1.25rem;
-    right: 0.25rem;
-  }
 }
 
 .v-infinite-scroll {
