@@ -71,8 +71,8 @@ const logoPath = '/img/default-logo-full.svg';
 
 .auth-container .auth-panel-container {
   position: relative;
-  width: 52rem;
-  min-height: 45rem;
+  width: 840px;
+  min-height: 720px;
   margin: 7% auto;
 
   @media (max-width: 1024px) {

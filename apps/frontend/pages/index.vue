@@ -2,7 +2,7 @@
   <NuxtLayout class="catalog-wrapper" name="main">
     <VContainer :class="{ 'catalog-empty': !hasRepositories, catalog: true }">
       <VRow class="catalog-actions pb-5" no-gutters>
-        <VCol cols="12" offset-lg="4" sm="12" md="12" lg="4">
+        <VCol cols="12" lg="4" md="12" offset-lg="4" sm="12">
           <SearchInput
             :search-input="repositoryStore.queryParams.search"
             @update="onSearchInput"
@@ -11,9 +11,9 @@
         <VCol
           class="d-flex justify-end align-bottom pl-2 text-sm-left"
           cols="12"
-          sm="12"
-          md="12"
           lg="4"
+          md="12"
+          sm="12"
         >
           <VTooltip
             content-class="bg-primary-darken-4"
@@ -72,9 +72,9 @@
             :key="repository.uid"
             class="px-3 pb-5"
             cols="12"
-            sm="12"
-            md="6"
             lg="4"
+            md="6"
+            sm="12"
           >
             <RepositoryCard :repository="repository" />
           </VCol>

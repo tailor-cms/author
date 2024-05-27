@@ -61,7 +61,7 @@
 
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
-import { useDisplay } from 'vuetify'
+import { useDisplay } from 'vuetify';
 import { UserAvatar } from '@tailor-cms/core-components-next';
 
 import { useAuthStore } from '@/stores/auth';
