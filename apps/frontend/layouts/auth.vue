@@ -2,19 +2,26 @@
   <div class="auth-container fill-height">
     <div class="auth-panel-container">
       <VSheet
-        class="auth-panel d-flex pa-2 bg-primary-darken-4"
+        class="auth-panel d-flex pa-5 bg-primary-darken-4"
         elevation="2"
         rounded="lg"
       >
-        <div class="d-flex justify-start align-start w-50 pt-4 pl-7">
-          <div class="d-flex align-center justify-center pt-4">
-            <img :src="logoPath" alt="Logo" class="logo" width="52" />
-            <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
-          </div>
-        </div>
-        <div class="auth-body w-50 py-8">
-          <slot></slot>
-        </div>
+        <VRow>
+          <VCol
+            cols="12"
+            md="12"
+            lg="6"
+            class="d-flex justify-start align-start pt-4 pl-7"
+          >
+            <div class="d-flex align-center justify-center pt-4">
+              <img :src="logoPath" alt="Logo" class="logo" width="52" />
+              <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
+            </div>
+          </VCol>
+          <VCol cols="12" md="12" lg="6" class="auth-body py-8">
+            <slot></slot>
+          </VCol>
+        </VRow>
       </VSheet>
     </div>
     <div class="waves-container">
@@ -67,6 +74,14 @@ const logoPath = '/img/default-logo-full.svg';
   width: 52rem;
   min-height: 45rem;
   margin: 7% auto;
+
+  @media (max-width: 1024px) {
+    width: 560px;
+  }
+
+  @media (max-width: 600px) {
+    width: 420px;
+  }
 }
 
 .auth-container .auth-panel.v-sheet {
