@@ -1,6 +1,6 @@
 <template>
   <div class="repo-search">
-    <div :style="{ width: isExpanded ? '92%' : '85%' }">
+    <div :style="{ width: (mdAndDown || isExpanded) ? '100%' : '85%' }">
       <VTextField
         v-model="internalValue"
         v-focus="isExpanded"
@@ -22,6 +22,7 @@
 
 <script lang="ts" setup>
 import debounce from 'lodash/debounce';
+import { useDisplay } from 'vuetify'
 
 export interface Props {
   searchInput: string;
@@ -32,6 +33,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits(['update']);
+
+const { mdAndDown } = useDisplay();
 
 const isExpanded = ref(false);
 const internalValue = ref(props.searchInput);

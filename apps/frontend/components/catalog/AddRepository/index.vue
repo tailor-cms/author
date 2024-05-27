@@ -12,7 +12,6 @@
         aria-label="Add repository"
         class="add-repository-btn"
         color="secondary"
-        position="absolute"
         prepend-icon="mdi-plus"
         variant="elevated"
       >
