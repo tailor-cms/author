@@ -14,7 +14,7 @@
       />
       <VAppBarTitle class="app-name text-primary-lighten-3">
         Tailor
-        <span class="text-caption font-weight-bold">
+        <span v-if="!smAndDown" class="text-caption font-weight-bold">
           <span class="text-primary-lighten-2 text-uppercase">
             authoring meets
           </span>
@@ -61,12 +61,15 @@
 
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify'
 import { UserAvatar } from '@tailor-cms/core-components-next';
 
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps<{ user: any }>();
+
+const { smAndDown } = useDisplay();
 
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
