@@ -1,18 +1,16 @@
 <template>
   <NuxtLayout name="main">
-    <VContainer>
-      <VRow>
-        <VCol>
-          <VAlert color="primary-lighten-3" variant="tonal">
-            Hello, User!
-          </VAlert>
-        </VCol>
-      </VRow>
+    <VContainer class="h-100 pt-14">
+      <VSheet color="primary-lighten-4" rounded="lg">
+        <Info />
+      </VSheet>
     </VContainer>
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
+import Info from '~/components/user/info.vue';
+
 definePageMeta({
   name: 'user-profile',
   middleware: ['auth'],
