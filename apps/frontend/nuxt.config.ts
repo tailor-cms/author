@@ -12,10 +12,10 @@ export default defineNuxtConfig({
   },
   routeRules: {
     '/api/**': {
-      proxy: 'http://localhost:3000/api/**',
+      proxy: `http://localhost:${process.env.BACKEND_PORT}/api/**`,
     },
     '/repository/assets/**': {
-      proxy: 'http://localhost:3000/repository/assets/**',
+      proxy: `http://localhost:${process.env.BACKEND_PORT}/repository/assets/**`,
     },
   },
   css: [

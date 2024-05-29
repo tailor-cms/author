@@ -31,6 +31,7 @@ for (const port of [PORT, REVERSE_PROXY_PORT]) {
 
 // Proxy public environment variables
 process.env.NUXT_PUBLIC_AI_UI_ENABLED = NUXT_PUBLIC_AI_UI_ENABLED;
+process.env.BACKEND_PORT = PORT || 3000;
 process.env.REVERSE_PROXY_PORT = REVERSE_PROXY_PORT || 8080;
 
 // Test database connection
