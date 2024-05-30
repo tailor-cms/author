@@ -8,6 +8,7 @@ export class OutlineItem {
   readonly addItemAboveBtn: Locator;
   readonly addItemBelowBtn: Locator;
   readonly addItemIntoBtn: Locator;
+  readonly openBtn: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
@@ -15,6 +16,11 @@ export class OutlineItem {
     this.addItemAboveBtn = el.getByRole('button', { name: 'Add item above' });
     this.addItemBelowBtn = el.getByRole('button', { name: 'Add item below' });
     this.addItemIntoBtn = el.getByRole('button', { name: 'Add item into' });
+    this.openBtn = el.getByRole('button', { name: 'Open' });
+  }
+
+  async select() {
+    await this.el.click();
   }
 
   async addAbove(type: string, name: string) {
