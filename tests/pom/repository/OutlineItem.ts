@@ -19,8 +19,8 @@ export class OutlineItem {
     this.openBtn = el.getByRole('button', { name: 'Open' });
   }
 
-  async select() {
-    await this.el.click();
+  select() {
+    return this.el.click();
   }
 
   async addAbove(type: string, name: string) {
