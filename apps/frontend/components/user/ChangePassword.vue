@@ -67,7 +67,7 @@ const notify = useNotification();
 
 const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
   validationSchema: object({
-    password: string().required(),
+    currentPassword: string().required(),
     newPassword: string().required().min(6).test((value, { parent }) => {
       return value !== parent.currentPassword;
     }),
@@ -85,13 +85,16 @@ const [passwordConfirmationInput] = defineField('passwordConfirmation');
 
 
 const submit = handleSubmit(async () => {
-  await store.changePassword({
+  return store.changePassword({
     currentPassword: currentPasswordInput.value,
     newPassword: newPasswordInput.value,
+  }).then(() => {
+    notify('Password changed!', { immediate: true });
+    store.logout();
+    navigateTo('/auth');
+  }).catch(() => {
+    notify('Failed to change password!', { immediate: true, color: 'error' })
   });
-  resetForm();
-  notify('Password changed!', { immediate: true });
-  store.logout();
 });
 
 const close = () => {

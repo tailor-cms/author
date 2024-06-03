@@ -76,10 +76,6 @@ const deleteAvatar = () => {
   });
 };
 
-const navigate = (path: string) => {
-  navigateTo(path);
-};
-
 const selectPhoto = (event) => {
   const file = event.target?.files[0];
   new Compressor(file, {
