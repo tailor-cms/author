@@ -26,6 +26,7 @@ provide('$eventBus', $eventBus);
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const commentStore = useCommentStore();
+const sse = useSSE();
 
 const isLoading = ref(true);
 
@@ -39,10 +40,12 @@ onMounted(async () => {
   ]);
   commentStore.$reset();
   isLoading.value = false;
+  sse.connect(repositoryId);
 });
 
 onUnmounted(() => {
   currentRepositoryStore.$reset();
   commentStore.$reset();
+  sse.disconnect();
 });
 </script>
