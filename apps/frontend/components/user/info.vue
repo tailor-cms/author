@@ -1,42 +1,54 @@
 <template>
-  <form @submit.prevent="submit" class="pt-4 px-4">
+  <form @submit.prevent="submit" class="pt-4 px-4 text-left">
     <VTextField
       v-model="emailInput"
+      :disabled="!isEditing"
       :error-messages="errors.email"
       label="Email"
       variant="outlined"
-      class="required"
+      class="required my-2"
     />
     <VTextField
       v-model="firstNameInput"
+      :disabled="!isEditing"
       :error-messages="errors.firstName"
       label="First name"
       variant="outlined"
-      class="required"
+      class="required my-2"
     />
     <VTextField
       v-model="lastNameInput"
+      :disabled="!isEditing"
       :error-messages="errors.lastName"
       label="Last name"
       variant="outlined"
-      class="required"
+      class="required my-2"
     />
     <div class="d-flex justify-end pb-3">
+      <template v-if="isEditing">
+        <VBtn
+          @click="close"
+          color="primary-darken-4"
+          variant="text">
+          Cancel
+        </VBtn>
+        <VBtn
+          :disabled="!meta.dirty"
+          class="ml-2 px-4"
+          color="primary-darken-4"
+          type="submit"
+          variant="tonal"
+        >
+          Update
+        </VBtn>
+      </template>
       <VBtn
-        @click="resetForm"
-        :disabled="!meta.dirty"
-        color="primary-darken-4"
-        variant="text">
-        Cancel
-      </VBtn>
-      <VBtn
-        :disabled="!meta.dirty"
-        class="ml-2 px-4"
+        v-else
+        @click="isEditing = true"
         color="primary-darken-4"
         type="submit"
-        variant="tonal"
-      >
-        Update
+        variant="tonal">
+        Edit
       </VBtn>
     </div>
   </form>
@@ -51,6 +63,7 @@ import pick from 'lodash/pick';
 
 const store = useAuthStore();
 const notify = useNotification();
+const isEditing = ref(false);
 
 const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
   initialValues: pick(store.user, ['email', 'firstName', 'lastName']),
@@ -71,13 +84,18 @@ const [emailInput] = defineField('email');
 const [firstNameInput] = defineField('firstName');
 const [lastNameInput] = defineField('lastName');
 
+const close = () => {
+  resetForm();
+  isEditing.value = false;
+}
+
 const submit = handleSubmit(async () => {
   await store.updateInfo({
     email: emailInput.value,
     firstName: firstNameInput.value,
     lastName: lastNameInput.value,
   });
-  resetForm();
+  isEditing.value = false;
   notify('User information updated!', { immediate: true });
 });
 </script>

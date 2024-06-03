@@ -3,9 +3,10 @@
     <template #activator="{ props }">
       <VBtn
         v-bind="props"
-        color="white"
+        color="primary-darken-4"
         prepend-icon="mdi-lock"
         variant="tonal"
+        class="mt-4"
       >
         Change Password
       </VBtn>

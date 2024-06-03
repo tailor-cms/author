@@ -1,49 +1,47 @@
 <template>
-  <VRow justify="center" class="pb-3">
-    <VSpeedDial location="right" target="#avatar" attach>
-      <template #activator="{ props: activatorProps }">
-        <VHover #default="{ isHovering, props }">
-          <VAvatar id="avatar" v-bind="props" size="150">
-            <VImg :src="image" />
-            <VIcon
-              v-if="isHovering"
-              v-bind="activatorProps"
-              class="overlay"
-              icon="mdi-camera"
-              size="x-large"
-              color="white"
-            />
-          </VAvatar>
-        </VHover>
-      </template>
-      <VBtn
-        for="photoInput"
-        key="1"
-        small
-        icon
-        tag="label"
-      >
-        <VIcon>mdi-upload</VIcon>
-        <input
-          id="photoInput"
-          ref="fileInput"
-          accept="image/*"
-          name="photo"
-          type="file"
-          @change="selectPhoto"
-          hidden
-        />
-      </VBtn>
-      <VBtn
-        v-if="!isGravatar"
-        key="2"
-        @click="deleteAvatar"
-        color="secondary-lighten-1"
-        small
-        icon="mdi-delete"
+  <VSpeedDial location="right" target="#avatar" attach>
+    <template #activator="{ props: activatorProps }">
+      <VHover #default="{ isHovering, props }">
+        <VAvatar id="avatar" v-bind="props" size="200">
+          <VImg :src="image" />
+          <VIcon
+            v-if="isHovering"
+            v-bind="activatorProps"
+            class="overlay"
+            icon="mdi-camera"
+            size="x-large"
+            color="white"
+          />
+        </VAvatar>
+      </VHover>
+    </template>
+    <VBtn
+      key="1"
+      for="photoInput"
+      small
+      icon
+      tag="label"
+    >
+      <VIcon>mdi-upload</VIcon>
+      <input
+        id="photoInput"
+        ref="fileInput"
+        accept="image/*"
+        name="photo"
+        type="file"
+        @change="selectPhoto"
+        hidden
       />
-    </VSpeedDial>
-  </VRow>
+    </VBtn>
+    <VBtn
+      v-if="!isGravatar"
+      key="2"
+      @click="deleteAvatar"
+      color="secondary-lighten-1"
+      small
+      icon="mdi-delete"
+    />
+  </VSpeedDial>
 </template>
 
 <script lang="ts" setup>
@@ -106,8 +104,8 @@ const toBase64 = file => new Promise((resolve, reject) => {
 <style lang="scss" scoped>
 $image-border: 4px solid #e3e3e3;
 $image-bg-color: #f5f5f5;
-$image-width: 150px;
-$image-height: 150px;
+$image-width: 12.5rem;
+$image-height: 12.5rem;
 
 .v-avatar ::v-deep {
   img, .v-icon {

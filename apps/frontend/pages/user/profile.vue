@@ -1,10 +1,20 @@
 <template>
   <NuxtLayout name="main">
-    <VContainer class="h-100 pt-14">
-      <ChangePassword />
-      <UserAvatar />
+    <VContainer class="h-100 pt-14 user-panel">
       <VSheet color="primary-lighten-4" rounded="lg">
-        <Info />
+        <VLayout>
+          <VRow class="ma-2">
+            <VCol cols="12" md="4" class="d-flex flex-column align-center">
+              <UserAvatar />
+              <ChangePassword />
+            </VCol>
+            <VCol>
+              <VSheet rounded="lg">
+                <Info />
+              </VSheet>
+            </VCol>
+          </VRow>
+        </VLayout>
       </VSheet>
     </VContainer>
   </NuxtLayout>
@@ -20,3 +30,9 @@ definePageMeta({
   middleware: ['auth'],
 });
 </script>
+
+<style lang="scss" scoped>
+.user-panel {
+  max-width: 1000px;
+}
+</style>
