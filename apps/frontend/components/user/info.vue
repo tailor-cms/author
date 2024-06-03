@@ -58,7 +58,7 @@ const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
     email: string()
       .required()
       .email()
-      .test('unique-email', 'Email already exists', async (email) => {
+      .test('unique-email', async (email) => {
         const user = await api.fetch({ email });
         return !user.length;
       }),
