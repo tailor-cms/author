@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, withDefaults } from 'vue';
+import { computed, defineProps, withDefaults } from 'vue';
 
 interface Props {
   imgUrl?: string;
@@ -31,20 +31,21 @@ const props = withDefaults(defineProps<Props>(), {
   rounded: 'xl',
 });
 
-const style = props.imgUrl
-  ? { 'background-image': `url(${props.imgUrl})` }
-  : {};
+const style = computed(() =>
+  props.imgUrl ? { 'background-image': `url(${props.imgUrl})` } : {},
+);
 </script>
 
 <style lang="scss" scoped>
 .user-avatar-container {
-  padding: 0.25rem;
+  padding: 0.125rem;
   overflow: hidden !important;
 
   .user-avatar {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    border-radius: 50%;
   }
 }
 </style>
