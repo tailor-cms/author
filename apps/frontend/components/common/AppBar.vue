@@ -5,7 +5,10 @@
     color="primary-darken-3"
     height="80"
   >
-    <a class="app-brand pt-2 pl-7" href="/">
+    <NuxtLink
+      :to="{ name: 'catalog' }"
+      class="app-brand pt-2 pl-7"
+    >
       <img
         alt="Tailor logo"
         height="44"
@@ -21,7 +24,7 @@
           <span class="text-secondary-lighten-2">AI</span>
         </span>
       </VAppBarTitle>
-    </a>
+    </NuxtLink>
     <template #append>
       <VBtn
         v-for="{ name, to } in routes"
