@@ -8,15 +8,14 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   devServer: {
-    // TODO: Baked in until frontend is migrated to Nuxt
-    port: 8080,
+    port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
   routeRules: {
     '/api/**': {
-      proxy: 'http://localhost:3000/api/**',
+      proxy: `http://localhost:${process.env.BACKEND_PORT}/api/**`,
     },
     '/repository/assets/**': {
-      proxy: 'http://localhost:3000/repository/assets/**',
+      proxy: `http://localhost:${process.env.BACKEND_PORT}/repository/assets/**`,
     },
   },
   css: [
