@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="submit" class="pt-4 px-4 text-left">
+  <form novalidate @submit.prevent="submit" class="pt-4 px-4 text-left">
     <VTextField
       v-model="emailInput"
       :disabled="!isEditing"
@@ -39,7 +39,7 @@
           type="submit"
           variant="tonal"
         >
-          Update
+          Save
         </VBtn>
       </template>
       <VBtn
@@ -71,9 +71,9 @@ const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
     email: string()
       .required()
       .email()
-      .test('unique-email', async (email) => {
-        const user = await api.fetch({ email });
-        return !user.length;
+      .test((email) => {
+        if (store.user && email === (store.user as any).email) return true;
+        return api.fetch({ email }).then(({ total }) => !total);
       }),
     firstName: string().min(2).required(),
     lastName: string().min(2).required(),
@@ -90,12 +90,15 @@ const close = () => {
 }
 
 const submit = handleSubmit(async () => {
-  await store.updateInfo({
+  return store.updateInfo({
     email: emailInput.value,
     firstName: firstNameInput.value,
     lastName: lastNameInput.value,
+  }).then(() => {
+    isEditing.value = false;
+    notify('User information updated!', { immediate: true });
+  }).catch(() => {
+    notify('Something went wrong!', { immediate: true, color: 'error' })
   });
-  isEditing.value = false;
-  notify('User information updated!', { immediate: true });
 });
 </script>

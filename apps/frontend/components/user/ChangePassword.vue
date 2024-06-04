@@ -1,5 +1,5 @@
 <template>
-  <TailorDialog v-model="isVisible" header-icon="mdi-lock">
+  <TailorDialog v-model="isVisible" header-icon="mdi-lock" persistent>
     <template #activator="{ props }">
       <VBtn
         v-bind="props"
@@ -13,7 +13,7 @@
     </template>
     <template #header>Change Password</template>
     <template #body>
-      <form @submit.prevent="submit">
+      <form novalidate @submit.prevent="submit">
         <VTextField
           v-model="currentPasswordInput"
           :error-messages="errors.currentPassword"
@@ -42,13 +42,16 @@
           class="required mb-4"
         />
         <div class="d-flex align-center pl-2 py-4">
+          <NuxtLink :to="{ name: 'forgot-password' }">
+            Forgot password ?
+          </NuxtLink>
           <VBtn @click="close" variant="text" class="ml-auto">Cancel</VBtn>
           <VBtn
             type="submit"
             color="primary-darken-4"
             variant="tonal"
           >
-            Update
+            Save
           </VBtn>
         </div>
       </form>
@@ -58,7 +61,7 @@
 
 <script lang="ts" setup>
 import TailorDialog from '@/components/common/TailorDialog.vue';
-import { object, string } from 'yup';
+import { object, string, ref as yupRef } from 'yup';
 import { useForm } from 'vee-validate';
 import { useAuthStore } from '@/stores/auth';
 
@@ -68,12 +71,17 @@ const notify = useNotification();
 const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
   validationSchema: object({
     currentPassword: string().required(),
-    newPassword: string().required().min(6).test((value, { parent }) => {
-      return value !== parent.currentPassword;
-    }),
-    passwordConfirmation: string().required().test((value, { parent }) => {
-      return value === parent.newPassword;
-    }),
+    newPassword: string()
+      .required()
+      .min(6)
+      .notOneOf(
+        [yupRef('currentPassword')],
+        'new password must be different from the current'
+      ),
+    passwordConfirmation: string()
+      .required()
+      .oneOf([yupRef('newPassword')], 'password confirmation does not match'),
+
   }),
 });
 
