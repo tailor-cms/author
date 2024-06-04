@@ -1,34 +1,87 @@
 import feed from '@/lib/RepositoryFeed';
 import { useActivityStore } from '@/stores/activity';
-import { useContentElementStore } from '@/stores/content-elements';
 import { useCommentStore } from '@/stores/comments';
+import { useContentElementStore } from '@/stores/content-elements';
+import isEqual from 'lodash/isEqual';
+
+// Report user activity every 30s
+const PING_INTERVAL = 30000;
 
 export const useSSE = () => {
-  const sseId = ref();
-  const repositoryId = ref();
+  const heartbeat = ref();
+  const sseId = ref<null | string>(null);
+
+  const route = useRoute();
   const activityStore = useActivityStore();
-  const contentElementStore = useContentElementStore();
   const commentStore = useCommentStore();
+  const contentElementStore = useContentElementStore();
+  const userTrackingStore = useUserTracking();
 
   function connect(id: number) {
     feed.connect(id, (conn: any) => {
       sseId.value = conn.id;
-      repositoryId.value = id;
       activityStore.$plugSSE();
-      contentElementStore.$plugSSE();
       commentStore.$plugSSE();
+      contentElementStore.$plugSSE();
+      userTrackingStore.$plugSSE();
+      userTrackingStore.fetch(id);
     });
   }
 
   function disconnect() {
+    clearInterval(heartbeat.value);
+    if (isTracking.value) userTrackingStore.reportEnd(trackingParameters.value);
     feed.disconnect();
     sseId.value = null;
-    repositoryId.value = null;
+    userTrackingStore.$reset();
   }
+
+  const trackingParameters = computed(() => ({
+    sseId: sseId.value,
+    repositoryId: route.params.id
+      ? parseInt(route.params.id as string, 10)
+      : null,
+    activityId: route.params.activityId
+      ? parseInt(route.params.activityId as string, 10)
+      : null,
+    elementId: route.query?.elementId,
+  }));
+
+  const isTracking = computed(() => {
+    return (
+      trackingParameters.value.sseId && trackingParameters.value.repositoryId
+    );
+  });
+
+  watch(
+    () => trackingParameters.value,
+    async (val, prevVal) => {
+      if (isEqual(val, prevVal)) return;
+      if (prevVal.sseId && prevVal.repositoryId) {
+        await userTrackingStore.reportEnd(prevVal);
+        clearInterval(heartbeat.value);
+      }
+      const { sseId, repositoryId } = val;
+      if (!sseId || !repositoryId) return;
+      await userTrackingStore.reportStart(val);
+      heartbeat.value = setInterval(
+        () => userTrackingStore.reportStart(val),
+        PING_INTERVAL,
+      );
+    },
+    { deep: true },
+  );
+
+  onBeforeUnmount(async () => {
+    if (!isTracking.value) return;
+    clearInterval(heartbeat.value);
+    await userTrackingStore.reportEnd(trackingParameters.value);
+    sseId.value = null;
+    userTrackingStore.$reset();
+  });
 
   return {
     sseId,
-    repositoryId,
     connect,
     disconnect,
   };
