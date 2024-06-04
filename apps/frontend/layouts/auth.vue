@@ -8,17 +8,17 @@
       >
         <VRow>
           <VCol
-            cols="12"
-            md="12"
-            lg="6"
             class="d-flex justify-start align-start pt-4 pl-7"
+            cols="12"
+            lg="6"
+            md="12"
           >
             <div class="d-flex align-center justify-center pt-4">
               <img :src="logoPath" alt="Logo" class="logo" width="52" />
               <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
             </div>
           </VCol>
-          <VCol cols="12" md="12" lg="6" class="auth-body py-8">
+          <VCol class="auth-body py-8" cols="12" lg="6" md="12">
             <slot></slot>
           </VCol>
         </VRow>
