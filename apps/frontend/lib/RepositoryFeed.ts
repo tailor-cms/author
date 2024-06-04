@@ -1,6 +1,7 @@
+import urlJoin from 'url-join';
+
 import { feed as api } from '@/api';
 import SSEConnection from './SSEConnection';
-import urlJoin from 'url-join';
 
 const noop = () => {};
 
@@ -50,5 +51,5 @@ class RepositoryFeed {
 }
 
 export default new RepositoryFeed({
-  baseUrl: '/api'
+  baseUrl: '/api',
 });
