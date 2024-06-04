@@ -1,9 +1,9 @@
 import { calculatePosition } from '@tailor-cms/utils';
 import { ContentElement as Events } from 'sse-event-types';
 
-import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { contentElement as api } from '@/api';
 import type { ContentElement } from '@/api/interfaces/content-element';
+import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 export type Id = number | string;
 export type StoreContentElement = ContentElement;

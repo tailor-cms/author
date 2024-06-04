@@ -73,11 +73,12 @@ export default class SSEConnection extends EventEmitter {
   }
 }
 
-SSEConnection.prototype.on = SSEConnection.prototype.addListener;
-SSEConnection.prototype.off = SSEConnection.prototype.removeListener;
-
 function createUrl(pathname: string, { searchParams = {} }) {
   const url = new URL(pathname, location.toString());
   url.search = new URLSearchParams(searchParams).toString();
   return url;
 }
+
+/* eslint-disable */
+SSEConnection.prototype.on = SSEConnection.prototype.addListener;
+SSEConnection.prototype.off = SSEConnection.prototype.removeListener;
