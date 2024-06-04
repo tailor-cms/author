@@ -5,10 +5,7 @@
     color="primary-darken-3"
     height="80"
   >
-    <NuxtLink
-      :to="{ name: 'catalog' }"
-      class="app-brand pt-2 pl-7"
-    >
+    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pt-2 pl-7">
       <img
         alt="Tailor logo"
         height="44"

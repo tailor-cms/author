@@ -56,10 +56,7 @@ export const useUserTracking = defineStore('userTracking', () => {
   });
 
   const getActiveUsers = computed(() => {
-    return (
-      entity: 'repository' | 'activity' | 'element',
-      entityId: any,
-    ) => {
+    return (entity: 'repository' | 'activity' | 'element', entityId: any) => {
       const users = activityByEntity.value[entity][entityId] || [];
       return orderBy(users, 'connectedAt', 'desc').filter(
         (user) => user.email !== authStore.user?.email,
