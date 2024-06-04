@@ -29,10 +29,7 @@ export class ActivityOutline {
   }
 
   async getOutlineItemByName(name: string) {
-    const item = this.el
-      .locator('.activity-wrapper')
-      .filter({ hasText: name })
-      .first();
+    const item = this.el.locator('.activity').filter({ hasText: name }).first();
     await expect(item).toBeVisible();
     return new OutlineItem(this.page, item);
   }
