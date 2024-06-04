@@ -3,12 +3,14 @@ import {
   calculatePosition,
   InsertLocation,
 } from '@tailor-cms/utils';
+import { Activity as Events } from 'sse-event-types';
 import findIndex from 'lodash/findIndex';
 import Hashids from 'hashids';
 import { schema } from 'tailor-config-shared';
 
 import type { Activity } from '@/api/interfaces/activity';
 import { activity as api } from '@/api';
+import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 export type Id = number | string;
 export type StoreActivity = Activity & { shortId: string };
@@ -138,6 +140,13 @@ export const useActivityStore = defineStore('activities', () => {
     return calculatePosition(context);
   }
 
+  const $plugSSE = () => {
+    sseRepositoryFeed
+      .subscribe(Events.Create, (it: Activity) => add(it))
+      .subscribe(Events.Update, (it: Activity) => add(it))
+      .subscribe(Events.Delete, (it: Activity) => $items.delete(it.uid));
+  };
+
   function $reset() {
     $items.clear();
   }
@@ -159,6 +168,7 @@ export const useActivityStore = defineStore('activities', () => {
     publish,
     reorder,
     calculateInsertPosition,
+    $plugSSE,
     $reset,
   };
 });

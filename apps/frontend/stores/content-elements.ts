@@ -1,5 +1,7 @@
 import { calculatePosition } from '@tailor-cms/utils';
+import { ContentElement as Events } from 'sse-event-types';
 
+import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { contentElement as api } from '@/api';
 import type { ContentElement } from '@/api/interfaces/content-element';
 
@@ -73,6 +75,13 @@ export const useContentElementStore = defineStore('contentElements', () => {
       .then((data) => Object.assign(storeElement, data));
   };
 
+  const $plugSSE = () => {
+    sseRepositoryFeed
+      .subscribe(Events.Create, (it: ContentElement) => add(it))
+      .subscribe(Events.Update, (it: ContentElement) => add(it))
+      .subscribe(Events.Delete, (it: ContentElement) => $items.delete(it.uid));
+  };
+
   function $reset() {
     $items.clear();
   }
@@ -87,6 +96,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     save,
     remove,
     reorder,
+    $plugSSE,
     $reset,
   };
 });

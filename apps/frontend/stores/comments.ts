@@ -1,7 +1,9 @@
+import { Comment as Events } from 'sse-event-types';
 import filter from 'lodash/filter';
 
 import { comment as api } from '@/api';
 import type { Comment } from '@/api/interfaces/comment';
+import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
 
 export type Id = number | string;
@@ -98,6 +100,13 @@ export const useCommentStore = defineStore('comments', () => {
       .then(() => fetch(repositoryId, data));
   };
 
+  const $plugSSE = () => {
+    sseRepositoryFeed
+      .subscribe(Events.Create, (it: Comment) => add(it))
+      .subscribe(Events.Update, (it: Comment) => add(it))
+      .subscribe(Events.Delete, (it: Comment) => $items.delete(it.uid));
+  };
+
   function $reset() {
     $items.clear();
     $seen.activity.clear();
@@ -118,6 +127,7 @@ export const useCommentStore = defineStore('comments', () => {
     getActivityComments,
     getUnseenActivityComments,
     updateResolvement,
+    $plugSSE,
     $reset,
   };
 });
