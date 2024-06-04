@@ -520,6 +520,9 @@ importers:
       to-case:
         specifier: ^2.0.0
         version: 2.0.0
+      url-join:
+        specifier: ^5.0.0
+        version: 5.0.0
       v-clipboard:
         specifier: 3.0.0-next.1
         version: 3.0.0-next.1(typescript@5.4.5)
@@ -554,6 +557,9 @@ importers:
       '@types/bluebird':
         specifier: ^3.5.42
         version: 3.5.42
+      '@types/debug':
+        specifier: ^4.1.12
+        version: 4.1.12
       '@types/lodash':
         specifier: ^4.17.0
         version: 4.17.0
