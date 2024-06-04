@@ -1,35 +1,32 @@
 <template>
-  <form novalidate @submit.prevent="submit" class="pt-4 px-4 text-left">
+  <form class="pt-4 px-4 text-left" novalidate @submit.prevent="submit">
     <VTextField
       v-model="emailInput"
       :disabled="!isEditing"
       :error-messages="errors.email"
+      class="required my-2"
       label="Email"
       variant="outlined"
-      class="required my-2"
     />
     <VTextField
       v-model="firstNameInput"
       :disabled="!isEditing"
       :error-messages="errors.firstName"
+      class="required my-2"
       label="First name"
       variant="outlined"
-      class="required my-2"
     />
     <VTextField
       v-model="lastNameInput"
       :disabled="!isEditing"
       :error-messages="errors.lastName"
+      class="required my-2"
       label="Last name"
       variant="outlined"
-      class="required my-2"
     />
     <div class="d-flex justify-end pb-3">
       <template v-if="isEditing">
-        <VBtn
-          @click="close"
-          color="primary-darken-4"
-          variant="text">
+        <VBtn color="primary-darken-4" variant="text" @click="close">
           Cancel
         </VBtn>
         <VBtn
@@ -44,10 +41,11 @@
       </template>
       <VBtn
         v-else
-        @click="isEditing = true"
         color="primary-darken-4"
         type="submit"
-        variant="tonal">
+        variant="tonal"
+        @click="isEditing = true"
+      >
         Edit
       </VBtn>
     </div>
@@ -56,10 +54,11 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
-import { useForm } from 'vee-validate';
-import { useAuthStore } from '@/stores/auth';
-import { user as api } from '@/api';
 import pick from 'lodash/pick';
+import { useForm } from 'vee-validate';
+
+import { user as api } from '@/api';
+import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();
 const notify = useNotification();
@@ -87,18 +86,21 @@ const [lastNameInput] = defineField('lastName');
 const close = () => {
   resetForm();
   isEditing.value = false;
-}
+};
 
-const submit = handleSubmit(async () => {
-  return store.updateInfo({
-    email: emailInput.value,
-    firstName: firstNameInput.value,
-    lastName: lastNameInput.value,
-  }).then(() => {
-    isEditing.value = false;
-    notify('User information updated!', { immediate: true });
-  }).catch(() => {
-    notify('Something went wrong!', { immediate: true, color: 'error' })
-  });
+const submit = handleSubmit(() => {
+  store
+    .updateInfo({
+      email: emailInput.value,
+      firstName: firstNameInput.value,
+      lastName: lastNameInput.value,
+    })
+    .then(() => {
+      isEditing.value = false;
+      notify('User information updated!', { immediate: true });
+    })
+    .catch(() => {
+      notify('Something went wrong!', { immediate: true, color: 'error' });
+    });
 });
 </script>

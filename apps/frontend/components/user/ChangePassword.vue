@@ -3,10 +3,10 @@
     <template #activator="{ props }">
       <VBtn
         v-bind="props"
+        class="mt-4"
         color="primary-darken-4"
         prepend-icon="mdi-lock"
         variant="tonal"
-        class="mt-4"
       >
         Change Password
       </VBtn>
@@ -17,40 +17,36 @@
         <VTextField
           v-model="currentPasswordInput"
           :error-messages="errors.currentPassword"
-          type="password"
+          class="required my-4"
           label="Current password"
           placeholder="Enter current password..."
+          type="password"
           variant="outlined"
-          class="required my-4"
         />
         <VTextField
           v-model="newPasswordInput"
           :error-messages="errors.newPassword"
-          type="password"
+          class="required mb-4"
           label="New password"
           placeholder="Enter new password..."
+          type="password"
           variant="outlined"
-          class="required mb-4"
         />
         <VTextField
           v-model="passwordConfirmationInput"
           :error-messages="errors.passwordConfirmation"
-          type="password"
+          class="required mb-4"
           label="Confirm new password"
           placeholder="Confirm new password..."
+          type="password"
           variant="outlined"
-          class="required mb-4"
         />
         <div class="d-flex align-center pl-2 py-4">
           <NuxtLink :to="{ name: 'forgot-password' }">
             Forgot password ?
           </NuxtLink>
-          <VBtn @click="close" variant="text" class="ml-auto">Cancel</VBtn>
-          <VBtn
-            type="submit"
-            color="primary-darken-4"
-            variant="tonal"
-          >
+          <VBtn class="ml-auto" variant="text" @click="close">Cancel</VBtn>
+          <VBtn color="primary-darken-4" type="submit" variant="tonal">
             Save
           </VBtn>
         </div>
@@ -60,15 +56,18 @@
 </template>
 
 <script lang="ts" setup>
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import { object, string, ref as yupRef } from 'yup';
 import { useForm } from 'vee-validate';
+
+import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useAuthStore } from '@/stores/auth';
+
+const isVisible = ref(false);
 
 const store = useAuthStore();
 const notify = useNotification();
 
-const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
+const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
     currentPassword: string().required(),
     newPassword: string()
@@ -76,33 +75,32 @@ const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
       .min(6)
       .notOneOf(
         [yupRef('currentPassword')],
-        'new password must be different from the current'
+        'new password must be different from the current',
       ),
     passwordConfirmation: string()
       .required()
       .oneOf([yupRef('newPassword')], 'password confirmation does not match'),
-
   }),
 });
-
-const isVisible = ref(false);
 
 const [currentPasswordInput] = defineField('currentPassword');
 const [newPasswordInput] = defineField('newPassword');
 const [passwordConfirmationInput] = defineField('passwordConfirmation');
 
-
-const submit = handleSubmit(async () => {
-  return store.changePassword({
-    currentPassword: currentPasswordInput.value,
-    newPassword: newPasswordInput.value,
-  }).then(() => {
-    notify('Password changed!', { immediate: true });
-    store.logout();
-    navigateTo('/auth');
-  }).catch(() => {
-    notify('Failed to change password!', { immediate: true, color: 'error' })
-  });
+const submit = handleSubmit(() => {
+  store
+    .changePassword({
+      currentPassword: currentPasswordInput.value,
+      newPassword: newPasswordInput.value,
+    })
+    .then(() => {
+      notify('Password changed!', { immediate: true });
+      store.logout();
+      navigateTo('/auth');
+    })
+    .catch(() => {
+      notify('Failed to change password!', { immediate: true, color: 'error' });
+    });
 });
 
 const close = () => {

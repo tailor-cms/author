@@ -4,13 +4,13 @@
       <VSheet color="primary-lighten-4" rounded="lg">
         <VLayout>
           <VRow class="ma-2">
-            <VCol cols="12" md="4" class="d-flex flex-column align-center">
+            <VCol class="d-flex flex-column align-center" cols="12" md="4">
               <UserAvatar />
               <ChangePassword />
             </VCol>
             <VCol>
               <VSheet rounded="lg">
-                <Info />
+                <UserInfo />
               </VSheet>
             </VCol>
           </VRow>
@@ -22,8 +22,8 @@
 
 <script setup lang="ts">
 import ChangePassword from '@/components/user/ChangePassword.vue';
-import Info from '@/components/user/info.vue';
 import UserAvatar from '@/components/user/Avatar/index.vue';
+import UserInfo from '@/components/user/UserInfo.vue';
 
 definePageMeta({
   name: 'user-profile',

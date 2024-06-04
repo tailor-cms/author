@@ -1,27 +1,21 @@
 <template>
   <VSpeedDial location="right" target="#avatar" attach>
     <template #activator="{ props: activatorProps }">
-      <VHover #default="{ isHovering, props }">
+      <VHover v-slot="{ isHovering, props }">
         <VAvatar id="avatar" v-bind="props" size="200">
           <VImg :src="image" />
           <VIcon
             v-if="isHovering"
             v-bind="activatorProps"
             class="overlay"
+            color="white"
             icon="mdi-camera"
             size="x-large"
-            color="white"
           />
         </VAvatar>
       </VHover>
     </template>
-    <VBtn
-      key="1"
-      for="photoInput"
-      small
-      icon
-      tag="label"
-    >
+    <VBtn key="1" for="photoInput" tag="label" icon small>
       <VIcon>mdi-upload</VIcon>
       <input
         id="photoInput"
@@ -29,37 +23,35 @@
         accept="image/*"
         name="photo"
         type="file"
-        @change="selectPhoto"
         hidden
+        @change="selectPhoto"
       />
     </VBtn>
     <VBtn
       v-if="!isGravatar"
       key="2"
-      @click="deleteAvatar"
       color="secondary-lighten-1"
-      small
       icon="mdi-delete"
+      small
+      @click="deleteAvatar"
     />
   </VSpeedDial>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
-import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
-import { useAuthStore } from '@/stores/auth';
+import { computed, ref } from 'vue';
 import Compressor from 'compressorjs';
-// import AvatarDialog from '@/components/user/Avatar/AvatarDialog.vue';
+
+import { useAuthStore } from '@/stores/auth';
+import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
+
+const fileInput = ref();
 
 const store = useAuthStore();
 const notify = useNotification();
 
 const image = computed(() => (store.user as any).imgUrl);
 const isGravatar = computed(() => /gravatar.com/.test(image.value));
-const isHovered = ref(false);
-const fileInput = ref();
-
-const selectAvatar = () => fileInput.value.$refs.fileInput.click();
 
 const updateAvatar = (imgUrl?: string) => {
   return store.updateInfo({ imgUrl }).then(() => {
@@ -76,25 +68,28 @@ const deleteAvatar = () => {
   });
 };
 
-const selectPhoto = (event) => {
-  const file = event.target?.files[0];
-  new Compressor(file, {
+const selectPhoto = (event: Event) => {
+  const { files } = event.target as HTMLInputElement;
+  if (!files?.length) return;
+  return new Compressor(files[0], {
     width: 250,
     height: 250,
     success: async (result) => {
       const imageUrl = await toBase64(result);
       updateAvatar(imageUrl);
     },
-    error: (err) => console.log(err.message),
+    error: (err) => notify(err.message, { immediate: true, color: 'error' }),
   });
-}
+};
 
-const toBase64 = file => new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = () => resolve(reader.result);
-  reader.onerror = reject;
-});
+const toBase64 = (file: Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -104,7 +99,8 @@ $image-width: 12.5rem;
 $image-height: 12.5rem;
 
 .v-avatar ::v-deep {
-  img, .v-icon {
+  img,
+  .v-icon {
     border: $image-border;
     border-radius: 50%;
     background-color: $image-bg-color;
