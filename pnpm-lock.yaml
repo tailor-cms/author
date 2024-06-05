@@ -478,6 +478,9 @@ importers:
       bluebird:
         specifier: ^3.7.2
         version: 3.7.2
+      compressorjs:
+        specifier: ^1.2.1
+        version: 1.2.1
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -527,8 +530,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(vue@3.4.23(typescript@5.4.5))
       vuetify:
-        specifier: 3.5.16
-        version: 3.5.16(typescript@5.4.5)(vue@3.4.23(typescript@5.4.5))
+        specifier: 3.6.8
+        version: 3.6.8(typescript@5.4.5)(vue@3.4.23(typescript@5.4.5))
       yup:
         specifier: ^1.4.0
         version: 1.4.0
@@ -4063,6 +4066,9 @@ packages:
   bluebird@3.7.2:
     resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
 
+  blueimp-canvas-to-blob@3.29.0:
+    resolution: {integrity: sha512-0pcSSGxC0QxT+yVkivxIqW0Y4VlO2XSDPofBAqoJ1qJxgH9eiUDLv50Rixij2cDuEfx4M6DpD9UGZpRhT5Q8qg==}
+
   blueimp-md5@2.19.0:
     resolution: {integrity: sha512-DRQrD6gJyy8FbiE4s+bDoXS9hiW3Vbx5uCdwvcCf3zLHL+Iv7LtGHLpr+GZV8rHG8tK766FGYBwRbu8pELTt+w==}
 
@@ -4415,6 +4421,9 @@ packages:
   compress-commons@5.0.1:
     resolution: {integrity: sha512-MPh//1cERdLtqwO3pOFLeXtpuai0Y2WCd5AhtKxznqM7WtaMYaOEMSgn45d9D10sIHSfIKE603HlOp8OPGrvag==}
     engines: {node: '>= 12.0.0'}
+
+  compressorjs@1.2.1:
+    resolution: {integrity: sha512-+geIjeRnPhQ+LLvvA7wxBQE5ddeLU7pJ3FsKFWirDw6veY3s9iLxAQEw7lXGHnhCJvBujEQWuNnGzZcvCvdkLQ==}
 
   concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
@@ -6296,6 +6305,10 @@ packages:
   is-binary-path@2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
     engines: {node: '>=8'}
+
+  is-blob@2.1.0:
+    resolution: {integrity: sha512-SZ/fTft5eUhQM6oF/ZaASFDEdbFVe89Imltn9uZr03wdKMcWNVYSMjQPFtg05QuNkt5l5c135ElvXEQG0rk4tw==}
+    engines: {node: '>=6'}
 
   is-boolean-object@1.1.2:
     resolution: {integrity: sha512-gDYaKHJmnj4aWxyj6YHyXVpdQawtVLHU5cb+eztPGczf6cjuTdwve5ZIEfgXqH4e57An1D1AKf8CZ3kYrQRqYA==}
@@ -9820,15 +9833,15 @@ packages:
       webpack-plugin-vuetify:
         optional: true
 
-  vuetify@3.5.16:
-    resolution: {integrity: sha512-jyApfATreFMkgjvK0bL7ntZnr+p9TU73+4E3kX6fIvUitdAP9fltG7yj+v3k14HLqZRSNhTL1GhQ95DFx631zw==}
+  vuetify@3.5.4:
+    resolution: {integrity: sha512-fHgfWMI7+z/UtbVPOezX+O1MNBOOMBW9HnKejcBIyQQ7jFRnTHbDQmbINf25FK0wrg/zkjfzyOmWWREKW39eXg==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
-      vite-plugin-vuetify: '>=1.0.0'
+      vite-plugin-vuetify: '>=1.0.0-alpha.12'
       vue: ^3.3.0
       vue-i18n: ^9.0.0
-      webpack-plugin-vuetify: '>=2.0.0'
+      webpack-plugin-vuetify: '>=2.0.0-alpha.11'
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -9839,15 +9852,15 @@ packages:
       webpack-plugin-vuetify:
         optional: true
 
-  vuetify@3.5.4:
-    resolution: {integrity: sha512-fHgfWMI7+z/UtbVPOezX+O1MNBOOMBW9HnKejcBIyQQ7jFRnTHbDQmbINf25FK0wrg/zkjfzyOmWWREKW39eXg==}
+  vuetify@3.6.8:
+    resolution: {integrity: sha512-j0v0iTeSVRj2ZEM9Q8HxejHxmxrQLYQSalhH82hfcraORaiDoqf1XV05N3P5ERXkKiJjJc/LfxFAUUvYSldxeg==}
     engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
-      vite-plugin-vuetify: '>=1.0.0-alpha.12'
+      vite-plugin-vuetify: '>=1.0.0'
       vue: ^3.3.0
       vue-i18n: ^9.0.0
-      webpack-plugin-vuetify: '>=2.0.0-alpha.11'
+      webpack-plugin-vuetify: '>=2.0.0'
     peerDependenciesMeta:
       typescript:
         optional: true
@@ -14853,6 +14866,8 @@ snapshots:
 
   bluebird@3.7.2: {}
 
+  blueimp-canvas-to-blob@3.29.0: {}
+
   blueimp-md5@2.19.0: {}
 
   body-parser@1.20.2:
@@ -15294,6 +15309,11 @@ snapshots:
       crc32-stream: 5.0.0
       normalize-path: 3.0.0
       readable-stream: 3.6.2
+
+  compressorjs@1.2.1:
+    dependencies:
+      blueimp-canvas-to-blob: 3.29.0
+      is-blob: 2.1.0
 
   concat-map@0.0.1: {}
 
@@ -17584,6 +17604,8 @@ snapshots:
   is-binary-path@2.1.0:
     dependencies:
       binary-extensions: 2.2.0
+
+  is-blob@2.1.0: {}
 
   is-boolean-object@1.1.2:
     dependencies:
@@ -21758,15 +21780,15 @@ snapshots:
     optionalDependencies:
       typescript: 5.4.5
 
-  vuetify@3.5.16(typescript@5.4.5)(vue@3.4.23(typescript@5.4.5)):
-    dependencies:
-      vue: 3.4.23(typescript@5.4.5)
-    optionalDependencies:
-      typescript: 5.4.5
-
   vuetify@3.5.4(typescript@5.4.5)(vue@3.3.11(typescript@5.4.5)):
     dependencies:
       vue: 3.3.11(typescript@5.4.5)
+    optionalDependencies:
+      typescript: 5.4.5
+
+  vuetify@3.6.8(typescript@5.4.5)(vue@3.4.23(typescript@5.4.5)):
+    dependencies:
+      vue: 3.4.23(typescript@5.4.5)
     optionalDependencies:
       typescript: 5.4.5
 

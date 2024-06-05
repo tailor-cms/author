@@ -139,7 +139,7 @@
 </template>
 
 <script lang="ts" setup>
-import { array, object, string } from 'yup';
+import { mixed, object, string } from 'yup';
 import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from 'tailor-config-shared';
 import { useForm } from 'vee-validate';
@@ -180,7 +180,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
     }),
     name: string().required().min(2).max(2000),
     description: string().required().min(2).max(2000),
-    archive: array().when((_, schema) => {
+    archive: mixed().when((_, schema) => {
       return selectedTab.value === IMPORT_TAB
         ? schema.required()
         : schema.notRequired();
@@ -248,7 +248,7 @@ const createActvities = (
 const importRepository = async ({ archive, name, description }: any) => {
   try {
     const form = new FormData();
-    form.append('archive', archive[0]);
+    form.append('archive', archive);
     form.append('name', name);
     form.append('description', description);
     const headers = { 'content-type': 'multipart/form-data' };
