@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
   devtools: { enabled: true },
+  telemetry: false,
   devServer: {
     port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
