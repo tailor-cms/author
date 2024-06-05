@@ -10,20 +10,16 @@
     offset-y
   >
     <template #activator="{ props: menuProps }">
-      <VTooltip location="left" open-delay="800">
+      <VTooltip location="left" open-delay="1000">
         <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="{ ...menuProps, ...tooltipProps }"
             :class="activator?.class"
+            :color="activator?.color"
             :icon="activator?.icon"
             size="x-small"
             variant="tonal"
-          >
-            <div v-if="activator.text" class="unseen">{{ activator.text }}</div>
-            <VIcon v-else :color="activator.color" size="18">
-              {{ activator.icon }}
-            </VIcon>
-          </VBtn>
+          />
         </template>
         <span>{{ activator.tooltip }}</span>
       </VTooltip>
@@ -59,9 +55,12 @@ import Discussion from './Discussion/index.vue';
 
 const getActivatorOptions = (unseenComments: any) => ({
   unseen: {
-    class: 'teal-accent-4 text-white',
     tooltip: 'View new comments',
-    text: unseenComments.length,
+    color: 'primary-darken-2',
+    icon:
+      unseenComments.length > 9
+        ? 'mdi-numeric-9-plus-box-multiple'
+        : `mdi-numeric-${unseenComments.length}-box-multiple`,
   },
   preview: {
     icon: 'mdi-comment-text-multiple-outline',
