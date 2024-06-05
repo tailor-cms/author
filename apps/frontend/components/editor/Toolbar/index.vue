@@ -30,7 +30,11 @@
             </VChip>
           </template>
         </h1>
-        <!-- <ActiveUsers v-if="!showPublishDiff" :users="activeUsers" class="mx-6" /> -->
+        <ActiveUsers
+          v-if="!showPublishDiff"
+          :users="usersWithActivity"
+          class="mx-4"
+        />
       </div>
       <ElementToolbarContainer
         v-if="element"
@@ -42,15 +46,15 @@
 </template>
 
 <script lang="ts" setup>
-// TODO: Needs to be implemented
-// import ActiveUsers from '@tailor-cms/core-components';
+import { ActiveUsers } from '@tailor-cms/core-components-next';
+
 import ActivityActions from './ActivityActions.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import { useEditorStore } from '@/stores/editor';
+import { useUserTracking } from '@/stores/user-tracking';
 
 defineProps({
   element: { type: Object, default: null },
-  activeUsers: { type: Array, default: () => [] },
 });
 
 const { $schemaService } = useNuxtApp() as any;
@@ -59,10 +63,19 @@ const { $schemaService } = useNuxtApp() as any;
 const showPublishDiff = false;
 
 const editorStore = useEditorStore();
+const userTrackingStore = useUserTracking();
+
 const activity = computed(() => editorStore.selectedActivity);
 const config = computed(
   () => activity.value && $schemaService.getLevel(activity.value?.type),
 );
+
+const usersWithActivity = computed(() => {
+  return userTrackingStore.getActiveUsers(
+    'activity',
+    editorStore.selectedActivity?.id,
+  );
+});
 </script>
 
 <style lang="scss" scoped>
