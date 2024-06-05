@@ -24,7 +24,7 @@
         class="ml-auto " />
     </div> -->
     <!-- TODO: Enable upon user activity tracking implementation -->
-    <!-- <ActiveUsers :users="activeUsers" :size="20" class="active-users" /> -->
+    <ActiveUsers :users="activeUsers" :size="20" class="active-users" />
     <component
       v-bind="{
         ...$attrs,
@@ -84,9 +84,9 @@ import {
 } from 'vue';
 import { getComponentName, getElementId } from '@tailor-cms/utils';
 
+import ActiveUsers from './ActiveUsers.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 // TODO: Add upon user activity tracking & discussion implementation
-// import ActiveUsers from './ActiveUsers.vue';
 // import PublishDiffChip from './PublishDiffChip.vue';
 
 const props = defineProps({
@@ -148,25 +148,41 @@ onMounted(() => {
   const deferSaveFlag = () => setTimeout(() => (isSaving.value = false), 1000);
   elementBus.on('saved', deferSaveFlag);
 
-  editorBus.on('element:select', ({ elementId, isSelected = true, user }) => {
-    isFocused.value = id.value === elementId;
-    // // TODO: Add upon user activity tracking implementation
-    // if (!user || user.id === currentUser.value?.id) {
-    //   isFocused.value = isSelected;
-    //   if (isSelected) focus();
-    //   return;
-    // }
-    // if (isSelected && !activeUsers.value.find((it: any) => it.id === user.id)) {
-    //   activeUsers.value.push(user);
-    // } else if (
-    //   !isSelected &&
-    //   activeUsers.value.find((it) => it.id === user.id)
-    // ) {
-    //   activeUsers.value = activeUsers.value.filter((it) => it.id !== user.id);
-    // }
-  });
+  editorBus.on(
+    'element:select',
+    ({
+      elementId,
+      isSelected = true,
+      user,
+    }: {
+      elementId: string;
+      isSelected: boolean;
+      user: any;
+    }) => {
+      // If not this element; return
+      if (id.value !== elementId) return;
+      // If selection event by the current user; handle focus & return
+      if (!user || user?.id === currentUser?.id) {
+        if (isSelected) focus();
+        else isFocused.value = false;
+        return;
+      }
+      // If other user; update active users
+      if (
+        isSelected &&
+        !activeUsers.value.find((it: any) => it.id === user.id)
+      ) {
+        activeUsers.value.push(user);
+      } else if (
+        !isSelected &&
+        activeUsers.value.find((it) => it.id === user.id)
+      ) {
+        activeUsers.value = activeUsers.value.filter((it) => it.id !== user.id);
+      }
+    },
+  );
 
-  editorBus.on('element:focus', (element) => {
+  editorBus.on('element:focus', (element: any) => {
     isFocused.value = !!element && getElementId(element) === id.value;
   });
 });
