@@ -7,7 +7,7 @@
       color="primary-lighten-3"
       size="small"
       variant="tonal"
-      closeable
+      closable
       rounded
       @click="seen"
       @click:close="seen"

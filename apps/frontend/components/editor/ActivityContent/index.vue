@@ -144,8 +144,8 @@ const elementsWithComments = computed(() => {
         (comment) => comment.contentElement?.uid === element.uid,
       );
       const lastSeen = max([
-        commentStore.$seen.contentElement.get(element.uid) || 0,
-        commentStore.$seen.activity.get(props.activity?.uid) || 0,
+        commentStore.$seen.contentElement[element.uid] || 0,
+        commentStore.$seen.activity[props.activity?.uid] || 0,
       ]);
       const hasUnresolvedComments = !!comments.length;
       elementMap[element.uid] = {
