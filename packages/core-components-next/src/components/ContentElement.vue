@@ -24,7 +24,7 @@
         class="ml-auto " />
     </div> -->
     <!-- TODO: Enable upon user activity tracking implementation -->
-    <ActiveUsers :users="activeUsers" :size="20" class="active-users" />
+    <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <component
       v-bind="{
         ...$attrs,

@@ -41,13 +41,18 @@
 </template>
 
 <script lang="ts" setup>
+import differenceBy from 'lodash/differenceBy';
 import find from 'lodash/find';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
+import isEqual from 'lodash/isEqual';
+import map from 'lodash/map';
 import max from 'lodash/max';
 import pMinDelay from 'p-min-delay';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
+import uniqBy from 'lodash/uniqBy';
+import without from 'lodash/without';
 
 import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
@@ -61,19 +66,7 @@ import { useCommentStore } from '@/stores/comments';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
-
-// TODO: Add once collab features are implemented
-// import differenceBy from 'lodash/differenceBy';
-// import isEqual from 'lodash/isEqual';
-// import { isQuestion } from '@tailor-cms/utils';
-// import { loader } from '@tailor-cms/core-components';
-// import commentEventListeners from 'components/common/mixins/commentEventListeners';
-// const CE_MODULE = 'repository/contentElements';
-// const ELEMENT_MUTATIONS = [
-//   `${CE_MODULE}/save`,
-//   `${CE_MODULE}/add`,
-//   `${CE_MODULE}/update`,
-// ];
+import { useUserTracking } from '@/stores/user-tracking';
 
 const CE_FOCUS_EVENT = 'element:focus';
 const CE_SELECT_EVENT = 'element:select';
@@ -100,6 +93,7 @@ const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
 const commentStore = useCommentStore();
 const storageService = useStorageService();
+const userTrackingStore = useUserTracking();
 
 const doTheMagic = ({ type }: { type: string }) => {
   if (!type) throw new Error('Type is required');
@@ -168,6 +162,27 @@ const elementsWithComments = computed(() => {
 const containerConfigs = computed(() => {
   if (!props.activity) return [];
   return $schemaService.getSupportedContainers(props.activity.type);
+});
+
+const collaboratorSelections = computed(() => {
+  if (!props.activity) return [];
+  const entityState = userTrackingStore.activityByEntity.activity;
+  const activeUserIds = without(
+    map(entityState[props.activity.id], 'id'),
+    authStore.user?.id,
+  );
+  if (!activeUserIds.length) return [];
+  const selections = userTrackingStore.users
+    .filter((it) => activeUserIds.includes(it.id))
+    .reduce(
+      (acc, { contexts = [], ...user }) => [
+        ...acc,
+        ...contexts.map((it) => ({ ...user, ...it })),
+      ],
+      [] as any[],
+    )
+    .filter((it) => it.elementId && it.activityId === props.activity?.id);
+  return uniqBy(selections, (it: any) => `${it.elementId}-${it.id}`);
 });
 
 const getContainerConfig = (type: string) => {
@@ -268,10 +283,9 @@ watch(isLoading, (val) => {
   if (val) return;
   setTimeout(() => {
     revealElement();
-    // TODO: Add once collab feature is implemented
-    // collaboratorSelections.forEach(({ elementId, ...user }) =>
-    //   selectElement(elementId, user),
-    // );
+    collaboratorSelections.value.forEach(({ elementId, ...user }) =>
+      selectElement(elementId, user),
+    );
   }, CE_SELECTION_DELAY);
 });
 
@@ -287,24 +301,23 @@ watch(showPublishDiff, (isOn) => {
   editorChannel.emit(CE_FOCUS_EVENT);
 });
 
-// TODO: Add once collab features are implemented
-// watch(collaboratorSelections, (val, prevVal) => {
-//   if (isLoading.value || isEqual(val, prevVal)) return;
-//   const selectionComparator = (it) => `${it.elementId}-${it.id}`;
-//   const removeSelection = differenceBy(prevVal, val, selectionComparator);
-//   const isSelected = differenceBy(val, prevVal, selectionComparator);
-//   [
-//     [removeSelection, false],
-//     [isSelected, true],
-//   ].forEach(([items, isSelected]) => {
-//     items.forEach(({ elementId, ...user }) =>
-//       selectElement(elementId, user, isSelected),
-//     );
-//   });
-// });
+watch(collaboratorSelections, (val, prevVal) => {
+  if (isLoading.value || isEqual(val, prevVal)) return;
+  const selectionComparator = (it: any) => `${it.elementId}-${it.id}`;
+  const removeSelection = differenceBy(prevVal, val, selectionComparator);
+  const isSelected = differenceBy(val, prevVal, selectionComparator);
+  [
+    [removeSelection, false],
+    [isSelected, true],
+  ].forEach(([items, isSelected]: any) => {
+    items.forEach(({ elementId, ...user }: any) =>
+      selectElement(elementId, user, isSelected),
+    );
+  });
+});
 
 // TODO: Delay mark seen comments
-editorChannel.on('comment', (val) => editorStore.processCommentEvent(val));
+editorChannel.on('comment', (val: any) => editorStore.processCommentEvent(val));
 
 onBeforeMount(async () => {
   await loadContents();
