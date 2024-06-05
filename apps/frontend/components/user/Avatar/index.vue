@@ -3,10 +3,11 @@
     <template #activator="{ props: activatorProps }">
       <VHover v-slot="{ isHovering, props }">
         <VAvatar id="avatar" v-bind="props" size="200">
-          <VImg :src="image" />
+          <img :src="image" alt="Avatar" />
           <VIcon
             v-if="isHovering"
             v-bind="activatorProps"
+            aria-label="Change avatar"
             class="overlay"
             color="white"
             icon="mdi-camera"
@@ -15,7 +16,14 @@
         </VAvatar>
       </VHover>
     </template>
-    <VBtn key="1" for="photoInput" tag="label" icon small>
+    <VBtn
+      key="1"
+      aria-label="Upload avatar"
+      for="photoInput"
+      tag="label"
+      icon
+      small
+    >
       <VIcon>mdi-upload</VIcon>
       <input
         id="photoInput"
@@ -30,6 +38,7 @@
     <VBtn
       v-if="!isGravatar"
       key="2"
+      aria-label="Delete avatar"
       color="secondary-lighten-1"
       icon="mdi-delete"
       small
