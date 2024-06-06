@@ -2,15 +2,17 @@
   <div class="unseen-divider">
     <VDivider />
     <VChip
+      class="mt-4 mb-1 text-uppercase"
       close-icon="mdi-close"
-      color="teal-accent-4"
+      color="primary-lighten-3"
       size="small"
-      variant="outlined"
-      closeable
+      variant="tonal"
+      closable
+      rounded
       @click="seen"
       @click:close="seen"
     >
-      <VIcon class="mr-1" size="14">mdi-arrow-down</VIcon>
+      <VIcon class="mr-1" size="16">mdi-arrow-down</VIcon>
       <span class="mr-2">{{ unseenCommentsLabel }}</span>
     </VChip>
   </div>

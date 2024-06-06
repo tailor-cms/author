@@ -1,6 +1,6 @@
 <template>
   <div class="repo-container">
-    <div class="mb-1 primary-darken-2 elevation-1">
+    <div class="d-flex mb-1 primary-darken-2 elevation-1">
       <VTabs
         bg-color="primary-darken-3"
         class="text-primary-lighten-3"
@@ -23,6 +23,8 @@
           {{ tab.name }}
         </VTab>
       </VTabs>
+      <VSpacer />
+      <ActiveUsers :users="activeUsers" class="mr-7" size="36" />
     </div>
     <div class="tab-content">
       <NuxtPage />
@@ -31,13 +33,17 @@
 </template>
 
 <script lang="ts" setup>
+import { ActiveUsers } from '@tailor-cms/core-components-next';
+
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useUserTracking } from '@/stores/user-tracking';
 
 definePageMeta({
   middleware: ['auth'],
 });
 
 const currentRepositoryStore = useCurrentRepository();
+const userTrackingStore = useUserTracking();
 
 useHead({
   title: currentRepositoryStore.repository?.name,
@@ -88,6 +94,13 @@ const tabs = computed(() => {
     hasActivities: !!currentRepositoryStore.activities.length,
     query: {},
   });
+});
+
+const activeUsers = computed(() => {
+  return userTrackingStore.getActiveUsers(
+    'repository',
+    currentRepositoryStore.repositoryId as number,
+  );
 });
 </script>
 
