@@ -4,7 +4,11 @@
       <VSheet color="primary-lighten-4" rounded="lg">
         <VLayout>
           <VRow class="ma-2">
-            <VCol class="d-flex flex-column align-center" cols="12" md="4">
+            <VCol
+              class="d-flex flex-column align-center justify-center"
+              cols="12"
+              md="5"
+            >
               <UserAvatar />
               <ChangePassword />
             </VCol>
@@ -33,6 +37,6 @@ definePageMeta({
 
 <style lang="scss" scoped>
 .user-panel {
-  max-width: 1000px;
+  max-width: 1200px;
 }
 </style>
