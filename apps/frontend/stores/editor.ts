@@ -51,6 +51,7 @@ export const useEditorStore = defineStore('editor', () => {
 
   const initialize = async (activityId: number) => {
     await activityStore.fetch(repositoryId.value, { activityId });
+    $reset();
     selectedActivityId.value = activityId;
   };
 
@@ -80,6 +81,8 @@ export const useEditorStore = defineStore('editor', () => {
 
   function $reset() {
     selectedActivityId.value = null;
+    selectedContentElementId.value = null;
+    selectedContentElement.value = null;
   }
 
   return {

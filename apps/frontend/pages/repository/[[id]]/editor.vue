@@ -53,12 +53,6 @@ const initializeCommentStore = (activityId: number) => {
   return commentStore.fetch(editorStore.repositoryId as number, { activityId });
 };
 
-onBeforeMount(() => {
-  const activityId = parseActivityId();
-  editorStore.initialize(activityId);
-  initializeCommentStore(activityId);
-});
-
 watch(
   () => route.params?.activityId,
   () => {
@@ -66,6 +60,17 @@ watch(
     initializeCommentStore(activityId);
   },
 );
+
+onBeforeMount(() => {
+  const activityId = parseActivityId();
+  editorStore.initialize(activityId);
+  initializeCommentStore(activityId);
+});
+
+onUnmounted(() => {
+  editorStore.$reset();
+  commentStore.$reset();
+});
 </script>
 
 <style lang="scss" scoped>

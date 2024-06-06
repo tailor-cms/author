@@ -1,7 +1,10 @@
+import { Comment as Events } from 'sse-event-types';
 import filter from 'lodash/filter';
+import { useStorage } from '@vueuse/core';
 
 import { comment as api } from '@/api';
 import type { Comment } from '@/api/interfaces/comment';
+import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
 
 export type Id = number | string;
@@ -9,12 +12,12 @@ export type FoundComment = Comment | undefined;
 
 export const useCommentStore = defineStore('comments', () => {
   const $items = reactive(new Map<string, Comment>());
-  const $seen = reactive({
-    activity: new Map<string, number>(),
-    contentElement: new Map<string, number>(),
-  });
-
   const items = computed(() => Array.from($items.values()));
+
+  const $seen = useStorage('tailor-cms-comments-seen', {
+    activity: {},
+    contentElement: {},
+  });
 
   function findById(id: Id): FoundComment {
     if (typeof id === 'string') return $items.get(id);
@@ -68,7 +71,7 @@ export const useCommentStore = defineStore('comments', () => {
   const getUnseenActivityComments = (activity: any) => {
     const authStore = useAuthStore();
     const activityComments = getActivityComments(activity.id);
-    const activitySeenAt = $seen.activity.get(activity.uid) || 0;
+    const activitySeenAt = $seen.value.activity[activity.uid] || 0;
     return filter(activityComments, (it) => {
       const isAuthor = it.author.id === authStore.user?.id;
       const createdAt = new Date(it.createdAt).getTime();
@@ -76,7 +79,7 @@ export const useCommentStore = defineStore('comments', () => {
       if (!it.contentElement) return true;
       // Return unseen activity comment if contentElement is not set
       const elementSeenAt =
-        $seen.contentElement.get(it.contentElement.uid) || 0;
+        $seen.value.contentElement[it.contentElement.uid] || 0;
       return elementSeenAt < createdAt;
     });
   };
@@ -89,7 +92,7 @@ export const useCommentStore = defineStore('comments', () => {
     const { activityUid, elementUid, lastCommentAt } = payload;
     const entity = elementUid ? 'contentElement' : 'activity';
     const resolvedKey = elementUid || (activityUid as string);
-    $seen[entity].set(resolvedKey, lastCommentAt);
+    $seen.value[entity][resolvedKey] = lastCommentAt;
   };
 
   const updateResolvement = (repositoryId: number, data: any) => {
@@ -98,10 +101,15 @@ export const useCommentStore = defineStore('comments', () => {
       .then(() => fetch(repositoryId, data));
   };
 
+  const $subscribeToSSE = () => {
+    sseRepositoryFeed
+      .subscribe(Events.Create, (it: Comment) => add(it))
+      .subscribe(Events.Update, (it: Comment) => add(it))
+      .subscribe(Events.Delete, (it: Comment) => $items.delete(it.uid));
+  };
+
   function $reset() {
     $items.clear();
-    $seen.activity.clear();
-    $seen.contentElement.clear();
   }
 
   return {
@@ -118,6 +126,7 @@ export const useCommentStore = defineStore('comments', () => {
     getActivityComments,
     getUnseenActivityComments,
     updateResolvement,
+    $subscribeToSSE,
     $reset,
   };
 });
