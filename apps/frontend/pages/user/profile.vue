@@ -37,6 +37,6 @@ definePageMeta({
 
 <style lang="scss" scoped>
 .user-panel {
-  max-width: 1200px;
+  max-width: 75rem;
 }
 </style>
