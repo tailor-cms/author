@@ -112,7 +112,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
     email: string()
       .required()
       .email()
-      .notOneOf(props.users.map((user: any) => user.email)),
+      .test((email) => api.fetch({ email }).then(({ total }) => !total)),
     firstName: string().min(2).required(),
     lastName: string().min(2).required(),
     role: string().required(),
