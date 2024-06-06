@@ -23,7 +23,6 @@
         :change-type="element.changeSincePublish"
         class="ml-auto " />
     </div> -->
-    <!-- TODO: Enable upon user activity tracking implementation -->
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <component
       v-bind="{
@@ -42,7 +41,6 @@
       @save="onSave"
     />
     <div v-if="!props.isDisabled" class="element-actions">
-      <!-- TODO: Add upon Discussion implementation -->
       <div
         v-if="showDiscussion"
         :class="{ 'is-visible': isHighlighted || hasComments }"
@@ -86,7 +84,7 @@ import { getComponentName, getElementId } from '@tailor-cms/utils';
 
 import ActiveUsers from './ActiveUsers.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
-// TODO: Add upon user activity tracking & discussion implementation
+// TODO: Add upon publish diff implementation
 // import PublishDiffChip from './PublishDiffChip.vue';
 
 const props = defineProps({
@@ -118,7 +116,6 @@ const id = computed(() => getElementId(props.element));
 const componentName = computed(() => getComponentName(props.element.type));
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
-// TODO: Add upon collab feature implementation
 const hasComments = computed(() => !!props.element.comments?.length);
 
 onBeforeUnmount(() => {
