@@ -75,7 +75,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
       .then((data) => Object.assign(storeElement, data));
   };
 
-  const $plugSSE = () => {
+  const $subscribeToSSE = () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: ContentElement) => add(it))
       .subscribe(Events.Update, (it: ContentElement) => add(it))
@@ -96,7 +96,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     save,
     remove,
     reorder,
-    $plugSSE,
+    $subscribeToSSE,
     $reset,
   };
 });

@@ -114,7 +114,7 @@ export const useUserTracking = defineStore('userTracking', () => {
     });
   };
 
-  const $plugSSE = () => {
+  const $subscribeToSSE = () => {
     sseRepositoryFeed
       .subscribe(UserActivity.Start, ({ user, context }: any) =>
         onStartEvent({ user, context }),
@@ -139,7 +139,7 @@ export const useUserTracking = defineStore('userTracking', () => {
     fetch,
     reportStart,
     reportEnd,
-    $plugSSE,
+    $subscribeToSSE,
     $reset,
   };
 });

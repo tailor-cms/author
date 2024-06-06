@@ -140,7 +140,7 @@ export const useActivityStore = defineStore('activities', () => {
     return calculatePosition(context);
   }
 
-  const $plugSSE = () => {
+  const $subscribeToSSE = () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Activity) => add(it))
       .subscribe(Events.Update, (it: Activity) => add(it))
@@ -168,7 +168,7 @@ export const useActivityStore = defineStore('activities', () => {
     publish,
     reorder,
     calculateInsertPosition,
-    $plugSSE,
+    $subscribeToSSE,
     $reset,
   };
 });

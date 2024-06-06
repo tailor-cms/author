@@ -21,10 +21,10 @@ export const useSSE = () => {
   function connect(id: number) {
     feed.connect(id, (conn: any) => {
       sseId.value = conn.id;
-      activityStore.$plugSSE();
-      commentStore.$plugSSE();
-      contentElementStore.$plugSSE();
-      userTrackingStore.$plugSSE();
+      activityStore.$subscribeToSSE();
+      commentStore.$subscribeToSSE();
+      contentElementStore.$subscribeToSSE();
+      userTrackingStore.$subscribeToSSE();
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       userTrackingStore.fetch(id);
     });

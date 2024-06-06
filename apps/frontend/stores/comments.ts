@@ -101,7 +101,7 @@ export const useCommentStore = defineStore('comments', () => {
       .then(() => fetch(repositoryId, data));
   };
 
-  const $plugSSE = () => {
+  const $subscribeToSSE = () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Comment) => add(it))
       .subscribe(Events.Update, (it: Comment) => add(it))
@@ -126,7 +126,7 @@ export const useCommentStore = defineStore('comments', () => {
     getActivityComments,
     getUnseenActivityComments,
     updateResolvement,
-    $plugSSE,
+    $subscribeToSSE,
     $reset,
   };
 });
