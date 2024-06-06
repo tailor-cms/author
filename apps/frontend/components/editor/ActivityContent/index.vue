@@ -126,11 +126,8 @@ const focusedElement = ref(null);
 const activityContentEl = ref();
 const mousedownCaptured = ref<boolean | null>(null);
 
-// TODO: Update once collab feature is implemented
-// const collaboratorSelections = useGetter('editor', 'collaboratorSelections');
-// const user = useState((state) => state.auth.user);
-const showPublishDiff = computed(() => false); // useState('editor', 'showPublishDiff');
-
+// TODO: Add once diff feature is implemented
+const showPublishDiff = computed(() => false);
 const elements = computed(() => contentElementStore.items);
 const containerIds = computed(
   () => props.contentContainers?.map((it: any) => it.id) as any[],
@@ -220,8 +217,8 @@ const handleContainerInit = () => {
   }, 500);
 };
 
+// TODO: Add once collab and composite element feature is added
 const initElementChangeWatcher = () => {
-  // TODO: Add once collab and composite element feature is added
   // this.storeUnsubscribe = this.$store.subscribe(mutation => {
   //   const { type, payload: element } = mutation;
   //   if (!focusedElement || !ELEMENT_MUTATIONS.includes(type)) return;
@@ -317,7 +314,7 @@ watch(collaboratorSelections, (val, prevVal) => {
 });
 
 // TODO: Delay mark seen comments
-editorChannel.on('comment', (val: any) => editorStore.processCommentEvent(val));
+editorChannel.on('comment', (e: any) => editorStore.processCommentEvent(e));
 
 onBeforeMount(async () => {
   await loadContents();

@@ -6,15 +6,15 @@ import { EventEmitter } from 'events';
 const debug = createDebug('sse-client');
 
 export default class SSEConnection extends EventEmitter {
-  _id;
-  _connection;
-  config;
+  private _id: string;
+  private connection: EventSource;
+  config: EventSourceInit;
 
   constructor(url: string, options = {}) {
     super();
-    this.config = this._buildConfig(options);
     this._id = cuid();
-    this._connection = this.initialize(createUrl(url, options), this.config);
+    this.config = this.buildConfig(options);
+    this.connection = this.initialize(createUrl(url, options), this.config);
     if (debug.enabled)
       this.on('message', (e) => debug('emitting event: %j', e));
   }
@@ -28,10 +28,10 @@ export default class SSEConnection extends EventEmitter {
   }
 
   get url() {
-    return this._connection.url;
+    return this.connection.url;
   }
 
-  initialize(url: URL, config: any) {
+  initialize(url: URL, config: EventSourceInit) {
     url.searchParams.append('id', this.id);
     if (debug.enabled) url.searchParams.append('debug', debug.namespace);
     const connection = new EventSource(url, config);
@@ -39,7 +39,7 @@ export default class SSEConnection extends EventEmitter {
     return connection;
   }
 
-  _buildConfig({
+  private buildConfig({
     headers,
     timeout = 45_000, // ms
     withCredentials,
@@ -53,23 +53,23 @@ export default class SSEConnection extends EventEmitter {
   }
 
   close() {
-    return this._connection.close();
+    return this.connection.close();
   }
 
   _emit = (e: any) => {
-    if (e.target !== this._connection) return;
+    if (e.target !== this.connection) return;
     const payload = e.data ? JSON.parse(e.data) : e;
     return this.emit(e.type, payload);
   };
 
   addListener(event: string, listener: any): any {
     super.addListener(event, listener);
-    this._connection.addEventListener(event, this._emit);
+    this.connection.addEventListener(event, this._emit);
   }
 
   removeListener(event: string, listener: any): any {
     super.removeListener(event, listener);
-    this._connection.removeEventListener(event, this._emit);
+    this.connection.removeEventListener(event, this._emit);
   }
 }
 
