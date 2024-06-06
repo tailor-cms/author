@@ -24,9 +24,9 @@ interface UserWithContexts extends User {
 }
 
 interface ActivityByEntity {
-  repository: Record<number, User[]>;
-  activity: Record<number, User[]>;
-  element: Record<string, User[]>;
+  repository: { number: User[] };
+  activity: { number: User[] };
+  element: { string: User[] };
 }
 
 function isContextEqual(
@@ -72,43 +72,64 @@ export const useUserTracking = defineStore('userTracking', () => {
       );
   };
 
-  const reportStart = (context: any) => api.start(context);
+  const reportStart = (context: ActivityContext) => api.start(context);
 
-  const reportEnd = (context: any) => api.end(context);
+  const reportEnd = (context: ActivityContext) => api.end(context);
 
-  const onStartEvent = ({ user, context }: any) => {
-    const userState = $users.get(user.id) || { ...user, contexts: [] };
+  const onStartEvent = ({
+    user,
+    context,
+  }: {
+    user: User;
+    context: ActivityContext;
+  }) => {
+    const userState = $users.get(user.id.toString()) || {
+      ...user,
+      contexts: [],
+    };
     const existingContext = find(
       userState.contexts,
       omit(context, ['connectedAt']),
     );
     if (existingContext) return;
-    $users.set(user.id, {
+    $users.set(user.id.toString(), {
       ...userState,
       contexts: [...userState.contexts, context],
     });
   };
 
-  const onEndEvent = ({ user, context }: any) => {
-    const userState: any = $users.get(user.id);
+  const onEndEvent = ({
+    user,
+    context,
+  }: {
+    user: User;
+    context: ActivityContext;
+  }) => {
+    const userState: any = $users.get(user.id.toString());
     if (!userState) return;
     const contexts = userState.contexts.filter(
       (it: ActivityContext) => !isContextEqual(it, context),
     );
-    $users.set(user.id, {
+    $users.set(user.id.toString(), {
       ...userState,
       contexts,
     });
   };
 
-  const onEndSessionEvent = ({ sseId, userId }: any) => {
-    const userState: any = $users.get(userId);
+  const onEndSessionEvent = ({
+    sseId,
+    userId,
+  }: {
+    sseId: string;
+    userId: number;
+  }) => {
+    const userState: any = $users.get(userId.toString()) as UserWithContexts;
     if (!userState) return;
     const contexts = userState.contexts.filter(
       (it: ActivityContext) => it.sseId !== sseId,
     );
-    if (isEmpty(contexts)) return $users.delete(userId);
-    $users.set(userId, {
+    if (isEmpty(contexts)) return $users.delete(userId.toString());
+    $users.set(userId.toString(), {
       ...userState,
       contexts,
     });
@@ -116,14 +137,20 @@ export const useUserTracking = defineStore('userTracking', () => {
 
   const $subscribeToSSE = () => {
     sseRepositoryFeed
-      .subscribe(UserActivity.Start, ({ user, context }: any) =>
-        onStartEvent({ user, context }),
+      .subscribe(
+        UserActivity.Start,
+        ({ user, context }: { user: User; context: ActivityContext }) =>
+          onStartEvent({ user, context }),
       )
-      .subscribe(UserActivity.End, ({ user, context }: any) =>
-        onEndEvent({ user, context }),
+      .subscribe(
+        UserActivity.End,
+        ({ user, context }: { user: User; context: ActivityContext }) =>
+          onEndEvent({ user, context }),
       )
-      .subscribe(UserActivity.EndSession, ({ sseId, userId }: any) =>
-        onEndSessionEvent({ sseId, userId }),
+      .subscribe(
+        UserActivity.EndSession,
+        ({ sseId, userId }: { sseId: string; userId: number }) =>
+          onEndSessionEvent({ sseId, userId }),
       );
   };
 
@@ -144,7 +171,7 @@ export const useUserTracking = defineStore('userTracking', () => {
   };
 });
 
-function setUserContext(state: any, user: any, context: ActivityContext) {
+function setUserContext(state: any, user: User, context: ActivityContext) {
   const mappings = {
     repository: context.repositoryId,
     activity: context.activityId,
