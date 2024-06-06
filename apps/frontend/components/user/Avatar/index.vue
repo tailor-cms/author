@@ -1,26 +1,36 @@
 <template>
-  <VSpeedDial location="right" target="#avatar" attach>
+  <!-- TODO: Replace content-props with content-class once it gets fixed -->
+  <VSpeedDial
+    :content-props="{ class: 'flex-column ga-3' }"
+    location="right"
+    offset="16"
+    target="#avatar"
+  >
     <template #activator="{ props: activatorProps }">
       <VHover v-slot="{ isHovering, props }">
         <VAvatar id="avatar" v-bind="props" size="200">
           <img :src="image" alt="Avatar" />
-          <VIcon
-            v-if="isHovering"
-            v-bind="activatorProps"
-            aria-label="Change avatar"
-            class="overlay"
-            color="white"
-            icon="mdi-camera"
-            size="x-large"
-          />
+          <VFadeTransition>
+            <VIcon
+              v-if="isHovering"
+              v-bind="activatorProps"
+              aria-label="Change avatar"
+              class="overlay"
+              color="white"
+              icon="mdi-camera"
+              size="x-large"
+            />
+          </VFadeTransition>
         </VAvatar>
       </VHover>
     </template>
     <VBtn
       key="1"
       aria-label="Upload avatar"
+      color="primary-darken-4"
       for="photoInput"
       tag="label"
+      variant="tonal"
       icon
       small
     >
@@ -39,8 +49,9 @@
       v-if="!isGravatar"
       key="2"
       aria-label="Delete avatar"
-      color="secondary-lighten-1"
+      color="secondary-lighten-2"
       icon="mdi-delete"
+      variant="tonal"
       small
       @click="deleteAvatar"
     />
@@ -83,6 +94,7 @@ const selectPhoto = (event: Event) => {
   return new Compressor(files[0], {
     width: 250,
     height: 250,
+    resize: 'cover',
     success: async (result) => {
       const imageUrl = await toBase64(result);
       updateAvatar(imageUrl);

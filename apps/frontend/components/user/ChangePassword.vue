@@ -3,7 +3,7 @@
     <template #activator="{ props }">
       <VBtn
         v-bind="props"
-        class="mt-4"
+        class="mt-6"
         color="primary-darken-4"
         prepend-icon="mdi-lock"
         variant="tonal"
@@ -42,11 +42,23 @@
           variant="outlined"
         />
         <div class="d-flex align-center pl-2 py-4">
-          <NuxtLink :to="{ name: 'forgot-password' }">
+          <NuxtLink :to="{ name: 'forgot-password' }" class="text-primary">
             Forgot password ?
           </NuxtLink>
-          <VBtn class="ml-auto" variant="text" @click="close">Cancel</VBtn>
-          <VBtn color="primary-darken-4" type="submit" variant="tonal">
+          <VBtn
+            class="ml-auto"
+            color="primary-darken-4"
+            variant="text"
+            @click="close"
+          >
+            Cancel
+          </VBtn>
+          <VBtn
+            class="ml-2"
+            color="primary-darken-4"
+            type="submit"
+            variant="tonal"
+          >
             Save
           </VBtn>
         </div>
