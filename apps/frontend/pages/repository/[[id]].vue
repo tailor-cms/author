@@ -26,7 +26,7 @@ provide('$eventBus', $eventBus);
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const commentStore = useCommentStore();
-const sse = useSSE();
+const sse = useRepositorySSE();
 
 const isLoading = ref(true);
 

@@ -8,9 +8,12 @@ import { useContentElementStore } from '@/stores/content-elements';
 // Report user activity every 30s
 const PING_INTERVAL = 30000;
 
-export const useSSE = () => {
-  const heartbeat = ref();
+// Subscribe to server-sent events on the repository level
+export const useRepositorySSE = () => {
+  // Connection ID for the server-sent events
   const sseId = ref<null | string>(null);
+  // Timer for pinging the server and reporting user activity
+  const heartbeat = ref();
 
   const route = useRoute();
   const activityStore = useActivityStore();
@@ -57,7 +60,7 @@ export const useSSE = () => {
   });
 
   watch(
-    () => trackingParameters.value,
+    trackingParameters,
     async (val, prevVal) => {
       if (isEqual(val, prevVal)) return;
       if (prevVal.sseId && prevVal.repositoryId) {
