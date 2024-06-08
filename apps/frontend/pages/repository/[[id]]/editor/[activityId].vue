@@ -14,11 +14,13 @@
 
 <script lang="ts" setup>
 import { getElementId } from '@tailor-cms/utils';
+import { schema } from 'tailor-config-shared';
 
 import ActivityContent from '@/components/editor/ActivityContent/index.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
+import { exposedApi } from '@/api';
 
 definePageMeta({
   name: 'editor',
@@ -35,6 +37,12 @@ const { $ceRegistry } = useNuxtApp() as any;
 
 provide('$ceRegistry', $ceRegistry);
 provide('$getCurrentUser', () => authStore.user);
+provide('$api', exposedApi);
+provide('$schemaService', schema);
+provide('$repository', {
+  ...repositoryStore.repository,
+  activities: repositoryStore.activities
+});
 
 const selectElement = (element: any) => {
   const route = useRoute();
