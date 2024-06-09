@@ -5,6 +5,7 @@ import * as mail from './mail.js';
 import * as storage from './storage.js';
 import * as store from './store.js';
 import * as tce from './tce.js';
+import * as test from './test.js';
 
 import resolveUrl from 'tailor-config-shared/src/url.js';
 
@@ -24,6 +25,7 @@ export {
   store,
   tce,
   ai,
+  test,
 };
 
 export default {
@@ -39,4 +41,5 @@ export default {
   store,
   tce,
   ai,
+  test,
 };
