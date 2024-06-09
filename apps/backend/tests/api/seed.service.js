@@ -5,6 +5,7 @@ import { faker } from '@faker-js/faker';
 import { packageDirectory } from 'pkg-dir';
 import path from 'node:path';
 import { role as roles } from 'tailor-config-shared';
+import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
 import TransferService from '../../shared/transfer/transfer.service.js';
 
 const { Activity, Repository, User } = db;
@@ -18,6 +19,7 @@ class SeedService {
   async resetDatabase() {
     await db.sequelize.drop({});
     await db.initialize();
+    await Promise.all(seedUsers.map((it) => User.create(it)));
     return true;
   }
 
