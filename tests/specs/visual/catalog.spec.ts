@@ -1,8 +1,8 @@
+import { repositories as mockRepositories } from 'tailor-seed/repositories';
 import { test } from '@playwright/test';
 
 import { EndpointClient, getEndpointClient } from '../../api/client';
 import { Catalog } from '../../pom/catalog/Catalog';
-import { repositories as mockRepositories } from '../../fixtures/repositories';
 import { percySnapshot } from '../../utils/percy.ts';
 
 let REPOSITORY_API: EndpointClient;

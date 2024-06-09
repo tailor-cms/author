@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
+import { repositories as mockRepositories } from 'tailor-seed/repositories';
 
 import { EndpointClient, getEndpointClient } from '../../../api/client';
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import { Catalog } from '../../../pom/catalog/Catalog';
-import { repositories as mockRepositories } from '../../../fixtures/repositories';
 import { RepositoryCard } from '../../../pom/catalog/RepositoryCard';
 
 let REPOSITORY_API: EndpointClient;
