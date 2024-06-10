@@ -58,9 +58,9 @@ class SeedService {
     role = roles.ADMIN,
   ) {
     await User.create({
-      role,
       email,
       password,
+      role,
     });
     return { email, password };
   }
