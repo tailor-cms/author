@@ -8,9 +8,7 @@ import { percySnapshot } from '../../utils/percy.ts';
 let REPOSITORY_API: EndpointClient;
 
 const seedCatalog = async () => {
-  return Promise.all(
-    mockRepositories.map((it) => REPOSITORY_API.create(it as any)),
-  );
+  return Promise.all(mockRepositories.map((it) => REPOSITORY_API.create(it)));
 };
 
 const cleanupCatalog = async (repositories) => {
