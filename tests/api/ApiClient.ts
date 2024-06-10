@@ -11,7 +11,7 @@ export default class APIClient extends BaseClient {
     this.createdEntityIds = [];
   }
 
-  getEntityUrl = (id) => this.getUrl(id.toString());
+  getEntityUrl = (id: number) => this.getUrl(id.toString());
 
   list = async (): Promise<EndpointResponse> => {
     const req = await this.getClient();
