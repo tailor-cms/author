@@ -160,7 +160,6 @@ const isRootContainer = ({
   parentId: string;
   type: string;
 }) => {
-  console.log(type, rootContainerTypes.value, parentId, selection.activity?.id);
   return (
     parentId === (selection.activity as any).id &&
     rootContainerTypes.value.includes(type)
@@ -172,7 +171,6 @@ const getSubcontainers = (container: any) => {
 };
 
 const showActivityElements = async (activity: any) => {
-  console.log('activity', activity);
   selection.activity = activity;
   const elements = await fetchElements(processedContainers.value);
   items.contentContainers = processedContainers.value.map((container) => {
