@@ -1,17 +1,12 @@
 import { expect, test } from '@playwright/test';
 
-import { EndpointClient, getEndpointClient } from '../../api/client';
 import { AddRepositoryDialog } from '../../pom/catalog/AddRepository';
+import ApiClient from '../../api/ApiClient.ts';
 import { Catalog } from '../../pom/catalog/Catalog';
 import { percySnapshot } from '../../utils/percy.ts';
 
 const TEST_REPOSITORY_NAME = 'Visual test imported repository';
-let REPOSITORY_API: EndpointClient;
-
-test.beforeAll(async ({ baseURL }) => {
-  if (!baseURL) throw new Error('baseURL is required');
-  REPOSITORY_API = await getEndpointClient(baseURL, '/api/repositories/');
-});
+const REPOSITORY_API = new ApiClient('/api/repositories/');
 
 test.beforeEach(async ({ page }) => {
   const catalog = new Catalog(page);
