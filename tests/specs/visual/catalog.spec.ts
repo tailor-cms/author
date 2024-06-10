@@ -1,38 +1,23 @@
-import mockRepositories from 'tailor-seed/repositories.json';
 import { test } from '@playwright/test';
 
-import ApiClient from '../../api/ApiClient.ts';
 import { Catalog } from '../../pom/catalog/Catalog';
 import { percySnapshot } from '../../utils/percy.ts';
+import SeedClient from '../../api/SeedClient';
 
-const REPOSITORY_API = new ApiClient('/api/repositories/');
-
-const seedCatalog = async () => {
-  return Promise.all(mockRepositories.map((it) => REPOSITORY_API.create(it)));
-};
-
-const cleanupCatalog = async (repositories) => {
-  for (const repository of repositories) {
-    await REPOSITORY_API.remove(repository.id);
-  }
-};
-
-test.beforeEach(async ({ page }) => {
-  const { data } = await REPOSITORY_API.list();
-  const { items: repositories } = data;
-  if (repositories.length) await cleanupCatalog(repositories);
-  await page.goto('/', { waitUntil: 'networkidle' });
+test.beforeEach(async () => {
+  await SeedClient.resetDatabase();
 });
 
 test('Should take a snapshot of an empty catalog', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
   await percySnapshot(page, 'Empty catalog page');
 });
 
 test('Should take a snapshot of an seeded catalog', async ({ page }) => {
-  await seedCatalog();
-  await page.reload({ waitUntil: 'networkidle' });
+  await SeedClient.seedCatalog();
+  await page.goto('/', { waitUntil: 'networkidle' });
   const catalog = new Catalog(page);
   await catalog.orderByName();
-  await page.waitForTimeout(2000);
+  await page.waitForLoadState('networkidle');
   await percySnapshot(page, 'Seeded catalog page');
 });
