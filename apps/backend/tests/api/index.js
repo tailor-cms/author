@@ -1,9 +1,12 @@
-import ctrl from './seed.controller.js';
 import express from 'express';
+
+import { authorize } from '../shared/auth/mw.js';
+import ctrl from './seed.controller.js';
 
 const router = express.Router();
 
 router
+  .use(authorize())
   .post('/reset', ctrl.resetDatabase)
   .post('/catalog', ctrl.seedCatalog)
   .post('/repository', ctrl.seedRepository)
