@@ -1,34 +1,21 @@
 import { expect, test } from '@playwright/test';
-import { repositories as mockRepositories } from 'tailor-seed/repositories';
+import mockRepositories from 'tailor-seed/repositories.json';
 
-import { EndpointClient, getEndpointClient } from '../../../api/client';
+import { getSeedClient, SeedClient } from '../../../api/client';
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import { Catalog } from '../../../pom/catalog/Catalog';
 import { RepositoryCard } from '../../../pom/catalog/RepositoryCard';
 
-let REPOSITORY_API: EndpointClient;
-
-const seedCatalog = async () => {
-  return Promise.all(
-    mockRepositories.map((it) => REPOSITORY_API.create(it as any)),
-  );
-};
-
-const cleanupCatalog = async (repositories) => {
-  for (const repository of repositories) {
-    await REPOSITORY_API.remove(repository.id);
-  }
-};
+let SEED_CLIENT: SeedClient;
+const seedCatalog = () => SEED_CLIENT.seedCatalog();
 
 test.beforeAll(async ({ baseURL }) => {
   if (!baseURL) throw new Error('baseURL is required');
-  REPOSITORY_API = await getEndpointClient(baseURL, '/api/repositories/');
+  SEED_CLIENT = await getSeedClient(baseURL);
 });
 
 test.beforeEach(async ({ page }) => {
-  const { data } = await REPOSITORY_API.list();
-  const { items: repositories } = data;
-  if (repositories.length) await cleanupCatalog(repositories);
+  await SEED_CLIENT.resetDatabase();
   await page.goto('/');
 });
 
