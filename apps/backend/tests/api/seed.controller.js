@@ -15,8 +15,11 @@ async function seedCatalog(_req, res) {
   return res.json({ data: repositories });
 }
 
-async function seedRepository(_req, res) {
-  const data = await SeedService.importRepositoryArchive();
+async function seedRepository(req, res) {
+  const data = await SeedService.importRepositoryArchive(
+    req.body.name,
+    req.body.description,
+  );
   return res.json({ data });
 }
 
