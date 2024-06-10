@@ -1,4 +1,4 @@
-import { repositories as catalogSeed } from 'tailor-seed/repositories.js';
+import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import crypto from 'node:crypto';
 import db from '../../shared/database/index.js';
 import { faker } from '@faker-js/faker';
@@ -24,7 +24,8 @@ class SeedService {
   }
 
   async seedCatalog(repositories = catalogSeed) {
-    return Promise.all(repositories.map((it) => Repository.create(it)));
+    const opts = { context: { userId: 1 } };
+    return Promise.all(repositories.map((it) => Repository.create(it, opts)));
   }
 
   async importRepositoryArchive(
