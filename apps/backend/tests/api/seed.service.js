@@ -10,6 +10,7 @@ import TransferService from '../../shared/transfer/transfer.service.js';
 
 const { Activity, Repository, User } = db;
 
+const DEFAULT_USER = seedUsers[0];
 // Get seed repository path
 const appDir = await packageDirectory();
 const projectDir = await packageDirectory({ cwd: path.join(appDir, '..') });
@@ -24,7 +25,9 @@ class SeedService {
   }
 
   async seedCatalog(repositories = catalogSeed) {
-    const opts = { context: { userId: 1 } };
+    const user = await User.findOne({ where: { email: DEFAULT_USER.email } });
+    if (!user) throw new Error('Seed user not found');
+    const opts = { context: { userId: user.id } };
     return Promise.all(repositories.map((it) => Repository.create(it, opts)));
   }
 
@@ -32,10 +35,12 @@ class SeedService {
     name = `Test repository ${crypto.randomUUID()}`,
     description = `Test repository description ${crypto.randomUUID()}`,
   ) {
+    const user = await User.findOne({ where: { email: DEFAULT_USER.email } });
+    if (!user) throw new Error('Seed user not found');
     const options = {
       name,
       description,
-      userId: 1,
+      userId: user.id,
     };
     await TransferService.createImportJob(seedPath, options).toPromise();
     const repository = await Repository.findOne({
