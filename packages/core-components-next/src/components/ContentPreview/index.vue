@@ -1,6 +1,11 @@
 <template>
   <div class="content-preview">
-    <VAlert v-if="!elements.length" class="mx-4" color="grey darken-4" text>
+    <VAlert
+      v-if="!elements.length"
+      class="mx-4"
+      color="grey darken-4"
+      variant="text"
+    >
       No available elements.
     </VAlert>
     <div
@@ -8,7 +13,7 @@
       :key="container.id"
       class="content-container d-flex flex-wrap"
     >
-      <ContentElement
+      <Element
         v-for="element in container.elements"
         :key="element.id"
         :element="element"
@@ -25,19 +30,22 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { keyBy } from 'lodash';
+import keyBy from 'lodash/keyBy';
 
-import ContentElement from './Element.vue';
+import type { ContentContainer } from '../../interfaces/activity';
+import type { ContentElement } from '../../interfaces/content-element';
+import Element from './Element.vue';
 
 interface Props {
-  contentContainers: Array<any>;
-  selectable: boolean;
-  multiple: boolean;
-  allowedTypes: Array<any>;
-  selected: Array<any>;
+  allowedTypes: Array<string>;
+  selected: Array<ContentElement>;
+  contentContainers?: Array<ContentContainer>;
+  selectable?: boolean;
+  multiple?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  contentContainers: () => [],
   selectable: false,
   multiple: false,
 });
@@ -65,7 +73,10 @@ const processedContainers = computed(() => {
 
 const elements = computed(() => {
   const { value: containers } = processedContainers;
-  return containers.reduce((acc, it) => acc.concat(it.elements), []);
+  return containers.reduce(
+    (acc, it) => acc.concat(it.elements),
+    [] as ContentElement[],
+  );
 });
 </script>
 

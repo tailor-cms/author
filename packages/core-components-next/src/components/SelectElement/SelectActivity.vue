@@ -2,7 +2,7 @@
   <div class="mx-3">
     <VTextField
       v-model="search"
-      :disabled="!activities.length"
+      :disabled="!activities?.length"
       clear-icon="mdi-close-circle-outline"
       placeholder="Filter items..."
       prepend-inner-icon="mdi-filter-outline"
@@ -55,32 +55,43 @@ import groupBy from 'lodash/groupBy';
 import pluralize from 'pluralize';
 import { VTreeview } from 'vuetify/labs/VTreeview';
 
+import type { Activity } from '../../interfaces/activity';
+import type { ContentElement } from '../../interfaces/content-element';
+
 const { toTreeFormat } = activityUtils;
 
 interface Props {
-  selectedElements?: Array<any>;
-  activities?: Array<any>;
+  selectedElements?: Array<ContentElement>;
+  activities?: Array<Activity>;
+}
+
+interface ActivityTree {
+  id: string;
+  name: string;
+  type: string;
+  children: Array<ActivityTree>;
 }
 
 const props = defineProps<Props>();
 defineEmits(['selected']);
 
 const search = ref('');
-const treeview = ref(null);
-const schemaService = inject('$schemaService');
+const treeview = ref();
+const schemaService = inject('$schemaService') as any;
 
 const groupedSelection = computed(() =>
   groupBy(props.selectedElements, 'outlineId'),
 );
 
-const activityTree = computed(() =>
-  toTreeFormat(props.activities, {
+const activityTree = computed<Array<ActivityTree>>(() => {
+  return toTreeFormat(props.activities, {
     filterNodesFn: schemaService.filterOutlineActivities,
-  }),
-);
+    processNodeFn: undefined,
+  });
+});
 
 const noResultsMessage = computed(() => {
-  if (!props.activities.length) return 'Empty repository';
+  if (!props.activities?.length) return 'Empty repository';
   if (!search.value || treeview.value) return '';
   const { excludedItems, nodes } = treeview.value;
   const hasSearchResults = excludedItems.size !== Object.keys(nodes).length;

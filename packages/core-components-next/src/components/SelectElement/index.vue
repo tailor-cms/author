@@ -64,8 +64,11 @@ import flatMap from 'lodash/flatMap';
 import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 
+import type { Activity, ContentContainer } from '../../interfaces/activity';
+import type { ContentElement } from '../../interfaces/content-element';
 import ContentPreview from '../ContentPreview/index.vue';
 import loader from '../../loader';
+import type { Repository } from '../../interfaces/repository';
 import SelectActivity from './SelectActivity.vue';
 import SelectRepository from './SelectRepository.vue';
 import TailorDialog from '../TailorDialog.vue';
@@ -81,10 +84,25 @@ interface Props {
   allowedTypes: Array<string>;
   heading: string;
   multiple?: boolean;
-  selected?: Array<any>;
+  selected?: Array<ContentElement>;
   headerIcon?: string;
   submitLabel?: string;
   onlyCurrentRepo?: boolean;
+}
+
+interface Selection {
+  repository: Repository | null;
+  activity?: Activity | null;
+  elements: Array<ContentElement>;
+}
+
+interface Items {
+  activities: Activity[];
+  contentContainers?: ContentContainer[];
+}
+
+interface CurrentRepository extends Repository {
+  activities: Activity[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -98,26 +116,28 @@ const emit = defineEmits(['selected', 'close']);
 
 const loadingContent = ref(false);
 
-const currentRepository = inject('$repository');
-const api = inject('$api');
-const schemaService = inject('$schemaService');
-console.log(currentRepository);
+const currentRepository = inject<CurrentRepository>('$repository') || null;
+const api = inject<any>('$api');
+const schemaService = inject<any>('$schemaService');
 
-const selection = reactive({
+const selection: Selection = reactive({
   repository: null,
   activity: null,
   elements: [],
 });
 
-const items = reactive({
+const items: Items = reactive({
   activities: [],
   contentContainers: [],
 });
 
 const elements = computed(() => {
-  const elements = flatMap(items.contentContainers, 'elements');
+  const elements: ContentElement[] = flatMap(
+    items.contentContainers,
+    'elements',
+  );
   if (!props.allowedTypes.length) return elements;
-  return elements.filter((it: any) => props.allowedTypes.includes(it.type));
+  return elements.filter((it) => props.allowedTypes.includes(it.type));
 });
 
 const allElementsSelected = computed(
@@ -135,14 +155,13 @@ const rootContainerTypes = computed(() => {
   return type && getContainerTypes(type);
 });
 
-const processedContainers = computed(() => {
+const processedContainers = computed<ContentContainer[]>(() => {
   if (!selection.activity || !items.activities.length) return [];
-  const containers = sortBy(items.activities.filter(isRootContainer), [
-    getTypePosition,
-    'position',
-    'createdAt',
-  ]);
-  return flatMap(containers, (it: any) => [it, ...getSubcontainers(it)]);
+  const containers: ContentContainer[] = sortBy(
+    items.activities.filter(isRootContainer),
+    [getTypePosition, 'position', 'createdAt'],
+  );
+  return flatMap(containers, (it) => [it, ...getSubcontainers(it)]);
 });
 
 const getContainerTypes = (type: string) => {
@@ -150,19 +169,13 @@ const getContainerTypes = (type: string) => {
 };
 
 const getTypePosition = ({ type }: { type: string }) => {
-  return rootContainerTypes.value.indexOf(type);
+  return rootContainerTypes.value?.indexOf(type);
 };
 
-const isRootContainer = ({
-  parentId,
-  type,
-}: {
-  parentId: string;
-  type: string;
-}) => {
+const isRootContainer = ({ parentId, type }: Activity) => {
   return (
     parentId === (selection.activity as any).id &&
-    rootContainerTypes.value.includes(type)
+    rootContainerTypes.value?.includes(type)
   );
 };
 
@@ -172,24 +185,30 @@ const getSubcontainers = (container: any) => {
 
 const showActivityElements = async (activity: any) => {
   selection.activity = activity;
-  const elements = await fetchElements(processedContainers.value);
+  const elements: ContentElement[] = await fetchElements(
+    processedContainers.value,
+  );
   items.contentContainers = processedContainers.value.map((container) => {
     return assignElements(container, activity, elements);
   });
 };
 
-const assignElements = (container: any, activity: any, elements: any) => {
+const assignElements = (
+  container: ContentContainer,
+  activity: Activity,
+  elements: ContentElement[],
+) => {
   const containerElements = elements
     .filter((it: any) => it.activityId === container.id)
     .map((element: any) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
 };
 
-const toggleElementSelection = (element) => {
+const toggleElementSelection = (element: ContentElement) => {
   const { elements } = selection;
-  const existing = elements.find(it => it.id === element.id);
+  const existing = elements.find((it) => it.id === element.id);
   selection.elements = existing
-    ? elements.filter(it => it.id !== element.id)
+    ? elements.filter((it) => it.id !== element.id)
     : elements.concat(element);
 };
 
@@ -203,11 +222,11 @@ const deselectActivity = () => {
   selection.elements = [...props.selected];
 };
 
-const selectRepository = async (repository) => {
+const selectRepository = async (repository: Repository) => {
   selection.repository = repository;
   deselectActivity();
   items.activities =
-    currentRepository.id === repository.id
+    currentRepository?.id === repository.id
       ? currentRepository.activities
       : await fetchActivities(repository);
 };
@@ -221,8 +240,8 @@ const fetchActivities = loader(
 );
 
 const fetchElements = loader(
-  async function (containers: any) {
-    const { id: repositoryId } = selection.repository;
+  async function (containers: ContentContainer[]) {
+    const repositoryId = selection.repository?.id;
     const params = { ids: map(containers, 'id') };
     return api.fetchContentElements(repositoryId, params);
   },
@@ -240,8 +259,8 @@ const close = () => emit('close');
 const openInEditor = (elementId: number) => {
   const router = useRouter();
   const params = {
-    activityId: selection.activity.id,
-    id: selection.repository.id,
+    activityId: selection.activity?.id,
+    id: selection.repository?.id,
   };
   const route = { name: 'editor', params, query: { elementId } };
   const { href } = router.resolve(route);
@@ -251,6 +270,6 @@ const openInEditor = (elementId: number) => {
 onMounted(() => {
   selection.elements = [...props.selected];
   selection.repository = currentRepository;
-  items.activities = currentRepository.activities;
+  items.activities = currentRepository?.activities || [];
 });
 </script>

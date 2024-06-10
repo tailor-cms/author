@@ -9,6 +9,9 @@
   ],
   "type": "module",
   "main": "./src/index.js",
+  "devDependencies": {
+    "@types/lodash": "^4.17.0"
+  },
   "peerDependencies": {
     "@tailor-cms/core-components-next": "workspace:*",
     "@tailor-cms/utils": "workspace:*",

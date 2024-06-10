@@ -681,6 +681,10 @@ importers:
       yup:
         specifier: ^1.4.0
         version: 1.4.0
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.0
+        version: 4.17.0
 
   packages/core-extensions/content-containers/page:
     dependencies:

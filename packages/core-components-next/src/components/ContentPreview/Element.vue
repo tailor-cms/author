@@ -1,5 +1,8 @@
 <template>
-  <VCol :cols="elementWidth" class="element-preview-container align-start float-none">
+  <VCol
+    :cols="elementWidth"
+    class="element-preview-container align-start float-none"
+  >
     <VCheckbox
       v-if="selectable"
       :disabled="disabled"
@@ -10,7 +13,7 @@
     />
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <div v-bind="hoverProps" class="element-wrapper flex-grow-1">
-        <ContentElement
+        <Element
           v-bind="$attrs"
           :class="{ selected: isSelected }"
           :element="element"
@@ -40,10 +43,11 @@
 import { computed, defineProps } from 'vue';
 import get from 'lodash/get';
 
-import ContentElement from '../ContentElement.vue';
+import type { ContentElement } from '../../interfaces/content-element';
+import Element from '../ContentElement.vue';
 
 interface Props {
-  element: any;
+  element: ContentElement;
   selectable?: boolean;
   isSelected?: boolean;
   selectionDisabled?: boolean;
@@ -58,7 +62,9 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['element:open', 'toggle']);
 
 const disabled = computed(() => props.selectionDisabled && !props.isSelected);
-const elementWidth = computed(() => get(props.element, 'data.width', 12));
+const elementWidth = computed(
+  () => get(props.element, 'data.width', 12) as number,
+);
 
 const toggleSelection = () => {
   if (!props.selectable || disabled.value) return;

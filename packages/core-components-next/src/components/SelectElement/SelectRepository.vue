@@ -22,24 +22,26 @@ import find from 'lodash/find';
 import sortBy from 'lodash/sortBy';
 
 import loader from '../../loader';
+import type { Repository } from '../../interfaces/repository';
 
-defineProps<{ repository: any }>();
+defineProps<{ repository: Repository }>();
 const emit = defineEmits(['selected']);
 
-const repositories = ref([]);
+const repositories = ref<Repository[]>([]);
 const loading = ref(false);
 
-const api = inject('$api');
+const api = inject<any>('$api');
 
-const selectRepository = (repository) => {
+const selectRepository = (repository: Repository) => {
   if (find(repositories.value, { id: repository.id })) {
     emit('selected', repository);
   }
 };
 
 const fetchRepositories = debounce(
-  loader(async (search) => {
-    const fetchedRepositories = await api.fetchRepositories({ search });
+  loader(async (search: string) => {
+    const fetchedRepositories: { items: Repository[]; total: number } =
+      await api.fetchRepositories({ search });
     repositories.value = sortBy(fetchedRepositories.items, 'name');
   }, 'loading'),
   500,
