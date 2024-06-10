@@ -7,6 +7,7 @@ import path from 'node:path';
 import { role as roles } from 'tailor-config-shared';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
 import TransferService from '../../shared/transfer/transfer.service.js';
+import { or } from 'sequelize';
 
 const { Activity, Repository, User } = db;
 
@@ -33,7 +34,7 @@ class SeedService {
 
   async importRepositoryArchive(
     name = `Test repository ${crypto.randomUUID()}`,
-    description = `Test repository description ${crypto.randomUUID()}`,
+    description = `Test repository description`,
   ) {
     const user = await User.findOne({ where: { email: DEFAULT_USER.email } });
     if (!user) throw new Error('Seed user not found');
@@ -45,6 +46,7 @@ class SeedService {
     await TransferService.createImportJob(seedPath, options).toPromise();
     const repository = await Repository.findOne({
       where: { name, description },
+      order: [['createdAt', 'DESC']],
     });
     const activity = await Activity.findOne({
       where: { repositoryId: repository.id, 'data.name': 'History of Pizza' },
