@@ -1,4 +1,4 @@
-import { repositories as mockRepositories } from 'tailor-seed/repositories';
+import mockRepositories from 'tailor-seed/repositories.json';
 import { test } from '@playwright/test';
 
 import { EndpointClient, getEndpointClient } from '../../api/client';
