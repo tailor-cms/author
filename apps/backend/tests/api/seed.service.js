@@ -7,7 +7,6 @@ import path from 'node:path';
 import { role as roles } from 'tailor-config-shared';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
 import TransferService from '../../shared/transfer/transfer.service.js';
-import { or } from 'sequelize';
 
 const { Activity, Repository, User } = db;
 
