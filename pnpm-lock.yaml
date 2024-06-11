@@ -601,11 +601,11 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-html-default-edit':
-        specifier: ^0.0.5
-        version: 0.0.5(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))
+        specifier: ^0.0.6
+        version: 0.0.6(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))
       '@tailor-cms/ce-html-default-server':
-        specifier: ^0.0.5
-        version: 0.0.5
+        specifier: ^0.0.6
+        version: 0.0.6
       '@tailor-cms/ce-image-edit':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.4.27(typescript@5.4.5))
@@ -3031,13 +3031,13 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
-  '@tailor-cms/ce-html-default-edit@0.0.5':
-    resolution: {integrity: sha512-f5BETjoz6pLfE/S0UlE13R0t0AJJrD38/+R8UhU0TMQ1nYF2qtstdo32cv337vCGTxB8vnrpEyHpktn+lQhKBw==}
+  '@tailor-cms/ce-html-default-edit@0.0.6':
+    resolution: {integrity: sha512-PWBwuZAVMaH8CJUNM7fkhHZJHVoE5+Ad3jBEixCayUmdcECY58Xm0Js+wA+ZTXJOOpI2O93KUo5C2GAkrsUZCQ==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-html-default-server@0.0.5':
-    resolution: {integrity: sha512-QwQyySPdtC4x0WE59cg0aIu2JHcEhGLjSjE9cWy75n9njxDpwVrQXQvzA07BTUoS4YWRDxZ5RIqPq9YD2RM1Vg==}
+  '@tailor-cms/ce-html-default-server@0.0.6':
+    resolution: {integrity: sha512-tLDOphmrOdv3SaIJXm8wOhm8PSNwXat0Dkqt3z9Zl0/6LRP8atHbJOXNrQKMZzolDdM68RbcOYamCb77Cg1Spw==}
 
   '@tailor-cms/ce-image-edit@1.0.0':
     resolution: {integrity: sha512-bPEZqyJByOVP1onGiTrVGNm+RICgiDKw0DewJ1xGvd5Pjgs1F0A+I9O8KRjCGF0Zt2Md6iytbnPPQsCy1073EQ==}
@@ -3091,12 +3091,6 @@ packages:
     resolution: {integrity: sha512-z/MPmW8bhRougMuorl6MAQBXeK4rhlP+jBWlNwT+CT8h5IkXqPnDbM1sZeagp2nYfVV6Yc4RWpzimqHHtGnYTA==}
     peerDependencies:
       '@tiptap/core': ^2.0.0
-
-  '@tiptap/extension-character-count@2.2.4':
-    resolution: {integrity: sha512-gUeWiIB3Y2+6CuEUq2hKS7BEgvj7l6zAx/xPWlKCbfIyhpQh58m7QLB2OEmdw1EJnGA9VgxqrqOkvdZp8E6vEA==}
-    peerDependencies:
-      '@tiptap/core': ^2.0.0
-      '@tiptap/pm': ^2.0.0
 
   '@tiptap/extension-code-block@2.2.4':
     resolution: {integrity: sha512-h6WV9TmaBEZmvqe1ezMR83DhCPUap6P2mSR5pwVk0WVq6rvZjfgU0iF3EetBJOeDgPlz7cNe2NMDfVb1nGTM/g==}
@@ -13399,9 +13393,8 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tailor-cms/ce-html-default-edit@0.0.5(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))':
+  '@tailor-cms/ce-html-default-edit@0.0.6(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))':
     dependencies:
-      '@tiptap/extension-character-count': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/pm@2.2.4)
       '@tiptap/extension-color': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/extension-text-style@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4)))
       '@tiptap/extension-font-family': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/extension-text-style@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4)))
       '@tiptap/extension-highlight': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))
@@ -13427,7 +13420,7 @@ snapshots:
     transitivePeerDependencies:
       - '@tiptap/core'
 
-  '@tailor-cms/ce-html-default-server@0.0.5': {}
+  '@tailor-cms/ce-html-default-server@0.0.6': {}
 
   '@tailor-cms/ce-image-edit@1.0.0(vue@3.4.27(typescript@5.4.5))':
     dependencies:
@@ -13489,11 +13482,6 @@ snapshots:
   '@tiptap/extension-bullet-list@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))':
     dependencies:
       '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
-
-  '@tiptap/extension-character-count@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/pm@2.2.4)':
-    dependencies:
-      '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
-      '@tiptap/pm': 2.2.4
 
   '@tiptap/extension-code-block@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/pm@2.2.4)':
     dependencies:
