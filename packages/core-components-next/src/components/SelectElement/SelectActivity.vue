@@ -20,23 +20,20 @@
       item-value="id"
       open-all
     >
-      <template #title="{ item: { id, name } }">
-        {{ name }}
-        <VChip
-          v-if="groupedSelection[id]"
-          class="readonly custom-chip"
-          rounded
-          small
-        >
-          {{ getChipLabel(groupedSelection[id]) }}
-        </VChip>
-      </template>
       <template #append="{ item }">
+        <VChip
+          v-if="groupedSelection[item.id]"
+          class="readonly custom-chip mx-2"
+          color="teal-lighten-1"
+          size="small"
+        >
+          {{ getChipLabel(groupedSelection[item.id].length) }}
+        </VChip>
         <VBtn
           v-if="item.isEditable"
-          color="primary-darken-2"
+          color="primary"
           size="small"
-          variant="outlined"
+          variant="tonal"
           @click="$emit('selected', item)"
         >
           View elements
@@ -74,7 +71,10 @@ interface ActivityTree {
   children: Array<ActivityTree>;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  selectedElements: () => [],
+  activities: () => [],
+});
 defineEmits(['selected']);
 
 const search = ref('');

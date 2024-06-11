@@ -24,7 +24,7 @@ import sortBy from 'lodash/sortBy';
 import loader from '../../loader';
 import type { Repository } from '../../interfaces/repository';
 
-defineProps<{ repository: Repository }>();
+defineProps<{ repository?: Repository }>();
 const emit = defineEmits(['selected']);
 
 const repositories = ref<Repository[]>([]);

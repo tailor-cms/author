@@ -95,8 +95,8 @@ interface Props {
 }
 
 interface Selection {
-  repository: Repository | null;
-  activity?: Activity | null;
+  repository?: Repository;
+  activity?: Activity;
   elements: Array<ContentElement>;
 }
 
@@ -120,13 +120,13 @@ const emit = defineEmits(['selected', 'close']);
 
 const loadingContent = ref(false);
 
-const currentRepository = inject<CurrentRepository>('$repository') || null;
+const currentRepository = inject<CurrentRepository>('$repository');
 const api = inject<any>('$api');
 const schemaService = inject<any>('$schemaService');
 
 const selection: Selection = reactive({
-  repository: null,
-  activity: null,
+  repository: undefined,
+  activity: undefined,
   elements: [],
 });
 
@@ -161,10 +161,11 @@ const rootContainerTypes = computed(() => {
 
 const processedContainers = computed<ContentContainer[]>(() => {
   if (!selection.activity || !items.activities.length) return [];
-  const containers: ContentContainer[] = sortBy(
-    items.activities.filter(isRootContainer),
-    [getTypePosition, 'position', 'createdAt'],
-  );
+  const containers = sortBy(items.activities.filter(isRootContainer), [
+    getTypePosition,
+    'position',
+    'createdAt',
+  ]) as ContentContainer[];
   return flatMap(containers, (it) => [it, ...getSubcontainers(it)]);
 });
 
@@ -221,7 +222,7 @@ const toggleSelectAll = () => {
 };
 
 const deselectActivity = () => {
-  selection.activity = null;
+  selection.activity = undefined;
   items.contentContainers = [];
   selection.elements = [...props.selected];
 };
