@@ -3,8 +3,8 @@
     <VAlert
       v-if="!elements.length"
       class="mx-4"
-      color="grey darken-4"
-      variant="text"
+      color="grey-darken-4"
+      variant="tonal"
     >
       No available elements.
     </VAlert>
