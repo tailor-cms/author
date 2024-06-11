@@ -15,6 +15,7 @@ test.beforeEach(async ({ page }) => {
 
 test('Take a snapshot of the editor page', async ({ page }) => {
   await page.getByText('The story of pizza begins').isVisible();
+  await page.waitForTimeout(1000);
   await percySnapshot(page, 'Editor page');
 });
 
