@@ -1,7 +1,10 @@
+import type { Activity } from "./activity";
+
 export interface ContentElement {
   id: number;
   uid: string;
   type: string;
+  activity?: Activity;
   repositoryId: number;
   /** Container holding the element */
   activityId: number;
