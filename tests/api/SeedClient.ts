@@ -18,9 +18,9 @@ class SeedClient extends BaseClient {
     return formatResponse(res);
   };
 
-  seedTestRepository = async (opts = {}): Promise<EndpointResponse> => {
+  seedTestRepository = async (data = {}): Promise<EndpointResponse> => {
     const req = await this.getClient();
-    const res = await req.post(this.getUrl('repository'), opts);
+    const res = await req.post(this.getUrl('repository'), { data });
     return formatResponse(res);
   };
 
