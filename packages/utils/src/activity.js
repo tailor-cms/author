@@ -47,7 +47,6 @@ export function toTreeFormat(
     type: it.type,
     name: it.data.name,
     level,
-    ...(processNodeFn && processNodeFn(it)),
     children: toTreeFormat(
       activities,
       { filterNodesFn, processNodeFn },
@@ -57,5 +56,6 @@ export function toTreeFormat(
         level: level + 1
       }
     ),
+    ...(processNodeFn && processNodeFn(it)),
   }));
 }

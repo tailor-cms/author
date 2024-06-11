@@ -1,5 +1,5 @@
 <template>
-  <VCombobox
+  <VAutocomplete
     :items="repositories"
     :loading="loading"
     :model-value="repository"
@@ -33,7 +33,7 @@ const loading = ref(false);
 const api = inject<any>('$api');
 
 const selectRepository = (repository: Repository) => {
-  if (find(repositories.value, { id: repository.id })) {
+  if (find(repositories.value, { id: repository?.id })) {
     emit('selected', repository);
   }
 };

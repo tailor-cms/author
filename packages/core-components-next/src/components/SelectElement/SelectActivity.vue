@@ -12,9 +12,10 @@
     <VTreeview
       v-show="!noResultsMessage"
       ref="treeview"
-      :items="activityTree"
+      :items="processedItems"
+      :opened="expandedActivityIds"
       :search="search"
-      class="py-3 px-1 treeview"
+      class="py-3 px-1 treeview bg-transparent"
       item-type=""
       item-value="id"
       open-all
@@ -32,7 +33,7 @@
       </template>
       <template #append="{ item }">
         <VBtn
-          v-if="hasContentContainers(item.type)"
+          v-if="item.isEditable"
           color="primary-darken-2"
           size="small"
           variant="outlined"
@@ -51,6 +52,7 @@
 <script lang="ts" setup>
 import { computed, defineProps, inject, ref } from 'vue';
 import { activity as activityUtils } from '@tailor-cms/utils';
+import cloneDeep from 'lodash/cloneDeep';
 import groupBy from 'lodash/groupBy';
 import pluralize from 'pluralize';
 import { VTreeview } from 'vuetify/labs/VTreeview';
@@ -83,24 +85,42 @@ const groupedSelection = computed(() =>
   groupBy(props.selectedElements, 'outlineId'),
 );
 
+const expandedActivityIds = computed(() => props.activities.map((it) => it.id));
+
+const processedItems = computed(() => {
+  if (!search.value) return activityTree.value;
+  const items = cloneDeep(activityTree.value);
+  return items.map(searchRecursive).filter(Boolean);
+});
+
+const doesTitleMatchSearch = (title: string) =>
+  title.toLowerCase().includes(search.value.toLowerCase());
+
+const searchRecursive = (item: any): any => {
+  if (doesTitleMatchSearch(item.title)) return item;
+  const filteredChildren = item.children?.map(searchRecursive).filter(Boolean);
+  if (filteredChildren?.length) return { ...item, children: filteredChildren };
+  return false;
+};
+const attachActivityAttrs = (activity: Activity) => ({
+  id: activity.id,
+  title: activity.data.name,
+  isEditable: !!schemaService.isEditable(activity.type),
+  ...(schemaService.isEditable(activity.type) && { children: undefined }),
+});
+
 const activityTree = computed<Array<ActivityTree>>(() => {
   return toTreeFormat(props.activities, {
     filterNodesFn: schemaService.filterOutlineActivities,
-    processNodeFn: undefined,
+    processNodeFn: attachActivityAttrs,
   });
 });
 
 const noResultsMessage = computed(() => {
   if (!props.activities?.length) return 'Empty repository';
-  if (!search.value || treeview.value) return '';
-  const { excludedItems, nodes } = treeview.value;
-  const hasSearchResults = excludedItems.size !== Object.keys(nodes).length;
-  return !hasSearchResults && 'No matches found';
+  if (!search.value || !!processedItems.value.length) return '';
+  return 'No matches found';
 });
-
-const hasContentContainers = (type: string) => {
-  return schemaService.isEditable(type);
-};
 
 const getChipLabel = (length: number) => {
   return `${pluralize('element', length, true)} selected`;
