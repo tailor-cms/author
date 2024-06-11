@@ -22,14 +22,14 @@
     >
       <template #title="{ item: { id, name } }">
         {{ name }}
-        <v-chip
+        <VChip
           v-if="groupedSelection[id]"
           class="readonly custom-chip"
           rounded
           small
         >
           {{ getChipLabel(groupedSelection[id]) }}
-        </v-chip>
+        </VChip>
       </template>
       <template #append="{ item }">
         <VBtn

@@ -24,8 +24,11 @@
       </template>
       <template v-else>
         <div v-if="toggleButton" class="d-flex justify-end mb-2 px-4">
-          <VBtn variant="outlined" @click="toggleSelectAll">
-            <VIcon class="mr-2">mdi-{{ toggleButton.icon }}</VIcon>
+          <VBtn
+            :prepend-icon="`mdi-${toggleButton.icon}`"
+            variant="outlined"
+            @click="toggleSelectAll"
+          >
             {{ toggleButton.label }}
           </VBtn>
         </div>
@@ -46,10 +49,11 @@
       <VBtn
         v-if="selection.activity"
         class="mr-2"
+        prepend-icon="mdi-arrow-left"
         variant="text"
         @click="deselectActivity"
       >
-        <VIcon class="mr-2" dense>mdi-arrow-left</VIcon>Back
+        Back
       </VBtn>
       <VBtn class="ml-1" variant="text" @click="close">Cancel</VBtn>
       <VBtn class="mr-2" variant="text" @click="save">{{ submitLabel }}</VBtn>
