@@ -39,6 +39,11 @@ const editorStore = useEditorStore();
 const commentStore = useCommentStore();
 const route = useRoute();
 
+useHead({
+  title: repositoryStore.repository?.name,
+  meta: [{ name: 'description', content: 'Tailor CMS - Editor page' }],
+});
+
 const activityId = ref<number | null>(null);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
