@@ -6,7 +6,9 @@ import SeedClient from '../../../api/SeedClient';
 const REPOSITORY_NAME = 'Editor test repository';
 
 test.beforeEach(async ({ page }) => {
-  const { data } = await SeedClient.seedTestRepository();
+  const { data } = await SeedClient.seedTestRepository({
+    name: REPOSITORY_NAME,
+  });
   const {
     activity: { repositoryId, id },
   } = data;
