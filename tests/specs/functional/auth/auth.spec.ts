@@ -2,8 +2,8 @@ import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import userSeed from 'tailor-seed/user.json';
 
-import { EndpointClient, getEndpointClient } from '../../../api/client';
 import { ForgotPassword, ResetPassword, SignIn } from '../../../pom/auth';
+import ApiClient from '../../../api/ApiClient';
 
 interface UserData {
   email: string;
@@ -15,7 +15,7 @@ const getMockUserData = (): UserData => ({
   password: faker.internet.password(),
 });
 
-let userAPI: EndpointClient;
+const userAPI = new ApiClient('/api/users');
 const DEFAULT_USER = userSeed[0];
 
 const createUser = async (page): Promise<UserData> => {
@@ -29,10 +29,6 @@ const createUser = async (page): Promise<UserData> => {
   await page.goto(initialLocation);
   return userData;
 };
-
-test.beforeAll(async ({ baseURL }) => {
-  userAPI = await getEndpointClient(baseURL, '/api/users');
-});
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
