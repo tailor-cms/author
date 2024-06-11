@@ -19,8 +19,9 @@ test('editor page has a title set', async ({ page }) => {
   await expect(page).toHaveTitle(REPOSITORY_NAME);
 });
 
-test('Can navigate using the sidebar', async ({ page }) => {
+test('can navigate using the sidebar', async ({ page }) => {
   const editor = new Editor(page);
+  await page.waitForLoadState('networkidle');
   await editor.toPrimaryPage();
   await editor.toSecondaryPage();
 });

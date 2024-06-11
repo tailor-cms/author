@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 export class EditorSidebar {
   readonly page: Page;
@@ -31,6 +31,7 @@ export class EditorSidebar {
   }
 
   async navigateTo(name: string) {
+    await expect(this.el).toBeVisible();
     const item = await this.getOutlineItemByName(name);
     await item.click();
   }
