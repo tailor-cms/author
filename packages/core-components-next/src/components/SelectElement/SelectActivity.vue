@@ -1,50 +1,48 @@
 <template>
-  <div class="mx-3">
-    <VTextField
-      v-model="search"
-      :disabled="!activities?.length"
-      clear-icon="mdi-close-circle-outline"
-      placeholder="Filter items..."
-      prepend-inner-icon="mdi-filter-outline"
-      variant="outlined"
-      clearable
-    />
-    <VTreeview
-      v-show="!noResultsMessage"
-      ref="treeview"
-      :items="processedItems"
-      :opened="expandedActivityIds"
-      :search="search"
-      class="py-3 px-1 treeview bg-transparent"
-      item-type=""
-      item-value="id"
-      max-height="300"
-      open-all
-    >
-      <template #append="{ item }">
-        <VChip
-          v-if="groupedSelection[item.id]"
-          class="readonly custom-chip mx-2"
-          color="teal-lighten-1"
-          size="small"
-        >
-          {{ getChipLabel(groupedSelection[item.id].length) }}
-        </VChip>
-        <VBtn
-          v-if="item.isEditable"
-          color="primary"
-          size="small"
-          variant="tonal"
-          @click="$emit('selected', item)"
-        >
-          View elements
-        </VBtn>
-      </template>
-    </VTreeview>
-    <VAlert v-if="noResultsMessage" color="primary-darken-2">
-      {{ noResultsMessage }}
-    </VAlert>
-  </div>
+  <VTextField
+    v-model="search"
+    :disabled="!activities?.length"
+    clear-icon="mdi-close-circle-outline"
+    placeholder="Filter items..."
+    prepend-inner-icon="mdi-filter-outline"
+    variant="outlined"
+    clearable
+  />
+  <VTreeview
+    v-show="!noResultsMessage"
+    ref="treeview"
+    :items="processedItems"
+    :opened="expandedActivityIds"
+    :search="search"
+    class="py-3 px-1 treeview bg-transparent"
+    item-type=""
+    item-value="id"
+    max-height="300"
+    open-all
+  >
+    <template #append="{ item }">
+      <VChip
+        v-if="groupedSelection[item.id]"
+        class="readonly custom-chip mx-2"
+        color="teal-lighten-1"
+        size="small"
+      >
+        {{ getChipLabel(groupedSelection[item.id].length) }}
+      </VChip>
+      <VBtn
+        v-if="item.isEditable"
+        color="primary"
+        size="small"
+        variant="tonal"
+        @click="$emit('selected', item)"
+      >
+        View elements
+      </VBtn>
+    </template>
+  </VTreeview>
+  <VAlert v-if="noResultsMessage" color="primary-darken-2">
+    {{ noResultsMessage }}
+  </VAlert>
 </template>
 
 <script lang="ts" setup>

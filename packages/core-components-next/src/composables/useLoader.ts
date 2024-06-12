@@ -1,4 +1,5 @@
 import pMinDelay from 'p-min-delay';
+import { ref } from 'vue';
 
 export const useLoader = () => {
   const loading = ref(false);

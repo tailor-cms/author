@@ -1,35 +1,34 @@
 <template>
-  <VCol
-    :cols="elementWidth"
-    class="element-preview-container align-start float-none"
-  >
+  <VCol :cols="elementWidth" class="d-flex align-start my-1">
     <VCheckbox
       v-if="selectable"
       :disabled="disabled"
       :model-value="isSelected"
-      class="flex-shrink-0"
+      class="flex-shrink-0 mr-2"
       color="primary-darken-4"
       @update:model-value="toggleSelection"
     />
     <VHover v-slot="{ isHovering, props: hoverProps }">
-      <div v-bind="hoverProps" class="element-wrapper flex-grow-1">
+      <div v-bind="hoverProps" class="element-wrapper flex-grow-1 mr-2">
         <Element
           v-bind="$attrs"
           :class="{ selected: isSelected }"
           :element="element"
           :set-width="false"
         />
-        <VTooltip location="top" open-delay="400">
+        <VTooltip location="bottom" open-delay="400">
           <template #activator="{ props: tooltipProps }">
-            <VBtn
-              :class="{ visible: isHovering }"
-              class="open-element-button"
-              color="blue-grey-darken-4"
-              v-bind="tooltipProps"
-              icon="mdi-open-in-new"
-              size="small"
-              @click.stop="$emit('element:open', element.uid)"
-            />
+            <VFadeTransition>
+              <VBtn
+                v-if="isHovering"
+                class="open-element-button"
+                color="blue-grey-darken-4"
+                v-bind="tooltipProps"
+                icon="mdi-open-in-new"
+                size="small"
+                @click="$emit('element:open', element.uid)"
+              />
+            </VFadeTransition>
           </template>
           <span>Open in editor</span>
         </VTooltip>
@@ -72,16 +71,7 @@ const toggleSelection = () => {
 </script>
 
 <style lang="scss" scoped>
-.element-preview-container {
-  position: relative;
-  display: flex;
-  margin: 0.25rem 0;
-}
-
 .content-element {
-  flex: 1 0;
-  margin: 0.4375rem 0 0 0.25rem;
-  box-shadow: none;
   border: 1px solid #e1e1e1;
 
   &.selected {
@@ -94,30 +84,13 @@ const toggleSelection = () => {
   }
 }
 
-.element-preview-container ::v-deep .contained-content {
-  margin: 0;
-
-  .message span:not(.heading) {
-    display: none;
-  }
-
-  .ql-editor {
-    word-break: break-all;
-  }
-}
-
 .element-wrapper {
   position: relative;
 }
 
 .open-element-button {
   position: absolute;
-  top: 0;
+  top: -0.75rem;
   right: -0.75rem;
-  transition: opacity 0.4s;
-
-  &:not(.visible) {
-    opacity: 0;
-  }
 }
 </style>

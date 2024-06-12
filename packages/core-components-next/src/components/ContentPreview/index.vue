@@ -1,32 +1,26 @@
 <template>
-  <div class="content-preview">
-    <VAlert
-      v-if="!elements.length"
-      class="mx-4 text-center"
-      color="primary"
-      height="19rem"
-      variant="tonal"
-    >
-      No available elements.
-    </VAlert>
-    <div
-      v-for="container in processedContainers"
-      :key="container.id"
-      class="content-container d-flex flex-wrap"
-    >
-      <Element
-        v-for="element in container.elements"
-        :key="element.id"
-        :element="element"
-        :is-selected="!!selectionMap[element.id]"
-        :selectable="selectable"
-        :selection-disabled="isSelectionDisabled"
-        is-disabled
-        @element:open="$emit('element:open', $event)"
-        @toggle="$emit('toggle', element)"
-      />
-    </div>
-  </div>
+  <VAlert
+    v-if="!elements.length"
+    class="text-center"
+    color="primary"
+    height="19rem"
+    variant="tonal"
+  >
+    No available elements.
+  </VAlert>
+  <VRow v-for="container in processedContainers" :key="container.id">
+    <Element
+      v-for="element in container.elements"
+      :key="element.id"
+      :element="element"
+      :is-selected="!!selectionMap[element.id]"
+      :selectable="selectable"
+      :selection-disabled="isSelectionDisabled"
+      is-disabled
+      @element:open="$emit('element:open', $event)"
+      @toggle="$emit('toggle', element)"
+    />
+  </VRow>
 </template>
 
 <script lang="ts" setup>
@@ -35,7 +29,7 @@ import keyBy from 'lodash/keyBy';
 
 import type { ContentContainer } from '../../interfaces/activity';
 import type { ContentElement } from '../../interfaces/content-element';
-import Element from './Element.vue';
+import Element from './ContentElement.vue';
 
 interface Props {
   allowedTypes: Array<string>;

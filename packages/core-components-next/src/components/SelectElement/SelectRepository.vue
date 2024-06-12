@@ -3,7 +3,6 @@
     :items="repositories"
     :loading="loading"
     :model-value="repository"
-    class="mx-3"
     item-title="name"
     item-value="id"
     label="Select repository"
