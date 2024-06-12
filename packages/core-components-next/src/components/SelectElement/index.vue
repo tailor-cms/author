@@ -14,7 +14,9 @@
           :repository="selection.repository"
           @selected="selectRepository"
         />
-        <VProgressCircular v-if="loadingContent" class="mt-5" indeterminate />
+        <VSheet v-if="loading" class="text-center pa-8" color="transparent">
+          <VProgressCircular class="mt-5" color="primary" indeterminate />
+        </VSheet>
         <SelectActivity
           v-else
           :activities="items.activities"
@@ -32,7 +34,9 @@
             {{ toggleButton.label }}
           </VBtn>
         </div>
-        <v-progress-circular v-if="loadingContent" class="mt-5" indeterminate />
+        <VSheet v-if="loading" class="text-center pa-8" color="transparent">
+          <VProgressCircular class="mt-5" color="primary" indeterminate />
+        </VSheet>
         <ContentPreview
           v-else
           :allowed-types="allowedTypes"
@@ -71,11 +75,11 @@ import sortBy from 'lodash/sortBy';
 import type { Activity, ContentContainer } from '../../interfaces/activity';
 import type { ContentElement } from '../../interfaces/content-element';
 import ContentPreview from '../ContentPreview/index.vue';
-import loader from '../../loader';
 import type { Repository } from '../../interfaces/repository';
 import SelectActivity from './SelectActivity.vue';
 import SelectRepository from './SelectRepository.vue';
 import TailorDialog from '../TailorDialog.vue';
+import { useLoader } from '../../composables/useLoader';
 
 const { getDescendants } = activityUtils;
 
@@ -118,7 +122,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['selected', 'close']);
 
-const loadingContent = ref(false);
+const { loading, loader } = useLoader();
 
 const currentRepository = inject<CurrentRepository>('$repository');
 const api = inject<any>('$api');
@@ -236,23 +240,15 @@ const selectRepository = async (repository: Repository) => {
       : await fetchActivities(repository);
 };
 
-const fetchActivities = loader(
-  async function (repository: any) {
-    return api.fetchActivities(repository.id);
-  },
-  'loadingContent',
-  500,
-);
+const fetchActivities = loader(async function (repository: any) {
+  return api.fetchActivities(repository.id);
+}, 500);
 
-const fetchElements = loader(
-  async function (containers: ContentContainer[]) {
-    const repositoryId = selection.repository?.id;
-    const params = { ids: map(containers, 'id') };
-    return api.fetchContentElements(repositoryId, params);
-  },
-  'loadingContent',
-  500,
-);
+const fetchElements = loader(async function (containers: ContentContainer[]) {
+  const repositoryId = selection.repository?.id;
+  const params = { ids: map(containers, 'id') };
+  return api.fetchContentElements(repositoryId, params);
+}, 500);
 
 const save = () => {
   emit('selected', [...selection.elements]);

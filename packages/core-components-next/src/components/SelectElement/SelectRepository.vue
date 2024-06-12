@@ -21,14 +21,14 @@ import debounce from 'lodash/debounce';
 import find from 'lodash/find';
 import sortBy from 'lodash/sortBy';
 
-import loader from '../../loader';
 import type { Repository } from '../../interfaces/repository';
+import { useLoader } from '../../composables/useLoader';
 
 defineProps<{ repository?: Repository }>();
 const emit = defineEmits(['selected']);
 
 const repositories = ref<Repository[]>([]);
-const loading = ref(false);
+const { loading, loader } = useLoader();
 
 const api = inject<any>('$api');
 
@@ -43,7 +43,7 @@ const fetchRepositories = debounce(
     const fetchedRepositories: { items: Repository[]; total: number } =
       await api.fetchRepositories({ search });
     repositories.value = sortBy(fetchedRepositories.items, 'name');
-  }, 'loading'),
+  }),
   500,
 );
 
