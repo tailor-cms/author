@@ -1,3 +1,4 @@
+import { store as activityCache } from '../../repository/feed/store.js';
 import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import crypto from 'node:crypto';
 import db from '../../shared/database/index.js';
@@ -21,6 +22,7 @@ class SeedService {
     await db.sequelize.drop({});
     await db.initialize();
     await Promise.all(seedUsers.map((it) => User.create(it)));
+    await activityCache.clear();
     return true;
   }
 
