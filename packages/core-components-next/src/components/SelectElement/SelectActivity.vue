@@ -53,21 +53,22 @@ import groupBy from 'lodash/groupBy';
 import pluralize from 'pluralize';
 import { VTreeview } from 'vuetify/labs/VTreeview';
 
+import type {
+  ContentElement,
+  Relationship,
+} from '../../interfaces/content-element';
 import type { Activity } from '../../interfaces/activity';
-import type { ContentElement } from '../../interfaces/content-element';
 
-const { toTreeFormat } = activityUtils;
-
-interface Props {
-  selectedElements?: Array<ContentElement>;
-  activities?: Array<Activity>;
+interface TreeItem {
+  id: string;
+  title: string;
+  isEditable: boolean;
+  children?: Array<TreeItem>;
 }
 
-interface ActivityTree {
-  id: string;
-  name: string;
-  type: string;
-  children: Array<ActivityTree>;
+interface Props {
+  selectedElements?: Array<ContentElement | Relationship>;
+  activities?: Array<Activity>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -78,47 +79,52 @@ defineEmits(['selected']);
 
 const search = ref('');
 const treeview = ref();
-const schemaService = inject('$schemaService') as any;
-
-const groupedSelection = computed(() =>
-  groupBy(props.selectedElements, 'outlineId'),
-);
+const schemaService = inject<any>('$schemaService');
 
 const expandedActivityIds = computed(() => props.activities.map((it) => it.id));
+
+const groupedSelection = computed(() => {
+  return groupBy(props.selectedElements, 'outlineId');
+});
+
+const activityTree = computed<Array<TreeItem>>(() => {
+  return activityUtils.toTreeFormat(props.activities, {
+    filterNodesFn: schemaService.filterOutlineActivities,
+    processNodeFn: attachActivityAttrs,
+  });
+});
 
 const processedItems = computed(() => {
   if (!search.value) return activityTree.value;
   const items = cloneDeep(activityTree.value);
-  return items.map(searchRecursive).filter(Boolean);
-});
-
-const doesTitleMatchSearch = (title: string) =>
-  title.toLowerCase().includes(search.value.toLowerCase());
-
-const searchRecursive = (item: any): any => {
-  if (doesTitleMatchSearch(item.title)) return item;
-  const filteredChildren = item.children?.map(searchRecursive).filter(Boolean);
-  if (filteredChildren?.length) return { ...item, children: filteredChildren };
-  return false;
-};
-const attachActivityAttrs = (activity: Activity) => ({
-  id: activity.id,
-  title: activity.data.name,
-  isEditable: !!schemaService.isEditable(activity.type),
-  ...(schemaService.isEditable(activity.type) && { children: undefined }),
-});
-
-const activityTree = computed<Array<ActivityTree>>(() => {
-  return toTreeFormat(props.activities, {
-    filterNodesFn: schemaService.filterOutlineActivities,
-    processNodeFn: attachActivityAttrs,
-  });
+  return items.map(searchRecursive).filter(Boolean) as TreeItem[];
 });
 
 const noResultsMessage = computed(() => {
   if (!props.activities?.length) return 'Empty repository';
   if (!search.value || !!processedItems.value.length) return '';
   return 'No matches found';
+});
+
+const doesTitleMatchSearch = (title: string) => {
+  return title.toLowerCase().includes(search.value.toLowerCase());
+};
+
+const searchRecursive = (item: TreeItem) => {
+  if (doesTitleMatchSearch(item.title)) return item;
+  if (!item.children) return false;
+  const children = item.children
+    .map(searchRecursive)
+    .filter(Boolean) as TreeItem[];
+  if (children.length) return { ...item, children };
+  return false;
+};
+
+const attachActivityAttrs = (activity: Activity) => ({
+  id: activity.id,
+  title: activity.data.name,
+  isEditable: !!schemaService.isEditable(activity.type),
+  ...(schemaService.isEditable(activity.type) && { children: undefined }),
 });
 
 const getChipLabel = (length: number) => {

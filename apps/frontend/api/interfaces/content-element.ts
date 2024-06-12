@@ -1,5 +1,20 @@
 import type { Activity } from './activity';
 
+export interface Relationship {
+  id: number;
+  containerId: number;
+  outlineId: number;
+}
+
+export interface RelationshipType {
+  key: string;
+  label: string;
+  multiple: boolean;
+  placeholder: string;
+  allowedTypes: Array<string>;
+  value?: Array<Relationship>;
+}
+
 export interface ContentElement {
   id: number;
   uid: string;
@@ -15,7 +30,7 @@ export interface ContentElement {
   /** Data collected using meta input fields */
   meta: Record<string, unknown>;
   /** See element relationship configuration for details */
-  refs: Record<string, unknown>;
+  refs: Record<string, Relationship>;
   /** Parent is soft-deleted */
   detached: boolean;
   /** Missing implementation */

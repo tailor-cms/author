@@ -27,13 +27,16 @@
 import { computed } from 'vue';
 import keyBy from 'lodash/keyBy';
 
+import type {
+  ContentElement,
+  Relationship,
+} from '../../interfaces/content-element';
 import type { ContentContainer } from '../../interfaces/activity';
-import type { ContentElement } from '../../interfaces/content-element';
 import Element from './ContentElement.vue';
 
 interface Props {
   allowedTypes: Array<string>;
-  selected: Array<ContentElement>;
+  selected: Array<ContentElement | Relationship>;
   contentContainers?: Array<ContentContainer>;
   selectable?: boolean;
   multiple?: boolean;

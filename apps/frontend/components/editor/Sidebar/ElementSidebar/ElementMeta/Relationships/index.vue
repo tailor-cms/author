@@ -1,6 +1,6 @@
 <template>
   <VList>
-    <RelationshipType
+    <RelationshipItem
       v-for="relationship in relationships"
       v-bind="relationship"
       :key="`${element.uid}.${relationship.key}`"
@@ -12,22 +12,22 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue';
 
-import type { ContentElement } from '@/api/interfaces/content-element';
-import RelationshipType from './RelationshipType.vue';
+import type { ContentElement, Relationship, RelationshipType } from '@/api/interfaces/content-element';
+import RelationshipItem from './RelationshipType.vue';
 import { useContentElementStore } from '@/stores/content-elements';
-
-const contentElementStore = useContentElementStore();
 
 interface Props {
   element: ContentElement;
-  relationships: Array<any>;
+  relationships: Array<RelationshipType>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   relationships: () => [],
 });
 
-const save = (key: string, val: any) => {
+const contentElementStore = useContentElementStore();
+
+const save = (key: string, val: Relationship) => {
   const refs = { ...props.element.refs };
   const updatedElement = { ...props.element, refs };
   updatedElement.refs[key] = val;

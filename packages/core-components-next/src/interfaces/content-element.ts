@@ -1,7 +1,16 @@
+import type { Activity } from './activity';
+
+export interface Relationship {
+  id: number;
+  containerId: number;
+  outlineId: number;
+}
+
 export interface ContentElement {
   id: number;
   uid: string;
   type: string;
+  activity?: Activity;
   repositoryId: number;
   /** Container holding the element */
   activityId: number;
@@ -12,7 +21,7 @@ export interface ContentElement {
   /** Data collected using meta input fields */
   meta: Record<string, unknown>;
   /** See element relationship configuration for details */
-  refs: Record<string, unknown>;
+  refs: Record<string, Relationship>;
   /** Parent is soft-deleted */
   detached: boolean;
   /** Missing implementation */

@@ -26,10 +26,10 @@ import { useLoader } from '../../composables/useLoader';
 defineProps<{ repository?: Repository }>();
 const emit = defineEmits(['selected']);
 
+const api = inject<any>('$api');
+
 const repositories = ref<Repository[]>([]);
 const { loading, loader } = useLoader();
-
-const api = inject<any>('$api');
 
 const selectRepository = (repository: Repository) => {
   if (find(repositories.value, { id: repository?.id })) {

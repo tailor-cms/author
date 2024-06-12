@@ -6,7 +6,7 @@
       :model-value="isSelected"
       class="flex-shrink-0 mr-2"
       color="primary-darken-4"
-      @update:model-value="toggleSelection"
+      @update:model-value="$emit('toggle')"
     />
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <div v-bind="hoverProps" class="element-wrapper flex-grow-1 mr-2">
@@ -56,18 +56,12 @@ const props = withDefaults(defineProps<Props>(), {
   isSelected: false,
   selectionDisabled: false,
 });
-
-const emit = defineEmits(['element:open', 'toggle']);
+defineEmits(['element:open', 'toggle']);
 
 const disabled = computed(() => props.selectionDisabled && !props.isSelected);
 const elementWidth = computed(
   () => get(props.element, 'data.width', 12) as number,
 );
-
-const toggleSelection = () => {
-  if (!props.selectable || disabled.value) return;
-  return emit('toggle');
-};
 </script>
 
 <style lang="scss" scoped>

@@ -10,14 +10,17 @@
 </template>
 
 <script lang="ts" setup>
-import type { ContentElement } from '@/api/interfaces/content-element';
+import type {
+  ContentElement,
+  RelationshipType
+} from '@/api/interfaces/content-element';
 import ElementInputs from './MetaInputs.vue';
 import ElementRelationships from './Relationships/index.vue';
 
 interface Props {
   element: ContentElement;
   inputs?: any[];
-  relationships?: any[];
+  relationships?: RelationshipType[];
 }
 
 withDefaults(defineProps<Props>(), {

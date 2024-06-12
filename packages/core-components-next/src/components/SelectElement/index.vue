@@ -78,15 +78,16 @@ import map from 'lodash/map';
 import sortBy from 'lodash/sortBy';
 
 import type { Activity, ContentContainer } from '../../interfaces/activity';
-import type { ContentElement } from '../../interfaces/content-element';
+import type {
+  ContentElement,
+  Relationship,
+} from '../../interfaces/content-element';
 import ContentPreview from '../ContentPreview/index.vue';
 import type { Repository } from '../../interfaces/repository';
 import SelectActivity from './SelectActivity.vue';
 import SelectRepository from './SelectRepository.vue';
 import TailorDialog from '../TailorDialog.vue';
 import { useLoader } from '../../composables/useLoader';
-
-const { getDescendants } = activityUtils;
 
 const TOGGLE_BUTTON = {
   SELECT: { label: 'Select all', icon: 'checkbox-multiple-marked-outline' },
@@ -97,7 +98,7 @@ interface Props {
   allowedTypes: Array<string>;
   heading: string;
   multiple?: boolean;
-  selected?: Array<ContentElement>;
+  selected?: Array<Relationship>;
   headerIcon?: string;
   submitLabel?: string;
   onlyCurrentRepo?: boolean;
@@ -106,16 +107,12 @@ interface Props {
 interface Selection {
   repository?: Repository;
   activity?: Activity;
-  elements: Array<ContentElement>;
+  elements: Array<ContentElement | Relationship>;
 }
 
 interface Items {
   activities: Activity[];
   contentContainers?: ContentContainer[];
-}
-
-interface CurrentRepository extends Repository {
-  activities: Activity[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -129,8 +126,8 @@ const emit = defineEmits(['selected', 'close']);
 
 const { loading, loader } = useLoader();
 
-const currentRepository = inject<CurrentRepository>('$repository');
 const api = inject<any>('$api');
+const currentRepository = inject<any>('$repository');
 const schemaService = inject<any>('$schemaService');
 
 const selection: Selection = reactive({
@@ -164,8 +161,8 @@ const toggleButton = computed(() => {
 });
 
 const rootContainerTypes = computed(() => {
-  const type = selection.activity?.type;
-  return type && getContainerTypes(type);
+  if (!selection.activity) return [];
+  return getContainerTypes(selection.activity.type);
 });
 
 const processedContainers = computed<ContentContainer[]>(() => {
@@ -179,25 +176,27 @@ const processedContainers = computed<ContentContainer[]>(() => {
 });
 
 const getContainerTypes = (type: string) => {
-  return map((schemaService as any).getSupportedContainers(type), 'type');
+  return map(schemaService.getSupportedContainers(type), 'type');
 };
 
 const getTypePosition = ({ type }: { type: string }) => {
-  return rootContainerTypes.value?.indexOf(type);
+  return rootContainerTypes.value.indexOf(type);
 };
 
 const isRootContainer = ({ parentId, type }: Activity) => {
+  if (!selection.activity) return false;
   return (
-    parentId === (selection.activity as any).id &&
-    rootContainerTypes.value?.includes(type)
+    parentId === selection.activity.id &&
+    rootContainerTypes.value.includes(type)
   );
 };
 
-const getSubcontainers = (container: any) => {
+const getSubcontainers = (container: ContentContainer) => {
+  const { getDescendants } = activityUtils;
   return sortBy(getDescendants(items.activities, container), 'position');
 };
 
-const showActivityElements = async (activity: any) => {
+const showActivityElements = async (activity: Activity) => {
   selection.activity = activity;
   const elements: ContentElement[] = await fetchElements(
     processedContainers.value,
@@ -213,8 +212,8 @@ const assignElements = (
   elements: ContentElement[],
 ) => {
   const containerElements = elements
-    .filter((it: any) => it.activityId === container.id)
-    .map((element: any) => ({ ...element, activity }));
+    .filter(({ activityId }) => activityId === container.id)
+    .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
 };
 
@@ -240,12 +239,12 @@ const selectRepository = async (repository: Repository) => {
   selection.repository = repository;
   deselectActivity();
   items.activities =
-    currentRepository?.id === repository.id
+    currentRepository.id === repository.id
       ? currentRepository.activities
       : await fetchActivities(repository);
 };
 
-const fetchActivities = loader(async function (repository: any) {
+const fetchActivities = loader(async function (repository: Repository) {
   return api.fetchActivities(repository.id);
 }, 500);
 
