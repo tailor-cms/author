@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
-import { EndpointClient, getEndpointClient } from '../../../api/client';
 import { ActivityOutline } from '../../../pom/repository/Outline';
+import ApiClient from '../../../api/ApiClient';
 
-let REPOSITORY_API: EndpointClient;
+const REPOSITORY_API = new ApiClient('/api/repositories/');
 let REPOSITORY: any = null;
 
 const createRepository = () => {
@@ -15,11 +15,6 @@ const createRepository = () => {
   };
   return REPOSITORY_API.create(payload as any);
 };
-
-test.beforeAll(async ({ baseURL }) => {
-  if (!baseURL) throw new Error('baseURL is required');
-  REPOSITORY_API = await getEndpointClient(baseURL, '/api/repositories/');
-});
 
 test.beforeEach(async ({ page }) => {
   const { data: repository } = await createRepository();

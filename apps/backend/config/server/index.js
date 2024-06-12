@@ -5,6 +5,7 @@ import * as mail from './mail.js';
 import * as storage from './storage.js';
 import * as store from './store.js';
 import * as tce from './tce.js';
+import * as test from './test.js';
 
 import resolveUrl from 'tailor-config-shared/src/url.js';
 
@@ -12,31 +13,33 @@ const { hostname, protocol, port, origin } = resolveUrl(process.env);
 const previewUrl = process.env.PREVIEW_URL;
 
 export {
-  protocol,
-  hostname,
-  port,
-  origin,
+  ai,
   auth,
-  mail,
-  storage,
-  previewUrl,
   consumer,
+  hostname,
+  mail,
+  origin,
+  port,
+  previewUrl,
+  protocol,
+  storage,
   store,
   tce,
-  ai,
+  test,
 };
 
 export default {
-  protocol,
-  hostname,
-  port,
-  origin,
+  ai,
   auth,
-  mail,
-  storage,
-  previewUrl,
   consumer,
+  hostname,
+  mail,
+  origin,
+  port,
+  previewUrl,
+  protocol,
+  storage,
   store,
   tce,
-  ai,
+  test,
 };

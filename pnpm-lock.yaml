@@ -123,6 +123,9 @@ importers:
       '@extensionengine/tapster':
         specifier: github:ExtensionEngine/tapster#53ccb222c757948d322c33087620453ddf5e70ed
         version: https://codeload.github.com/ExtensionEngine/tapster/tar.gz/53ccb222c757948d322c33087620453ddf5e70ed
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
       '@tailor-cms/config':
         specifier: workspace:*
         version: link:../../packages/tailor-config-parser

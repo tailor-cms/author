@@ -1,34 +1,13 @@
 import { expect, test } from '@playwright/test';
+import mockRepositories from 'tailor-seed/repositories.json';
 
-import { EndpointClient, getEndpointClient } from '../../../api/client';
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import { Catalog } from '../../../pom/catalog/Catalog';
-import { repositories as mockRepositories } from '../../../fixtures/repositories';
 import { RepositoryCard } from '../../../pom/catalog/RepositoryCard';
-
-let REPOSITORY_API: EndpointClient;
-
-const seedCatalog = async () => {
-  return Promise.all(
-    mockRepositories.map((it) => REPOSITORY_API.create(it as any)),
-  );
-};
-
-const cleanupCatalog = async (repositories) => {
-  for (const repository of repositories) {
-    await REPOSITORY_API.remove(repository.id);
-  }
-};
-
-test.beforeAll(async ({ baseURL }) => {
-  if (!baseURL) throw new Error('baseURL is required');
-  REPOSITORY_API = await getEndpointClient(baseURL, '/api/repositories/');
-});
+import SeedClient from '../../../api/SeedClient';
 
 test.beforeEach(async ({ page }) => {
-  const { data } = await REPOSITORY_API.list();
-  const { items: repositories } = data;
-  if (repositories.length) await cleanupCatalog(repositories);
+  await SeedClient.resetDatabase();
   await page.goto('/');
 });
 
@@ -57,7 +36,7 @@ test('should be able to import a repository', async ({ page }) => {
 });
 
 test('should be able to load repositories', async ({ page }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   // Pagination limit is 18
@@ -65,7 +44,7 @@ test('should be able to load repositories', async ({ page }) => {
 });
 
 test('should be able to load all repositories', async ({ page }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   // Pagination limit is 18
@@ -77,7 +56,7 @@ test('should be able to load all repositories', async ({ page }) => {
 });
 
 test('should be able to order by name', async ({ page }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   await catalog.orderByName();
@@ -88,7 +67,7 @@ test('should be able to order by name', async ({ page }) => {
 });
 
 test('should be able to order by asc / desc', async ({ page }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   await catalog.orderByName();
@@ -102,7 +81,7 @@ test('should be able to order by asc / desc', async ({ page }) => {
 test('should be able to pin repository and filter by pinned repositories', async ({
   page,
 }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   const repositoryCard = new RepositoryCard(
@@ -115,7 +94,7 @@ test('should be able to pin repository and filter by pinned repositories', async
 });
 
 test('should be able to search by name', async ({ page }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   await catalog.searchInput.fill('Astrono');
@@ -125,7 +104,7 @@ test('should be able to search by name', async ({ page }) => {
 test('should show a message in case of not matching the search', async ({
   page,
 }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   await catalog.searchInput.fill('sdasdassdas');
@@ -143,7 +122,7 @@ test('should show message in case of no pinned repositories', async ({
 });
 
 test('should be able to tag a repository', async ({ page }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   const repositoryCard = new RepositoryCard(
@@ -155,7 +134,7 @@ test('should be able to tag a repository', async ({ page }) => {
 });
 
 test('should be able to delete a tag', async ({ page }) => {
-  await seedCatalog();
+  await SeedClient.seedCatalog();
   await page.reload();
   const catalog = new Catalog(page);
   const repositoryCard = new RepositoryCard(
@@ -171,5 +150,5 @@ test('should be able to delete a tag', async ({ page }) => {
 });
 
 test.afterAll(async () => {
-  // TODO: Cleanup
+  await SeedClient.resetDatabase();
 });

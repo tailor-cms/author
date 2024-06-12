@@ -11,7 +11,7 @@
       variant="tonal"
       @click="toggleExpand"
     >
-      {{ hasExpandedItems ? 'Collapse' : 'Expand' }} all
+      Toggle all
     </VBtn>
   </div>
   <VList v-model:opened="expanded">
@@ -68,13 +68,15 @@ const searchRecursive = (item: any): any => {
 };
 
 const hasItems = computed(() => processedItems.value.length > 0);
-const hasExpandedItems = computed(() => expanded.value.length > 0);
+const isFullyExpanded = computed(
+  () => processedItems.value.length === expanded.value.length,
+);
 
 const getGroupIds = (items: any[]): number[] =>
   items.map((it: any) => (it.children?.length ? it.id : null)).filter(Boolean);
 
 const toggleExpand = () => {
-  if (hasExpandedItems.value) {
+  if (isFullyExpanded.value) {
     expanded.value = [];
     return;
   }

@@ -1,33 +1,17 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 
-import { EndpointClient, getEndpointClient } from '../../api/client';
-import { AddRepositoryDialog } from '../../pom/catalog/AddRepository';
-import { Catalog } from '../../pom/catalog/Catalog';
 import { percySnapshot } from '../../utils/percy.ts';
-
-const TEST_REPOSITORY_NAME = 'Visual test imported repository';
-let REPOSITORY_API: EndpointClient;
-
-test.beforeAll(async ({ baseURL }) => {
-  if (!baseURL) throw new Error('baseURL is required');
-  REPOSITORY_API = await getEndpointClient(baseURL, '/api/repositories/');
-});
+import SeedClient from '../../api/SeedClient';
 
 test.beforeEach(async ({ page }) => {
-  const catalog = new Catalog(page);
-  await catalog.visit();
-  const dialog = new AddRepositoryDialog(page);
-  await dialog.open();
-  await dialog.importRepository(TEST_REPOSITORY_NAME, 'Test description');
-  await expect(page.getByText(TEST_REPOSITORY_NAME)).toBeVisible({
-    timeout: 10000,
+  const { data } = await SeedClient.seedTestRepository({
+    name: 'Visual test imported repository',
   });
-  await catalog.findRepositoryCard(TEST_REPOSITORY_NAME).click();
-  await page.waitForLoadState('networkidle');
+  await page.goto(`/repository/${data.repository.id}/root/structure`);
 });
 
 test('Take a snapshot of the repository structure page', async ({ page }) => {
-  await page.waitForTimeout(2000);
+  await page.getByText('Introduction to Pizza Making').isVisible();
   await percySnapshot(page, 'Repository structure page');
 });
 
@@ -39,10 +23,5 @@ test('Take a snapshot of the settings page', async ({ page }) => {
 });
 
 test.afterEach(async () => {
-  const { data } = await REPOSITORY_API.list();
-  const { items: repositories } = data;
-  if (!repositories.length) return;
-  for (const repository of repositories) {
-    await REPOSITORY_API.remove(repository.id);
-  }
+  await SeedClient.resetDatabase();
 });

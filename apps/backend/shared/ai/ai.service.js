@@ -104,7 +104,7 @@ class AIService {
     if (!schema) throw new Error('Schema not found');
     const userPrompt = `
       ${this.baseRepositoryPrompt(schemaId, repoName, repoDescription)}
-      In order for you to help, is there any ambiguity in the request that
+      In order for you to help, is there any ambiguity in the topic that
       I should be aware of? Present any specificators or requirements that I
       should consider in form of tags. Return response as JSON and use the
       following format:

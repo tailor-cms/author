@@ -3,6 +3,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 dotenv.config();
 
+if (!process.env.APP_URL) process.env.APP_URL = 'http://localhost:3000';
+
 // See https://playwright.dev/docs/test-configuration.
 export default defineConfig({
   testDir: './specs',
@@ -12,7 +14,7 @@ export default defineConfig({
   workers: 1,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:3000',
+    baseURL: process.env.APP_URL,
     trace: 'on-first-retry',
     video: 'on-first-retry',
   },
