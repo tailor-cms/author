@@ -2,8 +2,8 @@
   <VAlert
     v-if="!elements.length"
     class="text-center"
-    color="primary"
-    height="19rem"
+    color="primary-darken-2"
+    height="300"
     variant="tonal"
   >
     No available elements.

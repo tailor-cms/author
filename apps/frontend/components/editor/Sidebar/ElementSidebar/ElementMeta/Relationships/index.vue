@@ -13,7 +13,7 @@
 import { defineProps } from 'vue';
 
 import type { ContentElement } from '@/api/interfaces/content-element';
-import RelationshipType from './Item.vue';
+import RelationshipType from './RelationshipType.vue';
 import { useContentElementStore } from '@/stores/content-elements';
 
 const contentElementStore = useContentElementStore();
@@ -21,7 +21,7 @@ const contentElementStore = useContentElementStore();
 interface Props {
   element: ContentElement;
   relationships: Array<any>;
-};
+}
 
 const props = withDefaults(defineProps<Props>(), {
   relationships: () => [],

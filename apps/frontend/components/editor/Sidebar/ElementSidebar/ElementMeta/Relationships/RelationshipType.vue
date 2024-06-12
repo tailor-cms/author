@@ -10,8 +10,8 @@
               v-bind="tooltipProps"
               :class="{ 'mr-3': hasRelationships }"
               :icon="hasRelationships ? 'mdi-pencil' : 'mdi-plus'"
-              size="small"
               color="teal-lighten-3"
+              size="small"
               variant="tonal"
               @click="showElementBrowser = true"
             />
@@ -52,18 +52,18 @@ import { computed, defineEmits, defineProps, ref } from 'vue';
 import pluralize from 'pluralize';
 import { SelectElement } from '@tailor-cms/core-components-next';
 
+import type { Activity } from '@/api/interfaces/activity';
 import type { ContentElement } from '@/api/interfaces/content-element';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
-import type { Activity } from '@/api/interfaces/activity';
 
 const getTotalsByActivity = (activities: Activity[], relationships: any[]) => {
   return activities.reduce((acc, activity) => {
-    const { id, data: { name } } = activity;
+    const { id, data } = activity;
     const { length } = relationships.filter((it) => it.outlineId === id);
-    return length ? [...acc, `${name} (${length})`] : acc;
+    return length ? [...acc, `${data.name} (${length})`] : acc;
   }, [] as Array<string>);
-}
+};
 
 interface Props {
   label: string;
@@ -118,7 +118,7 @@ const select = (elements: ContentElement[]) => {
 </script>
 
 <style lang="scss" scoped>
-.v-list-item +  .v-list-item {
+.v-list-item + .v-list-item {
   margin-top: 0.25rem;
 }
 </style>

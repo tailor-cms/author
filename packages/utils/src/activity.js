@@ -56,6 +56,6 @@ export function toTreeFormat(
         level: level + 1
       }
     ),
-    ...(processNodeFn && processNodeFn(it)),
+    ...(processNodeFn && processNodeFn(it))
   }));
 }

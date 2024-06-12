@@ -122,7 +122,7 @@ provide('$storageService', storageService);
 if (runtimeConfig.public.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 provide('$repository', {
   ...repositoryStore.repository,
-  activities: repositoryStore.activities
+  activities: repositoryStore.activities,
 });
 
 const isLoading = ref(true);

@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, onMounted, reactive, ref, withDefaults } from 'vue';
+import { computed, inject, onMounted, reactive, withDefaults } from 'vue';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import flatMap from 'lodash/flatMap';
 import map from 'lodash/map';

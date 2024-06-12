@@ -17,10 +17,10 @@ import { getElementId } from '@tailor-cms/utils';
 import { schema } from 'tailor-config-shared';
 
 import ActivityContent from '@/components/editor/ActivityContent/index.vue';
+import { exposedApi } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
-import { exposedApi } from '@/api';
 
 definePageMeta({
   name: 'editor',
@@ -41,7 +41,7 @@ provide('$api', exposedApi);
 provide('$schemaService', schema);
 provide('$repository', {
   ...repositoryStore.repository,
-  activities: repositoryStore.activities
+  activities: repositoryStore.activities,
 });
 
 const selectElement = (element: any) => {
