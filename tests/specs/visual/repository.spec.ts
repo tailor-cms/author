@@ -4,6 +4,7 @@ import { percySnapshot } from '../../utils/percy.ts';
 import SeedClient from '../../api/SeedClient';
 
 test.beforeEach(async ({ page }) => {
+  await SeedClient.resetDatabase();
   const { data } = await SeedClient.seedTestRepository({
     name: 'Visual test imported repository',
   });
@@ -22,6 +23,6 @@ test('Take a snapshot of the settings page', async ({ page }) => {
   await percySnapshot(page, 'Repository settings page');
 });
 
-test.afterEach(async () => {
+test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });
