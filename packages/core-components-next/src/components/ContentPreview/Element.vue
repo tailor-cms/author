@@ -18,7 +18,6 @@
           :class="{ selected: isSelected }"
           :element="element"
           :set-width="false"
-          class="content-element"
         />
         <VTooltip location="top" open-delay="400">
           <template #activator="{ props: tooltipProps }">
