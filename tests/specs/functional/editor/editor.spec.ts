@@ -35,6 +35,35 @@ test('can toggle using the sidebar', async ({ page }) => {
   await expect(page.getByText('Oven Baking Basics')).toBeHidden();
 });
 
+test('can create content container', async ({ page }) => {
+  const editor = new Editor(page);
+  await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
+  const containers = await editor.containerList.getContainers();
+  expect(containers.length).toBe(1);
+  await editor.containerList.addContainer();
+  const containersAfterAdd = await editor.containerList.getContainers();
+  expect(containersAfterAdd.length).toBe(2);
+  await page.reload();
+  await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
+  const containersAfterReload = await editor.containerList.getContainers();
+  expect(containersAfterReload.length).toBe(2);
+});
+
+test('can delete content container', async ({ page }) => {
+  const editor = new Editor(page);
+  await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
+  const containers = await editor.containerList.getContainers();
+  expect(containers.length).toBe(1);
+  await containers[0].remove();
+  await expect(page.getByText(editor.primaryPageContent)).not.toBeVisible();
+  await expect(
+    page.getByText('Click the button below to create first Section.'),
+  ).toBeVisible();
+  // Make sure changes are persisted
+  await page.reload();
+  await expect(page.getByText(editor.primaryPageContent)).not.toBeVisible();
+});
+
 test('can add content element', async ({ page }) => {
   const editor = new Editor(page);
   await editor.sidebar.toggleItems();
