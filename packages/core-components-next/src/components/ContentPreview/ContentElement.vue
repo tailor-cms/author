@@ -2,7 +2,7 @@
   <VCol :cols="elementWidth" class="d-flex align-start my-1">
     <VCheckbox
       v-if="selectable"
-      :disabled="disabled"
+      :disabled="selectionDisabled && !isSelected"
       :model-value="isSelected"
       class="flex-shrink-0 mr-2"
       color="primary-darken-4"
@@ -58,7 +58,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 defineEmits(['element:open', 'toggle']);
 
-const disabled = computed(() => props.selectionDisabled && !props.isSelected);
 const elementWidth = computed(
   () => get(props.element, 'data.width', 12) as number,
 );

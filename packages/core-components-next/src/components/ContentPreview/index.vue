@@ -25,6 +25,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+import flatMap from 'lodash/flatMap';
 import keyBy from 'lodash/keyBy';
 
 import type {
@@ -59,21 +60,17 @@ const selectionMap = computed(() => {
 });
 
 const processedContainers = computed(() => {
-  const { contentContainers: containers, allowedTypes } = props;
-  if (!allowedTypes.length) return containers;
-  return containers.map((container) => ({
+  const { contentContainers, allowedTypes } = props;
+  if (!allowedTypes.length) return contentContainers;
+  return contentContainers.map((container) => ({
     ...container,
-    elements: container.elements?.filter((it) =>
-      props.allowedTypes.includes(it.type),
+    elements: container.elements.filter(({ type }) =>
+      props.allowedTypes.includes(type),
     ),
   }));
 });
 
 const elements = computed(() => {
-  const { value: containers } = processedContainers;
-  return containers.reduce(
-    (acc, it) => acc.concat(it.elements),
-    [] as ContentElement[],
-  );
+  return flatMap(processedContainers.value, (it) => it.elements);
 });
 </script>

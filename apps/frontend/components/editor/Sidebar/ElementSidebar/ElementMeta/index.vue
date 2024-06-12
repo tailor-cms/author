@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import type {
   ContentElement,
-  RelationshipType
+  RelationshipType,
 } from '@/api/interfaces/content-element';
 import ElementInputs from './MetaInputs.vue';
 import ElementRelationships from './Relationships/index.vue';

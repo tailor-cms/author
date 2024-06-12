@@ -28,20 +28,21 @@ const emit = defineEmits(['selected']);
 
 const api = inject<any>('$api');
 
-const repositories = ref<Repository[]>([]);
 const { loading, loader } = useLoader();
 
+const repositories = ref<Repository[]>([]);
+
 const selectRepository = (repository: Repository) => {
-  if (find(repositories.value, { id: repository?.id })) {
+  if (find(repositories.value, { id: repository.id })) {
     emit('selected', repository);
   }
 };
 
 const fetchRepositories = debounce(
   loader(async (search: string) => {
-    const fetchedRepositories: { items: Repository[]; total: number } =
-      await api.fetchRepositories({ search });
-    repositories.value = sortBy(fetchedRepositories.items, 'name');
+    const data = await api.fetchRepositories({ search });
+    const fetchedRepositories: Repository[] = data.items;
+    repositories.value = sortBy(fetchedRepositories, 'name');
   }),
   500,
 );

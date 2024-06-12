@@ -24,7 +24,7 @@
       <VChip
         v-if="groupedSelection[item.id]"
         class="readonly custom-chip mx-2"
-        color="teal-lighten-1"
+        color="teal-darken-1"
         size="small"
       >
         {{ getChipLabel(groupedSelection[item.id].length) }}

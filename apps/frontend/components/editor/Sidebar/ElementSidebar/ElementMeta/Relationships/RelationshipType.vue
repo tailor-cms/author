@@ -52,8 +52,10 @@ import { computed, defineEmits, defineProps, ref } from 'vue';
 import pluralize from 'pluralize';
 import { SelectElement } from '@tailor-cms/core-components-next';
 
-import type { Activity } from '@/api/interfaces/activity';
-import type { ContentElement, Relationship } from '@/api/interfaces/content-element';
+import type {
+  ContentElement,
+  Relationship,
+} from '@/api/interfaces/content-element';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -93,9 +95,7 @@ const totalsByActivity = computed(() => {
 });
 
 const overview = computed(() => {
-  return hasRelationships.value
-    ? totalsByActivity.value.join(', ')
-    : '';
+  return hasRelationships.value ? totalsByActivity.value.join(', ') : '';
 });
 
 const removeAll = () => {

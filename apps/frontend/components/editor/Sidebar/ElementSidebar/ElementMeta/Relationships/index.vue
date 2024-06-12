@@ -12,7 +12,11 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue';
 
-import type { ContentElement, Relationship, RelationshipType } from '@/api/interfaces/content-element';
+import type {
+  ContentElement,
+  Relationship,
+  RelationshipType,
+} from '@/api/interfaces/content-element';
 import RelationshipItem from './RelationshipType.vue';
 import { useContentElementStore } from '@/stores/content-elements';
 

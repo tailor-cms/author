@@ -124,11 +124,11 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['selected', 'close']);
 
-const { loading, loader } = useLoader();
-
 const api = inject<any>('$api');
 const currentRepository = inject<any>('$repository');
 const schemaService = inject<any>('$schemaService');
+
+const { loading, loader } = useLoader();
 
 const selection: Selection = reactive({
   repository: undefined,
@@ -238,10 +238,10 @@ const deselectActivity = () => {
 const selectRepository = async (repository: Repository) => {
   selection.repository = repository;
   deselectActivity();
-  items.activities =
-    currentRepository.id === repository.id
-      ? currentRepository.activities
-      : await fetchActivities(repository);
+  const isCurrentRepository = currentRepository.id === repository.id;
+  items.activities = isCurrentRepository
+    ? currentRepository.activities
+    : await fetchActivities(repository);
 };
 
 const fetchActivities = loader(async function (repository: Repository) {
