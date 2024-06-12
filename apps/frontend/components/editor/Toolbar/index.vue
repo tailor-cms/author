@@ -33,7 +33,7 @@
         <ActiveUsers
           v-if="!showPublishDiff"
           :users="usersWithActivity"
-          class="mx-4"
+          class="mx-3"
         />
       </div>
       <ElementToolbarContainer
