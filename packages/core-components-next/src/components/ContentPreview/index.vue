@@ -2,8 +2,9 @@
   <div class="content-preview">
     <VAlert
       v-if="!elements.length"
-      class="mx-4"
-      color="grey-darken-4"
+      class="mx-4 text-center"
+      color="primary"
+      height="19rem"
       variant="tonal"
     >
       No available elements.
@@ -79,18 +80,3 @@ const elements = computed(() => {
   );
 });
 </script>
-
-<style lang="scss" scoped>
-.content-preview {
-  .v-alert {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 19rem;
-  }
-
-  .content-container:last-child {
-    margin-bottom: 0.625rem;
-  }
-}
-</style>

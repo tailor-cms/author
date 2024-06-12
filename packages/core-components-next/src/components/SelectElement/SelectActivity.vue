@@ -18,6 +18,7 @@
       class="py-3 px-1 treeview bg-transparent"
       item-type=""
       item-value="id"
+      max-height="300"
       open-all
     >
       <template #append="{ item }">
@@ -126,24 +127,3 @@ const getChipLabel = (length: number) => {
   return `${pluralize('element', length, true)} selected`;
 };
 </script>
-
-<style lang="scss" scoped>
-.treeview {
-  border: 1px solid #eee;
-  max-height: 19rem;
-  background-color: #fcfcfc;
-  text-align: left;
-  overflow-y: scroll;
-
-  .v-chip.custom-chip {
-    border-radius: 12px !important;
-  }
-
-  ::v-deep .v-treeview-node {
-    &--leaf > &__root,
-    &--leaf > &__content > * {
-      cursor: auto;
-    }
-  }
-}
-</style>
