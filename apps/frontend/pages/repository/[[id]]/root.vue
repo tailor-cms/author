@@ -24,7 +24,7 @@
         </VTab>
       </VTabs>
       <VSpacer />
-      <ActiveUsers :users="activeUsers" class="mr-7" size="36" />
+      <ActiveUsers :users="activeUsers" class="activity-avatars" size="36" />
     </div>
     <div class="tab-content">
       <NuxtPage />
@@ -119,5 +119,9 @@ const activeUsers = computed(() => {
     overflow-y: scroll;
     overflow-y: overlay;
   }
+}
+
+.activity-avatars {
+  margin-right: 1.5rem;
 }
 </style>
