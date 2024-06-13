@@ -15,31 +15,28 @@
     :opened="expandedActivityIds"
     :search="search"
     base-color="primary-darken-3"
-    class="py-3 px-1 treeview bg-transparent"
     item-type=""
     item-value="id"
     max-height="300"
+    nav
     open-all
+    @click:select="selectActivity($event.id as number)"
   >
     <template #append="{ item }">
       <VChip
         v-if="groupedSelection[item.id]"
-        class="readonly custom-chip ml-2"
+        class="ml-2"
         color="teal-darken-1"
         size="small"
       >
         {{ getChipLabel(groupedSelection[item.id].length) }}
       </VChip>
-      <VBtn
+      <VIcon
         v-if="item.isEditable"
         class="ml-2"
         color="primary"
-        size="small"
-        variant="tonal"
-        @click="$emit('selected', item)"
-      >
-        View elements
-      </VBtn>
+        icon="mdi-chevron-right"
+      />
     </template>
   </VTreeview>
   <VAlert v-if="noResultsMessage" color="primary-darken-2" variant="tonal">
@@ -77,7 +74,7 @@ const props = withDefaults(defineProps<Props>(), {
   selectedElements: () => [],
   activities: () => [],
 });
-defineEmits(['selected']);
+const emit = defineEmits(['selected']);
 
 const search = ref('');
 const treeview = ref();
@@ -95,6 +92,11 @@ const activityTree = computed<Array<TreeItem>>(() => {
     processNodeFn: attachActivityAttrs,
   });
 });
+
+const selectActivity = (id: number) => {
+  const activity = props.activities.find((it) => it.id === id);
+  emit('selected', activity);
+};
 
 const processedItems = computed(() => {
   if (!search.value) return activityTree.value;
@@ -135,7 +137,8 @@ const getChipLabel = (length: number) => {
 </script>
 
 <style lang="scss" scoped>
-.v-list ::v-deep .v-list-item {
+.v-list {
   border-radius: 4px !important;
+  background: rgba(var(--v-theme-primary-darken-2), 0.12);
 }
 </style>
