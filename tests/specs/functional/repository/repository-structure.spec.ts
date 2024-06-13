@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 
 import { ActivityOutline } from '../../../pom/repository/Outline';
 import ApiClient from '../../../api/ApiClient';
+import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
@@ -86,6 +87,22 @@ test('should be able to delete the activity', async ({ page }) => {
   // Test persistence
   await page.reload();
   await expect(page.getByText(targetPage)).not.toBeVisible();
+});
+
+test('should be able to edit the activity name', async ({ page }) => {
+  await toSeededRepository(page);
+  const targetItem = 'Introduction to Pizza Making';
+  await expect(page.getByText(targetItem)).toBeVisible();
+  const outline = new ActivityOutline(page);
+  const item = await outline.getOutlineItemByName(targetItem);
+  await item.select();
+  const sidebar = new OutlineSidebar(page);
+  const newName = 'Introduction to Pizza Making 2';
+  await sidebar.fillName(newName);
+  await outline.getOutlineItemByName(newName);
+  // Test persistence
+  await page.reload();
+  await expect(page.getByText(newName)).toBeVisible();
 });
 
 test('should be able to toggle expand / collapse', async ({ page }) => {
