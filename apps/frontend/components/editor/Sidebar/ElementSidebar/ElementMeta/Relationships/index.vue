@@ -23,7 +23,7 @@ import { useEditorStore } from '@/stores/editor';
 
 interface Props {
   element: ContentElement;
-  relationships: Array<RelationshipType>;
+  relationships: RelationshipType[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -38,6 +38,6 @@ const save = async (key: string, val: Relationship) => {
   const updatedElement = { ...props.element, refs };
   updatedElement.refs[key] = val;
   await contentElementStore.save(updatedElement);
-  if (selectedContentElement) return selectedContentElement.refs[key] = val;
+  if (selectedContentElement) selectedContentElement.refs[key] = val;
 };
 </script>

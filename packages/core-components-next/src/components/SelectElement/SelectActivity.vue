@@ -33,7 +33,7 @@
         v-if="item.isEditable"
         color="primary"
         size="small"
-        variant="tonal"
+        variant="text"
         @click="$emit('selected', item)"
       >
         View elements

@@ -11,8 +11,8 @@ export interface RelationshipType {
   label: string;
   multiple: boolean;
   placeholder: string;
-  allowedTypes: Array<string>;
-  value?: Array<Relationship>;
+  allowedTypes: string[];
+  value?: Relationship[];
 }
 
 export interface ContentElement {

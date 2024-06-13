@@ -63,8 +63,8 @@ interface Props {
   label: string;
   placeholder?: string;
   multiple?: boolean;
-  allowedTypes?: Array<string>;
-  value?: Array<Relationship>;
+  allowedTypes?: string[];
+  value?: Relationship[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -91,7 +91,7 @@ const totalsByActivity = computed(() => {
   return activities.value.reduce((acc, { id, data }) => {
     const { length } = props.value.filter((it) => it.outlineId === id);
     return length ? [...acc, `${data.name} (${length})`] : acc;
-  }, [] as Array<string>);
+  }, [] as string[]);
 });
 
 const overview = computed(() => {
