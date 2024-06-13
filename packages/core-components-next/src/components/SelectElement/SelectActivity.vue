@@ -15,10 +15,10 @@
     :opened="expandedActivityIds"
     :search="search"
     base-color="primary-darken-3"
+    class="pa-0"
     item-type=""
     item-value="id"
     max-height="300"
-    nav
     open-all
     @click:select="selectActivity($event.id as number)"
   >
