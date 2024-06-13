@@ -14,6 +14,7 @@
     :items="processedItems"
     :opened="expandedActivityIds"
     :search="search"
+    base-color="primary-darken-3"
     class="py-3 px-1 treeview bg-transparent"
     item-type=""
     item-value="id"
@@ -23,7 +24,7 @@
     <template #append="{ item }">
       <VChip
         v-if="groupedSelection[item.id]"
-        class="readonly custom-chip mx-2"
+        class="readonly custom-chip ml-2"
         color="teal-darken-1"
         size="small"
       >
@@ -31,16 +32,17 @@
       </VChip>
       <VBtn
         v-if="item.isEditable"
+        class="ml-2"
         color="primary"
         size="small"
-        variant="text"
+        variant="tonal"
         @click="$emit('selected', item)"
       >
         View elements
       </VBtn>
     </template>
   </VTreeview>
-  <VAlert v-if="noResultsMessage" color="primary-darken-2">
+  <VAlert v-if="noResultsMessage" color="primary-darken-2" variant="tonal">
     {{ noResultsMessage }}
   </VAlert>
 </template>
@@ -131,3 +133,9 @@ const getChipLabel = (length: number) => {
   return `${pluralize('element', length, true)} selected`;
 };
 </script>
+
+<style lang="scss" scoped>
+.v-list ::v-deep .v-list-item {
+  border-radius: 4px !important;
+}
+</style>
