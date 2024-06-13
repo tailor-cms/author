@@ -19,6 +19,7 @@ import type {
 } from '@/api/interfaces/content-element';
 import RelationshipItem from './RelationshipType.vue';
 import { useContentElementStore } from '@/stores/content-elements';
+import { useEditorStore } from '@/stores/editor';
 
 interface Props {
   element: ContentElement;
@@ -30,11 +31,13 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const contentElementStore = useContentElementStore();
+const { selectedContentElement } = useEditorStore();
 
-const save = (key: string, val: Relationship) => {
+const save = async (key: string, val: Relationship) => {
   const refs = { ...props.element.refs };
   const updatedElement = { ...props.element, refs };
   updatedElement.refs[key] = val;
-  return contentElementStore.save(updatedElement);
+  await contentElementStore.save(updatedElement);
+  if (selectedContentElement) return selectedContentElement.refs[key] = val;
 };
 </script>
