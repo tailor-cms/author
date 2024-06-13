@@ -49,6 +49,7 @@
       </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
+          aria-label="Delete element"
           class="mt-2"
           color="pink lighten-1"
           icon="mdi-delete-outline"
