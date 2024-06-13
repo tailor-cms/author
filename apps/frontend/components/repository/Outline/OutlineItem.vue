@@ -14,6 +14,7 @@
           <VBtn
             v-if="hasSubtypes"
             :icon="`mdi-${icon}`"
+            aria-label="Toggle expand"
             class="my-auto"
             color="primary-lighten-3"
             variant="text"
@@ -44,6 +45,7 @@
                   v-show="hasSubtypes"
                   v-bind="props"
                   :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
+                  aria-label="Toggle expand alt"
                   class="my-auto mx-0"
                   color="primary-lighten-4"
                   variant="text"
