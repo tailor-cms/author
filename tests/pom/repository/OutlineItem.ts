@@ -1,6 +1,32 @@
-import { Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 import { AddItemDialog } from './AddItemDialog';
+
+class OptionsMenu {
+  readonly page: Page;
+  readonly el: Locator;
+
+  constructor(page: Page, el: Locator) {
+    this.page = page;
+    this.el = el;
+  }
+
+  toggle() {
+    return this.el.click();
+  }
+
+  async remove() {
+    await this.toggle();
+    await this.el.getByLabel('Remove').click();
+    // Wait for dialog to open
+    const dialogContent = 'Are you sure you want to delete';
+    await expect(this.page.getByText(dialogContent)).toBeVisible();
+    const dialog = this.page.getByRole('dialog');
+    await dialog.getByRole('button', { name: 'Confirm' }).click();
+    // Wait for dialog to close
+    await expect(this.page.getByText(dialogContent)).not.toBeVisible();
+  }
+}
 
 export class OutlineItem {
   readonly page: Page;
@@ -11,6 +37,7 @@ export class OutlineItem {
   readonly openBtn: Locator;
   readonly toggleBtn: Locator;
   readonly toggleAltBtn: Locator;
+  readonly optionsMenu: OptionsMenu;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
@@ -24,6 +51,7 @@ export class OutlineItem {
       exact: true,
     });
     this.toggleAltBtn = el.getByRole('button', { name: 'Toggle expand alt' });
+    this.optionsMenu = new OptionsMenu(this.page, el.locator('.options-menu'));
   }
 
   select() {

@@ -147,7 +147,6 @@ onMounted(() => {
 .structure-container {
   position: relative;
   height: 100%;
-  padding-right: 29rem;
 }
 
 .structure {

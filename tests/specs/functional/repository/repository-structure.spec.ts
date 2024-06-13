@@ -75,34 +75,47 @@ test('should be able to add a new module below', async ({ page }) => {
   await outline.getOutlineItemByName(moduleName);
 });
 
+test('should be able to delete the activity', async ({ page }) => {
+  await toSeededRepository(page);
+  const targetPage = 'Introduction to Pizza Making';
+  await expect(page.getByText(targetPage)).toBeVisible();
+  const outline = new ActivityOutline(page);
+  const item = await outline.getOutlineItemByName(targetPage);
+  await item.optionsMenu.remove();
+  await expect(page.getByText(targetPage)).not.toBeVisible();
+  // Test persistence
+  await page.reload();
+  await expect(page.getByText(targetPage)).not.toBeVisible();
+});
+
 test('should be able to toggle expand / collapse', async ({ page }) => {
   await toSeededRepository(page);
-  expect(page.getByText('Introduction to Pizza Making')).toBeVisible();
-  expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText('Introduction to Pizza Making')).toBeVisible();
+  await expect(page.getByText('History of Pizza')).not.toBeVisible();
   const outline = new ActivityOutline(page);
   const module = await outline.getOutlineItemByName(
     'Introduction to Pizza Making',
   );
   await module.toggleExpand();
-  expect(page.getByText('History of Pizza')).toBeVisible();
+  await expect(page.getByText('History of Pizza')).toBeVisible();
   await module.toggleExpand();
-  expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText('History of Pizza')).not.toBeVisible();
 });
 
 test('should be able to toggle expand / collapse using the alt control', async ({
   page,
 }) => {
   await toSeededRepository(page);
-  expect(page.getByText('Introduction to Pizza Making')).toBeVisible();
-  expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText('Introduction to Pizza Making')).toBeVisible();
+  await expect(page.getByText('History of Pizza')).not.toBeVisible();
   const outline = new ActivityOutline(page);
   const module = await outline.getOutlineItemByName(
     'Introduction to Pizza Making',
   );
   await module.toggleExpandAlt();
-  expect(page.getByText('History of Pizza')).toBeVisible();
+  await expect(page.getByText('History of Pizza')).toBeVisible();
   await module.toggleExpandAlt();
-  expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText('History of Pizza')).not.toBeVisible();
 });
 
 test('should be able to toggle expand/collapse using toggle all btn', async ({
@@ -111,11 +124,11 @@ test('should be able to toggle expand/collapse using toggle all btn', async ({
   await toSeededRepository(page);
   const outline = new ActivityOutline(page);
   await outline.toggleExpand();
-  expect(page.getByText('History of Pizza')).toBeVisible();
-  expect(page.getByText('Basics of Dough Making')).toBeVisible();
+  await expect(page.getByText('History of Pizza')).toBeVisible();
+  await expect(page.getByText('Basics of Dough Making')).toBeVisible();
   await outline.toggleExpand();
-  expect(page.getByText('History of Pizza')).not.toBeVisible();
-  expect(page.getByText('Basics of Dough Making')).not.toBeVisible();
+  await expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText('Basics of Dough Making')).not.toBeVisible();
 });
 
 test.afterAll(async () => {
