@@ -13,6 +13,7 @@ test.beforeEach(async ({ page }) => {
     activity: { repositoryId, id },
   } = data;
   await page.goto(`/repository/${repositoryId}/editor/${id}`);
+  await page.waitForLoadState('networkidle');
 });
 
 test('editor page has a title set', async ({ page }) => {
@@ -72,6 +73,20 @@ test('can add content element', async ({ page }) => {
   await page.waitForTimeout(1000);
   await page.reload();
   await expect(page.locator('.content-element')).toHaveText('This is a test');
+});
+
+test('can delete content element', async ({ page }) => {
+  await page.waitForLoadState('networkidle');
+  const editor = new Editor(page);
+  await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
+  const containers = await editor.containerList.getContainers();
+  expect(containers.length).toBe(1);
+  const elements = await containers[0].getElements();
+  expect(elements.length).not.toBe(0);
+  await containers[0].deleteElements();
+  await expect(page.getByText(editor.primaryPageContent)).not.toBeVisible();
+  await page.reload();
+  await expect(page.getByText(editor.primaryPageContent)).not.toBeVisible();
 });
 
 test.afterAll(async () => {
