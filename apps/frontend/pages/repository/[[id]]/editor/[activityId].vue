@@ -39,6 +39,8 @@ provide('$ceRegistry', $ceRegistry);
 provide('$getCurrentUser', () => authStore.user);
 provide('$api', exposedApi);
 provide('$schemaService', schema);
+
+await editorStore.initialize(props.activityId);
 provide('$repository', {
   ...repositoryStore.repository,
   activities: repositoryStore.activities,
@@ -56,9 +58,6 @@ const selectElement = (element: any) => {
   navigateTo({ query });
 };
 
-onBeforeMount(() => {
-  editorStore.initialize(props.activityId);
-});
 // TODO: Publish diff, Toolbar and Sidebar need to be migrated
 // import VSidebar from './VSidebar/index.vue';
 // const showPublishDiff = computed(() => store.state.editor.showPublishDiff);
