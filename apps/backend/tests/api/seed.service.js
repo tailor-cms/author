@@ -1,7 +1,10 @@
+import { store as activityCache } from '../../repository/feed/store.js';
+import camelCase from 'lodash/camelCase.js';
 import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import crypto from 'node:crypto';
 import db from '../../shared/database/index.js';
 import { faker } from '@faker-js/faker';
+import mapKeys from 'lodash/mapKeys.js';
 import { packageDirectory } from 'pkg-dir';
 import path from 'node:path';
 import { role as roles } from 'tailor-config-shared';
@@ -20,7 +23,10 @@ class SeedService {
   async resetDatabase() {
     await db.sequelize.drop({});
     await db.initialize();
-    await Promise.all(seedUsers.map((it) => User.create(it)));
+    await Promise.all(
+      seedUsers.map((it) => User.create(mapKeys(it, (_, k) => camelCase(k)))),
+    );
+    await activityCache.clear();
     return true;
   }
 
