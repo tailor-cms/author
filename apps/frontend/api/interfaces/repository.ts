@@ -1,3 +1,5 @@
+import type { Activity } from "./activity";
+
 export interface RepositoryTag {
   repositoryId: number;
   tagId: number;
@@ -60,6 +62,7 @@ export interface Repository {
   description: string;
   data: any;
   tags: Tag[];
+  activities?: Activity[];
   revisions: Revision[];
   lastChange?: Revision;
   repositoryUsers: RepositoryUser[];

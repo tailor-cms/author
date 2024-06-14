@@ -9,7 +9,7 @@ import Hashids from 'hashids';
 import { schema } from 'tailor-config-shared';
 
 import type { Activity } from '@/api/interfaces/activity';
-import { activity as api } from '@/api';
+import { activity as api, client } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 export type Id = number | string;
@@ -127,6 +127,13 @@ export const useActivityStore = defineStore('activities', () => {
     activity.publishedAt = publishedAt;
   };
 
+  const clone = async (mapping: any) => {
+    const { srcId, srcRepositoryId } = mapping;
+    const activities = await api.clone(srcRepositoryId, srcId, mapping);
+    activities.forEach((activity: Activity) => add(activity));
+    return activities;
+  };
+
   function calculateInsertPosition(
     activity: StoreActivity,
     action: string,
@@ -139,6 +146,19 @@ export const useActivityStore = defineStore('activities', () => {
     }
     return calculatePosition(context);
   }
+
+  const calculateCopyPosition = (
+    action: string,
+    anchor: Activity
+  ) => {
+    const id = action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId;
+    const children = schema.getOutlineChildren(items.value, id);
+    const context = { items: children, action } as any;
+    if (action !== InsertLocation.ADD_INTO) {
+      context.newPosition = findIndex(children, { id: anchor.id });
+    }
+    return calculatePosition(context);
+  };
 
   const $subscribeToSSE = () => {
     sseRepositoryFeed
@@ -166,8 +186,10 @@ export const useActivityStore = defineStore('activities', () => {
     update,
     remove,
     publish,
+    clone,
     reorder,
     calculateInsertPosition,
+    calculateCopyPosition,
     $subscribeToSSE,
     $reset,
   };
