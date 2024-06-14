@@ -1,9 +1,10 @@
 <template>
   <div>
-    <VMenu max-width="350" offset="10">
+    <VMenu location="left" offset="-40" width="240" contained>
       <template #activator="{ props: menuProps }">
         <VBtn
           v-bind="menuProps"
+          aria-label="Options menu"
           color="primary-lighten-3"
           icon="mdi-dots-vertical"
           size="small"
@@ -16,6 +17,7 @@
         <VListItem
           v-for="it in menuOptions"
           :key="it.name"
+          :aria-label="it.name"
           dense
           @click="it.action()"
         >

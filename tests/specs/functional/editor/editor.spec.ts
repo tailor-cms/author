@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { Container } from '../../../pom/editor/Container';
 import { Editor } from '../../../pom/editor/Editor';
 import SeedClient from '../../../api/SeedClient';
 
@@ -42,12 +43,11 @@ test('can create content container', async ({ page }) => {
   const containers = await editor.containerList.getContainers();
   expect(containers.length).toBe(1);
   await editor.containerList.addContainer();
-  const containersAfterAdd = await editor.containerList.getContainers();
-  expect(containersAfterAdd.length).toBe(2);
+  await expect(page.locator(Container.selector)).toHaveCount(2);
+  // Make sure changes are persisted
   await page.reload();
   await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
-  const containersAfterReload = await editor.containerList.getContainers();
-  expect(containersAfterReload.length).toBe(2);
+  await expect(page.locator(Container.selector)).toHaveCount(2);
 });
 
 test('can delete content container', async ({ page }) => {
