@@ -40,7 +40,12 @@
       />
     </template>
   </VTreeview>
-  <VAlert v-if="noResultsMessage" color="primary-darken-2" variant="tonal">
+  <VAlert
+    v-if="noResultsMessage"
+    color="primary-darken-2"
+    icon="mdi-information-outline"
+    variant="tonal"
+  >
     {{ noResultsMessage }}
   </VAlert>
 </template>
