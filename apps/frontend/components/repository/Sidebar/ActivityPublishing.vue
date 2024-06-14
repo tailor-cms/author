@@ -1,6 +1,6 @@
 <template>
   <span class="publish-container">
-    <VMenu offset="10" position="left">
+    <VMenu offset="10" position="left" contained>
       <template #activator="{ props }">
         <VBtn
           :loading="publishingUtils.isPublishing.value"

@@ -105,6 +105,19 @@ test('should be able to edit the activity name', async ({ page }) => {
   await expect(page.getByText(newName)).toBeVisible();
 });
 
+test('should be able to publish activity', async ({ page }) => {
+  await toSeededRepository(page);
+  const targetItem = 'Introduction to Pizza Making';
+  await expect(page.getByText(targetItem)).toBeVisible();
+  const outline = new ActivityOutline(page);
+  const item = await outline.getOutlineItemByName(targetItem);
+  await item.select();
+  const sidebar = new OutlineSidebar(page);
+  expect(sidebar.el).toContainText('Not published');
+  await sidebar.publish();
+  expect(sidebar.el).toContainText('Published on');
+});
+
 test('should be able to toggle expand / collapse', async ({ page }) => {
   await toSeededRepository(page);
   await expect(page.getByText('Introduction to Pizza Making')).toBeVisible();
