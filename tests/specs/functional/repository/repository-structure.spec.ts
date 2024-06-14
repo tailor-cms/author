@@ -160,6 +160,19 @@ test('should be able to toggle expand/collapse using toggle all btn', async ({
   await expect(page.getByText('Basics of Dough Making')).not.toBeVisible();
 });
 
+test('should be able to post a comment', async ({ page }) => {
+  await toSeededRepository(page);
+  const targetItem = 'Introduction to Pizza Making';
+  await expect(page.getByText(targetItem)).toBeVisible();
+  const outline = new ActivityOutline(page);
+  const item = await outline.getOutlineItemByName(targetItem);
+  await item.select();
+  const sidebar = new OutlineSidebar(page);
+  const comment = 'This is a test comment';
+  await sidebar.comments.post(comment);
+  await expect(sidebar.comments.thread).toContainText(comment);
+});
+
 test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });
