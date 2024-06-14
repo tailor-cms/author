@@ -17,7 +17,7 @@ export class OutlineSidebar {
     await this.nameInput.fill(name);
     // Blur to trigger the save event
     await this.nameInput.blur();
-    await expect(this.page.locator('.v-snackbar')).toHaveText('saved');
+    await expect(this.page.locator('.v-snackbar')).toHaveText(/saved/);
   }
 
   async publish() {

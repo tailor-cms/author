@@ -113,9 +113,9 @@ test('should be able to publish activity', async ({ page }) => {
   const item = await outline.getOutlineItemByName(targetItem);
   await item.select();
   const sidebar = new OutlineSidebar(page);
-  expect(sidebar.el).toContainText('Not published');
+  await expect(sidebar.el).toContainText(/Not published/);
   await sidebar.publish();
-  expect(sidebar.el).toContainText('Published on');
+  await expect(sidebar.el).toContainText(/Published on/);
 });
 
 test('should be able to toggle expand / collapse', async ({ page }) => {
