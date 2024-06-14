@@ -24,7 +24,6 @@ const toSeededRepository = async (page) => {
   const { data } = await SeedClient.seedTestRepository();
   const { repository } = data;
   await page.goto(`/repository/${repository.id}/root/structure`);
-  await page.waitForLoadState('networkidle');
 };
 
 test('repository root page has a title set', async ({ page }) => {
