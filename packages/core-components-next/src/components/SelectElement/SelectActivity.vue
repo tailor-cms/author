@@ -10,7 +10,6 @@
   />
   <VTreeview
     v-show="!noResultsMessage"
-    ref="treeview"
     :items="processedItems"
     :opened="expandedActivityIds"
     :search="search"
@@ -19,7 +18,9 @@
     item-type=""
     item-value="id"
     max-height="300"
+    border
     open-all
+    rounded
     @click:select="selectActivity($event.id as number)"
   >
     <template #append="{ item }">
@@ -77,7 +78,6 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['selected']);
 
 const search = ref('');
-const treeview = ref();
 const schemaService = inject<any>('$schemaService');
 
 const expandedActivityIds = computed(() => props.activities.map((it) => it.id));
@@ -135,10 +135,3 @@ const getChipLabel = (length: number) => {
   return `${pluralize('element', length, true)} selected`;
 };
 </script>
-
-<style lang="scss" scoped>
-.v-list {
-  border-radius: 4px !important;
-  background: rgba(var(--v-theme-primary-darken-2), 0.12);
-}
-</style>
