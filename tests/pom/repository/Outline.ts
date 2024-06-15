@@ -12,7 +12,7 @@ export class ActivityOutline {
 
   constructor(page: Page) {
     const el = page.locator('.structure-page');
-    this.searchInput = el.getByLabel('Search by name or id...');
+    this.searchInput = el.getByPlaceholder('Search by name or id...');
     this.toggleAllBtn = el.getByRole('button', { name: 'Toggle all' });
     this.bottomAddBtn = el.getByTestId('repository__createRootActivityBtn');
     this.page = page;
@@ -21,6 +21,10 @@ export class ActivityOutline {
 
   toggleExpand() {
     return this.toggleAllBtn.click();
+  }
+
+  search(name: string) {
+    return this.searchInput.fill(name);
   }
 
   async getOutlineItems() {

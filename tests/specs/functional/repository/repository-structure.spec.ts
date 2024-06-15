@@ -160,6 +160,16 @@ test('should be able to toggle expand/collapse using toggle all btn', async ({
   await expect(page.getByText('Basics of Dough Making')).not.toBeVisible();
 });
 
+test('should be able to search by activity name', async ({ page }) => {
+  await toSeededRepository(page);
+  const outline = new ActivityOutline(page);
+  await outline.search('ess');
+  const locator = page.locator('.structure-page .search-result');
+  await expect(locator.nth(0)).toContainText('Essential Tools for Pizza Making');
+  await expect(locator.nth(1)).toContainText('The Business of Pizza');
+  await expect(locator).toHaveCount(2);
+});
+
 test('should be able to post a comment', async ({ page }) => {
   await toSeededRepository(page);
   const targetItem = 'Introduction to Pizza Making';
