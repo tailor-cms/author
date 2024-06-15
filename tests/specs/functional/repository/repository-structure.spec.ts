@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 
 import { ActivityOutline } from '../../../pom/repository/Outline';
 import ApiClient from '../../../api/ApiClient';
+import { Editor } from '../../../pom/editor/Editor';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 
@@ -168,6 +169,18 @@ test('should be able to search by activity name', async ({ page }) => {
   await expect(locator.nth(0)).toContainText('Essential Tools for Pizza Making');
   await expect(locator.nth(1)).toContainText('The Business of Pizza');
   await expect(locator).toHaveCount(2);
+});
+
+test('should be able to navigate to editor page', async ({ page }) => {
+  await toSeededRepository(page);
+  const outline = new ActivityOutline(page);
+  await outline.toggleExpand();
+  const item = await outline.getOutlineItemByName('History of Pizza');
+  await item.select();
+  const sidebar = new OutlineSidebar(page);
+  await sidebar.openEditor();
+  const editor = new Editor(page);
+  await expect(editor.topToolbar).toContainText('History of Pizza');
 });
 
 test('should be able to post a comment', async ({ page }) => {

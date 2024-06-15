@@ -24,6 +24,10 @@ export class OutlineSidebar {
     await expect(this.page.locator('.v-snackbar')).toHaveText(/saved/);
   }
 
+  openEditor() {
+    return this.el.getByRole('button', { name: 'Open' }).click();
+  }
+
   async publish() {
     await this.publishBtn.click();
     // Select last publish option (Publish element and children)
