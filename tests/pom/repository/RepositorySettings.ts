@@ -63,21 +63,23 @@ export class GeneralSettings {
     this.sidebar = new Sidebar(page, el.locator('.settings-sidebar'));
     this.page = page;
     this.el = el;
+    this.nameInput = el.getByLabel('Name');
+    this.descriptionInput = el.getByLabel('Description');
   }
 
-  async getName() {
+  getName() {
     return this.page.getByLabel('Name').inputValue();
   }
 
   async updateName(name: string) {
     await this.nameInput.fill(name);
     await this.nameInput.blur();
-    await expect(this.page.locator('.v-snackbar')).toHaveText(/saved/);
+    await expect(this.page.locator('.v-snackbar')).toHaveText(/Saved/);
   }
 
   async updateDescription(description: string) {
     await this.descriptionInput.fill(description);
     await this.descriptionInput.blur();
-    await expect(this.page.locator('.v-snackbar')).toHaveText(/saved/);
+    await expect(this.page.locator('.v-snackbar')).toHaveText(/Saved/);
   }
 }

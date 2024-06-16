@@ -40,3 +40,17 @@ test('should be able to publish the repository', async ({ page }) => {
   await expect(card.getByLabel('Published')).toBeVisible();
   await expect(card.getByLabel('Has unpublished changes')).not.toBeVisible();
 });
+
+test('should be able to edit name', async ({ page }) => {
+  const settingsPage = new GeneralSettings(page);
+  await settingsPage.updateName('New Name');
+  await page.reload();
+  await expect(settingsPage.nameInput).toHaveValue('New Name');
+});
+
+test('should be able to edit description', async ({ page }) => {
+  const settingsPage = new GeneralSettings(page);
+  await settingsPage.updateDescription('New Description');
+  await page.reload();
+  await expect(settingsPage.descriptionInput).toHaveValue('New Description');
+});
