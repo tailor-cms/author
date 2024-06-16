@@ -42,7 +42,11 @@
                 :color="
                   repository.hasUnpublishedChanges ? 'orange-lighten-3' : 'teal'
                 "
-                aria-label="Publishing status"
+                :aria-label="
+                  repository.hasUnpublishedChanges
+                    ? 'Has unpublished changes'
+                    : 'Published'
+                "
                 class="mr-2"
                 dot
                 inline
