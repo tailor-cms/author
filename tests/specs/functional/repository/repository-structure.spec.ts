@@ -166,7 +166,9 @@ test('should be able to search by activity name', async ({ page }) => {
   const outline = new ActivityOutline(page);
   await outline.search('ess');
   const locator = page.locator('.structure-page .search-result');
-  await expect(locator.nth(0)).toContainText('Essential Tools for Pizza Making');
+  await expect(locator.nth(0)).toContainText(
+    'Essential Tools for Pizza Making',
+  );
   await expect(locator.nth(1)).toContainText('The Business of Pizza');
   await expect(locator).toHaveCount(2);
 });
