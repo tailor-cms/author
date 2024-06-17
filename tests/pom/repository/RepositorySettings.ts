@@ -41,7 +41,7 @@ export class Sidebar {
     const downloadEvent = this.page.waitForEvent('download');
     await dialog.getByRole('button', { name: 'Download' }).click();
     const download = await downloadEvent;
-    await download.saveAs(download.suggestedFilename());
+    await download.saveAs(`tmp/${download.suggestedFilename()}`);
   }
 
   async delete() {

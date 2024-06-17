@@ -7,3 +7,6 @@ node_modules/
 # State storage
 # Storing context for authenticated user
 .auth.json
+# Temp files
+tmp/*
+!tmp/.gitkeep
