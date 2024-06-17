@@ -26,7 +26,7 @@
                 v-bind="tooltipProps"
                 icon="mdi-open-in-new"
                 size="small"
-                @click="$emit('element:open', element.uid)"
+                @click="openInEditor(element)"
               />
             </VFadeTransition>
           </template>
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps } from 'vue';
+import { computed, defineProps, inject } from 'vue';
 import get from 'lodash/get';
 
 import type { ContentElement } from '../../interfaces/content-element';
@@ -58,9 +58,20 @@ const props = withDefaults(defineProps<Props>(), {
 });
 defineEmits(['element:open', 'toggle']);
 
+const eventBus = inject<any>('$eventBus');
+
 const elementWidth = computed(
   () => get(props.element, 'data.width', 12) as number,
 );
+
+const openInEditor = (element: ContentElement) => {
+  const { uid: elementId, activity } = element;
+  eventBus.channel('app').emit('openElement', {
+    repositoryId: activity?.repositoryId,
+    activityId: activity?.id,
+    elementId,
+  });
+};
 </script>
 
 <style lang="scss" scoped>

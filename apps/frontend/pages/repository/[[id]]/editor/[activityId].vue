@@ -22,6 +22,12 @@ import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
 
+interface ElementRouteProps {
+  repositoryId: number;
+  activityId: number;
+  elementId: string;
+}
+
 definePageMeta({
   name: 'editor',
   middleware: ['auth'],
@@ -33,12 +39,14 @@ const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 
-const { $ceRegistry } = useNuxtApp() as any;
+const { $ceRegistry, $eventBus } = useNuxtApp() as any;
 
 provide('$ceRegistry', $ceRegistry);
 provide('$getCurrentUser', () => authStore.user);
 provide('$api', exposedApi);
 provide('$schemaService', schema);
+
+const appChannel = $eventBus.channel('app');
 
 await editorStore.initialize(props.activityId);
 provide('$repository', {
@@ -57,6 +65,15 @@ const selectElement = (element: any) => {
   if (selectedElementId) query.elementId = selectedElementId;
   navigateTo({ query });
 };
+
+appChannel.on('openElement', (props: ElementRouteProps) => {
+  const { repositoryId, activityId, elementId } = props;
+  const route = useRouter().resolve({
+    params: { activityId, repositoryId },
+    query: { elementId },
+  });
+  navigateTo(route.href, { open: { target: '_blank' } });
+});
 
 // TODO: Publish diff, Toolbar and Sidebar need to be migrated
 // import VSidebar from './VSidebar/index.vue';

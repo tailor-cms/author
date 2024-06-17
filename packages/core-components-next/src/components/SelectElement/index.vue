@@ -44,7 +44,6 @@
           :multiple="multiple"
           :selected="selection.elements"
           selectable
-          @element:open="openInEditor"
           @toggle="toggleElementSelection"
         />
       </template>
@@ -260,17 +259,6 @@ const save = () => {
 };
 
 const close = () => emit('close');
-
-const openInEditor = (elementId: number) => {
-  const { repository, activity } = selection;
-  if (!repository || !activity) return;
-  const url = new URL(
-    `/repository/${repository.id}/editor/${activity.id}`,
-    window.location.href,
-  );
-  url.searchParams.set('elementId', elementId.toString());
-  window.open(url.href, '_blank');
-};
 
 onMounted(() => {
   selection.elements = [...props.selected];
