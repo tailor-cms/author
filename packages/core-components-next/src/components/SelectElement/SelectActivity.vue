@@ -12,7 +12,6 @@
     v-show="!noResultsMessage"
     :items="processedItems"
     :opened="expandedActivityIds"
-    :search="search"
     base-color="primary-darken-3"
     class="pa-0"
     item-type=""
