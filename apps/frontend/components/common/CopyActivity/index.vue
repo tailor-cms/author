@@ -47,14 +47,19 @@
       />
     </template>
     <template #actions>
-      <VBtn :disabled="isCopyingActivities" variant="text" @click="close">
+      <VBtn
+        :disabled="isCopyingActivities"
+        color="primary-darken-4"
+        variant="text"
+        @click="close"
+      >
         Cancel
       </VBtn>
       <VBtn
         :disabled="!selectedActivities.length || isCopyingActivities"
-        class="mr-1"
-        color="secondary"
-        variant="text"
+        class="ml-2"
+        color="primary-darken-2"
+        variant="tonal"
         @click="copySelection"
       >
         {{ copyBtnLabel }}
@@ -65,7 +70,6 @@
 
 <script lang="ts" setup>
 import { computed, defineEmits, defineProps, ref } from 'vue';
-import debounce from 'lodash/debounce';
 import { InsertLocation } from '@tailor-cms/utils';
 import last from 'lodash/last';
 import pluralize from 'pluralize';
@@ -111,6 +115,7 @@ const isCopyingActivities = ref(false);
 const schema = computed(() =>
   SCHEMAS.find((it) => store.repository?.schema === it.id),
 );
+
 const copyBtnLabel = computed(() => {
   const selectedCount = selectedActivities.value.length;
   const selectionLabel = selectedCount
@@ -122,7 +127,7 @@ const copyBtnLabel = computed(() => {
 });
 
 const selectRepository = async (repository: Repository) => {
-  if (!repositories.value.find(({ id }) => id === repository.id)) return;
+  if (!repositories.value.find(({ id }) => id === repository?.id)) return;
   selectedRepository.value = repository;
   selectedActivities.value = [];
   if (repository.activities) return;
@@ -172,18 +177,13 @@ const close = () => {
   emit('close');
 };
 
-const fetchRepositories = debounce(
-  loader(async (search = '') => {
-    const params = { search, schema: store.repository?.schema };
-    const repositoriesData = await repositoryApi.getRepositories(params);
-    repositories.value = sortBy(repositoriesData.items, 'name');
-  }),
-  500,
-);
+const fetchRepositories =  loader(async (search = '') => {
+  const params = { search, schema: store.repository?.schema };
+  const repositoriesData = await repositoryApi.getRepositories(params);
+  repositories.value = sortBy(repositoriesData.items, 'name');
+}, 500);
 
-onMounted(() => {
-  fetchRepositories();
-});
+onMounted(() => fetchRepositories());
 </script>
 
 <style lang="scss" scoped>
