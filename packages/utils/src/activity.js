@@ -45,6 +45,7 @@ export function toTreeFormat(
   return filterNodesFn(parentActivities).map(activity => ({
     ...activity,
     name: activity.data.name,
+    title: activity.data.name,
     level,
     children: toTreeFormat(
       activities,

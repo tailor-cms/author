@@ -53,6 +53,7 @@
 import { computed, defineProps, inject, ref } from 'vue';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
+import compact from 'lodash/compact';
 import groupBy from 'lodash/groupBy';
 import pluralize from 'pluralize';
 import { VTreeview } from 'vuetify/labs/VTreeview';
@@ -105,7 +106,7 @@ const selectActivity = (id: number) => {
 const processedItems = computed(() => {
   if (!search.value) return activityTree.value;
   const items = cloneDeep(activityTree.value);
-  return items.map(searchRecursive).filter(Boolean) as TreeItem[];
+  return compact(items.map(searchRecursive));
 });
 
 const noResultsMessage = computed(() => {
@@ -121,9 +122,7 @@ const doesTitleMatchSearch = (title: string) => {
 const searchRecursive = (item: TreeItem) => {
   if (doesTitleMatchSearch(item.title)) return item;
   if (!item.children) return false;
-  const children = item.children
-    .map(searchRecursive)
-    .filter(Boolean) as TreeItem[];
+  const children: TreeItem[] = compact(item.children.map(searchRecursive));
   if (children.length) return { ...item, children };
   return false;
 };
