@@ -1,6 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test';
 
 import { ContainerList } from './ContainerList';
+import { ContentElement } from './ContentElement';
 import { EditorSidebar } from './Sidebar';
 
 export class Editor {
@@ -30,6 +31,16 @@ export class Editor {
     await expect(this.topToolbar).toContainText(this.secondaryPageName);
   }
 
+  async getElements(): Promise<ContentElement[]> {
+    const containers = await this.containerList.getContainers();
+    const elements: ContentElement[] = [];
+    for (const container of containers) {
+      const items = await container.getElements();
+      elements.push(...items);
+    }
+    return elements;
+  }
+
   async addContentElement(content = 'This is a test element') {
     const { page, sidebar } = this;
     await page.getByRole('button', { name: 'Add content' }).click();
@@ -41,5 +52,12 @@ export class Editor {
     await sidebar.el.focus();
     await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
     await page.waitForLoadState('networkidle');
+  }
+
+  async removeContentElement() {
+    const containers = await this.containerList.getContainers();
+    for (const container of containers) {
+      await container.deleteElements();
+    }
   }
 }
