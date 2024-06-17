@@ -5,7 +5,7 @@
         v-bind="props"
         :color="isSelected || isHovering ? '' : 'primary-darken-3'"
         :ripple="false"
-        class="mt-4 py-1 text-left"
+        class="search-result mt-4 py-1 text-left"
         min-height="160"
         rounded="6"
         variant="tonal"

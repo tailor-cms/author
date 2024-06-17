@@ -39,10 +39,14 @@
             <template #activator="{ props: tooltipProps }">
               <VBadge
                 v-bind="tooltipProps"
+                :aria-label="
+                  repository.hasUnpublishedChanges
+                    ? 'Has unpublished changes'
+                    : 'Published'
+                "
                 :color="
                   repository.hasUnpublishedChanges ? 'orange-lighten-3' : 'teal'
                 "
-                aria-label="Publishing status"
                 class="mr-2"
                 dot
                 inline
