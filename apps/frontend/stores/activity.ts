@@ -9,7 +9,7 @@ import Hashids from 'hashids';
 import { schema } from 'tailor-config-shared';
 
 import type { Activity } from '@/api/interfaces/activity';
-import { activity as api, client } from '@/api';
+import { activity as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 export type Id = number | string;
@@ -147,10 +147,7 @@ export const useActivityStore = defineStore('activities', () => {
     return calculatePosition(context);
   }
 
-  const calculateCopyPosition = (
-    action: string,
-    anchor: Activity
-  ) => {
+  const calculateCopyPosition = (action: string, anchor: Activity) => {
     const id = action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId;
     const children = schema.getOutlineChildren(items.value, id);
     const context = { items: children, action } as any;

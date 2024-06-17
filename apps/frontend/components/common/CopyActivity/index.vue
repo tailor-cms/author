@@ -3,15 +3,20 @@
     v-model="visible"
     header-icon="mdi-content-copy"
     width="650"
-    persistent>
+    persistent
+  >
     <template v-if="showActivator" #activator="{ props: dialogProps }">
-      <VBtn v-on="dialogProps" color="grey darken-3" variant="text" class="px-1">
-        <VIcon class="pr-1">mdi-content-copy</VIcon>Copy
+      <VBtn
+        v-bind="dialogProps"
+        class="px-1"
+        color="grey darken-3"
+        prepend-icon="mdi-content-copy"
+        variant="text"
+      >
+        Copy
       </VBtn>
     </template>
-    <template #header>
-      Copy items from {{ pluralize(schema.name) }}
-    </template>
+    <template #header>Copy items from {{ pluralize(schema.name) }}</template>
     <template #body>
       <div v-if="isCopyingActivities" class="ma-4">
         <div class="text-subtitle-1 text-center mb-2">
@@ -21,13 +26,13 @@
       </div>
       <VAutocomplete
         :items="repositories"
+        :label="schema.name"
         :loading="isFetchingRepositories"
         :model-value="selectedRepository"
-        :label="schema.name"
         item-title="name"
         item-value="id"
-        prepend-inner-icon="mdi-magnify"
         placeholder="Type to search repositories..."
+        prepend-inner-icon="mdi-magnify"
         variant="outlined"
         return-object
         @update:model-value="selectRepository"
@@ -35,21 +40,23 @@
       />
       <RepositoryTree
         v-if="selectedRepository && !isFetchingActivities"
-        @change="selectedActivities = $event"
+        :activities="selectedRepository.activities || []"
         :schema-name="schema.name"
         :supported-levels="levels"
-        :activities="selectedRepository.activities || []" />
+        @change="selectedActivities = $event"
+      />
     </template>
     <template #actions>
-      <VBtn @click="close" :disabled="isCopyingActivities" variant="text">
+      <VBtn :disabled="isCopyingActivities" variant="text" @click="close">
         Cancel
       </VBtn>
       <VBtn
-        @click="copySelection"
         :disabled="!selectedActivities.length || isCopyingActivities"
+        class="mr-1"
         color="secondary"
         variant="text"
-        class="mr-1">
+        @click="copySelection"
+      >
         {{ copyBtnLabel }}
       </VBtn>
     </template>
@@ -57,28 +64,27 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, defineProps, defineEmits } from 'vue';
-import { debounce } from 'lodash';
-import RepositoryTree from './RepositoryTree.vue';
-import { SCHEMAS } from 'tailor-config-shared';
+import { computed, defineEmits, defineProps, ref } from 'vue';
+import debounce from 'lodash/debounce';
+import { InsertLocation } from '@tailor-cms/utils';
 import last from 'lodash/last';
-import find from 'lodash/find';
-import sortBy from 'lodash/sortBy';
-import { useLoader } from '@tailor-cms/core-components-next';
 import pluralize from 'pluralize';
 import Promise from 'bluebird';
+import { SCHEMAS } from 'tailor-config-shared';
+import sortBy from 'lodash/sortBy';
+import { useLoader } from '@tailor-cms/core-components-next';
 
-import { InsertLocation } from '@tailor-cms/utils';
 import { activity as activityApi, repository as repositoryApi } from '@/api';
 import type { Activity } from '@/api/interfaces/activity';
 import type { Repository } from '@/api/interfaces/repository';
+import RepositoryTree from './RepositoryTree.vue';
+import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 
 interface Props {
   repositoryId: number;
-  levels: Array<number>;
+  levels: number[];
   action: string;
   anchor?: Activity | null;
   showActivator?: boolean;
@@ -102,11 +108,17 @@ const copiedActivities = ref<Activity[]>([]);
 const isFetchingActivities = ref(false);
 const isCopyingActivities = ref(false);
 
-const schema = computed(() => SCHEMAS.find(it => store.repository.schema === it.id));
+const schema = computed(() =>
+  SCHEMAS.find((it) => store.repository?.schema === it.id),
+);
 const copyBtnLabel = computed(() => {
   const selectedCount = selectedActivities.value.length;
-  const selectionLabel = selectedCount ? `${pluralize('item', selectedCount, true)}` : '';
-  return `Copy ${selectionLabel} ${props.action === InsertLocation.ADD_INTO ? 'inside' : ''}`;
+  const selectionLabel = selectedCount
+    ? `${pluralize('item', selectedCount, true)}`
+    : '';
+  return `Copy ${selectionLabel} ${
+    props.action === InsertLocation.ADD_INTO ? 'inside' : ''
+  }`;
 });
 
 const selectRepository = async (repository: Repository) => {
@@ -123,16 +135,22 @@ const selectRepository = async (repository: Repository) => {
 const copyActivity = async (activity: Activity) => {
   const { id: srcId, repositoryId: srcRepositoryId, type } = activity;
   const { action } = props;
-  const anchor = (action === InsertLocation.ADD_AFTER && last(copiedActivities.value)) || props.anchor;
+  const anchor =
+    (action === InsertLocation.ADD_AFTER && last(copiedActivities.value)) ||
+    props.anchor;
   const payload = {
     srcId,
     srcRepositoryId,
     repositoryId: props.repositoryId,
     type,
-    position: await activityStore.calculateCopyPosition(action, anchor as Activity),
+    position: await activityStore.calculateCopyPosition(
+      action,
+      anchor as Activity,
+    ),
   } as any;
   if (anchor) {
-    payload.parentId = action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId;
+    payload.parentId =
+      action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId;
   }
   const activities = await activityStore.clone(payload);
   copiedActivities.value.push(activities[0]);
@@ -154,11 +172,14 @@ const close = () => {
   emit('close');
 };
 
-const fetchRepositories = debounce(loader(async (search = '') => {
-  const params = { search, schema: store.repository.schema };
-  const repositoriesData = await repositoryApi.getRepositories(params);
-  repositories.value = sortBy(repositoriesData.items, 'name');
-}), 500);
+const fetchRepositories = debounce(
+  loader(async (search = '') => {
+    const params = { search, schema: store.repository?.schema };
+    const repositoriesData = await repositoryApi.getRepositories(params);
+    repositories.value = sortBy(repositoriesData.items, 'name');
+  }),
+  500,
+);
 
 onMounted(() => {
   fetchRepositories();

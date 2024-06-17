@@ -1,4 +1,4 @@
-import type { Activity } from "./activity";
+import type { Activity } from './activity';
 
 export interface RepositoryTag {
   repositoryId: number;

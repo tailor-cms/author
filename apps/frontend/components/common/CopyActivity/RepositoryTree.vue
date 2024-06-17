@@ -2,10 +2,10 @@
   <VTextField
     v-model="search"
     :placeholder="`Filter selected ${schemaName}...`"
-    prepend-inner-icon="mdi-filter-outline"
     clear-icon="mdi-close-circle-outline"
-    clearable
+    prepend-inner-icon="mdi-filter-outline"
     variant="outlined"
+    clearable
   />
   <VTreeview
     v-show="!noResultsMessage"
@@ -24,9 +24,10 @@
       <VIcon
         v-if="item.selectable"
         :class="[isSelectable(item) ? 'opacity-100' : 'opacity-50']"
+        :disabled="!isSelectable(item)"
         color="primary"
         @click.stop="toggleSelection(item)"
-        :disabled="!isSelectable(item)">
+      >
         mdi-checkbox-{{ isSelected(item) ? 'marked' : 'blank-outline' }}
       </VIcon>
     </template>
@@ -42,14 +43,14 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, computed } from 'vue';
+import { computed, defineProps, ref } from 'vue';
 import { activity as activityUtils } from '@tailor-cms/utils';
-
-import { VTreeview } from 'vuetify/labs/VTreeview';
-import type { Activity } from '@/api/interfaces/activity';
 import cloneDeep from 'lodash/cloneDeep';
 import compact from 'lodash/compact';
+import { VTreeview } from 'vuetify/labs/VTreeview';
 import xorBy from 'lodash/xorBy';
+
+import type { Activity } from '@/api/interfaces/activity';
 
 interface TreeItem extends Activity {
   title: string;
@@ -59,7 +60,6 @@ interface TreeItem extends Activity {
 }
 
 const props = defineProps<{
-  id: number;
   schemaName: string;
   activities: Activity[];
   supportedLevels: any[];
@@ -73,7 +73,7 @@ const { $schemaService } = useNuxtApp() as any;
 
 const expandedActivityIds = computed(() => props.activities.map((it) => it.id));
 
-const activityTree = computed<Array<TreeItem>>(() => {
+const activityTree = computed<TreeItem[]>(() => {
   return activityUtils.toTreeFormat(props.activities, {
     filterNodesFn: $schemaService.filterOutlineActivities,
     processNodeFn: attachActivityAttrs,
@@ -104,24 +104,23 @@ const searchRecursive = (item: TreeItem) => {
   return false;
 };
 
-const toggleSelection = (activity: TreeItem) =>{
+const toggleSelection = (activity: TreeItem) => {
   selected.value = xorBy(selected.value, [activity], 'id');
   emit('change', selected.value);
 };
 
 const isSelected = (item: TreeItem) => {
-  return selected.value.find(it => it.id === item.id);
-}
+  return selected.value.find(({ id }) => id === item.id);
+};
 
 const isSelectable = (item: TreeItem) => {
-  return !selected.value.length || (selected.value[0].level === item.level);
-}
+  return !selected.value.length || selected.value[0].level === item.level;
+};
 
 const attachActivityAttrs = (activity: TreeItem) => ({
   id: activity.id,
   title: activity.data.name,
-  disabled: !selected.value.length || (selected.value[0].level === activity.level),
-  selectable: !!props.supportedLevels.some(it => it.type === activity.type),
+  selectable: props.supportedLevels.some(({ type }) => type === activity.type),
   ...($schemaService.isEditable(activity.type) && { children: undefined }),
 });
 </script>
@@ -131,7 +130,7 @@ const attachActivityAttrs = (activity: TreeItem) => ({
   border-radius: 4px !important;
 }
 
-::v-deep .v-list-item--slim .v-list-item__prepend > .v-icon ~ .v-list-item__spacer {
+::v-deep .v-list-item .v-list-item__prepend > .v-icon ~ .v-list-item__spacer {
   width: 0.25rem !important;
 }
 </style>
