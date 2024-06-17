@@ -89,8 +89,6 @@ export const SCHEMA = {
   ],
   structure: [MODULE, PAGE],
   contentContainers: [SECTION_CONTAINER],
-  // Temporary target both CE_IMAGE and IMAGE, will be removed once the
-  // old frontend is removed
   elementMeta: [
     {
       type: 'CE_IMAGE',
@@ -100,6 +98,34 @@ export const SCHEMA = {
           type: 'TEXTAREA',
           label: 'Captions',
           placeholder: 'Enter captions...',
+        },
+      ],
+      relationships: [
+        {
+          key: 'related',
+          label: 'Related Content',
+          multiple: true,
+          placeholder: 'Click to select',
+          allowedTypes: ['CE_IMAGE'],
+        },
+      ],
+    },
+    {
+      type: 'CE_HTML_DEFAULT',
+      relationships: [
+        {
+          key: 'related',
+          label: 'Related Content',
+          multiple: true,
+          placeholder: 'Click to select',
+          allowedTypes: ['CE_HTML_DEFAULT', 'CE_IMAGE'],
+        },
+        {
+          key: 'prerequisites',
+          label: 'Prerequisites',
+          multiple: true,
+          placeholder: 'Click to select',
+          allowedTypes: ['CE_HTML_DEFAULT'],
         },
       ],
     },
