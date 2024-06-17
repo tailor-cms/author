@@ -164,12 +164,10 @@ test('should be able to toggle expand/collapse using toggle all btn', async ({
 test('should be able to search by activity name', async ({ page }) => {
   await toSeededRepository(page);
   const outline = new ActivityOutline(page);
-  await outline.search('ess');
+  await outline.search('hi');
   const locator = page.locator('.structure-page .search-result');
-  await expect(locator.nth(0)).toContainText(
-    'Essential Tools for Pizza Making',
-  );
-  await expect(locator.nth(1)).toContainText('The Business of Pizza');
+  await expect(locator.nth(0)).toContainText('History of Pizza');
+  await expect(locator.nth(1)).toContainText('Chicago Deep-Dish Pizza');
   await expect(locator).toHaveCount(2);
 });
 
