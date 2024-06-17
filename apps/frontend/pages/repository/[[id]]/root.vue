@@ -73,7 +73,7 @@ const getTabItems = ({
         route: 'progress',
         icon: 'chart-timeline-variant',
       },
-    hasActivities && {
+    {
       name: 'History',
       route: 'revisions',
       icon: 'history',
