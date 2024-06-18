@@ -16,7 +16,6 @@
     class="pa-0"
     item-type=""
     item-value="id"
-    max-height="300"
     border
     open-all
     rounded
@@ -138,3 +137,9 @@ const getChipLabel = (length: number) => {
   return `${pluralize('element', length, true)} selected`;
 };
 </script>
+
+<style lang="scss" scoped>
+.v-treeview {
+  max-height: 31.25rem;
+}
+</style>

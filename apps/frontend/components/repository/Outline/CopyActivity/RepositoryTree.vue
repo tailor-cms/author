@@ -15,7 +15,6 @@
     class="pa-0"
     item-type=""
     item-value="id"
-    max-height="300"
     border
     open-all
     rounded
@@ -126,6 +125,10 @@ const attachActivityAttrs = (activity: TreeItem) => ({
 </script>
 
 <style lang="scss" scoped>
+.v-treeview {
+  max-height: 31.25rem;
+}
+
 .v-list {
   border-radius: 4px !important;
 }
