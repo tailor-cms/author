@@ -71,9 +71,7 @@
 <script lang="ts" setup>
 import { computed, defineEmits, defineProps, ref } from 'vue';
 import { InsertLocation } from '@tailor-cms/utils';
-import last from 'lodash/last';
 import pluralize from 'pluralize';
-import Promise from 'bluebird';
 import { SCHEMAS } from 'tailor-config-shared';
 import sortBy from 'lodash/sortBy';
 import { useLoader } from '@tailor-cms/core-components-next';
@@ -85,6 +83,8 @@ import RepositoryTree from './RepositoryTree.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+
+const { ADD_AFTER, ADD_INTO } = InsertLocation;
 
 interface Props {
   repositoryId: number;
@@ -108,7 +108,6 @@ const visible = ref(!props.showActivator);
 const repositories = ref<Repository[]>([]);
 const selectedRepository = ref<Repository | null>(null);
 const selectedActivities = ref<Activity[]>([]);
-const copiedActivities = ref<Activity[]>([]);
 const isFetchingActivities = ref(false);
 const isCopyingActivities = ref(false);
 
@@ -137,38 +136,30 @@ const selectRepository = async (repository: Repository) => {
   isFetchingActivities.value = false;
 };
 
-const copyActivity = async (activity: Activity) => {
+const copyActivity = async (activity: Activity, prevActivity?: Activity) => {
+  const { action, repositoryId } = props;
   const { id: srcId, repositoryId: srcRepositoryId, type } = activity;
-  const { action } = props;
-  const anchor =
-    (action === InsertLocation.ADD_AFTER && last(copiedActivities.value)) ||
-    props.anchor;
-  const payload = {
+  const anchor = (props.action === ADD_AFTER && prevActivity) || props.anchor;
+  return activityStore.clone({
     srcId,
     srcRepositoryId,
-    repositoryId: props.repositoryId,
+    repositoryId,
     type,
-    position: await activityStore.calculateCopyPosition(
-      action,
-      anchor as Activity,
-    ),
-  } as any;
-  if (anchor) {
-    payload.parentId =
-      action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId;
-  }
-  const activities = await activityStore.clone(payload);
-  copiedActivities.value.push(activities[0]);
-  return activities;
+    position: await activityStore.calculateCopyPosition(action, anchor),
+    ...anchor && { parentId: action === ADD_INTO ? anchor.id : anchor.parentId }
+  });
 };
 
 const copySelection = async () => {
   isCopyingActivities.value = true;
   const items = sortBy(selectedActivities.value, ['parentId', 'position']);
-  await Promise.each(items, (it: Activity) => copyActivity(it));
+  let prevOutlineItem: Activity | undefined;
+  for (const item of items) {
+    const copied = await copyActivity(item, prevOutlineItem);
+    prevOutlineItem = copied[0]; // Only first copied activity is outline item
+  }
   emit('completed', items[0].parentId);
   isCopyingActivities.value = false;
-  copiedActivities.value = [];
   close();
 };
 

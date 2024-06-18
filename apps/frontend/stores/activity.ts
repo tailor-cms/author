@@ -147,12 +147,12 @@ export const useActivityStore = defineStore('activities', () => {
     return calculatePosition(context);
   }
 
-  const calculateCopyPosition = (action: string, anchor: Activity) => {
-    const id = action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId;
+  const calculateCopyPosition = (action: string, anchor: Activity | null) => {
+    const id = anchor && (action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId);
     const children = schema.getOutlineChildren(items.value, id);
     const context = { items: children, action } as any;
     if (action !== InsertLocation.ADD_INTO) {
-      context.newPosition = findIndex(children, { id: anchor.id });
+      context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
     }
     return calculatePosition(context);
   };
