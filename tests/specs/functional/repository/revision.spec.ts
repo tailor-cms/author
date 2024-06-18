@@ -118,7 +118,7 @@ test('should display a revision for deleted content element', async ({
   const editor = new Editor(page);
   await page.waitForLoadState('networkidle');
   await editor.addContentElement();
-  await editor.removeContentElement();
+  await editor.removeContentElements();
   await page.goto(getHistoryRoute(repository.id));
   await expect(page.getByText('Removed ce html default element')).toBeVisible();
 });

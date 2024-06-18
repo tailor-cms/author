@@ -54,7 +54,7 @@ export class Editor {
     await page.waitForLoadState('networkidle');
   }
 
-  async removeContentElement() {
+  async removeContentElements() {
     const containers = await this.containerList.getContainers();
     for (const container of containers) {
       await container.deleteElements();

@@ -94,10 +94,10 @@ export class RepositoryUsers {
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
     this.sidebar = new Sidebar(page, el.locator('.settings-sidebar'));
+    this.userTable = el.locator('.v-table');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
     this.page = page;
     this.el = el;
-    this.userTable = el.locator('.v-table');
   }
 
   getEntries() {
