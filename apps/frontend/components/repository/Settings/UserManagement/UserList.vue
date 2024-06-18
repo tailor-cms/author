@@ -42,8 +42,6 @@
 </template>
 
 <script lang="ts" setup>
-import debounce from 'lodash/debounce';
-
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
