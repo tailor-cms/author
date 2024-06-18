@@ -5,7 +5,7 @@
     width="650"
     persistent
   >
-    <template v-if="showActivator" #activator="{ props: dialogProps }">
+  <template v-if="showActivator" #activator="{ props: dialogProps }">
       <VBtn
         v-bind="dialogProps"
         class="px-1"

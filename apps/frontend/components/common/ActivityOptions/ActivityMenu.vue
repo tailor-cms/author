@@ -54,7 +54,7 @@
 import first from 'lodash/first';
 import sortBy from 'lodash/sortBy';
 
-import CopyDialog from '@/components/common/CopyActivity/index.vue';
+import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
 import { useActivityStore } from '@/stores/activity';
