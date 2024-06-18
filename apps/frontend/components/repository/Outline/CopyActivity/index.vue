@@ -5,7 +5,7 @@
     width="650"
     persistent
   >
-  <template v-if="showActivator" #activator="{ props: dialogProps }">
+    <template v-if="showActivator" #activator="{ props: dialogProps }">
       <VBtn
         v-bind="dialogProps"
         class="px-1"
@@ -177,7 +177,7 @@ const close = () => {
   emit('close');
 };
 
-const fetchRepositories =  loader(async (search = '') => {
+const fetchRepositories = loader(async (search = '') => {
   const params = { search, schema: store.repository?.schema };
   const repositoriesData = await repositoryApi.getRepositories(params);
   repositories.value = sortBy(repositoriesData.items, 'name');
