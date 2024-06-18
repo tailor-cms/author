@@ -17,13 +17,13 @@
         </td>
         <td class="user-entry-role">
           <VSelect
-            :model-value="item.repositoryRole"
             :items="roles"
+            :model-value="item.repositoryRole"
             density="compact"
             rounded="lg"
             variant="text"
             hide-details
-            @update:modelValue="(role: string) => upsertUser(item.email, role)"
+            @update:model-value="(role: string) => upsertUser(item.email, role)"
           />
         </td>
         <td class="user-entry-actions">
