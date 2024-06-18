@@ -16,7 +16,7 @@
           {{ description }}
         </div>
         <div class="text-body-2 text-primary-lighten-2">
-          {{ date }} {{ revision.user.label }}
+          {{ formatDistanceToNow(date) }} ago by {{ revision.user.label }}
         </div>
       </div>
     </div>
@@ -30,6 +30,7 @@
 <script lang="ts" setup>
 import fecha from 'fecha';
 import find from 'lodash/find';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
 import {
   getFormatDescription,

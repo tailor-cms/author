@@ -64,6 +64,7 @@
       />
       <VBtn
         :disabled="isTextEditorEmpty || error"
+        aria-label="Post comment"
         class="mt-3"
         color="teal-lighten-5"
         icon="mdi-send"

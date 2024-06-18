@@ -20,6 +20,7 @@
       </VTooltip>
       <VSpacer />
       <VBtn
+        :key="activityUrl"
         v-clipboard:copy="activity.shortId"
         v-clipboard:error="() => notify('Not able to copy the ID')"
         v-clipboard:success="
@@ -34,6 +35,7 @@
         <VIcon dense>mdi-identifier</VIcon>
       </VBtn>
       <VBtn
+        :key="activityUrl"
         v-clipboard:copy="activityUrl"
         v-clipboard:error="() => notify('Not able to copy the link')"
         v-clipboard:success="
@@ -80,15 +82,17 @@ import LabelChip from '@/components/common/LabelChip.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
 import { useActivityStore } from '@/stores/activity';
 
+const { $schemaService } = useNuxtApp() as any;
+
 const props = defineProps({
   activity: { type: Object, required: true },
 });
 
-const { $schemaService } = useNuxtApp() as any;
+const route = useRoute();
 const store = useActivityStore();
 const notify = useNotification();
 
-const activityUrl = computed(() => window.location.href);
+const activityUrl = computed(() => route.query && window.location.href);
 const config = computed(() => $schemaService.getLevel(props.activity.type));
 const metadata = computed(() =>
   $schemaService.getActivityMetadata(props.activity),

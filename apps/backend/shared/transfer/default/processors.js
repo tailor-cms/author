@@ -18,7 +18,7 @@ const { repository: role } = roleConfig;
 const noop = Function.prototype;
 
 const { ADMIN } = role;
-const IGNORE_ATTRS = ['id', 'uid', 'createdAt', 'updatedAt'];
+const IGNORE_ATTRS = ['id', 'uid', 'publishedAt', 'createdAt', 'updatedAt'];
 
 function createManifestProcessor(options) {
   const destStream = createProcessor(processManifest, options);

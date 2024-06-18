@@ -4,8 +4,7 @@
       :img-url="comment.author.imgUrl"
       :size="36"
       class="ml-1 mt-2"
-      color="secondary-lighten-2"
-      rounded="lg"
+      color="primary-lighten-4"
     />
     <div class="info-container">
       <div class="d-flex align-center">
