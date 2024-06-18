@@ -114,21 +114,23 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     if (!repositoryId.value) throw new Error('Repository not initialized!');
     return repositoryApi
       .getUsers(repositoryId.value)
-      .then((users) => users.forEach((it: any) => $users.set(it.id, it)));
+      .then((users) =>
+        users.forEach((it: any) => $users.set(it.id.toString(), it)),
+      );
   };
 
   const upsertUser = (email: string, role: string) => {
     if (!repositoryId.value) throw new Error('Repository not initialized!');
     return repositoryApi
       .upsertUser(repositoryId.value, { email, role })
-      .then((user) => $users.set(user.id, user));
+      .then((user) => $users.set(user.id.toString(), user));
   };
 
   const removeUser = (userId: number) => {
     if (!repositoryId.value) throw new Error('Repository not initialized!');
-    return repositoryApi
-      .removeUser(repositoryId.value, userId)
-      .then(() => $users.delete(userId.toString()));
+    return repositoryApi.removeUser(repositoryId.value, userId).then(() => {
+      $users.delete(userId.toString());
+    });
   };
 
   return {

@@ -32,18 +32,27 @@
           v-model="roleInput"
           :error-messages="errors.role"
           :items="roles"
-          class="required"
+          aria-label="Role"
+          class="role-select required"
           label="Role"
           placeholder="Role..."
           variant="outlined"
         />
-        <div class="d-flex justify-end">
-          <VBtn :disabled="isSaving" variant="text" @click="close">Cancel</VBtn>
+        <div class="d-flex justify-end pb-2">
+          <VBtn
+            :disabled="isSaving"
+            class="mr-2"
+            color="primary-darken-4"
+            variant="text"
+            @click="close"
+          >
+            Cancel
+          </VBtn>
           <VBtn
             :disabled="isSaving"
             color="primary-darken-4"
             type="submit"
-            variant="text"
+            variant="tonal"
           >
             Add
           </VBtn>

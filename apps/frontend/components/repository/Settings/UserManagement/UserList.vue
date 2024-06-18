@@ -7,28 +7,29 @@
     no-data-text="No assigned users."
   >
     <template #item="{ item }">
-      <tr>
+      <tr class="user-entry">
         <td class="text-left">
-          <VAvatar :image="item.imgUrl" size="40" variant="tonal" />
+          <VAvatar :image="item.imgUrl" size="32" variant="tonal" />
         </td>
-        <td class="text-left">{{ item.email }}</td>
-        <td class="text-left text-truncate">
+        <td class="text-left user-entry-email">{{ item.email }}</td>
+        <td class="user-entry-label text-body-2 text-left text-truncate">
           {{ item.fullName || 'N/A' }}
         </td>
-        <td class="role-select">
+        <td class="user-entry-role">
           <VSelect
             :items="roles"
             :value="item.repositoryRole"
             density="compact"
             rounded="lg"
-            variant="plain"
+            variant="text"
             hide-details
             @change="(role: string) => changeRole(item.email, role)"
           />
         </td>
-        <td class="actions">
+        <td class="user-entry-actions">
           <VBtn
-            color="grey-darken-3"
+            aria-label="Remove user"
+            color="blue-grey-darken-3"
             icon="mdi-delete"
             size="small"
             variant="text"
@@ -94,15 +95,8 @@ td.text-truncate {
   max-width: 11rem;
 }
 
-td.role-select {
+td.user-entry-role {
+  min-width: 6.5rem;
   max-width: 7.5rem;
-}
-
-::v-deep .v-input__slot::before {
-  border: none !important;
-}
-
-::v-deep .v-list.v-sheet {
-  text-align: left;
 }
 </style>

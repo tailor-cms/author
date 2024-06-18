@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import userSeed from 'tailor-seed/user.json';
 
 import { ForgotPassword, ResetPassword, SignIn } from '../../../pom/auth';
 import ApiClient from '../../../api/ApiClient';
+import { TEST_USER as DEFAULT_USER } from '../../../fixtures/auth';
 
 interface UserData {
   email: string;
@@ -16,7 +16,6 @@ const getMockUserData = (): UserData => ({
 });
 
 const userAPI = new ApiClient('/api/users');
-const DEFAULT_USER = userSeed[0];
 
 const createUser = async (page): Promise<UserData> => {
   const initialLocation = page.url();

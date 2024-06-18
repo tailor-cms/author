@@ -1,9 +1,7 @@
 import { expect, test as setup } from '@playwright/test';
-import userSeed from 'tailor-seed/user.json';
 
 import { SignIn } from '../pom/auth';
-
-const TEST_USER = userSeed[0];
+import { TEST_USER } from '../fixtures/auth';
 
 setup('authenticate', async ({ page }) => {
   const authPage = new SignIn(page);
