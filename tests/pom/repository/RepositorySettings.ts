@@ -83,3 +83,54 @@ export class GeneralSettings {
     await expect(this.page.locator('.v-snackbar')).toHaveText(/Saved/);
   }
 }
+
+export class RepositoryUsers {
+  readonly page: Page;
+  readonly el: Locator;
+  readonly sidebar: Sidebar;
+  readonly userTable: Locator;
+  readonly addBtn: Locator;
+
+  constructor(page: Page) {
+    const el = page.locator('.repository-settings');
+    this.sidebar = new Sidebar(page, el.locator('.settings-sidebar'));
+    this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.page = page;
+    this.el = el;
+    this.userTable = el.locator('.v-table');
+  }
+
+  getEntries() {
+    return this.userTable.locator('.user-entry');
+  }
+
+  getEntryByEmail(email: string) {
+    return this.getEntries().filter({ hasText: email });
+  }
+
+  async addUser(email: string, role: 'Admin' | 'Author' = 'Admin') {
+    await this.addBtn.click();
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByLabel('Email').fill(email);
+    // Due to autocomplete, click if user is already available
+    await dialog.getByLabel('Email').click();
+    await dialog.locator('.role-select').click();
+    // Mounted outside of the dialog in order to avoid overlay issues
+    const dropdownMenu = this.page.locator('.v-overlay.v-menu');
+    await dropdownMenu
+      .locator('.v-list-item-title')
+      .filter({ hasText: role })
+      .click();
+    await dialog.getByRole('button', { name: 'Add' }).click();
+    await expect(dialog).not.toBeVisible();
+    await expect(this.getEntryByEmail(email)).toHaveCount(1);
+  }
+
+  async removeUser(email: string) {
+    const entry = this.getEntryByEmail(email);
+    await entry.getByRole('button', { name: 'Remove user' }).click();
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByRole('button', { name: 'confirm' }).click();
+    await expect(entry).not.toBeVisible();
+  }
+}
