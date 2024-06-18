@@ -11,6 +11,9 @@ module.exports = {
     '@nuxtjs/eslint-config-typescript',
     'prettier',
   ],
+  rules: {
+    "@typescript-eslint/array-type": ["error", { default: 'array-simple' }],
+  },
   overrides: [
     {
       files: '*.vue',

@@ -84,7 +84,7 @@ import type { User } from '@/api/interfaces/user';
 export interface Props {
   visible: boolean;
   userData: any;
-  users: Array<User>;
+  users: User[];
 }
 
 const props = withDefaults(defineProps<Props>(), {

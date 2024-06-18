@@ -44,9 +44,9 @@ export function toTreeFormat(
   const parentActivities = filter(activities, { parentId });
   return filterNodesFn(parentActivities).map(it => ({
     id: it.id,
+    type: it.type,
     name: it.data.name,
     level,
-    ...(processNodeFn && processNodeFn(it)),
     children: toTreeFormat(
       activities,
       { filterNodesFn, processNodeFn },
@@ -55,6 +55,7 @@ export function toTreeFormat(
         parentId: it.id,
         level: level + 1
       }
-    )
+    ),
+    ...(processNodeFn && processNodeFn(it))
   }));
 }
