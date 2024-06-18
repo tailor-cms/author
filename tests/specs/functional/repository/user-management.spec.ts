@@ -33,17 +33,18 @@ test('should be able to update user role', async ({ page }) => {
   await page.goto(getRoute(repository.id));
   const repositoryUsers = new RepositoryUsers(page);
   await expect(repositoryUsers.el).toContainText('admin@gostudion.com');
-  const userEntry = repositoryUsers
+  const roleSelect = repositoryUsers
     .getEntryByEmail('admin@gostudion.com')
     .locator('.user-entry-role');
-  await userEntry.click();
+  await roleSelect.click();
+  // Select mounted outside
   const dropdownMenu = page.locator('.v-overlay.v-menu');
   await dropdownMenu
     .locator('.v-list-item-title')
     .filter({ hasText: 'Author' })
     .click();
   await expect(page.getByText('User updated')).toBeVisible();
-  await expect(userEntry).toHaveText('Author');
+  await expect(roleSelect).toHaveText('Author');
 });
 
 test.afterAll(async () => {
