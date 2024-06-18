@@ -5,6 +5,7 @@ import userSeed from 'tailor-seed/user.json';
 import { SignIn } from '../pom/auth';
 
 const TEST_USER = find(userSeed, { email: 'admin@gostudion.com' });
+if (!TEST_USER) throw new Error('Test user not found');
 
 setup('authenticate', async ({ page }) => {
   const authPage = new SignIn(page);
