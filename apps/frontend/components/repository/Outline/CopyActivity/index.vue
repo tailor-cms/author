@@ -22,7 +22,7 @@
         <div class="text-subtitle-1 text-center mb-2">
           Copying {{ selectedActivities.length }} items...
         </div>
-        <v-progress-linear color="primary-darken-2" indeterminate />
+        <VProgressLinear color="primary-darken-2" indeterminate />
       </div>
       <VAutocomplete
         :items="repositories"
