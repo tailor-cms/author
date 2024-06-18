@@ -4,6 +4,7 @@ import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import crypto from 'node:crypto';
 import db from '../../shared/database/index.js';
 import { faker } from '@faker-js/faker';
+import find from 'lodash/find.js';
 import mapKeys from 'lodash/mapKeys.js';
 import { packageDirectory } from 'pkg-dir';
 import path from 'node:path';
@@ -13,7 +14,9 @@ import TransferService from '../../shared/transfer/transfer.service.js';
 
 const { Activity, Repository, User } = db;
 
-const DEFAULT_USER = seedUsers[0];
+const DEFAULT_USER =
+  find(seedUsers, { email: 'admin@gostudion.com' }) || seedUsers[0];
+
 // Get seed repository path
 const appDir = await packageDirectory();
 const projectDir = await packageDirectory({ cwd: path.join(appDir, '..') });

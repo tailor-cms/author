@@ -37,12 +37,14 @@
 <script lang="ts" setup>
 import last from 'lodash/last';
 import reduce from 'lodash/reduce';
+import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 
 import api from '@/api/revision';
 import { isSameInstance } from '@/lib/revision';
 import type { Revision } from '~/api/interfaces/repository';
 import RevisionItem from '@/components/repository/Revisions/RevisionItem.vue';
+import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 definePageMeta({
@@ -50,6 +52,7 @@ definePageMeta({
 });
 
 const currentRepositoryStore = useCurrentRepository();
+const activityStore = useActivityStore();
 
 const isFetching = ref(true);
 const revisions = ref<Revision[]>([]);
@@ -77,6 +80,13 @@ const fetchRevisions = async () => {
     queryParams,
   );
   revisions.value = uniqBy([...revisions.value, ...items], 'uid');
+  // Make sure to fetch all activities for the revisions
+  const activityIds = uniq(
+    items.map((it) => it.state.activityId || it.state.id),
+  );
+  await activityStore.fetch(currentRepositoryStore.repositoryId, {
+    activityIds,
+  });
   areAllItemsFetched.value = total <= queryParams.offset + queryParams.limit;
   isFetching.value = false;
 };
