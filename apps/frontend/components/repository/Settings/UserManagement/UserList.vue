@@ -17,13 +17,13 @@
         </td>
         <td class="user-entry-role">
           <VSelect
+            :model-value="item.repositoryRole"
             :items="roles"
-            :value="item.repositoryRole"
             density="compact"
             rounded="lg"
             variant="text"
             hide-details
-            @change="(role: string) => changeRole(item.email, role)"
+            @update:modelValue="(role: string) => upsertUser(item.email, role)"
           />
         </td>
         <td class="user-entry-actions">
@@ -52,6 +52,7 @@ defineProps({
 });
 
 const store = useCurrentRepository();
+const notify = useNotification();
 
 const isLoading = ref(true);
 const headers = computed(() =>
@@ -68,14 +69,11 @@ const getUsers = async () => {
 
 const upsertUser = async (email: string, role: string) => {
   await store.upsertUser(email, role);
+  await notify('User updated', { immediate: true });
 };
 
 const removeUser = async (userId: number) => {
   await store.removeUser(userId);
-};
-
-const changeRole = (email: string, role: string) => {
-  debounce(() => upsertUser(email, role), 500);
 };
 
 const remove = (user: any) => {
