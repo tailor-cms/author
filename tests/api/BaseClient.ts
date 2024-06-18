@@ -1,5 +1,6 @@
 import * as Playwright from '@playwright/test';
-import userSeed from 'tailor-seed/user.json';
+
+import { TEST_USER } from '../fixtures/auth';
 
 export default class BaseClient {
   private baseURL: string;
@@ -22,7 +23,7 @@ export default class BaseClient {
   };
 
   private signIn = async () => {
-    const { email, password } = userSeed[0];
+    const { email, password } = TEST_USER;
     BaseClient.req = await Playwright.request.newContext();
     await BaseClient.req.post(new URL('/api/users/login', this.baseURL).href, {
       headers: { 'Content-Type': 'application/json' },

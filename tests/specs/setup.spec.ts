@@ -1,11 +1,7 @@
 import { expect, test as setup } from '@playwright/test';
-import find from 'lodash/find';
-import userSeed from 'tailor-seed/user.json';
 
 import { SignIn } from '../pom/auth';
-
-const TEST_USER = find(userSeed, { email: 'admin@gostudion.com' });
-if (!TEST_USER) throw new Error('Test user not found');
+import { TEST_USER } from '../fixtures/auth';
 
 setup('authenticate', async ({ page }) => {
   const authPage = new SignIn(page);
