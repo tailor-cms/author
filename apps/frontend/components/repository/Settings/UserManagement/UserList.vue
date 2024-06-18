@@ -83,7 +83,7 @@ const remove = (user: any) => {
   showConfirmationModal({
     title: 'Remove user',
     message: `Are you sure you want to remove user "${user.email}" from this repository?`,
-    action: () => removeUser(user.id);
+    action: () => removeUser(user.id),
   });
 };
 
