@@ -22,15 +22,16 @@
       </VBtn>
     </slot>
     <template v-if="isVisible">
-      <!-- <SelectElement
+      <SelectElement
         v-if="showElementBrowser"
-        @selected="addElements"
-        @close="showElementBrowser = false"
         :allowed-types="allowedTypes"
-        submit-label="Copy"
-        heading="Copy elements"
         header-icon="mdi-content-duplicate"
-        multiple /> -->
+        heading="Copy elements"
+        submit-label="Copy"
+        multiple
+        @close="showElementBrowser = false"
+        @selected="addElements"
+      />
       <AddNewElement
         v-model="isVisible"
         :allowed-types="allowedTypes"
@@ -52,15 +53,15 @@
               <VBtn :value="50" class="px-8" icon="mdi-select-compare" />
             </VBtnToggle>
           </div>
-          <!-- <VBtn
-            class="mt-6"
-            color="primary-lighten-4"
+          <VBtn
+            class="mt-8"
+            color="primary-darken-3"
+            prepend-icon="mdi-content-copy"
             variant="tonal"
             @click="showElementBrowser = !showElementBrowser"
           >
-            <VIcon class="mr-2">mdi-content-copy</VIcon>
             Copy existing
-          </VBtn> -->
+          </VBtn>
         </template>
       </AddNewElement>
     </template>
@@ -77,7 +78,7 @@ import reduce from 'lodash/reduce';
 import reject from 'lodash/reject';
 
 import AddNewElement from './AddNewElement.vue';
-// import SelectElement from '../SelectElement/index.vue';
+import SelectElement from '../SelectElement/index.vue';
 
 const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
@@ -113,7 +114,7 @@ const registry = inject('$ceRegistry').all as any[];
 
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
-// const showElementBrowser = ref(false);
+const showElementBrowser = ref(false);
 
 // Determine if the element picker should show all elements or a subset
 const isSubset = computed(() => !!props.include && !!props.include.length);

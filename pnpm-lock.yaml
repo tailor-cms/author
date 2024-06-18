@@ -569,6 +569,9 @@ importers:
       '@types/lodash':
         specifier: ^4.17.0
         version: 4.17.0
+      '@types/pluralize':
+        specifier: ^0.0.33
+        version: 0.0.33
       '@typescript-eslint/parser':
         specifier: ^6.9.0
         version: 6.13.2(eslint@8.57.0)(typescript@5.4.5)
@@ -604,11 +607,11 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-html-default-edit':
-        specifier: ^0.0.5
-        version: 0.0.5(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))
+        specifier: ^0.0.6
+        version: 0.0.6(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))
       '@tailor-cms/ce-html-default-server':
-        specifier: ^0.0.5
-        version: 0.0.5
+        specifier: ^0.0.6
+        version: 0.0.6
       '@tailor-cms/ce-image-edit':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.4.27(typescript@5.4.5))
@@ -663,6 +666,9 @@ importers:
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
+      p-min-delay:
+        specifier: ^4.0.2
+        version: 4.0.2
       pluralize:
         specifier: ^8.0.0
         version: 8.0.0
@@ -676,11 +682,18 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.3.11(typescript@5.4.5))
       vuetify:
-        specifier: ^3.3.5
-        version: 3.5.4(typescript@5.4.5)(vue@3.3.11(typescript@5.4.5))
+        specifier: ^3.6.8
+        version: 3.6.8(typescript@5.4.5)(vue@3.3.11(typescript@5.4.5))
       yup:
         specifier: ^1.4.0
         version: 1.4.0
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.0
+        version: 4.17.0
+      '@types/pluralize':
+        specifier: ^0.0.33
+        version: 0.0.33
 
   packages/core-extensions/content-containers/page:
     dependencies:
@@ -3027,13 +3040,13 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
-  '@tailor-cms/ce-html-default-edit@0.0.5':
-    resolution: {integrity: sha512-f5BETjoz6pLfE/S0UlE13R0t0AJJrD38/+R8UhU0TMQ1nYF2qtstdo32cv337vCGTxB8vnrpEyHpktn+lQhKBw==}
+  '@tailor-cms/ce-html-default-edit@0.0.6':
+    resolution: {integrity: sha512-PWBwuZAVMaH8CJUNM7fkhHZJHVoE5+Ad3jBEixCayUmdcECY58Xm0Js+wA+ZTXJOOpI2O93KUo5C2GAkrsUZCQ==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-html-default-server@0.0.5':
-    resolution: {integrity: sha512-QwQyySPdtC4x0WE59cg0aIu2JHcEhGLjSjE9cWy75n9njxDpwVrQXQvzA07BTUoS4YWRDxZ5RIqPq9YD2RM1Vg==}
+  '@tailor-cms/ce-html-default-server@0.0.6':
+    resolution: {integrity: sha512-tLDOphmrOdv3SaIJXm8wOhm8PSNwXat0Dkqt3z9Zl0/6LRP8atHbJOXNrQKMZzolDdM68RbcOYamCb77Cg1Spw==}
 
   '@tailor-cms/ce-image-edit@1.0.0':
     resolution: {integrity: sha512-bPEZqyJByOVP1onGiTrVGNm+RICgiDKw0DewJ1xGvd5Pjgs1F0A+I9O8KRjCGF0Zt2Md6iytbnPPQsCy1073EQ==}
@@ -3087,12 +3100,6 @@ packages:
     resolution: {integrity: sha512-z/MPmW8bhRougMuorl6MAQBXeK4rhlP+jBWlNwT+CT8h5IkXqPnDbM1sZeagp2nYfVV6Yc4RWpzimqHHtGnYTA==}
     peerDependencies:
       '@tiptap/core': ^2.0.0
-
-  '@tiptap/extension-character-count@2.2.4':
-    resolution: {integrity: sha512-gUeWiIB3Y2+6CuEUq2hKS7BEgvj7l6zAx/xPWlKCbfIyhpQh58m7QLB2OEmdw1EJnGA9VgxqrqOkvdZp8E6vEA==}
-    peerDependencies:
-      '@tiptap/core': ^2.0.0
-      '@tiptap/pm': ^2.0.0
 
   '@tiptap/extension-code-block@2.2.4':
     resolution: {integrity: sha512-h6WV9TmaBEZmvqe1ezMR83DhCPUap6P2mSR5pwVk0WVq6rvZjfgU0iF3EetBJOeDgPlz7cNe2NMDfVb1nGTM/g==}
@@ -3365,6 +3372,9 @@ packages:
 
   '@types/object.pick@1.3.4':
     resolution: {integrity: sha512-5PjwB0uP2XDp3nt5u5NJAG2DORHIRClPzWT/TTZhJ2Ekwe8M5bA9tvPdi9NO/n2uvu2/ictat8kgqvLfcIE1SA==}
+
+  '@types/pluralize@0.0.33':
+    resolution: {integrity: sha512-JOqsl+ZoCpP4e8TDke9W79FDcSgPAR0l6pixx2JHkhnRjvShyYiAYw2LVsnA7K08Y6DeOnaU6ujmENO4os/cYg==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -13395,9 +13405,8 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tailor-cms/ce-html-default-edit@0.0.5(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))':
+  '@tailor-cms/ce-html-default-edit@0.0.6(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))':
     dependencies:
-      '@tiptap/extension-character-count': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/pm@2.2.4)
       '@tiptap/extension-color': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/extension-text-style@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4)))
       '@tiptap/extension-font-family': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/extension-text-style@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4)))
       '@tiptap/extension-highlight': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))
@@ -13423,7 +13432,7 @@ snapshots:
     transitivePeerDependencies:
       - '@tiptap/core'
 
-  '@tailor-cms/ce-html-default-server@0.0.5': {}
+  '@tailor-cms/ce-html-default-server@0.0.6': {}
 
   '@tailor-cms/ce-image-edit@1.0.0(vue@3.4.27(typescript@5.4.5))':
     dependencies:
@@ -13485,11 +13494,6 @@ snapshots:
   '@tiptap/extension-bullet-list@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))':
     dependencies:
       '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
-
-  '@tiptap/extension-character-count@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/pm@2.2.4)':
-    dependencies:
-      '@tiptap/core': 2.2.4(@tiptap/pm@2.2.4)
-      '@tiptap/pm': 2.2.4
 
   '@tiptap/extension-code-block@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/pm@2.2.4)':
     dependencies:
@@ -13768,6 +13772,8 @@ snapshots:
   '@types/object.omit@3.0.3': {}
 
   '@types/object.pick@1.3.4': {}
+
+  '@types/pluralize@0.0.33': {}
 
   '@types/resolve@1.20.2': {}
 
@@ -21797,6 +21803,12 @@ snapshots:
       typescript: 5.4.5
 
   vuetify@3.5.4(typescript@5.4.5)(vue@3.3.11(typescript@5.4.5)):
+    dependencies:
+      vue: 3.3.11(typescript@5.4.5)
+    optionalDependencies:
+      typescript: 5.4.5
+
+  vuetify@3.6.8(typescript@5.4.5)(vue@3.3.11(typescript@5.4.5)):
     dependencies:
       vue: 3.3.11(typescript@5.4.5)
     optionalDependencies:

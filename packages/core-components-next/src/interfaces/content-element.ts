@@ -6,15 +6,6 @@ export interface Relationship {
   outlineId: number;
 }
 
-export interface RelationshipType {
-  key: string;
-  label: string;
-  multiple: boolean;
-  placeholder: string;
-  allowedTypes: string[];
-  value?: Relationship[];
-}
-
 export interface ContentElement {
   id: number;
   uid: string;

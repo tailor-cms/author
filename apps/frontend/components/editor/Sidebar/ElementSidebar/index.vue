@@ -10,20 +10,38 @@
 
 <script lang="ts" setup>
 import { getElementId, getSidebarName } from '@tailor-cms/utils';
+import { schema } from 'tailor-config-shared';
 
+import type { ContentElement } from '@/api/interfaces/content-element';
 import ElementMeta from './ElementMeta/index.vue';
+import { exposedApi } from '@/api';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const eventBus = inject('$eventBus') as any;
+const authStore = useAuthStore();
 const storageService = useStorageService();
+const repositoryStore = useCurrentRepository();
 
-const props = defineProps({
-  element: { type: Object, required: true },
-  metadata: { type: Object, default: () => ({}) },
+interface Props {
+  element: ContentElement;
+  metadata?: any;
+}
+const props = withDefaults(defineProps<Props>(), {
+  metadata: () => ({}),
 });
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
+const editorChannel = eventBus.channel('editor');
 provide('$elementBus', elementBus);
+provide('$editorBus', editorChannel);
 provide('$storageService', storageService);
+provide('$api', exposedApi);
+provide('$schemaService', schema);
+provide('$getCurrentUser', () => authStore.user);
+provide('$repository', {
+  ...repositoryStore.repository,
+  activities: repositoryStore.activities,
+});
 
 const sidebarName = getSidebarName(props.element?.type);
 
