@@ -120,9 +120,7 @@ const copyBtnLabel = computed(() => {
   const selectionLabel = selectedCount
     ? `${pluralize('item', selectedCount, true)}`
     : '';
-  return `Copy ${selectionLabel} ${
-    props.action === InsertLocation.ADD_INTO ? 'inside' : ''
-  }`;
+  return `Copy ${selectionLabel} ${props.action === ADD_INTO ? 'inside' : ''}`;
 });
 
 const selectRepository = async (repository: Repository) => {
@@ -139,14 +137,16 @@ const selectRepository = async (repository: Repository) => {
 const copyActivity = async (activity: Activity, prevActivity?: Activity) => {
   const { action, repositoryId } = props;
   const { id: srcId, repositoryId: srcRepositoryId, type } = activity;
-  const anchor = (props.action === ADD_AFTER && prevActivity) || props.anchor;
+  const anchor = (action === ADD_AFTER && prevActivity) || props.anchor;
   return activityStore.clone({
     srcId,
     srcRepositoryId,
     repositoryId,
     type,
     position: await activityStore.calculateCopyPosition(action, anchor),
-    ...anchor && { parentId: action === ADD_INTO ? anchor.id : anchor.parentId }
+    ...(anchor && {
+      parentId: action === ADD_INTO ? anchor.id : anchor.parentId,
+    }),
   });
 };
 

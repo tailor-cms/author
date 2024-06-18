@@ -18,6 +18,7 @@ export type FoundActivity = StoreActivity | undefined;
 
 const HASH_ALPHABET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
 const hashids = new Hashids('', 0, HASH_ALPHABET);
+const { ADD_INTO } = InsertLocation;
 
 export const useActivityStore = defineStore('activities', () => {
   const $items = reactive(new Map<string, StoreActivity>());
@@ -141,17 +142,17 @@ export const useActivityStore = defineStore('activities', () => {
   ) {
     const children = schema.getOutlineChildren(items.value, activity.parentId);
     const context = { items: children, action } as any;
-    if (action !== InsertLocation.ADD_INTO) {
+    if (action !== ADD_INTO) {
       context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
     }
     return calculatePosition(context);
   }
 
   const calculateCopyPosition = (action: string, anchor: Activity | null) => {
-    const id = anchor && (action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId);
+    const id = anchor && (action === ADD_INTO ? anchor.id : anchor.parentId);
     const children = schema.getOutlineChildren(items.value, id);
     const context = { items: children, action } as any;
-    if (action !== InsertLocation.ADD_INTO) {
+    if (action !== ADD_INTO) {
       context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
     }
     return calculatePosition(context);
