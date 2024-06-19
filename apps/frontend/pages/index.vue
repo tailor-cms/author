@@ -80,9 +80,9 @@
           </VCol>
         </VRow>
         <template #load-more="{ props: loadProps }">
-          <v-btn v-if="!areAllItemsFetched" variant="tonal" v-bind="loadProps">
+          <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="loadProps">
             Load more
-          </v-btn>
+          </VBtn>
         </template>
       </VInfiniteScroll>
       <VAlert

@@ -22,7 +22,7 @@
 <script lang="ts" setup>
 import cloneDeep from 'lodash/cloneDeep';
 import filter from 'lodash/filter';
-import isAfter from 'date-fns/isAfter';
+import { isAfter } from 'date-fns/isAfter';
 import map from 'lodash/map';
 import mapValues from 'lodash/mapValues';
 import merge from 'lodash/merge';

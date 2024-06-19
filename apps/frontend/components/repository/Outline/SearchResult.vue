@@ -1,8 +1,8 @@
 <template>
   <VHover>
-    <template #default="{ isHovering, props }">
+    <template #default="{ isHovering, props: hoverProps }">
       <VCard
-        v-bind="props"
+        v-bind="hoverProps"
         :color="isSelected || isHovering ? '' : 'primary-darken-3'"
         :ripple="false"
         class="search-result mt-4 py-1 text-left"
@@ -48,6 +48,7 @@ const props = defineProps({
   activity: { type: Object, required: true },
   isSelected: { type: Boolean, default: false },
 });
+defineEmits(['select', 'show']);
 
 const store = useCurrentRepository();
 const config = computed(() =>

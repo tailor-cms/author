@@ -1,7 +1,7 @@
 <template>
   <VTooltip location="left" max-width="300" open-delay="100">
-    <template #activator="{ props }">
-      <span v-bind="props">
+    <template #activator="{ props: tooltipProps }">
+      <span v-bind="tooltipProps">
         <VBadge :color="badgeColor" dot inline />
       </span>
     </template>

@@ -16,6 +16,7 @@ import { getMetaName } from '@tailor-cms/utils';
 const props = defineProps({
   meta: { type: Object, required: true },
 });
+defineEmits(['update']);
 
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));

@@ -28,9 +28,9 @@
 </template>
 
 <script lang="ts" setup>
-import fecha from 'fecha';
 import find from 'lodash/find';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { format } from 'fecha';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 
 import {
   getFormatDescription,
@@ -60,7 +60,7 @@ const color = computed(() => getRevisionColor(props.revision));
 const acronym = computed(() => getRevisionAcronym(props.revision));
 
 const date = computed(() =>
-  fecha.format(new Date(props.revision.createdAt), 'M/D/YY h:mm A'),
+  format(new Date(props.revision.createdAt), 'M/D/YY h:mm A'),
 );
 
 const description = computed(() =>
