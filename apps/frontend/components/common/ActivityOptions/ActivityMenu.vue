@@ -39,6 +39,14 @@
       :visible="showCreateDialog"
       @close="showCreateDialog = false"
     />
+    <CopyDialog
+      v-if="showCopyDialog"
+      :action="action"
+      :anchor="activity"
+      :levels="supportedLevels"
+      :repository-id="activity.repositoryId"
+      @close="showCopyDialog = false"
+    />
   </div>
 </template>
 
@@ -46,6 +54,7 @@
 import first from 'lodash/first';
 import sortBy from 'lodash/sortBy';
 
+import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
 import { useActivityStore } from '@/stores/activity';

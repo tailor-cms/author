@@ -42,20 +42,20 @@ export function toTreeFormat(
   const { parentId = null, level = 1, maxLevel = 20 } = _internals;
   if (level > maxLevel) throw new Error('Max level exceeded');
   const parentActivities = filter(activities, { parentId });
-  return filterNodesFn(parentActivities).map(it => ({
-    id: it.id,
-    type: it.type,
-    name: it.data.name,
+  return filterNodesFn(parentActivities).map(activity => ({
+    ...activity,
+    name: activity.data.name,
+    title: activity.data.name,
     level,
     children: toTreeFormat(
       activities,
       { filterNodesFn, processNodeFn },
       {
         ..._internals,
-        parentId: it.id,
+        parentId: activity.id,
         level: level + 1
       }
     ),
-    ...(processNodeFn && processNodeFn(it))
+    ...processNodeFn && processNodeFn(activity)
   }));
 }

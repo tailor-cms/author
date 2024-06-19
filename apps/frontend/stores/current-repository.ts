@@ -22,9 +22,10 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   });
 
   const repositoryId = ref<number | null>(null);
-  const repository = computed(
-    () => repositoryId.value && Repository.findById(repositoryId.value),
-  );
+
+  const repository = computed(() => {
+    return repositoryId.value ? Repository.findById(repositoryId.value) : null;
+  });
 
   const schemaName = computed(() => {
     return repository.value && getSchema(repository.value.schema).name;

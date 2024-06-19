@@ -1,9 +1,8 @@
 <template>
   <VTextField
     v-model="search"
-    :disabled="!activities?.length"
+    :placeholder="`Filter selected ${schemaName}...`"
     clear-icon="mdi-close-circle-outline"
-    placeholder="Filter items..."
     prepend-inner-icon="mdi-filter-outline"
     variant="outlined"
     clearable
@@ -19,23 +18,17 @@
     border
     open-all
     rounded
-    @click:select="selectActivity($event.id as number)"
   >
-    <template #append="{ item }">
-      <VChip
-        v-if="groupedSelection[item.id]"
-        class="ml-2"
-        color="teal-darken-1"
-        size="small"
-      >
-        {{ getChipLabel(groupedSelection[item.id].length) }}
-      </VChip>
+    <template #prepend="{ item }">
       <VIcon
-        v-if="item.isEditable"
-        class="ml-2"
+        v-if="item.selectable"
+        :class="[isSelectable(item) ? 'opacity-100' : 'opacity-50']"
+        :disabled="!isSelectable(item)"
         color="primary"
-        icon="mdi-chevron-right"
-      />
+        @click.stop="toggleSelection(item)"
+      >
+        mdi-checkbox-{{ isSelected(item) ? 'marked' : 'blank-outline' }}
+      </VIcon>
     </template>
   </VTreeview>
   <VAlert
@@ -49,58 +42,42 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, inject, ref } from 'vue';
+import { computed, defineProps, ref } from 'vue';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import compact from 'lodash/compact';
-import groupBy from 'lodash/groupBy';
-import pluralize from 'pluralize';
 import { VTreeview } from 'vuetify/labs/VTreeview';
+import xorBy from 'lodash/xorBy';
 
-import type {
-  ContentElement,
-  Relationship,
-} from '../../interfaces/content-element';
-import type { Activity } from '../../interfaces/activity';
+import type { Activity } from '@/api/interfaces/activity';
 
-interface TreeItem {
-  id: string;
+interface TreeItem extends Activity {
   title: string;
-  isEditable: boolean;
-  children?: Array<TreeItem>;
+  level: number;
+  selectable: boolean;
+  children?: TreeItem[];
 }
 
-interface Props {
-  selectedElements?: Array<ContentElement | Relationship>;
-  activities?: Array<Activity>;
-}
+const props = defineProps<{
+  schemaName: string;
+  activities: Activity[];
+  supportedLevels: any[];
+}>();
 
-const props = withDefaults(defineProps<Props>(), {
-  selectedElements: () => [],
-  activities: () => [],
-});
-const emit = defineEmits(['selected']);
+const emit = defineEmits(['change']);
 
 const search = ref('');
-const schemaService = inject<any>('$schemaService');
+const selected = ref<TreeItem[]>([]);
+const { $schemaService } = useNuxtApp() as any;
 
 const expandedActivityIds = computed(() => props.activities.map((it) => it.id));
 
-const groupedSelection = computed(() => {
-  return groupBy(props.selectedElements, 'outlineId');
-});
-
-const activityTree = computed<Array<TreeItem>>(() => {
+const activityTree = computed<TreeItem[]>(() => {
   return activityUtils.toTreeFormat(props.activities, {
-    filterNodesFn: schemaService.filterOutlineActivities,
+    filterNodesFn: $schemaService.filterOutlineActivities,
     processNodeFn: attachActivityAttrs,
   });
 });
-
-const selectActivity = (id: number) => {
-  const activity = props.activities.find((it) => it.id === id);
-  emit('selected', activity);
-};
 
 const processedItems = computed(() => {
   if (!search.value) return activityTree.value;
@@ -109,7 +86,7 @@ const processedItems = computed(() => {
 });
 
 const noResultsMessage = computed(() => {
-  if (!props.activities?.length) return 'Empty repository';
+  if (!props.activities?.length) return `Selected ${props.schemaName} is empty`;
   if (!search.value || !!processedItems.value.length) return '';
   return 'No matches found';
 });
@@ -126,20 +103,37 @@ const searchRecursive = (item: TreeItem) => {
   return false;
 };
 
-const attachActivityAttrs = (activity: Activity) => ({
+const toggleSelection = (activity: TreeItem) => {
+  selected.value = xorBy(selected.value, [activity], 'id');
+  emit('change', selected.value);
+};
+
+const isSelected = (item: TreeItem) => {
+  return selected.value.find(({ id }) => id === item.id);
+};
+
+const isSelectable = (item: TreeItem) => {
+  return !selected.value.length || selected.value[0].level === item.level;
+};
+
+const attachActivityAttrs = (activity: TreeItem) => ({
   id: activity.id,
   title: activity.data.name,
-  isEditable: !!schemaService.isEditable(activity.type),
-  ...(schemaService.isEditable(activity.type) && { children: undefined }),
+  selectable: props.supportedLevels.some(({ type }) => type === activity.type),
+  ...($schemaService.isEditable(activity.type) && { children: undefined }),
 });
-
-const getChipLabel = (length: number) => {
-  return `${pluralize('element', length, true)} selected`;
-};
 </script>
 
 <style lang="scss" scoped>
 .v-treeview {
   max-height: 31.25rem;
+}
+
+.v-list {
+  border-radius: 4px !important;
+}
+
+::v-deep .v-list-item .v-list-item__prepend > .v-icon ~ .v-list-item__spacer {
+  width: 0.25rem !important;
 }
 </style>
