@@ -607,11 +607,11 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-html-default-edit':
-        specifier: ^0.0.6
-        version: 0.0.6(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))
+        specifier: ^0.0.7
+        version: 0.0.7(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))
       '@tailor-cms/ce-html-default-server':
-        specifier: ^0.0.6
-        version: 0.0.6
+        specifier: ^0.0.7
+        version: 0.0.7
       '@tailor-cms/ce-image-edit':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.4.27(typescript@5.4.5))
@@ -3040,13 +3040,13 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
-  '@tailor-cms/ce-html-default-edit@0.0.6':
-    resolution: {integrity: sha512-PWBwuZAVMaH8CJUNM7fkhHZJHVoE5+Ad3jBEixCayUmdcECY58Xm0Js+wA+ZTXJOOpI2O93KUo5C2GAkrsUZCQ==}
+  '@tailor-cms/ce-html-default-edit@0.0.7':
+    resolution: {integrity: sha512-nnX1BSQgkzdAcPMFqptJwFYFe6qQbKSOGlrcJh3yAlpAtNocTmamEWjAob71PSoetwq2CpZVUy8+hTPwmpn7dw==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-html-default-server@0.0.6':
-    resolution: {integrity: sha512-tLDOphmrOdv3SaIJXm8wOhm8PSNwXat0Dkqt3z9Zl0/6LRP8atHbJOXNrQKMZzolDdM68RbcOYamCb77Cg1Spw==}
+  '@tailor-cms/ce-html-default-server@0.0.7':
+    resolution: {integrity: sha512-RhdkdWZR8e772GOmGlB4yDmjQKHsDBW1dC0iNZjncdNgy56L5oIaPbBwdgaMTe9EwyU1lrr1frYRr530GhokvA==}
 
   '@tailor-cms/ce-image-edit@1.0.0':
     resolution: {integrity: sha512-bPEZqyJByOVP1onGiTrVGNm+RICgiDKw0DewJ1xGvd5Pjgs1F0A+I9O8KRjCGF0Zt2Md6iytbnPPQsCy1073EQ==}
@@ -13405,7 +13405,7 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tailor-cms/ce-html-default-edit@0.0.6(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))':
+  '@tailor-cms/ce-html-default-edit@0.0.7(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(vue@3.4.27(typescript@5.4.5))':
     dependencies:
       '@tiptap/extension-color': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/extension-text-style@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4)))
       '@tiptap/extension-font-family': 2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4))(@tiptap/extension-text-style@2.2.4(@tiptap/core@2.2.4(@tiptap/pm@2.2.4)))
@@ -13432,7 +13432,7 @@ snapshots:
     transitivePeerDependencies:
       - '@tiptap/core'
 
-  '@tailor-cms/ce-html-default-server@0.0.6': {}
+  '@tailor-cms/ce-html-default-server@0.0.7': {}
 
   '@tailor-cms/ce-image-edit@1.0.0(vue@3.4.27(typescript@5.4.5))':
     dependencies:
