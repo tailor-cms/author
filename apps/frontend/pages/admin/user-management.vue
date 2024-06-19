@@ -115,6 +115,10 @@ definePageMeta({
   name: 'system-user-management',
 });
 
+useHead({
+  title: 'Admin',
+});
+
 const authStore = useAuthStore();
 
 const defaultPage = () => ({
