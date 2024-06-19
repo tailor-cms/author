@@ -17,7 +17,7 @@
         <VTextField
           v-model="currentPasswordInput"
           :error-messages="errors.currentPassword"
-          class="required my-4"
+          class="required mb-4"
           label="Current password"
           placeholder="Enter current password..."
           type="password"
