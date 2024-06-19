@@ -9,15 +9,13 @@
         <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="tooltipProps"
-            :disabled="disabled"
             :active="active"
+            :disabled="disabled"
+            :icon="`mdi-${icon}`"
             class="mr-2"
             variant="text"
-            icon
             @click.stop="action"
-          >
-            <VIcon>mdi-{{ icon }}</VIcon>
-          </VBtn>
+          />
         </template>
         <span>{{ title }}</span>
       </VTooltip>
@@ -87,5 +85,10 @@ const confirmPublishing = () => {
 <style lang="scss" scoped>
 .v-toolbar ::v-deep .v-toolbar__content {
   padding: 0 0.5rem;
+}
+
+.v-btn--active {
+  background: rgb(var(--v-theme-secondary)) !important;
+  color: white !important;
 }
 </style>
