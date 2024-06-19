@@ -24,7 +24,7 @@ export class UserDialog {
     firstName: string,
     lastName: string,
     email: string,
-    role: 'Admin' | 'Author',
+    role: 'Admin' | 'User',
   ) {
     await this.editFirstName(firstName);
     await this.editLastName(lastName);
@@ -45,13 +45,14 @@ export class UserDialog {
     return this.email.fill(value);
   }
 
-  async selectRole(role: 'Admin' | 'Author') {
+  async selectRole(role: 'Admin' | 'User') {
     await this.role.click();
     const dropdownMenu = this.page.locator('.v-overlay.v-menu');
     await dropdownMenu
-      .locator('.v-list-item-title')
+      .locator('.v-list-item .v-list-item-title')
       .filter({ hasText: role })
       .click();
+    await expect(dropdownMenu).toBeHidden();
   }
 
   async save() {
@@ -84,7 +85,7 @@ export class UserManagement {
     return this.getEntries().filter({ hasText: email });
   }
 
-  async addUser(email: string, role: 'Admin' | 'Author' = 'Admin') {
+  async addUser(email: string, role: 'Admin' | 'User' = 'Admin') {
     await this.addBtn.click();
     const dialog = new UserDialog(this.page);
     await dialog.edit('John', 'Doe', email, role);
@@ -93,7 +94,7 @@ export class UserManagement {
 
   async editUser(
     email: string,
-    data: { firstName: string; lastName: string; role: 'Admin' | 'Author' },
+    data: { firstName: string; lastName: string; role: 'Admin' | 'User' },
   ) {
     await this.addBtn.click();
     const dialog = new UserDialog(this.page);

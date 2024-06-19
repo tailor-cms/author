@@ -104,7 +104,7 @@ const isDialogVisible = computed({
 const isReinviting = ref(false);
 const isNewUser = computed(() => !props.userData?.id);
 const roles = computed(() =>
-  map(role.repository, (value) => ({ title: titleCase(value), value })),
+  map(role.user, (value) => ({ title: titleCase(value), value })),
 );
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
@@ -114,6 +114,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
       .email()
       .test((email) => {
         if (isNewUser.value) return true;
+        if (props.userData.email === email) return true;
         return api.fetch({ email }).then(({ total }) => !total);
       }),
     firstName: string().min(2).required(),

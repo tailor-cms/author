@@ -21,7 +21,7 @@ test('should be able to update a user', async ({ page }) => {
   await userManagement.editUser('admin@gostudion.com', {
     firstName: 'John',
     lastName: 'Doe',
-    role: 'Author',
+    role: 'User',
   });
   await page.reload();
   await expect(userManagement.userTable).toContainText('John');
