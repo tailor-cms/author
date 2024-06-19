@@ -29,7 +29,6 @@
 </template>
 
 <script lang="ts" setup>
-import fecha from 'fecha';
 import find from 'lodash/find';
 import { formatTimeAgo } from '@vueuse/core';
 
