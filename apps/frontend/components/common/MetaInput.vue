@@ -23,7 +23,7 @@ const componentName = computed(() => getMetaName(type.value));
 </script>
 
 <style lang="scss" scoped>
-::v-deep .title {
+:deep(.title) {
   color: #808080;
   font-size: 0.875rem !important;
   font-weight: normal;

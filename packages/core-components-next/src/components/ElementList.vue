@@ -107,7 +107,7 @@ const reorder = ({ newIndex: newPosition }) => {
   padding: 0.625rem 1.5rem;
 }
 
-::v-deep .sortable-ghost {
+:deep(.sortable-ghost) {
   .drag-handle {
     display: none;
   }
@@ -122,7 +122,7 @@ const reorder = ({ newIndex: newPosition }) => {
   }
 }
 
-::v-deep .sortable-drag .content-element {
+:deep(.sortable-drag .content-element) {
   max-height: auto;
   background: #fff;
 }

@@ -195,7 +195,7 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
       margin: 0.375rem 0.5rem;
     }
 
-    .options-menu ::v-deep .v-btn {
+    .options-menu :deep(.v-btn) {
       height: 100%;
     }
 

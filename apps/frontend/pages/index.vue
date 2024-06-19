@@ -255,7 +255,7 @@ onBeforeMount(async () => {
   overflow-x: unset !important;
 }
 
-::v-deep .v-infinite-scroll__side {
+:deep(.v-infinite-scroll__side) {
   > button {
     margin-top: 1.5rem;
   }

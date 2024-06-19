@@ -79,7 +79,7 @@ const descendantsInfo = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .v-badge {
-  margin: 0 0.125rem 0 0;
+.v-badge {
+  margin-right: 0.125rem;
 }
 </style>

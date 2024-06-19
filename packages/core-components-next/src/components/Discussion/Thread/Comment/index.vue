@@ -113,7 +113,7 @@ watch(() => props.comment, reset, { deep: true });
   &-editor.v-textarea {
     margin: 0.75rem 0 0 0;
 
-    ::v-deep .v-input__slot {
+    :deep(.v-input__slot) {
       width: auto;
     }
   }

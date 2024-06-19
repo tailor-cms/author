@@ -141,7 +141,7 @@ watch(
 .sidebar {
   text-align: left;
 
-  ::v-deep .v-navigation-drawer__content {
+  :deep(.v-navigation-drawer__content) {
     -ms-overflow-style: none !important;
     /* IE and Edge */
     scrollbar-width: none !important;
@@ -156,7 +156,7 @@ watch(
 .sidebar-container {
   height: 100%;
 
-  ::v-deep .activity-discussion {
+  :deep(.activity-discussion) {
     margin: 1rem 0;
     padding: 1rem;
     border: none;

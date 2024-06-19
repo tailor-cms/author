@@ -135,7 +135,7 @@ const options = computed(() => {
       margin: 0.25rem 0.125rem 0.125rem 0.625rem;
     }
 
-    ::v-deep .editor-link {
+    :deep(.editor-link) {
       display: inline-flex;
       align-self: flex-end;
     }

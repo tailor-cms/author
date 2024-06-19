@@ -157,7 +157,7 @@ const removeComment = (payload: any) => {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .v-menu__content {
+:deep(.v-menu__content) {
   background: #fff;
 
   .embedded-discussion {
@@ -169,7 +169,7 @@ const removeComment = (payload: any) => {
   }
 }
 
-::v-deep .comment-body {
+:deep(.comment-body) {
   padding: 0 0.25rem 0 3.9375rem;
 }
 

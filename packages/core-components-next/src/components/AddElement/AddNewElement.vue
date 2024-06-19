@@ -87,7 +87,7 @@ const emitAdd = (element) => emit('add', [element]);
   padding: 0 !important;
   white-space: normal;
 
-  ::v-deep .v-btn__content {
+  :deep(.v-btn__content) {
     flex: 1 1 100%;
     flex-direction: column;
     padding: 0.375rem;

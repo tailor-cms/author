@@ -227,7 +227,7 @@ watch(
     margin: 0 0.25rem 0 0.25rem;
   }
 
-  .alert ::v-deep .v-icon {
+  .alert :deep(.v-icon) {
     color: var(--v-primary-darken2) !important;
   }
 }

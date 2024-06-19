@@ -51,7 +51,7 @@ const onItemClick = () => {
 </script>
 
 <style scoped lang="scss">
-.list-item ::v-deep .v-list-item__append {
+.list-item :deep(.v-list-item__append) {
   i {
     opacity: 1 !important;
   }

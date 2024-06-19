@@ -268,7 +268,7 @@ const hide = () => {
 </script>
 
 <style lang="scss" scoped>
-.v-alert ::v-deep .mdi-close {
+.v-alert :deep(.mdi-close) {
   color: #eee;
 }
 

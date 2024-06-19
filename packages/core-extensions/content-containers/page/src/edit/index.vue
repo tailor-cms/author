@@ -191,7 +191,7 @@ const saveElement = (element: any, key: string, data: any) => {
 </script>
 
 <style lang="scss" scoped>
-.element-list ::v-deep .contained-content {
+.element-list :deep(.contained-content) {
   margin: 0;
 }
 
@@ -199,7 +199,7 @@ const saveElement = (element: any, key: string, data: any) => {
   margin: 0.625rem 0;
   padding: 0;
 
-  ::v-deep .inline-activator {
+  :deep(.inline-activator) {
     display: none;
   }
 }

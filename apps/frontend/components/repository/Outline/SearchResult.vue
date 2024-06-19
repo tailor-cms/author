@@ -62,7 +62,7 @@ const typeLabel = computed(() => config.value.label);
   transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.v-card:hover ::v-deep > .v-card__overlay {
+.v-card:hover > :deep(.v-card__overlay) {
   opacity: 0.01;
 }
 </style>

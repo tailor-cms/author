@@ -178,7 +178,7 @@ onMounted(() => fetchRepositories());
 </script>
 
 <style lang="scss" scoped>
-::v-deep .v-list-item__content {
+:deep(.v-list-item__content) {
   flex: initial;
 }
 </style>

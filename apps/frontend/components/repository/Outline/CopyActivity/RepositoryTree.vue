@@ -133,7 +133,7 @@ const attachActivityAttrs = (activity: TreeItem) => ({
   border-radius: 4px !important;
 }
 
-::v-deep .v-list-item .v-list-item__prepend > .v-icon ~ .v-list-item__spacer {
+:deep(.v-list-item__prepend .v-list-item__spacer) {
   width: 0.25rem !important;
 }
 </style>
