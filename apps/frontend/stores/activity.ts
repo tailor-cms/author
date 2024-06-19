@@ -12,7 +12,7 @@ import type { Activity } from '@/api/interfaces/activity';
 import { activity as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
-export type Id = number | string;
+type Id = number | string;
 export type StoreActivity = Activity & { shortId: string };
 export type FoundActivity = StoreActivity | undefined;
 

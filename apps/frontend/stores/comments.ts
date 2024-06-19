@@ -7,7 +7,7 @@ import type { Comment } from '@/api/interfaces/comment';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
 
-export type Id = number | string;
+type Id = number | string;
 export type FoundComment = Comment | undefined;
 
 export const useCommentStore = defineStore('comments', () => {
