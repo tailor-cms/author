@@ -29,6 +29,10 @@ import ChangePassword from '@/components/user/ChangePassword.vue';
 import UserAvatar from '@/components/user/Avatar/index.vue';
 import UserInfo from '@/components/user/UserInfo.vue';
 
+useHead({
+  title: 'User profile',
+});
+
 definePageMeta({
   name: 'user-profile',
   middleware: ['auth'],

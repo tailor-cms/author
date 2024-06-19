@@ -16,7 +16,8 @@
           {{ description }}
         </div>
         <div class="text-body-2 text-primary-lighten-2">
-          {{ formatDistanceToNow(date) }} ago by {{ revision.user.label }}
+          {{ formatTimeAgo(date, { rounding: 'floor' }) }} by
+          {{ revision.user.label }}
         </div>
       </div>
     </div>
@@ -29,8 +30,7 @@
 
 <script lang="ts" setup>
 import find from 'lodash/find';
-import { format } from 'fecha';
-import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import { formatTimeAgo } from '@vueuse/core';
 
 import {
   getFormatDescription,
@@ -58,10 +58,7 @@ const activity = computed(() => {
 
 const color = computed(() => getRevisionColor(props.revision));
 const acronym = computed(() => getRevisionAcronym(props.revision));
-
-const date = computed(() =>
-  format(new Date(props.revision.createdAt), 'M/D/YY h:mm A'),
-);
+const date = computed(() => new Date(props.revision.createdAt));
 
 const description = computed(() =>
   getFormatDescription(props.revision, activity.value),

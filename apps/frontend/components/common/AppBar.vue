@@ -44,6 +44,7 @@
           <UserAvatar
             v-bind="props"
             :img-url="user.imgUrl"
+            aria-label="User menu"
             class="mx-5"
             tag="button"
           />
