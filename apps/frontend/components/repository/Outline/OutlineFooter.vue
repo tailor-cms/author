@@ -18,13 +18,6 @@
         test-id-prefix="repository__createRootActivity"
         show-activator
       />
-      <CopyActivity
-        :anchor="anchor"
-        :repository-id="repositoryId as number"
-        activator-color="primary-lighten-2"
-        test-id-prefix="repository__createRootActivity"
-        show-activator
-      />
     </VCol>
   </VRow>
 </template>
@@ -33,7 +26,6 @@
 import last from 'lodash/last';
 import { storeToRefs } from 'pinia';
 
-import CopyActivity from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
