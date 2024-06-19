@@ -5,8 +5,9 @@ import { AppBar } from '../../../pom/common/AppBar.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 import { toSeededRepository } from '../../../helpers/seed.ts';
 
-test.beforeEach(async () => {
+test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
+  await page.goto('/');
 });
 
 test('should be able to access admin page', async ({ page }) => {
