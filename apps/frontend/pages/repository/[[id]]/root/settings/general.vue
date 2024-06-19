@@ -88,6 +88,7 @@ const publish = async () => {
   isPublishing.value = true;
   await api.publishRepositoryMeta(repository.value?.id);
   isPublishing.value = false;
+  notify('Info successfully published', { immediate: true });
 };
 </script>
 
