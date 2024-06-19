@@ -22,6 +22,7 @@ export const toSeededRepository = async (page: Page) => {
   const { data } = await SeedClient.seedTestRepository();
   const { repository } = data;
   await page.goto(`/repository/${repository.id}/root/structure`);
+  return repository;
 };
 
 export const toSeededRepositorySettings = async (page: Page) => {

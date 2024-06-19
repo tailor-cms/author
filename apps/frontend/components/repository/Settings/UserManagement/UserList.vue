@@ -18,12 +18,12 @@
         <td class="user-entry-role">
           <VSelect
             :items="roles"
-            :value="item.repositoryRole"
+            :model-value="item.repositoryRole"
             density="compact"
             rounded="lg"
             variant="text"
             hide-details
-            @change="(role: string) => changeRole(item.email, role)"
+            @update:model-value="(role: string) => upsertUser(item.email, role)"
           />
         </td>
         <td class="user-entry-actions">
@@ -42,8 +42,6 @@
 </template>
 
 <script lang="ts" setup>
-import debounce from 'lodash/debounce';
-
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -52,6 +50,7 @@ defineProps({
 });
 
 const store = useCurrentRepository();
+const notify = useNotification();
 
 const isLoading = ref(true);
 const headers = computed(() =>
@@ -68,14 +67,11 @@ const getUsers = async () => {
 
 const upsertUser = async (email: string, role: string) => {
   await store.upsertUser(email, role);
+  await notify('User updated', { immediate: true });
 };
 
 const removeUser = async (userId: number) => {
   await store.removeUser(userId);
-};
-
-const changeRole = (email: string, role: string) => {
-  debounce(() => upsertUser(email, role), 500);
 };
 
 const remove = (user: any) => {
