@@ -59,8 +59,7 @@ defineProps({
 
 const { $schemaService } = useNuxtApp() as any;
 
-// TODO: computed(() => this.$store.state.editor.showPublishDiff);
-const showPublishDiff = false;
+const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();

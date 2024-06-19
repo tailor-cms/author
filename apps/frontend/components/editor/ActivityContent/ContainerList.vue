@@ -61,6 +61,7 @@ import throttle from 'lodash/throttle';
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useEditorStore } from '@/stores/editor';
 
 const props = defineProps({
   type: { type: String, required: true },
@@ -87,9 +88,9 @@ const confirmationDialog = useConfirmationDialog();
 const currentRepository = useCurrentRepository();
 const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
+const editorStore = useEditorStore();
 
-// TODO: Implement once diffing is added; store.state.editor.showPublishDiff;
-const showPublishDiff = computed(() => false);
+const showPublishDiff = computed(() => editorStore.showPublishDiff);
 const elements = computed(() => contentElementStore.items);
 
 const containerName = computed(() => {

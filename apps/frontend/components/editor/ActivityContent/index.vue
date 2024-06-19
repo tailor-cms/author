@@ -126,8 +126,7 @@ const focusedElement = ref(null);
 const activityContentEl = ref();
 const mousedownCaptured = ref<boolean | null>(null);
 
-// TODO: Add once diff feature is implemented
-const showPublishDiff = computed(() => false);
+const showPublishDiff = computed(() => editorStore.showPublishDiff);
 const elements = computed(() => contentElementStore.items);
 const containerIds = computed(
   () => props.contentContainers?.map((it: any) => it.id) as any[],
