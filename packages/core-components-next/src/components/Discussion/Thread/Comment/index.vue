@@ -55,7 +55,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, defineProps, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';

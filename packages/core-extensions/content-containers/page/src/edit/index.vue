@@ -115,7 +115,7 @@ import {
   ElementList,
   InlineActivator,
 } from '@tailor-cms/core-components-next';
-import { computed, defineProps, inject, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import filter from 'lodash/filter';
 import sortBy from 'lodash/sortBy';
 

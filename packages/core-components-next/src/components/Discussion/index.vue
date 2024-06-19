@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, inject, nextTick, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, watch } from 'vue';
 import { object, string } from 'yup';
 import orderBy from 'lodash/orderBy';
 import { useForm } from 'vee-validate';

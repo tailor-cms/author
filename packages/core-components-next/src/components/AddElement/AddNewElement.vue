@@ -38,8 +38,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, defineProps } from 'vue';
-
 const props = defineProps({
   library: { type: Array, required: true },
   allowedTypes: { type: Array, required: true },

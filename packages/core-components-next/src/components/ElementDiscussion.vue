@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, inject, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import { Events } from '@tailor-cms/utils';
 import get from 'lodash/get';
 

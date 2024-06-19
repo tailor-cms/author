@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, defineProps, inject, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import Draggable from 'vuedraggable';
 import { getElementId } from '@tailor-cms/utils';
 import getVal from 'lodash/get';

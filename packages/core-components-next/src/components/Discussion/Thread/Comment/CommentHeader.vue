@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, defineProps } from 'vue';
+import { computed } from 'vue';
 import formatDate from 'date-fns/format';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 
