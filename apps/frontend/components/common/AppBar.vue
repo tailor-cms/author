@@ -41,7 +41,13 @@
         transition="slide-y-transition"
       >
         <template #activator="{ props }">
-          <UserAvatar v-bind="props" :img-url="user.imgUrl" class="mx-5" />
+          <UserAvatar
+            v-bind="props"
+            :img-url="user.imgUrl"
+            aria-label="User menu"
+            class="mx-5"
+            tabindex="0"
+          />
         </template>
         <VList class="text-left pt-0">
           <VListItem class="py-5 bg-primary-lighten-4" disabled>
