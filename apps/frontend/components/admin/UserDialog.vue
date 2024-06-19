@@ -19,7 +19,7 @@
           :disabled="!isNewUser"
           :error-messages="errors.email"
           class="mb-3"
-          label="E-mail"
+          label="Email"
           placeholder="Enter email..."
           variant="outlined"
         />
@@ -43,7 +43,7 @@
           v-model="roleInput"
           :error-messages="errors.role"
           :items="roles"
-          class="mb-3"
+          class="role-select mb-3"
           item-title="title"
           item-value="value"
           label="Role"

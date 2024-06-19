@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="user-management">
     <div class="d-flex py-6 px-4">
       <VSpacer />
       <VBtn
@@ -24,6 +24,7 @@
       <VCol>
         <VTextField
           v-model="filter"
+          aria-label="Search users"
           label="Search"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
@@ -48,19 +49,28 @@
       @update:sort-by="($event) => (dataTable.sortBy = $event)"
     >
       <template #item="{ item }">
-        <tr :key="item.id">
+        <tr :key="item.id" class="user-entry">
           <td class="text-no-wrap text-left">
-            <VAvatar :image="item?.imgUrl" size="40" variant="tonal" />
+            <VAvatar :image="item?.imgUrl" size="36" variant="tonal" />
           </td>
-          <td class="text-no-wrap text-left">{{ item.email }}</td>
-          <td class="text-truncate text-left">{{ item.firstName || '/' }}</td>
-          <td class="text-truncate text-left">{{ item.lastName || '/' }}</td>
-          <td class="text-no-wrap text-left">{{ item.role }}</td>
-          <td class="text-no-wrap text-left">
+          <td class="user-entry-email text-no-wrap text-left">
+            {{ item.email }}
+          </td>
+          <td class="user-entry-first-name text-truncate text-left">
+            {{ item.firstName || '/' }}
+          </td>
+          <td class="user-entry-last-name text-truncate text-left">
+            {{ item.lastName || '/' }}
+          </td>
+          <td class="user-entry-role text-no-wrap text-left">
+            {{ item.role }}
+          </td>
+          <td class="user-entry-created-at text-no-wrap text-left">
             {{ formatDate(item.createdAt, 'MM/dd/yy HH:mm') }}
           </td>
-          <td class="text-no-wrap text-center">
+          <td class="user-entry-actions text-no-wrap text-center">
             <VBtn
+              aria-label="Edit user"
               color="primary-darken-4"
               icon="mdi-pencil"
               size="small"
@@ -68,8 +78,10 @@
               @click="showUserDialog(item)"
             />
             <VBtn
+              :aria-label="item.deletedAt ? 'Restore user' : 'Archive user'"
               :disabled="currentUser?.id === item?.id"
               :icon="`mdi-account-${item.deletedAt ? 'convert' : 'off'}`"
+              :label="item.deletedAt ? 'Restore user' : 'Archive user'"
               color="primary-darken-4"
               size="small"
               variant="text"
