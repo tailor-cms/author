@@ -54,3 +54,9 @@ test('should be able to edit description', async ({ page }) => {
   await page.reload();
   await expect(settingsPage.descriptionInput).toHaveValue('New Description');
 });
+
+test('should be able to publish repository info', async ({ page }) => {
+  const settingsPage = new GeneralSettings(page);
+  await settingsPage.el.getByRole('button', { name: 'Publish info' }).click();
+  await expect(page.getByText('Info successfully published')).toBeVisible();
+});
