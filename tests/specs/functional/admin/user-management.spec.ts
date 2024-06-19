@@ -18,7 +18,9 @@ test('should be able to add new user to the platform', async ({ page }) => {
 
 test('should be able to update a user', async ({ page }) => {
   const userManagement = new UserManagement(page);
-  await userManagement.editUser('admin@gostudion.com', {
+  await userManagement.addUser('tools+1@gostudion.com');
+  await expect(userManagement.userTable).toContainText('tools+1@gostudion.com');
+  await userManagement.editUser('tools+2@gostudion.com', {
     firstName: 'John',
     lastName: 'Doe',
     role: 'User',
