@@ -33,6 +33,12 @@ function reorder(repositoryId, id, data) {
     .then(extractData);
 }
 
+function clone(repositoryId, id, data) {
+  return request
+    .post(`${urls.resource(repositoryId, id)}/clone`, data)
+    .then(extractData);
+}
+
 function publish(repositoryId, id) {
   return request
     .get(`${urls.resource(repositoryId, id)}/publish`)
@@ -50,6 +56,7 @@ export default {
   save,
   patch,
   reorder,
+  clone,
   remove,
   publish,
   getActivities,

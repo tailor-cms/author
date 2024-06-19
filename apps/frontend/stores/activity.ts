@@ -18,6 +18,7 @@ export type FoundActivity = StoreActivity | undefined;
 
 const HASH_ALPHABET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
 const hashids = new Hashids('', 0, HASH_ALPHABET);
+const { ADD_INTO } = InsertLocation;
 
 export const useActivityStore = defineStore('activities', () => {
   const $items = reactive(new Map<string, StoreActivity>());
@@ -127,6 +128,13 @@ export const useActivityStore = defineStore('activities', () => {
     activity.publishedAt = publishedAt;
   };
 
+  const clone = async (mapping: any) => {
+    const { srcId, srcRepositoryId } = mapping;
+    const activities = await api.clone(srcRepositoryId, srcId, mapping);
+    activities.forEach((activity: Activity) => add(activity));
+    return activities;
+  };
+
   function calculateInsertPosition(
     activity: StoreActivity,
     action: string,
@@ -134,11 +142,21 @@ export const useActivityStore = defineStore('activities', () => {
   ) {
     const children = schema.getOutlineChildren(items.value, activity.parentId);
     const context = { items: children, action } as any;
-    if (action !== InsertLocation.ADD_INTO) {
+    if (action !== ADD_INTO) {
       context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
     }
     return calculatePosition(context);
   }
+
+  const calculateCopyPosition = (action: string, anchor: Activity | null) => {
+    const id = anchor && (action === ADD_INTO ? anchor.id : anchor.parentId);
+    const children = schema.getOutlineChildren(items.value, id);
+    const context = { items: children, action } as any;
+    if (action !== ADD_INTO) {
+      context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
+    }
+    return calculatePosition(context);
+  };
 
   const $subscribeToSSE = () => {
     sseRepositoryFeed
@@ -166,8 +184,10 @@ export const useActivityStore = defineStore('activities', () => {
     update,
     remove,
     publish,
+    clone,
     reorder,
     calculateInsertPosition,
+    calculateCopyPosition,
     $subscribeToSSE,
     $reset,
   };

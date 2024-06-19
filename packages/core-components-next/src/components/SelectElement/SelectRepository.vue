@@ -16,7 +16,6 @@
 
 <script lang="ts" setup>
 import { inject, onMounted, ref } from 'vue';
-import debounce from 'lodash/debounce';
 import find from 'lodash/find';
 import sortBy from 'lodash/sortBy';
 
@@ -33,19 +32,16 @@ const { loading, loader } = useLoader();
 const repositories = ref<Repository[]>([]);
 
 const selectRepository = (repository: Repository) => {
-  if (find(repositories.value, { id: repository.id })) {
+  if (find(repositories.value, { id: repository?.id })) {
     emit('selected', repository);
   }
 };
 
-const fetchRepositories = debounce(
-  loader(async (search: string) => {
-    const data = await api.fetchRepositories({ search });
-    const fetchedRepositories: Repository[] = data.items;
-    repositories.value = sortBy(fetchedRepositories, 'name');
-  }),
-  500,
-);
+const fetchRepositories = loader(async (search: string) => {
+  const data = await api.fetchRepositories({ search });
+  const fetchedRepositories: Repository[] = data.items;
+  repositories.value = sortBy(fetchedRepositories, 'name');
+}, 500);
 
 onMounted(() => fetchRepositories());
 </script>
