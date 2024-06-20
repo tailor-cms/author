@@ -18,9 +18,9 @@ export const useEditorStore = defineStore('editor', () => {
 
   const repositoryId = computed(() => repositoryStore.repositoryId as number);
   const selectedActivityId = ref<number | null>(null);
-  const showPublishDiff = ref(false);
   const selectedContentElementId = ref<number | null>(null);
   const selectedContentElement = ref<StoreContentElement | null>(null);
+  const showPublishDiff = ref(false);
 
   const selectedActivity = computed(() => {
     if (!selectedActivityId.value) return null;
