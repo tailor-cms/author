@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, defineProps, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { InsertLocation } from '@tailor-cms/utils';
 import pluralize from 'pluralize';
 import { SCHEMAS } from 'tailor-config-shared';
@@ -178,7 +178,7 @@ onMounted(() => fetchRepositories());
 </script>
 
 <style lang="scss" scoped>
-::v-deep .v-list-item__content {
+:deep(.v-list-item__content) {
   flex: initial;
 }
 </style>

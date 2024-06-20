@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, defineProps, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import partition from 'lodash/partition';
 import takeRight from 'lodash/takeRight';
 

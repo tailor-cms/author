@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, inject } from 'vue';
+import { computed, inject } from 'vue';
 import get from 'lodash/get';
 
 import type { ContentElement } from '../../interfaces/content-element';

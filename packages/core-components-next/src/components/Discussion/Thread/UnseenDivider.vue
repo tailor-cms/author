@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import pluralize from 'pluralize';
 
 const props = defineProps({
@@ -43,7 +43,7 @@ const seen = () => emit('seen');
     margin: 1rem 0 0.25rem;
   }
 
-  ::v-deep .v-chip.v-chip--outlined.v-chip {
+  :deep(.v-chip.v-chip--outlined.v-chip) {
     margin: -1.5rem 0 0.5rem 0;
     border-radius: 1rem !important;
     background-color: #fafafa !important;

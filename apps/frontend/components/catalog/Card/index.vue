@@ -200,7 +200,7 @@ onMounted(() => nextTick(detectSchemaTruncation));
   }
 }
 
-.v-card:hover ::v-deep > .v-card__overlay {
+.v-card:hover > :deep(.v-card__overlay) {
   opacity: 0.01;
 }
 </style>

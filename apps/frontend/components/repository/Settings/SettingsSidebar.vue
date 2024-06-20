@@ -41,6 +41,8 @@
 </template>
 
 <script lang="ts" setup>
+defineEmits(['action']);
+
 const route = useRoute();
 
 const routes = computed(() => {

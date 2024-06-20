@@ -119,7 +119,7 @@ $image-bg-color: #f5f5f5;
 $image-width: 12.5rem;
 $image-height: 12.5rem;
 
-.v-avatar ::v-deep {
+.v-avatar {
   img,
   .v-icon {
     border: $image-border;

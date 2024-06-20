@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, inject } from 'vue';
+import { inject } from 'vue';
 
 import ThreadComment from './Comment/index.vue';
 

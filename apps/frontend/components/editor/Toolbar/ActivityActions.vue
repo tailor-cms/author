@@ -89,7 +89,7 @@ const confirmPublishing = () => {
 </script>
 
 <style lang="scss" scoped>
-.v-toolbar ::v-deep .v-toolbar__content {
+.v-toolbar :deep(.v-toolbar__content) {
   padding: 0 0.5rem;
 }
 </style>

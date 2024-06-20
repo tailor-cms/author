@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, inject, nextTick, ref, watch } from 'vue';
+import { computed, inject, nextTick, ref, watch } from 'vue';
 import { object, string } from 'yup';
 import orderBy from 'lodash/orderBy';
 import { useForm } from 'vee-validate';
@@ -227,7 +227,7 @@ watch(
     margin: 0 0.25rem 0 0.25rem;
   }
 
-  .alert ::v-deep .v-icon {
+  .alert :deep(.v-icon) {
     color: var(--v-primary-darken2) !important;
   }
 }

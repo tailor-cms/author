@@ -18,7 +18,7 @@
     return-object
     @update:model-value="onRelationshipChanged"
   >
-    <template #item="{ item, props }">
+    <template #item="{ item, props: autocompleteProps }">
       <VDivider v-if="'divider' in item.raw" />
       <VListSubheader
         v-else-if="'header' in item.raw"
@@ -27,7 +27,7 @@
       />
       <VListItem
         v-else
-        v-bind="props"
+        v-bind="autocompleteProps"
         :title="item.title"
         :value="item.value"
       />

@@ -82,28 +82,6 @@ const navigateToActivity = (activityId: number) => {
   padding: 0.75rem 0 0;
 }
 
-.v-treeview {
-  overflow-y: auto;
-
-  ::v-deep {
-    .v-treeview-node__toggle {
-      outline: none;
-    }
-
-    .v-treeview-node__root::before {
-      content: none;
-    }
-
-    .v-treeview-node__content {
-      margin-left: 0;
-    }
-
-    .v-treeview-node__level {
-      width: 0.75rem;
-    }
-  }
-}
-
 .tree-node {
   display: flex;
   align-items: center;
@@ -148,13 +126,11 @@ const navigateToActivity = (activityId: number) => {
   }
 }
 
-::v-deep {
-  .v-list-item-action {
-    display: none !important;
-  }
+:deep(.v-list-item-action) {
+  display: none !important;
 }
 
-::v-deep .v-list-item {
+:deep(.v-list-item) {
   .v-list-item__append {
     visibility: hidden;
   }

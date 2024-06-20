@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import compact from 'lodash/compact';
@@ -133,7 +133,7 @@ const attachActivityAttrs = (activity: TreeItem) => ({
   border-radius: 4px !important;
 }
 
-::v-deep .v-list-item .v-list-item__prepend > .v-icon ~ .v-list-item__spacer {
+:deep(.v-list-item__prepend .v-list-item__spacer) {
   width: 0.25rem !important;
 }
 </style>
