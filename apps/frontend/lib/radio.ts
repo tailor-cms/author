@@ -20,13 +20,12 @@ interface ExtendedMitt extends Events {
 export function extendedMitt<Events extends Record<EventType, unknown>>(
   all?: EventHandlerMap<Events>,
 ) {
-  const instance = mitt(all);
-  // @ts-ignore
+  const instance = mitt(all) as ExtendedMitt;
   instance.once = (type: any, fn: any) => {
     instance.on(type, fn);
     instance.on(type, instance.off.bind(instance, type, fn));
   };
-  return instance as unknown as ExtendedMitt;
+  return instance;
 }
 
 class Channel {

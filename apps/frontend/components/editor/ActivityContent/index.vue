@@ -54,9 +54,10 @@ import transform from 'lodash/transform';
 import uniqBy from 'lodash/uniqBy';
 import without from 'lodash/without';
 
+import type { Activity } from '@/api/interfaces/activity';
 import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
-import type { ContentElement } from '~/api/interfaces/content-element';
+import type { ContentElement } from '@/api/interfaces/content-element';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
 import type { Repository } from '@/api/interfaces/repository';
@@ -72,12 +73,12 @@ const CE_FOCUS_EVENT = 'element:focus';
 const CE_SELECT_EVENT = 'element:select';
 const CE_SELECTION_DELAY = 1000;
 
-const props = defineProps({
-  repository: Object,
-  activity: Object,
-  rootContainerGroups: Object,
-  contentContainers: Array,
-});
+const props = defineProps<{
+  repository: Repository;
+  activity: Activity;
+  rootContainerGroups: any;
+  contentContainers: Activity[];
+}>();
 
 const emit = defineEmits(['selected']);
 

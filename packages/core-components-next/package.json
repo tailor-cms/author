@@ -10,7 +10,7 @@
   "type": "module",
   "main": "./src/index.js",
   "devDependencies": {
-    "@types/lodash": "^4.17.0",
+    "@types/lodash": "^4.17.5",
     "@types/pluralize": "^0.0.33"
   },
   "peerDependencies": {

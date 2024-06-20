@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, defineProps, ref } from 'vue';
+import { computed, ref } from 'vue';
 import pluralize from 'pluralize';
 import { SelectElement } from '@tailor-cms/core-components-next';
 

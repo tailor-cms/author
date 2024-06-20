@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 
 import { ForgotPassword, ResetPassword, SignIn } from '../../../pom/auth';
 import ApiClient from '../../../api/ApiClient';
+import { AppBar } from '../../../pom/common/AppBar';
 import { TEST_USER as DEFAULT_USER } from '../../../fixtures/auth';
 
 interface UserData {
@@ -45,6 +46,16 @@ test('should be able to sign in', async ({ page }) => {
   await signInPage.visit();
   await signInPage.signIn(DEFAULT_USER.email, DEFAULT_USER.password);
   await expect(page).toHaveTitle('Catalog');
+});
+
+test('should be able to sign out', async ({ page }) => {
+  const signInPage = new SignIn(page);
+  await signInPage.visit();
+  await signInPage.signIn(DEFAULT_USER.email, DEFAULT_USER.password);
+  await expect(page).toHaveTitle('Catalog');
+  const appBar = new AppBar(page);
+  await appBar.logout();
+  await expect(page).toHaveTitle(/Sign in/);
 });
 
 test('sign in should fail in case of wrong credentials', async ({ page }) => {

@@ -22,8 +22,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, defineProps } from 'vue';
-
 import ItemGroup from './ItemGroup.vue';
 import ListItem from './ListItem.vue';
 

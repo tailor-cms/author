@@ -9,8 +9,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
-
 defineProps({
   disabled: { type: Boolean, required: false },
 });

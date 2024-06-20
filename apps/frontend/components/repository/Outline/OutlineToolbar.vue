@@ -68,7 +68,7 @@ watch(
   max-width: 24rem;
   transition: all 1s;
 
-  ::v-deep .v-field__outline {
+  :deep(.v-field__outline) {
     display: none;
   }
 }

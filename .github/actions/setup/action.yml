@@ -4,11 +4,11 @@ runs:
   steps:
   - uses: pnpm/action-setup@v2
     with:
-      version: 8.7.4
+      version: 9.0.6
   - name: Setup node to enable caching
     uses: actions/setup-node@v3
     with:
-      node-version: 20.6
+      node-version: 22.1
       cache: 'pnpm'
       cache-dependency-path: './pnpm-lock.yaml'
   - name: Install dependencies

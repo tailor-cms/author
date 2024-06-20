@@ -15,8 +15,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps } from 'vue';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components-next';
+import { computed } from 'vue';
 import get from 'lodash/get';
 import orderBy from 'lodash/orderBy';
 

@@ -29,6 +29,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   containerId: { type: String, default: '' },
 });
+defineEmits(['change']);
 
 const hasSubtypes = (outlineItemConfig: any) => {
   return !!outlineItemConfig.subLevels?.length;

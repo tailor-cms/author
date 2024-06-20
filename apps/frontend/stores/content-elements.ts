@@ -5,7 +5,7 @@ import { contentElement as api } from '@/api';
 import type { ContentElement } from '@/api/interfaces/content-element';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
-export type Id = number | string;
+type Id = number | string;
 export type StoreContentElement = ContentElement;
 export type FoundContentElement = StoreContentElement | undefined;
 

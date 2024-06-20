@@ -7,15 +7,15 @@
     "e2e:visual": "pnpm percy exec -- playwright test --project=visual"
   },
   "devDependencies": {
-    "@percy/cli": "^1.28.3",
+    "@percy/cli": "^1.28.7",
     "@percy/playwright": "^1.0.5",
-    "@playwright/test": "1.39.0",
-    "@types/node": "^20.12.7"
+    "@playwright/test": "1.44.1",
+    "@types/node": "^20.14.6"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
     "dotenv": "^16.4.5",
-    "jsdom": "^24.0.0",
+    "jsdom": "^24.1.0",
     "lodash": "^4.17.21",
     "mailtrap": "^3.3.0",
     "tailor-seed": "workspace:^"

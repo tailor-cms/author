@@ -96,7 +96,7 @@ const usersWithActivity = computed(() => {
     z-index: 99;
   }
 
-  ::v-deep .v-text-field__details {
+  :deep(.v-text-field__details) {
     margin: 0 !important;
     padding: 0 !important;
 

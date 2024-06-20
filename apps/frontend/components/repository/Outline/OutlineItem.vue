@@ -1,9 +1,9 @@
 <template>
   <div class="activity-wrapper">
     <VHover>
-      <template #default="{ isHovering, props }">
+      <template #default="{ isHovering, props: hoverProps }">
         <VSheet
-          v-bind="props"
+          v-bind="hoverProps"
           :id="`activity_${uid}`"
           :class="{ selected: isSelected, highlighted: isHovering }"
           :style="{ 'border-left-color': config.color }"
@@ -40,10 +40,10 @@
               class="options-toolbar my-auto"
             />
             <VTooltip location="bottom">
-              <template #activator="{ props }">
+              <template #activator="{ props: tooltipProps }">
                 <VBtn
                   v-show="hasSubtypes"
-                  v-bind="props"
+                  v-bind="tooltipProps"
                   :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
                   aria-label="Toggle expand alt"
                   class="my-auto mx-0"
@@ -78,11 +78,11 @@
         item-key="uid"
         @update="(data) => reorder(data, children)"
       >
-        <template #item="{ element, index }">
+        <template #item="{ element, index: i }">
           <OutlineItem
             v-bind="element"
             :activities="activities"
-            :index="index + 1"
+            :index="i + 1"
             class="sub-activity"
           />
         </template>
@@ -195,7 +195,7 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
       margin: 0.375rem 0.5rem;
     }
 
-    .options-menu ::v-deep .v-btn {
+    .options-menu :deep(.v-btn) {
       height: 100%;
     }
 

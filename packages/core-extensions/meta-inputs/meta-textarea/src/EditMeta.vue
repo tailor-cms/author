@@ -13,8 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-// eslint-disable-next-line
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 
 const emit = defineEmits(['update']);
 const props = defineProps({
