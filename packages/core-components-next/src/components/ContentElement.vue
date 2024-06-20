@@ -8,7 +8,7 @@
       {
         selected: activeUsers.length,
         focused: isFocused,
-        diff: editorState.isPublishDiff,
+        diff: showPublishDiff,
         frame,
       },
     ]"
@@ -16,9 +16,7 @@
     @click="onSelect"
   >
     <div
-      :class="{
-        visible: editorState.isPublishDiff && element.changeSincePublish,
-      }"
+      :class="{ visible: showPublishDiff && element.changeSincePublish }"
       class="header d-flex"
     >
       <PublishDiffChip
@@ -120,13 +118,14 @@ const componentName = computed(() => getComponentName(props.element.type));
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
+const showPublishDiff = computed(() => editorState.isPublishDiff.value);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
 });
 
 const onSelect = (e) => {
-  if (!props.isDisabled && !editorState.isPublishDiff.value && !e.component) {
+  if (!props.isDisabled && !showPublishDiff.value && !e.component) {
     focus();
     e.component = { name: 'content-element', data: props.element };
   }
