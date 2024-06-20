@@ -10,6 +10,7 @@
     "dc": "docker compose -f docker-compose.dev.yaml up & pnpm dev",
     "build": "pnpm -r build",
     "start": "cd ./apps/backend && pnpm start",
+    "dcs": "docker compose -f docker-compose.dev.yaml up & pnpm start",
     "lint": "eslint --ext .js,.ts,.vue .",
     "seed": "cd ./apps/backend && pnpm db:seed",
     "e2e:functional": "cd tests && pnpm e2e:functional",
