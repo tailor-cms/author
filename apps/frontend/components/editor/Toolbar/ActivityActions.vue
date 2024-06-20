@@ -10,6 +10,7 @@
           <VBtn
             v-bind="tooltipProps"
             :active="active"
+            :color="active ? 'secondary-lighten-3' : 'primary-lighten-1'"
             :disabled="disabled"
             :icon="`mdi-${icon}`"
             class="mr-2"
@@ -85,10 +86,5 @@ const confirmPublishing = () => {
 <style lang="scss" scoped>
 .v-toolbar :deep(.v-toolbar__content) {
   padding: 0 0.5rem;
-}
-
-.v-btn--active {
-  background: rgb(var(--v-theme-secondary)) !important;
-  color: white !important;
 }
 </style>
