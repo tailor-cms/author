@@ -11,8 +11,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
-
 // TODO: Update the type once utils is migrated to ts
 withDefaults(defineProps<{ changeType?: string | null }>(), {
   changeType: null,
