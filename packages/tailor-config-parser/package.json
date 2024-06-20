@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.21",
-    "yup": "^0.32.11"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@extensionengine/eslint-config": "^3.0.1",

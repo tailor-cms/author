@@ -34,11 +34,11 @@
     "cuid": "^2.1.8",
     "lodash": "^4.17.21",
     "to-case": "^2.0.0",
-    "uuid": "^8.3.2"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@extensionengine/eslint-config": "^3.0.1",
-    "del-cli": "^4.0.1",
+    "del-cli": "^5.1.0",
     "eslint": "^8.19.0",
     "eslint-config-semistandard": "^16.0.0",
     "eslint-config-standard": "^17.1.0",
