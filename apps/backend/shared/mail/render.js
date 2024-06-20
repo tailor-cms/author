@@ -5,7 +5,7 @@ import map from 'lodash/map.js';
 import mapKeys from 'lodash/mapKeys.js';
 import mjml2html from 'mjml';
 import mustache from 'mustache';
-import { paramCase } from 'change-case';
+import { kebabCase } from 'change-case';
 
 export { renderHtml, renderText };
 
@@ -32,7 +32,7 @@ function getAttributes($, style = {}) {
   return map(style, (declarations, name) =>
     $('<mj-class>').attr({
       name,
-      ...mapKeys(declarations, (_, key) => paramCase(key)),
+      ...mapKeys(declarations, (_, key) => kebabCase(key)),
     }),
   );
 }
