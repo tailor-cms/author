@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineEmits, ref } from 'vue';
+import { computed, ref } from 'vue';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 

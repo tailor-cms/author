@@ -80,9 +80,9 @@
           </VCol>
         </VRow>
         <template #load-more="{ props: loadProps }">
-          <v-btn v-if="!areAllItemsFetched" variant="tonal" v-bind="loadProps">
+          <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="loadProps">
             Load more
-          </v-btn>
+          </VBtn>
         </template>
       </VInfiniteScroll>
       <VAlert
@@ -255,7 +255,7 @@ onBeforeMount(async () => {
   overflow-x: unset !important;
 }
 
-::v-deep .v-infinite-scroll__side {
+:deep(.v-infinite-scroll__side) {
   > button {
     margin-top: 1.5rem;
   }

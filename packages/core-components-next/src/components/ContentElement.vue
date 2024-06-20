@@ -74,7 +74,6 @@
 <script lang="ts" setup>
 import {
   computed,
-  defineEmits,
   inject,
   onBeforeUnmount,
   onMounted,

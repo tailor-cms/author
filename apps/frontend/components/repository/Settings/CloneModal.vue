@@ -81,8 +81,10 @@ const close = () => {
 
 const submit = handleSubmit(async () => {
   inProgress.value = true;
-  const { id } = currentRepositoryStore?.repository;
-  await repositoryStore.clone(id, nameInput.value, descriptionInput.value);
+  const { id } = currentRepositoryStore?.repository || {};
+  if (id) {
+    await repositoryStore.clone(id, nameInput.value, descriptionInput.value);
+  }
   close();
 });
 </script>

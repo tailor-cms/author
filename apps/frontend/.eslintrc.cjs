@@ -6,13 +6,9 @@ module.exports = {
     sourceType: 'module',
     parser: '@typescript-eslint/parser',
   },
-  extends: [
-    '@tailor-cms/eslint-config',
-    '@nuxtjs/eslint-config-typescript',
-    'prettier',
-  ],
+  extends: ['@tailor-cms/eslint-config', '@nuxt/eslint-config', 'prettier'],
   rules: {
-    "@typescript-eslint/array-type": ["error", { default: 'array-simple' }],
+    '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
   },
   overrides: [
     {
@@ -35,4 +31,8 @@ module.exports = {
       parserOptions: { parser: '@typescript-eslint/parser' },
     },
   ],
+  globals: {
+    useCookie: true,
+    navigateTo: true
+  }
 };

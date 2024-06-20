@@ -103,11 +103,11 @@ import VueTreeView from 'vue3-tree-vue';
 
 import aiAPI from '@/api/ai';
 
-const props = defineProps({
-  schemaId: String,
-  name: String,
-  description: String,
-});
+const props = defineProps<{
+  schemaId: String;
+  name: String;
+  description: String;
+}>();
 
 const emit = defineEmits(['structure']);
 

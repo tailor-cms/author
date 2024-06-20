@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineProps, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 import uniq from 'lodash/uniq';
 

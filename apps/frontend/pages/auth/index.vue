@@ -114,7 +114,7 @@ const signIn = handleSubmit(({ email, password }) => {
   text-align: right;
 }
 
-.v-alert ::v-deep .mdi-close {
+.v-alert :deep(.mdi-close) {
   color: #eee;
 }
 </style>

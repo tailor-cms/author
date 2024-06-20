@@ -97,7 +97,7 @@ const filteredOptions = computed(() => {
   }
 }
 
-::v-deep .v-list-item-action {
+:deep(.v-list-item-action) {
   min-width: 1.75rem;
 }
 </style>

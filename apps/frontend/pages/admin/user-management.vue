@@ -103,7 +103,7 @@
 </template>
 
 <script lang="ts" setup>
-import formatDate from 'date-fns/format';
+import { formatDate } from 'date-fns/format';
 import humanize from 'humanize-string';
 
 import { user as api } from '@/api';

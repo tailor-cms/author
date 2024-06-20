@@ -162,14 +162,8 @@ onMounted(() => {
     display: none;
   }
 
-  ::v-deep {
-    .v-toolbar__content {
-      padding: 0;
-    }
-
-    > :last-child {
-      margin-bottom: 7.5rem;
-    }
+  > :deep(:last-child) {
+    margin-bottom: 7.5rem;
   }
 }
 </style>

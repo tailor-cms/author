@@ -46,7 +46,7 @@
             :img-url="user.imgUrl"
             aria-label="User menu"
             class="mx-5"
-            tabindex="0"
+            tag="button"
           />
         </template>
         <VList class="text-left pt-0">

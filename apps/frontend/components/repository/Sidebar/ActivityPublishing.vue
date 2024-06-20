@@ -1,13 +1,13 @@
 <template>
   <span class="publish-container">
     <VMenu offset="10" position="left" contained>
-      <template #activator="{ props }">
+      <template #activator="{ props: menuProps }">
         <VBtn
           :loading="publishingUtils.isPublishing.value"
           color="primary-lighten-4"
           size="small"
           variant="tonal"
-          v-bind="props"
+          v-bind="menuProps"
         >
           <VIcon class="mr-2">mdi-cloud-upload-outline</VIcon>
           Publish
@@ -40,7 +40,7 @@
 
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
-import fecha from 'fecha';
+import { format } from 'fecha';
 
 import PublishingBadge from './PublishingBadge.vue';
 
@@ -58,7 +58,7 @@ const config = computed(() => $schemaService.getLevel(props.activity.type));
 const publishedAtMessage = computed(() => {
   const { publishedAt } = props.activity;
   return publishedAt
-    ? `Published on ${fecha.format(new Date(publishedAt), 'M/D/YY h:mm A')}`
+    ? `Published on ${format(new Date(publishedAt), 'M/D/YY h:mm A')}`
     : 'Not published';
 });
 
