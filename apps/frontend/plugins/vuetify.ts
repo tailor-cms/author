@@ -29,6 +29,16 @@ const defaultTheme: ThemeDefinition = {
     'secondary-lighten-3': '#F48FB1',
     'secondary-lighten-4': '#F8BBD0',
     'secondary-lighten-5': '#FCE4EC',
+    success: '#4CAF50',
+    'success-darken-1': '#43A047',
+    'success-darken-2': '#2E7D32',
+    'success-darken-3': '#2E7D32',
+    'success-darken-4': '#1B5E20',
+    'success-lighten-1': '#66BB6A',
+    'success-lighten-2': '#81C784',
+    'success-lighten-3': '#A5D6A7',
+    'success-lighten-4': '#C8E6C9',
+    'success-lighten-5': '#E8F5E9',
   },
 };
 

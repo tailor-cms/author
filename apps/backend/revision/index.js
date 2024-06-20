@@ -1,12 +1,11 @@
 import { createError } from '../shared/error/helpers.js';
 import ctrl from './revision.controller.js';
 import db from '../shared/database/index.js';
-import defaultsDeep from 'lodash/defaultsDeep.js';
 import express from 'express';
-import { NOT_FOUND } from 'http-status-codes';
-import pick from 'lodash/pick.js';
+import { StatusCodes } from 'http-status-codes';
 import processListQuery from '../shared/util/processListQuery.js';
 
+const { NOT_FOUND } = StatusCodes;
 const { Revision, User } = db;
 const router = express.Router();
 const defaultListQuery = {
@@ -16,7 +15,7 @@ const defaultListQuery = {
 router.param('revisionId', getRevision);
 
 router
-  .get('/time-travel', processQuery({ elementIds: [] }), ctrl.getStateAtMoment)
+  .get('/time-travel', ctrl.getStateAtMoment)
   .get('/', processListQuery(defaultListQuery), ctrl.index)
   .get('/:revisionId', ctrl.get);
 
@@ -37,15 +36,3 @@ export default {
   path: '/revisions',
   router,
 };
-
-function processQuery(defaults) {
-  return (req, res, next) => {
-    const params = ['activityId', 'elementIds', 'timestamp'];
-    const query = defaultsDeep({}, pick(req.query, params), defaults);
-    if (query.elementIds) {
-      query.elementIds = query.elementIds.map(Number);
-    }
-    req.query = query;
-    next();
-  };
-}

@@ -27,7 +27,7 @@ async function index({ repository, query, opts }, res) {
 }
 
 async function getStateAtMoment({ query }, res) {
-  const { activityId, elementIds, timestamp } = query;
+  const { activityId, elementIds = [], timestamp } = query;
   const activity = await Activity.findByPk(activityId);
   const removes = await getEntityRemovesSinceMoment(activity, timestamp);
   const entityIds = [...elementIds, ...map(removes.elements, 'state.id')];

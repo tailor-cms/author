@@ -20,6 +20,7 @@ export const useEditorStore = defineStore('editor', () => {
   const selectedActivityId = ref<number | null>(null);
   const selectedContentElementId = ref<number | null>(null);
   const selectedContentElement = ref<StoreContentElement | null>(null);
+  const showPublishDiff = ref(false);
 
   const selectedActivity = computed(() => {
     if (!selectedActivityId.value) return null;
@@ -79,10 +80,15 @@ export const useEditorStore = defineStore('editor', () => {
     return resolvedAction(payload);
   };
 
+  const togglePublishDiff = (value?: boolean) => {
+    showPublishDiff.value = value ?? !showPublishDiff.value;
+  };
+
   function $reset() {
     selectedActivityId.value = null;
     selectedContentElementId.value = null;
     selectedContentElement.value = null;
+    showPublishDiff.value = false;
   }
 
   return {
@@ -91,10 +97,12 @@ export const useEditorStore = defineStore('editor', () => {
     selectedContentElementId,
     selectedActivity,
     selectedContentElement,
+    showPublishDiff,
     rootContainerGroups,
     contentContainers,
     initialize,
     processCommentEvent,
+    togglePublishDiff,
     $reset,
   };
 });
