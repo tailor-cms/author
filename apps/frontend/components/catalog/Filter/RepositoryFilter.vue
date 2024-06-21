@@ -34,19 +34,18 @@
         v-if="filteredOptions.length"
         :items="filteredOptions"
         :selected="selected"
-        base-color="primary-darken-3"
+        base-color="primary-darken-2"
         item-title="name"
-        item-value="id"
         max-height="300"
         select-strategy="leaf"
         return-object
         @click:select="emit('update', $event.id)"
       >
-        <template #prepend="{ item }">
-          <VCheckboxBtn :model-value="selected.includes(item.id)" />
+        <template #prepend="{ isSelected }">
+          <VCheckboxBtn :model-value="isSelected" />
         </template>
       </VList>
-      <div v-else class="d-flex align-center py-5 px-6 text-primary-darken-3">
+      <div v-else class="d-flex align-center py-5 px-6 text-primary-darken-2">
         <VIcon icon="mdi-information-outline" start />
         No {{ props.label }} found
       </div>
@@ -74,11 +73,9 @@ const emit = defineEmits(['update']);
 
 const search = ref('');
 
-const selected = computed(() =>
-  props.values
-    .filter(({ isSelected }: any) => isSelected)
-    .map((it: any) => it.id),
-);
+const selected = computed(() => {
+  return props.values.filter(({ isSelected }: any) => isSelected);
+});
 
 const options = computed(() => {
   return orderBy(
@@ -94,19 +91,3 @@ const filteredOptions = computed(() => {
   return filterBy(options.value, ({ name }) => reqex.test(name));
 });
 </script>
-
-<!-- <style lang="scss" scoped>
-.v-list {
-  max-height: 18.75rem;
-  border-radius: 0;
-  overflow-y: auto;
-
-  .v-list-item {
-    cursor: pointer;
-  }
-}
-
-:deep(.v-list-item-action) {
-  min-width: 1.75rem;
-}
-</style> -->
