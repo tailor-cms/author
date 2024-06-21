@@ -49,6 +49,9 @@ provide('$schemaService', schema);
 const appChannel = $eventBus.channel('app');
 
 await editorStore.initialize(props.activityId);
+provide('$editorState', {
+  isPublishDiff: computed(() => editorStore.showPublishDiff),
+});
 provide('$repository', {
   ...repositoryStore.repository,
   activities: repositoryStore.activities,
@@ -75,21 +78,12 @@ appChannel.on('openElement', (props: ElementRouteProps) => {
   navigateTo(route.href, { open: { target: '_blank' } });
 });
 
-// TODO: Publish diff, Toolbar and Sidebar need to be migrated
-// import VSidebar from './VSidebar/index.vue';
-// const showPublishDiff = computed(() => store.state.editor.showPublishDiff);
-// const togglePublishDiff = () => store.commit('editor/togglePublishDiff');
-// const closePublishDiff = () => {
-//   togglePublishDiff(false);
-// };
-// onBeforeUnmount(() => {
-//   closePublishDiff();
-// });
-// watch(
-//   () => props.activityId,
-//   () => {
-//     selectedElement.value = null;
-//     closePublishDiff();
-//   },
-// );
+const closePublishDiff = () => editorStore.togglePublishDiff(false);
+
+onBeforeUnmount(() => closePublishDiff());
+
+watch(
+  () => props.activityId,
+  () => closePublishDiff(),
+);
 </script>

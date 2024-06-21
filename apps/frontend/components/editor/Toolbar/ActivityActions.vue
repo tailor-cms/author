@@ -2,22 +2,21 @@
   <div>
     <VList bg-color="transparent">
       <VTooltip
-        v-for="{ title, icon, action, disabled } in actions"
+        v-for="{ active, title, icon, action, disabled } in actions"
         :key="title"
         location="bottom"
       >
         <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="tooltipProps"
+            :active="active"
+            :color="active ? 'secondary-lighten-3' : 'primary-lighten-1'"
             :disabled="disabled"
-            active-class="pink-darken-2"
+            :icon="`mdi-${icon}`"
             class="mr-2"
             variant="text"
-            icon
             @click.stop="action"
-          >
-            <VIcon>mdi-{{ icon }}</VIcon>
-          </VBtn>
+          />
         </template>
         <span>{{ title }}</span>
       </VTooltip>
@@ -32,8 +31,7 @@ import { useEditorStore } from '@/stores/editor';
 
 const currentRepositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
-// TODO: Publish diff needs to be implemented
-// const showPublishDiff = computed(() => false);
+const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
 const actions = computed(() => {
   const items = [
@@ -52,18 +50,15 @@ const actions = computed(() => {
       icon: 'eye',
       action: () => preview(),
     },
-    // TODO: Needs to be implemented
-    // {
-    //   title: showPublishDiff.value
-    //     ? 'Stop comparing with published'
-    //     : 'Compare with published',
-    //   icon: 'plus-minus',
-    //   active: showPublishDiff.value,
-    //   disabled: !editorStore.selectedActivity?.publishedAt,
-    //   // TODO: Needs to be implemented
-    //   // store.commit('editor/togglePublishDiff')
-    //   action: () => null,
-    // },
+    {
+      title: showPublishDiff.value
+        ? 'Stop comparing with published'
+        : 'Compare with published',
+      icon: 'plus-minus',
+      active: showPublishDiff.value,
+      disabled: !editorStore.selectedActivity?.publishedAt,
+      action: () => editorStore.togglePublishDiff(),
+    },
   ];
   if (!currentRepositoryStore.repository?.hasAdminAccess) return items;
   return items.concat({

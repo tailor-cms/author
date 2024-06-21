@@ -8,21 +8,22 @@
       {
         selected: activeUsers.length,
         focused: isFocused,
-        diff: false, // editorStore.isPublishDiff,
+        diff: showPublishDiff,
         frame,
       },
     ]"
     class="content-element"
     @click="onSelect"
   >
-    <!-- TODO: Add upon publish diff implementation -->
-    <!-- <div
-      :class="{ visible: editorState.isPublishDiff && element.changeSincePublish }"
-      class="header d-flex">
+    <div
+      :class="{ visible: showPublishDiff && element.changeSincePublish }"
+      class="header d-flex"
+    >
       <PublishDiffChip
         :change-type="element.changeSincePublish"
-        class="ml-auto " />
-    </div> -->
+        class="ml-auto"
+      />
+    </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <component
       v-bind="{
@@ -84,8 +85,7 @@ import { getComponentName, getElementId } from '@tailor-cms/utils';
 
 import ActiveUsers from './ActiveUsers.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
-// TODO: Add upon publish diff implementation
-// import PublishDiffChip from './PublishDiffChip.vue';
+import PublishDiffChip from './PublishDiffChip.vue';
 
 const props = defineProps({
   element: { type: Object, required: true },
@@ -101,6 +101,7 @@ const props = defineProps({
 const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
 
 const editorBus = inject('$editorBus') as any;
+const editorState = inject<any>('$editorState');
 const eventBus = inject('$eventBus') as any;
 const getCurrentUser = inject('$getCurrentUser') as any;
 
@@ -117,15 +118,17 @@ const componentName = computed(() => getComponentName(props.element.type));
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
+const showPublishDiff = computed(() => editorState.isPublishDiff.value);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
 });
 
 const onSelect = (e) => {
-  if (props.isDisabled || e.component) return; // || editorState.isPublishDiff
-  focus();
-  e.component = { name: 'content-element', data: props.element };
+  if (!props.isDisabled && !showPublishDiff.value && !e.component) {
+    focus();
+    e.component = { name: 'content-element', data: props.element };
+  }
 };
 
 const onSave = (data) => {
@@ -276,12 +279,12 @@ onMounted(() => {
 
 .diff {
   &.new {
-    @include highlight(var(--v-success-lighten2));
+    @include highlight(rgb(var(--v-theme-success-lighten-4)));
   }
 
   &.changed,
   &.removed {
-    @include highlight(var(--v-secondary-lighten4));
+    @include highlight(rgb(var(--v-theme-secondary-lighten-4)));
   }
 
   .element-actions {
