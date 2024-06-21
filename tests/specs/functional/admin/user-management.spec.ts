@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 import times from 'lodash/times';
+import userSeed from 'tailor-seed/user.json';
 
 import SeedClient from '../../../api/SeedClient.ts';
 import { UserManagement } from '../../../pom/admin/UserManagement.ts';
+
+const DEFAULT_USERS_PER_PAGE = 10;
 
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
@@ -68,29 +71,40 @@ test('should be able to search by email', async ({ page }) => {
 });
 
 test('should be able to paginate', async ({ page }) => {
-  await Promise.all(times(15, () => SeedClient.seedUser()));
+  const userCreateCount = DEFAULT_USERS_PER_PAGE + 1;
+  await Promise.all(times(userCreateCount, () => SeedClient.seedUser()));
   await page.reload();
   await page.waitForLoadState('networkidle');
   const userManagement = new UserManagement(page);
   await expect(userManagement.userEntriesLocator).toHaveCount(10);
   await userManagement.nextPage.click();
-  // Remaining 5 users + seed user
-  await expect(userManagement.userEntriesLocator).toHaveCount(6);
+  const userTotal = userCreateCount + userSeed.length;
+  const nextPageTotal =
+    userTotal >= 2 * DEFAULT_USERS_PER_PAGE
+      ? DEFAULT_USERS_PER_PAGE
+      : userTotal - DEFAULT_USERS_PER_PAGE;
+  await expect(userManagement.userEntriesLocator).toHaveCount(nextPageTotal);
   await userManagement.prevPage.click();
-  await expect(userManagement.userEntriesLocator).toHaveCount(10);
+  await expect(userManagement.userEntriesLocator).toHaveCount(
+    DEFAULT_USERS_PER_PAGE,
+  );
 });
 
 test('should be able to alter number of entries shown per page', async ({
   page,
 }) => {
-  await Promise.all(times(15, () => SeedClient.seedUser()));
+  const userCreateCount = DEFAULT_USERS_PER_PAGE + 1;
+  await Promise.all(times(userCreateCount, () => SeedClient.seedUser()));
   await page.reload();
   await page.waitForLoadState('networkidle');
   const userManagement = new UserManagement(page);
-  await expect(userManagement.userEntriesLocator).toHaveCount(10);
-  await userManagement.selectItemsPerPage(50);
-  // 15 users + seed user
-  await expect(userManagement.userEntriesLocator).toHaveCount(16);
+  await expect(userManagement.userEntriesLocator).toHaveCount(
+    DEFAULT_USERS_PER_PAGE,
+  );
+  await userManagement.selectItemsPerPage(100);
+  const userTotal = userCreateCount + userSeed.length;
+  const entriesToShow = userTotal >= 100 ? 100 : userTotal;
+  await expect(userManagement.userEntriesLocator).toHaveCount(entriesToShow);
 });
 
 test.afterAll(async () => {
