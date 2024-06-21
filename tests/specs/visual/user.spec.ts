@@ -16,5 +16,5 @@ test('Should take a snapshot of the "Change Password" dialog', async ({
 }) => {
   const passwordDialog = new ChangePasswordDialog(page);
   await passwordDialog.open();
-  await percySnapshot(page, 'Profile');
+  await percySnapshot(page, 'Profile - Change Password');
 });
