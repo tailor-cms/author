@@ -21,33 +21,36 @@
         <span class="text-capitalize">{{ props.label }}</span>
       </VTooltip>
     </template>
-    <VSheet class="pt-5 pa-3" elevation="0" min-width="300" rounded="0">
+    <VSheet min-width="300">
       <VTextField
         v-model="search"
         :label="`Filter ${props.label}...`"
+        class="mt-3 mx-3"
         variant="outlined"
         clearable
         hide-details
       />
-    </VSheet>
-    <VList v-if="filteredOptions.length" elevation="0" rounded="0">
-      <VListItem
-        v-for="option in filteredOptions"
-        :key="option.id"
-        :ripple="false"
-        @mousedown.stop="emit('update', option)"
+      <VList
+        v-if="filteredOptions.length"
+        :items="filteredOptions"
+        :selected="selected"
+        base-color="primary-darken-3"
+        item-title="name"
+        item-value="id"
+        max-height="300"
+        select-strategy="leaf"
+        return-object
+        @click:select="emit('update', $event.id)"
       >
-        <template #prepend>
-          <VListItemAction>
-            <VIcon v-if="option.isSelected" color="primary" icon="mdi-check" />
-          </VListItemAction>
+        <template #prepend="{ item }">
+          <VCheckboxBtn :model-value="selected.includes(item.id)" />
         </template>
-        <VListItemTitle>{{ option.name }}</VListItemTitle>
-      </VListItem>
-    </VList>
-    <div v-else class="bg-white pa-5 text-body-2">
-      No {{ props.label }} found
-    </div>
+      </VList>
+      <div v-else class="d-flex align-center py-5 px-6 text-primary-darken-3">
+        <VIcon icon="mdi-information-outline" start />
+        No {{ props.label }} found
+      </div>
+    </VSheet>
   </VMenu>
 </template>
 
@@ -71,6 +74,12 @@ const emit = defineEmits(['update']);
 
 const search = ref('');
 
+const selected = computed(() =>
+  props.values
+    .filter(({ isSelected }: any) => isSelected)
+    .map((it: any) => it.id),
+);
+
 const options = computed(() => {
   return orderBy(
     props.values,
@@ -86,7 +95,7 @@ const filteredOptions = computed(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<!-- <style lang="scss" scoped>
 .v-list {
   max-height: 18.75rem;
   border-radius: 0;
@@ -100,4 +109,4 @@ const filteredOptions = computed(() => {
 :deep(.v-list-item-action) {
   min-width: 1.75rem;
 }
-</style>
+</style> -->
