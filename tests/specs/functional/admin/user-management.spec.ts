@@ -78,6 +78,17 @@ test('should be able to paginate', async ({ page }) => {
   await expect(userManagement.userEntriesLocator).toHaveCount(10);
 });
 
+test('should be able to show more entries per page', async ({ page }) => {
+  await Promise.all(times(15, () => SeedClient.seedUser()));
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+  const userManagement = new UserManagement(page);
+  await expect(userManagement.userEntriesLocator).toHaveCount(10);
+  await userManagement.selectItemsPerPage(50);
+  // 15 users + seed user
+  await expect(userManagement.userEntriesLocator).toHaveCount(16);
+});
+
 test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });

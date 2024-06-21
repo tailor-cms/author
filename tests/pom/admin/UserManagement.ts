@@ -113,19 +113,22 @@ export class UserManagement {
   readonly userEntriesLocator: Locator;
   readonly prevPage: Locator;
   readonly nextPage: Locator;
+  readonly itemsPerPageBtn: Locator;
   readonly archiveToggle: Locator;
   readonly addBtn: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.user-management');
+    this.page = page;
+    this.el = el;
     this.userTable = el.locator('.v-table');
     this.archiveToggle = el.getByLabel('Archived');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
     this.userEntriesLocator = this.userTable.locator('.user-entry');
     this.prevPage = el.getByRole('button', { name: 'Previous page' });
     this.nextPage = el.getByRole('button', { name: 'Next page' });
-    this.page = page;
-    this.el = el;
+    const itemsPerPage = el.locator('.v-data-table-footer__items-per-page');
+    this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
   }
 
   async getEntries() {
@@ -165,5 +168,13 @@ export class UserManagement {
     const entry = await this.getEntryByEmail(email);
     await entry.restore();
     await expect(entry.el).toBeVisible();
+  }
+
+  async selectItemsPerPage(value: number) {
+    await this.itemsPerPageBtn.click();
+    await this.page
+      .locator('.v-list-item .v-list-item-title')
+      .filter({ hasText: value.toString() })
+      .click();
   }
 }
