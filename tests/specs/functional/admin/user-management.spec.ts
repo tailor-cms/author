@@ -76,7 +76,9 @@ test('should be able to paginate', async ({ page }) => {
   await page.reload();
   await page.waitForLoadState('networkidle');
   const userManagement = new UserManagement(page);
-  await expect(userManagement.userEntriesLocator).toHaveCount(10);
+  await expect(userManagement.userEntriesLocator).toHaveCount(
+    DEFAULT_USERS_PER_PAGE,
+  );
   await userManagement.nextPage.click();
   const userTotal = userCreateCount + userSeed.length;
   const nextPageTotal =
