@@ -110,6 +110,9 @@ export class UserManagement {
   readonly page: Page;
   readonly el: Locator;
   readonly userTable: Locator;
+  readonly userEntriesLocator: Locator;
+  readonly prevPage: Locator;
+  readonly nextPage: Locator;
   readonly archiveToggle: Locator;
   readonly addBtn: Locator;
 
@@ -118,20 +121,24 @@ export class UserManagement {
     this.userTable = el.locator('.v-table');
     this.archiveToggle = el.getByLabel('Archived');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.userEntriesLocator = this.userTable.locator('.user-entry');
+    this.prevPage = el.getByRole('button', { name: 'Previous page' });
+    this.nextPage = el.getByRole('button', { name: 'Next page' });
     this.page = page;
     this.el = el;
   }
 
   async getEntries() {
-    const items = await this.userTable.locator('.user-entry').all();
+    const items = await this.userEntriesLocator.all();
     return items.map((it) => new UserEntry(this.page, it));
   }
 
+  getEntryLocator(email: string): Locator {
+    return this.userEntriesLocator.filter({ hasText: email }).first();
+  }
+
   async getEntryByEmail(email: string) {
-    const el = this.userTable
-      .locator('.user-entry')
-      .filter({ hasText: email })
-      .first();
+    const el = this.getEntryLocator(email);
     await expect(el).toBeVisible();
     return new UserEntry(this.page, el);
   }

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import times from 'lodash/times';
 
 import SeedClient from '../../../api/SeedClient.ts';
 import { UserManagement } from '../../../pom/admin/UserManagement.ts';
@@ -62,6 +63,19 @@ test('should be able to search by email', async ({ page }) => {
   await expect(userManagement.userTable).toContainText(email);
   const matches = await userManagement.getEntries();
   expect(matches).toHaveLength(1);
+});
+
+test('should be able to paginate', async ({ page }) => {
+  await Promise.all(times(15, () => SeedClient.seedUser()));
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+  const userManagement = new UserManagement(page);
+  await expect(userManagement.userEntriesLocator).toHaveCount(10);
+  await userManagement.nextPage.click();
+  // Remaining 5 users + seed user
+  await expect(userManagement.userEntriesLocator).toHaveCount(6);
+  await userManagement.prevPage.click();
+  await expect(userManagement.userEntriesLocator).toHaveCount(10);
 });
 
 test.afterAll(async () => {
