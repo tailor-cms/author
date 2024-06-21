@@ -1,5 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test';
 
+import { confirmAction } from '../common/utils';
+
 export class UserDialog {
   readonly page: Page;
   readonly el: Locator;
@@ -21,27 +23,28 @@ export class UserDialog {
   }
 
   async edit(
+    email: string,
     firstName: string,
     lastName: string,
-    email: string,
     role: 'Admin' | 'User',
   ) {
-    await this.editFirstName(firstName);
-    await this.editLastName(lastName);
-    await this.editEmail(email);
+    const isEdit = await this.email.inputValue();
+    if (!isEdit) await this.enterEmail(email);
+    await this.enterFirstName(firstName);
+    await this.enterLastName(lastName);
     await this.selectRole(role);
     await this.save();
   }
 
-  editFirstName(value: string) {
+  enterFirstName(value: string) {
     return this.firstName.fill(value);
   }
 
-  editLastName(value: string) {
+  enterLastName(value: string) {
     return this.lastName.fill(value);
   }
 
-  editEmail(value: string) {
+  enterEmail(value: string) {
     return this.email.fill(value);
   }
 
@@ -61,63 +64,117 @@ export class UserDialog {
   }
 }
 
+export class UserEntry {
+  readonly page: Page;
+  readonly el: Locator;
+  readonly editBtn: Locator;
+  readonly achiveBtn: Locator;
+  readonly restoreBtn: Locator;
+
+  constructor(page: Page, el: Locator) {
+    this.editBtn = el.getByRole('button', { name: 'Edit user' });
+    this.achiveBtn = el.getByRole('button', { name: 'Archive user' });
+    this.restoreBtn = el.getByRole('button', { name: 'Restore user' });
+    this.el = el;
+    this.page = page;
+  }
+
+  async edit(
+    email: string,
+    data: {
+      firstName: string;
+      lastName: string;
+      role: 'Admin' | 'User';
+    },
+  ) {
+    await this.editBtn.click();
+    const dialog = new UserDialog(this.page);
+    await dialog.edit(email, data.firstName, data.lastName, data.role);
+    await expect(this.el).toContainText(data.firstName);
+    await expect(this.el).toContainText(data.lastName);
+    await expect(this.el).toContainText(data.role.toUpperCase());
+  }
+
+  async archive() {
+    await this.achiveBtn.click();
+    await confirmAction(this.page);
+  }
+
+  async restore() {
+    await this.restoreBtn.click();
+    await confirmAction(this.page);
+  }
+}
+
 export class UserManagement {
   readonly page: Page;
   readonly el: Locator;
   readonly userTable: Locator;
-  readonly addBtn: Locator;
+  readonly userEntriesLocator: Locator;
+  readonly prevPage: Locator;
+  readonly nextPage: Locator;
+  readonly itemsPerPageBtn: Locator;
   readonly archiveToggle: Locator;
+  readonly addBtn: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.user-management');
     this.userTable = el.locator('.v-table');
-    this.addBtn = el.getByRole('button', { name: 'Add user' });
     this.archiveToggle = el.getByLabel('Archived');
-    this.page = page;
+    this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.userEntriesLocator = this.userTable.locator('.user-entry');
+    this.prevPage = el.getByRole('button', { name: 'Previous page' });
+    this.nextPage = el.getByRole('button', { name: 'Next page' });
+    const itemsPerPage = el.locator('.v-data-table-footer__items-per-page');
+    this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
     this.el = el;
+    this.page = page;
   }
 
-  getEntries() {
-    return this.userTable.locator('.user-entry');
+  async getEntries() {
+    const items = await this.userEntriesLocator.all();
+    return items.map((it) => new UserEntry(this.page, it));
   }
 
-  getEntryByEmail(email: string) {
-    return this.getEntries().filter({ hasText: email });
+  getEntryLocator(email: string): Locator {
+    return this.userEntriesLocator.filter({ hasText: email }).first();
   }
 
-  async addUser(email: string, role: 'Admin' | 'User' = 'Admin') {
-    await this.addBtn.click();
-    const dialog = new UserDialog(this.page);
-    await dialog.edit('John', 'Doe', email, role);
-    await expect(this.getEntryByEmail(email)).toHaveCount(1);
+  async getEntryByEmail(email: string) {
+    const el = this.getEntryLocator(email);
+    await expect(el).toBeVisible();
+    return new UserEntry(this.page, el);
   }
 
-  async editUser(
+  async addUser(
     email: string,
-    data: { firstName: string; lastName: string; role: 'Admin' | 'User' },
+    firstName: string = 'John',
+    lastName: string = 'Doe',
+    role: 'Admin' | 'User' = 'Admin',
   ) {
     await this.addBtn.click();
     const dialog = new UserDialog(this.page);
-    await dialog.edit(data.firstName, data.lastName, email, data.role);
-    const entry = this.getEntryByEmail(email);
-    await expect(entry).toContainText(data.firstName);
-    await expect(entry).toContainText(data.lastName);
-    await expect(entry).toContainText(data.role.toUpperCase());
+    await dialog.edit(email, firstName, lastName, role);
+    return this.getEntryByEmail(email);
   }
 
-  async deactivateUser(email: string) {
-    const entry = this.getEntryByEmail(email).locator('.user-entry-actions');
-    await entry.getByRole('button', { name: 'Archive user' }).click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByRole('button', { name: 'confirm' }).click();
-    await expect(entry).not.toBeVisible();
+  async archiveUser(email: string) {
+    const entry = await this.getEntryByEmail(email);
+    await entry.archive();
+    await expect(entry.el).not.toBeVisible();
   }
 
   async restoreUser(email: string) {
-    const entry = this.getEntryByEmail(email).locator('.user-entry-actions');
-    await entry.getByRole('button', { name: 'Restore user' }).click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByRole('button', { name: 'confirm' }).click();
-    await expect(dialog).not.toBeVisible();
+    const entry = await this.getEntryByEmail(email);
+    await entry.restore();
+    await expect(entry.el).toBeVisible();
+  }
+
+  async selectItemsPerPage(value: number = 10 | 25 | 50 | 100) {
+    await this.itemsPerPageBtn.click();
+    await this.page
+      .locator('.v-list-item .v-list-item-title')
+      .filter({ hasText: value.toString() })
+      .click();
   }
 }
