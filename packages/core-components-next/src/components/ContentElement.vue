@@ -118,7 +118,7 @@ const componentName = computed(() => getComponentName(props.element.type));
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
-const showPublishDiff = computed(() => editorState.isPublishDiff.value);
+const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
