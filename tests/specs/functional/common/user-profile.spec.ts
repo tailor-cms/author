@@ -62,9 +62,9 @@ test('updating user should fail if required fields are empty', async ({
   await profilePage.fillFirstName('');
   await profilePage.fillLastName('');
   await profilePage.save();
-  await profilePage.hasVisibleAlert('email is a required field');
-  await profilePage.hasVisibleAlert('firstName is a required field');
-  await profilePage.hasVisibleAlert('lastName is a required field');
+  await profilePage.hasVisibleAlert('Email is a required field');
+  await profilePage.hasVisibleAlert('First name is a required field');
+  await profilePage.hasVisibleAlert('Last name is a required field');
 });
 
 test('updating user should fail if first or last name are less than two characters', async ({
@@ -74,8 +74,8 @@ test('updating user should fail if first or last name are less than two characte
   await profilePage.fillFirstName(faker.string.alpha(1));
   await profilePage.fillLastName(faker.string.alpha(1));
   await profilePage.save();
-  await profilePage.hasVisibleAlert('firstName must be at least 2 characters');
-  await profilePage.hasVisibleAlert('lastName must be at least 2 characters');
+  await profilePage.hasVisibleAlert('First name must be at least 2 characters');
+  await profilePage.hasVisibleAlert('Last name must be at least 2 characters');
 });
 
 test('should be able to update profile photo', async ({ page }) => {
@@ -94,10 +94,10 @@ test('updating password should fail if required fields are empty', async ({
   const passwordDialog = new ChangePasswordDialog(page);
   await passwordDialog.open();
   await passwordDialog.save();
-  await passwordDialog.hasVisibleAlert('currentPassword is a required field');
-  await passwordDialog.hasVisibleAlert('newPassword is a required field');
+  await passwordDialog.hasVisibleAlert('Current password is a required field');
+  await passwordDialog.hasVisibleAlert('New password is a required field');
   await passwordDialog.hasVisibleAlert(
-    'passwordConfirmation is a required field',
+    'Password confrimation is a required field',
   );
 });
 
@@ -111,7 +111,7 @@ test('updating password should fail if new password is same as current', async (
   await passwordDialog.fillPasswordConfirmation(userSeed[0].password);
   await passwordDialog.save();
   await passwordDialog.hasVisibleAlert(
-    'new password must be different from the current',
+    'New password must be different from the current',
   );
 });
 
@@ -124,7 +124,7 @@ test('updating password should fail if password confirmation does not match', as
   await passwordDialog.fillNewPassword(faker.internet.password());
   await passwordDialog.fillPasswordConfirmation(faker.internet.password());
   await passwordDialog.save();
-  await passwordDialog.hasVisibleAlert('password confirmation does not match');
+  await passwordDialog.hasVisibleAlert('Password confirmation does not match');
 });
 
 test('updating password should fail if current password is incorrect', async ({
