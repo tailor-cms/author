@@ -39,10 +39,11 @@ test('should be able to update user', async ({ page }) => {
 });
 
 test('updating user should fail if email already exists', async ({ page }) => {
-  const { email } = (await SeedClient.seedUser()).data;
+  const { data: user } = await SeedClient.seedUser();
+  const email = user.email.toLowerCase();
   const { firstName, lastName } = getMockUserData();
   const profilePage = new UserProfile(page);
-  await profilePage.updateProfile(email.toLowerCase(), firstName, lastName);
+  await profilePage.updateProfile(email, firstName, lastName);
   await profilePage.hasVisibleAlert(/is invalid/);
 });
 
