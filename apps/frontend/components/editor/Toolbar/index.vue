@@ -20,13 +20,14 @@
             <span class="text-white">comparing with published</span>
             <span class="px-2 text-grey">@</span>
             <VChip
+              v-if="activity.publishedAt"
               class="readonly"
               color="primary-lighten-4"
               text-color="grey-darken-4"
               label
               small
             >
-              {{ activity.publishedAt }}
+              {{ formatDate(activity.publishedAt, 'MM/dd/yy HH:mm') }}
             </VChip>
           </template>
         </h1>
@@ -47,6 +48,7 @@
 
 <script lang="ts" setup>
 import { ActiveUsers } from '@tailor-cms/core-components-next';
+import { formatDate } from 'date-fns/format';
 
 import ActivityActions from './ActivityActions.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
@@ -59,8 +61,7 @@ defineProps({
 
 const { $schemaService } = useNuxtApp() as any;
 
-// TODO: computed(() => this.$store.state.editor.showPublishDiff);
-const showPublishDiff = false;
+const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
