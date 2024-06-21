@@ -33,7 +33,7 @@ test('should be able to update a user', async ({ page }) => {
 });
 
 test('should be able to revoke user access', async ({ page }) => {
-  const email = 'test+1@gostudion.com';
+  const email = 'test+3@gostudion.com';
   const userManagement = new UserManagement(page);
   await userManagement.addUser(email);
   const entry = await userManagement.getEntryByEmail(email);
@@ -44,7 +44,7 @@ test('should be able to revoke user access', async ({ page }) => {
 });
 
 test('should be able to restore user access', async ({ page }) => {
-  const email = 'test+1@gostudion.com';
+  const email = 'test+4@gostudion.com';
   const userManagement = new UserManagement(page);
   await userManagement.addUser(email);
   const entry = await userManagement.getEntryByEmail(email);
@@ -63,6 +63,8 @@ test('should be able to search by email', async ({ page }) => {
   await expect(userManagement.userTable).toContainText(email);
   const matches = await userManagement.getEntries();
   expect(matches).toHaveLength(1);
+  await userManagement.el.getByLabel('Search users').fill('sdlkas');
+  await expect(userManagement.userTable).not.toContainText(email);
 });
 
 test('should be able to paginate', async ({ page }) => {
@@ -78,7 +80,9 @@ test('should be able to paginate', async ({ page }) => {
   await expect(userManagement.userEntriesLocator).toHaveCount(10);
 });
 
-test('should be able to show more entries per page', async ({ page }) => {
+test('should be able to alter number of entries shown per page', async ({
+  page,
+}) => {
   await Promise.all(times(15, () => SeedClient.seedUser()));
   await page.reload();
   await page.waitForLoadState('networkidle');

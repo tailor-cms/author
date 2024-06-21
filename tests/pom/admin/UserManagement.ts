@@ -119,8 +119,6 @@ export class UserManagement {
 
   constructor(page: Page) {
     const el = page.locator('.user-management');
-    this.page = page;
-    this.el = el;
     this.userTable = el.locator('.v-table');
     this.archiveToggle = el.getByLabel('Archived');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
@@ -129,6 +127,8 @@ export class UserManagement {
     this.nextPage = el.getByRole('button', { name: 'Next page' });
     const itemsPerPage = el.locator('.v-data-table-footer__items-per-page');
     this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
+    this.el = el;
+    this.page = page;
   }
 
   async getEntries() {
@@ -170,7 +170,7 @@ export class UserManagement {
     await expect(entry.el).toBeVisible();
   }
 
-  async selectItemsPerPage(value: number) {
+  async selectItemsPerPage(value: number = 10 | 25 | 50 | 100) {
     await this.itemsPerPageBtn.click();
     await this.page
       .locator('.v-list-item .v-list-item-title')
