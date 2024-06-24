@@ -63,9 +63,10 @@ const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
       .test((email) => {
         if (store.user && email === (store.user as any).email) return true;
         return api.fetch({ email }).then(({ total }) => !total);
-      }),
-    firstName: string().required().min(2),
-    lastName: string().required().min(2),
+      })
+      .label('Email'),
+    firstName: string().required().min(2).label('First name'),
+    lastName: string().required().min(2).label('Last name'),
   }),
 });
 
