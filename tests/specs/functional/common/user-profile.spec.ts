@@ -97,7 +97,7 @@ test('updating password should fail if required fields are empty', async ({
   await passwordDialog.hasVisibleAlert('Current password is a required field');
   await passwordDialog.hasVisibleAlert('New password is a required field');
   await passwordDialog.hasVisibleAlert(
-    'Password confrimation is a required field',
+    'Password confirmation is a required field',
   );
 });
 
