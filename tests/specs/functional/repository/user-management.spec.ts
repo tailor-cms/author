@@ -79,16 +79,20 @@ test('should be able to paginate', async ({ page }) => {
   const repository = await toEmptyRepository(page);
   await page.goto(RepositoryUsers.getRoute(repository.id));
   const userManagement = new RepositoryUsers(page);
+  // Make sure all of the newly created users are displayed
   await userManagement.selectItemsPerPage(100);
+  // Calculate the number of users to create to have two pages
   const userCreateCount = DEFAULT_USERS_PER_PAGE + 1;
-  const seededUsers = await Promise.all(
+  const createdUsers = await Promise.all(
     times(userCreateCount, () => SeedClient.seedUser()),
-  ).then((users) => users.map((user) => user.data));
-  for (const user of seededUsers) {
+  ).then((responses) => responses.map((res) => res.data));
+  for (const user of createdUsers) {
+    // Assign the user to the repository
     await userManagement.addUser(user.email, 'Author');
   }
   await page.reload();
   await page.waitForLoadState('networkidle');
+  // First page should have the maximum number of users per page
   await expect(userManagement.userEntriesLocator).toHaveCount(
     DEFAULT_USERS_PER_PAGE,
   );
