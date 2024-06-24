@@ -12,6 +12,8 @@ import {
 } from '../../../helpers/seed.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
+const DEFAULT_USERS_PER_PAGE = 10;
+
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
 });
@@ -71,6 +73,36 @@ test('should be able to update user role', async ({ page }) => {
     .click();
   await expect(page.getByText('User updated')).toBeVisible();
   await expect(roleSelect).toHaveText('Author');
+});
+
+test('should be able to paginate', async ({ page }) => {
+  const repository = await toEmptyRepository(page);
+  await page.goto(RepositoryUsers.getRoute(repository.id));
+  const userManagement = new RepositoryUsers(page);
+  await userManagement.selectItemsPerPage(100);
+  const userCreateCount = DEFAULT_USERS_PER_PAGE + 1;
+  const seededUsers = await Promise.all(
+    times(userCreateCount, () => SeedClient.seedUser()),
+  ).then((users) => users.map((user) => user.data));
+  for (const user of seededUsers) {
+    await userManagement.addUser(user.email, 'Author');
+  }
+  await page.reload();
+  await page.waitForLoadState('networkidle');
+  await expect(userManagement.userEntriesLocator).toHaveCount(
+    DEFAULT_USERS_PER_PAGE,
+  );
+  await userManagement.nextPage.click();
+  const userTotal = userCreateCount + userSeed.length;
+  const nextPageTotal =
+    userTotal >= 2 * DEFAULT_USERS_PER_PAGE
+      ? DEFAULT_USERS_PER_PAGE
+      : userTotal - DEFAULT_USERS_PER_PAGE;
+  await expect(userManagement.userEntriesLocator).toHaveCount(nextPageTotal);
+  await userManagement.prevPage.click();
+  await expect(userManagement.userEntriesLocator).toHaveCount(
+    DEFAULT_USERS_PER_PAGE,
+  );
 });
 
 test.afterAll(async () => {
