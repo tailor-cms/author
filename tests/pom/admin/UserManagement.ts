@@ -5,6 +5,7 @@ import { confirmAction } from '../common/utils';
 export class UserDialog {
   readonly page: Page;
   readonly el: Locator;
+  readonly alert: Locator;
   readonly email: Locator;
   readonly firstName: Locator;
   readonly lastName: Locator;
@@ -13,6 +14,7 @@ export class UserDialog {
 
   constructor(page: Page) {
     const el = page.locator('div[role="dialog"]');
+    this.alert = el.getByRole('alert');
     this.email = el.getByLabel('Email');
     this.firstName = el.getByLabel('First name');
     this.lastName = el.getByLabel('Last name');
@@ -61,6 +63,10 @@ export class UserDialog {
   async save() {
     await this.saveBtn.click();
     await expect(this.el).not.toBeVisible();
+  }
+
+  hasVisibleAlert(message: string | RegExp) {
+    return expect(this.alert.getByText(message)).toBeVisible();
   }
 }
 
