@@ -9,7 +9,7 @@ const DEFAULT_USERS_PER_PAGE = 10;
 
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
-  await page.goto('/admin/user-management');
+  await page.goto(UserManagement.route);
 });
 
 test('should be able to add new user to the platform', async ({ page }) => {

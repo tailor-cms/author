@@ -107,6 +107,7 @@ export class UserEntry {
 }
 
 export class UserManagement {
+  static route = '/admin/user-management';
   readonly page: Page;
   readonly el: Locator;
   readonly userTable: Locator;
