@@ -2,8 +2,11 @@ import { expect, test } from '@playwright/test';
 import times from 'lodash/times';
 import userSeed from 'tailor-seed/user.json';
 
+import {
+  UserDialog,
+  UserManagement,
+} from '../../../pom/admin/UserManagement.ts';
 import SeedClient from '../../../api/SeedClient.ts';
-import { UserManagement } from '../../../pom/admin/UserManagement.ts';
 
 const DEFAULT_USERS_PER_PAGE = 10;
 
@@ -33,6 +36,94 @@ test('should be able to update a user', async ({ page }) => {
   });
   await page.reload();
   await expect(userManagement.userTable).toContainText('John');
+});
+
+test('should not be able to add user with invalid Email', async ({ page }) => {
+  const userManagement = new UserManagement(page);
+  await userManagement.addBtn.click();
+  const dialog = new UserDialog(page);
+  await dialog.enterEmail('invalid-email');
+  await dialog.enterFirstName('John');
+  await dialog.enterLastName('Doe');
+  await dialog.selectRole('Admin');
+  await dialog.saveBtn.click();
+  await dialog.hasVisibleAlert(/must be a valid email/);
+});
+
+test('should not be able to add user without Email', async ({ page }) => {
+  const userManagement = new UserManagement(page);
+  await userManagement.addBtn.click();
+  const dialog = new UserDialog(page);
+  await dialog.enterFirstName('Joe');
+  await dialog.enterLastName('Doe');
+  await dialog.selectRole('Admin');
+  await dialog.saveBtn.click();
+  await dialog.hasVisibleAlert(/Email is a required field/);
+});
+
+test('should not be able to add user with missing First name', async ({
+  page,
+}) => {
+  const userManagement = new UserManagement(page);
+  await userManagement.addBtn.click();
+  const dialog = new UserDialog(page);
+  await dialog.enterEmail('test@gostudion.com');
+  await dialog.enterLastName('Doe');
+  await dialog.selectRole('Admin');
+  await dialog.saveBtn.click();
+  await dialog.hasVisibleAlert(/First name is a required field/);
+});
+
+test('should not be able to add user with invalid First name', async ({
+  page,
+}) => {
+  const userManagement = new UserManagement(page);
+  await userManagement.addBtn.click();
+  const dialog = new UserDialog(page);
+  await dialog.enterEmail('test@gostudion.com');
+  await dialog.enterFirstName('J');
+  await dialog.enterLastName('Doe');
+  await dialog.selectRole('Admin');
+  await dialog.saveBtn.click();
+  await dialog.hasVisibleAlert(/First name must be at least 2 char/);
+});
+
+test('should not be able to add user with missing Last name', async ({
+  page,
+}) => {
+  const userManagement = new UserManagement(page);
+  await userManagement.addBtn.click();
+  const dialog = new UserDialog(page);
+  await dialog.enterEmail('test@gostudion.com');
+  await dialog.enterFirstName('John');
+  await dialog.selectRole('Admin');
+  await dialog.saveBtn.click();
+  await dialog.hasVisibleAlert(/Last name is a required field/);
+});
+
+test('should not be able to add user with invalid Last name', async ({
+  page,
+}) => {
+  const userManagement = new UserManagement(page);
+  await userManagement.addBtn.click();
+  const dialog = new UserDialog(page);
+  await dialog.enterEmail('test@gostudion.com');
+  await dialog.enterFirstName('John');
+  await dialog.enterLastName('D');
+  await dialog.selectRole('Admin');
+  await dialog.saveBtn.click();
+  await dialog.hasVisibleAlert(/Last name must be at least 2 char/);
+});
+
+test('should not be able to add user without a Role', async ({ page }) => {
+  const userManagement = new UserManagement(page);
+  await userManagement.addBtn.click();
+  const dialog = new UserDialog(page);
+  await dialog.enterEmail('test@gostudion.com');
+  await dialog.enterFirstName('John');
+  await dialog.enterLastName('Doe');
+  await dialog.saveBtn.click();
+  await dialog.hasVisibleAlert(/Role is a required field/);
 });
 
 test('should be able to revoke user access', async ({ page }) => {
