@@ -123,6 +123,7 @@ interface Props {
   name: string;
   container: any;
   elements: any;
+  position: number;
   types?: any;
   layout?: boolean;
   disabled?: boolean;

@@ -21,7 +21,7 @@ import UserAvatar from './UserAvatar.vue';
 
 interface Props {
   users: any[];
-  size?: number;
+  size?: number | string;
 }
 
 withDefaults(defineProps<Props>(), {

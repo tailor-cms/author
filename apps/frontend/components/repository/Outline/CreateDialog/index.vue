@@ -79,20 +79,20 @@ import { useActivityStore } from '@/stores/activity';
 
 interface Props {
   repositoryId: number;
-  anchor: StoreActivity | null;
-  heading: string;
-  action: InsertLocation;
-  showActivator: boolean;
-  activatorLabel: string;
-  activatorColor: string;
-  activatorIcon: string;
-  testIdPrefix: string;
+  anchor?: StoreActivity | null;
+  heading?: string;
+  action?: InsertLocation;
+  showActivator?: boolean;
+  activatorLabel?: string;
+  activatorColor?: string;
+  activatorIcon?: string;
+  testIdPrefix?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   anchor: null,
   heading: '',
-  acton: InsertLocation.ADD_AFTER,
+  action: InsertLocation.ADD_AFTER,
   showActivator: false,
   activatorLabel: '',
   activatorColor: 'primary-darken-3',

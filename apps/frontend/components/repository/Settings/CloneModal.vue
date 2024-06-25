@@ -56,7 +56,7 @@ import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useRepositoryStore } from '@/stores/repository';
 
-withDefaults(defineProps<{ show: boolean }>(), {
+withDefaults(defineProps<{ show?: boolean }>(), {
   show: true,
 });
 const emit = defineEmits(['close']);

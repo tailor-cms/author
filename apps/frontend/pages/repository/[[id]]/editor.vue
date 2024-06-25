@@ -1,7 +1,6 @@
 <template>
-  <div>
+  <div v-if="editorStore.selectedActivity">
     <VToolbar
-      v-if="editorStore.selectedActivity"
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"

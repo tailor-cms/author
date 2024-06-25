@@ -3,14 +3,14 @@
     <div :style="{ width: mdAndDown || isExpanded ? '100%' : '85%' }">
       <VTextField
         v-model="internalValue"
-        v-focus="isExpanded"
         :bg-color="`primary-darken-${isExpanded ? 1 : 2}`"
         aria-label="Search repositories"
         class="pb-5"
         placeholder="Search..."
         prepend-inner-icon="mdi-magnify"
-        variant="tonal"
+        variant="solo"
         clearable
+        flat
         hide-details
         @blur="isExpanded = false"
         @focus="isExpanded = true"

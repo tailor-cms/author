@@ -70,7 +70,7 @@ interface Props {
   label: string;
   parentId: number;
   processedActivities: Activity[];
-  processedElements: Element[];
+  processedElements: Record<string, Element>;
   templateId?: string;
   containerGroup?: Activity[];
   required?: boolean;

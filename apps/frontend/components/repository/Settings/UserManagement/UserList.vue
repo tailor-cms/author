@@ -19,9 +19,11 @@
           <VSelect
             :items="roles"
             :model-value="item.repositoryRole"
+            bg-color="transparent"
             density="compact"
             rounded="lg"
-            variant="outlined"
+            variant="solo"
+            flat
             hide-details
             @update:model-value="(role: string) => upsertUser(item.email, role)"
           />

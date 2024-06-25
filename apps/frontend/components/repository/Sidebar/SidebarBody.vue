@@ -20,7 +20,7 @@
       </VTooltip>
       <VSpacer />
       <VBtn
-        :key="activityUrl"
+        :key="`${activityUrl}-identifier`"
         v-clipboard:copy="activity.shortId"
         v-clipboard:error="() => notify('Not able to copy the ID')"
         v-clipboard:success="
@@ -35,7 +35,7 @@
         <VIcon dense>mdi-identifier</VIcon>
       </VBtn>
       <VBtn
-        :key="activityUrl"
+        :key="`${activityUrl}-link`"
         v-clipboard:copy="activityUrl"
         v-clipboard:error="() => notify('Not able to copy the link')"
         v-clipboard:success="

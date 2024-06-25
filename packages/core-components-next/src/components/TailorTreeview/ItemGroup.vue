@@ -2,7 +2,12 @@
   <VListGroup v-if="item.children?.length" :value="item.id">
     <template #activator="{ props: activatorProps, isOpen }">
       <ListItem
-        v-bind="{ ...activatorProps, ...item, isOpen, isGroup: true }"
+        v-bind="{ ...activatorProps, isOpen }"
+        :id="item.id"
+        :is-active="activeItemId === item.id"
+        :is-editable="item.isEditable"
+        :title="item.title"
+        is-group
       />
     </template>
     <ItemGroup
@@ -15,8 +20,10 @@
   </VListGroup>
   <ListItem
     v-else
-    v-bind="item"
-    :is-active="activeItemId === item?.id"
+    :id="item.id"
+    :is-active="activeItemId === item.id"
+    :is-editable="item.isEditable"
+    :title="item.title"
     @edit="emit('edit', $event)"
   />
 </template>

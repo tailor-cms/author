@@ -17,10 +17,11 @@
             item-key="uid"
             @update="(data) => reorder(data, rootActivities)"
           >
-            <template #item="{ element }">
+            <template #item="{ element, index }">
               <OutlineItem
-                v-bind="element"
                 :activities="outlineActivities"
+                :activity="element"
+                :index="index + 1"
                 :level="1"
               />
             </template>
