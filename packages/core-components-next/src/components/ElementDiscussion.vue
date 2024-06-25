@@ -74,15 +74,20 @@ const getActivatorOptions = (unseenComments: any) => ({
   },
 });
 
-const props = defineProps({
-  id: { type: Number, default: null },
-  uid: { type: String, required: true },
-  activityId: { type: Number, required: true },
-  repositoryId: { type: Number, required: true },
-  comments: { type: Array, required: true },
-  hasUnresolvedComments: { type: Boolean, default: false },
-  lastSeen: { type: Number, required: true },
-  user: { type: Object, required: true },
+interface Props {
+  uid: string;
+  activityId: number;
+  repositoryId: number;
+  comments: any[];
+  lastSeen: number;
+  user: any;
+  id?: number | null;
+  hasUnresolvedComments?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  id: null,
+  hasUnresolvedComments: false,
 });
 
 const isVisible = ref(false);

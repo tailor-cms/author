@@ -19,8 +19,12 @@
 <script lang="ts" setup>
 import UserAvatar from './UserAvatar.vue';
 
-defineProps<{
-  users: Array<{ id: string; label: string; imgUrl: string }>;
-  size: number;
-}>();
+interface Props {
+  users: any[];
+  size?: number;
+}
+
+withDefaults(defineProps<Props>(), {
+  size: 36,
+});
 </script>

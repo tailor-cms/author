@@ -87,15 +87,25 @@ import ActiveUsers from './ActiveUsers.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 
-const props = defineProps({
-  element: { type: Object, required: true },
-  parent: { type: Object, default: null },
-  isHovered: { type: Boolean, default: false },
-  isDragged: { type: Boolean, default: false },
-  isDisabled: { type: Boolean, default: false },
-  frame: { type: Boolean, default: true },
-  dense: { type: Boolean, default: false },
-  showDiscussion: { type: Boolean, default: false },
+interface Props {
+  element: any;
+  parent?: any;
+  isHovered?: boolean;
+  isDragged?: boolean;
+  isDisabled?: boolean;
+  frame?: boolean;
+  dense?: boolean;
+  showDiscussion?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  parent: null,
+  isHovered: false,
+  isDragged: false,
+  isDisabled: false,
+  frame: true,
+  dense: false,
+  showDiscussion: false,
 });
 
 const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
@@ -124,14 +134,14 @@ onBeforeUnmount(() => {
   elementBus.destroy();
 });
 
-const onSelect = (e) => {
+const onSelect = (e: any) => {
   if (!props.isDisabled && !showPublishDiff.value && !e.component) {
     focus();
     e.component = { name: 'content-element', data: props.element };
   }
 };
 
-const onSave = (data) => {
+const onSave = (data: any) => {
   if (!isEmbed.value) isSaving.value = true;
   emit('save', data);
 };
@@ -142,8 +152,8 @@ const focus = () => {
 
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));
-  elementBus.on('save:meta', (meta) => emit('save:meta', meta));
-  elementBus.on('save', (data) => emit('save', onSave(data)));
+  elementBus.on('save:meta', (meta: any) => emit('save:meta', meta));
+  elementBus.on('save', (data: any) => emit('save', onSave(data)));
 
   const deferSaveFlag = () => setTimeout(() => (isSaving.value = false), 1000);
   elementBus.on('saved', deferSaveFlag);

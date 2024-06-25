@@ -45,13 +45,19 @@ import takeRight from 'lodash/takeRight';
 import ThreadList from './ThreadList.vue';
 import UnseenDivider from './UnseenDivider.vue';
 
-const props = defineProps({
-  items: { type: Array, required: true },
-  showAll: { type: Boolean, default: false },
-  minDisplayed: { type: Number, default: 5 },
-  isActivityThread: { type: Boolean, default: false },
-  unseenCount: { type: Number, required: true },
-  user: { type: Object, required: true },
+interface Props {
+  items: any[];
+  unseenCount: number;
+  user: any;
+  showAll?: boolean;
+  minDisplayed?: number;
+  isActivityThread?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showAll: false,
+  minDisplayed: 5,
+  isActivityThread: false,
 });
 
 const emit = defineEmits([
@@ -63,7 +69,7 @@ const emit = defineEmits([
   'seen',
 ]);
 
-const unseenDividerEl = ref(null);
+const unseenDividerEl = ref();
 const isVisible = ref(false);
 
 const visibleComments = computed(() => {
@@ -74,13 +80,11 @@ const visibleComments = computed(() => {
   return { seen, unseen };
 });
 
-const onUpdate = (comment, content) => {
+const onUpdate = (comment: any, content: any) => {
   emit('update', { ...comment, content });
 };
 
-const onIntersect = (_entries, _observer, isIntersected) => {
-  isVisible.value = isIntersected;
-};
+const onIntersect = (val: boolean) => (isVisible.value = val);
 
 const revealUnseen = (count = null) => {
   if ((count || props.unseenCount) < props.minDisplayed) return;
@@ -102,7 +106,11 @@ watch(isVisible, (val) => {
   revealUnseen();
 });
 
-watch(() => props.unseenCount, revealUnseen, { immediate: true });
+watch(
+  () => props.unseenCount,
+  () => revealUnseen(),
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>

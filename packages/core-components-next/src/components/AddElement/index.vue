@@ -4,7 +4,7 @@
       <VBtn
         v-if="large"
         :color="color"
-        :variant="variant"
+        :variant="variant as any"
         class="mt-3 mb-4"
         @click.stop="showElementPicker"
       >
@@ -89,28 +89,41 @@ const ELEMENT_GROUPS = [
   { name: 'Nongraded questions', icon: 'mdi-comment-question-outline' },
 ];
 
-const getQuestionData = (element, type) => {
+const getQuestionData = (element: any, type: any) => {
   const data = { width: LAYOUT.FULL_WIDTH };
   const question = [{ id: uuid(), data, type: 'JODIT_HTML', embedded: true }];
   return { question, type, ...element.data };
 };
 
-const emit = defineEmits(['add', 'hidden']);
-const props = defineProps({
-  items: { type: Array, required: true },
-  activity: { type: Object, default: null },
-  position: { type: Number, default: null },
-  layout: { type: Boolean, default: true },
-  include: { type: Array, default: null },
-  show: { type: Boolean, default: false },
-  large: { type: Boolean, default: false },
-  label: { type: String, default: 'Add content' },
-  icon: { type: String, default: 'mdi-plus' },
-  color: { type: String, default: 'primary-darken-4' },
-  variant: { type: String, default: 'tonal' },
-});
+interface Props {
+  items: any[];
+  activity?: any;
+  position?: number | null;
+  layout?: boolean;
+  include?: string[] | null;
+  show?: boolean;
+  large?: boolean;
+  label?: string;
+  icon?: string;
+  color?: string;
+  variant?: string;
+}
 
-const registry = inject('$ceRegistry').all as any[];
+const props = withDefaults(defineProps<Props>(), {
+  activity: null,
+  position: null,
+  layout: true,
+  include: null,
+  show: false,
+  large: false,
+  label: 'Add content',
+  icon: 'mdi-plus',
+  color: 'primary-darken-4',
+  variant: 'tonal',
+});
+const emit = defineEmits(['add', 'hidden']);
+
+const registry = inject<any>('$ceRegistry').all as any[];
 
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
@@ -122,7 +135,7 @@ const isSubset = computed(() => !!props.include && !!props.include.length);
 const contentElements = computed(() => {
   const items = registry.filter((it) => !isQuestion(it.type));
   if (!isSubset.value) return items;
-  return items.filter((it) => props.include.includes(it.type));
+  return items.filter((it) => props.include!.includes(it.type));
 });
 
 const questions = computed(() =>
@@ -130,14 +143,14 @@ const questions = computed(() =>
 );
 
 const assessments = computed(() => {
-  if (isSubset.value && !props.include.includes('ASSESSMENT')) return [];
+  if (isSubset.value && !props.include!.includes('ASSESSMENT')) return [];
   return registry
     .filter((it) => it.type === 'ASSESSMENT')
     .concat(questions.value.map((it) => ({ ...it, type: 'ASSESSMENT' })));
 });
 
 const reflections = computed(() => {
-  if (isSubset.value && !props.include.includes('REFLECTION')) return [];
+  if (isSubset.value && !props.include!.includes('REFLECTION')) return [];
   return registry
     .filter((it) => it.type === 'REFLECTION')
     .concat(questions.value.map((it) => ({ ...it, type: 'REFLECTION' })));
@@ -151,7 +164,7 @@ const library = computed(() => {
       if (elements.length) acc.push({ ...ELEMENT_GROUPS[i], elements });
       return acc;
     },
-    [],
+    [] as any[],
   );
 });
 
@@ -172,16 +185,16 @@ const allowedTypes = computed(() => {
     : allowedTypes;
 });
 
-const addElements = (elements) => {
+const addElements = (elements: any) => {
   const positions = getPositions(props.items, props.position, elements.length);
-  const items = elements.map((it, index) => {
+  const items = elements.map((it: any, index: any) => {
     return buildElement({ ...it, position: positions[index] });
   });
   emit('add', items);
   isVisible.value = false;
 };
 
-const buildElement = (el) => {
+const buildElement = (el: any) => {
   const { position, subtype, data = {}, initState = () => ({}) } = el;
   const element = {
     position,

@@ -84,21 +84,29 @@ import { useForm } from 'vee-validate';
 import DiscussionThread from './Thread/index.vue';
 import ResolveButton from './ResolveButton.vue';
 
-const eventBus = inject('$eventBus') as any;
-const showConfirmationModal = (opts: any) =>
-  eventBus.channel('app').emit('showConfirmationModal', opts);
+interface Props {
+  user: any;
+  comments?: any[];
+  unseenComments?: any[];
+  commentsShownLimit?: number;
+  scrollTarget?: string;
+  showHeading?: boolean;
+  showNotifications?: boolean;
+  isActivityThread?: boolean;
+  hasUnresolvedComments?: boolean;
+  isVisible?: boolean;
+}
 
-const props = defineProps({
-  comments: { type: Array, default: () => [] },
-  unseenComments: { type: Array, default: () => [] },
-  commentsShownLimit: { type: Number, default: 5 },
-  scrollTarget: { type: String, default: 'discussion' },
-  showHeading: { type: Boolean, default: false },
-  showNotifications: { type: Boolean, default: false },
-  isActivityThread: { type: Boolean, default: false },
-  hasUnresolvedComments: { type: Boolean, default: false },
-  isVisible: { type: Boolean, default: false },
-  user: { type: Object, required: true },
+const props = withDefaults(defineProps<Props>(), {
+  comments: () => [],
+  unseenComments: () => [],
+  commentsShownLimit: 5,
+  scrollTarget: 'discussion',
+  showHeading: false,
+  showNotifications: false,
+  isActivityThread: false,
+  hasUnresolvedComments: false,
+  isVisible: false,
 });
 
 const emit = defineEmits([
@@ -111,6 +119,10 @@ const emit = defineEmits([
   'update',
   'update:confirmationActive',
 ]);
+
+const eventBus = inject<any>('$eventBus');
+const showConfirmationModal = (opts: any) =>
+  eventBus.channel('app').emit('showConfirmationModal', opts);
 
 // Template refs
 const containerEl = ref(null);
@@ -150,7 +162,7 @@ const showResolveButton = computed(
 const post = handleSubmit(() => {
   if (isTextEditorEmpty.value) return;
   const { scrollTarget, user: author } = props;
-  const scrollTargetRef =
+  const scrollTargetRef: any =
     scrollTarget === 'discussion' ? containerEl : inputContainerEl;
   const payload = {
     content: contentInput.value,
@@ -194,7 +206,7 @@ watch(
   () => props.isVisible,
   (val) => {
     if (!val && props.isActivityThread) return;
-    setTimeout(() => inputEl.value?.$el?.focus(), 500);
+    setTimeout(() => (inputEl.value as any)?.$el?.focus(), 500);
   },
 );
 </script>

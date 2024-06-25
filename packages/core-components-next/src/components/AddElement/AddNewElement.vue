@@ -38,18 +38,15 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps({
-  library: { type: Array, required: true },
-  allowedTypes: { type: Array, required: true },
-});
+const props = defineProps<{ library: any[]; allowedTypes: any[] }>();
 
 const emit = defineEmits(['add']);
 
-const isAllowed = (type) => {
+const isAllowed = (type: any) => {
   return !props.allowedTypes.length || props.allowedTypes.includes(type);
 };
 
-const emitAdd = (element) => emit('add', [element]);
+const emitAdd = (element: any) => emit('add', [element]);
 </script>
 
 <style lang="scss" scoped>

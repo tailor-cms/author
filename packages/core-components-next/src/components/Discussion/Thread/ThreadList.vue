@@ -21,14 +21,20 @@ import { inject } from 'vue';
 
 import ThreadComment from './Comment/index.vue';
 
-defineProps({
-  comments: { type: Array, default: () => [] },
-  isActivityThread: { type: Boolean, default: false },
-  elementLabel: { type: String, default: null },
-  user: { type: Object, required: true },
+interface Props {
+  user: any;
+  comments?: any[];
+  isActivityThread?: boolean;
+  elementLabel?: string;
+}
+
+withDefaults(defineProps<Props>(), {
+  comments: () => [],
+  isActivityThread: false,
+  elementLabel: '',
 });
 
-const ceRegistry = inject('$ceRegistry') as any;
+const ceRegistry = inject<any>('$ceRegistry');
 
 const getElementLabel = (comment: any) => {
   if (!comment.contentElement?.type) return;

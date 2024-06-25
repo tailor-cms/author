@@ -31,13 +31,21 @@ import throttle from 'lodash/throttle';
 
 import ContentElement from './ContentElement.vue';
 
-const props = defineProps({
-  element: { type: Object, required: true },
-  isDisabled: { type: Boolean, default: false },
-  isDragged: { type: Boolean, default: false },
-  showDiscussion: { type: Boolean, default: false },
-  setWidth: { type: Boolean, default: true },
-  dense: { type: Boolean, default: false },
+interface Props {
+  element: any;
+  isDisabled?: boolean;
+  isDragged?: boolean;
+  showDiscussion?: boolean;
+  setWidth?: boolean;
+  dense?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isDisabled: false,
+  isDragged: false,
+  showDiscussion: false,
+  setWidth: true,
+  dense: false,
 });
 
 const emit = defineEmits([
