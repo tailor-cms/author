@@ -56,13 +56,15 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import type { Comment } from 'tailor-interfaces/comment';
+import type { User } from 'tailor-interfaces/user';
 
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';
 
 interface Props {
-  user: any;
-  comment: any;
+  user: User;
+  comment: Comment;
   isActivityThread?: boolean;
   elementLabel?: string;
 }

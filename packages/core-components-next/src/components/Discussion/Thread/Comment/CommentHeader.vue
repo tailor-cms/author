@@ -59,9 +59,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { Comment } from 'tailor-interfaces/comment';
 import { computed } from 'vue';
 import { formatDate } from 'date-fns/format';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import type { User } from 'tailor-interfaces/user';
 
 import EditorLink from '../../../EditorLink.vue';
 import UserAvatar from '../../..//UserAvatar.vue';
@@ -75,8 +77,8 @@ interface Option {
 }
 
 interface Props {
-  user: any;
-  comment: any;
+  user: User;
+  comment: Comment;
   isActivityThread?: boolean;
   isResolved?: boolean;
   elementLabel?: string;

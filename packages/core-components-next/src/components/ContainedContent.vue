@@ -14,7 +14,7 @@
     <span v-if="!isDisabled" class="drag-handle">
       <span class="mdi mdi-drag-vertical"></span>
     </span>
-    <ContentElement
+    <Element
       v-bind="bindings"
       @add="$emit('add', $event)"
       @delete="$emit('delete')"
@@ -26,13 +26,14 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 
-import ContentElement from './ContentElement.vue';
+import Element from './ContentElement.vue';
 
 interface Props {
-  element: any;
+  element: ContentElement;
   isDisabled?: boolean;
   isDragged?: boolean;
   showDiscussion?: boolean;
@@ -72,7 +73,9 @@ const bindings = computed(() => {
 });
 
 const elementWidth = computed(() => {
-  return props.setWidth ? get(props.element, 'data.width', 12) : undefined;
+  return props.setWidth
+    ? (get(props.element, 'data.width', 12) as number)
+    : undefined;
 });
 
 const scrollContainer = throttle((e) => {

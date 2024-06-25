@@ -78,16 +78,18 @@
 <script lang="ts" setup>
 import { computed, inject, nextTick, ref, watch } from 'vue';
 import { object, string } from 'yup';
+import type { Comment } from 'tailor-interfaces/comment';
 import orderBy from 'lodash/orderBy';
 import { useForm } from 'vee-validate';
+import type { User } from 'tailor-interfaces/user';
 
 import DiscussionThread from './Thread/index.vue';
 import ResolveButton from './ResolveButton.vue';
 
 interface Props {
-  user: any;
-  comments?: any[];
-  unseenComments?: any[];
+  user: User;
+  comments?: Comment[];
+  unseenComments?: Comment[];
   commentsShownLimit?: number;
   scrollTarget?: string;
   showHeading?: boolean;
@@ -125,9 +127,9 @@ const showConfirmationModal = (opts: any) =>
   eventBus.channel('app').emit('showConfirmationModal', opts);
 
 // Template refs
-const containerEl = ref(null);
-const inputContainerEl = ref(null);
-const inputEl = ref(null);
+const containerEl = ref<HTMLElement>();
+const inputContainerEl = ref<HTMLElement>();
+const inputEl = ref<HTMLElement>();
 
 const showAll = ref(false);
 const error = ref(false);
@@ -140,8 +142,8 @@ const { defineField, errors, handleSubmit } = useForm({
 const [contentInput] = defineField('message');
 
 const thread = computed(() => {
-  const processedThread = props.comments.map((comment: any) => {
-    const unseen = props.unseenComments.find((it: any) => it.id === comment.id);
+  const processedThread = props.comments.map((comment) => {
+    const unseen = props.unseenComments.find((it) => it.id === comment.id);
     return { ...comment, unseen: !!unseen };
   });
   return orderBy(processedThread, ['unseen', 'createdAt'], 'asc');
@@ -162,7 +164,7 @@ const showResolveButton = computed(
 const post = handleSubmit(() => {
   if (isTextEditorEmpty.value) return;
   const { scrollTarget, user: author } = props;
-  const scrollTargetRef: any =
+  const scrollTargetRef =
     scrollTarget === 'discussion' ? containerEl : inputContainerEl;
   const payload = {
     content: contentInput.value,
@@ -172,11 +174,14 @@ const post = handleSubmit(() => {
   };
   emit('save', payload);
   contentInput.value = '';
-  const scrollOptions = { block: 'center', behavior: 'smooth' };
-  nextTick(() => scrollTargetRef.value?.$el?.scrollIntoView(scrollOptions));
+  const scrollOptions: ScrollIntoViewOptions = {
+    block: 'center',
+    behavior: 'smooth',
+  };
+  nextTick(() => scrollTargetRef.value?.scrollIntoView(scrollOptions));
 });
 
-const remove = (comment: any) => {
+const remove = (comment: Comment) => {
   showConfirmationModal({
     title: 'Remove comment',
     message: 'Are you sure you want to remove this comment?',
@@ -204,10 +209,11 @@ watch(commentsCount, () => emit('change', thread.value));
 
 watch(
   () => props.isVisible,
-  (val) => {
+  async (val) => {
     if (!val && props.isActivityThread) return;
-    setTimeout(() => (inputEl.value as any)?.$el?.focus(), 500);
+    setTimeout(() => inputEl.value?.focus(), 500);
   },
+  { immediate: true },
 );
 </script>
 

@@ -94,10 +94,10 @@ const TOGGLE_BUTTON = {
 };
 
 interface Props {
-  allowedTypes: Array<string>;
+  allowedTypes: string[];
   heading: string;
   multiple?: boolean;
-  selected?: Array<Relationship>;
+  selected?: Relationship[];
   headerIcon?: string;
   submitLabel?: string;
   onlyCurrentRepo?: boolean;
@@ -106,7 +106,7 @@ interface Props {
 interface Selection {
   repository?: Repository;
   activity?: Activity;
-  elements: Array<ContentElement | Relationship>;
+  elements: (ContentElement | Relationship)[];
 }
 
 interface Items {

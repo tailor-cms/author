@@ -1,4 +1,5 @@
 import type { Activity } from './activity';
+import type { Comment } from './comment';
 
 export interface Relationship {
   id: number;
@@ -39,6 +40,10 @@ export interface ContentElement {
   contentId: string;
   /** Hash of a element data field, can be used to detect duplicates */
   contentSignature: string;
+  comments?: Comment[];
+  hasUnresolvedComments?: boolean;
+  lastSeen?: number;
+  changeSincePublish?: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: null | string;

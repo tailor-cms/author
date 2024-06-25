@@ -4,7 +4,7 @@
       <VBtn
         v-if="large"
         :color="color"
-        :variant="variant as any"
+        :variant="variant"
         class="mt-3 mb-4"
         @click.stop="showElementPicker"
       >
@@ -71,11 +71,14 @@
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
 import { getPositions, isQuestion, uuid } from '@tailor-cms/utils';
+import type { Activity } from 'tailor-interfaces/activity';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import flatMap from 'lodash/flatMap';
 import intersection from 'lodash/intersection';
 import pick from 'lodash/pick';
 import reduce from 'lodash/reduce';
 import reject from 'lodash/reject';
+import type { VBtn } from 'vuetify/components';
 
 import AddNewElement from './AddNewElement.vue';
 import SelectElement from '../SelectElement/index.vue';
@@ -89,15 +92,15 @@ const ELEMENT_GROUPS = [
   { name: 'Nongraded questions', icon: 'mdi-comment-question-outline' },
 ];
 
-const getQuestionData = (element: any, type: any) => {
+const getQuestionData = (element: any, type: string) => {
   const data = { width: LAYOUT.FULL_WIDTH };
   const question = [{ id: uuid(), data, type: 'JODIT_HTML', embedded: true }];
   return { question, type, ...element.data };
 };
 
 interface Props {
-  items: any[];
-  activity?: any;
+  items: ContentElement[];
+  activity?: Activity | null;
   position?: number | null;
   layout?: boolean;
   include?: string[] | null;
@@ -106,7 +109,7 @@ interface Props {
   label?: string;
   icon?: string;
   color?: string;
-  variant?: string;
+  variant?: VBtn['variant'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -185,9 +188,9 @@ const allowedTypes = computed(() => {
     : allowedTypes;
 });
 
-const addElements = (elements: any) => {
+const addElements = (elements: any[]) => {
   const positions = getPositions(props.items, props.position, elements.length);
-  const items = elements.map((it: any, index: any) => {
+  const items = elements.map((it, index: number) => {
     return buildElement({ ...it, position: positions[index] });
   });
   emit('add', items);

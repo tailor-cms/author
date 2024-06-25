@@ -39,16 +39,18 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue';
+import type { Comment } from 'tailor-interfaces/comment';
 import partition from 'lodash/partition';
 import takeRight from 'lodash/takeRight';
+import type { User } from 'tailor-interfaces/user';
 
 import ThreadList from './ThreadList.vue';
 import UnseenDivider from './UnseenDivider.vue';
 
 interface Props {
-  items: any[];
+  items: Comment[];
   unseenCount: number;
-  user: any;
+  user: User;
   showAll?: boolean;
   minDisplayed?: number;
   isActivityThread?: boolean;
@@ -80,7 +82,7 @@ const visibleComments = computed(() => {
   return { seen, unseen };
 });
 
-const onUpdate = (comment: any, content: any) => {
+const onUpdate = (comment: Comment, content: string) => {
   emit('update', { ...comment, content });
 };
 

@@ -725,6 +725,9 @@ importers:
       '@types/lodash':
         specifier: '*'
         version: 4.17.5
+      tailor-interfaces:
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
 
   packages/core-extensions/meta-inputs/meta-textarea:
     dependencies:

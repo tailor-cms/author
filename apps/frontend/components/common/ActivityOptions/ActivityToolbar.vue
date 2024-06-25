@@ -32,6 +32,7 @@
 <script lang="ts" setup>
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
+import { repository } from '~/api';
 
 const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
 
@@ -64,7 +65,7 @@ const options = computed(() => {
   }
   if (isEditable.value) {
     const { id: activityId, repositoryId } = props.activity;
-    const params = { repositoryId, activityId };
+    const params = { id: repositoryId, activityId };
     items.push({
       name: 'Open',
       icon: 'mdi-page-next-outline',

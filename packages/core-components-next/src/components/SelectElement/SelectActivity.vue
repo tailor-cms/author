@@ -66,12 +66,12 @@ interface TreeItem {
   id: string;
   title: string;
   isEditable: boolean;
-  children?: Array<TreeItem>;
+  children?: TreeItem[];
 }
 
 interface Props {
-  selectedElements?: Array<ContentElement | Relationship>;
-  activities?: Array<Activity>;
+  selectedElements?: (ContentElement | Relationship)[];
+  activities?: Activity[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -89,7 +89,7 @@ const groupedSelection = computed(() => {
   return groupBy(props.selectedElements, 'outlineId');
 });
 
-const activityTree = computed<Array<TreeItem>>(() => {
+const activityTree = computed<TreeItem[]>(() => {
   return activityUtils.toTreeFormat(props.activities, {
     filterNodesFn: schemaService.filterOutlineActivities,
     processNodeFn: attachActivityAttrs,

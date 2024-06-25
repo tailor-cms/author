@@ -38,15 +38,17 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps<{ library: any[]; allowedTypes: any[] }>();
+import type { ContentElement } from 'tailor-interfaces/content-element';
+
+const props = defineProps<{ library: any[]; allowedTypes: string[] }>();
 
 const emit = defineEmits(['add']);
 
-const isAllowed = (type: any) => {
+const isAllowed = (type: string) => {
   return !props.allowedTypes.length || props.allowedTypes.includes(type);
 };
 
-const emitAdd = (element: any) => emit('add', [element]);
+const emitAdd = (element: ContentElement) => emit('add', [element]);
 </script>
 
 <style lang="scss" scoped>

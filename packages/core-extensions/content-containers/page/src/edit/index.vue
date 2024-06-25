@@ -116,15 +116,17 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components-next';
 import { computed, inject, ref } from 'vue';
+import type { Activity } from 'tailor-interfaces/activity';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import filter from 'lodash/filter';
 import sortBy from 'lodash/sortBy';
 
 interface Props {
   name: string;
-  container: any;
-  elements: any;
+  container: Activity;
+  elements: Record<string, ContentElement>;
   position: number;
-  types?: any;
+  types?: string[] | null;
   layout?: boolean;
   disabled?: boolean;
 }
@@ -142,14 +144,14 @@ const emit = defineEmits([
   'save:element',
 ]);
 
-const doTheMagic = inject('$doTheMagic') as any;
+const doTheMagic = inject<any>('$doTheMagic');
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 
 const generateContent = async () => {
   isAiGeneratingContent.value = true;
   const elements = await doTheMagic({ type: props.container.type });
-  elements.forEach((element: any, index: number) => {
+  elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,
       position: index,
@@ -183,13 +185,13 @@ const onElementDrawerClose = () => {
   insertPosition.value = 0;
 };
 
-const onElementAdd = (element: any) => {
+const onElementAdd = (element: ContentElement) => {
   emit('save:element', element);
   isElementDrawerVisible.value = false;
   insertPosition.value = 0;
 };
 
-const saveElement = (element: any, key: string, data: any) => {
+const saveElement = (element: ContentElement, key: string, data: any) => {
   emit('save:element', {
     ...element,
     [key]: data,

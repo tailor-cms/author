@@ -38,16 +38,11 @@
       >
         <AddElement
           :activity="activity"
-          :color="addElementOptions.color"
-          :icon="addElementOptions.icon"
+          v-bind="addElementOptions"
           :include="supportedTypes"
           :items="elements"
-          :label="addElementOptions.label"
-          :large="addElementOptions.large"
           :layout="layout"
           :position="addElementOptions.position || elements.length"
-          :show="addElementOptions.show"
-          :variant="addElementOptions.variant"
           class="mt-6"
           @add="emit('add', $event)"
         />
@@ -58,6 +53,8 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
+import type { Activity } from 'tailor-interfaces/activity';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import Draggable from 'vuedraggable';
 import { getElementId } from '@tailor-cms/utils';
 import getVal from 'lodash/get';
@@ -65,10 +62,10 @@ import getVal from 'lodash/get';
 import AddElement from './AddElement/index.vue';
 
 interface Props {
-  elements?: any[];
+  elements?: ContentElement[];
   dragOptions?: any;
   supportedTypes?: string[] | null;
-  activity?: any;
+  activity?: Activity | null;
   layout?: boolean;
   isDisabled?: boolean;
   enableAdd?: boolean;
@@ -88,7 +85,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['add', 'update']);
 
-const editorBus = inject('$editorBus') as any;
+const editorBus = inject<any>('$editorBus');
 const dragElementIndex = ref<number>(-1);
 
 const options = computed(() => ({
@@ -101,7 +98,7 @@ const onDragStart = (index: number) => {
   editorBus.emit('element:focus');
 };
 
-const onDragEnd = (element: any) => {
+const onDragEnd = (element: ContentElement) => {
   dragElementIndex.value = -1;
   editorBus.emit('element:focus', element);
 };
