@@ -68,11 +68,11 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
+import type { User } from 'tailor-interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components-next';
 
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
-import type { User } from '@/api/interfaces/user';
 
 defineProps<{ user: User }>();
 

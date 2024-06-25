@@ -23,10 +23,10 @@
 <script lang="ts" setup>
 import { object, string } from 'yup';
 import debounce from 'lodash/debounce';
+import type { Repository } from 'tailor-interfaces/repository';
 import { useForm } from 'vee-validate';
 
 import api from '@/api/repository';
-import type { Repository } from '@/api/interfaces/repository';
 
 const EXISTING_NAME_MSG =
   'Warning: a Repository with that name already exists.';

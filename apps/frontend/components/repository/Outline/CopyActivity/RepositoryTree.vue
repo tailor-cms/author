@@ -43,13 +43,12 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import type { Activity } from 'tailor-interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import compact from 'lodash/compact';
 import { VTreeview } from 'vuetify/labs/VTreeview';
 import xorBy from 'lodash/xorBy';
-
-import type { Activity } from '@/api/interfaces/activity';
 
 interface TreeItem extends Activity {
   title: string;

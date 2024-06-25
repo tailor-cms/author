@@ -1,5 +1,6 @@
+import type { User } from 'tailor-interfaces/user';
+
 import { auth as api } from '@/api';
-import type { User } from '@/api/interfaces/user';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);

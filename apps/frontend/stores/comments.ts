@@ -1,9 +1,9 @@
+import type { Comment } from 'tailor-interfaces/comment';
 import { Comment as Events } from 'sse-event-types';
 import filter from 'lodash/filter';
 import { useStorage } from '@vueuse/core';
 
 import { comment as api } from '@/api';
-import type { Comment } from '@/api/interfaces/comment';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
 

@@ -42,9 +42,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { User } from 'tailor-interfaces/user';
+
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
-import type { User } from '@/api/interfaces/user';
 
 defineProps<{
   roles: Array<{ title: string; value: string }>;

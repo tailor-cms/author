@@ -66,11 +66,11 @@
 import { object, string } from 'yup';
 import throttle from 'lodash/throttle';
 import { useForm } from 'vee-validate';
+import type { User } from 'tailor-interfaces/user';
 
 import { user as api } from '~/api';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
-import type { User } from '@/api/interfaces/user';
 
 defineProps<{
   roles: Array<{ title: string; value: string }>;

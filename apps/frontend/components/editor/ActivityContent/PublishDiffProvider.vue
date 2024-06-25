@@ -20,7 +20,9 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from 'tailor-interfaces/activity';
 import cloneDeep from 'lodash/cloneDeep';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import filter from 'lodash/filter';
 import { isAfter } from 'date-fns/isAfter';
 import map from 'lodash/map';
@@ -30,9 +32,7 @@ import omit from 'lodash/omit';
 import { publishDiffChangeTypes } from '@tailor-cms/utils';
 import reduce from 'lodash/reduce';
 
-import type { Activity } from '@/api/interfaces/activity';
 import { revision as api } from '@/api';
-import type { ContentElement } from '@/api/interfaces/content-element';
 
 const { NEW, REMOVED, CHANGED } = publishDiffChangeTypes;
 type Content = ContentElement | Activity;

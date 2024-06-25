@@ -51,14 +51,13 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from 'tailor-interfaces/activity';
 import first from 'lodash/first';
 import sortBy from 'lodash/sortBy';
 
-import type { Activity } from '@/api/interfaces/activity';
 import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
-import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useSelectedActivity } from '#imports';
 
@@ -66,7 +65,7 @@ const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
 
-const props = defineProps<{ activity: Activity }>();
+const props = defineProps<{ activity: StoreActivity }>();
 
 const { $eventBus } = useNuxtApp() as any;
 const selectedActivity = useSelectedActivity(props.activity);

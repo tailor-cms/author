@@ -593,6 +593,9 @@ importers:
       sass:
         specifier: ^1.77.6
         version: 1.77.6
+      tailor-interfaces:
+        specifier: workspace:*
+        version: link:../../packages/tailor-interfaces
       vue:
         specifier: ^3.4.29
         version: 3.4.29(typescript@5.4.5)
@@ -700,6 +703,9 @@ importers:
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
+      tailor-interfaces:
+        specifier: workspace:*
+        version: link:../tailor-interfaces
 
   packages/core-extensions/content-containers/page:
     dependencies:
@@ -798,6 +804,8 @@ importers:
       rollup:
         specifier: ^4.18.0
         version: 4.18.0
+
+  packages/tailor-interfaces: {}
 
   packages/tailor-seed: {}
 

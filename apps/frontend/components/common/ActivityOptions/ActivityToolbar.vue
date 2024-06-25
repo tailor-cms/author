@@ -30,13 +30,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from '@/api/interfaces/activity';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
 
 const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
 
-const props = defineProps<{ activity: Activity }>();
+const props = defineProps<{ activity: StoreActivity }>();
 
 const selectedActivity = useSelectedActivity(props.activity);
 const showCreateDialog = ref(false);

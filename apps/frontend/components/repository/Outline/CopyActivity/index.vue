@@ -72,15 +72,15 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import type { Activity } from 'tailor-interfaces/activity';
 import { InsertLocation } from '@tailor-cms/utils';
 import pluralize from 'pluralize';
+import type { Repository } from 'tailor-interfaces/repository';
 import { SCHEMAS } from 'tailor-config-shared';
 import sortBy from 'lodash/sortBy';
 import { useLoader } from '@tailor-cms/core-components-next';
 
 import { activity as activityApi, repository as repositoryApi } from '@/api';
-import type { Activity } from '@/api/interfaces/activity';
-import type { Repository } from '@/api/interfaces/repository';
 import RepositoryTree from './RepositoryTree.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';

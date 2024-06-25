@@ -48,10 +48,10 @@
 
 <script lang="ts" setup>
 import { ActiveUsers } from '@tailor-cms/core-components-next';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import { formatDate } from 'date-fns/format';
 
 import ActivityActions from './ActivityActions.vue';
-import type { ContentElement } from '@/api/interfaces/content-element';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';

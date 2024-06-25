@@ -15,12 +15,12 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from 'tailor-interfaces/activity';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components-next';
 import { computed } from 'vue';
 import get from 'lodash/get';
 import orderBy from 'lodash/orderBy';
 
-import type { Activity } from '@/api/interfaces/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
 

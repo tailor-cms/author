@@ -25,9 +25,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from '@/api/interfaces/activity';
-import type { ContentElement } from '@/api/interfaces/content-element';
-import type { Repository } from '@/api/interfaces/repository';
+import type { Activity } from 'tailor-interfaces/activity';
+import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { Repository } from 'tailor-interfaces/repository';
+
 import { useCommentStore } from '@/stores/comments';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';

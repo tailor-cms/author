@@ -23,8 +23,8 @@
 
 <script lang="ts" setup>
 import * as utils from '@tailor-cms/utils';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 
-import type { ContentElement } from '@/api/interfaces/content-element';
 import DefaultToolbar from './DefaultToolbar.vue';
 
 const { $ceRegistry } = useNuxtApp() as any;

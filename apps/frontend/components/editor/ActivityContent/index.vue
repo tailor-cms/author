@@ -41,6 +41,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from 'tailor-interfaces/activity';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import differenceBy from 'lodash/differenceBy';
 import find from 'lodash/find';
 import get from 'lodash/get';
@@ -49,18 +51,16 @@ import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 import max from 'lodash/max';
 import pMinDelay from 'p-min-delay';
+import type { Repository } from 'tailor-interfaces/repository';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
 import uniqBy from 'lodash/uniqBy';
 import without from 'lodash/without';
 
-import type { Activity } from '@/api/interfaces/activity';
 import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
-import type { ContentElement } from '@/api/interfaces/content-element';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
-import type { Repository } from '@/api/interfaces/repository';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';

@@ -49,17 +49,17 @@
 
 <script lang="ts" setup>
 import { getContainerName, getElementId } from '@tailor-cms/utils';
+import type { Activity } from 'tailor-interfaces/activity';
 import BBPromise from 'bluebird';
 import capitalize from 'lodash/capitalize';
 import castArray from 'lodash/castArray';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import maxBy from 'lodash/maxBy';
 import pluralize from 'pluralize';
 import throttle from 'lodash/throttle';
 
-import type { Activity } from '@/api/interfaces/activity';
-import type { ContentElement } from '@/api/interfaces/content-element';
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
