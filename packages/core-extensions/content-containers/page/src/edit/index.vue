@@ -7,7 +7,7 @@
   >
     <div v-if="!isAiGeneratingContent" class="d-flex justify-end ma-3">
       <VBtn
-        v-if="isAiEnabled"
+        v-if="isAiEnabled && !disabled"
         class="mr-3"
         color="teal-darken-1"
         size="small"
@@ -18,7 +18,7 @@
         <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
       </VBtn>
       <VBtn
-        v-if="!isDisabled"
+        v-if="!disabled"
         color="secondary"
         size="small"
         variant="tonal"
@@ -61,7 +61,7 @@
       }"
       :elements="containerElements"
       :enable-add="false"
-      :is-disabled="isDisabled"
+      :is-disabled="disabled"
       :layout="layout"
       :supported-types="types"
       class="element-list"
@@ -70,14 +70,14 @@
     >
       <template #default="{ element, position, isDragged }">
         <InlineActivator
-          :disabled="isDisabled"
+          :disabled="disabled"
           @mousedown="showElementDrawer(position)"
         />
         <ContainedContent
           v-bind="{
             element,
             isDragged,
-            isDisabled: isDisabled,
+            isDisabled: disabled,
             setWidth: false,
           }"
           show-discussion
@@ -88,7 +88,7 @@
       </template>
     </ElementList>
     <AddElement
-      v-if="!isDisabled && !isAiGeneratingContent"
+      v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
       :include="types"
       :items="containerElements"
@@ -119,13 +119,19 @@ import { computed, inject, ref } from 'vue';
 import filter from 'lodash/filter';
 import sortBy from 'lodash/sortBy';
 
-const props = defineProps({
-  name: { type: String, required: true },
-  container: { type: Object, required: true },
-  elements: { type: Object, required: true },
-  types: { type: Array, default: null },
-  layout: { type: Boolean, default: true },
-  isDisabled: { type: Boolean, default: false },
+interface Props {
+  name: string;
+  container: any;
+  elements: any;
+  types?: any;
+  layout?: boolean;
+  disabled?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  types: null,
+  layout: true,
+  disabled: false,
 });
 
 const emit = defineEmits([
@@ -161,12 +167,12 @@ const containerElements = computed(() => {
 const insertPosition = ref(0);
 const isElementDrawerVisible = ref(false);
 
-const reorder = ({ newPosition }) => {
+const reorder = ({ newPosition }: { newPosition: number }) => {
   emit('reorder:element', { items: containerElements.value, newPosition });
 };
 
 const showElementDrawer = (elementIndex: number) => {
-  if (props.isDisabled || !elementIndex) return;
+  if (props.disabled || !elementIndex) return;
   insertPosition.value = elementIndex;
   isElementDrawerVisible.value = true;
 };

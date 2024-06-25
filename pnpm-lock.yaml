@@ -715,6 +715,10 @@ importers:
       vuetify:
         specifier: ^3.3.5
         version: 3.5.4(typescript@5.4.5)(vue@3.3.11(typescript@5.4.5))
+    devDependencies:
+      '@types/lodash':
+        specifier: '*'
+        version: 4.17.5
 
   packages/core-extensions/meta-inputs/meta-textarea:
     dependencies:
@@ -3642,9 +3646,6 @@ packages:
 
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
-
-  '@types/lodash@4.14.202':
-    resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
 
   '@types/lodash@4.17.5':
     resolution: {integrity: sha512-MBIOHVZqVqgfro1euRDWX7OO0fBVUUMrN6Pwm8LQsz8cWhEpihlvR70ENj3f40j58TNxZaWv2ndSkInykNBBJw==}
@@ -12784,7 +12785,7 @@ snapshots:
       '@npmcli/package-json': 5.1.0(bluebird@3.7.2)
       '@npmcli/query': 3.1.0
       '@npmcli/redact': 1.1.0
-      '@npmcli/run-script': 8.0.0
+      '@npmcli/run-script': 8.0.0(bluebird@3.7.2)
       bin-links: 4.0.3
       cacache: 18.0.1
       common-ancestor-path: 1.0.1
@@ -12896,18 +12897,6 @@ snapshots:
   '@npmcli/redact@1.1.0': {}
 
   '@npmcli/redact@2.0.1': {}
-
-  '@npmcli/run-script@8.0.0':
-    dependencies:
-      '@npmcli/node-gyp': 3.0.0
-      '@npmcli/package-json': 5.1.0(bluebird@3.7.2)
-      '@npmcli/promise-spawn': 7.0.0
-      node-gyp: 10.0.1
-      proc-log: 4.2.0
-      which: 4.0.0
-    transitivePeerDependencies:
-      - bluebird
-      - supports-color
 
   '@npmcli/run-script@8.0.0(bluebird@3.7.2)':
     dependencies:
@@ -15084,8 +15073,6 @@ snapshots:
       '@types/node': 20.14.6
 
   '@types/linkify-it@5.0.0': {}
-
-  '@types/lodash@4.14.202': {}
 
   '@types/lodash@4.17.5': {}
 
@@ -20898,7 +20885,7 @@ snapshots:
       '@npmcli/installed-package-contents': 2.1.0
       '@npmcli/package-json': 5.1.0(bluebird@3.7.2)
       '@npmcli/promise-spawn': 7.0.0
-      '@npmcli/run-script': 8.0.0
+      '@npmcli/run-script': 8.0.0(bluebird@3.7.2)
       cacache: 18.0.1
       fs-minipass: 3.0.3
       minipass: 7.0.4
@@ -23672,7 +23659,7 @@ snapshots:
   yup@0.32.11:
     dependencies:
       '@babel/runtime': 7.23.5
-      '@types/lodash': 4.14.202
+      '@types/lodash': 4.17.5
       lodash: 4.17.21
       lodash-es: 4.17.21
       nanoclone: 0.2.1
