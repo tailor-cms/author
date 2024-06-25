@@ -30,12 +30,16 @@ import omit from 'lodash/omit';
 import { publishDiffChangeTypes } from '@tailor-cms/utils';
 import reduce from 'lodash/reduce';
 
+import type { Activity } from '@/api/interfaces/activity';
 import { revision as api } from '@/api';
+import type { ContentElement } from '@/api/interfaces/content-element';
 
 const { NEW, REMOVED, CHANGED } = publishDiffChangeTypes;
-const getPublishedState = (revisions: any) =>
+type Content = ContentElement | Activity;
+
+const getPublishedState = (revisions: any[]) =>
   revisions.reduce(
-    (all: any, { state }: { state: any }) => ({
+    (all: Content, { state }: { state: Content }) => ({
       ...all,
       [state.uid]: omit(state, [
         'detached',
@@ -47,18 +51,26 @@ const getPublishedState = (revisions: any) =>
     {},
   );
 
-const props = defineProps({
-  repositoryId: { type: Number, required: true },
-  activityId: { type: Number, required: true },
-  activities: { type: Object, default: () => ({}) },
-  elements: { type: Object, default: () => ({}) },
-  containerGroups: { type: Object, default: () => ({}) },
-  publishTimestamp: { type: String, default: null },
-  showDiff: { type: Boolean, default: false },
+interface Props {
+  repositoryId: number;
+  activityId: number;
+  activities?: Activity[];
+  elements?: Record<string, ContentElement>;
+  containerGroups?: Record<string, Activity[]>;
+  publishTimestamp?: string;
+  showDiff?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  activities: () => [],
+  elements: () => ({}),
+  containerGroups: () => ({}),
+  publishTimestamp: '',
+  showDiff: false,
 });
 
-const publishedActivities = ref({});
-const publishedElements = ref({});
+const publishedActivities = ref<Record<string, Activity>>({});
+const publishedElements = ref<Record<string, ContentElement>>({});
 
 const processedActivities = computed(() => {
   const activities = cloneDeep(props.activities);
@@ -74,39 +86,39 @@ const processedContainerGroups = computed(() => {
   return reduce(props.containerGroups, addPublishedContainersToGroup, {});
 });
 
-const isAdded = (element: any) => {
+const isAdded = (element: ContentElement) => {
   if (!props.publishTimestamp) return true;
   const createdAt = new Date(element.createdAt);
   const publishedAt = new Date(props.publishTimestamp);
   return isAfter(createdAt, publishedAt);
 };
 
-const isModified = (element: any) => {
+const isModified = (element: ContentElement) => {
   if (!props.publishTimestamp) return false;
   const updatedAt = new Date(element.updatedAt);
   const publishedAt = new Date(props.publishTimestamp);
   return isAfter(updatedAt, publishedAt);
 };
 
-const isRemoved = (element: any) => {
+const isRemoved = (element: ContentElement) => {
   element = props.elements[element.uid];
   return !element || element.detached;
 };
 
-const getChangeType = (element: any) => {
+const getChangeType = (element: ContentElement) => {
   if (isRemoved(element)) return REMOVED;
   if (isAdded(element)) return NEW;
   if (isModified(element)) return CHANGED;
   return null;
 };
 
-const addChangeType = (element: any) => {
+const addChangeType = (element: ContentElement) => {
   return { ...element, changeSincePublish: getChangeType(element) };
 };
 
 const addPublishedContainersToGroup = (
-  groups: any,
-  group: any,
+  groups: Record<string, Activity[]>,
+  group: Activity[],
   type: string,
 ) => {
   const publishedContainers = filter(publishedActivities.value, {

@@ -72,8 +72,9 @@ import { UserAvatar } from '@tailor-cms/core-components-next';
 
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
+import type { User } from '@/api/interfaces/user';
 
-defineProps<{ user: any }>();
+defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
 

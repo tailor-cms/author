@@ -77,16 +77,27 @@ import TailorDialog from '@/components/common/TailorDialog.vue';
 import TypeSelect from './TypeSelect.vue';
 import { useActivityStore } from '@/stores/activity';
 
-const props = defineProps({
-  repositoryId: { type: Number, required: true },
-  anchor: { type: Object, default: null },
-  heading: { type: String, default: '' },
-  action: { type: String, default: InsertLocation.ADD_AFTER },
-  showActivator: { type: Boolean, default: false },
-  activatorLabel: { type: String, default: '' },
-  activatorColor: { type: String, default: 'primary-darken-3' },
-  activatorIcon: { type: String, default: 'mdi-folder-plus' },
-  testIdPrefix: { type: String, default: 'repository__createActivity' },
+interface Props {
+  repositoryId: number;
+  anchor: StoreActivity | null;
+  heading: string;
+  action: InsertLocation;
+  showActivator: boolean;
+  activatorLabel: string;
+  activatorColor: string;
+  activatorIcon: string;
+  testIdPrefix: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  anchor: null,
+  heading: '',
+  acton: InsertLocation.ADD_AFTER,
+  showActivator: false,
+  activatorLabel: '',
+  activatorColor: 'primary-darken-3',
+  activatorIcon: 'mdi-folder-plus',
+  testIdPrefix: 'repository__createActivity',
 });
 
 const emit = defineEmits(['close', 'created', 'expand']);
@@ -107,7 +118,7 @@ const visible = ref(false);
 const submitting = ref(false);
 
 const dialogTestId = computed(() => `${props.testIdPrefix}Dialog`);
-const taxonomyLevels = ref(selectedActivity.levels);
+const taxonomyLevels = ref(selectedActivity.levels) as any;
 const hasSingleTypeOption = computed(() => taxonomyLevels.value.length === 1);
 
 const defaultModalHeading = computed(() => {

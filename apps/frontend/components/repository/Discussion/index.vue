@@ -20,13 +20,19 @@ import { computed } from 'vue';
 import get from 'lodash/get';
 import orderBy from 'lodash/orderBy';
 
+import type { Activity } from '@/api/interfaces/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
 
-const props = defineProps({
-  activity: { type: Object, required: true },
-  panel: { type: Boolean, default: false },
-  showHeading: { type: Boolean, default: false },
+interface Props {
+  activity: Activity;
+  panel?: boolean;
+  showHeading?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  panel: false,
+  showHeading: false,
 });
 
 const { $ceRegistry } = useNuxtApp() as any;

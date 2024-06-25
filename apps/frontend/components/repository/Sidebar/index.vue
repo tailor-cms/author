@@ -33,12 +33,9 @@ import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const props = defineProps({
-  emptyMessage: {
-    type: String,
-    default:
-      'Please create your first Item on the left to view and edit its details here.',
-  },
+const props = withDefaults(defineProps<{ emptyMessage: string }>(), {
+  emptyMessage:
+    'Please create your first Item on the left to view and edit its details here.',
 });
 
 const store = useCurrentRepository();

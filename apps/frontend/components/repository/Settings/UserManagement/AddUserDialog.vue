@@ -70,10 +70,11 @@ import { useForm } from 'vee-validate';
 import { user as api } from '~/api';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+import type { User } from '@/api/interfaces/user';
 
-defineProps({
-  roles: { type: Array, required: true },
-});
+defineProps<{
+  roles: Array<{ title: string; value: string }>;
+}>();
 
 const store = useCurrentRepository();
 
@@ -113,6 +114,6 @@ const fetchUsers = throttle(async (filter) => {
     return;
   }
   const { items: users } = await api.fetch({ filter });
-  suggestedUsers.value = users.map((it: any) => it.email);
+  suggestedUsers.value = users.map((it: User) => it.email);
 }, 350);
 </script>

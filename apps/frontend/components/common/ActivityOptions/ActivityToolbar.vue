@@ -30,19 +30,17 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@/api/interfaces/activity';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
-import { useSelectedActivity } from '#imports';
 
 const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
 
-const props = defineProps({
-  activity: { type: Object, required: true },
-});
+const props = defineProps<{ activity: Activity }>();
 
 const selectedActivity = useSelectedActivity(props.activity);
 const showCreateDialog = ref(false);
-const action = ref('');
+const action = ref<InsertLocation>(ADD_AFTER);
 
 const options = computed(() => {
   const { subLevels, isEditable } = selectedActivity;
@@ -77,7 +75,7 @@ const options = computed(() => {
   return items;
 });
 
-const setCreateContext = (actionType: string) => {
+const setCreateContext = (actionType: InsertLocation) => {
   action.value = actionType;
   showCreateDialog.value = true;
 };

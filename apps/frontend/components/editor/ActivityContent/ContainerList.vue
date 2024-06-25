@@ -49,31 +49,41 @@
 
 <script lang="ts" setup>
 import { getContainerName, getElementId } from '@tailor-cms/utils';
+import BBPromise from 'bluebird';
 import capitalize from 'lodash/capitalize';
 import castArray from 'lodash/castArray';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import maxBy from 'lodash/maxBy';
 import pluralize from 'pluralize';
-import Promise from 'bluebird';
 import throttle from 'lodash/throttle';
 
+import type { Activity } from '@/api/interfaces/activity';
+import type { ContentElement } from '@/api/interfaces/content-element';
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
 
-const props = defineProps({
-  type: { type: String, required: true },
-  label: { type: String, required: true },
-  templateId: { type: String, default: null },
-  parentId: { type: Number, required: true },
-  containerGroup: { type: Array, default: () => [] },
-  processedActivities: { type: Object, required: true },
-  processedElements: { type: Object, required: true },
-  required: { type: Boolean, default: true },
-  multiple: { type: Boolean, default: false },
-  displayHeading: { type: Boolean, default: false },
+interface Props {
+  type: string;
+  label: string;
+  parentId: number;
+  processedActivities: Activity[];
+  processedElements: Element[];
+  templateId?: string;
+  containerGroup?: Activity[];
+  required?: boolean;
+  multiple?: boolean;
+  displayHeading?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  templateId: '',
+  containerGroup: () => [],
+  required: true,
+  multiple: false,
+  displayHeading: false,
 });
 
 const emit = defineEmits(['focusoutElement', 'createdContainer']);
@@ -123,9 +133,9 @@ const addContainer = async (data = {}) => {
   emit('createdContainer', payload);
 };
 
-const saveContentElements = (elements: any) => {
+const saveContentElements = (elements: ContentElement[]) => {
   const contentElements = castArray(elements);
-  return Promise.map(contentElements, (element) =>
+  return BBPromise.map(contentElements, (element) =>
     persistElement(element),
   ).then(() => {
     const message = `${pluralize('Element', contentElements.length)} saved`;
@@ -133,7 +143,7 @@ const saveContentElements = (elements: any) => {
   });
 };
 
-const persistElement = async (element: any) => {
+const persistElement = async (element: ContentElement) => {
   const elementChannelName = `element:${getElementId(element)}`;
   const elementChannel = eventBus.channel(elementChannelName);
   try {
@@ -153,7 +163,7 @@ const reorderContentElements = ({
   items,
 }: {
   newPosition: number;
-  items: any[];
+  items: ContentElement[];
 }) => {
   const element = items[newPosition];
   const context = { items, newPosition };
@@ -161,10 +171,10 @@ const reorderContentElements = ({
 };
 
 const requestDeletion = (
-  content: any,
-  action: Function,
+  content: Activity | ContentElement,
+  action: (val: any) => Promise<undefined>,
   name: string,
-  onDelete: Function = () => null,
+  onDelete?: () => void,
 ) => {
   confirmationDialog({
     title: `Delete ${name}?`,
@@ -174,15 +184,15 @@ const requestDeletion = (
 };
 
 const requestContainerDeletion = (
-  container: any,
+  container: Activity,
   name: string = 'container',
 ) => {
-  const action = (val: any) => activityStore.remove(val.id);
+  const action = (val: Activity) => activityStore.remove(val.id);
   requestDeletion(container, action, name);
 };
 
-const requestElementDeletion = (element: any) => {
-  const action = (val: any) =>
+const requestElementDeletion = (element: ContentElement) => {
+  const action = (val: ContentElement) =>
     contentElementStore.remove(val.repositoryId, val.id);
   const onDelete = () => emit('focusoutElement');
   requestDeletion(element, action, 'element', onDelete);

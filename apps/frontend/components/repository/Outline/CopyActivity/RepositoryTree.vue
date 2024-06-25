@@ -61,7 +61,7 @@ interface TreeItem extends Activity {
 const props = defineProps<{
   schemaName: string;
   activities: Activity[];
-  supportedLevels: any[];
+  supportedLevels: string[];
 }>();
 
 const emit = defineEmits(['change']);
@@ -119,7 +119,7 @@ const isSelectable = (item: TreeItem) => {
 const attachActivityAttrs = (activity: TreeItem) => ({
   id: activity.id,
   title: activity.data.name,
-  selectable: props.supportedLevels.some(({ type }) => type === activity.type),
+  selectable: props.supportedLevels.includes(activity.type),
   ...($schemaService.isEditable(activity.type) && { children: undefined }),
 });
 </script>

@@ -36,11 +36,15 @@
 <script lang="ts" setup>
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const props = defineProps({
-  search: { type: String, default: '' },
-  isFlat: { type: Boolean, default: false },
-});
+interface Props {
+  isFlat?: boolean;
+  search?: string;
+}
 
+const props = withDefaults(defineProps<Props>(), {
+  isFlat: false,
+  search: '',
+});
 const emit = defineEmits(['search']);
 
 const currentRepositoryStore = useCurrentRepository();

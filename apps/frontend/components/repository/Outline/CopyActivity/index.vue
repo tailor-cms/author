@@ -16,8 +16,10 @@
         Copy
       </VBtn>
     </template>
-    <template #header>Copy items from {{ pluralize(schema.name) }}</template>
-    <template #body>
+    <template v-if="schema" #header>
+      Copy items from {{ pluralize(schema.name) }}
+    </template>
+    <template v-if="schema" #body>
       <div v-if="isCopyingActivities" class="ma-4">
         <div class="text-subtitle-1 text-center mb-2">
           Copying {{ selectedActivities.length }} items...
@@ -88,7 +90,7 @@ const { ADD_AFTER, ADD_INTO } = InsertLocation;
 
 interface Props {
   repositoryId: number;
-  levels: number[];
+  levels: string[];
   action: string;
   anchor?: Activity | null;
   showActivator?: boolean;

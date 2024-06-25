@@ -76,7 +76,7 @@ const CE_SELECTION_DELAY = 1000;
 const props = defineProps<{
   repository: Repository;
   activity: Activity;
-  rootContainerGroups: any;
+  rootContainerGroups: Record<string, Activity[]>;
   contentContainers: Activity[];
 }>();
 
@@ -133,7 +133,7 @@ const containerIds = computed(
   () => props.contentContainers?.map((it: any) => it.id) as any[],
 );
 
-const elementsWithComments = computed(() => {
+const elementsWithComments = computed<any>(() => {
   return transform(
     elements.value,
     (elementMap: { [key: string]: any }, element: ContentElement) => {
@@ -141,8 +141,8 @@ const elementsWithComments = computed(() => {
         (comment) => comment.contentElement?.uid === element.uid,
       );
       const lastSeen = max([
-        commentStore.$seen.contentElement[element.uid] || 0,
-        commentStore.$seen.activity[props.activity?.uid] || 0,
+        (commentStore.$seen.contentElement as any)[element.uid] || 0,
+        (commentStore.$seen.activity as any)[props.activity?.uid] || 0,
       ]);
       const hasUnresolvedComments = !!comments.length;
       elementMap[element.uid] = {

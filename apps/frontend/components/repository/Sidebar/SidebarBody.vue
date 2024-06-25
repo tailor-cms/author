@@ -80,17 +80,13 @@ import ActivityDiscussion from '../Discussion/index.vue';
 import ActivityRelationship from './ActivityRelationship.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
-import { useActivityStore } from '@/stores/activity';
 
-const { $schemaService } = useNuxtApp() as any;
-
-const props = defineProps({
-  activity: { type: Object, required: true },
-});
+const props = defineProps<{ activity: StoreActivity }>();
 
 const route = useRoute();
 const store = useActivityStore();
 const notify = useNotification();
+const { $schemaService } = useNuxtApp() as any;
 
 const activityUrl = computed(() => route.query && window.location.href);
 const config = computed(() => $schemaService.getLevel(props.activity.type));

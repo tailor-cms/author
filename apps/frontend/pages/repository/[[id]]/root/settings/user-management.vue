@@ -15,11 +15,16 @@ import { title as titleCase } from 'to-case';
 import AddUserDialog from '@/components/repository/Settings/UserManagement/AddUserDialog.vue';
 import UserList from '@/components/repository/Settings/UserManagement/UserList.vue';
 
+interface Role {
+  title: string;
+  value: string;
+}
+
 definePageMeta({
   name: 'repository-settings-users',
 });
 
-const roles = computed(() =>
+const roles = computed<Role[]>(() =>
   map(role.repository, (value) => ({ title: titleCase(value), value })),
 );
 </script>

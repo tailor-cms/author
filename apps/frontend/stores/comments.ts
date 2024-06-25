@@ -86,7 +86,7 @@ export const useCommentStore = defineStore('comments', () => {
 
   const markSeenComments = (payload: {
     activityUid: string | undefined;
-    elementUid: string | undefined;
+    elementUid?: string | undefined;
     lastCommentAt: number;
   }) => {
     const { activityUid, elementUid, lastCommentAt } = payload;

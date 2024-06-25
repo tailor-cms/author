@@ -21,7 +21,7 @@
             :model-value="item.repositoryRole"
             density="compact"
             rounded="lg"
-            variant="text"
+            variant="outlined"
             hide-details
             @update:model-value="(role: string) => upsertUser(item.email, role)"
           />
@@ -44,10 +44,11 @@
 <script lang="ts" setup>
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
+import type { User } from '@/api/interfaces/user';
 
-defineProps({
-  roles: { type: Array, required: true },
-});
+defineProps<{
+  roles: Array<{ title: string; value: string }>;
+}>();
 
 const store = useCurrentRepository();
 const notify = useNotification();
@@ -74,7 +75,7 @@ const removeUser = async (userId: number) => {
   await store.removeUser(userId);
 };
 
-const remove = (user: any) => {
+const remove = (user: User) => {
   const showConfirmationModal = useConfirmationDialog();
   showConfirmationModal({
     title: 'Remove user',
