@@ -59,7 +59,7 @@ function publishActivity(activity) {
       })
       .then(() => saveSpine(spine))
       .then((savedSpine) =>
-        updateRepositoryCatalog(repository, savedSpine.publishedAt),
+        updateRepositoryCatalog(repository, savedSpine.publishedAt, false),
       )
       .then(() => updatePublishingStatus(repository, activity))
       .then(() => activity.save());
@@ -73,12 +73,12 @@ function getRepositoryCatalog() {
   });
 }
 
-function updateRepositoryCatalog(repository, publishedAt) {
+function updateRepositoryCatalog(repository, publishedAt, updateInfo = true) {
   return getRepositoryCatalog().then((catalog) => {
     const existing = find(catalog, { id: repository.id });
     if (!existing && repository.deletedAt) return;
     const repositoryData = {
-      ...getRepositoryAttrs(repository),
+      ...(updateInfo || !existing ? getRepositoryAttrs(repository) : existing),
       publishedAt: publishedAt || existing.publishedAt,
       detachedAt: repository.deletedAt,
     };

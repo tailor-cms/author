@@ -1,6 +1,7 @@
 import Promise from 'bluebird';
 
 import { type StoreActivity, useActivityStore } from '@/stores/activity';
+import { repository as api } from '@/api';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const initialStatus = () => ({ progress: 0, message: '' });
@@ -39,10 +40,22 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
     });
   };
 
+  const publishRepository = (activities: StoreActivity[]) => {
+    confirmationDialog({
+      title: 'Publish content',
+      message: getPublishMessage(activities),
+      action: async () => {
+        await api.publishRepositoryMeta(currentRepository.repositoryId);
+        await publish(activities.filter((it) => !it.detached));
+      },
+    });
+  };
+
   return {
     isPublishing,
     status,
     publish,
     confirmPublishing,
+    publishRepository,
   };
 };
