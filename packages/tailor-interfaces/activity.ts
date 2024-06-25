@@ -1,3 +1,5 @@
+import type { ContentElement } from './content-element';
+
 export interface Status {
   id: number;
   activityId: number;
@@ -33,4 +35,9 @@ export interface Activity {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+}
+
+export interface ContentContainer extends Activity {
+  elements: ContentElement[];
+  containers: ContentContainer[];
 }

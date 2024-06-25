@@ -50,18 +50,17 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
+import type {
+  ContentElement,
+  Relationship,
+} from 'tailor-interfaces/content-element';
+import type { Activity } from 'tailor-interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import compact from 'lodash/compact';
 import groupBy from 'lodash/groupBy';
 import pluralize from 'pluralize';
 import { VTreeview } from 'vuetify/labs/VTreeview';
-
-import type {
-  ContentElement,
-  Relationship,
-} from '../../interfaces/content-element';
-import type { Activity } from '../../interfaces/activity';
 
 interface TreeItem {
   id: string;

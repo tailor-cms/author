@@ -70,19 +70,19 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity, ContentContainer } from 'tailor-interfaces/activity';
 import { computed, inject, onMounted, reactive } from 'vue';
-import { activity as activityUtils } from '@tailor-cms/utils';
-import flatMap from 'lodash/flatMap';
-import map from 'lodash/map';
-import sortBy from 'lodash/sortBy';
-
-import type { Activity, ContentContainer } from '../../interfaces/activity';
 import type {
   ContentElement,
   Relationship,
-} from '../../interfaces/content-element';
+} from 'tailor-interfaces/content-element';
+import { activity as activityUtils } from '@tailor-cms/utils';
+import flatMap from 'lodash/flatMap';
+import map from 'lodash/map';
+import type { Repository } from 'tailor-interfaces/repository';
+import sortBy from 'lodash/sortBy';
+
 import ContentPreview from '../ContentPreview/index.vue';
-import type { Repository } from '../../interfaces/repository';
 import SelectActivity from './SelectActivity.vue';
 import SelectRepository from './SelectRepository.vue';
 import TailorDialog from '../TailorDialog.vue';
