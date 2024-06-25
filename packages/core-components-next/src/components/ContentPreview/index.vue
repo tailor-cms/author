@@ -26,7 +26,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import flatMap from 'lodash/flatMap';
-import intersectionBy from 'lodash/intersectionBy';
 import keyBy from 'lodash/keyBy';
 
 import type {
@@ -65,7 +64,9 @@ const processedContainers = computed(() => {
   if (!allowedTypes.length) return contentContainers;
   return contentContainers.map((container) => ({
     ...container,
-    elements: intersectionBy(container.elements, props.allowedTypes, 'type'),
+    elements: container.elements?.filter((it) =>
+      props.allowedTypes.includes(it.type),
+    ),
   }));
 });
 
