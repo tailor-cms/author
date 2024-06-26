@@ -77,6 +77,7 @@ const emit = defineEmits(['save']);
 
 const showElementBrowser = ref(false);
 const curentRepository = useCurrentRepository();
+const contentElementStore = useContentElementStore();
 const showConfirmationDialog = useConfirmationDialog();
 
 const activities = computed(() => curentRepository.activities);
@@ -108,6 +109,8 @@ const removeAll = () => {
 };
 
 const select = (elements: ContentElement[]) => {
+  // Add linked elements to the store
+  elements.forEach((it) => contentElementStore.add(it));
   const items = elements.map((it) => {
     if (!it.activity) return it;
     const { id, activity, activityId: containerId } = it;

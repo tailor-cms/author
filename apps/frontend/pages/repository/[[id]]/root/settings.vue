@@ -65,7 +65,7 @@ const clone = () => {
 };
 
 const publishRepository = () => {
-  publishUtils.confirmPublishing(currentRepositoryStore.outlineActivities);
+  publishUtils.publishRepository(currentRepositoryStore.outlineActivities);
 };
 
 const exportRepository = () => {
