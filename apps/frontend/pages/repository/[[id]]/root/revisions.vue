@@ -51,8 +51,18 @@ definePageMeta({
   name: 'revisions',
 });
 
+const { $eventBus } = useNuxtApp() as any;
 const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
+const editorStore = useEditorStore();
+const authStore = useAuthStore();
+
+const editorChannel = $eventBus.channel('editor');
+provide('$getCurrentUser', () => authStore.user);
+provide('$editorBus', editorChannel);
+provide('$editorState', {
+  isPublishDiff: computed(() => editorStore.showPublishDiff),
+});
 
 const isFetching = ref(true);
 const revisions = ref<Revision[]>([]);

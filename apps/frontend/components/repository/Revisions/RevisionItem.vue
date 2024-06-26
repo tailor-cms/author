@@ -21,10 +21,10 @@
         </div>
       </div>
     </div>
-    <!-- <EntityRevisions
+    <EntityRevisions
       v-if="isExpanded"
       v-bind="{ revision: props.revision, isDetached: !activity }"
-    /> -->
+    />
   </li>
 </template>
 
@@ -38,11 +38,9 @@ import {
   getRevisionAcronym,
   getRevisionColor,
 } from '@/lib/revision';
+import EntityRevisions from './EntityRevisions.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
-
-// TODO: Needs to be migrated
-// import EntityRevisions from './EntityRevisions.vue';
 
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
