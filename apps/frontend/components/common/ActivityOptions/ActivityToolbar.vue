@@ -32,7 +32,6 @@
 <script lang="ts" setup>
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
-import { repository } from '~/api';
 
 const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
 

@@ -7,7 +7,6 @@ import reduce from 'lodash/reduce';
 import type { Revision } from 'tailor-interfaces/revision';
 import { schema } from 'tailor-config-shared';
 
-
 const describe = {
   REPOSITORY: describeRepositoryRevision,
   ACTIVITY: describeActivityRevision,

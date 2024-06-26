@@ -68,10 +68,10 @@
       @add="onElementAdd"
       @update="reorder"
     >
-      <template #default="{ element, position, isDragged }">
+      <template #default="{ element, position: pos, isDragged }">
         <InlineActivator
           :disabled="disabled"
-          @mousedown="showElementDrawer(position)"
+          @mousedown="showElementDrawer(pos)"
         />
         <ContainedContent
           v-bind="{
