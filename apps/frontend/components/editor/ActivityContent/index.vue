@@ -41,8 +41,8 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from 'tailor-interfaces/activity';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import differenceBy from 'lodash/differenceBy';
 import find from 'lodash/find';
 import get from 'lodash/get';
@@ -51,7 +51,7 @@ import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 import max from 'lodash/max';
 import pMinDelay from 'p-min-delay';
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
 import uniqBy from 'lodash/uniqBy';

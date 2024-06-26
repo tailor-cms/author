@@ -2,7 +2,7 @@ import type {
   Repository,
   RepositoryUser,
   Tag,
-} from 'tailor-interfaces/repository';
+} from '@tailor-cms/interfaces/repository';
 
 import { repository as api, tag as tagApi } from '@/api';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';

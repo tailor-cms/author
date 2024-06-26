@@ -73,7 +73,7 @@
 import clamp from 'lodash/clamp';
 import get from 'lodash/get';
 import map from 'lodash/map';
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import truncate from 'lodash/truncate';
 
 import AddTag from './AddTag.vue';

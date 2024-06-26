@@ -17,9 +17,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { Comment } from 'tailor-interfaces/comment';
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import { inject } from 'vue';
-import type { User } from 'tailor-interfaces/user';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import ThreadComment from './Comment/index.vue';
 

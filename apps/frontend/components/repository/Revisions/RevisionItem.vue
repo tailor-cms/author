@@ -31,7 +31,7 @@
 <script lang="ts" setup>
 import find from 'lodash/find';
 import { formatTimeAgo } from '@vueuse/core';
-import type { Revision } from 'tailor-interfaces/repository';
+import type { Revision } from '@tailor-cms/interfaces/repository';
 
 import {
   getFormatDescription,

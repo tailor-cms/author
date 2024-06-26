@@ -71,8 +71,8 @@
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
 import { getPositions, isQuestion, uuid } from '@tailor-cms/utils';
-import type { Activity } from 'tailor-interfaces/activity';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import flatMap from 'lodash/flatMap';
 import intersection from 'lodash/intersection';
 import pick from 'lodash/pick';

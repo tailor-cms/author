@@ -10,9 +10,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { getElementId } from '@tailor-cms/utils';
-import type { Meta } from 'tailor-interfaces/common';
+import type { Meta } from '@tailor-cms/interfaces/common';
 
 import MetaInput from '@/components/common/MetaInput.vue';
 

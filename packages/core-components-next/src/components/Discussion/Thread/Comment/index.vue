@@ -56,8 +56,8 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
-import type { Comment } from 'tailor-interfaces/comment';
-import type { User } from 'tailor-interfaces/user';
+import type { Comment } from '@tailor-cms/interfaces/comment';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';

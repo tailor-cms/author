@@ -3,7 +3,7 @@ import {
   calculatePosition,
   InsertLocation,
 } from '@tailor-cms/utils';
-import type { Activity } from 'tailor-interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { Activity as Events } from 'sse-event-types';
 import findIndex from 'lodash/findIndex';
 import Hashids from 'hashids';

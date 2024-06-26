@@ -38,8 +38,8 @@
 <script lang="ts" setup>
 import cloneDeep from 'lodash/cloneDeep';
 import find from 'lodash/find';
-import type { Meta } from 'tailor-interfaces/common';
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Meta } from '@tailor-cms/interfaces/common';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import set from 'lodash/set';
 
 import { repository as api } from '@/api';

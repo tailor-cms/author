@@ -59,11 +59,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { Comment } from 'tailor-interfaces/comment';
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import { computed } from 'vue';
 import { formatDate } from 'date-fns/format';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import type { User } from 'tailor-interfaces/user';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import EditorLink from '../../../EditorLink.vue';
 import UserAvatar from '../../..//UserAvatar.vue';

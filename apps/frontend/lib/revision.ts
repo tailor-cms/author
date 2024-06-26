@@ -1,10 +1,10 @@
 import { lower, title as toTitleCase } from 'to-case';
-import type { Activity } from 'tailor-interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { assessment } from '@tailor-cms/utils';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
-import type { Revision } from 'tailor-interfaces/revision';
+import type { Revision } from '@tailor-cms/interfaces/revision';
 import { schema } from 'tailor-config-shared';
 
 const describe = {

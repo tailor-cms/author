@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from 'tailor-interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components-next';
 import { computed } from 'vue';
 import get from 'lodash/get';

@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from 'tailor-interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import first from 'lodash/first';
 import sortBy from 'lodash/sortBy';
 

@@ -20,9 +20,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from 'tailor-interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import cloneDeep from 'lodash/cloneDeep';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import filter from 'lodash/filter';
 import { isAfter } from 'date-fns/isAfter';
 import map from 'lodash/map';

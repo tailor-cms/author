@@ -39,7 +39,7 @@
 
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
 
 import Element from '../ContentElement.vue';

@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 

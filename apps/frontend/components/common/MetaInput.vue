@@ -12,7 +12,7 @@
 <script lang="ts" setup>
 import get from 'lodash/get';
 import { getMetaName } from '@tailor-cms/utils';
-import type { Meta } from 'tailor-interfaces/common';
+import type { Meta } from '@tailor-cms/interfaces/common';
 
 const props = defineProps<{ meta: Meta }>();
 defineEmits(['update']);

@@ -10,9 +10,9 @@
   "type": "module",
   "main": "./src/index.js",
   "devDependencies": {
+    "@tailor-cms/interfaces": "workspace:*",
     "@types/lodash": "^4.17.5",
-    "@types/pluralize": "^0.0.33",
-    "tailor-interfaces": "workspace:*"
+    "@types/pluralize": "^0.0.33"
   },
   "peerDependencies": {
     "@tailor-cms/core-components-next": "workspace:*",

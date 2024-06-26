@@ -27,9 +27,9 @@
 import type {
   ContentElement,
   Relationship,
-} from 'tailor-interfaces/content-element';
+} from '@tailor-cms/interfaces/content-element';
 import { computed } from 'vue';
-import type { ContentContainer } from 'tailor-interfaces/activity';
+import type { ContentContainer } from '@tailor-cms/interfaces/activity';
 import flatMap from 'lodash/flatMap';
 import keyBy from 'lodash/keyBy';
 

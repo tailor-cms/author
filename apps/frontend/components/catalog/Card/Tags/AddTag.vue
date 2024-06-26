@@ -37,7 +37,7 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
-import type { Repository, Tag } from 'tailor-interfaces/repository';
+import type { Repository, Tag } from '@tailor-cms/interfaces/repository';
 import differenceBy from 'lodash/differenceBy';
 import map from 'lodash/map';
 import { useForm } from 'vee-validate';

@@ -1,4 +1,4 @@
-import type { Comment } from 'tailor-interfaces/comment';
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Comment as Events } from 'sse-event-types';
 import filter from 'lodash/filter';
 import { useStorage } from '@vueuse/core';

@@ -1,4 +1,4 @@
-import type { User } from 'tailor-interfaces/user';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import { auth as api } from '@/api';
 

@@ -39,10 +39,10 @@
 
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue';
-import type { Comment } from 'tailor-interfaces/comment';
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import partition from 'lodash/partition';
 import takeRight from 'lodash/takeRight';
-import type { User } from 'tailor-interfaces/user';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import ThreadList from './ThreadList.vue';
 import UnseenDivider from './UnseenDivider.vue';

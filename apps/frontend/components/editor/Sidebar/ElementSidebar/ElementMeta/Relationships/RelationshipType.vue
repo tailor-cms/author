@@ -52,7 +52,7 @@ import { computed, ref } from 'vue';
 import type {
   ContentElement,
   Relationship,
-} from 'tailor-interfaces/content-element';
+} from '@tailor-cms/interfaces/content-element';
 import pluralize from 'pluralize';
 import { SelectElement } from '@tailor-cms/core-components-next';
 

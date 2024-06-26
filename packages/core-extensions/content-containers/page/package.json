@@ -9,8 +9,8 @@
   ],
   "main": "./src/index.js",
   "devDependencies": {
-    "@types/lodash": "*",
-    "tailor-interfaces": "workspace:*"
+    "@tailor-cms/interfaces": "workspace:*",
+    "@types/lodash": "*"
   },
   "peerDependencies": {
     "vue": "^3.3.4",
