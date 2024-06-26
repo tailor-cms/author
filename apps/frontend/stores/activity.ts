@@ -57,13 +57,13 @@ export const useActivityStore = defineStore('activities', () => {
     return items.value.filter(predicate);
   }
 
-  function add(item: Activity): StoreActivity {
+  function add(item: Activity): StoreActivity | undefined {
     $items.set(item.uid, {
       ...item,
       shortId: `A-${hashids.encode(item.id)}`,
       // status: getActivityStatus(it)
     });
-    return $items.get(item.uid) as StoreActivity;
+    return $items.get(item.uid);
   }
 
   async function fetch(
@@ -85,10 +85,10 @@ export const useActivityStore = defineStore('activities', () => {
     return items.value;
   }
 
-  async function save(payload: any): Promise<StoreActivity> {
+  async function save(payload: any): Promise<StoreActivity | undefined> {
     const activity = await api.save(payload);
     add(activity);
-    return $items.get(activity.uid) as StoreActivity;
+    return $items.get(activity.uid);
   }
 
   async function update(payload: any): Promise<FoundActivity> {
