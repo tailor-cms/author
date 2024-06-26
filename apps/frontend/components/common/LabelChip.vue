@@ -1,6 +1,6 @@
 <template>
   <VChip
-    :color="props.color"
+    :color="color"
     class="flex-shrink-0 text-caption text-uppercase font-weight-bold readonly"
     label
   >
@@ -9,7 +9,9 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps({
-  color: { type: String, default: 'primary-lighten-5' },
-});
+interface Props {
+  color?: string;
+}
+
+withDefaults(defineProps<Props>(), { color: 'primary-lighten-5' });
 </script>

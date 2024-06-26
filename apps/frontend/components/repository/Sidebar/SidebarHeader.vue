@@ -29,9 +29,7 @@ import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vu
 import ActivityPublishing from './ActivityPublishing.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const props = defineProps({
-  activity: { type: Object, required: true },
-});
+const props = defineProps<{ activity: StoreActivity }>();
 
 const { $schemaService } = useNuxtApp() as any;
 const store = useCurrentRepository();

@@ -22,10 +22,7 @@
 import { computed } from 'vue';
 import pluralize from 'pluralize';
 
-const props = defineProps({
-  count: { type: Number, required: true },
-});
-
+const props = defineProps<{ count: number }>();
 const emit = defineEmits(['seen']);
 
 const unseenCommentsLabel = computed(

@@ -14,7 +14,6 @@
         <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="{ ...menuProps, ...tooltipProps }"
-            :class="activator?.class"
             :color="activator?.color"
             :icon="activator?.icon"
             size="x-small"
@@ -48,12 +47,14 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
+import type { Comment } from 'tailor-interfaces/comment';
 import { Events } from '@tailor-cms/utils';
 import get from 'lodash/get';
+import type { User } from 'tailor-interfaces/user';
 
 import Discussion from './Discussion/index.vue';
 
-const getActivatorOptions = (unseenComments: any) => ({
+const getActivatorOptions = (unseenComments: Comment[]) => ({
   unseen: {
     tooltip: 'View new comments',
     color: 'primary-darken-2',
@@ -74,30 +75,38 @@ const getActivatorOptions = (unseenComments: any) => ({
   },
 });
 
-const props = defineProps({
-  id: { type: Number, default: null },
-  uid: { type: String, required: true },
-  activityId: { type: Number, required: true },
-  repositoryId: { type: Number, required: true },
-  comments: { type: Array, required: true },
-  hasUnresolvedComments: { type: Boolean, default: false },
-  lastSeen: { type: Number, required: true },
-  user: { type: Object, required: true },
+interface Props {
+  uid: string;
+  activityId: number;
+  repositoryId: number;
+  comments?: Comment[];
+  lastSeen?: number | null;
+  user: User;
+  id?: number | null;
+  hasUnresolvedComments?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  id: null,
+  comments: () => [],
+  lastSeen: null,
+  hasUnresolvedComments: false,
 });
 
 const isVisible = ref(false);
 const isConfirmationActive = ref(false);
 
-const editorBus = inject('$editorBus') as any;
+const editorBus = inject<any>('$editorBus');
 
 const lastCommentAt = computed(() =>
   new Date(get(props.comments[0], 'createdAt', 0)).getTime(),
 );
 
 const unseenComments = computed(() => {
-  return props.comments.filter((it: any) => {
+  return props.comments.filter((it) => {
     const createdAt = new Date(it.createdAt).getTime();
-    return it.author.id !== props.user.id && createdAt > props.lastSeen;
+    const isAuthor = it.author.id !== props.user.id;
+    return isAuthor && props.lastSeen && createdAt > props.lastSeen;
   });
 });
 
@@ -107,10 +116,10 @@ const activator = computed(() => {
     : props.comments.length
       ? 'preview'
       : 'post';
-  return getActivatorOptions(unseenComments.value)[type] as any;
+  return getActivatorOptions(unseenComments.value)[type];
 });
 
-const save = (data: any) => {
+const save = (data: Partial<Comment>) => {
   return editorBus.emit('comment', {
     action: Events.Discussion.SAVE,
     payload: {
@@ -148,10 +157,10 @@ const updateResolvement = ({
   });
 };
 
-const removeComment = (payload: any) => {
+const removeComment = (id: number) => {
   editorBus.emit('comment', {
     action: Events.Discussion.REMOVE,
-    payload,
+    payload: id,
   });
 };
 </script>

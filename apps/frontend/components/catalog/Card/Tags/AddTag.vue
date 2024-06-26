@@ -37,11 +37,11 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
+import type { Repository, Tag } from 'tailor-interfaces/repository';
 import differenceBy from 'lodash/differenceBy';
 import map from 'lodash/map';
 import { useForm } from 'vee-validate';
 
-import type { Repository, Tag } from '@/api/interfaces/repository';
 import { tag as api } from '@/api';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useRepositoryStore } from '@/stores/repository';

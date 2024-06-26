@@ -19,7 +19,7 @@ import { computed } from 'vue';
 
 interface Props {
   imgUrl?: string;
-  size?: number;
+  size?: number | string;
   color?: string;
   rounded?: string;
 }

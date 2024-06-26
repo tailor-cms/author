@@ -17,10 +17,16 @@
 </template>
 
 <script lang="ts" setup>
+import type { User } from 'tailor-interfaces/user';
+
 import UserAvatar from './UserAvatar.vue';
 
-defineProps<{
-  users: Array<{ id: string; label: string; imgUrl: string }>;
-  size: number;
-}>();
+interface Props {
+  users: User[];
+  size?: number | string;
+}
+
+withDefaults(defineProps<Props>(), {
+  size: 36,
+});
 </script>

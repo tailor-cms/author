@@ -50,6 +50,11 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
+import type {
+  ContentElement,
+  Relationship,
+} from 'tailor-interfaces/content-element';
+import type { Activity } from 'tailor-interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import compact from 'lodash/compact';
@@ -57,22 +62,16 @@ import groupBy from 'lodash/groupBy';
 import pluralize from 'pluralize';
 import { VTreeview } from 'vuetify/labs/VTreeview';
 
-import type {
-  ContentElement,
-  Relationship,
-} from '../../interfaces/content-element';
-import type { Activity } from '../../interfaces/activity';
-
 interface TreeItem {
   id: string;
   title: string;
   isEditable: boolean;
-  children?: Array<TreeItem>;
+  children?: TreeItem[];
 }
 
 interface Props {
-  selectedElements?: Array<ContentElement | Relationship>;
-  activities?: Array<Activity>;
+  selectedElements?: (ContentElement | Relationship)[];
+  activities?: Activity[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -90,7 +89,7 @@ const groupedSelection = computed(() => {
   return groupBy(props.selectedElements, 'outlineId');
 });
 
-const activityTree = computed<Array<TreeItem>>(() => {
+const activityTree = computed<TreeItem[]>(() => {
   return activityUtils.toTreeFormat(props.activities, {
     filterNodesFn: schemaService.filterOutlineActivities,
     processNodeFn: attachActivityAttrs,

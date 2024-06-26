@@ -23,15 +23,20 @@
 
 <script lang="ts" setup>
 import * as utils from '@tailor-cms/utils';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 
 import DefaultToolbar from './DefaultToolbar.vue';
 
 const { $ceRegistry } = useNuxtApp() as any;
 const elementBus = inject('$elementBus') as any;
 
-const props = defineProps({
-  element: { type: Object, required: true },
-  embed: { type: Object, default: null },
+interface Props {
+  element: ContentElement;
+  embed?: any;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  embed: null,
 });
 
 const componentName = computed(() => {

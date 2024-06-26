@@ -13,7 +13,8 @@
 import type {
   ContentElement,
   RelationshipType,
-} from '@/api/interfaces/content-element';
+} from 'tailor-interfaces/content-element';
+
 import ElementInputs from './MetaInputs.vue';
 import ElementRelationships from './Relationships/index.vue';
 

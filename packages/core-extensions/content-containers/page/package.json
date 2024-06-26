@@ -8,6 +8,10 @@
     "src"
   ],
   "main": "./src/index.js",
+  "devDependencies": {
+    "@types/lodash": "*",
+    "tailor-interfaces": "workspace:*"
+  },
   "peerDependencies": {
     "vue": "^3.3.4",
     "vuetify": "^3.3.5",

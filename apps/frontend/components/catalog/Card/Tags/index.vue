@@ -73,10 +73,10 @@
 import clamp from 'lodash/clamp';
 import get from 'lodash/get';
 import map from 'lodash/map';
+import type { Repository } from 'tailor-interfaces/repository';
 import truncate from 'lodash/truncate';
 
 import AddTag from './AddTag.vue';
-import type { Repository } from '@/api/interfaces/repository';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useRepositoryStore } from '@/stores/repository';
 

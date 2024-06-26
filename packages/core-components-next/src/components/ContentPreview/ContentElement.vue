@@ -39,9 +39,9 @@
 
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import get from 'lodash/get';
 
-import type { ContentElement } from '../../interfaces/content-element';
 import Element from '../ContentElement.vue';
 
 interface Props {

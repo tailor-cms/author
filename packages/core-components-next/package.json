@@ -11,7 +11,8 @@
   "main": "./src/index.js",
   "devDependencies": {
     "@types/lodash": "^4.17.5",
-    "@types/pluralize": "^0.0.33"
+    "@types/pluralize": "^0.0.33",
+    "tailor-interfaces": "workspace:*"
   },
   "peerDependencies": {
     "@tailor-cms/core-components-next": "workspace:*",

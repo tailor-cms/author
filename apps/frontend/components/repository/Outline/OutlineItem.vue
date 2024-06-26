@@ -4,12 +4,12 @@
       <template #default="{ isHovering, props: hoverProps }">
         <VSheet
           v-bind="hoverProps"
-          :id="`activity_${uid}`"
+          :id="`activity_${activity.uid}`"
           :class="{ selected: isSelected, highlighted: isHovering }"
           :style="{ 'border-left-color': config.color }"
           class="activity"
           data-testid="repository__structureActivity"
-          @mousedown="currentRepositoryStore.selectActivity(id)"
+          @mousedown="currentRepositoryStore.selectActivity(activity.id)"
         >
           <VBtn
             v-if="hasSubtypes"
@@ -18,25 +18,17 @@
             class="my-auto"
             color="primary-lighten-3"
             variant="text"
-            @mousedown.stop="utils.toggleOutlineItemExpand(uid)"
+            @mousedown.stop="utils.toggleOutlineItemExpand(activity.uid)"
           >
           </VBtn>
           <div
             class="activity-name h5 my-auto text-truncate text-primary-lighten-4"
           >
-            {{ data.name }}
+            {{ activity.data.name }}
           </div>
           <div v-if="isSelected || isHovering" class="actions my-auto">
             <OutlineItemToolbar
-              :activity="{
-                id,
-                uid,
-                repositoryId,
-                parentId,
-                type,
-                position,
-                data,
-              }"
+              :activity="activity"
               class="options-toolbar my-auto"
             />
             <VTooltip location="bottom">
@@ -49,24 +41,13 @@
                   class="my-auto mx-0"
                   color="primary-lighten-4"
                   variant="text"
-                  @click="utils.toggleOutlineItemExpand(uid)"
+                  @click="utils.toggleOutlineItemExpand(activity.uid)"
                 >
                 </VBtn>
               </template>
               <span>{{ isExpanded ? 'Collapse' : 'Expand' }}</span>
             </VTooltip>
-            <OptionsMenu
-              :activity="{
-                id,
-                uid,
-                repositoryId,
-                parentId,
-                type,
-                position,
-                data,
-              }"
-              class="options-menu"
-            />
+            <OptionsMenu :activity="activity" class="options-menu" />
           </div>
         </VSheet>
       </template>
@@ -80,8 +61,8 @@
       >
         <template #item="{ element, index: i }">
           <OutlineItem
-            v-bind="element"
             :activities="activities"
+            :activity="element"
             :index="i + 1"
             class="sub-activity"
           />
@@ -93,7 +74,6 @@
 
 <script lang="ts" setup>
 import Draggable from 'vuedraggable';
-import filter from 'lodash/filter';
 import size from 'lodash/size';
 
 import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
@@ -105,40 +85,42 @@ import { useCurrentRepository } from '@/stores/current-repository';
 const currentRepositoryStore = useCurrentRepository();
 const { taxonomy } = storeToRefs(currentRepositoryStore);
 
-const props = defineProps({
-  id: { type: Number, default: null },
-  uid: { type: String, required: true },
-  parentId: { type: Number, default: null },
-  repositoryId: { type: Number, required: true },
-  type: { type: String, required: true },
-  index: { type: Number, required: true },
-  position: { type: Number, required: true },
-  data: { type: Object, required: true },
-  activities: { type: Array, default: () => [] },
+interface Props {
+  activity: StoreActivity;
+  index: number;
+  activities?: StoreActivity[];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  activities: () => [],
 });
 
-const utils = useSelectedActivity(props);
+const utils = useSelectedActivity(props.activity);
 const reorder = useOutlineReorder();
 
 const config = computed(() =>
-  taxonomy.value.find((it: any) => it.type === props.type),
+  taxonomy.value.find((it: any) => it.type === props.activity.type),
 );
 
 const isSelected = computed(
-  () => currentRepositoryStore.selectedActivity?.uid === props.uid,
+  () => currentRepositoryStore.selectedActivity?.uid === props.activity.uid,
 );
 
-const isExpanded = computed(() => utils.isOutlineItemExpanded(props.uid));
+const isExpanded = computed(() =>
+  utils.isOutlineItemExpanded(props.activity.uid),
+);
 const hasSubtypes = computed(() => !!size(config.value.subLevels));
 const hasChildren = computed(() => children.value.length > 0 && hasSubtypes);
 const children = computed(() => {
-  return filter(props.activities as StoreActivity[], (it) => {
-    return (
-      props.id &&
-      props.id === it.parentId &&
-      config.value.subLevels.includes(it.type)
-    );
-  }).sort((x, y) => x.position - y.position);
+  return props.activities
+    .filter((it) => {
+      return (
+        props.activity.id &&
+        props.activity.id === it.parentId &&
+        config.value.subLevels.includes(it.type)
+      );
+    })
+    .sort((x, y) => x.position - y.position);
 });
 
 const icon = computed(() => {

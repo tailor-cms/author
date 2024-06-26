@@ -1,10 +1,10 @@
 import { calculatePosition } from '@tailor-cms/utils';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import { ContentElement as Events } from 'sse-event-types';
 import flatMap from 'lodash/flatMap';
 import flatten from 'lodash/flatten';
 
 import { contentElement as api } from '@/api';
-import type { ContentElement } from '@/api/interfaces/content-element';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 type Id = number | string;

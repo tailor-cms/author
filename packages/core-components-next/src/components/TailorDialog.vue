@@ -4,8 +4,11 @@
     v-bind="$attrs"
     @update:model-value="onModelUpdate"
   >
-    <template v-for="(_, slot) of $slots" #[slot]="scope">
-      <slot :name="slot" v-bind="scope"></slot>
+    <template v-if="$slots.activator" #activator="activatorProps">
+      <slot v-bind="activatorProps" name="activator"></slot>
+    </template>
+    <template v-if="$slots.default" #default="defaultProps">
+      <slot v-bind="defaultProps"></slot>
     </template>
     <VCard :data-testid="dataTestid" color="primary-lighten-5">
       <VCardTitle class="dialog-title pa-5 align-center bg-primary-darken-3">

@@ -17,20 +17,28 @@
 </template>
 
 <script lang="ts" setup>
+import type { Comment } from 'tailor-interfaces/comment';
 import { inject } from 'vue';
+import type { User } from 'tailor-interfaces/user';
 
 import ThreadComment from './Comment/index.vue';
 
-defineProps({
-  comments: { type: Array, default: () => [] },
-  isActivityThread: { type: Boolean, default: false },
-  elementLabel: { type: String, default: null },
-  user: { type: Object, required: true },
+interface Props {
+  user: User;
+  comments?: Comment[];
+  isActivityThread?: boolean;
+  elementLabel?: string;
+}
+
+withDefaults(defineProps<Props>(), {
+  comments: () => [],
+  isActivityThread: false,
+  elementLabel: '',
 });
 
-const ceRegistry = inject('$ceRegistry') as any;
+const ceRegistry = inject<any>('$ceRegistry');
 
-const getElementLabel = (comment: any) => {
+const getElementLabel = (comment: Comment) => {
   if (!comment.contentElement?.type) return;
   return ceRegistry?.get
     ? ceRegistry.get(comment.contentElement.type)?.name

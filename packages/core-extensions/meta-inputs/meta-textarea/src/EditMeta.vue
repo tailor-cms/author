@@ -15,11 +15,16 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-const emit = defineEmits(['update']);
-const props = defineProps({
-  meta: { type: Object, default: () => ({ value: null }) },
-  rows: { type: Number, default: 2 },
+interface Props {
+  meta?: any;
+  rows?: number;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  meta: () => ({ value: null }),
+  rows: 2,
 });
+const emit = defineEmits(['update']);
 
 const input = ref(props.meta.value);
 

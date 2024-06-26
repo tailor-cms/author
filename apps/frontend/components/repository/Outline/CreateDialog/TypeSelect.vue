@@ -23,11 +23,17 @@
 </template>
 
 <script lang="ts" setup>
-const props = defineProps({
-  value: { type: String, default: null },
-  options: { type: Array, required: true },
-  disabled: { type: Boolean, default: false },
-  containerId: { type: String, default: '' },
+interface Props {
+  options: any[];
+  value?: string | null;
+  disabled?: boolean;
+  containerId?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  value: null,
+  disabled: false,
+  containerId: '',
 });
 defineEmits(['change']);
 

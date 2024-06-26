@@ -12,10 +12,9 @@
 <script lang="ts" setup>
 import get from 'lodash/get';
 import { getMetaName } from '@tailor-cms/utils';
+import type { Meta } from 'tailor-interfaces/common';
 
-const props = defineProps({
-  meta: { type: Object, required: true },
-});
+const props = defineProps<{ meta: Meta }>();
 defineEmits(['update']);
 
 const type = computed(() => props.meta.type.toUpperCase());

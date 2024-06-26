@@ -38,11 +38,12 @@
 <script lang="ts" setup>
 import cloneDeep from 'lodash/cloneDeep';
 import find from 'lodash/find';
+import type { Meta } from 'tailor-interfaces/common';
+import type { Repository } from 'tailor-interfaces/repository';
 import set from 'lodash/set';
 
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
-import type { Repository } from '~/api/interfaces/repository';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useNotification } from '@/composables/useNotification';
@@ -68,11 +69,11 @@ const metadata = computed(() =>
   $schemaService.getRepositoryMetadata(repository.value),
 );
 
-const descriptionMeta = computed(() => ({
+const descriptionMeta = computed<Meta>(() => ({
   key: 'description',
-  value: repository.value?.description,
   type: 'TEXTAREA',
   label: 'Description',
+  value: repository.value?.description,
   validate: { required: true, min: 2, max: 2000 },
 }));
 

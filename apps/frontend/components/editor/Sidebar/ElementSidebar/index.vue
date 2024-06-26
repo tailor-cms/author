@@ -10,9 +10,9 @@
 
 <script lang="ts" setup>
 import { getElementId, getSidebarName } from '@tailor-cms/utils';
+import type { ContentElement } from 'tailor-interfaces/content-element';
 import { schema } from 'tailor-config-shared';
 
-import type { ContentElement } from '@/api/interfaces/content-element';
 import ElementMeta from './ElementMeta/index.vue';
 import { exposedApi } from '@/api';
 import { useCurrentRepository } from '@/stores/current-repository';
