@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Take a snapshot of the editor page', async ({ page }) => {
-  await page.getByText('The story of pizza begins').isVisible();
+  await expect(page.getByText('The story of pizza begins')).toBeVisible();
   await page.waitForTimeout(2000);
   await percySnapshot(page, 'Editor page');
 });
@@ -34,6 +34,19 @@ test('Take a snapshot of the editor page upon editing the HTML CE', async ({
   // Make sure the sidebar is visible
   await expect(page.getByText('Additional settings')).toBeVisible();
   await percySnapshot(page, 'Editor page - HTML Content Element editing');
+});
+
+test('Take a snapshot of the editor page upon adding new Content Element', async ({
+  page,
+}) => {
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  await expect(
+    page.getByText('Click the button below to add content'),
+  ).toBeVisible();
+  await page.getByRole('button', { name: 'Add content' }).click();
+  await expect(page.getByText('Content Elements')).toBeVisible();
+  await percySnapshot(page, 'Editor page - Add content element dialog');
 });
 
 test.afterAll(async () => {
