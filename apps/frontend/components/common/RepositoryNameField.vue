@@ -23,7 +23,7 @@
 <script lang="ts" setup>
 import { object, string } from 'yup';
 import debounce from 'lodash/debounce';
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import { useForm } from 'vee-validate';
 
 import api from '@/api/repository';

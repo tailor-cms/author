@@ -43,7 +43,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { Activity } from 'tailor-interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import compact from 'lodash/compact';

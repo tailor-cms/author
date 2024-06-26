@@ -12,6 +12,7 @@
     "@nuxt/eslint-config": "^0.3.13",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@tailor-cms/eslint-config": "^0.0.2",
+    "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
     "@types/debug": "^4.1.12",
     "@types/lodash": "^4.17.5",
@@ -22,7 +23,6 @@
     "eslint-config-prettier": ">=9.1.0",
     "nuxt": "^3.12.2",
     "sass": "^1.77.6",
-    "tailor-interfaces": "workspace:*",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
   },

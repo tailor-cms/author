@@ -68,10 +68,10 @@
       @add="onElementAdd"
       @update="reorder"
     >
-      <template #default="{ element, position, isDragged }">
+      <template #default="{ element, position: pos, isDragged }">
         <InlineActivator
           :disabled="disabled"
-          @mousedown="showElementDrawer(position)"
+          @mousedown="showElementDrawer(pos)"
         />
         <ContainedContent
           v-bind="{
@@ -116,8 +116,8 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components-next';
 import { computed, inject, ref } from 'vue';
-import type { Activity } from 'tailor-interfaces/activity';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import filter from 'lodash/filter';
 import sortBy from 'lodash/sortBy';
 

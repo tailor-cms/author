@@ -14,7 +14,7 @@ import type {
   ContentElement,
   Relationship,
   RelationshipType,
-} from 'tailor-interfaces/content-element';
+} from '@tailor-cms/interfaces/content-element';
 
 import RelationshipItem from './RelationshipType.vue';
 import { useContentElementStore } from '@/stores/content-elements';

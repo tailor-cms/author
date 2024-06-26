@@ -47,10 +47,10 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
-import type { Comment } from 'tailor-interfaces/comment';
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Events } from '@tailor-cms/utils';
 import get from 'lodash/get';
-import type { User } from 'tailor-interfaces/user';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import Discussion from './Discussion/index.vue';
 

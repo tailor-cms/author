@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 const props = defineProps<{ library: any[]; allowedTypes: string[] }>();
 

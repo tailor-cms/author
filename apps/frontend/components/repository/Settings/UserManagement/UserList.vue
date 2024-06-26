@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { User } from 'tailor-interfaces/user';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';

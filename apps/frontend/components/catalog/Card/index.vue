@@ -125,7 +125,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Repository, Revision } from 'tailor-interfaces/repository';
+import type { Repository, Revision } from '@tailor-cms/interfaces/repository';
 import first from 'lodash/first';
 import get from 'lodash/get';
 import truncate from 'lodash/truncate';

@@ -58,11 +58,11 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from 'tailor-interfaces/activity';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import ActivityNavigation from './ActivityNavigation.vue';

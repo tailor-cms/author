@@ -53,8 +53,8 @@ import { computed, inject, ref } from 'vue';
 import type {
   ContentElement,
   Relationship,
-} from 'tailor-interfaces/content-element';
-import type { Activity } from 'tailor-interfaces/activity';
+} from '@tailor-cms/interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import compact from 'lodash/compact';

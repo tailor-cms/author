@@ -72,10 +72,10 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import type { Activity } from 'tailor-interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { InsertLocation } from '@tailor-cms/utils';
 import pluralize from 'pluralize';
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import { SCHEMAS } from 'tailor-config-shared';
 import sortBy from 'lodash/sortBy';
 import { useLoader } from '@tailor-cms/core-components-next';

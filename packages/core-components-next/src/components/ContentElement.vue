@@ -82,10 +82,10 @@ import {
   ref,
 } from 'vue';
 import { getComponentName, getElementId } from '@tailor-cms/utils';
-import type { Activity } from 'tailor-interfaces/activity';
-import type { ContentElement } from 'tailor-interfaces/content-element';
-import type { Meta } from 'tailor-interfaces/common';
-import type { User } from 'tailor-interfaces/user';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { Meta } from '@tailor-cms/interfaces/common';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import ActiveUsers from './ActiveUsers.vue';
 import ElementDiscussion from './ElementDiscussion.vue';

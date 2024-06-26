@@ -37,7 +37,7 @@
 <script lang="ts" setup>
 import last from 'lodash/last';
 import reduce from 'lodash/reduce';
-import type { Revision } from 'tailor-interfaces/repository';
+import type { Revision } from '@tailor-cms/interfaces/repository';
 import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 

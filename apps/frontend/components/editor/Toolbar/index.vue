@@ -48,7 +48,7 @@
 
 <script lang="ts" setup>
 import { ActiveUsers } from '@tailor-cms/core-components-next';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
 
 import ActivityActions from './ActivityActions.vue';

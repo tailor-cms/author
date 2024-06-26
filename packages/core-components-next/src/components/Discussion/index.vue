@@ -78,10 +78,10 @@
 <script lang="ts" setup>
 import { computed, inject, nextTick, ref, watch } from 'vue';
 import { object, string } from 'yup';
-import type { Comment } from 'tailor-interfaces/comment';
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import orderBy from 'lodash/orderBy';
 import { useForm } from 'vee-validate';
-import type { User } from 'tailor-interfaces/user';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import DiscussionThread from './Thread/index.vue';
 import ResolveButton from './ResolveButton.vue';

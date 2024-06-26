@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import AppFooter from '@/components/common/AppFooter.vue';
 import CloneModal from '@/components/repository/Settings/CloneModal.vue';

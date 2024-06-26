@@ -17,7 +17,7 @@
 <script lang="ts" setup>
 import { inject, onMounted, ref } from 'vue';
 import find from 'lodash/find';
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import sortBy from 'lodash/sortBy';
 
 import { useLoader } from '../../composables/useLoader';

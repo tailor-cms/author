@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Repository } from 'tailor-interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import { repository as api } from '@/api';
 import TailorDialog from '@/components/common/TailorDialog.vue';

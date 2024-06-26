@@ -53,8 +53,8 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
-import type { Activity } from 'tailor-interfaces/activity';
-import type { ContentElement } from 'tailor-interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import Draggable from 'vuedraggable';
 import { getElementId } from '@tailor-cms/utils';
 import getVal from 'lodash/get';

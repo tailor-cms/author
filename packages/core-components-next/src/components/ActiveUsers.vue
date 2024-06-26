@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { User } from 'tailor-interfaces/user';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import UserAvatar from './UserAvatar.vue';
 

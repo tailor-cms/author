@@ -1,5 +1,5 @@
 {
-  "name": "tailor-interfaces",
+  "name": "@tailor-cms/interfaces",
   "type": "module",
   "version": "0.0.1",
   "description": "Tailor data interfaces"
