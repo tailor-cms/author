@@ -1,5 +1,5 @@
 <template>
-  <button class="inline-activator">
+  <button :class="{ disabled }" class="inline-activator">
     <hr />
     <VAvatar color="primary-darken-2" size="20">
       <VIcon size="20">mdi-plus</VIcon>
@@ -9,8 +9,8 @@
 </template>
 
 <script lang="ts" setup>
-defineProps({
-  disabled: { type: Boolean, required: false },
+withDefaults(defineProps<{ disabled: boolean }>(), {
+  disabled: false,
 });
 </script>
 

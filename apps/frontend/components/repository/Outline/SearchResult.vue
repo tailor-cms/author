@@ -44,10 +44,12 @@ import find from 'lodash/find';
 import LabelChip from '@/components/common/LabelChip.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const props = defineProps({
-  activity: { type: Object, required: true },
-  isSelected: { type: Boolean, default: false },
-});
+interface Props {
+  activity: StoreActivity;
+  isSelected?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), { isSelected: false });
 defineEmits(['select', 'show']);
 
 const store = useCurrentRepository();

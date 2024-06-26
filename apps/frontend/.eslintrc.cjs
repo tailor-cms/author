@@ -33,6 +33,6 @@ module.exports = {
   ],
   globals: {
     useCookie: true,
-    navigateTo: true
-  }
+    navigateTo: true,
+  },
 };

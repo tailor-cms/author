@@ -25,10 +25,14 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 
-const props = defineProps({
-  activityId: { type: Number, required: true },
-  elementUid: { type: String, default: null },
-  label: { type: String, required: true },
+interface Props {
+  activityId: number;
+  label: string;
+  elementUid?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  elementUid: '',
 });
 
 const editorRoute = computed(() => ({

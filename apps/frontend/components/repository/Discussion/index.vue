@@ -15,18 +15,25 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components-next';
 import { computed } from 'vue';
 import get from 'lodash/get';
 import orderBy from 'lodash/orderBy';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
 
-const props = defineProps({
-  activity: { type: Object, required: true },
-  panel: { type: Boolean, default: false },
-  showHeading: { type: Boolean, default: false },
+interface Props {
+  activity: Activity;
+  panel?: boolean;
+  showHeading?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  panel: false,
+  showHeading: false,
 });
 
 const { $ceRegistry } = useNuxtApp() as any;
@@ -35,7 +42,7 @@ provide('$ceRegistry', $ceRegistry);
 const authStore = useAuthStore();
 const commentStore = useCommentStore();
 
-const user = computed(() => authStore.user);
+const user = computed(() => authStore.user as User);
 
 const comments = computed(() => {
   const comments = commentStore.getActivityComments(props.activity.id);

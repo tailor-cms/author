@@ -23,9 +23,14 @@
 </template>
 
 <script lang="ts" setup>
-defineProps({
-  content: { type: String, default: '' },
-  isResolved: { type: Boolean, default: false },
+interface Props {
+  content?: string;
+  isResolved?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
+  content: '',
+  isResolved: false,
 });
 
 const emit = defineEmits(['unresolve']);

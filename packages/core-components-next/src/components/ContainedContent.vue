@@ -14,7 +14,7 @@
     <span v-if="!isDisabled" class="drag-handle">
       <span class="mdi mdi-drag-vertical"></span>
     </span>
-    <ContentElement
+    <ContentElementWrapper
       v-bind="bindings"
       @add="$emit('add', $event)"
       @delete="$emit('delete')"
@@ -26,18 +26,27 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 
-import ContentElement from './ContentElement.vue';
+import ContentElementWrapper from './ContentElement.vue';
 
-const props = defineProps({
-  element: { type: Object, required: true },
-  isDisabled: { type: Boolean, default: false },
-  isDragged: { type: Boolean, default: false },
-  showDiscussion: { type: Boolean, default: false },
-  setWidth: { type: Boolean, default: true },
-  dense: { type: Boolean, default: false },
+interface Props {
+  element: ContentElement;
+  isDisabled?: boolean;
+  isDragged?: boolean;
+  showDiscussion?: boolean;
+  setWidth?: boolean;
+  dense?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isDisabled: false,
+  isDragged: false,
+  showDiscussion: false,
+  setWidth: true,
+  dense: false,
 });
 
 const emit = defineEmits([
@@ -64,7 +73,9 @@ const bindings = computed(() => {
 });
 
 const elementWidth = computed(() => {
-  return props.setWidth ? get(props.element, 'data.width', 12) : undefined;
+  return props.setWidth
+    ? (get(props.element, 'data.width', 12) as number)
+    : undefined;
 });
 
 const scrollContainer = throttle((e) => {

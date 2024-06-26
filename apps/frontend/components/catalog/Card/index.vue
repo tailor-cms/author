@@ -125,6 +125,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Repository, Revision } from '@tailor-cms/interfaces/repository';
 import first from 'lodash/first';
 import get from 'lodash/get';
 import truncate from 'lodash/truncate';
@@ -132,7 +133,6 @@ import { useDisplay } from 'vuetify';
 import { UserAvatar } from '@tailor-cms/core-components-next';
 import { useTimeAgo } from '@vueuse/core';
 
-import type { Repository, Revision } from '@/api/interfaces/repository';
 import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
 

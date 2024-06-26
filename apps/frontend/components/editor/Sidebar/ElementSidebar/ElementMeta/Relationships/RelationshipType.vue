@@ -49,13 +49,13 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import pluralize from 'pluralize';
-import { SelectElement } from '@tailor-cms/core-components-next';
-
 import type {
   ContentElement,
   Relationship,
-} from '@/api/interfaces/content-element';
+} from '@tailor-cms/interfaces/content-element';
+import pluralize from 'pluralize';
+import { SelectElement } from '@tailor-cms/core-components-next';
+
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 

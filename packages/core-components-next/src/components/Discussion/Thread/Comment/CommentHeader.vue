@@ -45,8 +45,8 @@
     </div>
     <div v-if="showOptions" class="actions">
       <VBtn
-        v-for="({ action, icon, color }, name) in options"
-        :key="name"
+        v-for="{ action, icon, color } in options"
+        :key="action"
         :color="color"
         :icon="`mdi-${icon}`"
         class="ml-2"
@@ -59,24 +59,40 @@
 </template>
 
 <script lang="ts" setup>
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import { computed } from 'vue';
-import formatDate from 'date-fns/format';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { formatDate } from 'date-fns/format';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import EditorLink from '../../../EditorLink.vue';
 import UserAvatar from '../../..//UserAvatar.vue';
 
-const props = defineProps({
-  comment: { type: Object, required: true },
-  isActivityThread: { type: Boolean, default: false },
-  isResolved: { type: Boolean, default: false },
-  elementLabel: { type: String, default: null },
-  user: { type: Object, required: true },
+type Action = 'resolve' | 'toggleEdit' | 'remove';
+
+interface Option {
+  action: Action;
+  icon: string;
+  color: string;
+}
+
+interface Props {
+  user: User;
+  comment: Comment;
+  isActivityThread?: boolean;
+  isResolved?: boolean;
+  elementLabel?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isActivityThread: false,
+  isResolved: false,
+  elementLabel: '',
 });
 
 const emit = defineEmits(['remove', 'resolve', 'toggleEdit']);
 
-const getOptions = () => ({
+const OPTIONS: Record<string, Option> = {
   resolve: {
     action: 'resolve',
     icon: 'checkbox-outline',
@@ -92,7 +108,7 @@ const getOptions = () => ({
     icon: 'trash-can-outline',
     color: 'secondary-lighten-3',
   },
-});
+};
 
 const elementUid = computed(() => props.comment.contentElement?.uid);
 const isAuthor = computed(() => props.comment.author?.id === props.user?.id);
@@ -102,9 +118,8 @@ const showOptions = computed(
   () => isAuthor.value && !isDeleted.value && !props.isResolved,
 );
 const options = computed(() => {
-  const options = getOptions();
-  if (props.isActivityThread) delete options.resolve;
-  return options;
+  const { resolve, edit, remove } = OPTIONS;
+  return props.isActivityThread ? [edit, remove] : [resolve, edit, remove];
 });
 </script>
 

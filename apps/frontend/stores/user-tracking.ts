@@ -5,12 +5,12 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import orderBy from 'lodash/orderBy';
 import pick from 'lodash/pick';
+import type { User } from '@tailor-cms/interfaces/user';
 import { UserActivity } from 'sse-event-types';
 
 import { feed as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
-import type { User } from '@/api/interfaces/user';
 
 interface ActivityContext {
   sseId: string;

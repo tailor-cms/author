@@ -38,16 +38,11 @@
       >
         <AddElement
           :activity="activity"
-          :color="addElementOptions.color"
-          :icon="addElementOptions.icon"
+          v-bind="addElementOptions"
           :include="supportedTypes"
           :items="elements"
-          :label="addElementOptions.label"
-          :large="addElementOptions.large"
           :layout="layout"
           :position="addElementOptions.position || elements.length"
-          :show="addElementOptions.show"
-          :variant="addElementOptions.variant"
           class="mt-6"
           @add="emit('add', $event)"
         />
@@ -58,26 +53,39 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import Draggable from 'vuedraggable';
 import { getElementId } from '@tailor-cms/utils';
 import getVal from 'lodash/get';
 
 import AddElement from './AddElement/index.vue';
 
-const props = defineProps({
-  elements: { type: Array, default: () => [] },
-  dragOptions: { type: Object, default: () => ({}) },
-  supportedTypes: { type: Array, default: null },
-  activity: { type: Object, default: null },
-  layout: { type: Boolean, default: false },
-  isDisabled: { type: Boolean, default: false },
-  enableAdd: { type: Boolean, default: true },
-  addElementOptions: { type: Object, default: () => ({}) },
+interface Props {
+  elements?: ContentElement[];
+  dragOptions?: any;
+  supportedTypes?: string[] | null;
+  activity?: Activity | null;
+  layout?: boolean;
+  isDisabled?: boolean;
+  enableAdd?: boolean;
+  addElementOptions?: any;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  elements: () => [],
+  dragOptions: () => ({}),
+  supportedTypes: null,
+  activity: null,
+  layout: false,
+  isDisabled: false,
+  enableAdd: true,
+  addElementOptions: () => ({}),
 });
 
 const emit = defineEmits(['add', 'update']);
 
-const editorBus = inject('$editorBus') as any;
+const editorBus = inject<any>('$editorBus');
 const dragElementIndex = ref<number>(-1);
 
 const options = computed(() => ({
@@ -85,17 +93,17 @@ const options = computed(() => ({
   handle: '.drag-handle',
 }));
 
-const onDragStart = (index) => {
+const onDragStart = (index: number) => {
   dragElementIndex.value = index;
   editorBus.emit('element:focus');
 };
 
-const onDragEnd = (element) => {
+const onDragEnd = (element: ContentElement) => {
   dragElementIndex.value = -1;
   editorBus.emit('element:focus', element);
 };
 
-const reorder = ({ newIndex: newPosition }) => {
+const reorder = ({ newIndex: newPosition }: { newIndex: number }) => {
   const items = props.elements;
   emit('update', { newPosition, items });
 };

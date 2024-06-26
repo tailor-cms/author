@@ -22,11 +22,10 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import { TailorTreeview } from '@tailor-cms/core-components-next';
-
-import type { Activity } from '@/api/interfaces/activity';
-import type { Repository } from '@/api/interfaces/repository';
 
 const { $schemaService } = useNuxtApp() as any;
 

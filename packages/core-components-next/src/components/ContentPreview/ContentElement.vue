@@ -10,7 +10,7 @@
     />
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <div v-bind="hoverProps" class="element-wrapper flex-grow-1 mr-2">
-        <Element
+        <ContentElementWrapper
           v-bind="$attrs"
           :class="{ selected: isSelected }"
           :element="element"
@@ -39,10 +39,10 @@
 
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
 
-import type { ContentElement } from '../../interfaces/content-element';
-import Element from '../ContentElement.vue';
+import ContentElementWrapper from '../ContentElement.vue';
 
 interface Props {
   element: ContentElement;

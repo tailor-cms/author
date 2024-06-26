@@ -19,9 +19,11 @@
           <VSelect
             :items="roles"
             :model-value="item.repositoryRole"
+            bg-color="transparent"
             density="compact"
             rounded="lg"
-            variant="text"
+            variant="solo"
+            flat
             hide-details
             @update:model-value="(role: string) => upsertUser(item.email, role)"
           />
@@ -42,12 +44,14 @@
 </template>
 
 <script lang="ts" setup>
+import type { User } from '@tailor-cms/interfaces/user';
+
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-defineProps({
-  roles: { type: Array, required: true },
-});
+defineProps<{
+  roles: Array<{ title: string; value: string }>;
+}>();
 
 const store = useCurrentRepository();
 const notify = useNotification();
@@ -74,7 +78,7 @@ const removeUser = async (userId: number) => {
   await store.removeUser(userId);
 };
 
-const remove = (user: any) => {
+const remove = (user: User) => {
   const showConfirmationModal = useConfirmationDialog();
   showConfirmationModal({
     title: 'Remove user',

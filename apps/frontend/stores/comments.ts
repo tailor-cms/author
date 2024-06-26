@@ -1,9 +1,9 @@
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Comment as Events } from 'sse-event-types';
-import filter from 'lodash/filter';
 import { useStorage } from '@vueuse/core';
 
 import { comment as api } from '@/api';
-import type { Comment } from '@/api/interfaces/comment';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
 
@@ -15,8 +15,8 @@ export const useCommentStore = defineStore('comments', () => {
   const items = computed(() => Array.from($items.values()));
 
   const $seen = useStorage('tailor-cms-comments-seen', {
-    activity: {},
-    contentElement: {},
+    activity: {} as Record<string, number>,
+    contentElement: {} as Record<string, number>,
   });
 
   function findById(id: Id): FoundComment {
@@ -68,14 +68,14 @@ export const useCommentStore = defineStore('comments', () => {
     return where((it) => it.activityId === activityId);
   };
 
-  const getUnseenActivityComments = (activity: any) => {
+  const getUnseenActivityComments = (activity: Activity) => {
     const authStore = useAuthStore();
     const activityComments = getActivityComments(activity.id);
     const activitySeenAt = $seen.value.activity[activity.uid] || 0;
-    return filter(activityComments, (it) => {
+    return activityComments.filter((it) => {
       const isAuthor = it.author.id === authStore.user?.id;
       const createdAt = new Date(it.createdAt).getTime();
-      if (isAuthor || activitySeenAt >= createdAt) return;
+      if (isAuthor || activitySeenAt >= createdAt) return false;
       if (!it.contentElement) return true;
       // Return unseen activity comment if contentElement is not set
       const elementSeenAt =
@@ -86,7 +86,7 @@ export const useCommentStore = defineStore('comments', () => {
 
   const markSeenComments = (payload: {
     activityUid: string | undefined;
-    elementUid: string | undefined;
+    elementUid?: string | undefined;
     lastCommentAt: number;
   }) => {
     const { activityUid, elementUid, lastCommentAt } = payload;

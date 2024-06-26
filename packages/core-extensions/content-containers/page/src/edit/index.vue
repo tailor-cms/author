@@ -7,7 +7,7 @@
   >
     <div v-if="!isAiGeneratingContent" class="d-flex justify-end ma-3">
       <VBtn
-        v-if="isAiEnabled"
+        v-if="isAiEnabled && !disabled"
         class="mr-3"
         color="teal-darken-1"
         size="small"
@@ -18,7 +18,7 @@
         <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
       </VBtn>
       <VBtn
-        v-if="!isDisabled"
+        v-if="!disabled"
         color="secondary"
         size="small"
         variant="tonal"
@@ -61,23 +61,23 @@
       }"
       :elements="containerElements"
       :enable-add="false"
-      :is-disabled="isDisabled"
+      :is-disabled="disabled"
       :layout="layout"
       :supported-types="types"
       class="element-list"
       @add="onElementAdd"
       @update="reorder"
     >
-      <template #default="{ element, position, isDragged }">
+      <template #default="{ element, position: pos, isDragged }">
         <InlineActivator
-          :disabled="isDisabled"
-          @mousedown="showElementDrawer(position)"
+          :disabled="disabled"
+          @mousedown="showElementDrawer(pos)"
         />
         <ContainedContent
           v-bind="{
             element,
             isDragged,
-            isDisabled: isDisabled,
+            isDisabled: disabled,
             setWidth: false,
           }"
           show-discussion
@@ -88,7 +88,7 @@
       </template>
     </ElementList>
     <AddElement
-      v-if="!isDisabled && !isAiGeneratingContent"
+      v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
       :include="types"
       :items="containerElements"
@@ -116,16 +116,25 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components-next';
 import { computed, inject, ref } from 'vue';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import filter from 'lodash/filter';
 import sortBy from 'lodash/sortBy';
 
-const props = defineProps({
-  name: { type: String, required: true },
-  container: { type: Object, required: true },
-  elements: { type: Object, required: true },
-  types: { type: Array, default: null },
-  layout: { type: Boolean, default: true },
-  isDisabled: { type: Boolean, default: false },
+interface Props {
+  name: string;
+  container: Activity;
+  elements: Record<string, ContentElement>;
+  position: number;
+  types?: string[] | null;
+  layout?: boolean;
+  disabled?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  types: null,
+  layout: true,
+  disabled: false,
 });
 
 const emit = defineEmits([
@@ -135,14 +144,14 @@ const emit = defineEmits([
   'save:element',
 ]);
 
-const doTheMagic = inject('$doTheMagic') as any;
+const doTheMagic = inject<any>('$doTheMagic');
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 
 const generateContent = async () => {
   isAiGeneratingContent.value = true;
   const elements = await doTheMagic({ type: props.container.type });
-  elements.forEach((element: any, index: number) => {
+  elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,
       position: index,
@@ -161,12 +170,12 @@ const containerElements = computed(() => {
 const insertPosition = ref(0);
 const isElementDrawerVisible = ref(false);
 
-const reorder = ({ newPosition }) => {
+const reorder = ({ newPosition }: { newPosition: number }) => {
   emit('reorder:element', { items: containerElements.value, newPosition });
 };
 
 const showElementDrawer = (elementIndex: number) => {
-  if (props.isDisabled || !elementIndex) return;
+  if (props.disabled || !elementIndex) return;
   insertPosition.value = elementIndex;
   isElementDrawerVisible.value = true;
 };
@@ -176,13 +185,13 @@ const onElementDrawerClose = () => {
   insertPosition.value = 0;
 };
 
-const onElementAdd = (element: any) => {
+const onElementAdd = (element: ContentElement) => {
   emit('save:element', element);
   isElementDrawerVisible.value = false;
   insertPosition.value = 0;
 };
 
-const saveElement = (element: any, key: string, data: any) => {
+const saveElement = (element: ContentElement, key: string, data: any) => {
   emit('save:element', {
     ...element,
     [key]: data,

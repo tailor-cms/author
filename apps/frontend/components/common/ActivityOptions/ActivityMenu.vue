@@ -51,13 +51,13 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import first from 'lodash/first';
 import sortBy from 'lodash/sortBy';
 
 import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import InsertLocation from '@/lib/InsertLocation';
-import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useSelectedActivity } from '#imports';
 
@@ -65,17 +65,15 @@ const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
 
-const props = defineProps({
-  activity: { type: Object, required: true },
-});
+const props = defineProps<{ activity: StoreActivity }>();
 
 const { $eventBus } = useNuxtApp() as any;
 const selectedActivity = useSelectedActivity(props.activity);
 
 const showCreateDialog = ref(false);
 const showCopyDialog = ref(false);
-const action = ref('');
-const supportedLevels = ref<any[]>([]);
+const action = ref<InsertLocation>(ADD_AFTER);
+const supportedLevels = ref<string[]>([]);
 
 const addMenuOptions = computed(() => {
   const items = [
@@ -126,13 +124,13 @@ const menuOptions = computed(() => {
   ];
 });
 
-const setCreateContext = (actionValue: string) => {
+const setCreateContext = (actionValue: InsertLocation) => {
   action.value = actionValue;
   showCreateDialog.value = true;
 };
 
-const setCopyContext = (levels: any[], actionValue: string) => {
-  supportedLevels.value = levels;
+const setCopyContext = (levels: Activity[], actionValue: InsertLocation) => {
+  supportedLevels.value = levels.map((it) => it.type);
   action.value = actionValue;
   showCopyDialog.value = true;
 };
