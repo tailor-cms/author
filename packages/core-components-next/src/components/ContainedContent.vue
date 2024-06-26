@@ -14,7 +14,7 @@
     <span v-if="!isDisabled" class="drag-handle">
       <span class="mdi mdi-drag-vertical"></span>
     </span>
-    <Element
+    <ContentElementWrapper
       v-bind="bindings"
       @add="$emit('add', $event)"
       @delete="$emit('delete')"
@@ -30,7 +30,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 
-import Element from './ContentElement.vue';
+import ContentElementWrapper from './ContentElement.vue';
 
 interface Props {
   element: ContentElement;

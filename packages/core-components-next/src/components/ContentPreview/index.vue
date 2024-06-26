@@ -9,7 +9,7 @@
     No available elements.
   </VAlert>
   <VRow v-for="container in processedContainers" :key="container.id">
-    <Element
+    <ContentElementWrapper
       v-for="element in container.elements"
       :key="element.id"
       :element="element"
@@ -33,7 +33,7 @@ import type { ContentContainer } from '@tailor-cms/interfaces/activity';
 import flatMap from 'lodash/flatMap';
 import keyBy from 'lodash/keyBy';
 
-import Element from './ContentElement.vue';
+import ContentElementWrapper from './ContentElement.vue';
 
 interface Props {
   allowedTypes: string[];
