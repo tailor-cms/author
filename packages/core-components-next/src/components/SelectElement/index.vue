@@ -70,7 +70,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity, ContentContainer } from '@tailor-cms/interfaces/activity';
+import type {
+  Activity,
+  ContentContainer,
+} from '@tailor-cms/interfaces/activity';
 import { computed, inject, onMounted, reactive } from 'vue';
 import type {
   ContentElement,
