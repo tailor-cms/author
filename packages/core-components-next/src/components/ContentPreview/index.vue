@@ -64,8 +64,8 @@ const processedContainers = computed(() => {
   if (!allowedTypes.length) return contentContainers;
   return contentContainers.map((container) => ({
     ...container,
-    elements: container.elements.filter(({ type }) =>
-      props.allowedTypes.includes(type),
+    elements: container.elements?.filter((it) =>
+      props.allowedTypes.includes(it.type),
     ),
   }));
 });

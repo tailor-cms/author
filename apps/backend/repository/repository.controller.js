@@ -4,6 +4,7 @@ import { NO_CONTENT, NOT_FOUND } from 'http-status-codes';
 import { createError } from '../shared/error/helpers.js';
 import db from '../shared/database/index.js';
 import getVal from 'lodash/get.js';
+import groupBy from 'lodash/groupBy.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
@@ -40,23 +41,23 @@ const getFilter = (search) => {
   return { [Op.iLike]: term };
 };
 
+const includeUser = () => ({
+  model: User,
+  paranoid: false,
+  attributes: [
+    'id',
+    'email',
+    'firstName',
+    'lastName',
+    'fullName',
+    'label',
+    'imgUrl',
+  ],
+});
+
 const includeLastRevision = () => ({
   model: Revision,
-  include: [
-    {
-      model: User,
-      paranoid: false,
-      attributes: [
-        'id',
-        'email',
-        'firstName',
-        'lastName',
-        'fullName',
-        'label',
-        'imgUrl',
-      ],
-    },
-  ],
+  include: [includeUser()],
   order: [['createdAt', 'DESC']],
   limit: 1,
 });
@@ -83,13 +84,25 @@ async function index({ query, user, opts }, res) {
   if (schemas) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   opts.include = [
-    includeLastRevision(),
     includeRepositoryUser(user, query),
     ...includeRepositoryTags(query),
   ];
-  opts.distinct = true;
-  const { rows, count } = await Repository.findAndCountAll(opts);
-  res.json({ total: count, items: rows });
+  const { rows: repositories, count } = await Repository.findAndCountAll(opts);
+  const revisions = await Revision.findAll({
+    where: { repositoryId: repositories.map((it) => it.id) },
+    include: [includeUser()],
+    attributes: [
+      'repositoryId',
+      [sequelize.fn('max', sequelize.col('revision.created_at')), 'createdAt'],
+    ],
+    group: ['repositoryId', 'user.id'],
+  });
+  const revisionsByRepository = groupBy(revisions, 'repositoryId');
+  const items = repositories.map((repository) => ({
+    ...repository.toJSON(),
+    revisions: revisionsByRepository[repository.id],
+  }));
+  res.json({ total: count, items });
 }
 
 async function create({ user, body }, res) {

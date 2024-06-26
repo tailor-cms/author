@@ -159,7 +159,8 @@ class Activity extends Model {
   }
 
   static async cloneActivities(src, dstRepositoryId, dstParentId, opts) {
-    if (!opts.idMappings) opts.idMappings = {};
+    if (!opts.idMappings)
+      opts.idMappings = { activity: {}, contentElement: {} };
     const { idMappings, context, transaction } = opts;
     const dstActivities = await Activity.bulkCreate(
       map(src, (it) => ({
@@ -174,13 +175,15 @@ class Activity extends Model {
       src,
       async (acc, it, index) => {
         const parent = dstActivities[index];
-        acc[it.id] = parent.id;
+        acc.activity[it.id] = parent.id;
         const where = { activityId: it.id, detached: false };
         const elements = await ContentElement.findAll({ where, transaction });
-        await ContentElement.cloneElements(elements, parent, {
-          context,
-          transaction,
-        });
+        const elementMapping = await ContentElement.cloneElements(
+          elements,
+          parent,
+          { context, transaction },
+        );
+        acc.contentElement = { ...acc.contentElement, ...elementMapping };
         const children = await it.getChildren({ where: { detached: false } });
         if (!children.length) return acc;
         return Activity.cloneActivities(

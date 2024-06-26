@@ -1,5 +1,7 @@
 import { calculatePosition } from '@tailor-cms/utils';
 import { ContentElement as Events } from 'sse-event-types';
+import flatMap from 'lodash/flatMap';
+import flatten from 'lodash/flatten';
 
 import { contentElement as api } from '@/api';
 import type { ContentElement } from '@/api/interfaces/content-element';
@@ -38,6 +40,13 @@ export const useContentElementStore = defineStore('contentElements', () => {
       repositoryId,
       params,
     );
+    // Make sure to fetch all referenced elements
+    const ref = flatMap(contentElements, (v) => flatten(Object.values(v.refs)));
+    if (ref.length) {
+      const opts = { ids: ref.map((it: any) => it.containerId) };
+      const refElements = await api.fetch(repositoryId, opts);
+      contentElements.push(...refElements);
+    }
     $items.clear();
     contentElements.forEach((it) => add(it));
     return items.value;
