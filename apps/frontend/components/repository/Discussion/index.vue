@@ -20,6 +20,7 @@ import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components-ne
 import { computed } from 'vue';
 import get from 'lodash/get';
 import orderBy from 'lodash/orderBy';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
@@ -41,7 +42,7 @@ provide('$ceRegistry', $ceRegistry);
 const authStore = useAuthStore();
 const commentStore = useCommentStore();
 
-const user = computed(() => authStore.user);
+const user = computed(() => authStore.user as User);
 
 const comments = computed(() => {
   const comments = commentStore.getActivityComments(props.activity.id);

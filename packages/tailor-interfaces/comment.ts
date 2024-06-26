@@ -1,3 +1,5 @@
+import type { ContentElement } from './content-element';
+
 interface Author {
   id: number;
   email: string;
@@ -17,7 +19,7 @@ export interface Comment {
   contentElementId: number | null;
   content: string;
   author: Author;
-  contentElement: any | null;
+  contentElement: ContentElement | null;
   resolvedAt: string | null;
   createdAt: string;
   editedAt: string | null;

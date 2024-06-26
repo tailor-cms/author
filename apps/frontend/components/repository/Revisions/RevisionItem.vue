@@ -31,7 +31,7 @@
 <script lang="ts" setup>
 import find from 'lodash/find';
 import { formatTimeAgo } from '@vueuse/core';
-import type { Revision } from '@tailor-cms/interfaces/repository';
+import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import {
   getFormatDescription,
@@ -53,7 +53,7 @@ const isExpanded = ref(false);
 
 const activity = computed(() => {
   const { state } = props.revision;
-  const activityId = state.activityId || state.id;
+  const activityId = (state.activityId || state.id) as number;
   return getOutlineLocation(activityStore.getParent(activityId));
 });
 
