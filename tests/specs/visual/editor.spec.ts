@@ -15,13 +15,13 @@ test.beforeEach(async ({ page }) => {
   await page.goto(`/repository/${repositoryId}/editor/${id}`);
 });
 
-test('Take a snapshot of the editor page', async ({ page }) => {
+test('snapshot of the editor page', async ({ page }) => {
   await expect(page.getByText('The story of pizza begins')).toBeVisible();
   await page.waitForTimeout(2000);
   await percySnapshot(page, 'Editor page');
 });
 
-test('Take a snapshot of the editor page upon editing the HTML CE', async ({
+test('snapshot of the editor page upon editing the HTML CE', async ({
   page,
 }) => {
   await page.getByText('The story of pizza begins').isVisible();
@@ -36,7 +36,7 @@ test('Take a snapshot of the editor page upon editing the HTML CE', async ({
   await percySnapshot(page, 'Editor page - HTML Content Element editing');
 });
 
-test('Take a snapshot of the editor page upon adding new Content Element', async ({
+test('snapshot of the editor page upon adding new Content Element', async ({
   page,
 }) => {
   const editor = new Editor(page);
