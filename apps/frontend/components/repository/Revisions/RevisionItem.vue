@@ -2,6 +2,7 @@
   <li>
     <VListItem
       :active="isExpanded"
+      :class="{ 'rounded-b-0': isExpanded }"
       :disabled="!isContentElement"
       rounded="lg"
       @click="toggle"
@@ -22,7 +23,8 @@
     <VFadeTransition>
       <EntityRevisions
         v-if="isExpanded"
-        v-bind="{ revision: props.revision, isDetached: !activity }"
+        :is-detached="!activity"
+        :revision="props.revision"
       />
     </VFadeTransition>
   </li>
@@ -81,7 +83,15 @@ const toggle = () => {
 </script>
 
 <style lang="scss" scoped>
+li + li {
+  margin-top: 0.5rem;
+}
+
 .v-list-item--disabled {
   opacity: 1;
+}
+
+.v-list-item {
+  transition: all 0.3s ease;
 }
 </style>

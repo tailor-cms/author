@@ -1,5 +1,10 @@
 <template>
-  <VList max-height="31.25rem" rounded="lg">
+  <VList
+    base-color="primary-darken-4"
+    bg-color="primary-lighten-5"
+    max-height="32rem"
+    rounded="lg"
+  >
     <VListSubheader>Changes</VListSubheader>
     <VDivider />
     <VHover
@@ -10,12 +15,11 @@
       <VListItem
         v-bind="hoverProps"
         :active="isSelected(revision)"
-        color="primary-darken-4"
+        :subtitle="revision.user.label"
+        :title="formatDate(revision)"
         lines="two"
         @click="$emit('preview', revision)"
       >
-        <VListItemTitle>{{ formatDate(revision) }}</VListItemTitle>
-        <VListItemSubtitle>{{ revision.user.label }}</VListItemSubtitle>
         <template v-if="isHovering" #append>
           <VBtn
             v-show="!isDetached && index > 0 && !loading[revision.id]"
@@ -33,6 +37,7 @@
           indeterminate
         />
       </VListItem>
+      <VDivider />
     </VHover>
   </VList>
 </template>

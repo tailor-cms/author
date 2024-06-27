@@ -1,10 +1,9 @@
 <template>
-  <VSheet color="primary-lighten-4" min-height="300">
+  <VSheet class="rounded-b-lg" color="primary-lighten-4" min-height="300">
     <VRow class="ma-0 pa-2">
       <VCol cols="8">
-        <VSheet color="primary-lighten-5" rounded="lg">
+        <VSheet v-if="selectedRevision" color="primary-lighten-5" rounded="lg">
           <ContentElementWrapper
-            v-if="selectedRevision"
             :element="selectedRevision?.state as unknown as ContentElement"
             is-disabled
           />
@@ -104,3 +103,9 @@ onMounted(async () => {
   return previewRevision(props.revision);
 });
 </script>
+
+<style lang="scss" scoped>
+:deep(.frame) {
+  border: none;
+}
+</style>
