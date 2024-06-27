@@ -71,11 +71,12 @@ const areAllItemsFetched = ref(false);
 const bundledRevisions = computed(() => {
   return reduce(
     revisions.value,
-    (acc: any, it: any) => {
-      const prevRevision = last(acc) as any;
-      if (!prevRevision) return acc.push(it);
-      const isSameOperation = prevRevision?.operation === it.operation;
-      if (!isSameInstance(prevRevision, it) || !isSameOperation) acc.push(it);
+    (acc: Revision[], it: Revision) => {
+      const prevRevision = last(acc);
+      if (prevRevision) {
+        const isSameOperation = prevRevision.operation === it.operation;
+        if (!isSameInstance(prevRevision, it) || !isSameOperation) acc.push(it);
+      }
       return acc;
     },
     [revisions.value[0]],
@@ -84,26 +85,24 @@ const bundledRevisions = computed(() => {
 
 const fetchRevisions = async () => {
   isFetching.value = true;
-  const { items, total } = await api.fetch(
-    currentRepositoryStore.repository?.id,
-    queryParams,
-  );
+  const repositoryId = currentRepositoryStore.repository?.id;
+  if (!repositoryId) return;
+  const { items, total }: { items: Revision[]; total: number } =
+    await api.fetch(repositoryId, queryParams);
   revisions.value = uniqBy([...revisions.value, ...items], 'uid');
   // Make sure to fetch all activities for the revisions
   const activityIds = uniq(
     items.map((it) => it.state.activityId || it.state.id),
   );
-  await activityStore.fetch(currentRepositoryStore.repositoryId, {
-    activityIds,
-  });
+  await activityStore.fetch(repositoryId, { activityIds });
   areAllItemsFetched.value = total <= queryParams.offset + queryParams.limit;
   queryParams.offset += queryParams.limit;
   isFetching.value = false;
 };
 
-const loadMore = async ({ done }: any) => {
+const loadMore = async (options: any) => {
   await fetchRevisions();
-  done();
+  options.done('ok');
 };
 
 onMounted(() => {

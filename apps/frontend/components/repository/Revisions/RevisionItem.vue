@@ -29,6 +29,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import find from 'lodash/find';
 import { formatTimeAgo } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
@@ -67,7 +68,7 @@ const isContentElement = computed(
   () => props.revision.entity === 'CONTENT_ELEMENT',
 );
 
-const getOutlineLocation: any = (activity: any) => {
+const getOutlineLocation: any = (activity: Activity) => {
   if (!activity) return null;
   const level = find(currentRepositoryStore.taxonomy, { type: activity.type });
   if (level) return { ...activity, label: level.label };

@@ -3,9 +3,9 @@
     <VRow class="ma-0 pa-2">
       <VCol cols="8">
         <VSheet color="primary-lighten-5" rounded="lg">
-          <ContentElement
+          <ContentElementWrapper
             v-if="selectedRevision?.resolved"
-            :element="selectedRevision?.state"
+            :element="selectedRevision?.state as unknown as ContentElement"
             is-disabled
           />
         </VSheet>
@@ -26,7 +26,8 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
-import { ContentElement } from '@tailor-cms/core-components-next';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-components-next';
 import first from 'lodash/first';
 import get from 'lodash/get';
 import includes from 'lodash/includes';
@@ -58,14 +59,17 @@ const repositoryId = computed(() => props.revision.repositoryId);
 const getRevisions = async () => {
   const { entity, state } = props.revision;
   const params = { entity, entityId: state.id };
-  const { items } = await revisionApi.fetch(repositoryId.value, params);
-  return items.map((it: any) => {
+  const { items }: { items: Revision[] } = await revisionApi.fetch(
+    repositoryId.value,
+    params,
+  );
+  return items.map((it) => {
     const resolved = includes(WITHOUT_STATICS, it.state.type);
     return Object.assign(it, { resolved });
   });
 };
 
-const previewRevision = async (revision: any) => {
+const previewRevision = async (revision: Revision) => {
   if (get(selectedRevision.value, 'id') === revision.id) return;
   if (!revision.resolved) {
     revision.loading = true;
@@ -75,21 +79,23 @@ const previewRevision = async (revision: any) => {
   selectedRevision.value = revision;
 };
 
-const rollback = async (revision: any) => {
+const rollback = async (revision: Revision) => {
   revision.loading = true;
-  const entity = { ...revision.state, paranoid: false };
+  const entity = { ...revision.state, paranoid: false } as any;
   const { id, repositoryId } = entity;
   await contentElementApi.patch(repositoryId, id, entity);
   const items = await getRevisions();
   const newRevision = first(items);
-  revisions.value.unshift(newRevision);
-  await previewRevision(newRevision);
+  if (newRevision) {
+    revisions.value.unshift(newRevision);
+    await previewRevision(newRevision);
+  }
   revision.loading = false;
   if (sidebar.value) sidebar.value.scrollTop = 0;
 };
 
 onMounted(async () => {
-  await getRevisions().then((it) => (revisions.value = it));
+  revisions.value = await getRevisions();
   return previewRevision(props.revision);
 });
 </script>
