@@ -8,13 +8,13 @@
       mode="manual"
       @load="fetchRevisions"
     >
-      <ul>
+      <VList bg-color="transparent" lines="two" tag="ul">
         <RevisionItem
           v-for="revision in bundledRevisions"
           :key="revision.uid"
           :revision="revision"
         />
-      </ul>
+      </VList>
       <template #load-more="{ props: scrollProps }">
         <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="scrollProps">
           Load more

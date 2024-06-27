@@ -1,25 +1,24 @@
 <template>
-  <!-- eslint-disable
-    vuejs-accessibility/click-events-have-key-events,
-    vuejs-accessibility/no-static-element-interactions -->
   <li>
-    <div
-      :class="{ isExpanded, expandable: isContentElement }"
-      :style="{ cursor: isContentElement ? 'pointer' : 'auto' }"
-      class="revision"
+    <VListItem
+      :active="isExpanded"
+      :disabled="!isContentElement"
+      rounded="lg"
       @click="toggle"
     >
-      <VAvatar :color="color" size="42">{{ acronym }}</VAvatar>
-      <div class="content ml-3">
-        <div class="text-subtitle-1 text-truncate text-primary-lighten-4">
-          {{ description }}
-        </div>
-        <div class="text-body-2 text-primary-lighten-2">
-          {{ formatTimeAgo(date, { rounding: 'floor' }) }} by
-          {{ revision.user.label }}
-        </div>
-      </div>
-    </div>
+      <template #prepend>
+        <VAvatar :color="color" size="42">{{ acronym }}</VAvatar>
+      </template>
+      <VListItemTitle
+        class="text-subtitle-1 text-truncate text-primary-lighten-4"
+      >
+        {{ description }}
+      </VListItemTitle>
+      <VListItemSubtitle class="text-body-2 text-primary-lighten-3">
+        {{ formatTimeAgo(date, { rounding: 'floor' }) }} by
+        {{ revision.user.label }}
+      </VListItemSubtitle>
+    </VListItem>
     <VFadeTransition>
       <EntityRevisions
         v-if="isExpanded"
@@ -81,20 +80,7 @@ const toggle = () => {
 </script>
 
 <style lang="scss" scoped>
-.revision {
-  display: flex;
-  align-items: center;
-  min-height: 4.5rem;
-  padding: 0 1rem;
-
-  .content {
-    flex: 1;
-    overflow: hidden;
-  }
-}
-
-.expandable.isExpanded,
-.expandable.revision:hover {
-  background-color: rgba(var(--v-theme-primary-darken-2));
+.v-list-item--disabled {
+  opacity: 1;
 }
 </style>
