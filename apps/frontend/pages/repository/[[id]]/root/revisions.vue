@@ -4,9 +4,8 @@
       v-if="revisions.length > 0"
       class="revisions"
       color="primary-lighten-2"
-      empty-text=""
       mode="manual"
-      @load="fetchRevisions"
+      @load="loadMore"
     >
       <VList bg-color="transparent" lines="two" tag="ul">
         <RevisionItem
@@ -37,7 +36,7 @@
 <script lang="ts" setup>
 import last from 'lodash/last';
 import reduce from 'lodash/reduce';
-import type { Revision } from '@tailor-cms/interfaces/repository';
+import type { Revision } from '@tailor-cms/interfaces/revision';
 import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 
@@ -98,17 +97,17 @@ const fetchRevisions = async () => {
     activityIds,
   });
   areAllItemsFetched.value = total <= queryParams.offset + queryParams.limit;
+  queryParams.offset += queryParams.limit;
   isFetching.value = false;
 };
 
-const resetPagination = () => {
-  queryParams.offset = 0;
-  queryParams.limit = 200;
+const loadMore = async ({ done }: any) => {
+  await fetchRevisions();
+  done();
 };
 
 onMounted(() => {
-  resetPagination();
-  fetchRevisions();
+  return fetchRevisions();
 });
 </script>
 
