@@ -49,6 +49,14 @@ test('Take a snapshot of the editor page upon adding new Content Element', async
   await percySnapshot(page, 'Editor page - Add content element dialog');
 });
 
+test('snapshot of the editor page comments section', async ({ page }) => {
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  await page.getByRole('tab', { name: 'Comments' }).click();
+  await expect(page.getByText('Be the First to Comment!')).toBeVisible();
+  await percySnapshot(page, 'Editor page - Comments section');
+});
+
 test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });
