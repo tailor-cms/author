@@ -3,10 +3,9 @@
     vuejs-accessibility/click-events-have-key-events,
     vuejs-accessibility/no-static-element-interactions -->
   <li>
-    <!-- TODO: Migrate expansion once we have elements with disabled state -->
     <div
-      :class="{ isExpanded, expandable: false && isContentElement }"
-      :style="{ cursor: false && isContentElement ? 'pointer' : 'auto' }"
+      :class="{ isExpanded, expandable: isContentElement }"
+      :style="{ cursor: isContentElement ? 'pointer' : 'auto' }"
       class="revision"
       @click="toggle"
     >
@@ -21,10 +20,12 @@
         </div>
       </div>
     </div>
-    <EntityRevisions
-      v-if="isExpanded"
-      v-bind="{ revision: props.revision, isDetached: !activity }"
-    />
+    <VFadeTransition>
+      <EntityRevisions
+        v-if="isExpanded"
+        v-bind="{ revision: props.revision, isDetached: !activity }"
+      />
+    </VFadeTransition>
   </li>
 </template>
 
@@ -94,6 +95,6 @@ const toggle = () => {
 
 .expandable.isExpanded,
 .expandable.revision:hover {
-  background-color: #dadada;
+  background-color: rgba(var(--v-theme-primary-darken-2));
 }
 </style>
