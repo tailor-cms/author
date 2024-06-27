@@ -18,16 +18,16 @@
         <VListItemSubtitle>{{ revision.user.label }}</VListItemSubtitle>
         <template v-if="isHovering" #append>
           <VBtn
-            v-show="!isDetached && index > 0 && !revision.loading"
+            v-show="!isDetached && index > 0 && !loading[revision.id]"
             class="rollback"
             icon="mdi mdi-restore"
             size="small"
             variant="tonal"
-            @click.stop="$emit('rollback', revision)"
+            @click="$emit('rollback', revision)"
           />
         </template>
         <VProgressLinear
-          v-show="revision.loading"
+          v-show="loading[revision.id]"
           class="mt-2"
           color="primary"
           indeterminate
@@ -43,6 +43,7 @@ import type { Revision } from '@tailor-cms/interfaces/revision';
 
 interface Props {
   revisions?: Revision[];
+  loading: Record<string, boolean>;
   selected?: Revision | null;
   isDetached?: boolean;
 }
@@ -54,10 +55,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 defineEmits(['preview', 'rollback']);
 
-const isSelected = (revision: Revision) => {
-  return props.selected?.id === revision.id;
-};
-
+const isSelected = (revision: Revision) => props.selected?.id === revision.id;
 const formatDate = (revision: Revision) => {
   return format(new Date(revision.createdAt), 'M/D/YY h:mm A');
 };
