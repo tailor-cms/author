@@ -17,6 +17,7 @@
         :active="isSelected(revision)"
         :subtitle="revision.user.label"
         :title="formatDate(revision)"
+        class="position-relative"
         lines="two"
         @click="$emit('preview', revision)"
       >
@@ -31,8 +32,7 @@
           />
         </template>
         <VProgressLinear
-          v-show="loading[revision.id]"
-          class="mt-2"
+          v-if="loading[revision.id]"
           color="primary"
           indeterminate
         />
@@ -65,3 +65,12 @@ const formatDate = (revision: Revision) => {
   return format(new Date(revision.createdAt), 'M/D/YY h:mm A');
 };
 </script>
+
+<style lang="scss" scoped>
+.v-progress-linear {
+  position: absolute;
+  top: unset !important;
+  bottom: 0;
+  left: 0;
+}
+</style>

@@ -31,6 +31,7 @@ import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-compon
 import find from 'lodash/find';
 import first from 'lodash/first';
 import get from 'lodash/get';
+import { promiseTimeout } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import {
@@ -75,6 +76,7 @@ const previewRevision = async (revision: Revision) => {
     repositoryId.value,
     revision.id,
   );
+  await promiseTimeout(600);
   loading.value[revision.id] = false;
 };
 
