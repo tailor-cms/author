@@ -31,7 +31,6 @@ import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-compon
 import find from 'lodash/find';
 import first from 'lodash/first';
 import get from 'lodash/get';
-import includes from 'lodash/includes';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import {
@@ -39,8 +38,6 @@ import {
   revision as revisionApi,
 } from '@/api';
 import EntitySidebar from './EntitySidebar.vue';
-
-const WITHOUT_STATICS = ['CE_HTML_DEFAULT'];
 
 interface Props {
   revision: Revision;
@@ -71,9 +68,7 @@ const getRevisions = async () => {
 
 const previewRevision = async (revision: Revision) => {
   if (get(selectedRevision.value, 'id') === revision.id) return;
-  const withoutStatics = includes(WITHOUT_STATICS, revision.state.type);
   const resolvedRevision = find(resolvedRevisions.value, { id: revision.id });
-  if (withoutStatics) return (selectedRevision.value = revision);
   if (resolvedRevision) return (selectedRevision.value = resolvedRevision);
   loading.value[revision.id] = true;
   selectedRevision.value = await revisionApi.get(
