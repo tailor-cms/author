@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { confirmAction } from '../../pom/common/utils.ts';
 import { Editor } from '../../pom/editor/Editor';
 import { percySnapshot } from '../../utils/percy.ts';
 import SeedClient from '../../api/SeedClient';
@@ -55,6 +56,20 @@ test('snapshot of the editor page comments section', async ({ page }) => {
   await page.getByRole('tab', { name: 'Comments' }).click();
   await expect(page.getByText('Be the First to Comment!')).toBeVisible();
   await percySnapshot(page, 'Editor page - Comments section');
+});
+
+test('snapshot of the editor page displaying the publish diff', async ({
+  page,
+}) => {
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  await page.getByRole('button', { name: 'Publish', exact: true }).click();
+  await confirmAction(page);
+  await editor.addContentElement('This is a test');
+  await page.waitForTimeout(1000);
+  await page.reload();
+  await page.getByLabel('Compare with published').click();
+  await percySnapshot(page, 'Editor page - publish diff');
 });
 
 test.afterAll(async () => {
