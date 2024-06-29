@@ -4,6 +4,7 @@
       :active="isExpanded"
       :class="{ 'rounded-b-0': isExpanded }"
       :disabled="!isContentElement"
+      class="revision"
       rounded="lg"
       @click="toggle"
     >
@@ -87,11 +88,11 @@ li + li {
   margin-top: 0.5rem;
 }
 
-.v-list-item--disabled {
-  opacity: 1;
-}
-
-.v-list-item {
+.revision.v-list-item {
   transition: all 0.3s ease;
+
+  &.v-list-item--disabled {
+    opacity: 1;
+  }
 }
 </style>
