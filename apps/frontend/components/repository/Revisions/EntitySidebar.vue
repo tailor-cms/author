@@ -1,45 +1,47 @@
 <template>
-  <VList
-    base-color="primary-darken-4"
-    bg-color="primary-lighten-5"
-    max-height="32rem"
-    rounded="lg"
-  >
-    <VListSubheader>Changes</VListSubheader>
+  <VSheet color="primary-lighten-5" rounded="lg">
+    <div class="text-overline px-4 py-1">Changes</div>
     <VDivider />
-    <VHover
-      v-for="(revision, index) in revisions"
-      :key="revision.id"
-      v-slot="{ isHovering, props: hoverProps }"
+    <VList
+      base-color="primary-darken-4"
+      bg-color="transparent"
+      class="rounded-b-lg pa-0"
+      max-height="32rem"
     >
-      <VListItem
-        v-bind="hoverProps"
-        :active="isSelected(revision)"
-        :subtitle="revision.user.label"
-        :title="formatDate(revision)"
-        class="position-relative"
-        lines="two"
-        @click="$emit('preview', revision)"
+      <VHover
+        v-for="(revision, index) in revisions"
+        :key="revision.id"
+        v-slot="{ isHovering, props: hoverProps }"
       >
-        <template v-if="isHovering" #append>
-          <VBtn
-            v-show="!isDetached && index > 0 && !loading[revision.id]"
-            class="rollback"
-            icon="mdi mdi-restore"
-            size="small"
-            variant="tonal"
-            @click="$emit('rollback', revision)"
+        <VListItem
+          v-bind="hoverProps"
+          :active="isSelected(revision)"
+          :subtitle="revision.user.label"
+          :title="formatDate(revision)"
+          class="position-relative"
+          lines="two"
+          @click="$emit('preview', revision)"
+        >
+          <template v-if="isHovering" #append>
+            <VBtn
+              v-show="!isDetached && index > 0 && !loading[revision.id]"
+              class="rollback"
+              icon="mdi mdi-restore"
+              size="small"
+              variant="tonal"
+              @click="$emit('rollback', revision)"
+            />
+          </template>
+          <VProgressLinear
+            v-if="loading[revision.id]"
+            color="primary"
+            indeterminate
           />
-        </template>
-        <VProgressLinear
-          v-if="loading[revision.id]"
-          color="primary"
-          indeterminate
-        />
-      </VListItem>
-      <VDivider />
-    </VHover>
-  </VList>
+        </VListItem>
+        <VDivider />
+      </VHover>
+    </VList>
+  </VSheet>
 </template>
 
 <script lang="ts" setup>
