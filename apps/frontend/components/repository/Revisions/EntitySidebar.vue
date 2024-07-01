@@ -26,7 +26,7 @@
             <VBtn
               v-show="!isDetached && index > 0 && !loading[revision.id]"
               class="rollback"
-              icon="mdi mdi-restore"
+              icon="mdi-restore"
               size="small"
               variant="tonal"
               @click="$emit('rollback', revision)"
