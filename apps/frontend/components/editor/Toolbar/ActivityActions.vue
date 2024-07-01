@@ -10,6 +10,7 @@
           <VBtn
             v-bind="tooltipProps"
             :active="active"
+            :aria-label="title"
             :color="active ? 'secondary-lighten-3' : 'primary-lighten-1'"
             :disabled="disabled"
             :icon="`mdi-${icon}`"
