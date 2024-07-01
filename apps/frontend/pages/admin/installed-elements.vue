@@ -9,9 +9,9 @@
     />
     <VList
       :opened="Object.keys(filteredRegistry)"
+      bg-color="transparent"
       class="pa-0"
       rounded="lg"
-      border
       slim
     >
       <VListGroup
@@ -27,7 +27,7 @@
         <VAlert
           v-if="!elements.length"
           class="ma-4"
-          color="primary-lighten-1"
+          color="primary-darken-4"
           icon="mdi-information-outline"
           variant="tonal"
         >

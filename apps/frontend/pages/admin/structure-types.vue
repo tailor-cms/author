@@ -12,10 +12,11 @@
       :search="search"
       :slim="false"
       base-color="primary-darken-3"
+      bg-color="transparent"
       class="pa-0"
       item-title="label"
       item-type=""
-      border
+      item-value="id"
       open-all
       rounded
     >
