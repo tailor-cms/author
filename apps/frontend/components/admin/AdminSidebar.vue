@@ -27,7 +27,7 @@ const routes = computed(() => {
   return [
     { label: 'System Users', name: 'system-user-management', icon: 'account' },
     // { label: 'Structure Types', name: 'installed-schemas', icon: 'file-tree' },
-    // { label: 'Installed Elements', name: 'installed-elements', icon: 'puzzle' },
+    { label: 'Installed Elements', name: 'installed-elements', icon: 'puzzle' },
   ].map((it) => ({ ...it, query: route.query }));
 });
 </script>
