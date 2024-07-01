@@ -25,8 +25,6 @@ test('snapshot of the editor page', async ({ page }) => {
 test('snapshot of the editor page upon editing the HTML CE', async ({
   page,
 }) => {
-  await page.getByText('The story of pizza begins').isVisible();
-  await page.waitForTimeout(2000);
   const editor = new Editor(page);
   await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
   const containers = await editor.containerList.getContainers();
@@ -66,6 +64,7 @@ test('snapshot of the editor page displaying the publish diff', async ({
   await page.getByRole('button', { name: 'Publish', exact: true }).click();
   await confirmAction(page);
   await editor.addContentElement('This is a test');
+  // Wait for the changes to be saved
   await page.waitForTimeout(1000);
   await page.reload();
   await page.getByLabel('Compare with published').click();
