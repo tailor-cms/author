@@ -56,15 +56,22 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import type { Comment } from '@tailor-cms/interfaces/comment';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';
 
-const props = defineProps({
-  comment: { type: Object, required: true },
-  isActivityThread: { type: Boolean, default: false },
-  elementLabel: { type: String, default: null },
-  user: { type: Object, required: true },
+interface Props {
+  user: User;
+  comment: Comment;
+  isActivityThread?: boolean;
+  elementLabel?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isActivityThread: false,
+  elementLabel: '',
 });
 
 const emit = defineEmits(['remove', 'resolve', 'unresolve', 'update']);

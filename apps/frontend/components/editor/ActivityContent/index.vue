@@ -41,6 +41,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import differenceBy from 'lodash/differenceBy';
 import find from 'lodash/find';
 import get from 'lodash/get';
@@ -49,18 +51,16 @@ import isEqual from 'lodash/isEqual';
 import map from 'lodash/map';
 import max from 'lodash/max';
 import pMinDelay from 'p-min-delay';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import throttle from 'lodash/throttle';
 import transform from 'lodash/transform';
 import uniqBy from 'lodash/uniqBy';
 import without from 'lodash/without';
 
-import type { Activity } from '@/api/interfaces/activity';
 import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
-import type { ContentElement } from '@/api/interfaces/content-element';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
-import type { Repository } from '@/api/interfaces/repository';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
@@ -76,7 +76,7 @@ const CE_SELECTION_DELAY = 1000;
 const props = defineProps<{
   repository: Repository;
   activity: Activity;
-  rootContainerGroups: any;
+  rootContainerGroups: Record<string, Activity[]>;
   contentContainers: Activity[];
 }>();
 
@@ -133,7 +133,7 @@ const containerIds = computed(
   () => props.contentContainers?.map((it: any) => it.id) as any[],
 );
 
-const elementsWithComments = computed(() => {
+const elementsWithComments = computed<any>(() => {
   return transform(
     elements.value,
     (elementMap: { [key: string]: any }, element: ContentElement) => {
@@ -141,8 +141,8 @@ const elementsWithComments = computed(() => {
         (comment) => comment.contentElement?.uid === element.uid,
       );
       const lastSeen = max([
-        commentStore.$seen.contentElement[element.uid] || 0,
-        commentStore.$seen.activity[props.activity?.uid] || 0,
+        (commentStore.$seen.contentElement as any)[element.uid] || 0,
+        (commentStore.$seen.activity as any)[props.activity?.uid] || 0,
       ]);
       const hasUnresolvedComments = !!comments.length;
       elementMap[element.uid] = {

@@ -1,7 +1,6 @@
 <template>
-  <div>
+  <div v-if="editorStore.selectedActivity">
     <VToolbar
-      v-if="editorStore.selectedActivity"
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
@@ -25,9 +24,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from '@/api/interfaces/activity';
-import type { ContentElement } from '@/api/interfaces/content-element';
-import type { Repository } from '@/api/interfaces/repository';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { Repository } from '@tailor-cms/interfaces/repository';
+
 import { useCommentStore } from '@/stores/comments';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';

@@ -76,10 +76,10 @@ import map from 'lodash/map';
 import { role } from 'tailor-config-shared';
 import { title as titleCase } from 'to-case';
 import { useForm } from 'vee-validate';
+import type { User } from '@tailor-cms/interfaces/user';
 
 import { user as api } from '@/api';
 import TailorDialog from '@/components/common/TailorDialog.vue';
-import type { User } from '@/api/interfaces/user';
 
 export interface Props {
   visible: boolean;

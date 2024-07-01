@@ -6,7 +6,7 @@ import InsertLocation from '@/lib/InsertLocation';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-export const useSelectedActivity = (activity: StoreActivity) => {
+export const useSelectedActivity = (activity: StoreActivity | null) => {
   const { $schemaService } = useNuxtApp() as any;
   const repoStore = useCurrentRepository();
   const activityStore = useActivityStore();
@@ -59,8 +59,8 @@ export const useSelectedActivity = (activity: StoreActivity) => {
     if (uid) repoStore.toggleOutlineItemExpand(uid, true);
   };
 
-  const getAddDialogHeading = (action: string) => {
-    const heading = {
+  const getAddDialogHeading = (action: InsertLocation) => {
+    const heading: Record<string, string> = {
       [InsertLocation.ADD_BEFORE]: 'Add above',
       [InsertLocation.ADD_AFTER]: 'Add below',
       [InsertLocation.ADD_INTO]: 'Add into',

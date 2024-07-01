@@ -17,10 +17,17 @@
 </template>
 
 <script lang="ts" setup>
-defineProps({
-  show: { type: Boolean, default: false },
-  status: { type: Number, default: 0 },
-  width: { type: Number, default: 300 },
-  label: { type: String, default: 'Please wait...' },
+interface Props {
+  show?: boolean;
+  status?: number;
+  width?: number;
+  label?: string;
+}
+
+withDefaults(defineProps<Props>(), {
+  show: false,
+  status: 0,
+  width: 300,
+  label: 'Please wait...',
 });
 </script>

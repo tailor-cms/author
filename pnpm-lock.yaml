@@ -563,6 +563,9 @@ importers:
       '@tailor-cms/eslint-config':
         specifier: ^0.0.2
         version: 0.0.2(@typescript-eslint/eslint-plugin@7.13.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5))(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint-config-semistandard@17.0.0(eslint-config-standard@17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.2.0(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.2.0(eslint@8.57.0))(eslint@8.57.0))(eslint-config-standard@17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.2.0(eslint@8.57.0))(eslint@8.57.0))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@6.13.2(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-prettier@5.1.3(@types/eslint@8.56.10)(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint@8.57.0)(prettier@3.1.1))(eslint-plugin-promise@6.2.0(eslint@8.57.0))(eslint-plugin-vue@9.26.0(eslint@8.57.0))(eslint-plugin-vuejs-accessibility@2.3.0(eslint@8.57.0))(eslint@8.57.0)
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../packages/tailor-interfaces
       '@types/bluebird':
         specifier: ^3.5.42
         version: 3.5.42
@@ -694,6 +697,9 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
     devDependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../tailor-interfaces
       '@types/lodash':
         specifier: ^4.17.5
         version: 4.17.5
@@ -715,6 +721,13 @@ importers:
       vuetify:
         specifier: ^3.3.5
         version: 3.5.4(typescript@5.4.5)(vue@3.3.11(typescript@5.4.5))
+    devDependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      '@types/lodash':
+        specifier: '*'
+        version: 4.17.5
 
   packages/core-extensions/meta-inputs/meta-textarea:
     dependencies:
@@ -794,6 +807,8 @@ importers:
       rollup:
         specifier: ^4.18.0
         version: 4.18.0
+
+  packages/tailor-interfaces: {}
 
   packages/tailor-seed: {}
 
@@ -3642,9 +3657,6 @@ packages:
 
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
-
-  '@types/lodash@4.14.202':
-    resolution: {integrity: sha512-OvlIYQK9tNneDlS0VN54LLd5uiPCBOp7gS5Z0f1mjoJYBrtStzgmJBxONW3U6OZqdtNzZPmn9BS/7WI7BFFcFQ==}
 
   '@types/lodash@4.17.5':
     resolution: {integrity: sha512-MBIOHVZqVqgfro1euRDWX7OO0fBVUUMrN6Pwm8LQsz8cWhEpihlvR70ENj3f40j58TNxZaWv2ndSkInykNBBJw==}
@@ -12784,7 +12796,7 @@ snapshots:
       '@npmcli/package-json': 5.1.0(bluebird@3.7.2)
       '@npmcli/query': 3.1.0
       '@npmcli/redact': 1.1.0
-      '@npmcli/run-script': 8.0.0
+      '@npmcli/run-script': 8.0.0(bluebird@3.7.2)
       bin-links: 4.0.3
       cacache: 18.0.1
       common-ancestor-path: 1.0.1
@@ -12896,18 +12908,6 @@ snapshots:
   '@npmcli/redact@1.1.0': {}
 
   '@npmcli/redact@2.0.1': {}
-
-  '@npmcli/run-script@8.0.0':
-    dependencies:
-      '@npmcli/node-gyp': 3.0.0
-      '@npmcli/package-json': 5.1.0(bluebird@3.7.2)
-      '@npmcli/promise-spawn': 7.0.0
-      node-gyp: 10.0.1
-      proc-log: 4.2.0
-      which: 4.0.0
-    transitivePeerDependencies:
-      - bluebird
-      - supports-color
 
   '@npmcli/run-script@8.0.0(bluebird@3.7.2)':
     dependencies:
@@ -15085,8 +15085,6 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
-  '@types/lodash@4.14.202': {}
-
   '@types/lodash@4.17.5': {}
 
   '@types/markdown-it@14.1.1':
@@ -15894,7 +15892,7 @@ snapshots:
       '@vue/devtools-shared': 7.3.2
       '@vueuse/components': 10.11.0(vue@3.4.29(typescript@5.4.5))
       '@vueuse/core': 10.11.0(vue@3.4.29(typescript@5.4.5))
-      '@vueuse/integrations': 10.11.0(axios@1.7.2(debug@4.3.5))(change-case@5.4.4)(focus-trap@7.5.4)(sortablejs@1.14.0)(vue@3.4.29(typescript@5.4.5))
+      '@vueuse/integrations': 10.11.0(axios@1.7.2)(change-case@5.4.4)(focus-trap@7.5.4)(sortablejs@1.14.0)(vue@3.4.29(typescript@5.4.5))
       colord: 2.9.3
       floating-vue: 5.2.2(@nuxt/kit@3.12.2(magicast@0.3.4)(rollup@4.18.0))(vue@3.4.29(typescript@5.4.5))
       focus-trap: 7.5.4
@@ -16009,7 +16007,7 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@vueuse/integrations@10.11.0(axios@1.7.2(debug@4.3.5))(change-case@5.4.4)(focus-trap@7.5.4)(sortablejs@1.14.0)(vue@3.4.29(typescript@5.4.5))':
+  '@vueuse/integrations@10.11.0(axios@1.7.2)(change-case@5.4.4)(focus-trap@7.5.4)(sortablejs@1.14.0)(vue@3.4.29(typescript@5.4.5))':
     dependencies:
       '@vueuse/core': 10.11.0(vue@3.4.29(typescript@5.4.5))
       '@vueuse/shared': 10.11.0(vue@3.4.29(typescript@5.4.5))
@@ -20898,7 +20896,7 @@ snapshots:
       '@npmcli/installed-package-contents': 2.1.0
       '@npmcli/package-json': 5.1.0(bluebird@3.7.2)
       '@npmcli/promise-spawn': 7.0.0
-      '@npmcli/run-script': 8.0.0
+      '@npmcli/run-script': 8.0.0(bluebird@3.7.2)
       cacache: 18.0.1
       fs-minipass: 3.0.3
       minipass: 7.0.4
@@ -23253,7 +23251,7 @@ snapshots:
       '@vue/devtools-api': 7.3.2
       '@vue/shared': 3.4.27
       '@vueuse/core': 10.11.0(vue@3.4.29(typescript@5.4.5))
-      '@vueuse/integrations': 10.11.0(axios@1.7.2(debug@4.3.5))(change-case@5.4.4)(focus-trap@7.5.4)(sortablejs@1.14.0)(vue@3.4.29(typescript@5.4.5))
+      '@vueuse/integrations': 10.11.0(axios@1.7.2)(change-case@5.4.4)(focus-trap@7.5.4)(sortablejs@1.14.0)(vue@3.4.29(typescript@5.4.5))
       focus-trap: 7.5.4
       mark.js: 8.11.1
       minisearch: 6.3.0
@@ -23672,7 +23670,7 @@ snapshots:
   yup@0.32.11:
     dependencies:
       '@babel/runtime': 7.23.5
-      '@types/lodash': 4.14.202
+      '@types/lodash': 4.17.5
       lodash: 4.17.21
       lodash-es: 4.17.21
       nanoclone: 0.2.1

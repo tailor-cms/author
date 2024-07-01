@@ -21,8 +21,9 @@
 </template>
 
 <script lang="ts" setup>
+import type { Repository } from '@tailor-cms/interfaces/repository';
+
 import { repository as api } from '@/api';
-import type { Repository } from '~/api/interfaces/repository';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 
 const props = defineProps<{ repository: Repository }>();

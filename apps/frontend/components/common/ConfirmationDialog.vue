@@ -42,7 +42,7 @@ const appChannel = $eventBus.channel('app');
 const isVisible = ref(false);
 const context = ref(createContext());
 
-const open = (contextValue) => {
+const open = (contextValue: any) => {
   context.value = contextValue;
   isVisible.value = true;
   invoke(context.value, 'onOpen');

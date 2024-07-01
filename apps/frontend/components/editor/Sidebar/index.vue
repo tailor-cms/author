@@ -58,15 +58,15 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 
-import type { Activity } from '@/api/interfaces/activity';
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import ActivityNavigation from './ActivityNavigation.vue';
-import type { ContentElement } from '@/api/interfaces/content-element';
 import ElementSidebar from './ElementSidebar/index.vue';
-import type { Repository } from '@/api/interfaces/repository';
 
 const props = defineProps<{
   repository: Repository;
@@ -82,7 +82,7 @@ const ELEMENT_TAB = 'ELEMENT_TAB';
 const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 
 const selectedTab = ref(BROWSER_TAB);
-const tabs = computed(() => [
+const tabs: any = computed(() => [
   {
     name: BROWSER_TAB,
     label: 'Browse',

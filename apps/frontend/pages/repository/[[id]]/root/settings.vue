@@ -33,11 +33,12 @@
 </template>
 
 <script lang="ts" setup>
+import type { Repository } from '@tailor-cms/interfaces/repository';
+
 import AppFooter from '@/components/common/AppFooter.vue';
 import CloneModal from '@/components/repository/Settings/CloneModal.vue';
 import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
 import ProgressDialog from '@/components/common/ProgressDialog.vue';
-import type { Repository } from '~/api/interfaces/repository';
 import SettingsSidebar from '@/components/repository/Settings/SettingsSidebar.vue';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';

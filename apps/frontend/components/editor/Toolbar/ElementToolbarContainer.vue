@@ -18,9 +18,13 @@ import { getElementId } from '@tailor-cms/utils';
 
 import ElementToolbar from './ElementToolbar.vue';
 
-const props = defineProps({
-  element: { type: Object, required: true },
-  embed: { type: Object, default: null },
+interface Props {
+  element: any;
+  embed?: any;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  embed: null,
 });
 
 const elementBus = useContentElementBus(props.element);

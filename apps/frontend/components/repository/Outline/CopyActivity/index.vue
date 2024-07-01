@@ -16,8 +16,10 @@
         Copy
       </VBtn>
     </template>
-    <template #header>Copy items from {{ pluralize(schema.name) }}</template>
-    <template #body>
+    <template v-if="schema" #header>
+      Copy items from {{ pluralize(schema.name) }}
+    </template>
+    <template v-if="schema" #body>
       <div v-if="isCopyingActivities" class="ma-4">
         <div class="text-subtitle-1 text-center mb-2">
           Copying {{ selectedActivities.length }} items...
@@ -70,15 +72,15 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { InsertLocation } from '@tailor-cms/utils';
 import pluralize from 'pluralize';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import { SCHEMAS } from 'tailor-config-shared';
 import sortBy from 'lodash/sortBy';
 import { useLoader } from '@tailor-cms/core-components-next';
 
 import { activity as activityApi, repository as repositoryApi } from '@/api';
-import type { Activity } from '@/api/interfaces/activity';
-import type { Repository } from '@/api/interfaces/repository';
 import RepositoryTree from './RepositoryTree.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
@@ -88,7 +90,7 @@ const { ADD_AFTER, ADD_INTO } = InsertLocation;
 
 interface Props {
   repositoryId: number;
-  levels: number[];
+  levels: string[];
   action: string;
   anchor?: Activity | null;
   showActivator?: boolean;

@@ -15,8 +15,8 @@
           :revision="revision"
         />
       </ul>
-      <template #load-more="{ props }">
-        <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="props">
+      <template #load-more="{ props: scrollProps }">
+        <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="scrollProps">
           Load more
         </VBtn>
       </template>
@@ -37,12 +37,12 @@
 <script lang="ts" setup>
 import last from 'lodash/last';
 import reduce from 'lodash/reduce';
+import type { Revision } from '@tailor-cms/interfaces/repository';
 import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 
 import api from '@/api/revision';
 import { isSameInstance } from '@/lib/revision';
-import type { Revision } from '~/api/interfaces/repository';
 import RevisionItem from '@/components/repository/Revisions/RevisionItem.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';

@@ -48,6 +48,7 @@
 
 <script lang="ts" setup>
 import { ActiveUsers } from '@tailor-cms/core-components-next';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
 
 import ActivityActions from './ActivityActions.vue';
@@ -55,8 +56,12 @@ import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';
 
-defineProps({
-  element: { type: Object, default: null },
+interface Props {
+  element: ContentElement | null;
+}
+
+withDefaults(defineProps<Props>(), {
+  element: null,
 });
 
 const { $schemaService } = useNuxtApp() as any;

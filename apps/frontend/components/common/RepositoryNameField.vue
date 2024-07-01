@@ -23,6 +23,7 @@
 <script lang="ts" setup>
 import { object, string } from 'yup';
 import debounce from 'lodash/debounce';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import { useForm } from 'vee-validate';
 
 import api from '@/api/repository';
@@ -30,15 +31,22 @@ import api from '@/api/repository';
 const EXISTING_NAME_MSG =
   'Warning: a Repository with that name already exists.';
 
-const props = defineProps({
-  value: { type: String, default: '' },
-  label: { type: String, default: 'Name' },
-  repositoryId: { type: Number, default: null },
-  isValidated: { type: Boolean, default: true },
+interface Props {
+  value?: string;
+  label?: string;
+  repositoryId?: number | null;
+  isValidated?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  value: '',
+  label: 'Name',
+  repositoryId: null,
+  isValidated: true,
 });
 const emit = defineEmits(['change']);
 
-const existingRepositories = ref([]);
+const existingRepositories = ref<Repository[]>([]);
 const warning = ref('');
 
 const { defineField, handleSubmit, errors, validate, resetForm } = useForm({

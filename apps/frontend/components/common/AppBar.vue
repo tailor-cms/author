@@ -68,12 +68,13 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
+import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components-next';
 
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-defineProps<{ user: any }>();
+defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
 

@@ -70,19 +70,22 @@
 </template>
 
 <script lang="ts" setup>
+import type {
+  Activity,
+  ContentContainer,
+} from '@tailor-cms/interfaces/activity';
 import { computed, inject, onMounted, reactive } from 'vue';
-import { activity as activityUtils } from '@tailor-cms/utils';
-import flatMap from 'lodash/flatMap';
-import map from 'lodash/map';
-import sortBy from 'lodash/sortBy';
-
-import type { Activity, ContentContainer } from '../../interfaces/activity';
 import type {
   ContentElement,
   Relationship,
-} from '../../interfaces/content-element';
+} from '@tailor-cms/interfaces/content-element';
+import { activity as activityUtils } from '@tailor-cms/utils';
+import flatMap from 'lodash/flatMap';
+import map from 'lodash/map';
+import type { Repository } from '@tailor-cms/interfaces/repository';
+import sortBy from 'lodash/sortBy';
+
 import ContentPreview from '../ContentPreview/index.vue';
-import type { Repository } from '../../interfaces/repository';
 import SelectActivity from './SelectActivity.vue';
 import SelectRepository from './SelectRepository.vue';
 import TailorDialog from '../TailorDialog.vue';
@@ -94,10 +97,10 @@ const TOGGLE_BUTTON = {
 };
 
 interface Props {
-  allowedTypes: Array<string>;
+  allowedTypes: string[];
   heading: string;
   multiple?: boolean;
-  selected?: Array<Relationship>;
+  selected?: Relationship[];
   headerIcon?: string;
   submitLabel?: string;
   onlyCurrentRepo?: boolean;
@@ -106,7 +109,7 @@ interface Props {
 interface Selection {
   repository?: Repository;
   activity?: Activity;
-  elements: Array<ContentElement | Relationship>;
+  elements: (ContentElement | Relationship)[];
 }
 
 interface Items {
