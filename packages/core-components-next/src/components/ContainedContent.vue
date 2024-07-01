@@ -12,7 +12,7 @@
     @mouseover="isHovered = true"
   >
     <span v-if="!isDisabled" class="drag-handle">
-      <span class="mdi-drag-vertical"></span>
+      <span class="mdi mdi-drag-vertical"></span>
     </span>
     <ContentElementWrapper
       v-bind="bindings"
