@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-7">
+  <div class="pa-7 text-left">
     <VTextField
       v-model.trim="search"
       append-inner-icon="mdi-magnify"
@@ -9,7 +9,7 @@
     />
     <VList
       :opened="Object.keys(filteredRegistry)"
-      class="text-left pa-0"
+      class="pa-0"
       rounded="lg"
       border
       slim
