@@ -38,7 +38,7 @@
 <script lang="ts" setup>
 import cloneDeep from 'lodash/cloneDeep';
 import find from 'lodash/find';
-import type { Meta } from '@tailor-cms/interfaces/common';
+import type { Metadata } from '@tailor-cms/interfaces/schema';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import set from 'lodash/set';
 
@@ -69,7 +69,7 @@ const metadata = computed(() =>
   $schemaService.getRepositoryMetadata(repository.value),
 );
 
-const descriptionMeta = computed<Meta>(() => ({
+const descriptionMeta = computed<Metadata>(() => ({
   key: 'description',
   type: 'TEXTAREA',
   label: 'Description',
