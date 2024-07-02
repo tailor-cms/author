@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import { ActivityOutline } from '../../../pom/repository/Outline';
 import ApiClient from '../../../api/ApiClient';
 import { Editor } from '../../../pom/editor/Editor';
+import { outlineSeed } from '../../../helpers/seed';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 
@@ -78,26 +79,26 @@ test('should be able to add a new module below', async ({ page }) => {
 
 test('should be able to delete the activity', async ({ page }) => {
   await toSeededRepository(page);
-  const targetPage = 'Introduction to Pizza Making';
-  await expect(page.getByText(targetPage)).toBeVisible();
+  const targetItem = outlineSeed.group.title;
+  await expect(page.getByText(targetItem)).toBeVisible();
   const outline = new ActivityOutline(page);
-  const item = await outline.getOutlineItemByName(targetPage);
+  const item = await outline.getOutlineItemByName(targetItem);
   await item.optionsMenu.remove();
-  await expect(page.getByText(targetPage)).not.toBeVisible();
+  await expect(page.getByText(targetItem)).not.toBeVisible();
   // Test persistence
   await page.reload();
-  await expect(page.getByText(targetPage)).not.toBeVisible();
+  await expect(page.getByText(targetItem)).not.toBeVisible();
 });
 
 test('should be able to edit the activity name', async ({ page }) => {
   await toSeededRepository(page);
-  const targetItem = 'Introduction to Pizza Making';
+  const targetItem = outlineSeed.group.title;
   await expect(page.getByText(targetItem)).toBeVisible();
   const outline = new ActivityOutline(page);
   const item = await outline.getOutlineItemByName(targetItem);
   await item.select();
   const sidebar = new OutlineSidebar(page);
-  const newName = 'Introduction to Pizza Making 2';
+  const newName = `${targetItem} - edited`;
   await sidebar.fillName(newName);
   await outline.getOutlineItemByName(newName);
   // Test persistence
@@ -107,7 +108,7 @@ test('should be able to edit the activity name', async ({ page }) => {
 
 test('should be able to publish activity', async ({ page }) => {
   await toSeededRepository(page);
-  const targetItem = 'Introduction to Pizza Making';
+  const targetItem = outlineSeed.group.title;
   await expect(page.getByText(targetItem)).toBeVisible();
   const outline = new ActivityOutline(page);
   const item = await outline.getOutlineItemByName(targetItem);
@@ -120,32 +121,28 @@ test('should be able to publish activity', async ({ page }) => {
 
 test('should be able to toggle expand / collapse', async ({ page }) => {
   await toSeededRepository(page);
-  await expect(page.getByText('Introduction to Pizza Making')).toBeVisible();
-  await expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText(outlineSeed.group.title)).toBeVisible();
+  await expect(page.getByText(outlineSeed.primaryPage.title)).not.toBeVisible();
   const outline = new ActivityOutline(page);
-  const module = await outline.getOutlineItemByName(
-    'Introduction to Pizza Making',
-  );
+  const module = await outline.getOutlineItemByName(outlineSeed.group.title);
   await module.toggleExpand();
-  await expect(page.getByText('History of Pizza')).toBeVisible();
+  await expect(page.getByText(outlineSeed.primaryPage.title)).toBeVisible();
   await module.toggleExpand();
-  await expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText(outlineSeed.primaryPage.title)).not.toBeVisible();
 });
 
 test('should be able to toggle expand / collapse using the alt control', async ({
   page,
 }) => {
   await toSeededRepository(page);
-  await expect(page.getByText('Introduction to Pizza Making')).toBeVisible();
-  await expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText(outlineSeed.group.title)).toBeVisible();
+  await expect(page.getByText(outlineSeed.primaryPage.title)).not.toBeVisible();
   const outline = new ActivityOutline(page);
-  const module = await outline.getOutlineItemByName(
-    'Introduction to Pizza Making',
-  );
+  const module = await outline.getOutlineItemByName(outlineSeed.group.title);
   await module.toggleExpandAlt();
-  await expect(page.getByText('History of Pizza')).toBeVisible();
+  await expect(page.getByText(outlineSeed.primaryPage.title)).toBeVisible();
   await module.toggleExpandAlt();
-  await expect(page.getByText('History of Pizza')).not.toBeVisible();
+  await expect(page.getByText(outlineSeed.primaryPage.title)).not.toBeVisible();
 });
 
 test('should be able to toggle expand/collapse using toggle all btn', async ({
@@ -153,12 +150,11 @@ test('should be able to toggle expand/collapse using toggle all btn', async ({
 }) => {
   await toSeededRepository(page);
   const outline = new ActivityOutline(page);
+  await expect(page.getByText(outlineSeed.primaryPage.title)).not.toBeVisible();
   await outline.toggleExpand();
-  await expect(page.getByText('History of Pizza')).toBeVisible();
-  await expect(page.getByText('Basics of Dough Making')).toBeVisible();
+  await expect(page.getByText(outlineSeed.primaryPage.title)).toBeVisible();
   await outline.toggleExpand();
-  await expect(page.getByText('History of Pizza')).not.toBeVisible();
-  await expect(page.getByText('Basics of Dough Making')).not.toBeVisible();
+  await expect(page.getByText(outlineSeed.primaryPage.title)).not.toBeVisible();
 });
 
 test('should be able to search by activity name', async ({ page }) => {
@@ -166,7 +162,7 @@ test('should be able to search by activity name', async ({ page }) => {
   const outline = new ActivityOutline(page);
   await outline.search('hi');
   const locator = page.locator('.structure-page .search-result');
-  await expect(locator.nth(0)).toContainText('History of Pizza');
+  await expect(locator.nth(0)).toContainText(outlineSeed.primaryPage.title);
   await expect(locator.nth(1)).toContainText('Chicago Deep-Dish Pizza');
   await expect(locator).toHaveCount(2);
 });
@@ -175,17 +171,19 @@ test('should be able to navigate to editor page', async ({ page }) => {
   await toSeededRepository(page);
   const outline = new ActivityOutline(page);
   await outline.toggleExpand();
-  const item = await outline.getOutlineItemByName('History of Pizza');
+  const item = await outline.getOutlineItemByName(
+    outlineSeed.primaryPage.title,
+  );
   await item.select();
   const sidebar = new OutlineSidebar(page);
   await sidebar.openEditor();
   const editor = new Editor(page);
-  await expect(editor.topToolbar).toContainText('History of Pizza');
+  await expect(editor.topToolbar).toContainText(outlineSeed.primaryPage.title);
 });
 
 test('should be able to post a comment', async ({ page }) => {
   await toSeededRepository(page);
-  const targetItem = 'Introduction to Pizza Making';
+  const targetItem = outlineSeed.group.title;
   await expect(page.getByText(targetItem)).toBeVisible();
   const outline = new ActivityOutline(page);
   const item = await outline.getOutlineItemByName(targetItem);

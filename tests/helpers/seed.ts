@@ -31,3 +31,17 @@ export const toSeededRepositorySettings = async (page: Page) => {
   await page.goto(`/repository/${repository.id}/root/settings/general`);
   return repository;
 };
+
+export const outlineSeed = {
+  group: {
+    title: 'Introduction to Pizza Making',
+  },
+  primaryPage: {
+    title: 'History of Pizza',
+    textContent: 'The story of pizza begins in antiquity',
+  },
+  secondaryPage: {
+    title: 'Different Pizza Styles Around the World',
+    textContent: 'Click the button below to add content',
+  },
+};
