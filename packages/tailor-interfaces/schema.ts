@@ -49,8 +49,6 @@ export interface ActivityConfig {
   subLevels?: string[];
   isTrackedInWorkflow?: boolean;
   contentContainers?: string[];
-  hasExams?: boolean;
-  exams?: Record<string, any>;
   relationships?: ActivityRelationship[];
   meta?: Metadata[];
   ai?: AIConfig;
