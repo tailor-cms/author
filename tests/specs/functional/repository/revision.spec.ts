@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import { outlineLevel, toEmptyRepository } from '../../../helpers/seed.ts';
 import { ActivityOutline } from '../../../pom/repository/Outline.ts';
 import { Editor } from '../../../pom/editor/Editor.ts';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings.ts';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar.ts';
 import SeedClient from '../../../api/SeedClient.ts';
-import { toEmptyRepository } from '../../../helpers/seed.ts';
 
 const TAB_NAV_TEST_ID = 'repositoryRoot_nav';
 const getHistoryRoute = (id) => `/repository/${id}/root/revisions`;
@@ -35,7 +35,7 @@ test('should display a revision for created module', async ({ page }) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const moduleName = 'Module 1';
-  await outline.addRootItem('Module', moduleName);
+  await outline.addRootItem(outlineLevel.GROUP, moduleName);
   await page.goto(getHistoryRoute(repository.id));
   await expect(page.getByText(`Created ${moduleName} module`)).toBeVisible();
 });
@@ -44,7 +44,7 @@ test('should display a revision for updated module', async ({ page }) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const moduleName = 'Module 1';
-  await outline.addRootItem('Module', moduleName);
+  await outline.addRootItem(outlineLevel.GROUP, moduleName);
   const item = await outline.getOutlineItemByName(moduleName);
   await item.select();
   const sidebar = new OutlineSidebar(page);
@@ -57,7 +57,7 @@ test('should display a revision for deleted module', async ({ page }) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const moduleName = 'Module 1';
-  await outline.addRootItem('Module', moduleName);
+  await outline.addRootItem(outlineLevel.GROUP, moduleName);
   const item = await outline.getOutlineItemByName(moduleName);
   await item.select();
   await item.optionsMenu.remove();
@@ -71,7 +71,7 @@ test('should display a revision for created content element', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const pageName = 'Page 1';
-  await outline.addRootItem('Page', pageName);
+  await outline.addRootItem(outlineLevel.LEAF, pageName);
   const item = await outline.getOutlineItemByName(pageName);
   await item.select();
   await item.openBtn.click();
@@ -88,7 +88,7 @@ test('should display a revision for updated content element', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const pageName = 'Page 1';
-  await outline.addRootItem('Page', pageName);
+  await outline.addRootItem(outlineLevel.LEAF, pageName);
   const item = await outline.getOutlineItemByName(pageName);
   await item.select();
   await item.openBtn.click();
@@ -111,7 +111,7 @@ test('should display a revision for deleted content element', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const pageName = 'Page 1';
-  await outline.addRootItem('Page', pageName);
+  await outline.addRootItem(outlineLevel.LEAF, pageName);
   const item = await outline.getOutlineItemByName(pageName);
   await item.select();
   await item.openBtn.click();

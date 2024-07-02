@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
+import { outlineLevel, outlineSeed } from '../../helpers/seed';
 import { ActivityOutline } from '../../pom/repository/Outline.ts';
 import ApiClient from '../../api/ApiClient';
-import { outlineSeed } from '../../helpers/seed';
 import { percySnapshot } from '../../utils/percy.ts';
 import SeedClient from '../../api/SeedClient';
 
@@ -37,7 +37,7 @@ test('Take a snapshot of the repository structure page', async ({ page }) => {
 test('Take a snapshot of the history page', async ({ page }) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  await outline.addRootItem('Module', 'Module 1');
+  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
   const tabNavigation = page.getByTestId('repositoryRoot_nav');
   await tabNavigation.getByText('History').click();
   await expect(page.getByText('Created repository')).toBeVisible();

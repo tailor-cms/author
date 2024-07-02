@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
+import { outlineLevel, outlineSeed } from '../../../helpers/seed';
 import { ActivityOutline } from '../../../pom/repository/Outline';
 import ApiClient from '../../../api/ApiClient';
 import { Editor } from '../../../pom/editor/Editor';
-import { outlineSeed } from '../../../helpers/seed';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 
@@ -47,33 +47,33 @@ test('should be able to create a Module using bottom add button', async ({
 }) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  await outline.addRootItem('Module', 'Module 1');
+  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
 });
 
 test('should be able to create a new sub-module', async ({ page }) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const parent = await outline.addRootItem('Module', 'Module 1');
+  const parent = await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
   const subModuleName = 'Sub-Module 1';
-  await parent.addInto('Module', subModuleName);
+  await parent.addInto(outlineLevel.GROUP, subModuleName);
   await outline.getOutlineItemByName(subModuleName);
 });
 
 test('should be able to add a new module above', async ({ page }) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const anchor = await outline.addRootItem('Module', 'Module 1');
+  const anchor = await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
   const moduleName = 'Module above 1';
-  await anchor.addAbove('Module', moduleName);
+  await anchor.addAbove(outlineLevel.GROUP, moduleName);
   await outline.getOutlineItemByName(moduleName);
 });
 
 test('should be able to add a new module below', async ({ page }) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const anchor = await outline.addRootItem('Module', 'Module 1');
+  const anchor = await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
   const moduleName = 'Module below 1';
-  await anchor.addBelow('Module', moduleName);
+  await anchor.addBelow(outlineLevel.GROUP, moduleName);
   await outline.getOutlineItemByName(moduleName);
 });
 

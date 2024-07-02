@@ -45,3 +45,8 @@ export const outlineSeed = {
     textContent: 'Click the button below to add content',
   },
 };
+
+export const outlineLevel = {
+  GROUP: 'Module',
+  LEAF: 'Page',
+};
