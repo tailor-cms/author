@@ -3,14 +3,15 @@ import { expect, Locator, Page } from '@playwright/test';
 import { ContainerList } from './ContainerList';
 import { ContentElement } from './ContentElement';
 import { EditorSidebar } from './Sidebar';
+import { outlineSeed } from '../../helpers/seed';
 
 export class Editor {
   readonly page: Page;
   readonly sidebar: EditorSidebar;
   readonly topToolbar: Locator;
-  readonly primaryPageName = 'History of Pizza';
-  readonly primaryPageContent = 'The story of pizza begins';
-  readonly secondaryPageName = 'Different Pizza Styles Around the World';
+  readonly primaryPageName = outlineSeed.primaryPage.title;
+  readonly primaryPageContent = outlineSeed.primaryPage.textContent;
+  readonly secondaryPageName = outlineSeed.secondaryPage.title;
   readonly containerList: ContainerList;
 
   constructor(page: Page) {
