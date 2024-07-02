@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ActivityOutline } from '../../pom/repository/Outline.ts';
 import ApiClient from '../../api/ApiClient';
+import { outlineSeed } from '../../helpers/seed';
 import { percySnapshot } from '../../utils/percy.ts';
 import SeedClient from '../../api/SeedClient';
 
@@ -29,7 +30,7 @@ const toEmptyRepository = async (page) => {
 
 test('Take a snapshot of the repository structure page', async ({ page }) => {
   await toSeededRepository(page);
-  await page.getByText('Introduction to Pizza Making').isVisible();
+  await page.getByText(outlineSeed.group.title).isVisible();
   await percySnapshot(page, 'Repository structure page');
 });
 
