@@ -12,6 +12,7 @@ export class Editor {
   readonly primaryPageName = outlineSeed.primaryPage.title;
   readonly primaryPageContent = outlineSeed.primaryPage.textContent;
   readonly secondaryPageName = outlineSeed.secondaryPage.title;
+  readonly primaryElementLabel = 'ce html default';
   readonly containerList: ContainerList;
 
   constructor(page: Page) {
