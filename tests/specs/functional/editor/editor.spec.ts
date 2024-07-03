@@ -3,7 +3,6 @@ import { expect, test } from '@playwright/test';
 import { Container } from '../../../pom/editor/Container';
 import { Editor } from '../../../pom/editor/Editor';
 import SeedClient from '../../../api/SeedClient';
-import { toSeededRepository } from '../../../helpers/seed';
 
 const REPOSITORY_NAME = 'Editor test repository';
 
