@@ -19,6 +19,7 @@ test('editor page has a title set', async ({ page }) => {
 
 test('can navigate using the sidebar', async ({ page }) => {
   const editor = new Editor(page);
+  // Methods contain assertions
   await editor.toPrimaryPage();
   await editor.toSecondaryPage();
 });
@@ -62,6 +63,7 @@ test('can add content element', async ({ page }) => {
   await editor.sidebar.toggleItems();
   await editor.toSecondaryPage();
   await editor.addContentElement('This is a test');
+  // Make sure changes are persisted
   await page.waitForTimeout(1000);
   await page.reload();
   await expect(page.locator('.content-element')).toHaveText('This is a test');
@@ -76,6 +78,7 @@ test('can delete content element', async ({ page }) => {
   expect(elements.length).not.toBe(0);
   await containers[0].deleteElements();
   await expect(page.getByText(editor.primaryPageContent)).not.toBeVisible();
+  // Make sure changes are persisted
   await page.reload();
   await expect(page.getByText(editor.primaryPageContent)).not.toBeVisible();
 });
