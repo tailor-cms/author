@@ -18,8 +18,8 @@ export const toEmptyRepository = async (page: Page) => {
   return repository;
 };
 
-export const toSeededRepository = async (page: Page) => {
-  const { data } = await SeedClient.seedTestRepository();
+export const toSeededRepository = async (page: Page, name?: string) => {
+  const { data } = await SeedClient.seedTestRepository({ name });
   const { repository } = data;
   await page.goto(`/repository/${repository.id}/root/structure`);
   return repository;
