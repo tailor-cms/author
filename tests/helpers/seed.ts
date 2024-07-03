@@ -6,10 +6,10 @@ import SeedClient from '../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
 
-export const toEmptyRepository = async (page: Page) => {
+export const toEmptyRepository = async (page: Page, name?: string) => {
   const payload = {
-    schema: 'COURSE_SCHEMA',
-    name: `${faker.lorem.words(2)} ${new Date().getTime()}`,
+    schema: outlineSeed.schema,
+    name: name || `${faker.lorem.words(2)} ${new Date().getTime()}`,
     description: faker.lorem.words(4),
   };
   const { data: repository } = await REPOSITORY_API.create(payload as any);
