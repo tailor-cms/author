@@ -34,9 +34,10 @@ test('can toggle using the sidebar', async ({ page }) => {
   const editor = new Editor(page);
   // First toggle expands all outline items
   await editor.sidebar.toggleItems();
-  await expect(page.getByText(editor.primaryPageName)).toBeVisible();
+  const targetItem = page.locator('.sidebar').getByText(editor.primaryPageName);
+  await expect(targetItem).toBeVisible();
   await editor.sidebar.toggleItems();
-  await expect(page.getByText(editor.primaryPageName)).toBeHidden();
+  await expect(targetItem).toBeHidden();
 });
 
 test('can create content container', async ({ page }) => {
