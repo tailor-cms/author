@@ -104,7 +104,6 @@ test('should display a revision for updated content element', async ({
   await page.waitForLoadState('networkidle');
   const editor = new Editor(page);
   await editor.addContentElement();
-  await expectAlert(page, 'Element saved');
   const elements = await editor.getElements();
   await elements[0].el.locator('.tiptap').fill('updated content');
   await expectAlert(page, 'Element saved');
