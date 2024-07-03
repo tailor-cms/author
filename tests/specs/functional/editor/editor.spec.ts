@@ -9,7 +9,13 @@ const REPOSITORY_NAME = 'Editor test repository';
 
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
-  await toSeededRepository(page, REPOSITORY_NAME);
+  const { data } = await SeedClient.seedTestRepository({
+    name: REPOSITORY_NAME,
+  });
+  const {
+    activity: { repositoryId, id },
+  } = data;
+  await page.goto(`/repository/${repositoryId}/editor/${id}`);
   await page.waitForLoadState('networkidle');
 });
 
