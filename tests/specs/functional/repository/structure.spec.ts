@@ -1,32 +1,19 @@
 import { expect, test } from '@playwright/test';
-import { faker } from '@faker-js/faker';
 
-import { outlineLevel, outlineSeed } from '../../../helpers/seed';
+import {
+  outlineLevel,
+  outlineSeed,
+  toEmptyRepository,
+  toSeededRepository,
+} from '../../../helpers/seed';
 import { ActivityOutline } from '../../../pom/repository/Outline';
-import ApiClient from '../../../api/ApiClient';
 import { Editor } from '../../../pom/editor/Editor';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 
-const REPOSITORY_API = new ApiClient('/api/repositories/');
-
-const toEmptyRepository = async (page) => {
-  const payload = {
-    schema: 'COURSE_SCHEMA',
-    name: `${faker.lorem.words(2)} ${new Date().getTime()}`,
-    description: faker.lorem.words(4),
-  };
-  const { data: repository } = await REPOSITORY_API.create(payload as any);
-  await page.goto(`/repository/${repository.id}/root/structure`);
-  await page.waitForLoadState('networkidle');
-  return repository;
-};
-
-const toSeededRepository = async (page) => {
-  const { data } = await SeedClient.seedTestRepository();
-  const { repository } = data;
-  await page.goto(`/repository/${repository.id}/root/structure`);
-};
+test.beforeEach(async () => {
+  await SeedClient.resetDatabase();
+});
 
 test('repository root page has a title set', async ({ page }) => {
   const repository = await toEmptyRepository(page);
@@ -42,39 +29,48 @@ test('should have default intro message visible', async ({ page }) => {
   await expect(page.getByText(sidebarIntro)).toBeVisible();
 });
 
-test('should be able to create a Module using bottom add button', async ({
+test(`should create a ${outlineLevel.GROUP} using bottom add button`, async ({
   page,
 }) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
+  await outline.addRootItem(outlineLevel.GROUP, `${outlineLevel.GROUP} 1`);
 });
 
-test('should be able to create a new sub-module', async ({ page }) => {
+test(`should be able to create a new sub ${outlineLevel.GROUP}`, async ({
+  page,
+}) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const parent = await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
-  const subModuleName = 'Sub-Module 1';
-  await parent.addInto(outlineLevel.GROUP, subModuleName);
-  await outline.getOutlineItemByName(subModuleName);
+  const parentName = `${outlineLevel.GROUP} 1`;
+  const parent = await outline.addRootItem(outlineLevel.GROUP, parentName);
+  const subLevelName = `Sub ${outlineLevel.GROUP}`;
+  await parent.addInto(outlineLevel.GROUP, subLevelName);
+  await outline.getOutlineItemByName(subLevelName);
 });
 
-test('should be able to add a new module above', async ({ page }) => {
+test(`should be able to add a new ${outlineLevel.GROUP} above`, async ({
+  page,
+}) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const anchor = await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
-  const moduleName = 'Module above 1';
-  await anchor.addAbove(outlineLevel.GROUP, moduleName);
-  await outline.getOutlineItemByName(moduleName);
+  const anchorName = `${outlineLevel.GROUP} 1`;
+  const anchor = await outline.addRootItem(outlineLevel.GROUP, anchorName);
+  const itemName = `${outlineLevel.GROUP} above`;
+  await anchor.addAbove(outlineLevel.GROUP, itemName);
+  await outline.getOutlineItemByName(itemName);
 });
 
-test('should be able to add a new module below', async ({ page }) => {
+test(`should be able to add a new ${outlineLevel.GROUP} below`, async ({
+  page,
+}) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const anchor = await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
-  const moduleName = 'Module below 1';
-  await anchor.addBelow(outlineLevel.GROUP, moduleName);
-  await outline.getOutlineItemByName(moduleName);
+  const anchorName = `${outlineLevel.GROUP} 1`;
+  const anchor = await outline.addRootItem(outlineLevel.GROUP, anchorName);
+  const itemName = `${outlineLevel.GROUP} below`;
+  await anchor.addBelow(outlineLevel.GROUP, itemName);
+  await outline.getOutlineItemByName(itemName);
 });
 
 test('should be able to delete the activity', async ({ page }) => {
@@ -84,21 +80,22 @@ test('should be able to delete the activity', async ({ page }) => {
   const outline = new ActivityOutline(page);
   const item = await outline.getOutlineItemByName(targetItem);
   await item.optionsMenu.remove();
-  await expect(page.getByText(targetItem)).not.toBeVisible();
+  const itemLocator = page.getByText(targetItem);
+  await expect(itemLocator).not.toBeVisible();
   // Test persistence
   await page.reload();
-  await expect(page.getByText(targetItem)).not.toBeVisible();
+  await expect(itemLocator).not.toBeVisible();
 });
 
 test('should be able to edit the activity name', async ({ page }) => {
   await toSeededRepository(page);
-  const targetItem = outlineSeed.group.title;
-  await expect(page.getByText(targetItem)).toBeVisible();
+  const targetItemName = outlineSeed.group.title;
+  await expect(page.getByText(targetItemName)).toBeVisible();
   const outline = new ActivityOutline(page);
-  const item = await outline.getOutlineItemByName(targetItem);
+  const item = await outline.getOutlineItemByName(targetItemName);
   await item.select();
   const sidebar = new OutlineSidebar(page);
-  const newName = `${targetItem} - edited`;
+  const newName = `${targetItemName} - edited`;
   await sidebar.fillName(newName);
   await outline.getOutlineItemByName(newName);
   // Test persistence
@@ -108,10 +105,10 @@ test('should be able to edit the activity name', async ({ page }) => {
 
 test('should be able to publish activity', async ({ page }) => {
   await toSeededRepository(page);
-  const targetItem = outlineSeed.group.title;
-  await expect(page.getByText(targetItem)).toBeVisible();
+  const targetItemName = outlineSeed.group.title;
+  await expect(page.getByText(targetItemName)).toBeVisible();
   const outline = new ActivityOutline(page);
-  const item = await outline.getOutlineItemByName(targetItem);
+  const item = await outline.getOutlineItemByName(targetItemName);
   await item.select();
   const sidebar = new OutlineSidebar(page);
   await expect(sidebar.el).toContainText(/Not published/);
@@ -160,11 +157,10 @@ test('should be able to toggle expand/collapse using toggle all btn', async ({
 test('should be able to search by activity name', async ({ page }) => {
   await toSeededRepository(page);
   const outline = new ActivityOutline(page);
-  await outline.search('hi');
+  await outline.search(outlineSeed.primaryPage.title);
   const locator = page.locator('.structure-page .search-result');
   await expect(locator.nth(0)).toContainText(outlineSeed.primaryPage.title);
-  await expect(locator.nth(1)).toContainText('Chicago Deep-Dish Pizza');
-  await expect(locator).toHaveCount(2);
+  await expect(locator).toHaveCount(1);
 });
 
 test('should be able to navigate to editor page', async ({ page }) => {

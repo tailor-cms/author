@@ -33,6 +33,7 @@ export const toSeededRepositorySettings = async (page: Page) => {
 };
 
 export const outlineSeed = {
+  schema: 'COURSE_SCHEMA',
   group: {
     title: 'Introduction to Pizza Making',
   },
