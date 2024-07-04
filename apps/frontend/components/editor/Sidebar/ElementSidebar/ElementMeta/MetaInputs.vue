@@ -12,13 +12,13 @@
 <script lang="ts" setup>
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { getElementId } from '@tailor-cms/utils';
-import type { Meta } from '@tailor-cms/interfaces/common';
+import type { Metadata } from '@tailor-cms/interfaces/schema';
 
 import MetaInput from '@/components/common/MetaInput.vue';
 
 interface Props {
   element: ContentElement;
-  inputs?: Meta[];
+  inputs?: Metadata[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
 const elementBus = inject('$elementBus') as any;
 const id = computed(() => getElementId(props.element));
 
-const updateElement = (key: string, value: Meta) => {
+const updateElement = (key: string, value: Metadata) => {
   const meta = { ...props.element.meta };
   meta[key] = value;
   elementBus.emit('save:meta', meta);

@@ -1,5 +1,6 @@
 import type { Activity } from './activity';
 import type { Comment } from './comment';
+import type { ElementRelationship } from './schema';
 
 export interface Relationship {
   id: number;
@@ -7,12 +8,7 @@ export interface Relationship {
   outlineId: number;
 }
 
-export interface RelationshipType {
-  key: string;
-  label: string;
-  multiple: boolean;
-  placeholder: string;
-  allowedTypes: string[];
+export interface RelationshipType extends ElementRelationship {
   value?: Relationship[];
 }
 
