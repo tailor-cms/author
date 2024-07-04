@@ -34,6 +34,6 @@ For more on schemas visit schema section.
 
 The repository structure in Tailor is a fundamental concept that underpins the 
 platform's ability to provide a versatile and user-friendly environment for 
-creating and managing digital learning content. By understanding and effectively
-utilizing repositories and schemas, educators and content creators can 
-significantly enhance the learning experience for their audiences.
+creating and managing digital content. By understanding and effectively
+utilizing repositories and schemas, content creators can significantly 
+enhance experience for their audiences and meet the targeted platform needs.
