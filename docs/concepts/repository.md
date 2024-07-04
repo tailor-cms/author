@@ -1,4 +1,4 @@
-# Repository in Tailor
+# Repository
 
 ## Overview
 
@@ -19,7 +19,7 @@ Schemas are essentially blueprints that dictate how content within a repository
 is organized. By leveraging schemas, Tailor provides a highly customizable 
 framework that can adapt to any informational and educational needs.
 
-### Benefits of Using Schemas
+## Benefits of Using Schemas
 
 - **Customization:** Schemas allow for the creation of highly customized
   repositories that can cater to specific informational and educational needs.
