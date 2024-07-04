@@ -2,7 +2,7 @@ name: Setup node, pnpm, install dependencies
 runs:
   using: composite
   steps:
-  - uses: pnpm/action-setup@v2
+  - uses: pnpm/action-setup@v4
     with:
       version: 9.4.0
   - name: Setup node to enable caching

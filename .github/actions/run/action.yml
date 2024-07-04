@@ -2,7 +2,7 @@ name: Setup Tailor for E2E testing
 runs:
   using: composite
   steps:
-  - uses: pnpm/action-setup@v2
+  - uses: pnpm/action-setup@v4
     with:
       version: 9.4.0
   - uses: actions/setup-node@v3
