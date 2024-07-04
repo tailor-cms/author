@@ -19,6 +19,17 @@ export default defineConfig({
           { text: "Installation", link: "/installation" },
         ],
       },
+      {
+        text: "Concepts",
+        items: [
+          { text: "Repository", link: "/concepts/repository" },
+          { text: "Activity", link: "/concepts/activity" },
+          { text: "Content Element", link: "/concepts/content-element" },
+          { text: "Content Container", link: "/concepts/content-container" },
+          { text: "Meta Input", link: "/concepts/meta-input" },
+          { text: "Schema", link: "/concepts/schema" },
+        ],
+      },
     ],
     socialLinks: [
       { icon: "github", link: "https://github.com/tailor-cms/author" },
