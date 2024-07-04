@@ -1,5 +1,6 @@
 import { EndpointResponse, formatResponse } from './common';
 import BaseClient from './BaseClient';
+import { outlineSeed } from '../helpers/seed';
 
 class SeedClient extends BaseClient {
   constructor() {
@@ -18,8 +19,9 @@ class SeedClient extends BaseClient {
     return formatResponse(res);
   };
 
-  seedTestRepository = async (data = {}): Promise<EndpointResponse> => {
+  seedTestRepository = async (data: any = {}): Promise<EndpointResponse> => {
     const req = await this.getClient();
+    if (!data.schema) data.schema = outlineSeed.schema;
     const res = await req.post(this.getUrl('repository'), { data });
     return formatResponse(res);
   };
