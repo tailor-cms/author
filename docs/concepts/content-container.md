@@ -1,4 +1,4 @@
-# Content Containers
+# Content Container
 
 ## Introduction
 
@@ -26,8 +26,8 @@ content elements, laid out in a straightforward manner.
 On the more complex end of the spectrum, we have the Exam Content Container. 
 Unlike a simple page, an Exam can include not just Question Content Elements, 
 but also additional information like Exam Groups and employ a different layout. 
-Content Containers are enabler for a more Tailored authoring experience and
-Content Element reuse.
+Consider Content Containers as an enabler for a more Tailored authoring 
+experience and Content Element reuse.
 
 ## Extensibility
 
