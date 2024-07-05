@@ -129,9 +129,6 @@ importers:
       '@tailor-cms/config':
         specifier: workspace:*
         version: link:../../packages/tailor-config-parser
-      '@tailor-cms/garment':
-        specifier: ^0.16.0
-        version: 0.16.0
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -2865,9 +2862,6 @@ packages:
       eslint-plugin-vue: '>=9.17.0'
       eslint-plugin-vuejs-accessibility: '>=2.2.0'
 
-  '@tailor-cms/garment@0.16.0':
-    resolution: {integrity: sha512-5+fPqwZ62z9qycLbGyuH4bAV8UNYNhu/IdgDT085UigLWPQNfvOoeKkTagQTO17V3EHBkBib8wPkTHg6JOv//w==}
-
   '@tiptap/core@2.4.0':
     resolution: {integrity: sha512-YJSahk8pkxpCs8SflCZfTnJpE7IPyUWIylfgXM2DefjRQa5DZ+c6sNY0s/zbxKYFQ6AuHVX40r9pCfcqHChGxQ==}
     peerDependencies:
@@ -3982,9 +3976,6 @@ packages:
 
   cjs-module-lexer@1.3.1:
     resolution: {integrity: sha512-a3KdPAANPbNE4ZUv9h6LckSl9zLsYOP4MBmhIPkRaeyybt+r4UghLvq+xw/YwUcC1gqylCkL4rdVs3Lwupjm4Q==}
-
-  class-transformer@0.5.1:
-    resolution: {integrity: sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==}
 
   clean-css@4.2.4:
     resolution: {integrity: sha512-EJUDT7nDVFDvaQgAo2G/PJvxmp1o/c6iXLbswsBbUFXi1Nr+AjA2cKmfbKDMjMvzEe75g3P6JkaDDAKk96A85A==}
@@ -7026,9 +7017,6 @@ packages:
     resolution: {integrity: sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==}
     engines: {node: '>= 0.4'}
 
-  object-sizeof@1.6.3:
-    resolution: {integrity: sha512-LGtilAKuDGKCcvu1Xg3UvAhAeJJlFmblo3faltmOQ80xrGwAHxnauIXucalKdTEksHp/Pq9tZGz1hfyEmjFJPQ==}
-
   object.assign@4.1.5:
     resolution: {integrity: sha512-byy+U7gp+FVwmyzKPYhW2h5l3crpmGsxl7X2s8y43IgxvG4g3QZ6CffDtsNQy1WsmZpQbO+ybo0AlW7TY6DcBQ==}
     engines: {node: '>= 0.4'}
@@ -7945,9 +7933,6 @@ packages:
   refa@0.12.1:
     resolution: {integrity: sha512-J8rn6v4DBb2nnFqkqwy6/NnTYMcgLA+sLr0iIO41qpv0n+ngb7ksag2tMRl0inb1bbO/esUwzW1vbJi7K0sI0g==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
-
-  reflect-metadata@0.1.14:
-    resolution: {integrity: sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==}
 
   regenerator-runtime@0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
@@ -12497,18 +12482,6 @@ snapshots:
       eslint-plugin-vue: 9.26.0(eslint@8.57.0)
       eslint-plugin-vuejs-accessibility: 2.3.1(eslint@8.57.0)
 
-  '@tailor-cms/garment@0.16.0':
-    dependencies:
-      aws-sdk: 2.1651.0
-      bytes: 3.1.2
-      camelcase: 6.3.0
-      class-transformer: 0.5.1
-      dotenv: 16.4.5
-      lodash: 4.17.21
-      mime-types: 2.1.35
-      object-sizeof: 1.6.3
-      reflect-metadata: 0.1.14
-
   '@tiptap/core@2.4.0(@tiptap/pm@2.4.0)':
     dependencies:
       '@tiptap/pm': 2.4.0
@@ -13919,8 +13892,6 @@ snapshots:
       consola: 3.2.3
 
   cjs-module-lexer@1.3.1: {}
-
-  class-transformer@0.5.1: {}
 
   clean-css@4.2.4:
     dependencies:
@@ -17477,10 +17448,6 @@ snapshots:
 
   object-keys@1.1.1: {}
 
-  object-sizeof@1.6.3:
-    dependencies:
-      buffer: 5.7.1
-
   object.assign@4.1.5:
     dependencies:
       call-bind: 1.0.7
@@ -18481,8 +18448,6 @@ snapshots:
   refa@0.12.1:
     dependencies:
       '@eslint-community/regexpp': 4.11.0
-
-  reflect-metadata@0.1.14: {}
 
   regenerator-runtime@0.13.11: {}
 
