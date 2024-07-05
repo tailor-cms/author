@@ -31,7 +31,7 @@ After achieving the primary goal of modeling content to meet any needs,
 Tailor CMS's latest release focuses on enhancing collaboration, reuse, and user
 experience.
 
-The foundation of Tailor CMS is built on the extensive experience of Studion, 
+The foundation of Tailor CMS is built on the extensive experience of `Studion`, 
 a company specializing in custom learning experiences for corporations, 
 non-profits, and higher education institutions. The platform is crafted to
 maximize creative and pedagogical flexibility while minimizing development costs, time-to-market, maintenance overhead, and the friction between building custom
