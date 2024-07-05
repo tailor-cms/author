@@ -5,7 +5,9 @@
   "license": "MIT",
   "type": "module",
   "version": "1.0.0-beta.18",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/utils.cjs",
   "umd:main": "./dist/utils.umd.cjs",
   "module": "./dist/utils.js",
@@ -28,7 +30,7 @@
     "prebuild": "del-cli dist",
     "build": "vite build",
     "release": "npx np",
-    "lint": "eslint --ext .js ."
+    "lint": "eslint ."
   },
   "dependencies": {
     "cuid": "^2.1.8",
@@ -37,9 +39,11 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.6.0",
     "@extensionengine/eslint-config": "^3.0.1",
     "del-cli": "^5.1.0",
-    "eslint": "^8.19.0",
+    "eslint": "^9.6.0",
     "eslint-config-semistandard": "^16.0.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",

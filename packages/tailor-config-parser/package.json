@@ -29,16 +29,18 @@
     "prebuild": "del-cli dist",
     "build": "vite build",
     "release": "npx np",
-    "lint": "eslint --ext .js ."
+    "lint": "eslint ."
   },
   "dependencies": {
     "lodash": "^4.17.21",
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.6.0",
     "@extensionengine/eslint-config": "^3.0.1",
     "del-cli": "^5.1.0",
-    "eslint": "^8.19.0",
+    "eslint": "^9.6.0",
     "eslint-config-semistandard": "^16.0.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-import": "^2.29.1",

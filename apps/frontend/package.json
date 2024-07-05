@@ -18,7 +18,7 @@
     "@types/lodash": "^4.17.5",
     "@types/pluralize": "^0.0.33",
     "@types/promise-queue": "^2.2.3",
-    "@typescript-eslint/parser": "^6.9.0",
+    "@typescript-eslint/parser": "^7.15.0",
     "autoprefixer": "^10.4.19",
     "eslint-config-prettier": ">=9.1.0",
     "nuxt": "^3.12.2",
