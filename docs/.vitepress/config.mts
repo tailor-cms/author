@@ -11,7 +11,11 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     logo: 'logo.png',
     search: { provider: 'local' },
-    nav: [{ text: 'Home', link: '/' }],
+    nav: [
+      { text: 'Home', link: '/' },
+      { text: 'Garment', link: 'https://github.com/underscope/garment' },
+      { text: 'Content Element Kit', link: 'https://tailor-cms.github.io/xt/' },
+    ],
     sidebar: [
       {
         text: 'Introduction',
