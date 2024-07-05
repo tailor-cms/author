@@ -1,27 +1,49 @@
-import { defineConfig } from "vitepress";
+import { defineConfig } from 'vitepress';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Tailor",
+  title: 'Tailor',
   base: '/author/',
-  description: "Tailor docs",
+  description: 'Tailor docs',
   // In order to avoid errors for localhost:8080
   ignoreDeadLinks: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: "logo.png",
+    logo: 'logo.png',
     search: { provider: 'local' },
-    nav: [{ text: "Home", link: "/" }],
+    nav: [
+      { text: 'Home', link: '/' },
+      { text: 'Garment', link: 'https://github.com/underscope/garment' },
+      { text: 'Content Element Kit', link: 'https://tailor-cms.github.io/xt/' },
+    ],
     sidebar: [
       {
-        text: "Introduction",
+        text: 'Introduction',
+        items: [{ text: 'Overview', link: '/overview' }],
+      },
+      {
+        text: 'Concepts',
         items: [
-          { text: "Installation", link: "/installation" },
+          { text: 'Repository', link: '/concepts/repository' },
+          { text: 'Activity', link: '/concepts/activity' },
+          { text: 'Content Element', link: '/concepts/content-element' },
+          { text: 'Content Container', link: '/concepts/content-container' },
+          { text: 'Meta Input', link: '/concepts/meta-input' },
+          { text: 'Schema', link: '/concepts/schema' },
+        ],
+      },
+      {
+        text: 'Development',
+        items: [
+          {
+            text: 'Installation',
+            link: '/installation',
+          },
         ],
       },
     ],
     socialLinks: [
-      { icon: "github", link: "https://github.com/tailor-cms/author" },
+      { icon: 'github', link: 'https://github.com/tailor-cms/author' },
     ],
   },
 });
