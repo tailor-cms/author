@@ -39,6 +39,10 @@ export default defineConfig({
             text: 'Installation',
             link: '/installation',
           },
+          {
+            text: 'Content configuration',
+            link: '/dev/configuration',
+          },
         ],
       },
     ],
