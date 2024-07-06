@@ -38,10 +38,6 @@ provide('$storageService', storageService);
 provide('$api', exposedApi);
 provide('$schemaService', schema);
 provide('$getCurrentUser', () => authStore.user);
-provide('$repository', {
-  ...repositoryStore.repository,
-  activities: repositoryStore.activities,
-});
 
 const sidebarName = getSidebarName(props.element?.type);
 
