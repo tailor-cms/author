@@ -6,5 +6,9 @@
   {
     "name": "@tailor-cms/tme-file",
     "clientPackage": "@tailor-cms/tme-file"
+  },
+  {
+    "name": "@tailor-cms/tme-color",
+    "clientPackage": "@tailor-cms/tme-color"
   }
 ]
