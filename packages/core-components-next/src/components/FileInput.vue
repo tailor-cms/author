@@ -7,12 +7,12 @@
       :label="label"
       :loading="uploading ? 'primary' : false"
       :placeholder="placeholder"
-      :prepend-icon="false"
       :prepend-inner-icon="icon"
       :variant="variant"
+      prepend-icon=""
       @update:model-value="upload"
     />
-    <div v-else class="text-left">
+    <div v-else class="mb-5 text-left">
       <div class="ma-1 text-body-2">{{ label }}</div>
       <VChip
         :prepend-icon="icon"

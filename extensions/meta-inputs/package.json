@@ -2,7 +2,10 @@
   "name": "@tailor-cms/meta-element-collection",
   "type": "module",
   "version": "0.0.1",
-  "files": ["client.js", "server.js"],
+  "files": [
+    "client.js",
+    "server.js"
+  ],
   "main": "client.js",
   "scripts": {
     "cli": "node ./cli.js"
@@ -11,6 +14,7 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
-    "@tailor-cms/tme-textarea": "workspace:^"
+    "@tailor-cms/tme-textarea": "workspace:^",
+    "@tailor-cms/tme-file": "workspace:^"
   }
 }
