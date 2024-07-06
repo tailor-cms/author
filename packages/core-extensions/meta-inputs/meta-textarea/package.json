@@ -2,7 +2,7 @@
   "name": "@tailor-cms/tme-textarea",
   "version": "0.0.1",
   "description": "Tailor textarea meta input",
-  "author": "ExtensionEngine <info@extensionengine.com>",
+  "author": "Studion <info@gostudion.com>",
   "type": "module",
   "files": [
     "src"
