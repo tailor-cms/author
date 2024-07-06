@@ -1,9 +1,13 @@
 <template>
-  <FileInput v-bind="options" @delete="handleDelete" @upload="handleUpload" />
+  <FileInput
+    v-bind="options"
+    @delete="$emit('update', meta.key, null)"
+    @upload="$emit('update', meta.key, $event)"
+  />
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import { FileInput } from '@tailor-cms/core-components-next';
 import get from 'lodash/get';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
@@ -13,10 +17,7 @@ interface Meta extends Metadata {
 }
 
 const props = defineProps<{ meta: Meta }>();
-const emit = defineEmits(['update']);
-
-const handleUpload = (event: Event) => emit('update', props.meta.key, event);
-const handleDelete = () => emit('update', props.meta.key, null);
+defineEmits(['update']);
 
 const options = computed(() => {
   return {
@@ -25,6 +26,7 @@ const options = computed(() => {
     fileName: get(props.meta.value, 'name', ''),
     validate: props.meta.validate,
     label: props.meta.label,
+    icon: props.meta.icon,
     placeholder: props.meta.placeholder || '',
   };
 });

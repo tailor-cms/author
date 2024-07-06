@@ -23,6 +23,7 @@
         width="250"
         @update:model-value="color = $event"
       />
+      <VDivider />
       <VCardActions>
         <VSpacer />
         <VBtn

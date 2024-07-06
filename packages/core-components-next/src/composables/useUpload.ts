@@ -1,9 +1,10 @@
-import { getCurrentInstance, ref } from 'vue';
-import get from 'lodash/get';
+import { ref } from 'vue';
 
 import { useConfirmationDialog } from './useConfirmationDialog';
 import { useLoader } from './useLoader';
 import { useStorageService } from './useStorageService';
+
+type Emit = (event: 'delete' | 'upload', ...args: any[]) => void;
 
 const download = (url: string, fileName: string) => {
   const anchor = document.createElement('a');
@@ -11,19 +12,18 @@ const download = (url: string, fileName: string) => {
   anchor.click();
 };
 
-export const useUpload = () => {
-  const emit = get(getCurrentInstance(), 'emit', () => {});
+export const useUpload = (emit: Emit) => {
   const error = ref('');
 
   const { loading: uploading, loader } = useLoader();
-  const showConfirmationDialog = useConfirmationDialog();
   const storageService = useStorageService();
+  const showConfirmationDialog = useConfirmationDialog();
 
   const deleteFile = (item: any) => {
     showConfirmationDialog({
       title: 'Delete file?',
       message: `Are you sure you want to remove ${item.fileName}?`,
-      action: () => emit('delete', item.id, null),
+      action: () => emit('delete'),
     });
   };
 

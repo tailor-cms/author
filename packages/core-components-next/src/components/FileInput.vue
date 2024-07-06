@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps } from 'vue';
+import { computed } from 'vue';
 import truncate from 'lodash/truncate';
 import { type VFileInput } from 'vuetify/components';
 
@@ -69,8 +69,9 @@ const props = withDefaults(defineProps<Props>(), {
   density: 'default',
   icon: 'mdi-file',
 });
+const emit = defineEmits(['upload', 'delete']);
 
-const { upload, deleteFile, downloadFile, uploading } = useUpload();
+const { upload, deleteFile, downloadFile, uploading } = useUpload(emit);
 
 const acceptedFileTypes = computed(() => {
   const ext = props.validate.ext;

@@ -11,12 +11,11 @@
         <VBtn
           v-for="color in group"
           :key="color"
-          :active="color === selected"
           :aria-label="color"
           :color="color"
           class="color-btn"
           size="24"
-          variant="flat"
+          flat
           @click="select(color)"
         >
           <VIcon
@@ -69,77 +68,8 @@ const select = (color) => {
 </script>
 
 <style lang="scss" scoped>
-$size: 1.125rem;
-$gutter: 0.375rem;
-
 .color-btn {
   margin: 0.0625rem;
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 10%);
-}
-
-.control-group {
-  margin: 0.375rem 0;
-  line-height: 1.5rem;
-  font-weight: normal;
-  color: #333;
-  word-wrap: break-word;
-}
-
-.picker {
-  padding: 0.75rem 0.625rem;
-
-  &-title {
-    display: block;
-    margin-bottom: 0.625rem;
-    font-size: 0.875rem;
-    line-height: 1rem;
-    font-weight: normal;
-    text-align: left;
-    color: rgb(0 0 0 / 60%);
-  }
-}
-
-ul {
-  margin: 0;
-  padding: 0;
-}
-
-.colors {
-  overflow: auto;
-}
-
-.column {
-  float: left;
-  list-style: none;
-}
-
-.tile {
-  position: relative;
-  margin: 0 $gutter $gutter 0;
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 10%);
-  border-radius: 2px;
-  width: $size;
-  height: $size;
-  cursor: pointer;
-  list-style: none;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.dot {
-  position: absolute;
-  inset: 0;
-  opacity: 1;
-  margin: auto;
-  border-radius: 50%;
-  width: calc($size / 3);
-  height: calc($size / 3);
-  background: #fff;
-
-  .white & {
-    background: #000;
-  }
 }
 </style>
