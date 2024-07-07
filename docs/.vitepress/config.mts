@@ -41,7 +41,20 @@ export default defineConfig({
           },
           {
             text: 'Content configuration',
-            link: '/dev/configuration',
+            items: [
+              {
+                text: 'Introduction',
+                link: '/dev/configuration/introduction',
+              },
+              {
+                text: 'Adding new schema',
+                link: '/dev/configuration/schema',
+              },
+              {
+                text: 'Repository structure',
+                link: '/dev/configuration/structure',
+              },
+            ],
           },
         ],
       },
