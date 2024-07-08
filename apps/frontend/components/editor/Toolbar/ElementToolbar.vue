@@ -55,7 +55,9 @@ const config = computed(() => {
   return $ceRegistry.get(type);
 });
 
-const componentExists = computed(() => !!$ceRegistry.get(props.element.type));
+const componentExists = computed(
+  () => !!$ceRegistry.get(props.element.type)?.hasTopToolbar,
+);
 const save = (data: any) => elementBus.emit('save', data);
 </script>
 

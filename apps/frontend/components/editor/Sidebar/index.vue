@@ -100,7 +100,7 @@ const tabs: any = computed(() => [
     name: ELEMENT_TAB,
     label: 'Element',
     icon: 'toy-brick-outline',
-    disabled: !props.selectedElement?.type,
+    disabled: !elementSidebarEnabled.value || !props.selectedElement?.type,
   },
 ]);
 

@@ -1,5 +1,5 @@
 <template>
-  <VToolbar class="elevation-0" color="primary-darken-3" height="72">
+  <VToolbar class="elevation-0" color="transparent" height="72">
     <VToolbarTitle class="pl-1">{{ label }}</VToolbarTitle>
   </VToolbar>
 </template>
