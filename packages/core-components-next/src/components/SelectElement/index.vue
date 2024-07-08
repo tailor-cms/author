@@ -240,9 +240,9 @@ const deselectActivity = () => {
 const selectRepository = async (repository: Repository) => {
   selection.repository = repository;
   deselectActivity();
-  const isCurrentRepository = currentRepository.id === repository.id;
+  const isCurrentRepository = currentRepository.value.id === repository.id;
   items.activities = isCurrentRepository
-    ? currentRepository.activities
+    ? currentRepository.value.activities
     : await fetchActivities(repository);
 };
 
@@ -265,7 +265,7 @@ const close = () => emit('close');
 
 onMounted(() => {
   selection.elements = [...props.selected];
-  selection.repository = currentRepository;
-  items.activities = currentRepository?.activities || [];
+  selection.repository = currentRepository.value;
+  items.activities = currentRepository.value?.activities || [];
 });
 </script>

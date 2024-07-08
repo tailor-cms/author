@@ -634,6 +634,12 @@ importers:
 
   extensions/meta-inputs:
     dependencies:
+      '@tailor-cms/tme-color':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-color
+      '@tailor-cms/tme-file':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-file
       '@tailor-cms/tme-textarea':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-textarea
@@ -727,6 +733,40 @@ importers:
         version: link:../../../tailor-interfaces
       '@types/lodash':
         specifier: '*'
+        version: 4.17.6
+
+  packages/core-extensions/meta-inputs/meta-color:
+    dependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      vue:
+        specifier: ^3.3.4
+        version: 3.4.31(typescript@5.5.2)
+      vuetify:
+        specifier: ^3.3.5
+        version: 3.6.8(typescript@5.5.2)(vue@3.4.31(typescript@5.5.2))
+
+  packages/core-extensions/meta-inputs/meta-file:
+    dependencies:
+      '@tailor-cms/core-components-next':
+        specifier: workspace:*
+        version: link:../../../core-components-next
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      lodash:
+        specifier: '*'
+        version: 4.17.21
+      vue:
+        specifier: ^3.3.4
+        version: 3.4.31(typescript@5.5.2)
+      vuetify:
+        specifier: ^3.3.5
+        version: 3.6.8(typescript@5.5.2)(vue@3.4.31(typescript@5.5.2))
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.6
         version: 4.17.6
 
   packages/core-extensions/meta-inputs/meta-textarea:

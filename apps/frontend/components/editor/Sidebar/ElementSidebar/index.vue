@@ -15,12 +15,10 @@ import { schema } from 'tailor-config-shared';
 
 import ElementMeta from './ElementMeta/index.vue';
 import { exposedApi } from '@/api';
-import { useCurrentRepository } from '@/stores/current-repository';
 
 const eventBus = inject('$eventBus') as any;
 const authStore = useAuthStore();
 const storageService = useStorageService();
-const repositoryStore = useCurrentRepository();
 
 interface Props {
   element: ContentElement;
@@ -38,10 +36,6 @@ provide('$storageService', storageService);
 provide('$api', exposedApi);
 provide('$schemaService', schema);
 provide('$getCurrentUser', () => authStore.user);
-provide('$repository', {
-  ...repositoryStore.repository,
-  activities: repositoryStore.activities,
-});
 
 const sidebarName = getSidebarName(props.element?.type);
 
