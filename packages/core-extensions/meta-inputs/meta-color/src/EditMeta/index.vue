@@ -30,8 +30,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
+import { ref } from 'vue';
 
 import ColorInput from './ColorInput.vue';
 
@@ -60,7 +60,7 @@ const emit = defineEmits(['update']);
 const colors = ref(props.meta.colors ?? DEFAULT_COLORS);
 const selected = ref(props.meta.value ?? '#000000');
 
-const select = (color) => {
+const select = (color: string) => {
   if (selected.value === color) return;
   selected.value = color;
   emit('update', props.meta.key, color);

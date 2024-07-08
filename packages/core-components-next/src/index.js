@@ -11,3 +11,5 @@ export { default as ActiveUsers } from './components/ActiveUsers.vue';
 export { default as SelectElement } from './components/SelectElement/index.vue';
 export { default as FileInput } from './components/FileInput.vue';
 export { useLoader } from './composables/useLoader.ts';
+export { useConfirmationDialog } from './composables/useConfirmationDialog.ts';
+export { useStorageService } from './composables/useStorageService.ts';

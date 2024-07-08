@@ -15,12 +15,10 @@ import { schema } from 'tailor-config-shared';
 
 import ElementMeta from './ElementMeta/index.vue';
 import { exposedApi } from '@/api';
-import { useCurrentRepository } from '@/stores/current-repository';
 
 const eventBus = inject('$eventBus') as any;
 const authStore = useAuthStore();
 const storageService = useStorageService();
-const repositoryStore = useCurrentRepository();
 
 interface Props {
   element: ContentElement;
