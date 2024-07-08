@@ -17,6 +17,9 @@
   "peerDependencies": {
     "@tailor-cms/core-components-next": "workspace:*",
     "@tailor-cms/utils": "workspace:*",
+    "@tiptap/pm": "^2.4.0",
+    "@tiptap/starter-kit": "^2.4.0",
+    "@tiptap/vue-3": "^2.4.0",
     "date-fns": "^3.6.0",
     "lodash": "^4.17.21",
     "p-min-delay": "^4.0.2",
