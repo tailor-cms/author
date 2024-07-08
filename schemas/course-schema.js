@@ -82,6 +82,7 @@ export const SCHEMA = {
       type: 'FILE',
       label: 'Poster image',
       placeholder: 'Click to upload a poster image',
+      icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],
       },

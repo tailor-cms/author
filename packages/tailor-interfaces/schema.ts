@@ -5,6 +5,7 @@ export interface Metadata {
   placeholder?: string;
   validate: Record<string, any>;
   defaultValue?: any;
+  [key: string]: any;
 }
 
 export interface ElementRelationship {

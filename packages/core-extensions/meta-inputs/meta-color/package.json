@@ -1,7 +1,7 @@
 {
-  "name": "@tailor-cms/tme-textarea",
+  "name": "@tailor-cms/tme-color",
   "version": "0.0.1",
-  "description": "Tailor textarea meta input",
+  "description": "Tailor color meta input",
   "author": "Studion <info@gostudion.com>",
   "type": "module",
   "files": [
@@ -9,6 +9,7 @@
   ],
   "main": "./src/index.js",
   "peerDependencies": {
+    "@tailor-cms/interfaces": "workspace:*",
     "vue": "^3.3.4",
     "vuetify": "^3.3.5"
   }

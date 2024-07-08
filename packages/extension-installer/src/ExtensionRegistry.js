@@ -76,8 +76,10 @@ export class ExtensionRegistry {
 
   areDependenciesInstalled({ clientPackage: fePkg, serverPackage: bePkg }) {
     const { elements } = this;
-    const clientPkgExists = elements.find((it) => it.clientPackage === fePkg);
-    const serverPkgExists = elements.find((it) => it.serverPackage === bePkg);
+    const clientPkgExists =
+      fePkg && elements.find((it) => it.clientPackage === fePkg);
+    const serverPkgExists =
+      bePkg && elements.find((it) => it.serverPackage === bePkg);
     return clientPkgExists || serverPkgExists;
   }
 

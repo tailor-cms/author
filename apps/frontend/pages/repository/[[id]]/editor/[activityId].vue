@@ -52,10 +52,6 @@ await editorStore.initialize(props.activityId);
 provide('$editorState', {
   isPublishDiff: computed(() => editorStore.showPublishDiff),
 });
-provide('$repository', {
-  ...repositoryStore.repository,
-  activities: repositoryStore.activities,
-});
 
 const selectElement = (element: any) => {
   const route = useRoute();
