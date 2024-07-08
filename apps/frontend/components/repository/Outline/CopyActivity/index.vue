@@ -78,6 +78,7 @@ import pluralize from 'pluralize';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { SCHEMAS } from 'tailor-config-shared';
 import sortBy from 'lodash/sortBy';
+import { useLoader } from '@tailor-cms/core-components-next';
 
 import { activity as activityApi, repository as repositoryApi } from '@/api';
 import RepositoryTree from './RepositoryTree.vue';
