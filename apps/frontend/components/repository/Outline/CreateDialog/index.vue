@@ -118,7 +118,13 @@ const visible = ref(false);
 const submitting = ref(false);
 
 const dialogTestId = computed(() => `${props.testIdPrefix}Dialog`);
-const taxonomyLevels = ref(selectedActivity.levels) as any;
+
+const taxonomyLevels = computed<any[]>(() => {
+  const { subLevels, sameLevel } = selectedActivity;
+  const isAddInto = props.action === InsertLocation.ADD_INTO;
+  return isAddInto ? subLevels.value : sameLevel.value;
+});
+
 const hasSingleTypeOption = computed(() => taxonomyLevels.value.length === 1);
 
 const defaultModalHeading = computed(() => {

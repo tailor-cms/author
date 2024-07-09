@@ -11,13 +11,7 @@
     >
       <div class="card-body">
         <div class="d-flex align-center mt-1 mr-1 mb-1 ml-3">
-          <VChip
-            :color="repository.data.color"
-            class="px-1"
-            density="comfortable"
-            size="x-small"
-            variant="flat"
-          />
+          <VChip :color="repository.data.color" class="px-1" size="x-small" />
           <VTooltip
             :disabled="!isSchemaNameTruncated"
             content-class="bg-primary-darken-4"

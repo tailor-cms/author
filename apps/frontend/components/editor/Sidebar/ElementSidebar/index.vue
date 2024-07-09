@@ -1,6 +1,6 @@
 <template>
   <div class="element-sidebar">
-    <div class="pb-8 text-body-2 font-weight-bold text-primary-lighten-4">
+    <div class="pb-4 text-body-2 font-weight-bold text-primary-lighten-4">
       Additional settings
     </div>
     <component :is="sidebarName" :element="element" @save="onSave" />
