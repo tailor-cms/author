@@ -3,7 +3,7 @@
     v-bind="omit(activatorProps, 'onClick')"
     :class="{
       'text-secondary-lighten-4': isActive,
-      readonly: !isEditable || isActive,
+      readonly: !isEditable,
     }"
     :title="title"
     class="list-item"
