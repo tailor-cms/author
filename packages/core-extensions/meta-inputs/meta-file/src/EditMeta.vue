@@ -16,7 +16,15 @@ interface Meta extends Metadata {
   value?: { key: string; name: string };
 }
 
-const props = defineProps<{ meta: Meta }>();
+interface Props {
+  meta: Meta;
+  dark?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  dark: false,
+});
+
 defineEmits(['update']);
 
 const options = computed(() => {
@@ -29,6 +37,7 @@ const options = computed(() => {
     icon: props.meta.icon,
     value: props.meta.value,
     placeholder: props.meta.placeholder || '',
+    dark: props.dark,
   };
 });
 </script>

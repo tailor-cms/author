@@ -55,6 +55,7 @@
         v-for="it in metadata"
         :key="`${activity.uid}.${it.key}`"
         :meta="it"
+        dark
         @update="updateActivity"
       />
     </div>
