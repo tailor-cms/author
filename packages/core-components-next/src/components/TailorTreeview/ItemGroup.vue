@@ -41,3 +41,9 @@ const bindings = computed(() => {
 
 const emit = defineEmits(['edit']);
 </script>
+
+<style lang="scss" scoped>
+.v-list-group {
+  --list-indent-size: 0.75rem;
+}
+</style>
