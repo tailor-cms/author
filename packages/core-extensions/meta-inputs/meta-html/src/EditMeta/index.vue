@@ -1,5 +1,5 @@
 <template>
-  <RichTextEditor v-model="input" />
+  <RichTextEditor v-model="input" v-bind="meta" />
 </template>
 
 <script lang="ts" setup>

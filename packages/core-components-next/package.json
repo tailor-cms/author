@@ -32,5 +32,11 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@tiptap/extension-subscript": "^2.4.0",
+    "@tiptap/extension-superscript": "^2.4.0",
+    "@tiptap/extension-underline": "^2.4.0",
+    "@vueuse/core": "^10.11.0"
   }
 }

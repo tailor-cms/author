@@ -678,6 +678,15 @@ importers:
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../utils
+      '@tiptap/extension-subscript':
+        specifier: ^2.4.0
+        version: 2.4.0(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))
+      '@tiptap/extension-superscript':
+        specifier: ^2.4.0
+        version: 2.4.0(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))
+      '@tiptap/extension-underline':
+        specifier: ^2.4.0
+        version: 2.4.0(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))
       '@tiptap/pm':
         specifier: ^2.4.0
         version: 2.4.0
@@ -687,6 +696,9 @@ importers:
       '@tiptap/vue-3':
         specifier: ^2.4.0
         version: 2.4.0(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))(@tiptap/pm@2.4.0)(vue@3.4.31(typescript@5.5.2))
+      '@vueuse/core':
+        specifier: ^10.11.0
+        version: 10.11.0(vue@3.4.31(typescript@5.5.2))
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
