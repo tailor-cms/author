@@ -1,30 +1,44 @@
 <template>
-  <VInput ref="input" v-bind="$attrs" :model-value="modelValue">
-    <VSheet
-      v-if="editor"
-      :class="{ active, focused }"
-      class="editor w-100"
-      color="transparent"
-      rounded="sm"
-    >
-      <VFieldLabel :floating="active">{{ label }}</VFieldLabel>
-      <EditorContent :editor="editor" />
-      <VDivider />
-      <EditorToolbar :editor="editor" />
-      <div class="outline">
-        <div class="outline-start"></div>
-        <div class="outline-notch">
-          <VFieldLabel :floating="active">{{ label }}</VFieldLabel>
-        </div>
-        <div class="outline-end"></div>
-      </div>
-    </VSheet>
+  <VInput
+    ref="input"
+    :disabled="disabled"
+    :focused="focused"
+    :model-value="modelValue"
+    :rules="rules"
+    class="text-left"
+  >
+    <template #default="{ id, isValid, isDisabled, isDirty }">
+      <VField
+        :id="id.value"
+        :active="focused || isDirty.value"
+        :disabled="isDisabled.value"
+        :error="isValid.value === false"
+        :focused="focused"
+        :label="label"
+        :variant="variant"
+      >
+        <template #default="{ props: fieldProps }">
+          <div class="w-100">
+            <EditorContent
+              v-bind="fieldProps"
+              ref="input"
+              :editor="editor"
+              class="w-100"
+            />
+            <VDivider />
+            <EditorToolbar :editor="editor" />
+          </div>
+        </template>
+      </VField>
+    </template>
   </VInput>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
 import { EditorContent, useEditor } from '@tiptap/vue-3';
+import { ref, watch } from 'vue';
+import type { VField, VInput } from 'vuetify/components';
+import CharacterCount from '@tiptap/extension-character-count';
 import StarterKit from '@tiptap/starter-kit';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
@@ -33,7 +47,19 @@ import { useFocusWithin } from '@vueuse/core';
 
 import EditorToolbar from './EditorToolbar.vue';
 
-const props = defineProps<{ modelValue: string; label: string }>();
+interface Props {
+  modelValue: string;
+  label: string;
+  disabled: boolean;
+  variant?: VField['variant'];
+  rules?: VInput['rules'];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  variant: 'outlined',
+  disabled: false,
+  rules: undefined,
+});
 const emit = defineEmits(['update:modelValue']);
 
 const input = ref();
@@ -41,11 +67,20 @@ const { focused } = useFocusWithin(input);
 
 const editor = useEditor({
   content: props.modelValue,
-  onUpdate: () => emit('update:modelValue', editor.value?.getHTML()),
-  extensions: [StarterKit, Subscript, Superscript, Underline],
+  onUpdate: ({ editor }) => {
+    const content = editor.storage.characterCount.words()
+      ? editor.getHTML()
+      : '';
+    return emit('update:modelValue', content);
+  },
+  extensions: [
+    StarterKit.configure({ heading: false, horizontalRule: false }),
+    Subscript,
+    Superscript,
+    Underline,
+    CharacterCount.configure(),
+  ],
 });
-
-const active = computed(() => focused.value || !!editor.value?.getText());
 
 watch(
   () => props.modelValue,
@@ -58,99 +93,40 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.editor {
-  text-align: left;
-  position: relative;
-  border-radius: 4px;
-
-  &.active .outline .v-label {
-    visibility: unset;
-  }
-
-  .v-field-label {
-    margin: 0 1rem;
-  }
-
-  &.focused .outline {
-    --opacity: 1;
-    --width: 2px;
-  }
-
-  .outline {
-    pointer-events: none;
-    display: flex;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    --opacity: 0.38;
-    --width: 1px;
-
-    .v-field-label {
-      visibility: hidden;
-      opacity: var(--opacity);
-    }
-
-    .v-field-label.v-field-label--floating {
-      visibility: unset;
-      transform: translateY(-50%);
-      transform-origin: center;
-      position: static;
-      margin: 0 4px;
-    }
-  }
-
-  .outline-start {
-    flex: 0 0 0.75rem;
-    border: var(--width) solid currentColor;
-    opacity: var(--opacity);
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    border-right: none;
-  }
-
-  .outline-notch {
-    position: relative;
-    max-width: calc(100% - 12px);
-
-    &:before,
-    &:after {
-      border: 0 solid currentColor;
-      content: '';
-      opacity: var(--opacity);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    &:before {
-      opacity: 0;
-      top: 0;
-      border-width: var(--width) 0 0;
-    }
-
-    &:after {
-      bottom: 0;
-      border-width: 0 0 var(--width);
-    }
-  }
-
-  .outline-end {
-    flex: 1;
-    border: var(--width) solid currentColor;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-left: none;
-    opacity: var(--opacity);
-  }
-}
+$toolbar-height: 2.25rem;
 
 :deep(.ProseMirror) {
   overflow-y: auto;
-  padding: 0.75rem 1rem;
   outline: none;
+  width: 100%;
+
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+
+    code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
+    }
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid color-mix(in srgb, currentColor 20%, transparent);
+  }
+}
+
+.v-field--center-affix :deep(.v-label.v-field-label) {
+  top: calc(50% - $toolbar-height/2);
 }
 </style>

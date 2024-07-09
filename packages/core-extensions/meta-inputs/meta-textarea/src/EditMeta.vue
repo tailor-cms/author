@@ -5,6 +5,7 @@
     :name="meta.key"
     :placeholder="meta.placeholder"
     :rows="rows"
+    :rules="[(val) => !!val || 'The field is required']"
     class="my-2"
     variant="outlined"
     auto-grow

@@ -34,6 +34,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@tiptap/extension-character-count": "^2.4.0",
     "@tiptap/extension-subscript": "^2.4.0",
     "@tiptap/extension-superscript": "^2.4.0",
     "@tiptap/extension-underline": "^2.4.0",
