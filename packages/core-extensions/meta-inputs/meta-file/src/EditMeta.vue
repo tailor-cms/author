@@ -27,6 +27,7 @@ const options = computed(() => {
     validate: props.meta.validate,
     label: props.meta.label,
     icon: props.meta.icon,
+    value: props.meta.value,
     placeholder: props.meta.placeholder || '',
   };
 });
