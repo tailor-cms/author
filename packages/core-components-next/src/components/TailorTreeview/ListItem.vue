@@ -1,17 +1,20 @@
 <template>
   <VListItem
     v-bind="omit(activatorProps, 'onClick')"
-    :class="{ 'text-secondary-lighten-4': isActive }"
+    :class="{
+      'text-secondary-lighten-4': isActive,
+      readonly: !isEditable,
+    }"
     :title="title"
     class="list-item"
-    @click="onItemClick"
+    @click.prevent="onItemClick"
   >
     <template #prepend>
       <VBtn
         v-if="isGroup"
         :color="prependColor"
         :icon="prependIcon"
-        class="mr-2"
+        class="ml-n1 mr-2"
         density="comfortable"
         variant="text"
         @click="activatorProps?.onClick"
@@ -62,6 +65,14 @@ const onItemClick = () => {
 .list-item :deep(.v-list-item__append) {
   i {
     opacity: 1 !important;
+  }
+}
+
+.list-item.readonly {
+  pointer-events: none;
+
+  .v-btn {
+    pointer-events: auto;
   }
 }
 </style>
