@@ -1,15 +1,21 @@
 <template>
   <VListItem
-    v-bind="$attrs"
+    v-bind="omit(activatorProps, 'onClick')"
     :class="{ 'text-secondary-lighten-4': isActive }"
     :title="title"
     class="list-item"
     @click="onItemClick"
   >
     <template #prepend>
-      <VIcon v-if="isGroup" :color="prependColor">
-        {{ prependIcon }}
-      </VIcon>
+      <VBtn
+        v-if="isGroup"
+        :color="prependColor"
+        :icon="prependIcon"
+        class="mr-2"
+        density="comfortable"
+        variant="text"
+        @click="activatorProps?.onClick"
+      />
     </template>
     <template #title>
       <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
@@ -24,6 +30,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+import omit from 'lodash/omit';
 
 const props = defineProps<{
   id: number;
@@ -32,6 +39,7 @@ const props = defineProps<{
   isEditable?: boolean;
   isOpen?: boolean;
   isActive?: boolean;
+  activatorProps?: Record<string, any>;
 }>();
 
 const emit = defineEmits(['edit']);
