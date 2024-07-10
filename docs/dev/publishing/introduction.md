@@ -24,31 +24,32 @@ Here's how Tailor organizes content in the storage:
 - `repository` directory is created in the storage root.
 - `repository/index.json` file, known as the catalog, is created to provide
   an overview of all published repositories.
-- `repository/${ID}` directory is created for each published content
-  repository, named by its unique ID.
+- `repository/[id]` directory is created for each published content
+  repository, named by its unique id.
 - `repository/assets` directory is created for static asset storage 
   (e.g. images). This is because assets might be reused across different 
   repositories.
 
 ## Published Repository structure
 
-The published repository is structured around two main types of files:
+The published repository consists of two main file types:
 
-1. **Repository Root File (`index.json`):** Located at `repository/${ID}/index.json`,
+1. **Repository Root File (`index.json`):** Located at `repository/[id]/index.json`,
   this single file contains general information about the repository and 
   outlines the repository structure. It includes details on the activities 
   that define the structure of the repository.
 
-2. **Content Container Files (`[id].container.json`):** There are multiple 
+1. **Content Container Files (`[id].container.json`):** There are multiple 
    content container files, named `[id].container.json`, where `id` corresponds
-   to the published content containers. These files contain the specific
-   content and metadata for each container.
+   to the published content containers primary key. These files contain the
+   specific content and metadata for each container.
 
-For additional information, refer to the dedicated documentation pages.
-
-\
-When publishing repositories, there are two primary options for structuring
-the published content within the `repository/${ID}` directory:
+:::tip
+For additional information on these file types, refer to the dedicated 
+documentation pages.
+:::
+When publishing repositories, there are two options for structuring
+the published content within the `repository/[id]` directory:
 
 - **Flat Repository Structure**
 - **Nested Repository Structure** (deprecated)
@@ -57,7 +58,7 @@ the published content within the `repository/${ID}` directory:
 
 To enable the flat repository structure, the environment variable 
 `FLAT_REPO_STRUCTURE=1` must be set. This structure, which is now the default,
-consolidates all published activities within the `repository/${ID}` 
+consolidates all published containers within the `repository/[id]` 
 folder.
 
 ![Flat publishing structure](../../assets/flat_repository_structure.png)
@@ -86,24 +87,26 @@ const SCHEMA = {
 };
 ```
 
-When a repository is created and assigned an ID (for example, ID 1), 
+When a Repository is created and assigned an id (for example, id 1), 
 and it includes activities such as Page 1, Page 2, and Page 3, each containing 
-a single Section container (with IDs 4, 5, 6 respectively), the publication of 
+a single Section container (with ids 4, 5, 6 respectively), the publication of 
 the entire repository results in the following structure:
 
 - `repository/index.json`: Contains general information about the repository,
-  such as its ID, name, description, and the date it was last published.
-- `repository/1/index.json`: Includes general information about the repository,
-  details of all the Pages, and some additional data.
-- `repository/1`: This folder contains all the published Section
-  containers: `4.container.json`, `5.container.json`, `6.container.json`.
+  such as its id, name, description, and the date it was last published.
+- `repository/1` directory contains:
+  - `index.json` Repository root file which contains information about the
+  repository including the list with all of the Pages 
+  (without Section content).
+  - Contains all the published Section containers: 
+  `4.container.json`, `5.container.json`, `6.container.json`.
 
 ### Nested Structure
 
 In contrast, the nested structure (which is now deprecated) organizes content
 differently. Each structural activity, such as Page 1, Page 2, and Page 3
-(assigned IDs 1, 2, 3 respectively), would have its content container stored
-within a specific `<activity_id>` folder inside the `<content_repository_id>`
+(assigned ids 1, 2, 3 respectively), would have its content container stored
+within a specific `[activity_id]` folder inside the `[content_repository_id]`
 folder. This means the containers would be located at:
 - `repository/1/1/4.container.json` for Page 1,
 - `repository/1/2/5.container.json` for Page 2,
