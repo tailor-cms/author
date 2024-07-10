@@ -90,6 +90,7 @@
     <AddElement
       v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
+      :categories="categories"
       :include="types"
       :items="containerElements"
       :large="true"
@@ -127,6 +128,7 @@ interface Props {
   elements: Record<string, ContentElement>;
   position: number;
   types?: string[] | null;
+  categories?: any[] | null;
   layout?: boolean;
   disabled?: boolean;
 }
@@ -135,6 +137,7 @@ const props = withDefaults(defineProps<Props>(), {
   types: null,
   layout: true,
   disabled: false,
+  categories: null,
 });
 
 const emit = defineEmits([

@@ -4,7 +4,7 @@
       <div class="d-flex align-center pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
-      <div v-for="group in library as any" :key="group.name">
+      <div v-for="group in library as any" :key="group.name" class="mb-2">
         <div class="group-heading text-primary-darken-3">
           {{ group.name }}
         </div>
