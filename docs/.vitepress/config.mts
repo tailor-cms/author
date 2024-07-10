@@ -56,6 +56,15 @@ export default defineConfig({
               },
             ],
           },
+          {
+            text: 'Publishing',
+            items: [
+              {
+                text: 'Introduction',
+                link: '/dev/publishing/introduction',
+              },
+            ],
+          },
         ],
       },
     ],
