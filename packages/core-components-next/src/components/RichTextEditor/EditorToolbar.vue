@@ -1,93 +1,28 @@
 <template>
   <VSheet color="transparent" rounded="0">
-    <VBtn
-      :active="editor?.isActive('bold')"
-      icon="mdi-format-bold"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleBold().run()"
-    />
-    <VBtn
-      :active="editor?.isActive('italic')"
-      icon="mdi-format-italic"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleItalic().run()"
-    />
-    <VBtn
-      :active="editor?.isActive('underline')"
-      icon="mdi-format-underline"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleUnderline().run()"
-    />
-    <VBtn
-      :active="editor?.isActive('strike')"
-      icon="mdi-format-strikethrough-variant"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleStrike().run()"
-    />
-    <VDivider vertical />
-    <VBtn
-      :active="editor?.isActive('bulletList')"
-      icon="mdi-format-list-bulleted"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleBulletList().run()"
-    />
-    <VBtn
-      :active="editor?.isActive('orderedList')"
-      icon="mdi-format-list-numbered"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleOrderedList().run()"
-    />
-    <VDivider vertical />
-    <VBtn
-      :active="editor?.isActive('subscript')"
-      icon="mdi-format-subscript"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleSubscript().run()"
-    />
-    <VBtn
-      :active="editor?.isActive('superscript')"
-      icon="mdi-format-superscript"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleSuperscript().run()"
-    />
-    <VDivider vertical />
-    <VBtn
-      :active="editor?.isActive('blockquote')"
-      icon="mdi-format-quote-open"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleBlockquote().run()"
-    />
-    <VBtn
-      :active="editor?.isActive('codeBlock')"
-      icon="mdi-code-tags"
-      rounded="sm"
-      size="28"
-      variant="text"
-      @click="editor?.chain().focus().toggleCodeBlock().run()"
-    />
+    <template v-for="(group, index) in actions" :key="index">
+      <VDivider v-if="index" vertical />
+      <VBtn
+        v-for="action in group"
+        :key="action.name"
+        :active="editor?.isActive(action.name)"
+        :icon="action.icon"
+        rounded="sm"
+        size="28"
+        variant="text"
+        @click="editor?.chain().focus()[action.command]().run()"
+      />
+    </template>
   </VSheet>
 </template>
 
 <script lang="ts" setup>
-defineProps<{ editor: any }>();
+import { Editor } from '@tiptap/vue-3';
+import { VDivider } from 'vuetify/lib/components/index.mjs';
+
+import { actions } from './actions';
+
+defineProps<{ editor: Editor }>();
 </script>
 
 <style lang="scss" scoped>

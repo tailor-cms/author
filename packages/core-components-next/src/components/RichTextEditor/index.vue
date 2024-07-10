@@ -1,5 +1,6 @@
 <template>
   <VInput
+    v-if="editor"
     ref="input"
     :disabled="disabled"
     :focused="focused"
