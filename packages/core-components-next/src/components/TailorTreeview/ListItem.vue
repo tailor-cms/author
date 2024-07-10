@@ -1,15 +1,24 @@
 <template>
   <VListItem
-    v-bind="$attrs"
-    :class="{ 'text-secondary-lighten-4': isActive }"
+    v-bind="omit(activatorProps, 'onClick')"
+    :class="{
+      'text-secondary-lighten-4': isActive,
+      readonly: !isEditable,
+    }"
     :title="title"
     class="list-item"
-    @click="onItemClick"
+    @click.prevent="onItemClick"
   >
     <template #prepend>
-      <VIcon v-if="isGroup" :color="prependColor">
-        {{ prependIcon }}
-      </VIcon>
+      <VBtn
+        v-if="isGroup"
+        :color="prependColor"
+        :icon="prependIcon"
+        class="ml-n1 mr-2"
+        density="comfortable"
+        variant="text"
+        @click="activatorProps?.onClick"
+      />
     </template>
     <template #title>
       <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
@@ -24,6 +33,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+import omit from 'lodash/omit';
 
 const props = defineProps<{
   id: number;
@@ -32,6 +42,7 @@ const props = defineProps<{
   isEditable?: boolean;
   isOpen?: boolean;
   isActive?: boolean;
+  activatorProps?: Record<string, any>;
 }>();
 
 const emit = defineEmits(['edit']);
@@ -54,6 +65,14 @@ const onItemClick = () => {
 .list-item :deep(.v-list-item__append) {
   i {
     opacity: 1 !important;
+  }
+}
+
+.list-item.readonly {
+  pointer-events: none;
+
+  .v-btn {
+    pointer-events: auto;
   }
 }
 </style>

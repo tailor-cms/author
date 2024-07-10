@@ -1,7 +1,11 @@
 <template>
   <VListGroup v-if="item.children?.length" :value="item.id">
     <template #activator="{ props: activatorProps, isOpen }">
-      <ListItem v-bind="{ ...activatorProps, ...bindings, isOpen }" is-group />
+      <ListItem
+        v-bind="{ ...bindings, isOpen, activatorProps }"
+        is-group
+        @edit="emit('edit', $event)"
+      />
     </template>
     <ItemGroup
       v-for="subItem in item.children"
@@ -37,3 +41,9 @@ const bindings = computed(() => {
 
 const emit = defineEmits(['edit']);
 </script>
+
+<style lang="scss" scoped>
+.v-list-group {
+  --list-indent-size: 0.75rem;
+}
+</style>

@@ -3,6 +3,7 @@
     <component
       :is="componentName"
       :class="{ required: get(meta, 'validate.required') }"
+      :dark="dark"
       :meta="meta"
       @update="(key: string, value: any) => $emit('update', key, value)"
     />
@@ -14,7 +15,15 @@ import get from 'lodash/get';
 import { getMetaName } from '@tailor-cms/utils';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 
-const props = defineProps<{ meta: Metadata }>();
+interface Props {
+  meta: Metadata;
+  dark?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  dark: false,
+});
+
 defineEmits(['update']);
 
 const type = computed(() => props.meta.type.toUpperCase());
