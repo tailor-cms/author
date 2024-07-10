@@ -63,6 +63,10 @@ export default defineConfig({
                 text: 'Introduction',
                 link: '/dev/publishing/introduction',
               },
+              {
+                text: 'Repository catalog',
+                link: '/dev/publishing/catalog',
+              },
             ],
           },
         ],
