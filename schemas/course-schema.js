@@ -87,12 +87,6 @@ export const SCHEMA = {
         ext: ['jpg', 'jpeg', 'png'],
       },
     },
-    {
-      key: 'html',
-      type: 'HTML',
-      label: 'HTML',
-      placeholder: 'Enter html...',
-    },
   ],
   structure: [MODULE, PAGE],
   contentContainers: [SECTION_CONTAINER],
