@@ -1,16 +1,19 @@
+import type { Activity, Status } from '@tailor-cms/interfaces/activity';
 import {
   activity as activityUtils,
   calculatePosition,
   InsertLocation,
 } from '@tailor-cms/utils';
-import type { Activity } from '@tailor-cms/interfaces/activity';
+import { schema, workflow as workflowConfig } from 'tailor-config-shared';
 import { Activity as Events } from 'sse-event-types';
 import findIndex from 'lodash/findIndex';
 import Hashids from 'hashids';
-import { schema } from 'tailor-config-shared';
+import orderBy from 'lodash/orderBy';
 
 import { activity as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
+
+const { getDefaultActivityStatus } = workflowConfig;
 
 type Id = number | string;
 export type StoreActivity = Activity & { shortId: string };
@@ -61,7 +64,7 @@ export const useActivityStore = defineStore('activities', () => {
     $items.set(item.uid, {
       ...item,
       shortId: `A-${hashids.encode(item.id)}`,
-      // status: getActivityStatus(it)
+      status: getActivityStatus(item),
     });
     return $items.get(item.uid);
   }
@@ -158,6 +161,17 @@ export const useActivityStore = defineStore('activities', () => {
     return calculatePosition(context);
   };
 
+  const saveStatus = async (id: number, status: Status) => {
+    const activity = findById(id);
+    if (!activity) return;
+    const data = await api.updateStatus(
+      activity.repositoryId,
+      activity.id,
+      status,
+    );
+    Object.assign(activity, { status: data });
+  };
+
   const $subscribeToSSE = () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Activity) => add(it))
@@ -167,6 +181,13 @@ export const useActivityStore = defineStore('activities', () => {
 
   function $reset() {
     $items.clear();
+  }
+
+  function getActivityStatus({ status, type }: Activity) {
+    const defaultStatus = getDefaultActivityStatus(type);
+    if (!Array.isArray(status)) return status || defaultStatus;
+    const ordered = orderBy(status, (it) => new Date(it.updatedAt), ['desc']);
+    return ordered[0] || defaultStatus;
   }
 
   return {
@@ -188,6 +209,7 @@ export const useActivityStore = defineStore('activities', () => {
     reorder,
     calculateInsertPosition,
     calculateCopyPosition,
+    saveStatus,
     $subscribeToSSE,
     $reset,
   };
