@@ -39,11 +39,10 @@
       </template>
     </VSelect>
     <SelectPriority
-      :items="priorities"
+      :items="workflowConfig.priorities"
       :model-value="priority"
       @update:model-value="update('priority', $event)"
     />
-    <!-- v-model:priority -->
     <VDateInput
       :model-value="dueDate && new Date(dueDate)"
       label="Due date"
@@ -57,7 +56,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
 import { VDateInput } from 'vuetify/labs/VDateInput';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
@@ -67,19 +65,11 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 type Key = 'description' | 'status' | 'assigneeId' | 'priority' | 'dueDate';
 
-interface Priority {
-  id: string;
-  label: string;
-  icon: string;
-  default?: boolean;
-  color: string;
-}
-
 interface Props {
   description?: string | null;
   status?: string | null;
   assigneeId?: number | null;
-  priority?: any; // TODO: Update to Priority
+  priority?: string | null;
   dueDate?: string | null;
 }
 
@@ -87,18 +77,12 @@ const props = withDefaults(defineProps<Props>(), {
   description: null,
   status: null,
   assigneeId: null,
-  priority: workflowConfig.priorities.find((it) => it.default),
+  priority: workflowConfig.priorities.find((it) => it.default)?.id ?? null,
   dueDate: null,
 });
-
 const emit = defineEmits(['update']);
 
-const repositoryStore = useCurrentRepository();
-
-const users = computed(() => repositoryStore.users);
-const workflow = computed(() => repositoryStore.workflow);
-const priorities = computed(() => workflowConfig.priorities);
-
+const { users, workflow } = storeToRefs(useCurrentRepository());
 const update = async (key: Key, value: any) => {
   if (props[key] === value) return;
   emit('update', key, value);

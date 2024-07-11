@@ -26,7 +26,7 @@ import xor from 'lodash/xor';
 import AssigneeAvatar from '../AssigneeAvatar.vue';
 
 interface Props {
-  selected?: string[];
+  selected?: number[];
   unassigned?: boolean;
   options?: Record<string, any>;
   showUnassigned?: boolean;

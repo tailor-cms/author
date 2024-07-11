@@ -23,6 +23,7 @@
 import { isAfter, sub } from 'date-fns';
 import compact from 'lodash/compact';
 import overEvery from 'lodash/overEvery';
+import type { Status } from '@tailor-cms/interfaces/activity';
 import uniqBy from 'lodash/uniqBy';
 
 import Sidebar from '@/components/repository/Workflow/Sidebar/index.vue';
@@ -33,9 +34,17 @@ import WorkflowOverview from '@/components/repository/Workflow/Overview/index.vu
 const RECENCY_THRESHOLD = { days: 2 };
 const SEARCH_LENGTH_THRESHOLD = 2;
 
+interface Filters {
+  search: string | null;
+  status: string | null;
+  assigneeIds: number[];
+  unassigned: boolean;
+  recentOnly: boolean;
+}
+
 definePageMeta({ name: 'progress' });
 
-const filters = reactive({
+const filters = reactive<Filters>({
   search: null,
   status: null,
   assigneeIds: [],
@@ -71,19 +80,20 @@ const assignees = computed(() =>
   uniqBy(compact(activities.value.map(({ status }) => status.assignee)), 'id'),
 );
 
-const filterByStatus = ({ status }) => status === filters.status;
+const filterByStatus = ({ status }: Status) => status === filters.status;
 
-const filterByAssignee = ({ assigneeId }) => {
-  if (filters.unassigned && !assigneeId) return true;
+const filterByAssignee = ({ assigneeId }: Status) => {
+  if ((filters.unassigned && !assigneeId) || !assigneeId) return true;
   return filters.assigneeIds.includes(assigneeId);
 };
 
-const filterByRecency = ({ updatedAt }) => {
+const filterByRecency = ({ updatedAt }: Status) => {
   const updatedAtLimit = sub(new Date(), RECENCY_THRESHOLD);
   return isAfter(new Date(updatedAt), updatedAtLimit);
 };
 
-const filterBySearch = ({ shortId, data, status }) => {
+const filterBySearch = ({ shortId, data, status }: StoreActivity) => {
+  if (!filters.search) return;
   const searchableText = `${shortId} ${data.name} ${status.description}`;
   return searchableText.toLowerCase().includes(filters.search.toLowerCase());
 };

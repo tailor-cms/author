@@ -13,26 +13,26 @@
     variant
     @click:row="selectActivity"
   >
-    <template #item.name="{ item }">
+    <template #[`item.name`]="{ item }">
       <OverviewName :name="item.name" />
     </template>
-    <template #item.status="{ item }">
+    <template #[`item.status`]="{ item }">
       <OverviewStatus :color="item.status.color" :label="item.status.label" />
     </template>
-    <template #item.assignee="{ item }">
+    <template #[`item.assignee`]="{ item }">
       <OverviewAssignee
         :img-url="item.assignee?.imgUrl"
         :label="item.assignee?.label"
       />
     </template>
-    <template #item.priority="{ item }">
+    <template #[`item.priority`]="{ item }">
       <OverviewPriority
         :color="item.priority.color"
         :icon="item.priority.icon"
         :label="item.priority.label"
       />
     </template>
-    <template #item.dueDate="{ item }">
+    <template #[`item.dueDate`]="{ item }">
       <OverviewDueDate v-if="item.dueDate" :date="item.dueDate" />
     </template>
   </VDataTable>
@@ -84,11 +84,11 @@ const selectActivity = (_event: Event, { item }: any) => {
   repositoryStore.selectActivity(item.id);
 };
 
-function isActivitySelected(id) {
+function isActivitySelected(id: number) {
   return selectedActivity.value && selectedActivity.value.id === id;
 }
 
-function getStatusById(id) {
+function getStatusById(id: string) {
   return workflow.value.statuses.find((it) => it.id === id);
 }
 

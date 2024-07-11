@@ -27,7 +27,7 @@ import { computed, defineProps, ref } from 'vue';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
 const props = defineProps<{
-  modelValue: string;
+  modelValue: string | null;
 }>();
 
 const priorities = ref(workflowConfig.priorities);
