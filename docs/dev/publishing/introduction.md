@@ -34,10 +34,11 @@ Here's how Tailor organizes content in the storage:
 
 The published repository consists of two main file types:
 
-1. **Repository Root File (`index.json`):** Located at `repository/[id]/index.json`,
-  this single file contains general information about the repository and 
-  outlines the repository structure. It includes details on the activities 
-  that define the structure of the repository.
+1. **Repository Manifest File (`index.json`):** Located at 
+   `repository/[id]/index.json`, this single file contains general
+   information about the repository and outlines the repository structure.
+   It includes details on the activities  that define the structure of 
+   the repository.
 
 1. **Content Container Files (`[id].container.json`):** There are multiple 
    content container files, named `[id].container.json`, where `id` corresponds

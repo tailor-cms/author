@@ -67,6 +67,10 @@ export default defineConfig({
                 text: 'Repository catalog',
                 link: '/dev/publishing/catalog',
               },
+              {
+                text: 'Repository manifest',
+                link: '/dev/publishing/repository-manifest',
+              },
             ],
           },
         ],
