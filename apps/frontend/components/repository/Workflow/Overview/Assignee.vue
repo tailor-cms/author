@@ -13,8 +13,13 @@
 <script lang="ts" setup>
 import AssigneeAvatar from '../AssigneeAvatar.vue';
 
-defineProps({
-  label: { type: String, default: 'Unassigned' },
-  imgUrl: { type: String, default: null },
+interface Props {
+  label?: string;
+  imgUrl?: string | null;
+}
+
+withDefaults(defineProps<Props>(), {
+  label: 'Unassigned',
+  imgUrl: null,
 });
 </script>

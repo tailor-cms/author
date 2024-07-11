@@ -23,7 +23,6 @@
 import { isAfter, sub } from 'date-fns';
 import compact from 'lodash/compact';
 import overEvery from 'lodash/overEvery';
-import { storeToRefs } from 'pinia';
 import uniqBy from 'lodash/uniqBy';
 
 import Sidebar from '@/components/repository/Workflow/Sidebar/index.vue';

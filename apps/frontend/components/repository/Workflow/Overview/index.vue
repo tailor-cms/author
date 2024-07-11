@@ -11,30 +11,34 @@
     fixed-header
     hide-default-footer
     variant
-    @click:row="(_, { item }) => repositoryStore.selectActivity(item.id)"
+    @click:row="selectActivity"
   >
     <template #item.name="{ item }">
-      <OverviewName :value="item.name" />
+      <OverviewName :name="item.name" />
     </template>
     <template #item.status="{ item }">
-      <OverviewStatus v-bind="item.status" />
+      <OverviewStatus :color="item.status.color" :label="item.status.label" />
     </template>
     <template #item.assignee="{ item }">
-      <OverviewAssignee v-bind="item.assignee" />
+      <OverviewAssignee
+        :img-url="item.assignee?.imgUrl"
+        :label="item.assignee?.label"
+      />
     </template>
     <template #item.priority="{ item }">
-      <OverviewPriority v-bind="item.priority" />
+      <OverviewPriority
+        :color="item.priority.color"
+        :icon="item.priority.icon"
+        :label="item.priority.label"
+      />
     </template>
     <template #item.dueDate="{ item }">
-      <OverviewDueDate v-if="item.dueDate" :value="item.dueDate" />
+      <OverviewDueDate v-if="item.dueDate" :date="item.dueDate" />
     </template>
   </VDataTable>
 </template>
 
 <script lang="ts" setup>
-// import { ref, computed } from 'vue';
-// import { useStore } from 'vuex';
-
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
@@ -75,6 +79,10 @@ const items = computed(() =>
     class: isActivitySelected(id) && 'selected',
   })),
 );
+
+const selectActivity = (_event: Event, { item }: any) => {
+  repositoryStore.selectActivity(item.id);
+};
 
 function isActivitySelected(id) {
   return selectedActivity.value && selectedActivity.value.id === id;

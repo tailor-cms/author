@@ -2,13 +2,13 @@
   <VTooltip open-delay="800" bottom>
     <template #activator="{ props: tooltipProps }">
       <div v-bind="tooltipProps" class="column-name text-truncate">
-        {{ value }}
+        {{ name }}
       </div>
     </template>
-    {{ value }}
+    {{ name }}
   </VTooltip>
 </template>
 
 <script lang="ts" setup>
-defineProps<{ value: string }>();
+defineProps<{ name: string }>();
 </script>

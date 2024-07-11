@@ -8,7 +8,6 @@
       @update:model-value="update('description', $event)"
     />
     <SelectStatus
-      :error-messages="errors"
       :items="workflow.statuses"
       :model-value="status"
       label="Status"
@@ -40,7 +39,6 @@
       </template>
     </VSelect>
     <SelectPriority
-      :error-messages="errors"
       :items="priorities"
       :model-value="priority"
       @update:model-value="update('priority', $event)"
@@ -49,18 +47,12 @@
     <VDateInput
       :model-value="dueDate && new Date(dueDate)"
       label="Due date"
+      prepend-icon=""
       variant="outlined"
       clearable
       @click:clear="update('dueDate', null)"
       @update:model-value="update('dueDate', $event)"
     />
-    <!-- <DatePicker
-      :value="dueDate"
-      class="my-2"
-      label="Due date"
-      placeholder="Click to set due date"
-      @input="update('dueDate', $event)"
-    /> -->
   </section>
 </template>
 

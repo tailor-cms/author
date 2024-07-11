@@ -3,8 +3,9 @@
     <AssigneeAvatar
       v-for="assignee in options"
       :key="`assignee-${assignee.id}`"
-      v-bind="assignee"
       :class="{ active: selected.includes(assignee.id) }"
+      :img-url="assignee.imgUrl"
+      :label="assignee.label"
       class="avatar"
       show-tooltip
       @click="toggleAssignee(assignee.id)"
