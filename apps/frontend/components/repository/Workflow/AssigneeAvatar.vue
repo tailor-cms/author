@@ -1,0 +1,33 @@
+<template>
+  <VTooltip :disabled="!showTooltip" open-delay="500" bottom>
+    <template #activator="{ props: tooltipProps }">
+      <VAvatar
+        v-bind="{ ...tooltipProps, ...$attrs }"
+        :size="small ? 24 : 34"
+        color="primary-lighten-4"
+      >
+        <VImg v-if="imgUrl" :src="imgUrl" />
+        <VIcon v-else :size="small ? 16 : 24" color="primary-darken-3">
+          mdi-account
+        </VIcon>
+      </VAvatar>
+    </template>
+    <span>{{ label }}</span>
+  </VTooltip>
+</template>
+
+<script lang="ts" setup>
+interface Props {
+  imgUrl?: string | null;
+  label?: string;
+  small?: boolean;
+  showTooltip?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
+  label: 'Unassigned',
+  imgUrl: null,
+  small: false,
+  showTooltip: false,
+});
+</script>
