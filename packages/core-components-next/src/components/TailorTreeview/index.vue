@@ -14,7 +14,7 @@
       Toggle all
     </VBtn>
   </div>
-  <VList v-model:opened="expanded">
+  <VList v-model:opened="expanded" slim>
     <ItemGroup
       v-for="item in processedItems"
       :key="item.id"

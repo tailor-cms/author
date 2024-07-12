@@ -13,7 +13,6 @@ export default defineConfig({
     search: { provider: 'local' },
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Garment', link: 'https://github.com/underscope/garment' },
       { text: 'Content Element Kit', link: 'https://tailor-cms.github.io/xt/' },
     ],
     sidebar: [
@@ -53,6 +52,31 @@ export default defineConfig({
               {
                 text: 'Repository structure',
                 link: '/dev/configuration/structure',
+              },
+            ],
+          },
+          {
+            text: 'Publishing',
+            items: [
+              {
+                text: 'Introduction',
+                link: '/dev/publishing/introduction',
+              },
+              {
+                text: 'Repository catalog',
+                link: '/dev/publishing/catalog',
+              },
+              {
+                text: 'Repository manifest',
+                link: '/dev/publishing/repository-manifest',
+              },
+              {
+                text: 'Content Containers',
+                link: '/dev/publishing/content-containers',
+              },
+              {
+                text: 'SDK',
+                link: 'https://github.com/underscope/garment',
               },
             ],
           },
