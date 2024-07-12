@@ -1,8 +1,8 @@
 <template>
   <section>
-    <!-- Replace with RichTextEditor -->
-    <VTextarea
+    <RichTextEditor
       :model-value="description"
+      class="mb-2"
       label="Description"
       variant="outlined"
       @update:model-value="update('description', $event)"
@@ -41,6 +41,7 @@
     <SelectPriority
       :items="workflowConfig.priorities"
       :model-value="priority"
+      class="mb-2"
       @update:model-value="update('priority', $event)"
     />
     <VDateInput
@@ -56,6 +57,7 @@
 </template>
 
 <script lang="ts" setup>
+import { RichTextEditor } from '@tailor-cms/core-components-next';
 import { VDateInput } from 'vuetify/labs/VDateInput';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 

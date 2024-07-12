@@ -49,7 +49,7 @@ import { useFocusWithin } from '@vueuse/core';
 import EditorToolbar from './EditorToolbar.vue';
 
 interface Props {
-  modelValue: string;
+  modelValue: any;
   label: string;
   disabled: boolean;
   variant?: VField['variant'];
@@ -57,8 +57,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  variant: 'outlined',
   disabled: false,
+  variant: undefined,
   rules: undefined,
 });
 const emit = defineEmits(['update:modelValue']);
@@ -100,6 +100,10 @@ $toolbar-height: 2.25rem;
   overflow-y: auto;
   outline: none;
   width: 100%;
+
+  > * + * {
+    margin-top: 0.75em;
+  }
 
   ul,
   ol {
