@@ -1,0 +1,17 @@
+{
+  "name": "@tailor-cms/tme-html",
+  "version": "0.0.1",
+  "description": "Tailor HTML meta input",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "peerDependencies": {
+    "@tailor-cms/core-components-next": "workspace:*",
+    "@tailor-cms/interfaces": "workspace:*",
+    "vue": "^3.3.4",
+    "vuetify": "^3.3.5"
+  }
+}
