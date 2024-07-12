@@ -4,20 +4,22 @@
       Related <span class="text-lowercase">{{ activityConfig.label }}</span>
     </div>
     <ActivityCard
-      v-bind="{ id: props.id, name: props.name, shortId: props.shortId }"
+      :id="activity.id"
       :color="activityConfig.color"
+      :name="activity.data.name"
+      :short-id="activity.shortId"
       :type-label="activityConfig.label"
       class="mb-8"
     />
     <VTooltip open-delay="500" bottom>
       <template #activator="{ props: tooltipProps }">
-        <LabelChip v-bind="tooltipProps">{{ props.shortId }}</LabelChip>
+        <LabelChip v-bind="tooltipProps">{{ activity.shortId }}</LabelChip>
       </template>
       {{ activityConfig.label }} ID
     </VTooltip>
     <VBtn
       :key="`${statusUrl}-identifier`"
-      v-clipboard:copy="shortId"
+      v-clipboard:copy="activity.shortId"
       v-clipboard:error="() => notify('Not able to copy the ID')"
       v-clipboard:success="
         () => notify('ID copied to the clipboard', { immediate: true })
@@ -45,13 +47,7 @@
     >
       Copy link
     </VBtn>
-    <div class="mt-2 text-caption">
-      Created at {{ truncateSeconds(createdAt) }}
-      <template v-if="isUpdated">
-        <span class="mx-1">|</span>
-        Updated at {{ truncateSeconds(updatedAt) }}
-      </template>
-    </div>
+    <div class="mt-2 text-caption">{{ timestampInfo }}</div>
   </div>
 </template>
 
@@ -62,35 +58,26 @@ import { isBefore } from 'date-fns/isBefore';
 import ActivityCard from './ActivityCard.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 
-interface Props {
-  id: number;
-  shortId: string;
-  name: string;
-  type: string;
-  createdAt: string;
-  updatedAt?: string | null;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  updatedAt: null,
-});
+const props = defineProps<{
+  activity: StoreActivity;
+}>();
 
 const route = useRoute();
 const notify = useNotification();
 const { $schemaService } = useNuxtApp() as any;
 
 const statusUrl = computed(() => route.query && window.location.href);
-const activityConfig = computed(() => $schemaService.getLevel(props.type));
+const activityConfig = computed(() =>
+  $schemaService.getLevel(props.activity.type),
+);
 
-const isUpdated = computed(() => {
-  if (!props.updatedAt) return false;
-  const createdAt = truncateSeconds(new Date(props.createdAt));
-  const updatedAt = truncateSeconds(new Date(props.updatedAt));
-  return isBefore(createdAt, updatedAt);
-});
-
-const truncateSeconds = (date: Date) => {
+const timestampInfo = computed(() => {
   const format = 'MM/dd/yy HH:mm';
-  return formatDate(date, format);
-};
+  const createdAt = formatDate(props.activity.createdAt, format);
+  const updatedAt = formatDate(props.activity.status.updatedAt, format);
+  const isUpdated = isBefore(createdAt, updatedAt);
+
+  if (!isUpdated) return `Created at ${createdAt}`;
+  return `Created at ${createdAt} | Updated at ${updatedAt}`;
+});
 </script>

@@ -1,20 +1,22 @@
 <template>
   <section>
     <RichTextEditor
-      v-model="description"
+      :model-value="status.description"
       class="mb-2"
       label="Description"
       variant="outlined"
+      @update:model-value="updateStatus('description', $event)"
     />
     <SelectStatus
-      v-model="status"
       :items="workflow.statuses"
+      :model-value="status.status"
       label="Status"
       variant="outlined"
+      @update:model-value="updateStatus('status', $event)"
     />
     <VSelect
-      v-model="assigneeId"
       :items="users"
+      :model-value="status.assigneeId"
       class="my-2"
       item-title="label"
       item-value="id"
@@ -22,6 +24,7 @@
       placeholder="Click to set assignee"
       variant="outlined"
       clearable
+      @update:model-value="updateStatus('assigneeId', $event)"
     >
       <template #selection="{ item }">
         <VAvatar :image="item.raw.imgUrl" class="mr-3" size="26" />
@@ -36,9 +39,10 @@
       </template>
     </VSelect>
     <SelectPriority
-      v-model="priority"
       :items="workflowConfig.priorities"
+      :model-value="status.priority"
       class="mb-2"
+      @update:model-value="updateStatus('priority', $event)"
     />
     <VDateInput
       :model-value="dueDate && new Date(dueDate)"
@@ -46,28 +50,39 @@
       prepend-icon=""
       variant="outlined"
       clearable
-      @click:clear="dueDate = null"
-      @update:model-value="dueDate = $event"
+      @click:clear="updateStatus('dueDate', null)"
+      @update:model-value="updateStatus('dueDate', $event)"
     />
   </section>
 </template>
 
 <script lang="ts" setup>
 import { RichTextEditor } from '@tailor-cms/core-components-next';
+import type { Status } from '@tailor-cms/interfaces/activity';
 import { VDateInput } from 'vuetify/labs/VDateInput';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
 import SelectPriority from '../SelectPriority.vue';
 import SelectStatus from '../SelectStatus.vue';
+import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const description = defineModel<string | null>('description', {
-  default: null,
-});
-const status = defineModel<string | null>('status', { default: null });
-const assigneeId = defineModel<number | null>('assigneeId', { default: null });
-const priority = defineModel<string | null>('priority', { default: null });
-const dueDate = defineModel<string | null>('dueDate', { default: null });
+const props = defineProps<{
+  activity: StoreActivity;
+}>();
 
+const notify = useNotification();
+const activityStore = useActivityStore();
 const { users, workflow } = storeToRefs(useCurrentRepository());
+
+const status = computed(() => props.activity.status as unknown as Status);
+const dueDate = computed(
+  () => status.value.dueDate && new Date(status.value.dueDate),
+);
+
+const updateStatus = async (key: string, value: any = null) => {
+  const updatedData = { ...status.value, [key]: value } as any;
+  await activityStore.saveStatus(props.activity.id, updatedData);
+  return notify('Status saved', { immediate: true });
+};
 </script>
