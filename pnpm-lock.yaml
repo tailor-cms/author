@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@inquirer/select':
-        specifier: ^2.3.6
+        specifier: ^2.3.10
         version: 2.3.10
       concurrently:
         specifier: ^8.2.2
@@ -61,16 +61,16 @@ importers:
         specifier: '>=5.1.3'
         version: 5.1.3(@types/eslint@8.56.10)(eslint-config-prettier@9.1.0(eslint@8.57.0))(eslint@8.57.0)(prettier@3.3.2)
       eslint-plugin-promise:
-        specifier: '>=6.2.0'
+        specifier: '>=6.4.0'
         version: 6.4.0(eslint@8.57.0)
       eslint-plugin-vue:
-        specifier: '>=9.26.0'
+        specifier: '>=9.27.0'
         version: 9.27.0(eslint@8.57.0)
       eslint-plugin-vuejs-accessibility:
-        specifier: '>=2.3.0'
+        specifier: '>=2.3.1'
         version: 2.3.1(eslint@8.57.0)
       execa:
-        specifier: ^9.2.0
+        specifier: ^9.3.0
         version: 9.3.0
       inquirer:
         specifier: ^9.2.23
@@ -97,10 +97,10 @@ importers:
         specifier: workspace:^
         version: link:packages/tailor-seed
       typescript:
-        specifier: ^5.4.5
+        specifier: ^5.5.3
         version: 5.5.3
       vitepress:
-        specifier: ^1.2.3
+        specifier: ^1.3.0
         version: 1.3.0(@algolia/client-search@4.24.0)(@types/node@20.14.10)(axios@1.7.2)(change-case@5.4.4)(postcss@8.4.39)(sass@1.77.8)(search-insights@2.15.0)(sortablejs@1.14.0)(terser@5.31.2)(typescript@5.5.3)
       vue-eslint-parser:
         specifier: ^9.4.3
@@ -109,16 +109,16 @@ importers:
   apps/backend:
     dependencies:
       '@aws-sdk/client-s3':
-        specifier: ^3.600.0
+        specifier: ^3.614.0
         version: 3.614.0
       '@aws-sdk/lib-storage':
-        specifier: ^3.600.0
+        specifier: ^3.614.0
         version: 3.614.0(@aws-sdk/client-s3@3.614.0)
       '@aws-sdk/s3-request-presigner':
-        specifier: ^3.600.0
+        specifier: ^3.614.0
         version: 3.614.0
       '@aws-sdk/util-format-url':
-        specifier: ^3.598.0
+        specifier: ^3.609.0
         version: 3.609.0
       '@extensionengine/tapster':
         specifier: github:ExtensionEngine/tapster#53ccb222c757948d322c33087620453ddf5e70ed
@@ -172,7 +172,7 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       consolidate:
-        specifier: ^1.0.3
+        specifier: ^1.0.4
         version: 1.0.4(@babel/core@7.24.8)(lodash@4.17.21)(mustache@4.2.0)(underscore@1.13.6)
       cookie-parser:
         specifier: ^1.4.6
@@ -310,7 +310,7 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1
       openai:
-        specifier: ^4.52.0
+        specifier: ^4.52.7
         version: 4.52.7(encoding@0.1.13)
       openid-client:
         specifier: ^5.6.5
@@ -349,7 +349,7 @@ importers:
         specifier: ^1.9.0
         version: 1.9.0
       qs:
-        specifier: ^6.12.1
+        specifier: ^6.12.3
         version: 6.12.3
       randomstring:
         specifier: ^1.3.0
@@ -373,10 +373,10 @@ importers:
         specifier: ^1.6.0
         version: 1.6.0
       simple-oauth2:
-        specifier: ^5.0.1
+        specifier: ^5.1.0
         version: 5.1.0
       snyk:
-        specifier: ^1.1291.1
+        specifier: ^1.1292.1
         version: 1.1292.1
       sse-event-types:
         specifier: workspace:*
@@ -443,7 +443,7 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
       terser:
-        specifier: ^5.31.1
+        specifier: ^5.31.2
         version: 5.31.2
       umzug:
         specifier: ^3.8.1
@@ -536,8 +536,8 @@ importers:
         specifier: 3.0.0-next.1
         version: 3.0.0-next.1(typescript@5.5.3)
       vee-validate:
-        specifier: 4.13.1
-        version: 4.13.1(vue@3.4.31(typescript@5.5.3))
+        specifier: 4.13.2
+        version: 4.13.2(vue@3.4.31(typescript@5.5.3))
       vue3-tree-vue:
         specifier: ^2.0.10
         version: 2.0.10(vue@3.4.31(typescript@5.5.3))
@@ -545,8 +545,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(vue@3.4.31(typescript@5.5.3))
       vuetify:
-        specifier: 3.6.8
-        version: 3.6.8(typescript@5.5.3)(vue@3.4.31(typescript@5.5.3))
+        specifier: 3.6.12
+        version: 3.6.12(typescript@5.5.3)(vue@3.4.31(typescript@5.5.3))
       yup:
         specifier: ^1.4.0
         version: 1.4.0
@@ -573,7 +573,7 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12
       '@types/lodash':
-        specifier: ^4.17.5
+        specifier: ^4.17.6
         version: 4.17.6
       '@types/pluralize':
         specifier: ^0.0.33
@@ -591,16 +591,16 @@ importers:
         specifier: '>=9.1.0'
         version: 9.1.0(eslint@8.57.0)
       nuxt:
-        specifier: ^3.12.2
+        specifier: ^3.12.3
         version: 3.12.3(@parcel/watcher@2.4.1)(@types/node@20.14.10)(encoding@0.1.13)(eslint@8.57.0)(ioredis@5.4.1)(magicast@0.3.4)(meow@10.1.5)(optionator@0.9.4)(rollup@4.18.1)(sass@1.77.8)(terser@5.31.2)(typescript@5.5.3)(vite@5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.2))(xml2js@0.6.2)
       sass:
-        specifier: ^1.77.6
+        specifier: ^1.77.8
         version: 1.77.8
       vue:
-        specifier: ^3.4.29
+        specifier: ^3.4.31
         version: 3.4.31(typescript@5.5.3)
       vue-router:
-        specifier: ^4.3.3
+        specifier: ^4.4.0
         version: 4.4.0(vue@3.4.31(typescript@5.5.3))
 
   extensions/content-containers:
@@ -651,13 +651,13 @@ importers:
   infrastructure:
     dependencies:
       '@pulumi/aws':
-        specifier: ^6.41.0
+        specifier: ^6.44.0
         version: 6.44.0(typescript@5.5.3)
       '@pulumi/awsx':
-        specifier: ^2.12.1
+        specifier: ^2.13.0
         version: 2.13.0(typescript@5.5.3)
       '@pulumi/pulumi':
-        specifier: ^3.120.0
+        specifier: ^3.123.0
         version: 3.123.0(typescript@5.5.3)
       '@studion/infra-code-blocks':
         specifier: ^0.5.3
@@ -707,7 +707,7 @@ importers:
         specifier: workspace:*
         version: link:../tailor-interfaces
       '@types/lodash':
-        specifier: ^4.17.5
+        specifier: ^4.17.6
         version: 4.17.6
       '@types/pluralize':
         specifier: ^0.0.33
@@ -826,10 +826,10 @@ importers:
         specifier: ^2.29.1
         version: 2.29.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.5.3))(eslint@8.57.0)
       eslint-plugin-promise:
-        specifier: ^6.2.0
+        specifier: ^6.4.0
         version: 6.4.0(eslint@8.57.0)
       vite:
-        specifier: ^5.3.1
+        specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.2)
 
   packages/tailor-config-shared:
@@ -845,7 +845,7 @@ importers:
         version: 1.5.10
     devDependencies:
       rollup:
-        specifier: ^4.18.0
+        specifier: ^4.18.1
         version: 4.18.1
 
   packages/tailor-interfaces: {}
@@ -889,10 +889,10 @@ importers:
         specifier: ^15.2.4
         version: 15.7.0(eslint@8.57.0)
       eslint-plugin-promise:
-        specifier: ^6.2.0
+        specifier: ^6.4.0
         version: 6.4.0(eslint@8.57.0)
       vite:
-        specifier: ^5.3.1
+        specifier: ^5.3.3
         version: 5.3.3(@types/node@20.14.10)(sass@1.77.8)(terser@5.31.2)
 
   tests:
@@ -917,16 +917,16 @@ importers:
         version: link:../packages/tailor-seed
     devDependencies:
       '@percy/cli':
-        specifier: ^1.28.7
+        specifier: ^1.28.9
         version: 1.28.9(typescript@5.5.3)
       '@percy/playwright':
-        specifier: ^1.0.5
-        version: 1.0.6(playwright-core@1.44.1)
+        specifier: ^1.0.6
+        version: 1.0.6(playwright-core@1.45.1)
       '@playwright/test':
-        specifier: 1.44.1
-        version: 1.44.1
+        specifier: 1.45.1
+        version: 1.45.1
       '@types/node':
-        specifier: ^20.14.6
+        specifier: ^20.14.10
         version: 20.14.10
 
 packages:
@@ -2364,9 +2364,9 @@ packages:
     resolution: {integrity: sha512-cq8o4cWH0ibXh9VGi5P20Tu9XF/0fFXl9EUinr9QfTM7a7p0oTA4iJRCQWppXR1Pg8dSM0UCItCkPwsk9qWWYA==}
     engines: {node: ^12.20.0 || ^14.18.0 || >=16.0.0}
 
-  '@playwright/test@1.44.1':
-    resolution: {integrity: sha512-1hZ4TNvD5z9VuhNJ/walIjvMVvYkZKf71axoF/uiAqpntQJXpG64dlXhoDXE3OczPuTuvjf/M5KWFg5VAVUS3Q==}
-    engines: {node: '>=16'}
+  '@playwright/test@1.45.1':
+    resolution: {integrity: sha512-Wo1bWTzQvGA7LyKGIZc8nFSTFf2TkthGIFBR+QVNilvwouGzFd4PYukZe3rvf5PSqjHi1+1NyKSDZKcQWETzaA==}
+    engines: {node: '>=18'}
     hasBin: true
 
   '@polka/url@1.0.0-next.25':
@@ -7518,14 +7518,14 @@ packages:
   pkg-types@1.1.3:
     resolution: {integrity: sha512-+JrgthZG6m3ckicaOB74TwQ+tBWsFl3qVQg7mN8ulwSOElJ7gBhKzj2VkCPnZ4NlF6kEquYU+RIYNVAvzd54UA==}
 
-  playwright-core@1.44.1:
-    resolution: {integrity: sha512-wh0JWtYTrhv1+OSsLPgFzGzt67Y7BE/ZS3jEqgGBlp2ppp1ZDj8c+9IARNW4dwf1poq5MgHreEM2KV/GuR4cFA==}
-    engines: {node: '>=16'}
+  playwright-core@1.45.1:
+    resolution: {integrity: sha512-LF4CUUtrUu2TCpDw4mcrAIuYrEjVDfT1cHbJMfwnE2+1b8PZcFzPNgvZCvq2JfQ4aTjRCCHw5EJ2tmr2NSzdPg==}
+    engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.44.1:
-    resolution: {integrity: sha512-qr/0UJ5CFAtloI3avF95Y0L1xQo6r3LQArLIg/z/PoGJ6xa+EwzrwO5lpNr/09STxdHuUoP2mvuELJS+hLdtgg==}
-    engines: {node: '>=16'}
+  playwright@1.45.1:
+    resolution: {integrity: sha512-Hjrgae4kpSQBr98nhCj3IScxVeVUixqj+5oyif8TdIn2opTCPEzqAqNMeK42i3cWDCVu9MI+ZsGWw+gVR4ISBg==}
+    engines: {node: '>=18'}
     hasBin: true
 
   pluralize@8.0.0:
@@ -9175,6 +9175,11 @@ packages:
     peerDependencies:
       vue: ^3.4.26
 
+  vee-validate@4.13.2:
+    resolution: {integrity: sha512-HlpR/6MJ92TW9f135umMZKUqdd/tFQTxLNSf2ImbU4Y/MlLVAUpF1l64VdjTOhbClAqPjCb5p/SqHDxLpUHXrw==}
+    peerDependencies:
+      vue: ^3.4.26
+
   vite-hot-client@0.2.3:
     resolution: {integrity: sha512-rOGAV7rUlUHX89fP2p2v0A2WWvV3QMX2UYq0fRqsWSvFvev4atHWqjwGoKaZT1VTKyLGk533ecu3eyd0o59CAg==}
     peerDependencies:
@@ -9341,6 +9346,25 @@ packages:
     resolution: {integrity: sha512-FU5HCWBmsf20GpP3eudURW3WdWTKIbEIQxh9/8GE806hydR9qZqRRxRE3RjqX7PkuLuMQG/A7n3cfj9rCEchww==}
     peerDependencies:
       vue: ^3.0.1
+
+  vuetify@3.6.12:
+    resolution: {integrity: sha512-66fPzMLrJDpSGUjE4xkqEpEbvPJHp+/i9XqTcTGHTVAtb21/Fq/e01wm4VXs6smM4UgWhJvrRRfKacWAbSwZ7Q==}
+    engines: {node: ^12.20 || >=14.13}
+    peerDependencies:
+      typescript: '>=4.7'
+      vite-plugin-vuetify: '>=1.0.0'
+      vue: ^3.3.0
+      vue-i18n: ^9.0.0
+      webpack-plugin-vuetify: '>=2.0.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+      vite-plugin-vuetify:
+        optional: true
+      vue-i18n:
+        optional: true
+      webpack-plugin-vuetify:
+        optional: true
 
   vuetify@3.6.8:
     resolution: {integrity: sha512-j0v0iTeSVRj2ZEM9Q8HxejHxmxrQLYQSalhH82hfcraORaiDoqf1XV05N3P5ERXkKiJjJc/LfxFAUUvYSldxeg==}
@@ -11671,9 +11695,9 @@ snapshots:
 
   '@percy/logger@1.28.9': {}
 
-  '@percy/playwright@1.0.6(playwright-core@1.44.1)':
+  '@percy/playwright@1.0.6(playwright-core@1.45.1)':
     dependencies:
-      playwright-core: 1.44.1
+      playwright-core: 1.45.1
 
   '@percy/sdk-utils@1.28.9': {}
 
@@ -11701,9 +11725,9 @@ snapshots:
 
   '@pkgr/core@0.1.1': {}
 
-  '@playwright/test@1.44.1':
+  '@playwright/test@1.45.1':
     dependencies:
-      playwright: 1.44.1
+      playwright: 1.45.1
 
   '@polka/url@1.0.0-next.25': {}
 
@@ -13118,8 +13142,8 @@ snapshots:
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.11(encoding@0.1.13)
       '@rollup/pluginutils': 4.2.1
-      acorn: 8.12.0
-      acorn-import-attributes: 1.9.5(acorn@8.12.0)
+      acorn: 8.12.1
+      acorn-import-attributes: 1.9.5(acorn@8.12.1)
       async-sema: 3.1.1
       bindings: 1.5.0
       estree-walker: 2.0.2
@@ -13334,10 +13358,6 @@ snapshots:
     dependencies:
       mime-types: 2.1.35
       negotiator: 0.6.3
-
-  acorn-import-attributes@1.9.5(acorn@8.12.0):
-    dependencies:
-      acorn: 8.12.0
 
   acorn-import-attributes@1.9.5(acorn@8.12.1):
     dependencies:
@@ -13779,7 +13799,7 @@ snapshots:
   buffer@4.9.2:
     dependencies:
       base64-js: 1.5.1
-      ieee754: 1.1.13
+      ieee754: 1.2.1
       isarray: 1.0.0
 
   buffer@5.6.0:
@@ -17116,7 +17136,7 @@ snapshots:
 
   mlly@1.7.1:
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
       pathe: 1.1.2
       pkg-types: 1.1.3
       ufo: 1.5.3
@@ -17987,11 +18007,11 @@ snapshots:
       mlly: 1.7.1
       pathe: 1.1.2
 
-  playwright-core@1.44.1: {}
+  playwright-core@1.45.1: {}
 
-  playwright@1.44.1:
+  playwright@1.45.1:
     dependencies:
-      playwright-core: 1.44.1
+      playwright-core: 1.45.1
     optionalDependencies:
       fsevents: 2.3.2
 
@@ -19539,7 +19559,7 @@ snapshots:
 
   unctx@2.3.1:
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
       estree-walker: 3.0.3
       magic-string: 0.30.10
       unplugin: 1.11.0
@@ -19628,7 +19648,7 @@ snapshots:
 
   unplugin@1.11.0:
     dependencies:
-      acorn: 8.12.0
+      acorn: 8.12.1
       chokidar: 3.6.0
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.6.2
@@ -19755,6 +19775,12 @@ snapshots:
   vary@1.1.2: {}
 
   vee-validate@4.13.1(vue@3.4.31(typescript@5.5.3)):
+    dependencies:
+      '@vue/devtools-api': 6.6.3
+      type-fest: 4.21.0
+      vue: 3.4.31(typescript@5.5.3)
+
+  vee-validate@4.13.2(vue@3.4.31(typescript@5.5.3)):
     dependencies:
       '@vue/devtools-api': 6.6.3
       type-fest: 4.21.0
@@ -19965,6 +19991,12 @@ snapshots:
     dependencies:
       sortablejs: 1.14.0
       vue: 3.4.31(typescript@5.5.3)
+
+  vuetify@3.6.12(typescript@5.5.3)(vue@3.4.31(typescript@5.5.3)):
+    dependencies:
+      vue: 3.4.31(typescript@5.5.3)
+    optionalDependencies:
+      typescript: 5.5.3
 
   vuetify@3.6.8(typescript@5.5.3)(vue@3.4.31(typescript@5.5.3)):
     dependencies:
