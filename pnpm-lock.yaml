@@ -629,7 +629,7 @@ importers:
         version: 1.0.0
       '@tailor-cms/ce-multiple-choice-edit':
         specifier: ^0.0.2
-        version: 0.0.2(vue@3.4.31(typescript@5.5.2))
+        version: 0.0.2(vue@3.4.31(typescript@5.5.3))
       '@tailor-cms/ce-multiple-choice-server':
         specifier: ^0.0.2
         version: 0.0.2
@@ -12543,11 +12543,11 @@ snapshots:
 
   '@tailor-cms/ce-image-server@1.0.0': {}
 
-  '@tailor-cms/ce-multiple-choice-edit@0.0.2(vue@3.4.31(typescript@5.5.2))':
+  '@tailor-cms/ce-multiple-choice-edit@0.0.2(vue@3.4.31(typescript@5.5.3))':
     dependencies:
       lodash: 4.17.21
       uuid: 10.0.0
-      vue: 3.4.31(typescript@5.5.2)
+      vue: 3.4.31(typescript@5.5.3)
 
   '@tailor-cms/ce-multiple-choice-server@0.0.2':
     dependencies:
