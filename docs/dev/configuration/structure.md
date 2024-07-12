@@ -236,6 +236,7 @@ interface ActivityRelationship {
   allowEmpty: boolean;
   // Example, activity X sets activity Y as its prerequisite. If
   // allowCircualLinks is set to true then activity Y can set activity X as
+  // its prerequisite. False by default.
   allowCircularLinks: boolean;
   // Can Activity reference its parents and children
   allowInsideLineage: boolean;
