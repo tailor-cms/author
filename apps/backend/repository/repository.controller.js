@@ -95,6 +95,7 @@ async function index({ query, user, opts }, res) {
       'repositoryId',
       [sequelize.fn('max', sequelize.col('revision.created_at')), 'createdAt'],
     ],
+    order: [['createdAt', 'DESC']],
     group: ['repositoryId', 'user.id'],
   });
   const revisionsByRepository = groupBy(revisions, 'repositoryId');
