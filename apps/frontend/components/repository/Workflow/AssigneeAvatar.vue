@@ -1,5 +1,5 @@
 <template>
-  <VTooltip :disabled="!showTooltip" open-delay="500" bottom>
+  <VTooltip :disabled="!showTooltip" location="bottom" open-delay="500">
     <template #activator="{ props: tooltipProps }">
       <VAvatar
         v-bind="{ ...tooltipProps, ...$attrs }"

@@ -5,7 +5,7 @@
     variant="tonal"
   >
     <VIcon :color="color" icon="mdi-label" />
-    <VTooltip open-delay="500" bottom>
+    <VTooltip location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
         <span v-bind="tooltipProps" class="flex-shrink-0 mx-2">
           {{ shortId }}

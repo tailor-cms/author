@@ -11,7 +11,7 @@
       :type-label="activityConfig.label"
       class="mb-8"
     />
-    <VTooltip open-delay="500" bottom>
+    <VTooltip location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
         <LabelChip v-bind="tooltipProps">{{ activity.shortId }}</LabelChip>
       </template>

@@ -10,7 +10,7 @@
   >
     <template v-if="activity?.isTrackedInWorkflow">
       <SidebarHeader :activity="activity" class="pt-4" />
-      <StatusFieldGroup :activity="activity" class="mt-9 mb-2" />
+      <SidebarBody :activity="activity" class="mt-9 mb-2" />
     </template>
     <div v-else class="d-flex align-center mt-16">
       <VIcon
@@ -36,8 +36,8 @@
 
 <script lang="ts" setup>
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
-import SidebarHeader from './Header.vue';
-import StatusFieldGroup from './FieldGroup.vue';
+import SidebarBody from './SidebarBody.vue';
+import SidebarHeader from './SidebarHeader.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 withDefaults(defineProps<{ emptyMessage?: string }>(), {
