@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { User } from '@tailor-cms/interfaces/user';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
 import OverviewAssignee from './Assignee.vue';
@@ -49,8 +49,19 @@ import OverviewPriority from './Priority.vue';
 import OverviewStatus from './Status.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
+interface StatusConfig {
+  id: string;
+  label: string;
+  color: string;
+  default?: boolean;
+}
+
+interface PriorityConfig extends StatusConfig {
+  icon: string;
+}
+
 const props = defineProps<{
-  activities: Activity[];
+  activities: StoreActivity[];
 }>();
 
 const repositoryStore = useCurrentRepository();
@@ -92,18 +103,18 @@ function getStatusById(id: string) {
   return workflow.value.statuses.find((it) => it.id === id);
 }
 
-function compareStatuses(first, second) {
-  const statusIds = workflow.value.statuses.map((it) => it.id);
+function compareStatuses(first: StatusConfig, second: StatusConfig) {
+  const statusIds = workflow.value.statuses.map((it: StatusConfig) => it.id);
   return statusIds.indexOf(first.id) - statusIds.indexOf(second.id);
 }
 
-function compareAssignees(first, second) {
+function compareAssignees(first: User, second: User) {
   if (!second || !second.label) return -1;
   if (!first || !first.label) return 1;
   return first.label.localeCompare(second.label);
 }
 
-function comparePriorities(first, second) {
+function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
   const priorityIds = workflowConfig.priorities.map((it) => it.id);
   return priorityIds.indexOf(second.id) - priorityIds.indexOf(first.id);
 }

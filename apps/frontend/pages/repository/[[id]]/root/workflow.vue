@@ -56,13 +56,14 @@ const store = useCurrentRepository();
 const { workflowActivities: activities, workflow } = storeToRefs(store);
 
 const filteredActivities = computed(() => {
-  const asigneeFilterEnabled = filters.assigneeIds.length || filters.unassigned;
-  const searchFilterEnabled = filters.search?.length > SEARCH_LENGTH_THRESHOLD;
+  const { assigneeIds, search, unassigned, status, recentOnly } = filters;
+  const assigneeFilterEnabled = assigneeIds.length || unassigned;
+  const searchFilterEnabled = search?.length > SEARCH_LENGTH_THRESHOLD;
 
   const statusFilters = compact([
-    filters.status && filterByStatus,
-    asigneeFilterEnabled && filterByAssignee,
-    filters.recentOnly && filterByRecency,
+    status && filterByStatus,
+    assigneeFilterEnabled && filterByAssignee,
+    recentOnly && filterByRecency,
   ]);
 
   return activities.value.filter(

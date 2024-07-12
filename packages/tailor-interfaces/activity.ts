@@ -1,10 +1,10 @@
 import type { ContentElement } from './content-element';
-
+import type { User } from './user';
 export interface Status {
   id: number;
   activityId: number;
   assigneeId: number | null;
-  assignee: string | null;
+  assignee: User | null;
   status: string;
   description: string | null;
   priority: string;
