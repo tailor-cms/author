@@ -7,7 +7,7 @@
     <VIcon :color="color" icon="mdi-label" />
     <VTooltip open-delay="500" bottom>
       <template #activator="{ props: tooltipProps }">
-        <span class="flex-shrink-0 mx-2" v-bind="tooltipProps">
+        <span v-bind="tooltipProps" class="flex-shrink-0 mx-2">
           {{ shortId }}
         </span>
       </template>
@@ -15,7 +15,7 @@
     </VTooltip>
     <div class="text-truncate">{{ name }}</div>
     <VSpacer />
-    <VIcon class="mx-1" density="compact" icon="mdi-arrow-right" />
+    <VIcon class="mx-1" icon="mdi-arrow-right" />
   </VCard>
 </template>
 

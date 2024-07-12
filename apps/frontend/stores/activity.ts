@@ -16,7 +16,10 @@ import sseRepositoryFeed from '@/lib/RepositoryFeed';
 const { getDefaultActivityStatus } = workflowConfig;
 
 type Id = number | string;
-export type StoreActivity = Activity & { shortId: string };
+export type StoreActivity = Omit<Activity, 'status'> & {
+  shortId: string;
+  status: Status;
+};
 export type FoundActivity = StoreActivity | undefined;
 
 const HASH_ALPHABET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';

@@ -23,7 +23,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, defineProps, ref } from 'vue';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
 const props = defineProps<{
@@ -35,9 +34,3 @@ const selected = computed(() =>
   priorities.value.find((it) => it.id === props.modelValue),
 );
 </script>
-
-<style lang="scss" scoped>
-.icon {
-  width: 1rem;
-}
-</style>

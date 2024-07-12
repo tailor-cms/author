@@ -68,7 +68,7 @@ export const useCommentStore = defineStore('comments', () => {
     return where((it) => it.activityId === activityId);
   };
 
-  const getUnseenActivityComments = (activity: Activity) => {
+  const getUnseenActivityComments = (activity: StoreActivity) => {
     const authStore = useAuthStore();
     const activityComments = getActivityComments(activity.id);
     const activitySeenAt = $seen.value.activity[activity.uid] || 0;

@@ -7,9 +7,12 @@
         color="primary-lighten-4"
       >
         <VImg v-if="imgUrl" :src="imgUrl" />
-        <VIcon v-else :size="small ? 16 : 24" color="primary-darken-3">
-          mdi-account
-        </VIcon>
+        <VIcon
+          v-else
+          :size="small ? 16 : 24"
+          color="primary-darken-3"
+          icon="mdi-account"
+        />
       </VAvatar>
     </template>
     <span>{{ label }}</span>

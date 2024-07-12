@@ -10,25 +10,37 @@
   >
     <template v-if="isTrackedActivity">
       <SidebarHeader
-        v-bind="selectedActivity"
-        :name="selectedActivity?.data.name"
-        :updated-at="selectedActivity?.status.updatedAt"
+        v-bind="activity"
+        :name="activity?.data.name"
+        :updated-at="activity?.status.updatedAt"
         class="pt-4"
       />
       <StatusFieldGroup
-        v-bind="selectedActivity?.status"
+        v-bind="activity?.status"
         class="mt-9 mb-2"
-        @update="updateStatus"
+        @update:assignee-id="updateStatus('assigneeId', $event)"
+        @update:description="updateStatus('description', $event)"
+        @update:due-date="updateStatus('dueDate', $event)"
+        @update:priority="updateStatus('priority', $event)"
+        @update:status="updateStatus('status', $event)"
       />
     </template>
-    <section v-else class="placeholder grey--text text--darken-3">
-      <h4>Status Sidebar</h4>
-      <v-icon>mdi-chevron-left</v-icon>
-      <div class="info-content">{{ emptyMessage }}</div>
-    </section>
+    <div v-else class="d-flex align-center mt-16">
+      <VIcon
+        color="primary-lighten-3"
+        icon="mdi-arrow-left-circle"
+        size="x-large"
+      />
+      <VAlert
+        :text="emptyMessage"
+        class="ml-2"
+        color="primary-lighten-4"
+        variant="tonal"
+      />
+    </div>
     <ActivityDiscussion
-      v-if="selectedActivity"
-      :activity="selectedActivity"
+      v-if="activity"
+      :activity="activity"
       class="mt-2 mb-5 mx-1"
       panel
     />
@@ -44,30 +56,23 @@ import StatusFieldGroup from './FieldGroup.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-interface Props {
-  emptyMessage?: string;
-}
-
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<{ emptyMessage?: string }>(), {
   emptyMessage:
     'Please select item on the left to view and edit its status here.',
 });
 
+const notify = useNotification();
 const activityStore = useActivityStore();
 const repositoryStore = useCurrentRepository();
 
-const selectedActivity = computed(() => repositoryStore.selectedActivity);
-const isTrackedActivity = computed(
-  () => selectedActivity.value?.isTrackedInWorkflow,
-);
+const activity = computed(() => repositoryStore.selectedActivity);
+const isTrackedActivity = computed(() => activity.value?.isTrackedInWorkflow);
 
-const updateStatus = async (key: string, value: string) => {
-  if (!selectedActivity.value) return;
-  const status = {
-    ...selectedActivity.value?.status,
-    [key]: value || null,
-  } as any;
-  await activityStore.saveStatus(selectedActivity.value.id, status);
+const updateStatus = async (key: string, value: any = null) => {
+  if (!activity.value) return;
+  const status = { ...activity.value.status, [key]: value } as any;
+  await activityStore.saveStatus(activity.value.id, status);
+  return notify('Status saved', { immediate: true });
 };
 </script>
 
@@ -75,27 +80,5 @@ const updateStatus = async (key: string, value: string) => {
 .v-navigation-drawer {
   padding-bottom: 0.375rem;
   text-align: left;
-}
-
-.placeholder {
-  margin: 4.375rem 0 2.5rem;
-  padding: 0 1rem;
-
-  h4 {
-    padding: 0.5rem 0 1.125rem;
-    font-size: 1.25rem;
-    text-align: center;
-  }
-
-  .v-icon {
-    float: left;
-    padding: 0.375rem 1.25rem 0 0.75rem;
-    font-size: 2rem;
-    color: inherit;
-  }
-
-  .info-content {
-    width: 22rem;
-  }
 }
 </style>

@@ -62,12 +62,6 @@
 import AssigneeFilter from './Assignee.vue';
 import SelectStatus from '../SelectStatus.vue';
 
-const search = defineModel<string | null>('search', { default: null });
-const recentOnly = defineModel<boolean>('recentOnly', { default: false });
-const status = defineModel<string | null>('status', { default: null });
-const assigneeIds = defineModel<number[]>('assigneeIds', { default: () => [] });
-const unassigned = defineModel<boolean>('unassigned', { default: false });
-
 interface Props {
   assigneeOptions?: Record<string, any>;
   statusOptions?: any[];
@@ -79,10 +73,10 @@ withDefaults(defineProps<Props>(), {
   statusOptions: () => [],
   showUnassigned: false,
 });
-</script>
 
-<style lang="scss" scoped>
-.btn-filters {
-  letter-spacing: inherit;
-}
-</style>
+const search = defineModel<string | null>('search', { default: null });
+const recentOnly = defineModel<boolean>('recentOnly', { default: false });
+const status = defineModel<string | null>('status', { default: null });
+const assigneeIds = defineModel<number[]>('assigneeIds', { default: () => [] });
+const unassigned = defineModel<boolean>('unassigned', { default: false });
+</script>

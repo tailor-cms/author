@@ -1,22 +1,20 @@
 <template>
   <section>
     <RichTextEditor
-      :model-value="description"
+      v-model="description"
       class="mb-2"
       label="Description"
       variant="outlined"
-      @update:model-value="update('description', $event)"
     />
     <SelectStatus
+      v-model="status"
       :items="workflow.statuses"
-      :model-value="status"
       label="Status"
       variant="outlined"
-      @update:model-value="update('status', $event)"
     />
     <VSelect
+      v-model="assigneeId"
       :items="users"
-      :model-value="assigneeId"
       class="my-2"
       item-title="label"
       item-value="id"
@@ -24,7 +22,6 @@
       placeholder="Click to set assignee"
       variant="outlined"
       clearable
-      @update:model-value="update('assigneeId', $event)"
     >
       <template #selection="{ item }">
         <VAvatar :image="item.raw.imgUrl" class="mr-3" size="26" />
@@ -39,10 +36,9 @@
       </template>
     </VSelect>
     <SelectPriority
+      v-model="priority"
       :items="workflowConfig.priorities"
-      :model-value="priority"
       class="mb-2"
-      @update:model-value="update('priority', $event)"
     />
     <VDateInput
       :model-value="dueDate && new Date(dueDate)"
@@ -50,8 +46,8 @@
       prepend-icon=""
       variant="outlined"
       clearable
-      @click:clear="update('dueDate', null)"
-      @update:model-value="update('dueDate', $event)"
+      @click:clear="dueDate = null"
+      @update:model-value="dueDate = $event"
     />
   </section>
 </template>
@@ -65,28 +61,13 @@ import SelectPriority from '../SelectPriority.vue';
 import SelectStatus from '../SelectStatus.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-type Key = 'description' | 'status' | 'assigneeId' | 'priority' | 'dueDate';
-
-interface Props {
-  description?: string | null;
-  status?: string | null;
-  assigneeId?: number | null;
-  priority?: string | null;
-  dueDate?: string | null;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  description: null,
-  status: null,
-  assigneeId: null,
-  priority: workflowConfig.priorities.find((it) => it.default)?.id ?? null,
-  dueDate: null,
+const description = defineModel<string | null>('description', {
+  default: null,
 });
-const emit = defineEmits(['update']);
+const status = defineModel<string | null>('status', { default: null });
+const assigneeId = defineModel<number | null>('assigneeId', { default: null });
+const priority = defineModel<string | null>('priority', { default: null });
+const dueDate = defineModel<string | null>('dueDate', { default: null });
 
 const { users, workflow } = storeToRefs(useCurrentRepository());
-const update = async (key: Key, value: any) => {
-  if (props[key] === value) return;
-  emit('update', key, value);
-};
 </script>

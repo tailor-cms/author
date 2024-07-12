@@ -1,6 +1,6 @@
 <template>
   <div v-bind="$attrs" :class="{ 'text-error': elapsed, 'text-warning': soon }">
-    <VIcon v-if="icon" class="icon mr-1" size="16">mdi-clock-outline</VIcon>
+    <VIcon v-if="icon" class="icon mr-1" icon="mdi-clock-outline" size="16" />
     <span class="text-no-wrap">{{ formatDate(value, format) }}</span>
   </div>
 </template>

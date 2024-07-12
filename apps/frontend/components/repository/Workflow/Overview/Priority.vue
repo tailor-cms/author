@@ -6,7 +6,5 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
-
 defineProps<{ label: string; icon: string; color: string }>();
 </script>

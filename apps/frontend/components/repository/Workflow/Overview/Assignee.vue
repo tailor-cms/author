@@ -1,5 +1,5 @@
 <template>
-  <VTooltip open-delay="800" bottom>
+  <VTooltip location="top" open-delay="800">
     <template #activator="{ props: tooltipProps }">
       <div v-bind="tooltipProps" class="column-assignee d-flex align-center">
         <AssigneeAvatar :img-url="imgUrl" :label="label" class="mr-2" small />
