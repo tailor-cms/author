@@ -10,5 +10,9 @@
   {
     "name": "@tailor-cms/tme-color",
     "clientPackage": "@tailor-cms/tme-color"
+  },
+  {
+    "name": "@tailor-cms/tme-html",
+    "clientPackage": "@tailor-cms/tme-html"
   }
 ]
