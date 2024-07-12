@@ -50,13 +50,14 @@ import EditorToolbar from './EditorToolbar.vue';
 
 interface Props {
   modelValue: any;
-  label: string;
-  disabled: boolean;
+  label?: string;
+  disabled?: boolean;
   variant?: VField['variant'];
   rules?: VInput['rules'];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  label: undefined,
   disabled: false,
   variant: undefined,
   rules: undefined,
