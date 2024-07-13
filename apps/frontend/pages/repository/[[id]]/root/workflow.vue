@@ -84,8 +84,8 @@ const assignees = computed(() =>
 const filterByStatus = ({ status }: Status) => status === filters.status;
 
 const filterByAssignee = ({ assigneeId }: Status) => {
-  if ((filters.unassigned && !assigneeId) || !assigneeId) return true;
-  return filters.assigneeIds.includes(assigneeId);
+  if (filters.unassigned && !assigneeId) return true;
+  return filters.assigneeIds.includes(assigneeId as number);
 };
 
 const filterByRecency = ({ updatedAt }: Status) => {
