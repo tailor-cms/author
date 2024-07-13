@@ -1,7 +1,6 @@
 <template>
-  <div v-bind="$attrs" :class="{ 'text-error': elapsed, 'text-warning': soon }">
-    <VIcon class="icon mr-1" icon="mdi-clock-outline" size="16" />
-    <span class="text-no-wrap">{{ formatDate(date, 'MMM d, yyyy') }}</span>
+  <div :class="`text-${color}`" v-bind="$attrs">
+    {{ formatDate(date, 'MMM d, yyyy') }}
   </div>
 </template>
 
@@ -19,12 +18,19 @@ const { workflow } = useCurrentRepository();
 
 const currentDate = computed(() => formatDate(new Date(), 'yyyy-MM-dd'));
 const dueDate = computed(() => formatDate(new Date(props.date), 'yyyy-MM-dd'));
-const elapsed = computed(() => isAfter(currentDate.value, dueDate.value));
-const soon = computed(() => !elapsed.value && didWarningThresholdElapse.value);
 
 const didWarningThresholdElapse = computed(() => {
   if (!workflow.dueDateWarningThreshold) return false;
   const warningStartDate = sub(dueDate.value, workflow.dueDateWarningThreshold);
   return compareAsc(currentDate.value, warningStartDate) !== -1;
+});
+
+const elapsed = computed(() => isAfter(currentDate.value, dueDate.value));
+const soon = computed(() => !elapsed.value && didWarningThresholdElapse.value);
+
+const color = computed(() => {
+  if (elapsed.value) return 'primary-lighten-3';
+  if (soon.value) return 'orange-accent-3';
+  return undefined;
 });
 </script>

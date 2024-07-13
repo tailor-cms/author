@@ -5,7 +5,7 @@
     :row-props="
       ({ item }) => ({ class: isActivitySelected(item.id) && 'selected' })
     "
-    class="rounded-lg bg-primary-lighten-5 text-left"
+    class="rounded-lg bg-primary-darken-2 text-left"
     height="100%"
     items-per-page="100"
     fixed-header
@@ -121,12 +121,12 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 </script>
 
 <style lang="scss" scoped>
-:deep(tr) {
+:deep(tbody tr) {
   transition: background-color 0.3s ease;
 
   &.selected,
   &:hover {
-    background: rgba(var(--v-theme-primary-lighten-4)) !important;
+    background: rgba(var(--v-theme-primary-darken-1)) !important;
   }
 
   &.selected {
@@ -140,5 +140,15 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 
 .column-assignee {
   max-width: 11.5rem;
+}
+
+.v-table.v-table--fixed-header :deep(th) {
+  background: transparent !important;
+
+  &:hover {
+    opacity: 1;
+    font-weight: bold;
+    color: white !important;
+  }
 }
 </style>

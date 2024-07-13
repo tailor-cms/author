@@ -1,8 +1,8 @@
 <template>
-  <div class="d-flex align-center">
-    <VIcon :color="color" :icon="icon" class="priority-icon mr-1" />
-    {{ label }}
-  </div>
+  <VChip :color="color" size="small" rounded>
+    <VIcon :icon="icon" size="x-large" start />
+    <div class="text-white">{{ label }}</div>
+  </VChip>
 </template>
 
 <script lang="ts" setup>

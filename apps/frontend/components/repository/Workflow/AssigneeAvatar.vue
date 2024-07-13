@@ -21,7 +21,7 @@
 
 <script lang="ts" setup>
 interface Props {
-  imgUrl?: string | null;
+  imgUrl?: string;
   label?: string;
   small?: boolean;
   showTooltip?: boolean;
@@ -29,7 +29,7 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   label: 'Unassigned',
-  imgUrl: null,
+  imgUrl: undefined,
   small: false,
   showTooltip: false,
 });

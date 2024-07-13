@@ -42,6 +42,8 @@
       :items="workflowConfig.priorities"
       :model-value="status.priority"
       class="mb-2"
+      label="Priority"
+      variant="outlined"
       @update:model-value="updateStatus('priority', $event)"
     />
     <VDateInput

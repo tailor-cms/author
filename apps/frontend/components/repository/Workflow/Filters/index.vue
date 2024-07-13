@@ -10,7 +10,7 @@
         max-width="280"
         min-width="232"
         name="Search"
-        placeholder="Search by ID or name"
+        placeholder="Search by name or id..."
         prepend-inner-icon="mdi-magnify"
         rounded="xl"
         variant="solo"
@@ -48,8 +48,7 @@
     />
     <VBtn
       :active="recentOnly"
-      color="secondary-lighten-4"
-      height="42"
+      :color="recentOnly ? 'secondary-lighten-4' : 'primary-lighten-3'"
       variant="tonal"
       @click="recentOnly = !recentOnly"
     >

@@ -5,8 +5,6 @@
     :model-value="selected"
     item-title="label"
     item-value="id"
-    label="Priority"
-    variant="outlined"
   >
     <template #selection="{ item }">
       <VIcon :color="item.raw.color" :icon="item.raw.icon" class="mr-4" />
