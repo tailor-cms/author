@@ -1,47 +1,36 @@
 <template>
   <div>
-    <AssigneeAvatar
-      v-for="assignee in options"
-      :key="`assignee-${assignee.id}`"
-      :class="{ active: assigneeIds.includes(assignee.id) }"
-      :img-url="assignee.imgUrl"
-      :label="assignee.label"
-      show-tooltip
-      @click="toggleAssignee(assignee.id)"
-    />
-    <AssigneeAvatar
-      v-if="showUnassigned"
-      :class="{ active: unassigned }"
-      show-tooltip
-      @click="toggleUnassigned"
-    />
+    <VTooltip
+      v-for="{ id, imgUrl, label } in options"
+      :key="`assignee-${id}`"
+      location="bottom"
+      open-delay="500"
+    >
+      <template #activator="{ props: tooltipProps }">
+        <UserAvatar
+          v-bind="{ ...tooltipProps, label, imgUrl }"
+          :class="{ active: modelValue.includes(id) }"
+          color="primary-lighten-4"
+          @click="toggleAssignee(id)"
+        />
+      </template>
+      <span>{{ label }}</span>
+    </VTooltip>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { UserAvatar } from '@tailor-cms/core-components-next';
 import xor from 'lodash/xor';
 
-import AssigneeAvatar from '../AssigneeAvatar.vue';
-
-interface Props {
-  assigneeIds?: number[];
-  unassigned?: boolean;
-  options?: Record<string, any>;
-  showUnassigned?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  assigneeIds: () => [],
-  unassigned: false,
-  options: () => ({}),
-  showUnassigned: false,
-});
-
-const emit = defineEmits(['update:assigneeIds', 'update:unassigned']);
+const props = defineProps<{
+  modelValue: number[];
+  options: Record<string, any>;
+}>();
+const emit = defineEmits(['update:modelValue']);
 
 const toggleAssignee = (id: number) =>
-  emit('update:assigneeIds', xor(props.assigneeIds, [id]));
-const toggleUnassigned = () => emit('update:unassigned', !props.unassigned);
+  emit('update:modelValue', xor(props.modelValue, [id]));
 </script>
 
 <style lang="scss" scoped>

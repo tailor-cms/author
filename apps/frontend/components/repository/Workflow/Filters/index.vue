@@ -38,10 +38,8 @@
     </VHover>
     <AssigneeFilter
       v-if="assigneeOptions"
-      v-model:assigneeIds="assigneeIds"
-      v-model:unassigned="unassigned"
+      v-model="assigneeIds"
       :options="assigneeOptions"
-      :show-unassigned="showUnassigned"
       class="mr-4"
     />
     <VBtn
@@ -56,24 +54,18 @@
 </template>
 
 <script lang="ts" setup>
+import type { User } from '@tailor-cms/interfaces/user';
+
 import AssigneeFilter from './Assignee.vue';
 import SelectStatus from '../SelectStatus.vue';
 
-interface Props {
-  assigneeOptions?: Record<string, any>;
-  statusOptions?: any[];
-  showUnassigned?: boolean;
-}
-
-withDefaults(defineProps<Props>(), {
-  assigneeOptions: () => ({}),
-  statusOptions: () => [],
-  showUnassigned: false,
-});
+defineProps<{
+  assigneeOptions: Array<User | { id: null; label: string }>;
+  statusOptions: any[];
+}>();
 
 const search = defineModel<string | null>('search', { default: null });
 const recentOnly = defineModel<boolean>('recentOnly', { default: false });
 const status = defineModel<string | null>('status', { default: null });
 const assigneeIds = defineModel<number[]>('assigneeIds', { default: () => [] });
-const unassigned = defineModel<boolean>('unassigned', { default: false });
 </script>

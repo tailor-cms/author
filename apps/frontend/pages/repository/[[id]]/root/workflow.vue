@@ -2,15 +2,12 @@
   <VLayout full-height>
     <VMain>
       <div class="workflow">
-        {{ assignees }}
         <WorkflowFilters
           v-model:assigneeIds="filters.assigneeIds"
           v-model:recentOnly="filters.recentOnly"
           v-model:search="filters.search"
           v-model:status="filters.status"
-          v-model:unassigned="filters.unassigned"
           :assignee-options="assignees"
-          :show-unassigned="unassignedActivityExists"
           :status-options="workflow.statuses"
         />
         <WorkflowOverview :activities="filteredActivities" class="mt-5" />
@@ -39,7 +36,6 @@ interface Filters {
   search: string | null;
   status: string | null;
   assigneeIds: number[];
-  unassigned: boolean;
   recentOnly: boolean;
 }
 
@@ -49,7 +45,6 @@ const filters = reactive<Filters>({
   search: null,
   status: null,
   assigneeIds: [],
-  unassigned: false,
   recentOnly: false,
 });
 
@@ -57,13 +52,12 @@ const store = useCurrentRepository();
 const { workflowActivities: activities, workflow } = storeToRefs(store);
 
 const filteredActivities = computed(() => {
-  const { assigneeIds, search, unassigned, status, recentOnly } = filters;
-  const assigneeFilterEnabled = assigneeIds.length || unassigned;
+  const { assigneeIds, search, status, recentOnly } = filters;
   const searchFilterEnabled = search?.length > SEARCH_LENGTH_THRESHOLD;
 
   const statusFilters = compact([
     status && filterByStatus,
-    assigneeFilterEnabled && filterByAssignee,
+    assigneeIds.length && filterByAssignee,
     recentOnly && filterByRecency,
   ]);
 
@@ -74,18 +68,17 @@ const filteredActivities = computed(() => {
   );
 });
 
-const unassignedActivityExists = computed(() =>
-  activities.value.some((it) => !it.status.assigneeId),
-);
-
-const assignees = computed(() =>
-  uniqBy(compact(activities.value.map(({ status }) => status.assignee)), 'id'),
-);
+const assignees = computed(() => {
+  const unassigned = { id: null, label: 'Unassigned' };
+  return uniqBy(
+    activities.value.map(({ status }) => status.assignee ?? unassigned),
+    'id',
+  );
+});
 
 const filterByStatus = ({ status }: Status) => status === filters.status;
 
 const filterByAssignee = ({ assigneeId }: Status) => {
-  if (filters.unassigned && !assigneeId) return true;
   return filters.assigneeIds.includes(assigneeId as number);
 };
 
