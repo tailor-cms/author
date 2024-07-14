@@ -2,6 +2,7 @@
   <VLayout full-height>
     <VMain>
       <div class="workflow">
+        {{ assignees }}
         <WorkflowFilters
           v-model:assigneeIds="filters.assigneeIds"
           v-model:recentOnly="filters.recentOnly"
