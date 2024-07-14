@@ -3,17 +3,15 @@
     <AssigneeAvatar
       v-for="assignee in options"
       :key="`assignee-${assignee.id}`"
-      :class="{ active: selected.includes(assignee.id) }"
+      :class="{ active: assigneeIds.includes(assignee.id) }"
       :img-url="assignee.imgUrl"
       :label="assignee.label"
-      class="avatar"
       show-tooltip
       @click="toggleAssignee(assignee.id)"
     />
     <AssigneeAvatar
       v-if="showUnassigned"
       :class="{ active: unassigned }"
-      class="avatar"
       show-tooltip
       @click="toggleUnassigned"
     />
@@ -26,24 +24,24 @@ import xor from 'lodash/xor';
 import AssigneeAvatar from '../AssigneeAvatar.vue';
 
 interface Props {
-  selected?: number[];
+  assigneeIds?: number[];
   unassigned?: boolean;
   options?: Record<string, any>;
   showUnassigned?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  selected: () => [],
+  assigneeIds: () => [],
   unassigned: false,
   options: () => ({}),
   showUnassigned: false,
 });
 
-const emit = defineEmits(['change:assignee', 'change:unassigned']);
+const emit = defineEmits(['update:assigneeIds', 'update:unassigned']);
 
-const toggleAssignee = (id: string) =>
-  emit('change:assignee', xor(props.selected, [id]));
-const toggleUnassigned = () => emit('change:unassigned', !props.unassigned);
+const toggleAssignee = (id: number) =>
+  emit('update:assigneeIds', xor(props.assigneeIds, [id]));
+const toggleUnassigned = () => emit('update:unassigned', !props.unassigned);
 </script>
 
 <style lang="scss" scoped>

@@ -38,13 +38,11 @@
     </VHover>
     <AssigneeFilter
       v-if="assigneeOptions"
+      v-model:assigneeIds="assigneeIds"
+      v-model:unassigned="unassigned"
       :options="assigneeOptions"
-      :selected="assigneeIds"
       :show-unassigned="showUnassigned"
-      :unassigned="unassigned"
       class="mr-4"
-      @change:assignee="assigneeIds = $event"
-      @change:unassigned="unassigned = $event"
     />
     <VBtn
       :active="recentOnly"
