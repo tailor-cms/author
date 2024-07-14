@@ -48,14 +48,15 @@ const toggleUnassigned = () => emit('change:unassigned', !props.unassigned);
 
 <style lang="scss" scoped>
 :deep(.v-avatar) {
-  border: 2px solid rgb(var(--v-theme-primary-lighten-4));
+  transition: all 0.3s ease;
+  outline: 0 solid rgb(var(--v-theme-secondary));
 
   &:not(:first-of-type) {
     margin-left: -0.5rem;
   }
 
   &.active {
-    box-shadow: rgb(var(--v-theme-secondary)) 0 0 0 2px;
+    outline-width: 2px;
   }
 
   &:hover {

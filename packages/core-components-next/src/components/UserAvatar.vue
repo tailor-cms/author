@@ -10,7 +10,7 @@
       with browser blocking the image load.
     -->
     <div v-if="imgUrl" :style="style" class="user-avatar h-100 w-100"></div>
-    <VIcon v-else>mdi-account</VIcon>
+    <VIcon v-else color="primary-darken-3">mdi-account</VIcon>
   </VAvatar>
 </template>
 

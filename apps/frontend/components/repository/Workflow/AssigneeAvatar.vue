@@ -1,25 +1,20 @@
 <template>
   <VTooltip :disabled="!showTooltip" location="bottom" open-delay="500">
     <template #activator="{ props: tooltipProps }">
-      <VAvatar
+      <UserAvatar
         v-bind="{ ...tooltipProps, ...$attrs }"
+        :img-url="imgUrl"
         :size="small ? 24 : 34"
         color="primary-lighten-4"
-      >
-        <VImg v-if="imgUrl" :src="imgUrl" />
-        <VIcon
-          v-else
-          :size="small ? 16 : 24"
-          color="primary-darken-3"
-          icon="mdi-account"
-        />
-      </VAvatar>
+      />
     </template>
     <span>{{ label }}</span>
   </VTooltip>
 </template>
 
 <script lang="ts" setup>
+import { UserAvatar } from '@tailor-cms/core-components-next';
+
 interface Props {
   imgUrl?: string;
   label?: string;
