@@ -27,7 +27,7 @@
       @update:model-value="updateStatus('assigneeId', $event)"
     >
       <template #selection="{ item }">
-        <VAvatar :image="item.raw.imgUrl" class="mr-3" size="26" />
+        <VAvatar :image="item.raw.imgUrl" class="mr-4" size="26" />
         {{ item.title }}
       </template>
       <template #item="{ item, props: selectProps }">

@@ -5,7 +5,7 @@
         <VIcon :color="config.color" class="mr-2" size="26">mdi-label</VIcon>
         <span>{{ config.label.toUpperCase() }}</span>
       </div>
-      <VDivider class="my-2 ml-3" vertical />
+      <VDivider class="my-2 mx-3" vertical />
       <VTooltip location="bottom" open-delay="100">
         <template #activator="{ props: tooltipProps }">
           <LabelChip

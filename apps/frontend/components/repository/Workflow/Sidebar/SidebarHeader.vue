@@ -13,7 +13,9 @@
     />
     <VTooltip location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
-        <LabelChip v-bind="tooltipProps">{{ activity.shortId }}</LabelChip>
+        <LabelChip v-bind="tooltipProps" density="compact">
+          {{ activity.shortId }}
+        </LabelChip>
       </template>
       {{ activityConfig.label }} ID
     </VTooltip>
