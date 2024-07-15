@@ -2,11 +2,8 @@
   <VDataTable
     :headers="headers"
     :items="items"
-    :row-props="
-      ({ item }) => ({ class: isActivitySelected(item.id) && 'selected' })
-    "
-    class="rounded-lg bg-primary-darken-2 text-left"
-    height="100%"
+    :row-props="({ item }) => ({ class: item.class })"
+    class="rounded-lg bg-primary-darken-2 text-left overflow-y-auto"
     items-per-page="100"
     fixed-header
     hide-default-footer
@@ -23,7 +20,7 @@
         <UserAvatar
           :img-url="assignee?.imgUrl"
           color="primary-lighten-4"
-          size="24"
+          size="x-small"
           start
         />
         {{ assignee?.label ?? 'Unassigned' }}
@@ -100,7 +97,7 @@ function isActivitySelected(id: number) {
 }
 
 function getStatusById(id: string) {
-  return workflow.value.statuses.find((it) => it.id === id);
+  return workflow.value.statuses.find((it: StatusConfig) => it.id === id);
 }
 
 function compareStatuses(first: StatusConfig, second: StatusConfig) {
