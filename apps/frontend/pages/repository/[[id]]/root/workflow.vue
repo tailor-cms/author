@@ -53,7 +53,7 @@ const { workflowActivities: activities, workflow } = storeToRefs(store);
 
 const filteredActivities = computed(() => {
   const { assigneeIds, search, status, recentOnly } = filters;
-  const searchFilterEnabled = search?.length > SEARCH_LENGTH_THRESHOLD;
+  const searchFilterEnabled = search && search.length > SEARCH_LENGTH_THRESHOLD;
 
   const statusFilters = compact([
     status && filterByStatus,

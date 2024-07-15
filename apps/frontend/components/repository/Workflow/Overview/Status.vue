@@ -1,7 +1,7 @@
 <template>
   <VChip size="small" rounded>
     <VIcon :color="color" icon="mdi-circle" size="small" start />
-    <span class="text-white">{{ label }}</span>
+    {{ label }}
   </VChip>
 </template>
 

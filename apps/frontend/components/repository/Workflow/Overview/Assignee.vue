@@ -1,14 +1,14 @@
 <template>
   <VTooltip location="top" open-delay="800">
     <template #activator="{ props: tooltipProps }">
-      <div v-bind="tooltipProps" class="column-assignee d-flex align-center">
+      <div v-bind="tooltipProps" class="d-flex align-center">
         <UserAvatar
           :img-url="imgUrl"
           color="primary-lighten-4"
           size="24"
           start
         />
-        <span class="text-truncate">{{ label }}</span>
+        {{ label }}
       </div>
     </template>
     {{ label }}

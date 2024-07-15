@@ -121,7 +121,15 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 </script>
 
 <style lang="scss" scoped>
-:deep(tbody tr) {
+.v-table {
+  line-height: 1.25;
+
+  :deep(td) {
+    padding: 0.5rem 1rem !important;
+  }
+}
+
+:deep(tbody) tr {
   transition: background-color 0.3s ease;
 
   &.selected,
@@ -132,14 +140,6 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
   &.selected {
     pointer-events: none;
   }
-}
-
-.column-name {
-  max-width: 17.75rem;
-}
-
-.column-assignee {
-  max-width: 11.5rem;
 }
 
 .v-table.v-table--fixed-header :deep(th) {
