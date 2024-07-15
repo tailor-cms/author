@@ -1,21 +1,14 @@
 <template>
   <div>
-    <VTooltip
+    <UserAvatar
       v-for="{ id, imgUrl, label } in options"
       :key="`assignee-${id}`"
-      location="bottom"
-      open-delay="500"
-    >
-      <template #activator="{ props: tooltipProps }">
-        <UserAvatar
-          v-bind="{ ...tooltipProps, label, imgUrl }"
-          :class="{ active: modelValue.includes(id) }"
-          color="primary-lighten-4"
-          @click="toggleAssignee(id)"
-        />
-      </template>
-      <span>{{ label }}</span>
-    </VTooltip>
+      :class="{ active: modelValue.includes(id) }"
+      v-bind="{ imgUrl, label }"
+      :label="label"
+      color="primary-lighten-4"
+      @click="toggleAssignee(id)"
+    />
   </div>
 </template>
 

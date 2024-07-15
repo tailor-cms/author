@@ -15,7 +15,7 @@
     </VTooltip>
     <div class="text-truncate">{{ name }}</div>
     <VSpacer />
-    <VIcon class="mx-1" icon="mdi-arrow-right" />
+    <VIcon class="mx-1" icon="mdi-arrow-right" size="small" />
   </VCard>
 </template>
 

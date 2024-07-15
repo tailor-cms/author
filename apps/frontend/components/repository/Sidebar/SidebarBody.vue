@@ -50,6 +50,11 @@
         <VIcon dense>mdi-link</VIcon>
       </VBtn>
     </VSheet>
+    <ActivityStatus
+      v-if="activity.isTrackedInWorkflow"
+      v-bind="activity"
+      class="mt-6 mb-3"
+    />
     <div class="meta-elements">
       <MetaInput
         v-for="it in metadata"
@@ -79,6 +84,7 @@
 <script lang="ts" setup>
 import ActivityDiscussion from '../Discussion/index.vue';
 import ActivityRelationship from './ActivityRelationship.vue';
+import ActivityStatus from './ActivityStatus.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
 
