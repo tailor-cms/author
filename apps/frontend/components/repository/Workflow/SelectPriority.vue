@@ -1,11 +1,5 @@
 <template>
-  <VSelect
-    v-bind="$attrs"
-    :items="priorities"
-    :model-value="selected"
-    item-title="label"
-    item-value="id"
-  >
+  <VSelect v-bind="$attrs" item-title="label" item-value="id">
     <template #selection="{ item }">
       <VIcon :color="item.raw.color" :icon="item.raw.icon" class="mr-4" />
       {{ item.title }}
@@ -19,16 +13,3 @@
     </template>
   </VSelect>
 </template>
-
-<script lang="ts" setup>
-import { workflow as workflowConfig } from 'tailor-config-shared';
-
-const props = defineProps<{
-  modelValue: string | null;
-}>();
-
-const priorities = ref(workflowConfig.priorities);
-const selected = computed(() =>
-  priorities.value.find((it) => it.id === props.modelValue),
-);
-</script>

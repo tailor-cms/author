@@ -10,29 +10,32 @@
     items-per-page="100"
     fixed-header
     hide-default-footer
-    variant
     @click:row="selectActivity"
   >
-    <template #[`item.name`]="{ item }">
-      <OverviewName :name="item.name" />
+    <template #item.status="{ item: { status } }">
+      <VChip size="small" rounded>
+        <VIcon :color="status.color" icon="mdi-circle" size="small" start />
+        {{ status.label }}
+      </VChip>
     </template>
-    <template #[`item.status`]="{ item }">
-      <OverviewStatus :color="item.status.color" :label="item.status.label" />
+    <template #item.assignee="{ item: { assignee } }">
+      <div class="d-flex align-center gap-1">
+        <UserAvatar
+          :img-url="assignee?.imgUrl"
+          color="primary-lighten-4"
+          size="24"
+          start
+        />
+        {{ assignee?.label ?? 'Unassigned' }}
+      </div>
     </template>
-    <template #[`item.assignee`]="{ item }">
-      <OverviewAssignee
-        :img-url="item.assignee?.imgUrl"
-        :label="item.assignee?.label"
-      />
+    <template #item.priority="{ item: { priority } }">
+      <VChip :color="priority.color" size="small" rounded>
+        <VIcon :icon="priority.icon" size="x-large" start />
+        <div class="text-white">{{ priority.label }}</div>
+      </VChip>
     </template>
-    <template #[`item.priority`]="{ item }">
-      <OverviewPriority
-        :color="item.priority.color"
-        :icon="item.priority.icon"
-        :label="item.priority.label"
-      />
-    </template>
-    <template #[`item.dueDate`]="{ item }">
+    <template #item.dueDate="{ item }">
       <OverviewDueDate v-if="item.dueDate" :date="item.dueDate" />
     </template>
   </VDataTable>
@@ -40,13 +43,10 @@
 
 <script lang="ts" setup>
 import type { User } from '@tailor-cms/interfaces/user';
+import { UserAvatar } from '@tailor-cms/core-components-next';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
-import OverviewAssignee from './Assignee.vue';
 import OverviewDueDate from './DueDate.vue';
-import OverviewName from './Name.vue';
-import OverviewPriority from './Priority.vue';
-import OverviewStatus from './Status.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface StatusConfig {
@@ -142,8 +142,8 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
   }
 }
 
-.v-table.v-table--fixed-header :deep(th) {
-  background: transparent !important;
+.v-table :deep(th) {
+  background: rgba(var(--v-theme-primary-darken-2)) !important;
 
   &:hover {
     opacity: 1;
