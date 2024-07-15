@@ -53,17 +53,12 @@ function patch({ repository, user, activity, body }, res) {
   return activity.update(body, { context }).then((data) => res.json({ data }));
 }
 
-function remove({ user, repository, activity }, res) {
+async function remove({ user, repository, activity }, res) {
   const context = { userId: user.id, repository };
   const options = { recursive: true, soft: true, context };
-  const unpublish = activity.publishedAt
-    ? publishingService.unpublishActivity(repository, activity)
-    : Promise.resolve();
-  return unpublish.then(async () => {
-    const deleted = await activity.remove(options);
-    await updatePublishingStatus(repository, activity);
-    return res.json({ data: pick(deleted, ['id']) });
-  });
+  const deleted = await activity.remove(options);
+  await updatePublishingStatus(repository, activity);
+  return res.json({ data: pick(deleted, ['id']) });
 }
 
 function reorder({ activity, body, repository, user }, res) {
