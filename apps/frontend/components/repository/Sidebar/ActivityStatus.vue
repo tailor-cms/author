@@ -38,18 +38,17 @@
       </template>
       {{ priorityConfig.label }} priority
     </VTooltip>
-    <!-- <VTooltip v-if="status.dueDate" location="bottom" open-delay="500">
+    <VTooltip v-if="status.dueDate" location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
-        {{ status.dueDate }}
-        <WorkflowDueDate
+        <DueDate
           v-bind="tooltipProps"
           :date="status.dueDate"
-          class="mx-2 text-caption"
-          format="MM/DD/YY"
+          class="text-caption font-weight-bold"
+          format="MM/dd/yy"
         />
       </template>
       Due Date
-    </VTooltip> -->
+    </VTooltip>
     <VSpacer />
     <VIcon class="mx-1" icon="mdi-arrow-right" size="small" />
   </VCard>
@@ -60,7 +59,7 @@ import type { Status } from '@tailor-cms/interfaces/activity';
 import { UserAvatar } from '@tailor-cms/core-components-next';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
-// import WorkflowDueDate from '../Workflow/WorkflowDueDate.vue';
+import DueDate from '../Workflow/Overview/DueDate.vue';
 
 const props = defineProps<{
   id: number | null;

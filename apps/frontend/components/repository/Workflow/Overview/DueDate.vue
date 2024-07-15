@@ -1,6 +1,17 @@
 <template>
-  <div :class="`text-${color}`" v-bind="$attrs">
-    {{ formatDate(date, 'MMM d, yyyy') }}
+  <div
+    :class="{ 'text-primary-lighten-3': elapsed }"
+    v-bind="$attrs"
+    class="d-flex align-center"
+  >
+    {{ formatDate(date, format) }}
+    <VIcon
+      v-if="soon"
+      class="ml-1"
+      color="amber"
+      icon="mdi-alert-circle-outline"
+      size="small"
+    />
   </div>
 </template>
 
@@ -12,7 +23,14 @@ import { sub } from 'date-fns/sub';
 
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const props = defineProps<{ date: string }>();
+interface Props {
+  date: string;
+  format?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  format: 'MMM d, yyyy',
+});
 
 const { workflow } = useCurrentRepository();
 
@@ -27,10 +45,4 @@ const didWarningThresholdElapse = computed(() => {
 
 const elapsed = computed(() => isAfter(currentDate.value, dueDate.value));
 const soon = computed(() => !elapsed.value && didWarningThresholdElapse.value);
-
-const color = computed(() => {
-  if (elapsed.value) return 'primary-lighten-3';
-  if (soon.value) return 'orange-accent-3';
-  return undefined;
-});
 </script>
