@@ -10,6 +10,16 @@ export function isChanged(activity) {
   );
 }
 
+// Determine if previously published activity is now deleted
+// and the deletion is not published yet.
+export function doesRequirePublishing(activity) {
+  if (!activity.publishedAt) return false;
+  if (!activity.deletedAt) return false;
+  const dateDeleted = new Date(activity.deletedAt).getTime();
+  const datePublished = new Date(activity.publishedAt).getTime();
+  if (dateDeleted < datePublished) return true;
+}
+
 export function getParent(activities, activity) {
   const id = get(activity, 'parentId', null);
   return id && find(activities, { id });
