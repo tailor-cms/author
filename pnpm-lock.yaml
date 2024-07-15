@@ -627,6 +627,12 @@ importers:
       '@tailor-cms/ce-image-server':
         specifier: ^1.0.0
         version: 1.0.0
+      '@tailor-cms/ce-multiple-choice-edit':
+        specifier: ^0.0.2
+        version: 0.0.2(vue@3.4.31(typescript@5.5.3))
+      '@tailor-cms/ce-multiple-choice-server':
+        specifier: ^0.0.2
+        version: 0.0.2
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -2999,6 +3005,14 @@ packages:
 
   '@tailor-cms/ce-image-server@1.0.0':
     resolution: {integrity: sha512-l4cZmdHQ+TDRzHCSp7TrWrlIIq01ApbaJZuqwJu6MzctstFDhUdMY25TU+35TEDRjcL+odob6KP5uO44McH5Dg==}
+
+  '@tailor-cms/ce-multiple-choice-edit@0.0.2':
+    resolution: {integrity: sha512-3U+9Rcgd9bO054M9zd/2pmvzLYJoiVXDiS8Wn8suavDX5knteCsD61TbXjEYs15Pl2iben/hSV6G78EZhyhRpQ==}
+    peerDependencies:
+      vue: ^3.3.4
+
+  '@tailor-cms/ce-multiple-choice-server@0.0.2':
+    resolution: {integrity: sha512-6PWXygWYuKWhGxdmj/tLe7AiNZXg2JfRume3DUovCtQz50nd1e5ohAvVD8HYNUgHHAAn/PpBAdrOT4ZVXZljRA==}
 
   '@tailor-cms/cek-common@0.0.3':
     resolution: {integrity: sha512-QZGKfGb8sdmS/4U2ZdbG8VKD816Q2AoL4t23/WGXyo5wgpdjw4n9eNYNTwv8kp/pE02LzSBG+CUOMTb3UAqPoA==}
@@ -12576,6 +12590,16 @@ snapshots:
       vue: 3.4.31(typescript@5.5.3)
 
   '@tailor-cms/ce-image-server@1.0.0': {}
+
+  '@tailor-cms/ce-multiple-choice-edit@0.0.2(vue@3.4.31(typescript@5.5.3))':
+    dependencies:
+      lodash: 4.17.21
+      uuid: 10.0.0
+      vue: 3.4.31(typescript@5.5.3)
+
+  '@tailor-cms/ce-multiple-choice-server@0.0.2':
+    dependencies:
+      lodash: 4.17.21
 
   '@tailor-cms/cek-common@0.0.3': {}
 
