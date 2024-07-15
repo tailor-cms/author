@@ -3,10 +3,10 @@ import validateWorkflow from './workflow-validation';
 
 const priorities = [
   { id: 'CRITICAL', label: 'Critical', icon: 'mdi-chevron-double-up', color: 'red' },
-  { id: 'HIGH', label: 'High', icon: 'mdi-chevron-up', color: 'orange'},
-  { id: 'MEDIUM', label: 'Medium', icon: 'mdi-minus', default: true, color: 'grey'},
-  { id: 'LOW', label: 'Low', icon: 'mdi-chevron-down', color: 'green'},
-  { id: 'TRIVIAL', label: 'Trivial', icon: 'mdi-chevron-double-down', color: 'blue'}
+  { id: 'HIGH', label: 'High', icon: 'mdi-chevron-up', color: 'orange' },
+  { id: 'MEDIUM', label: 'Medium', icon: 'mdi-minus', default: true, color: 'grey' },
+  { id: 'LOW', label: 'Low', icon: 'mdi-chevron-down', color: 'green' },
+  { id: 'TRIVIAL', label: 'Trivial', icon: 'mdi-chevron-double-down', color: 'blue' }
 ];
 
 export default (workflows, schemaApi) => {

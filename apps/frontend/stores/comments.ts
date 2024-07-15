@@ -1,4 +1,3 @@
-import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Comment as Events } from 'sse-event-types';
 import { useStorage } from '@vueuse/core';
