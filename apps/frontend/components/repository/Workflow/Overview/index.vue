@@ -9,13 +9,13 @@
     hide-default-footer
     @click:row="selectActivity"
   >
-    <template #item.status="{ item: { status } }">
+    <template #[`item.status`]="{ item: { status } }">
       <VChip size="small" rounded>
         <VIcon :color="status.color" icon="mdi-circle" size="small" start />
         {{ status.label }}
       </VChip>
     </template>
-    <template #item.assignee="{ item: { assignee } }">
+    <template #[`item.assignee`]="{ item: { assignee } }">
       <div class="d-flex align-center gap-1">
         <UserAvatar
           :img-url="assignee?.imgUrl"
@@ -26,13 +26,13 @@
         {{ assignee?.label ?? 'Unassigned' }}
       </div>
     </template>
-    <template #item.priority="{ item: { priority } }">
+    <template #[`item.priority`]="{ item: { priority } }">
       <VChip :color="priority.color" size="small" rounded>
         <VIcon :icon="priority.icon" size="x-large" start />
         <div class="text-white">{{ priority.label }}</div>
       </VChip>
     </template>
-    <template #item.dueDate="{ item }">
+    <template #[`item.dueDate`]="{ item }">
       <OverviewDueDate v-if="item.dueDate" :date="item.dueDate" />
     </template>
   </VDataTable>
