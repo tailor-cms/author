@@ -75,7 +75,7 @@
           variant="tonal"
           @click="expanded = false"
         />
-        <img :src="image" alt="test" />
+        <img :src="image" alt="Full image" />
       </VOverlay>
     </div>
   </form>
@@ -137,6 +137,10 @@ const acceptedFileTypes = computed(() => {
 
   &.expanded {
     backdrop-filter: blur(18px);
+  }
+
+  :deep(img) {
+    max-width: 100%;
   }
 }
 </style>
