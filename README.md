@@ -9,7 +9,11 @@ Love](https://badgen.net/badge/Open%20Source/%E2%9D%A4/3eaf8e)](https://github.c
 
 Configurable headless CMS for complex content structures.
 
-# Features
+With unparalleled configurability and extensibility, Tailor CMS puts you in 
+control. Enjoy an intuitive authoring experience that makes managing your 
+content a breeze.
+
+## Features
 
 - ### ⚙️ Custom content structures
   Craft unique content structures using straightforward JSON definitions. 
