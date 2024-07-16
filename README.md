@@ -38,5 +38,7 @@ content a breeze.
 
 <br>
 <div align = center>
+
 [![Documentation](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/documentation_learn.svg)](https://docs.tailor-cms.com/)
+
 </div>
