@@ -1,7 +1,11 @@
 <template>
   <div class="header">
     <div class="options-container">
-      <ActivityOptions :activity="props.activity" class="float-right" />
+      <ActivityOptions
+        v-if="!isSoftDeleted"
+        :activity="props.activity"
+        class="float-right"
+      />
     </div>
     <VBtn
       v-show="isEditable"
@@ -18,11 +22,13 @@
       v-if="store.repository?.hasAdminAccess"
       :activity="activity"
       :outline-activities="store.outlineActivities"
+      :is-soft-deleted="isSoftDeleted"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
+import { activity as activityUtils } from '@tailor-cms/utils';
 import get from 'lodash/get';
 
 import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';
@@ -38,6 +44,10 @@ const isEditable = computed(() => {
   const type = get(props.activity, 'type');
   return type && $schemaService.isEditable(type);
 });
+
+const isSoftDeleted = computed(() =>
+  activityUtils.doesRequirePublishing(props.activity),
+);
 
 const edit = () => {
   if (!isEditable?.value) return;

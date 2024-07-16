@@ -17,7 +17,7 @@ export function doesRequirePublishing(activity) {
   if (!activity.deletedAt) return false;
   const dateDeleted = new Date(activity.deletedAt).getTime();
   const datePublished = new Date(activity.publishedAt).getTime();
-  if (dateDeleted < datePublished) return true;
+  return dateDeleted > datePublished;
 }
 
 export function getParent(activities, activity) {
