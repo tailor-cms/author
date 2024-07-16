@@ -20,6 +20,7 @@
 <script lang="ts" setup>
 import { isAfter, sub } from 'date-fns';
 import compact from 'lodash/compact';
+import orderBy from 'lodash/orderBy';
 import overEvery from 'lodash/overEvery';
 import type { Status } from '@tailor-cms/interfaces/activity';
 import uniqBy from 'lodash/uniqBy';
@@ -69,11 +70,11 @@ const filteredActivities = computed(() => {
 });
 
 const assignees = computed(() => {
-  const unassigned = { id: null, label: 'Unassigned' };
-  return uniqBy(
-    activities.value.map(({ status }) => status.assignee ?? unassigned),
+  const uniqueAssignees = uniqBy(
+    activities.value.map(({ status }) => status.assignee ?? { id: null }),
     'id',
   );
+  return orderBy(uniqueAssignees, 'label');
 });
 
 const filterByStatus = ({ status }: Status) => status === filters.status;

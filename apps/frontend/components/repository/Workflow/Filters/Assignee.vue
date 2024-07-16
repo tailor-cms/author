@@ -33,9 +33,14 @@
             <VListItemAction start>
               <VCheckboxBtn :model-value="modelValue.includes(id)" />
             </VListItemAction>
-            <UserAvatar v-bind="{ imgUrl, label }" color="primary-lighten-4" />
+            <UserAvatar
+              v-bind="{ imgUrl, label }"
+              class="menu-avatar"
+              color="primary-lighten-4"
+              size="small"
+            />
           </template>
-          <VListItemTitle>{{ label }}</VListItemTitle>
+          <VListItemTitle>{{ label ?? 'Unassigned' }}</VListItemTitle>
         </VListItem>
       </VList>
     </VMenu>
@@ -62,7 +67,7 @@ const moreOptions = computed(() => props.options.slice(NO_BASE_OPTIONS));
 </script>
 
 <style lang="scss" scoped>
-:deep(.v-avatar) {
+:deep(.v-avatar):not(.menu-avatar) {
   transition: all 0.3s ease;
   outline: 0 solid rgb(var(--v-theme-secondary));
 

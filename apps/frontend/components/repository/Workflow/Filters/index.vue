@@ -60,7 +60,7 @@ import AssigneeFilter from './Assignee.vue';
 import SelectStatus from '../SelectStatus.vue';
 
 defineProps<{
-  assigneeOptions: Array<User | { id: null; label: string }>;
+  assigneeOptions: Array<User | { id: null }>;
   statusOptions: any[];
 }>();
 
