@@ -46,7 +46,7 @@ export default defineConfig({
                 link: '/dev/general/testing',
               },
               {
-                text: 'Deployment',
+                text: 'Deploy with Pulumi',
                 link: '/dev/general/deployment',
               },
             ],
