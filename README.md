@@ -4,10 +4,10 @@
 
 # Tailor CMS
 
+### Configurable headless CMS for complex content structures.
+
 [![Open Source
 Love](https://badgen.net/badge/Open%20Source/%E2%9D%A4/3eaf8e)](https://github.com/ellerbrock/open-source-badge/)
-
-Configurable headless CMS for complex content structures.
 
 With unparalleled configurability and extensibility, Tailor CMS puts you in 
 control. Enjoy an intuitive authoring experience that makes managing your 
