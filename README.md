@@ -2,7 +2,9 @@
   <img width="180" src="./apps/frontend/public/img/default-logo-compact.svg">
 </div>
 
-# Tailor CMS
+<div align="center">
+  <h1>Tailor Author</h1>
+</div>
 
 ### Configurable headless CMS for complex content structures.
 
