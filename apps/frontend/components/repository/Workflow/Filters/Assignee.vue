@@ -1,46 +1,44 @@
 <template>
   <div>
     <UserAvatar
-      v-for="{ id, imgUrl, label } in baseOptions"
-      :key="`assignee-${id}`"
-      :class="{ active: modelValue.includes(id) }"
-      v-bind="{ imgUrl, label }"
-      :label="label"
+      v-for="option in baseOptions"
+      :key="`assignee-${option?.id}`"
+      :class="{ active: isSelected(option?.id) }"
+      :img-url="option?.imgUrl"
+      :label="option?.label ?? 'Unassigned'"
       color="primary-lighten-4"
-      @click="toggleAssignee(id)"
+      @click="toggleAssignee(option?.id)"
     />
     <VMenu v-if="moreOptions.length" :close-on-content-click="false">
       <template #activator="{ props: menuProps }">
         <VAvatar
           v-bind="menuProps"
-          :class="{
-            active: moreOptions.some((it) => modelValue.includes(it.id)),
-          }"
+          :class="{ active: moreOptions.some((it) => isSelected(it?.id)) }"
           color="primary-lighten-4"
           size="36"
         >
           +{{ moreOptions.length }}
         </VAvatar>
       </template>
-      <VList>
+      <VList color="primary-darken-3">
         <VListItem
-          v-for="{ id, label, imgUrl } in moreOptions"
-          :key="`assignee-${id}`"
-          :active="modelValue.includes(id)"
-          @click="toggleAssignee(id)"
+          v-for="option in moreOptions"
+          :key="`assignee-${option?.id}`"
+          :active="isSelected(option?.id)"
+          @click="toggleAssignee(option?.id)"
         >
           <template #prepend>
             <VListItemAction start>
-              <VCheckboxBtn :model-value="modelValue.includes(id)" />
+              <VCheckboxBtn :model-value="isSelected(option?.id)" />
             </VListItemAction>
             <UserAvatar
-              v-bind="{ imgUrl, label }"
+              :img-url="option?.imgUrl"
               class="menu-avatar"
               color="primary-lighten-4"
               size="small"
             />
           </template>
-          <VListItemTitle>{{ label ?? 'Unassigned' }}</VListItemTitle>
+          <VListItemTitle>{{ option?.label ?? 'Unassigned' }}</VListItemTitle>
         </VListItem>
       </VList>
     </VMenu>
@@ -48,22 +46,25 @@
 </template>
 
 <script lang="ts" setup>
+import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components-next';
 import xor from 'lodash/xor';
 
 const NO_BASE_OPTIONS = 3;
 
 const props = defineProps<{
-  modelValue: number[];
-  options: Record<string, any>;
+  modelValue: Array<number | null>;
+  options: Array<User | null>;
 }>();
 const emit = defineEmits(['update:modelValue']);
 
-const toggleAssignee = (id: number) =>
-  emit('update:modelValue', xor(props.modelValue, [id]));
+const toggleAssignee = (id?: number) =>
+  emit('update:modelValue', xor(props.modelValue, [id ?? null]));
 
 const baseOptions = computed(() => props.options.slice(0, NO_BASE_OPTIONS));
 const moreOptions = computed(() => props.options.slice(NO_BASE_OPTIONS));
+
+const isSelected = (id?: number) => props.modelValue.includes(id ?? null);
 </script>
 
 <style lang="scss" scoped>

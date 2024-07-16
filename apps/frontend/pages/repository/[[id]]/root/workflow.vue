@@ -71,7 +71,7 @@ const filteredActivities = computed(() => {
 
 const assignees = computed(() => {
   const uniqueAssignees = uniqBy(
-    activities.value.map(({ status }) => status.assignee ?? { id: null }),
+    activities.value.map(({ status }) => status.assignee),
     'id',
   );
   return orderBy(uniqueAssignees, 'label');
