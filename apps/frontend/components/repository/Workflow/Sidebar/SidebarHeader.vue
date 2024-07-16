@@ -26,13 +26,13 @@
       v-clipboard:success="
         () => notify('ID copied to the clipboard', { immediate: true })
       "
-      class="ml-2"
+      class="ml-2 px-4"
       color="primary-lighten-3"
-      prepend-icon="mdi-identifier"
       size="small"
       variant="tonal"
     >
-      Copy id
+      <VIcon class="mr-1" icon="mdi-content-copy" />
+      <VIcon icon="mdi-identifier" />
     </VBtn>
     <VBtn
       :key="`${statusUrl}-identifier`"
@@ -41,13 +41,13 @@
       v-clipboard:success="
         () => notify('Link copied to the clipboard', { immediate: true })
       "
-      class="ml-2"
+      class="ml-2 px-4"
       color="primary-lighten-3"
-      prepend-icon="mdi-link"
       size="small"
       variant="tonal"
     >
-      Copy link
+      <VIcon class="mr-1" icon="mdi-content-copy" />
+      <VIcon icon="mdi-link" />
     </VBtn>
     <div class="mt-2 text-caption">{{ timestampInfo }}</div>
   </div>
