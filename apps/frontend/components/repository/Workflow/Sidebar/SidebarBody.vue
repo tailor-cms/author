@@ -5,7 +5,7 @@
       class="mb-2"
       label="Description"
       variant="outlined"
-      @update:model-value="updateStatus('description', $event)"
+      @change="updateStatus('description', $event)"
     />
     <SelectStatus
       :items="workflow.statuses"

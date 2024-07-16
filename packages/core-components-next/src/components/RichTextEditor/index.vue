@@ -4,7 +4,7 @@
     ref="input"
     :disabled="disabled"
     :focused="focused"
-    :model-value="modelValue"
+    :model-value="content"
     :rules="rules"
     class="text-left"
   >
@@ -62,18 +62,19 @@ const props = withDefaults(defineProps<Props>(), {
   variant: undefined,
   rules: undefined,
 });
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'change']);
 
 const input = ref();
+const content = ref(props.modelValue);
 const { focused } = useFocusWithin(input);
 
 const editor = useEditor({
-  content: props.modelValue,
+  content: content.value,
   onUpdate: ({ editor }) => {
-    const content = editor.storage.characterCount.words()
+    content.value = editor.storage.characterCount.words()
       ? editor.getHTML()
       : '';
-    return emit('update:modelValue', content);
+    return emit('update:modelValue', content.value);
   },
   extensions: [
     StarterKit.configure({ heading: false, horizontalRule: false }),
@@ -87,11 +88,16 @@ const editor = useEditor({
 watch(
   () => props.modelValue,
   (value) => {
-    if (!editor.value!) return;
+    if (!editor.value) return;
     const isSame = editor.value.getHTML() === value;
-    return !isSame && editor.value?.commands.setContent(value, false);
+    return isSame && editor.value?.commands.setContent(value, false);
   },
 );
+
+watch(focused, async (val) => {
+  if (val || props.modelValue === content.value) return;
+  return emit('change', content.value);
+});
 </script>
 
 <style lang="scss" scoped>
