@@ -8,7 +8,6 @@
       variant="tonal"
       closable
     >
-      {{ localError }}
     </VAlert>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions-->
     <form novalidate @keydown.enter="signIn" @submit.prevent="signIn">
@@ -36,17 +35,27 @@
         type="password"
         variant="outlined"
       />
-      <div class="d-flex mt-2">
+      <template v-if="oidcEnabled">
         <VBtn
-          color="primary-lighten-2"
+          class="mb-2"
+          color="secondary-lighten-4"
           variant="tonal"
           block
           rounded
-          @click="signIn"
+          @click="loginOIDC"
         >
-          Sign in
+          {{ oidcLoginText }}
         </VBtn>
-      </div>
+      </template>
+      <VBtn
+        color="primary-lighten-2"
+        variant="tonal"
+        block
+        rounded
+        @click="signIn"
+      >
+        Sign in
+      </VBtn>
       <div class="options">
         <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       </div>
@@ -60,6 +69,14 @@ import { useForm } from 'vee-validate';
 
 import { useAuthStore } from '@/stores/auth';
 
+const LOGIN_ERR_MESSAGE = 'The email or password you entered is incorrect.';
+const TOO_MANY_REQ_CODE = 429;
+const TOO_MANY_REQ_ERR_MESSAGE =
+  'Too many login attempts. Please try again later.';
+const getOidcErrorMessage = (email: any, buttonLabel: string) =>
+  `Account with email ${email} does not exist.
+  Click "${buttonLabel}" to try with a different account.`;
+
 definePageMeta({
   name: 'sign-in',
 });
@@ -69,14 +86,12 @@ useHead({
   meta: [{ name: 'description', content: 'Tailor CMS - Sign in page' }],
 });
 
-const authStore = useAuthStore();
-
-const LOGIN_ERR_MESSAGE = 'The email or password you entered is incorrect.';
-const TOO_MANY_REQ_CODE = 429;
-const TOO_MANY_REQ_ERR_MESSAGE =
-  'Too many login attempts. Please try again later.';
-
 const localError = ref('');
+
+const { $oidc } = useNuxtApp() as any;
+
+const authStore = useAuthStore();
+const route = useRoute();
 
 const { defineField, handleSubmit, errors } = useForm({
   validationSchema: object({
@@ -87,6 +102,21 @@ const { defineField, handleSubmit, errors } = useForm({
 
 const [emailInput] = defineField('email');
 const [passwordInput] = defineField('password');
+
+const oidcEnabled = computed(() => $oidc.enabled);
+const oidcLoginText = computed(() => 'Login with OAuth');
+const accessDenied = computed(() => route.query.accessDenied);
+const oidcError = computed(
+  () =>
+    accessDenied.value &&
+    getOidcErrorMessage(accessDenied.value, oidcLoginText.value),
+);
+const errorMessage = computed(() => oidcError.value || localError.value);
+
+const loginOIDC = () => {
+  const action = oidcError.value ? 'reauthenticate' : 'authenticate';
+  $oidc[action]();
+};
 
 const signIn = handleSubmit(({ email, password }) => {
   localError.value = '';

@@ -1,4 +1,4 @@
-import { authenticate, logout } from '../shared/auth/index.js';
+import auth from '../shared/auth/index.js';
 import { fileURLToPath, URL } from 'node:url';
 import { BAD_REQUEST } from 'http-status-codes';
 import express from 'express';
@@ -8,6 +8,7 @@ import path from 'node:path';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const router = express.Router();
+const { authenticate, logout } = auth;
 
 const ACCESS_DENIED_ROUTE = '/auth?accessDenied=';
 
