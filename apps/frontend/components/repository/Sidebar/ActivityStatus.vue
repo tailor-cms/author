@@ -68,12 +68,11 @@ const props = defineProps<{
   status: Status;
 }>();
 
-const repositoryStore = useCurrentRepository();
+const store = useCurrentRepository();
+const { workflow } = storeToRefs(store);
 
 const statusConfig = computed(() =>
-  repositoryStore.workflow.statuses.find(
-    (s: any) => s.id === props.status.status,
-  ),
+  workflow.value.statuses.find((s: any) => s.id === props.status.status),
 );
 
 const priorityConfig = computed(() =>
