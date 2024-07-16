@@ -35,8 +35,21 @@ export default defineConfig({
         text: 'Development',
         items: [
           {
-            text: 'Installation',
-            link: '/installation',
+            text: 'General',
+            items: [
+              {
+                text: 'Installation Guide',
+                link: '/dev/general/setup',
+              },
+              {
+                text: 'Testing',
+                link: '/dev/general/testing',
+              },
+              {
+                text: 'Deployment',
+                link: '/dev/general/deployment',
+              },
+            ],
           },
           {
             text: 'Content configuration',
