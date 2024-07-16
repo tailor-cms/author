@@ -9,7 +9,7 @@ import path from 'node:path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const router = express.Router();
 
-const ACCESS_DENIED_ROUTE = '/#/login?accessDenied=';
+const ACCESS_DENIED_ROUTE = '/auth?accessDenied=';
 
 const OIDCErrors = [OIDCError.OPError, OIDCError.RPError];
 const scope = ['openid', 'profile', 'email'].join(' ');

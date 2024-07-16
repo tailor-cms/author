@@ -35,6 +35,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       aiUiEnabled: false,
+      oidcEnabled: false,
     },
   },
 });

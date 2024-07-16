@@ -10,8 +10,12 @@ import { testDatabaseConnection } from './setup/database.js';
 const configLocation = path.join(process.cwd(), '.env');
 const config = await fs.readFile(configLocation, 'utf-8');
 
-const { PORT, REVERSE_PROXY_PORT, NUXT_PUBLIC_AI_UI_ENABLED } =
-  dotenv.parse(config);
+const {
+  PORT,
+  REVERSE_PROXY_PORT,
+  NUXT_PUBLIC_AI_UI_ENABLED,
+  NUXT_PUBLIC_OIDC_ENABLED,
+} = dotenv.parse(config);
 
 if (
   PORT === undefined ||
@@ -31,6 +35,7 @@ for (const port of [PORT, REVERSE_PROXY_PORT]) {
 
 // Proxy public environment variables
 process.env.NUXT_PUBLIC_AI_UI_ENABLED = NUXT_PUBLIC_AI_UI_ENABLED;
+process.env.NUXT_PUBLIC_OIDC_ENABLED = NUXT_PUBLIC_OIDC_ENABLED;
 process.env.BACKEND_PORT = PORT || 3000;
 process.env.REVERSE_PROXY_PORT = REVERSE_PROXY_PORT || 8080;
 
