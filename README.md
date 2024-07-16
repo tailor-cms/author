@@ -32,4 +32,4 @@ Configurable headless CMS for complex content structures.
   creation. Say goodbye to disjointed workflows and hello to real-time
   collaboration.
 
-[![Documentation](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/docs.svg)](https://docs.tailor-cms.com/)
+[![Documentation](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/documentation_learn.svg)](https://docs.tailor-cms.com/)
