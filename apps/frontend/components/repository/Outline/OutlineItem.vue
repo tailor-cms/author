@@ -70,7 +70,12 @@
                   Will be removed upon publishing
                 </VTooltip>
               </VChip>
-              {{ activity.data.name }}
+              <span>{{ activity.data.name }}</span>
+            </div>
+            <VSpacer />
+            <div class="py-3 mr-3">
+              <VBtn class="mr-3" size="small" variant="tonal">Revert</VBtn>
+              <VBtn size="small" variant="tonal">Publish</VBtn>
             </div>
           </template>
         </VSheet>
