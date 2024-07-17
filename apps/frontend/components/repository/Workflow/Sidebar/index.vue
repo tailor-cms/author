@@ -1,6 +1,6 @@
 <template>
   <VNavigationDrawer
-    class="px-4"
+    class="px-4 text-left"
     color="primary-darken-2"
     elevation="2"
     location="right"
@@ -49,10 +49,3 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 const repositoryStore = useCurrentRepository();
 const activity = computed(() => repositoryStore.selectedActivity);
 </script>
-
-<style lang="scss" scoped>
-.v-navigation-drawer {
-  padding-bottom: 0.375rem;
-  text-align: left;
-}
-</style>

@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <div>
     <RichTextEditor
       :model-value="status.description"
       class="mb-2"
@@ -55,7 +55,7 @@
       @click:clear="updateStatus('dueDate', null)"
       @update:model-value="updateStatus('dueDate', $event)"
     />
-  </section>
+  </div>
 </template>
 
 <script lang="ts" setup>
