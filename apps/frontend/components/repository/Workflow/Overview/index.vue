@@ -143,7 +143,6 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
   background: rgba(var(--v-theme-primary-darken-2)) !important;
 
   &:hover {
-    opacity: 1;
     font-weight: bold;
     color: white !important;
   }
