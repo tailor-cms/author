@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'Tailor',
-  base: '/author/',
+  base: '/',
   description: 'Tailor docs',
   // In order to avoid errors for localhost:8080
   ignoreDeadLinks: true,
@@ -35,8 +35,21 @@ export default defineConfig({
         text: 'Development',
         items: [
           {
-            text: 'Installation',
-            link: '/installation',
+            text: 'General',
+            items: [
+              {
+                text: 'Installation Guide',
+                link: '/dev/general/setup',
+              },
+              {
+                text: 'Testing',
+                link: '/dev/general/testing',
+              },
+              {
+                text: 'Deploy with Pulumi',
+                link: '/dev/general/deployment',
+              },
+            ],
           },
           {
             text: 'Content configuration',
