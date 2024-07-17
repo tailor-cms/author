@@ -10,11 +10,17 @@ export default class OidcClient {
   logoutEnabled;
   baseUrl;
 
-  constructor({ baseUrl }: { baseUrl: string }) {
-    const config = useRuntimeConfig().public;
-    console.log('OidcClient constructor', config);
-    this.enabled = config.oidcEnabled;
-    this.logoutEnabled = config.oidcLogoutEnabled;
+  constructor({
+    baseUrl,
+    enabled,
+    logoutEnabled,
+  }: {
+    baseUrl: string;
+    enabled: boolean;
+    logoutEnabled: boolean;
+  }) {
+    this.enabled = enabled;
+    this.logoutEnabled = logoutEnabled;
     this.baseUrl = join(baseUrl, 'oidc');
   }
 
