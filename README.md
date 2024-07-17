@@ -2,43 +2,47 @@
   <img width="180" src="./apps/frontend/public/img/default-logo-compact.svg">
 </div>
 
-# Tailor CMS
+<div align="center">
+  <h1>Tailor Author</h1>
+</div>
+
+### Configurable headless CMS for complex content structures.
 
 [![Open Source
 Love](https://badgen.net/badge/Open%20Source/%E2%9D%A4/3eaf8e)](https://github.com/ellerbrock/open-source-badge/)
 
-Configurable headless CMS for complex content structures.
+With unparalleled configurability and extensibility, Tailor CMS puts you in 
+control. Enjoy an intuitive authoring experience that makes managing your 
+content a breeze.
 
-## Installation
+## Features
 
-### Prerequisites
+- ### ⚙️ Custom content structures
+  Craft unique content structures using straightforward JSON definitions. 
+  Whether you're building a custom Course or a Knowledge base, Tailor gives 
+  you the tools to create your content exactly the way you need it.
 
-- Node.js (>= 22.x): https://nodejs.org/en/download/
-- pnpm (>= 9.0.6): https://pnpm.io/installation
-- PostgreSQL (>= 9.4): https://www.postgresql.org/download/
-- Clone this repo
+- ### 📦 Experience limitless extensibility
+  Extend and customize your digital experience with ease using our custom 
+  elements, containers, and meta inputs. With Tailor, the possibilities for 
+  your content are endless.
 
-### Development
+- ### 🚀 Effortlessly access published content
+  Publish and consume content effortlessly, leveraging the power of configured 
+  storage like AWS S3. Say goodbye to complex setups and hello to streamlined 
+  workflows.
 
-- Run `pnpm setup:dev` in the project directory and enter the required details
-- Run `pnpm dev` to start the dev server
+- ### 🌍 The power of collaboration at your fingertips
+  With features like status tracking, content diffing, revisions, comments, 
+  and live editing updates, your team can work together seamlessly on content 
+  creation. Say goodbye to disjointed workflows and hello to real-time
+  collaboration.
 
-### Production
+<br>
+<div align = center>
 
-- Application is configured via environment variables contained in a
-  file named `.env`. Use the `.env.example` file as a template: 
-  `cp .env.example .env` and enter configuration details.
-- Bundle client by issuing `pnpm build`
-- To run app execute: `pnpm start`
+[![Documentation](https://gist.githubusercontent.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/documentation_learn.svg)](https://docs.tailor-cms.com/)
 
-## Content repository structure configuration
-
-Repository structure can be altered using the Tailor configuration file, 
-which must be placed inside the root directory and named `tailor.config.js`.
-
-## Testing
-
-- `pnpm e2e:functional`
-- `pnpm e2e:visual`
+</div>
 
 This project is tested with BrowserStack.
