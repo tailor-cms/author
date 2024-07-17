@@ -93,6 +93,27 @@ export default defineConfig({
               },
             ],
           },
+          {
+            text: 'Extensions',
+            items: [
+              {
+                text: 'Introduction',
+                link: '/dev/extensions/introduction',
+              },
+              {
+                text: 'Content Elements',
+                link: '/dev/extensions/content-elements',
+              },
+              {
+                text: 'Content Containers',
+                link: '/dev/extensions/content-containers',
+              },
+              {
+                text: 'Meta Inputs',
+                link: '/dev/extensions/meta-inputs',
+              },
+            ],
+          },
         ],
       },
     ],
