@@ -15,6 +15,8 @@ With unparalleled configurability and extensibility, Tailor CMS puts you in
 control. Enjoy an intuitive authoring experience that makes managing your 
 content a breeze.
 
+![](https://github.com/tailor-cms/author/tree/main/docs/assets/Tailor_7.gif)
+
 ## Features
 
 - ### ⚙️ Custom content structures
