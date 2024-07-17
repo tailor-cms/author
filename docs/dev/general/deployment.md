@@ -26,8 +26,10 @@ code, making it easier to create, manage, and update cloud resources.
      `/infrastructure/src/env.ts` file.
 
 3. **Configure the `TAILOR_DOCKER_IMAGE` Environment Variable**:
-   For example, use the command `export TAILOR_DOCKER_IMAGE=ghcr.io/tailor-cms/author:sha-4fa2c1b` to define the Docker image to be used. A GitHub
-   workflow is configured to automatically build and publish Docker images
+   For example, use the command 
+   `export TAILOR_DOCKER_IMAGE=ghcr.io/tailor-cms/author:sha-4fa2c1b` to define 
+   the Docker image to be used. A GitHub workflow is 
+   configured to automatically build and publish Docker images
    upon any merge into the `main` branch. This ensures that the latest version
    of the code is always available as a Docker image for deployment.
 
