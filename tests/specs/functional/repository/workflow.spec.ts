@@ -70,11 +70,44 @@ test('should be able to update workflow item', async ({ page }) => {
   await sidebar.selectDueDate(format(dueDate, dateFormat.input));
   await page.reload();
   await page.waitForLoadState('networkidle');
-  const row = await workflow.getItemByName(name);
+  const row = workflow.getRow(name);
   await expect(row.getByText(status)).toBeVisible();
   await expect(row.getByText(priority)).toBeVisible();
   await expect(row.getByText(assignee)).toBeVisible();
   await expect(row.getByText(format(dueDate, dateFormat.table))).toBeVisible();
+});
+
+test('should be able to filter by name', async ({ page }) => {
+  const name = outlineSeed.group.title;
+  await toSeededRepositoryWorkflow(page);
+  const workflow = new Workflow(page);
+  await workflow.search(name);
+  await expect(workflow.getRow()).toHaveCount(1);
+});
+
+test('should be able to filter by status', async ({ page }) => {
+  const name = outlineSeed.group.title;
+  await toSeededRepositoryWorkflow(page);
+  const workflow = new Workflow(page);
+  await workflow.openItemByName(name);
+  const sidebar = new WorkflowSidebar(page);
+  await expect(sidebar.el.getByText(name)).toBeVisible();
+  await sidebar.selectStatus('Done');
+  await workflow.filterStatus('Done');
+  await expect(workflow.getRow()).toHaveCount(1);
+});
+
+test('should be able to filter by asignee', async ({ page }) => {
+  const assignee = userSeed[0].email;
+  const name = outlineSeed.group.title;
+  await toSeededRepositoryWorkflow(page);
+  const workflow = new Workflow(page);
+  await workflow.openItemByName(name);
+  const sidebar = new WorkflowSidebar(page);
+  await expect(sidebar.el.getByText(name)).toBeVisible();
+  await sidebar.selectAssignee(assignee);
+  await workflow.filterAssignee(assignee);
+  await expect(workflow.getRow()).toHaveCount(1);
 });
 
 test('should be able to post a comment', async ({ page }) => {

@@ -3,15 +3,17 @@ import { expect, Locator, Page } from '@playwright/test';
 export class Workflow {
   readonly page: Page;
   readonly el: Locator;
-  readonly searchInput: Locator;
+  readonly searchFilter: Locator;
   readonly statusFilter: Locator;
+  readonly assigneeFilter: Locator;
   readonly recentBtn: Locator;
   readonly table: Locator;
 
   constructor(page: Page) {
     this.el = page.locator('.workflow-page');
-    this.searchInput = this.el.getByPlaceholder('Search by name or id...');
-    this.statusFilter = this.el.getByPlaceholder('Filter by status');
+    this.searchFilter = this.el.getByPlaceholder('Search by name or id...');
+    this.statusFilter = this.el.getByTestId('status-filter');
+    this.assigneeFilter = this.el.getByTestId('assignee-filter');
     this.recentBtn = this.el.getByRole('button', { name: 'Recently updated' });
     this.table = this.el.getByRole('table');
     this.page = page;
@@ -22,17 +24,27 @@ export class Workflow {
   }
 
   search(name: string) {
-    return this.searchInput.fill(name);
+    return this.searchFilter.fill(name);
   }
 
-  async getItemByName(name: string) {
-    const item = this.table.getByRole('row', { name });
-    await expect(item).toBeVisible();
-    return item;
+  async filterStatus(status: string) {
+    await this.statusFilter.click();
+    const menuItem = this.page
+      .locator('.v-list-item-title')
+      .filter({ hasText: status });
+    await menuItem.click();
+    await expect(menuItem).not.toBeVisible();
   }
 
-  async openItemByName(name: string) {
-    const item = await this.getItemByName(name);
-    return item.click();
+  async filterAssignee(assignee: string) {
+    await this.assigneeFilter.getByLabel(assignee).click();
+  }
+
+  getRow(name?: string) {
+    return this.table.locator('tbody').getByRole('row', { name });
+  }
+
+  openItemByName(name: string) {
+    return this.getRow(name).click();
   }
 }

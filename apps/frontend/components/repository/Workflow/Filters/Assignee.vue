@@ -3,10 +3,12 @@
     <UserAvatar
       v-for="option in baseOptions"
       :key="`assignee-${option?.id}`"
+      :aria-label="option?.label ?? 'Unassigned'"
       :class="{ active: isSelected(option?.id) }"
       :img-url="option?.imgUrl"
       :label="option?.label ?? 'Unassigned'"
       color="primary-lighten-4"
+      tag="button"
       @click="toggleAssignee(option?.id)"
     />
     <VMenu v-if="moreOptions.length" :close-on-content-click="false">

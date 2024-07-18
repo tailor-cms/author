@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 
 import { ActivityComments } from '../common/Comments';
 
@@ -25,26 +25,29 @@ export class WorkflowSidebar {
 
   async selectStatus(status: string) {
     await this.statusInput.click();
-    await this.page
+    const menuItem = this.page
       .locator('.v-list-item-title')
-      .filter({ hasText: status })
-      .click();
+      .filter({ hasText: status });
+    await menuItem.click();
+    await expect(menuItem).not.toBeVisible();
   }
 
   async selectAssignee(assigneee: string) {
     await this.assigneeInput.click();
-    await this.page
+    const menuItem = this.page
       .locator('.v-list-item-title')
-      .filter({ hasText: assigneee })
-      .click();
+      .filter({ hasText: assigneee });
+    await menuItem.click();
+    await expect(menuItem).not.toBeVisible();
   }
 
   async selectPriority(priority: string) {
     await this.priorityInput.click();
-    await this.page
+    const menuItem = this.page
       .locator('.v-list-item-title')
-      .filter({ hasText: priority })
-      .click();
+      .filter({ hasText: priority });
+    await menuItem.click();
+    await expect(menuItem).not.toBeVisible();
   }
 
   async selectDueDate(dueDate: string) {
