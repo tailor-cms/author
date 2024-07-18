@@ -66,7 +66,12 @@ const { workflow, selectedActivity } = storeToRefs(repositoryStore);
 
 const headers = computed(() => [
   { title: 'Name', value: 'name', sortable: true, maxWidth: '17.75rem' },
-  { title: 'Status', value: 'status', sort: compareStatuses },
+  {
+    title: 'Status',
+    value: 'status',
+    sort: compareStatuses,
+    width: '8.125rem',
+  },
   {
     title: 'Assignee',
     value: 'assignee',
