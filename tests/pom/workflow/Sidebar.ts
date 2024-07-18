@@ -15,12 +15,18 @@ export class WorkflowSidebar {
   constructor(page: Page) {
     this.page = page;
     this.el = page.locator('.workflow-page .v-navigation-drawer');
-    this.descriptionInput = this.el.getByText('Description');
+    this.descriptionInput = this.el
+      .getByTestId('description-input')
+      .getByRole('textbox');
     this.statusInput = this.el.getByTestId('status-input');
     this.assigneeInput = this.el.getByTestId('assignee-input');
     this.priorityInput = this.el.getByTestId('priority-input');
     this.dueDateInput = this.el.getByTestId('date-input');
     this.comments = new ActivityComments(page, this.el);
+  }
+
+  async setDescription(description: string) {
+    await this.descriptionInput.fill(description);
   }
 
   async selectStatus(status: string) {

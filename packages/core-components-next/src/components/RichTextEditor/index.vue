@@ -70,6 +70,9 @@ const { focused } = useFocusWithin(input);
 
 const editor = useEditor({
   content: content.value,
+  editorProps: {
+    attributes: { role: 'textbox' },
+  },
   onUpdate: ({ editor }) => {
     content.value = editor.storage.characterCount.words()
       ? editor.getHTML()

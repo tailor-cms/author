@@ -15,13 +15,14 @@ import SeedClient from '../../../api/SeedClient';
 import { Workflow } from '../../../pom/workflow/Workflow';
 import { WorkflowSidebar } from '../../../pom/workflow/Sidebar';
 
-const getWorkflowRoute = (id) => `/repository/${id}/root/workflow`;
 const statuses = ['Todo', 'In progress', 'Review', 'Done'];
 const priorities = ['Trivial', 'Low', 'Medium', 'High', 'Critical'];
 const dateFormat = {
-  input: 'yyyy-MM-dd',
+  input: 'MM/dd/yyyy',
   table: 'MMM d, yyyy',
 };
+
+const getWorkflowRoute = (id) => `/repository/${id}/root/workflow`;
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
@@ -55,6 +56,7 @@ test('should be able to open sidebar for the workflow item', async ({
 
 test('should be able to update workflow item', async ({ page }) => {
   const name = outlineSeed.group.title;
+  const description = faker.lorem.sentence();
   const status = sample(statuses);
   const priority = sample(priorities);
   const dueDate = new Date();
@@ -64,17 +66,25 @@ test('should be able to update workflow item', async ({ page }) => {
   await workflow.openItemByName(name);
   const sidebar = new WorkflowSidebar(page);
   await expect(sidebar.el.getByText(name)).toBeVisible();
-  await sidebar.selectStatus(status);
-  await sidebar.selectAssignee(assignee);
-  await sidebar.selectPriority(priority);
-  await sidebar.selectDueDate(format(dueDate, dateFormat.input));
-  await page.reload();
-  await page.waitForLoadState('networkidle');
   const row = workflow.getRow(name);
+  await sidebar.setDescription(description);
+  await sidebar.selectStatus(status);
   await expect(row.getByText(status)).toBeVisible();
-  await expect(row.getByText(priority)).toBeVisible();
+  await sidebar.selectAssignee(assignee);
   await expect(row.getByText(assignee)).toBeVisible();
+  await sidebar.selectPriority(priority);
+  await expect(row.getByText(priority)).toBeVisible();
+  await sidebar.selectDueDate(format(dueDate, dateFormat.input));
   await expect(row.getByText(format(dueDate, dateFormat.table))).toBeVisible();
+  // Reload the page to check if the changes are persisted
+  await page.reload();
+  await expect(sidebar.descriptionInput.getByText(description)).toBeVisible();
+  await expect(sidebar.statusInput.getByText(status)).toBeVisible();
+  await expect(sidebar.priorityInput.getByText(priority)).toBeVisible();
+  await expect(sidebar.assigneeInput.getByText(assignee)).toBeVisible();
+  await expect(sidebar.dueDateInput.locator('input')).toHaveValue(
+    format(dueDate, dateFormat.input),
+  );
 });
 
 test('should be able to filter by name', async ({ page }) => {
