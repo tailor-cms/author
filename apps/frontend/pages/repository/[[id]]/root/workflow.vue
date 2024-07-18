@@ -94,7 +94,11 @@ const filterBySearch = ({ shortId, data, status }: StoreActivity) => {
   return searchableText.toLowerCase().includes(filters.search.toLowerCase());
 };
 
-onMounted(() => store.getUsers());
+onMounted(async () => {
+  await store.getUsers();
+  const { activityId } = useRoute().query;
+  if (activityId) store.selectActivity(parseInt(activityId as string, 10));
+});
 </script>
 
 <style lang="scss" scoped>
