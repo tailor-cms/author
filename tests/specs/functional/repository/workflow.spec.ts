@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 import userSeed from 'tailor-seed/user.json';
 import { formatDate as format } from 'date-fns/format';
 import sample from 'lodash/sample';
@@ -74,6 +75,18 @@ test('should be able to update workflow item', async ({ page }) => {
   await expect(row.getByText(priority)).toBeVisible();
   await expect(row.getByText(assignee)).toBeVisible();
   await expect(row.getByText(format(dueDate, dateFormat.table))).toBeVisible();
+});
+
+test('should be able to post a comment', async ({ page }) => {
+  await toSeededRepositoryWorkflow(page);
+  const name = outlineSeed.group.title;
+  const workflow = new Workflow(page);
+  await workflow.openItemByName(name);
+  const sidebar = new WorkflowSidebar(page);
+  await expect(sidebar.el.getByText(name)).toBeVisible();
+  const comment = faker.lorem.sentence();
+  await sidebar.comments.post(comment);
+  await expect(sidebar.comments.thread).toContainText(comment);
 });
 
 test.afterAll(async () => {
