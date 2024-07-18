@@ -1,5 +1,5 @@
 <template>
-  <VLayout full-height>
+  <VLayout class="workflow-page" full-height>
     <VMain>
       <div class="workflow d-flex flex-column h-100">
         <WorkflowFilters

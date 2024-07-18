@@ -3,6 +3,7 @@
     <RichTextEditor
       :model-value="status.description"
       class="mb-2"
+      data-testid="description-input"
       label="Description"
       variant="outlined"
       @change="updateStatus('description', $event)"
@@ -10,6 +11,7 @@
     <SelectStatus
       :items="workflow.statuses"
       :model-value="status.status"
+      data-testid="status-input"
       label="Status"
       variant="outlined"
       @update:model-value="updateStatus('status', $event)"
@@ -18,6 +20,7 @@
       :items="users"
       :model-value="status.assigneeId"
       class="my-2"
+      data-testid="assignee-input"
       item-title="label"
       item-value="id"
       label="Assignee"
@@ -42,6 +45,7 @@
       :items="workflowConfig.priorities"
       :model-value="status.priority"
       class="mb-2"
+      data-testid="priority-input"
       label="Priority"
       variant="outlined"
       @update:model-value="updateStatus('priority', $event)"
