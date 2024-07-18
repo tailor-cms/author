@@ -5,54 +5,78 @@
         <VSheet
           v-bind="hoverProps"
           :id="`activity_${activity.uid}`"
-          :class="{ selected: isSelected, highlighted: isHovering }"
+          :class="{
+            selected: isSelected,
+            highlighted: isHovering,
+            disabled: isSoftDeleted,
+          }"
           :style="{ 'border-left-color': config.color }"
           class="activity"
           data-testid="repository__structureActivity"
           @mousedown="currentRepositoryStore.selectActivity(activity.id)"
         >
-          <VBtn
-            v-if="hasSubtypes"
-            :icon="`mdi-${icon}`"
-            aria-label="Toggle expand"
-            class="my-auto"
-            color="primary-lighten-3"
-            variant="text"
-            @mousedown.stop="utils.toggleOutlineItemExpand(activity.uid)"
-          >
-          </VBtn>
-          <div
-            class="activity-name h5 my-auto text-truncate text-primary-lighten-4"
-          >
-            {{ activity.data.name }}
-          </div>
-          <div v-if="isSelected || isHovering" class="actions my-auto">
-            <OutlineItemToolbar
-              :activity="activity"
-              class="options-toolbar my-auto"
-            />
-            <VTooltip location="bottom">
-              <template #activator="{ props: tooltipProps }">
-                <VBtn
-                  v-show="hasSubtypes"
-                  v-bind="tooltipProps"
-                  :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
-                  aria-label="Toggle expand alt"
-                  class="my-auto mx-0"
-                  color="primary-lighten-4"
-                  variant="text"
-                  @click="utils.toggleOutlineItemExpand(activity.uid)"
-                >
-                </VBtn>
-              </template>
-              <span>{{ isExpanded ? 'Collapse' : 'Expand' }}</span>
-            </VTooltip>
-            <OptionsMenu :activity="activity" class="options-menu" />
-          </div>
+          <template v-if="!isSoftDeleted">
+            <VBtn
+              v-if="hasSubtypes"
+              :icon="`mdi-${icon}`"
+              aria-label="Toggle expand"
+              class="my-auto"
+              color="primary-lighten-3"
+              variant="text"
+              @mousedown.stop="utils.toggleOutlineItemExpand(activity.uid)"
+            >
+            </VBtn>
+            <div
+              class="activity-name h5 my-auto text-truncate text-primary-lighten-4"
+            >
+              {{ activity.data.name }}
+            </div>
+            <div v-if="isSelected || isHovering" class="actions my-auto">
+              <OutlineItemToolbar
+                :activity="activity"
+                class="options-toolbar my-auto"
+              />
+              <VTooltip location="bottom">
+                <template #activator="{ props: tooltipProps }">
+                  <VBtn
+                    v-show="hasSubtypes"
+                    v-bind="tooltipProps"
+                    :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
+                    aria-label="Toggle expand alt"
+                    class="my-auto mx-0"
+                    color="primary-lighten-4"
+                    variant="text"
+                    @click="utils.toggleOutlineItemExpand(activity.uid)"
+                  >
+                  </VBtn>
+                </template>
+                <span>{{ isExpanded ? 'Collapse' : 'Expand' }}</span>
+              </VTooltip>
+              <OptionsMenu :activity="activity" class="options-menu" />
+            </div>
+          </template>
+          <template v-else>
+            <div
+              class="activity-name my-auto text-truncate text-primary-lighten-4"
+            >
+              <VChip class="mr-2">
+                Deleted
+                <VTooltip location="bottom">
+                  <template #activator="{ props: tooltipProps }">
+                    <VIcon v-bind="tooltipProps" color="secondary" class="ml-2">
+                      mdi-information-outline
+                    </VIcon>
+                  </template>
+                  Will be removed upon publishing
+                </VTooltip>
+              </VChip>
+              {{ activity.data.name }}
+            </div>
+          </template>
         </VSheet>
       </template>
     </VHover>
-    <div v-if="isExpanded && hasChildren">
+    <div v-if="!isSoftDeleted && isExpanded && hasChildren">
       <Draggable
         :list="children"
         v-bind="{ handle: '.activity' }"
@@ -73,6 +97,7 @@
 </template>
 
 <script lang="ts" setup>
+import { activity as activityUtils } from '@tailor-cms/utils';
 import Draggable from 'vuedraggable';
 import size from 'lodash/size';
 
@@ -104,6 +129,10 @@ const config = computed(() =>
 
 const isSelected = computed(
   () => currentRepositoryStore.selectedActivity?.uid === props.activity.uid,
+);
+
+const isSoftDeleted = computed(() =>
+  activityUtils.doesRequirePublishing(props.activity),
 );
 
 const isExpanded = computed(() =>
@@ -161,6 +190,10 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
       color: rgb(var(--v-theme-primary-lighten-4)) !important;
       font-weight: 600 !important;
     }
+  }
+
+  &.disabled {
+    background-color: rgb(var(--v-theme-primary-darken-4));
   }
 
   &.selected {
