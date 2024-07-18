@@ -44,27 +44,28 @@ test('should be able to open sidebar for the workflow item', async ({
   await expect(sidebar.el.getByText(groupTitle)).toBeVisible();
 });
 
-test('should be able to update and persist workflow item', async ({ page }) => {
+test('should be able to update workflow item', async ({ page }) => {
   const name = outlineSeed.group.title;
-  const status = {
-    status: 'Review',
-    priority: 'High',
-    assignee: userSeed[0].email,
-  };
+  const status = 'Review';
+  const priority = 'High';
+  const dueDate = '12/31/2023';
+  const assignee = userSeed[0].email;
   await toSeededRepositoryWorkflow(page);
   const workflow = new Workflow(page);
   await workflow.openItemByName(name);
   const sidebar = new WorkflowSidebar(page);
   await expect(sidebar.el.getByText(name)).toBeVisible();
-  await sidebar.selectStatus(status.status);
-  await sidebar.selectAssignee(status.assignee);
-  await sidebar.selectPriority(status.priority);
+  await sidebar.selectStatus(status);
+  await sidebar.selectAssignee(assignee);
+  await sidebar.selectPriority(priority);
+  await sidebar.selectDueDate(dueDate);
   await page.reload();
   await page.waitForLoadState('networkidle');
   const row = await workflow.getItemByName(name);
-  for (const value of Object.values(status)) {
-    await expect(row.getByText(value)).toBeVisible();
-  }
+  await expect(row.getByText(status)).toBeVisible();
+  await expect(row.getByText(priority)).toBeVisible();
+  await expect(row.getByText('Dec 31, 2023')).toBeVisible();
+  await expect(row.getByText(assignee)).toBeVisible();
 });
 
 test.afterAll(async () => {

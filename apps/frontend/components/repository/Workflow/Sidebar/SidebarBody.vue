@@ -52,6 +52,7 @@
     />
     <VDateInput
       :model-value="dueDate && new Date(dueDate)"
+      data-testid="date-input"
       label="Due date"
       prepend-icon=""
       variant="outlined"

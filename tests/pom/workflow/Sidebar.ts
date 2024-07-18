@@ -19,6 +19,7 @@ export class WorkflowSidebar {
     this.statusInput = this.el.getByTestId('status-input');
     this.assigneeInput = this.el.getByTestId('assignee-input');
     this.priorityInput = this.el.getByTestId('priority-input');
+    this.dueDateInput = this.el.getByTestId('date-input');
     this.comments = new ActivityComments(page, this.el);
   }
 
@@ -44,5 +45,13 @@ export class WorkflowSidebar {
       .locator('.v-list-item-title')
       .filter({ hasText: priority })
       .click();
+  }
+
+  async selectDueDate(dueDate: string) {
+    await this.dueDateInput
+      .getByLabel('Due date', { exact: true })
+      .fill(dueDate);
+    await this.dueDateInput.click();
+    await this.dueDateInput.press('Enter');
   }
 }
