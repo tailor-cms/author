@@ -15,6 +15,12 @@ export default defineNuxtConfig({
     '/api/**': {
       proxy: `http://localhost:${process.env.BACKEND_PORT}/api/**`,
     },
+    '/api/oidc/**': {
+      redirect: {
+        to: `http://localhost:${process.env.BACKEND_PORT}/api/oidc/**`,
+        statusCode: 302,
+      },
+    },
     '/repository/assets/**': {
       proxy: `http://localhost:${process.env.BACKEND_PORT}/repository/assets/**`,
     },
