@@ -36,6 +36,8 @@
     <SelectElement
       v-if="showElementBrowser"
       :allowed-types="allowedTypes"
+      :element="element"
+      :filters="filters"
       :heading="defaultPlaceholder"
       :multiple="multiple"
       :selected="value"
@@ -53,6 +55,7 @@ import type {
   ContentElement,
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
+import type { Filter } from '@tailor-cms/interfaces/schema';
 import pluralize from 'pluralize';
 import { SelectElement } from '@tailor-cms/core-components-next';
 
@@ -61,14 +64,17 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
   label: string;
+  element: ContentElement;
   placeholder?: string;
   multiple?: boolean;
   allowedTypes?: string[];
+  filters?: Filter[];
   value?: Relationship[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   allowedTypes: () => [],
+  filters: () => [],
   value: () => [],
   placeholder: '',
   multiple: true,
