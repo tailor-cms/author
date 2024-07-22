@@ -8,7 +8,7 @@
   >
     No available elements.
   </VAlert>
-  <VRow v-for="container in processedContainers" :key="container.id">
+  <VRow v-for="container in contentContainers" :key="container.id">
     <ContentElementWrapper
       v-for="el in container.elements"
       :key="el.id"
@@ -59,26 +59,6 @@ const isSelectionDisabled = computed(() => {
   return props.selectable && !props.multiple && !!props.selected.length;
 });
 
-const selectionMap = computed(() => {
-  return keyBy(props.selected, 'id');
-});
-
-const processedContainers = computed(() => {
-  const { contentContainers, allowedTypes, filters } = props;
-  if (!allowedTypes.length) return contentContainers;
-  return contentContainers.map((container) => ({
-    ...container,
-    elements: container.elements.filter((element) => {
-      const { type } = element;
-      const isAllowedType = !allowedTypes.length || allowedTypes.includes(type);
-      if (!isAllowedType) return false;
-      if (!filters?.length) return true;
-      return filters.every((filter) => filter(element, props.element));
-    }),
-  }));
-});
-
-const elements = computed(() => {
-  return flatMap(processedContainers.value, (it) => it.elements);
-});
+const selectionMap = computed(() => keyBy(props.selected, 'id'));
+const elements = computed(() => flatMap(props.contentContainers, 'elements'));
 </script>

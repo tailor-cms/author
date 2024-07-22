@@ -119,7 +119,7 @@ interface Selection {
 
 interface Items {
   activities: Activity[];
-  contentContainers?: ContentContainer[];
+  contentContainers: ContentContainer[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -149,20 +149,7 @@ const items: Items = reactive({
   contentContainers: [],
 });
 
-const elements = computed(() => {
-  const { allowedTypes, filters } = props;
-  const elements: ContentElement[] = flatMap(
-    items.contentContainers,
-    'elements',
-  );
-  return elements.filter((element) => {
-    const { type } = element;
-    const isAllowedType = !allowedTypes.length || allowedTypes.includes(type);
-    if (!isAllowedType) return false;
-    if (!filters?.length) return true;
-    return filters.every((filter) => filter(element, props.element));
-  });
-});
+const elements = computed(() => flatMap(items.contentContainers, 'elements'));
 
 const allElementsSelected = computed(
   () => selection.elements.length === elements.value.length,
@@ -225,8 +212,13 @@ const assignElements = (
   activity: Activity,
   elements: ContentElement[],
 ) => {
+  const { allowedTypes, filters = [] } = props;
   const containerElements = elements
-    .filter(({ activityId }) => activityId === container.id)
+    .filter((el) => {
+      if (el.activityId !== container.id) return false;
+      if (allowedTypes.length && !allowedTypes.includes(el.type)) return false;
+      return filters.every((filter) => filter(el, props.element));
+    })
     .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
 };
