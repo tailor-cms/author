@@ -114,6 +114,7 @@ PROTOCOL=http
 # frontend. In production, this configures the port on which the app is
 # available to the end user (443, if app is deployed with https configured).
 REVERSE_PROXY_PORT=8080
+# If the app is behind a reverse proxy and rate limiting is enabled
 # See https://expressjs.com/en/guide/behind-proxies.html
 REVERSE_PROXY_TRUST=false
 
