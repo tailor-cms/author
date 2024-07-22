@@ -1,4 +1,4 @@
-import OidcClient from '@/lib/oidc';
+import OidcClient from '@/lib/OidcClient';
 
 export default defineNuxtPlugin((nuxtApp) => {
   const { oidcEnabled, oidcLogoutEnabled } = useRuntimeConfig().public;
