@@ -1,4 +1,4 @@
-import { store as config } from '../../config/server/index.js';
+import { enableRateLimiting, store as config } from '../../config/server/index.js';
 import rateLimit from 'express-rate-limit';
 import Tapster from '@extensionengine/tapster';
 
@@ -38,12 +38,15 @@ class Store {
 
 const defaultStore = new Store();
 
+// As of version 7.0.0, setting max to zero will no longer disable the rate
+// limiter - instead, it will ‘block’ all requests to that endpoint.
 function requestLimiter({
   max = 30,
   windowMs = DEFAULT_WINDOW_MS,
   store = defaultStore,
   ...opts
 } = {}) {
+  if (!enableRateLimiting) max = 0;
   return rateLimit({ max, windowMs, store, ...opts });
 }
 

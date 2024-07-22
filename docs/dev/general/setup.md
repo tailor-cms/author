@@ -160,6 +160,8 @@ AUTH_JWT_SECRET=example_secret123!
 AUTH_JWT_ISSUER=tailor
 AUTH_JWT_COOKIE_NAME=access_token
 AUTH_JWT_COOKIE_SECRET=example_cookie_sign_secret123!
+# Enable rate limiting for authentication routes
+ENABLE_RATE_LIMITING=false
 
 # -------------------------------------------------------------------
 # OIDC

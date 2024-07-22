@@ -1,3 +1,5 @@
+import yn from 'yn';
+
 import * as ai from './ai.js';
 import * as auth from './auth.js';
 import * as consumer from './consumer.js';
@@ -10,12 +12,15 @@ import * as test from './test.js';
 import resolveUrl from 'tailor-config-shared/src/url.js';
 
 const { hostname, protocol, port, origin } = resolveUrl(process.env);
+
 const previewUrl = process.env.PREVIEW_URL;
+const enableRateLimiting = yn(process.env.ENABLE_RATE_LIMITING);
 
 export {
   ai,
   auth,
   consumer,
+  enableRateLimiting,
   hostname,
   mail,
   origin,
@@ -32,6 +37,7 @@ export default {
   ai,
   auth,
   consumer,
+  enableRateLimiting,
   hostname,
   mail,
   origin,
