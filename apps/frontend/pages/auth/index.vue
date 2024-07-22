@@ -1,13 +1,31 @@
 <template>
   <NuxtLayout name="auth" title="Sign in">
+    <template v-if="oidcEnabled">
+      <VBtn
+        class="mb-2"
+        color="secondary-lighten-4"
+        variant="tonal"
+        block
+        rounded
+        @click="loginOIDC"
+      >
+        {{ oidcLoginText }}
+      </VBtn>
+      <div class="d-flex align-center my-5">
+        <VDivider />
+        <span class="text-body-2 text-primary-lighten-3 mx-2">OR</span>
+        <VDivider />
+      </div>
+    </template>
     <VAlert
-      v-if="localError"
+      v-if="errorMessage"
       class="mb-7 text-left"
       color="pink-lighten-4"
       density="compact"
       variant="tonal"
       closable
     >
+      {{ errorMessage }}
     </VAlert>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions-->
     <form novalidate @keydown.enter="signIn" @submit.prevent="signIn">
@@ -35,18 +53,6 @@
         type="password"
         variant="outlined"
       />
-      <template v-if="oidcEnabled">
-        <VBtn
-          class="mb-2"
-          color="secondary-lighten-4"
-          variant="tonal"
-          block
-          rounded
-          @click="loginOIDC"
-        >
-          {{ oidcLoginText }}
-        </VBtn>
-      </template>
       <VBtn
         color="primary-lighten-2"
         variant="tonal"
@@ -73,6 +79,7 @@ const LOGIN_ERR_MESSAGE = 'The email or password you entered is incorrect.';
 const TOO_MANY_REQ_CODE = 429;
 const TOO_MANY_REQ_ERR_MESSAGE =
   'Too many login attempts. Please try again later.';
+
 const getOidcErrorMessage = (email: any, buttonLabel: string) =>
   `Account with email ${email} does not exist.
   Click "${buttonLabel}" to try with a different account.`;
@@ -89,7 +96,7 @@ useHead({
 const localError = ref('');
 
 const { $oidc } = useNuxtApp() as any;
-
+const runtimeConfig = useRuntimeConfig();
 const authStore = useAuthStore();
 const route = useRoute();
 
@@ -104,13 +111,14 @@ const [emailInput] = defineField('email');
 const [passwordInput] = defineField('password');
 
 const oidcEnabled = computed(() => $oidc.enabled);
-const oidcLoginText = computed(() => 'Login with OAuth');
-const accessDenied = computed(() => route.query.accessDenied);
-const oidcError = computed(
-  () =>
-    accessDenied.value &&
-    getOidcErrorMessage(accessDenied.value, oidcLoginText.value),
+const oidcLoginText = computed(
+  () => runtimeConfig.public.oidcLoginText || 'Login with OAuth',
 );
+const accessDenied = computed(() => route.query.accessDenied);
+const oidcError = computed(() => {
+  if (!accessDenied.value) return;
+  return getOidcErrorMessage(accessDenied.value, oidcLoginText.value);
+});
 const errorMessage = computed(() => oidcError.value || localError.value);
 
 const loginOIDC = () => {

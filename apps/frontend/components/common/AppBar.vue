@@ -78,6 +78,7 @@ defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
 
+const { $oidc } = useNuxtApp() as any;
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const { repository } = storeToRefs(currentRepositoryStore);
@@ -98,6 +99,7 @@ const routes = computed(() => {
 });
 
 const logout = async () => {
+  if (authStore.isOidcActive && $oidc.logoutEnabled) return $oidc.logout();
   await authStore.logout();
   navigateTo('/auth');
 };

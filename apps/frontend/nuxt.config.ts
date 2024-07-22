@@ -42,6 +42,7 @@ export default defineNuxtConfig({
     public: {
       aiUiEnabled: false,
       oidcEnabled: false,
+      oidcLoginText: '',
       oidcLogoutEnabled: false,
     },
   },
