@@ -114,6 +114,8 @@ PROTOCOL=http
 # frontend. In production, this configures the port on which the app is
 # available to the end user (443, if app is deployed with https configured).
 REVERSE_PROXY_PORT=8080
+# See https://expressjs.com/en/guide/behind-proxies.html
+REVERSE_PROXY_TRUST=false
 
 # -------------------------------------------------------------------
 # Database configuration
@@ -161,6 +163,7 @@ AUTH_JWT_ISSUER=tailor
 AUTH_JWT_COOKIE_NAME=access_token
 AUTH_JWT_COOKIE_SECRET=example_cookie_sign_secret123!
 # Enable rate limiting for authentication routes
+# Make sure you configure REVERSE_PROXY_TRUST
 ENABLE_RATE_LIMITING=false
 
 # -------------------------------------------------------------------
