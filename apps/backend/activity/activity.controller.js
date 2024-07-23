@@ -92,7 +92,9 @@ function getPreviewUrl({ activity }, res) {
       return oauth2.post(consumerConfig.previewWebhookUrl, body);
     })
     .then(({ data: { url } }) => {
-      return res.json({ location: `${new URL(url, previewUrl)}` });
+      return res.json({
+        location: `${new URL(url, consumerConfig.previewWebhookUrl)}`,
+      });
     });
 }
 
