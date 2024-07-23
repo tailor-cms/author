@@ -45,7 +45,7 @@ function createOAuth2Provider() {
       .catch((error) => console.error('Access Token Error', error.message));
   }
 
-  return { send, isConnected: true };
+  return { send };
 }
 
 export default createOAuth2Provider();
