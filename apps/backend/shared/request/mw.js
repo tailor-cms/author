@@ -44,10 +44,13 @@ const defaultStore = new Store();
 function requestLimiter({
   limit = 30,
   windowMs = DEFAULT_WINDOW_MS,
+  validate = false,
   store = defaultStore,
   ...opts
 } = {}) {
-  const options = { limit, windowMs, store, ...opts };
+  // 0 is counted as a hit, so we need to subtract
+  const max = limit > 0 ? limit - 1 : 0;
+  const options = { limit: max, validate, windowMs, store, ...opts };
   if (!generalConfig.enableRateLimiting) options.skip = () => true;
   return rateLimit(options);
 }
