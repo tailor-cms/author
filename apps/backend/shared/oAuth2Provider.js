@@ -1,5 +1,5 @@
 import { ClientCredentials } from 'simple-oauth2';
-import config from '../config/server/consumer.js';
+import oAuthConfig from '../config/server/consumer.js';
 import request from 'axios';
 import yup from 'yup';
 
@@ -11,8 +11,11 @@ const schema = yup.object().shape({
 });
 
 function createOAuth2Provider() {
+  if (!oAuthConfig.isConfigured) {
+    return { isConfigured: false };
+  }
   const { clientId, clientSecret, tokenHost, tokenPath } = schema.validateSync(
-    config,
+    oAuthConfig,
     { stripUnknown: true },
   );
 
@@ -45,7 +48,7 @@ function createOAuth2Provider() {
       .catch((error) => console.error('Access Token Error', error.message));
   }
 
-  return { send };
+  return { send, isConfigured: true };
 }
 
 export default createOAuth2Provider();

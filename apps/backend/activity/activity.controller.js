@@ -1,10 +1,10 @@
-import { consumer as oAuthConfig, previewUrl } from '../config/server/index.js';
 import db from '../shared/database/index.js';
 import { fetchActivityContent } from '../shared/publishing/helpers.js';
 import find from 'lodash/find.js';
 import get from 'lodash/get.js';
 import oauth2 from '../shared/oAuth2Provider.js';
 import pick from 'lodash/pick.js';
+import { previewUrl } from '../config/server/index.js';
 import publishingService from '../shared/publishing/publishing.service.js';
 import { schema } from 'tailor-config-shared';
 
@@ -79,7 +79,7 @@ function clone({ activity, body, user }, res) {
 }
 
 function getPreviewUrl({ activity }, res) {
-  if (!previewUrl || !oAuthConfig.isConfigured)
+  if (!previewUrl || !oauth2.isConfigured)
     throw new Error('Preview not configured!');
   return fetchActivityContent(activity, true)
     .then((content) => {
