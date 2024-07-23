@@ -16,4 +16,4 @@ function parseProxyPolicy(policy) {
 const env = process.env;
 
 export const enableRateLimiting = yn(env.ENABLE_RATE_LIMITING);
-export const reverseProxyPolicy = parseProxyPolicy(env.REVERSE_PROXY_POLICY);
+export const reverseProxyPolicy = parseProxyPolicy(env.REVERSE_PROXY_TRUST);
