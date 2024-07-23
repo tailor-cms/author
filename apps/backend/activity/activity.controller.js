@@ -80,7 +80,7 @@ function clone({ activity, body, user }, res) {
 
 function getPreviewUrl({ activity }, res) {
   if (!previewUrl || !oauth2.isConfigured)
-    throw new Error('Preview not configured!');
+    throw new Error('Preview is not configured!');
   return fetchActivityContent(activity, true)
     .then((content) => {
       const body = {
