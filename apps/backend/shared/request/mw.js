@@ -41,16 +41,15 @@ class Store {
 
 const defaultStore = new Store();
 
-// As of version 7.0.0, setting max to zero will no longer disable the rate
-// limiter - instead, it will ‘block’ all requests to that endpoint.
 function requestLimiter({
-  max = 30,
+  limit = 30,
   windowMs = DEFAULT_WINDOW_MS,
   store = defaultStore,
   ...opts
 } = {}) {
-  if (!generalConfig.enableRateLimiting) max = 0;
-  return rateLimit({ max, windowMs, store, ...opts });
+  const options = { limit, windowMs, store, ...opts };
+  if (!generalConfig.enableRateLimiting) options.skip = () => true;
+  return rateLimit(options);
 }
 
 export { requestLimiter };
