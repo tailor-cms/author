@@ -11,7 +11,7 @@ const schema = yup.object().shape({
 });
 
 function createOAuth2Provider() {
-  if (!oAuthConfig.isConfigured) {
+  if (!oAuthConfig.isAuthConfigured) {
     return { isConfigured: false };
   }
   const { clientId, clientSecret, tokenHost, tokenPath } = schema.validateSync(

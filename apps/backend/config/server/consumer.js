@@ -10,14 +10,13 @@ export const tokenHost = env.CONSUMER_CLIENT_TOKEN_HOST;
 
 export const tokenPath = env.CONSUMER_CLIENT_TOKEN_PATH;
 
-export const isConfigured =
-  webhookUrl && clientId && clientSecret && tokenHost && tokenPath;
+export const isAuthConfigured = clientId && clientSecret && tokenHost && tokenPath;
 
 export default {
   webhookUrl,
   clientId,
   clientSecret,
-  isConfigured,
+  isAuthConfigured,
   tokenHost,
   tokenPath,
 };
