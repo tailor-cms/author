@@ -221,12 +221,14 @@ STORAGE_PATH=data
 
 # Consumer publish notification settings
 # Hook to be called upon publishing a resource
-# CONSUMER_WEBHOOK_URL=http://127.0.0.1:3000/my-publish-hook-route
+# [Deprecated] CONSUMER_WEBHOOK_URL in favor of CONSUMER_PUBLISH_WEBHOOK.
+# CONSUMER_PUBLISH_WEBHOOK=http://127.0.0.1:3000/my-publish-hook-route
 
 # Route to be called in the editor upon clicking preview button.
 # To enable this, end-system/consumer needs to implement preview mechanism.
 # Route is secured using OAuth2 client credentials above.
-# PREVIEW_URL=http://localhost/api/v1/preview/
+# [Deprecated] PREVIEW_URL in favor of CONSUMER_PREVIEW_WEBHOOK.
+# CONSUMER_PREVIEW_WEBHOOK=http://localhost/api/v1/preview/
 
 # -------------------------------------------------------------------
 # Open AI configuration, optional

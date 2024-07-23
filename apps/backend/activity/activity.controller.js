@@ -4,7 +4,7 @@ import find from 'lodash/find.js';
 import get from 'lodash/get.js';
 import oauth2 from '../shared/oAuth2Provider.js';
 import pick from 'lodash/pick.js';
-import { previewUrl } from '../config/server/index.js';
+import consumerConfig from '../config/server/consumer.js';
 import publishingService from '../shared/publishing/publishing.service.js';
 import { schema } from 'tailor-config-shared';
 
@@ -79,7 +79,7 @@ function clone({ activity, body, user }, res) {
 }
 
 function getPreviewUrl({ activity }, res) {
-  if (!previewUrl || !oauth2.isAuthConfigured)
+  if (!consumerConfig.previewWebhookUrl || !oauth2.isAuthConfigured)
     throw new Error('Preview is not configured!');
   return fetchActivityContent(activity, true)
     .then((content) => {
@@ -89,7 +89,7 @@ function getPreviewUrl({ activity }, res) {
         meta: activity.data,
         ...content,
       };
-      return oauth2.post(previewUrl, body);
+      return oauth2.post(consumerConfig.previewUrl, body);
     })
     .then(({ data: { url } }) => {
       return res.json({ location: `${new URL(url, previewUrl)}` });

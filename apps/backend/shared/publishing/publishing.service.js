@@ -42,7 +42,7 @@ export default new PublishingService();
 function createPublishJob(action, payload) {
   return async () => {
     const data = await action(payload);
-    if (oAuthConfig.webhookUrl && oauth2.isAuthConfigured)
+    if (oAuthConfig.publishWebhookUrl && oauth2.isAuthConfigured)
       oauth2.send(oAuthConfig.webhookUrl, data);
     return data;
   };
