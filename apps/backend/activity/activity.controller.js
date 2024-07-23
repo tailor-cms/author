@@ -79,7 +79,7 @@ function clone({ activity, body, user }, res) {
 }
 
 function getPreviewUrl({ activity }, res) {
-  if (!consumerConfig.previewWebhookUrl || !oauth2.isAuthConfigured)
+  if (!consumerConfig.previewWebhookUrl || !oauth2.isConfigured)
     throw new Error('Preview is not configured!');
   return fetchActivityContent(activity, true)
     .then((content) => {
@@ -89,7 +89,7 @@ function getPreviewUrl({ activity }, res) {
         meta: activity.data,
         ...content,
       };
-      return oauth2.post(consumerConfig.previewUrl, body);
+      return oauth2.post(consumerConfig.previewWebhookUrl, body);
     })
     .then(({ data: { url } }) => {
       return res.json({ location: `${new URL(url, previewUrl)}` });

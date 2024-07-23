@@ -5,7 +5,7 @@ import {
   updatePublishingStatus,
   updateRepositoryCatalog,
 } from './helpers.js';
-import { consumer as oAuthConfig } from '../../config/server/index.js';
+import { consumer as consumerConfig } from '../../config/server/index.js';
 import oauth2 from '../oAuth2Provider.js';
 import PromiseQueue from 'promise-queue';
 
@@ -42,8 +42,8 @@ export default new PublishingService();
 function createPublishJob(action, payload) {
   return async () => {
     const data = await action(payload);
-    if (oAuthConfig.publishWebhookUrl && oauth2.isAuthConfigured)
-      oauth2.send(oAuthConfig.webhookUrl, data);
+    if (consumerConfig.publishWebhookUrl && oauth2.isConfigured)
+      oauth2.send(consumerConfig.publishWebhookUrl, data);
     return data;
   };
 }
