@@ -117,7 +117,8 @@ function applyFetchHooks(element) {
 
 function resolveOutlineActivity(element) {
   return element.getActivity().then((activity) => {
-    return activity && schema.isOutlineActivity(activity.type)
+    if (!activity) return;
+    return schema.isOutlineActivity(activity.type)
       ? activity
       : activity.getOutlineParent();
   });
