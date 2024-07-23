@@ -5,8 +5,11 @@ import {
   updatePublishingStatus,
   updateRepositoryCatalog,
 } from './helpers.js';
+import { consumer } from '../../config/server/index.js';
+import oauth2 from '../oAuth2Provider.js';
 import PromiseQueue from 'promise-queue';
-import webhook from '../webhookProvider.js';
+
+const { webhookUrl } = consumer;
 
 class PublishingService {
   constructor() {
@@ -41,7 +44,7 @@ export default new PublishingService();
 function createPublishJob(action, payload) {
   return async () => {
     const data = await action(payload);
-    if (webhook.isConnected) webhook.send(data);
+    if (oauth2.isConnected) oauth2.send(webhookUrl, data);
     return data;
   };
 }

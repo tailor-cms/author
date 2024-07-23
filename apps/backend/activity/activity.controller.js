@@ -2,10 +2,10 @@ import db from '../shared/database/index.js';
 import { fetchActivityContent } from '../shared/publishing/helpers.js';
 import find from 'lodash/find.js';
 import get from 'lodash/get.js';
+import oauth2 from '../shared/oAuth2Provider.js';
 import pick from 'lodash/pick.js';
 import { previewUrl } from '../config/server/index.js';
 import publishingService from '../shared/publishing/publishing.service.js';
-import request from 'axios';
 import { schema } from 'tailor-config-shared';
 
 const { Activity } = db;
@@ -87,7 +87,7 @@ function getPreviewUrl({ activity }, res) {
         meta: activity.data,
         ...content,
       };
-      return request.post(previewUrl, body);
+      return oauth2.post(previewUrl, body);
     })
     .then(({ data: { url } }) => {
       return res.json({ location: `${new URL(url, previewUrl)}` });

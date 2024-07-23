@@ -4,35 +4,36 @@ import request from 'axios';
 import yup from 'yup';
 
 const schema = yup.object().shape({
-  webhookUrl: yup.string().url().required(),
   clientId: yup.string().required(),
   clientSecret: yup.string().required(),
   tokenHost: yup.string().url().required(),
   tokenPath: yup.string().required(),
 });
 
-function createWebhookProvider() {
-  if (!config.webhookUrl) return { isConnected: false };
-  const { clientId, clientSecret, tokenHost, tokenPath, webhookUrl } =
-    schema.validateSync(config, { stripUnknown: true });
+function createOAuth2Provider() {
+  const { clientId, clientSecret, tokenHost, tokenPath } = schema.validateSync(
+    config,
+    { stripUnknown: true },
+  );
 
   const client = new ClientCredentials({
     client: { id: clientId, secret: clientSecret },
     auth: { tokenHost, tokenPath },
   });
+
   let accessToken;
 
-  getAccessToken();
-
-  return { send, isConnected: true };
-
-  async function send(payload) {
+  async function send(url, payload) {
     if (!accessToken || accessToken.expired()) {
       await getAccessToken();
     }
-    return request.post(webhookUrl, payload, {
-      headers: { Authorization: `Bearer ${accessToken.token.access_token}` },
-    });
+    return request
+      .post(url, payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken.token.access_token}`,
+        },
+      })
+      .catch((error) => console.error(error.message));
   }
 
   function getAccessToken() {
@@ -43,6 +44,8 @@ function createWebhookProvider() {
       })
       .catch((error) => console.error('Access Token Error', error.message));
   }
+
+  return { send, isConnected: true };
 }
 
-export default createWebhookProvider();
+export default createOAuth2Provider();
