@@ -22,8 +22,8 @@
       Status
     </VTooltip>
     <UserAvatar
-      :img-url="status.assignee?.imgUrl"
-      :label="status.assignee?.label ?? 'Unassigned'"
+      :img-url="activityStatus.assignee?.imgUrl"
+      :label="activityStatus.assignee?.label ?? 'Unassigned'"
       color="primary-lighten-4"
       size="x-small"
     />
@@ -38,11 +38,11 @@
       </template>
       {{ priorityConfig.label }} priority
     </VTooltip>
-    <VTooltip v-if="status.dueDate" location="bottom" open-delay="500">
+    <VTooltip v-if="activityStatus.dueDate" location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
         <DueDate
           v-bind="tooltipProps"
-          :date="status.dueDate"
+          :date="activityStatus.dueDate"
           class="text-caption font-weight-bold"
           format="MM/dd/yy"
         />
