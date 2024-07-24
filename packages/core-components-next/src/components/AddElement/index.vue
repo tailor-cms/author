@@ -75,6 +75,7 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import flatMap from 'lodash/flatMap';
 import intersection from 'lodash/intersection';
+import map from 'lodash/map';
 import pick from 'lodash/pick';
 import reject from 'lodash/reject';
 import type { VBtn } from 'vuetify/components';
@@ -134,7 +135,7 @@ const isSubset = computed(() => !!props.include && !!props.include.length);
 
 const contentElements = computed(() => {
   if (!isSubset.value) return registry;
-  return registry.filter((it) => props.include!.includes(it.type));
+  return map(props.include, (it) => registry.find((item) => item.type === it));
 });
 
 const library = computed(() => {
