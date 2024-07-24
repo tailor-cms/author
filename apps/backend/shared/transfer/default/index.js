@@ -73,6 +73,7 @@ class DefaultAdapter {
       assets: [],
       activityIdMap: {},
       elementIdMap: {},
+      elementUidMap: {},
       repositoryId: null,
     };
     await importFile(blobStore, Filename.MANIFEST, { context });

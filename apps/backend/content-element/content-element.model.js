@@ -4,6 +4,7 @@ import { ContentElement as Events } from 'sse-event-types';
 import forEach from 'lodash/forEach.js';
 import hooks from './hooks.js';
 import isNumber from 'lodash/isNumber.js';
+import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import zipObject from 'lodash/zipObject.js';
 
@@ -146,10 +147,9 @@ class ContentElement extends Model {
       }),
       { returning: true, context, transaction },
     );
-    return zipObject(
-      src.map((it) => it.id),
-      newElements.map((it) => it.id),
-    );
+    const idMap = zipObject(map(src, 'id'), map(newElements, 'id'));
+    const uidMap = zipObject(map(src, 'uid'), map(newElements, 'uid'));
+    return { idMap, uidMap };
   }
 
   /**
@@ -165,13 +165,14 @@ class ContentElement extends Model {
     // should be the same.
     forEach(refs, (values, name) => {
       forEach(values, (ref, index) => {
-        const id = mappings.contentElement[ref.id];
-        const outlineId = mappings.activity[ref.outlineId];
-        const containerId = mappings.activity[ref.containerId];
-        if (!id || !outlineId || !containerId) {
+        const id = mappings.elementId[ref.id];
+        const uid = mappings.elementUid[ref.uid];
+        const outlineId = mappings.activityId[ref.outlineId];
+        const containerId = mappings.activityId[ref.containerId];
+        if (!id || !uid || !outlineId || !containerId) {
           throw new Error('Unable to resolve element refs');
         }
-        refs[name][index] = { id, outlineId, containerId };
+        refs[name][index] = { id, uid, outlineId, containerId };
       });
     });
     this.changed('refs', true);
