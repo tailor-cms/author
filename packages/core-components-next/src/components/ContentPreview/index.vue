@@ -10,15 +10,15 @@
   </VAlert>
   <VRow v-for="container in contentContainers" :key="container.id">
     <ContentElementWrapper
-      v-for="el in container.elements"
-      :key="el.id"
-      :element="el"
-      :is-selected="!!selectionMap[el.id]"
+      v-for="it in container.elements"
+      :key="it.id"
+      :element="it"
+      :is-selected="!!selectionMap[it.id]"
       :selectable="selectable"
       :selection-disabled="isSelectionDisabled"
       is-disabled
       @element:open="$emit('element:open', $event)"
-      @toggle="$emit('toggle', el)"
+      @toggle="$emit('toggle', it)"
     />
   </VRow>
 </template>
