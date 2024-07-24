@@ -51,6 +51,12 @@ function createPreview(repositoryId, activityId) {
     .then((res) => res.data.location);
 }
 
+function updateStatus(repositoryId, id, data) {
+  return request
+    .post(`${urls.resource(repositoryId, id)}/status`, data)
+    .then(extractData);
+}
+
 export default {
   createPreview,
   save,
@@ -60,4 +66,5 @@ export default {
   remove,
   publish,
   getActivities,
+  updateStatus,
 };

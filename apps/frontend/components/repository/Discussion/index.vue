@@ -15,7 +15,6 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from '@tailor-cms/interfaces/activity';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components-next';
 import { computed } from 'vue';
 import get from 'lodash/get';
@@ -26,7 +25,7 @@ import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
 
 interface Props {
-  activity: Activity;
+  activity: StoreActivity;
   panel?: boolean;
   showHeading?: boolean;
 }
