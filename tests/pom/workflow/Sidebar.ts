@@ -16,12 +16,12 @@ export class WorkflowSidebar {
     this.page = page;
     this.el = page.locator('.workflow-page .v-navigation-drawer');
     this.descriptionInput = this.el
-      .getByTestId('description-input')
+      .getByTestId('workflow_descriptionInput')
       .getByRole('textbox');
-    this.statusInput = this.el.getByTestId('status-input');
-    this.assigneeInput = this.el.getByTestId('assignee-input');
-    this.priorityInput = this.el.getByTestId('priority-input');
-    this.dueDateInput = this.el.getByTestId('date-input');
+    this.statusInput = this.el.getByTestId('workflow_statusInput');
+    this.assigneeInput = this.el.getByTestId('workflow_assigneeInput');
+    this.priorityInput = this.el.getByTestId('workflow_priorityInput');
+    this.dueDateInput = this.el.getByTestId('workflow_dateInput');
     this.comments = new ActivityComments(page, this.el);
   }
 

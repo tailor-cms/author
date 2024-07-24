@@ -1,26 +1,26 @@
 <template>
   <div>
     <RichTextEditor
-      :model-value="status.description"
+      :model-value="activityStatus.description"
       class="mb-2"
-      data-testid="description-input"
+      data-testid="workflow_descriptionInput"
       label="Description"
       variant="outlined"
       @change="updateStatus('description', $event)"
     />
     <SelectStatus
       :items="workflow.statuses"
-      :model-value="status.status"
-      data-testid="status-input"
+      :model-value="activityStatus.status"
+      data-testid="workflow_statusInput"
       label="Status"
       variant="outlined"
       @update:model-value="updateStatus('status', $event)"
     />
     <VSelect
       :items="users"
-      :model-value="status.assigneeId"
+      :model-value="activityStatus.assigneeId"
       class="my-2"
-      data-testid="assignee-input"
+      data-testid="workflow_assigneeInput"
       item-title="label"
       item-value="id"
       label="Assignee"
@@ -43,16 +43,16 @@
     </VSelect>
     <SelectPriority
       :items="workflowConfig.priorities"
-      :model-value="status.priority"
+      :model-value="activityStatus.priority"
       class="mb-2"
-      data-testid="priority-input"
+      data-testid="workflow_priorityInput"
       label="Priority"
       variant="outlined"
       @update:model-value="updateStatus('priority', $event)"
     />
     <VDateInput
       :model-value="dueDate && new Date(dueDate)"
-      data-testid="date-input"
+      data-testid="workflow_dateInput"
       label="Due date"
       prepend-icon=""
       variant="outlined"
@@ -65,7 +65,6 @@
 
 <script lang="ts" setup>
 import { RichTextEditor } from '@tailor-cms/core-components-next';
-import type { Status } from '@tailor-cms/interfaces/activity';
 import { VDateInput } from 'vuetify/labs/VDateInput';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
@@ -82,13 +81,13 @@ const notify = useNotification();
 const activityStore = useActivityStore();
 const { users, workflow } = storeToRefs(useCurrentRepository());
 
-const status = computed(() => props.activity.status as unknown as Status);
+const activityStatus = computed(() => props.activity.status);
 const dueDate = computed(
-  () => status.value.dueDate && new Date(status.value.dueDate),
+  () => activityStatus.value.dueDate && new Date(activityStatus.value.dueDate),
 );
 
 const updateStatus = async (key: string, value: any = null) => {
-  const updatedData = { ...status.value, [key]: value } as any;
+  const updatedData = { ...activityStatus.value, [key]: value } as any;
   await activityStore.saveStatus(props.activity.id, updatedData);
   return notify('Status saved', { immediate: true });
 };

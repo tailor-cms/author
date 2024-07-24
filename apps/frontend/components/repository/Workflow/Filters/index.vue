@@ -26,7 +26,7 @@
         :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
         :items="statusOptions"
         class="mr-4"
-        data-testid="status-filter"
+        data-testid="workflow_statusFilter"
         density="comfortable"
         max-width="232"
         placeholder="Filter by status"
@@ -42,7 +42,7 @@
       v-model="assigneeIds"
       :options="assigneeOptions"
       class="mr-4"
-      data-testid="assignee-filter"
+      data-testid="workflow_assigneeFilter"
     />
     <VBtn
       :active="recentOnly"

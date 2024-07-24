@@ -56,6 +56,7 @@
 
 <script lang="ts" setup>
 import type { Status } from '@tailor-cms/interfaces/activity';
+import type { StatusConfig } from 'tailor-config-shared';
 import { UserAvatar } from '@tailor-cms/core-components-next';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
@@ -65,17 +66,19 @@ const props = defineProps<{
   id: number | null;
   shortId: string;
   type: string;
-  status: Status;
+  activityStatus: Status;
 }>();
 
 const store = useCurrentRepository();
 const { workflow } = storeToRefs(store);
 
 const statusConfig = computed(() =>
-  workflow.value.statuses.find((s: any) => s.id === props.status.status),
+  workflow.value.statuses.find(
+    (status: StatusConfig) => status === props.activityStatus.status,
+  ),
 );
 
 const priorityConfig = computed(() =>
-  workflowConfig.getPriority(props.status.priority),
+  workflowConfig.getPriority(props.activityStatus.priority),
 );
 </script>

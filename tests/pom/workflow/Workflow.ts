@@ -12,8 +12,8 @@ export class Workflow {
   constructor(page: Page) {
     this.el = page.locator('.workflow-page');
     this.searchFilter = this.el.getByPlaceholder('Search by name or id...');
-    this.statusFilter = this.el.getByTestId('status-filter');
-    this.assigneeFilter = this.el.getByTestId('assignee-filter');
+    this.statusFilter = this.el.getByTestId('workflow_statusFilter');
+    this.assigneeFilter = this.el.getByTestId('workflow_assigneeFilter');
     this.recentBtn = this.el.getByRole('button', { name: 'Recently updated' });
     this.table = this.el.getByRole('table');
     this.page = page;

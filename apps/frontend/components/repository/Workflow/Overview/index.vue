@@ -39,19 +39,13 @@
 </template>
 
 <script lang="ts" setup>
+import type { StatusConfig } from 'tailor-config-shared';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components-next';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
 import OverviewDueDate from './DueDate.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
-
-interface StatusConfig {
-  id: string;
-  label: string;
-  color: string;
-  default?: boolean;
-}
 
 interface PriorityConfig extends StatusConfig {
   icon: string;

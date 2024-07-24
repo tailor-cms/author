@@ -52,7 +52,10 @@
     </VSheet>
     <ActivityStatus
       v-if="activity.isTrackedInWorkflow"
-      v-bind="activity"
+      :id="activity.id"
+      :activity-status="activity.status"
+      :short-id="activity.shortId"
+      :type="activity.type"
       class="mt-6 mb-3"
     />
     <div class="meta-elements">
