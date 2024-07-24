@@ -214,8 +214,8 @@ importers:
         specifier: 5.0.0-beta.3
         version: 5.0.0-beta.3
       express-rate-limit:
-        specifier: ^6.7.0
-        version: 6.11.2(express@5.0.0-beta.3)
+        specifier: ^7.3.1
+        version: 7.3.1(express@5.0.0-beta.3)
       express-session:
         specifier: ^1.18.0
         version: 1.18.0
@@ -5417,11 +5417,11 @@ packages:
   exponential-backoff@3.1.1:
     resolution: {integrity: sha512-dX7e/LHVJ6W3DE1MHWi9S1EYzDESENfLrYohG2G++ovZrYOkm4Knwa0mc1cn84xJOR4KEU0WSchhLbd0UklbHw==}
 
-  express-rate-limit@6.11.2:
-    resolution: {integrity: sha512-a7uwwfNTh1U60ssiIkuLFWHt4hAC5yxlLGU2VP0X4YNlyEDZAqF4tK3GD3NSitVBrCQmQ0++0uOyFOgC2y4DDw==}
-    engines: {node: '>= 14'}
+  express-rate-limit@7.3.1:
+    resolution: {integrity: sha512-BbaryvkY4wEgDqLgD18/NSy2lDO2jTuT9Y8c1Mpx0X63Yz0sYd5zN6KPe7UvpuSVvV33T6RaE1o1IVZQjHMYgw==}
+    engines: {node: '>= 16'}
     peerDependencies:
-      express: ^4 || ^5
+      express: 4 || 5 || ^5.0.0-beta.1
 
   express-session@1.18.0:
     resolution: {integrity: sha512-m93QLWr0ju+rOwApSsyso838LQwgfs44QtOP/WBiwtAgPIo/SAh1a5c6nn2BR6mFNZehTpqKDESzP+fRHVbxwQ==}
@@ -15363,7 +15363,7 @@ snapshots:
 
   exponential-backoff@3.1.1: {}
 
-  express-rate-limit@6.11.2(express@5.0.0-beta.3):
+  express-rate-limit@7.3.1(express@5.0.0-beta.3):
     dependencies:
       express: 5.0.0-beta.3
 
