@@ -21,6 +21,9 @@ const { STORAGE_PATH } = process.env;
 const logger = getLogger();
 const app = express();
 
+if (config.general.reverseProxyPolicy)
+  app.set('trust proxy', config.general.reverseProxyPolicy);
+
 config.auth.oidc.enabled &&
   (await (async () => {
     const { default: consolidate } = await import('consolidate');
