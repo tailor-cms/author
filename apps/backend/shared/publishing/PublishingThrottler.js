@@ -1,6 +1,6 @@
-import { CacheManager } from '@extensionengine/tapster';
 import { createId as cuid } from '@paralleldrive/cuid2';
 import { setTimeout } from 'node:timers/promises';
+import Tapster from '@extensionengine/tapster';
 
 import { consumer, store } from '../../config/server/index.js';
 import createLogger from '../logger.js';
@@ -12,7 +12,7 @@ const { provider, ...options } = store;
 
 class PublishingThrottler {
   constructor() {
-    this.cache = new CacheManager({
+    this.cache = new Tapster({
       ...options[provider],
       store: provider,
       namespace: 'publish-webhook',
