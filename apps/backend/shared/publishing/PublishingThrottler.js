@@ -49,9 +49,8 @@ class PublishingThrottler {
     const jobId = cuid();
     const { repositoryId } = webhookCtx;
     await this.cache.set(repositoryId, jobId);
-    // Check with some delay if another job is created for this repository
+    // Check with delay if another job is created for this repository
     await setTimeout(consumer.publishWebhookThrottle);
-    // Check if this repository is locked or webhook can be called
     const activeJobId = await this.cache.get(repositoryId);
     if (activeJobId !== jobId) return;
     await this.cache.delete(repositoryId);
