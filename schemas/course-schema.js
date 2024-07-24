@@ -127,6 +127,7 @@ export const SCHEMA = {
           multiple: true,
           placeholder: 'Click to select',
           allowedTypes: ['CE_HTML_DEFAULT', 'CE_IMAGE'],
+          filters: [(optionEl, currentEl) => optionEl.id !== currentEl.id],
         },
         {
           key: 'prerequisites',
