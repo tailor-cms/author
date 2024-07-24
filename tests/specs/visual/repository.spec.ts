@@ -29,6 +29,16 @@ test('Take a snapshot of the history page', async ({ page }) => {
   await percySnapshot(page, 'Repository history page');
 });
 
+test('Take a snapshot of the progress page', async ({ page }) => {
+  await toEmptyRepository(page, REPOSITORY_NAME);
+  const outline = new ActivityOutline(page);
+  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
+  const tabNavigation = page.getByTestId('repositoryRoot_nav');
+  await tabNavigation.getByText('Progress').click();
+  await expect(page.getByText('Module 1')).toBeVisible();
+  await percySnapshot(page, 'Repository progress page');
+});
+
 test('Take a snapshot of the settings page', async ({ page }) => {
   await toSeededRepository(page, REPOSITORY_NAME);
   const tabNavigation = page.getByTestId('repositoryRoot_nav');
