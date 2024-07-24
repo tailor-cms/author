@@ -948,6 +948,9 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
