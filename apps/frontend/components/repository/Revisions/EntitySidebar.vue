@@ -1,47 +1,37 @@
 <template>
-  <VSheet color="primary-lighten-5" rounded="lg">
-    <div class="text-overline px-4 py-1">Changes</div>
+  <VList bg-color="primary-darken-3" class="rounded-lg pa-0" max-height="32rem">
+    <VListSubheader color="white">Changes</VListSubheader>
     <VDivider />
-    <VList
-      base-color="primary-darken-4"
-      bg-color="transparent"
-      class="rounded-b-lg pa-0"
-      max-height="32rem"
+    <VHover
+      v-for="(revision, index) in revisions"
+      :key="revision.id"
+      v-slot="{ isHovering, props: hoverProps }"
     >
-      <VHover
-        v-for="(revision, index) in revisions"
-        :key="revision.id"
-        v-slot="{ isHovering, props: hoverProps }"
+      <VListItem
+        v-bind="hoverProps"
+        :active="isSelected(revision)"
+        :subtitle="revision.user.label"
+        :title="formatDate(revision)"
+        class="position-relative"
+        lines="two"
+        @click="$emit('preview', revision)"
       >
-        <VListItem
-          v-bind="hoverProps"
-          :active="isSelected(revision)"
-          :subtitle="revision.user.label"
-          :title="formatDate(revision)"
-          class="position-relative"
-          lines="two"
-          @click="$emit('preview', revision)"
-        >
-          <template v-if="isHovering" #append>
-            <VBtn
-              v-show="!isDetached && index > 0 && !loading[revision.id]"
-              class="rollback"
-              icon="mdi-restore"
-              size="small"
-              variant="tonal"
-              @click="$emit('rollback', revision)"
-            />
-          </template>
-          <VProgressLinear
-            v-if="loading[revision.id]"
-            color="primary"
-            indeterminate
+        <template v-if="isHovering" #append>
+          <VBtn
+            v-show="!isDetached && index > 0 && !loading[revision.id]"
+            class="rollback"
+            color="white"
+            icon="mdi-restore"
+            size="small"
+            variant="tonal"
+            @click="$emit('rollback', revision)"
           />
-        </VListItem>
-        <VDivider />
-      </VHover>
-    </VList>
-  </VSheet>
+        </template>
+        <VProgressLinear v-if="loading[revision.id]" indeterminate />
+      </VListItem>
+      <VDivider v-if="index < revisions.length - 1" />
+    </VHover>
+  </VList>
 </template>
 
 <script lang="ts" setup>

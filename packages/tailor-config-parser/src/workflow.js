@@ -2,11 +2,11 @@ import find from 'lodash/find';
 import validateWorkflow from './workflow-validation';
 
 const priorities = [
-  { id: 'CRITICAL', label: 'Critical', icon: 'priorityCritical' },
-  { id: 'HIGH', label: 'High', icon: 'priorityHigh' },
-  { id: 'MEDIUM', label: 'Medium', icon: 'priorityMedium', default: true },
-  { id: 'LOW', label: 'Low', icon: 'priorityLow' },
-  { id: 'TRIVIAL', label: 'Trivial', icon: 'priorityTrivial' }
+  { id: 'CRITICAL', label: 'Critical', icon: 'mdi-chevron-double-up', color: 'red' },
+  { id: 'HIGH', label: 'High', icon: 'mdi-chevron-up', color: 'orange' },
+  { id: 'MEDIUM', label: 'Medium', icon: 'mdi-minus', default: true, color: 'grey' },
+  { id: 'LOW', label: 'Low', icon: 'mdi-chevron-down', color: 'green' },
+  { id: 'TRIVIAL', label: 'Trivial', icon: 'mdi-chevron-double-down', color: 'blue' }
 ];
 
 export default (workflows, schemaApi) => {
