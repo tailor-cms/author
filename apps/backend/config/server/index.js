@@ -12,8 +12,6 @@ import * as test from './test.js';
 
 const { hostname, protocol, port, origin } = resolveUrl(process.env);
 
-const previewUrl = process.env.PREVIEW_URL;
-
 export {
   ai,
   auth,
@@ -23,7 +21,6 @@ export {
   mail,
   origin,
   port,
-  previewUrl,
   protocol,
   storage,
   store,
@@ -40,7 +37,6 @@ export default {
   mail,
   origin,
   port,
-  previewUrl,
   protocol,
   storage,
   store,

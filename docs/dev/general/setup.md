@@ -217,18 +217,24 @@ STORAGE_PATH=data
 # STORAGE_REGION=us-east-1
 # STORAGE_BUCKET=my-bucket
 
-# Route to be called in the editor upon clicking preview button.
-# To enable this, end-system/consumer needs to implement preview mechanism.
-# PREVIEW_URL=http://localhost/api/v1/preview/
-
-# Consumer publish notification settings
-# Hook to be called upon publishing a resource
-# CONSUMER_WEBHOOK_URL=http://127.0.0.1:3000/my-publish-hook-route
+# -------------------------------------------------------------------
 # OAuth2 client credentials for authenticating with end-system
+# -------------------------------------------------------------------
 # CONSUMER_CLIENT_ID=tailor_dev_id
 # CONSUMER_CLIENT_SECRET=tailor_dev_secret
 # CONSUMER_CLIENT_TOKEN_HOST=http://127.0.0.1:3000
 # CONSUMER_CLIENT_TOKEN_PATH=/api/oauth2/token
+
+# Consumer publish notification settings
+# Hook to be called upon publishing a resource
+# [Deprecated] CONSUMER_WEBHOOK_URL in favor of CONSUMER_PUBLISH_WEBHOOK.
+# CONSUMER_PUBLISH_WEBHOOK=http://127.0.0.1:3000/my-publish-hook-route
+
+# Route to be called in the editor upon clicking preview button.
+# To enable this, end-system/consumer needs to implement preview mechanism.
+# Route is secured using OAuth2 client credentials above.
+# [Deprecated] PREVIEW_URL in favor of CONSUMER_PREVIEW_WEBHOOK.
+# CONSUMER_PREVIEW_WEBHOOK=http://localhost/api/v1/preview/
 
 # -------------------------------------------------------------------
 # Open AI configuration, optional
