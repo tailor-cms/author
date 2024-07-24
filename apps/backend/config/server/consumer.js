@@ -6,6 +6,10 @@ export const previewWebhookUrl =
 export const publishWebhookUrl =
   env.CONSUMER_PUBLISH_WEBHOOK || env.CONSUMER_WEBHOOK_URL;
 
+export const publishWebhookThrottle = env.CONSUMER_PUBLISH_WEBHOOK_THROTTLE
+  ? parseInt(env.CONSUMER_PUBLISH_WEBHOOK_THROTTLE, 10)
+  : 0;
+
 export const clientId = env.CONSUMER_CLIENT_ID;
 
 export const clientSecret = env.CONSUMER_CLIENT_SECRET;
@@ -20,6 +24,7 @@ export const isAuthConfigured =
 export default {
   previewWebhookUrl,
   publishWebhookUrl,
+  publishWebhookThrottle,
   clientId,
   clientSecret,
   isAuthConfigured,
