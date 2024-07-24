@@ -1,5 +1,5 @@
 <template>
-  <RichTextEditor v-model="input" v-bind="meta" />
+  <RichTextEditor :model-value="input" v-bind="meta" @change="input = $event" />
 </template>
 
 <script lang="ts" setup>

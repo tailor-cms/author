@@ -4,6 +4,7 @@
       v-for="relationship in relationships"
       v-bind="relationship"
       :key="`${element.uid}.${relationship.key}`"
+      :element="element"
       @save="save(relationship.key, $event)"
     />
   </VList>
