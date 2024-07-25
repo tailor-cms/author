@@ -265,7 +265,7 @@ function importRepository({ body, file, user }, res) {
   return TransferService.createImportJob(path, options)
     .toPromise()
     .finally(() => {
-      fs.unlinkSync(path);
+      fsp.unlink(path);
       res.end();
     });
 }
