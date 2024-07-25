@@ -90,7 +90,9 @@ async function processElements(elements, _enc, options) {
   elements = map(elements, (it) => normalize(it, ContentElement));
   const inserted = await insertElements(elements, options);
   const mappings = zipObject(map(elements, 'id'), map(inserted, 'id'));
+  const uidMappings = zipObject(map(elements, 'uid'), map(inserted, 'uid'));
   Object.assign(options.context.elementIdMap, mappings);
+  Object.assign(options.context.elementUidMap, uidMappings);
   await Promise.map(inserted, (it) => {
     if (isEmpty(it.refs)) return;
     return remapElementRefs(it, options);
@@ -138,16 +140,17 @@ function insertElements(elements, { context, transaction }) {
 }
 
 function remapElementRefs(element, { context, transaction }) {
-  const { activityIdMap, elementIdMap } = context;
+  const { activityIdMap, elementIdMap, elementUidMap } = context;
   forEach(element.refs, (values, name) => {
     forEach(values, (ref, index) => {
       const id = elementIdMap[ref.id];
+      const uid = elementUidMap[ref.uid];
       const outlineId = activityIdMap[ref.outlineId];
       const containerId = activityIdMap[ref.containerId];
-      if (!id || !outlineId || !containerId) {
+      if (!id || !uid || !outlineId || !containerId) {
         throw new Error('Unable to resolve element refs');
       }
-      element.refs[name][index] = { id, outlineId, containerId };
+      element.refs[name][index] = { id, uid, outlineId, containerId };
     });
   });
   element.changed('refs', true);
