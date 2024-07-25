@@ -17,3 +17,8 @@ const env = process.env;
 
 export const enableRateLimiting = yn(env.ENABLE_RATE_LIMITING);
 export const reverseProxyPolicy = parseProxyPolicy(env.REVERSE_PROXY_TRUST);
+
+export const availableSchemas = (env.NUXT_PUBLIC_AVAILABLE_SCHEMAS || '')
+  .split(',')
+  .filter(Boolean)
+  .map((schema) => schema.trim());

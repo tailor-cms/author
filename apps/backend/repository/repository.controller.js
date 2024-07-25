@@ -15,6 +15,7 @@ import sample from 'lodash/sample.js';
 import { schema } from 'tailor-config-shared';
 import { snakeCase } from 'change-case';
 import TransferService from '../shared/transfer/transfer.service.js';
+import { general } from '../config/server/index.js';
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
 const tmp = Promise.promisifyAll((await import('tmp')).default, {
@@ -78,10 +79,13 @@ const includeRepositoryTags = (query) => {
 };
 
 async function index({ query, user, opts }, res) {
-  const { search, name, schemas } = query;
+  const { search, name } = query;
+  const schemas = query.schemas || general.availableSchemas;
   if (search) opts.where.name = getFilter(search);
   if (name) opts.where.name = name;
-  if (schemas) opts.where.schema = schemas;
+  if (search) opts.where.name = getFilter(search);
+  if (name) opts.where.name = name;
+  if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   opts.include = [
     includeRepositoryUser(user, query),
@@ -261,7 +265,7 @@ function importRepository({ body, file, user }, res) {
   return TransferService.createImportJob(path, options)
     .toPromise()
     .finally(() => {
-      fs.unlinkSync(path);
+      fsp.unlink(path);
       res.end();
     });
 }
