@@ -78,10 +78,17 @@ const includeRepositoryTags = (query) => {
 };
 
 async function index({ query, user, opts }, res) {
-  const { search, name, schemas } = query;
+  const { search, name } = query;
+  const availableSchemas = (process.env.NUXT_PUBLIC_AVAILABLE_SCHEMAS || '')
+    .split(',')
+    .filter(Boolean)
+    .map((schema) => schema.trim());
+  const schemas = query.schemas || availableSchemas;
   if (search) opts.where.name = getFilter(search);
   if (name) opts.where.name = name;
-  if (schemas) opts.where.schema = schemas;
+  if (search) opts.where.name = getFilter(search);
+  if (name) opts.where.name = name;
+  if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   opts.include = [
     includeRepositoryUser(user, query),
