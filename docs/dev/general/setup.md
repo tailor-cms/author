@@ -230,6 +230,10 @@ STORAGE_PATH=data
 # [Deprecated] CONSUMER_WEBHOOK_URL in favor of CONSUMER_PUBLISH_WEBHOOK.
 # CONSUMER_PUBLISH_WEBHOOK=http://127.0.0.1:3000/my-publish-hook-route
 
+# Ability to throttle publish webhook, in milliseconds
+# 0 means no throttling
+# CONSUMER_PUBLISH_WEBHOOK_THROTTLE=0
+
 # Route to be called in the editor upon clicking preview button.
 # To enable this, end-system/consumer needs to implement preview mechanism.
 # Route is secured using OAuth2 client credentials above.
