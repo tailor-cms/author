@@ -39,6 +39,7 @@
       @add="emit('add', $event)"
       @delete="emit('delete')"
       @focus="onSelect"
+      @link="onLink"
       @save="onSave"
     />
     <div v-if="!props.isDisabled" class="element-actions">
@@ -152,6 +153,10 @@ const onSave = (data: ContentElement['data']) => {
 
 const focus = () => {
   editorBus.emit('element:focus', props.element, props.parent);
+};
+
+const onLink = () => {
+  editorBus.emit('element:link', props.element, props.parent);
 };
 
 onMounted(() => {

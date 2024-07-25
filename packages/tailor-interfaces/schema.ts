@@ -39,6 +39,7 @@ export interface ActivityRelationship {
   allowCircularLinks: boolean;
   allowInsideLineage: boolean;
   allowedTypes: string[];
+  disableSidebarUi?: boolean;
 }
 
 export interface AIConfig {

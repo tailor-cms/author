@@ -1,5 +1,5 @@
 <template>
-  <VListItem class="pa-4" variant="tonal" rounded>
+  <VListItem v-show="!disableSidebarUi" class="pa-4" variant="tonal" rounded>
     <VListItemTitle>{{ label }}</VListItemTitle>
     <VListItemSubtitle>{{ overview }}</VListItemSubtitle>
     <template #append>
@@ -70,6 +70,7 @@ interface Props {
   allowedTypes?: string[];
   filters?: Filter[];
   value?: Relationship[];
+  disableSidebarUi?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -78,6 +79,7 @@ const props = withDefaults(defineProps<Props>(), {
   value: () => [],
   placeholder: '',
   multiple: true,
+  disableSidebarUi: false,
 });
 const emit = defineEmits(['save']);
 
@@ -85,6 +87,7 @@ const showElementBrowser = ref(false);
 const curentRepository = useCurrentRepository();
 const contentElementStore = useContentElementStore();
 const showConfirmationDialog = useConfirmationDialog();
+const editorBus = useEditorBus();
 
 const activities = computed(() => curentRepository.activities);
 
@@ -124,6 +127,8 @@ const select = (elements: ContentElement[]) => {
   });
   emit('save', items);
 };
+
+editorBus.on('element:link', () => (showElementBrowser.value = true));
 </script>
 
 <style lang="scss" scoped>
