@@ -21,7 +21,7 @@ const relationships = yup.array().of(yup.object().shape({
   allowInsideLineage: yup.boolean(),
   allowedTypes: yup.array().of(activityType),
   filters: yup.array(),
-  disableSidebarUi: yup.boolean(),
+  disableSidebarUi: yup.boolean()
 }));
 
 const schema = yup.object().shape({
