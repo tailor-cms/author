@@ -1,5 +1,5 @@
 <template>
-  <VListItem v-show="!disableSidebarUi" class="pa-4" variant="tonal" rounded>
+  <VListItem class="pa-4" variant="tonal" rounded>
     <VListItemTitle>{{ label }}</VListItemTitle>
     <VListItemSubtitle>{{ overview }}</VListItemSubtitle>
     <template #append>
@@ -13,10 +13,10 @@
               color="teal-lighten-3"
               size="small"
               variant="tonal"
-              @click="showElementBrowser = true"
+              @click="$emit('open')"
             />
           </template>
-          <span>{{ placeholder || defaultPlaceholder }}</span>
+          <span>{{ placeholder }}</span>
         </VTooltip>
         <VTooltip v-if="hasRelationships" location="bottom">
           <template #activator="{ props: tooltipProps }">
@@ -33,69 +33,38 @@
         </VTooltip>
       </VListItemAction>
     </template>
-    <SelectElement
-      v-if="showElementBrowser"
-      :allowed-types="allowedTypes"
-      :element="element"
-      :filters="filters"
-      :heading="defaultPlaceholder"
-      :multiple="multiple"
-      :selected="value"
-      header-icon="mdi-transit-connection-variant"
-      only-current-repo
-      @close="showElementBrowser = false"
-      @selected="select"
-    />
   </VListItem>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import type {
-  ContentElement,
-  Relationship,
-} from '@tailor-cms/interfaces/content-element';
-import type { Filter } from '@tailor-cms/interfaces/schema';
+import { computed } from 'vue';
 import pluralize from 'pluralize';
-import { SelectElement } from '@tailor-cms/core-components-next';
+import type { Relationship } from '@tailor-cms/interfaces/content-element';
 
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
   label: string;
-  element: ContentElement;
   placeholder?: string;
   multiple?: boolean;
-  allowedTypes?: string[];
-  filters?: Filter[];
   value?: Relationship[];
-  disableSidebarUi?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   allowedTypes: () => [],
-  filters: () => [],
   value: () => [],
   placeholder: '',
   multiple: true,
-  disableSidebarUi: false,
 });
-const emit = defineEmits(['save']);
+const emit = defineEmits(['save', 'open']);
 
-const showElementBrowser = ref(false);
 const curentRepository = useCurrentRepository();
-const contentElementStore = useContentElementStore();
 const showConfirmationDialog = useConfirmationDialog();
-const editorBus = useEditorBus();
 
 const activities = computed(() => curentRepository.activities);
 
 const hasRelationships = computed(() => !!props.value.length);
-
-const defaultPlaceholder = computed(() => {
-  return `Select element${props.multiple ? 's' : ''}`;
-});
 
 const totalsByActivity = computed(() => {
   return activities.value.reduce((acc, { id, data }) => {
@@ -116,19 +85,6 @@ const removeAll = () => {
     action: () => emit('save', []),
   });
 };
-
-const select = (elements: ContentElement[]) => {
-  // Add linked elements to the store
-  elements.forEach((it) => contentElementStore.add(it));
-  const items = elements.map((it) => {
-    if (!it.activity) return it;
-    const { id, activity, activityId: containerId } = it;
-    return { id, containerId, outlineId: activity.id };
-  });
-  emit('save', items);
-};
-
-editorBus.on('element:link', () => (showElementBrowser.value = true));
 </script>
 
 <style lang="scss" scoped>
