@@ -74,7 +74,7 @@ const { workflow } = storeToRefs(store);
 
 const statusConfig = computed(() =>
   workflow.value.statuses.find(
-    (status: StatusConfig) => status === props.activityStatus.status,
+    (status: StatusConfig) => status.id === props.activityStatus.status,
   ),
 );
 
