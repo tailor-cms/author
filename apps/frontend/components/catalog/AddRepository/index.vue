@@ -66,7 +66,7 @@
             <VSelect
               v-model="schemaInput"
               :error-messages="errors.schema"
-              :items="SCHEMAS"
+              :items="availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
               data-testid="type-input"
               item-title="name"
@@ -193,8 +193,17 @@ const [nameInput] = defineField('name');
 const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
 
+const availableSchemas = computed(() => {
+  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
+    .split(',')
+    .filter(Boolean)
+    .map((schema) => schema.trim());
+  if (!availableSchemas.length) return SCHEMAS;
+  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
+});
+
 const resetData = () => {
-  schemaInput.value = SCHEMAS[0].id;
+  schemaInput.value = availableSchemas.value[0].id;
   nameInput.value = '';
   descriptionInput.value = '';
   archiveInput.value = null;
