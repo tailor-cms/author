@@ -5,8 +5,7 @@ import {
   updatePublishingStatus,
   updateRepositoryCatalog,
 } from './helpers.js';
-import { consumer as consumerConfig } from '../../config/server/index.js';
-import oauth2 from '../oAuth2Provider.js';
+import publishingThrottler from './PublishingThrottler.js';
 import PromiseQueue from 'promise-queue';
 
 class PublishingService {
@@ -41,9 +40,13 @@ export default new PublishingService();
 
 function createPublishJob(action, payload) {
   return async () => {
-    const data = await action(payload);
-    if (consumerConfig.publishWebhookUrl && oauth2.isConfigured)
-      oauth2.send(consumerConfig.publishWebhookUrl, data);
-    return data;
+    const webhookCtx = payload.repositoryId
+      ? { repositoryId: payload.repositoryId, activityId: payload.id }
+      : { repositoryId: payload.id };
+
+    await publishingThrottler.lock(webhookCtx.repositoryId);
+    const entity = await action(payload);
+    await publishingThrottler.call(webhookCtx);
+    return entity;
   };
 }
