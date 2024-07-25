@@ -80,7 +80,14 @@ const select = (key: string, elements: ContentElement[]) => {
 };
 
 editorBus.on('element:link', (key: string) => {
-  const relationship = find(props.relationships, { key }) ?? null;
-  activeRelationship.value = relationship;
+  const firstRelationship = props.relationships[0];
+  if (!key) {
+    console.log(`No relationship key provided. Defaults to first defined
+      relationship: '${firstRelationship.key}'`);
+  }
+  const relationship = key
+    ? find(props.relationships, { key })
+    : firstRelationship;
+  activeRelationship.value = relationship ?? null;
 });
 </script>

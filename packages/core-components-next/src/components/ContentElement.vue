@@ -155,9 +155,7 @@ const focus = () => {
   editorBus.emit('element:focus', props.element, props.parent);
 };
 
-const onLink = (key: string) => {
-  editorBus.emit('element:link', key, props.element, props.parent);
-};
+const onLink = (key?: string) => editorBus.emit('element:link', key);
 
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));

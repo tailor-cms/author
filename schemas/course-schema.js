@@ -135,7 +135,6 @@ export const SCHEMA = {
           multiple: true,
           placeholder: 'Click to select',
           allowedTypes: ['CE_HTML_DEFAULT'],
-          disableSidebarUi: true,
         },
       ],
     },
