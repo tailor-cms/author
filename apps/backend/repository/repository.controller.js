@@ -15,6 +15,7 @@ import sample from 'lodash/sample.js';
 import { schema } from 'tailor-config-shared';
 import { snakeCase } from 'change-case';
 import TransferService from '../shared/transfer/transfer.service.js';
+import { general } from '../config/server/index.js';
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
 const tmp = Promise.promisifyAll((await import('tmp')).default, {
@@ -79,11 +80,7 @@ const includeRepositoryTags = (query) => {
 
 async function index({ query, user, opts }, res) {
   const { search, name } = query;
-  const availableSchemas = (process.env.NUXT_PUBLIC_AVAILABLE_SCHEMAS || '')
-    .split(',')
-    .filter(Boolean)
-    .map((schema) => schema.trim());
-  const schemas = query.schemas || availableSchemas;
+  const schemas = query.schemas || general.availableSchemas;
   if (search) opts.where.name = getFilter(search);
   if (name) opts.where.name = name;
   if (search) opts.where.name = getFilter(search);
