@@ -4,6 +4,7 @@ import Promise from 'bluebird';
 import resolvers from './resolvers.js';
 import { sequelize } from '../../database/index.js';
 import storage from '../../../repository/storage.js';
+import uniq from 'lodash/uniq.js';
 import { useTar } from '../formats.js';
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
@@ -60,9 +61,13 @@ class DefaultAdapter {
       });
       await exportFile(blobStore, Filename.ELEMENTS, { context, transaction });
     });
-    await Promise.map(context.assets, (it) =>
-      exportFile(blobStore, it, { context }),
-    );
+    await Promise.map(uniq(context.assets), async (it) => {
+      try {
+        await exportFile(blobStore, it, { context });
+      } catch (e) {
+        console.log(`Unable to export file: ${it}\n`, e.message);
+      }
+    });
     await exportFile(blobStore, Filename.MANIFEST, { context });
   }
 

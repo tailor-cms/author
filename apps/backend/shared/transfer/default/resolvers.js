@@ -58,8 +58,8 @@ export default {
 function createAssetParser(assets) {
   return miss.through.obj(function (element, _enc, cb) {
     element = element || {};
-    const { data = {} } = element;
-    const str = JSON.stringify(data);
+    const { data = {}, meta = {} } = element;
+    const str = JSON.stringify({ ...data, ...meta });
     JSON.parse(str, (_, value) => {
       if (!isString(value)) return value;
       const [, asset] = prependStorage(value).split(reStorage);
