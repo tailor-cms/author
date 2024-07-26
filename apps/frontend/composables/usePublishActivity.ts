@@ -36,7 +36,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
     confirmationDialog({
       title: 'Publish content',
       message: getPublishMessage(activities),
-      action: () => publish(activities),
+      action: () => publish(activities.filter((it) => !it.detached)),
     });
   };
 
