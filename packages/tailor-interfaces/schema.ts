@@ -21,6 +21,7 @@ export interface ElementRelationship {
   multiple: boolean;
   allowedTypes: string[];
   filters?: Filter[];
+  disableSidebarUi?: boolean;
 }
 
 export interface ElementMetaConfig {
