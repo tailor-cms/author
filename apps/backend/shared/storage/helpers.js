@@ -1,5 +1,6 @@
 import { storage as config } from '../../config/server/index.js';
 import get from 'lodash/get.js';
+import isString from 'lodash/isString.js';
 import PluginRegistry from '../content-plugins/index.js';
 import Promise from 'bluebird';
 import set from 'lodash/set.js';
@@ -10,6 +11,8 @@ import values from 'lodash/values.js';
 const { elementRegistry } = PluginRegistry;
 const isPrimitive = (element) => !get(element, 'data.embeds');
 const isQuestion = (element) => get(element, 'data.question');
+const isStorageAsset = (v) => isString(v) && v.startsWith(config.protocol);
+const extractStorageKey = (v) => v.substr(config.protocol.length, v.length);
 
 // TODO: Temp patch until asset embeding is unified
 function resolveStatics(item) {
@@ -27,16 +30,28 @@ async function resolveAssetsMap(element) {
   if (!get(element, 'data.assets')) return element;
   await Promise.map(toPairs(element.data.assets), async ([key, url]) => {
     if (!url) return set(element.data, key, url);
-    const isStorageResource = url.startsWith(config.protocol);
-    const resolvedUrl = isStorageResource
-      ? await storage.getFileUrl(url.substr(config.protocol.length, url.length))
+    const resolvedUrl = isStorageAsset
+      ? await storage.getFileUrl(extractStorageKey(url))
       : url;
     set(element.data, key, resolvedUrl);
   });
   return element;
 }
 
+async function resolveMetaMap(element) {
+  const meta = Object.values(element.meta || {});
+  await Promise.all(
+    meta.map(async (value) => {
+      const url = get(value, 'url');
+      if (!url || !isStorageAsset(url)) return Promise.resolve();
+      value.publicUrl = await storage.getFileUrl(extractStorageKey(url));
+    }),
+  );
+  return element;
+}
+
 async function resolveQuestion(element) {
+  await resolveMetaMap(element);
   await resolveAssetsMap(element);
   const question = element.data.question;
   if (!question || question.length < 1) return Promise.resolve(element);
@@ -55,6 +70,7 @@ function resolvePrimitive(primitive) {
 }
 
 async function resolveComposite(composite) {
+  await resolveMetaMap(composite);
   await resolveAssetsMap(composite);
   return Promise.each(values(composite.data.embeds), resolvePrimitive).then(
     () => composite,
