@@ -80,6 +80,7 @@
             isDisabled: disabled,
             setWidth: false,
           }"
+          :references="getRefElements(element.refs)"
           show-discussion
           @delete="emit('delete:element', element)"
           @save="saveElement(element, 'data', $event)"
@@ -117,10 +118,16 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components-next';
 import { computed, inject, ref } from 'vue';
+import type {
+  ContentElement,
+  Relationship,
+} from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import filter from 'lodash/filter';
+import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
+
+import { useContentElementStore } from '@/stores/content-elements';
 
 interface Props {
   name: string;
@@ -148,6 +155,7 @@ const emit = defineEmits([
 ]);
 
 const doTheMagic = inject<any>('$doTheMagic');
+const contentElementStore = useContentElementStore();
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 
@@ -199,6 +207,17 @@ const saveElement = (element: ContentElement, key: string, data: any) => {
     ...element,
     [key]: data,
   });
+};
+
+const getRefElements = (refs: Record<string, Relationship[]>) => {
+  return reduce(
+    refs,
+    (acc: any, it, key: string) => {
+      const elements = it.map(({ id }) => contentElementStore.findById(id));
+      acc[key] = elements.filter(Boolean) as ContentElement[];
+    },
+    {} as Record<string, ContentElement[]>,
+  );
 };
 </script>
 
