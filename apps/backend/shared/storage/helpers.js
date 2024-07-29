@@ -64,9 +64,19 @@ function resolveAsset(element) {
     : resolveComposite(element);
 }
 
-function resolvePrimitive(primitive) {
+async function resolvePrimitive(primitive) {
   if (!isPrimitive(primitive)) throw new Error('Invalid primitive');
-  return resolveAssetsMap(primitive);
+  // Temp handle legacy image format, due to broken preview
+  if (primitive.type === 'IMAGE') {
+    // url might be set to null, can't use lodash default
+    const url = get(primitive, 'data.url');
+    if (url && url.startsWith('repository/')) {
+      primitive.data.assets = { url: `${config.protocol}${url}` };
+    }
+  }
+  await resolveMetaMap(primitive);
+  await resolveAssetsMap(primitive);
+  return primitive;
 }
 
 async function resolveComposite(composite) {
