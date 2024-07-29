@@ -257,7 +257,7 @@ async function initiateExportJob({ repository }, res) {
 function exportRepository({ repository, params }, res) {
   const { jobId } = params;
   log(
-    `[exportRepository] initiated, jobId: ${jobId}, repositoryId: ${repository.id}`,
+    `[exportRepository] initiated, repositoryId: ${repository.id}, jobId: ${jobId`,
   );
   const job = JobCache.get(jobId);
   if (!job) {
