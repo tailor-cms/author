@@ -37,7 +37,7 @@ const DEFAULT_COLORS = ['#689F38', '#FF5722', '#2196F3'];
 const lowercaseName = sequelize.fn('lower', sequelize.col('repository.name'));
 
 const JobCache = new Map();
-const logger = createLogger('repository-controller');
+const logger = createLogger('repository:controller');
 const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
 
 const getFilter = (search) => {
