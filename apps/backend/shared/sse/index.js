@@ -9,7 +9,7 @@ const SSE_HEADERS = {
   'Content-Type': 'text/event-stream',
   'Cache-Control': 'no-transform',
   Connection: 'keep-alive',
-  'Transfer-Encoding': 'identity',
+  'Transfer-Encoding': 'chunked',
   // NOTE: This controls nginx proxy buffering
   // https://nginx.com/resources/wiki/start/topics/examples/x-accel/#x-accel-buffering
   'X-Accel-Buffering': 'no',

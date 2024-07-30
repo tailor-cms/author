@@ -29,6 +29,7 @@
       v-bind="{
         ...$attrs,
         element,
+        references,
         isFocused,
         isDragged,
         isDisabled,
@@ -94,6 +95,7 @@ import PublishDiffChip from './PublishDiffChip.vue';
 
 interface Props {
   element: ContentElement;
+  references?: Record<string, ContentElement[]> | null;
   parent?: Activity | null;
   isHovered?: boolean;
   isDragged?: boolean;
@@ -104,6 +106,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  references: null,
   parent: null,
   isHovered: false,
   isDragged: false,
