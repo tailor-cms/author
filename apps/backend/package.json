@@ -71,6 +71,7 @@
     "joycon": "^3.1.1",
     "jsonwebtoken": "^9.0.2",
     "jszip": "^3.10.1",
+    "keyv": "^4.5.4",
     "lodash": "^4.17.21",
     "lru-cache": "^10.2.2",
     "luxon": "^3.4.4",

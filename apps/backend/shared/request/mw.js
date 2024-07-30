@@ -1,21 +1,19 @@
 import {
   general as generalConfig,
-  store as storeConfig,
+  kvStore as kvStoreConfig,
 } from '../../config/server/index.js';
+import Keyv from 'keyv';
 import rateLimit from 'express-rate-limit';
-import Tapster from '@extensionengine/tapster';
 
-const { provider, ...options } = storeConfig;
 const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 
 // Store must be implemented using the following interface:
 // https://github.com/nfriedly/express-rate-limit/blob/master/README.md#store
 class Store {
   constructor() {
-    this.cache = new Tapster({
-      ...options[provider],
-      store: provider,
+    this.cache = new Keyv(kvStoreConfig.providerUrl, {
       namespace: 'request-limiter',
+      ttl: kvStoreConfig.ttl,
     });
   }
 
