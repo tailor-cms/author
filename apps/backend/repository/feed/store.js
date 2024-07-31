@@ -3,7 +3,7 @@ import Keyv from 'keyv';
 
 const store = new Keyv(config.kvStore.providerUrl, {
   namespace: 'active-users',
-  ttl: 40,
+  ttl: 60 * 1000, // 1 minute in milliseconds
 });
 
 async function addContext(user, context) {
