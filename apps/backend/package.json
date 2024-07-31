@@ -21,7 +21,6 @@
     "@aws-sdk/lib-storage": "^3.614.0",
     "@aws-sdk/s3-request-presigner": "^3.614.0",
     "@aws-sdk/util-format-url": "^3.609.0",
-    "@extensionengine/tapster": "github:ExtensionEngine/tapster#53ccb222c757948d322c33087620453ddf5e70ed",
     "@faker-js/faker": "^8.4.1",
     "@paralleldrive/cuid2": "^2.2.2",
     "@tailor-cms/config": "workspace:*",
