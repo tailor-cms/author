@@ -1,20 +1,16 @@
 import { createId as cuid } from '@paralleldrive/cuid2';
+import Keyv from 'keyv';
 import { setTimeout } from 'node:timers/promises';
-import Tapster from '@extensionengine/tapster';
 
-import { consumer, store } from '../../config/server/index.js';
+import { consumer, kvStore } from '../../config/server/index.js';
 import createLogger from '../logger.js';
 import oauth2 from '../oAuth2Provider.js';
 
 const logger = createLogger('webhook-throttler');
 
-const { provider, ...options } = store;
-
 class PublishingThrottler {
   constructor() {
-    this.cache = new Tapster({
-      ...options[provider],
-      store: provider,
+    this.cache = new Keyv(kvStore.providerUrl, {
       namespace: 'publish-webhook',
       ttl: 2 * consumer.publishWebhookThrottle,
     });
