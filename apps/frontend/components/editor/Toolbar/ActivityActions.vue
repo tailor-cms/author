@@ -76,9 +76,9 @@ const actions = computed(() => {
 const preview = () => {
   if (!editorStore.selectedActivity) return;
   const { repositoryId, id } = editorStore.selectedActivity;
-  return api
-    .createPreview(repositoryId, id)
-    .then((location) => window.open(location));
+  return api.createPreview(repositoryId, id).then((location) => {
+    window.location.href = location;
+  });
 };
 
 const hasContentElements = computed(() => {
