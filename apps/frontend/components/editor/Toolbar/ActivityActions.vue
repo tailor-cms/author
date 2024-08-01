@@ -27,11 +27,14 @@
 
 <script lang="ts" setup>
 import { activity as api } from '@/api';
+import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
 
 const currentRepositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
+const contentElementStore = useContentElementStore();
+
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
 const actions = computed(() => {
@@ -49,6 +52,7 @@ const actions = computed(() => {
     {
       title: 'Preview',
       icon: 'eye',
+      disabled: !hasContentElements.value,
       action: () => preview(),
     },
     {
@@ -76,6 +80,14 @@ const preview = () => {
     .createPreview(repositoryId, id)
     .then((location) => window.open(location));
 };
+
+const hasContentElements = computed(() => {
+  const containerIds = editorStore.contentContainers.map((it) => it.id);
+  return (
+    !!contentElementStore.items.length &&
+    contentElementStore.items.some((it) => containerIds.includes(it.activityId))
+  );
+});
 
 const confirmPublishing = () => {
   if (!editorStore.selectedActivity) return;
