@@ -2,3 +2,4 @@ node_modules
 dist
 build
 apps/frontend/src/components.d.ts
+tests/playwright-report
