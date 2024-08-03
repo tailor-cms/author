@@ -45,10 +45,11 @@ jobs:
       - name: Install, build, seed, and start server
         uses: ./.github/actions/run
       - name: Check if platform is running
-        uses: lakuapik/gh-actions-http-status@v1
+        uses: indiesdev/curl@v1.1
         with:
-          sites: '["http://127.0.0.1:3000/api/healthcheck"]'
-          expected: '[200]'
+          url: http://localhost:3000/api/healthcheck
+          method: "GET"
+          accept: 200
       - name: Run functional tests
         shell: bash
         run: pnpm e2e:functional
