@@ -66,13 +66,13 @@ app.use(
 app.use(express.static(path.join(__dirname, '../frontend/.output/public')));
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
-// Mount main router.
-app.use('/api', requestLogger, router);
-
 // Healthcheck route
 app.use('/api/healthcheck', (_req, res) => {
   res.status(200).send();
 });
+
+// Mount main router.
+app.use('/api', requestLogger, router);
 
 // Global error handler.
 app.use(errorHandler);
