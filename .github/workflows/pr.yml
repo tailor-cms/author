@@ -44,6 +44,11 @@ jobs:
           echo "PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}" >> ./tests/.env
       - name: Install, build, seed, and start server
         uses: ./.github/actions/run
+      - name: Check if platform is running
+        uses: lakuapik/gh-actions-http-status@v1
+        with:
+          sites: '["http://127.0.0.1:3000/api/healthcheck"]'
+          expected: '[200]'
       - name: Run functional tests
         shell: bash
         run: pnpm e2e:functional

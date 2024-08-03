@@ -70,7 +70,7 @@ if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 app.use('/api', requestLogger, router);
 
 // Healthcheck route
-app.use('/healthcheck', (_req, res) => {
+app.use('/api/healthcheck', (_req, res) => {
   res.status(200).send();
 });
 
