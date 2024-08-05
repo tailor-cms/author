@@ -8,6 +8,7 @@
     "extensions",
     "infrastructure",
     "packages",
+    "schemas",
     "scripts",
     "tests",
     "tailor.config.js",
