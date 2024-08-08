@@ -41,7 +41,7 @@ class SeedService {
   }
 
   async importRepositoryArchive(
-    name = `Test repository ${crypto.randomUUID()}`,
+    name = `Test ${crypto.randomBytes(12).toString('hex')}`,
     description = `Test repository description`,
   ) {
     const user = await User.findOne({ where: { email: DEFAULT_USER.email } });
