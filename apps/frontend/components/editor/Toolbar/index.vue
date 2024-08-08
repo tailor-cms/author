@@ -3,9 +3,7 @@
     <div :style="{ left: lgAndUp ? '480px' : '380px' }">
       <div
         v-if="activity && !element"
-        :class="[
-          showPublishDiff ? 'bg-primary-darken-2' : 'bg-primary-darken-4',
-        ]"
+        :class="[showPublishDiff ? 'bg-publish-diff' : 'bg-primary-darken-4']"
         class="activity-toolbar px-3 align-center w-100"
       >
         <ActivityActions class="ml-1" />
@@ -133,5 +131,9 @@ const usersWithActivity = computed(() => {
     font-size: 1.375rem;
     text-align: left;
   }
+}
+
+.bg-publish-diff {
+  background-color: #1e282c;
 }
 </style>
