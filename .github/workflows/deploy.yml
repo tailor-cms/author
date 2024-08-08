@@ -53,6 +53,8 @@ jobs:
         with:
           context: .
           push: true
+          build-args: |
+            NUXT_PUBLIC_AI_UI_ENABLED=true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   deploy:
