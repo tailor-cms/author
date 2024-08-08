@@ -11,6 +11,7 @@
     <SelectStatus
       :items="workflow.statuses"
       :model-value="activityStatus.status"
+      class="my-4"
       data-testid="workflow_statusInput"
       label="Status"
       variant="outlined"
@@ -19,7 +20,7 @@
     <VSelect
       :items="users"
       :model-value="activityStatus.assigneeId"
-      class="my-2"
+      class="my-4"
       data-testid="workflow_assigneeInput"
       item-title="label"
       item-value="id"
@@ -27,6 +28,7 @@
       placeholder="Click to set assignee"
       variant="outlined"
       clearable
+      persistent-placeholder
       @update:model-value="updateStatus('assigneeId', $event)"
     >
       <template #selection="{ item }">
@@ -44,7 +46,7 @@
     <SelectPriority
       :items="workflowConfig.priorities"
       :model-value="activityStatus.priority"
-      class="mb-2"
+      class="my-4"
       data-testid="workflow_priorityInput"
       label="Priority"
       variant="outlined"
@@ -52,11 +54,14 @@
     />
     <VDateInput
       :model-value="dueDate && new Date(dueDate)"
+      class="my-4"
       data-testid="workflow_dateInput"
       label="Due date"
+      placeholder="Select due date"
       prepend-icon=""
       variant="outlined"
       clearable
+      persistent-placeholder
       @click:clear="updateStatus('dueDate', null)"
       @update:model-value="updateStatus('dueDate', $event)"
     />

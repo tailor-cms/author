@@ -49,3 +49,10 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 const repositoryStore = useCurrentRepository();
 const activity = computed(() => repositoryStore.selectedActivity);
 </script>
+
+<style lang="scss" scoped>
+::v-deep .v-navigation-drawer__content {
+  overflow-y: overlay;
+  scrollbar-width: none;
+}
+</style>
