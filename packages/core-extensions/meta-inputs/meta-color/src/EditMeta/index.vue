@@ -1,6 +1,6 @@
 <template>
   <div class="text-left my-2">
-    <div class="ma-1 text-body-2">{{ meta.label }}</div>
+    <div class="mt-1 mb-2 mx-1 text-body-2">{{ meta.label }}</div>
     <div class="d-flex">
       <ColorInput :color="selected" @input="select" />
       <div
