@@ -1,9 +1,10 @@
 <template>
   <VNavigationDrawer
+    :width="lgAndUp ? 480 : 380"
     class="sidebar"
     color="primary-darken-2"
     elevation="5"
-    width="480"
+    permanent
   >
     <div class="sidebar-container">
       <VWindow v-model="selectedTab">
@@ -64,6 +65,7 @@ import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
 import reject from 'lodash/reject';
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import { useDisplay } from 'vuetify';
 
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import ActivityNavigation from './ActivityNavigation.vue';
@@ -81,6 +83,7 @@ const COMMENTS_TAB = 'COMMENTS_TAB';
 const ELEMENT_TAB = 'ELEMENT_TAB';
 
 const { $ceRegistry, $schemaService } = useNuxtApp() as any;
+const { lgAndUp } = useDisplay();
 
 const selectedTab = ref(BROWSER_TAB);
 const tabs: any = computed(() => [

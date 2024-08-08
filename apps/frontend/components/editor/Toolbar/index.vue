@@ -1,6 +1,6 @@
 <template>
   <div class="toolbar-wrapper elevation-3">
-    <div>
+    <div :style="{ left: lgAndUp ? '480px' : '380px' }">
       <div
         v-if="activity && !element"
         :class="[
@@ -50,6 +50,7 @@
 import { ActiveUsers } from '@tailor-cms/core-components-next';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
+import { useDisplay } from 'vuetify';
 
 import ActivityActions from './ActivityActions.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
@@ -65,6 +66,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 const { $schemaService } = useNuxtApp() as any;
+const { lgAndUp } = useDisplay();
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
@@ -97,7 +99,6 @@ const usersWithActivity = computed(() => {
     left: 30rem;
     margin-top: 5rem;
     min-height: 5.5rem;
-    max-height: 9rem;
     z-index: 99;
   }
 
