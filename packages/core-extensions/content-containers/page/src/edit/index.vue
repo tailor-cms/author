@@ -127,8 +127,6 @@ import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
 
-import { useContentElementStore } from '@/stores/content-elements';
-
 interface Props {
   name: string;
   container: Activity;
@@ -155,7 +153,6 @@ const emit = defineEmits([
 ]);
 
 const doTheMagic = inject<any>('$doTheMagic');
-const contentElementStore = useContentElementStore();
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 
@@ -213,7 +210,7 @@ const getRefElements = (refs: Record<string, Relationship[]>) => {
   return reduce(
     refs,
     (acc: any, it, key: string) => {
-      const elements = it.map(({ id }) => contentElementStore.findById(id));
+      const elements = it.map(({ uid }) => props.elements[uid]);
       acc[key] = elements.filter(Boolean) as ContentElement[];
     },
     {} as Record<string, ContentElement[]>,
