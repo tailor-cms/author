@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <component
-      :is="componentName"
-      :class="{ required: get(meta, 'validate.required') }"
-      :dark="dark"
-      :meta="meta"
-      @update="(key: string, value: any) => $emit('update', key, value)"
-    />
-  </div>
+  <component
+    :is="componentName"
+    :class="{ required: get(meta, 'validate.required') }"
+    :dark="dark"
+    :meta="meta"
+    @update="(key: string, value: any) => $emit('update', key, value)"
+  />
 </template>
 
 <script lang="ts" setup>
