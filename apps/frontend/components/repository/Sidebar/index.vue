@@ -44,8 +44,18 @@ const store = useCurrentRepository();
 </script>
 
 <style lang="scss" scoped>
+$error-color: rgb(var(--v-theme-secondary-lighten-4));
+
 .v-navigation-drawer {
   text-align: left;
+
+  ::v-deep .v-input--error {
+    .v-messages__message,
+    .v-field__outline,
+    .v-field-label {
+      color: $error-color;
+    }
+  }
 }
 
 .placeholder {
