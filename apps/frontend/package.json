@@ -35,6 +35,7 @@
     "@tailor-cms/core-components-next": "workspace:^",
     "@tailor-cms/meta-element-collection": "workspace:^",
     "@tailor-cms/utils": "workspace:*",
+    "@vee-validate/rules": "^4.13.2",
     "@vueuse/core": "^10.11.0",
     "axios": "^1.7.2",
     "bluebird": "^3.7.2",

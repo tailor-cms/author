@@ -92,6 +92,16 @@ export const SCHEMA = {
       icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],
+        required: true,
+      },
+    },
+    {
+      key: 'test',
+      type: 'TEXTAREA',
+      label: 'Test',
+      placeholder: 'Click to test',
+      validate: {
+        required: true,
       },
     },
   ],

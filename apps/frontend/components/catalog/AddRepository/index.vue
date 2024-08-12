@@ -46,10 +46,10 @@
           </VTab>
         </VTabs>
       </div>
-      <form
+      <Form
         class="pa-4 bg-primary-lighten-5"
         novalidate
-        @submit.prevent="createRepository"
+        @submit="createRepository"
       >
         <VAlert
           :model-value="!!serverError"
@@ -63,56 +63,97 @@
         </VAlert>
         <VWindow id="addDialogWindow" v-model="selectedTab">
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
-            <VSelect
-              v-model="schemaInput"
-              :error-messages="errors.schema"
-              :items="availableSchemas"
-              :menu-props="{ attach: '#addDialogWindow' }"
-              data-testid="type-input"
-              item-title="name"
-              item-value="id"
-              label="Type"
-              placeholder="Select type..."
-              variant="outlined"
-            />
+            <Field
+              v-slot="{ field, errors, value }"
+              v-model="repository.schema"
+              :rules="{ required: isCreate }"
+              name="schema"
+            >
+              <VSelect
+                v-bind="field"
+                :error-messages="errors"
+                :items="availableSchemas"
+                :menu-props="{ attach: '#addDialogWindow' }"
+                :model-value="value"
+                data-testid="type-input"
+                item-title="name"
+                item-value="id"
+                label="Type"
+                placeholder="Select type..."
+                variant="outlined"
+              />
+            </Field>
           </VWindowItem>
           <VWindowItem :value="IMPORT_TAB" class="pt-1">
-            <VFileInput
-              v-model="archiveInput"
-              :clearable="false"
-              :error-messages="errors.archive"
-              :label="archiveInput ? 'Selected archive' : 'Select archive'"
-              accept=".tgz"
-              class="mb-2"
+            <Field
+              v-slot="{ handleBlur, handleChange, errors }"
+              :rules="{ required: !isCreate }"
               name="archive"
-              prepend-icon=""
-              prepend-inner-icon="mdi-paperclip"
-              variant="outlined"
-            />
+            >
+              <VFileInput
+                v-model="archive"
+                :clearable="false"
+                :error-messages="errors"
+                :label="archive ? 'Selected archive' : 'Select archive'"
+                accept=".tgz"
+                class="mb-2"
+                name="archive"
+                prepend-icon=""
+                prepend-inner-icon="mdi-paperclip"
+                variant="outlined"
+                @blur="handleBlur"
+                @change="handleChange"
+              />
+            </Field>
           </VWindowItem>
         </VWindow>
         <div class="dialog-subcontainer">
-          <RepositoryNameField
-            v-model="nameInput"
-            :is-validated="!!errors.name?.length"
-            class="mb-2"
+          <Field
+            v-slot="{ field, value, errors }"
+            v-model="repository.name"
             name="name"
-            placeholder="Enter name..."
-          />
-          <VTextarea
-            v-model="descriptionInput"
-            :error-messages="errors.description"
-            label="Description"
-            placeholder="Enter description..."
-            variant="outlined"
-          />
+            rules="required|min:2|max:25"
+          >
+            <RepositoryNameField
+              v-bind="field"
+              :error-messages="errors"
+              :model-value="value"
+              class="mb-2"
+              name="name"
+              placeholder="Enter name..."
+            />
+          </Field>
+          <Field
+            v-slot="{ field, value, errors }"
+            v-model="repository.description"
+            name="description"
+            rules="required|min:2|max:2000"
+          >
+            <VTextarea
+              v-bind="field"
+              :error-messages="errors"
+              :model-value="value"
+              label="Description"
+              placeholder="Enter description..."
+              variant="outlined"
+            />
+          </Field>
           <AIAssistance
             v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
-            :description="descriptionInput"
-            :name="nameInput"
-            :schema-id="schemaInput"
+            :description="repository.description"
+            :name="repository.name"
+            :schema-id="repository.schema"
             @structure="aiSuggestedOutline = $event"
           />
+          <template v-if="isCreate">
+            <MetaInput
+              v-for="it in schemaMeta"
+              :key="it.key"
+              :meta="it"
+              class="meta-input"
+              @update="(key, value) => (repository.data[key] = value)"
+            />
+          </template>
         </div>
         <div class="d-flex justify-end">
           <VBtn
@@ -133,23 +174,30 @@
             Create
           </VBtn>
         </div>
-      </form>
+      </Form>
     </template>
   </TailorDialog>
 </template>
 
 <script lang="ts" setup>
-import { mixed, object, string } from 'yup';
+import { Field, Form } from 'vee-validate';
 import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from 'tailor-config-shared';
-import { useForm } from 'vee-validate';
 
 import AIAssistance from './AIAssistance.vue';
 import { repository as api } from '@/api';
+import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useRepositoryStore } from '@/stores/repository';
+
+const resetData = () => ({
+  schema: SCHEMAS[0].id,
+  name: 'hjbjhb',
+  description: '',
+  data: {},
+});
 
 const { $schemaService } = useNuxtApp() as any;
 
@@ -171,27 +219,16 @@ const isSubmitting = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
-const { defineField, errors, handleSubmit, resetForm } = useForm({
-  validationSchema: object({
-    schema: string().when((_, schema) => {
-      return selectedTab.value === NEW_TAB
-        ? schema.required()
-        : schema.notRequired();
-    }),
-    name: string().required().min(2).max(2000),
-    description: string().required().min(2).max(2000),
-    archive: mixed().when((_, schema) => {
-      return selectedTab.value === IMPORT_TAB
-        ? schema.required()
-        : schema.notRequired();
-    }),
-  }),
-});
+const repository = reactive(resetData());
+const archive = ref(null);
 
-const [schemaInput] = defineField('schema');
-const [nameInput] = defineField('name');
-const [descriptionInput] = defineField('description');
-const [archiveInput] = defineField('archive');
+const schema = computed(() =>
+  SCHEMAS.find((it) => it.id === repository.schema),
+);
+
+const schemaMeta = computed(() =>
+  schema.value?.meta.filter((it) => !it.hideOnCreate),
+);
 
 const availableSchemas = computed(() => {
   const availableSchemas = (runtimeConfig.public.availableSchemas || '')
@@ -202,29 +239,23 @@ const availableSchemas = computed(() => {
   return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
 });
 
-const resetData = () => {
-  schemaInput.value = availableSchemas.value[0].id;
-  nameInput.value = '';
-  descriptionInput.value = '';
-  archiveInput.value = null;
-};
-
-const createRepository = handleSubmit(async (formPayload: any) => {
+const createRepository = async () => {
   isSubmitting.value = true;
   const action = isCreate.value ? create : importRepository;
   try {
-    await pMinDelay(action(formPayload), 2000);
+    await pMinDelay(action(repository), 2000);
     emit('created');
     hide();
   } catch {
     serverError.value = 'An error has occurred!';
   }
-});
+};
 
 const create = async (formPayload: {
   schema: string;
   name: string;
   description: string;
+  data: any;
 }) => {
   const repository = await repositoryStore.create(formPayload);
   if (!aiSuggestedOutline.value.length) return;
@@ -237,7 +268,7 @@ const createActvities = (
   items: any,
   parentId = null as null | number,
 ) => {
-  const outlineLevels = $schemaService.getOutlineLevels(schemaInput.value);
+  const outlineLevels = $schemaService.getOutlineLevels(repository.schema);
   items.forEach(async (activity: any, index: number) => {
     const type = outlineLevels.find(
       (it: any) => it.label === activity.type,
@@ -254,10 +285,11 @@ const createActvities = (
   });
 };
 
-const importRepository = async ({ archive, name, description }: any) => {
+const importRepository = async ({ name, description }: any) => {
+  if (!archive.value) return;
   try {
     const form = new FormData();
-    form.append('archive', archive);
+    form.append('archive', archive.value);
     form.append('name', name);
     form.append('description', description);
     const headers = { 'content-type': 'multipart/form-data' };
@@ -272,7 +304,6 @@ const hide = () => {
   isSubmitting.value = false;
   serverError.value = '';
   resetData();
-  resetForm();
 };
 </script>
 
