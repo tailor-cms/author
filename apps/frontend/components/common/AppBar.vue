@@ -28,8 +28,9 @@
         :key="name"
         :rounded="false"
         :to="to"
-        color="secondary-lighten-4"
+        color="teal-lighten-5"
         height="100"
+        min-width="120"
         variant="text"
       >
         <span class="toolbar-route text-truncate">{{ name }}</span>
