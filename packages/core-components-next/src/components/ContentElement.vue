@@ -65,7 +65,7 @@
     <VProgressLinear
       v-if="isSaving"
       class="save-indicator"
-      color="teal accent-2"
+      color="teal-accent-1"
       height="2"
       location="bottom"
       absolute
