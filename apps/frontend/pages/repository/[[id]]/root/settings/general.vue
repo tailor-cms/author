@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-8">
+  <div class="pa-8 text-left">
     <div class="actions">
       <VBtn
         :loading="isPublishing"

@@ -1,32 +1,28 @@
 <template>
-  <Field
-    v-slot="{ handleChange, errors }"
-    :name="$props.meta.key"
-    :rules="props.meta.validate"
-  >
-    <component
-      :is="componentName"
-      :class="{ required: get(meta, 'validate.required') }"
-      :dark="dark"
-      :error-messages="errors"
-      :meta="meta"
-      @update="(key: string, value: any) => update(key, value, handleChange)"
-    />
-  </Field>
+  <component
+    :is="componentName"
+    :class="{ required: get(meta, 'validate.required') }"
+    :dark="dark"
+    :error-messages="errorMessage"
+    :meta="meta"
+    @update="updateMeta"
+  />
 </template>
 
 <script lang="ts" setup>
-import { Field } from 'vee-validate';
 import get from 'lodash/get';
 import { getMetaName } from '@tailor-cms/utils';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
+import { useField } from 'vee-validate';
 
 interface Props {
   meta: Metadata;
+  name?: string | null;
   dark?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  name: null,
   dark: false,
 });
 
@@ -35,9 +31,20 @@ const emit = defineEmits(['update']);
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
 
-const update = (key: string, value: any, handler: any) => {
-  emit('update', key, value);
-  return handler(value);
+const {
+  value: input,
+  errorMessage,
+  validate,
+} = useField(() => props.name || props.meta.key, props.meta.validate, {
+  label: props.meta.key,
+  initialValue: props.meta.value,
+});
+
+const updateMeta = async (key: string, val: any) => {
+  input.value = val;
+  debugger;
+  const { valid } = await validate();
+  if (valid) emit('update', key, val);
 };
 </script>
 

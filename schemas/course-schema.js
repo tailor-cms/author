@@ -94,6 +94,7 @@ export const SCHEMA = {
         ext: ['jpg', 'jpeg', 'png'],
         required: true,
       },
+      hideOnCreate: true,
     },
     {
       key: 'test',
