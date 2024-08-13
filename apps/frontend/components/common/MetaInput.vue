@@ -42,7 +42,6 @@ const {
 
 const updateMeta = async (key: string, val: any) => {
   input.value = val;
-  debugger;
   const { valid } = await validate();
   if (valid) emit('update', key, val);
 };
