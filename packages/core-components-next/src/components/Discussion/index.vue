@@ -247,5 +247,9 @@ watch(
   .alert :deep(.v-icon) {
     color: var(--v-primary-darken2) !important;
   }
+
+  .v-input ::v-deep textarea::placeholder {
+    opacity: 0.85;
+  }
 }
 </style>
