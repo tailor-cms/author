@@ -65,6 +65,7 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
+              :disabled="SCHEMAS.length === 1"
               :error-messages="errors.schema"
               :items="availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
@@ -189,6 +190,7 @@ const { value: schemaInput } = useField<string>(
       ? schema.required()
       : schema.notRequired();
   }),
+  { initialValue: SCHEMAS.length === 1 ? SCHEMAS[0].id : undefined },
 );
 
 const { value: descriptionInput } = useField<string>(
