@@ -12,11 +12,11 @@
         <VAvatar :color="color" size="42">{{ acronym }}</VAvatar>
       </template>
       <VListItemTitle
-        class="text-subtitle-1 text-truncate text-primary-lighten-4"
+        class="text-subtitle-1 text-truncate text-primary-lighten-5"
       >
         {{ description }}
       </VListItemTitle>
-      <VListItemSubtitle class="text-body-2 text-primary-lighten-3">
+      <VListItemSubtitle class="text-body-2 text-primary-lighten-4">
         {{ formatTimeAgo(date, { rounding: 'floor' }) }} by
         {{ revision.user.label }}
       </VListItemSubtitle>
@@ -92,6 +92,10 @@ li + li {
   transition: all 0.3s ease;
 
   &.v-list-item--disabled {
+    opacity: 1;
+  }
+
+  .v-list-item-subtitle {
     opacity: 1;
   }
 }
