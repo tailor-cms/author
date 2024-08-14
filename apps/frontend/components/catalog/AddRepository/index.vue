@@ -189,7 +189,6 @@ const { value: schemaInput } = useField<string>(
       ? schema.required()
       : schema.notRequired();
   }),
-  { initialValue: SCHEMAS[0].id },
 );
 
 const { value: descriptionInput } = useField<string>(
