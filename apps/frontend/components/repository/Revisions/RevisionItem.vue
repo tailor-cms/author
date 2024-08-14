@@ -9,7 +9,7 @@
       @click="toggle"
     >
       <template #prepend>
-        <VAvatar :color="color" size="42">{{ acronym }}</VAvatar>
+        <VAvatar color="primary-lighten-3" size="42">{{ acronym }}</VAvatar>
       </template>
       <VListItemTitle
         class="text-subtitle-1 text-truncate text-primary-lighten-5"
