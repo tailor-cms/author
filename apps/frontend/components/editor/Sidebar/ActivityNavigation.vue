@@ -125,6 +125,11 @@ const navigateToActivity = (activityId: number) => {
   }
 }
 
+.v-input ::v-deep .v-label {
+  color: rgb(var(--v-theme-primary-lighten-5));
+  opacity: 1;
+}
+
 :deep(.v-list-item-action) {
   display: none !important;
 }
