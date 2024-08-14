@@ -84,12 +84,14 @@ export const useRepositoryStore = defineStore('repositories', () => {
     schema,
     name,
     description,
+    data,
   }: {
     schema: string;
     name: string;
     description: string;
+    data: any;
   }) => {
-    return api.create({ schema, name, description });
+    return api.create({ schema, name, description, data });
   };
 
   async function update(payload: any): Promise<Repository | undefined> {

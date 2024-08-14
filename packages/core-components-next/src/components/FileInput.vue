@@ -1,84 +1,77 @@
 <template>
-  <form @submit.prevent>
-    <VFileInput
-      v-if="!fileKey"
-      :accept="acceptedFileTypes"
-      :density="density"
-      :label="label"
-      :loading="uploading ? 'primary' : false"
-      :placeholder="placeholder"
-      :prepend-inner-icon="icon"
-      :variant="variant"
-      prepend-icon=""
-      @update:model-value="upload"
-    />
-    <div v-else class="mb-5 text-left">
-      <div class="ma-1 text-body-2">{{ label }}</div>
-      <VOverlay
-        v-model="expanded"
-        :class="{ expanded }"
-        content-class="d-flex align-center justify-center h-100 w-100"
-        close-on-content-click
-      >
-        <template #activator="{ props: dialogProps }">
-          <VCard
-            v-bind="image ? dialogProps : {}"
-            :color="dark ? 'primary-lighten-4' : 'primary'"
-            class="d-flex align-center"
-            max-width="460"
-            rounded="lg"
-            variant="tonal"
-            border
-          >
-            <div class="d-flex align-center">
-              <VAvatar
-                class="mr-3"
-                color="primary"
-                rounded="s-lg e-sm"
-                size="75"
-              >
-                <VImg v-if="image" :src="image" rounded="s-lg e-0" />
-                <VIcon v-else :icon="icon" size="x-large" />
-              </VAvatar>
-              <div
-                :class="`text-primary-${dark ? 'lighten-3' : 'darken-2'}`"
-                class="file-name"
-              >
-                {{ fileName }}
-              </div>
-            </div>
-            <VSpacer />
-            <div class="d-flex ma-3">
-              <VBtn
-                :color="dark ? 'primary-lighten-3' : 'primary-lighten-1'"
-                class="ml-2"
-                icon="mdi-download"
-                size="small"
-                variant="tonal"
-                @click="downloadFile(fileKey, fileName)"
-              />
-              <VBtn
-                :color="dark ? 'secondary-lighten-3' : 'secondary-lighten-1'"
-                class="ml-1"
-                icon="mdi-trash-can-outline"
-                size="small"
-                variant="tonal"
-                @click.stop="deleteFile({ id, fileName })"
-              />
-            </div>
-          </VCard>
-        </template>
-        <VBtn
-          class="position-absolute top-0 right-0 ma-4"
-          color="white"
-          icon="mdi-close"
+  <VFileInput
+    v-if="!fileKey"
+    :accept="acceptedFileTypes"
+    :density="density"
+    :label="label"
+    :loading="uploading ? 'primary' : false"
+    :placeholder="placeholder"
+    :prepend-inner-icon="icon"
+    :variant="variant"
+    prepend-icon=""
+    @update:model-value="upload"
+  />
+  <div v-else class="mb-5 text-left">
+    <div class="ma-1 text-body-2">{{ label }}</div>
+    <VOverlay
+      v-model="expanded"
+      :class="{ expanded }"
+      content-class="d-flex align-center justify-center h-100 w-100"
+      close-on-content-click
+    >
+      <template #activator="{ props: dialogProps }">
+        <VCard
+          v-bind="image ? dialogProps : {}"
+          :color="dark ? 'primary-lighten-4' : 'primary'"
+          class="d-flex align-center"
+          max-width="460"
+          rounded="lg"
           variant="tonal"
-          @click="expanded = false"
-        />
-        <img :src="image" alt="Full image" />
-      </VOverlay>
-    </div>
-  </form>
+          border
+        >
+          <div class="d-flex align-center">
+            <VAvatar class="mr-3" color="primary" rounded="s-lg e-sm" size="75">
+              <VImg v-if="image" :src="image" rounded="s-lg e-0" />
+              <VIcon v-else :icon="icon" size="x-large" />
+            </VAvatar>
+            <div
+              :class="`text-primary-${dark ? 'lighten-3' : 'darken-2'}`"
+              class="file-name"
+            >
+              {{ fileName }}
+            </div>
+          </div>
+          <VSpacer />
+          <div class="d-flex ma-3">
+            <VBtn
+              :color="dark ? 'primary-lighten-3' : 'primary-lighten-1'"
+              class="ml-2"
+              icon="mdi-download"
+              size="small"
+              variant="tonal"
+              @click="downloadFile(fileKey, fileName)"
+            />
+            <VBtn
+              :color="dark ? 'secondary-lighten-3' : 'secondary-lighten-1'"
+              class="ml-1"
+              icon="mdi-trash-can-outline"
+              size="small"
+              variant="tonal"
+              @click.stop="deleteFile({ id, fileName })"
+            />
+          </div>
+        </VCard>
+      </template>
+      <VBtn
+        class="position-absolute top-0 right-0 ma-4"
+        color="white"
+        icon="mdi-close"
+        variant="tonal"
+        @click="expanded = false"
+      />
+      <img :src="image" alt="Full image" />
+    </VOverlay>
+  </div>
 </template>
 
 <script lang="ts" setup>

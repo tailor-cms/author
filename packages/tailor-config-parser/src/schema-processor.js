@@ -29,7 +29,11 @@ function processRepositoryConfig(schema) {
   const hasColorMeta = find(schema.meta, { key: 'color' });
   if (!hasColorMeta) {
     schema.meta.push({
-      type: 'COLOR', key: 'color', label: 'Label color', colors: LABEL_COLORS
+      type: 'COLOR',
+      key: 'color',
+      label: 'Label color',
+      colors: LABEL_COLORS,
+      hideOnCreate: true
     });
   }
   schema.defaultMeta = getMetaDefaults(schema.meta);

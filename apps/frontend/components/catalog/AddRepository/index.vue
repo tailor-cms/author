@@ -65,6 +65,7 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
+              :disabled="SCHEMAS.length === 1"
               :error-messages="errors.schema"
               :items="availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
@@ -93,8 +94,6 @@
         </VWindow>
         <div class="dialog-subcontainer">
           <RepositoryNameField
-            v-model="nameInput"
-            :is-validated="!!errors.name?.length"
             class="mb-2"
             name="name"
             placeholder="Enter name..."
@@ -109,10 +108,19 @@
           <AIAssistance
             v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
-            :name="nameInput"
+            :name="values.name"
             :schema-id="schemaInput"
             @structure="aiSuggestedOutline = $event"
           />
+          <template v-if="isCreate">
+            <MetaInput
+              v-for="it in schemaMeta"
+              :key="it.key"
+              :meta="it"
+              :name="`data.${it.key}`"
+              class="meta-input"
+            />
+          </template>
         </div>
         <div class="d-flex justify-end">
           <VBtn
@@ -139,13 +147,15 @@
 </template>
 
 <script lang="ts" setup>
-import { mixed, object, string } from 'yup';
+import { mixed, string } from 'yup';
+import { useField, useForm } from 'vee-validate';
+import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from 'tailor-config-shared';
-import { useForm } from 'vee-validate';
 
 import AIAssistance from './AIAssistance.vue';
 import { repository as api } from '@/api';
+import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
@@ -171,27 +181,39 @@ const isSubmitting = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
-const { defineField, errors, handleSubmit, resetForm } = useForm({
-  validationSchema: object({
-    schema: string().when((_, schema) => {
-      return selectedTab.value === NEW_TAB
-        ? schema.required()
-        : schema.notRequired();
-    }),
-    name: string().required().min(2).max(2000),
-    description: string().required().min(2).max(2000),
-    archive: mixed().when((_, schema) => {
-      return selectedTab.value === IMPORT_TAB
-        ? schema.required()
-        : schema.notRequired();
-    }),
-  }),
-});
+const { handleSubmit, resetForm, values, errors } = useForm();
 
-const [schemaInput] = defineField('schema');
-const [nameInput] = defineField('name');
-const [descriptionInput] = defineField('description');
-const [archiveInput] = defineField('archive');
+const { value: schemaInput } = useField<string>(
+  'schema',
+  string().when((_, schema) => {
+    return selectedTab.value === NEW_TAB
+      ? schema.required()
+      : schema.notRequired();
+  }),
+  { initialValue: SCHEMAS.length === 1 ? SCHEMAS[0].id : undefined },
+);
+
+const { value: descriptionInput } = useField<string>(
+  'description',
+  string().required().min(2).max(2000),
+);
+
+const { value: archiveInput } = useField<File>(
+  'archive',
+  mixed().when((_, schema) => {
+    return selectedTab.value === IMPORT_TAB
+      ? schema.required()
+      : schema.notRequired();
+  }),
+);
+
+const schema = computed<ActivityConfig>(
+  () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
+);
+
+const schemaMeta = computed(() =>
+  schema.value?.meta?.filter((it) => !it.hideOnCreate),
+);
 
 const availableSchemas = computed(() => {
   const availableSchemas = (runtimeConfig.public.availableSchemas || '')
@@ -201,13 +223,6 @@ const availableSchemas = computed(() => {
   if (!availableSchemas.length) return SCHEMAS;
   return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
 });
-
-const resetData = () => {
-  schemaInput.value = availableSchemas.value[0].id;
-  nameInput.value = '';
-  descriptionInput.value = '';
-  archiveInput.value = null;
-};
 
 const createRepository = handleSubmit(async (formPayload: any) => {
   isSubmitting.value = true;
@@ -225,6 +240,7 @@ const create = async (formPayload: {
   schema: string;
   name: string;
   description: string;
+  data: any;
 }) => {
   const repository = await repositoryStore.create(formPayload);
   if (!aiSuggestedOutline.value.length) return;
@@ -249,7 +265,7 @@ const createActvities = (
       data: { name: activity.name },
       position: index,
     });
-    if (activity.children)
+    if (item && activity.children)
       createActvities(repositoryId, activity.children, item.id);
   });
 };
@@ -271,7 +287,6 @@ const hide = () => {
   isVisible.value = false;
   isSubmitting.value = false;
   serverError.value = '';
-  resetData();
   resetForm();
 };
 </script>

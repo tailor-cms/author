@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-8">
+  <div class="pa-8 text-left">
     <div class="actions">
       <VBtn
         :loading="isPublishing"
@@ -14,8 +14,8 @@
       </VBtn>
     </div>
     <RepositoryNameField
-      v-model="repository.name"
       :repository-id="repository.id"
+      :value="repository.name"
       class="my-2"
       @change="updateKey('name', $event)"
     />
