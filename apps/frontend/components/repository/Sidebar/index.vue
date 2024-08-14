@@ -53,7 +53,8 @@ const store = useCurrentRepository();
     .v-messages__message,
     .v-field__outline,
     .v-field-label,
-    input::placeholder {
+    input::placeholder,
+    textarea::placeholder {
       color: rgb(var(--v-theme-primary-lighten-5));
       opacity: 1;
     }
@@ -62,7 +63,8 @@ const store = useCurrentRepository();
       .v-messages__message,
       .v-field__outline,
       .v-field-label,
-      input::placeholder {
+      input::placeholder,
+      textarea::placeholder {
         color: $error-color;
       }
     }

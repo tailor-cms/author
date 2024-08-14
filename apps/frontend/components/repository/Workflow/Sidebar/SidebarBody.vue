@@ -108,7 +108,8 @@ const updateStatus = async (key: string, value: any = null) => {
   .v-messages__message,
   .v-field__outline,
   .v-field-label,
-  input::placeholder {
+  input::placeholder,
+  textarea::placeholder {
     color: rgb(var(--v-theme-primary-lighten-5));
     opacity: 1;
   }
@@ -117,7 +118,8 @@ const updateStatus = async (key: string, value: any = null) => {
     .v-messages__message,
     .v-field__outline,
     .v-field-label,
-    input::placeholder {
+    input::placeholder,
+    textarea::placeholder {
       color: $error-color;
     }
   }
