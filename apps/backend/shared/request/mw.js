@@ -1,21 +1,19 @@
 import {
   general as generalConfig,
-  store as storeConfig,
+  kvStore as kvStoreConfig,
 } from '../../config/server/index.js';
+import Keyv from 'keyv';
 import rateLimit from 'express-rate-limit';
-import Tapster from '@extensionengine/tapster';
 
-const { provider, ...options } = storeConfig;
 const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 
 // Store must be implemented using the following interface:
 // https://github.com/nfriedly/express-rate-limit/blob/master/README.md#store
 class Store {
   constructor() {
-    this.cache = new Tapster({
-      ...options[provider],
-      store: provider,
+    this.cache = new Keyv(kvStoreConfig.providerUrl, {
       namespace: 'request-limiter',
+      ttl: kvStoreConfig.ttl,
     });
   }
 
@@ -24,8 +22,9 @@ class Store {
     const { hits, ...record } = (await this.cache.has(key))
       ? await this.cache.get(key)
       : initialState;
-    await this.cache.set(key, { ...record, hits: hits + 1 });
-    cb(null, hits);
+    const updatedHits = hits + 1;
+    await this.cache.set(key, { ...record, hits: updatedHits });
+    cb(null, updatedHits);
   }
 
   async decrement(key) {
@@ -48,8 +47,7 @@ function requestLimiter({
   store = defaultStore,
   ...opts
 } = {}) {
-  // 0 is counted as a hit, so we need to subtract
-  const max = limit > 0 ? limit - 1 : 0;
+  const max = limit > 0 ? limit : 0;
   const options = { limit: max, validate, windowMs, store, ...opts };
   if (!generalConfig.enableRateLimiting) options.skip = () => true;
   return rateLimit(options);

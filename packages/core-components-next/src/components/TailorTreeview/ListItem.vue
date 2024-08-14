@@ -2,7 +2,7 @@
   <VListItem
     v-bind="omit(activatorProps, 'onClick')"
     :class="{
-      'text-secondary-lighten-4': isActive,
+      'list-item-active': isActive,
       readonly: !isEditable,
     }"
     :title="title"
@@ -24,7 +24,7 @@
       <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
     </template>
     <template #append>
-      <VIcon v-if="isEditable" color="secondary-lighten-4">
+      <VIcon v-if="isEditable" color="secondary-lighten-3">
         mdi-page-next-outline
       </VIcon>
     </template>
@@ -74,5 +74,9 @@ const onItemClick = () => {
   .v-btn {
     pointer-events: auto;
   }
+}
+
+.list-item-active {
+  color: #f9c2d5;
 }
 </style>

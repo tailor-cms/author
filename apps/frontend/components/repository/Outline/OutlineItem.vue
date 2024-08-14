@@ -16,7 +16,7 @@
             :icon="`mdi-${icon}`"
             aria-label="Toggle expand"
             class="my-auto"
-            color="primary-lighten-3"
+            color="primary-lighten-4"
             variant="text"
             @mousedown.stop="utils.toggleOutlineItemExpand(activity.uid)"
           >
@@ -158,7 +158,7 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
     background-color: rgb(var(--v-theme-primary-darken-1));
 
     .activity-name {
-      color: rgb(var(--v-theme-primary-lighten-4)) !important;
+      color: rgb(var(--v-theme-primary-lighten-5)) !important;
       font-weight: 600 !important;
     }
   }

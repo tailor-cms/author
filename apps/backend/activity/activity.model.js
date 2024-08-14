@@ -231,7 +231,8 @@ class Activity extends Model {
 
   predecessors() {
     if (!this.parentId) return Promise.resolve([]);
-    return this.getParent().then((parent) => {
+    return this.getParent({ paranoid: false }).then((parent) => {
+      if (parent.deletedAt) return Promise.resolve([]);
       return parent.predecessors().then((acc) => acc.concat(parent));
     });
   }

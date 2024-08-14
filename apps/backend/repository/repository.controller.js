@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import { NO_CONTENT, NOT_FOUND } from 'http-status-codes';
 import { createError } from '../shared/error/helpers.js';
+import { createLogger } from '../shared/logger.js';
 import db from '../shared/database/index.js';
 import getVal from 'lodash/get.js';
 import groupBy from 'lodash/groupBy.js';
@@ -36,6 +37,8 @@ const DEFAULT_COLORS = ['#689F38', '#FF5722', '#2196F3'];
 const lowercaseName = sequelize.fn('lower', sequelize.col('repository.name'));
 
 const JobCache = new Map();
+const logger = createLogger('repository:controller');
+const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
 
 const getFilter = (search) => {
   const term = search.length < 3 ? `${search}%` : `%${search}%`;
@@ -161,6 +164,7 @@ async function pin({ user, repository, body }, res) {
 }
 
 function clone({ user, repository, body }, res) {
+  log(`[clone] initiated, repositoryId: ${repository.id}`);
   const { name, description } = body;
   const context = { userId: user.id };
   return repository
@@ -236,6 +240,10 @@ async function initiateExportJob({ repository }, res) {
   return TransferService.createExportJob(outFile, options)
     .toPromise()
     .then((job) => {
+      log(
+        `[initiateExportJob] export job initiated,
+        repositoryId: ${repository.id}, jobId: ${job.id}`,
+      );
       // TODO: unlink job.filepath after timeout
       JobCache.set(job.id, job);
       res.json({ data: job.id });
@@ -248,8 +256,14 @@ async function initiateExportJob({ repository }, res) {
 
 function exportRepository({ repository, params }, res) {
   const { jobId } = params;
+  log(
+    `[exportRepository] initiated, repositoryId: ${repository.id}, jobId: ${jobId}`,
+  );
   const job = JobCache.get(jobId);
-  if (!job) return createError(NOT_FOUND);
+  if (!job) {
+    log(`[exportRepository] job not found on export, jobId: ${params.job.id}`);
+    return createError(NOT_FOUND);
+  }
   res.attachment(`${snakeCase(repository.name)}.tgz`);
   const exportStream = fs.createReadStream(job.filepath);
   return miss.pipeAsync(exportStream, res).then(() => {
@@ -259,6 +273,7 @@ function exportRepository({ repository, params }, res) {
 }
 
 function importRepository({ body, file, user }, res) {
+  log(`[importRepository] initiated, userId: ${user.id}, name: ${body.name}`);
   const { path } = file;
   const { description, name } = body;
   const options = { description, name, userId: user.id };

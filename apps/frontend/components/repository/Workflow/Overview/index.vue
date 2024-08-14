@@ -3,10 +3,9 @@
     :headers="headers"
     :items="items"
     :row-props="({ item }) => ({ class: item.class })"
-    class="rounded-lg bg-primary-darken-2 text-left overflow-y-auto"
-    items-per-page="100"
+    class="bg-primary-darken-2 rounded-lg text-left"
+    items-per-page="25"
     fixed-header
-    hide-default-footer
     @click:row="selectActivity"
   >
     <template #[`item.status`]="{ item: { status } }">

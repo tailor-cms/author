@@ -16,7 +16,16 @@ const client = new SMTPClient(config);
 client.smtp.debug(Number(Boolean(process.env.DEBUG)));
 logger.info(getConfig(client), '📧  SMTP client created');
 
-const send = (...args) => client.sendAsync(...args);
+const send = async (...args) => {
+  try {
+    const msg = await client.sendAsync(...args);
+    logger.debug('📧  Email sent', msg);
+    return msg;
+  } catch (error) {
+    logger.error('📧  Failed to send email', error);
+  }
+};
+
 const templatesDir = path.join(__dirname, './templates/');
 
 const resetUrl = (token) =>

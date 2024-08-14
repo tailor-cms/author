@@ -26,7 +26,7 @@
       v-clipboard:success="
         () => notify('ID copied to the clipboard', { immediate: true })
       "
-      class="ml-2 px-4"
+      class="ml-3 px-4"
       color="primary-lighten-3"
       size="small"
       variant="tonal"
@@ -49,7 +49,7 @@
       <VIcon class="mr-1" icon="mdi-content-copy" />
       <VIcon icon="mdi-link" />
     </VBtn>
-    <div class="mt-2 text-caption">{{ timestampInfo }}</div>
+    <div class="mt-8 text-caption">{{ timestampInfo }}</div>
   </div>
 </template>
 

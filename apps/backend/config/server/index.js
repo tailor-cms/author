@@ -6,7 +6,7 @@ import * as consumer from './consumer.js';
 import * as general from './general.js';
 import * as mail from './mail.js';
 import * as storage from './storage.js';
-import * as store from './store.js';
+import * as kvStore from './kvStore.js';
 import * as tce from './tce.js';
 import * as test from './test.js';
 
@@ -18,12 +18,12 @@ export {
   consumer,
   general,
   hostname,
+  kvStore,
   mail,
   origin,
   port,
   protocol,
   storage,
-  store,
   tce,
   test,
 };
@@ -34,12 +34,12 @@ export default {
   consumer,
   general,
   hostname,
+  kvStore,
   mail,
   origin,
   port,
   protocol,
   storage,
-  store,
   tce,
   test,
 };
