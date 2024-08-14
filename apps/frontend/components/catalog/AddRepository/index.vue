@@ -11,7 +11,7 @@
         v-bind="props"
         aria-label="Add repository"
         class="add-repository-btn"
-        color="secondary"
+        color="secondary-darken-1"
         prepend-icon="mdi-plus"
         variant="elevated"
       >
