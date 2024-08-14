@@ -475,6 +475,9 @@ importers:
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@vee-validate/i18n':
+        specifier: ^4.13.2
+        version: 4.13.2
       '@vee-validate/rules':
         specifier: ^4.13.2
         version: 4.13.2(vue@3.4.31(typescript@5.5.3))
@@ -3514,6 +3517,9 @@ packages:
 
   '@upstash/pulumi@0.2.0':
     resolution: {integrity: sha512-wxc8UGP9+4ccFwQes6FWvo4/Cia8LeLl8q1VXUoeuGHL67A1oQQmIIQ5HSFtGzOxh6t6GPlg3+kummsCReJ4Qg==}
+
+  '@vee-validate/i18n@4.13.2':
+    resolution: {integrity: sha512-GWqGgxJsQwZZCcrQOsvLNcvxLk1DmHctGw8vYXvwgqoj2hyrLtGQSmeIAqUVa2cYR6rk7301Ity5iJgOou9K5A==}
 
   '@vee-validate/rules@4.13.2':
     resolution: {integrity: sha512-NrmjxXw/gZQVhjgwIdEOeRYxn74I/3BYXTuExdwbpCPVgFh0pjTQx9aPGkVBnueeszVqO2LfWyKUpvwSWLPXRA==}
@@ -13195,6 +13201,8 @@ snapshots:
       - supports-color
       - ts-node
       - typescript
+
+  '@vee-validate/i18n@4.13.2': {}
 
   '@vee-validate/rules@4.13.2(vue@3.4.31(typescript@5.5.3))':
     dependencies:

@@ -65,7 +65,7 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
-              :error-messages="schemaErrors"
+              :error-messages="errors.schema"
               :items="availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
               data-testid="type-input"
@@ -80,7 +80,7 @@
             <VFileInput
               v-model="archiveInput"
               :clearable="false"
-              :error-messages="archiveErrors"
+              :error-messages="errors.archive"
               :label="archiveInput ? 'Selected archive' : 'Select archive'"
               accept=".tgz"
               class="mb-2"
@@ -93,15 +93,13 @@
         </VWindow>
         <div class="dialog-subcontainer">
           <RepositoryNameField
-            v-model="nameInput"
-            :is-validated="!!nameErrors.length"
             class="mb-2"
             name="name"
             placeholder="Enter name..."
           />
           <VTextarea
             v-model="descriptionInput"
-            :error-messages="descriptionErrors"
+            :error-messages="errors.description"
             label="Description"
             placeholder="Enter description..."
             variant="outlined"
@@ -109,7 +107,7 @@
           <AIAssistance
             v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
-            :name="nameInput"
+            :name="values.name"
             :schema-id="schemaInput"
             @structure="aiSuggestedOutline = $event"
           />
@@ -182,9 +180,9 @@ const isSubmitting = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
-const { handleSubmit, resetForm } = useForm();
+const { handleSubmit, resetForm, values, errors } = useForm();
 
-const { value: schemaInput, errors: schemaErrors } = useField<string>(
+const { value: schemaInput } = useField<string>(
   'schema',
   string().when((_, schema) => {
     return selectedTab.value === NEW_TAB
@@ -194,17 +192,12 @@ const { value: schemaInput, errors: schemaErrors } = useField<string>(
   { initialValue: SCHEMAS[0].id },
 );
 
-const { value: nameInput, errors: nameErrors } = useField<string>(
-  'name',
-  string().required().min(2).max(2000),
-);
-
-const { value: descriptionInput, errors: descriptionErrors } = useField<string>(
+const { value: descriptionInput } = useField<string>(
   'description',
   string().required().min(2).max(2000),
 );
 
-const { value: archiveInput, errors: archiveErrors } = useField<File>(
+const { value: archiveInput } = useField<File>(
   'archive',
   mixed().when((_, schema) => {
     return selectedTab.value === IMPORT_TAB

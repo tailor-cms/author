@@ -14,8 +14,8 @@
       </VBtn>
     </div>
     <RepositoryNameField
-      v-model="repository.name"
       :repository-id="repository.id"
+      :value="repository.name"
       class="my-2"
       @change="updateKey('name', $event)"
     />
