@@ -92,7 +92,6 @@ export const SCHEMA = {
       icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],
-        required: true,
       },
       hideOnCreate: true,
     },

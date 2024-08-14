@@ -37,11 +37,7 @@ import find from 'lodash/find';
 import { formatTimeAgo } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
-import {
-  getFormatDescription,
-  getRevisionAcronym,
-  getRevisionColor,
-} from '@/lib/revision';
+import { getFormatDescription, getRevisionAcronym } from '@/lib/revision';
 import EntityRevisions from './EntityRevisions.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -59,7 +55,6 @@ const activity = computed(() => {
   return getOutlineLocation(activityStore.getParent(activityId));
 });
 
-const color = computed(() => getRevisionColor(props.revision));
 const acronym = computed(() => getRevisionAcronym(props.revision));
 const date = computed(() => new Date(props.revision.createdAt));
 
