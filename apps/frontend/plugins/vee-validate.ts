@@ -10,6 +10,8 @@ export default defineNuxtPlugin(() => {
 
   configure({
     validateOnModelUpdate: false,
+    // TODO: messages have been modified to align with yup messages
+    // revisit once global validation strategy is finalized
     generateMessage: localize({
       en: {
         messages: {
