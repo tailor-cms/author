@@ -65,7 +65,7 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
-              :error-messages="errors.schema"
+              :error-messages="schemaErrors"
               :items="availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
               data-testid="type-input"
@@ -80,7 +80,7 @@
             <VFileInput
               v-model="archiveInput"
               :clearable="false"
-              :error-messages="errors.archive"
+              :error-messages="archiveErrors"
               :label="archiveInput ? 'Selected archive' : 'Select archive'"
               accept=".tgz"
               class="mb-2"
@@ -94,14 +94,14 @@
         <div class="dialog-subcontainer">
           <RepositoryNameField
             v-model="nameInput"
-            :is-validated="!!errors.name?.length"
+            :is-validated="!!nameErrors.length"
             class="mb-2"
             name="name"
             placeholder="Enter name..."
           />
           <VTextarea
             v-model="descriptionInput"
-            :error-messages="errors.description"
+            :error-messages="descriptionErrors"
             label="Description"
             placeholder="Enter description..."
             variant="outlined"
@@ -150,6 +150,7 @@
 <script lang="ts" setup>
 import { mixed, string } from 'yup';
 import { useField, useForm } from 'vee-validate';
+import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from 'tailor-config-shared';
 
@@ -181,41 +182,43 @@ const isSubmitting = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
-const schema = computed(() =>
-  SCHEMAS.find((it) => it.id === schemaInput.value),
-);
+const { handleSubmit, resetForm } = useForm();
 
-const schemaMeta = computed(() =>
-  schema.value?.meta.filter((it) => !it.hideOnCreate),
-);
-
-const { errors, handleSubmit, resetForm } = useForm({
-  initialValues: { schema: SCHEMAS[0].id },
-});
-
-const { value: schemaInput } = useField(
+const { value: schemaInput, errors: schemaErrors } = useField<string>(
   'schema',
   string().when((_, schema) => {
     return selectedTab.value === NEW_TAB
       ? schema.required()
       : schema.notRequired();
   }),
+  { initialValue: SCHEMAS[0].id },
 );
-const { value: nameInput } = useField(
+
+const { value: nameInput, errors: nameErrors } = useField<string>(
   'name',
   string().required().min(2).max(2000),
 );
-const { value: descriptionInput } = useField(
+
+const { value: descriptionInput, errors: descriptionErrors } = useField<string>(
   'description',
   string().required().min(2).max(2000),
 );
-const { value: archiveInput } = useField(
+
+const { value: archiveInput, errors: archiveErrors } = useField<File>(
   'archive',
   mixed().when((_, schema) => {
     return selectedTab.value === IMPORT_TAB
       ? schema.required()
       : schema.notRequired();
   }),
+);
+
+const schema = computed<ActivityConfig>(
+  () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
+);
+
+const schemaMeta = computed(() =>
+  schema.value?.meta?.filter((it) => !it.hideOnCreate),
 );
 
 const availableSchemas = computed(() => {
@@ -243,6 +246,7 @@ const create = async (formPayload: {
   schema: string;
   name: string;
   description: string;
+  data: any;
 }) => {
   const repository = await repositoryStore.create(formPayload);
   if (!aiSuggestedOutline.value.length) return;
@@ -267,7 +271,7 @@ const createActvities = (
       data: { name: activity.name },
       position: index,
     });
-    if (activity.children)
+    if (item && activity.children)
       createActvities(repositoryId, activity.children, item.id);
   });
 };

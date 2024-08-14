@@ -41,6 +41,7 @@
           v-for="input in metadata"
           :key="input.key"
           :meta="input"
+          :name="`data.${input.key}`"
           @update="setMetaValue"
         />
         <VSpacer />
@@ -70,6 +71,8 @@
 </template>
 
 <script lang="ts" setup>
+import { useForm } from 'vee-validate';
+
 import InsertLocation from '@/lib/InsertLocation';
 import MetaInput from '@/components/common/MetaInput.vue';
 import type { StoreActivity } from '@/stores/activity';
@@ -117,6 +120,8 @@ const initActivityState = (type: string) => {
 const visible = ref(false);
 const submitting = ref(false);
 
+const { handleSubmit } = useForm();
+
 const dialogTestId = computed(() => `${props.testIdPrefix}Dialog`);
 
 const taxonomyLevels = computed<any[]>(() => {
@@ -143,7 +148,7 @@ const setMetaValue = (key: string, val: any) => {
   activity.value.data[key] = val;
 };
 
-const submitForm = async () => {
+const submitForm = handleSubmit(async () => {
   const { anchor, action } = props;
   submitting.value = true;
   if (anchor) {
@@ -166,7 +171,7 @@ const submitForm = async () => {
   } finally {
     submitting.value = false;
   }
-};
+});
 
 watch(visible, (val) => {
   if (val) return;

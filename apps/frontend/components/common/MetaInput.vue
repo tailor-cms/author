@@ -31,19 +31,19 @@ const emit = defineEmits(['update']);
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
 
-const {
-  value: input,
-  errorMessage,
-  validate,
-} = useField(() => props.name || props.meta.key, props.meta.validate, {
-  label: props.meta.key,
-  initialValue: props.meta.value,
-});
+const { errorMessage, handleChange, validate } = useField(
+  () => props.name || props.meta.key,
+  props.meta.validate,
+  {
+    label: props.meta.key,
+    initialValue: props.meta.value,
+  },
+);
 
-const updateMeta = async (key: string, val: any) => {
-  input.value = val;
+const updateMeta = async (key: string, value: any) => {
+  handleChange(value, false);
   const { valid } = await validate();
-  if (valid) emit('update', key, val);
+  if (valid) emit('update', key, value);
 };
 </script>
 
