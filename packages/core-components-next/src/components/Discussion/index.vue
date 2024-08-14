@@ -15,7 +15,7 @@
         Show {{ showAll ? 'less' : 'more' }}
       </VBtn>
     </div>
-    <div v-if="showHeading" class="discussion-heading text-primary-lighten-3">
+    <div v-if="showHeading" class="discussion-heading text-primary-lighten-4">
       Comments
     </div>
     <VAlert
