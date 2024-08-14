@@ -13,7 +13,7 @@
               <ChangePassword />
             </VCol>
             <VCol>
-              <VSheet rounded="lg">
+              <VSheet color="primary-lighten-5" rounded="lg">
                 <UserInfo />
               </VSheet>
             </VCol>

@@ -9,7 +9,7 @@
       <VBtn
         v-if="isAiEnabled && !disabled"
         class="mr-3"
-        color="teal-darken-1"
+        color="teal-darken-2"
         size="small"
         variant="tonal"
         @click="generateContent"
@@ -19,7 +19,7 @@
       </VBtn>
       <VBtn
         v-if="!disabled"
-        color="secondary"
+        color="secondary-darken-1"
         size="small"
         variant="tonal"
         @click="emit('delete')"
