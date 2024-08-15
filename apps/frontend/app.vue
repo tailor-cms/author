@@ -17,4 +17,4 @@
   // support also RTL direction
   inset-inline-end: 0;
 }
-</style>=
+</style>
