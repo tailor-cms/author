@@ -32,7 +32,7 @@ const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
 
 const { errorMessage, handleChange, validate } = useField(
-  () => props.name || props.meta.key,
+  () => props.meta.key,
   props.meta.validate,
   {
     label: props.meta.key,
