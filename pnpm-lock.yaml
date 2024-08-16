@@ -655,6 +655,9 @@ importers:
       '@tailor-cms/tme-html':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-html
+      '@tailor-cms/tme-radio-group':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-radio-group
       '@tailor-cms/tme-textarea':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-textarea
@@ -816,6 +819,15 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
+      vue:
+        specifier: ^3.3.4
+        version: 3.4.31(typescript@5.5.3)
+      vuetify:
+        specifier: ^3.3.5
+        version: 3.6.12(typescript@5.5.3)(vue@3.4.31(typescript@5.5.3))
+
+  packages/core-extensions/meta-inputs/meta-radio-group:
+    dependencies:
       vue:
         specifier: ^3.3.4
         version: 3.4.31(typescript@5.5.3)

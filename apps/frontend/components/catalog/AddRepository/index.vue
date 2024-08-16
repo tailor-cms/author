@@ -107,13 +107,6 @@
             placeholder="Enter description..."
             variant="outlined"
           />
-          <AIAssistance
-            v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
-            :description="descriptionInput"
-            :name="values.name"
-            :schema-id="schemaInput"
-            @structure="aiSuggestedOutline = $event"
-          />
           <template v-if="isCreate">
             <MetaInput
               v-for="it in schemaMeta"
@@ -122,6 +115,13 @@
               class="meta-input"
             />
           </template>
+          <AIAssistance
+            v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
+            :description="descriptionInput"
+            :name="values.name"
+            :schema-id="schemaInput"
+            @structure="aiSuggestedOutline = $event"
+          />
         </div>
         <div class="d-flex justify-end">
           <VBtn
