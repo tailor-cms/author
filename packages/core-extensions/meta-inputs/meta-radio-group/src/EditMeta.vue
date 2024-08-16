@@ -16,3 +16,14 @@ withDefaults(defineProps<{ meta?: any }>(), {
 });
 defineEmits(['update']);
 </script>
+
+<style lang="scss" scoped>
+:deep(.v-label) {
+  white-space: normal;
+  margin-inline-start: 0 !important;
+}
+
+:deep(.v-radio-group) {
+  padding-inline-start: 0.375rem;
+}
+</style>
