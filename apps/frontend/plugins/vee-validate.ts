@@ -17,8 +17,8 @@ export default defineNuxtPlugin(() => {
         messages: {
           ...en.messages,
           required: '{field} is a required field',
-          min: '{field} must be at least {length} characters',
-          max: '{field} must be at most {length} characters',
+          min: '{field} must be at least 0:{length} characters',
+          max: '{field} must be at most 0:{length} characters',
         },
       },
     }),
