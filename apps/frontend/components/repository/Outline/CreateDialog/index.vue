@@ -79,6 +79,7 @@ import type { StoreActivity } from '@/stores/activity';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import TypeSelect from './TypeSelect.vue';
 import { useActivityStore } from '@/stores/activity';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
   repositoryId: number;
@@ -105,6 +106,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['close', 'created', 'expand']);
 
+const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 const selectedActivity = useSelectedActivity(props.anchor);
 const { $schemaService } = useNuxtApp() as any;
@@ -161,13 +163,13 @@ const submitForm = handleSubmit(async () => {
     anchor as StoreActivity,
   );
   try {
-    const item = await activityStore.save(activity.value);
+    const item = (await activityStore.save(activity.value)) as StoreActivity;
     if (anchor && anchor.id === activity.value?.parentId) {
       selectedActivity.expandOutlineItemParent(item);
     }
     emit('created', item);
+    currentRepositoryStore.selectActivity(item.id);
     visible.value = false;
-    navigateTo({ query: { activityId: item.id } });
   } finally {
     submitting.value = false;
   }

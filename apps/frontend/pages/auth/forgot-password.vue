@@ -39,10 +39,10 @@
           Send reset email
         </VBtn>
         <VBtn
-          :to="{ name: 'sign-in' }"
           class="mt-7"
           color="primary-lighten-3"
           variant="text"
+          @click.stop="$router.back()"
         >
           <VIcon class="pr-2">mdi-arrow-left</VIcon>Back
         </VBtn>

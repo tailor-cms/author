@@ -24,7 +24,7 @@
       <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
     </template>
     <template #append>
-      <VIcon v-if="isEditable" color="secondary-lighten-3">
+      <VIcon v-if="isEditable" color="secondary-lighten-4">
         mdi-page-next-outline
       </VIcon>
     </template>
