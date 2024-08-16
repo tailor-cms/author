@@ -95,15 +95,6 @@ export const SCHEMA = {
       },
       hideOnCreate: true,
     },
-    {
-      key: 'test',
-      type: 'TEXTAREA',
-      label: 'Test',
-      placeholder: 'Click to test',
-      validate: {
-        required: true,
-      },
-    },
   ],
   structure: [MODULE, PAGE],
   contentContainers: [SECTION_CONTAINER],
