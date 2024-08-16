@@ -14,5 +14,9 @@
   {
     "name": "@tailor-cms/tme-html",
     "clientPackage": "@tailor-cms/tme-html"
+  },
+  {
+    "name": "@tailor-cms/tme-radio-group",
+    "clientPackage": "@tailor-cms/tme-radio-group"
   }
 ]
