@@ -125,7 +125,7 @@ const navigateToActivity = (activityId: number) => {
   }
 }
 
-.v-input ::v-deep .v-label {
+.v-input :deep(.v-label) {
   color: rgb(var(--v-theme-primary-lighten-5));
   opacity: 1;
 }
