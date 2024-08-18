@@ -104,7 +104,7 @@ const findAncestors = (items: any, id: number, parents: any[] = []): any[] => {
 };
 
 const getGroupIds = (items: any[]): number[] =>
-  items.map((it: any) => (it.isGroup ? it.id : null)).filter(Boolean);
+  items.filter((it: any) => it.isGroup).map((it) => it.id);
 
 watch(
   () => props.search,
