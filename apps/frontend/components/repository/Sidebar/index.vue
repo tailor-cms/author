@@ -47,7 +47,7 @@ const store = useCurrentRepository();
 .v-navigation-drawer {
   text-align: left;
 
-  ::v-deep .v-input {
+  :deep(.v-input) {
     $error-color: rgb(var(--v-theme-secondary-lighten-4));
 
     .v-messages__message,

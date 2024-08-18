@@ -622,11 +622,11 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-html-default-edit':
-        specifier: ^0.0.8
-        version: 0.0.8(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))(vue@3.4.31(typescript@5.5.3))
+        specifier: ^0.0.9
+        version: 0.0.9(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))(vue@3.4.31(typescript@5.5.3))
       '@tailor-cms/ce-html-default-server':
-        specifier: ^0.0.8
-        version: 0.0.8
+        specifier: ^0.0.9
+        version: 0.0.9
       '@tailor-cms/ce-image-edit':
         specifier: ^1.0.0
         version: 1.0.0(vue@3.4.31(typescript@5.5.3))
@@ -655,6 +655,9 @@ importers:
       '@tailor-cms/tme-html':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-html
+      '@tailor-cms/tme-radio-group':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-radio-group
       '@tailor-cms/tme-textarea':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-textarea
@@ -727,7 +730,7 @@ importers:
         specifier: ^8.0.0
         version: 8.0.0
       vee-validate:
-        specifier: ^4.12.6
+        specifier: ^4.13.2
         version: 4.13.2(vue@3.4.31(typescript@5.5.3))
       vue:
         specifier: ^3.3.4
@@ -816,6 +819,15 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
+      vue:
+        specifier: ^3.3.4
+        version: 3.4.31(typescript@5.5.3)
+      vuetify:
+        specifier: ^3.3.5
+        version: 3.6.12(typescript@5.5.3)(vue@3.4.31(typescript@5.5.3))
+
+  packages/core-extensions/meta-inputs/meta-radio-group:
+    dependencies:
       vue:
         specifier: ^3.3.4
         version: 3.4.31(typescript@5.5.3)
@@ -2995,13 +3007,13 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
-  '@tailor-cms/ce-html-default-edit@0.0.8':
-    resolution: {integrity: sha512-8FrayLl8r5WHB3olzMTWLzC3YXbwZZEypPylXH62WIxQoHDyLnbpwz/ik82SAfMqacOxk6YjHgEctZqcrncbgA==}
+  '@tailor-cms/ce-html-default-edit@0.0.9':
+    resolution: {integrity: sha512-L2mMBP804r24eAo+LmIfVPs2y/ySyHoB04NPz9DETMtivL3dwGT5Z1yQgX1Ab5Dpj1c8LGLHjx9GxKDy9okAQw==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-html-default-server@0.0.8':
-    resolution: {integrity: sha512-kg0iG/mC1VQ+yPnGKSXDZz7nBMKUNL0X5nK114Fc4mJE5SGi/SP0iHx4CLnhNhmfvKa+WH4WcPs473MMwM+S7Q==}
+  '@tailor-cms/ce-html-default-server@0.0.9':
+    resolution: {integrity: sha512-CGOhh3Pi4k7/aTUocjoMcTz17QdvbvOS5QkUvxvbO6FOtjzjxgAIC8lqrgmF70PQkK/je1OrZZlURyPqMNgFkw==}
 
   '@tailor-cms/ce-image-edit@1.0.0':
     resolution: {integrity: sha512-bPEZqyJByOVP1onGiTrVGNm+RICgiDKw0DewJ1xGvd5Pjgs1F0A+I9O8KRjCGF0Zt2Md6iytbnPPQsCy1073EQ==}
@@ -12539,7 +12551,7 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tailor-cms/ce-html-default-edit@0.0.8(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))(vue@3.4.31(typescript@5.5.3))':
+  '@tailor-cms/ce-html-default-edit@0.0.9(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))(vue@3.4.31(typescript@5.5.3))':
     dependencies:
       '@tiptap/extension-color': 2.4.0(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))(@tiptap/extension-text-style@2.4.0(@tiptap/core@2.4.0(@tiptap/pm@2.4.0)))
       '@tiptap/extension-font-family': 2.4.0(@tiptap/core@2.4.0(@tiptap/pm@2.4.0))(@tiptap/extension-text-style@2.4.0(@tiptap/core@2.4.0(@tiptap/pm@2.4.0)))
@@ -12566,7 +12578,7 @@ snapshots:
     transitivePeerDependencies:
       - '@tiptap/core'
 
-  '@tailor-cms/ce-html-default-server@0.0.8': {}
+  '@tailor-cms/ce-html-default-server@0.0.9': {}
 
   '@tailor-cms/ce-image-edit@1.0.0(vue@3.4.31(typescript@5.5.3))':
     dependencies:

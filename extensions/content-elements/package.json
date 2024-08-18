@@ -14,8 +14,8 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
-    "@tailor-cms/ce-html-default-edit": "^0.0.8",
-    "@tailor-cms/ce-html-default-server": "^0.0.8",
+    "@tailor-cms/ce-html-default-edit": "^0.0.9",
+    "@tailor-cms/ce-html-default-server": "^0.0.9",
     "@tailor-cms/ce-image-edit": "^1.0.0",
     "@tailor-cms/ce-image-server": "^1.0.0",
     "@tailor-cms/ce-multiple-choice-edit": "^0.0.2",

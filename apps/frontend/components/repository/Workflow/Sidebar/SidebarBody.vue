@@ -102,7 +102,7 @@ const updateStatus = async (key: string, value: any = null) => {
 </script>
 
 <style lang="scss" scoped>
-.v-input ::v-deep {
+:deep(.v-input) {
   $error-color: rgb(var(--v-theme-secondary-lighten-4));
 
   .v-messages__message,
@@ -125,10 +125,8 @@ const updateStatus = async (key: string, value: any = null) => {
   }
 }
 
-.v-select ::v-deep {
-  .v-select__menu-icon {
-    color: rgb(var(--v-theme-primary-lighten-5)) !important;
-    opacity: 1;
-  }
+.v-select :deep(.v-select__menu-icon) {
+  color: rgb(var(--v-theme-primary-lighten-5)) !important;
+  opacity: 1;
 }
 </style>

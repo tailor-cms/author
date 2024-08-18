@@ -75,6 +75,7 @@ const descriptionMeta = computed<Metadata>(() => ({
   label: 'Description',
   value: repository.value?.description,
   validate: { required: true, min: 2, max: 2000 },
+  rows: 2,
 }));
 
 const updateKey = async (key: string, value: any) => {
