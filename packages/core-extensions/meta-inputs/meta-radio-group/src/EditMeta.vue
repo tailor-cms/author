@@ -1,5 +1,6 @@
 <template>
   <VRadioGroup
+    :color="color"
     :label="meta.label"
     :model-value="meta.value"
     :name="meta.key"
@@ -11,8 +12,9 @@
 </template>
 
 <script lang="ts" setup>
-withDefaults(defineProps<{ meta?: any }>(), {
+withDefaults(defineProps<{ meta?: any; color: string }>(), {
   meta: () => ({ value: null }),
+  color: 'primary-darken-3',
 });
 defineEmits(['update']);
 </script>
