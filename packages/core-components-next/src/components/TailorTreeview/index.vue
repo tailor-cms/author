@@ -78,11 +78,7 @@ const isFullyExpanded = computed(
 );
 
 const toggleExpand = () => {
-  if (isFullyExpanded.value) {
-    expanded.value = [];
-    return;
-  }
-  expanded.value = expandableItemIds.value;
+  expanded.value = isFullyExpanded.value ? [] : expandableItemIds.value;
 };
 
 const flatTree = (tree) =>
