@@ -1,8 +1,9 @@
 <template>
-  <VListGroup v-if="item.children?.length" :value="item.id">
+  <VListGroup v-if="item.isGroup" :value="item.id">
     <template #activator="{ props: activatorProps, isOpen }">
       <ListItem
         v-bind="{ ...bindings, isOpen, activatorProps }"
+        :is-empty="!item.children.length"
         is-group
         @edit="emit('edit', $event)"
       />
