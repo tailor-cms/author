@@ -81,7 +81,7 @@ function clone({ activity, body, user }, res) {
   return activity
     .clone(repositoryId, parentId, position, context)
     .then((mappings) => {
-      const opts = { where: { id: Object.values(mappings) } };
+      const opts = { where: { id: Object.values(mappings.activityId) } };
       return Activity.findAll(opts).then((data) => res.json({ data }));
     });
 }
