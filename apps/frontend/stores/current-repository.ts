@@ -11,26 +11,27 @@ const { getOutlineLevels, getSchema } = schemaConfig;
 const { getWorkflow } = workflowConfig;
 
 type Id = number | string;
+
 interface OutlineState {
   selectedActivityId: Id | null;
   expanded: Map<string, boolean>;
 }
 
-const getOutlineKey = (id: Id) => `tailor-cms-outline:${id}`;
+const getOutlineKey = (repositoryId: Id) =>
+  `tailor-cms-outline:${repositoryId}`;
 
-const loadOutline = (id: Id) => {
-  const outline = localStorage.getItem(getOutlineKey(id));
-  if (!outline) return { selectedActivityId: null, expanded: new Map() };
-  const { selectedActivityId, expanded } = JSON.parse(outline);
+const loadOutline = (repositoryId: Id) => {
+  const outline = localStorage.getItem(getOutlineKey(repositoryId));
+  const { selectedActivityId = null, expanded } = JSON.parse(outline ?? '{}');
   return { selectedActivityId, expanded: new Map(expanded) };
 };
 
-const saveOutline = (id: Id, outlineState: OutlineState) => {
+const saveOutline = (repositoryId: Id, outlineState: OutlineState) => {
   const data = JSON.stringify({
     selectedActivityId: outlineState.selectedActivityId,
     expanded: Array.from(outlineState.expanded.entries()),
   });
-  localStorage.setItem(getOutlineKey(id), data);
+  localStorage.setItem(getOutlineKey(repositoryId), data);
 };
 
 export const useCurrentRepository = defineStore('currentRepository', () => {
