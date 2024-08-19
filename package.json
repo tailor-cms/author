@@ -15,6 +15,7 @@
     "seed": "cd ./apps/backend && pnpm db:seed",
     "e2e:functional": "cd tests && pnpm e2e:functional",
     "e2e:visual": "cd tests && pnpm e2e:visual",
+    "e2e:a11y": "cd tests && pnpm e2e:a11y",
     "setup:dev": "pnpm i && node ./scripts/setup/index.js",
     "db:migrate": "cd ./apps/backend && pnpm db migrate",
     "db:reset": "cd ./apps/backend && pnpm db:reset",
