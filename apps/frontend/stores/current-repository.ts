@@ -115,11 +115,26 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const initialize = async (repoId: number) => {
     repositoryId.value = repoId;
+    const outline = localStorage.getItem(
+      `tailor-cms-outline:${repositoryId.value}`,
+    );
+    if (outline) {
+      const { selectedActivityId, expanded } = JSON.parse(outline);
+      outlineState.selectedActivityId = selectedActivityId;
+      outlineState.expanded = new Map(expanded);
+    }
     await Repository.get(repoId);
     await Activity.fetch(repoId, { outlineOnly: true });
   };
 
   function $reset() {
+    localStorage.setItem(
+      `tailor-cms-outline:${repositoryId.value}`,
+      JSON.stringify({
+        selectedActivityId: outlineState.selectedActivityId,
+        expanded: Array.from(outlineState.expanded.entries()),
+      }),
+    );
     repositoryId.value = null;
     outlineState.expanded.clear();
     $users.clear();
