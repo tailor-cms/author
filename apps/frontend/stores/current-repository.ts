@@ -11,6 +11,27 @@ const { getOutlineLevels, getSchema } = schemaConfig;
 const { getWorkflow } = workflowConfig;
 
 type Id = number | string;
+interface OutlineState {
+  selectedActivityId: Id | null;
+  expanded: Map<string, boolean>;
+}
+
+const getOutlineKey = (id: Id) => `tailor-cms-outline:${id}`;
+
+const loadOutline = (id: Id) => {
+  const outline = localStorage.getItem(getOutlineKey(id));
+  if (!outline) return { selectedActivityId: null, expanded: new Map() };
+  const { selectedActivityId, expanded } = JSON.parse(outline);
+  return { selectedActivityId, expanded: new Map(expanded) };
+};
+
+const saveOutline = (id: Id, outlineState: OutlineState) => {
+  const data = JSON.stringify({
+    selectedActivityId: outlineState.selectedActivityId,
+    expanded: Array.from(outlineState.expanded.entries()),
+  });
+  localStorage.setItem(getOutlineKey(id), data);
+};
 
 export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
@@ -115,26 +136,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const initialize = async (repoId: number) => {
     repositoryId.value = repoId;
-    const outline = localStorage.getItem(
-      `tailor-cms-outline:${repositoryId.value}`,
-    );
-    if (outline) {
-      const { selectedActivityId, expanded } = JSON.parse(outline);
-      outlineState.selectedActivityId = selectedActivityId;
-      outlineState.expanded = new Map(expanded);
-    }
+    Object.assign(outlineState, loadOutline(repoId));
     await Repository.get(repoId);
     await Activity.fetch(repoId, { outlineOnly: true });
   };
 
   function $reset() {
-    localStorage.setItem(
-      `tailor-cms-outline:${repositoryId.value}`,
-      JSON.stringify({
-        selectedActivityId: outlineState.selectedActivityId,
-        expanded: Array.from(outlineState.expanded.entries()),
-      }),
-    );
+    if (repositoryId.value) saveOutline(repositoryId.value, outlineState);
     repositoryId.value = null;
     outlineState.expanded.clear();
     $users.clear();
