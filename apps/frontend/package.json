@@ -35,8 +35,8 @@
     "@tailor-cms/core-components-next": "workspace:^",
     "@tailor-cms/meta-element-collection": "workspace:^",
     "@tailor-cms/utils": "workspace:*",
-    "@vee-validate/rules": "^4.13.2",
     "@vee-validate/i18n": "^4.13.2",
+    "@vee-validate/rules": "^4.13.2",
     "@vueuse/core": "^10.11.0",
     "axios": "^1.7.2",
     "bluebird": "^3.7.2",
@@ -60,7 +60,7 @@
     "vee-validate": "4.13.2",
     "vue3-tree-vue": "^2.0.10",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.6.12",
+    "vuetify": "3.7.0",
     "yup": "^1.4.0"
   }
 }

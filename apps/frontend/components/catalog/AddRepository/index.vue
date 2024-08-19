@@ -69,6 +69,7 @@
               :error-messages="errors.schema"
               :items="availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
+              class="required"
               data-testid="type-input"
               item-title="name"
               item-value="id"
@@ -84,7 +85,7 @@
               :error-messages="errors.archive"
               :label="archiveInput ? 'Selected archive' : 'Select archive'"
               accept=".tgz"
-              class="mb-2"
+              class="mb-2 required"
               name="archive"
               prepend-icon=""
               prepend-inner-icon="mdi-paperclip"
@@ -101,10 +102,19 @@
           <VTextarea
             v-model="descriptionInput"
             :error-messages="errors.description"
+            class="required"
             label="Description"
             placeholder="Enter description..."
             variant="outlined"
           />
+          <template v-if="isCreate">
+            <MetaInput
+              v-for="it in schemaMeta"
+              :key="it.key"
+              :meta="it"
+              class="meta-input"
+            />
+          </template>
           <AIAssistance
             v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
@@ -112,15 +122,6 @@
             :schema-id="schemaInput"
             @structure="aiSuggestedOutline = $event"
           />
-          <template v-if="isCreate">
-            <MetaInput
-              v-for="it in schemaMeta"
-              :key="it.key"
-              :meta="it"
-              :name="`data.${it.key}`"
-              class="meta-input"
-            />
-          </template>
         </div>
         <div class="d-flex justify-end">
           <VBtn
@@ -147,11 +148,11 @@
 </template>
 
 <script lang="ts" setup>
-import { mixed, string } from 'yup';
-import { useField, useForm } from 'vee-validate';
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
+import pick from 'lodash/pick';
 import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from 'tailor-config-shared';
+import { useForm } from 'vee-validate';
 
 import AIAssistance from './AIAssistance.vue';
 import { repository as api } from '@/api';
@@ -181,31 +182,21 @@ const isSubmitting = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
-const { handleSubmit, resetForm, values, errors } = useForm();
+const metaValidation = reactive<Record<string, any>>({});
 
-const { value: schemaInput } = useField<string>(
-  'schema',
-  string().when((_, schema) => {
-    return selectedTab.value === NEW_TAB
-      ? schema.required()
-      : schema.notRequired();
-  }),
-  { initialValue: SCHEMAS.length === 1 ? SCHEMAS[0].id : undefined },
-);
+const { defineField, handleSubmit, resetForm, values, errors } = useForm({
+  validationSchema: computed(() => ({
+    schema: { required: selectedTab.value === NEW_TAB },
+    name: 'required|min:2|max:250',
+    description: 'required|min:2|max:2000',
+    archive: { required: selectedTab.value === IMPORT_TAB },
+    ...metaValidation,
+  })),
+});
 
-const { value: descriptionInput } = useField<string>(
-  'description',
-  string().required().min(2).max(2000),
-);
-
-const { value: archiveInput } = useField<File>(
-  'archive',
-  mixed().when((_, schema) => {
-    return selectedTab.value === IMPORT_TAB
-      ? schema.required()
-      : schema.notRequired();
-  }),
-);
+const [schemaInput] = defineField('schema');
+const [descriptionInput] = defineField('description');
+const [archiveInput] = defineField('archive');
 
 const schema = computed<ActivityConfig>(
   () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
@@ -236,12 +227,11 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   }
 });
 
-const create = async (formPayload: {
-  schema: string;
-  name: string;
-  description: string;
-  data: any;
-}) => {
+const create = async (formData: any) => {
+  const formPayload = {
+    ...pick(formData, ['schema', 'name', 'description']),
+    data: pick(formData, Object.keys(metaValidation)),
+  };
   const repository = await repositoryStore.create(formPayload);
   if (!aiSuggestedOutline.value.length) return;
   // Trigger creation without waiting for completion
@@ -289,6 +279,15 @@ const hide = () => {
   serverError.value = '';
   resetForm();
 };
+
+watch(schemaMeta, (val) => {
+  Object.keys(metaValidation).forEach(
+    (key: string) => delete metaValidation[key],
+  );
+  if (val && val.length) {
+    return val.forEach((it) => (metaValidation[it.key] = it.validate));
+  }
+});
 </script>
 
 <style lang="scss" scoped>

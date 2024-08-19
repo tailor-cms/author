@@ -50,12 +50,18 @@ const emit = defineEmits(['edit']);
 
 const expanded = ref<number[]>([]);
 
+const flatItems = computed(() => flatTree(props.items));
+
 const processedItems = computed(() => {
   if (!props.search) return props.items;
   // clone the items to avoid modifying the original
   const items = cloneDeep(props.items);
   return items.filter(searchRecursive);
 });
+
+const hasItems = computed(() => processedItems.value.length > 0);
+
+const expandableItemIds = computed(() => getGroupIds(flatItems.value));
 
 const doesTitleMatchSearch = (title: string) =>
   title.toLowerCase().includes(props.search.toLowerCase());
@@ -67,21 +73,22 @@ const searchRecursive = (item: any): any => {
   return false;
 };
 
-const hasItems = computed(() => processedItems.value.length > 0);
 const isFullyExpanded = computed(
-  () => processedItems.value.length === expanded.value.length,
+  () => expandableItemIds.value.length === expanded.value.length,
 );
 
-const getGroupIds = (items: any[]): number[] =>
-  items.map((it: any) => (it.children?.length ? it.id : null)).filter(Boolean);
-
 const toggleExpand = () => {
-  if (isFullyExpanded.value) {
-    expanded.value = [];
-    return;
-  }
-  expanded.value = getGroupIds(processedItems.value);
+  expanded.value = isFullyExpanded.value ? [] : expandableItemIds.value;
 };
+
+const flatTree = (tree) =>
+  tree.reduce(
+    (acc, it) =>
+      it.children?.length
+        ? [...acc, it, ...flatTree(it.children)]
+        : [...acc, it],
+    [],
+  );
 
 const findAncestors = (items: any, id: number, parents: any[] = []): any[] => {
   const item = items.find((it: any) => it.id === id);
@@ -96,10 +103,13 @@ const findAncestors = (items: any, id: number, parents: any[] = []): any[] => {
     .filter(Boolean);
 };
 
+const getGroupIds = (items: any[]): number[] =>
+  items.filter((it: any) => it.isGroup).map((it) => it.id);
+
 watch(
   () => props.search,
   () => {
-    expanded.value = getGroupIds(processedItems.value);
+    expanded.value = expandableItemIds.value;
   },
 );
 

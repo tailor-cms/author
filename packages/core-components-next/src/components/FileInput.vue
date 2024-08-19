@@ -12,7 +12,7 @@
     @update:model-value="upload"
   />
   <div v-else class="mb-5 text-left">
-    <div class="ma-1 text-body-2">{{ label }}</div>
+    <div class="v-label ma-1 text-caption">{{ label }}</div>
     <VOverlay
       v-model="expanded"
       :class="{ expanded }"
@@ -23,7 +23,7 @@
         <VCard
           v-bind="image ? dialogProps : {}"
           :color="dark ? 'primary-lighten-4' : 'primary'"
-          class="d-flex align-center"
+          class="d-flex align-center mb-9"
           max-width="460"
           rounded="lg"
           variant="tonal"
@@ -135,5 +135,9 @@ const acceptedFileTypes = computed(() => {
   :deep(img) {
     max-width: 100%;
   }
+}
+
+.v-label {
+  opacity: 0.65;
 }
 </style>

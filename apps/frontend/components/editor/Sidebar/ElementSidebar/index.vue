@@ -52,7 +52,7 @@ $error-color: rgb(var(--v-theme-secondary-lighten-4));
     margin: 0 0.25rem 1.5rem;
   }
 
-  ::v-deep .v-input--error {
+  :deep(.v-input--error) {
     .v-messages__message,
     .v-field__outline,
     .v-field-label {
