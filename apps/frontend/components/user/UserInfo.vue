@@ -81,7 +81,12 @@ const submit = handleSubmit(() => {
       firstName: firstNameInput.value,
       lastName: lastNameInput.value,
     })
-    .then(() => notify('User information updated!', { immediate: true }))
+    .then(() => {
+      notify('User information updated!', { immediate: true });
+      resetForm({
+        values: pick(store.user, ['email', 'firstName', 'lastName']),
+      });
+    })
     .catch(() => {
       notify('Something went wrong!', { immediate: true, color: 'error' });
     });
