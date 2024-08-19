@@ -13,7 +13,7 @@ test('a11y check of the "Profile" page', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-profile-page-report',
     testInfo,
   );
 });
@@ -27,7 +27,7 @@ test('a11y check of the "Change Password" dialog', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-change-password-report',
     testInfo,
   );
 });

@@ -9,7 +9,7 @@ import { test } from './helpers/axe-config';
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
   const { data } = await SeedClient.seedTestRepository({
-    name: 'Visual test imported repository',
+    name: 'a11y test imported repository',
   });
   const {
     activity: { repositoryId, id },
@@ -26,7 +26,7 @@ test('a11y check of the editor page', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-editor-page-report',
     testInfo,
   );
 });
@@ -45,7 +45,7 @@ test('a11y check of the editor page upon editing the Content Element', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-editing-content-element-report',
     testInfo,
   );
 });
@@ -64,7 +64,7 @@ test('a11y check of the editor page upon adding new Content Element', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-adding-content-element-report',
     testInfo,
   );
 });
@@ -80,7 +80,7 @@ test('a11y check of the editor page comments section', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-comment-section-report',
     testInfo,
   );
 });
@@ -101,7 +101,7 @@ test('a11y check of the editor page displaying the publish diff', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-publish-diff-report',
     testInfo,
   );
 });

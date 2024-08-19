@@ -13,7 +13,7 @@ test('a11y check of the "Sign In" page', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-auth-page-report',
     testInfo,
   );
 });
@@ -27,7 +27,7 @@ test('a11y check of the "Forgot password?" page', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-forgot-password-page-report',
     testInfo,
   );
 });

@@ -15,7 +15,7 @@ test('a11y check of an empty catalog', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-catalog-page-report',
     testInfo,
   );
 });
@@ -32,7 +32,7 @@ test('a11y check of an seeded catalog', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-seeded-catalog-page-report',
     testInfo,
   );
 });

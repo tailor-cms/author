@@ -11,7 +11,7 @@ import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import SeedClient from '../../api/SeedClient';
 import { test } from './helpers/axe-config';
 
-const REPOSITORY_NAME = 'Visual test imported repository';
+const REPOSITORY_NAME = 'a11y test imported repository';
 
 test('a11y check of the repository structure page', async ({
   page,
@@ -22,7 +22,7 @@ test('a11y check of the repository structure page', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-respository-structure-report',
     testInfo,
   );
 });
@@ -41,7 +41,7 @@ test('a11y check of the history page', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-history-page-report',
     testInfo,
   );
 });
@@ -59,7 +59,7 @@ test('a11y check of the progress page', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-progress-page-report',
     testInfo,
   );
 });
@@ -75,7 +75,7 @@ test('a11y check of the settings page', async ({
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
-    'a11y-content-page-report',
+    'a11y-settings-page-report',
     testInfo,
   );
 });
