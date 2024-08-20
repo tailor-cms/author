@@ -81,19 +81,17 @@ const notify = useNotification();
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
-    currentPassword: string().required().label('Current password'),
+    currentPassword: string().required(),
     newPassword: string()
       .required()
       .min(6)
       .notOneOf(
         [yupRef('currentPassword')],
         'New password must be different from the current',
-      )
-      .label('New password'),
+      ),
     passwordConfirmation: string()
       .required()
-      .oneOf([yupRef('newPassword')], 'Password confirmation does not match')
-      .label('Password confirmation'),
+      .oneOf([yupRef('newPassword')], 'Password confirmation does not match'),
   }),
 });
 

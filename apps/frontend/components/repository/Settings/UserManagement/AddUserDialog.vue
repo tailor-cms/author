@@ -79,13 +79,18 @@ defineProps<{
 const store = useCurrentRepository();
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
-  validationSchema: object({
-    email: string()
-      .required()
-      .email()
-      .notOneOf(store.users.map((user) => user.email)),
-    role: string().required(),
-  }),
+  validationSchema: computed(() =>
+    object({
+      email: string()
+        .required()
+        .email()
+        .notOneOf(
+          store.users.map((user) => user.email),
+          'User with that email is already added',
+        ),
+      role: string().required(),
+    }),
+  ),
 });
 
 const [emailInput] = defineField('email');
