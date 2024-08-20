@@ -90,6 +90,7 @@ async function index({ query, user, opts }, res) {
   if (name) opts.where.name = name;
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
+  opts.distinct = true;
   opts.include = [
     includeRepositoryUser(user, query),
     ...includeRepositoryTags(query),

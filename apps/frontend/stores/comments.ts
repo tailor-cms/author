@@ -77,7 +77,7 @@ export const useCommentStore = defineStore('comments', () => {
     const activityComments = getActivityComments(activity.id);
     const activitySeenAt = $seen.value.activity[activity.uid] || 0;
     return activityComments.filter((it) => {
-      const isAuthor = it.author.id === authStore.user?.id;
+      const isAuthor = it.author?.id === authStore.user?.id;
       const createdAt = new Date(it.createdAt).getTime();
       if (isAuthor || activitySeenAt >= createdAt) return false;
       if (!it.contentElement) return true;
