@@ -98,7 +98,7 @@ const { defineField, errors, handleSubmit } = useForm({
     password: string().required().min(6),
     passwordConfirmation: string()
       .required()
-      .oneOf([yupRef('password')], 'password confirmation does not match'),
+      .oneOf([yupRef('password')], 'Password confirmation does not match'),
   }),
 });
 

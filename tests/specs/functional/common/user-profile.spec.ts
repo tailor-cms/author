@@ -44,7 +44,7 @@ test('updating user should fail if email already exists', async ({ page }) => {
   const { firstName, lastName } = getMockUserData();
   const profilePage = new UserProfile(page);
   await profilePage.updateProfile(email, firstName, lastName);
-  await profilePage.hasVisibleAlert(/is invalid/);
+  await profilePage.hasVisibleAlert('Email is already taken');
 });
 
 test('updating user should fail if email is invalid', async ({ page }) => {
