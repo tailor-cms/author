@@ -637,8 +637,8 @@ importers:
         specifier: ^0.0.2
         version: 0.0.2(vue@3.4.37(typescript@5.5.4))
       '@tailor-cms/ce-multiple-choice-server':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -3390,8 +3390,8 @@ packages:
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-multiple-choice-server@0.0.2':
-    resolution: {integrity: sha512-6PWXygWYuKWhGxdmj/tLe7AiNZXg2JfRume3DUovCtQz50nd1e5ohAvVD8HYNUgHHAAn/PpBAdrOT4ZVXZljRA==}
+  '@tailor-cms/ce-multiple-choice-server@0.0.3':
+    resolution: {integrity: sha512-af9uOuKokIYImvHkT0Z63gTF4mXQynUQPOeTmIyLi5E4XF5VqVVkHz7JMZ2iWtiJPZAT5eP5VvsM/pTcpXttIA==}
 
   '@tailor-cms/cek-common@0.0.3':
     resolution: {integrity: sha512-QZGKfGb8sdmS/4U2ZdbG8VKD816Q2AoL4t23/WGXyo5wgpdjw4n9eNYNTwv8kp/pE02LzSBG+CUOMTb3UAqPoA==}
@@ -13977,7 +13977,7 @@ snapshots:
       uuid: 10.0.0
       vue: 3.4.37(typescript@5.5.4)
 
-  '@tailor-cms/ce-multiple-choice-server@0.0.2':
+  '@tailor-cms/ce-multiple-choice-server@0.0.3':
     dependencies:
       lodash: 4.17.21
 
