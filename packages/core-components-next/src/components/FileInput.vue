@@ -20,7 +20,7 @@
     >
       <template #activator="{ props: dialogProps }">
         <VCard
-          v-bind="previewImage ? dialogProps : {}"
+          v-bind="showPreview ? dialogProps : {}"
           :color="dark ? 'primary-lighten-4' : 'primary'"
           class="d-flex align-center mb-9"
           max-width="460"
@@ -32,7 +32,7 @@
             <VAvatar class="mr-3" color="primary" rounded="s-lg e-sm" size="75">
               <VProgressCircular v-if="isLoading" indeterminate />
               <VImg
-                v-else-if="previewImage"
+                v-else-if="showPreview"
                 :src="publicUrl || value.publicUrl"
                 rounded="s-lg e-0"
               />
@@ -97,7 +97,7 @@ interface Props {
   variant?: VFileInput['variant'];
   density?: VFileInput['density'];
   dark?: boolean;
-  previewImage?: boolean;
+  showPreview?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -105,7 +105,7 @@ const props = withDefaults(defineProps<Props>(), {
   density: 'default',
   icon: 'mdi-file',
   dark: false,
-  previewImage: false,
+  showPreview: false,
   value: () => ({}),
 });
 const emit = defineEmits(['upload', 'delete']);
@@ -123,7 +123,7 @@ const acceptedFileTypes = computed(() => {
 });
 
 onMounted(async () => {
-  if (!props.previewImage || !props.fileKey) return;
+  if (!props.showPreview || !props.fileKey) return;
   isLoading.value = true;
   publicUrl.value = await getUrl(props.fileKey);
   isLoading.value = false;
