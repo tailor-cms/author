@@ -1,5 +1,5 @@
 import config from '../../config/server/index.js';
-import { elements } from '../../../../extensions/content-elements/server.js';
+import { elements } from '@tailor-cms/content-element-collection/server.js';
 import hooksTypes from './elementHooks.js';
 import pick from 'lodash/pick.js';
 import storage from '../../repository/storage.js';

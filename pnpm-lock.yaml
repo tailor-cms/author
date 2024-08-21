@@ -129,6 +129,12 @@ importers:
       '@tailor-cms/config':
         specifier: workspace:*
         version: link:../../packages/tailor-config-parser
+      '@tailor-cms/content-container-collection':
+        specifier: workspace:^
+        version: link:../../extensions/content-containers
+      '@tailor-cms/content-element-collection':
+        specifier: workspace:^
+        version: link:../../extensions/content-elements
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../../packages/utils
