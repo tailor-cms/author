@@ -53,11 +53,7 @@ const SECTION_CONTAINER = {
   multiple: true,
   types: ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_MULTIPLE_CHOICE'],
   categories: [
-    {
-      name: 'Questions',
-      icon: 'mdi-help-rhombus',
-      types: ['CE_MULTIPLE_CHOICE'],
-    },
+    { name: 'Questions', types: ['CE_MULTIPLE_CHOICE'] },
   ],
   ai: {
     definition: 'Sections are a way to organize content within a Page.',

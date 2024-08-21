@@ -41,7 +41,6 @@
           v-else
           :allowed-types="allowedTypes"
           :content-containers="items.contentContainers"
-          :element="element"
           :filters="filters"
           :multiple="multiple"
           :selected="selection.elements"
@@ -100,7 +99,7 @@ const TOGGLE_BUTTON = {
 };
 
 interface Props {
-  element: ContentElement;
+  element?: ContentElement | null;
   allowedTypes: string[];
   heading: string;
   multiple?: boolean;
@@ -123,6 +122,7 @@ interface Items {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  element: null,
   selected: () => [],
   filters: () => [],
   submitLabel: 'save',
@@ -217,7 +217,10 @@ const assignElements = (
     .filter((el) => {
       if (el.activityId !== container.id) return false;
       if (allowedTypes.length && !allowedTypes.includes(el.type)) return false;
-      return filters.every((filter) => filter(el, props.element));
+      if (!props.element) return true;
+      return filters.every((filter) =>
+        filter(el, props.element as ContentElement),
+      );
     })
     .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
