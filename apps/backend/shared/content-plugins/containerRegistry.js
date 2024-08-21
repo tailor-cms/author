@@ -1,27 +1,23 @@
-import BaseRegistry from './BaseRegistry.js';
-import containerList from 'tailor-config-shared/src/core-containers.js';
+import { elements } from '../../../../extensions/content-containers/server.js';
 import { schema } from 'tailor-config-shared';
 
 const { getContainerTemplateId: getId } = schema;
-const EXTENSIONS_LIST = '../../../../extensions/content-containers/index.js';
 
-class ContainerRegistry extends BaseRegistry {
+class ContainerRegistry {
   constructor() {
-    super('container', containerList, EXTENSIONS_LIST);
-    this._publishStructureBuilder = {};
+    this._registry = elements;
     this._staticsResolver = {};
     this._summaryBuilder = {};
+    this._publishStructureBuilder = {};
   }
 
   async initialize() {
-    await super.initialize();
     this.buildLookups();
   }
 
   buildLookups() {
     this._registry.forEach((it) => {
       const id = getId(it);
-
       Object.assign(this._publishStructureBuilder, { [id]: it.fetch });
       Object.assign(this._staticsResolver, { [id]: it.resolve });
       Object.assign(this._summaryBuilder, { [id]: it.buildSummary });
