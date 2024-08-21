@@ -93,7 +93,7 @@ watch(
   (value) => {
     if (!editor.value) return;
     const isSame = editor.value.getHTML() === value;
-    return isSame && editor.value?.commands.setContent(value, false);
+    return !isSame && editor.value?.commands.setContent(value, false);
   },
 );
 
