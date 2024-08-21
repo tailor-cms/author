@@ -1,6 +1,7 @@
 <template>
   <div>
     <RichTextEditor
+      :key="activity.id"
       :model-value="activityStatus.description"
       class="mb-2"
       data-testid="workflow_descriptionInput"
