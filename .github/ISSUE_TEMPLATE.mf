@@ -14,7 +14,7 @@ except for under certain conditions. -->
 <pre><code>
 <u>For server issues</u>
 * node version: X.Y.Z
-* npm version: X.Y.Z
+* pnpm version: X.Y.Z
 
 <u>For client issues</u>
 * Operating System:
