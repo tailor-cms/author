@@ -20,7 +20,7 @@
     >
       <template #activator="{ props: dialogProps }">
         <VCard
-          v-bind="image ? dialogProps : {}"
+          v-bind="showPreview ? dialogProps : {}"
           :color="dark ? 'primary-lighten-4' : 'primary'"
           class="d-flex align-center mb-9"
           max-width="460"
@@ -30,7 +30,12 @@
         >
           <div class="d-flex align-center">
             <VAvatar class="mr-3" color="primary" rounded="s-lg e-sm" size="75">
-              <VImg v-if="image" :src="image" rounded="s-lg e-0" />
+              <VProgressCircular v-if="isLoading" indeterminate />
+              <VImg
+                v-else-if="showPreview"
+                :src="publicUrl || value.publicUrl"
+                rounded="s-lg e-0"
+              />
               <VIcon v-else :icon="icon" size="x-large" />
             </VAvatar>
             <div
@@ -68,15 +73,16 @@
         variant="tonal"
         @click="expanded = false"
       />
-      <img :src="image" alt="Full image" />
+      <img :src="publicUrl || value.publicUrl" alt="Full image" />
     </VOverlay>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { type VFileInput } from 'vuetify/components';
 
+import { useStorageService } from '../composables/useStorageService';
 import { useUpload } from '../composables/useUpload';
 
 interface Props {
@@ -91,6 +97,7 @@ interface Props {
   variant?: VFileInput['variant'];
   density?: VFileInput['density'];
   dark?: boolean;
+  showPreview?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -98,17 +105,28 @@ const props = withDefaults(defineProps<Props>(), {
   density: 'default',
   icon: 'mdi-file',
   dark: false,
+  showPreview: false,
   value: () => ({}),
 });
 const emit = defineEmits(['upload', 'delete']);
 
+const { getUrl } = useStorageService();
 const { upload, deleteFile, downloadFile, uploading } = useUpload(emit);
 
 const expanded = ref(false);
-const image = computed(() => props.value?.publicUrl);
+const isLoading = ref(false);
+const publicUrl = ref('');
+
 const acceptedFileTypes = computed(() => {
   const ext = props.validate.ext;
   return ext?.length ? `.${ext.join(',.')}` : '';
+});
+
+onMounted(async () => {
+  if (!props.showPreview || !props.fileKey) return;
+  isLoading.value = true;
+  publicUrl.value = await getUrl(props.fileKey);
+  isLoading.value = false;
 });
 </script>
 

@@ -94,6 +94,7 @@ export const SCHEMA = {
         ext: ['jpg', 'jpeg', 'png'],
       },
       hideOnCreate: true,
+      showPreview: true,
     },
   ],
   structure: [MODULE, PAGE],
