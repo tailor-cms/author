@@ -37,6 +37,7 @@ const options = computed(() => {
     icon: props.meta.icon,
     value: props.meta.value,
     placeholder: props.meta.placeholder || '',
+    previewImage: props.meta.previewImage,
     dark: props.dark,
   };
 });
