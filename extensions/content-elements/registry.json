@@ -8,5 +8,10 @@
     "name": "@tailor-cms/ce-image",
     "clientPackage": "@tailor-cms/ce-image-edit",
     "serverPackage": "@tailor-cms/ce-image-server"
+  },
+  {
+    "name": "@tailor-cms/ce-multiple-choice",
+    "clientPackage": "@tailor-cms/ce-multiple-choice-edit",
+    "serverPackage": "@tailor-cms/ce-multiple-choice-server"
   }
 ]

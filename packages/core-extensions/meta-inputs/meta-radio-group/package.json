@@ -1,0 +1,15 @@
+{
+  "name": "@tailor-cms/tme-radio-group",
+  "version": "0.0.1",
+  "description": "Tailor radio group meta input",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "peerDependencies": {
+    "vue": "^3.3.4",
+    "vuetify": "^3.3.5"
+  }
+}

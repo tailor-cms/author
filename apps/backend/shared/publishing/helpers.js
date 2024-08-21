@@ -1,3 +1,4 @@
+import { createLogger } from '../logger.js';
 import db from '../database/index.js';
 import differenceWith from 'lodash/differenceWith.js';
 import filter from 'lodash/filter.js';
@@ -5,6 +6,7 @@ import find from 'lodash/find.js';
 import findIndex from 'lodash/findIndex.js';
 import get from 'lodash/get.js';
 import hash from 'hash-obj';
+import hooks from '../../content-element/hooks.js';
 import keys from 'lodash/keys.js';
 import map from 'lodash/map.js';
 import omit from 'lodash/omit.js';
@@ -12,7 +14,6 @@ import pick from 'lodash/pick.js';
 import PluginRegistry from '../content-plugins/index.js';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
-import { resolveStatics } from '../storage/helpers.js';
 import { schema } from 'tailor-config-shared';
 import storage from '../../repository/storage.js';
 import without from 'lodash/without.js';
@@ -24,9 +25,13 @@ const { getLevelRelationships, getOutlineLevels, getSupportedContainers } =
   schema;
 const { FLAT_REPO_STRUCTURE } = process.env;
 
+const logger = createLogger('publishing');
+const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
+
 const CC_ATTRS = ['id', 'uid', 'type', 'position', 'createdAt', 'updatedAt'];
 
 function publishActivity(activity) {
+  log(`[publishActivity] initiated, activity id: ${activity.id}`);
   return getStructureData(activity).then((data) => {
     const { repository, predecessors, spine } = data;
     const activityStructure = find(spine.structure, { id: activity.id });
@@ -62,7 +67,11 @@ function publishActivity(activity) {
         updateRepositoryCatalog(repository, savedSpine.publishedAt, false),
       )
       .then(() => updatePublishingStatus(repository, activity))
-      .then(() => activity.save());
+      .then(() => activity.save())
+      .then((activity) => {
+        log(`[publishActivity] completed, activity id: ${activity.id}`);
+        return activity;
+      });
   });
 }
 
@@ -74,34 +83,50 @@ function getRepositoryCatalog() {
 }
 
 function updateRepositoryCatalog(repository, publishedAt, updateInfo = true) {
-  return getRepositoryCatalog().then((catalog) => {
-    const existing = find(catalog, { id: repository.id });
-    if (!existing && repository.deletedAt) return;
-    const repositoryData = {
-      ...(updateInfo || !existing ? getRepositoryAttrs(repository) : existing),
-      publishedAt: publishedAt || existing.publishedAt,
-      detachedAt: repository.deletedAt,
-    };
-    if (existing) {
-      Object.assign(existing, omit(repositoryData, ['id']));
-    } else {
-      catalog.push(repositoryData);
-    }
-    const data = Buffer.from(JSON.stringify(catalog), 'utf8');
-    return storage.saveFile('repository/index.json', data);
-  });
+  log(
+    `[updateRepositoryCatalog] initiated, repository id: ${repository.id},
+    publishedAt: ${publishedAt}`,
+  );
+  return getRepositoryCatalog()
+    .then((catalog) => {
+      const existing = find(catalog, { id: repository.id });
+      if (!existing && repository.deletedAt) return;
+      const repositoryData = {
+        ...(updateInfo || !existing
+          ? getRepositoryAttrs(repository)
+          : existing),
+        publishedAt: publishedAt || existing.publishedAt,
+        detachedAt: repository.deletedAt,
+      };
+      if (existing) {
+        log('[updateRepositoryCatalog] repository found in catalog');
+        Object.assign(existing, omit(repositoryData, ['id']));
+      } else {
+        log('[updateRepositoryCatalog] repository not found in catalog');
+        catalog.push(repositoryData);
+      }
+      const data = Buffer.from(JSON.stringify(catalog), 'utf8');
+      return storage.saveFile('repository/index.json', data);
+    })
+    .then(() => log('[updateRepositoryCatalog] completed'));
 }
 
 async function publishRepositoryDetails(repository) {
+  log(`[publishRepositoryDetails] initiated, repository id: ${repository.id}`);
   const spine = await getPublishedStructure(repository);
   Object.assign(spine, getRepositoryAttrs(repository));
   await updatePublishingStatus(repository);
   const savedSpine = await saveSpine(spine);
   await updateRepositoryCatalog(repository, savedSpine.publishedAt);
+  log('[publishRepositoryDetails] completed');
   return repository;
 }
 
 function unpublishActivity(repository, activity) {
+  log(
+    `[unpublishActivity] initiated, repository id: ${repository.id},
+    activity id: ${activity.id}`,
+  );
   return getPublishedStructure(repository).then((spine) => {
     const spineActivity = find(spine.structure, { id: activity.id });
     if (!spineActivity) return;
@@ -110,6 +135,12 @@ function unpublishActivity(repository, activity) {
     return Promise.map(deleted, (it) => {
       const baseUrl = getBaseUrl(repository.id, it.id);
       const filePaths = getContainersFilePaths(baseUrl, it.contentContainers);
+      log(
+        `[unpublishActivity] deleting containers, container ids: ${map(
+          it.contentContainers,
+          'id',
+        ).join()}`,
+      );
       return storage.deleteFiles(filePaths);
     })
       .then(() => {
@@ -122,7 +153,11 @@ function unpublishActivity(repository, activity) {
       .then((savedSpine) =>
         updateRepositoryCatalog(repository, savedSpine.publishedAt),
       )
-      .then(() => activity.save());
+      .then(() => activity.save())
+      .then((activity) => {
+        log('[unpublishActivity] completed');
+        return activity;
+      });
   });
 }
 
@@ -152,13 +187,15 @@ async function fetchActivityContent(activity, signed = false) {
   return { containers };
 }
 
-function publishContainers(parent) {
-  return fetchContainers(parent).map(async (it) => {
+async function publishContainers(parent) {
+  log(`[publishContainers] initiated, parent id: ${parent.id}`);
+  const containers = await fetchContainers(parent).map(async (it) => {
     const { id, publishedAs = 'container' } = it;
     await saveFile(parent, `${id}.${publishedAs}`, it);
-
     return it;
   });
+  log(`[publishContainers] success, ids: ${map(containers, 'id').join()}`);
+  return containers;
 }
 
 function fetchContainers(parent) {
@@ -213,15 +250,17 @@ function unpublishDeletedContainers(parent, prevContainers, containers) {
   const prevFilePaths = getContainersFilePaths(baseUrl, prevContainers);
   const filePaths = getContainersFilePaths(baseUrl, containers);
   const deletedContainerFiles = differenceWith(prevFilePaths, filePaths);
-  if (deletedContainerFiles.length)
+  if (deletedContainerFiles.length) {
+    log('[unpublishDeletedContainers] deletable containers found');
     return storage.deleteFiles(deletedContainerFiles);
+  }
 }
 
-function resolveContainer(container) {
+async function resolveContainer(container) {
   const resolver = containerRegistry.getStaticsResolver(container);
-  return resolver
-    ? resolver(container, resolveStatics)
-    : Promise.map(container.elements, resolveStatics).then(() => container);
+  if (resolver) return resolver(container, hooks.applyFetchHooks);
+  await Promise.map(container.elements, hooks.applyFetchHooks);
+  return container;
 }
 
 function saveFile(parent, key, data) {
@@ -339,8 +378,14 @@ async function updatePublishingStatus(repository, activity) {
       modifiedAt: { [Op.gt]: sequelize.col('published_at') },
     },
   };
-  if (activity) where.id = { [Op.ne]: activity.id };
+  const debugContext = [`repository id: ${repository.id}`];
+  if (activity) {
+    where.id = { [Op.ne]: activity.id };
+    debugContext.push(`activity id: ${activity.id}`);
+  }
   const unpublishedCount = await Activity.count({ where });
+  debugContext.push(`unpublishedCount: ${unpublishedCount}`);
+  log(`[updatePublishingStatus] initiated, ${debugContext}`);
   return repository.update({ hasUnpublishedChanges: !!unpublishedCount });
 }
 

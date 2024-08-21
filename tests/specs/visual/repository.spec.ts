@@ -1,42 +1,27 @@
 import { expect, test } from '@playwright/test';
 
+import {
+  outlineLevel,
+  outlineSeed,
+  toEmptyRepository,
+  toSeededRepository,
+} from '../../helpers/seed';
 import { ActivityOutline } from '../../pom/repository/Outline.ts';
-import ApiClient from '../../api/ApiClient';
 import { percySnapshot } from '../../utils/percy.ts';
 import SeedClient from '../../api/SeedClient';
 
-const REPOSITORY_API = new ApiClient('/api/repositories/');
-
-const toSeededRepository = async (page) => {
-  await SeedClient.resetDatabase();
-  const { data } = await SeedClient.seedTestRepository({
-    name: 'Visual test imported repository',
-  });
-  await page.goto(`/repository/${data.repository.id}/root/structure`);
-};
-
-const toEmptyRepository = async (page) => {
-  const payload = {
-    schema: 'COURSE_SCHEMA',
-    name: 'Visual test imported repository',
-    description: 'Test',
-  };
-  const { data: repository } = await REPOSITORY_API.create(payload as any);
-  await page.goto(`/repository/${repository.id}/root/structure`);
-  await page.waitForLoadState('networkidle');
-  return repository;
-};
+const REPOSITORY_NAME = 'Visual test imported repository';
 
 test('Take a snapshot of the repository structure page', async ({ page }) => {
-  await toSeededRepository(page);
-  await page.getByText('Introduction to Pizza Making').isVisible();
+  await toSeededRepository(page, REPOSITORY_NAME);
+  await page.getByText(outlineSeed.group.title).isVisible();
   await percySnapshot(page, 'Repository structure page');
 });
 
 test('Take a snapshot of the history page', async ({ page }) => {
-  await toEmptyRepository(page);
+  await toEmptyRepository(page, REPOSITORY_NAME);
   const outline = new ActivityOutline(page);
-  await outline.addRootItem('Module', 'Module 1');
+  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
   const tabNavigation = page.getByTestId('repositoryRoot_nav');
   await tabNavigation.getByText('History').click();
   await expect(page.getByText('Created repository')).toBeVisible();
@@ -44,8 +29,18 @@ test('Take a snapshot of the history page', async ({ page }) => {
   await percySnapshot(page, 'Repository history page');
 });
 
+test('Take a snapshot of the progress page', async ({ page }) => {
+  await toEmptyRepository(page, REPOSITORY_NAME);
+  const outline = new ActivityOutline(page);
+  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
+  const tabNavigation = page.getByTestId('repositoryRoot_nav');
+  await tabNavigation.getByText('Progress').click();
+  await expect(page.getByText('Module 1')).toBeVisible();
+  await percySnapshot(page, 'Repository progress page');
+});
+
 test('Take a snapshot of the settings page', async ({ page }) => {
-  await toSeededRepository(page);
+  await toSeededRepository(page, REPOSITORY_NAME);
   const tabNavigation = page.getByTestId('repositoryRoot_nav');
   await tabNavigation.getByText('Settings').click();
   await page.waitForLoadState('networkidle');

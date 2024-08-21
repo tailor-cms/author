@@ -21,6 +21,9 @@ const { STORAGE_PATH } = process.env;
 const logger = getLogger();
 const app = express();
 
+if (config.general.reverseProxyPolicy)
+  app.set('trust proxy', config.general.reverseProxyPolicy);
+
 config.auth.oidc.enabled &&
   (await (async () => {
     const { default: consolidate } = await import('consolidate');
@@ -65,11 +68,6 @@ if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
 // Mount main router.
 app.use('/api', requestLogger, router);
-
-// Healthcheck route
-app.use('/healthcheck', (_req, res) => {
-  res.status(200).send();
-});
 
 // Global error handler.
 app.use(errorHandler);

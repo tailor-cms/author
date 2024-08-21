@@ -1,6 +1,6 @@
 <template>
   <div class="element-sidebar">
-    <div class="pb-8 text-body-2 font-weight-bold text-primary-lighten-4">
+    <div class="pb-4 text-body-2 font-weight-bold text-primary-lighten-4">
       Additional settings
     </div>
     <component :is="sidebarName" :element="element" @save="onSave" />
@@ -15,12 +15,10 @@ import { schema } from 'tailor-config-shared';
 
 import ElementMeta from './ElementMeta/index.vue';
 import { exposedApi } from '@/api';
-import { useCurrentRepository } from '@/stores/current-repository';
 
 const eventBus = inject('$eventBus') as any;
 const authStore = useAuthStore();
 const storageService = useStorageService();
-const repositoryStore = useCurrentRepository();
 
 interface Props {
   element: ContentElement;
@@ -38,10 +36,6 @@ provide('$storageService', storageService);
 provide('$api', exposedApi);
 provide('$schemaService', schema);
 provide('$getCurrentUser', () => authStore.user);
-provide('$repository', {
-  ...repositoryStore.repository,
-  activities: repositoryStore.activities,
-});
 
 const sidebarName = getSidebarName(props.element?.type);
 
@@ -49,11 +43,21 @@ const onSave = (data: any) => elementBus.emit('save', data);
 </script>
 
 <style lang="scss" scoped>
+$error-color: rgb(var(--v-theme-secondary-lighten-4));
+
 .element-sidebar {
   padding: 1.75rem 0.875rem 1.5rem;
 
   h3 {
     margin: 0 0.25rem 1.5rem;
+  }
+
+  :deep(.v-input--error) {
+    .v-messages__message,
+    .v-field__outline,
+    .v-field-label {
+      color: $error-color !important;
+    }
   }
 }
 </style>

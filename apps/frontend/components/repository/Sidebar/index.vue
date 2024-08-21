@@ -13,9 +13,11 @@
       <SidebarHeader :activity="store.selectedActivity" />
       <SidebarBody :activity="store.selectedActivity" />
     </div>
-    <div v-else class="placeholder text-primary-lighten-5">
+    <div v-else class="placeholder mt-16 text-primary-lighten-5">
       <div class="d-flex align-center">
-        <VIcon color="primary-lighten-3">mdi-arrow-left-circle</VIcon>
+        <VIcon color="primary-lighten-3" size="x-large">
+          mdi-arrow-left-circle
+        </VIcon>
         <VAlert
           class="info-content ml-2"
           color="primary-lighten-4"
@@ -44,26 +46,37 @@ const store = useCurrentRepository();
 <style lang="scss" scoped>
 .v-navigation-drawer {
   text-align: left;
+
+  :deep(.v-input) {
+    $error-color: rgb(var(--v-theme-secondary-lighten-4));
+
+    .v-messages__message,
+    .v-field__outline,
+    .v-field-label,
+    input::placeholder,
+    textarea::placeholder {
+      color: rgb(var(--v-theme-primary-lighten-5));
+      opacity: 1;
+    }
+
+    &.v-input--error {
+      .v-messages__message,
+      .v-field__outline,
+      .v-field-label,
+      input::placeholder,
+      textarea::placeholder {
+        color: $error-color;
+      }
+    }
+  }
 }
 
 .placeholder {
-  margin-top: 4.125rem;
   padding: 0 1rem;
 
   h4 {
     padding: 0.5rem 0 1.125rem;
     text-align: center;
-  }
-
-  .v-icon {
-    float: left;
-    padding: 0.375rem 1.25rem 0 0.75rem;
-    color: inherit;
-    font-size: 2rem;
-  }
-
-  .info-content {
-    width: 22rem;
   }
 }
 </style>

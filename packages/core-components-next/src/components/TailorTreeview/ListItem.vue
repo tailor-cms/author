@@ -1,15 +1,24 @@
 <template>
   <VListItem
-    v-bind="$attrs"
-    :class="{ 'text-secondary-lighten-4': isActive }"
+    v-bind="omit(activatorProps, 'onClick')"
+    :class="{
+      'list-item-active': isActive,
+      readonly: !isEditable,
+    }"
     :title="title"
     class="list-item"
-    @click="onItemClick"
+    @click.prevent="onItemClick"
   >
     <template #prepend>
-      <VIcon v-if="isGroup" :color="prependColor">
-        {{ prependIcon }}
-      </VIcon>
+      <VBtn
+        v-if="isGroup"
+        :color="prependColor"
+        :icon="prependIcon"
+        class="ml-n1 mr-2"
+        density="comfortable"
+        variant="text"
+        @click="activatorProps?.onClick"
+      />
     </template>
     <template #title>
       <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
@@ -24,20 +33,25 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+import omit from 'lodash/omit';
 
 const props = defineProps<{
   id: number;
   title: string;
   isGroup?: boolean;
+  isEmpty?: boolean;
   isEditable?: boolean;
   isOpen?: boolean;
   isActive?: boolean;
+  activatorProps?: Record<string, any>;
 }>();
 
 const emit = defineEmits(['edit']);
 
 const prependIcon = computed(() => {
-  return props.isGroup ? (props.isOpen ? 'mdi-folder-open' : 'mdi-folder') : '';
+  if (!props.isGroup) return '';
+  const icon = props.isOpen ? 'mdi-folder-open' : 'mdi-folder';
+  return props.isEmpty ? `${icon}-outline` : icon;
 });
 
 const prependColor = computed(() => {
@@ -55,5 +69,17 @@ const onItemClick = () => {
   i {
     opacity: 1 !important;
   }
+}
+
+.list-item.readonly {
+  pointer-events: none;
+
+  .v-btn {
+    pointer-events: auto;
+  }
+}
+
+.list-item-active {
+  color: #f9c2d5;
 }
 </style>

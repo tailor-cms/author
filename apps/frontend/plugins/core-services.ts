@@ -12,8 +12,8 @@ export default defineNuxtPlugin({
       nuxtApp.provide('schemaService', schema);
       nuxtApp.provide('storageService', assetApi);
       nuxtApp.provide('api', exposedApi);
-      // $teRegistry: contentPluginRegistry.elementRegistry,
-      // $ccRegistry: contentPluginRegistry.containerRegistry,
+
+      nuxtApp.vueApp.provide('$storageService', assetApi);
     },
   },
 });

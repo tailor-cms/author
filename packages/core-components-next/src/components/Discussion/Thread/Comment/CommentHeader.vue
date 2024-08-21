@@ -1,13 +1,14 @@
 <template>
   <div class="header">
     <UserAvatar
+      v-if="comment.author"
       :img-url="comment.author.imgUrl"
       :size="36"
       class="ml-1 mt-2"
       color="primary-lighten-4"
     />
     <div class="info-container">
-      <div class="d-flex align-center">
+      <div v-if="comment.author" class="d-flex align-center">
         <VTooltip location="right">
           <template #activator="{ props: tooltipProps }">
             <span

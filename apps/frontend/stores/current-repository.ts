@@ -1,12 +1,38 @@
-import { schema as schemaConfig } from 'tailor-config-shared';
+import {
+  schema as schemaConfig,
+  workflow as workflowConfig,
+} from 'tailor-config-shared';
 
 import { repository as repositoryApi } from '@/api';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
 
 const { getOutlineLevels, getSchema } = schemaConfig;
+const { getWorkflow } = workflowConfig;
 
 type Id = number | string;
+
+interface OutlineState {
+  selectedActivityId: Id | null;
+  expanded: Map<string, boolean>;
+}
+
+const getOutlineKey = (repositoryId: Id) =>
+  `tailor-cms-outline:${repositoryId}`;
+
+const loadOutline = (repositoryId: Id) => {
+  const outline = localStorage.getItem(getOutlineKey(repositoryId));
+  const { selectedActivityId = null, expanded } = JSON.parse(outline ?? '{}');
+  return { selectedActivityId, expanded: new Map(expanded) };
+};
+
+const saveOutline = (repositoryId: Id, outlineState: OutlineState) => {
+  const data = JSON.stringify({
+    selectedActivityId: outlineState.selectedActivityId,
+    expanded: Array.from(outlineState.expanded.entries()),
+  });
+  localStorage.setItem(getOutlineKey(repositoryId), data);
+};
 
 export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
@@ -62,6 +88,17 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     outlineState.selectedActivityId = activity.id;
     return navigateTo({ query: { ...route.query, activityId } });
   }
+  const workflow = computed(() => {
+    if (!repository.value) return null;
+    const schema = getSchema(repository.value.schema);
+    return getWorkflow(schema.workflowId);
+  });
+
+  const workflowActivities = computed(() => {
+    return activities.value.filter(
+      (it) => !it.detached && it.isTrackedInWorkflow,
+    );
+  });
 
   const isOutlineExpanded = computed(() => {
     if (!repository.value) return false;
@@ -100,11 +137,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const initialize = async (repoId: number) => {
     repositoryId.value = repoId;
+    Object.assign(outlineState, loadOutline(repoId));
     await Repository.get(repoId);
     await Activity.fetch(repoId, { outlineOnly: true });
   };
 
   function $reset() {
+    if (repositoryId.value) saveOutline(repositoryId.value, outlineState);
     repositoryId.value = null;
     outlineState.expanded.clear();
     $users.clear();
@@ -147,6 +186,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     rootActivities,
     selectActivity,
     selectedActivity,
+    workflow,
+    workflowActivities,
     isOutlineExpanded,
     isOutlineItemExpanded,
     toggleOutlineItemExpand,

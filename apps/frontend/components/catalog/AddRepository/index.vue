@@ -11,7 +11,7 @@
         v-bind="props"
         aria-label="Add repository"
         class="add-repository-btn"
-        color="secondary"
+        color="secondary-darken-1"
         prepend-icon="mdi-plus"
         variant="elevated"
       >
@@ -65,9 +65,11 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
+              :disabled="SCHEMAS.length === 1"
               :error-messages="errors.schema"
-              :items="SCHEMAS"
+              :items="availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
+              class="required"
               data-testid="type-input"
               item-title="name"
               item-value="id"
@@ -83,7 +85,7 @@
               :error-messages="errors.archive"
               :label="archiveInput ? 'Selected archive' : 'Select archive'"
               accept=".tgz"
-              class="mb-2"
+              class="mb-2 required"
               name="archive"
               prepend-icon=""
               prepend-inner-icon="mdi-paperclip"
@@ -93,8 +95,6 @@
         </VWindow>
         <div class="dialog-subcontainer">
           <RepositoryNameField
-            v-model="nameInput"
-            :is-validated="!!errors.name?.length"
             class="mb-2"
             name="name"
             placeholder="Enter name..."
@@ -102,14 +102,23 @@
           <VTextarea
             v-model="descriptionInput"
             :error-messages="errors.description"
+            class="required"
             label="Description"
             placeholder="Enter description..."
             variant="outlined"
           />
+          <template v-if="isCreate">
+            <MetaInput
+              v-for="it in schemaMeta"
+              :key="it.key"
+              :meta="it"
+              class="meta-input"
+            />
+          </template>
           <AIAssistance
             v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
-            :name="nameInput"
+            :name="values.name"
             :schema-id="schemaInput"
             @structure="aiSuggestedOutline = $event"
           />
@@ -139,13 +148,15 @@
 </template>
 
 <script lang="ts" setup>
-import { mixed, object, string } from 'yup';
+import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
+import pick from 'lodash/pick';
 import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from 'tailor-config-shared';
 import { useForm } from 'vee-validate';
 
 import AIAssistance from './AIAssistance.vue';
 import { repository as api } from '@/api';
+import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
@@ -171,34 +182,38 @@ const isSubmitting = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
-const { defineField, errors, handleSubmit, resetForm } = useForm({
-  validationSchema: object({
-    schema: string().when((_, schema) => {
-      return selectedTab.value === NEW_TAB
-        ? schema.required()
-        : schema.notRequired();
-    }),
-    name: string().required().min(2).max(2000),
-    description: string().required().min(2).max(2000),
-    archive: mixed().when((_, schema) => {
-      return selectedTab.value === IMPORT_TAB
-        ? schema.required()
-        : schema.notRequired();
-    }),
-  }),
+const metaValidation = reactive<Record<string, any>>({});
+
+const { defineField, handleSubmit, resetForm, values, errors } = useForm({
+  validationSchema: computed(() => ({
+    schema: { required: selectedTab.value === NEW_TAB },
+    name: 'required|min:2|max:250',
+    description: 'required|min:2|max:2000',
+    archive: { required: selectedTab.value === IMPORT_TAB },
+    ...metaValidation,
+  })),
 });
 
 const [schemaInput] = defineField('schema');
-const [nameInput] = defineField('name');
 const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
 
-const resetData = () => {
-  schemaInput.value = SCHEMAS[0].id;
-  nameInput.value = '';
-  descriptionInput.value = '';
-  archiveInput.value = null;
-};
+const schema = computed<ActivityConfig>(
+  () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
+);
+
+const schemaMeta = computed(() =>
+  schema.value?.meta?.filter((it) => !it.hideOnCreate),
+);
+
+const availableSchemas = computed(() => {
+  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
+    .split(',')
+    .filter(Boolean)
+    .map((schema) => schema.trim());
+  if (!availableSchemas.length) return SCHEMAS;
+  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
+});
 
 const createRepository = handleSubmit(async (formPayload: any) => {
   isSubmitting.value = true;
@@ -212,11 +227,11 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   }
 });
 
-const create = async (formPayload: {
-  schema: string;
-  name: string;
-  description: string;
-}) => {
+const create = async (formData: any) => {
+  const formPayload = {
+    ...pick(formData, ['schema', 'name', 'description']),
+    data: pick(formData, Object.keys(metaValidation)),
+  };
   const repository = await repositoryStore.create(formPayload);
   if (!aiSuggestedOutline.value.length) return;
   // Trigger creation without waiting for completion
@@ -240,7 +255,7 @@ const createActvities = (
       data: { name: activity.name },
       position: index,
     });
-    if (activity.children)
+    if (item && activity.children)
       createActvities(repositoryId, activity.children, item.id);
   });
 };
@@ -262,9 +277,17 @@ const hide = () => {
   isVisible.value = false;
   isSubmitting.value = false;
   serverError.value = '';
-  resetData();
   resetForm();
 };
+
+watch(schemaMeta, (val) => {
+  Object.keys(metaValidation).forEach(
+    (key: string) => delete metaValidation[key],
+  );
+  if (val && val.length) {
+    return val.forEach((it) => (metaValidation[it.key] = it.validate));
+  }
+});
 </script>
 
 <style lang="scss" scoped>

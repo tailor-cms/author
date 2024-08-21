@@ -15,7 +15,7 @@
         Show {{ showAll ? 'less' : 'more' }}
       </VBtn>
     </div>
-    <div v-if="showHeading" class="discussion-heading text-primary-lighten-3">
+    <div v-if="showHeading" class="discussion-heading text-primary-lighten-4">
       Comments
     </div>
     <VAlert
@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { object, string } from 'yup';
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import orderBy from 'lodash/orderBy';
@@ -85,6 +85,7 @@ import type { User } from '@tailor-cms/interfaces/user';
 
 import DiscussionThread from './Thread/index.vue';
 import ResolveButton from './ResolveButton.vue';
+import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 
 interface Props {
   user: User;
@@ -122,9 +123,7 @@ const emit = defineEmits([
   'update:confirmationActive',
 ]);
 
-const eventBus = inject<any>('$eventBus');
-const showConfirmationModal = (opts: any) =>
-  eventBus.channel('app').emit('showConfirmationModal', opts);
+const showConfirmationDialog = useConfirmationDialog();
 
 // Template refs
 const containerEl = ref<HTMLElement>();
@@ -182,7 +181,7 @@ const post = handleSubmit(() => {
 });
 
 const remove = (comment: Comment) => {
-  showConfirmationModal({
+  showConfirmationDialog({
     title: 'Remove comment',
     message: 'Are you sure you want to remove this comment?',
     action: () => emit('remove', comment.id),
@@ -191,7 +190,7 @@ const remove = (comment: Comment) => {
 };
 
 const resolveAll = () => {
-  showConfirmationModal({
+  showConfirmationDialog({
     title: 'Resolve all comments',
     message: 'Are you sure you want to resolve all comments?',
     action: () => emit('resolve'),
@@ -247,6 +246,10 @@ watch(
 
   .alert :deep(.v-icon) {
     color: var(--v-primary-darken2) !important;
+  }
+
+  .v-input :deep(textarea::placeholder) {
+    opacity: 0.85;
   }
 }
 </style>

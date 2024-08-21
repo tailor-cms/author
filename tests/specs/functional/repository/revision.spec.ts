@@ -1,11 +1,12 @@
 import { expect, test } from '@playwright/test';
 
+import { outlineLevel, toEmptyRepository } from '../../../helpers/seed.ts';
 import { ActivityOutline } from '../../../pom/repository/Outline.ts';
 import { Editor } from '../../../pom/editor/Editor.ts';
+import { expectAlert } from '../../../pom/common/utils.ts';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings.ts';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar.ts';
 import SeedClient from '../../../api/SeedClient.ts';
-import { toEmptyRepository } from '../../../helpers/seed.ts';
 
 const TAB_NAV_TEST_ID = 'repositoryRoot_nav';
 const getHistoryRoute = (id) => `/repository/${id}/root/revisions`;
@@ -31,38 +32,44 @@ test('should display a revision for updated repository', async ({ page }) => {
   await expect(page.getByText('Changed repository')).toBeVisible();
 });
 
-test('should display a revision for created module', async ({ page }) => {
+test('should display a revision for created group activity', async ({
+  page,
+}) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const moduleName = 'Module 1';
-  await outline.addRootItem('Module', moduleName);
+  const groupName = 'Group 1';
+  await outline.addRootItem(outlineLevel.GROUP, groupName);
   await page.goto(getHistoryRoute(repository.id));
-  await expect(page.getByText(`Created ${moduleName} module`)).toBeVisible();
+  await expect(page.getByText(`Created ${groupName}`)).toBeVisible();
 });
 
-test('should display a revision for updated module', async ({ page }) => {
+test('should display a revision for updated group activity', async ({
+  page,
+}) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const moduleName = 'Module 1';
-  await outline.addRootItem('Module', moduleName);
-  const item = await outline.getOutlineItemByName(moduleName);
+  const groupName = 'Group 1';
+  await outline.addRootItem(outlineLevel.GROUP, groupName);
+  const item = await outline.getOutlineItemByName(groupName);
   await item.select();
   const sidebar = new OutlineSidebar(page);
-  await sidebar.fillName('Module 1 updated');
+  await sidebar.fillName('Group 1 updated');
   await page.goto(getHistoryRoute(repository.id));
-  await expect(page.getByText(`Changed ${moduleName}`)).toBeVisible();
+  await expect(page.getByText(`Changed ${groupName}`)).toBeVisible();
 });
 
-test('should display a revision for deleted module', async ({ page }) => {
+test('should display a revision for deleted group activity', async ({
+  page,
+}) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const moduleName = 'Module 1';
-  await outline.addRootItem('Module', moduleName);
-  const item = await outline.getOutlineItemByName(moduleName);
+  const groupName = 'Group 1';
+  await outline.addRootItem(outlineLevel.GROUP, groupName);
+  const item = await outline.getOutlineItemByName(groupName);
   await item.select();
   await item.optionsMenu.remove();
   await page.goto(getHistoryRoute(repository.id));
-  await expect(page.getByText(`Removed ${moduleName}`)).toBeVisible();
+  await expect(page.getByText(`Removed ${groupName}`)).toBeVisible();
 });
 
 test('should display a revision for created content element', async ({
@@ -70,16 +77,18 @@ test('should display a revision for created content element', async ({
 }) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const pageName = 'Page 1';
-  await outline.addRootItem('Page', pageName);
-  const item = await outline.getOutlineItemByName(pageName);
+  const leafName = 'Leaf 1';
+  await outline.addRootItem(outlineLevel.LEAF, leafName);
+  const item = await outline.getOutlineItemByName(leafName);
   await item.select();
   await item.openBtn.click();
-  const editor = new Editor(page);
   await page.waitForLoadState('networkidle');
+  const editor = new Editor(page);
   await editor.addContentElement();
   await page.goto(getHistoryRoute(repository.id));
-  await expect(page.getByText('Created ce html default element')).toBeVisible();
+  await expect(
+    page.getByText(`Created ${editor.primaryElementLabel} element`),
+  ).toBeVisible();
 });
 
 test('should display a revision for updated content element', async ({
@@ -87,22 +96,22 @@ test('should display a revision for updated content element', async ({
 }) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const pageName = 'Page 1';
-  await outline.addRootItem('Page', pageName);
-  const item = await outline.getOutlineItemByName(pageName);
+  const leafName = 'Leaf 1';
+  await outline.addRootItem(outlineLevel.LEAF, leafName);
+  const item = await outline.getOutlineItemByName(leafName);
   await item.select();
   await item.openBtn.click();
-  const editor = new Editor(page);
   await page.waitForLoadState('networkidle');
+  const editor = new Editor(page);
   await editor.addContentElement();
-  await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
   const elements = await editor.getElements();
   await elements[0].el.locator('.tiptap').fill('updated content');
-  await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
-  await expect(page.locator('.v-snackbar')).not.toBeVisible();
+  await expectAlert(page, 'Element saved');
   await page.waitForLoadState('networkidle');
   await page.goto(getHistoryRoute(repository.id));
-  await expect(page.getByText('Changed ce html default')).toBeVisible();
+  await expect(
+    page.getByText(`Changed ${editor.primaryElementLabel}`),
+  ).toBeVisible();
 });
 
 test('should display a revision for deleted content element', async ({
@@ -110,17 +119,19 @@ test('should display a revision for deleted content element', async ({
 }) => {
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const pageName = 'Page 1';
-  await outline.addRootItem('Page', pageName);
-  const item = await outline.getOutlineItemByName(pageName);
+  const leafName = 'Leaf 1';
+  await outline.addRootItem(outlineLevel.LEAF, leafName);
+  const item = await outline.getOutlineItemByName(leafName);
   await item.select();
   await item.openBtn.click();
-  const editor = new Editor(page);
   await page.waitForLoadState('networkidle');
+  const editor = new Editor(page);
   await editor.addContentElement();
   await editor.removeContentElements();
   await page.goto(getHistoryRoute(repository.id));
-  await expect(page.getByText('Removed ce html default element')).toBeVisible();
+  await expect(
+    page.getByText(`Removed ${editor.primaryElementLabel} element`),
+  ).toBeVisible();
 });
 
 test.afterAll(async () => {

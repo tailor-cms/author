@@ -22,7 +22,7 @@ test('snapshot of the editor page', async ({ page }) => {
   await percySnapshot(page, 'Editor page');
 });
 
-test('snapshot of the editor page upon editing the HTML CE', async ({
+test('snapshot of the editor page upon editing the Content Element', async ({
   page,
 }) => {
   const editor = new Editor(page);
@@ -32,7 +32,7 @@ test('snapshot of the editor page upon editing the HTML CE', async ({
   await elements[0].el.click();
   // Make sure the sidebar is visible
   await expect(page.getByText('Additional settings')).toBeVisible();
-  await percySnapshot(page, 'Editor page - HTML Content Element editing');
+  await percySnapshot(page, 'Editor page - Content Element editing');
 });
 
 test('snapshot of the editor page upon adding new Content Element', async ({

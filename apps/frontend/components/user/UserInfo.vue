@@ -60,13 +60,15 @@ const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
     email: string()
       .required()
       .email()
-      .test((email) => {
-        if (store.user && email === (store.user as any).email) return true;
-        return api.fetch({ email }).then(({ total }) => !total);
-      })
-      .label('Email'),
-    firstName: string().required().min(2).label('First name'),
-    lastName: string().required().min(2).label('Last name'),
+      .test({
+        message: 'Email is already taken',
+        test: (email) => {
+          if (store.user && email === (store.user as any).email) return true;
+          return api.fetch({ email }).then(({ total }) => !total);
+        },
+      }),
+    firstName: string().required().min(2),
+    lastName: string().required().min(2),
   }),
 });
 
@@ -81,7 +83,12 @@ const submit = handleSubmit(() => {
       firstName: firstNameInput.value,
       lastName: lastNameInput.value,
     })
-    .then(() => notify('User information updated!', { immediate: true }))
+    .then(() => {
+      notify('User information updated!', { immediate: true });
+      resetForm({
+        values: pick(store.user, ['email', 'firstName', 'lastName']),
+      });
+    })
     .catch(() => {
       notify('Something went wrong!', { immediate: true, color: 'error' });
     });

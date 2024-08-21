@@ -61,6 +61,11 @@ export default defineNuxtPlugin((nuxt) => {
         add: outlineIconset,
       },
     },
+    display: {
+      thresholds: {
+        lg: 1440,
+      },
+    },
   });
   nuxt.vueApp.use(vuetify);
 });

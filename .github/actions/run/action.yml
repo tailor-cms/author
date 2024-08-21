@@ -2,12 +2,10 @@ name: Setup Tailor for E2E testing
 runs:
   using: composite
   steps:
-  - uses: pnpm/action-setup@v2
+  - uses: pnpm/action-setup@v4
+  - uses: actions/setup-node@v4
     with:
-      version: 9.0.6
-  - uses: actions/setup-node@v3
-    with:
-      node-version: 22.1
+      node-version: 22.5.1
       cache: 'pnpm'
       cache-dependency-path: './pnpm-lock.yaml'
   - name: Install dependencies
@@ -24,7 +22,7 @@ runs:
     run: pnpm dlx playwright@${{ env.PLAYWRIGHT_VERSION }} install --with-deps
     if: steps.playwright-cache.outputs.cache-hit != 'true'
   - name: Run service deps via Docker
-    uses: isbang/compose-action@v1.3.2
+    uses: hoverkraft-tech/compose-action@v2.0.1
     with:
       compose-file: docker-compose.dev.yaml
   - name: Update .env.dev config

@@ -41,6 +41,8 @@
           v-else
           :allowed-types="allowedTypes"
           :content-containers="items.contentContainers"
+          :element="element"
+          :filters="filters"
           :multiple="multiple"
           :selected="selection.elements"
           selectable
@@ -80,6 +82,7 @@ import type {
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import { activity as activityUtils } from '@tailor-cms/utils';
+import type { Filter } from '@tailor-cms/interfaces/schema';
 import flatMap from 'lodash/flatMap';
 import map from 'lodash/map';
 import type { Repository } from '@tailor-cms/interfaces/repository';
@@ -97,10 +100,12 @@ const TOGGLE_BUTTON = {
 };
 
 interface Props {
+  element: ContentElement;
   allowedTypes: string[];
   heading: string;
   multiple?: boolean;
   selected?: Relationship[];
+  filters?: Filter[];
   headerIcon?: string;
   submitLabel?: string;
   onlyCurrentRepo?: boolean;
@@ -114,11 +119,12 @@ interface Selection {
 
 interface Items {
   activities: Activity[];
-  contentContainers?: ContentContainer[];
+  contentContainers: ContentContainer[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   selected: () => [],
+  filters: () => [],
   submitLabel: 'save',
   headerIcon: 'mdi-toy-brick-plus-outline',
   onlyCurrentRepo: false,
@@ -143,14 +149,7 @@ const items: Items = reactive({
   contentContainers: [],
 });
 
-const elements = computed(() => {
-  const elements: ContentElement[] = flatMap(
-    items.contentContainers,
-    'elements',
-  );
-  if (!props.allowedTypes.length) return elements;
-  return elements.filter((it) => props.allowedTypes.includes(it.type));
-});
+const elements = computed(() => flatMap(items.contentContainers, 'elements'));
 
 const allElementsSelected = computed(
   () => selection.elements.length === elements.value.length,
@@ -213,8 +212,13 @@ const assignElements = (
   activity: Activity,
   elements: ContentElement[],
 ) => {
+  const { allowedTypes, filters = [] } = props;
   const containerElements = elements
-    .filter(({ activityId }) => activityId === container.id)
+    .filter((el) => {
+      if (el.activityId !== container.id) return false;
+      if (allowedTypes.length && !allowedTypes.includes(el.type)) return false;
+      return filters.every((filter) => filter(el, props.element));
+    })
     .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
 };
@@ -240,9 +244,9 @@ const deselectActivity = () => {
 const selectRepository = async (repository: Repository) => {
   selection.repository = repository;
   deselectActivity();
-  const isCurrentRepository = currentRepository.id === repository.id;
+  const isCurrentRepository = currentRepository.value.id === repository.id;
   items.activities = isCurrentRepository
-    ? currentRepository.activities
+    ? currentRepository.value.activities
     : await fetchActivities(repository);
 };
 
@@ -265,7 +269,7 @@ const close = () => emit('close');
 
 onMounted(() => {
   selection.elements = [...props.selected];
-  selection.repository = currentRepository;
-  items.activities = currentRepository?.activities || [];
+  selection.repository = currentRepository.value;
+  items.activities = currentRepository.value?.activities || [];
 });
 </script>

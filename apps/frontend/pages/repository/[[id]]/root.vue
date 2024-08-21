@@ -90,7 +90,7 @@ const getTabItems = ({
 const tabs = computed(() => {
   return getTabItems({
     hasSettingsAvailable: !!currentRepositoryStore.repository?.hasAdminAccess,
-    hasWorkflow: false,
+    hasWorkflow: !!currentRepositoryStore.workflow,
     hasActivities: !!currentRepositoryStore.activities.length,
     query: {},
   });

@@ -1,10 +1,18 @@
 import type { ContentElement } from './content-element';
+import type { User } from './user';
+
+export interface StatusConfig {
+  id: string;
+  label: string;
+  color: string;
+  default?: boolean;
+}
 
 export interface Status {
   id: number;
   activityId: number;
   assigneeId: number | null;
-  assignee: string | null;
+  assignee: User | null;
   status: string;
   description: string | null;
   priority: string;

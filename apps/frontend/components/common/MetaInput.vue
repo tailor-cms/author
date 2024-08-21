@@ -1,24 +1,50 @@
 <template>
-  <div>
-    <component
-      :is="componentName"
-      :class="{ required: get(meta, 'validate.required') }"
-      :meta="meta"
-      @update="(key: string, value: any) => $emit('update', key, value)"
-    />
-  </div>
+  <component
+    :is="componentName"
+    :class="{ required: get(meta, 'validate.required') }"
+    :dark="dark"
+    :error-messages="errorMessage"
+    :meta="meta"
+    @update="updateMeta"
+  />
 </template>
 
 <script lang="ts" setup>
 import get from 'lodash/get';
 import { getMetaName } from '@tailor-cms/utils';
-import type { Meta } from '@tailor-cms/interfaces/common';
+import type { Metadata } from '@tailor-cms/interfaces/schema';
+import { useField } from 'vee-validate';
 
-const props = defineProps<{ meta: Meta }>();
-defineEmits(['update']);
+interface Props {
+  meta: Metadata;
+  name?: string | null;
+  dark?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  name: null,
+  dark: false,
+});
+
+const emit = defineEmits(['update']);
 
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
+
+const { errorMessage, handleChange, validate } = useField(
+  () => props.meta.key,
+  props.meta.validate,
+  {
+    label: props.meta.key,
+    initialValue: props.meta.value,
+  },
+);
+
+const updateMeta = async (key: string, value: any) => {
+  handleChange(value, false);
+  const { valid } = await validate();
+  if (valid) emit('update', key, value);
+};
 </script>
 
 <style lang="scss" scoped>

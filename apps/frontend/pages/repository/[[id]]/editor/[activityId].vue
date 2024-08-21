@@ -39,9 +39,8 @@ const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 
-const { $ceRegistry, $eventBus } = useNuxtApp() as any;
+const { $eventBus } = useNuxtApp() as any;
 
-provide('$ceRegistry', $ceRegistry);
 provide('$getCurrentUser', () => authStore.user);
 provide('$api', exposedApi);
 provide('$schemaService', schema);
@@ -49,13 +48,6 @@ provide('$schemaService', schema);
 const appChannel = $eventBus.channel('app');
 
 await editorStore.initialize(props.activityId);
-provide('$editorState', {
-  isPublishDiff: computed(() => editorStore.showPublishDiff),
-});
-provide('$repository', {
-  ...repositoryStore.repository,
-  activities: repositoryStore.activities,
-});
 
 const selectElement = (element: any) => {
   const route = useRoute();

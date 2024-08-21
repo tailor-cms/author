@@ -6,7 +6,7 @@
         :key="id"
         class="mr-2"
         close-label="Remove tag"
-        color="primary-lighten-1"
+        color="primary-lighten-2"
         variant="tonal"
         label
       >

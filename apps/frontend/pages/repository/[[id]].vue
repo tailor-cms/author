@@ -20,13 +20,20 @@ definePageMeta({
 });
 
 const { $eventBus } = useNuxtApp() as any;
-// Expose $eventBus via Vue provide/inject to external components
-provide('$eventBus', $eventBus);
-
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const commentStore = useCommentStore();
 const repositorySSE = useRepositorySSE();
+
+// Expose $eventBus via Vue provide/inject to external components
+provide('$eventBus', $eventBus);
+provide(
+  '$repository',
+  computed(() => {
+    const { repository, activities } = currentRepositoryStore;
+    return { ...repository, activities };
+  }),
+);
 
 const isLoading = ref(true);
 

@@ -160,7 +160,7 @@ class Activity extends Model {
 
   static async cloneActivities(src, dstRepositoryId, dstParentId, opts) {
     if (!opts.idMappings)
-      opts.idMappings = { activity: {}, contentElement: {} };
+      opts.idMappings = { activityId: {}, elementId: {}, elementUid: {} };
     const { idMappings, context, transaction } = opts;
     const dstActivities = await Activity.bulkCreate(
       map(src, (it) => ({
@@ -175,15 +175,16 @@ class Activity extends Model {
       src,
       async (acc, it, index) => {
         const parent = dstActivities[index];
-        acc.activity[it.id] = parent.id;
+        acc.activityId[it.id] = parent.id;
         const where = { activityId: it.id, detached: false };
         const elements = await ContentElement.findAll({ where, transaction });
-        const elementMapping = await ContentElement.cloneElements(
+        const { idMap, uidMap } = await ContentElement.cloneElements(
           elements,
           parent,
           { context, transaction },
         );
-        acc.contentElement = { ...acc.contentElement, ...elementMapping };
+        Object.assign(acc.elementId, idMap);
+        Object.assign(acc.elementUid, uidMap);
         const children = await it.getChildren({ where: { detached: false } });
         if (!children.length) return acc;
         return Activity.cloneActivities(
@@ -230,7 +231,8 @@ class Activity extends Model {
 
   predecessors() {
     if (!this.parentId) return Promise.resolve([]);
-    return this.getParent().then((parent) => {
+    return this.getParent({ paranoid: false }).then((parent) => {
+      if (parent.deletedAt) return Promise.resolve([]);
       return parent.predecessors().then((acc) => acc.concat(parent));
     });
   }

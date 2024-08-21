@@ -1,6 +1,6 @@
-import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Comment as Events } from 'sse-event-types';
+import merge from 'lodash/merge';
 import { useStorage } from '@vueuse/core';
 
 import { comment as api } from '@/api';
@@ -33,6 +33,10 @@ export const useCommentStore = defineStore('comments', () => {
     return $items.get(item.uid) as Comment;
   }
 
+  function update(uid: string, data: any) {
+    $items.set(uid, merge($items.get(uid), data));
+  }
+
   async function fetch(
     repositoryId: number,
     params: {
@@ -61,19 +65,19 @@ export const useCommentStore = defineStore('comments', () => {
     const comment = findById(id);
     if (!comment) throw new Error('Comment not found');
     const commentWithoutContent = await api.remove(repositoryId, id);
-    $items.set(comment.uid, commentWithoutContent);
+    update(comment.uid, commentWithoutContent);
   }
 
   const getActivityComments = (activityId: number) => {
     return where((it) => it.activityId === activityId);
   };
 
-  const getUnseenActivityComments = (activity: Activity) => {
+  const getUnseenActivityComments = (activity: StoreActivity) => {
     const authStore = useAuthStore();
     const activityComments = getActivityComments(activity.id);
     const activitySeenAt = $seen.value.activity[activity.uid] || 0;
     return activityComments.filter((it) => {
-      const isAuthor = it.author.id === authStore.user?.id;
+      const isAuthor = it.author?.id === authStore.user?.id;
       const createdAt = new Date(it.createdAt).getTime();
       if (isAuthor || activitySeenAt >= createdAt) return false;
       if (!it.contentElement) return true;
@@ -105,7 +109,7 @@ export const useCommentStore = defineStore('comments', () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Comment) => add(it))
       .subscribe(Events.Update, (it: Comment) => add(it))
-      .subscribe(Events.Delete, (it: Comment) => $items.delete(it.uid));
+      .subscribe(Events.Delete, (it: Comment) => update(it.uid, it));
   };
 
   function $reset() {

@@ -4,17 +4,16 @@
       v-if="revisions.length > 0"
       class="revisions"
       color="primary-lighten-2"
-      empty-text=""
       mode="manual"
-      @load="fetchRevisions"
+      @load="loadMore"
     >
-      <ul>
+      <VList bg-color="transparent" lines="two" tag="ul">
         <RevisionItem
           v-for="revision in bundledRevisions"
           :key="revision.uid"
           :revision="revision"
         />
-      </ul>
+      </VList>
       <template #load-more="{ props: scrollProps }">
         <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="scrollProps">
           Load more
@@ -37,7 +36,7 @@
 <script lang="ts" setup>
 import last from 'lodash/last';
 import reduce from 'lodash/reduce';
-import type { Revision } from '@tailor-cms/interfaces/repository';
+import type { Revision } from '@tailor-cms/interfaces/revision';
 import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 
@@ -51,8 +50,18 @@ definePageMeta({
   name: 'revisions',
 });
 
+const { $eventBus } = useNuxtApp() as any;
 const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
+const editorStore = useEditorStore();
+const authStore = useAuthStore();
+
+const editorChannel = $eventBus.channel('editor');
+provide('$getCurrentUser', () => authStore.user);
+provide('$editorBus', editorChannel);
+provide('$editorState', {
+  isPublishDiff: computed(() => editorStore.showPublishDiff),
+});
 
 const isFetching = ref(true);
 const revisions = ref<Revision[]>([]);
@@ -62,11 +71,12 @@ const areAllItemsFetched = ref(false);
 const bundledRevisions = computed(() => {
   return reduce(
     revisions.value,
-    (acc: any, it: any) => {
-      const prevRevision = last(acc) as any;
-      if (!prevRevision) return acc.push(it);
-      const isSameOperation = prevRevision?.operation === it.operation;
-      if (!isSameInstance(prevRevision, it) || !isSameOperation) acc.push(it);
+    (acc: Revision[], it: Revision) => {
+      const prevRevision = last(acc);
+      if (prevRevision) {
+        const isSameOperation = prevRevision.operation === it.operation;
+        if (!isSameInstance(prevRevision, it) || !isSameOperation) acc.push(it);
+      }
       return acc;
     },
     [revisions.value[0]],
@@ -75,30 +85,28 @@ const bundledRevisions = computed(() => {
 
 const fetchRevisions = async () => {
   isFetching.value = true;
-  const { items, total } = await api.fetch(
-    currentRepositoryStore.repository?.id,
-    queryParams,
-  );
+  const repositoryId = currentRepositoryStore.repository?.id;
+  if (!repositoryId) return;
+  const { items, total }: { items: Revision[]; total: number } =
+    await api.fetch(repositoryId, queryParams);
   revisions.value = uniqBy([...revisions.value, ...items], 'uid');
   // Make sure to fetch all activities for the revisions
   const activityIds = uniq(
     items.map((it) => it.state.activityId || it.state.id),
   );
-  await activityStore.fetch(currentRepositoryStore.repositoryId, {
-    activityIds,
-  });
+  await activityStore.fetch(repositoryId, { activityIds });
   areAllItemsFetched.value = total <= queryParams.offset + queryParams.limit;
+  queryParams.offset += queryParams.limit;
   isFetching.value = false;
 };
 
-const resetPagination = () => {
-  queryParams.offset = 0;
-  queryParams.limit = 200;
+const loadMore = async (options: any) => {
+  await fetchRevisions();
+  options.done('ok');
 };
 
 onMounted(() => {
-  resetPagination();
-  fetchRevisions();
+  return fetchRevisions();
 });
 </script>
 

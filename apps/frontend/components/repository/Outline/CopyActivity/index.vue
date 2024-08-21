@@ -171,7 +171,7 @@ const close = () => {
 };
 
 const fetchRepositories = loader(async (search = '') => {
-  const params = { search, schema: store.repository?.schema };
+  const params = { search, schemas: store.repository?.schema };
   const repositoriesData = await repositoryApi.getRepositories(params);
   repositories.value = sortBy(repositoriesData.items, 'name');
 }, 500);

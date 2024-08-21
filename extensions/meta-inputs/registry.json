@@ -2,5 +2,21 @@
   {
     "name": "@tailor-cms/tme-textarea",
     "clientPackage": "@tailor-cms/tme-textarea"
+  },
+  {
+    "name": "@tailor-cms/tme-file",
+    "clientPackage": "@tailor-cms/tme-file"
+  },
+  {
+    "name": "@tailor-cms/tme-color",
+    "clientPackage": "@tailor-cms/tme-color"
+  },
+  {
+    "name": "@tailor-cms/tme-html",
+    "clientPackage": "@tailor-cms/tme-html"
+  },
+  {
+    "name": "@tailor-cms/tme-radio-group",
+    "clientPackage": "@tailor-cms/tme-radio-group"
   }
 ]

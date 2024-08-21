@@ -45,7 +45,7 @@ test('should not be able to add user without role', async ({ page }) => {
   const dialog = new AddUserDialog(page);
   await dialog.emailInput.fill('test+1@gostudion.com');
   await dialog.addBtn.click();
-  await dialog.hasVisibleAlert(/role is a required field/);
+  await dialog.hasVisibleAlert(/Role is a required field/);
 });
 
 test('should revoke user access to a repository', async ({ page }) => {

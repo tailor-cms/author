@@ -29,6 +29,7 @@
       v-bind="{
         ...$attrs,
         element,
+        references,
         isFocused,
         isDragged,
         isDisabled,
@@ -39,6 +40,7 @@
       @add="emit('add', $event)"
       @delete="emit('delete')"
       @focus="onSelect"
+      @link="onLink"
       @save="onSave"
     />
     <div v-if="!props.isDisabled" class="element-actions">
@@ -63,7 +65,7 @@
     <VProgressLinear
       v-if="isSaving"
       class="save-indicator"
-      color="teal accent-2"
+      color="teal-accent-1"
       height="2"
       location="bottom"
       absolute
@@ -93,6 +95,7 @@ import PublishDiffChip from './PublishDiffChip.vue';
 
 interface Props {
   element: ContentElement;
+  references?: Record<string, ContentElement[]> | null;
   parent?: Activity | null;
   isHovered?: boolean;
   isDragged?: boolean;
@@ -103,6 +106,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  references: null,
   parent: null,
   isHovered: false,
   isDragged: false,
@@ -153,6 +157,8 @@ const onSave = (data: ContentElement['data']) => {
 const focus = () => {
   editorBus.emit('element:focus', props.element, props.parent);
 };
+
+const onLink = (key?: string) => editorBus.emit('element:link', key);
 
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));
