@@ -34,10 +34,10 @@ const activityStatusUrl = (repositoryId, activityId) =>
   urlJoin(
     origin,
     '/repository',
-    `${repositoryId}/progress?activityId=${activityId}`,
+    `${repositoryId}/root/workflow?activityId=${activityId}`,
   );
 const activityUrl = ({ repositoryId, activityId }) =>
-  urlJoin(origin, '/repository', `${repositoryId}?activityId=${activityId}`);
+  urlJoin(origin, '/repository', `${repositoryId}/root/structure?activityId=${activityId}`);
 const elementUrl = ({ repositoryId, activityId, elementUid }) => {
   const query = `${activityId}?elementId=${elementUid}`;
   return urlJoin(origin, '/repository', `${repositoryId}/editor`, query);
