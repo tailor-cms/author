@@ -7,7 +7,7 @@ import * as general from './general.js';
 import * as mail from './mail.js';
 import * as storage from './storage.js';
 import * as kvStore from './kvStore.js';
-import * as tce from './tce.js';
+import tce from './tce.js';
 import * as test from './test.js';
 
 const { hostname, protocol, port, origin } = resolveUrl(process.env);

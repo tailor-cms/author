@@ -1,28 +1,18 @@
 import { storage as config } from '../../config/server/index.js';
 import get from 'lodash/get.js';
 import isString from 'lodash/isString.js';
-import PluginRegistry from '../content-plugins/index.js';
 import Promise from 'bluebird';
 import set from 'lodash/set.js';
 import storage from '../../repository/storage.js';
 import toPairs from 'lodash/toPairs.js';
 import values from 'lodash/values.js';
 
-const { elementRegistry } = PluginRegistry;
 const isPrimitive = (element) => !get(element, 'data.embeds');
 const isQuestion = (element) => get(element, 'data.question');
 const isStorageAsset = (v) => isString(v) && v.startsWith(config.protocol);
 const extractStorageKey = (v) => v.substr(config.protocol.length, v.length);
 
-// TODO: Temp patch until asset embeding is unified
 function resolveStatics(item) {
-  const customResolver = elementRegistry.getStaticsHandler(item.type);
-  return customResolver
-    ? customResolver(item, defaultStaticsResolver, resolveStatics)
-    : defaultStaticsResolver(item);
-}
-
-function defaultStaticsResolver(item) {
   return isQuestion(item) ? resolveQuestion(item) : resolveAsset(item);
 }
 
