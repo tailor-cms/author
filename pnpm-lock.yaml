@@ -172,7 +172,7 @@ importers:
         specifier: ^5.4.4
         version: 5.4.4
       cheerio:
-        specifier: ^1.0.0-rc.12
+        specifier: 1.0.0-rc.12
         version: 1.0.0-rc.12
       connect-history-api-fallback:
         specifier: ^2.0.0
