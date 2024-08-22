@@ -26,8 +26,14 @@ class ElementsRegistry {
     const elementHooks = this._hooks[elementType];
     if (!elementHooks || !elementHooks[hookName]) return;
     const services = { config: config.tce, storage };
-    return (element, options) =>
-      elementHooks[hookName](element, services, options);
+    return (element, options) => {
+      const context = options?.context || {};
+      return elementHooks[hookName](
+        element,
+        { ...services, context },
+        'authoring',
+      );
+    };
   }
 }
 
