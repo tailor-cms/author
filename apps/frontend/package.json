@@ -38,7 +38,7 @@
     "@vee-validate/i18n": "^4.13.2",
     "@vee-validate/rules": "^4.13.2",
     "@vueuse/core": "^10.11.0",
-    "axios": "^1.7.2",
+    "axios": "^1.7.4",
     "bluebird": "^3.7.2",
     "compressorjs": "^1.2.1",
     "date-fns": "^3.6.0",
