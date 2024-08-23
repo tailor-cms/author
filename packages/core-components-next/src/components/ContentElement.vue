@@ -26,6 +26,8 @@
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <component
+      :is="componentName"
+      v-if="isComponentAvailable"
       v-bind="{
         ...$attrs,
         element,
@@ -35,8 +37,6 @@
         isDisabled,
         dense,
       }"
-      :is="componentName"
-      v-if="isComponentAvailable"
       :id="`element_${id.value}`"
       @add="emit('add', $event)"
       @delete="emit('delete')"
