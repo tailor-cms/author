@@ -38,7 +38,7 @@
     "boxen": "^7.1.1",
     "bunyan": "^1.8.15",
     "change-case": "^5.4.4",
-    "cheerio": "^1.0.0-rc.12",
+    "cheerio": "1.0.0-rc.12",
     "connect-history-api-fallback": "^2.0.0",
     "consolidate": "^1.0.4",
     "cookie-parser": "^1.4.6",

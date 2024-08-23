@@ -13,7 +13,7 @@
         @save="save"
       />
     </template>
-    <DefaultToolbar v-else :label="config.name" />
+    <DefaultToolbar v-else :label="config?.name || ''" />
     <slot name="embed-toolbar"></slot>
   </VSheet>
 </template>

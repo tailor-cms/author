@@ -108,7 +108,7 @@ export const useCommentStore = defineStore('comments', () => {
   const $subscribeToSSE = () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Comment) => add(it))
-      .subscribe(Events.Update, (it: Comment) => add(it))
+      .subscribe(Events.Update, (it: Comment) => update(it.uid, it))
       .subscribe(Events.Delete, (it: Comment) => update(it.uid, it));
   };
 

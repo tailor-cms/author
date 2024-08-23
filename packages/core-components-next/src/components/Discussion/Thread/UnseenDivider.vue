@@ -4,7 +4,7 @@
     <VChip
       class="mt-4 mb-1 text-uppercase"
       close-icon="mdi-close"
-      color="primary-lighten-3"
+      color="primary-lighten-4"
       size="small"
       variant="tonal"
       closable

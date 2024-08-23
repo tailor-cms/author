@@ -36,6 +36,7 @@
         dense,
       }"
       :is="componentName"
+      v-if="isComponentAvailable"
       :id="`element_${id.value}`"
       @add="emit('add', $event)"
       @delete="emit('delete')"
@@ -43,6 +44,12 @@
       @link="onLink"
       @save="onSave"
     />
+    <VSheet v-else class="py-10" color="primary-lighten-5">
+      <div class="text-h6">
+        {{ element.type.replace('_', ' ') }}
+      </div>
+      <div class="pt-4 text-subtitle-2">Component is not available!</div>
+    </VSheet>
     <div v-if="!props.isDisabled" class="element-actions">
       <div
         v-if="showDiscussion"
@@ -118,6 +125,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
 
+const ceRegistry = inject<any>('$ceRegistry');
 const editorBus = inject<any>('$editorBus');
 const editorState = inject<any>('$editorState');
 const eventBus = inject<any>('$eventBus');
@@ -137,6 +145,9 @@ const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
+const isComponentAvailable = computed(
+  () => !!ceRegistry.get(props.element.type),
+);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
