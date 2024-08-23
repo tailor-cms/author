@@ -120,6 +120,7 @@ const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
+provide('$activityStore', activityStore);
 if (runtimeConfig.public.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);
