@@ -5,7 +5,7 @@
     :model-value="meta.value"
     :name="meta.key"
     class="my-2"
-    @change="$emit('update', meta.key, $event)"
+    @update:model-value="$emit('update', meta.key, $event)"
   >
     <VRadio v-for="it in meta.items" :key="it.value" v-bind="it" />
   </VRadioGroup>

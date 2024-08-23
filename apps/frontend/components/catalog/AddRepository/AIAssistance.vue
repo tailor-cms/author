@@ -104,7 +104,7 @@ import VueTreeView from 'vue3-tree-vue';
 import aiAPI from '@/api/ai';
 
 const props = defineProps<{
-  schemaId: String;
+  schemaId: String | null;
   name: String;
   description: String;
 }>();
