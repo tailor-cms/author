@@ -1,22 +1,26 @@
 <template>
   <VRadioGroup
+    v-model="input"
     :color="color"
     :label="meta.label"
-    :model-value="meta.value"
     :name="meta.key"
     class="my-2"
-    @update:model-value="$emit('update', meta.key, $event)"
+    @change="$emit('update', meta.key, input)"
   >
     <VRadio v-for="it in meta.items" :key="it.value" v-bind="it" />
   </VRadioGroup>
 </template>
 
 <script lang="ts" setup>
-withDefaults(defineProps<{ meta?: any; color: string }>(), {
+import { ref } from 'vue';
+
+const props = withDefaults(defineProps<{ meta?: any; color: string }>(), {
   meta: () => ({ value: null }),
   color: 'primary-darken-3',
 });
 defineEmits(['update']);
+
+const input = ref(props.meta.value);
 </script>
 
 <style lang="scss" scoped>
