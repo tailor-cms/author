@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-const props = withDefaults(defineProps<{ meta?: any; color: string }>(), {
+const props = withDefaults(defineProps<{ meta?: any; color?: string }>(), {
   meta: () => ({ value: null }),
   color: 'primary-darken-3',
 });
