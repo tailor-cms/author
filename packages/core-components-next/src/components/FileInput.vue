@@ -125,10 +125,9 @@ const acceptedFileTypes = computed(() => {
 watch(
   () => props.fileKey,
   async (key) => {
-    if (!key) publicUrl.value = '';
     if (!props.showPreview) return;
     isLoading.value = true;
-    publicUrl.value = await getUrl(props.fileKey);
+    publicUrl.value = key ? await getUrl(key) : '';
     isLoading.value = false;
   },
   { immediate: true },
