@@ -196,7 +196,7 @@ const availableSchemas = computed(() => {
 const { defineField, handleSubmit, resetForm, values, errors } = useForm({
   initialValues: {
     schema:
-      availableSchemas.value.length === 1 ? availableSchemas.value[0].id : '',
+      availableSchemas.value.length === 1 ? availableSchemas.value[0].id : null,
     name: '',
     description: '',
     archive: null,

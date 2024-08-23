@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { type VFileInput } from 'vuetify/components';
 
 import { useStorageService } from '../composables/useStorageService';
@@ -122,12 +122,16 @@ const acceptedFileTypes = computed(() => {
   return ext?.length ? `.${ext.join(',.')}` : '';
 });
 
-onMounted(async () => {
-  if (!props.showPreview || !props.fileKey) return;
-  isLoading.value = true;
-  publicUrl.value = await getUrl(props.fileKey);
-  isLoading.value = false;
-});
+watch(
+  () => props.fileKey,
+  async (key) => {
+    if (!props.showPreview) return;
+    isLoading.value = true;
+    publicUrl.value = key ? await getUrl(key) : '';
+    isLoading.value = false;
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>
