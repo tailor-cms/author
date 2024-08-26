@@ -11,7 +11,8 @@ const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 // https://github.com/nfriedly/express-rate-limit/blob/master/README.md#store
 class Store {
   constructor() {
-    this.cache = new Keyv(kvStoreConfig.providerUrl, {
+    this.cache = new Keyv({
+      store: kvStoreConfig.store,
       namespace: 'request-limiter',
       ttl: kvStoreConfig.ttl,
     });
