@@ -1,5 +1,7 @@
 import { createId as cuid } from '@paralleldrive/cuid2';
 import Keyv from 'keyv';
+// eslint-disable-next-line no-unused-vars
+import KeyvRedis from '@keyv/redis';
 import { setTimeout } from 'node:timers/promises';
 
 import { consumer, kvStore } from '../../config/server/index.js';

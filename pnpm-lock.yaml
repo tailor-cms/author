@@ -123,6 +123,9 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
+      '@keyv/redis':
+        specifier: ^3.0.1
+        version: 3.0.1
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
@@ -1953,6 +1956,10 @@ packages:
 
   '@js-sdsl/ordered-map@4.4.2':
     resolution: {integrity: sha512-iUKgm52T8HOE/makSxjqoWhe95ZJA1/G1sYsGev2JDKUSS14KAgg1LHb+Ba+IPow0xflbnSkOsZcO08C7w1gYw==}
+
+  '@keyv/redis@3.0.1':
+    resolution: {integrity: sha512-eyqzomQC76LjUOEkPP8rdR2Fk4eZBSS0Ma47i7CNiQuv8NCw3trZvghx8L5Xruk7XPEj/eRAMrAxP//xQFOPdQ==}
+    engines: {node: '>= 18'}
 
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
@@ -10799,6 +10806,12 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@js-sdsl/ordered-map@4.4.2': {}
+
+  '@keyv/redis@3.0.1':
+    dependencies:
+      ioredis: 5.4.1
+    transitivePeerDependencies:
+      - supports-color
 
   '@kwsites/file-exists@1.1.1':
     dependencies:

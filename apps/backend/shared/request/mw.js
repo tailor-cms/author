@@ -3,6 +3,8 @@ import {
   kvStore as kvStoreConfig,
 } from '../../config/server/index.js';
 import Keyv from 'keyv';
+// eslint-disable-next-line no-unused-vars
+import KeyvRedis from '@keyv/redis';
 import rateLimit from 'express-rate-limit';
 
 const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
