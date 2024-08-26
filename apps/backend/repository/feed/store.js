@@ -1,7 +1,8 @@
 import config from '../../config/server/index.js';
 import Keyv from 'keyv';
 
-const store = new Keyv(config.kvStore.providerUrl, {
+const store = new Keyv({
+  store: config.kvStore.store,
   namespace: 'active-users',
   ttl: 60 * 1000, // 1 minute in milliseconds
 });

@@ -113,7 +113,9 @@ const elementSidebarEnabled = computed(() => {
   const { inputs, relationships } = metadata.value;
   const visibleRelationships = reject(relationships, 'disableSidebarUi');
   const element = $ceRegistry.get(props.selectedElement.type);
-  return inputs.length || visibleRelationships.length || element.hasSideToolbar;
+  return (
+    inputs.length || visibleRelationships.length || element?.hasSideToolbar
+  );
 });
 
 const metadata = computed(() => {

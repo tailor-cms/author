@@ -112,15 +112,17 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
     email: string()
       .required()
       .email()
-      .test((email) => {
-        if (isNewUser.value) return true;
-        if (props.userData.email === email) return true;
-        return api.fetch({ email }).then(({ total }) => !total);
-      })
-      .label('Email'),
-    firstName: string().min(2).required().label('First name'),
-    lastName: string().min(2).required().label('Last name'),
-    role: string().required().label('Role'),
+      .test({
+        message: 'Email is already taken',
+        test: (email) => {
+          if (!isNewUser.value) return true;
+          if (props.userData.email === email) return true;
+          return api.fetch({ email }).then(({ total }) => !total);
+        },
+      }),
+    firstName: string().min(2).required(),
+    lastName: string().min(2).required(),
+    role: string().required(),
   }),
 });
 

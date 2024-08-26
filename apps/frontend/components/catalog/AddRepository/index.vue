@@ -65,7 +65,7 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
-              :disabled="SCHEMAS.length === 1"
+              :disabled="availableSchemas.length === 1"
               :error-messages="errors.schema"
               :items="availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
@@ -184,7 +184,23 @@ const aiSuggestedOutline = ref([]);
 
 const metaValidation = reactive<Record<string, any>>({});
 
+const availableSchemas = computed(() => {
+  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
+    .split(',')
+    .filter(Boolean)
+    .map((schema) => schema.trim());
+  if (!availableSchemas.length) return SCHEMAS;
+  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
+});
+
 const { defineField, handleSubmit, resetForm, values, errors } = useForm({
+  initialValues: {
+    schema:
+      availableSchemas.value.length === 1 ? availableSchemas.value[0].id : null,
+    name: '',
+    description: '',
+    archive: null,
+  },
   validationSchema: computed(() => ({
     schema: { required: selectedTab.value === NEW_TAB },
     name: 'required|min:2|max:250',
@@ -205,15 +221,6 @@ const schema = computed<ActivityConfig>(
 const schemaMeta = computed(() =>
   schema.value?.meta?.filter((it) => !it.hideOnCreate),
 );
-
-const availableSchemas = computed(() => {
-  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
-    .split(',')
-    .filter(Boolean)
-    .map((schema) => schema.trim());
-  if (!availableSchemas.length) return SCHEMAS;
-  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
-});
 
 const createRepository = handleSubmit(async (formPayload: any) => {
   isSubmitting.value = true;

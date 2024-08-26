@@ -58,10 +58,10 @@ const props = defineProps<{
   modelValue: Array<number | null>;
   options: Array<User | null>;
 }>();
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:model-value']);
 
 const toggleAssignee = (id?: number) =>
-  emit('update:modelValue', xor(props.modelValue, [id ?? null]));
+  emit('update:model-value', xor(props.modelValue, [id ?? null]));
 
 const baseOptions = computed(() => props.options.slice(0, NO_BASE_OPTIONS));
 const moreOptions = computed(() => props.options.slice(NO_BASE_OPTIONS));

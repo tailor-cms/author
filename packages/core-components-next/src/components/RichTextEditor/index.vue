@@ -62,7 +62,7 @@ const props = withDefaults(defineProps<Props>(), {
   variant: undefined,
   rules: undefined,
 });
-const emit = defineEmits(['update:modelValue', 'change']);
+const emit = defineEmits(['update:model-value', 'change']);
 
 const input = ref();
 const content = ref(props.modelValue);
@@ -77,7 +77,7 @@ const editor = useEditor({
     content.value = editor.storage.characterCount.words()
       ? editor.getHTML()
       : '';
-    return emit('update:modelValue', content.value);
+    return emit('update:model-value', content.value);
   },
   extensions: [
     StarterKit.configure({ heading: false, horizontalRule: false }),
@@ -93,7 +93,7 @@ watch(
   (value) => {
     if (!editor.value) return;
     const isSame = editor.value.getHTML() === value;
-    return isSame && editor.value?.commands.setContent(value, false);
+    return !isSame && editor.value?.commands.setContent(value, false);
   },
 );
 

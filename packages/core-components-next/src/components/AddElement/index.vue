@@ -86,7 +86,7 @@ import SelectElement from '../SelectElement/index.vue';
 const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
 
-const DEFAULT_CATEGORY = { name: 'Content Elements', icon: 'mdi-set-center' };
+const DEFAULT_CATEGORY = { name: 'Content Elements' };
 
 const getQuestionData = (element: any, type: string) => {
   const data = { width: LAYOUT.FULL_WIDTH };
@@ -141,11 +141,11 @@ const contentElements = computed(() => {
 const library = computed(() => {
   return Object.values(
     contentElements.value.reduce((acc, element) => {
-      const { name, icon } =
+      const { name } =
         props.categories?.find((it) => it.types.includes(element.type)) ||
         DEFAULT_CATEGORY;
       if (acc[name]) acc[name].elements.push(element);
-      else acc[name] = { name, icon, elements: [element] };
+      else acc[name] = { name, elements: [element] };
       return acc;
     }, {} as any),
   );

@@ -12,6 +12,28 @@ const { getWorkflow } = workflowConfig;
 
 type Id = number | string;
 
+interface OutlineState {
+  selectedActivityId: Id | null;
+  expanded: Map<string, boolean>;
+}
+
+const getOutlineKey = (repositoryId: Id) =>
+  `tailor-cms-outline:${repositoryId}`;
+
+const loadOutline = (repositoryId: Id) => {
+  const outline = localStorage.getItem(getOutlineKey(repositoryId));
+  const { selectedActivityId = null, expanded } = JSON.parse(outline ?? '{}');
+  return { selectedActivityId, expanded: new Map(expanded) };
+};
+
+const saveOutline = (repositoryId: Id, outlineState: OutlineState) => {
+  const data = JSON.stringify({
+    selectedActivityId: outlineState.selectedActivityId,
+    expanded: Array.from(outlineState.expanded.entries()),
+  });
+  localStorage.setItem(getOutlineKey(repositoryId), data);
+};
+
 export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
   const Repository = useRepositoryStore();
@@ -115,11 +137,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const initialize = async (repoId: number) => {
     repositoryId.value = repoId;
+    Object.assign(outlineState, loadOutline(repoId));
     await Repository.get(repoId);
     await Activity.fetch(repoId, { outlineOnly: true });
   };
 
   function $reset() {
+    if (repositoryId.value) saveOutline(repositoryId.value, outlineState);
     repositoryId.value = null;
     outlineState.expanded.clear();
     $users.clear();
