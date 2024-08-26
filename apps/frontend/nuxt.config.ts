@@ -6,6 +6,9 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
+  vite: {
+    optimizeDeps: { include: ['lodash'] },
+  },
   devtools: { enabled: true },
   telemetry: false,
   devServer: {
@@ -35,6 +38,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       aiUiEnabled: false,
+      availableSchemas: '',
     },
   },
 });

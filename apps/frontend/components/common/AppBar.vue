@@ -15,10 +15,10 @@
       <VAppBarTitle class="app-name text-primary-lighten-3">
         Tailor
         <span v-if="!smAndDown" class="text-caption font-weight-bold">
-          <span class="text-primary-lighten-2 text-uppercase">
+          <span class="text-primary-lighten-3 text-uppercase">
             authoring meets
           </span>
-          <span class="text-secondary-lighten-2">AI</span>
+          <span class="text-teal-lighten-4">AI</span>
         </span>
       </VAppBarTitle>
     </NuxtLink>
@@ -28,8 +28,9 @@
         :key="name"
         :rounded="false"
         :to="to"
-        color="secondary-lighten-4"
+        color="teal-lighten-5"
         height="100"
+        min-width="120"
         variant="text"
       >
         <span class="toolbar-route text-truncate">{{ name }}</span>

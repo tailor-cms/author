@@ -5,8 +5,8 @@ import {
   updatePublishingStatus,
   updateRepositoryCatalog,
 } from './helpers.js';
+import publishingThrottler from './PublishingThrottler.js';
 import PromiseQueue from 'promise-queue';
-import webhook from '../webhookProvider.js';
 
 class PublishingService {
   constructor() {
@@ -40,8 +40,13 @@ export default new PublishingService();
 
 function createPublishJob(action, payload) {
   return async () => {
-    const data = await action(payload);
-    if (webhook.isConnected) webhook.send(data);
-    return data;
+    const webhookCtx = payload.repositoryId
+      ? { repositoryId: payload.repositoryId, activityId: payload.id }
+      : { repositoryId: payload.id };
+
+    await publishingThrottler.lock(webhookCtx.repositoryId);
+    const entity = await action(payload);
+    await publishingThrottler.call(webhookCtx);
+    return entity;
   };
 }

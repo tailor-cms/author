@@ -5,6 +5,8 @@ and delivered. It emphasizes configurability and extensibility, providing an
 intuitive authoring experience that simplifies content management. Below is 
 an overview of its core features and the philosophy behind its development.
 
+<video controls="controls" src="./assets/Tailor_7.mp4" />
+
 ## Key Features
 
   **⚙️ Custom Content Structures** | Utilize schemas to craft bespoke content 

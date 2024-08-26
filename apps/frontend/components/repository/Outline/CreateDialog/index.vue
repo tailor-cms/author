@@ -41,6 +41,7 @@
           v-for="input in metadata"
           :key="input.key"
           :meta="input"
+          :name="`data.${input.key}`"
           @update="setMetaValue"
         />
         <VSpacer />
@@ -70,12 +71,15 @@
 </template>
 
 <script lang="ts" setup>
+import { useForm } from 'vee-validate';
+
 import InsertLocation from '@/lib/InsertLocation';
 import MetaInput from '@/components/common/MetaInput.vue';
 import type { StoreActivity } from '@/stores/activity';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import TypeSelect from './TypeSelect.vue';
 import { useActivityStore } from '@/stores/activity';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
   repositoryId: number;
@@ -102,6 +106,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['close', 'created', 'expand']);
 
+const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 const selectedActivity = useSelectedActivity(props.anchor);
 const { $schemaService } = useNuxtApp() as any;
@@ -116,6 +121,8 @@ const initActivityState = (type: string) => {
 
 const visible = ref(false);
 const submitting = ref(false);
+
+const { handleSubmit } = useForm();
 
 const dialogTestId = computed(() => `${props.testIdPrefix}Dialog`);
 
@@ -143,7 +150,7 @@ const setMetaValue = (key: string, val: any) => {
   activity.value.data[key] = val;
 };
 
-const submitForm = async () => {
+const submitForm = handleSubmit(async () => {
   const { anchor, action } = props;
   submitting.value = true;
   if (anchor) {
@@ -156,17 +163,17 @@ const submitForm = async () => {
     anchor as StoreActivity,
   );
   try {
-    const item = await activityStore.save(activity.value);
+    const item = (await activityStore.save(activity.value)) as StoreActivity;
     if (anchor && anchor.id === activity.value?.parentId) {
       selectedActivity.expandOutlineItemParent(item);
     }
     emit('created', item);
+    currentRepositoryStore.selectActivity(item.id);
     visible.value = false;
-    navigateTo({ query: { activityId: item.id } });
   } finally {
     submitting.value = false;
   }
-};
+});
 
 watch(visible, (val) => {
   if (val) return;

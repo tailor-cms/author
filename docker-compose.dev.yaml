@@ -1,7 +1,7 @@
 # TODO: Make all env variables configurable
 services:
   postgres:
-    container_name: "postgres"
+    container_name: "tailor-postgres"
     image: "postgres:15.1"
     environment:
       POSTGRES_DB: "tailor_dev"
@@ -12,3 +12,8 @@ services:
     ports:
       - "5432:5432"
     restart: "no"
+  redis:
+    container_name: "tailor-redis"
+    image: redis:7.4.0
+    ports:
+      - "6379:6379"

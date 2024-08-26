@@ -14,7 +14,7 @@
       <CreateDialog
         :anchor="anchor"
         :repository-id="repositoryId as number"
-        activator-color="primary-lighten-2"
+        activator-color="primary-lighten-3"
         test-id-prefix="repository__createRootActivity"
         show-activator
       />

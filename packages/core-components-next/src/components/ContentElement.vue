@@ -26,21 +26,30 @@
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <component
+      :is="componentName"
+      v-if="isComponentAvailable"
       v-bind="{
         ...$attrs,
         element,
+        references,
         isFocused,
         isDragged,
         isDisabled,
         dense,
       }"
-      :is="componentName"
       :id="`element_${id.value}`"
       @add="emit('add', $event)"
       @delete="emit('delete')"
       @focus="onSelect"
+      @link="onLink"
       @save="onSave"
     />
+    <VSheet v-else class="py-10" color="primary-lighten-5">
+      <div class="text-h6">
+        {{ element.type.replace('_', ' ') }}
+      </div>
+      <div class="pt-4 text-subtitle-2">Component is not available!</div>
+    </VSheet>
     <div v-if="!props.isDisabled" class="element-actions">
       <div
         v-if="showDiscussion"
@@ -63,7 +72,7 @@
     <VProgressLinear
       v-if="isSaving"
       class="save-indicator"
-      color="teal accent-2"
+      color="teal-accent-1"
       height="2"
       location="bottom"
       absolute
@@ -93,6 +102,7 @@ import PublishDiffChip from './PublishDiffChip.vue';
 
 interface Props {
   element: ContentElement;
+  references?: Record<string, ContentElement[]> | null;
   parent?: Activity | null;
   isHovered?: boolean;
   isDragged?: boolean;
@@ -103,6 +113,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  references: null,
   parent: null,
   isHovered: false,
   isDragged: false,
@@ -114,6 +125,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
 
+const ceRegistry = inject<any>('$ceRegistry');
 const editorBus = inject<any>('$editorBus');
 const editorState = inject<any>('$editorState');
 const eventBus = inject<any>('$eventBus');
@@ -133,6 +145,9 @@ const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
+const isComponentAvailable = computed(
+  () => !!ceRegistry.get(props.element.type),
+);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
@@ -153,6 +168,8 @@ const onSave = (data: ContentElement['data']) => {
 const focus = () => {
   editorBus.emit('element:focus', props.element, props.parent);
 };
+
+const onLink = (key?: string) => editorBus.emit('element:link', key);
 
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));

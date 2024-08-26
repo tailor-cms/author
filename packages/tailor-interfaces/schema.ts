@@ -1,3 +1,4 @@
+import type { ContentElement } from './content-element';
 export interface Metadata {
   key: string;
   type: string;
@@ -8,12 +9,19 @@ export interface Metadata {
   [key: string]: any;
 }
 
+export type Filter = (
+  optionEl: ContentElement,
+  currentEl: ContentElement,
+) => boolean;
+
 export interface ElementRelationship {
   key: string;
   label: string;
   placeholder: string;
   multiple: boolean;
   allowedTypes: string[];
+  filters?: Filter[];
+  disableSidebarUi?: boolean;
 }
 
 export interface ElementMetaConfig {

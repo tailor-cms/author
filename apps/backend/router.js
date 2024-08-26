@@ -18,6 +18,9 @@ router.use(processBody);
 router.use(extractAuthData);
 
 // Public routes:
+router.get('/healthcheck', (_req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 router.use(user.path, user.router);
 
 // SSO routes:

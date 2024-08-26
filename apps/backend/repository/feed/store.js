@@ -1,14 +1,10 @@
 import config from '../../config/server/index.js';
-import Promise from 'bluebird';
-import Tapster from '@extensionengine/tapster';
+import Keyv from 'keyv';
 
-const { provider, ...options } = config.store;
-
-const store = new Tapster({
-  ...options[provider],
-  store: provider,
+const store = new Keyv({
+  store: config.kvStore.store,
   namespace: 'active-users',
-  ttl: 40,
+  ttl: 60 * 1000, // 1 minute in milliseconds
 });
 
 async function addContext(user, context) {
@@ -26,10 +22,11 @@ async function removeContext(user, predicate) {
 }
 
 async function getActiveUsers() {
-  const activeUserKeys = await store.getKeys();
-  return Promise.map(activeUserKeys, (key) => store.get(key))
-    .filter(Boolean)
-    .reduce((acc, user) => ({ ...acc, [user.id]: user }), {});
+  const users = [];
+  for await (const [, value] of store.iterator()) {
+    users.push(value);
+  }
+  return users.reduce((acc, user) => ({ ...acc, [user.id]: user }), {});
 }
 
 async function findOrCreate(user) {

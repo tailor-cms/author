@@ -21,6 +21,7 @@
       :elements="processedElements"
       :name="name"
       :position="index"
+      :repository="currentRepository.repository"
       :tes="elements"
       class="content-container"
       @add:element="(val: any) => saveContentElements([val])"

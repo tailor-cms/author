@@ -34,6 +34,8 @@ import { useEditorStore } from '@/stores/editor';
 import VSidebar from '@/components/editor/Sidebar/index.vue';
 import VToolbar from '@/components/editor/Toolbar/index.vue';
 
+const { $ceRegistry } = useNuxtApp() as any;
+
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 const commentStore = useCommentStore();
@@ -42,6 +44,11 @@ const route = useRoute();
 useHead({
   title: repositoryStore.repository?.name,
   meta: [{ name: 'description', content: 'Tailor CMS - Editor page' }],
+});
+
+provide('$ceRegistry', $ceRegistry);
+provide('$editorState', {
+  isPublishDiff: computed(() => editorStore.showPublishDiff),
 });
 
 const activityId = ref<number | null>(null);

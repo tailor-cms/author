@@ -9,14 +9,14 @@
       @click="toggle"
     >
       <template #prepend>
-        <VAvatar :color="color" size="42">{{ acronym }}</VAvatar>
+        <VAvatar color="primary-lighten-3" size="42">{{ acronym }}</VAvatar>
       </template>
       <VListItemTitle
-        class="text-subtitle-1 text-truncate text-primary-lighten-4"
+        class="text-subtitle-1 text-truncate text-primary-lighten-5"
       >
         {{ description }}
       </VListItemTitle>
-      <VListItemSubtitle class="text-body-2 text-primary-lighten-3">
+      <VListItemSubtitle class="text-body-2 text-primary-lighten-4">
         {{ formatTimeAgo(date, { rounding: 'floor' }) }} by
         {{ revision.user.label }}
       </VListItemSubtitle>
@@ -37,11 +37,7 @@ import find from 'lodash/find';
 import { formatTimeAgo } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
-import {
-  getFormatDescription,
-  getRevisionAcronym,
-  getRevisionColor,
-} from '@/lib/revision';
+import { getFormatDescription, getRevisionAcronym } from '@/lib/revision';
 import EntityRevisions from './EntityRevisions.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -59,7 +55,6 @@ const activity = computed(() => {
   return getOutlineLocation(activityStore.getParent(activityId));
 });
 
-const color = computed(() => getRevisionColor(props.revision));
 const acronym = computed(() => getRevisionAcronym(props.revision));
 const date = computed(() => new Date(props.revision.createdAt));
 
@@ -92,6 +87,10 @@ li + li {
   transition: all 0.3s ease;
 
   &.v-list-item--disabled {
+    opacity: 1;
+  }
+
+  .v-list-item-subtitle {
     opacity: 1;
   }
 }

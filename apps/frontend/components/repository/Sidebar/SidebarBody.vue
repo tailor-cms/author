@@ -5,7 +5,7 @@
         <VIcon :color="config.color" class="mr-2" size="26">mdi-label</VIcon>
         <span>{{ config.label.toUpperCase() }}</span>
       </div>
-      <VDivider class="my-2 ml-3" vertical />
+      <VDivider class="my-2 mx-3" vertical />
       <VTooltip location="bottom" open-delay="100">
         <template #activator="{ props: tooltipProps }">
           <LabelChip
@@ -50,6 +50,14 @@
         <VIcon dense>mdi-link</VIcon>
       </VBtn>
     </VSheet>
+    <ActivityStatus
+      v-if="activity.isTrackedInWorkflow"
+      :id="activity.id"
+      :activity-status="activity.status"
+      :short-id="activity.shortId"
+      :type="activity.type"
+      class="mt-6 mb-3"
+    />
     <div v-if="!isSoftDeleted">
       <div class="meta-elements">
         <MetaInput
@@ -83,6 +91,7 @@ import { activity as activityUtils } from '@tailor-cms/utils';
 
 import ActivityDiscussion from '../Discussion/index.vue';
 import ActivityRelationship from './ActivityRelationship.vue';
+import ActivityStatus from './ActivityStatus.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
 

@@ -56,7 +56,7 @@ const webServer = new studion.WebServer(`${fullPrefix}-server`, {
   autoscaling: { enabled: false },
   size: 'small',
   desiredCount: 1,
-  healthCheckPath: '/healthcheck',
+  healthCheckPath: '/api/healthcheck',
   environment: getEnvVariables(db),
   secrets: getSecrets(db),
 });

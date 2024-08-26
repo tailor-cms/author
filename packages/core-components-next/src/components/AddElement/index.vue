@@ -75,8 +75,8 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import flatMap from 'lodash/flatMap';
 import intersection from 'lodash/intersection';
+import map from 'lodash/map';
 import pick from 'lodash/pick';
-import reduce from 'lodash/reduce';
 import reject from 'lodash/reject';
 import type { VBtn } from 'vuetify/components';
 
@@ -86,11 +86,7 @@ import SelectElement from '../SelectElement/index.vue';
 const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
 
-const ELEMENT_GROUPS = [
-  { name: 'Content Elements', icon: 'mdi-set-center' },
-  { name: 'Assessments', icon: 'mdi-help-rhombus' },
-  { name: 'Nongraded questions', icon: 'mdi-comment-question-outline' },
-];
+const DEFAULT_CATEGORY = { name: 'Content Elements' };
 
 const getQuestionData = (element: any, type: string) => {
   const data = { width: LAYOUT.FULL_WIDTH };
@@ -104,6 +100,7 @@ interface Props {
   position?: number | null;
   layout?: boolean;
   include?: string[] | null;
+  categories?: any[] | null;
   show?: boolean;
   large?: boolean;
   label?: string;
@@ -117,6 +114,7 @@ const props = withDefaults(defineProps<Props>(), {
   position: null,
   layout: true,
   include: null,
+  categories: null,
   show: false,
   large: false,
   label: 'Add content',
@@ -136,38 +134,20 @@ const showElementBrowser = ref(false);
 const isSubset = computed(() => !!props.include && !!props.include.length);
 
 const contentElements = computed(() => {
-  const items = registry.filter((it) => !isQuestion(it.type));
-  if (!isSubset.value) return items;
-  return items.filter((it) => props.include!.includes(it.type));
-});
-
-const questions = computed(() =>
-  registry.filter((it) => it?.type === 'QUESTION'),
-);
-
-const assessments = computed(() => {
-  if (isSubset.value && !props.include!.includes('ASSESSMENT')) return [];
-  return registry
-    .filter((it) => it.type === 'ASSESSMENT')
-    .concat(questions.value.map((it) => ({ ...it, type: 'ASSESSMENT' })));
-});
-
-const reflections = computed(() => {
-  if (isSubset.value && !props.include!.includes('REFLECTION')) return [];
-  return registry
-    .filter((it) => it.type === 'REFLECTION')
-    .concat(questions.value.map((it) => ({ ...it, type: 'REFLECTION' })));
+  if (!isSubset.value) return registry;
+  return map(props.include, (it) => registry.find((item) => item.type === it));
 });
 
 const library = computed(() => {
-  const groups = [contentElements.value, assessments.value, reflections.value];
-  return reduce(
-    groups,
-    (acc, elements, i) => {
-      if (elements.length) acc.push({ ...ELEMENT_GROUPS[i], elements });
+  return Object.values(
+    contentElements.value.reduce((acc, element) => {
+      const { name } =
+        props.categories?.find((it) => it.types.includes(element.type)) ||
+        DEFAULT_CATEGORY;
+      if (acc[name]) acc[name].elements.push(element);
+      else acc[name] = { name, elements: [element] };
       return acc;
-    },
-    [] as any[],
+    }, {} as any),
   );
 });
 

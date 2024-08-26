@@ -21,7 +21,7 @@
               :icon="`mdi-${icon}`"
               aria-label="Toggle expand"
               class="my-auto"
-              color="primary-lighten-3"
+              color="primary-lighten-4"
               variant="text"
               @mousedown.stop="utils.toggleOutlineItemExpand(activity.uid)"
             >
@@ -70,12 +70,7 @@
                   Will be removed upon publishing
                 </VTooltip>
               </VChip>
-              <span>{{ activity.data.name }}</span>
-            </div>
-            <VSpacer />
-            <div class="py-3 mr-3">
-              <VBtn class="mr-3" size="small" variant="tonal">Revert</VBtn>
-              <VBtn size="small" variant="tonal">Publish</VBtn>
+              {{ activity.data.name }}
             </div>
           </template>
         </VSheet>
@@ -192,7 +187,7 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
     background-color: rgb(var(--v-theme-primary-darken-1));
 
     .activity-name {
-      color: rgb(var(--v-theme-primary-lighten-4)) !important;
+      color: rgb(var(--v-theme-primary-lighten-5)) !important;
       font-weight: 600 !important;
     }
   }

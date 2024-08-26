@@ -38,6 +38,15 @@ export default defineConfig({
       },
     },
     {
+      name: 'a11y',
+      testDir: './specs/a11y',
+      dependencies: ['setup'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth.json',
+      },
+    },
+    {
       name: 'setup',
       testMatch: 'setup.spec.ts',
     },
