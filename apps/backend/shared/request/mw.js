@@ -3,8 +3,6 @@ import {
   kvStore as kvStoreConfig,
 } from '../../config/server/index.js';
 import Keyv from 'keyv';
-// eslint-disable-next-line no-unused-vars
-import KeyvRedis from '@keyv/redis';
 import rateLimit from 'express-rate-limit';
 
 const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
@@ -13,7 +11,8 @@ const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 // https://github.com/nfriedly/express-rate-limit/blob/master/README.md#store
 class Store {
   constructor() {
-    this.cache = new Keyv(kvStoreConfig.providerUrl, {
+    this.cache = new Keyv({
+      store: kvStoreConfig.store,
       namespace: 'request-limiter',
       ttl: kvStoreConfig.ttl,
     });
