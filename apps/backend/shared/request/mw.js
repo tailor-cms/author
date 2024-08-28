@@ -12,9 +12,8 @@ const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 class Store {
   constructor() {
     this.cache = new Keyv({
-      store: kvStoreConfig.store,
+      ...kvStoreConfig.keyvDefaultConfig,
       namespace: 'request-limiter',
-      ttl: kvStoreConfig.ttl,
     });
   }
 
