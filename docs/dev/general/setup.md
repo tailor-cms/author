@@ -137,11 +137,6 @@ DATABASE_URI=postgres://user:pass@hostname:port/database
 # If KV_STORE_URL is omitted, in-memory store is used
 # Example config:
 # redis://user:pass@localhost:6379
-# mongodb://user:pass@localhost:27017/dbname
-# sqlite://path/to/database.sqlite
-# postgresql://user:pass@localhost:5432/dbname
-# mysql://user:pass@localhost:3306/dbname
-# etcd://localhost:2379
 # See https://github.com/jaredwray/keyv/blob/main/packages/keyv/README.md#usage
 KV_STORE_URL=
 # ttl - time to live measured in seconds
