@@ -1,6 +1,11 @@
 <template>
   <div class="activity-options-container d-flex">
-    <VTooltip v-for="it in options" :key="it.name" location="bottom">
+    <VTooltip
+      v-for="it in options"
+      :key="it.name"
+      content-class="bg-primary-darken-4"
+      location="bottom"
+    >
       <template #activator="{ props: tooltipProps }">
         <VBtn
           v-bind="tooltipProps"
