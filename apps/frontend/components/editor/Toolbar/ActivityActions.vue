@@ -4,7 +4,9 @@
       <VTooltip
         v-for="{ active, title, icon, action, disabled } in actions"
         :key="title"
+        content-class="bg-primary-darken-4"
         location="bottom"
+        offset="24"
       >
         <template #activator="{ props: tooltipProps }">
           <VBtn
