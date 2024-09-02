@@ -1,5 +1,10 @@
 <template>
-  <VTooltip location="left" max-width="300" open-delay="100">
+  <VTooltip
+    content-class="bg-primary-darken-4"
+    location="left"
+    max-width="300"
+    open-delay="100"
+  >
     <template #activator="{ props: tooltipProps }">
       <span v-bind="tooltipProps">
         <VBadge :color="badgeColor" dot inline />
