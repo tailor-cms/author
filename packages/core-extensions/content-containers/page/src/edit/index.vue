@@ -183,7 +183,7 @@ const reorder = ({ newPosition }: { newPosition: number }) => {
 };
 
 const showElementDrawer = (elementIndex: number) => {
-  if (props.disabled || !elementIndex) return;
+  if (props.disabled) return;
   insertPosition.value = elementIndex;
   isElementDrawerVisible.value = true;
 };
