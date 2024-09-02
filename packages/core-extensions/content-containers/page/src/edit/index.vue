@@ -136,6 +136,7 @@ interface Props {
   categories?: any[] | null;
   layout?: boolean;
   disabled?: boolean;
+  config?: any;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -143,6 +144,7 @@ const props = withDefaults(defineProps<Props>(), {
   layout: true,
   disabled: false,
   categories: null,
+  config: null,
 });
 
 const emit = defineEmits([

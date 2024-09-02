@@ -16,6 +16,7 @@
       :key="container?.uid"
       v-bind="$attrs"
       :activities="processedActivities"
+      :config="config"
       :container="container"
       :disabled="showPublishDiff"
       :elements="processedElements"
@@ -72,6 +73,7 @@ interface Props {
   parentId: number;
   processedActivities: Activity[];
   processedElements: Record<string, Element>;
+  config?: any;
   templateId?: string;
   containerGroup?: Activity[];
   required?: boolean;
@@ -85,6 +87,7 @@ const props = withDefaults(defineProps<Props>(), {
   required: true,
   multiple: false,
   displayHeading: false,
+  config: null,
 });
 
 const emit = defineEmits(['focusoutElement', 'createdContainer']);
