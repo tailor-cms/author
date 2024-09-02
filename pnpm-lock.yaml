@@ -571,11 +571,11 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       '@tailor-cms/ce-multiple-choice-edit':
-        specifier: ^0.0.9
-        version: 0.0.9(vue@3.4.38(typescript@5.5.4))
+        specifier: ^0.0.10
+        version: 0.0.10(vue@3.4.38(typescript@5.5.4))
       '@tailor-cms/ce-multiple-choice-server':
-        specifier: ^0.0.9
-        version: 0.0.9
+        specifier: ^0.0.10
+        version: 0.0.10
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -2935,13 +2935,13 @@ packages:
   '@tailor-cms/ce-image-server@1.0.0':
     resolution: {integrity: sha512-l4cZmdHQ+TDRzHCSp7TrWrlIIq01ApbaJZuqwJu6MzctstFDhUdMY25TU+35TEDRjcL+odob6KP5uO44McH5Dg==}
 
-  '@tailor-cms/ce-multiple-choice-edit@0.0.9':
-    resolution: {integrity: sha512-PxXABVSdcwn0JdSNB/YcKcSNsNVTWCNE+J3Td6x9TOLhOsJoHJ1twnkY3oqDn97n3d3JDBlDpG6IKn7UsBsp5Q==}
+  '@tailor-cms/ce-multiple-choice-edit@0.0.10':
+    resolution: {integrity: sha512-oH7fonUs+nTnGpSZB34GO1nKRn630+Dkia4mMa0dW6tgtHnU1b6GHsYLLIXBZ2aSkv0AmSx/jyIBp0yPSmmh/g==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-multiple-choice-server@0.0.9':
-    resolution: {integrity: sha512-QW+kfyxINeWe7iTgjs97Q5a56n2t2Q59la3/bnlVyFmwtma+TRw/WQyTJ7FNlhf9L5WWzZTlk3I6KwxofJBRYA==}
+  '@tailor-cms/ce-multiple-choice-server@0.0.10':
+    resolution: {integrity: sha512-gwLKwWRy8LndLZj+z78G60lb4IqHTJa11c+p+u/c2ph4UCNyZ7tpQO5uZU2MVCMzDQVyUwKhePrqq/14iaTH3Q==}
 
   '@tailor-cms/cek-common@0.0.3':
     resolution: {integrity: sha512-QZGKfGb8sdmS/4U2ZdbG8VKD816Q2AoL4t23/WGXyo5wgpdjw4n9eNYNTwv8kp/pE02LzSBG+CUOMTb3UAqPoA==}
@@ -12362,13 +12362,13 @@ snapshots:
 
   '@tailor-cms/ce-image-server@1.0.0': {}
 
-  '@tailor-cms/ce-multiple-choice-edit@0.0.9(vue@3.4.38(typescript@5.5.4))':
+  '@tailor-cms/ce-multiple-choice-edit@0.0.10(vue@3.4.38(typescript@5.5.4))':
     dependencies:
       lodash: 4.17.21
       uuid: 10.0.0
       vue: 3.4.38(typescript@5.5.4)
 
-  '@tailor-cms/ce-multiple-choice-server@0.0.9':
+  '@tailor-cms/ce-multiple-choice-server@0.0.10':
     dependencies:
       lodash: 4.17.21
 
