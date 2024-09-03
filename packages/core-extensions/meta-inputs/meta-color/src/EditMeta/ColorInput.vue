@@ -5,7 +5,7 @@
         <VBtn
           v-bind="{ ...menuProps, ...hoverProps }"
           :color="color"
-          class="picker mr-1"
+          class="picker ml-1 mr-3"
           icon
         >
           <VFadeTransition>
@@ -64,6 +64,7 @@ watch(
 
 <style lang="scss" scoped>
 .picker {
+  margin-top: 3px;
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 15%);
 }
 </style>

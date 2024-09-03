@@ -50,7 +50,7 @@ definePageMeta({
   name: 'revisions',
 });
 
-const { $eventBus } = useNuxtApp() as any;
+const { $ceRegistry, $eventBus } = useNuxtApp() as any;
 const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 const editorStore = useEditorStore();
@@ -59,6 +59,7 @@ const authStore = useAuthStore();
 const editorChannel = $eventBus.channel('editor');
 provide('$getCurrentUser', () => authStore.user);
 provide('$editorBus', editorChannel);
+provide('$ceRegistry', $ceRegistry);
 provide('$editorState', {
   isPublishDiff: computed(() => editorStore.showPublishDiff),
 });

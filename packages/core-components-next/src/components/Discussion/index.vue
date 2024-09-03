@@ -15,7 +15,7 @@
         Show {{ showAll ? 'less' : 'more' }}
       </VBtn>
     </div>
-    <div v-if="showHeading" class="discussion-heading text-primary-lighten-3">
+    <div v-if="showHeading" class="discussion-heading text-primary-lighten-4">
       Comments
     </div>
     <VAlert
@@ -246,6 +246,10 @@ watch(
 
   .alert :deep(.v-icon) {
     color: var(--v-primary-darken2) !important;
+  }
+
+  .v-input :deep(textarea::placeholder) {
+    opacity: 0.85;
   }
 }
 </style>

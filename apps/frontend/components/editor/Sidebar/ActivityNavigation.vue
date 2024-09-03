@@ -41,6 +41,7 @@ const attachActivityAttrs = (activity: Activity) => ({
   id: activity.id,
   title: activity.data.name,
   isEditable: !!$schemaService.isEditable(activity.type),
+  isGroup: !!$schemaService.getLevel(activity.type)?.subLevels?.length,
 });
 
 const activityTreeData = computed(() => {
@@ -123,6 +124,11 @@ const navigateToActivity = (activityId: number) => {
       }
     }
   }
+}
+
+.v-input :deep(.v-label) {
+  color: rgb(var(--v-theme-primary-lighten-5));
+  opacity: 1;
 }
 
 :deep(.v-list-item-action) {

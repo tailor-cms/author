@@ -6,6 +6,9 @@ export default defineNuxtConfig({
   build: {
     transpile: ['vuetify'],
   },
+  vite: {
+    optimizeDeps: { include: ['lodash'] },
+  },
   devtools: { enabled: true },
   telemetry: false,
   devServer: {
@@ -44,6 +47,7 @@ export default defineNuxtConfig({
       oidcEnabled: false,
       oidcLoginText: '',
       oidcLogoutEnabled: false,
+      availableSchemas: '',
     },
   },
 });

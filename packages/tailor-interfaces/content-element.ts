@@ -6,6 +6,7 @@ export interface Relationship {
   id: number;
   containerId: number;
   outlineId: number;
+  uid: string;
 }
 
 export interface RelationshipType extends ElementRelationship {

@@ -5,9 +5,8 @@
     :close-on-content-click="false"
     location="left"
     min-width="450"
+    offset="4"
     transition="slide-y-transition"
-    attach
-    offset-y
   >
     <template #activator="{ props: menuProps }">
       <VTooltip location="left" open-delay="1000">

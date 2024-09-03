@@ -10,14 +10,8 @@ import { testDatabaseConnection } from './setup/database.js';
 const configLocation = path.join(process.cwd(), '.env');
 const config = await fs.readFile(configLocation, 'utf-8');
 
-const {
-  PORT,
-  REVERSE_PROXY_PORT,
-  NUXT_PUBLIC_AI_UI_ENABLED,
-  NUXT_PUBLIC_OIDC_ENABLED,
-  NUXT_PUBLIC_OIDC_LOGIN_TEXT,
-  NUXT_PUBLIC_OIDC_LOGOUT_ENABLED,
-} = dotenv.parse(config);
+const env = dotenv.parse(config);
+const { PORT, REVERSE_PROXY_PORT } = env;
 
 if (
   PORT === undefined ||
@@ -36,12 +30,12 @@ for (const port of [PORT, REVERSE_PROXY_PORT]) {
 }
 
 // Proxy public environment variables
-process.env.NUXT_PUBLIC_AI_UI_ENABLED = NUXT_PUBLIC_AI_UI_ENABLED;
-process.env.NUXT_PUBLIC_OIDC_ENABLED = NUXT_PUBLIC_OIDC_ENABLED;
-process.env.NUXT_PUBLIC_OIDC_LOGIN_TEXT = NUXT_PUBLIC_OIDC_LOGIN_TEXT;
-process.env.NUXT_PUBLIC_OIDC_LOGOUT_ENABLED = NUXT_PUBLIC_OIDC_LOGOUT_ENABLED;
 process.env.BACKEND_PORT = PORT || 3000;
 process.env.REVERSE_PROXY_PORT = REVERSE_PROXY_PORT || 8080;
+
+Object.entries(env).forEach(([key, value]) => {
+  if (key.startsWith('NUXT')) process.env[key] = value;
+});
 
 // Test database connection
 const dbConnectionLoader = ora('Waiting for database connection...');

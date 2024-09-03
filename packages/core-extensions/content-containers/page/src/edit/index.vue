@@ -9,7 +9,7 @@
       <VBtn
         v-if="isAiEnabled && !disabled"
         class="mr-3"
-        color="teal-darken-1"
+        color="teal-darken-2"
         size="small"
         variant="tonal"
         @click="generateContent"
@@ -19,7 +19,7 @@
       </VBtn>
       <VBtn
         v-if="!disabled"
-        color="secondary"
+        color="secondary-darken-1"
         size="small"
         variant="tonal"
         @click="emit('delete')"
@@ -80,6 +80,7 @@
             isDisabled: disabled,
             setWidth: false,
           }"
+          :references="getRefElements(element.refs)"
           show-discussion
           @delete="emit('delete:element', element)"
           @save="saveElement(element, 'data', $event)"
@@ -117,9 +118,13 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components-next';
 import { computed, inject, ref } from 'vue';
+import type {
+  ContentElement,
+  Relationship,
+} from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import filter from 'lodash/filter';
+import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
 
 interface Props {
@@ -178,7 +183,7 @@ const reorder = ({ newPosition }: { newPosition: number }) => {
 };
 
 const showElementDrawer = (elementIndex: number) => {
-  if (props.disabled || !elementIndex) return;
+  if (props.disabled) return;
   insertPosition.value = elementIndex;
   isElementDrawerVisible.value = true;
 };
@@ -199,6 +204,17 @@ const saveElement = (element: ContentElement, key: string, data: any) => {
     ...element,
     [key]: data,
   });
+};
+
+const getRefElements = (refs: Record<string, Relationship[]>) => {
+  return reduce(
+    refs,
+    (acc: any, it, key: string) => {
+      const elements = it.map(({ uid }) => props.elements[uid]);
+      acc[key] = elements.filter(Boolean) as ContentElement[];
+    },
+    {} as Record<string, ContentElement[]>,
+  );
 };
 </script>
 

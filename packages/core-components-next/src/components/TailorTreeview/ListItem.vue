@@ -2,7 +2,7 @@
   <VListItem
     v-bind="omit(activatorProps, 'onClick')"
     :class="{
-      'text-secondary-lighten-4': isActive,
+      'list-item-active': isActive,
       readonly: !isEditable,
     }"
     :title="title"
@@ -39,6 +39,7 @@ const props = defineProps<{
   id: number;
   title: string;
   isGroup?: boolean;
+  isEmpty?: boolean;
   isEditable?: boolean;
   isOpen?: boolean;
   isActive?: boolean;
@@ -48,7 +49,9 @@ const props = defineProps<{
 const emit = defineEmits(['edit']);
 
 const prependIcon = computed(() => {
-  return props.isGroup ? (props.isOpen ? 'mdi-folder-open' : 'mdi-folder') : '';
+  if (!props.isGroup) return '';
+  const icon = props.isOpen ? 'mdi-folder-open' : 'mdi-folder';
+  return props.isEmpty ? `${icon}-outline` : icon;
 });
 
 const prependColor = computed(() => {
@@ -74,5 +77,9 @@ const onItemClick = () => {
   .v-btn {
     pointer-events: auto;
   }
+}
+
+.list-item-active {
+  color: #f9c2d5;
 }
 </style>

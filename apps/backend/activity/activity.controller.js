@@ -1,11 +1,13 @@
 import db from '../shared/database/index.js';
+import { StatusCodes } from 'http-status-codes';
 import { fetchActivityContent } from '../shared/publishing/helpers.js';
+import { createError } from '../shared/error/helpers.js';
 import find from 'lodash/find.js';
 import get from 'lodash/get.js';
+import oauth2 from '../shared/oAuth2Provider.js';
 import pick from 'lodash/pick.js';
-import { previewUrl } from '../config/server/index.js';
+import consumerConfig from '../config/server/consumer.js';
 import publishingService from '../shared/publishing/publishing.service.js';
-import request from 'axios';
 import { schema } from 'tailor-config-shared';
 
 const { Activity } = db;
@@ -62,6 +64,12 @@ function reorder({ activity, body, repository, user }, res) {
 }
 
 function publish({ activity }, res) {
+  if (activity.detached) {
+    return createError(
+      StatusCodes.METHOD_NOT_ALLOWED,
+      'Cannot publish a deleted activity',
+    );
+  }
   return publishingService
     .publishActivity(activity)
     .then((data) => res.json({ data }));
@@ -73,12 +81,14 @@ function clone({ activity, body, user }, res) {
   return activity
     .clone(repositoryId, parentId, position, context)
     .then((mappings) => {
-      const opts = { where: { id: Object.values(mappings) } };
+      const opts = { where: { id: Object.values(mappings.activityId) } };
       return Activity.findAll(opts).then((data) => res.json({ data }));
     });
 }
 
 function getPreviewUrl({ activity }, res) {
+  if (!consumerConfig.previewWebhookUrl || !oauth2.isConfigured)
+    throw new Error('Preview is not configured!');
   return fetchActivityContent(activity, true)
     .then((content) => {
       const body = {
@@ -87,10 +97,12 @@ function getPreviewUrl({ activity }, res) {
         meta: activity.data,
         ...content,
       };
-      return request.post(previewUrl, body);
+      return oauth2.send(consumerConfig.previewWebhookUrl, body);
     })
     .then(({ data: { url } }) => {
-      return res.json({ location: `${new URL(url, previewUrl)}` });
+      return res.json({
+        location: `${new URL(url, consumerConfig.previewWebhookUrl)}`,
+      });
     });
 }
 

@@ -8,17 +8,17 @@
   >
     No available elements.
   </VAlert>
-  <VRow v-for="container in processedContainers" :key="container.id">
+  <VRow v-for="container in contentContainers" :key="container.id">
     <ContentElementWrapper
-      v-for="element in container.elements"
-      :key="element.id"
-      :element="element"
-      :is-selected="!!selectionMap[element.id]"
+      v-for="it in container.elements"
+      :key="it.id"
+      :element="it"
+      :is-selected="!!selectionMap[it.id]"
       :selectable="selectable"
       :selection-disabled="isSelectionDisabled"
       is-disabled
       @element:open="$emit('element:open', $event)"
-      @toggle="$emit('toggle', element)"
+      @toggle="$emit('toggle', it)"
     />
   </VRow>
 </template>
@@ -30,6 +30,7 @@ import type {
 } from '@tailor-cms/interfaces/content-element';
 import { computed } from 'vue';
 import type { ContentContainer } from '@tailor-cms/interfaces/activity';
+import type { Filter } from '@tailor-cms/interfaces/schema';
 import flatMap from 'lodash/flatMap';
 import keyBy from 'lodash/keyBy';
 
@@ -39,12 +40,14 @@ interface Props {
   allowedTypes: string[];
   selected: (ContentElement | Relationship)[];
   contentContainers?: ContentContainer[];
+  filters?: Filter[];
   selectable?: boolean;
   multiple?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   contentContainers: () => [],
+  filters: () => [],
   selectable: false,
   multiple: false,
 });
@@ -55,22 +58,6 @@ const isSelectionDisabled = computed(() => {
   return props.selectable && !props.multiple && !!props.selected.length;
 });
 
-const selectionMap = computed(() => {
-  return keyBy(props.selected, 'id');
-});
-
-const processedContainers = computed(() => {
-  const { contentContainers, allowedTypes } = props;
-  if (!allowedTypes.length) return contentContainers;
-  return contentContainers.map((container) => ({
-    ...container,
-    elements: container.elements?.filter((it) =>
-      props.allowedTypes.includes(it.type),
-    ),
-  }));
-});
-
-const elements = computed(() => {
-  return flatMap(processedContainers.value, (it) => it.elements);
-});
+const selectionMap = computed(() => keyBy(props.selected, 'id'));
+const elements = computed(() => flatMap(props.contentContainers, 'elements'));
 </script>

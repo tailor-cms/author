@@ -11,7 +11,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import mime from 'mime-types';
-import miss from 'mississippi';
+import { PassThrough } from 'node:stream';
 import path from 'node:path';
 import { Upload } from '@aws-sdk/lib-storage';
 import { validateConfig } from '../validation.js';
@@ -71,7 +71,7 @@ class Amazon {
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/getobjectcommand.html
   async createReadStream(key, options = {}) {
-    const throughStream = miss.through();
+    const throughStream = new PassThrough();
     const params = Object.assign(options, {
       Bucket: this.bucket,
       Key: key,
@@ -95,11 +95,12 @@ class Amazon {
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/classes/_aws_sdk_lib_storage.Upload.html
   createWriteStream(key, options = {}) {
-    const throughStream = miss.through();
+    const throughStream = new PassThrough();
     const params = Object.assign(options, {
       Bucket: this.bucket,
       Key: key,
       Body: throughStream,
+      ContentType: options.ContentType || mime.lookup(key),
     });
     const upload = new Upload({ client: this.client, params });
     upload.done().catch(noop);

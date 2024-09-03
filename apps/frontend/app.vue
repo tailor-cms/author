@@ -4,8 +4,19 @@
   </VApp>
 </template>
 
-<script setup lang="ts">
-import { configure } from 'vee-validate';
+<style lang="scss">
+.v-input.required {
+  .v-field-label {
+    padding-inline-end: 0.5rem;
 
-configure({ validateOnModelUpdate: false });
-</script>
+    &::after {
+      position: absolute;
+      content: '*';
+      color: rgb(var(--v-theme-primary-darken-5));
+      top: 0;
+      // support also RTL direction
+      inset-inline-end: 0;
+    }
+  }
+}
+</style>

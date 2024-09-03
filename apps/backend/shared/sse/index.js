@@ -1,5 +1,6 @@
+import { createId as cuid, isCuid } from '@paralleldrive/cuid2';
+
 import channels from './channels.js';
-import cuid from 'cuid';
 import { EventEmitter } from 'events';
 
 const SSE_TIMEOUT_MARGIN = 0.1;
@@ -8,7 +9,7 @@ const SSE_HEADERS = {
   'Content-Type': 'text/event-stream',
   'Cache-Control': 'no-transform',
   Connection: 'keep-alive',
-  'Transfer-Encoding': 'identity',
+  'Transfer-Encoding': 'chunked',
   // NOTE: This controls nginx proxy buffering
   // https://nginx.com/resources/wiki/start/topics/examples/x-accel/#x-accel-buffering
   'X-Accel-Buffering': 'no',
@@ -64,7 +65,7 @@ class SSEConnection extends EventEmitter {
     this._res.writeHead(200, SSE_HEADERS);
     this._res.flushHeaders();
     // Ensure connection id is correctly set.
-    this._id = cuid.isCuid(this.query.id) ? this.query.id : cuid();
+    this._id = isCuid(this.query.id) ? this.query.id : cuid();
     // Setup heartbeat interval.
     if (this.timeout > 0) {
       this._heartbeat = setInterval(() => this.write(':ping'), this.timeout);

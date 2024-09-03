@@ -1,7 +1,7 @@
 <template>
   <VSheet
     :key="id"
-    class="element-toolbar-wrapper h-100 d-flex align-center justify-center"
+    class="element-toolbar-wrapper d-flex align-center justify-center"
     color="#fff"
     elevation="1"
   >
@@ -13,11 +13,8 @@
         @save="save"
       />
     </template>
-    <DefaultToolbar v-else :label="config.name" />
+    <DefaultToolbar v-else :label="config?.name || ''" />
     <slot name="embed-toolbar"></slot>
-    <div class="actions-container">
-      <slot name="actions"></slot>
-    </div>
   </VSheet>
 </template>
 
@@ -65,15 +62,9 @@ const save = (data: any) => elementBus.emit('save', data);
 .element-toolbar-wrapper {
   position: absolute;
   width: 100%;
-  min-height: 3.5rem;
-  padding-right: 2.75rem;
+  min-height: 5.5rem;
+  padding: 0.5rem 2rem;
   z-index: 99;
   border-bottom: 4px solid #cfd8dc;
-
-  .actions-container {
-    position: absolute;
-    right: 1.25rem;
-    bottom: 1rem;
-  }
 }
 </style>

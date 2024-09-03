@@ -1,6 +1,14 @@
 const { env } = process;
 
-export const webhookUrl = env.CONSUMER_WEBHOOK_URL;
+export const previewWebhookUrl =
+  env.CONSUMER_PREVIEW_WEBHOOK || env.PREVIEW_URL;
+
+export const publishWebhookUrl =
+  env.CONSUMER_PUBLISH_WEBHOOK || env.CONSUMER_WEBHOOK_URL;
+
+export const publishWebhookThrottle = env.CONSUMER_PUBLISH_WEBHOOK_THROTTLE
+  ? parseInt(env.CONSUMER_PUBLISH_WEBHOOK_THROTTLE, 10)
+  : 0;
 
 export const clientId = env.CONSUMER_CLIENT_ID;
 
@@ -10,10 +18,16 @@ export const tokenHost = env.CONSUMER_CLIENT_TOKEN_HOST;
 
 export const tokenPath = env.CONSUMER_CLIENT_TOKEN_PATH;
 
+export const isAuthConfigured =
+  clientId && clientSecret && tokenHost && tokenPath;
+
 export default {
-  webhookUrl,
+  previewWebhookUrl,
+  publishWebhookUrl,
+  publishWebhookThrottle,
   clientId,
   clientSecret,
+  isAuthConfigured,
   tokenHost,
   tokenPath,
 };

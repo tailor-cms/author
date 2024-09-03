@@ -75,6 +75,7 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import flatMap from 'lodash/flatMap';
 import intersection from 'lodash/intersection';
+import map from 'lodash/map';
 import pick from 'lodash/pick';
 import reject from 'lodash/reject';
 import type { VBtn } from 'vuetify/components';
@@ -85,7 +86,7 @@ import SelectElement from '../SelectElement/index.vue';
 const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
 
-const DEFAULT_CATEGORY = { name: 'Content Elements', icon: 'mdi-set-center' };
+const DEFAULT_CATEGORY = { name: 'Content Elements' };
 
 const getQuestionData = (element: any, type: string) => {
   const data = { width: LAYOUT.FULL_WIDTH };
@@ -134,17 +135,17 @@ const isSubset = computed(() => !!props.include && !!props.include.length);
 
 const contentElements = computed(() => {
   if (!isSubset.value) return registry;
-  return registry.filter((it) => props.include!.includes(it.type));
+  return map(props.include, (it) => registry.find((item) => item.type === it));
 });
 
 const library = computed(() => {
   return Object.values(
     contentElements.value.reduce((acc, element) => {
-      const { name, icon } =
+      const { name } =
         props.categories?.find((it) => it.types.includes(element.type)) ||
         DEFAULT_CATEGORY;
       if (acc[name]) acc[name].elements.push(element);
-      else acc[name] = { name, icon, elements: [element] };
+      else acc[name] = { name, elements: [element] };
       return acc;
     }, {} as any),
   );

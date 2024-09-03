@@ -63,6 +63,6 @@ export class AddRepositoryDialog {
 
   async selectRepositoryType(type: string) {
     await this.typeInput.click();
-    await this.dialog.getByText(type).click();
+    await this.dialog.getByText(type, { exact: true }).click();
   }
 }

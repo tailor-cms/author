@@ -25,6 +25,13 @@ export const toSeededRepository = async (page: Page, name?: string) => {
   return repository;
 };
 
+export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
+  const { data } = await SeedClient.seedTestRepository({ name });
+  const { repository } = data;
+  await page.goto(`/repository/${repository.id}/root/workflow`);
+  return repository;
+};
+
 export const toSeededRepositorySettings = async (page: Page) => {
   const { data } = await SeedClient.seedTestRepository();
   const { repository } = data;

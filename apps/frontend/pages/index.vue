@@ -126,6 +126,7 @@ useHead({
   meta: [{ name: 'description', content: 'Tailor CMS - Repository catalog' }],
 });
 
+const runtimeConfig = useRuntimeConfig();
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 
@@ -146,10 +147,21 @@ const togglePinFilter = () => {
   refetchRepositories();
 };
 
+const availableSchemas = computed(() => {
+  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
+    .split(',')
+    .filter(Boolean)
+    .map((schema) => schema.trim());
+  if (!availableSchemas.length) return SCHEMAS;
+  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
+});
+
 const filters = computed(() => {
   const { SCHEMA, TAG } = repositoryFilterConfigs;
   const filters = [{ ...TAG, values: tags.value }];
-  if (SCHEMAS.length > 1) filters.push({ ...SCHEMA, values: SCHEMAS as any[] });
+  if (availableSchemas.value.length > 1) {
+    filters.push({ ...SCHEMA, values: SCHEMAS as any[] });
+  }
   return map(filters, ({ type, values, ...config }) => {
     values = map(values, (it) => {
       const isSelected = !!find(queryParams.value.filter, { id: it.id, type });

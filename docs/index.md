@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Get started ->
-      link: /installation
+      link: /dev/general/setup
 
 features:
   - title: ⚙️ Custom content structures

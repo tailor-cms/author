@@ -17,24 +17,24 @@ class StorageService {
   // Prefix key with custom protocol. e.g. storage://sample_key.ext
   getStorageUrl = (key) => `${config.protocol}${key}`;
 
-  async uploadFile(repositoryId, file, name) {
+  async uploadFile(_repositoryId, file, name) {
     const buffer = await readFile(file);
     const hash = sha256(file.originalname, buffer);
     const extension = path.extname(file.originalname);
     const fileName = `${hash}___${name}${extension}`;
-    const key = path.join(getPath(repositoryId), fileName);
+    const key = path.join(getPath(), fileName);
     await saveFile(key, buffer, { ContentType: file.mimetype });
     const publicUrl = await getFileUrl(key);
     return { key, publicUrl, url: getStorageUrl(key) };
   }
 
-  async uploadArchiveContent(repositoryId, archive, name) {
+  async uploadArchiveContent(_repositoryId, archive, name) {
     const buffer = await readFile(archive);
     const content = await JSZip.loadAsync(buffer);
     const files = pickBy(content.files, (it) => !it.dir);
     const keys = await Promise.all(
       Object.keys(files).map(async (src) => {
-        const key = path.join(getPath(repositoryId), name, src);
+        const key = path.join(getPath(), name, src);
         const file = await content.file(src).async('uint8array');
         const mimeType = mime.lookup(src);
         await saveFile(key, Buffer.from(file), { ContentType: mimeType });

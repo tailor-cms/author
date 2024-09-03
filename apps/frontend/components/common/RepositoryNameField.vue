@@ -2,7 +2,7 @@
   <VTextField
     v-model="nameInput"
     v-bind="$attrs"
-    :error-messages="errors.name"
+    :error-messages="errors"
     :label="props.label"
     :messages="warning"
     class="required"
@@ -21,10 +21,10 @@
 </template>
 
 <script lang="ts" setup>
-import { object, string } from 'yup';
 import debounce from 'lodash/debounce';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import { useForm } from 'vee-validate';
+import { string } from 'yup';
+import { useField } from 'vee-validate';
 
 import api from '@/api/repository';
 
@@ -35,35 +35,31 @@ interface Props {
   value?: string;
   label?: string;
   repositoryId?: number | null;
-  isValidated?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   value: '',
   label: 'Name',
   repositoryId: null,
-  isValidated: true,
 });
 const emit = defineEmits(['change']);
 
 const existingRepositories = ref<Repository[]>([]);
 const warning = ref('');
 
-const { defineField, handleSubmit, errors, validate, resetForm } = useForm({
-  validationSchema: object({
-    name: string().required().min(2).max(250),
-  }),
-});
-const [nameInput] = defineField('name');
-
-const update = handleSubmit(() => {
-  emit('change', nameInput.value);
+const {
+  value: nameInput,
+  errors,
+  validate,
+} = useField('name', string().required().min(2).max(250), {
+  initialValue: props.value,
 });
 
-watch(
-  () => props.isValidated,
-  (val) => (val ? validate() : resetForm()),
-);
+const update = async () => {
+  const { valid } = await validate();
+  if (valid) emit('change', nameInput.value);
+};
+
 watch(
   nameInput,
   debounce((val) => {
@@ -78,7 +74,5 @@ onMounted(async () => {
   const params = props.repositoryId ? { repositoryId: props.repositoryId } : {};
   const { items: repositories } = await api.getRepositories(params);
   existingRepositories.value = repositories;
-  nameInput.value = props.value;
-  resetForm();
 });
 </script>

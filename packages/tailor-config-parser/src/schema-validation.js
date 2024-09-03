@@ -5,7 +5,7 @@ const activityType = yup.string().min(2).max(50);
 const meta = yup.array().of(yup.object().shape({
   key: yup.string().min(2).max(50).required(),
   type: yup.string().min(2).max(30).required(),
-  label: yup.string().min(2).max(50).required(),
+  label: yup.string().min(2).max(100).required(),
   placeholder: yup.string().min(2).max(100),
   validate: yup.object()
 }));
@@ -19,7 +19,9 @@ const relationships = yup.array().of(yup.object().shape({
   allowEmpty: yup.boolean(),
   allowCircularLinks: yup.boolean(),
   allowInsideLineage: yup.boolean(),
-  allowedTypes: yup.array().of(activityType)
+  allowedTypes: yup.array().of(activityType),
+  filters: yup.array(),
+  disableSidebarUi: yup.boolean()
 }));
 
 const schema = yup.object().shape({

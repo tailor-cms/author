@@ -41,6 +41,7 @@
           v-else
           :allowed-types="allowedTypes"
           :content-containers="items.contentContainers"
+          :filters="filters"
           :multiple="multiple"
           :selected="selection.elements"
           selectable
@@ -80,6 +81,7 @@ import type {
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import { activity as activityUtils } from '@tailor-cms/utils';
+import type { Filter } from '@tailor-cms/interfaces/schema';
 import flatMap from 'lodash/flatMap';
 import map from 'lodash/map';
 import type { Repository } from '@tailor-cms/interfaces/repository';
@@ -97,10 +99,12 @@ const TOGGLE_BUTTON = {
 };
 
 interface Props {
+  element?: ContentElement | null;
   allowedTypes: string[];
   heading: string;
   multiple?: boolean;
   selected?: Relationship[];
+  filters?: Filter[];
   headerIcon?: string;
   submitLabel?: string;
   onlyCurrentRepo?: boolean;
@@ -114,11 +118,13 @@ interface Selection {
 
 interface Items {
   activities: Activity[];
-  contentContainers?: ContentContainer[];
+  contentContainers: ContentContainer[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  element: null,
   selected: () => [],
+  filters: () => [],
   submitLabel: 'save',
   headerIcon: 'mdi-toy-brick-plus-outline',
   onlyCurrentRepo: false,
@@ -143,14 +149,7 @@ const items: Items = reactive({
   contentContainers: [],
 });
 
-const elements = computed(() => {
-  const elements: ContentElement[] = flatMap(
-    items.contentContainers,
-    'elements',
-  );
-  if (!props.allowedTypes.length) return elements;
-  return elements.filter((it) => props.allowedTypes.includes(it.type));
-});
+const elements = computed(() => flatMap(items.contentContainers, 'elements'));
 
 const allElementsSelected = computed(
   () => selection.elements.length === elements.value.length,
@@ -213,8 +212,16 @@ const assignElements = (
   activity: Activity,
   elements: ContentElement[],
 ) => {
+  const { allowedTypes, filters = [] } = props;
   const containerElements = elements
-    .filter(({ activityId }) => activityId === container.id)
+    .filter((el) => {
+      if (el.activityId !== container.id) return false;
+      if (allowedTypes.length && !allowedTypes.includes(el.type)) return false;
+      if (!props.element) return true;
+      return filters.every((filter) =>
+        filter(el, props.element as ContentElement),
+      );
+    })
     .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
 };

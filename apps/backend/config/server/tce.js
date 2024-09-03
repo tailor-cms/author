@@ -1,6 +1,6 @@
 import camelCase from 'lodash/camelCase.js';
 
-export const tceConfig = Object.keys(process.env)
+const tceConfig = Object.keys(process.env)
   .map((it) => it.match(/^TCE_(.*)/))
   .filter(Boolean)
   .reduce(

@@ -1,4 +1,4 @@
-import cuid from 'cuid';
+import { createId as cuid } from '@paralleldrive/cuid2';
 import times from 'lodash/times';
 
 export const typeInfo = {

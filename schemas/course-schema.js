@@ -52,13 +52,7 @@ const SECTION_CONTAINER = {
   label: 'Section',
   multiple: true,
   types: ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_MULTIPLE_CHOICE'],
-  categories: [
-    {
-      name: 'Questions',
-      icon: 'mdi-help-rhombus',
-      types: ['CE_MULTIPLE_CHOICE'],
-    },
-  ],
+  categories: [{ name: 'Questions', types: ['CE_MULTIPLE_CHOICE'] }],
   ai: {
     definition: 'Sections are a way to organize content within a Page.',
     outputRules: {
@@ -93,6 +87,8 @@ export const SCHEMA = {
       validate: {
         ext: ['jpg', 'jpeg', 'png'],
       },
+      hideOnCreate: true,
+      showPreview: true,
     },
   ],
   structure: [MODULE, PAGE],
@@ -127,6 +123,7 @@ export const SCHEMA = {
           multiple: true,
           placeholder: 'Click to select',
           allowedTypes: ['CE_HTML_DEFAULT', 'CE_IMAGE'],
+          filters: [(optionEl, currentEl) => optionEl.id !== currentEl.id],
         },
         {
           key: 'prerequisites',

@@ -11,7 +11,7 @@
   "main": "./src/index.js",
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "^4.17.7",
     "@types/pluralize": "^0.0.33"
   },
   "peerDependencies": {
@@ -24,20 +24,20 @@
     "lodash": "^4.17.21",
     "p-min-delay": "^4.0.2",
     "pluralize": "^8.0.0",
-    "vee-validate": "^4.12.6",
+    "vee-validate": "^4.13.2",
     "vue": "^3.3.4",
     "vuedraggable": "^4.1.0",
-    "vuetify": "^3.6.8",
+    "vuetify": "3.7.0",
     "yup": "^1.4.0"
   },
   "publishConfig": {
     "access": "public"
   },
   "dependencies": {
-    "@tiptap/extension-character-count": "^2.4.0",
-    "@tiptap/extension-subscript": "^2.4.0",
-    "@tiptap/extension-superscript": "^2.4.0",
-    "@tiptap/extension-underline": "^2.4.0",
+    "@tiptap/extension-character-count": "^2.6.6",
+    "@tiptap/extension-subscript": "^2.6.6",
+    "@tiptap/extension-superscript": "^2.6.6",
+    "@tiptap/extension-underline": "^2.6.6",
     "@vueuse/core": "^10.11.0"
   }
 }
