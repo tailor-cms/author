@@ -53,4 +53,8 @@ const appCommands = await Promise.all(
   }),
 );
 
-concurrently(appCommands);
+const { result } = concurrently(appCommands, {
+  killOthers: true,
+  killSignal: 'SIGKILL',
+});
+result.then(() => process.exit(0)).catch(() => process.exit(1));
