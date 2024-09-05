@@ -73,6 +73,7 @@ import { computed, inject, ref, watch } from 'vue';
 import { getPositions, isQuestion, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 import flatMap from 'lodash/flatMap';
 import intersection from 'lodash/intersection';
 import map from 'lodash/map';
@@ -100,7 +101,7 @@ interface Props {
   position?: number | null;
   layout?: boolean;
   include?: string[] | null;
-  categories?: any[] | null;
+  categories?: ElementCategory[] | null;
   show?: boolean;
   large?: boolean;
   label?: string;
