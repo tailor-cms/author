@@ -112,7 +112,7 @@ const [passwordInput] = defineField('password');
 
 const oidcEnabled = computed(() => $oidc.enabled);
 const oidcLoginText = computed(
-  () => runtimeConfig.public.oidcLoginText || 'Login with OAuth',
+  () => (runtimeConfig.public.oidcLoginText as string) || 'Login with SSO',
 );
 const accessDenied = computed(() => route.query.accessDenied);
 const oidcError = computed(() => {

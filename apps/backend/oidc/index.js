@@ -3,6 +3,7 @@ import express from 'express';
 import { errors as OIDCError } from 'openid-client';
 
 import { origin } from '../config/server/index.js';
+import { requestLimiter } from '../shared/request/mw.js';
 
 const router = express.Router();
 const { authenticate, logout } = auth;
@@ -19,6 +20,7 @@ const getPromptParams = (req) => (isResign(req) ? { prompt: 'login' } : {});
 const isOIDCError = (err) => OIDCErrors.some((Ctor) => err instanceof Ctor);
 
 router
+  .use(requestLimiter())
   .get('/', authRequestHandler)
   .get('/callback', idpCallbackHandler, (_, res) => res.redirect(origin))
   .use(accessDeniedHandler);
