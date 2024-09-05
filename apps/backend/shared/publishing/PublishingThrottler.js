@@ -11,7 +11,7 @@ const logger = createLogger('webhook-throttler');
 class PublishingThrottler {
   constructor() {
     this.cache = new Keyv({
-      store: kvStore.store,
+      ...kvStore.keyvDefaultConfig,
       namespace: 'publish-webhook',
       ttl: 2 * consumer.publishWebhookThrottle,
     });

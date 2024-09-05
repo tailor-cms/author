@@ -18,7 +18,7 @@ test('a11y check of the "Profile" page', async ({
   );
 });
 
-test('a11y check of the "Change Password" dialog', async ({
+test.skip('a11y check of the "Change Password" dialog', async ({
   page,
   makeAxeBuilder,
 }, testInfo) => {

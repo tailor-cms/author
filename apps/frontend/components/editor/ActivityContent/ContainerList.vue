@@ -16,6 +16,7 @@
       :key="container?.uid"
       v-bind="$attrs"
       :activities="processedActivities"
+      :config="config"
       :container="container"
       :disabled="showPublishDiff"
       :elements="processedElements"
@@ -72,6 +73,7 @@ interface Props {
   parentId: number;
   processedActivities: Activity[];
   processedElements: Record<string, Element>;
+  config?: Record<string, any>;
   templateId?: string;
   containerGroup?: Activity[];
   required?: boolean;
@@ -81,6 +83,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   templateId: '',
+  config: () => ({}),
   containerGroup: () => [],
   required: true,
   multiple: false,

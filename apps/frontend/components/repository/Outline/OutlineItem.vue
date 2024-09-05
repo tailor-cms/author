@@ -36,7 +36,7 @@
                 :activity="activity"
                 class="options-toolbar my-auto"
               />
-              <VTooltip location="bottom">
+              <VTooltip content-class="bg-primary-darken-4" location="bottom">
                 <template #activator="{ props: tooltipProps }">
                   <VBtn
                     v-show="hasSubtypes"

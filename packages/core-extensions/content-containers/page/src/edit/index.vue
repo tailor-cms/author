@@ -123,6 +123,7 @@ import type {
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
@@ -133,7 +134,7 @@ interface Props {
   elements: Record<string, ContentElement>;
   position: number;
   types?: string[] | null;
-  categories?: any[] | null;
+  categories?: ElementCategory[] | null;
   layout?: boolean;
   disabled?: boolean;
 }
@@ -183,7 +184,7 @@ const reorder = ({ newPosition }: { newPosition: number }) => {
 };
 
 const showElementDrawer = (elementIndex: number) => {
-  if (props.disabled || !elementIndex) return;
+  if (props.disabled) return;
   insertPosition.value = elementIndex;
   isElementDrawerVisible.value = true;
 };

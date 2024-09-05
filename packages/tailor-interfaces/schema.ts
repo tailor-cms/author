@@ -63,12 +63,18 @@ export interface ActivityConfig {
   ai?: AIConfig;
 }
 
+export interface ElementCategory {
+  name: string;
+  types: string[];
+}
+
 export interface ContentContainer {
   type: string;
   templateId: string;
   label: string;
   multiple?: boolean;
   types?: string[];
+  categories?: ElementCategory[];
   displayHeading?: boolean;
   layout?: boolean;
   config?: Record<string, any>;
