@@ -1,16 +1,18 @@
 import auth from '../shared/auth/index.js';
 import { fileURLToPath, URL } from 'node:url';
-import { BAD_REQUEST } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import express from 'express';
 import get from 'lodash/get.js';
 import { errors as OIDCError } from 'openid-client';
 import path from 'node:path';
 
+import { origin } from '../config/server/index.js';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const router = express.Router();
 const { authenticate, logout } = auth;
 
-const ACCESS_DENIED_ROUTE = '/auth?accessDenied=';
+const ACCESS_DENIED_ROUTE = `${origin}/auth?accessDenied=`;
 
 const OIDCErrors = [OIDCError.OPError, OIDCError.RPError];
 const scope = ['openid', 'profile', 'email'].join(' ');
@@ -39,7 +41,7 @@ const isOIDCError = (err) => OIDCErrors.some((Ctor) => err instanceof Ctor);
 
 router
   .get('/', authRequestHandler)
-  .get('/callback', idpCallbackHandler, (_, res) => res.redirect('/'))
+  .get('/callback', idpCallbackHandler, (_, res) => res.redirect(origin))
   .use(accessDeniedHandler, defaultErrorHandler);
 
 export default {
@@ -78,7 +80,7 @@ function accessDeniedHandler(err, req, res, next) {
 
 function defaultErrorHandler(err, _req, res, _next) {
   const template = path.resolve(__dirname, './error.mustache');
-  const status = err.status || BAD_REQUEST;
+  const status = err.status || StatusCodes.BAD_REQUEST;
   return res.render(template, err, (_, html) => res.status(status).send(html));
 }
 
@@ -90,7 +92,7 @@ function login(req, res, next) {
   };
   authenticate('oidc', params)(req, res, (err) => {
     if (err) return next(err);
-    if (!isSilentAuth(req)) return res.redirect('/');
+    if (!isSilentAuth(req)) return res.redirect(BASE_URL);
     const template = path.resolve(__dirname, './authenticated.mustache');
     return res.render(template);
   });
