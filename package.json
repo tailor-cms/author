@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "node ./scripts/boot.js",
     "dc": "docker compose -f docker-compose.dev.yaml up & pnpm dev",
-    "build": "pnpm -r build",
+    "build": "dotenv -- pnpm -r build",
     "start": "cd ./apps/backend && pnpm start",
     "dcs": "docker compose -f docker-compose.dev.yaml up & pnpm start",
     "lint": "eslint --ext .js,.ts,.vue .",
@@ -27,6 +27,7 @@
     "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
+    "dotenv-cli": "^7.4.2",
     "@tailor-cms/eslint-config": "^0.0.2",
     "@typescript-eslint/eslint-plugin": "^6.9.0",
     "@typescript-eslint/parser": "^6.9.0",
