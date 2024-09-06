@@ -60,7 +60,8 @@
               class="activity-name my-auto text-truncate text-primary-lighten-4"
             >
               <VChip class="mr-2">
-                Deleted
+                <span class="pr-1 font-weight-bold">Deleted:</span>
+                Publish required
                 <VTooltip location="bottom">
                   <template #activator="{ props: tooltipProps }">
                     <VIcon v-bind="tooltipProps" color="secondary" class="ml-2">
