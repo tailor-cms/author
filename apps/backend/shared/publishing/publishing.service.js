@@ -22,7 +22,7 @@ class PublishingService {
     const data = await this.queue.add(
       createPublishJob(publishActivity, activity),
     );
-    log(`[queueAdd] complteted, activityId: ${activity.id}`);
+    log(`[queueAdd] completed, activityId: ${activity.id}`);
     return data;
   }
 
