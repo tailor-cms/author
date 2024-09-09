@@ -5,8 +5,12 @@ import {
   updatePublishingStatus,
   updateRepositoryCatalog,
 } from './helpers.js';
+import { createLogger } from '../shared/logger.js';
 import publishingThrottler from './PublishingThrottler.js';
 import PromiseQueue from 'promise-queue';
+
+const logger = createLogger('repository:controller');
+const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 
 class PublishingService {
   constructor() {
@@ -39,6 +43,7 @@ class PublishingService {
 export default new PublishingService();
 
 function createPublishJob(action, payload) {
+  log(`[createPublishJob] initiated, activityId: ${payload.id}`);
   return async () => {
     const webhookCtx = payload.repositoryId
       ? { repositoryId: payload.repositoryId, activityId: payload.id }

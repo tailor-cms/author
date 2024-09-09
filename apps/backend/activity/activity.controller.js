@@ -1,3 +1,4 @@
+import { createLogger } from '../shared/logger.js';
 import db from '../shared/database/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { fetchActivityContent } from '../shared/publishing/helpers.js';
@@ -12,6 +13,9 @@ import { schema } from 'tailor-config-shared';
 
 const { Activity } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
+
+const logger = createLogger('repository:controller');
+const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 
 function list({ repository, query, opts }, res) {
   if (!query.detached) opts.where.detached = false;
@@ -64,6 +68,7 @@ function reorder({ activity, body, repository, user }, res) {
 }
 
 function publish({ activity }, res) {
+  log(`[publish] initiated, activityId: ${activity.id}`);
   if (activity.detached) {
     return createError(
       StatusCodes.METHOD_NOT_ALLOWED,
