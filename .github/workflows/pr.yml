@@ -42,6 +42,8 @@ jobs:
           echo "MAILTRAP_INBOX_ID=${{ secrets.MAILTRAP_INBOX_ID }}" >> ./tests/.env
           echo "MAILTRAP_INBOX_NAME=e2e" >> ./tests/.env
           echo "PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}" >> ./tests/.env
+          echo "OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}" >> ./tests/.env
+          echo "OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}" >> ./tests/.env
       - name: Install, build, seed, and start server
         uses: ./.github/actions/run
       - name: Check if platform is running

@@ -6,6 +6,8 @@ import ApiClient from '../../../api/ApiClient';
 import { AppBar } from '../../../pom/common/AppBar';
 import { TEST_USER as DEFAULT_USER } from '../../../fixtures/auth';
 
+const { OIDC_TEST_USER_EMAIL, OIDC_TEST_USER_PASSWORD } = process.env;
+
 interface UserData {
   email: string;
   password: string;
@@ -39,6 +41,13 @@ test('sign in page has a title set', async ({ page }) => {
   const signIn = new SignIn(page);
   await signIn.visit();
   await expect(page).toHaveTitle(/Sign in/);
+});
+
+test('should be able to sign in with OIDC', async ({ page }) => {
+  const signInPage = new SignIn(page);
+  await signInPage.visit();
+  await signInPage.oidcSignIn(OIDC_TEST_USER_EMAIL, OIDC_TEST_USER_PASSWORD);
+  await expect(page).toHaveTitle('Catalog');
 });
 
 test('should be able to sign in', async ({ page }) => {
