@@ -34,7 +34,8 @@ jobs:
           echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env
           echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
           echo "EMAIL_HOST=sandbox.smtp.mailtrap.io" >> .env
-          echo "NUXT_PUBLIC_OIDC_ENABLED=true" >> .env
+          echo "NUXT_PUBLIC_OIDC_ENABLED=1" >> .env
+          echo "OIDC_ALLOW_SIGNUP=1" >> .env
           echo "OIDC_CLIENT_ID=${{ secrets.OIDC_CLIENT_ID }}" >> .env
           echo "OIDC_CLIENT_SECRET=${{ secrets.OIDC_CLIENT_SECRET }}" >> .env
           echo "OIDC_ISSUER=https://dev-65x6wuzrbje7k8bn.us.auth0.com/" >> .env
