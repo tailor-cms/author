@@ -80,8 +80,8 @@ import type {
   ContentElement,
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
+import type { ElementRegistry, Filter } from '@tailor-cms/interfaces/schema';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import type { Filter } from '@tailor-cms/interfaces/schema';
 import flatMap from 'lodash/flatMap';
 import map from 'lodash/map';
 import type { Repository } from '@tailor-cms/interfaces/repository';
@@ -133,6 +133,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['selected', 'close']);
 
 const api = inject<any>('$api');
+const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 const currentRepository = inject<any>('$repository');
 const schemaService = inject<any>('$schemaService');
 
@@ -218,9 +219,7 @@ const assignElements = (
       if (el.activityId !== container.id) return false;
       if (allowedTypes.length && !allowedTypes.includes(el.type)) return false;
       if (!props.element) return true;
-      return filters.every((filter) =>
-        filter(el, props.element as ContentElement),
-      );
+      return filters.every((filter) => filter(el, props.element!, ceRegistry));
     })
     .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
