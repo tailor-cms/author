@@ -33,25 +33,35 @@ class PublishingThrottler {
   }
 
   async call(webhookCtx) {
-    if (!this.isWebhookEnabled) return;
+    const { activityId, repositoryId } = webhookCtx;
+    const idMessage = activityId
+      ? `activityId: ${activityId}`
+      : `repositoryId: ${repositoryId}`;
 
-    const reportPublishing = () =>
+    if (!this.isWebhookEnabled) return logger.info('Webhook is not enabled');
+
+    logger.info(`[webhook call] initiated, ${idMessage}`);
+
+    const reportPublishing = () => {
+      logger.info(`[reportPublishing] initiated, ${idMessage}`);
       oauth2
         .send(consumer.publishWebhookUrl, webhookCtx)
+        .then(() => logger.info(`[reportPublishing] completed, ${idMessage}`))
         .catch((e) => logger.error(e));
+    };
 
     if (!this.isThrottlingEnabled) return reportPublishing();
 
     // Store job id for this repository
     const jobId = cuid();
-    const { repositoryId } = webhookCtx;
     await this.cache.set(repositoryId, jobId);
     // Check with delay if another job is created for this repository
     await setTimeout(consumer.publishWebhookThrottle);
     const activeJobId = await this.cache.get(repositoryId);
     if (activeJobId !== jobId) return;
     await this.cache.delete(repositoryId);
-    return reportPublishing();
+    await reportPublishing();
+    return logger.info(`[webhook call] completed, ${idMessage}`);
   }
 }
 

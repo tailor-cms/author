@@ -17,8 +17,13 @@ class PublishingService {
     this.queue = new PromiseQueue(1, Infinity);
   }
 
-  publishActivity(activity) {
-    return this.queue.add(createPublishJob(publishActivity, activity));
+  async publishActivity(activity) {
+    log(`[queueAdd] intiated, activityId: ${activity.id}`);
+    const data = await this.queue.add(
+      createPublishJob(publishActivity, activity),
+    );
+    log(`[queueAdd] complteted, activityId: ${activity.id}`);
+    return data;
   }
 
   publishRepoDetails(repository) {
