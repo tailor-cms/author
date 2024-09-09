@@ -5,7 +5,7 @@ import {
   updatePublishingStatus,
   updateRepositoryCatalog,
 } from './helpers.js';
-import { createLogger } from '../shared/logger.js';
+import { createLogger } from '../logger.js';
 import publishingThrottler from './PublishingThrottler.js';
 import PromiseQueue from 'promise-queue';
 
