@@ -33,12 +33,21 @@ class PublishingThrottler {
   }
 
   async call(webhookCtx) {
-    if (!this.isWebhookEnabled) return;
+    if (!this.isWebhookEnabled) return logger.info('Webhook is not enabled');
 
-    const reportPublishing = () =>
+    const params = Object.entries(webhookCtx)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join(', ');
+
+    logger.info(`[publishingThrottler] initiated, ${params}`);
+
+    const reportPublishing = () => {
+      logger.info(`[reportPublishing] initiated, ${params}`);
       oauth2
         .send(consumer.publishWebhookUrl, webhookCtx)
+        .then(() => logger.info(`[reportPublishing] completed, ${params}`))
         .catch((e) => logger.error(e));
+    };
 
     if (!this.isThrottlingEnabled) return reportPublishing();
 
@@ -51,7 +60,8 @@ class PublishingThrottler {
     const activeJobId = await this.cache.get(repositoryId);
     if (activeJobId !== jobId) return;
     await this.cache.delete(repositoryId);
-    return reportPublishing();
+    await reportPublishing();
+    return logger.info(`[publishingThrottler] completed, ${params}`);
   }
 }
 
