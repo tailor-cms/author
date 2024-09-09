@@ -26,7 +26,7 @@ const { getLevelRelationships, getOutlineLevels, getSupportedContainers } =
 const { FLAT_REPO_STRUCTURE } = process.env;
 
 const logger = createLogger('publishing');
-const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
+const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 
 const CC_ATTRS = ['id', 'uid', 'type', 'position', 'createdAt', 'updatedAt'];
 
