@@ -55,6 +55,8 @@ jobs:
           push: true
           build-args: |
             NUXT_PUBLIC_AI_UI_ENABLED=true
+            NUXT_PUBLIC_OIDC_ENABLED=true
+            NUXT_PUBLIC_OIDC_LOGOUT_ENABLED=true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   deploy:

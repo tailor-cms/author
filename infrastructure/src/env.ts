@@ -3,6 +3,7 @@ import * as pulumi from '@pulumi/pulumi';
 import * as studion from '@studion/infra-code-blocks';
 
 const aiConfig = new pulumi.Config('ai');
+const oidcConfg = new pulumi.Config('oidc');
 const awsConfig = new pulumi.Config('aws');
 const emailConfig = new pulumi.Config('email');
 const dnsConfig = new pulumi.Config('dns');
@@ -53,6 +54,24 @@ export const getEnvVariables = (db: studion.Database) => [
   { name: 'EMAIL_SENDER_ADDRESS', value: emailConfig.require('senderAddress') },
   { name: 'AI_MODEL_ID', value: aiConfig.require('modelId') },
   { name: 'FLAT_REPO_STRUCTURE', value: 'true' },
+  { name: 'OIDC_ISSUER', value: oidcConfg.require('issuer') },
+  { name: ' OIDC_JWKS_URL', value: oidcConfg.require('jwksUrl') },
+  {
+    name: 'OIDC_AUTHORIZATION_ENDPOINT',
+    value: oidcConfg.require('authorizationEndpoint'),
+  },
+  { name: 'OIDC_TOKEN_ENDPOINT', value: oidcConfg.require('tokenEndpoint') },
+  {
+    name: 'OIDC_USERINFO_ENDPOINT',
+    value: oidcConfg.require('userinfoEndpoint'),
+  },
+  { name: 'OIDC_LOGOUT_ENDPOINT', value: oidcConfg.require('logoutEndpoint') },
+  {
+    name: 'OIDC_POST_LOGOUT_URI_KEY',
+    value: oidcConfg.require('postLogoutUriKey'),
+  },
+  { name: 'OIDC_ALLOW_SIGNUP', value: 'true' },
+  { name: 'OIDC_DEFAULT_ROLE', value: 'ADMIN' },
 ];
 
 export const getSecrets = (db: studion.Database) => [
@@ -64,6 +83,9 @@ export const getSecrets = (db: studion.Database) => [
     'EMAIL_USER',
     'EMAIL_PASSWORD',
     'AI_SECRET_KEY',
+    'OIDC_CLIENT_ID',
+    'OIDC_CLIENT_SECRET',
+    'SESSION_SECRET',
   ].map((name) => ({ name, valueFrom: getSsmParam(name) })),
   { name: 'DATABASE_PASSWORD', valueFrom: db.password.secret.arn },
 ];
