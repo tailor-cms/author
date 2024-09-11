@@ -21,8 +21,10 @@ const { STORAGE_PATH } = process.env;
 const logger = getLogger();
 const app = express();
 
-const cookieConfig = Object.fromEntries(
-  Object.entries(process.env).filter(([key]) => key.startsWith('NUXT')),
+const configCookie = JSON.stringify(
+  Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => key.startsWith('NUXT')),
+  ),
 );
 
 if (config.general.reverseProxyPolicy)
@@ -69,9 +71,7 @@ app.use(
 );
 app.use(
   express.static(path.join(__dirname, '../frontend/.output/public'), {
-    setHeaders: (res) => {
-      res.cookie('config', JSON.stringify(cookieConfig));
-    },
+    setHeaders: (res) => res.cookie('config', configCookie),
   }),
 );
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
