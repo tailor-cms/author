@@ -21,6 +21,11 @@ const { STORAGE_PATH } = process.env;
 const logger = getLogger();
 const app = express();
 
+const cookieConfig = {
+  aiUiEnabled: config.general.aiUiEnabled,
+  availableSchemas: config.general.availableSchemas,
+};
+
 if (config.general.reverseProxyPolicy)
   app.set('trust proxy', config.general.reverseProxyPolicy);
 
@@ -63,7 +68,13 @@ app.use(
     ],
   }),
 );
-app.use(express.static(path.join(__dirname, '../frontend/.output/public')));
+app.use(
+  express.static(path.join(__dirname, '../frontend/.output/public'), {
+    setHeaders: (res) => {
+      res.cookie('config', JSON.stringify(cookieConfig));
+    },
+  }),
+);
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
 // Mount main router.

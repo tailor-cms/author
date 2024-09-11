@@ -4,6 +4,13 @@
   </VApp>
 </template>
 
+<script lang="ts" setup>
+import { useConfigStore } from '@/stores/config';
+
+const configStore = useConfigStore();
+configStore.getConfig();
+</script>
+
 <style lang="scss">
 .v-input.required {
   .v-field-label {

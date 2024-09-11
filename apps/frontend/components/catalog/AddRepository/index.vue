@@ -116,7 +116,7 @@
             />
           </template>
           <AIAssistance
-            v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
+            v-if="aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
@@ -160,13 +160,14 @@ import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
+import { useConfigStore } from '@/stores/config';
 import { useRepositoryStore } from '@/stores/repository';
 
 const { $schemaService } = useNuxtApp() as any;
 
-const runtimeConfig = useRuntimeConfig();
 const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
+const configStore = useConfigStore();
 
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
@@ -184,14 +185,8 @@ const aiSuggestedOutline = ref([]);
 
 const metaValidation = reactive<Record<string, any>>({});
 
-const availableSchemas = computed(() => {
-  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
-    .split(',')
-    .filter(Boolean)
-    .map((schema) => schema.trim());
-  if (!availableSchemas.length) return SCHEMAS;
-  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
-});
+const availableSchemas = computed(() => configStore.availableSchemas);
+const aiUiEnabled = computed(() => configStore.aiUiEnabled);
 
 const { defineField, handleSubmit, resetForm, values, errors } = useForm({
   initialValues: {
