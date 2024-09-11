@@ -14,14 +14,17 @@ export const useConfigStore = defineStore('config', () => {
 
     const availableSchemas = runtimeSchemas.length
       ? runtimeSchemas
-      : config.value.availableSchemas || [];
+      : config.value.NUXT_PUBLIC_AVAILABLE_SCHEMAS || [];
 
     if (!availableSchemas.length) return SCHEMAS;
     return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
   });
 
   const aiUiEnabled = computed(
-    () => runtimeConfig.aiUiEnabled ?? config.value.aiUiEnabled ?? false,
+    () =>
+      runtimeConfig.aiUiEnabled ??
+      config.value.NUXT_PUBLIC_AI_UI_ENABLED ??
+      false,
   );
 
   function getConfig() {

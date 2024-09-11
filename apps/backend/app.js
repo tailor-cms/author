@@ -21,10 +21,9 @@ const { STORAGE_PATH } = process.env;
 const logger = getLogger();
 const app = express();
 
-const cookieConfig = {
-  aiUiEnabled: config.general.aiUiEnabled,
-  availableSchemas: config.general.availableSchemas,
-};
+const cookieConfig = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => key.startsWith('NUXT')),
+);
 
 if (config.general.reverseProxyPolicy)
   app.set('trust proxy', config.general.reverseProxyPolicy);
