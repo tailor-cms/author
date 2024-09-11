@@ -12,7 +12,7 @@ export const useConfigStore = defineStore('config', () => {
       .filter(Boolean)
       .map((schema) => schema.trim());
 
-    const availableSchemas = runtimeSchemas.length
+    const availableSchemas = import.meta.dev
       ? runtimeSchemas
       : config.value.NUXT_PUBLIC_AVAILABLE_SCHEMAS || [];
 
@@ -20,11 +20,10 @@ export const useConfigStore = defineStore('config', () => {
     return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
   });
 
-  const aiUiEnabled = computed(
-    () =>
-      runtimeConfig.aiUiEnabled ??
-      config.value.NUXT_PUBLIC_AI_UI_ENABLED ??
-      false,
+  const aiUiEnabled = computed(() =>
+    import.meta.dev
+      ? runtimeConfig.aiUiEnabled
+      : config.value.NUXT_PUBLIC_AI_UI_ENABLED,
   );
 
   function getConfig() {
