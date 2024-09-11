@@ -114,6 +114,7 @@ import RepositoryFilterSelection from '@/components/catalog/Filter/RepositoryFil
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
 import { useAuthStore } from '@/stores/auth';
+import { useConfigStore } from '@/stores/config';
 import { useRepositoryStore } from '@/stores/repository';
 
 definePageMeta({
@@ -126,9 +127,9 @@ useHead({
   meta: [{ name: 'description', content: 'Tailor CMS - Repository catalog' }],
 });
 
-const runtimeConfig = useRuntimeConfig();
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
+const configStore = storeToRefs(useConfigStore());
 
 const isLoading = ref(true);
 
@@ -147,19 +148,10 @@ const togglePinFilter = () => {
   refetchRepositories();
 };
 
-const availableSchemas = computed(() => {
-  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
-    .split(',')
-    .filter(Boolean)
-    .map((schema) => schema.trim());
-  if (!availableSchemas.length) return SCHEMAS;
-  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
-});
-
 const filters = computed(() => {
   const { SCHEMA, TAG } = repositoryFilterConfigs;
   const filters = [{ ...TAG, values: tags.value }];
-  if (availableSchemas.value.length > 1) {
+  if (configStore.availableSchemas.value.length > 1) {
     filters.push({ ...SCHEMA, values: SCHEMAS as any[] });
   }
   return map(filters, ({ type, values, ...config }) => {

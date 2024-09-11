@@ -64,6 +64,7 @@ import PublishDiffProvider from './PublishDiffProvider.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
+import { useConfigStore } from '@/stores/config';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
@@ -84,7 +85,7 @@ const emit = defineEmits(['selected']);
 
 const route = useRoute();
 
-const runtimeConfig = useRuntimeConfig();
+const configStore = useConfigStore();
 const { $eventBus, $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useCurrentRepository();
@@ -120,7 +121,7 @@ const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
-if (runtimeConfig.public.aiUiEnabled) provide('$doTheMagic', doTheMagic);
+if (configStore.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);
 const focusedElement = ref(null);
