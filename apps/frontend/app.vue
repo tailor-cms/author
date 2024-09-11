@@ -7,8 +7,7 @@
 <script lang="ts" setup>
 import { useConfigStore } from '@/stores/config';
 
-const configStore = useConfigStore();
-configStore.getConfig();
+useConfigStore().getConfig();
 </script>
 
 <style lang="scss">
