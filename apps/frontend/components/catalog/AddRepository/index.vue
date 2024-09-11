@@ -167,7 +167,7 @@ const { $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
-const configStore = useConfigStore();
+const { aiUiEnabled, availableSchemas } = storeToRefs(useConfigStore());
 
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
@@ -184,9 +184,6 @@ const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
 const metaValidation = reactive<Record<string, any>>({});
-
-const availableSchemas = computed(() => configStore.availableSchemas);
-const aiUiEnabled = computed(() => configStore.aiUiEnabled);
 
 const { defineField, handleSubmit, resetForm, values, errors } = useForm({
   initialValues: {

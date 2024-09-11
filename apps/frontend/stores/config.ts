@@ -29,7 +29,6 @@ export const useConfigStore = defineStore('config', () => {
 
   function getConfig() {
     const cookie = useCookie('config');
-
     config.value = cookie.value;
     cookie.value = null;
   }
