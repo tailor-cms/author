@@ -1,11 +1,12 @@
 import OidcClient from '@/lib/OidcClient';
+import { useConfigStore } from '@/stores/config';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const { oidcEnabled, oidcLogoutEnabled } = useRuntimeConfig().public;
+  const configStore = useConfigStore();
   const oidcClient = new OidcClient({
     baseUrl: '/api',
-    enabled: oidcEnabled,
-    logoutEnabled: oidcLogoutEnabled,
+    enabled: configStore.oidc.enabled,
+    logoutEnabled: configStore.oidc.logoutEnabled,
   });
   nuxtApp.provide('oidc', oidcClient);
 });

@@ -26,6 +26,24 @@ export const useConfigStore = defineStore('config', () => {
       : config.value.NUXT_PUBLIC_AI_UI_ENABLED,
   );
 
+  const oidcEnabled = computed(() =>
+    import.meta.dev
+      ? runtimeConfig.oidcEnabled
+      : config.value.NUXT_PUBLIC_OIDC_ENABLED,
+  );
+
+  const oidcLoginText = computed(() =>
+    import.meta.dev
+      ? runtimeConfig.oidcLoginText
+      : config.value.NUXT_PUBLIC_OIDC_LOGIN_TEXT,
+  );
+
+  const oidcLogoutEnabled = computed(() =>
+    import.meta.dev
+      ? runtimeConfig.oidcLogoutEnabled
+      : config.value.NUXT_PUBLIC_OIDC_LOGOUT_ENABLED,
+  );
+
   function getConfig() {
     const cookie = useCookie('config');
     config.value = cookie.value;
@@ -36,5 +54,8 @@ export const useConfigStore = defineStore('config', () => {
     getConfig,
     aiUiEnabled,
     availableSchemas,
+    oidcEnabled,
+    oidcLoginText,
+    oidcLogoutEnabled,
   };
 });

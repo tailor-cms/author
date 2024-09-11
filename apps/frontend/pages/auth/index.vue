@@ -74,6 +74,7 @@ import { object, string } from 'yup';
 import { useForm } from 'vee-validate';
 
 import { useAuthStore } from '@/stores/auth';
+import { useConfigStore } from '@/stores/config';
 
 const LOGIN_ERR_MESSAGE = 'The email or password you entered is incorrect.';
 const TOO_MANY_REQ_CODE = 429;
@@ -96,7 +97,7 @@ useHead({
 const localError = ref('');
 
 const { $oidc } = useNuxtApp() as any;
-const runtimeConfig = useRuntimeConfig();
+const configStore = useConfigStore();
 const authStore = useAuthStore();
 const route = useRoute();
 
@@ -112,7 +113,7 @@ const [passwordInput] = defineField('password');
 
 const oidcEnabled = computed(() => $oidc.enabled);
 const oidcLoginText = computed(
-  () => (runtimeConfig.public.oidcLoginText as string) || 'Sign in with SSO',
+  () => (configStore.oidcLoginText as string) || 'Sign in with SSO',
 );
 const accessDenied = computed(() => route.query.accessDenied);
 const oidcError = computed(() => {
