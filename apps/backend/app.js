@@ -71,7 +71,10 @@ app.use(
 );
 app.use(
   express.static(path.join(__dirname, '../frontend/.output/public'), {
-    setHeaders: (res) => res.cookie('config', configCookie),
+    setHeaders: (res, path) => {
+      if (!path.endsWith('/public/index.html')) return;
+      return res.cookie('config', configCookie);
+    },
   }),
 );
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
