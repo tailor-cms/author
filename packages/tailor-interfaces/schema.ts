@@ -19,7 +19,7 @@ export interface Metadata {
 export type Filter = (
   optionEl: ContentElement,
   currentEl: ContentElement,
-  elRegistry: ElementManifest,
+  elRegistry?: ElementManifest,
 ) => boolean;
 
 export interface ElementRelationship {
