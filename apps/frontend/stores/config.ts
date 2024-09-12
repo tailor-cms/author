@@ -11,14 +11,17 @@ interface ConfigCookie {
   [key: string]: any;
 }
 
+const parseSchemas = (schemas = '') =>
+  schemas
+    .split(',')
+    .filter(Boolean)
+    .map((schema) => schema.trim());
+
 export const useConfigStore = defineStore('config', () => {
   const cookieConfig = reactive<ConfigCookie>({});
 
   const availableSchemas = computed(() => {
-    const availableSchemas = (cookieConfig.availableSchemas || '')
-      .split(',')
-      .filter(Boolean)
-      .map((schema) => schema.trim());
+    const availableSchemas = parseSchemas(cookieConfig.availableSchemas);
     if (!availableSchemas.length) return SCHEMAS;
     return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
   });
