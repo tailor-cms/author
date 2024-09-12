@@ -14,7 +14,7 @@ export class SignIn {
 
   constructor(page: Page) {
     this.page = page;
-    this.oidcBtn = page.getByRole('button', { name: 'Sign in with SSO' });
+    this.oidcBtn = page.getByTestId('auth_oidcLoginBtn');
     this.emailInput = page.getByLabel('Email');
     this.passwordInput = page.getByLabel('Password');
     this.forgotPasswordLink = page.getByRole('link', {

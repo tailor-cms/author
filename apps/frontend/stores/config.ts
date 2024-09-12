@@ -28,7 +28,7 @@ export const useConfigStore = defineStore('config', () => {
   });
 
   const oidcLoginText = computed(
-    () => config.oidcLoginText ?? 'Sign in with OIDC',
+    () => config.oidcLoginText ?? 'Sign in with SSO',
   );
 
   function getConfig() {

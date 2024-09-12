@@ -4,6 +4,7 @@
       <VBtn
         class="mb-2"
         color="secondary-lighten-4"
+        data-testid="auth_oidcLoginBtn"
         variant="tonal"
         block
         rounded
