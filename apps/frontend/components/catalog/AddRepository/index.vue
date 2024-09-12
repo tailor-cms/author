@@ -65,9 +65,9 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
-              :disabled="availableSchemas.length === 1"
+              :disabled="config.availableSchemas.length === 1"
               :error-messages="errors.schema"
-              :items="availableSchemas"
+              :items="config.availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
               class="required"
               data-testid="type-input"
@@ -116,7 +116,7 @@
             />
           </template>
           <AIAssistance
-            v-if="aiUiEnabled && selectedTab === NEW_TAB"
+            v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
@@ -167,7 +167,7 @@ const { $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
-const { aiUiEnabled, availableSchemas } = storeToRefs(useConfigStore());
+const config = useConfigStore();
 
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
@@ -188,7 +188,9 @@ const metaValidation = reactive<Record<string, any>>({});
 const { defineField, handleSubmit, resetForm, values, errors } = useForm({
   initialValues: {
     schema:
-      availableSchemas.value.length === 1 ? availableSchemas.value[0].id : null,
+      config.availableSchemas.length === 1
+        ? config.availableSchemas[0].id
+        : null,
     name: '',
     description: '',
     archive: null,

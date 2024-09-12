@@ -1,61 +1,47 @@
+import camelCase from 'lodash/camelCase';
 import { computed } from 'vue';
 import { SCHEMAS } from 'tailor-config-shared';
 
-export const useConfigStore = defineStore('config', () => {
-  const runtimeConfig = useRuntimeConfig().public;
+interface ConfigCookie {
+  aiUiEnabled?: boolean;
+  availableSchemas?: string;
+  oidcEnabled?: boolean;
+  oidcLoginText?: string;
+  oidcLogoutEnabled?: boolean;
+  [key: string]: any;
+}
 
-  const config = ref<any>({});
+const parseSchemas = (schemas = '') =>
+  schemas
+    .split(',')
+    .filter(Boolean)
+    .map((schema) => schema.trim());
+
+export const useConfigStore = defineStore('config', () => {
+  const rawConfig = ref({});
+  const config = reactive<ConfigCookie>({});
 
   const availableSchemas = computed(() => {
-    const runtimeSchemas = (runtimeConfig.availableSchemas || '')
-      .split(',')
-      .filter(Boolean)
-      .map((schema) => schema.trim());
-
-    const availableSchemas = import.meta.dev
-      ? runtimeSchemas
-      : config.value.NUXT_PUBLIC_AVAILABLE_SCHEMAS || [];
-
+    const availableSchemas = parseSchemas(config.availableSchemas);
     if (!availableSchemas.length) return SCHEMAS;
     return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
   });
 
-  const aiUiEnabled = computed(() =>
-    import.meta.dev
-      ? runtimeConfig.aiUiEnabled
-      : config.value.NUXT_PUBLIC_AI_UI_ENABLED,
-  );
-
-  const oidcEnabled = computed(() =>
-    import.meta.dev
-      ? runtimeConfig.oidcEnabled
-      : config.value.NUXT_PUBLIC_OIDC_ENABLED,
-  );
-
-  const oidcLoginText = computed(() =>
-    import.meta.dev
-      ? runtimeConfig.oidcLoginText
-      : config.value.NUXT_PUBLIC_OIDC_LOGIN_TEXT,
-  );
-
-  const oidcLogoutEnabled = computed(() =>
-    import.meta.dev
-      ? runtimeConfig.oidcLogoutEnabled
-      : config.value.NUXT_PUBLIC_OIDC_LOGOUT_ENABLED,
-  );
-
   function getConfig() {
-    const cookie = useCookie('config');
-    config.value = cookie.value;
-    cookie.value = null;
+    const cookie = useCookie<ConfigCookie | undefined>('config');
+    rawConfig.value = cookie.value ?? {};
+    if (!cookie.value) return;
+    Object.entries(cookie.value).forEach(([key, value]) => {
+      const parsedKey = camelCase(key.replace('NUXT_PUBLIC_', ''));
+      config[parsedKey] = value;
+    });
+    cookie.value = undefined;
   }
 
   return {
     getConfig,
-    aiUiEnabled,
+    props: readonly(config),
+    rawProps: readonly(rawConfig),
     availableSchemas,
-    oidcEnabled,
-    oidcLoginText,
-    oidcLogoutEnabled,
   };
 });
