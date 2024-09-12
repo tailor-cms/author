@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout name="auth" title="Sign in">
-    <template v-if="oidcEnabled">
+    <template v-if="config.props.oidcEnabled">
       <VBtn
         class="mb-2"
         color="secondary-lighten-4"
@@ -9,7 +9,7 @@
         rounded
         @click="loginOIDC"
       >
-        {{ oidcLoginText }}
+        {{ config.oidcLoginText }}
       </VBtn>
       <div class="d-flex align-center my-5">
         <VDivider />
@@ -97,7 +97,7 @@ useHead({
 const localError = ref('');
 
 const { $oidc } = useNuxtApp() as any;
-const configStore = useConfigStore();
+const config = useConfigStore();
 const authStore = useAuthStore();
 const route = useRoute();
 
@@ -111,14 +111,10 @@ const { defineField, handleSubmit, errors } = useForm({
 const [emailInput] = defineField('email');
 const [passwordInput] = defineField('password');
 
-const oidcEnabled = computed(() => $oidc.enabled);
-const oidcLoginText = computed(
-  () => (configStore.oidcLoginText as string) || 'Sign in with SSO',
-);
 const accessDenied = computed(() => route.query.accessDenied);
 const oidcError = computed(() => {
   if (!accessDenied.value) return;
-  return getOidcErrorMessage(accessDenied.value, oidcLoginText.value);
+  return getOidcErrorMessage(accessDenied.value, config.oidcLoginText);
 });
 const errorMessage = computed(() => oidcError.value || localError.value);
 

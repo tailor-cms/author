@@ -27,6 +27,10 @@ export const useConfigStore = defineStore('config', () => {
     return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
   });
 
+  const oidcLoginText = computed(
+    () => config.oidcLoginText ?? 'Sign in with OIDC',
+  );
+
   function getConfig() {
     const cookie = useCookie<ConfigCookie | undefined>('config');
     rawConfig.value = cookie.value ?? {};
@@ -43,5 +47,6 @@ export const useConfigStore = defineStore('config', () => {
     props: readonly(config),
     rawProps: readonly(rawConfig),
     availableSchemas,
+    oidcLoginText,
   };
 });
