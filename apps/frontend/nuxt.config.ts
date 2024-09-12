@@ -1,3 +1,9 @@
+const configCookie = JSON.stringify(
+  Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => key.startsWith('NUXT')),
+  ),
+);
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
@@ -8,6 +14,19 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: { include: ['lodash'] },
+    plugins: [
+      {
+        name: 'inject-configuration-headers',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            if (req.originalUrl === '/_nuxt/app.vue') {
+              res.setHeader('Set-Cookie', `config=${configCookie}`);
+            }
+            next();
+          });
+        },
+      },
+    ],
   },
   devtools: { enabled: true },
   telemetry: false,
