@@ -9,3 +9,4 @@ config:
   email:senderAddress: tailor@extensionengine.com
   ssm:keyPrefix: tailor/dev
   tailor-cms:resourceNamePrefix: tools
+  schema:availableSchemas: ""
