@@ -9,10 +9,13 @@ config:
   email:senderAddress: tailor@extensionengine.com
   ssm:keyPrefix: tailor/dev
   tailor-cms:resourceNamePrefix: tools
+  oidc:enabled: true
+  oidc:loginText: Sign in with Auth0
   oidc:issuer: https://dev-65x6wuzrbje7k8bn.us.auth0.com/
   oidc:jwksUrl: https://dev-65x6wuzrbje7k8bn.us.auth0.com/.well-known/jwks.json
   oidc:authorizationEndpoint: https://dev-65x6wuzrbje7k8bn.us.auth0.com/authorize
   oidc:tokenEndpoint: https://dev-65x6wuzrbje7k8bn.us.auth0.com/oauth/token
   oidc:userinfoEndpoint: https://dev-65x6wuzrbje7k8bn.us.auth0.com/userinfo
+  oidc:logoutEnabled: true
   oidc:logoutEndpoint: http://dev-65x6wuzrbje7k8bn.us.auth0.com/v2/logout
   oidc:postLogoutUriKey: returnTo

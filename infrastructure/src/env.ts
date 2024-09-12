@@ -54,8 +54,13 @@ export const getEnvVariables = (db: studion.Database) => [
   { name: 'EMAIL_SENDER_ADDRESS', value: emailConfig.require('senderAddress') },
   { name: 'AI_MODEL_ID', value: aiConfig.require('modelId') },
   { name: 'FLAT_REPO_STRUCTURE', value: 'true' },
+  { name: 'NUXT_PUBLIC_OIDC_ENABLED', value: oidcConfg.require('enabled') },
+  {
+    name: 'NUXT_PUBLIC_OIDC_LOGIN_TEXT',
+    value: oidcConfg.require('loginText'),
+  },
   { name: 'OIDC_ISSUER', value: oidcConfg.require('issuer') },
-  { name: ' OIDC_JWKS_URL', value: oidcConfg.require('jwksUrl') },
+  { name: 'OIDC_JWKS_URL', value: oidcConfg.require('jwksUrl') },
   {
     name: 'OIDC_AUTHORIZATION_ENDPOINT',
     value: oidcConfg.require('authorizationEndpoint'),
@@ -64,6 +69,10 @@ export const getEnvVariables = (db: studion.Database) => [
   {
     name: 'OIDC_USERINFO_ENDPOINT',
     value: oidcConfg.require('userinfoEndpoint'),
+  },
+  {
+    name: 'NUXT_PUBLIC_OIDC_LOGOUT_ENABLED',
+    value: oidcConfg.require('logoutEnabled'),
   },
   { name: 'OIDC_LOGOUT_ENDPOINT', value: oidcConfg.require('logoutEndpoint') },
   {
