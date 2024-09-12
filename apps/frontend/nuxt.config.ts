@@ -38,10 +38,4 @@ export default defineNuxtConfig({
       Poppins: true,
     },
   },
-  runtimeConfig: {
-    public: {
-      aiUiEnabled: false,
-      availableSchemas: '',
-    },
-  },
 });
