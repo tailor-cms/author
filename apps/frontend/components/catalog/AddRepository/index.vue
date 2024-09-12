@@ -116,7 +116,7 @@
             />
           </template>
           <AIAssistance
-            v-if="aiUiEnabled && selectedTab === NEW_TAB"
+            v-if="parsed.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
@@ -167,7 +167,7 @@ const { $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
-const { aiUiEnabled, availableSchemas } = storeToRefs(useConfigStore());
+const { availableSchemas, parsed } = storeToRefs(useConfigStore());
 
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';

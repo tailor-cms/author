@@ -1,8 +1,4 @@
-const configCookie = JSON.stringify(
-  Object.fromEntries(
-    Object.entries(process.env).filter(([key]) => key.startsWith('NUXT')),
-  ),
-);
+import injectConfigHeaders from './lib/vite-plugins/injectConfigHeaders';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -14,19 +10,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: { include: ['lodash'] },
-    plugins: [
-      {
-        name: 'inject-configuration-headers',
-        configureServer(server) {
-          server.middlewares.use((req, res, next) => {
-            if (req.originalUrl === '/_nuxt/app.vue') {
-              res.setHeader('Set-Cookie', `config=${configCookie}; path=/`);
-            }
-            next();
-          });
-        },
-      },
-    ],
+    plugins: [injectConfigHeaders],
   },
   devtools: { enabled: true },
   telemetry: false,

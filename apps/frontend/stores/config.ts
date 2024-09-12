@@ -18,35 +18,30 @@ const parseSchemas = (schemas = '') =>
     .map((schema) => schema.trim());
 
 export const useConfigStore = defineStore('config', () => {
-  const cookieConfig = reactive<ConfigCookie>({});
+  const rawConfig = ref({});
+  const config = reactive<ConfigCookie>({});
 
   const availableSchemas = computed(() => {
-    const availableSchemas = parseSchemas(cookieConfig.availableSchemas);
+    const availableSchemas = parseSchemas(config.availableSchemas);
     if (!availableSchemas.length) return SCHEMAS;
     return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
   });
 
-  const aiUiEnabled = computed(() => cookieConfig.aiUiEnabled);
-  const oidcEnabled = computed(() => cookieConfig.oidcEnabled);
-  const oidcLoginText = computed(() => cookieConfig.oidcLoginText);
-  const oidcLogoutEnabled = computed(() => cookieConfig.oidcLogoutEnabled);
-
   function getConfig() {
     const cookie = useCookie<ConfigCookie | undefined>('config');
+    rawConfig.value = cookie.value ?? {};
     if (!cookie.value) return;
     Object.entries(cookie.value).forEach(([key, value]) => {
       const parsedKey = camelCase(key.replace('NUXT_PUBLIC_', ''));
-      cookieConfig[parsedKey] = value;
+      config[parsedKey] = value;
     });
     cookie.value = undefined;
   }
 
   return {
     getConfig,
-    aiUiEnabled,
+    parsed: readonly(config),
+    raw: readonly(rawConfig),
     availableSchemas,
-    oidcEnabled,
-    oidcLoginText,
-    oidcLogoutEnabled,
   };
 });

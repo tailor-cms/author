@@ -121,7 +121,7 @@ const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
-if (configStore.aiUiEnabled) provide('$doTheMagic', doTheMagic);
+if (configStore.parsed.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);
 const focusedElement = ref(null);

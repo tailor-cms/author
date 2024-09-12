@@ -129,7 +129,7 @@ useHead({
 
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
-const configStore = storeToRefs(useConfigStore());
+const { availableSchemas } = storeToRefs(useConfigStore());
 
 const isLoading = ref(true);
 
@@ -151,7 +151,7 @@ const togglePinFilter = () => {
 const filters = computed(() => {
   const { SCHEMA, TAG } = repositoryFilterConfigs;
   const filters = [{ ...TAG, values: tags.value }];
-  if (configStore.availableSchemas.value.length > 1) {
+  if (availableSchemas.value.length > 1) {
     filters.push({ ...SCHEMA, values: SCHEMAS as any[] });
   }
   return map(filters, ({ type, values, ...config }) => {
