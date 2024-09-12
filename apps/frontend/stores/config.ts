@@ -12,13 +12,10 @@ interface ConfigCookie {
 }
 
 export const useConfigStore = defineStore('config', () => {
-  const runtimeConfig = useRuntimeConfig().public;
-
   const cookieConfig = reactive<ConfigCookie>({});
-  const config = import.meta.dev ? runtimeConfig : cookieConfig;
 
   const availableSchemas = computed(() => {
-    const availableSchemas = (config.availableSchemas || '')
+    const availableSchemas = (cookieConfig.availableSchemas || '')
       .split(',')
       .filter(Boolean)
       .map((schema) => schema.trim());
@@ -26,10 +23,10 @@ export const useConfigStore = defineStore('config', () => {
     return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
   });
 
-  const aiUiEnabled = computed(() => config.aiUiEnabled);
-  const oidcEnabled = computed(() => config.oidcEnabled);
-  const oidcLoginText = computed(() => config.oidcLoginText);
-  const oidcLogoutEnabled = computed(() => config.oidcLogoutEnabled);
+  const aiUiEnabled = computed(() => cookieConfig.aiUiEnabled);
+  const oidcEnabled = computed(() => cookieConfig.oidcEnabled);
+  const oidcLoginText = computed(() => cookieConfig.oidcLoginText);
+  const oidcLogoutEnabled = computed(() => cookieConfig.oidcLogoutEnabled);
 
   function getConfig() {
     const cookie = useCookie<ConfigCookie | undefined>('config');

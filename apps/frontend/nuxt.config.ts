@@ -20,7 +20,7 @@ export default defineNuxtConfig({
         configureServer(server) {
           server.middlewares.use((req, res, next) => {
             if (req.originalUrl === '/_nuxt/app.vue') {
-              res.setHeader('Set-Cookie', `config=${configCookie}`);
+              res.setHeader('Set-Cookie', `config=${configCookie}; path=/`);
             }
             next();
           });
