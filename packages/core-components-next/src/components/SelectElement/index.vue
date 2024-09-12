@@ -219,7 +219,9 @@ const assignElements = (
       if (el.activityId !== container.id) return false;
       if (allowedTypes.length && !allowedTypes.includes(el.type)) return false;
       if (!props.element) return true;
-      return filters.every((filter) => filter(el, props.element!, ceRegistry));
+      return filters.every((filter) =>
+        filter(el, props.element as ContentElement, ceRegistry),
+      );
     })
     .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };

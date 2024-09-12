@@ -23,7 +23,9 @@ const app = express();
 
 const configCookie = JSON.stringify(
   Object.fromEntries(
-    Object.entries(process.env).filter(([key]) => key.startsWith('NUXT')),
+    Object.entries(process.env).filter(([key]) =>
+      key.startsWith('NUXT_PUBLIC_'),
+    ),
   ),
 );
 
