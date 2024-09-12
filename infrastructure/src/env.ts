@@ -3,6 +3,7 @@ import * as pulumi from '@pulumi/pulumi';
 import * as studion from '@studion/infra-code-blocks';
 
 const aiConfig = new pulumi.Config('ai');
+const schemaConfig = new pulumi.Config('schema');
 const awsConfig = new pulumi.Config('aws');
 const emailConfig = new pulumi.Config('email');
 const dnsConfig = new pulumi.Config('dns');
@@ -54,6 +55,10 @@ export const getEnvVariables = (db: studion.Database) => [
   { name: 'AI_MODEL_ID', value: aiConfig.require('modelId') },
   { name: 'NUXT_PUBLIC_AI_UI_ENABLED', value: 'true' },
   { name: 'FLAT_REPO_STRUCTURE', value: 'true' },
+  {
+    name: 'NUXT_PUBLIC_AVAILABLE_SCHEMAS',
+    value: schemaConfig.require('availableSchemas'),
+  },
 ];
 
 export const getSecrets = (db: studion.Database) => [
