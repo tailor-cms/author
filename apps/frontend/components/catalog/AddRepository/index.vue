@@ -116,7 +116,7 @@
             />
           </template>
           <AIAssistance
-            v-if="parsed.aiUiEnabled && selectedTab === NEW_TAB"
+            v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
@@ -167,7 +167,7 @@ const { $schemaService } = useNuxtApp() as any;
 
 const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
-const { availableSchemas, parsed } = storeToRefs(useConfigStore());
+const config = useConfigStore();
 
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
@@ -188,7 +188,9 @@ const metaValidation = reactive<Record<string, any>>({});
 const { defineField, handleSubmit, resetForm, values, errors } = useForm({
   initialValues: {
     schema:
-      availableSchemas.value.length === 1 ? availableSchemas.value[0].id : null,
+      config.availableSchemas.length === 1
+        ? config.availableSchemas[0].id
+        : null,
     name: '',
     description: '',
     archive: null,

@@ -10,7 +10,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: { include: ['lodash'] },
-    plugins: [injectConfigHeaders],
+    plugins: [injectConfigHeaders()],
   },
   devtools: { enabled: true },
   telemetry: false,

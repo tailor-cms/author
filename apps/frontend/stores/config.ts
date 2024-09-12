@@ -40,8 +40,8 @@ export const useConfigStore = defineStore('config', () => {
 
   return {
     getConfig,
-    parsed: readonly(config),
-    raw: readonly(rawConfig),
+    props: readonly(config),
+    rawProps: readonly(rawConfig),
     availableSchemas,
   };
 });
