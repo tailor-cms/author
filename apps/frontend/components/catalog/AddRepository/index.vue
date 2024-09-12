@@ -65,9 +65,9 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
-              :disabled="availableSchemas.length === 1"
+              :disabled="config.availableSchemas.length === 1"
               :error-messages="errors.schema"
-              :items="availableSchemas"
+              :items="config.availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
               class="required"
               data-testid="type-input"
