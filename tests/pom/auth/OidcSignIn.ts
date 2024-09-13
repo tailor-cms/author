@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
-export class OIDCSignIn {
+export class OidcSignIn {
   readonly page: Page;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;

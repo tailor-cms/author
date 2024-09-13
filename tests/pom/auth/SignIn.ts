@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
-import { OIDCSignIn } from './OIDCSignIn';
+import { OidcSignIn } from './OidcSignIn';
 
 export class SignIn {
   static route = '/auth';
@@ -10,7 +10,7 @@ export class SignIn {
   readonly passwordInput: Locator;
   readonly forgotPasswordLink: Locator;
   readonly submitBtn: Locator;
-  readonly OIDCSignIn: OIDCSignIn;
+  readonly oidcSignInPage: OidcSignIn;
 
   constructor(page: Page) {
     this.page = page;
@@ -21,7 +21,7 @@ export class SignIn {
       name: 'Forgot password?',
     });
     this.submitBtn = page.getByRole('button', { name: 'Sign in', exact: true });
-    this.OIDCSignIn = new OIDCSignIn(page);
+    this.oidcSignInPage = new OidcSignIn(page);
   }
 
   visit() {
@@ -44,6 +44,6 @@ export class SignIn {
 
   async oidcSignIn(email?: string, password?: string) {
     await this.oidcBtn.click();
-    await this.OIDCSignIn.signIn(email, password);
+    await this.oidcSignInPage.signIn(email, password);
   }
 }

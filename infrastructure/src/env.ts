@@ -61,6 +61,8 @@ export const getEnvVariables = (db: studion.Database) => [
     name: 'NUXT_PUBLIC_OIDC_LOGIN_TEXT',
     value: oidcConfg.require('loginText'),
   },
+  { name: 'OIDC_ALLOW_SIGNUP', value: oidcConfg.require('allowSignup') },
+  { name: 'OIDC_DEFAULT_ROLE', value: oidcConfg.require('defaultRole') },
   { name: 'OIDC_ISSUER', value: oidcConfg.require('issuer') },
   { name: 'OIDC_JWKS_URL', value: oidcConfg.require('jwksUrl') },
   {
@@ -81,8 +83,6 @@ export const getEnvVariables = (db: studion.Database) => [
     name: 'OIDC_POST_LOGOUT_URI_KEY',
     value: oidcConfg.require('postLogoutUriKey'),
   },
-  { name: 'OIDC_ALLOW_SIGNUP', value: 'true' },
-  { name: 'OIDC_DEFAULT_ROLE', value: 'ADMIN' },
   {
     name: 'NUXT_PUBLIC_AVAILABLE_SCHEMAS',
     value: schemaConfig.require('availableSchemas'),
