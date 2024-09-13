@@ -1,10 +1,12 @@
 <template>
-  <div class="px-1 pt-0 pb-10">
+  <div class="my-2">
     <VSwitch
       v-model="input"
+      :color="`primary-${dark ? 'lighten-4' : 'darken-1'}`"
       :label="meta.label"
       :name="meta.key"
-      color="primary darken-1"
+      base-color="primary-lighten-1"
+      density="comfortable"
       hide-details
       @change="$emit('update', props.meta.key, input)"
     />
