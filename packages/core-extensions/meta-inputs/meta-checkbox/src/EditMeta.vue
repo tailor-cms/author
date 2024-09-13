@@ -1,34 +1,35 @@
 <template>
-  <div>
-    <div v-if="meta.label" class="control-label">{{ meta.label }}</div>
+  <div class="my-2">
+    <div v-if="meta.label" class="label ma-1 text-caption">
+      {{ meta.label }}
+    </div>
     <VCheckbox
       v-model="input"
+      :color="`primary-${dark ? 'lighten-4' : 'darken-1'}`"
       :label="meta.description"
       :name="meta.key"
-      color="primary-darken-2"
+      density="comfortable"
       @change="$emit('update', props.meta.key, input)"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
+import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { ref } from 'vue';
 
-interface Props {
-  meta?: any;
+interface Meta extends Metadata {
+  value?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  meta: () => ({ value: null }),
-});
+const props = defineProps<{ meta: Meta; dark: boolean }>();
 defineEmits(['update']);
 
 const input = ref(props.meta.value);
 </script>
 
 <style lang="scss" scoped>
-.control-label {
-  font-size: 0.875rem;
-  color: #0000008a;
+.label {
+  opacity: 0.65;
 }
 </style>

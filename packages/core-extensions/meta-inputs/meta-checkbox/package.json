@@ -9,6 +9,7 @@
   ],
   "main": "./src/index.js",
   "peerDependencies": {
+    "@tailor-cms/interfaces": "workspace:*",
     "vue": "^3.3.4",
     "vuetify": "^3.3.5"
   }

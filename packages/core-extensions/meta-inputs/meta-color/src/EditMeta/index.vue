@@ -1,6 +1,6 @@
 <template>
   <div class="text-left my-2">
-    <div class="v-label my-1 mx-1 text-caption">{{ meta.label }}</div>
+    <div class="label ma-1 text-caption">{{ meta.label }}</div>
     <div class="d-flex">
       <ColorInput :color="selected" @input="select" />
       <div
@@ -73,7 +73,7 @@ const select = (color: string) => {
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 10%);
 }
 
-.v-label {
+.label {
   opacity: 0.65;
 }
 </style>

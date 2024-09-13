@@ -722,6 +722,9 @@ importers:
 
   packages/core-extensions/meta-inputs/meta-checkbox:
     dependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
       vue:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
