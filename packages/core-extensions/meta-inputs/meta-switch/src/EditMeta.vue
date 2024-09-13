@@ -7,7 +7,6 @@
       :name="meta.key"
       base-color="primary-lighten-1"
       density="comfortable"
-      hide-details
       @change="$emit('update', props.meta.key, input)"
     />
   </div>
