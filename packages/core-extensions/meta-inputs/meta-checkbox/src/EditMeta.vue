@@ -1,41 +1,34 @@
 <template>
-  <div class="control">
+  <div>
     <div v-if="meta.label" class="control-label">{{ meta.label }}</div>
     <VCheckbox
-      :input-value="meta.value"
+      v-model="input"
       :label="meta.description"
       :name="meta.key"
-      class="mt-1"
-      color="primary darken-2"
-      @change="$emit('update', meta.key, $event)"
+      color="primary-darken-2"
+      @change="$emit('update', props.meta.key, input)"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
+
 interface Props {
   meta?: any;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   meta: () => ({ value: null }),
 });
 defineEmits(['update']);
+
+const input = ref(props.meta.value);
 </script>
 
 <style lang="scss" scoped>
-.control {
-  padding: 3px 8px;
-
-  ::v-deep label.v-label {
-    margin-bottom: 0;
-  }
-
-  &-label {
-    font-size: 0.875rem;
-    font-weight: normal;
-    text-align: left;
-    color: #0000008a;
-  }
+.control-label {
+  font-size: 0.875rem;
+  color: #0000008a;
 }
 </style>
