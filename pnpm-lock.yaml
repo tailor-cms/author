@@ -589,6 +589,9 @@ importers:
       '@tailor-cms/tme-color':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-color
+      '@tailor-cms/tme-combobox':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-combobox
       '@tailor-cms/tme-file':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-file
