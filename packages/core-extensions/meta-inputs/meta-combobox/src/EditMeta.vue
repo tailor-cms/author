@@ -7,11 +7,11 @@
     :multiple="meta.multiple"
     :name="meta.key"
     :placeholder="meta.placeholder"
-    item-text="label"
+    item-title="label"
     item-value="value"
     variant="outlined"
-    deletable-chips
-    @change="$emit('update', meta.key, input)"
+    closable-chips
+    @update:model-value="$emit('update', meta.key, input)"
   />
 </template>
 
@@ -26,11 +26,4 @@ const props = defineProps<{ meta: Meta; dark: boolean }>();
 defineEmits(['update']);
 
 const input = ref(props.meta.value);
-
-// const value = computed(() => {
-//   const { meta: { value, options } } = this;
-//   const hasPrimitiveOptions = !isObject(options[0]);
-//   if (hasPrimitiveOptions) return value;
-//   return value.map(val => options.find(it => it.value === val));
-// }
 </script>
