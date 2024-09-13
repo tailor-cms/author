@@ -1,21 +1,9 @@
 import join from 'url-join';
 
 export default class OidcClient {
-  enabled;
-  logoutEnabled;
   baseUrl;
 
-  constructor({
-    baseUrl,
-    enabled,
-    logoutEnabled,
-  }: {
-    baseUrl: string;
-    enabled: boolean;
-    logoutEnabled: boolean;
-  }) {
-    this.enabled = enabled;
-    this.logoutEnabled = logoutEnabled;
+  constructor({ baseUrl }: { baseUrl: string }) {
     this.baseUrl = join(baseUrl, 'oidc');
   }
 

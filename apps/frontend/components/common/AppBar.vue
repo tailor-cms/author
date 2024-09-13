@@ -102,7 +102,7 @@ const routes = computed(() => {
 });
 
 const logout = async () => {
-  if (authStore.isOidcActive && config.props.logoutEnabled) {
+  if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {
     return $oidc.logout();
   }
   await authStore.logout();
