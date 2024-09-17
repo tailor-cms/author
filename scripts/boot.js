@@ -59,7 +59,7 @@ Object.entries(env).forEach(([key, value]) => {
 const dbConnectionLoader = ora('Waiting for database connection...');
 dbConnectionLoader.start();
 const dbConfig = env.DATABASE_URI
-  ? { connectionString: config.DATABASE_URI }
+  ? { connectionString: env.DATABASE_URI }
   : {
       host: env.DATABASE_HOST || 'localhost',
       port: env.DATABASE_PORT || 5432,
