@@ -4,6 +4,7 @@
       v-for="input in inputs"
       :key="`${id}.${input.key}`"
       :meta="input"
+      dark
       @update="updateElement"
     />
   </div>
