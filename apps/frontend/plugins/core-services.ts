@@ -12,8 +12,6 @@ export default defineNuxtPlugin({
       nuxtApp.provide('schemaService', schema);
       nuxtApp.provide('storageService', assetApi);
       nuxtApp.provide('api', exposedApi);
-
-      nuxtApp.vueApp.provide('$storageService', assetApi);
     },
   },
 });

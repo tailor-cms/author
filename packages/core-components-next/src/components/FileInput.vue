@@ -79,10 +79,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { type VFileInput } from 'vuetify/components';
 
-import { useStorageService } from '../composables/useStorageService';
 import { useUpload } from '../composables/useUpload';
 
 interface Props {
@@ -110,7 +109,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['upload', 'delete']);
 
-const { getUrl } = useStorageService();
+const storageService = inject<any>('$storageService');
 const { upload, deleteFile, downloadFile, uploading } = useUpload(emit);
 
 const expanded = ref(false);
@@ -127,7 +126,7 @@ watch(
   async (key) => {
     if (!props.showPreview) return;
     isLoading.value = true;
-    publicUrl.value = key ? await getUrl(key) : '';
+    publicUrl.value = key ? await storageService.getUrl(key) : '';
     isLoading.value = false;
   },
   { immediate: true },

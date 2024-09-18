@@ -1,8 +1,7 @@
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 
 import { useConfirmationDialog } from './useConfirmationDialog';
 import { useLoader } from './useLoader';
-import { useStorageService } from './useStorageService';
 
 type Emit = (event: 'delete' | 'upload', ...args: any[]) => void;
 
@@ -16,7 +15,7 @@ export const useUpload = (emit: Emit) => {
   const error = ref('');
 
   const { loading: uploading, loader } = useLoader();
-  const storageService = useStorageService();
+  const storageService = inject<any>('$storageService');
   const showConfirmationDialog = useConfirmationDialog();
 
   const deleteFile = (item: any) => {
