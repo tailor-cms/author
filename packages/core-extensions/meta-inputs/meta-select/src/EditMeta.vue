@@ -43,7 +43,7 @@ const hasImgProp = computed(() => props.meta.options.some((it) => it.img));
 </script>
 
 <style lang="scss" scoped>
-:deep (.v-list-item__content) {
+:deep(.v-list-item__content) {
   flex: initial;
 }
 
