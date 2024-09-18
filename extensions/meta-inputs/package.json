@@ -14,6 +14,7 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
+    "@tailor-cms/tme-checkbox": "workspace:^",
     "@tailor-cms/tme-color": "workspace:^",
     "@tailor-cms/tme-file": "workspace:^",
     "@tailor-cms/tme-html": "workspace:^",
