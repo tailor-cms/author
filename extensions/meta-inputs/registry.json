@@ -22,5 +22,9 @@
   {
     "name": "@tailor-cms/tme-combobox",
     "clientPackage": "@tailor-cms/tme-combobox"
+  },
+  {
+    "name": "@tailor-cms/tme-checkbox",
+    "clientPackage": "@tailor-cms/tme-checkbox"
   }
 ]
