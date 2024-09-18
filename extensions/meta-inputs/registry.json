@@ -22,5 +22,9 @@
   {
     "name": "@tailor-cms/tme-switch",
     "clientPackage": "@tailor-cms/tme-switch"
+  },
+  {
+    "name": "@tailor-cms/tme-checkbox",
+    "clientPackage": "@tailor-cms/tme-checkbox"
   }
 ]

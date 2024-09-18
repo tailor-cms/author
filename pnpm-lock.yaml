@@ -586,6 +586,9 @@ importers:
 
   extensions/meta-inputs:
     dependencies:
+      '@tailor-cms/tme-checkbox':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-checkbox
       '@tailor-cms/tme-color':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-color
@@ -719,6 +722,18 @@ importers:
       '@types/lodash':
         specifier: '*'
         version: 4.17.7
+
+  packages/core-extensions/meta-inputs/meta-checkbox:
+    dependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      vue:
+        specifier: ^3.3.4
+        version: 3.4.38(typescript@5.5.4)
+      vuetify:
+        specifier: ^3.3.5
+        version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-color:
     dependencies:
