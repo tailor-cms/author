@@ -3,8 +3,9 @@ import pkg1 from '@tailor-cms/tme-file';
 import pkg2 from '@tailor-cms/tme-color';
 import pkg3 from '@tailor-cms/tme-html';
 import pkg4 from '@tailor-cms/tme-radio-group';
-import pkg5 from '@tailor-cms/tme-switch';
-import pkg6 from '@tailor-cms/tme-checkbox';
+import pkg5 from '@tailor-cms/tme-checkbox';
+import pkg6 from '@tailor-cms/tme-switch';
+import pkg7 from '@tailor-cms/tme-combobox';
 
 // prettier-ignore
 export const elements = [
@@ -15,4 +16,5 @@ export const elements = [
   pkg4,
   pkg5,
   pkg6,
+  pkg7,
 ];

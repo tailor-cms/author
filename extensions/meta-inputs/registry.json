@@ -20,11 +20,15 @@
     "clientPackage": "@tailor-cms/tme-radio-group"
   },
   {
+    "name": "@tailor-cms/tme-checkbox",
+    "clientPackage": "@tailor-cms/tme-checkbox"
+  },
+  {
     "name": "@tailor-cms/tme-switch",
     "clientPackage": "@tailor-cms/tme-switch"
   },
   {
-    "name": "@tailor-cms/tme-checkbox",
-    "clientPackage": "@tailor-cms/tme-checkbox"
-  }
+    "name": "@tailor-cms/tme-combobox",
+    "clientPackage": "@tailor-cms/tme-combobox"
+  },
 ]
