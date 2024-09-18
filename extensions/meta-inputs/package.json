@@ -18,6 +18,7 @@
     "@tailor-cms/tme-file": "workspace:^",
     "@tailor-cms/tme-html": "workspace:^",
     "@tailor-cms/tme-radio-group": "workspace:^",
+    "@tailor-cms/tme-select": "workspace:^",
     "@tailor-cms/tme-textarea": "workspace:^"
   }
 }

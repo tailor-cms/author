@@ -598,6 +598,9 @@ importers:
       '@tailor-cms/tme-radio-group':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-radio-group
+      '@tailor-cms/tme-select':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-select
       '@tailor-cms/tme-textarea':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-textarea
