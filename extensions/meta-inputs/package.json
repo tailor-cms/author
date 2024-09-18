@@ -14,11 +14,14 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
+    "@tailor-cms/tme-checkbox": "workspace:^",
     "@tailor-cms/tme-color": "workspace:^",
+    "@tailor-cms/tme-combobox": "workspace:^",
     "@tailor-cms/tme-file": "workspace:^",
     "@tailor-cms/tme-html": "workspace:^",
     "@tailor-cms/tme-radio-group": "workspace:^",
     "@tailor-cms/tme-select": "workspace:^",
+    "@tailor-cms/tme-switch": "workspace:^",
     "@tailor-cms/tme-textarea": "workspace:^"
   }
 }
