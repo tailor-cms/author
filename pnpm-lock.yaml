@@ -775,6 +775,18 @@ importers:
         specifier: ^3.3.5
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
+  packages/core-extensions/meta-inputs/meta-select:
+    dependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      vue:
+        specifier: ^3.3.4
+        version: 3.4.38(typescript@5.5.4)
+      vuetify:
+        specifier: ^3.3.5
+        version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
+
   packages/core-extensions/meta-inputs/meta-textarea:
     dependencies:
       vue:
