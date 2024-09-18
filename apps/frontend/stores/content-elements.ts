@@ -6,12 +6,15 @@ import flatten from 'lodash/flatten';
 
 import { contentElement as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
+import { useEditorStore } from '@/stores/editor';
 
 type Id = number | string;
 export type StoreContentElement = ContentElement;
 export type FoundContentElement = StoreContentElement | undefined;
 
 export const useContentElementStore = defineStore('contentElements', () => {
+  const editorStore = useEditorStore();
+
   const $items = reactive(new Map<string, StoreContentElement>());
   const items = computed(() => Array.from($items.values()));
 
@@ -28,7 +31,11 @@ export const useContentElementStore = defineStore('contentElements', () => {
 
   function add(item: ContentElement): StoreContentElement {
     $items.set(item.uid, item);
-    return $items.get(item.uid) as StoreContentElement;
+    const element = $items.get(item.uid) as StoreContentElement;
+    if (editorStore.selectedContentElement?.uid === element.uid) {
+      editorStore.selectedContentElement = element;
+    }
+    return element;
   }
 
   async function fetch(
