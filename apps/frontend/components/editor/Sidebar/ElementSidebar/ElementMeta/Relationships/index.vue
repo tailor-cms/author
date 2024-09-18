@@ -35,7 +35,6 @@ import { SelectElement } from '@tailor-cms/core-components-next';
 
 import RelationshipItem from './RelationshipType.vue';
 import { useContentElementStore } from '@/stores/content-elements';
-import { useEditorStore } from '@/stores/editor';
 
 interface Props {
   element: ContentElement;
@@ -53,19 +52,17 @@ const visibleRelationships = computed(() => {
 });
 
 const contentElementStore = useContentElementStore();
-const { selectedContentElement } = useEditorStore();
 const editorBus = useEditorBus();
 
 const defaultPlaceholder = computed(() => {
   return `Select element${activeRelationship.value?.multiple ? 's' : ''}`;
 });
 
-const save = async (key: string, val: any) => {
+const save = (key: string, val: any) => {
   const refs = { ...props.element.refs };
   const updatedElement = { ...props.element, refs };
   updatedElement.refs[key] = val;
-  await contentElementStore.save(updatedElement);
-  if (selectedContentElement) selectedContentElement.refs[key] = val;
+  return contentElementStore.save(updatedElement);
 };
 
 const select = (key: string, elements: ContentElement[]) => {
