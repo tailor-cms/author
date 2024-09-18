@@ -1,28 +1,38 @@
 <template>
   <VSelect
-    :chips="meta.multiple"
+    v-model="input"
     :items="meta.options"
     :label="meta.label"
     :multiple="meta.multiple"
     :name="meta.key"
     :placeholder="meta.placeholder"
     :small-chips="!hasImgProp"
-    :value="meta.value"
-    item-text="label"
-    item-value="value"
-    deletable-chips
-    outlined
+    item-title="label"
+    variant="outlined"
     @update:model-value="$emit('update', meta.key, input)"
   >
-    <template v-if="hasImgProp" #item="{ item }">
-      <img v-if="item.img" :alt="item.label" :src="item.img" class="img" />
-      <span>{{ item.label }}</span>
+    <template v-if="hasImgProp" #item="{ item, props: selectProps }">
+      <VListItem v-bind="selectProps">
+        <template #prepend="{ isSelected }">
+          <VCheckboxBtn
+            v-if="meta.multiple"
+            :model-value="isSelected"
+            class="mr-2"
+            density="compact"
+          />
+          <VAvatar :image="item.raw.img" size="26" />
+        </template>
+      </VListItem>
+    </template>
+    <template v-if="meta.multiple" #chip="{ item, props: selectProps }">
+      <VChip v-bind="selectProps" rounded="pill" closable pill>
+        <VAvatar v-if="hasImgProp" :image="item.raw.img" start />
+        {{ item.title }}
+      </VChip>
     </template>
     <template v-if="hasImgProp" #selection="{ item }">
-      <component :is="meta.multiple ? 'v-chip' : 'div'">
-        <img v-if="item.img" :alt="item.label" :src="item.img" class="img" />
-        <span>{{ item.label }}</span>
-      </component>
+      <VAvatar :image="item.raw.img" class="mr-4" size="26" />
+      {{ item.title }}
     </template>
   </VSelect>
 </template>
@@ -43,22 +53,7 @@ const hasImgProp = computed(() => props.meta.options.some((it) => it.img));
 </script>
 
 <style lang="scss" scoped>
-:deep(.v-list-item__content) {
-  flex: initial;
-}
-
-:deep(.v-select__slot .v-select__selections) {
-  min-height: 2.625rem !important;
-}
-
-.img {
-  margin-right: 0.75rem;
-  width: 2rem;
-  height: 2rem;
-}
-
-.v-chip__content .img {
-  width: 1.625rem;
-  height: 1.625rem;
+:deep(.v-select__selection .v-chip__content) {
+  overflow: unset;
 }
 </style>
