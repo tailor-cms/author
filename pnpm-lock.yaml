@@ -595,6 +595,9 @@ importers:
       '@tailor-cms/tme-combobox':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-combobox
+      '@tailor-cms/tme-datetime':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-datetime
       '@tailor-cms/tme-file':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-file
