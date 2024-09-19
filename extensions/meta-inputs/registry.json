@@ -31,4 +31,8 @@
     "name": "@tailor-cms/tme-combobox",
     "clientPackage": "@tailor-cms/tme-combobox"
   },
+  {
+    "name": "@tailor-cms/tme-select",
+    "clientPackage": "@tailor-cms/tme-select"
+  }
 ]
