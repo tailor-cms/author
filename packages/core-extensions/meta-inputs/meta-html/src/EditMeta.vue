@@ -1,10 +1,14 @@
 <template>
-  <RichTextEditor :model-value="input" v-bind="meta" @change="input = $event" />
+  <RichTextEditor
+    :model-value="meta.value"
+    v-bind="meta"
+    variant="outlined"
+    @change="$emit('update', props.meta.key, $event)"
+  />
 </template>
 
 <script lang="ts" setup>
 import type { Metadata } from '@tailor-cms/interfaces/schema';
-import { ref } from 'vue';
 import { RichTextEditor } from '@tailor-cms/core-components-next';
 
 interface Meta extends Metadata {
@@ -12,6 +16,5 @@ interface Meta extends Metadata {
 }
 
 const props = defineProps<{ meta: Meta }>();
-
-const input = ref(props.meta.value ?? '');
+defineEmits(['update']);
 </script>
