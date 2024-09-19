@@ -1,4 +1,4 @@
-import Edit from './EditMeta/index.vue';
+import Edit from './EditMeta.vue';
 
 export default {
   type: 'HTML',
