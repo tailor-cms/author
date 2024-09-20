@@ -61,7 +61,7 @@
       <VInfiniteScroll
         v-if="!isLoading && hasRepositories"
         class="d-flex ma-0 pa-0"
-        color="primary-lighten-2"
+        color="primary-lighten-3"
         empty-text=""
         mode="manual"
         @load="loadMore"
