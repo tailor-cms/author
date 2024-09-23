@@ -29,27 +29,25 @@
           </VWindowItem>
         </VWindow>
         <VCardActions class="d-flex pa-4">
-          <VBtn v-if="step !== 1" prepend-icon="mdi-arrow-left" @click="step--">
+          <VBtn v-if="step === 2" prepend-icon="mdi-arrow-left" @click="step--">
             Back
           </VBtn>
           <VSpacer />
-          <div>
-            <VBtn
-              v-if="step === 1 && !meta.hideTime"
-              :disabled="!dateInput"
-              @click="step++"
-            >
-              Next
-            </VBtn>
-            <VBtn
-              v-if="step === 2 || meta.hideTime"
-              :disabled="!dateInput || (!meta.hideTime && !timeInput)"
-              variant="tonal"
-              @click="save"
-            >
-              Save
-            </VBtn>
-          </div>
+          <VBtn
+            v-if="step === 1 && !meta.hideTime"
+            :disabled="!dateInput"
+            @click="step++"
+          >
+            Next
+          </VBtn>
+          <VBtn
+            v-if="step === 2 || meta.hideTime"
+            :disabled="!dateInput || (!meta.hideTime && !timeInput)"
+            variant="tonal"
+            @click="save"
+          >
+            Save
+          </VBtn>
         </VCardActions>
       </VCard>
     </VMenu>
@@ -109,8 +107,7 @@ const save = () => {
 };
 
 watch(menu, (value) => {
-  if (!value) return;
-  step.value = 1;
+  if (value) step.value = 1;
 });
 </script>
 
