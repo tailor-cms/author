@@ -92,20 +92,18 @@ const displayDate = useDateFormat(
 const openMenu = () => (menu.value = true);
 const closeMenu = () => (menu.value = false);
 
-const datetime = computed(() => {
+const getDatetime = () => {
   if (!dateInput.value) return;
   if (props.meta.hideTime) return dateInput.value;
   if (!timeInput.value) return;
-  const [hours, minutes] = timeInput.value.split(':');
-  return setMinutes(
-    setHours(dateInput.value, parseInt(hours)),
-    parseInt(minutes),
-  );
-});
+  const [hours, minutes] = timeInput.value.split(':').map(it => parseInt(it));
+  return setMinutes(setHours(dateInput.value, hours), minutes);
+};
 
 const save = () => {
-  input.value = datetime.value as string;
-  emit('update', props.meta.key, datetime.value);
+  const datetime = getDatetime() as string;
+  input.value = datetime;
+  emit('update', props.meta.key, datetime);
   closeMenu();
 };
 
