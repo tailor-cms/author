@@ -60,7 +60,6 @@
 import { computed, ref, watch } from 'vue';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { useDate } from 'vuetify';
-import { useDateFormat } from '@vueuse/core';
 import { VTimePicker } from 'vuetify/labs/VTimePicker';
 
 interface Meta extends Metadata {
@@ -69,7 +68,7 @@ interface Meta extends Metadata {
 const props = defineProps<{ meta: Meta; dark: boolean }>();
 const emit = defineEmits(['update']);
 
-const { setHours, setMinutes } = useDate();
+const date = useDate();
 
 const placeholder = computed(() =>
   props.meta.hideTime ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm',
@@ -78,15 +77,17 @@ const placeholder = computed(() =>
 const step = ref(1);
 const menu = ref(false);
 
-const input = ref(props.meta.value);
-const time = useDateFormat(() => input.value, 'HH:mm');
+const input = ref<Date | string | undefined>(props.meta.value);
+const time = computed(() => date.format(input.value, 'fullTime24h'));
 
 const dateInput = ref(input.value);
 const timeInput = ref(input.value && time.value);
 
-const displayDate = useDateFormat(
-  () => input.value,
-  props.meta.hideTime ? 'MM/DD/YYYY' : 'MM/DD/YYYY HH:mm',
+const displayDate = computed(() =>
+  date.format(
+    input.value,
+    props.meta.hideTime ? 'keyboardDate' : 'keyboardDateTime24h',
+  ),
 );
 
 const openMenu = () => (menu.value = true);
@@ -96,8 +97,8 @@ const getDatetime = () => {
   if (!dateInput.value) return;
   if (props.meta.hideTime) return dateInput.value;
   if (!timeInput.value) return;
-  const [hours, minutes] = timeInput.value.split(':').map(it => parseInt(it));
-  return setMinutes(setHours(dateInput.value, hours), minutes);
+  const [hours, minutes] = timeInput.value.split(':').map((it) => parseInt(it));
+  return date.setMinutes(date.setHours(dateInput.value, hours), minutes);
 };
 
 const save = () => {
@@ -110,8 +111,6 @@ const save = () => {
 watch(menu, (value) => {
   if (!value) return;
   step.value = 1;
-  dateInput.value = input.value;
-  timeInput.value = input.value && time.value;
 });
 </script>
 

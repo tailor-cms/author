@@ -773,9 +773,6 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
-      '@vueuse/core':
-        specifier: ^10.11.0
-        version: 10.11.1(vue@3.4.38(typescript@5.5.4))
       vue:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
