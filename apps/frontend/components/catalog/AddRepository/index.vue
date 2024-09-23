@@ -281,14 +281,15 @@ const hide = () => {
   resetForm();
 };
 
-watch(schemaMeta, (val) => {
-  Object.keys(metaValidation).forEach(
-    (key: string) => delete metaValidation[key],
-  );
-  if (val && val.length) {
+watch(
+  schemaMeta,
+  (val) => {
+    Object.keys(metaValidation).forEach((key) => delete metaValidation[key]);
+    if (!val?.length) return;
     return val.forEach((it) => (metaValidation[it.key] = it.validate));
-  }
-});
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>

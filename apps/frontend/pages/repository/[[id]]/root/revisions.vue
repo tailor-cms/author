@@ -3,7 +3,7 @@
     <VInfiniteScroll
       v-if="revisions.length > 0"
       class="revisions"
-      color="primary-lighten-2"
+      color="primary-lighten-3"
       mode="manual"
       @load="loadMore"
     >
