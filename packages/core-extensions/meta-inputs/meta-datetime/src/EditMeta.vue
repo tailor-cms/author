@@ -69,7 +69,7 @@ const emit = defineEmits(['update']);
 const date = useDate();
 
 const placeholder = computed(() =>
-  props.meta.hideTime ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm',
+  props.meta.hideTime ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm:ss',
 );
 
 const step = ref(1);
