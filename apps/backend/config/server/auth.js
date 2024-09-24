@@ -24,7 +24,7 @@ export const jwt = {
 };
 
 export const oidc = {
-  enabled: yn(env.OIDC_ENABLED),
+  enabled: yn(env.NUXT_PUBLIC_OIDC_ENABLED),
   clientID: env.OIDC_CLIENT_ID,
   clientSecret: env.OIDC_CLIENT_SECRET,
   issuer: env.OIDC_ISSUER,
