@@ -25,7 +25,7 @@
             />
           </VWindowItem>
           <VWindowItem :value="2">
-            <VTimePicker v-model="timeInput" />
+            <VTimePicker v-model="timeInput" ampm-in-title />
           </VWindowItem>
         </VWindow>
         <VCardActions class="d-flex pa-4">
@@ -76,7 +76,7 @@ const step = ref(1);
 const menu = ref(false);
 
 const input = ref<Date | string | undefined>(props.meta.value);
-const time = computed(() => date.format(input.value, 'fullTime24h'));
+const time = computed(() => date.format(input.value, 'fullTime12h'));
 
 const dateInput = ref(input.value);
 const timeInput = ref(input.value && time.value);
@@ -84,7 +84,7 @@ const timeInput = ref(input.value && time.value);
 const displayDate = computed(() =>
   date.format(
     input.value,
-    props.meta.hideTime ? 'keyboardDate' : 'keyboardDateTime24h',
+    props.meta.hideTime ? 'keyboardDate' : 'keyboardDateTime12h',
   ),
 );
 
@@ -114,5 +114,20 @@ watch(menu, (value) => {
 <style lang="scss" scoped>
 :deep(.v-window) {
   margin: 0;
+}
+
+:deep(.v-time-picker-controls)
+  .v-time-picker-controls__time
+  .v-time-picker-controls__ampm {
+  gap: 0.25rem;
+
+  .v-time-picker-controls__ampm__pm,
+  .v-time-picker-controls__ampm__am {
+    border: none;
+    border-radius: 1rem !important;
+    height: 2.375rem;
+    font-size: 1rem;
+    font-weight: bold;
+  }
 }
 </style>
