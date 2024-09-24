@@ -7,6 +7,7 @@ import pkg5 from '@tailor-cms/tme-checkbox';
 import pkg6 from '@tailor-cms/tme-switch';
 import pkg7 from '@tailor-cms/tme-combobox';
 import pkg8 from '@tailor-cms/tme-select';
+import pkg9 from '@tailor-cms/tme-datetime';
 
 // prettier-ignore
 export const elements = [
@@ -18,5 +19,6 @@ export const elements = [
   pkg5,
   pkg6,
   pkg7,
-  pkg8
+  pkg8,
+  pkg9,
 ];

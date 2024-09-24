@@ -1,7 +1,7 @@
 {
-  "name": "@tailor-cms/tme-switch",
+  "name": "@tailor-cms/tme-datetime",
   "version": "0.0.1",
-  "description": "Tailor switch meta input",
+  "description": "Tailor datetime meta input",
   "author": "Studion <info@gostudion.com>",
   "type": "module",
   "files": [

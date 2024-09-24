@@ -34,5 +34,9 @@
   {
     "name": "@tailor-cms/tme-select",
     "clientPackage": "@tailor-cms/tme-select"
+  },
+  {
+    "name": "@tailor-cms/tme-datetime",
+    "clientPackage": "@tailor-cms/tme-datetime"
   }
 ]

@@ -17,6 +17,7 @@
     "@tailor-cms/tme-checkbox": "workspace:^",
     "@tailor-cms/tme-color": "workspace:^",
     "@tailor-cms/tme-combobox": "workspace:^",
+    "@tailor-cms/tme-datetime": "workspace:^",
     "@tailor-cms/tme-file": "workspace:^",
     "@tailor-cms/tme-html": "workspace:^",
     "@tailor-cms/tme-radio-group": "workspace:^",

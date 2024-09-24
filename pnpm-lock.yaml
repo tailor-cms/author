@@ -595,6 +595,9 @@ importers:
       '@tailor-cms/tme-combobox':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-combobox
+      '@tailor-cms/tme-datetime':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-datetime
       '@tailor-cms/tme-file':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-file
@@ -719,7 +722,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
     devDependencies:
       '@tailor-cms/interfaces':
@@ -738,7 +741,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-color:
@@ -750,7 +753,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-combobox:
@@ -762,7 +765,19 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
+        version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
+
+  packages/core-extensions/meta-inputs/meta-datetime:
+    dependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      vue:
+        specifier: ^3.3.4
+        version: 3.4.38(typescript@5.5.4)
+      vuetify:
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-file:
@@ -780,7 +795,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
     devDependencies:
       '@types/lodash':
@@ -799,7 +814,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-radio-group:
@@ -808,7 +823,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-select:
@@ -820,7 +835,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-switch:
@@ -832,7 +847,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-textarea:
@@ -841,7 +856,7 @@ importers:
         specifier: ^3.3.4
         version: 3.4.38(typescript@5.5.4)
       vuetify:
-        specifier: ^3.3.5
+        specifier: ^3.7.0
         version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
 
   packages/extension-installer:

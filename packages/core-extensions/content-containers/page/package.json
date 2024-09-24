@@ -14,7 +14,7 @@
   },
   "peerDependencies": {
     "vue": "^3.3.4",
-    "vuetify": "^3.3.5",
+    "vuetify": "^3.7.0",
     "lodash": "*",
     "@tailor-cms/core-components-next": "workspace:*"
   }
