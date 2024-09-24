@@ -76,7 +76,7 @@ const step = ref(1);
 const menu = ref(false);
 
 const input = ref<Date | string | undefined>(props.meta.value);
-const time = computed(() => date.format(input.value, 'fullTime12h'));
+const time = computed(() => date.format(input.value, 'fullTime24h'));
 
 const dateInput = ref(input.value);
 const timeInput = ref(input.value && time.value);
