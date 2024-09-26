@@ -6,12 +6,13 @@ import { createError } from '../shared/error/helpers.js';
 import find from 'lodash/find.js';
 import get from 'lodash/get.js';
 import oauth2 from '../shared/oAuth2Provider.js';
+import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import consumerConfig from '../config/server/consumer.js';
 import publishingService from '../shared/publishing/publishing.service.js';
 import { schema } from 'tailor-config-shared';
 
-const { Activity } = db;
+const { Activity, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
 
 const logger = createLogger('repository:controller');
@@ -20,7 +21,18 @@ const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 function list({ repository, query, opts }, res) {
   if (!query.detached) opts.where.detached = false;
   if (query.outlineOnly) {
+    // Include deleted if published and deletion is not published yet
+    opts.paranoid = false;
     opts.where.type = getOutlineLevels(repository.schema).map((it) => it.type);
+    opts.where[Op.or] = [
+      { deletedAt: null },
+      {
+        publishedAt: {
+          [Op.ne]: null,
+          [Op.lt]: sequelize.col('activity.deleted_at'),
+        },
+      },
+    ];
   }
   return repository.getActivities(opts).then((data) => res.json({ data }));
 }
@@ -47,17 +59,12 @@ function patch({ repository, user, activity, body }, res) {
   return activity.update(body, { context }).then((data) => res.json({ data }));
 }
 
-function remove({ user, repository, activity }, res) {
+async function remove({ user, repository, activity }, res) {
   const context = { userId: user.id, repository };
   const options = { recursive: true, soft: true, context };
-  const unpublish = activity.publishedAt
-    ? publishingService.unpublishActivity(repository, activity)
-    : Promise.resolve();
-  return unpublish.then(async () => {
-    const deleted = await activity.remove(options);
-    await updatePublishingStatus(repository, activity);
-    return res.json({ data: pick(deleted, ['id']) });
-  });
+  const deleted = await activity.remove(options);
+  await updatePublishingStatus(repository, activity);
+  return res.json({ data: pick(deleted, ['id']) });
 }
 
 function reorder({ activity, body, repository, user }, res) {
