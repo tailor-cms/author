@@ -573,12 +573,24 @@ importers:
       '@tailor-cms/ce-image-server':
         specifier: ^1.0.0
         version: 1.0.0
+      '@tailor-cms/ce-matching-question-edit':
+        specifier: ^0.0.3
+        version: 0.0.3(vue@3.4.38(typescript@5.5.4))
+      '@tailor-cms/ce-matching-question-server':
+        specifier: ^0.0.3
+        version: 0.0.3
       '@tailor-cms/ce-multiple-choice-edit':
-        specifier: ^0.0.10
-        version: 0.0.10(vue@3.4.38(typescript@5.5.4))
+        specifier: ^0.0.11
+        version: 0.0.11(vue@3.4.38(typescript@5.5.4))
       '@tailor-cms/ce-multiple-choice-server':
-        specifier: ^0.0.10
-        version: 0.0.10
+        specifier: ^0.0.11
+        version: 0.0.11
+      '@tailor-cms/ce-single-choice-edit':
+        specifier: ^0.0.3
+        version: 0.0.3(vue@3.4.38(typescript@5.5.4))
+      '@tailor-cms/ce-single-choice-server':
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -3013,13 +3025,29 @@ packages:
   '@tailor-cms/ce-image-server@1.0.0':
     resolution: {integrity: sha512-l4cZmdHQ+TDRzHCSp7TrWrlIIq01ApbaJZuqwJu6MzctstFDhUdMY25TU+35TEDRjcL+odob6KP5uO44McH5Dg==}
 
-  '@tailor-cms/ce-multiple-choice-edit@0.0.10':
-    resolution: {integrity: sha512-oH7fonUs+nTnGpSZB34GO1nKRn630+Dkia4mMa0dW6tgtHnU1b6GHsYLLIXBZ2aSkv0AmSx/jyIBp0yPSmmh/g==}
+  '@tailor-cms/ce-matching-question-edit@0.0.3':
+    resolution: {integrity: sha512-O5SC8sRIqnqCyWt/MM0a3au7cJ4dheuXJYvMMO8JLsU1nwzqbYUfyjJy4XKcaRss64TCw2azdNl02Il3N6dfhg==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-multiple-choice-server@0.0.10':
-    resolution: {integrity: sha512-gwLKwWRy8LndLZj+z78G60lb4IqHTJa11c+p+u/c2ph4UCNyZ7tpQO5uZU2MVCMzDQVyUwKhePrqq/14iaTH3Q==}
+  '@tailor-cms/ce-matching-question-server@0.0.3':
+    resolution: {integrity: sha512-88p93B/yQJO0ooA4LsFW7L6Axke8Q/rfoZBtzy+P/rRjkdMli86rrDBCcbTjMz/VSBXg5w52Yu7bIjyKG61zVA==}
+
+  '@tailor-cms/ce-multiple-choice-edit@0.0.11':
+    resolution: {integrity: sha512-Mk8VpUWZtrK8SbYok2vTMYNXesL9JeadxnO3DAfEqmXzTehLExQ9jlfM1t2DoQsGR6EEwNyKlj/70FFZACB2BQ==}
+    peerDependencies:
+      vue: ^3.3.4
+
+  '@tailor-cms/ce-multiple-choice-server@0.0.11':
+    resolution: {integrity: sha512-z4hd21drp7Cgcfcop9ljBoNubaMrw9PHDgV5MhhGdiQMAtI0m3sDy2b6YFH8BmpyWVA3nQ8fuXoqEIzIw4jkcA==}
+
+  '@tailor-cms/ce-single-choice-edit@0.0.3':
+    resolution: {integrity: sha512-GOpq4jQ38ZcB9wuXPkBnk3rWDocOD7/O4KbDdL7TpjQkZmspGb+BXzdE9oiMi3CRPB0niWORWjRxaKR8EicKEw==}
+    peerDependencies:
+      vue: ^3.3.4
+
+  '@tailor-cms/ce-single-choice-server@0.0.3':
+    resolution: {integrity: sha512-/h/5zuwa10eAgx8YuaRRU61NKtbIHaR2Wx1xVQ62Ox/pSO4PRt5ThF2dt0C3idmtgw9ogv4yl/OpCrIa3WrCrA==}
 
   '@tailor-cms/cek-common@0.0.3':
     resolution: {integrity: sha512-QZGKfGb8sdmS/4U2ZdbG8VKD816Q2AoL4t23/WGXyo5wgpdjw4n9eNYNTwv8kp/pE02LzSBG+CUOMTb3UAqPoA==}
@@ -12478,13 +12506,32 @@ snapshots:
 
   '@tailor-cms/ce-image-server@1.0.0': {}
 
-  '@tailor-cms/ce-multiple-choice-edit@0.0.10(vue@3.4.38(typescript@5.5.4))':
+  '@tailor-cms/ce-matching-question-edit@0.0.3(vue@3.4.38(typescript@5.5.4))':
     dependencies:
       lodash: 4.17.21
       uuid: 10.0.0
       vue: 3.4.38(typescript@5.5.4)
 
-  '@tailor-cms/ce-multiple-choice-server@0.0.10':
+  '@tailor-cms/ce-matching-question-server@0.0.3':
+    dependencies:
+      lodash: 4.17.21
+
+  '@tailor-cms/ce-multiple-choice-edit@0.0.11(vue@3.4.38(typescript@5.5.4))':
+    dependencies:
+      lodash: 4.17.21
+      uuid: 10.0.0
+      vue: 3.4.38(typescript@5.5.4)
+
+  '@tailor-cms/ce-multiple-choice-server@0.0.11':
+    dependencies:
+      lodash: 4.17.21
+
+  '@tailor-cms/ce-single-choice-edit@0.0.3(vue@3.4.38(typescript@5.5.4))':
+    dependencies:
+      lodash: 4.17.21
+      vue: 3.4.38(typescript@5.5.4)
+
+  '@tailor-cms/ce-single-choice-server@0.0.3':
     dependencies:
       lodash: 4.17.21
 

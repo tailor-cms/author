@@ -13,5 +13,15 @@
     "name": "@tailor-cms/ce-multiple-choice",
     "clientPackage": "@tailor-cms/ce-multiple-choice-edit",
     "serverPackage": "@tailor-cms/ce-multiple-choice-server"
+  },
+  {
+    "name": "@tailor-cms/ce-single-choice",
+    "clientPackage": "@tailor-cms/ce-single-choice-edit",
+    "serverPackage": "@tailor-cms/ce-single-choice-server"
+  },
+  {
+    "name": "@tailor-cms/ce-matching-question",
+    "clientPackage": "@tailor-cms/ce-matching-question-edit",
+    "serverPackage": "@tailor-cms/ce-matching-question-server"
   }
 ]
