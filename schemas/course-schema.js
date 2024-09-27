@@ -51,8 +51,19 @@ const SECTION_CONTAINER = {
   templateId: 'DEFAULT',
   label: 'Section',
   multiple: true,
-  types: ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_MULTIPLE_CHOICE'],
-  categories: [{ name: 'Questions', types: ['CE_MULTIPLE_CHOICE'] }],
+  types: [
+    'CE_HTML_DEFAULT',
+    'CE_IMAGE',
+    'CE_MULTIPLE_CHOICE',
+    'CE_SINGLE_CHOICE',
+    'CE_MATCHING_QUESTION',
+  ],
+  categories: [
+    {
+      name: 'Questions',
+      types: ['CE_MULTIPLE_CHOICE', 'CE_SINGLE_CHOICE', 'CE_MATCHING_QUESTION'],
+    },
+  ],
   ai: {
     definition: 'Sections are a way to organize content within a Page.',
     outputRules: {
