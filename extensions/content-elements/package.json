@@ -20,9 +20,9 @@
     "@tailor-cms/ce-image-server": "^1.0.0",
     "@tailor-cms/ce-matching-question-edit": "^0.0.3",
     "@tailor-cms/ce-matching-question-server": "^0.0.3",
-    "@tailor-cms/ce-multiple-choice-edit": "^0.0.11",
-    "@tailor-cms/ce-multiple-choice-server": "^0.0.11",
-    "@tailor-cms/ce-single-choice-edit": "^0.0.3",
-    "@tailor-cms/ce-single-choice-server": "^0.0.3"
+    "@tailor-cms/ce-multiple-choice-edit": "^0.0.12",
+    "@tailor-cms/ce-multiple-choice-server": "^0.0.12",
+    "@tailor-cms/ce-single-choice-edit": "^0.0.4",
+    "@tailor-cms/ce-single-choice-server": "^0.0.4"
   }
 }
