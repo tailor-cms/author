@@ -57,11 +57,19 @@ const SECTION_CONTAINER = {
     'CE_MULTIPLE_CHOICE',
     'CE_SINGLE_CHOICE',
     'CE_MATCHING_QUESTION',
+    'CE_TEXT_RESPONSE',
+    'CE_TRUE_FALSE',
   ],
   categories: [
     {
       name: 'Questions',
-      types: ['CE_MULTIPLE_CHOICE', 'CE_SINGLE_CHOICE', 'CE_MATCHING_QUESTION'],
+      types: [
+        'CE_MULTIPLE_CHOICE',
+        'CE_SINGLE_CHOICE',
+        'CE_MATCHING_QUESTION',
+        'CE_TEXT_RESPONSE',
+        'CE_TRUE_FALSE',
+      ],
     },
   ],
   ai: {

@@ -23,5 +23,15 @@
     "name": "@tailor-cms/ce-matching-question",
     "clientPackage": "@tailor-cms/ce-matching-question-edit",
     "serverPackage": "@tailor-cms/ce-matching-question-server"
+  },
+  {
+    "name": "@tailor-cms/ce-text-response",
+    "clientPackage": "@tailor-cms/ce-text-response-edit",
+    "serverPackage": "@tailor-cms/ce-text-response-server"
+  },
+  {
+    "name": "@tailor-cms/ce-true-false",
+    "clientPackage": "@tailor-cms/ce-true-false-edit",
+    "serverPackage": "@tailor-cms/ce-true-false-server"
   }
 ]
