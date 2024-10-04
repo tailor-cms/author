@@ -2,7 +2,7 @@
   <VChip
     class="mx-2 mb-1 px-5"
     close-icon="mdi-close"
-    color="primary-lighten-2"
+    color="primary-lighten-3"
     variant="tonal"
     closable
     @click:close="emit('close')"
