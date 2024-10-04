@@ -13,7 +13,7 @@
             v-bind="tooltipProps"
             :active="active"
             :aria-label="title"
-            :color="active ? 'secondary-lighten-3' : 'primary-lighten-3'"
+            :color="active ? 'secondary-lighten-3' : 'primary-lighten-4'"
             :disabled="disabled"
             :icon="`mdi-${icon}`"
             class="mr-2"
@@ -101,5 +101,9 @@ const confirmPublishing = () => {
 <style lang="scss" scoped>
 .v-toolbar :deep(.v-toolbar__content) {
   padding: 0 0.5rem;
+}
+
+.v-btn--disabled {
+  opacity: 0.35;
 }
 </style>
