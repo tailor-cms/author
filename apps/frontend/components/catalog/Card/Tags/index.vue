@@ -6,7 +6,7 @@
         :key="id"
         class="mr-2"
         close-label="Remove tag"
-        color="primary-lighten-2"
+        color="primary-lighten-3"
         variant="tonal"
         label
       >
@@ -33,7 +33,7 @@
               <VBtn
                 v-bind="closeTooltipProps"
                 :ripple="false"
-                color="primary-lighten-1"
+                color="primary-lighten-3"
                 icon="mdi-close-circle"
                 variant="plain"
                 @click.stop="showTagDeleteConfirmation(id, name)"
@@ -55,6 +55,7 @@
         <VBtn
           v-bind="tooltipProps"
           aria-label="Add tag"
+          color="primary-lighten-2"
           icon="mdi-tag-plus"
           @click.stop="showTagDialog = true"
         />

@@ -13,7 +13,7 @@
             v-bind="tooltipProps"
             :active="active"
             :aria-label="title"
-            :color="active ? 'secondary-lighten-3' : 'primary-lighten-1'"
+            :color="active ? 'secondary-lighten-3' : 'primary-lighten-3'"
             :disabled="disabled"
             :icon="`mdi-${icon}`"
             class="mr-2"
