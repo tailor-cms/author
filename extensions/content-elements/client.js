@@ -5,6 +5,12 @@ import pkg3 from '@tailor-cms/ce-single-choice-edit';
 import pkg4 from '@tailor-cms/ce-matching-question-edit';
 import pkg5 from '@tailor-cms/ce-text-response-edit';
 import pkg6 from '@tailor-cms/ce-true-false-edit';
+import pkg7 from '@tailor-cms/ce-numerical-response-edit';
+import pkg8 from '@tailor-cms/ce-fill-blank-edit';
+import pkg9 from '@tailor-cms/ce-page-break-edit';
+import pkg10 from '@tailor-cms/ce-drag-drop-edit';
+import pkg11 from '@tailor-cms/ce-pdf-edit';
+import pkg12 from '@tailor-cms/ce-embed-edit';
 
 // prettier-ignore
 export const elements = [
@@ -15,4 +21,10 @@ export const elements = [
   pkg4,
   pkg5,
   pkg6,
+  pkg7,
+  pkg8,
+  pkg9,
+  pkg10,
+  pkg11,
+  pkg12,
 ];
