@@ -97,7 +97,7 @@ const usersWithActivity = computed(() => {
     left: 30rem;
     margin-top: 5rem;
     min-height: 5.5rem;
-    z-index: 999;
+    z-index: 99;
   }
 
   :deep(.v-text-field__details) {

@@ -568,11 +568,11 @@ importers:
         specifier: ^0.0.2
         version: 0.0.2
       '@tailor-cms/ce-embed-edit':
-        specifier: ^0.0.2
-        version: 0.0.2(vue@3.4.38(typescript@5.5.4))
+        specifier: ^0.0.3
+        version: 0.0.3(vue@3.4.38(typescript@5.5.4))
       '@tailor-cms/ce-embed-server':
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.3
+        version: 0.0.3
       '@tailor-cms/ce-fill-blank-edit':
         specifier: ^0.0.4
         version: 0.0.4(vue@3.4.38(typescript@5.5.4))
@@ -616,11 +616,11 @@ importers:
         specifier: ^0.0.2
         version: 0.0.2
       '@tailor-cms/ce-pdf-edit':
-        specifier: ^0.0.4
-        version: 0.0.4(vue@3.4.38(typescript@5.5.4))
+        specifier: ^0.0.5
+        version: 0.0.5(vue@3.4.38(typescript@5.5.4))
       '@tailor-cms/ce-pdf-server':
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: ^0.0.5
+        version: 0.0.5
       '@tailor-cms/ce-single-choice-edit':
         specifier: ^0.0.5
         version: 0.0.5(vue@3.4.38(typescript@5.5.4))
@@ -3065,13 +3065,13 @@ packages:
   '@tailor-cms/ce-drag-drop-server@0.0.2':
     resolution: {integrity: sha512-Q99gT0fKS9Osxz1xvPIhPMfn5EpHatd8w1aX/fJNLbrFvux6tDcqJUmIib1k2qeTQTpP/mWKLMVUAcCuoknS7g==}
 
-  '@tailor-cms/ce-embed-edit@0.0.2':
-    resolution: {integrity: sha512-Im/CkHOhD9aJYEjAfDAfhKyfRNBI/mpMD1nXYf/oKmV/ekkIjy/ehB3wgOQFXzfuclArpMh5Cu620U320Hejeg==}
+  '@tailor-cms/ce-embed-edit@0.0.3':
+    resolution: {integrity: sha512-luZ/JxIw7lk75k7R2EHqcu7uJ98Yxs72ql7OD5itmPpep8rLi9ic6ObnLTmC+lNCdXNFwsqjtBSxY4uZ97kj3A==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-embed-server@0.0.2':
-    resolution: {integrity: sha512-T6ZGkx5ZaoMYv+iTAuhInFjo2RTksj0zY1ZYtBoFWeH3XuYnaby7Ogbkzd2PZfukY7W0Ihv38qikSwTmEt1gRg==}
+  '@tailor-cms/ce-embed-server@0.0.3':
+    resolution: {integrity: sha512-OkM5j8XKU+KGMhPZ/UkKYhrHV8PUp05U25E3DsodoiitfoCDAqfi/3BKF9efcw/V4s06Mr5h7Ajp3FKX955AnQ==}
 
   '@tailor-cms/ce-fill-blank-edit@0.0.4':
     resolution: {integrity: sha512-W/oY0twhh6OrEmyxWLAdnHjTCBKH1DgI7w3M3MWyLTV53hGsXovj9OZ60Udx0IH5Pr2qnsCL4fYJP8+ZpAsW6g==}
@@ -3129,13 +3129,13 @@ packages:
   '@tailor-cms/ce-page-break-server@0.0.2':
     resolution: {integrity: sha512-lznwVZy1ZWJHcGmLfQnTsW+Z8L3EAwqEFkFUsNsyTAd3BirLmqTnaMgXNlfGuSgSMEZprhXTMMpvtgYQmHXtQQ==}
 
-  '@tailor-cms/ce-pdf-edit@0.0.4':
-    resolution: {integrity: sha512-y8V/edGdieYokmZlKZMVOY1uEZW8V6KqNTD/c5TdG8DPl+an0c1Q0GDVqqy+3xMlx4Njg9d3JZ0/Hgja5kFuGw==}
+  '@tailor-cms/ce-pdf-edit@0.0.5':
+    resolution: {integrity: sha512-YukYoX4b67F2DvlBXMT1Q4bLBeTrQu56MoV47PXo0tBPFojEKw8RSCXxX3m6bc/KgH76+9OFMomlTQ9o4o/7hg==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-pdf-server@0.0.4':
-    resolution: {integrity: sha512-3/H8uLt82KqLv4SrSbMvosD6QIjVfYp3CjKssxlByPl7XuOUK7HwNQp6Io8ItZGS/yimETY5IrFJvgb/oDoxZw==}
+  '@tailor-cms/ce-pdf-server@0.0.5':
+    resolution: {integrity: sha512-fMtI05fCNtp5z0DZEZqE+YJv8aWvdymttNBjGrLrnCwPbZKI/RMpoP74OcbYq/iEsZcWuaxR7Of3la8NM6gbjw==}
 
   '@tailor-cms/ce-single-choice-edit@0.0.5':
     resolution: {integrity: sha512-d7kJrVbmbYchJ7yRFkgGywbeOVh3hrorVgmJOhAkuEPQULLjoiRm5CIpxRMASch+OWlOsPlqfxLkes88Y99CeQ==}
@@ -12592,11 +12592,11 @@ snapshots:
     dependencies:
       lodash: 4.17.21
 
-  '@tailor-cms/ce-embed-edit@0.0.2(vue@3.4.38(typescript@5.5.4))':
+  '@tailor-cms/ce-embed-edit@0.0.3(vue@3.4.38(typescript@5.5.4))':
     dependencies:
       vue: 3.4.38(typescript@5.5.4)
 
-  '@tailor-cms/ce-embed-server@0.0.2': {}
+  '@tailor-cms/ce-embed-server@0.0.3': {}
 
   '@tailor-cms/ce-fill-blank-edit@0.0.4(vue@3.4.38(typescript@5.5.4))':
     dependencies:
@@ -12678,13 +12678,13 @@ snapshots:
 
   '@tailor-cms/ce-page-break-server@0.0.2': {}
 
-  '@tailor-cms/ce-pdf-edit@0.0.4(vue@3.4.38(typescript@5.5.4))':
+  '@tailor-cms/ce-pdf-edit@0.0.5(vue@3.4.38(typescript@5.5.4))':
     dependencies:
       '@tailor-cms/cek-common': 0.0.3
       lodash: 4.17.21
       vue: 3.4.38(typescript@5.5.4)
 
-  '@tailor-cms/ce-pdf-server@0.0.4': {}
+  '@tailor-cms/ce-pdf-server@0.0.5': {}
 
   '@tailor-cms/ce-single-choice-edit@0.0.5(vue@3.4.38(typescript@5.5.4))':
     dependencies:
