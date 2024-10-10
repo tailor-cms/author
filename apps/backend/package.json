@@ -33,7 +33,7 @@
     "axios": "^1.7.5",
     "bcrypt": "^5.1.1",
     "bluebird": "^3.7.2",
-    "body-parser": "^1.20.2",
+    "body-parser": "^1.20.3",
     "boxen": "^7.1.1",
     "bunyan": "^1.8.15",
     "change-case": "^5.4.4",
