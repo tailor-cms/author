@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.0",
-    "@percy/cli": "^1.29.2",
+    "@percy/cli": "^1.30.0",
     "@percy/playwright": "^1.0.6",
     "@playwright/test": "1.46.1",
     "@types/node": "^20.14.10"

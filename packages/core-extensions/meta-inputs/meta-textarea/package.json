@@ -10,6 +10,6 @@
   "main": "./src/index.js",
   "peerDependencies": {
     "vue": "^3.3.4",
-    "vuetify": "^3.3.5"
+    "vuetify": "^3.7.0"
   }
 }

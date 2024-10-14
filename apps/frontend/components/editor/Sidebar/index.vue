@@ -158,6 +158,10 @@ watch(
       display: none !important;
     }
   }
+
+  .v-btn--disabled {
+    opacity: 0.35;
+  }
 }
 
 .sidebar-container {

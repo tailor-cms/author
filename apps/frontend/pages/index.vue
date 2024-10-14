@@ -23,7 +23,7 @@
             <template #activator="{ props: tooltipProps }">
               <VBtn
                 v-bind="tooltipProps"
-                :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-1'"
+                :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-3'"
                 :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                 aria-label="Toggle pinned items filter"
                 class="my-1"
@@ -61,7 +61,7 @@
       <VInfiniteScroll
         v-if="!isLoading && hasRepositories"
         class="d-flex ma-0 pa-0"
-        color="primary-lighten-2"
+        color="primary-lighten-4"
         empty-text=""
         mode="manual"
         @load="loadMore"

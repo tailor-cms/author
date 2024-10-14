@@ -1,0 +1,16 @@
+{
+  "name": "@tailor-cms/tme-datetime",
+  "version": "0.0.1",
+  "description": "Tailor datetime meta input",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "peerDependencies": {
+    "@tailor-cms/interfaces": "workspace:*",
+    "vue": "^3.3.4",
+    "vuetify": "^3.7.0"
+  }
+}

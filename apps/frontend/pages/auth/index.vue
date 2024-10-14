@@ -55,7 +55,7 @@
         variant="outlined"
       />
       <VBtn
-        color="primary-lighten-2 mt-2"
+        color="primary-lighten-4 mt-2"
         variant="tonal"
         block
         rounded

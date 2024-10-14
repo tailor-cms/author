@@ -71,3 +71,9 @@ const recentOnly = defineModel<boolean>('recentOnly', { default: false });
 const status = defineModel<string | null>('status', { default: null });
 const assigneeIds = defineModel<number[]>('assigneeIds', { default: () => [] });
 </script>
+
+<style lang="scss" scoped>
+:deep(input::placeholder) {
+  opacity: 0.75;
+}
+</style>

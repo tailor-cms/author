@@ -59,4 +59,8 @@ watch(
     transition: width 0.3s ease;
   }
 }
+
+:deep(input::placeholder) {
+  opacity: 0.75;
+}
 </style>

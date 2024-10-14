@@ -25,7 +25,7 @@ const relationships = yup.array().of(yup.object().shape({
 }));
 
 const schema = yup.object().shape({
-  id: yup.string().min(2).max(20).required(),
+  id: yup.string().min(2).max(30).required(),
   name: yup.string().min(2).max(200).required(),
   meta,
   workflowId: yup.string(),
@@ -47,7 +47,7 @@ const schema = yup.object().shape({
   contentContainers: yup.array().of(yup.object().shape({
     type: yup.string().min(2).max(50).required(),
     label: yup.string().min(2).max(100).required(),
-    types: yup.array().of(yup.string().min(2).max(20)),
+    types: yup.array().of(yup.string().min(2).max(30)),
     multiple: yup.boolean(),
     displayHeading: yup.boolean()
   }))

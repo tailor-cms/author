@@ -66,6 +66,7 @@
                 v-bind="tooltipProps"
                 aria-label="Repository settings"
                 class="repo-info mr-2"
+                color="primary-lighten-2"
                 icon="mdi-cog"
                 size="small"
                 variant="text"
@@ -75,8 +76,7 @@
                     params: { id: repository.id },
                   })
                 "
-              >
-              </VBtn>
+              />
             </template>
             Open settings
           </VTooltip>
@@ -109,7 +109,7 @@
           <template #activator="{ props: tooltipProps }">
             <VBtn
               v-bind="tooltipProps"
-              :color="isPinned ? 'lime-lighten-2' : 'primary'"
+              :color="isPinned ? 'lime-lighten-2' : 'primary-lighten-2'"
               :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
               aria-label="Pin repository"
               class="mr-1"

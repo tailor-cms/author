@@ -64,7 +64,7 @@ const selectElement = (element: any) => {
 appChannel.on('openElement', (props: ElementRouteProps) => {
   const { repositoryId, activityId, elementId } = props;
   const route = useRouter().resolve({
-    params: { activityId, repositoryId },
+    params: { id: repositoryId, activityId },
     query: { elementId },
   });
   navigateTo(route.href, { open: { target: '_blank' } });

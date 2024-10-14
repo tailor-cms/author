@@ -23,7 +23,7 @@
       v-if="!isFlat"
       :disabled="!!props.search"
       class="px-5"
-      color="primary-lighten-3"
+      color="primary-lighten-4"
       height="42"
       variant="tonal"
       @click="currentRepositoryStore.toggleOutlineExpand"
@@ -75,5 +75,9 @@ watch(
   :deep(.v-field__outline) {
     display: none;
   }
+}
+
+:deep(input::placeholder) {
+  opacity: 0.75;
 }
 </style>
