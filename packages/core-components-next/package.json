@@ -11,7 +11,7 @@
   "main": "./src/index.js",
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "^4.17.7",
+    "@types/lodash": "^4.17.10",
     "@types/pluralize": "^0.0.33"
   },
   "peerDependencies": {
@@ -34,10 +34,10 @@
     "access": "public"
   },
   "dependencies": {
-    "@tiptap/extension-character-count": "^2.6.6",
-    "@tiptap/extension-subscript": "^2.6.6",
-    "@tiptap/extension-superscript": "^2.6.6",
-    "@tiptap/extension-underline": "^2.6.6",
+    "@tiptap/extension-character-count": "^2.8.0",
+    "@tiptap/extension-subscript": "^2.8.0",
+    "@tiptap/extension-superscript": "^2.8.0",
+    "@tiptap/extension-underline": "^2.8.0",
     "@vueuse/core": "^10.11.0"
   }
 }
