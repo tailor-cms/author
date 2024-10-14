@@ -1,4 +1,11 @@
 import type { ContentElement } from './content-element';
+
+export type ElementManifest = Record<string, any>;
+export interface ElementRegistry {
+  all: ElementManifest[];
+  load: (el: ContentElement) => void;
+  get: (id: string) => ElementManifest;
+}
 export interface Metadata {
   key: string;
   type: string;
@@ -12,6 +19,7 @@ export interface Metadata {
 export type Filter = (
   optionEl: ContentElement,
   currentEl: ContentElement,
+  elRegistry?: ElementManifest,
 ) => boolean;
 
 export interface ElementRelationship {

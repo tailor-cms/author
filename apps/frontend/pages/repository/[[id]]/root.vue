@@ -3,7 +3,7 @@
     <div class="d-flex mb-1 primary-darken-2 elevation-1">
       <VTabs
         bg-color="primary-darken-3"
-        class="text-primary-lighten-3"
+        class="text-primary-lighten-4"
         color="primary-lighten-1"
         data-testid="repositoryRoot_nav"
         elevation="1"
@@ -15,9 +15,9 @@
           :key="tab.name"
           :to="{ name: tab.route, query: tab.query }"
           class="px-10"
-          color="primary-lighten-3"
+          color="primary-lighten-4"
         >
-          <VIcon class="text-primary-lighten-2" start>
+          <VIcon class="text-primary-lighten-3" start>
             mdi-{{ tab.icon }}
           </VIcon>
           {{ tab.name }}

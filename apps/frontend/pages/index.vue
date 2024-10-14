@@ -23,7 +23,7 @@
             <template #activator="{ props: tooltipProps }">
               <VBtn
                 v-bind="tooltipProps"
-                :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-1'"
+                :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-3'"
                 :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                 aria-label="Toggle pinned items filter"
                 class="my-1"
@@ -61,7 +61,7 @@
       <VInfiniteScroll
         v-if="!isLoading && hasRepositories"
         class="d-flex ma-0 pa-0"
-        color="primary-lighten-2"
+        color="primary-lighten-4"
         empty-text=""
         mode="manual"
         @load="loadMore"
@@ -114,6 +114,7 @@ import RepositoryFilterSelection from '@/components/catalog/Filter/RepositoryFil
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
 import { useAuthStore } from '@/stores/auth';
+import { useConfigStore } from '@/stores/config';
 import { useRepositoryStore } from '@/stores/repository';
 
 definePageMeta({
@@ -126,9 +127,9 @@ useHead({
   meta: [{ name: 'description', content: 'Tailor CMS - Repository catalog' }],
 });
 
-const runtimeConfig = useRuntimeConfig();
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
+const config = useConfigStore();
 
 const isLoading = ref(true);
 
@@ -147,19 +148,10 @@ const togglePinFilter = () => {
   refetchRepositories();
 };
 
-const availableSchemas = computed(() => {
-  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
-    .split(',')
-    .filter(Boolean)
-    .map((schema) => schema.trim());
-  if (!availableSchemas.length) return SCHEMAS;
-  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
-});
-
 const filters = computed(() => {
   const { SCHEMA, TAG } = repositoryFilterConfigs;
   const filters = [{ ...TAG, values: tags.value }];
-  if (availableSchemas.value.length > 1) {
+  if (config.availableSchemas.length > 1) {
     filters.push({ ...SCHEMA, values: SCHEMAS as any[] });
   }
   return map(filters, ({ type, values, ...config }) => {

@@ -13,4 +13,3 @@ export { default as FileInput } from './components/FileInput.vue';
 export { default as RichTextEditor } from './components/RichTextEditor/index.vue';
 export { useLoader } from './composables/useLoader.ts';
 export { useConfirmationDialog } from './composables/useConfirmationDialog.ts';
-export { useStorageService } from './composables/useStorageService.ts';

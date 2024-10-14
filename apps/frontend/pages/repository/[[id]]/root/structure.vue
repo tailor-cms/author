@@ -82,6 +82,9 @@ const { outlineActivities, rootActivities, selectedActivity, taxonomy } =
   storeToRefs(repositoryStore);
 
 const reorder = useOutlineReorder();
+const storageService = useStorageService();
+
+provide('$storageService', storageService);
 
 const search = ref('');
 const structureEl = ref();

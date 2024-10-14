@@ -1,3 +1,5 @@
+import injectConfigHeaders from './lib/vite-plugins/injectConfigHeaders';
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
@@ -8,6 +10,7 @@ export default defineNuxtConfig({
   },
   vite: {
     optimizeDeps: { include: ['lodash'] },
+    plugins: [injectConfigHeaders()],
   },
   devtools: { enabled: true },
   telemetry: false,
@@ -33,12 +36,6 @@ export default defineNuxtConfig({
     families: {
       Roboto: true,
       Poppins: true,
-    },
-  },
-  runtimeConfig: {
-    public: {
-      aiUiEnabled: false,
-      availableSchemas: '',
     },
   },
 });

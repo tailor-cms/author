@@ -38,7 +38,7 @@
       />
       <div class="d-flex mt-2">
         <VBtn
-          color="primary-lighten-2"
+          color="primary-lighten-4"
           variant="tonal"
           block
           rounded

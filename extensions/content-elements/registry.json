@@ -13,5 +13,55 @@
     "name": "@tailor-cms/ce-multiple-choice",
     "clientPackage": "@tailor-cms/ce-multiple-choice-edit",
     "serverPackage": "@tailor-cms/ce-multiple-choice-server"
+  },
+  {
+    "name": "@tailor-cms/ce-single-choice",
+    "clientPackage": "@tailor-cms/ce-single-choice-edit",
+    "serverPackage": "@tailor-cms/ce-single-choice-server"
+  },
+  {
+    "name": "@tailor-cms/ce-matching-question",
+    "clientPackage": "@tailor-cms/ce-matching-question-edit",
+    "serverPackage": "@tailor-cms/ce-matching-question-server"
+  },
+  {
+    "name": "@tailor-cms/ce-text-response",
+    "clientPackage": "@tailor-cms/ce-text-response-edit",
+    "serverPackage": "@tailor-cms/ce-text-response-server"
+  },
+  {
+    "name": "@tailor-cms/ce-true-false",
+    "clientPackage": "@tailor-cms/ce-true-false-edit",
+    "serverPackage": "@tailor-cms/ce-true-false-server"
+  },
+  {
+    "name": "@tailor-cms/ce-numerical-response",
+    "clientPackage": "@tailor-cms/ce-numerical-response-edit",
+    "serverPackage": "@tailor-cms/ce-numerical-response-server"
+  },
+  {
+    "name": "@tailor-cms/ce-fill-blank",
+    "clientPackage": "@tailor-cms/ce-fill-blank-edit",
+    "serverPackage": "@tailor-cms/ce-fill-blank-server"
+  },
+  {
+    "name": "@tailor-cms/ce-page-break",
+    "clientPackage": "@tailor-cms/ce-page-break-edit",
+    "serverPackage": "@tailor-cms/ce-page-break-server"
+  },
+  {
+    "name": "@tailor-cms/ce-drag-drop",
+    "clientPackage": "@tailor-cms/ce-drag-drop-edit",
+    "serverPackage": "@tailor-cms/ce-drag-drop-server"
+  },
+  {
+    "name": "@tailor-cms/ce-pdf",
+    "clientPackage": "@tailor-cms/ce-pdf-edit",
+    "serverPackage": "@tailor-cms/ce-pdf-server"
+  },
+  {
+    "name": "@tailor-cms/ce-embed",
+    "clientPackage": "@tailor-cms/ce-embed-edit",
+    "serverPackage": "@tailor-cms/ce-embed-server"
   }
 ]

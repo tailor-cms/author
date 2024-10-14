@@ -36,12 +36,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { ActivityConfig, Schema } from '@tailor-cms/interfaces/schema';
 import { computed, ref } from 'vue';
+import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { createId as cuid } from '@paralleldrive/cuid2';
-import { SCHEMAS } from 'tailor-config-shared';
 import { VTreeview } from 'vuetify/labs/VTreeview';
 import without from 'lodash/without';
+
+import { useConfigStore } from '@/stores/config';
 
 interface TreeItem {
   id: string;
@@ -55,6 +56,7 @@ definePageMeta({
 });
 
 const search = ref('');
+const config = useConfigStore();
 
 const buildTree = (type: string, structure: ActivityConfig[]) => {
   const id = cuid();
@@ -70,10 +72,10 @@ const buildTree = (type: string, structure: ActivityConfig[]) => {
 };
 
 const schemas = computed<TreeItem[]>(() => {
-  return SCHEMAS.map(({ name: label, structure }: Schema) => {
-    const roots = structure.filter((it) => it.rootLevel);
+  return config.availableSchemas.map(({ name: label, structure }: any) => {
+    const roots = structure.filter((it: any) => it.rootLevel);
     const children = roots
-      .map(({ type }) => buildTree(type, structure))
+      .map(({ type }: any) => buildTree(type, structure))
       .filter(Boolean) as TreeItem[];
     return { id: cuid(), label, children };
   });

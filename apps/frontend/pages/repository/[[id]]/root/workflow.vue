@@ -3,8 +3,8 @@
     <VMain>
       <div class="workflow d-flex flex-column h-100">
         <WorkflowFilters
-          v-model:assigneeIds="filters.assigneeIds"
-          v-model:recentOnly="filters.recentOnly"
+          v-model:assignee-ids="filters.assigneeIds"
+          v-model:recent-only="filters.recentOnly"
           v-model:search="filters.search"
           v-model:status="filters.status"
           :assignee-options="assignees"

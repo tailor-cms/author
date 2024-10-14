@@ -21,6 +21,14 @@ const { STORAGE_PATH } = process.env;
 const logger = getLogger();
 const app = express();
 
+const configCookie = JSON.stringify(
+  Object.fromEntries(
+    Object.entries(process.env).filter(([key]) =>
+      key.startsWith('NUXT_PUBLIC_'),
+    ),
+  ),
+);
+
 if (config.general.reverseProxyPolicy)
   app.set('trust proxy', config.general.reverseProxyPolicy);
 
@@ -63,7 +71,14 @@ app.use(
     ],
   }),
 );
-app.use(express.static(path.join(__dirname, '../frontend/.output/public')));
+app.use(
+  express.static(path.join(__dirname, '../frontend/.output/public'), {
+    setHeaders: (res, path) => {
+      if (!path.endsWith('/public/index.html')) return;
+      return res.cookie('config', configCookie);
+    },
+  }),
+);
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
 // Mount main router.

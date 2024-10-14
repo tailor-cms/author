@@ -65,9 +65,9 @@
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
               v-model="schemaInput"
-              :disabled="availableSchemas.length === 1"
+              :disabled="config.availableSchemas.length === 1"
               :error-messages="errors.schema"
-              :items="availableSchemas"
+              :items="config.availableSchemas"
               :menu-props="{ attach: '#addDialogWindow' }"
               class="required"
               data-testid="type-input"
@@ -116,7 +116,7 @@
             />
           </template>
           <AIAssistance
-            v-if="runtimeConfig.public.aiUiEnabled && selectedTab === NEW_TAB"
+            v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
@@ -160,13 +160,14 @@ import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
+import { useConfigStore } from '@/stores/config';
 import { useRepositoryStore } from '@/stores/repository';
 
 const { $schemaService } = useNuxtApp() as any;
 
-const runtimeConfig = useRuntimeConfig();
 const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
+const config = useConfigStore();
 
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
@@ -184,19 +185,12 @@ const aiSuggestedOutline = ref([]);
 
 const metaValidation = reactive<Record<string, any>>({});
 
-const availableSchemas = computed(() => {
-  const availableSchemas = (runtimeConfig.public.availableSchemas || '')
-    .split(',')
-    .filter(Boolean)
-    .map((schema) => schema.trim());
-  if (!availableSchemas.length) return SCHEMAS;
-  return SCHEMAS.filter((it) => availableSchemas.includes(it.id));
-});
-
 const { defineField, handleSubmit, resetForm, values, errors } = useForm({
   initialValues: {
     schema:
-      availableSchemas.value.length === 1 ? availableSchemas.value[0].id : null,
+      config.availableSchemas.length === 1
+        ? config.availableSchemas[0].id
+        : null,
     name: '',
     description: '',
     archive: null,
@@ -287,14 +281,15 @@ const hide = () => {
   resetForm();
 };
 
-watch(schemaMeta, (val) => {
-  Object.keys(metaValidation).forEach(
-    (key: string) => delete metaValidation[key],
-  );
-  if (val && val.length) {
+watch(
+  schemaMeta,
+  (val) => {
+    Object.keys(metaValidation).forEach((key) => delete metaValidation[key]);
+    if (!val?.length) return;
     return val.forEach((it) => (metaValidation[it.key] = it.validate));
-  }
-});
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>
