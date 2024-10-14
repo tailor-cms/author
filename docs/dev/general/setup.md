@@ -183,7 +183,7 @@ ENABLE_RATE_LIMITING=false
 # Use OIDC_POST_LOGOUT_URI_KEY if OIDC provider uses post logout uri key not
 # aligned with OIDC RP-Initiated Logout standard key (post_logout_redirect_uri)
 # OIDC_POST_LOGOUT_URI_KEY=
-# SESSION_SECRET=
+# OIDC_SESSION_SECRET=
 
 # -------------------------------------------------------------------
 # Email configuration for sending notifications

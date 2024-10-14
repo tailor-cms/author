@@ -9,3 +9,4 @@
 - Updated healthcheck route to `/api/healthcheck`
 - Prefixed `OIDC_ENABLED`, `OIDC_LOGIN_TEXT` and `OIDC_LOGOUT_ENABLED` env 
   variables `NUXT_PUBLIC_`
+- prefixed `SESSION_SECRET` with `OIDC_`

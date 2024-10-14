@@ -100,7 +100,7 @@ export const getSecrets = (db: studion.Database) => [
     'AI_SECRET_KEY',
     'OIDC_CLIENT_ID',
     'OIDC_CLIENT_SECRET',
-    'SESSION_SECRET',
+    'OIDC_SESSION_SECRET',
   ].map((name) => ({ name, valueFrom: getSsmParam(name) })),
   { name: 'DATABASE_PASSWORD', valueFrom: db.password.secret.arn },
 ];
