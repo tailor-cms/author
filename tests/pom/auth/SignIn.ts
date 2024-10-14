@@ -10,7 +10,6 @@ export class SignIn {
   readonly passwordInput: Locator;
   readonly forgotPasswordLink: Locator;
   readonly submitBtn: Locator;
-  readonly oidcSignInPage: OidcSignIn;
 
   constructor(page: Page) {
     this.page = page;
@@ -21,7 +20,6 @@ export class SignIn {
       name: 'Forgot password?',
     });
     this.submitBtn = page.getByRole('button', { name: 'Sign in', exact: true });
-    this.oidcSignInPage = new OidcSignIn(page);
   }
 
   visit() {
@@ -44,6 +42,7 @@ export class SignIn {
 
   async oidcSignIn(email?: string, password?: string) {
     await this.oidcBtn.click();
-    await this.oidcSignInPage.signIn(email, password);
+    const oidcSignInPage = new OidcSignIn(this.page);
+    await oidcSignInPage.signIn(email, password);
   }
 }
