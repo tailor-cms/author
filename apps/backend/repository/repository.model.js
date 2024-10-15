@@ -127,7 +127,7 @@ class Repository extends Model {
     return Promise.join(
       Promise.map(activities, (it) => {
         return it.mapClonedReferences(
-          mappings.activity,
+          mappings.activityId,
           relationships,
           transaction,
         );
