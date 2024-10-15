@@ -43,7 +43,7 @@ test('sign in page has a title set', async ({ page }) => {
   await expect(page).toHaveTitle(/Sign in/);
 });
 
-test.only('should be able to sign in with OIDC', async ({ page }) => {
+test('should be able to sign in with OIDC', async ({ page }) => {
   test.skip(
     !OIDC_TEST_USER_EMAIL || !OIDC_TEST_USER_PASSWORD,
     'OIDC is not enabled',
