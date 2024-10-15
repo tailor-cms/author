@@ -9,7 +9,7 @@ import { createLogger } from '../logger.js';
 import publishingThrottler from './PublishingThrottler.js';
 import PromiseQueue from 'promise-queue';
 
-const logger = createLogger('repository:controller');
+const logger = createLogger('publishing:service');
 const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 
 class PublishingService {
