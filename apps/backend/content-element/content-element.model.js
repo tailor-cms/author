@@ -1,4 +1,5 @@
 import { Model, Op } from 'sequelize';
+import { createLogger } from '../shared/logger.js';
 import calculatePosition from '../shared/util/calculatePosition.js';
 import { ContentElement as Events } from 'sse-event-types';
 import forEach from 'lodash/forEach.js';
@@ -7,6 +8,8 @@ import isNumber from 'lodash/isNumber.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import zipObject from 'lodash/zipObject.js';
+
+const logger = createLogger('content-element:model');
 
 class ContentElement extends Model {
   static fields(DataTypes) {
@@ -169,10 +172,15 @@ class ContentElement extends Model {
         const uid = mappings.elementUid[ref.uid];
         const outlineId = mappings.activityId[ref.outlineId];
         const containerId = mappings.activityId[ref.containerId];
-        if (!id || !uid || !outlineId || !containerId) {
-          throw new Error('Unable to resolve element refs');
+        if (!id || (ref.uid && !uid) || !outlineId || !containerId) {
+          return logger.error({ ref }, 'Unable to resolve element ref');
         }
-        refs[name][index] = { id, uid, outlineId, containerId };
+        refs[name][index] = {
+          id,
+          ...(ref.uid && { uid }),
+          outlineId,
+          containerId,
+        };
       });
     });
     this.changed('refs', true);
