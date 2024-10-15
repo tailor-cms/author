@@ -19,7 +19,7 @@ import storageRouter from '../shared/storage/storage.router.js';
 const { Repository } = db;
 const router = express.Router();
 
-const removeTimeout = (req, _res, next) => {
+const increaseRequestTimeout = (req, _res, next) => {
   req.setTimeout(10 * 60 * 1000); // 10 minutes in milliseconds
   next();
 };
@@ -45,10 +45,14 @@ router
 
 router
   .post('/:repositoryId/pin', ctrl.pin)
-  .post('/:repositoryId/clone', authorize(), ctrl.clone)
+  .post('/:repositoryId/clone', authorize(), increaseRequestTimeout, ctrl.clone)
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
-  .get('/:repositoryId/export/setup', removeTimeout, ctrl.initiateExportJob)
+  .get(
+    '/:repositoryId/export/setup',
+    increaseRequestTimeout,
+    ctrl.initiateExportJob,
+  )
   .post('/:repositoryId/export/:jobId', ctrl.export)
   .post('/:repositoryId/users', ctrl.upsertUser)
   .delete('/:repositoryId/users/:userId', ctrl.removeUser)
