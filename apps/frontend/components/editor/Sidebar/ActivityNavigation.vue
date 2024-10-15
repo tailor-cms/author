@@ -45,7 +45,8 @@ const attachActivityAttrs = (activity: Activity) => ({
 });
 
 const activityTreeData = computed(() => {
-  return activityUtils.toTreeFormat(props.activities, {
+  const withoutSoftDeleted = props.activities.filter((it) => !it.deletedAt);
+  return activityUtils.toTreeFormat(withoutSoftDeleted, {
     processNodeFn: attachActivityAttrs,
   });
 });
