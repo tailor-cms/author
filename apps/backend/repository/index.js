@@ -20,7 +20,7 @@ const { Repository } = db;
 const router = express.Router();
 
 const removeTimeout = (req, _res, next) => {
-  req.setTimeout(0);
+  req.setTimeout(10 * 60 * 1000); // 10 minutes in milliseconds
   next();
 };
 
