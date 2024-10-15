@@ -19,6 +19,11 @@ import storageRouter from '../shared/storage/storage.router.js';
 const { Repository } = db;
 const router = express.Router();
 
+const removeTimeout = (req, _res, next) => {
+  req.setTimeout(0);
+  next();
+};
+
 // NOTE: disk storage engine expects an object to be passed as the first argument
 // https://github.com/expressjs/multer/blob/6b5fff5/storage/disk.js#L17-L18
 const upload = multer({ storage: multer.diskStorage({}) });
@@ -43,7 +48,7 @@ router
   .post('/:repositoryId/clone', authorize(), ctrl.clone)
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
-  .get('/:repositoryId/export/setup', ctrl.initiateExportJob)
+  .get('/:repositoryId/export/setup', removeTimeout, ctrl.initiateExportJob)
   .post('/:repositoryId/export/:jobId', ctrl.export)
   .post('/:repositoryId/users', ctrl.upsertUser)
   .delete('/:repositoryId/users/:userId', ctrl.removeUser)
