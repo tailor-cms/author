@@ -53,7 +53,11 @@ function add(Activity, Hooks, Models) {
       : context.repository.update({ hasUnpublishedChanges: true });
   }
 
-  async function touchOutline(activity, { context = {}, transaction }) {
+  async function touchOutline(
+    _hookType,
+    activity,
+    { context = {}, transaction },
+  ) {
     if (!isRepository(context.repository)) return Promise.resolve();
     const outlineActivity = isOutlineActivity(activity.type)
       ? activity
