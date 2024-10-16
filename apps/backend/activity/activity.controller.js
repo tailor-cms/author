@@ -74,8 +74,9 @@ function reorder({ activity, body, repository, user }, res) {
     .then((data) => res.json({ data }));
 }
 
-async function restore({ activity }, res) {
-  await activity.restore();
+async function restore({ activity, repository, user }, res) {
+  const context = { userId: user.id, repository };
+  await activity.restore({ context });
   return res.json({ data: activity });
 }
 

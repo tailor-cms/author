@@ -10,6 +10,7 @@ function add(Revision, Hooks, { Repository, Activity, ContentElement }) {
   const hooks = {
     [Hooks.afterCreate]: 'CREATE',
     [Hooks.afterUpdate]: 'UPDATE',
+    [Hooks.afterRestore]: 'UPDATE',
     [Hooks.afterDestroy]: 'REMOVE',
     [Hooks.afterBulkCreate]: 'CREATE',
   };
