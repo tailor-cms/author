@@ -8,7 +8,7 @@
       />
     </div>
     <VBtn
-      v-show="isEditable"
+      v-show="!isSoftDeleted && isEditable"
       class="px-4 mr-3 btn-open"
       color="teal-lighten-4"
       size="small"
@@ -18,11 +18,22 @@
       <VIcon class="mr-2">mdi-page-next-outline</VIcon>
       Open
     </VBtn>
+    <VBtn
+      v-if="isSoftDeleted"
+      class="mr-3"
+      color="orange-lighten-4"
+      size="small"
+      variant="tonal"
+      @click.stop="api.restore(store.repositoryId, props.activity.id)"
+    >
+      <VIcon class="mr-2">mdi-history</VIcon>
+      Restore
+    </VBtn>
     <ActivityPublishing
       v-if="store.repository?.hasAdminAccess"
       :activity="activity"
-      :outline-activities="store.outlineActivities"
       :is-soft-deleted="isSoftDeleted"
+      :outline-activities="store.outlineActivities"
     />
   </div>
 </template>
@@ -33,6 +44,7 @@ import get from 'lodash/get';
 
 import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import ActivityPublishing from './ActivityPublishing.vue';
+import api from '@/api/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{ activity: StoreActivity }>();
