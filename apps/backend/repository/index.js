@@ -53,6 +53,7 @@ router
     increaseRequestTimeout,
     ctrl.initiateExportJob,
   )
+  .get('/:repositoryId/export/:jobId/status', ctrl.exportStatus)
   .post('/:repositoryId/export/:jobId', ctrl.export)
   .post('/:repositoryId/users', ctrl.upsertUser)
   .delete('/:repositoryId/users/:userId', ctrl.removeUser)

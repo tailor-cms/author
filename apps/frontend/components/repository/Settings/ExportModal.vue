@@ -55,10 +55,23 @@ const exportRepository = async () => {
   close();
 };
 
+const setStatus = (val: { icon: string; color: string; message: string }) => {
+  status.value = val;
+};
+
+const getStatus = async (jobId: string | null, hits = 1) => {
+  const MAX_HITS = 6;
+  const INTERVAL = 3000;
+  const job = await api.getExportJobStatus(props.repository.id, jobId);
+  if (job) return setStatus(STATUS.READY);
+  if (hits >= MAX_HITS) return setStatus(STATUS.ERROR);
+  return setTimeout(() => getStatus(jobId, hits + 1), hits * INTERVAL);
+};
+
 const initiateExportJob = async () => {
   try {
     jobId.value = await api.initiateExportJob(props.repository.id);
-    status.value = STATUS.READY;
+    return getStatus(jobId.value);
   } catch {
     status.value = STATUS.ERROR;
   }

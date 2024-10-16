@@ -1,6 +1,7 @@
 import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
-import { NO_CONTENT, NOT_FOUND } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
+import { createId as cuid } from '@paralleldrive/cuid2';
 import { createError } from '../shared/error/helpers.js';
 import { createLogger } from '../shared/logger.js';
 import db from '../shared/database/index.js';
@@ -17,6 +18,8 @@ import { schema } from 'tailor-config-shared';
 import { snakeCase } from 'change-case';
 import TransferService from '../shared/transfer/transfer.service.js';
 import { general } from '../config/server/index.js';
+
+const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
 const tmp = Promise.promisifyAll((await import('tmp')).default, {
@@ -237,8 +240,9 @@ async function removeTag({ params: { tagId, repositoryId } }, res) {
 
 async function initiateExportJob({ repository }, res) {
   const [outFile] = await tmp.fileAsync();
+  const jobId = cuid();
   const options = { repositoryId: repository.id, schemaId: repository.schema };
-  return TransferService.createExportJob(outFile, options)
+  TransferService.createExportJob(outFile, options, jobId)
     .toPromise()
     .then((job) => {
       log(
@@ -247,12 +251,18 @@ async function initiateExportJob({ repository }, res) {
       );
       // TODO: unlink job.filepath after timeout
       JobCache.set(job.id, job);
-      res.json({ data: job.id });
     })
     .catch(() => {
       fsp.unlink(outFile);
       return createError(NOT_FOUND);
     });
+  return res.json({ data: jobId });
+}
+
+function exportStatus({ params }, res) {
+  const job = JobCache.get(params.jobId);
+  if (!job) return res.json.send({});
+  res.json({ data: job.id });
 }
 
 function exportRepository({ repository, params }, res) {
@@ -262,7 +272,7 @@ function exportRepository({ repository, params }, res) {
   );
   const job = JobCache.get(jobId);
   if (!job) {
-    log(`[exportRepository] job not found on export, jobId: ${params.job.id}`);
+    log(`[exportRepository] job not found on export, jobId: ${jobId}`);
     return createError(NOT_FOUND);
   }
   res.attachment(`${snakeCase(repository.name)}.tgz`);
@@ -294,6 +304,7 @@ export default {
   remove,
   initiateExportJob,
   export: exportRepository,
+  exportStatus,
   import: importRepository,
   pin,
   clone,
