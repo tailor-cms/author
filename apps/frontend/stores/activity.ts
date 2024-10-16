@@ -132,6 +132,7 @@ export const useActivityStore = defineStore('activities', () => {
       activity.id,
     );
     activity.publishedAt = publishedAt;
+    if (activity.deletedAt) $items.delete(activity.uid);
   };
 
   const clone = async (mapping: any) => {
