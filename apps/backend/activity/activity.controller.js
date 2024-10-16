@@ -74,6 +74,11 @@ function reorder({ activity, body, repository, user }, res) {
     .then((data) => res.json({ data }));
 }
 
+async function restore({ activity }, res) {
+  await activity.restore();
+  return res.json({ data: activity });
+}
+
 function publish({ activity }, res) {
   log(`[publish] initiated, activityId: ${activity.id}`);
   if (activity.detached) {
@@ -143,6 +148,7 @@ export default {
   list,
   patch,
   remove,
+  restore,
   reorder,
   clone,
   publish,
