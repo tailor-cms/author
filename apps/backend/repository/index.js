@@ -19,11 +19,6 @@ import storageRouter from '../shared/storage/storage.router.js';
 const { Repository } = db;
 const router = express.Router();
 
-const increaseRequestTimeout = (req, _res, next) => {
-  req.setTimeout(10 * 60 * 1000); // 10 minutes in milliseconds
-  next();
-};
-
 // NOTE: disk storage engine expects an object to be passed as the first argument
 // https://github.com/expressjs/multer/blob/6b5fff5/storage/disk.js#L17-L18
 const upload = multer({ storage: multer.diskStorage({}) });
@@ -45,15 +40,11 @@ router
 
 router
   .post('/:repositoryId/pin', ctrl.pin)
-  .post('/:repositoryId/clone', authorize(), increaseRequestTimeout, ctrl.clone)
+  .post('/:repositoryId/clone', authorize(), ctrl.clone)
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
-  .get(
-    '/:repositoryId/export/setup',
-    increaseRequestTimeout,
-    ctrl.initiateExportJob,
-  )
-  .get('/:repositoryId/export/:jobId/status', ctrl.exportStatus)
+  .get('/:repositoryId/export/setup', ctrl.initiateExportJob)
+  .get('/:repositoryId/export/:jobId/status', ctrl.getExportStatus)
   .post('/:repositoryId/export/:jobId', ctrl.export)
   .post('/:repositoryId/users', ctrl.upsertUser)
   .delete('/:repositoryId/users/:userId', ctrl.removeUser)

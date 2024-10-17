@@ -259,10 +259,9 @@ async function initiateExportJob({ repository }, res) {
   return res.json({ data: jobId });
 }
 
-function exportStatus({ params }, res) {
+function getExportStatus({ params }, res) {
   const job = JobCache.get(params.jobId);
-  if (!job) return res.json({});
-  res.json({ data: job.id });
+  return res.json({ isCompleted: !!job });
 }
 
 function exportRepository({ repository, params }, res) {
@@ -304,7 +303,7 @@ export default {
   remove,
   initiateExportJob,
   export: exportRepository,
-  exportStatus,
+  getExportStatus,
   import: importRepository,
   pin,
   clone,
