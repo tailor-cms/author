@@ -261,7 +261,8 @@ async function initiateExportJob({ repository }, res) {
 
 function getExportStatus({ params }, res) {
   const job = JobCache.get(params.jobId);
-  return res.json({ isCompleted: !!job });
+  const data = { isCompleted: !!job };
+  return res.json({ data });
 }
 
 function exportRepository({ repository, params }, res) {
