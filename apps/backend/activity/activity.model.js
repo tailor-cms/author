@@ -280,7 +280,7 @@ class Activity extends Model {
 
   async restoreWithDescendants({ context }) {
     const transaction = await this.sequelize.transaction();
-    return this.descendants({ attributes: ['id'] })
+    await this.descendants({ attributes: ['id'] })
       .then((descendants) => {
         descendants.all = [...descendants.nodes, ...descendants.leaves];
         return descendants;
@@ -299,6 +299,7 @@ class Activity extends Model {
         return Activity.update({ detached: false }, { where, transaction });
       })
       .then(() => this.restore({ context, transaction }));
+    await transaction.commit();
   }
 
   reorder(index, context) {
