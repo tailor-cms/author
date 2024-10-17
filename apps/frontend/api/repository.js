@@ -10,6 +10,7 @@ const urls = {
   publish: (id) => `${urls.resource(id)}/publish`,
   exportInit: (id) => `${urls.resource(id)}/export/setup`,
   export: (id, jobId) => `${urls.resource(id)}/export/${jobId}`,
+  exportStatus: (id, jobId) => `${urls.export(id, jobId)}/status`,
   users: (id, userId = '') => `${urls.resource(id)}/users/${userId}`,
   tags: (id, tagId = '') => `${urls.resource(id)}/tags/${tagId}`,
 };
@@ -78,6 +79,10 @@ function initiateExportJob(repositoryId) {
   return request.get(urls.exportInit(repositoryId)).then(extractData);
 }
 
+function getExportJobStatus(repositoryId, jobId) {
+  return request.get(urls.exportStatus(repositoryId, jobId)).then(extractData);
+}
+
 function exportRepository(repositoryId, jobId, fields) {
   return request.submitForm(urls.export(repositoryId, jobId), fields);
 }
@@ -101,6 +106,7 @@ export default {
   addTag,
   removeTag,
   initiateExportJob,
+  getExportJobStatus,
   exportRepository,
   importRepository,
 };
