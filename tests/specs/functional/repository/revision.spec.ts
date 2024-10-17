@@ -29,7 +29,7 @@ test('should display a revision for updated repository', async ({ page }) => {
   const settings = new GeneralSettings(page);
   await settings.updateName('Test update');
   await tabNavigation.getByText('History').click();
-  await expect(page.getByText('Changed repository')).toBeVisible();
+  await expect(page.getByText('Updated repository')).toBeVisible();
 });
 
 test('should display a revision for created group activity', async ({
@@ -55,7 +55,7 @@ test('should display a revision for updated group activity', async ({
   const sidebar = new OutlineSidebar(page);
   await sidebar.fillName('Group 1 updated');
   await page.goto(getHistoryRoute(repository.id));
-  await expect(page.getByText(`Changed ${groupName}`)).toBeVisible();
+  await expect(page.getByText(`Updated ${groupName}`)).toBeVisible();
 });
 
 test('should display a revision for deleted group activity', async ({
