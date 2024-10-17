@@ -14,6 +14,8 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
+    "@tailor-cms/ce-audio-edit": "^0.0.1",
+    "@tailor-cms/ce-audio-server": "^0.0.1",
     "@tailor-cms/ce-drag-drop-edit": "^0.0.2",
     "@tailor-cms/ce-drag-drop-server": "^0.0.2",
     "@tailor-cms/ce-embed-edit": "^0.0.3",
@@ -39,6 +41,8 @@
     "@tailor-cms/ce-text-response-edit": "^0.0.1",
     "@tailor-cms/ce-text-response-server": "^0.0.1",
     "@tailor-cms/ce-true-false-edit": "^0.0.2",
-    "@tailor-cms/ce-true-false-server": "^0.0.2"
+    "@tailor-cms/ce-true-false-server": "^0.0.2",
+    "@tailor-cms/ce-video-edit": "^0.0.1",
+    "@tailor-cms/ce-video-server": "^0.0.1"
   }
 }

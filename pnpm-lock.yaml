@@ -561,6 +561,12 @@ importers:
 
   extensions/content-elements:
     dependencies:
+      '@tailor-cms/ce-audio-edit':
+        specifier: ^0.0.1
+        version: 0.0.1(vue@3.5.12(typescript@5.5.4))
+      '@tailor-cms/ce-audio-server':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@tailor-cms/ce-drag-drop-edit':
         specifier: ^0.0.2
         version: 0.0.2(vue@3.5.12(typescript@5.5.4))
@@ -639,6 +645,12 @@ importers:
       '@tailor-cms/ce-true-false-server':
         specifier: ^0.0.2
         version: 0.0.2
+      '@tailor-cms/ce-video-edit':
+        specifier: ^0.0.1
+        version: 0.0.1(vue@3.5.12(typescript@5.5.4))
+      '@tailor-cms/ce-video-server':
+        specifier: ^0.0.1
+        version: 0.0.1
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -3329,6 +3341,14 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
+  '@tailor-cms/ce-audio-edit@0.0.1':
+    resolution: {integrity: sha512-KzSKcfv9A+aC8wYm0NucuR9mg7o6WzAsdL76Wm3Th9QNre7Y5sRDTXedaQRPf4qDo1Y27CFOkEqiw7QN/HhK9A==}
+    peerDependencies:
+      vue: ^3.3.4
+
+  '@tailor-cms/ce-audio-server@0.0.1':
+    resolution: {integrity: sha512-V0N/rOoC2Bg0ffjxjnWgCf4yOjZMLgVRvrjPzypWPHdjcb29f2tAQPGVlk+6ni8U/KJkZjKz7KXpEFa+K6PjwA==}
+
   '@tailor-cms/ce-drag-drop-edit@0.0.2':
     resolution: {integrity: sha512-3gVyIAp6P/ArQfyu1V1qjRLL4na6ZcHnNspf8E0vhpyXMYfsFkUeJ0N/3YjpgSgLp3mQ3lDKU4pvidTGz39bJA==}
     peerDependencies:
@@ -3432,6 +3452,14 @@ packages:
 
   '@tailor-cms/ce-true-false-server@0.0.2':
     resolution: {integrity: sha512-1TXKUeQTJTVm8RmysAQlZtFeo3xyFA69WPidqbQ6NX3I6FfcTYeM7MUHnQzTOMSC2kXE1S4diao2y8KPX4JgTA==}
+
+  '@tailor-cms/ce-video-edit@0.0.1':
+    resolution: {integrity: sha512-fF44oxhcuhs5pVy62w5pbaDDKTBDcx9U8mYx/g2VwMk1rMGQO4cPfr8yWosh/1J3qJiwa6jGQ07rB88W1PjQKg==}
+    peerDependencies:
+      vue: ^3.3.4
+
+  '@tailor-cms/ce-video-server@0.0.1':
+    resolution: {integrity: sha512-EqrSWKaYG0hEu4i9DOhnoIyb2/76jmeU4noz3Z/CMfyK6dX+uGpVjsceqH/LiX4efbsVtDrah08KoJWEnH7seQ==}
 
   '@tailor-cms/cek-common@0.0.3':
     resolution: {integrity: sha512-QZGKfGb8sdmS/4U2ZdbG8VKD816Q2AoL4t23/WGXyo5wgpdjw4n9eNYNTwv8kp/pE02LzSBG+CUOMTb3UAqPoA==}
@@ -13870,6 +13898,13 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
+  '@tailor-cms/ce-audio-edit@0.0.1(vue@3.5.12(typescript@5.5.4))':
+    dependencies:
+      '@tailor-cms/cek-common': 0.0.3
+      vue: 3.5.12(typescript@5.5.4)
+
+  '@tailor-cms/ce-audio-server@0.0.1': {}
+
   '@tailor-cms/ce-drag-drop-edit@0.0.2(vue@3.5.12(typescript@5.5.4))':
     dependencies:
       lodash: 4.17.21
@@ -14000,6 +14035,13 @@ snapshots:
   '@tailor-cms/ce-true-false-server@0.0.2':
     dependencies:
       lodash: 4.17.21
+
+  '@tailor-cms/ce-video-edit@0.0.1(vue@3.5.12(typescript@5.5.4))':
+    dependencies:
+      '@tailor-cms/cek-common': 0.0.3
+      vue: 3.5.12(typescript@5.5.4)
+
+  '@tailor-cms/ce-video-server@0.0.1': {}
 
   '@tailor-cms/cek-common@0.0.3': {}
 

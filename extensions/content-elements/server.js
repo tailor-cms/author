@@ -11,6 +11,8 @@ import pkg9 from '@tailor-cms/ce-page-break-server';
 import pkg10 from '@tailor-cms/ce-drag-drop-server';
 import pkg11 from '@tailor-cms/ce-pdf-server';
 import pkg12 from '@tailor-cms/ce-embed-server';
+import pkg13 from '@tailor-cms/ce-audio-server';
+import pkg14 from '@tailor-cms/ce-video-server';
 
 // prettier-ignore
 export const elements = [
@@ -27,4 +29,6 @@ export const elements = [
   pkg10,
   pkg11,
   pkg12,
+  pkg13,
+  pkg14,
 ];
