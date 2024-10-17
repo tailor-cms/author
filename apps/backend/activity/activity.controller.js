@@ -61,7 +61,7 @@ function patch({ repository, user, activity, body }, res) {
 
 async function remove({ user, repository, activity }, res) {
   const context = { userId: user.id, repository };
-  const options = { recursive: true, soft: true, context };
+  const options = { recursive: false, soft: true, context };
   const deleted = await activity.remove(options);
   await updatePublishingStatus(repository, activity);
   return res.json({ data: pick(deleted, ['id']) });
@@ -76,7 +76,7 @@ function reorder({ activity, body, repository, user }, res) {
 
 async function restore({ activity, repository, user }, res) {
   const context = { userId: user.id, repository };
-  await activity.restore({ context });
+  await activity.restoreWithDescendants({ context });
   return res.json({ data: activity });
 }
 
