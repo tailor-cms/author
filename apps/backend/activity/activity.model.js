@@ -278,6 +278,30 @@ class Activity extends Model {
     });
   }
 
+  async restoreWithDescendants({ context }) {
+    const transaction = await this.sequelize.transaction();
+    await this.descendants({ attributes: ['id'] })
+      .then((descendants) => {
+        descendants.all = [...descendants.nodes, ...descendants.leaves];
+        return descendants;
+      })
+      .then(async (descendants) => {
+        const activities = map(descendants.all, 'id');
+        const where = { activityId: [...activities, this.id] };
+        await this.sequelize
+          .model('ContentElement')
+          .update({ detached: false }, { where, transaction });
+        return descendants;
+      })
+      .then((descendants) => {
+        const activities = map(descendants.nodes, 'id');
+        const where = { parentId: [...activities, this.id] };
+        return Activity.update({ detached: false }, { where, transaction });
+      })
+      .then(() => this.restore({ context, transaction }));
+    await transaction.commit();
+  }
+
   reorder(index, context) {
     return this.sequelize.transaction((transaction) => {
       const filter = { type: getSiblingTypes(this.type) };
