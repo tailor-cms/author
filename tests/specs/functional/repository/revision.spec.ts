@@ -110,7 +110,7 @@ test('should display a revision for updated content element', async ({
   await page.waitForLoadState('networkidle');
   await page.goto(getHistoryRoute(repository.id));
   await expect(
-    page.getByText(`Changed ${editor.primaryElementLabel}`),
+    page.getByText(`Updated ${editor.primaryElementLabel}`),
   ).toBeVisible();
 });
 
