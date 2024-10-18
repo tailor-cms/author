@@ -13,9 +13,9 @@ const adapters = {
 };
 
 class TransferJob extends EventEmitter {
-  constructor(filepath, options = {}) {
+  constructor(filepath, options = {}, id) {
     super();
-    this.id = cuid();
+    this.id = id || cuid();
     this.filepath = filepath;
     this.options = options;
     this.type = this.constructor.name;
