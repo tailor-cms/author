@@ -34,6 +34,16 @@ jobs:
           echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env
           echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
           echo "EMAIL_HOST=sandbox.smtp.mailtrap.io" >> .env
+          echo "NUXT_PUBLIC_OIDC_ENABLED=${{ vars.NUXT_PUBLIC_OIDC_ENABLED }}" >> .env
+          echo "OIDC_ALLOW_SIGNUP=${{ vars.OIDC_ALLOW_SIGNUP }}" >> .env
+          echo "OIDC_CLIENT_ID=${{ secrets.OIDC_CLIENT_ID }}" >> .env
+          echo "OIDC_CLIENT_SECRET=${{ secrets.OIDC_CLIENT_SECRET }}" >> .env
+          echo "OIDC_ISSUER=${{ vars.OIDC_ISSUER }}" >> .env
+          echo "OIDC_JWKS_URL=${{ vars.OIDC_JWKS_URL }}" >> .env
+          echo "OIDC_AUTHORIZATION_ENDPOINT=${{ vars.OIDC_AUTHORIZATION_ENDPOINT }}" >> .env
+          echo "OIDC_TOKEN_ENDPOINT=${{ vars.OIDC_TOKEN_ENDPOINT }}" >> .env
+          echo "OIDC_USERINFO_ENDPOINT=${{ vars.OIDC_USERINFO_ENDPOINT }}" >> .env
+          echo "OIDC_SESSION_SECRET=${{ secrets.OIDC_SESSION_SECRET }}" >> .env
       - name: Setup E2E .env
         run: |
           touch ./tests/.env
@@ -42,6 +52,8 @@ jobs:
           echo "MAILTRAP_INBOX_ID=${{ secrets.MAILTRAP_INBOX_ID }}" >> ./tests/.env
           echo "MAILTRAP_INBOX_NAME=e2e" >> ./tests/.env
           echo "PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}" >> ./tests/.env
+          echo "OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}" >> ./tests/.env
+          echo "OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}" >> ./tests/.env
       - name: Install, build, seed, and start server
         uses: ./.github/actions/run
       - name: Check if platform is running
