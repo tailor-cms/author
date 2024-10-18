@@ -373,17 +373,21 @@ async function updatePublishingStatus(repository, activity) {
     repositoryId: repository.id,
     type: outlineTypes,
     detached: false,
-    [Op.or]: {
-      publishedAt: { [Op.eq]: null },
-      modifiedAt: { [Op.gt]: sequelize.col('published_at') },
-    },
+    // Not published at all or has unpublished changes
+    [Op.or]: [
+      {
+        publishedAt: { [Op.gt]: 0 },
+        modifiedAt: { [Op.gt]: sequelize.col('published_at') },
+      },
+      { publishedAt: null, deletedAt: null },
+    ],
   };
   const debugContext = [`repository id: ${repository.id}`];
   if (activity) {
     where.id = { [Op.ne]: activity.id };
     debugContext.push(`activity id: ${activity.id}`);
   }
-  const unpublishedCount = await Activity.count({ where });
+  const unpublishedCount = await Activity.count({ where, paranoid: false });
   debugContext.push(`unpublishedCount: ${unpublishedCount}`);
   log(`[updatePublishingStatus] initiated, ${debugContext}`);
   return repository.update({ hasUnpublishedChanges: !!unpublishedCount });

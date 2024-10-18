@@ -18,7 +18,7 @@
           <VListItemTitle>{{ config.label }}</VListItemTitle>
         </VListItem>
         <VListItem
-          v-if="activityWithDescendants.length > 1"
+          v-if="!isSoftDeleted && activityWithDescendants.length > 1"
           @click="publishingUtils.confirmPublishing(activityWithDescendants)"
         >
           <VListItemTitle>{{ config.label }} and children</VListItemTitle>
@@ -47,6 +47,7 @@ import PublishingBadge from './PublishingBadge.vue';
 const props = defineProps<{
   activity: StoreActivity;
   outlineActivities: StoreActivity[];
+  isSoftDeleted: boolean;
 }>();
 
 const { $schemaService } = useNuxtApp() as any;
