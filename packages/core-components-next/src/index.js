@@ -11,5 +11,8 @@ export { default as ActiveUsers } from './components/ActiveUsers.vue';
 export { default as SelectElement } from './components/SelectElement/index.vue';
 export { default as FileInput } from './components/FileInput.vue';
 export { default as RichTextEditor } from './components/RichTextEditor/index.vue';
+export { default as AssetInput } from './components/AssetInput.vue';
+export { default as ElementPlaceholder } from './components/ElementPlaceholder.vue';
+export { default as PreviewOverlay } from './components/PreviewOverlay.vue';
 export { useLoader } from './composables/useLoader.ts';
 export { useConfirmationDialog } from './composables/useConfirmationDialog.ts';
