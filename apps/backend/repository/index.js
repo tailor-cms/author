@@ -44,6 +44,7 @@ router
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
   .get('/:repositoryId/export/setup', ctrl.initiateExportJob)
+  .get('/:repositoryId/export/:jobId/status', ctrl.getExportStatus)
   .post('/:repositoryId/export/:jobId', ctrl.export)
   .post('/:repositoryId/users', ctrl.upsertUser)
   .delete('/:repositoryId/users/:userId', ctrl.removeUser)

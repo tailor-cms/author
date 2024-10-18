@@ -1,4 +1,5 @@
 import db from '../../database/index.js';
+import { createLogger } from '../../logger.js';
 import filter from 'lodash/filter.js';
 import forEach from 'lodash/forEach.js';
 import isEmpty from 'lodash/isEmpty.js';
@@ -12,6 +13,8 @@ import reduce from 'lodash/reduce.js';
 import roleConfig from 'tailor-config-shared/src/role.js';
 import { SCHEMAS } from 'tailor-config-shared';
 import zipObject from 'lodash/zipObject.js';
+
+const logger = createLogger('processors');
 
 const { Activity, ContentElement, Repository, RepositoryUser } = db;
 const { repository: role } = roleConfig;
@@ -147,10 +150,15 @@ function remapElementRefs(element, { context, transaction }) {
       const uid = elementUidMap[ref.uid];
       const outlineId = activityIdMap[ref.outlineId];
       const containerId = activityIdMap[ref.containerId];
-      if (!id || !uid || !outlineId || !containerId) {
-        throw new Error('Unable to resolve element refs');
+      if (!id || (ref.uid && !uid) || !outlineId || !containerId) {
+        return logger.error({ ref }, 'Unable to resolve element ref');
       }
-      element.refs[name][index] = { id, uid, outlineId, containerId };
+      element.refs[name][index] = {
+        id,
+        ...(ref.uid && { uid }),
+        outlineId,
+        containerId,
+      };
     });
   });
   element.changed('refs', true);

@@ -15,7 +15,7 @@ import { schema } from 'tailor-config-shared';
 const { Activity, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
 
-const logger = createLogger('repository:controller');
+const logger = createLogger('activity:controller');
 const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 
 function list({ repository, query, opts }, res) {
