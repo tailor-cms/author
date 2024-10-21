@@ -42,9 +42,10 @@ export default class OIDCStrategy extends BaseOIDCStrategy {
 
   logout(params) {
     return (req, res) => {
-      req.logout();
-      const { oidc: oidcData } = req.authData;
-      res.redirect(this.logoutUrl({ ...params, oidcData }));
+      req.logout(() => {
+        const { oidc: oidcData } = req.authData || {};
+        res.redirect(this.logoutUrl({ ...params, oidcData }));
+      });
     };
   }
 }
