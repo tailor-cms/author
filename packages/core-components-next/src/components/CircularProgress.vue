@@ -9,8 +9,7 @@
       <img
         alt="Tailor logo"
         class="pt-1"
-        height="52"
-        src="/img/default-logo-full.svg"
+        src="https://avatars.githubusercontent.com/u/142484057"
         width="32"
       />
     </template>
