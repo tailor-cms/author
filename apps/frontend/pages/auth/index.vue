@@ -3,7 +3,7 @@
     <template v-if="config.props.oidcEnabled">
       <VBtn
         class="mb-2"
-        color="secondary-lighten-4"
+        color="primary-lighten-4"
         data-testid="auth_oidcLoginBtn"
         variant="tonal"
         block
