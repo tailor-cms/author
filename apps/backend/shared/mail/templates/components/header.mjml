@@ -1,6 +1,10 @@
 <mj-section>
   <mj-column>
-    <mj-image width="64px" height="64px" src="{{origin}}/img/default-logo-compact.png" />
+    <mj-image
+      width="64px"
+      height="64px"
+      src=""https://avatars.githubusercontent.com/u/142484057"
+    />
     <mj-text align="center" mj-class="title">
       Tailor
     </mj-text>
