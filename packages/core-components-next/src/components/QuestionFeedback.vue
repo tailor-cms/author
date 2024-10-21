@@ -1,6 +1,6 @@
 <template>
   <div class="feedback-container">
-    <div>
+    <div class="mb-2">
       <span class="text-subtitle-2">Feedback</span>
       <VBtn class="ml-2" size="small" variant="text" @click="toggleExpand">
         {{ buttonLabel }}
@@ -13,7 +13,7 @@
           :key="index"
           class="mb-4"
         >
-          <div class="mb-2">
+          <div class="mb-4">
             <span class="text-subtitle-2">
               {{ answerType }} {{ index + 1 }}:
               {{ answer || 'Answer not added.' }}
@@ -24,12 +24,13 @@
             :model-value="feedback[index]"
             label="Feedback"
             rows="2"
+            variant="outlined"
             auto-grow
             @update:model-value="emit('update', { [index]: $event })"
           />
           <div v-else>
             <div v-if="feedback[index]">{{ feedback[index] }}</div>
-            <span v-else class="font-italic"> Feedback not added. </span>
+            <span v-else class="font-italic">Feedback not added.</span>
           </div>
         </div>
       </div>
