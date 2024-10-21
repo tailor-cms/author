@@ -10,7 +10,7 @@
       v-if="fileName"
       :model-value="fileName"
       hide-details="auto"
-      min-width="350"
+      max-width="350"
       variant="outlined"
       disabled
     />
