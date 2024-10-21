@@ -18,7 +18,7 @@ config:
   oidc:authorizationEndpoint: https://accounts.google.com/o/oauth2/v2/auth
   oidc:tokenEndpoint: https://oauth2.googleapis.com/token
   oidc:userinfoEndpoint: https://openidconnect.googleapis.com/v1/userinfo
-  oidc:logoutEnabled: "false"
+  oidc:logoutEnabled: ""
   oidc:logoutEndpoint: ""
   oidc:postLogoutUriKey: ""
   schema:availableSchemas: ""
