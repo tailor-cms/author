@@ -18,18 +18,18 @@
       @update:uploading="uploading = $event"
       @upload="uploadFile"
     />
-    <div v-if="!uploading && (urlInput || !hasAsset)">
+    <template v-if="!uploading && (urlInput || !hasAsset)">
       <VTextField
         v-model="urlInput"
         :disabled="!isEditing"
         :error-messages="errors.url"
         :placeholder="allowFileUpload ? 'or paste a URL...' : 'Paste a URL...'"
         hide-details="auto"
-        min-width="350"
+        max-width="350"
         variant="outlined"
         clearable
       />
-    </div>
+    </template>
     <VBtn v-if="!isEditing" @click="isEditing = true">Edit</VBtn>
     <template v-else>
       <VBtn v-if="hasChanges" :disabled="uploading" @click="save">Save</VBtn>
