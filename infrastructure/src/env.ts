@@ -3,6 +3,7 @@ import * as pulumi from '@pulumi/pulumi';
 import * as studion from '@studion/infra-code-blocks';
 
 const aiConfig = new pulumi.Config('ai');
+const oidcConfg = new pulumi.Config('oidc');
 const schemaConfig = new pulumi.Config('schema');
 const awsConfig = new pulumi.Config('aws');
 const emailConfig = new pulumi.Config('email');
@@ -55,6 +56,33 @@ export const getEnvVariables = (db: studion.Database) => [
   { name: 'AI_MODEL_ID', value: aiConfig.require('modelId') },
   { name: 'NUXT_PUBLIC_AI_UI_ENABLED', value: 'true' },
   { name: 'FLAT_REPO_STRUCTURE', value: 'true' },
+  { name: 'NUXT_PUBLIC_OIDC_ENABLED', value: oidcConfg.require('enabled') },
+  {
+    name: 'NUXT_PUBLIC_OIDC_LOGIN_TEXT',
+    value: oidcConfg.require('loginText'),
+  },
+  { name: 'OIDC_ALLOW_SIGNUP', value: oidcConfg.require('allowSignup') },
+  { name: 'OIDC_DEFAULT_ROLE', value: oidcConfg.require('defaultRole') },
+  { name: 'OIDC_ISSUER', value: oidcConfg.require('issuer') },
+  { name: 'OIDC_JWKS_URL', value: oidcConfg.require('jwksUrl') },
+  {
+    name: 'OIDC_AUTHORIZATION_ENDPOINT',
+    value: oidcConfg.require('authorizationEndpoint'),
+  },
+  { name: 'OIDC_TOKEN_ENDPOINT', value: oidcConfg.require('tokenEndpoint') },
+  {
+    name: 'OIDC_USERINFO_ENDPOINT',
+    value: oidcConfg.require('userinfoEndpoint'),
+  },
+  {
+    name: 'NUXT_PUBLIC_OIDC_LOGOUT_ENABLED',
+    value: oidcConfg.require('logoutEnabled'),
+  },
+  { name: 'OIDC_LOGOUT_ENDPOINT', value: oidcConfg.require('logoutEndpoint') },
+  {
+    name: 'OIDC_POST_LOGOUT_URI_KEY',
+    value: oidcConfg.require('postLogoutUriKey'),
+  },
   {
     name: 'NUXT_PUBLIC_AVAILABLE_SCHEMAS',
     value: schemaConfig.require('availableSchemas'),
@@ -70,6 +98,9 @@ export const getSecrets = (db: studion.Database) => [
     'EMAIL_USER',
     'EMAIL_PASSWORD',
     'AI_SECRET_KEY',
+    'OIDC_CLIENT_ID',
+    'OIDC_CLIENT_SECRET',
+    'OIDC_SESSION_SECRET',
   ].map((name) => ({ name, valueFrom: getSsmParam(name) })),
   { name: 'DATABASE_PASSWORD', valueFrom: db.password.secret.arn },
 ];

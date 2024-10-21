@@ -9,8 +9,8 @@ class TransferService {
     this.queue = new PromiseQueue(1, Infinity);
   }
 
-  createExportJob(outFile, options) {
-    const exportJob = new ExportJob(outFile, options);
+  createExportJob(outFile, options, id) {
+    const exportJob = new ExportJob(outFile, options, id);
     this.queue.add(() => exportJob.run());
     setupLogging(exportJob);
     return exportJob;
