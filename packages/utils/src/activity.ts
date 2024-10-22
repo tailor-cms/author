@@ -3,16 +3,16 @@ import find from 'lodash/find';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
 
-export function isChanged(activity) {
+type Activity = any;
+
+export function isChanged(activity: Activity) {
   return (
     !activity.publishedAt ||
     new Date(activity.modifiedAt) > new Date(activity.publishedAt)
   );
 }
 
-// Determine if previously published activity is now deleted
-// and the deletion is not published yet.
-export function doesRequirePublishing(activity) {
+export function doesRequirePublishing(activity: Activity) {
   if (!activity.publishedAt) return false;
   if (!activity.deletedAt) return false;
   const dateDeleted = new Date(activity.deletedAt).getTime();
@@ -20,39 +20,47 @@ export function doesRequirePublishing(activity) {
   return dateDeleted > datePublished;
 }
 
-export function getParent(activities, activity) {
+export function getParent(activities: Activity[], activity: Activity) {
   const id = get(activity, 'parentId', null);
   return id && find(activities, { id });
 }
 
-export function getChildren(activities, parentId) {
+export function getChildren(activities: Activity[], parentId: number) {
   return sortBy(filter(activities, { parentId }), 'position');
 }
 
-export function getDescendants(activities, activity) {
+export function getDescendants(activities: Activity[], activity: Activity) {
   const children = filter(activities, { parentId: activity.id });
   if (!children.length) return [];
-  const reducer = (acc, it) => acc.concat(getDescendants(activities, it));
+  const reducer = (acc: any, it: any) => {
+    return acc.concat(getDescendants(activities, it));
+  };
   const descendants = children.reduce(reducer, []);
   return children.concat(descendants);
 }
 
-export function getAncestors(activities, activity) {
+export function getAncestors(activities: Activity[], activity: Activity) {
   const parent = find(activities, { id: activity.parentId });
   if (!parent) return [];
-  const ancestors = getAncestors(activities, parent);
+  const ancestors: Activity[] = getAncestors(activities, parent);
   return [...ancestors, parent];
 }
 
+interface Internals {
+  parentId?: number;
+  level?: number;
+  maxLevel?: number;
+}
+
 export function toTreeFormat(
-  activities,
-  { filterNodesFn = it => it, processNodeFn },
-  _internals = {}
+  activities: Activity[],
+  { filterNodesFn = (it: any) => it, processNodeFn }: any,
+  _internals: Internals = {},
 ) {
   const { parentId = null, level = 1, maxLevel = 20 } = _internals;
   if (level > maxLevel) throw new Error('Max level exceeded');
   const parentActivities = filter(activities, { parentId });
-  return filterNodesFn(parentActivities).map(activity => ({
+  return filterNodesFn(parentActivities).map((activity: Activity) => ({
     ...activity,
     name: activity.data.name,
     title: activity.data.name,
@@ -63,9 +71,9 @@ export function toTreeFormat(
       {
         ..._internals,
         parentId: activity.id,
-        level: level + 1
-      }
+        level: level + 1,
+      },
     ),
-    ...processNodeFn && processNodeFn(activity)
+    ...(processNodeFn && processNodeFn(activity)),
   }));
 }

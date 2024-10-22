@@ -2,23 +2,38 @@ import InsertLocation from './InsertLocation';
 
 const { ADD_AFTER, REORDER } = InsertLocation;
 
-const distributePositions = ({ lower = 0, upper }, count) => {
+interface DistributePositions {
+  lower?: number;
+  upper?: number;
+}
+
+const distributePositions = (
+  { lower = 0, upper }: DistributePositions,
+  count: number,
+): number[] => {
   const delta = upper ? (upper - lower) / (count + 1) : 1;
   return Array.from({ length: count }).map((_, i) => delta * (i + 1) + lower);
 };
 
-function getDeprecationWarning(config) {
+function getDeprecationWarning(config: any) {
   if (!Object.prototype.hasOwnProperty.call(config, 'isFirstChild')) return;
   console.warn(`Deprecation notice:
     'isFirstChild' option is deprecated and no longer used!
     Providing it does not affect this function.`);
 }
 
-export const getPositions = (items, index, count = 1) => {
+export const getPositions = (items: any[], index: number, count = 1) => {
   const { position: lower } = items[index - 1] || {};
   const { position: upper } = items[index] || {};
   return distributePositions({ lower, upper }, count);
 };
+
+interface PositionContext {
+  newPosition: number;
+  items: any[];
+  action?: 'ADD_AFTER' | 'ADD_INTO' | 'ADD_BEFORE' | 'REORDER';
+  count?: number;
+}
 
 /**
  * Calculates item position(s) based on the options provided.
@@ -28,7 +43,7 @@ export const getPositions = (items, index, count = 1) => {
  *     item's new position.
  * @param {boolean} isFirstChild Deprecated: Boolean value denoting whether
  *     the item should be placed as the first child of its parent.
- * @param {"ADD_AFTER" | "ADD_BEFORE" | "REORDER" } [action=REORDER]
+ * @param {"ADD_AFTER" | "ADD_INTO" | "ADD_BEFORE" | "REORDER" } [action=REORDER]
  *     A string value determining where the item should be placed
  *     in relation to `newPosition`.
  *     `ADD_BEFORE` returns position(s) placed before the anchor element.
@@ -41,8 +56,14 @@ export const getPositions = (items, index, count = 1) => {
  * @return {(number|Array)} Single position if `count` is 1 or an array containing
  *     `count` positions.
  */
-export function calculatePosition({ newPosition, items, action = REORDER, count = 1 }) {
-  getDeprecationWarning(...arguments);
+export function calculatePosition({
+  newPosition,
+  items,
+  action = 'REORDER',
+  count = 1,
+}: PositionContext) {
+  // eslint-disable-next-line prefer-rest-params
+  getDeprecationWarning(arguments[0]);
   const arr = [...items];
   if (action === REORDER) arr.splice(newPosition, count);
   let index = items.length;
