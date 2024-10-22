@@ -1,5 +1,7 @@
-export default {
-  NEW: 'new',
-  CHANGED: 'changed',
-  REMOVED: 'removed',
-};
+enum PublishDiffChangeTypes {
+  New = 'new',
+  Changed = 'changed',
+  Removed = 'removed',
+}
+
+export default PublishDiffChangeTypes;

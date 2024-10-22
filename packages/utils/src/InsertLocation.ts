@@ -1,6 +1,8 @@
-export default {
-  ADD_BEFORE: 'ADD_BEFORE',
-  ADD_AFTER: 'ADD_AFTER',
-  ADD_INTO: 'ADD_INTO',
-  REORDER: 'REORDER',
-};
+enum InsertLocation {
+  AddBefore = 'ADD_BEFORE',
+  AddAfter = 'ADD_AFTER',
+  AddInto = 'ADD_INTO',
+  Reorder = 'REORDER',
+}
+
+export default InsertLocation;

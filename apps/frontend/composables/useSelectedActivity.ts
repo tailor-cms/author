@@ -1,8 +1,8 @@
 import { computed } from 'vue';
 import get from 'lodash/get';
+import { InsertLocation } from '@tailor-cms/utils';
 import uniqBy from 'lodash/uniqBy';
 
-import InsertLocation from '@/lib/InsertLocation';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -61,9 +61,9 @@ export const useSelectedActivity = (activity: StoreActivity | null) => {
 
   const getAddDialogHeading = (action: InsertLocation) => {
     const heading: Record<string, string> = {
-      [InsertLocation.ADD_BEFORE]: 'Add above',
-      [InsertLocation.ADD_AFTER]: 'Add below',
-      [InsertLocation.ADD_INTO]: 'Add into',
+      [InsertLocation.AddBefore]: 'Add above',
+      [InsertLocation.AddAfter]: 'Add below',
+      [InsertLocation.AddInto]: 'Add into',
     };
     return heading[action];
   };
