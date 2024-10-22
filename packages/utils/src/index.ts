@@ -1,3 +1,4 @@
+import { ContentElement } from '@tailor-cms/interfaces/content-element';
 import kebabCase from 'lodash/kebabCase';
 
 export * from './calculatePosition';
@@ -29,5 +30,5 @@ export const getToolbarName = (type: string) =>
 export const getSidebarName = (type: string) =>
   `tce-${kebabCase(type)}-sidebar`;
 
-export const getElementId = (element: any) =>
+export const getElementId = (element: ContentElement) =>
   element && (element.uid || element.id);

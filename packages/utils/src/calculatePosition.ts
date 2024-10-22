@@ -1,10 +1,15 @@
+import { Activity } from '@tailor-cms/interfaces/activity';
+import { ContentElement } from '@tailor-cms/interfaces/content-element';
+
 import InsertLocation from './insertLocation';
 
 const { AddAfter, Reorder } = InsertLocation;
 
+type Item = Activity | ContentElement;
+
 interface PositionConfig {
   newPosition: number;
-  items: any[];
+  items: Item[];
   isFirstChild?: boolean;
   action?: InsertLocation;
   count?: number;
@@ -25,7 +30,7 @@ function getDeprecationWarning(config: PositionConfig) {
     Providing it does not affect this function.`);
 }
 
-export const getPositions = (items: any[], index: number, count = 1) => {
+export const getPositions = (items: Item[], index: number, count = 1) => {
   const { position: lower } = items[index - 1] || {};
   const { position: upper } = items[index] || {};
   return distributePositions({ lower, upper }, count);
