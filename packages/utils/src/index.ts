@@ -2,7 +2,7 @@ import kebabCase from 'lodash/kebabCase';
 
 export * from './calculatePosition';
 export * as activity from './activity';
-export { default as InsertLocation } from './InsertLocations';
+export { default as InsertLocation } from './insertLocation';
 export * as Events from './events';
 export { default as numberToLetter } from './numberToLetter';
 export { default as PublishDiffChangeTypes } from './publishDiffChangeTypes';

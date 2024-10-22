@@ -1,4 +1,4 @@
-import InsertLocation from './InsertLocations';
+import InsertLocation from './insertLocation';
 
 const { AddAfter, Reorder } = InsertLocation;
 
