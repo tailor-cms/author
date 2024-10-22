@@ -12,7 +12,7 @@ export default (n: number) => {
 
   const chars: string[] = [];
   while (digits.length) {
-    chars.push(alphabet[digits.pop() as number]);
+    chars.push(alphabet[digits.pop()]);
   }
 
   return chars.join('');
