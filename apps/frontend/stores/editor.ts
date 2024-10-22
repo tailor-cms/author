@@ -60,20 +60,20 @@ export const useEditorStore = defineStore('editor', () => {
     action,
     payload,
   }: {
-    action: string;
+    action: Events.Discussion;
     payload: any;
   }) => {
-    const { SAVE, REMOVE, SET_LAST_SEEN, RESOLVE } = Events.Discussion;
+    const { Save, Remove, SetLastSeen, Resolve } = Events.Discussion;
     const editorContext = {
       repositoryId: repositoryId.value,
       activityId: selectedActivityId.value,
     };
     const resolvedAction = {
-      [SAVE]: (payload: any) =>
+      [Save]: (payload: any) =>
         commentStore.save({ ...payload, ...editorContext }),
-      [REMOVE]: (id: number) => commentStore.remove(repositoryId.value, id),
-      [SET_LAST_SEEN]: (payload: any) => commentStore.markSeenComments(payload),
-      [RESOLVE]: (payload: any) =>
+      [Remove]: (id: number) => commentStore.remove(repositoryId.value, id),
+      [SetLastSeen]: (payload: any) => commentStore.markSeenComments(payload),
+      [Resolve]: (payload: any) =>
         commentStore.updateResolvement(repositoryId.value, payload),
     }[action];
     if (!resolvedAction) return;

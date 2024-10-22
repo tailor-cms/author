@@ -1,23 +1,5 @@
 <template>
   <NuxtLayout name="auth" title="Sign in">
-    <template v-if="config.props.oidcEnabled">
-      <VBtn
-        class="mb-2"
-        color="secondary-lighten-4"
-        data-testid="auth_oidcLoginBtn"
-        variant="tonal"
-        block
-        rounded
-        @click="loginOIDC"
-      >
-        {{ config.oidcLoginText }}
-      </VBtn>
-      <div class="d-flex align-center my-5">
-        <VDivider />
-        <span class="text-body-2 text-primary-lighten-3 mx-2">OR</span>
-        <VDivider />
-      </div>
-    </template>
     <VAlert
       v-if="errorMessage"
       class="mb-7 text-left"
@@ -54,15 +36,32 @@
         type="password"
         variant="outlined"
       />
-      <VBtn
-        color="primary-lighten-4 mt-2"
-        variant="tonal"
-        block
-        rounded
-        @click="signIn"
-      >
-        Sign in
-      </VBtn>
+      <VRow dense>
+        <VCol v-if="config.props.oidcEnabled" cols="6">
+          <VBtn
+            v-if="config.props.oidcEnabled"
+            color="teal-lighten-3"
+            data-testid="auth_oidcLoginBtn"
+            variant="tonal"
+            block
+            rounded
+            @click="loginOIDC"
+          >
+            {{ config.oidcLoginText }}
+          </VBtn>
+        </VCol>
+        <VCol>
+          <VBtn
+            color="primary-lighten-4"
+            variant="tonal"
+            block
+            rounded
+            @click="signIn"
+          >
+            Sign in
+          </VBtn>
+        </VCol>
+      </VRow>
       <div class="options">
         <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       </div>

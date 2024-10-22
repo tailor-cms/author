@@ -1,8 +1,8 @@
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const alphabet: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const base = alphabet.length;
 
-export default function numberToLetter(n) {
-  const digits = [];
+export default (n: number) => {
+  const digits: number[] = [];
 
   do {
     const v = n % base;
@@ -10,10 +10,10 @@ export default function numberToLetter(n) {
     n = Math.floor(n / base);
   } while (n-- > 0);
 
-  const chars = [];
+  const chars: string[] = [];
   while (digits.length) {
     chars.push(alphabet[digits.pop()]);
   }
 
   return chars.join('');
-}
+};

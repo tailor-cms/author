@@ -71,9 +71,9 @@
 </template>
 
 <script lang="ts" setup>
+import { InsertLocation } from '@tailor-cms/utils';
 import { useForm } from 'vee-validate';
 
-import InsertLocation from '@/lib/InsertLocation';
 import MetaInput from '@/components/common/MetaInput.vue';
 import type { StoreActivity } from '@/stores/activity';
 import TailorDialog from '@/components/common/TailorDialog.vue';
@@ -96,7 +96,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   anchor: null,
   heading: '',
-  action: InsertLocation.ADD_AFTER,
+  action: InsertLocation.AddAfter,
   showActivator: false,
   activatorLabel: '',
   activatorColor: 'primary-darken-3',
@@ -128,7 +128,7 @@ const dialogTestId = computed(() => `${props.testIdPrefix}Dialog`);
 
 const taxonomyLevels = computed<any[]>(() => {
   const { subLevels, sameLevel } = selectedActivity;
-  const isAddInto = props.action === InsertLocation.ADD_INTO;
+  const isAddInto = props.action === InsertLocation.AddInto;
   return isAddInto ? subLevels.value : sameLevel.value;
 });
 
@@ -155,7 +155,7 @@ const submitForm = handleSubmit(async () => {
   submitting.value = true;
   if (anchor) {
     activity.value.parentId =
-      action === InsertLocation.ADD_INTO ? anchor.id : anchor.parentId;
+      action === InsertLocation.AddInto ? anchor.id : anchor.parentId;
   }
   activity.value.position = await activityStore.calculateInsertPosition(
     activity.value,
