@@ -86,12 +86,12 @@ import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const { ADD_AFTER, ADD_INTO } = InsertLocation;
+const { AddAfter, AddInto } = InsertLocation;
 
 interface Props {
   repositoryId: number;
   levels: string[];
-  action: string;
+  action: InsertLocation;
   anchor?: Activity | null;
   showActivator?: boolean;
 }
@@ -122,7 +122,7 @@ const copyBtnLabel = computed(() => {
   const selectionLabel = selectedCount
     ? `${pluralize('item', selectedCount, true)}`
     : '';
-  return `Copy ${selectionLabel} ${props.action === ADD_INTO ? 'inside' : ''}`;
+  return `Copy ${selectionLabel} ${props.action === AddInto ? 'inside' : ''}`;
 });
 
 const selectRepository = async (repository: Repository) => {
@@ -139,7 +139,7 @@ const selectRepository = async (repository: Repository) => {
 const copyActivity = async (activity: Activity, prevActivity?: Activity) => {
   const { action, repositoryId } = props;
   const { id: srcId, repositoryId: srcRepositoryId, type } = activity;
-  const anchor = (action === ADD_AFTER && prevActivity) || props.anchor;
+  const anchor = (action === AddAfter && prevActivity) || props.anchor;
   return activityStore.clone({
     srcId,
     srcRepositoryId,
@@ -147,7 +147,7 @@ const copyActivity = async (activity: Activity, prevActivity?: Activity) => {
     type,
     position: await activityStore.calculateCopyPosition(action, anchor),
     ...(anchor && {
-      parentId: action === ADD_INTO ? anchor.id : anchor.parentId,
+      parentId: action === AddAfter ? anchor.id : anchor.parentId,
     }),
   });
 };

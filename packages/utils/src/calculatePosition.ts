@@ -1,6 +1,6 @@
 import InsertLocation from './InsertLocation';
 
-const { ADD_AFTER, REORDER } = InsertLocation;
+const { AddAfter, Reorder } = InsertLocation;
 
 interface DistributePositions {
   lower?: number;
@@ -31,7 +31,7 @@ export const getPositions = (items: any[], index: number, count = 1) => {
 interface PositionContext {
   newPosition: number;
   items: any[];
-  action?: 'ADD_AFTER' | 'ADD_INTO' | 'ADD_BEFORE' | 'REORDER';
+  action?: InsertLocation;
   count?: number;
 }
 
@@ -43,14 +43,14 @@ interface PositionContext {
  *     item's new position.
  * @param {boolean} isFirstChild Deprecated: Boolean value denoting whether
  *     the item should be placed as the first child of its parent.
- * @param {"ADD_AFTER" | "ADD_INTO" | "ADD_BEFORE" | "REORDER" } [action=REORDER]
+ * @param {InsertLocation} [action=Reorder]
  *     A string value determining where the item should be placed
  *     in relation to `newPosition`.
- *     `ADD_BEFORE` returns position(s) placed before the anchor element.
- *     `ADD_AFTER` returns position(s) placed after the anchor element.
- *     `REORDER` returns calculated position(s) based on `position` property of
+ *     AddBefore returns position(s) placed before the anchor element.
+ *     AddAfter returns position(s) placed after the anchor element.
+ *     Reorder returns calculated position(s) based on `position` property of
  *     adjacent elements.
- *     Defaults to `REORDER`.
+ *     Defaults to Reorder.
  * @param {number} count A number of items for which position needs to be
  *     determinate.
  * @return {(number|Array)} Single position if `count` is 1 or an array containing
@@ -59,16 +59,16 @@ interface PositionContext {
 export function calculatePosition({
   newPosition,
   items,
-  action = 'REORDER',
+  action = Reorder,
   count = 1,
 }: PositionContext) {
   // eslint-disable-next-line prefer-rest-params
   getDeprecationWarning(arguments[0]);
   const arr = [...items];
-  if (action === REORDER) arr.splice(newPosition, count);
+  if (action === Reorder) arr.splice(newPosition, count);
   let index = items.length;
   if (newPosition !== undefined) {
-    index = action === ADD_AFTER ? newPosition + 1 : newPosition;
+    index = action === AddAfter ? newPosition + 1 : newPosition;
   }
   const positions = getPositions(arr, index, count);
   return count === 1 ? positions[0] : positions;
