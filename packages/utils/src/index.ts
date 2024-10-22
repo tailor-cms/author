@@ -2,10 +2,10 @@ import kebabCase from 'lodash/kebabCase';
 
 export * from './calculatePosition';
 export * as activity from './activity';
-export { default as InsertLocation } from './InsertLocation';
+export { default as InsertLocation } from './InsertLocations';
 export * as Events from './events';
 export { default as numberToLetter } from './numberToLetter';
-export { default as publishDiffChangeTypes } from './publishDiffChangeTypes';
+export { default as PublishDiffChangeTypes } from './publishDiffChangeTypes';
 export { default as uuid } from './uuid';
 
 export const getMetaName = (type: string) => `meta-${kebabCase(type)}`;
