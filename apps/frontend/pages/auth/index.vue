@@ -19,7 +19,7 @@
         rounded
         @click="loginOIDC"
       >
-        <VIcon v-if="config.oidcLoginText.includes('Google')" class="mr-2" left>
+        <VIcon v-if="config.oidcLoginText.includes('Google')" start>
           mdi-google
         </VIcon>
         {{ config.oidcLoginText }}
