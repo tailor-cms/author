@@ -7,6 +7,8 @@ export const useAuthStore = defineStore('auth', () => {
   const strategy = ref<string | null>(null);
 
   const isAdmin = computed(() => user.value?.role === 'ADMIN');
+  const isDefaultUser = computed(() => user.value?.role === 'USER');
+
   const isOidcActive = computed(() => strategy.value === 'oidc');
 
   function $reset(
@@ -70,6 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     isAdmin,
+    isDefaultUser,
     isOidcActive,
     login,
     logout,
