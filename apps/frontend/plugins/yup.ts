@@ -1,5 +1,4 @@
 import { addMethod, setLocale, string } from 'yup';
-import isURL, { IsURLOptions } from 'validator/lib/isURL';
 import capitalize from 'lodash/capitalize';
 import { email } from '@vee-validate/rules';
 import lowerCase from 'lodash/lowerCase';
@@ -25,14 +24,6 @@ export default defineNuxtPlugin(() => {
       'is-email',
       ({ path }) => `${sentenceCase(path)} must be a valid email`,
       email,
-    );
-  });
-
-  addMethod(string, 'url', function (options: IsURLOptions) {
-    return this.test(
-      'is-url',
-      ({ path }) => `The ${sentenceCase(path)} is not a valid URL`,
-      (value) => !value || isURL(value, options),
     );
   });
 });

@@ -80,9 +80,7 @@ const file = ref(isLinked.value ? null : pick(props, ['url', 'publicUrl']));
 
 const { defineField, errors, validate, resetForm } = useForm({
   validationSchema: object({
-    url: string()
-      .nullable()
-      .url({ protocols: ['http', 'https'], require_protocol: true }),
+    url: string().url().nullable(),
   }),
   initialValues: { url: isLinked.value ? props.url : null },
 });
