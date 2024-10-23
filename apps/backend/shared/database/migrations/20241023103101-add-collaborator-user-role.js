@@ -10,13 +10,15 @@ const ENUM_NAME = `enum_user_${COLUMN_NAME}`;
 
 const OLD_ROLES = {
   ADMIN: 'ADMIN',
+  INTEGRATION: 'INTEGRATION',
   USER: 'USER',
 };
 
 const NEW_ROLES = {
   ADMIN: 'ADMIN',
-  USER: 'USER',
   COLLABORATOR: 'COLLABORATOR',
+  INTEGRATION: 'INTEGRATION',
+  USER: 'USER',
 };
 
 const ROLES = { ...OLD_ROLES, ...NEW_ROLES };

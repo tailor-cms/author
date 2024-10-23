@@ -1,5 +1,10 @@
 const role = {
-  user: { ADMIN: 'ADMIN', COLLABORATOR: 'COLLABORATOR', USER: 'USER' },
+  user: {
+    ADMIN: 'ADMIN',
+    COLLABORATOR: 'COLLABORATOR',
+    INTEGRATION: 'INTEGRATION',
+    USER: 'USER',
+  },
   repository: { ADMIN: 'ADMIN', AUTHOR: 'AUTHOR' },
 };
 
