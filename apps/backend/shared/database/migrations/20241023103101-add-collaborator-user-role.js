@@ -1,7 +1,6 @@
 // eslint-disable-next-line strict
 'use strict';
 
-const Promise = require('bluebird');
 const { default: replaceEnum } = require('sequelize-replace-enum-postgres');
 
 const TABLE_NAME = 'user';
@@ -38,7 +37,8 @@ const changeRoleColumn = (queryInterface, roles) =>
 exports.up = async (queryInterface) => {
   await changeRoleColumn(queryInterface, Object.values(ROLES));
   await updateRoles(queryInterface.sequelize, [
-    [NEW_ROLES.COLLABORATOR, OLD_ROLES.USER],
+    NEW_ROLES.COLLABORATOR,
+    OLD_ROLES.USER,
   ]);
   await changeRoleColumn(queryInterface, Object.values(NEW_ROLES));
 };
@@ -46,15 +46,13 @@ exports.up = async (queryInterface) => {
 exports.down = async (queryInterface) => {
   await changeRoleColumn(queryInterface, Object.values(ROLES));
   await updateRoles(queryInterface.sequelize, [
-    [OLD_ROLES.USER, NEW_ROLES.COLLABORATOR],
+    OLD_ROLES.USER,
+    NEW_ROLES.COLLABORATOR,
   ]);
   await changeRoleColumn(queryInterface, Object.values(OLD_ROLES));
 };
 
-function updateRoles(db, mappings) {
-  return db.transaction((t) => Promise.map(mappings, doUpdate(t)));
-  function doUpdate(transaction) {
-    const query = 'UPDATE "user" SET role=? WHERE role=?';
-    return (replacements) => db.query(query, { replacements, transaction });
-  }
+function updateRoles(db, replacements) {
+  const query = 'UPDATE "user" SET role=? WHERE role=?';
+  return db.query(query, { replacements });
 }
