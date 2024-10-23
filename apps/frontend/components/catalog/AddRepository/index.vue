@@ -1,6 +1,6 @@
 <template>
   <TailorDialog
-    v-if="isAdmin"
+    v-if="isCreateEnabled"
     v-model="isVisible"
     header-icon="mdi-folder-plus-outline"
     paddingless
@@ -172,7 +172,7 @@ const config = useConfigStore();
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
 
-defineProps<{ isAdmin: boolean }>();
+defineProps<{ isCreateEnabled: boolean }>();
 
 const emit = defineEmits(['created']);
 

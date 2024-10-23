@@ -48,7 +48,7 @@
           </span>
           <span class="my-2 ml-5">
             <AddRepository
-              :is-admin="authStore.isAdmin"
+              :is-create-enabled="authStore.isAdmin || authStore.isDefaultUser"
               @created="onRepositoryAdd"
             />
           </span>
