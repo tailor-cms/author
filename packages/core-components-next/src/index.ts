@@ -14,5 +14,6 @@ export { default as RichTextEditor } from './components/RichTextEditor/index.vue
 export { default as AssetInput } from './components/AssetInput.vue';
 export { default as ElementPlaceholder } from './components/ElementPlaceholder.vue';
 export { default as PreviewOverlay } from './components/PreviewOverlay.vue';
+export { default as QuestionFeedback } from './components/QuestionFeedback.vue';
 export { useLoader } from './composables/useLoader';
 export { useConfirmationDialog } from './composables/useConfirmationDialog';
