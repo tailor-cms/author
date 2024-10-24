@@ -728,10 +728,10 @@ importers:
         version: 2.6.6
       '@tiptap/vue-3':
         specifier: ^2.4.0
-        version: 2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.4.38(typescript@5.5.4))
+        version: 2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.12(typescript@5.5.4))
       '@vueuse/core':
         specifier: ^10.11.0
-        version: 10.11.1(vue@3.4.38(typescript@5.5.4))
+        version: 10.11.1(vue@3.5.12(typescript@5.5.4))
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -746,16 +746,16 @@ importers:
         version: 8.0.0
       vee-validate:
         specifier: ^4.13.2
-        version: 4.13.2(vue@3.4.38(typescript@5.5.4))
+        version: 4.13.2(vue@3.5.12(typescript@5.5.4))
       vue:
         specifier: ^3.3.4
-        version: 3.4.38(typescript@5.5.4)
+        version: 3.5.12(typescript@5.5.4)
       vuedraggable:
         specifier: ^4.1.0
-        version: 4.1.0(vue@3.4.38(typescript@5.5.4))
+        version: 4.1.0(vue@3.5.12(typescript@5.5.4))
       vuetify:
         specifier: 3.7.0
-        version: 3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4))
+        version: 3.7.0(typescript@5.5.4)(vue@3.5.12(typescript@5.5.4))
       yup:
         specifier: ^1.4.0
         version: 1.4.0
@@ -5897,6 +5897,7 @@ packages:
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   esniff@2.0.1:
@@ -14359,14 +14360,6 @@ snapshots:
       '@tiptap/extension-text': 2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))
       '@tiptap/pm': 2.6.6
 
-  '@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.4.38(typescript@5.5.4))':
-    dependencies:
-      '@tiptap/core': 2.6.6(@tiptap/pm@2.6.6)
-      '@tiptap/extension-bubble-menu': 2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)
-      '@tiptap/extension-floating-menu': 2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)
-      '@tiptap/pm': 2.6.6
-      vue: 3.4.38(typescript@5.5.4)
-
   '@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.12(typescript@5.5.4))':
     dependencies:
       '@tiptap/core': 2.6.6(@tiptap/pm@2.6.6)
@@ -15066,16 +15059,6 @@ snapshots:
 
   '@vue/shared@3.5.12': {}
 
-  '@vueuse/core@10.11.1(vue@3.4.38(typescript@5.5.4))':
-    dependencies:
-      '@types/web-bluetooth': 0.0.20
-      '@vueuse/metadata': 10.11.1
-      '@vueuse/shared': 10.11.1(vue@3.4.38(typescript@5.5.4))
-      vue-demi: 0.14.10(vue@3.4.38(typescript@5.5.4))
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
-
   '@vueuse/core@10.11.1(vue@3.5.12(typescript@5.5.4))':
     dependencies:
       '@types/web-bluetooth': 0.0.20
@@ -15113,13 +15096,6 @@ snapshots:
   '@vueuse/metadata@10.11.1': {}
 
   '@vueuse/metadata@11.1.0': {}
-
-  '@vueuse/shared@10.11.1(vue@3.4.38(typescript@5.5.4))':
-    dependencies:
-      vue-demi: 0.14.10(vue@3.4.38(typescript@5.5.4))
-    transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
 
   '@vueuse/shared@10.11.1(vue@3.5.12(typescript@5.5.4))':
     dependencies:
@@ -21812,12 +21788,6 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vee-validate@4.13.2(vue@3.4.38(typescript@5.5.4)):
-    dependencies:
-      '@vue/devtools-api': 6.6.3
-      type-fest: 4.25.0
-      vue: 3.4.38(typescript@5.5.4)
-
   vee-validate@4.13.2(vue@3.5.12(typescript@5.5.4)):
     dependencies:
       '@vue/devtools-api': 6.6.3
@@ -22018,10 +21988,6 @@ snapshots:
     dependencies:
       ufo: 1.5.4
 
-  vue-demi@0.14.10(vue@3.4.38(typescript@5.5.4)):
-    dependencies:
-      vue: 3.4.38(typescript@5.5.4)
-
   vue-demi@0.14.10(vue@3.5.12(typescript@5.5.4)):
     dependencies:
       vue: 3.5.12(typescript@5.5.4)
@@ -22079,11 +22045,6 @@ snapshots:
     optionalDependencies:
       typescript: 5.5.4
 
-  vuedraggable@4.1.0(vue@3.4.38(typescript@5.5.4)):
-    dependencies:
-      sortablejs: 1.14.0
-      vue: 3.4.38(typescript@5.5.4)
-
   vuedraggable@4.1.0(vue@3.5.12(typescript@5.5.4)):
     dependencies:
       sortablejs: 1.14.0
@@ -22092,6 +22053,12 @@ snapshots:
   vuetify@3.7.0(typescript@5.5.4)(vue@3.4.38(typescript@5.5.4)):
     dependencies:
       vue: 3.4.38(typescript@5.5.4)
+    optionalDependencies:
+      typescript: 5.5.4
+
+  vuetify@3.7.0(typescript@5.5.4)(vue@3.5.12(typescript@5.5.4)):
+    dependencies:
+      vue: 3.5.12(typescript@5.5.4)
     optionalDependencies:
       typescript: 5.5.4
 

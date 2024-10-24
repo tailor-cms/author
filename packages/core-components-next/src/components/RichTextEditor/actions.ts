@@ -1,60 +1,73 @@
+export enum Command {
+  ToggleBold = 'toggleBold',
+  ToggleItalic = 'toggleItalic',
+  ToggleUnderline = 'toggleUnderline',
+  ToggleStrike = 'toggleStrike',
+  ToggleBulletList = 'toggleBulletList',
+  ToggleOrderedList = 'toggleOrderedList',
+  ToggleSubscript = 'toggleSubscript',
+  ToggleSuperscript = 'toggleSuperscript',
+  ToggleBlockquote = 'toggleBlockquote',
+  ToggleCodeBlock = 'toggleCodeBlock',
+}
+
 export const actions = [
   [
     {
       name: 'bold',
       icon: 'mdi-format-bold',
-      command: 'toggleBold',
+      command: Command.ToggleBold,
     },
     {
       name: 'italic',
       icon: 'mdi-format-italic',
-      command: 'toggleItalic',
+      command: Command.ToggleItalic,
     },
     {
       name: 'underline',
       icon: 'mdi-format-underline',
-      command: 'toggleUnderline',
+      command: Command.ToggleUnderline,
     },
     {
       name: 'strike',
       icon: 'mdi-format-strikethrough-variant',
-      command: 'toggleStrike',
+      command: Command.ToggleStrike,
     },
   ],
   [
     {
       name: 'bulletList',
       icon: 'mdi-format-list-bulleted',
-      command: 'toggleBulletList',
+      command: Command.ToggleBulletList,
     },
     {
       name: 'orderedList',
       icon: 'mdi-format-list-numbered',
-      command: 'toggleOrderedList',
+      command: Command.ToggleOrderedList,
     },
   ],
   [
     {
       name: 'subscript',
       icon: 'mdi-format-subscript',
-      command: 'toggleSubscript',
+      command: Command.ToggleSubscript,
     },
     {
       name: 'superscript',
       icon: 'mdi-format-superscript',
-      command: 'toggleSuperscript',
+      command: Command.ToggleSuperscript,
     },
   ],
   [
     {
       name: 'blockquote',
       icon: 'mdi-format-quote-open',
-      command: 'toggleBlockquote',
+      command: Command.ToggleBlockquote,
     },
     {
       name: 'codeBlock',
       icon: 'mdi-code-tags',
-      command: 'toggleCodeBlock',
+      command: Command.ToggleCodeBlock,
     },
   ],
 ];

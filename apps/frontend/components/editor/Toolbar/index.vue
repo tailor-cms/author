@@ -100,21 +100,20 @@ const usersWithActivity = computed(() => {
     z-index: 99;
   }
 
-  :deep(.v-text-field__details) {
-    margin: 0 !important;
-    padding: 0 !important;
+  .v-input {
+    position: relative;
 
-    .primary--text {
-      opacity: 0;
-    }
-
-    .error--text {
+    :deep(.v-input__details) {
       position: absolute;
-      margin-top: 0.125rem;
-      padding: 0.5rem;
-      color: #fff !important;
-      background-color: #3a3a3a;
-      border-radius: 4px;
+      padding: 0 !important;
+
+      .v-messages__message {
+        margin-top: 0.5rem;
+        border-radius: 4px;
+        padding: 0.5rem 0.75rem;
+        background-color: #424242;
+        color: #fff !important;
+      }
     }
   }
 }
