@@ -4,7 +4,7 @@
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "files": [
     "dist"
   ],
@@ -29,14 +29,15 @@
   },
   "devDependencies": {
     "@tailor-cms/eslint-config": "0.0.2",
+    "@tailor-cms/interfaces": "workspace:*",
     "@types/lodash": "^4.17.6",
     "@types/uuid": "^10.0.0",
     "tsup": "^8.3.0",
     "typescript": "^5.5.4"
   },
-  "peerDependencies": {
-    "@tailor-cms/interfaces": "workspace:*"
-  },
+  "bundledDependencies": [
+    "@tailor-cms/interfaces"
+  ],
   "tsup": {
     "entry": [
       "src/index.ts"
