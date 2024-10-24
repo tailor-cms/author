@@ -1,8 +1,8 @@
-const alphabet: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const base = alphabet.length;
 
 export default (n: number) => {
-  const digits: number[] = [];
+  const digits = [];
 
   do {
     const v = n % base;
@@ -10,7 +10,7 @@ export default (n: number) => {
     n = Math.floor(n / base);
   } while (n-- > 0);
 
-  const chars: string[] = [];
+  const chars = [];
   while (digits.length) {
     chars.push(alphabet[digits.pop()]);
   }
