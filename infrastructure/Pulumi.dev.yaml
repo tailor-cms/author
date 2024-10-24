@@ -11,7 +11,7 @@ config:
   tailor-cms:resourceNamePrefix: tools
   oidc:enabled: "true"
   oidc:loginText: Sign in with Google
-  oidc:defaultRole: ADMIN
+  oidc:defaultRole: USER
   oidc:allowSignup: "true"
   oidc:issuer: https://accounts.google.com
   oidc:jwksUrl: https://www.googleapis.com/oauth2/v3/certs
