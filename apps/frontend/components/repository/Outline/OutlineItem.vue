@@ -64,7 +64,7 @@
                 Publish required
                 <VTooltip location="bottom">
                   <template #activator="{ props: tooltipProps }">
-                    <VIcon v-bind="tooltipProps" color="secondary" class="ml-2">
+                    <VIcon v-bind="tooltipProps" class="ml-2" color="secondary">
                       mdi-information-outline
                     </VIcon>
                   </template>
