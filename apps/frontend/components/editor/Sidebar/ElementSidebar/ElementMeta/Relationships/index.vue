@@ -31,7 +31,7 @@ import type {
   RelationshipType,
 } from '@tailor-cms/interfaces/content-element';
 import find from 'lodash/find';
-import { SelectElement } from '@tailor-cms/core-components-next';
+import { SelectElement } from '@tailor-cms/core-components';
 
 import RelationshipItem from './RelationshipType.vue';
 import { useContentElementStore } from '@/stores/content-elements';

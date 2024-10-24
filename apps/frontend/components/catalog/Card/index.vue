@@ -130,7 +130,7 @@ import first from 'lodash/first';
 import get from 'lodash/get';
 import truncate from 'lodash/truncate';
 import { useDisplay } from 'vuetify';
-import { UserAvatar } from '@tailor-cms/core-components-next';
+import { UserAvatar } from '@tailor-cms/core-components';
 import { useTimeAgo } from '@vueuse/core';
 
 import Tags from './Tags/index.vue';

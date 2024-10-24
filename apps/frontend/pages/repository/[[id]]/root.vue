@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ActiveUsers } from '@tailor-cms/core-components-next';
+import { ActiveUsers } from '@tailor-cms/core-components';
 
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useUserTracking } from '@/stores/user-tracking';

@@ -9,7 +9,7 @@
   ],
   "main": "./src/index.js",
   "peerDependencies": {
-    "@tailor-cms/core-components-next": "workspace:*",
+    "@tailor-cms/core-components": "workspace:*",
     "@tailor-cms/interfaces": "workspace:*",
     "vue": "^3.3.4",
     "vuetify": "^3.7.0"

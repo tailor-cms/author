@@ -40,7 +40,7 @@
 <script lang="ts" setup>
 import type { StatusConfig } from 'tailor-config-shared';
 import type { User } from '@tailor-cms/interfaces/user';
-import { UserAvatar } from '@tailor-cms/core-components-next';
+import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from 'tailor-config-shared';
 
 import OverviewDueDate from './DueDate.vue';

@@ -1,9 +1,9 @@
 {
-  "name": "@tailor-cms/core-components-next",
+  "name": "@tailor-cms/core-components",
   "description": "Reusable Tailor UI components",
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "files": [
     "src"
   ],
@@ -15,7 +15,6 @@
     "@types/pluralize": "^0.0.33"
   },
   "peerDependencies": {
-    "@tailor-cms/core-components-next": "workspace:*",
     "@tailor-cms/utils": "workspace:*",
     "@tiptap/pm": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",

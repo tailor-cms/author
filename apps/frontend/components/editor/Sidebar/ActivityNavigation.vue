@@ -25,7 +25,7 @@
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import { TailorTreeview } from '@tailor-cms/core-components-next';
+import { TailorTreeview } from '@tailor-cms/core-components';
 
 const { $schemaService } = useNuxtApp() as any;
 

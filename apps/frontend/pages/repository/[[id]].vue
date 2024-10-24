@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts" setup>
-import { CircularProgress } from '@tailor-cms/core-components-next';
+import { CircularProgress } from '@tailor-cms/core-components';
 import { promiseTimeout } from '@vueuse/core';
 
 import { useAuthStore } from '@/stores/auth';
