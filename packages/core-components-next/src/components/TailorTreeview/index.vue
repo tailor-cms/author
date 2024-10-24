@@ -81,9 +81,9 @@ const toggleExpand = () => {
   expanded.value = isFullyExpanded.value ? [] : expandableItemIds.value;
 };
 
-const flatTree = (tree) =>
+const flatTree = (tree: any) =>
   tree.reduce(
-    (acc, it) =>
+    (acc: any, it: any) =>
       it.children?.length
         ? [...acc, it, ...flatTree(it.children)]
         : [...acc, it],

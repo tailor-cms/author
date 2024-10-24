@@ -35,16 +35,17 @@
 </template>
 
 <script lang="ts" setup>
-import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
-import InsertLocation from '@/lib/InsertLocation';
+import { InsertLocation } from '@tailor-cms/utils';
 
-const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
+import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
+
+const { AddAfter, AddBefore, AddInto } = InsertLocation;
 
 const props = defineProps<{ activity: StoreActivity }>();
 
 const selectedActivity = useSelectedActivity(props.activity);
 const showCreateDialog = ref(false);
-const action = ref<InsertLocation>(ADD_AFTER);
+const action = ref<InsertLocation>(AddAfter);
 
 const options = computed(() => {
   const { subLevels, isEditable } = selectedActivity;
@@ -52,19 +53,19 @@ const options = computed(() => {
     {
       name: 'Add item above',
       icon: 'add:above',
-      action: () => setCreateContext(ADD_BEFORE),
+      action: () => setCreateContext(AddBefore),
     },
     {
       name: 'Add item below',
       icon: 'add:below',
-      action: () => setCreateContext(ADD_AFTER),
+      action: () => setCreateContext(AddAfter),
     },
   ];
   if (subLevels.value.length) {
     items.push({
       name: 'Add item into',
       icon: 'add:into',
-      action: () => setCreateContext(ADD_INTO),
+      action: () => setCreateContext(AddInto),
     });
   }
   if (isEditable.value) {

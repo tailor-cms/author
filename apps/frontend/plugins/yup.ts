@@ -19,12 +19,11 @@ export default defineNuxtPlugin(() => {
     },
   });
 
-  addMethod(string, 'email', function validateEmail(message) {
-    const defaultMsg = ({ path }: any) =>
-      `${sentenceCase(path)} must be a valid email`;
-    return this.test({
-      message: message || defaultMsg,
-      test: email,
-    });
+  addMethod(string, 'email', function () {
+    return this.test(
+      'is-email',
+      ({ path }) => `${sentenceCase(path)} must be a valid email`,
+      email,
+    );
   });
 });

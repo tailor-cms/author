@@ -97,8 +97,8 @@ const getQuestionData = (element: any, type: string) => {
 
 interface Props {
   items: ContentElement[];
+  position: number;
   activity?: Activity | null;
-  position?: number | null;
   layout?: boolean;
   include?: string[] | null;
   categories?: ElementCategory[] | null;
@@ -112,7 +112,6 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   activity: null,
-  position: null,
   layout: true,
   include: null,
   categories: null,

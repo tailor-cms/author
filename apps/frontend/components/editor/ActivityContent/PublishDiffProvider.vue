@@ -29,12 +29,12 @@ import map from 'lodash/map';
 import mapValues from 'lodash/mapValues';
 import merge from 'lodash/merge';
 import omit from 'lodash/omit';
-import { publishDiffChangeTypes } from '@tailor-cms/utils';
+import { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import reduce from 'lodash/reduce';
 
 import { revision as api } from '@/api';
 
-const { NEW, REMOVED, CHANGED } = publishDiffChangeTypes;
+const { New, Removed, Changed } = PublishDiffChangeTypes;
 type Content = ContentElement | Activity;
 
 const getPublishedState = (revisions: any[]) =>
@@ -106,9 +106,9 @@ const isRemoved = (element: ContentElement) => {
 };
 
 const getChangeType = (element: ContentElement) => {
-  if (isRemoved(element)) return REMOVED;
-  if (isAdded(element)) return NEW;
-  if (isModified(element)) return CHANGED;
+  if (isRemoved(element)) return Removed;
+  if (isAdded(element)) return New;
+  if (isModified(element)) return Changed;
   return null;
 };
 

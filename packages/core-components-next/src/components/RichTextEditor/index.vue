@@ -5,6 +5,7 @@
     :disabled="disabled"
     :focused="focused"
     :model-value="content"
+    :readonly="readonly"
     :rules="rules"
     class="text-left"
   >
@@ -54,11 +55,13 @@ interface Props {
   disabled?: boolean;
   variant?: VField['variant'];
   rules?: VInput['rules'];
+  readonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   label: undefined,
   disabled: false,
+  readonly: false,
   variant: undefined,
   rules: undefined,
 });

@@ -27,7 +27,6 @@ uuid();
 Util list:
 - activity
 - InsertLocation
-- assessment
 - Events
 - numberToLetter
 - publishDiffChangeTypes
