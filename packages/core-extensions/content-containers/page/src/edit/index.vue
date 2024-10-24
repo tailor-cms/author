@@ -116,7 +116,7 @@ import {
   ContainedContent,
   ElementList,
   InlineActivator,
-} from '@tailor-cms/core-components-next';
+} from '@tailor-cms/core-components';
 import { computed, inject, ref } from 'vue';
 import type {
   ContentElement,

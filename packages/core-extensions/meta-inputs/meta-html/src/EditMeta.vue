@@ -9,7 +9,7 @@
 
 <script lang="ts" setup>
 import type { Metadata } from '@tailor-cms/interfaces/schema';
-import { RichTextEditor } from '@tailor-cms/core-components-next';
+import { RichTextEditor } from '@tailor-cms/core-components';
 
 interface Meta extends Metadata {
   value?: string;
