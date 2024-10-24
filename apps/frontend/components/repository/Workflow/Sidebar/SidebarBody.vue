@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts" setup>
-import { RichTextEditor } from '@tailor-cms/core-components-next';
+import { RichTextEditor } from '@tailor-cms/core-components';
 import type { Status } from '@tailor-cms/interfaces/activity';
 import { VDateInput } from 'vuetify/labs/VDateInput';
 import { workflow as workflowConfig } from 'tailor-config-shared';

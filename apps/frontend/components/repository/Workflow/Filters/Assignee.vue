@@ -49,7 +49,7 @@
 
 <script lang="ts" setup>
 import type { User } from '@tailor-cms/interfaces/user';
-import { UserAvatar } from '@tailor-cms/core-components-next';
+import { UserAvatar } from '@tailor-cms/core-components';
 import xor from 'lodash/xor';
 
 const NO_BASE_OPTIONS = 3;

@@ -27,7 +27,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-components-next';
+import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-components';
 import find from 'lodash/find';
 import first from 'lodash/first';
 import get from 'lodash/get';
