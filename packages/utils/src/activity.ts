@@ -3,10 +3,12 @@ import filter from 'lodash/filter';
 import find from 'lodash/find';
 import get from 'lodash/get';
 import sortBy from 'lodash/sortBy';
+
 interface NodeProcessor {
   filterNodesFn?: (it: Activity[]) => Activity[];
   processNodeFn?: (it: Activity) => Activity;
 }
+
 interface Internals {
   parentId?: number;
   level?: number;
