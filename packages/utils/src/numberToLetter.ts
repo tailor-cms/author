@@ -1,7 +1,7 @@
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const base = alphabet.length;
 
-export default function numberToLetter(n) {
+export default (n: number) => {
   const digits = [];
 
   do {
@@ -16,4 +16,4 @@ export default function numberToLetter(n) {
   }
 
   return chars.join('');
-}
+};

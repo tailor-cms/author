@@ -53,15 +53,15 @@
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import first from 'lodash/first';
+import { InsertLocation } from '@tailor-cms/utils';
 import sortBy from 'lodash/sortBy';
 
 import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
-import InsertLocation from '@/lib/InsertLocation';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useSelectedActivity } from '#imports';
 
-const { ADD_AFTER, ADD_BEFORE, ADD_INTO } = InsertLocation;
+const { AddAfter, AddBefore, AddInto } = InsertLocation;
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
 
@@ -72,7 +72,7 @@ const selectedActivity = useSelectedActivity(props.activity);
 
 const showCreateDialog = ref(false);
 const showCopyDialog = ref(false);
-const action = ref<InsertLocation>(ADD_AFTER);
+const action = ref<InsertLocation>(AddAfter);
 const supportedLevels = ref<string[]>([]);
 
 const addMenuOptions = computed(() => {
@@ -80,19 +80,19 @@ const addMenuOptions = computed(() => {
     {
       name: 'Add item above',
       icon: 'add:above',
-      action: () => setCreateContext(ADD_BEFORE),
+      action: () => setCreateContext(AddBefore),
     },
     {
       name: 'Add item below',
       icon: 'add:below',
-      action: () => setCreateContext(ADD_AFTER),
+      action: () => setCreateContext(AddAfter),
     },
   ];
   if (!selectedActivity.subLevels.value?.length) return items;
   return items.concat({
     name: 'Add item into',
     icon: 'add:into',
-    action: () => setCreateContext(ADD_INTO),
+    action: () => setCreateContext(AddInto),
   });
 });
 
@@ -101,14 +101,14 @@ const copyMenuOptions = computed(() => {
     {
       name: 'Copy existing below',
       icon: 'mdi-content-copy',
-      action: () => setCopyContext(selectedActivity.sameLevel.value, ADD_AFTER),
+      action: () => setCopyContext(selectedActivity.sameLevel.value, AddAfter),
     },
   ];
   if (!selectedActivity.subLevels.value.length) return items;
   return items.concat({
     name: 'Copy existing into',
     icon: 'mdi-content-copy',
-    action: () => setCopyContext(selectedActivity.subLevels.value, ADD_INTO),
+    action: () => setCopyContext(selectedActivity.subLevels.value, AddInto),
   });
 });
 

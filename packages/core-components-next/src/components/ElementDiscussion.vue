@@ -120,7 +120,7 @@ const activator = computed(() => {
 
 const save = (data: Partial<Comment>) => {
   return editorBus.emit('comment', {
-    action: Events.Discussion.SAVE,
+    action: Events.Discussion.Save,
     payload: {
       ...data,
       author: props.user,
@@ -132,7 +132,7 @@ const save = (data: Partial<Comment>) => {
 
 const setLastSeen = (timeout: number) => {
   editorBus.emit('comment', {
-    action: Events.Discussion.SET_LAST_SEEN,
+    action: Events.Discussion.SetLastSeen,
     payload: {
       elementUid: props.uid,
       lastCommentAt: lastCommentAt.value,
@@ -147,7 +147,7 @@ const updateResolvement = ({
   resolvedAt,
 }: { id?: number; resolvedAt?: number } = {}) => {
   editorBus.emit('comment', {
-    action: Events.Discussion.RESOLVE,
+    action: Events.Discussion.Resolve,
     payload: {
       id,
       contentElementId: props.id,
@@ -158,7 +158,7 @@ const updateResolvement = ({
 
 const removeComment = (id: number) => {
   editorBus.emit('comment', {
-    action: Events.Discussion.REMOVE,
+    action: Events.Discussion.Remove,
     payload: id,
   });
 };
