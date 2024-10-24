@@ -10,6 +10,22 @@
     >
       {{ errorMessage }}
     </VAlert>
+    <div v-if="config.props.oidcEnabled" class="mt-4">
+      <VBtn
+        color="blue-lighten-4"
+        data-testid="auth_oidcLoginBtn"
+        variant="tonal"
+        block
+        rounded
+        @click="loginOIDC"
+      >
+        <VIcon v-if="config.oidcLoginText.includes('Google')" start>
+          mdi-google
+        </VIcon>
+        {{ config.oidcLoginText }}
+      </VBtn>
+      <VDivider class="my-10" />
+    </div>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions-->
     <form novalidate @keydown.enter="signIn" @submit.prevent="signIn">
       <VTextField
@@ -36,32 +52,15 @@
         type="password"
         variant="outlined"
       />
-      <VRow dense>
-        <VCol v-if="config.props.oidcEnabled" cols="6">
-          <VBtn
-            v-if="config.props.oidcEnabled"
-            color="teal-lighten-3"
-            data-testid="auth_oidcLoginBtn"
-            variant="tonal"
-            block
-            rounded
-            @click="loginOIDC"
-          >
-            {{ config.oidcLoginText }}
-          </VBtn>
-        </VCol>
-        <VCol>
-          <VBtn
-            color="primary-lighten-4"
-            variant="tonal"
-            block
-            rounded
-            @click="signIn"
-          >
-            Sign in
-          </VBtn>
-        </VCol>
-      </VRow>
+      <VBtn
+        color="primary-lighten-4"
+        variant="tonal"
+        block
+        rounded
+        @click="signIn"
+      >
+        Sign in
+      </VBtn>
       <div class="options">
         <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       </div>

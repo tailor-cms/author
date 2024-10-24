@@ -1,3 +1,3 @@
-import { v1 } from 'uuid';
+import { v4 } from 'uuid';
 
-export default () => v1();
+export default () => v4();

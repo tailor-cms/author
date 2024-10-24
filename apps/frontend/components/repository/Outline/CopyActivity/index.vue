@@ -147,7 +147,7 @@ const copyActivity = async (activity: Activity, prevActivity?: Activity) => {
     type,
     position: await activityStore.calculateCopyPosition(action, anchor),
     ...(anchor && {
-      parentId: action === AddAfter ? anchor.id : anchor.parentId,
+      parentId: action === AddInto ? anchor.id : anchor.parentId,
     }),
   });
 };
