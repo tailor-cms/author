@@ -42,7 +42,7 @@ const add = (ActivityStatus, Hooks, { Activity }) => {
   function withActivity(...hooks) {
     const invokeHooks = (type, status, opts) =>
       status
-        .getActivity()
+        .getActivity({ paranoid: false })
         .then((activity) =>
           hooks.forEach((hook) => hook(type, activity, opts)),
         );

@@ -20,7 +20,7 @@ function getAction(operation: string) {
       return 'Removed';
     case 'UPDATE':
     default:
-      return 'Changed';
+      return 'Updated';
   }
 }
 
