@@ -22,6 +22,14 @@ export function isChanged(activity: Activity) {
   );
 }
 
+export function doesRequirePublishing(activity: Activity) {
+  if (!activity.publishedAt) return false;
+  if (!activity.deletedAt) return false;
+  const dateDeleted = new Date(activity.deletedAt).getTime();
+  const datePublished = new Date(activity.publishedAt).getTime();
+  return dateDeleted > datePublished;
+}
+
 export function getParent(activities: Activity[], activity: Activity) {
   const id = get(activity, 'parentId', null);
   return id && find(activities, { id });

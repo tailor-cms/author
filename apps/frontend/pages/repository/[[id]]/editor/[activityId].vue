@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getElementId } from '@tailor-cms/utils';
+import { activity as activityUtils, getElementId } from '@tailor-cms/utils';
 import { schema } from 'tailor-config-shared';
 
 import ActivityContent from '@/components/editor/ActivityContent/index.vue';
@@ -33,13 +33,15 @@ definePageMeta({
   middleware: ['auth'],
 });
 
+const { $eventBus } = useNuxtApp() as any;
+
 const props = defineProps<{ activityId: number }>();
+
+const router = useRouter();
 
 const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
-
-const { $eventBus } = useNuxtApp() as any;
 
 provide('$getCurrentUser', () => authStore.user);
 provide('$api', exposedApi);
@@ -72,10 +74,25 @@ appChannel.on('openElement', (props: ElementRouteProps) => {
 
 const closePublishDiff = () => editorStore.togglePublishDiff(false);
 
+const preventAccessIfDeleted = () => {
+  const predecessors = activityUtils.getAncestors(
+    repositoryStore.activities,
+    editorStore.selectedActivity,
+  );
+  const isSoftDeleted = [...predecessors, editorStore.selectedActivity].some(
+    (activity) => activity.deletedAt,
+  );
+  if (isSoftDeleted) router.replace('/');
+};
+
+onMounted(() => preventAccessIfDeleted());
 onBeforeUnmount(() => closePublishDiff());
 
 watch(
   () => props.activityId,
-  () => closePublishDiff(),
+  () => {
+    preventAccessIfDeleted();
+    closePublishDiff();
+  },
 );
 </script>

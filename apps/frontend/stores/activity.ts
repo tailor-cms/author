@@ -113,7 +113,7 @@ export const useActivityStore = defineStore('activities', () => {
     const activity = findById(id);
     if (!activity) return;
     await api.remove(activity.repositoryId, activity.id);
-    $items.delete(activity.uid);
+    // Await SSE event for store removal
   }
 
   const reorder = async (reorderdActivity: StoreActivity, context: any) => {
@@ -132,6 +132,7 @@ export const useActivityStore = defineStore('activities', () => {
       activity.id,
     );
     activity.publishedAt = publishedAt;
+    if (activity.deletedAt) $items.delete(activity.uid);
   };
 
   const clone = async (mapping: any) => {
@@ -182,7 +183,12 @@ export const useActivityStore = defineStore('activities', () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Activity) => add(it))
       .subscribe(Events.Update, (it: Activity) => add(it))
-      .subscribe(Events.Delete, (it: Activity) => $items.delete(it.uid));
+      .subscribe(Events.Delete, (it: Activity) => {
+        const activity = it.deletedAt ? it : { ...it, deletedAt: new Date() };
+        const requirePublishing = activityUtils.doesRequirePublishing(activity);
+        if (requirePublishing) add(activity as Activity);
+        else $items.delete(activity.uid);
+      });
   };
 
   function $reset() {

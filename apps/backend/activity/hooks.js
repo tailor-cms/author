@@ -9,10 +9,11 @@ function add(Activity, Hooks, Models) {
   const { Events } = Activity;
 
   const mappings = {
-    [Hooks.afterCreate]: [sseCreate, touchRepository, touchOutline],
-    [Hooks.afterUpdate]: [sseUpdate, touchRepository, touchOutline],
+    [Hooks.afterCreate]: [touchRepository, touchOutline, sseCreate],
+    [Hooks.afterUpdate]: [touchRepository, touchOutline, sseUpdate],
     [Hooks.afterBulkUpdate]: [afterTransaction(sseBulkUpdate)],
-    [Hooks.afterDestroy]: [sseDelete, touchRepository, touchOutline],
+    [Hooks.afterDestroy]: [touchRepository, touchOutline, sseDelete],
+    [Hooks.afterRestore]: [touchRepository, touchOutline, sseUpdate],
   };
 
   forEach(mappings, (hooks, type) => {
@@ -53,7 +54,11 @@ function add(Activity, Hooks, Models) {
       : context.repository.update({ hasUnpublishedChanges: true });
   }
 
-  async function touchOutline(activity, { context = {}, transaction }) {
+  async function touchOutline(
+    _hookType,
+    activity,
+    { context = {}, transaction },
+  ) {
     if (!isRepository(context.repository)) return Promise.resolve();
     const outlineActivity = isOutlineActivity(activity.type)
       ? activity

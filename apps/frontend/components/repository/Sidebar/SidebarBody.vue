@@ -58,22 +58,24 @@
       :type="activity.type"
       class="mt-6 mb-3"
     />
-    <div class="meta-elements">
-      <MetaInput
-        v-for="it in metadata"
-        :key="`${activity.uid}.${it.key}`"
-        :meta="it"
-        dark
-        @update="updateActivity"
-      />
-    </div>
-    <div>
-      <ActivityRelationship
-        v-for="relationship in config.relationships"
-        :key="`${activity.uid}.${relationship.type}`"
-        :activity="activity"
-        v-bind="relationship"
-      />
+    <div v-if="!isSoftDeleted">
+      <div class="meta-elements">
+        <MetaInput
+          v-for="it in metadata"
+          :key="`${activity.uid}.${it.key}`"
+          :meta="it"
+          dark
+          @update="updateActivity"
+        />
+      </div>
+      <div>
+        <ActivityRelationship
+          v-for="relationship in config.relationships"
+          :key="`${activity.uid}.${relationship.type}`"
+          :activity="activity"
+          v-bind="relationship"
+        />
+      </div>
     </div>
     <ActivityDiscussion
       :activity="activity"
@@ -85,6 +87,8 @@
 </template>
 
 <script lang="ts" setup>
+import { activity as activityUtils } from '@tailor-cms/utils';
+
 import ActivityDiscussion from '../Discussion/index.vue';
 import ActivityRelationship from './ActivityRelationship.vue';
 import ActivityStatus from './ActivityStatus.vue';
@@ -102,6 +106,10 @@ const activityUrl = computed(() => route.query && window.location.href);
 const config = computed(() => $schemaService.getLevel(props.activity.type));
 const metadata = computed(() =>
   $schemaService.getActivityMetadata(props.activity),
+);
+
+const isSoftDeleted = computed(() =>
+  activityUtils.doesRequirePublishing(props.activity),
 );
 
 const updateActivity = async (key: string, value: any) => {
