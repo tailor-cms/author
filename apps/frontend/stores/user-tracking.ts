@@ -48,7 +48,7 @@ export const useUserTracking = defineStore('userTracking', () => {
   const activityByEntity = computed(() => {
     return users.value.reduce(
       (acc: any, { contexts, ...user }: UserWithContexts): ActivityByEntity => {
-        contexts.forEach((ctx: any) => setUserContext(acc, user, ctx));
+        contexts?.forEach((ctx: any) => setUserContext(acc, user, ctx));
         return acc;
       },
       { repository: {}, activity: {}, element: {} },
