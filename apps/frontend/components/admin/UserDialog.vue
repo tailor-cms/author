@@ -49,7 +49,15 @@
           label="Role"
           placeholder="Select role..."
           variant="outlined"
-        />
+        >
+          <template #item="{ item, props: itemProps }">
+            <VListItem
+              v-bind="itemProps"
+              :subtitle="item.raw.description"
+              class="py-3"
+            />
+          </template>
+        </VSelect>
         <div class="d-flex justify-end pb-3">
           <VBtn color="primary-darken-4" variant="text" @click="close">
             Cancel
@@ -81,6 +89,8 @@ import type { User } from '@tailor-cms/interfaces/user';
 import { user as api } from '@/api';
 import TailorDialog from '@/components/common/TailorDialog.vue';
 
+const UserRole = role.user;
+
 export interface Props {
   visible: boolean;
   userData: any;
@@ -94,6 +104,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['created', 'updated', 'update:visible']);
 
+const availableRoles = {
+  [UserRole.COLLABORATOR]: 'Can access only assigned repositories',
+  [UserRole.USER]: 'Can create new and access assigned repositories',
+  [UserRole.ADMIN]: 'Can fully manage the application and access all data',
+};
+
 const isDialogVisible = computed({
   get: () => props.visible,
   set(value) {
@@ -104,7 +120,11 @@ const isDialogVisible = computed({
 const isReinviting = ref(false);
 const isNewUser = computed(() => !props.userData?.id);
 const roles = computed(() =>
-  map(role.user, (value) => ({ title: titleCase(value), value })),
+  map(availableRoles, (description, value) => ({
+    title: titleCase(value),
+    value,
+    description,
+  })),
 );
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({

@@ -1,15 +1,31 @@
 <template>
   <NuxtLayout name="auth" title="Sign in">
     <VAlert
-      v-if="localError"
+      v-if="errorMessage"
       class="mb-7 text-left"
       color="pink-lighten-4"
       density="compact"
       variant="tonal"
       closable
     >
-      {{ localError }}
+      {{ errorMessage }}
     </VAlert>
+    <div v-if="config.props.oidcEnabled" class="mt-4">
+      <VBtn
+        color="blue-lighten-4"
+        data-testid="auth_oidcLoginBtn"
+        variant="tonal"
+        block
+        rounded
+        @click="loginOIDC"
+      >
+        <VIcon v-if="config.oidcLoginText.includes('Google')" start>
+          mdi-google
+        </VIcon>
+        {{ config.oidcLoginText }}
+      </VBtn>
+      <VDivider class="my-10" />
+    </div>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions-->
     <form novalidate @keydown.enter="signIn" @submit.prevent="signIn">
       <VTextField
@@ -36,17 +52,15 @@
         type="password"
         variant="outlined"
       />
-      <div class="d-flex mt-2">
-        <VBtn
-          color="primary-lighten-4"
-          variant="tonal"
-          block
-          rounded
-          @click="signIn"
-        >
-          Sign in
-        </VBtn>
-      </div>
+      <VBtn
+        color="primary-lighten-4"
+        variant="tonal"
+        block
+        rounded
+        @click="signIn"
+      >
+        Sign in
+      </VBtn>
       <div class="options">
         <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       </div>
@@ -59,6 +73,16 @@ import { object, string } from 'yup';
 import { useForm } from 'vee-validate';
 
 import { useAuthStore } from '@/stores/auth';
+import { useConfigStore } from '@/stores/config';
+
+const LOGIN_ERR_MESSAGE = 'The email or password you entered is incorrect.';
+const TOO_MANY_REQ_CODE = 429;
+const TOO_MANY_REQ_ERR_MESSAGE =
+  'Too many login attempts. Please try again later.';
+
+const getOidcErrorMessage = (email: any, buttonLabel: string) =>
+  `Account with email ${email} does not exist.
+  Click "${buttonLabel}" to try with a different account.`;
 
 definePageMeta({
   name: 'sign-in',
@@ -69,14 +93,12 @@ useHead({
   meta: [{ name: 'description', content: 'Tailor CMS - Sign in page' }],
 });
 
-const authStore = useAuthStore();
-
-const LOGIN_ERR_MESSAGE = 'The email or password you entered is incorrect.';
-const TOO_MANY_REQ_CODE = 429;
-const TOO_MANY_REQ_ERR_MESSAGE =
-  'Too many login attempts. Please try again later.';
-
 const localError = ref('');
+
+const { $oidc } = useNuxtApp() as any;
+const config = useConfigStore();
+const authStore = useAuthStore();
+const route = useRoute();
 
 const { defineField, handleSubmit, errors } = useForm({
   validationSchema: object({
@@ -87,6 +109,18 @@ const { defineField, handleSubmit, errors } = useForm({
 
 const [emailInput] = defineField('email');
 const [passwordInput] = defineField('password');
+
+const accessDenied = computed(() => route.query.accessDenied);
+const oidcError = computed(() => {
+  if (!accessDenied.value) return;
+  return getOidcErrorMessage(accessDenied.value, config.oidcLoginText);
+});
+const errorMessage = computed(() => oidcError.value || localError.value);
+
+const loginOIDC = () => {
+  const action = oidcError.value ? 'reauthenticate' : 'authenticate';
+  $oidc[action]();
+};
 
 const signIn = handleSubmit(({ email, password }) => {
   localError.value = '';

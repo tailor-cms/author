@@ -1,6 +1,5 @@
 import { lower, title as toTitleCase } from 'to-case';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import { assessment } from '@tailor-cms/utils';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
@@ -21,7 +20,7 @@ function getAction(operation: string) {
       return 'Removed';
     case 'UPDATE':
     default:
-      return 'Changed';
+      return 'Updated';
   }
 }
 
@@ -52,14 +51,11 @@ function describeActivityRevision(rev: Revision, activity: Activity) {
 }
 
 function describeElementRevision(rev: Revision, activity: Activity) {
-  const { type, data } = rev.state;
-  const title =
-    type === 'ASSESSMENT' ? assessment.typeInfo[data.type].title : type;
   const action = getAction(rev.operation);
   const activityText = activity
     ? getContainerContext(activity)
     : 'within deleted container';
-  return `${action} ${lower(title)} element ${activityText}`;
+  return `${action} ${lower(rev.state.type)} element ${activityText}`;
 }
 
 function describeRepositoryRevision(rev: Revision) {

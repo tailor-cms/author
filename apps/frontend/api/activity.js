@@ -5,6 +5,7 @@ const urls = {
   root: (repositoryId) => `/repositories/${repositoryId}/activities`,
   resource: (repositoryId, id) =>
     `/repositories/${repositoryId}/activities/${id}`,
+  restore: (repositoryId, id) => `${urls.resource(repositoryId, id)}/restore`,
 };
 
 function getActivities(repositoryId, params) {
@@ -25,6 +26,10 @@ function patch({ repositoryId, id, ...payload }) {
 
 function remove(repositoryId, id) {
   return request.delete(urls.resource(repositoryId, id));
+}
+
+function restore(repositoryId, id) {
+  return request.patch(urls.restore(repositoryId, id));
 }
 
 function reorder(repositoryId, id, data) {
@@ -64,6 +69,7 @@ export default {
   reorder,
   clone,
   remove,
+  restore,
   publish,
   getActivities,
   updateStatus,

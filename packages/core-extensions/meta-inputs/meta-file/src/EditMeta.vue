@@ -8,7 +8,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { FileInput } from '@tailor-cms/core-components-next';
+import { FileInput } from '@tailor-cms/core-components';
 import get from 'lodash/get';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 

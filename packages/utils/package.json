@@ -1,53 +1,59 @@
 {
   "name": "@tailor-cms/utils",
   "description": "Tailor utility functions",
-  "author": "ExtensionEngine <info@extensionengine.com>",
+  "author": "Studion <info@gostudion.com>",
   "license": "MIT",
   "type": "module",
-  "version": "1.0.0-beta.18",
+  "version": "1.0.1",
   "files": [
     "dist"
   ],
-  "main": "./dist/utils.cjs",
-  "umd:main": "./dist/utils.umd.cjs",
-  "module": "./dist/utils.js",
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
-      "import": "./dist/utils.js",
-      "require": "./dist/utils.cjs"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
-  "keywords": [],
-  "homepage": "https://github.com/ExtensionEngine/tailor#readme",
-  "bugs": {
-    "url": "https://github.com/ExtensionEngine/tailor/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ExtensionEngine/tailor.git"
-  },
   "scripts": {
-    "prebuild": "del-cli dist",
-    "build": "vite build",
-    "release": "npx np",
-    "lint": "eslint --ext .js ."
+    "build": "tsup",
+    "lint": "eslint --ext .js,.ts .",
+    "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
     "lodash": "^4.17.21",
-    "to-case": "^2.0.0",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@extensionengine/eslint-config": "^3.0.1",
-    "del-cli": "^5.1.0",
-    "eslint": "^8.19.0",
-    "eslint-config-semistandard": "^16.0.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-n": "^15.2.4",
-    "eslint-plugin-promise": "^6.4.0",
-    "vite": "^5.4.8"
+    "@tailor-cms/eslint-config": "0.0.2",
+    "@tailor-cms/interfaces": "workspace:*",
+    "@types/lodash": "^4.17.6",
+    "@types/uuid": "^10.0.0",
+    "tsup": "^8.3.0",
+    "typescript": "^5.5.4"
+  },
+  "bundledDependencies": [
+    "@tailor-cms/interfaces"
+  ],
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "target": [
+      "node14",
+      "es2022"
+    ],
+    "format": [
+      "cjs",
+      "esm"
+    ],
+    "bundle": true,
+    "minify": false,
+    "clean": false,
+    "dts": true
   },
   "publishConfig": {
     "access": "public"

@@ -24,7 +24,7 @@ export type FoundActivity = StoreActivity | undefined;
 
 const HASH_ALPHABET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
 const hashids = new Hashids('', 0, HASH_ALPHABET);
-const { ADD_INTO } = InsertLocation;
+const { AddInto } = InsertLocation;
 
 export const useActivityStore = defineStore('activities', () => {
   const $items = reactive(new Map<string, StoreActivity>());
@@ -113,7 +113,7 @@ export const useActivityStore = defineStore('activities', () => {
     const activity = findById(id);
     if (!activity) return;
     await api.remove(activity.repositoryId, activity.id);
-    $items.delete(activity.uid);
+    // Await SSE event for store removal
   }
 
   const reorder = async (reorderdActivity: StoreActivity, context: any) => {
@@ -132,6 +132,7 @@ export const useActivityStore = defineStore('activities', () => {
       activity.id,
     );
     activity.publishedAt = publishedAt;
+    if (activity.deletedAt) $items.delete(activity.uid);
   };
 
   const clone = async (mapping: any) => {
@@ -143,22 +144,25 @@ export const useActivityStore = defineStore('activities', () => {
 
   function calculateInsertPosition(
     activity: StoreActivity,
-    action: string,
+    action: InsertLocation,
     anchor: StoreActivity,
   ) {
     const children = schema.getOutlineChildren(items.value, activity.parentId);
     const context = { items: children, action } as any;
-    if (action !== ADD_INTO) {
+    if (action !== AddInto) {
       context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
     }
     return calculatePosition(context);
   }
 
-  const calculateCopyPosition = (action: string, anchor: Activity | null) => {
-    const id = anchor && (action === ADD_INTO ? anchor.id : anchor.parentId);
+  const calculateCopyPosition = (
+    action: InsertLocation,
+    anchor: Activity | null,
+  ) => {
+    const id = anchor && (action === AddInto ? anchor.id : anchor.parentId);
     const children = schema.getOutlineChildren(items.value, id);
     const context = { items: children, action } as any;
-    if (action !== ADD_INTO) {
+    if (action !== AddInto) {
       context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
     }
     return calculatePosition(context);
@@ -179,7 +183,12 @@ export const useActivityStore = defineStore('activities', () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Activity) => add(it))
       .subscribe(Events.Update, (it: Activity) => add(it))
-      .subscribe(Events.Delete, (it: Activity) => $items.delete(it.uid));
+      .subscribe(Events.Delete, (it: Activity) => {
+        const activity = it.deletedAt ? it : { ...it, deletedAt: new Date() };
+        const requirePublishing = activityUtils.doesRequirePublishing(activity);
+        if (requirePublishing) add(activity as Activity);
+        else $items.delete(activity.uid);
+      });
   };
 
   function $reset() {

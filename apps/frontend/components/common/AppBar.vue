@@ -70,18 +70,21 @@
 import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
 import type { User } from '@tailor-cms/interfaces/user';
-import { UserAvatar } from '@tailor-cms/core-components-next';
+import { UserAvatar } from '@tailor-cms/core-components';
 
 import { useAuthStore } from '@/stores/auth';
+import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
 
+const { $oidc } = useNuxtApp() as any;
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const { repository } = storeToRefs(currentRepositoryStore);
+const config = useConfigStore();
 
 const routes = computed(() => {
   const items = [
@@ -99,6 +102,9 @@ const routes = computed(() => {
 });
 
 const logout = async () => {
+  if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {
+    return $oidc.logout();
+  }
   await authStore.logout();
   navigateTo('/auth');
 };

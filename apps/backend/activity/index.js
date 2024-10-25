@@ -20,6 +20,7 @@ router
   .delete(ctrl.remove);
 
 router
+  .patch('/:activityId/restore', ctrl.restore)
   .post('/:activityId/reorder', ctrl.reorder)
   .post('/:activityId/clone', ctrl.clone)
   .post('/:activityId/status', ctrl.updateStatus)

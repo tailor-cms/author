@@ -4,10 +4,19 @@ import { auth as api } from '@/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);
-  const isAdmin = computed(() => user.value?.role === 'ADMIN');
+  const strategy = ref<string | null>(null);
 
-  function $reset({ user: userData = null } = {}) {
+  const isAdmin = computed(() => user.value?.role === 'ADMIN');
+  const isDefaultUser = computed(() => user.value?.role === 'USER');
+
+  const isOidcActive = computed(() => strategy.value === 'oidc');
+
+  function $reset(
+    userData: User | null = null,
+    authStrategy: string | null = null,
+  ) {
     user.value = userData;
+    strategy.value = authStrategy;
   }
 
   function login(credentials: {
@@ -16,7 +25,7 @@ export const useAuthStore = defineStore('auth', () => {
   }): Promise<void> {
     return api
       .login(credentials)
-      .then(({ data: { user } }) => $reset({ user }));
+      .then(({ data: { user, authData } }) => $reset(user, authData?.strategy));
   }
 
   function logout() {
@@ -50,10 +59,8 @@ export const useAuthStore = defineStore('auth', () => {
   function fetchUserInfo() {
     return api
       .getUserInfo()
-      .then(({ data: { user } }) => $reset({ user }))
-      .catch(() => {
-        $reset();
-      });
+      .then(({ data: { user, authData } }) => $reset(user, authData?.strategy))
+      .catch(() => $reset());
   }
 
   function updateInfo(payload: any) {
@@ -65,6 +72,8 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     isAdmin,
+    isDefaultUser,
+    isOidcActive,
     login,
     logout,
     forgotPassword,

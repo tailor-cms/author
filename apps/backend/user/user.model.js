@@ -13,7 +13,7 @@ import randomstring from 'randomstring';
 import { role as roles } from 'tailor-config-shared';
 
 const {
-  user: { ADMIN, USER, INTEGRATION },
+  user: { ADMIN, COLLABORATOR, INTEGRATION, USER },
 } = roles;
 const gravatarConfig = { size: 130, default: 'identicon' };
 
@@ -40,8 +40,8 @@ class User extends Model {
         defaultValue: () => randomstring.generate(),
       },
       role: {
-        type: ENUM(ADMIN, USER, INTEGRATION),
-        defaultValue: USER,
+        type: ENUM(ADMIN, COLLABORATOR, INTEGRATION, USER),
+        defaultValue: COLLABORATOR,
       },
       firstName: {
         type: STRING,

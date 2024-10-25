@@ -62,7 +62,11 @@ const add = (Comment, Hooks, db) => {
           model: Repository,
           include: [{ model: RepositoryUser, include: { model: User } }],
         },
-        { model: Activity, attributes: ['id', 'type', 'data'] },
+        {
+          model: Activity,
+          attributes: ['id', 'type', 'data'],
+          paranoid: false,
+        },
         { model: User, as: 'author' },
         includeElement,
       ],
