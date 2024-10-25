@@ -252,7 +252,7 @@ const selectRepository = async (repository: Repository) => {
   selection.repository = repository;
   deselectActivity();
   const isCurrentRepository = currentRepository.value.id === repository.id;
-  const activities = isCurrentRepository
+  const activities: Activity[] = isCurrentRepository
     ? currentRepository.value.activities
     : await fetchActivities(repository);
   items.activities = activities.filter((it) => !it.deletedAt);
