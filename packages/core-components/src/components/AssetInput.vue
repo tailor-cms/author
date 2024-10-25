@@ -25,7 +25,7 @@
         :error-messages="errors.url"
         :placeholder="allowFileUpload ? 'or paste a URL...' : 'Paste a URL...'"
         hide-details="auto"
-        max-width="350"
+        min-width="350"
         variant="outlined"
         clearable
       />
