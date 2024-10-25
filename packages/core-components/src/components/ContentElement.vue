@@ -37,7 +37,7 @@
         isDisabled,
         dense,
       }"
-      :id="`element_${id.value}`"
+      :id="`element_${id}`"
       @add="emit('add', $event)"
       @delete="emit('delete')"
       @focus="onSelect"
