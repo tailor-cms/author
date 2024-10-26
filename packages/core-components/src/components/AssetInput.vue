@@ -20,14 +20,15 @@
     />
     <template v-if="!uploading && (urlInput || !hasAsset)">
       <VTextField
-        v-model="urlInput"
         :disabled="!isEditing"
         :error-messages="errors.url"
+        :model-value="urlInput"
         :placeholder="allowFileUpload ? 'or paste a URL...' : 'Paste a URL...'"
         hide-details="auto"
         min-width="350"
         variant="outlined"
         clearable
+        @update:model-value="urlInput = $event || null"
       />
     </template>
     <VBtn v-if="!isEditing" @click="isEditing = true">Edit</VBtn>
@@ -78,7 +79,7 @@ const isEditing = ref(!props.url);
 const isLinked = ref(!isUploaded(props.url));
 const file = ref(isLinked.value ? null : pick(props, ['url', 'publicUrl']));
 
-const { defineField, errors, validate, resetForm } = useForm({
+const { defineField, errors, validate } = useForm({
   validationSchema: object({
     url: string().url().nullable(),
   }),
@@ -100,7 +101,6 @@ const fileName = computed(() => {
 const uploadFile = (value: any) => {
   file.value = value;
   urlInput.value = null;
-  resetForm();
 };
 
 const save = async () => {
@@ -118,6 +118,5 @@ const cancel = () => {
   urlInput.value = isLinked.value ? props.url : null;
   file.value = isLinked.value ? null : pick(props, ['url', 'publicUrl']);
   isEditing.value = !props.url;
-  resetForm();
 };
 </script>
