@@ -22,7 +22,10 @@
     >
       {{ name }}
     </div>
-    <div v-if="!dense && !isDisabled" class="text-subtitle-1">
+    <div
+      v-if="!dense && !isDisabled"
+      class="text-grey-darken-2 text-subtitle-1"
+    >
       <template v-if="!isFocused">{{ placeholder }}</template>
       <template v-else>
         {{ activePlaceholder }}

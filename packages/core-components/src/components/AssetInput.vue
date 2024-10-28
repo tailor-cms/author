@@ -1,5 +1,5 @@
 <template>
-  <VToolbarItems>
+  <VToolbarItems class="ga-2">
     <VBtn
       v-if="url && !isEditing"
       :href="publicUrl || url"
