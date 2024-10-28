@@ -1,7 +1,10 @@
+import isArray from 'lodash/isArray.js';
+import isNumber from 'lodash/isNumber.js';
 import { Model } from 'sequelize';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import { schema } from 'tailor-config-shared';
+import uniq from 'lodash/uniq.js';
 
 const { getRepositoryRelationships, getSchema } = schema;
 
@@ -107,13 +110,77 @@ class Repository extends Model {
     );
   }
 
-  /**
-   * Maps references for cloned activities and content elements.
-   * @param {Object} mappings Dict where keys represent old and values new ids.
-   * @param {SequelizeTransaction} [transaction]
-   * @returns {Promise.<Object>} Object with mapped activities and elements.
-   */
-  async mapClonedReferences(mappings, transaction) {
+  async validateReferences(transaction) {
+    const Activity = this.sequelize.model('Activity');
+    const ContentElement = this.sequelize.model('ContentElement');
+    // Extract references from entity with refs object.
+    // Each reference is represented as an object with entityId, id and
+    // type. The type is the key of the reference in the refs object,
+    // id is the id of the referenced entity and entityId is the id of
+    // the entity that contains the reference.
+    const processReferences = (item) => {
+      const processRefEntry = (entry) => {
+        if (isNumber(entry)) return [entry];
+        if (isArray(entry)) return entry.map((it) => it.id);
+        return [entry.id];
+      };
+      const relationshipKeys = Object.keys(item.refs);
+      return relationshipKeys.reduce((acc, key) => {
+        const references = item.refs[key];
+        if (!references) return acc;
+        const relatedEntityIds = processRefEntry(item.refs[key]);
+        acc.push(
+          ...relatedEntityIds.map((id) => ({
+            entity: item,
+            id,
+            type: key,
+          })),
+        );
+        return acc;
+      }, []);
+    };
+    // Extract references from array of entities.
+    // Entities can be activities or content elements.
+    const extractReferences = (items) =>
+      items.reduce((acc, it) => {
+        acc.push(...processReferences(it));
+        return acc;
+      }, []);
+    // Fetch all repo entities with references.
+    const [activities, elements] = await this.getEntitiesWithRefs(transaction);
+    // Extract referenced activity and element ids.
+    const activityRefMappings = extractReferences(activities);
+    const referencedActivityIds = uniq(activityRefMappings.map((it) => it.id));
+    const elementRefMappings = extractReferences(elements);
+    const referencedElementIds = uniq(elementRefMappings.map((it) => it.id));
+    // Fetch referenced activities and elements.
+    const referencedActivities = await Activity.findAll({
+      where: { id: referencedActivityIds },
+      attributes: ['id'],
+      transaction,
+    });
+    const referencedElements = await ContentElement.findAll({
+      where: { id: referencedElementIds },
+      attributes: ['id'],
+      transaction,
+    });
+    // Check if all elements referenced within mappings are present in the
+    // entities array.
+    const detectMissingReferences = (mappings, entities) => {
+      return mappings.filter((it) => !entities.find((el) => el.id === it.id));
+    };
+    const faultyActivities = detectMissingReferences(
+      activityRefMappings,
+      referencedActivities,
+    );
+    const faultyElements = detectMissingReferences(
+      elementRefMappings,
+      referencedElements,
+    );
+    return { activities: faultyActivities, elements: faultyElements };
+  }
+
+  async getEntitiesWithRefs(transaction) {
     const Activity = this.sequelize.model('Activity');
     const ContentElement = this.sequelize.model('ContentElement');
     const opts = { where: { repositoryId: this.id }, transaction };
@@ -124,6 +191,18 @@ class Repository extends Model {
       ),
       ContentElement.scope('withReferences').findAll(opts),
     ]);
+    return [activities, elements];
+  }
+
+  /**
+   * Maps references for cloned activities and content elements.
+   * @param {Object} mappings Dict where keys represent old and values new ids.
+   * @param {SequelizeTransaction} [transaction]
+   * @returns {Promise.<Object>} Object with mapped activities and elements.
+   */
+  async mapClonedReferences(mappings, transaction) {
+    const [activities, elements] = await this.getEntitiesWithRefs(transaction);
+    const relationships = getRepositoryRelationships(this.schema);
     return Promise.join(
       Promise.map(activities, (it) => {
         return it.mapClonedReferences(
