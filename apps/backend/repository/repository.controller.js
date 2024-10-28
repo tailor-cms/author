@@ -303,7 +303,8 @@ function validateReferences(req, res) {
   return repository.validateReferences().then((data) => res.json({ data }));
 }
 
-async function cleanupInvalidReferences({ body }, res) {
+async function cleanupInvalidReferences(req, res) {
+  const { body } = req;
   const activityEntities = await Activity.findAll({
     where: {
       repositoryId: req.repository.id,
