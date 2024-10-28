@@ -27,6 +27,8 @@ const tmp = Promise.promisifyAll((await import('tmp')).default, {
 });
 
 const {
+  Activity,
+  ContentElement,
   Repository,
   RepositoryTag,
   RepositoryUser,
@@ -301,6 +303,30 @@ function validateReferences(req, res) {
   return repository.validateReferences().then((data) => res.json({ data }));
 }
 
+async function cleanupInvalidReferences({ body }, res) {
+  const activityEntities = await Activity.findAll({
+    where: {
+      repositoryId: req.repository.id,
+      id: body.activities.map((it) => it.entity.id),
+    },
+  });
+  await Promise.each(activityEntities, async (it) => {
+    const ref = body.activities.find((it) => it.entity.id);
+    await it.removeReference(ref.type, ref.id);
+  });
+  const elementEntities = await ContentElement.findAll({
+    where: {
+      repositoryId: req.repository.id,
+      id: body.elements.map((it) => it.entity.id),
+    },
+  });
+  await Promise.each(elementEntities, async (it) => {
+    const ref = body.elements.find((it) => it.entity.id);
+    await it.removeReference(ref.type, ref.id);
+  });
+  return res.status(NO_CONTENT).send();
+}
+
 export default {
   index,
   create,
@@ -320,4 +346,5 @@ export default {
   addTag,
   removeTag,
   validateReferences,
+  cleanupInvalidReferences,
 };

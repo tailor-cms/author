@@ -3,7 +3,9 @@ import { schema, workflow } from 'tailor-config-shared';
 import calculatePosition from '../shared/util/calculatePosition.js';
 import { Activity as Events } from 'sse-event-types';
 import hooks from './hooks.js';
+import isArray from 'lodash/isArray.js';
 import isEmpty from 'lodash/isEmpty.js';
+import isNumber from 'lodash/isNumber.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
@@ -222,6 +224,20 @@ class Activity extends Model {
     return this.update({ refs }, { transaction });
   }
 
+  async removeReference(type, id, transaction) {
+    const refs = this.refs || {};
+    if (!refs[type]) return this;
+    if (isArray(refs[type])) {
+      refs[type] = refs[type].filter((it) =>
+        isNumber(it) ? it !== id : it.id !== id,
+      );
+    } else {
+      delete refs[type];
+    }
+    this.changed('refs', true);
+    return this.update({ refs }, { transaction });
+  }
+
   siblings({ filter = {}, transaction }) {
     const { parentId, repositoryId } = this;
     const where = { ...filter, parentId, repositoryId };
@@ -235,6 +251,13 @@ class Activity extends Model {
       if (parent.deletedAt) return Promise.resolve([]);
       return parent.predecessors().then((acc) => acc.concat(parent));
     });
+  }
+
+  async getFirstOutlineItem(item = this) {
+    if (!item.parentId) return item;
+    if (isOutlineActivity(item.type)) return item;
+    const parent = await item.getParent({ paranoid: false });
+    return this.getFirstOutlineItem(parent);
   }
 
   descendants(options = {}, nodes = [], leaves = []) {

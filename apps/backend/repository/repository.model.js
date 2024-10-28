@@ -121,7 +121,8 @@ class Repository extends Model {
     const processReferences = (item) => {
       const processRefEntry = (entry) => {
         if (isNumber(entry)) return [entry];
-        if (isArray(entry)) return entry.map((it) => it.id);
+        if (isArray(entry))
+          return entry.map((it) => (isNumber(it) ? it : it.id));
         return [entry.id];
       };
       const relationshipKeys = Object.keys(item.refs);
@@ -177,6 +178,11 @@ class Repository extends Model {
       elementRefMappings,
       referencedElements,
     );
+    await Promise.each(faultyElements, async (it) => {
+      const activity = await Activity.findByPk(it.entity.activityId);
+      it.outlineActivity = await activity.getFirstOutlineItem();
+      return it;
+    });
     return { activities: faultyActivities, elements: faultyElements };
   }
 

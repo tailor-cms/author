@@ -4,6 +4,7 @@ import calculatePosition from '../shared/util/calculatePosition.js';
 import { ContentElement as Events } from 'sse-event-types';
 import forEach from 'lodash/forEach.js';
 import hooks from './hooks.js';
+import isArray from 'lodash/isArray.js';
 import isNumber from 'lodash/isNumber.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
@@ -153,6 +154,20 @@ class ContentElement extends Model {
     const idMap = zipObject(map(src, 'id'), map(newElements, 'id'));
     const uidMap = zipObject(map(src, 'uid'), map(newElements, 'uid'));
     return { idMap, uidMap };
+  }
+
+  async removeReference(type, id, transaction) {
+    const refs = this.refs || {};
+    if (!refs[type]) return this;
+    if (isArray(refs[type])) {
+      refs[type] = refs[type].filter((it) =>
+        isNumber(it) ? it !== id : it.id !== id,
+      );
+    } else {
+      delete refs[type];
+    }
+    this.changed('refs', true);
+    return this.update({ refs }, { transaction });
   }
 
   /**

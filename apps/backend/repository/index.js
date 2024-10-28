@@ -51,6 +51,7 @@ router
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
   .get('/:repositoryId/validate-references', ctrl.validateReferences)
+  .post('/:repositoryId/cleanup-references', ctrl.cleanupInvalidReferences)
   .get('/:repositoryId/export/setup', ctrl.initiateExportJob)
   .get('/:repositoryId/export/:jobId/status', ctrl.getExportStatus)
   .post('/:repositoryId/export/:jobId', ctrl.export)

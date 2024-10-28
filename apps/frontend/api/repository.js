@@ -7,6 +7,7 @@ const urls = {
   resource: (id) => `${urls.root}/${id}`,
   clone: (id) => `${urls.resource(id)}/clone`,
   validateReferences: (id) => `${urls.resource(id)}/validate-references`,
+  cleanupReferences: (id) => `${urls.resource(id)}/cleanup-references`,
   pin: (id) => `${urls.resource(id)}/pin`,
   publish: (id) => `${urls.resource(id)}/publish`,
   exportInit: (id) => `${urls.resource(id)}/export/setup`,
@@ -44,6 +45,12 @@ function clone(repositoryId, name, description) {
 
 function validateReferences(repositoryId) {
   return request.get(urls.validateReferences(repositoryId)).then(extractData);
+}
+
+function cleanupReferences(repositoryId, data) {
+  return request
+    .post(urls.cleanupReferences(repositoryId), data)
+    .then(extractData);
 }
 
 function pin(repositoryId, pin) {
@@ -115,4 +122,5 @@ export default {
   exportRepository,
   importRepository,
   validateReferences,
+  cleanupReferences,
 };
