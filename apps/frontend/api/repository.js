@@ -43,9 +43,7 @@ function clone(repositoryId, name, description) {
 }
 
 function validateReferences(repositoryId) {
-  return request
-    .get(urls.valvalidateReferencesidate(repositoryId))
-    .then(extractData);
+  return request.get(urls.validateReferences(repositoryId)).then(extractData);
 }
 
 function pin(repositoryId, pin) {
