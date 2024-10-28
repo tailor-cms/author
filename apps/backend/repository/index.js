@@ -50,6 +50,7 @@ router
   .post('/:repositoryId/clone', authorize(), ctrl.clone)
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
+  .get('/:repositoryId/validate-references', ctrl.validateReferences)
   .get('/:repositoryId/export/setup', ctrl.initiateExportJob)
   .get('/:repositoryId/export/:jobId/status', ctrl.getExportStatus)
   .post('/:repositoryId/export/:jobId', ctrl.export)

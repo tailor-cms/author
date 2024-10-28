@@ -296,6 +296,11 @@ function importRepository({ body, file, user }, res) {
     });
 }
 
+function validateReferences(req, res) {
+  const { repository } = req;
+  return repository.validateReferences().then((data) => res.json({ data }));
+}
+
 export default {
   index,
   create,
@@ -314,4 +319,5 @@ export default {
   publishRepoInfo,
   addTag,
   removeTag,
+  validateReferences,
 };

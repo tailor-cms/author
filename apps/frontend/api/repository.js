@@ -6,6 +6,7 @@ const urls = {
   import: () => `${urls.root}/import`,
   resource: (id) => `${urls.root}/${id}`,
   clone: (id) => `${urls.resource(id)}/clone`,
+  validateReferences: (id) => `${urls.resource(id)}/validate-references`,
   pin: (id) => `${urls.resource(id)}/pin`,
   publish: (id) => `${urls.resource(id)}/publish`,
   exportInit: (id) => `${urls.resource(id)}/export/setup`,
@@ -38,6 +39,12 @@ function remove(repositoryId) {
 function clone(repositoryId, name, description) {
   return request
     .post(urls.clone(repositoryId), { name, description })
+    .then(extractData);
+}
+
+function validateReferences(repositoryId) {
+  return request
+    .get(urls.valvalidateReferencesidate(repositoryId))
     .then(extractData);
 }
 
@@ -109,4 +116,5 @@ export default {
   getExportJobStatus,
   exportRepository,
   importRepository,
+  validateReferences,
 };
