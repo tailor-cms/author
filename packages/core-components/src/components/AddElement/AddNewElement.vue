@@ -7,29 +7,24 @@
       <div v-for="group in library as any" :key="group.name" class="mb-2">
         <div class="group-heading text-primary-darken-3">{{ group.name }}</div>
         <div class="group-elements ga-5">
-          <VHover
+          <VBtn
             v-for="element in group.elements"
             :key="element.position"
-            v-slot="{ isHovering, props: hoverProps }"
+            :disabled="!isAllowed(element.type)"
+            class="add-element"
+            color="primary-darken-3"
+            rounded="lg"
+            variant="text"
+            stacked
+            @click.stop="emitAdd(element)"
           >
-            <VBtn
-              v-bind="hoverProps"
-              :color="isHovering ? 'primary-darken-4' : 'primary-darken-3'"
-              :disabled="!isAllowed(element.type)"
-              class="add-element"
-              rounded="lg"
-              variant="tonal"
-              stacked
-              @click.stop="emitAdd(element)"
-            >
-              <template #prepend>
-                <VIcon v-if="element.ui.icon" size="28">
-                  {{ element.ui.icon }}
-                </VIcon>
-              </template>
-              {{ element.name }}
-            </VBtn>
-          </VHover>
+            <template #prepend>
+              <VIcon v-if="element.ui.icon" size="28">
+                {{ element.ui.icon }}
+              </VIcon>
+            </template>
+            {{ element.name }}
+          </VBtn>
         </div>
       </div>
     </div>
