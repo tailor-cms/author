@@ -107,14 +107,19 @@ class Repository extends Model {
     );
   }
 
-  async validateReferences(t) {
+  async validateReferences(transaction) {
+    const [activities, elements] = await this.getEntitiesWithRefs(transaction);
     const Activity = this.sequelize.model('Activity');
     const ContentElement = this.sequelize.model('ContentElement');
-    // Fetch all repo entities with references.
-    const [activities, elements] = await this.getEntitiesWithRefs(t);
     return {
-      activities: await Activity.detectMissingReferences(activities, t),
-      elements: await ContentElement.detectMissingReferences(elements, t),
+      activities: await Activity.detectMissingReferences(
+        activities,
+        transaction,
+      ),
+      elements: await ContentElement.detectMissingReferences(
+        elements,
+        transaction,
+      ),
     };
   }
 
