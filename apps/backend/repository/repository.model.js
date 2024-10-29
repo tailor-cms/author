@@ -1,6 +1,7 @@
 import isArray from 'lodash/isArray.js';
 import isNumber from 'lodash/isNumber.js';
 import { Model } from 'sequelize';
+import { normalizeCollectionReferences } from '../shared/util/modelReference.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import { schema } from 'tailor-config-shared';
@@ -113,77 +114,50 @@ class Repository extends Model {
   async validateReferences(transaction) {
     const Activity = this.sequelize.model('Activity');
     const ContentElement = this.sequelize.model('ContentElement');
-    // Extract references from entity with refs object.
-    // Each reference is represented as an object with entityId, id and
-    // type. The type is the key of the reference in the refs object,
-    // id is the id of the referenced entity and entityId is the id of
-    // the entity that contains the reference.
-    const processReferences = (item) => {
-      const processRefEntry = (entry) => {
-        if (isNumber(entry)) return [entry];
-        if (isArray(entry))
-          return entry.map((it) => (isNumber(it) ? it : it.id));
-        return [entry.id];
-      };
-      const relationshipKeys = Object.keys(item.refs);
-      return relationshipKeys.reduce((acc, key) => {
-        const references = item.refs[key];
-        if (!references) return acc;
-        const relatedEntityIds = processRefEntry(item.refs[key]);
-        acc.push(
-          ...relatedEntityIds.map((id) => ({
-            entity: item,
-            id,
-            type: key,
-          })),
-        );
-        return acc;
-      }, []);
-    };
-    // Extract references from array of entities.
-    // Entities can be activities or content elements.
-    const extractReferences = (items) =>
-      items.reduce((acc, it) => {
-        acc.push(...processReferences(it));
-        return acc;
-      }, []);
     // Fetch all repo entities with references.
     const [activities, elements] = await this.getEntitiesWithRefs(transaction);
-    // Extract referenced activity and element ids.
-    const activityRefMappings = extractReferences(activities);
-    const referencedActivityIds = uniq(activityRefMappings.map((it) => it.id));
-    const elementRefMappings = extractReferences(elements);
-    const referencedElementIds = uniq(elementRefMappings.map((it) => it.id));
+    // Extract target entity ids from relationship mappings.
+    const getTargetIds = (items) => uniq(items.map((it) => it.target.id));
+    const activityRelationships = normalizeCollectionReferences(activities);
+    const contentElementRelationships = normalizeCollectionReferences(elements);
     // Fetch referenced activities and elements.
     const referencedActivities = await Activity.findAll({
-      where: { id: referencedActivityIds },
+      where: { id: getTargetIds(activityRelationships) },
       attributes: ['id'],
       transaction,
     });
     const referencedElements = await ContentElement.findAll({
-      where: { id: referencedElementIds },
+      where: { id: getTargetIds(contentElementRelationships) },
       attributes: ['id'],
       transaction,
     });
-    // Check if all elements referenced within mappings are present in the
-    // entities array.
-    const detectMissingReferences = (mappings, entities) => {
-      return mappings.filter((it) => !entities.find((el) => el.id === it.id));
+    // Check if all elements referenced within mappings exist.
+    const detectMissingReferences = (relationships, items) => {
+      const notExists = (r) => !items.find((it) => r.target.id === it.id);
+      return relationships.filter(notExists);
     };
-    const faultyActivities = detectMissingReferences(
-      activityRefMappings,
+    const faultyActivityRelationships = detectMissingReferences(
+      activityRelationships,
       referencedActivities,
     );
-    const faultyElements = detectMissingReferences(
-      elementRefMappings,
+    const faultyElementRelationships = detectMissingReferences(
+      contentElementRelationships,
       referencedElements,
     );
-    await Promise.each(faultyElements, async (it) => {
-      const activity = await Activity.findByPk(it.entity.activityId);
-      it.outlineActivity = await activity.getFirstOutlineItem();
-      return it;
+    // Attach outline item to faulty element relationships to be able to
+    // create a link to the faulty element.
+    await Promise.each(faultyElementRelationships, async (relationship) => {
+      const activity = await Activity.findByPk(relationship.src.activityId);
+      relationship.src = {
+        ...relationship.src.toJSON(),
+        outlineActivity: await activity.getFirstOutlineItem(),
+      };
+      return relationship;
     });
-    return { activities: faultyActivities, elements: faultyElements };
+    return {
+      activities: faultyActivityRelationships,
+      elements: faultyElementRelationships,
+    };
   }
 
   async getEntitiesWithRefs(transaction) {

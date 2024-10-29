@@ -190,10 +190,10 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     $brokenReferences.warnings = [];
     activities.forEach((it: any) => {
       $brokenReferences.warnings.push({
-        id: it.entity.id,
+        id: it.src.id,
         message: `
-          ${it.entity.data.name}
-          "${schemaConfig.getLevel(it.entity.type).label}" "${it.type}"
+          ${it.src.data.name}
+          "${schemaConfig.getLevel(it.src.type).label}" "${it.referenceName}"
           relationship does not exist anymore. Relationship needs to be removed.
           If related item removal is published, make sure to publish this
           activity as well.`,
@@ -202,10 +202,10 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     const { $ceRegistry } = useNuxtApp() as any;
     elements.forEach((it: any) => {
       $brokenReferences.warnings.push({
-        link: `/repository/${it.entity.repositoryId}/editor/${it.outlineActivity.id}?elementId=${it.entity.uid}`,
+        link: `/repository/${it.src.repositoryId}/editor/${it.src.outlineActivity.id}?elementId=${it.src.uid}`,
         message: `
-          "${$ceRegistry.get(it.entity.type).name}" element relationship
-          "${it.type}" does not exist anymore. Relationship needs to be
+          "${$ceRegistry.get(it.src.type).name}" element relationship
+          "${it.relationshipName}" does not exist anymore. Relationship needs to be
           removed. If related element removal is published, make sure to
           publish this element as well.`,
       });
