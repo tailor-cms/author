@@ -12,12 +12,7 @@ import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 
-const {
-  getRepositoryRelationships,
-  getSiblingTypes,
-  isOutlineActivity,
-  isTrackedInWorkflow,
-} = schema;
+const { getSiblingTypes, isOutlineActivity, isTrackedInWorkflow } = schema;
 const { getDefaultActivityStatus } = workflow;
 
 class Activity extends Model {
