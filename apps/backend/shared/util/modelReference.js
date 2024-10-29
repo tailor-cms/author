@@ -99,6 +99,13 @@ export const detectMissingReferences = async (Entity, items, transaction) => {
   return references.filter(notExists);
 };
 
+/**
+ * Remove references from the entities of the given type.
+ * @param {Activity|ContentElement} Entity
+ * @param {number} repositoryId
+ * @param {object[]} references - Array of src, target and referenceName mappings
+ * @returns <Promise.<void>>
+ */
 export const removeInvalidReferences = async (
   Entity,
   repositoryId,
