@@ -11,6 +11,8 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
+    "@tailor-cms/tcc-assessment-pool-edit": "workspace:^",
+    "@tailor-cms/tcc-assessment-pool-server": "workspace:^",
     "@tailor-cms/tcc-page": "workspace:^"
   }
 }

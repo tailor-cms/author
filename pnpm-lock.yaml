@@ -551,6 +551,12 @@ importers:
 
   extensions/content-containers:
     dependencies:
+      '@tailor-cms/tcc-assessment-pool-edit':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/assessment-pool-edit
+      '@tailor-cms/tcc-assessment-pool-server':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/assessment-pool-server
       '@tailor-cms/tcc-page':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/page
@@ -779,11 +785,14 @@ importers:
         specifier: ^0.0.33
         version: 0.0.33
 
-  packages/core-extensions/content-containers/assessment-pool:
+  packages/core-extensions/content-containers/assessment-pool-edit:
     dependencies:
       '@tailor-cms/core-components':
         specifier: workspace:*
         version: link:../../../core-components
+      '@tailor-cms/utils':
+        specifier: workspace:*
+        version: link:../../../utils
       lodash:
         specifier: '*'
         version: 4.17.21
@@ -797,6 +806,19 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
+      '@types/lodash':
+        specifier: '*'
+        version: 4.17.10
+
+  packages/core-extensions/content-containers/assessment-pool-server:
+    dependencies:
+      bluebird:
+        specifier: ^3.7.2
+        version: 3.7.2
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+    devDependencies:
       '@types/lodash':
         specifier: '*'
         version: 4.17.10
