@@ -3,12 +3,11 @@ import { schema, workflow } from 'tailor-config-shared';
 import calculatePosition from '../shared/util/calculatePosition.js';
 import { Activity as Events } from 'sse-event-types';
 import hooks from './hooks.js';
-import isArray from 'lodash/isArray.js';
 import isEmpty from 'lodash/isEmpty.js';
-import isNumber from 'lodash/isNumber.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
+import { removeReference } from '../shared/util/modelReference.js';
 
 const { getSiblingTypes, isOutlineActivity, isTrackedInWorkflow } = schema;
 const { getDefaultActivityStatus } = workflow;
@@ -224,18 +223,9 @@ class Activity extends Model {
     return this.update({ refs }, { transaction });
   }
 
-  async removeReference(type, id, transaction) {
-    const refs = this.refs || {};
-    if (!refs[type]) return this;
-    if (isArray(refs[type])) {
-      refs[type] = refs[type].filter((it) =>
-        isNumber(it) ? it !== id : it.id !== id,
-      );
-    } else {
-      delete refs[type];
-    }
-    this.changed('refs', true);
-    return this.update({ refs }, { transaction });
+  removeReference(type, id, transaction) {
+    this.refs = removeReference(this.refs, type, id);
+    return this.save({ transaction });
   }
 
   siblings({ filter = {}, transaction }) {
@@ -253,6 +243,13 @@ class Activity extends Model {
     });
   }
 
+  /**
+   * Iterates through the parent chain until it finds the first outline
+   * Activity. Outline Activities are the ones that are defined in the schema
+   * as the structure of the repository.
+   * @param {Activity} item
+   * @returns {Promise.<Activity>}
+   */
   async getFirstOutlineItem(item = this) {
     if (!item.parentId) return item;
     if (isOutlineActivity(item.type)) return item;
