@@ -49,12 +49,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const repositoryId = ref<number | null>(null);
 
-  const $brokenReferences = reactive({
-    elements: [],
-    activities: [],
-    warnings: [] as any[],
-  });
-
   const repository = computed(() => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
   });
@@ -146,8 +140,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     Object.assign(outlineState, loadOutline(repoId));
     await Repository.get(repoId);
     await Activity.fetch(repoId, { outlineOnly: true });
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    validateReferences();
   };
 
   function $reset() {
@@ -180,53 +172,11 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     });
   };
 
-  const validateReferences = async () => {
-    if (!repositoryId.value) throw new Error('Repository not initialized!');
-    const { activities, elements } = await repositoryApi.validateReferences(
-      repositoryId.value,
-    );
-    $brokenReferences.activities = activities;
-    $brokenReferences.elements = elements;
-    $brokenReferences.warnings = [];
-    activities.forEach((it: any) => {
-      $brokenReferences.warnings.push({
-        id: it.src.id,
-        message: `
-          ${it.src.data.name}
-          "${schemaConfig.getLevel(it.src.type).label}" "${it.referenceName}"
-          relationship does not exist anymore. Relationship needs to be removed.
-          If related item removal is published, make sure to publish this
-          activity as well.`,
-      });
-    });
-    const { $ceRegistry } = useNuxtApp() as any;
-    elements.forEach((it: any) => {
-      $brokenReferences.warnings.push({
-        link: `/repository/${it.src.repositoryId}/editor/${it.src.outlineActivity.id}?elementId=${it.src.uid}`,
-        message: `
-          "${$ceRegistry.get(it.src.type).name}" element relationship
-          "${it.relationshipName}" does not exist anymore. Relationship needs to be
-          removed. If related element removal is published, make sure to
-          publish this element as well.`,
-      });
-    });
-  };
-
-  const cleanupReferences = async () => {
-    if (!repositoryId.value) throw new Error('Repository not initialized!');
-    await repositoryApi.cleanupReferences(
-      repositoryId.value,
-      $brokenReferences,
-    );
-    await validateReferences();
-  };
-
   return {
     initialize,
     repositoryId,
     repository,
     $users,
-    $brokenReferences,
     users,
     outlineState,
     schemaName,
@@ -246,8 +196,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     getUsers,
     upsertUser,
     removeUser,
-    validateReferences,
-    cleanupReferences,
     $reset,
   };
 });
