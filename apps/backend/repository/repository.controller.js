@@ -12,6 +12,7 @@ import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import publishingService from '../shared/publishing/publishing.service.js';
+import { removeInvalidReferences } from '../shared/util/modelReference.js';
 import { repository as role } from 'tailor-config-shared/src/role.js';
 import sample from 'lodash/sample.js';
 import { schema } from 'tailor-config-shared';
@@ -304,27 +305,9 @@ function validateReferences(req, res) {
 }
 
 async function cleanupInvalidReferences(req, res) {
-  const { body } = req;
-  const activityEntities = await Activity.findAll({
-    where: {
-      repositoryId: req.repository.id,
-      id: body.activities.map((it) => it.entity.id),
-    },
-  });
-  await Promise.each(activityEntities, async (it) => {
-    const ref = body.activities.find((it) => it.entity.id);
-    await it.removeReference(ref.type, ref.id);
-  });
-  const elementEntities = await ContentElement.findAll({
-    where: {
-      repositoryId: req.repository.id,
-      id: body.elements.map((it) => it.entity.id),
-    },
-  });
-  await Promise.each(elementEntities, async (it) => {
-    const ref = body.elements.find((it) => it.entity.id);
-    await it.removeReference(ref.type, ref.id);
-  });
+  const { body, repository } = req;
+  await removeInvalidReferences(Activity, repository.id, body.activities);
+  await removeInvalidReferences(ContentElement, repository.id, body.elements);
   return res.status(NO_CONTENT).send();
 }
 

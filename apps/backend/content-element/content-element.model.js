@@ -177,9 +177,8 @@ class ContentElement extends Model {
     });
   }
 
-  removeReference(type, id, transaction) {
+  removeReference(type, id) {
     this.refs = removeReference(this.refs, type, id);
-    return this.save({ transaction });
   }
 
   /**

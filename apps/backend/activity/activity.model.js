@@ -230,9 +230,8 @@ class Activity extends Model {
     return detectMissingReferences(Activity, activities, transaction);
   }
 
-  removeReference(type, id, transaction) {
+  removeReference(type, id) {
     this.refs = removeReference(this.refs, type, id);
-    return this.save({ transaction });
   }
 
   siblings({ filter = {}, transaction }) {

@@ -2,6 +2,7 @@ import cloneDeep from 'lodash/cloneDeep.js';
 import isArray from 'lodash/isArray.js';
 import isNumber from 'lodash/isNumber.js';
 import uniq from 'lodash/uniq.js';
+import Promise from 'bluebird';
 
 /**
  * Returns a reference object without the reference of the given type and id.
@@ -96,4 +97,23 @@ export const detectMissingReferences = async (Entity, items, transaction) => {
   const notExists = (r) =>
     !referencedEntities.find((it) => it.id === r.target.id);
   return references.filter(notExists);
+};
+
+export const removeInvalidReferences = async (
+  Entity,
+  repositoryId,
+  references,
+) => {
+  if (!references?.length) return;
+  const items = await Entity.findAll({
+    where: {
+      repositoryId,
+      id: references.map((it) => it.src.id),
+    },
+  });
+  await Promise.each(items, async (entity) => {
+    const refs = references.filter((it) => entity.id === it.src.id);
+    refs.forEach((r) => entity.removeReference(r.referenceName, r.target.id));
+    await entity.save();
+  });
 };
