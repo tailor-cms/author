@@ -195,7 +195,10 @@ const isRootContainer = ({ parentId, type }: Activity) => {
 
 const getSubcontainers = (container: ContentContainer) => {
   const { getDescendants } = activityUtils;
-  return sortBy(getDescendants(items.activities, container), 'position');
+  return sortBy(
+    getDescendants(items.activities, container) as ContentContainer[],
+    'position',
+  );
 };
 
 const showActivityElements = async (activity: Activity) => {
@@ -249,7 +252,7 @@ const selectRepository = async (repository: Repository) => {
   selection.repository = repository;
   deselectActivity();
   const isCurrentRepository = currentRepository.value.id === repository.id;
-  const activities = isCurrentRepository
+  const activities: Activity[] = isCurrentRepository
     ? currentRepository.value.activities
     : await fetchActivities(repository);
   items.activities = activities.filter((it) => !it.deletedAt);

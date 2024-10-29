@@ -62,9 +62,11 @@ import groupBy from 'lodash/groupBy';
 import pluralize from 'pluralize';
 import { VTreeview } from 'vuetify/labs/VTreeview';
 
-interface TreeItem {
-  id: string;
+interface TreeItem extends Activity {
+  id: number;
+  name?: string;
   title: string;
+  label: string;
   isEditable: boolean;
   children?: TreeItem[];
 }
@@ -89,11 +91,11 @@ const groupedSelection = computed(() => {
   return groupBy(props.selectedElements, 'outlineId');
 });
 
-const activityTree = computed<TreeItem[]>(() => {
+const activityTree = computed(() => {
   return activityUtils.toTreeFormat(props.activities, {
     filterNodesFn: schemaService.filterOutlineActivities,
     processNodeFn: attachActivityAttrs,
-  });
+  }) as TreeItem[];
 });
 
 const selectActivity = (id: number) => {

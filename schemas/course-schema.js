@@ -54,9 +54,9 @@ const SECTION_CONTAINER = {
   types: [
     'CE_HTML_DEFAULT',
     'CE_IMAGE',
-    // 'CE_VIDEO',
+    'CE_VIDEO',
     'CE_EMBED',
-    // 'CE_AUDIO',
+    'CE_AUDIO',
     'CE_PAGE_BREAK',
     'CE_PDF',
     // 'CE_ACCORDION',

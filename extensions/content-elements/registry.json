@@ -63,5 +63,15 @@
     "name": "@tailor-cms/ce-embed",
     "clientPackage": "@tailor-cms/ce-embed-edit",
     "serverPackage": "@tailor-cms/ce-embed-server"
+  },
+  {
+    "name": "@tailor-cms/ce-audio",
+    "clientPackage": "@tailor-cms/ce-audio-edit",
+    "serverPackage": "@tailor-cms/ce-audio-server"
+  },
+  {
+    "name": "@tailor-cms/ce-video",
+    "clientPackage": "@tailor-cms/ce-video-edit",
+    "serverPackage": "@tailor-cms/ce-video-server"
   }
 ]
