@@ -1,5 +1,5 @@
 <template>
-  <div v-show="referenceErrors.length">
+  <div v-show="errors.length">
     <VAlert
       class="mt-5 text-left text-subtitle-1"
       color="yellow-lighten-4"
@@ -10,26 +10,21 @@
       <div class="mt-3 text-subtitle-1 font-weight-bold">Detected Issues:</div>
       <div class="pl-1 pr-5 text-subtitle-1">
         <VCard
-          v-for="(warning, index) in referenceErrors"
+          v-for="({ id, link, message }, index) in errors"
           :key="index"
           class="my-4 pa-4"
           variant="tonal"
         >
-          {{ index + 1 }}.
-          {{ warning.message }}
+          {{ index + 1 }}. {{ message }}
           <a
-            v-if="warning.id"
+            v-if="id"
             class="text-yellow-accent-1"
             href="#"
-            @click.stop="repositoryStore.selectActivity(warning.id)"
+            @click.stop="repositoryStore.selectActivity(id)"
           >
             Click to select the item.
           </a>
-          <NuxtLink
-            v-else-if="warning.link"
-            :to="warning.link"
-            class="text-yellow-accent-1"
-          >
+          <NuxtLink v-else-if="link" :to="link" class="text-yellow-accent-1">
             Click to navigate to the item.
           </NuxtLink>
         </VCard>
@@ -62,15 +57,15 @@ const { $ceRegistry } = useNuxtApp() as any;
 const repositoryStore = useCurrentRepository();
 
 const errorReport = ref<any>([]);
-const referenceErrors = ref<ReferenceError[]>([]);
+const errors = ref<ReferenceError[]>([]);
 
 const validateReferences = async () => {
   const { repositoryId } = repositoryStore;
   if (!repositoryId) throw new Error('Repository not initialized!');
   const { activities, elements } = await api.validateReferences(repositoryId);
-  referenceErrors.value = [];
+  errors.value = [];
   activities.forEach((it: any) => {
-    referenceErrors.value.push({
+    errors.value.push({
       id: it.src.id,
       message: `
         ${it.src.data.name}
@@ -81,7 +76,7 @@ const validateReferences = async () => {
     });
   });
   elements.forEach((it: any) => {
-    referenceErrors.value.push({
+    errors.value.push({
       link: `/repository/${repositoryId}/editor/${it.src.outlineActivity.id}?elementId=${it.src.uid}`,
       message: `
         "${$ceRegistry.get(it.src.type).name}" element relationship
