@@ -1,11 +1,7 @@
-import isArray from 'lodash/isArray.js';
-import isNumber from 'lodash/isNumber.js';
 import { Model } from 'sequelize';
-import { normalizeCollectionReferences } from '../shared/util/modelReference.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import { schema } from 'tailor-config-shared';
-import uniq from 'lodash/uniq.js';
 
 const { getRepositoryRelationships, getSchema } = schema;
 
@@ -111,52 +107,14 @@ class Repository extends Model {
     );
   }
 
-  async validateReferences(transaction) {
+  async validateReferences(t) {
     const Activity = this.sequelize.model('Activity');
     const ContentElement = this.sequelize.model('ContentElement');
     // Fetch all repo entities with references.
-    const [activities, elements] = await this.getEntitiesWithRefs(transaction);
-    // Extract target entity ids from relationship mappings.
-    const getTargetIds = (items) => uniq(items.map((it) => it.target.id));
-    const activityRelationships = normalizeCollectionReferences(activities);
-    const contentElementRelationships = normalizeCollectionReferences(elements);
-    // Fetch referenced activities and elements.
-    const referencedActivities = await Activity.findAll({
-      where: { id: getTargetIds(activityRelationships) },
-      attributes: ['id'],
-      transaction,
-    });
-    const referencedElements = await ContentElement.findAll({
-      where: { id: getTargetIds(contentElementRelationships) },
-      attributes: ['id'],
-      transaction,
-    });
-    // Check if all elements referenced within mappings exist.
-    const detectMissingReferences = (relationships, items) => {
-      const notExists = (r) => !items.find((it) => r.target.id === it.id);
-      return relationships.filter(notExists);
-    };
-    const faultyActivityRelationships = detectMissingReferences(
-      activityRelationships,
-      referencedActivities,
-    );
-    const faultyElementRelationships = detectMissingReferences(
-      contentElementRelationships,
-      referencedElements,
-    );
-    // Attach outline item to faulty element relationships to be able to
-    // create a link to the faulty element.
-    await Promise.each(faultyElementRelationships, async (relationship) => {
-      const activity = await Activity.findByPk(relationship.src.activityId);
-      relationship.src = {
-        ...relationship.src.toJSON(),
-        outlineActivity: await activity.getFirstOutlineItem(),
-      };
-      return relationship;
-    });
+    const [activities, elements] = await this.getEntitiesWithRefs(t);
     return {
-      activities: faultyActivityRelationships,
-      elements: faultyElementRelationships,
+      activities: await Activity.detectMissingReferences(activities, t),
+      elements: await ContentElement.detectMissingReferences(elements, t),
     };
   }
 

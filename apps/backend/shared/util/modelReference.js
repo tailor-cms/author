@@ -1,6 +1,7 @@
 import cloneDeep from 'lodash/cloneDeep.js';
 import isArray from 'lodash/isArray.js';
 import isNumber from 'lodash/isNumber.js';
+import uniq from 'lodash/uniq.js';
 
 /**
  * Returns a reference object without the reference of the given type and id.
@@ -75,4 +76,24 @@ export const normalizeCollectionReferences = (items) => {
       })),
     );
   }, []);
+};
+
+/**
+ * @param {Activity|ContentElement} Entity
+ * @param {Activity[]|ContentElement[]} items
+ * @param {Sequelize.Transaction} transaction
+ * @returns {Promise.<object[]>} - Array of src, target and referenceName
+ * mappings
+ */
+export const detectMissingReferences = async (Entity, items, transaction) => {
+  const references = normalizeCollectionReferences(items);
+  const referencedEntities = await Entity.findAll({
+    where: { id: uniq(references.map((it) => it.target.id)) },
+    attributes: ['id'],
+    transaction,
+  });
+  // Filter out references where the target entity does not exist in the db
+  const notExists = (r) =>
+    !referencedEntities.find((it) => it.id === r.target.id);
+  return references.filter(notExists);
 };

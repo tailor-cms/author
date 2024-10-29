@@ -1,3 +1,7 @@
+import {
+  detectMissingReferences,
+  removeReference,
+} from '../shared/util/modelReference.js';
 import { Model, Op } from 'sequelize';
 import { schema, workflow } from 'tailor-config-shared';
 import calculatePosition from '../shared/util/calculatePosition.js';
@@ -7,9 +11,13 @@ import isEmpty from 'lodash/isEmpty.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import { removeReference } from '../shared/util/modelReference.js';
 
-const { getSiblingTypes, isOutlineActivity, isTrackedInWorkflow } = schema;
+const {
+  getRepositoryRelationships,
+  getSiblingTypes,
+  isOutlineActivity,
+  isTrackedInWorkflow,
+} = schema;
 const { getDefaultActivityStatus } = workflow;
 
 class Activity extends Model {
@@ -221,6 +229,10 @@ class Activity extends Model {
       if (refs[type]) refs[type] = refs[type].map((it) => mappings[it]);
     });
     return this.update({ refs }, { transaction });
+  }
+
+  static detectMissingReferences(activities, transaction) {
+    return detectMissingReferences(Activity, activities, transaction);
   }
 
   removeReference(type, id, transaction) {
