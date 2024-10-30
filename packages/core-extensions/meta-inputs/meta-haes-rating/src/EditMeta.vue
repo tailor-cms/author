@@ -50,7 +50,7 @@
       color="transparent"
       height="350"
     >
-      <RadarChart :dark="dark" :data="chartData" />
+      <RadarChart :dark="dark" :data="chartData" :min="0" :max="4" />
     </VSheet>
   </div>
 </template>
