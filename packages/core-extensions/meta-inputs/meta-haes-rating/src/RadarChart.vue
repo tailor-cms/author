@@ -10,12 +10,18 @@ import {
   LineElement,
   PointElement,
   RadialLinearScale,
-  Tooltip,
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { computed } from 'vue';
 import { Radar } from 'vue-chartjs';
 
-ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip);
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  ChartDataLabels,
+);
 
 const props = defineProps<{
   dark: boolean;
@@ -33,6 +39,17 @@ const linesColor = computed(() =>
 
 const chartOptions = computed(() => ({
   responsive: true,
+  plugins: {
+    datalabels: {
+      color: '#fff',
+      backgroundColor: function (context) {
+        return context.dataset.borderColor;
+      },
+      font: { weight: 'bold', size: 10 },
+      borderRadius: 25,
+      formatter: (value: number) => value.toFixed(1),
+    },
+  },
   scales: {
     r: {
       pointLabels: {
@@ -43,7 +60,7 @@ const chartOptions = computed(() => ({
       angleLines: { color: linesColor.value },
       ticks: {
         count: 5,
-        backdropColor: 'rgba(0, 0, 0, 0)',
+        backdropColor: 'transparent',
         color: props.dark ? '#fff' : '#000',
         font: { size: 16 },
       },

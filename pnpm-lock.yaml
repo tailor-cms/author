@@ -879,6 +879,9 @@ importers:
       chart.js:
         specifier: ^4.4.6
         version: 4.4.6
+      chartjs-plugin-datalabels:
+        specifier: ^2.2.0
+        version: 2.2.0(chart.js@4.4.6)
       vue:
         specifier: ^3.3.4
         version: 3.5.12(typescript@5.5.4)
@@ -4744,6 +4747,11 @@ packages:
   chart.js@4.4.6:
     resolution: {integrity: sha512-8Y406zevUPbbIBA/HRk33khEmQPk5+cxeflWE/2rx1NJsjVWMPw/9mSP9rxHP5eqi6LNoPBVMfZHxbwLSgldYA==}
     engines: {pnpm: '>=8'}
+
+  chartjs-plugin-datalabels@2.2.0:
+    resolution: {integrity: sha512-14ZU30lH7n89oq+A4bWaJPnAG8a7ZTk7dKf48YAzMvJjQtjrgg5Dpk9f+LbjCF6bpx3RAGTeL13IXpKQYyRvlw==}
+    peerDependencies:
+      chart.js: '>=3.0.0'
 
   cheerio-select@2.1.0:
     resolution: {integrity: sha512-9v9kG0LvzrlcungtnJtpGNxY+fzECQKhK4EGJX2vByejiMX84MFNQw4UxPJl3bFbTMw+Dfs37XaIkCwTZfLh4g==}
@@ -15898,6 +15906,10 @@ snapshots:
   chart.js@4.4.6:
     dependencies:
       '@kurkle/color': 0.3.2
+
+  chartjs-plugin-datalabels@2.2.0(chart.js@4.4.6):
+    dependencies:
+      chart.js: 4.4.6
 
   cheerio-select@2.1.0:
     dependencies:
