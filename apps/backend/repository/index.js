@@ -27,7 +27,7 @@ const UserRole = RoleConfig.user;
 
 router.post(
   '/import',
-  authorize([UserRole.USER]),
+  authorize(UserRole.USER),
   upload.single('archive'),
   ctrl.import,
 );
@@ -37,7 +37,7 @@ router.param('repositoryId', getRepository).use('/:repositoryId', hasAccess);
 router
   .route('/')
   .get(processQuery({ limit: 100 }), ctrl.index)
-  .post(authorize([UserRole.USER]), ctrl.create);
+  .post(authorize(UserRole.USER), ctrl.create);
 
 router
   .route('/:repositoryId')
