@@ -44,6 +44,13 @@ const PAGE = {
   },
   color: '#08A9AD',
   contentContainers: [ACTIVITY_TYPE.SECTION],
+  meta: [
+    {
+      key: 'haesRating',
+      type: 'HAES_RATING',
+      label: 'HE@S rating',
+    },
+  ],
 };
 
 const SECTION_CONTAINER = {

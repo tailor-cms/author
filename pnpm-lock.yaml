@@ -876,6 +876,9 @@ importers:
 
   packages/core-extensions/meta-inputs/meta-haes-rating:
     dependencies:
+      chart.js:
+        specifier: ^4.4.6
+        version: 4.4.6
       vue:
         specifier: ^3.3.4
         version: 3.5.12(typescript@5.5.4)
