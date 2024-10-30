@@ -9,6 +9,7 @@
           class="ml-1 flex-grow-0"
           @search="(val) => (search = val)"
         />
+        <BrokenReferencesAlert />
         <template v-if="!search">
           <Draggable
             v-bind="{ handle: '.activity' }"
@@ -63,6 +64,7 @@ import find from 'lodash/find';
 import map from 'lodash/map';
 import { storeToRefs } from 'pinia';
 
+import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';

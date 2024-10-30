@@ -107,13 +107,23 @@ class Repository extends Model {
     );
   }
 
-  /**
-   * Maps references for cloned activities and content elements.
-   * @param {Object} mappings Dict where keys represent old and values new ids.
-   * @param {SequelizeTransaction} [transaction]
-   * @returns {Promise.<Object>} Object with mapped activities and elements.
-   */
-  async mapClonedReferences(mappings, transaction) {
+  async validateReferences(transaction) {
+    const [activities, elements] = await this.getEntitiesWithRefs(transaction);
+    const Activity = this.sequelize.model('Activity');
+    const ContentElement = this.sequelize.model('ContentElement');
+    return {
+      activities: await Activity.detectMissingReferences(
+        activities,
+        transaction,
+      ),
+      elements: await ContentElement.detectMissingReferences(
+        elements,
+        transaction,
+      ),
+    };
+  }
+
+  async getEntitiesWithRefs(transaction) {
     const Activity = this.sequelize.model('Activity');
     const ContentElement = this.sequelize.model('ContentElement');
     const opts = { where: { repositoryId: this.id }, transaction };
@@ -124,6 +134,18 @@ class Repository extends Model {
       ),
       ContentElement.scope('withReferences').findAll(opts),
     ]);
+    return [activities, elements];
+  }
+
+  /**
+   * Maps references for cloned activities and content elements.
+   * @param {Object} mappings Dict where keys represent old and values new ids.
+   * @param {SequelizeTransaction} [transaction]
+   * @returns {Promise.<Object>} Object with mapped activities and elements.
+   */
+  async mapClonedReferences(mappings, transaction) {
+    const [activities, elements] = await this.getEntitiesWithRefs(transaction);
+    const relationships = getRepositoryRelationships(this.schema);
     return Promise.join(
       Promise.map(activities, (it) => {
         return it.mapClonedReferences(

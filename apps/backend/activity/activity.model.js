@@ -1,3 +1,7 @@
+import {
+  detectMissingReferences,
+  removeReference,
+} from '../shared/util/modelReference.js';
 import { Model, Op } from 'sequelize';
 import { schema, workflow } from 'tailor-config-shared';
 import calculatePosition from '../shared/util/calculatePosition.js';
@@ -222,6 +226,14 @@ class Activity extends Model {
     return this.update({ refs }, { transaction });
   }
 
+  static detectMissingReferences(activities, transaction) {
+    return detectMissingReferences(Activity, activities, transaction);
+  }
+
+  removeReference(type, id) {
+    this.refs = removeReference(this.refs, type, id);
+  }
+
   siblings({ filter = {}, transaction }) {
     const { parentId, repositoryId } = this;
     const where = { ...filter, parentId, repositoryId };
@@ -235,6 +247,20 @@ class Activity extends Model {
       if (parent.deletedAt) return Promise.resolve([]);
       return parent.predecessors().then((acc) => acc.concat(parent));
     });
+  }
+
+  /**
+   * Iterates through the parent chain until it finds the first outline
+   * Activity. Outline Activities are the ones that are defined in the schema
+   * as the structure of the repository.
+   * @param {Activity} item
+   * @returns {Promise.<Activity>}
+   */
+  async getFirstOutlineItem(item = this) {
+    if (!item.parentId) return item;
+    if (isOutlineActivity(item.type)) return item;
+    const parent = await item.getParent({ paranoid: false });
+    return this.getFirstOutlineItem(parent);
   }
 
   descendants(options = {}, nodes = [], leaves = []) {

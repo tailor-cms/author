@@ -12,6 +12,7 @@ import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import publishingService from '../shared/publishing/publishing.service.js';
+import { removeInvalidReferences } from '../shared/util/modelReference.js';
 import { repository as role } from 'tailor-config-shared/src/role.js';
 import sample from 'lodash/sample.js';
 import { schema } from 'tailor-config-shared';
@@ -27,6 +28,8 @@ const tmp = Promise.promisifyAll((await import('tmp')).default, {
 });
 
 const {
+  Activity,
+  ContentElement,
   Repository,
   RepositoryTag,
   RepositoryUser,
@@ -296,6 +299,18 @@ function importRepository({ body, file, user }, res) {
     });
 }
 
+function validateReferences(req, res) {
+  const { repository } = req;
+  return repository.validateReferences().then((data) => res.json({ data }));
+}
+
+async function cleanupInvalidReferences(req, res) {
+  const { body, repository } = req;
+  await removeInvalidReferences(Activity, repository.id, body.activities);
+  await removeInvalidReferences(ContentElement, repository.id, body.elements);
+  return res.status(NO_CONTENT).send();
+}
+
 export default {
   index,
   create,
@@ -314,4 +329,6 @@ export default {
   publishRepoInfo,
   addTag,
   removeTag,
+  validateReferences,
+  cleanupInvalidReferences,
 };

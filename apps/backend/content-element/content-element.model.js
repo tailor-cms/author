@@ -1,3 +1,7 @@
+import {
+  detectMissingReferences,
+  removeReference,
+} from '../shared/util/modelReference.js';
 import { Model, Op } from 'sequelize';
 import { createLogger } from '../shared/logger.js';
 import calculatePosition from '../shared/util/calculatePosition.js';
@@ -7,6 +11,7 @@ import hooks from './hooks.js';
 import isNumber from 'lodash/isNumber.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
+import Promise from 'bluebird';
 import zipObject from 'lodash/zipObject.js';
 
 const logger = createLogger('content-element:model');
@@ -153,6 +158,27 @@ class ContentElement extends Model {
     const idMap = zipObject(map(src, 'id'), map(newElements, 'id'));
     const uidMap = zipObject(map(src, 'uid'), map(newElements, 'uid'));
     return { idMap, uidMap };
+  }
+
+  static async detectMissingReferences(elements, transaction) {
+    const missingReferences = await detectMissingReferences(
+      ContentElement,
+      elements,
+      transaction,
+    );
+    const Activity = this.sequelize.model('Activity');
+    return Promise.each(missingReferences, async (relationship) => {
+      const activity = await Activity.findByPk(relationship.src.activityId);
+      relationship.src = {
+        ...relationship.src.toJSON(),
+        outlineActivity: await activity.getFirstOutlineItem(),
+      };
+      return relationship;
+    });
+  }
+
+  removeReference(type, id) {
+    this.refs = removeReference(this.refs, type, id);
   }
 
   /**
