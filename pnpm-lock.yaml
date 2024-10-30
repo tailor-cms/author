@@ -673,6 +673,9 @@ importers:
       '@tailor-cms/tme-file':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-file
+      '@tailor-cms/tme-haes-rating':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-haes-rating
       '@tailor-cms/tme-html':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-html
@@ -879,6 +882,9 @@ importers:
       vue-chartjs:
         specifier: ^5.3.1
         version: 5.3.1(chart.js@4.4.6)(vue@3.5.12(typescript@5.5.4))
+      vuetify:
+        specifier: ^3.7.0
+        version: 3.7.2(typescript@5.5.4)(vue@3.5.12(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-html:
     dependencies:
