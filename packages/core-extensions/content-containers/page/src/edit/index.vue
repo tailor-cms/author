@@ -213,6 +213,7 @@ const getRefElements = (refs: Record<string, Relationship[]>) => {
     (acc: any, it, key: string) => {
       const elements = it.map(({ uid }) => props.elements[uid]);
       acc[key] = elements.filter(Boolean) as ContentElement[];
+      return acc;
     },
     {} as Record<string, ContentElement[]>,
   );
