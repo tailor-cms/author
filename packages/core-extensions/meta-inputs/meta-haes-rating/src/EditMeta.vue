@@ -1,5 +1,5 @@
 <template>
-  <div class="ma-1">
+  <div class="mt-1 mb-6 mx-1">
     <div class="d-flex align-center justify-space-between">
       <div class="text-caption mb-2">{{ meta.label }}</div>
       <VBtnToggle
@@ -25,11 +25,11 @@
         />
       </VBtnToggle>
     </div>
-    <div v-if="mode === RatingMode.Slider">
+    <div v-if="mode === RatingMode.Slider" class="py-3">
       <div
         v-for="(label, i) in labels"
         :key="label"
-        class="d-flex align-center"
+        class="d-flex align-center my-2"
       >
         <div class="label text-caption">{{ label }}</div>
         <VSlider
