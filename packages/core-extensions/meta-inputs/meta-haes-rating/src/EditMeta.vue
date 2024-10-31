@@ -5,6 +5,7 @@
       <VBtnToggle
         v-model="mode"
         :base-color="dark ? 'primary-lighten-4' : 'primary-darken-4'"
+        :value="RatingMode.Slider"
         density="compact"
         rounded="lg"
         variant="text"
@@ -50,7 +51,7 @@
       color="transparent"
       height="350"
     >
-      <RadarChart :dark="dark" :data="chartData" :min="0" :max="4" />
+      <RadarChart :dark="dark" :data="chartData" :max="4" :min="0" />
     </VSheet>
   </div>
 </template>
