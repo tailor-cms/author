@@ -1,50 +1,29 @@
 <template>
   <div class="mt-1 mb-6 mx-1">
-    <div class="d-flex align-center justify-space-between">
-      <div class="text-caption mb-2">{{ meta.label }}</div>
-      <VBtnToggle
-        v-model="mode"
-        :base-color="dark ? 'primary-lighten-4' : 'primary-darken-4'"
-        :value="RatingMode.Slider"
-        density="compact"
-        rounded="lg"
-        variant="text"
-        border
-      >
-        <VBtn
-          :value="RatingMode.Slider"
-          class="px-4"
-          icon="mdi-tune"
-          size="small"
-        />
-        <VBtn
-          :value="RatingMode.Chart"
-          class="px-4"
-          icon="mdi-radar"
-          size="small"
-        />
-      </VBtnToggle>
+    <div class="d-flex align-center justify-space-between mb-2">
+      <div class="text-caption">{{ meta.label }}</div>
+      <RatingSliders
+        :dark="dark"
+        :value="meta.value"
+        @save="emit('update', meta.key, $event)"
+      />
     </div>
-    <div v-if="mode === RatingMode.Slider" class="py-3">
-      <div
-        v-for="(label, i) in labels"
-        :key="label"
-        class="d-flex align-center my-2"
-      >
-        <div class="label text-caption">{{ label }}</div>
-        <VSlider
-          v-model="input[i]"
-          :color="dark ? 'white' : 'primary'"
-          max="4"
-          min="0"
-          step="0.1"
-          hide-details
-          thumb-label
-          @end="onChange"
-        />
-        <div class="text-subtitle-2 ml-2 slider-value">{{ input[i] }}</div>
+    <VCard
+      v-if="isEmpty"
+      :color="dark ? 'primary-lighten-4' : 'primary-darken-2'"
+      class="d-flex flex-wrap justify-center pa-8"
+      variant="tonal"
+    >
+      <VAvatar size="64" variant="tonal">
+        <VIcon icon="mdi-chart-timeline-variant-shimmer" size="x-large" />
+      </VAvatar>
+      <div class="my-4 w-100 text-center">
+        <div class="text-body-1">Rating Not Available</div>
+        <div class="text-body-2">
+          To edit the rating, click on the edit button above.
+        </div>
       </div>
-    </div>
+    </VCard>
     <VSheet
       v-else
       class="d-flex justify-center"
@@ -57,17 +36,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 import RadarChart from './RadarChart.vue';
-
-enum RatingMode {
-  Slider = 'SLIDER',
-  Chart = 'CHART',
-}
+import RatingSliders from './RatingSliders.vue';
 
 interface Props {
-  meta?: any;
+  meta: any;
   dark?: boolean;
 }
 
@@ -79,32 +54,24 @@ const labels = [
   'Real-World Outcomes',
 ];
 
-const mode = ref(RatingMode.Slider);
-
 const props = withDefaults(defineProps<Props>(), {
-  meta: () => ({ value: null }),
   dark: false,
 });
 const emit = defineEmits(['update']);
 
-const input = ref([...(props.meta.value || new Array(5).fill(2.5))]);
+const isEmpty = computed(() => !props.meta.value);
 
 const chartData = computed(() => ({
   labels: labels.map((it) => it.split(' ')),
   datasets: [
     {
-      data: input.value,
+      data: props.meta.value,
       backgroundColor: 'rgba(233, 30, 99, 0.2)',
       borderColor: 'rgba(233, 30, 99, 0.7)',
       borderWidth: 2,
     },
   ],
 }));
-
-const onChange = () => {
-  if (input.value === props.meta.value) return;
-  emit('update', props.meta.key, input.value);
-};
 </script>
 
 <style lang="scss" scoped>
