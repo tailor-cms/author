@@ -673,6 +673,9 @@ importers:
       '@tailor-cms/tme-file':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-file
+      '@tailor-cms/tme-haes-rating':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/meta-inputs/meta-haes-rating
       '@tailor-cms/tme-html':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-html
@@ -870,6 +873,24 @@ importers:
       '@types/lodash':
         specifier: ^4.17.10
         version: 4.17.10
+
+  packages/core-extensions/meta-inputs/meta-haes-rating:
+    dependencies:
+      chart.js:
+        specifier: ^4.4.6
+        version: 4.4.6
+      chartjs-plugin-datalabels:
+        specifier: ^2.2.0
+        version: 2.2.0(chart.js@4.4.6)
+      vue:
+        specifier: ^3.3.4
+        version: 3.5.12(typescript@5.5.4)
+      vue-chartjs:
+        specifier: ^5.3.1
+        version: 5.3.1(chart.js@4.4.6)(vue@3.5.12(typescript@5.5.4))
+      vuetify:
+        specifier: ^3.7.0
+        version: 3.7.2(typescript@5.5.4)(vue@3.5.12(typescript@5.5.4))
 
   packages/core-extensions/meta-inputs/meta-html:
     dependencies:
@@ -2202,6 +2223,9 @@ packages:
 
   '@keyv/serialize@1.0.1':
     resolution: {integrity: sha512-kKXeynfORDGPUEEl2PvTExM2zs+IldC6ZD8jPcfvI351MDNtfMlw9V9s4XZXuJNDK2qR5gbEKxRyoYx3quHUVQ==}
+
+  '@kurkle/color@0.3.2':
+    resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
 
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
@@ -4719,6 +4743,15 @@ packages:
 
   chardet@0.7.0:
     resolution: {integrity: sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==}
+
+  chart.js@4.4.6:
+    resolution: {integrity: sha512-8Y406zevUPbbIBA/HRk33khEmQPk5+cxeflWE/2rx1NJsjVWMPw/9mSP9rxHP5eqi6LNoPBVMfZHxbwLSgldYA==}
+    engines: {pnpm: '>=8'}
+
+  chartjs-plugin-datalabels@2.2.0:
+    resolution: {integrity: sha512-14ZU30lH7n89oq+A4bWaJPnAG8a7ZTk7dKf48YAzMvJjQtjrgg5Dpk9f+LbjCF6bpx3RAGTeL13IXpKQYyRvlw==}
+    peerDependencies:
+      chart.js: '>=3.0.0'
 
   cheerio-select@2.1.0:
     resolution: {integrity: sha512-9v9kG0LvzrlcungtnJtpGNxY+fzECQKhK4EGJX2vByejiMX84MFNQw4UxPJl3bFbTMw+Dfs37XaIkCwTZfLh4g==}
@@ -10117,6 +10150,12 @@ packages:
   vue-bundle-renderer@2.1.0:
     resolution: {integrity: sha512-uZ+5ZJdZ/b43gMblWtcpikY6spJd0nERaM/1RtgioXNfWFbjKlUwrS8HlrddN6T2xtptmOouWclxLUkpgcVX3Q==}
 
+  vue-chartjs@5.3.1:
+    resolution: {integrity: sha512-rZjqcHBxKiHrBl0CIvcOlVEBwRhpWAVf6rDU3vUfa7HuSRmGtCslc0Oc8m16oAVuk0erzc1FCtH1VCriHsrz+A==}
+    peerDependencies:
+      chart.js: ^4.1.1
+      vue: ^3.0.0-0 || ^2.7.0
+
   vue-demi@0.14.10:
     resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
     engines: {node: '>=12'}
@@ -12103,6 +12142,8 @@ snapshots:
   '@keyv/serialize@1.0.1':
     dependencies:
       buffer: 6.0.3
+
+  '@kurkle/color@0.3.2': {}
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
@@ -15861,6 +15902,14 @@ snapshots:
   character-entities-legacy@3.0.0: {}
 
   chardet@0.7.0: {}
+
+  chart.js@4.4.6:
+    dependencies:
+      '@kurkle/color': 0.3.2
+
+  chartjs-plugin-datalabels@2.2.0(chart.js@4.4.6):
+    dependencies:
+      chart.js: 4.4.6
 
   cheerio-select@2.1.0:
     dependencies:
@@ -22101,6 +22150,11 @@ snapshots:
   vue-bundle-renderer@2.1.0:
     dependencies:
       ufo: 1.5.4
+
+  vue-chartjs@5.3.1(chart.js@4.4.6)(vue@3.5.12(typescript@5.5.4)):
+    dependencies:
+      chart.js: 4.4.6
+      vue: 3.5.12(typescript@5.5.4)
 
   vue-demi@0.14.10(vue@3.5.12(typescript@5.5.4)):
     dependencies:

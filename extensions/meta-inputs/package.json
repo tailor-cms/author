@@ -19,6 +19,7 @@
     "@tailor-cms/tme-combobox": "workspace:^",
     "@tailor-cms/tme-datetime": "workspace:^",
     "@tailor-cms/tme-file": "workspace:^",
+    "@tailor-cms/tme-haes-rating": "workspace:^",
     "@tailor-cms/tme-html": "workspace:^",
     "@tailor-cms/tme-radio-group": "workspace:^",
     "@tailor-cms/tme-select": "workspace:^",
