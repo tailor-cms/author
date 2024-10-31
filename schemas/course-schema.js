@@ -132,6 +132,12 @@ export const SCHEMA = {
       hideOnCreate: true,
       showPreview: true,
     },
+    {
+      key: 'haesRating',
+      type: 'HAES_RATING',
+      label: 'HE@S rating',
+      hideOnCreate: true,
+    },
   ],
   structure: [MODULE, PAGE],
   contentContainers: [SECTION_CONTAINER],

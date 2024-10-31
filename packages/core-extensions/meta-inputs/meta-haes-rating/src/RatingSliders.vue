@@ -13,13 +13,13 @@
     <VCard color="primary-lighten-5">
       <VCardText class="d-flex flex-column gr-1">
         <div
-          v-for="(label, i) in labels"
+          v-for="{ key, label } in haesParams"
           :key="label"
           class="d-flex align-center"
         >
           <div class="label text-caption font-weight-bold">{{ label }}</div>
           <VSlider
-            v-model="input[i]"
+            v-model="input[key]"
             color="primary"
             max="4"
             min="0"
@@ -27,7 +27,7 @@
             hide-details
           />
           <div class="text-subtitle-2 ml-2 slider-value">
-            {{ input[i] }}
+            {{ input[key].toFixed(1) }}
           </div>
         </div>
       </VCardText>
@@ -58,38 +58,32 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
+import { haesParams } from './utils';
+
 interface Props {
   dark?: boolean;
   value?: any;
 }
 
-const labels = [
-  'Learner Centered Content',
-  'Active Learning',
-  'Unbounded Inclusion',
-  'Community Connections',
-  'Real-World Outcomes',
-];
-
 const isEditing = ref(false);
 
 const props = withDefaults(defineProps<Props>(), {
-  value: () => new Array(5).fill(2.5),
+  value: () => haesParams.reduce((acc, { key }) => ({ ...acc, [key]: 0 }), {}),
   dark: false,
 });
 const emit = defineEmits(['save', 'cancel']);
 
-const input = ref([...props.value]);
+const input = ref({ ...props.value });
 
 const save = () => {
   isEditing.value = false;
   if (input.value === props.value) return;
-  emit('save', [...input.value]);
+  emit('save', { ...input.value });
 };
 
 const cancel = () => {
   isEditing.value = false;
-  input.value = [...props.value];
+  input.value = { ...props.value };
 };
 </script>
 

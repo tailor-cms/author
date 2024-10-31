@@ -38,6 +38,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 
+import { haesParams } from './utils';
 import RadarChart from './RadarChart.vue';
 import RatingSliders from './RatingSliders.vue';
 
@@ -45,14 +46,6 @@ interface Props {
   meta: any;
   dark?: boolean;
 }
-
-const labels = [
-  'Learner Centered Content',
-  'Active Learning',
-  'Unbounded Inclusion',
-  'Community Connections',
-  'Real-World Outcomes',
-];
 
 const props = withDefaults(defineProps<Props>(), {
   dark: false,
@@ -62,10 +55,10 @@ const emit = defineEmits(['update']);
 const isEmpty = computed(() => !props.meta.value);
 
 const chartData = computed(() => ({
-  labels: labels.map((it) => it.split(' ')),
+  labels: haesParams.map((it) => it.label.split(' ')),
   datasets: [
     {
-      data: props.meta.value,
+      data: haesParams.map(({ key }) => props.meta.value[key]),
       backgroundColor: 'rgba(233, 30, 99, 0.2)',
       borderColor: 'rgba(233, 30, 99, 0.7)',
       borderWidth: 2,
