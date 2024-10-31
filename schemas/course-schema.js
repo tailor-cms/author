@@ -111,11 +111,12 @@ export const SCHEMA = {
   id: 'COURSE_SCHEMA',
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Course',
+  description: 'A classic course structure featuring modules and pages.',
   meta: [
     {
       key: 'posterImage',
       type: 'FILE',
-      label: 'Poster image',
+      label: 'Poster Image',
       placeholder: 'Click to upload a poster image',
       icon: 'mdi-image',
       validate: {

@@ -76,7 +76,15 @@
               label="Type"
               placeholder="Select type..."
               variant="outlined"
-            />
+            >
+              <template #item="{ item, props: itemProps }">
+                <VListItem
+                  v-bind="itemProps"
+                  :subtitle="item.raw.description"
+                  class="py-4"
+                />
+              </template>
+            </VSelect>
           </VWindowItem>
           <VWindowItem :value="IMPORT_TAB" class="pt-1">
             <VFileInput
@@ -293,6 +301,10 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+:deep .v-list-item-subtitle {
+  margin: 0.25rem 0 0;
+}
+
 .v-alert :deep(.mdi-close) {
   color: #eee;
 }
