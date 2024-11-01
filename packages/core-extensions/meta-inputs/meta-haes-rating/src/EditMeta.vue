@@ -53,14 +53,13 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['update']);
 
 const isEmpty = computed(() => !props.meta.value);
-
 const chartData = computed(() => ({
   labels: haesParams.map((it) => it.label.split(' ')),
   datasets: [
     {
       data: haesParams.map(({ key }) => props.meta.value[key]),
-      backgroundColor: 'rgba(233, 30, 99, 0.2)',
-      borderColor: 'rgba(233, 30, 99, 0.7)',
+      backgroundColor: props.dark ? '#ECEFF140' : '#37474F33',
+      borderColor: props.dark ? '#ECEFF1BF' : '#263238BF',
       borderWidth: 2,
     },
   ],
@@ -68,6 +67,10 @@ const chartData = computed(() => ({
 </script>
 
 <style lang="scss" scoped>
+.v-sheet {
+  letter-spacing: 0 !important;
+}
+
 .label {
   width: 10rem;
   opacity: 0.7;
