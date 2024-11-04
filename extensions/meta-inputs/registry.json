@@ -38,5 +38,9 @@
   {
     "name": "@tailor-cms/tme-datetime",
     "clientPackage": "@tailor-cms/tme-datetime"
+  },
+  {
+    "name": "@tailor-cms/tme-haes-rating",
+    "clientPackage": "@tailor-cms/tme-haes-rating"
   }
 ]

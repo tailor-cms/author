@@ -55,6 +55,8 @@ const RESPONSE = {
 
 export const SCHEMA = {
   id: 'Q&A_SCHEMA',
+  description:
+    'A structured Q&A repository with organized categories and questions.',
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Q&A',
   structure: [CATEGORY, QUESTION],
