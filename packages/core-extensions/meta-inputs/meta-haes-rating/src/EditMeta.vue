@@ -58,8 +58,8 @@ const chartData = computed(() => ({
   datasets: [
     {
       data: haesParams.map(({ key }) => props.meta.value[key]),
-      backgroundColor: props.dark ? '#ECEFF140' : '#37474F33',
-      borderColor: props.dark ? '#ECEFF1BF' : '#263238BF',
+      backgroundColor: props.dark ? '#ECEFF140' : '#455A6433',
+      borderColor: props.dark ? '#ECEFF1BF' : '#455A64BF',
       borderWidth: 2,
     },
   ],
