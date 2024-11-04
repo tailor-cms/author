@@ -29,7 +29,7 @@
           variant="outlined"
           filter
         >
-          {{ chip }}
+          {{ humanize(chip) }}
         </VChip>
       </VChipGroup>
       <VBtn
@@ -56,7 +56,7 @@
           variant="outlined"
           filter
         >
-          {{ chip }}
+          {{ humanize(chip) }}
         </VChip>
       </VChipGroup>
       <div class="mt-5 mb-4 text-body-2 font-weight-bold">Audience:</div>
@@ -99,6 +99,7 @@
 </template>
 
 <script lang="ts" setup>
+import humanize from 'humanize-string';
 import VueTreeView from 'vue3-tree-vue';
 
 import aiAPI from '@/api/ai';
