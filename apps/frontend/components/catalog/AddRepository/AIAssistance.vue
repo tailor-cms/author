@@ -29,7 +29,7 @@
           variant="outlined"
           filter
         >
-          {{ chip }}
+          {{ humanize(chip) }}
         </VChip>
       </VChipGroup>
       <VBtn
@@ -56,7 +56,7 @@
           variant="outlined"
           filter
         >
-          {{ chip }}
+          {{ humanize(chip) }}
         </VChip>
       </VChipGroup>
       <div class="mt-5 mb-4 text-body-2 font-weight-bold">Audience:</div>
@@ -99,6 +99,7 @@
 </template>
 
 <script lang="ts" setup>
+import humanize from 'humanize-string';
 import VueTreeView from 'vue3-tree-vue';
 
 import aiAPI from '@/api/ai';
@@ -109,7 +110,7 @@ const props = defineProps<{
   description: String;
 }>();
 
-const emit = defineEmits(['structure']);
+const emit = defineEmits(['structure', 'aiAssistanceToggle']);
 
 const isAssistaceEnabled = ref(false);
 const isFetchingData = ref(false);
@@ -127,6 +128,7 @@ const outlineTree = ref<any>([]);
 const statusMessage = ref('');
 
 watch(isAssistaceEnabled, (value) => {
+  emit('aiAssistanceToggle', value);
   if (!value) {
     isFetchingData.value = false;
     topicTagOptions.value = [];

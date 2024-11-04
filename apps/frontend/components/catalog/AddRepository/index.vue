@@ -128,6 +128,7 @@
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
+            @ai-assistance-toggle="isAssistaceEnabled = $event"
             @structure="aiSuggestedOutline = $event"
           />
         </div>
@@ -141,6 +142,7 @@
             Cancel
           </VBtn>
           <VBtn
+            :disabled="isAssistaceEnabled && !aiSuggestedOutline?.length"
             :loading="isSubmitting"
             class="ml-2"
             color="primary-darken-2"
@@ -159,6 +161,7 @@
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import pick from 'lodash/pick';
 import pMinDelay from 'p-min-delay';
+import Promise from 'bluebird';
 import { SCHEMAS } from 'tailor-config-shared';
 import { useForm } from 'vee-validate';
 
@@ -188,6 +191,7 @@ const isVisible = ref(false);
 const selectedTab = ref(NEW_TAB);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isSubmitting = ref(false);
+const isAssistaceEnabled = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
@@ -247,13 +251,13 @@ const create = async (formData: any) => {
   createActvities(repository.id, aiSuggestedOutline.value);
 };
 
-const createActvities = (
+const createActvities = async (
   repositoryId: number,
   items: any,
   parentId = null as null | number,
 ) => {
   const outlineLevels = $schemaService.getOutlineLevels(schemaInput.value);
-  items.forEach(async (activity: any, index: number) => {
+  await Promise.each(items, async (activity: any, index: number) => {
     const type = outlineLevels.find(
       (it: any) => it.label === activity.type,
     ).type;
@@ -264,8 +268,8 @@ const createActvities = (
       data: { name: activity.name },
       position: index,
     });
-    if (item && activity.children)
-      createActvities(repositoryId, activity.children, item.id);
+    if (!item || !activity.children?.length) return;
+    return createActvities(repositoryId, activity.children, item.id);
   });
 };
 
