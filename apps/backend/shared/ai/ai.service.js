@@ -108,10 +108,13 @@ class AIService {
       I should be aware of? Present any specificators or requirements that I
       should consider in form of tags. Return response as JSON and use the
       following format:
-      ['tag1', 'tag2', 'tag3'].
+      { tags: ['tag1', 'tag2', 'tag3'] }.
       The response should not include more than 15 tags, and each tag should
       not exceed 20 characters.`;
-    return this.requestCompletion(userPrompt);
+    const response = await this.requestCompletion(userPrompt);
+    // If no tags are provided, ask once again, temp solution
+    if (!response?.tags?.length) return this.requestCompletion(userPrompt);
+    return response;
   }
 
   async getTopicStyleRecommendations(
@@ -125,9 +128,12 @@ class AIService {
       I would like to get some style / school-of-thought based recommendations
       that can further help you in the future. Return response as JSON in form
       of tags and use the following format:
-      ['tag1', 'tag2', 'tag3'].
+      { tags: ['tag1', 'tag2', 'tag3'] }.
     `;
-    return this.requestCompletion(userPrompt);
+    const response = await this.requestCompletion(userPrompt);
+    // If no tags are provided, ask once again, temp solution
+    if (!response?.tags?.length) return this.requestCompletion(userPrompt);
+    return response;
   }
 
   async suggestOutline(
