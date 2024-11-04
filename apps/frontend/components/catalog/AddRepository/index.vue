@@ -120,6 +120,7 @@
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
+            @ai-assistance-toggle="isAssistaceEnabled = $event"
             @structure="aiSuggestedOutline = $event"
           />
         </div>
@@ -133,6 +134,7 @@
             Cancel
           </VBtn>
           <VBtn
+            :disabled="isAssistaceEnabled && !aiSuggestedOutline?.length"
             :loading="isSubmitting"
             class="ml-2"
             color="primary-darken-2"
@@ -181,6 +183,7 @@ const isVisible = ref(false);
 const selectedTab = ref(NEW_TAB);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isSubmitting = ref(false);
+const isAssistaceEnabled = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 

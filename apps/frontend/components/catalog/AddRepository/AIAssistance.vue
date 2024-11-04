@@ -109,7 +109,7 @@ const props = defineProps<{
   description: String;
 }>();
 
-const emit = defineEmits(['structure']);
+const emit = defineEmits(['structure', 'aiAssistanceToggle']);
 
 const isAssistaceEnabled = ref(false);
 const isFetchingData = ref(false);
@@ -127,6 +127,7 @@ const outlineTree = ref<any>([]);
 const statusMessage = ref('');
 
 watch(isAssistaceEnabled, (value) => {
+  emit('aiAssistanceToggle', value);
   if (!value) {
     isFetchingData.value = false;
     topicTagOptions.value = [];
