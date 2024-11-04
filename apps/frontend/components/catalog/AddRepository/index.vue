@@ -248,7 +248,7 @@ const create = async (formData: any) => {
   const repository = await repositoryStore.create(formPayload);
   if (!aiSuggestedOutline.value.length) return;
   // Trigger creation without waiting for completion
-  createActvities(repository.id, aiSuggestedOutline.value);
+  await createActvities(repository.id, aiSuggestedOutline.value);
 };
 
 const createActvities = async (
