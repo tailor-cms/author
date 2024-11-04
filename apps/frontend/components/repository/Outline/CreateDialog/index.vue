@@ -72,6 +72,7 @@
 
 <script lang="ts" setup>
 import { InsertLocation } from '@tailor-cms/utils';
+import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { useForm } from 'vee-validate';
 
 import MetaInput from '@/components/common/MetaInput.vue';
@@ -143,7 +144,9 @@ const activity = ref(initActivityState(taxonomyLevels.value?.[0]?.type)) as any;
 
 const metadata = computed(() => {
   if (!activity.value.type) return null;
-  return $schemaService.getActivityMetadata(activity.value);
+  return $schemaService
+    .getActivityMetadata(activity.value)
+    .filter((it: Metadata) => !it.hideOnCreate);
 });
 
 const setMetaValue = (key: string, val: any) => {

@@ -56,6 +56,8 @@ const SECTION = {
 
 export const SCHEMA = {
   id: 'KNOWLEDGE_BASE',
+  description:
+    'A structured knowledge base with organized categories and entries.',
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Knowledge Base',
   structure: [CATEGORY, ENTRY],
