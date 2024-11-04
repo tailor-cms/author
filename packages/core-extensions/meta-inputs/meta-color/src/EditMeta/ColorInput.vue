@@ -23,18 +23,24 @@
         width="250"
         @update:model-value="color = $event"
       />
-      <VDivider />
       <VCardActions>
         <VSpacer />
         <VBtn
+          :slim="false"
           color="primary-darken-4"
+          size="small"
           variant="text"
-          small
           @click="menu = false"
         >
           Cancel
         </VBtn>
-        <VBtn color="primary-darken-2" variant="tonal" small @click="submit">
+        <VBtn
+          :slim="false"
+          color="primary-darken-3"
+          size="small"
+          variant="tonal"
+          @click="submit"
+        >
           Submit
         </VBtn>
       </VCardActions>
