@@ -8,6 +8,7 @@ export const path = 'assets';
 export const protocol = 'storage://';
 
 export const amazon = {
+  endpoint: process.env.STORAGE_ENDPOINT,
   key: process.env.STORAGE_KEY,
   secret: process.env.STORAGE_SECRET,
   region: process.env.STORAGE_REGION,

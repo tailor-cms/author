@@ -23,16 +23,33 @@ const { containerRegistry } = PluginRegistry;
 const { Op } = Sequelize;
 const { getLevelRelationships, getOutlineLevels, getSupportedContainers } =
   schema;
+
 const { FLAT_REPO_STRUCTURE } = process.env;
+const CC_ATTRS = ['id', 'uid', 'type', 'position', 'createdAt', 'updatedAt'];
 
 const logger = createLogger('publishing');
 const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 
-const CC_ATTRS = ['id', 'uid', 'type', 'position', 'createdAt', 'updatedAt'];
+const PublishEnv = {
+  DEFAULT: 'repository',
+  PREVIEW: 'preview',
+};
 
-function publishActivity(activity) {
+// NOTE: Proof of concept
+async function publishToPreviewEnv(repository) {
+  const outlineTypes = getOutlineLevels(repository.schema).map((it) => it.type);
+  const activities = await repository.getActivities({
+    where: { type: outlineTypes, deletedAt: null },
+  });
+  return Promise.each(activities, (activity) =>
+    publishActivity(activity, PublishEnv.PREVIEW),
+  );
+}
+
+function publishActivity(activity, publishEnv = PublishEnv.DEFAULT) {
   log(`[publishActivity] initiated, activity id: ${activity.id}`);
-  return getStructureData(activity).then((data) => {
+  const isDefaultEnv = publishEnv === PublishEnv.DEFAULT;
+  return getStructureData(activity, publishEnv).then((data) => {
     const { repository, predecessors, spine } = data;
     const activityStructure = find(spine.structure, { id: activity.id });
     const prevPublishedContainers = get(
@@ -46,15 +63,16 @@ function publishActivity(activity) {
       if (!exists) addToSpine(spine, it);
     });
 
-    activity.publishedAt = new Date();
+    if (isDefaultEnv) activity.publishedAt = new Date();
     addToSpine(spine, activity);
 
-    return publishContainers(activity)
+    return publishContainers(activity, publishEnv)
       .then(async (containers) => {
         await unpublishDeletedContainers(
           activity,
           prevPublishedContainers,
           containers,
+          publishEnv,
         );
         return containers;
       })
@@ -62,11 +80,16 @@ function publishActivity(activity) {
         const publishedData = find(spine.structure, { id: activity.id });
         return attachContainerSummary(publishedData, containers);
       })
-      .then(() => saveSpine(spine))
+      .then(() => saveSpine(spine, publishEnv))
       .then((savedSpine) =>
-        updateRepositoryCatalog(repository, savedSpine.publishedAt, false),
+        updateRepositoryCatalog(
+          repository,
+          savedSpine.publishedAt,
+          false,
+          publishEnv,
+        ),
       )
-      .then(() => updatePublishingStatus(repository, activity))
+      .then(() => isDefaultEnv && updatePublishingStatus(repository, activity))
       .then(() => activity.save())
       .then((activity) => {
         log(`[publishActivity] completed, activity id: ${activity.id}`);
@@ -75,19 +98,26 @@ function publishActivity(activity) {
   });
 }
 
-function getRepositoryCatalog() {
-  return storage.getFile('repository/index.json').then((buffer) => {
+function getRepositoryCatalog(publishEnv = PublishEnv.DEFAULT) {
+  const catalogPath = `${publishEnv}/index.json`;
+  return storage.getFile(catalogPath).then((buffer) => {
     if (!buffer) return [];
     return JSON.parse(buffer.toString('utf8'));
   });
 }
 
-function updateRepositoryCatalog(repository, publishedAt, updateInfo = true) {
+function updateRepositoryCatalog(
+  repository,
+  publishedAt,
+  updateInfo = true,
+  publishEnv = PublishEnv.DEFAULT,
+) {
   log(
     `[updateRepositoryCatalog] initiated, repository id: ${repository.id},
     publishedAt: ${publishedAt}`,
   );
-  return getRepositoryCatalog()
+  const catalogPath = `${publishEnv}/index.json`;
+  return getRepositoryCatalog(publishEnv)
     .then((catalog) => {
       const existing = find(catalog, { id: repository.id });
       if (!existing && repository.deletedAt) return;
@@ -106,34 +136,47 @@ function updateRepositoryCatalog(repository, publishedAt, updateInfo = true) {
         catalog.push(repositoryData);
       }
       const data = Buffer.from(JSON.stringify(catalog), 'utf8');
-      return storage.saveFile('repository/index.json', data);
+      return storage.saveFile(catalogPath, data);
     })
     .then(() => log('[updateRepositoryCatalog] completed'));
 }
 
-async function publishRepositoryDetails(repository) {
+async function publishRepositoryDetails(
+  repository,
+  publishEnv = PublishEnv.DEFAULT,
+) {
   log(`[publishRepositoryDetails] initiated, repository id: ${repository.id}`);
-  const spine = await getPublishedStructure(repository);
+  const spine = await getPublishedStructure(repository, publishEnv);
   Object.assign(spine, getRepositoryAttrs(repository));
-  await updatePublishingStatus(repository);
-  const savedSpine = await saveSpine(spine);
-  await updateRepositoryCatalog(repository, savedSpine.publishedAt);
+  const isDefaultEnv = publishEnv === PublishEnv.DEFAULT;
+  if (isDefaultEnv) await updatePublishingStatus(repository, publishEnv);
+  const savedSpine = await saveSpine(spine, publishEnv);
+  await updateRepositoryCatalog(
+    repository,
+    savedSpine.publishedAt,
+    true,
+    publishEnv,
+  );
   log('[publishRepositoryDetails] completed');
   return repository;
 }
 
-function unpublishActivity(repository, activity) {
+function unpublishActivity(
+  repository,
+  activity,
+  publishEnv = PublishEnv.DEFAULT,
+) {
   log(
     `[unpublishActivity] initiated, repository id: ${repository.id},
     activity id: ${activity.id}`,
   );
-  return getPublishedStructure(repository).then((spine) => {
+  const isDefaultEnv = publishEnv === PublishEnv.DEFAULT;
+  return getPublishedStructure(repository, publishEnv).then((spine) => {
     const spineActivity = find(spine.structure, { id: activity.id });
     if (!spineActivity) return;
-
     const deleted = getSpineChildren(spine, activity).concat(spineActivity);
     return Promise.map(deleted, (it) => {
-      const baseUrl = getBaseUrl(repository.id, it.id);
+      const baseUrl = getBaseUrl(repository.id, it.id, publishEnv);
       const filePaths = getContainersFilePaths(baseUrl, it.contentContainers);
       log(
         `[unpublishActivity] deleting containers, container ids: ${map(
@@ -148,12 +191,12 @@ function unpublishActivity(repository, activity) {
           spine.structure,
           ({ id }) => !find(deleted, { id }),
         );
-        return saveSpine(spine);
+        return saveSpine(spine, publishEnv);
       })
       .then((savedSpine) =>
-        updateRepositoryCatalog(repository, savedSpine.publishedAt),
+        updateRepositoryCatalog(repository, savedSpine.publishedAt, publishEnv),
       )
-      .then(() => activity.save())
+      .then(() => isDefaultEnv && activity.save())
       .then((activity) => {
         log('[unpublishActivity] completed');
         return activity;
@@ -161,9 +204,9 @@ function unpublishActivity(repository, activity) {
   });
 }
 
-function getStructureData(activity) {
+function getStructureData(activity, environment = PublishEnv.DEFAULT) {
   const repoData = activity.getRepository().then((repository) => {
-    return getPublishedStructure(repository).then((spine) => ({
+    return getPublishedStructure(repository, environment).then((spine) => ({
       repository,
       spine,
     }));
@@ -173,8 +216,8 @@ function getStructureData(activity) {
   );
 }
 
-function getPublishedStructure(repository) {
-  const storageKey = `repository/${repository.id}/index.json`;
+function getPublishedStructure(repository, environment = PublishEnv.DEFAULT) {
+  const storageKey = `${environment}/${repository.id}/index.json`;
   return storage.getFile(storageKey).then((buffer) => {
     const data = buffer && JSON.parse(buffer.toString('utf8'));
     return data || { ...getRepositoryAttrs(repository), structure: [] };
@@ -187,11 +230,11 @@ async function fetchActivityContent(activity, signed = false) {
   return { containers };
 }
 
-async function publishContainers(parent) {
+async function publishContainers(parent, environment = PublishEnv.DEFAULT) {
   log(`[publishContainers] initiated, parent id: ${parent.id}`);
   const containers = await fetchContainers(parent).map(async (it) => {
     const { id, publishedAs = 'container' } = it;
-    await saveFile(parent, `${id}.${publishedAs}`, it);
+    await saveFile(parent, `${id}.${publishedAs}`, it, environment);
     return it;
   });
   log(`[publishContainers] success, ids: ${map(containers, 'id').join()}`);
@@ -245,8 +288,13 @@ async function fetchCustomContainers(parent, config) {
   );
 }
 
-function unpublishDeletedContainers(parent, prevContainers, containers) {
-  const baseUrl = getBaseUrl(parent.repositoryId, parent.id);
+function unpublishDeletedContainers(
+  parent,
+  prevContainers,
+  containers,
+  publishEnv = PublishEnv.DEFAULT,
+) {
+  const baseUrl = getBaseUrl(parent.repositoryId, parent.id, publishEnv);
   const prevFilePaths = getContainersFilePaths(baseUrl, prevContainers);
   const filePaths = getContainersFilePaths(baseUrl, containers);
   const deletedContainerFiles = differenceWith(prevFilePaths, filePaths);
@@ -263,13 +311,13 @@ async function resolveContainer(container) {
   return container;
 }
 
-function saveFile(parent, key, data) {
+function saveFile(parent, key, data, environment = PublishEnv.DEFAULT) {
   const buffer = Buffer.from(JSON.stringify(data), 'utf8');
-  const baseUrl = getBaseUrl(parent.repositoryId, parent.id);
+  const baseUrl = getBaseUrl(parent.repositoryId, parent.id, environment);
   return storage.saveFile(`${baseUrl}/${key}.json`, buffer);
 }
 
-function saveSpine(spine) {
+function saveSpine(spine, environment = PublishEnv.DEFAULT) {
   const hashProperties = pick(
     spine,
     without(keys(spine), ['version', 'publishedAt']),
@@ -277,7 +325,7 @@ function saveSpine(spine) {
   const version = hash(hashProperties, { algorithm: 'sha1' });
   const updatedSpine = { ...spine, version, publishedAt: new Date() };
   const spineData = Buffer.from(JSON.stringify(updatedSpine), 'utf8');
-  const key = `repository/${spine.id}/index.json`;
+  const key = `${environment}/${spine.id}/index.json`;
   return storage.saveFile(key, spineData).then(() => updatedSpine);
 }
 
@@ -353,10 +401,10 @@ function renameKey(obj, key, newKey) {
   delete obj[key];
 }
 
-function getBaseUrl(repoId, parentId) {
+function getBaseUrl(repoId, parentId, environment = PublishEnv.DEFAULT) {
   return FLAT_REPO_STRUCTURE
-    ? `repository/${repoId}`
-    : `repository/${repoId}/${parentId}`;
+    ? `${environment}/${repoId}`
+    : `${environment}/${repoId}/${parentId}`;
 }
 
 function mapRelationships(relationships, activity) {
@@ -402,4 +450,5 @@ export {
   updatePublishingStatus,
   fetchActivityContent,
   getRepositoryAttrs,
+  publishToPreviewEnv,
 };

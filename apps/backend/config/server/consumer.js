@@ -1,7 +1,12 @@
+import yn from 'yn';
+
 const { env } = process;
 
 export const previewWebhookUrl =
   env.CONSUMER_PREVIEW_WEBHOOK || env.PREVIEW_URL;
+
+// Publish working version of entire repository to preview environment
+export const enableDraftPublishing = yn(env.PUBLISH_DRAFT_TO_PREVIEW_ENV);
 
 export const publishWebhookUrl =
   env.CONSUMER_PUBLISH_WEBHOOK || env.CONSUMER_WEBHOOK_URL;
@@ -24,6 +29,7 @@ export const isAuthConfigured =
 export default {
   previewWebhookUrl,
   publishWebhookUrl,
+  enableDraftPublishing,
   publishWebhookThrottle,
   clientId,
   clientSecret,

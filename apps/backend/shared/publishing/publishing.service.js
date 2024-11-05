@@ -1,6 +1,7 @@
 import {
   publishActivity,
   publishRepositoryDetails,
+  publishToPreviewEnv,
   unpublishActivity,
   updatePublishingStatus,
   updateRepositoryCatalog,
@@ -42,6 +43,10 @@ class PublishingService {
 
   updatePublishingStatus(repository, activity) {
     return this.queue.add(() => updatePublishingStatus(repository, activity));
+  }
+
+  publishToPreviewEnv(repository) {
+    return this.queue.add(() => publishToPreviewEnv(repository));
   }
 }
 

@@ -104,9 +104,13 @@ function clone({ activity, body, user }, res) {
     });
 }
 
-function getPreviewUrl({ activity }, res) {
+async function getPreviewUrl({ repository, activity }, res) {
   if (!consumerConfig.previewWebhookUrl || !oauth2.isConfigured)
     throw new Error('Preview is not configured!');
+
+  if (consumerConfig.enableDraftPublishing)
+    await publishingService.publishToPreviewEnv(repository);
+
   return fetchActivityContent(activity, true)
     .then((content) => {
       const body = {
