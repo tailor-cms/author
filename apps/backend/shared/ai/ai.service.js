@@ -72,6 +72,12 @@ const systemPrompt = `
   - Generated content should not include any offensive language or content
   - Only return JSON objects`;
 
+const tagFormattingPrompt = `
+  Return response as JSON and use the following format:
+  { tags: ['Example tag a', 'Example tag b', 'Example tag c'] }.
+  The response should not include more than 15 tags. Each tag should be in
+  human readable format and should not exceed 30 characters.`;
+
 class AIService {
   #openai;
 
@@ -106,11 +112,8 @@ class AIService {
       ${this.baseRepositoryPrompt(schemaId, repoName, repoDescription)}
       In order for you to help, is there any ambiguity in the topic that
       I should be aware of? Present any specificators or requirements that I
-      should consider in form of tags. Return response as JSON and use the
-      following format:
-      { tags: ['tag1', 'tag2', 'tag3'] }.
-      The response should not include more than 15 tags, and each tag should
-      not exceed 20 characters.`;
+      should consider in form of tags.
+      ${tagFormattingPrompt}`;
     const response = await this.requestCompletion(userPrompt);
     // If no tags are provided, ask once again, temp solution
     if (!response?.tags?.length) return this.requestCompletion(userPrompt);
@@ -126,10 +129,9 @@ class AIService {
     const userPrompt = `
       ${this.baseRepositoryPrompt(schemaId, repoName, repoDescription, tags)}
       I would like to get some style / school-of-thought based recommendations
-      that can further help you in the future. Return response as JSON in form
-      of tags and use the following format:
-      { tags: ['tag1', 'tag2', 'tag3'] }.
-    `;
+      that can further help you in the future. Present options that I
+      should consider in form of tags.
+      ${tagFormattingPrompt}`;
     const response = await this.requestCompletion(userPrompt);
     // If no tags are provided, ask once again, temp solution
     if (!response?.tags?.length) return this.requestCompletion(userPrompt);
