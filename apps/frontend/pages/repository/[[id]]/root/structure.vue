@@ -2,6 +2,7 @@
   <VLayout class="structure-page">
     <VMain class="structure-container">
       <div ref="structureEl" class="structure d-flex flex-column justify-start">
+        {{ filters }}
         <OutlineToolbar
           v-if="hasActivities"
           v-model:activity-types="filters.activityTypes"
@@ -165,7 +166,7 @@ const filteredActivities = computed(() => {
 
 const filterBySearch = ({ shortId, data }: StoreActivity) => {
   const regex = new RegExp(filters.search.trim(), 'i');
-  return regex.test(shortId || data.name);
+  return regex.test(shortId) || regex.test(data.name);
 };
 
 const goTo = async (activity: StoreActivity) => {
