@@ -4,10 +4,11 @@
       <div ref="structureEl" class="structure d-flex flex-column justify-start">
         <OutlineToolbar
           v-if="hasActivities"
+          v-model:activity-types="filters.activityTypes"
+          v-model:search="filters.search"
+          :activity-type-options="taxonomy"
           :is-flat="isFlat"
-          :search="search"
           class="ml-1 flex-grow-0"
-          @search="(val) => (search = val)"
         />
         <BrokenReferencesAlert />
         <VRow
@@ -16,13 +17,17 @@
           dense
         >
           <template v-if="filteredActivities.length">
-            <VCol v-for="item in filteredActivities" :key="item.id" cols="4">
+            <VCol
+              v-for="item in filteredActivities"
+              :key="item.id"
+              :cols="lgAndUp ? 4 : mdAndUp ? 6 : 12"
+            >
               <OutlineCard :activity="item" />
             </VCol>
           </template>
           <VCol v-else cols="12">
             <VAlert
-              v-if="!filteredActivities.length && search"
+              v-if="!filteredActivities.length && filters.search"
               class="mb-5"
               color="primary-lighten-2"
               icon="mdi-magnify"
@@ -37,7 +42,7 @@
           </VCol>
         </VRow>
         <template v-else>
-          <template v-if="!search">
+          <template v-if="!filters.search">
             <Draggable
               v-bind="{ handle: '.activity' }"
               :list="rootActivities"
@@ -61,7 +66,9 @@
               v-for="activity in filteredActivities"
               :key="activity.uid"
               :activity="activity"
-              :is-selected="repositoryStore.selectedActivity?.id === activity.id"
+              :is-selected="
+                repositoryStore.selectedActivity?.id === activity.id
+              "
               @select="repositoryStore.selectActivity(activity.id)"
               @show="goTo(activity)"
             />
@@ -92,6 +99,7 @@ import find from 'lodash/find';
 import map from 'lodash/map';
 import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify';
 
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import OutlineCard from '@/components/repository/Outline/OutlineCard.vue';
@@ -102,6 +110,11 @@ import SearchResult from '@/components/repository/Outline/SearchResult.vue';
 import Sidebar from '@/components/repository/Sidebar/index.vue';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+
+interface Filters {
+  search: string;
+  activityTypes: string[];
+}
 
 definePageMeta({
   name: 'repository',
@@ -120,10 +133,15 @@ const {
 
 const reorder = useOutlineReorder();
 const storageService = useStorageService();
+const { mdAndUp, lgAndUp } = useDisplay();
 
 provide('$storageService', storageService);
 
-const search = ref('');
+const filters = reactive<Filters>({
+  search: '',
+  activityTypes: [],
+});
+
 const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);
 
@@ -137,15 +155,21 @@ const isFlat = computed(() => {
 });
 
 const filteredActivities = computed(() => {
-  if (!search.value) return outlineActivities.value;
-  const regex = new RegExp(search.value.trim(), 'i');
-  return filter(outlineActivities.value, ({ shortId, data: { name } }) => {
-    return regex.test(shortId) || regex.test(name);
-  });
+  const filterByType = (type: string) => filters.activityTypes.includes(type);
+  return outlineActivities.value.filter(
+    (activity: StoreActivity) =>
+      (!filters.search || filterBySearch(activity)) &&
+      (!filters.activityTypes.length || filterByType(activity.type)),
+  );
 });
 
+const filterBySearch = ({ shortId, data }: StoreActivity) => {
+  const regex = new RegExp(filters.search.trim(), 'i');
+  return regex.test(shortId || data.name);
+};
+
 const goTo = async (activity: StoreActivity) => {
-  search.value = '';
+  filters.search = '';
   repositoryStore.selectActivity(activity.id);
   await nextTick();
   scrollToActivity(activity);

@@ -2,27 +2,27 @@
   <VHover v-slot="{ props: hoverProps }" v-model="isHovered">
     <VCard
       v-bind="hoverProps"
-      :id="`activity_${activity.uid}`"
+      :id="`activity_${props.activity.uid}`"
       :color="color"
       class="text-left py-2"
       elevation="0"
       rounded="md"
-      @mousedown="repositoryStore.selectActivity(activity.id)"
+      @mousedown="repositoryStore.selectActivity(props.activity.id)"
     >
       <VSheet
-        class="d-flex align-center my-1 mx-3"
+        class="d-flex align-center my-1 mx-4"
         color="transparent"
         height="32"
       >
         <VChip
           :color="config.color"
-          class="px-1"
+          class="px-2"
           size="x-small"
           variant="flat"
         />
         <div class="activity-label text-uppercase ml-2">{{ config.label }}</div>
         <VSpacer />
-        <VChip v-if="isSoftDeleted">
+        <VChip v-if="isSoftDeleted" size="small">
           <span class="pr-1 font-weight-bold">Deleted:</span>
           Publish required
           <VIcon
@@ -32,30 +32,32 @@
             icon="mdi-information-outline"
           />
         </VChip>
-        <template v-else-if="isHovered || isSelected">
-          <VTooltip
-            v-for="it in options"
-            :key="it.name"
-            content-class="bg-primary-darken-4"
-            location="bottom"
-          >
-            <template #activator="{ props: tooltipProps }">
-              <VBtn
-                v-bind="tooltipProps"
-                :aria-label="it.name"
-                :icon="it.icon"
-                color="primary-lighten-3"
-                size="small"
-                variant="text"
-                @click.stop="it.action"
-              >
-              </VBtn>
-            </template>
-            <span>{{ it.name }}</span>
-          </VTooltip>
-        </template>
+        <VFadeTransition>
+          <div v-if="!isSoftDeleted && (isHovered || isSelected)">
+            <VBtn
+              v-if="selectedActivity.isEditable"
+              color="primary-lighten-4"
+              prepend-icon="mdi-pencil"
+              size="small"
+              text="Edit"
+              variant="text"
+              @click.stop="openEditor"
+            />
+            <VBtn
+              v-tooltip:bottom="'Remove'"
+              color="primary-lighten-4"
+              density="comfortable"
+              icon="mdi-delete"
+              size="small"
+              variant="text"
+              @click.stop="deleteActivity"
+            />
+          </div>
+        </VFadeTransition>
       </VSheet>
-      <VCardTitle class="pt-0">{{ activity.data.name }}</VCardTitle>
+      <VCardTitle class="text-primary-lighten-5 pt-0">
+        {{ props.activity.data.name }}
+      </VCardTitle>
     </VCard>
   </VHover>
 </template>
@@ -84,26 +86,6 @@ provide('$storageService', storageService);
 
 const isHovered = ref(false);
 
-const options = computed(() => {
-  const items = [
-    {
-      name: 'Remove',
-      icon: 'mdi-delete',
-      action: () => deleteActivity(),
-    },
-  ];
-  if (selectedActivity.isEditable.value) {
-    const { id: activityId, repositoryId } = props.activity;
-    const params = { id: repositoryId, activityId };
-    items.unshift({
-      name: 'Open',
-      icon: 'mdi-page-next-outline',
-      action: () => navigateTo({ name: 'editor', params }),
-    });
-  }
-  return items;
-});
-
 const config = computed(() => $schemaService.getLevel(props.activity.type));
 
 const isSelected = computed(
@@ -121,21 +103,24 @@ const color = computed(() => {
   return isHighlighted.value ? 'primary-darken-1' : 'primary-darken-2';
 });
 
-const deleteActivity = () => {
-  const { activity } = props;
-  const actionFunc = () => {
-    const focusNode = activity.parentId
-      ? activityStore.findById(activity.parentId)
-      : first(sortBy(repositoryStore.rootActivities, 'position'));
-    activityStore.remove(props.activity.id);
-    if (focusNode) repositoryStore.selectActivity(focusNode.id);
-  };
-  return showConfirmationDialog({
-    title: 'Delete item?',
-    message: `Are you sure you want to delete ${activity.data.name}?`,
-    action: actionFunc,
-  });
+const openEditor = () => {
+  const { id: activityId, repositoryId } = props.activity;
+  const params = { id: repositoryId, activityId };
+  navigateTo({ name: 'editor', params });
 };
+
+const deleteActivity = () =>
+  showConfirmationDialog({
+    title: 'Delete item?',
+    message: `Are you sure you want to delete ${props.activity.data.name}?`,
+    action: () => {
+      const focusNode = props.activity.parentId
+        ? activityStore.findById(props.activity.parentId)
+        : first(sortBy(repositoryStore.rootActivities, 'position'));
+      activityStore.remove(props.activity.id);
+      if (focusNode) repositoryStore.selectActivity(focusNode.id);
+    },
+  });
 </script>
 
 <style lang="scss" scoped>

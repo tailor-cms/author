@@ -5,7 +5,7 @@
       <template #default="{ isHovering, props: hoverProps }">
         <VTextField
           v-bind="hoverProps"
-          v-model="searchInput"
+          v-model="search"
           :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
           :class="{ 'mr-4': !isFlat }"
           density="comfortable"
@@ -15,18 +15,41 @@
           variant="outlined"
           clearable
           hide-details
-          @click:clear="resetInput"
+          @click:clear="search = ''"
         />
       </template>
     </VHover>
+    <VHover
+      v-if="repositoryStore.schemaOutlineStyle === OutlineStyle.Flat"
+      v-slot="{ isHovering, props: hoverProps }"
+    >
+      <VSelect
+        v-bind="hoverProps"
+        v-model="activityTypes"
+        :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
+        :items="activityTypeOptions"
+        class="mr-4"
+        density="comfortable"
+        item-title="label"
+        item-value="type"
+        max-width="232"
+        placeholder="Filter by type"
+        rounded="xl"
+        variant="solo"
+        clearable
+        flat
+        hide-details
+        multiple
+      />
+    </VHover>
     <VBtn
-      v-if="!isFlat"
-      :disabled="!!props.search"
+      v-else-if="!isFlat"
+      :disabled="!!search"
       class="px-5"
       color="primary-lighten-4"
       height="42"
       variant="tonal"
-      @click="currentRepositoryStore.toggleOutlineExpand"
+      @click="repositoryStore.toggleOutlineExpand"
     >
       Toggle all
     </VBtn>
@@ -34,33 +57,30 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  type ActivityConfig,
+  OutlineStyle,
+} from '@tailor-cms/interfaces/schema';
+
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
+  activityTypeOptions: ActivityConfig[];
   isFlat?: boolean;
-  search?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   isFlat: false,
-  search: '',
 });
-const emit = defineEmits(['search']);
 
-const currentRepositoryStore = useCurrentRepository();
-const searchInput = ref('');
+const search = defineModel<string | null>('search', { default: null });
+const activityTypes = defineModel<string[]>('activityTypes', {
+  default: () => [],
+});
 
-const resetInput = () => {
-  searchInput.value = '';
-  emit('search', '');
-};
+defineEmits(['search']);
 
-watch(
-  () => searchInput.value,
-  (value) => {
-    emit('search', value);
-  },
-);
+const repositoryStore = useCurrentRepository();
 </script>
 
 <style lang="scss" scoped>
