@@ -23,7 +23,7 @@
           <VCol v-else cols="12">
             <VAlert
               v-if="!filteredActivities.length"
-              :icon="hasActivities ? 'mdi-magnify' : 'mdi-information-outline'"
+              :icon="`mdi-${hasActivities ? 'magnify' : 'information-outline'}`"
               class="mb-5"
               color="primary-lighten-3"
               variant="tonal"

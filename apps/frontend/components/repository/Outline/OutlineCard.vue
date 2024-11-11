@@ -7,7 +7,6 @@
       class="text-left py-2"
       elevation="0"
       height="150"
-      rounded="md"
       @mousedown="repositoryStore.selectActivity(props.activity.id)"
     >
       <VSheet
@@ -23,7 +22,7 @@
         />
         <div class="activity-label text-uppercase ml-2">{{ config.label }}</div>
         <VSpacer />
-        <VChip v-if="isSoftDeleted" size="small">
+        <VChip v-if="isSoftDeleted" rounded="lg" size="small">
           <span class="pr-1 font-weight-bold">Deleted:</span>
           Publish required
           <VIcon
