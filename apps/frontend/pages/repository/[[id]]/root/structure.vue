@@ -3,42 +3,37 @@
     <VMain class="structure-container">
       <div ref="structureEl" class="structure d-flex flex-column justify-start">
         <OutlineToolbar
-          v-if="hasActivities"
+          v-if="hasActivities || isFlat"
           v-model:activity-types="filters.activityTypes"
           v-model:search="filters.search"
           :activity-type-options="taxonomy"
-          :is-flat="isFlat"
-          class="ml-1 flex-grow-0"
+          :has-activities="hasActivities"
         />
         <BrokenReferencesAlert />
-        <VRow
-          v-if="schemaOutlineStyle === OutlineStyle.Flat"
-          class="mt-5 flex-grow-0"
-          dense
-        >
+        <VRow v-if="isFlat" class="mt-5 flex-grow-0" dense>
           <template v-if="filteredActivities.length">
             <VCol
               v-for="item in filteredActivities"
               :key="item.id"
-              :cols="lgAndUp ? 4 : mdAndUp ? 6 : 12"
+              :cols="xlAndUp ? 3 : lgAndUp ? 4 : mdAndUp ? 6 : 12"
             >
               <OutlineCard :activity="item" />
             </VCol>
           </template>
           <VCol v-else cols="12">
             <VAlert
-              v-if="!filteredActivities.length && filters.search"
+              v-if="!filteredActivities.length"
+              :icon="hasActivities ? 'mdi-magnify' : 'mdi-information-outline'"
               class="mb-5"
-              color="primary-lighten-2"
-              icon="mdi-magnify"
+              color="primary-lighten-3"
               variant="tonal"
               prominent
             >
-              No matches found!
+              <template v-if="hasActivities">No matches found!</template>
+              <template v-else>
+                Click on the button above in order to create your first item!
+              </template>
             </VAlert>
-          </VCol>
-          <VCol cols="12">
-            <OutlineFooter class="mt-1" />
           </VCol>
         </VRow>
         <template v-else>
@@ -76,7 +71,7 @@
               <VAlert
                 v-if="!filteredActivities.length"
                 class="mb-5"
-                color="primary-lighten-2"
+                color="primary-lighten-3"
                 icon="mdi-magnify"
                 variant="tonal"
                 prominent
@@ -94,9 +89,6 @@
 
 <script lang="ts" setup>
 import Draggable from 'vuedraggable';
-import filter from 'lodash/filter';
-import find from 'lodash/find';
-import map from 'lodash/map';
 import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
@@ -133,7 +125,7 @@ const {
 
 const reorder = useOutlineReorder();
 const storageService = useStorageService();
-const { mdAndUp, lgAndUp } = useDisplay();
+const { mdAndUp, lgAndUp, xlAndUp } = useDisplay();
 
 provide('$storageService', storageService);
 
@@ -145,15 +137,7 @@ const filters = reactive<Filters>({
 const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);
 
-const isFlat = computed(() => {
-  const types = map(
-    filter(taxonomy.value, (it) => !it.rootLevel),
-    'type',
-  );
-  if (!types.length) return false;
-  return !find(outlineActivities.value, (it) => types.includes(it.type));
-});
-
+const isFlat = computed(() => schemaOutlineStyle.value === OutlineStyle.Flat);
 const filteredActivities = computed(() => {
   const filterByType = (type: string) => filters.activityTypes.includes(type);
   return outlineActivities.value.filter(

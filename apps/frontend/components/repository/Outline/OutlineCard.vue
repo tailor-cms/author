@@ -6,6 +6,7 @@
       :color="color"
       class="text-left py-2"
       elevation="0"
+      height="150"
       rounded="md"
       @mousedown="repositoryStore.selectActivity(props.activity.id)"
     >
@@ -55,7 +56,7 @@
           </div>
         </VFadeTransition>
       </VSheet>
-      <VCardTitle class="text-primary-lighten-5 pt-0">
+      <VCardTitle class="text-primary-lighten-5 pa-0 ma-4">
         {{ props.activity.data.name }}
       </VCardTitle>
     </VCard>
@@ -132,5 +133,16 @@ const deleteActivity = () =>
   font-size: 0.75rem;
   line-height: 1.25rem;
   letter-spacing: 1px;
+}
+
+.v-card-title {
+  white-space: normal;
+  word-break: break-word;
+  overflow: hidden;
+  /* stylelint-disable-next-line value-no-vendor-prefix */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.1;
 }
 </style>
