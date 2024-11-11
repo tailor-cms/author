@@ -17,7 +17,10 @@
       />
     </VHover>
     <template v-if="!isHierarchyStyle">
-      <VHover v-if="hasActivities" v-slot="{ isHovering, props: hoverProps }">
+      <VHover
+        v-if="hasActivities && activityTypeOptions.length"
+        v-slot="{ isHovering, props: hoverProps }"
+      >
         <VSelect
           v-bind="hoverProps"
           v-model="activityTypes"
