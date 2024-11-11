@@ -6,7 +6,7 @@
       :color="color"
       class="text-left py-2"
       elevation="0"
-      height="150"
+      height="130"
       @mousedown="repositoryStore.selectActivity(props.activity.id)"
     >
       <VSheet
