@@ -10,37 +10,19 @@
           @search="(val) => (search = val)"
         />
         <BrokenReferencesAlert />
-        <template v-if="!search">
-          <Draggable
-            v-bind="{ handle: '.activity' }"
-            :list="rootActivities"
-            class="mt-5"
-            item-key="uid"
-            @update="(data) => reorder(data, rootActivities)"
-          >
-            <template #item="{ element, index }">
-              <OutlineItem
-                :activities="outlineActivities"
-                :activity="element"
-                :index="index + 1"
-                :level="1"
-              />
-            </template>
-          </Draggable>
-          <OutlineFooter class="mt-1" />
-        </template>
-        <template v-else>
-          <SearchResult
-            v-for="activity in filteredActivities"
-            :key="activity.uid"
-            :activity="activity"
-            :is-selected="repositoryStore.selectedActivity?.id === activity.id"
-            @select="repositoryStore.selectActivity(activity.id)"
-            @show="goTo(activity)"
-          />
-          <div class="my-6">
+        <VRow
+          v-if="schemaOutlineStyle === OutlineStyle.Flat"
+          class="mt-5 flex-grow-0"
+          dense
+        >
+          <template v-if="filteredActivities.length">
+            <VCol v-for="item in filteredActivities" :key="item.id" cols="4">
+              <OutlineCard :activity="item" />
+            </VCol>
+          </template>
+          <VCol v-else cols="12">
             <VAlert
-              v-if="!filteredActivities.length"
+              v-if="!filteredActivities.length && search"
               class="mb-5"
               color="primary-lighten-2"
               icon="mdi-magnify"
@@ -49,7 +31,53 @@
             >
               No matches found!
             </VAlert>
-          </div>
+          </VCol>
+          <VCol cols="12">
+            <OutlineFooter class="mt-1" />
+          </VCol>
+        </VRow>
+        <template v-else>
+          <template v-if="!search">
+            <Draggable
+              v-bind="{ handle: '.activity' }"
+              :list="rootActivities"
+              class="mt-5"
+              item-key="uid"
+              @update="(data) => reorder(data, rootActivities)"
+            >
+              <template #item="{ element, index }">
+                <OutlineItem
+                  :activities="outlineActivities"
+                  :activity="element"
+                  :index="index + 1"
+                  :level="1"
+                />
+              </template>
+            </Draggable>
+            <OutlineFooter class="mt-1" />
+          </template>
+          <template v-else>
+            <SearchResult
+              v-for="activity in filteredActivities"
+              :key="activity.uid"
+              :activity="activity"
+              :is-selected="repositoryStore.selectedActivity?.id === activity.id"
+              @select="repositoryStore.selectActivity(activity.id)"
+              @show="goTo(activity)"
+            />
+            <div class="my-6">
+              <VAlert
+                v-if="!filteredActivities.length"
+                class="mb-5"
+                color="primary-lighten-2"
+                icon="mdi-magnify"
+                variant="tonal"
+                prominent
+              >
+                No matches found!
+              </VAlert>
+            </div>
+          </template>
         </template>
       </div>
     </VMain>
@@ -62,10 +90,12 @@ import Draggable from 'vuedraggable';
 import filter from 'lodash/filter';
 import find from 'lodash/find';
 import map from 'lodash/map';
+import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 import { storeToRefs } from 'pinia';
 
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
-import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
+import OutlineCard from '@/components/repository/Outline/OutlineCard.vue';
+import OutlineFooter from '~/components/repository/Outline/OutlineFooter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
@@ -80,8 +110,13 @@ definePageMeta({
 
 const repositoryStore = useCurrentRepository();
 
-const { outlineActivities, rootActivities, selectedActivity, taxonomy } =
-  storeToRefs(repositoryStore);
+const {
+  outlineActivities,
+  rootActivities,
+  selectedActivity,
+  taxonomy,
+  schemaOutlineStyle,
+} = storeToRefs(repositoryStore);
 
 const reorder = useOutlineReorder();
 const storageService = useStorageService();
