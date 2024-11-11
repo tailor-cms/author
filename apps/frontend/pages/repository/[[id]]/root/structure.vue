@@ -2,7 +2,6 @@
   <VLayout class="structure-page">
     <VMain class="structure-container">
       <div ref="structureEl" class="structure d-flex flex-column justify-start">
-        {{ filters }}
         <OutlineToolbar
           v-if="hasActivities"
           v-model:activity-types="filters.activityTypes"

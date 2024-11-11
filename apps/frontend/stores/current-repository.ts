@@ -2,11 +2,11 @@ import {
   schema as schemaConfig,
   workflow as workflowConfig,
 } from 'tailor-config-shared';
+import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 
 import { repository as repositoryApi } from '@/api';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
-import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 
 const { getOutlineLevels, getSchema } = schemaConfig;
 const { getWorkflow } = workflowConfig;
