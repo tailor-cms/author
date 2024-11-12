@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { SCHEMAS } from 'tailor-config-shared';
 
 interface ConfigCookie {
+  statsigKey?: string;
   aiUiEnabled?: boolean;
   availableSchemas?: string;
   oidcEnabled?: boolean;
