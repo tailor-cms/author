@@ -9,10 +9,10 @@ export default async function () {
   await authStore.fetchUserInfo();
   isAuthenticated.value = authStore.user ? 'true' : null;
   if (!isAuthenticated.value) return navigateTo({ name: 'sign-in' });
-  await initStatsig();
+  await statsigInit();
 }
 
-const initStatsig = async () => {
+const statsigInit = async () => {
   const authStore = useAuthStore();
   const config = useConfigStore();
   if (!config.props.statsigKey || !authStore.user?.email) return;
