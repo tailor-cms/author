@@ -1,6 +1,7 @@
 <template>
   <VToolbar class="toolbar" color="transparent">
     <VHover v-if="hasActivities" v-slot="{ isHovering, props: hoverProps }">
+      <VSpacer v-if="isListStyle" />
       <VTextField
         v-bind="hoverProps"
         v-model="search"
@@ -16,7 +17,7 @@
         @click:clear="search = ''"
       />
     </VHover>
-    <template v-if="!isHierarchyStyle">
+    <template v-if="!isListStyle">
       <VHover
         v-if="hasActivities && activityTypeOptions.length"
         v-slot="{ isHovering, props: hoverProps }"
@@ -92,8 +93,8 @@ const repositoryStore = useCurrentRepository();
 const { outlineActivities, rootActivities, schemaOutlineStyle, taxonomy } =
   storeToRefs(repositoryStore);
 
-const isHierarchyStyle = computed(
-  () => schemaOutlineStyle.value === OutlineStyle.Hierarchical,
+const isListStyle = computed(
+  () => schemaOutlineStyle.value === OutlineStyle.List,
 );
 
 const isFlat = computed(() => {

@@ -3,14 +3,14 @@
     <VMain class="structure-container">
       <div ref="structureEl" class="structure d-flex flex-column justify-start">
         <OutlineToolbar
-          v-if="hasActivities || isFlat"
+          v-if="hasActivities || isGrid"
           v-model:activity-types="filters.activityTypes"
           v-model:search="filters.search"
           :activity-type-options="taxonomy"
           :has-activities="hasActivities"
         />
         <BrokenReferencesAlert />
-        <VRow v-if="isFlat" class="mt-5 flex-grow-0" dense>
+        <VRow v-if="isGrid" class="mt-5 flex-grow-0" dense>
           <template v-if="filteredActivities.length">
             <VCol
               v-for="item in filteredActivities"
@@ -137,7 +137,7 @@ const filters = reactive<Filters>({
 const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);
 
-const isFlat = computed(() => schemaOutlineStyle.value === OutlineStyle.Flat);
+const isGrid = computed(() => schemaOutlineStyle.value === OutlineStyle.Grid);
 const filteredActivities = computed(() => {
   const filterByType = (type: string) => filters.activityTypes.includes(type);
   return outlineActivities.value.filter(

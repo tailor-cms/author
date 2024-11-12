@@ -3,8 +3,8 @@ import type { ContentElement } from './content-element';
 export type ElementManifest = Record<string, any>;
 
 export enum OutlineStyle {
-  Flat = 'FLAT',
-  Hierarchical = 'HIERARCHICAL',
+  Grid = 'GRID',
+  List = 'LIST',
 }
 
 export interface ElementRegistry {

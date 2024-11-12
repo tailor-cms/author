@@ -61,7 +61,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const schemaName = computed(() => schema.value?.name || '');
 
   const schemaOutlineStyle = computed(() => {
-    return schema.value?.outlineStyle || OutlineStyle.Hierarchical;
+    return schema.value?.outlineStyle || OutlineStyle.List;
   });
 
   const taxonomy = computed(() => {
