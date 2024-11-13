@@ -1,6 +1,7 @@
 <template>
   <FileInput
     v-bind="options"
+    class="my-2"
     @delete="$emit('update', meta.key, null)"
     @upload="$emit('update', meta.key, $event)"
   />
