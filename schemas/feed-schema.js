@@ -6,6 +6,7 @@ const ACTIVITY_TYPE = {
   EVENT: 'EVENT',
   GROWTH_OPPORTUNITY: 'GROWTH_OPPORTUNITY',
   SECTION: 'SECTION',
+  GROUP: 'GROUP',
 };
 
 const defaultMeta = [
@@ -54,11 +55,28 @@ const podcastMeta = [
   },
 ];
 
+const GROUP = {
+  type: ACTIVITY_TYPE.GROUP,
+  rootLevel: true,
+  label: 'Group',
+  color: '#5187C7',
+  subLevels: [
+    ACTIVITY_TYPE.GROUP,
+    ACTIVITY_TYPE.ARTICLE,
+    ACTIVITY_TYPE.PODCAST,
+    ACTIVITY_TYPE.EVENT,
+    ACTIVITY_TYPE.GROWTH_OPPORTUNITY,
+  ],
+  ai: {
+    definition: `Groups are a way to organize content into categories.`,
+  },
+};
+
 const EVENT = {
   type: ACTIVITY_TYPE.EVENT,
   rootLevel: true,
   label: 'Event',
-  color: '#5187C7',
+  color: '#7986CB',
   meta: [
     ...defaultMeta,
     {
@@ -79,7 +97,7 @@ const PODCAST = {
   type: ACTIVITY_TYPE.PODCAST,
   rootLevel: true,
   label: 'Podcast',
-  color: '#5187C7',
+  color: '#CDDC39',
   meta: [...podcastMeta, ...defaultMeta],
   ai: {
     definition:
@@ -141,6 +159,6 @@ export const SCHEMA = {
   name: 'Feed',
   description: 'A community feed with articles and growth opportunities.',
   workflowId: DEFAULT_WORKFLOW.id,
-  structure: [EVENT, ARTICLE, PODCAST, GROWTH_OPPORTUNITY],
+  structure: [GROUP, EVENT, ARTICLE, PODCAST, GROWTH_OPPORTUNITY],
   contentContainers: [SECTION],
 };
