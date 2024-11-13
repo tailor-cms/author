@@ -26,6 +26,14 @@ const defaultMeta = [
     },
     showPreview: true,
   },
+  {
+    key: 'tags',
+    type: 'COMBOBOX',
+    label: 'Tags',
+    placeholder: 'Tags',
+    multiple: true,
+    options: [],
+  },
 ];
 
 const podcastMeta = [
@@ -78,7 +86,6 @@ const EVENT = {
   label: 'Event',
   color: '#7986CB',
   meta: [
-    ...defaultMeta,
     {
       key: 'link',
       type: 'TEXTAREA',
@@ -87,6 +94,15 @@ const EVENT = {
       validate: { url: true },
       rows: 1,
     },
+    {
+      key: 'participants',
+      type: 'COMBOBOX',
+      label: 'Participants',
+      placeholder: 'Participants',
+      multiple: true,
+      options: [],
+    },
+    ...defaultMeta,
   ],
   ai: {
     definition: 'Events are a way to promote gatherings.',
@@ -98,7 +114,18 @@ const PODCAST = {
   rootLevel: true,
   label: 'Podcast',
   color: '#CDDC39',
-  meta: [...podcastMeta, ...defaultMeta],
+  meta: [
+    ...podcastMeta,
+    ...defaultMeta,
+    {
+      key: 'participants',
+      type: 'COMBOBOX',
+      label: 'Participants',
+      placeholder: 'Participants',
+      multiple: true,
+      options: [],
+    },
+  ],
   ai: {
     definition:
       'Provides a way to promote podcasts on various platforms and view aggregated engagement data.',
@@ -118,11 +145,21 @@ const GROWTH_OPPORTUNITY = {
 };
 
 const ARTICLE = {
-  type: ACTIVITY_TYPE.GROWTH_OPPORTUNITY,
+  type: ACTIVITY_TYPE.ARTICLE,
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Growth Opportunity',
-  meta: [...defaultMeta],
+  meta: [
+    ...defaultMeta,
+    {
+      key: 'authors',
+      type: 'COMBOBOX',
+      label: 'Authors',
+      placeholder: 'Authors',
+      multiple: true,
+      options: [],
+    },
+  ],
   color: '#08A9AD',
   contentContainers: [ACTIVITY_TYPE.SECTION],
   ai: {
