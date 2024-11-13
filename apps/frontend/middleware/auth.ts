@@ -21,6 +21,7 @@ const statsigInit = async () => {
     config.props.statsigKey,
     authStore.user.email,
   );
+  if (!client) return;
   const dynamicConfig = await client.getDynamicConfig('personalizedconfig');
   config.personalize(dynamicConfig);
 };
