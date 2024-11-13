@@ -148,7 +148,7 @@ const ARTICLE = {
   type: ACTIVITY_TYPE.ARTICLE,
   rootLevel: true,
   isTrackedInWorkflow: true,
-  label: 'Growth Opportunity',
+  label: 'Article',
   meta: [
     ...defaultMeta,
     {
