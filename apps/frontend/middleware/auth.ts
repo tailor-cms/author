@@ -8,8 +8,8 @@ export default async function () {
   if (authStore.user) return;
   await authStore.fetchUserInfo();
   isAuthenticated.value = authStore.user ? 'true' : null;
-  if (!isAuthenticated.value) return navigateTo({ name: 'sign-in' });
-  await statsigInit();
+  if (isAuthenticated.value) await statsigInit();
+  else return navigateTo({ name: 'sign-in' });
 }
 
 const statsigInit = async () => {
@@ -17,5 +17,10 @@ const statsigInit = async () => {
   const config = useConfigStore();
   if (!config.props.statsigKey || !authStore.user?.email) return;
   const nuxtApp: any = useNuxtApp();
-  await nuxtApp.$statsigInit(config.props.statsigKey, authStore.user.email);
+  const client = await nuxtApp.$statsigInit(
+    config.props.statsigKey,
+    authStore.user.email,
+  );
+  const dynamicConfig = await client.getDynamicConfig('personalizedconfig');
+  config.personalize(dynamicConfig);
 };

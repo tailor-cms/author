@@ -43,8 +43,16 @@ export const useConfigStore = defineStore('config', () => {
     cookie.value = undefined;
   }
 
+  function personalize(statsigConfig: any) {
+    Object.entries(statsigConfig.value).forEach(([key, value]) => {
+      const parsedKey = camelCase(key);
+      config[parsedKey] = value;
+    });
+  }
+
   return {
     getConfig,
+    personalize,
     props: readonly(config),
     rawProps: readonly(rawConfig),
     availableSchemas,

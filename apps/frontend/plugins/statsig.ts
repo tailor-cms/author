@@ -16,5 +16,4 @@ export default defineNuxtPlugin((nuxtApp) => {
     await client.initializeAsync();
     return client;
   });
-  nuxtApp.provide('statsig', client);
 });
