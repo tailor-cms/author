@@ -1,4 +1,4 @@
-import { DEFAULT_WORKFLOW } from './default-workflow';
+import { DEFAULT_WORKFLOW } from './default-workflow.js';
 
 const ACTIVITY_TYPE = {
   ARTICLE: 'ARTICLE',
