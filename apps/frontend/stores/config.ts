@@ -40,7 +40,7 @@ export const useConfigStore = defineStore('config', () => {
       const parsedKey = camelCase(key.replace('NUXT_PUBLIC_', ''));
       config[parsedKey] = value;
     });
-    cookie.value = undefined;
+    if (!import.meta.dev) cookie.value = undefined;
   }
 
   function personalize(statsigConfig: any) {

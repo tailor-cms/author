@@ -1,6 +1,7 @@
+import { StatsigClient } from '@statsig/js-client';
+
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
-import { useNuxtApp } from '#app';
 
 export default async function () {
   const isAuthenticated = useCookie('is-authenticated');
@@ -16,12 +17,10 @@ const statsigInit = async () => {
   const authStore = useAuthStore();
   const config = useConfigStore();
   if (!config.props.statsigKey || !authStore.user?.email) return;
-  const nuxtApp: any = useNuxtApp();
-  const client = await nuxtApp.$statsigInit(
-    config.props.statsigKey,
-    authStore.user.email,
-  );
-  if (!client) return;
-  const dynamicConfig = await client.getDynamicConfig('personalizedconfig');
+  const client = new StatsigClient(config.props.statsigKey, {
+    userID: authStore.user?.email,
+  });
+  await client.initializeAsync();
+  const dynamicConfig = client.getDynamicConfig('personalizedconfig');
   config.personalize(dynamicConfig);
 };
