@@ -16,7 +16,6 @@ export default async function () {
 const statsigInit = async () => {
   const authStore = useAuthStore();
   const config = useConfigStore();
-  config.getConfig();
   if (!config.props.statsigKey || !authStore.user?.email) return;
   const client = new StatsigClient(config.props.statsigKey, {
     userID: authStore.user?.email,
