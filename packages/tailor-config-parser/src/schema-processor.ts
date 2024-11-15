@@ -1,4 +1,8 @@
-import { ActivityConfig, Metadata, Schema } from '@tailor-cms/interfaces/schema';
+import {
+  ActivityConfig,
+  Metadata,
+  Schema,
+} from '@tailor-cms/interfaces/schema';
 import find from 'lodash/find.js';
 import get from 'lodash/get.js';
 import map from 'lodash/map.js';
