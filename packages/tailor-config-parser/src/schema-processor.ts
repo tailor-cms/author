@@ -1,7 +1,10 @@
-import find from 'lodash/find';
-import get from 'lodash/get';
-import map from 'lodash/map';
-import transform from 'lodash/transform';
+// import type { Activity } from '@tailor-cms/interfaces/activity';
+import find from 'lodash/find.js';
+import get from 'lodash/get.js';
+import map from 'lodash/map.js';
+import type { Schema } from '@tailor-cms/interfaces/schema';
+import transform from 'lodash/transform.js';
+
 import validate from './schema-validation';
 
 const LABEL_COLORS = [
@@ -10,17 +13,17 @@ const LABEL_COLORS = [
   ['#3F51B5', '#2196F3'],
   ['#03A9F4', '#00BCD4'],
   ['#009688', '#4CAF50'],
-  ['#FF9800', '#FF5722']
+  ['#FF9800', '#FF5722'],
 ];
 
 // Validate schemas
 // Prefix activity types with schema id; SCHEMA_ID/TYPE
 // Process meta
-export default (schemas = []) => {
+export default (schemas: Schema[] = []) => {
   validate(schemas);
-  schemas.forEach(schema => {
+  schemas.forEach((schema) => {
     processRepositoryConfig(schema);
-    schema.structure.forEach(it => processActivityConfig(schema, it));
+    schema.structure.forEach((it) => processActivityConfig(schema, it));
   });
 };
 
@@ -33,15 +36,17 @@ function processRepositoryConfig(schema) {
       key: 'color',
       label: 'Label color',
       colors: LABEL_COLORS,
-      hideOnCreate: true
+      hideOnCreate: true,
     });
   }
   schema.defaultMeta = getMetaDefaults(schema.meta);
 }
 
-function processActivityConfig(schema, activity) {
+function processActivityConfig(schema: Schema, activity) {
   activity.type = processType(schema, activity.type);
-  activity.subLevels = map(activity.subLevels, type => processType(schema, type));
+  activity.subLevels = map(activity.subLevels, (type) =>
+    processType(schema, type),
+  );
   activity.relationships = processActivityRelationships(activity);
   activity.meta = get(activity, 'meta', []);
   const hasNameMeta = find(activity.meta, { key: 'name' });
@@ -51,13 +56,15 @@ function processActivityConfig(schema, activity) {
       type: 'TEXTAREA',
       label: 'Name',
       placeholder: 'Click to add...',
-      validate: { required: true, min: 2, max: 250 }
+      validate: { required: true, min: 2, max: 250 },
     });
   }
   activity.defaultMeta = getMetaDefaults(activity.meta);
   const examObjectives = get(activity, 'exams.objectives');
   if (examObjectives) {
-    activity.exams.objectives = map(examObjectives, it => processType(schema, it));
+    activity.exams.objectives = map(examObjectives, (it) =>
+      processType(schema, it),
+    );
   }
 }
 
@@ -66,9 +73,13 @@ function processType(schema, type) {
 }
 
 function getMetaDefaults(meta) {
-  return transform(meta, (acc, it) => {
-    if (it.defaultValue) acc[it.key] = it.defaultValue;
-  }, {});
+  return transform(
+    meta,
+    (acc, it) => {
+      if (it.defaultValue) acc[it.key] = it.defaultValue;
+    },
+    {},
+  );
 }
 
 function processActivityRelationships(activity) {
@@ -77,7 +88,7 @@ function processActivityRelationships(activity) {
     relationships.unshift({
       type: 'prerequisites',
       label: 'Prerequisites',
-      placeholder: 'Select prerequisites'
+      placeholder: 'Select prerequisites',
     });
   }
   return relationships;
