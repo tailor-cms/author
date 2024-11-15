@@ -1,3 +1,9 @@
+import {
+  ActivityRelationship,
+  ContentContainer,
+  Metadata,
+  Schema,
+} from '@tailor-cms/interfaces/schema';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import castArray from 'lodash/castArray.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
@@ -14,7 +20,7 @@ import sortBy from 'lodash/sortBy.js';
 import union from 'lodash/union.js';
 import uniq from 'lodash/uniq.js';
 
-export default (schemas, defaultConfiguration) => {
+export default (schemas: Schema[]) => {
   return {
     getSchemaId,
     getSchema,
@@ -44,7 +50,7 @@ export default (schemas, defaultConfiguration) => {
     return type.includes('/') && first(type.split('/'));
   }
 
-  function getSchema(id: string) {
+  function getSchema(id: string): Schema {
     const schema = find(schemas, { id });
     if (!schema) throw new Error('Schema does not exist!');
     return schema;
@@ -149,7 +155,7 @@ export default (schemas, defaultConfiguration) => {
     return find(config, (it) => castArray(it.type).includes(type)) || {};
   }
 
-  function getSiblingTypes(type: string) {
+  function getSiblingTypes(type: string): string[] {
     if (!isOutlineActivity(type)) return [type];
     const schemaId = getSchemaId(type);
     const outline = getOutlineLevels(schemaId);
@@ -168,27 +174,23 @@ export default (schemas, defaultConfiguration) => {
     );
   }
 
-  function getSupportedContainers(type: string) {
+  function getSupportedContainers(type: string): ContentContainer[] {
     const schema = getSchema(getSchemaId(type));
-    const defaultConfig = get(defaultConfiguration, 'CONTENT_CONTAINERS', []);
     const schemaConfig = get(schema, 'contentContainers', []);
     const activityConfig = get(
       getActivityConfig(type),
       'contentContainers',
       [],
     );
-    return map(
-      activityConfig,
-      (type) => find(schemaConfig, { type }) || find(defaultConfig, { type }),
-    );
+    return map(activityConfig, (type) => find(schemaConfig, { type }));
   }
 
   // type is checked because of legacy support
-  function getContainerTemplateId(container) {
+  function getContainerTemplateId(container: ContentContainer) {
     return container.templateId || container.type;
   }
 
-  function getRepositoryMetadata(repository: Repository) {
+  function getRepositoryMetadata(repository: Repository): Metadata[] {
     const config = get(getSchema(repository.schema), 'meta', []);
     return map(config, (it) => {
       const value = get(repository, `data.${it.key}`);
@@ -196,7 +198,7 @@ export default (schemas, defaultConfiguration) => {
     });
   }
 
-  function getLevelRelationships(type: string) {
+  function getLevelRelationships(type: string): ActivityRelationship[] {
     return get(getActivityConfig(type), 'relationships', []);
   }
 

@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import type { Schema } from '@tailor-cms/interfaces/schema';
 
 const activityType = yup.string().min(2).max(50);
 
@@ -69,7 +70,7 @@ const schema = yup.object().shape({
 
 const schemas = yup.array().of(schema).min(1);
 
-export default (config) => {
+export default (config: Schema[]) => {
   try {
     schemas.validateSync(config);
   } catch (err) {

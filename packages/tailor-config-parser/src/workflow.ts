@@ -2,7 +2,15 @@ import find from 'lodash/find.js';
 
 import validateWorkflow from './workflow-validation';
 
-const priorities = [
+interface WorkflowStage {
+  id: string;
+  label: string;
+  icon: string;
+  color: string;
+  default?: boolean;
+}
+
+const priorities: WorkflowStage[] = [
   {
     id: 'CRITICAL',
     label: 'Critical',

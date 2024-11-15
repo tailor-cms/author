@@ -132,7 +132,7 @@ importers:
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
-      '@tailor-cms/config':
+      '@tailor-cms/config-parser':
         specifier: workspace:*
         version: link:../../packages/tailor-config-parser
       '@tailor-cms/content-container-collection':
@@ -1002,7 +1002,7 @@ importers:
 
   packages/tailor-config-shared:
     dependencies:
-      '@tailor-cms/config':
+      '@tailor-cms/config-parser':
         specifier: workspace:*
         version: link:../tailor-config-parser
       is-localhost:

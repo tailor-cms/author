@@ -1,19 +1,13 @@
 {
-  "name": "@tailor-cms/config",
+  "name": "@tailor-cms/config-parser",
   "description": "Access parsed Tailor config",
-  "author": "ExtensionEngine <info@extensionengine.com>",
+  "author": "Studion <tools@gostudion.com>",
   "license": "MIT",
-  "version": "1.0.0-beta.25",
+  "version": "1.0.0",
   "type": "module",
-  "homepage": "https://github.com/ExtensionEngine/tailor#readme",
-  "bugs": {
-    "url": "https://github.com/ExtensionEngine/tailor/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ExtensionEngine/tailor.git"
-  },
+  "files": ["dist"],
   "sideEffects": false,
+  "main": "./dist/index.cjs",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -21,7 +15,6 @@
       "require": "./dist/index.cjs"
     }
   },
-  "main": "./dist/index.cjs",
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
@@ -31,15 +24,10 @@
       ]
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "dev": "tsup --watch src",
     "build": "tsup",
-    "prebuild": "del-cli dist",
-    "release": "npx np",
-    "lint": "eslint --ext .js ."
+    "prebuild": "del-cli dist"
   },
   "dependencies": {
     "lodash": "^4.17.21",
