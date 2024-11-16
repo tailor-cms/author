@@ -76,14 +76,15 @@ const emit = defineEmits(['input']);
 
 const uploading = ref(false);
 const isEditing = ref(!props.url);
-const isLinked = ref(!isUploaded(props.url));
-const file = ref(isLinked.value ? null : pick(props, ['url', 'publicUrl']));
+const file = ref(
+  isUploaded(props.url) ? pick(props, ['url', 'publicUrl']) : null,
+);
 
 const { defineField, errors, validate } = useForm({
   validationSchema: object({
     url: string().url().nullable(),
   }),
-  initialValues: { url: isLinked.value ? props.url : null },
+  initialValues: { url: !isUploaded(props.url) ? props.url : null },
 });
 
 const [urlInput] = defineField('url');
@@ -115,8 +116,9 @@ const save = async () => {
 };
 
 const cancel = () => {
-  urlInput.value = isLinked.value ? props.url : null;
-  file.value = isLinked.value ? null : pick(props, ['url', 'publicUrl']);
+  const isLinked = !isUploaded(props.url);
+  urlInput.value = isLinked ? props.url : null;
+  file.value = isLinked ? null : pick(props, ['url', 'publicUrl']);
   isEditing.value = !props.url;
 };
 </script>

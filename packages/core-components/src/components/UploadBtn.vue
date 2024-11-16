@@ -12,7 +12,7 @@
       hide-details="auto"
       min-width="350"
       variant="outlined"
-      disabled
+      readonly
     />
   </template>
   <template v-else-if="isEditing">
