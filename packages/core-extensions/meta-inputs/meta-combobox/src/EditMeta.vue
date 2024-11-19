@@ -7,6 +7,7 @@
     :multiple="meta.multiple"
     :name="meta.key"
     :placeholder="meta.placeholder"
+    class="my-2"
     item-title="label"
     item-value="value"
     variant="outlined"

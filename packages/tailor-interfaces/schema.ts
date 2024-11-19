@@ -47,7 +47,7 @@ export interface ActivityRelationship {
   allowEmpty: boolean;
   allowCircularLinks: boolean;
   allowInsideLineage: boolean;
-  allowedTypes: string[];
+  allowedTypes?: string[];
 }
 
 export interface AIConfig {
@@ -68,7 +68,12 @@ export interface ActivityConfig {
   contentContainers?: string[];
   relationships?: ActivityRelationship[];
   meta?: Metadata[];
+  defaultMeta?: Record<string, any>;
   ai?: AIConfig;
+  // @deprecated use relationships instead
+  hasPrerequisites?: boolean;
+  // @deprecated will be removed after migrating exam container
+  exams?: any;
 }
 
 export interface ElementCategory {
@@ -96,7 +101,10 @@ export interface Schema {
   workflowId: string;
   name: string;
   meta?: Metadata[];
+  defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];
   contentContainers: ContentContainer[];
   elementMeta?: ElementMetaConfig[];
+  // @deprecated use elementMeta instead
+  tesMeta?: ElementMetaConfig[];
 }

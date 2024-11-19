@@ -1,15 +1,40 @@
-import find from 'lodash/find';
+import find from 'lodash/find.js';
+
 import validateWorkflow from './workflow-validation';
 
-const priorities = [
-  { id: 'CRITICAL', label: 'Critical', icon: 'mdi-chevron-double-up', color: 'red' },
+interface WorkflowStage {
+  id: string;
+  label: string;
+  icon: string;
+  color: string;
+  default?: boolean;
+}
+
+const priorities: WorkflowStage[] = [
+  {
+    id: 'CRITICAL',
+    label: 'Critical',
+    icon: 'mdi-chevron-double-up',
+    color: 'red',
+  },
   { id: 'HIGH', label: 'High', icon: 'mdi-chevron-up', color: 'orange' },
-  { id: 'MEDIUM', label: 'Medium', icon: 'mdi-minus', default: true, color: 'grey' },
+  {
+    id: 'MEDIUM',
+    label: 'Medium',
+    icon: 'mdi-minus',
+    default: true,
+    color: 'grey',
+  },
   { id: 'LOW', label: 'Low', icon: 'mdi-chevron-down', color: 'green' },
-  { id: 'TRIVIAL', label: 'Trivial', icon: 'mdi-chevron-double-down', color: 'blue' }
+  {
+    id: 'TRIVIAL',
+    label: 'Trivial',
+    icon: 'mdi-chevron-double-down',
+    color: 'blue',
+  },
 ];
 
-export default (workflows, schemaApi) => {
+export default (workflows: any[], schemaApi) => {
   validateWorkflow(workflows);
 
   return {
@@ -17,7 +42,7 @@ export default (workflows, schemaApi) => {
     getWorkflow,
     getPriority,
     getDefaultWorkflowStatus,
-    getDefaultActivityStatus
+    getDefaultActivityStatus,
   };
 
   function getWorkflow(id) {
@@ -30,8 +55,8 @@ export default (workflows, schemaApi) => {
 
   function getDefaultWorkflowStatus(id) {
     const { statuses } = getWorkflow(id);
-    const { id: status } = statuses.find(it => it.default) || statuses[0];
-    const { id: priority } = priorities.find(it => it.default);
+    const { id: status } = statuses.find((it) => it.default) || statuses[0];
+    const { id: priority } = priorities.find((it) => it.default) as any;
     return { status, priority };
   }
 

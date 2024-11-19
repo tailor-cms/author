@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { SCHEMAS } from 'tailor-config-shared';
 
 interface ConfigCookie {
+  statsigKey?: string;
   aiUiEnabled?: boolean;
   availableSchemas?: string;
   oidcEnabled?: boolean;
@@ -39,11 +40,19 @@ export const useConfigStore = defineStore('config', () => {
       const parsedKey = camelCase(key.replace('NUXT_PUBLIC_', ''));
       config[parsedKey] = value;
     });
-    cookie.value = undefined;
+    if (!import.meta.dev) cookie.value = undefined;
+  }
+
+  function personalize(statsigConfig: any) {
+    Object.entries(statsigConfig.value).forEach(([key, value]) => {
+      const parsedKey = camelCase(key);
+      config[parsedKey] = value;
+    });
   }
 
   return {
     getConfig,
+    personalize,
     props: readonly(config),
     rawProps: readonly(rawConfig),
     availableSchemas,
