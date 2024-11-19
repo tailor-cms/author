@@ -73,11 +73,11 @@
 <script lang="ts" setup>
 import { InsertLocation } from '@tailor-cms/utils';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
+import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
 import MetaInput from '@/components/common/MetaInput.vue';
 import type { StoreActivity } from '@/stores/activity';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import TypeSelect from './TypeSelect.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';

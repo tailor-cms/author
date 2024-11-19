@@ -50,9 +50,9 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
+import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useRepositoryStore } from '@/stores/repository';
 
