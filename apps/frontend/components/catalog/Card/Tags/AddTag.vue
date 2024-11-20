@@ -40,10 +40,10 @@ import { object, string } from 'yup';
 import type { Repository, Tag } from '@tailor-cms/interfaces/repository';
 import differenceBy from 'lodash/differenceBy';
 import map from 'lodash/map';
+import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
 import { tag as api } from '@/api';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
 const store = useRepositoryStore();
