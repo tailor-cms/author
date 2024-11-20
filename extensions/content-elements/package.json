@@ -4,9 +4,11 @@
   "version": "0.0.1",
   "files": [
     "client.js",
-    "server.js"
+    "server.js",
+    "index.d.ts"
   ],
   "main": "client.js",
+  "types": "index.d.ts",
   "scripts": {
     "cli": "node ./cli.js"
   },
@@ -24,8 +26,8 @@
     "@tailor-cms/ce-fill-blank-server": "^0.0.4",
     "@tailor-cms/ce-html-default-edit": "^0.0.9",
     "@tailor-cms/ce-html-default-server": "^0.0.9",
-    "@tailor-cms/ce-image-edit": "^1.0.0",
-    "@tailor-cms/ce-image-server": "^1.0.0",
+    "@tailor-cms/ce-image-edit": "^1.0.1",
+    "@tailor-cms/ce-image-server": "^1.0.1",
     "@tailor-cms/ce-matching-question-edit": "^0.0.3",
     "@tailor-cms/ce-matching-question-server": "^0.0.3",
     "@tailor-cms/ce-multiple-choice-edit": "^0.0.12",
