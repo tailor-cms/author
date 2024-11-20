@@ -2,8 +2,13 @@
   "name": "@tailor-cms/content-container-collection",
   "type": "module",
   "version": "0.0.1",
-  "files": ["client.js", "server.js"],
+  "files": [
+    "client.js",
+    "server.js",
+    "index.d.ts"
+  ],
   "main": "client.js",
+  "types": "index.d.ts",
   "scripts": {
     "cli": "node ./cli.js"
   },
