@@ -8,3 +8,4 @@ packages:
   - 'extensions/meta-inputs'
   - 'extensions/content-containers'
   - 'infrastructure'
+  - 'schemas'
