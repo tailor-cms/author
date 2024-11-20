@@ -1,18 +1,27 @@
+import {
+  ActivityConfig,
+  ContentContainer,
+  Schema,
+} from '@tailor-cms/interfaces/schema';
+import { ContentContainerType } from '@tailor-cms/content-container-collection';
+import { ContentElementType } from '@tailor-cms/content-element-collection';
+import { MetaInputType } from '@tailor-cms/meta-element-collection';
+
 import { DEFAULT_WORKFLOW } from './default-workflow.js';
 
-const ACTIVITY_TYPE = {
-  MODULE: 'MODULE',
-  PAGE: 'PAGE',
-  SECTION: 'SECTION',
-};
+enum ActivityType {
+  Module = 'MODULE',
+  Page = 'PAGE',
+  Section = 'SECTION',
+}
 
-const MODULE = {
-  type: ACTIVITY_TYPE.MODULE,
+const ModuleConfig: ActivityConfig = {
+  type: ActivityType.Module,
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Module',
   color: '#5187C7',
-  subLevels: [ACTIVITY_TYPE.MODULE, ACTIVITY_TYPE.PAGE],
+  subLevels: [ActivityType.Module, ActivityType.Page],
   ai: {
     definition: `
       Modules are a way to organize knowledge into chunks that are easier to
@@ -22,19 +31,19 @@ const MODULE = {
     {
       type: 'prerequisites',
       label: 'Prerequisites',
+      placeholder: 'Click to select',
       multiple: true,
       searchable: true,
       allowEmpty: true,
-      placeholder: 'Click to select',
       allowCircularLinks: false,
       allowInsideLineage: true,
-      allowedTypes: [ACTIVITY_TYPE.MODULE],
+      allowedTypes: [ActivityType.Module],
     },
   ],
 };
 
-const PAGE = {
-  type: ACTIVITY_TYPE.PAGE,
+const PageConfig: ActivityConfig = {
+  type: ActivityType.Page,
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Page',
@@ -43,55 +52,56 @@ const PAGE = {
       Pages contain the actual content that the user will interact with.`,
   },
   color: '#08A9AD',
-  contentContainers: [ACTIVITY_TYPE.SECTION],
+  contentContainers: [ActivityType.Section],
   meta: [
     {
       key: 'haesRating',
-      type: 'HAES_RATING',
+      type: MetaInputType.HaesRating,
       label: 'HE@S rating',
       hideOnCreate: true,
     },
   ],
 };
 
-const SECTION_CONTAINER = {
-  type: ACTIVITY_TYPE.SECTION,
-  templateId: 'DEFAULT',
+const SectionConfig: ContentContainer = {
+  type: ActivityType.Section,
+  templateId: ContentContainerType.Default,
   label: 'Section',
   multiple: true,
   types: [
-    'CE_HTML_DEFAULT',
-    'CE_IMAGE',
-    'CE_VIDEO',
-    'CE_EMBED',
-    'CE_AUDIO',
-    'CE_PAGE_BREAK',
-    'CE_PDF',
+    ContentElementType.HtmlDefault,
+    ContentElementType.Image,
+    ContentElementType.Video,
+    ContentElementType.Embed,
+    ContentElementType.Audio,
+    ContentElementType.PageBreak,
+    ContentElementType.Pdf,
+    // TODO: Need to be migrated
     // 'CE_ACCORDION',
     // 'CE_TABLE',
     // 'CE_MODAL',
     // 'CE_CAROUSEL',
-    'CE_MULTIPLE_CHOICE',
-    'CE_SINGLE_CHOICE',
-    'CE_TEXT_RESPONSE',
-    'CE_NUMERICAL_RESPONSE',
-    'CE_TRUE_FALSE',
-    'CE_MATCHING_QUESTION',
-    'CE_FILL_BLANK',
-    'CE_DRAG_DROP',
+    ContentElementType.MultipleChoice,
+    ContentElementType.SingleChoice,
+    ContentElementType.TextResponse,
+    ContentElementType.NumericalResponse,
+    ContentElementType.TrueFalse,
+    ContentElementType.MatchingQuestion,
+    ContentElementType.FillBlank,
+    ContentElementType.DragDrop,
   ],
   categories: [
     {
       name: 'Questions',
       types: [
-        'CE_MULTIPLE_CHOICE',
-        'CE_SINGLE_CHOICE',
-        'CE_TEXT_RESPONSE',
-        'CE_NUMERICAL_RESPONSE',
-        'CE_TRUE_FALSE',
-        'CE_MATCHING_QUESTION',
-        'CE_FILL_BLANK',
-        'CE_DRAG_DROP',
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+        ContentElementType.TextResponse,
+        ContentElementType.NumericalResponse,
+        ContentElementType.TrueFalse,
+        ContentElementType.MatchingQuestion,
+        ContentElementType.FillBlank,
+        ContentElementType.DragDrop,
       ],
     },
   ],
@@ -115,7 +125,7 @@ const SECTION_CONTAINER = {
   },
 };
 
-export const SCHEMA = {
+export const SCHEMA: Schema = {
   id: 'COURSE_SCHEMA',
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Course',
@@ -123,7 +133,7 @@ export const SCHEMA = {
   meta: [
     {
       key: 'posterImage',
-      type: 'FILE',
+      type: MetaInputType.File,
       label: 'Poster Image',
       placeholder: 'Click to upload a poster image',
       icon: 'mdi-image',
@@ -134,15 +144,15 @@ export const SCHEMA = {
       showPreview: true,
     },
   ],
-  structure: [MODULE, PAGE],
-  contentContainers: [SECTION_CONTAINER],
+  structure: [ModuleConfig, PageConfig],
+  contentContainers: [SectionConfig],
   elementMeta: [
     {
-      type: 'CE_IMAGE',
+      type: ContentElementType.Image,
       inputs: [
         {
           key: 'captions',
-          type: 'TEXTAREA',
+          type: MetaInputType.Textarea,
           label: 'Captions',
           placeholder: 'Enter captions...',
         },
@@ -153,19 +163,22 @@ export const SCHEMA = {
           label: 'Related Content',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: ['CE_IMAGE'],
+          allowedTypes: [ContentElementType.Image],
         },
       ],
     },
     {
-      type: 'CE_HTML_DEFAULT',
+      type: ContentElementType.HtmlDefault,
       relationships: [
         {
           key: 'related',
           label: 'Related Content',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: ['CE_HTML_DEFAULT', 'CE_IMAGE'],
+          allowedTypes: [
+            ContentElementType.HtmlDefault,
+            ContentElementType.Image,
+          ],
           filters: [(optionEl, currentEl) => optionEl.id !== currentEl.id],
         },
         {
@@ -173,7 +186,7 @@ export const SCHEMA = {
           label: 'Prerequisites',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: ['CE_HTML_DEFAULT'],
+          allowedTypes: [ContentElementType.HtmlDefault],
         },
       ],
     },

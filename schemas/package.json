@@ -1,0 +1,12 @@
+{
+  "name": "@tailor-cms/schemas",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Tailor schemas",
+  "devDependencies": {
+    "@tailor-cms/content-container-collection": "workspace:^",
+    "@tailor-cms/content-element-collection": "workspace:^",
+    "@tailor-cms/interfaces": "workspace:^",
+    "@tailor-cms/meta-element-collection": "workspace:^"
+  }
+}
