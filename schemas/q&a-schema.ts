@@ -1,18 +1,26 @@
+import {
+  ActivityConfig,
+  ContentContainer,
+  Schema,
+} from '@tailor-cms/interfaces/schema';
+import { ContentContainerType } from '@tailor-cms/content-container-collection';
+import { ContentElementType } from '@tailor-cms/content-element-collection';
+
 import { DEFAULT_WORKFLOW } from './default-workflow.js';
 
-const ACTIVITY_TYPE = {
-  CATEGORY: 'CATEGORY',
-  QUESTION: 'QUESTION',
-  RESPONSE: 'RESPONSE',
-};
+enum ActivityType {
+  Category = 'CATEGORY',
+  Question = 'QUESTION',
+  Response = 'RESPONSE',
+}
 
-const CATEGORY = {
-  type: ACTIVITY_TYPE.CATEGORY,
+const CATEGORY: ActivityConfig = {
+  type: ActivityType.Category,
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Category',
   color: '#5187C7',
-  subLevels: [ACTIVITY_TYPE.CATEGORY, ACTIVITY_TYPE.QUESTION],
+  subLevels: [ActivityType.Category, ActivityType.Question],
   ai: {
     definition: `
       Categories are a way to organize questions.
@@ -21,12 +29,12 @@ const CATEGORY = {
   },
 };
 
-const QUESTION = {
-  type: ACTIVITY_TYPE.QUESTION,
+const QUESTION: ActivityConfig = {
+  type: ActivityType.Question,
   isTrackedInWorkflow: true,
   label: 'Question',
   color: '#08A9AD',
-  contentContainers: [ACTIVITY_TYPE.RESPONSE],
+  contentContainers: [ActivityType.Response],
   ai: {
     definition: `
       Question represents individual question a user might have.
@@ -35,11 +43,11 @@ const QUESTION = {
   },
 };
 
-const RESPONSE = {
-  type: ACTIVITY_TYPE.RESPONSE,
-  templateId: 'DEFAULT',
+const RESPONSE: ContentContainer = {
+  type: ActivityType.Response,
+  templateId: ContentContainerType.Default,
   label: 'Response',
-  types: ['CE_HTML_DEFAULT', 'CE_IMAGE'],
+  types: [ContentElementType.HtmlDefault, ContentElementType.Image],
   ai: {
     definition: `
       Response should clearly and concisely answer to the question it is
@@ -53,7 +61,7 @@ const RESPONSE = {
   },
 };
 
-export const SCHEMA = {
+export const SCHEMA: Schema = {
   id: 'Q&A_SCHEMA',
   description:
     'A structured Q&A repository with organized categories and questions.',
