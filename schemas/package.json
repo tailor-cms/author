@@ -17,6 +17,9 @@
     "build": "tsup",
     "prebuild": "del-cli dist"
   },
+  "dependencies": {
+    "@tailor-cms/config-parser": "workspace:^"
+  },
   "devDependencies": {
     "@tailor-cms/content-container-collection": "workspace:^",
     "@tailor-cms/content-element-collection": "workspace:^",
@@ -48,8 +51,5 @@
     "minify": false,
     "clean": false,
     "dts": true
-  },
-  "dependencies": {
-    "@tailor-cms/config-parser": "workspace:^"
   }
 }
