@@ -33,7 +33,8 @@
             @update:model-value="emit('update', { [index]: $event })"
           />
           <div v-else>
-            <div v-if="feedback[index]">{{ feedback[index] }}</div>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-if="feedback[index]" v-html="feedback[index]"></div>
             <span v-else class="font-italic">Feedback not added.</span>
           </div>
         </div>
