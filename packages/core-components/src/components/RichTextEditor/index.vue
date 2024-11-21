@@ -2,14 +2,11 @@
   <VInput
     v-if="editor"
     ref="input"
-    :disabled="disabled"
-    :focused="focused"
+    v-bind="{ disabled, focused, readonly, rules }"
     :model-value="content"
-    :readonly="readonly"
-    :rules="rules"
     class="text-left"
   >
-    <template #default="{ id, isValid, isDisabled, isDirty }">
+    <template #default="{ id, isValid, isReadonly, isDisabled, isDirty }">
       <VField
         :id="id.value"
         :active="focused || isDirty.value"
@@ -17,18 +14,18 @@
         :error="isValid.value === false"
         :focused="focused"
         :label="label"
+        :readonly="isReadonly.value"
         :variant="variant"
       >
         <template #default="{ props: fieldProps }">
           <div class="w-100">
-            <EditorContent
-              v-bind="fieldProps"
-              ref="input"
-              :editor="editor"
-              class="w-100"
-            />
+            <EditorContent v-bind="fieldProps" :editor="editor" class="w-100" />
             <VDivider />
-            <EditorToolbar :editor="editor" />
+            <EditorToolbar
+              :disabled="isDisabled.value"
+              :editor="editor"
+              :readonly="isReadonly.value"
+            />
           </div>
         </template>
       </VField>
@@ -38,7 +35,7 @@
 
 <script lang="ts" setup>
 import { EditorContent, useEditor } from '@tiptap/vue-3';
-import { ref, watch } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 import type { VField, VInput } from 'vuetify/components';
 import CharacterCount from '@tiptap/extension-character-count';
 import StarterKit from '@tiptap/starter-kit';
@@ -104,6 +101,10 @@ watch(focused, async (val) => {
   if (val || props.modelValue === content.value) return;
   return emit('change', content.value);
 });
+
+watchEffect(() =>
+  editor.value?.setEditable(!props.readonly && !props.disabled),
+);
 </script>
 
 <style lang="scss" scoped>
@@ -144,7 +145,9 @@ $toolbar-height: 2.25rem;
   }
 }
 
-.v-field--center-affix :deep(.v-label.v-field-label) {
-  top: calc(50% - $toolbar-height/2);
+.v-field--center-affix {
+  :deep(.v-label.v-field-label:not(.v-field-label--floating)) {
+    top: calc(50% - $toolbar-height/2);
+  }
 }
 </style>
