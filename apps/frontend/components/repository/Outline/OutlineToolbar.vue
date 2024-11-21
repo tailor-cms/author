@@ -1,32 +1,63 @@
 <template>
   <VToolbar class="toolbar" color="transparent">
-    <VSpacer />
-    <VHover>
-      <template #default="{ isHovering, props: hoverProps }">
-        <VTextField
-          v-bind="hoverProps"
-          v-model="searchInput"
-          :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-          :class="{ 'mr-4': !isFlat }"
-          density="comfortable"
-          placeholder="Search by name or id..."
-          prepend-inner-icon="mdi-magnify"
-          rounded="xl"
-          variant="outlined"
-          clearable
-          hide-details
-          @click:clear="resetInput"
-        />
-      </template>
+    <VHover v-if="hasActivities" v-slot="{ isHovering, props: hoverProps }">
+      <VSpacer v-if="isListStyle" />
+      <VTextField
+        v-bind="hoverProps"
+        v-model="search"
+        :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
+        :class="{ 'mr-4': !isFlat }"
+        density="comfortable"
+        placeholder="Search by name or id..."
+        prepend-inner-icon="mdi-magnify"
+        rounded="xl"
+        variant="outlined"
+        clearable
+        hide-details
+        @click:clear="search = ''"
+      />
     </VHover>
+    <template v-if="!isListStyle">
+      <VHover
+        v-if="hasActivities && activityTypeOptions.length"
+        v-slot="{ isHovering, props: hoverProps }"
+      >
+        <VSelect
+          v-bind="hoverProps"
+          v-model="activityTypes"
+          :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
+          :items="activityTypeOptions"
+          density="comfortable"
+          item-title="label"
+          item-value="type"
+          max-width="232"
+          placeholder="Filter by type"
+          rounded="xl"
+          variant="solo"
+          clearable
+          flat
+          hide-details
+          multiple
+        />
+      </VHover>
+      <VSpacer />
+      <CreateDialog
+        :anchor="anchor"
+        :repository-id="repositoryStore.repositoryId as number"
+        activator-color="primary-lighten-4"
+        class="px-4"
+        variant="tonal"
+        show-activator
+      />
+    </template>
     <VBtn
-      v-if="!isFlat"
-      :disabled="!!props.search"
+      v-else-if="!isFlat && hasActivities"
+      :disabled="!!search"
       class="px-5"
       color="primary-lighten-4"
       height="42"
       variant="tonal"
-      @click="currentRepositoryStore.toggleOutlineExpand"
+      @click="repositoryStore.toggleOutlineExpand"
     >
       Toggle all
     </VBtn>
@@ -34,33 +65,48 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  type ActivityConfig,
+  OutlineStyle,
+} from '@tailor-cms/interfaces/schema';
+import filter from 'lodash/filter';
+import find from 'lodash/find';
+import last from 'lodash/last';
+import map from 'lodash/map';
+
+import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-interface Props {
-  isFlat?: boolean;
-  search?: string;
-}
+defineProps<{
+  activityTypeOptions: ActivityConfig[];
+  hasActivities: boolean;
+}>();
 
-const props = withDefaults(defineProps<Props>(), {
-  isFlat: false,
-  search: '',
+const search = defineModel<string | null>('search', { default: null });
+const activityTypes = defineModel<string[]>('activityTypes', {
+  default: () => [],
 });
-const emit = defineEmits(['search']);
 
-const currentRepositoryStore = useCurrentRepository();
-const searchInput = ref('');
+defineEmits(['search']);
 
-const resetInput = () => {
-  searchInput.value = '';
-  emit('search', '');
-};
+const repositoryStore = useCurrentRepository();
+const { outlineActivities, rootActivities, schemaOutlineStyle, taxonomy } =
+  storeToRefs(repositoryStore);
 
-watch(
-  () => searchInput.value,
-  (value) => {
-    emit('search', value);
-  },
+const isListStyle = computed(
+  () => schemaOutlineStyle.value === OutlineStyle.List,
 );
+
+const isFlat = computed(() => {
+  const types = map(
+    filter(taxonomy.value, (it) => !it.rootLevel),
+    'type',
+  );
+  if (!types.length) return false;
+  return !find(outlineActivities.value, (it) => types.includes(it.type));
+});
+
+const anchor = computed(() => last(rootActivities.value));
 </script>
 
 <style lang="scss" scoped>

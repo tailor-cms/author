@@ -2,6 +2,7 @@ import {
   schema as schemaConfig,
   workflow as workflowConfig,
 } from 'tailor-config-shared';
+import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 
 import { repository as repositoryApi } from '@/api';
 import { useActivityStore } from './activity';
@@ -53,8 +54,14 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
   });
 
-  const schemaName = computed(() => {
-    return repository.value && getSchema(repository.value.schema).name;
+  const schema = computed(() => {
+    return repository.value && getSchema(repository.value.schema);
+  });
+
+  const schemaName = computed(() => schema.value?.name || '');
+
+  const schemaOutlineStyle = computed(() => {
+    return schema.value?.outlineStyle || OutlineStyle.List;
   });
 
   const taxonomy = computed(() => {
@@ -180,6 +187,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     users,
     outlineState,
     schemaName,
+    schemaOutlineStyle,
     taxonomy,
     activities,
     outlineActivities,

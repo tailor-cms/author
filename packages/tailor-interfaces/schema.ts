@@ -1,6 +1,12 @@
 import type { ContentElement } from './content-element';
 
 export type ElementManifest = Record<string, any>;
+
+export enum OutlineStyle {
+  Grid = 'GRID',
+  List = 'LIST',
+}
+
 export interface ElementRegistry {
   all: ElementManifest[];
   load: (el: ContentElement) => void;
@@ -103,6 +109,7 @@ export interface Schema {
   meta?: Metadata[];
   defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];
+  outlineStyle?: OutlineStyle;
   contentContainers: ContentContainer[];
   elementMeta?: ElementMetaConfig[];
   // @deprecated use elementMeta instead
