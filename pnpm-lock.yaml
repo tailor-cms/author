@@ -134,7 +134,7 @@ importers:
         version: 2.2.2
       '@tailor-cms/config':
         specifier: workspace:*
-        version: link:../../schemas
+        version: link:../../config
       '@tailor-cms/config-parser':
         specifier: workspace:*
         version: link:../../packages/tailor-config-parser
@@ -414,7 +414,7 @@ importers:
         version: 3.5.0
       '@tailor-cms/config':
         specifier: workspace:*
-        version: link:../../schemas
+        version: link:../../config
       '@tailor-cms/content-container-collection':
         specifier: workspace:^
         version: link:../../extensions/content-containers
@@ -563,6 +563,34 @@ importers:
       vue-router:
         specifier: ^4.4.5
         version: 4.4.5(vue@3.5.12(typescript@5.6.3))
+
+  config:
+    dependencies:
+      '@tailor-cms/config-parser':
+        specifier: workspace:^
+        version: link:../packages/tailor-config-parser
+    devDependencies:
+      '@tailor-cms/content-container-collection':
+        specifier: workspace:^
+        version: link:../extensions/content-containers
+      '@tailor-cms/content-element-collection':
+        specifier: workspace:^
+        version: link:../extensions/content-elements
+      '@tailor-cms/interfaces':
+        specifier: workspace:^
+        version: link:../packages/tailor-interfaces
+      '@tailor-cms/meta-element-collection':
+        specifier: workspace:^
+        version: link:../extensions/meta-inputs
+      del-cli:
+        specifier: ^5.1.0
+        version: 5.1.0
+      tsup:
+        specifier: ^7.2.0
+        version: 7.3.0(postcss@8.4.47)(typescript@5.6.3)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
 
   extensions/content-containers:
     dependencies:
@@ -1056,34 +1084,6 @@ importers:
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
-
-  schemas:
-    dependencies:
-      '@tailor-cms/config-parser':
-        specifier: workspace:^
-        version: link:../packages/tailor-config-parser
-    devDependencies:
-      '@tailor-cms/content-container-collection':
-        specifier: workspace:^
-        version: link:../extensions/content-containers
-      '@tailor-cms/content-element-collection':
-        specifier: workspace:^
-        version: link:../extensions/content-elements
-      '@tailor-cms/interfaces':
-        specifier: workspace:^
-        version: link:../packages/tailor-interfaces
-      '@tailor-cms/meta-element-collection':
-        specifier: workspace:^
-        version: link:../extensions/meta-inputs
-      del-cli:
-        specifier: ^5.1.0
-        version: 5.1.0
-      tsup:
-        specifier: ^7.2.0
-        version: 7.3.0(postcss@8.4.47)(typescript@5.6.3)
-      typescript:
-        specifier: ^5.6.3
-        version: 5.6.3
 
   tests:
     dependencies:

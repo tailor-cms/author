@@ -8,7 +8,7 @@
     "extensions",
     "infrastructure",
     "packages",
-    "schemas",
+    "config",
     "scripts",
     "tests",
     ".eslintrc.cjs",

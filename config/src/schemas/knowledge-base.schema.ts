@@ -6,7 +6,7 @@ import {
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
-import { DEFAULT_WORKFLOW } from './default-workflow.js';
+import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 enum ActivityType {
   Category = 'CATEGORY',

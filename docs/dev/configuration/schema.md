@@ -1,17 +1,8 @@
 # Adding new schema
 
-`tailor.config.js` is required to export a `SCHEMAS` property, which contains
-an array of Schemas available in the system. Currently, schemas are defined
-using `js`, which we plan to migrate to `ts` in the future. Within the
-documentation, we'll use TypeScript interfaces to document Schema configuration
-options.
-
-\
- `tailor.config.js`
-
-```ts
-export const SCHEMAS: Schema[] = [];
-```
+`@tailor-cms/config` package (located in `/config` dir) exports `SCHEMAS`
+property, which contains an array of Schemas available in the system.
+Currently, schemas are defined using `TypeScript`.
 
 \
 Let's dive a bit into Schema definition.
