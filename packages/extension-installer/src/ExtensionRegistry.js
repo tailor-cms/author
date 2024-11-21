@@ -150,7 +150,7 @@ export class ExtensionRegistry {
     });
     shell.echo('Generating export modules...');
     fs.writeFileSync(clientExportsLocation, getExportModule(clientPackages));
-    const interfaceModuleExport = await getInterfaceModule(
+    const interfaceModuleExport = getInterfaceModule(
       this.location,
       elements,
       this.extensionType,
@@ -183,7 +183,7 @@ const exportInterfaceTemplate = _.template(
 const getExportModule = (entries) =>
   exportModuleTemplate({ entries }).trim().concat('\n];\n');
 
-const getInterfaceModule = async (dir, packages, extensionType) => {
+const getInterfaceModule = (dir, packages, extensionType) => {
   const isBundled = extensionType === 'content element';
   const targetPath = isBundled ? 'dist/index.cjs' : 'src/index.js';
   const packageTypes = packages.map((it) =>
