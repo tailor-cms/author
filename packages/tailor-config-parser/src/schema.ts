@@ -20,7 +20,7 @@ import sortBy from 'lodash/sortBy.js';
 import union from 'lodash/union.js';
 import uniq from 'lodash/uniq.js';
 
-export default (schemas: Schema[]) => {
+export const getSchemaApi = (schemas: Schema[]) => {
   return {
     getSchemaId,
     getSchema,

@@ -2,7 +2,14 @@ import find from 'lodash/find.js';
 
 import validateWorkflow from './workflow-validation';
 
-interface WorkflowStage {
+export interface WorkflowStatus {
+  id: string;
+  label: string;
+  color: string;
+  default?: boolean;
+}
+
+export interface WorkflowPriority {
   id: string;
   label: string;
   icon: string;
@@ -10,7 +17,19 @@ interface WorkflowStage {
   default?: boolean;
 }
 
-const priorities: WorkflowStage[] = [
+interface DueDateTreshold {
+  days?: number;
+  months?: number;
+  weeks?: number;
+}
+
+export interface Workflow {
+  id: string;
+  dueDateWarningThreshold?: DueDateTreshold;
+  statuses: WorkflowStatus[];
+}
+
+const priorities: WorkflowPriority[] = [
   {
     id: 'CRITICAL',
     label: 'Critical',
@@ -34,7 +53,7 @@ const priorities: WorkflowStage[] = [
   },
 ];
 
-export default (workflows: any[], schemaApi) => {
+export const getWorkflowApi = (workflows: Workflow[], schemaApi) => {
   validateWorkflow(workflows);
 
   return {
@@ -45,16 +64,18 @@ export default (workflows: any[], schemaApi) => {
     getDefaultActivityStatus,
   };
 
-  function getWorkflow(id) {
+  function getWorkflow(id): Workflow | undefined {
     return find(workflows, { id });
   }
 
-  function getPriority(id) {
+  function getPriority(id): WorkflowPriority {
     return find(priorities, { id });
   }
 
   function getDefaultWorkflowStatus(id) {
-    const { statuses } = getWorkflow(id);
+    const workflow = getWorkflow(id);
+    if (!workflow) return;
+    const { statuses } = workflow;
     const { id: status } = statuses.find((it) => it.default) || statuses[0];
     const { id: priority } = priorities.find((it) => it.default) as any;
     return { status, priority };

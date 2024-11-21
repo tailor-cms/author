@@ -44,7 +44,7 @@ export class ExtensionRegistry {
   }
 
   get interfaceExportsLocation() {
-    return path.join(this.location, 'index.d.ts');
+    return path.join(this.location, 'types.js');
   }
 
   get serverExportsLocation() {
@@ -175,8 +175,8 @@ export const elements = [
 // prettier-ignore
 const exportInterfaceTemplate = _.template(
   `
-  export enum <%- enumName %> {
-  <% _.forEach(types, function(val, key) {%><%- key %> = '<%- val %>',
+  export const <%- enumName %> = {
+  <% _.forEach(types, function(val, key) {%><%- key %>: '<%- val %>',
   <%});%>
   `);
 
@@ -196,7 +196,7 @@ const getInterfaceModule = async (dir, packages, extensionType) => {
     return acc;
   }, {});
   const enumName = `${toPascalCase(extensionType)}Type`;
-  return exportInterfaceTemplate({ enumName, types }).trim().concat('\n}\n');
+  return exportInterfaceTemplate({ enumName, types }).trim().concat('\n};\n');
 };
 
 const parseType = (path) => {

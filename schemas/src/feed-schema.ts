@@ -4,8 +4,8 @@ import {
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
-import { ContentContainerType } from '@tailor-cms/content-container-collection';
-import { MetaInputType } from '@tailor-cms/meta-element-collection';
+import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
+import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from './default-workflow.js';
 

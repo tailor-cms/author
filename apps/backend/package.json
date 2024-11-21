@@ -24,6 +24,7 @@
     "@faker-js/faker": "^8.4.1",
     "@keyv/redis": "^3.0.1",
     "@paralleldrive/cuid2": "^2.2.2",
+    "@tailor-cms/config": "workspace:*",
     "@tailor-cms/config-parser": "workspace:*",
     "@tailor-cms/content-container-collection": "workspace:^",
     "@tailor-cms/content-element-collection": "workspace:^",

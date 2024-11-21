@@ -3,7 +3,7 @@ import {
   removeReference,
 } from '../shared/util/modelReference.js';
 import { Model, Op } from 'sequelize';
-import { schema, workflow } from 'tailor-config-shared';
+import { schema, workflow } from '@tailor-cms/config';
 import calculatePosition from '../shared/util/calculatePosition.js';
 import { Activity as Events } from 'sse-event-types';
 import hooks from './hooks.js';

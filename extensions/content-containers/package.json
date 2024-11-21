@@ -5,10 +5,8 @@
   "files": [
     "client.js",
     "server.js",
-    "index.d.ts"
+    "types.js"
   ],
-  "main": "client.js",
-  "types": "index.d.ts",
   "scripts": {
     "cli": "node ./cli.js"
   },

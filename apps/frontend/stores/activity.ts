@@ -4,7 +4,7 @@ import {
   calculatePosition,
   InsertLocation,
 } from '@tailor-cms/utils';
-import { schema, workflow as workflowConfig } from 'tailor-config-shared';
+import { schema, workflow as workflowConfig } from '@tailor-cms/config';
 import { Activity as Events } from 'sse-event-types';
 import findIndex from 'lodash/findIndex';
 import Hashids from 'hashids';

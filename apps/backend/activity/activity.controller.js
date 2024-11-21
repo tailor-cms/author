@@ -10,7 +10,7 @@ import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import consumerConfig from '../config/server/consumer.js';
 import publishingService from '../shared/publishing/publishing.service.js';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 const { Activity, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;

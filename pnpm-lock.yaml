@@ -132,6 +132,9 @@ importers:
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
+      '@tailor-cms/config':
+        specifier: workspace:*
+        version: link:../../schemas
       '@tailor-cms/config-parser':
         specifier: workspace:*
         version: link:../../packages/tailor-config-parser
@@ -409,6 +412,9 @@ importers:
       '@statsig/web-analytics':
         specifier: ^3.5.0
         version: 3.5.0
+      '@tailor-cms/config':
+        specifier: workspace:*
+        version: link:../../schemas
       '@tailor-cms/content-container-collection':
         specifier: workspace:^
         version: link:../../extensions/content-containers
@@ -1052,6 +1058,10 @@ importers:
         version: 5.5.4
 
   schemas:
+    dependencies:
+      '@tailor-cms/config-parser':
+        specifier: workspace:^
+        version: link:../packages/tailor-config-parser
     devDependencies:
       '@tailor-cms/content-container-collection':
         specifier: workspace:^
@@ -1065,6 +1075,15 @@ importers:
       '@tailor-cms/meta-element-collection':
         specifier: workspace:^
         version: link:../extensions/meta-inputs
+      del-cli:
+        specifier: ^5.1.0
+        version: 5.1.0
+      tsup:
+        specifier: ^7.2.0
+        version: 7.3.0(postcss@8.4.47)(typescript@5.6.3)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
 
   tests:
     dependencies:

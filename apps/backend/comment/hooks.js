@@ -1,7 +1,7 @@
 import mail from '../shared/mail/index.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 import sse from '../shared/sse/index.js';
 import without from 'lodash/without.js';
 

@@ -58,7 +58,7 @@
 import type { Status } from '@tailor-cms/interfaces/activity';
 import type { StatusConfig } from 'tailor-config-shared';
 import { UserAvatar } from '@tailor-cms/core-components';
-import { workflow as workflowConfig } from 'tailor-config-shared';
+import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import DueDate from '../Workflow/Overview/DueDate.vue';
 
