@@ -184,8 +184,8 @@ const getExportModule = (entries) =>
   exportModuleTemplate({ entries }).trim().concat('\n];\n');
 
 const getInterfaceModule = (dir, packages, extensionType) => {
-  const isBundled = extensionType === 'content element';
-  const targetPath = isBundled ? 'dist/index.cjs' : 'src/index.js';
+  const isBuilt = extensionType === 'content element';
+  const targetPath = isBuilt ? 'dist/index.cjs' : 'src/index.js';
   const packageTypes = packages.map((it) =>
     parseType(`${dir}/node_modules/${it.clientPackage}/${targetPath}`),
   );
