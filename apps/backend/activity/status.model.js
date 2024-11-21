@@ -1,7 +1,7 @@
 import { Activity as Events } from 'sse-event-types';
 import hooks from './status.hooks.js';
 import { Model } from 'sequelize';
-import { workflow } from '@tailor-cms/config'
+import { workflow } from '@tailor-cms/config';
 
 const { priorities } = workflow;
 const priorityIds = priorities.map((it) => it.id);
