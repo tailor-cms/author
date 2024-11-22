@@ -56,7 +56,7 @@
 
 <script lang="ts" setup>
 import type { Status } from '@tailor-cms/interfaces/activity';
-import type { StatusConfig } from 'tailor-config-shared';
+import type { StatusConfig } from '@tailor-cms/common';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 

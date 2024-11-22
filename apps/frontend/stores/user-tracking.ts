@@ -6,7 +6,7 @@ import omit from 'lodash/omit';
 import orderBy from 'lodash/orderBy';
 import pick from 'lodash/pick';
 import type { User } from '@tailor-cms/interfaces/user';
-import { UserActivity } from 'sse-event-types';
+import { UserActivity } from '@tailor-cms/common/src/sse.js';
 
 import { feed as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';

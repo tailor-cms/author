@@ -1,7 +1,7 @@
 import { auth as authConfig } from '../../config/server/index.js';
 import { createError } from '../error/helpers.js';
 import get from 'lodash/get.js';
-import roleConfig from 'tailor-config-shared/src/role.js';
+import roleConfig from '@tailor-cms/common/src/role.js';
 import { UNAUTHORIZED } from 'http-status-codes';
 
 const { user: role } = roleConfig;

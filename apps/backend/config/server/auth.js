@@ -1,4 +1,4 @@
-import { role as roleConfig } from 'tailor-config-shared';
+import { role as roleConfig } from '@tailor-cms/common';
 import yn from 'yn';
 
 const { env } = process;

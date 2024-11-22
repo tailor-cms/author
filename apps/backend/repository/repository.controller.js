@@ -13,7 +13,7 @@ import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import publishingService from '../shared/publishing/publishing.service.js';
 import { removeInvalidReferences } from '../shared/util/modelReference.js';
-import { repository as role } from 'tailor-config-shared/src/role.js';
+import { repository as role } from '@tailor-cms/common/src/role.js';
 import sample from 'lodash/sample.js';
 import { schema } from '@tailor-cms/config';
 import { snakeCase } from 'change-case';

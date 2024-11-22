@@ -5,7 +5,7 @@ import {
 import { Model, Op } from 'sequelize';
 import { schema, workflow } from '@tailor-cms/config';
 import calculatePosition from '../shared/util/calculatePosition.js';
-import { Activity as Events } from 'sse-event-types';
+import { Activity as Events } from '@tailor-cms/common/src/sse.js';
 import hooks from './hooks.js';
 import isEmpty from 'lodash/isEmpty.js';
 import map from 'lodash/map.js';

@@ -132,6 +132,9 @@ importers:
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
+      '@tailor-cms/common':
+        specifier: workspace:*
+        version: link:../../packages/tailor-common
       '@tailor-cms/config':
         specifier: workspace:*
         version: link:../../config
@@ -324,15 +327,9 @@ importers:
       simple-oauth2:
         specifier: ^5.1.0
         version: 5.1.0
-      sse-event-types:
-        specifier: workspace:*
-        version: link:../../packages/sse-event-types
       strip-json-comments:
         specifier: ^5.0.1
         version: 5.0.1
-      tailor-config-shared:
-        specifier: workspace:*
-        version: link:../../packages/tailor-config-shared
       tailor-seed:
         specifier: workspace:*
         version: link:../../packages/tailor-seed
@@ -412,6 +409,9 @@ importers:
       '@statsig/web-analytics':
         specifier: ^3.5.0
         version: 3.5.0
+      '@tailor-cms/common':
+        specifier: workspace:*
+        version: link:../../packages/tailor-common
       '@tailor-cms/config':
         specifier: workspace:*
         version: link:../../config
@@ -481,12 +481,6 @@ importers:
       promise-queue:
         specifier: ^2.2.5
         version: 2.2.5
-      sse-event-types:
-        specifier: workspace:*
-        version: link:../../packages/sse-event-types
-      tailor-config-shared:
-        specifier: workspace:*
-        version: link:../../packages/tailor-config-shared
       to-case:
         specifier: ^2.0.0
         version: 2.0.0
@@ -1014,7 +1008,17 @@ importers:
         specifier: ^8.14.0
         version: 8.14.0
 
-  packages/sse-event-types: {}
+  packages/tailor-common:
+    dependencies:
+      '@tailor-cms/config-parser':
+        specifier: workspace:*
+        version: link:../tailor-config-parser
+      is-localhost:
+        specifier: 0.0.2
+        version: 0.0.2
+      url-parse:
+        specifier: ^1.5.10
+        version: 1.5.10
 
   packages/tailor-config-parser:
     dependencies:
@@ -1037,18 +1041,6 @@ importers:
       typescript:
         specifier: ^5.6.3
         version: 5.6.3
-
-  packages/tailor-config-shared:
-    dependencies:
-      '@tailor-cms/config-parser':
-        specifier: workspace:*
-        version: link:../tailor-config-parser
-      is-localhost:
-        specifier: 0.0.2
-        version: 0.0.2
-      url-parse:
-        specifier: ^1.5.10
-        version: 1.5.10
 
   packages/tailor-interfaces: {}
 

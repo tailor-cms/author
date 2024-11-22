@@ -10,7 +10,7 @@ import omit from 'lodash/omit.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import randomstring from 'randomstring';
-import { role as roles } from 'tailor-config-shared';
+import { role as roles } from '@tailor-cms/common';
 
 const {
   user: { ADMIN, COLLABORATOR, INTEGRATION, USER },

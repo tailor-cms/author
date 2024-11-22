@@ -8,7 +8,7 @@ import find from 'lodash/find.js';
 import mapKeys from 'lodash/mapKeys.js';
 import { packageDirectory } from 'pkg-dir';
 import path from 'node:path';
-import { role as roles } from 'tailor-config-shared';
+import { role as roles } from '@tailor-cms/common';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
 import TransferService from '../../shared/transfer/transfer.service.js';
 
