@@ -6,8 +6,8 @@ import { mkdirp } from 'mkdirp';
 import * as yup from 'yup';
 import { pathExists } from 'path-exists';
 import Promise from 'bluebird';
-import config from '#config';
 import { validateConfig } from '../validation.js';
+import config from '#config';
 
 const isNotFound = (err) => err.code === 'ENOENT';
 const resolvePath = (str) => path.resolve(expandPath(str));

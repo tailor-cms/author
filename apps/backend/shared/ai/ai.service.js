@@ -4,8 +4,8 @@ import { schema as schemaConfig } from '@tailor-cms/config';
 import shuffle from 'lodash/shuffle.js';
 import StorageService from '../storage/storage.service.js';
 
-import { ai as aiConfig } from '#config';
 import createLogger from '../logger.js';
+import { ai as aiConfig } from '#config';
 
 const logger = createLogger('ai');
 const {

@@ -3,11 +3,11 @@ import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import get from 'lodash/get.js';
 import jwt from 'jsonwebtoken';
 import LocalStrategy from 'passport-local';
-import { auth as config, origin } from '#config';
 import db from '../database/index.js';
 import Audience from './audience.js';
 import auth from './authenticator.js';
 import OIDCStrategy from './oidc.js';
+import { auth as config, origin } from '#config';
 
 const { User } = db;
 const options = {

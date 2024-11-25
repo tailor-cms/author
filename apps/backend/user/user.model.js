@@ -9,8 +9,8 @@ import Promise from 'bluebird';
 import randomstring from 'randomstring';
 import { role as roles } from '@tailor-cms/common';
 import mail from '../shared/mail/index.js';
-import { auth as authConfig } from '#config';
 import Audience from '../shared/auth/audience.js';
+import { auth as authConfig } from '#config';
 
 const {
   user: { ADMIN, COLLABORATOR, INTEGRATION, USER },
