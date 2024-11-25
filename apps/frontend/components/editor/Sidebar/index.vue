@@ -67,9 +67,9 @@ import reject from 'lodash/reject';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { useDisplay } from 'vuetify';
 
-import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import ActivityNavigation from './ActivityNavigation.vue';
 import ElementSidebar from './ElementSidebar/index.vue';
+import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 
 const props = defineProps<{
   repository: Repository;
@@ -139,6 +139,7 @@ watch(
 // watch(unseenComments, debounce((val) => {
 //   unseenCommentCount.value = val.length;
 // }, 200));
+// eslint-disable-next-line max-len
 // const unseenComments = computed(() => store.getters['repository/comments/getUnseenActivityComments'](props.selectedActivity));
 // const unseenCommentCount = ref(0);
 // const discussionTabVisible = computed(() => selectedTab.value === 'comments');

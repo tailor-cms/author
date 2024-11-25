@@ -5,10 +5,10 @@ import {
   NO_CONTENT,
   NOT_FOUND,
 } from 'http-status-codes';
-import { createError, validationError } from '../shared/error/helpers.js';
-import db from '../shared/database/index.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
+import { createError, validationError } from '../shared/error/helpers.js';
+import db from '../shared/database/index.js';
 
 const { User } = db;
 const createFilter = (q) =>

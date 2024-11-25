@@ -104,9 +104,9 @@ import VueTreeView from 'vue3-tree-vue';
 import aiAPI from '@/api/ai';
 
 const props = defineProps<{
-  schemaId: String | null;
-  name: String;
-  description: String;
+  schemaId: string | null;
+  name: string;
+  description: string;
 }>();
 
 const emit = defineEmits(['structure', 'aiAssistanceToggle']);

@@ -29,11 +29,13 @@ client.interceptors.response.use(
   (res) => res,
   (err) => {
     if (isAuthError(err)) {
+      // eslint-disable-next-line no-undef
       const isAuthenticated = useCookie('is-authenticated');
       isAuthenticated.value = false;
       const authRoute = '/auth';
       if (window.location.pathname === authRoute) return;
-      if (process.server) return navigateTo(authRoute);
+      // eslint-disable-next-line no-undef
+      if (import.meta.server) return navigateTo(authRoute);
       return window.location.replace(authRoute);
     }
     throw err;

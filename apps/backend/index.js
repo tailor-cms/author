@@ -1,13 +1,12 @@
-import app from './app.js';
-import boxen from 'boxen';
-import contentPluginRegistry from './shared/content-plugins/index.js';
 import { createRequire } from 'node:module';
-import Promise from 'bluebird';
 import { promisify } from 'node:util';
+import Promise from 'bluebird';
+import boxen from 'boxen';
 import toCase from 'to-case';
+import contentPluginRegistry from './shared/content-plugins/index.js';
+import app from './app.js';
 
 const require = createRequire(import.meta.url);
-const pkg = require('./package.json');
 
 // NOTE: This needs to be done before db models get loaded!
 const isProduction = process.env.NODE_ENV === 'production';
@@ -17,6 +16,7 @@ Promise.config({ longStackTraces: !isProduction });
 import config from './config/server/index.js';
 import database from './shared/database/index.js';
 import getLogger from './shared/logger.js';
+const pkg = require('./package.json');
 /* eslint-enable */
 
 const capitalize = toCase.capital;

@@ -1,11 +1,11 @@
-import { storage as config } from '../../config/server/index.js';
 import get from 'lodash/get.js';
 import isString from 'lodash/isString.js';
 import Promise from 'bluebird';
 import set from 'lodash/set.js';
-import storage from '../../repository/storage.js';
 import toPairs from 'lodash/toPairs.js';
 import values from 'lodash/values.js';
+import storage from '../../repository/storage.js';
+import { storage as config } from '../../config/server/index.js';
 
 const isPrimitive = (element) => !get(element, 'data.embeds');
 const isQuestion = (element) => get(element, 'data.question');

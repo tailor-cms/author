@@ -9,7 +9,7 @@ import outlineIconset from '~/components/repository/Outline/icons/iconset';
 
 const defaultTheme: ThemeDefinition = {
   colors: {
-    primary: '#607D8B',
+    'primary': '#607D8B',
     'primary-darken-1': '#546E7A',
     'primary-darken-2': '#455A64',
     'primary-darken-3': '#37474F',
@@ -19,7 +19,7 @@ const defaultTheme: ThemeDefinition = {
     'primary-lighten-3': '#B0BEC5',
     'primary-lighten-4': '#CFD8DC',
     'primary-lighten-5': '#ECEFF1',
-    secondary: '#E91E63',
+    'secondary': '#E91E63',
     'secondary-darken-1': '#D81B60',
     'secondary-darken-2': '#C2185B',
     'secondary-darken-3': '#AD1457',
@@ -29,7 +29,7 @@ const defaultTheme: ThemeDefinition = {
     'secondary-lighten-3': '#F48FB1',
     'secondary-lighten-4': '#F8BBD0',
     'secondary-lighten-5': '#FCE4EC',
-    success: '#4CAF50',
+    'success': '#4CAF50',
     'success-darken-1': '#43A047',
     'success-darken-2': '#2E7D32',
     'success-darken-3': '#2E7D32',

@@ -1,3 +1,5 @@
+import PromiseQueue from 'promise-queue';
+import { createLogger } from '../logger.js';
 import {
   publishActivity,
   publishRepositoryDetails,
@@ -5,9 +7,7 @@ import {
   updatePublishingStatus,
   updateRepositoryCatalog,
 } from './helpers.js';
-import { createLogger } from '../logger.js';
 import publishingThrottler from './PublishingThrottler.js';
-import PromiseQueue from 'promise-queue';
 
 const logger = createLogger('publishing:service');
 const log = (msg) => logger.info(msg.replace(/\n/g, ' '));

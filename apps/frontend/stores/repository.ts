@@ -4,9 +4,9 @@ import type {
   Tag,
 } from '@tailor-cms/interfaces/repository';
 
+import { useAuthStore } from './auth';
 import { repository as api, tag as tagApi } from '@/api';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
-import { useAuthStore } from './auth';
 
 const getDefaultQueryParams = () => ({
   offset: 0,

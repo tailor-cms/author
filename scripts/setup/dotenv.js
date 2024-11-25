@@ -1,5 +1,5 @@
-import * as dotenv from 'dotenv';
 import * as fs from 'node:fs/promises';
+import * as dotenv from 'dotenv';
 import isNil from 'lodash/isNil.js';
 import isString from 'lodash/isString.js';
 
@@ -45,7 +45,7 @@ export default async function (path, additionalEnvConfig) {
   let existingEnvConfig = {};
   try {
     existingEnvConfig = await loadConfig(envPath);
-  } catch (err) {
+  } catch {
     console.log(`◦ No existing .env in ${path}`);
   }
   const config = {

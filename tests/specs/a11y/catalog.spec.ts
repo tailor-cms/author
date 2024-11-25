@@ -1,6 +1,6 @@
-import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { Catalog } from '../../pom/catalog/Catalog';
 import SeedClient from '../../api/SeedClient';
+import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { test } from './helpers/axe-config';
 
 test.beforeEach(async () => {

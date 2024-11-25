@@ -1,9 +1,9 @@
 import { expect } from '@playwright/test';
 
-import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { confirmAction } from '../../pom/common/utils.ts';
 import { Editor } from '../../pom/editor/Editor';
 import SeedClient from '../../api/SeedClient';
+import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { test } from './helpers/axe-config';
 
 test.beforeEach(async ({ page }) => {

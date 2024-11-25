@@ -16,6 +16,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import countBy from 'lodash/countBy';
 import filter from 'lodash/filter';
@@ -25,7 +26,7 @@ import pluralize from 'pluralize';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
-  activity: Object;
+  activity: Activity;
 }>();
 
 const { getDescendants, isChanged } = activityUtils;

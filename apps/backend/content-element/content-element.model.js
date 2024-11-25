@@ -1,18 +1,18 @@
-import {
-  detectMissingReferences,
-  removeReference,
-} from '../shared/util/modelReference.js';
 import { Model, Op } from 'sequelize';
-import { createLogger } from '../shared/logger.js';
-import calculatePosition from '../shared/util/calculatePosition.js';
 import { ContentElement as Events } from '@tailor-cms/common/src/sse.js';
 import forEach from 'lodash/forEach.js';
-import hooks from './hooks.js';
 import isNumber from 'lodash/isNumber.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import zipObject from 'lodash/zipObject.js';
+import calculatePosition from '../shared/util/calculatePosition.js';
+import { createLogger } from '../shared/logger.js';
+import {
+  detectMissingReferences,
+  removeReference,
+} from '../shared/util/modelReference.js';
+import hooks from './hooks.js';
 
 const logger = createLogger('content-element:model');
 
@@ -130,8 +130,8 @@ class ContentElement extends Model {
   static fetch(opt) {
     return isNumber(opt)
       ? ContentElement.findByPk(opt).then(
-          (it) => it && hooks.applyFetchHooks(it),
-        )
+        (it) => it && hooks.applyFetchHooks(it),
+      )
       : ContentElement.findAll(opt).map(hooks.applyFetchHooks);
   }
 

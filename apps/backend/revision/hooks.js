@@ -1,6 +1,6 @@
-import createLogger from '../shared/logger.js';
 import forEach from 'lodash/forEach.js';
 import toCase from 'to-case';
+import createLogger from '../shared/logger.js';
 
 const castArray = (arg) => (Array.isArray(arg) ? arg : [arg]);
 const { constant } = toCase;

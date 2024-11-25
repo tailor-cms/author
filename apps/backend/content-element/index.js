@@ -1,6 +1,6 @@
-import ctrl from './content-element.controller.js';
 import express from 'express';
 import processListQuery from '../shared/util/processListQuery.js';
+import ctrl from './content-element.controller.js';
 
 const processQuery = processListQuery();
 const router = express.Router();

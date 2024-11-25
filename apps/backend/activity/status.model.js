@@ -1,13 +1,13 @@
 import { Activity as Events } from '@tailor-cms/common/src/sse.js';
-import hooks from './status.hooks.js';
 import { Model } from 'sequelize';
 import { workflow } from '@tailor-cms/config';
+import hooks from './status.hooks.js';
 
 const { priorities } = workflow;
 const priorityIds = priorities.map((it) => it.id);
 
 class ActivityStatus extends Model {
-  static fields({ DATE, ENUM, STRING, TEXT, FLOAT, UUID, UUIDV4 }) {
+  static fields({ DATE, ENUM, STRING, TEXT }) {
     return {
       status: {
         type: STRING,

@@ -1,13 +1,13 @@
-import { auth as config, origin } from '../../config/server/index.js';
+import path from 'node:path';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import Audience from './audience.js';
-import auth from './authenticator.js';
-import db from '../database/index.js';
 import get from 'lodash/get.js';
 import jwt from 'jsonwebtoken';
 import LocalStrategy from 'passport-local';
+import { auth as config, origin } from '../../config/server/index.js';
+import db from '../database/index.js';
+import Audience from './audience.js';
+import auth from './authenticator.js';
 import OIDCStrategy from './oidc.js';
-import path from 'node:path';
 
 const { User } = db;
 const options = {

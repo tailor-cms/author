@@ -1,5 +1,5 @@
-import { Activity } from '@tailor-cms/interfaces/activity';
-import { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 import InsertLocation from './insertLocation';
 

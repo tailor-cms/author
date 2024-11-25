@@ -1,9 +1,10 @@
-import { expect, Locator, Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
-import { ContainerList } from './ContainerList';
-import { ContentElement } from './ContentElement';
-import { EditorSidebar } from './Sidebar';
 import { outlineSeed } from '../../helpers/seed';
+import { ContainerList } from './ContainerList';
+import type { ContentElement } from './ContentElement';
+import { EditorSidebar } from './Sidebar';
 
 export class Editor {
   readonly page: Page;

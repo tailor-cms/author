@@ -1,5 +1,5 @@
-import Bunyan from 'bunyan';
 import { createRequire } from 'node:module';
+import Bunyan from 'bunyan';
 import safeRequire from 'safe-require';
 
 const require = createRequire(import.meta.url);

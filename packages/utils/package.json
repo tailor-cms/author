@@ -19,7 +19,6 @@
   },
   "scripts": {
     "build": "tsup",
-    "lint": "eslint --ext .js,.ts .",
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
@@ -28,7 +27,6 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
-    "@tailor-cms/eslint-config": "0.0.2",
     "@tailor-cms/interfaces": "workspace:*",
     "@types/lodash": "^4.17.6",
     "@types/uuid": "^10.0.0",

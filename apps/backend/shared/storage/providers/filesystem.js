@@ -1,12 +1,12 @@
 import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
-import * as yup from 'yup';
-import config from '../../../config/server/index.js';
+import path from 'node:path';
 import expandPath from 'untildify';
 import { mkdirp } from 'mkdirp';
-import path from 'node:path';
+import * as yup from 'yup';
 import { pathExists } from 'path-exists';
 import Promise from 'bluebird';
+import config from '../../../config/server/index.js';
 import { validateConfig } from '../validation.js';
 
 const isNotFound = (err) => err.code === 'ENOENT';

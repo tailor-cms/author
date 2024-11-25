@@ -1,4 +1,4 @@
-import {
+import type {
   ActivityConfig,
   ContentContainer,
   Metadata,
@@ -137,6 +137,7 @@ const PODCAST: ActivityConfig = {
   ],
   ai: {
     definition:
+      // eslint-disable-next-line max-len
       'Provides a way to promote podcasts on various platforms and view aggregated engagement data.',
   },
 };

@@ -1,6 +1,6 @@
-import ctrl from './controller.js';
 import express from 'express';
 import { middleware as sse } from '../../shared/sse/index.js';
+import ctrl from './controller.js';
 
 const router = express.Router();
 

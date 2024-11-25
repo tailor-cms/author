@@ -1,6 +1,6 @@
-import { ExportJob, ImportJob } from './job.js';
-import createLogger from '../logger.js';
 import PromiseQueue from 'promise-queue';
+import createLogger from '../logger.js';
+import { ExportJob, ImportJob } from './job.js';
 
 const logger = createLogger();
 

@@ -1,7 +1,7 @@
+import path from 'node:path';
 import boxen from 'boxen';
 import dotenv from 'dotenv';
 import { packageDirectory } from 'pkg-dir';
-import path from 'node:path';
 import { readPackageUpSync } from 'read-pkg-up';
 import semver from 'semver';
 

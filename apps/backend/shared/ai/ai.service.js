@@ -22,7 +22,7 @@ const parseResponse = (val) => {
   try {
     if (!isString(content)) return content;
     return JSON.parse(content);
-  } catch (e) {
+  } catch {
     logger.info('Unable to parse response', content);
     throw new Error('Invalid AI response', content);
   }

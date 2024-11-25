@@ -1,20 +1,18 @@
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
-import { fileURLToPath } from 'node:url';
 import helmet from 'helmet';
 import history from 'connect-history-api-fallback';
-import origin from './shared/origin.js';
-import path from 'node:path';
 import qs from 'qs';
+import origin from './shared/origin.js';
 
-/* eslint-disable */
 import auth from './shared/auth/index.js';
 import config from './config/server/index.js';
 import getLogger from './shared/logger.js';
 import router from './router.js';
-/* eslint-enable */
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { STORAGE_PATH } = process.env;
@@ -88,7 +86,7 @@ app.use('/api', requestLogger, router);
 app.use(errorHandler);
 
 // Handle non-existing routes.
-app.use((req, res, next) => res.status(404).end());
+app.use((req, res) => res.status(404).end());
 
 export default app;
 
@@ -97,7 +95,7 @@ function requestLogger(req, res, next) {
   next();
 }
 
-function errorHandler(err, _req, res, _next) {
+function errorHandler(err, _req, res) {
   if (!err.status || err.status === 500) {
     logger.error({ err });
     res.status(500).end();

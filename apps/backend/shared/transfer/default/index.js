@@ -1,11 +1,11 @@
 import * as yup from 'yup';
-import processors from './processors.js';
 import Promise from 'bluebird';
-import resolvers from './resolvers.js';
+import uniq from 'lodash/uniq.js';
 import { sequelize } from '../../database/index.js';
 import storage from '../../../repository/storage.js';
-import uniq from 'lodash/uniq.js';
 import { useTar } from '../formats.js';
+import resolvers from './resolvers.js';
+import processors from './processors.js';
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
 
