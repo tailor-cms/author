@@ -10,8 +10,8 @@ import qs from 'qs';
 import origin from './shared/origin.js';
 
 import auth from './shared/auth/index.js';
-import getLogger from '#logger';
 import router from './router.js';
+import getLogger from '#logger';
 import config from '#config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -3,8 +3,8 @@ import path from 'node:path';
 import pick from 'lodash/pick.js';
 import { SMTPClient } from 'emailjs';
 import urlJoin from 'url-join';
-import { createLogger, Level } from '#logger';
 import { renderHtml, renderText } from './render.js';
+import { createLogger, Level } from '#logger';
 import { mail as config, origin } from '#config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

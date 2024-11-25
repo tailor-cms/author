@@ -11,8 +11,8 @@ import reduce from 'lodash/reduce.js';
 import roleConfig from '@tailor-cms/common/src/role.js';
 import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
-import { createLogger } from '#logger';
 import db from '../../database/index.js';
+import { createLogger } from '#logger';
 
 const logger = createLogger('processors');
 
