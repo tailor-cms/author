@@ -5,8 +5,8 @@
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",
   "imports": {
-    "#config": "./config/server/index.js",
-    "#config/*": "./config/server/*",
+    "#config": "./config/index.js",
+    "#config/*": "./config/*",
     "#logger": "./shared/logger.js"
   },
   "scripts": {
