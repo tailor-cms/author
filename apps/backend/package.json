@@ -1,6 +1,6 @@
 {
   "name": "tailor-server",
-  "version": "7.0.0-alpha.1",
+  "version": "7.1.0",
   "codename": "X",
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",
