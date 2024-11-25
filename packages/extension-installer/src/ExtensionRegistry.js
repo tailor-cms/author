@@ -72,8 +72,8 @@ export class ExtensionRegistry {
     const list = verbose
       ? this.elements
       : this.list()
-          .map((name) => `· ${name}`)
-          .join('\n');
+        .map((name) => `· ${name}`)
+        .join('\n');
     shell.echo(list);
   }
 
