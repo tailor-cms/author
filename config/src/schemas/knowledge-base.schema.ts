@@ -1,39 +1,47 @@
-import { DEFAULT_WORKFLOW } from './default-workflow.js';
+import {
+  ActivityConfig,
+  ContentContainer,
+  Schema,
+} from '@tailor-cms/interfaces/schema';
+import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
+import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
-const ACTIVITY_TYPE = {
-  CATEGORY: 'CATEGORY',
-  ENTRY: 'ENTRY',
-  SECTION: 'SECTION',
-};
+import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
-const CATEGORY = {
-  type: ACTIVITY_TYPE.CATEGORY,
+enum ActivityType {
+  Category = 'CATEGORY',
+  Entry = 'ENTRY',
+  Section = 'SECTION',
+}
+
+const CATEGORY: ActivityConfig = {
+  type: ActivityType.Category,
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Category',
   color: '#5187C7',
-  subLevels: [ACTIVITY_TYPE.CATEGORY, ACTIVITY_TYPE.ENTRY],
+  subLevels: [ActivityType.Category, ActivityType.Entry],
   ai: {
     definition: 'Categories are a way to organize content.',
   },
 };
 
-const ENTRY = {
-  type: ACTIVITY_TYPE.ENTRY,
+const ENTRY: ActivityConfig = {
+  type: ActivityType.Entry,
   isTrackedInWorkflow: true,
   label: 'Entry',
   color: '#08A9AD',
-  contentContainers: [ACTIVITY_TYPE.SECTION],
+  contentContainers: [ActivityType.Section],
   ai: {
     definition: 'Entry represents a Topic within a Knowledge Base Category.',
   },
 };
 
-const SECTION = {
-  type: ACTIVITY_TYPE.SECTION,
-  templateId: 'DEFAULT',
+const SECTION: ContentContainer = {
+  type: ActivityType.Section,
+  templateId: ContentContainerType.Default,
   label: 'Section',
-  types: ['CE_HTML_DEFAULT', 'CE_IMAGE'],
+  types: [ContentElementType.HtmlDefault, ContentElementType.Image],
   ai: {
     definition: 'Page content is organized into sections.',
     outputRules: {
@@ -54,7 +62,7 @@ const SECTION = {
   },
 };
 
-export const SCHEMA = {
+export const SCHEMA: Schema = {
   id: 'KNOWLEDGE_BASE',
   description:
     'A structured knowledge base with organized categories and entries.',

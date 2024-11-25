@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { schema as schemaConfig } from 'tailor-config-shared';
+import { schema as schemaConfig } from '@tailor-cms/config';
 
 import { repository as api } from '@/api';
 import { useCurrentRepository } from '@/stores/current-repository';

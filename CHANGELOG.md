@@ -1,5 +1,11 @@
 # Changelog
 
+## v7.1
+
+#### Changes
+- Migrated schemas to `@tailor-cms/config` package, located in the `./config`
+  dir. Schemas are now defined using the TypeScript.
+
 ## v7.0
 
 #### Changes

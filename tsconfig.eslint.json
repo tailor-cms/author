@@ -8,10 +8,9 @@
     "extensions",
     "infrastructure",
     "packages",
-    "schemas",
+    "config",
     "scripts",
     "tests",
-    "tailor.config.js",
     ".eslintrc.cjs",
   ]
 }

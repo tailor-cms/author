@@ -1,4 +1,4 @@
-import { elements } from '@tailor-cms/content-element-collection';
+import { elements } from '@tailor-cms/content-element-collection/client';
 import { getComponentName as getName } from '@tailor-cms/utils';
 
 import ComponentRegistry from './ComponentRegistry';

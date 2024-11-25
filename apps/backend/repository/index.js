@@ -13,7 +13,7 @@ import activity from '../activity/index.js';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
-import { role as RoleConfig } from 'tailor-config-shared';
+import { role as RoleConfig } from '@tailor-cms/common';
 import storageRouter from '../shared/storage/storage.router.js';
 /* eslint-enable */
 

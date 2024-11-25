@@ -1,4 +1,4 @@
-import { Comment as Events } from 'sse-event-types';
+import { Comment as Events } from '@tailor-cms/common/src/sse.js';
 import hooks from './hooks.js';
 import { Model } from 'sequelize';
 

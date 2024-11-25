@@ -5,7 +5,7 @@ import {
 import { Model, Op } from 'sequelize';
 import { createLogger } from '../shared/logger.js';
 import calculatePosition from '../shared/util/calculatePosition.js';
-import { ContentElement as Events } from 'sse-event-types';
+import { ContentElement as Events } from '@tailor-cms/common/src/sse.js';
 import forEach from 'lodash/forEach.js';
 import hooks from './hooks.js';
 import isNumber from 'lodash/isNumber.js';

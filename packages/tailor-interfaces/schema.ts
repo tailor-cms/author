@@ -11,7 +11,7 @@ export interface Metadata {
   type: string;
   label: string;
   placeholder?: string;
-  validate: Record<string, any>;
+  validate?: Record<string, any>;
   defaultValue?: any;
   [key: string]: any;
 }
@@ -34,7 +34,7 @@ export interface ElementRelationship {
 
 export interface ElementMetaConfig {
   type: string;
-  inputs: Metadata[];
+  inputs?: Metadata[];
   relationships: ElementRelationship[];
 }
 
@@ -100,6 +100,7 @@ export interface Schema {
   id: string;
   workflowId: string;
   name: string;
+  description?: string;
   meta?: Metadata[];
   defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];

@@ -1,4 +1,4 @@
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 import { asset as assetApi, exposedApi } from '@/api';
 import { useAuthStore } from '@/stores/auth';

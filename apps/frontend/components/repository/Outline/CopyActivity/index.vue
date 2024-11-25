@@ -77,7 +77,7 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import { InsertLocation } from '@tailor-cms/utils';
 import pluralize from 'pluralize';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import { SCHEMAS } from 'tailor-config-shared';
+import { SCHEMAS } from '@tailor-cms/config';
 import sortBy from 'lodash/sortBy';
 
 import { activity as activityApi, repository as repositoryApi } from '@/api';

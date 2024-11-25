@@ -14,7 +14,7 @@ import pick from 'lodash/pick.js';
 import PluginRegistry from '../content-plugins/index.js';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 import storage from '../../repository/storage.js';
 import without from 'lodash/without.js';
 

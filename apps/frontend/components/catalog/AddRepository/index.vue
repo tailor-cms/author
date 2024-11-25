@@ -162,7 +162,7 @@ import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import pick from 'lodash/pick';
 import pMinDelay from 'p-min-delay';
 import Promise from 'bluebird';
-import { SCHEMAS } from 'tailor-config-shared';
+import { SCHEMAS } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 

@@ -1,5 +1,5 @@
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import { Comment as Events } from 'sse-event-types';
+import { Comment as Events } from '@tailor-cms/common/src/sse.js';
 import merge from 'lodash/merge';
 import { useStorage } from '@vueuse/core';
 

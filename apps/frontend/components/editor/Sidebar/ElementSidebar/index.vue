@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import { getElementId, getSidebarName } from '@tailor-cms/utils';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 import ElementMeta from './ElementMeta/index.vue';
 import { exposedApi } from '@/api';

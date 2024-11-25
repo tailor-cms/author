@@ -1,6 +1,6 @@
-import { elements } from '@tailor-cms/content-container-collection';
+import { elements } from '@tailor-cms/content-container-collection/client';
 import { getContainerName as getName } from '@tailor-cms/utils';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 import ComponentRegistry from './ComponentRegistry';
 
