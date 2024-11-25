@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import createLogger from '../shared/logger.js';
+import createLogger from '#logger';
 
 createLogger.enabled = false;
 

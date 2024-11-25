@@ -16,7 +16,7 @@ import storage from '../../repository/storage.js';
 import PluginRegistry from '../content-plugins/index.js';
 import hooks from '../../content-element/hooks.js';
 import db from '../database/index.js';
-import { createLogger } from '../logger.js';
+import { createLogger } from '#logger';
 
 const { Activity, ContentElement, Sequelize, sequelize } = db;
 const { containerRegistry } = PluginRegistry;

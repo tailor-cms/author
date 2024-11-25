@@ -15,7 +15,7 @@ import { snakeCase } from 'change-case';
 import { removeInvalidReferences } from '../shared/util/modelReference.js';
 import publishingService from '../shared/publishing/publishing.service.js';
 import db from '../shared/database/index.js';
-import { createLogger } from '../shared/logger.js';
+import { createLogger } from '#logger';
 import { createError } from '../shared/error/helpers.js';
 import TransferService from '../shared/transfer/transfer.service.js';
 import { general } from '#config';

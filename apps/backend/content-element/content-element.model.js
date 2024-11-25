@@ -7,7 +7,7 @@ import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import zipObject from 'lodash/zipObject.js';
 import calculatePosition from '../shared/util/calculatePosition.js';
-import { createLogger } from '../shared/logger.js';
+import { createLogger } from '#logger';
 import {
   detectMissingReferences,
   removeReference,

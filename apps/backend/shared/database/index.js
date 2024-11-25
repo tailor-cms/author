@@ -7,7 +7,7 @@ import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import semver from 'semver';
 import Sequelize from 'sequelize';
-import createLogger from '../logger.js';
+import createLogger from '#logger';
 import sequelizeConfig from '../../sequelize.config.cjs';
 
 // Require models.

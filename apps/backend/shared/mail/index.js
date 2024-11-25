@@ -3,7 +3,7 @@ import path from 'node:path';
 import pick from 'lodash/pick.js';
 import { SMTPClient } from 'emailjs';
 import urlJoin from 'url-join';
-import { createLogger, Level } from '../../shared/logger.js';
+import { createLogger, Level } from '#logger';
 import { renderHtml, renderText } from './render.js';
 import { mail as config, origin } from '#config';
 

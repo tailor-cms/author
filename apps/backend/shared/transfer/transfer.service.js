@@ -1,5 +1,5 @@
 import PromiseQueue from 'promise-queue';
-import createLogger from '../logger.js';
+import createLogger from '#logger';
 import { ExportJob, ImportJob } from './job.js';
 
 const logger = createLogger();
