@@ -18,7 +18,7 @@ import db from '../shared/database/index.js';
 import { createLogger } from '../shared/logger.js';
 import { createError } from '../shared/error/helpers.js';
 import TransferService from '../shared/transfer/transfer.service.js';
-import { general } from '../config/server/index.js';
+import { general } from '#config';
 
 const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 

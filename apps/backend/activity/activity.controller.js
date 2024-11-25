@@ -9,7 +9,7 @@ import db from '../shared/database/index.js';
 import { fetchActivityContent } from '../shared/publishing/helpers.js';
 import { createError } from '../shared/error/helpers.js';
 import oauth2 from '../shared/oAuth2Provider.js';
-import consumerConfig from '../config/server/consumer.js';
+import consumerConfig from '#config/consumer.js';
 import publishingService from '../shared/publishing/publishing.service.js';
 
 const { Activity, sequelize } = db;

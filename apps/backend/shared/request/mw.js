@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit';
 import {
   general as generalConfig,
   kvStore as kvStoreConfig,
-} from '../../config/server/index.js';
+} from '#config';
 
 const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 

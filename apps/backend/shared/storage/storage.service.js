@@ -5,7 +5,7 @@ import mime from 'mime-types';
 import pickBy from 'lodash/pickBy.js';
 import request from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { storage as config } from '../../config/server/index.js';
+import { storage as config } from '#config';
 
 import Storage from '../../repository/storage.js';
 import { readFile, sha256 } from './util.js';

@@ -13,7 +13,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 Promise.config({ longStackTraces: !isProduction });
 
 /* eslint-disable */
-import config from './config/server/index.js';
+import config from '#config';
 import database from './shared/database/index.js';
 import getLogger from './shared/logger.js';
 const pkg = require('./package.json');

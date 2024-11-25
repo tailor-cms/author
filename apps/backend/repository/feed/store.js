@@ -1,5 +1,5 @@
 import Keyv from 'keyv';
-import config from '../../config/server/index.js';
+import config from '#config';
 
 const store = new Keyv({
   ...config.kvStore.keyvDefaultConfig,

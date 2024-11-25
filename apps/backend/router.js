@@ -4,7 +4,7 @@ import {
   ai as aiConfig,
   auth as authConfig,
   test as testConfig,
-} from './config/server/index.js';
+} from '#config';
 import authenticator from './shared/auth/index.js';
 import { extractAuthData } from './shared/auth/mw.js';
 import repository from './repository/index.js';

@@ -4,6 +4,11 @@
   "codename": "X",
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",
+  "imports": {
+    "#config": "./config/server/index.js",
+    "#config/*": "./config/server/*",
+    "#logger": "./shared/logger.js"
+  },
   "scripts": {
     "dev": "nodemon --import ./script/preflight.js ./index.js | bunyan-pretty || exit 0",
     "start": "node --import ./script/preflight.js ./index.js",

@@ -6,7 +6,7 @@ import { mkdirp } from 'mkdirp';
 import * as yup from 'yup';
 import { pathExists } from 'path-exists';
 import Promise from 'bluebird';
-import config from '../../../config/server/index.js';
+import config from '#config';
 import { validateConfig } from '../validation.js';
 
 const isNotFound = (err) => err.code === 'ENOENT';
