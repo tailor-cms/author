@@ -4,7 +4,7 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import reduce from 'lodash/reduce';
 import type { Revision } from '@tailor-cms/interfaces/revision';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 const describe = {
   REPOSITORY: describeRepositoryRevision,

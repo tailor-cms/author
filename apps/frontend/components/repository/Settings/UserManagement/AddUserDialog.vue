@@ -64,12 +64,12 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
+import { TailorDialog } from '@tailor-cms/core-components';
 import throttle from 'lodash/throttle';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import { user as api } from '~/api';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps<{
@@ -85,7 +85,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
         .required()
         .email()
         .notOneOf(
-          store.users.map((user) => user.email),
+          store.users.map((user: User) => user.email),
           'User with that email is already added',
         ),
       role: string().required(),

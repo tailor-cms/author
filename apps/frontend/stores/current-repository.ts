@@ -1,7 +1,7 @@
 import {
   schema as schemaConfig,
   workflow as workflowConfig,
-} from 'tailor-config-shared';
+} from '@tailor-cms/config';
 
 import { repository as repositoryApi } from '@/api';
 import { useActivityStore } from './activity';

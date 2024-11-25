@@ -1,6 +1,6 @@
 import isString from 'lodash/isString.js';
 import OpenAI from 'openai';
-import { schema as schemaConfig } from 'tailor-config-shared';
+import { schema as schemaConfig } from '@tailor-cms/config';
 import shuffle from 'lodash/shuffle.js';
 import StorageService from '../storage/storage.service.js';
 

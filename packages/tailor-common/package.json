@@ -1,5 +1,5 @@
 {
-  "name": "tailor-config-shared",
+  "name": "@tailor-cms/common",
   "type": "module",
   "files": [
     "src"

@@ -22,9 +22,9 @@
 
 <script lang="ts" setup>
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import { TailorDialog } from '@tailor-cms/core-components';
 
 import { repository as api } from '@/api';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 
 const props = defineProps<{ repository: Repository }>();
 const emit = defineEmits(['close']);

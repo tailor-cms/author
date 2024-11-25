@@ -2,7 +2,7 @@ import { addContext, getActiveUsers, removeContext } from './store.js';
 import isEqual from 'lodash/isEqual.js';
 import pick from 'lodash/pick.js';
 import sse from '../../shared/sse/index.js';
-import { UserActivity } from 'sse-event-types';
+import { UserActivity } from '@tailor-cms/common/src/sse.js';
 
 const USER_ATTRS = [
   'id',

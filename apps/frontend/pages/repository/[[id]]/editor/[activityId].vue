@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { activity as activityUtils, getElementId } from '@tailor-cms/utils';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 import ActivityContent from '@/components/editor/ActivityContent/index.vue';
 import { exposedApi } from '@/api';

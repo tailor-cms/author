@@ -1,23 +1,32 @@
-import { DEFAULT_WORKFLOW } from './default-workflow.js';
+import {
+  ActivityConfig,
+  ContentContainer,
+  Metadata,
+  Schema,
+} from '@tailor-cms/interfaces/schema';
+import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
+import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
-const ACTIVITY_TYPE = {
-  ARTICLE: 'ARTICLE',
-  PODCAST: 'PODCAST',
-  EVENT: 'EVENT',
-  GROWTH_OPPORTUNITY: 'GROWTH_OPPORTUNITY',
-  SECTION: 'SECTION',
-  GROUP: 'GROUP',
-};
+import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
-const defaultMeta = [
+enum ActivityType {
+  Article = 'ARTICLE',
+  Event = 'EVENT',
+  Group = 'GROUP',
+  GrowthOpportunity = 'GROWTH_OPPORTUNITY',
+  Podcast = 'PODCAST',
+  Section = 'SECTION',
+}
+
+const defaultMeta: Metadata[] = [
   {
     key: 'description',
-    type: 'HTML',
+    type: MetaInputType.Html,
     label: 'Description',
   },
   {
     key: 'thumbnail',
-    type: 'FILE',
+    type: MetaInputType.File,
     label: 'Thumbnail Image',
     placeholder: 'Click to upload a thumbnail image',
     icon: 'mdi-image',
@@ -28,7 +37,7 @@ const defaultMeta = [
   },
   {
     key: 'tags',
-    type: 'COMBOBOX',
+    type: MetaInputType.Combobox,
     label: 'Tags',
     placeholder: 'Tags',
     multiple: true,
@@ -36,10 +45,10 @@ const defaultMeta = [
   },
 ];
 
-const podcastMeta = [
+const podcastMeta: Metadata[] = [
   {
     key: 'spotifyLink',
-    type: 'TEXTAREA',
+    type: MetaInputType.Textarea,
     label: 'Spotify Link',
     placeholder: 'Enter a valid Spotify link',
     validate: { url: true },
@@ -47,7 +56,7 @@ const podcastMeta = [
   },
   {
     key: 'youtubeLink',
-    type: 'TEXTAREA',
+    type: MetaInputType.Textarea,
     label: 'YouTube Link',
     placeholder: 'Enter a valid YouTube link',
     validate: { url: true },
@@ -55,7 +64,7 @@ const podcastMeta = [
   },
   {
     key: 'applePodcastLink',
-    type: 'TEXTAREA',
+    type: MetaInputType.Textarea,
     label: 'Apple Podcast Link',
     placeholder: 'Enter a valid Apple Podcast link',
     validate: { url: true },
@@ -63,32 +72,32 @@ const podcastMeta = [
   },
 ];
 
-const GROUP = {
-  type: ACTIVITY_TYPE.GROUP,
+const GROUP: ActivityConfig = {
+  type: ActivityType.Group,
   rootLevel: true,
   label: 'Group',
   color: '#5187C7',
   subLevels: [
-    ACTIVITY_TYPE.GROUP,
-    ACTIVITY_TYPE.ARTICLE,
-    ACTIVITY_TYPE.PODCAST,
-    ACTIVITY_TYPE.EVENT,
-    ACTIVITY_TYPE.GROWTH_OPPORTUNITY,
+    ActivityType.Group,
+    ActivityType.Article,
+    ActivityType.Podcast,
+    ActivityType.Event,
+    ActivityType.GrowthOpportunity,
   ],
   ai: {
     definition: `Groups are a way to organize content into categories.`,
   },
 };
 
-const EVENT = {
-  type: ACTIVITY_TYPE.EVENT,
+const EVENT: ActivityConfig = {
+  type: ActivityType.Event,
   rootLevel: true,
   label: 'Event',
   color: '#7986CB',
   meta: [
     {
       key: 'link',
-      type: 'TEXTAREA',
+      type: MetaInputType.Textarea,
       label: 'Event Link',
       placeholder: 'Enter event link',
       validate: { url: true },
@@ -96,7 +105,7 @@ const EVENT = {
     },
     {
       key: 'participants',
-      type: 'COMBOBOX',
+      type: MetaInputType.Combobox,
       label: 'Participants',
       placeholder: 'Participants',
       multiple: true,
@@ -109,8 +118,8 @@ const EVENT = {
   },
 };
 
-const PODCAST = {
-  type: ACTIVITY_TYPE.PODCAST,
+const PODCAST: ActivityConfig = {
+  type: ActivityType.Podcast,
   rootLevel: true,
   label: 'Podcast',
   color: '#CDDC39',
@@ -119,7 +128,7 @@ const PODCAST = {
     ...defaultMeta,
     {
       key: 'participants',
-      type: 'COMBOBOX',
+      type: MetaInputType.Combobox,
       label: 'Participants',
       placeholder: 'Participants',
       multiple: true,
@@ -132,20 +141,20 @@ const PODCAST = {
   },
 };
 
-const GROWTH_OPPORTUNITY = {
-  type: ACTIVITY_TYPE.GROWTH_OPPORTUNITY,
+const GROWTH_OPPORTUNITY: ActivityConfig = {
+  type: ActivityType.GrowthOpportunity,
   rootLevel: true,
   label: 'Growth Opportunity',
   meta: [...defaultMeta],
   color: '#08A9AD',
-  contentContainers: [ACTIVITY_TYPE.SECTION],
+  contentContainers: [ActivityType.Section],
   ai: {
     definition: 'Represents a learning opportunity for the community.',
   },
 };
 
-const ARTICLE = {
-  type: ACTIVITY_TYPE.ARTICLE,
+const ARTICLE: ActivityConfig = {
+  type: ActivityType.Article,
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Article',
@@ -153,7 +162,7 @@ const ARTICLE = {
     ...defaultMeta,
     {
       key: 'authors',
-      type: 'COMBOBOX',
+      type: MetaInputType.Combobox,
       label: 'Authors',
       placeholder: 'Authors',
       multiple: true,
@@ -161,15 +170,15 @@ const ARTICLE = {
     },
   ],
   color: '#08A9AD',
-  contentContainers: [ACTIVITY_TYPE.SECTION],
+  contentContainers: [ActivityType.Section],
   ai: {
     definition: 'Entry represents an article within a feed.',
   },
 };
 
-const SECTION = {
-  type: ACTIVITY_TYPE.SECTION,
-  templateId: 'DEFAULT',
+const SECTION: ContentContainer = {
+  type: ActivityType.Section,
+  templateId: ContentContainerType.Default,
   label: 'Section',
   ai: {
     definition: 'Page content is organized into sections.',
@@ -191,7 +200,7 @@ const SECTION = {
   },
 };
 
-export const SCHEMA = {
+export const SCHEMA: Schema = {
   id: 'FEED_SCHEMA',
   name: 'Feed',
   description: 'A community feed with articles and growth opportunities.',

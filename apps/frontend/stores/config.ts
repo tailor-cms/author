@@ -1,6 +1,6 @@
 import camelCase from 'lodash/camelCase';
 import { computed } from 'vue';
-import { SCHEMAS } from 'tailor-config-shared';
+import { SCHEMAS } from '@tailor-cms/config';
 
 interface ConfigCookie {
   statsigKey?: string;

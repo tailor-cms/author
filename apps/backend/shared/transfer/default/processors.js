@@ -10,8 +10,8 @@ import omit from 'lodash/omit.js';
 import { parse } from 'JSONStream';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
-import roleConfig from 'tailor-config-shared/src/role.js';
-import { SCHEMAS } from 'tailor-config-shared';
+import roleConfig from '@tailor-cms/common/src/role.js';
+import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
 
 const logger = createLogger('processors');

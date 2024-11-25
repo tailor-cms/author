@@ -1,5 +1,5 @@
 import { elements } from '@tailor-cms/content-container-collection/server.js';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 const { getContainerTemplateId: getId } = schema;
 

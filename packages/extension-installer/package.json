@@ -8,5 +8,8 @@
     "jsonfile": "^6.1.0",
     "lodash": "^4.17.21",
     "shelljs": "^0.8.5"
+  },
+  "devDependencies": {
+    "acorn": "^8.14.0"
   }
 }

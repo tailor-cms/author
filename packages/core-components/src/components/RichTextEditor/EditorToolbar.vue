@@ -4,6 +4,7 @@
       <VDivider v-if="index" vertical />
       <VBtn
         v-for="action in group"
+        v-bind="{ disabled, readonly }"
         :key="action.name"
         :active="editor?.isActive(action.name)"
         :icon="action.icon"
@@ -22,7 +23,7 @@ import { VDivider } from 'vuetify/lib/components/index.mjs';
 
 import { actions } from './actions';
 
-defineProps<{ editor: Editor }>();
+defineProps<{ editor: Editor; disabled: boolean; readonly: boolean }>();
 </script>
 
 <style lang="scss" scoped>

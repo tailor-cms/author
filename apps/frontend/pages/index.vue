@@ -103,7 +103,7 @@
 <script setup lang="ts">
 import find from 'lodash/find';
 import map from 'lodash/map';
-import { SCHEMAS } from 'tailor-config-shared';
+import { SCHEMAS } from '@tailor-cms/config';
 import { storeToRefs } from 'pinia';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';

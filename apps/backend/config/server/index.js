@@ -1,4 +1,4 @@
-import resolveUrl from 'tailor-config-shared/src/url.js';
+import resolveUrl from '@tailor-cms/common/src/url.js';
 
 import * as ai from './ai.js';
 import * as auth from './auth.js';

@@ -1,12 +1,11 @@
 {
   "name": "@tailor-cms/meta-element-collection",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "files": [
     "client.js",
-    "server.js"
+    "types.js"
   ],
-  "main": "client.js",
   "scripts": {
     "cli": "node ./cli.js"
   },

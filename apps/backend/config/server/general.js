@@ -1,5 +1,5 @@
 import yn from 'yn';
-import { SCHEMAS } from 'tailor-config-shared';
+import { SCHEMAS } from '@tailor-cms/config';
 import map from 'lodash/map.js';
 import intersection from 'lodash/intersection.js';
 
