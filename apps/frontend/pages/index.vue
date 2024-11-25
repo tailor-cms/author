@@ -205,7 +205,7 @@ const refetchRepositories = async () => {
   isLoading.value = false;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line
 const loadMore = async ({ done }: { done: Function }) => {
   const totalItems = repositories.value.length;
   queryParams.value.offset = totalItems;

@@ -53,7 +53,7 @@ import UploadBtn from './UploadBtn.vue';
 const isUploaded = (url: string | null) => {
   try {
     return url && new URL(url).protocol === 'storage:';
-  } catch (e) {
+  } catch {
     return false;
   }
 };
