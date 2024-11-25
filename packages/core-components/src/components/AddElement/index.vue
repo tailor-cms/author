@@ -15,7 +15,8 @@
         v-else
         :icon="icon"
         color="primary-darken-2"
-        variant="outlined"
+        size="small"
+        variant="tonal"
         @click.stop="showElementPicker"
       >
         <VIcon>{{ icon }}</VIcon>

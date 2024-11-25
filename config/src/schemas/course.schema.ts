@@ -76,8 +76,8 @@ const SectionConfig: ContentContainer = {
     ContentElementType.Audio,
     ContentElementType.PageBreak,
     ContentElementType.Pdf,
+    ContentElementType.Accordion,
     // TODO: Need to be migrated
-    // 'CE_ACCORDION',
     // 'CE_TABLE',
     // 'CE_MODAL',
     // 'CE_CAROUSEL',

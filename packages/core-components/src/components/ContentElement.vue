@@ -54,13 +54,13 @@
       <div
         v-if="showDiscussion"
         :class="{ 'is-visible': isHighlighted || hasComments }"
+        class="mb-2"
       >
         <ElementDiscussion v-bind="element" :user="currentUser" @open="focus" />
       </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
           aria-label="Delete element"
-          class="mt-2"
           color="pink lighten-1"
           icon="mdi-delete-outline"
           size="x-small"
@@ -174,9 +174,7 @@ const onLink = (key?: string) => editorBus.emit('element:link', key);
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));
   elementBus.on('save:meta', (meta: Meta) => emit('save:meta', meta));
-  elementBus.on('save', (data: ContentElement['data']) =>
-    emit('save', onSave(data)),
-  );
+  elementBus.on('save', onSave);
 
   const deferSaveFlag = () => setTimeout(() => (isSaving.value = false), 1000);
   elementBus.on('saved', deferSaveFlag);

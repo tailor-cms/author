@@ -7,7 +7,7 @@
     @add="addItems"
     @update="reorderItem"
   >
-    <template #list-item="{ element, isDragged }">
+    <template #default="{ element, isDragged }">
       <ContainedContent
         :element="element"
         :is-disabled="isDisabled"
@@ -34,13 +34,20 @@ import ContainedContent from './ContainedContent.vue';
 import ElementList from './ElementList.vue';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 
-const props = defineProps<{
-  container: Record<string, any>;
+interface Props {
   types: string[];
-  isDisabled: boolean;
-  addElementOptions: Record<string, any>;
-  enableAdd: boolean;
-}>();
+  container: { embeds: Record<string, ContentElement> };
+  isDisabled?: boolean;
+  enableAdd?: boolean;
+  addElementOptions?: Record<string, any>;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isDisabled: false,
+  enableAdd: true,
+  types: () => [],
+  addElementOptions: () => ({}),
+});
 
 const emits = defineEmits(['save', 'delete']);
 
