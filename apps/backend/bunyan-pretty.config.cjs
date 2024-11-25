@@ -10,6 +10,6 @@ module.exports = {
       const index = input.indexOf(': ') + 1;
       const sql = input.substring(index);
       return format('\n```sql\n%s\n```', prettify(sql));
-    }
-  }
+    },
+  },
 };

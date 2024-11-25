@@ -1,5 +1,6 @@
-import { expect, Page, TestInfo } from '@playwright/test';
-import { AxeBuilder } from '@axe-core/playwright';
+import type { Page, TestInfo } from '@playwright/test';
+import { expect } from '@playwright/test';
+import type { AxeBuilder } from '@axe-core/playwright';
 
 import { attachViolations } from './axe-config';
 

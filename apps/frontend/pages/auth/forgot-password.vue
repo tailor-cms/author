@@ -9,7 +9,7 @@
     >
       {{ errorMessage || 'Sending reset email...' }}
     </VAlert>
-    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions-->
+    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
     <form
       v-if="!errorMessage"
       novalidate

@@ -76,9 +76,9 @@ import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
+import TypeSelect from './TypeSelect.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
 import type { StoreActivity } from '@/stores/activity';
-import TypeSelect from './TypeSelect.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 

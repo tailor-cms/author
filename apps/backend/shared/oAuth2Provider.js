@@ -1,7 +1,7 @@
 import { ClientCredentials } from 'simple-oauth2';
-import oAuthConfig from '../config/server/consumer.js';
 import request from 'axios';
 import yup from 'yup';
+import oAuthConfig from '../config/server/consumer.js';
 
 const schema = yup.object().shape({
   clientId: yup.string().required(),

@@ -1,7 +1,6 @@
+import { EventEmitter } from 'events';
 import createDebug from 'debug';
 import { createId as cuid } from '@paralleldrive/cuid2';
-
-import { EventEmitter } from 'events';
 
 const debug = createDebug('sse-client');
 
@@ -79,6 +78,5 @@ function createUrl(pathname: string, { searchParams = {} }) {
   return url;
 }
 
-/* eslint-disable */
 SSEConnection.prototype.on = SSEConnection.prototype.addListener;
 SSEConnection.prototype.off = SSEConnection.prototype.removeListener;

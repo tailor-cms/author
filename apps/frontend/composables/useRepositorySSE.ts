@@ -28,14 +28,14 @@ export const useRepositorySSE = () => {
       commentStore.$subscribeToSSE();
       contentElementStore.$subscribeToSSE();
       userTrackingStore.$subscribeToSSE();
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
       userTrackingStore.fetch(id);
     });
   }
 
   function disconnect() {
     clearInterval(heartbeat.value);
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
     if (isTracking.value) userTrackingStore.reportEnd(trackingParameters.value);
     feed.disconnect();
     sseId.value = null;
@@ -71,7 +71,7 @@ export const useRepositorySSE = () => {
       if (!sseId || !repositoryId) return;
       await userTrackingStore.reportStart(val);
       heartbeat.value = setInterval(
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
         () => userTrackingStore.reportStart(val),
         PING_INTERVAL,
       );

@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import createLogger from '../shared/logger.js';
 import roleConfig from '@tailor-cms/common/src/role.js';
+import createLogger from '../shared/logger.js';
 
 createLogger.enabled = false;
 

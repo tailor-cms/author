@@ -1,9 +1,9 @@
+import Keyv from 'keyv';
+import rateLimit from 'express-rate-limit';
 import {
   general as generalConfig,
   kvStore as kvStoreConfig,
 } from '../../config/server/index.js';
-import Keyv from 'keyv';
-import rateLimit from 'express-rate-limit';
 
 const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 

@@ -1,5 +1,5 @@
-import createLogger from './logger.js';
 import { hostname } from '../config/server/index.js';
+import createLogger from './logger.js';
 
 const logger = createLogger();
 const isProduction = process.env.NODE_ENV === 'production';

@@ -36,9 +36,9 @@
 </template>
 
 <script lang="ts" setup>
-import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
+import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 withDefaults(defineProps<{ emptyMessage?: string }>(), {

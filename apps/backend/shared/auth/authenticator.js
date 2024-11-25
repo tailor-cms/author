@@ -1,9 +1,9 @@
+import { IncomingMessage } from 'http';
 import addDays from 'date-fns/addDays/index.js';
-import Audience from './audience.js';
 import { Authenticator } from 'passport';
 import autobind from 'auto-bind';
 import { auth as config } from '../../config/server/index.js';
-import { IncomingMessage } from 'http';
+import Audience from './audience.js';
 
 const isFunction = (arg) => typeof arg === 'function';
 

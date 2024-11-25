@@ -1,3 +1,5 @@
+import { PassThrough } from 'node:stream';
+import path from 'node:path';
 import * as yup from 'yup';
 import {
   CopyObjectCommand,
@@ -11,8 +13,6 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import mime from 'mime-types';
-import { PassThrough } from 'node:stream';
-import path from 'node:path';
 import { Upload } from '@aws-sdk/lib-storage';
 import { validateConfig } from '../validation.js';
 
@@ -157,7 +157,7 @@ class Amazon {
   }
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/headobjectcommand.html
-  fileExists(key, options = {}) {
+  fileExists(key) {
     const params = { Bucket: this.bucket, Key: key };
     return this.client.send(new HeadObjectCommand(params)).catch((err) => {
       if (isNotFound(err)) return null;

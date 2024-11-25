@@ -1,4 +1,3 @@
-// eslint-disable-next-line strict
 'use strict';
 
 const bcrypt = require('bcrypt');

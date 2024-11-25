@@ -1,6 +1,6 @@
-import autobind from 'auto-bind';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import autobind from 'auto-bind';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

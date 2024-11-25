@@ -57,10 +57,10 @@ import transform from 'lodash/transform';
 import uniqBy from 'lodash/uniqBy';
 import without from 'lodash/without';
 
-import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
+import aiAPI from '@/api/ai';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
@@ -102,9 +102,9 @@ const doTheMagic = ({ type }: { type: string }) => {
   const ancestors = activityStore.getAncestors(props.activity?.id);
   const location = ancestors.length
     ? ancestors.reduce(
-        (acc, it) => acc + (acc === '' ? it.data.name : `, ${it.data.name}`),
-        '',
-      )
+      (acc, it) => acc + (acc === '' ? it.data.name : `, ${it.data.name}`),
+      '',
+    )
     : '';
   const { name, description } = props.repository as Repository;
   return aiAPI.getContentSuggestion({

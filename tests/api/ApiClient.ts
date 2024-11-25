@@ -1,6 +1,7 @@
 import * as Playwright from '@playwright/test';
 
-import { EndpointResponse, formatResponse } from './common';
+import type { EndpointResponse } from './common';
+import { formatResponse } from './common';
 import BaseClient from './BaseClient';
 
 export default class APIClient extends BaseClient {

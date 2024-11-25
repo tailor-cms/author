@@ -3,9 +3,9 @@ import {
   workflow as workflowConfig,
 } from '@tailor-cms/config';
 
-import { repository as repositoryApi } from '@/api';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
+import { repository as repositoryApi } from '@/api';
 
 const { getOutlineLevels, getSchema } = schemaConfig;
 const { getWorkflow } = workflowConfig;

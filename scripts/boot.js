@@ -1,9 +1,9 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import concurrently from 'concurrently';
 import dotenv from 'dotenv';
 import fkill from 'fkill';
-import fs from 'node:fs/promises';
 import ora from 'ora';
-import path from 'node:path';
 import pg from 'pg';
 import { portToPid } from 'pid-port';
 
@@ -20,7 +20,7 @@ const testDatabaseConnection = async (dbConfig, times = 10, backoff = 2000) => {
     const client = new PostgresClient(dbConfig);
     await client.connect();
     return true;
-  } catch (e) {
+  } catch {
     if (times > 0) {
       await timeout(backoff);
       return testDatabaseConnection(dbConfig, times - 1, backoff + 2000);
@@ -44,7 +44,9 @@ for (const port of [PORT, REVERSE_PROXY_PORT]) {
   try {
     const pid = await portToPid(port);
     if (pid) await fkill(pid, { force: true });
-  } catch {}
+  } catch {
+    console.log(`No process found on port ${port}`);
+  }
 }
 
 // Proxy public environment variables

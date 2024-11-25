@@ -1,4 +1,4 @@
-import { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import kebabCase from 'lodash/kebabCase';
 
 export * from './calculatePosition';

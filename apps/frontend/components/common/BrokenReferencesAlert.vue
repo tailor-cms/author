@@ -77,6 +77,7 @@ const validateReferences = async () => {
   });
   elements.forEach((it: any) => {
     errors.value.push({
+      // eslint-disable-next-line max-len
       link: `/repository/${repositoryId}/editor/${it.src.outlineActivity.id}?elementId=${it.src.uid}`,
       message: `
         "${$ceRegistry.get(it.src.type).name}" element relationship

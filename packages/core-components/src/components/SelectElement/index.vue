@@ -88,10 +88,10 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import sortBy from 'lodash/sortBy';
 
 import ContentPreview from '../ContentPreview/index.vue';
-import SelectActivity from './SelectActivity.vue';
-import SelectRepository from './SelectRepository.vue';
 import TailorDialog from '../TailorDialog.vue';
 import { useLoader } from '../../composables/useLoader';
+import SelectActivity from './SelectActivity.vue';
+import SelectRepository from './SelectRepository.vue';
 
 const TOGGLE_BUTTON = {
   SELECT: { label: 'Select all', icon: 'checkbox-multiple-marked-outline' },

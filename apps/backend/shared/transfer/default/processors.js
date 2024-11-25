@@ -1,5 +1,3 @@
-import db from '../../database/index.js';
-import { createLogger } from '../../logger.js';
 import filter from 'lodash/filter.js';
 import forEach from 'lodash/forEach.js';
 import isEmpty from 'lodash/isEmpty.js';
@@ -13,6 +11,8 @@ import reduce from 'lodash/reduce.js';
 import roleConfig from '@tailor-cms/common/src/role.js';
 import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
+import { createLogger } from '../../logger.js';
+import db from '../../database/index.js';
 
 const logger = createLogger('processors');
 

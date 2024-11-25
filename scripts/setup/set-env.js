@@ -1,7 +1,7 @@
-import { createDatabase, getDatabaseClient } from './database.js';
-import generateConfig from './dotenv.js';
 import { packageDirectory } from 'pkg-dir';
 import shell from 'shelljs';
+import { createDatabase, getDatabaseClient } from './database.js';
+import generateConfig from './dotenv.js';
 
 const log = (msg) => console.log(` ${msg}`);
 const PROJECT_DIR = await packageDirectory();

@@ -1,9 +1,9 @@
-import db from '../../database/index.js';
 import mapKeys from 'lodash/mapKeys.js';
 import miss from 'mississippi';
 import QueryStream from 'pg-query-stream';
 import { schema } from '@tailor-cms/config';
 import { stringify } from 'JSONStream';
+import db from '../../database/index.js';
 
 const { Activity, ContentElement, Repository } = db;
 const reStorage = /^storage:\/\//;
@@ -55,7 +55,7 @@ export default {
   createAssetResolver,
 };
 
-function createAssetParser(assets) {
+function createAssetParser() {
   return miss.through.obj(function (element, _enc, cb) {
     element = element || {};
     const { data = {}, meta = {} } = element;

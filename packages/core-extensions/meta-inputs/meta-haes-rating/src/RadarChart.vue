@@ -3,8 +3,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { ChartDataset } from 'chart.js';
 import {
-  ChartDataset,
   Chart as ChartJS,
   Filler,
   LineElement,

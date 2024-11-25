@@ -25,6 +25,7 @@ class Channel extends EventEmitter {
     return this;
   }
 
+  // eslint-disable-next-line no-unused-vars
   send(_event, _data) {
     this._connections.forEach((connection) => connection.send(...arguments));
     return this;

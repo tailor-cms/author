@@ -81,8 +81,8 @@ import pick from 'lodash/pick';
 import reject from 'lodash/reject';
 import type { VBtn } from 'vuetify/components';
 
-import AddNewElement from './AddNewElement.vue';
 import SelectElement from '../SelectElement/index.vue';
+import AddNewElement from './AddNewElement.vue';
 
 const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
