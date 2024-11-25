@@ -28,10 +28,10 @@
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash": "^4.17.13",
     "@types/uuid": "^10.0.0",
-    "tsup": "^8.3.0",
-    "typescript": "^5.5.4"
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
   },
   "bundledDependencies": [
     "@tailor-cms/interfaces"
