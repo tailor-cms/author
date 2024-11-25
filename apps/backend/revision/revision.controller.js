@@ -1,9 +1,9 @@
 import map from 'lodash/map.js';
-import db from '#shared/database/index.js';
 import {
   getEntityRemovesSinceMoment,
   getLastState,
 } from './revision.service.js';
+import db from '#shared/database/index.js';
 
 const { Activity, Revision, User } = db;
 

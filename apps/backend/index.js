@@ -3,8 +3,8 @@ import { promisify } from 'node:util';
 import Promise from 'bluebird';
 import boxen from 'boxen';
 import toCase from 'to-case';
-import contentPluginRegistry from '#shared/content-plugins/index.js';
 import app from './app.js';
+import contentPluginRegistry from '#shared/content-plugins/index.js';
 
 const require = createRequire(import.meta.url);
 
