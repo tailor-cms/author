@@ -1,8 +1,8 @@
 import express from 'express';
 import { NOT_FOUND } from 'http-status-codes';
-import db from '../shared/database/index.js';
-import { createError } from '../shared/error/helpers.js';
-import processListQuery from '../shared/util/processListQuery.js';
+import db from '#shared/database/index.js';
+import { createError } from '#shared/error/helpers.js';
+import processListQuery from '#shared/util/processListQuery.js';
 import ctrl from './activity.controller.js';
 
 const { Activity } = db;

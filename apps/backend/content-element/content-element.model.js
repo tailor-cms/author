@@ -6,11 +6,11 @@ import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import zipObject from 'lodash/zipObject.js';
-import calculatePosition from '../shared/util/calculatePosition.js';
+import calculatePosition from '#shared/util/calculatePosition.js';
 import {
   detectMissingReferences,
   removeReference,
-} from '../shared/util/modelReference.js';
+} from '#shared/util/modelReference.js';
 import hooks from './hooks.js';
 import { createLogger } from '#logger';
 

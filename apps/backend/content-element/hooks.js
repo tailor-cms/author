@@ -3,10 +3,10 @@ import get from 'lodash/get.js';
 import hash from 'hash-obj';
 import Promise from 'bluebird';
 import { schema } from '@tailor-cms/config';
-import PluginRegistry from '../shared/content-plugins/index.js';
-import { resolveStatics } from '../shared/storage/helpers.js';
-import elementHooks from '../shared/content-plugins/elementHooks.js';
-import sse from '../shared/sse/index.js';
+import PluginRegistry from '#shared/content-plugins/index.js';
+import { resolveStatics } from '#shared/storage/helpers.js';
+import elementHooks from '#shared/content-plugins/elementHooks.js';
+import sse from '#shared/sse/index.js';
 
 const { elementRegistry } = PluginRegistry;
 

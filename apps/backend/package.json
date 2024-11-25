@@ -7,7 +7,8 @@
   "imports": {
     "#config": "./config/index.js",
     "#config/*": "./config/*",
-    "#logger": "./shared/logger.js"
+    "#logger": "./shared/logger.js",
+    "#shared/*": "./shared/*"
   },
   "scripts": {
     "dev": "nodemon --import ./script/preflight.js ./index.js | bunyan-pretty || exit 0",

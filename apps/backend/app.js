@@ -7,9 +7,9 @@ import express from 'express';
 import helmet from 'helmet';
 import history from 'connect-history-api-fallback';
 import qs from 'qs';
-import origin from './shared/origin.js';
+import origin from '#shared/origin.js';
 
-import auth from './shared/auth/index.js';
+import auth from '#shared/auth/index.js';
 import router from './router.js';
 import getLogger from '#logger';
 import config from '#config';

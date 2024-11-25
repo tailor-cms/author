@@ -8,8 +8,8 @@ import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import randomstring from 'randomstring';
 import { role as roles } from '@tailor-cms/common';
-import mail from '../shared/mail/index.js';
-import Audience from '../shared/auth/audience.js';
+import mail from '#shared/mail/index.js';
+import Audience from '#shared/auth/audience.js';
 import { auth as authConfig } from '#config';
 
 const {

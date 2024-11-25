@@ -4,11 +4,11 @@ import get from 'lodash/get.js';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import { schema } from '@tailor-cms/config';
-import db from '../shared/database/index.js';
-import { fetchActivityContent } from '../shared/publishing/helpers.js';
-import { createError } from '../shared/error/helpers.js';
-import oauth2 from '../shared/oAuth2Provider.js';
-import publishingService from '../shared/publishing/publishing.service.js';
+import db from '#shared/database/index.js';
+import { fetchActivityContent } from '#shared/publishing/helpers.js';
+import { createError } from '#shared/error/helpers.js';
+import oauth2 from '#shared/oAuth2Provider.js';
+import publishingService from '#shared/publishing/publishing.service.js';
 import consumerConfig from '#config/consumer.js';
 import { createLogger } from '#logger';
 

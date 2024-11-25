@@ -1,8 +1,8 @@
 import { FORBIDDEN, NOT_FOUND } from 'http-status-codes';
 import express from 'express';
-import { createError } from '../shared/error/helpers.js';
-import db from '../shared/database/index.js';
-import processQuery from '../shared/util/processListQuery.js';
+import { createError } from '#shared/error/helpers.js';
+import db from '#shared/database/index.js';
+import processQuery from '#shared/util/processListQuery.js';
 import ctrl from './comment.controller.js';
 
 const { Comment, Sequelize, User } = db;

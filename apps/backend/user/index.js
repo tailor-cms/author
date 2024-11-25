@@ -1,10 +1,10 @@
 import { ACCEPTED } from 'http-status-codes';
 import express from 'express';
-import { authorize } from '../shared/auth/mw.js';
-import authService from '../shared/auth/index.js';
-import db from '../shared/database/index.js';
-import { processPagination } from '../shared/database/pagination.js';
-import { requestLimiter } from '../shared/request/mw.js';
+import { authorize } from '#shared/auth/mw.js';
+import authService from '#shared/auth/index.js';
+import db from '#shared/database/index.js';
+import { processPagination } from '#shared/database/pagination.js';
+import { requestLimiter } from '#shared/request/mw.js';
 import ctrl from './user.controller.js';
 import {
   loginRequestLimiter,

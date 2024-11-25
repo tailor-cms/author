@@ -8,9 +8,9 @@ import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import camelCase from 'lodash/camelCase.js';
 import { role as roles } from '@tailor-cms/common';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
-import db from '../../shared/database/index.js';
+import db from '#shared/database/index.js';
 import { store as activityCache } from '../../repository/feed/store.js';
-import TransferService from '../../shared/transfer/transfer.service.js';
+import TransferService from '#shared/transfer/transfer.service.js';
 
 const { Activity, Repository, User } = db;
 

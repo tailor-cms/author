@@ -2,8 +2,8 @@ import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import { schema } from '@tailor-cms/config';
 import without from 'lodash/without.js';
-import sse from '../shared/sse/index.js';
-import mail from '../shared/mail/index.js';
+import sse from '#shared/sse/index.js';
+import mail from '#shared/mail/index.js';
 
 const add = (Comment, Hooks, db) => {
   const { Events } = Comment;
