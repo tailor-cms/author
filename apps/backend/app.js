@@ -7,12 +7,12 @@ import express from 'express';
 import helmet from 'helmet';
 import history from 'connect-history-api-fallback';
 import qs from 'qs';
-import origin from './shared/origin.js';
-
-import auth from './shared/auth/index.js';
-import config from './config/server/index.js';
-import getLogger from './shared/logger.js';
 import router from './router.js';
+import origin from '#shared/origin.js';
+
+import auth from '#shared/auth/index.js';
+import getLogger from '#logger';
+import config from '#config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { STORAGE_PATH } = process.env;

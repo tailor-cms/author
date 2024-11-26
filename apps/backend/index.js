@@ -3,8 +3,8 @@ import { promisify } from 'node:util';
 import Promise from 'bluebird';
 import boxen from 'boxen';
 import toCase from 'to-case';
-import contentPluginRegistry from './shared/content-plugins/index.js';
 import app from './app.js';
+import contentPluginRegistry from '#shared/content-plugins/index.js';
 
 const require = createRequire(import.meta.url);
 
@@ -13,9 +13,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 Promise.config({ longStackTraces: !isProduction });
 
 /* eslint-disable */
-import config from './config/server/index.js';
-import database from './shared/database/index.js';
-import getLogger from './shared/logger.js';
+import config from '#config';
+import database from '#shared/database/index.js';
+import getLogger from '#logger';
 const pkg = require('./package.json');
 /* eslint-enable */
 

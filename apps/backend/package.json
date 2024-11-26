@@ -1,9 +1,15 @@
 {
   "name": "tailor-server",
-  "version": "7.0.0-alpha.1",
+  "version": "7.1.0",
   "codename": "X",
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",
+  "imports": {
+    "#config": "./config/index.js",
+    "#config/*": "./config/*",
+    "#logger": "./shared/logger.js",
+    "#shared/*": "./shared/*"
+  },
   "scripts": {
     "dev": "nodemon --import ./script/preflight.js ./index.js | bunyan-pretty || exit 0",
     "start": "node --import ./script/preflight.js ./index.js",

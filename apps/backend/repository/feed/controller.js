@@ -1,8 +1,8 @@
 import isEqual from 'lodash/isEqual.js';
 import pick from 'lodash/pick.js';
 import { UserActivity } from '@tailor-cms/common/src/sse.js';
-import sse from '../../shared/sse/index.js';
 import { addContext, getActiveUsers, removeContext } from './store.js';
+import sse from '#shared/sse/index.js';
 
 const USER_ATTRS = [
   'id',

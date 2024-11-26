@@ -1,7 +1,7 @@
 import { NOT_FOUND } from 'http-status-codes';
 import pick from 'lodash/pick.js';
-import { createError } from '../shared/error/helpers.js';
-import db from '../shared/database/index.js';
+import { createError } from '#shared/error/helpers.js';
+import db from '#shared/database/index.js';
 
 const { Activity, ContentElement } = db;
 

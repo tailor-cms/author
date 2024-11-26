@@ -7,8 +7,8 @@ import {
 } from 'http-status-codes';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
-import { createError, validationError } from '../shared/error/helpers.js';
-import db from '../shared/database/index.js';
+import { createError, validationError } from '#shared/error/helpers.js';
+import db from '#shared/database/index.js';
 
 const { User } = db;
 const createFilter = (q) =>

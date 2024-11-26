@@ -1,9 +1,9 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import db from '../shared/database/index.js';
-import { createError } from '../shared/error/helpers.js';
-import processListQuery from '../shared/util/processListQuery.js';
 import ctrl from './revision.controller.js';
+import db from '#shared/database/index.js';
+import { createError } from '#shared/error/helpers.js';
+import processListQuery from '#shared/util/processListQuery.js';
 
 const { NOT_FOUND } = StatusCodes;
 const { Revision, User } = db;

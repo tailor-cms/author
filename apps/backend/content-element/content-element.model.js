@@ -6,13 +6,13 @@ import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import zipObject from 'lodash/zipObject.js';
-import calculatePosition from '../shared/util/calculatePosition.js';
-import { createLogger } from '../shared/logger.js';
+import hooks from './hooks.js';
+import calculatePosition from '#shared/util/calculatePosition.js';
 import {
   detectMissingReferences,
   removeReference,
-} from '../shared/util/modelReference.js';
-import hooks from './hooks.js';
+} from '#shared/util/modelReference.js';
+import { createLogger } from '#logger';
 
 const logger = createLogger('content-element:model');
 

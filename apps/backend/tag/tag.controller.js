@@ -1,5 +1,5 @@
 import yn from 'yn';
-import db from '../shared/database/index.js';
+import db from '#shared/database/index.js';
 
 const { Tag } = db;
 

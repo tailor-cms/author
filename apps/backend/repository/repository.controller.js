@@ -12,13 +12,13 @@ import { repository as role } from '@tailor-cms/common/src/role.js';
 import sample from 'lodash/sample.js';
 import { schema } from '@tailor-cms/config';
 import { snakeCase } from 'change-case';
-import { removeInvalidReferences } from '../shared/util/modelReference.js';
-import publishingService from '../shared/publishing/publishing.service.js';
-import db from '../shared/database/index.js';
-import { createLogger } from '../shared/logger.js';
-import { createError } from '../shared/error/helpers.js';
-import TransferService from '../shared/transfer/transfer.service.js';
-import { general } from '../config/server/index.js';
+import { removeInvalidReferences } from '#shared/util/modelReference.js';
+import publishingService from '#shared/publishing/publishing.service.js';
+import db from '#shared/database/index.js';
+import { createError } from '#shared/error/helpers.js';
+import TransferService from '#shared/transfer/transfer.service.js';
+import { createLogger } from '#logger';
+import { general } from '#config';
 
 const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 

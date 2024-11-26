@@ -2,9 +2,9 @@ import { setTimeout } from 'node:timers/promises';
 import { createId as cuid } from '@paralleldrive/cuid2';
 import Keyv from 'keyv';
 
-import { consumer, kvStore } from '../../config/server/index.js';
-import createLogger from '../logger.js';
 import oauth2 from '../oAuth2Provider.js';
+import createLogger from '#logger';
+import { consumer, kvStore } from '#config';
 
 const logger = createLogger('webhook-throttler');
 

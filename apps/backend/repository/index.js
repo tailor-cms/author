@@ -2,19 +2,19 @@ import path from 'node:path';
 import { NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
 import express from 'express';
 import multer from 'multer';
-import { authorize } from '../shared/auth/mw.js';
-import { createError } from '../shared/error/helpers.js';
-import db from '../shared/database/index.js';
-import processQuery from '../shared/util/processListQuery.js';
 import ctrl from './repository.controller.js';
 import feed from './feed/index.js';
+import { authorize } from '#shared/auth/mw.js';
+import { createError } from '#shared/error/helpers.js';
+import db from '#shared/database/index.js';
+import processQuery from '#shared/util/processListQuery.js';
 /* eslint-disable */
 import activity from '../activity/index.js';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
 import { role as RoleConfig } from '@tailor-cms/common';
-import storageRouter from '../shared/storage/storage.router.js';
+import storageRouter from '#shared/storage/storage.router.js';
 /* eslint-enable */
 
 const { Repository } = db;
