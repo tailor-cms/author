@@ -1,4 +1,4 @@
-import createLogger from '#logger';
+import { createLogger } from '#logger';
 import { hostname } from '#config';
 
 const logger = createLogger();

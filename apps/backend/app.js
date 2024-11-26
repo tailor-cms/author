@@ -11,12 +11,11 @@ import router from './router.js';
 import origin from '#shared/origin.js';
 
 import auth from '#shared/auth/index.js';
-import getLogger from '#logger';
+import { createHttpLogger } from '#logger';
 import config from '#config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { STORAGE_PATH } = process.env;
-const logger = getLogger();
 const app = express();
 
 const configCookie = JSON.stringify(
@@ -80,7 +79,7 @@ app.use(
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
 // Mount main router.
-app.use('/api', requestLogger, router);
+app.use('/api', createHttpLogger(), router);
 
 // Global error handler.
 app.use(errorHandler);
@@ -90,14 +89,9 @@ app.use((req, res) => res.status(404).end());
 
 export default app;
 
-function requestLogger(req, res, next) {
-  logger.info({ req });
-  next();
-}
-
-function errorHandler(err, _req, res) {
+function errorHandler(err, req, res) {
   if (!err.status || err.status === 500) {
-    logger.error({ err });
+    req.log.error({ err });
     res.status(500).end();
     return;
   }

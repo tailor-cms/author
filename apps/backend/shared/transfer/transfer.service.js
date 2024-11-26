@@ -1,8 +1,8 @@
 import PromiseQueue from 'promise-queue';
 import { ExportJob, ImportJob } from './job.js';
-import createLogger from '#logger';
+import { createLogger } from '#logger';
 
-const logger = createLogger();
+const logger = createLogger('transfer:service');
 
 class TransferService {
   constructor() {

@@ -11,7 +11,7 @@
     "#shared/*": "./shared/*"
   },
   "scripts": {
-    "dev": "nodemon --import ./script/preflight.js ./index.js | bunyan-pretty || exit 0",
+    "dev": "nodemon --import ./script/preflight.js ./index.js || exit 0",
     "start": "node --import ./script/preflight.js ./index.js",
     "debug:server": "nodemon --inspect --import ./script/preflight.js ./index.js",
     "db": "node --import ./script/preflight.js ./script/sequelize.js",
@@ -42,7 +42,6 @@
     "bluebird": "^3.7.2",
     "body-parser": "^1.20.3",
     "boxen": "^7.1.1",
-    "bunyan": "^1.8.15",
     "change-case": "^5.4.4",
     "cheerio": "1.0.0-rc.12",
     "connect-history-api-fallback": "^2.0.0",
@@ -84,6 +83,9 @@
     "path-exists": "^5.0.0",
     "pg": "^8.13.1",
     "pg-query-stream": "^4.7.1",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "pino-pretty": "^12.0.0",
     "pkg-dir": "^8.0.0",
     "promise-queue": "^2.2.5",
     "qs": "^6.13.1",
@@ -108,13 +110,12 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
-    "bunyan-pretty-cli": "^0.2.0",
+    "@types/bluebird": "^3.5.42",
     "dargs": "^8.1.0",
     "del-cli": "^5.1.0",
     "dotenv-cli": "^7.4.4",
     "nodemon": "^3.1.7",
     "sequelize-cli": "^6.6.2",
-    "sql-log-prettifier": "^0.1.2",
     "terser": "^5.36.0",
     "umzug": "^3.8.2"
   },

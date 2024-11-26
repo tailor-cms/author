@@ -3,7 +3,7 @@ import { createId as cuid } from '@paralleldrive/cuid2';
 import Keyv from 'keyv';
 
 import oauth2 from '../oAuth2Provider.js';
-import createLogger from '#logger';
+import { createLogger } from '#logger';
 import { consumer, kvStore } from '#config';
 
 const logger = createLogger('webhook-throttler');

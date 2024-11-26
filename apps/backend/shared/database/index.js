@@ -23,7 +23,7 @@ import Tag from '../../tag/tag.model.js';
 import Hooks from './hooks.js';
 import config from './config.js';
 import { wrapMethods } from './helpers.js';
-import createLogger from '#logger';
+import { createLogger } from '#logger';
 
 const require = createRequire(import.meta.url);
 const pkg = require('../../package.json');
