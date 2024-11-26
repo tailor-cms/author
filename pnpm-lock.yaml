@@ -712,8 +712,8 @@ importers:
         specifier: ^3.141.0
         version: 3.141.0(typescript@5.7.2)
       '@studion/infra-code-blocks':
-        specifier: ^0.6.11
-        version: 0.6.11(typescript@5.7.2)
+        specifier: ^0.5.3
+        version: 0.5.3(typescript@5.7.2)
     devDependencies:
       '@types/node':
         specifier: ^22
@@ -3555,8 +3555,8 @@ packages:
   '@statsig/web-analytics@3.7.0':
     resolution: {integrity: sha512-MzM8QDH68+1ufuWRupY7d2uERc3420kNMyTt0BOKdCGkqZuXROs0ZrAhC5wWnUbdcRoCfYc58noOZcMRPioCBA==}
 
-  '@studion/infra-code-blocks@0.6.11':
-    resolution: {integrity: sha512-u+oT5O6rEsL+ufD7TBp5PmHxjXAZpuJtHBwFc5KAYgE5h2djixgb2JkpLNO7UV4VHdNJdYU+nVQaoH4lsevtvA==}
+  '@studion/infra-code-blocks@0.5.3':
+    resolution: {integrity: sha512-6McQJ9y49qeRypQlcltIdT5JFgzAloOXpjnx92Vrrk51LlcJqNFQmwQo4dNUxUNe5+WiMQGIg2c1oSG8TZ3gtg==}
 
   '@stylistic/eslint-plugin-js@2.6.4':
     resolution: {integrity: sha512-kx1hS3xTvzxZLdr/DCU/dLBE++vcP97sHeEFX2QXhk1Ipa4K1rzPOLw1HCbf4mU3s+7kHP5eYpDe+QteEOFLug==}
@@ -14643,7 +14643,7 @@ snapshots:
       '@statsig/client-core': 3.7.0
       '@statsig/js-client': 3.7.0
 
-  '@studion/infra-code-blocks@0.6.11(typescript@5.7.2)':
+  '@studion/infra-code-blocks@0.5.3(typescript@5.7.2)':
     dependencies:
       '@pulumi/aws': 5.43.0(typescript@5.7.2)
       '@pulumi/awsx': 1.0.6(typescript@5.7.2)
