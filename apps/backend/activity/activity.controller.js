@@ -80,7 +80,7 @@ async function restore({ activity, repository, user }, res) {
   return res.json({ data: activity });
 }
 
-function publish({ activity }, res) {
+async function publish({ activity }, res) {
   log(`[publish] initiated, activityId: ${activity.id}`);
   if (activity.detached) {
     return createError(
@@ -88,9 +88,10 @@ function publish({ activity }, res) {
       'Cannot publish a deleted activity',
     );
   }
-  return publishingService
-    .publishActivity(activity)
-    .then((data) => res.json({ data }));
+  const data = await (activity.deletedAt
+    ? publishingService.unpublishActivity(activity)
+    : publishingService.publishActivity(activity));
+  return res.json({ data });
 }
 
 function clone({ activity, body, user }, res) {
