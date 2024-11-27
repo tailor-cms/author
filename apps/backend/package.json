@@ -5,10 +5,12 @@
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",
   "imports": {
+    "#": "./*",
     "#config": "./config/index.js",
     "#config/*": "./config/*",
     "#logger": "./shared/logger.js",
-    "#shared/*": "./shared/*"
+    "#shared/*": "./shared/*",
+    "#storage": "./repository/storage.js"
   },
   "scripts": {
     "dev": "nodemon --import ./script/preflight.js ./index.js || exit 0",
