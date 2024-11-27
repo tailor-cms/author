@@ -1,0 +1,19 @@
+<template>
+  <div class="hint-container">
+    <div class="text-left text-subtitle-2 mb-2">Hint</div>
+    <VTextField
+      :model-value="hint"
+      placeholder="Optional hint..."
+      variant="outlined"
+      clearable
+      @update:model-value="$emit('update', { hint: $event })"
+    />
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { defineProps, defineEmits } from 'vue';
+
+defineProps<{ hint: string }>();
+defineEmits(['update']);
+</script>

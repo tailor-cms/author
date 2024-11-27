@@ -1,7 +1,7 @@
 <template>
   <div class="feedback-container">
     <div class="mb-2">
-      <span class="text-subtitle-2">Feedback</span>
+      <span class="text-left text-subtitle-2">Feedback</span>
       <VBtn
         class="ml-2"
         color="primary-darken-4"
