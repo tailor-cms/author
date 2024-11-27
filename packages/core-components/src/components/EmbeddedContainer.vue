@@ -30,9 +30,9 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import mapKeys from 'lodash/mapKeys';
 import sortBy from 'lodash/sortBy';
 
+import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 import ContainedContent from './ContainedContent.vue';
 import ElementList from './ElementList.vue';
-import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 
 interface Props {
   types: string[];
