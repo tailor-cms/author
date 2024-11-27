@@ -48,8 +48,7 @@ const props = withDefaults(defineProps<Props>(), {
   types: () => [],
   addElementOptions: () => ({}),
 });
-
-const emits = defineEmits(['save', 'delete']);
+const emit = defineEmits(['save', 'delete']);
 
 const showConfirmationDialog = useConfirmationDialog();
 
@@ -62,7 +61,7 @@ const addItems = (items: ContentElement[]) => {
   items = Array.isArray(items) ? items : [items];
   const container = cloneDeep(props.container);
   container.embeds = { ...container.embeds, ...mapKeys(items, 'id') };
-  emits('save', container);
+  emit('save', container);
 };
 
 const reorderItem = ({
@@ -76,20 +75,20 @@ const reorderItem = ({
   const container = cloneDeep(props.container);
   const reordered = container.embeds[items[newPosition].id];
   reordered.position = calculatePosition(context) as number;
-  emits('save', container);
+  emit('save', container);
 };
 
 const save = (item: ContentElement, key: string, value: any) => {
   const container = cloneDeep(props.container);
   container.embeds[item.id] = { ...item, [key]: value };
-  emits('save', container);
+  emit('save', container);
 };
 
 const requestDeleteConfirmation = (element: ContentElement) => {
   showConfirmationDialog({
     title: 'Delete element?',
     message: 'Are you sure you want to delete element?',
-    action: () => emits('delete', element),
+    action: () => emit('delete', element),
   });
 };
 </script>
