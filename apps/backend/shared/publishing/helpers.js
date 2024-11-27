@@ -71,11 +71,12 @@ async function publishActivity(activity) {
   return activity;
 }
 
-async function unpublishActivity(repository, activity) {
+async function unpublishActivity(activity) {
   log(
-    `[unpublishActivity] initiated, repository id: ${repository.id},
+    `[unpublishActivity] initiated, repository id: ${activity.repositoryId},
     activity id: ${activity.id}`,
   );
+  const repository = await activity.getRepository();
   const manifest = await RepositoryManifest.load(repository);
   const publishedManifest = manifest.unpublishActivity(activity);
   await updateRepositoryCatalog(repository, publishedManifest.publishedAt);

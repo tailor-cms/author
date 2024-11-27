@@ -32,8 +32,8 @@ class PublishingService {
     );
   }
 
-  unpublishActivity(repository, activity) {
-    return this.queue.add(() => unpublishActivity(repository, activity));
+  unpublishActivity(activity) {
+    return this.queue.add(() => unpublishActivity(activity));
   }
 
   updateRepositoryCatalog(repository) {
