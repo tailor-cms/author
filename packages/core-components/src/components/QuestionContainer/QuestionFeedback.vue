@@ -7,7 +7,7 @@
         color="primary-darken-4"
         size="small"
         variant="text"
-        @click="toggleExpand"
+        @click="isExpanded = !isExpanded"
       >
         {{ buttonLabel }}
       </VBtn>
@@ -47,7 +47,7 @@
 import { computed, ref, watch } from 'vue';
 import { isArray, some } from 'lodash';
 
-import { RichTextEditor } from '..';
+import RichTextEditor from '../RichTextEditor/index.vue';
 
 const props = defineProps<{
   answers: Array<string> | boolean | null;
@@ -63,10 +63,6 @@ const buttonLabel = computed(() => (isExpanded.value ? 'hide' : 'show'));
 const processedAnswers = computed(() =>
   isArray(props.answers) ? props.answers : ['True', 'False'],
 );
-
-const toggleExpand = () => {
-  isExpanded.value = !isExpanded.value;
-};
 
 watch(
   () => props.isEditing,

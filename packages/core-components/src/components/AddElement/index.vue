@@ -1,6 +1,6 @@
 <template>
   <div class="add-element-container">
-    <slot>
+    <slot :add-element="showElementPicker">
       <VBtn
         v-if="large"
         :color="color"
@@ -125,7 +125,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['add', 'hidden']);
 
-const registry = inject<any>('$ceRegistry').all as any[];
+const registry = inject<any>('$ceRegistry')?.all as any[];
 
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
