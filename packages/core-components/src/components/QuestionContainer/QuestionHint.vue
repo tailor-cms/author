@@ -6,7 +6,7 @@
       placeholder="Optional hint..."
       variant="outlined"
       clearable
-      @update:model-value="$emit('update', { hint: $event })"
+      @update:model-value="$emit('update', $event)"
     />
   </div>
 </template>
