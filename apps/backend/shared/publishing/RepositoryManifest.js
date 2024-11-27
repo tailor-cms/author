@@ -1,6 +1,7 @@
 import findIndex from 'lodash/findIndex.js';
 import hash from 'hash-obj';
 import pick from 'lodash/pick.js';
+import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
 import { schema } from '@tailor-cms/config';
 import without from 'lodash/without.js';

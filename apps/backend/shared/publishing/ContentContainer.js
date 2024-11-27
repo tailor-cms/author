@@ -1,4 +1,5 @@
 import differenceWith from 'lodash/differenceWith.js';
+import find from 'lodash/find.js';
 import map from 'lodash/map.js';
 import Promise from 'bluebird';
 import { schema } from '@tailor-cms/config';
