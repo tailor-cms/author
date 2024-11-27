@@ -1,4 +1,3 @@
-// eslint-disable-next-line strict
 'use strict';
 
 const TABLE_NAME = 'teaching_element';
@@ -10,7 +9,7 @@ function findTables(queryInterface) {
 
 function setCellType({ data }, type) {
   if (!data.embeds) return;
-  data.embeds = mapKeys(data.embeds, (data, id) => {
+  data.embeds = mapKeys(data.embeds, (data) => {
     return Object.assign({}, data, { type });
   });
 }

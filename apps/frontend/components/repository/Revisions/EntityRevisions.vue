@@ -34,11 +34,11 @@ import get from 'lodash/get';
 import { promiseTimeout } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
+import EntitySidebar from './EntitySidebar.vue';
 import {
   contentElement as contentElementApi,
   revision as revisionApi,
 } from '@/api';
-import EntitySidebar from './EntitySidebar.vue';
 
 interface Props {
   revision: Revision;

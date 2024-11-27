@@ -86,7 +86,6 @@ class Channel {
 }
 
 export default class Radio {
-  // eslint-disable-next-line no-use-before-define
   private static instance: Radio;
   private static channels = new Map();
   private static bus = extendedMitt();

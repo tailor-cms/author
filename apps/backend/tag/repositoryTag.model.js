@@ -1,7 +1,7 @@
 import { Model } from 'sequelize';
 
 class RepositoryTag extends Model {
-  static fields({ INTEGER, DATE }) {
+  static fields({ INTEGER }) {
     return {
       repositoryId: {
         type: INTEGER,

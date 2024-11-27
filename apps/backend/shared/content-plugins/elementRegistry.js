@@ -1,8 +1,8 @@
-import config from '../../config/server/index.js';
 import { elements } from '@tailor-cms/content-element-collection/server.js';
-import hooksTypes from './elementHooks.js';
 import pick from 'lodash/pick.js';
 import storage from '../../repository/storage.js';
+import hooksTypes from './elementHooks.js';
+import config from '#config';
 
 class ElementsRegistry {
   constructor() {

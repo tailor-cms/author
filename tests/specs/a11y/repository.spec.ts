@@ -7,8 +7,8 @@ import {
   toSeededRepository,
 } from '../../helpers/seed';
 import { ActivityOutline } from '../../pom/repository/Outline.ts';
-import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import SeedClient from '../../api/SeedClient';
+import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { test } from './helpers/axe-config';
 
 const REPOSITORY_NAME = 'a11y test imported repository';

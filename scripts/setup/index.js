@@ -1,11 +1,11 @@
+import { createRequire } from 'module';
 import boxen from 'boxen';
 import chalk from 'chalk';
-import { createRequire } from 'module';
 import { execaCommand } from 'execa';
 import minimist from 'minimist';
+import shell from 'shelljs';
 import setEnv from './set-env.js';
 import { saveDevConfig } from './dotenv.js';
-import shell from 'shelljs';
 import { testDatabaseConnection } from './database.js';
 import { shouldUseComposeSpec, shouldSeedTheDatabase } from './user-prompts.js';
 

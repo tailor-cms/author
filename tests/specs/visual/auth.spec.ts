@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 
-import { ForgotPassword, SignIn } from './../../pom/auth';
 import { percySnapshot } from '../../utils/percy.ts';
+import { ForgotPassword, SignIn } from './../../pom/auth';
 
 test.beforeEach(({ page }) => page.goto('/', { waitUntil: 'networkidle' }));
 

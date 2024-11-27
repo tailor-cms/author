@@ -80,7 +80,7 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
-import { type VFileInput } from 'vuetify/components';
+import type { VFileInput } from 'vuetify/components';
 
 import { useUpload } from '../composables/useUpload';
 

@@ -58,8 +58,8 @@
 <script lang="ts" setup>
 import type { User } from '@tailor-cms/interfaces/user';
 
-import AssigneeFilter from './Assignee.vue';
 import SelectStatus from '../SelectStatus.vue';
+import AssigneeFilter from './Assignee.vue';
 
 defineProps<{
   assigneeOptions: Array<User | null>;

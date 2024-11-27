@@ -1,5 +1,5 @@
-import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { ChangePasswordDialog } from '../../pom/common/ChangePasswordDiaog.ts';
+import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { test } from './helpers/axe-config';
 
 test.beforeEach(({ page }) =>

@@ -1,5 +1,5 @@
-import { parsePath } from './helpers.js';
 import pick from 'lodash/pick.js';
+import { parsePath } from './helpers.js';
 
 const parseOptions = ({ limit, offset, sortOrder }) => ({
   limit: parseInt(limit, 10) || 100,

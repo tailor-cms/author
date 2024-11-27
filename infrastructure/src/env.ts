@@ -1,6 +1,6 @@
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
-import * as studion from '@studion/infra-code-blocks';
+import type * as studion from '@studion/infra-code-blocks';
 
 const aiConfig = new pulumi.Config('ai');
 const oidcConfg = new pulumi.Config('oidc');

@@ -1,5 +1,5 @@
-import { Strategy as BaseOIDCStrategy, Issuer } from 'openid-client';
 import { URL } from 'node:url';
+import { Strategy as BaseOIDCStrategy, Issuer } from 'openid-client';
 
 export default class OIDCStrategy extends BaseOIDCStrategy {
   constructor(options, verify) {

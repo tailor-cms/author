@@ -4,8 +4,8 @@ import { schema as schemaConfig } from '@tailor-cms/config';
 import shuffle from 'lodash/shuffle.js';
 import StorageService from '../storage/storage.service.js';
 
-import { ai as aiConfig } from '../../config/server/index.js';
-import createLogger from '../logger.js';
+import { createLogger } from '#logger';
+import { ai as aiConfig } from '#config';
 
 const logger = createLogger('ai');
 const {
@@ -22,7 +22,7 @@ const parseResponse = (val) => {
   try {
     if (!isString(content)) return content;
     return JSON.parse(content);
-  } catch (e) {
+  } catch {
     logger.info('Unable to parse response', content);
     throw new Error('Invalid AI response', content);
   }

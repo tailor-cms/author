@@ -37,8 +37,8 @@ import find from 'lodash/find';
 import { formatTimeAgo } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
-import { getFormatDescription, getRevisionAcronym } from '@/lib/revision';
 import EntityRevisions from './EntityRevisions.vue';
+import { getFormatDescription, getRevisionAcronym } from '@/lib/revision';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 

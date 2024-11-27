@@ -1,16 +1,16 @@
-import {
-  detectMissingReferences,
-  removeReference,
-} from '../shared/util/modelReference.js';
 import { Model, Op } from 'sequelize';
 import { schema, workflow } from '@tailor-cms/config';
-import calculatePosition from '../shared/util/calculatePosition.js';
 import { Activity as Events } from '@tailor-cms/common/src/sse.js';
-import hooks from './hooks.js';
 import isEmpty from 'lodash/isEmpty.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
+import hooks from './hooks.js';
+import calculatePosition from '#shared/util/calculatePosition.js';
+import {
+  detectMissingReferences,
+  removeReference,
+} from '#shared/util/modelReference.js';
 
 const { getSiblingTypes, isOutlineActivity, isTrackedInWorkflow } = schema;
 const { getDefaultActivityStatus } = workflow;

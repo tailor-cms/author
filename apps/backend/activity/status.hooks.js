@@ -1,11 +1,11 @@
 import forEach from 'lodash/forEach.js';
 import get from 'lodash/get.js';
-import mail from '../shared/mail/index.js';
 import { Op } from 'sequelize';
 import { schema } from '@tailor-cms/config';
-import sse from '../shared/sse/index.js';
+import mail from '#shared/mail/index.js';
+import sse from '#shared/sse/index.js';
 
-const add = (ActivityStatus, Hooks, { Activity }) => {
+const add = (ActivityStatus, Hooks) => {
   const { Events } = ActivityStatus;
 
   const mappings = {

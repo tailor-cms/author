@@ -1,8 +1,8 @@
 import { BAD_REQUEST, NO_CONTENT } from 'http-status-codes';
-import { createError } from '../shared/error/helpers.js';
-import db from '../shared/database/index.js';
 import pick from 'lodash/pick.js';
 import pickBy from 'lodash/pickBy.js';
+import { createError } from '#shared/error/helpers.js';
+import db from '#shared/database/index.js';
 
 const { Comment, ContentElement, User } = db;
 

@@ -69,10 +69,10 @@ const getTabItems = ({
     },
     hasActivities &&
       hasWorkflow && {
-        name: 'Progress',
-        route: 'progress',
-        icon: 'chart-timeline-variant',
-      },
+      name: 'Progress',
+      route: 'progress',
+      icon: 'chart-timeline-variant',
+    },
     {
       name: 'History',
       route: 'revisions',

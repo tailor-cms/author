@@ -1,9 +1,9 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import * as acorn from 'acorn';
 import _ from 'lodash';
 import camelCase from 'lodash/camelCase.js';
-import fs from 'node:fs';
 import jsonfile from 'jsonfile';
-import path from 'node:path';
 import shell from 'shelljs';
 import upperFirst from 'lodash/upperFirst.js';
 
@@ -72,8 +72,8 @@ export class ExtensionRegistry {
     const list = verbose
       ? this.elements
       : this.list()
-          .map((name) => `· ${name}`)
-          .join('\n');
+        .map((name) => `· ${name}`)
+        .join('\n');
     shell.echo(list);
   }
 
@@ -164,6 +164,7 @@ export class ExtensionRegistry {
 
 // prettier-ignore
 const exportModuleTemplate = _.template(
+// eslint-disable-next-line @stylistic/indent
 `<% _.forEach(entries, function(it, index) { %>import pkg<%- index %> from '<%- it %>';
 <%});%>
 // prettier-ignore

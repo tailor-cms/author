@@ -28,7 +28,7 @@
         <VIcon class="pr-2">mdi-arrow-left</VIcon>Sign in
       </VBtn>
     </div>
-    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions-->
+    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
     <form v-else novalidate @keydown.enter="submit" @submit.prevent="submit">
       <VTextField
         v-model="passwordInput"

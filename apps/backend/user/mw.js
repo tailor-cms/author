@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { requestLimiter } from '../shared/request/mw.js';
+import { requestLimiter } from '#shared/request/mw.js';
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 

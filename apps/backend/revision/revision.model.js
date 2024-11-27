@@ -1,8 +1,8 @@
 import { Model, Sequelize } from 'sequelize';
-import { applyFetchHooks } from '../content-element/hooks.js';
-import hooks from './hooks.js';
 import isNumber from 'lodash/isNumber.js';
 import Promise from 'bluebird';
+import { applyFetchHooks } from '../content-element/hooks.js';
+import hooks from './hooks.js';
 
 const { literal } = Sequelize;
 

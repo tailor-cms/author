@@ -2,20 +2,15 @@ import injectConfigHeaders from './lib/vite-plugins/injectConfigHeaders';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  ssr: false,
-  debug: true,
   modules: ['@nuxtjs/google-fonts', '@pinia/nuxt'],
+  ssr: false,
+  devtools: { enabled: true },
+  css: [
+    '@mdi/font/css/materialdesignicons.min.css',
+    'vuetify/lib/styles/main.sass',
+  ],
   build: {
     transpile: ['vuetify'],
-  },
-  vite: {
-    optimizeDeps: { include: ['lodash'] },
-    plugins: [injectConfigHeaders()],
-  },
-  devtools: { enabled: true },
-  telemetry: false,
-  devServer: {
-    port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
   routeRules: {
     '/api/**': {
@@ -31,17 +26,22 @@ export default defineNuxtConfig({
       proxy: `http://localhost:${process.env.BACKEND_PORT}/repository/assets/**`,
     },
   },
-  css: [
-    '@mdi/font/css/materialdesignicons.min.css',
-    'vuetify/lib/styles/main.sass',
-  ],
-  pinia: {
-    storesDirs: ['./stores/**'],
+  devServer: {
+    port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
+  vite: {
+    optimizeDeps: { include: ['lodash'] },
+    plugins: [injectConfigHeaders()],
+  },
+  telemetry: false,
+  debug: true,
   googleFonts: {
     families: {
       Roboto: true,
       Poppins: true,
     },
+  },
+  pinia: {
+    storesDirs: ['./stores/**'],
   },
 });

@@ -296,6 +296,7 @@ const hide = () => {
 watch(
   schemaMeta,
   (val) => {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     Object.keys(metaValidation).forEach((key) => delete metaValidation[key]);
     if (!val?.length) return;
     return val.forEach((it) => (metaValidation[it.key] = it.validate));

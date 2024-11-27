@@ -8,10 +8,10 @@
     "e2e:a11y": "pnpm playwright test --project=a11y --project=setup"
   },
   "devDependencies": {
-    "@axe-core/playwright": "4.10.0",
-    "@percy/cli": "^1.30.0",
-    "@percy/playwright": "^1.0.6",
-    "@playwright/test": "1.46.1",
+    "@axe-core/playwright": "4.10.1",
+    "@percy/cli": "^1.30.2",
+    "@percy/playwright": "^1.0.7",
+    "@playwright/test": "1.49.0",
     "@types/node": "^20.14.10"
   },
   "dependencies": {

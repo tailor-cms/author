@@ -80,8 +80,8 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import { SCHEMAS } from '@tailor-cms/config';
 import sortBy from 'lodash/sortBy';
 
-import { activity as activityApi, repository as repositoryApi } from '@/api';
 import RepositoryTree from './RepositoryTree.vue';
+import { activity as activityApi, repository as repositoryApi } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 

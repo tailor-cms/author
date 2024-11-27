@@ -217,7 +217,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '../mixins';
+@use '../mixins';
 
 .content-element {
   $accent-1: #1de9b6;
@@ -307,12 +307,12 @@ onMounted(() => {
 
 .diff {
   &.new {
-    @include highlight(rgb(var(--v-theme-success-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-success-lighten-4)));
   }
 
   &.changed,
   &.removed {
-    @include highlight(rgb(var(--v-theme-secondary-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-secondary-lighten-4)));
   }
 
   .element-actions {

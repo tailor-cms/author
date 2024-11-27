@@ -3,7 +3,7 @@
     v-bind="omit(activatorProps, 'onClick')"
     :class="{
       'list-item-active': isActive,
-      readonly: !isEditable,
+      'readonly': !isEditable,
     }"
     :title="title"
     class="list-item"

@@ -42,8 +42,8 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
 import get from 'lodash/get';
 
-import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import ActivityPublishing from './ActivityPublishing.vue';
+import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import api from '@/api/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
