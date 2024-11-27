@@ -12,8 +12,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits } from 'vue';
-
 defineProps<{ hint: string }>();
 defineEmits(['update']);
 </script>

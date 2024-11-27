@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="pa-4" color="primary-lighten-5">
+  <div>
     <div class="text-left text-subtitle-2 mb-2">Question</div>
     <VInput
       :model-value="elementData.question"
@@ -23,7 +23,7 @@
         @save="saveQuestion($event.embeds)"
       />
     </VInput>
-  </VSheet>
+  </div>
 </template>
 
 <script lang="ts" setup>

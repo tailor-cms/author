@@ -1,16 +1,19 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard class="question-container bg-grey-lighten-5">
+  <VCard class="question-container" elevation="0" border>
     <VToolbar class="px-4" color="primary-darken-3" height="36">
       <VIcon :icon="icon" color="secondary-lighten-2" size="18" start />
       <span class="text-subtitle-2">{{ name }}</span>
     </VToolbar>
     <VForm ref="form" class="content" validate-on="submit">
-      <QuestionPrompt
-        :element-data="elementData"
-        :is-disabled="isDisabled"
-        @update="emit('update', $event)"
-      />
+      <VSheet class="pa-4" color="primary-lighten-5">
+        <QuestionPrompt
+          :element-data="elementData"
+          :is-disabled="isDisabled"
+          @update="emit('update', $event)"
+        />
+      </VSheet>
+      <VDivider />
       <VCardText>
         <slot></slot>
         <QuestionHint
@@ -50,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref } from 'vue';
+import { ref } from 'vue';
 
 import QuestionFeedback from './QuestionFeedback.vue';
 import QuestionHint from './QuestionHint.vue';
