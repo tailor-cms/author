@@ -35,7 +35,7 @@
 
 <script lang="ts" setup>
 import { EditorContent, useEditor } from '@tiptap/vue-3';
-import { ref, watch, watchEffect } from 'vue';
+import { ref, watch } from 'vue';
 import type { VField, VInput } from 'vuetify/components';
 import CharacterCount from '@tiptap/extension-character-count';
 import StarterKit from '@tiptap/starter-kit';
@@ -102,8 +102,9 @@ watch(focused, async (val) => {
   return emit('change', content.value);
 });
 
-watchEffect(() =>
-  editor.value?.setEditable(!props.readonly && !props.disabled),
+watch(
+  () => props.readonly || props.disabled,
+  (val) => editor.value?.setEditable(!val),
 );
 </script>
 

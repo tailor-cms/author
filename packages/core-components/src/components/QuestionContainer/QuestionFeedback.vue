@@ -28,9 +28,8 @@
           <RichTextEditor
             v-if="props.isEditing"
             :model-value="feedback[index]"
-            label="Feedback"
             variant="outlined"
-            @update:model-value="emit('update', { [index]: $event })"
+            @update:model-value="update($event, index)"
           />
           <div v-else>
             <!-- eslint-disable-next-line vue/no-v-html -->
@@ -63,6 +62,10 @@ const buttonLabel = computed(() => (isExpanded.value ? 'hide' : 'show'));
 const processedAnswers = computed(() =>
   isArray(props.answers) ? props.answers : ['True', 'False'],
 );
+
+const update = (value: string, index: number) => {
+  emit('update', { ...props.feedback, [index]: value });
+};
 
 watch(
   () => props.isEditing,

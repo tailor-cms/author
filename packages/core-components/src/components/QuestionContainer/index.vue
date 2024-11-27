@@ -48,8 +48,7 @@
           clearable
           @update:model-value="emit('update', { hint: $event })"
         />
-        <Feedback
-          v-if="showFeedback"
+        <QuestionFeedback
           :answers="elementData.answers"
           :feedback="elementData.feedback"
           :is-editing="!isDisabled"
@@ -87,7 +86,7 @@ import omit from 'lodash/omit';
 import sortBy from 'lodash/sortBy';
 import without from 'lodash/without';
 
-import Feedback from './QuestionFeedback.vue';
+import QuestionFeedback from './QuestionFeedback.vue';
 
 const props = defineProps<{
   elementData: Record<string, any>;
