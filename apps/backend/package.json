@@ -5,7 +5,7 @@
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",
   "imports": {
-    "#": "./*",
+    "#app/*": "./*",
     "#config": "./config/index.js",
     "#config/*": "./config/*",
     "#logger": "./shared/logger.js",

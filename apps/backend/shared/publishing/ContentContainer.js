@@ -4,7 +4,7 @@ import Promise from 'bluebird';
 import { schema } from '@tailor-cms/config';
 
 import { getBaseUrl, log } from './utils.js';
-import hooks from '#/content-element/hooks.js';
+import hooks from '#app/content-element/hooks.js';
 import db from '#shared/database/index.js';
 import PluginRegistry from '#shared/content-plugins/index.js';
 import storage from '#storage';
@@ -22,10 +22,10 @@ function getContainersFilePaths(baseUrl, containers = []) {
   return containers.map((it) => `${baseUrl}/${it.id}.${it.publishedAs}.json`);
 }
 
-export class ContentContainers {
+export class ContentContainer {
   static async publish(parent) {
     log(`[containers:publish] initiated, parent id: ${parent.id}`);
-    const containers = await ContentContainers.fetch(parent);
+    const containers = await ContentContainer.fetch(parent);
     await Promise.map(containers, async (container) => {
       const { id, publishedAs = 'container' } = container;
       await saveFile(parent, `${id}.${publishedAs}`, container);
