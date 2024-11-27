@@ -75,7 +75,7 @@ const reorderItem = ({
   const context = { items, newPosition };
   const container = cloneDeep(props.container);
   const reordered = container.embeds[items[newPosition].id];
-  reordered.position = calculatePosition(context);
+  reordered.position = calculatePosition(context) as number;
   emits('save', container);
 };
 
