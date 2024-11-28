@@ -5,7 +5,7 @@ import {
   unpublishActivity,
   updatePublishingStatus,
   updateRepositoryCatalog,
-} from './helpers.js';
+} from './actions.js';
 import publishingThrottler from './PublishingThrottler.js';
 import { createLogger } from '#logger';
 
