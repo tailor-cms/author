@@ -33,7 +33,7 @@ async function updateRepositoryCatalog(
     ...(shouldUpdateRepositoryInfo
       ? RepositoryManifest.pickRepositoryAttrs(repository)
       : existing),
-    publishedAt: publishedAt || existing.publishedAt,
+    publishedAt: publishedAt || existing?.publishedAt || new Date(),
     detachedAt: repository.deletedAt,
   };
   if (existing) {
@@ -80,6 +80,7 @@ async function unpublishActivity(activity) {
   const manifest = await RepositoryManifest.load(repository);
   const publishedManifest = manifest.unpublishActivity(activity);
   await updateRepositoryCatalog(repository, publishedManifest.publishedAt);
+  activity.publishedAt = new Date();
   await activity.save();
   log('[unpublishActivity] completed');
   return activity;
