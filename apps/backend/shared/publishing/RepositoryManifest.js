@@ -7,12 +7,8 @@ import { schema } from '@tailor-cms/config';
 import without from 'lodash/without.js';
 
 import { ContentContainer } from './ContentContainer.js';
+import { renameKey } from './utils.js';
 import storage from '#storage';
-
-function renameKey(obj, key, newKey) {
-  obj[newKey] = obj[key];
-  delete obj[key];
-}
 
 export class RepositoryManifest {
   repository = null;
@@ -86,14 +82,13 @@ export class RepositoryManifest {
   async publishActivity(activity) {
     const publishedActivity = this.findActivityById(activity.id);
     const prevPublishedContainers = publishedActivity?.contentContainers || [];
-    // Parents need to be added to the published structure
-    // if not already published
+    // Parents need to be in the published structure
     const predecessors = await activity.predecessors();
     predecessors.forEach((it) => {
       const exists = this.findActivityById(it.id);
       if (!exists) this.upsertStructureItem(it);
     });
-    // Upsert in manifest structure
+    // Upsert in the manifest structure
     this.upsertStructureItem(activity);
     // Publish containers
     const newlyPublishedContainers = await ContentContainer.publish(activity);
@@ -103,7 +98,7 @@ export class RepositoryManifest {
       prevPublishedContainers,
       newlyPublishedContainers,
     );
-    // Add container info to the manifest structure item
+    // Add container info to the manifest structure activity item
     this.attachContainerSummary(activity.id, newlyPublishedContainers);
     return this.save();
   }
@@ -112,11 +107,11 @@ export class RepositoryManifest {
     const manifestItem = this.findActivityById(activity.id);
     if (!manifestItem) return;
     const deleted = this.getStructureChildren(activity.id).concat(manifestItem);
-    // Remove activity and children from the structure
+    // Remove activity and its children from the repository structure
     this.removeStructureItems(deleted);
     // Unpublish related content containers
     await Promise.map(deleted, async (it) =>
-      ContentContainer.unpublish(activity, it.contentContainers || []),
+      ContentContainer.unpublish(activity, it.contentContainers),
     );
     return this.save();
   }
@@ -152,12 +147,12 @@ export class RepositoryManifest {
     this.draft.structure = structure.filter((it) => !ids.includes(it.id));
   }
 
-  getStructureChildren(parentId) {
+  getStructureChildren(id) {
     const { structure } = this.draft;
-    const items = structure?.filter((it) => it.parentId === parentId);
+    const items = structure?.filter((it) => it.parentId === id);
     if (!items.length) return [];
     return items.concat(
-      reduce(items, (acc, it) => acc.concat(this.getStructureChildren(it)), []),
+      reduce(items, (acc, it) => acc.concat(this.getStructureChildren(it.id)), []),
     );
   }
 

@@ -51,13 +51,13 @@ export class ContentContainer {
     const containers = await Promise.all([
       fetchDefaultContainers(parent, configs),
       fetchCustomContainers(parent, configs),
-    ]).reduce((containers, groupedContainers) => {
+    ]).reduce((acc, groupedContainers) => {
       const processedContainers = groupedContainers.map((it) => {
         const config = find(configs, { type: it.type });
         const publishedAs = config?.publishedAs || 'container';
         return { ...it, publishedAs, templateId: config.templateId };
       });
-      return containers.concat(processedContainers);
+      return acc.concat(processedContainers);
     }, []);
     return signed ? Promise.map(containers, resolveContainer) : containers;
   }
