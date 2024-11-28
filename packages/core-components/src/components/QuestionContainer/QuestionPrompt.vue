@@ -1,14 +1,15 @@
 <template>
   <div>
-    <div class="text-left text-subtitle-2 mb-2">Question</div>
+    <div class="text-subtitle-2 mb-2">Question</div>
     <VInput
       :model-value="elementData.question"
       :rules="[requiredRule]"
+      hide-details="auto"
     >
       <VAlert
         v-if="!elementData.question?.length"
         :text="alertMsg"
-        class="w-100"
+        class="w-100 ma-4"
         color="primary-darken-2"
         icon="mdi-information-variant"
         variant="tonal"
@@ -18,6 +19,8 @@
         :add-element-options="addElementOptions"
         :container="elementData"
         :is-disabled="isDisabled"
+        :types="allowedTypes"
+        dense
         class="text-right w-100"
         @delete="deleteEmbed($event.id)"
         @save="saveQuestion($event.embeds)"
@@ -42,6 +45,7 @@ const addElementOptions = {
 const props = defineProps<{
   elementData: Record<string, any>;
   isDisabled: boolean;
+  allowedTypes: string[];
 }>();
 const emit = defineEmits(['update']);
 

@@ -5,7 +5,6 @@
         v-if="large"
         :color="color"
         :variant="variant"
-        class="mt-3 mb-4"
         @click.stop="showElementPicker"
       >
         <VIcon class="pr-3">{{ icon }}</VIcon>
@@ -55,7 +54,6 @@
             </VBtnToggle>
           </div>
           <VBtn
-            class="mt-8"
             color="primary-darken-3"
             prepend-icon="mdi-content-copy"
             variant="tonal"
@@ -82,6 +80,7 @@ import pick from 'lodash/pick';
 import reject from 'lodash/reject';
 import type { VBtn } from 'vuetify/components';
 
+import isObject from 'lodash/isObject';
 import SelectElement from '../SelectElement/index.vue';
 import AddNewElement from './AddNewElement.vue';
 
@@ -95,6 +94,9 @@ const getQuestionData = (element: any, type: string) => {
   const question = [{ id: uuid(), data, type: 'JODIT_HTML', embedded: true }];
   return { question, type, ...element.data };
 };
+
+// TO-DO Remove once consolidated
+type ElType = string | { type: string; allowedTypes: string };
 
 interface Props {
   items: ContentElement[];
@@ -136,7 +138,10 @@ const isSubset = computed(() => !!props.include && !!props.include.length);
 
 const contentElements = computed(() => {
   if (!isSubset.value) return registry;
-  return map(props.include, (it) => registry.find((item) => item.type === it));
+  return map(props.include, (it: ElType) => {
+    const type = isObject(it) ? it.type : it;
+    return registry.find((item) => item.type === type);
+  });
 });
 
 const library = computed(() => {
@@ -164,9 +169,9 @@ const allowedTypes = computed(() => {
       ? elements
       : reject(elements, 'ui.forceFullWidth');
   const allowedTypes = allowedElements.map((it) => it.type);
-  return props.include
-    ? intersection(props.include, allowedTypes)
-    : allowedTypes;
+  if (!props.include) return allowedTypes;
+  const include = props.include.map((it: ElType) => isObject(it) ? it.type : it);
+  return intersection(include, allowedTypes);
 });
 
 const addElements = (elements: any[]) => {

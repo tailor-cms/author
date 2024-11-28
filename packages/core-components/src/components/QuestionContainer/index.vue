@@ -1,22 +1,23 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard class="question-container" elevation="0" border>
+  <VCard class="question-container my-2">
     <VToolbar class="px-4" color="primary-darken-3" height="36">
       <VIcon :icon="icon" color="secondary-lighten-2" size="18" start />
       <span class="text-subtitle-2">{{ name }}</span>
     </VToolbar>
-    <VForm ref="form" class="content" validate-on="submit">
-      <VSheet class="pa-4" color="primary-lighten-5">
+    <VForm ref="form" class="content text-left" validate-on="submit">
+      <VSheet class="pa-4" color="grey-lighten-4">
         <QuestionPrompt
           :element-data="elementData"
           :is-disabled="isDisabled"
+          :allowed-types="allowedTypes"
           @update="emit('update', $event)"
         />
       </VSheet>
-      <VDivider />
-      <VCardText>
+      <div class="pa-4">
         <slot></slot>
         <QuestionHint
+          :is-editing="!isDisabled"
           :hint="elementData.hint"
           @update="emit('update', { hint: $event })"
         />
@@ -28,8 +29,8 @@
           :is-graded="isGraded"
           @update="emit('update', { feedback: $event })"
         />
-      </VCardText>
-      <VCardActions class="d-flex justify-end pa-4 pt-0">
+      </div>
+      <div v-if="!isDisabled" class="d-flex justify-end pa-4 pt-0">
         <VBtn
           :disabled="!isDirty"
           color="primary-darken-4"
@@ -47,7 +48,7 @@
         >
           Save
         </VBtn>
-      </VCardActions>
+      </div>
     </VForm>
   </VCard>
 </template>
@@ -59,15 +60,21 @@ import QuestionFeedback from './QuestionFeedback.vue';
 import QuestionHint from './QuestionHint.vue';
 import QuestionPrompt from './QuestionPrompt.vue';
 
-defineProps<{
+interface Props {
+  allowedTypes: string[];
   elementData: Record<string, any>;
   name: string;
   icon: string;
-  showFeedback: boolean;
   isDisabled: boolean;
   isDirty: boolean;
-  isGraded: boolean;
-}>();
+  isGraded?: boolean;
+  showFeedback?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
+  isGraded: false,
+  showFeedback: true,
+});
 const emit = defineEmits(['cancel', 'delete', 'save', 'update']);
 
 const form = ref();
