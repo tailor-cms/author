@@ -141,7 +141,7 @@ async function updateStatus({ user, body, activity }, res) {
 
 function updatePublishingStatus(repository, activity) {
   if (!isOutlineActivity(activity.type)) return Promise.resolve();
-  return publishingService.updatePublishingStatus(repository);
+  return publishingService.updatePublishingStatus(repository, activity);
 }
 
 export default {

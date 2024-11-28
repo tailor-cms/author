@@ -1,14 +1,8 @@
-import map from 'lodash/map.js';
 import omit from 'lodash/omit.js';
-import { schema } from '@tailor-cms/config';
 import { log } from './utils.js';
 import { ContentContainer } from './ContentContainer.js';
 import { RepositoryManifest } from './RepositoryManifest.js';
 import storage from '#storage';
-import db from '#shared/database/index.js';
-
-const { Activity, Sequelize, sequelize } = db;
-const { Op } = Sequelize;
 
 async function getRepositoryCatalog() {
   const buffer = await storage.getFile('repository/index.json');
@@ -52,7 +46,7 @@ async function publishRepositoryDetails(repository) {
   log(`[publishRepositoryDetails] initiated, repository id: ${repository.id}`);
   const manifest = await RepositoryManifest.load(repository);
   const publishedData = await manifest.update();
-  await updatePublishingStatus(repository);
+  await repository.updatePublishingStatus();
   await updateRepositoryCatalog(repository, publishedData.publishedAt);
   log('[publishRepositoryDetails] completed');
   return repository;
@@ -65,7 +59,7 @@ async function publishActivity(activity) {
   activity.publishedAt = new Date();
   const publishedData = await manifest.publishActivity(activity);
   await updateRepositoryCatalog(repository, publishedData.publishedAt, false);
-  await updatePublishingStatus(repository, activity);
+  await repository.updatePublishingStatus(activity);
   await activity.save();
   log(`[publishActivity] completed, activity id: ${activity.id}`);
   return activity;
@@ -86,34 +80,6 @@ async function unpublishActivity(activity) {
   return activity;
 }
 
-// Check if there is at least one outline activity with unpublished
-// changes and upadate repository model accordingly
-async function updatePublishingStatus(repository, activity) {
-  const outlineTypes = map(schema.getOutlineLevels(repository.schema), 'type');
-  const where = {
-    repositoryId: repository.id,
-    type: outlineTypes,
-    detached: false,
-    // Not published at all or has unpublished changes
-    [Op.or]: [
-      {
-        publishedAt: { [Op.gt]: 0 },
-        modifiedAt: { [Op.gt]: sequelize.col('published_at') },
-      },
-      { publishedAt: null, deletedAt: null },
-    ],
-  };
-  const debugContext = [`repository id: ${repository.id}`];
-  if (activity) {
-    where.id = { [Op.ne]: activity.id };
-    debugContext.push(`activity id: ${activity.id}`);
-  }
-  const unpublishedCount = await Activity.count({ where, paranoid: false });
-  debugContext.push(`unpublishedCount: ${unpublishedCount}`);
-  log(`[updatePublishingStatus] initiated, ${debugContext}`);
-  return repository.update({ hasUnpublishedChanges: !!unpublishedCount });
-}
-
 async function fetchActivityContent(activity, signed = false) {
   let containers = await ContentContainer.fetch(activity, signed);
   return { containers };
@@ -124,6 +90,5 @@ export {
   unpublishActivity,
   publishRepositoryDetails,
   updateRepositoryCatalog,
-  updatePublishingStatus,
   fetchActivityContent,
 };

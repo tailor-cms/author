@@ -3,7 +3,6 @@ import {
   publishActivity,
   publishRepositoryDetails,
   unpublishActivity,
-  updatePublishingStatus,
   updateRepositoryCatalog,
 } from './actions.js';
 import publishingThrottler from './PublishingThrottler.js';
@@ -41,7 +40,7 @@ class PublishingService {
   }
 
   updatePublishingStatus(repository, activity) {
-    return this.queue.add(() => updatePublishingStatus(repository, activity));
+    return this.queue.add(() => repository.updatePublishingStatus(activity));
   }
 }
 
