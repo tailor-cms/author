@@ -121,6 +121,7 @@
               :key="it.key"
               :meta="it"
               class="meta-input"
+              is-new
             />
           </template>
           <AIAssistance
