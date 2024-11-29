@@ -32,6 +32,13 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: { include: ['lodash'] },
     plugins: [injectConfigHeaders()],
+    css: {
+      preprocessorOptions: {
+        sass: {
+          api: 'modern-compiler',
+        },
+      },
+    },
   },
   telemetry: false,
   debug: true,
