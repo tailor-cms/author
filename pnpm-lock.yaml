@@ -106,7 +106,7 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       '@tailor-cms/common':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../../packages/tailor-common
       '@tailor-cms/config':
         specifier: workspace:*
@@ -306,9 +306,6 @@ importers:
       simple-oauth2:
         specifier: ^5.1.0
         version: 5.1.0
-      strip-json-comments:
-        specifier: ^5.0.1
-        version: 5.0.1
       tailor-seed:
         specifier: workspace:*
         version: link:../../packages/tailor-seed
@@ -9716,10 +9713,6 @@ packages:
   strip-json-comments@3.1.1:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
-
-  strip-json-comments@5.0.1:
-    resolution: {integrity: sha512-0fk9zBqO67Nq5M/m45qHCJxylV/DhBlIOVExqgOMiCCrzrhU6tCibRXNqE3jwJLftzE9SNuZtYbpzcO+i9FiKw==}
-    engines: {node: '>=14.16'}
 
   strip-literal@2.1.0:
     resolution: {integrity: sha512-Op+UycaUt/8FbN/Z2TWPBLge3jWrP3xj10f3fnYxf052bKuS3EKs1ZQcVGjnEMdsNVAM+plXRdmjrZ/KgG3Skw==}
@@ -22076,8 +22069,6 @@ snapshots:
       min-indent: 1.0.1
 
   strip-json-comments@3.1.1: {}
-
-  strip-json-comments@5.0.1: {}
 
   strip-literal@2.1.0:
     dependencies:

@@ -17,3 +17,11 @@ services:
     image: redis:7.4.0
     ports:
       - "6379:6379"
+  localstack:
+    container_name: tailor-localstack
+    image: localstack/localstack
+    ports:
+      - '127.0.0.1:4566:4566'
+    environment:
+      - SERVICES=s3:4566
+      - DEFAULT_REGION=us-east-1
