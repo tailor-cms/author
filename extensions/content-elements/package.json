@@ -14,8 +14,8 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
-    "@tailor-cms/ce-accordion-edit": "^0.0.2",
-    "@tailor-cms/ce-accordion-server": "^0.0.2",
+    "@tailor-cms/ce-accordion-edit": "^0.0.4",
+    "@tailor-cms/ce-accordion-server": "^0.0.4",
     "@tailor-cms/ce-audio-edit": "^0.0.4",
     "@tailor-cms/ce-audio-server": "^0.0.4",
     "@tailor-cms/ce-drag-drop-edit": "^0.0.2",

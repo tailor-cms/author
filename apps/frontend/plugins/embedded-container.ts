@@ -1,5 +1,5 @@
 import { EmbeddedContainer } from '@tailor-cms/core-components';
 
 export default defineNuxtPlugin((nuxt) => {
-  nuxt.vueApp.component('EmbeddedContainer', EmbeddedContainer);
+  nuxt.vueApp.component('TailorEmbeddedContainer', EmbeddedContainer);
 });
