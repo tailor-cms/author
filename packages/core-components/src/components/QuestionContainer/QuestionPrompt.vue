@@ -15,7 +15,7 @@
         variant="tonal"
         prominent
       />
-      <EmbeddedContainer
+      <TailorEmbeddedContainer
         :add-element-options="addElementOptions"
         :container="elementData"
         :is-disabled="isDisabled"
