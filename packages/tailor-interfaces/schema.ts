@@ -84,7 +84,7 @@ export interface ElementCategory {
 export interface ElementTypeConfig {
   id: string;
   allowedEmbedTypes?: string[];
-  isGraded?: boolean;
+  isGradeable?: boolean;
 }
 
 export interface ContentContainer {
