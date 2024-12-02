@@ -34,6 +34,7 @@ import ContentElementWrapper from './ContentElement.vue';
 
 interface Props {
   element: ContentElement;
+  config?: any;
   references?: Record<string, ContentElement[]> | null;
   isDisabled?: boolean;
   isDragged?: boolean;
@@ -63,10 +64,19 @@ const emit = defineEmits([
 const isHovered = ref(false);
 
 const bindings = computed(() => {
-  const { element, isDisabled, references, isDragged, dense, showDiscussion } =
-    props;
+  const {
+    config,
+    element,
+    isDisabled,
+    references,
+    isDragged,
+    dense,
+    showDiscussion,
+  } = props;
   return {
     element,
+    isGraded: config?.isGraded,
+    allowedEmbedTypes: config?.allowedEmbedTypes,
     references,
     isDisabled,
     isDragged,

@@ -14,7 +14,9 @@
       :is="containerName"
       v-for="(container, index) in containerGroup"
       :key="container?.uid"
-      v-bind="$attrs"
+      :types="types"
+      :categories="config.categories"
+      :element-config="elementConfig"
       :activities="processedActivities"
       :config="config"
       :container="container"
@@ -61,18 +63,19 @@ import isEmpty from 'lodash/isEmpty';
 import maxBy from 'lodash/maxBy';
 import pluralize from 'pluralize';
 import throttle from 'lodash/throttle';
+import keyBy from 'lodash/keyBy';
 
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
+import { isString } from 'lodash';
 
 interface Props {
   type: string;
-  label: string;
   parentId: number;
   processedActivities: Activity[];
-  processedElements: Record<string, Element>;
+  processedElements: Record<string, ContentElement>;
   config?: Record<string, any>;
   templateId?: string;
   containerGroup?: Activity[];
@@ -112,7 +115,11 @@ const containerName = computed(() => {
   return getContainerName($ccRegistry.get(id) ? id : 'DEFAULT');
 });
 
-const name = computed(() => props.label.toLowerCase());
+const name = computed(() => props.config.label.toLowerCase());
+const elementConfig = computed(() => keyBy(props.config.types, 'id'));
+const types = computed(() =>
+  props.config.types?.map((it: any) => isString(it) ? it : it.id)
+);
 
 const addBtnEnabled = computed(() => {
   const isMultipleOrEmpty = props.multiple || !props.containerGroup.length;
