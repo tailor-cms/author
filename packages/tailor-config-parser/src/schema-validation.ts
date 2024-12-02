@@ -61,7 +61,15 @@ const schema = yup.object().shape({
     yup.object().shape({
       type: yup.string().min(2).max(50).required(),
       label: yup.string().min(2).max(100).required(),
-      types: yup.array().of(yup.string().min(2).max(30)),
+      types: yup
+        .array()
+        .of(
+          yup.object().shape({
+            id: yup.string().min(2).max(50),
+            isGraded: yup.boolean(),
+            allowedEmbedTypes: yup.array().of(yup.string().min(2).max(50)),
+          }),
+        ),
       multiple: yup.boolean(),
       displayHeading: yup.boolean(),
     }),
