@@ -1,4 +1,5 @@
-import { Model } from 'sequelize';
+import { Model, Op } from 'sequelize';
+import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import { schema } from '@tailor-cms/config';
@@ -182,6 +183,29 @@ class Repository extends Model {
       await dst.mapClonedReferences(idMap, transaction);
       return dst;
     });
+  }
+
+  // Check if there is at least one outline activity with unpublished
+  // changes and update repository model accordingly
+  async updatePublishingStatus(excludedActivity) {
+    const outlineTypes = map(schema.getOutlineLevels(this.schema), 'type');
+    const where = {
+      repositoryId: this.id,
+      type: outlineTypes,
+      detached: false,
+      // Not published at all or has unpublished changes
+      [Op.or]: [
+        {
+          publishedAt: { [Op.gt]: 0 },
+          modifiedAt: { [Op.gt]: this.sequelize.col('published_at') },
+        },
+        { publishedAt: null, deletedAt: null },
+      ],
+    };
+    if (excludedActivity) where.id = { [Op.ne]: excludedActivity.id };
+    const Activity = this.sequelize.model('Activity');
+    const unpublishedCount = await Activity.count({ where, paranoid: false });
+    return this.update({ hasUnpublishedChanges: !!unpublishedCount });
   }
 
   getUser(user) {

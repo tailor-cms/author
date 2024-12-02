@@ -12,6 +12,7 @@ export const amazon = {
   secret: process.env.STORAGE_SECRET,
   region: process.env.STORAGE_REGION,
   bucket: process.env.STORAGE_BUCKET,
+  endpoint: process.env.STORAGE_ENDPOINT,
 };
 
 export const filesystem = {

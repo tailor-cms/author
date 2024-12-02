@@ -3,9 +3,8 @@ import {
   publishActivity,
   publishRepositoryDetails,
   unpublishActivity,
-  updatePublishingStatus,
   updateRepositoryCatalog,
-} from './helpers.js';
+} from './actions.js';
 import publishingThrottler from './PublishingThrottler.js';
 import { createLogger } from '#logger';
 
@@ -32,8 +31,8 @@ class PublishingService {
     );
   }
 
-  unpublishActivity(repository, activity) {
-    return this.queue.add(() => unpublishActivity(repository, activity));
+  unpublishActivity(activity) {
+    return this.queue.add(() => unpublishActivity(activity));
   }
 
   updateRepositoryCatalog(repository) {
@@ -41,7 +40,7 @@ class PublishingService {
   }
 
   updatePublishingStatus(repository, activity) {
-    return this.queue.add(() => updatePublishingStatus(repository, activity));
+    return this.queue.add(() => repository.updatePublishingStatus(activity));
   }
 }
 

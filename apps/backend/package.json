@@ -5,10 +5,12 @@
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",
   "imports": {
+    "#app/*": "./*",
     "#config": "./config/index.js",
     "#config/*": "./config/*",
     "#logger": "./shared/logger.js",
-    "#shared/*": "./shared/*"
+    "#shared/*": "./shared/*",
+    "#storage": "./repository/storage.js"
   },
   "scripts": {
     "dev": "nodemon --import ./script/preflight.js ./index.js || exit 0",
@@ -30,6 +32,7 @@
     "@faker-js/faker": "^8.4.1",
     "@keyv/redis": "^3.0.1",
     "@paralleldrive/cuid2": "^2.2.2",
+    "@tailor-cms/common": "workspace:^",
     "@tailor-cms/config": "workspace:*",
     "@tailor-cms/config-parser": "workspace:*",
     "@tailor-cms/content-container-collection": "workspace:^",
@@ -96,8 +99,6 @@
     "sequelize": "^6.37.5",
     "sequelize-replace-enum-postgres": "^1.6.0",
     "simple-oauth2": "^5.1.0",
-    "strip-json-comments": "^5.0.1",
-    "@tailor-cms/common": "workspace:*",
     "tailor-seed": "workspace:*",
     "tar-fs": "^3.0.6",
     "tmp": "0.2.1",
