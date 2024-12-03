@@ -60,6 +60,7 @@ import castArray from 'lodash/castArray';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 import maxBy from 'lodash/maxBy';
 import pluralize from 'pluralize';
 import throttle from 'lodash/throttle';
@@ -69,7 +70,6 @@ import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
-import { isString } from 'lodash';
 
 interface Props {
   type: string;
@@ -117,9 +117,7 @@ const containerName = computed(() => {
 
 const name = computed(() => props.config.label.toLowerCase());
 const elementConfig = computed(() => keyBy(props.config.types, 'id'));
-const types = computed(() =>
-  props.config.types?.map((it: any) => isString(it) ? it : it.id)
-);
+const types = computed(() => map(props.config.types, 'id'));
 
 const addBtnEnabled = computed(() => {
   const isMultipleOrEmpty = props.multiple || !props.containerGroup.length;
