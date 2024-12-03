@@ -71,7 +71,7 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
-import { getPositions, isQuestion, uuid } from '@tailor-cms/utils';
+import { getPositions, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ElementCategory } from '@tailor-cms/interfaces/schema';
@@ -89,12 +89,6 @@ const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
 
 const DEFAULT_CATEGORY = { name: 'Content Elements' };
-
-const getQuestionData = (element: any, type: string) => {
-  const data = { width: LAYOUT.FULL_WIDTH };
-  const question = [{ id: uuid(), data, type: 'JODIT_HTML', embedded: true }];
-  return { question, type, ...element.data };
-};
 
 interface Props {
   items: ContentElement[];
@@ -179,7 +173,7 @@ const addElements = (elements: any[]) => {
 };
 
 const buildElement = (el: any) => {
-  const { position, subtype, data = {}, initState = () => ({}) } = el;
+  const { position, data = {}, initState = () => ({}) } = el;
   const element = {
     position,
     ...pick(el, ['type', 'refs']),
@@ -189,9 +183,6 @@ const buildElement = (el: any) => {
     ? { activityId: props.activity.id } // If content element within activity
     : { id: uuid(), embedded: true }; // If embed, assign id
   Object.assign(element, contextData);
-  if (isQuestion(element.type))
-    element.data = getQuestionData(element, subtype);
-  if (element.type === 'REFLECTION') delete element.data.correct;
   return element;
 };
 
