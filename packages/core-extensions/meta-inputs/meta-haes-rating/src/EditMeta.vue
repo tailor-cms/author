@@ -78,9 +78,9 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 
+import { RadarChart } from '@tailor-cms/core-components';
 import isEmpty from 'lodash/isEmpty';
 import { haesParams } from './utils';
-import RadarChart from './RadarChart.vue';
 import RatingSliders from './RatingSliders.vue';
 
 interface Props {
