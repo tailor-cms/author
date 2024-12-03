@@ -1,36 +1,28 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard class="question-container my-2">
-    <VToolbar class="px-4" color="primary-darken-3" height="36">
-      <VIcon :icon="icon" color="secondary-lighten-2" size="18" start />
-      <span class="text-subtitle-2">{{ name }}</span>
-    </VToolbar>
+  <VCard class="question-container my-2" elevation="0">
     <VForm ref="form" class="content text-left" validate-on="submit">
-      <VSheet class="pa-4" color="grey-lighten-4">
-        <QuestionPrompt
-          :element-data="elementData"
-          :is-disabled="isDisabled"
-          :allowed-types="allowedTypes"
-          @update="emit('update', $event)"
-        />
-      </VSheet>
-      <div class="pa-4">
-        <slot></slot>
-        <QuestionHint
-          :is-editing="!isDisabled"
-          :hint="elementData.hint"
-          @update="emit('update', { hint: $event })"
-        />
-        <QuestionFeedback
-          v-if="showFeedback"
-          :answers="elementData.answers"
-          :feedback="elementData.feedback"
-          :is-editing="!isDisabled"
-          :is-graded="isGraded"
-          @update="emit('update', { feedback: $event })"
-        />
-      </div>
-      <div v-if="!isDisabled" class="d-flex justify-end pa-4 pt-0">
+      <QuestionPrompt
+        :element-data="elementData"
+        :is-disabled="isDisabled"
+        :allowed-types="allowedEmbedTypes"
+        @update="emit('update', $event)"
+      />
+      <slot></slot>
+      <QuestionHint
+        :is-editing="!isDisabled"
+        :hint="elementData.hint"
+        @update="emit('update', { hint: $event })"
+      />
+      <QuestionFeedback
+        v-if="showFeedback"
+        :answers="elementData.answers"
+        :feedback="elementData.feedback"
+        :is-editing="!isDisabled"
+        :is-gradeable="isGradeable"
+        @update="emit('update', { feedback: $event })"
+      />
+      <div v-if="!isDisabled" class="d-flex justify-end">
         <VBtn
           :disabled="!isDirty"
           color="primary-darken-4"
@@ -61,18 +53,16 @@ import QuestionHint from './QuestionHint.vue';
 import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
-  allowedTypes: string[];
+  allowedEmbedTypes: string[];
   elementData: Record<string, any>;
-  name: string;
-  icon: string;
   isDisabled: boolean;
   isDirty: boolean;
-  isGraded?: boolean;
+  isGradeable?: boolean;
   showFeedback?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
-  isGraded: false,
+  isGradeable: false,
   showFeedback: true,
 });
 const emit = defineEmits(['cancel', 'delete', 'save', 'update']);
