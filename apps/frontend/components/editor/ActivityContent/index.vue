@@ -27,8 +27,7 @@
         <ContentContainers
           v-for="(containerGroup, type) in processedContainerGroups"
           :key="type"
-          :type="type"
-          :config="getContainerConfig(type)"
+          v-bind="getContainerConfig(type)"
           :container-group="containerGroup"
           :parent-id="editorStore.selectedActivity.id"
           :processed-activities="processedActivities"
