@@ -5,6 +5,7 @@
     :dark="dark"
     :error-messages="errorMessage"
     :meta="meta"
+    :is-new="isNew"
     @update="updateMeta"
   />
 </template>
@@ -19,11 +20,13 @@ interface Props {
   meta: Metadata;
   name?: string | null;
   dark?: boolean;
+  isNew?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   name: null,
   dark: false,
+  isNew: false,
 });
 
 const emit = defineEmits(['update']);
