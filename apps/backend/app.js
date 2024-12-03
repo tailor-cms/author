@@ -89,7 +89,8 @@ app.use((req, res) => res.status(404).end());
 
 export default app;
 
-function errorHandler(err, req, res) {
+// eslint-disable-next-line no-unused-vars
+function errorHandler(err, req, res, _next) {
   if (!err.status || err.status === 500) {
     req.log.error({ err });
     res.status(500).end();
