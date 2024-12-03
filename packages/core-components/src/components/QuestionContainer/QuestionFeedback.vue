@@ -53,12 +53,12 @@ const props = defineProps<{
   answers: Array<string> | boolean | null;
   feedback: Record<string, string>;
   isEditing: boolean;
-  isGraded: boolean;
+  isGradeable: boolean;
 }>();
 const emit = defineEmits(['update']);
 
 const isExpanded = ref(some(props.feedback));
-const answerType = computed(() => (props.isGraded ? 'Answer' : 'Option'));
+const answerType = computed(() => (props.isGradeable ? 'Answer' : 'Option'));
 const buttonLabel = computed(() => (isExpanded.value ? 'hide' : 'show'));
 const processedAnswers = computed(() =>
   isArray(props.answers) ? props.answers : ['True', 'False'],

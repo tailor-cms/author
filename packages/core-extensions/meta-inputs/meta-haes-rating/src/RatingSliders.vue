@@ -27,7 +27,7 @@
             hide-details
           />
           <div class="text-subtitle-2 ml-2 slider-value">
-            {{ input[key].toFixed(1) }}
+            {{ input[key]?.toFixed(1) }}
           </div>
         </div>
       </VCardText>
@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 import { haesParams } from './utils';
 
@@ -85,6 +85,14 @@ const cancel = () => {
   isEditing.value = false;
   input.value = { ...props.value };
 };
+
+watch(
+  () => props.value,
+  (value) => {
+    input.value = { ...value };
+  },
+  { deep: true },
+);
 </script>
 
 <style lang="scss" scoped>

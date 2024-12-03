@@ -30,6 +30,7 @@
       v-if="isComponentAvailable"
       v-bind="{
         ...$attrs,
+        allowedEmbedTypes,
         element,
         references,
         isFocused,
@@ -110,6 +111,7 @@ interface Props {
   frame?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
+  allowedEmbedTypes?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {

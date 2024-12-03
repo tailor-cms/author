@@ -15,6 +15,8 @@
       v-for="(container, index) in containerGroup"
       :key="container?.uid"
       v-bind="$attrs"
+      :types="allowedTypes"
+      :element-config="elementConfig"
       :activities="processedActivities"
       :config="config"
       :container="container"
@@ -57,10 +59,13 @@ import capitalize from 'lodash/capitalize';
 import castArray from 'lodash/castArray';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
+import type { ElementTypeConfig } from '@tailor-cms/interfaces/schema';
 import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 import maxBy from 'lodash/maxBy';
 import pluralize from 'pluralize';
 import throttle from 'lodash/throttle';
+import keyBy from 'lodash/keyBy';
 
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
@@ -70,9 +75,10 @@ import { useEditorStore } from '@/stores/editor';
 interface Props {
   type: string;
   label: string;
+  types: ElementTypeConfig[];
   parentId: number;
   processedActivities: Activity[];
-  processedElements: Record<string, Element>;
+  processedElements: Record<string, ContentElement>;
   config?: Record<string, any>;
   templateId?: string;
   containerGroup?: Activity[];
@@ -113,6 +119,8 @@ const containerName = computed(() => {
 });
 
 const name = computed(() => props.label.toLowerCase());
+const allowedTypes = computed(() => map(props.types, 'id'));
+const elementConfig = computed(() => keyBy(props.types, 'id'));
 
 const addBtnEnabled = computed(() => {
   const isMultipleOrEmpty = props.multiple || !props.containerGroup.length;

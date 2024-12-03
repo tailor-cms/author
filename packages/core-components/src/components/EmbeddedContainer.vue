@@ -25,7 +25,7 @@
 <script lang="ts" setup>
 import { calculatePosition } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
-import { computed } from 'vue';
+import { computed, inject } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import mapKeys from 'lodash/mapKeys';
 import sortBy from 'lodash/sortBy';
@@ -50,6 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['save', 'delete']);
 
+const editorBus = inject<any>('$editorBus');
 const showConfirmationDialog = useConfirmationDialog();
 
 const embeds = computed(() => {
@@ -88,7 +89,10 @@ const requestDeleteConfirmation = (element: ContentElement) => {
   showConfirmationDialog({
     title: 'Delete element?',
     message: 'Are you sure you want to delete element?',
-    action: () => emit('delete', element),
+    action: () => {
+      emit('delete', element);
+      editorBus.emit('element:focus');
+    },
   });
 };
 </script>

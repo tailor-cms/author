@@ -42,6 +42,7 @@
           :key="input.key"
           :meta="input"
           :name="`data.${input.key}`"
+          is-new
           @update="setMetaValue"
         />
         <VSpacer />

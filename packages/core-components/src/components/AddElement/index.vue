@@ -69,7 +69,7 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
-import { getPositions, isQuestion, uuid } from '@tailor-cms/utils';
+import { getPositions, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ElementCategory } from '@tailor-cms/interfaces/schema';
@@ -80,7 +80,6 @@ import pick from 'lodash/pick';
 import reject from 'lodash/reject';
 import type { VBtn } from 'vuetify/components';
 
-import isObject from 'lodash/isObject';
 import SelectElement from '../SelectElement/index.vue';
 import AddNewElement from './AddNewElement.vue';
 
@@ -88,15 +87,6 @@ const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
 
 const DEFAULT_CATEGORY = { name: 'Content Elements' };
-
-const getQuestionData = (element: any, type: string) => {
-  const data = { width: LAYOUT.FULL_WIDTH };
-  const question = [{ id: uuid(), data, type: 'JODIT_HTML', embedded: true }];
-  return { question, type, ...element.data };
-};
-
-// TO-DO Remove once consolidated
-type ElType = string | { type: string; allowedTypes: string };
 
 interface Props {
   items: ContentElement[];
@@ -138,10 +128,7 @@ const isSubset = computed(() => !!props.include && !!props.include.length);
 
 const contentElements = computed(() => {
   if (!isSubset.value) return registry;
-  return map(props.include, (it: ElType) => {
-    const type = isObject(it) ? it.type : it;
-    return registry.find((item) => item.type === type);
-  });
+  return map(props.include, (it) => registry.find((item) => item.type === it));
 });
 
 const library = computed(() => {
@@ -169,9 +156,9 @@ const allowedTypes = computed(() => {
       ? elements
       : reject(elements, 'ui.forceFullWidth');
   const allowedTypes = allowedElements.map((it) => it.type);
-  if (!props.include) return allowedTypes;
-  const include = props.include.map((it: ElType) => isObject(it) ? it.type : it);
-  return intersection(include, allowedTypes);
+  return props.include
+    ? intersection(props.include, allowedTypes)
+    : allowedTypes;
 });
 
 const addElements = (elements: any[]) => {
@@ -184,7 +171,7 @@ const addElements = (elements: any[]) => {
 };
 
 const buildElement = (el: any) => {
-  const { position, subtype, data = {}, initState = () => ({}) } = el;
+  const { position, data = {}, initState = () => ({}) } = el;
   const element = {
     position,
     ...pick(el, ['type', 'refs']),
@@ -194,9 +181,6 @@ const buildElement = (el: any) => {
     ? { activityId: props.activity.id } // If content element within activity
     : { id: uuid(), embedded: true }; // If embed, assign id
   Object.assign(element, contextData);
-  if (isQuestion(element.type))
-    element.data = getQuestionData(element, subtype);
-  if (element.type === 'REFLECTION') delete element.data.correct;
   return element;
 };
 
