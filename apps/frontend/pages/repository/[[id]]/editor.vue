@@ -19,6 +19,7 @@
         :activity-id="activityId"
         class="activity-content"
       />
+      <EngagementSidebar />
     </div>
   </div>
 </template>
@@ -33,6 +34,7 @@ import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
 import VSidebar from '@/components/editor/Sidebar/index.vue';
 import VToolbar from '@/components/editor/Toolbar/index.vue';
+import EngagementSidebar from '@/components/editor/EngagementSidebar/index.vue';
 
 const { $ceRegistry } = useNuxtApp() as any;
 
