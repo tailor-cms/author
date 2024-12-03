@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import bodyParser from 'body-parser';
@@ -90,6 +89,7 @@ app.use((req, res) => res.status(404).end());
 
 export default app;
 
+// eslint-disable-next-line no-unused-vars
 function errorHandler(err, req, res, _next) {
   if (!err.status || err.status === 500) {
     req.log.error({ err });
