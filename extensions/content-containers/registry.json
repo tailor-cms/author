@@ -3,5 +3,10 @@
     "name": "@tailor-cms/tcc-page",
     "clientPackage": "@tailor-cms/tcc-page",
     "serverPackage": ""
+  },
+  {
+    "name": "@tailor-cms/tcc-structured-content",
+    "clientPackage": "@tailor-cms/tcc-structured-content",
+    "serverPackage": ""
   }
 ]
