@@ -6,6 +6,7 @@
     :error-messages="errorMessage"
     :meta="meta"
     :is-new="isNew"
+    :is-reviewer="isReviewer"
     @update="updateMeta"
   />
 </template>
@@ -28,9 +29,11 @@ const props = withDefaults(defineProps<Props>(), {
   dark: false,
   isNew: false,
 });
-
 const emit = defineEmits(['update']);
 
+const authStore = useAuthStore();
+
+const isReviewer = computed(() => authStore.isAdmin);
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
 

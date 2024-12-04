@@ -1,17 +1,8 @@
 <template>
-  <VMenu v-model="isEditing" :close-on-content-click="false" width="440">
-    <template #activator="{ props: menuProps }">
-      <VBtn
-        v-bind="menuProps"
-        :color="dark ? 'primary-lighten-4' : 'primary-darken-2'"
-        size="small"
-        variant="tonal"
-      >
-        Edit
-      </VBtn>
-    </template>
-    <VCard color="primary-lighten-5">
-      <VCardText class="d-flex flex-column gr-1">
+  <TailorDialog v-model="isDialogVisible" header-icon="mdi-account" persistent>
+    <template #header>{{ value.rating ? 'Edit' : 'Add' }} H@ES Rating</template>
+    <template #body>
+      <div class="mb-8">
         <div
           v-for="{ key, label } in haesParams"
           :key="label"
@@ -19,7 +10,7 @@
         >
           <div class="label text-caption font-weight-bold">{{ label }}</div>
           <VSlider
-            v-model="input[key]"
+            v-model="input.rating[key]"
             color="primary"
             max="4"
             min="0"
@@ -27,69 +18,88 @@
             hide-details
           />
           <div class="text-subtitle-2 ml-2 slider-value">
-            {{ input[key]?.toFixed(1) }}
+            {{ input.rating[key]?.toFixed(1) }}
           </div>
         </div>
-      </VCardText>
-      <VCardActions class="d-flex justify-end px-4 pt-0">
+      </div>
+      <RichTextEditor
+        v-if="reviewable"
+        v-model="input.review"
+        variant="outlined"
+        label="Review Notes"
+      />
+      <div class="d-flex justify-end pb-3">
         <VBtn
-          :slim="false"
           color="primary-darken-4"
-          size="small"
           variant="text"
           @click="cancel"
         >
           Cancel
         </VBtn>
         <VBtn
-          :slim="false"
+          class="ml-2"
           color="primary-darken-3"
-          size="small"
           variant="tonal"
           @click="save"
         >
-          Save
+          {{ value.rating ? 'Save' : 'Submit' }}
         </VBtn>
-      </VCardActions>
-    </VCard>
-  </VMenu>
+      </div>
+    </template>
+  </TailorDialog>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import cloneDeep from 'lodash/cloneDeep';
 
+import { RichTextEditor, TailorDialog } from '@tailor-cms/core-components';
 import { haesParams } from './utils';
 
 interface Props {
+  visible: boolean;
+  reviewable?: boolean;
   dark?: boolean;
   value?: any;
 }
 
-const isEditing = ref(false);
-
 const props = withDefaults(defineProps<Props>(), {
-  value: () => haesParams.reduce((acc, { key }) => ({ ...acc, [key]: 0 }), {}),
+  value: () => ({}),
+  reviewable: false,
   dark: false,
 });
-const emit = defineEmits(['save', 'cancel']);
+const emit = defineEmits(['save', 'cancel', 'update:visible']);
 
-const input = ref({ ...props.value });
+const input = ref();
+
+const isDialogVisible = computed({
+  get: () => props.visible,
+  set(value) {
+    if (!value) close();
+  },
+});
 
 const save = () => {
-  isEditing.value = false;
+  isDialogVisible.value = false;
   if (input.value === props.value) return;
-  emit('save', { ...input.value });
+  emit('save', { ...input.value, requestedReview: false });
 };
 
 const cancel = () => {
-  isEditing.value = false;
-  input.value = { ...props.value };
+  isDialogVisible.value = false;
+};
+
+const close = () => {
+  emit('update:visible', false);
 };
 
 watch(
   () => props.value,
   (value) => {
-    input.value = { ...value };
+    input.value = Object.assign(
+      { rating: haesParams.reduce((acc, { key }) => ({ ...acc, [key]: 0 }), {}) },
+      cloneDeep(value),
+    );
   },
   { deep: true },
 );
