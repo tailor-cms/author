@@ -23,7 +23,7 @@
       >
         Edit
       </VBtn>
-      <RatingSliders
+      <RateDialog
         :dark="dark"
         :value="dialogData"
         :visible="isDialogVisible"
@@ -116,7 +116,7 @@ import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
 import { haesParams } from './utils';
 import RadarChart from './RadarChart.vue';
-import RatingSliders from './RatingSliders.vue';
+import RateDialog from './RateDialog.vue';
 
 interface Props {
   meta: any;

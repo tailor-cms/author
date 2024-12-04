@@ -7,6 +7,8 @@ export const useAuthStore = defineStore('auth', () => {
   const strategy = ref<string | null>(null);
 
   const isAdmin = computed(() => user.value?.role === 'ADMIN');
+  // TO-DO: Update to appropirate role
+  const isReviewer = computed(() => user.value?.role === 'ADMIN');
   const isDefaultUser = computed(() => user.value?.role === 'USER');
 
   const isOidcActive = computed(() => strategy.value === 'oidc');
@@ -72,6 +74,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     isAdmin,
+    isReviewer,
     isDefaultUser,
     isOidcActive,
     login,
