@@ -31,9 +31,9 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['update']);
 
-const authStore = useAuthStore();
+const store = useCurrentRepository();
 
-const isReviewer = computed(() => authStore.isAdmin);
+const isReviewer = computed(() => store.repository?.hasAdminAccess);
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
 

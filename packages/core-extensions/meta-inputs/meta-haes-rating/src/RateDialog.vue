@@ -1,5 +1,5 @@
 <template>
-  <TailorDialog v-model="isDialogVisible" header-icon="mdi-account" persistent>
+  <TailorDialog v-model="isDialogVisible" header-icon="mdi-tune" persistent>
     <template #header>{{ value.rating ? 'Edit' : 'Add' }} H@ES Rating</template>
     <template #body>
       <VForm ref="form" validate-on="submit" novalidate @submit.prevent="save">
@@ -84,25 +84,20 @@ const input = ref();
 const isDialogVisible = computed({
   get: () => props.visible,
   set(value) {
-    if (!value) close();
+    if (!value) emit('update:visible', false);
   },
 });
 
 const save = async () => {
   if (!form.value) return;
   const { valid } = await form.value.validate();
-  if (valid) {
-    emit('save', { ...input.value, requestedReview: false });
-    isDialogVisible.value = false;
-  }
+  if (!valid) return;
+  emit('save', { ...input.value, requestedReview: false });
+  isDialogVisible.value = false;
 };
 
 const cancel = () => {
   isDialogVisible.value = false;
-};
-
-const close = () => {
-  emit('update:visible', false);
 };
 
 watch(

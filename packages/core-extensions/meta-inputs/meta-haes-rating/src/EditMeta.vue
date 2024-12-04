@@ -81,7 +81,7 @@
           </template>
         </div>
         <VBtn
-          v-if="meta.reviewable && !isReviewer && !reviewRequested"
+          v-if="meta.reviewable && !isReviewer && !isReviewRequested"
           class="mt-4"
           color="teal-accent-1"
           variant="tonal"
@@ -93,7 +93,7 @@
           {{ isEmpty(input?.rating) ? 'Request' : 'Re-Request' }} Review
         </VBtn>
         <VBtn
-          v-else-if="reviewRequested && isReviewer"
+          v-else-if="isReviewRequested && isReviewer"
           class="mt-4"
           color="pink-lighten-4"
           variant="tonal"
@@ -137,11 +137,13 @@ const input = ref(cloneDeep(props.meta.value ?? { rating: {} }));
 const dialogData = ref(cloneDeep(input.value));
 const isDialogVisible = ref(false);
 
-const reviewRequested = computed(() => input.value?.requestedReview);
+const isReviewRequested = computed(() => input.value?.requestedReview);
 const isEditable = computed(() => {
-  if (!props.meta.reviewable) return true;
-  return !reviewRequested.value && props.isReviewer && props.meta.value?.rating;
+  const { isReviewer, meta } = props;
+  if (!meta.reviewable) return true;
+  return !isReviewRequested.value && isReviewer && meta.value?.rating;
 });
+
 const chartData = computed(() => ({
   labels: haesParams.map((it) => it.label.split(' ')),
   datasets: [
@@ -158,7 +160,7 @@ const alertMsg = computed(() => {
   if (props.isNew) {
     return 'Rating Not Available. To edit the rating, switch to the sliders view.';
   }
-  if (reviewRequested.value) {
+  if (isReviewRequested.value) {
     return props.isReviewer
       ? 'Rating Requested. To add the rating, click on the button below'
       : 'Rating Not Submitted. The rating has been requested';
@@ -217,7 +219,6 @@ const update = (value) => {
     background: #0d0d0d;
     white-space: break-spaces;
     color: #fff;
-    font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
 
