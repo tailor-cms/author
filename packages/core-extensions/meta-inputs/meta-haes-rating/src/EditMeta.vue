@@ -53,7 +53,20 @@
       </div>
     </div>
     <template v-else>
+      <VAlert
+        v-if="isReviewRequested && !isReviewer"
+        class="px-6 py-12"
+        color="teal-accent-1"
+        variant="tonal"
+        icon="mdi-head-sync-outline"
+        rounded="lg"
+        border
+        prominent
+      >
+        {{ alertMsg }}
+      </VAlert>
       <VCard
+        v-else
         :color="dark ? 'primary-lighten-4' : 'primary-darken-2'"
         class="pa-4"
         variant="tonal"
@@ -163,7 +176,7 @@ const alertMsg = computed(() => {
   if (isReviewRequested.value) {
     return props.isReviewer
       ? 'Rating Requested. To add the rating, click on the button below'
-      : 'Rating Not Submitted. The rating has been requested';
+      : 'The rating has been requested! Waiting for expert feedback...';
   }
   return props.isReviewer
     ? 'Rating Not Available. The rating has not been requested yet'
