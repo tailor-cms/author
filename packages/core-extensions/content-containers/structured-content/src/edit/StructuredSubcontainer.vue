@@ -23,7 +23,7 @@
         v-for="input in processedMeta"
         :key="input.key"
         :cols="input.cols || 12"
-        class="px-8"
+        class="pt-0 pb-3 px-8"
       >
         <MetaInput
           :meta="input"

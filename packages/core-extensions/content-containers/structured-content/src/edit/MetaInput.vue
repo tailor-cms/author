@@ -6,6 +6,7 @@
     :dark="false"
     :meta="meta"
     :is-new="isNew"
+    persistent-placeholder
     @update="updateMeta"
   />
 </template>

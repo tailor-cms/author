@@ -45,7 +45,7 @@
           :items="containerContent"
           :position="Math.min(insertElementPosition, lastPosition)"
           :show="!isDisabled && isAddDrawerVisible"
-          class="my-4"
+          class="my-5"
           color="primary-darken-3"
           label="Add content element"
           variant="tonal"
