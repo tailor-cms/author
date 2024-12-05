@@ -149,7 +149,7 @@ const reorder = (id: number, step: number) => {
 const createSubcontainer = (type: string) => {
   const parentId = props.container.id;
   const position = nextPosition.value;
-  const data = config[type]?.meta?.init() || {};
+  const data = config[type]?.initMeta();
   emit('add:subcontainer', { type, parentId, position, data });
 };
 </script>

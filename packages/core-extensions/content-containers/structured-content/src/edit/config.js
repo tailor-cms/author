@@ -1,4 +1,6 @@
+import capitalize from 'lodash/capitalize';
 import reduce from 'lodash/reduce';
+import words from 'lodash/words';
 
 const DefaultSubcontainers = {
   Section: 'SECTION',
@@ -22,7 +24,11 @@ export const parseConfig = (repository, outlineActivity, container, config) => {
     (acc, val, key) => {
       acc[key] = {
         ...val,
+        icon: val.icon || 'mdi-text',
+        label: val.label || words(capitalize(key)),
         meta: val?.meta(repository, outlineActivity, container, val),
+        initMeta: () =>
+          val?.initMeta(repository, outlineActivity, container, val) || {},
       };
       return acc;
     },

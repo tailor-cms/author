@@ -4,7 +4,6 @@ import type {
   Schema,
 } from '@tailor-cms/interfaces/schema';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
@@ -42,7 +41,6 @@ const StructuredContentContainer: ContentContainer = {
   templateId: ContentContainerType.StructuredContent,
   type: ContentContainerType.StructuredContent,
   label: 'Structured content',
-  types: [ContentElementType.HtmlDefault, ContentElementType.Image],
   ai: {
     definition:
       'Learning Bit content is organized into structured content sections.',

@@ -3,7 +3,7 @@
     <div class="d-flex align-center mt-3 mx-1 mb-8">
       <VCardTitle class="text-primary-darken-3 text-truncate">
         <VIcon class="mr-2" color="primary-darken-4">
-          {{ icon || 'mdi-text' }}
+          {{ icon }}
         </VIcon>
         {{ label }}
       </VCardTitle>
