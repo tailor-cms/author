@@ -73,5 +73,10 @@
     "name": "@tailor-cms/ce-video",
     "clientPackage": "@tailor-cms/ce-video-edit",
     "serverPackage": "@tailor-cms/ce-video-server"
+  },
+  {
+    "name": "@tailor-cms/ce-accordion",
+    "clientPackage": "@tailor-cms/ce-accordion-edit",
+    "serverPackage": "@tailor-cms/ce-accordion-server"
   }
 ]

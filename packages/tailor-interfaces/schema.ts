@@ -81,12 +81,18 @@ export interface ElementCategory {
   types: string[];
 }
 
+export interface ElementTypeConfig {
+  id: string;
+  allowedEmbedTypes?: string[];
+  isGradeable?: boolean;
+}
+
 export interface ContentContainer {
   type: string;
   templateId: string;
   label: string;
   multiple?: boolean;
-  types?: string[];
+  types?: Array<ElementTypeConfig>;
   categories?: ElementCategory[];
   displayHeading?: boolean;
   layout?: boolean;
