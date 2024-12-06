@@ -43,7 +43,7 @@
       :supported-types="elementTypes"
       @add:subcontainer="emit('add:subcontainer', $event)"
       @update:subcontainer="emit('update:subcontainer', $event)"
-      @delete:subcontainer="(...e) => emit('delete:subcontainer', ...e)"
+      @delete:subcontainer="emit('delete:subcontainer', $event)"
       @delete:element="emit('delete:element', $event)"
       @reorder:element="emit('reorder:element', $event)"
     />

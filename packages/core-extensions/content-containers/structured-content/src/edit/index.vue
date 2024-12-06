@@ -60,8 +60,8 @@
         @click="createSubcontainer(subcontainerType)"
       >
         <div class="mr-2">
-          <VIcon x-small>mdi-plus</VIcon>
-          <VIcon small>{{ config[subcontainerType].icon || 'mdi-text' }}</VIcon>
+          <VIcon size="x-small">mdi-plus</VIcon>
+          <VIcon size="small">{{ config[subcontainerType].icon }}</VIcon>
         </div>
         Add {{ config[subcontainerType].label }}
       </VBtn>
