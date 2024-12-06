@@ -9,10 +9,12 @@ import { DEFAULT_WORKFLOW as DefaultWorkflow } from './workflows/default.workflo
 import { SCHEMA as FeedSchema } from './schemas/feed.schema';
 import { SCHEMA as KnowledgeBase } from './schemas/knowledge-base.schema';
 import { SCHEMA as QASchema } from './schemas/q&a.schema';
+import { SCHEMA as HeasSchema } from './schemas/heas.schema';
 
 export const WORKFLOWS = [DefaultWorkflow];
 export const SCHEMAS = processSchemas([
   CourseSchema,
+  HeasSchema,
   FeedSchema,
   KnowledgeBase,
   QASchema,
