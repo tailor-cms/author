@@ -58,10 +58,17 @@ const PageConfig: ActivityConfig = {
       key: 'haesRating',
       type: MetaInputType.HaesRating,
       label: 'HE@S rating',
+      reviewable: true,
       hideOnCreate: true,
     },
   ],
 };
+
+const allowedEmbedTypes = [
+  ContentElementType.HtmlDefault,
+  ContentElementType.Image,
+  ContentElementType.Video,
+];
 
 const SectionConfig: ContentContainer = {
   type: ActivityType.Section,
@@ -69,26 +76,26 @@ const SectionConfig: ContentContainer = {
   label: 'Section',
   multiple: true,
   types: [
-    ContentElementType.HtmlDefault,
-    ContentElementType.Image,
-    ContentElementType.Video,
-    ContentElementType.Embed,
-    ContentElementType.Audio,
-    ContentElementType.PageBreak,
-    ContentElementType.Pdf,
+    { id: ContentElementType.HtmlDefault },
+    { id: ContentElementType.Image },
+    { id: ContentElementType.Video },
+    { id: ContentElementType.Embed },
+    { id: ContentElementType.Audio },
+    { id: ContentElementType.PageBreak },
+    { id: ContentElementType.Pdf },
+    { id: ContentElementType.Accordion, allowedEmbedTypes },
     // TODO: Need to be migrated
-    // 'CE_ACCORDION',
-    // 'CE_TABLE',
-    // 'CE_MODAL',
-    // 'CE_CAROUSEL',
-    ContentElementType.MultipleChoice,
-    ContentElementType.SingleChoice,
-    ContentElementType.TextResponse,
-    ContentElementType.NumericalResponse,
-    ContentElementType.TrueFalse,
-    ContentElementType.MatchingQuestion,
-    ContentElementType.FillBlank,
-    ContentElementType.DragDrop,
+    // ContentElementType.Table,
+    // ContentElementType.Modal,
+    // ContentElementType.Carousel,
+    { id: ContentElementType.MultipleChoice, isGradeable: true, allowedEmbedTypes },
+    { id: ContentElementType.SingleChoice, isGradeable: true, allowedEmbedTypes },
+    { id: ContentElementType.TextResponse, isGradeable: true, allowedEmbedTypes },
+    { id: ContentElementType.NumericalResponse, isGradeable: true, allowedEmbedTypes },
+    { id: ContentElementType.TrueFalse, isGradeable: true, allowedEmbedTypes },
+    { id: ContentElementType.MatchingQuestion, isGradeable: true, allowedEmbedTypes },
+    { id: ContentElementType.FillBlank, isGradeable: true, allowedEmbedTypes },
+    { id: ContentElementType.DragDrop, isGradeable: true, allowedEmbedTypes },
   ],
   categories: [
     {

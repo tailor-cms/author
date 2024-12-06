@@ -1,7 +1,7 @@
 <template>
   <VBottomSheet class="mx-5">
     <div class="element-container bg-primary-lighten-5">
-      <div class="d-flex align-center pt-6 pb-5 px-10">
+      <div class="d-flex align-end pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
       <div v-for="group in library as any" :key="group.name" class="mb-2">

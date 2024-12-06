@@ -10,7 +10,7 @@
       @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
     >
       <div class="card-body">
-        <div class="d-flex align-center mt-1 mr-1 mb-1 ml-3">
+        <div class="card-header d-flex align-center my-1 mx-3">
           <VChip :color="repository.data.color" class="px-1" size="x-small" />
           <VTooltip
             :disabled="!isSchemaNameTruncated"
@@ -65,7 +65,7 @@
               <VBtn
                 v-bind="tooltipProps"
                 aria-label="Repository settings"
-                class="repo-info mr-2"
+                class="repo-info"
                 color="primary-lighten-2"
                 icon="mdi-cog"
                 size="small"
@@ -188,6 +188,10 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .card-body {
   padding: 0.375rem 0 0;
+
+  .card-header {
+    min-height: 2.5rem;
+  }
 
   .schema-name {
     font-size: 0.75rem;
