@@ -218,7 +218,7 @@ const handleContainerInit = () => {
   }, 500);
 };
 
-// TODO: Add once collab and composite element feature is added
+// TODO: Used for embedded toolbars, add once table content element is migrated
 const initElementChangeWatcher = () => {
   // this.storeUnsubscribe = this.$store.subscribe(mutation => {
   //   const { type, payload: element } = mutation;

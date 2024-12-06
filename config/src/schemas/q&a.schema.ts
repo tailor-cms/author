@@ -47,7 +47,10 @@ const RESPONSE: ContentContainer = {
   type: ActivityType.Response,
   templateId: ContentContainerType.Default,
   label: 'Response',
-  types: [ContentElementType.HtmlDefault, ContentElementType.Image],
+  types: [
+    { id: ContentElementType.HtmlDefault },
+    { id: ContentElementType.Image },
+  ],
   ai: {
     definition: `
       Response should clearly and concisely answer to the question it is

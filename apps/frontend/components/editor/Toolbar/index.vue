@@ -100,14 +100,14 @@ const usersWithActivity = computed(() => {
     z-index: 99;
   }
 
-  .v-input {
+  :deep(.v-input) {
     position: relative;
 
-    :deep(.v-input__details) {
+    .v-input__details {
       position: absolute;
       padding: 0 !important;
 
-      .v-messages__message {
+      .v-messages {
         margin-top: 0.5rem;
         border-radius: 4px;
         padding: 0.5rem 0.75rem;
