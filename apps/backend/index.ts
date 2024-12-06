@@ -1,13 +1,9 @@
-import { createRequire } from 'node:module';
 import { promisify } from 'node:util';
 import Promise from 'bluebird';
-import boxen from 'boxen';
-import toCase from 'to-case';
+import boxen, { type Options as BoxenOptions } from 'boxen';
 import app from './app.js';
 import config from '#config';
 import contentPluginRegistry from '#shared/content-plugins/index.js';
-
-const require = createRequire(import.meta.url);
 
 // NOTE: This needs to be done before db models get loaded!
 Promise.config({ longStackTraces: !config.isProduction });
@@ -15,10 +11,8 @@ Promise.config({ longStackTraces: !config.isProduction });
 /* eslint-disable */
 import database from '#shared/database/index.js';
 import { createLogger } from '#logger';
-const pkg = require('./package.json');
 /* eslint-enable */
 
-const capitalize = toCase.capital;
 const logger = createLogger();
 const runApp = promisify(app.listen.bind(app));
 
@@ -35,7 +29,7 @@ database
 
 const message = (name, version) =>
   `
-    ${capitalize(name)} v${version}
+    ${name} v${version}
 
     It's aliveeeee 🚀
 
@@ -50,6 +44,6 @@ function welcome(name, version) {
     borderStyle: 'double',
     borderColor: 'blue',
     align: 'left',
-  };
-  console.error(boxen(message(name, version), options));
+  } as BoxenOptions;
+  console.log(boxen(message(name, version), options));
 }
