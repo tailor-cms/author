@@ -886,6 +886,9 @@ importers:
 
   packages/core-extensions/meta-inputs/meta-haes-rating:
     dependencies:
+      '@tailor-cms/core-components':
+        specifier: workspace:*
+        version: link:../../../core-components
       chart.js:
         specifier: ^4.4.6
         version: 4.4.6
