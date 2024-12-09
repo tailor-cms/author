@@ -1,16 +1,24 @@
 import type {
   ActivityConfig,
-  ContentContainer,
+  ContentContainerConfig,
   Schema,
 } from '@tailor-cms/interfaces/schema';
+import type { ContentContainer } from '@tailor-cms/interfaces/activity';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
-const guidelines = (_repository, contentContainers, contentElements, ceRegistry) => {
-  const sections = contentContainers?.filter((it: any) => it.type === 'SECTION');
+const guidelines = (
+  _repository: Repository,
+  contentContainers: ContentContainer[],
+  contentElements: ContentElement[],
+  ceRegistry,
+) => {
+  const sections = contentContainers?.filter((it) => it.type === 'SECTION');
   const questions = ceRegistry.questions?.map((it) => it.type);
   const hasVideo = contentElements?.some((it) => it.type === ContentElementType.Video);
 
@@ -48,9 +56,6 @@ const guidelines = (_repository, contentContainers, contentElements, ceRegistry)
         realWorldOutcomes: 0,
       },
       isDone: () => {
-        const sections = contentContainers?.filter(
-          (it: any) => it.type === 'SECTION',
-        );
         return sections?.every((it) => it.data.relatedResources?.trim()?.length > 0);
       },
     },
@@ -145,7 +150,7 @@ const LearningBit: ActivityConfig = {
   },
 };
 
-const StructuredContentContainer: ContentContainer = {
+const StructuredContentContainer: ContentContainerConfig = {
   templateId: ContentContainerType.StructuredContent,
   type: ContentContainerType.StructuredContent,
   label: 'Structured content',

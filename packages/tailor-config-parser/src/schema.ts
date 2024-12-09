@@ -1,6 +1,6 @@
 import type {
   ActivityRelationship,
-  ContentContainer,
+  ContentContainerConfig,
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
@@ -174,7 +174,7 @@ export const getSchemaApi = (schemas: Schema[]) => {
     );
   }
 
-  function getSupportedContainers(type: string): ContentContainer[] {
+  function getSupportedContainers(type: string): ContentContainerConfig[] {
     const schema = getSchema(getSchemaId(type));
     const schemaConfig = get(schema, 'contentContainers', []);
     const activityConfig = get(
@@ -186,7 +186,7 @@ export const getSchemaApi = (schemas: Schema[]) => {
   }
 
   // type is checked because of legacy support
-  function getContainerTemplateId(container: ContentContainer) {
+  function getContainerTemplateId(container: ContentContainerConfig) {
     return container.templateId || container.type;
   }
 

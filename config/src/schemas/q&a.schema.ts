@@ -1,6 +1,6 @@
 import type {
   ActivityConfig,
-  ContentContainer,
+  ContentContainerConfig,
   Schema,
 } from '@tailor-cms/interfaces/schema';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
@@ -43,7 +43,7 @@ const QUESTION: ActivityConfig = {
   },
 };
 
-const RESPONSE: ContentContainer = {
+const RESPONSE: ContentContainerConfig = {
   type: ActivityType.Response,
   templateId: ContentContainerType.Default,
   label: 'Response',

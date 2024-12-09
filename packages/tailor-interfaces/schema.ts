@@ -1,4 +1,6 @@
+import type { ContentContainer } from './activity';
 import type { ContentElement } from './content-element';
+import type { Repository } from './repository';
 
 export type ElementManifest = Record<string, any>;
 export interface ElementRegistry {
@@ -58,10 +60,25 @@ export interface AIConfig {
   };
 }
 
+interface Guideline {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  metric: Record<string, number>;
+  isDone: () => boolean;
+};
+
 export interface ActivityConfig {
   type: string;
   label: string;
   color: string;
+  guidelines?: (
+    repository: Repository,
+    contentContainers: ContentContainer[],
+    contentElements: ContentElement[],
+    ceRegistry
+  ) => Guideline[];
   rootLevel?: boolean;
   subLevels?: string[];
   isTrackedInWorkflow?: boolean;
@@ -87,7 +104,7 @@ export interface ElementTypeConfig {
   isGradeable?: boolean;
 }
 
-export interface ContentContainer {
+export interface ContentContainerConfig {
   type: string;
   templateId: string;
   label: string;
@@ -110,7 +127,7 @@ export interface Schema {
   meta?: Metadata[];
   defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];
-  contentContainers: ContentContainer[];
+  contentContainers: ContentContainerConfig[];
   elementMeta?: ElementMetaConfig[];
   // @deprecated use elementMeta instead
   tesMeta?: ElementMetaConfig[];
