@@ -35,7 +35,7 @@ export interface ElementRelationship {
 export interface ElementMetaConfig {
   type: string;
   inputs?: Metadata[];
-  relationships: ElementRelationship[];
+  relationships?: ElementRelationship[];
 }
 
 export interface ActivityRelationship {

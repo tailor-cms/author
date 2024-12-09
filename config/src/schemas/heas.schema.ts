@@ -9,9 +9,10 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
-const checklist = (repository, contentContainers, contentElements, ceRegistry) => {
+const checklist = (_repository, contentContainers, contentElements, ceRegistry) => {
   const sections = contentContainers?.filter((it: any) => it.type === 'SECTION');
-  const questions = ceRegistry.questions.map((it) => it.type);
+  const questions = ceRegistry.questions?.map((it) => it.type);
+  const hasVideo = contentElements?.some((it) => it.type === ContentElementType.Video);
 
   return [
     {
@@ -68,7 +69,7 @@ const checklist = (repository, contentContainers, contentElements, ceRegistry) =
         realWorldOutcomes: 0,
       },
       isDone: () => {
-        return contentElements?.some((it) => questions.includes(it.type));
+        return contentElements?.some((it) => questions?.includes(it.type));
       },
     },
     {
@@ -89,24 +90,28 @@ const checklist = (repository, contentContainers, contentElements, ceRegistry) =
         return sections?.every((it) => it.data.keyTakeaways?.trim()?.length > 0);
       },
     },
-    {
-      id: '5',
-      icon: 'mdi-file-document',
-      title: 'Add a Video Transcript',
-      description: `Improve on Unbounded Inclusion by ensuring all learners,
-      including those with auditory impairments or who prefer reading, can fully
-      engage with the content.`,
-      metric: {
-        learnerCenteredContent: 0,
-        activeLearning: 0,
-        unboundedInclusion: 2,
-        communityConnections: 1,
-        realWorldOutcomes: 0,
-      },
-      isDone: () => {
-        return contentElements?.some((it) => it.type === ContentElementType.Video);
-      },
-    },
+    ...hasVideo
+      ? [{
+          id: '5',
+          icon: 'mdi-file-document',
+          title: 'Add a Video Transcript',
+          description: `Improve on Unbounded Inclusion by ensuring all learners,
+          including those with auditory impairments or who prefer reading, can fully
+          engage with the content.`,
+          metric: {
+            learnerCenteredContent: 0,
+            activeLearning: 0,
+            unboundedInclusion: 2,
+            communityConnections: 1,
+            realWorldOutcomes: 0,
+          },
+          isDone: () => {
+            return contentElements?.every(
+              (it) => it.type !== ContentElementType.Video || it.meta.transcript,
+            );
+          },
+        }]
+      : [],
   ];
 };
 
@@ -205,6 +210,22 @@ export const SCHEMA: Schema = {
       type: MetaInputType.HaesRating,
       label: 'HE@S rating',
       hideOnCreate: false,
+    },
+  ],
+  elementMeta: [
+    {
+      type: ContentElementType.Video,
+      inputs: [
+        {
+          key: 'transcript',
+          type: MetaInputType.File,
+          label: 'Video Transcript',
+          placeholder: 'Click to upload video transcript',
+          validate: {
+            ext: ['pdf'],
+          },
+        },
+      ],
     },
   ],
 };
