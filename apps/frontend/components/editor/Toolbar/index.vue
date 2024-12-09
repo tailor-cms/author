@@ -1,6 +1,11 @@
 <template>
   <div class="toolbar-wrapper elevation-3">
-    <div :style="{ left: lgAndUp ? '480px' : '380px' }">
+    <div
+      :style="{
+        left: lgAndUp ? '480px' : '380px',
+        right: '380px',
+      }"
+    >
       <div
         v-if="activity && !element"
         :class="[showPublishDiff ? 'bg-publish-diff' : 'bg-primary-darken-4']"

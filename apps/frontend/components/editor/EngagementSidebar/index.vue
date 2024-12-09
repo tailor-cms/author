@@ -1,6 +1,6 @@
 <template>
   <VNavigationDrawer
-    :width="lgAndUp ? 480 : 380"
+    width="380"
     class="sidebar"
     color="primary-darken-2"
     elevation="5"
@@ -35,8 +35,16 @@
           <VDivider class="my-3" />
           <div class="d-flex flex-wrap ga-1">
             <template v-for="(metric, key) in it.metric" :key="key">
-              <VChip v-if="metric" size="small" rounded="pill">
-                {{ startCase(key) }}: +{{ metric }}
+              <VChip v-if="metric" size="small" rounded="pill" pill>
+                <VAvatar
+                  class="font-weight-bold"
+                  color="white"
+                  variant="tonal"
+                  start
+                >
+                  +{{ metric }}
+                </VAvatar>
+                {{ startCase(key) }}
               </VChip>
             </template>
           </div>
@@ -48,31 +56,30 @@
 </template>
 
 <script lang="ts" setup>
-import { useDisplay } from 'vuetify';
 import sumBy from 'lodash/sumBy';
 import startCase from 'lodash/startCase';
 import { RadarChart } from '@tailor-cms/core-components';
 
-const { lgAndUp } = useDisplay();
 const editorStore = useEditorStore();
 const contentElementStore = useContentElementStore();
 const repositoryStore = useCurrentRepository();
 
-const { $schemaService } = useNuxtApp() as any;
+const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 
 const checklist = computed(() => {
   if (!repositoryStore.selectedActivity) return [];
   const { type } = repositoryStore.selectedActivity;
-  return $schemaService.getLevel(type)?.checklist || [];
+  return $schemaService.getLevel(type)?.checklist(
+    repositoryStore.repository,
+    editorStore.contentContainers,
+    contentElementStore.items,
+    $ceRegistry,
+  ) || [];
 });
 
 const checklistProgress = computed(() => {
   const completed = checklist.value.reduce((acc, it) => {
-    acc[it.id] = it.isDone(
-      {},
-      editorStore.contentContainers,
-      contentElementStore.items,
-    );
+    acc[it.id] = it.isDone();
     return acc;
   }, {});
   return completed;
