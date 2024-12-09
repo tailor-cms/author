@@ -1,6 +1,6 @@
 {
-  "name": "@tailor-cms/display-components",
-  "description": "Reusable CEK Display UI components",
+  "name": "@tailor-cms/lx-components",
+  "description": "Reusable learning experience UI components",
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
   "version": "0.0.1",
