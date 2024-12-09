@@ -128,7 +128,6 @@ $toolbar-height: 2.25rem;
   pre {
     background: #0d0d0d;
     color: #fff;
-    font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
 

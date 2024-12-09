@@ -56,7 +56,7 @@ class Amazon {
     this.bucket = config.bucket;
     this.region = config.region;
     this.client = new S3Client(s3Config);
-    this.initTestBucket();
+    if (config.endpoint) this.initTestBucket();
   }
 
   static create(config) {
