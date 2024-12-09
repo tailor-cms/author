@@ -8,7 +8,7 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
-const checklist = [
+const checklist = (repository, contentContainers, contentElements, ceRegistry) => [
   {
     id: '1',
     icon: 'mdi-target',
@@ -23,7 +23,7 @@ const checklist = [
       communityConnections: 0,
       realWorldOutcomes: 0,
     },
-    isDone: (_repository, contentContainers, _contentElements) => {
+    isDone: () => {
       const sections = contentContainers?.filter(
         (it: any) => it.type === 'SECTION',
       );
@@ -44,7 +44,7 @@ const checklist = [
       communityConnections: 0,
       realWorldOutcomes: 0,
     },
-    isDone: (_repository, contentContainers, _contentElements) => {
+    isDone: () => {
       const sections = contentContainers?.filter(
         (it: any) => it.type === 'SECTION',
       );
@@ -81,7 +81,7 @@ const checklist = [
       communityConnections: 0,
       realWorldOutcomes: 2,
     },
-    isDone: (_repository, contentContainers, _contentElements) => {
+    isDone: () => {
       const sections = contentContainers?.filter(
         (it: any) => it.type === 'SECTION',
       );
