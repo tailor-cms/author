@@ -13,20 +13,19 @@
       </div>
       <VList>
         <VListItem
-          v-for="(it, index) in checklist"
+          v-for="(it) in checklist"
           :key="it.id"
           :subtitle="it.description"
           :title="it.title"
           class="pa-4"
           variant="tonal"
           rounded
-          @click="checklist[index].isDone = !checklist[index].isDone"
         >
           <template #prepend>
             <VBadge
               color="success"
               icon="mdi-check-bold"
-              :model-value="it.isDone"
+              :model-value="checklistProgress[it.id]"
             >
               <VAvatar variant="tonal">
                 <VIcon>{{ it.icon }}</VIcon>
@@ -56,108 +55,33 @@ import { RadarChart } from '@tailor-cms/core-components';
 
 const { lgAndUp } = useDisplay();
 const editorStore = useEditorStore();
+const contentElementStore = useContentElementStore();
+const repositoryStore = useCurrentRepository();
 
-const sectionContainers = computed(() =>
-  editorStore.contentContainers?.filter((it: any) => it.type === 'SECTION'),
-);
+const { $schemaService } = useNuxtApp() as any;
 
-const areObjectivesSet = computed(() => sectionContainers.value?.every(
-  (it: any) => it.data.learningObjectives?.length > 0,
-));
+const checklist = computed(() => {
+  if (!repositoryStore.selectedActivity) return [];
+  const { type } = repositoryStore.selectedActivity;
+  return $schemaService.getLevel(type)?.checklist || [];
+});
 
-const areRelatedResourcesSet = computed(() => sectionContainers.value?.every(
-  (it: any) => it.data.relatedResources?.trim()?.length > 0,
-));
-
-const areKeyTakeawaysSet = computed(() => sectionContainers.value?.every(
-  (it: any) => it.data.keyTakeaways?.trim()?.length > 0,
-));
-
-const checklist = computed(() => [
-  {
-    id: '1',
-    icon: 'mdi-target',
-    title: 'Define Learning Objectives',
-    description: `Improve on Learner-Centered Content by defining what learners
-    will gain by engaging with this content. This helps them start out with a
-    clear goal and focus.`,
-    metric: {
-      learnerCenteredContent: 2,
-      activeLearning: 0,
-      unboundedInclusion: 0,
-      communityConnections: 0,
-      realWorldOutcomes: 0,
-    },
-    isDone: areObjectivesSet.value,
-  },
-  {
-    id: '2',
-    icon: 'mdi-link-variant',
-    title: 'Link to Related Resources',
-    description: `Improve on Learner-Centered Content by linking to additional
-    materials, such as articles, videos, or tools that further learners'
-    understanding or provide alternative perspectives on the topic.`,
-    metric: {
-      learnerCenteredContent: 1,
-      activeLearning: 0,
-      unboundedInclusion: 0,
-      communityConnections: 0,
-      realWorldOutcomes: 0,
-    },
-    isDone: areRelatedResourcesSet.value,
-  },
-  {
-    id: '3',
-    icon: 'mdi-help-circle',
-    title: 'Add a Knowledge Check',
-    description: `Improve on Active Learning by incorporating a question or
-    reflection prompt to help learners apply and test their understanding of
-    the material.`,
-    metric: {
-      learnerCenteredContent: 0,
-      activeLearning: 2,
-      unboundedInclusion: 0,
-      communityConnections: 0,
-      realWorldOutcomes: 0,
-    },
-    isDone: true,
-  },
-  {
-    id: '4',
-    icon: 'mdi-text-box',
-    title: 'Add a Key Takeaway',
-    description: `
-      Improve on Real-World Outcomes by offering a summary, guide,
-      or other resource that learners can keep for future reference.`,
-    metric: {
-      learnerCenteredContent: 0,
-      activeLearning: 0,
-      unboundedInclusion: 0,
-      communityConnections: 0,
-      realWorldOutcomes: 2,
-    },
-    isDone: areKeyTakeawaysSet.value,
-  },
-  {
-    id: '5',
-    icon: 'mdi-file-document',
-    title: 'Add a Video Transcript',
-    description: `Improve on Unbounded Inclusion by ensuring all learners,
-    including those with auditory impairments or who prefer reading, can fully
-    engage with the content.`,
-    metric: {
-      learnerCenteredContent: 0,
-      activeLearning: 0,
-      unboundedInclusion: 2,
-      communityConnections: 1,
-      realWorldOutcomes: 0,
-    },
-    isDone: true,
-  },
-]);
+const checklistProgress = computed(() => {
+  const completed = checklist.value.reduce((acc, it) => {
+    acc[it.id] = it.isDone(
+      {},
+      editorStore.contentContainers,
+      contentElementStore.items,
+    );
+    return acc;
+  }, {});
+  return completed;
+});
 
 const ratings = computed(() => {
-  const completed = checklist.value.filter((it) => it.isDone);
+  const completed = checklist.value.filter(
+    (it: any) => checklistProgress.value[it.id],
+  );
   return {
     learnerCenteredContent: sumBy(completed, 'metric.learnerCenteredContent'),
     activeLearning: sumBy(completed, 'metric.activeLearning'),
