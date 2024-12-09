@@ -91,6 +91,7 @@ const DEFAULT_CATEGORY = { name: 'Content Elements' };
 interface Props {
   items: ContentElement[];
   position: number;
+  elementConfig?: Record<string, any>;
   activity?: Activity | null;
   layout?: boolean;
   include?: string[] | null;
@@ -104,6 +105,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  elementConfig: () => ({}),
   activity: null,
   layout: true,
   include: null,
@@ -181,6 +183,7 @@ const buildElement = (el: any) => {
     ? { activityId: props.activity.id } // If content element within activity
     : { id: uuid(), embedded: true }; // If embed, assign id
   Object.assign(element, contextData);
+  if (!props.elementConfig[el.type]?.isGradeable) delete element.data.correct;
   return element;
 };
 

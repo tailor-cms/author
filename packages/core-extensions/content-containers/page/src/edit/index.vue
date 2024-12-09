@@ -60,6 +60,7 @@
         variant: 'elevated',
       }"
       :elements="containerElements"
+      :element-config="elementConfig"
       :enable-add="false"
       :is-disabled="disabled"
       :layout="layout"
@@ -92,6 +93,7 @@
     <AddElement
       v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
+      :element-config="elementConfig"
       :categories="categories"
       :include="types"
       :items="containerElements"
@@ -133,8 +135,8 @@ interface Props {
   name: string;
   container: Activity;
   elements: Record<string, ContentElement>;
-  elementConfig: Record<string, any>;
   position: number;
+  elementConfig?: Record<string, any>;
   types?: string[] | null;
   categories?: ElementCategory[] | null;
   layout?: boolean;
@@ -142,6 +144,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  elementConfig: () => ({}),
   types: null,
   layout: true,
   disabled: false,
