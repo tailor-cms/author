@@ -6,7 +6,7 @@
     variant="tonal"
     border>
     <div
-      v-if="!!Object.keys(feedback).length"
+      v-if="hasFeedback"
       class="d-flex flex-column ga-2 mt-4"
     >
       <VCard v-for="(it, key) in feedback" :key="key" variant="tonal" rounded>
@@ -27,6 +27,10 @@ const props = defineProps<{
   isGraded: boolean;
   isCorrect: any;
 }>();
+
+const hasFeedback = computed(() =>
+  props.feedback && Object.keys(props.feedback).length,
+);
 
 const alertProps = computed(() => {
   if (!props.isGraded) return { title: 'Submitted', type: 'info' };
