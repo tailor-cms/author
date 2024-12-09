@@ -39,6 +39,7 @@
         <AddElement
           :activity="activity"
           v-bind="addElementOptions"
+          :element-config="elementConfig"
           :include="supportedTypes"
           :items="elements"
           :layout="layout"
@@ -63,6 +64,7 @@ import AddElement from './AddElement/index.vue';
 
 interface Props {
   elements?: ContentElement[];
+  elementConfig?: Record<string, any>;
   dragOptions?: any;
   supportedTypes?: string[] | null;
   activity?: Activity | null;
@@ -75,6 +77,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   elements: () => [],
   dragOptions: () => ({}),
+  elementConfig: () => ({}),
   supportedTypes: null,
   activity: null,
   layout: false,

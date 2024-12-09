@@ -36,21 +36,9 @@ const props = withDefaults(defineProps<Props>(), {
   embed: null,
 });
 
-const componentName = computed(() => {
-  const { type } = props.element;
-  if (utils.isQuestion(props.element.type)) return;
-  return utils.getToolbarName(type);
-});
-
-const id = utils.getElementId(props.element);
-
-const isQuestion = computed(() => utils.isQuestion(props.element.type));
-
-const config = computed(() => {
-  const { element } = props;
-  const type = isQuestion.value ? element.data.type : element.type;
-  return $ceRegistry.get(type);
-});
+const id = computed(() => utils.getElementId(props.element));
+const componentName = computed(() => utils.getToolbarName(props.element.type));
+const config = computed(() => $ceRegistry.get(props.element.type));
 
 const componentExists = computed(
   () => !!$ceRegistry.get(props.element.type)?.hasTopToolbar,

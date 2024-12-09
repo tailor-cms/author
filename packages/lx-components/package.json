@@ -1,0 +1,19 @@
+{
+  "name": "@tailor-cms/lx-components",
+  "description": "Reusable learning experience UI components",
+  "author": "Studion <info@gostudion.com>",
+  "license": "MIT",
+  "version": "0.0.2",
+  "files": [
+    "src"
+  ],
+  "type": "module",
+  "main": "./src/index.ts",
+  "peerDependencies": {
+    "vue": "^3.3.4",
+    "vuetify": "3.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
