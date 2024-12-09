@@ -2,38 +2,36 @@
   <component
     :is="componentName"
     :class="{ required: get(meta, 'validate.required') }"
-    :dark="dark"
     :error-messages="errorMessage"
+    :dark="false"
     :meta="meta"
     :is-new="isNew"
-    :is-reviewer="isReviewer"
+    persistent-placeholder
     @update="updateMeta"
   />
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue';
 import get from 'lodash/get';
 import { getMetaName } from '@tailor-cms/utils';
-import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { useField } from 'vee-validate';
+
+import type { Metadata } from '@tailor-cms/interfaces/schema';
 
 interface Props {
   meta: Metadata;
   name?: string | null;
-  dark?: boolean;
   isNew?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   name: null,
-  dark: false,
   isNew: false,
 });
+
 const emit = defineEmits(['update']);
 
-const store = useCurrentRepository();
-
-const isReviewer = computed(() => store.repository?.hasAdminAccess);
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
 
