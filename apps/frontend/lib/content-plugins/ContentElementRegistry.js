@@ -8,7 +8,10 @@ const getCondition = (type) => (it) => it.subtype === type || it.type === type;
 export default (appInstance) =>
   new ComponentRegistry(appInstance, {
     name: 'content element',
-    attrs: ['name', 'type', 'subtype', 'version', 'schema', 'initState', 'ui'],
+    attrs: [
+      'name', 'type', 'subtype', 'version', 'schema', 'initState', 'ui',
+      'isQuestion', 'isComposite',
+    ],
     getCondition,
     getName,
     elements,
