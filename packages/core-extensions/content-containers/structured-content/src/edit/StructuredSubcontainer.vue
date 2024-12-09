@@ -66,12 +66,12 @@ const props = defineProps<{
   activities: Record<string, Activity>;
   elements: Record<string, ContentElement>;
   label: string;
-  layout: boolean;
   icon: string;
   meta: any;
-  elementTypes: Array<any>;
-  categories: ElementCategory[];
   isDisabled: boolean;
+  layout?: boolean;
+  elementTypes?: Array<any>;
+  categories?: ElementCategory[];
 }>();
 
 const emit = defineEmits([

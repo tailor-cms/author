@@ -75,11 +75,11 @@ import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 const props = defineProps<{
   container: Activity;
   elements: Record<string, ContentElement>;
-  layout: boolean;
   label: string;
   isDisabled: boolean;
-  supportedTypes: any[];
-  categories: ElementCategory[];
+  layout?: boolean;
+  supportedTypes?: any[];
+  categories?: ElementCategory[];
 }>();
 
 const emit = defineEmits(['save:element', 'delete:element', 'reorder:element']);
