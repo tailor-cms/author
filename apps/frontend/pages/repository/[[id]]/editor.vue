@@ -19,7 +19,7 @@
         :activity-id="activityId"
         class="activity-content"
       />
-      <EngagementSidebar />
+      <EngagementSidebar v-if="repositoryStore.hasGuidelines" />
     </div>
   </div>
 </template>

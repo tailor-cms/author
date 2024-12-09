@@ -7,7 +7,7 @@ import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
 import { repository as repositoryApi } from '@/api';
 
-const { getOutlineLevels, getSchema } = schemaConfig;
+const { getOutlineLevels, getSchema, getLevel } = schemaConfig;
 const { getWorkflow } = workflowConfig;
 
 type Id = number | string;
@@ -80,6 +80,12 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const selectedActivity = computed(() => {
     const id = outlineState.selectedActivityId;
     return outlineActivities.value.find((it) => it.id === id);
+  });
+
+  const hasGuidelines = computed(() => {
+    if (!selectedActivity.value) return false;
+    const { type } = selectedActivity.value;
+    return getLevel(type)?.guidelines;
   });
 
   function selectActivity(activityId: number) {
@@ -186,6 +192,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     rootActivities,
     selectActivity,
     selectedActivity,
+    hasGuidelines,
     workflow,
     workflowActivities,
     isOutlineExpanded,

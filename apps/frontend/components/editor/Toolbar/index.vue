@@ -3,7 +3,7 @@
     <div
       :style="{
         left: lgAndUp ? '480px' : '380px',
-        right: '380px',
+        ...repositoryStore.hasGuidelines && { right: '380px' },
       }"
     >
       <div
@@ -70,6 +70,7 @@ withDefaults(defineProps<Props>(), {
 
 const { $schemaService } = useNuxtApp() as any;
 const { lgAndUp } = useDisplay();
+const repositoryStore = useCurrentRepository();
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
