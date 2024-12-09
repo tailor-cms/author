@@ -23,7 +23,11 @@
           @click="checklist[index].isDone = !checklist[index].isDone"
         >
           <template #prepend>
-            <VBadge color="success" icon="mdi-check-bold" :model-value="it.isDone">
+            <VBadge
+              color="success"
+              icon="mdi-check-bold"
+              :model-value="it.isDone"
+            >
               <VAvatar variant="tonal">
                 <VIcon>{{ it.icon }}</VIcon>
               </VAvatar>
@@ -51,8 +55,25 @@ import startCase from 'lodash/startCase';
 import { RadarChart } from '@tailor-cms/core-components';
 
 const { lgAndUp } = useDisplay();
+const editorStore = useEditorStore();
 
-const checklist = ref([
+const sectionContainers = computed(() =>
+  editorStore.contentContainers?.filter((it: any) => it.type === 'SECTION'),
+);
+
+const areObjectivesSet = computed(() => sectionContainers.value?.every(
+  (it: any) => it.data.learningObjectives?.length > 0,
+));
+
+const areRelatedResourcesSet = computed(() => sectionContainers.value?.every(
+  (it: any) => it.data.relatedResources?.trim()?.length > 0,
+));
+
+const areKeyTakeawaysSet = computed(() => sectionContainers.value?.every(
+  (it: any) => it.data.keyTakeaways?.trim()?.length > 0,
+));
+
+const checklist = computed(() => [
   {
     id: '1',
     icon: 'mdi-target',
@@ -67,7 +88,7 @@ const checklist = ref([
       communityConnections: 0,
       realWorldOutcomes: 0,
     },
-    isDone: true,
+    isDone: areObjectivesSet.value,
   },
   {
     id: '2',
@@ -83,7 +104,7 @@ const checklist = ref([
       communityConnections: 0,
       realWorldOutcomes: 0,
     },
-    isDone: true,
+    isDone: areRelatedResourcesSet.value,
   },
   {
     id: '3',
@@ -103,11 +124,11 @@ const checklist = ref([
   },
   {
     id: '4',
-    icon: 'mdi-file-pdf-box',
-    title: 'Add a PDF Takeaway',
-    description: `Improve on Real-World Outcomes by offering a downloadable
-    summary, guide, or other resource that learners can keep for future
-    reference.`,
+    icon: 'mdi-text-box',
+    title: 'Add a Key Takeaway',
+    description: `
+      Improve on Real-World Outcomes by offering a summary, guide,
+      or other resource that learners can keep for future reference.`,
     metric: {
       learnerCenteredContent: 0,
       activeLearning: 0,
@@ -115,7 +136,7 @@ const checklist = ref([
       communityConnections: 0,
       realWorldOutcomes: 2,
     },
-    isDone: true,
+    isDone: areKeyTakeawaysSet.value,
   },
   {
     id: '5',
