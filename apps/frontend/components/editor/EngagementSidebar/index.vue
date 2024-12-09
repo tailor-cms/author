@@ -13,7 +13,7 @@
       </div>
       <VList>
         <VListItem
-          v-for="(it) in checklist"
+          v-for="(it) in guidelines"
           :key="it.id"
           :subtitle="it.description"
           :title="it.title"
@@ -23,9 +23,9 @@
         >
           <template #prepend>
             <VBadge
-              color="success"
+              color="lime-accent-4"
               icon="mdi-check-bold"
-              :model-value="checklistProgress[it.id]"
+              :model-value="progress[it.id]"
             >
               <VAvatar variant="tonal">
                 <VIcon>{{ it.icon }}</VIcon>
@@ -38,7 +38,7 @@
               <VChip v-if="metric" size="small" rounded="pill" pill>
                 <VAvatar
                   class="font-weight-bold"
-                  color="white"
+                  :color="progress[it.id] ? 'lime-accent-4' : 'white'"
                   variant="tonal"
                   start
                 >
@@ -66,10 +66,10 @@ const repositoryStore = useCurrentRepository();
 
 const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 
-const checklist = computed(() => {
+const guidelines = computed(() => {
   if (!repositoryStore.selectedActivity) return [];
   const { type } = repositoryStore.selectedActivity;
-  return $schemaService.getLevel(type)?.checklist(
+  return $schemaService.getLevel(type)?.guidelines(
     repositoryStore.repository,
     editorStore.contentContainers,
     contentElementStore.items,
@@ -77,8 +77,8 @@ const checklist = computed(() => {
   ) || [];
 });
 
-const checklistProgress = computed(() => {
-  const completed = checklist.value.reduce((acc, it) => {
+const progress = computed(() => {
+  const completed = guidelines.value.reduce((acc, it) => {
     acc[it.id] = it.isDone();
     return acc;
   }, {});
@@ -86,8 +86,8 @@ const checklistProgress = computed(() => {
 });
 
 const ratings = computed(() => {
-  const completed = checklist.value.filter(
-    (it: any) => checklistProgress.value[it.id],
+  const completed = guidelines.value.filter(
+    (it: any) => progress.value[it.id],
   );
   return {
     learnerCenteredContent: sumBy(completed, 'metric.learnerCenteredContent'),

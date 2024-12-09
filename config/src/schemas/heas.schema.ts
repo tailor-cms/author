@@ -9,7 +9,7 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
-const checklist = (_repository, contentContainers, contentElements, ceRegistry) => {
+const guidelines = (_repository, contentContainers, contentElements, ceRegistry) => {
   const sections = contentContainers?.filter((it: any) => it.type === 'SECTION');
   const questions = ceRegistry.questions?.map((it) => it.type);
   const hasVideo = contentElements?.some((it) => it.type === ContentElementType.Video);
@@ -139,7 +139,7 @@ const LearningBit: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: true,
   color: '#08A9AD',
-  checklist,
+  guidelines,
   ai: {
     definition: 'Learning Bit represents a small piece of knowledge.',
   },
