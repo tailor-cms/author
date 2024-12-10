@@ -13,9 +13,8 @@
     "#storage": "./repository/storage.js"
   },
   "scripts": {
-    "dev": "nodemon --import ./script/preflight.js ./index.js || exit 0",
-    "start": "node --import ./script/preflight.js ./index.js",
-    "debug:server": "nodemon --inspect --import ./script/preflight.js ./index.js",
+    "dev": "node --watch --import ./script/preflight.js --experimental-strip-types ./index.ts || exit 0",
+    "start": "node --import ./script/preflight.js --experimental-strip-types ./index.ts",
     "db": "node --import ./script/preflight.js ./script/sequelize.js",
     "db:reset": "pnpm db drop && pnpm db create && pnpm db migrate",
     "db:seed": "pnpm db seed:all",
@@ -115,14 +114,12 @@
     "dargs": "^8.1.0",
     "del-cli": "^5.1.0",
     "dotenv-cli": "^7.4.4",
-    "nodemon": "^3.1.7",
     "sequelize-cli": "^6.6.2",
     "terser": "^5.36.0",
     "umzug": "^3.8.2"
   },
   "engines": {
-    "node": ">= 20.3.1",
-    "npm": ">= 9.6.0",
+    "node": ">= 22.11.0",
     "postgres": ">= 9.4"
   }
 }
