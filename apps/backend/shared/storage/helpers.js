@@ -1,5 +1,5 @@
 import get from 'lodash/get.js';
-import has from 'lodash/has.js'
+import has from 'lodash/has.js';
 import isString from 'lodash/isString.js';
 import Promise from 'bluebird';
 import set from 'lodash/set.js';
