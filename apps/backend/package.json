@@ -15,7 +15,6 @@
   "scripts": {
     "dev": "nodemon --import ./script/preflight.js --experimental-strip-types ./index.ts || exit 0",
     "start": "node --import ./script/preflight.js --experimental-strip-types ./index.ts",
-    "debug:server": "nodemon --inspect --import ./script/preflight.js --experimental-strip-type ./index.ts",
     "db": "node --import ./script/preflight.js ./script/sequelize.js",
     "db:reset": "pnpm db drop && pnpm db create && pnpm db migrate",
     "db:seed": "pnpm db seed:all",
