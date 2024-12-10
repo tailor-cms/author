@@ -1,5 +1,5 @@
 ARG PNPM_HOME="/root/.local/share/pnpm"
-ARG PNPM_VERSION="9.0.6"
+ARG PNPM_VERSION="9.15.0"
 
 FROM node:22.11.0-alpine3.19
 # Prerequisites
