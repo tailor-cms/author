@@ -121,6 +121,7 @@
               :key="it.key"
               :meta="it"
               class="meta-input"
+              is-new
             />
           </template>
           <AIAssistance
@@ -306,7 +307,7 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-:deep .v-list-item-subtitle {
+:deep(.v-list-item-subtitle) {
   margin: 0.25rem 0 0;
 }
 

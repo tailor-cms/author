@@ -75,6 +75,7 @@
         />
         <ContainedContent
           v-bind="{
+            config: elementConfig[element.type],
             element,
             isDragged,
             isDisabled: disabled,
@@ -132,6 +133,7 @@ interface Props {
   name: string;
   container: Activity;
   elements: Record<string, ContentElement>;
+  elementConfig: Record<string, any>;
   position: number;
   types?: string[] | null;
   categories?: ElementCategory[] | null;
