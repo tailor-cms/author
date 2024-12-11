@@ -30,10 +30,10 @@
     "yup": "^1.4.0"
   },
   "dependencies": {
-    "@tiptap/extension-character-count": "^2.10.2",
-    "@tiptap/extension-subscript": "^2.10.2",
-    "@tiptap/extension-superscript": "^2.10.2",
-    "@tiptap/extension-underline": "^2.10.2",
+    "@tiptap/extension-character-count": "^2.10.3",
+    "@tiptap/extension-subscript": "^2.10.3",
+    "@tiptap/extension-superscript": "^2.10.3",
+    "@tiptap/extension-underline": "^2.10.3",
     "@vueuse/core": "^10.11.0"
   },
   "bundleDependencies": [

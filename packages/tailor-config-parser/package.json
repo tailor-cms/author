@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.21",
-    "yup": "^1.4.0"
+    "yup": "^1.5.0"
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:^",

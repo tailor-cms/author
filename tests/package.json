@@ -9,15 +9,15 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.1",
-    "@percy/cli": "^1.30.2",
+    "@percy/cli": "^1.30.4",
     "@percy/playwright": "^1.0.7",
-    "@playwright/test": "1.49.0",
+    "@playwright/test": "1.49.1",
     "@types/node": "^20.14.10"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
     "date-fns": "^3.6.0",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "jsdom": "^24.1.0",
     "lodash": "^4.17.21",
     "mailtrap": "^3.4.0",
