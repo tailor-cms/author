@@ -2,10 +2,15 @@ import { createLogger } from '#logger';
 
 const { FLAT_REPO_STRUCTURE } = process.env;
 
-export function getBaseUrl(repoId, parentId) {
+export const PublishEnv = {
+  DRAFT: 'draft',
+  DEFAULT: 'repository',
+};
+
+export function getBaseUrl(env, repositoryId, parentId) {
   return FLAT_REPO_STRUCTURE
-    ? `repository/${repoId}`
-    : `repository/${repoId}/${parentId}`;
+    ? `${env}/${repositoryId}`
+    : `${env}/${repositoryId}/${parentId}`;
 }
 
 export const logger = createLogger('publishing');

@@ -13,31 +13,35 @@ import storage from '#storage';
 const { containerRegistry } = PluginRegistry;
 const { ContentElement } = db;
 
-function saveFile(parent, key, data) {
-  const buffer = Buffer.from(JSON.stringify(data), 'utf8');
-  const baseUrl = getBaseUrl(parent.repositoryId, parent.id);
-  return storage.saveFile(`${baseUrl}/${key}.json`, buffer);
-}
-
 function getContainersFilePaths(baseUrl, containers = []) {
   return containers.map((it) => `${baseUrl}/${it.id}.${it.publishedAs}.json`);
 }
 
-export class ContentContainer {
-  static async publish(parent) {
-    log(`[containers:publish] initiated, parent id: ${parent.id}`);
-    const containers = await ContentContainer.fetch(parent);
+export class ActivityContainers {
+  env = null;
+  activity = null;
+
+  constructor(env, parentOutlineActivity) {
+    this.env = env;
+    // Activity which has the containers as children
+    this.activity = parentOutlineActivity;
+  }
+
+  async publish() {
+    log(`[containers:publish] initiated, parent id: ${this.parent.id}`);
+    const containers = await this.fetch();
     await Promise.map(containers, async (container) => {
       const { id, publishedAs = 'container' } = container;
-      await saveFile(parent, `${id}.${publishedAs}`, container);
+      await this.saveContainerData(`${id}.${publishedAs}`, container);
     });
     log(`[containers:publish] success, ids: ${map(containers, 'id').join()}`);
     return containers;
   }
 
-  static async unpublish(parent, publishedContainers, excludedContainers = []) {
+  async unpublish(publishedContainers, excludedContainers = []) {
     if (!publishedContainers?.length) return;
-    const baseUrl = getBaseUrl(parent.repositoryId, parent.id);
+    const { activity: parent } = this;
+    const baseUrl = getBaseUrl(this.env, parent.repositoryId, parent.id);
     const filePaths = getContainersFilePaths(baseUrl, publishedContainers);
     const excludedFilePaths = getContainersFilePaths(baseUrl, excludedContainers);
     const deletePaths = differenceWith(filePaths, excludedFilePaths);
@@ -46,11 +50,11 @@ export class ContentContainer {
     return storage.deleteFiles(deletePaths);
   }
 
-  static async fetch(parent, signed = false) {
-    const configs = schema.getSupportedContainers(parent.type);
+  async fetch(signed = false) {
+    const configs = schema.getSupportedContainers(this.activity.type);
     const containers = await Promise.all([
-      fetchDefaultContainers(parent, configs),
-      fetchCustomContainers(parent, configs),
+      fetchDefaultContainers(this.activity, configs),
+      fetchCustomContainers(this.activity, configs),
     ]).reduce((acc, groupedContainers) => {
       const processedContainers = groupedContainers.map((it) => {
         const config = find(configs, { type: it.type });
@@ -60,6 +64,13 @@ export class ContentContainer {
       return acc.concat(processedContainers);
     }, []);
     return signed ? Promise.map(containers, resolveContainer) : containers;
+  }
+
+  saveContainerData(key, data) {
+    const { env, activity } = this;
+    const buffer = Buffer.from(JSON.stringify(data), 'utf8');
+    const baseUrl = getBaseUrl(env, activity.repositoryId, activity.id);
+    return storage.saveFile(`${baseUrl}/${key}.json`, buffer);
   }
 
   static attachContainerSummary(activity, containers) {

@@ -6,28 +6,33 @@ import reduce from 'lodash/reduce.js';
 import { schema } from '@tailor-cms/config';
 import without from 'lodash/without.js';
 
-import { ContentContainer } from './ContentContainer.js';
-import { renameKey } from './utils.js';
+import { ActivityContainers } from './ContentContainer.js';
+import { PublishEnv, renameKey } from './utils.js';
 import storage from '#storage';
 
 export class RepositoryManifest {
+  env = null;
   repository = null;
   draft = null;
 
-  constructor(repository, draft) {
+  constructor(repository, draft, env = PublishEnv.DEFAULT) {
     if (!repository) throw new Error('RepositoryManifest args are not valid!');
+    this.env = env;
     this.repository = repository;
     this.draft = draft;
   }
 
-  static async load(repository) {
-    const manifest = await RepositoryManifest.loadFromStorage(repository.id);
+  static async load(repository, env = PublishEnv.DEFAULT) {
+    const manifest = await RepositoryManifest.loadFromStorage(
+      repository.id,
+      env,
+    );
     const draft = manifest || RepositoryManifest.init(repository);
-    return new RepositoryManifest(repository, draft);
+    return new RepositoryManifest(repository, draft, env);
   }
 
-  static async loadFromStorage(repositoryId) {
-    const storageKey = `repository/${repositoryId}/index.json`;
+  static async loadFromStorage(repositoryId, env = PublishEnv.DEFAULT) {
+    const storageKey = `${env}/${repositoryId}/index.json`;
     const buffer = await storage.getFile(storageKey);
     return !!buffer && JSON.parse(buffer.toString('utf8'));
   }
@@ -59,7 +64,7 @@ export class RepositoryManifest {
       publishedAt: new Date(),
     };
     const buffer = Buffer.from(JSON.stringify(updatedData), 'utf8');
-    const key = `repository/${this.repository.id}/index.json`;
+    const key = `${this.env}/${this.repository.id}/index.json`;
     await storage.saveFile(key, buffer);
     return updatedData;
   }
@@ -89,17 +94,20 @@ export class RepositoryManifest {
       if (!exists) this.upsertStructureItem(it);
     });
     // Upsert in the manifest structure
-    this.upsertStructureItem(activity);
+    const publishedStructureItem = this.upsertStructureItem(activity);
     // Publish containers
-    const newlyPublishedContainers = await ContentContainer.publish(activity);
+    const activityContainers = new ActivityContainers(this.env, activity);
+    const newlyPublishedContainers = await activityContainers.publish();
     // Remove deleted containers
-    await ContentContainer.unpublish(
-      activity,
+    await activityContainers.unpublish(
       prevPublishedContainers,
       newlyPublishedContainers,
     );
     // Add container info to the manifest structure activity item
-    this.attachContainerSummary(activity.id, newlyPublishedContainers);
+    ActivityContainers.attachContainerSummary(
+      publishedStructureItem,
+      newlyPublishedContainers,
+    );
     return this.save();
   }
 
@@ -110,8 +118,9 @@ export class RepositoryManifest {
     // Remove activity and its children from the repository structure
     this.removeStructureItems(deleted);
     // Unpublish related content containers
+    const activityContainers = new ActivityContainers(this.env, activity);
     await Promise.map(deleted, async (it) =>
-      ContentContainer.unpublish(activity, it.contentContainers),
+      activityContainers.unpublish(it.contentContainers),
     );
     return this.save();
   }
@@ -132,13 +141,14 @@ export class RepositoryManifest {
       ]),
       relationships: this.mapRelationships(relationships, activity),
     };
-    renameKey(activity, 'data', 'meta');
+    renameKey(data, 'data', 'meta');
     const index = this.findActivityIndex(data.id);
     if (index < 0) {
       this.draft.structure.push(data);
     } else {
       this.draft.structure[index] = data;
     }
+    return data;
   }
 
   removeStructureItems(activities) {
@@ -152,13 +162,17 @@ export class RepositoryManifest {
     const items = structure?.filter((it) => it.parentId === id);
     if (!items.length) return [];
     return items.concat(
-      reduce(items, (acc, it) => acc.concat(this.getStructureChildren(it.id)), []),
+      reduce(
+        items,
+        (acc, it) => acc.concat(this.getStructureChildren(it.id)),
+        [],
+      ),
     );
   }
 
   attachContainerSummary(activityId, containers) {
     const outlineActivity = this.findActivityById(activityId);
-    ContentContainer.attachContainerSummary(outlineActivity, containers);
+    ActivityContainers.attachContainerSummary(outlineActivity, containers);
   }
 
   mapRelationships(relationships, activity) {
