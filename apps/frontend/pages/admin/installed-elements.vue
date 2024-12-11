@@ -64,7 +64,6 @@ definePageMeta({
 });
 
 const DEFAULT_ICON = 'mdi-help-rhombus';
-const QUESTION_TYPES = ['ASSESSMENT', 'QUESTION'];
 
 const { $ceRegistry } = useNuxtApp() as any;
 const search = ref('');
@@ -72,9 +71,7 @@ const search = ref('');
 const registry = computed<Registry>(() => {
   return $ceRegistry.all.reduce(
     (registry: Registry, item: any) => {
-      const group = QUESTION_TYPES.includes(item.type)
-        ? 'questions'
-        : 'contentElements';
+      const group = item.isQuestion ? 'questions' : 'contentElements';
       registry[group].push(item);
       return registry;
     },

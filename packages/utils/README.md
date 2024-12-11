@@ -36,8 +36,5 @@ Util list:
 - getMetaName
 - getContainerName
 - getComponentName
-- processAnswerType
-- isQuestion
-- resolveElementType
 - getToolbarName
 - getElementId
