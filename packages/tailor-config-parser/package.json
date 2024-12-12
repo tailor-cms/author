@@ -35,8 +35,8 @@
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:^",
-    "del-cli": "^5.1.0",
-    "tsup": "^7.2.0",
+    "del-cli": "^6.0.0",
+    "tsup": "^8.3.5",
     "typescript": "^5.7.2"
   },
   "tsup": {
