@@ -21,10 +21,10 @@ export class ActivityContainers {
   env = null;
   activity = null;
 
-  constructor(env, parentOutlineActivity) {
+  constructor(env, containersParentActivity) {
     this.env = env;
     // Activity which has the containers as children
-    this.activity = parentOutlineActivity;
+    this.activity = containersParentActivity;
   }
 
   async publish() {
