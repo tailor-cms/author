@@ -53,10 +53,10 @@ async function publishRepositoryDetails(repository) {
   return repository;
 }
 
-async function publishActivity(activity) {
+async function publishActivity(activity, env = PublishEnv.DEFAULT) {
   log(`[publishActivity] initiated, activity id: ${activity.id}`);
   const repository = await activity.getRepository();
-  const manifest = await RepositoryManifest.load(repository);
+  const manifest = await RepositoryManifest.load(repository, env);
   activity.publishedAt = new Date();
   const publishedData = await manifest.publishActivity(activity);
   await updateRepositoryCatalog(repository, publishedData.publishedAt, false);
@@ -66,13 +66,13 @@ async function publishActivity(activity) {
   return activity;
 }
 
-async function unpublishActivity(activity) {
+async function unpublishActivity(activity, env = PublishEnv.DEFAULT) {
   log(
     `[unpublishActivity] initiated, repository id: ${activity.repositoryId},
     activity id: ${activity.id}`,
   );
   const repository = await activity.getRepository();
-  const manifest = await RepositoryManifest.load(repository);
+  const manifest = await RepositoryManifest.load(repository, env);
   const publishedManifest = manifest.unpublishActivity(activity);
   await updateRepositoryCatalog(repository, publishedManifest.publishedAt);
   activity.publishedAt = new Date();

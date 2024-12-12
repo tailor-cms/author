@@ -23,12 +23,11 @@ export class ActivityContainers {
 
   constructor(env, containersParentActivity) {
     this.env = env;
-    // Activity which has the containers as children
     this.activity = containersParentActivity;
   }
 
   async publish() {
-    log(`[containers:publish] initiated, parent id: ${this.parent.id}`);
+    log(`[containers:publish] initiated, parent id: ${this.activity.id}`);
     const containers = await this.fetch();
     await Promise.map(containers, async (container) => {
       const { id, publishedAs = 'container' } = container;
