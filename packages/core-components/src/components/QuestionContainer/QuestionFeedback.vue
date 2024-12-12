@@ -7,7 +7,7 @@
         color="primary-darken-4"
         size="small"
         variant="text"
-        @click="toggleExpand"
+        @click="isExpanded = !isExpanded"
       >
         {{ buttonLabel }}
       </VBtn>
@@ -28,9 +28,9 @@
           <RichTextEditor
             v-if="props.isEditing"
             :model-value="feedback[index]"
-            label="Feedback"
             variant="outlined"
-            @update:model-value="emit('update', { [index]: $event })"
+            hide-details
+            @update:model-value="update($event, index)"
           />
           <div v-else>
             <!-- eslint-disable-next-line vue/no-v-html -->
@@ -47,7 +47,7 @@
 import { computed, ref, watch } from 'vue';
 import { isArray, some } from 'lodash';
 
-import { RichTextEditor } from '..';
+import RichTextEditor from '../RichTextEditor/index.vue';
 
 const props = defineProps<{
   answers: Array<string> | boolean | null;
@@ -64,8 +64,8 @@ const processedAnswers = computed(() =>
   isArray(props.answers) ? props.answers : ['True', 'False'],
 );
 
-const toggleExpand = () => {
-  isExpanded.value = !isExpanded.value;
+const update = (value: string, index: number) => {
+  emit('update', { ...props.feedback, [index]: value });
 };
 
 watch(

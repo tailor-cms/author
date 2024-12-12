@@ -13,16 +13,7 @@ export const getMetaName = (type: string) => `meta-${kebabCase(type)}`;
 
 export const getContainerName = (type: string) => `tcc-${kebabCase(type)}`;
 
-export const getComponentName = (type: string) =>
-  `tce-${kebabCase(resolveElementType(type))}`;
-
-export const processAnswerType = (type: string) => `answer-${kebabCase(type)}`;
-
-export const isQuestion = (type: string) =>
-  ['QUESTION', 'REFLECTION', 'ASSESSMENT'].includes(type);
-
-export const resolveElementType = (type: string) =>
-  isQuestion(type) ? 'QUESTION-CONTAINER' : type;
+export const getComponentName = (type: string) => `tce-${kebabCase(type)}`;
 
 export const getToolbarName = (type: string) =>
   `tce-${kebabCase(type)}-toolbar`;
