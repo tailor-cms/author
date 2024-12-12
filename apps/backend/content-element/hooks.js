@@ -1,6 +1,6 @@
 import forEach from 'lodash/forEach.js';
 import get from 'lodash/get.js';
-import hash from 'hash-obj';
+import hash from 'hash-object';
 import Promise from 'bluebird';
 import { schema } from '@tailor-cms/config';
 import PluginRegistry from '#shared/content-plugins/index.js';
