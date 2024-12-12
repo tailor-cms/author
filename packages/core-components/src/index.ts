@@ -14,8 +14,8 @@ export { default as RichTextEditor } from './components/RichTextEditor/index.vue
 export { default as AssetInput } from './components/AssetInput.vue';
 export { default as ElementPlaceholder } from './components/ElementPlaceholder.vue';
 export { default as PreviewOverlay } from './components/PreviewOverlay.vue';
-export { default as QuestionFeedback } from './components/QuestionFeedback.vue';
 export { default as RadarChart } from './components/RadarChart.vue';
+export { default as QuestionContainer } from './components/QuestionContainer/index.vue';
 export { default as EmbeddedContainer } from './components/EmbeddedContainer.vue';
 export { default as TailorDialog } from './components/TailorDialog.vue';
 export { useLoader } from './composables/useLoader';
