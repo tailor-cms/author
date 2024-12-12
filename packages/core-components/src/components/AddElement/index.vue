@@ -1,11 +1,10 @@
 <template>
   <div class="add-element-container">
-    <slot>
+    <slot :add-element="showElementPicker">
       <VBtn
         v-if="large"
         :color="color"
         :variant="variant"
-        class="mt-3 mb-4"
         @click.stop="showElementPicker"
       >
         <VIcon class="pr-3">{{ icon }}</VIcon>
@@ -55,7 +54,6 @@
             </VBtnToggle>
           </div>
           <VBtn
-            class="mt-8"
             color="primary-darken-3"
             prepend-icon="mdi-content-copy"
             variant="tonal"
@@ -93,6 +91,7 @@ const DEFAULT_CATEGORY = { name: 'Content Elements' };
 interface Props {
   items: ContentElement[];
   position: number;
+  elementConfig?: Record<string, any>;
   activity?: Activity | null;
   layout?: boolean;
   include?: string[] | null;
@@ -106,6 +105,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  elementConfig: () => ({}),
   activity: null,
   layout: true,
   include: null,
@@ -119,7 +119,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['add', 'hidden']);
 
-const registry = inject<any>('$ceRegistry').all as any[];
+const registry = inject<any>('$ceRegistry')?.all as any[];
 
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
@@ -183,6 +183,7 @@ const buildElement = (el: any) => {
     ? { activityId: props.activity.id } // If content element within activity
     : { id: uuid(), embedded: true }; // If embed, assign id
   Object.assign(element, contextData);
+  if (!props.elementConfig[el.type]?.isGradeable) delete element.data.correct;
   return element;
 };
 

@@ -1,8 +1,6 @@
 import {
   getToolbarName,
   getSidebarName,
-  isQuestion,
-  processAnswerType,
 } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import find from 'lodash/find';
@@ -16,10 +14,7 @@ import sortBy from 'lodash/sortBy';
  * If a templateId exists then use it. If not it tries to find which type to
  * use.
  */
-function getIdentifier({ templateId, type, subtype }) {
-  if (templateId) return templateId;
-  return isQuestion(type) ? processAnswerType(subtype) : type;
-}
+const getIdentifier = ({ templateId, type }) => templateId || type;
 
 export default class ComponentRegistry {
   constructor(
@@ -63,6 +58,10 @@ export default class ComponentRegistry {
 
   get all() {
     return sortBy(cloneDeep(this._registry), 'position');
+  }
+
+  get questions() {
+    return this.all.filter((it) => it.isQuestion);
   }
 
   get(type) {
