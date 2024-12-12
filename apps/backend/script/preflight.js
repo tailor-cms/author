@@ -2,7 +2,7 @@ import path from 'node:path';
 import boxen from 'boxen';
 import dotenv from 'dotenv';
 import { packageDirectory } from 'pkg-dir';
-import { readPackageUpSync } from 'read-pkg-up';
+import { readPackageUpSync } from 'read-package-up';
 import semver from 'semver';
 
 const { packageJson: pkg } = readPackageUpSync();

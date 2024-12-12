@@ -1,5 +1,5 @@
 import { IncomingMessage } from 'http';
-import addDays from 'date-fns/addDays/index.js';
+import { addDays } from 'date-fns';
 import { Authenticator } from 'passport';
 import autobind from 'auto-bind';
 import Audience from './audience.js';

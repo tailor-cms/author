@@ -1,5 +1,5 @@
 import findIndex from 'lodash/findIndex.js';
-import hash from 'hash-obj';
+import hash from 'hash-object';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
