@@ -183,7 +183,7 @@ const buildElement = (el: any) => {
     ? { activityId: props.activity.id } // If content element within activity
     : { id: uuid(), embedded: true }; // If embed, assign id
   Object.assign(element, contextData);
-  if (!props.elementConfig[el.type]?.isGradeable) delete element.data.correct;
+  if (!props.elementConfig[el.type]?.isGradable) delete element.data.correct;
   return element;
 };
 

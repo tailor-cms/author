@@ -19,7 +19,7 @@
         :answers="elementData.answers"
         :feedback="elementData.feedback"
         :is-editing="!isDisabled"
-        :is-gradeable="isGradeable"
+        :is-gradable="elementData.isGradable"
         @update="emit('update', { feedback: $event })"
       />
       <div v-if="!isDisabled" class="d-flex justify-end">
@@ -57,12 +57,10 @@ interface Props {
   elementData: Record<string, any>;
   isDisabled: boolean;
   isDirty: boolean;
-  isGradeable?: boolean;
   showFeedback?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
-  isGradeable: false,
   showFeedback: true,
 });
 const emit = defineEmits(['cancel', 'delete', 'save', 'update']);

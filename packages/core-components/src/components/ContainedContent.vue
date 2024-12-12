@@ -75,7 +75,7 @@ const bindings = computed(() => {
   } = props;
   return {
     element,
-    isGradeable: config?.isGradeable,
+    isGradable: config?.isGradable,
     allowedEmbedTypes: config?.allowedEmbedTypes,
     references,
     isDisabled,
