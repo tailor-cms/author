@@ -25,7 +25,7 @@
   "dependencies": {
     "@mdi/font": "7.4.47",
     "@paralleldrive/cuid2": "^2.2.2",
-    "@pinia/nuxt": "^0.5.1",
+    "@pinia/nuxt": "^0.9.0",
     "@statsig/js-client": "^3.8.1",
     "@statsig/web-analytics": "^3.8.1",
     "@tailor-cms/common": "workspace:*",
