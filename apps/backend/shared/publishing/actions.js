@@ -1,6 +1,6 @@
 import omit from 'lodash/omit.js';
 import { log } from './utils.js';
-import { ContentContainer } from './ContentContainer.js';
+import { ActivityContainers } from './ActivityContainers.js';
 import { RepositoryManifest } from './RepositoryManifest.js';
 import storage from '#storage';
 
@@ -81,7 +81,7 @@ async function unpublishActivity(activity) {
 }
 
 async function fetchActivityContent(activity, signed = false) {
-  let containers = await ContentContainer.fetch(activity, signed);
+  let containers = await ActivityContainers.fetch(activity, signed);
   return { containers };
 }
 

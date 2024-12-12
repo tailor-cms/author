@@ -6,7 +6,7 @@ import reduce from 'lodash/reduce.js';
 import { schema } from '@tailor-cms/config';
 import without from 'lodash/without.js';
 
-import { ActivityContainers } from './ContentContainer.js';
+import { ActivityContainers } from './ActivityContainers.js';
 import { PublishEnv, renameKey } from './utils.js';
 import storage from '#storage';
 
