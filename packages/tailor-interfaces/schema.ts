@@ -78,7 +78,7 @@ export interface ActivityConfig {
 
 export interface ElementCategory {
   name: string;
-  types: string[];
+  types: Array<ElementTypeConfig>;
 }
 
 export interface ElementTypeConfig {
@@ -92,8 +92,7 @@ export interface ContentContainer {
   templateId: string;
   label: string;
   multiple?: boolean;
-  types?: Array<ElementTypeConfig>;
-  categories?: ElementCategory[];
+  types?: ElementCategory[];
   displayHeading?: boolean;
   layout?: boolean;
   config?: Record<string, any>;

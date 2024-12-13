@@ -72,10 +72,7 @@ import { computed, inject, ref, watch } from 'vue';
 import { getPositions, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 import flatMap from 'lodash/flatMap';
-import intersection from 'lodash/intersection';
-import map from 'lodash/map';
 import pick from 'lodash/pick';
 import reject from 'lodash/reject';
 import type { VBtn } from 'vuetify/components';
@@ -86,16 +83,12 @@ import AddNewElement from './AddNewElement.vue';
 const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
 
-const DEFAULT_CATEGORY = { name: 'Content Elements' };
-
 interface Props {
   items: ContentElement[];
   position: number;
-  elementConfig?: Record<string, any>;
   activity?: Activity | null;
   layout?: boolean;
-  include?: string[] | null;
-  categories?: ElementCategory[] | null;
+  include?: any[] | null;
   show?: boolean;
   large?: boolean;
   label?: string;
@@ -105,11 +98,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  elementConfig: () => ({}),
   activity: null,
   layout: true,
   include: null,
-  categories: null,
   show: false,
   large: false,
   label: 'Add content',
@@ -119,7 +110,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['add', 'hidden']);
 
-const registry = inject<any>('$ceRegistry')?.all as any[];
+const ceRegistry = inject<any>('$ceRegistry');
 
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
@@ -128,22 +119,14 @@ const showElementBrowser = ref(false);
 // Determine if the element picker should show all elements or a subset
 const isSubset = computed(() => !!props.include && !!props.include.length);
 
-const contentElements = computed(() => {
-  if (!isSubset.value) return registry;
-  return map(props.include, (it) => registry.find((item) => item.type === it));
-});
-
 const library = computed(() => {
-  return Object.values(
-    contentElements.value.reduce((acc, element) => {
-      const { name } =
-        props.categories?.find((it) => it.types.includes(element.type)) ||
-        DEFAULT_CATEGORY;
-      if (acc[name]) acc[name].elements.push(element);
-      else acc[name] = { name, elements: [element] };
-      return acc;
-    }, {} as any),
-  );
+  if (!isSubset.value) return [{ name: 'Content Elements', types: ceRegistry.all }];
+  return props.include?.map((category) => {
+    const types = category.types.map(({ id, ...schemaConfig }) => {
+      return { ...ceRegistry.get(id), schemaConfig };
+    });
+    return { ...category, types };
+  });
 });
 
 const processedWidth = computed(() => {
@@ -151,16 +134,15 @@ const processedWidth = computed(() => {
 });
 
 const allowedTypes = computed(() => {
-  const elements = flatMap(library.value, 'elements');
+  const elements = flatMap(library.value, 'types');
   if (!props.layout) return props.include || [];
   const allowedElements =
     elementWidth.value === DEFAULT_ELEMENT_WIDTH
       ? elements
       : reject(elements, 'ui.forceFullWidth');
-  const allowedTypes = allowedElements.map((it) => it.type);
-  return props.include
-    ? intersection(props.include, allowedTypes)
-    : allowedTypes;
+  return allowedElements.map(({ type, schemaConfig }) =>
+    ({ type, schemaConfig }),
+  );
 });
 
 const addElements = (elements: any[]) => {
@@ -173,17 +155,21 @@ const addElements = (elements: any[]) => {
 };
 
 const buildElement = (el: any) => {
-  const { position, data = {}, initState = () => ({}) } = el;
+  const { position, data = {}, initState = () => ({}), schemaConfig } = el;
   const element = {
-    position,
     ...pick(el, ['type', 'refs']),
     data: { ...initState(), ...data, width: processedWidth.value },
+    position,
   };
+  if (!el.data && el.isQuestion) {
+    const isGradable = schemaConfig?.isGradable ?? el.isGradable ?? true;
+    element.data.isGradable = isGradable;
+    if (!isGradable) delete element.data.correct;
+  }
   const contextData = props.activity
     ? { activityId: props.activity.id } // If content element within activity
     : { id: uuid(), embedded: true }; // If embed, assign id
   Object.assign(element, contextData);
-  if (!props.elementConfig[el.type]?.isGradable) delete element.data.correct;
   return element;
 };
 
