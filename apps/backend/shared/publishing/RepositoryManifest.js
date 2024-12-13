@@ -170,11 +170,6 @@ export class RepositoryManifest {
     );
   }
 
-  attachContainerSummary(activityId, containers) {
-    const outlineActivity = this.findActivityById(activityId);
-    ActivityContainers.attachContainerSummary(outlineActivity, containers);
-  }
-
   mapRelationships(relationships, activity) {
     return relationships.reduce((acc, { type }) => {
       return Object.assign(acc, { [type]: activity?.refs?.[type] || [] });
