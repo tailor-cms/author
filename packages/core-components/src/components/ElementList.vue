@@ -31,7 +31,7 @@
     <template v-if="enableAdd && !isDisabled">
       <slot
         :activity="activity"
-        :include="types"
+        :include="supportedTypes"
         :layout="layout"
         :position="elements.length"
         name="list-add"
@@ -39,7 +39,7 @@
         <AddElement
           :activity="activity"
           v-bind="addElementOptions"
-          :include="types"
+          :include="supportedTypes"
           :items="elements"
           :layout="layout"
           :position="addElementOptions.position || elements.length"
@@ -65,7 +65,7 @@ import AddElement from './AddElement/index.vue';
 interface Props {
   elements?: ContentElement[];
   dragOptions?: any;
-  types?: ElementCategory[] | null;
+  supportedTypes?: ElementCategory[] | null;
   activity?: Activity | null;
   layout?: boolean;
   isDisabled?: boolean;
@@ -76,7 +76,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   elements: () => [],
   dragOptions: () => ({}),
-  types: null,
+  supportedTypes: null,
   activity: null,
   layout: false,
   isDisabled: false,

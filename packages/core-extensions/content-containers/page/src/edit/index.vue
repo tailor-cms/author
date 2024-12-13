@@ -63,7 +63,8 @@
       :enable-add="false"
       :is-disabled="disabled"
       :layout="layout"
-      :types="types"
+      :embed-types="embedTypes"
+      :supported-types="types"
       class="element-list"
       @add="onElementAdd"
       @update="reorder"
@@ -75,6 +76,7 @@
         />
         <ContainedContent
           v-bind="{
+            embedTypes,
             element,
             isDragged,
             isDisabled: disabled,
@@ -132,12 +134,14 @@ interface Props {
   container: Activity;
   elements: Record<string, ContentElement>;
   position: number;
+  embedTypes?: ElementCategory[] | null;
   types?: ElementCategory[] | null;
   layout?: boolean;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  embedTypes: null,
   types: null,
   layout: true,
   disabled: false,

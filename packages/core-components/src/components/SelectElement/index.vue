@@ -100,7 +100,7 @@ const TOGGLE_BUTTON = {
 
 interface Props {
   element?: ContentElement | null;
-  allowedTypes: string[];
+  allowedTypes: Array<{ type: string; schemaConfig: any }>;
   heading: string;
   multiple?: boolean;
   selected?: Relationship[];

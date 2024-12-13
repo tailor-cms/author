@@ -64,17 +64,19 @@ const PageConfig: ActivityConfig = {
   ],
 };
 
-const allowedEmbedTypes = [
-  ContentElementType.HtmlDefault,
-  ContentElementType.Image,
-  ContentElementType.Video,
-];
-
 const SectionConfig: ContentContainer = {
   type: ActivityType.Section,
   templateId: ContentContainerType.Default,
   label: 'Section',
   multiple: true,
+  embedTypes: [{
+    name: 'Content Elements',
+    types: [
+      { id: ContentElementType.HtmlDefault },
+      { id: ContentElementType.Image },
+      { id: ContentElementType.Video },
+    ],
+  }],
   types: [
     {
       name: 'Content Elements',
@@ -86,7 +88,7 @@ const SectionConfig: ContentContainer = {
         { id: ContentElementType.Audio },
         { id: ContentElementType.PageBreak },
         { id: ContentElementType.Pdf },
-        { id: ContentElementType.Accordion, allowedEmbedTypes },
+        { id: ContentElementType.Accordion },
         // TODO: Need to be migrated
         // ContentElementType.Table,
         // ContentElementType.Modal,
@@ -96,24 +98,24 @@ const SectionConfig: ContentContainer = {
     {
       name: 'Assessments',
       types: [
-        { id: ContentElementType.MultipleChoice, isGradable: true, allowedEmbedTypes },
-        { id: ContentElementType.SingleChoice, isGradable: true, allowedEmbedTypes },
-        { id: ContentElementType.TextResponse, isGradable: true, allowedEmbedTypes },
-        { id: ContentElementType.NumericalResponse, isGradable: true, allowedEmbedTypes },
-        { id: ContentElementType.TrueFalse, isGradable: true, allowedEmbedTypes },
-        { id: ContentElementType.MatchingQuestion, isGradable: true, allowedEmbedTypes },
-        { id: ContentElementType.FillBlank, isGradable: true, allowedEmbedTypes },
-        { id: ContentElementType.DragDrop, isGradable: true, allowedEmbedTypes },
+        { id: ContentElementType.MultipleChoice, isGradable: true },
+        { id: ContentElementType.SingleChoice, isGradable: true },
+        { id: ContentElementType.TextResponse, isGradable: true },
+        { id: ContentElementType.NumericalResponse, isGradable: true },
+        { id: ContentElementType.TrueFalse, isGradable: true },
+        { id: ContentElementType.MatchingQuestion, isGradable: true },
+        { id: ContentElementType.FillBlank, isGradable: true },
+        { id: ContentElementType.DragDrop, isGradable: true },
       ],
     },
     {
       name: 'Nongraded questions',
       types: [
-        { id: ContentElementType.MultipleChoice, isGradable: false, allowedEmbedTypes },
-        { id: ContentElementType.SingleChoice, isGradable: false, allowedEmbedTypes },
-        { id: ContentElementType.TextResponse, isGradable: false, allowedEmbedTypes },
-        { id: ContentElementType.TrueFalse, isGradable: false, allowedEmbedTypes },
-        { id: ContentElementType.FillBlank, isGradable: false, allowedEmbedTypes },
+        { id: ContentElementType.MultipleChoice, isGradable: false },
+        { id: ContentElementType.SingleChoice, isGradable: false },
+        { id: ContentElementType.TextResponse, isGradable: false },
+        { id: ContentElementType.TrueFalse, isGradable: false },
+        { id: ContentElementType.FillBlank, isGradable: false },
       ],
     },
   ],

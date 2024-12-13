@@ -4,7 +4,7 @@
       <div class="d-flex align-end pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
-      <div v-for="group in library as any" :key="group.name" class="mb-2">
+      <div v-for="group in library" :key="group.name" class="mb-2">
         <div class="group-heading text-primary-darken-3">{{ group.name }}</div>
         <div class="group-elements ga-5">
           <VBtn
@@ -35,7 +35,7 @@
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import some from 'lodash/some';
 
-const props = defineProps<{ library: any; allowedTypes: string[] }>();
+const props = defineProps<{ library: any; allowedTypes: any[] }>();
 
 const emit = defineEmits(['add']);
 

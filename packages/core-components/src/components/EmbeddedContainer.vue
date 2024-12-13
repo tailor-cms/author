@@ -27,6 +27,7 @@ import { calculatePosition } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
 import { computed, inject } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 import mapKeys from 'lodash/mapKeys';
 import sortBy from 'lodash/sortBy';
 
@@ -35,7 +36,7 @@ import ContainedContent from './ContainedContent.vue';
 import ElementList from './ElementList.vue';
 
 interface Props {
-  types: string[];
+  types: ElementCategory[];
   container: { embeds: Record<string, ContentElement> };
   isDisabled?: boolean;
   enableAdd?: boolean;

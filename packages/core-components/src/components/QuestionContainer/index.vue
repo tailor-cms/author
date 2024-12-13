@@ -1,11 +1,11 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard class="question-container my-2" elevation="0">
+  <div class="question-container my-2">
     <VForm ref="form" class="content text-left" validate-on="submit">
       <QuestionPrompt
         :element-data="elementData"
         :is-disabled="isDisabled"
-        :allowed-types="allowedEmbedTypes"
+        :allowed-types="embedTypes"
         @update="emit('update', $event)"
       />
       <slot></slot>
@@ -42,7 +42,7 @@
         </VBtn>
       </div>
     </VForm>
-  </VCard>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -53,7 +53,7 @@ import QuestionHint from './QuestionHint.vue';
 import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
-  allowedEmbedTypes: string[];
+  embedTypes: string[];
   elementData: Record<string, any>;
   isDisabled: boolean;
   isDirty: boolean;

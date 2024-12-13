@@ -15,6 +15,7 @@
       v-for="(container, index) in containerGroup"
       :key="container?.uid"
       v-bind="$attrs"
+      :embed-types="embedTypes"
       :types="types"
       :activities="processedActivities"
       :config="config"
@@ -72,6 +73,7 @@ import { useEditorStore } from '@/stores/editor';
 interface Props {
   type: string;
   label: string;
+  embedTypes: ElementTypeConfig[];
   types: ElementTypeConfig[];
   parentId: number;
   processedActivities: Activity[];

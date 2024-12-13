@@ -72,6 +72,7 @@ import { computed, inject, ref, watch } from 'vue';
 import { getPositions, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 import flatMap from 'lodash/flatMap';
 import pick from 'lodash/pick';
 import reject from 'lodash/reject';
@@ -88,7 +89,7 @@ interface Props {
   position: number;
   activity?: Activity | null;
   layout?: boolean;
-  include?: any[] | null;
+  include?: ElementCategory[] | null;
   show?: boolean;
   large?: boolean;
   label?: string;
@@ -135,7 +136,6 @@ const processedWidth = computed(() => {
 
 const allowedTypes = computed(() => {
   const elements = flatMap(library.value, 'types');
-  if (!props.layout) return props.include || [];
   const allowedElements =
     elementWidth.value === DEFAULT_ELEMENT_WIDTH
       ? elements
