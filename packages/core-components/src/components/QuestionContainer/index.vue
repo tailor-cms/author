@@ -1,7 +1,11 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <div class="question-container my-2">
-    <VForm ref="form" class="content text-left" validate-on="submit">
+  <VCard class="question-container my-2" color="grey-lighten-5">
+    <VToolbar class="px-4" color="primary-darken-3" height="36">
+      <VIcon :icon="icon" color="secondary-lighten-2" size="18" start />
+      <span class="text-subtitle-2">{{ type }}</span>
+    </VToolbar>
+    <VForm ref="form" class="content text-left pa-6" validate-on="submit">
       <QuestionPrompt
         :element-data="elementData"
         :is-disabled="isDisabled"
@@ -22,27 +26,28 @@
         :is-gradable="elementData.isGradable"
         @update="emit('update', { feedback: $event })"
       />
-      <div v-if="!isDisabled" class="d-flex justify-end">
-        <VBtn
-          :disabled="!isDirty"
-          color="primary-darken-4"
-          variant="text"
-          @click="emit('cancel')"
-        >
-          Cancel
-        </VBtn>
-        <VBtn
-          :disabled="!isDirty"
-          class="ml-2"
-          color="primary-darken-3"
-          variant="tonal"
-          @click="save"
-        >
-          Save
-        </VBtn>
-      </div>
+      <VFadeTransition>
+        <div v-if="!isDisabled && isDirty" class="d-flex justify-end">
+          <VBtn
+            color="primary-darken-4"
+            variant="text"
+            @click="emit('cancel')"
+          >
+            Cancel
+          </VBtn>
+          <VBtn
+            class="ml-2"
+            color="success"
+            prepend-icon="mdi-check"
+            variant="tonal"
+            @click="save"
+          >
+            Save
+          </VBtn>
+        </div>
+      </VFadeTransition>
     </VForm>
-  </div>
+  </VCard>
 </template>
 
 <script lang="ts" setup>
@@ -53,6 +58,8 @@ import QuestionHint from './QuestionHint.vue';
 import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
+  type: string;
+  icon: string;
   embedTypes: string[];
   elementData: Record<string, any>;
   isDisabled: boolean;

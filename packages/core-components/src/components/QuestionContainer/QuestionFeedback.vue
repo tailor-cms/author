@@ -12,18 +12,16 @@
         {{ buttonLabel }}
       </VBtn>
     </div>
-    <VFadeTransition>
-      <div v-if="isExpanded">
+    <VExpandTransition>
+      <div v-show="isExpanded">
         <div
           v-for="(answer, index) in processedAnswers"
           :key="index"
-          class="mb-4"
+          class="text-subtitle-2 mb-6"
         >
           <div class="mb-4">
-            <span class="text-subtitle-2">
-              {{ answerType }} {{ index + 1 }}:
-              {{ answer || 'Answer not added.' }}
-            </span>
+            {{ answerType }} {{ index + 1 }}:
+            {{ answer || 'Answer not added.' }}
           </div>
           <RichTextEditor
             v-if="props.isEditing"
@@ -32,14 +30,14 @@
             hide-details
             @update:model-value="update($event, index)"
           />
-          <div v-else>
+          <template v-else>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-if="feedback[index]" v-html="feedback[index]"></div>
             <span v-else class="font-italic">Feedback not added.</span>
-          </div>
+          </template>
         </div>
       </div>
-    </VFadeTransition>
+    </VExpandTransition>
   </div>
 </template>
 
