@@ -557,11 +557,11 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-accordion-edit':
-        specifier: ^0.0.10
-        version: 0.0.10(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
+        specifier: ^0.0.11
+        version: 0.0.11(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
       '@tailor-cms/ce-accordion-server':
-        specifier: ^0.0.10
-        version: 0.0.10
+        specifier: ^0.0.11
+        version: 0.0.11
       '@tailor-cms/ce-audio-edit':
         specifier: ^0.0.4
         version: 0.0.4(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
@@ -3527,13 +3527,13 @@ packages:
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
     engines: {node: '>=10'}
 
-  '@tailor-cms/ce-accordion-edit@0.0.10':
-    resolution: {integrity: sha512-5LSC7dgQ6RNxZLVNw5mxjPOiLgpE/zOQC8qvdbq+bxYSgGr6lNVvfvtktufrzYQtIqqQKC48phQlJZXistGq0w==}
+  '@tailor-cms/ce-accordion-edit@0.0.11':
+    resolution: {integrity: sha512-pfZZ2hfl8fsaav1cuMkbUutSupV7s/61z7Bg3oMhKW3KfjdHVYsk/b4soeaHIicw08hZGPEdCL1akADLzSlgQQ==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-accordion-server@0.0.10':
-    resolution: {integrity: sha512-oaZWfMrCuPIiV77XxaMXwOQ9SQUD6T8xYvERHjKMbrhcfwGSF51LPTIFCInvavQMf6GF6xmz3OCunekLSf/0Aw==}
+  '@tailor-cms/ce-accordion-server@0.0.11':
+    resolution: {integrity: sha512-j0vMxKA5zyPlaD5l9/salmJSy/anjib0SE4Oh8TO41XN3kN7x8GstbMOjJdvOZ73Q6I5ih+IHyKSIneaJ5CKMg==}
 
   '@tailor-cms/ce-audio-edit@0.0.4':
     resolution: {integrity: sha512-VvCHbMWUAX/MVcBH0e/x3FxlV7EYcud8DO4a7G+ulxptZ5VdTEBWUcq5wTZFhPigfGz4k96GbayrS0l9HgFJIw==}
@@ -14152,7 +14152,7 @@ snapshots:
     dependencies:
       defer-to-connect: 2.0.1
 
-  '@tailor-cms/ce-accordion-edit@0.0.10(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)':
+  '@tailor-cms/ce-accordion-edit@0.0.11(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)':
     dependencies:
       '@paralleldrive/cuid2': 2.2.2
       '@tailor-cms/core-components': 1.0.24(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(lodash@4.17.21)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
@@ -14176,7 +14176,7 @@ snapshots:
       - vuetify
       - yup
 
-  '@tailor-cms/ce-accordion-server@0.0.10': {}
+  '@tailor-cms/ce-accordion-server@0.0.11': {}
 
   '@tailor-cms/ce-audio-edit@0.0.4(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)':
     dependencies:
