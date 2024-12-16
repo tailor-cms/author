@@ -67,7 +67,6 @@ const schema = yup.object().shape({
           yup.object().shape({
             id: yup.string().min(2).max(50),
             isGradable: yup.boolean(),
-            allowedEmbedTypes: yup.array().of(yup.string().min(2).max(50)),
           }),
         ),
       multiple: yup.boolean(),
