@@ -78,12 +78,10 @@ export interface ActivityConfig {
 
 export interface ElementCategory {
   name: string;
-  types: Array<ElementTypeConfig>;
-}
-
-export interface ElementTypeConfig {
-  id: string;
-  isGradable?: boolean;
+  types: Array<{
+    id: string;
+    isGradable?: boolean;
+  }>;
 }
 
 export interface ContentContainer {

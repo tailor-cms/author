@@ -53,21 +53,26 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
+import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 import QuestionFeedback from './QuestionFeedback.vue';
 import QuestionHint from './QuestionHint.vue';
 import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
-  type: string;
-  icon: string;
-  embedTypes: string[];
   elementData: Record<string, any>;
-  isDisabled: boolean;
-  isDirty: boolean;
+  embedTypes: ElementCategory[];
+  isDisabled?: boolean;
+  isDirty?: boolean;
+  type?: string;
+  icon?: string;
   showFeedback?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
+  type: 'Question element',
+  icon: 'mdi-help-cirlce-outline',
+  isDisabled: false,
+  isDirty: false,
   showFeedback: true,
 });
 const emit = defineEmits(['cancel', 'delete', 'save', 'update']);
