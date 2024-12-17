@@ -60,23 +60,9 @@ import sumBy from 'lodash/sumBy';
 import startCase from 'lodash/startCase';
 import { RadarChart } from '@tailor-cms/core-components';
 
-const editorStore = useEditorStore();
-const contentElementStore = useContentElementStore();
 const repositoryStore = useCurrentRepository();
 
-const { $ceRegistry, $schemaService } = useNuxtApp() as any;
-
-const guidelines = computed(() => {
-  if (!repositoryStore.selectedActivity) return [];
-  const { type } = repositoryStore.selectedActivity;
-  return $schemaService.getLevel(type)?.guidelines(
-    repositoryStore.repository,
-    editorStore.contentContainers,
-    contentElementStore.items,
-    $ceRegistry,
-  ) || [];
-});
-
+const guidelines = computed(() => repositoryStore.selectedActivityGuidelines);
 const progress = computed(() => {
   const completed = guidelines.value.reduce((acc, it) => {
     acc[it.id] = it.isDone();

@@ -4,6 +4,8 @@ import {
 } from '@tailor-cms/config';
 
 import { useActivityStore } from './activity';
+import { useContentElementStore } from './content-elements';
+import { useEditorStore } from './editor';
 import { useRepositoryStore } from './repository';
 import { repository as repositoryApi } from '@/api';
 
@@ -38,6 +40,9 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
+  const ContentElement = useContentElementStore();
+  const Editor = useEditorStore();
+  const { $ceRegistry } = useNuxtApp();
 
   const $users = reactive(new Map<string, any>());
   const users = computed(() => Array.from($users.values()));
@@ -82,10 +87,17 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return outlineActivities.value.find((it) => it.id === id);
   });
 
-  const hasGuidelines = computed(() => {
-    if (!selectedActivity.value) return false;
+  const selectedActivityGuidelines = computed<
+    ReturnType<typeof getLevel>['guidelines'] | undefined
+  >(() => {
+    if (!selectedActivity.value) return;
     const { type } = selectedActivity.value;
-    return getLevel(type)?.guidelines;
+    return getLevel(type).guidelines?.(
+      repository.value,
+      Editor.contentContainers,
+      ContentElement.items,
+      $ceRegistry,
+    );
   });
 
   function selectActivity(activityId: number) {
@@ -192,7 +204,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     rootActivities,
     selectActivity,
     selectedActivity,
-    hasGuidelines,
+    selectedActivityGuidelines,
     workflow,
     workflowActivities,
     isOutlineExpanded,

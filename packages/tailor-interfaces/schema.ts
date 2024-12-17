@@ -60,7 +60,7 @@ export interface AIConfig {
   };
 }
 
-interface Guideline {
+export interface Guideline {
   id: string;
   icon: string;
   title: string;
@@ -77,7 +77,7 @@ export interface ActivityConfig {
     repository: Repository,
     contentContainers: ContentContainer[],
     contentElements: ContentElement[],
-    ceRegistry
+    ceRegistry: any,
   ) => Guideline[];
   rootLevel?: boolean;
   subLevels?: string[];

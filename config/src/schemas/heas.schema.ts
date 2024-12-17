@@ -82,8 +82,8 @@ const guidelines = (
       icon: 'mdi-text-box',
       title: 'Add a Key Takeaway',
       description: `
-        Improve on Real-World Outcomes by offering a summary, guide,
-        or other resource that learners can keep for future reference.`,
+      Improve on Real-World Outcomes by offering a summary, guide,
+      or other resource that learners can keep for future reference.`,
       metric: {
         learnerCenteredContent: 0,
         activeLearning: 0,

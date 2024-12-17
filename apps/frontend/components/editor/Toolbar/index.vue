@@ -3,7 +3,7 @@
     <div
       :style="{
         left: lgAndUp ? '480px' : '380px',
-        ...repositoryStore.hasGuidelines && { right: '380px' },
+        ...!!repositoryStore.selectedActivityGuidelines && { right: '380px' },
       }"
     >
       <div
