@@ -1,5 +1,13 @@
 # Changelog
 
+## v7.2
+
+#### Changes
+- Added support for activity guidelines. Guidelines are defined through the 
+  schema, they are functions which accepts repository, containers, elements and
+  content element registry and return array of guidelines used to guide the
+  author through the course creation.
+
 ## v7.1
 
 #### Changes

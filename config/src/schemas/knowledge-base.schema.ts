@@ -1,6 +1,6 @@
 import type {
   ActivityConfig,
-  ContentContainer,
+  ContentContainerConfig,
   Schema,
 } from '@tailor-cms/interfaces/schema';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
@@ -37,7 +37,7 @@ const ENTRY: ActivityConfig = {
   },
 };
 
-const SECTION: ContentContainer = {
+const SECTION: ContentContainerConfig = {
   type: ActivityType.Section,
   templateId: ContentContainerType.Default,
   label: 'Section',

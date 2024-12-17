@@ -75,10 +75,10 @@ import { useEditorStore } from '@/stores/editor';
 interface Props {
   type: string;
   label: string;
-  types: ElementTypeConfig[];
   parentId: number;
   processedActivities: Activity[];
   processedElements: Record<string, ContentElement>;
+  types?: ElementTypeConfig[];
   config?: Record<string, any>;
   templateId?: string;
   containerGroup?: Activity[];

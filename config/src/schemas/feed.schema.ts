@@ -1,6 +1,6 @@
 import type {
   ActivityConfig,
-  ContentContainer,
+  ContentContainerConfig,
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
@@ -177,7 +177,7 @@ const ARTICLE: ActivityConfig = {
   },
 };
 
-const SECTION: ContentContainer = {
+const SECTION: ContentContainerConfig = {
   type: ActivityType.Section,
   templateId: ContentContainerType.Default,
   label: 'Section',

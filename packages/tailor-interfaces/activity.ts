@@ -24,6 +24,7 @@ export interface Status {
 
 interface Data {
   name: string;
+  [key: string]: any;
 }
 
 export interface Activity {
