@@ -48,6 +48,8 @@ jobs:
           echo "STORAGE_REGION=us-east-1" >> .env
           echo "STORAGE_ENDPOINT=http://localhost:4566" >> .env
           echo "STORAGE_BUCKET=test" >> .env
+          echo "STORAGE_KEY"=test >> .env
+          echo "STORAGE_SECRET"=test >> .env
       - name: Setup E2E .env
         run: |
           touch ./tests/.env
