@@ -1,6 +1,6 @@
 # TODO: Make all env variables configurable
 services:
-  postgres:
+  tailor-postgres:
     container_name: "postgres"
     image: "postgres:15.1"
     environment:
@@ -37,3 +37,12 @@ services:
       DATABASE_USER: "dev"
       DATABASE_PASSWORD: "dev"
     restart: "no"
+
+  tailor-localstack:
+    container_name: tailor-localstack
+    image: localstack/localstack
+    ports:
+      - '127.0.0.1:4566:4566'
+    environment:
+      - SERVICES=s3:4566
+      - DEFAULT_REGION=us-east-1
