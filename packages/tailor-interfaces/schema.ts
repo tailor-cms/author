@@ -78,13 +78,10 @@ export interface ActivityConfig {
 
 export interface ElementCategory {
   name: string;
-  types: string[];
-}
-
-export interface ElementTypeConfig {
-  id: string;
-  allowedEmbedTypes?: string[];
-  isGradeable?: boolean;
+  types: Array<{
+    id: string;
+    isGradable?: boolean;
+  }>;
 }
 
 export interface ContentContainer {
@@ -92,8 +89,8 @@ export interface ContentContainer {
   templateId: string;
   label: string;
   multiple?: boolean;
-  types?: Array<ElementTypeConfig>;
-  categories?: ElementCategory[];
+  embedTypes?: ElementCategory[];
+  types?: ElementCategory[];
   displayHeading?: boolean;
   layout?: boolean;
   config?: Record<string, any>;

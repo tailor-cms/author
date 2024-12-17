@@ -42,8 +42,13 @@ const SECTION: ContentContainer = {
   templateId: ContentContainerType.Default,
   label: 'Section',
   types: [
-    { id: ContentElementType.HtmlDefault },
-    { id: ContentElementType.Image },
+    {
+      name: 'Content Elements',
+      types: [
+        { id: ContentElementType.HtmlDefault },
+        { id: ContentElementType.Image },
+      ],
+    },
   ],
   ai: {
     definition: 'Page content is organized into sections.',

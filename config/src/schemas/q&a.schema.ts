@@ -48,8 +48,13 @@ const RESPONSE: ContentContainer = {
   templateId: ContentContainerType.Default,
   label: 'Response',
   types: [
-    { id: ContentElementType.HtmlDefault },
-    { id: ContentElementType.Image },
+    {
+      name: 'Content Elements',
+      types: [
+        { id: ContentElementType.HtmlDefault },
+        { id: ContentElementType.Image },
+      ],
+    },
   ],
   ai: {
     definition: `

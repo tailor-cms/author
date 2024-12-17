@@ -60,10 +60,10 @@
         variant: 'elevated',
       }"
       :elements="containerElements"
-      :element-config="elementConfig"
       :enable-add="false"
       :is-disabled="disabled"
       :layout="layout"
+      :embed-types="embedTypes"
       :supported-types="types"
       class="element-list"
       @add="onElementAdd"
@@ -76,7 +76,7 @@
         />
         <ContainedContent
           v-bind="{
-            config: elementConfig[element.type],
+            embedTypes,
             element,
             isDragged,
             isDisabled: disabled,
@@ -93,8 +93,6 @@
     <AddElement
       v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
-      :element-config="elementConfig"
-      :categories="categories"
       :include="types"
       :items="containerElements"
       :large="true"
@@ -136,19 +134,17 @@ interface Props {
   container: Activity;
   elements: Record<string, ContentElement>;
   position: number;
-  elementConfig?: Record<string, any>;
-  types?: string[] | null;
-  categories?: ElementCategory[] | null;
+  embedTypes?: ElementCategory[] | null;
+  types?: ElementCategory[] | null;
   layout?: boolean;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  elementConfig: () => ({}),
+  embedTypes: null,
   types: null,
   layout: true,
   disabled: false,
-  categories: null,
 });
 
 const emit = defineEmits([
