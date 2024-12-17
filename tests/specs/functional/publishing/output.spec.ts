@@ -10,12 +10,18 @@ test.beforeEach(async () => {
 });
 
 test('should be able to publish repository', async ({ page }) => {
-  const repository = await toSeededRepositorySettings(page);
+  const { repository, activity } = await toSeededRepositorySettings(page);
   const settingsPage = new GeneralSettings(page);
   await settingsPage.sidebar.publish();
   const publishedRepository = await StorageClient.source().get(repository.id);
   expect(publishedRepository.id).toBe(repository.id);
   expect(publishedRepository.name).toBe(repository.name);
+  await publishedRepository.load();
+  const publishedActivity = publishedRepository.activitiesWithContainers.find(
+    (it) => it.id === activity.id,
+  );
+  expect(publishedActivity).toBeDefined();
+  expect(publishedActivity?.contentContainers.length).not.toBe(0);
 });
 
 test.afterAll(async () => {
