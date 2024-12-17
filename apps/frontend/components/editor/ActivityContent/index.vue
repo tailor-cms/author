@@ -48,6 +48,7 @@ import find from 'lodash/find';
 import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
 import isEqual from 'lodash/isEqual';
+import isString from 'lodash/isString';
 import map from 'lodash/map';
 import max from 'lodash/max';
 import pMinDelay from 'p-min-delay';
@@ -184,7 +185,17 @@ const collaboratorSelections = computed(() => {
 });
 
 const getContainerConfig = (type: string) => {
-  return find(containerConfigs.value, { type });
+  const config = find(containerConfigs.value, { type });
+  if (!config.types) return config;
+  const isLegacyFormat = config.types.some((it: any) => isString(it));
+  if (!isLegacyFormat) return config;
+  return {
+    ...config,
+    types: {
+      name: 'Content Elements',
+      types: config.types.map((id: string) => ({ id })),
+    },
+  };
 };
 
 const onClick = (e: any) => {

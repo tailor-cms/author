@@ -89,7 +89,7 @@ export interface ContentContainer {
   templateId: string;
   label: string;
   multiple?: boolean;
-  embedTypes: ElementCategory[];
+  embedTypes?: ElementCategory[];
   types?: ElementCategory[];
   displayHeading?: boolean;
   layout?: boolean;
