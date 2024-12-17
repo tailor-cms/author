@@ -11,11 +11,21 @@ services:
       - "5432"
     restart: "no"
 
+  tailor-localstack:
+    container_name: tailor-localstack
+    image: localstack/localstack
+    ports:
+      - '127.0.0.1:4566:4566'
+    environment:
+      - SERVICES=s3:4566
+      - DEFAULT_REGION=us-east-1
+
   tailor-backend:
     image: "tailor-backend"
     container_name: "tailor-backend"
     depends_on:
-      - "postgres"
+      - "tailor-postgres"
+      - "tailor-localstack"
     build:
       dockerfile: "./Dockerfile"
       context: "."
@@ -37,12 +47,3 @@ services:
       DATABASE_USER: "dev"
       DATABASE_PASSWORD: "dev"
     restart: "no"
-
-  tailor-localstack:
-    container_name: tailor-localstack
-    image: localstack/localstack
-    ports:
-      - '127.0.0.1:4566:4566'
-    environment:
-      - SERVICES=s3:4566
-      - DEFAULT_REGION=us-east-1
