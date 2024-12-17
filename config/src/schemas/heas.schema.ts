@@ -30,13 +30,7 @@ const guidelines = (
       description: `Improve on Learner-Centered Content by defining what learners
       will gain by engaging with this content. This helps them start out with a
       clear goal and focus.`,
-      metric: {
-        learnerCenteredContent: 2,
-        activeLearning: 0,
-        unboundedInclusion: 0,
-        communityConnections: 0,
-        realWorldOutcomes: 0,
-      },
+      metric: { learnerCenteredContent: 2 },
       isDone: () => {
         return sections?.every((it) => it.data.learningObjectives?.length > 0);
       },
@@ -48,13 +42,7 @@ const guidelines = (
       description: `Improve on Learner-Centered Content by linking to additional
       materials, such as articles, videos, or tools that further learners'
       understanding or provide alternative perspectives on the topic.`,
-      metric: {
-        learnerCenteredContent: 1,
-        activeLearning: 0,
-        unboundedInclusion: 0,
-        communityConnections: 0,
-        realWorldOutcomes: 0,
-      },
+      metric: { learnerCenteredContent: 1 },
       isDone: () => {
         return sections?.every((it) => it.data.relatedResources?.trim()?.length > 0);
       },
@@ -66,13 +54,7 @@ const guidelines = (
       description: `Improve on Active Learning by incorporating a question or
       reflection prompt to help learners apply and test their understanding of
       the material.`,
-      metric: {
-        learnerCenteredContent: 0,
-        activeLearning: 2,
-        unboundedInclusion: 0,
-        communityConnections: 0,
-        realWorldOutcomes: 0,
-      },
+      metric: { activeLearning: 2 },
       isDone: () => {
         return contentElements?.some((it) => questions?.includes(it.type));
       },
@@ -84,13 +66,7 @@ const guidelines = (
       description: `
       Improve on Real-World Outcomes by offering a summary, guide,
       or other resource that learners can keep for future reference.`,
-      metric: {
-        learnerCenteredContent: 0,
-        activeLearning: 0,
-        unboundedInclusion: 0,
-        communityConnections: 0,
-        realWorldOutcomes: 2,
-      },
+      metric: { realWorldOutcomes: 2 },
       isDone: () => {
         return sections?.every((it) => it.data.keyTakeaways?.trim()?.length > 0);
       },
