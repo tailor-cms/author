@@ -1084,8 +1084,8 @@ importers:
         specifier: ^9.3.0
         version: 9.3.0
       '@tailor-cms/garment':
-        specifier: ^0.18.1-beta.1
-        version: 0.18.1-beta.1
+        specifier: ^0.18.1-beta.2
+        version: 0.18.1-beta.2
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -3703,8 +3703,8 @@ packages:
     bundledDependencies:
       - '@tailor-cms/interfaces'
 
-  '@tailor-cms/garment@0.18.1-beta.1':
-    resolution: {integrity: sha512-Zo/SlyOL6bRLrzADHZVmGRoolKULASxvwvuoUaLvZqT3WOBoF13L/3cPnbzVmda6fRDqrQ77O16mOk/Kb1BG/w==}
+  '@tailor-cms/garment@0.18.1-beta.2':
+    resolution: {integrity: sha512-yiktx6NSESJpvuT3rYbdss8PBaUUSRMFM6hiqSPTA6YrhCWrCshL0s1FehZO3TOSTpI61QWCoddkyjhXafp7Sg==}
 
   '@tiptap/core@2.6.6':
     resolution: {integrity: sha512-VO5qTsjt6rwworkuo0s5AqYMfDA0ZwiTiH6FHKFSu2G/6sS7HKcc/LjPq+5Legzps4QYdBDl3W28wGsGuS1GdQ==}
@@ -14637,16 +14637,16 @@ snapshots:
       - '@tiptap/core'
       - '@vue/composition-api'
 
-  '@tailor-cms/garment@0.18.1-beta.1':
+  '@tailor-cms/garment@0.18.1-beta.2':
     dependencies:
       aws-sdk: 2.1692.0
       bytes: 3.1.2
-      camelcase: 8.0.0
       class-transformer: 0.5.1
       mime-types: 2.1.35
       object-sizeof: 2.6.5
       reflect-metadata: 0.2.2
       set-value: 4.1.0
+      to-camel-case: 1.0.0
 
   '@tiptap/core@2.6.6(@tiptap/pm@2.6.6)':
     dependencies:
