@@ -57,7 +57,7 @@ test('should revoke user access to a repository', async ({ page }) => {
 });
 
 test('should be able to update user role', async ({ page }) => {
-  const repository = await toSeededRepository(page);
+  const { repository } = await toSeededRepository(page);
   await page.goto(RepositoryUsers.getRoute(repository.id));
   const repositoryUsers = new RepositoryUsers(page);
   await expect(repositoryUsers.el).toContainText('admin@gostudion.com');

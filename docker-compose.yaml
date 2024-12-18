@@ -1,6 +1,6 @@
 # TODO: Make all env variables configurable
 services:
-  postgres:
+  tailor-postgres:
     container_name: "postgres"
     image: "postgres:15.1"
     environment:
@@ -12,10 +12,9 @@ services:
     restart: "no"
 
   tailor-backend:
-    image: "tailor-backend"
     container_name: "tailor-backend"
     depends_on:
-      - "postgres"
+      - "tailor-postgres"
     build:
       dockerfile: "./Dockerfile"
       context: "."
