@@ -25,6 +25,13 @@ test('should be able to publish repository', async ({ page }) => {
   // Based on the seed data, the activity has 1 content container with 4 elements
   expect(publishedActivity?.contentContainers.length).toBe(1);
   expect(publishedActivity?.contentContainers[0].elements).toHaveLength(4);
+  await publishedActivity?.makePublic();
+  const imageElement = publishedActivity?.contentContainers[0].elements.find(
+    (it) => it.type === 'CE_IMAGE',
+  );
+  expect(imageElement).toBeDefined();
+  // Check if public URL is generated
+  expect(imageElement?.data?.url).toBeDefined();
 });
 
 test.afterAll(async () => {
