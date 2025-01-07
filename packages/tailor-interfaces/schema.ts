@@ -76,21 +76,25 @@ export interface ActivityConfig {
   exams?: any;
 }
 
-export interface ElementCategory {
-  name: string;
-  types: Array<{
-    id: string;
-    isGradable?: boolean;
-  }>;
+export interface ContentElementItem {
+  id: string;
+  isGradable?: boolean;
 }
+
+export interface ContentElementCategory {
+  name: string;
+  items: Array<ContentElementItem | string>;
+}
+
+export type ElementConfig = ContentElementCategory | ContentElementItem | string;
 
 export interface ContentContainer {
   type: string;
   templateId: string;
   label: string;
   multiple?: boolean;
-  embedTypes?: ElementCategory[];
-  types?: ElementCategory[];
+  embedElementConfig?: ElementConfig[];
+  contentElementConfig?: ElementConfig[];
   displayHeading?: boolean;
   layout?: boolean;
   config?: Record<string, any>;

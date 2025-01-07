@@ -94,7 +94,7 @@ import {
 import { getComponentName, getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import type { Meta } from '@tailor-cms/interfaces/common';
 import type { User } from '@tailor-cms/interfaces/user';
 
@@ -112,7 +112,7 @@ interface Props {
   frame?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
-  embedTypes?: ElementCategory[] | null;
+  embedTypes?: ContentElementCategory[] | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {

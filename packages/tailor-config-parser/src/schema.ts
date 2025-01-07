@@ -1,6 +1,9 @@
 import type {
   ActivityRelationship,
   ContentContainer,
+  ContentElementCategory,
+  ContentElementItem,
+  ElementConfig,
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
@@ -182,7 +185,24 @@ export const getSchemaApi = (schemas: Schema[]) => {
       'contentContainers',
       [],
     );
-    return map(activityConfig, (type) => find(schemaConfig, { type }));
+    const containers = map(activityConfig, (type) => find(schemaConfig, { type }));
+    return containers.map((it) => {
+      if (it.types) {
+        it.contentElementConfig = it.types;
+        delete it.types;
+      }
+      if (it.embedTypes) {
+        it.embedElementConfig = it.embedTypes;
+        delete it.embedTypes;
+      }
+      if (it.contentElementConfig) {
+        it.contentElementConfig = processElementConfig(it.contentElementConfig);
+      }
+      if (it.embedElementConfig) {
+        it.embedElementConfig = processElementConfig(it.embedElementConfig);
+      }
+      return it;
+    });
   }
 
   // type is checked because of legacy support
@@ -209,4 +229,24 @@ export const getSchemaApi = (schemas: Schema[]) => {
       [],
     );
   }
+};
+
+const processElementConfig = (config: ElementConfig[]) => {
+  const DEFAULT_GROUP = 'Content Elements';
+  return config.reduce((acc, it) => {
+    const isGroup = typeof it !== 'string' && 'items' in it;
+    if (isGroup) {
+      it.items = it.items.map(processItem);
+      acc.push(it);
+      return acc;
+    }
+    const index = acc.findIndex((it) => it.name === DEFAULT_GROUP);
+    if (index >= 0) acc[index].items.push(processItem(it));
+    else acc.push({ name: DEFAULT_GROUP, items: [processItem(it)] });
+    return acc;
+  }, [] as ContentElementCategory[]);
+};
+
+const processItem = (item: ContentElementItem | string) => {
+  return typeof item === 'string' ? { id: item as string } : item;
 };

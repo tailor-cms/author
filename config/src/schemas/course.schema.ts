@@ -69,35 +69,27 @@ const SectionConfig: ContentContainer = {
   templateId: ContentContainerType.Default,
   label: 'Section',
   multiple: true,
-  embedTypes: [{
-    name: 'Content Elements',
-    types: [
-      { id: ContentElementType.HtmlDefault },
-      { id: ContentElementType.Image },
-      { id: ContentElementType.Video },
-    ],
-  }],
-  types: [
-    {
-      name: 'Content Elements',
-      types: [
-        { id: ContentElementType.HtmlDefault },
-        { id: ContentElementType.Image },
-        { id: ContentElementType.Video },
-        { id: ContentElementType.Embed },
-        { id: ContentElementType.Audio },
-        { id: ContentElementType.PageBreak },
-        { id: ContentElementType.Pdf },
-        { id: ContentElementType.Accordion },
-        // TODO: Need to be migrated
-        // ContentElementType.Table,
-        // ContentElementType.Modal,
-        // ContentElementType.Carousel,
-      ],
-    },
+  embedElementConfig: [
+    ContentElementType.HtmlDefault,
+    ContentElementType.Image,
+    ContentElementType.Video,
+  ],
+  contentElementConfig: [
+    ContentElementType.HtmlDefault,
+    ContentElementType.Image,
+    ContentElementType.Video,
+    ContentElementType.Embed,
+    ContentElementType.Audio,
+    ContentElementType.PageBreak,
+    ContentElementType.Pdf,
+    ContentElementType.Accordion,
+    // TODO: Need to be migrated
+    // ContentElementType.Table,
+    // ContentElementType.Modal,
+    // ContentElementType.Carousel,
     {
       name: 'Assessments',
-      types: [
+      items: [
         { id: ContentElementType.MultipleChoice, isGradable: true },
         { id: ContentElementType.SingleChoice, isGradable: true },
         { id: ContentElementType.TextResponse, isGradable: true },
@@ -110,7 +102,7 @@ const SectionConfig: ContentContainer = {
     },
     {
       name: 'Nongraded questions',
-      types: [
+      items: [
         { id: ContentElementType.MultipleChoice, isGradable: false },
         { id: ContentElementType.SingleChoice, isGradable: false },
         { id: ContentElementType.TextResponse, isGradable: false },

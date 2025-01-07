@@ -63,8 +63,8 @@
       :enable-add="false"
       :is-disabled="disabled"
       :layout="layout"
-      :embed-types="embedTypes"
-      :supported-types="types"
+      :embed-types="embedElementConfig"
+      :supported-types="contentElementConfig"
       class="element-list"
       @add="onElementAdd"
       @update="reorder"
@@ -76,7 +76,7 @@
         />
         <ContainedContent
           v-bind="{
-            embedTypes,
+            embedElementConfig,
             element,
             isDragged,
             isDisabled: disabled,
@@ -93,7 +93,7 @@
     <AddElement
       v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
-      :include="types"
+      :include="contentElementConfig"
       :items="containerElements"
       :large="true"
       :layout="layout"
@@ -124,7 +124,7 @@ import type {
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
@@ -134,15 +134,15 @@ interface Props {
   container: Activity;
   elements: Record<string, ContentElement>;
   position: number;
-  embedTypes?: ElementCategory[] | null;
-  types?: ElementCategory[] | null;
+  embedElementConfig?: ContentElementCategory[] | null;
+  contentElementConfig?: ContentElementCategory[] | null;
   layout?: boolean;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  embedTypes: null,
-  types: null,
+  embedElementConfig: null,
+  contentElementConfig: null,
   layout: true,
   disabled: false,
 });

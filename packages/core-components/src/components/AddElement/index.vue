@@ -123,7 +123,7 @@ const isSubset = computed(() => !!props.include && !!props.include.length);
 const library = computed(() => {
   if (!isSubset.value) return [{ name: 'Content Elements', types: ceRegistry.all }];
   return props.include?.map((category) => {
-    const types = category.types.map(({ id, ...schemaConfig }) => {
+    const types = category.items.map(({ id, ...schemaConfig }) => {
       return { ...ceRegistry.get(id), schemaConfig };
     });
     return { ...category, types };
