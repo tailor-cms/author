@@ -605,11 +605,11 @@ importers:
         specifier: ^0.0.6
         version: 0.0.6
       '@tailor-cms/ce-multiple-choice-edit':
-        specifier: ^0.0.16
-        version: 0.0.16(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
+        specifier: ^0.0.17
+        version: 0.0.17(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
       '@tailor-cms/ce-multiple-choice-server':
-        specifier: ^0.0.16
-        version: 0.0.16
+        specifier: ^0.0.17
+        version: 0.0.17
       '@tailor-cms/ce-numerical-response-edit':
         specifier: ^0.0.4
         version: 0.0.4(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
@@ -3591,13 +3591,13 @@ packages:
   '@tailor-cms/ce-matching-question-server@0.0.6':
     resolution: {integrity: sha512-m1vDJ6dNrWmN9ESZyKJ8UwaTgQAnP974tyq/EUX+K8jHSWjWnOVnuShGtM387di7dc2gWkxpiTeRC34FcX761g==}
 
-  '@tailor-cms/ce-multiple-choice-edit@0.0.16':
-    resolution: {integrity: sha512-Wdr2Nd/cjfwvCXL3K1pQfP5KjY4NZGijsoSNsPspmPYMNW29EwuEi0Q7E5llMKgmQKs0s1ZdFOunos9HaAhoYA==}
+  '@tailor-cms/ce-multiple-choice-edit@0.0.17':
+    resolution: {integrity: sha512-Cyj9aY4CMIoFrOqiZpOygp3QVpbQDCDI3tzqoiyd/wNsCXM1HtuLGzKxSDyss06+orU8NYvK8M3sCv4Xs+FrYA==}
     peerDependencies:
       vue: ^3.3.4
 
-  '@tailor-cms/ce-multiple-choice-server@0.0.16':
-    resolution: {integrity: sha512-Qaw8xjlynHbKtrzwJPCP4rqfbC8LcVQCEJsvbm3bINN1tTQXjRkE9mVf5NrlsIVifwyM5zvMFn9H7HFeDsMMwQ==}
+  '@tailor-cms/ce-multiple-choice-server@0.0.17':
+    resolution: {integrity: sha512-YVPRUi5lwjIjD9dby9Pj0iHkc9VuMgee8kgGEzo/uoNaxGwpsddtaurfHtBzXU+N8SF52j2Mf9LY7Jawpnp0Dw==}
 
   '@tailor-cms/ce-numerical-response-edit@0.0.4':
     resolution: {integrity: sha512-4HfxZzPs7X5fxq2k7x42I9UTX2Tkx2rPtOv3uBUeGMr1s/rA+GGLNVieWx4gx+N36dj+GWBVmssd4bddFo6VkA==}
@@ -14362,7 +14362,7 @@ snapshots:
     dependencies:
       lodash: 4.17.21
 
-  '@tailor-cms/ce-multiple-choice-edit@0.0.16(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)':
+  '@tailor-cms/ce-multiple-choice-edit@0.0.17(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)':
     dependencies:
       '@tailor-cms/core-components': 1.0.24(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.13)(@types/pluralize@0.0.33)(date-fns@4.1.0)(lodash@4.17.21)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
       lodash: 4.17.21
@@ -14384,7 +14384,7 @@ snapshots:
       - vuetify
       - yup
 
-  '@tailor-cms/ce-multiple-choice-server@0.0.16':
+  '@tailor-cms/ce-multiple-choice-server@0.0.17':
     dependencies:
       lodash: 4.17.21
 
