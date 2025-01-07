@@ -44,12 +44,12 @@ import map from 'lodash/map';
 import omit from 'lodash/omit';
 import sortBy from 'lodash/sortBy';
 import without from 'lodash/without';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 const props = defineProps<{
   elementData: Record<string, any>;
   isDisabled: boolean;
-  allowedTypes: ElementCategory[];
+  allowedTypes: ContentElementCategory[];
 }>();
 const emit = defineEmits(['update']);
 

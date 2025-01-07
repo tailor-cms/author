@@ -56,7 +56,7 @@ import { computed, inject, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import Draggable from 'vuedraggable/src/vuedraggable';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getElementId } from '@tailor-cms/utils';
 import getVal from 'lodash/get';
 
@@ -65,7 +65,7 @@ import AddElement from './AddElement/index.vue';
 interface Props {
   elements?: ContentElement[];
   dragOptions?: any;
-  supportedTypes?: ElementCategory[] | null;
+  supportedTypes?: ContentElementCategory[] | null;
   activity?: Activity | null;
   layout?: boolean;
   isDisabled?: boolean;

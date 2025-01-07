@@ -56,7 +56,7 @@ import { computed, ref, watch } from 'vue';
 
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 import MetaInput from './MetaInput.vue';
 import StructuredContent from './StructuredContent.vue';
@@ -70,7 +70,7 @@ const props = defineProps<{
   icon: string;
   meta: any;
   elementTypes: Array<any>;
-  categories: ElementCategory[];
+  categories: ContentElementCategory[];
   isDisabled: boolean;
 }>();
 
