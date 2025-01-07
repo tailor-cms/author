@@ -1,6 +1,6 @@
 import { useConfigStore } from '@/stores/config';
 
-export default function () {
+export default defineNuxtPlugin(() => {
   const configStore = useConfigStore();
   configStore.getConfig();
-}
+});
