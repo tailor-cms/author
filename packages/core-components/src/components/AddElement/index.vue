@@ -1,11 +1,10 @@
 <template>
   <div class="add-element-container">
-    <slot>
+    <slot :add-element="showElementPicker">
       <VBtn
         v-if="large"
         :color="color"
         :variant="variant"
-        class="mt-3 mb-4"
         @click.stop="showElementPicker"
       >
         <VIcon class="pr-3">{{ icon }}</VIcon>
@@ -15,7 +14,8 @@
         v-else
         :icon="icon"
         color="primary-darken-2"
-        variant="outlined"
+        size="small"
+        variant="tonal"
         @click.stop="showElementPicker"
       >
         <VIcon>{{ icon }}</VIcon>
@@ -54,7 +54,6 @@
             </VBtnToggle>
           </div>
           <VBtn
-            class="mt-8"
             color="primary-darken-3"
             prepend-icon="mdi-content-copy"
             variant="tonal"
@@ -70,7 +69,7 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
-import { getPositions, isQuestion, uuid } from '@tailor-cms/utils';
+import { getPositions, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ElementCategory } from '@tailor-cms/interfaces/schema';
@@ -89,15 +88,10 @@ const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
 
 const DEFAULT_CATEGORY = { name: 'Content Elements' };
 
-const getQuestionData = (element: any, type: string) => {
-  const data = { width: LAYOUT.FULL_WIDTH };
-  const question = [{ id: uuid(), data, type: 'JODIT_HTML', embedded: true }];
-  return { question, type, ...element.data };
-};
-
 interface Props {
   items: ContentElement[];
   position: number;
+  elementConfig?: Record<string, any>;
   activity?: Activity | null;
   layout?: boolean;
   include?: string[] | null;
@@ -111,6 +105,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  elementConfig: () => ({}),
   activity: null,
   layout: true,
   include: null,
@@ -124,7 +119,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['add', 'hidden']);
 
-const registry = inject<any>('$ceRegistry').all as any[];
+const registry = inject<any>('$ceRegistry')?.all as any[];
 
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
@@ -178,7 +173,7 @@ const addElements = (elements: any[]) => {
 };
 
 const buildElement = (el: any) => {
-  const { position, subtype, data = {}, initState = () => ({}) } = el;
+  const { position, data = {}, initState = () => ({}) } = el;
   const element = {
     position,
     ...pick(el, ['type', 'refs']),
@@ -188,9 +183,7 @@ const buildElement = (el: any) => {
     ? { activityId: props.activity.id } // If content element within activity
     : { id: uuid(), embedded: true }; // If embed, assign id
   Object.assign(element, contextData);
-  if (isQuestion(element.type))
-    element.data = getQuestionData(element, subtype);
-  if (element.type === 'REFLECTION') delete element.data.correct;
+  if (!props.elementConfig[el.type]?.isGradeable) delete element.data.correct;
   return element;
 };
 

@@ -1,0 +1,23 @@
+{
+  "name": "@tailor-cms/tcc-structured-content",
+  "version": "0.0.1",
+  "description": "Tailor structured content container",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "devDependencies": {
+    "@tailor-cms/interfaces": "workspace:*",
+    "@types/lodash": "*"
+  },
+  "peerDependencies": {
+    "@tailor-cms/core-components": "workspace:*",
+    "@tailor-cms/utils": "workspace:*",
+    "lodash": "*",
+    "vee-validate": "4.14.7",
+    "vue": "^3.3.4",
+    "vuetify": "^3.7.0"
+  }
+}

@@ -307,7 +307,7 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-:deep .v-list-item-subtitle {
+:deep(.v-list-item-subtitle) {
   margin: 0.25rem 0 0;
 }
 

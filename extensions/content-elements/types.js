@@ -14,4 +14,5 @@ export const ContentElementType = {
   Embed: 'CE_EMBED',
   Audio: 'CE_AUDIO',
   Video: 'CE_VIDEO',
+  Accordion: 'CE_ACCORDION',
 };

@@ -24,7 +24,7 @@
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
     "lodash": "^4.17.21",
-    "uuid": "^10.0.0"
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
