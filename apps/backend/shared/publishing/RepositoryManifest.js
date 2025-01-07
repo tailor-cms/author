@@ -132,7 +132,7 @@ export class RepositoryManifest {
       ]),
       relationships: this.mapRelationships(relationships, activity),
     };
-    renameKey(activity, 'data', 'meta');
+    renameKey(data, 'data', 'meta');
     const index = this.findActivityIndex(data.id);
     if (index < 0) {
       this.draft.structure.push(data);
