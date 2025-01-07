@@ -76,7 +76,7 @@
         />
         <ContainedContent
           v-bind="{
-            embedElementConfig,
+            embedTypes: embedElementConfig,
             element,
             isDragged,
             isDisabled: disabled,
