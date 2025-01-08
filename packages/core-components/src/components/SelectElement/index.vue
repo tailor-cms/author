@@ -39,7 +39,6 @@
         </VSheet>
         <ContentPreview
           v-else
-          :allowed-types="allowedTypes"
           :content-containers="items.contentContainers"
           :filters="filters"
           :multiple="multiple"
@@ -100,7 +99,7 @@ const TOGGLE_BUTTON = {
 
 interface Props {
   element?: ContentElement | null;
-  allowedTypes: Array<{ type: string; schemaConfig: any }>;
+  allowedElementConfig: Array<{ type: string; config: any }>;
   heading: string;
   multiple?: boolean;
   selected?: Relationship[];
@@ -231,10 +230,10 @@ const assignElements = (
 };
 
 const isAllowedType = (el: ContentElement) => {
-  if (!props.allowedTypes.length) return true;
-  return props.allowedTypes.some((it: any) => {
+  if (!props.allowedElementConfig.length) return true;
+  return props.allowedElementConfig.some((it: any) => {
     const sameType = it.type === el.type;
-    const sameConfig = it.schemaConfig.isGradable === el.data.isGradable;
+    const sameConfig = it.config.isGradable === el.data.isGradable;
     return sameType && sameConfig;
   });
 };

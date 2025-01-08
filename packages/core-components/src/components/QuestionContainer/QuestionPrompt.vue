@@ -27,7 +27,7 @@
           }"
           :container="elementData"
           :is-disabled="isDisabled"
-          :types="allowedTypes"
+          :allowed-element-config="allowedElementConfig"
           class="text-center"
           dense
           @delete="deleteEmbed($event.id)"
@@ -49,7 +49,7 @@ import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 const props = defineProps<{
   elementData: Record<string, any>;
   isDisabled: boolean;
-  allowedTypes: ContentElementCategory[];
+  allowedElementConfig: ContentElementCategory[];
 }>();
 const emit = defineEmits(['update']);
 

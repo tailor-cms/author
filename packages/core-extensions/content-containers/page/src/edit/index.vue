@@ -63,8 +63,7 @@
       :enable-add="false"
       :is-disabled="disabled"
       :layout="layout"
-      :embed-types="embedElementConfig"
-      :supported-types="contentElementConfig"
+      :supported-types-config="contentElementConfig"
       class="element-list"
       @add="onElementAdd"
       @update="reorder"
@@ -76,7 +75,7 @@
         />
         <ContainedContent
           v-bind="{
-            embedTypes: embedElementConfig,
+            embedElementConfig,
             element,
             isDragged,
             isDisabled: disabled,

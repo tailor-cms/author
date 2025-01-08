@@ -9,7 +9,7 @@
       <QuestionPrompt
         :element-data="elementData"
         :is-disabled="isDisabled"
-        :allowed-types="embedTypes"
+        :allowed-element-config="embedTypes.concat(embedElementConfig)"
         @update="emit('update', $event)"
       />
       <slot></slot>
@@ -60,7 +60,8 @@ import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
   elementData: Record<string, any>;
-  embedTypes: ContentElementCategory[];
+  embedTypes?: ContentElementCategory[]; // TODO: Remove once elements are migrated
+  embedElementConfig?: ContentElementCategory[];
   isDisabled?: boolean;
   isDirty?: boolean;
   type?: string;
@@ -69,6 +70,8 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
+  embedTypes: () => [],
+  embedElementConfig: () => [],
   type: 'Question element',
   icon: 'mdi-help-cirlce-outline',
   isDisabled: false,

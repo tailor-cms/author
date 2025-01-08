@@ -24,7 +24,7 @@
     <template v-if="isVisible">
       <SelectElement
         v-if="showElementBrowser"
-        :allowed-types="allowedTypes"
+        :allowed-element-config="allowedElementConfig"
         header-icon="mdi-content-duplicate"
         heading="Copy elements"
         submit-label="Copy"
@@ -34,7 +34,7 @@
       />
       <AddNewElement
         v-model="isVisible"
-        :allowed-types="allowedTypes"
+        :allowed-element-config="allowedElementConfig"
         :library="library"
         @add="addElements"
       >
@@ -117,32 +117,24 @@ const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
 const showElementBrowser = ref(false);
 
-// Determine if the element picker should show all elements or a subset
-const isSubset = computed(() => !!props.include && !!props.include.length);
-
-const library = computed(() => {
-  if (!isSubset.value) return [{ name: 'Content Elements', types: ceRegistry.all }];
-  return props.include?.map((category) => {
-    const types = category.items.map(({ id, ...schemaConfig }) => {
-      return { ...ceRegistry.get(id), schemaConfig };
-    });
-    return { ...category, types };
+const library = computed(() => props.include?.map((category) => {
+  const items = category.items.map(({ id, ...config }) => {
+    return { ...ceRegistry.get(id), config };
   });
-});
+  return { ...category, items };
+}));
 
 const processedWidth = computed(() => {
   return elementWidth.value === 50 ? LAYOUT.HALF_WIDTH : LAYOUT.FULL_WIDTH;
 });
 
-const allowedTypes = computed(() => {
-  const elements = flatMap(library.value, 'types');
+const allowedElementConfig = computed(() => {
+  const elements = flatMap(library.value, 'items');
   const allowedElements =
     elementWidth.value === DEFAULT_ELEMENT_WIDTH
       ? elements
       : reject(elements, 'ui.forceFullWidth');
-  return allowedElements.map(({ type, schemaConfig }) =>
-    ({ type, schemaConfig }),
-  );
+  return allowedElements.map(({ type, config }) => ({ type, config }));
 });
 
 const addElements = (elements: any[]) => {
@@ -155,14 +147,14 @@ const addElements = (elements: any[]) => {
 };
 
 const buildElement = (el: any) => {
-  const { position, data = {}, initState = () => ({}), schemaConfig } = el;
+  const { position, data = {}, initState = () => ({}), config } = el;
   const element = {
     ...pick(el, ['type', 'refs']),
     data: { ...initState(), ...data, width: processedWidth.value },
     position,
   };
   if (!el.data && el.isQuestion) {
-    const isGradable = schemaConfig?.isGradable ?? el.isGradable ?? true;
+    const isGradable = config?.isGradable ?? el.isGradable ?? true;
     element.data.isGradable = isGradable;
     if (!isGradable) delete element.data.correct;
   }

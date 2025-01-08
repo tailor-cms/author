@@ -37,7 +37,6 @@ import keyBy from 'lodash/keyBy';
 import ContentElementWrapper from './ContentElement.vue';
 
 interface Props {
-  allowedTypes: Array<{ type: string; schemaConfig: any }>;
   selected: (ContentElement | Relationship)[];
   contentContainers?: ContentContainer[];
   filters?: Filter[];

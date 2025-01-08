@@ -8,7 +8,7 @@
         <div class="group-heading text-primary-darken-3">{{ group.name }}</div>
         <div class="group-elements ga-5">
           <VBtn
-            v-for="element in group.types"
+            v-for="element in group.items"
             :key="element.position"
             :disabled="!isAllowed(element.type)"
             class="add-element"
@@ -35,12 +35,13 @@
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import some from 'lodash/some';
 
-const props = defineProps<{ library: any; allowedTypes: any[] }>();
+const props = defineProps<{ library: any; allowedElementConfig: any[] }>();
 
 const emit = defineEmits(['add']);
 
 const isAllowed = (type: string) => {
-  return !props.allowedTypes.length || some(props.allowedTypes, { type });
+  const hasElements = !props.allowedElementConfig.length;
+  return hasElements || some(props.allowedElementConfig, { type });
 };
 
 const emitAdd = (element: ContentElement) => emit('add', [element]);

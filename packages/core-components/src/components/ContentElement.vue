@@ -30,7 +30,8 @@
       v-if="isComponentAvailable"
       v-bind="{
         ...$attrs,
-        embedTypes,
+        embedTypes: embedElementConfig, // TODO: Remove once elements are migrated
+        embedElementConfig,
         element,
         references,
         isFocused,
@@ -112,11 +113,11 @@ interface Props {
   frame?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
-  embedTypes?: ContentElementCategory[] | null;
+  embedElementConfig?: ContentElementCategory[] | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  embedTypes: null,
+  embedElementConfig: null,
   references: null,
   parent: null,
   isHovered: false,
