@@ -4,14 +4,20 @@ import type { Schema } from '@tailor-cms/interfaces/schema';
 const activityType = yup.string().min(2).max(50);
 const contentElementType = yup.string().min(2).max(50);
 
+const categoryItemType = yup.object().shape({
+  id: contentElementType.required(),
+  isGradable: yup.boolean(),
+});
+
 const elementCategoryType = yup.object().shape({
   name: yup.string().min(2).max(50).required(),
-  types: yup.array().of(
-    yup.object().shape({
-      id: contentElementType.required(),
-      isGradable: yup.boolean(),
-    }),
-  ),
+  items: yup.array().of(categoryItemType),
+});
+
+const elementConfig = yup.lazy((val) => {
+  if (typeof val === 'string') return contentElementType;
+  if ('items' in val) return elementCategoryType;
+  return categoryItemType;
 });
 
 const meta = yup.array().of(
@@ -72,12 +78,8 @@ const schema = yup.object().shape({
     yup.object().shape({
       type: yup.string().min(2).max(50).required(),
       label: yup.string().min(2).max(100).required(),
-      types: yup.array().of(
-        yup.lazy((val) => {
-          if (typeof val === 'string') return contentElementType;
-          return elementCategoryType;
-        }),
-      ),
+      embedElementConfig: yup.array().of(elementConfig),
+      contentElementConfig: yup.array().of(elementConfig),
       multiple: yup.boolean(),
       displayHeading: yup.boolean(),
     }),
