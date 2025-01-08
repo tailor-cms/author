@@ -23,7 +23,27 @@ import sortBy from 'lodash/sortBy.js';
 import union from 'lodash/union.js';
 import uniq from 'lodash/uniq.js';
 
+const DEFAULT_GROUP = 'Content Elements';
 const DEFAULT_EMBED_ELEMENTS = ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_EMBED'];
+
+const processElementConfig = (config: ElementConfig[]) => {
+  return config.reduce((acc, it) => {
+    const isGroup = typeof it !== 'string' && 'items' in it;
+    if (isGroup) {
+      it.items = it.items.map(processItem);
+      acc.push(it);
+      return acc;
+    }
+    const index = acc.findIndex((it) => it.name === DEFAULT_GROUP);
+    if (index >= 0) acc[index].items.push(processItem(it));
+    else acc.push({ name: DEFAULT_GROUP, items: [processItem(it)] });
+    return acc;
+  }, [] as ContentElementCategory[]);
+};
+
+const processItem = (item: ContentElementItem | string) => {
+  return typeof item === 'string' ? { id: item as string } : item;
+};
 
 export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   return {
@@ -232,24 +252,4 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
       [],
     );
   }
-};
-
-const processElementConfig = (config: ElementConfig[]) => {
-  const DEFAULT_GROUP = 'Content Elements';
-  return config.reduce((acc, it) => {
-    const isGroup = typeof it !== 'string' && 'items' in it;
-    if (isGroup) {
-      it.items = it.items.map(processItem);
-      acc.push(it);
-      return acc;
-    }
-    const index = acc.findIndex((it) => it.name === DEFAULT_GROUP);
-    if (index >= 0) acc[index].items.push(processItem(it));
-    else acc.push({ name: DEFAULT_GROUP, items: [processItem(it)] });
-    return acc;
-  }, [] as ContentElementCategory[]);
-};
-
-const processItem = (item: ContentElementItem | string) => {
-  return typeof item === 'string' ? { id: item as string } : item;
 };
