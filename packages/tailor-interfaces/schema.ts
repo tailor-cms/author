@@ -83,7 +83,7 @@ export interface ContentElementItem {
 
 export interface ContentElementCategory {
   name: string;
-  items: Array<ContentElementItem | string>;
+  items: ContentElementItem[];
 }
 
 export type ElementConfig = ContentElementCategory | ContentElementItem | string;

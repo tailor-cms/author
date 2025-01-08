@@ -23,7 +23,9 @@ import sortBy from 'lodash/sortBy.js';
 import union from 'lodash/union.js';
 import uniq from 'lodash/uniq.js';
 
-export const getSchemaApi = (schemas: Schema[]) => {
+const DEFAULT_EMBED_ELEMENTS = ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_EMBED'];
+
+export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   return {
     getSchemaId,
     getSchema,
@@ -185,23 +187,24 @@ export const getSchemaApi = (schemas: Schema[]) => {
       'contentContainers',
       [],
     );
-    const containers = map(activityConfig, (type) => find(schemaConfig, { type }));
-    return containers.map((it) => {
-      if (it.types) {
-        it.contentElementConfig = it.types;
-        delete it.types;
+    return map(activityConfig, (type) => {
+      const {
+        types,
+        contentElementConfig = types || ceRegistry,
+        embedElementConfig = DEFAULT_EMBED_ELEMENTS,
+        ...container
+      } = find(schemaConfig, { type }) || {};
+      if (types) {
+        console.warn(`
+          Deprecation notice: 'types' prop in content container
+          schema config has been replaced with 'contentElementConfig'
+        `);
       }
-      if (it.embedTypes) {
-        it.embedElementConfig = it.embedTypes;
-        delete it.embedTypes;
-      }
-      if (it.contentElementConfig) {
-        it.contentElementConfig = processElementConfig(it.contentElementConfig);
-      }
-      if (it.embedElementConfig) {
-        it.embedElementConfig = processElementConfig(it.embedElementConfig);
-      }
-      return it;
+      return {
+        ...container,
+        contentElementConfig: processElementConfig(contentElementConfig),
+        embedElementConfig: processElementConfig(embedElementConfig),
+      };
     });
   }
 
