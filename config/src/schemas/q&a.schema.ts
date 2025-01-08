@@ -47,14 +47,9 @@ const RESPONSE: ContentContainer = {
   type: ActivityType.Response,
   templateId: ContentContainerType.Default,
   label: 'Response',
-  types: [
-    {
-      name: 'Content Elements',
-      types: [
-        { id: ContentElementType.HtmlDefault },
-        { id: ContentElementType.Image },
-      ],
-    },
+  contentElementConfig: [
+    ContentElementType.HtmlDefault,
+    ContentElementType.Image,
   ],
   ai: {
     definition: `
