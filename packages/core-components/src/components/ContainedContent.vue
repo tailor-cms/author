@@ -35,7 +35,7 @@ import ContentElementWrapper from './ContentElement.vue';
 
 interface Props {
   element: ContentElement;
-  embedElementConfig?: ContentElementCategory[] | null;
+  embedElementConfig?: ContentElementCategory[];
   references?: Record<string, ContentElement[]> | null;
   isDisabled?: boolean;
   isDragged?: boolean;
@@ -45,7 +45,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  embedElementConfig: null,
+  embedElementConfig: () => [],
   references: null,
   isDisabled: false,
   isDragged: false,

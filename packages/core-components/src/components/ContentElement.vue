@@ -113,11 +113,11 @@ interface Props {
   frame?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
-  embedElementConfig?: ContentElementCategory[] | null;
+  embedElementConfig?: ContentElementCategory[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  embedElementConfig: null,
+  embedElementConfig: () => [],
   references: null,
   parent: null,
   isHovered: false,
