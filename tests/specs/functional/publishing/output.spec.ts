@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
+import { isStorageConfigured, StorageClient } from '../../../api/StorageClient';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
 import SeedClient from '../../../api/SeedClient';
-import StorageClient from '../../../api/StorageClient';
 import { toSeededRepositorySettings } from '../../../helpers/seed';
 
 test.beforeEach(async () => {
@@ -10,7 +10,7 @@ test.beforeEach(async () => {
 });
 
 test('should be able to publish repository', async ({ page }) => {
-  test.skip(!StorageClient, 'Storage is not enabled');
+  test.skip(!isStorageConfigured, 'Storage is not enabled');
   const { repository, activity } = await toSeededRepositorySettings(page);
   const settingsPage = new GeneralSettings(page);
   await settingsPage.sidebar.publish();
