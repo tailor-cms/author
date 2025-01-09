@@ -10,6 +10,7 @@ test.beforeEach(async () => {
 });
 
 test('should be able to publish repository', async ({ page }) => {
+  test.skip(!StorageClient, 'Storage is not enabled');
   const { repository, activity } = await toSeededRepositorySettings(page);
   const settingsPage = new GeneralSettings(page);
   await settingsPage.sidebar.publish();

@@ -57,6 +57,9 @@ jobs:
           echo "MAILTRAP_TOKEN=${{ secrets.MAILTRAP_TOKEN }}" >> ./tests/.env
           echo "MAILTRAP_INBOX_ID=${{ secrets.MAILTRAP_INBOX_ID }}" >> ./tests/.env
           echo "MAILTRAP_INBOX_NAME=e2e" >> ./tests/.env
+          echo "LOCALSTACK_ENDPOINT=http://localhost:4566" >> ./tests/.env
+          echo "LOCALSTACK_REGION=us-east-1" >> ./tests/.env
+          echo "LOCALSTACK_BUCKET=test" >> ./tests/.env
           echo "PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}" >> ./tests/.env
           echo "OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}" >> ./tests/.env
           echo "OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}" >> ./tests/.env
