@@ -81,6 +81,7 @@ import type { VBtn } from 'vuetify/components';
 import SelectElement from '../SelectElement/index.vue';
 import AddNewElement from './AddNewElement.vue';
 
+const DEFAULT_GROUP = 'Content Elements';
 const DEFAULT_ELEMENT_WIDTH = 100;
 const LAYOUT = { HALF_WIDTH: 6, FULL_WIDTH: 12 };
 
@@ -117,12 +118,18 @@ const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
 const showElementBrowser = ref(false);
 
-const library = computed(() => props.include?.map((category) => {
-  const items = category.items.map(({ id, ...config }) => {
-    return { ...ceRegistry.get(id), config };
+// Determine if the element picker should show all elements or a subset
+const isSubset = computed(() => !!props.include && !!props.include.length);
+
+const library = computed(() => {
+  if (!isSubset.value) return [{ name: DEFAULT_GROUP, items: ceRegistry.all }];
+  return props.include?.map((group) => {
+    const items = group.items.map(({ id, ...config }) => {
+      return { ...ceRegistry.get(id), config };
+    });
+    return { ...group, items };
   });
-  return { ...category, items };
-}));
+});
 
 const processedWidth = computed(() => {
   return elementWidth.value === 50 ? LAYOUT.HALF_WIDTH : LAYOUT.FULL_WIDTH;

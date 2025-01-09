@@ -40,7 +40,7 @@
       :is-disabled="isDisabled"
       :label="'content elements'"
       :layout="layout"
-      :supported-types="elementTypes"
+      :supported-element-config="contentElementConfig"
       @add:subcontainer="emit('add:subcontainer', $event)"
       @update:subcontainer="emit('update:subcontainer', $event)"
       @delete:subcontainer="emit('delete:subcontainer', $event)"
@@ -69,7 +69,7 @@ const props = defineProps<{
   layout: boolean;
   icon: string;
   meta: any;
-  elementTypes: Array<any>;
+  contentElementConfig: Array<any>;
   categories: ContentElementCategory[];
   isDisabled: boolean;
 }>();

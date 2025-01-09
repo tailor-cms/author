@@ -15,7 +15,7 @@
       :elements="containerContent"
       :is-disabled="isDisabled"
       :layout="layout"
-      :supported-types="supportedTypes"
+      :supported-element-config="supportedElementConfig"
       class="element-list"
       @update="reorder"
     >
@@ -78,7 +78,7 @@ const props = defineProps<{
   layout: boolean;
   label: string;
   isDisabled: boolean;
-  supportedTypes: any[];
+  supportedElementConfig: any[];
   categories: ContentElementCategory[];
 }>();
 
