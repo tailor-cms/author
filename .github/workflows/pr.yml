@@ -44,6 +44,12 @@ jobs:
           echo "OIDC_TOKEN_ENDPOINT=${{ vars.OIDC_TOKEN_ENDPOINT }}" >> .env
           echo "OIDC_USERINFO_ENDPOINT=${{ vars.OIDC_USERINFO_ENDPOINT }}" >> .env
           echo "OIDC_SESSION_SECRET=${{ secrets.OIDC_SESSION_SECRET }}" >> .env
+          echo "STORAGE_PROVIDER=amazon" >> .env
+          echo "STORAGE_REGION=us-east-1" >> .env
+          echo "STORAGE_ENDPOINT=http://localhost:4566" >> .env
+          echo "STORAGE_BUCKET=test" >> .env
+          echo "STORAGE_KEY"=test >> .env
+          echo "STORAGE_SECRET"=test >> .env
       - name: Setup E2E .env
         run: |
           touch ./tests/.env
@@ -51,6 +57,9 @@ jobs:
           echo "MAILTRAP_TOKEN=${{ secrets.MAILTRAP_TOKEN }}" >> ./tests/.env
           echo "MAILTRAP_INBOX_ID=${{ secrets.MAILTRAP_INBOX_ID }}" >> ./tests/.env
           echo "MAILTRAP_INBOX_NAME=e2e" >> ./tests/.env
+          echo "LOCALSTACK_ENDPOINT=http://localhost:4566" >> ./tests/.env
+          echo "LOCALSTACK_REGION=us-east-1" >> ./tests/.env
+          echo "LOCALSTACK_BUCKET=test" >> ./tests/.env
           echo "PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}" >> ./tests/.env
           echo "OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}" >> ./tests/.env
           echo "OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}" >> ./tests/.env
