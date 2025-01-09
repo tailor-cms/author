@@ -4,11 +4,11 @@
       <div class="d-flex align-end pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
-      <div v-for="group in library as any" :key="group.name" class="mb-2">
+      <div v-for="group in library" :key="group.name" class="mb-2">
         <div class="group-heading text-primary-darken-3">{{ group.name }}</div>
         <div class="group-elements ga-5">
           <VBtn
-            v-for="element in group.elements"
+            v-for="element in group.items"
             :key="element.position"
             :disabled="!isAllowed(element.type)"
             class="add-element"
@@ -33,13 +33,15 @@
 
 <script lang="ts" setup>
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import some from 'lodash/some';
 
-const props = defineProps<{ library: any[]; allowedTypes: string[] }>();
+const props = defineProps<{ library: any; allowedElementConfig: any[] }>();
 
 const emit = defineEmits(['add']);
 
 const isAllowed = (type: string) => {
-  return !props.allowedTypes.length || props.allowedTypes.includes(type);
+  const hasElements = !props.allowedElementConfig.length;
+  return hasElements || some(props.allowedElementConfig, { type });
 };
 
 const emitAdd = (element: ContentElement) => emit('add', [element]);

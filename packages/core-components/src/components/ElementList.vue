@@ -31,7 +31,7 @@
     <template v-if="enableAdd && !isDisabled">
       <slot
         :activity="activity"
-        :include="supportedTypes"
+        :include="supportedElementConfig || supportedTypes"
         :layout="layout"
         :position="elements.length"
         name="list-add"
@@ -39,8 +39,7 @@
         <AddElement
           :activity="activity"
           v-bind="addElementOptions"
-          :element-config="elementConfig"
-          :include="supportedTypes"
+          :include="supportedElementConfig || supportedTypes"
           :items="elements"
           :layout="layout"
           :position="addElementOptions.position || elements.length"
@@ -57,6 +56,7 @@ import { computed, inject, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import Draggable from 'vuedraggable/src/vuedraggable';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getElementId } from '@tailor-cms/utils';
 import getVal from 'lodash/get';
 
@@ -64,9 +64,10 @@ import AddElement from './AddElement/index.vue';
 
 interface Props {
   elements?: ContentElement[];
-  elementConfig?: Record<string, any>;
   dragOptions?: any;
-  supportedTypes?: string[] | null;
+  // TODO: Remove once elements are migrated
+  supportedTypes?: ContentElementCategory[] | null;
+  supportedElementConfig?: ContentElementCategory[] | null;
   activity?: Activity | null;
   layout?: boolean;
   isDisabled?: boolean;
@@ -77,8 +78,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   elements: () => [],
   dragOptions: () => ({}),
-  elementConfig: () => ({}),
   supportedTypes: null,
+  supportedElementConfig: null,
   activity: null,
   layout: false,
   isDisabled: false,

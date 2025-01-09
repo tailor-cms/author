@@ -15,7 +15,7 @@
       :elements="containerContent"
       :is-disabled="isDisabled"
       :layout="layout"
-      :supported-types="supportedTypes"
+      :supported-element-config="supportedElementConfig"
       class="element-list"
       @update="reorder"
     >
@@ -70,7 +70,7 @@ import { filter, sortBy, transform } from 'lodash';
 
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 const props = defineProps<{
   container: Activity;
@@ -78,8 +78,8 @@ const props = defineProps<{
   layout: boolean;
   label: string;
   isDisabled: boolean;
-  supportedTypes: any[];
-  categories: ElementCategory[];
+  supportedElementConfig: any[];
+  categories: ContentElementCategory[];
 }>();
 
 const emit = defineEmits(['save:element', 'delete:element', 'reorder:element']);
