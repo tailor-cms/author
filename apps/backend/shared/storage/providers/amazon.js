@@ -25,8 +25,8 @@ const DEFAULT_EXPIRATION_TIME = 3600; // seconds
 export const schema = yup.object().shape({
   region: yup.string().required(),
   bucket: yup.string().required(),
-  key: yup.string().required(),
-  secret: yup.string().required(),
+  key: yup.string(),
+  secret: yup.string(),
   endpoint: yup.string(),
 });
 
