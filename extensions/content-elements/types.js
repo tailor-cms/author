@@ -15,4 +15,5 @@ export const ContentElementType = {
   Audio: 'CE_AUDIO',
   Video: 'CE_VIDEO',
   Accordion: 'CE_ACCORDION',
+  Carousel: 'CE_CAROUSEL',
 };

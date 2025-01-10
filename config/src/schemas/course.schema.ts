@@ -86,7 +86,7 @@ const SectionConfig: ContentContainer = {
     // TODO: Need to be migrated
     // ContentElementType.Table,
     // ContentElementType.Modal,
-    // ContentElementType.Carousel,
+    ContentElementType.Carousel,
     {
       name: 'Assessments',
       items: [
