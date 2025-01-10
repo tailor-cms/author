@@ -34,13 +34,12 @@
     <StructuredContent
       v-bind="$attrs"
       :activities="activities"
-      :categories="categories"
       :container="container"
       :elements="elements"
       :is-disabled="isDisabled"
       :label="'content elements'"
       :layout="layout"
-      :supported-types="elementTypes"
+      :supported-element-config="contentElementConfig"
       @add:subcontainer="emit('add:subcontainer', $event)"
       @update:subcontainer="emit('update:subcontainer', $event)"
       @delete:subcontainer="emit('delete:subcontainer', $event)"
@@ -56,7 +55,6 @@ import { computed, ref, watch } from 'vue';
 
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 
 import MetaInput from './MetaInput.vue';
 import StructuredContent from './StructuredContent.vue';
@@ -70,8 +68,7 @@ const props = defineProps<{
   meta: any;
   isDisabled: boolean;
   layout?: boolean;
-  elementTypes?: Array<any>;
-  categories?: ElementCategory[];
+  contentElementConfig: Array<any>;
 }>();
 
 const emit = defineEmits([

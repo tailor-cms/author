@@ -12,8 +12,6 @@ const DEFAULT_CONFIG = {
     icon: 'mdi-text-box-outline',
     layout: true,
     meta: [],
-    elementTypes: [],
-    categories: [],
   },
 };
 

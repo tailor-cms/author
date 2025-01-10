@@ -30,7 +30,8 @@
       v-if="isComponentAvailable"
       v-bind="{
         ...$attrs,
-        allowedEmbedTypes,
+        embedTypes: embedElementConfig, // TODO: Remove once elements are migrated
+        embedElementConfig,
         element,
         references,
         isFocused,
@@ -94,6 +95,7 @@ import {
 import { getComponentName, getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import type { Meta } from '@tailor-cms/interfaces/common';
 import type { User } from '@tailor-cms/interfaces/user';
 
@@ -111,10 +113,11 @@ interface Props {
   frame?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
-  allowedEmbedTypes?: string[];
+  embedElementConfig?: ContentElementCategory[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  embedElementConfig: () => [],
   references: null,
   parent: null,
   isHovered: false,

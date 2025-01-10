@@ -15,7 +15,7 @@
       :elements="containerContent"
       :is-disabled="isDisabled"
       :layout="layout"
-      :supported-types="supportedTypes"
+      :supported-element-config="supportedElementConfig"
       class="element-list"
       @update="reorder"
     >
@@ -41,7 +41,6 @@
       <template #list-add="{ position: lastPosition, ...slotProps }">
         <AddElement
           v-bind="slotProps"
-          :categories="categories"
           :items="containerContent"
           :position="Math.min(insertElementPosition, lastPosition)"
           :show="!isDisabled && isAddDrawerVisible"
@@ -70,7 +69,6 @@ import { filter, sortBy, transform } from 'lodash';
 
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
 
 const props = defineProps<{
   container: Activity;
@@ -79,7 +77,7 @@ const props = defineProps<{
   isDisabled: boolean;
   layout?: boolean;
   supportedTypes?: any[];
-  categories?: ElementCategory[];
+  supportedElementConfig: any[];
 }>();
 
 const emit = defineEmits(['save:element', 'delete:element', 'reorder:element']);

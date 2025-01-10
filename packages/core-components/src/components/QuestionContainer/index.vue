@@ -1,11 +1,15 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard class="question-container my-2" elevation="0">
-    <VForm ref="form" class="content text-left" validate-on="submit">
+  <VCard class="question-container my-2" color="grey-lighten-5">
+    <VToolbar class="px-4" color="primary-darken-3" height="36">
+      <VIcon :icon="icon" color="secondary-lighten-2" size="18" start />
+      <span class="text-subtitle-2">{{ type }}</span>
+    </VToolbar>
+    <VForm ref="form" class="content text-left pa-6" validate-on="submit">
       <QuestionPrompt
         :element-data="elementData"
         :is-disabled="isDisabled"
-        :allowed-types="allowedEmbedTypes"
+        :allowed-element-config="embedTypes.concat(embedElementConfig)"
         @update="emit('update', $event)"
       />
       <slot></slot>
@@ -19,28 +23,29 @@
         :answers="elementData.answers"
         :feedback="elementData.feedback"
         :is-editing="!isDisabled"
-        :is-gradeable="isGradeable"
+        :is-gradable="elementData.isGradable"
         @update="emit('update', { feedback: $event })"
       />
-      <div v-if="!isDisabled" class="d-flex justify-end">
-        <VBtn
-          :disabled="!isDirty"
-          color="primary-darken-4"
-          variant="text"
-          @click="emit('cancel')"
-        >
-          Cancel
-        </VBtn>
-        <VBtn
-          :disabled="!isDirty"
-          class="ml-2"
-          color="primary-darken-3"
-          variant="tonal"
-          @click="save"
-        >
-          Save
-        </VBtn>
-      </div>
+      <VFadeTransition>
+        <div v-if="!isDisabled && isDirty" class="d-flex justify-end">
+          <VBtn
+            color="primary-darken-4"
+            variant="text"
+            @click="emit('cancel')"
+          >
+            Cancel
+          </VBtn>
+          <VBtn
+            class="ml-2"
+            color="success"
+            prepend-icon="mdi-check"
+            variant="tonal"
+            @click="save"
+          >
+            Save
+          </VBtn>
+        </div>
+      </VFadeTransition>
     </VForm>
   </VCard>
 </template>
@@ -48,21 +53,29 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import QuestionFeedback from './QuestionFeedback.vue';
 import QuestionHint from './QuestionHint.vue';
 import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
-  allowedEmbedTypes: string[];
   elementData: Record<string, any>;
-  isDisabled: boolean;
-  isDirty: boolean;
-  isGradeable?: boolean;
+  embedTypes?: ContentElementCategory[]; // TODO: Remove once elements are migrated
+  embedElementConfig?: ContentElementCategory[];
+  isDisabled?: boolean;
+  isDirty?: boolean;
+  type?: string;
+  icon?: string;
   showFeedback?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
-  isGradeable: false,
+  embedTypes: () => [],
+  embedElementConfig: () => [],
+  type: 'Question element',
+  icon: 'mdi-help-cirlce-outline',
+  isDisabled: false,
+  isDirty: false,
   showFeedback: true,
 });
 const emit = defineEmits(['cancel', 'delete', 'save', 'update']);

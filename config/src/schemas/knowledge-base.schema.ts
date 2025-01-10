@@ -41,9 +41,9 @@ const SECTION: ContentContainerConfig = {
   type: ActivityType.Section,
   templateId: ContentContainerType.Default,
   label: 'Section',
-  types: [
-    { id: ContentElementType.HtmlDefault },
-    { id: ContentElementType.Image },
+  contentElementConfig: [
+    ContentElementType.HtmlDefault,
+    ContentElementType.Image,
   ],
   ai: {
     definition: 'Page content is organized into sections.',

@@ -1,6 +1,9 @@
 import type {
   ActivityRelationship,
   ContentContainerConfig,
+  ContentElementCategory,
+  ContentElementItem,
+  ElementConfig,
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
@@ -20,7 +23,29 @@ import sortBy from 'lodash/sortBy.js';
 import union from 'lodash/union.js';
 import uniq from 'lodash/uniq.js';
 
-export const getSchemaApi = (schemas: Schema[]) => {
+const DEFAULT_GROUP = 'Content Elements';
+const DEFAULT_EMBED_ELEMENTS = ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_EMBED'];
+
+const processElementConfig = (config: ElementConfig[]) => {
+  return config.reduce((acc, it) => {
+    const isGroup = typeof it !== 'string' && 'items' in it;
+    if (isGroup) {
+      it.items = it.items.map(processItem);
+      acc.push(it);
+      return acc;
+    }
+    const index = acc.findIndex((it) => it.name === DEFAULT_GROUP);
+    if (index >= 0) acc[index].items.push(processItem(it));
+    else acc.push({ name: DEFAULT_GROUP, items: [processItem(it)] });
+    return acc;
+  }, [] as ContentElementCategory[]);
+};
+
+const processItem = (item: ContentElementItem | string) => {
+  return typeof item === 'string' ? { id: item as string } : item;
+};
+
+export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   return {
     getSchemaId,
     getSchema,
@@ -182,7 +207,25 @@ export const getSchemaApi = (schemas: Schema[]) => {
       'contentContainers',
       [],
     );
-    return map(activityConfig, (type) => find(schemaConfig, { type }));
+    return map(activityConfig, (type) => {
+      const {
+        types,
+        contentElementConfig = types || ceRegistry,
+        embedElementConfig = DEFAULT_EMBED_ELEMENTS,
+        ...container
+      } = find(schemaConfig, { type }) || {};
+      if (types) {
+        console.warn(`
+          Deprecation notice: 'types' prop in content container
+          schema config has been replaced with 'contentElementConfig'
+        `);
+      }
+      return {
+        ...container,
+        contentElementConfig: processElementConfig(contentElementConfig),
+        embedElementConfig: processElementConfig(embedElementConfig),
+      };
+    });
   }
 
   // type is checked because of legacy support

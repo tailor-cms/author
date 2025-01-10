@@ -1,6 +1,7 @@
 import omit from 'lodash/omit.js';
-import { log } from './utils.js';
-import { ContentContainer } from './ContentContainer.js';
+
+import { log, PublishEnv } from './utils.js';
+import { ActivityContainers } from './ActivityContainers.js';
 import { RepositoryManifest } from './RepositoryManifest.js';
 import storage from '#storage';
 
@@ -52,10 +53,10 @@ async function publishRepositoryDetails(repository) {
   return repository;
 }
 
-async function publishActivity(activity) {
+async function publishActivity(activity, env = PublishEnv.DEFAULT) {
   log(`[publishActivity] initiated, activity id: ${activity.id}`);
   const repository = await activity.getRepository();
-  const manifest = await RepositoryManifest.load(repository);
+  const manifest = await RepositoryManifest.load(repository, env);
   activity.publishedAt = new Date();
   const publishedData = await manifest.publishActivity(activity);
   await updateRepositoryCatalog(repository, publishedData.publishedAt, false);
@@ -65,13 +66,13 @@ async function publishActivity(activity) {
   return activity;
 }
 
-async function unpublishActivity(activity) {
+async function unpublishActivity(activity, env = PublishEnv.DEFAULT) {
   log(
     `[unpublishActivity] initiated, repository id: ${activity.repositoryId},
     activity id: ${activity.id}`,
   );
   const repository = await activity.getRepository();
-  const manifest = await RepositoryManifest.load(repository);
+  const manifest = await RepositoryManifest.load(repository, env);
   const publishedManifest = manifest.unpublishActivity(activity);
   await updateRepositoryCatalog(repository, publishedManifest.publishedAt);
   activity.publishedAt = new Date();
@@ -80,8 +81,9 @@ async function unpublishActivity(activity) {
   return activity;
 }
 
-async function fetchActivityContent(activity, signed = false) {
-  let containers = await ContentContainer.fetch(activity, signed);
+async function fetchActivityContent(activity, signed = false, env = PublishEnv.DEFAULT) {
+  const activityContainers = new ActivityContainers(env, activity);
+  let containers = await activityContainers.fetch(signed);
   return { containers };
 }
 

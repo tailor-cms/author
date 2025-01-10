@@ -4,6 +4,7 @@ import {
   processSchemas,
 } from '@tailor-cms/config-parser';
 
+import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { SCHEMA as CourseSchema } from './schemas/course.schema';
 import { DEFAULT_WORKFLOW as DefaultWorkflow } from './workflows/default.workflow';
 import { SCHEMA as FeedSchema } from './schemas/feed.schema';
@@ -20,7 +21,7 @@ export const SCHEMAS = processSchemas([
   QASchema,
 ]);
 
-export const schema = getSchemaApi(SCHEMAS);
+export const schema = getSchemaApi(SCHEMAS, Object.values(ContentElementType));
 export const workflow = getWorkflowApi(WORKFLOWS, schema);
 
 export default {
