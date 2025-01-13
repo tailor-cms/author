@@ -85,7 +85,7 @@ const SectionConfig: ContentContainer = {
     ContentElementType.Accordion,
     // TODO: Need to be migrated
     // ContentElementType.Table,
-    // ContentElementType.Modal,
+    ContentElementType.Modal,
     ContentElementType.Carousel,
     {
       name: 'Assessments',
