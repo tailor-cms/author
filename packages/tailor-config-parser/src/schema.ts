@@ -1,6 +1,6 @@
 import type {
   ActivityRelationship,
-  ContentContainer,
+  ContentContainerConfig,
   ContentElementCategory,
   ContentElementItem,
   ElementConfig,
@@ -199,7 +199,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     );
   }
 
-  function getSupportedContainers(type: string): ContentContainer[] {
+  function getSupportedContainers(type: string): ContentContainerConfig[] {
     const schema = getSchema(getSchemaId(type));
     const schemaConfig = get(schema, 'contentContainers', []);
     const activityConfig = get(
@@ -229,7 +229,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   }
 
   // type is checked because of legacy support
-  function getContainerTemplateId(container: ContentContainer) {
+  function getContainerTemplateId(container: ContentContainerConfig) {
     return container.templateId || container.type;
   }
 

@@ -125,10 +125,10 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 
+import { RadarChart } from '@tailor-cms/core-components';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
 import { haesParams } from './utils';
-import RadarChart from './RadarChart.vue';
 import RateDialog from './RateDialog.vue';
 
 interface Props {
