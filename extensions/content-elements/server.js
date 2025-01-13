@@ -14,6 +14,8 @@ import pkg12 from '@tailor-cms/ce-embed-server';
 import pkg13 from '@tailor-cms/ce-audio-server';
 import pkg14 from '@tailor-cms/ce-video-server';
 import pkg15 from '@tailor-cms/ce-accordion-server';
+import pkg16 from '@tailor-cms/ce-carousel-server';
+import pkg17 from '@tailor-cms/ce-modal-server';
 
 // prettier-ignore
 export const elements = [
@@ -33,4 +35,6 @@ export const elements = [
   pkg13,
   pkg14,
   pkg15,
+  pkg16,
+  pkg17,
 ];

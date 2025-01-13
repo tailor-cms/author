@@ -78,5 +78,15 @@
     "name": "@tailor-cms/ce-accordion",
     "clientPackage": "@tailor-cms/ce-accordion-edit",
     "serverPackage": "@tailor-cms/ce-accordion-server"
+  },
+  {
+    "name": "@tailor-cms/ce-carousel",
+    "clientPackage": "@tailor-cms/ce-carousel-edit",
+    "serverPackage": "@tailor-cms/ce-carousel-server"
+  },
+  {
+    "name": "@tailor-cms/ce-modal",
+    "clientPackage": "@tailor-cms/ce-modal-edit",
+    "serverPackage": "@tailor-cms/ce-modal-server"
   }
 ]
