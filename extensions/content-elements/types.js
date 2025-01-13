@@ -16,4 +16,5 @@ export const ContentElementType = {
   Video: 'CE_VIDEO',
   Accordion: 'CE_ACCORDION',
   Carousel: 'CE_CAROUSEL',
+  Modal: 'CE_MODAL',
 };
