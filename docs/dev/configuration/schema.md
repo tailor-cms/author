@@ -26,7 +26,7 @@ interface Schema {
   structure: ActivityConfig[];
   // Provide configuration for Content Containers which are used within
   // this schema
-  contentContainers: ContentContainer[];
+  contentContainers: ContentContainerConfig[];
   // Ability to specify additional data inputs for any installed element
   // Inputs are shown within editor sidebar upon element selection
   // For more details see content element metadata configuration

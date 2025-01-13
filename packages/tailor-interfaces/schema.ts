@@ -1,4 +1,6 @@
+import type { ContentContainer } from './activity';
 import type { ContentElement } from './content-element';
+import type { Repository } from './repository';
 
 export type ElementManifest = Record<string, any>;
 export interface ElementRegistry {
@@ -35,7 +37,7 @@ export interface ElementRelationship {
 export interface ElementMetaConfig {
   type: string;
   inputs?: Metadata[];
-  relationships: ElementRelationship[];
+  relationships?: ElementRelationship[];
 }
 
 export interface ActivityRelationship {
@@ -58,10 +60,25 @@ export interface AIConfig {
   };
 }
 
+export interface Guideline {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  metric: Record<string, number>;
+  isDone: () => boolean;
+};
+
 export interface ActivityConfig {
   type: string;
   label: string;
   color: string;
+  guidelines?: (
+    repository: Repository,
+    contentContainers: ContentContainer[],
+    contentElements: ContentElement[],
+    ceRegistry: any,
+  ) => Guideline[];
   rootLevel?: boolean;
   subLevels?: string[];
   isTrackedInWorkflow?: boolean;
@@ -88,7 +105,7 @@ export interface ContentElementCategory {
 
 export type ElementConfig = ContentElementCategory | ContentElementItem | string;
 
-export interface ContentContainer {
+export interface ContentContainerConfig {
   type: string;
   templateId: string;
   label: string;
@@ -111,7 +128,7 @@ export interface Schema {
   meta?: Metadata[];
   defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];
-  contentContainers: ContentContainer[];
+  contentContainers: ContentContainerConfig[];
   elementMeta?: ElementMetaConfig[];
   // @deprecated use elementMeta instead
   tesMeta?: ElementMetaConfig[];

@@ -53,7 +53,7 @@ const PAGE: ActivityConfig = {
 // We are going to use 'DEFAULT' container which is provided with Tailor
 // 'DEFAULT' container is just a list of Content Elements which are enabled
 // by adding it to the `types` list
-const SECTION: ContentContainer = {
+const SECTION: ContentContainerConfig = {
   // Content Container id for this particular schema
   type: 'SECTION',
   // id of the installed container

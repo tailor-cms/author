@@ -34,7 +34,6 @@
     <StructuredContent
       v-bind="$attrs"
       :activities="activities"
-      :categories="categories"
       :container="container"
       :elements="elements"
       :is-disabled="isDisabled"
@@ -56,7 +55,6 @@ import { computed, ref, watch } from 'vue';
 
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 import MetaInput from './MetaInput.vue';
 import StructuredContent from './StructuredContent.vue';
@@ -66,12 +64,11 @@ const props = defineProps<{
   activities: Record<string, Activity>;
   elements: Record<string, ContentElement>;
   label: string;
-  layout: boolean;
   icon: string;
   meta: any;
-  contentElementConfig: Array<any>;
-  categories: ContentElementCategory[];
   isDisabled: boolean;
+  layout?: boolean;
+  contentElementConfig: Array<any>;
 }>();
 
 const emit = defineEmits([

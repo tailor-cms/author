@@ -41,7 +41,6 @@
       <template #list-add="{ position: lastPosition, ...slotProps }">
         <AddElement
           v-bind="slotProps"
-          :categories="categories"
           :items="containerContent"
           :position="Math.min(insertElementPosition, lastPosition)"
           :show="!isDisabled && isAddDrawerVisible"
@@ -70,16 +69,15 @@ import { filter, sortBy, transform } from 'lodash';
 
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 const props = defineProps<{
   container: Activity;
   elements: Record<string, ContentElement>;
-  layout: boolean;
   label: string;
   isDisabled: boolean;
+  layout?: boolean;
+  supportedTypes?: any[];
   supportedElementConfig: any[];
-  categories: ContentElementCategory[];
 }>();
 
 const emit = defineEmits(['save:element', 'delete:element', 'reorder:element']);

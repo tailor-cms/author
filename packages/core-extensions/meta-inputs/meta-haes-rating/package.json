@@ -12,10 +12,5 @@
     "@tailor-cms/core-components": "workspace:*",
     "vue": "^3.3.4",
     "vuetify": "^3.7.0"
-  },
-  "dependencies": {
-    "chart.js": "^4.4.7",
-    "chartjs-plugin-datalabels": "^2.2.0",
-    "vue-chartjs": "^5.3.2"
   }
 }

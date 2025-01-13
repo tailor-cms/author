@@ -50,6 +50,7 @@ const chartOptions = computed(() => ({
       font: { weight: 'bold', size: 12 },
       borderRadius: 25,
       borderColor: props.dark ? '#ECEFF1BF' : '#455A64BF',
+      borderWidth: 1,
       padding: { top: 5, bottom: 5 },
       formatter: (value: number) => value.toFixed(1),
     },
