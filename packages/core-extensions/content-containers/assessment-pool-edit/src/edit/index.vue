@@ -1,103 +1,118 @@
 <template>
   <div class="assessments">
     <div class="heading">
-      <h2 class="primary--text text--darken-3">Assessments</h2>
-      <v-btn v-if="hasAssessments" @click="toggleAssessments" text small>
+      <h2 class="primary--text text-darken-3">
+        Assessments
+      </h2>
+      <VBtn
+        v-if="hasAssessments"
+        variant="text"
+        size="small"
+        @click="toggleAssessments"
+      >
         {{ allSelected ? 'hide all' : 'show all' }}
-      </v-btn>
+      </VBtn>
     </div>
-    <v-alert :value="!hasAssessments" color="white" icon="mdi-information-variant">
+    <VAlert
+      :model-value="!hasAssessments"
+      color="white"
+      icon="mdi-information-variant"
+    >
       Click the button below to create first assessment.
-    </v-alert>
+    </VAlert>
     <div class="pl-0">
-      <assessment-item
+      <AssessmentItem
         v-for="it in assessments"
         :key="it.uid"
+        :assessment="it"
+        :expanded="isSelected(it)"
+        :is-disabled="isDisabled"
         @selected="toggleSelect(it)"
         @save="saveAssessment"
         @delete="$emit('delete:element', it)"
-        :assessment="it"
-        :expanded="isSelected(it)"
-        :is-disabled="isDisabled" />
+      />
     </div>
-    <add-element
+    <AddElement
       v-if="!isDisabled"
-      @add="addAssessments"
-      :items="assessments"
-      :include="['ASSESSMENT']"
       :activity="container"
-      :position="assessments.length"
+      :include="[]"
+      :items="assessments"
       :layout="false"
+      :position="assessments.length"
+      label="Add assessment"
       large
-      label="Add assessment" />
+      @add="addAssessments"
+    />
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { ref, computed, watch } from 'vue';
 import { AddElement, AssessmentItem } from '@tailor-cms/core-components';
-import filter from 'lodash/filter';
-import sortBy from 'lodash/sortBy';
+import { filter, sortBy } from 'lodash';
 import { uuid } from '@tailor-cms/utils';
 
-export default {
-  name: 'assessment-pool',
-  props: {
-    container: { type: Object, required: true },
-    elements: { type: Object, required: true },
-    isDisabled: { type: Boolean, default: false }
-  },
-  data: () => ({
-    selected: [],
-    allSelected: false
-  }),
-  computed: {
-    assessments() {
-      const activityId = this.container.id;
-      const assessments = filter(this.elements, { activityId });
-      return sortBy(assessments, 'position');
-    },
-    hasAssessments: vm => vm.assessments.length
-  },
-  methods: {
-    addAssessments(assessments) {
-      assessments.forEach(it => {
-        const uid = uuid();
-        this.$emit('add:element', { ...it, uid });
-        this.selected.push(uid);
-      });
-    },
-    saveAssessment(assessment) {
-      const event = assessment.id ? 'update:element' : 'save:element';
-      return this.$emit(event, assessment);
-    },
-    toggleSelect(assessment) {
-      const { question } = assessment.data;
-      const hasQuestion = question && question.length;
-      if (this.isSelected(assessment) && !hasQuestion) {
-        this.$emit('delete:element', assessment);
-      } else if (this.isSelected(assessment)) {
-        this.selected.splice(this.selected.indexOf(assessment.uid), 1);
-      } else {
-        this.selected.push(assessment.uid);
-      }
-    },
-    isSelected(assessment) {
-      return this.selected.includes(assessment.uid);
-    },
-    clearSelected() {
-      const ids = this.assessments.map(it => it.uid);
-      this.selected = this.selected.filter(it => ids.includes(it));
-    },
-    toggleAssessments() {
-      this.allSelected = !this.allSelected;
-      this.selected = this.allSelected ? this.assessments.map(it => it.uid) : [];
-    }
-  },
-  watch: {
-    assessments: 'clearSelected'
-  },
-  components: { AddElement, AssessmentItem }
+const props = defineProps<{
+  container: any;
+  elements: Record<string, any>;
+  isDisabled: boolean;
+}>();
+const emit = defineEmits([
+  'add:element',
+  'save:element',
+  'delete:element',
+  'update:element',
+]);
+
+const selected = ref<string[]>([]);
+const allSelected = ref(false);
+
+const assessments = computed(() => {
+  const activityId = props.container.id;
+  const assessments = filter(props.elements, { activityId });
+  return sortBy(assessments, 'position');
+});
+
+const hasAssessments = computed(() => assessments.value.length > 0);
+
+const addAssessments = (newAssessments: any[]) => {
+  newAssessments.forEach(it => {
+    const uid = uuid();
+    emit('add:element', { ...it, uid });
+    selected.value.push(uid);
+  });
 };
+
+const saveAssessment = (assessment: any) => {
+  const event = assessment.id ? 'update:element' : 'save:element';
+  emit(event, assessment);
+};
+
+const toggleSelect = (assessment: any) => {
+  const { question } = assessment.data;
+  const hasQuestion = question && question.length;
+  if (isSelected(assessment) && !hasQuestion) {
+    emit('delete:element', assessment);
+  } else if (isSelected(assessment)) {
+    selected.value.splice(selected.value.indexOf(assessment.uid), 1);
+  } else {
+    selected.value.push(assessment.uid);
+  }
+};
+
+const isSelected = (assessment: any) => selected.value.includes(assessment.uid);
+
+const clearSelected = () => {
+  const ids = assessments.value.map(it => it.uid);
+  selected.value = selected.value.filter(it => ids.includes(it));
+};
+
+const toggleAssessments = () => {
+  allSelected.value = !allSelected.value;
+  selected.value = allSelected.value ? assessments.value.map(it => it.uid) : [];
+};
+
+watch(assessments, clearSelected);
 </script>
 
 <style lang="scss" scoped>
