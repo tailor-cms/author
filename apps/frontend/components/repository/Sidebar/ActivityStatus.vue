@@ -4,7 +4,7 @@
     class="d-flex align-center pa-2 ga-3"
     variant="tonal"
   >
-    <VTooltip location="bottom" open-delay="500">
+    <VTooltip v-if="statusConfig" location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
         <span
           v-bind="tooltipProps"
@@ -27,7 +27,7 @@
       color="primary-lighten-4"
       size="x-small"
     />
-    <VTooltip location="bottom" open-delay="500">
+    <VTooltip v-if="priorityConfig" location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
         <VIcon
           :color="priorityConfig.color"
@@ -56,7 +56,6 @@
 
 <script lang="ts" setup>
 import type { Status } from '@tailor-cms/interfaces/activity';
-import type { StatusConfig } from '@tailor-cms/common';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
@@ -73,9 +72,7 @@ const store = useCurrentRepository();
 const { workflow } = storeToRefs(store);
 
 const statusConfig = computed(() =>
-  workflow.value.statuses.find(
-    (status: StatusConfig) => status.id === props.activityStatus.status,
-  ),
+  workflow.value?.statuses.find(({ id }) => id === props.activityStatus.status),
 );
 
 const priorityConfig = computed(() =>

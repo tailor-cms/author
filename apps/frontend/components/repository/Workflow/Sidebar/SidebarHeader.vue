@@ -76,7 +76,7 @@ const activityConfig = computed(() =>
 const timestampInfo = computed(() => {
   const format = 'MM/dd/yy HH:mm';
   const createdAt = formatDate(props.activity.createdAt, format);
-  const updatedAt = formatDate(props.activity.status.updatedAt, format);
+  const updatedAt = formatDate(props.activity.currentStatus.updatedAt, format);
   const isUpdated = isBefore(createdAt, updatedAt);
 
   if (!isUpdated) return `Created at ${createdAt}`;

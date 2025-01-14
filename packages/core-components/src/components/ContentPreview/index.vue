@@ -29,7 +29,7 @@ import type {
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import { computed } from 'vue';
-import type { ContentContainer } from '@tailor-cms/interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { Filter } from '@tailor-cms/interfaces/schema';
 import flatMap from 'lodash/flatMap';
 import keyBy from 'lodash/keyBy';
@@ -38,7 +38,7 @@ import ContentElementWrapper from './ContentElement.vue';
 
 interface Props {
   selected: (ContentElement | Relationship)[];
-  contentContainers?: ContentContainer[];
+  contentContainers?: Activity[];
   filters?: Filter[];
   selectable?: boolean;
   multiple?: boolean;
