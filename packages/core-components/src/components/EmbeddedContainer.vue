@@ -36,8 +36,8 @@ import ContainedContent from './ContainedContent.vue';
 import ElementList from './ElementList.vue';
 
 interface Props {
-  types: ContentElementCategory[]; // TODO: Remove once elements are migrated
-  allowedElementConfig: ContentElementCategory[];
+  types?: ContentElementCategory[]; // TODO: Remove once elements are migrated
+  allowedElementConfig?: ContentElementCategory[];
   container: { embeds: Record<string, ContentElement> };
   isDisabled?: boolean;
   enableAdd?: boolean;
