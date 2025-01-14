@@ -265,4 +265,7 @@ FLAT_REPO_STRUCTURE=1
 # Force color output (for logs)
 # https://nodejs.org/api/tty.html#writestreamgetcolordepthenv
 FORCE_COLOR=1
+
+# Statsig key
+NUXT_PUBLIC_STATSIG_KEY=
 ```

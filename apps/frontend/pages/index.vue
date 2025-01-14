@@ -1,8 +1,13 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
-    <VContainer :class="{ 'catalog-empty': !hasRepositories, catalog: true }">
+    <VContainer :class="{ 'catalog-empty': !hasRepositories, 'catalog': true }">
       <VRow class="catalog-actions pb-5" no-gutters>
-        <VCol cols="12" lg="4" md="12" offset-lg="4" sm="12">
+        <VCol
+          cols="12"
+          lg="4"
+          md="12"
+          offset-lg="4"
+          sm="12">
           <SearchInput
             :search-input="repositoryStore.queryParams.search"
             @update="onSearchInput"
@@ -103,14 +108,15 @@
 <script setup lang="ts">
 import find from 'lodash/find';
 import map from 'lodash/map';
-import { SCHEMAS } from 'tailor-config-shared';
+import { SCHEMAS } from '@tailor-cms/config';
 import { storeToRefs } from 'pinia';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
 import RepositoryCard from '@/components/catalog/Card/index.vue';
 import RepositoryFilter from '~/components/catalog/Filter/RepositoryFilter.vue';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
-import RepositoryFilterSelection from '@/components/catalog/Filter/RepositoryFilterSelection/index.vue';
+import RepositoryFilterSelection
+  from '@/components/catalog/Filter/RepositoryFilterSelection/index.vue';
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
 import { useAuthStore } from '@/stores/auth';
@@ -199,6 +205,7 @@ const refetchRepositories = async () => {
   isLoading.value = false;
 };
 
+// eslint-disable-next-line
 const loadMore = async ({ done }: { done: Function }) => {
   const totalItems = repositories.value.length;
   queryParams.value.offset = totalItems;

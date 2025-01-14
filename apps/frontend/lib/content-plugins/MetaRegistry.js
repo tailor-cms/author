@@ -1,5 +1,5 @@
 import { getMetaName as getName } from '@tailor-cms/utils';
-import { elements } from '@tailor-cms/meta-element-collection';
+import { elements } from '@tailor-cms/meta-element-collection/client';
 import ComponentRegistry from './ComponentRegistry';
 
 export default (appInstance) =>

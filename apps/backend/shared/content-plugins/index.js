@@ -1,6 +1,6 @@
+import Promise from 'bluebird';
 import containerRegistry from './containerRegistry.js';
 import elementRegistry from './elementRegistry.js';
-import Promise from 'bluebird';
 
 class ContentPluginRegistry {
   constructor() {

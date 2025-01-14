@@ -1,6 +1,6 @@
 import * as aws from '@pulumi/aws';
 import * as pulumi from '@pulumi/pulumi';
-import * as studion from '@studion/infra-code-blocks';
+import type * as studion from '@studion/infra-code-blocks';
 
 const aiConfig = new pulumi.Config('ai');
 const oidcConfg = new pulumi.Config('oidc');
@@ -101,6 +101,7 @@ export const getSecrets = (db: studion.Database) => [
     'OIDC_CLIENT_ID',
     'OIDC_CLIENT_SECRET',
     'OIDC_SESSION_SECRET',
+    'NUXT_PUBLIC_STATSIG_KEY',
   ].map((name) => ({ name, valueFrom: getSsmParam(name) })),
   { name: 'DATABASE_PASSWORD', valueFrom: db.password.secret.arn },
 ];

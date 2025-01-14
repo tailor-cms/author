@@ -27,8 +27,7 @@
 
 <script lang="ts" setup>
 import invoke from 'lodash/invoke';
-
-import TailorDialog from '@/components/common/TailorDialog.vue';
+import { TailorDialog } from '@tailor-cms/core-components';
 
 const { $eventBus } = useNuxtApp() as any;
 

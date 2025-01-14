@@ -2,22 +2,23 @@ import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import { StatusCodes } from 'http-status-codes';
 import { createId as cuid } from '@paralleldrive/cuid2';
-import { createError } from '../shared/error/helpers.js';
-import { createLogger } from '../shared/logger.js';
-import db from '../shared/database/index.js';
 import getVal from 'lodash/get.js';
 import groupBy from 'lodash/groupBy.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import publishingService from '../shared/publishing/publishing.service.js';
-import { repository as role } from 'tailor-config-shared/src/role.js';
+import { repository as role } from '@tailor-cms/common/src/role.js';
 import sample from 'lodash/sample.js';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 import { snakeCase } from 'change-case';
-import TransferService from '../shared/transfer/transfer.service.js';
-import { general } from '../config/server/index.js';
+import { removeInvalidReferences } from '#shared/util/modelReference.js';
+import publishingService from '#shared/publishing/publishing.service.js';
+import db from '#shared/database/index.js';
+import { createError } from '#shared/error/helpers.js';
+import TransferService from '#shared/transfer/transfer.service.js';
+import { createLogger } from '#logger';
+import { general } from '#config';
 
 const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 
@@ -27,6 +28,8 @@ const tmp = Promise.promisifyAll((await import('tmp')).default, {
 });
 
 const {
+  Activity,
+  ContentElement,
   Repository,
   RepositoryTag,
   RepositoryUser,
@@ -296,6 +299,18 @@ function importRepository({ body, file, user }, res) {
     });
 }
 
+function validateReferences(req, res) {
+  const { repository } = req;
+  return repository.validateReferences().then((data) => res.json({ data }));
+}
+
+async function cleanupInvalidReferences(req, res) {
+  const { body, repository } = req;
+  await removeInvalidReferences(Activity, repository.id, body.activities);
+  await removeInvalidReferences(ContentElement, repository.id, body.elements);
+  return res.status(NO_CONTENT).send();
+}
+
 export default {
   index,
   create,
@@ -314,4 +329,6 @@ export default {
   publishRepoInfo,
   addTag,
   removeTag,
+  validateReferences,
+  cleanupInvalidReferences,
 };

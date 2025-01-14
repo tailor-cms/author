@@ -1,8 +1,5 @@
 import 'dotenv/config';
-import createLogger from '../shared/logger.js';
-import roleConfig from 'tailor-config-shared/src/role.js';
-
-createLogger.enabled = false;
+import roleConfig from '@tailor-cms/common/src/role.js';
 
 // Dynamic import is needed in order for the `enabled` flag to be respected
 const { default: db } = await import('../shared/database/index.js');

@@ -1,16 +1,16 @@
-import { store as activityCache } from '../../repository/feed/store.js';
-import camelCase from 'lodash/camelCase.js';
-import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import crypto from 'node:crypto';
-import db from '../../shared/database/index.js';
+import path from 'node:path';
 import { faker } from '@faker-js/faker';
 import find from 'lodash/find.js';
 import mapKeys from 'lodash/mapKeys.js';
 import { packageDirectory } from 'pkg-dir';
-import path from 'node:path';
-import { role as roles } from 'tailor-config-shared';
+import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
+import camelCase from 'lodash/camelCase.js';
+import { role as roles } from '@tailor-cms/common';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
-import TransferService from '../../shared/transfer/transfer.service.js';
+import { store as activityCache } from '../../repository/feed/store.js';
+import db from '#shared/database/index.js';
+import TransferService from '#shared/transfer/transfer.service.js';
 
 const { Activity, Repository, User } = db;
 
@@ -57,7 +57,7 @@ class SeedService {
       order: [['createdAt', 'DESC']],
     });
     const activity = await Activity.findOne({
-      where: { repositoryId: repository.id, 'data.name': 'History of Pizza' },
+      where: { 'repositoryId': repository.id, 'data.name': 'History of Pizza' },
     });
     return { repository, activity };
   }

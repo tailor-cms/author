@@ -83,9 +83,9 @@ import orderBy from 'lodash/orderBy';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 
+import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 import DiscussionThread from './Thread/index.vue';
 import ResolveButton from './ResolveButton.vue';
-import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 
 interface Props {
   user: User;

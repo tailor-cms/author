@@ -1,9 +1,9 @@
-import auth from '../shared/auth/index.js';
 import express from 'express';
 import { errors as OIDCError } from 'openid-client';
+import auth from '#shared/auth/index.js';
 
-import { origin } from '../config/server/index.js';
-import { requestLimiter } from '../shared/request/mw.js';
+import { requestLimiter } from '#shared/request/mw.js';
+import { origin } from '#config';
 
 const router = express.Router();
 const { authenticate, logout } = auth;

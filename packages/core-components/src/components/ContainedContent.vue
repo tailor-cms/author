@@ -27,6 +27,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import get from 'lodash/get';
 import throttle from 'lodash/throttle';
 
@@ -34,6 +35,7 @@ import ContentElementWrapper from './ContentElement.vue';
 
 interface Props {
   element: ContentElement;
+  embedElementConfig?: ContentElementCategory[];
   references?: Record<string, ContentElement[]> | null;
   isDisabled?: boolean;
   isDragged?: boolean;
@@ -43,6 +45,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  embedElementConfig: () => [],
   references: null,
   isDisabled: false,
   isDragged: false,
@@ -63,10 +66,18 @@ const emit = defineEmits([
 const isHovered = ref(false);
 
 const bindings = computed(() => {
-  const { element, isDisabled, references, isDragged, dense, showDiscussion } =
-    props;
+  const {
+    embedElementConfig,
+    element,
+    isDisabled,
+    references,
+    isDragged,
+    dense,
+    showDiscussion,
+  } = props;
   return {
     element,
+    embedElementConfig,
     references,
     isDisabled,
     isDragged,

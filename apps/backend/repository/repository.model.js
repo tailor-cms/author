@@ -1,7 +1,8 @@
-import { Model } from 'sequelize';
+import { Model, Op } from 'sequelize';
+import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 const { getRepositoryRelationships, getSchema } = schema;
 
@@ -107,13 +108,23 @@ class Repository extends Model {
     );
   }
 
-  /**
-   * Maps references for cloned activities and content elements.
-   * @param {Object} mappings Dict where keys represent old and values new ids.
-   * @param {SequelizeTransaction} [transaction]
-   * @returns {Promise.<Object>} Object with mapped activities and elements.
-   */
-  async mapClonedReferences(mappings, transaction) {
+  async validateReferences(transaction) {
+    const [activities, elements] = await this.getEntitiesWithRefs(transaction);
+    const Activity = this.sequelize.model('Activity');
+    const ContentElement = this.sequelize.model('ContentElement');
+    return {
+      activities: await Activity.detectMissingReferences(
+        activities,
+        transaction,
+      ),
+      elements: await ContentElement.detectMissingReferences(
+        elements,
+        transaction,
+      ),
+    };
+  }
+
+  async getEntitiesWithRefs(transaction) {
     const Activity = this.sequelize.model('Activity');
     const ContentElement = this.sequelize.model('ContentElement');
     const opts = { where: { repositoryId: this.id }, transaction };
@@ -124,6 +135,18 @@ class Repository extends Model {
       ),
       ContentElement.scope('withReferences').findAll(opts),
     ]);
+    return [activities, elements];
+  }
+
+  /**
+   * Maps references for cloned activities and content elements.
+   * @param {Object} mappings Dict where keys represent old and values new ids.
+   * @param {SequelizeTransaction} [transaction]
+   * @returns {Promise.<Object>} Object with mapped activities and elements.
+   */
+  async mapClonedReferences(mappings, transaction) {
+    const [activities, elements] = await this.getEntitiesWithRefs(transaction);
+    const relationships = getRepositoryRelationships(this.schema);
     return Promise.join(
       Promise.map(activities, (it) => {
         return it.mapClonedReferences(
@@ -160,6 +183,29 @@ class Repository extends Model {
       await dst.mapClonedReferences(idMap, transaction);
       return dst;
     });
+  }
+
+  // Check if there is at least one outline activity with unpublished
+  // changes and update repository model accordingly
+  async updatePublishingStatus(excludedActivity) {
+    const outlineTypes = map(schema.getOutlineLevels(this.schema), 'type');
+    const where = {
+      repositoryId: this.id,
+      type: outlineTypes,
+      detached: false,
+      // Not published at all or has unpublished changes
+      [Op.or]: [
+        {
+          publishedAt: { [Op.gt]: 0 },
+          modifiedAt: { [Op.gt]: this.sequelize.col('published_at') },
+        },
+        { publishedAt: null, deletedAt: null },
+      ],
+    };
+    if (excludedActivity) where.id = { [Op.ne]: excludedActivity.id };
+    const Activity = this.sequelize.model('Activity');
+    const unpublishedCount = await Activity.count({ where, paranoid: false });
+    return this.update({ hasUnpublishedChanges: !!unpublishedCount });
   }
 
   getUser(user) {

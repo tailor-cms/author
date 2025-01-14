@@ -1,12 +1,12 @@
-import elementHooks from '../shared/content-plugins/elementHooks.js';
 import forEach from 'lodash/forEach.js';
 import get from 'lodash/get.js';
-import hash from 'hash-obj';
-import PluginRegistry from '../shared/content-plugins/index.js';
+import hash from 'hash-object';
 import Promise from 'bluebird';
-import { resolveStatics } from '../shared/storage/helpers.js';
-import { schema } from 'tailor-config-shared';
-import sse from '../shared/sse/index.js';
+import { schema } from '@tailor-cms/config';
+import PluginRegistry from '#shared/content-plugins/index.js';
+import { resolveStatics } from '#shared/storage/helpers.js';
+import elementHooks from '#shared/content-plugins/elementHooks.js';
+import sse from '#shared/sse/index.js';
 
 const { elementRegistry } = PluginRegistry;
 

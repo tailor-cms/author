@@ -63,7 +63,7 @@
       :enable-add="false"
       :is-disabled="disabled"
       :layout="layout"
-      :supported-types="types"
+      :supported-types-config="contentElementConfig"
       class="element-list"
       @add="onElementAdd"
       @update="reorder"
@@ -75,6 +75,7 @@
         />
         <ContainedContent
           v-bind="{
+            embedElementConfig,
             element,
             isDragged,
             isDisabled: disabled,
@@ -91,8 +92,7 @@
     <AddElement
       v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
-      :categories="categories"
-      :include="types"
+      :include="contentElementConfig"
       :items="containerElements"
       :large="true"
       :layout="layout"
@@ -123,7 +123,7 @@ import type {
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
@@ -133,17 +133,17 @@ interface Props {
   container: Activity;
   elements: Record<string, ContentElement>;
   position: number;
-  types?: string[] | null;
-  categories?: ElementCategory[] | null;
+  embedElementConfig?: ContentElementCategory[] | null;
+  contentElementConfig?: ContentElementCategory[] | null;
   layout?: boolean;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  types: null,
+  embedElementConfig: null,
+  contentElementConfig: null,
   layout: true,
   disabled: false,
-  categories: null,
 });
 
 const emit = defineEmits([
@@ -213,6 +213,7 @@ const getRefElements = (refs: Record<string, Relationship[]>) => {
     (acc: any, it, key: string) => {
       const elements = it.map(({ uid }) => props.elements[uid]);
       acc[key] = elements.filter(Boolean) as ContentElement[];
+      return acc;
     },
     {} as Record<string, ContentElement[]>,
   );

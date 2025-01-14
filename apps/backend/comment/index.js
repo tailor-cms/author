@@ -1,9 +1,9 @@
 import { FORBIDDEN, NOT_FOUND } from 'http-status-codes';
-import { createError } from '../shared/error/helpers.js';
-import ctrl from './comment.controller.js';
-import db from '../shared/database/index.js';
 import express from 'express';
-import processQuery from '../shared/util/processListQuery.js';
+import ctrl from './comment.controller.js';
+import { createError } from '#shared/error/helpers.js';
+import db from '#shared/database/index.js';
+import processQuery from '#shared/util/processListQuery.js';
 
 const { Comment, Sequelize, User } = db;
 const router = express.Router();

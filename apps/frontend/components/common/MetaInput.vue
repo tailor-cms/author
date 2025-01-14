@@ -5,6 +5,8 @@
     :dark="dark"
     :error-messages="errorMessage"
     :meta="meta"
+    :is-new="isNew"
+    :is-reviewer="isReviewer"
     @update="updateMeta"
   />
 </template>
@@ -19,15 +21,19 @@ interface Props {
   meta: Metadata;
   name?: string | null;
   dark?: boolean;
+  isNew?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   name: null,
   dark: false,
+  isNew: false,
 });
-
 const emit = defineEmits(['update']);
 
+const store = useCurrentRepository();
+
+const isReviewer = computed(() => store.repository?.hasAdminAccess);
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
 

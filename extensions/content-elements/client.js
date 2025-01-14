@@ -13,6 +13,9 @@ import pkg11 from '@tailor-cms/ce-pdf-edit';
 import pkg12 from '@tailor-cms/ce-embed-edit';
 import pkg13 from '@tailor-cms/ce-audio-edit';
 import pkg14 from '@tailor-cms/ce-video-edit';
+import pkg15 from '@tailor-cms/ce-accordion-edit';
+import pkg16 from '@tailor-cms/ce-carousel-edit';
+import pkg17 from '@tailor-cms/ce-modal-edit';
 
 // prettier-ignore
 export const elements = [
@@ -31,4 +34,7 @@ export const elements = [
   pkg12,
   pkg13,
   pkg14,
+  pkg15,
+  pkg16,
+  pkg17,
 ];

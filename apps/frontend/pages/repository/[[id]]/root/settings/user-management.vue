@@ -9,9 +9,10 @@
 
 <script lang="ts" setup>
 import map from 'lodash/map';
-import { role } from 'tailor-config-shared';
+import { role } from '@tailor-cms/common';
 import { title as titleCase } from 'to-case';
 
+// eslint-disable-next-line max-len
 import AddUserDialog from '@/components/repository/Settings/UserManagement/AddUserDialog.vue';
 import UserList from '@/components/repository/Settings/UserManagement/UserList.vue';
 

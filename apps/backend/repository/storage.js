@@ -1,6 +1,6 @@
-import BaseStorage from '../shared/storage/index.js';
-import { storage as config } from '../config/server/index.js';
 import path from 'node:path';
+import BaseStorage from '#shared/storage/index.js';
+import { storage as config } from '#config';
 
 class Storage extends BaseStorage {
   getPath() {

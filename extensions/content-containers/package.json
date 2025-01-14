@@ -2,8 +2,11 @@
   "name": "@tailor-cms/content-container-collection",
   "type": "module",
   "version": "0.0.1",
-  "files": ["client.js", "server.js"],
-  "main": "client.js",
+  "files": [
+    "client.js",
+    "server.js",
+    "types.js"
+  ],
   "scripts": {
     "cli": "node ./cli.js"
   },
@@ -13,6 +16,7 @@
   "dependencies": {
     "@tailor-cms/tcc-assessment-pool-edit": "workspace:^",
     "@tailor-cms/tcc-assessment-pool-server": "workspace:^",
-    "@tailor-cms/tcc-page": "workspace:^"
+    "@tailor-cms/tcc-page": "workspace:^",
+    "@tailor-cms/tcc-structured-content": "workspace:^"
   }
 }

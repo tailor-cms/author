@@ -15,6 +15,8 @@
       v-for="(container, index) in containerGroup"
       :key="container?.uid"
       v-bind="$attrs"
+      :embed-element-config="embedElementConfig"
+      :content-element-config="contentElementConfig"
       :activities="processedActivities"
       :config="config"
       :container="container"
@@ -57,6 +59,7 @@ import capitalize from 'lodash/capitalize';
 import castArray from 'lodash/castArray';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import get from 'lodash/get';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import isEmpty from 'lodash/isEmpty';
 import maxBy from 'lodash/maxBy';
 import pluralize from 'pluralize';
@@ -70,9 +73,11 @@ import { useEditorStore } from '@/stores/editor';
 interface Props {
   type: string;
   label: string;
+  contentElementConfig: ContentElementCategory[];
+  embedElementConfig: ContentElementCategory[];
   parentId: number;
   processedActivities: Activity[];
-  processedElements: Record<string, Element>;
+  processedElements: Record<string, ContentElement>;
   config?: Record<string, any>;
   templateId?: string;
   containerGroup?: Activity[];

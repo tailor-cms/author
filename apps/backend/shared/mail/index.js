@@ -1,11 +1,11 @@
-import { mail as config, origin } from '../../config/server/index.js';
-import { createLogger, Level } from '../../shared/logger.js';
 import { fileURLToPath, URL } from 'node:url';
-import { renderHtml, renderText } from './render.js';
 import path from 'node:path';
 import pick from 'lodash/pick.js';
 import { SMTPClient } from 'emailjs';
 import urlJoin from 'url-join';
+import { renderHtml, renderText } from './render.js';
+import { createLogger, Level } from '#logger';
+import { mail as config, origin } from '#config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const logger = createLogger('mailer', { level: Level.DEBUG });

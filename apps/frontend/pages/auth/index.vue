@@ -26,7 +26,7 @@
       </VBtn>
       <VDivider class="my-10" />
     </div>
-    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions-->
+    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
     <form novalidate @keydown.enter="signIn" @submit.prevent="signIn">
       <VTextField
         v-model="emailInput"

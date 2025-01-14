@@ -1,6 +1,7 @@
-import { EndpointResponse, formatResponse } from './common';
-import BaseClient from './BaseClient';
 import { outlineSeed } from '../helpers/seed';
+import type { EndpointResponse } from './common';
+import { formatResponse } from './common';
+import BaseClient from './BaseClient';
 
 class SeedClient extends BaseClient {
   constructor() {

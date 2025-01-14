@@ -42,6 +42,7 @@
           :key="input.key"
           :meta="input"
           :name="`data.${input.key}`"
+          is-new
           @update="setMetaValue"
         />
         <VSpacer />
@@ -72,12 +73,13 @@
 
 <script lang="ts" setup>
 import { InsertLocation } from '@tailor-cms/utils';
+import type { Metadata } from '@tailor-cms/interfaces/schema';
+import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
+import TypeSelect from './TypeSelect.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
 import type { StoreActivity } from '@/stores/activity';
-import TailorDialog from '@/components/common/TailorDialog.vue';
-import TypeSelect from './TypeSelect.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -143,7 +145,9 @@ const activity = ref(initActivityState(taxonomyLevels.value?.[0]?.type)) as any;
 
 const metadata = computed(() => {
   if (!activity.value.type) return null;
-  return $schemaService.getActivityMetadata(activity.value);
+  return $schemaService
+    .getActivityMetadata(activity.value)
+    .filter((it: Metadata) => !it.hideOnCreate);
 });
 
 const setMetaValue = (key: string, val: any) => {

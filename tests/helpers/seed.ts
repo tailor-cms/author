@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 import ApiClient from '../api/ApiClient';
 import SeedClient from '../api/SeedClient';
@@ -20,9 +20,9 @@ export const toEmptyRepository = async (page: Page, name?: string) => {
 
 export const toSeededRepository = async (page: Page, name?: string) => {
   const { data } = await SeedClient.seedTestRepository({ name });
-  const { repository } = data;
+  const { repository, activity } = data;
   await page.goto(`/repository/${repository.id}/root/structure`);
-  return repository;
+  return { repository, activity };
 };
 
 export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
@@ -34,9 +34,9 @@ export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
 
 export const toSeededRepositorySettings = async (page: Page) => {
   const { data } = await SeedClient.seedTestRepository();
-  const { repository } = data;
+  const { repository, activity } = data;
   await page.goto(`/repository/${repository.id}/root/settings/general`);
-  return repository;
+  return { repository, activity };
 };
 
 export const outlineSeed = {

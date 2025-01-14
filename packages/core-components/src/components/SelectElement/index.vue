@@ -39,7 +39,6 @@
         </VSheet>
         <ContentPreview
           v-else
-          :allowed-types="allowedTypes"
           :content-containers="items.contentContainers"
           :filters="filters"
           :multiple="multiple"
@@ -88,10 +87,10 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import sortBy from 'lodash/sortBy';
 
 import ContentPreview from '../ContentPreview/index.vue';
-import SelectActivity from './SelectActivity.vue';
-import SelectRepository from './SelectRepository.vue';
 import TailorDialog from '../TailorDialog.vue';
 import { useLoader } from '../../composables/useLoader';
+import SelectActivity from './SelectActivity.vue';
+import SelectRepository from './SelectRepository.vue';
 
 const TOGGLE_BUTTON = {
   SELECT: { label: 'Select all', icon: 'checkbox-multiple-marked-outline' },
@@ -100,7 +99,7 @@ const TOGGLE_BUTTON = {
 
 interface Props {
   element?: ContentElement | null;
-  allowedTypes: string[];
+  allowedElementConfig: Array<{ type: string; config: any }>;
   heading: string;
   multiple?: boolean;
   selected?: Relationship[];
@@ -216,11 +215,11 @@ const assignElements = (
   activity: Activity,
   elements: ContentElement[],
 ) => {
-  const { allowedTypes, filters = [] } = props;
+  const { filters = [] } = props;
   const containerElements = elements
     .filter((el) => {
       if (el.activityId !== container.id) return false;
-      if (allowedTypes.length && !allowedTypes.includes(el.type)) return false;
+      if (!isAllowedType(el)) return false;
       if (!props.element) return true;
       return filters.every((filter) =>
         filter(el, props.element as ContentElement, ceRegistry),
@@ -228,6 +227,15 @@ const assignElements = (
     })
     .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
+};
+
+const isAllowedType = (el: ContentElement) => {
+  if (!props.allowedElementConfig.length) return true;
+  return props.allowedElementConfig.some((it: any) => {
+    const sameType = it.type === el.type;
+    const sameConfig = it.config.isGradable === el.data.isGradable;
+    return sameType && sameConfig;
+  });
 };
 
 const toggleElementSelection = (element: ContentElement) => {

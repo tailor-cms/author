@@ -1,5 +1,5 @@
 {
-  "name": "@harvard-lxp/tcc-assessment-pool-server",
+  "name": "@tailor-cms/tcc-assessment-pool-server",
   "version": "0.0.1",
   "description": "Tailor assessment pool content container server package",
   "author": "Studion <info@gostudion.com>",

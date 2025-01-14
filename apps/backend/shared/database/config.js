@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import yn from 'yn';
 
-import { createLogger, Level } from '../logger.js';
+import { createLogger, Level } from '#logger';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const logger = createLogger('db', { level: Level.DEBUG });

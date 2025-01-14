@@ -38,10 +38,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { StatusConfig } from 'tailor-config-shared';
+import type { StatusConfig } from '@tailor-cms/common';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
-import { workflow as workflowConfig } from 'tailor-config-shared';
+import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import OverviewDueDate from './DueDate.vue';
 import { useCurrentRepository } from '@/stores/current-repository';

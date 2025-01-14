@@ -154,7 +154,7 @@ const children = computed(() => {
 });
 
 const icon = computed(() => {
-  if (!hasSubtypes) return;
+  if (!hasSubtypes.value) return;
   let icon = isExpanded.value ? 'folder-open' : 'folder';
   if (!hasChildren.value) icon += '-outline';
   return icon;

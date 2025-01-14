@@ -1,9 +1,9 @@
 import { createRequire } from 'node:module';
+import path from 'node:path';
 import dargs from 'dargs';
 import dotenv from 'dotenv';
 import minimist from 'minimist';
 import { packageDirectory } from 'pkg-dir';
-import path from 'node:path';
 import safeRequire from 'safe-require';
 
 // App root
@@ -39,7 +39,7 @@ const options = Object.assign({}, config, getOptions(argv));
 process.argv.push(...dargs(options));
 
 // Make it rain!
-// eslint-disable-next-line
+
 require('sequelize-cli/lib/sequelize');
 
 function getArgs(argv) {

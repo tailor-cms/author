@@ -1,6 +1,11 @@
 <template>
   <div class="toolbar-wrapper elevation-3">
-    <div :style="{ left: lgAndUp ? '480px' : '380px' }">
+    <div
+      :style="{
+        left: lgAndUp ? '480px' : '380px',
+        ...!!repositoryStore.selectedActivityGuidelines && { right: '380px' },
+      }"
+    >
       <div
         v-if="activity && !element"
         :class="[showPublishDiff ? 'bg-publish-diff' : 'bg-primary-darken-4']"
@@ -65,6 +70,7 @@ withDefaults(defineProps<Props>(), {
 
 const { $schemaService } = useNuxtApp() as any;
 const { lgAndUp } = useDisplay();
+const repositoryStore = useCurrentRepository();
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
@@ -100,14 +106,14 @@ const usersWithActivity = computed(() => {
     z-index: 99;
   }
 
-  .v-input {
+  :deep(.v-input) {
     position: relative;
 
-    :deep(.v-input__details) {
+    .v-input__details {
       position: absolute;
       padding: 0 !important;
 
-      .v-messages__message {
+      .v-messages {
         margin-top: 0.5rem;
         border-radius: 4px;
         padding: 0.5rem 0.75rem;

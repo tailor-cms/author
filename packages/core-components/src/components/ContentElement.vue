@@ -30,6 +30,8 @@
       v-if="isComponentAvailable"
       v-bind="{
         ...$attrs,
+        embedTypes: embedElementConfig, // TODO: Remove once elements are migrated
+        embedElementConfig,
         element,
         references,
         isFocused,
@@ -54,13 +56,13 @@
       <div
         v-if="showDiscussion"
         :class="{ 'is-visible': isHighlighted || hasComments }"
+        class="mb-2"
       >
         <ElementDiscussion v-bind="element" :user="currentUser" @open="focus" />
       </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
           aria-label="Delete element"
-          class="mt-2"
           color="pink lighten-1"
           icon="mdi-delete-outline"
           size="x-small"
@@ -93,6 +95,7 @@ import {
 import { getComponentName, getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import type { Meta } from '@tailor-cms/interfaces/common';
 import type { User } from '@tailor-cms/interfaces/user';
 
@@ -110,9 +113,11 @@ interface Props {
   frame?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
+  embedElementConfig?: ContentElementCategory[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  embedElementConfig: () => [],
   references: null,
   parent: null,
   isHovered: false,
@@ -174,9 +179,7 @@ const onLink = (key?: string) => editorBus.emit('element:link', key);
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));
   elementBus.on('save:meta', (meta: Meta) => emit('save:meta', meta));
-  elementBus.on('save', (data: ContentElement['data']) =>
-    emit('save', onSave(data)),
-  );
+  elementBus.on('save', onSave);
 
   const deferSaveFlag = () => setTimeout(() => (isSaving.value = false), 1000);
   elementBus.on('saved', deferSaveFlag);
@@ -219,7 +222,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '../mixins';
+@use '../mixins';
 
 .content-element {
   $accent-1: #1de9b6;
@@ -309,12 +312,12 @@ onMounted(() => {
 
 .diff {
   &.new {
-    @include highlight(rgb(var(--v-theme-success-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-success-lighten-4)));
   }
 
   &.changed,
   &.removed {
-    @include highlight(rgb(var(--v-theme-secondary-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-secondary-lighten-4)));
   }
 
   .element-actions {

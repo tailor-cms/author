@@ -1,20 +1,20 @@
-import { NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
-import { authorize } from '../shared/auth/mw.js';
-import { createError } from '../shared/error/helpers.js';
-import ctrl from './repository.controller.js';
-import db from '../shared/database/index.js';
-import express from 'express';
-import feed from './feed/index.js';
-import multer from 'multer';
 import path from 'node:path';
-import processQuery from '../shared/util/processListQuery.js';
+import { NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
+import express from 'express';
+import multer from 'multer';
+import ctrl from './repository.controller.js';
+import feed from './feed/index.js';
+import { authorize } from '#shared/auth/mw.js';
+import { createError } from '#shared/error/helpers.js';
+import db from '#shared/database/index.js';
+import processQuery from '#shared/util/processListQuery.js';
 /* eslint-disable */
 import activity from '../activity/index.js';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
-import { role as RoleConfig } from 'tailor-config-shared';
-import storageRouter from '../shared/storage/storage.router.js';
+import { role as RoleConfig } from '@tailor-cms/common';
+import storageRouter from '#shared/storage/storage.router.js';
 /* eslint-enable */
 
 const { Repository } = db;
@@ -27,7 +27,7 @@ const UserRole = RoleConfig.user;
 
 router.post(
   '/import',
-  authorize([UserRole.USER]),
+  authorize(UserRole.USER),
   upload.single('archive'),
   ctrl.import,
 );
@@ -37,7 +37,7 @@ router.param('repositoryId', getRepository).use('/:repositoryId', hasAccess);
 router
   .route('/')
   .get(processQuery({ limit: 100 }), ctrl.index)
-  .post(authorize([UserRole.USER]), ctrl.create);
+  .post(authorize(UserRole.USER), ctrl.create);
 
 router
   .route('/:repositoryId')
@@ -50,6 +50,8 @@ router
   .post('/:repositoryId/clone', authorize(), ctrl.clone)
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
+  .get('/:repositoryId/references/validate', ctrl.validateReferences)
+  .post('/:repositoryId/references/cleanup', ctrl.cleanupInvalidReferences)
   .get('/:repositoryId/export/setup', ctrl.initiateExportJob)
   .get('/:repositoryId/export/:jobId/status', ctrl.getExportStatus)
   .post('/:repositoryId/export/:jobId', ctrl.export)

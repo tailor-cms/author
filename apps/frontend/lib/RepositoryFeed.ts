@@ -1,7 +1,7 @@
 import urlJoin from 'url-join';
 
-import { feed as api } from '@/api';
 import SSEConnection from './SSEConnection';
+import { feed as api } from '@/api';
 
 const noop = () => {};
 

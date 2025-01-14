@@ -1,11 +1,11 @@
 import isString from 'lodash/isString.js';
 import OpenAI from 'openai';
-import { schema as schemaConfig } from 'tailor-config-shared';
+import { schema as schemaConfig } from '@tailor-cms/config';
 import shuffle from 'lodash/shuffle.js';
 import StorageService from '../storage/storage.service.js';
 
-import { ai as aiConfig } from '../../config/server/index.js';
-import createLogger from '../logger.js';
+import { createLogger } from '#logger';
+import { ai as aiConfig } from '#config';
 
 const logger = createLogger('ai');
 const {
@@ -22,7 +22,7 @@ const parseResponse = (val) => {
   try {
     if (!isString(content)) return content;
     return JSON.parse(content);
-  } catch (e) {
+  } catch {
     logger.info('Unable to parse response', content);
     throw new Error('Invalid AI response', content);
   }
@@ -72,6 +72,12 @@ const systemPrompt = `
   - Generated content should not include any offensive language or content
   - Only return JSON objects`;
 
+const tagFormattingPrompt = `
+  Return response as JSON and use the following format:
+  { tags: ['Example tag a', 'Example tag b', 'Example tag c'] }.
+  The response should not include more than 15 tags. Each tag should be in
+  human readable format and should not exceed 30 characters.`;
+
 class AIService {
   #openai;
 
@@ -106,12 +112,12 @@ class AIService {
       ${this.baseRepositoryPrompt(schemaId, repoName, repoDescription)}
       In order for you to help, is there any ambiguity in the topic that
       I should be aware of? Present any specificators or requirements that I
-      should consider in form of tags. Return response as JSON and use the
-      following format:
-      ['tag1', 'tag2', 'tag3'].
-      The response should not include more than 15 tags, and each tag should
-      not exceed 20 characters.`;
-    return this.requestCompletion(userPrompt);
+      should consider in form of tags.
+      ${tagFormattingPrompt}`;
+    const response = await this.requestCompletion(userPrompt);
+    // If no tags are provided, ask once again, temp solution
+    if (!response?.tags?.length) return this.requestCompletion(userPrompt);
+    return response;
   }
 
   async getTopicStyleRecommendations(
@@ -123,11 +129,13 @@ class AIService {
     const userPrompt = `
       ${this.baseRepositoryPrompt(schemaId, repoName, repoDescription, tags)}
       I would like to get some style / school-of-thought based recommendations
-      that can further help you in the future. Return response as JSON in form
-      of tags and use the following format:
-      ['tag1', 'tag2', 'tag3'].
-    `;
-    return this.requestCompletion(userPrompt);
+      that can further help you in the future. Present options that I
+      should consider in form of tags.
+      ${tagFormattingPrompt}`;
+    const response = await this.requestCompletion(userPrompt);
+    // If no tags are provided, ask once again, temp solution
+    if (!response?.tags?.length) return this.requestCompletion(userPrompt);
+    return response;
   }
 
   async suggestOutline(

@@ -2,7 +2,7 @@ import { activity as activityUtils, Events } from '@tailor-cms/utils';
 import filter from 'lodash/filter';
 import flatMap from 'lodash/flatMap';
 import reduce from 'lodash/reduce';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
 
 import type { StoreContentElement } from './content-elements';
 import { useActivityStore } from './activity';

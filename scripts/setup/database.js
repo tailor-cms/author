@@ -1,6 +1,6 @@
-import { loadDevConfig, saveDevConfig } from './dotenv.js';
 import inquirer from 'inquirer';
 import pg from 'pg';
+import { loadDevConfig, saveDevConfig } from './dotenv.js';
 
 const { Client } = pg;
 const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -21,7 +21,7 @@ export const testDatabaseConnection = async (times = 20, backoff = 2000) => {
   try {
     await _getDatabaseClient();
     return true;
-  } catch (e) {
+  } catch {
     if (times > 0) {
       await timeout(backoff);
       return testDatabaseConnection(times - 1, backoff + 2000);

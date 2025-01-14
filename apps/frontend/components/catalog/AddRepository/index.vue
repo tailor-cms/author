@@ -76,7 +76,15 @@
               label="Type"
               placeholder="Select type..."
               variant="outlined"
-            />
+            >
+              <template #item="{ item, props: itemProps }">
+                <VListItem
+                  v-bind="itemProps"
+                  :subtitle="item.raw.description"
+                  class="py-4"
+                />
+              </template>
+            </VSelect>
           </VWindowItem>
           <VWindowItem :value="IMPORT_TAB" class="pt-1">
             <VFileInput
@@ -113,6 +121,7 @@
               :key="it.key"
               :meta="it"
               class="meta-input"
+              is-new
             />
           </template>
           <AIAssistance
@@ -120,6 +129,7 @@
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
+            @ai-assistance-toggle="isAssistaceEnabled = $event"
             @structure="aiSuggestedOutline = $event"
           />
         </div>
@@ -133,6 +143,7 @@
             Cancel
           </VBtn>
           <VBtn
+            :disabled="isAssistaceEnabled && !aiSuggestedOutline?.length"
             :loading="isSubmitting"
             class="ml-2"
             color="primary-darken-2"
@@ -151,14 +162,15 @@
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import pick from 'lodash/pick';
 import pMinDelay from 'p-min-delay';
-import { SCHEMAS } from 'tailor-config-shared';
+import Promise from 'bluebird';
+import { SCHEMAS } from '@tailor-cms/config';
+import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
 import AIAssistance from './AIAssistance.vue';
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useConfigStore } from '@/stores/config';
 import { useRepositoryStore } from '@/stores/repository';
@@ -180,6 +192,7 @@ const isVisible = ref(false);
 const selectedTab = ref(NEW_TAB);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isSubmitting = ref(false);
+const isAssistaceEnabled = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
 
@@ -236,16 +249,16 @@ const create = async (formData: any) => {
   const repository = await repositoryStore.create(formPayload);
   if (!aiSuggestedOutline.value.length) return;
   // Trigger creation without waiting for completion
-  createActvities(repository.id, aiSuggestedOutline.value);
+  await createActvities(repository.id, aiSuggestedOutline.value);
 };
 
-const createActvities = (
+const createActvities = async (
   repositoryId: number,
   items: any,
   parentId = null as null | number,
 ) => {
   const outlineLevels = $schemaService.getOutlineLevels(schemaInput.value);
-  items.forEach(async (activity: any, index: number) => {
+  await Promise.each(items, async (activity: any, index: number) => {
     const type = outlineLevels.find(
       (it: any) => it.label === activity.type,
     ).type;
@@ -256,8 +269,8 @@ const createActvities = (
       data: { name: activity.name },
       position: index,
     });
-    if (item && activity.children)
-      createActvities(repositoryId, activity.children, item.id);
+    if (!item || !activity.children?.length) return;
+    return createActvities(repositoryId, activity.children, item.id);
   });
 };
 
@@ -284,6 +297,7 @@ const hide = () => {
 watch(
   schemaMeta,
   (val) => {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     Object.keys(metaValidation).forEach((key) => delete metaValidation[key]);
     if (!val?.length) return;
     return val.forEach((it) => (metaValidation[it.key] = it.validate));
@@ -293,6 +307,10 @@ watch(
 </script>
 
 <style lang="scss" scoped>
+:deep(.v-list-item-subtitle) {
+  margin: 0.25rem 0 0;
+}
+
 .v-alert :deep(.mdi-close) {
   color: #eee;
 }

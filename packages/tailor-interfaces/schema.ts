@@ -1,4 +1,6 @@
+import type { ContentContainer } from './activity';
 import type { ContentElement } from './content-element';
+import type { Repository } from './repository';
 
 export type ElementManifest = Record<string, any>;
 export interface ElementRegistry {
@@ -11,7 +13,7 @@ export interface Metadata {
   type: string;
   label: string;
   placeholder?: string;
-  validate: Record<string, any>;
+  validate?: Record<string, any>;
   defaultValue?: any;
   [key: string]: any;
 }
@@ -34,8 +36,8 @@ export interface ElementRelationship {
 
 export interface ElementMetaConfig {
   type: string;
-  inputs: Metadata[];
-  relationships: ElementRelationship[];
+  inputs?: Metadata[];
+  relationships?: ElementRelationship[];
 }
 
 export interface ActivityRelationship {
@@ -47,7 +49,7 @@ export interface ActivityRelationship {
   allowEmpty: boolean;
   allowCircularLinks: boolean;
   allowInsideLineage: boolean;
-  allowedTypes: string[];
+  allowedTypes?: string[];
 }
 
 export interface AIConfig {
@@ -58,31 +60,58 @@ export interface AIConfig {
   };
 }
 
+export interface Guideline {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  metric: Record<string, number>;
+  isDone: () => boolean;
+};
+
 export interface ActivityConfig {
   type: string;
   label: string;
   color: string;
+  guidelines?: (
+    repository: Repository,
+    contentContainers: ContentContainer[],
+    contentElements: ContentElement[],
+    ceRegistry: any,
+  ) => Guideline[];
   rootLevel?: boolean;
   subLevels?: string[];
   isTrackedInWorkflow?: boolean;
   contentContainers?: string[];
   relationships?: ActivityRelationship[];
   meta?: Metadata[];
+  defaultMeta?: Record<string, any>;
   ai?: AIConfig;
+  // @deprecated use relationships instead
+  hasPrerequisites?: boolean;
+  // @deprecated will be removed after migrating exam container
+  exams?: any;
 }
 
-export interface ElementCategory {
+export interface ContentElementItem {
+  id: string;
+  isGradable?: boolean;
+}
+
+export interface ContentElementCategory {
   name: string;
-  types: string[];
+  items: ContentElementItem[];
 }
 
-export interface ContentContainer {
+export type ElementConfig = ContentElementCategory | ContentElementItem | string;
+
+export interface ContentContainerConfig {
   type: string;
   templateId: string;
   label: string;
   multiple?: boolean;
-  types?: string[];
-  categories?: ElementCategory[];
+  embedElementConfig?: ElementConfig[];
+  contentElementConfig?: ElementConfig[];
   displayHeading?: boolean;
   layout?: boolean;
   config?: Record<string, any>;
@@ -95,8 +124,12 @@ export interface Schema {
   id: string;
   workflowId: string;
   name: string;
+  description?: string;
   meta?: Metadata[];
+  defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];
-  contentContainers: ContentContainer[];
+  contentContainers: ContentContainerConfig[];
   elementMeta?: ElementMetaConfig[];
+  // @deprecated use elementMeta instead
+  tesMeta?: ElementMetaConfig[];
 }

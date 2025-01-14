@@ -1,16 +1,16 @@
-import Audience from '../shared/auth/audience.js';
-import { auth as authConfig } from '../config/server/index.js';
 import bcrypt from 'bcrypt';
 import gravatar from 'gravatar';
 import jwt from 'jsonwebtoken';
-import mail from '../shared/mail/index.js';
 import map from 'lodash/map.js';
 import { Model } from 'sequelize';
 import omit from 'lodash/omit.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import randomstring from 'randomstring';
-import { role as roles } from 'tailor-config-shared';
+import { role as roles } from '@tailor-cms/common';
+import mail from '#shared/mail/index.js';
+import Audience from '#shared/auth/audience.js';
+import { auth as authConfig } from '#config';
 
 const {
   user: { ADMIN, COLLABORATOR, INTEGRATION, USER },

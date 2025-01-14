@@ -1,13 +1,18 @@
 import { Model, Op } from 'sequelize';
-import { createLogger } from '../shared/logger.js';
-import calculatePosition from '../shared/util/calculatePosition.js';
-import { ContentElement as Events } from 'sse-event-types';
+import { ContentElement as Events } from '@tailor-cms/common/src/sse.js';
 import forEach from 'lodash/forEach.js';
-import hooks from './hooks.js';
 import isNumber from 'lodash/isNumber.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
+import Promise from 'bluebird';
 import zipObject from 'lodash/zipObject.js';
+import hooks from './hooks.js';
+import calculatePosition from '#shared/util/calculatePosition.js';
+import {
+  detectMissingReferences,
+  removeReference,
+} from '#shared/util/modelReference.js';
+import { createLogger } from '#logger';
 
 const logger = createLogger('content-element:model');
 
@@ -125,8 +130,8 @@ class ContentElement extends Model {
   static fetch(opt) {
     return isNumber(opt)
       ? ContentElement.findByPk(opt).then(
-          (it) => it && hooks.applyFetchHooks(it),
-        )
+        (it) => it && hooks.applyFetchHooks(it),
+      )
       : ContentElement.findAll(opt).map(hooks.applyFetchHooks);
   }
 
@@ -153,6 +158,27 @@ class ContentElement extends Model {
     const idMap = zipObject(map(src, 'id'), map(newElements, 'id'));
     const uidMap = zipObject(map(src, 'uid'), map(newElements, 'uid'));
     return { idMap, uidMap };
+  }
+
+  static async detectMissingReferences(elements, transaction) {
+    const missingReferences = await detectMissingReferences(
+      ContentElement,
+      elements,
+      transaction,
+    );
+    const Activity = this.sequelize.model('Activity');
+    return Promise.each(missingReferences, async (relationship) => {
+      const activity = await Activity.findByPk(relationship.src.activityId);
+      relationship.src = {
+        ...relationship.src.toJSON(),
+        outlineActivity: await activity.getFirstOutlineItem(),
+      };
+      return relationship;
+    });
+  }
+
+  removeReference(type, id) {
+    this.refs = removeReference(this.refs, type, id);
   }
 
   /**

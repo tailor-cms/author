@@ -81,13 +81,13 @@
 import { object, string } from 'yup';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
-import { role } from 'tailor-config-shared';
+import { role } from '@tailor-cms/common';
+import { TailorDialog } from '@tailor-cms/core-components';
 import { title as titleCase } from 'to-case';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import { user as api } from '@/api';
-import TailorDialog from '@/components/common/TailorDialog.vue';
 
 const UserRole = role.user;
 
