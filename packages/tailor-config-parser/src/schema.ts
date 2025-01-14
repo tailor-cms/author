@@ -1,4 +1,5 @@
 import type {
+  ActivityConfig,
   ActivityRelationship,
   ContentContainerConfig,
   ContentElementCategory,
@@ -26,6 +27,8 @@ import uniq from 'lodash/uniq.js';
 
 const DEFAULT_GROUP = 'Content Elements';
 const DEFAULT_EMBED_ELEMENTS = ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_EMBED'];
+
+type EmptyObject = Record<string, never>;
 
 const processElementConfig = (config: ElementConfig[]) => {
   return config.reduce((acc, it) => {
@@ -98,7 +101,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   }
 
   function getActivityLabel(activity: Activity) {
-    return getActivityConfig(activity.type)?.label;
+    return getActivityConfig(activity.type).label;
   }
 
   function getActivityMetadata(activity: Activity) {
@@ -149,14 +152,14 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     const hasActivityId = 'activityId' in item;
     const isElement = hasActivityId || isString(item.id);
     return isElement
-      ? getElementConfig(schemaId, item.type) ?? {}
-      : getActivityConfig(item.type) ?? {};
+      ? getElementConfig(schemaId, item.type)
+      : getActivityConfig(item.type);
   }
 
-  function getActivityConfig(type: string) {
+  function getActivityConfig(type: string): ActivityConfig | EmptyObject {
     const schemaId = getSchemaId(type);
-    if (!schemaId) return undefined;
-    return find(getOutlineLevels(schemaId), { type });
+    if (!schemaId) return {};
+    return find(getOutlineLevels(schemaId), { type }) ?? {};
   }
 
   function getOutlineChildren(activities: Activity[], parentId: number | null) {
@@ -164,7 +167,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     if (!parentId || !children.length) return children;
     const parent = find(activities, { id: parentId });
     if (!parent) return [];
-    const types = getActivityConfig(parent.type)?.subLevels;
+    const types = getActivityConfig(parent.type).subLevels;
     return types ? filter(children, (it) => types.includes(it.type)) : [];
   }
 
@@ -172,14 +175,15 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     return filter(activities, (it) => isOutlineActivity(it.type));
   }
 
-  function getElementConfig(schemaId: string, type: string) {
-    if (!schemaId) return undefined;
+  function getElementConfig(schemaId: string, type: string):
+    ElementMetaConfig | EmptyObject {
+    if (!schemaId) return {};
     // tesMeta used to support legacy config
     const { elementMeta, tesMeta } = getSchema(schemaId);
-    if (!elementMeta && !tesMeta) return undefined;
-    const config: ElementMetaConfig[] =
+    if (!elementMeta && !tesMeta) return {};
+    const config =
       elementMeta || map(tesMeta, (it) => ({ ...it, inputs: it.meta }));
-    return find(config, (it) => castArray(it.type).includes(type));
+    return find(config, (it) => castArray(it.type).includes(type)) ?? {};
   }
 
   function getSiblingTypes(type: string): string[] {
@@ -188,7 +192,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     if (!schemaId) return [type];
     const outline = getOutlineLevels(schemaId);
     const activityConfig = getActivityConfig(type);
-    const isRootLevel = activityConfig?.rootLevel;
+    const isRootLevel = activityConfig.rootLevel;
     return uniq(
       reduce(
         outline,
