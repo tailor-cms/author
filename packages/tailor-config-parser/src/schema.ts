@@ -71,9 +71,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   };
 
   function getSchemaId(type: string) {
-    const id = type.includes('/') && first(type.split('/'));
-    if (!id) throw new Error('Unable to parse schema id!');
-    return id;
+    return type.includes('/') && first(type.split('/'));
   }
 
   function getSchema(id: string): Schema {
@@ -88,11 +86,13 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
 
   function isOutlineActivity(type: string) {
     const schemaId = getSchemaId(type);
+    if (!schemaId) return false;
     return !!find(getOutlineLevels(schemaId), { type });
   }
 
   function isTrackedInWorkflow(type: string) {
     const schemaId = getSchemaId(type);
+    if (!schemaId) return false;
     const activity = find(getOutlineLevels(schemaId), { type });
     return !!(activity && activity.isTrackedInWorkflow);
   }
@@ -104,6 +104,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   function getActivityMetadata(activity: Activity) {
     if (!activity?.type) return [];
     const schemaId = getSchemaId(activity.type);
+    if (!schemaId) return [];
     return getMetadata(schemaId, activity, 'meta', 'data');
   }
 
@@ -154,6 +155,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
 
   function getActivityConfig(type: string) {
     const schemaId = getSchemaId(type);
+    if (!schemaId) return undefined;
     return find(getOutlineLevels(schemaId), { type });
   }
 
@@ -183,6 +185,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   function getSiblingTypes(type: string): string[] {
     if (!isOutlineActivity(type)) return [type];
     const schemaId = getSchemaId(type);
+    if (!schemaId) return [type];
     const outline = getOutlineLevels(schemaId);
     const activityConfig = getActivityConfig(type);
     const isRootLevel = activityConfig?.rootLevel;
@@ -201,6 +204,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
 
   function getSupportedContainers(type: string): ContentContainerConfig[] {
     const schemaId = getSchemaId(type);
+    if (!schemaId) return [];
     const schema = getSchema(schemaId);
     const schemaConfig = get(schema, 'contentContainers', []);
     const activityConfig = get(
