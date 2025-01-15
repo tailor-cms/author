@@ -3,7 +3,7 @@ import type {
   ContentContainerConfig,
   Schema,
 } from '@tailor-cms/interfaces/schema';
-import type { ContentContainer } from '@tailor-cms/interfaces/activity';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
@@ -14,7 +14,7 @@ import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 const guidelines = (
   _repository: Repository,
-  contentContainers: ContentContainer[],
+  contentContainers: Activity[],
   contentElements: ContentElement[],
   ceRegistry,
 ) => {

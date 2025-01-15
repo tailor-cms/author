@@ -38,7 +38,6 @@
 <script lang="ts" setup>
 import castArray from 'lodash/castArray';
 import compact from 'lodash/compact';
-import concat from 'lodash/concat';
 import filterBy from 'lodash/filter';
 import flatMap from 'lodash/flatMap';
 import get from 'lodash/get';
@@ -114,7 +113,7 @@ const groupedOptions = computed(() => {
   const grouped = groupBy(options.value, 'type');
   return flatMap(grouped, (it, type) => {
     const headerLabel = $schemaService.getLevel(type).label;
-    return concat({ header: pluralize(headerLabel) }, { divider: true }, it);
+    return [{ header: pluralize(headerLabel) }, { divider: true }, ...it];
   });
 });
 

@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { StatusConfig } from '@tailor-cms/common';
+import type { StatusConfig } from '@tailor-cms/interfaces/activity';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
@@ -76,12 +76,12 @@ const headers = computed(() => [
 ]);
 
 const items = computed(() =>
-  props.activities.map(({ id, data, status }) => ({
-    ...status,
+  props.activities.map(({ id, data, currentStatus }) => ({
+    ...currentStatus,
     id,
     name: data.name,
-    status: getStatusById(status.status),
-    priority: workflowConfig.getPriority(status.priority),
+    status: getStatusById(currentStatus.status),
+    priority: workflowConfig.getPriority(currentStatus.priority),
     class: isActivitySelected(id) && 'selected',
   })),
 );

@@ -68,7 +68,7 @@ export const getWorkflowApi = (workflows: Workflow[], schemaApi) => {
     return find(workflows, { id });
   }
 
-  function getPriority(id): WorkflowPriority {
+  function getPriority(id): WorkflowPriority | undefined {
     return find(priorities, { id });
   }
 

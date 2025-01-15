@@ -1,9 +1,11 @@
 import type {
+  ActivityConfig,
   ActivityRelationship,
   ContentContainerConfig,
   ContentElementCategory,
   ContentElementItem,
   ElementConfig,
+  ElementMetaConfig,
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
@@ -25,6 +27,8 @@ import uniq from 'lodash/uniq.js';
 
 const DEFAULT_GROUP = 'Content Elements';
 const DEFAULT_EMBED_ELEMENTS = ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_EMBED'];
+
+type EmptyObject = Record<string, never>;
 
 const processElementConfig = (config: ElementConfig[]) => {
   return config.reduce((acc, it) => {
@@ -65,9 +69,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     getSupportedContainers,
     getContainerTemplateId,
     isEditable: (activityType: string) => {
-      const config = getActivityConfig(activityType);
-      const hasContainers = !!getSupportedContainers(activityType).length;
-      return hasContainers || config.hasAssessments;
+      return !!getSupportedContainers(activityType).length;
     },
   };
 
@@ -86,16 +88,16 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   }
 
   function isOutlineActivity(type: string) {
-    const schema = getSchemaId(type);
-    if (!schema) return false;
-    return !!find(getOutlineLevels(schema), { type });
+    const schemaId = getSchemaId(type);
+    if (!schemaId) return false;
+    return !!find(getOutlineLevels(schemaId), { type });
   }
 
   function isTrackedInWorkflow(type: string) {
-    const schema = getSchemaId(type);
-    if (!schema) return false;
-    const activity = find(getOutlineLevels(schema), { type });
-    return activity && activity.isTrackedInWorkflow;
+    const schemaId = getSchemaId(type);
+    if (!schemaId) return false;
+    const activity = find(getOutlineLevels(schemaId), { type });
+    return !!(activity && activity.isTrackedInWorkflow);
   }
 
   function getActivityLabel(activity: Activity) {
@@ -105,6 +107,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   function getActivityMetadata(activity: Activity) {
     if (!activity?.type) return [];
     const schemaId = getSchemaId(activity.type);
+    if (!schemaId) return [];
     return getMetadata(schemaId, activity, 'meta', 'data');
   }
 
@@ -153,36 +156,40 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
       : getActivityConfig(item.type);
   }
 
-  function getActivityConfig(type: string) {
+  function getActivityConfig(type: string): ActivityConfig | EmptyObject {
     const schemaId = getSchemaId(type);
-    return schemaId ? find(getOutlineLevels(schemaId), { type }) : {};
+    if (!schemaId) return {};
+    return find(getOutlineLevels(schemaId), { type }) ?? {};
   }
 
-  function getOutlineChildren(activities: Activity[], parentId: number) {
+  function getOutlineChildren(activities: Activity[], parentId: number | null) {
     const children = sortBy(filter(activities, { parentId }), 'position');
     if (!parentId || !children.length) return children;
-    const parentType = find(activities, { id: parentId }).type;
-    const types = getActivityConfig(parentType).subLevels;
-    return filter(children, (it) => types.includes(it.type));
+    const parent = find(activities, { id: parentId });
+    if (!parent) return [];
+    const types = getActivityConfig(parent.type).subLevels;
+    return types ? filter(children, (it) => types.includes(it.type)) : [];
   }
 
   function filterOutlineActivities(activities: Activity[]) {
     return filter(activities, (it) => isOutlineActivity(it.type));
   }
 
-  function getElementConfig(schemaId: string, type: string) {
+  function getElementConfig(schemaId: string, type: string):
+    ElementMetaConfig | EmptyObject {
     if (!schemaId) return {};
     // tesMeta used to support legacy config
     const { elementMeta, tesMeta } = getSchema(schemaId);
     if (!elementMeta && !tesMeta) return {};
     const config =
       elementMeta || map(tesMeta, (it) => ({ ...it, inputs: it.meta }));
-    return find(config, (it) => castArray(it.type).includes(type)) || {};
+    return find(config, (it) => castArray(it.type).includes(type)) ?? {};
   }
 
   function getSiblingTypes(type: string): string[] {
     if (!isOutlineActivity(type)) return [type];
     const schemaId = getSchemaId(type);
+    if (!schemaId) return [type];
     const outline = getOutlineLevels(schemaId);
     const activityConfig = getActivityConfig(type);
     const isRootLevel = activityConfig.rootLevel;
@@ -194,13 +201,15 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
           if (!it.subLevels || !it.subLevels.includes(type)) return acc;
           return [...acc, ...it.subLevels];
         },
-        [],
+        [] as string[],
       ),
     );
   }
 
   function getSupportedContainers(type: string): ContentContainerConfig[] {
-    const schema = getSchema(getSchemaId(type));
+    const schemaId = getSchemaId(type);
+    if (!schemaId) return [];
+    const schema = getSchema(schemaId);
     const schemaConfig = get(schema, 'contentContainers', []);
     const activityConfig = get(
       getActivityConfig(type),
@@ -213,7 +222,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
         contentElementConfig = types || ceRegistry,
         embedElementConfig = DEFAULT_EMBED_ELEMENTS,
         ...container
-      } = find(schemaConfig, { type }) || {};
+      } = find(schemaConfig, { type }) as ContentContainerConfig;
       if (types) {
         console.warn(`
           Deprecation notice: 'types' prop in content container
@@ -248,7 +257,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   function getRepositoryRelationships(schemaId: string) {
     const structure = getOutlineLevels(schemaId);
     return flatMap(structure, (it) => it.relationships).reduce(
-      (acc, { type }) => union(acc, [type]),
+      (acc, rel) => rel ? union(acc, [rel.type]) : acc,
       [],
     );
   }

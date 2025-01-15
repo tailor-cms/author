@@ -3,6 +3,7 @@
     <VMain>
       <div class="workflow d-flex flex-column h-100">
         <WorkflowFilters
+          v-if="workflow"
           v-model:assignee-ids="filters.assigneeIds"
           v-model:recent-only="filters.recentOnly"
           v-model:search="filters.search"
@@ -64,14 +65,14 @@ const filteredActivities = computed(() => {
 
   return activities.value.filter(
     (activity) =>
-      (!statusFilters.length || overEvery(statusFilters)(activity.status)) &&
+      (!statusFilters.length || overEvery(statusFilters)(activity.currentStatus)) &&
       (!searchFilterEnabled || filterBySearch(activity)),
   );
 });
 
 const assignees = computed(() => {
   const uniqueAssignees = uniqBy(
-    activities.value.map(({ status }) => status.assignee),
+    activities.value.map(({ currentStatus }) => currentStatus.assignee),
     'id',
   );
   return orderBy(uniqueAssignees, 'label');
@@ -88,9 +89,9 @@ const filterByRecency = ({ updatedAt }: Status) => {
   return isAfter(new Date(updatedAt), updatedAtLimit);
 };
 
-const filterBySearch = ({ shortId, data, status }: StoreActivity) => {
+const filterBySearch = ({ shortId, data, currentStatus }: StoreActivity) => {
   if (!filters.search) return;
-  const searchableText = `${shortId} ${data.name} ${status.description}`;
+  const searchableText = `${shortId} ${data.name} ${currentStatus.description}`;
   return searchableText.toLowerCase().includes(filters.search.toLowerCase());
 };
 

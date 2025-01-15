@@ -53,7 +53,7 @@
     <ActivityStatus
       v-if="activity.isTrackedInWorkflow"
       :id="activity.id"
-      :activity-status="activity.status"
+      :activity-status="activity.currentStatus"
       :short-id="activity.shortId"
       :type="activity.type"
       class="mt-6 mb-3"

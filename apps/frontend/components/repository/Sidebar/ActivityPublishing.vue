@@ -64,10 +64,11 @@ const publishedAtMessage = computed(() => {
 });
 
 const activityWithDescendants = computed(() => {
-  return [
-    ...getDescendants(props.outlineActivities, props.activity),
+  const descendants = getDescendants(
+    props.outlineActivities,
     props.activity,
-  ];
+  ) as StoreActivity[];
+  return [...descendants, props.activity];
 });
 </script>
 

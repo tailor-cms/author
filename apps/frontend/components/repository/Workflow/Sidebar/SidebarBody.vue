@@ -71,7 +71,6 @@
 
 <script lang="ts" setup>
 import { RichTextEditor } from '@tailor-cms/core-components';
-import type { Status } from '@tailor-cms/interfaces/activity';
 import { VDateInput } from 'vuetify/labs/VDateInput';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
@@ -88,9 +87,7 @@ const notify = useNotification();
 const activityStore = useActivityStore();
 const { users, workflow } = storeToRefs(useCurrentRepository());
 
-const activityStatus = computed(
-  () => props.activity.status as unknown as Status,
-);
+const activityStatus = computed(() => props.activity.currentStatus);
 const dueDate = computed(
   () => activityStatus.value.dueDate && new Date(activityStatus.value.dueDate),
 );
