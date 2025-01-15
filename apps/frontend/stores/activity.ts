@@ -16,9 +16,9 @@ import sseRepositoryFeed from '@/lib/RepositoryFeed';
 const { getDefaultActivityStatus } = workflowConfig;
 
 type Id = number | string;
-export type StoreActivity = Omit<Activity, 'status'> & {
+export type StoreActivity = Activity & {
   shortId: string;
-  status: Status;
+  currentStatus: Status;
 };
 export type FoundActivity = StoreActivity | undefined;
 
@@ -28,7 +28,7 @@ const { AddInto } = InsertLocation;
 
 export const useActivityStore = defineStore('activities', () => {
   const $items = reactive(new Map<string, StoreActivity>());
-  const items = computed(() => Array.from($items.values()));
+  const items = computed<StoreActivity[]>(() => Array.from($items.values()));
 
   function findById(id: Id): FoundActivity {
     if (typeof id === 'string') return $items.get(id);
@@ -42,19 +42,24 @@ export const useActivityStore = defineStore('activities', () => {
 
   function getDescendants(id: Id): StoreActivity[] {
     const activity = findById(id);
-    return activity ? activityUtils.getDescendants(items.value, activity) : [];
+    return activity
+      ? activityUtils.getDescendants(items.value, activity) as StoreActivity[]
+      : [];
   }
 
   function getAncestors(id: Id): StoreActivity[] {
     const activity = findById(id);
-    return activityUtils.getAncestors(items.value, activity);
+    return activity
+      ? activityUtils.getAncestors(items.value, activity) as StoreActivity[]
+      : [];
   }
 
   function getLineage(id: Id): StoreActivity[] {
     const activity = findById(id);
+    if (!activity) return [];
     const ancestors = activityUtils.getAncestors(items.value, activity);
     const descendants = activityUtils.getDescendants(items.value, activity);
-    return [...ancestors, ...descendants];
+    return [...ancestors, ...descendants] as StoreActivity[];
   }
 
   function where(
@@ -67,7 +72,7 @@ export const useActivityStore = defineStore('activities', () => {
     $items.set(item.uid, {
       ...item,
       shortId: `A-${hashids.encode(item.id)}`,
-      status: getActivityStatus(item),
+      currentStatus: getActivityStatus(item),
     });
     return $items.get(item.uid);
   }
@@ -184,7 +189,9 @@ export const useActivityStore = defineStore('activities', () => {
       .subscribe(Events.Create, (it: Activity) => add(it))
       .subscribe(Events.Update, (it: Activity) => add(it))
       .subscribe(Events.Delete, (it: Activity) => {
-        const activity = it.deletedAt ? it : { ...it, deletedAt: new Date() };
+        const activity = it.deletedAt
+          ? it
+          : { ...it, deletedAt: new Date().toISOString() };
         const requirePublishing = activityUtils.doesRequirePublishing(activity);
         if (requirePublishing) add(activity as Activity);
         else $items.delete(activity.uid);

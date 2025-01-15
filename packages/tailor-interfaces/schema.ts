@@ -1,4 +1,4 @@
-import type { ContentContainer } from './activity';
+import type { Activity } from './activity';
 import type { ContentElement } from './content-element';
 import type { Repository } from './repository';
 
@@ -65,7 +65,7 @@ export interface Guideline {
   icon: string;
   title: string;
   description: string;
-  metric: Record<string, number>;
+  metric: Record<string, number | undefined>;
   isDone: () => boolean;
 };
 
@@ -75,7 +75,7 @@ export interface ActivityConfig {
   color: string;
   guidelines?: (
     repository: Repository,
-    contentContainers: ContentContainer[],
+    contentContainers: Activity[],
     contentElements: ContentElement[],
     ceRegistry: any,
   ) => Guideline[];
@@ -93,14 +93,18 @@ export interface ActivityConfig {
   exams?: any;
 }
 
-export interface ContentElementItem {
-  id: string;
+export interface ContentElementConfig {
   isGradable?: boolean;
+}
+
+export interface ContentElementItem extends ContentElementConfig {
+  id: string;
 }
 
 export interface ContentElementCategory {
   name: string;
   items: ContentElementItem[];
+  config?: ContentElementConfig;
 }
 
 export type ElementConfig = ContentElementCategory | ContentElementItem | string;
@@ -110,6 +114,7 @@ export interface ContentContainerConfig {
   templateId: string;
   label: string;
   multiple?: boolean;
+  types?: ElementConfig[];
   embedElementConfig?: ElementConfig[];
   contentElementConfig?: ElementConfig[];
   displayHeading?: boolean;
@@ -131,5 +136,5 @@ export interface Schema {
   contentContainers: ContentContainerConfig[];
   elementMeta?: ElementMetaConfig[];
   // @deprecated use elementMeta instead
-  tesMeta?: ElementMetaConfig[];
+  tesMeta?: any[];
 }

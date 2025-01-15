@@ -5,7 +5,7 @@ import reduce from 'lodash/reduce';
 import { schema } from '@tailor-cms/config';
 
 import type { StoreContentElement } from './content-elements';
-import { useActivityStore } from './activity';
+import { useActivityStore, type StoreActivity } from './activity';
 import { useCommentStore } from './comments';
 import { useCurrentRepository } from './current-repository';
 
@@ -33,21 +33,22 @@ export const useEditorStore = defineStore('editor', () => {
     const containers = schema.getSupportedContainers(type);
     return reduce(
       containers,
-      (acc: any, { type }) => {
+      (acc, { type }) => {
         acc[type] = filter(repositoryStore.activities, { parentId: id, type });
         return acc;
       },
-      {},
+      {} as Record<string, StoreActivity[]>,
     );
   });
 
   const contentContainers = computed(() => {
     if (!selectedActivity.value) return [];
     const parents = flatMap(rootContainerGroups.value);
-    return parents.reduce((acc: any[], parent) => {
-      acc.push(parent, ...getDescendants(repositoryStore.activities, parent));
+    return parents.reduce((acc, parent) => {
+      const descentants = getDescendants(repositoryStore.activities, parent);
+      acc.push(parent, ...descentants as StoreActivity[]);
       return acc;
-    }, []);
+    }, [] as StoreActivity[]);
   });
 
   const initialize = async (activityId: number) => {

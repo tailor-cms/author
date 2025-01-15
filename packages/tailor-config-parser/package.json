@@ -5,7 +5,9 @@
   "license": "MIT",
   "version": "1.0.0",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "main": "./dist/index.cjs",
   "exports": {
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:^",
+    "@types/lodash": "^4.17.14",
     "del-cli": "^6.0.0",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2"
