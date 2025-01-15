@@ -45,8 +45,9 @@ const processElementConfig = (config: ElementConfig[]) => {
   }, [] as ContentElementCategory[]);
 };
 
-const processItem = (item: ContentElementItem | string) => {
-  return typeof item === 'string' ? { id: item as string } : item;
+const processItem = (item: ContentElementItem | string, config?: any) => {
+  const processed = isString(item) ? { id: item } : item;
+  return Object.assign(processed, config);
 };
 
 export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
