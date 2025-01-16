@@ -79,8 +79,6 @@
 </template>
 
 <script lang="ts" setup>
-import humanize from 'humanize-string';
-
 import { userGroup as api } from '@/api';
 import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 
