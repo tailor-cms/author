@@ -10,10 +10,14 @@ import Sequelize from 'sequelize';
 import sequelizeConfig from '../../sequelize.config.cjs';
 
 // Require models.
+/* eslint-disable */
 import User from '../../user/user.model.js';
+import UserGroup from '#app/user-group/userGroup.model.js';
+import UserGroupMember from '#app/user-group/userGroupMember.model.js';
 import Repository from '../../repository/repository.model.js';
 import RepositoryTag from '../../tag/repositoryTag.model.js';
 import RepositoryUser from '../../repository/repositoryUser.model.js';
+import RepositoryUserGroup from '#app/user-group/repositoryUserGroup.js';
 import ActivityStatus from '../../activity/status.model.js';
 import Activity from '../../activity/activity.model.js';
 import ContentElement from '../../content-element/content-element.model.js';
@@ -24,6 +28,7 @@ import Hooks from './hooks.js';
 import config from './config.js';
 import { wrapMethods } from './helpers.js';
 import { createLogger } from '#logger';
+/* eslint-enable */
 
 const require = createRequire(import.meta.url);
 const pkg = require('../../package.json');
@@ -94,9 +99,12 @@ function initialize() {
  */
 const models = {
   User: defineModel(User),
+  UserGroup: defineModel(UserGroup),
+  UserGroupMember: defineModel(UserGroupMember),
   Repository: defineModel(Repository),
   RepositoryTag: defineModel(RepositoryTag),
   RepositoryUser: defineModel(RepositoryUser),
+  RepositoryUserGroup: defineModel(RepositoryUserGroup),
   ActivityStatus: defineModel(ActivityStatus),
   Activity: defineModel(Activity),
   Revision: defineModel(Revision),
