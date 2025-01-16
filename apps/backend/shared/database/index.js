@@ -17,7 +17,7 @@ import UserGroupMember from '#app/user-group/userGroupMember.model.js';
 import Repository from '../../repository/repository.model.js';
 import RepositoryTag from '../../tag/repositoryTag.model.js';
 import RepositoryUser from '../../repository/repositoryUser.model.js';
-import RepositoryUserGroup from '#app/user-group/repositoryUserGroup.js';
+import RepositoryUserGroup from '#app/user-group/repositoryUserGroup.model.js';
 import ActivityStatus from '../../activity/status.model.js';
 import Activity from '../../activity/activity.model.js';
 import ContentElement from '../../content-element/content-element.model.js';
