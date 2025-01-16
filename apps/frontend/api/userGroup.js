@@ -14,8 +14,8 @@ function create(data) {
   return request.post(urls.root, data).then(extractData);
 }
 
-function patch(data) {
-  return request.post(urls.resource(data.id), data).then(extractData);
+function update(data) {
+  return request.patch(urls.resource(data.id), data).then(extractData);
 }
 
 function remove(id) {
@@ -25,6 +25,6 @@ function remove(id) {
 export default {
   fetch,
   create,
-  patch,
+  update,
   remove,
 };
