@@ -1,68 +1,92 @@
 <template>
-  <div class="assessments">
-    <div class="heading">
-      <h2 class="primary--text text-darken-3">
-        Assessments
-      </h2>
+  <div class="bg-transparent">
+    <div class="text-left d-flex justify-space-between align-center mb-2">
+      <div class="text-white text-h6">Assessments</div>
       <VBtn
         v-if="hasAssessments"
-        variant="text"
+        variant="tonal"
         size="small"
+        color="white"
         @click="toggleAssessments"
       >
-        {{ allSelected ? 'hide all' : 'show all' }}
+        {{ allSelected ? 'Hide All' : 'Show All' }}
       </VBtn>
     </div>
     <VAlert
-      :model-value="!hasAssessments"
-      color="white"
-      icon="mdi-information-variant"
+      v-if="!hasAssessments"
+      color="primary-lighten-3"
+      icon="mdi-information-outline"
+      variant="tonal"
+      prominent
     >
-      Click the button below to create first assessment.
+      Click the button below to create first Assessment.
     </VAlert>
-    <div class="pl-0">
+    <div class="mb-8">
       <AssessmentItem
         v-for="it in assessments"
         :key="it.uid"
-        :assessment="it"
+        :element="it"
+        :embed-element-config="embedElementConfig"
         :expanded="isSelected(it)"
-        :is-disabled="isDisabled"
+        :is-disabled="disabled"
         @selected="toggleSelect(it)"
         @save="saveAssessment"
         @delete="$emit('delete:element', it)"
       />
     </div>
     <AddElement
-      v-if="!isDisabled"
+      v-if="!disabled"
       :activity="container"
-      :include="[]"
+      :include="include"
       :items="assessments"
       :layout="false"
       :position="assessments.length"
       label="Add assessment"
       large
+      color="teal-accent-1"
+      variant="tonal"
       @add="addAssessments"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch } from 'vue';
+import type {
+  ContentElementCategory,
+  ElementRegistry,
+} from '@tailor-cms/interfaces/schema';
+import { ref, computed, watch, inject } from 'vue';
 import { AddElement, AssessmentItem } from '@tailor-cms/core-components';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import { filter, sortBy } from 'lodash';
 import { uuid } from '@tailor-cms/utils';
 
-const props = defineProps<{
-  container: any;
+interface Props {
+  container: Activity;
   elements: Record<string, any>;
-  isDisabled: boolean;
-}>();
+  disabled: boolean;
+  embedElementConfig?: ContentElementCategory[] | null;
+  contentElementConfig?: ContentElementCategory[] | null;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  embedElementConfig: null,
+  contentElementConfig: null,
+});
+
 const emit = defineEmits([
   'add:element',
   'save:element',
   'delete:element',
   'update:element',
 ]);
+
+const ceRegistry = inject<ElementRegistry>('$ceRegistry');
+const include = computed(() => {
+  const items = ceRegistry?.questions.map((it) =>
+    ({ id: it.type, isGradable: true })) ?? [];
+  return [{ name: 'Assessments', items }];
+});
 
 const selected = ref<string[]>([]);
 const allSelected = ref(false);
@@ -114,33 +138,3 @@ const toggleAssessments = () => {
 
 watch(assessments, clearSelected);
 </script>
-
-<style lang="scss" scoped>
-.assessments {
-  margin: 4rem 0 15rem;
-
-  .v-alert {
-    color: #555;
-  }
-
-  .heading {
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
-    padding: 0 0 0.5rem 0.125rem;
-
-    .v-btn {
-      margin: 0.25rem 0 0;
-      padding: 0;
-    }
-  }
-
-  h2 {
-    display: inline-block;
-    margin: 0;
-    font-size: 1.125rem;
-    line-height: 1.875rem;
-    vertical-align: middle;
-  }
-}
-</style>
