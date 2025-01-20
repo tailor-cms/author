@@ -13,9 +13,9 @@
     "@types/lodash": "*"
   },
   "peerDependencies": {
-    "vue": "^3.3.4",
-    "vuetify": "^3.7.0",
+    "@tailor-cms/core-components": "workspace:*",
     "lodash": "*",
-    "@tailor-cms/core-components": "workspace:*"
+    "vue": "^3.3.4",
+    "vuetify": "^3.7.0"
   }
 }
