@@ -91,14 +91,15 @@ import truncate from 'lodash/truncate';
 import PublishDiffChip from './PublishDiffChip.vue';
 
 interface Props {
-  embedElementConfig?: ContentElementCategory[] | null;
   element: ContentElement;
+  embedElementConfig?: ContentElementCategory[];
   expanded?: boolean;
   draggable?: boolean;
   isDisabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  embedElementConfig: () => [],
   expanded: false,
   draggable: false,
   isDisabled: false,
@@ -118,19 +119,19 @@ const showPublishDiff = computed(() => editorState.isPublishDiff);
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);
 
-const getTextAssets = (item: any) =>
-  filter(item, (it: any) => TEXT_CONTAINERS.includes(it.type));
+const getTextAssets = (items: ContentElement[]) =>
+  filter(items, (it) => TEXT_CONTAINERS.includes(it.type));
 
 const componentName = (type: string) => getComponentName(type);
 
-const save = (data: any) => {
+const save = (data: ContentElement['data']) => {
   emit('save', { ...cloneDeep(props.element), data });
 };
 
 const question = computed(() => {
   const question = props.element.data.question as string[];
   const embeds = props.element.data.embeds as Record<string, ContentElement>;
-  const textAssets = getTextAssets(question?.map((id) => embeds[id]));
+  const textAssets = getTextAssets(question.map((id) => embeds[id]));
   const questionText = map(textAssets, 'data.content').join(' ');
   return truncate(
     questionText.replace(htmlRegex, '').replace(blankRegex, () => '____'),

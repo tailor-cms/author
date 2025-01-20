@@ -27,9 +27,9 @@
         :key="it.uid"
         :element="it"
         :embed-element-config="embedElementConfig"
-        :expanded="isSelected(it)"
+        :expanded="isSelected(it.uid)"
         :is-disabled="disabled"
-        @selected="toggleSelect(it)"
+        @selected="toggleSelect(it.uid)"
         @save="saveAssessment"
         @delete="$emit('delete:element', it)"
       />
@@ -42,10 +42,10 @@
       :layout="false"
       :position="assessments.length"
       class="mt-12"
-      label="Add assessment"
-      large
       color="teal-accent-1"
+      label="Add assessment"
       variant="tonal"
+      large
       @add="addAssessments"
     />
   </div>
@@ -59,6 +59,7 @@ import type {
 import { ref, computed, watch, inject } from 'vue';
 import { AddElement, AssessmentItem } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import pull from 'lodash/pull';
@@ -67,15 +68,15 @@ import { uuid } from '@tailor-cms/utils';
 
 interface Props {
   container: Activity;
-  elements: Record<string, any>;
+  elements: Record<string, ContentElement>;
   disabled: boolean;
-  embedElementConfig?: ContentElementCategory[] | null;
-  contentElementConfig?: ContentElementCategory[] | null;
+  embedElementConfig?: ContentElementCategory[];
+  contentElementConfig?: ContentElementCategory[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  embedElementConfig: null,
-  contentElementConfig: null,
+  embedElementConfig: () => [],
+  contentElementConfig: () => [],
 });
 
 const emit = defineEmits([
@@ -86,14 +87,17 @@ const emit = defineEmits([
 ]);
 
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
-const include = computed(() => {
-  const items = ceRegistry?.questions.map((it) =>
-    ({ id: it.type, isGradable: true })) ?? [];
-  return [{ name: 'Assessments', items }];
-});
 
 const selected = ref<string[]>([]);
 const allSelected = ref(false);
+
+const hasAssessments = computed(() => assessments.value.length > 0);
+
+const include = computed(() => {
+  const questions = ceRegistry?.questions ?? [];
+  const items = questions.map(({ type }) => ({ id: type, isGradable: true }));
+  return [{ name: 'Assessments', items }];
+});
 
 const assessments = computed(() => {
   const activityId = props.container.id;
@@ -101,9 +105,7 @@ const assessments = computed(() => {
   return sortBy(assessments, 'position');
 });
 
-const hasAssessments = computed(() => assessments.value.length > 0);
-
-const addAssessments = (newAssessments: any[]) => {
+const addAssessments = (newAssessments: ContentElement[]) => {
   newAssessments.forEach((it) => {
     const uid = uuid();
     emit('add:element', { ...it, uid });
@@ -111,16 +113,16 @@ const addAssessments = (newAssessments: any[]) => {
   });
 };
 
-const saveAssessment = (assessment: any) => {
+const saveAssessment = (assessment: ContentElement) => {
   const event = assessment.id ? 'update:element' : 'save:element';
-  emit(event, assessment);
+  return emit(event, assessment);
 };
 
-const toggleSelect = (assessment: any) => isSelected(assessment)
-  ? pull(selected.value, assessment.uid)
-  : selected.value.push(assessment.uid);
+const isSelected = (uid: string) => selected.value.includes(uid);
 
-const isSelected = (assessment: any) => selected.value.includes(assessment.uid);
+const toggleSelect = (uid: string) => isSelected(uid)
+  ? pull(selected.value, uid)
+  : selected.value.push(uid);
 
 const clearSelected = () => {
   const ids = map(assessments.value, 'uid');
