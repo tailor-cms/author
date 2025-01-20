@@ -21,7 +21,7 @@
     >
       Click the button below to create first Assessment.
     </VAlert>
-    <div v-else class="d-flex flex-column ga-2">
+    <div v-else class="d-flex flex-column ga-2 mb-11">
       <AssessmentItem
         v-for="it in assessments"
         :key="it.uid"
@@ -41,7 +41,7 @@
       :items="assessments"
       :layout="false"
       :position="assessments.length"
-      class="mt-12"
+      class="mt-6"
       color="teal-accent-1"
       label="Add assessment"
       variant="tonal"

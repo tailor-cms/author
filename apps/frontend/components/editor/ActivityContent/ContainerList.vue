@@ -8,7 +8,8 @@
       variant="tonal"
       prominent
     >
-      Click the button below to create first {{ capitalize(name) }}.
+      Click the button below to create {{ multiple ? 'first' : '' }}
+      {{ capitalize(name) }}.
     </VAlert>
     <component
       :is="containerName"

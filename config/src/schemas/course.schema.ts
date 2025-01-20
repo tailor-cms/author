@@ -10,9 +10,14 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 enum ActivityType {
+  // Outline
   Module = 'MODULE',
   Page = 'PAGE',
+  Lesson = 'LESSON',
+  // Content containers
+  Intro = 'INTRO',
   Section = 'SECTION',
+  AssessmentPool = 'ASSESSMENT_POOL',
 }
 
 const ModuleConfig: ActivityConfig = {
@@ -63,6 +68,36 @@ const PageConfig: ActivityConfig = {
     },
   ],
 };
+
+const LessonConfig: ActivityConfig = {
+  type: ActivityType.Lesson,
+  rootLevel: true,
+  isTrackedInWorkflow: true,
+  label: 'Lesson',
+  ai: {
+    definition: `
+      Lessons contain the content user will interact with, as well as the
+      assessments they should complete.`,
+  },
+  color: '#FFA000',
+  contentContainers: [
+    ActivityType.Intro,
+    ActivityType.Section,
+    ActivityType.AssessmentPool,
+  ],
+};
+
+const IntroConfig: ContentContainerConfig = ({
+  type: ActivityType.Intro,
+  templateId: ContentContainerType.Default,
+  label: 'Intro',
+  layout: false,
+  types: [
+    ContentElementType.HtmlDefault,
+    ContentElementType.Image,
+    ContentElementType.Video,
+  ],
+});
 
 const SectionConfig: ContentContainerConfig = {
   type: ActivityType.Section,
@@ -138,6 +173,13 @@ const SectionConfig: ContentContainerConfig = {
   },
 };
 
+const AssessmentPoolConfig: ContentContainerConfig = {
+  type: ActivityType.AssessmentPool,
+  templateId: ContentContainerType.AssessmentPool,
+  label: 'Assessments',
+  publishedAs: 'assessments',
+};
+
 export const SCHEMA: Schema = {
   id: 'COURSE_SCHEMA',
   workflowId: DEFAULT_WORKFLOW.id,
@@ -157,8 +199,8 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
-  structure: [ModuleConfig, PageConfig],
-  contentContainers: [SectionConfig],
+  structure: [ModuleConfig, PageConfig, LessonConfig],
+  contentContainers: [IntroConfig, SectionConfig, AssessmentPoolConfig],
   elementMeta: [
     {
       type: ContentElementType.Image,
