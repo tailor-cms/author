@@ -2,6 +2,7 @@
   <VChip
     v-if="changeType"
     :color="changeType === 'new' ? 'success' : 'secondary'"
+    :variant="variant"
     class="readonly font-weight-medium text-capitalize"
     size="small"
     round
@@ -12,7 +13,13 @@
 
 <script lang="ts" setup>
 // TODO: Update the type once utils is migrated to ts
-withDefaults(defineProps<{ changeType?: string | null }>(), {
+interface Props {
+  changeType?: string | null;
+  variant?: string;
+}
+
+withDefaults(defineProps<Props>(), {
   changeType: null,
+  variant: 'tonal',
 });
 </script>

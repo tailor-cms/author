@@ -1,7 +1,7 @@
 <template>
   <div class="bg-transparent">
-    <div class="text-left d-flex justify-space-between align-center mb-2">
-      <div class="text-white text-h6">Assessments</div>
+    <div class="text-left d-flex justify-space-between align-center mb-4">
+      <div class="text-white text-subtitle-1">Assessments</div>
       <VBtn
         v-if="hasAssessments"
         variant="tonal"
@@ -21,7 +21,7 @@
     >
       Click the button below to create first Assessment.
     </VAlert>
-    <div class="mb-8">
+    <div v-else class="d-flex flex-column ga-2">
       <AssessmentItem
         v-for="it in assessments"
         :key="it.uid"
@@ -41,6 +41,7 @@
       :items="assessments"
       :layout="false"
       :position="assessments.length"
+      class="mt-8"
       label="Add assessment"
       large
       color="teal-accent-1"
@@ -60,6 +61,7 @@ import { AddElement, AssessmentItem } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { filter, sortBy } from 'lodash';
 import { uuid } from '@tailor-cms/utils';
+import pull from 'lodash/pull';
 
 interface Props {
   container: Activity;
@@ -112,17 +114,9 @@ const saveAssessment = (assessment: any) => {
   emit(event, assessment);
 };
 
-const toggleSelect = (assessment: any) => {
-  const { question } = assessment.data;
-  const hasQuestion = question && question.length;
-  if (isSelected(assessment) && !hasQuestion) {
-    emit('delete:element', assessment);
-  } else if (isSelected(assessment)) {
-    selected.value.splice(selected.value.indexOf(assessment.uid), 1);
-  } else {
-    selected.value.push(assessment.uid);
-  }
-};
+const toggleSelect = (assessment: any) => isSelected(assessment)
+  ? pull(selected.value, assessment.uid)
+  : selected.value.push(assessment.uid);
 
 const isSelected = (assessment: any) => selected.value.includes(assessment.uid);
 
