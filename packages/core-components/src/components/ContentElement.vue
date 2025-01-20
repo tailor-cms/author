@@ -20,7 +20,7 @@
       class="header d-flex"
     >
       <PublishDiffChip
-        :change-type="element.changeSincePublish"
+        :change-type="element.changeSincePublish as PublishDiffChangeTypes"
         class="ml-auto"
       />
     </div>
@@ -92,7 +92,7 @@ import {
   provide,
   ref,
 } from 'vue';
-import { getComponentName, getElementId } from '@tailor-cms/utils';
+import { getComponentName, getElementId, PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
