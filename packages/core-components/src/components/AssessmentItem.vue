@@ -2,60 +2,73 @@
   <VHover v-slot="{ isHovering: isCardHovered, props: hoverProps }">
     <div
       v-bind="hoverProps"
-      :class="[props.element.changeSincePublish, {
-        hover: isCardHovered,
-        expanded: props.expanded,
-        diff: editorState.isPublishDiff,
-      }]"
       class="d-flex align-start justify-strech">
+      <span v-if="!isDisabled && draggable" class="drag-handle">
+        <VIcon
+          icon="mdi-drag-vertical"
+          color="primary-lighten-2"
+          size="large"
+        />
+      </span>
       <component
         :is="componentName(element.type)"
-        v-if="props.expanded"
+        v-if="expanded"
         v-bind="{
           element,
           embedTypes: embedElementConfig,
           embedElementConfig,
           isDisabled,
         }"
+        :class="[element.changeSincePublish, { diff: showPublishDiff }]"
         class="flex-grow-1"
         @delete="emit('delete')"
         @save="save"
       />
       <VCard
         v-else
+        :class="[element.changeSincePublish, { diff: showPublishDiff }]"
         class="d-flex justify-space-between align-center pa-2 w-100"
         color="primary-darken-2"
         variant="flat"
+        min-height="48"
         @click="$emit('selected')">
-        <VChip variant="text">
-          <VIcon
-            :icon="elementConfig?.ui.icon"
-            color="secondary-lighten-2"
-            start
-          />
-          <span class="text-subtitle-1">{{ elementConfig?.name }}</span>
-        </VChip>
-        <span class="question mx-2">{{ question }}</span>
-        <PublishDiffChip
-          v-if="editorState.isPublishDiff && props.element.changeSincePublish"
-          :change-type="props.element.changeSincePublish"
-        />
-        <VBtn
-          v-else-if="isCardHovered"
-          color="secondary-lighten-3"
-          class="delete"
-          variant="tonal"
-          size="x-small"
-          icon
-          @click.stop="$emit('delete')">
-          <VIcon icon="mdi-delete-outline" size="large" />
-        </VBtn>
+        <VRow dense>
+          <VCol cols="3" class="text-left align-content-center">
+            <div class="px-2 d-flex align-center">
+              <VIcon
+                :icon="elementConfig?.ui.icon"
+                color="secondary-lighten-2"
+                size="18"
+                start
+              />
+              <span class="text-subtitle-2">{{ elementConfig?.name }}</span>
+            </div>
+          </VCol>
+          <VCol cols="6" class="align-content-center">{{ question }}</VCol>
+          <VCol cols="3" class="text-right align-content-center">
+            <PublishDiffChip
+              v-if="editorState.isPublishDiff && element.changeSincePublish"
+              :change-type="publishDiffChangeType"
+            />
+            <VBtn
+              v-else-if="isCardHovered"
+              color="secondary-lighten-3"
+              class="delete"
+              variant="tonal"
+              size="x-small"
+              icon
+              @click.stop="$emit('delete')">
+              <VIcon icon="mdi-delete-outline" size="large" />
+            </VBtn>
+          </VCol>
+        </VRow>
       </VCard>
       <VBtn
         icon="mdi-chevron-down"
         variant="tonal"
         class="ml-3 my-1"
         density="comfortable"
+        color="primary-lighten-2"
         @click="$emit('selected')" />
     </div>
   </VHover>
@@ -67,11 +80,12 @@ import type {
   ContentElementCategory,
   ElementRegistry,
 } from '@tailor-cms/interfaces/schema';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { getComponentName } from '@tailor-cms/utils';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import cloneDeep from 'lodash/cloneDeep';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
+import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import truncate from 'lodash/truncate';
 
 import PublishDiffChip from './PublishDiffChip.vue';
@@ -86,7 +100,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   expanded: false,
-  draggable: true,
+  draggable: false,
   isDisabled: false,
 });
 
@@ -100,6 +114,9 @@ const blankRegex = /(@blank)/g;
 const htmlRegex = /(<\/?[^>]+(>|$))|&nbsp;/g;
 
 const elementConfig = computed(() => ceRegistry?.get(props.element.type));
+const showPublishDiff = computed(() => editorState.isPublishDiff);
+const publishDiffChangeType = computed(() =>
+  props.element.changeSincePublish as PublishDiffChangeTypes);
 
 const getTextAssets = (item: any) =>
   filter(item, (it: any) => TEXT_CONTAINERS.includes(it.type));
@@ -124,68 +141,18 @@ const question = computed(() => {
 <style lang="scss" scoped>
 @use '../mixins';
 
-.assessment-item {
-  margin-bottom: 0.625rem;
-  padding: 0;
-  position: relative;
-
-  // .v-chip {
-  //   min-width: 1.875rem;
-  // }
-
-  // .drag-handle {
-  //   position: absolute;
-  //   top: 0;
-  //   left: -1.75rem;
-  //   cursor: move;
-  //   color: #888;
-  // }
-
-  // .minimized {
-  //   padding: 0.375rem 1.375rem;
-  //   cursor: pointer;
-
-  //   .question {
-  //     display: inline-block;
-  //     max-width: 80%;
-  //     min-height: 1.875rem;
-  //     font-size: 1rem;
-  //     line-height: 2.125rem;
-  //     font-weight: 400;
-  //     color: #444;
-  //   }
-
-  //   .v-chip {
-  //     margin-top: 0.125rem;
-  //   }
-  // }
-
-  // .delete {
-  //   opacity: 0;
-  // }
-
-  // &.hover:not(.sortable-chosen) .delete:not(.disabled) {
-  //   opacity: 1;
-  // }
-}
-
-.question-container {
-  margin: 0 !important;
+.drag-handle {
+  margin: 0.625rem 0 0.625rem -0.5rem;
 }
 
 .diff {
-  border: none;
-
-  &.expanded {
-    border-radius: 4px;
-  }
-
   &.new {
-    @include mixins.highlight(var(--v-success-lighten2));
+    @include mixins.highlight(rgb(var(--v-theme-success-lighten-4)));
   }
 
-  &.changed, &.removed {
-    @include mixins.highlight(var(--v-secondary-lighten4));
+  &.changed,
+  &.removed {
+    @include mixins.highlight(rgb(var(--v-theme-secondary-lighten-4)));
   }
 }
 </style>

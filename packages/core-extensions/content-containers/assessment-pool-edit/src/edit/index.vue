@@ -1,15 +1,15 @@
 <template>
   <div class="bg-transparent">
-    <div class="text-left d-flex justify-space-between align-center mb-4">
+    <div class="d-flex justify-space-between align-center mb-4">
       <div class="text-white text-subtitle-1">Assessments</div>
       <VBtn
         v-if="hasAssessments"
         variant="tonal"
         size="small"
-        color="white"
+        color="primary-lighten-3"
         @click="toggleAssessments"
       >
-        {{ allSelected ? 'Hide All' : 'Show All' }}
+        {{ allSelected ? 'Hide' : 'Show' }} All
       </VBtn>
     </div>
     <VAlert
@@ -41,7 +41,7 @@
       :items="assessments"
       :layout="false"
       :position="assessments.length"
-      class="mt-8"
+      class="mt-12"
       label="Add assessment"
       large
       color="teal-accent-1"
@@ -59,9 +59,11 @@ import type {
 import { ref, computed, watch, inject } from 'vue';
 import { AddElement, AssessmentItem } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import { filter, sortBy } from 'lodash';
-import { uuid } from '@tailor-cms/utils';
+import filter from 'lodash/filter';
+import map from 'lodash/map';
 import pull from 'lodash/pull';
+import sortBy from 'lodash/sortBy';
+import { uuid } from '@tailor-cms/utils';
 
 interface Props {
   container: Activity;
@@ -102,7 +104,7 @@ const assessments = computed(() => {
 const hasAssessments = computed(() => assessments.value.length > 0);
 
 const addAssessments = (newAssessments: any[]) => {
-  newAssessments.forEach(it => {
+  newAssessments.forEach((it) => {
     const uid = uuid();
     emit('add:element', { ...it, uid });
     selected.value.push(uid);
@@ -121,13 +123,13 @@ const toggleSelect = (assessment: any) => isSelected(assessment)
 const isSelected = (assessment: any) => selected.value.includes(assessment.uid);
 
 const clearSelected = () => {
-  const ids = assessments.value.map(it => it.uid);
-  selected.value = selected.value.filter(it => ids.includes(it));
+  const ids = map(assessments.value, 'uid');
+  selected.value = selected.value.filter((id) => ids.includes(id));
 };
 
 const toggleAssessments = () => {
   allSelected.value = !allSelected.value;
-  selected.value = allSelected.value ? assessments.value.map(it => it.uid) : [];
+  selected.value = allSelected.value ? map(assessments.value, 'uid') : [];
 };
 
 watch(assessments, clearSelected);
