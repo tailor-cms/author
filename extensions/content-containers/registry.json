@@ -5,18 +5,13 @@
     "serverPackage": ""
   },
   {
-    "name": "@tailor-cms/tcc-assessment-pool",
-    "clientPackage": "@tailor-cms/tcc-assessment-pool-edit",
-    "serverPackage": "@tailor-cms/tcc-assessment-pool-server"
-  },
-  {
-    "name": "@tailor-cms/tcc-page",
-    "clientPackage": "@tailor-cms/tcc-page",
-    "serverPackage": ""
-  },
-  {
     "name": "@tailor-cms/tcc-structured-content",
     "clientPackage": "@tailor-cms/tcc-structured-content",
     "serverPackage": ""
+  },
+  {
+    "name": "@tailor-cms/tcc-assessment-pool",
+    "clientPackage": "@tailor-cms/tcc-assessment-pool-edit",
+    "serverPackage": "@tailor-cms/tcc-assessment-pool-server"
   }
 ]
