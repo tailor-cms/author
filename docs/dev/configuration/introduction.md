@@ -52,15 +52,32 @@ const PAGE: ActivityConfig = {
 // This is a Content Container definition.
 // We are going to use 'DEFAULT' container which is provided with Tailor
 // 'DEFAULT' container is just a list of Content Elements which are enabled
-// by adding it to the `types` list
+// by adding it to the `contentElementConfig` config
 const SECTION: ContentContainerConfig = {
   // Content Container id for this particular schema
   type: 'SECTION',
   // id of the installed container
   templateId: 'DEFAULT',
   label: 'Section',
-  // List of Content Element types which Author can add to this container
-  types: ['CE_HTML_DEFAULT'],
+  // Configuration of Content Element types which Author can add to this 
+  // container
+  contentElementConfig: [
+    {
+      name: 'Category A',
+      config: { isGradable: true },
+      items: [ContentElementType.MultipleChoice]
+    }, 
+    {
+      name: 'Category B',
+      items: [
+        ContentElementType.MultipleChoice,
+        { id: ContentElementType.SingleChoice, isGradable: false },
+      ]
+    },
+  ],
+  // Configuration of Content Element types which Author can add as embedded
+  // elements inside composite elements in this container
+  embedElementConfig: [ContentElementType.HtmlDefault],
 };
 
 export const SCHEMA: Schema = {
