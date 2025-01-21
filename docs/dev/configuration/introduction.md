@@ -19,8 +19,9 @@ As an illustrative example, let's model a Knowledge Base schema. This Schema
 is designed to organize content by Categories. Content is added to Page nodes,
 which are contained within Categories. Each Entry can host multiple Section
 Containers; Content Containers that hold the actual Content Elements. For
-this scenario, we will enable a single element: a WYSIWYG rich text editor,
-referred to as CE_HTML_DEFAULT.
+this scenario, we will add two groups of content elements to showcase different 
+configuration possibilities. Third option is used for specifying allowed
+embed elements.
 
 Here is an example:
 
@@ -63,12 +64,12 @@ const SECTION: ContentContainerConfig = {
   // container
   contentElementConfig: [
     {
-      name: 'Category A',
+      name: 'Group A',
       config: { isGradable: true },
       items: [ContentElementType.MultipleChoice]
     }, 
     {
-      name: 'Category B',
+      name: 'Group B',
       items: [
         ContentElementType.MultipleChoice,
         { id: ContentElementType.SingleChoice, isGradable: false },
