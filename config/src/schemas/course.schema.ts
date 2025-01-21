@@ -92,7 +92,7 @@ const IntroConfig: ContentContainerConfig = ({
   templateId: ContentContainerType.Default,
   label: 'Intro',
   layout: false,
-  types: [
+  contentElementConfig: [
     ContentElementType.HtmlDefault,
     ContentElementType.Image,
     ContentElementType.Video,
