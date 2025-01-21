@@ -34,18 +34,18 @@ const processElementConfig = (config: ElementConfig[]) => {
   return config.reduce((acc, it) => {
     const isGroup = typeof it !== 'string' && 'items' in it;
     if (isGroup) {
-      it.items = it.items.map(processItem);
+      it.items = it.items.map(processCategoryItem);
       acc.push(it);
       return acc;
     }
     const index = acc.findIndex((it) => it.name === DEFAULT_GROUP);
-    if (index >= 0) acc[index].items.push(processItem(it));
-    else acc.push({ name: DEFAULT_GROUP, items: [processItem(it)] });
+    if (index >= 0) acc[index].items.push(processCategoryItem(it));
+    else acc.push({ name: DEFAULT_GROUP, items: [processCategoryItem(it)] });
     return acc;
   }, [] as ContentElementCategory[]);
 };
 
-const processItem = (item: ContentElementItem | string, config?: any) => {
+const processCategoryItem = (item: ContentElementItem | string, config?: any) => {
   const processed = isString(item) ? { id: item } : item;
   return Object.assign(processed, config);
 };
