@@ -42,7 +42,7 @@ const SECTION: ContentContainerConfig = {
   templateId: ContentContainerType.Default,
   label: 'Section',
   contentElementConfig: [
-    ContentElementType.HtmlDefault,
+    ContentElementType.Html,
     ContentElementType.Image,
   ],
   ai: {
