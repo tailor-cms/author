@@ -110,7 +110,7 @@ const emit = defineEmits(['add', 'save', 'delete', 'selected']);
 const editorState = inject<any>('$editorState');
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 
-const TEXT_CONTAINERS = ['CE_HTML_DEFAULT'];
+const TEXT_CONTAINERS = ['HTML'];
 const blankRegex = /(@blank)/g;
 const htmlRegex = /(<\/?[^>]+(>|$))|&nbsp;/g;
 
