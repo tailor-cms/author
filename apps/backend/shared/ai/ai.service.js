@@ -241,7 +241,7 @@ class AIService {
       ${promptEnd}`;
     const { elements = [] } = await this.requestCompletion(userPrompt);
     const htmlElements = elements.map((it) => ({
-      type: 'CE_HTML_DEFAULT',
+      type: 'HTML',
       data: { content: it.content },
     }));
     logger.info('Generated HTML elements', htmlElements);
@@ -261,7 +261,7 @@ class AIService {
     const imgUrl = await this.generateImage(dallePrompt);
     const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
     const imageElement = {
-      type: 'CE_IMAGE',
+      type: 'IMAGE',
       data: {
         assets: { url: imgInternalUrl },
       },

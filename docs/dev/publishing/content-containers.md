@@ -74,7 +74,7 @@ an ID of 36. To access the content, we navigate to
     {
       "id": 2,
       "uid": "e5b0c315-033d-445a-8198-a72b2f10f451",
-      "type": "CE_HTML_DEFAULT",
+      "type": "HTML",
       "contentId": "afc62b76-d4ee-4707-ab26-ff95728c51e9",
       "contentSignature": "bd2deee9eb79e29ab9af39ae8860031674359c03",
       "position": 1,
@@ -89,7 +89,7 @@ an ID of 36. To access the content, we navigate to
     {
       "id": 1,
       "uid": "1b0562f6-fe69-4e11-9ac1-4d8ceb2b1336",
-      "type": "CE_HTML_DEFAULT",
+      "type": "HTML",
       "contentId": "a4768059-b661-425f-a90c-24d2e56a1326",
       "contentSignature": "21394d772ff63cbe46e39c777f354d53fc75beec",
       "position": 2,
@@ -104,7 +104,7 @@ an ID of 36. To access the content, we navigate to
     {
       "id": 3,
       "uid": "8d71eec4-e868-45b9-a4e0-e2e709cfcc65",
-      "type": "CE_HTML_DEFAULT",
+      "type": "HTML",
       "contentId": "a47967f4-f6f3-4093-8fc3-459b2cf30e8a",
       "contentSignature": "496330c0a61006fe855b481e05c0826fa2e0ffcb",
       "position": 3,
@@ -119,7 +119,7 @@ an ID of 36. To access the content, we navigate to
     {
       "id": 4,
       "uid": "38c998b0-be81-4344-8c99-2185bdd0a285",
-      "type": "CE_IMAGE",
+      "type": "IMAGE",
       "contentId": "f8fd5fab-d04b-4423-8f01-8e024e032bd0",
       "contentSignature": "190d7a300882a0eb6b69ee244aded8ed448d6a9c",
       "position": 4,
@@ -136,7 +136,7 @@ an ID of 36. To access the content, we navigate to
     {
       "id": 195,
       "uid": "e1892374-770b-447f-a8fd-e4d79f2c3fe9",
-      "type": "CE_HTML_DEFAULT",
+      "type": "HTML",
       "contentId": "85dddff5-3d6c-4f52-9740-1f3f1012d226",
       "contentSignature": "78c1b493ac522bbece5c6688494d72f3531a9930",
       "position": 5,
