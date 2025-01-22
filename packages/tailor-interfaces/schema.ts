@@ -93,14 +93,18 @@ export interface ActivityConfig {
   exams?: any;
 }
 
-export interface ContentElementItem {
-  id: string;
+export interface ContentElementConfig {
   isGradable?: boolean;
+}
+
+export interface ContentElementItem extends ContentElementConfig {
+  id: string;
 }
 
 export interface ContentElementCategory {
   name: string;
   items: ContentElementItem[];
+  config?: ContentElementConfig;
 }
 
 export type ElementConfig = ContentElementCategory | ContentElementItem | string;
