@@ -17,6 +17,11 @@ jobs:
         run: pnpm lint
   e2e:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4, 5]
+        shardTotal: [5]
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -48,8 +53,8 @@ jobs:
           echo "STORAGE_REGION=us-east-1" >> .env
           echo "STORAGE_ENDPOINT=http://localhost:4566" >> .env
           echo "STORAGE_BUCKET=test" >> .env
-          echo "STORAGE_KEY"=test >> .env
-          echo "STORAGE_SECRET"=test >> .env
+          echo "STORAGE_KEY=test" >> .env
+          echo "STORAGE_SECRET=test" >> .env
       - name: Setup E2E .env
         run: |
           touch ./tests/.env
@@ -73,16 +78,20 @@ jobs:
           accept: 200
       - name: Run functional tests
         shell: bash
-        run: pnpm e2e:functional
+        run: pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
         shell: bash
-        run: pnpm e2e:visual
+        run: |
+          PERCY_PARALLEL_TOTAL=${{ matrix.shardTotal }} \
+          PERCY_PARALLEL_NONCE=${{ github.run_id }} \
+          pnpm e2e:visual --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run a11y tests
         shell: bash
-        run: pnpm e2e:a11y
+        run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shardIndex }}
           path: ./tests/playwright-report/
           retention-days: 1
