@@ -17,6 +17,11 @@ jobs:
         run: pnpm lint
   e2e:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4, 5]
+        shardTotal: [5]
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -73,7 +78,7 @@ jobs:
           accept: 200
       - name: Run functional tests
         shell: bash
-        run: pnpm e2e:functional
+        run: pnpm e2e:functional -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
         shell: bash
         run: pnpm e2e:visual
@@ -83,6 +88,6 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shardIndex }}
           path: ./tests/playwright-report/
           retention-days: 1
