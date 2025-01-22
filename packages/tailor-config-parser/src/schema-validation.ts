@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import type { Schema } from '@tailor-cms/interfaces/schema';
+import isString from 'lodash/isString.js';
 
 const activityType = yup.string().min(2).max(50);
 const contentElementType = yup.string().min(2).max(50);
@@ -11,11 +12,14 @@ const categoryItemType = yup.object().shape({
 
 const elementCategoryType = yup.object().shape({
   name: yup.string().min(2).max(50).required(),
-  items: yup.array().of(categoryItemType),
+  config: yup.object(),
+  items: yup.array().of(
+    yup.lazy((val) => isString(val) ? contentElementType : categoryItemType),
+  ),
 });
 
 const elementConfig = yup.lazy((val) => {
-  if (typeof val === 'string') return contentElementType;
+  if (isString(val)) return contentElementType;
   if ('items' in val) return elementCategoryType;
   return categoryItemType;
 });
