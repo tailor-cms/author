@@ -84,13 +84,13 @@ jobs:
         run: |
           PERCY_PARALLEL_TOTAL=${{ matrix.shardTotal }} \
           PERCY_PARALLEL_NONCE=${{ github.run_id }} \
-          PERCY_PARALLEL_PARTIAL=1 \
           pnpm e2e:visual --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run a11y tests
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
       - uses: actions/upload-artifact@v3
-        if: always()
+        if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ matrix.shardIndex }}
           path: ./tests/playwright-report/
