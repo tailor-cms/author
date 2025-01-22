@@ -31,23 +31,23 @@ const DEFAULT_EMBED_ELEMENTS = ['CE_HTML_DEFAULT', 'CE_IMAGE', 'CE_EMBED'];
 type EmptyObject = Record<string, never>;
 
 const processElementConfig = (config: ElementConfig[]) => {
+  const processItem = (item: ContentElementItem | string, config?: any) => {
+    const processed = isString(item) ? { id: item } : item;
+    return Object.assign(processed, config);
+  };
+
   return config.reduce((acc, it) => {
     const isGroup = typeof it !== 'string' && 'items' in it;
     if (isGroup) {
-      it.items = it.items.map(processCategoryItem);
+      it.items = it.items.map(processItem);
       acc.push(it);
       return acc;
     }
     const index = acc.findIndex((it) => it.name === DEFAULT_GROUP);
-    if (index >= 0) acc[index].items.push(processCategoryItem(it));
-    else acc.push({ name: DEFAULT_GROUP, items: [processCategoryItem(it)] });
+    if (index >= 0) acc[index].items.push(processItem(it));
+    else acc.push({ name: DEFAULT_GROUP, items: [processItem(it)] });
     return acc;
   }, [] as ContentElementCategory[]);
-};
-
-const processCategoryItem = (item: ContentElementItem | string, config?: any) => {
-  const processed = isString(item) ? { id: item } : item;
-  return Object.assign(processed, config);
 };
 
 export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
