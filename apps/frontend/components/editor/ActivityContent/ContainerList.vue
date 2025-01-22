@@ -1,6 +1,11 @@
 <template>
   <div class="content-containers">
-    <h2 v-if="displayHeading" class="text-h5">{{ capitalize(name) }}</h2>
+    <h2
+      v-if="displayHeading"
+      class="mb-4 text-h6 text-left text-primary-lighten-4"
+    >
+      {{ capitalize(name) }}
+    </h2>
     <VAlert
       v-if="!containerGroup.length"
       color="primary-lighten-3"
