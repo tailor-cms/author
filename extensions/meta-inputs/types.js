@@ -10,4 +10,5 @@ export const MetaInputType = {
   Select: 'SELECT',
   Datetime: 'DATETIME',
   HaesRating: 'HAES_RATING',
+  TextField: 'TEXT_FIELD',
 };
