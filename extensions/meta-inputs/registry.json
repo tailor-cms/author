@@ -42,5 +42,9 @@
   {
     "name": "@tailor-cms/tme-haes-rating",
     "clientPackage": "@tailor-cms/tme-haes-rating"
+  },
+  {
+    "name": "@tailor-cms/tme-text-field",
+    "clientPackage": "@tailor-cms/tme-text-field"
   }
 ]
