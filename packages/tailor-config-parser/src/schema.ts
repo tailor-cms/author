@@ -31,6 +31,11 @@ const DEFAULT_EMBED_ELEMENTS = ['HTML', 'IMAGE', 'EMBED'];
 type EmptyObject = Record<string, never>;
 
 const processElementConfig = (config: ElementConfig[]) => {
+  const processItem = (item: ContentElementItem | string, config?: any) => {
+    const processed = isString(item) ? { id: item } : item;
+    return Object.assign(processed, config);
+  };
+
   return config.reduce((acc, it) => {
     const isGroup = typeof it !== 'string' && 'items' in it;
     if (isGroup) {
@@ -43,11 +48,6 @@ const processElementConfig = (config: ElementConfig[]) => {
     else acc.push({ name: DEFAULT_GROUP, items: [processItem(it)] });
     return acc;
   }, [] as ContentElementCategory[]);
-};
-
-const processItem = (item: ContentElementItem | string, config?: any) => {
-  const processed = isString(item) ? { id: item } : item;
-  return Object.assign(processed, config);
 };
 
 export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
