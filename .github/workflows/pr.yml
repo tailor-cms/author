@@ -81,10 +81,10 @@ jobs:
         run: pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
         shell: bash
-        run: pnpm e2e:visual
+        run: pnpm e2e:visual --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run a11y tests
         shell: bash
-        run: pnpm e2e:a11y
+        run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
