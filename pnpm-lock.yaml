@@ -549,6 +549,12 @@ importers:
       '@tailor-cms/tcc-assessment-pool-server':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/assessment-pool-server
+      '@tailor-cms/tcc-exam-edit':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/exam-edit
+      '@tailor-cms/tcc-exam-server':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/exam-server
       '@tailor-cms/tcc-page':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/page
