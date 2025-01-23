@@ -1,0 +1,23 @@
+{
+  "name": "@tailor-cms/tcc-exam-edit",
+  "version": "0.0.1",
+  "description": "Tailor exam content container edit package",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "devDependencies": {
+    "@tailor-cms/interfaces": "workspace:*",
+    "@types/lodash": "*",
+    "@types/pluralize": "^0.0.33"
+  },
+  "peerDependencies": {
+    "@tailor-cms/core-components": "workspace:*",
+    "lodash": "*",
+    "pluralize": "^8.0.0",
+    "vue": "^3.3.4",
+    "vuetify": "^3.7.0"
+  }
+}
