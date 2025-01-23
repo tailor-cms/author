@@ -110,12 +110,23 @@ class User extends Model {
     };
   }
 
-  static associate({ ActivityStatus, Comment, Repository, RepositoryUser }) {
+  static associate({
+    ActivityStatus,
+    Comment,
+    Repository,
+    RepositoryUser,
+    UserGroup,
+    UserGroupMember,
+  }) {
     this.hasMany(Comment, {
       foreignKey: { name: 'authorId', field: 'author_id' },
     });
     this.belongsToMany(Repository, {
       through: RepositoryUser,
+      foreignKey: { name: 'userId', field: 'user_id' },
+    });
+    this.belongsToMany(UserGroup, {
+      through: UserGroupMember,
       foreignKey: { name: 'userId', field: 'user_id' },
     });
     this.hasMany(ActivityStatus, {
