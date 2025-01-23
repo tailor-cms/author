@@ -32,7 +32,7 @@ async function resolve(exam, resolveStatics) {
   return exam;
 }
 
-module.exports = {
+export default {
   templateId: 'EXAM',
   version: '1.0',
   fetch,

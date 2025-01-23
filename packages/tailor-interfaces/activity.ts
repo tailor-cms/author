@@ -31,7 +31,7 @@ export interface Activity {
   id: number;
   uid: string;
   repositoryId: number;
-  parentId?: number;
+  parentId: number | null;
   type: string;
   position: number;
   data: Data;
