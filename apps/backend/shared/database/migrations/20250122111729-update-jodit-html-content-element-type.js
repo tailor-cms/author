@@ -1,62 +1,61 @@
 'use strict';
 
-const TABLE_NAME = 'content_element';
+const head = require('lodash/head');
+const mapValues = require('lodash/mapValues');
+const Promise = require('bluebird');
 
 exports.up = async (queryInterface) => {
-  await updateContentElementType(queryInterface, 'JODIT_HTML', 'HTML');
+  await updateContentElementType(queryInterface.sequelize, 'JODIT_HTML', 'HTML');
 };
 
 exports.down = async (queryInterface) => {
-  await updateContentElementType(queryInterface, 'HTML', 'JODIT_HTML');
+  await updateContentElementType(queryInterface.sequelize, 'HTML', 'JODIT_HTML');
 };
 
-const updateContentElementType = async (qi, oldType, newType) => {
-  await updateRootTypes(qi, oldType, newType);
-  await updateEmbedsTypes(qi, oldType, newType);
-  await updateQuestionTypes(qi, oldType, newType);
+const updateContentElementType = async (sequelize, oldType, newType) => {
+  const transaction = await sequelize.transaction();
+  const elements = await getContentElements(sequelize, transaction);
+  await Promise.each(elements, (el) => {
+    const updatedData = processElement(el, oldType, newType);
+    return updateElement(sequelize, updatedData, transaction);
+  });
+  await transaction.commit();
 };
 
-const updateRootTypes = (qi, oldType, newType) => qi.bulkUpdate(
-  TABLE_NAME,
-  { type: newType },
-  { type: oldType },
-);
+async function getContentElements(sequelize, transaction) {
+  const sql = `
+    SELECT
+      id,
+      type,
+      data
+    FROM
+      content_element
+    WHERE
+      content_element.type = 'CE_JODIT_HTML' OR
+      content_element.data->'embeds' IS NOT NULL OR
+      content_element.data->'question' IS NOT NULL
+  `;
+  const options = { transaction, raw: true };
+  return head(await sequelize.query(sql, options));
+}
 
-const updateEmbedsTypes = (qi, oldType, newType) => qi.sequelize.query(`
-  UPDATE ${TABLE_NAME}
-  SET data = jsonb_set(
-    data,
-    '{embeds}',
-    (
-      SELECT jsonb_object_agg(
-        key,
-        CASE
-          WHEN value->>'type' = '${oldType}'
-          THEN jsonb_set(value, '{type}', '"${newType}"')
-          ELSE value
-        END
-      )
-      FROM jsonb_each(data->'embeds')
-    )
-  )
-  WHERE data->'embeds' IS NOT NULL;
-`);
+const processElement = (el, oldType, newType) => {
+  const { embeds, question } = el.data;
+  if (el.type === oldType) el.type = newType;
+  if (embeds) {
+    el.embeds = mapValues(embeds, (it) => processElement(it, oldType, newType));
+  }
+  if (question) {
+    el.question = question.map((it) => processElement(it, oldType, newType));
+  }
+  return el;
+};
 
-const updateQuestionTypes = (qi, oldType, newType) => qi.sequelize.query(`
-  UPDATE ${TABLE_NAME}
-  SET data = jsonb_set(
-    data,
-    '{question}',
-    (
-      SELECT jsonb_agg(
-        CASE
-          WHEN value->>'type' = '${oldType}'
-          THEN jsonb_set(value, '{type}', '"${newType}"')
-          ELSE value
-        END
-      )
-      FROM jsonb_array_elements(data->'question')
-    )
-  )
-  WHERE data->'question' IS NOT NULL;
-`);
+const updateElement = async (sequelize, el, transaction) => {
+  const sql = `UPDATE content_element SET type=?, data=? WHERE id =?`;
+  const options = {
+    transaction,
+    replacements: [el.type, JSON.stringify(el.data), el.id],
+  };
+  return sequelize.query(sql, options);
+};
