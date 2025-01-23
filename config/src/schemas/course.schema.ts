@@ -14,6 +14,7 @@ enum ActivityType {
   Module = 'MODULE',
   Page = 'PAGE',
   Lesson = 'LESSON',
+  KnowledgeCheck = 'KNOWLEDGE_CHECK',
   // Content containers
   Intro = 'INTRO',
   Section = 'SECTION',
@@ -84,6 +85,21 @@ const LessonConfig: ActivityConfig = {
     ActivityType.Section,
     ContentContainerType.AssessmentPool,
   ],
+};
+
+const KnowledgeCheckConfig: ActivityConfig = {
+  type: ActivityType.KnowledgeCheck,
+  rootLevel: true,
+  isTrackedInWorkflow: true,
+  label: 'Knowledge check',
+  ai: {
+    definition: `
+      Knowledge checks are short assessments designed to gauge the learner's
+      understanding of the material covered in the lesson. They help reinforce
+      learning and provide immediate feedback to the learner.`,
+  },
+  color: '#E91E63',
+  contentContainers: [ContentContainerType.Exam],
 };
 
 const IntroConfig: ContentContainerConfig = ({
@@ -177,6 +193,28 @@ const AssessmentPoolConfig: ContentContainerConfig = {
   templateId: ContentContainerType.AssessmentPool,
   label: 'Assessments',
   publishedAs: 'assessments',
+  ai: {
+    definition: `
+      Assessment pools are collections of assessments that can be used to
+      evaluate the learner's understanding of the material. They can include
+      various types of questions and are designed to provide comprehensive
+      feedback.`,
+  },
+};
+
+const ExamConfig: ContentContainerConfig = {
+  type: ContentContainerType.Exam,
+  templateId: ContentContainerType.Exam,
+  label: 'Exam',
+  displayHeading: true,
+  multiple: true,
+  publishedAs: 'exam',
+  ai: {
+    definition: `
+      Exams are comprehensive assessments that evaluate the learner's
+      understanding of the material covered in the lesson. They are designed to
+      test the learner's knowledge and provide feedback on their progress.`,
+  },
 };
 
 export const SCHEMA: Schema = {
@@ -198,8 +236,8 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
-  structure: [ModuleConfig, PageConfig, LessonConfig],
-  contentContainers: [IntroConfig, SectionConfig, AssessmentPoolConfig],
+  structure: [ModuleConfig, PageConfig, LessonConfig, KnowledgeCheckConfig],
+  contentContainers: [IntroConfig, SectionConfig, AssessmentPoolConfig, ExamConfig],
   elementMeta: [
     {
       type: ContentElementType.Image,
