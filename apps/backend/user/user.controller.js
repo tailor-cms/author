@@ -10,28 +10,46 @@ import { Op } from 'sequelize';
 import { createError, validationError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
-const { User } = db;
+const { User, UserGroup } = db;
+
 const createFilter = (q) =>
   map(['email', 'firstName', 'lastName'], (it) => ({
     [it]: { [Op.iLike]: `%${q}%` },
   }));
 
-function list({ query: { email, role, filter, archived }, options }, res) {
+async function list(
+  { query: { email, role, filter, archived }, options },
+  res,
+) {
   const where = { [Op.and]: [] };
   if (filter) where[Op.or] = createFilter(filter);
   if (email) where[Op.and].push({ email });
   if (role) where[Op.and].push({ role });
-  return User.findAndCountAll({ where, ...options, paranoid: !archived }).then(
-    ({ rows, count }) => {
-      return res.json({ data: { items: map(rows, 'profile'), total: count } });
+  options.include = [{ model: UserGroup }];
+  const { rows, count: total } = await User.findAndCountAll({
+    where,
+    ...options,
+    paranoid: !archived,
+  });
+  return res.json({
+    data: {
+      items: map(rows, (it) => ({ ...it.profile, userGroups: it.userGroups })),
+      total,
     },
-  );
+  });
 }
 
-function upsert({ body: { uid, email, firstName, lastName, role } }, res) {
-  return User.inviteOrUpdate({ uid, email, firstName, lastName, role }).then(
-    (data) => res.json({ data }),
-  );
+async function upsert(req, res) {
+  const { uid, email, firstName, lastName, role, userGroupIds } = req.body;
+  const payload = { uid, email, firstName, lastName, role };
+  const user = await User.inviteOrUpdate(payload);
+  if (isArray(userGroupIds)) {
+    const userGroups = userGroupIds?.length
+      ? await UserGroup.findAll({ where: { id: userGroupIds } })
+      : [];
+    await user.setUserGroups(userGroups);
+  }
+  return res.json({ data: user });
 }
 
 function remove({ params: { id } }, res) {
