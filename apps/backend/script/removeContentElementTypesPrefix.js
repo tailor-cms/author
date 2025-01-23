@@ -1,8 +1,9 @@
 import 'dotenv/config';
 import { Op } from 'sequelize';
+import mapValues from 'lodash/mapValues.js';
 import db from '#shared/database/index.js';
 
-const { ContentElement, sequelize } = db;
+const { ContentElement } = db;
 
 migrateContentElements()
   .then(() => {
@@ -15,63 +16,24 @@ migrateContentElements()
   });
 
 async function migrateContentElements() {
-  const transaction = await sequelize.transaction();
-  await ContentElement.update(
-    { type: sequelize.literal(`REPLACE(type, 'CE_', '')`) },
-    { where: { type: { [Op.like]: 'CE_%' } } },
-    { transaction });
-  await ContentElement.update(
-    { data: embedElementsQuery },
-    { where: { 'data.embeds': { [Op.ne]: null } } },
-    { transaction },
-  );
-  await ContentElement.update(
-    { data: questionElementsQuery },
-    { where: { 'data.question': { [Op.ne]: null } } },
-    { transaction },
-  );
-  return transaction.commit();
+  const where = {
+    [Op.or]: [
+      { type: 'JODIT_HTML' },
+      { 'data.embeds': { [Op.ne]: null } },
+      { 'data.question': { [Op.ne]: null } },
+    ],
+  };
+  return ContentElement
+    .findAll({ where })
+    .each((el) => el.update(
+      processElement(el.toJSON()),
+    ));
 }
 
-const embedElementsQuery = sequelize.literal(`
-  jsonb_set(
-    data,
-    '{embeds}',
-    (
-      SELECT jsonb_object_agg(
-        key,
-        CASE
-          WHEN value->>'type' LIKE 'CE_%'
-          THEN jsonb_set(
-            value,
-            '{type}',
-            to_jsonb(REPLACE(value->>'type', 'CE_', ''))
-          )
-          ELSE value
-        END
-      )
-      FROM jsonb_each(data->'embeds')
-    )
-  )
-`);
-
-const questionElementsQuery = sequelize.literal(`
-  jsonb_set(
-    data,
-    '{embeds}',
-    (
-      SELECT jsonb_agg(
-        CASE
-          WHEN value->>'type' LIKE 'CE_%'
-          THEN jsonb_set(
-            value,
-            '{type}',
-            to_jsonb(REPLACE(value->>'type', 'CE_', ''))
-          )
-          ELSE value
-        END
-      )
-      FROM jsonb_array_elements(data->'question')
-    )
-  )
-`);
+const processElement = (el) => {
+  const { embeds, question } = el.data;
+  if (el.type.startsWith('CE_')) el.type = el.type.replace('CE_', '');
+  if (embeds) el.embeds = mapValues(embeds, processElement);
+  if (question) el.question = question.map(processElement);
+  return el;
+};
