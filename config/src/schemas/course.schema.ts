@@ -17,7 +17,6 @@ enum ActivityType {
   // Content containers
   Intro = 'INTRO',
   Section = 'SECTION',
-  AssessmentPool = 'ASSESSMENT_POOL',
 }
 
 const ModuleConfig: ActivityConfig = {
@@ -83,7 +82,7 @@ const LessonConfig: ActivityConfig = {
   contentContainers: [
     ActivityType.Intro,
     ActivityType.Section,
-    ActivityType.AssessmentPool,
+    ContentContainerType.AssessmentPool,
   ],
 };
 
@@ -174,7 +173,7 @@ const SectionConfig: ContentContainerConfig = {
 };
 
 const AssessmentPoolConfig: ContentContainerConfig = {
-  type: ActivityType.AssessmentPool,
+  type: ContentContainerType.AssessmentPool,
   templateId: ContentContainerType.AssessmentPool,
   label: 'Assessments',
   publishedAs: 'assessments',
