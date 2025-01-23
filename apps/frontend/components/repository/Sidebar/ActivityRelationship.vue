@@ -97,7 +97,9 @@ const options = computed(() => {
   const { schema } = repositoryStore.repository;
   const prefixWithSchema = (type: string) =>
     type.includes(`${schema}/`) ? type : `${schema}/${type}`;
-  const allowedTypes = config.map((it: string) => prefixWithSchema(it));
+  const allowedTypes = config
+    ? config.map((it: string) => prefixWithSchema(it))
+    : [];
   return filterBy(repositoryStore.outlineActivities, (it) => {
     if (allowedTypes.length && !allowedTypes.includes(it.type)) return false;
     if (!props.allowCircularLinks && it.id === props.activity.id) return false;

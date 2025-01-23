@@ -12,6 +12,16 @@ export default defineNuxtPlugin(() => {
     defineRule(name, rule);
   });
 
+  defineRule('decimal', (value: any, [decimals = '*', separator = '.']) => {
+    const msg = 'This field must contain only decimal values';
+    if (value === null || value === undefined || value === '') return msg;
+    const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
+    const regex = new RegExp(
+      `^[-+]?\\d*(\\${separator}\\d${regexPart})?([eE]{1}[-]?\\d+)?$`,
+    );
+    return regex.test(value) || msg;
+  });
+
   configure({
     validateOnModelUpdate: false,
     // TODO: messages have been modified to align with yup messages

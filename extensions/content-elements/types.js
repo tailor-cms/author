@@ -1,5 +1,5 @@
 export const ContentElementType = {
-  HtmlDefault: 'HTML',
+  Html: 'HTML',
   Image: 'IMAGE',
   MultipleChoice: 'MULTIPLE_CHOICE',
   SingleChoice: 'SINGLE_CHOICE',
