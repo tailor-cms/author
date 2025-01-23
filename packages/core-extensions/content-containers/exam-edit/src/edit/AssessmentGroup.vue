@@ -8,12 +8,14 @@
           v-model.number="timeLimit"
           min="0"
           name="timeLimit"
-          hint="Time limit (minutes)"
+          label="Time limit"
           type="number"
           step="15"
+          suffix="min"
           persistent-hint
+          variant="outlined"
           @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()">
-          <template #append-outer>
+          <template #append>
             <VIcon @click="$emit('delete')">mdi-delete</VIcon>
           </template>
         </VTextField>
@@ -29,11 +31,13 @@
       @delete:element="$emit('delete:element', $event)" />
     <h4>Questions</h4>
     <VAlert
-      :value="!hasAssessments"
-      color="blue-grey-darken-3"
-      icon="mdi-information-variant"
-      text>
-      Click the button below to Create first Assessment.
+      v-if="!hasAssessments"
+      color="primary-darken-1"
+      icon="mdi-information-outline"
+      variant="tonal"
+      prominent
+    >
+      Click the button below to create first Assessment.
     </VAlert>
     <ElementList
       :elements="assessments"
@@ -41,7 +45,7 @@
       :supported-types="[]"
       @add="addAssessments"
       @update="$emit('reorder:element', $event)">
-      <template #list-item="{ element }">
+      <template #default="{ element }">
         <AssessmentItem
           :assessment="element"
           :objectives="objectives"

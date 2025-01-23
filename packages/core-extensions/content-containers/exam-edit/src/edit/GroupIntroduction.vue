@@ -7,11 +7,11 @@
       :layout="true"
       @add="$emit('save:element', $event)"
       @update="$emit('reorder:element', $event)">
-      <template #list-item="{ element, dragged }">
+      <template #default="{ element, isDragged }">
         <ContainedContent
           :element="element"
           :set-width="false"
-          :is-dragged="dragged"
+          :is-dragged="isDragged"
           @save="save(element, $event)"
           @delete="$emit('delete:element', element)" />
       </template>

@@ -1,19 +1,25 @@
 <template>
   <div :class="{ collapsed }" class="exam">
-    <div
+    <VRow
       v-if="collapsed"
       class="d-flex justify-center align-center"
       @click="collapsed = false">
-      <h3 class="ml-auto">{{ title }}</h3>
-      <VChip
-        color="green"
-        text-color="white"
-        label
-        small
-        class="ml-auto">
-        <strong>{{ label }}</strong>
-      </VChip>
-    </div>
+      <VCol cols="2" class="text-left">
+        <VChip
+          color="green"
+          text-color="white"
+          label
+          small
+          class="ml-auto">
+          <strong>{{ label }}</strong>
+        </VChip>
+      </VCol>
+      <VCol cols="8">
+        <h3 class="ml-auto">{{ title }}</h3>
+      </VCol>
+      <VCol cols="2" class="text-right">
+      </VCol>
+    </VRow>
     <div v-else>
       <div class="header d-flex justify-space-between align-baseline">
         <h3 class="text-left">{{ title }}</h3>
@@ -30,7 +36,8 @@
         v-if="!groups.length"
         color="blue-grey-darken-3"
         icon="mdi-information-variant"
-        text>
+        variant="tonal"
+      >
         Click the button below to Create first question group.
       </VAlert>
       <AssessmentGroup
