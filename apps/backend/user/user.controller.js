@@ -1,12 +1,7 @@
-import {
-  ACCEPTED,
-  BAD_REQUEST,
-  CONFLICT,
-  NO_CONTENT,
-  NOT_FOUND,
-} from 'http-status-codes';
+import isArray from 'lodash/isArray.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
+import { StatusCodes } from 'http-status-codes';
 import { createError, validationError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
@@ -53,21 +48,27 @@ async function upsert(req, res) {
 }
 
 function remove({ params: { id } }, res) {
-  return User.destroy({ where: { id } }).then(() => res.sendStatus(NO_CONTENT));
+  return User.destroy({ where: { id } }).then(() =>
+    res.sendStatus(StatusCodes.NO_CONTENT),
+  );
 }
 
 function forgotPassword({ body }, res) {
   const { email } = body;
   return User.unscoped()
     .findOne({ where: { email } })
-    .then((user) => user || createError(NOT_FOUND, 'User not found'))
+    .then(
+      (user) => user || createError(StatusCodes.NOT_FOUND, 'User not found'),
+    )
     .then((user) => user.sendResetToken())
     .then(() => res.end());
 }
 
 function resetPassword({ body, user }, res) {
   const { password } = body;
-  return user.update({ password }).then(() => res.sendStatus(NO_CONTENT));
+  return user
+    .update({ password })
+    .then(() => res.sendStatus(StatusCodes.NO_CONTENT));
 }
 
 function getProfile({ user, authData }, res) {
@@ -79,25 +80,29 @@ function updateProfile({ user, body }, res) {
   return user
     .update({ email, firstName, lastName, imgUrl })
     .then(({ profile }) => res.json({ user: profile }))
-    .catch(() => validationError(CONFLICT));
+    .catch(() => validationError(StatusCodes.CONFLICT));
 }
 
 function changePassword({ user, body }, res) {
   const { currentPassword, newPassword } = body;
-  if (currentPassword === newPassword) return res.sendStatus(BAD_REQUEST);
+  if (currentPassword === newPassword)
+    return res.sendStatus(StatusCodes.BAD_REQUEST);
   return user
     .authenticate(currentPassword)
-    .then((user) => user || createError(BAD_REQUEST))
+    .then((user) => user || createError(StatusCodes.BAD_REQUEST))
     .then((user) => user.update({ password: newPassword }))
-    .then(() => res.sendStatus(NO_CONTENT));
+    .then(() => res.sendStatus(StatusCodes.NO_CONTENT));
 }
 
 function reinvite({ params }, res) {
   return User.unscoped()
     .findByPk(params.id)
-    .then((user) => user || createError(NOT_FOUND, 'User does not exist!'))
+    .then(
+      (user) =>
+        user || createError(StatusCodes.NOT_FOUND, 'User does not exist!'),
+    )
     .then((user) => User.sendInvitation(user))
-    .then(() => res.status(ACCEPTED).end());
+    .then(() => res.status(StatusCodes.ACCEPTED).end());
 }
 
 export default {

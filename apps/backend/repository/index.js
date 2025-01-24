@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
 import express from 'express';
 import multer from 'multer';
+import { StatusCodes } from 'http-status-codes';
 import ctrl from './repository.controller.js';
 import feed from './feed/index.js';
 import { authorize } from '#shared/auth/mw.js';
@@ -76,10 +76,7 @@ function mount(router, mountPath, subrouter) {
 
 function getRepository(req, _res, next, repositoryId) {
   return Repository.findByPk(repositoryId, { paranoid: false })
-    .then(
-      (repository) =>
-        repository || createError(NOT_FOUND, 'Repository not found'),
-    )
+    .then((item) => item || createError(StatusCodes.NOT_FOUND, 'Not found'))
     .then((repository) => {
       req.repository = repository;
       next();
@@ -91,7 +88,10 @@ function hasAccess(req, _res, next) {
   if (user.isAdmin()) return next();
   return repository
     .getUser(user)
-    .then((user) => user || createError(UNAUTHORIZED, 'Access restricted'))
+    .then(
+      (user) =>
+        user || createError(StatusCodes.UNAUTHORIZED, 'Access restricted'),
+    )
     .then((user) => {
       req.repositoryRole = user.repositoryUser.role;
       next();
