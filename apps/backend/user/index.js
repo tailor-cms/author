@@ -35,7 +35,7 @@ router
 // Protected routes:
 router
   .use(authService.authenticate('jwt'))
-  .get('/', authorize(), processPagination(User), ctrl.list)
+  .get('/', authorize(), processPagination(User, false), ctrl.list)
   .post('/', authorize(), ctrl.upsert)
   .get('/logout', authService.logout())
   .get('/me', ctrl.getProfile)

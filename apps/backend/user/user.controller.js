@@ -20,9 +20,9 @@ async function list(
   if (filter) where[Op.or] = createFilter(filter);
   if (email) where[Op.and].push({ email });
   if (role) where[Op.and].push({ role });
-  options.include = [{ model: UserGroup }];
   const { rows, count: total } = await User.findAndCountAll({
     where,
+    include: [{ model: UserGroup, as: 'userGroups' }],
     ...options,
     paranoid: !archived,
   });

@@ -58,6 +58,22 @@
             />
           </template>
         </VSelect>
+        <VSelect
+          v-model="groupInput"
+          :error-messages="errors.userGroupIds"
+          :items="userGroups"
+          :return-object="false"
+          class="user-group-select mb-3"
+          item-title="name"
+          item-value="id"
+          label="User Group"
+          placeholder="Select user group..."
+          variant="outlined"
+          chips
+          clearable
+          closable-chips
+          multiple
+        />
         <div class="d-flex justify-end pb-3">
           <VBtn color="primary-darken-4" variant="text" @click="close">
             Cancel
@@ -95,6 +111,7 @@ export interface Props {
   visible: boolean;
   userData: any;
   users: User[];
+  userGroups: any[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -150,6 +167,7 @@ const [emailInput] = defineField('email');
 const [firstNameInput] = defineField('firstName');
 const [lastNameInput] = defineField('lastName');
 const [roleInput] = defineField('role');
+const [groupInput] = defineField('userGroupIds');
 
 watch(isDialogVisible, (val) => {
   if (!val) return;
@@ -158,6 +176,7 @@ watch(isDialogVisible, (val) => {
     firstNameInput.value = props.userData.firstName;
     lastNameInput.value = props.userData.lastName;
     roleInput.value = props.userData.role;
+    groupInput.value = props.userData.userGroups.map((it: any) => it.id) || [];
   } else {
     resetForm();
   }
@@ -176,6 +195,7 @@ const submit = handleSubmit(async () => {
     firstName: firstNameInput.value,
     lastName: lastNameInput.value,
     role: roleInput.value,
+    userGroupIds: groupInput.value,
   });
   emit(`${action}d`);
   close();
