@@ -38,10 +38,10 @@
               <VIcon
                 :icon="elementConfig?.ui.icon"
                 color="secondary-lighten-2"
-                size="18"
+                size="small"
                 start
               />
-              <span class="text-subtitle-2">{{ elementConfig?.name }}</span>
+              <span class="text-subtitle-1">{{ elementConfig?.name }}</span>
             </div>
           </VCol>
           <VCol cols="6" class="align-content-center">{{ question }}</VCol>
