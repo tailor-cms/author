@@ -17,6 +17,9 @@ exports.up = (queryInterface, Sequelize) => {
         references: { model: 'user_group', key: 'id' },
         onDelete: 'CASCADE',
       },
+      role: {
+        type: Sequelize.ENUM('ADMIN', 'USER', 'COLLABORATOR'),
+      },
     })
     .then(async () => {
       return queryInterface.addConstraint(TABLE_NAME, {
