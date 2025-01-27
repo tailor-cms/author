@@ -30,7 +30,6 @@
       v-if="isComponentAvailable"
       v-bind="{
         ...$attrs,
-        embedTypes: embedElementConfig, // TODO: Remove once elements are migrated
         embedElementConfig,
         element,
         references,

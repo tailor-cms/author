@@ -200,6 +200,22 @@ const AssessmentPoolConfig: ContentContainerConfig = {
       various types of questions and are designed to provide comprehensive
       feedback.`,
   },
+  contentElementConfig: [
+    {
+      name: 'Assessments',
+      config: { isGradable: true },
+      items: [
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+        ContentElementType.TextResponse,
+        ContentElementType.NumericalResponse,
+        ContentElementType.TrueFalse,
+        ContentElementType.MatchingQuestion,
+        ContentElementType.FillBlank,
+        ContentElementType.DragDrop,
+      ],
+    },
+  ],
 };
 
 const ExamConfig: ContentContainerConfig = {

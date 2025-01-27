@@ -14,12 +14,12 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
-    "@tailor-cms/ce-accordion-edit": "^0.0.14",
-    "@tailor-cms/ce-accordion-server": "^0.0.14",
+    "@tailor-cms/ce-accordion-edit": "^0.0.15",
+    "@tailor-cms/ce-accordion-server": "^0.0.15",
     "@tailor-cms/ce-audio-edit": "^0.0.6",
     "@tailor-cms/ce-audio-server": "^0.0.6",
-    "@tailor-cms/ce-carousel-edit": "^0.0.3",
-    "@tailor-cms/ce-carousel-server": "^0.0.3",
+    "@tailor-cms/ce-carousel-edit": "^0.0.4",
+    "@tailor-cms/ce-carousel-server": "^0.0.4",
     "@tailor-cms/ce-drag-drop-edit": "^0.0.8",
     "@tailor-cms/ce-drag-drop-server": "^0.0.8",
     "@tailor-cms/ce-embed-edit": "^0.0.9",

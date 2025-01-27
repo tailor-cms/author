@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Op } from 'sequelize';
-import mapValues from 'lodash/mapValues.js';
+import forEach from 'lodash/forEach.js';
 import db from '#shared/database/index.js';
 
 const { ContentElement } = db;
@@ -18,7 +18,7 @@ migrateContentElements()
 async function migrateContentElements() {
   const where = {
     [Op.or]: [
-      { type: 'JODIT_HTML' },
+      { type: { [Op.like]: 'CE_%' } },
       { 'data.embeds': { [Op.ne]: null } },
       { 'data.question': { [Op.ne]: null } },
     ],
@@ -33,7 +33,7 @@ async function migrateContentElements() {
 const processElement = (el) => {
   const { embeds, question } = el.data;
   if (el.type.startsWith('CE_')) el.type = el.type.replace('CE_', '');
-  if (embeds) el.embeds = mapValues(embeds, processElement);
-  if (question) el.question = question.map(processElement);
+  if (embeds) forEach(embeds, processElement);
+  if (question) forEach(question, processElement);
   return el;
 };
