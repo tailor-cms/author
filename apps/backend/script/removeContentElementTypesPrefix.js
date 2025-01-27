@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { Op } from 'sequelize';
-import mapValues from 'lodash/mapValues.js';
+import forEach from 'lodash/forEach.js';
 import db from '#shared/database/index.js';
 
 const { ContentElement } = db;
@@ -33,7 +33,7 @@ async function migrateContentElements() {
 const processElement = (el) => {
   const { embeds, question } = el.data;
   if (el.type.startsWith('CE_')) el.type = el.type.replace('CE_', '');
-  if (embeds) el.data.embeds = mapValues(embeds, processElement);
-  if (question) el.data.question = question.map(processElement);
+  if (embeds) forEach(embeds, processElement);
+  if (question) forEach(question, processElement);
   return el;
 };

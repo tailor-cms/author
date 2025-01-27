@@ -1,7 +1,8 @@
 'use strict';
 
+const cloneDeep = require('lodash/cloneDeep');
+const forEach = require('lodash/forEach');
 const head = require('lodash/head');
-const mapValues = require('lodash/mapValues');
 const Promise = require('bluebird');
 
 exports.up = async (queryInterface) => {
@@ -16,7 +17,7 @@ const updateContentElementType = async (sequelize, oldType, newType) => {
   const transaction = await sequelize.transaction();
   const elements = await getContentElements(sequelize, transaction);
   await Promise.each(elements, (el) => {
-    const updatedData = processElement(el, oldType, newType);
+    const updatedData = processElement(cloneDeep(el), oldType, newType);
     return updateElement(sequelize, updatedData, transaction);
   });
   await transaction.commit();
@@ -42,12 +43,8 @@ async function getContentElements(sequelize, transaction) {
 const processElement = (el, oldType, newType) => {
   const { embeds, question } = el.data;
   if (el.type === oldType) el.type = newType;
-  if (embeds) {
-    el.data.embeds = mapValues(embeds, (it) => processElement(it, oldType, newType));
-  }
-  if (question) {
-    el.data.question = question.map((it) => processElement(it, oldType, newType));
-  }
+  if (embeds) forEach(embeds, (it) => processElement(it, oldType, newType));
+  if (question) forEach(question, (it) => processElement(it, oldType, newType));
   return el;
 };
 
