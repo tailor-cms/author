@@ -43,10 +43,10 @@ const processElement = (el, oldType, newType) => {
   const { embeds, question } = el.data;
   if (el.type === oldType) el.type = newType;
   if (embeds) {
-    el.embeds = mapValues(embeds, (it) => processElement(it, oldType, newType));
+    el.data.embeds = mapValues(embeds, (it) => processElement(it, oldType, newType));
   }
   if (question) {
-    el.question = question.map((it) => processElement(it, oldType, newType));
+    el.data.question = question.map((it) => processElement(it, oldType, newType));
   }
   return el;
 };
