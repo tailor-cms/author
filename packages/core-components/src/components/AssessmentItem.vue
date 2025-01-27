@@ -15,7 +15,6 @@
         v-if="expanded"
         v-bind="{
           element,
-          embedTypes: embedElementConfig,
           embedElementConfig,
           isDisabled,
         }"
