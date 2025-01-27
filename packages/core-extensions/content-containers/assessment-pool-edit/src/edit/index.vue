@@ -94,6 +94,7 @@ const allSelected = ref(false);
 const hasAssessments = computed(() => assessments.value.length > 0);
 
 const include = computed(() => {
+  if (props.contentElementConfig) return props.contentElementConfig;
   const questions = ceRegistry?.questions ?? [];
   const items = questions.map(({ type }) => ({ id: type, isGradable: true }));
   return [{ name: 'Assessments', items }];

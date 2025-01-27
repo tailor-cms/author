@@ -177,6 +177,22 @@ const AssessmentPoolConfig: ContentContainerConfig = {
   templateId: ContentContainerType.AssessmentPool,
   label: 'Assessments',
   publishedAs: 'assessments',
+  contentElementConfig: [
+    {
+      name: 'Assessments',
+      config: { isGradable: true },
+      items: [
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+        ContentElementType.TextResponse,
+        ContentElementType.NumericalResponse,
+        ContentElementType.TrueFalse,
+        ContentElementType.MatchingQuestion,
+        ContentElementType.FillBlank,
+        ContentElementType.DragDrop,
+      ],
+    },
+  ],
 };
 
 export const SCHEMA: Schema = {
