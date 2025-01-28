@@ -65,7 +65,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['update:model-value', 'change']);
 
 // TODO: Cleanup types, should work without 'any'
-const input = ref<any>(null);
+const input = ref(null) as any;
 const content = ref(props.modelValue);
 const { focused } = useFocusWithin(input);
 

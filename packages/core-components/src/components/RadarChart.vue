@@ -1,5 +1,5 @@
 <template>
-  <Radar :data="data" :options="chartOptions" />
+  <Radar :data="props.data" :options="chartOptions" />
 </template>
 
 <script lang="ts" setup>
@@ -41,13 +41,13 @@ const chartOptions = computed(() => ({
   plugins: {
     datalabels: {
       color: '#FFFFFF',
-      backgroundColor: (context) => {
+      backgroundColor: (context: any) => {
         const value = context.dataset.data[context.dataIndex];
         if (value >= 3) return '#009688';
         if (value >= 1.5) return '#9E9D24';
         return '#E91E63';
       },
-      font: { weight: 'bold', size: 12 },
+      font: { weight: 500, size: 12 },
       borderRadius: 25,
       borderColor: props.dark ? '#ECEFF1BF' : '#455A64BF',
       borderWidth: 1,

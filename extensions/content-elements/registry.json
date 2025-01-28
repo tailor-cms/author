@@ -1,8 +1,8 @@
 [
   {
-    "name": "@tailor-cms/ce-html-default",
-    "clientPackage": "@tailor-cms/ce-html-default-edit",
-    "serverPackage": "@tailor-cms/ce-html-default-server"
+    "name": "@tailor-cms/ce-html",
+    "clientPackage": "@tailor-cms/ce-html-edit",
+    "serverPackage": "@tailor-cms/ce-html-server"
   },
   {
     "name": "@tailor-cms/ce-image",

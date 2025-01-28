@@ -133,15 +133,15 @@ interface Props {
   container: Activity;
   elements: Record<string, ContentElement>;
   position: number;
-  embedElementConfig?: ContentElementCategory[] | null;
-  contentElementConfig?: ContentElementCategory[] | null;
+  embedElementConfig?: ContentElementCategory[];
+  contentElementConfig?: ContentElementCategory[];
   layout?: boolean;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  embedElementConfig: null,
-  contentElementConfig: null,
+  embedElementConfig: () => [],
+  contentElementConfig: () => [],
   layout: true,
   disabled: false,
 });

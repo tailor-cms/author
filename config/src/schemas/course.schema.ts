@@ -10,8 +10,12 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 enum ActivityType {
+  // Outline
   Module = 'MODULE',
   Page = 'PAGE',
+  Lesson = 'LESSON',
+  // Content containers
+  Intro = 'INTRO',
   Section = 'SECTION',
 }
 
@@ -64,13 +68,43 @@ const PageConfig: ActivityConfig = {
   ],
 };
 
+const LessonConfig: ActivityConfig = {
+  type: ActivityType.Lesson,
+  rootLevel: true,
+  isTrackedInWorkflow: true,
+  label: 'Lesson',
+  ai: {
+    definition: `
+      Lessons contain the content user will interact with, as well as the
+      assessments they should complete.`,
+  },
+  color: '#FFA000',
+  contentContainers: [
+    ActivityType.Intro,
+    ActivityType.Section,
+    ContentContainerType.AssessmentPool,
+  ],
+};
+
+const IntroConfig: ContentContainerConfig = ({
+  type: ActivityType.Intro,
+  templateId: ContentContainerType.Default,
+  label: 'Intro',
+  layout: false,
+  contentElementConfig: [
+    ContentElementType.TipTapHtml,
+    ContentElementType.Image,
+    ContentElementType.Video,
+  ],
+});
+
 const SectionConfig: ContentContainerConfig = {
   type: ActivityType.Section,
   templateId: ContentContainerType.Default,
   label: 'Section',
   multiple: true,
   embedElementConfig: [
-    ContentElementType.HtmlDefault,
+    ContentElementType.TipTapHtml,
     ContentElementType.Image,
     ContentElementType.Video,
   ],
@@ -78,7 +112,7 @@ const SectionConfig: ContentContainerConfig = {
     {
       name: 'Content Elements',
       items: [
-        ContentElementType.HtmlDefault,
+        ContentElementType.TipTapHtml,
         ContentElementType.Image,
         ContentElementType.Video,
         ContentElementType.Embed,
@@ -138,6 +172,29 @@ const SectionConfig: ContentContainerConfig = {
   },
 };
 
+const AssessmentPoolConfig: ContentContainerConfig = {
+  type: ContentContainerType.AssessmentPool,
+  templateId: ContentContainerType.AssessmentPool,
+  label: 'Assessments',
+  publishedAs: 'assessments',
+  contentElementConfig: [
+    {
+      name: 'Assessments',
+      config: { isGradable: true },
+      items: [
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+        ContentElementType.TextResponse,
+        ContentElementType.NumericalResponse,
+        ContentElementType.TrueFalse,
+        ContentElementType.MatchingQuestion,
+        ContentElementType.FillBlank,
+        ContentElementType.DragDrop,
+      ],
+    },
+  ],
+};
+
 export const SCHEMA: Schema = {
   id: 'COURSE_SCHEMA',
   workflowId: DEFAULT_WORKFLOW.id,
@@ -157,8 +214,8 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
-  structure: [ModuleConfig, PageConfig],
-  contentContainers: [SectionConfig],
+  structure: [ModuleConfig, PageConfig, LessonConfig],
+  contentContainers: [IntroConfig, SectionConfig, AssessmentPoolConfig],
   elementMeta: [
     {
       type: ContentElementType.Image,
@@ -181,7 +238,7 @@ export const SCHEMA: Schema = {
       ],
     },
     {
-      type: ContentElementType.HtmlDefault,
+      type: ContentElementType.TipTapHtml,
       relationships: [
         {
           key: 'related',
@@ -189,7 +246,7 @@ export const SCHEMA: Schema = {
           multiple: true,
           placeholder: 'Click to select',
           allowedTypes: [
-            ContentElementType.HtmlDefault,
+            ContentElementType.TipTapHtml,
             ContentElementType.Image,
           ],
           filters: [(optionEl, currentEl) => optionEl.id !== currentEl.id],
@@ -199,7 +256,7 @@ export const SCHEMA: Schema = {
           label: 'Prerequisites',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [ContentElementType.HtmlDefault],
+          allowedTypes: [ContentElementType.TipTapHtml],
         },
       ],
     },

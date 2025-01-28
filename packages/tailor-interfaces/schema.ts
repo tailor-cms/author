@@ -5,6 +5,7 @@ import type { Repository } from './repository';
 export type ElementManifest = Record<string, any>;
 export interface ElementRegistry {
   all: ElementManifest[];
+  questions: ElementManifest[];
   load: (el: ContentElement) => void;
   get: (id: string) => ElementManifest;
 }

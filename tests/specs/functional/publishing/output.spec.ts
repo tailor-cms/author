@@ -28,7 +28,7 @@ test('should be able to publish repository', async ({ page }) => {
   expect(publishedActivity?.contentContainers[0].elements).toHaveLength(4);
   await publishedActivity?.makePublic();
   const imageElement = publishedActivity?.contentContainers[0].elements.find(
-    (it) => it.type === 'CE_IMAGE',
+    (it) => it.type === 'IMAGE',
   );
   expect(imageElement).toBeDefined();
   // Check if public URL is generated

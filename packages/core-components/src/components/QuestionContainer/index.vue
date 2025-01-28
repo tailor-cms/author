@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
   <VCard class="question-container my-2" color="grey-lighten-5">
-    <VToolbar class="px-4" color="primary-darken-3" height="36">
+    <VToolbar class="px-4" color="primary-darken-2" height="36">
       <VIcon :icon="icon" color="secondary-lighten-2" size="18" start />
       <span class="text-subtitle-2">{{ type }}</span>
     </VToolbar>
@@ -9,7 +9,7 @@
       <QuestionPrompt
         :element-data="elementData"
         :is-disabled="isDisabled"
-        :allowed-element-config="embedTypes.concat(embedElementConfig)"
+        :allowed-element-config="embedElementConfig"
         @update="emit('update', $event)"
       />
       <slot></slot>
@@ -60,7 +60,6 @@ import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
   elementData: Record<string, any>;
-  embedTypes?: ContentElementCategory[]; // TODO: Remove once elements are migrated
   embedElementConfig?: ContentElementCategory[];
   isDisabled?: boolean;
   isDirty?: boolean;
@@ -70,7 +69,6 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  embedTypes: () => [],
   embedElementConfig: () => [],
   type: 'Question element',
   icon: 'mdi-help-cirlce-outline',

@@ -191,7 +191,7 @@ const getInterfaceModule = (dir, packages, extensionType) => {
     parseType(`${dir}/node_modules/${it.clientPackage}/${targetPath}`),
   );
   const toPascalCase = (str) => upperFirst(camelCase(str));
-  const processType = (str) => str && toPascalCase(str.replace(/^CE_/, ''));
+  const processType = (str) => str && toPascalCase(str);
   const types = packageTypes.reduce((acc, type) => {
     acc[processType(type)] = type;
     return acc;
