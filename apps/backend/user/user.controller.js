@@ -71,8 +71,9 @@ function resetPassword({ body, user }, res) {
     .then(() => res.sendStatus(StatusCodes.NO_CONTENT));
 }
 
-function getProfile({ user, authData }, res) {
-  return res.json({ user: user.profile, authData });
+async function getProfile({ user, authData }, res) {
+  const userGroups = await user.getAccessibleUserGroups();
+  return res.json({ authData, user: user.profile, userGroups });
 }
 
 function updateProfile({ user, body }, res) {

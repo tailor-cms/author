@@ -238,6 +238,23 @@ class User extends Model {
     if (audience === Audience.Scope.Access) return secret;
     return [secret, this.password, this.createdAt.getTime()].join('');
   }
+
+  async getAccessibleUserGroups() {
+    if (this.isAdmin()) {
+      const UserGroup = this.sequelize.model('UserGroup');
+      const groups = await UserGroup.findAll();
+      return groups.map((group) => ({
+        ...group.dataValues,
+        role: 'ADMIN',
+      }));
+    }
+    return this.getUserGroups().then((groups) =>
+      groups.map((group) => ({
+        ...pick(group.dataValues, ['id', 'name']),
+        role: group?.userGroupMember?.role,
+      })),
+    );
+  }
 }
 
 export default User;
