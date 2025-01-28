@@ -241,7 +241,7 @@ class AIService {
       ${promptEnd}`;
     const { elements = [] } = await this.requestCompletion(userPrompt);
     const htmlElements = elements.map((it) => ({
-      type: 'HTML',
+      type: 'TIPTAP_HTML',
       data: { content: it.content },
     }));
     logger.info('Generated HTML elements', htmlElements);
