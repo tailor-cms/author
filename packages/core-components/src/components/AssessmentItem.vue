@@ -114,7 +114,7 @@ const blankRegex = /(@blank)/g;
 const htmlRegex = /(<\/?[^>]+(>|$))|&nbsp;/g;
 
 const elementConfig = computed(() => ceRegistry?.get(props.element.type));
-const showPublishDiff = computed(() => editorState.isPublishDiff);
+const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);
 
