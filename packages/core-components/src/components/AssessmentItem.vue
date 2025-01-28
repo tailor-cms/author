@@ -109,7 +109,7 @@ const emit = defineEmits(['add', 'save', 'delete', 'selected']);
 const editorState = inject<any>('$editorState');
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 
-const TEXT_CONTAINERS = ['HTML'];
+const TEXT_CONTAINERS = ['TIPTAP_HTML'];
 const blankRegex = /(@blank)/g;
 const htmlRegex = /(<\/?[^>]+(>|$))|&nbsp;/g;
 

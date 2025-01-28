@@ -92,7 +92,7 @@ const IntroConfig: ContentContainerConfig = ({
   label: 'Intro',
   layout: false,
   contentElementConfig: [
-    ContentElementType.Html,
+    ContentElementType.TipTapHtml,
     ContentElementType.Image,
     ContentElementType.Video,
   ],
@@ -104,7 +104,7 @@ const SectionConfig: ContentContainerConfig = {
   label: 'Section',
   multiple: true,
   embedElementConfig: [
-    ContentElementType.Html,
+    ContentElementType.TipTapHtml,
     ContentElementType.Image,
     ContentElementType.Video,
   ],
@@ -112,7 +112,7 @@ const SectionConfig: ContentContainerConfig = {
     {
       name: 'Content Elements',
       items: [
-        ContentElementType.Html,
+        ContentElementType.TipTapHtml,
         ContentElementType.Image,
         ContentElementType.Video,
         ContentElementType.Embed,
@@ -238,7 +238,7 @@ export const SCHEMA: Schema = {
       ],
     },
     {
-      type: ContentElementType.Html,
+      type: ContentElementType.TipTapHtml,
       relationships: [
         {
           key: 'related',
@@ -246,7 +246,7 @@ export const SCHEMA: Schema = {
           multiple: true,
           placeholder: 'Click to select',
           allowedTypes: [
-            ContentElementType.Html,
+            ContentElementType.TipTapHtml,
             ContentElementType.Image,
           ],
           filters: [(optionEl, currentEl) => optionEl.id !== currentEl.id],
@@ -256,7 +256,7 @@ export const SCHEMA: Schema = {
           label: 'Prerequisites',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [ContentElementType.Html],
+          allowedTypes: [ContentElementType.TipTapHtml],
         },
       ],
     },

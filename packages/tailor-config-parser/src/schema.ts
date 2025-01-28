@@ -26,7 +26,7 @@ import union from 'lodash/union.js';
 import uniq from 'lodash/uniq.js';
 
 const DEFAULT_GROUP = 'Content Elements';
-const DEFAULT_EMBED_ELEMENTS = ['HTML', 'IMAGE', 'EMBED'];
+const DEFAULT_EMBED_ELEMENTS = ['TIPTAP_HTML', 'IMAGE', 'EMBED'];
 
 type EmptyObject = Record<string, never>;
 
