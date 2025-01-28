@@ -20,20 +20,22 @@ async function migrateContentElements() {
     [Op.or]: [
       { type: { [Op.like]: 'CE_%' } },
       { 'data.embeds': { [Op.ne]: null } },
-      { 'data.question': { [Op.ne]: null } },
     ],
   };
   return ContentElement
     .findAll({ where })
-    .each((el) => el.update(
-      processElement(el.toJSON()),
-    ));
+    .each((el) => {
+      const data = processElement(el.toJSON());
+      return el.update(data);
+    });
 }
 
 const processElement = (el) => {
-  const { embeds, question } = el.data;
-  if (el.type.startsWith('CE_')) el.type = el.type.replace('CE_', '');
-  if (embeds) forEach(embeds, processElement);
-  if (question) forEach(question, processElement);
+  if (el.type.startsWith('CE_')) el.type = getNewType(el.type);
+  if (el.data.embeds) forEach(el.data.embeds, processElement);
   return el;
+};
+
+const getNewType = (type) => {
+  return type === 'CE_HTML_DEFAULT' ? 'TIPTAP_HTML' : type.replace('CE_', '');
 };

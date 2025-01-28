@@ -109,12 +109,12 @@ const emit = defineEmits(['add', 'save', 'delete', 'selected']);
 const editorState = inject<any>('$editorState');
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 
-const TEXT_CONTAINERS = ['HTML'];
+const TEXT_CONTAINERS = ['TIPTAP_HTML'];
 const blankRegex = /(@blank)/g;
 const htmlRegex = /(<\/?[^>]+(>|$))|&nbsp;/g;
 
 const elementConfig = computed(() => ceRegistry?.get(props.element.type));
-const showPublishDiff = computed(() => editorState.isPublishDiff);
+const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);
 

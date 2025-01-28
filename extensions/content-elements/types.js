@@ -1,5 +1,5 @@
 export const ContentElementType = {
-  Html: 'HTML',
+  TipTapHtml: 'TIPTAP_HTML',
   Image: 'IMAGE',
   MultipleChoice: 'MULTIPLE_CHOICE',
   SingleChoice: 'SINGLE_CHOICE',
