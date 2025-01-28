@@ -1,10 +1,21 @@
 <template>
   <div class="group-introduction">
+    <VAlert
+      v-if="!elements.length"
+      class="mt-4"
+      color="primary-darken-1"
+      icon="mdi-information-outline"
+      variant="tonal"
+      prominent
+    >
+      Click the button below to create first Introduction item.
+    </VAlert>
     <ElementList
-      :elements="introductionElements"
+      :elements="elements"
       :activity="group"
-      :supported-types="[]"
+      :supported-element-config="supportedElementConfig"
       :layout="true"
+      class="pa-4"
       @add="$emit('save:element', $event)"
       @update="$emit('reorder:element', $event)">
       <template #default="{ element, isDragged }">
@@ -21,28 +32,32 @@
 
 <script lang="ts" setup>
 import { ContainedContent, ElementList } from '@tailor-cms/core-components';
-import cloneDeep from 'lodash/cloneDeep';
-import filter from 'lodash/filter';
-import sortBy from 'lodash/sortBy';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import cloneDeep from 'lodash/cloneDeep';
 import { computed } from 'vue';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
-const props = defineProps<{
+defineProps<{
   group: Activity;
-  elements: Record<string, ContentElement>;
+  elements: ContentElement[];
 }>();
+
 const emit = defineEmits([
   'save:element',
   'reorder:element',
   'delete:element',
 ]);
 
-const introductionElements = computed(() => {
-  // TODO: Add isQuestion
-  const cond = (it: any) => it.activityId === props.group.id;
-  return sortBy(filter(props.elements, cond), 'position');
-});
+const supportedElementConfig = computed(() => [{
+  name: 'Content Elements',
+  items: [
+    { id: ContentElementType.Html },
+    { id: ContentElementType.Image },
+    { id: ContentElementType.Video },
+    { id: ContentElementType.Embed },
+  ],
+}]);
 
 const save = (element: any, data: any) => {
   element = cloneDeep(element);
@@ -50,11 +65,3 @@ const save = (element: any, data: any) => {
   emit('save:element', element);
 };
 </script>
-
-<style lang="scss" scoped>
-.group-introduction {
-  margin: 30px 0;
-  min-height: 150px;
-  padding: 5px 15px;
-}
-</style>

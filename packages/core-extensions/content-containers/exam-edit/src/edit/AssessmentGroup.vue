@@ -1,69 +1,79 @@
 <template>
-  <VContainer class="assessment-group">
-    <div class="divider"></div>
-    <!-- TODO: Add Validation -->
-    <VRow justify="end" no-gutters class="pa-0">
-      <VCol cols="2">
-        <VTextField
-          v-model.number="timeLimit"
-          min="0"
-          name="timeLimit"
-          label="Time limit"
-          type="number"
-          step="15"
-          suffix="min"
-          persistent-hint
-          variant="outlined"
-          @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()">
-          <template #append>
-            <VIcon @click="$emit('delete')">mdi-delete</VIcon>
-          </template>
-        </VTextField>
-      </VCol>
-    </VRow>
-    <h3>Question group {{ position }}</h3>
-    <h4>Introduction</h4>
-    <GroupIntroduction
-      :group="group"
-      :elements="elements"
-      @save:element="$emit('save:element', $event)"
-      @reorder:element="$emit('reorder:element', $event)"
-      @delete:element="$emit('delete:element', $event)" />
-    <h4>Questions</h4>
-    <VAlert
-      v-if="!hasAssessments"
-      color="primary-darken-1"
-      icon="mdi-information-outline"
-      variant="tonal"
-      prominent
-    >
-      Click the button below to create first Assessment.
-    </VAlert>
-    <ElementList
-      :elements="assessments"
-      :activity="group"
-      :supported-types="[]"
-      @add="addAssessments"
-      @update="$emit('reorder:element', $event)">
-      <template #default="{ element }">
-        <AssessmentItem
-          :assessment="element"
-          :objectives="objectives"
-          :objective-label="objectiveLabel"
-          @save="saveAssessment"
-          @delete="deleteAssessment(element)" />
-      </template>
-    </ElementList>
-  </VContainer>
+  <VCard class="assessment-group">
+    <VSheet class="d-flex align-center ga-2 px-4 py-3">
+      <VIcon icon="mdi-help-circle" size="small" />
+      <h3>Question group {{ numberToLetter(position) }}</h3>
+      <VSpacer />
+      <VBtn
+        variant="tonal"
+        color="secondary-darken-1"
+        size="small"
+        @click="$emit('delete')"
+      >
+        Delete Group
+      </VBtn>
+    </VSheet>
+    <VDivider />
+    <div class="pa-6">
+      <VTextField
+        v-model.number="timeLimit"
+        min="0"
+        name="timeLimit"
+        label="Time limit"
+        type="number"
+        step="15"
+        suffix="min"
+        persistent-hint
+        variant="outlined"
+        @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
+      />
+      <h4 class="text-left">Introduction</h4>
+      <GroupIntroduction
+        :group="group"
+        :elements="introductionElements"
+        @save:element="$emit('save:element', $event)"
+        @reorder:element="$emit('reorder:element', $event)"
+        @delete:element="$emit('delete:element', $event)" />
+      <h4 class="text-left mb-2">Questions</h4>
+      <VAlert
+        v-if="!hasAssessments"
+        class="mt-4"
+        color="primary-darken-1"
+        icon="mdi-information-outline"
+        variant="tonal"
+        prominent
+      >
+        Click the button below to create first Assessment.
+      </VAlert>
+      <ElementList
+        :elements="assessments"
+        :activity="group"
+        :supported-element-config="supportedElementConfig"
+        class="px-0"
+        @add="addAssessments"
+        @update="$emit('reorder:element', $event)">
+        <template #default="{ element }">
+          <AssessmentItem
+            :assessment="element"
+            :objectives="objectives"
+            :objective-label="objectiveLabel"
+            @save="saveAssessment"
+            @delete="deleteAssessment(element)" />
+        </template>
+      </ElementList>
+    </div>
+  </VCard>
 </template>
 
 <script lang="ts" setup>
 import { defineProps, ref, computed, watch, inject } from 'vue';
+import { numberToLetter, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import { uuid } from '@tailor-cms/utils';
 import cloneDeep from 'lodash/cloneDeep';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import debounce from 'lodash/debounce';
 import { ElementList } from '@tailor-cms/core-components';
+import type { ElementRegistry } from '@tailor-cms/interfaces/schema';
 import filter from 'lodash/filter';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
@@ -71,9 +81,9 @@ import map from 'lodash/map';
 import pickBy from 'lodash/pickBy';
 import sortBy from 'lodash/sortBy';
 import uniq from 'lodash/uniq';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import GroupIntroduction from './GroupIntroduction.vue';
+
 import AssessmentItem from './Assessment.vue';
+import GroupIntroduction from './GroupIntroduction.vue';
 
 const props = defineProps<{
   group: Activity;
@@ -92,12 +102,21 @@ const emit = defineEmits([
 ]);
 
 const schemaService = inject<any>('$schemaService');
+const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 
 const unsavedAssessments = ref<Record<string, any>>({});
 const timeLimit = ref<number>(get(props.group, 'data.timeLimit', 0));
 
+const questionTypes = computed(() => map(ceRegistry?.questions, 'type'));
 const savedAssessments = computed(() => {
-  const cond = { activityId: props.group.id, type: 'ASSESSMENT' };
+  const filtered = filter(props.elements, (el) => {
+    return el.activityId === props.group.id && isQuestion(el.type);
+  });
+  return sortBy(filtered, 'position');
+});
+
+const introductionElements = computed(() => {
+  const cond = (it: any) => it.activityId === props.group.id && !isQuestion(it.type);
   return sortBy(filter(props.elements, cond), 'position');
 });
 
@@ -120,6 +139,13 @@ const objectiveLabel = computed(() => {
     : schemaService.getLevel(types[0]).label;
   return `Link ${label}`;
 });
+
+const supportedElementConfig = computed(() => {
+  const items = questionTypes.value.map((id) => ({ id, isGradable: true }));
+  return [{ name: 'Assessments', items }];
+});
+
+const isQuestion = (type: string) => questionTypes.value.includes(type);
 
 const addAssessments = (assessments: Array<any>) => {
   assessments.forEach((it) => {
@@ -154,46 +180,18 @@ watch(timeLimit, debounce((val: number) => {
 </script>
 
 <style lang="scss" scoped>
-h3 {
-  margin: 30px 5px;
-  font-size: 18px;
-  text-align: left;
-  color: #444;
-}
-
-h4 {
-  margin: 20px 5px;
-  font-size: 16px;
-  text-align: left;
-  color: #444;
-}
-
-.assessment-group {
-  margin: 30px 0;
-  padding: 15px 20px;
-
-  .assessment-item {
-    margin-bottom: 12px;
-  }
-
-  + .assessment-group {
-    .divider {
-      margin: 20px 0 70px;
-      border-top: 1px solid #e1e1e1;
-    }
-  }
-}
-
 .remove {
   float: right;
   margin: 10px 5px;
   font-size: 22px;
-  color: #777;
 
   &:hover {
     cursor: pointer;
-    color: #444;
   }
+}
+
+:deep(.list-group) > .v-row > .v-col {
+  padding: 0.25rem 0.75rem;
 }
 
 .time-limit {

@@ -1,69 +1,77 @@
 <template>
-  <div :class="{ collapsed }" class="exam">
+  <VCard :class="{ collapsed }" class="exam" color="primary-darken-2" elevation="0">
     <VRow
       v-if="collapsed"
-      class="d-flex justify-center align-center"
-      @click="collapsed = false">
+      class="d-flex justify-center align-center py-3 px-4"
+      no-gutters
+      @click="collapsed = false"
+    >
       <VCol cols="2" class="text-left">
-        <VChip
-          color="green"
-          text-color="white"
-          label
-          small
-          class="ml-auto">
-          <strong>{{ label }}</strong>
-        </VChip>
+        <VChip color="green-accent-2" size="small">{{ label }}</VChip>
       </VCol>
       <VCol cols="8">
-        <h3 class="ml-auto">{{ title }}</h3>
+        <h3>{{ title }}</h3>
       </VCol>
       <VCol cols="2" class="text-right">
       </VCol>
     </VRow>
-    <div v-else>
-      <div class="header d-flex justify-space-between align-baseline">
+    <div v-else class="py-3 px-4">
+      <div class="d-flex justify-space-between align-baseline mb-3">
         <h3 class="text-left">{{ title }}</h3>
-        <div class="actions">
-          <VBtn variant="text" @click="collapsed = true">
+        <div>
+          <VBtn
+            class="mr-3"
+            color="teal-lighten-4"
+            size="small"
+            variant="tonal"
+            @click="collapsed = true"
+          >
             Collapse
           </VBtn>
-          <VBtn variant="text" @click="$emit('delete')">
-            Delete
+          <VBtn
+            color="secondary-lighten-4"
+            size="small"
+            variant="tonal"
+            @click="emit('delete')"
+          >
+            Delete Exam
           </VBtn>
         </div>
       </div>
       <VAlert
         v-if="!groups.length"
-        color="blue-grey-darken-3"
+        color="primary-lighten-3"
         icon="mdi-information-variant"
         variant="tonal"
       >
         Click the button below to Create first question group.
       </VAlert>
-      <AssessmentGroup
-        v-for="(group, index) in groups"
-        :key="group.uid"
-        :group="group"
-        :elements="elements"
-        :objectives="examObjectives"
-        :position="index"
-        @save:element="$emit('save:element', $event)"
-        @update:element="$emit('update:element', $event)"
-        @reorder:element="$emit('reorder:element', $event)"
-        @delete:element="$emit('delete:element', $event)"
-        @update="$emit('update:subcontainer', $event)"
-        @delete="$emit('delete:subcontainer', group, 'group')" />
+      <div class="d-flex flex-column ga-4">
+        <AssessmentGroup
+          v-for="(group, index) in groups"
+          :key="group.uid"
+          :group="group"
+          :elements="elements"
+          :objectives="examObjectives"
+          :position="index"
+          @save:element="$emit('save:element', $event)"
+          @update:element="$emit('update:element', $event)"
+          @reorder:element="$emit('reorder:element', $event)"
+          @delete:element="$emit('delete:element', $event)"
+          @update="$emit('update:subcontainer', $event)"
+          @delete="$emit('delete:subcontainer', group, 'group')" />
+      </div>
       <VBtn
         :disabled="!container.id"
-        color="primary-darken-2"
-        variant="outlined"
+        color="primary-lighten-5"
+        variant="tonal"
         class="my-5"
         @click.stop="createGroup">
-        <VIcon class="pr-2">mdi-file-tree</VIcon>
+        <VIcon class="pr-2">mdi-folder-plus-outline</VIcon>
         Add Question Group
       </VBtn>
     </div>
-  </div>
+  </VCard>
 </template>
 
 <script lang="ts" setup>
@@ -139,23 +147,10 @@ h3 {
   padding: 0;
   font-size: 14px;
   text-align: left;
-  color: #505050;
 }
 
 .exam {
   margin-bottom: 13px;
-  box-shadow: 0 1px 4px rgb(0 0 0 / 30%);
-  padding: 0;
-  background-color: #fff;
-
-  > div {
-    padding: 15px 25px;
-  }
-
-  .header {
-    min-height: 50px;
-    padding: 5px;
-  }
 }
 
 .collapsed {
@@ -163,16 +158,5 @@ h3 {
     background-color: #f0f0f0;
     cursor: pointer;
   }
-}
-
-.actions {
-  > span {
-    margin-left: 10px;
-  }
-}
-
-.label {
-  min-width: 40px;
-  line-height: 12px;
 }
 </style>

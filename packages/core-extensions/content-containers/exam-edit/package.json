@@ -14,6 +14,7 @@
     "@types/pluralize": "^0.0.33"
   },
   "peerDependencies": {
+    "@tailor-cms/content-element-collection": "workspace:*",
     "@tailor-cms/core-components": "workspace:*",
     "lodash": "*",
     "pluralize": "^8.0.0",

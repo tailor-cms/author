@@ -856,6 +856,9 @@ importers:
 
   packages/core-extensions/content-containers/exam-edit:
     dependencies:
+      '@tailor-cms/content-element-collection':
+        specifier: workspace:*
+        version: link:../../../../extensions/content-elements
       '@tailor-cms/core-components':
         specifier: workspace:*
         version: link:../../../core-components
