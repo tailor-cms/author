@@ -11,7 +11,7 @@
     />
     <SelectElement
       v-if="activeRelationship"
-      :allowed-types="activeRelationship.allowedTypes"
+      :allowed-element-config="allowedElementConfig"
       :element="element"
       :filters="activeRelationship.filters"
       :heading="defaultPlaceholder"
@@ -56,6 +56,12 @@ const editorBus = useEditorBus();
 
 const defaultPlaceholder = computed(() => {
   return `Select element${activeRelationship.value?.multiple ? 's' : ''}`;
+});
+
+const allowedElementConfig = computed(() => {
+  return activeRelationship.value?.allowedElementConfig.map(
+    ({ id, ...config }) => ({ type: id, config }),
+  ) ?? [];
 });
 
 const save = (key: string, val: any) => {

@@ -233,7 +233,7 @@ export const SCHEMA: Schema = {
           label: 'Related Content',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [ContentElementType.Image],
+          allowedElementConfig: [ContentElementType.Image],
         },
       ],
     },
@@ -245,7 +245,7 @@ export const SCHEMA: Schema = {
           label: 'Related Content',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [
+          allowedElementConfig: [
             ContentElementType.TipTapHtml,
             ContentElementType.Image,
           ],
@@ -256,7 +256,7 @@ export const SCHEMA: Schema = {
           label: 'Prerequisites',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [ContentElementType.TipTapHtml],
+          allowedElementConfig: [ContentElementType.TipTapHtml],
         },
       ],
     },
