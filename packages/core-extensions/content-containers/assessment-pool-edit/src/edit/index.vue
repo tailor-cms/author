@@ -79,7 +79,7 @@
 import {
   AddElement,
   AssessmentItem,
-  CircularProgress
+  CircularProgress,
 } from '@tailor-cms/core-components';
 import type {
   ContentElementCategory,
