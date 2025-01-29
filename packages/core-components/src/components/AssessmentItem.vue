@@ -43,7 +43,12 @@
               <span class="text-subtitle-1">{{ elementConfig?.name }}</span>
             </div>
           </VCol>
-          <VCol cols="6" class="align-content-center">{{ question }}</VCol>
+          <VCol
+            cols="6"
+            class="text-subtitle-2 align-content-center text-truncate"
+          >
+            {{ question }}
+          </VCol>
           <VCol cols="3" class="text-right align-content-center">
             <PublishDiffChip
               v-if="editorState.isPublishDiff && element.changeSincePublish"
@@ -85,7 +90,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
-import truncate from 'lodash/truncate';
 
 import PublishDiffChip from './PublishDiffChip.vue';
 
@@ -132,9 +136,7 @@ const question = computed(() => {
   const embeds = props.element.data.embeds as Record<string, ContentElement>;
   const textAssets = getTextAssets(question.map((id) => embeds[id]));
   const questionText = map(textAssets, 'data.content').join(' ');
-  return truncate(
-    questionText.replace(htmlRegex, '').replace(blankRegex, () => '____'),
-    { length: 50 });
+  return questionText.replace(htmlRegex, '').replace(blankRegex, () => '____');
 });
 </script>
 
