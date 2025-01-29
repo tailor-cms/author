@@ -1,19 +1,33 @@
 <template>
   <div class="bg-transparent">
-    <div class="d-flex justify-space-between align-center mb-4">
+    <div class="d-flex align-center mb-4">
       <div class="text-white text-subtitle-1">Assessments</div>
-      <VBtn
-        v-if="hasAssessments"
-        variant="tonal"
-        size="small"
-        color="primary-lighten-3"
-        @click="toggleAssessments"
-      >
-        {{ allSelected ? 'Hide' : 'Show' }} All
-      </VBtn>
+      <VSpacer />
+      <template v-if="!isAiGeneratingContent">
+        <VBtn
+          v-if="isAiEnabled && !disabled"
+          color="teal-lighten-2"
+          size="small"
+          variant="tonal"
+          @click="generateContent"
+        >
+          Do the magic
+          <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
+        </VBtn>
+        <VBtn
+          v-if="hasAssessments"
+          class="ml-3"
+          variant="tonal"
+          size="small"
+          color="primary-lighten-3"
+          @click="toggleAssessments"
+        >
+          {{ allSelected ? 'Hide' : 'Show' }} All
+        </VBtn>
+      </template>
     </div>
     <VAlert
-      v-if="!hasAssessments"
+      v-if="!hasAssessments && !isAiGeneratingContent"
       color="primary-lighten-3"
       icon="mdi-information-outline"
       variant="tonal"
@@ -21,6 +35,16 @@
     >
       Click the button below to create first Assessment.
     </VAlert>
+    <VSheet
+      v-else-if="isAiGeneratingContent"
+      color="primary-darken-4"
+      class="py-16 text-subtitle-2 rounded-lg"
+    >
+      <CircularProgress />
+      <div class="pt-3 text-primary-lighten-4 font-weight-bold">
+        <span>Content generation in progress...</span>
+      </div>
+    </VSheet>
     <div v-else class="d-flex flex-column ga-2 mb-11">
       <AssessmentItem
         v-for="it in assessments"
@@ -35,7 +59,7 @@
       />
     </div>
     <AddElement
-      v-if="!disabled"
+      v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
       :include="include"
       :items="assessments"
@@ -52,12 +76,16 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  AddElement,
+  AssessmentItem,
+  CircularProgress,
+} from '@tailor-cms/core-components';
 import type {
   ContentElementCategory,
   ElementRegistry,
 } from '@tailor-cms/interfaces/schema';
 import { ref, computed, watch, inject } from 'vue';
-import { AddElement, AssessmentItem } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import filter from 'lodash/filter';
@@ -87,9 +115,26 @@ const emit = defineEmits([
 ]);
 
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
+const doTheMagic = inject<any>('$doTheMagic');
 
 const selected = ref<string[]>([]);
 const allSelected = ref(false);
+const isAiEnabled = computed(() => !!doTheMagic);
+const isAiGeneratingContent = ref(false);
+
+const generateContent = async () => {
+  isAiGeneratingContent.value = true;
+  const elements = await doTheMagic({ type: props.container.type });
+  elements.forEach((element: ContentElement, index: number) => {
+    emit('save:element', {
+      ...element,
+      position: index,
+      activityId: props.container.id,
+      repositoryId: props.container.repositoryId,
+    });
+  });
+  isAiGeneratingContent.value = false;
+};
 
 const hasAssessments = computed(() => assessments.value.length > 0);
 

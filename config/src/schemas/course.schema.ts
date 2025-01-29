@@ -16,7 +16,6 @@ enum ActivityType {
   Lesson = 'LESSON',
   KnowledgeCheck = 'KNOWLEDGE_CHECK',
   // Content containers
-  Intro = 'INTRO',
   Section = 'SECTION',
 }
 
@@ -26,7 +25,7 @@ const ModuleConfig: ActivityConfig = {
   isTrackedInWorkflow: true,
   label: 'Module',
   color: '#5187C7',
-  subLevels: [ActivityType.Module, ActivityType.Page],
+  subLevels: [ActivityType.Module, ActivityType.Page, ActivityType.Lesson],
   ai: {
     definition: `
       Modules are a way to organize knowledge into chunks that are easier to
@@ -81,7 +80,6 @@ const LessonConfig: ActivityConfig = {
   },
   color: '#FFA000',
   contentContainers: [
-    ActivityType.Intro,
     ActivityType.Section,
     ContentContainerType.AssessmentPool,
   ],
@@ -101,18 +99,6 @@ const KnowledgeCheckConfig: ActivityConfig = {
   color: '#E91E63',
   contentContainers: [ContentContainerType.Exam],
 };
-
-const IntroConfig: ContentContainerConfig = ({
-  type: ActivityType.Intro,
-  templateId: ContentContainerType.Default,
-  label: 'Intro',
-  layout: false,
-  contentElementConfig: [
-    ContentElementType.TipTapHtml,
-    ContentElementType.Image,
-    ContentElementType.Video,
-  ],
-});
 
 const SectionConfig: ContentContainerConfig = {
   type: ActivityType.Section,
@@ -216,6 +202,20 @@ const AssessmentPoolConfig: ContentContainerConfig = {
       ],
     },
   ],
+  ai: {
+    definition: `
+      Assessment pools are a way to organize assessments that can be used in
+      multiple lessons.`,
+    outputRules: {
+      prompt: `
+      - Format the 'question' content and 'feedback' content as a HTML with
+        suitable tags.
+      - Apply text-body-2 and mb-5 classes to the paragraph html tags
+      You are trying to teach the audience, so make sure the content is easy to
+      understand, has a friendly tone and is engaging to the reader.`,
+      isAssessment: true,
+    },
+  },
 };
 
 const ExamConfig: ContentContainerConfig = {
@@ -253,7 +253,7 @@ export const SCHEMA: Schema = {
     },
   ],
   structure: [ModuleConfig, PageConfig, LessonConfig, KnowledgeCheckConfig],
-  contentContainers: [IntroConfig, SectionConfig, AssessmentPoolConfig, ExamConfig],
+  contentContainers: [SectionConfig, AssessmentPoolConfig, ExamConfig],
   elementMeta: [
     {
       type: ContentElementType.Image,

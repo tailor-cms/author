@@ -58,6 +58,7 @@ export interface AIConfig {
   outputRules?: {
     prompt: string;
     useDalle?: boolean;
+    isAssessment?: boolean;
   };
 }
 
