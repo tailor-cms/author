@@ -39,7 +39,8 @@ const processElementConfig = (config: ElementConfig[]) => {
   return config.reduce((acc, it) => {
     const isGroup = typeof it !== 'string' && 'items' in it;
     if (isGroup) {
-      it.items = it.items.map(processItem);
+      it.items = it.items.map((item) => processItem(item, it.config));
+      delete it.config;
       acc.push(it);
       return acc;
     }
