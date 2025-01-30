@@ -132,6 +132,23 @@
             @ai-assistance-toggle="isAssistaceEnabled = $event"
             @structure="aiSuggestedOutline = $event"
           />
+          <VSelect
+            v-if="showUserGroupInput"
+            v-model="groupInput"
+            :error-messages="errors.userGroupIds"
+            :items="authStore.groupsWithCreateRepositoryAccess"
+            :return-object="false"
+            class="user-group-select mb-3"
+            item-title="name"
+            item-value="id"
+            label="User Group"
+            placeholder="Select user group..."
+            variant="outlined"
+            chips
+            clearable
+            closable-chips
+            multiple
+          />
         </div>
         <div class="d-flex justify-end">
           <VBtn
@@ -172,11 +189,13 @@ import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import { useActivityStore } from '@/stores/activity';
+import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
 import { useRepositoryStore } from '@/stores/repository';
 
 const { $schemaService } = useNuxtApp() as any;
 
+const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 const activityStore = useActivityStore();
 const config = useConfigStore();
@@ -195,6 +214,11 @@ const isSubmitting = ref(false);
 const isAssistaceEnabled = ref(false);
 const serverError = ref('');
 const aiSuggestedOutline = ref([]);
+
+const showUserGroupInput = computed(() => {
+  if (authStore.hasDefaultUserGroup) return false;
+  return !!authStore.groupsWithCreateRepositoryAccess?.length;
+});
 
 const metaValidation = reactive<Record<string, any>>({});
 
@@ -220,6 +244,7 @@ const { defineField, handleSubmit, resetForm, values, errors } = useForm({
 const [schemaInput] = defineField('schema');
 const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
+const [groupInput] = defineField('userGroupIds');
 
 const schema = computed<ActivityConfig>(
   () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
@@ -243,7 +268,7 @@ const createRepository = handleSubmit(async (formPayload: any) => {
 
 const create = async (formData: any) => {
   const formPayload = {
-    ...pick(formData, ['schema', 'name', 'description']),
+    ...pick(formData, ['schema', 'name', 'description', 'userGroupIds']),
     data: pick(formData, Object.keys(metaValidation)),
   };
   const repository = await repositoryStore.create(formPayload);
@@ -274,12 +299,13 @@ const createActvities = async (
   });
 };
 
-const importRepository = async ({ archive, name, description }: any) => {
+const importRepository = async ({ archive, name, description, userGroupIds }: any) => {
   try {
     const form = new FormData();
     form.append('archive', archive);
     form.append('name', name);
     form.append('description', description);
+    form.append('userGroupIds', userGroupIds);
     const headers = { 'content-type': 'multipart/form-data' };
     await api.importRepository(form, { headers });
   } catch {

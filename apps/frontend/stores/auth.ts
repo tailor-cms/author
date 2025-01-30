@@ -15,6 +15,11 @@ export const useAuthStore = defineStore('auth', () => {
     () => !isAdmin.value && !isDefaultUser.value,
   );
 
+  const hasDefaultUserGroup = computed(() => {
+    if (!hasGroupBoundAccess.value) return false;
+    return userGroups.value.length === 1;
+  });
+
   const groupsWithCreateRepositoryAccess = computed(() =>
     userGroups.value.filter(
       (group) => group.role === 'ADMIN' || group.role === 'USER',
@@ -96,6 +101,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     isDefaultUser,
     hasGroupBoundAccess,
+    hasDefaultUserGroup,
     hasCreateRepositoryAccess,
     login,
     logout,

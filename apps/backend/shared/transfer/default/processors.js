@@ -16,7 +16,7 @@ import { createLogger } from '#logger';
 
 const logger = createLogger('processors');
 
-const { Activity, ContentElement, Repository, RepositoryUser } = db;
+const { Activity, ContentElement, Repository, RepositoryUser, User } = db;
 const { repository: role } = roleConfig;
 const noop = Function.prototype;
 
@@ -63,14 +63,19 @@ function processManifest(manifest, _enc, { context }) {
 }
 
 async function processRepository(repository, _enc, { context, transaction }) {
-  const { description, name, userId } = context;
+  const { name, description, userId, userGroupIds } = context;
   repository = normalize(repository, Repository);
   Object.assign(repository, { description, name });
   const options = { context: { userId }, transaction };
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
-  const { id } = await Repository.create(repositoryRecord, options);
+  const entity = await Repository.create(repositoryRecord, options);
+  const { id } = entity;
   const userRecord = { userId, repositoryId: id, role: ADMIN };
   await RepositoryUser.create(userRecord, { transaction });
+  if (userGroupIds?.length) {
+    const user = await User.findByPk(userId);
+    await entity.associateWithUserGroups(userGroupIds, user, transaction);
+  }
   context.repositoryId = id;
 }
 

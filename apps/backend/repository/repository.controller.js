@@ -37,6 +37,7 @@ const {
   sequelize,
   Tag,
   User,
+  UserGroup,
 } = db;
 
 const DEFAULT_COLORS = ['#689F38', '#FF5722', '#2196F3'];
@@ -136,6 +137,9 @@ async function create({ user, body }, res) {
     userId: user.id,
     role: role.ADMIN,
   });
+  if (body.userGroupIds) {
+    await repository.associateWithUserGroups(body.userGroupIds, user);
+  }
   return res.json({ data: repository });
 }
 
@@ -289,8 +293,8 @@ function exportRepository({ repository, params }, res) {
 function importRepository({ body, file, user }, res) {
   log(`[importRepository] initiated, userId: ${user.id}, name: ${body.name}`);
   const { path } = file;
-  const { description, name } = body;
-  const options = { description, name, userId: user.id };
+  const { name, description, userGroupIds } = body;
+  const options = { description, name, userId: user.id, userGroupIds };
   return TransferService.createImportJob(path, options)
     .toPromise()
     .finally(() => {

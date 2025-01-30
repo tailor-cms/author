@@ -58,8 +58,10 @@ class Repository extends Model {
       Revision,
       ContentElement,
       User,
+      UserGroup,
       Tag,
       RepositoryTag,
+      RepositoryUserGroup,
     } = db;
     this.hasMany(Activity, {
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
@@ -85,6 +87,10 @@ class Repository extends Model {
     });
     this.belongsToMany(User, {
       through: RepositoryUser,
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
+    });
+    this.belongsToMany(UserGroup, {
+      through: RepositoryUserGroup,
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
   }
@@ -206,6 +212,20 @@ class Repository extends Model {
     const Activity = this.sequelize.model('Activity');
     const unpublishedCount = await Activity.count({ where, paranoid: false });
     return this.update({ hasUnpublishedChanges: !!unpublishedCount });
+  }
+
+  async associateWithUserGroups(userGroupIds, user, transaction) {
+    if (!userGroupIds?.length) return;
+    const userGroupData = await user.getAccessibleUserGroups();
+    const userAssociatedGroups = userGroupData.filter((it) =>
+      userGroupIds.includes(it.id),
+    );
+    if (!userAssociatedGroups.length) return;
+    const UserGroup = this.sequelize.model('UserGroup');
+    const userGroups = await UserGroup.findAll({
+      where: { id: userAssociatedGroups.map((it) => it.id) },
+    });
+    await this.setUserGroups(userGroups, { transaction });
   }
 
   getUser(user) {
