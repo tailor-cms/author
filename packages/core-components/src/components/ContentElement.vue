@@ -20,7 +20,7 @@
       class="header d-flex"
     >
       <PublishDiffChip
-        :change-type="element.changeSincePublish"
+        :change-type="element.changeSincePublish as PublishDiffChangeTypes"
         class="ml-auto"
       />
     </div>
@@ -30,7 +30,6 @@
       v-if="isComponentAvailable"
       v-bind="{
         ...$attrs,
-        embedTypes: embedElementConfig, // TODO: Remove once elements are migrated
         embedElementConfig,
         element,
         references,
@@ -92,6 +91,7 @@ import {
   provide,
   ref,
 } from 'vue';
+import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import { getComponentName, getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';

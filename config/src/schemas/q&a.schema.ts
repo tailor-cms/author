@@ -48,7 +48,7 @@ const RESPONSE: ContentContainerConfig = {
   templateId: ContentContainerType.Default,
   label: 'Response',
   contentElementConfig: [
-    ContentElementType.HtmlDefault,
+    ContentElementType.TipTapHtml,
     ContentElementType.Image,
   ],
   ai: {

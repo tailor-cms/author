@@ -13,7 +13,8 @@
       variant="tonal"
       prominent
     >
-      Click the button below to create first {{ capitalize(name) }}.
+      Click the button below to create {{ multiple ? 'first' : '' }}
+      {{ capitalize(name) }}.
     </VAlert>
     <component
       :is="containerName"
@@ -31,7 +32,6 @@
       :position="index"
       :repository="currentRepository.repository"
       :tes="elements"
-      class="content-container"
       @add:element="(val: any) => saveContentElements([val])"
       @add:subcontainer="addContainer"
       @delete="requestContainerDeletion(container)"

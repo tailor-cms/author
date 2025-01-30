@@ -72,7 +72,6 @@
 <script lang="ts" setup>
 import type {
   Activity,
-  ContentContainer,
 } from '@tailor-cms/interfaces/activity';
 import { computed, inject, onMounted, reactive } from 'vue';
 import type {
@@ -117,7 +116,7 @@ interface Selection {
 
 interface Items {
   activities: Activity[];
-  contentContainers: ContentContainer[];
+  contentContainers: Activity[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -166,13 +165,13 @@ const rootContainerTypes = computed(() => {
   return getContainerTypes(selection.activity.type);
 });
 
-const processedContainers = computed<ContentContainer[]>(() => {
+const processedContainers = computed<Activity[]>(() => {
   if (!selection.activity || !items.activities.length) return [];
   const containers = sortBy(items.activities.filter(isRootContainer), [
     getTypePosition,
     'position',
     'createdAt',
-  ]) as ContentContainer[];
+  ]) as Activity[];
   return flatMap(containers, (it) => [it, ...getSubcontainers(it)]);
 });
 
@@ -192,10 +191,10 @@ const isRootContainer = ({ parentId, type }: Activity) => {
   );
 };
 
-const getSubcontainers = (container: ContentContainer) => {
+const getSubcontainers = (container: Activity) => {
   const { getDescendants } = activityUtils;
   return sortBy(
-    getDescendants(items.activities, container) as ContentContainer[],
+    getDescendants(items.activities, container) as Activity[],
     'position',
   );
 };
@@ -211,7 +210,7 @@ const showActivityElements = async (activity: Activity) => {
 };
 
 const assignElements = (
-  container: ContentContainer,
+  container: Activity,
   activity: Activity,
   elements: ContentElement[],
 ) => {
@@ -270,7 +269,7 @@ const fetchActivities = loader(async function (repository: Repository) {
   return api.fetchActivities(repository.id);
 }, 500);
 
-const fetchElements = loader(async function (containers: ContentContainer[]) {
+const fetchElements = loader(async function (containers: Activity[]) {
   const repositoryId = selection.repository?.id;
   const params = { ids: map(containers, 'id') };
   return api.fetchContentElements(repositoryId, params);
