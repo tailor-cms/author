@@ -81,6 +81,9 @@ class Repository extends Model {
     this.hasMany(RepositoryTag, {
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
+    this.hasMany(RepositoryUserGroup, {
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
+    });
     this.belongsToMany(Tag, {
       through: RepositoryTag,
       foreignKey: { name: 'repositoryId', field: 'repository_id' },

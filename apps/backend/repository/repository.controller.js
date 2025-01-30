@@ -36,8 +36,8 @@ const {
   Revision,
   sequelize,
   Tag,
+  RepositoryUserGroup,
   User,
-  UserGroup,
 } = db;
 
 const DEFAULT_COLORS = ['#689F38', '#FF5722', '#2196F3'];
@@ -77,7 +77,7 @@ const includeRepositoryUser = (user, query) => {
   const options =
     query && query.pinned
       ? { where: { userId: user.id, pinned: true }, required: true }
-      : { where: { userId: user.id }, required: !user.isAdmin() };
+      : { where: { userId: user.id }, required: false };
   return { model: RepositoryUser, ...options };
 };
 
@@ -88,20 +88,30 @@ const includeRepositoryTags = (query) => {
     : include;
 };
 
-async function index({ query, user, opts }, res) {
+async function index({ query, user, opts, userGroupMemberships }, res) {
   const { search, name } = query;
   const schemas = query.schemas || general.availableSchemas;
-  if (search) opts.where.name = getFilter(search);
-  if (name) opts.where.name = name;
   if (search) opts.where.name = getFilter(search);
   if (name) opts.where.name = name;
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   opts.distinct = true;
+  opts.subQuery = false;
   opts.include = [
     includeRepositoryUser(user, query),
+    { model: RepositoryUserGroup },
     ...includeRepositoryTags(query),
   ];
+  if (!user.isAdmin()) {
+    opts.where[Op.or] = [
+      { '$repositoryUsers.user_id$': user.id },
+      {
+        '$repositoryUserGroups.group_id$': {
+          [Op.in]: userGroupMemberships.map((it) => it.id),
+        },
+      },
+    ];
+  }
   const { rows: repositories, count } = await Repository.findAndCountAll(opts);
   const revisions = await Revision.findAll({
     where: { repositoryId: repositories.map((it) => it.id) },
