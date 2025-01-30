@@ -1,6 +1,6 @@
 <template>
   <TailorDialog
-    v-if="isCreateEnabled"
+    v-if="authStore.hasCreateRepositoryAccess"
     v-model="isVisible"
     header-icon="mdi-folder-plus-outline"
     paddingless
@@ -133,7 +133,7 @@
             @structure="aiSuggestedOutline = $event"
           />
           <VSelect
-            v-if="showUserGroupInput"
+            v-show="showUserGroupInput"
             v-model="groupInput"
             :error-messages="errors.userGroupIds"
             :items="authStore.groupsWithCreateRepositoryAccess"
@@ -244,7 +244,7 @@ const { defineField, handleSubmit, resetForm, values, errors } = useForm({
 const [schemaInput] = defineField('schema');
 const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
-const [groupInput] = defineField('userGroupIds');
+const [groupInput] = defineField('userGroupIds') as any;
 
 const schema = computed<ActivityConfig>(
   () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
@@ -299,7 +299,12 @@ const createActvities = async (
   });
 };
 
-const importRepository = async ({ archive, name, description, userGroupIds }: any) => {
+const importRepository = async ({
+  archive,
+  name,
+  description,
+  userGroupIds,
+}: any) => {
   try {
     const form = new FormData();
     form.append('archive', archive);
@@ -330,6 +335,13 @@ watch(
   },
   { immediate: true },
 );
+
+watch(isVisible, (val) => {
+  if (!val) return;
+  groupInput.value = authStore.hasDefaultUserGroup
+    ? [authStore.userGroups[0].id]
+    : [];
+});
 </script>
 
 <style lang="scss" scoped>

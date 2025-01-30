@@ -27,7 +27,9 @@ export const useAuthStore = defineStore('auth', () => {
   );
 
   const hasCreateRepositoryAccess = computed(
-    () => groupsWithCreateRepositoryAccess.value.length > 0,
+    () =>
+      !hasGroupBoundAccess.value ||
+      groupsWithCreateRepositoryAccess.value.length > 0,
   );
 
   function $reset(
