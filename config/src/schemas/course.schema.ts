@@ -188,8 +188,8 @@ const AssessmentPoolConfig: ContentContainerConfig = {
       - Format the 'question' content and 'feedback' content as a HTML with
         suitable tags.
       - Apply text-body-2 and mb-5 classes to the paragraph html tags
-      You are trying to teach the audience, so make sure the content is easy to
-      understand, has a friendly tone and is engaging to the reader.`,
+        You are trying to teach the audience, so make sure the content is easy to
+        understand, has a friendly tone and is engaging to the reader.`,
       isAssessment: true,
     },
   },
