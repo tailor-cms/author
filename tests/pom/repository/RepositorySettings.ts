@@ -39,9 +39,6 @@ export class Sidebar {
     await expect(dialog.getByText('Repository export is ready.')).toBeVisible({
       timeout: 10000,
     });
-    await expect(dialog.getByRole('button', { name: 'Download' })).toBeVisible({
-      timeout: 10000,
-    });
     const downloadEvent = this.page.waitForEvent('download');
     await dialog.getByRole('button', { name: 'Download' }).click();
     const download = await downloadEvent;
