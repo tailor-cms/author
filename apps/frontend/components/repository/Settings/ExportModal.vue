@@ -9,7 +9,7 @@
     <template #actions>
       <VBtn color="primary-darken-4" variant="text" @click="close">Cancel</VBtn>
       <VBtn
-        :disabled="status !== STATUS.READY"
+        :disabled="status.message !== STATUS.READY.message"
         color="primary-darken-4"
         variant="text"
         @click="exportRepository"
