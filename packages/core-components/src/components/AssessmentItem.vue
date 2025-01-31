@@ -10,9 +10,10 @@
           size="large"
         />
       </span>
-      <component
-        :is="componentName(element.type)"
+      <QuestionElement
         v-if="expanded"
+        :icon="elementConfig?.ui.icon"
+        :type="elementConfig?.name"
         v-bind="{
           element,
           embedElementConfig,
@@ -84,7 +85,6 @@ import type {
   ContentElementCategory,
   ElementRegistry,
 } from '@tailor-cms/interfaces/schema';
-import { getComponentName } from '@tailor-cms/utils';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import cloneDeep from 'lodash/cloneDeep';
 import filter from 'lodash/filter';
@@ -92,6 +92,7 @@ import map from 'lodash/map';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
 import PublishDiffChip from './PublishDiffChip.vue';
+import QuestionElement from './QuestionElement.vue';
 
 interface Props {
   element: ContentElement;
@@ -124,8 +125,6 @@ const publishDiffChangeType = computed(() =>
 
 const getTextAssets = (items: ContentElement[]) =>
   filter(items, (it) => TEXT_CONTAINERS.includes(it.type));
-
-const componentName = (type: string) => getComponentName(type);
 
 const save = (data: ContentElement['data']) => {
   emit('save', { ...cloneDeep(props.element), data });
