@@ -30,6 +30,7 @@ jobs:
           url: http://localhost:3000/api/healthcheck
           method: "GET"
           accept: 200
+          timeout: 15000
   e2e:
     runs-on: ubuntu-latest
     strategy:
