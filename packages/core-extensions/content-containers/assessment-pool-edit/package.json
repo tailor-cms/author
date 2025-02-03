@@ -1,7 +1,7 @@
 {
-  "name": "@tailor-cms/tcc-page",
+  "name": "@tailor-cms/tcc-assessment-pool-edit",
   "version": "0.0.1",
-  "description": "Tailor page content container",
+  "description": "Tailor assessment pool content container edit package",
   "author": "Studion <info@gostudion.com>",
   "type": "module",
   "files": [

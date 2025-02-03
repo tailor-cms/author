@@ -23,6 +23,7 @@
     "@tailor-cms/tme-radio-group": "workspace:^",
     "@tailor-cms/tme-select": "workspace:^",
     "@tailor-cms/tme-switch": "workspace:^",
+    "@tailor-cms/tme-text-field": "workspace:^",
     "@tailor-cms/tme-textarea": "workspace:^"
   }
 }

@@ -1,7 +1,10 @@
+import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import isString from 'lodash/isString.js';
 import OpenAI from 'openai';
 import { schema as schemaConfig } from '@tailor-cms/config';
 import shuffle from 'lodash/shuffle.js';
+import { v4 as uuidv4 } from 'uuid';
+import pick from 'lodash/pick.js';
 import StorageService from '../storage/storage.service.js';
 
 import { createLogger } from '#logger';
@@ -187,6 +190,15 @@ class AIService {
       repositoryDescription,
     );
     const outputRules = containerConfig?.ai?.outputRules || {};
+    if (outputRules.isAssessment) {
+      return this.generateAssessmentsForTopic({
+        topic,
+        location,
+        level,
+        introPrompt,
+        outputRules,
+      });
+    };
     const [htmlElements, imageElement] = await Promise.all([
       this.generateHTMLElementsForTopic({
         topic,
@@ -219,6 +231,56 @@ class AIService {
     return parseResponse(completion);
   }
 
+  async generateAssessmentsForTopic({
+    topic,
+    location,
+    level,
+    introPrompt = '',
+    outputRules = {},
+  }) {
+    const promptEnd = outputRules?.prompt
+      ? `The following rules should be followed: ${outputRules.prompt}`
+      : '';
+    const userPrompt = `
+      ${introPrompt}
+      Generate multiple choice question about the "${topic}".
+      The content is located in the "${location}".
+      The targeted audience expertese level is "${level}".
+      Return the response as a JSON object such that you:
+        - Use { elements: []} format; where each element is defined as
+        { "question": "", "correct": [], "answers": [], "hint": "", "feedback": {} }
+        where 'question' is the question prompt, 'answers' is an array of possible
+        answers, 'correct' is an array of indexes of the correct answers (one or more
+        answers can be correct), 'hint' is an optional hint for the correct
+        solution, and 'feedback' is an object with feedback for each answer, using
+        indexes as keys. Feedback is optional and should provide more information
+        about the answers.
+      ${promptEnd}`;
+    const { elements = [] } = await this.requestCompletion(userPrompt);
+    const assessments = elements.map((it) => {
+      const uuid = uuidv4();
+      return {
+        type: ContentElementType.MultipleChoice,
+        data: {
+          ...pick(it, ['correct', 'answers', 'hint', 'feedback']),
+          question: [uuid],
+          isGradable: true,
+          embeds: {
+            [uuid]: {
+              id: uuid,
+              data: { content: it.question },
+              embedded: true,
+              position: 1,
+              type: ContentElementType.TipTapHtml,
+            },
+          },
+        },
+      };
+    });
+    logger.info('Generated Assessment elements', assessments);
+    return assessments;
+  }
+
   async generateHTMLElementsForTopic({
     topic,
     location,
@@ -241,7 +303,7 @@ class AIService {
       ${promptEnd}`;
     const { elements = [] } = await this.requestCompletion(userPrompt);
     const htmlElements = elements.map((it) => ({
-      type: 'CE_HTML_DEFAULT',
+      type: ContentElementType.TipTapHtml,
       data: { content: it.content },
     }));
     logger.info('Generated HTML elements', htmlElements);
@@ -261,7 +323,7 @@ class AIService {
     const imgUrl = await this.generateImage(dallePrompt);
     const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
     const imageElement = {
-      type: 'CE_IMAGE',
+      type: 'IMAGE',
       data: {
         assets: { url: imgInternalUrl },
       },

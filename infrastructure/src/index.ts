@@ -55,7 +55,7 @@ const webServer = new studion.WebServer(`${fullPrefix}-server`, {
   clusterName: cluster.name,
   hostedZoneId: dnsConfig.require('hostedZoneId'),
   autoscaling: { enabled: false },
-  size: 'small',
+  size: 'large', // 1 vCPU, 2GB RAM
   desiredCount: 1,
   healthCheckPath: '/api/healthcheck',
   environment: getEnvVariables(db),

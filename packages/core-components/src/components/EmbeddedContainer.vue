@@ -3,7 +3,7 @@
     :add-element-options="addElementOptions"
     :elements="embeds"
     :enable-add="!isDisabled && enableAdd"
-    :supported-element-config="types.concat(allowedElementConfig)"
+    :supported-element-config="allowedElementConfig"
     @add="addItems"
     @update="reorderItem"
   >
@@ -36,7 +36,6 @@ import ContainedContent from './ContainedContent.vue';
 import ElementList from './ElementList.vue';
 
 interface Props {
-  types?: ContentElementCategory[]; // TODO: Remove once elements are migrated
   allowedElementConfig?: ContentElementCategory[];
   container: { embeds: Record<string, ContentElement> };
   isDisabled?: boolean;
@@ -47,7 +46,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   isDisabled: false,
   enableAdd: true,
-  types: () => [],
   allowedElementConfig: () => [],
   addElementOptions: () => ({}),
 });

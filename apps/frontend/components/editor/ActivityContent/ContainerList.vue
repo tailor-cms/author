@@ -1,6 +1,11 @@
 <template>
   <div class="content-containers">
-    <h2 v-if="displayHeading" class="text-h5">{{ capitalize(name) }}</h2>
+    <h2
+      v-if="displayHeading"
+      class="mb-4 text-h6 text-left text-primary-lighten-4"
+    >
+      {{ capitalize(name) }}
+    </h2>
     <VAlert
       v-if="!containerGroup.length"
       color="primary-lighten-3"
@@ -8,7 +13,8 @@
       variant="tonal"
       prominent
     >
-      Click the button below to create first {{ capitalize(name) }}.
+      Click the button below to create {{ multiple ? 'first' : '' }}
+      {{ capitalize(name) }}.
     </VAlert>
     <component
       :is="containerName"
@@ -26,7 +32,6 @@
       :position="index"
       :repository="currentRepository.repository"
       :tes="elements"
-      class="content-container"
       @add:element="(val: any) => saveContentElements([val])"
       @add:subcontainer="addContainer"
       @delete="requestContainerDeletion(container)"

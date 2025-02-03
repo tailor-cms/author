@@ -5,6 +5,7 @@ import type { Repository } from './repository';
 export type ElementManifest = Record<string, any>;
 export interface ElementRegistry {
   all: ElementManifest[];
+  questions: ElementManifest[];
   load: (el: ContentElement) => void;
   get: (id: string) => ElementManifest;
 }
@@ -29,7 +30,7 @@ export interface ElementRelationship {
   label: string;
   placeholder: string;
   multiple: boolean;
-  allowedTypes: string[];
+  allowedElementConfig: ContentElementItem[];
   filters?: Filter[];
   disableSidebarUi?: boolean;
 }
@@ -57,6 +58,7 @@ export interface AIConfig {
   outputRules?: {
     prompt: string;
     useDalle?: boolean;
+    isAssessment?: boolean;
   };
 }
 
@@ -93,14 +95,18 @@ export interface ActivityConfig {
   exams?: any;
 }
 
-export interface ContentElementItem {
-  id: string;
+export interface ContentElementConfig {
   isGradable?: boolean;
+}
+
+export interface ContentElementItem extends ContentElementConfig {
+  id: string;
 }
 
 export interface ContentElementCategory {
   name: string;
   items: ContentElementItem[];
+  config?: ContentElementConfig;
 }
 
 export type ElementConfig = ContentElementCategory | ContentElementItem | string;

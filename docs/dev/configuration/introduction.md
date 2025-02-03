@@ -19,8 +19,9 @@ As an illustrative example, let's model a Knowledge Base schema. This Schema
 is designed to organize content by Categories. Content is added to Page nodes,
 which are contained within Categories. Each Entry can host multiple Section
 Containers; Content Containers that hold the actual Content Elements. For
-this scenario, we will enable a single element: a WYSIWYG rich text editor,
-referred to as CE_HTML_DEFAULT.
+this scenario, we will add two groups of content elements to showcase different 
+configuration possibilities. Third option is used for specifying allowed
+embed elements.
 
 Here is an example:
 
@@ -52,15 +53,32 @@ const PAGE: ActivityConfig = {
 // This is a Content Container definition.
 // We are going to use 'DEFAULT' container which is provided with Tailor
 // 'DEFAULT' container is just a list of Content Elements which are enabled
-// by adding it to the `types` list
+// by adding it to the `contentElementConfig` config
 const SECTION: ContentContainerConfig = {
   // Content Container id for this particular schema
   type: 'SECTION',
   // id of the installed container
   templateId: 'DEFAULT',
   label: 'Section',
-  // List of Content Element types which Author can add to this container
-  types: ['CE_HTML_DEFAULT'],
+  // Configuration of Content Element types which Author can add to this 
+  // container
+  contentElementConfig: [
+    {
+      name: 'Group A',
+      config: { isGradable: true },
+      items: [ContentElementType.MultipleChoice]
+    }, 
+    {
+      name: 'Group B',
+      items: [
+        ContentElementType.MultipleChoice,
+        { id: ContentElementType.SingleChoice, isGradable: false },
+      ]
+    },
+  ],
+  // Configuration of Content Element types which Author can add as embedded
+  // elements inside composite elements in this container
+  embedElementConfig: [ContentElementType.TipTapHtml],
 };
 
 export const SCHEMA: Schema = {

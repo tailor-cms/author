@@ -10,8 +10,11 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 enum ActivityType {
+  // Outline
   Module = 'MODULE',
   Page = 'PAGE',
+  Lesson = 'LESSON',
+  // Content containers
   Section = 'SECTION',
 }
 
@@ -21,7 +24,7 @@ const ModuleConfig: ActivityConfig = {
   isTrackedInWorkflow: true,
   label: 'Module',
   color: '#5187C7',
-  subLevels: [ActivityType.Module, ActivityType.Page],
+  subLevels: [ActivityType.Module, ActivityType.Page, ActivityType.Lesson],
   ai: {
     definition: `
       Modules are a way to organize knowledge into chunks that are easier to
@@ -52,7 +55,10 @@ const PageConfig: ActivityConfig = {
       Pages contain the actual content that the user will interact with.`,
   },
   color: '#08A9AD',
-  contentContainers: [ActivityType.Section],
+  contentContainers: [
+    ActivityType.Section,
+    ContentContainerType.AssessmentPool,
+  ],
   meta: [
     {
       key: 'haesRating',
@@ -70,44 +76,51 @@ const SectionConfig: ContentContainerConfig = {
   label: 'Section',
   multiple: true,
   embedElementConfig: [
-    ContentElementType.HtmlDefault,
+    ContentElementType.TipTapHtml,
     ContentElementType.Image,
     ContentElementType.Video,
   ],
   contentElementConfig: [
-    ContentElementType.HtmlDefault,
-    ContentElementType.Image,
-    ContentElementType.Video,
-    ContentElementType.Embed,
-    ContentElementType.Audio,
-    ContentElementType.PageBreak,
-    ContentElementType.Pdf,
-    ContentElementType.Accordion,
-    // TODO: Need to be migrated
-    // ContentElementType.Table,
-    ContentElementType.Modal,
-    ContentElementType.Carousel,
+    {
+      name: 'Content Elements',
+      items: [
+        ContentElementType.TipTapHtml,
+        ContentElementType.Image,
+        ContentElementType.Video,
+        ContentElementType.Embed,
+        ContentElementType.Audio,
+        ContentElementType.PageBreak,
+        ContentElementType.Pdf,
+        ContentElementType.Accordion,
+        // TODO: Need to be migrated
+        // ContentElementType.Table,
+        ContentElementType.Modal,
+        ContentElementType.Carousel,
+      ],
+    },
     {
       name: 'Assessments',
+      config: { isGradable: true },
       items: [
-        { id: ContentElementType.MultipleChoice, isGradable: true },
-        { id: ContentElementType.SingleChoice, isGradable: true },
-        { id: ContentElementType.TextResponse, isGradable: true },
-        { id: ContentElementType.NumericalResponse, isGradable: true },
-        { id: ContentElementType.TrueFalse, isGradable: true },
-        { id: ContentElementType.MatchingQuestion, isGradable: true },
-        { id: ContentElementType.FillBlank, isGradable: true },
-        { id: ContentElementType.DragDrop, isGradable: true },
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+        ContentElementType.TextResponse,
+        ContentElementType.NumericalResponse,
+        ContentElementType.TrueFalse,
+        ContentElementType.MatchingQuestion,
+        ContentElementType.FillBlank,
+        ContentElementType.DragDrop,
       ],
     },
     {
       name: 'Nongraded questions',
+      config: { isGradable: false },
       items: [
-        { id: ContentElementType.MultipleChoice, isGradable: false },
-        { id: ContentElementType.SingleChoice, isGradable: false },
-        { id: ContentElementType.TextResponse, isGradable: false },
-        { id: ContentElementType.TrueFalse, isGradable: false },
-        { id: ContentElementType.FillBlank, isGradable: false },
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+        ContentElementType.TextResponse,
+        ContentElementType.TrueFalse,
+        ContentElementType.FillBlank,
       ],
     },
   ],
@@ -127,6 +140,43 @@ const SectionConfig: ContentContainerConfig = {
         understand, has a friendly tone and is engaging to the reader.
         Make sure to include the latest relevant information on the topic.`,
       useDalle: true,
+    },
+  },
+};
+
+const AssessmentPoolConfig: ContentContainerConfig = {
+  type: ContentContainerType.AssessmentPool,
+  templateId: ContentContainerType.AssessmentPool,
+  label: 'Assessments',
+  publishedAs: 'assessments',
+  contentElementConfig: [
+    {
+      name: 'Assessments',
+      config: { isGradable: true },
+      items: [
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+        ContentElementType.TextResponse,
+        ContentElementType.NumericalResponse,
+        ContentElementType.TrueFalse,
+        ContentElementType.MatchingQuestion,
+        ContentElementType.FillBlank,
+        ContentElementType.DragDrop,
+      ],
+    },
+  ],
+  ai: {
+    definition: `
+      Assessment pools are a way to organize assessments that can be used in
+      multiple lessons.`,
+    outputRules: {
+      prompt: `
+      - Format the 'question' content and 'feedback' content as a HTML with
+        suitable tags.
+      - Apply text-body-2 and mb-5 classes to the paragraph html tags
+        You are trying to teach the audience, so make sure the content is easy to
+        understand, has a friendly tone and is engaging to the reader.`,
+      isAssessment: true,
     },
   },
 };
@@ -151,7 +201,7 @@ export const SCHEMA: Schema = {
     },
   ],
   structure: [ModuleConfig, PageConfig],
-  contentContainers: [SectionConfig],
+  contentContainers: [SectionConfig, AssessmentPoolConfig],
   elementMeta: [
     {
       type: ContentElementType.Image,
@@ -169,20 +219,20 @@ export const SCHEMA: Schema = {
           label: 'Related Content',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [ContentElementType.Image],
+          allowedElementConfig: [ContentElementType.Image],
         },
       ],
     },
     {
-      type: ContentElementType.HtmlDefault,
+      type: ContentElementType.TipTapHtml,
       relationships: [
         {
           key: 'related',
           label: 'Related Content',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [
-            ContentElementType.HtmlDefault,
+          allowedElementConfig: [
+            ContentElementType.TipTapHtml,
             ContentElementType.Image,
           ],
           filters: [(optionEl, currentEl) => optionEl.id !== currentEl.id],
@@ -192,7 +242,7 @@ export const SCHEMA: Schema = {
           label: 'Prerequisites',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [ContentElementType.HtmlDefault],
+          allowedElementConfig: [ContentElementType.TipTapHtml],
         },
       ],
     },
