@@ -176,7 +176,7 @@ watch(isDialogVisible, (val) => {
     firstNameInput.value = props.userData.firstName;
     lastNameInput.value = props.userData.lastName;
     roleInput.value = props.userData.role;
-    groupInput.value = props.userData.userGroups.map((it: any) => it.id) || [];
+    groupInput.value = props.userData?.userGroups?.map((it: any) => it.id) || [];
   } else {
     resetForm();
   }
