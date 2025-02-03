@@ -46,8 +46,6 @@ services:
     # Make .env based
     ports:
       - '3000:3000'
-    env_file:
-      - .env
     environment:
       NODE_ENV: 'development'
       HOSTNAME: 'localhost'
@@ -66,4 +64,6 @@ services:
       STORAGE_BUCKET: 'test'
       KV_STORE_URL: 'redis://author-dc-redis:6379'
       KV_STORE_DEFAULT_TTL: 0
+      AUTH_JWT_SECRET: 'test_secret'
+      AUTH_JWT_COOKIE_SECRET: 'test_cookie_secret'
     restart: 'no'
