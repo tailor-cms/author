@@ -1,38 +1,69 @@
-# TODO: Make all env variables configurable
 services:
-  tailor-postgres:
-    container_name: "postgres"
-    image: "postgres:15.1"
+  author-dc-postgres:
+    container_name: 'author-dc-postgres'
+    image: 'postgres:15.1'
     environment:
-      POSTGRES_DB: "tailor"
-      POSTGRES_USER: "dev"
-      POSTGRES_PASSWORD: "dev"
+      POSTGRES_DB: 'tailor'
+      POSTGRES_USER: 'dev'
+      POSTGRES_PASSWORD: 'dev'
     expose:
-      - "5432"
-    restart: "no"
+      - '5432'
+    ports:
+      - '5432:5432'
+    restart: 'no'
 
-  tailor-backend:
-    container_name: "tailor-backend"
-    depends_on:
-      - "tailor-postgres"
-    build:
-      dockerfile: "./Dockerfile"
-      context: "."
+  author-dc-redis:
+    container_name: author-dc-redis
+    image: redis:7.4.0
     expose:
-      - "3000"
+      - '6379'
+    ports:
+      - '6379:6379'
+
+  author-dc-localstack:
+    container_name: author-dc-localstack
+    image: localstack/localstack
+    expose:
+      - '4566'
+    ports:
+      - '4566:4566'
+    environment:
+      - DEFAULT_REGION=us-east-1
+      - SERVICES=s3:4566
+      - BUCKET_NAME=test
+
+  author-dc-backend:
+    container_name: author-dc-backend
+    depends_on:
+      - 'author-dc-postgres'
+      - 'author-dc-redis'
+      - 'author-dc-localstack'
+    build:
+      dockerfile: './Dockerfile'
+      context: '.'
+    expose:
+      - '3000'
     # Make .env based
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - .env
     environment:
-      NODE_ENV: "development"
-      PROTOCOL: "http"
-      HOSTNAME: "localhost"
+      NODE_ENV: 'development'
+      HOSTNAME: 'localhost'
+      PROTOCOL: 'http'
       PORT: 3000
       REVERSE_PROXY_PORT: 3000
-      DATABASE_HOST: "postgres"
-      DATABASE_NAME: "tailor"
-      DATABASE_USER: "dev"
-      DATABASE_PASSWORD: "dev"
-    restart: "no"
+      DATABASE_NAME: 'tailor'
+      DATABASE_USER: 'dev'
+      DATABASE_PASSWORD: 'dev'
+      DATABASE_HOST: 'author-dc-postgres'
+      STORAGE_PROVIDER: 'amazon'
+      STORAGE_ENDPOINT: 'http://author-dc-localstack:4566'
+      STORAGE_REGION: 'us-east-1'
+      STORAGE_KEY: 'test'
+      STORAGE_SECRET: 'test'
+      STORAGE_BUCKET: 'test'
+      KV_STORE_URL: 'redis://author-dc-redis:6379'
+      KV_STORE_DEFAULT_TTL: 0
+    restart: 'no'
