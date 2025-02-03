@@ -55,7 +55,10 @@ const PageConfig: ActivityConfig = {
       Pages contain the actual content that the user will interact with.`,
   },
   color: '#08A9AD',
-  contentContainers: [ActivityType.Section],
+  contentContainers: [
+    ActivityType.Section,
+    ContentContainerType.AssessmentPool,
+  ],
   meta: [
     {
       key: 'haesRating',
@@ -64,23 +67,6 @@ const PageConfig: ActivityConfig = {
       reviewable: true,
       hideOnCreate: true,
     },
-  ],
-};
-
-const LessonConfig: ActivityConfig = {
-  type: ActivityType.Lesson,
-  rootLevel: true,
-  isTrackedInWorkflow: true,
-  label: 'Lesson',
-  ai: {
-    definition: `
-      Lessons contain the content user will interact with, as well as the
-      assessments they should complete.`,
-  },
-  color: '#FFA000',
-  contentContainers: [
-    ActivityType.Section,
-    ContentContainerType.AssessmentPool,
   ],
 };
 
@@ -214,7 +200,7 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
-  structure: [ModuleConfig, PageConfig, LessonConfig],
+  structure: [ModuleConfig, PageConfig],
   contentContainers: [SectionConfig, AssessmentPoolConfig],
   elementMeta: [
     {
