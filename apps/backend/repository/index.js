@@ -8,36 +8,38 @@ import { authorize } from '#shared/auth/mw.js';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import processQuery from '#shared/util/processListQuery.js';
+
 /* eslint-disable */
+import AccesssService from '#app/shared/auth/Accesss.service.js';
 import activity from '../activity/index.js';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
-import { role as RoleConfig } from '@tailor-cms/common';
 import storageRouter from '#shared/storage/storage.router.js';
 /* eslint-enable */
 
-const { Repository } = db;
+const { Repository, UserGroup } = db;
 const router = express.Router();
 
 // NOTE: disk storage engine expects an object to be passed as the first argument
 // https://github.com/expressjs/multer/blob/6b5fff5/storage/disk.js#L17-L18
 const upload = multer({ storage: multer.diskStorage({}) });
-const UserRole = RoleConfig.user;
 
 router.post(
   '/import',
-  authorize(UserRole.USER),
+  AccesssService.hasCreateRepositoryAccess,
   upload.single('archive'),
   ctrl.import,
 );
 
-router.param('repositoryId', getRepository).use('/:repositoryId', hasAccess);
+router
+  .param('repositoryId', getRepository)
+  .use('/:repositoryId', AccesssService.hasRepositoryAccess);
 
 router
   .route('/')
   .get(processQuery({ limit: 100 }), ctrl.index)
-  .post(authorize(UserRole.USER), ctrl.create);
+  .post(AccesssService.hasCreateRepositoryAccess, ctrl.create);
 
 router
   .route('/:repositoryId')
@@ -75,25 +77,13 @@ function mount(router, mountPath, subrouter) {
 }
 
 function getRepository(req, _res, next, repositoryId) {
-  return Repository.findByPk(repositoryId, { paranoid: false })
+  return Repository.findByPk(repositoryId, {
+    include: [{ model: UserGroup, required: false }],
+    paranoid: false,
+  })
     .then((item) => item || createError(StatusCodes.NOT_FOUND, 'Not found'))
     .then((repository) => {
       req.repository = repository;
-      next();
-    });
-}
-
-function hasAccess(req, _res, next) {
-  const { user, repository } = req;
-  if (user.isAdmin()) return next();
-  return repository
-    .getUser(user)
-    .then(
-      (user) =>
-        user || createError(StatusCodes.UNAUTHORIZED, 'Access restricted'),
-    )
-    .then((user) => {
-      req.repositoryRole = user.repositoryUser.role;
       next();
     });
 }

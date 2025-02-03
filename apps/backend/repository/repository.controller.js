@@ -88,7 +88,7 @@ const includeRepositoryTags = (query) => {
     : include;
 };
 
-async function index({ query, user, opts, userGroupMemberships }, res) {
+async function index({ query, user, opts }, res) {
   const { search, name } = query;
   const schemas = query.schemas || general.availableSchemas;
   if (search) opts.where.name = getFilter(search);
@@ -107,7 +107,7 @@ async function index({ query, user, opts, userGroupMemberships }, res) {
       { '$repositoryUsers.user_id$': user.id },
       {
         '$repositoryUserGroups.group_id$': {
-          [Op.in]: userGroupMemberships.map((it) => it.id),
+          [Op.in]: user.userGroups.map((it) => it.id),
         },
       },
     ];

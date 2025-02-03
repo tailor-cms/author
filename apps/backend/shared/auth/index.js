@@ -9,16 +9,16 @@ import auth from './authenticator.js';
 import OIDCStrategy from './oidc.js';
 import { auth as config, origin } from '#config';
 
-const { User } = db;
-const options = {
-  usernameField: 'email',
-  session: false,
-};
+const { User, UserGroup } = db;
+const loadUserOptions = { include: [{ model: UserGroup }] };
 
 auth.use(
-  new LocalStrategy(options, (email, password, done) => {
+  new LocalStrategy({
+    usernameField: 'email',
+    session: false,
+  }, (email, password, done) => {
     return User.unscoped()
-      .findOne({ where: { email } })
+      .findOne({ where: { email }, ...loadUserOptions })
       .then((user) => user && user.authenticate(password))
       .then((user) => done(null, user || false))
       .error((err) => done(err, false));
@@ -72,7 +72,7 @@ export default auth;
 
 function verifyJWT(payload, done) {
   return User.unscoped()
-    .findByPk(payload.id)
+    .findByPk(payload.id, { ...loadUserOptions })
     .then((user) => done(null, user || false))
     .error((err) => done(err, false));
 }
@@ -94,7 +94,7 @@ function extractJwtFromCookie(req) {
 function secretOrKeyProvider(_, rawToken, done) {
   const { id } = jwt.decode(rawToken) || {};
   return User.unscoped()
-    .findByPk(id, { rejectOnEmpty: true })
+    .findByPk(id, { ...loadUserOptions, rejectOnEmpty: true })
     .then((user) => user.getTokenSecret())
     .then((secret) => done(null, secret))
     .catch((err) => done(err));
@@ -106,10 +106,16 @@ function apiUrl(pathname) {
 
 function findOrCreateOIDCUser({ email, firstName, lastName }) {
   if (!config.oidc.enableSignup) {
-    return User.findOne({ where: { email }, rejectOnEmpty: true });
+    return User.findOne({
+      where: { email },
+      ...loadUserOptions,
+      rejectOnEmpty: true,
+    });
   }
   const defaults = { firstName, lastName, role: config.oidc.defaultRole };
-  return User.findOrCreate({ where: { email }, defaults }).then(
-    ([user]) => user,
-  );
+  return User.findOrCreate({
+    where: { email },
+    ...loadUserOptions,
+    defaults,
+  }).then(([user]) => user);
 }
