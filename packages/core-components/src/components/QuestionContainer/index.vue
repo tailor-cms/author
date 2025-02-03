@@ -1,16 +1,15 @@
-<!-- eslint-disable vue/no-undef-components -->
 <template>
   <div class="text-left">
     <QuestionPrompt
+      :allowed-element-config="embedElementConfig"
       :element-data="elementData"
       :is-disabled="isDisabled"
-      :allowed-element-config="embedElementConfig"
       @update="$emit('update', $event)"
     />
     <slot></slot>
     <QuestionHint
-      :is-editing="!isDisabled"
       :hint="elementData.hint"
+      :is-editing="!isDisabled"
       @update="$emit('update', { hint: $event })"
     />
     <QuestionFeedback
@@ -26,6 +25,7 @@
 
 <script lang="ts" setup>
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
+
 import QuestionFeedback from './QuestionFeedback.vue';
 import QuestionHint from './QuestionHint.vue';
 import QuestionPrompt from './QuestionPrompt.vue';
