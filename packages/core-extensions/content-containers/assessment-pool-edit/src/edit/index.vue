@@ -1,17 +1,17 @@
 <template>
   <div class="bg-transparent">
-    <div class="d-flex align-center mb-4">
-      <div class="text-white text-subtitle-1">Assessments</div>
+    <div class="d-flex align-center mb-6">
+      <div class="text-primary-lighten-4 text-h6">Assessments</div>
       <VSpacer />
-      <template v-if="!isAiGeneratingContent">
+      <div v-if="!isAiGeneratingContent" class="pb-1">
         <VBtn
           v-if="isAiEnabled && !disabled"
-          color="teal-lighten-2"
+          color="primary-lighten-4"
           size="small"
           variant="tonal"
           @click="generateContent"
         >
-          Do the magic
+          Generate questions
           <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
         </VBtn>
         <VBtn
@@ -19,12 +19,13 @@
           class="ml-3"
           variant="tonal"
           size="small"
+          min-width="100"
           color="primary-lighten-3"
           @click="toggleAssessments"
         >
           {{ allSelected ? 'Hide' : 'Show' }} All
         </VBtn>
-      </template>
+      </div>
     </div>
     <VAlert
       v-if="!hasAssessments && !isAiGeneratingContent"
@@ -65,7 +66,7 @@
       :items="assessments"
       :layout="false"
       :position="assessments.length"
-      class="mt-6"
+      class="mt-8"
       color="teal-accent-1"
       label="Add assessment"
       variant="tonal"
@@ -166,9 +167,8 @@ const saveAssessment = (assessment: ContentElement) => {
 
 const isSelected = (uid: string) => selected.value.includes(uid);
 
-const toggleSelect = (uid: string) => isSelected(uid)
-  ? pull(selected.value, uid)
-  : selected.value.push(uid);
+const toggleSelect = (uid: string) =>
+  isSelected(uid) ? pull(selected.value, uid) : selected.value.push(uid);
 
 const clearSelected = () => {
   const ids = map(assessments.value, 'uid');
