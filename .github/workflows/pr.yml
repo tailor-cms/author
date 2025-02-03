@@ -24,6 +24,9 @@ jobs:
         uses: hoverkraft-tech/compose-action@v2.0.1
         with:
           compose-file: docker-compose.yaml
+      - name: Run
+        shell: bash
+        run: sleep 30
       - name: Check if platform is running
         uses: indiesdev/curl@v1.1
         with:
