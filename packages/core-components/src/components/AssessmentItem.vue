@@ -15,6 +15,7 @@
         :icon="elementConfig?.ui.icon"
         :type="elementConfig?.name"
         v-bind="{
+          componentName,
           element,
           embedElementConfig,
           isDisabled,
@@ -87,6 +88,7 @@ import type {
 } from '@tailor-cms/interfaces/schema';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import cloneDeep from 'lodash/cloneDeep';
+import { getComponentName } from '@tailor-cms/utils';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
@@ -120,6 +122,7 @@ const htmlRegex = /(<\/?[^>]+(>|$))|&nbsp;/g;
 
 const elementConfig = computed(() => ceRegistry?.get(props.element.type));
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
+const componentName = computed(() => getComponentName(props.element.type));
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);
 
