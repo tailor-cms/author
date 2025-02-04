@@ -30,7 +30,7 @@ export interface ElementRelationship {
   label: string;
   placeholder: string;
   multiple: boolean;
-  allowedTypes: string[];
+  allowedElementConfig: ContentElementItem[];
   filters?: Filter[];
   disableSidebarUi?: boolean;
 }

@@ -8,7 +8,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxt/devtools": "latest",
+    "@nuxt/devtools": "^1.7.0",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
@@ -17,7 +17,7 @@
     "@types/pluralize": "^0.0.33",
     "@types/promise-queue": "^2.2.3",
     "autoprefixer": "^10.4.20",
-    "nuxt": "3.14.1592",
+    "nuxt": "3.15.4",
     "sass": "^1.82.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
