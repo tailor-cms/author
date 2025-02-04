@@ -1,7 +1,7 @@
-import { body, validationResult } from 'express-validator';
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 
+import * as validation from './user-group.validation.js';
 import ctrl from './user-group.controller.js';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
@@ -9,26 +9,22 @@ import db from '#shared/database/index.js';
 const { UserGroup } = db;
 const router = express.Router();
 
-const validateReq = [
-  body('name').notEmpty().trim(),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
-    }
-    next();
-  },
-];
-
 router.param('id', getUserGroup);
 
 router.route('/')
   .get(ctrl.list)
-  .post(validateReq, ctrl.create);
+  .post(validation.upsertUserGroup, ctrl.create);
 
 router.route('/:id')
-  .patch(validateReq, ctrl.update)
+  .get(ctrl.get)
+  .patch(validation.upsertUserGroup, ctrl.update)
   .delete(ctrl.remove);
+
+router.route('/:id/users')
+  .get(ctrl.getUsers)
+  .post(validation.upsertUser, ctrl.upsertUser);
+
+router.delete('/:id/users/:userId', ctrl.removeUser);
 
 export default {
   path: '/user-group',
