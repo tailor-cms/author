@@ -51,15 +51,38 @@ import { computed, reactive, ref, watch } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import { getComponentName } from '@tailor-cms/utils';
 import isEqual from 'lodash/isEqual';
+import omit from 'lodash/omit';
+import sortBy from 'lodash/sortBy';
+
+import { questionType } from '../utils';
+
+const convertLegacyElement = (element: ContentElement) => {
+  const question = element.data.question as any[];
+  const embeds = question.reduce((acc, question, index) => {
+    const position = index + 1;
+    const embed = { position, ...question };
+    acc[question.id] = embed;
+    return acc;
+  }, {});
+  const type = questionType.get(element.data.type as string);
+  const data = { ...omit(element.data, 'question'), embeds };
+  return { ...element, data, type };
+};
+
+const initializeElement = () => {
+  const element = cloneDeep(props.element);
+  return props.isLegacyQuestion ? convertLegacyElement(element) : element;
+};
 
 interface Props {
   element: ContentElement;
+  componentName: string;
   references?: Record<string, ContentElement[]> | null;
   type?: string;
   icon?: string;
   embedElementConfig?: ContentElementCategory[];
+  isLegacyQuestion?: boolean;
   isDisabled?: boolean;
   isFocused?: boolean;
   isDragged?: boolean;
@@ -76,6 +99,7 @@ const props = withDefaults(defineProps<Props>(), {
   isFocused: false,
   dense: false,
 });
+
 const emit = defineEmits([
   'add',
   'cancel',
@@ -87,9 +111,8 @@ const emit = defineEmits([
 ]);
 
 const form = ref();
-const editedElement = reactive(cloneDeep(props.element));
+const editedElement = reactive(initializeElement());
 
-const componentName = computed(() => getComponentName(props.element.type));
 const isDirty = computed(
   () => !isEqual(editedElement.data, props.element.data),
 );
@@ -97,7 +120,11 @@ const isDirty = computed(
 const save = async () => {
   if (!form.value) return;
   const { valid } = await form.value.validate();
-  if (valid) emit('save', editedElement.data);
+  if (!valid) return;
+  if (!props.isLegacyQuestion) return emit('save', editedElement.data);
+  const { embeds, ...data } = cloneDeep(editedElement.data);
+  const question = omit(sortBy(embeds, 'position'), 'position');
+  return emit('save', { ...data, question, type: props.element.type });
 };
 
 const cancel = () => {

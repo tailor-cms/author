@@ -47,12 +47,16 @@ import { isArray, some } from 'lodash';
 
 import RichTextEditor from '../RichTextEditor/index.vue';
 
-const props = defineProps<{
-  answers: Array<string> | boolean | null;
-  feedback: Record<string, string>;
+interface Props {
+  answers: string[];
   isEditing: boolean;
   isGradable: boolean;
-}>();
+  feedback?: Record<number, string>;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  feedback: () => ({}),
+});
 const emit = defineEmits(['update']);
 
 const isExpanded = ref(some(props.feedback));
