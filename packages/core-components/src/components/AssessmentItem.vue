@@ -33,7 +33,7 @@
         variant="flat"
         min-height="48"
         @click="$emit('selected')">
-        <VRow dense>
+        <VRow class="w-100" dense>
           <VCol cols="3" class="text-left align-content-center">
             <div class="px-2 d-flex align-center">
               <VIcon
