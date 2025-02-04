@@ -1,27 +1,31 @@
-# TODO: Make all env variables configurable
 services:
-  postgres:
-    container_name: "tailor-postgres"
-    image: "postgres:15.1"
+  author-dev-postgres:
+    container_name: 'author-dev-postgres'
+    image: 'postgres:15.1'
     environment:
-      POSTGRES_DB: "tailor_dev"
-      POSTGRES_USER: "dev"
-      POSTGRES_PASSWORD: "dev"
+      POSTGRES_DB: 'tailor_dev'
+      POSTGRES_USER: 'dev'
+      POSTGRES_PASSWORD: 'dev'
     expose:
-      - "5432"
+      - '5432'
     ports:
-      - "5432:5432"
-    restart: "no"
-  redis:
-    container_name: "tailor-redis"
+      - '5432:5432'
+    restart: 'no'
+  author-dev-redis:
+    container_name: 'author-dev-redis'
     image: redis:7.4.0
+    expose:
+      - '6379'
     ports:
-      - "6379:6379"
-  localstack:
-    container_name: tailor-localstack
+      - '6379:6379'
+  author-dev-localstack:
+    container_name: author-dev-localstack
     image: localstack/localstack
+    expose:
+      - '4566'
     ports:
-      - '127.0.0.1:4566:4566'
+      - '4566:4566'
     environment:
       - SERVICES=s3:4566
       - DEFAULT_REGION=us-east-1
+      - BUCKET_NAME=test

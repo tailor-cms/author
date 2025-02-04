@@ -10,10 +10,12 @@
           size="large"
         />
       </span>
-      <component
-        :is="componentName(element.type)"
+      <QuestionElement
         v-if="expanded"
+        :icon="elementConfig?.ui.icon"
+        :type="elementConfig?.name"
         v-bind="{
+          componentName,
           element,
           embedElementConfig,
           isDisabled,
@@ -31,7 +33,7 @@
         variant="flat"
         min-height="48"
         @click="$emit('selected')">
-        <VRow dense>
+        <VRow class="w-100" dense>
           <VCol cols="3" class="text-left align-content-center">
             <div class="px-2 d-flex align-center">
               <VIcon
@@ -84,14 +86,16 @@ import type {
   ContentElementCategory,
   ElementRegistry,
 } from '@tailor-cms/interfaces/schema';
-import { getComponentName } from '@tailor-cms/utils';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import cloneDeep from 'lodash/cloneDeep';
+import { getComponentName } from '@tailor-cms/utils';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
+import sortBy from 'lodash/sortBy';
 
 import PublishDiffChip from './PublishDiffChip.vue';
+import QuestionElement from './QuestionElement.vue';
 
 interface Props {
   element: ContentElement;
@@ -119,22 +123,20 @@ const htmlRegex = /(<\/?[^>]+(>|$))|&nbsp;/g;
 
 const elementConfig = computed(() => ceRegistry?.get(props.element.type));
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
+const componentName = computed(() => getComponentName(props.element.type));
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);
 
 const getTextAssets = (items: ContentElement[]) =>
   filter(items, (it) => TEXT_CONTAINERS.includes(it.type));
 
-const componentName = (type: string) => getComponentName(type);
-
 const save = (data: ContentElement['data']) => {
   emit('save', { ...cloneDeep(props.element), data });
 };
 
 const question = computed(() => {
-  const question = props.element.data.question as string[];
   const embeds = props.element.data.embeds as Record<string, ContentElement>;
-  const textAssets = getTextAssets(question.map((id) => embeds[id]));
+  const textAssets = getTextAssets(sortBy(embeds, 'position'));
   const questionText = map(textAssets, 'data.content').join(' ');
   return questionText.replace(htmlRegex, '').replace(blankRegex, () => '____');
 });

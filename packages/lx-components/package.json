@@ -3,7 +3,7 @@
   "description": "Reusable learning experience UI components",
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "files": [
     "src"
   ],
@@ -11,7 +11,9 @@
   "main": "./src/index.ts",
   "peerDependencies": {
     "vue": "^3.3.4",
-    "vuetify": "3.7.0"
+    "vuetify": "3.7.0",
+    "@types/lodash": "^4.17.10",
+    "lodash": "^4.17.21"
   },
   "publishConfig": {
     "access": "public"

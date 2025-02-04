@@ -56,7 +56,10 @@ const PageConfig: ActivityConfig = {
       Pages contain the actual content that the user will interact with.`,
   },
   color: '#08A9AD',
-  contentContainers: [ActivityType.Section],
+  contentContainers: [
+    ActivityType.Section,
+    ContentContainerType.AssessmentPool,
+  ],
   meta: [
     {
       key: 'haesRating',
@@ -65,23 +68,6 @@ const PageConfig: ActivityConfig = {
       reviewable: true,
       hideOnCreate: true,
     },
-  ],
-};
-
-const LessonConfig: ActivityConfig = {
-  type: ActivityType.Lesson,
-  rootLevel: true,
-  isTrackedInWorkflow: true,
-  label: 'Lesson',
-  ai: {
-    definition: `
-      Lessons contain the content user will interact with, as well as the
-      assessments they should complete.`,
-  },
-  color: '#FFA000',
-  contentContainers: [
-    ActivityType.Section,
-    ContentContainerType.AssessmentPool,
   ],
 };
 
@@ -211,8 +197,8 @@ const AssessmentPoolConfig: ContentContainerConfig = {
       - Format the 'question' content and 'feedback' content as a HTML with
         suitable tags.
       - Apply text-body-2 and mb-5 classes to the paragraph html tags
-      You are trying to teach the audience, so make sure the content is easy to
-      understand, has a friendly tone and is engaging to the reader.`,
+        You are trying to teach the audience, so make sure the content is easy to
+        understand, has a friendly tone and is engaging to the reader.`,
       isAssessment: true,
     },
   },
@@ -252,7 +238,7 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
-  structure: [ModuleConfig, PageConfig, LessonConfig, KnowledgeCheckConfig],
+  structure: [ModuleConfig, PageConfig, KnowledgeCheckConfig],
   contentContainers: [SectionConfig, AssessmentPoolConfig, ExamConfig],
   elementMeta: [
     {
@@ -271,7 +257,7 @@ export const SCHEMA: Schema = {
           label: 'Related Content',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [ContentElementType.Image],
+          allowedElementConfig: [ContentElementType.Image],
         },
       ],
     },
@@ -283,7 +269,7 @@ export const SCHEMA: Schema = {
           label: 'Related Content',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [
+          allowedElementConfig: [
             ContentElementType.TipTapHtml,
             ContentElementType.Image,
           ],
@@ -294,7 +280,7 @@ export const SCHEMA: Schema = {
           label: 'Prerequisites',
           multiple: true,
           placeholder: 'Click to select',
-          allowedTypes: [ContentElementType.TipTapHtml],
+          allowedElementConfig: [ContentElementType.TipTapHtml],
         },
       ],
     },
