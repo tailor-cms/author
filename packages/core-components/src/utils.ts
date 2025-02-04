@@ -8,3 +8,6 @@ export const questionType = new Map([
   ['TR', 'TEXT_RESPONSE'],
   ['FB', 'FILL_BLANK'],
 ]);
+
+const LEGACY_QUESTION_TYPES = ['ASSESSMENT', 'REFLECTION', 'QUESTION'];
+export const isLegacyQuestion = (type) => LEGACY_QUESTION_TYPES.includes(type);

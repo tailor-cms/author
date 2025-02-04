@@ -27,7 +27,7 @@
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <template v-if="!!componentManifest">
       <QuestionElement
-        v-if="isLegacyQuestion || isQuestion"
+        v-if="isLegacyQuestion(element.type) || isQuestion"
         :icon="componentManifest.ui.icon"
         :type="componentManifest.name"
         v-bind="{
@@ -39,9 +39,9 @@
           isFocused,
           isDragged,
           isDisabled,
-          isLegacyQuestion,
           dense,
         }"
+        :is-legacy-question="isLegacyQuestion(element.type)"
         @add="emit('add', $event)"
         @delete="emit('delete')"
         @focus="onSelect"
@@ -123,13 +123,11 @@ import type { Meta } from '@tailor-cms/interfaces/common';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { User } from '@tailor-cms/interfaces/user';
 
-import { questionType } from '../utils';
+import { isLegacyQuestion, questionType } from '../utils';
 import ActiveUsers from './ActiveUsers.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
-
-const LEGACY_QUESTION_TYPES = ['ASSESSMENT', 'REFLECTION', 'QUESTION'];
 
 interface Props {
   element: ContentElement;
@@ -173,7 +171,7 @@ const currentUser = getCurrentUser?.();
 const activeUsers = ref<User[]>([]);
 
 const id = computed(() => getElementId(props.element));
-const elementType = computed(() => isLegacyQuestion.value
+const elementType = computed(() => isLegacyQuestion(props.element.type)
   ? questionType.get(props.element.data.type as string) || ''
   : props.element.type,
 );
@@ -183,8 +181,6 @@ const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
 const componentManifest = computed(() => ceRegistry.get(elementType.value));
-const isLegacyQuestion = computed(() =>
-  LEGACY_QUESTION_TYPES.includes(props.element.type));
 const isQuestion = computed(() => componentManifest.value?.isQuestion || false);
 
 onBeforeUnmount(() => {

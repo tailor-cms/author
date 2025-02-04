@@ -92,6 +92,7 @@ import { getComponentName } from '@tailor-cms/utils';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
+import sortBy from 'lodash/sortBy';
 
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
@@ -134,9 +135,8 @@ const save = (data: ContentElement['data']) => {
 };
 
 const question = computed(() => {
-  const question = props.element.data.question as string[];
   const embeds = props.element.data.embeds as Record<string, ContentElement>;
-  const textAssets = getTextAssets(question.map((id) => embeds[id]));
+  const textAssets = getTextAssets(sortBy(embeds, 'position'));
   const questionText = map(textAssets, 'data.content').join(' ');
   return questionText.replace(htmlRegex, '').replace(blankRegex, () => '____');
 });

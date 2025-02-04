@@ -85,6 +85,7 @@ import map from 'lodash/map';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import sortBy from 'lodash/sortBy';
 
+import { isLegacyQuestion, questionType } from '../../utils';
 import ContentPreview from '../ContentPreview/index.vue';
 import TailorDialog from '../TailorDialog.vue';
 import { useLoader } from '../../composables/useLoader';
@@ -231,8 +232,14 @@ const assignElements = (
 const isAllowedType = (el: ContentElement) => {
   if (!props.allowedElementConfig.length) return true;
   return props.allowedElementConfig.some((it: any) => {
-    const sameType = it.type === el.type;
-    const sameConfig = it.config.isGradable === el.data.isGradable;
+    const type = isLegacyQuestion(el.type)
+      ? questionType.get(el.data.type as string) || ''
+      : el.type;
+    const sameType = it.type === type;
+    const isGradable = isLegacyQuestion(el.type)
+      ? el.type === 'ASSESSMENT'
+      : el.data.isGradable;
+    const sameConfig = it.config.isGradable === isGradable;
     return sameType && sameConfig;
   });
 };

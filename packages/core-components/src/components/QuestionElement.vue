@@ -66,7 +66,8 @@ const convertLegacyElement = (element: ContentElement) => {
     return acc;
   }, {});
   const type = questionType.get(element.data.type as string);
-  const data = { ...omit(element.data, 'question'), embeds };
+  const isGradable = element.type === 'ASSESSMENT';
+  const data = { ...omit(element.data, 'question'), embeds, isGradable };
   return { ...element, data, type };
 };
 
@@ -123,19 +124,20 @@ const save = async () => {
   if (!valid) return;
   if (!props.isLegacyQuestion) return emit('save', editedElement.data);
   const { embeds, ...data } = cloneDeep(editedElement.data);
-  const question = omit(sortBy(embeds, 'position'), 'position');
-  return emit('save', { ...data, question, type: props.element.type });
+  const question = sortBy(embeds, 'position').map((it) => omit(it, 'position'));
+  const type = props.element.data.type;
+  return emit('save', { ...data, question, type });
 };
 
 const cancel = () => {
-  editedElement.data = cloneDeep(props.element.data);
+  editedElement.data = initializeElement().data;
 };
 
 watch(
   () => props.element,
   () => {
     if (!isDirty.value) return;
-    editedElement.data = cloneDeep(props.element.data);
+    editedElement.data = initializeElement().data;
   },
 );
 </script>
