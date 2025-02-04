@@ -1,11 +1,7 @@
 <template>
   <VCard class="question-container pa-4">
     <VForm ref="form" class="tce-root" @submit.prevent="submit">
-      <QuestionPrompt
-        :embeds="data.embeds"
-        :question="data.question"
-        class="mb-4"
-      />
+      <QuestionPrompt :embeds="data.embeds" class="mb-4" />
       <div v-if="data.hint" class="d-flex justify-end text-subtitle-2">
         <QuestionHint :hint="data.hint" />
       </div>

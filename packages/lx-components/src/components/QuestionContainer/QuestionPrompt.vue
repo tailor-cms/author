@@ -7,7 +7,6 @@ import { computed } from 'vue';
 import sortBy from 'lodash/sortBy';
 
 const props = defineProps<{
-  question: string[];
   embeds: Record<string, any>;
 }>();
 
