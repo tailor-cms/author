@@ -53,7 +53,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
-import sortBy from 'lodash/sortBy';
+import map from 'lodash/map';
 
 import { questionType } from '../utils';
 
@@ -67,7 +67,12 @@ const convertLegacyElement = (element: ContentElement) => {
   }, {});
   const type = questionType.get(element.data.type as string);
   const isGradable = element.type === 'ASSESSMENT';
-  const data = { ...omit(element.data, 'question'), embeds, isGradable };
+  const data = {
+    ...omit(element.data, 'question'),
+    question: map(question, 'id'),
+    isGradable,
+    embeds,
+  };
   return { ...element, data, type };
 };
 
@@ -115,7 +120,7 @@ const form = ref();
 const editedElement = reactive(initializeElement());
 
 const isDirty = computed(
-  () => !isEqual(editedElement.data, props.element.data),
+  () => !isEqual(editedElement.data, initializeElement().data),
 );
 
 const save = async () => {
@@ -123,10 +128,13 @@ const save = async () => {
   const { valid } = await form.value.validate();
   if (!valid) return;
   if (!props.isLegacyQuestion) return emit('save', editedElement.data);
-  const { embeds, ...data } = cloneDeep(editedElement.data);
-  const question = sortBy(embeds, 'position').map((it) => omit(it, 'position'));
-  const type = props.element.data.type;
-  return emit('save', { ...data, question, type });
+  const data = cloneDeep(editedElement.data);
+  const question = data.question as any[];
+  return emit('save', {
+    ...omit(data, 'embeds', 'question', 'isGradable'),
+    question: map(question, (id) => omit(data.embeds[id], 'position')),
+    type: props.element.data.type,
+  });
 };
 
 const cancel = () => {
