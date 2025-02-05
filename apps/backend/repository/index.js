@@ -10,7 +10,7 @@ import db from '#shared/database/index.js';
 import processQuery from '#shared/util/processListQuery.js';
 
 /* eslint-disable */
-import AccesssService from '#app/shared/auth/Accesss.service.js';
+import AccesssService from '#app/shared/auth/accesss.service.js';
 import activity from '../activity/index.js';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
