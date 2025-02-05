@@ -4,18 +4,41 @@ import { auth as api } from '@/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);
+  const userGroups = ref<any[]>([]);
   const strategy = ref<string | null>(null);
 
   const isAdmin = computed(() => user.value?.role === 'ADMIN');
   const isDefaultUser = computed(() => user.value?.role === 'USER');
-
   const isOidcActive = computed(() => strategy.value === 'oidc');
+
+  const hasGroupBoundAccess = computed(
+    () => !isAdmin.value && !isDefaultUser.value,
+  );
+
+  const hasDefaultUserGroup = computed(() => {
+    if (!hasGroupBoundAccess.value) return false;
+    return userGroups.value.length === 1;
+  });
+
+  const groupsWithCreateRepositoryAccess = computed(() =>
+    userGroups.value.filter(
+      (group) => group.role === 'ADMIN' || group.role === 'USER',
+    ),
+  );
+
+  const hasCreateRepositoryAccess = computed(
+    () =>
+      !hasGroupBoundAccess.value ||
+      groupsWithCreateRepositoryAccess.value.length > 0,
+  );
 
   function $reset(
     userData: User | null = null,
+    userGroupData: any[] = [],
     authStrategy: string | null = null,
   ) {
     user.value = userData;
+    userGroups.value = userGroupData;
     strategy.value = authStrategy;
   }
 
@@ -59,7 +82,9 @@ export const useAuthStore = defineStore('auth', () => {
   function fetchUserInfo() {
     return api
       .getUserInfo()
-      .then(({ data: { user, authData } }) => $reset(user, authData?.strategy))
+      .then(({ data: { user, userGroups, authData } }) =>
+        $reset(user, userGroups, authData?.strategy),
+      )
       .catch(() => $reset());
   }
 
@@ -71,9 +96,15 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
+    userGroups,
+    groupsWithCreateRepositoryAccess,
+    strategy,
+    isOidcActive,
     isAdmin,
     isDefaultUser,
-    isOidcActive,
+    hasGroupBoundAccess,
+    hasDefaultUserGroup,
+    hasCreateRepositoryAccess,
     login,
     logout,
     forgotPassword,

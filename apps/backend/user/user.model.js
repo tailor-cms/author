@@ -110,12 +110,23 @@ class User extends Model {
     };
   }
 
-  static associate({ ActivityStatus, Comment, Repository, RepositoryUser }) {
+  static associate({
+    ActivityStatus,
+    Comment,
+    Repository,
+    RepositoryUser,
+    UserGroup,
+    UserGroupMember,
+  }) {
     this.hasMany(Comment, {
       foreignKey: { name: 'authorId', field: 'author_id' },
     });
     this.belongsToMany(Repository, {
       through: RepositoryUser,
+      foreignKey: { name: 'userId', field: 'user_id' },
+    });
+    this.belongsToMany(UserGroup, {
+      through: UserGroupMember,
       foreignKey: { name: 'userId', field: 'user_id' },
     });
     this.hasMany(ActivityStatus, {
@@ -226,6 +237,23 @@ class User extends Model {
     const { secret } = authConfig.jwt;
     if (audience === Audience.Scope.Access) return secret;
     return [secret, this.password, this.createdAt.getTime()].join('');
+  }
+
+  async getAccessibleUserGroups() {
+    if (this.isAdmin()) {
+      const UserGroup = this.sequelize.model('UserGroup');
+      const groups = await UserGroup.findAll();
+      return groups.map((group) => ({
+        ...group.dataValues,
+        role: 'ADMIN',
+      }));
+    }
+    return this.getUserGroups().then((groups) =>
+      groups.map((group) => ({
+        ...pick(group.dataValues, ['id', 'name']),
+        role: group?.userGroupMember?.role,
+      })),
+    );
   }
 }
 

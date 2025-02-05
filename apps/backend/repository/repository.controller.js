@@ -19,6 +19,7 @@ import { createError } from '#shared/error/helpers.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 import { createLogger } from '#logger';
 import { general } from '#config';
+import UserGroup from '#app/user-group/userGroup.model.js';
 
 const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 
@@ -36,6 +37,7 @@ const {
   Revision,
   sequelize,
   Tag,
+  RepositoryUserGroup,
   User,
 } = db;
 
@@ -76,7 +78,7 @@ const includeRepositoryUser = (user, query) => {
   const options =
     query && query.pinned
       ? { where: { userId: user.id, pinned: true }, required: true }
-      : { where: { userId: user.id }, required: !user.isAdmin() };
+      : { where: { userId: user.id }, required: false };
   return { model: RepositoryUser, ...options };
 };
 
@@ -92,15 +94,25 @@ async function index({ query, user, opts }, res) {
   const schemas = query.schemas || general.availableSchemas;
   if (search) opts.where.name = getFilter(search);
   if (name) opts.where.name = name;
-  if (search) opts.where.name = getFilter(search);
-  if (name) opts.where.name = name;
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   opts.distinct = true;
+  opts.subQuery = false;
   opts.include = [
     includeRepositoryUser(user, query),
+    { model: RepositoryUserGroup },
     ...includeRepositoryTags(query),
   ];
+  if (!user.isAdmin()) {
+    opts.where[Op.or] = [
+      { '$repositoryUsers.user_id$': user.id },
+      {
+        '$repositoryUserGroups.group_id$': {
+          [Op.in]: user.userGroups.map((it) => it.id),
+        },
+      },
+    ];
+  }
   const { rows: repositories, count } = await Repository.findAndCountAll(opts);
   const revisions = await Revision.findAll({
     where: { repositoryId: repositories.map((it) => it.id) },
@@ -136,6 +148,9 @@ async function create({ user, body }, res) {
     userId: user.id,
     role: role.ADMIN,
   });
+  if (body.userGroupIds) {
+    await repository.associateWithUserGroups(body.userGroupIds, user);
+  }
   return res.json({ data: repository });
 }
 
@@ -143,6 +158,7 @@ async function get({ repository, user }, res) {
   const include = [
     includeLastRevision(),
     includeRepositoryUser(user),
+    { model: UserGroup },
     { model: Tag },
   ];
   await repository.reload({ include });
@@ -214,6 +230,21 @@ function removeUser(req, res) {
     .then((user) => user || createError(NOT_FOUND, 'User not found'))
     .then(() => RepositoryUser.destroy({ where, force: true }))
     .then(() => res.end());
+}
+
+async function addUserGroup({ repository, body }, res) {
+  const { userGroupId } = body;
+  if (!body.userGroupId) return createError(NOT_FOUND, 'Invalid request');
+  const userGroup = await UserGroup.findByPk(userGroupId);
+  if (!userGroup) return createError(NOT_FOUND, 'User group not found');
+  await repository.addUserGroup([userGroup]);
+  return res.json({ data: userGroup });
+}
+
+async function removeUserGroup({ params: { repositoryId, userGroupId } }, res) {
+  const where = { repositoryId, groupId: userGroupId };
+  await RepositoryUserGroup.destroy({ where });
+  return res.status(NO_CONTENT).send();
 }
 
 function findOrCreateRole(repository, user, role) {
@@ -289,8 +320,8 @@ function exportRepository({ repository, params }, res) {
 function importRepository({ body, file, user }, res) {
   log(`[importRepository] initiated, userId: ${user.id}, name: ${body.name}`);
   const { path } = file;
-  const { description, name } = body;
-  const options = { description, name, userId: user.id };
+  const { name, description, userGroupIds } = body;
+  const options = { description, name, userId: user.id, userGroupIds };
   return TransferService.createImportJob(path, options)
     .toPromise()
     .finally(() => {
@@ -326,6 +357,8 @@ export default {
   getUsers,
   upsertUser,
   removeUser,
+  addUserGroup,
+  removeUserGroup,
   publishRepoInfo,
   addTag,
   removeTag,

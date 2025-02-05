@@ -1,43 +1,45 @@
 import path from 'node:path';
-import { NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
 import express from 'express';
 import multer from 'multer';
+import { StatusCodes } from 'http-status-codes';
 import ctrl from './repository.controller.js';
 import feed from './feed/index.js';
 import { authorize } from '#shared/auth/mw.js';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import processQuery from '#shared/util/processListQuery.js';
+
 /* eslint-disable */
+import AccesssService from '#app/shared/auth/Accesss.service.js';
 import activity from '../activity/index.js';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
-import { role as RoleConfig } from '@tailor-cms/common';
 import storageRouter from '#shared/storage/storage.router.js';
 /* eslint-enable */
 
-const { Repository } = db;
+const { Repository, UserGroup } = db;
 const router = express.Router();
 
 // NOTE: disk storage engine expects an object to be passed as the first argument
 // https://github.com/expressjs/multer/blob/6b5fff5/storage/disk.js#L17-L18
 const upload = multer({ storage: multer.diskStorage({}) });
-const UserRole = RoleConfig.user;
 
 router.post(
   '/import',
-  authorize(UserRole.USER),
+  AccesssService.hasCreateRepositoryAccess,
   upload.single('archive'),
   ctrl.import,
 );
 
-router.param('repositoryId', getRepository).use('/:repositoryId', hasAccess);
+router
+  .param('repositoryId', getRepository)
+  .use('/:repositoryId', AccesssService.hasRepositoryAccess);
 
 router
   .route('/')
   .get(processQuery({ limit: 100 }), ctrl.index)
-  .post(authorize(UserRole.USER), ctrl.create);
+  .post(AccesssService.hasCreateRepositoryAccess, ctrl.create);
 
 router
   .route('/:repositoryId')
@@ -57,6 +59,8 @@ router
   .post('/:repositoryId/export/:jobId', ctrl.export)
   .post('/:repositoryId/users', ctrl.upsertUser)
   .delete('/:repositoryId/users/:userId', ctrl.removeUser)
+  .post('/:repositoryId/user-group', ctrl.addUserGroup)
+  .delete('/:repositoryId/user-group/:userGroupId', ctrl.removeUserGroup)
   .post('/:repositoryId/tags', ctrl.addTag)
   .delete('/:repositoryId/tags/:tagId', ctrl.removeTag);
 
@@ -75,25 +79,13 @@ function mount(router, mountPath, subrouter) {
 }
 
 function getRepository(req, _res, next, repositoryId) {
-  return Repository.findByPk(repositoryId, { paranoid: false })
-    .then(
-      (repository) =>
-        repository || createError(NOT_FOUND, 'Repository not found'),
-    )
+  return Repository.findByPk(repositoryId, {
+    include: [{ model: UserGroup, required: false }],
+    paranoid: false,
+  })
+    .then((item) => item || createError(StatusCodes.NOT_FOUND, 'Not found'))
     .then((repository) => {
       req.repository = repository;
-      next();
-    });
-}
-
-function hasAccess(req, _res, next) {
-  const { user, repository } = req;
-  if (user.isAdmin()) return next();
-  return repository
-    .getUser(user)
-    .then((user) => user || createError(UNAUTHORIZED, 'Access restricted'))
-    .then((user) => {
-      req.repositoryRole = user.repositoryUser.role;
       next();
     });
 }
