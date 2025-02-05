@@ -10,4 +10,5 @@ export const questionType = new Map([
 ]);
 
 const LEGACY_QUESTION_TYPES = ['ASSESSMENT', 'REFLECTION', 'QUESTION'];
-export const isLegacyQuestion = (type) => LEGACY_QUESTION_TYPES.includes(type);
+export const isLegacyQuestion = (type: string) =>
+  LEGACY_QUESTION_TYPES.includes(type);

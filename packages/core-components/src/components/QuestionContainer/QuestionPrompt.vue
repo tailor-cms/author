@@ -2,7 +2,7 @@
   <div class="mb-4">
     <div class="text-subtitle-2 mb-2">Question</div>
     <VInput
-      :model-value="Object.values(elementData.embeds)"
+      :model-value="elementData.question"
       :rules="[requiredRule]"
     >
       <div
@@ -31,7 +31,7 @@
           class="text-center"
           dense
           @delete="deleteEmbed($event.id)"
-          @save="emit('update', { embeds: $event.embeds })"
+          @save="saveQuestion($event.embeds)"
         />
       </div>
     </VInput>
@@ -40,8 +40,11 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
+import map from 'lodash/map';
 import omit from 'lodash/omit';
 import size from 'lodash/size';
+import sortBy from 'lodash/sortBy';
+import without from 'lodash/without';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 const props = defineProps<{
@@ -62,8 +65,17 @@ const alertMsg = computed(() => {
     : 'Click the button below to add a question element.';
 });
 
+const saveQuestion = (embeds: any) => {
+  const question = map(sortBy(embeds, 'position'), 'id');
+  emit('update', { question, embeds });
+};
+
 const deleteEmbed = (id: string) => {
-  emit('update', { embeds: omit(props.elementData.embeds, id) });
+  const { embeds, question } = props.elementData;
+  emit('update', {
+    embeds: omit(embeds, id),
+    question: without(question, id),
+  });
 };
 
 const requiredRule = (val: string[]) => {
@@ -71,7 +83,7 @@ const requiredRule = (val: string[]) => {
 };
 
 editorChannel.on('element:focus', (element: any = {}) => {
-  isFocused.value = Object.keys(props.elementData.embeds).includes(element.id);
+  isFocused.value = props.elementData.question.includes(element.id);
 });
 </script>
 
