@@ -19,6 +19,7 @@ import { createError } from '#shared/error/helpers.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 import { createLogger } from '#logger';
 import { general } from '#config';
+import UserGroup from '#app/user-group/userGroup.model.js';
 
 const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 
@@ -157,6 +158,7 @@ async function get({ repository, user }, res) {
   const include = [
     includeLastRevision(),
     includeRepositoryUser(user),
+    { model: UserGroup },
     { model: Tag },
   ];
   await repository.reload({ include });
@@ -228,6 +230,21 @@ function removeUser(req, res) {
     .then((user) => user || createError(NOT_FOUND, 'User not found'))
     .then(() => RepositoryUser.destroy({ where, force: true }))
     .then(() => res.end());
+}
+
+async function addUserGroup({ repository, body }, res) {
+  const { userGroupId } = body;
+  if (!body.userGroupId) return createError(NOT_FOUND, 'Invalid request');
+  const userGroup = await UserGroup.findByPk(userGroupId);
+  if (!userGroup) return createError(NOT_FOUND, 'User group not found');
+  await repository.addUserGroup([userGroup]);
+  return res.json({ data: userGroup });
+}
+
+async function removeUserGroup({ params: { repositoryId, userGroupId } }, res) {
+  const where = { repositoryId, groupId: userGroupId };
+  await RepositoryUserGroup.destroy({ where });
+  return res.status(NO_CONTENT).send();
 }
 
 function findOrCreateRole(repository, user, role) {
@@ -340,6 +357,8 @@ export default {
   getUsers,
   upsertUser,
   removeUser,
+  addUserGroup,
+  removeUserGroup,
   publishRepoInfo,
   addTag,
   removeTag,

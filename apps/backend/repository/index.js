@@ -59,6 +59,8 @@ router
   .post('/:repositoryId/export/:jobId', ctrl.export)
   .post('/:repositoryId/users', ctrl.upsertUser)
   .delete('/:repositoryId/users/:userId', ctrl.removeUser)
+  .post('/:repositoryId/user-group', ctrl.addUserGroup)
+  .delete('/:repositoryId/user-group/:userGroupId', ctrl.removeUserGroup)
   .post('/:repositoryId/tags', ctrl.addTag)
   .delete('/:repositoryId/tags/:tagId', ctrl.removeTag);
 
