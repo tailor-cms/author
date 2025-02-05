@@ -11,7 +11,7 @@
         :class="{ focused: isFocused }"
       >
         <VAlert
-          v-if="!elementData.question?.length"
+          v-if="!size(elementData.embeds)"
           :text="alertMsg"
           class="mx-6 mt-4 mb-2"
           color="primary-darken-2"
@@ -42,6 +42,7 @@
 import { computed, inject, ref } from 'vue';
 import map from 'lodash/map';
 import omit from 'lodash/omit';
+import size from 'lodash/size';
 import sortBy from 'lodash/sortBy';
 import without from 'lodash/without';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';

@@ -25,26 +25,50 @@
       />
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
-    <component
-      :is="componentName"
-      v-if="isComponentAvailable"
-      v-bind="{
-        ...$attrs,
-        embedElementConfig,
-        element,
-        references,
-        isFocused,
-        isDragged,
-        isDisabled,
-        dense,
-      }"
-      :id="`element_${id}`"
-      @add="emit('add', $event)"
-      @delete="emit('delete')"
-      @focus="onSelect"
-      @link="onLink"
-      @save="onSave"
-    />
+    <template v-if="!!componentManifest">
+      <QuestionElement
+        v-if="isLegacyQuestion(element.type) || isQuestion"
+        :icon="componentManifest.ui.icon"
+        :type="componentManifest.name"
+        v-bind="{
+          ...$attrs,
+          componentName,
+          embedElementConfig,
+          element,
+          references,
+          isFocused,
+          isDragged,
+          isDisabled,
+          dense,
+        }"
+        :is-legacy-question="isLegacyQuestion(element.type)"
+        @add="emit('add', $event)"
+        @delete="emit('delete')"
+        @focus="onSelect"
+        @link="onLink"
+        @save="onSave"
+      />
+      <component
+        :is="componentName"
+        v-else
+        v-bind="{
+          ...$attrs,
+          embedElementConfig,
+          element,
+          references,
+          isFocused,
+          isDragged,
+          isDisabled,
+          dense,
+        }"
+        :id="`element_${id}`"
+        @add="emit('add', $event)"
+        @delete="emit('delete')"
+        @focus="onSelect"
+        @link="onLink"
+        @save="onSave"
+      />
+    </template>
     <VSheet v-else class="py-10" color="primary-lighten-5">
       <div class="text-h6">
         {{ element.type.replace('_', ' ') }}
@@ -91,17 +115,19 @@ import {
   provide,
   ref,
 } from 'vue';
-import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import { getComponentName, getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import type { Meta } from '@tailor-cms/interfaces/common';
+import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { User } from '@tailor-cms/interfaces/user';
 
+import { isLegacyQuestion, questionType } from '../utils';
 import ActiveUsers from './ActiveUsers.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
+import QuestionElement from './QuestionElement.vue';
 
 interface Props {
   element: ContentElement;
@@ -145,14 +171,17 @@ const currentUser = getCurrentUser?.();
 const activeUsers = ref<User[]>([]);
 
 const id = computed(() => getElementId(props.element));
-const componentName = computed(() => getComponentName(props.element.type));
+const elementType = computed(() => isLegacyQuestion(props.element.type)
+  ? questionType.get(props.element.data.type as string) || ''
+  : props.element.type,
+);
+const componentName = computed(() => getComponentName(elementType.value));
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
-const isComponentAvailable = computed(
-  () => !!ceRegistry.get(props.element.type),
-);
+const componentManifest = computed(() => ceRegistry.get(elementType.value));
+const isQuestion = computed(() => componentManifest.value?.isQuestion || false);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
