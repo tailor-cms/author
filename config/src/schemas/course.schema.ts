@@ -92,8 +92,7 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.PageBreak,
         ContentElementType.Pdf,
         ContentElementType.Accordion,
-        // TODO: Need to be migrated
-        // ContentElementType.Table,
+        ContentElementType.Table,
         ContentElementType.Modal,
         ContentElementType.Carousel,
       ],
