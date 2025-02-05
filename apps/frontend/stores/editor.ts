@@ -45,8 +45,8 @@ export const useEditorStore = defineStore('editor', () => {
     if (!selectedActivity.value) return [];
     const parents = flatMap(rootContainerGroups.value);
     return parents.reduce((acc, parent) => {
-      const descentants = getDescendants(repositoryStore.activities, parent);
-      acc.push(parent, ...descentants as StoreActivity[]);
+      const descendants = getDescendants(repositoryStore.activities, parent);
+      acc.push(parent, ...descendants as StoreActivity[]);
       return acc;
     }, [] as StoreActivity[]);
   });
