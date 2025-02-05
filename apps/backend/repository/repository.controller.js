@@ -105,7 +105,10 @@ async function index({ query, user, opts }, res) {
   ];
   if (!user.isAdmin()) {
     opts.where[Op.or] = [
-      { '$repositoryUsers.user_id$': user.id },
+      {
+        '$repositoryUsers.user_id$': user.id,
+        '$repositoryUsers.has_access$': true,
+      },
       {
         '$repositoryUserGroups.group_id$': {
           [Op.in]: user.userGroups.map((it) => it.id),
@@ -147,6 +150,7 @@ async function create({ user, body }, res) {
     repositoryId: repository.id,
     userId: user.id,
     role: role.ADMIN,
+    hasAccess: true,
   });
   if (body.userGroupIds) {
     await repository.associateWithUserGroups(body.userGroupIds, user);
@@ -202,14 +206,18 @@ function publishRepoInfo({ repository }, res) {
 }
 
 function getUsers(req, res) {
-  return req.repository.getUsers().then((users) =>
-    res.json({
-      data: map(users, (it) => ({
-        ...it.profile,
-        repositoryRole: it.repositoryUser.role,
-      })),
-    }),
-  );
+  return req.repository
+    .getUsers({
+      where: { '$repositoryUser.has_access$': true },
+    })
+    .then((users) =>
+      res.json({
+        data: map(users, (it) => ({
+          ...it.profile,
+          repositoryRole: it.repositoryUser.role,
+        })),
+      }),
+    );
 }
 
 function upsertUser({ repository, body }, res) {
@@ -250,10 +258,15 @@ async function removeUserGroup({ params: { repositoryId, userGroupId } }, res) {
 function findOrCreateRole(repository, user, role) {
   return RepositoryUser.findOrCreate({
     where: { repositoryId: repository.id, userId: user.id },
-    defaults: { repositoryId: repository.id, userId: user.id, role },
+    defaults: {
+      repositoryId: repository.id,
+      userId: user.id,
+      role,
+      hasAccess: true,
+    },
     paranoid: false,
   })
-    .then(([cu, created]) => (created ? cu : cu.update({ role })))
+    .then(([cu, isNew]) => (isNew ? cu : cu.update({ role, hasAccess: true })))
     .then((cu) => (cu.deletedAt ? cu.restore() : cu))
     .then(() => user);
 }

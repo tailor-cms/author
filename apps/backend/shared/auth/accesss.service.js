@@ -1,3 +1,4 @@
+import first from 'lodash/first.js';
 import intersection from 'lodash/intersection.js';
 import { role } from '@tailor-cms/common';
 import { StatusCodes } from 'http-status-codes';
@@ -14,8 +15,12 @@ class AccessService {
     // If user is a system admin, allow all
     if (user.isAdmin()) return next();
     // Get user relationship with the repository, if exists allow access
-    const userRelationship = await repository.getUser(user);
-    if (userRelationship) return next();
+    const userRelationship = first(
+      await repository.getRepositoryUsers({
+        where: { userId: user.id },
+      }),
+    );
+    if (userRelationship && userRelationship.hasAccess) return next();
     // Check if user is a member of any user group that has access to the repository
     const repositoryGroupIds = repository.userGroups.map((it) => it.id);
     const userGroupIds = user.userGroups.map((it) => it.id);
