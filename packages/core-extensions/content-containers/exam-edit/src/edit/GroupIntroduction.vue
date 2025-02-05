@@ -13,8 +13,8 @@
     <ElementList
       :elements="elements"
       :activity="group"
-      :supported-element-config="supportedElementConfig"
-      :layout="true"
+      :supported-element-config="introductionElementConfig"
+      layout
       class="pa-4"
       @add="$emit('save:element', $event)"
       @update="$emit('reorder:element', $event)">
@@ -34,9 +34,8 @@
 import { ContainedContent, ElementList } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import cloneDeep from 'lodash/cloneDeep';
-import { computed } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
+import { introductionElementConfig } from './config';
 
 defineProps<{
   group: Activity;
@@ -48,16 +47,6 @@ const emit = defineEmits([
   'reorder:element',
   'delete:element',
 ]);
-
-const supportedElementConfig = computed(() => [{
-  name: 'Content Elements',
-  items: [
-    { id: ContentElementType.Html },
-    { id: ContentElementType.Image },
-    { id: ContentElementType.Video },
-    { id: ContentElementType.Embed },
-  ],
-}]);
 
 const save = (element: any, data: any) => {
   element = cloneDeep(element);

@@ -1,7 +1,6 @@
 <template>
   <VCard class="assessment-group">
     <VSheet class="d-flex align-center ga-2 px-4 py-3">
-      <VIcon icon="mdi-help-circle" size="small" />
       <h3>Question group {{ numberToLetter(position) }}</h3>
       <VSpacer />
       <VBtn
@@ -13,7 +12,6 @@
         Delete Group
       </VBtn>
     </VSheet>
-    <VDivider />
     <div class="pa-6">
       <VTextField
         v-model.number="timeLimit"
