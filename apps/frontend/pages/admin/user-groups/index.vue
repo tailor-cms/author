@@ -25,16 +25,14 @@
         />
       </VCol>
     </VRow>
-    <VDataTableServer
+    <VDataTable
       :headers="headers"
       :items="userGroups"
       :items-length="totalItems"
-      :items-per-page="dataTable.itemsPerPage"
-      :items-per-page-options="[10, 25, 50, 100]"
       :loading="isLoading"
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
-      class="pt-4"
+      class="pt-4 px-4"
       item-value="id"
       must-sort
       @update:options="fetch"
@@ -43,7 +41,11 @@
       <template #item="{ item }">
         <tr :key="item.id">
           <td class="text-no-wrap text-left">
-            {{ item.name }}
+            <NuxtLink
+              :to="{ name: 'user-group', params: { userGroupId: item.id } }"
+              class="text-primary-darken-4">
+              {{ item.name }}
+            </NuxtLink>
           </td>
           <td class="text-no-wrap text-left">
             <VBtn
@@ -66,7 +68,7 @@
           </td>
         </tr>
       </template>
-    </VDataTableServer>
+    </VDataTable>
     <UserGroupDialog
       :group-data="editedGroup"
       :user-groups="userGroups"
@@ -102,11 +104,11 @@ const headers = [
 ];
 
 const isLoading = ref(true);
-const userGroups = ref<any[]>([]);
-const dataTable = reactive(defaultPage());
-const totalItems = ref(0);
-const filter = ref('');
 const isGroupDialogVisible = ref(false);
+const userGroups = ref<any[]>([]);
+const totalItems = ref(0);
+const dataTable = reactive(defaultPage());
+const filter = ref('');
 const editedGroup = ref(null);
 
 const showGroupDialog = (group = null) => {
