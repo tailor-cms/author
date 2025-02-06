@@ -70,7 +70,7 @@ async function processRepository(repository, _enc, { context, transaction }) {
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
   const entity = await Repository.create(repositoryRecord, options);
   const { id } = entity;
-  const userRecord = { userId, repositoryId: id, role: ADMIN };
+  const userRecord = { userId, repositoryId: id, role: ADMIN, hasAccess: true };
   await RepositoryUser.create(userRecord, { transaction });
   if (userGroupIds?.length) {
     const user = await User.findByPk(userId);
