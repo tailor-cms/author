@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div class="group-management">
     <div class="d-flex py-6 px-4">
       <VSpacer />
       <VBtn
+        aria-label="Add user group"
         class="px-3"
         color="primary-darken-2"
         variant="tonal"
@@ -39,7 +40,7 @@
       @update:sort-by="($event) => (dataTable.sortBy = $event)"
     >
       <template #item="{ item }">
-        <tr :key="item.id">
+        <tr :key="item.id" class="group-entry">
           <td class="text-no-wrap text-left">
             <NuxtLink
               :to="{ name: 'user-group', params: { userGroupId: item.id } }"
