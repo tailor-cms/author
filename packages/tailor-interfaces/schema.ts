@@ -8,6 +8,12 @@ export interface ElementRegistry {
   questions: ElementManifest[];
   load: (el: ContentElement) => void;
   get: (id: string) => ElementManifest;
+  isLegacyQuestion: (type: string) => boolean;
+  matchesAllowedElementConfig: (
+    el: ContentElement,
+    config: Record<string, any>
+  ) => boolean;
+  getByEntity: (el: ContentElement) => ElementManifest;
 }
 export interface Metadata {
   key: string;

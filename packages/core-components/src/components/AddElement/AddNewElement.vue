@@ -4,8 +4,10 @@
       <div class="d-flex align-end pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
-      <div v-for="group in library" :key="group.name" class="mb-2">
-        <div class="group-heading text-primary-darken-3">{{ group.name }}</div>
+      <div v-for="group in library" :key="group.name" class="mb-2 mx-10">
+        <div class="group-heading text-primary-darken-3 mt-3 mb-2">
+          {{ group.name }}
+        </div>
         <div class="group-elements ga-5">
           <VBtn
             v-for="element in group.items"
@@ -57,8 +59,6 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
 }
 
 .group-heading {
-  margin: 0 2.5rem 0.75rem;
-  padding-top: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1rem;
@@ -69,7 +69,6 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  padding: 0 2.25rem;
 }
 
 .add-element {

@@ -263,7 +263,6 @@ class AIService {
         type: ContentElementType.MultipleChoice,
         data: {
           ...pick(it, ['correct', 'answers', 'hint', 'feedback']),
-          question: [uuid],
           isGradable: true,
           embeds: {
             [uuid]: {
