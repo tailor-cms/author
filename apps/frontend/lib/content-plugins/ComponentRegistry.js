@@ -9,19 +9,6 @@ import noop from 'lodash/noop';
 import pick from 'lodash/pick';
 import sortBy from 'lodash/sortBy';
 
-export const questionType = new Map([
-  ['NR', 'NUMERICAL_RESPONSE'],
-  ['MQ', 'MATCHING_QUESTION'],
-  ['DD', 'DRAG_DROP'],
-  ['MC', 'MULTIPLE_CHOICE'],
-  ['SC', 'SINGLE_CHOICE'],
-  ['TF', 'TRUE_FALSE'],
-  ['TR', 'TEXT_RESPONSE'],
-  ['FB', 'FILL_BLANK'],
-]);
-
-const LEGACY_QUESTION_TYPES = ['ASSESSMENT', 'REFLECTION', 'QUESTION'];
-
 /**
  * Used to resolve component name that should be used for rendering.
  * If a templateId exists then use it. If not it tries to find which type to
@@ -73,30 +60,9 @@ export default class ComponentRegistry {
     return sortBy(cloneDeep(this._registry), 'position');
   }
 
-  get questions() {
-    return this.all.filter((it) => it.isQuestion);
-  }
-
   get(type) {
     if (!type) return null;
     const res = find(this._registry, this._getCondition(type));
     return res && cloneDeep(res);
   }
-
-  isLegacyQuestion(type) {
-    return LEGACY_QUESTION_TYPES.includes(type);
-  }
-
-  isGradableQuestion(el) {
-    return this.isLegacyQuestion(el.type)
-      ? el.type === 'ASSESSMENT'
-      : el.data.isGradable;
-  }
-
-  getByEntity(el) {
-    const isLegacyQuestion = this.isLegacyQuestion(el.type);
-    if (!isLegacyQuestion) return this.get(el.type);
-    const type = questionType.get(el.data.type);
-    return this.get(type ?? el.type);
-  };
 }

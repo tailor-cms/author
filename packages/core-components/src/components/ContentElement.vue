@@ -25,11 +25,11 @@
       />
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
-    <template v-if="!!componentManifest">
+    <template v-if="!!manifest">
       <QuestionElement
         v-if="isQuestion"
-        :icon="componentManifest.ui.icon"
-        :type="componentManifest.name"
+        :icon="manifest.ui.icon"
+        :type="manifest.name"
         v-bind="{
           ...$attrs,
           componentName,
@@ -114,7 +114,7 @@ import {
   provide,
   ref,
 } from 'vue';
-import { getComponentName, getElementId } from '@tailor-cms/utils';
+import { getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
@@ -169,13 +169,13 @@ const currentUser = getCurrentUser?.();
 const activeUsers = ref<User[]>([]);
 
 const id = computed(() => getElementId(props.element));
-const componentManifest = computed(() => ceRegistry.getByEntity(props.element));
-const componentName = computed(() => getComponentName(componentManifest.value?.type));
+const manifest = computed(() => ceRegistry.getByEntity(props.element));
+const componentName = computed(() => manifest.value?.componentName);
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
-const isQuestion = computed(() => componentManifest.value?.isQuestion || false);
+const isQuestion = computed(() => manifest.value?.isQuestion || false);
 
 onBeforeUnmount(() => {
   elementBus.destroy();

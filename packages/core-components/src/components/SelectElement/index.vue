@@ -230,10 +230,10 @@ const assignElements = (
 
 const isAllowedType = (el: ContentElement) => {
   if (!props.allowedElementConfig.length) return true;
-  return props.allowedElementConfig.some((it: any) => {
-    const sameType = it.type === ceRegistry?.getByEntity(el).type;
-    const isGradable = ceRegistry?.isGradableQuestion(el);
-    const sameConfig = it.config.isGradable === isGradable;
+  return props.allowedElementConfig.some(({ type, config }: any) => {
+    if (!ceRegistry) return;
+    const sameType = type === ceRegistry.getByEntity(el).type;
+    const sameConfig = ceRegistry.matchesAllowedElementConfig(el, config);
     return sameType && sameConfig;
   });
 };
