@@ -170,7 +170,7 @@ const activeUsers = ref<User[]>([]);
 
 const id = computed(() => getElementId(props.element));
 const componentManifest = computed(() => ceRegistry.getByEntity(props.element));
-const componentName = computed(() => getComponentName(componentManifest.value?.type));
+const componentName = computed(() => componentManifest.value?.componentName);
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);

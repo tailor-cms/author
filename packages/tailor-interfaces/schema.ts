@@ -9,7 +9,10 @@ export interface ElementRegistry {
   load: (el: ContentElement) => void;
   get: (id: string) => ElementManifest;
   isLegacyQuestion: (type: string) => boolean;
-  isGradableQuestion: (el: ContentElement) => boolean;
+  matchesAllowedElementConfig: (
+    el: ContentElement,
+    config: Record<string, any>
+  ) => boolean;
   getByEntity: (el: ContentElement) => ElementManifest;
 }
 export interface Metadata {
