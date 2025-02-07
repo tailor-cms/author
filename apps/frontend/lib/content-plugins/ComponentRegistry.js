@@ -63,9 +63,6 @@ export default class ComponentRegistry {
   get(type) {
     if (!type) return null;
     const res = find(this._registry, this._getCondition(type));
-    if (!res) return;
-    const element = cloneDeep(res);
-    const componentName = this._getName(getIdentifier(element));
-    return Object.assign(element, { componentName });
+    return res && cloneDeep(res);
   }
 }
