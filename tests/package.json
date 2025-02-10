@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "e2e:functional": "pnpm playwright test --project=chrome --project=setup",
+    "e2e:functional": "pnpm playwright test --project=chrome-admin --project=chrome-default-user --project=chrome-collaborator --project=setup-admin --project=setup-default-user --project=setup-collaborator",
     "e2e:visual": "pnpm percy exec -- playwright test --project=visual",
     "e2e:a11y": "pnpm playwright test --project=a11y --project=setup"
   },

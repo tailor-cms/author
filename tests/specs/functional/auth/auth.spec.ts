@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 import { ForgotPassword, ResetPassword, SignIn } from '../../../pom/auth';
 import ApiClient from '../../../api/ApiClient';
 import { AppBar } from '../../../pom/common/AppBar';
-import { TEST_USER as DEFAULT_USER } from '../../../fixtures/auth';
+import { ADMIN_TEST_USER as USER } from '../../../fixtures/auth';
 
 const { OIDC_TEST_USER_EMAIL, OIDC_TEST_USER_PASSWORD } = process.env;
 
@@ -57,14 +57,14 @@ test('should be able to sign in with OIDC', async ({ page }) => {
 test('should be able to sign in', async ({ page }) => {
   const signInPage = new SignIn(page);
   await signInPage.visit();
-  await signInPage.signIn(DEFAULT_USER.email, DEFAULT_USER.password);
+  await signInPage.signIn(USER.email, USER.password);
   await expect(page).toHaveTitle('Catalog');
 });
 
 test('should be able to sign out', async ({ page }) => {
   const signInPage = new SignIn(page);
   await signInPage.visit();
-  await signInPage.signIn(DEFAULT_USER.email, DEFAULT_USER.password);
+  await signInPage.signIn(USER.email, USER.password);
   await expect(page).toHaveTitle('Catalog');
   const appBar = new AppBar(page);
   await appBar.logout();
@@ -74,7 +74,7 @@ test('should be able to sign out', async ({ page }) => {
 test('sign in should fail in case of wrong credentials', async ({ page }) => {
   const signInPage = new SignIn(page);
   await signInPage.visit();
-  await signInPage.signIn(DEFAULT_USER.email, faker.internet.password());
+  await signInPage.signIn(USER.email, faker.internet.password());
   await expect(
     page.getByText('The email or password you entered is incorrect.'),
   ).toBeVisible();

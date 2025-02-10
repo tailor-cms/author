@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="overflow-hidden" color="primary-lighten-4" rounded="lg">
+  <VSheet class="admin-sidebar overflow-hidden" color="primary-lighten-4" rounded="lg">
     <VList bg-color="transparent" class="text-left mb-6">
       <VListItem
         v-for="{ name, label, icon, query } in routes"

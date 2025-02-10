@@ -5,7 +5,7 @@ const Promise = require('bluebird');
 const users = require('tailor-seed/user.json');
 
 module.exports = {
-  up(queryInterface) {
+  up(qi) {
     const now = new Date();
     const rows = users.map((user) => ({
       ...user,
@@ -16,10 +16,10 @@ module.exports = {
       .then(({ auth: config }) =>
         Promise.map(rows, (user) => encryptPassword(user, config.saltRounds)),
       )
-      .then((users) => queryInterface.bulkInsert('user', users));
+      .then((rows) => qi.bulkInsert('user', rows.sort((a, b) => a.id - b.id)));
   },
-  down(queryInterface) {
-    return queryInterface.bulkDelete('user');
+  down(qi) {
+    return qi.bulkDelete('user');
   },
 };
 
