@@ -68,13 +68,28 @@ class SeedService {
     email = faker.internet.email(),
     password = faker.internet.password(),
     role = roles.ADMIN,
+    userGroup = null,
   ) {
-    await User.create({
+    const user = await User.create({
       email,
       password,
       role,
     });
-    return { email, password };
+    return {
+      email,
+      password,
+      userGroup: userGroup ? await this.attachUserToGroup(user, userGroup) : null,
+    };
+  }
+
+  async attachUserToGroup(user, { name = 'Test Group', role = UserRole.ADMIN }) {
+    const userGroup = await UserGroup.create({ name });
+    await UserGroupMember.create({
+      userId: user.id,
+      groupId: userGroup.id,
+      role,
+    });
+    return userGroup;
   }
 }
 
