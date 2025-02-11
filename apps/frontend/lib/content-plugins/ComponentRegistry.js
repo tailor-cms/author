@@ -60,10 +60,6 @@ export default class ComponentRegistry {
     return sortBy(cloneDeep(this._registry), 'position');
   }
 
-  get questions() {
-    return this.all.filter((it) => it.isQuestion);
-  }
-
   get(type) {
     if (!type) return null;
     const res = find(this._registry, this._getCondition(type));
