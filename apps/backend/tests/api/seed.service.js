@@ -67,7 +67,7 @@ class SeedService {
   async createUser(
     email = faker.internet.email(),
     password = faker.internet.password(),
-    role = roles.ADMIN,
+    role = UserRole.ADMIN,
     userGroup = null,
   ) {
     const user = await User.create({

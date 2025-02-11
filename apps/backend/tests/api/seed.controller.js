@@ -6,7 +6,8 @@ async function resetDatabase(_req, res) {
 }
 
 async function seedUser(req, res) {
-  const user = await SeedService.createUser(req.body);
+  const { email, password, role, userGroup } = req.body;
+  const user = await SeedService.createUser(email, password, role, userGroup);
   return res.json({ data: user });
 }
 
