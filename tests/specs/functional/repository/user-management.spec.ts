@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
 import times from 'lodash/times';
-import userSeed from 'tailor-seed/user.json';
 
 import {
   AddUserDialog,
