@@ -97,11 +97,8 @@ test('should be able to paginate', async ({ page }) => {
     DEFAULT_USERS_PER_PAGE,
   );
   await userManagement.nextPage.click();
-  const userTotal = userCreateCount + userSeed.length;
-  const nextPageTotal =
-    userTotal >= 2 * DEFAULT_USERS_PER_PAGE
-      ? DEFAULT_USERS_PER_PAGE
-      : userTotal - DEFAULT_USERS_PER_PAGE;
+  const userTotal = userCreateCount + 1; // +1 for the repository creator
+  const nextPageTotal = userTotal - DEFAULT_USERS_PER_PAGE;
   await expect(userManagement.userEntriesLocator).toHaveCount(nextPageTotal);
   await userManagement.prevPage.click();
   await expect(userManagement.userEntriesLocator).toHaveCount(
