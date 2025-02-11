@@ -26,10 +26,18 @@ export const useAuthStore = defineStore('auth', () => {
     ),
   );
 
+  const groupsWithAdminAccess = computed(() =>
+    userGroups.value.filter((group) => group.role === 'ADMIN'),
+  );
+
   const hasCreateRepositoryAccess = computed(
     () =>
       !hasGroupBoundAccess.value ||
       groupsWithCreateRepositoryAccess.value.length > 0,
+  );
+
+  const hasAdminAccess = computed(
+    () => isAdmin.value || groupsWithAdminAccess.value.length > 0,
   );
 
   function $reset(
@@ -103,6 +111,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     isDefaultUser,
     hasGroupBoundAccess,
+    hasAdminAccess,
     hasDefaultUserGroup,
     hasCreateRepositoryAccess,
     login,
