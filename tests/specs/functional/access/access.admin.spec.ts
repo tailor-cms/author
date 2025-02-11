@@ -8,7 +8,7 @@ import {
 } from '../../../pom/admin/GroupManagement.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
-test.beforeEach(async () => {
+test.beforeAll(async () => {
   await SeedClient.resetDatabase();
 });
 
@@ -46,8 +46,4 @@ test('I should be able to access Installed Elements', async ({ page }) => {
   await page.goto('/admin/installed-elements');
   await page.waitForLoadState('networkidle');
   await expect(page).toHaveURL('/admin/installed-elements');
-});
-
-test.afterAll(async () => {
-  await SeedClient.resetDatabase();
 });
