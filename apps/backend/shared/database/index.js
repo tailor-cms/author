@@ -63,16 +63,16 @@ function initialize() {
   });
 
   umzug.on('migrating', (m) =>
-    logger.info({ migration: m }, '⬆️  Migrating:', m),
+    logger.info(`⬆️  Migrating: ${m.name}`),
   );
   umzug.on('migrated', (m) =>
-    logger.info({ migration: m }, '⬆️  Migrated:', m),
+    logger.info(`⬆️  Migrated: ${m.name}`),
   );
   umzug.on('reverting', (m) =>
-    logger.info({ migration: m }, '⬇️  Reverting:', m),
+    logger.info(`⬇️  Reverting: ${m.name}`),
   );
   umzug.on('reverted', (m) =>
-    logger.info({ migration: m }, '⬇️  Reverted:', m),
+    logger.info(`⬇️  Reverted: ${m.name}`),
   );
 
   return sequelize
