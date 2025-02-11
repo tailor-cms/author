@@ -2,6 +2,7 @@
 
 const bcrypt = require('bcrypt');
 const Promise = require('bluebird');
+const sortBy = require('lodash/sortBy');
 const users = require('tailor-seed/user.json');
 
 module.exports = {
@@ -14,9 +15,9 @@ module.exports = {
     }));
     return import('../../../config/index.js')
       .then(({ auth: config }) =>
-        Promise.map(rows, (user) => encryptPassword(user, config.saltRounds)),
+        Promise.each(rows, (user) => encryptPassword(user, config.saltRounds)),
       )
-      .then((rows) => qi.bulkInsert('user', rows.sort((a, b) => a.id - b.id)));
+      .then((rows) => qi.bulkInsert('user', sortBy(rows, 'email')));
   },
   down(qi) {
     return qi.bulkDelete('user');

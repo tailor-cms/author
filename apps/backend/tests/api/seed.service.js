@@ -6,13 +6,15 @@ import mapKeys from 'lodash/mapKeys.js';
 import { packageDirectory } from 'pkg-dir';
 import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import camelCase from 'lodash/camelCase.js';
-import { role as roles } from '@tailor-cms/common';
+import Promise from 'bluebird';
+import { role as roles, UserRole } from '@tailor-cms/common';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
+import sortBy from 'lodash/sortBy.js';
 import { store as activityCache } from '../../repository/feed/store.js';
 import db from '#shared/database/index.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 
-const { Activity, Repository, User } = db;
+const { Activity, Repository, User, UserGroup, UserGroupMember } = db;
 
 const DEFAULT_USER =
   find(seedUsers, { email: 'admin@gostudion.com' }) || seedUsers[0];
@@ -26,9 +28,9 @@ class SeedService {
   async resetDatabase() {
     await db.sequelize.drop({});
     await db.initialize();
-    await Promise.all(
-      seedUsers.map((it) => User.create(mapKeys(it, (_, k) => camelCase(k)))),
-    );
+    await Promise.each(
+      sortBy(seedUsers, 'email'),
+      (it) => User.create(mapKeys(it, (_, k) => camelCase(k))));
     await activityCache.clear();
     return true;
   }
