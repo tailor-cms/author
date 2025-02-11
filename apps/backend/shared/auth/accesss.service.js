@@ -39,10 +39,10 @@ class AccessService {
     // If repository is created for a user group
     if (userGroupIds.length) {
       const isGroupMember = userGroupIds.every((id) =>
-        user.userGroups.find(
-          (group) =>
-            group.id === id &&
-            [UserRole.ADMIN, UserRole.USER].includes(group.role),
+        user.userGroupMembers?.find(
+          (it) =>
+            it.groupId === id &&
+            [UserRole.ADMIN, UserRole.USER].includes(it.role),
         ),
       );
       if (isGroupMember) return next();

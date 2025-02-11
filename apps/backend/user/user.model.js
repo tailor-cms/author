@@ -125,6 +125,9 @@ class User extends Model {
       through: RepositoryUser,
       foreignKey: { name: 'userId', field: 'user_id' },
     });
+    this.hasMany(UserGroupMember, {
+      foreignKey: { name: 'userId', field: 'user_id' },
+    });
     this.belongsToMany(UserGroup, {
       through: UserGroupMember,
       foreignKey: { name: 'userId', field: 'user_id' },

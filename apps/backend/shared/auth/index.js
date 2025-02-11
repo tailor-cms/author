@@ -9,8 +9,8 @@ import auth from './authenticator.js';
 import OIDCStrategy from './oidc.js';
 import { auth as config, origin } from '#config';
 
-const { User, UserGroup } = db;
-const loadUserOptions = { include: [{ model: UserGroup }] };
+const { User, UserGroup, UserGroupMember } = db;
+const loadUserOptions = { include: [{ model: UserGroup }, { model: UserGroupMember }] };
 
 auth.use(
   new LocalStrategy({
