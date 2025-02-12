@@ -118,16 +118,11 @@ const label = computed(() => {
 });
 
 const examObjectives = computed(() => {
-  const activity = find(props.activities, { id: props.container.parentId });
+  const activities = Object.values(props.activities);
+  const activity = find(activities, { id: props.container.parentId! });
   const objectiveTypes = get(props.config, 'objectives') as string[];
   if (!activity || !objectiveTypes) return [];
-  if (activity.type === 'ASSESSMENT_GROUP') {
-    const parent = find(props.activities, { id: activity.parentId });
-    return get(parent, 'refs.objectives', []) as Activity[];
-  }
-  const children = activityUtils.getDescendants(
-    Object.values(props.activities), activity,
-  );
+  const children = activityUtils.getDescendants(activities, activity);
   return filter(children, (it) => objectiveTypes.includes(it.type));
 });
 

@@ -6,16 +6,18 @@
     @selected="expanded = !expanded"
     @save="save"
     @delete="$emit('delete')">
-    <template #header="{ isEditing }">
+    <template #header>
       <VRow v-if="objectives.length" justify="end" no-gutters class="mt-2">
         <VCol cols="5">
           <VAutocomplete
             v-model="objective"
             :items="objectives"
-            item-text="data.name"
-            :disabled="!isEditing"
             :placeholder="objectiveLabel"
-            return-object />
+            item-title="data.name"
+            variant="outlined"
+            hide-details
+            return-object
+          />
         </VCol>
       </VRow>
     </template>
@@ -28,8 +30,8 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import find from 'lodash/find';
 import get from 'lodash/get';
+import { onMounted, ref } from 'vue';
 import set from 'lodash/set';
-import { defineProps, ref, onMounted } from 'vue';
 
 const props = defineProps<{
   assessment: ContentElement;

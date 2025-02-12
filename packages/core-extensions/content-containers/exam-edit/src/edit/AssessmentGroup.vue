@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, ref, computed, watch, inject } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { numberToLetter, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import cloneDeep from 'lodash/cloneDeep';

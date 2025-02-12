@@ -9,6 +9,8 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
+const SchemaId = 'COURSE_SCHEMA';
+
 enum ActivityType {
   // Outline
   Module = 'MODULE',
@@ -211,6 +213,9 @@ const ExamConfig: ContentContainerConfig = {
   displayHeading: true,
   multiple: true,
   publishedAs: 'exam',
+  config: {
+    objectives: [`${SchemaId}/${ActivityType.Page}`],
+  },
   ai: {
     definition: `
       Exams are comprehensive assessments that evaluate the learner's
@@ -220,7 +225,7 @@ const ExamConfig: ContentContainerConfig = {
 };
 
 export const SCHEMA: Schema = {
-  id: 'COURSE_SCHEMA',
+  id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Course',
   description: 'A classic course structure featuring modules and pages.',
