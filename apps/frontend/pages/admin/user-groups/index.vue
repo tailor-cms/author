@@ -3,6 +3,7 @@
     <div class="d-flex py-6 px-4">
       <VSpacer />
       <VBtn
+        v-if="authStore.isAdmin"
         aria-label="Add user group"
         class="px-3"
         color="primary-darken-2"
@@ -103,6 +104,8 @@ const headers = [
   { title: 'Name', sortable: false },
   { title: 'Actions', sortable: false },
 ];
+
+const authStore = useAuthStore();
 
 const isLoading = ref(true);
 const isGroupDialogVisible = ref(false);
