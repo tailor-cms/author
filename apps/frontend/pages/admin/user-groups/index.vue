@@ -49,7 +49,7 @@
               {{ item.name }}
             </NuxtLink>
           </td>
-          <td class="text-no-wrap text-left">
+          <td v-if="authStore.isAdmin" class="text-no-wrap text-left">
             <VBtn
               aria-label="Edit user group"
               color="primary-darken-4"
@@ -100,12 +100,12 @@ const defaultPage = () => ({
   itemsPerPage: 10,
 });
 
-const headers = [
-  { title: 'Name', sortable: false },
-  { title: 'Actions', sortable: false },
-];
-
 const authStore = useAuthStore();
+
+const headers = [
+  { title: 'Group name', sortable: false },
+  authStore.isAdmin && { title: 'Actions', sortable: false },
+].filter(Boolean);
 
 const isLoading = ref(true);
 const isGroupDialogVisible = ref(false);
