@@ -5,16 +5,21 @@ import { Op } from 'sequelize';
 import { createError } from '#app/shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
-const { User, UserGroup } = db;
+const { User, UserGroup, UserGroupMember } = db;
 const createFilter = (q) =>
   map(['name'], (it) => ({
     [it]: { [Op.iLike]: `%${q}%` },
   }));
 
-async function list({ query: { filter, archived }, options }, res) {
+async function list({ user, query: { filter, archived }, options }, res) {
   const where = { [Op.and]: [] };
   if (filter) where[Op.or] = createFilter(filter);
   const opts = { where, ...options, paranoid: !archived };
+  if (!user.isAdmin()) {
+    opts.include = [
+      { model: UserGroupMember, where: { userId: user.id }, required: true },
+    ];
+  }
   const { rows, count } = await UserGroup.findAndCountAll(opts);
   return res.json({ data: { items: rows, total: count } });
 }

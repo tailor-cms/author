@@ -13,6 +13,9 @@ class UserGroup extends Model {
   }
 
   static associate({ Repository, RepositoryUserGroup, User, UserGroupMember }) {
+    this.hasMany(UserGroupMember, {
+      foreignKey: { name: 'groupId', field: 'group_id' },
+    });
     this.belongsToMany(User, {
       through: UserGroupMember,
       foreignKey: { name: 'groupId', field: 'group_id' },
