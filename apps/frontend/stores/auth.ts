@@ -106,6 +106,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     userGroups,
     groupsWithCreateRepositoryAccess,
+    groupsWithAdminAccess,
     strategy,
     isOidcActive,
     isAdmin,
