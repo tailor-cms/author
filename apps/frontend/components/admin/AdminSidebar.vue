@@ -1,5 +1,9 @@
 <template>
-  <VSheet class="admin-sidebar overflow-hidden" color="primary-lighten-4" rounded="lg">
+  <VSheet
+    class="admin-sidebar overflow-hidden"
+    color="primary-lighten-4"
+    rounded="lg"
+  >
     <VList bg-color="transparent" class="text-left mb-6">
       <VListItem
         v-for="{ name, label, icon, query } in routes"
@@ -21,14 +25,29 @@
 </template>
 
 <script lang="ts" setup>
+const authStore = useAuthStore();
 const route = useRoute();
 
 const routes = computed(() => {
   return [
-    { label: 'System Users', name: 'system-user-management', icon: 'account' },
+    authStore.isAdmin && {
+      label: 'System Users',
+      name: 'system-user-management',
+      icon: 'account',
+    },
     { label: 'User Groups', name: 'user-groups', icon: 'account-group' },
-    { label: 'Structure Types', name: 'installed-schemas', icon: 'file-tree' },
-    { label: 'Installed Elements', name: 'installed-elements', icon: 'puzzle' },
-  ].map((it) => ({ ...it, query: route.query }));
+    authStore.isAdmin && {
+      label: 'Structure Types',
+      name: 'installed-schemas',
+      icon: 'file-tree',
+    },
+    authStore.isAdmin && {
+      label: 'Installed Elements',
+      name: 'installed-elements',
+      icon: 'puzzle',
+    },
+  ]
+    .filter((it) => it)
+    .map((it) => ({ ...it, query: route.query }));
 });
 </script>
