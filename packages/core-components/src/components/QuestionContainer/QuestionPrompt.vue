@@ -83,7 +83,7 @@ const requiredRule = (val: string[]) => {
 };
 
 editorChannel.on('element:focus', (element: any = {}) => {
-  isFocused.value = props.elementData.question.includes(element.id);
+  isFocused.value = props.elementData.question.includes(element?.id);
 });
 </script>
 

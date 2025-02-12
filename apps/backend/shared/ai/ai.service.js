@@ -270,7 +270,7 @@ class AIService {
               data: { content: it.question },
               embedded: true,
               position: 1,
-              type: ContentElementType.TipTapHtml,
+              type: ContentElementType.TiptapHtml,
             },
           },
         },
@@ -302,7 +302,7 @@ class AIService {
       ${promptEnd}`;
     const { elements = [] } = await this.requestCompletion(userPrompt);
     const htmlElements = elements.map((it) => ({
-      type: ContentElementType.TipTapHtml,
+      type: ContentElementType.TiptapHtml,
       data: { content: it.content },
     }));
     logger.info('Generated HTML elements', htmlElements);
