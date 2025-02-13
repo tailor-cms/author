@@ -15,7 +15,7 @@ test.beforeAll(async () => {
 });
 
 test.describe('collaborator added to a User Group as Admin,', () => {
-  test('i should be able to create Repository', async ({ page }) => {
+  test('should be able to create Repository', async ({ page }) => {
     await page.goto('/');
     const dialog = new AddRepositoryDialog(page);
     await expect(dialog.openDialogBtn).toBeVisible();
@@ -23,13 +23,13 @@ test.describe('collaborator added to a User Group as Admin,', () => {
     await dialog.createRepository();
   });
 
-  test('i should see the Admin menu entry', async ({ page }) => {
+  test('should see the Admin menu entry', async ({ page }) => {
     await page.goto('/');
     const appBar = new AppBar(page);
     await expect(appBar.adminLink).toBeVisible();
   });
 
-  test('i should be able to access group listing', async ({ page }) => {
+  test('should be able to access group listing', async ({ page }) => {
     await page.goto('/');
     const appBar = new AppBar(page);
     await expect(appBar.adminLink).toBeVisible();
@@ -38,7 +38,7 @@ test.describe('collaborator added to a User Group as Admin,', () => {
     await expect(page).toHaveURL('/admin/user-groups');
   });
 
-  test('i should not be able to access User Management', async ({ page }) => {
+  test('should not be able to access User Management', async ({ page }) => {
     await page.goto(UserManagement.route);
     await page.waitForLoadState('networkidle');
     await expect(page).toHaveURL('/');
