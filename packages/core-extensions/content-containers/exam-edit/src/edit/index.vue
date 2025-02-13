@@ -52,6 +52,7 @@
           :key="group.uid"
           :group="group"
           :elements="elements"
+          :is-disabled="disabled"
           :objectives="examObjectives"
           :position="index"
           @save:element="$emit('save:element', $event)"
@@ -62,6 +63,7 @@
           @delete="$emit('delete:subcontainer', group, 'group')" />
       </div>
       <VBtn
+        v-if="!disabled"
         :disabled="!container.id"
         color="primary-lighten-5"
         variant="tonal"
@@ -80,20 +82,28 @@ import { filter, find, get } from 'lodash';
 import { computed, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import pluralize from 'pluralize';
 
 import AssessmentGroup from './AssessmentGroup.vue';
 
 interface Props {
+  name: string;
   container: Activity;
+  elements: Record<string, ContentElement>;
   position: number;
   activities: Record<string, Activity>;
-  elements: Record<string, ContentElement>;
+  embedElementConfig?: ContentElementCategory[];
+  contentElementConfig?: ContentElementCategory[];
   config?: Record<string, any>;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  embedElementConfig: () => [],
+  contentElementConfig: () => [],
   config: () => ({}),
+  disabled: false,
 });
 const emit = defineEmits([
   'delete',

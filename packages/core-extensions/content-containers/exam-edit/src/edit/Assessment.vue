@@ -3,6 +3,7 @@
     :element="assessment"
     :expanded="expanded"
     :draggable="true"
+    :is-disabled="isDisabled"
     @selected="expanded = !expanded"
     @save="save"
     @delete="$emit('delete')">
@@ -11,6 +12,7 @@
         <VCol cols="5">
           <VAutocomplete
             v-model="objective"
+            :disabled="isDisabled"
             :items="objectives"
             :placeholder="objectiveLabel"
             item-title="data.name"
@@ -37,6 +39,7 @@ const props = defineProps<{
   assessment: ContentElement;
   objectives: Activity[];
   objectiveLabel: string;
+  isDisabled: boolean;
 }>();
 const emit = defineEmits(['save', 'delete']);
 

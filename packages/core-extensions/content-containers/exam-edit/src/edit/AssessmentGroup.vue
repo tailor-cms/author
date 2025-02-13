@@ -55,6 +55,7 @@
             :assessment="element"
             :objectives="objectives"
             :objective-label="objectiveLabel"
+            :is-disabled="isDisabled"
             @save="saveAssessment"
             @delete="deleteAssessment(element)" />
         </template>
@@ -88,6 +89,7 @@ const props = defineProps<{
   elements: Record<string, ContentElement>;
   objectives: Activity[];
   position: number;
+  isDisabled: boolean;
 }>();
 
 const emit = defineEmits([
