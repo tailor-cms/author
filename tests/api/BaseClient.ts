@@ -1,6 +1,6 @@
 import * as Playwright from '@playwright/test';
 
-import { TEST_USER } from '../fixtures/auth';
+import { ADMIN_TEST_USER } from '../fixtures/auth';
 
 export default class BaseClient {
   private baseURL: string;
@@ -23,7 +23,7 @@ export default class BaseClient {
   };
 
   private signIn = async () => {
-    const { email, password } = TEST_USER;
+    const { email, password } = ADMIN_TEST_USER;
     BaseClient.req = await Playwright.request.newContext();
     await BaseClient.req.post(new URL('/api/users/login', this.baseURL).href, {
       headers: { 'Content-Type': 'application/json' },

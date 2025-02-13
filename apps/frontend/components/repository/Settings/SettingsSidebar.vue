@@ -48,7 +48,11 @@ const route = useRoute();
 const routes = computed(() => {
   return [
     { label: 'General', name: 'repository-settings-general', icon: 'wrench' },
-    { label: 'People', name: 'repository-settings-users', icon: 'account' },
+    {
+      label: 'Access management',
+      name: 'repository-settings-users',
+      icon: 'shield-account-outline',
+    },
   ].map((it) => ({ ...it, query: route.query }));
 });
 

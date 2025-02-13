@@ -135,7 +135,7 @@ export class AddUserDialog {
 
 export class RepositoryUsers {
   static getRoute = (id: number) =>
-    `/repository/${id.toString()}/root/settings/user-management`;
+    `/repository/${id.toString()}/root/settings/access/user-management`;
 
   readonly page: Page;
   readonly el: Locator;

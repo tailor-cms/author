@@ -89,9 +89,14 @@ const config = useConfigStore();
 const routes = computed(() => {
   const items = [
     { name: 'Catalog', to: '/' },
-    { name: 'Admin', to: { name: 'system-user-management' } },
+    {
+      name: 'Admin',
+      to: {
+        name: authStore.isAdmin ? 'system-user-management' : 'user-groups',
+      },
+    },
   ];
-  if (!authStore.isAdmin) items.pop();
+  if (!authStore.hasAdminAccess) items.pop();
   if (repository.value) {
     items.unshift({
       name: `${repository.value.name} structure`,

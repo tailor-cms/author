@@ -18,5 +18,6 @@ export { default as repository } from './repository';
 export { default as revision } from './revision';
 export { default as tag } from './tag';
 export { default as user } from './user';
+export { default as userGroup } from './userGroup';
 export { default as client } from './request';
 export { extractData } from './helpers';
