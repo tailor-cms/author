@@ -17,7 +17,7 @@
         </VCol>
         <VCol cols="2" class="text-right">
           <VBtn
-            v-if="!disabled"
+            v-if="!collapsed && !disabled"
             color="secondary-lighten-4"
             size="small"
             variant="tonal"
