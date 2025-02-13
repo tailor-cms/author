@@ -72,7 +72,7 @@
       />
       <VSlideYTransition>
         <VBtn
-          v-if="expanded"
+          v-if="expanded && !isDisabled"
           class="mt-2"
           color="secondary-lighten-2"
           density="comfortable"

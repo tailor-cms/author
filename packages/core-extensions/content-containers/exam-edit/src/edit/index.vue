@@ -1,78 +1,72 @@
 <template>
   <VCard :class="{ collapsed }" class="exam" color="primary-darken-2" elevation="0">
-    <VRow
-      v-if="collapsed"
-      class="d-flex justify-center align-center py-3 px-4"
-      no-gutters
-      @click="collapsed = false"
+    <VCard
+      rounded="0"
+      elevation="0"
+      color="primary-darken-2"
+      @click="collapsed = !collapsed"
     >
-      <VCol cols="2" class="text-left">
-        <VChip color="green-accent-2" size="small">{{ label }}</VChip>
-      </VCol>
-      <VCol cols="8">
-        <h3>{{ title }}</h3>
-      </VCol>
-      <VCol cols="2" class="text-right">
-      </VCol>
-    </VRow>
-    <div v-else class="py-3 px-4">
-      <div class="d-flex justify-space-between align-baseline mb-3">
-        <h3 class="text-left">{{ title }}</h3>
-        <div>
+      <VRow class="d-flex justify-center align-center py-3 px-4" no-gutters>
+        <VCol cols="2" class="text-left">
+          <VChip color="green-accent-2" size="small">{{ label }}</VChip>
+        </VCol>
+        <VCol cols="8">
+          <h3 class="text-subtitle-2 font-weight-bold text-left">
+            {{ title }}
+          </h3>
+        </VCol>
+        <VCol cols="2" class="text-right">
           <VBtn
-            class="mr-3"
-            color="teal-lighten-4"
-            size="small"
-            variant="tonal"
-            @click="collapsed = true"
-          >
-            Collapse
-          </VBtn>
-          <VBtn
+            v-if="!disabled"
             color="secondary-lighten-4"
             size="small"
             variant="tonal"
-            @click="emit('delete')"
+            @click.stop="emit('delete')"
           >
             Delete Exam
           </VBtn>
+        </VCol>
+      </VRow>
+    </VCard>
+    <VDivider v-if="!collapsed" />
+    <VExpandTransition>
+      <div v-if="!collapsed" class="pa-4">
+        <VAlert
+          v-if="!groups.length"
+          color="primary-lighten-3"
+          icon="mdi-information-variant"
+          variant="tonal"
+        >
+          Click the button below to Create first question group.
+        </VAlert>
+        <div class="d-flex flex-column ga-4">
+          <AssessmentGroup
+            v-for="(group, index) in groups"
+            :key="group.uid"
+            :group="group"
+            :elements="elements"
+            :is-disabled="disabled"
+            :objectives="examObjectives"
+            :position="index"
+            @save:element="$emit('save:element', $event)"
+            @update:element="$emit('update:element', $event)"
+            @reorder:element="$emit('reorder:element', $event)"
+            @delete:element="$emit('delete:element', $event)"
+            @update="$emit('update:subcontainer', $event)"
+            @delete="$emit('delete:subcontainer', group, 'group')" />
         </div>
+        <VBtn
+          v-if="!disabled"
+          :disabled="!container.id"
+          color="primary-lighten-5"
+          variant="tonal"
+          class="my-5"
+          @click.stop="createGroup">
+          <VIcon class="pr-2">mdi-folder-plus-outline</VIcon>
+          Add Question Group
+        </VBtn>
       </div>
-      <VAlert
-        v-if="!groups.length"
-        color="primary-lighten-3"
-        icon="mdi-information-variant"
-        variant="tonal"
-      >
-        Click the button below to Create first question group.
-      </VAlert>
-      <div class="d-flex flex-column ga-4">
-        <AssessmentGroup
-          v-for="(group, index) in groups"
-          :key="group.uid"
-          :group="group"
-          :elements="elements"
-          :is-disabled="disabled"
-          :objectives="examObjectives"
-          :position="index"
-          @save:element="$emit('save:element', $event)"
-          @update:element="$emit('update:element', $event)"
-          @reorder:element="$emit('reorder:element', $event)"
-          @delete:element="$emit('delete:element', $event)"
-          @update="$emit('update:subcontainer', $event)"
-          @delete="$emit('delete:subcontainer', group, 'group')" />
-      </div>
-      <VBtn
-        v-if="!disabled"
-        :disabled="!container.id"
-        color="primary-lighten-5"
-        variant="tonal"
-        class="my-5"
-        @click.stop="createGroup">
-        <VIcon class="pr-2">mdi-folder-plus-outline</VIcon>
-        Add Question Group
-      </VBtn>
-    </div>
+    </VExpandTransition>
   </VCard>
 </template>
 

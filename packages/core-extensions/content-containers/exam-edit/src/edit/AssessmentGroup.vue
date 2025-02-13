@@ -1,7 +1,9 @@
 <template>
   <VCard class="assessment-group">
     <VSheet class="d-flex align-center ga-2 px-4 py-3">
-      <h3>Question group {{ numberToLetter(position) }}</h3>
+      <h3 class="text-subtitle-1 font-weight-bold">
+        Question group {{ numberToLetter(position) }}
+      </h3>
       <VSpacer />
       <VBtn
         variant="tonal"
@@ -12,9 +14,11 @@
         Delete Group
       </VBtn>
     </VSheet>
+    <VDivider />
     <div class="pa-6">
       <VTextField
         v-model.number="timeLimit"
+        :readonly="isDisabled"
         min="0"
         name="timeLimit"
         label="Time limit"
@@ -25,14 +29,14 @@
         variant="outlined"
         @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
       />
-      <h4 class="text-left">Introduction</h4>
+      <h4 class="text-subtitle-2 font-weight-bold text-left">Introduction</h4>
       <GroupIntroduction
         :group="group"
         :elements="introductionElements"
         @save:element="$emit('save:element', $event)"
         @reorder:element="$emit('reorder:element', $event)"
         @delete:element="$emit('delete:element', $event)" />
-      <h4 class="text-left mb-2">Questions</h4>
+      <h4 class="text-subtitle-2 font-weight-bold text-left mb-2">Questions</h4>
       <VAlert
         v-if="!hasAssessments"
         class="mt-4"
@@ -47,6 +51,7 @@
         :elements="assessments"
         :activity="group"
         :supported-element-config="supportedElementConfig"
+        :is-disabled="isDisabled"
         class="px-0"
         @add="addAssessments"
         @update="$emit('reorder:element', $event)">
