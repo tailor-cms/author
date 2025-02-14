@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="user-group-users">
     <VRow class="mt-2 py-5">
       <VCol>
         <div class="pl-7 text-subtitle-1 text-primary-darken-4 text-left">
@@ -109,8 +109,16 @@ async function upsertUser(email: string, role: string) {
 }
 
 async function removeUser(userId: number) {
-  await api.removeUser(userGroupId, userId);
-  await fetchUsers();
+  const showDialog = useConfirmationDialog();
+  const confirmation = {
+    title: 'Remove user',
+    message: 'Are you sure you want to remove user from a group?',
+    action: async () => {
+      await api.removeUser(userGroupId, userId);
+      await fetchUsers();
+    },
+  };
+  showDialog(confirmation);
 }
 
 onBeforeMount(async () => {

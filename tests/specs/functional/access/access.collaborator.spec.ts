@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository.ts';
 import { AppBar } from '../../../pom/common/AppBar.ts';
 import { COLLAB_TEST_USER } from '../../../fixtures/auth.ts';
-import { GroupManagement } from '../../../pom/admin/GroupManagement.ts';
+import { GroupManagement, UserGroupUserList } from '../../../pom/admin/GroupManagement.ts';
 import { UserManagement } from '../../../pom/admin/UserManagement.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
@@ -79,6 +79,34 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
     await appBar.adminLink.click();
     await page.waitForLoadState('networkidle');
     await expect(page).toHaveURL('/admin/user-groups');
+  });
+
+  test('should be able to access user group page', async ({ page }) => {
+    await page.goto('/');
+    const appBar = new AppBar(page);
+    await expect(appBar.adminLink).toBeVisible();
+    await appBar.adminLink.click();
+    await page.waitForLoadState('networkidle');
+    await expect(page).toHaveURL('/admin/user-groups');
+    await page.getByRole('link', { name: 'Test' }).click();
+    await expect(page.getByText('Test user group')).toBeVisible();
+  });
+
+  test('should be able to assign user to a group', async ({ page }) => {
+    const route = UserGroupUserList.getRoute(1);
+    await page.goto(route);
+    await expect(page).toHaveURL(route);
+    const userGroupUserList = new UserGroupUserList(page);
+    await userGroupUserList.addUser('user@gostudion.com', 'User');
+  });
+
+  test('should be able to remove user from a group', async ({ page }) => {
+    const route = UserGroupUserList.getRoute(1);
+    await page.goto(route);
+    await expect(page).toHaveURL(route);
+    const userGroupUserList = new UserGroupUserList(page);
+    await userGroupUserList.addUser('user@gostudion.com', 'User');
+    await userGroupUserList.removeUser('user@gostudion.com');
   });
 
   test('should not be able to access User Management', async ({ page }) => {

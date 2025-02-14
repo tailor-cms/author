@@ -33,7 +33,7 @@
           :error-messages="errors.role"
           :items="roles"
           aria-label="Role"
-          class="role-select required my-4"
+          class="group-role-select required my-4"
           label="Role"
           placeholder="Role..."
           variant="outlined"
@@ -85,6 +85,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['save']);
 
+const authStore = useAuthStore();
+
 const roles = computed<Role[]>(() =>
   map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({
     title: titleCase(value),
@@ -129,6 +131,8 @@ const submit = handleSubmit(async () => {
 });
 
 const fetchUsers = throttle(async (filter) => {
+  // Only admins can see the list of users
+  if (!authStore.isAdmin) return;
   if (!filter || filter.length < 2) {
     suggestedUsers.value = [];
     return;
