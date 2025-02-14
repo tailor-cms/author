@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, inject, reactive, ref, watch } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
@@ -56,7 +56,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import map from 'lodash/map';
 
-import { questionType } from '../utils';
+const isLegacyQuestion = (type: string) => ceRegistry.isLegacyQuestion(type);
 
 const convertLegacyElement = (element: ContentElement) => {
   const question = element.data.question as any[];
@@ -66,7 +66,7 @@ const convertLegacyElement = (element: ContentElement) => {
     acc[question.id] = embed;
     return acc;
   }, {});
-  const type = questionType.get(element.data.type as string);
+  const type = ceRegistry.getByEntity(element).type;
   const isGradable = element.type === 'ASSESSMENT';
   const data = {
     ...omit(element.data, 'question'),
@@ -78,8 +78,8 @@ const convertLegacyElement = (element: ContentElement) => {
 };
 
 const initializeElement = () => {
-  const element = cloneDeep(props.element);
-  return props.isLegacyQuestion ? convertLegacyElement(element) : element;
+  const el = cloneDeep(props.element);
+  return isLegacyQuestion(el.type) ? convertLegacyElement(el) : el;
 };
 
 interface Props {
@@ -89,7 +89,6 @@ interface Props {
   type?: string;
   icon?: string;
   embedElementConfig?: ContentElementCategory[];
-  isLegacyQuestion?: boolean;
   isDisabled?: boolean;
   isFocused?: boolean;
   isDragged?: boolean;
@@ -117,6 +116,8 @@ const emit = defineEmits([
   'update',
 ]);
 
+const ceRegistry = inject<any>('$ceRegistry');
+
 const form = ref();
 const editedElement = reactive(initializeElement());
 
@@ -128,14 +129,16 @@ const save = async () => {
   if (!form.value) return;
   const { valid } = await form.value.validate();
   if (!valid) return;
-  if (!props.isLegacyQuestion) return emit('save', editedElement.data);
-  const data = cloneDeep(editedElement.data);
-  const question = data.question as any[];
-  return emit('save', {
-    ...omit(data, 'embeds', 'question', 'isGradable'),
-    question: map(question, (id) => omit(data.embeds[id], 'position')),
-    type: props.element.data.type,
-  });
+  if (isLegacyQuestion(props.element.type)) {
+    const data = cloneDeep(editedElement.data);
+    const question = data.question as any[];
+    return emit('save', {
+      ...omit(data, 'embeds', 'question', 'isGradable'),
+      question: map(question, (id) => omit(data.embeds[id], 'position')),
+      type: props.element.data.type,
+    });
+  }
+  return emit('save', editedElement.data);
 };
 
 const cancel = () => {
