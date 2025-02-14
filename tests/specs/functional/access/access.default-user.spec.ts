@@ -94,14 +94,14 @@ test.describe('Default user role, added to a User Group as Admin,', () => {
   test('should be able to assign user to a group', async ({ page }) => {
     await GroupManagement.goToGroupByName(page, 'Test');
     const userGroupUserList = new UserGroupUserList(page);
-    await userGroupUserList.addUser('user@gostudion.com', 'User');
+    await userGroupUserList.addUser('test_user@gostudion.com', 'User');
   });
 
   test('should be able to remove user from a group', async ({ page }) => {
     await GroupManagement.goToGroupByName(page, 'Test');
     const userGroupUserList = new UserGroupUserList(page);
-    await userGroupUserList.addUser('user@gostudion.com', 'User');
-    await userGroupUserList.removeUser('user@gostudion.com');
+    await userGroupUserList.addUser('test_user@gostudion.com', 'User');
+    await userGroupUserList.removeUser('test_user@gostudion.com');
   });
 
   test('should not be able to access User Management', async ({ page }) => {
