@@ -8,24 +8,52 @@ export class AdminSection {
   static structureListRoute = '/admin/structure-types';
   static installedElementsRoute = '/admin/installed-elements';
 
-  private static async visit(page: Page, route: string) {
+  private static async visit(page: Page, route: string, validate = false) {
     await page.goto(route, { waitUntil: 'networkidle' });
-    await expect(page).toHaveURL(route);
+    if (validate) await expect(page).toHaveURL(route);
   }
 
-  static goToUserManagement(page: Page) {
-    return AdminSection.visit(page, AdminSection.userManagementRoute);
+  static goToUserManagement(
+    page: Page,
+    options: { validate: boolean } = { validate: false },
+  ) {
+    return AdminSection.visit(
+      page,
+      AdminSection.userManagementRoute,
+      options.validate,
+    );
   }
 
-  static goToGroupManagement(page: Page) {
-    return AdminSection.visit(page, AdminSection.groupManagementRoute);
+  static goToGroupManagement(
+    page: Page,
+    options: { validate: boolean } = { validate: false },
+  ) {
+    return AdminSection.visit(
+      page,
+      AdminSection.groupManagementRoute,
+      options.validate,
+    );
   }
 
-  static goToStructuresPage(page: Page) {
-    return AdminSection.visit(page, AdminSection.structureListRoute);
+  static goToStructuresPage(
+    page: Page,
+    options: { validate: boolean } = { validate: false },
+  ) {
+    return AdminSection.visit(
+      page,
+      AdminSection.structureListRoute,
+      options.validate,
+    );
   }
 
-  static goToInstalledElementsList(page: Page) {
-    return AdminSection.visit(page, AdminSection.installedElementsRoute);
+  static goToInstalledElementsList(
+    page: Page,
+    options: { validate: boolean } = { validate: false },
+  ) {
+    return AdminSection.visit(
+      page,
+      AdminSection.installedElementsRoute,
+      options.validate,
+    );
   }
 }

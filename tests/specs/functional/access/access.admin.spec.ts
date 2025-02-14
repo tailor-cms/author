@@ -30,10 +30,10 @@ test.describe('as a System Admin', () => {
   });
 
   test('should be able to access Structure Types', async ({ page }) => {
-    await AdminSection.goToStructuresPage(page);
+    await AdminSection.goToStructuresPage(page, { validate: true });
   });
 
   test('should be able to access Installed Elements', async ({ page }) => {
-    await AdminSection.goToInstalledElementsList(page);
+    await AdminSection.goToInstalledElementsList(page, { validate: true });
   });
 });

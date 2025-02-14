@@ -47,8 +47,7 @@ export class UserGroupUserAssignment {
 }
 
 export class UserGroupUserList {
-  static getRoute = (id: number) =>
-    `/admin/user-groups/${id.toString()}`;
+  static getRoute = (id: number) => `/admin/user-groups/${id.toString()}`;
 
   readonly page: Page;
   readonly el: Locator;
@@ -80,7 +79,10 @@ export class UserGroupUserList {
     return this.userEntriesLocator.filter({ hasText: email });
   }
 
-  async addUser(email: string, role: 'Admin' | 'User' | 'Collaborator' = 'Admin') {
+  async addUser(
+    email: string,
+    role: 'Admin' | 'User' | 'Collaborator' = 'Admin',
+  ) {
     await this.addBtn.click();
     const dialog = new UserGroupUserAssignment(this.page);
     await dialog.addUser(email, role);
@@ -183,6 +185,33 @@ export class GroupManagement {
     this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
     this.el = el;
     this.page = page;
+  }
+
+  static async visit(page: Page) {
+    await page.goto(GroupManagement.route, { waitUntil: 'networkidle' });
+    return new GroupManagement(page);
+  }
+
+  static async create(
+    page: Page,
+    name: string,
+    options: { visit: boolean } = { visit: false },
+  ) {
+    const groupManagement = await GroupManagement.visit(page);
+    await groupManagement.addUserGroup(name);
+    const entry = await groupManagement.getEntryByName(name);
+    if (options.visit) {
+      await entry.el.getByRole('link', { name }).click();
+      await expect(page.getByText(`${name} user group`)).toBeVisible();
+    }
+  }
+
+  static async goToGroupByName(page: Page, name: string) {
+    const groupManagement = await GroupManagement.visit(page);
+    const entry = await groupManagement.getEntryByName(name);
+    await entry.el.getByRole('link', { name }).click();
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByText(`${name} user group`)).toBeVisible();
   }
 
   async getEntries() {

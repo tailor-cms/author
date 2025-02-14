@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { AdminSection } from '../../../pom/admin/Admin.ts';
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository.ts';
 import { AppBar } from '../../../pom/common/AppBar.ts';
 import { COLLAB_TEST_USER } from '../../../fixtures/auth.ts';
@@ -7,7 +8,6 @@ import {
   GroupManagement,
   UserGroupUserList,
 } from '../../../pom/admin/GroupManagement.ts';
-import { UserManagement } from '../../../pom/admin/UserManagement.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
 test.describe('Collaborator, without User Group assignment', () => {
@@ -28,26 +28,22 @@ test.describe('Collaborator, without User Group assignment', () => {
   });
 
   test('should not be able to access User Management', async ({ page }) => {
-    await page.goto(UserManagement.route);
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToUserManagement(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Group management', async ({ page }) => {
-    await page.goto(GroupManagement.route);
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToGroupManagement(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Structure Types', async ({ page }) => {
-    await page.goto('/admin/structure-types');
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToStructuresPage(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Installed Elements', async ({ page }) => {
-    await page.goto('/admin/installed-elements');
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToInstalledElementsList(page);
     await expect(page).toHaveURL('/');
   });
 });
@@ -64,7 +60,6 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
   test('should be able to create Repository', async ({ page }) => {
     await page.goto('/');
     const dialog = new AddRepositoryDialog(page);
-    await expect(dialog.openDialogBtn).toBeVisible();
     await dialog.open();
     await dialog.createRepository();
   });
@@ -81,60 +76,45 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
     await expect(appBar.adminLink).toBeVisible();
     await appBar.adminLink.click();
     await page.waitForLoadState('networkidle');
-    await expect(page).toHaveURL('/admin/user-groups');
+    await expect(page).toHaveURL(AdminSection.groupManagementRoute);
   });
 
   test('should be able to access user group page', async ({ page }) => {
-    await page.goto('/');
-    const appBar = new AppBar(page);
-    await expect(appBar.adminLink).toBeVisible();
-    await appBar.adminLink.click();
-    await page.waitForLoadState('networkidle');
-    await expect(page).toHaveURL('/admin/user-groups');
-    await page.getByRole('link', { name: 'Test' }).click();
-    await expect(page.getByText('Test user group')).toBeVisible();
+    await GroupManagement.goToGroupByName(page, 'Test');
   });
 
   test('should not be able to access group actions', async ({ page }) => {
-    await page.goto(GroupManagement.route);
-    const groupManagement = new GroupManagement(page);
+    const groupManagement = await GroupManagement.visit(page);
     const groupEntry = await groupManagement.getEntryByName('Test');
     await expect(groupEntry.editBtn).not.toBeVisible();
     await expect(groupEntry.removeBtn).not.toBeVisible();
   });
 
   test('should be able to assign user to a group', async ({ page }) => {
-    const route = UserGroupUserList.getRoute(1);
-    await page.goto(route);
-    await expect(page).toHaveURL(route);
+    await GroupManagement.goToGroupByName(page, 'Test');
     const userGroupUserList = new UserGroupUserList(page);
     await userGroupUserList.addUser('user@gostudion.com', 'User');
   });
 
   test('should be able to remove user from a group', async ({ page }) => {
-    const route = UserGroupUserList.getRoute(1);
-    await page.goto(route);
-    await expect(page).toHaveURL(route);
+    await GroupManagement.goToGroupByName(page, 'Test');
     const userGroupUserList = new UserGroupUserList(page);
     await userGroupUserList.addUser('user@gostudion.com', 'User');
     await userGroupUserList.removeUser('user@gostudion.com');
   });
 
   test('should not be able to access User Management', async ({ page }) => {
-    await page.goto(UserManagement.route);
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToUserManagement(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Structure Types', async ({ page }) => {
-    await page.goto('/admin/structure-types');
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToStructuresPage(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Installed Elements', async ({ page }) => {
-    await page.goto('/admin/installed-elements');
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToInstalledElementsList(page);
     await expect(page).toHaveURL('/');
   });
 });
@@ -151,7 +131,6 @@ test.describe('Collaborator added to a User Group as Default User,', () => {
   test('should be able to create Repository', async ({ page }) => {
     await page.goto('/');
     const dialog = new AddRepositoryDialog(page);
-    await expect(dialog.openDialogBtn).toBeVisible();
     await dialog.open();
     await dialog.createRepository();
   });
@@ -162,27 +141,23 @@ test.describe('Collaborator added to a User Group as Default User,', () => {
     await expect(appBar.adminLink).not.toBeVisible();
   });
 
-  test('should not be able to access User Management', async ({ page }) => {
-    await page.goto(UserManagement.route);
-    await page.waitForLoadState('networkidle');
+  test('should not be able to access Group management', async ({ page }) => {
+    await AdminSection.goToGroupManagement(page);
     await expect(page).toHaveURL('/');
   });
 
-  test('should not be able to access Group management', async ({ page }) => {
-    await page.goto(GroupManagement.route);
-    await page.waitForLoadState('networkidle');
+  test('should not be able to access User Management', async ({ page }) => {
+    await AdminSection.goToUserManagement(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Structure Types', async ({ page }) => {
-    await page.goto('/admin/structure-types');
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToStructuresPage(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Installed Elements', async ({ page }) => {
-    await page.goto('/admin/installed-elements');
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToInstalledElementsList(page);
     await expect(page).toHaveURL('/');
   });
 });
@@ -209,26 +184,22 @@ test.describe('Collaborator added to a User Group with Colaborator role', () => 
   });
 
   test('should not be able to access User Management', async ({ page }) => {
-    await page.goto(UserManagement.route);
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToUserManagement(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Group management', async ({ page }) => {
-    await page.goto(GroupManagement.route);
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToGroupManagement(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Structure Types', async ({ page }) => {
-    await page.goto('/admin/structure-types');
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToStructuresPage(page);
     await expect(page).toHaveURL('/');
   });
 
   test('should not be able to access Installed Elements', async ({ page }) => {
-    await page.goto('/admin/installed-elements');
-    await page.waitForLoadState('networkidle');
+    await AdminSection.goToInstalledElementsList(page);
     await expect(page).toHaveURL('/');
   });
 });
