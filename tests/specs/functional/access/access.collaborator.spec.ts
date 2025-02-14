@@ -3,7 +3,10 @@ import { expect, test } from '@playwright/test';
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository.ts';
 import { AppBar } from '../../../pom/common/AppBar.ts';
 import { COLLAB_TEST_USER } from '../../../fixtures/auth.ts';
-import { GroupManagement, UserGroupUserList } from '../../../pom/admin/GroupManagement.ts';
+import {
+  GroupManagement,
+  UserGroupUserList,
+} from '../../../pom/admin/GroupManagement.ts';
 import { UserManagement } from '../../../pom/admin/UserManagement.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
@@ -90,6 +93,14 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
     await expect(page).toHaveURL('/admin/user-groups');
     await page.getByRole('link', { name: 'Test' }).click();
     await expect(page.getByText('Test user group')).toBeVisible();
+  });
+
+  test('should not be able to access group actions', async ({ page }) => {
+    await page.goto(GroupManagement.route);
+    const groupManagement = new GroupManagement(page);
+    const groupEntry = await groupManagement.getEntryByName('Test');
+    await expect(groupEntry.editBtn).not.toBeVisible();
+    await expect(groupEntry.removeBtn).not.toBeVisible();
   });
 
   test('should be able to assign user to a group', async ({ page }) => {
