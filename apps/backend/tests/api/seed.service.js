@@ -10,8 +10,10 @@ import Promise from 'bluebird';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
 import sortBy from 'lodash/sortBy.js';
 import { UserRole } from '@tailor-cms/common';
+
 import { store as activityCache } from '../../repository/feed/store.js';
 import db from '#shared/database/index.js';
+import RepositoryUserGroup from '#app/user-group/repositoryUserGroup.model.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 
 const { Activity, Repository, User, UserGroup, UserGroupMember } = db;
@@ -35,11 +37,24 @@ class SeedService {
     return true;
   }
 
-  async seedCatalog(repositories = catalogSeed) {
+  async seedCatalog({ repositorySeed = catalogSeed, userGroup }) {
     const user = await User.findOne({ where: { email: DEFAULT_USER.email } });
     if (!user) throw new Error('Seed user not found');
     const opts = { context: { userId: user.id } };
-    return Promise.all(repositories.map((it) => Repository.create(it, opts)));
+    const repositories = await Promise.all(
+      repositorySeed.map((it) => Repository.create(it, opts)));
+    if (userGroup?.name) {
+      const [group] = await UserGroup.findOrCreate({
+        where: { name: userGroup.name },
+      });
+      for (const repository of repositories) {
+        await RepositoryUserGroup.create({
+          repositoryId: repository.id,
+          groupId: group.id,
+        });
+      }
+    }
+    return repositories;
   }
 
   async importRepositoryArchive(

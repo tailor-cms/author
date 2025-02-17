@@ -11,8 +11,9 @@ async function seedUser(req, res) {
   return res.json({ data: user });
 }
 
-async function seedCatalog(_req, res) {
-  const repositories = await SeedService.seedCatalog();
+async function seedCatalog(req, res) {
+  const { userGroup } = req.body;
+  const repositories = await SeedService.seedCatalog({ userGroup });
   return res.json({ data: repositories });
 }
 
