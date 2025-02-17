@@ -3,6 +3,7 @@ import { expect, test } from '@playwright/test';
 import { Container } from '../../../pom/editor/Container';
 import { Editor } from '../../../pom/editor/Editor';
 import SeedClient from '../../../api/SeedClient';
+import { outlineSeed } from '../../../helpers/seed';
 
 const REPOSITORY_NAME = 'Editor test repository';
 
@@ -73,6 +74,18 @@ test('can add content element', async ({ page }) => {
   await page.waitForTimeout(1000);
   await page.reload();
   await expect(page.locator('.content-element')).toHaveText('This is a test');
+});
+
+test('can copy content element', async ({ page }) => {
+  const editor = new Editor(page);
+  await editor.sidebar.toggleItems();
+  await editor.toSecondaryPage();
+  const elementContent = 'The Origins of Pizza';
+  await editor.copyContentElement(outlineSeed.primaryPage.title, elementContent);
+  // Make sure changes are persisted
+  await page.waitForTimeout(1000);
+  await page.reload();
+  await expect(page.locator('.content-element')).toContainText(elementContent);
 });
 
 test('can delete content element', async ({ page }) => {

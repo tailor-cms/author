@@ -5,9 +5,11 @@ import { outlineSeed } from '../../helpers/seed';
 import { ContainerList } from './ContainerList';
 import type { ContentElement } from './ContentElement';
 import { EditorSidebar } from './Sidebar';
+import { CopyDialog } from './CopyDialog';
 
 export class Editor {
   readonly page: Page;
+  readonly copyDialog: CopyDialog;
   readonly sidebar: EditorSidebar;
   readonly topToolbar: Locator;
   readonly primaryPageName = outlineSeed.primaryPage.title;
@@ -18,6 +20,7 @@ export class Editor {
 
   constructor(page: Page) {
     this.page = page;
+    this.copyDialog = new CopyDialog(page);
     this.sidebar = new EditorSidebar(page);
     this.topToolbar = this.page.locator('.activity-toolbar');
     this.containerList = new ContainerList(page);
@@ -53,6 +56,17 @@ export class Editor {
     await page.locator('.tiptap').fill(content);
     // Focusout element to trigger the save
     await sidebar.el.focus();
+    await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
+    await page.waitForLoadState('networkidle');
+  }
+
+  async copyContentElement(pageTitle: string, elementContent: string) {
+    const { page, copyDialog } = this;
+    await page.getByRole('button', { name: 'Add content' }).click();
+    await page.getByRole('button', { name: 'Copy existing' }).click();
+    await copyDialog.selectActivity(pageTitle);
+    await copyDialog.selectElement(elementContent);
+    await copyDialog.copyElement();
     await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
     await page.waitForLoadState('networkidle');
   }
