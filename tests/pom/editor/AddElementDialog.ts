@@ -14,8 +14,8 @@ export class AddElementDialog {
     this.el = el;
   }
 
-  async open() {
-    await this.addBtn.click();
+  open() {
+    return this.addBtn.click();
   }
 
   async add(name: string) {

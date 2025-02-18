@@ -1,6 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
-import { Relationship } from './Relationship';
 
 export class EditorSidebar {
   readonly page: Page;
@@ -20,20 +19,6 @@ export class EditorSidebar {
 
   toggleItems() {
     return this.toggleAllBtn.click();
-  }
-
-  getRelationship(name: string) {
-    return new Relationship(this.page, name);
-  }
-
-  async addRelationship(name: string) {
-    const relationship = new Relationship(this.page, name);
-    await relationship.add();
-  }
-
-  async clearRelationship(name: string) {
-    const relationship = new Relationship(this.page, name);
-    await relationship.clear();
   }
 
   async getOutlineItems(name?: string) {

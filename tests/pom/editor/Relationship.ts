@@ -23,8 +23,8 @@ export class Relationship {
     this.el = el;
   }
 
-  async openDialog() {
-    await this.addBtn.click();
+  openDialog() {
+    return this.addBtn.click();
   }
 
   async add(title: string, content?: string) {

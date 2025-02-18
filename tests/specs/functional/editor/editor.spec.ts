@@ -4,6 +4,7 @@ import { Container } from '../../../pom/editor/Container';
 import { Editor } from '../../../pom/editor/Editor';
 import SeedClient from '../../../api/SeedClient';
 import { outlineSeed } from '../../../helpers/seed';
+import { Relationship } from '../../../pom/editor/Relationship';
 
 const REPOSITORY_NAME = 'Editor test repository';
 
@@ -103,7 +104,7 @@ test('can link specific content element', async ({ page }) => {
   const editor = new Editor(page);
   const pageTitle = outlineSeed.primaryPage.title;
   await editor.focusElement('The Art and Science of Pizza Making');
-  const relationship = editor.sidebar.getRelationship('Related content');
+  const relationship = new Relationship(page, 'Related content');
   await relationship.add(pageTitle, 'The Origins of Pizza');
   // Make sure changes are persisted
   await page.reload();

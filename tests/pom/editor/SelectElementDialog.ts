@@ -14,16 +14,16 @@ export class SelectElementDialog {
     this.el = el;
   }
 
-  async confirm() {
-    await this.confirmBtn.click();
+  confirm() {
+    return this.confirmBtn.click();
   }
 
-  async selectActivity(title: string) {
-    await this.el.getByText(title).click();
+  selectActivity(title: string) {
+    return this.el.getByText(title).click();
   }
 
-  async selectAll() {
-    await this.selectAllBtn.click();
+  selectAll() {
+    return this.selectAllBtn.click();
   }
 
   async selectElement(hasText: string) {
