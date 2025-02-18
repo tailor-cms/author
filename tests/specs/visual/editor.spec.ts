@@ -43,9 +43,36 @@ test('snapshot of the editor page upon adding new Content Element', async ({
   await expect(
     page.getByText('Click the button below to add content'),
   ).toBeVisible();
-  await page.getByRole('button', { name: 'Add content' }).click();
+  await editor.addElementDialog.open();
   await expect(page.getByText('Content Elements')).toBeVisible();
   await percySnapshot(page, 'Editor page - Add content element dialog');
+});
+
+test('snapshot of the editor page upon copying Content Elements', async ({
+  page,
+}) => {
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  await expect(
+    page.getByText('Click the button below to add content'),
+  ).toBeVisible();
+  await editor.addElementDialog.openCopyDialog();
+  await expect(page.getByText('Copy elements')).toBeVisible();
+  await percySnapshot(page, 'Editor page - Copy elements dialog');
+});
+
+test('snapshot of the editor page upon linking Content Elements', async ({
+  page,
+}) => {
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  await expect(
+    page.getByText('Click the button below to add content'),
+  ).toBeVisible();
+  await editor.focusElement('The Art and Science of Pizza Making');
+  await editor.sidebar.getRelationship('Related content').openDialog();
+  await expect(page.getByText('Select elements')).toBeVisible();
+  await percySnapshot(page, 'Editor page - Copy elements dialog');
 });
 
 test('snapshot of the editor page comments section', async ({ page }) => {

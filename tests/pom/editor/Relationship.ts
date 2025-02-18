@@ -21,8 +21,12 @@ export class Relationship {
     this.el = el;
   }
 
-  async add(title: string, content?: string) {
+  async openDialog() {
     await this.addBtn.click();
+  }
+
+  async add(title: string, content?: string) {
+    await this.openDialog();
     await this.relationshipDialog.select(title, content);
   }
 
