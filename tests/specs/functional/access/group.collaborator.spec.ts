@@ -33,3 +33,16 @@ test('should not be able to see non associated repositories', async ({
   await page.goto('/');
   await expect(page.getByText('0 available repositories')).toBeVisible();
 });
+
+test('should be able to access group associated repositories', async ({
+  page,
+}) => {
+  await SeedClient.seedCatalog({ userGroup: { name: USER_GROUP_NAME } });
+  await page.goto('/');
+  const catalog = new Catalog(page);
+  await catalog.getFirstRepositoryCard().click();
+  const structureContainer = page.locator('.structure-page');
+  await expect(structureContainer).toContainText(
+    'Click on the button below in order to create your first item!',
+  );
+});
