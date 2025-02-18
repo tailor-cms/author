@@ -5,6 +5,12 @@ export class Sidebar {
   readonly page: Page;
   readonly el: Locator;
 
+  public static getUserAccessRoute = (id: number) =>
+    `/repository/${id}/root/settings/access/user-management`;
+
+  public static getGroupAccessRoute = (id: number) =>
+    `/repository/${id}/root/settings/access/group-management`;
+
   constructor(page: Page, el: Locator) {
     this.page = page;
     this.el = el;
