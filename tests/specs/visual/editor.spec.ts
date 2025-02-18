@@ -65,10 +65,7 @@ test('snapshot of the editor page upon linking Content Elements', async ({
   page,
 }) => {
   const editor = new Editor(page);
-  await editor.toSecondaryPage();
-  await expect(
-    page.getByText('Click the button below to add content'),
-  ).toBeVisible();
+  await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
   await editor.focusElement('The Art and Science of Pizza Making');
   await editor.sidebar.getRelationship('Related content').openDialog();
   await expect(page.getByText('Select elements')).toBeVisible();
