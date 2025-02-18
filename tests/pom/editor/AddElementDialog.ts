@@ -10,6 +10,7 @@ export class AddElementDialog {
     const el = page.locator('div[role="dialog"].v-bottom-sheet');
     this.addBtn = page.getByRole('button', { name: 'Add content' });
     this.copyBtn = el.getByRole('button', { name: 'Copy existing' });
+    this.page = page;
     this.el = el;
   }
 

@@ -4,6 +4,7 @@ import { SelectElementDialog } from './SelectElementDialog';
 
 export class Relationship {
   readonly el: Locator;
+  readonly page: Page;
   readonly name: string;
   readonly addBtn: Locator;
   readonly removeBtn: Locator;
@@ -13,6 +14,7 @@ export class Relationship {
 
   constructor(page: Page, name: string) {
     const el = page.locator('.element-relationship', { hasText: name });
+    this.page = page;
     this.addBtn = el.getByRole('button', { name: 'Add Relationship' });
     this.removeBtn = el.getByRole('button', { name: 'Remove Relationship' });
     this.confirmationDialog = new ConfirmationDialog(page, 'Remove Related Contents');

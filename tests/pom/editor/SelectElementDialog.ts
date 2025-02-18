@@ -10,6 +10,7 @@ export class SelectElementDialog {
     const el = page.locator('div[role="dialog"]', { hasText: /^(Copy|Select) elements/ });
     this.confirmBtn = el.getByRole('button', { name: /^(Copy|Save)/ });
     this.selectAllBtn = el.getByRole('button', { name: 'Select all' });
+    this.page = page;
     this.el = el;
   }
 
