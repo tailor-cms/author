@@ -21,6 +21,22 @@ export class EditorSidebar {
     return this.toggleAllBtn.click();
   }
 
+  getRelationship(hasText: string) {
+    return this.el.locator('.element-relationship', { hasText });
+  }
+
+  async addRelationship(relationship: string) {
+    const rel = this.getRelationship(relationship);
+    const addBtn = rel.getByRole('button', { name: 'Add Relationship' });
+    await addBtn.click();
+  }
+
+  async clearRelationship(relationship: string) {
+    const rel = this.getRelationship(relationship);
+    const removeBtn = rel.getByRole('button', { name: 'Remove Relationships' });
+    await removeBtn.click();
+  }
+
   async getOutlineItems(name?: string) {
     const el = this.el.locator('.v-list-item');
     return name ? el.filter({ hasText: name }).all() : el.all();

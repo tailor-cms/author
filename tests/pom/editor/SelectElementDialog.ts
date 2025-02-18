@@ -1,18 +1,18 @@
 import type { Locator, Page } from '@playwright/test';
 
-export class CopyDialog {
+export class SelectElementDialog {
   readonly page: Page;
   readonly el: Locator;
-  readonly copyBtn: Locator;
+  readonly confirmBtn: Locator;
 
   constructor(page: Page) {
-    const el = page.locator('div[role="dialog"]', { hasText: 'Copy elements' });
-    this.copyBtn = el.getByRole('button', { name: 'Copy' });
+    const el = page.locator('div[role="dialog"]', { hasText: /^(Copy|Select) elements/ });
+    this.confirmBtn = el.getByRole('button', { name: /^(Copy|Save)/ });
     this.el = el;
   }
 
-  copyElement() {
-    return this.copyBtn.click();
+  async confirm() {
+    await this.confirmBtn.click();
   }
 
   async selectActivity(title: string) {

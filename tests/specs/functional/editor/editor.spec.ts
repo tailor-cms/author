@@ -88,6 +88,20 @@ test('can copy content element', async ({ page }) => {
   await expect(page.locator('.content-element')).toContainText(elementContent);
 });
 
+test('can add content element relationship', async ({ page }) => {
+  const editor = new Editor(page);
+  await editor.sidebar.toggleItems();
+  await editor.toSecondaryPage();
+  const pageTitle = outlineSeed.primaryPage.title;
+  const elementContent = 'The Origins of Pizza';
+  const relationship = 'Related content';
+  await editor.linkContentElement(relationship, pageTitle, elementContent);
+  // Make sure changes are persisted
+  await page.waitForTimeout(1000);
+  await page.reload();
+  await expect(editor.sidebar.el).toContainText(`${pageTitle} (1)`);
+});
+
 test('can delete content element', async ({ page }) => {
   const editor = new Editor(page);
   await expect(page.getByText(editor.primaryPageContent)).toBeVisible();

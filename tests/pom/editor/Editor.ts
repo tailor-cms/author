@@ -5,11 +5,11 @@ import { outlineSeed } from '../../helpers/seed';
 import { ContainerList } from './ContainerList';
 import type { ContentElement } from './ContentElement';
 import { EditorSidebar } from './Sidebar';
-import { CopyDialog } from './CopyDialog';
+import { SelectElementDialog } from './SelectElementDialog';
 
 export class Editor {
   readonly page: Page;
-  readonly copyDialog: CopyDialog;
+  readonly selectElementDialog: SelectElementDialog;
   readonly sidebar: EditorSidebar;
   readonly topToolbar: Locator;
   readonly primaryPageName = outlineSeed.primaryPage.title;
@@ -20,7 +20,7 @@ export class Editor {
 
   constructor(page: Page) {
     this.page = page;
-    this.copyDialog = new CopyDialog(page);
+    this.selectElementDialog = new SelectElementDialog(page);
     this.sidebar = new EditorSidebar(page);
     this.topToolbar = this.page.locator('.activity-toolbar');
     this.containerList = new ContainerList(page);
@@ -61,13 +61,26 @@ export class Editor {
   }
 
   async copyContentElement(pageTitle: string, elementContent: string) {
-    const { page, copyDialog } = this;
+    const { page, selectElementDialog: copyDialog } = this;
     await page.getByRole('button', { name: 'Add content' }).click();
     await page.getByRole('button', { name: 'Copy existing' }).click();
     await copyDialog.selectActivity(pageTitle);
     await copyDialog.selectElement(elementContent);
-    await copyDialog.copyElement();
+    await copyDialog.confirm();
     await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
+    await page.waitForLoadState('networkidle');
+  }
+
+  async linkContentElement(relationship: string, pageTitle: string, elementContent: string) {
+    const { page, sidebar, selectElementDialog: linkDialog } = this;
+    await page.getByRole('button', { name: 'Add content' }).click();
+    await page.getByRole('button', { name: 'HTML' }).click();
+    // Temporary using the first one / assuming container is empty before adding
+    await page.locator('.content-element').click();
+    await sidebar.addRelationship(relationship);
+    await linkDialog.selectActivity(pageTitle);
+    await linkDialog.selectElement(elementContent);
+    await linkDialog.confirm();
     await page.waitForLoadState('networkidle');
   }
 
