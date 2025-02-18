@@ -11,6 +11,10 @@ export class ContentElement {
     this.deleteBtn = el.getByRole('button', { name: 'Delete element' });
   }
 
+  async focus() {
+    await this.el.click();
+  }
+
   async remove() {
     await this.el.hover();
     await this.deleteBtn.click();

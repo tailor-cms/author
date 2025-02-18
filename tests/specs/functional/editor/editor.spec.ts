@@ -73,7 +73,7 @@ test('can add content element', async ({ page }) => {
   // Make sure changes are persisted
   await page.waitForTimeout(1000);
   await page.reload();
-  await expect(page.locator('.content-element')).toHaveText('This is a test');
+  await expect(editor.getElement('This is a test')).toBeVisible();
 });
 
 test('can copy specific content element', async ({ page }) => {
@@ -85,7 +85,7 @@ test('can copy specific content element', async ({ page }) => {
   // Make sure changes are persisted
   await page.waitForTimeout(1000);
   await page.reload();
-  await expect(page.locator('.content-element')).toContainText(elContent);
+  await expect(editor.getElement(elContent)).toBeVisible();
 });
 
 test('can copy all content elements from page', async ({ page }) => {
@@ -101,42 +101,34 @@ test('can copy all content elements from page', async ({ page }) => {
 
 test('can link specific content element', async ({ page }) => {
   const editor = new Editor(page);
-  await editor.sidebar.toggleItems();
-  await editor.toSecondaryPage();
   const pageTitle = outlineSeed.primaryPage.title;
-  const elContent = 'The Origins of Pizza';
-  const relationship = 'Related content';
-  await editor.addContentElementRelationship(relationship, pageTitle, elContent);
+  await editor.focusElement('The Art and Science of Pizza Making');
+  const relationship = editor.sidebar.getRelationship('Related content');
+  await relationship.add(pageTitle, 'The Origins of Pizza');
   // Make sure changes are persisted
-  await page.waitForTimeout(1000);
   await page.reload();
-  await expect(editor.sidebar.el).toContainText(`${pageTitle} (1)`);
+  await expect(relationship.overview).toContainText(`${pageTitle} (1)`);
 });
 
 test('can link all content element from page', async ({ page }) => {
   const editor = new Editor(page);
-  await editor.sidebar.toggleItems();
-  await editor.toSecondaryPage();
   const pageTitle = outlineSeed.primaryPage.title;
-  const relationship = 'Related content';
-  await editor.addContentElementRelationship(relationship, pageTitle);
+  await editor.focusElement('The Art and Science of Pizza Making');
+  const relationship = editor.sidebar.getRelationship('Related content');
+  await relationship.add(pageTitle);
   // Make sure changes are persisted
-  await page.waitForTimeout(1000);
   await page.reload();
-  await expect(editor.sidebar.el).toContainText(`${pageTitle} (4)`);
+  await expect(relationship.overview).toContainText(`${pageTitle} (3)`);
 });
 
 test('can remove content element links', async ({ page }) => {
   const editor = new Editor(page);
   const pageTitle = outlineSeed.primaryPage.title;
-  const elContent = 'The Origins of Pizza';
-  const relationshipName = 'Related content';
-  await page.locator('.content-element', { hasText: elContent }).click();
-  const relationship = editor.sidebar.getRelationship(relationshipName);
+  await editor.focusElement('The Origins of Pizza');
+  const relationship = editor.sidebar.getRelationship('Related content');
   await expect(relationship.overview).toContainText(`${pageTitle} (1)`);
   await relationship.clear();
   // Make sure changes are persisted
-  await page.waitForTimeout(1000);
   await page.reload();
   await expect(relationship.overview).toBeEmpty();
 });

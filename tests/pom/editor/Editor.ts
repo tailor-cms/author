@@ -4,13 +4,13 @@ import { expect } from '@playwright/test';
 import { outlineSeed } from '../../helpers/seed';
 import { AddElementDialog } from './AddElementDialog';
 import { ContainerList } from './ContainerList';
-import type { ContentElement } from './ContentElement';
+import { ContentElement } from './ContentElement';
 import { EditorSidebar } from './Sidebar';
 import { SelectElementDialog } from './SelectElementDialog';
 
 export class Editor {
   readonly page: Page;
-  readonly selectElementDialog: SelectElementDialog;
+  readonly copyDialog: SelectElementDialog;
   readonly sidebar: EditorSidebar;
   readonly topToolbar: Locator;
   readonly addElementDialog: AddElementDialog;
@@ -22,7 +22,7 @@ export class Editor {
 
   constructor(page: Page) {
     this.page = page;
-    this.selectElementDialog = new SelectElementDialog(page);
+    this.copyDialog = new SelectElementDialog(page);
     this.sidebar = new EditorSidebar(page);
     this.topToolbar = this.page.locator('.activity-toolbar');
     this.addElementDialog = new AddElementDialog(page);
@@ -40,8 +40,15 @@ export class Editor {
     await expect(this.topToolbar).toContainText(this.secondaryPageName);
   }
 
-  async openCopyDialog() {
-    await this.addElementDialog.openCopyDialog();
+  getElement(content?: string) {
+    return content ?
+      this.page.locator('.content-element', { hasText: content }) :
+      this.page.locator('.content-element').first();
+  }
+
+  async focusElement(content?: string) {
+    const locator = this.getElement(content);
+    await new ContentElement(this.page, locator).focus();
   }
 
   async getElements(): Promise<ContentElement[]> {
@@ -58,7 +65,7 @@ export class Editor {
     const { page, sidebar } = this;
     await this.addElementDialog.add('HTML');
     // Temporary using the first one / assuming container is empty before adding
-    await page.locator('.content-element').click();
+    await this.focusElement();
     await page.locator('.tiptap').fill(content);
     // Focusout element to trigger the save
     await sidebar.el.focus();
@@ -67,25 +74,11 @@ export class Editor {
   }
 
   async copyContentElements(pageTitle: string, elementContent?: string) {
-    const { page, selectElementDialog: copyDialog } = this;
-    await this.openCopyDialog();
+    const { page, copyDialog } = this;
+    await this.addElementDialog.openCopyDialog();
     await copyDialog.select(pageTitle, elementContent);
     await expect(page.locator('.v-snackbar'))
       .toHaveText(elementContent ? 'Element saved' : 'Elements saved');
-    await page.waitForLoadState('networkidle');
-  }
-
-  async addContentElementRelationship(
-    relationship: string,
-    pageTitle: string,
-    elementContent?: string,
-  ) {
-    const { page, sidebar, selectElementDialog: linkDialog } = this;
-    await this.addElementDialog.add('HTML');
-    // Temporary using the first one / assuming container is empty before adding
-    await page.locator('.content-element').click();
-    await sidebar.addRelationship(relationship);
-    await linkDialog.select(pageTitle, elementContent);
     await page.waitForLoadState('networkidle');
   }
 
