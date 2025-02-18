@@ -76,30 +76,54 @@ test('can add content element', async ({ page }) => {
   await expect(page.locator('.content-element')).toHaveText('This is a test');
 });
 
-test('can copy content element', async ({ page }) => {
+test('can copy specific content element', async ({ page }) => {
   const editor = new Editor(page);
   await editor.sidebar.toggleItems();
   await editor.toSecondaryPage();
   const elementContent = 'The Origins of Pizza';
-  await editor.copyContentElement(outlineSeed.primaryPage.title, elementContent);
+  await editor.copyContentElements(outlineSeed.primaryPage.title, elementContent);
   // Make sure changes are persisted
   await page.waitForTimeout(1000);
   await page.reload();
   await expect(page.locator('.content-element')).toContainText(elementContent);
 });
 
-test('can add content element relationship', async ({ page }) => {
+test('can copy all content elements from page', async ({ page }) => {
+  const editor = new Editor(page);
+  await editor.sidebar.toggleItems();
+  await editor.toSecondaryPage();
+  await editor.copyContentElements(outlineSeed.primaryPage.title);
+  // Make sure changes are persisted
+  await page.waitForTimeout(1000);
+  await page.reload();
+  await expect(page.locator('.content-element')).toHaveCount(4);
+});
+
+test('can link specific content element', async ({ page }) => {
   const editor = new Editor(page);
   await editor.sidebar.toggleItems();
   await editor.toSecondaryPage();
   const pageTitle = outlineSeed.primaryPage.title;
   const elementContent = 'The Origins of Pizza';
   const relationship = 'Related content';
-  await editor.linkContentElement(relationship, pageTitle, elementContent);
+  await editor.linkContentElements(relationship, pageTitle, elementContent);
   // Make sure changes are persisted
   await page.waitForTimeout(1000);
   await page.reload();
   await expect(editor.sidebar.el).toContainText(`${pageTitle} (1)`);
+});
+
+test('can link all content element from page', async ({ page }) => {
+  const editor = new Editor(page);
+  await editor.sidebar.toggleItems();
+  await editor.toSecondaryPage();
+  const pageTitle = outlineSeed.primaryPage.title;
+  const relationship = 'Related content';
+  await editor.linkContentElements(relationship, pageTitle);
+  // Make sure changes are persisted
+  await page.waitForTimeout(1000);
+  await page.reload();
+  await expect(editor.sidebar.el).toContainText(`${pageTitle} (4)`);
 });
 
 test('can delete content element', async ({ page }) => {

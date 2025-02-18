@@ -60,27 +60,28 @@ export class Editor {
     await page.waitForLoadState('networkidle');
   }
 
-  async copyContentElement(pageTitle: string, elementContent: string) {
+  async copyContentElements(pageTitle: string, elementContent?: string) {
     const { page, selectElementDialog: copyDialog } = this;
     await page.getByRole('button', { name: 'Add content' }).click();
     await page.getByRole('button', { name: 'Copy existing' }).click();
-    await copyDialog.selectActivity(pageTitle);
-    await copyDialog.selectElement(elementContent);
-    await copyDialog.confirm();
-    await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
+    await copyDialog.select(pageTitle, elementContent);
+    await expect(page.locator('.v-snackbar'))
+      .toHaveText(elementContent ? 'Element saved' : 'Elements saved');
     await page.waitForLoadState('networkidle');
   }
 
-  async linkContentElement(relationship: string, pageTitle: string, elementContent: string) {
+  async linkContentElements(
+    relationship: string,
+    pageTitle: string,
+    elementContent?: string,
+  ) {
     const { page, sidebar, selectElementDialog: linkDialog } = this;
     await page.getByRole('button', { name: 'Add content' }).click();
     await page.getByRole('button', { name: 'HTML' }).click();
     // Temporary using the first one / assuming container is empty before adding
     await page.locator('.content-element').click();
     await sidebar.addRelationship(relationship);
-    await linkDialog.selectActivity(pageTitle);
-    await linkDialog.selectElement(elementContent);
-    await linkDialog.confirm();
+    await linkDialog.select(pageTitle, elementContent);
     await page.waitForLoadState('networkidle');
   }
 
