@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { outlineSeed } from '../../helpers/seed';
+import { AddElementDialog } from './AddElementDialog';
 import { ContainerList } from './ContainerList';
 import type { ContentElement } from './ContentElement';
 import { EditorSidebar } from './Sidebar';
@@ -12,6 +13,7 @@ export class Editor {
   readonly selectElementDialog: SelectElementDialog;
   readonly sidebar: EditorSidebar;
   readonly topToolbar: Locator;
+  readonly addElementDialog: AddElementDialog;
   readonly primaryPageName = outlineSeed.primaryPage.title;
   readonly primaryPageContent = outlineSeed.primaryPage.textContent;
   readonly secondaryPageName = outlineSeed.secondaryPage.title;
@@ -23,6 +25,7 @@ export class Editor {
     this.selectElementDialog = new SelectElementDialog(page);
     this.sidebar = new EditorSidebar(page);
     this.topToolbar = this.page.locator('.activity-toolbar');
+    this.addElementDialog = new AddElementDialog(page);
     this.containerList = new ContainerList(page);
   }
 
@@ -37,6 +40,10 @@ export class Editor {
     await expect(this.topToolbar).toContainText(this.secondaryPageName);
   }
 
+  async openCopyDialog() {
+    await this.addElementDialog.openCopyDialog();
+  }
+
   async getElements(): Promise<ContentElement[]> {
     const containers = await this.containerList.getContainers();
     const elements: ContentElement[] = [];
@@ -49,8 +56,7 @@ export class Editor {
 
   async addContentElement(content = 'This is a test element') {
     const { page, sidebar } = this;
-    await page.getByRole('button', { name: 'Add content' }).click();
-    await page.getByRole('button', { name: 'HTML' }).click();
+    await this.addElementDialog.add('HTML');
     // Temporary using the first one / assuming container is empty before adding
     await page.locator('.content-element').click();
     await page.locator('.tiptap').fill(content);
@@ -62,8 +68,7 @@ export class Editor {
 
   async copyContentElements(pageTitle: string, elementContent?: string) {
     const { page, selectElementDialog: copyDialog } = this;
-    await page.getByRole('button', { name: 'Add content' }).click();
-    await page.getByRole('button', { name: 'Copy existing' }).click();
+    await this.openCopyDialog();
     await copyDialog.select(pageTitle, elementContent);
     await expect(page.locator('.v-snackbar'))
       .toHaveText(elementContent ? 'Element saved' : 'Elements saved');
@@ -76,8 +81,7 @@ export class Editor {
     elementContent?: string,
   ) {
     const { page, sidebar, selectElementDialog: linkDialog } = this;
-    await page.getByRole('button', { name: 'Add content' }).click();
-    await page.getByRole('button', { name: 'HTML' }).click();
+    await this.addElementDialog.add('HTML');
     // Temporary using the first one / assuming container is empty before adding
     await page.locator('.content-element').click();
     await sidebar.addRelationship(relationship);
