@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { Relationship } from './Relationship';
 
 export class EditorSidebar {
   readonly page: Page;
@@ -21,20 +22,18 @@ export class EditorSidebar {
     return this.toggleAllBtn.click();
   }
 
-  getRelationship(hasText: string) {
-    return this.el.locator('.element-relationship', { hasText });
+  getRelationship(name: string) {
+    return new Relationship(this.page, name);
   }
 
-  async addRelationship(relationship: string) {
-    const rel = this.getRelationship(relationship);
-    const addBtn = rel.getByRole('button', { name: 'Add Relationship' });
-    await addBtn.click();
+  async addRelationship(name: string) {
+    const relationship = new Relationship(this.page, name);
+    await relationship.add();
   }
 
-  async clearRelationship(relationship: string) {
-    const rel = this.getRelationship(relationship);
-    const removeBtn = rel.getByRole('button', { name: 'Remove Relationships' });
-    await removeBtn.click();
+  async clearRelationship(name: string) {
+    const relationship = new Relationship(this.page, name);
+    await relationship.clear();
   }
 
   async getOutlineItems(name?: string) {

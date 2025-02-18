@@ -70,7 +70,7 @@ export class Editor {
     await page.waitForLoadState('networkidle');
   }
 
-  async linkContentElements(
+  async addContentElementRelationship(
     relationship: string,
     pageTitle: string,
     elementContent?: string,
