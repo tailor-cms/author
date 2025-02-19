@@ -115,7 +115,7 @@ test('can link all content element from page', async ({ page }) => {
   const editor = new Editor(page);
   const pageTitle = outlineSeed.primaryPage.title;
   await editor.focusElement('The Art and Science of Pizza Making');
-  const relationship = editor.sidebar.getRelationship('Related content');
+  const relationship = new Relationship(page, 'Related content');
   await relationship.add(pageTitle);
   // Make sure changes are persisted
   await page.reload();
@@ -126,7 +126,7 @@ test('can remove content element links', async ({ page }) => {
   const editor = new Editor(page);
   const pageTitle = outlineSeed.primaryPage.title;
   await editor.focusElement('The Origins of Pizza');
-  const relationship = editor.sidebar.getRelationship('Related content');
+  const relationship = new Relationship(page, 'Related content');
   await expect(relationship.overview).toContainText(`${pageTitle} (1)`);
   await relationship.clear();
   // Make sure changes are persisted

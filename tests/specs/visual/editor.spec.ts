@@ -4,6 +4,7 @@ import { confirmAction } from '../../pom/common/utils.ts';
 import { Editor } from '../../pom/editor/Editor';
 import { percySnapshot } from '../../utils/percy.ts';
 import SeedClient from '../../api/SeedClient';
+import { Relationship } from '../../pom/editor/Relationship.ts';
 
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
@@ -67,7 +68,8 @@ test('snapshot of the editor page upon linking Content Elements', async ({
   const editor = new Editor(page);
   await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
   await editor.focusElement('The Art and Science of Pizza Making');
-  await editor.sidebar.getRelationship('Related content').openDialog();
+  const relationship = new Relationship(page, 'Related content');
+  await relationship.openDialog();
   await expect(page.getByText('Select elements')).toBeVisible();
   await percySnapshot(page, 'Editor page - Copy elements dialog');
 });
