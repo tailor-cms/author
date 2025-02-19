@@ -71,7 +71,7 @@ test('snapshot of the editor page upon linking Content Elements', async ({
   const relationship = new Relationship(page, 'Related content');
   await relationship.openDialog();
   await expect(page.getByText('Select elements')).toBeVisible();
-  await percySnapshot(page, 'Editor page - Copy elements dialog');
+  await percySnapshot(page, 'Editor page - Link elements dialog');
 });
 
 test('snapshot of the editor page comments section', async ({ page }) => {
