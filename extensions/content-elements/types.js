@@ -1,5 +1,5 @@
 export const ContentElementType = {
-  TipTapHtml: 'TIPTAP_HTML',
+  TiptapHtml: 'TIPTAP_HTML',
   Image: 'IMAGE',
   MultipleChoice: 'MULTIPLE_CHOICE',
   SingleChoice: 'SINGLE_CHOICE',
@@ -17,4 +17,5 @@ export const ContentElementType = {
   Accordion: 'ACCORDION',
   Carousel: 'CAROUSEL',
   Modal: 'MODAL',
+  BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
 };

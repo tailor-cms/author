@@ -88,5 +88,10 @@
     "name": "@tailor-cms/ce-modal",
     "clientPackage": "@tailor-cms/ce-modal-edit",
     "serverPackage": "@tailor-cms/ce-modal-server"
+  },
+  {
+    "name": "@tailor-cms/ce-brightcove-video",
+    "clientPackage": "@tailor-cms/ce-brightcove-video-edit",
+    "serverPackage": "@tailor-cms/ce-brightcove-video-server"
   }
 ]
