@@ -17,5 +17,6 @@ export const ContentElementType = {
   Accordion: 'ACCORDION',
   Carousel: 'CAROUSEL',
   Modal: 'MODAL',
+  Table: 'TABLE',
   BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
 };
