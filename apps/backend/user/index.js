@@ -28,9 +28,9 @@ router
   .post('/forgot-password', ctrl.forgotPassword)
   .use('/reset-password', requestLimiter(), authService.authenticate('token'))
   .post('/reset-password', ctrl.resetPassword)
-  .post('/reset-password/token-status', (_, res) =>
-    res.sendStatus(StatusCodes.ACCEPTED),
-  );
+  .post('/reset-password/token-status', (_, res) => {
+    return res.sendStatus(StatusCodes.ACCEPTED);
+  });
 
 // Protected routes:
 router
