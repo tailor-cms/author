@@ -1,24 +1,15 @@
-import { body, validationResult } from 'express-validator';
-import { StatusCodes } from 'http-status-codes';
+import { body } from 'express-validator';
 import { UserRole } from '@tailor-cms/common';
 
-export const upsertUserGroup = [
-  body('name').notEmpty().trim(),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (errors.isEmpty()) return next();
-    return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
-  },
-];
+import defineRequestValidator from '#shared/request/validation.js';
 
-export const upsertUser = [
+export const upsertUserGroup = defineRequestValidator([
+  body('name').notEmpty().trim(),
+]);
+
+export const upsertUser = defineRequestValidator([
   body('email').notEmpty().isEmail().normalizeEmail(),
   body('role')
     .notEmpty()
     .isIn([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR]),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (errors.isEmpty()) return next();
-    return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
-  },
-];
+]);
