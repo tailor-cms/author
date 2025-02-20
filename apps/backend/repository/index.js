@@ -8,6 +8,7 @@ import { authorize } from '#shared/auth/mw.js';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import processQuery from '#shared/util/processListQuery.js';
+import requestValidation from './repository.validation.js';
 
 /* eslint-disable */
 import AccesssService from '#app/shared/auth/accesss.service.js';
@@ -70,6 +71,7 @@ router
   .post(
     '/:repositoryId/user-group',
     AccesssService.hasRepositoryAdminAccess,
+    requestValidation.addUserGroup,
     ctrl.addUserGroup,
   )
   .delete(

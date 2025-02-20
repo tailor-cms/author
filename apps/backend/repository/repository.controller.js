@@ -16,9 +16,9 @@ import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import publishingService from '#shared/publishing/publishing.service.js';
 import db from '#shared/database/index.js';
 import { createError } from '#shared/error/helpers.js';
-import TransferService from '#shared/transfer/transfer.service.js';
 import { createLogger } from '#logger';
 import { general } from '#config';
+import TransferService from '#shared/transfer/transfer.service.js';
 import UserGroup from '#app/user-group/userGroup.model.js';
 
 const { NO_CONTENT, NOT_FOUND } = StatusCodes;
@@ -242,7 +242,6 @@ function removeUser(req, res) {
 
 async function addUserGroup({ repository, body }, res) {
   const { userGroupId } = body;
-  if (!body.userGroupId) return createError(NOT_FOUND, 'Invalid request');
   const userGroup = await UserGroup.findByPk(userGroupId);
   if (!userGroup) return createError(NOT_FOUND, 'User group not found');
   await repository.addUserGroup([userGroup]);
