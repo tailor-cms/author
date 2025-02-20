@@ -57,10 +57,26 @@ router
   .get('/:repositoryId/export/setup', ctrl.initiateExportJob)
   .get('/:repositoryId/export/:jobId/status', ctrl.getExportStatus)
   .post('/:repositoryId/export/:jobId', ctrl.export)
-  .post('/:repositoryId/users', ctrl.upsertUser)
-  .delete('/:repositoryId/users/:userId', ctrl.removeUser)
-  .post('/:repositoryId/user-group', ctrl.addUserGroup)
-  .delete('/:repositoryId/user-group/:userGroupId', ctrl.removeUserGroup)
+  .post(
+    '/:repositoryId/users',
+    AccesssService.hasRepositoryAdminAccess,
+    ctrl.upsertUser,
+  )
+  .delete(
+    '/:repositoryId/users/:userId',
+    AccesssService.hasRepositoryAdminAccess,
+    ctrl.removeUser,
+  )
+  .post(
+    '/:repositoryId/user-group',
+    AccesssService.hasRepositoryAdminAccess,
+    ctrl.addUserGroup,
+  )
+  .delete(
+    '/:repositoryId/user-group/:userGroupId',
+    AccesssService.hasRepositoryAdminAccess,
+    ctrl.removeUserGroup,
+  )
   .post('/:repositoryId/tags', ctrl.addTag)
   .delete('/:repositoryId/tags/:tagId', ctrl.removeTag);
 

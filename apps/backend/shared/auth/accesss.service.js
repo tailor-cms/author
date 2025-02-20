@@ -29,6 +29,28 @@ class AccessService {
     return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
   }
 
+  async hasRepositoryAdminAccess(req, _res, next) {
+    const { repository, user } = req;
+    // If user is a system admin, allow all
+    if (user.isAdmin()) return next();
+    // Check if user is associated with the repository as an admin
+    const userRelationship = first(
+      await repository.getRepositoryUsers({
+        where: { userId: user.id, role: UserRole.ADMIN, hasAccess: true },
+      }),
+    );
+    if (userRelationship) return next();
+    // Check if user is a member of repository associated user group and has
+    // admin privileges
+    const repositoryGroupIds = repository.userGroups.map((it) => it.id);
+    const userGroupIds = user.userGroupMembers
+      ?.filter((it) => it.role === UserRole.ADMIN)
+      .map((it) => it.groupId);
+    if (intersection(repositoryGroupIds, userGroupIds).length) return next();
+    // If none of the above conditions are met, deny access
+    return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
+  }
+
   async hasCreateRepositoryAccess(req, _res, next) {
     const { body, user } = req;
     const { userGroupIds } = body;

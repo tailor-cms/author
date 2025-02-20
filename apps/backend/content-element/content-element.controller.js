@@ -13,7 +13,7 @@ function list({ query, opts }, res) {
   return ContentElement.fetch(opts).then((data) => res.json({ data }));
 }
 
-async function show({ contentElement }, res) {
+function show({ contentElement }, res) {
   return res.json({ data: contentElement });
 }
 
