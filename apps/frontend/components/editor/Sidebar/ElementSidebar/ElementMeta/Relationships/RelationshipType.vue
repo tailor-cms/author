@@ -1,5 +1,5 @@
 <template>
-  <VListItem class="pa-4" variant="tonal" rounded>
+  <VListItem class="element-relationship pa-4" variant="tonal" rounded>
     <VListItemTitle>{{ label }}</VListItemTitle>
     <VListItemSubtitle>{{ overview }}</VListItemSubtitle>
     <template #append>
@@ -8,6 +8,7 @@
           <template #activator="{ props: tooltipProps }">
             <VBtn
               v-bind="tooltipProps"
+              :aria-label="`${hasRelationships ? 'Edit' : 'Add'} Relationship`"
               :class="{ 'mr-3': hasRelationships }"
               :icon="hasRelationships ? 'mdi-pencil' : 'mdi-plus'"
               color="teal-lighten-3"
@@ -22,6 +23,7 @@
           <template #activator="{ props: tooltipProps }">
             <VBtn
               v-bind="tooltipProps"
+              aria-label="Remove Relationship"
               color="secondary-lighten-3"
               icon="mdi-close"
               size="small"
@@ -67,7 +69,7 @@ const activities = computed(() => curentRepository.activities);
 const hasRelationships = computed(() => !!props.value.length);
 
 const totalsByActivity = computed(() => {
-  return activities.value.reduce((acc, { id, data }) => {
+  return activities.value.reduce((acc: any, { id, data }: any) => {
     const { length } = props.value.filter((it) => it.outlineId === id);
     return length ? [...acc, `${data.name} (${length})`] : acc;
   }, [] as string[]);

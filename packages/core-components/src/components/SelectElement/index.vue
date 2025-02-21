@@ -123,7 +123,7 @@ const props = withDefaults(defineProps<Props>(), {
   element: null,
   selected: () => [],
   filters: () => [],
-  submitLabel: 'save',
+  submitLabel: 'Save',
   headerIcon: 'mdi-toy-brick-plus-outline',
   onlyCurrentRepo: false,
   multiple: true,
