@@ -1,6 +1,6 @@
 import get from 'lodash/get.js';
 import roleConfig from '@tailor-cms/common/src/role.js';
-import { UNAUTHORIZED } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import { createError } from '../error/helpers.js';
 import { auth as authConfig } from '#config';
 
@@ -10,7 +10,7 @@ function authorize(...allowed) {
   allowed.push(role.ADMIN);
   return ({ user }, res, next) => {
     if (user && allowed.includes(user.role)) return next();
-    return createError(UNAUTHORIZED, 'Access restricted');
+    return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
   };
 }
 

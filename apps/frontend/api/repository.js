@@ -15,6 +15,7 @@ const urls = {
   exportStatus: (id, jobId) => `${urls.export(id, jobId)}/status`,
   users: (id, userId = '') => `${urls.resource(id)}/users/${userId}`,
   tags: (id, tagId = '') => `${urls.resource(id)}/tags/${tagId}`,
+  userGroup: (id, userGroupId = '') => `${urls.resource(id)}/user-group/${userGroupId}`,
 };
 
 function get(repositoryId, params) {
@@ -87,6 +88,16 @@ function removeTag({ repositoryId, tagId }) {
   return request.delete(urls.tags(repositoryId, tagId)).then(extractData);
 }
 
+function addUserGroup({ repositoryId, userGroupId }) {
+  return request
+    .post(urls.userGroup(repositoryId), { userGroupId })
+    .then(extractData);
+}
+
+function removeUserGroup({ repositoryId, userGroupId }) {
+  return request.delete(urls.userGroup(repositoryId, userGroupId)).then(extractData);
+}
+
 function initiateExportJob(repositoryId) {
   return request.get(urls.exportInit(repositoryId)).then(extractData);
 }
@@ -112,6 +123,8 @@ export default {
   getUsers,
   upsertUser,
   removeUser,
+  addUserGroup,
+  removeUserGroup,
   clone,
   pin,
   publishRepositoryMeta,
