@@ -9,11 +9,14 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
+const SchemaId = 'COURSE_SCHEMA';
+
 enum ActivityType {
   // Outline
   Module = 'MODULE',
   Page = 'PAGE',
   Lesson = 'LESSON',
+  KnowledgeCheck = 'KNOWLEDGE_CHECK',
   // Content containers
   Section = 'SECTION',
 }
@@ -68,6 +71,21 @@ const PageConfig: ActivityConfig = {
       hideOnCreate: true,
     },
   ],
+};
+
+const KnowledgeCheckConfig: ActivityConfig = {
+  type: ActivityType.KnowledgeCheck,
+  rootLevel: true,
+  isTrackedInWorkflow: true,
+  label: 'Knowledge check',
+  ai: {
+    definition: `
+      Knowledge checks are short assessments designed to gauge the learner's
+      understanding of the material covered in the lesson. They help reinforce
+      learning and provide immediate feedback to the learner.`,
+  },
+  color: '#E91E63',
+  contentContainers: [ContentContainerType.Exam],
 };
 
 const SectionConfig: ContentContainerConfig = {
@@ -148,6 +166,13 @@ const AssessmentPoolConfig: ContentContainerConfig = {
   templateId: ContentContainerType.AssessmentPool,
   label: 'Assessments',
   publishedAs: 'assessments',
+  ai: {
+    definition: `
+      Assessment pools are collections of assessments that can be used to
+      evaluate the learner's understanding of the material. They can include
+      various types of questions and are designed to provide comprehensive
+      feedback.`,
+  },
   contentElementConfig: [
     {
       name: 'Assessments',
@@ -180,8 +205,26 @@ const AssessmentPoolConfig: ContentContainerConfig = {
   },
 };
 
+const ExamConfig: ContentContainerConfig = {
+  type: ContentContainerType.Exam,
+  templateId: ContentContainerType.Exam,
+  label: 'Exam',
+  displayHeading: true,
+  multiple: true,
+  publishedAs: 'exam',
+  config: {
+    objectives: [`${SchemaId}/${ActivityType.Page}`],
+  },
+  ai: {
+    definition: `
+      Exams are comprehensive assessments that evaluate the learner's
+      understanding of the material covered in the lesson. They are designed to
+      test the learner's knowledge and provide feedback on their progress.`,
+  },
+};
+
 export const SCHEMA: Schema = {
-  id: 'COURSE_SCHEMA',
+  id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Course',
   description: 'A classic course structure featuring modules and pages.',
@@ -199,8 +242,8 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
-  structure: [ModuleConfig, PageConfig],
-  contentContainers: [SectionConfig, AssessmentPoolConfig],
+  structure: [ModuleConfig, PageConfig, KnowledgeCheckConfig],
+  contentContainers: [SectionConfig, AssessmentPoolConfig, ExamConfig],
   elementMeta: [
     {
       type: ContentElementType.Image,

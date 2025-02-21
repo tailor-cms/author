@@ -13,5 +13,10 @@
     "name": "@tailor-cms/tcc-assessment-pool",
     "clientPackage": "@tailor-cms/tcc-assessment-pool-edit",
     "serverPackage": "@tailor-cms/tcc-assessment-pool-server"
+  },
+  {
+    "name": "@tailor-cms/tcc-exam",
+    "clientPackage": "@tailor-cms/tcc-exam-edit",
+    "serverPackage": "@tailor-cms/tcc-exam-server"
   }
 ]
