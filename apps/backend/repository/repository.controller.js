@@ -248,8 +248,8 @@ async function addUserGroup({ repository, body }, res) {
   return res.json({ data: userGroup });
 }
 
-async function removeUserGroup({ params: { repositoryId, userGroupId } }, res) {
-  const where = { repositoryId, groupId: userGroupId };
+async function removeUserGroup({ repository, params: { userGroupId } }, res) {
+  const where = { repositoryId: repository.id, groupId: userGroupId };
   await RepositoryUserGroup.destroy({ where });
   return res.status(NO_CONTENT).send();
 }

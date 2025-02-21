@@ -90,7 +90,7 @@ function removeTag({ repositoryId, tagId }) {
 
 function addUserGroup({ repositoryId, userGroupId }) {
   return request
-    .post(urls.userGroup(repositoryId), { repositoryId, userGroupId })
+    .post(urls.userGroup(repositoryId), { userGroupId })
     .then(extractData);
 }
 
