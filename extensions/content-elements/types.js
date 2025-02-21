@@ -18,4 +18,5 @@ export const ContentElementType = {
   Carousel: 'CAROUSEL',
   Modal: 'MODAL',
   Table: 'TABLE',
+  BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
 };

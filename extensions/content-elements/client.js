@@ -17,6 +17,7 @@ import pkg15 from '@tailor-cms/ce-accordion-edit';
 import pkg16 from '@tailor-cms/ce-carousel-edit';
 import pkg17 from '@tailor-cms/ce-modal-edit';
 import pkg18 from '@tailor-cms/ce-table-edit';
+import pkg19 from '@tailor-cms/ce-brightcove-video-edit';
 
 // prettier-ignore
 export const elements = [
@@ -39,4 +40,5 @@ export const elements = [
   pkg16,
   pkg17,
   pkg18,
+  pkg19,
 ];

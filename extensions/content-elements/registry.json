@@ -93,5 +93,10 @@
     "name": "@tailor-cms/ce-table",
     "clientPackage": "@tailor-cms/ce-table-edit",
     "serverPackage": "@tailor-cms/ce-table-server"
+  },
+  {
+    "name": "@tailor-cms/ce-brightcove-video",
+    "clientPackage": "@tailor-cms/ce-brightcove-video-edit",
+    "serverPackage": "@tailor-cms/ce-brightcove-video-server"
   }
 ]
