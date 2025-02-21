@@ -574,6 +574,12 @@ importers:
       '@tailor-cms/ce-audio-server':
         specifier: ^0.0.6
         version: 0.0.6
+      '@tailor-cms/ce-brightcove-video-edit':
+        specifier: ^0.0.2
+        version: 0.0.2(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.14)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
+      '@tailor-cms/ce-brightcove-video-server':
+        specifier: ^0.0.2
+        version: 0.0.2
       '@tailor-cms/ce-carousel-edit':
         specifier: ^0.0.4
         version: 0.0.4(vue@3.5.13(typescript@5.7.2))
@@ -599,11 +605,11 @@ importers:
         specifier: ^0.0.11
         version: 0.0.11
       '@tailor-cms/ce-html-edit':
-        specifier: ^0.0.12
-        version: 0.0.12(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(vue@3.5.13(typescript@5.7.2))
+        specifier: ^0.0.13
+        version: 0.0.13(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(vue@3.5.13(typescript@5.7.2))
       '@tailor-cms/ce-html-server':
-        specifier: ^0.0.12
-        version: 0.0.12
+        specifier: ^0.0.13
+        version: 0.0.13
       '@tailor-cms/ce-image-edit':
         specifier: ^1.0.3
         version: 1.0.3(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.14)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
@@ -3768,6 +3774,14 @@ packages:
   '@tailor-cms/ce-audio-server@0.0.6':
     resolution: {integrity: sha512-ZiYeWJkicY4OJAOKcCA2OLETXjt1P0zLtZNm76beewh3+UdFmmN80cucJgoN0DxC2XxTlkVDMHzBSuj1y95AZA==}
 
+  '@tailor-cms/ce-brightcove-video-edit@0.0.2':
+    resolution: {integrity: sha512-XRcshDGmhkUBRBEFFpf+jZ1am6HNBUocqa5qnzY3hz/WHMcGaIUb1oXrEjl/YVux2pKrn4mKEamvWtwr0WCGxA==}
+    peerDependencies:
+      vue: ^3.5.13
+
+  '@tailor-cms/ce-brightcove-video-server@0.0.2':
+    resolution: {integrity: sha512-x/z979lWeWJpf8ziLE1A9IdGkRRulzWPE5K/Z8N4it8iYdmnVBvx81/mBUwtY98TjQOOT4D6/O8iwKkUSqAu/w==}
+
   '@tailor-cms/ce-carousel-edit@0.0.4':
     resolution: {integrity: sha512-Cxx3DiSVJRitDaEsOgNrr40+iNWEbVazeVNdghXkLEhuqS8LdBHnl4hiGfT/ptDveR2If57eaFIFEIsRzF09CQ==}
     peerDependencies:
@@ -3800,13 +3814,13 @@ packages:
   '@tailor-cms/ce-fill-blank-server@0.0.11':
     resolution: {integrity: sha512-e298L1m2y8wV8dDR9LTCToMU9ctHEnhZJW24GY7vq9lFdlgyc0DewildRKyeCjwJXMlpZyoTHSdNe4ucfEeDYA==}
 
-  '@tailor-cms/ce-html-edit@0.0.12':
-    resolution: {integrity: sha512-FqDER5AuorpPi9PCbWG7sAIYYGDt2d8yEyikoHijip5ZhyixXSjuo3/U7YCQTcIgLPVVpclitZiAechsxXpHNA==}
+  '@tailor-cms/ce-html-edit@0.0.13':
+    resolution: {integrity: sha512-sH2zBo+O2Xh40C38B0vOxHVD1+l3DA2EcodHHsp7U8KwJYK3jxSPE/2WkSOBtfmdpr8V+wXwOOcDirB/gZh/Hg==}
     peerDependencies:
-      vue: ^3.3.4
+      vue: ^3.5.13
 
-  '@tailor-cms/ce-html-server@0.0.12':
-    resolution: {integrity: sha512-37z2qpnuFtkOlMxjFwXMd0rwDTPIAF1uiCFpHaWtSNu+nQr7yz8d6eFwR1jufNtgw57C/zzyuZ1JE4FPST9wYw==}
+  '@tailor-cms/ce-html-server@0.0.13':
+    resolution: {integrity: sha512-kHKjAhaMc15FJ2qe6xZUYFRgubfJHF1jJtbQ5Gj84FhVIEKRU9bz4T0mZHIC8ou1lRfc6JP6Lamim38zoQcb6Q==}
 
   '@tailor-cms/ce-image-edit@1.0.3':
     resolution: {integrity: sha512-XmnO4va/fyxkCuKcKoXYumN2ka7O7nEczp72mkx+BMPz5L6RcgeJ54Zp/hohpmhiopR3HwlFpJTX4ytTs04mYA==}
@@ -12822,7 +12836,7 @@ snapshots:
       promise-all-reject-late: 1.0.1
       promise-call-limit: 3.0.1
       read-package-json-fast: 3.0.2
-      semver: 7.6.3
+      semver: 7.7.0
       ssri: 10.0.6
       treeverse: 3.0.0
       walk-up-path: 3.0.1
@@ -12832,7 +12846,7 @@ snapshots:
 
   '@npmcli/fs@3.1.1':
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.0
 
   '@npmcli/git@5.0.8':
     dependencies:
@@ -12843,7 +12857,7 @@ snapshots:
       proc-log: 4.2.0
       promise-inflight: 1.0.1
       promise-retry: 2.0.1
-      semver: 7.6.3
+      semver: 7.7.0
       which: 4.0.0
     transitivePeerDependencies:
       - bluebird
@@ -12866,7 +12880,7 @@ snapshots:
       json-parse-even-better-errors: 3.0.2
       pacote: 18.0.6
       proc-log: 4.2.0
-      semver: 7.6.3
+      semver: 7.7.0
     transitivePeerDependencies:
       - bluebird
       - supports-color
@@ -12883,7 +12897,7 @@ snapshots:
       json-parse-even-better-errors: 3.0.2
       normalize-package-data: 6.0.2
       proc-log: 4.2.0
-      semver: 7.6.3
+      semver: 7.7.0
     transitivePeerDependencies:
       - bluebird
 
@@ -13302,7 +13316,7 @@ snapshots:
       '@types/shimmer': 1.2.0
       import-in-the-middle: 1.11.0
       require-in-the-middle: 7.4.0
-      semver: 7.6.3
+      semver: 7.7.0
       shimmer: 1.2.1
     transitivePeerDependencies:
       - supports-color
@@ -13338,7 +13352,7 @@ snapshots:
       '@opentelemetry/propagator-b3': 1.25.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/propagator-jaeger': 1.25.1(@opentelemetry/api@1.9.0)
       '@opentelemetry/sdk-trace-base': 1.25.1(@opentelemetry/api@1.9.0)
-      semver: 7.6.3
+      semver: 7.7.0
 
   '@opentelemetry/semantic-conventions@1.25.1': {}
 
@@ -14732,6 +14746,31 @@ snapshots:
 
   '@tailor-cms/ce-audio-server@0.0.6': {}
 
+  '@tailor-cms/ce-brightcove-video-edit@0.0.2(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.14)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)':
+    dependencies:
+      '@tailor-cms/core-components': 1.0.32(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.14)(@types/pluralize@0.0.33)(date-fns@4.1.0)(lodash@4.17.21)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
+      lodash: 4.17.21
+      url-join: 5.0.0
+      vue: 3.5.13(typescript@5.7.2)
+    transitivePeerDependencies:
+      - '@tailor-cms/utils'
+      - '@tiptap/core'
+      - '@tiptap/pm'
+      - '@tiptap/starter-kit'
+      - '@tiptap/vue-3'
+      - '@types/lodash'
+      - '@types/pluralize'
+      - date-fns
+      - p-min-delay
+      - pluralize
+      - typescript
+      - vee-validate
+      - vuedraggable
+      - vuetify
+      - yup
+
+  '@tailor-cms/ce-brightcove-video-server@0.0.2': {}
+
   '@tailor-cms/ce-carousel-edit@0.0.4(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       lodash: 4.17.21
@@ -14819,7 +14858,7 @@ snapshots:
     dependencies:
       lodash: 4.17.21
 
-  '@tailor-cms/ce-html-edit@0.0.12(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(vue@3.5.13(typescript@5.7.2))':
+  '@tailor-cms/ce-html-edit@0.0.13(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@tiptap/extension-color': 2.9.1(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/extension-text-style@2.9.1(@tiptap/core@2.6.6(@tiptap/pm@2.6.6)))
       '@tiptap/extension-font-family': 2.9.1(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/extension-text-style@2.9.1(@tiptap/core@2.6.6(@tiptap/pm@2.6.6)))
@@ -14846,7 +14885,7 @@ snapshots:
     transitivePeerDependencies:
       - '@tiptap/core'
 
-  '@tailor-cms/ce-html-server@0.0.12': {}
+  '@tailor-cms/ce-html-server@0.0.13': {}
 
   '@tailor-cms/ce-image-edit@1.0.3(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.14)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)':
     dependencies:
@@ -15579,7 +15618,7 @@ snapshots:
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.6.3
+      semver: 7.7.0
       ts-api-utils: 1.3.0(typescript@5.7.2)
     optionalDependencies:
       typescript: 5.7.2
@@ -17285,7 +17324,7 @@ snapshots:
       '@one-ini/wasm': 0.1.1
       commander: 10.0.1
       minimatch: 9.0.1
-      semver: 7.6.3
+      semver: 7.7.0
 
   ee-first@1.1.1: {}
 
@@ -17588,7 +17627,7 @@ snapshots:
       get-tsconfig: 4.7.6
       is-glob: 4.0.3
       minimatch: 9.0.5
-      semver: 7.6.3
+      semver: 7.7.0
       stable-hash: 0.0.4
       tslib: 2.7.0
     transitivePeerDependencies:
@@ -17606,7 +17645,7 @@ snapshots:
       espree: 10.3.0
       esquery: 1.6.0
       parse-imports: 2.1.1
-      semver: 7.6.3
+      semver: 7.7.0
       spdx-expression-parse: 4.0.0
       synckit: 0.9.1
     transitivePeerDependencies:
@@ -17640,7 +17679,7 @@ snapshots:
       read-pkg-up: 7.0.1
       regexp-tree: 0.1.27
       regjsparser: 0.10.0
-      semver: 7.6.3
+      semver: 7.7.0
       strip-indent: 3.0.0
 
   eslint-plugin-vue@9.31.0(eslint@9.16.0(jiti@2.4.2)):
@@ -17651,7 +17690,7 @@ snapshots:
       natural-compare: 1.4.0
       nth-check: 2.1.1
       postcss-selector-parser: 6.1.2
-      semver: 7.6.3
+      semver: 7.7.0
       vue-eslint-parser: 9.4.3(eslint@9.16.0(jiti@2.4.2))
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
@@ -19890,7 +19929,7 @@ snapshots:
       make-fetch-happen: 13.0.1
       nopt: 7.2.1
       proc-log: 4.2.0
-      semver: 7.6.3
+      semver: 7.7.0
       tar: 6.2.1
       which: 4.0.0
     transitivePeerDependencies:
@@ -19916,7 +19955,7 @@ snapshots:
   normalize-package-data@6.0.2:
     dependencies:
       hosted-git-info: 7.0.2
-      semver: 7.6.3
+      semver: 7.7.0
       validate-npm-package-license: 3.0.4
 
   normalize-path@3.0.0: {}
@@ -19931,7 +19970,7 @@ snapshots:
 
   npm-install-checks@6.3.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.0
 
   npm-normalize-package-bin@1.0.1: {}
 
@@ -19941,7 +19980,7 @@ snapshots:
     dependencies:
       hosted-git-info: 7.0.2
       proc-log: 4.2.0
-      semver: 7.6.3
+      semver: 7.7.0
       validate-npm-package-name: 5.0.1
 
   npm-packlist@8.0.2:
@@ -19953,7 +19992,7 @@ snapshots:
       npm-install-checks: 6.3.0
       npm-normalize-package-bin: 3.0.1
       npm-package-arg: 11.0.3
-      semver: 7.6.3
+      semver: 7.7.0
 
   npm-registry-fetch@17.1.0:
     dependencies:
