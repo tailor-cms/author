@@ -7,14 +7,12 @@ import omit from 'lodash/omit.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import randomstring from 'randomstring';
-import { role as roles } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/common';
 import mail from '#shared/mail/index.js';
 import Audience from '#shared/auth/audience.js';
 import { auth as authConfig } from '#config';
 
-const {
-  user: { ADMIN, COLLABORATOR, INTEGRATION, USER },
-} = roles;
+const { ADMIN, COLLABORATOR, INTEGRATION, USER } = UserRole;
 const gravatarConfig = { size: 130, default: 'identicon' };
 
 class User extends Model {
@@ -248,7 +246,7 @@ class User extends Model {
       const groups = await UserGroup.findAll();
       return groups.map((group) => ({
         ...group.dataValues,
-        role: 'ADMIN',
+        role: UserRole.ADMIN,
       }));
     }
     return this.getUserGroups().then((groups) =>
