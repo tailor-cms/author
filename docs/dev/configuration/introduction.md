@@ -78,7 +78,7 @@ const SECTION: ContentContainerConfig = {
   ],
   // Configuration of Content Element types which Author can add as embedded
   // elements inside composite elements in this container
-  embedElementConfig: [ContentElementType.TipTapHtml],
+  embedElementConfig: [ContentElementType.TiptapHtml],
 };
 
 export const SCHEMA: Schema = {
