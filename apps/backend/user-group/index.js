@@ -16,7 +16,7 @@ router.param('id', getUserGroup);
 router
   .route('/')
   .get(ctrl.list)
-  .post(authorize(UserRole.ADMIN), validation.upsertUserGroup, ctrl.create);
+  .post(authorize(), validation.upsertUserGroup, ctrl.create);
 
 router
   .route('/:id')
