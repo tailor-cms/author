@@ -652,6 +652,12 @@ importers:
       '@tailor-cms/ce-single-choice-server':
         specifier: ^0.0.20
         version: 0.0.20
+      '@tailor-cms/ce-table-edit':
+        specifier: ^0.0.2
+        version: 0.0.2(vue@3.5.13(typescript@5.7.2))
+      '@tailor-cms/ce-table-server':
+        specifier: ^0.0.2
+        version: 0.0.2
       '@tailor-cms/ce-text-response-edit':
         specifier: ^0.0.12
         version: 0.0.12(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.14)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)
@@ -3865,6 +3871,14 @@ packages:
 
   '@tailor-cms/ce-single-choice-server@0.0.20':
     resolution: {integrity: sha512-s94Nic0cTRoGvJt6n6lYIrMjG125qAOLBqaBO7/ikc1ebXUvDpHa4RINFosKLd2epAaPt3773yoxOy49iu68HQ==}
+
+  '@tailor-cms/ce-table-edit@0.0.2':
+    resolution: {integrity: sha512-0Zt7kT1TzyLUGaDV5IXAUQn4+SBWKu38WdqWfBP/M8aNEkwyvQyfd+4n2MGIPjMYo8JF/DcQpdTmBzI/lweq+g==}
+    peerDependencies:
+      vue: ^3.5.13
+
+  '@tailor-cms/ce-table-server@0.0.2':
+    resolution: {integrity: sha512-GVFlxngWDO5c0YQ8TkofG/evGejcSt7HjGGpyUqn8/EejISvvhDkBgV/r01OGP88znGrCFnN0cXFfATjMqCfXA==}
 
   '@tailor-cms/ce-text-response-edit@0.0.12':
     resolution: {integrity: sha512-bqbC2t52/7d/87ygqPi3p2D2gy4DQ2L+apBp1rkWVzRvFNDzh2G9vpJ2K0J1q6lXh62cs74L6o7g/oahfZWLBA==}
@@ -15001,6 +15015,14 @@ snapshots:
   '@tailor-cms/ce-single-choice-server@0.0.20':
     dependencies:
       lodash: 4.17.21
+
+  '@tailor-cms/ce-table-edit@0.0.2(vue@3.5.13(typescript@5.7.2))':
+    dependencies:
+      lodash: 4.17.21
+      uuid: 11.0.5
+      vue: 3.5.13(typescript@5.7.2)
+
+  '@tailor-cms/ce-table-server@0.0.2': {}
 
   '@tailor-cms/ce-text-response-edit@0.0.12(@tailor-cms/utils@packages+utils)(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(@tiptap/starter-kit@2.6.6)(@tiptap/vue-3@2.6.6(@tiptap/core@2.6.6(@tiptap/pm@2.6.6))(@tiptap/pm@2.6.6)(vue@3.5.13(typescript@5.7.2)))(@types/lodash@4.17.14)(@types/pluralize@0.0.33)(date-fns@4.1.0)(p-min-delay@4.0.2)(pluralize@8.0.0)(typescript@5.7.2)(vee-validate@4.14.7(vue@3.5.13(typescript@5.7.2)))(vue@3.5.13(typescript@5.7.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.7.2)))(vuetify@3.7.5(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(yup@1.5.0)':
     dependencies:

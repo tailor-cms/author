@@ -194,7 +194,8 @@ const onSave = (data: ContentElement['data']) => {
 };
 
 const focus = () => {
-  editorBus.emit('element:focus', props.element, props.parent);
+  const { element, parent } = props;
+  editorBus.emit('element:focus', { ...element, parent });
 };
 
 const onLink = (key?: string) => editorBus.emit('element:link', key);

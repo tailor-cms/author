@@ -15,17 +15,11 @@
 
 <script lang="ts" setup>
 import { getElementId } from '@tailor-cms/utils';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 import ElementToolbar from './ElementToolbar.vue';
 
-interface Props {
-  element: any;
-  embed?: any;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  embed: null,
-});
+const props = defineProps<{ element: ContentElement }>();
 
 const elementBus = useContentElementBus(props.element);
 const storageService = useStorageService();

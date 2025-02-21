@@ -76,7 +76,7 @@ const SectionConfig: ContentContainerConfig = {
   label: 'Section',
   multiple: true,
   embedElementConfig: [
-    ContentElementType.TipTapHtml,
+    ContentElementType.TiptapHtml,
     ContentElementType.Image,
     ContentElementType.Video,
   ],
@@ -84,7 +84,7 @@ const SectionConfig: ContentContainerConfig = {
     {
       name: 'Content Elements',
       items: [
-        ContentElementType.TipTapHtml,
+        ContentElementType.TiptapHtml,
         ContentElementType.Image,
         ContentElementType.Video,
         ContentElementType.Embed,
@@ -92,8 +92,7 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.PageBreak,
         ContentElementType.Pdf,
         ContentElementType.Accordion,
-        // TODO: Need to be migrated
-        // ContentElementType.Table,
+        ContentElementType.Table,
         ContentElementType.Modal,
         ContentElementType.Carousel,
       ],
@@ -224,7 +223,7 @@ export const SCHEMA: Schema = {
       ],
     },
     {
-      type: ContentElementType.TipTapHtml,
+      type: ContentElementType.TiptapHtml,
       relationships: [
         {
           key: 'related',
@@ -232,7 +231,7 @@ export const SCHEMA: Schema = {
           multiple: true,
           placeholder: 'Click to select',
           allowedElementConfig: [
-            ContentElementType.TipTapHtml,
+            ContentElementType.TiptapHtml,
             ContentElementType.Image,
           ],
           filters: [(optionEl, currentEl) => optionEl.id !== currentEl.id],
@@ -242,7 +241,7 @@ export const SCHEMA: Schema = {
           label: 'Prerequisites',
           multiple: true,
           placeholder: 'Click to select',
-          allowedElementConfig: [ContentElementType.TipTapHtml],
+          allowedElementConfig: [ContentElementType.TiptapHtml],
         },
       ],
     },
