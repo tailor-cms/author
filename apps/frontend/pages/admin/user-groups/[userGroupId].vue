@@ -10,7 +10,7 @@
             variant="text"
             @click="router.back()"
           />
-          {{ userGroup.name }} user group
+          {{ userGroup?.name }} user group
         </div>
       </VCol>
       <VCol>
@@ -25,14 +25,14 @@
     <VDataTable
       v-if="!isLoading"
       :items="userGroupUsers"
-      hide-default-header
       class="px-6 bg-transparent"
       no-data-text="No assigned users."
+      hide-default-header
     >
       <template #item="{ item }">
         <tr class="user-entry">
           <td class="text-left">
-            <VAvatar :image="item.imgUrl" size="32" variant="tonal" />
+            <UserAvatar :img-url="item.imgUrl" size="32" />
           </td>
           <td class="text-left user-entry-email">{{ item.email }}</td>
           <td class="user-entry-label text-body-2 text-left text-truncate">
@@ -70,7 +70,11 @@
 <script lang="ts" setup>
 import map from 'lodash/map.js';
 import { title as titleCase } from 'to-case';
+import { UserAvatar } from '@tailor-cms/core-components';
 import { UserRole } from '@tailor-cms/common';
+
+import type { User } from '@tailor-cms/interfaces/user';
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 import { userGroup as api } from '@/api';
 import UserGroupMembershipDialog from '~/components/admin/UserGroupMembershipDialog.vue';
@@ -89,8 +93,8 @@ const router = useRouter();
 
 const isLoading = ref(true);
 const userGroupId = parseInt(route.params.userGroupId as string, 10);
-const userGroup = ref<any>({});
-const userGroupUsers = ref<any[]>([]);
+const userGroup = ref<UserGroup | null>(null);
+const userGroupUsers = ref<User[]>([]);
 
 const roles = computed<Role[]>(() =>
   map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({

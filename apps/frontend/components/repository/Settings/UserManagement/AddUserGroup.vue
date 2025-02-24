@@ -52,18 +52,16 @@
 </template>
 
 <script lang="ts" setup>
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
+
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
 import repositoryApi from '@/api/repository.js';
 
-export interface Props {
-  userGroups: any;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  userGroups: [],
-});
+const props = defineProps<{
+  userGroups: UserGroup[];
+}>();
 
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();

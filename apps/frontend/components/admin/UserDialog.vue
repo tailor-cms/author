@@ -102,6 +102,7 @@ import { TailorDialog } from '@tailor-cms/core-components';
 import { title as titleCase } from 'to-case';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 import { user as api } from '@/api';
 
@@ -111,7 +112,7 @@ export interface Props {
   visible: boolean;
   userData: any;
   users: User[];
-  userGroups: any[];
+  userGroups: UserGroup[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -176,7 +177,8 @@ watch(isDialogVisible, (val) => {
     firstNameInput.value = props.userData.firstName;
     lastNameInput.value = props.userData.lastName;
     roleInput.value = props.userData.role;
-    groupInput.value = props.userData?.userGroups?.map((it: any) => it.id) || [];
+    groupInput.value = props.userData?.userGroups
+      ?.map((it: UserGroup) => it.id) || [];
   } else {
     resetForm();
   }

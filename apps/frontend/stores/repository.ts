@@ -4,6 +4,7 @@ import type {
   Tag,
 } from '@tailor-cms/interfaces/repository';
 import intersectionBy from 'lodash/intersectionBy';
+import { UserRole } from '@tailor-cms/common';
 
 import { useAuthStore } from './auth';
 import { repository as api, tag as tagApi } from '@/api';
@@ -172,7 +173,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     const repositoryGroups = repository?.userGroups || [];
     repository.hasAdminAccess =
       authStore.isAdmin ||
-      repository.repositoryUser?.role === 'ADMIN' ||
+      repository.repositoryUser?.role === UserRole.ADMIN ||
       !!intersectionBy(userAdminGroups, repositoryGroups, 'id').length;
   }
 

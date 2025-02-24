@@ -83,6 +83,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
+
 import { userGroup as api } from '@/api';
 import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 
@@ -103,13 +105,13 @@ const defaultPage = () => ({
 const authStore = useAuthStore();
 
 const headers = [
-  { title: 'Group name', sortable: false },
-  authStore.isAdmin && { title: 'Actions', sortable: false },
+  { title: 'Group name', key: 'name', sortable: false },
+  authStore.isAdmin && { title: 'Actions', key: 'actions', sortable: false },
 ].filter(Boolean);
 
 const isLoading = ref(true);
 const isGroupDialogVisible = ref(false);
-const userGroups = ref<any[]>([]);
+const userGroups = ref<UserGroup[]>([]);
 const totalItems = ref(0);
 const dataTable = reactive(defaultPage());
 const filter = ref('');

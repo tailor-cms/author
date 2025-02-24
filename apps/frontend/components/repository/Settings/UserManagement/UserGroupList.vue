@@ -33,6 +33,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 import api from '@/api/repository.js';
 
 const repositoryStore = useRepositoryStore();
@@ -42,7 +43,7 @@ const groups = computed(
   () => currentRepositoryStore?.repository?.userGroups || [],
 );
 
-const remove = (group: any) => {
+const remove = (group: UserGroup) => {
   const showDialog = useConfirmationDialog();
   const { repositoryId } = currentRepositoryStore;
   const payload = {

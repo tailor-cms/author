@@ -1,14 +1,16 @@
 import type { User } from '@tailor-cms/interfaces/user';
+import type { UserGroupWithRole } from '@tailor-cms/interfaces/user-group';
+import { UserRole } from '@tailor-cms/common';
 
 import { auth as api } from '@/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);
-  const userGroups = ref<any[]>([]);
+  const userGroups = ref<UserGroupWithRole[]>([]);
   const strategy = ref<string | null>(null);
 
-  const isAdmin = computed(() => user.value?.role === 'ADMIN');
-  const isDefaultUser = computed(() => user.value?.role === 'USER');
+  const isAdmin = computed(() => user.value?.role === UserRole.ADMIN);
+  const isDefaultUser = computed(() => user.value?.role === UserRole.USER);
   const isOidcActive = computed(() => strategy.value === 'oidc');
 
   const hasGroupBoundAccess = computed(
@@ -22,12 +24,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   const groupsWithCreateRepositoryAccess = computed(() =>
     userGroups.value.filter(
-      (group) => group.role === 'ADMIN' || group.role === 'USER',
+      (group) => group.role === UserRole.ADMIN || group.role === UserRole.USER,
     ),
   );
 
   const groupsWithAdminAccess = computed(() =>
-    userGroups.value.filter((group) => group.role === 'ADMIN'),
+    userGroups.value.filter((group) => group.role === UserRole.ADMIN),
   );
 
   const hasCreateRepositoryAccess = computed(
@@ -42,7 +44,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   function $reset(
     userData: User | null = null,
-    userGroupData: any[] = [],
+    userGroupData: UserGroupWithRole[] = [],
     authStrategy: string | null = null,
   ) {
     user.value = userData;

@@ -188,10 +188,6 @@ import AIAssistance from './AIAssistance.vue';
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
-import { useActivityStore } from '@/stores/activity';
-import { useAuthStore } from '@/stores/auth';
-import { useConfigStore } from '@/stores/config';
-import { useRepositoryStore } from '@/stores/repository';
 
 const { $schemaService } = useNuxtApp() as any;
 
