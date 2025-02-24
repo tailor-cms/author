@@ -1,15 +1,15 @@
-import { StatusCodes } from 'http-status-codes';
 import { Op } from 'sequelize';
+import { StatusCodes } from 'http-status-codes';
 
 import { createError } from '#app/shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
 const { User, UserGroup, UserGroupMember } = db;
 
-async function list({ user, query: { filter, archived }, options }, res) {
+async function list({ user, query: { filter }, options }, res) {
   const where = {};
   if (filter) where.name = { [Op.iLike]: `%${filter}%` };
-  const opts = { where, ...options, paranoid: !archived };
+  const opts = { where, ...options };
   if (!user.isAdmin()) {
     opts.include = [
       { model: UserGroupMember, where: { userId: user.id }, required: true },
@@ -30,6 +30,8 @@ async function create({ body: { name } }, res) {
 }
 
 async function update({ userGroup, body: { name } }, res) {
+  const exists = await UserGroup.findOne({ where: { name } });
+  if (exists) return createError(StatusCodes.CONFLICT, 'Group already exists');
   await userGroup.update({ name });
   return res.json({ data: userGroup });
 }
