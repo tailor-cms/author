@@ -13,10 +13,16 @@ import { UserRole } from '@tailor-cms/common';
 
 import { store as activityCache } from '../../repository/feed/store.js';
 import db from '#shared/database/index.js';
-import RepositoryUserGroup from '#app/user-group/repositoryUserGroup.model.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 
-const { Activity, Repository, User, UserGroup, UserGroupMember } = db;
+const {
+  Activity,
+  Repository,
+  RepositoryUserGroup,
+  User,
+  UserGroup,
+  UserGroupMember,
+} = db;
 
 const DEFAULT_USER =
   find(seedUsers, { email: 'admin@gostudion.com' }) || seedUsers[0];

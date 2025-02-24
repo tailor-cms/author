@@ -4,6 +4,7 @@ import { UserRole } from '@tailor-cms/common';
 
 import * as validation from './user-group.validation.js';
 import ctrl from './user-group.controller.js';
+
 import { authorize } from '#shared/auth/mw.js';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
@@ -40,7 +41,7 @@ async function getUserGroup(req, _res, next, id) {
   const { user } = req;
   const group = await UserGroup.findByPk(id, { paranoid: false });
   if (!group) return createError(StatusCodes.NOT_FOUND, 'User group not found');
-  // If the user is not an admin, check if they are an admin of the group
+  // If the user is not an admin, check if user is a group admin
   if (!user.isAdmin()) {
     const isGroupAdmin = await UserGroupMember.findOne({
       where: { userId: user.id, groupId: group.id, role: UserRole.ADMIN },
