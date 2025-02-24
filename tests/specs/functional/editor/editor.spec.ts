@@ -5,6 +5,7 @@ import { Editor } from '../../../pom/editor/Editor';
 import SeedClient from '../../../api/SeedClient';
 import { outlineSeed } from '../../../helpers/seed';
 import { Relationship } from '../../../pom/editor/Relationship';
+import { ContentElement } from '../../../pom/editor/ContentElement';
 
 const REPOSITORY_NAME = 'Editor test repository';
 
@@ -97,7 +98,7 @@ test('can copy all content elements from page', async ({ page }) => {
   // Make sure changes are persisted
   await page.waitForTimeout(1000);
   await page.reload();
-  await expect(page.locator('.content-element')).toHaveCount(4);
+  await expect(page.locator(ContentElement.selector)).toHaveCount(4);
 });
 
 test('can link specific content element', async ({ page }) => {

@@ -42,8 +42,8 @@ export class Editor {
 
   getElement(content?: string) {
     return content ?
-      this.page.locator('.content-element', { hasText: content }) :
-      this.page.locator('.content-element').first();
+      this.page.locator(ContentElement.selector, { hasText: content }) :
+      this.page.locator(ContentElement.selector).first();
   }
 
   async focusElement(content?: string) {

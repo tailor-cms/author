@@ -1,6 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 
 export class ContentElement {
+  static selector = '.content-element';
   readonly page: Page;
   readonly el: Locator;
   readonly deleteBtn: Locator;
