@@ -1,19 +1,14 @@
 import { StatusCodes } from 'http-status-codes';
-import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 
 import { createError } from '#app/shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
 const { User, UserGroup, UserGroupMember } = db;
-const createFilter = (q) =>
-  map(['name'], (it) => ({
-    [it]: { [Op.iLike]: `%${q}%` },
-  }));
 
 async function list({ user, query: { filter, archived }, options }, res) {
-  const where = { [Op.and]: [] };
-  if (filter) where[Op.or] = createFilter(filter);
+  const where = {};
+  if (filter) where.name = { [Op.iLike]: `%${filter}%` };
   const opts = { where, ...options, paranoid: !archived };
   if (!user.isAdmin()) {
     opts.include = [
@@ -24,11 +19,13 @@ async function list({ user, query: { filter, archived }, options }, res) {
   return res.json({ data: { items: rows, total: count } });
 }
 
-async function get({ userGroup }, res) {
+function get({ userGroup }, res) {
   return res.json({ data: userGroup });
 }
 
-function create({ body: { name } }, res) {
+async function create({ body: { name } }, res) {
+  const group = await UserGroup.findOne({ where: { name } });
+  if (group) return createError(StatusCodes.CONFLICT, 'Group already exists');
   return UserGroup.create({ name }).then((data) => res.json({ data }));
 }
 
@@ -49,7 +46,8 @@ async function getUsers({ userGroup }, res) {
 
 async function upsertUser(req, res) {
   const { email, role } = req.body;
-  const user = await User.inviteOrUpdate({ email });
+  let user = await User.findOne({ where: { email } });
+  if (!user) user = await User.inviteOrUpdate({ email });
   await req.userGroup.addUser(user, { through: { role } });
   return res.sendStatus(StatusCodes.NO_CONTENT);
 }

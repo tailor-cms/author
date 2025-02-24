@@ -1,7 +1,5 @@
 import { Model } from 'sequelize';
-import { role as roles } from '@tailor-cms/common';
-
-const { user: { ADMIN, COLLABORATOR, USER } } = roles;
+import { UserRole } from '@tailor-cms/common';
 
 class UserGroupMember extends Model {
   static fields({ ENUM, INTEGER }) {
@@ -19,8 +17,8 @@ class UserGroupMember extends Model {
         unique: 'user_group_member_pkey',
       },
       role: {
-        type: ENUM(ADMIN, COLLABORATOR, USER),
-        defaultValue: USER,
+        type: ENUM(UserRole.ADMIN, UserRole.COLLABORATOR, UserRole.USER),
+        defaultValue: UserRole.USER,
       },
     };
   }
