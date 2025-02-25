@@ -19,5 +19,6 @@ export const ContentElementType = {
   Modal: 'MODAL',
   Table: 'TABLE',
   BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
+  JoditHtml: 'JODIT_HTML',
   QuillHtml: 'QUILL_HTML',
 };
