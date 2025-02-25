@@ -63,12 +63,12 @@ export class UserGroupUserList {
     this.userTable = el.locator('.v-table');
     this.userEntriesLocator = this.userTable.locator('.user-entry');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
-    this.page = page;
-    this.el = el;
     this.prevPage = el.getByRole('button', { name: 'Previous page' });
     this.nextPage = el.getByRole('button', { name: 'Next page' });
     const itemsPerPage = el.locator('.v-data-table-footer__items-per-page');
     this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
+    this.page = page;
+    this.el = el;
   }
 
   getEntries() {
@@ -98,7 +98,7 @@ export class UserGroupUserList {
     await expect(entry).not.toBeVisible();
   }
 
-  async selectItemsPerPage(value: number = 10 | 25 | 50 | 100) {
+  async selectItemsPerPage(value: 10 | 25 | 50 | 100 = 10) {
     await this.itemsPerPageBtn.click();
     await this.page
       .locator('.v-list-item .v-list-item-title')
@@ -166,8 +166,8 @@ export class GroupEntry {
 export class GroupManagement {
   static route = 'admin/user-groups';
   readonly page: Page;
-  readonly addBtn: Locator;
   readonly el: Locator;
+  readonly addBtn: Locator;
   readonly groupTable: Locator;
   readonly groupEntriesLocator: Locator;
   readonly prevPage: Locator;
@@ -242,7 +242,7 @@ export class GroupManagement {
     await expect(entry.el).not.toBeVisible();
   }
 
-  async selectItemsPerPage(value: number = 10 | 25 | 50 | 100) {
+  async selectItemsPerPage(value: 10 | 25 | 50 | 100 = 10) {
     await this.itemsPerPageBtn.click();
     await this.page
       .locator('.v-list-item .v-list-item-title')

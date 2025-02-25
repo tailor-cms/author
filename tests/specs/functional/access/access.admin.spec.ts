@@ -12,13 +12,13 @@ test.beforeAll(async () => {
 // are already covered as part of the remaining tests.
 test.describe('as a System Admin', () => {
   test('should see the admin menu entry', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
     await expect(appBar.adminLink).toBeVisible();
   });
 
   test('should be able to see 4 menu entries', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
     await appBar.adminLink.click();
     const sidebarLocator = page.locator('.admin-sidebar');

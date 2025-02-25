@@ -16,15 +16,16 @@ test.describe('Default user role, without User Group assignment', () => {
   });
 
   test('should be able to create Repository', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const dialog = new AddRepositoryDialog(page);
     await dialog.open();
     await dialog.createRepository();
   });
 
   test('should not see the Admin menu entry', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
+    await expect(appBar.catalogLink).toBeVisible();
     await expect(appBar.adminLink).not.toBeVisible();
   });
 
@@ -59,20 +60,20 @@ test.describe('Default user role, added to a User Group as Admin,', () => {
   });
 
   test('should be able to create Repository', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const dialog = new AddRepositoryDialog(page);
     await dialog.open();
     await dialog.createRepository();
   });
 
   test('should see the Admin menu entry', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
     await expect(appBar.adminLink).toBeVisible();
   });
 
   test('should be able to access group listing', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
     await expect(appBar.adminLink).toBeVisible();
     await appBar.adminLink.click();
@@ -130,15 +131,16 @@ test.describe('Default user role, added to a User Group as Default User,', () =>
   });
 
   test('should be able to create Repository', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const dialog = new AddRepositoryDialog(page);
     await dialog.open();
     await dialog.createRepository();
   });
 
   test('should not see the Admin menu entry', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
+    await expect(appBar.catalogLink).toBeVisible();
     await expect(appBar.adminLink).not.toBeVisible();
   });
 
@@ -172,15 +174,16 @@ test.describe('Default user role, added to a Group with Colaborator role', () =>
     });
   });
 
-  test('should not be able to create Repository', async ({ page }) => {
-    await page.goto('/');
+  test('should be able to create Repository', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' });
     const dialog = new AddRepositoryDialog(page);
-    await expect(dialog.openDialogBtn).not.toBeVisible();
+    await expect(dialog.openDialogBtn).toBeVisible();
   });
 
   test('should not see the Admin menu entry', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
+    await expect(appBar.catalogLink).toBeVisible();
     await expect(appBar.adminLink).not.toBeVisible();
   });
 

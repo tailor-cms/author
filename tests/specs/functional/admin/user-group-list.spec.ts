@@ -27,9 +27,10 @@ test('should be able to edit user group', async ({ page }) => {
   const name = 'Test Group';
   await userGroupPage.addUserGroup(name);
   const entry = await userGroupPage.getEntryByName(name);
-  await entry.edit('Edited Test Group');
+  const updatedName = 'Edited Test Group';
+  await entry.edit(updatedName);
   await page.reload();
-  await expect(userGroupPage.groupTable).toContainText(name);
+  await expect(userGroupPage.groupTable).toContainText(updatedName);
 });
 
 test('should be able to remove user group', async ({ page }) => {
