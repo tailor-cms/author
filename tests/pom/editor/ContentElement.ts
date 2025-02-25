@@ -1,6 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 
 export class ContentElement {
+  static selector = '.content-element';
   readonly page: Page;
   readonly el: Locator;
   readonly deleteBtn: Locator;
@@ -9,6 +10,10 @@ export class ContentElement {
     this.page = page;
     this.el = el;
     this.deleteBtn = el.getByRole('button', { name: 'Delete element' });
+  }
+
+  async focus() {
+    await this.el.click();
   }
 
   async remove() {
