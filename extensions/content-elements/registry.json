@@ -98,5 +98,10 @@
     "name": "@tailor-cms/ce-brightcove-video",
     "clientPackage": "@tailor-cms/ce-brightcove-video-edit",
     "serverPackage": "@tailor-cms/ce-brightcove-video-server"
+  },
+  {
+    "name": "@tailor-cms/ce-quill-html",
+    "clientPackage": "@tailor-cms/ce-quill-html-edit",
+    "serverPackage": "@tailor-cms/ce-quill-html-server"
   }
 ]

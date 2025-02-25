@@ -19,4 +19,5 @@ export const ContentElementType = {
   Modal: 'MODAL',
   Table: 'TABLE',
   BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
+  QuillHtml: 'QUILL_HTML',
 };
