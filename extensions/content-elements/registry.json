@@ -103,5 +103,10 @@
     "name": "@tailor-cms/ce-jodit-html",
     "clientPackage": "@tailor-cms/ce-jodit-html-edit",
     "serverPackage": "@tailor-cms/ce-jodit-html-server"
+  },
+  {
+    "name": "@tailor-cms/ce-quill-html",
+    "clientPackage": "@tailor-cms/ce-quill-html-edit",
+    "serverPackage": "@tailor-cms/ce-quill-html-server"
   }
 ]
