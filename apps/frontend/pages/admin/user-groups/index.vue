@@ -34,6 +34,7 @@
       :loading="isLoading"
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
+      no-data-text="No user groups."
       class="pt-4 px-4"
       item-value="id"
       must-sort
@@ -97,14 +98,14 @@ useHead({
 });
 
 const defaultPage = () => ({
-  sortBy: [{ key: 'name', order: 'desc' }],
+  sortBy: [{ key: 'name', order: 'desc' }] as any,
   page: 1,
   itemsPerPage: 10,
 });
 
 const authStore = useAuthStore();
 
-const headers = [
+const headers: any = [
   { title: 'Group name', key: 'name', sortable: false },
   authStore.isAdmin && { title: 'Actions', key: 'actions', sortable: false },
 ].filter(Boolean);

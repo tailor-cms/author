@@ -1,5 +1,9 @@
 <template>
-  <TailorDialog v-model="isDialogVisible" header-icon="mdi-account-group" persistent>
+  <TailorDialog
+    v-model="isDialogVisible"
+    header-icon="mdi-account-group"
+    persistent
+  >
     <template #header>{{ isNewGroup ? 'Create' : 'Edit' }} User Group</template>
     <template #body>
       <form class="form" novalidate @submit.prevent="submit">
@@ -60,7 +64,7 @@ const isDialogVisible = computed({
 
 const isNewGroup = computed(() => !props.groupData?.id);
 
-const { defineField, errors, handleSubmit, resetForm } = useForm({
+const { defineField, errors, handleSubmit, resetForm, setFieldError } = useForm({
   validationSchema: object({
     name: string().min(2).max(250).required(),
   }),
@@ -84,10 +88,16 @@ const close = () => {
 
 const submit = handleSubmit(async () => {
   const action = isNewGroup.value ? 'create' : 'update';
-  await api[action]({
-    id: props.groupData?.id,
-    name: nameInput.value,
-  });
+  try {
+    await api[action]({
+      id: props.groupData?.id,
+      name: nameInput.value,
+    });
+  } catch (e: any) {
+    const { message } = e?.response?.data?.error || {};
+    setFieldError('name', message || 'An error occurred!');
+    return;
+  }
   emit(`${action}d`);
   close();
 });
