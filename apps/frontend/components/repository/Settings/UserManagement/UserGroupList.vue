@@ -1,10 +1,20 @@
 <template>
+  <VAlert
+    v-if="groups.length === 0"
+    class="mt-12 ml-10 mr-5"
+    color="primary-darken-2"
+    variant="tonal"
+    icon="mdi-information-outline"
+  >
+    No associated user groups.
+  </VAlert>
   <VDataTable
+    v-else
+    :headers="headers"
     :items="groups"
     :items-per-page="-1"
-    class="pt-4 px-6 bg-transparent"
-    hide-default-header
-    hide-default-footer
+    class="pt-5 px-6 bg-transparent"
+    no-data-text="No associated user groups."
   >
     <template #item="{ item }">
       <tr :key="item.id">
@@ -16,7 +26,7 @@
             {{ item.name }}
           </NuxtLink>
         </td>
-        <td>
+        <td class="text-left">
           <VBtn
             aria-label="Deassociate user group"
             icon="mdi-delete-outline"
@@ -38,6 +48,11 @@ import api from '@/api/repository.js';
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
+
+const headers: any = [
+  { title: 'Group name', key: 'name', sortable: false },
+  { title: 'Actions', key: 'actions', sortable: false },
+];
 
 const groups = computed(
   () => currentRepositoryStore?.repository?.userGroups || [],
