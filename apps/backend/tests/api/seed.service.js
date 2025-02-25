@@ -6,13 +6,23 @@ import mapKeys from 'lodash/mapKeys.js';
 import { packageDirectory } from 'pkg-dir';
 import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import camelCase from 'lodash/camelCase.js';
-import { role as roles } from '@tailor-cms/common';
+import Promise from 'bluebird';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
+import sortBy from 'lodash/sortBy.js';
+import { UserRole } from '@tailor-cms/common';
+
 import { store as activityCache } from '../../repository/feed/store.js';
 import db from '#shared/database/index.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 
-const { Activity, Repository, User } = db;
+const {
+  Activity,
+  Repository,
+  RepositoryUserGroup,
+  User,
+  UserGroup,
+  UserGroupMember,
+} = db;
 
 const DEFAULT_USER =
   find(seedUsers, { email: 'admin@gostudion.com' }) || seedUsers[0];
@@ -26,18 +36,31 @@ class SeedService {
   async resetDatabase() {
     await db.sequelize.drop({});
     await db.initialize();
-    await Promise.all(
-      seedUsers.map((it) => User.create(mapKeys(it, (_, k) => camelCase(k)))),
-    );
+    await Promise.each(
+      sortBy(seedUsers, 'email'),
+      (it) => User.create(mapKeys(it, (_, k) => camelCase(k))));
     await activityCache.clear();
     return true;
   }
 
-  async seedCatalog(repositories = catalogSeed) {
+  async seedCatalog({ repositorySeed = catalogSeed, userGroup }) {
     const user = await User.findOne({ where: { email: DEFAULT_USER.email } });
     if (!user) throw new Error('Seed user not found');
     const opts = { context: { userId: user.id } };
-    return Promise.all(repositories.map((it) => Repository.create(it, opts)));
+    const repositories = await Promise.all(
+      repositorySeed.map((it) => Repository.create(it, opts)));
+    if (userGroup?.name) {
+      const [group] = await UserGroup.findOrCreate({
+        where: { name: userGroup.name },
+      });
+      for (const repository of repositories) {
+        await RepositoryUserGroup.create({
+          repositoryId: repository.id,
+          groupId: group.id,
+        });
+      }
+    }
+    return repositories;
   }
 
   async importRepositoryArchive(
@@ -65,14 +88,28 @@ class SeedService {
   async createUser(
     email = faker.internet.email(),
     password = faker.internet.password(),
-    role = roles.ADMIN,
+    role = UserRole.ADMIN,
+    userGroup,
   ) {
-    await User.create({
+    const [user] = await User.findOrCreate({
+      where: { email },
+      defaults: { password, role },
+    });
+    return {
       email,
       password,
+      userGroup: userGroup ? (await this.attachUserToGroup(user, userGroup)) : null,
+    };
+  }
+
+  async attachUserToGroup(user, { name = 'Test Group', role = UserRole.ADMIN }) {
+    const userGroup = await UserGroup.create({ name });
+    await UserGroupMember.create({
+      userId: user.id,
+      groupId: userGroup.id,
       role,
     });
-    return { email, password };
+    return userGroup;
   }
 }
 

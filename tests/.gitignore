@@ -6,7 +6,7 @@ node_modules/
 /playwright/.cache/
 # State storage
 # Storing context for authenticated user
-.auth.json
+.auth-*.json
 # Temp files
 tmp/*
 !tmp/.gitkeep

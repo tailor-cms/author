@@ -1,6 +1,6 @@
-import { BAD_REQUEST, NO_CONTENT } from 'http-status-codes';
 import pick from 'lodash/pick.js';
 import pickBy from 'lodash/pickBy.js';
+import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
@@ -58,13 +58,16 @@ function remove({ comment }, res) {
 function updateResolvement({ repository, body }, res) {
   const { id, resolvedAt, contentElementId } = body;
   if (!contentElementId && !id) {
-    return createError(BAD_REQUEST, 'id or contentElementId required!');
+    return createError(
+      StatusCodes.BAD_REQUEST,
+      'id or contentElementId required!',
+    );
   }
   const { id: repositoryId } = repository;
   const where = pickBy({ id, repositoryId, contentElementId }, (val) => !!val);
   const data = { resolvedAt: resolvedAt ? null : new Date() };
   return Comment.update(data, { where, paranoid: false }).then(() =>
-    res.sendStatus(NO_CONTENT),
+    res.sendStatus(StatusCodes.NO_CONTENT),
   );
 }
 

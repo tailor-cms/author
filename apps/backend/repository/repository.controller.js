@@ -16,9 +16,10 @@ import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import publishingService from '#shared/publishing/publishing.service.js';
 import db from '#shared/database/index.js';
 import { createError } from '#shared/error/helpers.js';
-import TransferService from '#shared/transfer/transfer.service.js';
 import { createLogger } from '#logger';
 import { general } from '#config';
+import TransferService from '#shared/transfer/transfer.service.js';
+import UserGroup from '#app/user-group/userGroup.model.js';
 
 const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 
@@ -36,6 +37,7 @@ const {
   Revision,
   sequelize,
   Tag,
+  RepositoryUserGroup,
   User,
 } = db;
 
@@ -76,7 +78,7 @@ const includeRepositoryUser = (user, query) => {
   const options =
     query && query.pinned
       ? { where: { userId: user.id, pinned: true }, required: true }
-      : { where: { userId: user.id }, required: !user.isAdmin() };
+      : { where: { userId: user.id }, required: false };
   return { model: RepositoryUser, ...options };
 };
 
@@ -92,15 +94,28 @@ async function index({ query, user, opts }, res) {
   const schemas = query.schemas || general.availableSchemas;
   if (search) opts.where.name = getFilter(search);
   if (name) opts.where.name = name;
-  if (search) opts.where.name = getFilter(search);
-  if (name) opts.where.name = name;
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   opts.distinct = true;
+  opts.subQuery = false;
   opts.include = [
     includeRepositoryUser(user, query),
+    { model: RepositoryUserGroup },
     ...includeRepositoryTags(query),
   ];
+  if (!user.isAdmin()) {
+    opts.where[Op.or] = [
+      {
+        '$repositoryUsers.user_id$': user.id,
+        '$repositoryUsers.has_access$': true,
+      },
+      {
+        '$repositoryUserGroups.group_id$': {
+          [Op.in]: user.userGroups.map((it) => it.id),
+        },
+      },
+    ];
+  }
   const { rows: repositories, count } = await Repository.findAndCountAll(opts);
   const revisions = await Revision.findAll({
     where: { repositoryId: repositories.map((it) => it.id) },
@@ -135,7 +150,11 @@ async function create({ user, body }, res) {
     repositoryId: repository.id,
     userId: user.id,
     role: role.ADMIN,
+    hasAccess: true,
   });
+  if (body.userGroupIds) {
+    await repository.associateWithUserGroups(body.userGroupIds, user);
+  }
   return res.json({ data: repository });
 }
 
@@ -143,6 +162,7 @@ async function get({ repository, user }, res) {
   const include = [
     includeLastRevision(),
     includeRepositoryUser(user),
+    { model: UserGroup },
     { model: Tag },
   ];
   await repository.reload({ include });
@@ -186,14 +206,18 @@ function publishRepoInfo({ repository }, res) {
 }
 
 function getUsers(req, res) {
-  return req.repository.getUsers().then((users) =>
-    res.json({
-      data: map(users, (it) => ({
-        ...it.profile,
-        repositoryRole: it.repositoryUser.role,
-      })),
-    }),
-  );
+  return req.repository
+    .getUsers({
+      where: { '$repositoryUser.has_access$': true },
+    })
+    .then((users) =>
+      res.json({
+        data: map(users, (it) => ({
+          ...it.profile,
+          repositoryRole: it.repositoryUser.role,
+        })),
+      }),
+    );
 }
 
 function upsertUser({ repository, body }, res) {
@@ -216,13 +240,32 @@ function removeUser(req, res) {
     .then(() => res.end());
 }
 
+async function addUserGroup({ repository, body }, res) {
+  const { userGroupId } = body;
+  const userGroup = await UserGroup.findByPk(userGroupId);
+  if (!userGroup) return createError(NOT_FOUND, 'User group not found');
+  await repository.addUserGroup([userGroup]);
+  return res.json({ data: userGroup });
+}
+
+async function removeUserGroup({ repository, params: { userGroupId } }, res) {
+  const where = { repositoryId: repository.id, groupId: userGroupId };
+  await RepositoryUserGroup.destroy({ where });
+  return res.status(NO_CONTENT).send();
+}
+
 function findOrCreateRole(repository, user, role) {
   return RepositoryUser.findOrCreate({
     where: { repositoryId: repository.id, userId: user.id },
-    defaults: { repositoryId: repository.id, userId: user.id, role },
+    defaults: {
+      repositoryId: repository.id,
+      userId: user.id,
+      role,
+      hasAccess: true,
+    },
     paranoid: false,
   })
-    .then(([cu, created]) => (created ? cu : cu.update({ role })))
+    .then(([cu, isNew]) => (isNew ? cu : cu.update({ role, hasAccess: true })))
     .then((cu) => (cu.deletedAt ? cu.restore() : cu))
     .then(() => user);
 }
@@ -289,8 +332,8 @@ function exportRepository({ repository, params }, res) {
 function importRepository({ body, file, user }, res) {
   log(`[importRepository] initiated, userId: ${user.id}, name: ${body.name}`);
   const { path } = file;
-  const { description, name } = body;
-  const options = { description, name, userId: user.id };
+  const { name, description, userGroupIds } = body;
+  const options = { description, name, userId: user.id, userGroupIds };
   return TransferService.createImportJob(path, options)
     .toPromise()
     .finally(() => {
@@ -326,6 +369,8 @@ export default {
   getUsers,
   upsertUser,
   removeUser,
+  addUserGroup,
+  removeUserGroup,
   publishRepoInfo,
   addTag,
   removeTag,

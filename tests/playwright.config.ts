@@ -20,35 +20,64 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chrome',
+      name: 'chrome-admin',
       testDir: './specs/functional',
-      dependencies: ['setup'],
+      testIgnore: ['*.default-user.spec.ts', '*.collaborator.spec.ts', '*.setup.spec.ts'],
+      dependencies: ['setup-admin'],
       use: {
         ...devices['Desktop Chrome'],
-        storageState: '.auth.json',
+        storageState: '.auth-admin.json',
+      },
+    },
+    {
+      name: 'chrome-default-user',
+      testDir: './specs/functional',
+      testMatch: ['*.default-user.spec.ts'],
+      dependencies: ['setup-default-user'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth-default-user.json',
+      },
+    },
+    {
+      name: 'chrome-collaborator',
+      testDir: './specs/functional',
+      testMatch: ['*.collaborator.spec.ts'],
+      dependencies: ['setup-collaborator'],
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth-collaborator.json',
       },
     },
     {
       name: 'visual',
       testDir: './specs/visual',
-      dependencies: ['setup'],
+      dependencies: ['setup-admin'],
       use: {
         ...devices['Desktop Chrome'],
-        storageState: '.auth.json',
+        storageState: '.auth-admin.json',
       },
     },
     {
       name: 'a11y',
       testDir: './specs/a11y',
-      dependencies: ['setup'],
+      dependencies: ['setup-admin'],
       use: {
         ...devices['Desktop Chrome'],
-        storageState: '.auth.json',
+        storageState: '.auth-admin.json',
       },
     },
     {
-      name: 'setup',
-      testMatch: 'setup.spec.ts',
+      name: 'setup-admin',
+      testMatch: 'admin.setup.spec.ts',
+    },
+    {
+      name: 'setup-default-user',
+      testMatch: 'default-user.setup.spec.ts',
+    },
+    {
+      name: 'setup-collaborator',
+      testMatch: 'collaborator.setup.spec.ts',
     },
   ],
 });
