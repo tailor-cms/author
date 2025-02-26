@@ -16,6 +16,8 @@
   "dependencies": {
     "@tailor-cms/tcc-assessment-pool-edit": "workspace:^",
     "@tailor-cms/tcc-assessment-pool-server": "workspace:^",
+    "@tailor-cms/tcc-exam-edit": "workspace:^",
+    "@tailor-cms/tcc-exam-server": "workspace:^",
     "@tailor-cms/tcc-page": "workspace:^",
     "@tailor-cms/tcc-structured-content": "workspace:^"
   }
