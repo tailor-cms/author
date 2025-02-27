@@ -21,9 +21,15 @@ router
 router.post('/:elementId/reorder', ctrl.reorder);
 
 function getContentElement(req, _res, next, elementId) {
+  if (!Number.isInteger(Number(elementId))) {
+    return createError(StatusCodes.BAD_REQUEST, 'Invalid id format');
+  }
   return ContentElement.findByPk(elementId, { paranoid: false })
     .then((it) => it || createError(StatusCodes.NOT_FOUND, 'Not found'))
     .then((contentElement) => {
+      if (contentElement.repositoryId !== req.repository.id) {
+        return createError(StatusCodes.FORBIDDEN, 'Access restricted');
+      }
       req.contentElement = contentElement;
       next();
     });

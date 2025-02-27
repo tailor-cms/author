@@ -55,7 +55,7 @@ class AccessService {
     // If user is creating a repository for themselves, allow
     if (user.role === UserRole.USER && !userGroupIds?.length) return next();
     // If repository is created for a user group
-    if (userGroupIds.length) {
+    if (userGroupIds?.length) {
       const hasCreateGrant = userGroupIds.every((id) =>
         user.userGroupMembers?.find(
           (it) =>

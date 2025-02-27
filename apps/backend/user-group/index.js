@@ -16,7 +16,7 @@ router.param('id', getUserGroup);
 
 router
   .route('/')
-  .get(ctrl.list)
+  .get(validation.listUserGroups, ctrl.list)
   .post(authorize(), validation.upsertUserGroup, ctrl.create);
 
 router

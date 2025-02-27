@@ -138,7 +138,7 @@ const fetch = async (opts = {}) => {
   isLoading.value = false;
 };
 
-const remove = (group: any) => {
+const remove = (group: UserGroup) => {
   const showDialog = useConfirmationDialog();
   const confirmation = {
     title: 'Delete user group',
