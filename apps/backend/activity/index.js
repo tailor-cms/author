@@ -1,5 +1,5 @@
 import express from 'express';
-import { NOT_FOUND } from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 import ctrl from './activity.controller.js';
 import db from '#shared/database/index.js';
 import { createError } from '#shared/error/helpers.js';
@@ -29,9 +29,7 @@ router
 
 function getActivity(req, _res, next, activityId) {
   return Activity.findByPk(activityId, { paranoid: false })
-    .then(
-      (activity) => activity || createError(NOT_FOUND, 'Activity not found'),
-    )
+    .then((it) => it || createError(StatusCodes.NOT_FOUND, 'Not found'))
     .then((activity) => {
       req.activity = activity;
       next();

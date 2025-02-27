@@ -6,11 +6,16 @@ import SeedClient from '../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
 
-export const toEmptyRepository = async (page: Page, name?: string) => {
+export const toEmptyRepository = async (
+  page: Page,
+  name?: string,
+  userGroupIds?: number[],
+) => {
   const payload = {
     schema: outlineSeed.schema,
     name: name || `${faker.lorem.words(2)} ${new Date().getTime()}`,
     description: faker.lorem.words(4),
+    userGroupIds,
   };
   const { data: repository } = await REPOSITORY_API.create(payload as any);
   await page.goto(`/repository/${repository.id}/root/structure`);

@@ -70,13 +70,13 @@ import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import { user as api } from '~/api';
-import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps<{
   roles: Array<{ title: string; value: string }>;
 }>();
 
-const store = useCurrentRepository();
+const authStore = useAuthStore();
+const repositoryStore = useCurrentRepository();
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: computed(() =>
@@ -85,7 +85,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
         .required()
         .email()
         .notOneOf(
-          store.users.map((user: User) => user.email),
+          repositoryStore.users.map((user: User) => user.email),
           'User with that email is already added',
         ),
       role: string().required(),
@@ -107,13 +107,15 @@ const close = () => {
 
 const submit = handleSubmit(async () => {
   isSaving.value = true;
-  await store.upsertUser(emailInput.value, roleInput.value);
+  await repositoryStore.upsertUser(emailInput.value, roleInput.value);
   suggestedUsers.value = [];
   isSaving.value = false;
   close();
 });
 
 const fetchUsers = throttle(async (filter) => {
+  // Only admins can see the list of users
+  if (!authStore.isAdmin) return;
   if (!filter || filter.length < 2) {
     suggestedUsers.value = [];
     return;

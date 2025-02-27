@@ -1,22 +1,30 @@
 import pick from 'lodash/pick.js';
-import { parsePath } from './helpers.js';
+import { StatusCodes } from 'http-status-codes';
+import { hasColumn, parsePath } from './helpers.js';
+import { createError } from '#shared/error/helpers.js';
 
 const parseOptions = ({ limit, offset, sortOrder }) => ({
   limit: parseInt(limit, 10) || 100,
   offset: parseInt(offset, 10) || 0,
-  sortOrder: sortOrder || 'ASC',
+  sortOrder: ['ASC', 'DESC'].includes(sortOrder) ? sortOrder : 'ASC',
 });
 
-function processPagination(Model) {
+function processPagination(Model, processScopedAttrs = true) {
   return (req, _, next) => {
     const options = parseOptions(req.query);
     Object.assign(req.query, options);
     req.options = pick(options, ['limit', 'offset']);
     const { sortBy } = req.query;
-    if (sortBy) {
-      req.options.order = [[...parsePath(sortBy, Model), options.sortOrder]];
+    if (!sortBy) return next();
+    if (!hasColumn(Model, sortBy)) {
+      return createError(StatusCodes.BAD_REQUEST, `Invalid column: ${sortBy}`);
     }
-    next();
+    if (processScopedAttrs) {
+      req.options.order = [[...parsePath(Model, sortBy), options.sortOrder]];
+    } else {
+      req.options.order = [[sortBy, options.sortOrder]];
+    }
+    return next();
   };
 }
 

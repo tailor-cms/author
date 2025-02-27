@@ -23,19 +23,9 @@
 
 <script lang="ts" setup>
 import AdminSidebar from '@/components/admin/AdminSidebar.vue';
-import { useAuthStore } from '@/stores/auth';
 
 definePageMeta({
   name: 'admin',
-  middleware: ['auth'],
-});
-
-const authStore = useAuthStore();
-
-onBeforeMount(async () => {
-  // Refetch user info to get the latest permissions
-  await authStore.fetchUserInfo();
-  if (authStore.isAdmin) return;
-  navigateTo({ name: 'catalog' });
+  middleware: ['auth', 'has-admin-access'],
 });
 </script>

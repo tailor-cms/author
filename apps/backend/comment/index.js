@@ -1,5 +1,5 @@
-import { FORBIDDEN, NOT_FOUND } from 'http-status-codes';
 import express from 'express';
+import { StatusCodes } from 'http-status-codes';
 import ctrl from './comment.controller.js';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
@@ -45,7 +45,9 @@ function getComment(req, _res, next, commentId) {
   ];
   const options = { include, paranoid: false, rejectOnEmpty: true };
   return Comment.findByPk(commentId, options)
-    .catch(EmptyResultError, () => createError(NOT_FOUND, 'Comment not found'))
+    .catch(EmptyResultError, () =>
+      createError(StatusCodes.NOT_FOUND, 'Comment not found'),
+    )
     .then((comment) => {
       req.comment = comment;
       next();
@@ -53,7 +55,8 @@ function getComment(req, _res, next, commentId) {
 }
 
 function canEdit({ user, comment }, _res, next) {
-  if (user.id !== comment.authorId) return createError(FORBIDDEN, 'Forbidden');
+  if (user.id !== comment.authorId)
+    return createError(StatusCodes.FORBIDDEN, 'Forbidden');
   next();
 }
 

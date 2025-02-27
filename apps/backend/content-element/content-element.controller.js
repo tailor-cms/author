@@ -1,6 +1,4 @@
-import { NOT_FOUND } from 'http-status-codes';
 import pick from 'lodash/pick.js';
-import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
 const { Activity, ContentElement } = db;
@@ -12,52 +10,39 @@ function list({ query, opts }, res) {
     const where = { id: ids.map(Number) };
     opts.include = { model: Activity.unscoped(), attributes: [], where };
   }
-
   return ContentElement.fetch(opts).then((data) => res.json({ data }));
 }
 
-function show({ params }, res) {
-  const id = parseInt(params.elementId, 10);
-  return ContentElement.fetch(id)
-    .then((asset) => asset || createError(NOT_FOUND, 'Element not found'))
-    .then((asset) => res.json({ data: asset }));
+function show({ contentElement }, res) {
+  return res.json({ data: contentElement });
 }
 
-function create({ user, repository, body }, res) {
+async function create({ user, repository, body }, res) {
   const attr = ['uid', 'activityId', 'type', 'data', 'position', 'refs'];
   const data = { ...pick(body, attr), repositoryId: repository.id };
   const context = { userId: user.id, repository };
-  return ContentElement.create(data, { context }).then((asset) =>
-    res.json({ data: asset }),
-  );
+  const contentElement = await ContentElement.create(data, { context });
+  return res.json({ data: contentElement });
 }
 
-function patch({ repository, user, body, params: { elementId } }, res) {
+async function patch({ repository, user, body, contentElement }, res) {
   const attrs = ['type', 'data', 'position', 'meta', 'refs', 'deletedAt'];
   const data = pick(body, attrs);
-  const paranoid = body.paranoid !== false;
   const context = { userId: user.id, repository };
-  return ContentElement.findByPk(elementId, { paranoid })
-    .then((asset) => asset || createError(NOT_FOUND, 'Element not found'))
-    .then((asset) => {
-      if (asset.deletedAt) asset.setDataValue('deletedAt', null);
-      return asset.update(data, { context });
-    })
-    .then((asset) => res.json({ data: asset }));
+  if (contentElement.deletedAt) contentElement.setDataValue('deletedAt', null);
+  await contentElement.update(data, { context });
+  return res.json({ data: contentElement });
 }
 
-function remove({ repository, user, params: { elementId } }, res) {
+async function remove({ repository, user, contentElement }, res) {
   const context = { userId: user.id, repository };
-  return ContentElement.findByPk(elementId)
-    .then((asset) => asset || createError(NOT_FOUND, 'Element not found'))
-    .then((asset) => asset.destroy({ context }))
-    .then(() => res.end());
+  await contentElement.destroy({ context });
+  return res.end();
 }
 
-function reorder({ body, params: { elementId } }, res) {
-  return ContentElement.findByPk(elementId)
-    .then((asset) => asset.reorder(body.position))
-    .then((asset) => res.json({ data: asset }));
+async function reorder({ body, contentElement }, res) {
+  await contentElement.reorder(body.position);
+  return res.json({ data: contentElement });
 }
 
 export default {

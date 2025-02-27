@@ -14,9 +14,9 @@ class SeedClient extends BaseClient {
     return formatResponse(res);
   };
 
-  seedCatalog = async (): Promise<EndpointResponse> => {
+  seedCatalog = async (data = {}): Promise<EndpointResponse> => {
     const req = await this.getClient();
-    const res = await req.post(this.getUrl('catalog'));
+    const res = await req.post(this.getUrl('catalog'), { data });
     return formatResponse(res);
   };
 
@@ -27,9 +27,9 @@ class SeedClient extends BaseClient {
     return formatResponse(res);
   };
 
-  seedUser = async (): Promise<EndpointResponse> => {
+  seedUser = async (data = {}): Promise<EndpointResponse> => {
     const req = await this.getClient();
-    const res = await req.post(this.getUrl('user'));
+    const res = await req.post(this.getUrl('user'), { data });
     return formatResponse(res);
   };
 }

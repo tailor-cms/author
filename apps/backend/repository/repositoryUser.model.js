@@ -24,6 +24,11 @@ class RepositoryUser extends Model {
         type: BOOLEAN,
         defaultValue: false,
       },
+      hasAccess: {
+        type: BOOLEAN,
+        defaultValue: false,
+        field: 'has_access',
+      },
       createdAt: {
         type: DATE,
         field: 'created_at',

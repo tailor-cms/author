@@ -94,6 +94,7 @@
     <UserDialog
       :user-data="editedUser"
       :users="users"
+      :user-groups="userGroups"
       :visible="isUserDialogVisible"
       @created="fetch(defaultPage)"
       @update:visible="isUserDialogVisible = $event"
@@ -107,7 +108,8 @@ import { formatDate } from 'date-fns/format';
 import humanize from 'humanize-string';
 import type { User } from '@tailor-cms/interfaces/user';
 
-import { user as api } from '@/api';
+import { user as userApi, userGroup as userGroupApi } from '@/api';
+
 import { useAuthStore } from '@/stores/auth';
 import UserDialog from '@/components/admin/UserDialog.vue';
 
@@ -138,12 +140,13 @@ const headers = [
 ];
 
 const actions = {
-  archive: (user: any) => api.remove(user),
-  restore: (user: any) => api.upsert(user),
+  archive: (user: any) => userApi.remove(user),
+  restore: (user: any) => userApi.upsert(user),
 };
 
 const isLoading = ref(true);
 const users = ref<User[]>([]);
+const userGroups = ref<any[]>([]);
 const dataTable = reactive(defaultPage());
 const totalItems = ref(0);
 const filter = ref('');
@@ -161,7 +164,7 @@ const showUserDialog = (user = null) => {
 const fetch = async (opts = {}) => {
   Object.assign(dataTable, opts);
   isLoading.value = true;
-  const { items, total } = await api.fetch({
+  const { items, total } = await userApi.fetch({
     sortBy: dataTable.sortBy[0].key,
     sortOrder: dataTable.sortBy[0].order === 'desc' ? 'DESC' : 'ASC',
     offset: (dataTable.page - 1) * dataTable.itemsPerPage,
@@ -187,6 +190,11 @@ const archiveOrRestore = (user: any) => {
 
 watch(filter, () => fetch());
 watch(showArchiveToggle, () => fetch());
+
+onBeforeMount(async () => {
+  const { items } = await userGroupApi.fetch();
+  userGroups.value = items;
+});
 </script>
 
 <style lang="scss" scoped>
