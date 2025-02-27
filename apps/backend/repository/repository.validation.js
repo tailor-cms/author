@@ -1,14 +1,9 @@
-import { body, validationResult } from 'express-validator';
-import { StatusCodes } from 'http-status-codes';
+import { body } from 'express-validator';
+import defineRequestValidator from '#shared/request/validation.js';
 
-const addUserGroup = [
+const addUserGroup = defineRequestValidator([
   body('userGroupId').notEmpty().isNumeric(),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (errors.isEmpty()) return next();
-    return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
-  },
-];
+]);
 
 export default {
   addUserGroup,

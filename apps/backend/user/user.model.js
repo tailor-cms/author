@@ -136,10 +136,13 @@ class User extends Model {
     });
   }
 
-  static scopes() {
+  static scopes({ UserGroup, UserGroupMember }) {
     return {
       defaultScope: {
         attributes: { exclude: ['password'] },
+      },
+      withGroups() {
+        return { include: [{ model: UserGroup }, { model: UserGroupMember }] };
       },
     };
   }

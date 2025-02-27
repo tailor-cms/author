@@ -177,7 +177,8 @@ test.describe('Default user role, added to a Group with Colaborator role', () =>
   test('should be able to create Repository', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     const dialog = new AddRepositoryDialog(page);
-    await expect(dialog.openDialogBtn).toBeVisible();
+    await dialog.open();
+    await dialog.createRepository();
   });
 
   test('should not see the Admin menu entry', async ({ page }) => {

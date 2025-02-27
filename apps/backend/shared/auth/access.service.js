@@ -56,14 +56,14 @@ class AccessService {
     if (user.role === UserRole.USER && !userGroupIds?.length) return next();
     // If repository is created for a user group
     if (userGroupIds.length) {
-      const isGroupMember = userGroupIds.every((id) =>
+      const hasCreateGrant = userGroupIds.every((id) =>
         user.userGroupMembers?.find(
           (it) =>
             it.groupId === id &&
             [UserRole.ADMIN, UserRole.USER].includes(it.role),
         ),
       );
-      if (isGroupMember) return next();
+      if (hasCreateGrant) return next();
     }
     // If none of the above conditions are met, deny access
     return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');

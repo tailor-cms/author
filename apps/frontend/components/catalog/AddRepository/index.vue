@@ -137,7 +137,6 @@
             v-model="groupInput"
             :error-messages="errors.userGroupIds"
             :items="authStore.groupsWithCreateRepositoryAccess"
-            :return-object="false"
             class="user-group-select mb-3"
             item-title="name"
             item-value="id"

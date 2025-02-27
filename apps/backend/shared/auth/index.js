@@ -9,16 +9,15 @@ import auth from './authenticator.js';
 import OIDCStrategy from './oidc.js';
 import { auth as config, origin } from '#config';
 
-const { User, UserGroup, UserGroupMember } = db;
-const loadUserOptions = { include: [{ model: UserGroup }, { model: UserGroupMember }] };
+const { User } = db;
 
 auth.use(
   new LocalStrategy({
     usernameField: 'email',
     session: false,
   }, (email, password, done) => {
-    return User.unscoped()
-      .findOne({ where: { email }, ...loadUserOptions })
+    return User.scope('withGroups')
+      .findOne({ where: { email } })
       .then((user) => user && user.authenticate(password))
       .then((user) => done(null, user || false))
       .error((err) => done(err, false));
@@ -71,8 +70,8 @@ auth.deserializeUser((user, done) => done(null, user));
 export default auth;
 
 function verifyJWT(payload, done) {
-  return User.unscoped()
-    .findByPk(payload.id, { ...loadUserOptions })
+  return User.scope('withGroups')
+    .findByPk(payload.id)
     .then((user) => done(null, user || false))
     .error((err) => done(err, false));
 }
@@ -93,8 +92,8 @@ function extractJwtFromCookie(req) {
 
 function secretOrKeyProvider(_, rawToken, done) {
   const { id } = jwt.decode(rawToken) || {};
-  return User.unscoped()
-    .findByPk(id, { ...loadUserOptions, rejectOnEmpty: true })
+  return User.scope('withGroups')
+    .findByPk(id, { rejectOnEmpty: true })
     .then((user) => user.getTokenSecret())
     .then((secret) => done(null, secret))
     .catch((err) => done(err));
@@ -106,16 +105,14 @@ function apiUrl(pathname) {
 
 function findOrCreateOIDCUser({ email, firstName, lastName }) {
   if (!config.oidc.enableSignup) {
-    return User.findOne({
+    return User.scope('withGroups').findOne({
       where: { email },
-      ...loadUserOptions,
       rejectOnEmpty: true,
     });
   }
   const defaults = { firstName, lastName, role: config.oidc.defaultRole };
-  return User.findOrCreate({
+  return User.scope('withGroups').findOrCreate({
     where: { email },
-    ...loadUserOptions,
     defaults,
   }).then(([user]) => user);
 }
