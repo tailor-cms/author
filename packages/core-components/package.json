@@ -3,7 +3,7 @@
   "description": "Reusable Tailor UI components",
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "files": [
     "src"
   ],
@@ -24,7 +24,7 @@
     "p-min-delay": "^4.0.2",
     "pluralize": "^8.0.0",
     "vee-validate": "^4.13.2",
-    "vue": "^3.3.4",
+    "vue": "^3.5.13",
     "vuedraggable": "^4.1.0",
     "vuetify": "3.7.0",
     "yup": "^1.4.0"
