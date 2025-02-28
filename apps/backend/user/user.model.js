@@ -7,14 +7,12 @@ import omit from 'lodash/omit.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import randomstring from 'randomstring';
-import { role as roles } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/common';
 import mail from '#shared/mail/index.js';
 import Audience from '#shared/auth/audience.js';
 import { auth as authConfig } from '#config';
 
-const {
-  user: { ADMIN, COLLABORATOR, INTEGRATION, USER },
-} = roles;
+const { ADMIN, COLLABORATOR, INTEGRATION, USER } = UserRole;
 const gravatarConfig = { size: 130, default: 'identicon' };
 
 class User extends Model {
@@ -110,12 +108,26 @@ class User extends Model {
     };
   }
 
-  static associate({ ActivityStatus, Comment, Repository, RepositoryUser }) {
+  static associate({
+    ActivityStatus,
+    Comment,
+    Repository,
+    RepositoryUser,
+    UserGroup,
+    UserGroupMember,
+  }) {
     this.hasMany(Comment, {
       foreignKey: { name: 'authorId', field: 'author_id' },
     });
     this.belongsToMany(Repository, {
       through: RepositoryUser,
+      foreignKey: { name: 'userId', field: 'user_id' },
+    });
+    this.hasMany(UserGroupMember, {
+      foreignKey: { name: 'userId', field: 'user_id' },
+    });
+    this.belongsToMany(UserGroup, {
+      through: UserGroupMember,
       foreignKey: { name: 'userId', field: 'user_id' },
     });
     this.hasMany(ActivityStatus, {
@@ -124,10 +136,13 @@ class User extends Model {
     });
   }
 
-  static scopes() {
+  static scopes({ UserGroup, UserGroupMember }) {
     return {
       defaultScope: {
         attributes: { exclude: ['password'] },
+      },
+      withGroups() {
+        return { include: [{ model: UserGroup }, { model: UserGroupMember }] };
       },
     };
   }
@@ -226,6 +241,23 @@ class User extends Model {
     const { secret } = authConfig.jwt;
     if (audience === Audience.Scope.Access) return secret;
     return [secret, this.password, this.createdAt.getTime()].join('');
+  }
+
+  async getAccessibleUserGroups() {
+    if (this.isAdmin()) {
+      const UserGroup = this.sequelize.model('UserGroup');
+      const groups = await UserGroup.findAll();
+      return groups.map((group) => ({
+        ...group.dataValues,
+        role: UserRole.ADMIN,
+      }));
+    }
+    return this.getUserGroups().then((groups) =>
+      groups.map((group) => ({
+        ...pick(group.dataValues, ['id', 'name']),
+        role: group?.userGroupMember?.role,
+      })),
+    );
   }
 }
 

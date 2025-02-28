@@ -1,21 +1,54 @@
 import type { User } from '@tailor-cms/interfaces/user';
+import type { UserGroupWithRole } from '@tailor-cms/interfaces/user-group';
+import { UserRole } from '@tailor-cms/common';
 
 import { auth as api } from '@/api';
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);
+  const userGroups = ref<UserGroupWithRole[]>([]);
   const strategy = ref<string | null>(null);
 
-  const isAdmin = computed(() => user.value?.role === 'ADMIN');
-  const isDefaultUser = computed(() => user.value?.role === 'USER');
-
+  const isAdmin = computed(() => user.value?.role === UserRole.ADMIN);
+  const isDefaultUser = computed(() => user.value?.role === UserRole.USER);
   const isOidcActive = computed(() => strategy.value === 'oidc');
+
+  const hasGroupBoundAccess = computed(
+    () => !isAdmin.value && !isDefaultUser.value,
+  );
+
+  const hasDefaultUserGroup = computed(() => {
+    if (!hasGroupBoundAccess.value) return false;
+    return userGroups.value.length === 1;
+  });
+
+  const groupsWithCreateRepositoryAccess = computed(() =>
+    userGroups.value.filter(
+      (group) => group.role === UserRole.ADMIN || group.role === UserRole.USER,
+    ),
+  );
+
+  const groupsWithAdminAccess = computed(() =>
+    userGroups.value.filter((group) => group.role === UserRole.ADMIN),
+  );
+
+  const hasCreateRepositoryAccess = computed(
+    () =>
+      !hasGroupBoundAccess.value ||
+      groupsWithCreateRepositoryAccess.value.length > 0,
+  );
+
+  const hasAdminAccess = computed(
+    () => isAdmin.value || groupsWithAdminAccess.value.length > 0,
+  );
 
   function $reset(
     userData: User | null = null,
+    userGroupData: UserGroupWithRole[] = [],
     authStrategy: string | null = null,
   ) {
     user.value = userData;
+    userGroups.value = userGroupData;
     strategy.value = authStrategy;
   }
 
@@ -59,7 +92,9 @@ export const useAuthStore = defineStore('auth', () => {
   function fetchUserInfo() {
     return api
       .getUserInfo()
-      .then(({ data: { user, authData } }) => $reset(user, authData?.strategy))
+      .then(({ data: { user, userGroups, authData } }) =>
+        $reset(user, userGroups, authData?.strategy),
+      )
       .catch(() => $reset());
   }
 
@@ -71,9 +106,17 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
+    userGroups,
+    groupsWithCreateRepositoryAccess,
+    groupsWithAdminAccess,
+    strategy,
+    isOidcActive,
     isAdmin,
     isDefaultUser,
-    isOidcActive,
+    hasGroupBoundAccess,
+    hasAdminAccess,
+    hasDefaultUserGroup,
+    hasCreateRepositoryAccess,
     login,
     logout,
     forgotPassword,
