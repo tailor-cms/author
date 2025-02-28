@@ -5,13 +5,15 @@ async function resetDatabase(_req, res) {
   return res.status(200).send();
 }
 
-async function seedUser(_req, res) {
-  const user = await SeedService.createUser();
+async function seedUser(req, res) {
+  const { email, password, role, userGroup } = req.body;
+  const user = await SeedService.createUser(email, password, role, userGroup);
   return res.json({ data: user });
 }
 
-async function seedCatalog(_req, res) {
-  const repositories = await SeedService.seedCatalog();
+async function seedCatalog(req, res) {
+  const { userGroup } = req.body;
+  const repositories = await SeedService.seedCatalog({ userGroup });
   return res.json({ data: repositories });
 }
 
