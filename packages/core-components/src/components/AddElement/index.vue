@@ -69,13 +69,11 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
+import { flatMap, pick, reject } from 'lodash-es';
 import { getPositions, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import flatMap from 'lodash/flatMap';
-import pick from 'lodash/pick';
-import reject from 'lodash/reject';
 import type { VBtn } from 'vuetify/components';
 
 import SelectElement from '../SelectElement/index.vue';
