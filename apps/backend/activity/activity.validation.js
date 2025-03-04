@@ -2,12 +2,10 @@ import { body, param, query } from 'express-validator';
 import defineRequestValidator from '#shared/request/validation.js';
 
 const entityPathParams = [
-  param('repositoryId').isInt(),
   param('activityId').isInt(),
 ];
 
 export const list = defineRequestValidator([
-  param('repositoryId').isInt(),
   // Include items for which parent is deleted
   query('detached').isBoolean().optional(),
   // Include only outline activities (type declared in the schema structure)
@@ -15,7 +13,6 @@ export const list = defineRequestValidator([
 ]);
 
 export const create = defineRequestValidator([
-  param('repositoryId').isInt(),
   body('uid').isUUID().optional(),
   body('parentId').isInt().optional(),
   body('type').isString().trim().escape().notEmpty(),
