@@ -1,9 +1,7 @@
 import { body, param, query } from 'express-validator';
 import defineRequestValidator from '#shared/request/validation.js';
 
-const entityPathParams = [
-  param('activityId').isInt(),
-];
+const entityPathParams = [param('activityId').isInt()];
 
 export const list = defineRequestValidator([
   // Include items for which parent is deleted
@@ -14,7 +12,7 @@ export const list = defineRequestValidator([
 
 export const create = defineRequestValidator([
   body('uid').isUUID().optional(),
-  body('parentId').isInt().optional(),
+  body('parentId').isInt().optional({ nullable: true }),
   body('type').isString().trim().notEmpty(),
   body('position').isFloat().optional(),
   body('data').isObject().optional(),
@@ -45,7 +43,7 @@ export const clone = defineRequestValidator([
   ...entityPathParams,
   // Target location
   body('repositoryId').isInt(),
-  body('parentId').isInt().optional(),
+  body('parentId').isInt().optional({ nullable: true }),
   body('position').isFloat().optional(),
 ]);
 
@@ -53,9 +51,9 @@ export const getPreviewUrl = defineRequestValidator(entityPathParams);
 
 export const updateWorkflowStatus = defineRequestValidator([
   ...entityPathParams,
-  body('assigneeId').isInt().optional(),
+  body('assigneeId').isInt().optional({ nullable: true }),
   body('status').isString().trim().escape().notEmpty().optional(),
   body('priority').isString().trim().escape().notEmpty().optional(),
-  body('description').isString().trim().optional(),
-  body('dueDate').isDate().optional(),
+  body('description').isString().trim().optional({ nullable: true }),
+  body('dueDate').isDate().optional({ nullable: true }),
 ]);
