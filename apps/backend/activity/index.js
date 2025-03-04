@@ -4,7 +4,7 @@ import ctrl from './activity.controller.js';
 import db from '#shared/database/index.js';
 import { createError } from '#shared/error/helpers.js';
 import processListQuery from '#shared/util/processListQuery.js';
-import * as validation from '#activity/activity.validation.js';
+import * as validation from '#app/activity/activity.validation.js';
 
 const { Activity } = db;
 const router = express.Router();
