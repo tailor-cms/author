@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import pluralize from 'pluralize';
+import pluralize from 'pluralize-esm';
 
 const props = defineProps<{ count: number }>();
 const emit = defineEmits(['seen']);

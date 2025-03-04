@@ -31,8 +31,7 @@ import type {
 import { computed } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { Filter } from '@tailor-cms/interfaces/schema';
-import flatMap from 'lodash/flatMap';
-import keyBy from 'lodash/keyBy';
+import { flatMap, keyBy } from 'lodash-es';
 
 import ContentElementWrapper from './ContentElement.vue';
 
