@@ -55,5 +55,5 @@ export const updateWorkflowStatus = defineRequestValidator([
   body('status').isString().trim().escape().notEmpty().optional(),
   body('priority').isString().trim().escape().notEmpty().optional(),
   body('description').isString().trim().optional({ nullable: true }),
-  body('dueDate').isDate().optional({ nullable: true }),
+  body('dueDate').isISO8601({ strict: true, strictSeparator: true }).optional(),
 ]);
