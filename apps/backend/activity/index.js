@@ -12,7 +12,10 @@ const processQuery = processListQuery({ order: [['position']] });
 
 router.param('activityId', getActivity);
 
-router.route('/').get(processQuery, ctrl.list).post(ctrl.create);
+router
+  .route('/')
+  .get(processQuery, validation.list, ctrl.list)
+  .post(validation.create, ctrl.create);
 
 router
   .route('/:activityId', validation.get)
