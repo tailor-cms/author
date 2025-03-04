@@ -15,7 +15,7 @@ export const list = defineRequestValidator([
 export const create = defineRequestValidator([
   body('uid').isUUID().optional(),
   body('parentId').isInt().optional(),
-  body('type').isString().trim().escape().notEmpty(),
+  body('type').isString().trim().notEmpty(),
   body('position').isFloat().optional(),
   body('data').isObject().optional(),
   body('refs').isObject().optional(),
@@ -56,6 +56,6 @@ export const updateWorkflowStatus = defineRequestValidator([
   body('assigneeId').isInt().optional(),
   body('status').isString().trim().escape().notEmpty().optional(),
   body('priority').isString().trim().escape().notEmpty().optional(),
-  body('description').isString().trim().escape().optional(),
+  body('description').isString().trim().optional(),
   body('dueDate').isDate().optional(),
 ]);
