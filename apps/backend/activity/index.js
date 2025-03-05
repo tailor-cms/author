@@ -1,11 +1,11 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import ctrl from './activity.controller.js';
-import db from '#shared/database/index.js';
-import { createError } from '#shared/error/helpers.js';
-import processListQuery from '#shared/util/processListQuery.js';
 import * as validation from '#app/activity/activity.validation.js';
-import AccessService from '#app/shared/auth/access.service.js';
+import { createError } from '#shared/error/helpers.js';
+import { hasRepositoryAccess } from '#app/shared/auth/access.service.js';
+import ctrl from '#app/activity/activity.controller.js';
+import db from '#shared/database/index.js';
+import processListQuery from '#shared/util/processListQuery.js';
 
 const { Activity, Repository } = db;
 const router = express.Router();
@@ -58,7 +58,7 @@ async function hasCloneTargetAccess({ body, user }, _res, next) {
   const targetRepository = await Repository.findByPk(targetRepositoryId);
   if (!targetRepository)
     throw createError(StatusCodes.BAD_REQUEST, 'Target repository not found');
-  const hasTargetAccess = await AccessService.hasRepositoryAccess(
+  const hasTargetAccess = await hasRepositoryAccess(
     targetRepository,
     user,
   );
