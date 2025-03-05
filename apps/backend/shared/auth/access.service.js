@@ -15,7 +15,7 @@ class AccessService {
     return AccessService.instance;
   }
 
-  async hasRepositoryAccessMw(req, _res, next) {
+  async hasRepositoryAccess(req, _res, next) {
     const { repository, user } = req;
     const hasAccess = await repository.hasRepositoryAccess(user);
     return hasAccess
@@ -23,7 +23,7 @@ class AccessService {
       : createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
   }
 
-  async hasRepositoryAdminAccessMw(req, _res, next) {
+  async hasRepositoryAdminAccess(req, _res, next) {
     const { repository, user } = req;
     // If user is a system admin, allow all
     if (user.isAdmin()) return next();
@@ -45,7 +45,7 @@ class AccessService {
     return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
   }
 
-  async hasCreateRepositoryAccessMw(req, _res, next) {
+  async hasCreateRepositoryAccess(req, _res, next) {
     const { body, user } = req;
     const { userGroupIds } = body;
     // If user is system admin, allow

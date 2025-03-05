@@ -28,19 +28,19 @@ const upload = multer({ storage: multer.diskStorage({}) });
 
 router.post(
   '/import',
-  AccessService.hasCreateRepositoryAccessMw,
+  AccessService.hasCreateRepositoryAccess,
   upload.single('archive'),
   ctrl.import,
 );
 
 router
   .param('repositoryId', getRepository)
-  .use('/:repositoryId', AccessService.hasRepositoryAccessMw);
+  .use('/:repositoryId', AccessService.hasRepositoryAccess);
 
 router
   .route('/')
   .get(processQuery({ limit: 100 }), ctrl.index)
-  .post(AccessService.hasCreateRepositoryAccessMw, ctrl.create);
+  .post(AccessService.hasCreateRepositoryAccess, ctrl.create);
 
 router
   .route('/:repositoryId')
@@ -60,23 +60,23 @@ router
   .post('/:repositoryId/export/:jobId', ctrl.export)
   .post(
     '/:repositoryId/users',
-    AccessService.hasRepositoryAdminAccessMw,
+    AccessService.hasRepositoryAdminAccess,
     ctrl.upsertUser,
   )
   .delete(
     '/:repositoryId/users/:userId',
-    AccessService.hasRepositoryAdminAccessMw,
+    AccessService.hasRepositoryAdminAccess,
     ctrl.removeUser,
   )
   .post(
     '/:repositoryId/user-group',
-    AccessService.hasRepositoryAdminAccessMw,
+    AccessService.hasRepositoryAdminAccess,
     requestValidation.addUserGroup,
     ctrl.addUserGroup,
   )
   .delete(
     '/:repositoryId/user-group/:userGroupId',
-    AccessService.hasRepositoryAdminAccessMw,
+    AccessService.hasRepositoryAdminAccess,
     ctrl.removeUserGroup,
   )
   .post('/:repositoryId/tags', ctrl.addTag)
