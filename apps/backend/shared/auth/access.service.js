@@ -15,24 +15,6 @@ class AccessService {
     return AccessService.instance;
   }
 
-  async hasRepositoryAccess(repository, user) {
-    // If user is a system admin, allow all
-    if (user.isAdmin()) return true;
-    // Get user relationship with the repository, if exists allow access
-    const userRelationship = first(
-      await repository.getRepositoryUsers({
-        where: { userId: user.id, hasAccess: true },
-      }),
-    );
-    if (userRelationship) return true;
-    // Check if user is a member of any user group that has access to the repository
-    const repositoryGroupIds = repository.userGroups.map((it) => it.id);
-    const userGroupIds = user.userGroups.map((it) => it.id);
-    if (intersection(repositoryGroupIds, userGroupIds).length) return true;
-    // If none of the above conditions are met, deny access
-    return false;
-  }
-
   async hasRepositoryAccessMw(req, _res, next) {
     const { repository, user } = req;
     const hasAccess = await hasRepositoryAccess(repository, user);
