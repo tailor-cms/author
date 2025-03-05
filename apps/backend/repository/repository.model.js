@@ -120,6 +120,7 @@ class Repository extends Model {
   }
 
   async hasAccess(user) {
+    const UserGroup = this.sequelize.model('UserGroup');
     // If user is a system admin, allow all
     if (user.isAdmin()) return true;
     // Get user relationship with the repository, if exists allow access
@@ -130,6 +131,10 @@ class Repository extends Model {
     );
     if (userRelationship) return true;
     // Check if user is a member of any user group that has access to the repository
+    // Check if userGroups are loaded
+    if (this.userGroups === undefined) {
+      await this.reload({ include: [{ model: UserGroup, required: false }] });
+    }
     const repositoryGroupIds = this.userGroups.map((it) => it.id);
     const userGroupIds = user.userGroups.map((it) => it.id);
     if (intersection(repositoryGroupIds, userGroupIds).length) return true;
