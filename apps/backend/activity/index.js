@@ -5,8 +5,9 @@ import db from '#shared/database/index.js';
 import { createError } from '#shared/error/helpers.js';
 import processListQuery from '#shared/util/processListQuery.js';
 import * as validation from '#app/activity/activity.validation.js';
+import AccessService from '#app/shared/auth/access.service.js';
 
-const { Activity } = db;
+const { Activity, Repository } = db;
 const router = express.Router();
 const processQuery = processListQuery({ order: [['position']] });
 
@@ -28,7 +29,12 @@ router
   .get('/:activityId/publish', validation.publish, ctrl.publish)
   .patch('/:activityId/restore', validation.restore, ctrl.restore)
   .post('/:activityId/reorder', validation.reorder, ctrl.reorder)
-  .post('/:activityId/clone', validation.clone, ctrl.clone)
+  .post(
+    '/:activityId/clone',
+    validation.clone,
+    hasCloneTargetAccess,
+    ctrl.clone,
+  )
   .post(
     '/:activityId/status',
     validation.updateWorkflowStatus,
@@ -45,6 +51,27 @@ function getActivity(req, _res, next, activityId) {
       req.activity = activity;
       next();
     });
+}
+
+async function hasCloneTargetAccess({ body, user }, _res, next) {
+  const { repositoryId: targetRepositoryId, parentId: targetParentId } = body;
+  const targetRepository = await Repository.findByPk(targetRepositoryId);
+  if (!targetRepository)
+    throw createError(StatusCodes.BAD_REQUEST, 'Target repository not found');
+  const hasTargetAccess = await AccessService.hasRepositoryAccess(
+    targetRepository,
+    user,
+  );
+  if (!hasTargetAccess) throw createError(StatusCodes.FORBIDDEN);
+  if (targetParentId) {
+    const targetParent = await Activity.findByPk(targetParentId);
+    if (!targetParent || targetParent.repositoryId !== targetRepository.id)
+      throw createError(
+        StatusCodes.BAD_REQUEST,
+        'Target parent does not exist',
+      );
+  }
+  next();
 }
 
 export default {
