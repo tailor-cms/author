@@ -19,9 +19,9 @@ router
 
 router
   .route('/:activityId', validation.get)
-  .get(ctrl.show, validation.get)
-  .patch(ctrl.patch, validation.update)
-  .delete(ctrl.remove, validation.remove);
+  .get(validation.get, ctrl.show)
+  .patch(validation.update, ctrl.patch)
+  .delete(validation.remove, ctrl.remove);
 
 router
   .get('/:activityId/preview', validation.getPreviewUrl, ctrl.getPreviewUrl)
