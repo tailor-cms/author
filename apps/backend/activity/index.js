@@ -58,10 +58,7 @@ async function hasCloneTargetAccess({ body, user }, _res, next) {
   const targetRepository = await Repository.findByPk(targetRepositoryId);
   if (!targetRepository)
     throw createError(StatusCodes.BAD_REQUEST, 'Target repository not found');
-  const hasTargetAccess = await hasRepositoryAccess(
-    targetRepository,
-    user,
-  );
+  const hasTargetAccess = await targetRepository.hasRepositoryAccess(user);
   if (!hasTargetAccess) throw createError(StatusCodes.FORBIDDEN);
   if (targetParentId) {
     const targetParent = await Activity.findByPk(targetParentId);

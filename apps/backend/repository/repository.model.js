@@ -1,4 +1,6 @@
 import { Model, Op } from 'sequelize';
+import first from 'lodash/first.js';
+import intersection from 'lodash/intersection.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
@@ -115,6 +117,24 @@ class Repository extends Model {
           if (context) repository.hasUnpublishedChanges = true;
         }),
     );
+  }
+
+  async hasRepositoryAccess(user) {
+    // If user is a system admin, allow all
+    if (user.isAdmin()) return true;
+    // Get user relationship with the repository, if exists allow access
+    const userRelationship = first(
+      await this.getRepositoryUsers({
+        where: { userId: user.id, hasAccess: true },
+      }),
+    );
+    if (userRelationship) return true;
+    // Check if user is a member of any user group that has access to the repository
+    const repositoryGroupIds = this.userGroups.map((it) => it.id);
+    const userGroupIds = user.userGroups.map((it) => it.id);
+    if (intersection(repositoryGroupIds, userGroupIds).length) return true;
+    // If none of the above conditions are met, deny access
+    return false;
   }
 
   async validateReferences(transaction) {
