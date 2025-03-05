@@ -32,7 +32,7 @@ router
   .post(
     '/:activityId/status',
     validation.updateWorkflowStatus,
-    ctrl.updateStatus,
+    ctrl.updateWorkflowStatus,
   );
 
 function getActivity(req, _res, next, activityId) {

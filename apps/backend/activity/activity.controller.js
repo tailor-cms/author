@@ -5,14 +5,15 @@ import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import { schema } from '@tailor-cms/config';
 import db from '#shared/database/index.js';
-import { fetchActivityContent } from '#shared/publishing/actions.js';
 import { createError } from '#shared/error/helpers.js';
+import { createLogger } from '#logger';
+import { fetchActivityContent } from '#shared/publishing/actions.js';
+import AccessService from '#app/shared/auth/access.service.js';
+import consumerConfig from '#config/consumer.js';
 import oauth2 from '#shared/oAuth2Provider.js';
 import publishingService from '#shared/publishing/publishing.service.js';
-import consumerConfig from '#config/consumer.js';
-import { createLogger } from '#logger';
 
-const { Activity, sequelize } = db;
+const { Activity, Repository, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
 
 const logger = createLogger('activity:controller');
@@ -94,11 +95,30 @@ async function publish({ activity }, res) {
   return res.json({ data });
 }
 
-function clone({ activity, body, user }, res) {
-  const { repositoryId, parentId, position } = body;
-  const context = { userId: user.id };
+async function clone({ activity, body, user }, res) {
+  const {
+    repositoryId: targetRepositoryId,
+    parentId: targetParentId,
+    position,
+  } = body;
+  const targetRepository = await Repository.findByPk(targetRepositoryId);
+  if (!targetRepository)
+    throw createError(StatusCodes.BAD_REQUEST, 'Target repository not found');
+  const hasTargetAccess = await AccessService.hasRepositoryAccess(
+    targetRepository,
+    user,
+  );
+  if (!hasTargetAccess) throw createError(StatusCodes.FORBIDDEN);
+  if (targetParentId) {
+    const targetParent = await Activity.findByPk(targetParentId);
+    if (!targetParent || targetParent.repositoryId !== targetRepository.id)
+      throw createError(
+        StatusCodes.BAD_REQUEST,
+        'Target parent does not exist',
+      );
+  }
   return activity
-    .clone(repositoryId, parentId, position, context)
+    .clone(targetRepositoryId, targetParentId, position, { userId: user.id })
     .then((mappings) => {
       const opts = { where: { id: Object.values(mappings.activityId) } };
       return Activity.findAll(opts).then((data) => res.json({ data }));
@@ -125,7 +145,7 @@ function getPreviewUrl({ activity }, res) {
     });
 }
 
-async function updateStatus({ user, body, activity }, res) {
+async function updateWorkflowStatus({ user, activity, body }, res) {
   const context = { user };
   const data = pick(body, [
     'assigneeId',
@@ -155,5 +175,5 @@ export default {
   clone,
   publish,
   getPreviewUrl,
-  updateStatus,
+  updateWorkflowStatus,
 };
