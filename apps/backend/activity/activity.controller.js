@@ -12,7 +12,7 @@ import consumerConfig from '#config/consumer.js';
 import oauth2 from '#shared/oAuth2Provider.js';
 import publishingService from '#shared/publishing/publishing.service.js';
 
-const { Activity, Repository, sequelize } = db;
+const { Activity, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
 
 const logger = createLogger('activity:controller');
