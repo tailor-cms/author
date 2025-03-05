@@ -17,7 +17,7 @@ class AccessService {
 
   async hasRepositoryAccess(req, _res, next) {
     const { repository, user } = req;
-    const hasAccess = await repository.hasRepositoryAccess(user);
+    const hasAccess = await repository.hasAccess(user);
     return hasAccess
       ? next()
       : createError(StatusCodes.UNAUTHORIZED, 'Access restricted');

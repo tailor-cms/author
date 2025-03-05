@@ -119,7 +119,7 @@ class Repository extends Model {
     );
   }
 
-  async hasRepositoryAccess(user) {
+  async hasAccess(user) {
     // If user is a system admin, allow all
     if (user.isAdmin()) return true;
     // Get user relationship with the repository, if exists allow access

@@ -2,7 +2,6 @@ import express from 'express';
 import { StatusCodes } from 'http-status-codes';
 import * as validation from '#app/activity/activity.validation.js';
 import { createError } from '#shared/error/helpers.js';
-import { hasRepositoryAccess } from '#app/shared/auth/access.service.js';
 import ctrl from '#app/activity/activity.controller.js';
 import db from '#shared/database/index.js';
 import processListQuery from '#shared/util/processListQuery.js';
@@ -58,7 +57,7 @@ async function hasCloneTargetAccess({ body, user }, _res, next) {
   const targetRepository = await Repository.findByPk(targetRepositoryId);
   if (!targetRepository)
     throw createError(StatusCodes.BAD_REQUEST, 'Target repository not found');
-  const hasTargetAccess = await targetRepository.hasRepositoryAccess(user);
+  const hasTargetAccess = await targetRepository.hasAccess(user);
   if (!hasTargetAccess) throw createError(StatusCodes.FORBIDDEN);
   if (targetParentId) {
     const targetParent = await Activity.findByPk(targetParentId);
