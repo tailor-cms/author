@@ -19,7 +19,7 @@ router
 
 router
   .route('/:activityId', validation.get)
-  .get(validation.get, ctrl.show)
+  .get(ctrl.show)
   .patch(validation.update, ctrl.patch)
   .delete(validation.remove, ctrl.remove);
 
