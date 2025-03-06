@@ -7,7 +7,7 @@ export const get = defineRequestValidator(entityPathParams);
 
 export const list = defineRequestValidator([
   query('entity')
-    .isWhitelisted(['ACTIVITY', 'CONTENT_ELEMENT', 'REPOSITORY'])
+    .isIn(['ACTIVITY', 'CONTENT_ELEMENT', 'REPOSITORY'])
     .optional(),
   query('entityId').isInt().optional(),
 ]);
