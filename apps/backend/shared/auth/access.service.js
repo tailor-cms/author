@@ -6,23 +6,21 @@ import { UserRole } from '@tailor-cms/common';
 import { createError } from '#shared/error/helpers.js';
 
 class AccessService {
+  static instance;
+
+  constructor() {
+    if (!AccessService.instance) {
+      AccessService.instance = this;
+    }
+    return AccessService.instance;
+  }
+
   async hasRepositoryAccess(req, _res, next) {
     const { repository, user } = req;
-    // If user is a system admin, allow all
-    if (user.isAdmin()) return next();
-    // Get user relationship with the repository, if exists allow access
-    const userRelationship = first(
-      await repository.getRepositoryUsers({
-        where: { userId: user.id, hasAccess: true },
-      }),
-    );
-    if (userRelationship) return next();
-    // Check if user is a member of any user group that has access to the repository
-    const repositoryGroupIds = repository.userGroups.map((it) => it.id);
-    const userGroupIds = user.userGroups.map((it) => it.id);
-    if (intersection(repositoryGroupIds, userGroupIds).length) return next();
-    // If none of the above conditions are met, deny access
-    return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
+    const hasAccess = await repository.hasAccess(user);
+    return hasAccess
+      ? next()
+      : createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
   }
 
   async hasRepositoryAdminAccess(req, _res, next) {
@@ -70,4 +68,5 @@ class AccessService {
   }
 }
 
-export default new AccessService();
+const accessService = new AccessService();
+export default accessService;
