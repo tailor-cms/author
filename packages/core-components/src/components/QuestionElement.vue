@@ -5,6 +5,7 @@
       <VIcon :icon="icon" color="secondary-lighten-2" size="18" start />
       <span class="text-subtitle-2">{{ type }}</span>
     </VToolbar>
+    <slot></slot>
     <VForm ref="form" class="content text-left pa-6" validate-on="submit">
       <component
         :is="componentName"
