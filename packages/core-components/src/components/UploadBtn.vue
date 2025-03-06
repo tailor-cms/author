@@ -39,7 +39,7 @@
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
-import uniqueId from 'lodash/uniqueId';
+import { uniqueId } from 'lodash-es';
 
 import { useUpload } from '../composables/useUpload';
 

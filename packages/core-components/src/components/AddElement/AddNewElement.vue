@@ -35,7 +35,7 @@
 
 <script lang="ts" setup>
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import some from 'lodash/some';
+import { some } from 'lodash-es';
 
 const props = defineProps<{ library: any; allowedElementConfig: any[] }>();
 

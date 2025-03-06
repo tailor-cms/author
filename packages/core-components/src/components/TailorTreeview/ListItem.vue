@@ -33,7 +33,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import omit from 'lodash/omit';
+import { omit } from 'lodash-es';
 
 const props = defineProps<{
   id: number;

@@ -79,7 +79,7 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { object, string } from 'yup';
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import orderBy from 'lodash/orderBy';
+import { orderBy } from 'lodash-es';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 

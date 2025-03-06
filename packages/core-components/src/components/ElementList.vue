@@ -58,7 +58,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import Draggable from 'vuedraggable/src/vuedraggable';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getElementId } from '@tailor-cms/utils';
-import getVal from 'lodash/get';
+import { get as getVal } from 'lodash-es';
 
 import AddElement from './AddElement/index.vue';
 
