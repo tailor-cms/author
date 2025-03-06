@@ -28,8 +28,7 @@
 import { computed, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import get from 'lodash/get';
-import throttle from 'lodash/throttle';
+import { get, throttle } from 'lodash-es';
 
 import ContentElementWrapper from './ContentElement.vue';
 

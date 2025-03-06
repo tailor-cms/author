@@ -78,12 +78,10 @@ import type {
   ContentElement,
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
+import { flatMap, map, sortBy } from 'lodash-es';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import type { ElementRegistry, Filter } from '@tailor-cms/interfaces/schema';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import flatMap from 'lodash/flatMap';
-import map from 'lodash/map';
-import type { Repository } from '@tailor-cms/interfaces/repository';
-import sortBy from 'lodash/sortBy';
 
 import ContentPreview from '../ContentPreview/index.vue';
 import TailorDialog from '../TailorDialog.vue';

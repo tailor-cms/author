@@ -40,11 +40,7 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
-import map from 'lodash/map';
-import omit from 'lodash/omit';
-import size from 'lodash/size';
-import sortBy from 'lodash/sortBy';
-import without from 'lodash/without';
+import { map, omit, size, sortBy, without } from 'lodash-es';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 const props = defineProps<{
