@@ -15,8 +15,10 @@
             v-bind="{ handle: '.activity' }"
             :list="rootActivities"
             class="mt-5"
+            group="activities"
             item-key="uid"
             @update="(data) => reorder(data, rootActivities)"
+            @change="(e) => repositoryStore.handleOutlineItemDrag(e)"
           >
             <template #item="{ element, index }">
               <OutlineItem
