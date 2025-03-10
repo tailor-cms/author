@@ -1,6 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 
-import { ActivityComments } from '../common/Comments';
+import { Comments } from '../common/Comments';
 import { Navigation } from './Navigation';
 
 enum SidebarTab {
@@ -17,7 +17,7 @@ export class EditorSidebar {
   readonly toggleAllBtn: Locator;
   readonly treeView: Locator;
   readonly navigation: Navigation;
-  readonly comments: ActivityComments;
+  readonly comments: Comments;
 
   constructor(page: Page) {
     this.page = page;
@@ -25,7 +25,7 @@ export class EditorSidebar {
     this.el = el;
     this.tabs = el.getByRole('tablist');
     this.navigation = new Navigation(page, el);
-    this.comments = new ActivityComments(page, el);
+    this.comments = new Comments(page, el);
   }
 
   getTabByName(name: SidebarTab) {

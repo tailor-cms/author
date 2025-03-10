@@ -1,6 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 
-export class ActivityComments {
+export class Comments {
   readonly page: Page;
   readonly el: Locator;
   readonly thread: Locator;
@@ -9,7 +9,7 @@ export class ActivityComments {
 
   constructor(page: Page, parent: Locator) {
     this.page = page;
-    this.el = parent.locator('.activity-discussion');
+    this.el = parent.locator('.embedded-discussion');
     this.thread = this.el.locator('.discussion-thread');
     this.commentInput = this.el.locator('textarea').locator('visible=true');
     this.postBtn = this.el.getByRole('button', { name: 'Post comment' });

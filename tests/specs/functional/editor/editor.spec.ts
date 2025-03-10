@@ -149,6 +149,21 @@ test('can delete content element', async ({ page }) => {
   await expect(page.getByText(editor.primaryPageContent)).not.toBeVisible();
 });
 
+test('can post comment on element', async ({ page }) => {
+  const editor = new Editor(page);
+  await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
+  await expect(page.locator(Container.selector)).toHaveCount(1);
+  const containers = await editor.containerList.getContainers();
+  const elements = await containers[0].getElements();
+  expect(elements.length).not.toBe(0);
+  const comment = 'This is a test comment';
+  await elements[0].comment(comment);
+  // Make sure changes are persisted
+  await page.reload();
+  await elements[0].openComments();
+  await expect(page.getByText(comment)).toBeVisible();
+});
+
 test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });

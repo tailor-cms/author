@@ -15,6 +15,7 @@
             v-bind="{ ...menuProps, ...tooltipProps }"
             :color="activator?.color"
             :icon="activator?.icon"
+            :aria-label="activator?.tooltip"
             size="x-small"
             variant="tonal"
           />
