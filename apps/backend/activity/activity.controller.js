@@ -56,8 +56,9 @@ function show({ activity }, res) {
 
 async function patch({ repository, user, activity, body }, res) {
   const context = { userId: user.id, repository };
-  await activity.update(body, { context });
-  if (body.position) await activity.reorder(body.position, context);
+  const { position, ...payload } = body;
+  await activity.update(payload, { context });
+  if (position) await activity.reorder(position, context);
   const data = await activity.reload();
   return res.json({ data });
 }
