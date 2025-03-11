@@ -1,5 +1,38 @@
 import type { Locator, Page } from '@playwright/test';
 
+export class Comment {
+  static selector = '.comment';
+  readonly page: Page;
+  readonly el: Locator;
+  readonly resolveBtn: Locator;
+  readonly editBtn: Locator;
+  readonly removeBtn: Locator;
+
+  constructor(page: Page, el: Locator) {
+    this.page = page;
+    this.el = el;
+    this.resolveBtn = el.getByRole('button', { name: 'Resolve comment' });
+    this.editBtn = el.getByRole('button', { name: 'Edit comment' });
+    this.removeBtn = el.getByRole('button', { name: 'Remove comment' });
+  }
+
+  async focus() {
+    await this.el.click();
+  }
+
+  async resolve() {
+    return this.resolveBtn.click();
+  }
+
+  async toggleEdit() {
+    return this.editBtn.click();
+  }
+
+  async remove() {
+    return this.removeBtn.click();
+  }
+}
+
 export class Comments {
   readonly page: Page;
   readonly el: Locator;
@@ -18,5 +51,12 @@ export class Comments {
   async post(comment: string) {
     await this.commentInput.fill(comment);
     await this.postBtn.click();
+  }
+
+  getComment(content?: string) {
+    const element = content ?
+      this.page.locator(Comment.selector, { hasText: content }) :
+      this.page.locator(Comment.selector).first();
+    return new Comment(this.page, element);
   }
 }

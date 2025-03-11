@@ -75,7 +75,7 @@ test('can add content element', async ({ page }) => {
   // Make sure changes are persisted
   await page.waitForTimeout(1000);
   await page.reload();
-  await expect(editor.getElement('This is a test')).toBeVisible();
+  await expect(editor.getElement('This is a test').el).toBeVisible();
 });
 
 test('can copy specific content element', async ({ page }) => {
@@ -87,7 +87,7 @@ test('can copy specific content element', async ({ page }) => {
   // Make sure changes are persisted
   await page.waitForTimeout(1000);
   await page.reload();
-  await expect(editor.getElement(elContent)).toBeVisible();
+  await expect(editor.getElement(elContent).el).toBeVisible();
 });
 
 test('can copy all content elements from page', async ({ page }) => {
