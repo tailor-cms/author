@@ -5,7 +5,7 @@ import {
 } from './revision.service.js';
 import db from '#shared/database/index.js';
 
-const { Activity, Revision, User } = db;
+const { Revision, User } = db;
 
 async function index({ repository, query, opts }, res) {
   const { entity, entityId } = query;
@@ -26,23 +26,27 @@ async function index({ repository, query, opts }, res) {
   return res.json({ total: count, items: rows });
 }
 
-async function getStateAtMoment({ query }, res) {
-  const { activityId, timestamp } = query;
-  const elementIds = (query.elementIds || []).map(Number);
-  const activity = await Activity.findByPk(activityId);
-  const removes = await getEntityRemovesSinceMoment(activity, timestamp);
-  const entityIds = [...elementIds, ...map(removes.elements, 'state.id')];
-  const removedActivityIds = map(removes.activities, 'state.id');
-  const elements = await getLastState(entityIds, removedActivityIds, timestamp);
-  return res.json({ data: { ...removes, elements } });
-}
-
 function get({ revision }, res) {
   return res.json(revision);
 }
 
+async function getStateAtMoment({ repository, activity, query }, res) {
+  const { timestamp } = query;
+  const elementIds = (query.elementIds || []).map(Number);
+  const removes = await getEntityRemovesSinceMoment(activity, timestamp);
+  const entityIds = [...elementIds, ...map(removes.elements, 'state.id')];
+  const removedActivityIds = map(removes.activities, 'state.id');
+  const elements = await getLastState(
+    repository.id,
+    entityIds,
+    removedActivityIds,
+    timestamp,
+  );
+  return res.json({ data: { ...removes, elements } });
+}
+
 export default {
   index,
-  getStateAtMoment,
   get,
+  getStateAtMoment,
 };

@@ -89,17 +89,14 @@
 
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
+import { cloneDeep, filter, map, sortBy } from 'lodash-es';
 import type {
   ContentElementCategory,
   ElementRegistry,
 } from '@tailor-cms/interfaces/schema';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import cloneDeep from 'lodash/cloneDeep';
 import { getComponentName } from '@tailor-cms/utils';
-import filter from 'lodash/filter';
-import map from 'lodash/map';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
-import sortBy from 'lodash/sortBy';
 
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';

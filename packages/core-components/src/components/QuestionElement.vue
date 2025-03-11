@@ -49,12 +49,9 @@
 
 <script lang="ts" setup>
 import { computed, inject, reactive, ref, watch } from 'vue';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep, isEqual, omit, map } from 'lodash-es';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import isEqual from 'lodash/isEqual';
-import omit from 'lodash/omit';
-import map from 'lodash/map';
 
 const isLegacyQuestion = (type: string) => ceRegistry.isLegacyQuestion(type);
 

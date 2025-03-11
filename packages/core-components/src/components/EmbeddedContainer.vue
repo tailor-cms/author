@@ -24,12 +24,10 @@
 
 <script lang="ts" setup>
 import { calculatePosition } from '@tailor-cms/utils';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep, mapKeys, sortBy } from 'lodash-es';
 import { computed, inject } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import mapKeys from 'lodash/mapKeys';
-import sortBy from 'lodash/sortBy';
 
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 import ContainedContent from './ContainedContent.vue';

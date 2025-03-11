@@ -5,12 +5,12 @@ import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import { schema } from '@tailor-cms/config';
 import db from '#shared/database/index.js';
-import { fetchActivityContent } from '#shared/publishing/actions.js';
 import { createError } from '#shared/error/helpers.js';
+import { createLogger } from '#logger';
+import { fetchActivityContent } from '#shared/publishing/actions.js';
+import consumerConfig from '#config/consumer.js';
 import oauth2 from '#shared/oAuth2Provider.js';
 import publishingService from '#shared/publishing/publishing.service.js';
-import consumerConfig from '#config/consumer.js';
-import { createLogger } from '#logger';
 
 const { Activity, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
@@ -94,11 +94,9 @@ async function publish({ activity }, res) {
   return res.json({ data });
 }
 
-function clone({ activity, body, user }, res) {
-  const { repositoryId, parentId, position } = body;
-  const context = { userId: user.id };
+async function clone({ activity, body, user }, res) {
   return activity
-    .clone(repositoryId, parentId, position, context)
+    .clone(body.repositoryId, body.parentId, body.position, { userId: user.id })
     .then((mappings) => {
       const opts = { where: { id: Object.values(mappings.activityId) } };
       return Activity.findAll(opts).then((data) => res.json({ data }));
@@ -125,7 +123,7 @@ function getPreviewUrl({ activity }, res) {
     });
 }
 
-async function updateStatus({ user, body, activity }, res) {
+async function updateWorkflowStatus({ user, activity, body }, res) {
   const context = { user };
   const data = pick(body, [
     'assigneeId',
@@ -155,5 +153,5 @@ export default {
   clone,
   publish,
   getPreviewUrl,
-  updateStatus,
+  updateWorkflowStatus,
 };

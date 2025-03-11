@@ -48,7 +48,7 @@
 import { computed, inject, ref } from 'vue';
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Events } from '@tailor-cms/utils';
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import Discussion from './Discussion/index.vue';

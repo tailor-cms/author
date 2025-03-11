@@ -43,9 +43,8 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
+import { last, pick } from 'lodash-es';
 import { object, string } from 'yup';
-import last from 'lodash/last';
-import pick from 'lodash/pick';
 import { useForm } from 'vee-validate';
 
 import UploadBtn from './UploadBtn.vue';
