@@ -29,6 +29,10 @@ export default (schemas: Schema[] = []) => {
   schemas.forEach((schema) => {
     processRepositoryConfig(schema);
     schema.elementMeta?.forEach((it) => processelementMetaConfig(it));
+    // Normalize activity types before processing configurations
+    schema.structure.forEach((it) => {
+      it.type = processType(schema, it.type);
+    });
     schema.structure.forEach((it) => processActivityConfig(schema, it));
   });
   return schemas;
@@ -51,10 +55,10 @@ function processRepositoryConfig(schema: Schema) {
 }
 
 function processActivityConfig(schema: Schema, activity: ActivityConfig) {
-  activity.type = processType(schema, activity.type);
   activity.subLevels = map(activity.subLevels, (type) =>
     processType(schema, type),
   );
+  activity.parentTypes = resolveParentTypes(schema, activity);
   activity.relationships = processActivityRelationships(activity);
   activity.meta = activity.meta || [];
   const hasNameMeta = find(activity.meta, { key: 'name' });
@@ -77,11 +81,17 @@ function processActivityConfig(schema: Schema, activity: ActivityConfig) {
   }
 }
 
+function resolveParentTypes(schema: Schema, activityConfig: ActivityConfig) {
+  return schema.structure
+    .filter((it) => it.subLevels?.includes(activityConfig.type))
+    .map((it) => it.type);
+}
+
 function processelementMetaConfig(elementMeta: any) {
   elementMeta.relationships?.forEach((relationship) => {
     relationship.allowedElementConfig = map(
       relationship.allowedElementConfig,
-      (item) => isString(item) ? { id: item } : item,
+      (item) => (isString(item) ? { id: item } : item),
     );
   });
 }

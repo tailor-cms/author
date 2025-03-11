@@ -54,9 +54,13 @@ function show({ activity }, res) {
   return res.json({ data: activity });
 }
 
-function patch({ repository, user, activity, body }, res) {
+async function patch({ repository, user, activity, body }, res) {
   const context = { userId: user.id, repository };
-  return activity.update(body, { context }).then((data) => res.json({ data }));
+  const { position, ...payload } = body;
+  await activity.update(payload, { context });
+  if (position) await activity.reorder(position, context);
+  const data = await activity.reload();
+  return res.json({ data });
 }
 
 async function remove({ user, repository, activity }, res) {

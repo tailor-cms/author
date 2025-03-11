@@ -89,6 +89,7 @@ export interface ActivityConfig {
   ) => Guideline[];
   rootLevel?: boolean;
   subLevels?: string[];
+  parentTypes?: string[];
   isTrackedInWorkflow?: boolean;
   contentContainers?: string[];
   relationships?: ActivityRelationship[];
