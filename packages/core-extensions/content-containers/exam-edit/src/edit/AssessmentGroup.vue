@@ -1,6 +1,6 @@
 <template>
-  <VCard class="assessment-group">
-    <VSheet class="d-flex align-center ga-2 px-4 py-3">
+  <VExpansionPanel class="assessment-group">
+    <VExpansionPanelTitle static>
       <h3 class="text-subtitle-1 font-weight-bold">
         Question group {{ numberToLetter(position) }}
       </h3>
@@ -13,9 +13,8 @@
       >
         Delete Group
       </VBtn>
-    </VSheet>
-    <VDivider />
-    <div class="pa-6">
+    </VExpansionPanelTitle>
+    <VExpansionPanelText class="mt-4">
       <VTextField
         v-model.number="timeLimit"
         :readonly="isDisabled"
@@ -65,8 +64,8 @@
             @delete="deleteAssessment(element)" />
         </template>
       </ElementList>
-    </div>
-  </VCard>
+    </VExpansionPanelText>
+  </VExpansionPanel>
 </template>
 
 <script lang="ts" setup>

@@ -39,7 +39,7 @@
         >
           Click the button below to Create first question group.
         </VAlert>
-        <div class="d-flex flex-column ga-4">
+        <VExpansionPanels>
           <AssessmentGroup
             v-for="(group, index) in groups"
             :key="group.uid"
@@ -54,7 +54,7 @@
             @delete:element="$emit('delete:element', $event)"
             @update="$emit('update:subcontainer', $event)"
             @delete="$emit('delete:subcontainer', group, 'group')" />
-        </div>
+        </VExpansionPanels>
         <VBtn
           v-if="!disabled"
           :disabled="!container.id"
