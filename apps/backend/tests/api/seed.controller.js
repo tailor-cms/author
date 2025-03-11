@@ -17,6 +17,14 @@ async function seedCatalog(req, res) {
   return res.json({ data: repositories });
 }
 
+async function seedComment(req, res) {
+  const { content, repositoryId, activityId, contentElementId } = req.body;
+  const comment = await SeedService.createComment(
+    content, repositoryId, activityId, contentElementId,
+  );
+  return res.json({ data: comment });
+}
+
 async function seedRepository(req, res) {
   const data = await SeedService.importRepositoryArchive(
     req.body.name,
@@ -29,5 +37,6 @@ export default {
   resetDatabase,
   seedUser,
   seedCatalog,
+  seedComment,
   seedRepository,
 };

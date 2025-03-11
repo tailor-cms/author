@@ -22,6 +22,8 @@ const {
   User,
   UserGroup,
   UserGroupMember,
+  Comment,
+  ContentElement,
 } = db;
 
 const DEFAULT_USER =
@@ -100,6 +102,29 @@ class SeedService {
       password,
       userGroup: userGroup ? (await this.attachUserToGroup(user, userGroup)) : null,
     };
+  }
+
+  async createComment(
+    content,
+    repositoryId,
+    activityId,
+    contentElementId = null,
+  ) {
+    const repository = await Repository.findByPk(repositoryId);
+    if (!repository) throw new Error('Repository not found');
+    const activity = await Activity.findByPk(activityId);
+    if (!activity) throw new Error('Activity not found');
+    if (contentElementId) {
+      const element = await ContentElement.findByPk(contentElementId);
+      if (!element) throw new Error('Content element not found');
+    }
+    const comment = await Comment.create({
+      content,
+      repositoryId,
+      activityId,
+      contentElementId,
+    });
+    return comment;
   }
 
   async attachUserToGroup(user, { name = 'Test Group', role = UserRole.ADMIN }) {
