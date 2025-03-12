@@ -57,7 +57,7 @@ function show({ activity }, res) {
 async function patch({ repository, user, activity, body }, res) {
   const context = { userId: user.id, repository };
   const { position, ...payload } = body;
-  // If changing parent for outline item, update publishing status
+  // If changing parent for outline item, update parent publishing status
   if (
     isOutlineActivity(activity.type) &&
     activity.parentId &&
