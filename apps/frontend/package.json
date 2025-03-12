@@ -58,7 +58,7 @@
     "vee-validate": "4.15.0",
     "vue3-tree-vue": "^2.0.13",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.7.16",
+    "vuetify": "3.7.5",
     "yup": "^1.6.1"
   }
 }
