@@ -76,8 +76,8 @@
 
 <script lang="ts" setup>
 import { activity as activityUtils, numberToLetter } from '@tailor-cms/utils';
-import { filter, find, get } from 'lodash';
-import { computed, ref } from 'vue';
+import { filter, find, get, last } from 'lodash';
+import { computed, ref, watch } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
@@ -142,6 +142,10 @@ const createGroup = () => {
     position: groups.value.length + 1,
   });
 };
+
+watch(groups, (value) => {
+  expanded.value = last(value)?.uid;
+});
 </script>
 
 <style lang="scss" scoped>
