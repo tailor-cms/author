@@ -4,12 +4,12 @@
   "main": "src/index.js",
   "dependencies": {
     "commander": "^12.1.0",
-    "inquirer": "^12.2.0",
+    "inquirer": "^12.4.3",
     "jsonfile": "^6.1.0",
     "lodash": "^4.17.21",
     "shelljs": "^0.8.5"
   },
   "devDependencies": {
-    "acorn": "^8.14.0"
+    "acorn": "^8.14.1"
   }
 }
