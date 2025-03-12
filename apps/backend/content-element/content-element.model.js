@@ -130,8 +130,8 @@ class ContentElement extends Model {
   static fetch(opt) {
     return isNumber(opt)
       ? ContentElement.findByPk(opt).then(
-        (it) => it && hooks.applyFetchHooks(it),
-      )
+          (it) => it && hooks.applyFetchHooks(it),
+        )
       : ContentElement.findAll(opt).map(hooks.applyFetchHooks);
   }
 
