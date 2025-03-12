@@ -1,24 +1,28 @@
 <template>
-  <VCard :class="{ collapsed }" class="exam" color="primary-darken-2" elevation="0">
+  <VCard :class="{ collapsed }" class="exam">
     <VCard
       rounded="0"
       elevation="0"
-      color="primary-darken-2"
+      color="transparent"
       @click="collapsed = !collapsed"
     >
-      <VRow class="d-flex justify-center align-center py-3 px-4" no-gutters>
-        <VCol cols="2" class="text-left">
-          <VChip color="green-accent-2" size="small">{{ label }}</VChip>
-        </VCol>
-        <VCol cols="8">
-          <h3 class="text-subtitle-2 font-weight-bold text-left">
+      <VRow class="d-flex justify-center align-center py-4 px-4" no-gutters>
+        <VCol
+          :class="{ 'text-left': !collapsed }"
+          :cols="collapsed ? 8 : 10"
+          :offset="collapsed ? 2 : 0"
+        >
+          <h3 class="text-subtitle-1 font-weight-bold">
             {{ title }}
           </h3>
         </VCol>
         <VCol cols="2" class="text-right">
+          <VChip v-if="collapsed" color="green-darken-1" size="small">
+            {{ label }}
+          </VChip>
           <VBtn
-            v-if="!collapsed && !disabled"
-            color="secondary-lighten-4"
+            v-else-if="!disabled"
+            color="secondary-darken-1"
             size="small"
             variant="tonal"
             @click.stop="emit('delete')"
@@ -28,18 +32,18 @@
         </VCol>
       </VRow>
     </VCard>
-    <VDivider v-if="!collapsed" />
     <VExpandTransition>
-      <div v-if="!collapsed" class="pa-4">
+      <div v-if="!collapsed" class="px-8 py-4">
         <VAlert
           v-if="!groups.length"
-          color="primary-lighten-3"
+          color="primary-darken-1"
           icon="mdi-information-variant"
           variant="tonal"
+          prominent
         >
           Click the button below to Create first question group.
         </VAlert>
-        <VExpansionPanels>
+        <VExpansionPanels v-model="expanded" rounded="lg" flat>
           <AssessmentGroup
             v-for="(group, index) in groups"
             :key="group.uid"
@@ -48,6 +52,7 @@
             :is-disabled="disabled"
             :objectives="examObjectives"
             :position="index"
+            :is-expanded="expanded === group.uid"
             @save:element="$emit('save:element', $event)"
             @update:element="$emit('update:element', $event)"
             @reorder:element="$emit('reorder:element', $event)"
@@ -59,7 +64,6 @@
           v-if="!disabled"
           :disabled="!container.id"
           color="primary-lighten-5"
-          variant="tonal"
           class="my-5"
           @click.stop="createGroup">
           <VIcon class="pr-2">mdi-folder-plus-outline</VIcon>
@@ -110,6 +114,7 @@ const emit = defineEmits([
   'delete:subcontainer',
 ]);
 
+const expanded = ref<string>();
 const collapsed = ref(!!props.container.id);
 
 const groups = computed(() =>

@@ -1,19 +1,32 @@
 <template>
-  <VExpansionPanel class="assessment-group">
-    <VExpansionPanelTitle static>
-      <h3 class="text-subtitle-1 font-weight-bold">
-        Question group {{ numberToLetter(position) }}
-      </h3>
-      <VSpacer />
-      <VBtn
-        variant="tonal"
-        color="secondary-darken-1"
-        size="small"
-        @click="$emit('delete')"
+  <VExpansionPanel class="assessment-group" :value="group.uid">
+    <VHover v-slot="{ isHovering, props: hoverProps }">
+      <VExpansionPanelTitle
+        v-bind="hoverProps"
+        color="primary-lighten-5"
+        min-height="64"
+        static
       >
-        Delete Group
-      </VBtn>
-    </VExpansionPanelTitle>
+        <h3 class="text-subtitle-1 font-weight-bold">
+          Question group {{ numberToLetter(position) }}
+        </h3>
+        <VSpacer />
+        <VFadeTransition>
+          <VBtn
+            v-if="!isDisabled && (isExpanded || isHovering)"
+            v-tooltip:bottom="{ text: 'Delete Group', openDelay: 300 }"
+            class="mr-2"
+            color="secondary-lighten-1"
+            size="x-small"
+            variant="tonal"
+            icon
+            @click="$emit('delete')"
+          >
+            <VIcon icon="mdi-delete-outline" size="large" />
+          </VBtn>
+        </VFadeTransition>
+      </VExpansionPanelTitle>
+    </VHover>
     <VExpansionPanelText class="mt-4">
       <VTextField
         v-model.number="timeLimit"
@@ -88,13 +101,19 @@ import uniq from 'lodash/uniq';
 import AssessmentItem from './Assessment.vue';
 import GroupIntroduction from './GroupIntroduction.vue';
 
-const props = defineProps<{
+interface Props {
   group: Activity;
   elements: Record<string, ContentElement>;
   objectives: Activity[];
   position: number;
-  isDisabled: boolean;
-}>();
+  isDisabled?: boolean;
+  isExpanded?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isDisabled: false,
+  isExpanded: false,
+});
 
 const emit = defineEmits([
   'update',
@@ -184,6 +203,10 @@ watch(timeLimit, debounce((val: number) => {
 </script>
 
 <style lang="scss" scoped>
+.v-expansion-panel {
+  border: thin solid rgba(0, 0, 0, 0.12);
+}
+
 .remove {
   float: right;
   margin: 10px 5px;
