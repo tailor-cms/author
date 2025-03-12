@@ -76,11 +76,14 @@
 
 <script lang="ts" setup>
 import { activity as activityUtils, numberToLetter } from '@tailor-cms/utils';
-import { filter, find, get, last } from 'lodash';
 import { computed, ref, watch } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
+import filter from 'lodash/filter';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import last from 'lodash/last';
 import pluralize from 'pluralize';
 
 import AssessmentGroup from './AssessmentGroup.vue';
@@ -143,8 +146,8 @@ const createGroup = () => {
   });
 };
 
-watch(groups, (value) => {
-  expanded.value = last(value)?.uid;
+watch(() => groups.value.length, () => {
+  expanded.value = last(groups.value)?.uid;
 });
 </script>
 

@@ -20,7 +20,7 @@
             size="x-small"
             variant="tonal"
             icon
-            @click="$emit('delete')"
+            @click.stop="$emit('delete')"
           >
             <VIcon icon="mdi-delete-outline" size="large" />
           </VBtn>
