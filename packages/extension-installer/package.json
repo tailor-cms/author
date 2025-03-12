@@ -3,11 +3,11 @@
   "type": "module",
   "main": "src/index.js",
   "dependencies": {
-    "commander": "^12.1.0",
+    "commander": "^13.1.0",
     "inquirer": "^12.4.3",
     "jsonfile": "^6.1.0",
     "lodash": "^4.17.21",
-    "shelljs": "^0.8.5"
+    "shelljs": "^0.9.1"
   },
   "devDependencies": {
     "acorn": "^8.14.1"
