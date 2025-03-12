@@ -20,4 +20,5 @@ export const ContentElementType = {
   Table: 'TABLE',
   BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
   JoditHtml: 'JODIT_HTML',
+  Html: 'HTML',
 };
