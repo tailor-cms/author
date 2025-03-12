@@ -28,7 +28,6 @@ services:
     ports:
       - '4566:4566'
     environment:
-      - DEFAULT_REGION=us-east-1
       - SERVICES=s3:4566
       - BUCKET_NAME=test
 
