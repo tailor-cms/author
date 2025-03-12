@@ -3,7 +3,7 @@ services:
     container_name: 'author-dc-postgres'
     image: 'postgres:15.1'
     environment:
-      POSTGRES_DB: 'tailor'
+      POSTGRES_DB: 'tailor_dev'
       POSTGRES_USER: 'dev'
       POSTGRES_PASSWORD: 'dev'
     expose:
@@ -52,7 +52,7 @@ services:
       PROTOCOL: 'http'
       PORT: 3000
       REVERSE_PROXY_PORT: 3000
-      DATABASE_NAME: 'tailor'
+      DATABASE_NAME: 'tailor_dev'
       DATABASE_USER: 'dev'
       DATABASE_PASSWORD: 'dev'
       DATABASE_HOST: 'author-dc-postgres'
@@ -64,6 +64,7 @@ services:
       STORAGE_BUCKET: 'test'
       KV_STORE_URL: 'redis://author-dc-redis:6379'
       KV_STORE_DEFAULT_TTL: 0
-      AUTH_JWT_SECRET: 'test_secret'
+      AUTH_JWT_SECRET: 'dev_secret123.'
+      AUTH_JWT_ISSUER: 'tailor'
       AUTH_JWT_COOKIE_SECRET: 'test_cookie_secret'
     restart: 'no'
