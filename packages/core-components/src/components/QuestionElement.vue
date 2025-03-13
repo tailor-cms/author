@@ -4,9 +4,9 @@
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VCard
         v-bind="hoverProps"
-        class="d-flex px-4"
         :color="expanded ? 'primary-darken-2' : 'primary-lighten-5'"
         :height="collapsable ? 48 : 38"
+        class="d-flex px-4"
         rounded="0"
         flat
         v-on="{ click: collapsable ? () => (expanded = !expanded) : null }"

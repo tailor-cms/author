@@ -16,8 +16,8 @@
         isDisabled,
       }"
       :class="[element.changeSincePublish, { diff: showPublishDiff }]"
-      collapsable
       class="flex-grow-1"
+      collapsable
       @delete="emit('delete')"
       @save="save"
     >
