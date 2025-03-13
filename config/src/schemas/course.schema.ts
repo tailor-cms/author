@@ -166,13 +166,6 @@ const AssessmentPoolConfig: ContentContainerConfig = {
   templateId: ContentContainerType.AssessmentPool,
   label: 'Assessments',
   publishedAs: 'assessments',
-  ai: {
-    definition: `
-      Assessment pools are collections of assessments that can be used to
-      evaluate the learner's understanding of the material. They can include
-      various types of questions and are designed to provide comprehensive
-      feedback.`,
-  },
   contentElementConfig: [
     {
       name: 'Assessments',
@@ -191,15 +184,17 @@ const AssessmentPoolConfig: ContentContainerConfig = {
   ],
   ai: {
     definition: `
-      Assessment pools are a way to organize assessments that can be used in
-      multiple lessons.`,
+      Assessment pools are collections of assessments that can be used to
+      evaluate the learner's understanding of the material. They can include
+      various types of questions and are designed to provide comprehensive
+      feedback.`,
     outputRules: {
       prompt: `
       - Format the 'question' content and 'feedback' content as a HTML with
         suitable tags.
-      - Apply text-body-2 and mb-5 classes to the paragraph html tags
-        You are trying to teach the audience, so make sure the content is easy to
-        understand, has a friendly tone and is engaging to the reader.`,
+      - Apply text-body-2 and mb-5 classes to the paragraph html tags.
+      - Unlike 'question' and 'feeback' which are HTML content, 'hint' should
+        be plaintext.`,
       isAssessment: true,
     },
   },
