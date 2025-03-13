@@ -2,26 +2,29 @@
   <AssessmentItem
     :element="assessment"
     :expanded="expanded"
-    :draggable="true"
     :is-disabled="isDisabled"
+    class="ml-2 mr-3"
+    draggable
     @selected="expanded = !expanded"
     @save="save"
     @delete="$emit('delete')">
     <template #header>
-      <VRow v-if="objectives.length" justify="end" no-gutters class="mt-2">
-        <VCol cols="5">
-          <VAutocomplete
-            v-model="objective"
-            :disabled="isDisabled"
-            :items="objectives"
-            :placeholder="objectiveLabel"
-            item-title="data.name"
-            variant="outlined"
-            hide-details
-            return-object
-          />
-        </VCol>
-      </VRow>
+      <div v-if="objectives.length" class="d-flex px-6 py-4">
+        <VRow justify="end" no-gutters class="mt-2">
+          <VCol cols="5">
+            <VAutocomplete
+              v-model="objective"
+              :disabled="isDisabled"
+              :items="objectives"
+              :placeholder="objectiveLabel"
+              item-title="data.name"
+              variant="outlined"
+              hide-details
+              return-object
+            />
+          </VCol>
+        </VRow>
+      </div>
     </template>
   </AssessmentItem>
 </template>

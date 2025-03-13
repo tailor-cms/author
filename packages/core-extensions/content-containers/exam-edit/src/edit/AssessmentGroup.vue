@@ -7,7 +7,7 @@
         min-height="64"
         static
       >
-        <h3 class="text-subtitle-1 font-weight-bold">
+        <h3 class="text-subtitle-1">
           Question group {{ numberToLetter(position) }}
         </h3>
         <VSpacer />
@@ -41,14 +41,15 @@
         variant="outlined"
         @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
       />
-      <h4 class="text-subtitle-2 font-weight-bold text-left">Introduction</h4>
+      <h4 class="text-subtitle-2 text-left">Introduction</h4>
       <GroupIntroduction
         :group="group"
         :elements="introductionElements"
+        :is-disabled="isDisabled"
         @save:element="$emit('save:element', $event)"
         @reorder:element="$emit('reorder:element', $event)"
         @delete:element="$emit('delete:element', $event)" />
-      <h4 class="text-subtitle-2 font-weight-bold text-left mb-2">Questions</h4>
+      <h4 class="text-subtitle-2 text-left mb-2">Questions</h4>
       <VAlert
         v-if="!hasAssessments"
         class="mt-4"

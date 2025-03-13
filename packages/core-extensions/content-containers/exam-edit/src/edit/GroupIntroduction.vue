@@ -14,6 +14,7 @@
       :elements="elements"
       :activity="group"
       :supported-element-config="introductionElementConfig"
+      :is-disabled="isDisabled"
       layout
       class="pa-4"
       @add="$emit('save:element', $event)"
@@ -23,6 +24,7 @@
           :element="element"
           :set-width="false"
           :is-dragged="isDragged"
+          :is-disabled="isDisabled"
           @save="save(element, $event)"
           @delete="$emit('delete:element', element)" />
       </template>
@@ -40,6 +42,7 @@ import { introductionElementConfig } from './config';
 defineProps<{
   group: Activity;
   elements: ContentElement[];
+  isDisabled: boolean;
 }>();
 
 const emit = defineEmits([
