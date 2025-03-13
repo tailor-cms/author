@@ -20,5 +20,5 @@ export const ContentElementType = {
   Table: 'TABLE',
   BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
   JoditHtml: 'JODIT_HTML',
-  QuillHtml: 'QUILL_HTML',
+  Html: 'HTML',
 };

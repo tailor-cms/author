@@ -15,7 +15,6 @@ enum ActivityType {
   // Outline
   Module = 'MODULE',
   Page = 'PAGE',
-  Lesson = 'LESSON',
   KnowledgeCheck = 'KNOWLEDGE_CHECK',
   // Content containers
   Section = 'SECTION',
@@ -27,7 +26,7 @@ const ModuleConfig: ActivityConfig = {
   isTrackedInWorkflow: true,
   label: 'Module',
   color: '#5187C7',
-  subLevels: [ActivityType.Module, ActivityType.Page, ActivityType.Lesson],
+  subLevels: [ActivityType.Module, ActivityType.Page],
   ai: {
     definition: `
       Modules are a way to organize knowledge into chunks that are easier to

@@ -153,6 +153,36 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     ancestors.forEach((it) => toggleOutlineItemExpand(it.uid, true));
   };
 
+  // Used for drag & drop of outline activities
+  const handleOutlineItemDrag = async (
+    context: any = {},
+    parentId: number | null = null,
+  ) => {
+    const { added } = context;
+    if (!added?.element?.id) return;
+    const { element } = added;
+    const config = taxonomy.value?.find((it: any) => it.type === element.type);
+    if (!config) return;
+    // Check if the element can be moved to the new parent
+    // type must be in the subLevels of the parent type
+    if (parentId) {
+      const parent = Activity.findById(parentId);
+      if (!parent) return;
+      const parentConfig = taxonomy.value?.find(
+        (it: any) => it.type === parent.type,
+      );
+      if (!parentConfig?.subLevels?.includes(element.type)) return;
+    } else if (!config.rootLevel) {
+      // If parentId is null, the element must be a root level
+      return;
+    }
+    await Activity.update({
+      id: added.element.id,
+      parentId,
+      position: added.newIndex,
+    });
+  };
+
   const initialize = async (repoId: number) => {
     repositoryId.value = repoId;
     Object.assign(outlineState, loadOutline(repoId));
@@ -212,6 +242,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     toggleOutlineItemExpand,
     toggleOutlineExpand,
     expandOutlineParents,
+    handleOutlineItemDrag,
     getUsers,
     upsertUser,
     removeUser,
