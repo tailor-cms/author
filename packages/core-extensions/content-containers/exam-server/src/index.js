@@ -6,14 +6,30 @@ const ATTRS = [
   'id', 'uid', 'type', 'position', 'parentId', 'createdAt', 'updatedAt',
 ];
 
+// TODO: Temp solution, should be provided to functions via API once all the
+// packages are migrated
+
+const questions = [
+  'MULTIPLE_CHOICE',
+  'SINGLE_CHOICE',
+  'MATCHING_QUESTION',
+  'TEXT_RESPONSE',
+  'TRUE_FALSE',
+  'NUMERICAL_RESPONSE',
+  'FILL_BLANK',
+  'PAGE_BREAK',
+  'DRAG_DROP',
+];
+const isQuestion = (type) => questions.includes(type);
+
 async function fetchGroups(exam, { include }) {
   const groups = await exam.getChildren({ include });
   return {
     ...pick(exam, ATTRS),
     groups: groups.map((group) => ({
       ...pick(group, ['id', 'uid', 'type', 'position', 'data', 'createdAt']),
-      intro: filter(group.ContentElements, (it) => it.type !== 'ASSESSMENT'),
-      assessments: filter(group.ContentElements, { type: 'ASSESSMENT' }),
+      intro: filter(group.ContentElements, (it) => !isQuestion(it.type)),
+      assessments: filter(group.ContentElements, (it) => isQuestion(it.type)),
     })),
   };
 }

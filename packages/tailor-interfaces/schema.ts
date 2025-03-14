@@ -8,6 +8,7 @@ export interface ElementRegistry {
   questions: ElementManifest[];
   load: (el: ContentElement) => void;
   get: (id: string) => ElementManifest;
+  isQuestion: (type: string) => boolean;
   isLegacyQuestion: (type: string) => boolean;
   matchesAllowedElementConfig: (
     el: ContentElement,

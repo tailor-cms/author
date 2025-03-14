@@ -11,22 +11,24 @@
       Click the button below to create first Introduction item.
     </VAlert>
     <ElementList
-      :elements="elements"
       :activity="group"
-      :supported-element-config="introductionElementConfig"
+      :elements="elements"
       :is-disabled="isDisabled"
-      layout
+      :supported-element-config="introductionElementConfig"
       class="pa-4"
+      layout
       @add="$emit('save:element', $event)"
-      @update="$emit('reorder:element', $event)">
+      @update="$emit('reorder:element', $event)"
+    >
       <template #default="{ element, isDragged }">
         <ContainedContent
           :element="element"
-          :set-width="false"
-          :is-dragged="isDragged"
           :is-disabled="isDisabled"
+          :is-dragged="isDragged"
+          :set-width="false"
+          @delete="$emit('delete:element', element)"
           @save="save(element, $event)"
-          @delete="$emit('delete:element', element)" />
+        />
       </template>
     </ElementList>
   </div>
@@ -35,7 +37,7 @@
 <script lang="ts" setup>
 import { ContainedContent, ElementList } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash-es';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { introductionElementConfig } from './config';
 

@@ -1,23 +1,23 @@
 <template>
-  <VCard :class="{ collapsed }" class="exam">
+  <VCard class="mb-4" color="primary-lighten-5">
     <VCard
-      rounded="0"
-      elevation="0"
       color="transparent"
-      @click="collapsed = !collapsed"
+      elevation="0"
+      rounded="0"
+      @click="isExamCollapsed = !isExamCollapsed"
     >
-      <VRow class="d-flex justify-center align-center py-4 px-4" no-gutters>
+      <VRow class="d-flex justify-center align-center pa-4" no-gutters>
         <VCol
-          :class="{ 'text-left': !collapsed }"
-          :cols="collapsed ? 8 : 10"
-          :offset="collapsed ? 2 : 0"
+          :class="{ 'text-left': !isExamCollapsed }"
+          :cols="isExamCollapsed ? 8 : 10"
+          :offset="isExamCollapsed ? 2 : 0"
         >
-          <h3 class="text-subtitle-1 font-weight-bold">
+          <div class="text-subtitle-1 font-weight-bold">
             {{ title }}
-          </h3>
+          </div>
         </VCol>
         <VCol cols="2" class="text-right">
-          <VChip v-if="collapsed" color="green-darken-1" size="small">
+          <VChip v-if="isExamCollapsed" color="green-darken-1" size="small">
             {{ label }}
           </VChip>
           <VBtn
@@ -33,7 +33,7 @@
       </VRow>
     </VCard>
     <VExpandTransition>
-      <div v-if="!collapsed" class="px-8 py-4">
+      <div v-if="!isExamCollapsed" class="px-6 py-4">
         <VAlert
           v-if="!groups.length"
           color="primary-darken-1"
@@ -43,29 +43,32 @@
         >
           Click the button below to Create first question group.
         </VAlert>
-        <VExpansionPanels v-model="expanded" rounded="lg" flat>
+        <VExpansionPanels v-model="expandedAssessmentGroup" rounded="lg" flat>
           <AssessmentGroup
             v-for="(group, index) in groups"
             :key="group.uid"
-            :group="group"
             :elements="elements"
+            :group="group"
             :is-disabled="disabled"
+            :is-expanded="expandedAssessmentGroup === group.uid"
             :objectives="examObjectives"
             :position="index"
-            :is-expanded="expanded === group.uid"
-            @save:element="$emit('save:element', $event)"
-            @update:element="$emit('update:element', $event)"
-            @reorder:element="$emit('reorder:element', $event)"
+            @delete="deleteGroup(group)"
             @delete:element="$emit('delete:element', $event)"
+            @reorder:element="$emit('reorder:element', $event)"
+            @save:element="$emit('save:element', $event)"
             @update="$emit('update:subcontainer', $event)"
-            @delete="$emit('delete:subcontainer', group, 'group')" />
+            @update:element="$emit('update:element', $event)"
+          />
         </VExpansionPanels>
         <VBtn
           v-if="!disabled"
           :disabled="!container.id"
-          color="primary-lighten-5"
+          color="primary-darken-2"
           class="my-5"
-          @click.stop="createGroup">
+          variant="tonal"
+          @click.stop="createGroup"
+        >
           <VIcon class="pr-2">mdi-folder-plus-outline</VIcon>
           Add Question Group
         </VBtn>
@@ -80,11 +83,8 @@ import { computed, ref, watch } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import filter from 'lodash/filter';
-import find from 'lodash/find';
-import get from 'lodash/get';
-import last from 'lodash/last';
-import pluralize from 'pluralize';
+import { filter, find, get, last } from 'lodash-es';
+import pluralize from 'pluralize-esm';
 
 import AssessmentGroup from './AssessmentGroup.vue';
 
@@ -117,8 +117,8 @@ const emit = defineEmits([
   'delete:subcontainer',
 ]);
 
-const expanded = ref<string>();
-const collapsed = ref(!!props.container.id);
+const isExamCollapsed = ref(!!props.container.id);
+const expandedAssessmentGroup = ref<string>();
 
 const groups = computed(() =>
   filter(props.activities, { parentId: props.container.id }));
@@ -142,32 +142,18 @@ const createGroup = () => {
   emit('add:subcontainer', {
     type: 'ASSESSMENT_GROUP',
     parentId: props.container.id,
-    position: groups.value.length + 1,
+    position: (last(groups.value)?.position ?? 0) + 1,
   });
 };
 
-watch(() => groups.value.length, () => {
-  expanded.value = last(groups.value)?.uid;
+const deleteGroup = (group: Activity) => {
+  const isExpanded = expandedAssessmentGroup.value === group.uid;
+  emit('delete:subcontainer', group, 'group');
+  if (isExpanded) expandedAssessmentGroup.value = undefined;
+};
+
+watch(() => groups.value.length, (val, oldVal) => {
+  if (val < oldVal) return;
+  expandedAssessmentGroup.value = last(groups.value)?.uid;
 });
 </script>
-
-<style lang="scss" scoped>
-h3 {
-  display: inline-block;
-  margin: 0;
-  padding: 0;
-  font-size: 14px;
-  text-align: left;
-}
-
-.exam {
-  margin-bottom: 13px;
-}
-
-.collapsed {
-  &:hover {
-    background-color: #f0f0f0;
-    cursor: pointer;
-  }
-}
-</style>

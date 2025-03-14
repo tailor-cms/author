@@ -16,8 +16,8 @@
   "peerDependencies": {
     "@tailor-cms/content-element-collection": "workspace:*",
     "@tailor-cms/core-components": "workspace:*",
-    "lodash": "*",
-    "pluralize": "^8.0.0",
+    "lodash-es": "*",
+    "pluralize-esm": "^9.0.5",
     "vue": "^3.3.4",
     "vuetify": "^3.7.0"
   }

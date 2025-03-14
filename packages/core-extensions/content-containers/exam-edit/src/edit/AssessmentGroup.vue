@@ -1,15 +1,10 @@
 <template>
-  <VExpansionPanel class="assessment-group" :value="group.uid">
+  <VExpansionPanel :value="group.uid" class="assessment-group">
     <VHover v-slot="{ isHovering, props: hoverProps }">
-      <VExpansionPanelTitle
-        v-bind="hoverProps"
-        color="primary-lighten-5"
-        min-height="64"
-        static
-      >
-        <h3 class="text-subtitle-1">
+      <VExpansionPanelTitle v-bind="hoverProps" min-height="64" static>
+        <div class="text-subtitle-1 font-weight-bold">
           Question group {{ numberToLetter(position) }}
-        </h3>
+        </div>
         <VSpacer />
         <VFadeTransition>
           <VBtn
@@ -31,25 +26,26 @@
       <VTextField
         v-model.number="timeLimit"
         :readonly="isDisabled"
+        label="Time limit"
         min="0"
         name="timeLimit"
-        label="Time limit"
-        type="number"
         step="15"
         suffix="min"
-        persistent-hint
+        type="number"
         variant="outlined"
+        persistent-hint
         @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
       />
-      <h4 class="text-subtitle-2 text-left">Introduction</h4>
+      <div class="text-subtitle-2 text-left">Introduction</div>
       <GroupIntroduction
-        :group="group"
         :elements="introductionElements"
+        :group="group"
         :is-disabled="isDisabled"
-        @save:element="$emit('save:element', $event)"
+        @delete:element="$emit('delete:element', $event)"
         @reorder:element="$emit('reorder:element', $event)"
-        @delete:element="$emit('delete:element', $event)" />
-      <h4 class="text-subtitle-2 text-left mb-2">Questions</h4>
+        @save:element="$emit('save:element', $event)"
+      />
+      <div class="text-subtitle-2 text-left mb-2">Questions</div>
       <VAlert
         v-if="!hasAssessments"
         class="mt-4"
@@ -61,21 +57,23 @@
         Click the button below to create first Assessment.
       </VAlert>
       <ElementList
-        :elements="assessments"
         :activity="group"
-        :supported-element-config="supportedElementConfig"
+        :elements="assessments"
         :is-disabled="isDisabled"
+        :supported-element-config="supportedElementConfig"
         class="px-0"
         @add="addAssessments"
-        @update="$emit('reorder:element', $event)">
+        @update="$emit('reorder:element', $event)"
+      >
         <template #default="{ element }">
           <AssessmentItem
             :assessment="element"
+            :is-disabled="isDisabled"
             :objectives="objectives"
             :objective-label="objectiveLabel"
-            :is-disabled="isDisabled"
+            @delete="deleteAssessment(element)"
             @save="saveAssessment"
-            @delete="deleteAssessment(element)" />
+          />
         </template>
       </ElementList>
     </VExpansionPanelText>
@@ -83,21 +81,23 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  cloneDeep,
+  debounce,
+  filter,
+  get,
+  isEmpty,
+  map,
+  pickBy,
+  sortBy,
+  uniq,
+} from 'lodash-es';
 import { computed, inject, ref, watch } from 'vue';
 import { numberToLetter, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import cloneDeep from 'lodash/cloneDeep';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import debounce from 'lodash/debounce';
 import { ElementList } from '@tailor-cms/core-components';
 import type { ElementRegistry } from '@tailor-cms/interfaces/schema';
-import filter from 'lodash/filter';
-import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
-import map from 'lodash/map';
-import pickBy from 'lodash/pickBy';
-import sortBy from 'lodash/sortBy';
-import uniq from 'lodash/uniq';
 
 import AssessmentItem from './Assessment.vue';
 import GroupIntroduction from './GroupIntroduction.vue';
@@ -133,15 +133,17 @@ const timeLimit = ref<number>(get(props.group, 'data.timeLimit', 0));
 
 const questionTypes = computed(() => map(ceRegistry?.questions, 'type'));
 const savedAssessments = computed(() => {
-  const filtered = filter(props.elements, (el) => {
-    return el.activityId === props.group.id && isQuestion(el.type);
+  const filtered = filter(props.elements, ({ activityId, type }) => {
+    return activityId === props.group.id && isQuestion(type);
   });
   return sortBy(filtered, 'position');
 });
 
 const introductionElements = computed(() => {
-  const cond = (it: any) => it.activityId === props.group.id && !isQuestion(it.type);
-  return sortBy(filter(props.elements, cond), 'position');
+  const filtered = filter(props.elements, ({ activityId, type }) => {
+    return activityId === props.group.id && !isQuestion(type);
+  });
+  return sortBy(filtered, 'position');
 });
 
 const assessments = computed(() => {
@@ -169,7 +171,7 @@ const supportedElementConfig = computed(() => {
   return [{ name: 'Assessments', items }];
 });
 
-const isQuestion = (type: string) => questionTypes.value.includes(type);
+const isQuestion = (type: string) => ceRegistry?.isQuestion(type) ?? false;
 
 const addAssessments = (assessments: Array<any>) => {
   assessments.forEach((it) => {
@@ -208,31 +210,7 @@ watch(timeLimit, debounce((val: number) => {
   border: thin solid rgba(0, 0, 0, 0.12);
 }
 
-.remove {
-  float: right;
-  margin: 10px 5px;
-  font-size: 22px;
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
 :deep(.list-group) > .v-row > .v-col {
   padding: 0.25rem 0.75rem;
-}
-
-.time-limit {
-  margin: 7px 20px;
-
-  label {
-    margin-right: 5px;
-    vertical-align: bottom;
-  }
-
-  input {
-    width: 50px;
-    text-align: center;
-  }
 }
 </style>

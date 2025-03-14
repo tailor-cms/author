@@ -5,9 +5,10 @@
     :is-disabled="isDisabled"
     class="ml-2 mr-3"
     draggable
-    @selected="expanded = !expanded"
+    @delete="$emit('delete')"
     @save="save"
-    @delete="$emit('delete')">
+    @selected="expanded = !expanded"
+  >
     <template #header>
       <div v-if="objectives.length" class="d-flex px-6 py-4">
         <VRow justify="end" no-gutters class="mt-2">
@@ -30,13 +31,11 @@
 </template>
 
 <script lang="ts" setup>
+import { find, get, set } from 'lodash-es';
+import { onMounted, ref } from 'vue';
 import { AssessmentItem } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import find from 'lodash/find';
-import get from 'lodash/get';
-import { onMounted, ref } from 'vue';
-import set from 'lodash/set';
 
 const props = defineProps<{
   assessment: ContentElement;

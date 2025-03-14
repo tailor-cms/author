@@ -886,12 +886,12 @@ importers:
       '@tailor-cms/core-components':
         specifier: workspace:*
         version: link:../../../core-components
-      lodash:
+      lodash-es:
         specifier: '*'
         version: 4.17.21
-      pluralize:
-        specifier: ^8.0.0
-        version: 8.0.0
+      pluralize-esm:
+        specifier: ^9.0.5
+        version: 9.0.5
       vue:
         specifier: ^3.3.4
         version: 3.5.13(typescript@5.8.2)
