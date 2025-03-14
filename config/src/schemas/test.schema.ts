@@ -9,7 +9,7 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
-const SchemaId = 'COURSE_SCHEMA';
+const SchemaId = 'TEST_SCHEMA';
 
 enum ActivityType {
   // Outline
@@ -70,6 +70,21 @@ const PageConfig: ActivityConfig = {
       hideOnCreate: true,
     },
   ],
+};
+
+const KnowledgeCheckConfig: ActivityConfig = {
+  type: ActivityType.KnowledgeCheck,
+  rootLevel: true,
+  isTrackedInWorkflow: true,
+  label: 'Knowledge check',
+  ai: {
+    definition: `
+      Knowledge checks are short assessments designed to gauge the learner's
+      understanding of the material covered in the lesson. They help reinforce
+      learning and provide immediate feedback to the learner.`,
+  },
+  color: '#E91E63',
+  contentContainers: [ContentContainerType.Exam],
 };
 
 const SectionConfig: ContentContainerConfig = {
@@ -205,8 +220,8 @@ const ExamConfig: ContentContainerConfig = {
 export const SCHEMA: Schema = {
   id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
-  name: 'Course',
-  description: 'A classic course structure featuring modules and pages.',
+  name: 'Test Schema',
+  description: 'A test schema.',
   meta: [
     {
       key: 'posterImage',
@@ -221,7 +236,7 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
-  structure: [ModuleConfig, PageConfig],
+  structure: [ModuleConfig, PageConfig, KnowledgeCheckConfig],
   contentContainers: [SectionConfig, AssessmentPoolConfig, ExamConfig],
   elementMeta: [
     {
