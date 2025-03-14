@@ -14,13 +14,13 @@ const describe = {
 
 function getAction(operation: string) {
   switch (operation) {
-    case 'CREATE':
-      return 'Created';
-    case 'REMOVE':
-      return 'Removed';
-    case 'UPDATE':
-    default:
-      return 'Updated';
+  case 'CREATE':
+    return 'Created';
+  case 'REMOVE':
+    return 'Removed';
+  case 'UPDATE':
+  default:
+    return 'Updated';
   }
 }
 
@@ -72,31 +72,31 @@ export function getFormatDescription(rev: Revision, activity: Activity) {
 
 export function getRevisionAcronym(rev: Revision) {
   switch (rev.entity) {
-    case 'ACTIVITY': {
-      const typeArray = rev.state.type.split('_', 2);
-      return reduce(typeArray, (acc, val) => acc + val.charAt(0), '');
-    }
-    case 'REPOSITORY':
-      return 'R';
-    case 'CONTENT_ELEMENT':
-      return 'CE';
-    default:
-      return 'N/A';
+  case 'ACTIVITY': {
+    const typeArray = rev.state.type.split('_', 2);
+    return reduce(typeArray, (acc, val) => acc + val.charAt(0), '');
+  }
+  case 'REPOSITORY':
+    return 'R';
+  case 'CONTENT_ELEMENT':
+    return 'CE';
+  default:
+    return 'N/A';
   }
 }
 
 export function getRevisionColor(rev: Revision) {
   const DEFAULT_COLOR = 'primary-lighten-4';
   switch (rev.entity) {
-    case 'ACTIVITY': {
-      const config = schema.getLevel(rev.state.type);
-      return !isEmpty(config) ? config.color : DEFAULT_COLOR;
-    }
-    case 'REPOSITORY':
-      return 'primary-lighten-4';
-    case 'CONTENT_ELEMENT':
-      return 'teal-lighten-4';
-    default:
-      return DEFAULT_COLOR;
+  case 'ACTIVITY': {
+    const config = schema.getLevel(rev.state.type);
+    return !isEmpty(config) ? config.color : DEFAULT_COLOR;
+  }
+  case 'REPOSITORY':
+    return 'primary-lighten-4';
+  case 'CONTENT_ELEMENT':
+    return 'teal-lighten-4';
+  default:
+    return DEFAULT_COLOR;
   }
 }

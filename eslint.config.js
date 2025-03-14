@@ -42,6 +42,14 @@ export default createConfigForNuxt({
       ],
       '@stylistic/operator-linebreak': 'off',
       '@stylistic/indent-binary-ops': 'off',
+      '@stylistic/indent': [
+        'error',
+        2,
+        {
+          flatTernaryExpressions: true,
+          offsetTernaryExpressions: true,
+        },
+      ],
       '@typescript-eslint/no-explicit-any': 'off',
     },
   });
