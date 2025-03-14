@@ -26,6 +26,21 @@
               </VIcon>
             </template>
             {{ element.name }}
+            <template #append>
+              <div class="version-info">
+                <VTooltip :text="element.version">
+                  <template #activator="{ props: tooltipProps }">
+                    <VIcon
+                      v-bind="tooltipProps"
+                      color="primary-darken-3"
+                      size="18"
+                    >
+                      mdi-information-outline
+                    </VIcon>
+                  </template>
+                </VTooltip>
+              </div>
+            </template>
           </VBtn>
         </div>
       </div>
@@ -85,5 +100,17 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
   :deep(.v-btn__prepend) {
     margin-bottom: 0.25rem;
   }
+}
+
+.version-info {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.5rem;
+  opacity: 0;
+}
+
+.v-btn:hover .version-info {
+  opacity: 1;
+  transition: all 0.5s ease-in;
 }
 </style>
