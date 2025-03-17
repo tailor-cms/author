@@ -61,7 +61,7 @@ import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';
 
 interface Props {
-  element: ContentElement | null;
+  element?: ContentElement | null;
 }
 
 withDefaults(defineProps<Props>(), {

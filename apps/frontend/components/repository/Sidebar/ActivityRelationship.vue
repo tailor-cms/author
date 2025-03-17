@@ -55,11 +55,11 @@ interface Props {
   activity: StoreActivity;
   type: string;
   label: string;
-  multiple: boolean;
-  allowEmpty: boolean;
-  placeholder: string;
-  allowCircularLinks: boolean;
-  allowInsideLineage: boolean;
+  multiple?: boolean;
+  allowEmpty?: boolean;
+  placeholder?: string;
+  allowCircularLinks?: boolean;
+  allowInsideLineage?: boolean;
   allowedTypes: string[];
 }
 
