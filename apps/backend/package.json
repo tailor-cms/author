@@ -40,7 +40,7 @@
     "JSONStream": "^1.3.5",
     "auto-bind": "^5.0.1",
     "axios": "^1.8.3",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "bluebird": "^3.7.2",
     "body-parser": "^1.20.3",
     "boxen": "^8.0.1",

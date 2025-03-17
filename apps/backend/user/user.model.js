@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import gravatar from 'gravatar';
 import jwt from 'jsonwebtoken';
 import map from 'lodash/map.js';
