@@ -552,6 +552,12 @@ importers:
       '@tailor-cms/tcc-assessment-pool-server':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/assessment-pool-server
+      '@tailor-cms/tcc-exam-edit':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/exam-edit
+      '@tailor-cms/tcc-exam-server':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/exam-server
       '@tailor-cms/tcc-page':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/page
@@ -860,6 +866,50 @@ importers:
         version: 4.17.16
 
   packages/core-extensions/content-containers/assessment-pool-server:
+    dependencies:
+      bluebird:
+        specifier: ^3.7.2
+        version: 3.7.2
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+    devDependencies:
+      '@types/lodash':
+        specifier: '*'
+        version: 4.17.16
+
+  packages/core-extensions/content-containers/exam-edit:
+    dependencies:
+      '@tailor-cms/content-element-collection':
+        specifier: workspace:*
+        version: link:../../../../extensions/content-elements
+      '@tailor-cms/core-components':
+        specifier: workspace:*
+        version: link:../../../core-components
+      lodash-es:
+        specifier: '*'
+        version: 4.17.21
+      pluralize-esm:
+        specifier: ^9.0.5
+        version: 9.0.5
+      vue:
+        specifier: ^3.3.4
+        version: 3.5.13(typescript@5.8.2)
+      vuetify:
+        specifier: ^3.7.0
+        version: 3.7.5(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2))
+    devDependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      '@types/lodash':
+        specifier: '*'
+        version: 4.17.16
+      '@types/pluralize':
+        specifier: ^0.0.33
+        version: 0.0.33
+
+  packages/core-extensions/content-containers/exam-server:
     dependencies:
       bluebird:
         specifier: ^3.7.2

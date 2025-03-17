@@ -4,6 +4,7 @@
     :elements="embeds"
     :enable-add="!isDisabled && enableAdd"
     :supported-element-config="allowedElementConfig"
+    :is-disabled="isDisabled"
     @add="addItems"
     @update="reorderItem"
   >
