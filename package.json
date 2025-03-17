@@ -45,7 +45,7 @@
     "tailor-seed": "workspace:^",
     "typescript": "^5.8.2",
     "vitepress": "^1.6.3",
-    "vue-eslint-parser": "^9.4.3"
+    "vue-eslint-parser": "^10.1.1"
   },
   "dependencies": {
     "@inquirer/select": "^4.1.0",
