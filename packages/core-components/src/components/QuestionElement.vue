@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard class="question-container" color="grey-lighten-5">
+  <VCard :flat="!expanded" class="question-container" color="grey-lighten-5">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VCard
         v-bind="hoverProps"
@@ -52,7 +52,7 @@
     </VHover>
     <VExpandTransition>
       <div v-if="expanded">
-        <slot></slot>
+        <slot :update-refs="updateRefs"></slot>
         <VForm ref="form" class="content text-left pa-6" validate-on="submit">
           <component
             :is="componentName"
@@ -175,9 +175,11 @@ const form = ref();
 const expanded = ref(!props.collapsable);
 const editedElement = reactive(initializeElement());
 
-const isDirty = computed(
-  () => !isEqual(editedElement.data, initializeElement().data),
-);
+const isDirty = computed(() => {
+  const dataChanged = !isEqual(editedElement.data, initializeElement().data);
+  const refsChanged = !isEqual(editedElement.refs, props.element.refs);
+  return dataChanged || refsChanged;
+});
 
 const question = computed(() => {
   const embeds = editedElement.data.embeds as Record<string, ContentElement>;
@@ -187,6 +189,10 @@ const question = computed(() => {
 
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);
+
+const updateRefs = (refs: Record<string, any>) => {
+  editedElement.refs = refs;
+};
 
 const save = async () => {
   if (!form.value) return;
