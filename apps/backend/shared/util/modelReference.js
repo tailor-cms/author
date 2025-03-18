@@ -1,4 +1,5 @@
 import cloneDeep from 'lodash/cloneDeep.js';
+import groupBy from 'lodash/groupBy.js';
 import isArray from 'lodash/isArray.js';
 import isNumber from 'lodash/isNumber.js';
 import uniq from 'lodash/uniq.js';
@@ -86,13 +87,17 @@ export const normalizeCollectionReferences = (items) => {
  * @returns {Promise.<object[]>} - Array of src, target and referenceName
  * mappings
  */
-export const detectMissingReferences = async (Entity, items, transaction) => {
+export const detectMissingReferences = async (Entity, items, sequelize, transaction) => {
   const references = normalizeCollectionReferences(items);
-  const referencedEntities = await Entity.findAll({
-    where: { id: uniq(references.map((it) => it.target.id)) },
-    attributes: ['id'],
-    transaction,
-  });
+  const grouped = groupBy(references, (it) => it.entity ?? Entity.name);
+  const referencedEntities = (await Promise.map(
+    Object.entries(grouped), async ([group, refs]) => {
+      return sequelize.model(group).findAll({
+        where: { id: uniq(refs.map((it) => it.target.id)) },
+        attributes: ['id'],
+        transaction,
+      });
+    })).flat();
   // Filter out references where the target entity does not exist in the db
   const notExists = (r) =>
     !referencedEntities.find((it) => it.id === r.target.id);
