@@ -43,8 +43,8 @@ import { useForm } from 'vee-validate';
 import { userGroup as api } from '@/api';
 
 export interface Props {
-  visible: boolean;
-  groupData: any;
+  visible?: boolean;
+  groupData?: any;
   userGroups: any[];
 }
 

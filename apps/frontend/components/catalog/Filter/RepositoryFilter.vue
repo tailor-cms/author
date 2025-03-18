@@ -58,9 +58,9 @@ import filterBy from 'lodash/filter';
 import orderBy from 'lodash/orderBy';
 
 export interface Props {
-  label: string;
-  icon: string;
-  values: any;
+  label?: string;
+  icon?: string;
+  values?: any;
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -8,7 +8,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^2.2.1",
+    "@nuxt/devtools": "^2.3.0",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
@@ -43,6 +43,7 @@
     "compressorjs": "^1.2.1",
     "date-fns": "^4.1.0",
     "debug": "^4.4.0",
+    "events": "^3.3.0",
     "fecha": "^4.2.3",
     "hashids": "^2.3.0",
     "humanize-string": "^3.0.0",

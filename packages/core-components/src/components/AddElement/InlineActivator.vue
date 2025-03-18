@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-withDefaults(defineProps<{ disabled: boolean }>(), {
+withDefaults(defineProps<{ disabled?: boolean }>(), {
   disabled: false,
 });
 </script>

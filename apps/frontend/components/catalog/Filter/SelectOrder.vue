@@ -56,7 +56,7 @@
 
 <script lang="ts" setup>
 export interface Props {
-  sortBy: { field: string; direction: string };
+  sortBy?: { field: string; direction: string };
 }
 
 const props = withDefaults(defineProps<Props>(), {
