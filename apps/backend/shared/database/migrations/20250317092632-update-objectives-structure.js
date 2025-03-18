@@ -5,7 +5,7 @@ exports.up = ({ sequelize }) => sequelize.query(`
   SET refs = jsonb_set(
     refs - 'objectiveId',
     '{objective}',
-    jsonb_build_object('id', refs->'objectiveId', 'type', 'ACTIVITY')
+    jsonb_build_object('id', refs->'objectiveId', 'entity', 'Activity')
   )
   WHERE refs ? 'objectiveId';
 `);

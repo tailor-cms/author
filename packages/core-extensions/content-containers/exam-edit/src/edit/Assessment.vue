@@ -3,6 +3,7 @@
     :element="assessment"
     :expanded="expanded"
     :is-disabled="isDisabled"
+    :is-dirty="isDirty"
     class="ml-2 mr-3"
     draggable
     @delete="$emit('delete')"
@@ -14,14 +15,15 @@
         <VRow justify="end" no-gutters class="mt-2">
           <VCol cols="5">
             <VAutocomplete
-              v-model="objective"
+              v-model="objectiveId"
               :disabled="isDisabled"
               :items="objectives"
               :placeholder="objectiveLabel"
               item-title="data.name"
+              item-value="id"
               variant="outlined"
               hide-details
-              return-object
+              clearable
             />
           </VCol>
         </VRow>
@@ -31,11 +33,13 @@
 </template>
 
 <script lang="ts" setup>
-import { find, get, set } from 'lodash-es';
-import { onMounted, ref } from 'vue';
 import { AssessmentItem } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { get } from 'lodash-es';
+import { ref } from 'vue';
+
+const objectiveEntity = 'Activity';
 
 const props = defineProps<{
   assessment: ContentElement;
@@ -46,16 +50,19 @@ const props = defineProps<{
 const emit = defineEmits(['save', 'delete']);
 
 const expanded = ref(!props.assessment.id);
-const objective = ref<Activity | null>(null);
+const objectiveId = ref<number | null>(null);
+
+const isDirty = computed(() => {
+  return objectiveId.value !== get(props.assessment, 'refs.objective.id', null);
+});
 
 const save = (assessment: Record<string, any>) => {
-  set(assessment, 'refs.objectiveId', get(objective.value, 'id', null));
+  if (isDirty.value) {
+    const objective = objectiveId.value
+      ? { id: objectiveId.value, entity: objectiveEntity }
+      : undefined;
+    assessment.refs.objective = objective;
+  }
   emit('save', assessment);
 };
-
-onMounted(() => {
-  const objectiveId = get(props.assessment, 'refs.objectiveId') as number;
-  if (!objectiveId) return;
-  objective.value = find(props.objectives, { id: objectiveId }) ?? null;
-});
 </script>

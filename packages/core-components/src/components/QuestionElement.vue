@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard :flat="!expanded" class="question-container" color="grey-lighten-5">
+  <VCard class="question-container" color="grey-lighten-5">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VCard
         v-bind="hoverProps"
@@ -52,7 +52,7 @@
     </VHover>
     <VExpandTransition>
       <div v-if="expanded">
-        <slot :update-refs="updateRefs"></slot>
+        <slot></slot>
         <VForm ref="form" class="content text-left pa-6" validate-on="submit">
           <component
             :is="componentName"
@@ -144,6 +144,7 @@ interface Props {
   isDragged?: boolean;
   dense?: boolean;
   collapsable?: boolean;
+  isDirty?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -156,6 +157,7 @@ const props = withDefaults(defineProps<Props>(), {
   isFocused: false,
   dense: false,
   collapsable: false,
+  isDirty: false,
 });
 
 const emit = defineEmits([
@@ -177,8 +179,7 @@ const editedElement = reactive(initializeElement());
 
 const isDirty = computed(() => {
   const dataChanged = !isEqual(editedElement.data, initializeElement().data);
-  const refsChanged = !isEqual(editedElement.refs, props.element.refs);
-  return dataChanged || refsChanged;
+  return dataChanged || props.isDirty;
 });
 
 const question = computed(() => {
@@ -189,10 +190,6 @@ const question = computed(() => {
 
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);
-
-const updateRefs = (refs: Record<string, any>) => {
-  editedElement.refs = refs;
-};
 
 const save = async () => {
   if (!form.value) return;
