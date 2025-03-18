@@ -43,6 +43,7 @@
     "compressorjs": "^1.2.1",
     "date-fns": "^4.1.0",
     "debug": "^4.4.0",
+    "emittery": "^1.1.0",
     "fecha": "^4.2.3",
     "hashids": "^2.3.0",
     "humanize-string": "^3.0.0",
