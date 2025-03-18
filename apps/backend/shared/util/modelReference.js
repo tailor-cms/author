@@ -89,7 +89,7 @@ export const normalizeCollectionReferences = (items) => {
  */
 export const detectMissingReferences = async (Entity, items, sequelize, transaction) => {
   const references = normalizeCollectionReferences(items);
-  const grouped = groupBy(references, (it) => it.entity ?? Entity.name);
+  const grouped = groupBy(references, (it) => it.target.entity ?? Entity.name);
   const referencedEntities = (await Promise.map(
     Object.entries(grouped), async ([group, refs]) => {
       return sequelize.model(group).findAll({

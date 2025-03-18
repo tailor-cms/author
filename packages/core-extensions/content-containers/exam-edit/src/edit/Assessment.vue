@@ -11,7 +11,7 @@
     @selected="expanded = !expanded"
   >
     <template #header>
-      <div v-if="objectives.length" class="d-flex px-6 py-4">
+      <div v-if="objectives.length || objectiveId" class="d-flex px-6 py-4">
         <VRow justify="end" no-gutters class="mt-2">
           <VCol cols="5">
             <VAutocomplete
@@ -50,7 +50,9 @@ const props = defineProps<{
 const emit = defineEmits(['save', 'delete']);
 
 const expanded = ref(!props.assessment.id);
-const objectiveId = ref<number | null>(null);
+const objectiveId = ref<number | null>(
+  get(props.assessment, 'refs.objective.id', null),
+);
 
 const isDirty = computed(() => {
   return objectiveId.value !== get(props.assessment, 'refs.objective.id', null);
