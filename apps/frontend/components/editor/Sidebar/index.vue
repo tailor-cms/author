@@ -110,12 +110,12 @@ const tabs: any = computed(() => [
 
 const elementSidebarEnabled = computed(() => {
   if (!props.selectedElement) return false;
+  const { type, activityId } = props.selectedElement;
   const { inputs, relationships } = metadata.value;
   const visibleRelationships = reject(relationships, 'disableSidebarUi');
-  const element = $ceRegistry.get(props.selectedElement.type);
-  return (
-    inputs.length || visibleRelationships.length || element?.hasSideToolbar
-  );
+  const element = $ceRegistry.get(type);
+  const hasRelationships = visibleRelationships.length && activityId;
+  return inputs.length || hasRelationships || element?.hasSideToolbar;
 });
 
 const metadata = computed(() => {

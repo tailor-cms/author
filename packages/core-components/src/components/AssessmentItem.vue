@@ -16,6 +16,7 @@
         isDisabled,
       }"
       :class="[element.changeSincePublish, { diff: showPublishDiff }]"
+      :is-dirty="isDirty"
       class="flex-grow-1"
       collapsable
       @delete="emit('delete')"
@@ -46,6 +47,7 @@ interface Props {
   expanded?: boolean;
   draggable?: boolean;
   isDisabled?: boolean;
+  isDirty?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -53,6 +55,7 @@ const props = withDefaults(defineProps<Props>(), {
   expanded: false,
   draggable: false,
   isDisabled: false,
+  isDirty: false,
 });
 
 const emit = defineEmits(['add', 'save', 'delete', 'selected']);

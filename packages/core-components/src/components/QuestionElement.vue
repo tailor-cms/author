@@ -144,6 +144,7 @@ interface Props {
   isDragged?: boolean;
   dense?: boolean;
   collapsable?: boolean;
+  isDirty?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -156,6 +157,7 @@ const props = withDefaults(defineProps<Props>(), {
   isFocused: false,
   dense: false,
   collapsable: false,
+  isDirty: false,
 });
 
 const emit = defineEmits([
@@ -175,9 +177,10 @@ const form = ref();
 const expanded = ref(!props.collapsable);
 const editedElement = reactive(initializeElement());
 
-const isDirty = computed(
-  () => !isEqual(editedElement.data, initializeElement().data),
-);
+const isDirty = computed(() => {
+  const dataChanged = !isEqual(editedElement.data, initializeElement().data);
+  return dataChanged || props.isDirty;
+});
 
 const question = computed(() => {
   const embeds = editedElement.data.embeds as Record<string, ContentElement>;
