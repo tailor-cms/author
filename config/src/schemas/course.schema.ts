@@ -94,7 +94,6 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.PageBreak,
         ContentElementType.Pdf,
         ContentElementType.Accordion,
-        ContentElementType.Table,
         ContentElementType.Modal,
         ContentElementType.Carousel,
       ],
