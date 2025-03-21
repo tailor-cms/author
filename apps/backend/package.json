@@ -37,6 +37,7 @@
     "@tailor-cms/config-parser": "workspace:*",
     "@tailor-cms/content-container-collection": "workspace:^",
     "@tailor-cms/content-element-collection": "workspace:^",
+    "@tailor-cms/meta-element-collection": "workspace:^",
     "@tailor-cms/utils": "workspace:*",
     "JSONStream": "^1.3.5",
     "auto-bind": "^5.0.1",
@@ -104,6 +105,7 @@
     "tar-fs": "^3.0.8",
     "tmp": "0.2.3",
     "to-case": "^2.0.0",
+    "umzug": "^3.8.2",
     "untildify": "^5.0.0",
     "url-join": "^5.0.0",
     "url-parse": "^1.5.10",
@@ -117,8 +119,7 @@
     "del-cli": "^6.0.0",
     "dotenv-cli": "^8.0.0",
     "sequelize-cli": "^6.6.2",
-    "terser": "^5.39.0",
-    "umzug": "^3.8.2"
+    "terser": "^5.39.0"
   },
   "engines": {
     "node": ">= 22.11.0",
