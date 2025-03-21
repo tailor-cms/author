@@ -11,8 +11,8 @@
     "@axe-core/playwright": "4.10.1",
     "@percy/cli": "^1.30.8",
     "@percy/playwright": "^1.0.7",
-    "@playwright/test": "1.51.0",
-    "@types/node": "^22.13.10"
+    "@playwright/test": "1.51.1",
+    "@types/node": "^22.13.11"
   },
   "dependencies": {
     "@faker-js/faker": "^9.6.0",

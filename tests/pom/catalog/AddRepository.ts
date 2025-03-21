@@ -26,7 +26,7 @@ export class AddRepositoryDialog {
     this.typeInput = dialog.getByTestId('type-input');
     this.nameInput = dialog.getByLabel('Name');
     this.descriptionInput = dialog.getByLabel('Description');
-    this.archiveInput = page.locator('input[name="archive"]');
+    this.archiveInput = dialog.locator('input[name="archive"]');
     this.createRepositoryBtn = dialog.getByRole('button', { name: 'Create' });
   }
 
@@ -53,7 +53,8 @@ export class AddRepositoryDialog {
     description = faker.lorem.words(4),
   ) {
     await this.importTab.click();
-    await this.archiveInput.click();
+    // https://github.com/vuetifyjs/vuetify/issues/21058
+    await this.archiveInput.click({ force: true });
     await this.archiveInput.setInputFiles('./fixtures/pizza.tgz');
     await this.nameInput.fill(name);
     await this.descriptionInput.fill(description);
