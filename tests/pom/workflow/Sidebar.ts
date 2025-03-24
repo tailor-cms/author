@@ -58,10 +58,10 @@ export class WorkflowSidebar {
   }
 
   async selectDueDate(dueDate: string) {
+    await this.dueDateInput.click();
     await this.dueDateInput
       .getByLabel('Due date', { exact: true })
       .fill(dueDate);
-    await this.dueDateInput.click();
     await this.dueDateInput.press('Enter');
   }
 }
