@@ -120,6 +120,9 @@ importers:
       '@tailor-cms/content-element-collection':
         specifier: workspace:^
         version: link:../../extensions/content-elements
+      '@tailor-cms/meta-element-collection':
+        specifier: workspace:^
+        version: link:../../extensions/meta-inputs
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -321,6 +324,9 @@ importers:
       to-case:
         specifier: ^2.0.0
         version: 2.0.0
+      umzug:
+        specifier: ^3.8.2
+        version: 3.8.2(@types/node@22.13.11)
       untildify:
         specifier: ^5.0.0
         version: 5.0.0
@@ -358,9 +364,6 @@ importers:
       terser:
         specifier: ^5.39.0
         version: 5.39.0
-      umzug:
-        specifier: ^3.8.2
-        version: 3.8.2(@types/node@22.13.11)
 
   apps/frontend:
     dependencies:

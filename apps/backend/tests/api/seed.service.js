@@ -27,11 +27,6 @@ const {
 const DEFAULT_USER =
   find(seedUsers, { email: 'admin@gostudion.com' }) || seedUsers[0];
 
-// Get seed repository path
-const appDir = await packageDirectory();
-const projectDir = await packageDirectory({ cwd: path.join(appDir, '..') });
-const seedPath = path.join(projectDir, '/tests/fixtures/pizza.tgz');
-
 class SeedService {
   async resetDatabase() {
     await db.sequelize.drop({});
@@ -67,6 +62,10 @@ class SeedService {
     name = `Test ${crypto.randomBytes(12).toString('hex')}`,
     description = `Test repository description`,
   ) {
+    // Get seed repository path
+    const appDir = await packageDirectory();
+    const projectDir = await packageDirectory({ cwd: path.join(appDir, '..') });
+    const seedPath = path.join(projectDir, '/tests/fixtures/pizza.tgz');
     const user = await User.findOne({ where: { email: DEFAULT_USER.email } });
     if (!user) throw new Error('Seed user not found');
     const options = {
