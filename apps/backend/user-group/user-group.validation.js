@@ -9,6 +9,7 @@ export const listUserGroups = defineRequestValidator([
 
 export const upsertUserGroup = defineRequestValidator([
   body('name').notEmpty().trim(),
+  body('logoUrl').isString().optional(),
 ]);
 
 export const upsertUser = defineRequestValidator([
