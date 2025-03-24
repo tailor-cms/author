@@ -7,9 +7,9 @@
     target="#avatar"
   >
     <template #activator="{ props: activatorProps }">
-      <VHover v-slot="{ isHovering, props }">
-        <VAvatar id="avatar" v-bind="props" size="200">
-          <img :src="image" alt="Avatar" />
+      <VHover v-slot="{ isHovering, props: hoverProps }">
+        <VAvatar id="avatar" v-bind="hoverProps" size="200">
+          <img :src="imgUrl" alt="Avatar" />
           <VFadeTransition>
             <VIcon
               v-if="isHovering"
@@ -53,7 +53,7 @@
       icon="mdi-delete"
       variant="tonal"
       small
-      @click="deleteAvatar"
+      @click="$emit('delete')"
     />
   </VSpeedDial>
 </template>
@@ -62,31 +62,20 @@
 import { computed, ref } from 'vue';
 import Compressor from 'compressorjs';
 
-import { useAuthStore } from '@/stores/auth';
-import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
+export interface Props {
+  imgUrl?: string;
+}
 
-const fileInput = ref();
+const props = withDefaults(defineProps<Props>(), {
+  imgUrl: '',
+});
 
-const store = useAuthStore();
+const emit = defineEmits(['save', 'delete']);
+
 const notify = useNotification();
 
-const image = computed(() => (store.user as any).imgUrl);
-const isGravatar = computed(() => /gravatar.com/.test(image.value));
-
-const updateAvatar = (imgUrl?: string) => {
-  return store.updateInfo({ imgUrl }).then(() => {
-    notify('Your profile picture has been updated!', { immediate: true });
-  });
-};
-
-const deleteAvatar = () => {
-  const showConfirmationDialog = useConfirmationDialog();
-  showConfirmationDialog({
-    title: 'Delete avatar?',
-    message: 'Are you sure you want to delete your profile picture?',
-    action: () => updateAvatar(''),
-  });
-};
+const fileInput = ref();
+const isGravatar = computed(() => /gravatar.com/.test(props.imgUrl));
 
 const selectPhoto = (event: Event) => {
   const { files } = event.target as HTMLInputElement;
@@ -97,7 +86,7 @@ const selectPhoto = (event: Event) => {
     resize: 'cover',
     success: async (result) => {
       const imageUrl = await toBase64(result);
-      updateAvatar(imageUrl);
+      emit('save', imageUrl);
     },
     error: (err) => notify(err.message, { immediate: true, color: 'error' }),
   });
