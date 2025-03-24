@@ -1,6 +1,6 @@
-import filter from 'lodash/filter.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
+import partition from 'lodash/partition.js';
 
 const ATTRS = [
   'id', 'uid', 'type', 'position', 'parentId', 'createdAt', 'updatedAt',
@@ -24,12 +24,19 @@ const isQuestion = (type) => questions.includes(type);
 
 async function fetchGroups(exam, { include }) {
   const groups = await exam.getChildren({ include });
+  const [assessments, intro] = partition(groups, (it) => isQuestion(it.type));
   return {
     ...pick(exam, ATTRS),
     groups: groups.map((group) => ({
       ...pick(group, ['id', 'uid', 'type', 'position', 'data', 'createdAt']),
-      intro: filter(group.ContentElements, (it) => !isQuestion(it.type)),
-      assessments: filter(group.ContentElements, (it) => isQuestion(it.type)),
+      intro,
+      assessments: assessments.map(({ refs, ...element }) => {
+        if (refs.objective) {
+          refs.objectiveId = refs.objective.id || null;
+          delete refs.objective;
+        }
+        return { ...element, refs };
+      }),
     })),
   };
 }

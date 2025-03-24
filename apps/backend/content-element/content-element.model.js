@@ -164,6 +164,7 @@ class ContentElement extends Model {
     const missingReferences = await detectMissingReferences(
       ContentElement,
       elements,
+      this.sequelize,
       transaction,
     );
     const Activity = this.sequelize.model('Activity');
