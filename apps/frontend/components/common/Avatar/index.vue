@@ -121,8 +121,8 @@ const toBase64 = (file: Blob): Promise<string> => {
 </script>
 
 <style lang="scss" scoped>
-$image-border: 4px solid #e3e3e3;
-$image-bg-color: #f5f5f5;
+$image-border: 4px solid #cfd8dc;
+$image-bg-color: #cfd8dc;
 $image-width: 11.25rem;
 $image-height: 11.25rem;
 
@@ -148,5 +148,6 @@ $image-height: 11.25rem;
 
 .placeholder-icon {
   padding: $image-height;
+  background-color: #cfd8dc !important;
 }
 </style>
