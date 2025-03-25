@@ -22,11 +22,14 @@
               />
               <div v-else>
                 <img v-if="imgUrl" :src="imgUrl" alt="Avatar" width="180" />
-                <VIcon
+                <VBtn
                   v-else
                   :icon="placeholderIcon"
                   class="placeholder-icon"
-                  @click="openAvatarUploadDialog"
+                  height="180"
+                  variant="tonal"
+                  width="180"
+                  @click.stop="openAvatarUploadDialog"
                 />
               </div>
             </VFadeTransition>
@@ -42,7 +45,6 @@
         variant="tonal"
         icon
         small
-        @click="openAvatarUploadDialog"
       >
         <VIcon>mdi-upload</VIcon>
       </VBtn>
@@ -147,7 +149,6 @@ $image-height: 11.25rem;
 }
 
 .placeholder-icon {
-  padding: $image-height;
   background-color: #cfd8dc !important;
 }
 </style>

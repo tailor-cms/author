@@ -7,7 +7,7 @@
     <template #header>{{ isNewGroup ? 'Create' : 'Edit' }} User Group</template>
     <template #body>
       <form class="form" novalidate @submit.prevent="submit">
-        <div class="d-flex justify-center mt-2 mb-6">
+        <div class="d-flex justify-center mt-2 mb-7">
           <GroupAvatar
             :img-url="logoUrlInput"
             @save="onAvatarSave"

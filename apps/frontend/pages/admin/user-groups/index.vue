@@ -44,9 +44,14 @@
       <template #item="{ item }">
         <tr :key="item.id" class="group-entry">
           <td class="text-no-wrap text-left">
+            <VAvatar size="24" tile>
+              <VImg v-if="item.logoUrl" alt="Group logo" :src="item.logoUrl" />
+              <VIcon v-else icon="mdi-account-multiple-outline" />
+            </VAvatar>
             <NuxtLink
               :to="{ name: 'user-group', params: { userGroupId: item.id } }"
-              class="text-primary-darken-4">
+              class="ml-6 text-primary-darken-4"
+            >
               {{ item.name }}
             </NuxtLink>
           </td>
