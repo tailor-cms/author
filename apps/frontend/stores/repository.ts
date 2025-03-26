@@ -14,6 +14,7 @@ const getDefaultQueryParams = () => ({
   offset: 0,
   limit: 18,
   search: '',
+  userGroupId: 0,
   sortBy: {
     field: 'updatedAt',
     direction: 'DESC',
@@ -34,7 +35,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
   const queryParams = reactive(getDefaultQueryParams());
 
   const query = computed(() => {
-    const { sortBy, pinned, filter, ...rest } = queryParams;
+    const { sortBy, pinned, filter, userGroupId, ...rest } = queryParams;
     const filters = filter.reduce((acc, { id, type }) => {
       const filterTypeConfig = repositoryFilterConfigs[type];
       acc[filterTypeConfig.queryParam] ||= [];
@@ -48,6 +49,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
       ...filters,
       ...{
         pinned: pinned || undefined,
+        userGroupId: userGroupId || undefined,
       },
     };
   });
