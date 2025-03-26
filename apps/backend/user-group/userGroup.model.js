@@ -1,13 +1,17 @@
 import { Model } from 'sequelize';
 
 class UserGroup extends Model {
-  static fields({ STRING }) {
+  static fields({ STRING, TEXT }) {
     return {
       name: {
         type: STRING,
         unique: true,
         allowNull: false,
         validate: { notEmpty: true, len: [2, 250] },
+      },
+      logoUrl: {
+        type: TEXT,
+        field: 'logo_url',
       },
     };
   }
