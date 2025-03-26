@@ -81,7 +81,7 @@ const { defineField, errors, handleSubmit, resetForm, setFieldError } = useForm(
   {
     validationSchema: object({
       name: string().min(2).max(250).required(),
-      logoUrl: string(),
+      logoUrl: string().nullable(),
     }),
   },
 );
@@ -109,8 +109,10 @@ const submit = handleSubmit(async () => {
   try {
     await api[action]({
       id: props.groupData?.id,
-      name: nameInput.value,
-      logoUrl: logoUrlInput.value,
+      ...{
+        name: nameInput.value || undefined,
+        logoUrl: logoUrlInput.value || undefined,
+      },
     });
   } catch (e: any) {
     const { message } = e?.response?.data?.error || {};
