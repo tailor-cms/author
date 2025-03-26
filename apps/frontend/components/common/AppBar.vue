@@ -117,6 +117,8 @@ const config = useConfigStore();
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
+const route = useRoute();
+
 const { repository } = storeToRefs(currentRepositoryStore);
 
 const routes = computed(() => {
@@ -147,7 +149,7 @@ const userGroupOptions = computed(() => [
 ]);
 
 const showUserGroupSelect = computed(
-  () => authStore.userGroups.length > 0 && !repository.value,
+  () => authStore.userGroups.length > 0 && route.name === 'catalog',
 );
 
 const onUserGroupChange = async (group: any) => {

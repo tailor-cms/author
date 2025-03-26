@@ -24,7 +24,7 @@ function get({ userGroup }, res) {
 }
 
 async function create({ body: { name, logoUrl } }, res) {
-  const group = name && (await UserGroup.findOne({ where: { name } }));
+  const group = await UserGroup.findOne({ where: { name } });
   if (group) return createError(StatusCodes.CONFLICT, 'Group already exists');
   return UserGroup.create({ name, logoUrl }).then((data) => res.json({ data }));
 }

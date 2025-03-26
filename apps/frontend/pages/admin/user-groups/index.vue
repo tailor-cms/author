@@ -44,10 +44,7 @@
       <template #item="{ item }">
         <tr :key="item.id" class="group-entry">
           <td class="text-no-wrap text-left">
-            <VAvatar size="24" tile>
-              <VImg v-if="item.logoUrl" alt="Group logo" :src="item.logoUrl" />
-              <VIcon v-else icon="mdi-account-multiple-outline" />
-            </VAvatar>
+            <UserGroupAvatar :logo-url="item.logoUrl" />
             <NuxtLink
               :to="{ name: 'user-group', params: { userGroupId: item.id } }"
               class="ml-6 text-primary-darken-4"
@@ -92,6 +89,7 @@
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 import { userGroup as api } from '@/api';
+import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 
 definePageMeta({
