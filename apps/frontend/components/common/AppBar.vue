@@ -26,7 +26,7 @@
         </span>
       </VAppBarTitle>
     </NuxtLink>
-    <div v-if="showUserGroupSelect" class="d-flex d-block pt-2">
+    <div v-if="showUserGroupSelect" class="pt-2">
       <VCombobox
         v-model="selectedUserGroup"
         :items="userGroupOptions"
@@ -141,12 +141,12 @@ const routes = computed(() => {
   return items;
 });
 
-const selectedUserGroup = ref<number>(0);
-
 const userGroupOptions = computed(() => [
   { id: 0, name: 'All workspaces' },
   ...authStore.userGroups,
 ]);
+
+const selectedUserGroup = ref<any>(userGroupOptions.value[0]);
 
 const showUserGroupSelect = computed(
   () => authStore.userGroups.length > 0 && route.name === 'catalog',
