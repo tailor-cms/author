@@ -121,9 +121,10 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const isOutlineExpanded = computed(() => {
     if (!repository.value) return false;
     const totalItems = outlineActivities.value.length;
-    const toggleState = outlineState.expanded.values();
-    const expandedItems = Array.from(toggleState).filter(Boolean).length;
-    return expandedItems >= totalItems;
+    const itemStates = outlineActivities.value.map((it) =>
+      outlineState.expanded.get(it.uid));
+    const expandedItems = itemStates.filter(Boolean).length;
+    return expandedItems === totalItems;
   });
 
   const isOutlineItemExpanded = (id: Id) => {
