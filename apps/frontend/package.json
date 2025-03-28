@@ -8,7 +8,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^2.3.1",
+    "@nuxt/devtools": "^2.3.2",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
@@ -59,7 +59,7 @@
     "vee-validate": "4.15.0",
     "vue3-tree-vue": "^2.0.13",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.7.18",
+    "vuetify": "3.7.19",
     "yup": "^1.6.1"
   }
 }
