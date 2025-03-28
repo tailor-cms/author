@@ -111,9 +111,6 @@ export const useRepositoryStore = defineStore('repositories', () => {
 
   async function remove(id: number): Promise<void> {
     await api.remove(id);
-    const repository = findById(id);
-    if (!repository) return;
-    $items.delete(repository.uid);
   }
 
   const clone = (id: number, name: string, description: string) => {
