@@ -1,26 +1,13 @@
-<script setup lang="ts">
-import type { NuxtError } from '#app';
-
-const props = defineProps({
-  error: Object as () => NuxtError,
-});
-
-const is404 = computed(() => props.error?.statusCode === 404);
-const headline = computed(() =>
-  is404.value ? 'looks like that Page has been ✂ 😉' : 'an error has occured!',
-);
-const handleError = () => clearError({ redirect: '/' });
-</script>
-
 <template>
-  <VApp class="bg-primary-darken-3">
-    <VContainer class="mt-15">
-      <div class="d-flex flex-column align-center justify-center h-100">
+  <VApp class="py-15 bg-primary-darken-3">
+    <VContainer class="mt-16">
+      <div class="d-flex flex-column align-center justify-center">
         <VEmptyState
           :headline="`Whooops, ${headline}`"
           image="/img/default-logo-compact.svg"
         />
         <VBtn
+          class="mt-4"
           color="primary-darken-4"
           prepend-icon="mdi-arrow-left"
           @click="handleError"
@@ -31,6 +18,22 @@ const handleError = () => clearError({ redirect: '/' });
     </VContainer>
   </VApp>
 </template>
+
+<script setup lang="ts">
+import type { NuxtError } from '#app';
+
+const props = defineProps({
+  error: Object as () => NuxtError,
+});
+
+const is404 = computed(() => props.error?.statusCode === 404);
+
+const headline = computed(() =>
+  is404.value ? 'looks like that Page has been ✂ 😉' : 'an error has occured!',
+);
+
+const handleError = () => clearError({ redirect: '/' });
+</script>
 
 <style lang="scss" scoped>
 :deep(.v-empty-state__headline) {
