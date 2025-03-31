@@ -27,7 +27,7 @@
       </VAppBarTitle>
     </NuxtLink>
     <div v-if="showUserGroupSelect" class="pt-2">
-      <VCombobox
+      <VSelect
         v-model="repositoryStore.selectedUserGroup"
         :items="repositoryStore.userGroupOptions"
         item-title="name"
@@ -51,7 +51,7 @@
             {{ title }}
           </VListItem>
         </template>
-      </VCombobox>
+      </VSelect>
     </div>
     <template #append>
       <VBtn
@@ -107,6 +107,7 @@ import UserGroupAvatar from './UserGroupAvatar.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { VAutocomplete } from 'vuetify/components';
 
 defineProps<{ user: User }>();
 
