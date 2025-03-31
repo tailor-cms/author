@@ -23,16 +23,18 @@ function get({ userGroup }, res) {
   return res.json({ data: userGroup });
 }
 
-async function create({ body: { name } }, res) {
+async function create({ body: { name, logoUrl } }, res) {
   const group = await UserGroup.findOne({ where: { name } });
   if (group) return createError(StatusCodes.CONFLICT, 'Group already exists');
-  return UserGroup.create({ name }).then((data) => res.json({ data }));
+  return UserGroup.create({ name, logoUrl }).then((data) => res.json({ data }));
 }
 
-async function update({ userGroup, body: { name } }, res) {
-  const exists = await UserGroup.findOne({ where: { name } });
-  if (exists) return createError(StatusCodes.CONFLICT, 'Group already exists');
-  await userGroup.update({ name });
+async function update({ userGroup, body }, res) {
+  const exists =
+    body.name && (await UserGroup.findOne({ where: { name: body.name } }));
+  if (exists && exists.id !== userGroup.id)
+    return createError(StatusCodes.CONFLICT, 'Group already exists');
+  await userGroup.update(body);
   return res.json({ data: userGroup });
 }
 

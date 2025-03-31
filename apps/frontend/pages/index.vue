@@ -229,6 +229,10 @@ const noRepositoriesMessage = computed(() => {
 onBeforeMount(async () => {
   // Refetch user info to get the latest permissions
   authStore.fetchUserInfo();
+  // If the user is coming back to the catalog page, we need to make sure
+  // that the store items are purged and fetched again
+  // (in case the user has deleted a repository).
+  repositoryStore.$items.clear();
   await repositoryStore.fetch();
   await repositoryStore.fetchTags();
   isLoading.value = false;
