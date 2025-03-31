@@ -1,11 +1,11 @@
 <template>
   <VNavigationDrawer
     :key="store.selectedActivity?.uid"
+    :width="sidebarWidth"
     class="ml-1"
     color="primary-darken-2"
     elevation="2"
     location="right"
-    width="480"
     absolute
     permanent
   >
@@ -31,6 +31,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useDisplay } from 'vuetify';
 import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -41,6 +42,8 @@ const props = withDefaults(defineProps<{ emptyMessage?: string }>(), {
 });
 
 const store = useCurrentRepository();
+const { width: pageInnerWidth } = useDisplay();
+const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 680 : 480));
 </script>
 
 <style lang="scss" scoped>

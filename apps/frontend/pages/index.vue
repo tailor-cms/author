@@ -1,6 +1,9 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
-    <VContainer :class="{ 'catalog-empty': !hasRepositories, 'catalog': true }">
+    <VContainer
+      :class="{ 'catalog-empty': !hasRepositories, 'catalog': true }"
+      max-width="1360"
+    >
       <VRow class="catalog-actions pb-5" no-gutters>
         <VCol
           cols="12"
@@ -247,10 +250,6 @@ onBeforeMount(async () => {
 
 .catalog {
   margin-top: 0 !important;
-
-  @media (min-width: 1264px) {
-    max-width: 1185px;
-  }
 
   &.catalog-empty {
     &::before {
