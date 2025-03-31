@@ -54,6 +54,12 @@ export const useRepositoryStore = defineStore('repositories', () => {
     };
   });
 
+  const userGroupOptions = computed(() => [
+    { id: 0, name: 'All workspaces' },
+    ...authStore.userGroups,
+  ]);
+  const selectedUserGroup = ref<any>(userGroupOptions.value[0]);
+
   function findById(id: number | string) {
     if (typeof id === 'string') return $items.get(id);
     return items.value.find((it) => it.id === id);
@@ -194,6 +200,8 @@ export const useRepositoryStore = defineStore('repositories', () => {
     remove,
     clone,
     queryParams,
+    userGroupOptions,
+    selectedUserGroup,
     resetQueryParams,
     resetPaginationParams,
     fetchTags,

@@ -28,8 +28,8 @@
     </NuxtLink>
     <div v-if="showUserGroupSelect" class="pt-2">
       <VCombobox
-        v-model="selectedUserGroup"
-        :items="userGroupOptions"
+        v-model="repositoryStore.selectedUserGroup"
+        :items="repositoryStore.userGroupOptions"
         item-title="name"
         item-value="id"
         min-width="300"
@@ -140,13 +140,6 @@ const routes = computed(() => {
   }
   return items;
 });
-
-const userGroupOptions = computed(() => [
-  { id: 0, name: 'All workspaces' },
-  ...authStore.userGroups,
-]);
-
-const selectedUserGroup = ref<any>(userGroupOptions.value[0]);
 
 const showUserGroupSelect = computed(
   () => authStore.userGroups.length > 0 && route.name === 'catalog',
