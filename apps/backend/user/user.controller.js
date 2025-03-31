@@ -25,6 +25,7 @@ async function list(
     include: [{ model: UserGroup, as: 'userGroups' }],
     ...options,
     paranoid: !archived,
+    distinct: true,
   });
   return res.json({
     data: {
