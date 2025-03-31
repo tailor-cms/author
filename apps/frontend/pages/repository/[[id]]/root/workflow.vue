@@ -1,7 +1,7 @@
 <template>
   <VLayout class="workflow-page" full-height>
     <VMain>
-      <VContainer class="workflow d-flex flex-column h-100" max-width="2000px">
+      <VContainer class="workflow d-flex flex-column h-100" max-width="2000">
         <WorkflowFilters
           v-if="workflow"
           v-model:assignee-ids="filters.assigneeIds"

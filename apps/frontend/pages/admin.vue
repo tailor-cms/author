@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout name="main">
-    <VContainer class="h-100 pt-14" max-width="1400px">
+    <VContainer class="h-100 pt-14" max-width="1400">
       <VSheet color="primary-lighten-4" rounded="lg">
         <VRow>
           <VCol cols="3">
@@ -16,7 +16,7 @@
             </VSheet>
           </VCol>
         </VRow>
-      </VSheet>
+      </VSheet>p
     </VContainer>
   </NuxtLayout>
 </template>

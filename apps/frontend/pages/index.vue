@@ -2,7 +2,7 @@
   <NuxtLayout class="catalog-wrapper" name="main">
     <VContainer
       :class="{ 'catalog-empty': !hasRepositories, 'catalog': true }"
-      max-width="1360px"
+      max-width="1360"
     >
       <VRow class="catalog-actions pb-5" no-gutters>
         <VCol
