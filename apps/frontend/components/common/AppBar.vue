@@ -107,7 +107,6 @@ import UserGroupAvatar from './UserGroupAvatar.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
-import { VAutocomplete } from 'vuetify/components';
 
 defineProps<{ user: User }>();
 
