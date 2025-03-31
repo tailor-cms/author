@@ -1,7 +1,7 @@
 <template>
   <VLayout class="workflow-page" full-height>
     <VMain>
-      <div class="workflow d-flex flex-column h-100">
+      <VContainer class="workflow d-flex flex-column h-100" max-width="2000">
         <WorkflowFilters
           v-if="workflow"
           v-model:assignee-ids="filters.assigneeIds"
@@ -12,7 +12,7 @@
           :status-options="workflow.statuses"
         />
         <WorkflowOverview :activities="filteredActivities" class="mt-5" />
-      </div>
+      </VContainer>
     </VMain>
     <Sidebar />
   </VLayout>

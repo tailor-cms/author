@@ -1,6 +1,6 @@
 <template>
   <div class="repository-settings">
-    <VContainer class="h-100 pt-14">
+    <VContainer class="h-100 pt-14" max-width="1400">
       <VSheet color="primary-lighten-4" rounded="lg">
         <VRow>
           <VCol cols="3">

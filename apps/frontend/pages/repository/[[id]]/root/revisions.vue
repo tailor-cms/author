@@ -1,5 +1,5 @@
 <template>
-  <VContainer>
+  <VContainer max-width="1200">
     <VInfiniteScroll
       v-if="revisions.length > 0"
       class="revisions"
