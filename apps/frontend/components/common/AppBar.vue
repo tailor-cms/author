@@ -146,7 +146,7 @@ const showUserGroupSelect = computed(
 );
 
 const onUserGroupChange = async (group: any) => {
-  repositoryStore.queryParams.userGroupId = group.id;
+  repositoryStore.selectedUserGroup = group;
   await repositoryStore.fetch();
 };
 

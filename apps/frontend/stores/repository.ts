@@ -14,7 +14,6 @@ const getDefaultQueryParams = () => ({
   offset: 0,
   limit: 18,
   search: '',
-  userGroupId: 0,
   sortBy: {
     field: 'updatedAt',
     direction: 'DESC',
@@ -34,8 +33,14 @@ export const useRepositoryStore = defineStore('repositories', () => {
   const areAllItemsFetched = ref(false);
   const queryParams = reactive(getDefaultQueryParams());
 
+  const userGroupOptions = computed(() => [
+    { id: 0, name: 'All workspaces' },
+    ...authStore.userGroups,
+  ]);
+  const selectedUserGroup = ref<any>(userGroupOptions.value[0].id);
+
   const query = computed(() => {
-    const { sortBy, pinned, filter, userGroupId, ...rest } = queryParams;
+    const { sortBy, pinned, filter, ...rest } = queryParams;
     const filters = filter.reduce((acc, { id, type }) => {
       const filterTypeConfig = repositoryFilterConfigs[type];
       acc[filterTypeConfig.queryParam] ||= [];
@@ -49,16 +54,10 @@ export const useRepositoryStore = defineStore('repositories', () => {
       ...filters,
       ...{
         pinned: pinned || undefined,
-        userGroupId: userGroupId || undefined,
+        userGroupId: selectedUserGroup.value || undefined,
       },
     };
   });
-
-  const userGroupOptions = computed(() => [
-    { id: 0, name: 'All workspaces' },
-    ...authStore.userGroups,
-  ]);
-  const selectedUserGroup = ref<any>(userGroupOptions.value[0]);
 
   function findById(id: number | string) {
     if (typeof id === 'string') return $items.get(id);
