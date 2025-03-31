@@ -11,17 +11,17 @@
     "@axe-core/playwright": "4.10.1",
     "@percy/cli": "^1.30.8",
     "@percy/playwright": "^1.0.7",
-    "@playwright/test": "1.51.0",
-    "@types/node": "^22.13.10"
+    "@playwright/test": "1.51.1",
+    "@types/node": "^22.13.11"
   },
   "dependencies": {
     "@faker-js/faker": "^9.6.0",
     "@tailor-cms/garment": "^0.18.1-beta.2",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
-    "jsdom": "^25.0.1",
+    "jsdom": "^26.0.0",
     "lodash": "^4.17.21",
-    "mailtrap": "^3.4.0",
+    "mailtrap": "^4.0.0",
     "tailor-seed": "workspace:^"
   }
 }

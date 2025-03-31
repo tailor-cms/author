@@ -1,6 +1,9 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
-    <VContainer :class="{ 'catalog-empty': !hasRepositories, 'catalog': true }">
+    <VContainer
+      :class="{ 'catalog-empty': !hasRepositories, 'catalog': true }"
+      max-width="1360"
+    >
       <VRow class="catalog-actions pb-5" no-gutters>
         <VCol
           cols="12"
@@ -229,6 +232,10 @@ const noRepositoriesMessage = computed(() => {
 onBeforeMount(async () => {
   // Refetch user info to get the latest permissions
   authStore.fetchUserInfo();
+  // If the user is coming back to the catalog page, we need to make sure
+  // that the store items are purged and fetched again
+  // (in case the user has deleted a repository).
+  repositoryStore.$items.clear();
   await repositoryStore.fetch();
   await repositoryStore.fetchTags();
   isLoading.value = false;
@@ -243,10 +250,6 @@ onBeforeMount(async () => {
 
 .catalog {
   margin-top: 0 !important;
-
-  @media (min-width: 1264px) {
-    max-width: 1185px;
-  }
 
   &.catalog-empty {
     &::before {

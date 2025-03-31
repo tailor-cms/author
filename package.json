@@ -27,32 +27,32 @@
     "docs:preview": "vitepress preview docs"
   },
   "devDependencies": {
-    "@nuxt/eslint-config": "^0.7.2",
-    "@typescript-eslint/eslint-plugin": "^8.26.1",
-    "@typescript-eslint/parser": "^8.26.1",
+    "@nuxt/eslint-config": "^1.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
     "boxen": "^8.0.1",
     "chalk": "^5.4.1",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.22.0",
     "execa": "^9.5.2",
-    "inquirer": "^12.4.3",
+    "inquirer": "^12.5.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
     "ora": "^8.2.0",
-    "pg": "^8.14.0",
+    "pg": "^8.14.1",
     "pkg-dir": "^8.0.0",
-    "shelljs": "^0.9.1",
+    "shelljs": "^0.9.2",
     "tailor-seed": "workspace:^",
     "typescript": "^5.8.2",
     "vitepress": "^1.6.3",
-    "vue-eslint-parser": "^9.4.3"
+    "vue-eslint-parser": "^10.1.1"
   },
   "dependencies": {
-    "@inquirer/select": "^4.0.10",
+    "@inquirer/select": "^4.1.0",
     "concurrently": "^9.1.2",
     "dotenv": "^16.4.7",
     "fkill": "^9.0.0",
     "pid-port": "^1.0.2"
   },
-  "packageManager": "pnpm@9.15.0"
+  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
 }

@@ -25,7 +25,7 @@ import debounce from 'lodash/debounce';
 import { useDisplay } from 'vuetify';
 
 export interface Props {
-  searchInput: string;
+  searchInput?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {

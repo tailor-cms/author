@@ -38,7 +38,7 @@ import { useContentElementStore } from '@/stores/content-elements';
 
 interface Props {
   element: ContentElement;
-  relationships: RelationshipType[];
+  relationships?: RelationshipType[];
 }
 
 const props = withDefaults(defineProps<Props>(), {

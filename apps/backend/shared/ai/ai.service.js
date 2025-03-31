@@ -273,6 +273,7 @@ class AIService {
               type: ContentElementType.TiptapHtml,
             },
           },
+          question: [uuid],
         },
       };
     });

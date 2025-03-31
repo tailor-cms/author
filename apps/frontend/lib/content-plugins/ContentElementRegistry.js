@@ -21,6 +21,10 @@ class ContentElementRegistry extends ComponentRegistry {
     return this.all.filter((it) => it.isQuestion);
   }
 
+  isQuestion(type) {
+    return this.get(type).isQuestion || this.isLegacyQuestion(type);
+  };
+
   isLegacyQuestion(type) {
     return LEGACY_QUESTION_TYPES.includes(type);
   }

@@ -7,8 +7,14 @@ export const listUserGroups = defineRequestValidator([
   query('filter').isString().isLength({ max: 100 }).optional(),
 ]);
 
-export const upsertUserGroup = defineRequestValidator([
-  body('name').notEmpty().trim(),
+export const createUserGroup = defineRequestValidator([
+  body('name').isString().trim().notEmpty(),
+  body('logoUrl').isString().trim().optional(),
+]);
+
+export const updateUserGroup = defineRequestValidator([
+  body('name').isString().trim().notEmpty().optional(),
+  body('logoUrl').isString().trim().optional(),
 ]);
 
 export const upsertUser = defineRequestValidator([

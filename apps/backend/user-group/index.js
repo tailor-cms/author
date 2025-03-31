@@ -17,12 +17,12 @@ router.param('id', getUserGroup);
 router
   .route('/')
   .get(validation.listUserGroups, ctrl.list)
-  .post(authorize(), validation.upsertUserGroup, ctrl.create);
+  .post(authorize(), validation.createUserGroup, ctrl.create);
 
 router
   .route('/:id')
   .get(ctrl.get)
-  .patch(validation.upsertUserGroup, ctrl.update)
+  .patch(validation.updateUserGroup, ctrl.update)
   .delete(ctrl.remove);
 
 router

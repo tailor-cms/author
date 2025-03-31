@@ -1,6 +1,6 @@
 'use strict';
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Promise = require('bluebird');
 const sortBy = require('lodash/sortBy');
 const users = require('tailor-seed/user.json');
