@@ -16,7 +16,7 @@
             </VSheet>
           </VCol>
         </VRow>
-      </VSheet>p
+      </VSheet>
     </VContainer>
   </NuxtLayout>
 </template>
