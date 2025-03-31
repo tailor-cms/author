@@ -37,7 +37,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     { id: 0, name: 'All workspaces' },
     ...authStore.userGroups,
   ]);
-  const selectedUserGroup = ref<number>(userGroupOptions.value[0].id);
+  const selectedUserGroupId = ref<number>(userGroupOptions.value[0].id);
 
   const query = computed(() => {
     const { sortBy, pinned, filter, ...rest } = queryParams;
@@ -54,7 +54,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
       ...filters,
       ...{
         pinned: pinned || undefined,
-        userGroupId: selectedUserGroup.value || undefined,
+        userGroupId: selectedUserGroupId.value || undefined,
       },
     };
   });
@@ -200,7 +200,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     clone,
     queryParams,
     userGroupOptions,
-    selectedUserGroup,
+    selectedUserGroupId,
     resetQueryParams,
     resetPaginationParams,
     fetchTags,

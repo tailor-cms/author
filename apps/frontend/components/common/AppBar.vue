@@ -28,7 +28,7 @@
     </NuxtLink>
     <div v-if="showUserGroupSelect" class="pt-2">
       <VSelect
-        v-model="repositoryStore.selectedUserGroup"
+        v-model="repositoryStore.selectedUserGroupId"
         :items="repositoryStore.userGroupOptions"
         item-title="name"
         item-value="id"
@@ -146,7 +146,7 @@ const showUserGroupSelect = computed(
 );
 
 const onUserGroupChange = async (userGroupId: number) => {
-  repositoryStore.selectedUserGroup = userGroupId;
+  repositoryStore.selectedUserGroupId = userGroupId;
   await repositoryStore.fetch();
 };
 
