@@ -4,7 +4,7 @@
       <VContainer
         ref="structureEl"
         class="structure d-flex flex-column justify-start"
-        max-width="1800px"
+        max-width="1800"
       >
         <OutlineToolbar
           v-if="hasActivities"
