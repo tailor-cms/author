@@ -46,7 +46,7 @@ class AccessService {
   }
 
   async hasCreateRepositoryAccess(req, _res, next) {
-    const { body, user } = req;
+    const { body = {}, user } = req;
     const { userGroupIds } = body;
     // If user is system admin, allow
     if (user.isAdmin()) return next();
