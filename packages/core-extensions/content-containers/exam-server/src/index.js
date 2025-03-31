@@ -17,7 +17,6 @@ const questions = [
   'TRUE_FALSE',
   'NUMERICAL_RESPONSE',
   'FILL_BLANK',
-  'PAGE_BREAK',
   'DRAG_DROP',
 ];
 const isQuestion = (type) => questions.includes(type);
