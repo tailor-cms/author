@@ -1,10 +1,10 @@
 <template>
   <VNavigationDrawer
+    :width="sidebarWidth"
     class="px-4 text-left"
     color="primary-darken-2"
     elevation="2"
     location="right"
-    width="480"
     absolute
     permanent
   >
@@ -36,6 +36,7 @@
 </template>
 
 <script lang="ts" setup>
+import { useDisplay } from 'vuetify';
 import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
@@ -48,6 +49,8 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 
 const repositoryStore = useCurrentRepository();
 const activity = computed(() => repositoryStore.selectedActivity);
+const { width: pageInnerWidth } = useDisplay();
+const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 680 : 480));
 </script>
 
 <style lang="scss" scoped>
