@@ -145,8 +145,8 @@ const showUserGroupSelect = computed(
   () => authStore.userGroups.length > 0 && route.name === 'catalog',
 );
 
-const onUserGroupChange = async (group: any) => {
-  repositoryStore.selectedUserGroup = group;
+const onUserGroupChange = async (userGroupId: number) => {
+  repositoryStore.selectedUserGroup = userGroupId;
   await repositoryStore.fetch();
 };
 

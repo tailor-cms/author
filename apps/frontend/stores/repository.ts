@@ -37,7 +37,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
     { id: 0, name: 'All workspaces' },
     ...authStore.userGroups,
   ]);
-  const selectedUserGroup = ref<any>(userGroupOptions.value[0].id);
+  const selectedUserGroup = ref<number>(userGroupOptions.value[0].id);
 
   const query = computed(() => {
     const { sortBy, pinned, filter, ...rest } = queryParams;
