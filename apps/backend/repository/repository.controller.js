@@ -90,12 +90,8 @@ const includeRepositoryTags = (query) => {
 };
 
 async function index({ query, user, opts }, res) {
-  const { search, name } = query;
+  const { search, name, userGroupId } = query;
   const schemas = query.schemas || general.availableSchemas;
-  if (search) opts.where.name = getFilter(search);
-  if (name) opts.where.name = name;
-  if (schemas && schemas.length) opts.where.schema = schemas;
-  if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   opts.distinct = true;
   opts.subQuery = false;
   opts.include = [
@@ -103,6 +99,13 @@ async function index({ query, user, opts }, res) {
     { model: RepositoryUserGroup },
     ...includeRepositoryTags(query),
   ];
+  if (search) opts.where.name = getFilter(search);
+  if (name) opts.where.name = name;
+  if (schemas && schemas.length) opts.where.schema = schemas;
+  if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
+  if (userGroupId) {
+    opts.where['$repositoryUserGroups.group_id$'] = userGroupId;
+  }
   if (!user.isAdmin()) {
     opts.where[Op.or] = [
       {

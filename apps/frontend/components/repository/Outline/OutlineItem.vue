@@ -79,10 +79,12 @@
     </VHover>
     <div v-if="!isSoftDeleted && isExpanded && hasChildren">
       <Draggable
-        :list="children"
         v-bind="{ handle: '.activity' }"
+        :list="children"
+        group="activities"
         item-key="uid"
         @update="(data) => reorder(data, children)"
+        @change="(e) => currentRepositoryStore.handleOutlineItemDrag(e, activity.id)"
       >
         <template #item="{ element, index: i }">
           <OutlineItem
@@ -106,9 +108,9 @@ import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';
 import type { StoreActivity } from '@/stores/activity';
-import { useCurrentRepository } from '@/stores/current-repository';
 
 const currentRepositoryStore = useCurrentRepository();
+
 const { taxonomy } = storeToRefs(currentRepositoryStore);
 
 interface Props {

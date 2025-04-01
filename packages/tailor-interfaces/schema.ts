@@ -8,6 +8,7 @@ export interface ElementRegistry {
   questions: ElementManifest[];
   load: (el: ContentElement) => void;
   get: (id: string) => ElementManifest;
+  isQuestion: (type: string) => boolean;
   isLegacyQuestion: (type: string) => boolean;
   matchesAllowedElementConfig: (
     el: ContentElement,
@@ -89,6 +90,7 @@ export interface ActivityConfig {
   ) => Guideline[];
   rootLevel?: boolean;
   subLevels?: string[];
+  parentTypes?: string[];
   isTrackedInWorkflow?: boolean;
   contentContainers?: string[];
   relationships?: ActivityRelationship[];

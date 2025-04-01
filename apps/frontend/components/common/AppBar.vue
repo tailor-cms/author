@@ -3,16 +3,20 @@
     id="mainAppBar"
     class="elevation-0"
     color="primary-darken-3"
-    height="80"
+    height="84"
   >
     <NuxtLink :to="{ name: 'catalog' }" class="app-brand pt-2 pl-7">
       <img
         alt="Tailor logo"
-        height="44"
+        class="mr-6"
+        height="42"
         src="/img/default-logo-full.svg"
         width="44"
       />
-      <VAppBarTitle class="app-name text-primary-lighten-3">
+      <VAppBarTitle
+        v-if="!showUserGroupSelect"
+        class="app-name text-primary-lighten-3"
+      >
         Tailor
         <span v-if="!smAndDown" class="text-caption font-weight-bold">
           <span class="text-primary-lighten-3 text-uppercase">
@@ -22,6 +26,33 @@
         </span>
       </VAppBarTitle>
     </NuxtLink>
+    <div v-if="showUserGroupSelect" class="pt-2">
+      <VCombobox
+        v-model="selectedUserGroup"
+        :items="userGroupOptions"
+        item-title="name"
+        item-value="id"
+        min-width="300"
+        variant="outlined"
+        hide-details
+        @update:model-value="onUserGroupChange"
+      >
+        <template #selection="{ item }">
+          <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
+          {{ item.title }}
+        </template>
+        <template #item="{ item, props: { title, ...restProps } }">
+          <VListItem v-bind="restProps">
+            <UserGroupAvatar
+              :logo-url="item.raw.logoUrl"
+              class="mr-5"
+              placeholder-color="primary-darken-3"
+            />
+            {{ title }}
+          </VListItem>
+        </template>
+      </VCombobox>
+    </div>
     <template #append>
       <VBtn
         v-for="{ name, to } in routes"
@@ -71,6 +102,7 @@ import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
+import UserGroupAvatar from './UserGroupAvatar.vue';
 
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
@@ -81,10 +113,13 @@ defineProps<{ user: User }>();
 const { smAndDown } = useDisplay();
 
 const { $oidc } = useNuxtApp() as any;
-const authStore = useAuthStore();
-const currentRepositoryStore = useCurrentRepository();
-const { repository } = storeToRefs(currentRepositoryStore);
 const config = useConfigStore();
+const authStore = useAuthStore();
+const repositoryStore = useRepositoryStore();
+const currentRepositoryStore = useCurrentRepository();
+const route = useRoute();
+
+const { repository } = storeToRefs(currentRepositoryStore);
 
 const routes = computed(() => {
   const items = [
@@ -105,6 +140,22 @@ const routes = computed(() => {
   }
   return items;
 });
+
+const userGroupOptions = computed(() => [
+  { id: 0, name: 'All workspaces' },
+  ...authStore.userGroups,
+]);
+
+const selectedUserGroup = ref<any>(userGroupOptions.value[0]);
+
+const showUserGroupSelect = computed(
+  () => authStore.userGroups.length > 0 && route.name === 'catalog',
+);
+
+const onUserGroupChange = async (group: any) => {
+  repositoryStore.queryParams.userGroupId = group.id;
+  await repositoryStore.fetch();
+};
 
 const logout = async () => {
   if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {
@@ -138,7 +189,7 @@ $font-color: #333;
   cursor: pointer;
 
   .app-name {
-    margin: 0.125rem 0 0 0.75rem;
+    margin: 0 0 0 0.125rem;
     font-family: Poppins, Roboto, sans-serif;
     font-size: 1.5rem;
     font-weight: 600;

@@ -8,7 +8,7 @@ export const ContentElementType = {
   TrueFalse: 'TRUE_FALSE',
   NumericalResponse: 'NUMERICAL_RESPONSE',
   FillBlank: 'FILL_BLANK',
-  PageBreak: 'PAGE_BREAK',
+  Break: 'BREAK',
   DragDrop: 'DRAG_DROP',
   Pdf: 'PDF',
   Embed: 'EMBED',
@@ -20,5 +20,5 @@ export const ContentElementType = {
   Table: 'TABLE',
   BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
   JoditHtml: 'JODIT_HTML',
-  QuillHtml: 'QUILL_HTML',
+  Html: 'HTML',
 };

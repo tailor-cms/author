@@ -1,0 +1,18 @@
+{
+  "name": "@tailor-cms/tcc-exam-server",
+  "version": "0.0.1",
+  "description": "Tailor exam content container server package",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "devDependencies": {
+    "@types/lodash": "*"
+  },
+  "peerDependencies": {
+    "bluebird": "^3.7.2",
+    "lodash": "^4.17.21"
+  }
+}

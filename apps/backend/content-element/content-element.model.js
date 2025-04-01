@@ -130,8 +130,8 @@ class ContentElement extends Model {
   static fetch(opt) {
     return isNumber(opt)
       ? ContentElement.findByPk(opt).then(
-        (it) => it && hooks.applyFetchHooks(it),
-      )
+          (it) => it && hooks.applyFetchHooks(it),
+        )
       : ContentElement.findAll(opt).map(hooks.applyFetchHooks);
   }
 
@@ -164,6 +164,7 @@ class ContentElement extends Model {
     const missingReferences = await detectMissingReferences(
       ContentElement,
       elements,
+      this.sequelize,
       transaction,
     );
     const Activity = this.sequelize.model('Activity');

@@ -44,9 +44,11 @@
       <template #item="{ item }">
         <tr :key="item.id" class="group-entry">
           <td class="text-no-wrap text-left">
+            <UserGroupAvatar :logo-url="item.logoUrl" />
             <NuxtLink
               :to="{ name: 'user-group', params: { userGroupId: item.id } }"
-              class="text-primary-darken-4">
+              class="ml-6 text-primary-darken-4"
+            >
               {{ item.name }}
             </NuxtLink>
           </td>
@@ -87,6 +89,7 @@
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 import { userGroup as api } from '@/api';
+import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 
 definePageMeta({

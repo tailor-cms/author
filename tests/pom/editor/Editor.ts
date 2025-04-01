@@ -41,9 +41,9 @@ export class Editor {
   }
 
   getElement(content?: string) {
-    const element = content ?
-      this.page.locator(ContentElement.selector, { hasText: content }) :
-      this.page.locator(ContentElement.selector).first();
+    const element = content
+      ? this.page.locator(ContentElement.selector, { hasText: content })
+      : this.page.locator(ContentElement.selector).first();
     return new ContentElement(this.page, element);
   }
 

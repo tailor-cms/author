@@ -7,6 +7,13 @@
     <template #header>{{ isNewGroup ? 'Create' : 'Edit' }} User Group</template>
     <template #body>
       <form class="form" novalidate @submit.prevent="submit">
+        <div class="d-flex justify-center mt-2 mb-7">
+          <GroupAvatar
+            :img-url="logoUrlInput"
+            @save="onAvatarSave"
+            @delete="onAvatarSave('')"
+          />
+        </div>
         <VTextField
           v-model="nameInput"
           :error-messages="errors.name"
@@ -40,11 +47,13 @@ import isEmpty from 'lodash/isEmpty';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
+import GroupAvatar from '@/components/common/Avatar/index.vue';
+
 import { userGroup as api } from '@/api';
 
 export interface Props {
-  visible: boolean;
-  groupData: any;
+  visible?: boolean;
+  groupData?: any;
   userGroups: any[];
 }
 
@@ -64,18 +73,27 @@ const isDialogVisible = computed({
 
 const isNewGroup = computed(() => !props.groupData?.id);
 
-const { defineField, errors, handleSubmit, resetForm, setFieldError } = useForm({
-  validationSchema: object({
-    name: string().min(2).max(250).required(),
-  }),
-});
+const onAvatarSave = (imgUrl: string) => {
+  logoUrlInput.value = imgUrl;
+};
+
+const { defineField, errors, handleSubmit, resetForm, setFieldError } = useForm(
+  {
+    validationSchema: object({
+      name: string().min(2).max(250).required(),
+      logoUrl: string().nullable(),
+    }),
+  },
+);
 
 const [nameInput] = defineField('name');
+const [logoUrlInput] = defineField('logoUrl');
 
 watch(isDialogVisible, (val) => {
   if (!val) return;
   if (!isEmpty(props.groupData)) {
     nameInput.value = props.groupData.name;
+    logoUrlInput.value = props.groupData.logoUrl;
   } else {
     resetForm();
   }
@@ -91,7 +109,10 @@ const submit = handleSubmit(async () => {
   try {
     await api[action]({
       id: props.groupData?.id,
-      name: nameInput.value,
+      ...{
+        name: nameInput.value || undefined,
+        logoUrl: logoUrlInput.value || undefined,
+      },
     });
   } catch (e: any) {
     const { message } = e?.response?.data?.error || {};

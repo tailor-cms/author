@@ -9,11 +9,13 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
+const SchemaId = 'COURSE_SCHEMA';
+
 enum ActivityType {
   // Outline
   Module = 'MODULE',
   Page = 'PAGE',
-  Lesson = 'LESSON',
+  KnowledgeCheck = 'KNOWLEDGE_CHECK',
   // Content containers
   Section = 'SECTION',
 }
@@ -24,7 +26,7 @@ const ModuleConfig: ActivityConfig = {
   isTrackedInWorkflow: true,
   label: 'Module',
   color: '#5187C7',
-  subLevels: [ActivityType.Module, ActivityType.Page, ActivityType.Lesson],
+  subLevels: [ActivityType.Module, ActivityType.Page],
   ai: {
     definition: `
       Modules are a way to organize knowledge into chunks that are easier to
@@ -89,10 +91,9 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.Video,
         ContentElementType.Embed,
         ContentElementType.Audio,
-        ContentElementType.PageBreak,
+        ContentElementType.Break,
         ContentElementType.Pdf,
         ContentElementType.Accordion,
-        ContentElementType.Table,
         ContentElementType.Modal,
         ContentElementType.Carousel,
       ],
@@ -166,22 +167,42 @@ const AssessmentPoolConfig: ContentContainerConfig = {
   ],
   ai: {
     definition: `
-      Assessment pools are a way to organize assessments that can be used in
-      multiple lessons.`,
+      Assessment pools are collections of assessments that can be used to
+      evaluate the learner's understanding of the material. They can include
+      various types of questions and are designed to provide comprehensive
+      feedback.`,
     outputRules: {
       prompt: `
       - Format the 'question' content and 'feedback' content as a HTML with
         suitable tags.
-      - Apply text-body-2 and mb-5 classes to the paragraph html tags
-        You are trying to teach the audience, so make sure the content is easy to
-        understand, has a friendly tone and is engaging to the reader.`,
+      - Apply text-body-2 and mb-5 classes to the paragraph html tags.
+      - Unlike 'question' and 'feeback' which are HTML content, 'hint' should
+        be plaintext.`,
       isAssessment: true,
     },
   },
 };
 
+const ExamConfig: ContentContainerConfig = {
+  type: ContentContainerType.Exam,
+  templateId: ContentContainerType.Exam,
+  label: 'Exam',
+  displayHeading: true,
+  multiple: true,
+  publishedAs: 'exam',
+  config: {
+    objectives: [`${SchemaId}/${ActivityType.Page}`],
+  },
+  ai: {
+    definition: `
+      Exams are comprehensive assessments that evaluate the learner's
+      understanding of the material covered in the lesson. They are designed to
+      test the learner's knowledge and provide feedback on their progress.`,
+  },
+};
+
 export const SCHEMA: Schema = {
-  id: 'COURSE_SCHEMA',
+  id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Course',
   description: 'A classic course structure featuring modules and pages.',
@@ -200,7 +221,7 @@ export const SCHEMA: Schema = {
     },
   ],
   structure: [ModuleConfig, PageConfig],
-  contentContainers: [SectionConfig, AssessmentPoolConfig],
+  contentContainers: [SectionConfig, AssessmentPoolConfig, ExamConfig],
   elementMeta: [
     {
       type: ContentElementType.Image,

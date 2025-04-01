@@ -1,7 +1,11 @@
 <template>
   <VLayout class="structure-page">
     <VMain class="structure-container">
-      <div ref="structureEl" class="structure d-flex flex-column justify-start">
+      <VContainer
+        ref="structureEl"
+        class="structure d-flex flex-column justify-start"
+        max-width="1800"
+      >
         <OutlineToolbar
           v-if="hasActivities"
           :is-flat="isFlat"
@@ -15,8 +19,10 @@
             v-bind="{ handle: '.activity' }"
             :list="rootActivities"
             class="mt-5"
+            group="activities"
             item-key="uid"
             @update="(data) => reorder(data, rootActivities)"
+            @change="(e) => repositoryStore.handleOutlineItemDrag(e)"
           >
             <template #item="{ element, index }">
               <OutlineItem
@@ -51,7 +57,7 @@
             </VAlert>
           </div>
         </template>
-      </div>
+      </VContainer>
     </VMain>
     <Sidebar />
   </VLayout>

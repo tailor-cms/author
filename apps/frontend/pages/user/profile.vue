@@ -9,7 +9,11 @@
               cols="12"
               md="5"
             >
-              <UserAvatar />
+              <UserAvatar
+                :img-url="store.user?.imgUrl"
+                @save="saveAvatar"
+                @delete="deleteAvatar"
+              />
               <ChangePassword />
             </VCol>
             <VCol>
@@ -26,7 +30,7 @@
 
 <script setup lang="ts">
 import ChangePassword from '@/components/user/ChangePassword.vue';
-import UserAvatar from '@/components/user/Avatar/index.vue';
+import UserAvatar from '@/components/common/Avatar/index.vue';
 import UserInfo from '@/components/user/UserInfo.vue';
 
 useHead({
@@ -37,6 +41,24 @@ definePageMeta({
   name: 'user-profile',
   middleware: ['auth'],
 });
+
+const store = useAuthStore();
+const notify = useNotification();
+
+const saveAvatar = (imgUrl?: string) => {
+  return store.updateInfo({ imgUrl }).then(() => {
+    notify('Your profile picture has been updated!', { immediate: true });
+  });
+};
+
+const deleteAvatar = () => {
+  const showConfirmationDialog = useConfirmationDialog();
+  showConfirmationDialog({
+    title: 'Delete avatar?',
+    message: 'Are you sure you want to delete your profile picture?',
+    action: () => saveAvatar(''),
+  });
+};
 </script>
 
 <style lang="scss" scoped>

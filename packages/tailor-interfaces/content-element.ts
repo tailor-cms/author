@@ -28,7 +28,7 @@ export interface ContentElement {
   /** Data collected using meta input fields */
   meta: Record<string, unknown>;
   /** See element relationship configuration for details */
-  refs: Record<string, Relationship>;
+  refs: Record<string, Relationship | number>;
   /** Parent is soft-deleted */
   detached: boolean;
   /** Missing implementation */
