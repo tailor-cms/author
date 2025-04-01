@@ -662,11 +662,11 @@ importers:
         specifier: ^0.0.9
         version: 0.0.9
       '@tailor-cms/ce-page-break-edit':
-        specifier: ^0.0.4
-        version: 0.0.4(vue@3.5.13(typescript@5.8.2))
+        specifier: ^0.0.5
+        version: 0.0.5(vue@3.5.13(typescript@5.8.2))
       '@tailor-cms/ce-page-break-server':
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: ^0.0.5
+        version: 0.0.5
       '@tailor-cms/ce-pdf-edit':
         specifier: ^0.0.8
         version: 0.0.8(@tailor-cms/utils@packages+utils)(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(@tiptap/starter-kit@2.11.5)(@tiptap/vue-3@2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(vue@3.5.13(typescript@5.8.2)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(typescript@5.8.2)(vee-validate@4.15.0(vue@3.5.13(typescript@5.8.2)))(vue@3.5.13(typescript@5.8.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.8.2)))(vuetify@3.7.19(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2)))(yup@1.6.1)
@@ -3509,13 +3509,13 @@ packages:
   '@tailor-cms/ce-numerical-response-server@0.0.9':
     resolution: {integrity: sha512-tAHvl9yYbewhmjK1JPVM8DsYVkfEUnSHdcIaFq+Ow15dqKOomJQrbprPjJXeRbT66zAt6sP5Yg6jWhLs2SNALw==}
 
-  '@tailor-cms/ce-page-break-edit@0.0.4':
-    resolution: {integrity: sha512-7fSet50sKQ5HcmcZX1Ezd3SzLuuHDogUOHCNsDbuYM0yfbXhITVUW2t2DRRQiQnDVyjBSxWJGgZo7JqN6RS9Bw==}
+  '@tailor-cms/ce-page-break-edit@0.0.5':
+    resolution: {integrity: sha512-JXdxW+Pn0ctdrYKItbCCvX0ggOC93z8wc6eGHSlPBXZn27lr8nYf1HL3fuNQHfkiXBsdYzOp7arfCK/FsAd8dw==}
     peerDependencies:
-      vue: ^3.3.4
+      vue: ^3.5.13
 
-  '@tailor-cms/ce-page-break-server@0.0.4':
-    resolution: {integrity: sha512-+6lNqy7rJT3WXSyK8JmPnjA1l558/9iMMdRBG1rKwSZpYe3geZunTPo3Py+m5N0jB4yugPJ8/5P5n90rXzABpQ==}
+  '@tailor-cms/ce-page-break-server@0.0.5':
+    resolution: {integrity: sha512-WsHWXuumxAibCZpKHT72FbW8kuFYVLH0eaqv1JsV8NGvOlcGLxhyJx++AtIEtOeGYHk+vnpmlPhxqvEMxWq1Zg==}
 
   '@tailor-cms/ce-pdf-edit@0.0.8':
     resolution: {integrity: sha512-UlDnlgronHsqURgr5OFjvVcQtDyFWovcjaTAjDpir7OQkaMSVE1Yh3pbDqDHvjRVI8D+nS851rH7t8THMTbpmA==}
@@ -13220,11 +13220,11 @@ snapshots:
     dependencies:
       lodash: 4.17.21
 
-  '@tailor-cms/ce-page-break-edit@0.0.4(vue@3.5.13(typescript@5.8.2))':
+  '@tailor-cms/ce-page-break-edit@0.0.5(vue@3.5.13(typescript@5.8.2))':
     dependencies:
       vue: 3.5.13(typescript@5.8.2)
 
-  '@tailor-cms/ce-page-break-server@0.0.4': {}
+  '@tailor-cms/ce-page-break-server@0.0.5': {}
 
   '@tailor-cms/ce-pdf-edit@0.0.8(@tailor-cms/utils@packages+utils)(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(@tiptap/starter-kit@2.11.5)(@tiptap/vue-3@2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(vue@3.5.13(typescript@5.8.2)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(typescript@5.8.2)(vee-validate@4.15.0(vue@3.5.13(typescript@5.8.2)))(vue@3.5.13(typescript@5.8.2))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.8.2)))(vuetify@3.7.19(typescript@5.8.2)(vue@3.5.13(typescript@5.8.2)))(yup@1.6.1)':
     dependencies:

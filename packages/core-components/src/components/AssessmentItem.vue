@@ -7,8 +7,8 @@
       />
     </span>
     <QuestionElement
-      :icon="elementConfig?.ui.icon"
-      :type="elementConfig?.name"
+      :icon="manifest?.ui.icon"
+      :type="manifest?.name"
       v-bind="{
         componentName,
         element,
@@ -16,6 +16,7 @@
         isDisabled,
       }"
       :class="[element.changeSincePublish, { diff: showPublishDiff }]"
+      :is-dirty="isDirty"
       class="flex-grow-1"
       collapsable
       @delete="emit('delete')"
@@ -36,7 +37,6 @@ import type {
   ElementRegistry,
 } from '@tailor-cms/interfaces/schema';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import { getComponentName } from '@tailor-cms/utils';
 
 import QuestionElement from './QuestionElement.vue';
 
@@ -46,6 +46,7 @@ interface Props {
   expanded?: boolean;
   draggable?: boolean;
   isDisabled?: boolean;
+  isDirty?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -53,6 +54,7 @@ const props = withDefaults(defineProps<Props>(), {
   expanded: false,
   draggable: false,
   isDisabled: false,
+  isDirty: false,
 });
 
 const emit = defineEmits(['add', 'save', 'delete', 'selected']);
@@ -60,9 +62,9 @@ const emit = defineEmits(['add', 'save', 'delete', 'selected']);
 const editorState = inject<any>('$editorState');
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 
-const elementConfig = computed(() => ceRegistry?.get(props.element.type));
+const manifest = computed(() => ceRegistry?.getByEntity(props.element));
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
-const componentName = computed(() => getComponentName(props.element.type));
+const componentName = computed(() => manifest.value?.componentName);
 
 const save = (data: ContentElement['data']) => {
   emit('save', { ...cloneDeep(props.element), data });
