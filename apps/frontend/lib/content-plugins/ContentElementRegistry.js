@@ -22,7 +22,7 @@ class ContentElementRegistry extends ComponentRegistry {
   }
 
   isQuestion(type) {
-    return this.get(type).isQuestion || this.isLegacyQuestion(type);
+    return this.isLegacyQuestion(type) || this.get(type)?.isQuestion;
   };
 
   isLegacyQuestion(type) {
