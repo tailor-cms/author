@@ -1,7 +1,11 @@
 <template>
   <VLayout class="structure-page">
     <VMain class="structure-container">
-      <div ref="structureEl" class="structure d-flex flex-column justify-start">
+      <VContainer
+        ref="structureEl"
+        class="structure d-flex flex-column justify-start"
+        max-width="1800"
+      >
         <OutlineToolbar
           v-if="hasActivities"
           :is-flat="isFlat"
@@ -53,7 +57,7 @@
             </VAlert>
           </div>
         </template>
-      </div>
+      </VContainer>
     </VMain>
     <Sidebar />
   </VLayout>
