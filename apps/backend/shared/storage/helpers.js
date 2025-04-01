@@ -16,7 +16,7 @@ async function resolveAssetsMap(element) {
   if (!get(element, 'data.assets')) return element;
   await Promise.map(toPairs(element.data.assets), async ([key, url]) => {
     if (!url) return set(element.data, key, url);
-    const resolvedUrl = isStorageAsset
+    const resolvedUrl = isStorageAsset(url)
       ? await storage.getFileUrl(extractStorageKey(url))
       : url;
     set(element.data, key, resolvedUrl);

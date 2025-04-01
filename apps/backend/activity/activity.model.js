@@ -227,7 +227,9 @@ class Activity extends Model {
   }
 
   static detectMissingReferences(activities, transaction) {
-    return detectMissingReferences(Activity, activities, transaction);
+    return detectMissingReferences(
+      Activity, activities, this.sequelize, transaction,
+    );
   }
 
   removeReference(type, id) {

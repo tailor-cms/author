@@ -91,7 +91,7 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.Video,
         ContentElementType.Embed,
         ContentElementType.Audio,
-        ContentElementType.PageBreak,
+        ContentElementType.Break,
         ContentElementType.Pdf,
         ContentElementType.Accordion,
         ContentElementType.Modal,
