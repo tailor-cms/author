@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { createError } from '#app/shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
-const { User, UserGroup, UserGroupMember } = db;
+const { RepositoryUserGroup, User, UserGroup, UserGroupMember } = db;
 
 async function list({ user, query: { filter }, options }, res) {
   const where = {};
@@ -39,7 +39,11 @@ async function update({ userGroup, body }, res) {
 }
 
 async function remove({ params: { id } }, res) {
-  await UserGroup.destroy({ where: { id } });
+  const transaction = await db.sequelize.transaction();
+  await UserGroupMember.destroy({ where: { groupId: id }, transaction });
+  await RepositoryUserGroup.destroy({ where: { groupId: id }, transaction });
+  await UserGroup.destroy({ where: { id }, transaction });
+  await transaction.commit();
   return res.sendStatus(StatusCodes.NO_CONTENT);
 }
 
