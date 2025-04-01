@@ -281,17 +281,5 @@ export const SCHEMA: Schema = {
         },
       ],
     },
-    {
-      type: ContentElementType.MultipleChoice,
-      relationships: [
-        {
-          key: 'prerequisites',
-          label: 'Prerequisites',
-          multiple: true,
-          placeholder: 'Click to select',
-          allowedElementConfig: [ContentElementType.TiptapHtml],
-        },
-      ],
-    },
   ],
 };
