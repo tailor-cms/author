@@ -8,7 +8,7 @@ export const ContentElementType = {
   TrueFalse: 'TRUE_FALSE',
   NumericalResponse: 'NUMERICAL_RESPONSE',
   FillBlank: 'FILL_BLANK',
-  PageBreak: 'PAGE_BREAK',
+  Break: 'BREAK',
   DragDrop: 'DRAG_DROP',
   Pdf: 'PDF',
   Embed: 'EMBED',
