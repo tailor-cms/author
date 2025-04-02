@@ -18,7 +18,8 @@ export const updateUserGroup = defineRequestValidator([
 ]);
 
 export const upsertUser = defineRequestValidator([
-  body('email').notEmpty().isEmail().normalizeEmail(),
+  body('emails').isArray({ min: 1 }),
+  body('email.*').isEmail().trim().notEmpty(),
   body('role')
     .notEmpty()
     .isIn([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR]),
