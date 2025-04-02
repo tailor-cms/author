@@ -10,6 +10,7 @@ import Promise from 'bluebird';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
 import sortBy from 'lodash/sortBy.js';
 import { UserRole } from '@tailor-cms/common';
+import { Op } from 'sequelize';
 
 import { store as activityCache } from '../../repository/feed/store.js';
 import db from '#shared/database/index.js';
@@ -83,7 +84,15 @@ class SeedService {
     const activity = await Activity.findOne({
       where: { 'repositoryId': repository.id, 'data.name': 'History of Pizza' },
     });
-    return { repository, activity };
+    const contentElement = await ContentElement.findOne({
+      where: {
+        'repositoryId': repository.id,
+        'data.content': {
+          [Op.like]: '%The Origins of Pizza%',
+        },
+      },
+    });
+    return { repository, activity, contentElement };
   }
 
   async createUser(
@@ -117,11 +126,14 @@ class SeedService {
       const element = await ContentElement.findByPk(contentElementId);
       if (!element) throw new Error('Content element not found');
     }
+    const author = await User.findOne({ where: { email: DEFAULT_USER.email } });
+    if (!author) throw new Error('Seed user not found');
     const comment = await Comment.create({
       content,
       repositoryId,
       activityId,
       contentElementId,
+      authorId: author.id,
     });
     return comment;
   }

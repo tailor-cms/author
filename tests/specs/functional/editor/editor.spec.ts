@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test as base } from '@playwright/test';
 
 import { Container } from '../../../pom/editor/Container';
 import { Editor } from '../../../pom/editor/Editor';
@@ -9,15 +9,29 @@ import { ContentElement } from '../../../pom/editor/ContentElement';
 
 const REPOSITORY_NAME = 'Editor test repository';
 
-test.beforeEach(async ({ page }) => {
-  await SeedClient.resetDatabase();
-  const { data } = await SeedClient.seedTestRepository({
-    name: REPOSITORY_NAME,
-  });
+type TestFixtures = {
+  seedData: {
+    activity: Record<string, any>;
+    contentElement: Record<string, any>;
+    repository: Record<string, any>;
+  };
+};
+
+const test = base.extend<TestFixtures>({
+  seedData: async (_, use) => {
+    await SeedClient.resetDatabase();
+    const { data } = await SeedClient.seedTestRepository({
+      name: REPOSITORY_NAME,
+    });
+    await use(data);
+  },
+});
+
+test.beforeEach(async ({ page, seedData }) => {
   const {
-    activity: { repositoryId, id },
-  } = data;
-  await page.goto(`/repository/${repositoryId}/editor/${id}`);
+    activity: { repositoryId, id: activityId },
+  } = seedData;
+  await page.goto(`/repository/${repositoryId}/editor/${activityId}`);
   await page.waitForLoadState('networkidle');
 });
 
@@ -162,6 +176,31 @@ test('can post comment on element', async ({ page }) => {
   await page.reload();
   await elements[0].openComments();
   await expect(page.getByText(comment)).toBeVisible();
+});
+
+test('can remove element comment', async ({ page, seedData }) => {
+  const editor = new Editor(page);
+  const content = 'This is a test comment';
+  const { id: activityId, repositoryId } = seedData.activity;
+  const { id: contentElementId } = seedData.contentElement;
+  await SeedClient.seedComment({
+    contentElementId,
+    activityId,
+    repositoryId,
+    content,
+  });
+  await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
+  await expect(page.locator(Container.selector)).toHaveCount(1);
+  await page.reload();
+  const element = await editor.getElement('The Origins of Pizza');
+  await element.openComments();
+  const comment = element.comments.getComment(content);
+  await expect(comment.el).toBeVisible();
+  await comment.remove();
+  // Make sure changes are persisted
+  await element.openComments();
+  await expect(comment.el).not.toBeVisible();
+  await expect(page.getByText('This comment has been deleted')).toBeVisible();
 });
 
 test.afterAll(async () => {

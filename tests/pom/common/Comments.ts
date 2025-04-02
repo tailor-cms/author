@@ -1,4 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
+import { ConfirmationDialog } from './ConfirmationDialog';
 
 export class Comment {
   static selector = '.comment';
@@ -7,6 +8,7 @@ export class Comment {
   readonly resolveBtn: Locator;
   readonly editBtn: Locator;
   readonly removeBtn: Locator;
+  readonly confirmationDialog: ConfirmationDialog;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
@@ -14,22 +16,24 @@ export class Comment {
     this.resolveBtn = el.getByRole('button', { name: 'Resolve comment' });
     this.editBtn = el.getByRole('button', { name: 'Edit comment' });
     this.removeBtn = el.getByRole('button', { name: 'Remove comment' });
+    this.confirmationDialog = new ConfirmationDialog(page, 'Remove comment');
   }
 
-  async focus() {
-    await this.el.click();
+  focus() {
+    return this.el.click();
   }
 
-  async resolve() {
+  resolve() {
     return this.resolveBtn.click();
   }
 
-  async toggleEdit() {
+  toggleEdit() {
     return this.editBtn.click();
   }
 
   async remove() {
-    return this.removeBtn.click();
+    await this.removeBtn.click();
+    await this.confirmationDialog.confirm();
   }
 }
 
@@ -54,9 +58,9 @@ export class Comments {
   }
 
   getComment(content?: string) {
-    const element = content ?
-      this.page.locator(Comment.selector, { hasText: content }) :
-      this.page.locator(Comment.selector).first();
+    const element = content
+      ? this.page.locator(Comment.selector, { hasText: content })
+      : this.page.locator(Comment.selector).first();
     return new Comment(this.page, element);
   }
 }

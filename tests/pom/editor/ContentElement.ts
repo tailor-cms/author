@@ -14,7 +14,7 @@ export class ContentElement {
     this.page = page;
     this.el = el;
     this.deleteBtn = el.getByRole('button', { name: 'Delete element' });
-    this.commentBtn = el.getByRole('button', { name: 'Post a comment' });
+    this.commentBtn = el.getByRole('button', { name: 'View comments' });
     this.commentsMenu = page.locator('.v-menu');
     this.comments = new Comments(page, this.commentsMenu);
   }

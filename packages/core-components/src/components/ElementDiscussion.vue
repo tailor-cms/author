@@ -15,7 +15,7 @@
             v-bind="{ ...menuProps, ...tooltipProps }"
             :color="activator?.color"
             :icon="activator?.icon"
-            :aria-label="activator?.tooltip"
+            aria-label="View comments"
             size="x-small"
             variant="tonal"
           />
