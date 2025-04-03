@@ -11,7 +11,7 @@ export const Schema: OpenAISchema = {
       properties: {
         type: { enum: [ContentElementType.MultipleChoice] },
         question: { type: 'string' },
-        answers: { type: 'array', items: { type: 'string' } },
+        answers: { type: 'array', items: { type: 'string' }, minItems: 2 },
         correct: { type: 'array', items: { type: 'integer' } },
         feedback: {
           type: 'object',
@@ -20,7 +20,6 @@ export const Schema: OpenAISchema = {
         hint: { type: 'string' },
       },
       required: ['type', 'question', 'answers', 'correct'],
-      minItems: 2,
     },
   },
 };
