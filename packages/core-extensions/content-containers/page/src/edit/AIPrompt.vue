@@ -1,9 +1,5 @@
 <template>
-  <VMenu
-    v-model="isVisible"
-    :close-on-content-click="false"
-    location="bottom"
-  >
+  <VMenu v-model="isVisible" :close-on-content-click="false" location="bottom">
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
@@ -62,14 +58,14 @@ const emit = defineEmits<{
     name: 'generate',
     payload: {
       type: string;
-      history: string[];
+      promptHistory: string[];
     },
   ): void;
 }>();
 
 const isVisible = ref(false);
-const promptType = ref('ADD');
 const promptText = ref('');
+const promptType = ref('ADD');
 const promptHistory = ref<string[]>([]);
 
 const onPromptSubmit = async () => {
@@ -77,7 +73,7 @@ const onPromptSubmit = async () => {
   promptHistory.value.push(promptText.value);
   emit('generate', {
     type: promptType.value,
-    history: promptHistory.value,
+    promptHistory: promptHistory.value,
   });
   isVisible.value = false;
 };
@@ -85,8 +81,6 @@ const onPromptSubmit = async () => {
 watch(isVisible, (val) => {
   if (!val) return;
   promptText.value = '';
-  promptType.value = props.contentElements?.length
-    ? 'MODIFY'
-    : 'ADD';
+  promptType.value = props.contentElements?.length ? 'MODIFY' : 'ADD';
 });
 </script>

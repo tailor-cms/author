@@ -6,16 +6,21 @@
     rounded="lg"
   >
     <div v-if="!isAiGeneratingContent" class="d-flex justify-end ma-3">
+      <AIPrompt
+        v-if="isAiEnabled && !disabled"
+        :content-elements="containerElements"
+        @generate="generateContent"
+      />
       <VBtn
         v-if="isAiEnabled && !disabled"
-        class="mr-3"
+        class="mx-3"
         color="teal-darken-2"
         size="small"
         variant="tonal"
         @click="generateContent"
       >
         Do the magic
-        <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
+        <VIcon end>mdi-magic-staff</VIcon>
       </VBtn>
       <VBtn
         v-if="!disabled"
@@ -128,6 +133,8 @@ import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
 
+import AIPrompt from './AIPrompt.vue';
+
 interface Props {
   name: string;
   container: Activity;
@@ -157,9 +164,12 @@ const doTheMagic = inject<any>('$doTheMagic');
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 
-const generateContent = async () => {
+const generateContent = async (context = {} as any) => {
   isAiGeneratingContent.value = true;
-  const elements = await doTheMagic({ type: props.container.type });
+  context.type = context.type || 'ADD';
+  context.promptHistory = context.promptHistory || [];
+  context.content = containerElements.value;
+  const elements = await doTheMagic({ type: props.container.type, context });
   elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,

@@ -97,7 +97,7 @@ const commentStore = useCommentStore();
 const storageService = useStorageService();
 const userTrackingStore = useUserTracking();
 
-const doTheMagic = ({ type }: { type: string }) => {
+const doTheMagic = ({ type, context }: { type: string; context: any }) => {
   if (!type) throw new Error('Type is required');
   const ancestors = activityStore.getAncestors(props.activity?.id);
   const location = ancestors.length
@@ -114,6 +114,7 @@ const doTheMagic = ({ type }: { type: string }) => {
     containerType: type,
     location,
     topic: props.activity?.data?.name,
+    context,
   });
 };
 
