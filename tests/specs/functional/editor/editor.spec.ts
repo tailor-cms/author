@@ -18,7 +18,8 @@ type TestFixtures = {
 };
 
 const test = base.extend<TestFixtures>({
-  seedData: async (_, use) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  seedData: async ({ page }, use) => {
     await SeedClient.resetDatabase();
     const { data } = await SeedClient.seedTestRepository({
       name: REPOSITORY_NAME,
