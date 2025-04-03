@@ -12,7 +12,12 @@ export const Schema: OpenAISchema = {
       required: ['type', 'content'],
       properties: {
         type: { enum: [ContentElementType.TiptapHtml] },
-        content: { type: 'string' },
+        data: {
+          type: 'object',
+          properties: {
+            content: { type: 'string' },
+          },
+        },
       },
     },
   },
@@ -20,8 +25,8 @@ export const Schema: OpenAISchema = {
 
 export const Prompt = `
   Response should be a JSON object such that:
-  - [{ type: "${ContentElementType.TiptapHtml}", "content": "" }] format is
-    used, where content is the text of the page.
+  - [{ type: "${ContentElementType.TiptapHtml}", data: { "content": "" } }]
+    format is used, where content is the text of the page.
   - Format the content as a HTML with suitable tags
 `;
 
