@@ -6,6 +6,7 @@ export const Schema: OpenAISchema = {
   name: 'ce_question_elements',
   schema: {
     type: 'array',
+    minItems: 1,
     items: {
       type: 'object',
       properties: {
