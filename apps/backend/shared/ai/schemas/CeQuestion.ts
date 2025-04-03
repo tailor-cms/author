@@ -20,6 +20,7 @@ export const Schema: OpenAISchema = {
         hint: { type: 'string' },
       },
       required: ['type', 'question', 'answers', 'correct'],
+      minItems: 2,
     },
   },
 };
