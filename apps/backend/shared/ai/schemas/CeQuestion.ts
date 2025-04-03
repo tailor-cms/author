@@ -1,7 +1,7 @@
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import type { OpenAISchema } from './utils/OpenAISchema.ts';
 
-export const QuestionResponseSchema: OpenAISchema = {
+export const Schema: OpenAISchema = {
   type: 'json_schema',
   name: 'ce_question_elements',
   schema: {
@@ -23,7 +23,7 @@ export const QuestionResponseSchema: OpenAISchema = {
   },
 };
 
-export const QuestionResponsePrompt = `
+export const Prompt = `
   Return an array of question element objects.
   Each object should have the following properties:
   {
@@ -45,7 +45,7 @@ export const QuestionResponsePrompt = `
       about the answers.
 `;
 
-export const QuestionResponse = {
-  Prompt: QuestionResponsePrompt,
-  Schema: QuestionResponseSchema,
+export default {
+  Prompt,
+  Schema,
 };
