@@ -27,7 +27,7 @@
             >
             </VBtn>
             <div
-              class="activity-name h5 my-auto text-truncate text-primary-lighten-4"
+              class="activity-name my-auto text-truncate text-primary-lighten-4"
             >
               {{ activity.data.name }}
             </div>
