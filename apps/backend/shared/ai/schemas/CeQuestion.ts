@@ -15,7 +15,7 @@ export const Schema: OpenAISchema = {
         correct: { type: 'array', items: { type: 'integer' } },
         feedback: {
           type: 'object',
-          patternProperties: { '^I': { type: 'boolean' } },
+          patternProperties: { '^I': { type: 'string' } },
         },
         hint: { type: 'string' },
       },
