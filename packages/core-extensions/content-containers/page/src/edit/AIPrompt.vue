@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { AiInput, AIRequestType } from '@tailor-cms/interfaces/ai';
+import type { AiInput, AiRequestType } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ref, watch } from 'vue';
 
@@ -64,7 +64,7 @@ const emit = defineEmits<{
 
 const isVisible = ref(false);
 const promptText = ref('');
-const promptType = ref<AIRequestType>('ADD');
+const promptType = ref<AiRequestType>('ADD');
 
 const onPromptSubmit = async () => {
   if (!promptText.value) return;
