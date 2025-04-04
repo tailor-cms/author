@@ -46,34 +46,31 @@
 </template>
 
 <script lang="ts" setup>
+import type { AiInput, AIRequestType } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ref, watch } from 'vue';
 
 const props = defineProps<{
+  inputs: AiInput[];
   contentElements: ContentElement[];
 }>();
 
 const emit = defineEmits<{
   (
     name: 'generate',
-    payload: {
-      type: string;
-      promptHistory: string[];
-    },
+    payload: AiInput,
   ): void;
 }>();
 
 const isVisible = ref(false);
 const promptText = ref('');
-const promptType = ref('ADD');
-const promptHistory = ref<string[]>([]);
+const promptType = ref<AIRequestType>('ADD');
 
 const onPromptSubmit = async () => {
   if (!promptText.value) return;
-  promptHistory.value.push(promptText.value);
   emit('generate', {
     type: promptType.value,
-    promptHistory: promptHistory.value,
+    text: promptText.value,
   });
   isVisible.value = false;
 };

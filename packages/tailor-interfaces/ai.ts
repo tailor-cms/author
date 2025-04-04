@@ -3,11 +3,11 @@ export type AIRequestType = 'ADD' | 'MODIFY';
 export interface AiInput {
   type: AIRequestType;
   text: string;
-  useSearchTool: boolean;
+  useSearchTool?: boolean;
 }
 
 export interface AiContext {
-  repositoryDescription: string;
-  content: string;
+  repositoryDescription?: string;
+  content?: string;
   inputs: AiInput[];
 }

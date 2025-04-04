@@ -9,6 +9,7 @@
       <AIPrompt
         v-if="isAiEnabled && !disabled"
         :content-elements="containerElements"
+        :inputs="aiInputs"
         @generate="generateContent"
       />
       <VBtn
@@ -17,7 +18,12 @@
         color="teal-darken-2"
         size="small"
         variant="tonal"
-        @click="generateContent"
+        @click="
+          generateContent({
+            type: 'ADD',
+            text: 'Generate content for this page',
+          })
+        "
       >
         Do the magic
         <VIcon end>mdi-magic-staff</VIcon>
@@ -128,6 +134,7 @@ import type {
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
@@ -161,14 +168,17 @@ const emit = defineEmits([
 ]);
 
 const doTheMagic = inject<any>('$doTheMagic');
+const aiInputs = ref<AiInput[]>([]);
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 
-const generateContent = async (context = {} as any) => {
+const generateContent = async (input: AiInput) => {
   isAiGeneratingContent.value = true;
-  context.type = context.type || 'ADD';
-  context.promptHistory = context.promptHistory || [];
-  context.content = containerElements.value;
+  aiInputs.value.push(input);
+  const context: AiContext = {
+    inputs: aiInputs.value,
+    content: JSON.stringify(containerElements.value),
+  };
   const elements = await doTheMagic({ type: props.container.type, context });
   elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
