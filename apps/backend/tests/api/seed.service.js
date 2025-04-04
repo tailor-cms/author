@@ -10,6 +10,7 @@ import Promise from 'bluebird';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
 import sortBy from 'lodash/sortBy.js';
 import { UserRole } from '@tailor-cms/common';
+import { Op } from 'sequelize';
 
 import { store as activityCache } from '../../repository/feed/store.js';
 import db from '#shared/database/index.js';
@@ -22,6 +23,8 @@ const {
   User,
   UserGroup,
   UserGroupMember,
+  Comment,
+  ContentElement,
 } = db;
 
 const DEFAULT_USER =
@@ -81,7 +84,15 @@ class SeedService {
     const activity = await Activity.findOne({
       where: { 'repositoryId': repository.id, 'data.name': 'History of Pizza' },
     });
-    return { repository, activity };
+    const contentElement = await ContentElement.findOne({
+      where: {
+        'repositoryId': repository.id,
+        'data.content': {
+          [Op.like]: '%The Origins of Pizza%',
+        },
+      },
+    });
+    return { repository, activity, contentElement };
   }
 
   async createUser(
@@ -99,6 +110,32 @@ class SeedService {
       password,
       userGroup: userGroup ? (await this.attachUserToGroup(user, userGroup)) : null,
     };
+  }
+
+  async createComment(
+    content,
+    repositoryId,
+    activityId,
+    contentElementId = null,
+  ) {
+    const repository = await Repository.findByPk(repositoryId);
+    if (!repository) throw new Error('Repository not found');
+    const activity = await Activity.findByPk(activityId);
+    if (!activity) throw new Error('Activity not found');
+    if (contentElementId) {
+      const element = await ContentElement.findByPk(contentElementId);
+      if (!element) throw new Error('Content element not found');
+    }
+    const author = await User.findOne({ where: { email: DEFAULT_USER.email } });
+    if (!author) throw new Error('Seed user not found');
+    const comment = await Comment.create({
+      content,
+      repositoryId,
+      activityId,
+      contentElementId,
+      authorId: author.id,
+    });
+    return comment;
   }
 
   async attachUserToGroup(user, { name = 'Test Group', role = UserRole.ADMIN }) {

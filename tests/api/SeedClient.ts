@@ -27,6 +27,13 @@ class SeedClient extends BaseClient {
     return formatResponse(res);
   };
 
+  seedComment = async (data: any = {}): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    if (!data.schema) data.schema = outlineSeed.schema;
+    const res = await req.post(this.getUrl('comment'), { data });
+    return formatResponse(res);
+  };
+
   seedUser = async (data = {}): Promise<EndpointResponse> => {
     const req = await this.getClient();
     const res = await req.post(this.getUrl('user'), { data });

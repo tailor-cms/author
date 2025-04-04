@@ -10,6 +10,7 @@ router
   .post('/reset', ctrl.resetDatabase)
   .post('/catalog', ctrl.seedCatalog)
   .post('/repository', ctrl.seedRepository)
+  .post('/comment', ctrl.seedComment)
   .post('/user', ctrl.seedUser);
 
 export default {

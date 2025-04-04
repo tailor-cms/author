@@ -46,8 +46,9 @@
     </div>
     <div v-if="showOptions" class="actions">
       <VBtn
-        v-for="{ action, icon, color } in options"
+        v-for="{ action, icon, label, color } in options"
         :key="action"
+        :aria-label="label"
         :color="color"
         :icon="`mdi-${icon}`"
         class="ml-2"
@@ -73,6 +74,7 @@ type Action = 'resolve' | 'toggleEdit' | 'remove';
 
 interface Option {
   action: Action;
+  label: string;
   icon: string;
   color: string;
 }
@@ -95,16 +97,19 @@ const emit = defineEmits(['remove', 'resolve', 'toggleEdit']);
 
 const OPTIONS: Record<string, Option> = {
   resolve: {
+    label: 'Resolve comment',
     action: 'resolve',
     icon: 'checkbox-outline',
     color: 'primary-lighten-3',
   },
   edit: {
+    label: 'Edit comment',
     action: 'toggleEdit',
     icon: 'pencil-outline',
     color: 'teal-lighten-3',
   },
   remove: {
+    label: 'Remove comment',
     action: 'remove',
     icon: 'trash-can-outline',
     color: 'secondary-lighten-3',
