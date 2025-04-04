@@ -36,6 +36,11 @@ export class ContentElement {
     await this.commentsMenu.isVisible();
   }
 
+  async getComment(content?: string) {
+    await this.openComments();
+    return this.comments.getComment(content);
+  }
+
   async comment(text: string) {
     await this.openComments();
     await this.comments.post(text);

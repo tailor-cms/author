@@ -1,4 +1,4 @@
-import { expect, test as base } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { Container } from '../../../pom/editor/Container';
 import { Editor } from '../../../pom/editor/Editor';
@@ -8,30 +8,21 @@ import { Relationship } from '../../../pom/editor/Relationship';
 import { ContentElement } from '../../../pom/editor/ContentElement';
 
 const REPOSITORY_NAME = 'Editor test repository';
+const COMMENT_CONTENT = 'Content element test comment';
 
-type TestFixtures = {
-  seedData: {
-    activity: Record<string, any>;
-    contentElement: Record<string, any>;
-    repository: Record<string, any>;
-  };
-};
-
-const test = base.extend<TestFixtures>({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  seedData: async ({ page }, use) => {
-    await SeedClient.resetDatabase();
-    const { data } = await SeedClient.seedTestRepository({
-      name: REPOSITORY_NAME,
-    });
-    await use(data);
-  },
-});
-
-test.beforeEach(async ({ page, seedData }) => {
-  const {
-    activity: { repositoryId, id: activityId },
-  } = seedData;
+test.beforeEach(async ({ page }) => {
+  await SeedClient.resetDatabase();
+  const { data } = await SeedClient.seedTestRepository({
+    name: REPOSITORY_NAME,
+  });
+  const { id: activityId, repositoryId } = data.activity;
+  const { id: contentElementId } = data.contentElement;
+  await SeedClient.seedComment({
+    contentElementId,
+    activityId,
+    repositoryId,
+    content: COMMENT_CONTENT,
+  });
   await page.goto(`/repository/${repositoryId}/editor/${activityId}`);
   await page.waitForLoadState('networkidle');
 });
@@ -179,29 +170,26 @@ test('can post comment on element', async ({ page }) => {
   await expect(page.getByText(comment)).toBeVisible();
 });
 
-test('can remove element comment', async ({ page, seedData }) => {
+test('can remove element comment', async ({ page }) => {
   const editor = new Editor(page);
-  const content = 'This is a test comment';
-  const { id: activityId, repositoryId } = seedData.activity;
-  const { id: contentElementId } = seedData.contentElement;
-  await SeedClient.seedComment({
-    contentElementId,
-    activityId,
-    repositoryId,
-    content,
-  });
-  await expect(page.getByText(editor.primaryPageContent)).toBeVisible();
-  await expect(page.locator(Container.selector)).toHaveCount(1);
-  await page.reload();
   const element = await editor.getElement('The Origins of Pizza');
-  await element.openComments();
-  const comment = element.comments.getComment(content);
-  await expect(comment.el).toBeVisible();
+  const comment = await element.getComment(COMMENT_CONTENT);
   await comment.remove();
   // Make sure changes are persisted
   await element.openComments();
   await expect(comment.el).not.toBeVisible();
   await expect(page.getByText('This comment has been deleted')).toBeVisible();
+});
+
+test('can resolve element comment', async ({ page }) => {
+  const editor = new Editor(page);
+  const element = await editor.getElement('The Origins of Pizza');
+  const comment = await element.getComment(COMMENT_CONTENT);
+  await comment.resolve();
+  // Make sure changes are persisted
+  await element.openComments();
+  await expect(page.getByText('Marked as resolved')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Undo' })).toBeVisible();
 });
 
 test.afterAll(async () => {
