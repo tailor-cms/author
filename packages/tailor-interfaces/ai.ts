@@ -6,7 +6,7 @@ export interface AiInput {
   useSearchTool: boolean;
 }
 
-export interface AIContext {
+export interface AiContext {
   repositoryDescription: string;
   content: string;
   inputs: AiInput[];
