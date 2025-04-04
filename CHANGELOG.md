@@ -1,5 +1,40 @@
 # Changelog
 
+## v7.5
+
+#### Changes
+- Migrated Table, Brightcove Video, Jodit HTML, and Quill HTML content elements.
+- Migrated Exam and Assessment Pool content containers.
+- Migrated Text Field meta input.
+- Migrated Table, Brightcove Video, Jodit HTML and Quill HTML content elements
+- Migrated Exam and Assessment Pool content containers
+- Migrated Text field meta input
+- Refactored Questions to separate question form from the container. Question 
+  content elements are just importing the form inside the container. This
+   provides users with greater flexibility to extend functionality.
+- Implemented User Groups and User Group access management.
+- Expanded the test suite to include tests for discussion, publishing, user 
+  groups, copying and linking elements.
+- Upgraded all dependencies to their latest versions.
+- Updated the compose spec. The dev spec has been revised to avoid naming 
+  collisions, and a workflow job has been added to test the default spec.
+- Improved the Dockerfile by updating the base image, pruning the build, and 
+  running the initialization process via dumb-init.
+- Enhanced the Activity API with request validation and additional access checks.
+- Improved the Revision API with request validation and a repository ownership
+  check for revisions.
+- Added the ability to drag and drop outline items between different parent 
+  elements.
+- Migrated the option to link activities. The old structure, which only 
+  contained an ID, has been updated to an object containing both `id` and 
+  `entity` type. Specifically, `objectiveId: ID` has been replaced with 
+  `objective: { id: ID, entity: 'Activity' }`. This change enables 
+  differentiation between entities when detecting broken references. If no 
+  `entity` property is provided, it is assumed to belong to the same entity as 
+  the target element. Additionally, a transformation to revert to the old format 
+  before publishing has been added to prevent migrations on consumer platforms.
+- Implemented a basic error page.
+
 ## v7.2
 
 #### Changes
