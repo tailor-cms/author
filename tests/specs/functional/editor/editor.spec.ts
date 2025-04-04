@@ -16,11 +16,10 @@ test.beforeEach(async ({ page }) => {
     name: REPOSITORY_NAME,
   });
   const { id: activityId, repositoryId } = data.activity;
-  const { id: contentElementId } = data.contentElement;
   await SeedClient.seedComment({
-    contentElementId,
-    activityId,
     repositoryId,
+    activityId,
+    contentElementId: data.contentElement.id,
     content: COMMENT_CONTENT,
   });
   await page.goto(`/repository/${repositoryId}/editor/${activityId}`);
