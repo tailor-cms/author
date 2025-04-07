@@ -90,7 +90,6 @@ export class AiPrompt {
   // TODO: Add option to control the size of the output
   // TODO: Add option to enable web search tool
   // TODO: Add support for the file upload tool
-  // TODO: Add support for the image generation tool
   toOpenAiInput(): OpenAI.Responses.ResponseInputItem[] {
     const res: OpenAI.Responses.ResponseInputItem[] = [];
     res.push({ role: 'developer', content: systemPrompt });
