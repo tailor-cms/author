@@ -1,5 +1,10 @@
 import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
+import {
+  AiResponseSchema,
+  AiTargetAudience,
+} from '@tailor-cms/interfaces/ai.ts';
+import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import StorageService from '../../storage/storage.service.js';
 
 import getContentSchema from '../schemas/index.ts';
@@ -8,12 +13,12 @@ import RepositoryContext from './RepositoryContext.ts';
 import { ai as aiConfig } from '#config';
 
 const systemPrompt = `
-  Asistant is a bot desinged to help users to create content for
+  Assistant is a bot desinged to help authors to create content for
   Courses, Q&A content, Knowledge base, etc.
   Rules:
   - Use the User rules to generate the content
   - Generated content should have a friendly tone and be easy to understand
-  - Generated content should not include any offensive language or content`;
+  - Generated content should not include any offensive language`;
 
 export class AiPrompt {
   // OpenAI client
@@ -24,45 +29,33 @@ export class AiPrompt {
   private repositoryContext: RepositoryContext;
   // User, assistant or system generated inputs
   private inputs: AiInput[];
-  // Existing content
+  // Existing content, relevant for the context
   private content: string;
+  // Response
+  private response: any;
 
   constructor(client: OpenAI, context: AiContext) {
     if (!context?.inputs?.length) throw new Error('Prompt not provided');
-    this.client = client;
     this.repositoryContext = new RepositoryContext(context.repository);
     this.content = context.content || '';
     this.inputs = context.inputs;
+    this.client = client;
     this.context = context;
   }
 
   async execute() {
-    let jsonResponse;
     try {
       const response = await this.client.responses.create({
         model: aiConfig.modelId,
         input: this.toOpenAiInput(),
-        text: {
-          format: this.format,
-        },
+        text: { format: this.format },
       } as OpenAI.Responses.ResponseCreateParamsNonStreaming);
-      jsonResponse = this.responseProcessor(response.output_text);
-      if (
-        this.prompt.responseSchema === 'HTML' &&
-        this.prompt.useImageGenerationTool
-      ) {
-        const imageElement = await this.generateImageForTopic(
-          this.repositoryContext,
-          // Dalle has 4000 char limit (repo context + content)
-          response.output_text.slice(0, 1000),
-        );
-        const [firstElement, ...restElements] = jsonResponse;
-        jsonResponse = [firstElement, imageElement, ...restElements];
-      }
+      this.response = this.responseProcessor(response.output_text);
+      await this.applyImageTool();
+      return this.response;
     } catch {
-      return [];
+      return {};
     }
-    return jsonResponse;
   }
 
   get prompt() {
@@ -76,7 +69,7 @@ export class AiPrompt {
 
   get isCustomPrompt() {
     const { responseSchema } = this.prompt;
-    return !responseSchema || responseSchema === 'CUSTOM';
+    return !responseSchema || responseSchema === AiResponseSchema.CUSTOM;
   }
 
   // JSON Schema for the OpenAI responses API
@@ -95,7 +88,7 @@ export class AiPrompt {
   }
 
   // TODO: Add option to control the size of the output
-  // TODO: Add option enable web search tool
+  // TODO: Add option to enable web search tool
   // TODO: Add support for the file upload tool
   // TODO: Add support for the image generation tool
   toOpenAiInput(): OpenAI.Responses.ResponseInputItem[] {
@@ -113,36 +106,40 @@ export class AiPrompt {
       type,
       text,
       responseSchema,
-      targetAudience = 'INTERMEDIATE',
+      targetAudience = AiTargetAudience.INTERMEDIATE,
     } = userInput;
     const base = `The user asked to ${type} the content.`;
     const target = `The target audience is ${targetAudience.toLowerCase()}.`;
     const responseSchemaDescription =
-      responseSchema === 'CUSTOM'
+      responseSchema === AiResponseSchema.CUSTOM
         ? 'Return the response as a JSON object.'
         : getContentSchema(responseSchema).getPrompt(this.context);
-    const content = `${base} ${text}. ${responseSchemaDescription} ${target}`;
     return {
       role: 'user',
-      content,
+      content: `${base} ${text}. ${responseSchemaDescription} ${target}`,
     };
   }
 
-  async generateImageForTopic(repositoryContext: RepositoryContext, content) {
+  async applyImageTool() {
+    if (
+      !this.prompt.useImageGenerationTool ||
+      this.prompt.responseSchema !== AiResponseSchema.HTML
+    )
+      return;
     const userPrompt = `
-      ${repositoryContext.toString()}
+      ${this.repositoryContext.toString()}
       Generate appropriate image for the given topic and content:
-      ${content}
-    `;
+      ${JSON.stringify(this.response)}`;
     const imgUrl = await this.generateImage(userPrompt);
     const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
     const imageElement = {
-      type: 'IMAGE',
+      type: ContentElementType.Image,
       data: {
         assets: { url: imgInternalUrl },
       },
     };
-    return imageElement;
+    const [firstElement, ...restElements] = this.response;
+    return [firstElement, imageElement, ...restElements];
   }
 
   private async generateImage(prompt) {

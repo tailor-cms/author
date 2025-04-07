@@ -1,11 +1,22 @@
-export type AiRequestType = 'CREATE' | 'ADD' | 'MODIFY';
-export type AiTargetAudience = 'BEGINNER' | 'INTERMEDIATE' | 'EXPERT';
-export type AiResponseSchema =
-  | 'HTML'
-  | 'QUESTION'
-  | 'OUTLINE'
-  | 'TAG'
-  | 'CUSTOM';
+export enum AiRequestType {
+  CREATE = 'CREATE',
+  ADD = 'ADD',
+  MODIFY = 'MODIFY',
+}
+
+export enum AiTargetAudience {
+  BEGINNER = 'BEGINNER',
+  INTERMEDIATE = 'INTERMEDIATE',
+  EXPERT = 'EXPERT',
+}
+
+export enum AiResponseSchema {
+  CUSTOM = 'CUSTOM',
+  HTML = 'HTML',
+  OUTLINE = 'OUTLINE',
+  QUESTION = 'QUESTION',
+  TAG = 'TAG',
+}
 
 export interface AiInput {
   type: AiRequestType;
