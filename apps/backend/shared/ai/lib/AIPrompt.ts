@@ -15,6 +15,8 @@ const systemPrompt = `
   - Generated content should not include any offensive language or content`;
 
 export class AIPrompt {
+  // OpenAI client
+  private client: OpenAI;
   // Context of the request
   private context: AiContext;
   // Information about the repository, content location, topic, etc.
@@ -23,15 +25,13 @@ export class AIPrompt {
   private inputs: AiInput[];
   // Existing content
   private content: string;
-  // OpenAI client
-  private client: OpenAI;
 
   constructor(client: OpenAI, context: AiContext) {
     if (!context?.inputs?.length) throw new Error('Prompt not provided');
     this.client = client;
     this.repositoryContext = new RepositoryContext(context.repository);
-    this.inputs = context.inputs;
     this.content = context.content || '';
+    this.inputs = context.inputs;
     this.context = context;
   }
 
@@ -49,8 +49,7 @@ export class AIPrompt {
     } catch {
       return [];
     }
-    const processor = getContentSchema(this.prompt.responseSchema)?.processResponse;
-    return processor ? processor(parsedResponse) : parsedResponse;
+    return this.responseProcessor(parsedResponse);
   }
 
   get prompt() {
@@ -62,10 +61,23 @@ export class AIPrompt {
     return this.inputs[this.inputs.length - 2];
   }
 
-  get format() {
+  get isCustomPrompt() {
     const { responseSchema } = this.prompt;
-    if (!responseSchema || responseSchema === 'CUSTOM') return undefined;
-    return getContentSchema(responseSchema).Schema;
+    return !responseSchema || responseSchema === 'CUSTOM';
+  }
+
+  // JSON Schema for the OpenAI responses API
+  get format() {
+    return this.isCustomPrompt
+      ? undefined
+      : getContentSchema(this.prompt.responseSchema)?.Schema;
+  }
+
+  get responseProcessor() {
+    const noop = (val: any) => val;
+    return this.isCustomPrompt
+      ? noop
+      : getContentSchema(this.prompt.responseSchema)?.processResponse || noop;
   }
 
   // TODO: Add option to control the size of the output
