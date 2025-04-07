@@ -3,12 +3,12 @@
 ## v8.0
 
 #### Changes
-- Migrated Table, Brightcove Video, Jodit HTML and Quill HTML content elements
-- Migrated Exam and Assessment Pool content containers
-- Migrated Text Field meta input
+- Migrated Table, Brightcove Video, Jodit HTML and Quill HTML content elements.
+- Migrated Exam and Assessment Pool content containers.
+- Migrated Text Field meta input.
 - Refactored Questions to separate question form from the container. Question 
   content elements are just importing the form inside the container. This
-   provides users with greater flexibility to extend functionality.
+  provides users with greater flexibility to extend functionality.
 - Implemented User Groups and User Group access management.
 - Expanded the test suite to include tests for discussion, publishing, user 
   groups, copying and linking elements.
@@ -35,22 +35,22 @@
 ## v7.2
 
 #### Changes
-- Replaced bunyan with pino logger
+- Replaced bunyan with pino logger.
 - Migrated Accordion, Carousel and Modal content elements.
-- Migrated Embedded Container core component
+- Migrated Embedded Container core component.
 - Refactored publishing by breaking the logic into multiple modules, adding 
-  LocalStack to `compose.dev` and enabling S3 endpoint configuration
-- Enabled TypeScript on the backend via the Node.js experimental flag
-- Implemented reviewable HE@S meta inputs
+  LocalStack to `compose.dev` and enabling S3 endpoint configuration.
+- Added support to publish into the draft environment.
+- Enabled TypeScript on the backend via the Node.js experimental flag.
+- Implemented reviewable HE@S meta inputs.
 - Implemented structured content container and initialized HA@S schema.
 - Migrated Question Container core component and updated all question 
   content elements to reuse the component.
-- Added support to publish into the draft environment
 - Added support for activity guidelines. Guidelines are defined through the 
   schema as functions that accept a repository, containers, elements and the 
   content element registry and return an array of guidelines to guide authors 
-  through course creation
-- Upgraded all dependencies to their latest versions, including ESLint to v9
+  through course creation.
+- Upgraded all dependencies to their latest versions, including ESLint to v9.
 - Replaced the `types` property in the `contentContainer` schema with 
   `contentElementConfig`. This new property allows defining an array of 
   categories with supported content elements. As a result, the `categories` 
