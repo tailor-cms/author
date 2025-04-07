@@ -3,9 +3,6 @@
 ## v7.5
 
 #### Changes
-- Migrated Table, Brightcove Video, Jodit HTML, and Quill HTML content elements.
-- Migrated Exam and Assessment Pool content containers.
-- Migrated Text Field meta input.
 - Migrated Table, Brightcove Video, Jodit HTML and Quill HTML content elements
 - Migrated Exam and Assessment Pool content containers
 - Migrated Text field meta input
@@ -38,10 +35,22 @@
 ## v7.2
 
 #### Changes
+- Replaced bunyan with pino logger
+- Migrated Accordion, Carousel and Modal content elements.
+- Migrated Embedded Container core component
+- Refactored publishing by breaking the logic into multiple modules, adding 
+  LocalStack to `compose.dev` and enabling S3 endpoint configuration
+- Enabled TypeScript on the backend via the Node.js experimental flag
+- Implemented reviewable HE@S meta inputs
+- Implemented structured content container and initialized HA@S schema.
+- Migrated Question Container core component and updated all question 
+  content elements to reuse the component.
+- Added support to publish into the draft environment
 - Added support for activity guidelines. Guidelines are defined through the 
-  schema, they are functions which accepts repository, containers, elements and
-  content element registry and return array of guidelines used to guide the
-  author through the course creation.
+  schema as functions that accept a repository, containers, elements, and the 
+  content element registry, and return an array of guidelines to guide authors 
+  through course creation
+- Upgraded all dependencies to their latest versions, including ESLint to v9
 - Replaced the `types` property in the `contentContainer` schema with 
   `contentElementConfig`. This new property allows defining an array of 
   categories with supported content elements. As a result, the `categories` 
