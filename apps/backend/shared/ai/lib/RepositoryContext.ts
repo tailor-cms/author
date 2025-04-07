@@ -1,3 +1,4 @@
+import type { AIContainerConfig } from '@tailor-cms/interfaces/schema.ts';
 import type { AiRepositoryContext } from '@tailor-cms/interfaces/ai.ts';
 import { schema as schemaAPI } from '@tailor-cms/config';
 
@@ -6,7 +7,7 @@ export default class RepositoryContext {
   name: string;
   description: string;
   outlineLocation?: string;
-  containerRules?: any;
+  containerConfig?: AIContainerConfig;
   topic?: string;
   tags?: string[];
 
@@ -16,7 +17,7 @@ export default class RepositoryContext {
     this.description = context.description;
     this.outlineLocation = context.outlineLocation;
     this.topic = context.topic;
-    this.containerRules = context.containerRules;
+    this.containerConfig = context.containerConfig;
     this.tags = context.tags;
   }
 
@@ -31,9 +32,9 @@ export default class RepositoryContext {
   get baseContext() {
     const { name, description } = this;
     if (!this.schema || !name || !description) return '';
-    const intro = `User is working on "${schema.name}" named "${name}".`;
-    const details = `It is described by user as: "${description}".`;
-    return `${intro} ${details}`;
+    const intro = `User is working on "${this.schema.name}" named "${name}".`;
+    const desc = `It is described by user as: "${description}".`;
+    return `${intro} ${desc}`;
   }
 
   get locationContext() {
@@ -43,7 +44,7 @@ export default class RepositoryContext {
   }
 
   get contentContainerDescription() {
-    return this.containerRules?.definition || '';
+    return this.containerConfig?.definition || '';
   }
 
   get topicContext() {
