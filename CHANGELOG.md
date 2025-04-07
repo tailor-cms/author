@@ -1,6 +1,6 @@
 # Changelog
 
-## v7.5
+## v8.0
 
 #### Changes
 - Migrated Table, Brightcove Video, Jodit HTML and Quill HTML content elements
