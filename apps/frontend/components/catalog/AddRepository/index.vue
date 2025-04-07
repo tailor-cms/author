@@ -124,14 +124,6 @@
               is-new
             />
           </template>
-          <AIAssistance
-            v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
-            :description="descriptionInput"
-            :name="values.name"
-            :schema-id="schemaInput"
-            @ai-assistance-toggle="isAssistaceEnabled = $event"
-            @structure="aiSuggestedOutline = $event"
-          />
           <VSelect
             v-show="showUserGroupInput"
             v-model="groupInput"
@@ -147,6 +139,14 @@
             clearable
             closable-chips
             multiple
+          />
+          <AIAssistance
+            v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
+            :description="descriptionInput"
+            :name="values.name"
+            :schema-id="schemaInput"
+            @ai-assistance-toggle="isAssistaceEnabled = $event"
+            @structure="aiSuggestedOutline = $event"
           />
         </div>
         <div class="d-flex justify-end">
