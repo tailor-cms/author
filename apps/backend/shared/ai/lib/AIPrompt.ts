@@ -1,5 +1,6 @@
 import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
+import StorageService from '../../storage/storage.service.js';
 
 import getContentSchema from '../schemas/index.ts';
 import RepositoryContext from './RepositoryContext.ts';
@@ -36,7 +37,7 @@ export class AIPrompt {
   }
 
   async execute() {
-    let parsedResponse;
+    let jsonResponse;
     try {
       const response = await this.client.responses.create({
         model: aiConfig.modelId,
@@ -45,11 +46,23 @@ export class AIPrompt {
           format: this.format,
         },
       } as OpenAI.Responses.ResponseCreateParamsNonStreaming);
-      parsedResponse = JSON.parse(response.output_text);
-    } catch {
+      jsonResponse = this.responseProcessor(response.output_text);
+      if (
+        this.prompt.responseSchema === 'HTML' &&
+        this.prompt.useImageGenerationTool
+      ) {
+        const imageElement = await this.generateImageForTopic(
+          this.repositoryContext,
+          // Dalle has 4000 char limit (repo context + content)
+          response.output_text.slice(0, 1000),
+        );
+        const [firstElement, ...restElements] = jsonResponse;
+        jsonResponse = [firstElement, imageElement, ...restElements];
+      }
+    } catch (e) {
       return [];
     }
-    return this.responseProcessor(parsedResponse);
+    return jsonResponse;
   }
 
   get prompt() {
@@ -75,9 +88,10 @@ export class AIPrompt {
 
   get responseProcessor() {
     const noop = (val: any) => val;
-    return this.isCustomPrompt
+    const processor = this.isCustomPrompt
       ? noop
       : getContentSchema(this.prompt.responseSchema)?.processResponse || noop;
+    return (val) => processor(JSON.parse(val));
   }
 
   // TODO: Add option to control the size of the output
@@ -112,5 +126,36 @@ export class AIPrompt {
       role: 'user',
       content,
     };
+  }
+
+  async generateImageForTopic(repositoryContext: RepositoryContext, content) {
+    const userPrompt = `
+      ${repositoryContext.toString()}
+      Generate appropriate image for the given topic and content:
+      ${content}
+    `;
+    const imgUrl = await this.generateImage(userPrompt);
+    const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
+    const imageElement = {
+      type: 'IMAGE',
+      data: {
+        assets: { url: imgInternalUrl },
+      },
+    };
+    return imageElement;
+  }
+
+  private async generateImage(prompt) {
+    const { data } = await this.client.images.generate({
+      model: 'dall-e-3',
+      prompt,
+      // amount of images, max 1 for dall-e-3
+      n: 1,
+      // 'standard' | 'hd'
+      quality: 'hd',
+      size: '1024x1024',
+      style: 'natural',
+    });
+    return new URL(data[0].url as string);
   }
 }

@@ -48,6 +48,7 @@ export const getPrompt = () => `
 const spec: AiResponseSpec = {
   Schema,
   getPrompt,
+  processResponse: (val) => val?.elements,
 };
 
 export default spec;

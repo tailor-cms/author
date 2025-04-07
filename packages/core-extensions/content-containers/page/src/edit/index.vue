@@ -23,6 +23,7 @@
             type: 'CREATE',
             text: 'Generate content for this page.',
             responseSchema: 'HTML',
+            useImageGenerationTool: true,
           })
         "
       >
@@ -180,7 +181,7 @@ const generateContent = async (input: AiInput) => {
     inputs: aiInputs.value,
     content: JSON.stringify(containerElements.value),
   };
-  const { elements } = await doTheMagic({
+  const elements = await doTheMagic({
     containerType: props.container.type,
     ...context,
   });
