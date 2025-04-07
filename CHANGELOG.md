@@ -5,7 +5,7 @@
 #### Changes
 - Migrated Table, Brightcove Video, Jodit HTML and Quill HTML content elements
 - Migrated Exam and Assessment Pool content containers
-- Migrated Text field meta input
+- Migrated Text Field meta input
 - Refactored Questions to separate question form from the container. Question 
   content elements are just importing the form inside the container. This
    provides users with greater flexibility to extend functionality.
@@ -14,7 +14,7 @@
   groups, copying and linking elements.
 - Upgraded all dependencies to their latest versions.
 - Updated the compose spec. The dev spec has been revised to avoid naming 
-  collisions, and a workflow job has been added to test the default spec.
+  collisions and a workflow job has been added to test the default spec.
 - Improved the Dockerfile by updating the base image, pruning the build, and 
   running the initialization process via dumb-init.
 - Enhanced the Activity API with request validation and additional access checks.
@@ -47,8 +47,8 @@
   content elements to reuse the component.
 - Added support to publish into the draft environment
 - Added support for activity guidelines. Guidelines are defined through the 
-  schema as functions that accept a repository, containers, elements, and the 
-  content element registry, and return an array of guidelines to guide authors 
+  schema as functions that accept a repository, containers, elements and the 
+  content element registry and return an array of guidelines to guide authors 
   through course creation
 - Upgraded all dependencies to their latest versions, including ESLint to v9
 - Replaced the `types` property in the `contentContainer` schema with 
@@ -78,16 +78,45 @@
 ## v7.1
 
 #### Changes
+- Migrated Multiple Choice, Single Choice, Matching Question, True-False, 
+  Text Response, Drag & Drop, Embed, Fill in Blank, Numerical Response, Page 
+  Break, PDF, Audio and Video content elements.
+- Migrated Color, File, Html, Radio Group, DateTime, Select, Combobox, Switch, 
+  Checkbox meta inputs.
 - Migrated schemas to `@tailor-cms/config` package, located in the `./config`
   dir. Schemas are now defined using the TypeScript.
-
-## v7.0
-
-#### Changes
+- Migrated Tailor Dialog core component and reused it where applicable.
+- Migrated `config-parser` and `utils` packages to TypeScript.
+- Migrated OIDC. As part of the migration, prefixed `OIDC_ENABLED`, 
+  `OIDC_LOGIN_TEXT` and `OIDC_LOGOUT_ENABLED` environment variables with 
+  `NUXT_PUBLIC_`. Also prefixed `SESSION_SECRET` with `OIDC_`. 
+  See `.env.example` for more details.
+- Migrated Workflow, Admin Panel, Content Element Revision, Publish Diff, 
+Activity Copy, Element Copy, SSE, User Activity Reporting and User Profile.
+- Passed environmental variables prefixed with `NUXT_` as cookies.
+- Passed referenced elements to the target content element.
+- Implemented Feed Schema.
+- Implemented HA@S Rating meta input. This meta input allows inputting and 
+  displaying ratings for the following parameters: Learner-Centered Content, 
+  Active Learning, Unbounded Inclusion, Community Connections and Real-World 
+  Outcomes.
+- Added support for feature flags and session tracking using Statsig. To enable 
+  this, the `NUXT_PUBLIC_STATSIG_KEY` environmental variable should be provided.
+- Improved AI outline generation by ensuring proper order, disabling creation 
+  when assistance is provided and updating the AI model.
+- Added schema descriptions, which are displayed in the schema list selector 
+  when creating a new course. This is added via the `description` schema 
+  property.
+- Added the `COLLABORATOR` user role, which can create new repositories but does 
+  not have access to all repositories. The old `USER` role has been migrated to 
+  `COLLABORATOR`.
+- Refactored the export repository flow. The setup initiates the job and returns 
+  a `jobId`. The client calls the server periodically to get the job status. 
+  Once it is done, the ready status is set and the user can download it.
+- Increased E2E functional test coverage.
+- Added E2E accessibility tests.
+- Added a check to prevent publishing detached pages.
 - Added the ability to turn off rate limiting via the `ENABLE_RATE_LIMITING`
   environment variable. See `.env.example` for more details.
 - Updated Key-Value store configuration. See `.env.example` for more details.
 - Updated healthcheck route to `/api/healthcheck`
-- Prefixed `OIDC_ENABLED`, `OIDC_LOGIN_TEXT` and `OIDC_LOGOUT_ENABLED` env 
-  variables `NUXT_PUBLIC_`
-- prefixed `SESSION_SECRET` with `OIDC_`
