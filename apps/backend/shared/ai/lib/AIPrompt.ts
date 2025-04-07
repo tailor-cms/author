@@ -59,7 +59,7 @@ export class AIPrompt {
         const [firstElement, ...restElements] = jsonResponse;
         jsonResponse = [firstElement, imageElement, ...restElements];
       }
-    } catch (e) {
+    } catch {
       return [];
     }
     return jsonResponse;
