@@ -92,7 +92,11 @@
   `NUXT_PUBLIC_`. Also prefixed `SESSION_SECRET` with `OIDC_`. 
   See `.env.example` for more details.
 - Migrated Workflow, Admin Panel, Content Element Revision, Publish Diff, 
-Activity Copy, Element Copy, SSE, User Activity Reporting and User Profile.
+  Activity Copy, Element Copy, SSE, User Activity Reporting and User Profile.
+- Added broken references detection. A warning is displayed in the structure 
+  view if a broken element or activity reference is detected. Users can then 
+  click a button to clean up broken references or manually update the linked 
+  element/activity reference.
 - Passed environmental variables prefixed with `NUXT_` as cookies.
 - Passed referenced elements to the target content element.
 - Implemented Feed Schema.
