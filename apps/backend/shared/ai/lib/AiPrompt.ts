@@ -15,7 +15,7 @@ const systemPrompt = `
   - Generated content should have a friendly tone and be easy to understand
   - Generated content should not include any offensive language or content`;
 
-export class AIPrompt {
+export class AiPrompt {
   // OpenAI client
   private client: OpenAI;
   // Context of the request

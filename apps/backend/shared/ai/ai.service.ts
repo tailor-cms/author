@@ -1,7 +1,7 @@
 import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
 import OpenAI from 'openai';
 
-import { AIPrompt } from './lib/AIPrompt.ts';
+import { AiPrompt } from './lib/AiPrompt.ts';
 import { ai as aiConfig } from '#config';
 
 class AiService {
@@ -12,7 +12,7 @@ class AiService {
   }
 
   generate(context: AiContext) {
-    const prompt = new AIPrompt(this.#openai, context);
+    const prompt = new AiPrompt(this.#openai, context);
     return prompt.execute();
   }
 }
