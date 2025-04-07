@@ -75,7 +75,7 @@ interface ActivityConfig {
   // see Workflow configuration section
   isTrackedInWorkflow?: boolean;
   // Provides additional context for the AI upon use for content generation
-  ai?: AIConfig;
+  ai?: AiActivityConfig;
 }
 ```
 

@@ -27,7 +27,7 @@ export interface AiRepositoryContext {
   // If content is generated for a container
   containerType?: string;
   // If content is generated for a container
-  containerRules?: any;
+  containerConfig?: any;
   // General topic of the content, in case of a outline node title of the leaf
   topic?: string;
   // Additional information about the content

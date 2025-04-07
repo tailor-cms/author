@@ -1,4 +1,4 @@
-import type { AIContainerConfig } from '@tailor-cms/interfaces/schema.ts';
+import type { AiActivityConfig } from '@tailor-cms/interfaces/schema.ts';
 import type { AiRepositoryContext } from '@tailor-cms/interfaces/ai.ts';
 import { schema as schemaAPI } from '@tailor-cms/config';
 
@@ -7,7 +7,7 @@ export default class RepositoryContext {
   name: string;
   description: string;
   outlineLocation?: string;
-  containerConfig?: AIContainerConfig;
+  containerConfig?: AiActivityConfig;
   topic?: string;
   tags?: string[];
 

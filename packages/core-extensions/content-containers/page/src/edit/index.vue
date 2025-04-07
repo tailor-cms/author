@@ -20,8 +20,9 @@
         variant="tonal"
         @click="
           generateContent({
-            type: 'ADD',
-            text: 'Generate content for this page',
+            type: 'CREATE',
+            text: 'Generate content for this page.',
+            responseSchema: 'HTML',
           })
         "
       >
@@ -134,7 +135,7 @@ import type {
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai';
+import type { AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
@@ -175,15 +176,22 @@ const isAiGeneratingContent = ref(false);
 const generateContent = async (input: AiInput) => {
   isAiGeneratingContent.value = true;
   aiInputs.value.push(input);
-  const context: AiContext = {
+  const context = {
     inputs: aiInputs.value,
     content: JSON.stringify(containerElements.value),
   };
-  const elements = await doTheMagic({ type: props.container.type, context });
+  const { elements } = await doTheMagic({
+    containerType: props.container.type,
+    ...context,
+  });
+  const lastElementPosition =
+    containerElements.value?.length > 0
+      ? containerElements.value[containerElements.value.length - 1].position
+      : 0;
   elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,
-      position: index,
+      position: lastElementPosition + index,
       activityId: props.container.id,
       repositoryId: props.container.repositoryId,
     });

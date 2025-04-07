@@ -42,6 +42,7 @@
 
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import differenceBy from 'lodash/differenceBy';
 import find from 'lodash/find';
@@ -97,25 +98,50 @@ const commentStore = useCommentStore();
 const storageService = useStorageService();
 const userTrackingStore = useUserTracking();
 
-const doTheMagic = ({ type, context }: { type: string; context: any }) => {
-  if (!type) throw new Error('Type is required');
-  const ancestors = activityStore.getAncestors(props.activity?.id);
-  const location = ancestors.length
-    ? ancestors.reduce(
-        (acc, it) => acc + (acc === '' ? it.data.name : `, ${it.data.name}`),
-        '',
-      )
-    : '';
-  const { name, description } = props.repository as Repository;
-  return aiAPI.getContentSuggestion({
-    repositoryName: name,
-    repositoryDescription: description,
-    outlineActivityType: props.activity?.type,
-    containerType: type,
-    location,
-    topic: props.activity?.data?.name,
-    context,
-  });
+const getOutlineLocationDesciption = (activity: Activity) => {
+  const ancestors = activityStore.getAncestors(activity?.id);
+  if (!ancestors.length) return '';
+  return ancestors.reduce(
+    (acc, it) => acc + (acc === '' ? it.data.name : `, ${it.data.name}`),
+    '',
+  );
+};
+
+const getAiConfig = (
+  outlineActivityType: string,
+  containerType: string,
+) => {
+  const config = $schemaService
+    .getSupportedContainers(outlineActivityType)
+    .find((it: any) => it?.type === containerType);
+  return config?.ai || {};
+};
+
+const doTheMagic = ({
+  containerType,
+  inputs,
+  content,
+}: {
+  containerType: string;
+  inputs: AiInput[];
+  content?: string;
+}) => {
+  const { name, description, schema } = props.repository;
+  const context: AiContext = {
+    repository: {
+      schemaId: schema,
+      name,
+      description,
+      outlineLocation: getOutlineLocationDesciption(props.activity),
+      outlineActivityType: props.activity?.type,
+      containerType,
+      containerConfig: getAiConfig(props.activity.type, containerType),
+      topic: props.activity?.data?.name,
+    },
+    inputs,
+    content,
+  };
+  return aiAPI.generate(context);
 };
 
 const editorChannel = $eventBus.channel('editor');
