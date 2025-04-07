@@ -1,5 +1,7 @@
+import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
 import { schema as schemaConfiguration } from '@tailor-cms/config';
-import type { OpenAISchema } from './utils/OpenAISchema.ts';
+
+import type { AiResponseSpec, OpenAISchema } from './interfaces.js';
 
 const { getLevel, getOutlineLevels, getSchema } = schemaConfiguration;
 
@@ -7,20 +9,32 @@ const Schema: OpenAISchema = {
   type: 'json_schema',
   name: 'outline_structure',
   schema: {
-    type: 'array',
-    minItems: 1,
-    items: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-        type: { type: 'string' },
-        children: {
-          type: 'array',
-          items: { $ref: '#' },
+    type: 'object',
+    definitions: {
+      activity: {
+        type: 'object',
+        properties: {
+          type: { type: 'string' },
+          name: { type: 'string' },
+          children: {
+            type: 'array',
+            items: { $ref: '#/definitions/activity' },
+          },
+        },
+        required: ['name', 'type', 'children'],
+        additionalProperties: false,
+      },
+    },
+    properties: {
+      activities: {
+        type: 'array',
+        items: {
+          $ref: '#/definitions/activity',
         },
       },
-      required: ['name', 'type'],
     },
+    required: ['activities'],
+    additionalProperties: false,
   },
 };
 
@@ -31,7 +45,7 @@ const Schema: OpenAISchema = {
 // In the root level of the taxonomy, the following node types are available:
 // Module, Page. Module contains the following sublevels: Module, Page.
 // Page contains the content.
-const generateTaxonomyDesc = (schemaId) => {
+const generateTaxonomyDesc = (schemaId: string): string => {
   const outlineLevels = getOutlineLevels(schemaId);
   if (!outlineLevels) throw new Error('Schema not found!');
   const generateTaxonDesc = (activityTypeConfig) => {
@@ -57,13 +71,8 @@ const generateTaxonomyDesc = (schemaId) => {
   `;
 };
 
-const getPrompt = ({
-  schemaId,
-  level,
-}: {
-  schemaId: string;
-  level: string;
-}) => {
+const getPrompt = (context: AiContext): string => {
+  const { schemaId } = context.repository;
   const schema = getSchema(schemaId);
   const leafLevels = getOutlineLevels(schemaId).filter(
     (it) => it?.contentContainers?.length,
@@ -72,18 +81,18 @@ const getPrompt = ({
     Generate a structure/outline for this content.
     The structure should be created by following the taxonomy of the
     "${schema.name}" specified as: ${generateTaxonomyDesc(schemaId).trim()}
-    The targeted audience expertese level is ${level}.
     Return the response as a JSON object with the following format:
     { "name": "", "type": "", children: [] }
     where type indicates one of the taxonomy node types and children is an
     array of the same format. If possible, generate at least 10 root nodes.
     Make sure to have content holder nodes in the structure. The content
     holder nodes are the following:
-    ${leafLevels.map((it) => it.label).join(', ')}.
-  `;
+    ${leafLevels.map((it) => it.label).join(', ')}.`;
 };
 
-export default {
+const spec: AiResponseSpec = {
   Schema,
   getPrompt,
 };
+
+export default spec;

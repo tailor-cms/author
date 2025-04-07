@@ -44,7 +44,7 @@ export class AIPrompt {
         text: {
           format: this.format,
         },
-      });
+      } as OpenAI.Responses.ResponseCreateParamsNonStreaming);
       parsedResponse = JSON.parse(response.output_text);
     } catch {
       return [];
