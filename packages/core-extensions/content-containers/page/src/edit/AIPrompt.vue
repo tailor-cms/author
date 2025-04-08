@@ -20,11 +20,11 @@
         variant="tonal"
         group
       >
-        <VBtn value="ADD">
+        <VBtn :value="AiRequestType.ADD">
           <VIcon start>mdi-plus</VIcon>
           Add
         </VBtn>
-        <VBtn value="MODIFY">
+        <VBtn :value="AiRequestType.MODIFY">
           <VIcon start>mdi-update</VIcon>
           Modify
         </VBtn>
@@ -46,31 +46,35 @@
 </template>
 
 <script lang="ts" setup>
-import type { AiInput, AiRequestType } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import {
+  AiRequestType,
+  AiResponseSchema,
+  type AiInput,
+} from '@tailor-cms/interfaces/ai';
 import { ref, watch } from 'vue';
 
-const props = defineProps<{
+defineProps<{
   inputs: AiInput[];
   contentElements: ContentElement[];
 }>();
 
 const emit = defineEmits<{
-  (
-    name: 'generate',
-    payload: AiInput,
-  ): void;
+  (name: 'generate', payload: AiInput): void;
 }>();
 
 const isVisible = ref(false);
 const promptText = ref('');
-const promptType = ref<AiRequestType>('ADD');
+const promptType = ref<AiRequestType>(AiRequestType.ADD);
 
 const onPromptSubmit = async () => {
-  if (!promptText.value) return;
+  const text = promptText.value.trim();
+  if (!text) return;
   emit('generate', {
     type: promptType.value,
-    text: promptText.value,
+    text,
+    responseSchema: AiResponseSchema.HTML,
+    useImageGenerationTool: true,
   });
   isVisible.value = false;
 };
@@ -78,6 +82,5 @@ const onPromptSubmit = async () => {
 watch(isVisible, (val) => {
   if (!val) return;
   promptText.value = '';
-  promptType.value = props.contentElements?.length ? 'MODIFY' : 'ADD';
 });
 </script>
