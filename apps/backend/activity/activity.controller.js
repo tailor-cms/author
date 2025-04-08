@@ -56,20 +56,17 @@ function show({ activity }, res) {
 
 async function patch({ repository, user, activity, body }, res) {
   const context = { userId: user.id, repository };
-  const { position, ...payload } = body;
   // If changing parent for outline item, update parent publishing status
   if (
     isOutlineActivity(activity.type) &&
     activity.parentId &&
-    payload.parentId &&
-    payload.parentId !== activity.parentId
+    body.parentId &&
+    body.parentId !== activity.parentId
   ) {
     const parent = await Activity.findByPk(activity.parentId);
     await parent.touch();
   }
-  await activity.update(payload, { context });
-  if (position) await activity.reorder(position, context);
-  const data = await activity.reload();
+  const data = await activity.update(body, { context });
   return res.json({ data });
 }
 
