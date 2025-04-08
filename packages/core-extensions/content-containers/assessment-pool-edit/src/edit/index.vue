@@ -9,13 +9,7 @@
           color="primary-lighten-4"
           size="small"
           variant="tonal"
-          @click="
-            generateContent({
-              type: 'CREATE',
-              text: 'Generate 5 questions.',
-              responseSchema: 'QUESTION',
-            })
-          "
+          @click="generateQuestions"
         >
           Generate questions
           <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
@@ -83,19 +77,20 @@
 </template>
 
 <script lang="ts" setup>
+import type {
+  ContentElementCategory,
+  ElementRegistry,
+} from '@tailor-cms/interfaces/schema';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { AiInput } from '@tailor-cms/interfaces/ai';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import {
   AddElement,
   AssessmentItem,
   CircularProgress,
 } from '@tailor-cms/core-components';
-import type {
-  ContentElementCategory,
-  ElementRegistry,
-} from '@tailor-cms/interfaces/schema';
-import { ref, computed, watch, inject } from 'vue';
-import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { AiInput } from '@tailor-cms/interfaces/ai';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
+import { computed, inject, ref, watch } from 'vue';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import pull from 'lodash/pull';
@@ -130,10 +125,17 @@ const allSelected = ref(false);
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 
-const generateContent = async (input: AiInput) => {
+const generateQuestions = async () => {
   isAiGeneratingContent.value = true;
+  const hasAssessments = assessments.value.length > 0;
   const context = {
-    inputs: [input],
+    inputs: [
+      {
+        type: hasAssessments ? AiRequestType.CREATE : AiRequestType.ADD,
+        text: 'Generate 5 questions.',
+        responseSchema: AiResponseSchema.QUESTION,
+      },
+    ],
     content: assessments.value.length ? JSON.stringify(assessments.value) : '',
   };
   const elements = await doTheMagic({
