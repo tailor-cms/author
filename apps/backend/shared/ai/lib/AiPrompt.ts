@@ -1,9 +1,5 @@
 import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
-import {
-  AiResponseSchema,
-  AiTargetAudience,
-} from '@tailor-cms/interfaces/ai.ts';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import StorageService from '../../storage/storage.service.js';
 
@@ -69,7 +65,7 @@ export class AiPrompt {
 
   get isCustomPrompt() {
     const { responseSchema } = this.prompt;
-    return !responseSchema || responseSchema === AiResponseSchema.CUSTOM;
+    return !responseSchema || responseSchema === 'CUSTOM';
   }
 
   // JSON Schema for the OpenAI responses API
@@ -105,12 +101,12 @@ export class AiPrompt {
       type,
       text,
       responseSchema,
-      targetAudience = AiTargetAudience.INTERMEDIATE,
+      targetAudience = 'INTERMEDIATE',
     } = userInput;
     const base = `The user asked to ${type} the content.`;
     const target = `The target audience is ${targetAudience.toLowerCase()}.`;
     const responseSchemaDescription =
-      responseSchema === AiResponseSchema.CUSTOM
+      responseSchema === 'CUSTOM'
         ? 'Return the response as a JSON object.'
         : getContentSchema(responseSchema).getPrompt(this.context);
     return {
@@ -122,7 +118,7 @@ export class AiPrompt {
   async applyImageTool() {
     if (
       !this.prompt.useImageGenerationTool ||
-      this.prompt.responseSchema !== AiResponseSchema.HTML
+      this.prompt.responseSchema !== 'HTML'
     )
       return;
     const userPrompt = `

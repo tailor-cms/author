@@ -4,11 +4,15 @@ export enum AiRequestType {
   MODIFY = 'MODIFY',
 }
 
+export type AiRequestTypeLiteral = `${AiRequestType}`;
+
 export enum AiTargetAudience {
   BEGINNER = 'BEGINNER',
   INTERMEDIATE = 'INTERMEDIATE',
   EXPERT = 'EXPERT',
 }
+
+export type AiTargetAudienceLiteral = `${AiTargetAudience}`;
 
 export enum AiResponseSchema {
   CUSTOM = 'CUSTOM',
@@ -18,11 +22,13 @@ export enum AiResponseSchema {
   TAG = 'TAG',
 }
 
+export type AiResponseSchemaLiteral = `${AiResponseSchema}`;
+
 export interface AiInput {
-  type: AiRequestType;
+  type: AiRequestTypeLiteral;
   text: string;
-  responseSchema: AiResponseSchema;
-  targetAudience?: AiTargetAudience;
+  responseSchema: AiResponseSchemaLiteral;
+  targetAudience?: AiTargetAudienceLiteral;
   useImageGenerationTool?: boolean;
   useSearchTool?: boolean;
 }
