@@ -140,7 +140,7 @@
             closable-chips
             multiple
           />
-          <AIAssistance
+          <AiAssistance
             v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
             :description="descriptionInput"
             :name="values.name"
@@ -183,7 +183,7 @@ import { SCHEMAS } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
-import AIAssistance from './AIAssistance.vue';
+import AiAssistance from './AiAssistance.vue';
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';

@@ -99,9 +99,10 @@
 </template>
 
 <script lang="ts" setup>
-import type {
-  AiContext,
-  AiInput,
+import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai';
+import {
+  AiResponseSchema,
+  AiRequestType,
   AiTargetAudience,
 } from '@tailor-cms/interfaces/ai';
 
@@ -122,10 +123,10 @@ const topicTagOptions = ref([]);
 const selectedTopicTags = ref([]);
 const styleTagOptions = ref([]);
 const selectedStyleTags = ref([]);
-const difficultyOptions: { [key: number]: string } = {
-  0: 'Beginner',
-  1: 'Intermediate',
-  2: 'Expert',
+const difficultyOptions: { [key: number]: AiTargetAudience } = {
+  0: AiTargetAudience.BEGINNER,
+  1: AiTargetAudience.INTERMEDIATE,
+  2: AiTargetAudience.EXPERT,
 };
 const selectedDifficulty = ref(1);
 const outlineTree = ref<any>([]);
@@ -174,9 +175,9 @@ watch(isAssistaceEnabled, (value) => {
   }
   isFetchingData.value = true;
   const context = createAiContext({
-    type: 'CREATE',
+    type: AiRequestType.CREATE,
     text: ambiguityPrompt,
-    responseSchema: 'TAG',
+    responseSchema: AiResponseSchema.TAG,
   });
   aiAPI.generate(context).then(({ tags }) => {
     topicTagOptions.value = tags;
@@ -187,9 +188,9 @@ watch(isAssistaceEnabled, (value) => {
 const fetchStyle = () => {
   isFetchingData.value = true;
   const context = createAiContext({
-    type: 'CREATE',
+    type: AiRequestType.CREATE,
     text: stylePrompt,
-    responseSchema: 'TAG',
+    responseSchema: AiResponseSchema.TAG,
   });
   return aiAPI.generate(context).then(({ tags }) => {
     styleTagOptions.value = tags;
@@ -201,20 +202,22 @@ const fetchOutline = () => {
   isFetchingData.value = true;
   statusMessage.value = 'Generating outline... This might take a while....';
   const context = createAiContext({
-    type: 'CREATE',
+    type: AiRequestType.CREATE,
     text: outlinePrompt,
-    responseSchema: 'OUTLINE',
+    responseSchema: AiResponseSchema.OUTLINE,
     targetAudience: difficultyOptions[
       selectedDifficulty.value
     ].toUpperCase() as AiTargetAudience,
   });
   aiAPI.generate(context).then(({ activities }) => {
     activities.children.forEach((it: any) => (it.expanded = true));
-    outlineTree.value = [{
-      name: props.name,
-      children: activities,
-      expanded: true,
-    }];
+    outlineTree.value = [
+      {
+        name: props.name,
+        children: activities,
+        expanded: true,
+      },
+    ];
     isFetchingData.value = false;
     statusMessage.value = '';
     emit('structure', activities);
