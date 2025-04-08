@@ -206,7 +206,7 @@ const fetchOutline = async () => {
     targetAudience: difficultyOptions[selectedDifficulty.value],
   });
   const activities = await aiAPI.generate(context);
-  activities.children.forEach((it: any) => (it.expanded = true));
+  activities.forEach((it: any) => (it.expanded = true));
   // Add repository name as a root node
   outlineTree.value = [
     {
@@ -359,6 +359,16 @@ const fetchOutline = async () => {
     transform: rotate(-45deg);
     right: 6px;
     top: 5px;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.v-slider :deep .v-slider-track__tick-label {
+  text-transform: lowercase;
+
+  &:first-letter {
+    text-transform: uppercase;
   }
 }
 </style>

@@ -3,6 +3,7 @@
     v-if="authStore.hasCreateRepositoryAccess"
     v-model="isVisible"
     header-icon="mdi-folder-plus-outline"
+    min-width="600"
     paddingless
     persistent
   >
