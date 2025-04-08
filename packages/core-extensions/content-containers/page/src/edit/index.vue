@@ -195,7 +195,7 @@ const generateContent = async (input: AiInput) => {
   elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,
-      position: lastElementPosition + index,
+      position: lastElementPosition + index + 1,
       activityId: props.container.id,
       repositoryId: props.container.repositoryId,
     });
