@@ -20,9 +20,9 @@
         variant="tonal"
         @click="
           generateContent({
-            type: 'CREATE',
+            type: AiRequestType.CREATE,
             text: 'Generate content for this page.',
-            responseSchema: 'HTML',
+            responseSchema: AiResponseSchema.HTML,
             useImageGenerationTool: true,
           })
         "
@@ -123,14 +123,6 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  AddElement,
-  CircularProgress,
-  ContainedContent,
-  ElementList,
-  InlineActivator,
-} from '@tailor-cms/core-components';
-import { computed, inject, ref } from 'vue';
 import type {
   ContentElement,
   Relationship,
@@ -138,6 +130,15 @@ import type {
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
+import {
+  AddElement,
+  CircularProgress,
+  ContainedContent,
+  ElementList,
+  InlineActivator,
+} from '@tailor-cms/core-components';
+import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
+import { computed, inject, ref } from 'vue';
 import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
@@ -170,20 +171,17 @@ const emit = defineEmits([
 ]);
 
 const doTheMagic = inject<any>('$doTheMagic');
-const aiInputs = ref<AiInput[]>([]);
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
+const aiInputs = ref<AiInput[]>([]);
 
 const generateContent = async (input: AiInput) => {
   isAiGeneratingContent.value = true;
   aiInputs.value.push(input);
-  const context = {
-    inputs: aiInputs.value,
-    content: JSON.stringify(containerElements.value),
-  };
   const elements = await doTheMagic({
     containerType: props.container.type,
-    ...context,
+    inputs: aiInputs.value,
+    content: JSON.stringify(containerElements.value),
   });
   const lastElementPosition =
     containerElements.value?.length > 0
