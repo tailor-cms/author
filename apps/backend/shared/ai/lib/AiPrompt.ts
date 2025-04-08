@@ -121,10 +121,11 @@ export class AiPrompt {
       this.prompt.responseSchema !== 'HTML'
     )
       return;
+    // output needs to be sliced to avoid exceeding the max length
     const userPrompt = `
       ${this.repositoryContext.toString()}
       Generate appropriate image for the given topic and content:
-      ${JSON.stringify(this.response)}`;
+      ${JSON.stringify(this.response).slice(0, 1000)}`;
     const imgUrl = await this.generateImage(userPrompt);
     const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
     const imageElement = {
