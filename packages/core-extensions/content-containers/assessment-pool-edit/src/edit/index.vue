@@ -131,7 +131,7 @@ const generateQuestions = async () => {
   const context = {
     inputs: [
       {
-        type: hasAssessments ? AiRequestType.CREATE : AiRequestType.ADD,
+        type: hasAssessments ? AiRequestType.ADD : AiRequestType.CREATE,
         text: 'Generate 5 questions.',
         responseSchema: AiResponseSchema.QUESTION,
       },
