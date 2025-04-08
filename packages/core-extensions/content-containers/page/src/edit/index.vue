@@ -187,6 +187,11 @@ const generateContent = async (input: AiInput) => {
     containerElements.value?.length > 0
       ? containerElements.value[containerElements.value.length - 1].position
       : 0;
+  if (input.type === AiRequestType.MODIFY) {
+    containerElements.value.forEach((element: ContentElement) => {
+      emit('delete:element', element, true);
+    });
+  }
   elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,
