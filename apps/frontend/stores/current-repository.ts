@@ -2,6 +2,10 @@ import {
   schema as schemaConfig,
   workflow as workflowConfig,
 } from '@tailor-cms/config';
+import {
+  calculatePosition,
+  InsertLocation,
+} from '@tailor-cms/utils';
 import type { Guideline } from '@tailor-cms/interfaces/schema';
 
 import { useActivityStore } from './activity';
@@ -177,10 +181,16 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
       // If parentId is null, the element must be a root level
       return;
     }
+    const children = schemaConfig.getOutlineChildren(Activity.items, parentId);
+    const position = calculatePosition({
+      items: children,
+      action: InsertLocation.AddBefore,
+      newPosition: added.newIndex,
+    });
     await Activity.update({
       id: added.element.id,
       parentId,
-      position: added.newIndex,
+      position,
     });
   };
 

@@ -1,5 +1,4 @@
 import get from 'lodash/get.js';
-import has from 'lodash/has.js';
 import isString from 'lodash/isString.js';
 import Promise from 'bluebird';
 import set from 'lodash/set.js';
@@ -8,7 +7,9 @@ import values from 'lodash/values.js';
 import storage from '../../repository/storage.js';
 import { storage as config } from '#config';
 
-const isComposite = (element) => has(element, 'data.embeds');
+const isComposite = (element) => !!get(element, 'data.embeds');
+const isLegacyQuestion = (element) =>
+  !isComposite(element) && !!get(element, 'data.question');
 const isStorageAsset = (v) => isString(v) && v.startsWith(config.protocol);
 const extractStorageKey = (v) => v.substr(config.protocol.length, v.length);
 
@@ -16,7 +17,7 @@ async function resolveAssetsMap(element) {
   if (!get(element, 'data.assets')) return element;
   await Promise.map(toPairs(element.data.assets), async ([key, url]) => {
     if (!url) return set(element.data, key, url);
-    const resolvedUrl = isStorageAsset
+    const resolvedUrl = isStorageAsset(url)
       ? await storage.getFileUrl(extractStorageKey(url))
       : url;
     set(element.data, key, resolvedUrl);
@@ -39,7 +40,9 @@ async function resolveMetaMap(element) {
 function resolveStatics(element) {
   return isComposite(element)
     ? resolveComposite(element)
-    : resolvePrimitive(element);
+    : isLegacyQuestion(element)
+      ? resolveLegacyQuestion(element)
+      : resolvePrimitive(element);
 }
 
 async function resolvePrimitive(primitive) {
@@ -63,6 +66,14 @@ async function resolveComposite(composite) {
   const embeds = values(composite.data.embeds);
   if (!embeds || embeds.length < 1) return Promise.resolve(composite);
   return Promise.each(embeds, resolvePrimitive).then(() => composite);
+}
+
+async function resolveLegacyQuestion(element) {
+  await resolveMetaMap(element);
+  await resolveAssetsMap(element);
+  const question = element.data.question;
+  if (!question || question.length < 1) return Promise.resolve(element);
+  return Promise.each(question, resolvePrimitive).then(() => element);
 }
 
 export { resolveStatics };

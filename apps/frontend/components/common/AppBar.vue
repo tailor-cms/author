@@ -27,15 +27,15 @@
       </VAppBarTitle>
     </NuxtLink>
     <div v-if="showUserGroupSelect" class="pt-2">
-      <VCombobox
-        v-model="selectedUserGroup"
-        :items="userGroupOptions"
+      <VSelect
+        v-model="repositoryStore.selectedUserGroupId"
+        :items="repositoryStore.userGroupOptions"
         item-title="name"
         item-value="id"
         min-width="300"
         variant="outlined"
         hide-details
-        @update:model-value="onUserGroupChange"
+        @update:model-value="() => repositoryStore.fetch()"
       >
         <template #selection="{ item }">
           <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
@@ -51,7 +51,7 @@
             {{ title }}
           </VListItem>
         </template>
-      </VCombobox>
+      </VSelect>
     </div>
     <template #append>
       <VBtn
@@ -141,21 +141,9 @@ const routes = computed(() => {
   return items;
 });
 
-const userGroupOptions = computed(() => [
-  { id: 0, name: 'All workspaces' },
-  ...authStore.userGroups,
-]);
-
-const selectedUserGroup = ref<any>(userGroupOptions.value[0]);
-
 const showUserGroupSelect = computed(
   () => authStore.userGroups.length > 0 && route.name === 'catalog',
 );
-
-const onUserGroupChange = async (group: any) => {
-  repositoryStore.queryParams.userGroupId = group.id;
-  await repositoryStore.fetch();
-};
 
 const logout = async () => {
   if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {
