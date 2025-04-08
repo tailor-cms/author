@@ -82,7 +82,6 @@ import type {
   ElementRegistry,
 } from '@tailor-cms/interfaces/schema';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import {
   AddElement,
