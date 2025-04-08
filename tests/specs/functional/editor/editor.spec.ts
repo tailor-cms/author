@@ -175,6 +175,7 @@ test('can remove element comment', async ({ page }) => {
   const comment = await element.getComment(COMMENT_CONTENT);
   await comment.remove();
   // Make sure changes are persisted
+  await page.reload();
   await element.openComments();
   await expect(comment.el).not.toBeVisible();
   await expect(page.getByText('This comment has been deleted')).toBeVisible();
@@ -186,9 +187,24 @@ test('can resolve element comment', async ({ page }) => {
   const comment = await element.getComment(COMMENT_CONTENT);
   await comment.resolve();
   // Make sure changes are persisted
+  await page.reload();
   await element.openComments();
   await expect(page.getByText('Marked as resolved')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Undo' })).toBeVisible();
+});
+
+test('can edit element comment', async ({ page }) => {
+  const editor = new Editor(page);
+  const element = await editor.getElement('The Origins of Pizza');
+  const comment = await element.getComment(COMMENT_CONTENT);
+  const newComment = 'This is a test comment edited';
+  await comment.edit(newComment);
+  // Make sure changes are persisted
+  await page.reload();
+  await element.openComments();
+  await expect(page.getByText(COMMENT_CONTENT)).not.toBeVisible();
+  await expect(page.getByText('(edited)')).toBeVisible();
+  await expect(page.getByText(newComment)).toBeVisible();
 });
 
 test.afterAll(async () => {

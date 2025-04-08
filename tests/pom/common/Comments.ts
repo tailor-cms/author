@@ -31,6 +31,14 @@ export class Comment {
     return this.editBtn.click();
   }
 
+  async edit(content: string) {
+    await this.toggleEdit();
+    const input = this.page.locator('.comment-editor textarea').locator('visible=true');
+    const saveBtn = this.page.getByRole('button', { name: 'Save' });
+    await input.fill(content);
+    await saveBtn.click();
+  }
+
   async remove() {
     await this.removeBtn.click();
     await this.confirmationDialog.confirm();
