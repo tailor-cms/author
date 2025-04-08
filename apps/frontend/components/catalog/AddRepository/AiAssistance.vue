@@ -105,7 +105,6 @@ import {
   AiRequestType,
   AiTargetAudience,
 } from '@tailor-cms/interfaces/ai';
-
 import VueTreeView from 'vue3-tree-vue';
 import aiAPI from '@/api/ai';
 
@@ -133,21 +132,19 @@ const outlineTree = ref<any>([]);
 const statusMessage = ref('');
 
 const ambiguityPrompt = `
-  In order for you to help, is there any ambiguity in the topic that
-  I should be aware of? Present any specificators or requirements that I
-  should consider in form of tags.`;
+  In order for you to provide better content, is there any ambiguity in the
+  topic that I should be aware of? Present any specificators or requirements
+  that I should consider in form of tags.`;
 
 const stylePrompt = `
   I would like to get some style / school-of-thought based recommendations
   that can further help you in the future. Present options that I
   should consider in form of tags.`;
 
-const outlinePrompt = 'Provide suggestion for the outline of the content.';
-
 const createAiContext = (input: AiInput): AiContext => {
   const { schemaId, name, description } = props;
   if (!schemaId || !name || !description) {
-    throw new Error('Missing required properties for AiContext');
+    throw new Error('Missing required properties for the AiContext');
   }
   const topicTags = selectedTopicTags.value.map(
     (index) => topicTagOptions.value[index],
@@ -171,6 +168,7 @@ watch(isAssistaceEnabled, (value) => {
   if (!value) {
     isFetchingData.value = false;
     topicTagOptions.value = [];
+    styleTagOptions.value = [];
     return;
   }
   isFetchingData.value = true;
@@ -198,30 +196,28 @@ const fetchStyle = () => {
   });
 };
 
-const fetchOutline = () => {
+const fetchOutline = async () => {
   isFetchingData.value = true;
   statusMessage.value = 'Generating outline... This might take a while....';
   const context = createAiContext({
     type: AiRequestType.CREATE,
-    text: outlinePrompt,
+    text: 'Provide suggestion for the outline of the content.',
     responseSchema: AiResponseSchema.OUTLINE,
-    targetAudience: difficultyOptions[
-      selectedDifficulty.value
-    ].toUpperCase() as AiTargetAudience,
+    targetAudience: difficultyOptions[selectedDifficulty.value],
   });
-  aiAPI.generate(context).then(({ activities }) => {
-    activities.children.forEach((it: any) => (it.expanded = true));
-    outlineTree.value = [
-      {
-        name: props.name,
-        children: activities,
-        expanded: true,
-      },
-    ];
-    isFetchingData.value = false;
-    statusMessage.value = '';
-    emit('structure', activities);
-  });
+  const activities = await aiAPI.generate(context);
+  activities.children.forEach((it: any) => (it.expanded = true));
+  // Add repository name as a root node
+  outlineTree.value = [
+    {
+      name: props.name,
+      expanded: true,
+      children: activities,
+    },
+  ];
+  isFetchingData.value = false;
+  statusMessage.value = '';
+  emit('structure', activities);
 };
 </script>
 

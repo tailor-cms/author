@@ -93,6 +93,7 @@ const getPrompt = (context: AiContext): string => {
 const spec: AiResponseSpec = {
   Schema,
   getPrompt,
+  processResponse: (val) => val?.activities || [],
 };
 
 export default spec;
