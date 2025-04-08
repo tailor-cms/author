@@ -9,7 +9,7 @@
         class="d-flex px-4"
         rounded="0"
         flat
-        v-on="{ click: collapsable ? () => (expanded = !expanded) : null }"
+        v-on="{ click: collapsable ? () => emit('selected') : null }"
       >
         <VRow class="w-100" dense>
           <VCol cols="3" class="text-left align-content-center">
@@ -145,6 +145,7 @@ interface Props {
   dense?: boolean;
   collapsable?: boolean;
   isDirty?: boolean;
+  expanded?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -168,13 +169,13 @@ const emit = defineEmits([
   'select',
   'link',
   'update',
+  'selected',
 ]);
 
 const ceRegistry = inject<any>('$ceRegistry');
 const editorState = inject<any>('$editorState');
 
 const form = ref();
-const expanded = ref(!props.collapsable);
 const editedElement = reactive(initializeElement());
 
 const isDirty = computed(() => {
