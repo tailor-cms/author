@@ -47,7 +47,7 @@ export class AiPrompt {
         text: { format: this.format },
       } as OpenAI.Responses.ResponseCreateParamsNonStreaming);
       this.response = this.responseProcessor(response.output_text);
-      await this.applyImageTool();
+      this.response = await this.applyImageTool();
       return this.response;
     } catch {
       return {};
