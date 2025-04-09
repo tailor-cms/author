@@ -49,6 +49,7 @@
   groups, copying and linking elements.
 - Upgraded all dependencies to their latest versions including ESLint to v9.
 - Replaced bunyan with pino logger.
+- Replaced auto-publishing upon activity deletion with explicit publish.
 - Passed environmental variables prefixed with `NUXT_` as cookies.
 - Replaced the `types` property in the `contentContainer` schema with 
   `contentElementConfig`. This new property allows defining an array of 
@@ -81,6 +82,7 @@
   schema as functions that accept a repository, containers, elements and the 
   content element registry and return an array of guidelines to guide authors 
   through course creation.
+- Added the ability to display Content Element version info on hover
 - Added the ability to drag and drop outline items between different parent 
   elements.
 - Added support to publish into the draft environment.
