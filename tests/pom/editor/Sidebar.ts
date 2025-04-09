@@ -44,11 +44,11 @@ export class EditorSidebar {
     return this.getTabByName(SidebarTab.Element).click();
   }
 
-  toggleItems() {
+  toggleOutlineItems() {
     return this.navigation.toggleItems();
   }
 
-  navigateTo(name: string) {
+  navigateToPage(name: string) {
     return this.navigation.navigateTo(name);
   }
 }

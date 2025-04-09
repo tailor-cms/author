@@ -40,10 +40,10 @@ test('can navigate using the sidebar', async ({ page }) => {
 test('can toggle using the sidebar', async ({ page }) => {
   const editor = new Editor(page);
   // First toggle expands all outline items
-  await editor.sidebar.toggleItems();
+  await editor.sidebar.toggleOutlineItems();
   const targetItem = page.locator('.sidebar').getByText(editor.primaryPageName);
   await expect(targetItem).toBeVisible();
-  await editor.sidebar.toggleItems();
+  await editor.sidebar.toggleOutlineItems();
   await expect(targetItem).toBeHidden();
 });
 
@@ -74,7 +74,7 @@ test('can delete content container', async ({ page }) => {
 
 test('can add content element', async ({ page }) => {
   const editor = new Editor(page);
-  await editor.sidebar.toggleItems();
+  await editor.sidebar.toggleOutlineItems();
   await editor.toSecondaryPage();
   await editor.addContentElement('This is a test');
   // Make sure changes are persisted
@@ -85,7 +85,7 @@ test('can add content element', async ({ page }) => {
 
 test('can copy specific content element', async ({ page }) => {
   const editor = new Editor(page);
-  await editor.sidebar.toggleItems();
+  await editor.sidebar.toggleOutlineItems();
   await editor.toSecondaryPage();
   const elContent = 'The Origins of Pizza';
   await editor.copyContentElements(outlineSeed.primaryPage.title, elContent);
@@ -97,7 +97,7 @@ test('can copy specific content element', async ({ page }) => {
 
 test('can copy all content elements from page', async ({ page }) => {
   const editor = new Editor(page);
-  await editor.sidebar.toggleItems();
+  await editor.sidebar.toggleOutlineItems();
   await editor.toSecondaryPage();
   await editor.copyContentElements(outlineSeed.primaryPage.title);
   // Make sure changes are persisted
@@ -162,7 +162,8 @@ test('can post comment on element', async ({ page }) => {
   const elements = await containers[0].getElements();
   expect(elements.length).not.toBe(0);
   const comment = 'This is a test comment';
-  await elements[0].comment(comment);
+  await elements[0].postComment(comment);
+  await expect(page.getByText(comment)).toBeVisible();
   // Make sure changes are persisted
   await page.reload();
   await elements[0].openComments();
@@ -177,7 +178,6 @@ test('can remove element comment', async ({ page }) => {
   // Make sure changes are persisted
   await page.reload();
   await element.openComments();
-  await expect(comment.el).not.toBeVisible();
   await expect(page.getByText('This comment has been deleted')).toBeVisible();
 });
 

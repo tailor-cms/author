@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { ConfirmationDialog } from './ConfirmationDialog';
 
 export class Comment {
@@ -23,8 +23,10 @@ export class Comment {
     return this.el.click();
   }
 
-  resolve() {
-    return this.resolveBtn.click();
+  async resolve() {
+    await this.resolveBtn.click();
+    await expect(this.page.getByText('Marked as resolved')).toBeVisible();
+    await expect(this.page.getByRole('button', { name: 'Undo' })).toBeVisible();
   }
 
   toggleEdit() {
@@ -33,15 +35,18 @@ export class Comment {
 
   async edit(content: string) {
     await this.toggleEdit();
-    const input = this.page.locator('.comment-editor textarea').locator('visible=true');
+    const input = this.page.locator('.comment-editor textarea')
+      .locator('visible=true');
     const saveBtn = this.page.getByRole('button', { name: 'Save' });
     await input.fill(content);
     await saveBtn.click();
+    await expect(this.page.getByText(content)).toBeVisible();
   }
 
   async remove() {
     await this.removeBtn.click();
     await this.confirmationDialog.confirm();
+    await expect(this.el).not.toBeVisible();
   }
 }
 

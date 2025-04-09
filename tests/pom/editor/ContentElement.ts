@@ -6,7 +6,7 @@ export class ContentElement {
   readonly page: Page;
   readonly el: Locator;
   readonly deleteBtn: Locator;
-  readonly commentBtn: Locator;
+  readonly commentPopoverToggle: Locator;
   readonly commentsMenu: Locator;
   readonly comments: Comments;
 
@@ -14,7 +14,7 @@ export class ContentElement {
     this.page = page;
     this.el = el;
     this.deleteBtn = el.getByRole('button', { name: 'Delete element' });
-    this.commentBtn = el.getByRole('button', { name: 'View comments' });
+    this.commentPopoverToggle = el.getByRole('button', { name: 'View comments' });
     this.commentsMenu = page.locator('.v-menu');
     this.comments = new Comments(page, this.commentsMenu);
   }
@@ -32,7 +32,7 @@ export class ContentElement {
 
   async openComments() {
     await this.el.hover();
-    await this.commentBtn.click();
+    await this.commentPopoverToggle.click();
     await this.commentsMenu.isVisible();
   }
 
@@ -41,7 +41,7 @@ export class ContentElement {
     return this.comments.getComment(content);
   }
 
-  async comment(text: string) {
+  async postComment(text: string) {
     await this.openComments();
     await this.comments.post(text);
   }

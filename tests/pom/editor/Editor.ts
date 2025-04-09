@@ -30,13 +30,13 @@ export class Editor {
   }
 
   async toPrimaryPage() {
-    await this.sidebar.navigateTo(this.primaryPageName);
+    await this.sidebar.navigateToPage(this.primaryPageName);
     await expect(this.topToolbar).toContainText(this.primaryPageName);
     await expect(this.page.getByText(this.primaryPageContent)).toBeVisible();
   }
 
   async toSecondaryPage() {
-    await this.sidebar.navigateTo(this.secondaryPageName);
+    await this.sidebar.navigateToPage(this.secondaryPageName);
     await expect(this.topToolbar).toContainText(this.secondaryPageName);
   }
 
