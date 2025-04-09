@@ -10,6 +10,7 @@
       :icon="manifest?.ui.icon"
       :type="manifest?.name"
       v-bind="{
+        expanded,
         componentName,
         element,
         embedElementConfig,
@@ -19,6 +20,7 @@
       :is-dirty="isDirty"
       class="flex-grow-1"
       collapsable
+      @selected="emit('selected')"
       @delete="emit('delete')"
       @save="save"
     >
