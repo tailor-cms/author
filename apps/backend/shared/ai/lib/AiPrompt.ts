@@ -120,7 +120,7 @@ export class AiPrompt {
       !this.prompt.useImageGenerationTool ||
       this.prompt.responseSchema !== 'HTML'
     )
-      return;
+      return this.response;
     // output needs to be sliced to avoid exceeding the max length
     const userPrompt = `
       ${this.repositoryContext.toString()}
