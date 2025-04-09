@@ -78,11 +78,10 @@
 ## v7.1
 
 #### Changes
-- Migrated Multiple Choice, Single Choice, Matching Question, True-False, 
-  Text Response, Drag & Drop, Embed, Fill in Blank, Numerical Response, Page 
-  Break, PDF, Audio and Video content elements.
-- Migrated Color, File, Html, Radio Group, DateTime, Select, Combobox, Switch, 
-  Checkbox meta inputs.
+- Migrated Single Choice, Matching Question, True-False, Text Response, Drag & 
+  Drop, Embed, Fill in Blank, Numerical Response, Page Break, PDF, Audio and 
+  Video content elements.
+- Migrated DateTime, Select, Combobox, Switch and Checkbox meta inputs.
 - Migrated schemas to `@tailor-cms/config` package, located in the `./config`
   dir. Schemas are now defined using the TypeScript.
 - Migrated Tailor Dialog core component and reused it where applicable.
@@ -91,14 +90,11 @@
   `OIDC_LOGIN_TEXT` and `OIDC_LOGOUT_ENABLED` environment variables with 
   `NUXT_PUBLIC_`. Also prefixed `SESSION_SECRET` with `OIDC_`. 
   See `.env.example` for more details.
-- Migrated Workflow, Admin Panel, Content Element Revision, Publish Diff, 
-  Activity Copy, Element Copy, SSE, User Activity Reporting and User Profile.
 - Added broken references detection. A warning is displayed in the structure 
   view if a broken element or activity reference is detected. Users can then 
   click a button to clean up broken references or manually update the linked 
   element/activity reference.
 - Passed environmental variables prefixed with `NUXT_` as cookies.
-- Passed referenced elements to the target content element.
 - Implemented Feed Schema.
 - Implemented HA@S Rating meta input. This meta input allows inputting and 
   displaying ratings for the following parameters: Learner-Centered Content, 
@@ -117,10 +113,17 @@
 - Refactored the export repository flow. The setup initiates the job and returns 
   a `jobId`. The client calls the server periodically to get the job status. 
   Once it is done, the ready status is set and the user can download it.
-- Increased E2E functional test coverage.
-- Added E2E accessibility tests.
-- Added a check to prevent publishing detached pages.
+
+## v7.0
+
+#### Changes
 - Added the ability to turn off rate limiting via the `ENABLE_RATE_LIMITING`
   environment variable. See `.env.example` for more details.
 - Updated Key-Value store configuration. See `.env.example` for more details.
 - Updated healthcheck route to `/api/healthcheck`
+- Increased E2E functional test coverage.
+- Added E2E accessibility tests.
+- Added a check to prevent publishing detached pages.
+- Passed referenced elements to the target content element.
+- Migrated Workflow, Admin Panel, Content Element Revision, Publish Diff, 
+  Activity Copy, Element Copy, SSE, User Activity Reporting and User Profile.
