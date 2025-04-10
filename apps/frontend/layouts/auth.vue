@@ -14,7 +14,7 @@
             md="12"
           >
             <div class="d-flex align-center justify-center pt-4">
-              <img :src="logoPath" alt="Logo" class="logo" width="52" />
+              <img :src="logoPath" alt="Logo" class="logo" width="78" />
               <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
             </div>
           </VCol>
@@ -38,7 +38,7 @@ const props = defineProps<{
 }>();
 
 const title = props.title || 'Tailor CMS';
-const logoPath = '/img/default-logo-full.svg';
+const logoPath = '/img/logo-new.png';
 </script>
 
 <style lang="scss">
