@@ -9,7 +9,7 @@
       <img
         alt="Tailor logo"
         class="mr-6"
-        src="/img/logo-new.png"
+        src="/img/logo-new.svg"
         width="52"
       />
       <VAppBarTitle
