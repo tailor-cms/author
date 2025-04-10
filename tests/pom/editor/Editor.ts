@@ -30,25 +30,25 @@ export class Editor {
   }
 
   async toPrimaryPage() {
-    await this.sidebar.navigateTo(this.primaryPageName);
+    await this.sidebar.navigateToPage(this.primaryPageName);
     await expect(this.topToolbar).toContainText(this.primaryPageName);
     await expect(this.page.getByText(this.primaryPageContent)).toBeVisible();
   }
 
   async toSecondaryPage() {
-    await this.sidebar.navigateTo(this.secondaryPageName);
+    await this.sidebar.navigateToPage(this.secondaryPageName);
     await expect(this.topToolbar).toContainText(this.secondaryPageName);
   }
 
   getElement(content?: string) {
-    return content
+    const element = content
       ? this.page.locator(ContentElement.selector, { hasText: content })
       : this.page.locator(ContentElement.selector).first();
+    return new ContentElement(this.page, element);
   }
 
   async focusElement(content?: string) {
-    const locator = this.getElement(content);
-    await new ContentElement(this.page, locator).focus();
+    return this.getElement(content).focus();
   }
 
   async getElements(): Promise<ContentElement[]> {

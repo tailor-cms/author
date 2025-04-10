@@ -3,6 +3,7 @@
     v-model="isVisible"
     :close-on-click="!isConfirmationActive"
     :close-on-content-click="false"
+    class="element-discussion"
     location="left"
     min-width="450"
     offset="4"
@@ -15,6 +16,7 @@
             v-bind="{ ...menuProps, ...tooltipProps }"
             :color="activator?.color"
             :icon="activator?.icon"
+            aria-label="View comments"
             size="x-small"
             variant="tonal"
           />
