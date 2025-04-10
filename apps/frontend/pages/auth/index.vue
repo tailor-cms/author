@@ -53,7 +53,7 @@
         variant="outlined"
       />
       <VBtn
-        color="primary-lighten-4"
+        color="teal-lighten-3"
         variant="tonal"
         block
         rounded
