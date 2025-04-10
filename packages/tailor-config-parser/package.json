@@ -40,7 +40,7 @@
     "@types/lodash": "^4.17.16",
     "del-cli": "^6.0.0",
     "tsup": "^8.4.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "tsup": {
     "entry": [

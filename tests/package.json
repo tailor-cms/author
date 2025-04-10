@@ -9,10 +9,10 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.1",
-    "@percy/cli": "^1.30.8",
+    "@percy/cli": "^1.30.9",
     "@percy/playwright": "^1.0.7",
     "@playwright/test": "1.51.1",
-    "@types/node": "^22.13.14"
+    "@types/node": "^22.14.0"
   },
   "dependencies": {
     "@faker-js/faker": "^9.6.0",

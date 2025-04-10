@@ -1,7 +1,7 @@
 FROM node:22.14.0-bookworm-slim@sha256:bac8ff0b5302b06924a5e288fb4ceecef9c8bb0bb92515985d2efdc3a2447052 AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@10.7.0+sha512.6b865ad4b62a1d9842b61d674a393903b871d9244954f652b8842c2b553c72176b278f64c463e52d40fff8aba385c235c8c9ecf5cc7de4fd78b8bb6d49633ab6 --activate
+RUN corepack enable && corepack prepare pnpm@10.8.0 --activate
 RUN apt update && apt install -y --no-install-recommends dumb-init
 ENTRYPOINT ["dumb-init", "--"]
 
