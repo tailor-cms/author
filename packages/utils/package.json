@@ -31,7 +31,7 @@
     "@types/lodash": "^4.17.16",
     "@types/uuid": "^10.0.0",
     "tsup": "^8.4.0",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   },
   "bundledDependencies": [
     "@tailor-cms/interfaces"
