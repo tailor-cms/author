@@ -38,6 +38,8 @@
   Once it is done, the ready status is set and the user can download it.
 - Improved AI outline generation by ensuring proper order, disabling creation 
   when assistance is provided and updating the AI model.
+- Added AI user prompt for adding and modifying default container content, also
+  added generic interface for repository context and AI interaction.
 - Enhanced the Activity API with request validation and additional access checks.
 - Enhanced the Revision API with request validation and a repository ownership
   check for revisions.
