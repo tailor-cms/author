@@ -15,7 +15,7 @@ export class ContentElement {
     this.el = el;
     this.deleteBtn = el.getByRole('button', { name: 'Delete element' });
     this.commentPopoverToggle = el.getByRole('button', { name: 'View comments' });
-    this.commentsMenu = page.locator('.v-menu');
+    this.commentsMenu = page.locator('.v-menu.element-discussion');
     this.comments = new Comments(page, this.commentsMenu);
   }
 

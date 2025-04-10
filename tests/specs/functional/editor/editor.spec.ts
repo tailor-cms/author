@@ -163,7 +163,6 @@ test('can post comment on element', async ({ page }) => {
   expect(elements.length).not.toBe(0);
   const comment = 'This is a test comment';
   await elements[0].postComment(comment);
-  await expect(page.getByText(comment)).toBeVisible();
   // Make sure changes are persisted
   await page.reload();
   await elements[0].openComments();

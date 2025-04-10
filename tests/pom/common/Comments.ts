@@ -68,6 +68,7 @@ export class Comments {
   async post(comment: string) {
     await this.commentInput.fill(comment);
     await this.postBtn.click();
+    await expect(this.page.getByText(comment)).toBeVisible();
   }
 
   getComment(content?: string) {
