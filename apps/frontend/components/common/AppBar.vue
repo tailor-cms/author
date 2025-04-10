@@ -9,13 +9,12 @@
       <img
         alt="Tailor logo"
         class="mr-6"
-        height="42"
-        src="/img/default-logo-full.svg"
-        width="44"
+        src="/img/logo-new.svg"
+        width="52"
       />
       <VAppBarTitle
         v-if="!showUserGroupSelect"
-        class="app-name text-primary-lighten-3"
+        class="app-name pt-1 text-primary-lighten-3"
       >
         Tailor
         <span v-if="!smAndDown" class="text-caption font-weight-bold">
