@@ -5,7 +5,6 @@ import { StatusCodes } from 'http-status-codes';
 import ctrl from './repository.controller.js';
 import feed from './feed/index.js';
 import requestValidation from './repository.validation.js';
-import { authorize } from '#shared/auth/mw.js';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import processQuery from '#shared/util/processListQuery.js';
@@ -50,7 +49,7 @@ router
 
 router
   .post('/:repositoryId/pin', ctrl.pin)
-  .post('/:repositoryId/clone', authorize(), ctrl.clone)
+  .post('/:repositoryId/clone', AccessService.hasCreateRepositoryAccess, ctrl.clone)
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
   .get('/:repositoryId/references/validate', ctrl.validateReferences)
