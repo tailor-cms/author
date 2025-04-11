@@ -27,19 +27,12 @@
             </template>
             {{ element.name }}
             <template #append>
-              <div class="version-info">
-                <VTooltip :text="element.version">
-                  <template #activator="{ props: tooltipProps }">
-                    <VIcon
-                      v-bind="tooltipProps"
-                      color="primary-darken-3"
-                      size="18"
-                    >
-                      mdi-information-outline
-                    </VIcon>
-                  </template>
-                </VTooltip>
-              </div>
+              <VIcon
+                v-tooltip="element.version"
+                class="version-info"
+                icon="mdi-information-outline"
+                size="16"
+              />
             </template>
           </VBtn>
         </div>
