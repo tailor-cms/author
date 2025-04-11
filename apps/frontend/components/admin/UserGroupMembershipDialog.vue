@@ -3,7 +3,7 @@
     <template #activator="{ props: activatorProps }">
       <VBtn
         v-bind="activatorProps"
-        aria-label="Add user to the group"
+        aria-label="Add users to the group"
         class="add-user"
         color="primary-darken-2"
         prepend-icon="mdi-plus"
@@ -13,19 +13,29 @@
         Add user
       </VBtn>
     </template>
-    <template #header>Add user to the user group</template>
+    <template #header>Add users to the user group</template>
     <template #body>
       <form novalidate @submit.prevent="submit">
         <VCombobox
-          v-model="emailInput"
-          :error-messages="errors.email"
+          ref="emailInput"
+          :model-value="emailInput"
           :items="suggestedUsers"
+          :clear-on-select="false"
+          :error-messages="errors.email"
           class="required mb-4"
           item-title="email"
           item-value="email"
           label="Email"
           placeholder="Enter email..."
           variant="outlined"
+          chips
+          clearable
+          closable-chips
+          multiple
+          @update:focused="onEmailInputFocusChange"
+          @update:model-value="(emails: string[]) => {
+            emailInput = emails.filter((v: string) => EMAIL_PATTERN.test(v));
+          }"
           @update:search="fetchUsers"
         />
         <VSelect
@@ -63,7 +73,7 @@
 </template>
 
 <script lang="ts" setup>
-import { object, string } from 'yup';
+import { array, object, string } from 'yup';
 import map from 'lodash/map';
 import { TailorDialog } from '@tailor-cms/core-components';
 import throttle from 'lodash/throttle';
@@ -73,6 +83,8 @@ import type { User } from '@tailor-cms/interfaces/user';
 import { UserRole } from '@tailor-cms/common';
 
 import { user as userApi, userGroup as userGroupApi } from '@/api';
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface Role {
   title: string;
@@ -87,6 +99,13 @@ const emit = defineEmits(['save']);
 
 const authStore = useAuthStore();
 
+const isVisible = ref(false);
+const isSaving = ref(false);
+const suggestedUsers = ref([]);
+const searchInput = ref('');
+
+const emailInputEl = useTemplateRef('emailInput');
+
 const roles = computed<Role[]>(() =>
   map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({
     title: titleCase(value),
@@ -97,9 +116,9 @@ const roles = computed<Role[]>(() =>
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: computed(() =>
     object({
-      email: string()
-        .required()
-        .email(),
+      email: array()
+        .of(string().email('Invalid email address'))
+        .min(1, 'At least one email is required'),
       role: string().required(),
     }),
   ),
@@ -108,19 +127,20 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
 const [emailInput] = defineField('email');
 const [roleInput] = defineField('role');
 
-const isVisible = ref(false);
-const isSaving = ref(false);
-const suggestedUsers = ref([]);
-
 const close = () => {
   isVisible.value = false;
   resetForm();
 };
 
+const onEmailInputFocusChange = (isFocused: boolean) => {
+  if (isFocused) return;
+  emailInputEl.value.search = '';
+};
+
 const submit = handleSubmit(async () => {
   isSaving.value = true;
   const payload = {
-    email: emailInput.value,
+    emails: emailInput.value,
     role: roleInput.value,
   };
   await userGroupApi.upsertUser(props.userGroupId, payload);

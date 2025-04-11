@@ -52,11 +52,13 @@ async function getUsers({ userGroup }, res) {
   return res.json({ data: users });
 }
 
-async function upsertUser(req, res) {
-  const { email, role } = req.body;
-  let user = await User.findOne({ where: { email } });
-  if (!user) user = await User.inviteOrUpdate({ email });
-  await req.userGroup.addUser(user, { through: { role } });
+async function upsertUser({ userGroup, body }, res) {
+  const { emails, role } = body;
+  for (const email of emails) {
+    let user = await User.findOne({ where: { email } });
+    if (!user) user = await User.inviteOrUpdate({ email });
+    await userGroup.addUser(user, { through: { role } });
+  }
   return res.sendStatus(StatusCodes.NO_CONTENT);
 }
 
