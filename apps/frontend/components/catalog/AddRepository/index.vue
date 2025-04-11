@@ -3,6 +3,7 @@
     v-if="authStore.hasCreateRepositoryAccess"
     v-model="isVisible"
     header-icon="mdi-folder-plus-outline"
+    min-width="600"
     paddingless
     persistent
   >
@@ -124,14 +125,6 @@
               is-new
             />
           </template>
-          <AIAssistance
-            v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
-            :description="descriptionInput"
-            :name="values.name"
-            :schema-id="schemaInput"
-            @ai-assistance-toggle="isAssistaceEnabled = $event"
-            @structure="aiSuggestedOutline = $event"
-          />
           <VSelect
             v-show="showUserGroupInput"
             v-model="groupInput"
@@ -147,6 +140,14 @@
             clearable
             closable-chips
             multiple
+          />
+          <AiAssistance
+            v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
+            :description="descriptionInput"
+            :name="values.name"
+            :schema-id="schemaInput"
+            @ai-assistance-toggle="isAssistaceEnabled = $event"
+            @structure="aiSuggestedOutline = $event"
           />
         </div>
         <div class="d-flex justify-end">
@@ -183,7 +184,7 @@ import { SCHEMAS } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
-import AIAssistance from './AIAssistance.vue';
+import AiAssistance from './AiAssistance.vue';
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';

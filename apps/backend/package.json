@@ -114,7 +114,9 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
+    "@types/json-schema": "^7.0.15",
     "dargs": "^8.1.0",
     "del-cli": "^6.0.0",
     "dotenv-cli": "^8.0.0",

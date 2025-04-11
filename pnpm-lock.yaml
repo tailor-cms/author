@@ -346,9 +346,15 @@ importers:
         specifier: ^1.6.1
         version: 1.6.1
     devDependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../packages/tailor-interfaces
       '@types/bluebird':
         specifier: ^3.5.42
         version: 3.5.42
+      '@types/json-schema':
+        specifier: ^7.0.15
+        version: 7.0.15
       dargs:
         specifier: ^8.1.0
         version: 8.1.0

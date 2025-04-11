@@ -99,8 +99,13 @@
 </template>
 
 <script lang="ts" setup>
+import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai';
+import {
+  AiResponseSchema,
+  AiRequestType,
+  AiTargetAudience,
+} from '@tailor-cms/interfaces/ai';
 import VueTreeView from 'vue3-tree-vue';
-
 import aiAPI from '@/api/ai';
 
 const props = defineProps<{
@@ -117,24 +122,62 @@ const topicTagOptions = ref([]);
 const selectedTopicTags = ref([]);
 const styleTagOptions = ref([]);
 const selectedStyleTags = ref([]);
-const difficultyOptions: { [key: number]: string } = {
-  0: 'Beginner',
-  1: 'Intermediate',
-  2: 'Expert',
+const difficultyOptions: { [key: number]: AiTargetAudience } = {
+  0: AiTargetAudience.Beginner,
+  1: AiTargetAudience.Intermediate,
+  2: AiTargetAudience.Expert,
 };
 const selectedDifficulty = ref(1);
 const outlineTree = ref<any>([]);
 const statusMessage = ref('');
+
+const ambiguityPrompt = `
+  In order for you to provide better content, is there any ambiguity in the
+  topic that I should be aware of? Present any specificators or requirements
+  that I should consider in form of tags.`;
+
+const stylePrompt = `
+  I would like to get some style / school-of-thought based recommendations
+  that can further help you in the future. Present options that I
+  should consider in form of tags.`;
+
+const createAiContext = (input: AiInput): AiContext => {
+  const { schemaId, name, description } = props;
+  if (!schemaId || !name || !description) {
+    throw new Error('Missing required properties for the AiContext');
+  }
+  const topicTags = selectedTopicTags.value.map(
+    (index) => topicTagOptions.value[index],
+  );
+  const styleTags = selectedStyleTags.value.map(
+    (index) => styleTagOptions.value[index],
+  );
+  return {
+    repository: {
+      schemaId,
+      name,
+      description,
+      tags: [...topicTags, ...styleTags],
+    },
+    inputs: [input],
+  };
+};
 
 watch(isAssistaceEnabled, (value) => {
   emit('aiAssistanceToggle', value);
   if (!value) {
     isFetchingData.value = false;
     topicTagOptions.value = [];
+    styleTagOptions.value = [];
     return;
   }
   isFetchingData.value = true;
-  aiAPI.resolveAmbiguity({ ...props }).then(({ tags }) => {
+  const context = createAiContext({
+    type: AiRequestType.Create,
+    text: ambiguityPrompt,
+    responseSchema: AiResponseSchema.Tag,
+  });
+  aiAPI.generate(context).then(({ tags }) => {
     topicTagOptions.value = tags;
     isFetchingData.value = false;
   });
@@ -142,38 +185,39 @@ watch(isAssistaceEnabled, (value) => {
 
 const fetchStyle = () => {
   isFetchingData.value = true;
-  const payload = {
-    ...props,
-    tags: selectedTopicTags.value.map((i) => topicTagOptions.value[i]),
-  };
-  aiAPI.getTopicStyleRecommendations(payload).then((response) => {
-    styleTagOptions.value = response.tags;
+  const context = createAiContext({
+    type: AiRequestType.Create,
+    text: stylePrompt,
+    responseSchema: AiResponseSchema.Tag,
+  });
+  return aiAPI.generate(context).then(({ tags }) => {
+    styleTagOptions.value = tags;
     isFetchingData.value = false;
   });
 };
 
-const fetchOutline = () => {
+const fetchOutline = async () => {
   isFetchingData.value = true;
   statusMessage.value = 'Generating outline... This might take a while....';
-  const topicTags = selectedTopicTags.value.map(
-    (index) => topicTagOptions.value[index],
-  );
-  const styleTags = selectedStyleTags.value.map(
-    (index) => styleTagOptions.value[index],
-  );
-  const payload = {
-    ...props,
-    tags: [...topicTags, ...styleTags],
-    level: difficultyOptions[selectedDifficulty.value],
-  };
-  aiAPI.getTopicOutlineRecommendation(payload).then((response) => {
-    response.expanded = true;
-    response.children.forEach((it: any) => (it.expanded = true));
-    outlineTree.value = [response];
-    isFetchingData.value = false;
-    statusMessage.value = '';
-    emit('structure', response.children);
+  const context = createAiContext({
+    type: AiRequestType.Create,
+    text: 'Provide suggestion for the outline of the content.',
+    responseSchema: AiResponseSchema.Outline,
+    targetAudience: difficultyOptions[selectedDifficulty.value],
   });
+  const activities = await aiAPI.generate(context);
+  activities.forEach((it: any) => (it.expanded = true));
+  // Add repository name as a root node
+  outlineTree.value = [
+    {
+      name: props.name,
+      expanded: true,
+      children: activities,
+    },
+  ];
+  isFetchingData.value = false;
+  statusMessage.value = '';
+  emit('structure', activities);
 };
 </script>
 
@@ -315,6 +359,16 @@ const fetchOutline = () => {
     transform: rotate(-45deg);
     right: 6px;
     top: 5px;
+  }
+}
+</style>
+
+<style lang="scss" scoped>
+.v-slider :deep .v-slider-track__tick-label {
+  text-transform: lowercase;
+
+  &:first-letter {
+    text-transform: uppercase;
   }
 }
 </style>
