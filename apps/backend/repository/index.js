@@ -5,7 +5,6 @@ import { StatusCodes } from 'http-status-codes';
 import ctrl from './repository.controller.js';
 import feed from './feed/index.js';
 import requestValidation from './repository.validation.js';
-import { authorize } from '#shared/auth/mw.js';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import processQuery from '#shared/util/processListQuery.js';
