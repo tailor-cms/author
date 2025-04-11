@@ -62,7 +62,9 @@ const { defineField, handleSubmit, errors } = useForm({
     tag: string()
       .trim()
       .required()
-      .matches(/^[a-zA-Z0-9]+$/, { message: 'Tag can contain only letters and numbers' })
+      .matches(/^[a-zA-Z0-9\s]+$/, {
+        message: 'Tag can contain only letters, numbers, and spaces',
+      })
       .min(2)
       .max(20),
   }),
