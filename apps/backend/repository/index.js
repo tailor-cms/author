@@ -50,7 +50,7 @@ router
 
 router
   .post('/:repositoryId/pin', ctrl.pin)
-  .post('/:repositoryId/clone', authorize(), ctrl.clone)
+  .post('/:repositoryId/clone', AccessService.hasCreateRepositoryAccess, ctrl.clone)
   .post('/:repositoryId/publish', ctrl.publishRepoInfo)
   .get('/:repositoryId/users', ctrl.getUsers)
   .get('/:repositoryId/references/validate', ctrl.validateReferences)
