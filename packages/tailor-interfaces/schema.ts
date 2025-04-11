@@ -60,7 +60,7 @@ export interface ActivityRelationship {
   allowedTypes?: string[];
 }
 
-export interface AIConfig {
+export interface AiActivityConfig {
   definition: string;
   outputRules?: {
     prompt: string;
@@ -96,7 +96,7 @@ export interface ActivityConfig {
   relationships?: ActivityRelationship[];
   meta?: Metadata[];
   defaultMeta?: Record<string, any>;
-  ai?: AIConfig;
+  ai?: AiActivityConfig;
   // @deprecated use relationships instead
   hasPrerequisites?: boolean;
   // @deprecated will be removed after migrating exam container
@@ -132,7 +132,7 @@ export interface ContentContainerConfig {
   config?: Record<string, any>;
   required?: boolean;
   publishedAs?: string;
-  ai?: AIConfig;
+  ai?: AiActivityConfig;
 }
 
 export interface Schema {

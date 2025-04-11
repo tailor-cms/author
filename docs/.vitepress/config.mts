@@ -9,7 +9,7 @@ export default defineConfig({
   ignoreDeadLinks: true,
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: 'logo.png',
+    logo: 'logo-new.png',
     search: { provider: 'local' },
     nav: [
       { text: 'Home', link: '/' },

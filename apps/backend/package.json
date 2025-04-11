@@ -25,12 +25,12 @@
     "integration:token": "node --import ./script/preflight.js ./script/generateIntegrationToken.js"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.779.0",
-    "@aws-sdk/lib-storage": "^3.779.0",
-    "@aws-sdk/s3-request-presigner": "^3.779.0",
+    "@aws-sdk/client-s3": "^3.782.0",
+    "@aws-sdk/lib-storage": "^3.782.0",
+    "@aws-sdk/s3-request-presigner": "^3.782.0",
     "@aws-sdk/util-format-url": "^3.775.0",
     "@faker-js/faker": "^9.6.0",
-    "@keyv/redis": "^4.3.2",
+    "@keyv/redis": "^4.3.3",
     "@paralleldrive/cuid2": "^2.2.2",
     "@tailor-cms/common": "workspace:^",
     "@tailor-cms/config": "workspace:*",
@@ -80,7 +80,7 @@
     "mkdirp": "^3.0.1",
     "multer": "^1.4.5-lts.2",
     "mustache": "^4.2.0",
-    "openai": "^4.91.0",
+    "openai": "^4.93.0",
     "openid-client": "^5.7.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -114,7 +114,9 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
+    "@types/json-schema": "^7.0.15",
     "dargs": "^8.1.0",
     "del-cli": "^6.0.0",
     "dotenv-cli": "^8.0.0",

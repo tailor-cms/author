@@ -6,16 +6,29 @@
     rounded="lg"
   >
     <div v-if="!isAiGeneratingContent" class="d-flex justify-end ma-3">
+      <AIPrompt
+        v-if="isAiEnabled && !disabled"
+        :content-elements="containerElements"
+        :inputs="aiInputs"
+        @generate="generateContent"
+      />
       <VBtn
         v-if="isAiEnabled && !disabled"
-        class="mr-3"
+        class="mx-3"
         color="teal-darken-2"
         size="small"
         variant="tonal"
-        @click="generateContent"
+        @click="
+          generateContent({
+            type: AiRequestType.Create,
+            text: 'Generate content for this page.',
+            responseSchema: AiResponseSchema.Html,
+            useImageGenerationTool: true,
+          })
+        "
       >
         Do the magic
-        <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
+        <VIcon end>mdi-magic-staff</VIcon>
       </VBtn>
       <VBtn
         v-if="!disabled"
@@ -110,6 +123,13 @@
 </template>
 
 <script lang="ts" setup>
+import type {
+  ContentElement,
+  Relationship,
+} from '@tailor-cms/interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { AiInput } from '@tailor-cms/interfaces/ai';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import {
   AddElement,
   CircularProgress,
@@ -117,16 +137,13 @@ import {
   ElementList,
   InlineActivator,
 } from '@tailor-cms/core-components';
+import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { computed, inject, ref } from 'vue';
-import type {
-  ContentElement,
-  Relationship,
-} from '@tailor-cms/interfaces/content-element';
-import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import filter from 'lodash/filter';
 import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
+
+import AIPrompt from './AIPrompt.vue';
 
 interface Props {
   name: string;
@@ -156,14 +173,29 @@ const emit = defineEmits([
 const doTheMagic = inject<any>('$doTheMagic');
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
+const aiInputs = ref<AiInput[]>([]);
 
-const generateContent = async () => {
+const generateContent = async (input: AiInput) => {
   isAiGeneratingContent.value = true;
-  const elements = await doTheMagic({ type: props.container.type });
+  aiInputs.value.push(input);
+  const elements = await doTheMagic({
+    containerType: props.container.type,
+    inputs: aiInputs.value,
+    content: JSON.stringify(containerElements.value),
+  });
+  const lastElementPosition =
+    containerElements.value?.length > 0
+      ? containerElements.value[containerElements.value.length - 1].position
+      : 0;
+  if (input.type === AiRequestType.Modify) {
+    containerElements.value.forEach((element: ContentElement) => {
+      emit('delete:element', element, true);
+    });
+  }
   elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,
-      position: index,
+      position: lastElementPosition + index + 1,
       activityId: props.container.id,
       repositoryId: props.container.repositoryId,
     });
