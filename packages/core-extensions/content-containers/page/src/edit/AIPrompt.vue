@@ -20,11 +20,11 @@
         variant="tonal"
         group
       >
-        <VBtn :value="AiRequestType.ADD">
+        <VBtn :value="AiRequestType.Add">
           <VIcon start>mdi-plus</VIcon>
           Add
         </VBtn>
-        <VBtn :value="AiRequestType.MODIFY">
+        <VBtn :value="AiRequestType.Modify">
           <VIcon start>mdi-update</VIcon>
           Modify
         </VBtn>
@@ -65,7 +65,7 @@ const emit = defineEmits<{
 
 const isVisible = ref(false);
 const promptText = ref('');
-const promptType = ref<AiRequestType>(AiRequestType.ADD);
+const promptType = ref<AiRequestType>(AiRequestType.Add);
 
 const onPromptSubmit = async () => {
   const text = promptText.value.trim();
@@ -73,7 +73,7 @@ const onPromptSubmit = async () => {
   emit('generate', {
     type: promptType.value,
     text,
-    responseSchema: AiResponseSchema.HTML,
+    responseSchema: AiResponseSchema.Html,
     useImageGenerationTool: true,
   });
   isVisible.value = false;

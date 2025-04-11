@@ -1,25 +1,25 @@
 export enum AiRequestType {
-  CREATE = 'CREATE',
-  ADD = 'ADD',
-  MODIFY = 'MODIFY',
+  Create = 'CREATE',
+  Add = 'ADD',
+  Modify = 'MODIFY',
 }
 
 export type AiRequestTypeLiteral = `${AiRequestType}`;
 
 export enum AiTargetAudience {
-  BEGINNER = 'BEGINNER',
-  INTERMEDIATE = 'INTERMEDIATE',
-  EXPERT = 'EXPERT',
+  Beginner = 'BEGINNER',
+  Intermediate = 'INTERMEDIATE',
+  Expert = 'EXPERT',
 }
 
 export type AiTargetAudienceLiteral = `${AiTargetAudience}`;
 
 export enum AiResponseSchema {
-  CUSTOM = 'CUSTOM',
-  HTML = 'HTML',
-  OUTLINE = 'OUTLINE',
-  QUESTION = 'QUESTION',
-  TAG = 'TAG',
+  Custom = 'CUSTOM',
+  Html = 'HTML',
+  Outline = 'OUTLINE',
+  Question = 'QUESTION',
+  Tag = 'TAG',
 }
 
 export type AiResponseSchemaLiteral = `${AiResponseSchema}`;

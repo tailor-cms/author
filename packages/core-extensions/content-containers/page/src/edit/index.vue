@@ -20,9 +20,9 @@
         variant="tonal"
         @click="
           generateContent({
-            type: AiRequestType.CREATE,
+            type: AiRequestType.Create,
             text: 'Generate content for this page.',
-            responseSchema: AiResponseSchema.HTML,
+            responseSchema: AiResponseSchema.Html,
             useImageGenerationTool: true,
           })
         "
@@ -187,7 +187,7 @@ const generateContent = async (input: AiInput) => {
     containerElements.value?.length > 0
       ? containerElements.value[containerElements.value.length - 1].position
       : 0;
-  if (input.type === AiRequestType.MODIFY) {
+  if (input.type === AiRequestType.Modify) {
     containerElements.value.forEach((element: ContentElement) => {
       emit('delete:element', element, true);
     });

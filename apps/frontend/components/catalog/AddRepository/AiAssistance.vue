@@ -123,9 +123,9 @@ const selectedTopicTags = ref([]);
 const styleTagOptions = ref([]);
 const selectedStyleTags = ref([]);
 const difficultyOptions: { [key: number]: AiTargetAudience } = {
-  0: AiTargetAudience.BEGINNER,
-  1: AiTargetAudience.INTERMEDIATE,
-  2: AiTargetAudience.EXPERT,
+  0: AiTargetAudience.Beginner,
+  1: AiTargetAudience.Intermediate,
+  2: AiTargetAudience.Expert,
 };
 const selectedDifficulty = ref(1);
 const outlineTree = ref<any>([]);
@@ -173,9 +173,9 @@ watch(isAssistaceEnabled, (value) => {
   }
   isFetchingData.value = true;
   const context = createAiContext({
-    type: AiRequestType.CREATE,
+    type: AiRequestType.Create,
     text: ambiguityPrompt,
-    responseSchema: AiResponseSchema.TAG,
+    responseSchema: AiResponseSchema.Tag,
   });
   aiAPI.generate(context).then(({ tags }) => {
     topicTagOptions.value = tags;
@@ -186,9 +186,9 @@ watch(isAssistaceEnabled, (value) => {
 const fetchStyle = () => {
   isFetchingData.value = true;
   const context = createAiContext({
-    type: AiRequestType.CREATE,
+    type: AiRequestType.Create,
     text: stylePrompt,
-    responseSchema: AiResponseSchema.TAG,
+    responseSchema: AiResponseSchema.Tag,
   });
   return aiAPI.generate(context).then(({ tags }) => {
     styleTagOptions.value = tags;
@@ -200,9 +200,9 @@ const fetchOutline = async () => {
   isFetchingData.value = true;
   statusMessage.value = 'Generating outline... This might take a while....';
   const context = createAiContext({
-    type: AiRequestType.CREATE,
+    type: AiRequestType.Create,
     text: 'Provide suggestion for the outline of the content.',
-    responseSchema: AiResponseSchema.OUTLINE,
+    responseSchema: AiResponseSchema.Outline,
     targetAudience: difficultyOptions[selectedDifficulty.value],
   });
   const activities = await aiAPI.generate(context);
