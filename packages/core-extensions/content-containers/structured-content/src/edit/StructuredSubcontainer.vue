@@ -68,7 +68,7 @@ const props = defineProps<{
   meta: any;
   isDisabled: boolean;
   layout?: boolean;
-  contentElementConfig: Array<any>;
+  contentElementConfig?: Array<any>;
 }>();
 
 const emit = defineEmits([
