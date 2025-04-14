@@ -3,11 +3,13 @@ import filter from 'lodash/filter';
 import flatMap from 'lodash/flatMap';
 import reduce from 'lodash/reduce';
 import { schema } from '@tailor-cms/config';
+import type { Guideline } from '@tailor-cms/interfaces/schema';
 
 import type { StoreContentElement } from './content-elements';
 import { useActivityStore, type StoreActivity } from './activity';
 import { useCommentStore } from './comments';
 import { useCurrentRepository } from './current-repository';
+import { useContentElementStore } from './content-elements';
 
 const { getDescendants } = activityUtils;
 
@@ -15,6 +17,8 @@ export const useEditorStore = defineStore('editor', () => {
   const repositoryStore = useCurrentRepository();
   const activityStore = useActivityStore();
   const commentStore = useCommentStore();
+  const elementStore = useContentElementStore();
+  const { $ceRegistry } = useNuxtApp();
 
   const repositoryId = computed(() => repositoryStore.repositoryId as number);
   const selectedActivityId = ref<number | null>(null);
@@ -25,6 +29,18 @@ export const useEditorStore = defineStore('editor', () => {
   const selectedActivity = computed(() => {
     if (!selectedActivityId.value) return null;
     return activityStore.findById(selectedActivityId.value);
+  });
+
+  const guidelines = computed(() => {
+    if (!repositoryStore.repository || !selectedActivity.value) return;
+    const { type } = selectedActivity.value;
+    const guidelines = schema.getLevel(type)?.guidelines?.(
+      repositoryStore.repository,
+      contentContainers.value,
+      elementStore.items,
+      $ceRegistry,
+    ) as Guideline[] | undefined;
+    return guidelines;
   });
 
   const rootContainerGroups = computed(() => {
@@ -101,6 +117,7 @@ export const useEditorStore = defineStore('editor', () => {
     showPublishDiff,
     rootContainerGroups,
     contentContainers,
+    guidelines,
     initialize,
     processCommentEvent,
     togglePublishDiff,
