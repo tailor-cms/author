@@ -77,7 +77,7 @@ const props = defineProps<{
   isDisabled: boolean;
   layout?: boolean;
   supportedTypes?: any[];
-  supportedElementConfig: any[];
+  supportedElementConfig?: any[];
 }>();
 
 const emit = defineEmits(['save:element', 'delete:element', 'reorder:element']);

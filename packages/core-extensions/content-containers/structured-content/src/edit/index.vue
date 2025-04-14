@@ -22,6 +22,7 @@
           :elements="elements"
           :container="subcontainer"
           :is-disabled="disabled"
+          :content-element-config="contentElementConfig"
           @add:element="emit('add:element', $event)"
           @save:element="emit('save:element', $event)"
           @delete:element="emit('delete:element', $event)"
@@ -72,6 +73,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { cloneDeep, filter, find, findIndex } from 'lodash';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 import type { Activity } from '@tailor-cms/interfaces/activity.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element.js';
@@ -89,6 +91,8 @@ interface Props {
   elements: Record<string, ContentElement>;
   config: any;
   disabled?: boolean;
+  embedElementConfig?: ContentElementCategory[];
+  contentElementConfig?: ContentElementCategory[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
