@@ -51,7 +51,7 @@ const PAGE: ActivityConfig = {
 };
 
 // This is a Content Container definition.
-// We are going to use 'DEFAULT' container which is provided with Tailor
+// We are going to use 'DEFAULT' container template which is provided with Tailor.
 // 'DEFAULT' container is just a list of Content Elements which are enabled
 // by adding it to the `contentElementConfig` config
 const SECTION: ContentContainerConfig = {
