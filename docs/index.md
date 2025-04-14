@@ -10,7 +10,7 @@ hero:
   actions:
     - theme: brand
       text: Get started ->
-      link: /dev/general/setup
+      link: /overview
 
 features:
   - icon: ⚡️
