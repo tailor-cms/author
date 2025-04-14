@@ -159,6 +159,7 @@ const props = withDefaults(defineProps<Props>(), {
   dense: false,
   collapsable: false,
   isDirty: false,
+  expanded: true,
 });
 
 const emit = defineEmits([
