@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress';
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: 'Tailor',
+  title: 'Tailor Author',
   base: '/',
   description: 'Tailor docs',
   // In order to avoid errors for localhost:8080
