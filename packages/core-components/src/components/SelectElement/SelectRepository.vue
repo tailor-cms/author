@@ -2,6 +2,7 @@
   <VAutocomplete
     :items="repositories"
     :loading="loading"
+    :menu-props="{ maxWidth: '100%' }"
     :model-value="repository"
     item-title="name"
     item-value="id"
