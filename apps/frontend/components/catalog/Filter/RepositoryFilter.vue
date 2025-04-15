@@ -14,6 +14,7 @@
           <VBtn
             v-bind="{ ...menuProps, ...tooltipProps }"
             :icon="icon"
+            :aria-label="props.label"
             color="primary-lighten-2"
             variant="text"
           />
@@ -41,8 +42,11 @@
         return-object
         @click:select="emit('update', $event.id)"
       >
-        <template #prepend="{ isSelected }">
-          <VCheckboxBtn :model-value="isSelected" />
+        <template #prepend="{ isSelected, select }">
+          <VCheckboxBtn
+            :model-value="isSelected"
+            @click="select"
+          />
         </template>
       </VList>
       <div v-else class="d-flex align-center py-5 px-6 text-primary-darken-2">
