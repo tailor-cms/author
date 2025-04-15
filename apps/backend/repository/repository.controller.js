@@ -8,7 +8,6 @@ import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import { repository as role } from '@tailor-cms/common/src/role.js';
 import sample from 'lodash/sample.js';
 import { schema } from '@tailor-cms/config';
 import { snakeCase } from 'change-case';

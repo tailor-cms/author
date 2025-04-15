@@ -26,9 +26,9 @@ export const toEmptyRepository = async (
 export const toSeededRepository = async (
   page: Page,
   name?: string,
-  userEmail?: string,
+  authorEmail?: string,
 ) => {
-  const { data } = await SeedClient.seedTestRepository({ name, userEmail });
+  const { data } = await SeedClient.seedTestRepository({ name, authorEmail });
   const { repository, activity } = data;
   await page.goto(`/repository/${repository.id}/root/structure`);
   return { repository, activity };
@@ -43,9 +43,9 @@ export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
 
 export const toSeededRepositorySettings = async (
   page: Page,
-  userEmail?: string,
+  authorEmail?: string,
 ) => {
-  const { data } = await SeedClient.seedTestRepository({ userEmail });
+  const { data } = await SeedClient.seedTestRepository({ authorEmail });
   const { repository, activity } = data;
   await page.goto(`/repository/${repository.id}/root/settings/general`);
   return { repository, activity };
