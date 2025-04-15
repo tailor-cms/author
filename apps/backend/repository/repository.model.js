@@ -213,6 +213,7 @@ class Repository extends Model {
         userId: context.userId,
         repositoryId: dst.id,
         role: RepositoryRole.ADMIN,
+        hasAccess: true,
       },
       { transaction },
     );

@@ -29,6 +29,7 @@ async function seedRepository(req, res) {
   const data = await SeedService.importRepositoryArchive(
     req.body.name,
     req.body.description,
+    req.body.userEmail,
   );
   return res.json({ data });
 }

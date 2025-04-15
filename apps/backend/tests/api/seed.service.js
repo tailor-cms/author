@@ -64,12 +64,15 @@ class SeedService {
   async importRepositoryArchive(
     name = `Test ${crypto.randomBytes(12).toString('hex')}`,
     description = `Test repository description`,
+    userEmail = null,
   ) {
     // Get seed repository path
     const appDir = await packageDirectory();
     const projectDir = await packageDirectory({ cwd: path.join(appDir, '..') });
     const seedPath = path.join(projectDir, '/tests/fixtures/pizza.tgz');
-    const user = await User.findOne({ where: { email: DEFAULT_USER.email } });
+    const user = await User.findOne({
+      where: { email: userEmail || DEFAULT_USER.email },
+    });
     if (!user) throw new Error('Seed user not found');
     const options = {
       name,

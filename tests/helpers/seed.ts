@@ -23,8 +23,12 @@ export const toEmptyRepository = async (
   return repository;
 };
 
-export const toSeededRepository = async (page: Page, name?: string) => {
-  const { data } = await SeedClient.seedTestRepository({ name });
+export const toSeededRepository = async (
+  page: Page,
+  name?: string,
+  userEmail?: string,
+) => {
+  const { data } = await SeedClient.seedTestRepository({ name, userEmail });
   const { repository, activity } = data;
   await page.goto(`/repository/${repository.id}/root/structure`);
   return { repository, activity };
@@ -37,8 +41,11 @@ export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
   return repository;
 };
 
-export const toSeededRepositorySettings = async (page: Page) => {
-  const { data } = await SeedClient.seedTestRepository();
+export const toSeededRepositorySettings = async (
+  page: Page,
+  userEmail?: string,
+) => {
+  const { data } = await SeedClient.seedTestRepository({ userEmail });
   const { repository, activity } = data;
   await page.goto(`/repository/${repository.id}/root/settings/general`);
   return { repository, activity };
