@@ -120,6 +120,25 @@ class Repository extends Model {
     );
   }
 
+  static async createByUser(data, { context, transaction } = {}) {
+    const RepositoryUser = this.sequelize.model('RepositoryUser');
+    const repository = await Repository.create(data, {
+      context,
+      returning: true,
+      transaction,
+    });
+    await RepositoryUser.create(
+      {
+        userId: context.userId,
+        repositoryId: repository.id,
+        role: RepositoryRole.ADMIN,
+        hasAccess: true,
+      },
+      { transaction },
+    );
+    return repository;
+  }
+
   async hasAccess(user) {
     const UserGroup = this.sequelize.model('UserGroup');
     // If user is a system admin, allow all
@@ -199,24 +218,14 @@ class Repository extends Model {
 
   async clone(name, description, context) {
     const Repository = this.sequelize.model('Repository');
-    const RepositoryUser = this.sequelize.model('RepositoryUser');
     const Activity = this.sequelize.model('Activity');
     const srcAttributes = pick(this, ['schema', 'data']);
     const dstAttributes = Object.assign(srcAttributes, { name, description });
     const transaction = await this.sequelize.transaction();
-    const dst = await Repository.create(dstAttributes, {
+    const dst = await Repository.createByUser(dstAttributes, {
       context,
       transaction,
     });
-    await RepositoryUser.create(
-      {
-        userId: context.userId,
-        repositoryId: dst.id,
-        role: RepositoryRole.ADMIN,
-        hasAccess: true,
-      },
-      { transaction },
-    );
     const src = await Activity.findAll({
       where: { repositoryId: this.id, parentId: null },
       transaction,

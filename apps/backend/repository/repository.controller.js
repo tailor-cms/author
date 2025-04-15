@@ -141,20 +141,12 @@ async function index({ query, user, opts }, res) {
 async function create({ user, body }, res) {
   const defaultMeta = getVal(schema.getSchema(body.schema), 'defaultMeta', {});
   const data = { color: sample(DEFAULT_COLORS), ...defaultMeta, ...body.data };
-  const repository = await Repository.create(
+  const repository = await Repository.createByUser(
     { ...body, data },
     {
-      isNewRecord: true,
-      returning: true,
       context: { userId: user.id },
     },
   );
-  await RepositoryUser.create({
-    repositoryId: repository.id,
-    userId: user.id,
-    role: role.ADMIN,
-    hasAccess: true,
-  });
   if (body.userGroupIds) {
     await repository.associateWithUserGroups(body.userGroupIds, user);
   }
