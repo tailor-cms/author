@@ -93,7 +93,6 @@ async function index({ query, user, opts }, res) {
   const { search, name, userGroupId } = query;
   const schemas = query.schemas || general.availableSchemas;
   opts.distinct = true;
-  opts.subQuery = false;
   opts.include = [
     includeRepositoryUser(user, query),
     { model: RepositoryUserGroup },
