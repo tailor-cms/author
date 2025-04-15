@@ -4,6 +4,7 @@ import intersection from 'lodash/intersection.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
+import { RepositoryRole } from '@tailor-cms/common/src/role.js';
 import { schema } from '@tailor-cms/config';
 
 const { getRepositoryRelationships, getSchema } = schema;
@@ -196,27 +197,36 @@ class Repository extends Model {
     );
   }
 
-  clone(name, description, context) {
+  async clone(name, description, context) {
     const Repository = this.sequelize.model('Repository');
+    const RepositoryUser = this.sequelize.model('RepositoryUser');
     const Activity = this.sequelize.model('Activity');
     const srcAttributes = pick(this, ['schema', 'data']);
     const dstAttributes = Object.assign(srcAttributes, { name, description });
-    return this.sequelize.transaction(async (transaction) => {
-      const dst = await Repository.create(dstAttributes, {
-        context,
-        transaction,
-      });
-      const src = await Activity.findAll({
-        where: { repositoryId: this.id, parentId: null },
-        transaction,
-      });
-      const idMap = await Activity.cloneActivities(src, dst.id, null, {
-        context,
-        transaction,
-      });
-      await dst.mapClonedReferences(idMap, transaction);
-      return dst;
+    const transaction = await this.sequelize.transaction();
+    const dst = await Repository.create(dstAttributes, {
+      context,
+      transaction,
     });
+    await RepositoryUser.create(
+      {
+        userId: context.userId,
+        repositoryId: dst.id,
+        role: RepositoryRole.ADMIN,
+      },
+      { transaction },
+    );
+    const src = await Activity.findAll({
+      where: { repositoryId: this.id, parentId: null },
+      transaction,
+    });
+    const idMap = await Activity.cloneActivities(src, dst.id, null, {
+      context,
+      transaction,
+    });
+    await dst.mapClonedReferences(idMap, transaction);
+    await transaction.commit();
+    return dst;
   }
 
   // Check if there is at least one outline activity with unpublished
