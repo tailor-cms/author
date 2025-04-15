@@ -14,6 +14,7 @@
           <VBtn
             v-bind="{ ...menuProps, ...tooltipProps }"
             :icon="icon"
+            :aria-label="props.label"
             color="primary-lighten-2"
             variant="text"
           />
