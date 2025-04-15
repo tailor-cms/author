@@ -133,6 +133,19 @@ test('should be able to tag a repository', async ({ page }) => {
   await expect(repositoryCard.el.getByText('tag1')).toBeVisible();
 });
 
+test('should be able to filter by tag', async ({ page }) => {
+  await SeedClient.seedCatalog();
+  await page.reload();
+  const catalog = new Catalog(page);
+  const repositoryCard = new RepositoryCard(
+    page,
+    catalog.getFirstRepositoryCard(),
+  );
+  await repositoryCard.addTag('tag1');
+  await catalog.filterByTag('tag1');
+  await expect(catalog.getRepositoryCards()).toHaveCount(1);
+});
+
 test('should be able to delete a tag', async ({ page }) => {
   await SeedClient.seedCatalog();
   await page.reload();
@@ -147,6 +160,14 @@ test('should be able to delete a tag', async ({ page }) => {
   // TODO: Check why reload is needed for the CI run
   await page.reload();
   await expect(page.getByText('tag1')).not.toBeVisible();
+});
+
+test('should be able to filter by schema', async ({ page }) => {
+  await SeedClient.seedCatalog();
+  await page.reload();
+  const catalog = new Catalog(page);
+  await catalog.filterBySchema('Course');
+  await expect(catalog.getRepositoryCards()).toHaveCount(15);
 });
 
 test.afterAll(async () => {
