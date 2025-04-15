@@ -34,7 +34,7 @@
         min-width="300"
         variant="outlined"
         hide-details
-        @update:model-value="() => repositoryStore.fetch()"
+        @update:model-value="onUserGroupChange"
       >
         <template #selection="{ item }">
           <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
@@ -143,6 +143,11 @@ const routes = computed(() => {
 const showUserGroupSelect = computed(
   () => authStore.userGroups.length > 0 && route.name === 'catalog',
 );
+
+const onUserGroupChange = async () => {
+  repositoryStore.resetPaginationParams();
+  await repositoryStore.fetch();
+};
 
 const logout = async () => {
   if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {
