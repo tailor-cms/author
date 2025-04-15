@@ -46,7 +46,7 @@ class SeedService {
     if (!user) throw new Error('Seed user not found');
     const opts = { context: { userId: user.id } };
     const repositories = await Promise.all(
-      repositorySeed.map((it) => Repository.create(it, opts)));
+      repositorySeed.map((it) => Repository.createByUser(it, opts)));
     if (userGroup?.name) {
       const [group] = await UserGroup.findOrCreate({
         where: { name: userGroup.name },
