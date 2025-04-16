@@ -1,7 +1,7 @@
 {
   "name": "tailor-cms",
-  "version": "8.0.0-beta.0",
-  "codename": "X",
+  "version": "8.0.0",
+  "codename": "Quilt",
   "description": "Next-gen Tailor",
   "license": "MIT",
   "type": "module",
