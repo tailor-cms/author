@@ -57,7 +57,7 @@ code, making it easier to create, manage, and update cloud resources.
 7. **Invite admin**
 
     ```sh
-    cd apps/backend
+    cd /tailor/apps/backend
     pnpm invite:admin admin@example.com
     ```
 

@@ -5,7 +5,7 @@
       <VForm ref="form" validate-on="submit" novalidate @submit.prevent="save">
         <div class="mb-8">
           <div
-            v-for="{ key, label } in haesParams"
+            v-for="{ key, label } in heasParams"
             :key="label"
             class="d-flex align-center"
           >
@@ -57,9 +57,9 @@ import { computed, ref, watch } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { RichTextEditor, TailorDialog } from '@tailor-cms/core-components';
-import { haesParams } from './utils';
+import { heasParams } from './utils';
 
-const initializeRating = () => haesParams.reduce((acc, { key }) => {
+const initializeRating = () => heasParams.reduce((acc, { key }) => {
   acc[key] = 0;
   return acc;
 }, {});

@@ -1,4 +1,4 @@
-export const haesParams = [
+export const heasParams = [
   { key: 'learnerCenteredContent', label: 'Learner Centered Content' },
   { key: 'activeLearning', label: 'Active Learning' },
   { key: 'unboundedInclusion', label: 'Unbounded Inclusion' },
