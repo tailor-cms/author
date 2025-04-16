@@ -63,8 +63,8 @@ const PageConfig: ActivityConfig = {
   ],
   meta: [
     {
-      key: 'haesRating',
-      type: MetaInputType.HaesRating,
+      key: 'HeasRating',
+      type: MetaInputType.HeasRating,
       label: 'HE@S rating',
       reviewable: true,
       hideOnCreate: true,

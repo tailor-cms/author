@@ -66,6 +66,10 @@ export default defineConfig({
                 text: 'Repository structure',
                 link: '/dev/configuration/structure',
               },
+              {
+                text: 'Configurable inputs',
+                link: '/dev/configuration/meta-inputs',
+              },
             ],
           },
           {
