@@ -1,7 +1,7 @@
 {
   "name": "tailor-server",
-  "version": "7.1.0",
-  "codename": "X",
+  "version": "8.0.0",
+  "codename": "Quilt",
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",
   "imports": {
