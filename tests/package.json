@@ -9,17 +9,17 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.1",
-    "@percy/cli": "^1.30.9",
-    "@percy/playwright": "^1.0.7",
+    "@percy/cli": "^1.30.10",
+    "@percy/playwright": "^1.0.8",
     "@playwright/test": "1.51.1",
-    "@types/node": "^22.14.0"
+    "@types/node": "^22.14.1"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.6.0",
+    "@faker-js/faker": "^9.7.0",
     "@tailor-cms/garment": "^0.18.1-beta.2",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.4.7",
-    "jsdom": "^26.0.0",
+    "dotenv": "^16.5.0",
+    "jsdom": "^26.1.0",
     "lodash": "^4.17.21",
     "mailtrap": "^4.0.0",
     "tailor-seed": "workspace:^"
