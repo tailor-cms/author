@@ -34,7 +34,7 @@
     </div>
     <div v-if="isEditing" class="py-3">
       <div
-        v-for="{ key, label } in haesParams"
+        v-for="{ key, label } in heasParams"
         :key="key"
         class="d-flex align-center my-2"
       >
@@ -128,7 +128,7 @@ import { computed, ref } from 'vue';
 import { RadarChart } from '@tailor-cms/core-components';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
-import { haesParams } from './utils';
+import { heasParams } from './utils';
 import RateDialog from './RateDialog.vue';
 
 interface Props {
@@ -158,10 +158,10 @@ const isEditable = computed(() => {
 });
 
 const chartData = computed(() => ({
-  labels: haesParams.map((it) => it.label.split(' ')),
+  labels: heasParams.map((it) => it.label.split(' ')),
   datasets: [
     {
-      data: haesParams.map(({ key }) => input.value?.rating[key]),
+      data: heasParams.map(({ key }) => input.value?.rating[key]),
       backgroundColor: props.dark ? '#ECEFF140' : '#455A6433',
       borderColor: props.dark ? '#ECEFF1BF' : '#455A64BF',
       borderWidth: 1,

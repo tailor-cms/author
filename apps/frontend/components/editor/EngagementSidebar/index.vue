@@ -84,7 +84,7 @@ const ratings = computed(() => {
   };
 });
 
-const haesParams = [
+const heasParams = [
   { key: 'learnerCenteredContent', label: 'Learner Centered Content' },
   { key: 'activeLearning', label: 'Active Learning' },
   { key: 'unboundedInclusion', label: 'Unbounded Inclusion' },
@@ -93,10 +93,10 @@ const haesParams = [
 ];
 
 const chartData = computed(() => ({
-  labels: haesParams.map((it) => it.label.split(' ')),
+  labels: heasParams.map((it) => it.label.split(' ')),
   datasets: [
     {
-      data: haesParams.map(({ key }) => ratings.value[key]),
+      data: heasParams.map(({ key }) => ratings.value[key]),
       backgroundColor: '#ECEFF140',
       borderColor: '#ECEFF1BF',
       borderWidth: 1,

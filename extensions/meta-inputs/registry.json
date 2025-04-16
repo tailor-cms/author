@@ -40,8 +40,8 @@
     "clientPackage": "@tailor-cms/tme-datetime"
   },
   {
-    "name": "@tailor-cms/tme-haes-rating",
-    "clientPackage": "@tailor-cms/tme-haes-rating"
+    "name": "@tailor-cms/tme-heas-rating",
+    "clientPackage": "@tailor-cms/tme-heas-rating"
   },
   {
     "name": "@tailor-cms/tme-text-field",

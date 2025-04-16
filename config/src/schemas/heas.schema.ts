@@ -212,8 +212,8 @@ export const SCHEMA: Schema = {
   contentContainers: [StructuredContentContainer],
   meta: [
     {
-      key: 'haesRating',
-      type: MetaInputType.HaesRating,
+      key: 'heasRating',
+      type: MetaInputType.HeasRating,
       label: 'HE@S rating',
       hideOnCreate: false,
     },

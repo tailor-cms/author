@@ -9,6 +9,6 @@ export const MetaInputType = {
   Combobox: 'COMBOBOX',
   Select: 'SELECT',
   Datetime: 'DATETIME',
-  HaesRating: 'HAES_RATING',
+  HeasRating: 'HEAS_RATING',
   TextField: 'TEXT_FIELD',
 };
