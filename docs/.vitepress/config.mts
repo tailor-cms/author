@@ -67,7 +67,7 @@ export default defineConfig({
                 link: '/dev/configuration/structure',
               },
               {
-                text: 'Configurable inputs',
+                text: 'Meta inputs',
                 link: '/dev/configuration/meta-inputs',
               },
             ],

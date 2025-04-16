@@ -1,4 +1,4 @@
-# Configurable inputs
+# Meta inputs
 
 ## Overview
 
@@ -15,7 +15,7 @@ the Extensions section.
 ### Base interface
 
 ```ts
-interface ConfigurableInput {
+interface MetaInput {
   // Used to resolve correct input component
   type: string;
   // Key for the data storage
