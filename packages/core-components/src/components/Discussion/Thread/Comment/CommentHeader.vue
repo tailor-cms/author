@@ -44,7 +44,7 @@
         </template>
       </div>
     </div>
-    <div v-if="showOptions" class="actions">
+    <div v-if="showOptions && !isEditing" class="actions">
       <VBtn
         v-for="{ action, icon, label, color } in options"
         :key="action"
@@ -70,7 +70,7 @@ import type { User } from '@tailor-cms/interfaces/user';
 import EditorLink from '../../../EditorLink.vue';
 import UserAvatar from '../../..//UserAvatar.vue';
 
-type Action = 'resolve' | 'toggleEdit' | 'remove';
+type Action = 'resolve' | 'enableEdit' | 'remove';
 
 interface Option {
   action: Action;
@@ -84,16 +84,18 @@ interface Props {
   comment: Comment;
   isActivityThread?: boolean;
   isResolved?: boolean;
+  isEditing?: boolean;
   elementLabel?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isActivityThread: false,
   isResolved: false,
+  isEditing: false,
   elementLabel: '',
 });
 
-const emit = defineEmits(['remove', 'resolve', 'toggleEdit']);
+const emit = defineEmits(['remove', 'resolve', 'enableEdit']);
 
 const OPTIONS: Record<string, Option> = {
   resolve: {
@@ -104,7 +106,7 @@ const OPTIONS: Record<string, Option> = {
   },
   edit: {
     label: 'Edit comment',
-    action: 'toggleEdit',
+    action: 'enableEdit',
     icon: 'pencil-outline',
     color: 'teal-lighten-3',
   },

@@ -4,13 +4,14 @@
       v-bind="{
         comment,
         isActivityThread,
+        isEditing,
         isResolved,
         elementLabel,
         user,
       }"
       @remove="remove"
       @resolve="handleResolvementUpdate"
-      @toggle-edit="toggleEdit"
+      @enable-edit="isEditing = true"
     />
     <div class="comment-body">
       <CommentPreview
@@ -80,13 +81,9 @@ const content = ref(props.comment.content);
 const isEditing = ref(false);
 const isResolved = computed(() => !!props.comment.resolvedAt);
 
-const toggleEdit = () => {
-  isEditing.value = !isEditing.value;
-};
-
 const save = () => {
   if (!content.value) return remove();
-  toggleEdit();
+  isEditing.value = false;
   emit('update', props.comment, content.value);
 };
 
