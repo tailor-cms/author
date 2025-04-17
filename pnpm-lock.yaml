@@ -739,7 +739,7 @@ importers:
         version: link:../../packages/core-extensions/meta-inputs/meta-file
       '@tailor-cms/tme-heas-rating':
         specifier: workspace:^
-        version: link:../../packages/core-extensions/meta-inputs/meta-haes-rating
+        version: link:../../packages/core-extensions/meta-inputs/meta-heas-rating
       '@tailor-cms/tme-html':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-html
@@ -1054,7 +1054,7 @@ importers:
         specifier: ^4.17.16
         version: 4.17.16
 
-  packages/core-extensions/meta-inputs/meta-haes-rating:
+  packages/core-extensions/meta-inputs/meta-heas-rating:
     dependencies:
       '@tailor-cms/core-components':
         specifier: workspace:*
