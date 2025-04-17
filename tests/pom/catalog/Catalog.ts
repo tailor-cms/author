@@ -64,7 +64,7 @@ export class Catalog {
     await this.tagsFilterBtn.click();
     await this.page
       .locator('.v-list-item-title')
-      .filter({ hasText: tag })
+      .getByText(tag, { exact: true })
       .click();
   }
 
@@ -72,7 +72,7 @@ export class Catalog {
     await this.schemaFilterBtn.click();
     await this.page
       .locator('.v-list-item-title')
-      .filter({ hasText: schema }).first()
+      .getByText(schema, { exact: true })
       .click();
   }
 }
