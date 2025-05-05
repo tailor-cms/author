@@ -58,7 +58,7 @@ export const getEnvVariables = (db: studion.Database) => [
   { name: 'FLAT_REPO_STRUCTURE', value: 'true' },
   {
     name: 'NUXT_PUBLIC_AVAILABLE_SCHEMAS',
-    value: schemaConfig.require('availableSchemas'),
+    value: schemaConfig.get('availableSchemas'),
   },
   ...getAiConfig(),
   ...getOidcConfig(),
