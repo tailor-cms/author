@@ -30,7 +30,7 @@
         </VBtn>
       </VBtnToggle>
       <VTextarea v-model="promptText" label="Prompt" variant="outlined" />
-      <VCardAction class="d-flex justify-end">
+      <VCardActions class="d-flex justify-end">
         <VBtn
           color="primary-lighten-3"
           density="comfortable"
@@ -40,7 +40,7 @@
           <VIcon start>mdi-magic-staff</VIcon>
           Generate
         </VBtn>
-      </VCardAction>
+      </VCardActions>
     </VCard>
   </VMenu>
 </template>
