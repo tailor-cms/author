@@ -14,8 +14,22 @@ const STACK = pulumi.getStack();
 const resourceNamePrefix = config.require('resourceNamePrefix');
 const fullPrefix = `${resourceNamePrefix}-${STACK}`;
 
-export const tailorImage = process.env.TAILOR_DOCKER_IMAGE;
-if (!tailorImage) throw new Error('Missing Tailor Docker image env variable!');
+function buildAndPushImage() {
+  const imageRepository = new aws.ecr.Repository('tailor-cms', {
+    forceDelete: true,
+  });
+  return new awsx.ecr.Image('author', {
+    repositoryUrl: imageRepository.repositoryUrl,
+    context: '..',
+    platform: 'linux/amd64',
+    args: {
+      ssh: 'default',
+    },
+  });
+}
+
+export const tailorImage =
+  process.env.TAILOR_DOCKER_IMAGE || buildAndPushImage().imageUri;
 
 const vpc = new awsx.ec2.Vpc(`${PROJECT_NAME}-vpc`, {
   enableDnsHostnames: true,
