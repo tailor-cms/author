@@ -25,18 +25,16 @@ import Revision from '../../revision/revision.model.js';
 import Comment from '../../comment/comment.model.js';
 import Tag from '../../tag/tag.model.js';
 import Hooks from './hooks.js';
-import config from './config.js';
 import { wrapMethods } from './helpers.js';
-import { createLogger } from '#logger';
+import config from '#config/database.js';
 /* eslint-enable */
 
 const require = createRequire(import.meta.url);
 const pkg = require('../../package.json');
 
-const logger = createLogger('db');
-const isProduction = process.env.NODE_ENV === 'production';
 const sequelize = createConnection(config);
 const { migrationsPath } = sequelizeConfig;
+const { logger } = config;
 
 function initialize() {
   const umzug = new Umzug({
@@ -79,7 +77,7 @@ function initialize() {
     .authenticate()
     .then(() => logger.info(getConfig(sequelize), '🗄️  Connected to database'))
     .then(() => checkPostgreVersion(sequelize))
-    .then(() => !isProduction && umzug.up())
+    .then(() => config.migrateOnStartup && umzug.up())
     .then(() => umzug.executed())
     .then((migrations) => {
       const files = migrations.map((it) => it.name);
