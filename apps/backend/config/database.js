@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import yn from 'yn';
 
-import { createLogger, Level } from '#logger';
+import { createLogger } from '#logger';
 
 function parseConfig(config = process.env) {
   const DATABASE_URI = config.DATABASE_URI || config.POSTGRES_URI;

@@ -1,7 +1,7 @@
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 
-import { isProduction } from '#config';
+import { isProduction } from '#config/runtime.js';
 import { defaultLevel } from '#config/logger.js';
 
 const prettyTransport = {
