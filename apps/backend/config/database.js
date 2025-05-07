@@ -25,7 +25,7 @@ function parseConfig(config = process.env) {
   };
 }
 
-const logger = createLogger('db', { level: Level.DEBUG });
+const logger = createLogger('db');
 
 const config = {
   ...parseConfig(),
