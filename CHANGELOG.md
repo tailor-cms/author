@@ -1,5 +1,14 @@
 # Changelog
 
+## v8.0.1
+
+#### Changes
+- Decoupled the automatic execution of database migrations from the `NODE_ENV`
+  flag. This behavior is now controlled by the 
+  `DATABASE_DISABLE_MIGRATIONS_ON_STARTUP` flag.
+- Added the ability to build a Docker image when running `pulumi up`,
+  eliminating the need to provide an image URL.
+
 ## v8.0
 
 #### Changes
