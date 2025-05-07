@@ -2,7 +2,7 @@ import pino from 'pino';
 import pinoHttp from 'pino-http';
 
 import { isProduction } from '#config/runtime.js';
-import { defaultLevel } from '#config/logger.js';
+import { logLevel } from '#config/logger.js';
 
 const prettyTransport = {
   target: 'pino-pretty',
@@ -10,12 +10,12 @@ const prettyTransport = {
 };
 
 const transport = isProduction ? undefined : prettyTransport;
-export const createLogger = (name, opts = {}) =>
+export const createLogger = (name) =>
   pino({
     name,
-    level: opts.level || defaultLevel,
+    level: logLevel,
     transport,
   });
 
 export const createHttpLogger = () =>
-  pinoHttp({ transport });
+  pinoHttp({ transport, level: logLevel });

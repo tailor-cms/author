@@ -22,9 +22,7 @@ function getSsmParam(key: string) {
 }
 
 export const getEnvVariables = (db: studion.Database): any => [
-  // Will trigger DB migrations on startup
-  { name: 'NODE_ENV', value: 'development' },
-  { name: 'LOG_LEVEL', value: 'INFO' },
+  { name: 'LOG_LEVEL', value: 'info' },
   { name: 'HOSTNAME', value: dnsConfig.require('domain') },
   { name: 'PROTOCOL', value: 'https' },
   { name: 'PORT', value: '3000' }, // Internal service port

@@ -16,4 +16,4 @@ if (!Object.values(Level).includes(parsedLevel)) {
   throw new Error(`Invalid log level: ${parsedLevel}`);
 }
 
-export const defaultLevel = parsedLevel;
+export const logLevel = parsedLevel;
