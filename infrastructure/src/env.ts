@@ -21,7 +21,7 @@ function getSsmParam(key: string) {
   return pulumi.interpolate`${baseArn}:${accountId}:parameter/${prefix}/${key}`;
 }
 
-export const getEnvVariables = (db: studion.Database) => [
+export const getEnvVariables = (db: studion.Database): any => [
   // Will trigger DB migrations on startup
   { name: 'NODE_ENV', value: 'development' },
   { name: 'LOG_LEVEL', value: 'INFO' },
@@ -98,7 +98,7 @@ function getOidcConfig() {
     },
     {
       name: 'NUXT_PUBLIC_OIDC_LOGOUT_ENABLED',
-      value: oidcConfg.require('logoutEnabled'),
+      value: oidcConfg.get('logoutEnabled'),
     },
     { name: 'OIDC_ALLOW_SIGNUP', value: oidcConfg.require('allowSignup') },
     {
@@ -110,11 +110,11 @@ function getOidcConfig() {
     { name: 'OIDC_JWKS_URL', value: oidcConfg.require('jwksUrl') },
     {
       name: 'OIDC_LOGOUT_ENDPOINT',
-      value: oidcConfg.require('logoutEndpoint'),
+      value: oidcConfg.get('logoutEndpoint'),
     },
     {
       name: 'OIDC_POST_LOGOUT_URI_KEY',
-      value: oidcConfg.require('postLogoutUriKey'),
+      value: oidcConfg.get('postLogoutUriKey'),
     },
     {
       name: 'OIDC_TOKEN_ENDPOINT',
