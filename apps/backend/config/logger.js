@@ -10,10 +10,8 @@ export const Level = {
   Silent: 'silent',
 };
 
-const parsedLevel = env.LOG_LEVEL?.toLowerCase() || Level.Info;
+export const logLevel = env.LOG_LEVEL?.toLowerCase() || Level.Info;
 
-if (!Object.values(Level).includes(parsedLevel)) {
-  throw new Error(`Invalid log level: ${parsedLevel}`);
+if (!Object.values(Level).includes(logLevel)) {
+  throw new Error(`Invalid log level: ${logLevel}`);
 }
-
-export const logLevel = parsedLevel;
