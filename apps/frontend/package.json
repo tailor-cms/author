@@ -8,7 +8,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^2.3.2",
+    "@nuxt/devtools": "^2.4.0",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
@@ -17,17 +17,17 @@
     "@types/pluralize": "^0.0.33",
     "@types/promise-queue": "^2.2.3",
     "autoprefixer": "^10.4.21",
-    "nuxt": "3.16.2",
-    "sass": "^1.86.3",
+    "nuxt": "3.17.2",
+    "sass": "^1.88.0",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.1"
   },
   "dependencies": {
     "@mdi/font": "7.4.47",
     "@paralleldrive/cuid2": "^2.2.2",
     "@pinia/nuxt": "^0.10.1",
-    "@statsig/js-client": "^3.15.3",
-    "@statsig/web-analytics": "^3.15.3",
+    "@statsig/js-client": "^3.16.1",
+    "@statsig/web-analytics": "^3.16.1",
     "@tailor-cms/common": "workspace:*",
     "@tailor-cms/config": "workspace:*",
     "@tailor-cms/content-container-collection": "workspace:^",
@@ -38,7 +38,7 @@
     "@vee-validate/i18n": "^4.15.0",
     "@vee-validate/rules": "^4.15.0",
     "@vueuse/core": "^13.1.0",
-    "axios": "^1.8.4",
+    "axios": "^1.9.0",
     "bluebird": "^3.7.2",
     "compressorjs": "^1.2.1",
     "date-fns": "^4.1.0",
@@ -59,7 +59,7 @@
     "vee-validate": "4.15.0",
     "vue3-tree-vue": "^2.0.13",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.8.1",
+    "vuetify": "3.8.4",
     "yup": "^1.6.1"
   }
 }
