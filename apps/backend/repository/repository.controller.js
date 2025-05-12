@@ -8,16 +8,17 @@ import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import { repository as role } from '@tailor-cms/common/src/role.js';
 import sample from 'lodash/sample.js';
 import { schema } from '@tailor-cms/config';
 import { snakeCase } from 'change-case';
+
 import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import publishingService from '#shared/publishing/publishing.service.js';
 import db from '#shared/database/index.js';
 import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { general } from '#config';
+import { subQuery } from '#shared/database/helpers.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 import UserGroup from '#app/user-group/userGroup.model.js';
 
@@ -26,6 +27,16 @@ const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 const miss = Promise.promisifyAll((await import('mississippi')).default);
 const tmp = Promise.promisifyAll((await import('tmp')).default, {
   multiArgs: true,
+});
+
+const selectUserRepositories = (userId) => subQuery(RepositoryUser, {
+  attributes: ['repository_id'],
+  where: { user_id: userId, has_access: true },
+});
+
+const selectGroupRepositories = (groupId) => subQuery(RepositoryUserGroup, {
+  attributes: ['repository_id'],
+  where: { group_id: groupId },
 });
 
 const {
@@ -93,7 +104,6 @@ async function index({ query, user, opts }, res) {
   const { search, name, userGroupId } = query;
   const schemas = query.schemas || general.availableSchemas;
   opts.distinct = true;
-  opts.subQuery = false;
   opts.include = [
     includeRepositoryUser(user, query),
     { model: RepositoryUserGroup },
@@ -104,19 +114,12 @@ async function index({ query, user, opts }, res) {
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   if (userGroupId) {
-    opts.where['$repositoryUserGroups.group_id$'] = userGroupId;
+    opts.where.id = { [Op.in]: selectGroupRepositories(userGroupId) };
   }
   if (!user.isAdmin()) {
     opts.where[Op.or] = [
-      {
-        '$repositoryUsers.user_id$': user.id,
-        '$repositoryUsers.has_access$': true,
-      },
-      {
-        '$repositoryUserGroups.group_id$': {
-          [Op.in]: user.userGroups.map((it) => it.id),
-        },
-      },
+      { id: { [Op.in]: selectUserRepositories(user.id) } },
+      { id: { [Op.in]: selectGroupRepositories(map(user.userGroups, 'id')) } },
     ];
   }
   const { rows: repositories, count } = await Repository.findAndCountAll(opts);
@@ -141,20 +144,12 @@ async function index({ query, user, opts }, res) {
 async function create({ user, body }, res) {
   const defaultMeta = getVal(schema.getSchema(body.schema), 'defaultMeta', {});
   const data = { color: sample(DEFAULT_COLORS), ...defaultMeta, ...body.data };
-  const repository = await Repository.create(
+  const repository = await Repository.createByUser(
     { ...body, data },
     {
-      isNewRecord: true,
-      returning: true,
       context: { userId: user.id },
     },
   );
-  await RepositoryUser.create({
-    repositoryId: repository.id,
-    userId: user.id,
-    role: role.ADMIN,
-    hasAccess: true,
-  });
   if (body.userGroupIds) {
     await repository.associateWithUserGroups(body.userGroupIds, user);
   }

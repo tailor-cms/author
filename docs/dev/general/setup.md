@@ -8,8 +8,8 @@ This guide is designed to help you prepare your development machine for Tailor
 development. You have two primary options for setting up the necessary 
 dependencies:
 
-- **Using Docker:** Dependencies are managed through Docker compose, 
-  simplifying the setup process.
+- **Using Docker:** Services like PostgreSQL and Redis are managed 
+  through Docker Compose, simplifying the setup process.
 - **Manual Setup:** This approach requires manually installing and configuring
   the necessary services.
 
@@ -17,8 +17,8 @@ dependencies:
 
 Before you begin, ensure you have the following installed:
 
-- [Node.js (version 22.x or higher)](https://nodejs.org/en/download/)
-- [pnpm (version 9.0.6 or higher)](https://pnpm.io/installation)
+- [Node.js (version 22.14 or higher)](https://nodejs.org/en/download/)
+- [pnpm (version 9.8.0 or higher)](https://pnpm.io/installation)
 - Clone the Tailor repository to your local machine.
 
 ### Setup Using Docker
@@ -130,6 +130,9 @@ DATABASE_URI=postgres://user:pass@hostname:port/database
 # DATABASE_HOST=localhost
 # DATABASE_PORT=5432
 # DATABASE_ADAPTER=postgres
+
+# Migrations are run on startup by default
+# DATABASE_DISABLE_MIGRATIONS_ON_STARTUP=
 
 # -------------------------------------------------------------------
 # In-memory store configuration

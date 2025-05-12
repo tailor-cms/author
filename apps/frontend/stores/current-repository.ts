@@ -6,15 +6,12 @@ import {
   calculatePosition,
   InsertLocation,
 } from '@tailor-cms/utils';
-import type { Guideline } from '@tailor-cms/interfaces/schema';
 
 import { useActivityStore } from './activity';
-import { useContentElementStore } from './content-elements';
-import { useEditorStore } from './editor';
 import { useRepositoryStore } from './repository';
 import { repository as repositoryApi } from '@/api';
 
-const { getOutlineLevels, getSchema, getLevel } = schemaConfig;
+const { getOutlineLevels, getSchema } = schemaConfig;
 const { getWorkflow } = workflowConfig;
 
 type Id = number | string;
@@ -45,9 +42,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
-  const { items } = useContentElementStore();
-  const { contentContainers } = useEditorStore();
-  const { $ceRegistry } = useNuxtApp();
 
   const $users = reactive(new Map<string, any>());
   const users = computed(() => Array.from($users.values()));
@@ -90,18 +84,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const selectedActivity = computed(() => {
     const id = outlineState.selectedActivityId;
     return outlineActivities.value.find((it) => it.id === id);
-  });
-
-  const selectedActivityGuidelines = computed(() => {
-    if (!repository.value || !selectedActivity.value) return;
-    const { type } = selectedActivity.value;
-    const guidelines = getLevel(type)?.guidelines?.(
-      repository.value,
-      contentContainers,
-      items,
-      $ceRegistry,
-    ) as Guideline[] | undefined;
-    return guidelines;
   });
 
   function selectActivity(activityId: number) {
@@ -245,7 +227,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     rootActivities,
     selectActivity,
     selectedActivity,
-    selectedActivityGuidelines,
     workflow,
     workflowActivities,
     isOutlineExpanded,

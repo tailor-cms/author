@@ -4,7 +4,7 @@
       <div class="d-flex flex-column align-center justify-center">
         <VEmptyState
           :headline="`Whooops, ${headline}`"
-          image="/img/default-logo-compact.svg"
+          image="/img/logo-new.svg"
         />
         <VBtn
           class="mt-4"

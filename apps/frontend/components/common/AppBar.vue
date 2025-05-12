@@ -9,13 +9,12 @@
       <img
         alt="Tailor logo"
         class="mr-6"
-        height="42"
-        src="/img/default-logo-full.svg"
-        width="44"
+        src="/img/logo-new.svg"
+        width="52"
       />
       <VAppBarTitle
         v-if="!showUserGroupSelect"
-        class="app-name text-primary-lighten-3"
+        class="app-name pt-1 text-primary-lighten-3"
       >
         Tailor
         <span v-if="!smAndDown" class="text-caption font-weight-bold">
@@ -35,7 +34,7 @@
         min-width="300"
         variant="outlined"
         hide-details
-        @update:model-value="() => repositoryStore.fetch()"
+        @update:model-value="onUserGroupChange"
       >
         <template #selection="{ item }">
           <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
@@ -144,6 +143,11 @@ const routes = computed(() => {
 const showUserGroupSelect = computed(
   () => authStore.userGroups.length > 0 && route.name === 'catalog',
 );
+
+const onUserGroupChange = async () => {
+  repositoryStore.resetPaginationParams();
+  await repositoryStore.fetch();
+};
 
 const logout = async () => {
   if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {

@@ -8,6 +8,8 @@ export class Catalog {
   readonly orderByBtn: Locator;
   readonly orderDirectionBtn: Locator;
   readonly pinnedFilterBtn: Locator;
+  readonly tagsFilterBtn: Locator;
+  readonly schemaFilterBtn: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -18,6 +20,8 @@ export class Catalog {
     this.orderDirectionBtn = page.getByRole('button', {
       name: 'Order direction',
     });
+    this.tagsFilterBtn = page.getByRole('button', { name: 'Tags' });
+    this.schemaFilterBtn = page.getByRole('button', { name: 'Schemas' });
   }
 
   visit() {
@@ -54,5 +58,21 @@ export class Catalog {
 
   orderByCreationDate() {
     return this.orderByProp('Creation date');
+  }
+
+  async filterByTag(tag: string) {
+    await this.tagsFilterBtn.click();
+    await this.page
+      .locator('.v-list-item-title')
+      .getByText(tag, { exact: true })
+      .click();
+  }
+
+  async filterBySchema(schema: string) {
+    await this.schemaFilterBtn.click();
+    await this.page
+      .locator('.v-list-item-title')
+      .getByText(schema, { exact: true })
+      .click();
   }
 }

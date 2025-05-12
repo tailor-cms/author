@@ -59,7 +59,14 @@ const availableTags = computed(() =>
 
 const { defineField, handleSubmit, errors } = useForm({
   validationSchema: object({
-    tag: string().required().min(2).max(20),
+    tag: string()
+      .trim()
+      .required()
+      .matches(/^[a-zA-Z0-9\s]+$/, {
+        message: 'Tag can contain only letters, numbers, and spaces',
+      })
+      .min(2)
+      .max(20),
   }),
 });
 const [tagInput] = defineField('tag');

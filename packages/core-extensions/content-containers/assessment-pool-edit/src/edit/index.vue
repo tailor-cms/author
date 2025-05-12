@@ -9,7 +9,7 @@
           color="primary-lighten-4"
           size="small"
           variant="tonal"
-          @click="generateContent"
+          @click="generateQuestions"
         >
           Generate questions
           <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
@@ -77,18 +77,19 @@
 </template>
 
 <script lang="ts" setup>
+import type {
+  ContentElementCategory,
+  ElementRegistry,
+} from '@tailor-cms/interfaces/schema';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import {
   AddElement,
   AssessmentItem,
   CircularProgress,
 } from '@tailor-cms/core-components';
-import type {
-  ContentElementCategory,
-  ElementRegistry,
-} from '@tailor-cms/interfaces/schema';
-import { ref, computed, watch, inject } from 'vue';
-import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
+import { computed, inject, ref, watch } from 'vue';
 import filter from 'lodash/filter';
 import map from 'lodash/map';
 import pull from 'lodash/pull';
@@ -123,15 +124,29 @@ const allSelected = ref(false);
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 
-const generateContent = async () => {
+const generateQuestions = async () => {
   isAiGeneratingContent.value = true;
-  const elements = await doTheMagic({ type: props.container.type });
+  const hasAssessments = assessments.value.length > 0;
+  const context = {
+    inputs: [
+      {
+        type: hasAssessments ? AiRequestType.Add : AiRequestType.Create,
+        text: 'Generate 5 questions.',
+        responseSchema: AiResponseSchema.Question,
+      },
+    ],
+    content: assessments.value.length ? JSON.stringify(assessments.value) : '',
+  };
+  const elements = await doTheMagic({
+    containerType: props.container.type,
+    ...context,
+  });
   elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,
-      position: index,
-      activityId: props.container.id,
+      position: assessments.value.length + index,
       repositoryId: props.container.repositoryId,
+      activityId: props.container.id,
     });
   });
   isAiGeneratingContent.value = false;

@@ -205,10 +205,14 @@ const requestContainerDeletion = (
   requestDeletion(container, action, name);
 };
 
-const requestElementDeletion = (element: ContentElement) => {
+const requestElementDeletion = (
+  element: ContentElement,
+  force: boolean = false,
+) => {
   const action = (val: ContentElement) =>
     contentElementStore.remove(val.repositoryId, val.id);
   const onDelete = () => emit('focusoutElement');
+  if (force) return action(element);
   requestDeletion(element, action, 'element', onDelete);
 };
 

@@ -8,7 +8,7 @@ import pkg6 from '@tailor-cms/tme-switch';
 import pkg7 from '@tailor-cms/tme-combobox';
 import pkg8 from '@tailor-cms/tme-select';
 import pkg9 from '@tailor-cms/tme-datetime';
-import pkg10 from '@tailor-cms/tme-haes-rating';
+import pkg10 from '@tailor-cms/tme-heas-rating';
 import pkg11 from '@tailor-cms/tme-text-field';
 
 // prettier-ignore

@@ -176,6 +176,31 @@ const StructuredContentContainer: ContentContainerConfig = {
       ],
     },
   },
+  contentElementConfig: [
+    {
+      name: 'Content Elements',
+      items: [
+        ContentElementType.TiptapHtml,
+        ContentElementType.Image,
+      ],
+    },
+    {
+      name: 'Assessments',
+      config: { isGradable: true },
+      items: [
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+      ],
+    },
+    {
+      name: 'Nongraded questions',
+      config: { isGradable: false },
+      items: [
+        ContentElementType.MultipleChoice,
+        ContentElementType.SingleChoice,
+      ],
+    },
+  ],
 };
 
 export const SCHEMA: Schema = {
@@ -187,8 +212,8 @@ export const SCHEMA: Schema = {
   contentContainers: [StructuredContentContainer],
   meta: [
     {
-      key: 'haesRating',
-      type: MetaInputType.HaesRating,
+      key: 'heasRating',
+      type: MetaInputType.HeasRating,
       label: 'HE@S rating',
       hideOnCreate: false,
     },

@@ -31,6 +31,11 @@ export const hasColumn = (Model, col) => {
   return !!parsedPath.length;
 };
 
+export const subQuery = (model, options) => {
+  const sql = model.queryGenerator.selectQuery(model.tableName, options, model);
+  return Sequelize.literal(`(${sql.slice(0, -1)})`);
+};
+
 function parsePath(Model, path) {
   if (!path.includes('.')) return [dbColumn(path, Model)];
   const [alias, ...columns] = path.split('.');

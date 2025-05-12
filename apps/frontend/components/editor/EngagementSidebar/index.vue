@@ -60,9 +60,9 @@ import sumBy from 'lodash/sumBy';
 import startCase from 'lodash/startCase';
 import { RadarChart } from '@tailor-cms/core-components';
 
-const repositoryStore = useCurrentRepository();
+const editorStore = useEditorStore();
 
-const guidelines = computed(() => repositoryStore.selectedActivityGuidelines);
+const guidelines = computed(() => editorStore.guidelines);
 const progress = computed(() => {
   const completed = guidelines.value.reduce((acc, it) => {
     acc[it.id] = it.isDone();
@@ -72,7 +72,7 @@ const progress = computed(() => {
 });
 
 const ratings = computed(() => {
-  const completed = guidelines.value.filter(
+  const completed = guidelines.value?.filter(
     (it: any) => progress.value[it.id],
   );
   return {
@@ -84,7 +84,7 @@ const ratings = computed(() => {
   };
 });
 
-const haesParams = [
+const heasParams = [
   { key: 'learnerCenteredContent', label: 'Learner Centered Content' },
   { key: 'activeLearning', label: 'Active Learning' },
   { key: 'unboundedInclusion', label: 'Unbounded Inclusion' },
@@ -93,10 +93,10 @@ const haesParams = [
 ];
 
 const chartData = computed(() => ({
-  labels: haesParams.map((it) => it.label.split(' ')),
+  labels: heasParams.map((it) => it.label.split(' ')),
   datasets: [
     {
-      data: haesParams.map(({ key }) => ratings.value[key]),
+      data: heasParams.map(({ key }) => ratings.value[key]),
       backgroundColor: '#ECEFF140',
       borderColor: '#ECEFF1BF',
       borderWidth: 1,

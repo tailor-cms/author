@@ -30,6 +30,7 @@
         :items="repositories"
         :label="schema.name"
         :loading="isFetchingRepositories"
+        :menu-props="{ maxWidth: '100%' }"
         :model-value="selectedRepository"
         item-title="name"
         item-value="id"
