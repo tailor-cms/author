@@ -1,5 +1,10 @@
 # Changelog
 
+## v8.0.2
+
+#### Changes
+- Updated dependnecies
+
 ## v8.0.1
 
 #### Changes

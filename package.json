@@ -1,6 +1,6 @@
 {
   "name": "tailor-cms",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "codename": "Quilt",
   "description": "Next-gen Tailor",
   "license": "MIT",
@@ -54,5 +54,5 @@
     "fkill": "^9.0.0",
     "pid-port": "^1.0.2"
   },
-  "packageManager": "pnpm@10.8.1"
+  "packageManager": "pnpm@10.10.0"
 }

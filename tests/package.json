@@ -11,7 +11,7 @@
     "@axe-core/playwright": "4.10.1",
     "@percy/cli": "^1.30.10",
     "@percy/playwright": "^1.0.8",
-    "@playwright/test": "1.51.1",
+    "@playwright/test": "1.52.0",
     "@types/node": "^22.15.17"
   },
   "dependencies": {
