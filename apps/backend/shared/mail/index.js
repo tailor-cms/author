@@ -4,11 +4,11 @@ import pick from 'lodash/pick.js';
 import { SMTPClient } from 'emailjs';
 import urlJoin from 'url-join';
 import { renderHtml, renderText } from './render.js';
-import { createLogger, Level } from '#logger';
+import { createLogger } from '#logger';
 import { mail as config, origin } from '#config';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const logger = createLogger('mailer', { level: Level.DEBUG });
+const logger = createLogger('mailer');
 
 const from = `${config.sender.name} <${config.sender.address}>`;
 const client = new SMTPClient(config);
