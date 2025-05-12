@@ -3,7 +3,7 @@
 ## v8.0.2
 
 #### Changes
-- Updated dependnecies
+- Updated dependencies
 
 ## v8.0.1
 
