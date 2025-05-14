@@ -1,14 +1,21 @@
 <template>
-  <component
-    :is="componentName"
-    :class="{ required: get(meta, 'validate.required') }"
-    :dark="dark"
-    :error-messages="errorMessage"
-    :meta="meta"
-    :is-new="isNew"
-    :is-reviewer="isReviewer"
-    @update="updateMeta"
-  />
+  <div>
+    <component
+      :is="componentName"
+      :class="{ required: get(meta, 'validate.required') }"
+      :dark="dark"
+      :error-messages="errorMessage"
+      :meta="meta"
+      :is-new="isNew"
+      :is-reviewer="isReviewer"
+      @update="updateMeta"
+    />
+  </div>
+  <span
+    v-for="it in $pluginRegistry.getAppendComponents(meta.type)"
+    :key="it.id">
+    <component :is="it.appendComponentName" />
+  </span>
 </template>
 
 <script lang="ts" setup>
@@ -29,8 +36,10 @@ const props = withDefaults(defineProps<Props>(), {
   dark: false,
   isNew: false,
 });
+
 const emit = defineEmits(['update']);
 
+const { $pluginRegistry } = useNuxtApp() as any;
 const store = useCurrentRepository();
 
 const isReviewer = computed(() => store.repository?.hasAdminAccess);
