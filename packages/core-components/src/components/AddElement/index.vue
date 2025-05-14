@@ -159,8 +159,20 @@ const buildElement = (el: any) => {
     position,
   };
   if (!el.data && el.isQuestion) {
+    const id = uuid();
+    const question = {
+      id,
+      data: {},
+      type: 'TIPTAP_HTML',
+      position: 1,
+      embedded: true,
+    };
     const isGradable = config?.isGradable ?? el.isGradable ?? true;
-    element.data.isGradable = isGradable;
+    Object.assign(element.data, {
+      embeds: { [id]: question },
+      question: [id],
+      isGradable,
+    });
     if (!isGradable) delete element.data.correct;
   }
   const contextData = props.activity
