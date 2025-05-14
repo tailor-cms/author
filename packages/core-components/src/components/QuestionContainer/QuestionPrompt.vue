@@ -15,7 +15,7 @@
           :text="alertMsg"
           class="mx-6 mt-4 mb-2"
           color="primary-darken-2"
-          icon="mdi-information-variant"
+          icon="mdi-information-outline"
           variant="tonal"
           prominent
         />

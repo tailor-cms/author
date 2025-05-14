@@ -37,7 +37,7 @@
         <VAlert
           v-if="!groups.length"
           color="primary-darken-1"
-          icon="mdi-information-variant"
+          icon="mdi-information-outline"
           variant="tonal"
           prominent
         >
