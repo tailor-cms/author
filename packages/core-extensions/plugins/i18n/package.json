@@ -1,0 +1,15 @@
+{
+  "name": "@tailor-cms/tp-i18n",
+  "version": "0.0.1",
+  "description": "Tailor plugin for i18n support",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "peerDependencies": {
+    "vue": "^3.5.13",
+    "vuetify": "^3.7.0"
+  }
+}
