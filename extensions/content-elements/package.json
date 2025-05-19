@@ -26,6 +26,8 @@
     "@tailor-cms/ce-drag-drop-server": "^0.0.13",
     "@tailor-cms/ce-embed-edit": "^0.0.9",
     "@tailor-cms/ce-embed-server": "^0.0.9",
+    "@tailor-cms/ce-file-edit": "^0.0.1",
+    "@tailor-cms/ce-file-server": "^0.0.1",
     "@tailor-cms/ce-fill-blank-edit": "^0.0.11",
     "@tailor-cms/ce-fill-blank-server": "^0.0.11",
     "@tailor-cms/ce-html-edit": "^0.0.13",

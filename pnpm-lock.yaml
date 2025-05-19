@@ -619,6 +619,12 @@ importers:
       '@tailor-cms/ce-embed-server':
         specifier: ^0.0.9
         version: 0.0.9
+      '@tailor-cms/ce-file-edit':
+        specifier: ^0.0.1
+        version: 0.0.1(@tailor-cms/utils@packages+utils)(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(@tiptap/starter-kit@2.12.0)(@tiptap/vue-3@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(vue@3.5.13(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(typescript@5.8.3)(vee-validate@4.15.0(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.8.3)))(vuetify@3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))(yup@1.6.1)
+      '@tailor-cms/ce-file-server':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@tailor-cms/ce-fill-blank-edit':
         specifier: ^0.0.11
         version: 0.0.11(@tailor-cms/utils@packages+utils)(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(@tiptap/starter-kit@2.12.0)(@tiptap/vue-3@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(vue@3.5.13(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(typescript@5.8.3)(vee-validate@4.15.0(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))(vuetify@3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))(yup@1.6.1)
@@ -780,7 +786,7 @@ importers:
     devDependencies:
       '@types/node':
         specifier: ^22
-        version: 22.15.14
+        version: 22.15.17
 
   packages/core-components:
     dependencies:
@@ -868,7 +874,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -909,7 +915,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -947,7 +953,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -975,7 +981,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -994,7 +1000,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-color:
     dependencies:
@@ -1006,7 +1012,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-combobox:
     dependencies:
@@ -1018,7 +1024,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-datetime:
     dependencies:
@@ -1030,7 +1036,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-file:
     dependencies:
@@ -1048,7 +1054,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
     devDependencies:
       '@types/lodash':
         specifier: ^4.17.16
@@ -1064,7 +1070,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-html:
     dependencies:
@@ -1079,7 +1085,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-radio-group:
     dependencies:
@@ -1088,7 +1094,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-select:
     dependencies:
@@ -1100,7 +1106,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-switch:
     dependencies:
@@ -1112,7 +1118,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-textarea:
     dependencies:
@@ -1121,7 +1127,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/core-extensions/meta-inputs/meta-textfield:
     dependencies:
@@ -1130,7 +1136,7 @@ importers:
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
-        version: 3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+        version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
 
   packages/extension-installer:
     dependencies:
@@ -3704,6 +3710,14 @@ packages:
   '@tailor-cms/ce-embed-server@0.0.9':
     resolution: {integrity: sha512-5I+oCv9btkQrYewOX+c8d2QvsxrHfkUDxhWn29YhKVjfkqGS/mTGoylhuit8wP9zj3Ck+abwFqNAbvkfFBJG/g==}
 
+  '@tailor-cms/ce-file-edit@0.0.1':
+    resolution: {integrity: sha512-41M0qJgE4+6NjzHoPxadhCxDppWz99pN6XVfM2aHNaWGx0vWGYFn30qMz9P99wWS7fVlW68QU3JdvU0FAFXKVw==}
+    peerDependencies:
+      vue: ^3.5.13
+
+  '@tailor-cms/ce-file-server@0.0.1':
+    resolution: {integrity: sha512-gLFc737Sh5ncmt4y7N2FEb3WdFpF9oa00ES1Ijw4X87A+/NIBm7y9R5LYtx4WmM6wTbG78gECVN4t/qXL93FIw==}
+
   '@tailor-cms/ce-fill-blank-edit@0.0.11':
     resolution: {integrity: sha512-760MpnXjl37C2U0l/lcIC0Q3B53uLJxowvgvleUNXHOVXdtzly1/QAObzWs5jbVlQCUWG40ACRVRSXSlP7NT5g==}
     peerDependencies:
@@ -4167,9 +4181,6 @@ packages:
 
   '@types/node@18.19.97':
     resolution: {integrity: sha512-4r3Y9EuCJjWduiam85Fo4GBQtneaEuoaBSdiKo+o6qwQUh0JFVBe7cRUK6I6yVzA0S1gBJJfoQx4VtBH4e5ikg==}
-
-  '@types/node@22.15.14':
-    resolution: {integrity: sha512-BL1eyu/XWsFGTtDWOYULQEs4KR0qdtYfCxYAUYRoB7JP7h9ETYLgQTww6kH8Sj2C0pFGgrpM0XKv6/kbIzYJ1g==}
 
   '@types/node@22.15.17':
     resolution: {integrity: sha512-wIX2aSZL5FE+MR0JlvF87BNVrtFWf6AE6rxSE9X7OwnVvoyCQjpzSRJ+M87se/4QCkCiebQAqrJ0y6fwIyi7nw==}
@@ -10323,22 +10334,6 @@ packages:
       webpack-plugin-vuetify:
         optional: true
 
-  vuetify@3.8.1:
-    resolution: {integrity: sha512-3qReKBBWIIdJJmwnFU1blVIKHDtnLfIP7kk0MwUrrfjYkWmsDpsymtDnsukkTCnlJ1WvhLr64eQFosr0RVbj9w==}
-    engines: {node: ^12.20 || >=14.13}
-    peerDependencies:
-      typescript: '>=4.7'
-      vite-plugin-vuetify: '>=2.1.0'
-      vue: ^3.5.0
-      webpack-plugin-vuetify: '>=3.1.0'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-      vite-plugin-vuetify:
-        optional: true
-      webpack-plugin-vuetify:
-        optional: true
-
   vuetify@3.8.4:
     resolution: {integrity: sha512-hfA1eqA6vhrF5LF8Yfk0uHdNUmh8Uckxn5wREiThO82HW/9Vfreh+IpxPgEtCsAhV33KW+NVamltQCu3HczRKw==}
     engines: {node: ^12.20 || >=14.13}
@@ -14143,6 +14138,30 @@ snapshots:
 
   '@tailor-cms/ce-embed-server@0.0.9': {}
 
+  '@tailor-cms/ce-file-edit@0.0.1(@tailor-cms/utils@packages+utils)(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(@tiptap/starter-kit@2.12.0)(@tiptap/vue-3@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(vue@3.5.13(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(typescript@5.8.3)(vee-validate@4.15.0(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.8.3)))(vuetify@3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))(yup@1.6.1)':
+    dependencies:
+      '@tailor-cms/core-components': 1.0.35(@tailor-cms/utils@packages+utils)(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(@tiptap/starter-kit@2.12.0)(@tiptap/vue-3@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(vue@3.5.13(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(typescript@5.8.3)(vee-validate@4.15.0(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.8.3)))(vuetify@3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))(yup@1.6.1)
+      lodash: 4.17.21
+      vue: 3.5.13(typescript@5.8.3)
+    transitivePeerDependencies:
+      - '@tailor-cms/utils'
+      - '@tiptap/core'
+      - '@tiptap/pm'
+      - '@tiptap/starter-kit'
+      - '@tiptap/vue-3'
+      - '@types/lodash-es'
+      - date-fns
+      - lodash-es
+      - p-min-delay
+      - pluralize-esm
+      - typescript
+      - vee-validate
+      - vuedraggable
+      - vuetify
+      - yup
+
+  '@tailor-cms/ce-file-server@0.0.1': {}
+
   '@tailor-cms/ce-fill-blank-edit@0.0.11(@tailor-cms/utils@packages+utils)(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(@tiptap/starter-kit@2.12.0)(@tiptap/vue-3@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(vue@3.5.13(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(typescript@5.8.3)(vee-validate@4.15.0(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))(vuetify@3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))(yup@1.6.1)':
     dependencies:
       '@tailor-cms/core-components': 1.0.35(@tailor-cms/utils@packages+utils)(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(@tiptap/starter-kit@2.12.0)(@tiptap/vue-3@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(vue@3.5.13(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(typescript@5.8.3)(vee-validate@4.15.0(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))(vuedraggable@4.1.0(vue@3.5.13(typescript@5.8.3)))(vuetify@3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)))(yup@1.6.1)
@@ -14868,10 +14887,6 @@ snapshots:
   '@types/node@18.19.97':
     dependencies:
       undici-types: 5.26.5
-
-  '@types/node@22.15.14':
-    dependencies:
-      undici-types: 6.21.0
 
   '@types/node@22.15.17':
     dependencies:
@@ -21744,12 +21759,6 @@ snapshots:
       vue: 3.5.13(typescript@5.8.3)
 
   vuetify@3.7.0(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)):
-    dependencies:
-      vue: 3.5.13(typescript@5.8.3)
-    optionalDependencies:
-      typescript: 5.8.3
-
-  vuetify@3.8.1(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3)):
     dependencies:
       vue: 3.5.13(typescript@5.8.3)
     optionalDependencies:
