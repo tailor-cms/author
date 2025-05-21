@@ -364,7 +364,7 @@ const fetchOutline = async () => {
 </style>
 
 <style lang="scss" scoped>
-.v-slider :deep .v-slider-track__tick-label {
+.v-slider :deep(.v-slider-track__tick-label) {
   text-transform: lowercase;
 
   &:first-letter {
