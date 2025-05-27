@@ -40,7 +40,7 @@
 
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 
 import ActivityPublishing from './ActivityPublishing.vue';
 import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';

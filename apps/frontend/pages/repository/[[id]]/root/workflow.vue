@@ -19,12 +19,9 @@
 </template>
 
 <script lang="ts" setup>
+import { compact, orderBy, overEvery, uniqBy } from 'lodash-es';
 import { isAfter, sub } from 'date-fns';
-import compact from 'lodash/compact';
-import orderBy from 'lodash/orderBy';
-import overEvery from 'lodash/overEvery';
 import type { Status } from '@tailor-cms/interfaces/activity';
-import uniqBy from 'lodash/uniqBy';
 
 import Sidebar from '@/components/repository/Workflow/Sidebar/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';

@@ -138,10 +138,8 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components';
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
+import { filter, reduce, sortBy } from 'lodash-es';
 import { computed, inject, ref } from 'vue';
-import filter from 'lodash/filter';
-import reduce from 'lodash/reduce';
-import sortBy from 'lodash/sortBy';
 
 import AIPrompt from './AIPrompt.vue';
 

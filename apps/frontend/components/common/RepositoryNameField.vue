@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { string } from 'yup';
 import { useField } from 'vee-validate';

@@ -26,11 +26,9 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
+import { find, first, get } from 'lodash-es';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-components';
-import find from 'lodash/find';
-import first from 'lodash/first';
-import get from 'lodash/get';
 import { promiseTimeout } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 

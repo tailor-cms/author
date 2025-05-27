@@ -65,7 +65,7 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components';
 import { computed, ref } from 'vue';
-import { filter, sortBy, transform } from 'lodash';
+import { filter, sortBy, transform } from 'lodash-es';
 
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';

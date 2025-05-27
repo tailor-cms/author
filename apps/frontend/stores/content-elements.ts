@@ -1,8 +1,7 @@
+import { flatMap, flatten } from 'lodash-es';
 import { calculatePosition } from '@tailor-cms/utils';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ContentElement as Events } from '@tailor-cms/common/src/sse.js';
-import flatMap from 'lodash/flatMap';
-import flatten from 'lodash/flatten';
 
 import { contentElement as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';

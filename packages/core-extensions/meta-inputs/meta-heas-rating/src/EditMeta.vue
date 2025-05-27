@@ -123,11 +123,10 @@
 </template>
 
 <script lang="ts" setup>
+import { cloneDeep, isEmpty } from 'lodash-es';
 import { computed, ref } from 'vue';
-
 import { RadarChart } from '@tailor-cms/core-components';
-import isEmpty from 'lodash/isEmpty';
-import cloneDeep from 'lodash/cloneDeep';
+
 import { heasParams } from './utils';
 import RateDialog from './RateDialog.vue';
 

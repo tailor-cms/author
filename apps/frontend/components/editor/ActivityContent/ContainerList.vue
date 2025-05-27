@@ -57,18 +57,13 @@
 </template>
 
 <script lang="ts" setup>
+import { capitalize, castArray, get, isEmpty, maxBy, throttle } from 'lodash-es';
 import { getContainerName, getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import BBPromise from 'bluebird';
-import capitalize from 'lodash/capitalize';
-import castArray from 'lodash/castArray';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import get from 'lodash/get';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import isEmpty from 'lodash/isEmpty';
-import maxBy from 'lodash/maxBy';
 import pluralize from 'pluralize';
-import throttle from 'lodash/throttle';
 
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';

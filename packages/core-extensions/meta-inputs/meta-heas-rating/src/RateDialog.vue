@@ -54,7 +54,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
-import cloneDeep from 'lodash/cloneDeep';
+import { cloneDeep } from 'lodash-es';
 
 import { RichTextEditor, TailorDialog } from '@tailor-cms/core-components';
 import { heasParams } from './utils';

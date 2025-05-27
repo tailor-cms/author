@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import map from 'lodash/map.js';
+import { map } from 'lodash-es';
 import { title as titleCase } from 'to-case';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { UserRole } from '@tailor-cms/common';

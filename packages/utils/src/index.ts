@@ -1,7 +1,5 @@
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import filter from 'lodash/filter';
-import kebabCase from 'lodash/kebabCase';
-import map from 'lodash/map';
+import { filter, kebabCase, map } from 'lodash-es';
 
 export * from './calculatePosition';
 export * as activity from './activity';

@@ -56,8 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import sumBy from 'lodash/sumBy';
-import startCase from 'lodash/startCase';
+import { startCase, sumBy } from 'lodash-es';
 import { RadarChart } from '@tailor-cms/core-components';
 
 const editorStore = useEditorStore();

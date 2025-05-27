@@ -25,8 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import filterBy from 'lodash/filter';
-import flatMap from 'lodash/flatMap';
+import { filter as filterBy, flatMap } from 'lodash-es';
 
 import filterConfigs from '../repositoryFilterConfigs';
 import SelectedFilter from './SelectedFilter.vue';

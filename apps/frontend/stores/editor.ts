@@ -1,7 +1,5 @@
 import { activity as activityUtils, Events } from '@tailor-cms/utils';
-import filter from 'lodash/filter';
-import flatMap from 'lodash/flatMap';
-import reduce from 'lodash/reduce';
+import { filter, flatMap, reduce } from 'lodash-es';
 import { schema } from '@tailor-cms/config';
 import type { Guideline } from '@tailor-cms/interfaces/schema';
 

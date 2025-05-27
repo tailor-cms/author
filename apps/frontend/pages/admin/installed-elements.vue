@@ -52,7 +52,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import startCase from 'lodash/startCase';
+import { startCase } from 'lodash-es';
 
 interface Registry {
   contentElements: any[];

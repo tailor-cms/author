@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import invoke from 'lodash/invoke';
+import { invoke } from 'lodash-es';
 import { TailorDialog } from '@tailor-cms/core-components';
 
 const { $eventBus } = useNuxtApp() as any;

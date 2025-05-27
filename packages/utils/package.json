@@ -23,12 +23,12 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "^4.17.16",
+    "@types/lodash-es": "^4.17.12",
     "@types/uuid": "^10.0.0",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3"

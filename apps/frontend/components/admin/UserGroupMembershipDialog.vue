@@ -63,10 +63,9 @@
 </template>
 
 <script lang="ts" setup>
+import { map, throttle } from 'lodash-es';
 import { object, string } from 'yup';
-import map from 'lodash/map';
 import { TailorDialog } from '@tailor-cms/core-components';
-import throttle from 'lodash/throttle';
 import { title as titleCase } from 'to-case';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';

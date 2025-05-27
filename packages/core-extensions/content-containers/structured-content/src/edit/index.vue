@@ -72,7 +72,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { cloneDeep, filter, find, findIndex } from 'lodash';
+import { cloneDeep, filter, find, findIndex } from 'lodash-es';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 import type { Activity } from '@tailor-cms/interfaces/activity.js';

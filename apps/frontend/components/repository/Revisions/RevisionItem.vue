@@ -33,7 +33,7 @@
 
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import find from 'lodash/find';
+import { find } from 'lodash-es';
 import { formatTimeAgo } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 

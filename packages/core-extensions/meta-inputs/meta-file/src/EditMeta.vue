@@ -10,7 +10,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { FileInput } from '@tailor-cms/core-components';
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 
 interface Meta extends Metadata {

@@ -1,4 +1,4 @@
-import pick from 'lodash/pick.js';
+import { pick } from 'lodash-es';
 import Promise from 'bluebird';
 
 const ATTRS = [
