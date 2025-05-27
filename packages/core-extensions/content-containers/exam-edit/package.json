@@ -18,7 +18,7 @@
     "@tailor-cms/core-components": "workspace:*",
     "lodash-es": "*",
     "pluralize-esm": "^9.0.5",
-    "vue": "^3.3.4",
-    "vuetify": "^3.7.0"
+    "vue": "^3.5.15",
+    "vuetify": "^3.8.6"
   }
 }

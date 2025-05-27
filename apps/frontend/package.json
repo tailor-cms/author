@@ -19,7 +19,7 @@
     "autoprefixer": "^10.4.21",
     "nuxt": "3.17.2",
     "sass": "^1.88.0",
-    "vue": "^3.5.13",
+    "vue": "^3.5.15",
     "vue-router": "^4.5.1"
   },
   "dependencies": {
@@ -54,12 +54,13 @@
     "pluralize": "^8.0.0",
     "promise-queue": "^2.2.5",
     "to-case": "^2.0.0",
+
     "url-join": "^5.0.0",
     "v-clipboard": "3.0.0-next.1",
     "vee-validate": "4.15.0",
     "vue3-tree-vue": "^2.0.13",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.8.4",
+    "vuetify": "3.8.6",
     "yup": "^1.6.1"
   }
 }
