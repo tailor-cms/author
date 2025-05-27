@@ -97,7 +97,7 @@ import { isEmpty, map } from 'lodash-es';
 import { object, string } from 'yup';
 import { role } from '@tailor-cms/common';
 import { TailorDialog } from '@tailor-cms/core-components';
-import { title as titleCase } from 'to-case';
+import { titleCase } from '@tailor-cms/utils';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';

@@ -1,11 +1,8 @@
+import { sentenceCase } from '@tailor-cms/utils';
 import { configure, defineRule } from 'vee-validate';
 import { all } from '@vee-validate/rules';
-import capitalize from 'lodash/capitalize';
 import en from '@vee-validate/i18n/dist/locale/en.json';
 import { localize } from '@vee-validate/i18n';
-import lowerCase from 'lodash/lowerCase';
-
-const sentenceCase = (value: string) => capitalize(lowerCase(value));
 
 export default defineNuxtPlugin(() => {
   Object.entries(all).forEach(([name, rule]) => {
