@@ -129,8 +129,4 @@ const attachActivityAttrs = (activity: TreeItem) => ({
 .v-list {
   border-radius: 4px !important;
 }
-
-:deep(.v-list-item__prepend .v-list-item__spacer) {
-  width: 0.25rem !important;
-}
 </style>
