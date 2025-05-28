@@ -10,7 +10,7 @@ import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import sample from 'lodash/sample.js';
 import { schema } from '@tailor-cms/config';
-import { snakeCase } from 'change-case';
+import snakeCase from 'lodash/snakeCase.js';
 
 import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import publishingService from '#shared/publishing/publishing.service.js';
