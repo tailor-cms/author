@@ -1,5 +1,5 @@
 import { get, isEmpty, reduce } from 'lodash-es';
-import { lower, title as toTitleCase } from 'to-case';
+import { lowerCase, titleCase } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { Entity, type Revision } from '@tailor-cms/interfaces/revision';
 import { schema } from '@tailor-cms/config';
@@ -28,7 +28,7 @@ function getActivityTypeLabel(activity: Activity) {
   const activityConfig = schema.getLevel(activity.type);
   return !isEmpty(activityConfig)
     ? activityConfig.label
-    : toTitleCase(activity.type);
+    : titleCase(activity.type);
 }
 
 function getContainerContext(activity: Activity) {
@@ -47,7 +47,7 @@ function describeActivityRevision(rev: Revision, activity: Activity) {
   const containerContext = activityConfig.rootLevel
     ? ''
     : getContainerContext(activity);
-  return `${action} ${name} ${lower(typeLabel)} ${containerContext}`;
+  return `${action} ${name} ${lowerCase(typeLabel)} ${containerContext}`;
 }
 
 function describeElementRevision(rev: Revision, activity: Activity) {
@@ -56,7 +56,7 @@ function describeElementRevision(rev: Revision, activity: Activity) {
     ? getContainerContext(activity)
     : 'within deleted container';
   const state = rev.state as ContentElement;
-  return `${action} ${lower(state.type)} element ${activityText}`;
+  return `${action} ${lowerCase(state.type)} element ${activityText}`;
 }
 
 function describeRepositoryRevision(rev: Revision) {

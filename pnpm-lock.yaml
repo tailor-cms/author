@@ -147,9 +147,6 @@ importers:
       boxen:
         specifier: ^8.0.1
         version: 8.0.1
-      change-case:
-        specifier: ^5.4.4
-        version: 5.4.4
       cheerio:
         specifier: 1.0.0
         version: 1.0.0
@@ -321,9 +318,6 @@ importers:
       tmp:
         specifier: 0.2.3
         version: 0.2.3
-      to-case:
-        specifier: ^2.0.0
-        version: 2.0.0
       umzug:
         specifier: ^3.8.2
         version: 3.8.2(@types/node@22.15.17)
@@ -463,9 +457,6 @@ importers:
       promise-queue:
         specifier: ^2.2.5
         version: 2.2.5
-      to-case:
-        specifier: ^2.0.0
-        version: 2.0.0
       url-join:
         specifier: ^5.0.0
         version: 5.0.0
@@ -6039,9 +6030,6 @@ packages:
   escape-html@1.0.3:
     resolution: {integrity: sha512-NiSupZ4OeuGwr68lGIeym/ksIZMJodUGOSCZ/FSnTxcrekbvqrgdUxlJOMpijaKZVjAJrWrGs/6Jy8OMuyj9ow==}
 
-  escape-regexp-component@1.0.2:
-    resolution: {integrity: sha512-B0yxafj1D1ZTNEHkFoQxz4iboZSfaZHhaNhIug7GcUCL4ZUrVSJZTmWUAkPOFaYDfi3RNT9XM082TuGE6jpmiQ==}
-
   escape-string-regexp@1.0.5:
     resolution: {integrity: sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==}
     engines: {node: '>=0.8.0'}
@@ -9666,9 +9654,6 @@ packages:
   tippy.js@6.3.7:
     resolution: {integrity: sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==}
 
-  title-case-minors@1.0.0:
-    resolution: {integrity: sha512-GFT+1ZjqJgq5AywOXjl9VelGgqMpOtfwdxYaYy3eUE1gbyxneeSnADLoov7TxXelqftIhlblsnHVqw5hNFUbGQ==}
-
   tldts-core@6.1.86:
     resolution: {integrity: sha512-Je6p7pkk+KMzMv2XXKmAE3McmolOQFdxkKw0R8EYNr7sELW46JqnNeTX8ybPiQgvg1ymCoF8LXs5fzFaZvJPTA==}
 
@@ -9690,42 +9675,15 @@ packages:
   to-camel-case@1.0.0:
     resolution: {integrity: sha512-nD8pQi5H34kyu1QDMFjzEIYqk0xa9Alt6ZfrdEMuHCFOfTLhDG5pgTu/aAM9Wt9lXILwlXmWP43b8sav0GNE8Q==}
 
-  to-capital-case@1.0.0:
-    resolution: {integrity: sha512-mfERGNFweI+x+OctN7rlbZQqDC68BjXEt9gOrf8qy26IyqQyUTqfdKQBN3XhqN0fP9Pl4zaoXKGeWv+wSPXIyQ==}
-
-  to-case@2.0.0:
-    resolution: {integrity: sha512-zgkg4NYbr3pgT1Cz/kh65HIiXhv3IShKx1Nh2RqsKlq84EySwd4XsEh/mZln3tlhiN3ejmlZzTMaU3ziIouKzw==}
-
-  to-constant-case@1.0.0:
-    resolution: {integrity: sha512-jN3gxix+u/ANZbIcFpwegLnBI45le9HdAo+d7fAgIBDhg7ZJynaDQqDFe5QIzMLqqnfGQvleUtwR5iEMbsv81w==}
-
-  to-dot-case@1.0.0:
-    resolution: {integrity: sha512-gwKmnzzTGdPiMWTFFpRYqB3dQpVJgAxuhEYEM+7Vbqd6quFfvdhZPXlqRLf8jIaWL3qCX/rxTW9Y2eeSTJP9/w==}
-
   to-no-case@1.0.2:
     resolution: {integrity: sha512-Z3g735FxuZY8rodxV4gH7LxClE4H0hTIyHNIHdk+vpQxjLm0cwnKXq/OFVZ76SOQmto7txVcwSCwkU5kqp+FKg==}
-
-  to-pascal-case@1.0.0:
-    resolution: {integrity: sha512-QGMWHqM6xPrcQW57S23c5/3BbYb0Tbe9p+ur98ckRnGDwD4wbbtDiYI38CfmMKNB5Iv0REjs5SNDntTwvDxzZA==}
 
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
 
-  to-sentence-case@1.0.0:
-    resolution: {integrity: sha512-egaI3iiTSS5FpN8ZiN08Kqx8EQDTK4yqnp5m2WqR5qGSMLi605gYn887drlyZFn+lLMQAOC7tABafk/oQIoqGQ==}
-
-  to-slug-case@1.0.0:
-    resolution: {integrity: sha512-g0U7IDgSDpFUTapdARFnck4TQ8rcSSYZ1qSZGbwcTbDpm7eWSEHHQfhC2K9gYN7/vQ3xS5v5PDD+HXuLsQp3ng==}
-
-  to-snake-case@1.0.0:
-    resolution: {integrity: sha512-joRpzBAk1Bhi2eGEYBjukEWHOe/IvclOkiJl3DtA91jV6NwQ3MwXA4FHYeqk8BNp/D8bmi9tcNbRu/SozP0jbQ==}
-
   to-space-case@1.0.0:
     resolution: {integrity: sha512-rLdvwXZ39VOn1IxGL3V6ZstoTbwLRckQmn/U8ZDLuWwIXNpuZDhQ3AiRUlhTbOXFVE9C+dR51wM0CBDhk31VcA==}
-
-  to-title-case@1.0.0:
-    resolution: {integrity: sha512-zy39Lh3pLnDIvS7PEoPNIo7Jbm7IK4NCruhQDEsHmVmvqn4v+WlwgQZtHESbYxnwhU0YCdTJJ4IQshR2XWYVFw==}
 
   toidentifier@1.0.1:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
@@ -15880,7 +15838,8 @@ snapshots:
 
   chalk@5.4.1: {}
 
-  change-case@5.4.4: {}
+  change-case@5.4.4:
+    optional: true
 
   character-entities-html4@2.1.0: {}
 
@@ -16745,8 +16704,6 @@ snapshots:
   escape-goat@3.0.0: {}
 
   escape-html@1.0.3: {}
-
-  escape-regexp-component@1.0.2: {}
 
   escape-string-regexp@1.0.5: {}
 
@@ -21049,8 +21006,6 @@ snapshots:
     dependencies:
       '@popperjs/core': 2.11.8
 
-  title-case-minors@1.0.0: {}
-
   tldts-core@6.1.86: {}
 
   tldts@6.1.86:
@@ -21071,64 +21026,15 @@ snapshots:
     dependencies:
       to-space-case: 1.0.0
 
-  to-capital-case@1.0.0:
-    dependencies:
-      to-space-case: 1.0.0
-
-  to-case@2.0.0:
-    dependencies:
-      to-camel-case: 1.0.0
-      to-capital-case: 1.0.0
-      to-constant-case: 1.0.0
-      to-dot-case: 1.0.0
-      to-no-case: 1.0.2
-      to-pascal-case: 1.0.0
-      to-sentence-case: 1.0.0
-      to-slug-case: 1.0.0
-      to-snake-case: 1.0.0
-      to-space-case: 1.0.0
-      to-title-case: 1.0.0
-
-  to-constant-case@1.0.0:
-    dependencies:
-      to-snake-case: 1.0.0
-
-  to-dot-case@1.0.0:
-    dependencies:
-      to-space-case: 1.0.0
-
   to-no-case@1.0.2: {}
-
-  to-pascal-case@1.0.0:
-    dependencies:
-      to-space-case: 1.0.0
 
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
 
-  to-sentence-case@1.0.0:
-    dependencies:
-      to-no-case: 1.0.2
-
-  to-slug-case@1.0.0:
-    dependencies:
-      to-space-case: 1.0.0
-
-  to-snake-case@1.0.0:
-    dependencies:
-      to-space-case: 1.0.0
-
   to-space-case@1.0.0:
     dependencies:
       to-no-case: 1.0.2
-
-  to-title-case@1.0.0:
-    dependencies:
-      escape-regexp-component: 1.0.2
-      title-case-minors: 1.0.0
-      to-capital-case: 1.0.0
-      to-sentence-case: 1.0.0
 
   toidentifier@1.0.1: {}
 

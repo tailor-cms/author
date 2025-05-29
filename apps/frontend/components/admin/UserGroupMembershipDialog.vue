@@ -66,7 +66,7 @@
 import { map, throttle } from 'lodash-es';
 import { object, string } from 'yup';
 import { TailorDialog } from '@tailor-cms/core-components';
-import { title as titleCase } from 'to-case';
+import { titleCase } from '@tailor-cms/utils';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserRole } from '@tailor-cms/common';
