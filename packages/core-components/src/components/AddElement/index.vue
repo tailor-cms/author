@@ -162,7 +162,7 @@ const buildElement = (el: any) => {
     const id = uuid();
     const question = {
       id,
-      data: {},
+      data: { content: '' },
       type: 'TIPTAP_HTML',
       position: 1,
       embedded: true,
