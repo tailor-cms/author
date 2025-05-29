@@ -51,7 +51,7 @@ importers:
       inquirer:
         specifier: ^12.6.1
         version: 12.6.1(@types/node@22.15.17)
-      lodash:
+      lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       minimist:
@@ -445,7 +445,7 @@ importers:
       humanize-string:
         specifier: ^3.0.0
         version: 3.0.0
-      lodash:
+      lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       mitt:
@@ -503,9 +503,9 @@ importers:
       '@types/debug':
         specifier: ^4.1.12
         version: 4.1.12
-      '@types/lodash':
-        specifier: ^4.17.16
-        version: 4.17.16
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
@@ -866,7 +866,7 @@ importers:
       '@tailor-cms/core-components':
         specifier: workspace:*
         version: link:../../../core-components
-      lodash:
+      lodash-es:
         specifier: '*'
         version: 4.17.21
       vue:
@@ -879,22 +879,22 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: '*'
-        version: 4.17.16
+        version: 4.17.12
 
   packages/core-extensions/content-containers/assessment-pool-server:
     dependencies:
       bluebird:
         specifier: ^3.7.2
         version: 3.7.2
-      lodash:
-        specifier: ^4.17.21
+      lodash-es:
+        specifier: '*'
         version: 4.17.21
     devDependencies:
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: '*'
-        version: 4.17.16
+        version: 4.17.12
 
   packages/core-extensions/content-containers/exam-edit:
     dependencies:
@@ -920,9 +920,9 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: '*'
-        version: 4.17.16
+        version: 4.17.12
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
@@ -932,20 +932,20 @@ importers:
       bluebird:
         specifier: ^3.7.2
         version: 3.7.2
-      lodash:
-        specifier: ^4.17.21
+      lodash-es:
+        specifier: '*'
         version: 4.17.21
     devDependencies:
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: '*'
-        version: 4.17.16
+        version: 4.17.12
 
   packages/core-extensions/content-containers/page:
     dependencies:
       '@tailor-cms/core-components':
         specifier: workspace:*
         version: link:../../../core-components
-      lodash:
+      lodash-es:
         specifier: '*'
         version: 4.17.21
       vue:
@@ -958,9 +958,9 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: '*'
-        version: 4.17.16
+        version: 4.17.12
 
   packages/core-extensions/content-containers/structured-content:
     dependencies:
@@ -970,7 +970,7 @@ importers:
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../../../utils
-      lodash:
+      lodash-es:
         specifier: '*'
         version: 4.17.21
       vee-validate:
@@ -986,9 +986,9 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
-      '@types/lodash':
+      '@types/lodash-es':
         specifier: '*'
-        version: 4.17.16
+        version: 4.17.12
 
   packages/core-extensions/meta-inputs/meta-checkbox:
     dependencies:
@@ -1046,7 +1046,7 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
-      lodash:
+      lodash-es:
         specifier: '*'
         version: 4.17.21
       vue:
@@ -1056,21 +1056,28 @@ importers:
         specifier: ^3.7.0
         version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
     devDependencies:
-      '@types/lodash':
-        specifier: ^4.17.16
-        version: 4.17.16
+      '@types/lodash-es':
+        specifier: '*'
+        version: 4.17.12
 
   packages/core-extensions/meta-inputs/meta-heas-rating:
     dependencies:
       '@tailor-cms/core-components':
         specifier: workspace:*
         version: link:../../../core-components
+      lodash-es:
+        specifier: '*'
+        version: 4.17.21
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
       vuetify:
         specifier: ^3.7.0
         version: 3.8.4(typescript@5.8.3)(vue@3.5.13(typescript@5.8.3))
+    devDependencies:
+      '@types/lodash-es':
+        specifier: '*'
+        version: 4.17.12
 
   packages/core-extensions/meta-inputs/meta-html:
     dependencies:
@@ -1149,7 +1156,7 @@ importers:
       jsonfile:
         specifier: ^6.1.0
         version: 6.1.0
-      lodash:
+      lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       shelljs:
@@ -1162,10 +1169,10 @@ importers:
 
   packages/lx-components:
     dependencies:
-      '@types/lodash':
-        specifier: ^4.17.10
-        version: 4.17.16
-      lodash:
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
+      lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       vue:
@@ -1189,7 +1196,7 @@ importers:
 
   packages/tailor-config-parser:
     dependencies:
-      lodash:
+      lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       yup:
@@ -1199,9 +1206,9 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:^
         version: link:../tailor-interfaces
-      '@types/lodash':
-        specifier: ^4.17.16
-        version: 4.17.16
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       del-cli:
         specifier: ^6.0.0
         version: 6.0.0
@@ -1221,7 +1228,7 @@ importers:
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2
-      lodash:
+      lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       uuid:
@@ -1231,9 +1238,9 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../tailor-interfaces
-      '@types/lodash':
-        specifier: ^4.17.16
-        version: 4.17.16
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       '@types/uuid':
         specifier: ^10.0.0
         version: 10.0.0
@@ -1261,7 +1268,7 @@ importers:
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
-      lodash:
+      lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
       mailtrap:
@@ -1283,6 +1290,9 @@ importers:
       '@playwright/test':
         specifier: 1.52.0
         version: 1.52.0
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
       '@types/node':
         specifier: ^22.15.17
         version: 22.15.17

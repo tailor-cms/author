@@ -1,13 +1,8 @@
+import { cloneDeep, find, kebabCase, noop, pick, sortBy } from 'lodash-es';
 import {
   getToolbarName,
   getSidebarName,
 } from '@tailor-cms/utils';
-import cloneDeep from 'lodash/cloneDeep';
-import find from 'lodash/find';
-import kebabCase from 'lodash/kebabCase';
-import noop from 'lodash/noop';
-import pick from 'lodash/pick';
-import sortBy from 'lodash/sortBy';
 
 /**
  * Used to resolve component name that should be used for rendering.

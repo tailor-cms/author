@@ -1,6 +1,5 @@
-import pick from 'lodash/pick.js';
+import { pick, partition } from 'lodash-es';
 import Promise from 'bluebird';
-import partition from 'lodash/partition.js';
 
 const ATTRS = [
   'id', 'uid', 'type', 'position', 'parentId', 'createdAt', 'updatedAt',

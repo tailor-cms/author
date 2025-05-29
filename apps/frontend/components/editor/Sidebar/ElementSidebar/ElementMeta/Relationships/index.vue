@@ -30,7 +30,7 @@ import type {
   ContentElement,
   RelationshipType,
 } from '@tailor-cms/interfaces/content-element';
-import find from 'lodash/find';
+import { find } from 'lodash-es';
 import { SelectElement } from '@tailor-cms/core-components';
 
 import RelationshipItem from './RelationshipType.vue';

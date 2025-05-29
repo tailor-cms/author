@@ -1,4 +1,4 @@
-import camelCase from 'lodash/camelCase';
+import { camelCase } from 'lodash-es';
 import { computed } from 'vue';
 import { SCHEMAS } from '@tailor-cms/config';
 

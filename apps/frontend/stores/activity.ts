@@ -4,11 +4,10 @@ import {
   calculatePosition,
   InsertLocation,
 } from '@tailor-cms/utils';
+import { findIndex, orderBy } from 'lodash-es';
 import { schema, workflow as workflowConfig } from '@tailor-cms/config';
 import { Activity as Events } from '@tailor-cms/common/src/sse.js';
-import findIndex from 'lodash/findIndex';
 import Hashids from 'hashids';
-import orderBy from 'lodash/orderBy';
 
 import { activity as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';

@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import { useDisplay } from 'vuetify';
 
 export interface Props {

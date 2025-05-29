@@ -102,7 +102,7 @@
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
 import Draggable from 'vuedraggable';
-import size from 'lodash/size';
+import { size } from 'lodash-es';
 
 import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';

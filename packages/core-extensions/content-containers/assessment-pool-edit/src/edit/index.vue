@@ -90,10 +90,7 @@ import {
 } from '@tailor-cms/core-components';
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { computed, inject, ref, watch } from 'vue';
-import filter from 'lodash/filter';
-import map from 'lodash/map';
-import pull from 'lodash/pull';
-import sortBy from 'lodash/sortBy';
+import { filter, map, pull, sortBy } from 'lodash-es';
 import { uuid } from '@tailor-cms/utils';
 
 interface Props {

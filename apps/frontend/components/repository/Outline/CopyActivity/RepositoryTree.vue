@@ -42,13 +42,11 @@
 </template>
 
 <script lang="ts" setup>
+import { cloneDeep, compact, xorBy } from 'lodash-es';
 import { computed, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import cloneDeep from 'lodash/cloneDeep';
-import compact from 'lodash/compact';
 import { VTreeview } from 'vuetify/labs/VTreeview';
-import xorBy from 'lodash/xorBy';
 
 interface TreeItem extends Activity {
   title: string;

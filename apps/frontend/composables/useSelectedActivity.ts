@@ -1,7 +1,6 @@
+import { get, uniqBy } from 'lodash-es';
 import { computed } from 'vue';
-import get from 'lodash/get';
 import { InsertLocation } from '@tailor-cms/utils';
-import uniqBy from 'lodash/uniqBy';
 
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';

@@ -1,4 +1,4 @@
-import find from 'lodash/find';
+import { find } from 'lodash-es';
 import seed from 'tailor-seed/user.json';
 
 const ADMIN_TEST_USER = find(seed, { email: 'admin@gostudion.com' });

@@ -34,11 +34,8 @@
 </template>
 
 <script lang="ts" setup>
-import last from 'lodash/last';
-import reduce from 'lodash/reduce';
+import { last, reduce, uniq, uniqBy } from 'lodash-es';
 import type { Revision } from '@tailor-cms/interfaces/revision';
-import uniq from 'lodash/uniq';
-import uniqBy from 'lodash/uniqBy';
 
 import api from '@/api/revision';
 import { isSameInstance } from '@/lib/revision';

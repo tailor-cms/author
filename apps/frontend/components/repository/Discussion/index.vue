@@ -15,10 +15,9 @@
 </template>
 
 <script lang="ts" setup>
+import { get, orderBy } from 'lodash-es';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components';
 import { computed } from 'vue';
-import get from 'lodash/get';
-import orderBy from 'lodash/orderBy';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import { useAuthStore } from '@/stores/auth';

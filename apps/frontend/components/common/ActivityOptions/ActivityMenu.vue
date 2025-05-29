@@ -51,10 +51,9 @@
 </template>
 
 <script lang="ts" setup>
+import { first, sortBy } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import first from 'lodash/first';
 import { InsertLocation } from '@tailor-cms/utils';
-import sortBy from 'lodash/sortBy';
 
 import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';

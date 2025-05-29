@@ -71,11 +71,8 @@
 </template>
 
 <script lang="ts" setup>
-import clamp from 'lodash/clamp';
-import get from 'lodash/get';
-import map from 'lodash/map';
+import { clamp, get, map, truncate } from 'lodash-es';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import truncate from 'lodash/truncate';
 
 import AddTag from './AddTag.vue';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';

@@ -3,7 +3,7 @@ import type {
   RepositoryUser,
   Tag,
 } from '@tailor-cms/interfaces/repository';
-import intersectionBy from 'lodash/intersectionBy';
+import { intersectionBy } from 'lodash-es';
 import { UserRole } from '@tailor-cms/common';
 
 import { useAuthStore } from './auth';

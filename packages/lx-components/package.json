@@ -10,8 +10,8 @@
   "type": "module",
   "main": "./src/index.ts",
   "peerDependencies": {
-    "@types/lodash": "^4.17.10",
-    "lodash": "^4.17.21",
+    "@types/lodash-es": "^4.17.12",
+    "lodash-es": "^4.17.21",
     "vue": "^3.5.13",
     "vuetify": "3.7.0"
   },

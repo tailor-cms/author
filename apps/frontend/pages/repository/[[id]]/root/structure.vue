@@ -64,10 +64,8 @@
 </template>
 
 <script lang="ts" setup>
+import { filter, find, map } from 'lodash-es';
 import Draggable from 'vuedraggable';
-import filter from 'lodash/filter';
-import find from 'lodash/find';
-import map from 'lodash/map';
 import { storeToRefs } from 'pinia';
 
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';

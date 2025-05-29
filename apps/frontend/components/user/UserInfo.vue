@@ -45,7 +45,7 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
-import pick from 'lodash/pick';
+import { pick } from 'lodash-es';
 import { useForm } from 'vee-validate';
 
 import { user as api } from '@/api';

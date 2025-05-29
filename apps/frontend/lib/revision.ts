@@ -1,15 +1,14 @@
+import { get, isEmpty, reduce } from 'lodash-es';
 import { lower, title as toTitleCase } from 'to-case';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
-import reduce from 'lodash/reduce';
-import type { Revision } from '@tailor-cms/interfaces/revision';
+import { Entity, type Revision } from '@tailor-cms/interfaces/revision';
 import { schema } from '@tailor-cms/config';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 const describe = {
-  REPOSITORY: describeRepositoryRevision,
-  ACTIVITY: describeActivityRevision,
-  CONTENT_ELEMENT: describeElementRevision,
+  [Entity.Repository]: describeRepositoryRevision,
+  [Entity.Activity]: describeActivityRevision,
+  [Entity.ContentElement]: describeElementRevision,
 };
 
 function getAction(operation: string) {
@@ -40,10 +39,11 @@ function getContainerContext(activity: Activity) {
 }
 
 function describeActivityRevision(rev: Revision, activity: Activity) {
+  const state = rev.state as Activity;
   const name = get(rev, 'state.data.name', '');
-  const typeLabel = getActivityTypeLabel(rev.state);
+  const typeLabel = getActivityTypeLabel(state);
   const action = getAction(rev.operation);
-  const activityConfig = schema.getLevel(rev.state.type);
+  const activityConfig = schema.getLevel(state.type);
   const containerContext = activityConfig.rootLevel
     ? ''
     : getContainerContext(activity);
@@ -55,7 +55,8 @@ function describeElementRevision(rev: Revision, activity: Activity) {
   const activityText = activity
     ? getContainerContext(activity)
     : 'within deleted container';
-  return `${action} ${lower(rev.state.type)} element ${activityText}`;
+  const state = rev.state as ContentElement;
+  return `${action} ${lower(state.type)} element ${activityText}`;
 }
 
 function describeRepositoryRevision(rev: Revision) {
@@ -72,13 +73,14 @@ export function getFormatDescription(rev: Revision, activity: Activity) {
 
 export function getRevisionAcronym(rev: Revision) {
   switch (rev.entity) {
-  case 'ACTIVITY': {
-    const typeArray = rev.state.type.split('_', 2);
+  case Entity.Activity: {
+    const state = rev.state as Activity;
+    const typeArray = state.type.split('_', 2);
     return reduce(typeArray, (acc, val) => acc + val.charAt(0), '');
   }
-  case 'REPOSITORY':
+  case Entity.Repository:
     return 'R';
-  case 'CONTENT_ELEMENT':
+  case Entity.ContentElement:
     return 'CE';
   default:
     return 'N/A';
@@ -88,13 +90,14 @@ export function getRevisionAcronym(rev: Revision) {
 export function getRevisionColor(rev: Revision) {
   const DEFAULT_COLOR = 'primary-lighten-4';
   switch (rev.entity) {
-  case 'ACTIVITY': {
-    const config = schema.getLevel(rev.state.type);
+  case Entity.Activity: {
+    const state = rev.state as Activity;
+    const config = schema.getLevel(state.type);
     return !isEmpty(config) ? config.color : DEFAULT_COLOR;
   }
-  case 'REPOSITORY':
+  case Entity.Repository:
     return 'primary-lighten-4';
-  case 'CONTENT_ELEMENT':
+  case Entity.ContentElement:
     return 'teal-lighten-4';
   default:
     return DEFAULT_COLOR;

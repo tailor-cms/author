@@ -16,11 +16,9 @@
 </template>
 
 <script lang="ts" setup>
+import { countBy, filter, map } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import countBy from 'lodash/countBy';
-import filter from 'lodash/filter';
-import map from 'lodash/map';
 import pluralize from 'pluralize';
 
 import { useCurrentRepository } from '@/stores/current-repository';

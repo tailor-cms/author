@@ -79,7 +79,7 @@ import { InsertLocation } from '@tailor-cms/utils';
 import pluralize from 'pluralize';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { SCHEMAS } from '@tailor-cms/config';
-import sortBy from 'lodash/sortBy';
+import { sortBy } from 'lodash-es';
 
 import RepositoryTree from './RepositoryTree.vue';
 import { activity as activityApi, repository as repositoryApi } from '@/api';

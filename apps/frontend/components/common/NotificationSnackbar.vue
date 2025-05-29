@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 import Queue from 'promise-queue';
 
 interface NotificationOptions {

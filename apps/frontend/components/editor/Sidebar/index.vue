@@ -59,11 +59,10 @@
 </template>
 
 <script lang="ts" setup>
+import { get, reject } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import get from 'lodash/get';
 import { getElementId } from '@tailor-cms/utils';
-import reject from 'lodash/reject';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { useDisplay } from 'vuetify';
 

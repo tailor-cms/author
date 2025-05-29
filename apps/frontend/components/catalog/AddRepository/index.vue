@@ -177,7 +177,7 @@
 
 <script lang="ts" setup>
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
-import pick from 'lodash/pick';
+import { pick } from 'lodash-es';
 import pMinDelay from 'p-min-delay';
 import Promise from 'bluebird';
 import { SCHEMAS } from '@tailor-cms/config';

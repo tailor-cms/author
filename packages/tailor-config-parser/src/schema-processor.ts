@@ -3,11 +3,7 @@ import type {
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
-import find from 'lodash/find.js';
-import isString from 'lodash/isString.js';
-import get from 'lodash/get.js';
-import map from 'lodash/map.js';
-import transform from 'lodash/transform.js';
+import { find, isString, get, map, transform } from 'lodash-es';
 
 import validate from './schema-validation';
 

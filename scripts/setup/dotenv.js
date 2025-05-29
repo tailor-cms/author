@@ -1,7 +1,6 @@
 import * as fs from 'node:fs/promises';
 import * as dotenv from 'dotenv';
-import isNil from 'lodash/isNil.js';
-import isString from 'lodash/isString.js';
+import { isNil, isString } from 'lodash-es';
 
 const DEV_CONFIG_PATH = './scripts/setup/.env';
 

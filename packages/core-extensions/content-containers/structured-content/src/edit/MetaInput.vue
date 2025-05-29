@@ -13,7 +13,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 import { getMetaName } from '@tailor-cms/utils';
 import { useField } from 'vee-validate';
 

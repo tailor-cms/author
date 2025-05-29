@@ -1,6 +1,6 @@
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Comment as Events } from '@tailor-cms/common/src/sse.js';
-import merge from 'lodash/merge';
+import { merge } from 'lodash-es';
 import { useStorage } from '@vueuse/core';
 
 import { comment as api } from '@/api';

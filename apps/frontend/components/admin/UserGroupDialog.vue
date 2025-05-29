@@ -43,7 +43,7 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash-es';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 

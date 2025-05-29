@@ -30,7 +30,8 @@ export default defineNuxtConfig({
     port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
   vite: {
-    optimizeDeps: { include: ['lodash'] },
+    // TODO: Check if this is still needed
+    optimizeDeps: { include: ['lodash-es'] },
     plugins: [injectConfigHeaders()],
     css: {
       preprocessorOptions: {

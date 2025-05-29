@@ -40,7 +40,7 @@ import { computed, ref } from 'vue';
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { createId as cuid } from '@paralleldrive/cuid2';
 import { VTreeview } from 'vuetify/labs/VTreeview';
-import without from 'lodash/without';
+import { without } from 'lodash-es';
 
 import { useConfigStore } from '@/stores/config';
 

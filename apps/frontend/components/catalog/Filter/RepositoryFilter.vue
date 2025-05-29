@@ -58,8 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import filterBy from 'lodash/filter';
-import orderBy from 'lodash/orderBy';
+import { filter as filterBy, orderBy } from 'lodash-es';
 
 export interface Props {
   label?: string;

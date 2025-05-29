@@ -10,7 +10,7 @@
   "main": "./src/index.js",
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "*",
+    "@types/lodash-es": "*",
     "@types/pluralize": "^0.0.33"
   },
   "peerDependencies": {
