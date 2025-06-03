@@ -3,7 +3,7 @@
   "description": "Reusable Tailor UI components",
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
-  "version": "1.0.39",
+  "version": "1.0.40",
   "files": [
     "src"
   ],
@@ -13,7 +13,7 @@
     "@tailor-cms/interfaces": "workspace:*"
   },
   "peerDependencies": {
-    "@tailor-cms/utils": "workspace:*",
+    "@tailor-cms/utils": "workspace:^",
     "@tiptap/pm": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
     "@tiptap/vue-3": "^2.4.0",
