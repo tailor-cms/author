@@ -782,7 +782,7 @@ importers:
   packages/core-components:
     dependencies:
       '@tailor-cms/utils':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../utils
       '@tiptap/extension-character-count':
         specifier: ^2.12.0
