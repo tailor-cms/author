@@ -60,7 +60,7 @@ import type {
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import pluralize from 'pluralize-esm';
-import { VTreeview, VTreeviewItem, VTreeviewGroup } from 'vuetify/labs/VTreeview';
+import { VTreeview } from 'vuetify/labs/VTreeview';
 
 interface TreeItem extends Activity {
   id: number;
