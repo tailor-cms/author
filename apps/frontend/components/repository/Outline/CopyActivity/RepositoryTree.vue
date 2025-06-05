@@ -113,12 +113,15 @@ const isSelectable = (item: TreeItem) => {
   return !selected.value.length || selected.value[0].level === item.level;
 };
 
-const attachActivityAttrs = (activity: TreeItem) => ({
-  id: activity.id,
-  title: activity.data.name,
-  selectable: props.supportedLevels.includes(activity.type),
-  ...($schemaService.isEditable(activity.type) && { children: undefined }),
-});
+const attachActivityAttrs = (activity: TreeItem) => {
+  const hasChildren = !!$schemaService.getLevel(activity.type).subLevels.length;
+  return {
+    id: activity.id,
+    title: activity.data.name,
+    selectable: props.supportedLevels.includes(activity.type),
+    ...(!hasChildren && { children: undefined }),
+  };
+};
 </script>
 
 <style lang="scss" scoped>
