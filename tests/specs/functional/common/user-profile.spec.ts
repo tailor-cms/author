@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import userSeed from 'tailor-seed/user.json';
+import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
 
 import { ChangePasswordDialog } from '../../../pom/common/ChangePasswordDiaog';
 import SeedClient from '../../../api/SeedClient';

@@ -2,6 +2,7 @@
   "name": "tailor-e2e",
   "version": "0.0.1",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "e2e:functional": "pnpm playwright test --project=chrome-admin --project=chrome-default-user --project=chrome-collaborator --project=setup-admin --project=setup-default-user --project=setup-collaborator",
     "e2e:visual": "pnpm percy exec -- playwright test --project=visual --project=setup-admin",

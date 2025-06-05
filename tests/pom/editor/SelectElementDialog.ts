@@ -19,7 +19,8 @@ export class SelectElementDialog {
   }
 
   selectActivity(title: string) {
-    return this.el.getByText(title).click();
+    const item = this.el.locator('.v-list-item').filter({ hasText: title });
+    return item.getByRole('button').click();
   }
 
   selectAll() {
