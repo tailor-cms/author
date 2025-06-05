@@ -12,7 +12,7 @@
         v-on="{ click: collapsable ? () => emit('selected') : null }"
       >
         <VRow class="w-100" dense>
-          <VCol cols="3" class="text-left align-content-center">
+          <VCol :cols="expanded ? 6 : 3" class="text-left align-content-center">
             <div class="d-flex align-center">
               <VIcon
                 :icon="icon"
@@ -24,10 +24,11 @@
             </div>
           </VCol>
           <VCol
+            v-if="!expanded"
             cols="6"
             class="text-subtitle-2 align-content-center text-truncate"
           >
-            <template v-if="!expanded">{{ question }}</template>
+            {{ question }}
           </VCol>
           <VCol cols="3" class="text-right align-content-center">
             <PublishDiffChip

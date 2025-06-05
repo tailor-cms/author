@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { times } from 'lodash-es';
-import userSeed from 'tailor-seed/user.json';
+import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
 
 import {
   UserDialog,
