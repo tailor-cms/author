@@ -10,8 +10,10 @@ export default defineNuxtPlugin(() => {
   });
 
   defineRule('decimal', (value: any, [decimals = '*', separator = '.']) => {
+    // null and undefined are valid values, should be handled by required rule
+    if (value === null || value === undefined) return true;
     const msg = 'This field must contain only decimal values';
-    if (value === null || value === undefined || value === '') return msg;
+    if (value === '') return msg;
     const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
     const regex = new RegExp(
       `^[-+]?\\d*(\\${separator}\\d${regexPart})?([eE]{1}[-]?\\d+)?$`,
