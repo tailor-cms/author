@@ -109,7 +109,7 @@
       :items="containerElements"
       :large="true"
       :layout="layout"
-      :position="insertPosition ? insertPosition : containerElements.length"
+      :position="insertPosition ?? containerElements.length"
       :show="isElementDrawerVisible"
       class="my-4"
       color="primary-lighten-5"
