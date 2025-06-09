@@ -623,11 +623,11 @@ importers:
         specifier: ^0.0.12
         version: 0.0.12
       '@tailor-cms/ce-html-edit':
-        specifier: ^0.0.14
-        version: 0.0.14(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(vue@3.5.15(typescript@5.8.3))
+        specifier: ^0.0.15
+        version: 0.0.15(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(vue@3.5.15(typescript@5.8.3))
       '@tailor-cms/ce-html-server':
-        specifier: ^0.0.14
-        version: 0.0.14
+        specifier: ^0.0.15
+        version: 0.0.15
       '@tailor-cms/ce-image-edit':
         specifier: ^1.0.4
         version: 1.0.4(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(@tiptap/starter-kit@2.12.0)(@tiptap/vue-3@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(vue@3.5.15(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(vee-validate@4.15.0(vue@3.5.15(typescript@5.8.3)))(vue@3.5.15(typescript@5.8.3))(vuedraggable@4.1.0(vue@3.5.15(typescript@5.8.3)))(yup@1.6.1)
@@ -3727,13 +3727,13 @@ packages:
   '@tailor-cms/ce-fill-blank-server@0.0.12':
     resolution: {integrity: sha512-xv1H8VjWgV7OQV3/0gbnt5jhXrGtD9zHg29NuCoYsYAK++lAFVdhsfxuoTsUUZYFgeM5L1JLKXqctU8E9ys6YQ==}
 
-  '@tailor-cms/ce-html-edit@0.0.14':
-    resolution: {integrity: sha512-XDo+HftjwP+TiGFcNE1feP8QXz8w0vQEZrCiMD6Wxw5FiZiC/Bcs7MQ7Jq4vjGVQRQoHNl1Lvna3BB2roSL5FA==}
+  '@tailor-cms/ce-html-edit@0.0.15':
+    resolution: {integrity: sha512-NmCZpdXEDbt4IEyfKbsB5JGSLDjSfqN1B7adnrXiW8/+TpbjVfbhY+yLqKMr3A2SJkHlHzS1NKmpzmJGiKlCaw==}
     peerDependencies:
       vue: ^3.5.13
 
-  '@tailor-cms/ce-html-server@0.0.14':
-    resolution: {integrity: sha512-aB9T7U9V+Lek4+RNPD6dtN892QhnH0yEds9Th5yKX9KxgFaoWBQEC3aP/ZU0HP5iaLvCqq5DBglb9SVKJvFD5w==}
+  '@tailor-cms/ce-html-server@0.0.15':
+    resolution: {integrity: sha512-BB0ms8FKaQIwcRyQdxKCvnhsHcg0JpZDa9OADoyLaEla/KcWLbc4LA2wcNnwpJ3Ndcv1V0itzFfRuanxgOxAPw==}
 
   '@tailor-cms/ce-image-edit@1.0.4':
     resolution: {integrity: sha512-u0ntJEdBRONxg9Lm7RjyVWKcJxNi3P/XNZfOQaZxv+Og9HtyaI29P0066B/1ppvdN5cRP+tq7nrSDWslsxyXag==}
@@ -14171,7 +14171,7 @@ snapshots:
     dependencies:
       lodash: 4.17.21
 
-  '@tailor-cms/ce-html-edit@0.0.14(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(vue@3.5.15(typescript@5.8.3))':
+  '@tailor-cms/ce-html-edit@0.0.15(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(vue@3.5.15(typescript@5.8.3))':
     dependencies:
       '@tiptap/extension-color': 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/extension-text-style@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0)))
       '@tiptap/extension-font-family': 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/extension-text-style@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0)))
@@ -14198,7 +14198,7 @@ snapshots:
     transitivePeerDependencies:
       - '@tiptap/core'
 
-  '@tailor-cms/ce-html-server@0.0.14': {}
+  '@tailor-cms/ce-html-server@0.0.15': {}
 
   '@tailor-cms/ce-image-edit@1.0.4(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(@tiptap/starter-kit@2.12.0)(@tiptap/vue-3@2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))(@tiptap/pm@2.12.0)(vue@3.5.15(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(vee-validate@4.15.0(vue@3.5.15(typescript@5.8.3)))(vue@3.5.15(typescript@5.8.3))(vuedraggable@4.1.0(vue@3.5.15(typescript@5.8.3)))(yup@1.6.1)':
     dependencies:
