@@ -206,7 +206,7 @@ const containerElements = computed(() => {
   return sortBy(filter(props.elements, { activityId: id.value }), 'position');
 });
 
-const insertPosition = ref(0);
+const insertPosition = ref<number | null>(null);
 const isElementDrawerVisible = ref(false);
 
 const reorder = ({ newPosition }: { newPosition: number }) => {
@@ -221,13 +221,13 @@ const showElementDrawer = (elementIndex: number) => {
 
 const onElementDrawerClose = () => {
   isElementDrawerVisible.value = false;
-  insertPosition.value = 0;
+  insertPosition.value = null;
 };
 
 const onElementAdd = (element: ContentElement) => {
   emit('save:element', element);
   isElementDrawerVisible.value = false;
-  insertPosition.value = 0;
+  insertPosition.value = null;
 };
 
 const saveElement = (element: ContentElement, key: string, data: any) => {
