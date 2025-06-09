@@ -27,8 +27,9 @@ const input = ref(props.meta.value);
 
 const onChange = () => {
   if (input.value === props.meta.value) return;
-  if (input.value === '' && props.meta.inputType === 'number')
-    input.value = null;
-  emit('update', props.meta.key, input.value);
+  const processedValue = props.meta.inputType === 'number'
+    ? (input.value === '' ? undefined : Number(input.value))
+    : input.value;
+  emit('update', props.meta.key, processedValue);
 };
 </script>
