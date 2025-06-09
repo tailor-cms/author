@@ -12,7 +12,7 @@
         v-on="{ click: collapsable ? () => emit('selected') : null }"
       >
         <VRow class="w-100" dense>
-          <VCol :cols="expanded ? 6 : 3" class="text-left align-content-center">
+          <VCol :cols="expanded ? 9 : 3" class="text-left align-content-center">
             <div class="d-flex align-center">
               <VIcon
                 :icon="icon"
