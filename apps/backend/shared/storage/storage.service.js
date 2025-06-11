@@ -22,7 +22,7 @@ class StorageService {
     const hash = sha256(file.originalname, buffer);
     const extension = path.extname(file.originalname);
     const fileName = `${hash}___${name}${extension}`;
-    const key = path.join(getPath(), fileName);
+    const key = getPath(fileName);
     await saveFile(key, buffer, { ContentType: file.mimetype });
     const publicUrl = await getFileUrl(key);
     return { key, publicUrl, url: getStorageUrl(key) };
@@ -34,7 +34,7 @@ class StorageService {
     const files = pickBy(content.files, (it) => !it.dir);
     const keys = await Promise.all(
       Object.keys(files).map(async (src) => {
-        const key = path.join(getPath(), name, src);
+        const key = getPath(name, src);
         const file = await content.file(src).async('uint8array');
         const mimeType = mime.lookup(src);
         await saveFile(key, Buffer.from(file), { ContentType: mimeType });
@@ -46,10 +46,7 @@ class StorageService {
 
   async downloadToStorage(url) {
     const res = await request.get(url, { responseType: 'arraybuffer' });
-    const filename = path.join(
-      getPath(),
-      `${uuidv4()}__${url.pathname.split('/').pop()}`,
-    );
+    const filename = getPath(`${uuidv4()}__${url.pathname.split('/').pop()}`);
     await Storage.saveFile(filename, res.data);
     return getStorageUrl(filename);
   }
