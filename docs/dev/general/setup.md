@@ -17,7 +17,7 @@ dependencies:
 
 Before you begin, ensure you have the following installed:
 
-- [Node.js (version 22.14 or higher)](https://nodejs.org/en/download/)
+- [Node.js (version 24.2.0 or higher)](https://nodejs.org/en/download/)
 - [pnpm (version 9.8.0 or higher)](https://pnpm.io/installation)
 - Clone the Tailor repository to your local machine.
 

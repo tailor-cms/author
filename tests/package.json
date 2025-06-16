@@ -9,15 +9,15 @@
     "e2e:a11y": "pnpm playwright test --project=a11y --project=setup-admin"
   },
   "devDependencies": {
-    "@axe-core/playwright": "4.10.1",
-    "@percy/cli": "^1.30.10",
+    "@axe-core/playwright": "4.10.2",
+    "@percy/cli": "^1.31.0",
     "@percy/playwright": "^1.0.8",
-    "@playwright/test": "1.52.0",
+    "@playwright/test": "1.53.0",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^22.15.17"
+    "@types/node": "^24.0.3"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.7.0",
+    "@faker-js/faker": "^9.8.0",
     "@tailor-cms/garment": "^0.18.1-beta.2",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
