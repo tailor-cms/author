@@ -17,8 +17,8 @@
     <template #body>
       <form novalidate @submit.prevent="submit">
         <VCombobox
-          ref="emailInput"
-          :model-value="emailInput"
+          ref="emailInputEl"
+          v-model="emailInput"
           :items="suggestedUsers"
           :clear-on-select="false"
           :error-messages="errors.email"
@@ -102,7 +102,7 @@ const isVisible = ref(false);
 const isSaving = ref(false);
 const suggestedUsers = ref([]);
 
-const emailInputEl = useTemplateRef('emailInput');
+const emailInputEl = useTemplateRef('emailInputEl');
 
 const roles = computed<Role[]>(() =>
   map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({
@@ -112,6 +112,10 @@ const roles = computed<Role[]>(() =>
 );
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
+  initialValues: {
+    email: [],
+    role: UserRole.USER,
+  },
   validationSchema: computed(() =>
     object({
       email: array()
@@ -132,6 +136,14 @@ const close = () => {
 
 const onEmailInputFocusChange = (isFocused: boolean) => {
   if (isFocused) return;
+  const searchValue = emailInputEl.value.search;
+  const isValidEmail = EMAIL_PATTERN.test(searchValue);
+  const isEmailAlreadyAdded = emailInput.value.find(
+    (v: string) => v === searchValue,
+  );
+  if (isValidEmail && !isEmailAlreadyAdded) {
+    emailInput.value.push(searchValue);
+  }
   emailInputEl.value.search = '';
 };
 
