@@ -9,21 +9,23 @@ import type {
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
+import {
+  castArray,
+  filter,
+  find,
+  first,
+  flatMap,
+  get,
+  isString,
+  map,
+  reduce,
+  sortBy,
+  union,
+  uniq,
+} from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import castArray from 'lodash/castArray.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import filter from 'lodash/filter.js';
-import find from 'lodash/find.js';
-import first from 'lodash/first.js';
-import flatMap from 'lodash/flatMap.js';
-import get from 'lodash/get.js';
-import isString from 'lodash/isString.js';
-import map from 'lodash/map.js';
-import reduce from 'lodash/reduce.js';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import sortBy from 'lodash/sortBy.js';
-import union from 'lodash/union.js';
-import uniq from 'lodash/uniq.js';
 
 const DEFAULT_GROUP = 'Content Elements';
 const DEFAULT_EMBED_ELEMENTS = ['TIPTAP_HTML', 'IMAGE', 'EMBED'];

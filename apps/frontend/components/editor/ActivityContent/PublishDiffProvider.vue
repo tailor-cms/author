@@ -20,17 +20,11 @@
 </template>
 
 <script lang="ts" setup>
+import { cloneDeep, filter, map, mapValues, merge, omit, reduce } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import cloneDeep from 'lodash/cloneDeep';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import filter from 'lodash/filter';
 import { isAfter } from 'date-fns/isAfter';
-import map from 'lodash/map';
-import mapValues from 'lodash/mapValues';
-import merge from 'lodash/merge';
-import omit from 'lodash/omit';
 import { PublishDiffChangeTypes } from '@tailor-cms/utils';
-import reduce from 'lodash/reduce';
 
 import { revision as api } from '@/api';
 

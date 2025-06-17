@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 import { getMetaName } from '@tailor-cms/utils';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { useField } from 'vee-validate';

@@ -11,11 +11,11 @@
   "peerDependencies": {
     "@tailor-cms/core-components": "workspace:*",
     "@tailor-cms/interfaces": "workspace:*",
-    "lodash": "*",
-    "vue": "^3.5.13",
-    "vuetify": "^3.7.0"
+    "lodash-es": "*",
+    "vue": "^3.5.15",
+    "vuetify": "^3.8.6"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.16"
+    "@types/lodash-es": "*"
   }
 }

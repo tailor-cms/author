@@ -1,10 +1,10 @@
 import * as fs from 'node:fs';
 import * as cheerio from 'cheerio';
+import kebabCase from 'lodash/kebabCase.js';
 import map from 'lodash/map.js';
 import mapKeys from 'lodash/mapKeys.js';
 import mjml2html from 'mjml';
 import mustache from 'mustache';
-import { kebabCase } from 'change-case';
 import { html } from './formatters.js';
 
 export { renderHtml, renderText };

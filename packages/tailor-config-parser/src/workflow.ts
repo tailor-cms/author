@@ -1,4 +1,4 @@
-import find from 'lodash/find.js';
+import { find } from 'lodash-es';
 
 import validateWorkflow from './workflow-validation';
 

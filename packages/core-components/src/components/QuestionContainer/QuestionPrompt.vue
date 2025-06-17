@@ -13,9 +13,9 @@
         <VAlert
           v-if="!size(elementData.embeds)"
           :text="alertMsg"
-          class="mx-6 mt-4 mb-2"
-          color="primary-darken-2"
-          icon="mdi-information-variant"
+          class="mx-6 mt-4 mb-2 text-center"
+          color="primary-darken-1"
+          icon="mdi-information-outline"
           variant="tonal"
           prominent
         />

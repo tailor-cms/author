@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { formatDate as format } from 'date-fns/format';
-import sample from 'lodash/sample';
-import userSeed from 'tailor-seed/user.json';
+import { sample } from 'lodash-es';
+import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
 
 import {
   outlineLevel,

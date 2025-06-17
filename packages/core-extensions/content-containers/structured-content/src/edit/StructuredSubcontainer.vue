@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { cloneDeep, debounce } from 'lodash';
+import { cloneDeep, debounce } from 'lodash-es';
 import { computed, ref, watch } from 'vue';
 
 import type { Activity } from '@tailor-cms/interfaces/activity';

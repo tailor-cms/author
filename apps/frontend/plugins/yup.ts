@@ -1,9 +1,6 @@
 import { addMethod, setLocale, string } from 'yup';
-import capitalize from 'lodash/capitalize';
 import { email } from '@vee-validate/rules';
-import lowerCase from 'lodash/lowerCase';
-
-const sentenceCase = (value: string) => capitalize(lowerCase(value));
+import { sentenceCase } from '@tailor-cms/utils';
 
 export default defineNuxtPlugin(() => {
   setLocale({

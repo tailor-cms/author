@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import last from 'lodash/last';
+import { last } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';

@@ -55,7 +55,6 @@ const titleField = {
   key: 'title',
   label: 'Title',
   placeholder: 'Enter title...',
-  inputType: 'string',
   validate: { required: true, min: 2, max: 80 },
 };
 

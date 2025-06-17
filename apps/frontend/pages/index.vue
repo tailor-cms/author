@@ -109,8 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import find from 'lodash/find';
-import map from 'lodash/map';
+import { find, map } from 'lodash-es';
 import { SCHEMAS } from '@tailor-cms/config';
 import { storeToRefs } from 'pinia';
 

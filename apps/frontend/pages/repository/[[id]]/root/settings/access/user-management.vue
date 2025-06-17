@@ -8,9 +8,9 @@
 </template>
 
 <script lang="ts" setup>
-import map from 'lodash/map';
+import { map } from 'lodash-es';
 import { role } from '@tailor-cms/common';
-import { title as titleCase } from 'to-case';
+import { titleCase } from '@tailor-cms/utils';
 
 import AddUserDialog from
   '@/components/repository/Settings/UserManagement/AddUserDialog.vue';

@@ -109,7 +109,7 @@
       :items="containerElements"
       :large="true"
       :layout="layout"
-      :position="insertPosition ? insertPosition : containerElements.length"
+      :position="insertPosition ?? containerElements.length"
       :show="isElementDrawerVisible"
       class="my-4"
       color="primary-lighten-5"
@@ -138,10 +138,8 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components';
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
+import { filter, reduce, sortBy } from 'lodash-es';
 import { computed, inject, ref } from 'vue';
-import filter from 'lodash/filter';
-import reduce from 'lodash/reduce';
-import sortBy from 'lodash/sortBy';
 
 import AIPrompt from './AIPrompt.vue';
 
@@ -208,7 +206,7 @@ const containerElements = computed(() => {
   return sortBy(filter(props.elements, { activityId: id.value }), 'position');
 });
 
-const insertPosition = ref(0);
+const insertPosition = ref<number | null>(null);
 const isElementDrawerVisible = ref(false);
 
 const reorder = ({ newPosition }: { newPosition: number }) => {
@@ -223,13 +221,13 @@ const showElementDrawer = (elementIndex: number) => {
 
 const onElementDrawerClose = () => {
   isElementDrawerVisible.value = false;
-  insertPosition.value = 0;
+  insertPosition.value = null;
 };
 
 const onElementAdd = (element: ContentElement) => {
   emit('save:element', element);
   isElementDrawerVisible.value = false;
-  insertPosition.value = 0;
+  insertPosition.value = null;
 };
 
 const saveElement = (element: ContentElement, key: string, data: any) => {

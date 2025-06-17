@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import find from 'lodash/find';
+import { find } from 'lodash-es';
 
 import LabelChip from '@/components/common/LabelChip.vue';
 import { useCurrentRepository } from '@/stores/current-repository';

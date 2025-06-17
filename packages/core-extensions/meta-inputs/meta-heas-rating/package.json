@@ -8,9 +8,13 @@
     "src"
   ],
   "main": "./src/index.js",
+  "devDependencies": {
+    "@types/lodash-es": "*"
+  },
   "peerDependencies": {
     "@tailor-cms/core-components": "workspace:*",
-    "vue": "^3.5.13",
-    "vuetify": "^3.7.0"
+    "lodash-es": "*",
+    "vue": "^3.5.15",
+    "vuetify": "^3.8.6"
   }
 }

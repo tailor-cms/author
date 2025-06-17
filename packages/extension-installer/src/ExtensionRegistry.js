@@ -1,11 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { camelCase, template, upperFirst } from 'lodash-es';
 import * as acorn from 'acorn';
-import _ from 'lodash';
-import camelCase from 'lodash/camelCase.js';
 import jsonfile from 'jsonfile';
 import shell from 'shelljs';
-import upperFirst from 'lodash/upperFirst.js';
 
 import { getInstallationInfo, selectExtension } from './prompts.js';
 
@@ -163,7 +161,7 @@ export class ExtensionRegistry {
 }
 
 // prettier-ignore
-const exportModuleTemplate = _.template(
+const exportModuleTemplate = template(
 // eslint-disable-next-line @stylistic/indent
 `<% _.forEach(entries, function(it, index) { %>import pkg<%- index %> from '<%- it %>';
 <%});%>
@@ -174,7 +172,7 @@ export const elements = [
 `);
 
 // prettier-ignore
-const exportInterfaceTemplate = _.template(
+const exportInterfaceTemplate = template(
   `
   export const <%- enumName %> = {
   <% _.forEach(types, function(val, key) {%><%- key %>: '<%- val %>',

@@ -10,7 +10,7 @@ import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import sample from 'lodash/sample.js';
 import { schema } from '@tailor-cms/config';
-import { snakeCase } from 'change-case';
+import snakeCase from 'lodash/snakeCase.js';
 
 import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import publishingService from '#shared/publishing/publishing.service.js';
@@ -59,11 +59,6 @@ const JobCache = new Map();
 const logger = createLogger('repository:controller');
 const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
 
-const getFilter = (search) => {
-  const term = search.length < 3 ? `${search}%` : `%${search}%`;
-  return { [Op.iLike]: term };
-};
-
 const includeUser = () => ({
   model: User,
   paranoid: false,
@@ -109,7 +104,7 @@ async function index({ query, user, opts }, res) {
     { model: RepositoryUserGroup },
     ...includeRepositoryTags(query),
   ];
-  if (search) opts.where.name = getFilter(search);
+  if (search) opts.where.name = { [Op.iLike]: `%${search}%` };
   if (name) opts.where.name = name;
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;

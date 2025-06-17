@@ -36,14 +36,16 @@
 </template>
 
 <script lang="ts" setup>
-import castArray from 'lodash/castArray';
-import compact from 'lodash/compact';
-import filterBy from 'lodash/filter';
-import flatMap from 'lodash/flatMap';
-import get from 'lodash/get';
-import groupBy from 'lodash/groupBy';
-import isEmpty from 'lodash/isEmpty';
-import map from 'lodash/map';
+import {
+  castArray,
+  compact,
+  filter as filterBy,
+  flatMap,
+  get,
+  groupBy,
+  isEmpty,
+  map,
+} from 'lodash-es';
 import { object } from 'yup';
 import pluralize from 'pluralize';
 import { useForm } from 'vee-validate';

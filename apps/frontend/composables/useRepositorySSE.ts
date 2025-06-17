@@ -1,4 +1,4 @@
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash-es';
 
 import feed from '@/lib/RepositoryFeed';
 import { useActivityStore } from '@/stores/activity';

@@ -1,11 +1,8 @@
+import { sentenceCase } from '@tailor-cms/utils';
 import { configure, defineRule } from 'vee-validate';
 import { all } from '@vee-validate/rules';
-import capitalize from 'lodash/capitalize';
 import en from '@vee-validate/i18n/dist/locale/en.json';
 import { localize } from '@vee-validate/i18n';
-import lowerCase from 'lodash/lowerCase';
-
-const sentenceCase = (value: string) => capitalize(lowerCase(value));
 
 export default defineNuxtPlugin(() => {
   Object.entries(all).forEach(([name, rule]) => {
@@ -13,8 +10,10 @@ export default defineNuxtPlugin(() => {
   });
 
   defineRule('decimal', (value: any, [decimals = '*', separator = '.']) => {
+    // null and undefined are valid values, should be handled by required rule
+    if (value === null || value === undefined) return true;
     const msg = 'This field must contain only decimal values';
-    if (value === null || value === undefined || value === '') return msg;
+    if (value === '') return msg;
     const regexPart = decimals === '*' ? '+' : `{1,${decimals}}`;
     const regex = new RegExp(
       `^[-+]?\\d*(\\${separator}\\d${regexPart})?([eE]{1}[-]?\\d+)?$`,

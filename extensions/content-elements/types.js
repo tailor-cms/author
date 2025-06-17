@@ -21,4 +21,5 @@ export const ContentElementType = {
   BrightcoveVideo: 'BRIGHTCOVE_VIDEO',
   JoditHtml: 'JODIT_HTML',
   Html: 'HTML',
+  File: 'FILE',
 };

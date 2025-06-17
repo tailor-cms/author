@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import type { Schema } from '@tailor-cms/interfaces/schema';
-import isString from 'lodash/isString.js';
+import { isString } from 'lodash-es';
 
 const activityType = yup.string().min(2).max(50);
 const contentElementType = yup.string().min(2).max(50);

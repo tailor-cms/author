@@ -1,10 +1,4 @@
-import each from 'lodash/each';
-import find from 'lodash/find';
-import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
-import omit from 'lodash/omit';
-import orderBy from 'lodash/orderBy';
-import pick from 'lodash/pick';
+import { each, find, isEmpty, isEqual, omit, orderBy, pick } from 'lodash-es';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserActivity } from '@tailor-cms/common/src/sse.js';
 

@@ -1,6 +1,4 @@
-import capitalize from 'lodash/capitalize';
-import reduce from 'lodash/reduce';
-import words from 'lodash/words';
+import { capitalize, reduce, words } from 'lodash-es';
 
 const DefaultSubcontainers = {
   Section: 'SECTION',

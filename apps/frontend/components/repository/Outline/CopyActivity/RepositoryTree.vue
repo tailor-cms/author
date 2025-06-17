@@ -42,13 +42,11 @@
 </template>
 
 <script lang="ts" setup>
+import { cloneDeep, compact, xorBy } from 'lodash-es';
 import { computed, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import cloneDeep from 'lodash/cloneDeep';
-import compact from 'lodash/compact';
 import { VTreeview } from 'vuetify/labs/VTreeview';
-import xorBy from 'lodash/xorBy';
 
 interface TreeItem extends Activity {
   title: string;
@@ -115,12 +113,15 @@ const isSelectable = (item: TreeItem) => {
   return !selected.value.length || selected.value[0].level === item.level;
 };
 
-const attachActivityAttrs = (activity: TreeItem) => ({
-  id: activity.id,
-  title: activity.data.name,
-  selectable: props.supportedLevels.includes(activity.type),
-  ...($schemaService.isEditable(activity.type) && { children: undefined }),
-});
+const attachActivityAttrs = (activity: TreeItem) => {
+  const hasChildren = !!$schemaService.getLevel(activity.type).subLevels.length;
+  return {
+    id: activity.id,
+    title: activity.data.name,
+    selectable: props.supportedLevels.includes(activity.type),
+    ...(!hasChildren && { children: undefined }),
+  };
+};
 </script>
 
 <style lang="scss" scoped>
@@ -130,9 +131,5 @@ const attachActivityAttrs = (activity: TreeItem) => ({
 
 .v-list {
   border-radius: 4px !important;
-}
-
-:deep(.v-list-item__prepend .v-list-item__spacer) {
-  width: 0.25rem !important;
 }
 </style>

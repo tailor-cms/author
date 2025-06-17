@@ -36,11 +36,9 @@
 </template>
 
 <script lang="ts" setup>
-import cloneDeep from 'lodash/cloneDeep';
-import find from 'lodash/find';
+import { cloneDeep, find, set } from 'lodash-es';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import set from 'lodash/set';
 
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
