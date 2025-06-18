@@ -28,6 +28,8 @@ function parseProxyPolicy(policy) {
 
 const env = process.env;
 
+export const isFlatPublishingStructure = yn(env.FLAT_REPO_STRUCTURE);
+
 export const enableRateLimiting = yn(env.ENABLE_RATE_LIMITING);
 export const reverseProxyPolicy = parseProxyPolicy(env.REVERSE_PROXY_TRUST);
 
