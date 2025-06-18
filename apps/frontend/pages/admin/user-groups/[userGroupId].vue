@@ -108,7 +108,7 @@ async function fetchUsers() {
 }
 
 async function upsertUser(email: string, role: string) {
-  await api.upsertUser(userGroupId, { email, role });
+  await api.upsertUser(userGroupId, { emails: [email], role });
   await fetchUsers();
 }
 

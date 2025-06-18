@@ -19,9 +19,10 @@
     <template #item="{ item }">
       <tr :key="item.id">
         <td class="text-truncate text-left">
+          <UserGroupAvatar :logo-url="item.logoUrl" />
           <NuxtLink
             :to="{ name: 'user-group', params: { userGroupId: item.id } }"
-            class="text-primary-darken-4"
+            class="ml-5 text-primary-darken-4"
           >
             {{ item.name }}
           </NuxtLink>
@@ -44,7 +45,9 @@
 
 <script lang="ts" setup>
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
+
 import api from '@/api/repository.js';
+import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
