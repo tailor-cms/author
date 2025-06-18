@@ -28,8 +28,8 @@
   },
   "devDependencies": {
     "@nuxt/eslint-config": "^1.4.1",
-    "@typescript-eslint/eslint-plugin": "^8.34.0",
-    "@typescript-eslint/parser": "^8.34.0",
+    "@typescript-eslint/eslint-plugin": "^8.34.1",
+    "@typescript-eslint/parser": "^8.34.1",
     "boxen": "^8.0.1",
     "chalk": "^5.4.1",
     "dotenv-cli": "^8.0.0",
