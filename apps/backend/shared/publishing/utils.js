@@ -1,6 +1,5 @@
 import { createLogger } from '#logger';
-
-const { FLAT_REPO_STRUCTURE } = process.env;
+import { isFlatPublishingStructure } from '#config/general.js';
 
 export const PublishEnv = {
   DRAFT: 'draft',
@@ -8,7 +7,7 @@ export const PublishEnv = {
 };
 
 export function getBaseUrl(env, repositoryId, parentId) {
-  return FLAT_REPO_STRUCTURE
+  return isFlatPublishingStructure
     ? `${env}/${repositoryId}`
     : `${env}/${repositoryId}/${parentId}`;
 }

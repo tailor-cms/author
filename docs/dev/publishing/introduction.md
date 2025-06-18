@@ -58,7 +58,7 @@ the published content within the `repository/[id]` directory:
 ### Flat Structure
 
 To enable the flat repository structure, the environment variable 
-`FLAT_REPO_STRUCTURE=1` must be set. This structure, which is now the default,
+`FLAT_REPO_STRUCTURE=true` must be set. This structure, which is now the default,
 consolidates all published containers within the `repository/[id]` 
 folder.
 
