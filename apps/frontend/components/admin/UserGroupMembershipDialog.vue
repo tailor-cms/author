@@ -19,9 +19,9 @@
         <VCombobox
           ref="emailInputEl"
           v-model="emailInput"
-          :items="suggestedUsers"
           :clear-on-select="false"
           :error-messages="errors.email"
+          :items="suggestedUsers"
           class="required mb-4"
           item-title="email"
           item-value="email"
@@ -33,9 +33,7 @@
           closable-chips
           multiple
           @update:focused="onEmailInputFocusChange"
-          @update:model-value="(emails: string[]) => {
-            emailInput = emails.filter((v: string) => EMAIL_PATTERN.test(v));
-          }"
+          @update:model-value="onEmailValueChange"
           @update:search="fetchUsers"
         />
         <VSelect
@@ -98,11 +96,10 @@ const emit = defineEmits(['save']);
 
 const authStore = useAuthStore();
 
+const emailInputEl = useTemplateRef('emailInputEl');
 const isVisible = ref(false);
 const isSaving = ref(false);
 const suggestedUsers = ref([]);
-
-const emailInputEl = useTemplateRef('emailInputEl');
 
 const roles = computed<Role[]>(() =>
   map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({
@@ -129,10 +126,8 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
 const [emailInput] = defineField('email');
 const [roleInput] = defineField('role');
 
-const close = () => {
-  isVisible.value = false;
-  resetForm();
-};
+const onEmailValueChange = (val: string[]) =>
+  (emailInput.value = val.filter((v: string) => EMAIL_PATTERN.test(v)));
 
 const onEmailInputFocusChange = (isFocused: boolean) => {
   if (isFocused) return;
@@ -145,6 +140,11 @@ const onEmailInputFocusChange = (isFocused: boolean) => {
     emailInput.value.push(searchValue);
   }
   emailInputEl.value.search = '';
+};
+
+const close = () => {
+  isVisible.value = false;
+  resetForm();
 };
 
 const submit = handleSubmit(async () => {
