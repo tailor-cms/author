@@ -23,5 +23,5 @@
 </template>
 
 <script lang="ts" setup>
-import { codename, version } from '@/../package.json';
+import { codename, version } from '@/../../../package.json' with { type: 'json' };
 </script>
