@@ -64,7 +64,7 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0
       pg:
-        specifier: ^8.16.0
+        specifier: ^8.16.1
         version: 8.16.1
       shelljs:
         specifier: ^0.10.0
@@ -85,13 +85,13 @@ importers:
   apps/backend:
     dependencies:
       '@aws-sdk/client-s3':
-        specifier: ^3.830.0
+        specifier: ^3.832.0
         version: 3.832.0
       '@aws-sdk/lib-storage':
-        specifier: ^3.830.0
+        specifier: ^3.832.0
         version: 3.832.0(@aws-sdk/client-s3@3.832.0)
       '@aws-sdk/s3-request-presigner':
-        specifier: ^3.830.0
+        specifier: ^3.832.0
         version: 3.832.0
       '@aws-sdk/util-format-url':
         specifier: ^3.821.0
@@ -268,10 +268,10 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       pg:
-        specifier: ^8.16.0
+        specifier: ^8.16.1
         version: 8.16.1
       pg-query-stream:
-        specifier: ^4.10.0
+        specifier: ^4.10.1
         version: 4.10.1(pg@8.16.1)
       pino:
         specifier: ^9.7.0
@@ -362,7 +362,7 @@ importers:
         specifier: ^6.6.3
         version: 6.6.3
       terser:
-        specifier: ^5.43.0
+        specifier: ^5.43.1
         version: 5.43.1
 
   apps/frontend:
@@ -410,7 +410,7 @@ importers:
         specifier: ^4.15.1
         version: 4.15.1(vue@3.5.17(typescript@5.8.3))
       '@vueuse/core':
-        specifier: ^13.3.0
+        specifier: ^13.4.0
         version: 13.4.0(vue@3.5.17(typescript@5.8.3))
       axios:
         specifier: ^1.10.0
@@ -513,7 +513,7 @@ importers:
         specifier: ^1.89.2
         version: 1.89.2
       vue:
-        specifier: ^3.5.16
+        specifier: ^3.5.17
         version: 3.5.17(typescript@5.8.3)
       vue-router:
         specifier: ^4.5.1
@@ -809,7 +809,7 @@ importers:
         specifier: ^4.17.12
         version: 4.17.12
       '@vueuse/core':
-        specifier: ^13.3.0
+        specifier: ^13.4.0
         version: 13.4.0(vue@3.5.17(typescript@5.8.3))
       chart.js:
         specifier: ^4.5.0
@@ -1271,16 +1271,16 @@ importers:
     devDependencies:
       '@axe-core/playwright':
         specifier: 4.10.2
-        version: 4.10.2(playwright-core@1.53.0)
+        version: 4.10.2(playwright-core@1.53.1)
       '@percy/cli':
         specifier: ^1.31.0
         version: 1.31.0(typescript@5.8.3)
       '@percy/playwright':
         specifier: ^1.0.8
-        version: 1.0.8(playwright-core@1.53.0)
+        version: 1.0.8(playwright-core@1.53.1)
       '@playwright/test':
-        specifier: 1.53.0
-        version: 1.53.0
+        specifier: 1.53.1
+        version: 1.53.1
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -2864,8 +2864,8 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@playwright/test@1.53.0':
-    resolution: {integrity: sha512-15hjKreZDcp7t6TL/7jkAo6Df5STZN09jGiv5dbP9A6vMVncXRqE7/B2SncsyOwrkZRBH2i6/TPOL8BVmm3c7w==}
+  '@playwright/test@1.53.1':
+    resolution: {integrity: sha512-Z4c23LHV0muZ8hfv4jw6HngPJkbbtZxTkxPNIg7cJcTc9C28N/p2q7g3JZS2SiKBBHJ3uM1dgDye66bB7LEk5w==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -8026,13 +8026,13 @@ packages:
   pkg-types@2.1.0:
     resolution: {integrity: sha512-wmJwA+8ihJixSoHKxZJRBQG1oY8Yr9pGLzRmSsNms0iNWyHHAlZCa7mmKiFR10YPZuz/2k169JiS/inOjBCZ2A==}
 
-  playwright-core@1.53.0:
-    resolution: {integrity: sha512-mGLg8m0pm4+mmtB7M89Xw/GSqoNC+twivl8ITteqvAndachozYe2ZA7srU6uleV1vEdAHYqjq+SV8SNxRRFYBw==}
+  playwright-core@1.53.1:
+    resolution: {integrity: sha512-Z46Oq7tLAyT0lGoFx4DOuB1IA9D1TPj0QkYxpPVUnGDqHHvDpCftu1J2hM2PiWsNMoZh8+LQaarAWcDfPBc6zg==}
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.53.0:
-    resolution: {integrity: sha512-ghGNnIEYZC4E+YtclRn4/p6oYbdPiASELBIYkBXfaTVKreQUYbMUYQDwS12a8F0/HtIjr/CkGjtwABeFPGcS4Q==}
+  playwright@1.53.1:
+    resolution: {integrity: sha512-LJ13YLr/ocweuwxyGf1XNFWIU4M2zUSo149Qbp+A4cpwDjsxRPj7k6H25LBrEHiEwxvRbD8HdwvQmRMSvquhYw==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -10797,10 +10797,10 @@ snapshots:
       '@smithy/types': 4.3.1
       tslib: 2.8.1
 
-  '@axe-core/playwright@4.10.2(playwright-core@1.53.0)':
+  '@axe-core/playwright@4.10.2(playwright-core@1.53.1)':
     dependencies:
       axe-core: 4.10.3
-      playwright-core: 1.53.0
+      playwright-core: 1.53.1
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -12362,9 +12362,9 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@percy/playwright@1.0.8(playwright-core@1.53.0)':
+  '@percy/playwright@1.0.8(playwright-core@1.53.1)':
     dependencies:
-      playwright-core: 1.53.0
+      playwright-core: 1.53.1
 
   '@percy/sdk-utils@1.31.0': {}
 
@@ -12385,9 +12385,9 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@playwright/test@1.53.0':
+  '@playwright/test@1.53.1':
     dependencies:
-      playwright: 1.53.0
+      playwright: 1.53.1
 
   '@polka/url@1.0.0-next.29': {}
 
@@ -14730,7 +14730,7 @@ snapshots:
   buffer@4.9.2:
     dependencies:
       base64-js: 1.5.1
-      ieee754: 1.1.13
+      ieee754: 1.2.1
       isarray: 1.0.0
 
   buffer@5.6.0:
@@ -18564,11 +18564,11 @@ snapshots:
       exsolve: 1.0.6
       pathe: 2.0.3
 
-  playwright-core@1.53.0: {}
+  playwright-core@1.53.1: {}
 
-  playwright@1.53.0:
+  playwright@1.53.1:
     dependencies:
-      playwright-core: 1.53.0
+      playwright-core: 1.53.1
     optionalDependencies:
       fsevents: 2.3.2
 
