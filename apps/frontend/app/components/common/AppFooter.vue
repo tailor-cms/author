@@ -8,7 +8,13 @@
         src="/img/default-logo-compact.svg"
         width="32px"
       />
-      <VChip class="mx-4" color="primary-lighten-4" rounded="lg" label small>
+      <VChip
+        class="mx-4"
+        color="primary-lighten-4"
+        rounded="lg"
+        label
+        small
+      >
         {{ version }} {{ codename }}
       </VChip>
       Built with <VIcon class="mx-1" color="pink">mdi-heart</VIcon>
