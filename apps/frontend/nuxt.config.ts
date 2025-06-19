@@ -5,7 +5,6 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/google-fonts', '@pinia/nuxt'],
   ssr: false,
   devtools: { enabled: true },
-  future: { compatibilityVersion: 4 },
   css: [
     '@mdi/font/css/materialdesignicons.min.css',
     'vuetify/lib/styles/main.sass',
@@ -30,6 +29,7 @@ export default defineNuxtConfig({
   devServer: {
     port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
+  future: { compatibilityVersion: 4 },
   vite: {
     // TODO: Check if this is still needed
     optimizeDeps: { include: ['lodash-es'] },
