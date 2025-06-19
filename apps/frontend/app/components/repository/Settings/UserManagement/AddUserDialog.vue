@@ -69,7 +69,7 @@ import { throttle } from 'lodash-es';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 
-import { user as api } from '~/api';
+import { user as api } from '@/api';
 
 defineProps<{
   roles: Array<{ title: string; value: string }>;

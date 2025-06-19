@@ -1,10 +1,11 @@
-import injectConfigHeaders from './lib/vite-plugins/injectConfigHeaders';
+import injectConfigHeaders from './app/lib/vite-plugins/injectConfigHeaders';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxtjs/google-fonts', '@pinia/nuxt'],
   ssr: false,
   devtools: { enabled: true },
+  future: { compatibilityVersion: 4 },
   css: [
     '@mdi/font/css/materialdesignicons.min.css',
     'vuetify/lib/styles/main.sass',
@@ -50,6 +51,6 @@ export default defineNuxtConfig({
     },
   },
   pinia: {
-    storesDirs: ['./stores/**'],
+    storesDirs: ['./app/stores/**'],
   },
 });
