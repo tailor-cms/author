@@ -13,7 +13,8 @@
         color="primary-lighten-4"
         rounded="lg"
         label
-        small>
+        small
+      >
         {{ version }} {{ codename }}
       </VChip>
       Built with <VIcon class="mx-1" color="pink">mdi-heart</VIcon>
@@ -23,5 +24,5 @@
 </template>
 
 <script lang="ts" setup>
-import { codename, version } from '@/../../package.json';
+import { codename, version } from '@/../../../package.json' with { type: 'json' };
 </script>

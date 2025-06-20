@@ -1,4 +1,4 @@
-import injectConfigHeaders from './lib/vite-plugins/injectConfigHeaders';
+import injectConfigHeaders from './app/lib/vite-plugins/injectConfigHeaders';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -29,6 +29,7 @@ export default defineNuxtConfig({
   devServer: {
     port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
+  future: { compatibilityVersion: 4 },
   vite: {
     // TODO: Check if this is still needed
     optimizeDeps: { include: ['lodash-es'] },
@@ -50,6 +51,6 @@ export default defineNuxtConfig({
     },
   },
   pinia: {
-    storesDirs: ['./stores/**'],
+    storesDirs: ['./app/stores/**'],
   },
 });

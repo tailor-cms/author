@@ -3,7 +3,7 @@ import path from 'node:path';
 import dargs from 'dargs';
 import dotenv from 'dotenv';
 import minimist from 'minimist';
-import { packageDirectory } from 'pkg-dir';
+import { packageDirectory } from 'package-directory';
 import safeRequire from 'safe-require';
 
 // App root

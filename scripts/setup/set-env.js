@@ -1,4 +1,4 @@
-import { packageDirectory } from 'pkg-dir';
+import { packageDirectory } from 'package-directory';
 import shell from 'shelljs';
 import { createDatabase, getDatabaseClient } from './database.js';
 import generateConfig from './dotenv.js';
