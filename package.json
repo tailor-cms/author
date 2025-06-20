@@ -39,7 +39,7 @@
     "lodash-es": "^4.17.21",
     "minimist": "^1.2.8",
     "ora": "^8.2.0",
-    "pg": "^8.16.1",
+    "pg": "^8.16.2",
     "package-directory": "^8.1.0",
     "shelljs": "^0.10.0",
     "tailor-seed": "workspace:^",

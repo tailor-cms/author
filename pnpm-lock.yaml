@@ -64,8 +64,8 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0
       pg:
-        specifier: ^8.16.1
-        version: 8.16.1
+        specifier: ^8.16.2
+        version: 8.16.2
       shelljs:
         specifier: ^0.10.0
         version: 0.10.0
@@ -268,11 +268,11 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
       pg:
-        specifier: ^8.16.1
-        version: 8.16.1
+        specifier: ^8.16.2
+        version: 8.16.2
       pg-query-stream:
-        specifier: ^4.10.1
-        version: 4.10.1(pg@8.16.1)
+        specifier: ^4.10.2
+        version: 4.10.2(pg@8.16.2)
       pino:
         specifier: ^9.7.0
         version: 9.7.0
@@ -302,7 +302,7 @@ importers:
         version: 7.7.2
       sequelize:
         specifier: ^6.37.7
-        version: 6.37.7(pg@8.16.1)
+        version: 6.37.7(pg@8.16.2)
       sequelize-replace-enum-postgres:
         specifier: ^1.6.0
         version: 1.6.0
@@ -785,17 +785,17 @@ importers:
         specifier: workspace:^
         version: link:../utils
       '@tiptap/extension-character-count':
-        specifier: ^2.14.0
-        version: 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)
+        specifier: ^2.14.1
+        version: 2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)
       '@tiptap/extension-subscript':
-        specifier: ^2.14.0
-        version: 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
+        specifier: ^2.14.1
+        version: 2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
       '@tiptap/extension-superscript':
-        specifier: ^2.14.0
-        version: 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
+        specifier: ^2.14.1
+        version: 2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
       '@tiptap/extension-underline':
-        specifier: ^2.14.0
-        version: 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
+        specifier: ^2.14.1
+        version: 2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
       '@tiptap/pm':
         specifier: ^2.4.0
         version: 2.14.0
@@ -3699,8 +3699,8 @@ packages:
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
-  '@tiptap/extension-character-count@2.14.0':
-    resolution: {integrity: sha512-aTCobbF9yIXOntVTdjzJ4G5V0TJKeeIDW8RFMdTVr5o0R/woSZ27cXiPGdS7XxpN6gY9vlNzYe79CcNBDTzLfA==}
+  '@tiptap/extension-character-count@2.14.1':
+    resolution: {integrity: sha512-FLM9QnuVHGApUvOyWW7wfJAv80ERzYjFZxwf4X2YpI5/BI+rL6o4/RIwHDHncQsfvNrCdmMaB6qR7yePwcVulA==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
       '@tiptap/pm': ^2.7.0
@@ -3825,8 +3825,18 @@ packages:
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
+  '@tiptap/extension-subscript@2.14.1':
+    resolution: {integrity: sha512-HPGDOyItlixCYsSQf/qCi4clJRFB/hODLfFKJBjzj+Jj1HzKYj1AlS4d3aRT3tpJMSzcgWL6YykVHgvSD5FK3w==}
+    peerDependencies:
+      '@tiptap/core': ^2.7.0
+
   '@tiptap/extension-superscript@2.14.0':
     resolution: {integrity: sha512-BnsqY9TxN15KxxoX1rulL0sV0Wu3umD4Un0E90LZ5G/QRrVUeohAuOiraqRJ4GnJPVJBR2H0+7Sg5sKqYuIpnQ==}
+    peerDependencies:
+      '@tiptap/core': ^2.7.0
+
+  '@tiptap/extension-superscript@2.14.1':
+    resolution: {integrity: sha512-RHIzNAm5fMgcJI+YBSgAzZmkusON66MA+TADzhGrfGzLeZIP7pSosWcJTRE1voAunzCYg7BlY6l9pFhgbX/5Ug==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
@@ -3868,6 +3878,11 @@ packages:
 
   '@tiptap/extension-underline@2.14.0':
     resolution: {integrity: sha512-rlBasbwElFikaL5qPyp3OeoEBH2p9Dve0K6liqIWF4i9cECH2Bm53y2S0enVEe01hmgQEWmoYK+fq67rxr3XsQ==}
+    peerDependencies:
+      '@tiptap/core': ^2.7.0
+
+  '@tiptap/extension-underline@2.14.1':
+    resolution: {integrity: sha512-yrrl3LTIWdOobh7ATeIWUOg1EwdYnDweS7cppv/2o02OuhmDVk7nPWEdDyu/e3yw9llX69PMf9eaEAvzhv7PaA==}
     peerDependencies:
       '@tiptap/core': ^2.7.0
 
@@ -7929,8 +7944,8 @@ packages:
   pg-connection-string@2.9.1:
     resolution: {integrity: sha512-nkc6NpDcvPVpZXxrreI/FOtX3XemeLl8E0qFr6F2Lrm/I8WOnaWNhIPK2Z7OHpw7gh5XJThi6j6ppgNoaT1w4w==}
 
-  pg-cursor@2.15.1:
-    resolution: {integrity: sha512-H3pT6fqIO1/u55mDGen2v6gvoaIBwVxhoJWEdF0qhQfsF7hXGW1BbJ8CwMtyoZRWZH7fASVoT3p2/4BGUoSxTg==}
+  pg-cursor@2.15.2:
+    resolution: {integrity: sha512-34QPprl24V91kfXk/zQkHMAQjNfBYB9Ts92R+vE/Ci4GSvm6Due/bTlVF3V8Gw6aLDdvjXCyOJFT2eorxVY0Xg==}
     peerDependencies:
       pg: ^8
 
@@ -7943,11 +7958,11 @@ packages:
     peerDependencies:
       pg: '>=8.0'
 
-  pg-protocol@1.10.1:
-    resolution: {integrity: sha512-9YS3ZonDj0Lxny//aF0ITPdfrEPgKWCJvONsSXAaIUhgpzlzl5JgaZNlbTFxvYNfm2terGEnHeOSUlF6qRGBzw==}
+  pg-protocol@1.10.2:
+    resolution: {integrity: sha512-Ci7jy8PbaWxfsck2dwZdERcDG2A0MG8JoQILs+uZNjABFuBuItAZCWUNz8sXRDMoui24rJw7WlXqgpMdBSN/vQ==}
 
-  pg-query-stream@4.10.1:
-    resolution: {integrity: sha512-xxtMwwtM7DbfsGc4H2jd8USjg0JgdhnyzFphTm47VP+YKOw75JSugjFTI2vNL9AVrNKDa/cmlUWkN99taIS1Ng==}
+  pg-query-stream@4.10.2:
+    resolution: {integrity: sha512-04SbGL5/ENbF1OCQrVbq1vCKpNtRrfaI9bCiRXb4FLRalW9GSC0hZXnBMgGQqNPdzxYF36js8WCW6QABvOqlIg==}
     peerDependencies:
       pg: ^8
 
@@ -7955,8 +7970,8 @@ packages:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
     engines: {node: '>=4'}
 
-  pg@8.16.1:
-    resolution: {integrity: sha512-5n6e7MgF5ABRsssOsX9xC95p+NUuhgDQDBSsrKSZJjYVqZHGyrmJuknym2IbVhGtzV9siBdzH9SEIQAuWF+sdg==}
+  pg@8.16.2:
+    resolution: {integrity: sha512-OtLWF0mKLmpxelOt9BqVq83QV6bTfsS0XLegIeAKqKjurRnRKie1Dc1iL89MugmSLhftxw6NNCyZhm1yQFLMEQ==}
     engines: {node: '>= 16.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
@@ -13624,10 +13639,10 @@ snapshots:
   '@tailor-cms/core-components@1.0.40(@tailor-cms/utils@packages+utils)(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)(@tiptap/starter-kit@2.14.0)(@tiptap/vue-3@2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)(vue@3.5.17(typescript@5.8.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.17(typescript@5.8.3)))(vue@3.5.17(typescript@5.8.3))(vuedraggable@4.1.0(vue@3.5.17(typescript@5.8.3)))(vuetify@3.8.6(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3)))(yup@1.6.1)':
     dependencies:
       '@tailor-cms/utils': link:packages/utils
-      '@tiptap/extension-character-count': 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)
-      '@tiptap/extension-subscript': 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
-      '@tiptap/extension-superscript': 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
-      '@tiptap/extension-underline': 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
+      '@tiptap/extension-character-count': 2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)
+      '@tiptap/extension-subscript': 2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
+      '@tiptap/extension-superscript': 2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
+      '@tiptap/extension-underline': 2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))
       '@tiptap/pm': 2.14.0
       '@tiptap/starter-kit': 2.14.0
       '@tiptap/vue-3': 2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)(vue@3.5.17(typescript@5.8.3))
@@ -13681,7 +13696,7 @@ snapshots:
     dependencies:
       '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
 
-  '@tiptap/extension-character-count@2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)':
+  '@tiptap/extension-character-count@2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))(@tiptap/pm@2.14.0)':
     dependencies:
       '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
       '@tiptap/pm': 2.14.0
@@ -13786,7 +13801,15 @@ snapshots:
     dependencies:
       '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
 
+  '@tiptap/extension-subscript@2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))':
+    dependencies:
+      '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
+
   '@tiptap/extension-superscript@2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))':
+    dependencies:
+      '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
+
+  '@tiptap/extension-superscript@2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))':
     dependencies:
       '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
 
@@ -13820,6 +13843,10 @@ snapshots:
       '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
 
   '@tiptap/extension-underline@2.14.0(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))':
+    dependencies:
+      '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
+
+  '@tiptap/extension-underline@2.14.1(@tiptap/core@2.14.0(@tiptap/pm@2.14.0))':
     dependencies:
       '@tiptap/core': 2.14.0(@tiptap/pm@2.14.0)
 
@@ -18445,22 +18472,22 @@ snapshots:
 
   pg-connection-string@2.9.1: {}
 
-  pg-cursor@2.15.1(pg@8.16.1):
+  pg-cursor@2.15.2(pg@8.16.2):
     dependencies:
-      pg: 8.16.1
+      pg: 8.16.2
 
   pg-int8@1.0.1: {}
 
-  pg-pool@3.10.1(pg@8.16.1):
+  pg-pool@3.10.1(pg@8.16.2):
     dependencies:
-      pg: 8.16.1
+      pg: 8.16.2
 
-  pg-protocol@1.10.1: {}
+  pg-protocol@1.10.2: {}
 
-  pg-query-stream@4.10.1(pg@8.16.1):
+  pg-query-stream@4.10.2(pg@8.16.2):
     dependencies:
-      pg: 8.16.1
-      pg-cursor: 2.15.1(pg@8.16.1)
+      pg: 8.16.2
+      pg-cursor: 2.15.2(pg@8.16.2)
 
   pg-types@2.2.0:
     dependencies:
@@ -18470,11 +18497,11 @@ snapshots:
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
 
-  pg@8.16.1:
+  pg@8.16.2:
     dependencies:
       pg-connection-string: 2.9.1
-      pg-pool: 3.10.1(pg@8.16.1)
-      pg-protocol: 1.10.1
+      pg-pool: 3.10.1(pg@8.16.2)
+      pg-protocol: 1.10.2
       pg-types: 2.2.0
       pgpass: 1.0.5
     optionalDependencies:
@@ -19361,7 +19388,7 @@ snapshots:
 
   sequelize-replace-enum-postgres@1.6.0: {}
 
-  sequelize@6.37.7(pg@8.16.1):
+  sequelize@6.37.7(pg@8.16.2):
     dependencies:
       '@types/debug': 4.1.12
       '@types/validator': 13.15.2
@@ -19380,7 +19407,7 @@ snapshots:
       validator: 13.15.15
       wkx: 0.5.0
     optionalDependencies:
-      pg: 8.16.1
+      pg: 8.16.2
     transitivePeerDependencies:
       - supports-color
 
