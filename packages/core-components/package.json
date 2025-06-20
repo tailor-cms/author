@@ -29,10 +29,10 @@
     "yup": "^1.4.0"
   },
   "dependencies": {
-    "@tiptap/extension-character-count": "^2.14.1",
-    "@tiptap/extension-subscript": "^2.14.1",
-    "@tiptap/extension-superscript": "^2.14.1",
-    "@tiptap/extension-underline": "^2.14.1",
+    "@tiptap/extension-character-count": "^2.22.0",
+    "@tiptap/extension-subscript": "^2.22.0",
+    "@tiptap/extension-superscript": "^2.22.0",
+    "@tiptap/extension-underline": "^2.22.0",
     "@vueuse/core": "^13.4.0",
     "chart.js": "^4.5.0",
     "chartjs-plugin-datalabels": "^2.2.0",
