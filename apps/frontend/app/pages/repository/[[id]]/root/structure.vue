@@ -36,7 +36,7 @@
               <template v-else>
                 Click on the button above in order to create your first item!
               </template>
-          </VAlert>
+            </VAlert>
           </VCol>
         </VRow>
         <template v-else>
