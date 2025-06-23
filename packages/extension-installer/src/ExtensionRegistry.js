@@ -1,7 +1,8 @@
-import _ from 'lodash';
 import fs from 'node:fs';
-import jsonfile from 'jsonfile';
 import path from 'node:path';
+import { camelCase, template, upperFirst } from 'lodash-es';
+import * as acorn from 'acorn';
+import jsonfile from 'jsonfile';
 import shell from 'shelljs';
 
 import { getInstallationInfo, selectExtension } from './prompts.js';
@@ -38,6 +39,10 @@ export class ExtensionRegistry {
 
   get clientExportsLocation() {
     return path.join(this.location, 'client.js');
+  }
+
+  get interfaceExportsLocation() {
+    return path.join(this.location, 'types.js');
   }
 
   get serverExportsLocation() {
@@ -125,12 +130,13 @@ export class ExtensionRegistry {
     this.onRegistryUpdate();
   }
 
-  onRegistryUpdate() {
+  async onRegistryUpdate() {
     const {
       clientExportsLocation,
       clientPackages,
       elements,
       hasServerPackages,
+      interfaceExportsLocation,
       registryLocation,
       serverExportsLocation,
       serverPackages,
@@ -142,6 +148,12 @@ export class ExtensionRegistry {
     });
     shell.echo('Generating export modules...');
     fs.writeFileSync(clientExportsLocation, getExportModule(clientPackages));
+    const interfaceModuleExport = getInterfaceModule(
+      this.location,
+      elements,
+      this.extensionType,
+    );
+    fs.writeFileSync(interfaceExportsLocation, interfaceModuleExport);
     if (hasServerPackages) {
       fs.writeFileSync(serverExportsLocation, getExportModule(serverPackages));
     }
@@ -149,7 +161,8 @@ export class ExtensionRegistry {
 }
 
 // prettier-ignore
-const exportModuleTemplate = _.template(
+const exportModuleTemplate = template(
+// eslint-disable-next-line @stylistic/indent
 `<% _.forEach(entries, function(it, index) { %>import pkg<%- index %> from '<%- it %>';
 <%});%>
 // prettier-ignore
@@ -158,5 +171,59 @@ export const elements = [
   <%});%>
 `);
 
+// prettier-ignore
+const exportInterfaceTemplate = template(
+  `
+  export const <%- enumName %> = {
+  <% _.forEach(types, function(val, key) {%><%- key %>: '<%- val %>',
+  <%});%>
+  `);
+
 const getExportModule = (entries) =>
   exportModuleTemplate({ entries }).trim().concat('\n];\n');
+
+const getInterfaceModule = (dir, packages, extensionType) => {
+  const isBuilt = extensionType === 'content element';
+  const targetPath = isBuilt ? 'dist/index.cjs' : 'src/index.js';
+  const packageTypes = packages.map((it) =>
+    parseType(`${dir}/node_modules/${it.clientPackage}/${targetPath}`),
+  );
+  const toPascalCase = (str) => upperFirst(camelCase(str));
+  const processType = (str) => str && toPascalCase(str);
+  const types = packageTypes.reduce((acc, type) => {
+    acc[processType(type)] = type;
+    return acc;
+  }, {});
+  const enumName = `${toPascalCase(extensionType)}Type`;
+  return exportInterfaceTemplate({ enumName, types }).trim().concat('\n};\n');
+};
+
+const parseType = (path) => {
+  const file = fs.readFileSync(path, { encoding: 'utf-8' });
+  const opts = path.endsWith('.cjs') ? {} : { sourceType: 'module' };
+  const ast = acorn.parse(file, { ...opts, ecmaVersion: 2020 });
+  return (
+    findTypeExportValue(ast) ||
+    findTypeExportValue(ast, 'templateId') ||
+    findTypeVariableValue(ast)
+  );
+};
+
+const findTypeVariableValue = (ast) => {
+  const targetNodeType = 'VariableDeclaration';
+  const n = ast.body.filter((it) => it.type === targetNodeType);
+  const filter = (val) => val.declarations.find((y) => y.id.name === 'type');
+  const target = n.find(filter);
+  if (!target) return '';
+  const declaration = filter(target);
+  return declaration?.init?.value || '';
+};
+
+const findTypeExportValue = (ast, key = 'type') => {
+  const exportNodeType = 'ExportDefaultDeclaration';
+  const exportNode = ast.body.find((it) => it.type === exportNodeType);
+  if (!exportNode) return '';
+  const { properties } = exportNode.declaration;
+  const typeNode = properties.find((it) => it.key.name === key);
+  return typeNode?.value?.value || '';
+};

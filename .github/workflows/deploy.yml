@@ -60,13 +60,13 @@ jobs:
     needs: build-and-push-image
     steps:
       - name: Set up Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24.2.0
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9.0.6
+          version: 10
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -74,13 +74,13 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Install dependencies
-        run: pnpm i
+        run: pnpm i --frozen-lockfile
       - name: Add SHORT_SHA env variable
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
       - name: Provision infra and deploy
-        uses: pulumi/actions@v3
+        uses: pulumi/actions@v6
         with:
           command: up
           stack-name: extensionengine/tailor-cms/dev

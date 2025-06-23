@@ -6,16 +6,29 @@
     rounded="lg"
   >
     <div v-if="!isAiGeneratingContent" class="d-flex justify-end ma-3">
+      <AIPrompt
+        v-if="isAiEnabled && !disabled"
+        :content-elements="containerElements"
+        :inputs="aiInputs"
+        @generate="generateContent"
+      />
       <VBtn
         v-if="isAiEnabled && !disabled"
-        class="mr-3"
+        class="mx-3"
         color="teal-darken-2"
         size="small"
         variant="tonal"
-        @click="generateContent"
+        @click="
+          generateContent({
+            type: AiRequestType.Create,
+            text: 'Generate content for this page.',
+            responseSchema: AiResponseSchema.Html,
+            useImageGenerationTool: true,
+          })
+        "
       >
         Do the magic
-        <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
+        <VIcon end>mdi-magic-staff</VIcon>
       </VBtn>
       <VBtn
         v-if="!disabled"
@@ -63,7 +76,7 @@
       :enable-add="false"
       :is-disabled="disabled"
       :layout="layout"
-      :supported-types="types"
+      :supported-types-config="contentElementConfig"
       class="element-list"
       @add="onElementAdd"
       @update="reorder"
@@ -75,6 +88,7 @@
         />
         <ContainedContent
           v-bind="{
+            embedElementConfig,
             element,
             isDragged,
             isDisabled: disabled,
@@ -91,12 +105,11 @@
     <AddElement
       v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
-      :categories="categories"
-      :include="types"
+      :include="contentElementConfig"
       :items="containerElements"
       :large="true"
       :layout="layout"
-      :position="insertPosition ? insertPosition : containerElements.length"
+      :position="insertPosition ?? containerElements.length"
       :show="isElementDrawerVisible"
       class="my-4"
       color="primary-lighten-5"
@@ -110,6 +123,13 @@
 </template>
 
 <script lang="ts" setup>
+import type {
+  ContentElement,
+  Relationship,
+} from '@tailor-cms/interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { AiInput } from '@tailor-cms/interfaces/ai';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import {
   AddElement,
   CircularProgress,
@@ -117,33 +137,28 @@ import {
   ElementList,
   InlineActivator,
 } from '@tailor-cms/core-components';
+import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
+import { filter, reduce, sortBy } from 'lodash-es';
 import { computed, inject, ref } from 'vue';
-import type {
-  ContentElement,
-  Relationship,
-} from '@tailor-cms/interfaces/content-element';
-import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ElementCategory } from '@tailor-cms/interfaces/schema';
-import filter from 'lodash/filter';
-import reduce from 'lodash/reduce';
-import sortBy from 'lodash/sortBy';
+
+import AIPrompt from './AIPrompt.vue';
 
 interface Props {
   name: string;
   container: Activity;
   elements: Record<string, ContentElement>;
   position: number;
-  types?: string[] | null;
-  categories?: ElementCategory[] | null;
+  embedElementConfig?: ContentElementCategory[];
+  contentElementConfig?: ContentElementCategory[];
   layout?: boolean;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  types: null,
+  embedElementConfig: () => [],
+  contentElementConfig: () => [],
   layout: true,
   disabled: false,
-  categories: null,
 });
 
 const emit = defineEmits([
@@ -156,14 +171,29 @@ const emit = defineEmits([
 const doTheMagic = inject<any>('$doTheMagic');
 const isAiEnabled = computed(() => !!doTheMagic);
 const isAiGeneratingContent = ref(false);
+const aiInputs = ref<AiInput[]>([]);
 
-const generateContent = async () => {
+const generateContent = async (input: AiInput) => {
   isAiGeneratingContent.value = true;
-  const elements = await doTheMagic({ type: props.container.type });
+  aiInputs.value.push(input);
+  const elements = await doTheMagic({
+    containerType: props.container.type,
+    inputs: aiInputs.value,
+    content: JSON.stringify(containerElements.value),
+  });
+  const lastElementPosition =
+    containerElements.value?.length > 0
+      ? containerElements.value[containerElements.value.length - 1].position
+      : 0;
+  if (input.type === AiRequestType.Modify) {
+    containerElements.value.forEach((element: ContentElement) => {
+      emit('delete:element', element, true);
+    });
+  }
   elements.forEach((element: ContentElement, index: number) => {
     emit('save:element', {
       ...element,
-      position: index,
+      position: lastElementPosition + index + 1,
       activityId: props.container.id,
       repositoryId: props.container.repositoryId,
     });
@@ -176,7 +206,7 @@ const containerElements = computed(() => {
   return sortBy(filter(props.elements, { activityId: id.value }), 'position');
 });
 
-const insertPosition = ref(0);
+const insertPosition = ref<number | null>(null);
 const isElementDrawerVisible = ref(false);
 
 const reorder = ({ newPosition }: { newPosition: number }) => {
@@ -191,13 +221,13 @@ const showElementDrawer = (elementIndex: number) => {
 
 const onElementDrawerClose = () => {
   isElementDrawerVisible.value = false;
-  insertPosition.value = 0;
+  insertPosition.value = null;
 };
 
 const onElementAdd = (element: ContentElement) => {
   emit('save:element', element);
   isElementDrawerVisible.value = false;
-  insertPosition.value = 0;
+  insertPosition.value = null;
 };
 
 const saveElement = (element: ContentElement, key: string, data: any) => {

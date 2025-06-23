@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
-import times from 'lodash/times';
-import userSeed from 'tailor-seed/user.json';
+import { times } from 'lodash-es';
 
 import {
   AddUserDialog,
@@ -57,7 +56,7 @@ test('should revoke user access to a repository', async ({ page }) => {
 });
 
 test('should be able to update user role', async ({ page }) => {
-  const repository = await toSeededRepository(page);
+  const { repository } = await toSeededRepository(page);
   await page.goto(RepositoryUsers.getRoute(repository.id));
   const repositoryUsers = new RepositoryUsers(page);
   await expect(repositoryUsers.el).toContainText('admin@gostudion.com');
@@ -97,11 +96,8 @@ test('should be able to paginate', async ({ page }) => {
     DEFAULT_USERS_PER_PAGE,
   );
   await userManagement.nextPage.click();
-  const userTotal = userCreateCount + userSeed.length;
-  const nextPageTotal =
-    userTotal >= 2 * DEFAULT_USERS_PER_PAGE
-      ? DEFAULT_USERS_PER_PAGE
-      : userTotal - DEFAULT_USERS_PER_PAGE;
+  const userTotal = userCreateCount + 1; // +1 for the repository creator
+  const nextPageTotal = userTotal - DEFAULT_USERS_PER_PAGE;
   await expect(userManagement.userEntriesLocator).toHaveCount(nextPageTotal);
   await userManagement.prevPage.click();
   await expect(userManagement.userEntriesLocator).toHaveCount(

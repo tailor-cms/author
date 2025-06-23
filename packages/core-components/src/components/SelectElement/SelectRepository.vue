@@ -2,6 +2,7 @@
   <VAutocomplete
     :items="repositories"
     :loading="loading"
+    :menu-props="{ maxWidth: '100%' }"
     :model-value="repository"
     item-title="name"
     item-value="id"
@@ -15,10 +16,9 @@
 </template>
 
 <script lang="ts" setup>
+import { find, sortBy } from 'lodash-es';
 import { inject, onMounted, ref } from 'vue';
-import find from 'lodash/find';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import sortBy from 'lodash/sortBy';
 
 import { useLoader } from '../../composables/useLoader';
 

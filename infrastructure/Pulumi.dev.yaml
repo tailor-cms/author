@@ -1,5 +1,6 @@
 config:
-  ai:modelId: gpt-4o
+  ai:enabled: "true"
+  ai:modelId: gpt-4.1
   aws:region: us-east-1
   dns:domain: tailor-cms.com
   dns:hostedZoneId: Z1042476S7RM57FM4WWG
@@ -22,3 +23,4 @@ config:
   oidc:logoutEndpoint: ""
   oidc:postLogoutUriKey: ""
   schema:availableSchemas: ""
+  statsig:enabled: "true"

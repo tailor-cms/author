@@ -1,26 +1,26 @@
-// eslint-disable-next-line strict
 'use strict';
 
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const Promise = require('bluebird');
+const sortBy = require('lodash/sortBy');
 const users = require('tailor-seed/user.json');
 
 module.exports = {
-  up(queryInterface) {
+  up(qi) {
     const now = new Date();
     const rows = users.map((user) => ({
       ...user,
       created_at: now,
       updated_at: now,
     }));
-    return import('../../../config/server/index.js')
+    return import('../../../config/index.js')
       .then(({ auth: config }) =>
-        Promise.map(rows, (user) => encryptPassword(user, config.saltRounds)),
+        Promise.each(rows, (user) => encryptPassword(user, config.saltRounds)),
       )
-      .then((users) => queryInterface.bulkInsert('user', users));
+      .then((rows) => qi.bulkInsert('user', sortBy(rows, 'email')));
   },
-  down(queryInterface) {
-    return queryInterface.bulkDelete('user');
+  down(qi) {
+    return qi.bulkDelete('user');
   },
 };
 

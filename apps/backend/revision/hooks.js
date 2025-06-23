@@ -1,9 +1,8 @@
-import createLogger from '../shared/logger.js';
 import forEach from 'lodash/forEach.js';
-import toCase from 'to-case';
+import { constantCase } from '@tailor-cms/utils';
+import { createLogger } from '#logger';
 
 const castArray = (arg) => (Array.isArray(arg) ? arg : [arg]);
-const { constant } = toCase;
 const logger = createLogger('db');
 
 function add(Revision, Hooks, { Repository, Activity, ContentElement }) {
@@ -45,7 +44,7 @@ function add(Revision, Hooks, { Repository, Activity, ContentElement }) {
     const repositoryId = isRepository(instance)
       ? instance.id
       : instance.repositoryId;
-    const entity = constant(instance.constructor.name);
+    const entity = constantCase(instance.constructor.name);
     const operation = hooks[hookType];
     logger.info(`[Revision] ${entity}#${hookType}`, {
       entity,

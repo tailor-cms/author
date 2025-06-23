@@ -3,7 +3,7 @@
     v-bind="omit(activatorProps, 'onClick')"
     :class="{
       'list-item-active': isActive,
-      readonly: !isEditable,
+      'readonly': !isEditable,
     }"
     :title="title"
     class="list-item"
@@ -33,7 +33,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import omit from 'lodash/omit';
+import { omit } from 'lodash-es';
 
 const props = defineProps<{
   id: number;

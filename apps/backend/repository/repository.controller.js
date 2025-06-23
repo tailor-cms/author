@@ -2,29 +2,41 @@ import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import { StatusCodes } from 'http-status-codes';
 import { createId as cuid } from '@paralleldrive/cuid2';
-import { createError } from '../shared/error/helpers.js';
-import { createLogger } from '../shared/logger.js';
-import db from '../shared/database/index.js';
 import getVal from 'lodash/get.js';
 import groupBy from 'lodash/groupBy.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import publishingService from '../shared/publishing/publishing.service.js';
-import { removeInvalidReferences } from '../shared/util/modelReference.js';
-import { repository as role } from 'tailor-config-shared/src/role.js';
 import sample from 'lodash/sample.js';
-import { schema } from 'tailor-config-shared';
-import { snakeCase } from 'change-case';
-import TransferService from '../shared/transfer/transfer.service.js';
-import { general } from '../config/server/index.js';
+import { schema } from '@tailor-cms/config';
+import snakeCase from 'lodash/snakeCase.js';
+
+import { removeInvalidReferences } from '#shared/util/modelReference.js';
+import publishingService from '#shared/publishing/publishing.service.js';
+import db from '#shared/database/index.js';
+import { createError } from '#shared/error/helpers.js';
+import { createLogger } from '#logger';
+import { general } from '#config';
+import { subQuery } from '#shared/database/helpers.js';
+import TransferService from '#shared/transfer/transfer.service.js';
+import UserGroup from '#app/user-group/userGroup.model.js';
 
 const { NO_CONTENT, NOT_FOUND } = StatusCodes;
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
 const tmp = Promise.promisifyAll((await import('tmp')).default, {
   multiArgs: true,
+});
+
+const selectUserRepositories = (userId) => subQuery(RepositoryUser, {
+  attributes: ['repository_id'],
+  where: { user_id: userId, has_access: true },
+});
+
+const selectGroupRepositories = (groupId) => subQuery(RepositoryUserGroup, {
+  attributes: ['repository_id'],
+  where: { group_id: groupId },
 });
 
 const {
@@ -36,6 +48,7 @@ const {
   Revision,
   sequelize,
   Tag,
+  RepositoryUserGroup,
   User,
 } = db;
 
@@ -45,11 +58,6 @@ const lowercaseName = sequelize.fn('lower', sequelize.col('repository.name'));
 const JobCache = new Map();
 const logger = createLogger('repository:controller');
 const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
-
-const getFilter = (search) => {
-  const term = search.length < 3 ? `${search}%` : `%${search}%`;
-  return { [Op.iLike]: term };
-};
 
 const includeUser = () => ({
   model: User,
@@ -76,7 +84,7 @@ const includeRepositoryUser = (user, query) => {
   const options =
     query && query.pinned
       ? { where: { userId: user.id, pinned: true }, required: true }
-      : { where: { userId: user.id }, required: !user.isAdmin() };
+      : { where: { userId: user.id }, required: false };
   return { model: RepositoryUser, ...options };
 };
 
@@ -88,19 +96,27 @@ const includeRepositoryTags = (query) => {
 };
 
 async function index({ query, user, opts }, res) {
-  const { search, name } = query;
+  const { search, name, userGroupId } = query;
   const schemas = query.schemas || general.availableSchemas;
-  if (search) opts.where.name = getFilter(search);
-  if (name) opts.where.name = name;
-  if (search) opts.where.name = getFilter(search);
-  if (name) opts.where.name = name;
-  if (schemas && schemas.length) opts.where.schema = schemas;
-  if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
   opts.distinct = true;
   opts.include = [
     includeRepositoryUser(user, query),
+    { model: RepositoryUserGroup },
     ...includeRepositoryTags(query),
   ];
+  if (search) opts.where.name = { [Op.iLike]: `%${search}%` };
+  if (name) opts.where.name = name;
+  if (schemas && schemas.length) opts.where.schema = schemas;
+  if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
+  if (userGroupId) {
+    opts.where.id = { [Op.in]: selectGroupRepositories(userGroupId) };
+  }
+  if (!user.isAdmin()) {
+    opts.where[Op.or] = [
+      { id: { [Op.in]: selectUserRepositories(user.id) } },
+      { id: { [Op.in]: selectGroupRepositories(map(user.userGroups, 'id')) } },
+    ];
+  }
   const { rows: repositories, count } = await Repository.findAndCountAll(opts);
   const revisions = await Revision.findAll({
     where: { repositoryId: repositories.map((it) => it.id) },
@@ -123,19 +139,15 @@ async function index({ query, user, opts }, res) {
 async function create({ user, body }, res) {
   const defaultMeta = getVal(schema.getSchema(body.schema), 'defaultMeta', {});
   const data = { color: sample(DEFAULT_COLORS), ...defaultMeta, ...body.data };
-  const repository = await Repository.create(
+  const repository = await Repository.createByUser(
     { ...body, data },
     {
-      isNewRecord: true,
-      returning: true,
       context: { userId: user.id },
     },
   );
-  await RepositoryUser.create({
-    repositoryId: repository.id,
-    userId: user.id,
-    role: role.ADMIN,
-  });
+  if (body.userGroupIds) {
+    await repository.associateWithUserGroups(body.userGroupIds, user);
+  }
   return res.json({ data: repository });
 }
 
@@ -143,6 +155,7 @@ async function get({ repository, user }, res) {
   const include = [
     includeLastRevision(),
     includeRepositoryUser(user),
+    { model: UserGroup },
     { model: Tag },
   ];
   await repository.reload({ include });
@@ -186,14 +199,18 @@ function publishRepoInfo({ repository }, res) {
 }
 
 function getUsers(req, res) {
-  return req.repository.getUsers().then((users) =>
-    res.json({
-      data: map(users, (it) => ({
-        ...it.profile,
-        repositoryRole: it.repositoryUser.role,
-      })),
-    }),
-  );
+  return req.repository
+    .getUsers({
+      where: { '$repositoryUser.has_access$': true },
+    })
+    .then((users) =>
+      res.json({
+        data: map(users, (it) => ({
+          ...it.profile,
+          repositoryRole: it.repositoryUser.role,
+        })),
+      }),
+    );
 }
 
 function upsertUser({ repository, body }, res) {
@@ -216,13 +233,32 @@ function removeUser(req, res) {
     .then(() => res.end());
 }
 
+async function addUserGroup({ repository, body }, res) {
+  const { userGroupId } = body;
+  const userGroup = await UserGroup.findByPk(userGroupId);
+  if (!userGroup) return createError(NOT_FOUND, 'User group not found');
+  await repository.addUserGroup([userGroup]);
+  return res.json({ data: userGroup });
+}
+
+async function removeUserGroup({ repository, params: { userGroupId } }, res) {
+  const where = { repositoryId: repository.id, groupId: userGroupId };
+  await RepositoryUserGroup.destroy({ where });
+  return res.status(NO_CONTENT).send();
+}
+
 function findOrCreateRole(repository, user, role) {
   return RepositoryUser.findOrCreate({
     where: { repositoryId: repository.id, userId: user.id },
-    defaults: { repositoryId: repository.id, userId: user.id, role },
+    defaults: {
+      repositoryId: repository.id,
+      userId: user.id,
+      role,
+      hasAccess: true,
+    },
     paranoid: false,
   })
-    .then(([cu, created]) => (created ? cu : cu.update({ role })))
+    .then(([cu, isNew]) => (isNew ? cu : cu.update({ role, hasAccess: true })))
     .then((cu) => (cu.deletedAt ? cu.restore() : cu))
     .then(() => user);
 }
@@ -289,8 +325,8 @@ function exportRepository({ repository, params }, res) {
 function importRepository({ body, file, user }, res) {
   log(`[importRepository] initiated, userId: ${user.id}, name: ${body.name}`);
   const { path } = file;
-  const { description, name } = body;
-  const options = { description, name, userId: user.id };
+  const { name, description, userGroupIds } = body;
+  const options = { description, name, userId: user.id, userGroupIds };
   return TransferService.createImportJob(path, options)
     .toPromise()
     .finally(() => {
@@ -326,6 +362,8 @@ export default {
   getUsers,
   upsertUser,
   removeUser,
+  addUserGroup,
+  removeUserGroup,
   publishRepoInfo,
   addTag,
   removeTag,

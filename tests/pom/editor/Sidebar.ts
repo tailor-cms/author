@@ -1,38 +1,54 @@
-import { expect, Locator, Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+
+import { Comments } from '../common/Comments';
+import { Navigation } from './Navigation';
+
+enum SidebarTab {
+  Comments = 'COMMENTS_TAB',
+  Browser = 'BROWSER_TAB',
+  Element = 'ELEMENT_TAB',
+}
 
 export class EditorSidebar {
   readonly page: Page;
   readonly el: Locator;
+  readonly tabs: Locator;
   readonly searchInput: Locator;
   readonly toggleAllBtn: Locator;
   readonly treeView: Locator;
+  readonly navigation: Navigation;
+  readonly comments: Comments;
 
   constructor(page: Page) {
-    const el = page.locator('.sidebar-container');
-    this.searchInput = el.getByLabel('Search...');
-    this.toggleAllBtn = el.getByRole('button', { name: 'Toggle all' });
-    this.treeView = el.locator('.tree-view');
     this.page = page;
+    const el = page.locator('.sidebar-container');
     this.el = el;
+    this.tabs = el.getByRole('tablist');
+    this.navigation = new Navigation(page, el);
+    this.comments = new Comments(page, el);
   }
 
-  toggleItems() {
-    return this.toggleAllBtn.click();
+  getTabByName(name: SidebarTab) {
+    return this.tabs.getByRole('tab', { name });
   }
 
-  async getOutlineItems(name?: string) {
-    const el = this.el.locator('.v-list-item');
-    return name ? el.filter({ hasText: name }).all() : el.all();
+  openCommentsTab() {
+    return this.getTabByName(SidebarTab.Comments).click();
   }
 
-  async getOutlineItemByName(name: string) {
-    const items = await this.getOutlineItems(name);
-    return items[0];
+  openBrowserTab() {
+    return this.getTabByName(SidebarTab.Browser).click();
   }
 
-  async navigateTo(name: string) {
-    await expect(this.el).toBeVisible();
-    const item = await this.getOutlineItemByName(name);
-    await item.click();
+  openElementTab() {
+    return this.getTabByName(SidebarTab.Element).click();
+  }
+
+  toggleOutlineItems() {
+    return this.navigation.toggleItems();
+  }
+
+  navigateToPage(name: string) {
+    return this.navigation.navigateTo(name);
   }
 }

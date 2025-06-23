@@ -1,7 +1,7 @@
 import express from 'express';
 
-import { authorize } from '../../shared/auth/mw.js';
 import ctrl from './seed.controller.js';
+import { authorize } from '#shared/auth/mw.js';
 
 const router = express.Router();
 
@@ -10,6 +10,7 @@ router
   .post('/reset', ctrl.resetDatabase)
   .post('/catalog', ctrl.seedCatalog)
   .post('/repository', ctrl.seedRepository)
+  .post('/comment', ctrl.seedComment)
   .post('/user', ctrl.seedUser);
 
 export default {

@@ -3,40 +3,42 @@
   "description": "Reusable Tailor UI components",
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
-  "version": "1.0.8",
+  "version": "1.0.40",
   "files": [
     "src"
   ],
   "type": "module",
   "main": "./src/index.ts",
   "devDependencies": {
-    "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "^4.17.10",
-    "@types/pluralize": "^0.0.33"
+    "@tailor-cms/interfaces": "workspace:*"
   },
   "peerDependencies": {
-    "@tailor-cms/utils": "workspace:*",
+    "@tailor-cms/utils": "workspace:^",
     "@tiptap/pm": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
     "@tiptap/vue-3": "^2.4.0",
+    "@types/lodash-es": "^4.17.12",
     "date-fns": "^3.6.0",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "p-min-delay": "^4.0.2",
-    "pluralize": "^8.0.0",
+    "pluralize-esm": "^9.0.5",
     "vee-validate": "^4.13.2",
-    "vue": "^3.3.4",
+    "vue": "^3.5.15",
     "vuedraggable": "^4.1.0",
-    "vuetify": "3.7.0",
+    "vuetify": "3.8.6",
     "yup": "^1.4.0"
   },
   "dependencies": {
-    "@tiptap/extension-character-count": "^2.8.0",
-    "@tiptap/extension-subscript": "^2.8.0",
-    "@tiptap/extension-superscript": "^2.8.0",
-    "@tiptap/extension-underline": "^2.8.0",
-    "@vueuse/core": "^10.11.0"
+    "@tiptap/extension-character-count": "^2.22.0",
+    "@tiptap/extension-subscript": "^2.22.0",
+    "@tiptap/extension-superscript": "^2.22.0",
+    "@tiptap/extension-underline": "^2.22.0",
+    "@vueuse/core": "^13.4.0",
+    "chart.js": "^4.5.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "vue-chartjs": "^5.3.2"
   },
-  "bundledDependencies": [
+  "bundleDependencies": [
     "@tailor-cms/interfaces"
   ],
   "publishConfig": {

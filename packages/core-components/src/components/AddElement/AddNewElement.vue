@@ -1,14 +1,16 @@
 <template>
   <VBottomSheet class="mx-5">
     <div class="element-container bg-primary-lighten-5">
-      <div class="d-flex align-center pt-6 pb-5 px-10">
+      <div class="d-flex align-end pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
-      <div v-for="group in library as any" :key="group.name" class="mb-2">
-        <div class="group-heading text-primary-darken-3">{{ group.name }}</div>
+      <div v-for="group in library" :key="group.name" class="mb-2 mx-10">
+        <div class="group-heading text-primary-darken-3 mt-3 mb-2">
+          {{ group.name }}
+        </div>
         <div class="group-elements ga-5">
           <VBtn
-            v-for="element in group.elements"
+            v-for="element in group.items"
             :key="element.position"
             :disabled="!isAllowed(element.type)"
             class="add-element"
@@ -24,6 +26,14 @@
               </VIcon>
             </template>
             {{ element.name }}
+            <template #append>
+              <VIcon
+                v-tooltip="element.version"
+                class="version-info"
+                icon="mdi-information-outline"
+                size="16"
+              />
+            </template>
           </VBtn>
         </div>
       </div>
@@ -33,13 +43,15 @@
 
 <script lang="ts" setup>
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { some } from 'lodash-es';
 
-const props = defineProps<{ library: any[]; allowedTypes: string[] }>();
+const props = defineProps<{ library: any; allowedElementConfig: any[] }>();
 
 const emit = defineEmits(['add']);
 
 const isAllowed = (type: string) => {
-  return !props.allowedTypes.length || props.allowedTypes.includes(type);
+  const hasElements = !props.allowedElementConfig.length;
+  return hasElements || some(props.allowedElementConfig, { type });
 };
 
 const emitAdd = (element: ContentElement) => emit('add', [element]);
@@ -55,8 +67,6 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
 }
 
 .group-heading {
-  margin: 0 2.5rem 0.75rem;
-  padding-top: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1rem;
@@ -67,7 +77,6 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  padding: 0 2.25rem;
 }
 
 .add-element {
@@ -84,5 +93,17 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
   :deep(.v-btn__prepend) {
     margin-bottom: 0.25rem;
   }
+}
+
+.version-info {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.5rem;
+  opacity: 0;
+}
+
+.v-btn:hover .version-info {
+  opacity: 1;
+  transition: all 0.5s ease-in;
 }
 </style>

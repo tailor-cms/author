@@ -1,6 +1,7 @@
-import { EndpointResponse, formatResponse } from './common';
-import BaseClient from './BaseClient';
 import { outlineSeed } from '../helpers/seed';
+import type { EndpointResponse } from './common';
+import { formatResponse } from './common';
+import BaseClient from './BaseClient';
 
 class SeedClient extends BaseClient {
   constructor() {
@@ -13,9 +14,9 @@ class SeedClient extends BaseClient {
     return formatResponse(res);
   };
 
-  seedCatalog = async (): Promise<EndpointResponse> => {
+  seedCatalog = async (data = {}): Promise<EndpointResponse> => {
     const req = await this.getClient();
-    const res = await req.post(this.getUrl('catalog'));
+    const res = await req.post(this.getUrl('catalog'), { data });
     return formatResponse(res);
   };
 
@@ -26,9 +27,16 @@ class SeedClient extends BaseClient {
     return formatResponse(res);
   };
 
-  seedUser = async (): Promise<EndpointResponse> => {
+  seedComment = async (data: any = {}): Promise<EndpointResponse> => {
     const req = await this.getClient();
-    const res = await req.post(this.getUrl('user'));
+    if (!data.schema) data.schema = outlineSeed.schema;
+    const res = await req.post(this.getUrl('comment'), { data });
+    return formatResponse(res);
+  };
+
+  seedUser = async (data = {}): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    const res = await req.post(this.getUrl('user'), { data });
     return formatResponse(res);
   };
 }

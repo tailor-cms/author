@@ -3,6 +3,7 @@
     v-model="isVisible"
     :close-on-click="!isConfirmationActive"
     :close-on-content-click="false"
+    class="element-discussion"
     location="left"
     min-width="450"
     offset="4"
@@ -15,6 +16,7 @@
             v-bind="{ ...menuProps, ...tooltipProps }"
             :color="activator?.color"
             :icon="activator?.icon"
+            aria-label="View comments"
             size="x-small"
             variant="tonal"
           />
@@ -48,7 +50,7 @@
 import { computed, inject, ref } from 'vue';
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Events } from '@tailor-cms/utils';
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import Discussion from './Discussion/index.vue';

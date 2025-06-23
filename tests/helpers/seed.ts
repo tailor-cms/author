@@ -1,16 +1,21 @@
 import { faker } from '@faker-js/faker';
-import { Page } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 import ApiClient from '../api/ApiClient';
 import SeedClient from '../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
 
-export const toEmptyRepository = async (page: Page, name?: string) => {
+export const toEmptyRepository = async (
+  page: Page,
+  name?: string,
+  userGroupIds?: number[],
+) => {
   const payload = {
     schema: outlineSeed.schema,
     name: name || `${faker.lorem.words(2)} ${new Date().getTime()}`,
     description: faker.lorem.words(4),
+    userGroupIds,
   };
   const { data: repository } = await REPOSITORY_API.create(payload as any);
   await page.goto(`/repository/${repository.id}/root/structure`);
@@ -18,11 +23,15 @@ export const toEmptyRepository = async (page: Page, name?: string) => {
   return repository;
 };
 
-export const toSeededRepository = async (page: Page, name?: string) => {
-  const { data } = await SeedClient.seedTestRepository({ name });
-  const { repository } = data;
+export const toSeededRepository = async (
+  page: Page,
+  name?: string,
+  authorEmail?: string,
+) => {
+  const { data } = await SeedClient.seedTestRepository({ name, authorEmail });
+  const { repository, activity } = data;
   await page.goto(`/repository/${repository.id}/root/structure`);
-  return repository;
+  return { repository, activity };
 };
 
 export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
@@ -32,11 +41,14 @@ export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
   return repository;
 };
 
-export const toSeededRepositorySettings = async (page: Page) => {
-  const { data } = await SeedClient.seedTestRepository();
-  const { repository } = data;
+export const toSeededRepositorySettings = async (
+  page: Page,
+  authorEmail?: string,
+) => {
+  const { data } = await SeedClient.seedTestRepository({ authorEmail });
+  const { repository, activity } = data;
   await page.goto(`/repository/${repository.id}/root/settings/general`);
-  return repository;
+  return { repository, activity };
 };
 
 export const outlineSeed = {

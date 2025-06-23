@@ -1,0 +1,20 @@
+{
+  "name": "@tailor-cms/tme-heas-rating",
+  "version": "0.0.1",
+  "description": "Tailor high engagement at scale rating meta input",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "devDependencies": {
+    "@types/lodash-es": "*"
+  },
+  "peerDependencies": {
+    "@tailor-cms/core-components": "workspace:*",
+    "lodash-es": "*",
+    "vue": "^3.5.15",
+    "vuetify": "^3.8.6"
+  }
+}

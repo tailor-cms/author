@@ -79,13 +79,13 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { object, string } from 'yup';
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import orderBy from 'lodash/orderBy';
+import { orderBy } from 'lodash-es';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 
+import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 import DiscussionThread from './Thread/index.vue';
 import ResolveButton from './ResolveButton.vue';
-import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 
 interface Props {
   user: User;

@@ -4,7 +4,7 @@
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "files": [
     "dist"
   ],
@@ -19,21 +19,19 @@
   },
   "scripts": {
     "build": "tsup",
-    "lint": "eslint --ext .js,.ts .",
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
-    "lodash": "^4.17.21",
-    "uuid": "^10.0.0"
+    "lodash-es": "^4.17.21",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@tailor-cms/eslint-config": "0.0.2",
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "^4.17.6",
+    "@types/lodash-es": "^4.17.12",
     "@types/uuid": "^10.0.0",
-    "tsup": "^8.3.0",
-    "typescript": "^5.5.4"
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
   },
   "bundledDependencies": [
     "@tailor-cms/interfaces"

@@ -1,23 +1,22 @@
-import { auth as config, origin } from '../../config/server/index.js';
+import path from 'node:path';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
-import Audience from './audience.js';
-import auth from './authenticator.js';
-import db from '../database/index.js';
 import get from 'lodash/get.js';
 import jwt from 'jsonwebtoken';
 import LocalStrategy from 'passport-local';
+import db from '../database/index.js';
+import Audience from './audience.js';
+import auth from './authenticator.js';
 import OIDCStrategy from './oidc.js';
-import path from 'node:path';
+import { auth as config, origin } from '#config';
 
 const { User } = db;
-const options = {
-  usernameField: 'email',
-  session: false,
-};
 
 auth.use(
-  new LocalStrategy(options, (email, password, done) => {
-    return User.unscoped()
+  new LocalStrategy({
+    usernameField: 'email',
+    session: false,
+  }, (email, password, done) => {
+    return User.scope('withGroups')
       .findOne({ where: { email } })
       .then((user) => user && user.authenticate(password))
       .then((user) => done(null, user || false))
@@ -71,7 +70,7 @@ auth.deserializeUser((user, done) => done(null, user));
 export default auth;
 
 function verifyJWT(payload, done) {
-  return User.unscoped()
+  return User.scope('withGroups')
     .findByPk(payload.id)
     .then((user) => done(null, user || false))
     .error((err) => done(err, false));
@@ -93,7 +92,7 @@ function extractJwtFromCookie(req) {
 
 function secretOrKeyProvider(_, rawToken, done) {
   const { id } = jwt.decode(rawToken) || {};
-  return User.unscoped()
+  return User.scope('withGroups')
     .findByPk(id, { rejectOnEmpty: true })
     .then((user) => user.getTokenSecret())
     .then((secret) => done(null, secret))
@@ -106,10 +105,14 @@ function apiUrl(pathname) {
 
 function findOrCreateOIDCUser({ email, firstName, lastName }) {
   if (!config.oidc.enableSignup) {
-    return User.findOne({ where: { email }, rejectOnEmpty: true });
+    return User.scope('withGroups').findOne({
+      where: { email },
+      rejectOnEmpty: true,
+    });
   }
   const defaults = { firstName, lastName, role: config.oidc.defaultRole };
-  return User.findOrCreate({ where: { email }, defaults }).then(
-    ([user]) => user,
-  );
+  return User.scope('withGroups').findOrCreate({
+    where: { email },
+    defaults,
+  }).then(([user]) => user);
 }

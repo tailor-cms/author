@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
-import times from 'lodash/times';
-import userSeed from 'tailor-seed/user.json';
+import { times } from 'lodash-es';
+import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
 
 import {
   UserDialog,
@@ -162,20 +162,14 @@ test('should be able to search by email', async ({ page }) => {
 });
 
 test('should be able to paginate', async ({ page }) => {
-  const userCreateCount = DEFAULT_USERS_PER_PAGE + 1;
-  await Promise.all(times(userCreateCount, () => SeedClient.seedUser()));
-  await page.reload();
-  await page.waitForLoadState('networkidle');
+  const nextPageTotal = userSeed.length % 10;
+  await Promise.all(times(DEFAULT_USERS_PER_PAGE, () => SeedClient.seedUser()));
+  await page.reload({ waitUntil: 'networkidle' });
   const userManagement = new UserManagement(page);
   await expect(userManagement.userEntriesLocator).toHaveCount(
     DEFAULT_USERS_PER_PAGE,
   );
   await userManagement.nextPage.click();
-  const userTotal = userCreateCount + userSeed.length;
-  const nextPageTotal =
-    userTotal >= 2 * DEFAULT_USERS_PER_PAGE
-      ? DEFAULT_USERS_PER_PAGE
-      : userTotal - DEFAULT_USERS_PER_PAGE;
   await expect(userManagement.userEntriesLocator).toHaveCount(nextPageTotal);
   await userManagement.prevPage.click();
   await expect(userManagement.userEntriesLocator).toHaveCount(
@@ -186,8 +180,8 @@ test('should be able to paginate', async ({ page }) => {
 test('should be able to alter number of entries shown per page', async ({
   page,
 }) => {
-  const userCreateCount = DEFAULT_USERS_PER_PAGE + 1;
-  await Promise.all(times(userCreateCount, () => SeedClient.seedUser()));
+  const userTotal = DEFAULT_USERS_PER_PAGE + userSeed.length;
+  await Promise.all(times(DEFAULT_USERS_PER_PAGE, () => SeedClient.seedUser()));
   await page.reload();
   await page.waitForLoadState('networkidle');
   const userManagement = new UserManagement(page);
@@ -195,7 +189,6 @@ test('should be able to alter number of entries shown per page', async ({
     DEFAULT_USERS_PER_PAGE,
   );
   await userManagement.selectItemsPerPage(100);
-  const userTotal = userCreateCount + userSeed.length;
   const entriesToShow = userTotal >= 100 ? 100 : userTotal;
   await expect(userManagement.userEntriesLocator).toHaveCount(entriesToShow);
 });

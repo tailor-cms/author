@@ -1,20 +1,21 @@
-import { expect, Locator, Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
-import { ActivityComments } from '../common/Comments';
+import { Comments } from '../common/Comments';
 
 export class OutlineSidebar {
   readonly page: Page;
   readonly el: Locator;
   readonly nameInput: Locator;
   readonly publishBtn: Locator;
-  readonly comments: ActivityComments;
+  readonly comments: Comments;
 
   constructor(page: Page) {
     this.page = page;
     this.el = page.locator('.structure-page .v-navigation-drawer');
     this.nameInput = this.el.getByLabel('Name');
     this.publishBtn = this.el.getByRole('button', { name: 'Publish' });
-    this.comments = new ActivityComments(page, this.el);
+    this.comments = new Comments(page, this.el);
   }
 
   async fillName(name) {

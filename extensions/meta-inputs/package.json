@@ -1,12 +1,11 @@
 {
   "name": "@tailor-cms/meta-element-collection",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "files": [
     "client.js",
-    "server.js"
+    "types.js"
   ],
-  "main": "client.js",
   "scripts": {
     "cli": "node ./cli.js"
   },
@@ -19,11 +18,12 @@
     "@tailor-cms/tme-combobox": "workspace:^",
     "@tailor-cms/tme-datetime": "workspace:^",
     "@tailor-cms/tme-file": "workspace:^",
-    "@tailor-cms/tme-haes-rating": "workspace:^",
+    "@tailor-cms/tme-heas-rating": "workspace:^",
     "@tailor-cms/tme-html": "workspace:^",
     "@tailor-cms/tme-radio-group": "workspace:^",
     "@tailor-cms/tme-select": "workspace:^",
     "@tailor-cms/tme-switch": "workspace:^",
+    "@tailor-cms/tme-text-field": "workspace:^",
     "@tailor-cms/tme-textarea": "workspace:^"
   }
 }

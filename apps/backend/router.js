@@ -1,16 +1,17 @@
-import ai from './shared/ai/index.js';
-import {
-  ai as aiConfig,
-  auth as authConfig,
-  test as testConfig,
-} from './config/server/index.js';
-import authenticator from './shared/auth/index.js';
 import express from 'express';
-import { extractAuthData } from './shared/auth/mw.js';
 import repository from './repository/index.js';
 import seedRouter from './tests/api/index.js';
 import tag from './tag/index.js';
 import user from './user/index.js';
+import userGroup from './user-group/index.js';
+import { extractAuthData } from '#shared/auth/mw.js';
+import authenticator from '#shared/auth/index.js';
+import ai from '#shared/ai/index.js';
+import {
+  ai as aiConfig,
+  auth as authConfig,
+  test as testConfig,
+} from '#config';
 
 const { authenticate } = authenticator;
 const router = express.Router();
@@ -34,6 +35,7 @@ authConfig.oidc.enabled &&
 router.use(authenticate('jwt'));
 router.use(repository.path, repository.router);
 router.use(tag.path, tag.router);
+router.use(userGroup.path, userGroup.router);
 if (aiConfig.isEnabled) router.use(ai.path, ai.router);
 if (testConfig.isSeedApiEnabled) router.use(seedRouter.path, seedRouter.router);
 

@@ -34,9 +34,8 @@
 </template>
 
 <script setup lang="ts">
+import { cloneDeep, uniq } from 'lodash-es';
 import { computed, ref, watch } from 'vue';
-import cloneDeep from 'lodash/cloneDeep';
-import uniq from 'lodash/uniq';
 
 import ItemGroup from './ItemGroup.vue';
 

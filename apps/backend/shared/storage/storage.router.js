@@ -1,6 +1,6 @@
-import ctrl from './storage.controller.js';
 import express from 'express';
 import multer from 'multer';
+import ctrl from './storage.controller.js';
 
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });

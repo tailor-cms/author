@@ -1,5 +1,5 @@
 import { Model } from 'sequelize';
-import { repository as role } from 'tailor-config-shared/src/role.js';
+import { repository as role } from '@tailor-cms/common/src/role.js';
 
 class RepositoryUser extends Model {
   static fields({ BOOLEAN, DATE, ENUM, INTEGER }) {
@@ -23,6 +23,11 @@ class RepositoryUser extends Model {
       pinned: {
         type: BOOLEAN,
         defaultValue: false,
+      },
+      hasAccess: {
+        type: BOOLEAN,
+        defaultValue: false,
+        field: 'has_access',
       },
       createdAt: {
         type: DATE,

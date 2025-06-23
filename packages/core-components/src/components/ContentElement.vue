@@ -20,30 +20,54 @@
       class="header d-flex"
     >
       <PublishDiffChip
-        :change-type="element.changeSincePublish"
+        :change-type="element.changeSincePublish as PublishDiffChangeTypes"
         class="ml-auto"
       />
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
-    <component
-      :is="componentName"
-      v-if="isComponentAvailable"
-      v-bind="{
-        ...$attrs,
-        element,
-        references,
-        isFocused,
-        isDragged,
-        isDisabled,
-        dense,
-      }"
-      :id="`element_${id}`"
-      @add="emit('add', $event)"
-      @delete="emit('delete')"
-      @focus="onSelect"
-      @link="onLink"
-      @save="onSave"
-    />
+    <template v-if="!!manifest">
+      <QuestionElement
+        v-if="isQuestion"
+        :icon="manifest.ui.icon"
+        :type="manifest.name"
+        v-bind="{
+          ...$attrs,
+          componentName,
+          embedElementConfig,
+          element,
+          references,
+          isFocused,
+          isDragged,
+          isDisabled,
+          dense,
+        }"
+        @add="emit('add', $event)"
+        @delete="emit('delete')"
+        @focus="onSelect"
+        @link="onLink"
+        @save="onSave"
+      />
+      <component
+        :is="componentName"
+        v-else
+        v-bind="{
+          ...$attrs,
+          embedElementConfig,
+          element,
+          references,
+          isFocused,
+          isDragged,
+          isDisabled,
+          dense,
+        }"
+        :id="`element_${id}`"
+        @add="emit('add', $event)"
+        @delete="emit('delete')"
+        @focus="onSelect"
+        @link="onLink"
+        @save="onSave"
+      />
+    </template>
     <VSheet v-else class="py-10" color="primary-lighten-5">
       <div class="text-h6">
         {{ element.type.replace('_', ' ') }}
@@ -54,13 +78,13 @@
       <div
         v-if="showDiscussion"
         :class="{ 'is-visible': isHighlighted || hasComments }"
+        class="mb-2"
       >
         <ElementDiscussion v-bind="element" :user="currentUser" @open="focus" />
       </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
           aria-label="Delete element"
-          class="mt-2"
           color="pink lighten-1"
           icon="mdi-delete-outline"
           size="x-small"
@@ -90,15 +114,18 @@ import {
   provide,
   ref,
 } from 'vue';
-import { getComponentName, getElementId } from '@tailor-cms/utils';
+import { getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import type { Meta } from '@tailor-cms/interfaces/common';
+import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import ActiveUsers from './ActiveUsers.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
+import QuestionElement from './QuestionElement.vue';
 
 interface Props {
   element: ContentElement;
@@ -110,9 +137,11 @@ interface Props {
   frame?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
+  embedElementConfig?: ContentElementCategory[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  embedElementConfig: () => [],
   references: null,
   parent: null,
   isHovered: false,
@@ -140,14 +169,13 @@ const currentUser = getCurrentUser?.();
 const activeUsers = ref<User[]>([]);
 
 const id = computed(() => getElementId(props.element));
-const componentName = computed(() => getComponentName(props.element.type));
+const manifest = computed(() => ceRegistry.getByEntity(props.element));
+const componentName = computed(() => manifest.value?.componentName);
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
-const isComponentAvailable = computed(
-  () => !!ceRegistry.get(props.element.type),
-);
+const isQuestion = computed(() => manifest.value?.isQuestion || false);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
@@ -166,7 +194,8 @@ const onSave = (data: ContentElement['data']) => {
 };
 
 const focus = () => {
-  editorBus.emit('element:focus', props.element, props.parent);
+  const { element, parent } = props;
+  editorBus.emit('element:focus', { ...element, parent });
 };
 
 const onLink = (key?: string) => editorBus.emit('element:link', key);
@@ -174,9 +203,7 @@ const onLink = (key?: string) => editorBus.emit('element:link', key);
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));
   elementBus.on('save:meta', (meta: Meta) => emit('save:meta', meta));
-  elementBus.on('save', (data: ContentElement['data']) =>
-    emit('save', onSave(data)),
-  );
+  elementBus.on('save', onSave);
 
   const deferSaveFlag = () => setTimeout(() => (isSaving.value = false), 1000);
   elementBus.on('saved', deferSaveFlag);
@@ -219,7 +246,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '../mixins';
+@use '../mixins';
 
 .content-element {
   $accent-1: #1de9b6;
@@ -309,12 +336,12 @@ onMounted(() => {
 
 .diff {
   &.new {
-    @include highlight(rgb(var(--v-theme-success-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-success-lighten-4)));
   }
 
   &.changed,
   &.removed {
-    @include highlight(rgb(var(--v-theme-secondary-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-secondary-lighten-4)));
   }
 
   .element-actions {

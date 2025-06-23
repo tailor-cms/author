@@ -2,25 +2,28 @@
   "name": "tailor-e2e",
   "version": "0.0.1",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "e2e:functional": "pnpm playwright test --project=chrome --project=setup",
-    "e2e:visual": "pnpm percy exec -- playwright test --project=visual",
-    "e2e:a11y": "pnpm playwright test --project=a11y --project=setup"
+    "e2e:functional": "pnpm playwright test --project=chrome-admin --project=chrome-default-user --project=chrome-collaborator --project=setup-admin --project=setup-default-user --project=setup-collaborator",
+    "e2e:visual": "pnpm percy exec -- playwright test --project=visual --project=setup-admin",
+    "e2e:a11y": "pnpm playwright test --project=a11y --project=setup-admin"
   },
   "devDependencies": {
-    "@axe-core/playwright": "4.10.0",
-    "@percy/cli": "^1.30.0",
-    "@percy/playwright": "^1.0.6",
-    "@playwright/test": "1.46.1",
-    "@types/node": "^20.14.10"
+    "@axe-core/playwright": "4.10.2",
+    "@percy/cli": "^1.31.0",
+    "@percy/playwright": "^1.0.8",
+    "@playwright/test": "1.53.1",
+    "@types/lodash-es": "^4.17.12",
+    "@types/node": "^24.0.3"
   },
   "dependencies": {
-    "@faker-js/faker": "^8.4.1",
-    "date-fns": "^3.6.0",
-    "dotenv": "^16.4.5",
-    "jsdom": "^24.1.0",
-    "lodash": "^4.17.21",
-    "mailtrap": "^3.4.0",
+    "@faker-js/faker": "^9.8.0",
+    "@tailor-cms/garment": "^0.18.1-beta.2",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
+    "jsdom": "^26.1.0",
+    "lodash-es": "^4.17.21",
+    "mailtrap": "^4.1.0",
     "tailor-seed": "workspace:^"
   }
 }

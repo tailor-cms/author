@@ -1,5 +1,3 @@
-import db from '../../database/index.js';
-import { createLogger } from '../../logger.js';
 import filter from 'lodash/filter.js';
 import forEach from 'lodash/forEach.js';
 import isEmpty from 'lodash/isEmpty.js';
@@ -10,13 +8,15 @@ import omit from 'lodash/omit.js';
 import { parse } from 'JSONStream';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
-import roleConfig from 'tailor-config-shared/src/role.js';
-import { SCHEMAS } from 'tailor-config-shared';
+import roleConfig from '@tailor-cms/common/src/role.js';
+import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
+import db from '../../database/index.js';
+import { createLogger } from '#logger';
 
 const logger = createLogger('processors');
 
-const { Activity, ContentElement, Repository, RepositoryUser } = db;
+const { Activity, ContentElement, Repository, RepositoryUser, User } = db;
 const { repository: role } = roleConfig;
 const noop = Function.prototype;
 
@@ -63,14 +63,19 @@ function processManifest(manifest, _enc, { context }) {
 }
 
 async function processRepository(repository, _enc, { context, transaction }) {
-  const { description, name, userId } = context;
+  const { name, description, userId, userGroupIds } = context;
   repository = normalize(repository, Repository);
   Object.assign(repository, { description, name });
   const options = { context: { userId }, transaction };
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
-  const { id } = await Repository.create(repositoryRecord, options);
-  const userRecord = { userId, repositoryId: id, role: ADMIN };
+  const entity = await Repository.create(repositoryRecord, options);
+  const { id } = entity;
+  const userRecord = { userId, repositoryId: id, role: ADMIN, hasAccess: true };
   await RepositoryUser.create(userRecord, { transaction });
+  if (userGroupIds?.length) {
+    const user = await User.findByPk(userId);
+    await entity.associateWithUserGroups(userGroupIds, user, transaction);
+  }
   context.repositoryId = id;
 }
 

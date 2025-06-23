@@ -1,16 +1,16 @@
-import { createLogger } from '../shared/logger.js';
-import db from '../shared/database/index.js';
 import { StatusCodes } from 'http-status-codes';
-import { fetchActivityContent } from '../shared/publishing/helpers.js';
-import { createError } from '../shared/error/helpers.js';
 import find from 'lodash/find.js';
 import get from 'lodash/get.js';
-import oauth2 from '../shared/oAuth2Provider.js';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
-import consumerConfig from '../config/server/consumer.js';
-import publishingService from '../shared/publishing/publishing.service.js';
-import { schema } from 'tailor-config-shared';
+import { schema } from '@tailor-cms/config';
+import db from '#shared/database/index.js';
+import { createError } from '#shared/error/helpers.js';
+import { createLogger } from '#logger';
+import { fetchActivityContent } from '#shared/publishing/actions.js';
+import consumerConfig from '#config/consumer.js';
+import oauth2 from '#shared/oAuth2Provider.js';
+import publishingService from '#shared/publishing/publishing.service.js';
 
 const { Activity, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
@@ -54,9 +54,20 @@ function show({ activity }, res) {
   return res.json({ data: activity });
 }
 
-function patch({ repository, user, activity, body }, res) {
+async function patch({ repository, user, activity, body }, res) {
   const context = { userId: user.id, repository };
-  return activity.update(body, { context }).then((data) => res.json({ data }));
+  // If changing parent for outline item, update parent publishing status
+  if (
+    isOutlineActivity(activity.type) &&
+    activity.parentId &&
+    body.parentId &&
+    body.parentId !== activity.parentId
+  ) {
+    const parent = await Activity.findByPk(activity.parentId);
+    await parent.touch();
+  }
+  const data = await activity.update(body, { context });
+  return res.json({ data });
 }
 
 async function remove({ user, repository, activity }, res) {
@@ -80,7 +91,7 @@ async function restore({ activity, repository, user }, res) {
   return res.json({ data: activity });
 }
 
-function publish({ activity }, res) {
+async function publish({ activity }, res) {
   log(`[publish] initiated, activityId: ${activity.id}`);
   if (activity.detached) {
     return createError(
@@ -88,16 +99,15 @@ function publish({ activity }, res) {
       'Cannot publish a deleted activity',
     );
   }
-  return publishingService
-    .publishActivity(activity)
-    .then((data) => res.json({ data }));
+  const data = await (activity.deletedAt
+    ? publishingService.unpublishActivity(activity)
+    : publishingService.publishActivity(activity));
+  return res.json({ data });
 }
 
-function clone({ activity, body, user }, res) {
-  const { repositoryId, parentId, position } = body;
-  const context = { userId: user.id };
+async function clone({ activity, body, user }, res) {
   return activity
-    .clone(repositoryId, parentId, position, context)
+    .clone(body.repositoryId, body.parentId, body.position, { userId: user.id })
     .then((mappings) => {
       const opts = { where: { id: Object.values(mappings.activityId) } };
       return Activity.findAll(opts).then((data) => res.json({ data }));
@@ -124,7 +134,7 @@ function getPreviewUrl({ activity }, res) {
     });
 }
 
-async function updateStatus({ user, body, activity }, res) {
+async function updateWorkflowStatus({ user, activity, body }, res) {
   const context = { user };
   const data = pick(body, [
     'assigneeId',
@@ -154,5 +164,5 @@ export default {
   clone,
   publish,
   getPreviewUrl,
-  updateStatus,
+  updateWorkflowStatus,
 };

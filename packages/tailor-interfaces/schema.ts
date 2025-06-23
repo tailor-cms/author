@@ -1,4 +1,6 @@
+import type { Activity } from './activity';
 import type { ContentElement } from './content-element';
+import type { Repository } from './repository';
 
 export type ElementManifest = Record<string, any>;
 
@@ -9,15 +11,23 @@ export enum OutlineStyle {
 
 export interface ElementRegistry {
   all: ElementManifest[];
+  questions: ElementManifest[];
   load: (el: ContentElement) => void;
   get: (id: string) => ElementManifest;
+  isQuestion: (type: string) => boolean;
+  isLegacyQuestion: (type: string) => boolean;
+  matchesAllowedElementConfig: (
+    el: ContentElement,
+    config: Record<string, any>
+  ) => boolean;
+  getByEntity: (el: ContentElement) => ElementManifest;
 }
 export interface Metadata {
   key: string;
   type: string;
   label: string;
   placeholder?: string;
-  validate: Record<string, any>;
+  validate?: Record<string, any>;
   defaultValue?: any;
   [key: string]: any;
 }
@@ -33,15 +43,15 @@ export interface ElementRelationship {
   label: string;
   placeholder: string;
   multiple: boolean;
-  allowedTypes: string[];
+  allowedElementConfig: ContentElementItem[];
   filters?: Filter[];
   disableSidebarUi?: boolean;
 }
 
 export interface ElementMetaConfig {
   type: string;
-  inputs: Metadata[];
-  relationships: ElementRelationship[];
+  inputs?: Metadata[];
+  relationships?: ElementRelationship[];
 }
 
 export interface ActivityRelationship {
@@ -53,57 +63,95 @@ export interface ActivityRelationship {
   allowEmpty: boolean;
   allowCircularLinks: boolean;
   allowInsideLineage: boolean;
-  allowedTypes: string[];
+  allowedTypes?: string[];
 }
 
-export interface AIConfig {
+export interface AiActivityConfig {
   definition: string;
   outputRules?: {
     prompt: string;
     useDalle?: boolean;
+    isAssessment?: boolean;
   };
 }
+
+export interface Guideline {
+  id: string;
+  icon: string;
+  title: string;
+  description: string;
+  metric: Record<string, number | undefined>;
+  isDone: () => boolean;
+};
 
 export interface ActivityConfig {
   type: string;
   label: string;
   color: string;
+  guidelines?: (
+    repository: Repository,
+    contentContainers: Activity[],
+    contentElements: ContentElement[],
+    ceRegistry: any,
+  ) => Guideline[];
   rootLevel?: boolean;
   subLevels?: string[];
+  parentTypes?: string[];
   isTrackedInWorkflow?: boolean;
   contentContainers?: string[];
   relationships?: ActivityRelationship[];
   meta?: Metadata[];
-  ai?: AIConfig;
+  defaultMeta?: Record<string, any>;
+  ai?: AiActivityConfig;
+  // @deprecated use relationships instead
+  hasPrerequisites?: boolean;
+  // @deprecated will be removed after migrating exam container
+  exams?: any;
 }
 
-export interface ElementCategory {
+export interface ContentElementConfig {
+  isGradable?: boolean;
+}
+
+export interface ContentElementItem extends ContentElementConfig {
+  id: string;
+}
+
+export interface ContentElementCategory {
   name: string;
-  types: string[];
+  items: ContentElementItem[];
+  config?: ContentElementConfig;
 }
 
-export interface ContentContainer {
+export type ElementConfig = ContentElementCategory | ContentElementItem | string;
+
+export interface ContentContainerConfig {
   type: string;
   templateId: string;
   label: string;
   multiple?: boolean;
-  types?: string[];
-  categories?: ElementCategory[];
+  types?: ElementConfig[];
+  embedElementConfig?: ElementConfig[];
+  contentElementConfig?: ElementConfig[];
   displayHeading?: boolean;
   layout?: boolean;
   config?: Record<string, any>;
   required?: boolean;
   publishedAs?: string;
-  ai?: AIConfig;
+  ai?: AiActivityConfig;
 }
 
 export interface Schema {
   id: string;
   workflowId: string;
   name: string;
+  description?: string;
   meta?: Metadata[];
+  defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];
   outlineStyle?: OutlineStyle;
-  contentContainers: ContentContainer[];
+  contentContainers: ContentContainerConfig[];
   elementMeta?: ElementMetaConfig[];
+  // @deprecated use elementMeta instead
+  tesMeta?: any[];
 }

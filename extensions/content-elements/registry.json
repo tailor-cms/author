@@ -1,8 +1,8 @@
 [
   {
-    "name": "@tailor-cms/ce-html-default",
-    "clientPackage": "@tailor-cms/ce-html-default-edit",
-    "serverPackage": "@tailor-cms/ce-html-default-server"
+    "name": "@tailor-cms/ce-html",
+    "clientPackage": "@tailor-cms/ce-html-edit",
+    "serverPackage": "@tailor-cms/ce-html-server"
   },
   {
     "name": "@tailor-cms/ce-image",
@@ -73,5 +73,45 @@
     "name": "@tailor-cms/ce-video",
     "clientPackage": "@tailor-cms/ce-video-edit",
     "serverPackage": "@tailor-cms/ce-video-server"
+  },
+  {
+    "name": "@tailor-cms/ce-accordion",
+    "clientPackage": "@tailor-cms/ce-accordion-edit",
+    "serverPackage": "@tailor-cms/ce-accordion-server"
+  },
+  {
+    "name": "@tailor-cms/ce-carousel",
+    "clientPackage": "@tailor-cms/ce-carousel-edit",
+    "serverPackage": "@tailor-cms/ce-carousel-server"
+  },
+  {
+    "name": "@tailor-cms/ce-modal",
+    "clientPackage": "@tailor-cms/ce-modal-edit",
+    "serverPackage": "@tailor-cms/ce-modal-server"
+  },
+  {
+    "name": "@tailor-cms/ce-table",
+    "clientPackage": "@tailor-cms/ce-table-edit",
+    "serverPackage": "@tailor-cms/ce-table-server"
+  },
+  {
+    "name": "@tailor-cms/ce-brightcove-video",
+    "clientPackage": "@tailor-cms/ce-brightcove-video-edit",
+    "serverPackage": "@tailor-cms/ce-brightcove-video-server"
+  },
+  {
+    "name": "@tailor-cms/ce-jodit-html",
+    "clientPackage": "@tailor-cms/ce-jodit-html-edit",
+    "serverPackage": "@tailor-cms/ce-jodit-html-server"
+  },
+  {
+    "name": "@tailor-cms/ce-quill-html",
+    "clientPackage": "@tailor-cms/ce-quill-html-edit",
+    "serverPackage": "@tailor-cms/ce-quill-html-server"
+  },
+  {
+    "name": "@tailor-cms/ce-file",
+    "clientPackage": "@tailor-cms/ce-file-edit",
+    "serverPackage": "@tailor-cms/ce-file-server"
   }
 ]

@@ -1,26 +1,23 @@
-import { storage as config } from '../../config/server/index.js';
 import get from 'lodash/get.js';
 import isString from 'lodash/isString.js';
 import Promise from 'bluebird';
 import set from 'lodash/set.js';
-import storage from '../../repository/storage.js';
 import toPairs from 'lodash/toPairs.js';
 import values from 'lodash/values.js';
+import storage from '../../repository/storage.js';
+import { storage as config } from '#config';
 
-const isPrimitive = (element) => !get(element, 'data.embeds');
-const isQuestion = (element) => get(element, 'data.question');
+const isComposite = (element) => !!get(element, 'data.embeds');
+const isLegacyQuestion = (element) =>
+  !isComposite(element) && !!get(element, 'data.question');
 const isStorageAsset = (v) => isString(v) && v.startsWith(config.protocol);
 const extractStorageKey = (v) => v.substr(config.protocol.length, v.length);
-
-function resolveStatics(item) {
-  return isQuestion(item) ? resolveQuestion(item) : resolveAsset(item);
-}
 
 async function resolveAssetsMap(element) {
   if (!get(element, 'data.assets')) return element;
   await Promise.map(toPairs(element.data.assets), async ([key, url]) => {
     if (!url) return set(element.data, key, url);
-    const resolvedUrl = isStorageAsset
+    const resolvedUrl = isStorageAsset(url)
       ? await storage.getFileUrl(extractStorageKey(url))
       : url;
     set(element.data, key, resolvedUrl);
@@ -40,22 +37,16 @@ async function resolveMetaMap(element) {
   return element;
 }
 
-async function resolveQuestion(element) {
-  await resolveMetaMap(element);
-  await resolveAssetsMap(element);
-  const question = element.data.question;
-  if (!question || question.length < 1) return Promise.resolve(element);
-  return Promise.each(question, resolveAsset).then(() => element);
-}
-
-function resolveAsset(element) {
-  return isPrimitive(element)
-    ? resolvePrimitive(element)
-    : resolveComposite(element);
+function resolveStatics(element) {
+  return isComposite(element)
+    ? resolveComposite(element)
+    : isLegacyQuestion(element)
+      ? resolveLegacyQuestion(element)
+      : resolvePrimitive(element);
 }
 
 async function resolvePrimitive(primitive) {
-  if (!isPrimitive(primitive)) throw new Error('Invalid primitive');
+  if (isComposite(primitive)) throw new Error('Invalid primitive');
   // Temp handle legacy image format, due to broken preview
   if (primitive.type === 'IMAGE') {
     // url might be set to null, can't use lodash default
@@ -72,9 +63,17 @@ async function resolvePrimitive(primitive) {
 async function resolveComposite(composite) {
   await resolveMetaMap(composite);
   await resolveAssetsMap(composite);
-  return Promise.each(values(composite.data.embeds), resolvePrimitive).then(
-    () => composite,
-  );
+  const embeds = values(composite.data.embeds);
+  if (!embeds || embeds.length < 1) return Promise.resolve(composite);
+  return Promise.each(embeds, resolvePrimitive).then(() => composite);
+}
+
+async function resolveLegacyQuestion(element) {
+  await resolveMetaMap(element);
+  await resolveAssetsMap(element);
+  const question = element.data.question;
+  if (!question || question.length < 1) return Promise.resolve(element);
+  return Promise.each(question, resolvePrimitive).then(() => element);
 }
 
 export { resolveStatics };

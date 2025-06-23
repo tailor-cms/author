@@ -1,9 +1,13 @@
+import { PassThrough } from 'node:stream';
+import path from 'node:path';
 import * as yup from 'yup';
 import {
   CopyObjectCommand,
+  CreateBucketCommand,
   DeleteObjectCommand,
   DeleteObjectsCommand,
   GetObjectCommand,
+  HeadBucketCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
@@ -11,8 +15,6 @@ import {
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import mime from 'mime-types';
-import { PassThrough } from 'node:stream';
-import path from 'node:path';
 import { Upload } from '@aws-sdk/lib-storage';
 import { validateConfig } from '../validation.js';
 
@@ -23,8 +25,9 @@ const DEFAULT_EXPIRATION_TIME = 3600; // seconds
 export const schema = yup.object().shape({
   region: yup.string().required(),
   bucket: yup.string().required(),
-  key: yup.string().required(),
-  secret: yup.string().required(),
+  key: yup.string(),
+  secret: yup.string(),
+  endpoint: yup.string(),
 });
 
 class Amazon {
@@ -33,22 +36,41 @@ class Amazon {
 
     const s3Config = {
       signatureVersion: 'v4',
-      credentials: {
-        accessKeyId: config.key,
-        secretAccessKey: config.secret,
-      },
       region: config.region,
       apiVersion: '2006-03-01',
       maxRetries: 3,
     };
 
+    if (config.endpoint) {
+      s3Config.endpoint = config.endpoint;
+      s3Config.forcePathStyle = true;
+    }
+
+    if (config.key && config.secret) {
+      s3Config.credentials = {
+        accessKeyId: config.key,
+        secretAccessKey: config.secret,
+      };
+    }
+
     this.bucket = config.bucket;
     this.region = config.region;
     this.client = new S3Client(s3Config);
+    if (config.endpoint) this.initTestBucket();
   }
 
   static create(config) {
     return new Amazon(config);
+  }
+
+  async initTestBucket() {
+    const endpoint = await this.client.config.endpoint();
+    if (!endpoint.hostname === 'localhost') return;
+    try {
+      await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
+    } catch {
+      await this.client.send(new CreateBucketCommand({ Bucket: this.bucket }));
+    }
   }
 
   path(...segments) {
@@ -157,7 +179,7 @@ class Amazon {
   }
 
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/headobjectcommand.html
-  fileExists(key, options = {}) {
+  fileExists(key) {
     const params = { Bucket: this.bucket, Key: key };
     return this.client.send(new HeadObjectCommand(params)).catch((err) => {
       if (isNotFound(err)) return null;

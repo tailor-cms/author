@@ -1,5 +1,5 @@
-import db from '../shared/database/index.js';
 import map from 'lodash/map.js';
+import db from '#shared/database/index.js';
 
 const { Revision, Sequelize } = db;
 const { Op } = Sequelize;
@@ -17,7 +17,7 @@ async function getEntityRemovesSinceMoment(activity, timestamp) {
   return getRemovesGroupedByEntity(map(nodes, 'id'), where);
 }
 
-function getLastState(ids, activityIds, beforeTimestamp) {
+function getLastState(repositoryId, ids, activityIds, beforeTimestamp) {
   const whereCreateOrUpdate = {
     operation: { [Op.or]: ['CREATE', 'UPDATE'] },
   };
@@ -36,6 +36,7 @@ function getLastState(ids, activityIds, beforeTimestamp) {
   };
   return Revision.scope('lastByEntity').fetch({
     where: {
+      repositoryId,
       ...whereCreateOrUpdate,
       ...whereBefore,
       ...whereInElementOrActivityIds,

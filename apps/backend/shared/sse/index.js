@@ -1,14 +1,14 @@
+import { EventEmitter } from 'events';
 import { createId as cuid, isCuid } from '@paralleldrive/cuid2';
 
 import channels from './channels.js';
-import { EventEmitter } from 'events';
 
 const SSE_TIMEOUT_MARGIN = 0.1;
 const SSE_DEFAULT_TIMEOUT = 60000; /* ms */
 const SSE_HEADERS = {
   'Content-Type': 'text/event-stream',
   'Cache-Control': 'no-transform',
-  Connection: 'keep-alive',
+  'Connection': 'keep-alive',
   'Transfer-Encoding': 'chunked',
   // NOTE: This controls nginx proxy buffering
   // https://nginx.com/resources/wiki/start/topics/examples/x-accel/#x-accel-buffering

@@ -19,7 +19,6 @@
     border
     open-all
     rounded
-    @click:select="selectActivity($event.id as number)"
   >
     <template #append="{ item }">
       <VChip
@@ -30,11 +29,14 @@
       >
         {{ getChipLabel(groupedSelection[item.id].length) }}
       </VChip>
-      <VIcon
+      <VBtn
         v-if="item.isEditable"
         class="ml-2"
         color="primary"
+        variant="text"
+        density="comfortable"
         icon="mdi-chevron-right"
+        @click="selectActivity(item.id)"
       />
     </template>
   </VTreeview>
@@ -50,16 +52,14 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
+import { cloneDeep, compact, groupBy } from 'lodash-es';
 import type {
   ContentElement,
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import cloneDeep from 'lodash/cloneDeep';
-import compact from 'lodash/compact';
-import groupBy from 'lodash/groupBy';
-import pluralize from 'pluralize';
+import pluralize from 'pluralize-esm';
 import { VTreeview } from 'vuetify/labs/VTreeview';
 
 interface TreeItem extends Activity {
@@ -127,12 +127,16 @@ const searchRecursive = (item: TreeItem) => {
   return false;
 };
 
-const attachActivityAttrs = (activity: Activity) => ({
-  id: activity.id,
-  title: activity.data.name,
-  isEditable: !!schemaService.isEditable(activity.type),
-  ...(schemaService.isEditable(activity.type) && { children: undefined }),
-});
+const attachActivityAttrs = (activity: Activity) => {
+  const hasChildren = !!schemaService.getLevel(activity.type).subLevels.length;
+  return {
+    id: activity.id,
+    title: activity.data.name,
+    selectable: true,
+    isEditable: !!schemaService.isEditable(activity.type),
+    ...(!hasChildren && { children: undefined }),
+  };
+};
 
 const getChipLabel = (length: number) => {
   return `${pluralize('element', length, true)} selected`;

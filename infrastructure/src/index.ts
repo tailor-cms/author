@@ -14,8 +14,22 @@ const STACK = pulumi.getStack();
 const resourceNamePrefix = config.require('resourceNamePrefix');
 const fullPrefix = `${resourceNamePrefix}-${STACK}`;
 
-export const tailorImage = process.env.TAILOR_DOCKER_IMAGE;
-if (!tailorImage) throw new Error('Missing Tailor Docker image env variable!');
+function buildAndPushImage() {
+  const imageRepository = new aws.ecr.Repository('tailor-cms', {
+    forceDelete: true,
+  });
+  return new awsx.ecr.Image('author', {
+    repositoryUrl: imageRepository.repositoryUrl,
+    context: '..',
+    platform: 'linux/amd64',
+    args: {
+      ssh: 'default',
+    },
+  });
+}
+
+export const tailorImage =
+  process.env.TAILOR_DOCKER_IMAGE || buildAndPushImage().imageUri;
 
 const vpc = new awsx.ec2.Vpc(`${PROJECT_NAME}-vpc`, {
   enableDnsHostnames: true,
@@ -36,6 +50,7 @@ const db = new studion.Database(`${fullPrefix}-tailor-db`, {
   vpcId: vpc.vpcId,
   vpcCidrBlock: vpc.vpc.cidrBlock,
   isolatedSubnetIds: vpc.isolatedSubnetIds,
+  engineVersion: '15.7',
 });
 
 const cluster = new aws.ecs.Cluster(`${fullPrefix}-ecs-cluster`, {
@@ -54,7 +69,7 @@ const webServer = new studion.WebServer(`${fullPrefix}-server`, {
   clusterName: cluster.name,
   hostedZoneId: dnsConfig.require('hostedZoneId'),
   autoscaling: { enabled: false },
-  size: 'small',
+  size: 'large', // 1 vCPU, 2GB RAM
   desiredCount: 1,
   healthCheckPath: '/api/healthcheck',
   environment: getEnvVariables(db),

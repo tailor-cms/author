@@ -24,6 +24,7 @@ export interface Status {
 
 interface Data {
   name: string;
+  [key: string]: any;
 }
 
 export interface Activity {
@@ -38,14 +39,11 @@ export interface Activity {
   status: Status[];
   isTrackedInWorkflow: boolean;
   detached: boolean;
+  elements?: ContentElement[];
+  containers?: Activity[];
   modifiedAt: string | null;
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-}
-
-export interface ContentContainer extends Activity {
-  elements: ContentElement[];
-  containers: ContentContainer[];
 }

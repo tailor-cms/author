@@ -39,7 +39,6 @@
         </VSheet>
         <ContentPreview
           v-else
-          :allowed-types="allowedTypes"
           :content-containers="items.contentContainers"
           :filters="filters"
           :multiple="multiple"
@@ -73,25 +72,22 @@
 <script lang="ts" setup>
 import type {
   Activity,
-  ContentContainer,
 } from '@tailor-cms/interfaces/activity';
 import { computed, inject, onMounted, reactive } from 'vue';
 import type {
   ContentElement,
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
+import { flatMap, map, sortBy } from 'lodash-es';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import type { ElementRegistry, Filter } from '@tailor-cms/interfaces/schema';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import flatMap from 'lodash/flatMap';
-import map from 'lodash/map';
-import type { Repository } from '@tailor-cms/interfaces/repository';
-import sortBy from 'lodash/sortBy';
 
 import ContentPreview from '../ContentPreview/index.vue';
-import SelectActivity from './SelectActivity.vue';
-import SelectRepository from './SelectRepository.vue';
 import TailorDialog from '../TailorDialog.vue';
 import { useLoader } from '../../composables/useLoader';
+import SelectActivity from './SelectActivity.vue';
+import SelectRepository from './SelectRepository.vue';
 
 const TOGGLE_BUTTON = {
   SELECT: { label: 'Select all', icon: 'checkbox-multiple-marked-outline' },
@@ -100,7 +96,7 @@ const TOGGLE_BUTTON = {
 
 interface Props {
   element?: ContentElement | null;
-  allowedTypes: string[];
+  allowedElementConfig: Array<{ type: string; config: any }>;
   heading: string;
   multiple?: boolean;
   selected?: Relationship[];
@@ -118,14 +114,14 @@ interface Selection {
 
 interface Items {
   activities: Activity[];
-  contentContainers: ContentContainer[];
+  contentContainers: Activity[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   element: null,
   selected: () => [],
   filters: () => [],
-  submitLabel: 'save',
+  submitLabel: 'Save',
   headerIcon: 'mdi-toy-brick-plus-outline',
   onlyCurrentRepo: false,
   multiple: true,
@@ -167,13 +163,13 @@ const rootContainerTypes = computed(() => {
   return getContainerTypes(selection.activity.type);
 });
 
-const processedContainers = computed<ContentContainer[]>(() => {
+const processedContainers = computed<Activity[]>(() => {
   if (!selection.activity || !items.activities.length) return [];
   const containers = sortBy(items.activities.filter(isRootContainer), [
     getTypePosition,
     'position',
     'createdAt',
-  ]) as ContentContainer[];
+  ]) as Activity[];
   return flatMap(containers, (it) => [it, ...getSubcontainers(it)]);
 });
 
@@ -193,10 +189,10 @@ const isRootContainer = ({ parentId, type }: Activity) => {
   );
 };
 
-const getSubcontainers = (container: ContentContainer) => {
+const getSubcontainers = (container: Activity) => {
   const { getDescendants } = activityUtils;
   return sortBy(
-    getDescendants(items.activities, container) as ContentContainer[],
+    getDescendants(items.activities, container) as Activity[],
     'position',
   );
 };
@@ -212,15 +208,15 @@ const showActivityElements = async (activity: Activity) => {
 };
 
 const assignElements = (
-  container: ContentContainer,
+  container: Activity,
   activity: Activity,
   elements: ContentElement[],
 ) => {
-  const { allowedTypes, filters = [] } = props;
+  const { filters = [] } = props;
   const containerElements = elements
     .filter((el) => {
       if (el.activityId !== container.id) return false;
-      if (allowedTypes.length && !allowedTypes.includes(el.type)) return false;
+      if (!isAllowedType(el)) return false;
       if (!props.element) return true;
       return filters.every((filter) =>
         filter(el, props.element as ContentElement, ceRegistry),
@@ -228,6 +224,16 @@ const assignElements = (
     })
     .map((element) => ({ ...element, activity }));
   return { ...container, elements: sortBy(containerElements, 'position') };
+};
+
+const isAllowedType = (el: ContentElement) => {
+  if (!props.allowedElementConfig.length) return true;
+  return props.allowedElementConfig.some(({ type, config }: any) => {
+    if (!ceRegistry) return;
+    const sameType = type === ceRegistry.getByEntity(el).type;
+    const sameConfig = ceRegistry.matchesAllowedElementConfig(el, config);
+    return sameType && sameConfig;
+  });
 };
 
 const toggleElementSelection = (element: ContentElement) => {
@@ -262,7 +268,7 @@ const fetchActivities = loader(async function (repository: Repository) {
   return api.fetchActivities(repository.id);
 }, 500);
 
-const fetchElements = loader(async function (containers: ContentContainer[]) {
+const fetchElements = loader(async function (containers: Activity[]) {
   const repositoryId = selection.repository?.id;
   const params = { ids: map(containers, 'id') };
   return api.fetchContentElements(repositoryId, params);

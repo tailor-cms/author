@@ -1,0 +1,18 @@
+{
+  "name": "@tailor-cms/tcc-assessment-pool-server",
+  "version": "0.0.1",
+  "description": "Tailor assessment pool content container server package",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "devDependencies": {
+    "@types/lodash-es": "*"
+  },
+  "peerDependencies": {
+    "bluebird": "^3.7.2",
+    "lodash-es": "*"
+  }
+}

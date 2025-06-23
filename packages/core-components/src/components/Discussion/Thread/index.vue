@@ -40,8 +40,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue';
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import partition from 'lodash/partition';
-import takeRight from 'lodash/takeRight';
+import { partition, takeRight } from 'lodash-es';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import ThreadList from './ThreadList.vue';

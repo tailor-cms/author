@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import userSeed from 'tailor-seed/user.json';
+import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
 
 import { ChangePasswordDialog } from '../../../pom/common/ChangePasswordDiaog';
 import SeedClient from '../../../api/SeedClient';
@@ -67,6 +67,7 @@ test('updating user should fail if required fields are empty', async ({
   await profilePage.hasVisibleAlert('Last name is a required field');
 });
 
+// eslint-disable-next-line max-len
 test('updating user should fail if first or last name are less than two characters', async ({
   page,
 }) => {

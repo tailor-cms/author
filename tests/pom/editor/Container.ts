@@ -1,8 +1,7 @@
-import { expect, Locator, Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import { ContentElement } from './ContentElement';
-
-const ELEMENT_SELECTOR = '.content-element';
 
 export class Container {
   static selector = '.content-container';
@@ -17,7 +16,7 @@ export class Container {
   }
 
   async getElements(content?: string) {
-    const locator = this.el.locator(ELEMENT_SELECTOR);
+    const locator = this.el.locator(ContentElement.selector);
     const items = await (content
       ? locator.filter({ hasText: content }).all()
       : locator.all());
@@ -26,9 +25,9 @@ export class Container {
 
   async deleteElements() {
     // Need to fetch one by one since locator will be stale after list is updated
-    const elementCount = await this.el.locator(ELEMENT_SELECTOR).count();
+    const elementCount = await this.el.locator(ContentElement.selector).count();
     for (let i = 0; i < elementCount; i++) {
-      const locator = this.el.locator(ELEMENT_SELECTOR).first();
+      const locator = this.el.locator(ContentElement.selector).first();
       const element = new ContentElement(this.page, locator);
       await element.remove();
     }

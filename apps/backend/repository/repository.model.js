@@ -1,7 +1,11 @@
-import { Model } from 'sequelize';
+import { Model, Op } from 'sequelize';
+import first from 'lodash/first.js';
+import intersection from 'lodash/intersection.js';
+import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import { schema } from 'tailor-config-shared';
+import { RepositoryRole } from '@tailor-cms/common/src/role.js';
+import { schema } from '@tailor-cms/config';
 
 const { getRepositoryRelationships, getSchema } = schema;
 
@@ -57,8 +61,10 @@ class Repository extends Model {
       Revision,
       ContentElement,
       User,
+      UserGroup,
       Tag,
       RepositoryTag,
+      RepositoryUserGroup,
     } = db;
     this.hasMany(Activity, {
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
@@ -78,12 +84,19 @@ class Repository extends Model {
     this.hasMany(RepositoryTag, {
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
+    this.hasMany(RepositoryUserGroup, {
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
+    });
     this.belongsToMany(Tag, {
       through: RepositoryTag,
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.belongsToMany(User, {
       through: RepositoryUser,
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
+    });
+    this.belongsToMany(UserGroup, {
+      through: RepositoryUserGroup,
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
   }
@@ -105,6 +118,48 @@ class Repository extends Model {
           if (context) repository.hasUnpublishedChanges = true;
         }),
     );
+  }
+
+  static async createByUser(data, { context, transaction } = {}) {
+    const RepositoryUser = this.sequelize.model('RepositoryUser');
+    const repository = await Repository.create(data, {
+      context,
+      returning: true,
+      transaction,
+    });
+    await RepositoryUser.create(
+      {
+        userId: context.userId,
+        repositoryId: repository.id,
+        role: RepositoryRole.ADMIN,
+        hasAccess: true,
+      },
+      { transaction },
+    );
+    return repository;
+  }
+
+  async hasAccess(user) {
+    const UserGroup = this.sequelize.model('UserGroup');
+    // If user is a system admin, allow all
+    if (user.isAdmin()) return true;
+    // Get user relationship with the repository, if exists allow access
+    const userRelationship = first(
+      await this.getRepositoryUsers({
+        where: { userId: user.id, hasAccess: true },
+      }),
+    );
+    if (userRelationship) return true;
+    // Check if user is a member of any user group that has access to the repository
+    // Check if userGroups are loaded
+    if (this.userGroups === undefined) {
+      await this.reload({ include: [{ model: UserGroup, required: false }] });
+    }
+    const repositoryGroupIds = this.userGroups.map((it) => it.id);
+    const userGroupIds = user.userGroups.map((it) => it.id);
+    if (intersection(repositoryGroupIds, userGroupIds).length) return true;
+    // If none of the above conditions are met, deny access
+    return false;
   }
 
   async validateReferences(transaction) {
@@ -161,27 +216,64 @@ class Repository extends Model {
     );
   }
 
-  clone(name, description, context) {
+  async clone(name, description, context) {
     const Repository = this.sequelize.model('Repository');
     const Activity = this.sequelize.model('Activity');
     const srcAttributes = pick(this, ['schema', 'data']);
     const dstAttributes = Object.assign(srcAttributes, { name, description });
-    return this.sequelize.transaction(async (transaction) => {
-      const dst = await Repository.create(dstAttributes, {
-        context,
-        transaction,
-      });
-      const src = await Activity.findAll({
-        where: { repositoryId: this.id, parentId: null },
-        transaction,
-      });
-      const idMap = await Activity.cloneActivities(src, dst.id, null, {
-        context,
-        transaction,
-      });
-      await dst.mapClonedReferences(idMap, transaction);
-      return dst;
+    const transaction = await this.sequelize.transaction();
+    const dst = await Repository.createByUser(dstAttributes, {
+      context,
+      transaction,
     });
+    const src = await Activity.findAll({
+      where: { repositoryId: this.id, parentId: null },
+      transaction,
+    });
+    const idMap = await Activity.cloneActivities(src, dst.id, null, {
+      context,
+      transaction,
+    });
+    await dst.mapClonedReferences(idMap, transaction);
+    await transaction.commit();
+    return dst;
+  }
+
+  // Check if there is at least one outline activity with unpublished
+  // changes and update repository model accordingly
+  async updatePublishingStatus(excludedActivity) {
+    const outlineTypes = map(schema.getOutlineLevels(this.schema), 'type');
+    const where = {
+      repositoryId: this.id,
+      type: outlineTypes,
+      detached: false,
+      // Not published at all or has unpublished changes
+      [Op.or]: [
+        {
+          publishedAt: { [Op.gt]: 0 },
+          modifiedAt: { [Op.gt]: this.sequelize.col('published_at') },
+        },
+        { publishedAt: null, deletedAt: null },
+      ],
+    };
+    if (excludedActivity) where.id = { [Op.ne]: excludedActivity.id };
+    const Activity = this.sequelize.model('Activity');
+    const unpublishedCount = await Activity.count({ where, paranoid: false });
+    return this.update({ hasUnpublishedChanges: !!unpublishedCount });
+  }
+
+  async associateWithUserGroups(userGroupIds, user, transaction) {
+    if (!userGroupIds?.length) return;
+    const userGroupData = await user.getAccessibleUserGroups();
+    const userAssociatedGroups = userGroupData.filter((it) =>
+      userGroupIds.includes(it.id),
+    );
+    if (!userAssociatedGroups.length) return;
+    const UserGroup = this.sequelize.model('UserGroup');
+    const userGroups = await UserGroup.findAll({
+      where: { id: userAssociatedGroups.map((it) => it.id) },
+    });
+    await this.setUserGroups(userGroups, { transaction });
   }
 
   getUser(user) {

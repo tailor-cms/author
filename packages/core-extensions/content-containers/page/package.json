@@ -10,12 +10,12 @@
   "main": "./src/index.js",
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "*"
+    "@types/lodash-es": "*"
   },
   "peerDependencies": {
-    "vue": "^3.3.4",
-    "vuetify": "^3.7.0",
-    "lodash": "*",
-    "@tailor-cms/core-components": "workspace:*"
+    "@tailor-cms/core-components": "workspace:*",
+    "lodash-es": "*",
+    "vue": "^3.5.15",
+    "vuetify": "^3.8.6"
   }
 }

@@ -1,4 +1,3 @@
-// eslint-disable-next-line strict
 'use strict';
 
 const { default: replaceEnum } = require('sequelize-replace-enum-postgres');

@@ -1,3 +1,13 @@
+import type { Activity } from './activity';
+import type { ContentElement } from './content-element';
+import type { Repository } from './repository';
+
+export enum Entity {
+  Repository = 'REPOSITORY',
+  Activity = 'ACTIVITY',
+  ContentElement = 'CONTENT_ELEMENT',
+}
+
 interface User {
   id: number;
   email: string;
@@ -12,9 +22,9 @@ export interface Revision {
   uid: string;
   userId: number;
   repositoryId: number;
-  entity: string;
+  entity: Entity;
   operation: string;
-  state: Record<string, unknown>;
+  state: ContentElement | Activity | Repository;
   user: User;
   createdAt: string;
   updatedAt: string;

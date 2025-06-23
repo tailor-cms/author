@@ -1,8 +1,8 @@
-import { addContext, getActiveUsers, removeContext } from './store.js';
 import isEqual from 'lodash/isEqual.js';
 import pick from 'lodash/pick.js';
-import sse from '../../shared/sse/index.js';
-import { UserActivity } from 'sse-event-types';
+import { UserActivity } from '@tailor-cms/common/src/sse.js';
+import { addContext, getActiveUsers, removeContext } from './store.js';
+import sse from '#shared/sse/index.js';
 
 const USER_ATTRS = [
   'id',
@@ -43,6 +43,7 @@ async function addUserActivity({ user, body: { context } }, res) {
 async function removeUserActivity({ user, body: { context } }, res) {
   res.end();
   user = pick(user, USER_ATTRS);
+  // eslint-disable-next-line no-unused-vars
   const { connectedAt, ...targetCtx } = context;
   const compareBy = Object.keys(targetCtx);
   await removeContext(user, (it) => isEqual(pick(it, compareBy), targetCtx));

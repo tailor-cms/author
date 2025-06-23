@@ -25,11 +25,24 @@ const dbColumn = (col, Model) => {
   return Sequelize.col(name);
 };
 
-function parsePath(path, Model) {
+export const hasColumn = (Model, col) => {
+  if (!col.includes('.')) return has(Model, `rawAttributes.${col}.field`);
+  const parsedPath = parsePath(Model, col);
+  return !!parsedPath.length;
+};
+
+export const subQuery = (model, options) => {
+  const sql = model.queryGenerator.selectQuery(model.tableName, options, model);
+  return Sequelize.literal(`(${sql.slice(0, -1)})`);
+};
+
+function parsePath(Model, path) {
   if (!path.includes('.')) return [dbColumn(path, Model)];
   const [alias, ...columns] = path.split('.');
-  const { target: model } = Model.associations[alias];
-  return [{ model, as: alias }, ...parsePath(columns.join('.'), model)];
+  const association = Model.associations[alias];
+  if (!association) return [];
+  const { target: model } = association;
+  return [{ model, as: alias }, ...parsePath(model, columns.join('.'))];
 }
 
 const sqlFunctions = {

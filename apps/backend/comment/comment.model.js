@@ -1,6 +1,6 @@
-import { Comment as Events } from 'sse-event-types';
-import hooks from './hooks.js';
+import { Comment as Events } from '@tailor-cms/common/src/sse.js';
 import { Model } from 'sequelize';
+import hooks from './hooks.js';
 
 class Comment extends Model {
   static fields(DataTypes) {

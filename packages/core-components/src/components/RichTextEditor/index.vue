@@ -2,14 +2,11 @@
   <VInput
     v-if="editor"
     ref="input"
-    :disabled="disabled"
-    :focused="focused"
+    v-bind="{ disabled, focused, readonly, rules }"
     :model-value="content"
-    :readonly="readonly"
-    :rules="rules"
     class="text-left"
   >
-    <template #default="{ id, isValid, isDisabled, isDirty }">
+    <template #default="{ id, isValid, isReadonly, isDisabled, isDirty }">
       <VField
         :id="id.value"
         :active="focused || isDirty.value"
@@ -17,18 +14,18 @@
         :error="isValid.value === false"
         :focused="focused"
         :label="label"
+        :readonly="isReadonly.value"
         :variant="variant"
       >
         <template #default="{ props: fieldProps }">
           <div class="w-100">
-            <EditorContent
-              v-bind="fieldProps"
-              ref="input"
-              :editor="editor"
-              class="w-100"
-            />
+            <EditorContent v-bind="fieldProps" :editor="editor" class="w-100" />
             <VDivider />
-            <EditorToolbar :editor="editor" />
+            <EditorToolbar
+              :disabled="isDisabled.value"
+              :editor="editor"
+              :readonly="isReadonly.value"
+            />
           </div>
         </template>
       </VField>
@@ -67,7 +64,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['update:model-value', 'change']);
 
-const input = ref();
+// TODO: Cleanup types, should work without 'any'
+const input = ref(null) as any;
 const content = ref(props.modelValue);
 const { focused } = useFocusWithin(input);
 
@@ -104,6 +102,11 @@ watch(focused, async (val) => {
   if (val || props.modelValue === content.value) return;
   return emit('change', content.value);
 });
+
+watch(
+  () => props.readonly || props.disabled,
+  (val) => editor.value?.setEditable(!val),
+);
 </script>
 
 <style lang="scss" scoped>
@@ -126,7 +129,6 @@ $toolbar-height: 2.25rem;
   pre {
     background: #0d0d0d;
     color: #fff;
-    font-family: 'JetBrainsMono', monospace;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
 
@@ -144,7 +146,9 @@ $toolbar-height: 2.25rem;
   }
 }
 
-.v-field--center-affix :deep(.v-label.v-field-label) {
-  top: calc(50% - $toolbar-height/2);
+.v-field--center-affix {
+  :deep(.v-label.v-field-label:not(.v-field-label--floating)) {
+    top: calc(50% - $toolbar-height/2);
+  }
 }
 </style>

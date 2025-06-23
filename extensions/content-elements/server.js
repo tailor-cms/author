@@ -1,4 +1,4 @@
-import pkg0 from '@tailor-cms/ce-html-default-server';
+import pkg0 from '@tailor-cms/ce-html-server';
 import pkg1 from '@tailor-cms/ce-image-server';
 import pkg2 from '@tailor-cms/ce-multiple-choice-server';
 import pkg3 from '@tailor-cms/ce-single-choice-server';
@@ -13,6 +13,14 @@ import pkg11 from '@tailor-cms/ce-pdf-server';
 import pkg12 from '@tailor-cms/ce-embed-server';
 import pkg13 from '@tailor-cms/ce-audio-server';
 import pkg14 from '@tailor-cms/ce-video-server';
+import pkg15 from '@tailor-cms/ce-accordion-server';
+import pkg16 from '@tailor-cms/ce-carousel-server';
+import pkg17 from '@tailor-cms/ce-modal-server';
+import pkg18 from '@tailor-cms/ce-table-server';
+import pkg19 from '@tailor-cms/ce-brightcove-video-server';
+import pkg20 from '@tailor-cms/ce-jodit-html-server';
+import pkg21 from '@tailor-cms/ce-quill-html-server';
+import pkg22 from '@tailor-cms/ce-file-server';
 
 // prettier-ignore
 export const elements = [
@@ -31,4 +39,12 @@ export const elements = [
   pkg12,
   pkg13,
   pkg14,
+  pkg15,
+  pkg16,
+  pkg17,
+  pkg18,
+  pkg19,
+  pkg20,
+  pkg21,
+  pkg22,
 ];

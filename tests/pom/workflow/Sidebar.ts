@@ -1,6 +1,7 @@
-import { expect, Locator, Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
-import { ActivityComments } from '../common/Comments';
+import { Comments } from '../common/Comments';
 
 export class WorkflowSidebar {
   readonly page: Page;
@@ -10,7 +11,7 @@ export class WorkflowSidebar {
   readonly assigneeInput: Locator;
   readonly priorityInput: Locator;
   readonly dueDateInput: Locator;
-  readonly comments: ActivityComments;
+  readonly comments: Comments;
 
   constructor(page: Page) {
     this.page = page;
@@ -22,7 +23,7 @@ export class WorkflowSidebar {
     this.assigneeInput = this.el.getByTestId('workflow_assigneeInput');
     this.priorityInput = this.el.getByTestId('workflow_priorityInput');
     this.dueDateInput = this.el.getByTestId('workflow_dateInput');
-    this.comments = new ActivityComments(page, this.el);
+    this.comments = new Comments(page, this.el);
   }
 
   async setDescription(description: string) {
@@ -57,10 +58,10 @@ export class WorkflowSidebar {
   }
 
   async selectDueDate(dueDate: string) {
+    await this.dueDateInput.click();
     await this.dueDateInput
       .getByLabel('Due date', { exact: true })
       .fill(dueDate);
-    await this.dueDateInput.click();
     await this.dueDateInput.press('Enter');
   }
 }

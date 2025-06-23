@@ -1,5 +1,8 @@
 <template>
-  <VCol :cols="elementWidth" class="d-flex align-start my-1">
+  <VCol
+    :cols="elementWidth"
+    class="d-flex align-start my-1 content-preview"
+  >
     <VCheckbox
       v-if="selectable"
       :disabled="selectionDisabled && !isSelected"
@@ -40,7 +43,7 @@
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import get from 'lodash/get';
+import { get } from 'lodash-es';
 
 import ContentElementWrapper from '../ContentElement.vue';
 
