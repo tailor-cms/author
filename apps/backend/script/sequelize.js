@@ -4,7 +4,7 @@ import dargs from 'dargs';
 import dotenv from 'dotenv';
 import minimist from 'minimist';
 import { packageDirectory } from 'package-directory';
-import safeRequire from 'safe-require';
+import optionalRequire from 'optional-require';
 
 // App root
 const appDirectory = await packageDirectory();
@@ -21,7 +21,7 @@ const actions = ['migrate', 'seed', 'create', 'drop'];
 const isAction = (cmd) => actions.some((it) => cmd.startsWith(it));
 
 // Load config.
-const config = safeRequire(path.join(process.cwd(), 'sequelize.config.cjs'));
+const config = optionalRequire(path.join(process.cwd(), 'sequelize.config.cjs'));
 if (!config) {
   console.error('Error: `sequelize.config.cjs` not found');
   process.exit(1);

@@ -19,7 +19,7 @@
 import { countBy, filter, map } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import pluralize from 'pluralize';
+import pluralize from 'pluralize-esm';
 
 import { useCurrentRepository } from '@/stores/current-repository';
 

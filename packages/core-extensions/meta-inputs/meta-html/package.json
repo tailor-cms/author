@@ -12,6 +12,6 @@
     "@tailor-cms/core-components": "workspace:*",
     "@tailor-cms/interfaces": "workspace:*",
     "vue": "^3.5.15",
-    "vuetify": "^3.8.6"
+    "vuetify": "^3.8.11"
   }
 }

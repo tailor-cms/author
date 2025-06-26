@@ -47,7 +47,7 @@ import {
   map,
 } from 'lodash-es';
 import { object } from 'yup';
-import pluralize from 'pluralize';
+import pluralize from 'pluralize-esm';
 import { useForm } from 'vee-validate';
 
 import { type StoreActivity, useActivityStore } from '@/stores/activity';

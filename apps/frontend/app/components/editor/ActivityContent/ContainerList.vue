@@ -63,7 +63,7 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import BBPromise from 'bluebird';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import pluralize from 'pluralize';
+import pluralize from 'pluralize-esm';
 
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';

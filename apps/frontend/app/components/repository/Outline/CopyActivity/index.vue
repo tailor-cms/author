@@ -76,7 +76,7 @@ import { computed, ref } from 'vue';
 import { TailorDialog, useLoader } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { InsertLocation } from '@tailor-cms/utils';
-import pluralize from 'pluralize';
+import pluralize from 'pluralize-esm';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { SCHEMAS } from '@tailor-cms/config';
 import { sortBy } from 'lodash-es';
