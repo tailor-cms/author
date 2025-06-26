@@ -26,8 +26,8 @@
     "@mdi/font": "7.4.47",
     "@paralleldrive/cuid2": "^2.2.2",
     "@pinia/nuxt": "^0.11.1",
-    "@statsig/js-client": "^3.18.0",
-    "@statsig/web-analytics": "^3.18.0",
+    "@statsig/js-client": "^3.18.1",
+    "@statsig/web-analytics": "^3.18.1",
     "@tailor-cms/common": "workspace:*",
     "@tailor-cms/config": "workspace:*",
     "@tailor-cms/content-container-collection": "workspace:^",
@@ -51,14 +51,14 @@
     "mitt": "^3.0.1",
     "p-min-delay": "^4.1.0",
     "pinia": "^3.0.3",
-    "pluralize": "^8.0.0",
+    "pluralize-esm": "^9.0.5",
     "promise-queue": "^2.2.5",
     "url-join": "^5.0.0",
     "v-clipboard": "3.0.0-next.1",
     "vee-validate": "4.15.1",
     "vue3-tree-vue": "^2.0.14",
     "vuedraggable": "4.1.0",
-    "vuetify": "3.8.10",
+    "vuetify": "^3.8.11",
     "yup": "^1.6.1"
   }
 }
