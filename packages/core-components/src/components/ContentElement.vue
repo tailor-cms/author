@@ -39,6 +39,7 @@
           isFocused,
           isDragged,
           isDisabled,
+          isReadonly: props.isDisabled,
           dense,
         }"
         @add="emit('add', $event)"
@@ -58,6 +59,7 @@
           isFocused,
           isDragged,
           isDisabled,
+          isReadonly: props.isDisabled,
           dense,
         }"
         :id="`element_${id}`"
