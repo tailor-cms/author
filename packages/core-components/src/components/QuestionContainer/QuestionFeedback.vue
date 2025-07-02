@@ -24,15 +24,15 @@
             {{ answer || 'Answer not added.' }}
           </div>
           <RichTextEditor
-            v-if="props.isEditing"
-            :model-value="feedback[index]"
+            v-if="!props.isReadonly"
+            :model-value="feedback?.[index]"
             variant="outlined"
             hide-details
             @update:model-value="update($event, index)"
           />
           <template v-else>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-if="feedback[index]" v-html="feedback[index]"></div>
+            <div v-if="feedback?.[index]" v-html="feedback[index]"></div>
             <span v-else class="font-italic">Feedback not added.</span>
           </template>
         </div>
@@ -49,7 +49,7 @@ import RichTextEditor from '../RichTextEditor/index.vue';
 
 interface Props {
   answers: string[];
-  isEditing: boolean;
+  isReadonly: boolean;
   isGradable: boolean;
   feedback?: Record<number, string>;
 }
@@ -71,10 +71,10 @@ const update = (value: string, index: number) => {
 };
 
 watch(
-  () => props.isEditing,
+  () => props.isReadonly,
   (val) => {
     if (!some(props.feedback)) return;
-    if (val) isExpanded.value = true;
+    if (!val) isExpanded.value = true;
   },
 );
 </script>
