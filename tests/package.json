@@ -12,15 +12,15 @@
     "@axe-core/playwright": "4.10.2",
     "@percy/cli": "^1.31.0",
     "@percy/playwright": "^1.0.8",
-    "@playwright/test": "1.53.1",
+    "@playwright/test": "1.53.2",
     "@types/lodash-es": "^4.17.12",
-    "@types/node": "^24.0.4"
+    "@types/node": "^24.0.10"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.8.0",
+    "@faker-js/faker": "^9.9.0",
     "@tailor-cms/garment": "0.18.1-beta.2",
     "date-fns": "^4.1.0",
-    "dotenv": "^16.5.0",
+    "dotenv": "^17.0.1",
     "jsdom": "^26.1.0",
     "lodash-es": "^4.17.21",
     "mailtrap": "^4.1.0",

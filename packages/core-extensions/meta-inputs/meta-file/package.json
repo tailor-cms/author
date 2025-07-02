@@ -16,6 +16,6 @@
     "vuetify": "^3.8.11"
   },
   "devDependencies": {
-    "@types/lodash-es": "*"
+    "@types/lodash-es": "^4.17.12"
   }
 }
