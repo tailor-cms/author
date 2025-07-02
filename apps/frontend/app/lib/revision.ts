@@ -1,9 +1,10 @@
 import { get, isEmpty, reduce } from 'lodash-es';
 import { lowerCase, titleCase } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import { Entity, type Revision } from '@tailor-cms/interfaces/revision';
-import { schema } from '@tailor-cms/config';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { Entity } from '@tailor-cms/interfaces/revision';
+import type { Revision } from '@tailor-cms/interfaces/revision';
+import { schema } from '@tailor-cms/config';
 
 const describe = {
   [Entity.Repository]: describeRepositoryRevision,

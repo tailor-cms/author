@@ -22,7 +22,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 
-// eslint-disable-next-line import/no-self-import
 import ItemGroup from './ItemGroup.vue';
 import ListItem from './ListItem.vue';
 

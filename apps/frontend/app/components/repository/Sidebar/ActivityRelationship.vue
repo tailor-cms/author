@@ -50,7 +50,8 @@ import { object } from 'yup';
 import pluralize from 'pluralize-esm';
 import { useForm } from 'vee-validate';
 
-import { type StoreActivity, useActivityStore } from '@/stores/activity';
+import type { StoreActivity } from '@/stores/activity';
+import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
