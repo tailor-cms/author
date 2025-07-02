@@ -15,6 +15,7 @@
         element,
         embedElementConfig,
         isDisabled,
+        isReadonly: props.isDisabled,
       }"
       :class="[element.changeSincePublish, { diff: showPublishDiff }]"
       :is-dirty="isDirty"

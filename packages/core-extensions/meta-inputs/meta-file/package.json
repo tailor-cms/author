@@ -13,9 +13,9 @@
     "@tailor-cms/interfaces": "workspace:*",
     "lodash-es": "*",
     "vue": "^3.5.15",
-    "vuetify": "^3.8.6"
+    "vuetify": "^3.8.11"
   },
   "devDependencies": {
-    "@types/lodash-es": "*"
+    "@types/lodash-es": "^4.17.12"
   }
 }

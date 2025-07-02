@@ -40,7 +40,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import pluralize from 'pluralize';
+import pluralize from 'pluralize-esm';
 import type { Relationship } from '@tailor-cms/interfaces/content-element';
 
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';

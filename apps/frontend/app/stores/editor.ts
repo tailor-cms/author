@@ -3,8 +3,9 @@ import { filter, flatMap, reduce } from 'lodash-es';
 import { schema } from '@tailor-cms/config';
 import type { Guideline } from '@tailor-cms/interfaces/schema';
 
+import type { StoreActivity } from './activity';
 import type { StoreContentElement } from './content-elements';
-import { useActivityStore, type StoreActivity } from './activity';
+import { useActivityStore } from './activity';
 import { useCommentStore } from './comments';
 import { useCurrentRepository } from './current-repository';
 import { useContentElementStore } from './content-elements';

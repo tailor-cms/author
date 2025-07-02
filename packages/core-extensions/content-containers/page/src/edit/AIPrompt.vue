@@ -46,13 +46,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import {
-  AiRequestType,
-  AiResponseSchema,
-  type AiInput,
-} from '@tailor-cms/interfaces/ai';
+import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { ref, watch } from 'vue';
+import type { AiInput } from '@tailor-cms/interfaces/ai';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 defineProps<{
   inputs: AiInput[];
