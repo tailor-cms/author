@@ -5,10 +5,7 @@
     rounded="lg"
     variant="tonal"
     border>
-    <div
-      v-if="hasFeedback"
-      class="d-flex flex-column ga-2 mt-4"
-    >
+    <div v-if="hasFeedback" class="d-flex flex-column ga-2 mt-4">
       <VCard v-for="(it, key) in feedback" :key="key" variant="tonal" rounded>
         <VCardText class="d-flex">
           <!-- eslint-disable-next-line vue/no-v-html -->

@@ -1,5 +1,10 @@
 <template>
-  <VCard class="question-container pa-4">
+  <VCard
+    class="question-container pa-4"
+    color="grey-lighten-5"
+    variant="flat"
+    border
+  >
     <VForm ref="form" class="tce-root" @submit.prevent="submit">
       <QuestionPrompt
         :embeds="data.embeds"
@@ -23,14 +28,14 @@
           color="primary"
           prepend-icon="mdi-check"
           type="submit"
-          variant="tonal"
+          variant="flat"
         >
           Submit
         </VBtn>
         <VBtn
           v-else
           prepend-icon="mdi-refresh"
-          variant="tonal"
+          variant="text"
           @click="emit('retry')"
         >
           Retry
@@ -66,10 +71,3 @@ const submit = async () => {
   if (valid) emit('submit');
 };
 </script>
-
-<style lang="scss" scoped>
-.tce-root {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1rem;
-}
-</style>
