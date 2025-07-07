@@ -61,14 +61,17 @@ import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
   data: Record<string, any>;
-  feedback: Record<string, any>;
   isCorrect: boolean;
   isGraded: boolean;
   isSubmitted: boolean;
+  feedback?: Record<string, any>;
   allowedRetake?: boolean;
 }
 
-withDefaults(defineProps<Props>(), { allowedRetake: false });
+withDefaults(defineProps<Props>(), {
+  allowedRetake: false,
+  feedback: undefined,
+});
 const emit = defineEmits(['submit', 'retry']);
 
 const form = ref<HTMLFormElement>();
