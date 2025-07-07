@@ -2,16 +2,16 @@
   <ElementList
     :add-element-options="addElementOptions"
     :elements="embeds"
-    :enable-add="!isDisabled && enableAdd"
+    :enable-add="!isDisabled && !isReadonly && enableAdd"
     :supported-element-config="allowedElementConfig"
-    :is-disabled="isDisabled"
+    :is-disabled="isDisabled || isReadonly"
     @add="addItems"
     @update="reorderItem"
   >
     <template #default="{ element, isDragged }">
       <ContainedContent
         :element="element"
-        :is-disabled="isDisabled"
+        :is-disabled="isDisabled || isReadonly"
         :is-dragged="isDragged"
         v-bind="$attrs"
         class="my-2"
@@ -38,12 +38,14 @@ interface Props {
   allowedElementConfig?: ContentElementCategory[];
   container: { embeds: Record<string, ContentElement> };
   isDisabled?: boolean;
+  isReadonly?: boolean;
   enableAdd?: boolean;
   addElementOptions?: Record<string, any>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isDisabled: false,
+  isReadonly: false,
   enableAdd: true,
   allowedElementConfig: () => [],
   addElementOptions: () => ({}),

@@ -3,7 +3,7 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 
 interface NodeProcessor {
   filterNodesFn?: (it: Activity[]) => Activity[];
-  processNodeFn?: (it: Activity) => Activity;
+  processNodeFn?: (it: Activity) => any;
 }
 
 interface Internals {
