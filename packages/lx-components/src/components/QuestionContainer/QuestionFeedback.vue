@@ -1,12 +1,11 @@
 <template>
-  <VAlert
-    v-bind="alertProps"
-    class="mb-3"
-    rounded="lg"
-    variant="tonal"
-    border>
+  <VAlert :color="alertProps.color" variant="tonal">
+    <div class="d-flex align-center">
+      <VIcon :icon="alertProps.icon" class="mr-2" size="small" />
+      <span class="text-subtitle-1">{{ alertProps.text }}</span>
+    </div>
     <div v-if="hasFeedback" class="d-flex flex-column ga-2 mt-4">
-      <VCard v-for="(it, key) in feedback" :key="key" variant="tonal" rounded>
+      <VCard v-for="(it, key) in feedback" :key="key" variant="tonal">
         <VCardText class="d-flex">
           <!-- eslint-disable-next-line vue/no-v-html -->
           <div class="feedback" v-html="it"></div>
@@ -25,18 +24,27 @@ const props = defineProps<{
   isCorrect: any;
 }>();
 
-const hasFeedback = computed(() =>
-  props.feedback && Object.keys(props.feedback).length,
+const hasFeedback = computed(
+  () => props.feedback && Object.keys(props.feedback).length,
 );
 
 const alertProps = computed(() => {
-  if (!props.isGraded) return { title: 'Submitted', type: 'info' };
-  if (props.isCorrect) return { title: 'Correct', type: 'success' };
-  return { title: 'Incorrect', type: 'error' };
+  if (!props.isGraded) {
+    return { text: 'Submitted', color: 'info', icon: 'mdi-information' };
+  }
+  if (props.isCorrect) {
+    return { text: 'Correct', color: 'success', icon: 'mdi-check-circle' };
+  }
+  return { text: 'Incorrect', color: 'error', icon: 'mdi-close-circle' };
 });
 </script>
 
 <style lang="scss" scoped>
+.text-subtitle-1 {
+  line-height: 1;
+  font-weight: bold;
+}
+
 :deep(.feedback) {
   width: 100%;
 
@@ -66,7 +74,7 @@ const alertProps = computed(() => {
 
   blockquote {
     padding-left: 1rem;
-    border-left: 2px solid color-mix(in srgb, currentColor 20%, transparent);
+    border-left: 2px solid color-mix(in srgb, currentColor 36%, transparent);
   }
 }
 </style>
