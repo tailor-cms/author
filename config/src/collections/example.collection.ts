@@ -15,6 +15,10 @@ class Article {
   @Prop({ label: 'Overview Video' })
   @IsContentElement(ContentElementType.Video)
   video: ContentElement;
+
+  @Prop()
+  @IsContentElement(ContentElementType.MultipleChoice)
+  question: ContentElement;
 }
 
 export const exampleCollection = new TailorCollection(Article);
