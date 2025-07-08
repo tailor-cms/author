@@ -39,6 +39,7 @@
       @delete:subcontainer="requestContainerDeletion"
       @reorder:element="reorderContentElements"
       @save:element="saveContentElements"
+      @update:container="activityStore.update"
       @update:element="(val: any) => saveContentElements([val])"
       @update:subcontainer="activityStore.update"
     />
