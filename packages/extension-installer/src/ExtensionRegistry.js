@@ -41,8 +41,12 @@ export class ExtensionRegistry {
     return path.join(this.location, 'client.js');
   }
 
-  get interfaceExportsLocation() {
+  get typeObjectLocation() {
     return path.join(this.location, 'types.js');
+  }
+
+  get typeEnumLocation() {
+    return path.join(this.location, 'enum.ts');
   }
 
   get serverExportsLocation() {
@@ -136,7 +140,8 @@ export class ExtensionRegistry {
       clientPackages,
       elements,
       hasServerPackages,
-      interfaceExportsLocation,
+      typeObjectLocation,
+      typeEnumLocation,
       registryLocation,
       serverExportsLocation,
       serverPackages,
@@ -153,7 +158,8 @@ export class ExtensionRegistry {
       elements,
       this.extensionType,
     );
-    fs.writeFileSync(interfaceExportsLocation, interfaceModuleExport);
+    fs.writeFileSync(typeObjectLocation, interfaceModuleExport.js);
+    fs.writeFileSync(typeEnumLocation, interfaceModuleExport.ts);
     if (hasServerPackages) {
       fs.writeFileSync(serverExportsLocation, getExportModule(serverPackages));
     }
@@ -179,6 +185,14 @@ const exportInterfaceTemplate = template(
   <%});%>
   `);
 
+// prettier-ignore
+const exportEnumTemplate = template(
+  `
+  export enum <%- enumName %> {
+  <% _.forEach(types, function(val, key) {%><%- key %> = '<%- val %>',
+  <%});%>
+  `);
+
 const getExportModule = (entries) =>
   exportModuleTemplate({ entries }).trim().concat('\n];\n');
 
@@ -195,7 +209,10 @@ const getInterfaceModule = (dir, packages, extensionType) => {
     return acc;
   }, {});
   const enumName = `${toPascalCase(extensionType)}Type`;
-  return exportInterfaceTemplate({ enumName, types }).trim().concat('\n};\n');
+  return {
+    js: exportInterfaceTemplate({ enumName, types }).trim().concat('\n};\n'),
+    ts: exportEnumTemplate({ enumName, types }).trim().concat('\n};\n'),
+  };
 };
 
 const parseType = (path) => {
