@@ -18,5 +18,10 @@
     "name": "@tailor-cms/tcc-exam",
     "clientPackage": "@tailor-cms/tcc-exam-edit",
     "serverPackage": "@tailor-cms/tcc-exam-server"
+  },
+  {
+    "name": "@tailor-cms/tcc-collection-item",
+    "clientPackage": "@tailor-cms/tcc-collection-item",
+    "serverPackage": ""
   }
 ]
