@@ -58,7 +58,6 @@
 import { computed, ref, watch } from 'vue';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { useDate } from 'vuetify';
-import { VTimePicker } from 'vuetify/labs/VTimePicker';
 
 interface Meta extends Metadata {
   value?: string;

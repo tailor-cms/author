@@ -14,8 +14,6 @@
     :opened="expandedActivityIds"
     base-color="primary-darken-3"
     class="pa-0"
-    item-type=""
-    item-value="id"
     border
     open-all
     rounded
@@ -27,7 +25,7 @@
         color="teal-darken-1"
         size="small"
       >
-        {{ getChipLabel(groupedSelection[item.id].length) }}
+        {{ getChipLabel(groupedSelection[item.id]!.length) }}
       </VChip>
       <VBtn
         v-if="item.isEditable"
@@ -60,7 +58,6 @@ import type {
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import pluralize from 'pluralize-esm';
-import { VTreeview } from 'vuetify/labs/VTreeview';
 
 interface TreeItem extends Activity {
   id: number;
@@ -130,10 +127,11 @@ const searchRecursive = (item: TreeItem) => {
 const attachActivityAttrs = (activity: Activity) => {
   const hasChildren = !!schemaService.getLevel(activity.type).subLevels.length;
   return {
-    id: activity.id,
+    value: activity.id,
     title: activity.data.name,
     selectable: true,
     isEditable: !!schemaService.isEditable(activity.type),
+    type: undefined,
     ...(!hasChildren && { children: undefined }),
   };
 };
