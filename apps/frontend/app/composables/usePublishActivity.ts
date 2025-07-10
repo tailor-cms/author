@@ -1,7 +1,8 @@
 import Promise from 'bluebird';
 
-import { type StoreActivity, useActivityStore } from '@/stores/activity';
 import { repository as api } from '@/api';
+import type { StoreActivity } from '@/stores/activity';
+import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const initialStatus = () => ({ progress: 0, message: '' });

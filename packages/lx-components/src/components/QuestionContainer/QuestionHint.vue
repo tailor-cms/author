@@ -2,8 +2,8 @@
   <VTooltip
     v-model="showHint"
     :open-on-hover="false"
-    location="bottom"
-    max-width="350"
+    location="bottom left"
+    max-width="250"
     close-on-back
     open-on-click
   >
@@ -13,9 +13,10 @@
         v-bind="tooltipProps"
         :active="isActive"
         :prepend-icon="`mdi-lightbulb-${isActive ? 'on' : 'outline'}`"
+        color="primary-darken-1"
         size="small"
         text="Hint"
-        variant="text"
+        variant="tonal"
         rounded
       />
     </template>

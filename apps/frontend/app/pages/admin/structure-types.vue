@@ -15,14 +15,13 @@
       bg-color="transparent"
       class="pa-0"
       item-title="label"
-      item-type=""
       item-value="id"
       open-all
       rounded
     >
       <template #prepend="{ item, isActive }">
         <VIcon
-          :icon="`mdi-folder${isActive ? '-open' : ''}`"
+          :icon="getNodeIcon(!!item.children, isActive)"
           color="primary-darken-3"
         />
         <VIcon
@@ -39,7 +38,6 @@
 import { computed, ref } from 'vue';
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { createId as cuid } from '@paralleldrive/cuid2';
-import { VTreeview } from 'vuetify/labs/VTreeview';
 import { without } from 'lodash-es';
 
 import { useConfigStore } from '@/stores/config';
@@ -63,12 +61,12 @@ const buildTree = (type: string, structure: ActivityConfig[]) => {
   const item = structure.find((it) => it.type === type);
   if (!item) return;
   const { subLevels, ...leaf } = item;
-  if (!subLevels?.length) return { id, ...leaf };
+  if (!subLevels?.length) return { id, ...leaf, type: undefined };
   const recursive = subLevels?.includes(type);
   const children = without(subLevels, type)
     .map((type) => buildTree(type, structure))
     .filter(Boolean) as TreeItem[];
-  return { id, children, recursive, ...leaf };
+  return { id, children, recursive, ...leaf, type: undefined };
 };
 
 const schemas = computed<TreeItem[]>(() => {
@@ -80,4 +78,9 @@ const schemas = computed<TreeItem[]>(() => {
     return { id: cuid(), label, children };
   });
 });
+
+const getNodeIcon = (hasChildren: boolean, isActive: boolean) => {
+  if (!hasChildren) return 'mdi-file';
+  return `mdi-folder${isActive ? '-open' : ''}`;
+};
 </script>

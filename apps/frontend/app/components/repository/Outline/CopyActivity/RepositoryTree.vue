@@ -13,8 +13,6 @@
     :opened="expandedActivityIds"
     base-color="primary-darken-3"
     class="pa-0"
-    item-type=""
-    item-value="id"
     border
     open-all
     rounded
@@ -46,7 +44,6 @@ import { cloneDeep, compact, xorBy } from 'lodash-es';
 import { computed, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
-import { VTreeview } from 'vuetify/labs/VTreeview';
 
 interface TreeItem extends Activity {
   title: string;
@@ -73,7 +70,7 @@ const activityTree = computed<TreeItem[]>(() => {
   return activityUtils.toTreeFormat(props.activities, {
     filterNodesFn: $schemaService.filterOutlineActivities,
     processNodeFn: attachActivityAttrs,
-  });
+  }) as TreeItem[];
 });
 
 const processedItems = computed(() => {
@@ -110,15 +107,16 @@ const isSelected = (item: TreeItem) => {
 };
 
 const isSelectable = (item: TreeItem) => {
-  return !selected.value.length || selected.value[0].level === item.level;
+  return !selected.value.length || selected.value[0]!.level === item.level;
 };
 
-const attachActivityAttrs = (activity: TreeItem) => {
+const attachActivityAttrs = (activity: Activity) => {
   const hasChildren = !!$schemaService.getLevel(activity.type).subLevels.length;
   return {
-    id: activity.id,
+    value: activity.id,
     title: activity.data.name,
     selectable: props.supportedLevels.includes(activity.type),
+    type: undefined,
     ...(!hasChildren && { children: undefined }),
   };
 };
