@@ -84,10 +84,23 @@ const save = () => {
 </script>
 
 <style lang="scss" scoped>
-.collection-item :deep .contained-content {
-  .element-actions,
-  .drag-handle {
-    display: none !important;
+.element-container {
+  position: relative;
+}
+
+.label {
+  opacity: 0.65;
+}
+
+.element-container > .contained-content :deep {
+  // First level elements cannot be dragged
+  > .drag-handle {
+    display: none;
+  }
+
+  // First level elements cannot be deleted
+  > .content-element > .element-actions {
+    display: none;
   }
 
   .content-element.focused {
@@ -99,13 +112,5 @@ const save = () => {
       background: rgb(var(--v-theme-primary-darken-4)) !important;
     }
   }
-}
-
-.element-container {
-  position: relative;
-}
-
-.label {
-  opacity: 0.65;
 }
 </style>
