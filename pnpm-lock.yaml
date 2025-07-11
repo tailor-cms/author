@@ -524,6 +524,9 @@ importers:
       '@tailor-cms/config-parser':
         specifier: workspace:^
         version: link:../packages/tailor-config-parser
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
       '@tailor-cms/content-container-collection':
         specifier: workspace:^
@@ -555,6 +558,9 @@ importers:
       '@tailor-cms/tcc-assessment-pool-server':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/assessment-pool-server
+      '@tailor-cms/tcc-collection-item':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/collection-item
       '@tailor-cms/tcc-exam-edit':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/exam-edit
@@ -888,6 +894,34 @@ importers:
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
+        version: 4.17.12
+
+  packages/core-extensions/content-containers/collection-item:
+    dependencies:
+      '@tailor-cms/core-components':
+        specifier: workspace:*
+        version: link:../../../core-components
+      '@tailor-cms/utils':
+        specifier: workspace:*
+        version: link:../../../utils
+      lodash-es:
+        specifier: '*'
+        version: 4.17.21
+      vee-validate:
+        specifier: 4.14.7
+        version: 4.14.7(vue@3.5.17(typescript@5.8.3))
+      vue:
+        specifier: ^3.5.15
+        version: 3.5.17(typescript@5.8.3)
+      vuetify:
+        specifier: ^3.8.6
+        version: 3.9.0(typescript@5.8.3)(vue@3.5.17(typescript@5.8.3))
+    devDependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      '@types/lodash-es':
+        specifier: '*'
         version: 4.17.12
 
   packages/core-extensions/content-containers/exam-edit:
