@@ -2,8 +2,6 @@
   "compilerOptions": {
     "target": "ES2018",
     "lib": ["esnext"],
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -13,5 +11,7 @@
     "esModuleInterop": true,
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   }
 }

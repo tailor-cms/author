@@ -41,8 +41,12 @@ export class ExtensionRegistry {
     return path.join(this.location, 'client.js');
   }
 
-  get interfaceExportsLocation() {
+  get typeObjectLocation() {
     return path.join(this.location, 'types.js');
+  }
+
+  get typeEnumLocation() {
+    return path.join(this.location, 'enum.ts');
   }
 
   get serverExportsLocation() {
@@ -136,7 +140,8 @@ export class ExtensionRegistry {
       clientPackages,
       elements,
       hasServerPackages,
-      interfaceExportsLocation,
+      typeObjectLocation,
+      typeEnumLocation,
       registryLocation,
       serverExportsLocation,
       serverPackages,
@@ -148,12 +153,13 @@ export class ExtensionRegistry {
     });
     shell.echo('Generating export modules...');
     fs.writeFileSync(clientExportsLocation, getExportModule(clientPackages));
-    const interfaceModuleExport = getInterfaceModule(
+    const typeExport = generateTypeExport(
       this.location,
       elements,
       this.extensionType,
     );
-    fs.writeFileSync(interfaceExportsLocation, interfaceModuleExport);
+    fs.writeFileSync(typeObjectLocation, typeExport.js);
+    fs.writeFileSync(typeEnumLocation, typeExport.ts);
     if (hasServerPackages) {
       fs.writeFileSync(serverExportsLocation, getExportModule(serverPackages));
     }
@@ -172,17 +178,25 @@ export const elements = [
 `);
 
 // prettier-ignore
-const exportInterfaceTemplate = template(
+const exportTypeTemplate = template(
   `
   export const <%- enumName %> = {
   <% _.forEach(types, function(val, key) {%><%- key %>: '<%- val %>',
   <%});%>
   `);
 
+// prettier-ignore
+const exportEnumTemplate = template(
+  `
+  export enum <%- enumName %> {
+  <% _.forEach(types, function(val, key) {%><%- key %> = '<%- val %>',
+  <%});%>
+  `);
+
 const getExportModule = (entries) =>
   exportModuleTemplate({ entries }).trim().concat('\n];\n');
 
-const getInterfaceModule = (dir, packages, extensionType) => {
+const generateTypeExport = (dir, packages, extensionType) => {
   const isBuilt = extensionType === 'content element';
   const targetPath = isBuilt ? 'dist/index.cjs' : 'src/index.js';
   const packageTypes = packages.map((it) =>
@@ -195,7 +209,10 @@ const getInterfaceModule = (dir, packages, extensionType) => {
     return acc;
   }, {});
   const enumName = `${toPascalCase(extensionType)}Type`;
-  return exportInterfaceTemplate({ enumName, types }).trim().concat('\n};\n');
+  return {
+    js: exportTypeTemplate({ enumName, types }).trim().concat('\n};\n'),
+    ts: exportEnumTemplate({ enumName, types }).trim().concat('\n};\n'),
+  };
 };
 
 const parseType = (path) => {
