@@ -113,5 +113,10 @@
     "name": "@tailor-cms/ce-file",
     "clientPackage": "@tailor-cms/ce-file-edit",
     "serverPackage": "@tailor-cms/ce-file-server"
+  },
+  {
+    "name": "@tailor-cms/ce-html-raw",
+    "clientPackage": "@tailor-cms/ce-html-raw-edit",
+    "serverPackage": "@tailor-cms/ce-html-raw-server"
   }
 ]
