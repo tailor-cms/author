@@ -87,6 +87,7 @@ const SectionConfig: ContentContainerConfig = {
       name: 'Content Elements',
       items: [
         ContentElementType.TiptapHtml,
+        ContentElementType.HtmlRaw,
         ContentElementType.Image,
         ContentElementType.Video,
         ContentElementType.Embed,
