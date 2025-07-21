@@ -201,7 +201,7 @@ const getInterfaceModule = (dir, packages, extensionType) => {
 const parseType = (path) => {
   const file = fs.readFileSync(path, { encoding: 'utf-8' });
   const opts = path.endsWith('.cjs') ? {} : { sourceType: 'module' };
-  const ast = acorn.parse(file, { ...opts, ecmaVersion: 2020 });
+  const ast = acorn.parse(file, { ...opts, ecmaVersion: 'latest' });
   return (
     findTypeExportValue(ast) ||
     findTypeExportValue(ast, 'templateId') ||
