@@ -26,7 +26,7 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { sortBy } from 'lodash-es';
-import { TailorTreeview } from '@tailor-cms/core-components';
+import TailorTreeview from './TailorTreeview/index.vue';
 
 const { $schemaService } = useNuxtApp() as any;
 
@@ -139,10 +139,6 @@ const navigateToActivity = (activityId: number) => {
 }
 
 :deep(.v-list-item) {
-  .v-list-item__append {
-    visibility: hidden;
-  }
-
   &:hover {
     .v-list-item-title {
       font-weight: 600 !important;
