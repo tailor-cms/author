@@ -20,7 +20,7 @@ export class AddElementDialog {
 
   async add(name: string) {
     await this.open();
-    await this.page.getByRole('button', { name }).click();
+    await this.page.getByRole('button', { name, exact: true }).click();
   }
 
   async openCopyDialog() {
