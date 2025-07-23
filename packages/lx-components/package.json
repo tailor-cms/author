@@ -3,7 +3,7 @@
   "description": "Reusable learning experience UI components",
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "files": [
     "src"
   ],
