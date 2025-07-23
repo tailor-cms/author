@@ -22,3 +22,18 @@ withDefaults(defineProps<Props>(), {
   name: 'Content Element',
 });
 </script>
+
+<style lang="scss" scoped>
+.v-card {
+  border: 1px dashed color-mix(in srgb, currentColor 36%, transparent);
+
+  .v-icon {
+    position: absolute;
+    opacity: 0.08;
+    left: calc(50% - 15.625rem);
+    top: calc(50% - 15.625rem);
+    z-index: -1;
+    transform: rotate(-15deg);
+  }
+}
+</style>
