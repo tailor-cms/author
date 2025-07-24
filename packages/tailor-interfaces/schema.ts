@@ -3,6 +3,12 @@ import type { ContentElement } from './content-element';
 import type { Repository } from './repository';
 
 export type ElementManifest = Record<string, any>;
+
+export enum OutlineStyle {
+  Grid = 'GRID',
+  List = 'LIST',
+}
+
 export interface ElementRegistry {
   all: ElementManifest[];
   questions: ElementManifest[];
@@ -143,6 +149,7 @@ export interface Schema {
   meta?: Metadata[];
   defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];
+  outlineStyle?: OutlineStyle;
   contentContainers: ContentContainerConfig[];
   elementMeta?: ElementMetaConfig[];
   // @deprecated use elementMeta instead

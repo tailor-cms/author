@@ -5,7 +5,8 @@
   "files": [
     "client.js",
     "server.js",
-    "types.js"
+    "types.js",
+    "enum.ts"
   ],
   "scripts": {
     "cli": "node ./cli.js"
