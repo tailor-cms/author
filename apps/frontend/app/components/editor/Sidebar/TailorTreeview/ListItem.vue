@@ -112,7 +112,6 @@ const onItemClick = (e: any) => {
 
 const reoder = (direction: number) => {
   const activity = activityStore.findById(props.id) as any;
-  console.log('xxx', props.index + direction);
   return activityStore.reorder(activity, {
     items: props.siblings,
     position: props.index + direction,
