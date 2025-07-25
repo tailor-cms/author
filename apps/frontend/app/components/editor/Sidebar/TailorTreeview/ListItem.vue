@@ -24,11 +24,8 @@
           <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
           <ActivityMenu
             v-show="isHovered"
-            :activity="activity as any"
-            :activator="{
-              size: 'x-small',
-              variant: 'text',
-            }"
+            :activity="activity"
+            activator-size="x-small"
             class="activity-menu ml-2"
             @click.stop
           />

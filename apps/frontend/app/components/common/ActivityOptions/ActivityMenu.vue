@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <span>
     <VMenu location="left" offset="-40" width="240" contained>
       <template #activator="{ props: menuProps }">
         <VBtn
@@ -7,8 +7,8 @@
           aria-label="Options menu"
           color="primary-lighten-3"
           icon="mdi-dots-vertical"
-          size="small"
           variant="text"
+          :size="activatorSize"
           rounded
         >
         </VBtn>
@@ -47,13 +47,13 @@
       :repository-id="activity.repositoryId"
       @close="showCopyDialog = false"
     />
-  </div>
+  </span>
 </template>
 
 <script lang="ts" setup>
 import { first, sortBy } from 'lodash-es';
-import type { Activity } from '@tailor-cms/interfaces/activity';
 import { InsertLocation } from '@tailor-cms/utils';
+import type { StoreActivity } from '@/stores/activity';
 
 import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
@@ -64,7 +64,14 @@ const { AddAfter, AddBefore, AddInto } = InsertLocation;
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
 
-const props = defineProps<{ activity: StoreActivity }>();
+export interface Props {
+  activity: StoreActivity;
+  activatorSize?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  activatorSize: 'small',
+});
 
 const { $eventBus } = useNuxtApp() as any;
 const selectedActivity = useSelectedActivity(props.activity);
