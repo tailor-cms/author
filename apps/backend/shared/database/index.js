@@ -10,7 +10,7 @@ import Sequelize from 'sequelize';
 import sequelizeConfig from '../../sequelize.config.cjs';
 
 // Require models.
-/* eslint-disable */
+
 import User from '../../user/user.model.js';
 import UserGroup from '#app/user-group/userGroup.model.js';
 import UserGroupMember from '#app/user-group/userGroupMember.model.js';
@@ -27,7 +27,6 @@ import Tag from '../../tag/tag.model.js';
 import Hooks from './hooks.js';
 import { wrapMethods } from './helpers.js';
 import config from '#config/database.js';
-/* eslint-enable */
 
 const require = createRequire(import.meta.url);
 const pkg = require('../../package.json');
