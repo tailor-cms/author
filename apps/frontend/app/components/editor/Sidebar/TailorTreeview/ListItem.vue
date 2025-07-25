@@ -90,7 +90,7 @@ const activityStore = useActivityStore();
 const listItem = useTemplateRef<HTMLButtonElement>('listItem');
 const isHovered = useElementHover(listItem, {
   delayEnter: 400,
-  delayLeave: 800,
+  delayLeave: 1000,
 });
 
 const activity = activityStore.findById(props.id) as Activity;
