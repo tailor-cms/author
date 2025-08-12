@@ -49,7 +49,7 @@ export default (appInstance) =>
     name: 'content element',
     attrs: [
       'name', 'type', 'version', 'schema', 'initState', 'ui', 'isQuestion',
-      'isComposite',
+      'isComposite', 'ai',
     ],
     getCondition: (type) => (it) => it.type === type,
     getName,

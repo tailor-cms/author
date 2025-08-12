@@ -4,48 +4,65 @@
       <div class="d-flex align-end pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
-      <div v-for="group in library" :key="group.name" class="mb-2 mx-10">
-        <div class="group-heading text-primary-darken-3 mt-3 mb-2">
-          {{ group.name }}
+      <VSheet
+        v-if="isAiGeneratingContent"
+        color="primary-lighten-5"
+        class="py-16 text-subtitle-2 rounded-lg mx-10 text-center"
+      >
+        <CircularProgress />
+        <div class="pt-3 text-primary-darken-4 font-weight-bold">
+          <span>Content generation in progress...</span>
         </div>
-        <div class="group-elements ga-5">
-          <VBtn
-            v-for="element in group.items"
-            :key="element.position"
-            :disabled="!isAllowed(element.type)"
-            class="add-element"
-            color="primary-darken-3"
-            rounded="lg"
-            variant="text"
-            stacked
-            @click.stop="emitAdd(element)"
-          >
-            <template #prepend>
-              <VIcon v-if="element.ui.icon" size="28">
-                {{ element.ui.icon }}
-              </VIcon>
-            </template>
-            {{ element.name }}
-            <template #append>
-              <VIcon
-                v-tooltip="element.version"
-                class="version-info"
-                icon="mdi-information-outline"
-                size="16"
-              />
-            </template>
-          </VBtn>
+      </VSheet>
+      <template v-else>
+        <div v-for="group in library" :key="group.name" class="mb-2 mx-10">
+          <div class="group-heading text-primary-darken-3 mt-3 mb-2">
+            {{ group.name }}
+          </div>
+          <div class="group-elements ga-5">
+            <VBtn
+              v-for="element in group.items"
+              :key="element.position"
+              :disabled="!isAllowed(element.type)"
+              class="add-element"
+              color="primary-darken-3"
+              rounded="lg"
+              variant="text"
+              stacked
+              @click.stop="emitAdd(element)"
+            >
+              <template #prepend>
+                <VIcon v-if="element.ui.icon" size="28">
+                  {{ element.ui.icon }}
+                </VIcon>
+              </template>
+              {{ element.name }}
+              <template #append>
+                <VIcon
+                  v-tooltip="element.version"
+                  class="version-info"
+                  icon="mdi-information-outline"
+                  size="16"
+                />
+              </template>
+            </VBtn>
+          </div>
         </div>
-      </div>
+      </template>
     </div>
   </VBottomSheet>
 </template>
 
 <script lang="ts" setup>
+import CircularProgress from '../CircularProgress.vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { some } from 'lodash-es';
 
-const props = defineProps<{ library: any; allowedElementConfig: any[] }>();
+const props = defineProps<{
+  library: any;
+  allowedElementConfig: any[];
+  isAiGeneratingContent: boolean;
+}>();
 
 const emit = defineEmits(['add']);
 
