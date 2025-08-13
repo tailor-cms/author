@@ -6,7 +6,7 @@
       </div>
       <VSheet
         v-if="isAiGeneratingContent"
-        color="primary-lighten-5"
+        color="primary-lighten-4"
         class="py-16 text-subtitle-2 rounded-lg mx-10 text-center"
       >
         <CircularProgress />
