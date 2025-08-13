@@ -101,7 +101,7 @@
           <template #activator="{ props: tooltipProps }">
             <VBtn
               v-bind="tooltipProps"
-              aria-label="Delete element"
+              aria-label="Generate content"
               class="mb-2"
               color="indigo lighten-1"
               icon="mdi-creation"
@@ -118,7 +118,7 @@
           <template #activator="{ props: tooltipProps }">
             <VBtn
               v-bind="tooltipProps"
-              aria-label="Delete element"
+              aria-label="Reset element"
               class="mb-2"
               color="teal lighten-1"
               icon="mdi-restore"
