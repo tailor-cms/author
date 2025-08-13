@@ -110,7 +110,24 @@
               @click="generateContent(element)"
             />
           </template>
-          Regenerate content
+          Generate content
+        </VTooltip>
+      </div>
+      <div :class="{ 'is-visible': isHighlighted }">
+        <VTooltip location="left" open-delay="1000">
+          <template #activator="{ props: tooltipProps }">
+            <VBtn
+              v-bind="tooltipProps"
+              aria-label="Delete element"
+              class="mb-2"
+              color="teal lighten-1"
+              icon="mdi-restore"
+              size="x-small"
+              variant="tonal"
+              @click="reset(element)"
+            />
+          </template>
+          Reset element
         </VTooltip>
       </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
@@ -145,7 +162,7 @@ import {
   provide,
   ref,
 } from 'vue';
-import { getElementId } from '@tailor-cms/utils';
+import { getElementId, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { AiRequestType } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
@@ -235,6 +252,29 @@ const focus = () => {
 };
 
 const onLink = (key?: string) => editorBus.emit('element:link', key);
+
+const reset = (element: ContentElement) => {
+  const { initState } = manifest.value;
+  const data = initState();
+  if (isQuestion.value) {
+    const id = uuid();
+    const question = {
+      id,
+      data: { content: '' },
+      type: 'TIPTAP_HTML',
+      position: 1,
+      embedded: true,
+    };
+    const isGradable = element.data.isGradable ?? true;
+    Object.assign(data, {
+      embeds: { [id]: question },
+      question: [id],
+      isGradable,
+    });
+    if (!isGradable) delete element.data.correct;
+  }
+  return onSave({ ...element.data, ...data });
+};
 
 const generateContent = async (element: ContentElement) => {
   isAiGeneratingContent.value = true;
