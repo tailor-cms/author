@@ -63,6 +63,7 @@
           </VBtn>
           <VSpacer />
           <VSwitch
+            v-if="doTheMagic"
             v-model="useAI"
             class="ml-4"
             color="primary-darken-2"
