@@ -149,6 +149,6 @@ export class AiPrompt {
       size: '1024x1024',
       style: 'natural',
     });
-    return new URL(data[0].url as string);
+    if (data) return new URL(data[0].url as string);
   }
 }
