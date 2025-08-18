@@ -78,6 +78,7 @@
               </div>
             </VFadeTransition>
             <VIcon
+              v-if="collapsable"
               :icon="`mdi-chevron-${expanded ? 'up' : 'down'}`"
               class="my-1 ml-2"
             />
