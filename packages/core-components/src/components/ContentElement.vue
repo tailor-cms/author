@@ -26,7 +26,7 @@
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <VSheet
-      v-if="isAiGeneratingContent"
+      v-if="loading"
       color="primary-lighten-5"
       class="py-16 text-subtitle-2 rounded-lg text-center"
     >
@@ -56,7 +56,9 @@
           @add="emit('add', $event)"
           @delete="emit('delete')"
           @focus="onSelect"
+          @generate="generateContent"
           @link="onLink"
+          @reset="reset"
           @save="onSave"
         />
         <component
@@ -103,11 +105,11 @@
               v-bind="tooltipProps"
               aria-label="Generate content"
               class="mb-2"
-              color="indigo lighten-1"
+              color="indigo"
               icon="mdi-creation"
               size="x-small"
               variant="tonal"
-              @click="generateContent(element)"
+              @click="generateContent"
             />
           </template>
           Generate content
@@ -120,11 +122,11 @@
               v-bind="tooltipProps"
               aria-label="Reset element"
               class="mb-2"
-              color="teal lighten-1"
+              color="teal"
               icon="mdi-restore"
               size="x-small"
               variant="tonal"
-              @click="reset(element)"
+              @click="reset"
             />
           </template>
           Reset element
@@ -133,7 +135,7 @@
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
           aria-label="Delete element"
-          color="pink lighten-1"
+          color="pink"
           icon="mdi-delete-outline"
           size="x-small"
           variant="tonal"
@@ -162,20 +164,22 @@ import {
   provide,
   ref,
 } from 'vue';
-import { getElementId, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { AiRequestType } from '@tailor-cms/interfaces/ai';
+import { cloneDeep } from 'lodash-es';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
+import { getElementId } from '@tailor-cms/utils';
 import type { Meta } from '@tailor-cms/interfaces/common';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import ActiveUsers from './ActiveUsers.vue';
+import CircularProgress from './CircularProgress.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
-import CircularProgress from './CircularProgress.vue';
+import { useLoader } from '../composables/useLoader';
 
 interface Props {
   element: ContentElement;
@@ -211,12 +215,13 @@ const eventBus = inject<any>('$eventBus');
 const getCurrentUser = inject<any>('$getCurrentUser');
 const doTheMagic = inject<any>('$doTheMagic');
 
+const { loading, loader } = useLoader();
+
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
 
 const isFocused = ref(false);
 const isSaving = ref(false);
-const isAiGeneratingContent = ref(false);
 const currentUser = getCurrentUser?.();
 const activeUsers = ref<User[]>([]);
 
@@ -253,43 +258,22 @@ const focus = () => {
 
 const onLink = (key?: string) => editorBus.emit('element:link', key);
 
-const reset = (element: ContentElement) => {
-  const { initState } = manifest.value;
-  const data = initState();
-  if (isQuestion.value) {
-    const id = uuid();
-    const question = {
-      id,
-      data: { content: '' },
-      type: 'TIPTAP_HTML',
-      position: 1,
-      embedded: true,
-    };
-    const isGradable = element.data.isGradable ?? true;
-    Object.assign(data, {
-      embeds: { [id]: question },
-      question: [id],
-      isGradable,
-    });
-    if (!isGradable) delete element.data.correct;
-  }
-  return onSave({ ...element.data, ...data });
+const reset = () => {
+  if (!ceRegistry) return;
+  const data = ceRegistry.resetData(props.element);
+  return onSave(data);
 };
 
-const generateContent = async (element: ContentElement) => {
-  isAiGeneratingContent.value = true;
-  const input = {
+const generateContent = loader(async function () {
+  const data = cloneDeep(props.element.data);
+  const inputs = [{
     type: AiRequestType.Create,
     text: 'Generate content element for this page.',
-    responseSchema: element.type,
-  };
-  const data = await doTheMagic({
-    containerType: props.parent?.type,
-    inputs: [input],
-  });
-  isAiGeneratingContent.value = false;
-  return onSave({ ...element.data, ...data });
-};
+    responseSchema: props.element.type,
+  }];
+  const generatedContent = await doTheMagic({ inputs });
+  return onSave({ ...data, ...generatedContent });
+});
 
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));

@@ -30,23 +30,57 @@
           >
             {{ question }}
           </VCol>
-          <VCol cols="3" class="text-right align-content-center">
+          <VCol cols="3" class="text-right d-flex justify-end align-center">
             <PublishDiffChip
               v-if="editorState.isPublishDiff && element.changeSincePublish"
               :change-type="publishDiffChangeType"
             />
             <VFadeTransition>
-              <VBtn
+              <div
                 v-if="!isDisabled && collapsable && (isHovering || expanded)"
-                :color="`secondary-lighten-${expanded ? 3 : 1}`"
-                class="ml-2"
-                density="comfortable"
-                variant="tonal"
-                icon="mdi-delete-outline"
-                size="small"
-                @click.stop="$emit('delete')"
-              />
+                class="d-flex justify-end ga-1"
+              >
+                <VTooltip location="left" open-delay="1000">
+                  <template #activator="{ props: tooltipProps }">
+                    <VBtn
+                      v-bind="tooltipProps"
+                      :color="`indigo-lighten-${expanded ? 3 : 1}`"
+                      aria-label="Generate content"
+                      icon="mdi-creation"
+                      size="x-small"
+                      variant="tonal"
+                      @click.stop="$emit('generate')"
+                    />
+                  </template>
+                  Generate content
+                </VTooltip>
+                <VTooltip location="left" open-delay="1000">
+                  <template #activator="{ props: tooltipProps }">
+                    <VBtn
+                      v-bind="tooltipProps"
+                      :color="`teal-lighten-${expanded ? 3 : 1}`"
+                      aria-label="Reset element"
+                      icon="mdi-restore"
+                      size="x-small"
+                      variant="tonal"
+                      @click.stop="$emit('reset')"
+                    />
+                  </template>
+                  Reset element
+                </VTooltip>
+                <VBtn
+                  :color="`secondary-lighten-${expanded ? 3 : 1}`"
+                  icon="mdi-delete-outline"
+                  size="x-small"
+                  variant="tonal"
+                  @click.stop="$emit('delete')"
+                />
+              </div>
             </VFadeTransition>
+            <VIcon
+              :icon="`mdi-chevron-${expanded ? 'up' : 'down'}`"
+              class="my-1 ml-2"
+            />
           </VCol>
         </VRow>
       </VCard>
@@ -99,12 +133,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, reactive, ref, watch } from 'vue';
 import { cloneDeep, isEqual, omit, map } from 'lodash-es';
+import { computed, inject, reactive, ref, watch } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import { getQuestionPromptPreview } from '@tailor-cms/utils';
+import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
 import PublishDiffChip from './PublishDiffChip.vue';
 
@@ -175,6 +209,8 @@ const emit = defineEmits([
   'link',
   'update',
   'selected',
+  'generate',
+  'reset',
 ]);
 
 const ceRegistry = inject<any>('$ceRegistry');
