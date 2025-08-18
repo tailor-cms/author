@@ -32,7 +32,7 @@
       class="flex-grow-1"
       collapsable
       @delete="emit('delete')"
-      @generate="generateContent"
+      @generate="confirmGenerate"
       @reset="reset"
       @save="save"
       @selected="emit('selected')"
@@ -82,6 +82,7 @@ const doTheMagic = inject<any>('$doTheMagic');
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 
 const { loading, loader } = useLoader();
+const confirmationDialog = useConfirmationDialog();
 
 const manifest = computed(() => ceRegistry?.getByEntity(props.element));
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
@@ -89,8 +90,23 @@ const componentName = computed(() => manifest.value?.componentName);
 
 const reset = () => {
   if (!ceRegistry) return;
-  const data = ceRegistry.resetData(props.element);
-  return save(data);
+  confirmationDialog({
+    title: 'Reset element?',
+    message: 'Are you sure you want to reset this element?',
+    action: () => {
+      const data = ceRegistry.resetData(props.element);
+      return save(data);
+    },
+  });
+};
+
+const confirmGenerate = () => {
+  if (!ceRegistry) return;
+  confirmationDialog({
+    title: 'Generate element content?',
+    message: 'Are you sure you want to generate new content for this element?',
+    action: generateContent,
+  });
 };
 
 const generateContent = loader(async function () {

@@ -56,7 +56,7 @@
           @add="emit('add', $event)"
           @delete="emit('delete')"
           @focus="onSelect"
-          @generate="generateContent"
+          @generate="confirmGenerate"
           @link="onLink"
           @reset="reset"
           @save="onSave"
@@ -109,7 +109,7 @@
               icon="mdi-creation"
               size="x-small"
               variant="tonal"
-              @click="generateContent"
+              @click="confirmGenerate"
             />
           </template>
           Generate content
@@ -216,6 +216,7 @@ const getCurrentUser = inject<any>('$getCurrentUser');
 const doTheMagic = inject<any>('$doTheMagic');
 
 const { loading, loader } = useLoader();
+const confirmationDialog = useConfirmationDialog();
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
@@ -260,8 +261,23 @@ const onLink = (key?: string) => editorBus.emit('element:link', key);
 
 const reset = () => {
   if (!ceRegistry) return;
-  const data = ceRegistry.resetData(props.element);
-  return onSave(data);
+  confirmationDialog({
+    title: 'Reset element?',
+    message: 'Are you sure you want to reset element?',
+    action: () => {
+      const data = ceRegistry.resetData(props.element);
+      return onSave(data);
+    },
+  });
+};
+
+const confirmGenerate = () => {
+  if (!ceRegistry) return;
+  confirmationDialog({
+    title: 'Generate element content?',
+    message: 'Are you sure you want to generate new content for the element?',
+    action: generateContent,
+  });
 };
 
 const generateContent = loader(async function () {
