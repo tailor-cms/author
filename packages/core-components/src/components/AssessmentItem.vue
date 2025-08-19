@@ -57,6 +57,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import CircularProgress from './CircularProgress.vue';
 import QuestionElement from './QuestionElement.vue';
 import { useLoader } from '../composables/useLoader';
+import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 
 interface Props {
   element: ContentElement;
