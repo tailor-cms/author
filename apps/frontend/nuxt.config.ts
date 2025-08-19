@@ -29,18 +29,10 @@ export default defineNuxtConfig({
   devServer: {
     port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
-  future: { compatibilityVersion: 4 },
   vite: {
     // TODO: Check if this is still needed
     optimizeDeps: { include: ['lodash-es'] },
     plugins: [injectConfigHeaders()],
-    css: {
-      preprocessorOptions: {
-        sass: {
-          api: 'modern-compiler',
-        },
-      },
-    },
   },
   telemetry: false,
   debug: true,
