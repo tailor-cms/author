@@ -4,8 +4,8 @@
   "main": "src/index.js",
   "dependencies": {
     "commander": "^14.0.0",
-    "inquirer": "^12.9.1",
-    "jsonfile": "^6.1.0",
+    "inquirer": "^12.9.3",
+    "jsonfile": "^6.2.0",
     "lodash-es": "^4.17.21",
     "shelljs": "^0.10.0"
   },
