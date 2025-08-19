@@ -30,7 +30,7 @@
       :class="[element.changeSincePublish, { diff: showPublishDiff }]"
       :is-dirty="isDirty"
       class="flex-grow-1"
-      collapsable
+      collapsible
       @delete="emit('delete')"
       @generate="confirmGenerate"
       @reset="reset"
@@ -56,8 +56,8 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 import CircularProgress from './CircularProgress.vue';
 import QuestionElement from './QuestionElement.vue';
-import { useLoader } from '../composables/useLoader';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
+import { useLoader } from '../composables/useLoader';
 
 interface Props {
   element: ContentElement;

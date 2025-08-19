@@ -179,6 +179,7 @@ import CircularProgress from './CircularProgress.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
+import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 import { useLoader } from '../composables/useLoader';
 
 interface Props {

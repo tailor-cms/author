@@ -5,11 +5,11 @@
       <VCard
         v-bind="hoverProps"
         :color="expanded ? 'primary-darken-2' : 'primary-lighten-5'"
-        :height="collapsable ? 48 : 38"
+        :height="collapsible ? 48 : 38"
         class="d-flex px-4"
         rounded="0"
         flat
-        v-on="{ click: collapsable ? () => emit('selected') : null }"
+        v-on="{ click: collapsible ? () => emit('selected') : null }"
       >
         <VRow class="w-100" dense>
           <VCol :cols="expanded ? 9 : 3" class="text-left align-content-center">
@@ -37,10 +37,10 @@
             />
             <VFadeTransition>
               <div
-                v-if="!isDisabled && collapsable && (isHovering || expanded)"
+                v-if="!isDisabled && collapsible && (isHovering || expanded)"
                 class="d-flex justify-end ga-1"
               >
-                <VTooltip location="left" open-delay="1000">
+                <VTooltip v-if="showAI" location="left" open-delay="1000">
                   <template #activator="{ props: tooltipProps }">
                     <VBtn
                       v-bind="tooltipProps"
@@ -78,7 +78,7 @@
               </div>
             </VFadeTransition>
             <VIcon
-              v-if="collapsable"
+              v-if="collapsible"
               :icon="`mdi-chevron-${expanded ? 'up' : 'down'}`"
               class="my-1 ml-2"
             />
@@ -142,6 +142,7 @@ import { getQuestionPromptPreview } from '@tailor-cms/utils';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
 import PublishDiffChip from './PublishDiffChip.vue';
+import { useConfigStore } from '@/stores/config';
 
 const isLegacyQuestion = (type: string) => ceRegistry.isLegacyQuestion(type);
 
@@ -181,7 +182,7 @@ interface Props {
   isFocused?: boolean;
   isDragged?: boolean;
   dense?: boolean;
-  collapsable?: boolean;
+  collapsible?: boolean;
   isDirty?: boolean;
   expanded?: boolean;
 }
@@ -196,7 +197,7 @@ const props = withDefaults(defineProps<Props>(), {
   isDragged: false,
   isFocused: false,
   dense: false,
-  collapsable: false,
+  collapsible: false,
   isDirty: false,
   expanded: true,
 });
@@ -220,6 +221,9 @@ const editorState = inject<any>('$editorState');
 const form = ref();
 const editedElement = reactive(initializeElement());
 
+const config = useConfigStore();
+
+const manifest = computed(() => ceRegistry.getByEntity(props.element));
 const isDirty = computed(() => {
   const dataChanged = !isEqual(editedElement.data, initializeElement().data);
   return dataChanged || props.isDirty;
@@ -230,6 +234,8 @@ const question = computed(() => {
   const questions = editedElement.data.question as string[];
   return getQuestionPromptPreview(questions.map((it) => embeds[it]));
 });
+
+const showAI = computed(() => !!config.props.aiUiEnabled && manifest.value?.ai);
 
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);
