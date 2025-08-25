@@ -61,14 +61,12 @@
           >
             Copy existing
           </VBtn>
-          <VTextarea
+          <VTextField
             v-else
             v-model="aiPrompt"
             density="comfortable"
             label="AI Prompt"
-            max-width="300"
             placeholder="Optional: give extra context"
-            rows="2"
             hide-details
           />
           <VSpacer />
