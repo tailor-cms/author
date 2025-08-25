@@ -14,8 +14,8 @@
         <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="{ ...menuProps, ...tooltipProps }"
+            :color="color"
             aria-label="Generate content"
-            color="indigo"
             icon="mdi-creation"
             size="x-small"
             variant="tonal"
@@ -29,13 +29,15 @@
         v-model="promptText"
         label="Prompt"
         rows="3"
-        variant="outlined" />
+        variant="outlined"
+        placeholder="Optional: give extra context"
+      />
       <div class="d-flex justify-end">
         <VBtn
-          color="primary-lighten-3"
-          variant="tonal"
           :slim="false"
+          color="primary-lighten-3"
           prepend-icon="mdi-creation"
+          variant="tonal"
           @click="onPromptSubmit"
         >
           Generate
@@ -48,6 +50,13 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 
+interface Props {
+  color?: string;
+}
+
+withDefaults(defineProps<Props>(), {
+  color: 'indigo',
+});
 const emit = defineEmits(['generate']);
 
 const isVisible = ref(false);

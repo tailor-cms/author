@@ -40,25 +40,16 @@
                 v-if="!isDisabled && collapsible && (isHovering || expanded)"
                 class="d-flex justify-end ga-1"
               >
-                <VTooltip v-if="showAI" location="left" open-delay="1000">
-                  <template #activator="{ props: tooltipProps }">
-                    <VBtn
-                      v-bind="tooltipProps"
-                      :color="`indigo-lighten-${expanded ? 3 : 1}`"
-                      aria-label="Generate content"
-                      icon="mdi-creation"
-                      size="x-small"
-                      variant="tonal"
-                      @click.stop="$emit('generate')"
-                    />
-                  </template>
-                  Generate content
-                </VTooltip>
+                <ElementGeneration
+                  v-if="showAI"
+                  :color="`indigo${expanded ? '-lighten-3' : ''}`"
+                  @generate="$emit('generate', $event)"
+                />
                 <VTooltip location="left" open-delay="1000">
                   <template #activator="{ props: tooltipProps }">
                     <VBtn
                       v-bind="tooltipProps"
-                      :color="`teal-lighten-${expanded ? 3 : 1}`"
+                      :color="`teal${expanded ? '-lighten-3' : ''}`"
                       aria-label="Reset element"
                       icon="mdi-restore"
                       size="x-small"
@@ -69,7 +60,7 @@
                   Reset element
                 </VTooltip>
                 <VBtn
-                  :color="`secondary-lighten-${expanded ? 3 : 1}`"
+                  :color="`secondary${expanded ? '-lighten-3' : ''}`"
                   icon="mdi-delete-outline"
                   size="x-small"
                   variant="tonal"
@@ -141,6 +132,7 @@ import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getQuestionPromptPreview } from '@tailor-cms/utils';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
+import ElementGeneration from './ElementGeneration.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import { useConfigStore } from '@/stores/config';
 

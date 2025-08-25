@@ -32,7 +32,7 @@
       class="flex-grow-1"
       collapsible
       @delete="emit('delete')"
-      @generate="confirmGenerate"
+      @generate="generateContent"
       @reset="reset"
       @save="save"
       @selected="emit('selected')"
@@ -101,20 +101,11 @@ const reset = () => {
   });
 };
 
-const confirmGenerate = () => {
-  if (!ceRegistry) return;
-  confirmationDialog({
-    title: 'Generate element content?',
-    message: 'Are you sure you want to generate new content for this element?',
-    action: generateContent,
-  });
-};
-
-const generateContent = loader(async function () {
+const generateContent = loader(async function (text) {
   const data = cloneDeep(props.element.data);
   const inputs = [{
     type: AiRequestType.Create,
-    text: 'Generate content element for this page.',
+    text: text ?? 'Generate content element for this page.',
     responseSchema: props.element.type,
   }];
   const generatedContent = await doTheMagic({ inputs });

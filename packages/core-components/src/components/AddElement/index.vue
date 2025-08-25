@@ -64,10 +64,11 @@
           <VTextarea
             v-else
             v-model="aiPrompt"
+            density="comfortable"
             label="AI Prompt"
             max-width="300"
+            placeholder="Optional: give extra context"
             rows="2"
-            density="comfortable"
             hide-details
           />
           <VSpacer />
@@ -180,7 +181,7 @@ const generateContent = async (element: ContentElement) => {
   isAiGeneratingContent.value = true;
   const input = {
     type: AiRequestType.Create,
-    text: aiPrompt.value.trim(),
+    text: aiPrompt.value.trim() ?? 'Generate content element for this page.',
     responseSchema: element.type,
   };
   const data = await doTheMagic({
