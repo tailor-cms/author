@@ -56,7 +56,7 @@
           @add="emit('add', $event)"
           @delete="emit('delete')"
           @focus="onSelect"
-          @generate="confirmGenerate"
+          @generate="generateContent"
           @link="onLink"
           @reset="reset"
           @save="onSave"
@@ -90,30 +90,15 @@
         <div class="pt-4 text-subtitle-2">Component is not available!</div>
       </VSheet>
     </template>
-    <div v-if="!props.isDisabled" class="element-actions">
+    <div v-if="!props.isDisabled" class="element-actions ga-1">
       <div
         v-if="showDiscussion"
         :class="{ 'is-visible': isHighlighted || hasComments }"
-        class="mb-2"
       >
         <ElementDiscussion v-bind="element" :user="currentUser" @open="focus" />
       </div>
       <div v-if="showAI" :class="{ 'is-visible': isHighlighted }">
-        <VTooltip location="left" open-delay="1000">
-          <template #activator="{ props: tooltipProps }">
-            <VBtn
-              v-bind="tooltipProps"
-              aria-label="Generate content"
-              class="mb-2"
-              color="indigo"
-              icon="mdi-creation"
-              size="x-small"
-              variant="tonal"
-              @click="confirmGenerate"
-            />
-          </template>
-          Generate content
-        </VTooltip>
+        <ElementGeneration @generate="generateContent" />
       </div>
       <div :class="{ 'is-visible': isHighlighted }">
         <VTooltip location="left" open-delay="1000">
@@ -121,7 +106,6 @@
             <VBtn
               v-bind="tooltipProps"
               aria-label="Reset element"
-              class="mb-2"
               color="teal"
               icon="mdi-restore"
               size="x-small"
@@ -177,6 +161,7 @@ import type { User } from '@tailor-cms/interfaces/user';
 import ActiveUsers from './ActiveUsers.vue';
 import CircularProgress from './CircularProgress.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
+import ElementGeneration from './ElementGeneration.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
@@ -235,7 +220,9 @@ const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
 const isQuestion = computed(() => manifest.value?.isQuestion || false);
-const showAI = computed(() => !!doTheMagic && manifest.value?.ai);
+const showAI = computed(() =>
+  !props.element.embedded && !!doTheMagic && manifest.value?.ai,
+);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
@@ -272,21 +259,13 @@ const reset = () => {
   });
 };
 
-const confirmGenerate = () => {
-  if (!ceRegistry) return;
-  confirmationDialog({
-    title: 'Generate element content?',
-    message: 'Are you sure you want to generate new content for the element?',
-    action: generateContent,
-  });
-};
-
-const generateContent = loader(async function () {
+const generateContent = loader(async function (text) {
   const data = cloneDeep(props.element.data);
   const inputs = [{
-    type: AiRequestType.Create,
-    text: 'Generate content element for this page.',
+    type: AiRequestType.Modify,
+    text: text ?? 'Generate content element for this page.',
     responseSchema: props.element.type,
+    content: JSON.stringify(props.element.data),
   }];
   const generatedContent = await doTheMagic({ inputs });
   return onSave({ ...data, ...generatedContent });

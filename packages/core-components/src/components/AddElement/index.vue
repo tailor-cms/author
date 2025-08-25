@@ -53,7 +53,7 @@
             </VBtnToggle>
           </div>
           <VBtn
-            :disabled="useAI"
+            v-if="!useAI"
             color="primary-darken-3"
             prepend-icon="mdi-content-copy"
             variant="tonal"
@@ -61,6 +61,15 @@
           >
             Copy existing
           </VBtn>
+          <VTextarea
+            v-else
+            v-model="aiPrompt"
+            label="AI Prompt"
+            max-width="300"
+            rows="2"
+            density="comfortable"
+            hide-details
+          />
           <VSpacer />
           <VSwitch
             v-if="doTheMagic"
@@ -124,6 +133,7 @@ const emit = defineEmits(['add', 'hidden']);
 const ceRegistry = inject<any>('$ceRegistry');
 
 const useAI = ref(false);
+const aiPrompt = ref('');
 const doTheMagic = inject<any>('$doTheMagic');
 const isAiGeneratingContent = ref(false);
 const isVisible = ref(false);
@@ -170,7 +180,7 @@ const generateContent = async (element: ContentElement) => {
   isAiGeneratingContent.value = true;
   const input = {
     type: AiRequestType.Create,
-    text: 'Generate content element for this page.',
+    text: aiPrompt.value.trim(),
     responseSchema: element.type,
   };
   const data = await doTheMagic({
