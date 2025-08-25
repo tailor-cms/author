@@ -5,6 +5,9 @@ import CeHtml from './CeHtml.ts';
 import CeQuestion from './CeQuestion.ts';
 import Outline from './Outline.ts';
 import Tag from './Tag.ts';
+import PluginRegistry from '#shared/content-plugins/index.js';
+
+const { elementRegistry } = PluginRegistry;
 
 const specs = {
   HTML: CeHtml,
@@ -13,8 +16,8 @@ const specs = {
   TAG: Tag,
 };
 
-export default (schema: AiResponseSchema): AiResponseSpec => {
-  const spec = specs[schema] as AiResponseSpec;
+export default (schema: AiResponseSchema | string): AiResponseSpec => {
+  const spec = elementRegistry.getAiConfig(schema) ?? specs[schema];
   if (!spec) throw new Error(`No response spec found for: ${schema}`);
-  return spec;
+  return spec as AiResponseSpec;
 };

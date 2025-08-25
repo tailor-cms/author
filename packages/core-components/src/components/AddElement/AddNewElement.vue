@@ -4,6 +4,18 @@
       <div class="d-flex align-end pt-6 pb-5 px-10">
         <slot name="header"></slot>
       </div>
+      <VFadeTransition>
+        <VSheet
+          v-if="isAiGeneratingContent"
+          class="generation-loader text-subtitle-2 rounded-lg text-center"
+          color="primary-lighten-5"
+        >
+          <CircularProgress />
+          <div class="pt-3 text-primary-darken-4 font-weight-bold">
+            <span>Content generation in progress...</span>
+          </div>
+        </VSheet>
+      </VFadeTransition>
       <div v-for="group in library" :key="group.name" class="mb-2 mx-10">
         <div class="group-heading text-primary-darken-3 mt-3 mb-2">
           {{ group.name }}
@@ -42,10 +54,16 @@
 </template>
 
 <script lang="ts" setup>
+import CircularProgress from '../CircularProgress.vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { some } from 'lodash-es';
+import { VFadeTransition } from 'vuetify/components';
 
-const props = defineProps<{ library: any; allowedElementConfig: any[] }>();
+const props = defineProps<{
+  library: any;
+  allowedElementConfig: any[];
+  isAiGeneratingContent: boolean;
+}>();
 
 const emit = defineEmits(['add']);
 
@@ -105,5 +123,18 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
 .v-btn:hover .version-info {
   opacity: 1;
   transition: all 0.5s ease-in;
+}
+
+.generation-loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 </style>
