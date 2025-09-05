@@ -1,12 +1,15 @@
 import { Model, Op } from 'sequelize';
 import { schema, workflow } from '@tailor-cms/config';
 import { Activity as Events } from '@tailor-cms/common/src/sse.js';
+import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
+import calculatePosition from '#shared/util/calculatePosition.js';
+import contentElementHooks from '../content-element/hooks.js';
+import hooks from './hooks.js';
 import isEmpty from 'lodash/isEmpty.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import hooks from './hooks.js';
-import calculatePosition from '#shared/util/calculatePosition.js';
+
 import {
   detectMissingReferences,
   removeReference,
@@ -228,7 +231,10 @@ class Activity extends Model {
 
   static detectMissingReferences(activities, transaction) {
     return detectMissingReferences(
-      Activity, activities, this.sequelize, transaction,
+      Activity,
+      activities,
+      this.sequelize,
+      transaction,
     );
   }
 
@@ -346,6 +352,16 @@ class Activity extends Model {
       if (isOutlineActivity(parent.type)) return parent;
       return parent.getOutlineParent(transaction);
     });
+  }
+
+  async processEmbeddedElements() {
+    if (this.type !== ContentContainerType.CollectionItemContent)
+      return Promise.resolve(this);
+    for (const key of Object.keys(this.data)) {
+      if (!this.data?.[key]?.embedded) return;
+      contentElementHooks.applyFetchHooks(this.data[key]);
+    }
+    return this;
   }
 
   touch(transaction) {
