@@ -72,7 +72,8 @@ async function patch({ repository, user, activity, body }, res) {
 
 async function remove({ user, repository, activity }, res) {
   const context = { userId: user.id, repository };
-  const options = { recursive: false, soft: true, context };
+  const recursive = !isOutlineActivity(activity.type) || !activity.publishedAt;
+  const options = { recursive, soft: true, context };
   const deleted = await activity.remove(options);
   await updatePublishingStatus(repository, activity);
   return res.json({ data: pick(deleted, ['id']) });
