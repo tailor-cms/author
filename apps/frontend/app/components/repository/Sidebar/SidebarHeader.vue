@@ -46,10 +46,12 @@ import ActivityPublishing from './ActivityPublishing.vue';
 import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import api from '@/api/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useActivityStore } from '@/stores/activity';
 
 const props = defineProps<{ activity: StoreActivity }>();
 
 const { $schemaService } = useNuxtApp() as any;
+const activityStore = useActivityStore();
 const store = useCurrentRepository();
 
 const isEditable = computed(() => {
@@ -73,7 +75,7 @@ const edit = () => {
 const restore = async () => {
   const { id: activityId, repositoryId } = props.activity;
   await api.restore(repositoryId, activityId);
-  return store.initialize(repositoryId);
+  return activityStore.fetch(repositoryId, { outlineOnly: true });
 };
 </script>
 
