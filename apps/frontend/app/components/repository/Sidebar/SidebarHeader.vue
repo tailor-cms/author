@@ -24,7 +24,7 @@
       color="orange-lighten-4"
       size="small"
       variant="tonal"
-      @click.stop="api.restore(store.repositoryId, props.activity.id)"
+      @click.stop="restore"
     >
       <VIcon class="mr-2">mdi-history</VIcon>
       Restore
@@ -68,6 +68,12 @@ const edit = () => {
     name: 'editor',
     params: { repositoryId, activityId },
   });
+};
+
+const restore = async () => {
+  const { id: activityId, repositoryId } = props.activity;
+  await api.restore(repositoryId, activityId);
+  return store.initialize(repositoryId);
 };
 </script>
 
