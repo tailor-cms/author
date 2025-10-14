@@ -32,7 +32,7 @@ const ModuleConfig: ActivityConfig = {
     ActivityType.Module,
     ActivityType.Lesson,
     ActivityType.Page,
-    ActivityType.KnowledgeCheck
+    ActivityType.KnowledgeCheck,
   ],
   ai: {
     definition: `
@@ -45,14 +45,14 @@ const ModuleConfig: ActivityConfig = {
       key: 'textField',
       label: 'Test text field',
       placeholder: 'Click to edit...',
-      validate: { required: false }
+      validate: { required: false },
     },
     {
       type: MetaInputType.Textarea,
       key: 'textarea',
       label: 'Test textarea',
       placeholder: 'Click to edit...',
-      validate: { max: 250 }
+      validate: { max: 250 },
     },
     {
       type: MetaInputType.Select,
@@ -62,8 +62,8 @@ const ModuleConfig: ActivityConfig = {
       options: [
         { value: 15, label: '15 min' },
         { value: 30, label: '30 min' },
-        { value: 45, label: '45 min' }
-      ]
+        { value: 45, label: '45 min' },
+      ],
     },
     {
       type: MetaInputType.Select,
@@ -74,8 +74,8 @@ const ModuleConfig: ActivityConfig = {
       options: [
         { value: 'OPT1', label: 'Option 1' },
         { value: 'OPT2', label: 'Option 2' },
-        { value: 'OPT3', label: 'Option 3' }
-      ]
+        { value: 'OPT3', label: 'Option 3' },
+      ],
     },
     {
       type: MetaInputType.Combobox,
@@ -83,18 +83,18 @@ const ModuleConfig: ActivityConfig = {
       label: 'Test combobox',
       multiple: true,
       placeholder: 'Select...',
-      options: ['Option 1', 'Option 2', 'Option 3']
+      options: ['Option 1', 'Option 2', 'Option 3'],
     },
     {
       type: MetaInputType.Switch,
       key: 'switch',
-      label: 'Test switch'
+      label: 'Test switch',
     },
     {
       type: MetaInputType.Checkbox,
       key: 'checkbox',
       label: 'Test checkbox',
-      description: 'Option selected'
+      description: 'Option selected',
     },
     {
       type: MetaInputType.File,
@@ -102,28 +102,28 @@ const ModuleConfig: ActivityConfig = {
       label: 'Test file attachment',
       placeholder: 'Click to upload the image',
       showPreview: true,
-      validate: { ext: ['jpg', 'jpeg', 'png'] }
+      validate: { ext: ['jpg', 'jpeg', 'png'] },
     },
     {
       type: MetaInputType.Datetime,
       key: 'datetime',
-      label: 'Test date selection'
+      label: 'Test date selection',
     },
     {
       type: MetaInputType.Html,
       key: 'html',
-      label: 'Test html input'
+      label: 'Test html input',
     },
     {
       type: MetaInputType.Color,
       key: 'color',
-      label: 'Test color selection'
+      label: 'Test color selection',
     },
     {
       type: MetaInputType.HeasRating,
       key: 'heasRating',
       label: 'Test HE@S rating',
-    }
+    },
   ],
   relationships: [
     {
@@ -349,7 +349,7 @@ export const SCHEMA: Schema = {
     ModuleConfig,
     LessonConfig,
     KnowledgeCheckConfig,
-    PageConfig
+    PageConfig,
   ],
   contentContainers: [
     SectionConfig,
