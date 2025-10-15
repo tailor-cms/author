@@ -464,7 +464,7 @@ importers:
         specifier: 3.0.0-next.1
         version: 3.0.0-next.1(typescript@5.9.3)
       vee-validate:
-        specifier: 4.15.1
+        specifier: ^4.15.1
         version: 4.15.1(vue@3.5.22(typescript@5.9.3))
       vue3-tree-vue:
         specifier: ^2.0.15
@@ -581,11 +581,11 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0
       '@tailor-cms/ce-audio-edit':
-        specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(@tiptap/starter-kit@3.7.0)(@tiptap/vue-3@3.7.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        specifier: ^0.1.1
+        version: 0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(@tiptap/starter-kit@3.7.0)(@tiptap/vue-3@3.7.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-audio-server':
         specifier: ^0.1.0
-        version: 0.1.0
+        version: 0.1.1
       '@tailor-cms/ce-brightcove-video-edit':
         specifier: ^0.1.0
         version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(@tiptap/starter-kit@3.7.0)(@tiptap/vue-3@3.7.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
@@ -827,16 +827,16 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       p-min-delay:
-        specifier: ^4.0.2
+        specifier: ^4.2.0
         version: 4.2.0
       pluralize-esm:
         specifier: ^9.0.5
         version: 9.0.5
       vee-validate:
-        specifier: ^4.13.2
+        specifier: ^4.15.1
         version: 4.15.1(vue@3.5.22(typescript@5.9.3))
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vue-chartjs:
         specifier: ^5.3.2
@@ -845,7 +845,7 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.5.22(typescript@5.9.3))
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       yup:
         specifier: ^1.4.0
@@ -867,10 +867,10 @@ importers:
         specifier: '*'
         version: 4.17.21
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/interfaces':
@@ -908,10 +908,10 @@ importers:
         specifier: ^9.0.5
         version: 9.0.5
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/interfaces':
@@ -946,10 +946,10 @@ importers:
         specifier: '*'
         version: 4.17.21
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/interfaces':
@@ -974,10 +974,10 @@ importers:
         specifier: 4.14.7
         version: 4.14.7(vue@3.5.22(typescript@5.9.3))
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/interfaces':
@@ -993,10 +993,10 @@ importers:
         specifier: workspace:*
         version: link:../../../tailor-interfaces
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-color:
@@ -1005,10 +1005,10 @@ importers:
         specifier: workspace:*
         version: link:../../../tailor-interfaces
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-combobox:
@@ -1017,10 +1017,10 @@ importers:
         specifier: workspace:*
         version: link:../../../tailor-interfaces
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-datetime:
@@ -1029,10 +1029,10 @@ importers:
         specifier: workspace:*
         version: link:../../../tailor-interfaces
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-file:
@@ -1047,10 +1047,10 @@ importers:
         specifier: '*'
         version: 4.17.21
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@types/lodash-es':
@@ -1066,10 +1066,10 @@ importers:
         specifier: '*'
         version: 4.17.21
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@types/lodash-es':
@@ -1085,19 +1085,19 @@ importers:
         specifier: workspace:*
         version: link:../../../tailor-interfaces
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-radio-group:
     dependencies:
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-select:
@@ -1106,10 +1106,10 @@ importers:
         specifier: workspace:*
         version: link:../../../tailor-interfaces
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-switch:
@@ -1118,28 +1118,28 @@ importers:
         specifier: workspace:*
         version: link:../../../tailor-interfaces
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-textarea:
     dependencies:
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/core-extensions/meta-inputs/meta-textfield:
     dependencies:
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/extension-installer:
@@ -1173,10 +1173,10 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       vue:
-        specifier: ^3.5.17
+        specifier: ^3.5.22
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.9.0
+        specifier: ^3.10.5
         version: 3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/tailor-common:
@@ -3768,13 +3768,13 @@ packages:
   '@tailor-cms/ce-accordion-server@0.1.0':
     resolution: {integrity: sha512-1hXUX2W0tLKrj2BIJU2ZJX5gmVXz4wMT+DKieoQ0RXXC4TzkU3ep9IB/gAWT7brGs4+g0/cMk3jgQTFiTZRrZA==}
 
-  '@tailor-cms/ce-audio-edit@0.1.0':
-    resolution: {integrity: sha512-zSp+zMgdwutx/+egnY6UxIHM2Wo3IdzrCf7ih7CThZrz4blNHLsRjOckrB8A9f5g2BzgpTL6/IBVmojKhrL7/A==}
+  '@tailor-cms/ce-audio-edit@0.1.1':
+    resolution: {integrity: sha512-zoVfcgoxu4ykJrPL9r3GWTGSubYxJlURQK1rT9lwexyjbmLqCi+Q8AKjgh86Zr8jb5DRCpRVUZfioMc1O9Oi2A==}
     peerDependencies:
       vue: ^3.5.13
 
-  '@tailor-cms/ce-audio-server@0.1.0':
-    resolution: {integrity: sha512-VK5aNoFbeQjnvFiaMDyma/x/7KffwcslGWi+bpYrsOhYMHg097DpqyndPoEDuiD+xMzxxxXlPmBtgpTwD5C7rA==}
+  '@tailor-cms/ce-audio-server@0.1.1':
+    resolution: {integrity: sha512-Mipp1KzK22Wdw1nQAE3ca8UMl/VLJtFtJ8MbbUhqGtgPAMXAeVPMKo+Run273Z6pn2KO/emjWBPMj3zTx3/b7A==}
 
   '@tailor-cms/ce-brightcove-video-edit@0.1.0':
     resolution: {integrity: sha512-luOWrEMzLvMhw6mlQ8lo+0JR3wcdHxWLZMsz95IjEiNTt+hb0HWfAHWuvY5b17OpHiQMfL08O90XRQy8ydu2ZQ==}
@@ -13654,7 +13654,7 @@ snapshots:
 
   '@tailor-cms/ce-accordion-server@0.1.0': {}
 
-  '@tailor-cms/ce-audio-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(@tiptap/starter-kit@3.7.0)(@tiptap/vue-3@3.7.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-audio-edit@0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(@tiptap/starter-kit@3.7.0)(@tiptap/vue-3@3.7.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
       '@tailor-cms/cek-common': 1.3.2
       '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(@tiptap/starter-kit@3.7.0)(@tiptap/vue-3@3.7.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
@@ -13675,7 +13675,7 @@ snapshots:
       - vuetify
       - yup
 
-  '@tailor-cms/ce-audio-server@0.1.0': {}
+  '@tailor-cms/ce-audio-server@0.1.1': {}
 
   '@tailor-cms/ce-brightcove-video-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(@tiptap/starter-kit@3.7.0)(@tiptap/vue-3@3.7.0(@floating-ui/dom@1.7.4)(@tiptap/core@3.7.0(@tiptap/pm@3.7.0))(@tiptap/pm@3.7.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
