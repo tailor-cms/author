@@ -38,7 +38,7 @@
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:^",
     "@types/lodash-es": "^4.17.12",
-    "del-cli": "^6.0.0",
+    "del-cli": "^7.0.0",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3"
   },
