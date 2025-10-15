@@ -55,6 +55,7 @@
           commentsCount ? 'Add a comment...' : 'Start the discussion...'
         "
         class="comment-input"
+        hide-details="auto"
         rows="3"
         variant="outlined"
         auto-grow
