@@ -14,9 +14,11 @@ const SchemaId = 'TEST_SCHEMA';
 enum ActivityType {
   // Outline
   Module = 'MODULE',
+  Lesson = 'LESSON',
   Page = 'PAGE',
   KnowledgeCheck = 'KNOWLEDGE_CHECK',
   // Content containers
+  Intro = 'INTRO',
   Section = 'SECTION',
 }
 
@@ -26,12 +28,103 @@ const ModuleConfig: ActivityConfig = {
   isTrackedInWorkflow: true,
   label: 'Module',
   color: '#5187C7',
-  subLevels: [ActivityType.Module, ActivityType.Page],
+  subLevels: [
+    ActivityType.Module,
+    ActivityType.Lesson,
+    ActivityType.Page,
+    ActivityType.KnowledgeCheck,
+  ],
   ai: {
     definition: `
       Modules are a way to organize knowledge into chunks that are easier to
       understand and learn. Modules can be nested if needed.`,
   },
+  meta: [
+    {
+      type: MetaInputType.TextField,
+      key: 'textField',
+      label: 'Test text field',
+      placeholder: 'Click to edit...',
+      validate: { required: false },
+    },
+    {
+      type: MetaInputType.Textarea,
+      key: 'textarea',
+      label: 'Test textarea',
+      placeholder: 'Click to edit...',
+      validate: { max: 250 },
+    },
+    {
+      type: MetaInputType.Select,
+      key: 'select',
+      label: 'Test select',
+      placeholder: 'Select...',
+      options: [
+        { value: 15, label: '15 min' },
+        { value: 30, label: '30 min' },
+        { value: 45, label: '45 min' },
+      ],
+    },
+    {
+      type: MetaInputType.Select,
+      key: 'multiselect',
+      label: 'Test multiselect',
+      multiple: true,
+      placeholder: 'Select...',
+      options: [
+        { value: 'OPT1', label: 'Option 1' },
+        { value: 'OPT2', label: 'Option 2' },
+        { value: 'OPT3', label: 'Option 3' },
+      ],
+    },
+    {
+      type: MetaInputType.Combobox,
+      key: 'combobox',
+      label: 'Test combobox',
+      multiple: true,
+      placeholder: 'Select...',
+      options: ['Option 1', 'Option 2', 'Option 3'],
+    },
+    {
+      type: MetaInputType.Switch,
+      key: 'switch',
+      label: 'Test switch',
+    },
+    {
+      type: MetaInputType.Checkbox,
+      key: 'checkbox',
+      label: 'Test checkbox',
+      description: 'Option selected',
+    },
+    {
+      type: MetaInputType.File,
+      key: 'file',
+      label: 'Test file attachment',
+      placeholder: 'Click to upload the image',
+      showPreview: true,
+      validate: { ext: ['jpg', 'jpeg', 'png'] },
+    },
+    {
+      type: MetaInputType.Datetime,
+      key: 'datetime',
+      label: 'Test date selection',
+    },
+    {
+      type: MetaInputType.Html,
+      key: 'html',
+      label: 'Test html input',
+    },
+    {
+      type: MetaInputType.Color,
+      key: 'color',
+      label: 'Test color selection',
+    },
+    {
+      type: MetaInputType.HeasRating,
+      key: 'heasRating',
+      label: 'Test HE@S rating',
+    },
+  ],
   relationships: [
     {
       type: 'prerequisites',
@@ -52,31 +145,47 @@ const PageConfig: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Page',
+  color: '#08A9AD',
   ai: {
     definition: `
       Pages contain the actual content that the user will interact with.`,
   },
-  color: '#08A9AD',
+  contentContainers: [ActivityType.Section],
+};
+
+const IntroConfig: ContentContainerConfig = ({
+  type: ActivityType.Intro,
+  templateId: ContentContainerType.Default,
+  label: 'Intro',
+  layout: false,
+  types: [
+    ContentElementType.TiptapHtml,
+    ContentElementType.Image,
+    ContentElementType.Video,
+  ],
+});
+
+const LessonConfig: ActivityConfig = {
+  type: ActivityType.Lesson,
+  label: 'Lesson',
+  color: '#FFA000',
+  isTrackedInWorkflow: true,
+  ai: {
+    definition: `
+      Lessons contain the content user will interact with, as well as the
+      assessments they should complete.`,
+  },
   contentContainers: [
+    ActivityType.Intro,
     ActivityType.Section,
     ContentContainerType.AssessmentPool,
-  ],
-  meta: [
-    {
-      key: 'heasRating',
-      type: MetaInputType.HeasRating,
-      label: 'HE@S rating',
-      reviewable: true,
-      hideOnCreate: true,
-    },
   ],
 };
 
 const KnowledgeCheckConfig: ActivityConfig = {
   type: ActivityType.KnowledgeCheck,
-  rootLevel: true,
-  isTrackedInWorkflow: true,
   label: 'Knowledge check',
+  isTrackedInWorkflow: true,
   ai: {
     definition: `
       Knowledge checks are short assessments designed to gauge the learner's
@@ -102,6 +211,7 @@ const SectionConfig: ContentContainerConfig = {
       name: 'Content Elements',
       items: [
         ContentElementType.TiptapHtml,
+        ContentElementType.HtmlRaw,
         ContentElementType.Image,
         ContentElementType.Video,
         ContentElementType.Embed,
@@ -235,8 +345,18 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
-  structure: [ModuleConfig, PageConfig, KnowledgeCheckConfig],
-  contentContainers: [SectionConfig, AssessmentPoolConfig, ExamConfig],
+  structure: [
+    ModuleConfig,
+    LessonConfig,
+    KnowledgeCheckConfig,
+    PageConfig,
+  ],
+  contentContainers: [
+    SectionConfig,
+    IntroConfig,
+    ExamConfig,
+    AssessmentPoolConfig,
+  ],
   elementMeta: [
     {
       type: ContentElementType.Image,

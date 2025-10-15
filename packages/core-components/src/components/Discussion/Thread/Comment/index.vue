@@ -16,13 +16,14 @@
     <div class="comment-body">
       <CommentPreview
         v-if="!isEditing"
-        v-bind="{ content, isResolved }"
+        v-bind="{ content: comment.content, isResolved }"
         @unresolve="handleResolvementUpdate"
       />
       <template v-else>
         <!-- eslint-disable vuejs-accessibility/no-autofocus -->
         <VTextarea
-          v-model.trim="content"
+          v-model.trim="contentInput"
+          :error-messages="errors.message"
           class="comment-editor"
           rows="3"
           variant="outlined"
@@ -62,6 +63,8 @@ import type { User } from '@tailor-cms/interfaces/user';
 
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';
+import { object, string } from 'yup';
+import { useForm } from 'vee-validate';
 
 interface Props {
   user: User;
@@ -77,15 +80,24 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['remove', 'resolve', 'unresolve', 'update']);
 
-const content = ref(props.comment.content);
 const isEditing = ref(false);
 const isResolved = computed(() => !!props.comment.resolvedAt);
 
-const save = () => {
-  if (!content.value) return remove();
+const { defineField, errors, handleSubmit, resetForm } = useForm({
+  validationSchema: object({
+    message: string().max(600, 'Max 600 characters'),
+  }),
+  initialValues: {
+    message: props.comment.content,
+  },
+});
+const [contentInput] = defineField('message');
+
+const save = handleSubmit(() => {
+  if (!contentInput.value) return remove();
   isEditing.value = false;
-  emit('update', props.comment, content.value);
-};
+  emit('update', props.comment, contentInput.value);
+});
 
 const remove = () => {
   emit('remove', props.comment);
@@ -96,7 +108,7 @@ const handleResolvementUpdate = () => {
 };
 
 const reset = () => {
-  content.value = props.comment.content;
+  resetForm();
   isEditing.value = false;
 };
 
