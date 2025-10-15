@@ -7,11 +7,12 @@
   >
     <template v-if="showActivator" #activator="{ props: activatorProps }">
       <VBtn
-        v-bind="activatorProps"
+        v-bind="{ ...activatorProps, ...$attrs }"
         :color="activatorColor"
         :data-testid="`${props.testIdPrefix}Btn`"
+        :size="size"
+        :variant="variant"
         class="px-2"
-        variant="text"
       >
         <VIcon class="mr-2">{{ props.activatorIcon }}</VIcon>
         {{ activatorLabel || defaultModalHeading }}
@@ -85,6 +86,8 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
   repositoryId: number;
+  size?: string;
+  variant?: string;
   anchor?: StoreActivity | null;
   heading?: string;
   action?: InsertLocation;
@@ -101,6 +104,8 @@ const props = withDefaults(defineProps<Props>(), {
   action: InsertLocation.AddAfter,
   showActivator: false,
   activatorLabel: '',
+  size: 'default',
+  variant: 'text',
   activatorColor: 'primary-darken-3',
   activatorIcon: 'mdi-folder-plus',
   testIdPrefix: 'repository__createActivity',

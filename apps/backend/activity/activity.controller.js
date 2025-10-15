@@ -18,7 +18,7 @@ const { getOutlineLevels, isOutlineActivity } = schema;
 const logger = createLogger('activity:controller');
 const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 
-function list({ repository, query, opts }, res) {
+async function list({ repository, query, opts }, res) {
   if (!query.detached) opts.where.detached = false;
   if (query.outlineOnly) {
     // Include deleted if published and deletion is not published yet
@@ -34,7 +34,9 @@ function list({ repository, query, opts }, res) {
       },
     ];
   }
-  return repository.getActivities(opts).then((data) => res.json({ data }));
+  const activities = await repository.getActivities(opts);
+  await Promise.all(activities.map((it) => it.processEmbeddedElements()));
+  return res.json({ data: activities });
 }
 
 function create({ user, repository, body }, res) {

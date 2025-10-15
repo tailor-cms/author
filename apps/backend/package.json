@@ -13,9 +13,9 @@
     "#storage": "./repository/storage.js"
   },
   "scripts": {
-    "dev": "node --watch --import ./script/preflight.js --experimental-strip-types ./index.ts || exit 0",
-    "start": "node --import ./script/preflight.js --experimental-strip-types ./index.ts",
-    "start:docker": "node --experimental-strip-types ./index.ts",
+    "dev": "node --watch --import ./script/preflight.js --experimental-transform-types ./index.ts || exit 0",
+    "start": "node --import ./script/preflight.js --experimental-transform-types ./index.ts",
+    "start:docker": "node --experimental-transform-types ./index.ts",
     "db": "node --import ./script/preflight.js ./script/sequelize.js",
     "db:reset": "pnpm db drop && pnpm db create && pnpm db migrate",
     "db:seed": "pnpm db seed:all",
