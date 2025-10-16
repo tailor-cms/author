@@ -665,11 +665,11 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0
       '@tailor-cms/ce-mux-video-edit':
-        specifier: ^0.0.5
-        version: 0.0.5(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.2.0)(@tiptap/vue-3@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.18(typescript@5.9.2)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(react@19.1.1)(vee-validate@4.15.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))(vuedraggable@4.1.0(vue@3.5.18(typescript@5.9.2)))(vuetify@3.9.5(typescript@5.9.2)(vue@3.5.18(typescript@5.9.2)))(yup@1.7.1)
+        specifier: ^0.0.6
+        version: 0.0.6(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.2.0)(@tiptap/vue-3@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.18(typescript@5.9.2)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(react@19.1.1)(vee-validate@4.15.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))(vuedraggable@4.1.0(vue@3.5.18(typescript@5.9.2)))(vuetify@3.9.5(typescript@5.9.2)(vue@3.5.18(typescript@5.9.2)))(yup@1.7.1)
       '@tailor-cms/ce-mux-video-server':
-        specifier: ^0.0.5
-        version: 0.0.5(encoding@0.1.13)(pg@8.16.3)
+        specifier: ^0.0.6
+        version: 0.0.6(encoding@0.1.13)(pg@8.16.3)
       '@tailor-cms/ce-numerical-response-edit':
         specifier: ^0.1.0
         version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.2.0)(@tiptap/vue-3@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.18(typescript@5.9.2)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))(vuedraggable@4.1.0(vue@3.5.18(typescript@5.9.2)))(vuetify@3.9.5(typescript@5.9.2)(vue@3.5.18(typescript@5.9.2)))(yup@1.7.1)
@@ -1705,8 +1705,14 @@ packages:
   '@codemirror/autocomplete@6.18.6':
     resolution: {integrity: sha512-PHHBXFomUs5DF+9tCOM/UoW6XQ4R44lLNNhRaW9PKPTU0D7lIjRg3ElxaJnTwsl/oHiR93WSXDBrekhoUGCPtg==}
 
+  '@codemirror/autocomplete@6.19.0':
+    resolution: {integrity: sha512-61Hfv3cF07XvUxNeC3E7jhG8XNi1Yom1G0lRC936oLnlF+jrbrv8rc/J98XlYzcsAoTVupfsf5fLej1aI8kyIg==}
+
   '@codemirror/commands@6.8.1':
     resolution: {integrity: sha512-KlGVYufHMQzxbdQONiLyGQDUW0itrLZwq3CcY7xpv9ZLRHqzkBSoteocBHtMCoY7/Ci4xhzSrToIeLg7FxHuaw==}
+
+  '@codemirror/commands@6.9.0':
+    resolution: {integrity: sha512-454TVgjhO6cMufsyyGN70rGIfJxJEjcqjBG2x2Y03Y/+Fm99d3O/Kv1QDYWuG6hvxsgmjXmBuATikIIYvERX+w==}
 
   '@codemirror/lang-css@6.3.1':
     resolution: {integrity: sha512-kr5fwBGiGtmz6l0LSJIbno9QrifNMUusivHbnA1H6Dmqy4HZFte3UAICix1VuKo0lMPKQr2rqB+0BkKi/S3Ejg==}
@@ -1726,6 +1732,9 @@ packages:
   '@codemirror/lint@6.8.5':
     resolution: {integrity: sha512-s3n3KisH7dx3vsoeGMxsbRAgKe4O1vbrnKBClm99PU0fWxmxsx5rR2PfqQgIt+2MMJBHbiJ5rfIdLYfB9NNvsA==}
 
+  '@codemirror/lint@6.9.0':
+    resolution: {integrity: sha512-wZxW+9XDytH3SKvS8cQzMyQCaaazH8XL1EMHleHe00wVzsv7NBQKVW2yzEHrRhmM7ZOhVdItPbvlRBvMp9ej7A==}
+
   '@codemirror/search@6.5.11':
     resolution: {integrity: sha512-KmWepDE6jUdL6n8cAAqIpRmLPBZ5ZKnicE8oGU/s3QrAVID+0VhLFrzUucVKHG5035/BSykhExDL/Xm7dHthiA==}
 
@@ -1737,6 +1746,9 @@ packages:
 
   '@codemirror/view@6.38.1':
     resolution: {integrity: sha512-RmTOkE7hRU3OVREqFVITWHz6ocgBjv08GoePscAakgVQfciA3SGCEk7mb9IzwW61cKKmlTpHXG6DUE5Ubx+MGQ==}
+
+  '@codemirror/view@6.38.6':
+    resolution: {integrity: sha512-qiS0z1bKs5WOvHIAC0Cybmv4AJSkAXgX5aD6Mqd2epSLlVJsQl8NG23jCVouIgkh4All/mrbdsf2UOLFnJw0tw==}
 
   '@colors/colors@1.6.0':
     resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
@@ -4056,13 +4068,13 @@ packages:
   '@tailor-cms/ce-multiple-choice-server@0.1.0':
     resolution: {integrity: sha512-gqvXF0U0WU/VhtZwvs3fmjAnderTCrUzJmnnUPXuOKSeIllSfjHLY0/OprK04yduCYkjRKocPE1dPfa1PoB1Ww==}
 
-  '@tailor-cms/ce-mux-video-edit@0.0.5':
-    resolution: {integrity: sha512-dTUVX8cjIhzmi58grdlBLlE/WPx8IgAL1PYIntR+RXLpvbL0zBkbBlb7mQPwoi/Z/QlfllWOXHsV9L1tW+e7Tg==}
+  '@tailor-cms/ce-mux-video-edit@0.0.6':
+    resolution: {integrity: sha512-Ec+/6bKrG9/RuF/Jneo4w8YTP1oh1IhY8NkFHNZxmG4U9irOvMY/B+E7KtiDa9IGtCOg92dKVNC3NY26Qat62w==}
     peerDependencies:
       vue: ^3.5.13
 
-  '@tailor-cms/ce-mux-video-server@0.0.5':
-    resolution: {integrity: sha512-LwNGybU9Zx5XcFN9wpv191WShvzPvA5HKyTZIbpWa6pX2cqu98BrwoFWdfIP1kDqnaVhKQVwpJEq2hZ4JYKE2A==}
+  '@tailor-cms/ce-mux-video-server@0.0.6':
+    resolution: {integrity: sha512-7rc7XcjBT/Fbu96vz/RAc6Pke/WIP7Mei+8CJKQyalvnBNn6pKNFX0WdsMPBw//8/mRBfjijNFQSgnKEyNf6KQ==}
 
   '@tailor-cms/ce-numerical-response-edit@0.1.0':
     resolution: {integrity: sha512-y5reWD1dA+pwQC4MTWD8lP/Ry9bUWNM3Xf+hnrvmlV2pwpEIvR9dUGxvVaK2UcfCIGafRC/Cae4n36k6nfmRmg==}
@@ -11701,11 +11713,25 @@ snapshots:
       '@codemirror/view': 6.38.1
       '@lezer/common': 1.2.3
 
+  '@codemirror/autocomplete@6.19.0':
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
+      '@lezer/common': 1.2.3
+
   '@codemirror/commands@6.8.1':
     dependencies:
       '@codemirror/language': 6.11.3
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.38.1
+      '@lezer/common': 1.2.3
+
+  '@codemirror/commands@6.9.0':
+    dependencies:
+      '@codemirror/language': 6.11.3
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
       '@lezer/common': 1.2.3
 
   '@codemirror/lang-css@6.3.1':
@@ -11758,10 +11784,16 @@ snapshots:
       '@codemirror/view': 6.38.1
       crelt: 1.0.6
 
+  '@codemirror/lint@6.9.0':
+    dependencies:
+      '@codemirror/state': 6.5.2
+      '@codemirror/view': 6.38.6
+      crelt: 1.0.6
+
   '@codemirror/search@6.5.11':
     dependencies:
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.1
+      '@codemirror/view': 6.38.6
       crelt: 1.0.6
 
   '@codemirror/state@6.5.2':
@@ -11776,6 +11808,13 @@ snapshots:
       '@lezer/highlight': 1.2.1
 
   '@codemirror/view@6.38.1':
+    dependencies:
+      '@codemirror/state': 6.5.2
+      crelt: 1.0.6
+      style-mod: 4.1.2
+      w3c-keyname: 2.2.8
+
+  '@codemirror/view@6.38.6':
     dependencies:
       '@codemirror/state': 6.5.2
       crelt: 1.0.6
@@ -14586,7 +14625,7 @@ snapshots:
     dependencies:
       lodash-es: 4.17.21
 
-  '@tailor-cms/ce-mux-video-edit@0.0.5(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.2.0)(@tiptap/vue-3@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.18(typescript@5.9.2)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(react@19.1.1)(vee-validate@4.15.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))(vuedraggable@4.1.0(vue@3.5.18(typescript@5.9.2)))(vuetify@3.9.5(typescript@5.9.2)(vue@3.5.18(typescript@5.9.2)))(yup@1.7.1)':
+  '@tailor-cms/ce-mux-video-edit@0.0.6(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.2.0)(@tiptap/vue-3@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.18(typescript@5.9.2)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.1.0)(pluralize-esm@9.0.5)(react@19.1.1)(vee-validate@4.15.1(vue@3.5.18(typescript@5.9.2)))(vue@3.5.18(typescript@5.9.2))(vuedraggable@4.1.0(vue@3.5.18(typescript@5.9.2)))(vuetify@3.9.5(typescript@5.9.2)(vue@3.5.18(typescript@5.9.2)))(yup@1.7.1)':
     dependencies:
       '@mux/mux-player': 3.6.0(react@19.1.1)
       '@mux/upchunk': 3.5.0
@@ -14611,7 +14650,7 @@ snapshots:
       - vuetify
       - yup
 
-  '@tailor-cms/ce-mux-video-server@0.0.5(encoding@0.1.13)(pg@8.16.3)':
+  '@tailor-cms/ce-mux-video-server@0.0.6(encoding@0.1.13)(pg@8.16.3)':
     dependencies:
       '@mux/mux-node': 12.7.0(encoding@0.1.13)
       lodash-es: 4.17.21
@@ -16276,13 +16315,13 @@ snapshots:
 
   codemirror@6.0.2:
     dependencies:
-      '@codemirror/autocomplete': 6.18.6
-      '@codemirror/commands': 6.8.1
+      '@codemirror/autocomplete': 6.19.0
+      '@codemirror/commands': 6.9.0
       '@codemirror/language': 6.11.3
-      '@codemirror/lint': 6.8.5
+      '@codemirror/lint': 6.9.0
       '@codemirror/search': 6.5.11
       '@codemirror/state': 6.5.2
-      '@codemirror/view': 6.38.1
+      '@codemirror/view': 6.38.6
 
   color-convert@1.9.3:
     dependencies:
