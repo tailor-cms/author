@@ -25,9 +25,9 @@
     "integration:token": "node --import ./script/preflight.js ./script/generateIntegrationToken.js"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.910.0",
-    "@aws-sdk/lib-storage": "^3.910.0",
-    "@aws-sdk/s3-request-presigner": "^3.910.0",
+    "@aws-sdk/client-s3": "^3.911.0",
+    "@aws-sdk/lib-storage": "^3.911.0",
+    "@aws-sdk/s3-request-presigner": "^3.911.0",
     "@aws-sdk/util-format-url": "^3.910.0",
     "@faker-js/faker": "^10.1.0",
     "@keyv/redis": "^5.1.3",
