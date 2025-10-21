@@ -1,6 +1,6 @@
 <template>
   <VAppBar
-    :class="[showPublishDiff ? 'bg-publish-diff' : 'bg-primary-darken-4']"
+    :color="toolbarColor"
     class="toolbar-wrapper"
     elevation="3"
     order="1"
@@ -63,7 +63,7 @@ interface Props {
   element?: ContentElement | null;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   element: null,
 });
 defineEmits(['toggle-navigation-drawer']);
@@ -80,6 +80,11 @@ const activity = computed(() => editorStore.selectedActivity);
 const config = computed(
   () => activity.value && $schemaService.getLevel(activity.value?.type),
 );
+
+const toolbarColor = computed(() => {
+  if (props.element) return 'white';
+  return showPublishDiff.value ? '#1e282c' : 'primary-darken-4';
+});
 
 const usersWithActivity = computed(() => {
   return userTrackingStore.getActiveUsers(
@@ -111,6 +116,10 @@ const usersWithActivity = computed(() => {
       }
     }
   }
+
+  &.bg-white {
+    border-bottom: 4px solid #cfd8dc;
+  }
 }
 
 .activity-toolbar {
@@ -123,9 +132,5 @@ const usersWithActivity = computed(() => {
     color: #fff;
     text-align: left;
   }
-}
-
-.bg-publish-diff {
-  background-color: #1e282c;
 }
 </style>
