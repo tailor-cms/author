@@ -82,20 +82,37 @@
             tag="button"
           />
         </template>
-        <VList class="text-left pt-0" color="primary-darken-3">
-          <VListItem class="py-5 bg-primary-darken-2" :title="user.email" />
-          <template v-if="smAndDown">
-            <VListItem
-              v-for="{ name, to } in routes"
-              :key="name"
-              :to="to"
-              :title="name"
+        <VCard color="primary-lighten-4" class="text-left">
+          <div class="text-center pa-4">
+            <UserAvatar
+              :img-url="user.imgUrl"
+              aria-label="User menu"
+              size="52"
             />
+            <div
+              v-if="user.firstName || user.lastName"
+              class="text-h6 font-weight-bold mt-4"
+            >
+              {{ user.firstName }} {{ user.lastName }}
+            </div>
+            <div class="text-subtitle-2">
+              {{ user.email }}
+            </div>
+          </div>
+          <VList class="py-0" color="primary-darken-3" rounded="lg" border>
+            <template v-if="smAndDown">
+              <VListItem
+                v-for="{ name, to } in routes"
+                :key="name"
+                :to="to"
+                :title="name"
+              />
+            </template>
             <VDivider />
-          </template>
-          <VListItem :to="{ name: 'user-profile' }" title="Profile" />
-          <VListItem title="Logout" @click="logout" />
-        </VList>
+            <VListItem :to="{ name: 'user-profile' }" title="Profile" />
+            <VListItem title="Logout" @click="logout" />
+          </VList>
+        </VCard>
       </VMenu>
     </template>
   </VAppBar>
