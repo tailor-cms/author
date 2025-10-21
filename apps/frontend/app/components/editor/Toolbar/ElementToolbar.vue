@@ -48,11 +48,14 @@ const save = (data: any) => elementBus.emit('save', data);
 
 <style lang="scss" scoped>
 .element-toolbar-wrapper {
-  position: absolute;
   width: 100%;
   min-height: 5.5rem;
   padding: 0.5rem 2rem;
   z-index: 99;
   border-bottom: 4px solid #cfd8dc;
+}
+
+:deep(.v-btn-group--density-compact.v-btn-group) {
+  height: unset;
 }
 </style>

@@ -3,14 +3,13 @@
     <VMain class="structure-container">
       <VContainer
         ref="structureEl"
-        class="structure d-flex flex-column justify-start"
+        class="structure d-flex flex-column justify-start py-8 px-sm-15"
         max-width="1800"
       >
         <OutlineToolbar
           v-if="hasActivities"
           :is-flat="isFlat"
           :search="search"
-          class="ml-1 flex-grow-0"
           @search="(val) => (search = val)"
         />
         <BrokenReferencesAlert />
@@ -67,6 +66,7 @@
 import { filter, find, map } from 'lodash-es';
 import Draggable from 'vuedraggable';
 import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify';
 
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
@@ -162,7 +162,6 @@ onMounted(() => {
 .structure {
   position: relative;
   height: 100%;
-  padding: 2rem 5.625rem 0 3.75rem;
   overflow-y: scroll;
   overflow-y: overlay;
   -ms-overflow-style: none;

@@ -1,59 +1,51 @@
 <template>
-  <div class="toolbar-wrapper elevation-3">
+  <VAppBar class="toolbar-wrapper" order="1" elevation="3">
     <div
-      :style="{
-        left: lgAndUp ? '480px' : '380px',
-        ...!!repositoryStore.selectedActivityGuidelines && { right: '380px' },
-      }"
+      v-if="activity && !element"
+      :class="[showPublishDiff ? 'bg-publish-diff' : 'bg-primary-darken-4']"
+      class="activity-toolbar px-3 align-center w-100"
     >
-      <div
-        v-if="activity && !element"
-        :class="[showPublishDiff ? 'bg-publish-diff' : 'bg-primary-darken-4']"
-        class="activity-toolbar px-3 align-center w-100"
-      >
-        <ActivityActions class="ml-1" />
-        <h1 class="py-2 px-6 text-h5 text-truncate">
-          <span>{{ config.label }}</span>
+      <ActivityActions class="ml-1" />
+      <h1 class="py-2 px-6 text-h5">
+        <span>{{ config.label }}</span>
+        <span class="px-2 text-grey">|</span>
+        <span class="text-secondary-lighten-3">
+          {{ activity.data.name }}
+        </span>
+        <template v-if="showPublishDiff">
           <span class="px-2 text-grey">|</span>
-          <span class="text-secondary-lighten-3">
-            {{ activity.data.name }}
-          </span>
-          <template v-if="showPublishDiff">
-            <span class="px-2 text-grey">|</span>
-            <span class="text-white">comparing with published</span>
-            <span class="px-2 text-grey">@</span>
-            <VChip
-              v-if="activity.publishedAt"
-              class="readonly"
-              color="primary-lighten-4"
-              text-color="grey-darken-4"
-              label
-              small
-            >
-              {{ formatDate(activity.publishedAt, 'MM/dd/yy HH:mm') }}
-            </VChip>
-          </template>
-        </h1>
-        <ActiveUsers
-          v-if="!showPublishDiff"
-          :users="usersWithActivity"
-          class="mx-3"
-        />
-      </div>
-      <ElementToolbarContainer
-        v-if="element"
-        :element="element"
-        class="element-container"
+          <span class="text-white">comparing with published</span>
+          <span class="px-2 text-grey">@</span>
+          <VChip
+            v-if="activity.publishedAt"
+            class="readonly"
+            color="primary-lighten-4"
+            text-color="grey-darken-4"
+            label
+            small
+          >
+            {{ formatDate(activity.publishedAt, 'MM/dd/yy HH:mm') }}
+          </VChip>
+        </template>
+      </h1>
+      <ActiveUsers
+        v-if="!showPublishDiff"
+        :users="usersWithActivity"
+        class="mx-3"
       />
     </div>
-  </div>
+    <ElementToolbarContainer
+      v-if="element"
+      :element="element"
+      class="element-container w-100"
+    />
+  </VAppBar>
 </template>
 
 <script lang="ts" setup>
 import { ActiveUsers } from '@tailor-cms/core-components';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
-import { useDisplay } from 'vuetify';
 
 import ActivityActions from './ActivityActions.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
@@ -69,8 +61,6 @@ withDefaults(defineProps<Props>(), {
 });
 
 const { $schemaService } = useNuxtApp() as any;
-const { lgAndUp } = useDisplay();
-const repositoryStore = useCurrentRepository();
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
@@ -92,18 +82,8 @@ const usersWithActivity = computed(() => {
 
 <style lang="scss" scoped>
 .toolbar-wrapper {
-  position: relative;
-  width: 100%;
-
-  > div {
-    display: flex;
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 30rem;
-    margin-top: 5rem;
-    min-height: 5.5rem;
-    z-index: 99;
+  :deep(.v-toolbar__content) {
+    height: unset !important;
   }
 
   :deep(.v-input) {
@@ -126,14 +106,12 @@ const usersWithActivity = computed(() => {
 
 .activity-toolbar {
   display: flex;
-  height: 5.625rem;
-  z-index: 999;
+  flex-wrap: wrap;
+  min-height: 5.625rem;
 
   h1 {
     flex: 1;
-    margin: 0;
     color: #fff;
-    font-size: 1.375rem;
     text-align: left;
   }
 }

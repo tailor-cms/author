@@ -5,7 +5,7 @@
     color="primary-darken-3"
     height="84"
   >
-    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pt-2 pl-7">
+    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pl-7">
       <img
         alt="Tailor logo"
         class="mr-6"
@@ -53,18 +53,20 @@
       </VSelect>
     </div>
     <template #append>
-      <VBtn
-        v-for="{ name, to } in routes"
-        :key="name"
-        :rounded="false"
-        :to="to"
-        color="teal-lighten-5"
-        height="100"
-        min-width="120"
-        variant="text"
-      >
-        <span class="toolbar-route text-truncate">{{ name }}</span>
-      </VBtn>
+      <template v-if="!smAndDown">
+        <VBtn
+          v-for="{ name, to } in routes"
+          :key="name"
+          :rounded="false"
+          :to="to"
+          color="teal-lighten-5"
+          height="100"
+          min-width="120"
+          variant="text"
+        >
+          <span class="toolbar-route text-truncate">{{ name }}</span>
+        </VBtn>
+      </template>
       <VMenu
         attach="#mainAppBar"
         min-width="220px"
@@ -80,16 +82,19 @@
             tag="button"
           />
         </template>
-        <VList class="text-left pt-0">
-          <VListItem class="py-5 bg-primary-lighten-4" disabled>
-            <VListItemTitle>{{ user.email }}</VListItemTitle>
-          </VListItem>
-          <VListItem :to="{ name: 'user-profile' }">
-            <VListItemTitle>Profile</VListItemTitle>
-          </VListItem>
-          <VListItem @click="logout">
-            <VListItemTitle>Logout</VListItemTitle>
-          </VListItem>
+        <VList class="text-left pt-0" color="primary-darken-3">
+          <VListItem class="py-5 bg-primary-darken-2" :title="user.email" />
+          <template v-if="smAndDown">
+            <VListItem
+              v-for="{ name, to } in routes"
+              :key="name"
+              :to="to"
+              :title="name"
+            />
+            <VDivider />
+          </template>
+          <VListItem :to="{ name: 'user-profile' }" title="Profile" />
+          <VListItem title="Logout" @click="logout" />
         </VList>
       </VMenu>
     </template>

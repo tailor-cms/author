@@ -1,18 +1,17 @@
 <template>
-  <VToolbar class="toolbar" color="transparent">
-    <VSpacer />
+  <div class="toolbar d-flex align-center justify-end flex-wrap ga-4 mb-2">
     <VHover>
       <template #default="{ isHovering, props: hoverProps }">
         <VTextField
           v-bind="hoverProps"
           v-model="searchInput"
           :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-          :class="{ 'mr-4': !isFlat }"
           density="comfortable"
           placeholder="Search by name or id..."
           prepend-inner-icon="mdi-magnify"
           rounded="xl"
           variant="outlined"
+          min-width="220"
           clearable
           hide-details
           @click:clear="resetInput"
@@ -30,7 +29,7 @@
     >
       Toggle all
     </VBtn>
-  </VToolbar>
+  </div>
 </template>
 
 <script lang="ts" setup>
