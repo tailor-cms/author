@@ -82,35 +82,44 @@
             tag="button"
           />
         </template>
-        <VCard color="primary-lighten-4" class="text-left">
-          <div class="text-center pa-4">
-            <UserAvatar
-              :img-url="user.imgUrl"
-              aria-label="User menu"
-              size="52"
-            />
-            <div
-              v-if="user.firstName || user.lastName"
-              class="text-h6 font-weight-bold mt-4"
-            >
-              {{ user.firstName }} {{ user.lastName }}
-            </div>
-            <div class="text-subtitle-2">
-              {{ user.email }}
+        <VCard color="primary-darken-3" class="text-left">
+          <div class="d-flex pa-4 align-center">
+            <UserAvatar :img-url="user.imgUrl" size="48" />
+            <div class="text-primary-lighten-4 ml-4">
+              <div
+                v-if="user.firstName || user.lastName"
+                class="text-subtitle-1 font-weight-bold"
+              >
+                {{ user.firstName }} {{ user.lastName }}
+              </div>
+              <div class="text-subtitle-2">
+                {{ user.email }}
+              </div>
             </div>
           </div>
-          <VList class="py-0" color="primary-darken-3" rounded="lg" border>
+          <VList class="d-flex flex-column ga-1 pa-2" color="primary" slim>
             <template v-if="smAndDown">
               <VListItem
-                v-for="{ name, to } in routes"
+                v-for="{ name, to, icon } in routes"
                 :key="name"
                 :to="to"
                 :title="name"
+                :prepend-icon="icon"
+                rounded="lg"
               />
             </template>
-            <VDivider />
-            <VListItem :to="{ name: 'user-profile' }" title="Profile" />
-            <VListItem title="Logout" @click="logout" />
+            <VListItem
+              :to="{ name: 'user-profile' }"
+              title="Profile"
+              prepend-icon="mdi-account"
+              rounded="lg"
+            />
+            <VListItem
+              title="Logout"
+              prepend-icon="mdi-logout"
+              rounded="lg"
+              @click="logout"
+            />
           </VList>
         </VCard>
       </VMenu>
@@ -144,12 +153,13 @@ const { repository } = storeToRefs(currentRepositoryStore);
 
 const routes = computed(() => {
   const items = [
-    { name: 'Catalog', to: '/' },
+    { name: 'Catalog', to: '/', icon: 'mdi-view-dashboard' },
     {
       name: 'Admin',
       to: {
         name: authStore.isAdmin ? 'system-user-management' : 'user-groups',
       },
+      icon: 'mdi-account-cog',
     },
   ];
   if (!authStore.hasAdminAccess) items.pop();
@@ -157,6 +167,7 @@ const routes = computed(() => {
     items.unshift({
       name: `${repository.value.name} structure`,
       to: `/repository/${repository.value?.id}/root/structure`,
+      icon: 'mdi-file-tree',
     });
   }
   return items;
