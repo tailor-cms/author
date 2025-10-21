@@ -8,7 +8,7 @@
     <VAppBarNavIcon
       v-if="smAndDown"
       class="mx-2"
-      @click="$emit('toggle-navigation-drawer')"
+      @click="$emit('toggle-sidebar')"
     />
     <div v-if="activity && !element" class="activity-toolbar px-3 align-center">
       <ActivityActions class="ml-1" />
@@ -45,6 +45,15 @@
       :element="element"
       class="element-container w-100"
     />
+    <VSpacer />
+    <VAppBarNavIcon
+      v-if="mdAndDown && !!editorStore.guidelines"
+      class="mx-2"
+      color="lime"
+      variant="tonal"
+      icon="mdi-format-list-checks"
+      @click="$emit('toggle-guidelines')"
+    />
   </VAppBar>
 </template>
 
@@ -66,7 +75,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   element: null,
 });
-defineEmits(['toggle-navigation-drawer']);
+defineEmits(['toggle-sidebar', 'toggle-guidelines']);
 
 const { $schemaService } = useNuxtApp() as any;
 
@@ -74,7 +83,7 @@ const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
-const { smAndUp, smAndDown } = useDisplay();
+const { smAndUp, smAndDown, mdAndDown } = useDisplay();
 
 const activity = computed(() => editorStore.selectedActivity);
 const config = computed(

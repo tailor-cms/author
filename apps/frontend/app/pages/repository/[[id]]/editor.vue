@@ -4,7 +4,9 @@
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
-      @toggle-navigation-drawer="showSidebar = !showSidebar"
+      @toggle-sidebar="showSidebar = !showSidebar"
+      @toggle-guidelines="showGuidelines = !showGuidelines"
+
     />
     <div class="editor-content-container">
       <VSidebar
@@ -21,7 +23,10 @@
         :activity-id="activityId"
         class="activity-content"
       />
-      <EngagementSidebar v-if="!!editorStore.guidelines" />
+      <EngagementSidebar
+        v-if="!!editorStore.guidelines"
+        v-model="showGuidelines"
+      />
     </div>
   </div>
 </template>
@@ -57,6 +62,7 @@ provide('$editorState', {
 
 const activityId = ref<number | null>(null);
 const showSidebar = ref(null);
+const showGuidelines = ref(null);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
 
