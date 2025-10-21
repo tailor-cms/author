@@ -66,7 +66,6 @@
 import { filter, find, map } from 'lodash-es';
 import Draggable from 'vuedraggable';
 import { storeToRefs } from 'pinia';
-import { useDisplay } from 'vuetify';
 
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
