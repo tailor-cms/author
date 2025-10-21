@@ -1,12 +1,18 @@
 <template>
-  <VAppBar class="toolbar-wrapper" order="1" elevation="3">
-    <div
-      v-if="activity && !element"
-      :class="[showPublishDiff ? 'bg-publish-diff' : 'bg-primary-darken-4']"
-      class="activity-toolbar px-3 align-center w-100"
-    >
+  <VAppBar
+    :class="[showPublishDiff ? 'bg-publish-diff' : 'bg-primary-darken-4']"
+    class="toolbar-wrapper"
+    elevation="3"
+    order="1"
+  >
+    <VAppBarNavIcon
+      v-if="smAndDown"
+      class="mx-2"
+      @click="$emit('toggle-navigation-drawer')"
+    />
+    <div v-if="activity && !element" class="activity-toolbar px-3 align-center">
       <ActivityActions class="ml-1" />
-      <h1 class="py-2 px-6 text-h5">
+      <h1 v-if="smAndUp" class="py-2 px-6 text-h5">
         <span>{{ config.label }}</span>
         <span class="px-2 text-grey">|</span>
         <span class="text-secondary-lighten-3">
@@ -51,6 +57,7 @@ import ActivityActions from './ActivityActions.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';
+import { useDisplay } from 'vuetify';
 
 interface Props {
   element?: ContentElement | null;
@@ -59,6 +66,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   element: null,
 });
+defineEmits(['toggle-navigation-drawer']);
 
 const { $schemaService } = useNuxtApp() as any;
 
@@ -66,6 +74,7 @@ const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
+const { smAndUp, smAndDown } = useDisplay();
 
 const activity = computed(() => editorStore.selectedActivity);
 const config = computed(
