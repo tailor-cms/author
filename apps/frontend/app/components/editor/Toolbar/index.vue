@@ -8,7 +8,7 @@
     <VAppBarNavIcon v-if="smAndDown" @click="$emit('toggle-sidebar')" />
     <div v-if="activity && !element" class="activity-toolbar w-100 px-3 py-2">
       <ActivityActions />
-      <h1 v-if="smAndUp" class="py-2 px-6 text-h5">
+      <h1 v-if="mdAndUp" class="py-2 px-6 text-h5 text-truncate">
         <span>{{ config.label }}</span>
         <span class="px-2 text-grey">|</span>
         <span class="text-secondary-lighten-3">
@@ -79,7 +79,7 @@ const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
-const { smAndUp, smAndDown, mdAndDown } = useDisplay();
+const { mdAndUp, smAndDown, mdAndDown } = useDisplay();
 
 const activity = computed(() => editorStore.selectedActivity);
 const config = computed(

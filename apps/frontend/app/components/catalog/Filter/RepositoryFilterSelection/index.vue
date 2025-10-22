@@ -12,7 +12,6 @@
     />
     <VBtn
       v-show="repositoryFilter.length"
-      class="mb-1 ml-1"
       color="teal-lighten-3"
       size="small"
       variant="tonal"

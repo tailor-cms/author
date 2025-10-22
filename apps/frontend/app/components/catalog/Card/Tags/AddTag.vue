@@ -8,15 +8,12 @@
     <template #body>
       <form novalidate @submit.prevent="submitForm">
         <VCombobox
-          v-model.trim="tagInput"
+          v-model="tagInput"
           :error-messages="errors.tag"
           :items="availableTags"
           label="Select a tag or add a new one"
           name="tag"
           variant="outlined"
-          counter
-          maxlength="20"
-          persistent-counter
           @keydown.enter="submitForm"
           @update-tag-name:search-input="(v: string) => (tagInput = v)"
         />
