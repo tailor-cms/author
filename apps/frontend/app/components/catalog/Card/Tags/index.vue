@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import { clamp, get, map, truncate } from 'lodash-es';
+import { get } from 'lodash-es';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import AddTag from './AddTag.vue';
