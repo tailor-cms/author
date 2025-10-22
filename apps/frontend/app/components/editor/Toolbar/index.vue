@@ -5,13 +5,9 @@
     elevation="3"
     order="1"
   >
-    <VAppBarNavIcon
-      v-if="smAndDown"
-      class="mx-2"
-      @click="$emit('toggle-sidebar')"
-    />
-    <div v-if="activity && !element" class="activity-toolbar px-3 align-center">
-      <ActivityActions class="ml-1" />
+    <VAppBarNavIcon v-if="smAndDown" @click="$emit('toggle-sidebar')" />
+    <div v-if="activity && !element" class="activity-toolbar w-100 px-3 py-2">
+      <ActivityActions />
       <h1 v-if="smAndUp" class="py-2 px-6 text-h5">
         <span>{{ config.label }}</span>
         <span class="px-2 text-grey">|</span>
@@ -34,25 +30,25 @@
           </VChip>
         </template>
       </h1>
-      <ActiveUsers
-        v-if="!showPublishDiff"
-        :users="usersWithActivity"
-        class="mx-3"
-      />
+      <div class="d-flex align-center">
+        <ActiveUsers
+          v-if="!showPublishDiff && usersWithActivity.length"
+          :users="usersWithActivity"
+          class="mx-2"
+        />
+        <VAppBarNavIcon
+          v-if="mdAndDown && !!editorStore.guidelines"
+          color="lime"
+          variant="tonal"
+          icon="mdi-format-list-checks"
+          @click="$emit('toggle-guidelines')"
+        />
+      </div>
     </div>
     <ElementToolbarContainer
       v-if="element"
       :element="element"
       class="element-container w-100"
-    />
-    <VSpacer />
-    <VAppBarNavIcon
-      v-if="mdAndDown && !!editorStore.guidelines"
-      class="mx-2"
-      color="lime"
-      variant="tonal"
-      icon="mdi-format-list-checks"
-      @click="$emit('toggle-guidelines')"
     />
   </VAppBar>
 </template>
@@ -133,6 +129,8 @@ const usersWithActivity = computed(() => {
 
 .activity-toolbar {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
   min-height: 5.625rem;
 

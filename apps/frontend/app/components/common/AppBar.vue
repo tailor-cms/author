@@ -69,7 +69,8 @@
       </template>
       <VMenu
         attach="#mainAppBar"
-        min-width="220px"
+        min-width="220"
+        max-width="350"
         offset="10"
         transition="slide-y-transition"
       >
@@ -97,7 +98,11 @@
               </div>
             </div>
           </div>
-          <VList class="d-flex flex-column ga-1 pa-2" color="primary" slim>
+          <VList
+            class="d-flex flex-column ga-1 pa-2"
+            color="primary-darken-3"
+            slim
+          >
             <template v-if="smAndDown">
               <VListItem
                 v-for="{ name, to, icon } in routes"
@@ -111,7 +116,7 @@
             <VListItem
               :to="{ name: 'user-profile' }"
               title="Profile"
-              prepend-icon="mdi-account"
+              prepend-icon="mdi-account-circle-outline"
               rounded="lg"
             />
             <VListItem
@@ -153,13 +158,13 @@ const { repository } = storeToRefs(currentRepositoryStore);
 
 const routes = computed(() => {
   const items = [
-    { name: 'Catalog', to: '/', icon: 'mdi-view-dashboard' },
+    { name: 'Catalog', to: '/', icon: 'mdi-view-grid-plus-outline' },
     {
       name: 'Admin',
       to: {
         name: authStore.isAdmin ? 'system-user-management' : 'user-groups',
       },
-      icon: 'mdi-account-cog',
+      icon: 'mdi-account-cog-outline',
     },
   ];
   if (!authStore.hasAdminAccess) items.pop();
@@ -167,7 +172,7 @@ const routes = computed(() => {
     items.unshift({
       name: `${repository.value.name} structure`,
       to: `/repository/${repository.value?.id}/root/structure`,
-      icon: 'mdi-file-tree',
+      icon: 'mdi-file-tree-outline',
     });
   }
   return items;

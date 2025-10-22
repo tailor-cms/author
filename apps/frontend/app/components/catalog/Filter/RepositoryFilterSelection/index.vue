@@ -1,7 +1,7 @@
 <template>
   <VRow
     v-if="repositoryFilter.length"
-    class="selected-tags align-center mt-0 mb-4"
+    class="selected-tags align-center mt-0 mb-6 ml-0 ga-2"
   >
     <SelectedFilter
       v-for="filter in orderedFilters"
@@ -42,9 +42,3 @@ const orderedFilters = computed(() => {
   ) as any[];
 });
 </script>
-
-<style lang="scss" scoped>
-.selected-tags {
-  min-height: 2.5rem;
-}
-</style>

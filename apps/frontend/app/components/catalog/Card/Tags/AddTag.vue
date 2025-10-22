@@ -8,16 +8,19 @@
     <template #body>
       <form novalidate @submit.prevent="submitForm">
         <VCombobox
-          v-model="tagInput"
+          v-model.trim="tagInput"
           :error-messages="errors.tag"
           :items="availableTags"
           label="Select a tag or add a new one"
           name="tag"
           variant="outlined"
+          counter
+          maxlength="20"
+          persistent-counter
           @keydown.enter="submitForm"
           @update-tag-name:search-input="(v: string) => (tagInput = v)"
         />
-        <div class="d-flex justify-end pb-2 pr-1">
+        <div class="d-flex justify-end mt-4 pb-2 pr-1">
           <VBtn
             class="mr-2"
             color="primary-darken-4"
@@ -56,7 +59,7 @@ const availableTags = computed(() =>
   map(differenceBy(tags.value, assignedTags.value, 'id'), 'name'),
 );
 
-const { defineField, handleSubmit, errors } = useForm({
+const { defineField, handleSubmit, errors, resetForm } = useForm({
   validationSchema: object({
     tag: string()
       .trim()
@@ -71,7 +74,7 @@ const { defineField, handleSubmit, errors } = useForm({
 const [tagInput] = defineField('tag');
 
 const closeAddTagDialog = () => {
-  tagInput.value = null;
+  resetForm();
   emit('close');
 };
 
