@@ -79,6 +79,14 @@ jobs:
         run: pnpm i --frozen-lockfile
       - name: Add SHORT_SHA env variable
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
+      - name: Refresh Pulumi state
+        uses: pulumi/actions@v6
+        with:
+          command: refresh
+          stack-name: extensionengine/tailor-cms/dev
+          work-dir: infrastructure
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
       - name: Provision infra and deploy
         uses: pulumi/actions@v6
         with:
