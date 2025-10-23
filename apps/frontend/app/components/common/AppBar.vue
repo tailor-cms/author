@@ -25,33 +25,32 @@
         </span>
       </VAppBarTitle>
     </NuxtLink>
-    <div v-if="showUserGroupSelect" class="pt-2">
-      <VSelect
-        v-model="repositoryStore.selectedUserGroupId"
-        :items="repositoryStore.userGroupOptions"
-        item-title="name"
-        item-value="id"
-        min-width="300"
-        variant="outlined"
-        hide-details
-        @update:model-value="onUserGroupChange"
-      >
-        <template #selection="{ item }">
-          <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
-          {{ item.title }}
-        </template>
-        <template #item="{ item, props: { title, ...restProps } }">
-          <VListItem v-bind="restProps">
-            <UserGroupAvatar
-              :logo-url="item.raw.logoUrl"
-              class="mr-5"
-              placeholder-color="primary-darken-3"
-            />
-            {{ title }}
-          </VListItem>
-        </template>
-      </VSelect>
-    </div>
+    <VSelect
+      v-if="showUserGroupSelect"
+      v-model="repositoryStore.selectedUserGroupId"
+      :items="repositoryStore.userGroupOptions"
+      item-title="name"
+      item-value="id"
+      min-width="250"
+      max-width="300"
+      hide-details
+      @update:model-value="onUserGroupChange"
+    >
+      <template #selection="{ item }">
+        <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
+        <span class="text-truncate">{{ item.title }}</span>
+      </template>
+      <template #item="{ item, props: { title, ...restProps } }">
+        <VListItem v-bind="restProps">
+          <UserGroupAvatar
+            :logo-url="item.raw.logoUrl"
+            class="mr-5"
+            placeholder-color="primary-darken-3"
+          />
+          {{ title }}
+        </VListItem>
+      </template>
+    </VSelect>
     <template #append>
       <template v-if="!smAndDown">
         <VBtn

@@ -1,6 +1,6 @@
 <template>
-  <div class="tags-container mb-1">
-    <div class="tag-list d-flex flex-wrap align-center ga-2">
+  <div class="tags-container">
+    <div class="tag-list d-flex flex-wrap align-center ga-2 py-2">
       <VChip
         v-for="{ id, name } in repository.tags"
         :key="id"
@@ -41,6 +41,7 @@
         <VBtn
           v-bind="tooltipProps"
           aria-label="Add tag"
+          class="ml-2"
           color="primary-lighten-2"
           icon="mdi-tag-plus"
           @click.stop="showTagDialog = true"

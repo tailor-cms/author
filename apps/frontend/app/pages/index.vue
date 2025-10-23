@@ -74,7 +74,6 @@
           <VCol
             v-for="repository in repositoryStore.items"
             :key="repository.uid"
-            class="px-3 pb-5"
             cols="12"
             lg="4"
             md="6"

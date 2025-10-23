@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column ga-16">
+  <div>
     <slot
       v-if="showDiff"
       v-bind="{
