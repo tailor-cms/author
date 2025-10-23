@@ -23,7 +23,7 @@
     "invite:admin": "node --import ./script/preflight.js ./script/inviteAdmin.js",
     "integration:add": "node --import ./script/preflight.js ./script/addIntegration.js",
     "integration:token": "node --import ./script/preflight.js ./script/generateIntegrationToken.js",
-    "detachDescendantsOfDeletedActivities": "node --import ./script/preflight.js ./script/detachDescendantsOfDeletedActivities.js"
+    "cleanup:detached-activities": "node --import ./script/preflight.js ./script/cleanupDetachedActivities.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.864.0",
