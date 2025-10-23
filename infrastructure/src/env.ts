@@ -70,6 +70,10 @@ export const getSecrets = (db: studion.Database) => {
     'STORAGE_SECRET',
     'EMAIL_USER',
     'EMAIL_PASSWORD',
+    'TCE_MUX_TOKEN_ID',
+    'TCE_MUX_TOKEN_SECRET',
+    'TCE_MUX_JWT_SIGNING_KEY',
+    'TCE_MUX_JWT_PRIVATE_KEY',
   ];
   if (aiConfig.getBoolean('enabled')) ssmParams.push('AI_SECRET_KEY');
   if (statsigConfig.getBoolean('enabled'))

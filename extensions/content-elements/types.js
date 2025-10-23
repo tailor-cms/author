@@ -23,4 +23,5 @@ export const ContentElementType = {
   Html: 'HTML',
   File: 'FILE',
   HtmlRaw: 'HTML_RAW',
+  MuxVideo: 'MUX_VIDEO',
 };

@@ -97,6 +97,7 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.Accordion,
         ContentElementType.Modal,
         ContentElementType.Carousel,
+        ContentElementType.MuxVideo,
       ],
     },
     {
