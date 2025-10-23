@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left my-2">
+  <div class="text-left mt-2 mb-8">
     <div class="label ma-1 text-caption">{{ meta.label }}</div>
     <div class="d-flex">
       <ColorInput :color="selected" @input="select" />
