@@ -9,14 +9,12 @@ import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import processQuery from '#shared/util/processListQuery.js';
 
-/* eslint-disable */
 import AccessService from '#app/shared/auth/access.service.js';
 import activity from '../activity/index.js';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
 import storageRouter from '#shared/storage/storage.router.js';
-/* eslint-enable */
 
 const { Repository, UserGroup } = db;
 const router = express.Router();
