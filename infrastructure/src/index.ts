@@ -50,7 +50,7 @@ const db = new studion.Database(`${fullPrefix}-tailor-db`, {
   vpcId: vpc.vpcId,
   vpcCidrBlock: vpc.vpc.cidrBlock,
   isolatedSubnetIds: vpc.isolatedSubnetIds,
-  engineVersion: '15.7',
+  engineVersion: '15.12',
 });
 
 const cluster = new aws.ecs.Cluster(`${fullPrefix}-ecs-cluster`, {
