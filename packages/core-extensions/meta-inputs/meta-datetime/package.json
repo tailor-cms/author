@@ -11,6 +11,6 @@
   "peerDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
     "vue": "^3.5.22",
-    "vuetify": "^3.10.5"
+    "vuetify": "^3.10.7"
   }
 }

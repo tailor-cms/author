@@ -19,6 +19,6 @@
     "lodash-es": "*",
     "pluralize-esm": "^9.0.5",
     "vue": "^3.5.22",
-    "vuetify": "^3.10.5"
+    "vuetify": "^3.10.7"
   }
 }

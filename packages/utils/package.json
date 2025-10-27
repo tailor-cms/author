@@ -4,7 +4,7 @@
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
   "type": "module",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "files": [
     "dist"
   ],
@@ -22,7 +22,7 @@
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
-    "@paralleldrive/cuid2": "^2.2.2",
+    "@paralleldrive/cuid2": "^3.1.0",
     "lodash-es": "^4.17.21",
     "uuid": "^13.0.0"
   },
