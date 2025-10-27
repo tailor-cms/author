@@ -9,6 +9,7 @@ export interface ElementRegistry {
   load: (el: ContentElement) => void;
   get: (id: string) => ElementManifest;
   isQuestion: (type: string) => boolean;
+  resetData: (element: ContentElement) => ContentElement['data'];
   isLegacyQuestion: (type: string) => boolean;
   matchesAllowedElementConfig: (
     el: ContentElement,

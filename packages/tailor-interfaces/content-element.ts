@@ -39,6 +39,7 @@ export interface ContentElement {
   contentSignature: string;
   comments?: Comment[];
   hasUnresolvedComments?: boolean;
+  embedded?: boolean;
   lastSeen?: number;
   changeSincePublish?: string;
   createdAt: string;

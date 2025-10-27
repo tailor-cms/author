@@ -25,69 +25,101 @@
       />
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
-    <template v-if="!!manifest">
-      <QuestionElement
-        v-if="isQuestion"
-        :icon="manifest.ui.icon"
-        :type="manifest.name"
-        v-bind="{
-          ...$attrs,
-          componentName,
-          embedElementConfig,
-          element,
-          references,
-          isFocused,
-          isDragged,
-          isDisabled,
-          isReadonly: props.isDisabled,
-          dense,
-        }"
-        @add="emit('add', $event)"
-        @delete="emit('delete')"
-        @focus="onSelect"
-        @link="onLink"
-        @save="onSave"
-      />
-      <component
-        :is="componentName"
-        v-else
-        v-bind="{
-          ...$attrs,
-          embedElementConfig,
-          element,
-          references,
-          isFocused,
-          isDragged,
-          isDisabled,
-          isReadonly: props.isDisabled,
-          dense,
-        }"
-        :id="`element_${id}`"
-        @add="emit('add', $event)"
-        @delete="emit('delete')"
-        @focus="onSelect"
-        @link="onLink"
-        @save="onSave"
-      />
-    </template>
-    <VSheet v-else class="py-10" color="primary-lighten-5">
-      <div class="text-h6">
-        {{ element.type.replace('_', ' ') }}
+    <VSheet
+      v-if="loading"
+      color="primary-lighten-5"
+      class="py-16 text-subtitle-2 rounded-lg text-center"
+    >
+      <CircularProgress />
+      <div class="pt-3 text-primary-darken-4 font-weight-bold">
+        <span>Content generation in progress...</span>
       </div>
-      <div class="pt-4 text-subtitle-2">Component is not available!</div>
     </VSheet>
-    <div v-if="!props.isDisabled" class="element-actions">
+    <template v-else>
+      <template v-if="!!manifest">
+        <QuestionElement
+          v-if="isQuestion"
+          :icon="manifest.ui.icon"
+          :type="manifest.name"
+          v-bind="{
+            ...$attrs,
+            componentName,
+            embedElementConfig,
+            element,
+            references,
+            isFocused,
+            isDragged,
+            isDisabled,
+            isReadonly: props.isDisabled,
+            dense,
+          }"
+          @add="emit('add', $event)"
+          @delete="emit('delete')"
+          @focus="onSelect"
+          @generate="generateContent"
+          @link="onLink"
+          @reset="reset"
+          @save="onSave"
+        />
+        <component
+          :is="componentName"
+          v-else
+          v-bind="{
+            ...$attrs,
+            embedElementConfig,
+            element,
+            references,
+            isFocused,
+            isDragged,
+            isDisabled,
+            isReadonly: props.isDisabled,
+            dense,
+          }"
+          :id="`element_${id}`"
+          @add="emit('add', $event)"
+          @delete="emit('delete')"
+          @focus="onSelect"
+          @link="onLink"
+          @save="onSave"
+        />
+      </template>
+      <VSheet v-else class="py-10" color="primary-lighten-5">
+        <div class="text-h6">
+          {{ element.type.replace('_', ' ') }}
+        </div>
+        <div class="pt-4 text-subtitle-2">Component is not available!</div>
+      </VSheet>
+    </template>
+    <div v-if="!props.isDisabled" class="element-actions ga-1">
       <div
         v-if="showDiscussion"
         :class="{ 'is-visible': isHighlighted || hasComments }"
-        class="mb-2"
       >
         <ElementDiscussion v-bind="element" :user="currentUser" @open="focus" />
+      </div>
+      <div v-if="showAI" :class="{ 'is-visible': isHighlighted }">
+        <ElementGeneration @generate="generateContent" />
+      </div>
+      <div :class="{ 'is-visible': isHighlighted }">
+        <VTooltip location="left" open-delay="1000">
+          <template #activator="{ props: tooltipProps }">
+            <VBtn
+              v-bind="tooltipProps"
+              aria-label="Reset element"
+              color="teal"
+              icon="mdi-restore"
+              size="x-small"
+              variant="tonal"
+              @click="reset"
+            />
+          </template>
+          Reset element
+        </VTooltip>
       </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
           aria-label="Delete element"
-          color="pink lighten-1"
+          color="pink"
           icon="mdi-delete-outline"
           size="x-small"
           variant="tonal"
@@ -116,18 +148,24 @@ import {
   provide,
   ref,
 } from 'vue';
-import { getElementId } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
+import { AiRequestType } from '@tailor-cms/interfaces/ai';
+import { cloneDeep } from 'lodash-es';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
+import { getElementId } from '@tailor-cms/utils';
 import type { Meta } from '@tailor-cms/interfaces/common';
 import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import ActiveUsers from './ActiveUsers.vue';
+import CircularProgress from './CircularProgress.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
+import ElementGeneration from './ElementGeneration.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
+import { useConfirmationDialog } from '../composables/useConfirmationDialog';
+import { useLoader } from '../composables/useLoader';
 
 interface Props {
   element: ContentElement;
@@ -161,6 +199,10 @@ const editorBus = inject<any>('$editorBus');
 const editorState = inject<any>('$editorState');
 const eventBus = inject<any>('$eventBus');
 const getCurrentUser = inject<any>('$getCurrentUser');
+const doTheMagic = inject<any>('$doTheMagic');
+
+const { loading, loader } = useLoader();
+const confirmationDialog = useConfirmationDialog();
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
@@ -178,6 +220,9 @@ const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
 const isQuestion = computed(() => manifest.value?.isQuestion || false);
+const showAI = computed(() =>
+  !props.element.embedded && !!doTheMagic && manifest.value?.ai,
+);
 
 onBeforeUnmount(() => {
   elementBus.destroy();
@@ -201,6 +246,30 @@ const focus = () => {
 };
 
 const onLink = (key?: string) => editorBus.emit('element:link', key);
+
+const reset = () => {
+  if (!ceRegistry) return;
+  confirmationDialog({
+    title: 'Reset element?',
+    message: 'Are you sure you want to reset element?',
+    action: () => {
+      const data = ceRegistry.resetData(props.element);
+      return onSave(data);
+    },
+  });
+};
+
+const generateContent = loader(async function (text) {
+  const data = cloneDeep(props.element.data);
+  const inputs = [{
+    type: AiRequestType.Modify,
+    text: text ?? 'Generate content element for this page.',
+    responseSchema: props.element.type,
+    content: JSON.stringify(props.element.data),
+  }];
+  const generatedContent = await doTheMagic({ inputs });
+  return onSave({ ...data, ...generatedContent });
+});
 
 onMounted(() => {
   elementBus.on('delete', () => emit('delete'));
