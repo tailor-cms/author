@@ -33,14 +33,14 @@
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
-    "yup": "^1.7.0"
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:^",
     "@types/lodash-es": "^4.17.12",
-    "del-cli": "^6.0.0",
+    "del-cli": "^7.0.0",
     "tsup": "^8.5.0",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   },
   "tsup": {
     "entry": [

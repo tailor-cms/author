@@ -9,11 +9,11 @@ const {
   MAILTRAP_INBOX_NAME,
 } = process.env;
 
-const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const client = new MailtrapClient({
   accountId: parseInt(MAILTRAP_ACCOUNT_ID, 10),
-  token: MAILTRAP_TOKEN,
   testInboxId: parseInt(MAILTRAP_INBOX_ID, 10),
+  token: MAILTRAP_TOKEN || '',
 });
 
 // Get the first email from the inbox
