@@ -2,12 +2,12 @@
   "name": "@tailor-cms/infrastucture",
   "main": "src/index.ts",
   "devDependencies": {
-    "@types/node": "^24.3.0"
+    "@types/node": "^24.7.2"
   },
   "dependencies": {
-    "@pulumi/aws": "^6.83.0",
-    "@pulumi/awsx": "^2.22.0",
-    "@pulumi/pulumi": "^3.190.0",
+    "@pulumi/aws": "^7.10.0",
+    "@pulumi/awsx": "^3.0.1",
+    "@pulumi/pulumi": "^3.203.0",
     "@studion/infra-code-blocks": "^0.7.0"
   }
 }

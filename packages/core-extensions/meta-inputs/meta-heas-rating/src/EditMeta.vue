@@ -172,6 +172,9 @@ const alertMsg = computed(() => {
   if (props.isNew) {
     return 'Rating Not Available. To edit the rating, switch to the sliders view.';
   }
+  if (!props.meta.reviewable) {
+    return 'Rating Not Available. To edit the rating, click on the button above';
+  }
   if (isReviewRequested.value) {
     return props.isReviewer
       ? 'Rating Requested. To add the rating, click on the button below'

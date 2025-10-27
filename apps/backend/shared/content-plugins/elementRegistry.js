@@ -8,6 +8,7 @@ class ElementsRegistry {
   constructor() {
     this._registry = elements;
     this._hooks = {};
+    this._aiSchemas = {};
   }
 
   async initialize() {
@@ -19,7 +20,14 @@ class ElementsRegistry {
       Object.assign(this._hooks, {
         [it.type]: pick(it, Object.values(hooksTypes)),
       });
+      Object.assign(this._aiSchemas, {
+        [it.type]: it.ai,
+      });
     });
+  }
+
+  getAiConfig(elementType) {
+    return this._aiSchemas[elementType];
   }
 
   getHook(elementType, hookName) {

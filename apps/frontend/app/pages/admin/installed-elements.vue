@@ -12,6 +12,7 @@
       bg-color="transparent"
       class="pa-0"
       rounded="lg"
+      divided
       slim
     >
       <VListGroup
@@ -34,13 +35,22 @@
           No elements found!
         </VAlert>
         <VListItem
-          v-for="{ name, ui, version, position } in elements"
+          v-for="{ name, ui, version, position, ai } in elements"
           v-else
           :key="position"
           lines="two"
         >
           <template #prepend>
             <VIcon :icon="ui.icon || DEFAULT_ICON" size="x-large" />
+          </template>
+          <template #append>
+            <VChip
+              v-if="ai"
+              text="AI Powered"
+              color="indigo-darken-2"
+              size="small"
+              prepend-icon="mdi-creation"
+              rounded />
           </template>
           <VListItemTitle>{{ name }}</VListItemTitle>
           <VListItemSubtitle>Version {{ version }}</VListItemSubtitle>
