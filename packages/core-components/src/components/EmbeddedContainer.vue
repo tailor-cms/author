@@ -10,6 +10,7 @@
   >
     <template #default="{ element, isDragged }">
       <ContainedContent
+        :key="element.id"
         :element="element"
         :is-disabled="isDisabled || isReadonly"
         :is-dragged="isDragged"

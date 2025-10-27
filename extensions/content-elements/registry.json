@@ -118,5 +118,10 @@
     "name": "@tailor-cms/ce-html-raw",
     "clientPackage": "@tailor-cms/ce-html-raw-edit",
     "serverPackage": "@tailor-cms/ce-html-raw-server"
+  },
+  {
+    "name": "@tailor-cms/ce-mux-video",
+    "clientPackage": "@tailor-cms/ce-mux-video-edit",
+    "serverPackage": "@tailor-cms/ce-mux-video-server"
   }
 ]

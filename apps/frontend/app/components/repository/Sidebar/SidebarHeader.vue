@@ -24,7 +24,7 @@
       color="orange-lighten-4"
       size="small"
       variant="tonal"
-      @click.stop="api.restore(store.repositoryId, props.activity.id)"
+      @click.stop="restore"
     >
       <VIcon class="mr-2">mdi-history</VIcon>
       Restore
@@ -46,10 +46,12 @@ import ActivityPublishing from './ActivityPublishing.vue';
 import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import api from '@/api/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useActivityStore } from '@/stores/activity';
 
 const props = defineProps<{ activity: StoreActivity }>();
 
 const { $schemaService } = useNuxtApp() as any;
+const activityStore = useActivityStore();
 const store = useCurrentRepository();
 
 const isEditable = computed(() => {
@@ -68,6 +70,12 @@ const edit = () => {
     name: 'editor',
     params: { repositoryId, activityId },
   });
+};
+
+const restore = async () => {
+  const { id: activityId, repositoryId } = props.activity;
+  await api.restore(repositoryId, activityId);
+  return activityStore.fetch(repositoryId, { outlineOnly: true });
 };
 </script>
 
