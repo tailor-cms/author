@@ -16,6 +16,7 @@
           processedActivities,
           processedContainerGroups,
         }"
+        :class="{ 'd-flex flex-column ga-16': !isLoading }"
         :activities="repositoryStore.activities"
         :activity-id="editorStore.selectedActivity.id"
         :container-groups="rootContainerGroups"
