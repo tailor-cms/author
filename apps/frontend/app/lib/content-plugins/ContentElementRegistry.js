@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash-es';
 import { elements } from '@tailor-cms/content-element-collection/client';
 import { getComponentName as getName } from '@tailor-cms/utils';
 import { v4 as uuid } from 'uuid';
@@ -32,20 +31,19 @@ class ContentElementRegistry extends ComponentRegistry {
 
   resetData(element) {
     const el = this.get(element.type);
-    const data = cloneDeep(element.data);
     if (!el) return null;
-    const initData = el.initState();
+    const data = el.initState();
     if (this.isQuestion(element.type)) {
       const question = initQuestion();
-      const isGradable = data.isGradable ?? true;
-      Object.assign(initData, {
+      const isGradable = element.data.isGradable ?? true;
+      Object.assign(data, {
         embeds: { [question.id]: question },
         question: [question.id],
         isGradable,
       });
       if (!isGradable) delete data.correct;
     }
-    return initData;
+    return data;
   };
 
   isQuestion(type) {
