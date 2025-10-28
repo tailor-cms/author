@@ -45,7 +45,7 @@ class ContentElementRegistry extends ComponentRegistry {
       });
       if (!isGradable) delete data.correct;
     }
-    return { ...data, ...initData };
+    return initData;
   };
 
   isQuestion(type) {
