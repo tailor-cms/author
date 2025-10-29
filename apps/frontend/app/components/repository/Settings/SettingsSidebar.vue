@@ -4,22 +4,17 @@
     color="primary-lighten-4"
     rounded="lg"
   >
-    <VList bg-color="transparent" class="text-left mb-6">
+    <VList bg-color="transparent" class="text-left mb-6 py-0" slim>
       <VListItem
         v-for="{ name, label, icon, query } in routes"
         :key="name"
         :to="{ name, query }"
+        :prepend-icon="`mdi-${icon}`"
+        :title="label"
         active-class="bg-primary-lighten-4 text-primary-darken-4"
         class="mb-2 pa-4"
         rounded="lg"
-      >
-        <template #prepend>
-          <VIcon>mdi-{{ icon }}</VIcon>
-        </template>
-        <VListItemTitle>
-          {{ label }}
-        </VListItemTitle>
-      </VListItem>
+      />
     </VList>
     <VList bg-color="transparent" class="text-left">
       <VListSubheader class="text-primary-darken-4">Actions</VListSubheader>

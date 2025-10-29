@@ -1,11 +1,10 @@
 <template>
-  <VToolbar class="toolbar" color="transparent">
+  <div class="toolbar d-flex align-center flex-wrap ga-4 mb-4">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VTextField
         v-model="search"
         v-bind="hoverProps"
         :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-        class="mr-4"
         density="comfortable"
         max-width="280"
         min-width="232"
@@ -25,10 +24,10 @@
         v-model="status"
         :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
         :items="statusOptions"
-        class="mr-4"
         data-testid="workflow_statusFilter"
         density="comfortable"
-        max-width="232"
+        max-width="280"
+        min-width="232"
         placeholder="Filter by status"
         rounded="xl"
         variant="solo"
@@ -41,7 +40,6 @@
       v-if="assigneeOptions"
       v-model="assigneeIds"
       :options="assigneeOptions"
-      class="mr-4"
       data-testid="workflow_assigneeFilter"
     />
     <VBtn
@@ -52,7 +50,7 @@
     >
       Recently updated
     </VBtn>
-  </VToolbar>
+  </div>
 </template>
 
 <script lang="ts" setup>
