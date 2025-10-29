@@ -41,6 +41,24 @@
             </template>
             <span>{{ arePinnedShown ? 'Show all' : 'Show pinned' }}</span>
           </VTooltip>
+          <VTooltip
+            content-class="bg-primary-darken-4"
+            location="top"
+            open-delay="400"
+          >
+            <template #activator="{ props: tooltipProps }">
+              <VBtn
+                v-bind="tooltipProps"
+                :color="isDeleteMode ? 'red-accent-3' : 'primary-lighten-3'"
+                icon="mdi-delete-sweep"
+                aria-label="Toggle delete mode"
+                class="my-1 ml-2"
+                variant="tonal"
+                @click="toggleDeleteMode"
+              />
+            </template>
+            <span>{{ isDeleteMode ? 'Cancel' : 'Delete mode' }}</span>
+          </VTooltip>
           <SelectOrder
             :sort-by="queryParams.sortBy"
             class="pl-2"
@@ -66,6 +84,38 @@
         @clear:all="(queryParams.filter = []) && refetchRepositories()"
         @close="onFilterChange"
       />
+      <VExpandTransition>
+        <div v-if="isDeleteMode" class="text-left d-flex align-center mb-4">
+          <VTooltip
+            content-class="bg-primary-darken-4"
+            location="top"
+            open-delay="400"
+          >
+            <template #activator="{ props: tooltipProps }">
+              <VCheckbox
+                v-bind="tooltipProps"
+                :disabled="!repositories.length"
+                :model-value="isAllSelected"
+                :indeterminate="isIndeterminate"
+                label="Select all"
+                color="red-accent-3"
+                hide-details
+                @update:model-value="toggleSelectAll"
+              />
+            </template>
+            <span>{{ isAllSelected ? 'Deselect all' : 'Select all' }}</span>
+          </VTooltip>
+          <VBtn
+            :disabled="selectedRepos.size === 0"
+            class="ml-4"
+            color="red-accent-3"
+            prepend-icon="mdi-delete"
+            @click="deleteSelected"
+          >
+            Delete ({{ selectedRepos.size }})
+          </VBtn>
+        </div>
+      </VExpandTransition>
       <VInfiniteScroll
         v-if="!isLoading && hasRepositories"
         class="d-flex ma-0 pa-0"
@@ -84,7 +134,12 @@
             md="6"
             sm="12"
           >
-            <RepositoryCard :repository="repository" />
+            <RepositoryCard
+              :is-selected="selectedRepos.has(repository.id)"
+              :repository="repository"
+              :selectable="isDeleteMode"
+              @toggle-selection="toggleSelection"
+            />
           </VCol>
         </VRow>
         <template #load-more="{ props: loadProps }">
@@ -122,6 +177,7 @@ import RepositoryFilterSelection
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
 import { useAuthStore } from '@/stores/auth';
+import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useConfigStore } from '@/stores/config';
 import { useRepositoryStore } from '@/stores/repository';
 
@@ -138,8 +194,11 @@ useHead({
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 const config = useConfigStore();
+const confirmationDialog = useConfirmationDialog();
 
 const isLoading = ref(true);
+const isDeleteMode = ref(false);
+const selectedRepos = ref<Set<number>>(new Set());
 
 const {
   queryParams,
@@ -150,10 +209,51 @@ const {
 
 const hasRepositories = computed(() => !!repositories.value.length);
 const arePinnedShown = computed(() => queryParams.value.pinned);
+const isAllSelected = computed(() =>
+  repositories.value.length > 0 &&
+  selectedRepos.value.size === repositories.value.length,
+);
+const isIndeterminate = computed(() =>
+  selectedRepos.value.size > 0 &&
+  selectedRepos.value.size < repositories.value.length,
+);
 
 const togglePinFilter = () => {
   queryParams.value.pinned = !arePinnedShown.value;
   refetchRepositories();
+};
+
+const toggleDeleteMode = () => {
+  isDeleteMode.value = !isDeleteMode.value;
+  if (!isDeleteMode.value) selectedRepos.value.clear();
+};
+
+const toggleSelection = (id: number) => {
+  if (selectedRepos.value.has(id)) return selectedRepos.value.delete(id);
+  selectedRepos.value.add(id);
+};
+
+const toggleSelectAll = () => {
+  if (isAllSelected.value) return selectedRepos.value.clear();
+  selectedRepos.value = new Set(repositories.value.map((repo) => repo.id));
+};
+
+const deleteSelected = () => {
+  const count = selectedRepos.value.size;
+  const itemText = count === 1 ? 'repository' : 'repositories';
+
+  confirmationDialog({
+    title: 'Delete repositories?',
+    message: `Are you sure you want to delete ${count} ${itemText}?`,
+    action: async () => {
+      await Promise.all(Array.from(selectedRepos.value).map((id) =>
+        repositoryStore.remove(id),
+      ));
+      selectedRepos.value.clear();
+      isDeleteMode.value = false;
+      await refetchRepositories();
+    },
+  });
 };
 
 const filters = computed(() => {
@@ -172,6 +272,7 @@ const filters = computed(() => {
 });
 
 const updateSort = (payload: any) => {
+  selectedRepos.value.clear();
   queryParams.value.sortBy = {
     ...queryParams.value.sortBy,
     ...payload,
@@ -180,11 +281,13 @@ const updateSort = (payload: any) => {
 };
 
 const onSearchInput = (searchInput: string) => {
+  selectedRepos.value.clear();
   queryParams.value.search = searchInput;
   refetchRepositories();
 };
 
 const onFilterChange = (payload: any) => {
+  selectedRepos.value.clear();
   const { filter: catalogFilter } = queryParams.value;
   const existing = find(catalogFilter, { id: payload.id });
   if (!existing) queryParams.value.filter.push(payload);

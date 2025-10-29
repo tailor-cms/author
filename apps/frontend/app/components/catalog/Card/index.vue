@@ -11,7 +11,15 @@
     >
       <div class="card-body">
         <div class="card-header d-flex align-center my-1 mx-3">
-          <VChip :color="repository.data.color" class="px-1" size="x-small" />
+          <VCheckbox
+            v-if="selectable"
+            :model-value="isSelected"
+            class="ml-n1"
+            color="red-accent-3"
+            hide-details
+            @click.stop
+            @update:model-value="$emit('toggle-selection', repository.id)" />
+          <VChip v-else :color="repository.data.color" class="px-1" size="x-small" />
           <VTooltip
             :disabled="!isSchemaNameTruncated"
             content-class="bg-primary-darken-4"
@@ -137,7 +145,12 @@ import { useRepositoryStore } from '@/stores/repository';
 const { $schemaService } = useNuxtApp() as any;
 const store = useRepositoryStore();
 
-const props = defineProps<{ repository: Repository }>();
+const props = defineProps<{
+  repository: Repository;
+  selectable: boolean;
+  isSelected?: boolean;
+}>();
+defineEmits(['toggle-selection']);
 
 // Template ref
 const schema = ref(null);
@@ -204,5 +217,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .v-card:hover > :deep(.v-card__overlay) {
   opacity: 0.01;
+}
+
+.v-checkbox :deep(.v-selection-control) {
+  min-height: unset !important;
 }
 </style>
