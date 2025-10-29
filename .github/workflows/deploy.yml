@@ -83,7 +83,7 @@ jobs:
         uses: pulumi/actions@v6
         with:
           command: up
-          stack-name: extensionengine/tailor-cms/dev
+          stack-name: extensionengine/tailor-cms/prod
           work-dir: infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
