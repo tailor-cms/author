@@ -167,6 +167,7 @@
 import { find, map } from 'lodash-es';
 import { SCHEMAS } from '@tailor-cms/config';
 import { storeToRefs } from 'pinia';
+import Promise from 'bluebird';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
 import RepositoryCard from '@/components/catalog/Card/index.vue';
@@ -246,9 +247,8 @@ const deleteSelected = () => {
     title: 'Delete repositories?',
     message: `Are you sure you want to delete ${count} ${itemText}?`,
     action: async () => {
-      await Promise.all(Array.from(selectedRepos.value).map((id) =>
-        repositoryStore.remove(id),
-      ));
+      const repositories = Array.from(selectedRepos.value);
+      await Promise.each(repositories, (id) => repositoryStore.remove(id));
       selectedRepos.value.clear();
       isDeleteMode.value = false;
       await refetchRepositories();
