@@ -3,13 +3,13 @@ config:
   ai:modelId: gpt-4.1
   aws:region: us-east-1
   dns:domain: tailor-cms.com
-  dns:hostedZoneId: Z1042476S7RM57FM4WWG
-  s3:bucket: tailor-cms-dev
-  s3:region: eu-central-1
+  dns:hostedZoneId: Z03469864NDBKNYE5TS1
+  s3:bucket: tailor-prod
+  s3:region: us-east-1
   email:host: email-smtp.us-east-1.amazonaws.com
   email:senderAddress: tailor@extensionengine.com
-  ssm:keyPrefix: tailor/dev
-  tailor-cms:resourceNamePrefix: tools
+  ssm:keyPrefix: author/prod
+  tailor-cms:resourceNamePrefix: author
   oidc:enabled: "true"
   oidc:loginText: Sign in with Google
   oidc:defaultRole: USER
