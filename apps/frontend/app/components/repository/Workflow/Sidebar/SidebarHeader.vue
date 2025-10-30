@@ -66,7 +66,7 @@ const props = defineProps<{
 
 const route = useRoute();
 const notify = useNotification();
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 
 const statusUrl = computed(() => route.query && window.location.href);
 const activityConfig = computed(() =>

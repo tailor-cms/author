@@ -66,7 +66,7 @@ const currentRepositoryStore = useCurrentRepository();
 
 const props = defineProps<{ activity: StoreActivity }>();
 
-const { $eventBus } = useNuxtApp() as any;
+const { $eventBus } = useNuxtApp();
 const selectedActivity = useSelectedActivity(props.activity);
 
 const showCreateDialog = ref(false);

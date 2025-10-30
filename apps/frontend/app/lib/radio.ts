@@ -28,7 +28,7 @@ export function extendedMitt<Events extends Record<EventType, unknown>>(
   return instance;
 }
 
-class Channel {
+export class Channel {
   private id: string;
   private bus: ExtendedMitt;
   private repliers: Map<unknown, unknown>;
@@ -46,17 +46,17 @@ class Channel {
   emit = (eventName: string, data: unknown) =>
     this.bus.emit(this.resolveEventName(eventName), data);
 
-  on = (eventName: string, fn: any) => {
+  on = (eventName: string, fn: (event: any) => void) => {
     this.listeners.push({ eventName, fn });
     this.bus.on(this.resolveEventName(eventName), fn);
   };
 
-  off = (eventName: string, fn: any) => {
+  off = (eventName: string, fn: (event: any) => void) => {
     this.listeners = this.listeners.filter((it) => it.eventName !== eventName);
     this.bus.off(this.resolveEventName(eventName), fn);
   };
 
-  once = (eventName: string, fn: any) => {
+  once = (eventName: string, fn: (event: any) => void) => {
     this.listeners.push({ eventName, fn });
     this.bus.once(this.resolveEventName(eventName) as keyof Events, fn);
   };
@@ -87,12 +87,12 @@ class Channel {
 
 export default class Radio {
   private static instance: Radio;
-  private static channels = new Map();
+  private static channels = new Map<string, Channel>();
   private static bus = extendedMitt();
 
   channel(id: string) {
     const { bus, channels } = Radio;
-    if (channels.has(id)) return channels.get(id);
+    if (channels.has(id)) return channels.get(id)!;
     const channel = new Channel(bus, id, () => channels.delete(id));
     channels.set(id, channel);
     return channel;

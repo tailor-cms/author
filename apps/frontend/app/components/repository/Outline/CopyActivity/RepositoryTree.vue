@@ -62,7 +62,7 @@ const emit = defineEmits(['change']);
 
 const search = ref('');
 const selected = ref<TreeItem[]>([]);
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 
 const expandedActivityIds = computed(() => props.activities.map((it) => it.id));
 
@@ -111,7 +111,7 @@ const isSelectable = (item: TreeItem) => {
 };
 
 const attachActivityAttrs = (activity: Activity) => {
-  const hasChildren = !!$schemaService.getLevel(activity.type).subLevels.length;
+  const hasChildren = !!$schemaService.getLevel(activity.type).subLevels?.length;
   return {
     value: activity.id,
     title: activity.data.name,

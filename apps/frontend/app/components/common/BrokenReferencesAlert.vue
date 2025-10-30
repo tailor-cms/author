@@ -53,7 +53,7 @@ interface ReferenceError {
   message: string;
 }
 
-const { $ceRegistry } = useNuxtApp() as any;
+const { $ceRegistry } = useNuxtApp();
 const repositoryStore = useCurrentRepository();
 
 const errorReport = ref<any>([]);

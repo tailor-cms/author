@@ -33,7 +33,7 @@ definePageMeta({
   middleware: ['auth'],
 });
 
-const { $eventBus } = useNuxtApp() as any;
+const { $eventBus } = useNuxtApp();
 
 const props = defineProps<{ activityId: number }>();
 

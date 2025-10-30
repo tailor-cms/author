@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   showHeading: false,
 });
 
-const { $ceRegistry } = useNuxtApp() as any;
+const { $ceRegistry } = useNuxtApp();
 provide('$ceRegistry', $ceRegistry);
 
 const authStore = useAuthStore();

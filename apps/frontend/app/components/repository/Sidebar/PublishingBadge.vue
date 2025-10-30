@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 
 const { getDescendants, isChanged } = activityUtils;
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 
 const store = useCurrentRepository();
 

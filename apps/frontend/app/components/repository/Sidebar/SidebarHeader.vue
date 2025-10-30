@@ -50,7 +50,7 @@ import { useActivityStore } from '@/stores/activity';
 
 const props = defineProps<{ activity: StoreActivity }>();
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 const activityStore = useActivityStore();
 const store = useCurrentRepository();
 

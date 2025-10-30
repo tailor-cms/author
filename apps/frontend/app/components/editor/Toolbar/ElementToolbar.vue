@@ -24,7 +24,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 import DefaultToolbar from './DefaultToolbar.vue';
 
-const { $ceRegistry } = useNuxtApp() as any;
+const { $ceRegistry } = useNuxtApp();
 const elementBus = inject('$elementBus') as any;
 
 interface Props {

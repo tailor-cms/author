@@ -1,6 +1,7 @@
 import OidcClient from '@/lib/OidcClient';
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(() => {
   const oidcClient = new OidcClient({ baseUrl: '/api' });
-  nuxtApp.provide('oidc', oidcClient);
+  const provide = { oidc: oidcClient };
+  return { provide };
 });

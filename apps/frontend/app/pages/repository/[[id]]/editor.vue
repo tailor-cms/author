@@ -36,7 +36,7 @@ import VSidebar from '@/components/editor/Sidebar/index.vue';
 import VToolbar from '@/components/editor/Toolbar/index.vue';
 import EngagementSidebar from '@/components/editor/EngagementSidebar/index.vue';
 
-const { $ceRegistry } = useNuxtApp() as any;
+const { $ceRegistry } = useNuxtApp();
 
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();

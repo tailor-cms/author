@@ -50,7 +50,7 @@ const props = defineProps<{
   isSoftDeleted: boolean;
 }>();
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 const { getDescendants } = activityUtils;
 const publishingUtils = usePublishActivity(props.activity);
 

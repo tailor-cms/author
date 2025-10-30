@@ -2,6 +2,6 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { getElementId } from '@tailor-cms/utils';
 
 export const useContentElementBus = (element: ContentElement) => {
-  const { $eventBus } = useNuxtApp() as any;
+  const { $eventBus } = useNuxtApp();
   return $eventBus.channel(`element:${getElementId(element)}`);
 };

@@ -189,7 +189,7 @@ import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();

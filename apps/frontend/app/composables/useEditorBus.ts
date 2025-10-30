@@ -1,4 +1,4 @@
 export const useEditorBus = () => {
-  const { $eventBus } = useNuxtApp() as any;
+  const { $eventBus } = useNuxtApp();
   return $eventBus.channel('editor');
 };

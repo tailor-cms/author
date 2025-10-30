@@ -89,7 +89,7 @@ const emit = defineEmits(['selected']);
 const route = useRoute();
 
 const config = useConfigStore();
-const { $eventBus, $schemaService } = useNuxtApp() as any;
+const { $eventBus, $schemaService } = useNuxtApp();
 
 const repositoryStore = useCurrentRepository();
 const authStore = useAuthStore();

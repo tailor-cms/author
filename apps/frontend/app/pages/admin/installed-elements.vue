@@ -75,7 +75,7 @@ definePageMeta({
 
 const DEFAULT_ICON = 'mdi-help-rhombus';
 
-const { $ceRegistry } = useNuxtApp() as any;
+const { $ceRegistry } = useNuxtApp();
 const search = ref('');
 
 const registry = computed<Registry>(() => {

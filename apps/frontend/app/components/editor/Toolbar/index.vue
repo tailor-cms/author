@@ -68,7 +68,7 @@ withDefaults(defineProps<Props>(), {
   element: null,
 });
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 const { lgAndUp } = useDisplay();
 const repositoryStore = useCurrentRepository();
 

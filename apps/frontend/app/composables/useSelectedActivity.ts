@@ -6,7 +6,7 @@ import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 export const useSelectedActivity = (activity: StoreActivity | null) => {
-  const { $schemaService } = useNuxtApp() as any;
+  const { $schemaService } = useNuxtApp();
   const repoStore = useCurrentRepository();
   const activityStore = useActivityStore();
 

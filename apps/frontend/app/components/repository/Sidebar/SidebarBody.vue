@@ -100,7 +100,7 @@ const props = defineProps<{ activity: StoreActivity }>();
 const route = useRoute();
 const store = useActivityStore();
 const notify = useNotification();
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 
 const activityUrl = computed(() => route.query && window.location.href);
 const config = computed(() => $schemaService.getLevel(props.activity.type));

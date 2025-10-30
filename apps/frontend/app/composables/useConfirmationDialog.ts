@@ -5,7 +5,7 @@ interface ConfirmationDialogOptions {
 }
 
 export const useConfirmationDialog = () => {
-  const { $eventBus } = useNuxtApp() as any;
+  const { $eventBus } = useNuxtApp();
   return (opts: ConfirmationDialogOptions) => {
     $eventBus.channel('app').emit('showConfirmationModal', opts);
   };

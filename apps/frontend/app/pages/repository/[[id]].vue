@@ -19,7 +19,7 @@ definePageMeta({
   middleware: ['auth'],
 });
 
-const { $eventBus } = useNuxtApp() as any;
+const { $eventBus } = useNuxtApp();
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const commentStore = useCommentStore();

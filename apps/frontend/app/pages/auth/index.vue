@@ -95,7 +95,7 @@ useHead({
 
 const localError = ref('');
 
-const { $oidc } = useNuxtApp() as any;
+const { $oidc } = useNuxtApp();
 const config = useConfigStore();
 const authStore = useAuthStore();
 const route = useRoute();

@@ -47,7 +47,7 @@ definePageMeta({
   name: 'revisions',
 });
 
-const { $ceRegistry, $eventBus } = useNuxtApp() as any;
+const { $ceRegistry, $eventBus } = useNuxtApp();
 const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 const editorStore = useEditorStore();

@@ -63,7 +63,7 @@ interface Props {
   placeholder?: string;
   allowCircularLinks?: boolean;
   allowInsideLineage?: boolean;
-  allowedTypes: string[];
+  allowedTypes?: string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -72,9 +72,10 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Click to select',
   allowCircularLinks: false,
   allowInsideLineage: false,
+  allowedTypes: () => [],
 });
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 const repositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 
@@ -100,9 +101,7 @@ const options = computed(() => {
   const { schema } = repositoryStore.repository;
   const prefixWithSchema = (type: string) =>
     type.includes(`${schema}/`) ? type : `${schema}/${type}`;
-  const allowedTypes = config
-    ? config.map((it: string) => prefixWithSchema(it))
-    : [];
+  const allowedTypes = config.map((it: string) => prefixWithSchema(it));
   return filterBy(repositoryStore.outlineActivities, (it) => {
     if (allowedTypes.length && !allowedTypes.includes(it.type)) return false;
     if (!props.allowCircularLinks && it.id === props.activity.id) return false;

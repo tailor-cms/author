@@ -111,7 +111,7 @@ defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
 
-const { $oidc } = useNuxtApp() as any;
+const { $oidc } = useNuxtApp();
 const config = useConfigStore();
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();

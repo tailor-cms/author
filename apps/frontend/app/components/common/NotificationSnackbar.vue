@@ -30,7 +30,7 @@ interface NotificationOptions {
   immediate?: boolean;
 }
 
-const { $eventBus } = useNuxtApp() as any;
+const { $eventBus } = useNuxtApp();
 const queue = new Queue(1, Infinity);
 
 const initialData = (): NotificationOptions => ({

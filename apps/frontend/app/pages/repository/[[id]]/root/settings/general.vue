@@ -50,7 +50,7 @@ definePageMeta({
   name: 'repository-settings-general',
 });
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();

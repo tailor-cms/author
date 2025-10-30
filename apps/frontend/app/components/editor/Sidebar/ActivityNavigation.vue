@@ -28,7 +28,7 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import { sortBy } from 'lodash-es';
 import { TailorTreeview } from '@tailor-cms/core-components';
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 
 const props = defineProps<{
   repository: Repository;

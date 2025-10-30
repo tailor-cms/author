@@ -81,7 +81,7 @@ const BROWSER_TAB = 'BROWSER_TAB';
 const COMMENTS_TAB = 'COMMENTS_TAB';
 const ELEMENT_TAB = 'ELEMENT_TAB';
 
-const { $ceRegistry, $schemaService } = useNuxtApp() as any;
+const { $ceRegistry, $schemaService } = useNuxtApp();
 const { lgAndUp } = useDisplay();
 
 const selectedTab = ref(BROWSER_TAB);

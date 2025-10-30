@@ -134,7 +134,7 @@ import { useTimeAgo } from '@vueuse/core';
 import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp();
 const store = useRepositoryStore();
 
 const props = defineProps<{ repository: Repository }>();

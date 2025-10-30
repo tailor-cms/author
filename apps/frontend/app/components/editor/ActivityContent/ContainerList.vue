@@ -97,7 +97,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['focusoutElement', 'createdContainer']);
 
-const { $schemaService, $ccRegistry } = useNuxtApp() as any;
+const { $schemaService, $ccRegistry } = useNuxtApp();
 const eventBus = inject('$eventBus') as any;
 
 const notify = useNotification();
