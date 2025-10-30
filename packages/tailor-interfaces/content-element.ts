@@ -24,9 +24,9 @@ export interface ContentElement {
   /** Floating point indicating the position within the container */
   position: number;
   /** KV property bag, specific to the content element type */
-  data: Record<string, unknown>;
+  data: Record<string, any>;
   /** Data collected using meta input fields */
-  meta: Record<string, unknown>;
+  meta: Record<string, any>;
   /** See element relationship configuration for details */
   refs: Record<string, Relationship | number>;
   /** Parent is soft-deleted */

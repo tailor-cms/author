@@ -222,11 +222,12 @@ const { defineField, handleSubmit, resetForm, values, errors } = useForm({
   initialValues: {
     schema:
       config.availableSchemas.length === 1
-        ? config.availableSchemas[0].id
+        ? config.availableSchemas[0]!.id
         : null,
     name: '',
     description: '',
     archive: null,
+    userGroupIds: [] as number[],
   },
   validationSchema: computed(() => ({
     schema: { required: selectedTab.value === NEW_TAB },
@@ -240,7 +241,7 @@ const { defineField, handleSubmit, resetForm, values, errors } = useForm({
 const [schemaInput] = defineField('schema');
 const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
-const [groupInput] = defineField('userGroupIds') as any;
+const [groupInput] = defineField('userGroupIds');
 
 const schema = computed<ActivityConfig>(
   () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
@@ -335,7 +336,7 @@ watch(
 watch(isVisible, (val) => {
   if (!val) return;
   groupInput.value = authStore.hasDefaultUserGroup
-    ? [authStore.userGroups[0].id]
+    ? [authStore.userGroups[0]!.id]
     : [];
 });
 </script>

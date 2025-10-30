@@ -100,7 +100,7 @@ const openAvatarUploadDialog = () => {
 const selectPhoto = (event: Event) => {
   const { files } = event.target as HTMLInputElement;
   if (!files?.length) return;
-  return new Compressor(files[0], {
+  return new Compressor(files[0]!, {
     width: 250,
     height: 250,
     resize: 'cover',

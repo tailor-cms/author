@@ -17,6 +17,7 @@
 <script lang="ts" setup>
 import { get, orderBy } from 'lodash-es';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components';
+import type { Comment } from '@tailor-cms/interfaces/comment';
 import { computed } from 'vue';
 import type { User } from '@tailor-cms/interfaces/user';
 
@@ -81,8 +82,8 @@ const setLastSeenComment = (timeout = 200) => {
 const remove = (id: number) =>
   commentStore.remove(props.activity.repositoryId, id);
 
-const updateResolvement = (data: any) =>
-  commentStore.updateResolvement(props.activity.repositoryId, data);
+const updateResolvement = (comment: Comment) =>
+  commentStore.updateResolvement(props.activity.repositoryId, comment);
 
 onBeforeMount(() => {
   const { id: activityId, repositoryId } = props.activity;

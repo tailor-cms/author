@@ -1,3 +1,4 @@
+import type { User } from '@tailor-cms/interfaces/user';
 import request from './request';
 
 const urls = {
@@ -11,7 +12,7 @@ const urls = {
   changePassword: () => `${urls.profile()}/change-password`,
 };
 
-function login(credentials) {
+function login(credentials: { email: string; password: string }) {
   return request.post(urls.login(), credentials);
 }
 
@@ -19,19 +20,19 @@ function logout() {
   return request.get(urls.logout());
 }
 
-function forgotPassword(email) {
+function forgotPassword(email: string) {
   return request.post(urls.forgotPassword(), { email });
 }
 
-function resetPassword(token, password) {
+function resetPassword(token: string, password: string) {
   return request.post(urls.resetPassword(), { token, password });
 }
 
-function validateResetToken(token) {
+function validateResetToken(token: string) {
   return request.base.post(urls.resetTokenStatus(), { token });
 }
 
-function changePassword(currentPassword, newPassword) {
+function changePassword(currentPassword: string, newPassword: string) {
   return request.post(urls.changePassword(), { currentPassword, newPassword });
 }
 
@@ -39,7 +40,7 @@ function getUserInfo() {
   return request.get(urls.profile());
 }
 
-function updateUserInfo(userData) {
+function updateUserInfo(userData: Partial<User>) {
   return request.patch(urls.profile(), userData);
 }
 

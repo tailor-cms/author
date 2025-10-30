@@ -1,8 +1,10 @@
+import type { App } from 'vue';
 import { elements } from '@tailor-cms/content-element-collection/client';
 import { getComponentName as getName } from '@tailor-cms/utils';
 import { v4 as uuid } from 'uuid';
 
 import ComponentRegistry from './ComponentRegistry';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 export const questionType = new Map([
   ['NR', 'NUMERICAL_RESPONSE'],
@@ -24,12 +26,12 @@ const initQuestion = () => ({
   embedded: true,
 });
 
-class ContentElementRegistry extends ComponentRegistry {
+export class ContentElementRegistry extends ComponentRegistry {
   get questions() {
     return this.all.filter((it) => it.isQuestion);
   }
 
-  resetData(element) {
+  resetData(element: ContentElement) {
     const el = this.get(element.type);
     if (!el) return null;
     const data = el.initState();
@@ -46,22 +48,25 @@ class ContentElementRegistry extends ComponentRegistry {
     return data;
   };
 
-  isQuestion(type) {
+  isQuestion(type: string) {
     return this.isLegacyQuestion(type) || this.get(type)?.isQuestion;
   };
 
-  isLegacyQuestion(type) {
+  isLegacyQuestion(type: string) {
     return LEGACY_QUESTION_TYPES.includes(type);
   }
 
-  matchesAllowedElementConfig(el, config) {
+  matchesAllowedElementConfig(
+    el: ContentElement,
+    config: { isGradable: boolean },
+  ) {
     const isGradable = this.isLegacyQuestion(el.type)
       ? el.type === 'ASSESSMENT'
       : el.data.isGradable;
     return config.isGradable === isGradable;
   };
 
-  getByEntity(el) {
+  getByEntity(el: ContentElement) {
     const isLegacyQuestion = this.isLegacyQuestion(el.type);
     if (!isLegacyQuestion) return this.get(el.type);
     const type = questionType.get(el.data.type);
@@ -69,14 +74,14 @@ class ContentElementRegistry extends ComponentRegistry {
   };
 }
 
-export default (appInstance) =>
+export default (appInstance: App<Element>) =>
   new ContentElementRegistry(appInstance, {
     name: 'content element',
     attrs: [
       'name', 'type', 'version', 'schema', 'initState', 'ui', 'isQuestion',
       'isComposite', 'ai',
     ],
-    getCondition: (type) => (it) => it.type === type,
+    getCondition: (type: string) => (it: ContentElement) => it.type === type,
     getName,
     elements,
   });

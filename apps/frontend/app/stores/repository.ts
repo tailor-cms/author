@@ -1,5 +1,6 @@
 import type {
   Repository,
+  RepositoryFilters,
   RepositoryUser,
   Tag,
 } from '@tailor-cms/interfaces/repository';
@@ -8,7 +9,13 @@ import { UserRole } from '@tailor-cms/common';
 
 import { useAuthStore } from './auth';
 import { repository as api, tag as tagApi } from '@/api';
-import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
+import type {
+  RepositoryFilter,
+} from '@/components/catalog/Filter/repositoryFilterConfigs';
+import {
+  RepositoryFilterType,
+} from '@/components/catalog/Filter/repositoryFilterConfigs';
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 const getDefaultQueryParams = () => ({
   offset: 0,
@@ -19,43 +26,40 @@ const getDefaultQueryParams = () => ({
     direction: 'DESC',
   },
   pinned: false,
-  filter: [] as any[],
+  filter: [] as RepositoryFilter[],
 });
 
 export const useRepositoryStore = defineStore('repositories', () => {
   const authStore = useAuthStore();
 
   const $items = reactive(new Map<string, Repository>());
-  const items = computed(() => Array.from($items.values()));
+  const items = computed<Repository[]>(() => Array.from($items.values()));
   const $tags = reactive(new Map<string, Tag>());
-  const tags = computed(() => Array.from($tags.values()));
+  const tags = computed<Tag[]>(() => Array.from($tags.values()));
 
   const areAllItemsFetched = ref(false);
   const queryParams = reactive(getDefaultQueryParams());
 
-  const userGroupOptions = computed(() => [
+  const userGroupOptions = computed<UserGroup[]>(() => [
     { id: 0, name: 'All workspaces' },
     ...authStore.userGroups,
   ]);
-  const selectedUserGroupId = ref<number>(userGroupOptions.value[0].id);
+  const selectedUserGroupId = ref<number>(userGroupOptions.value[0]!.id);
 
   const query = computed(() => {
     const { sortBy, pinned, filter, ...rest } = queryParams;
-    const filters = filter.reduce((acc, { id, type }) => {
-      const filterTypeConfig = repositoryFilterConfigs[type];
-      acc[filterTypeConfig.queryParam] ||= [];
-      acc[filterTypeConfig.queryParam].push(id);
+    const filters = filter.reduce<RepositoryFilters>((acc, { id, type }) => {
+      if (type === RepositoryFilterType.TAG) acc.tagIds.push(id);
+      if (type === RepositoryFilterType.SCHEMA) acc.schemas.push(id);
       return acc;
-    }, {} as any);
+    }, { schemas: [], tagIds: [] });
     return {
       ...rest,
       sortBy: sortBy.field,
       sortOrder: sortBy.direction,
       ...filters,
-      ...{
-        pinned: pinned || undefined,
-        userGroupId: selectedUserGroupId.value || undefined,
-      },
+      pinned: pinned || undefined,
+      userGroupId: selectedUserGroupId.value || undefined,
     };
   });
 
@@ -100,15 +104,14 @@ export const useRepositoryStore = defineStore('repositories', () => {
     name: string;
     description: string;
     userGroupIds: number[];
-    data: any;
+    data: Record<string, any>;
   }) => {
     return api.create({ schema, name, description, data, userGroupIds });
   };
 
-  async function update(payload: any): Promise<Repository | undefined> {
-    const repository = findById(payload.id);
+  async function update({ id, ...rest }: Repository) {
+    const repository = findById(id);
     if (!repository) return;
-    const { id, ...rest } = payload;
     const updatedRepository = await api.patch(id, rest);
     Object.assign(repository, updatedRepository);
     return repository;

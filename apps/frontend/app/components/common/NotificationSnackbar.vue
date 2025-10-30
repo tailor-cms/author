@@ -52,7 +52,10 @@ const close = () => {
   isVisible.value = false;
 };
 
-const addToQueue = (opts: NotificationOptions) => queue.add(() => show(opts));
+const addToQueue = (opts: NotificationOptions) => {
+  return queue.add(() => Promise.resolve(show(opts)));
+};
+
 const schedule = (opts: NotificationOptions) => {
   return (opts.immediate ? addToQueue : debounce(addToQueue, 2500))(opts);
 };

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="d-flex justify-end pr-4">
-      <AddUserGroup :user-groups="currentRepositoryStore.repository.userGroups" />
+      <AddUserGroup :user-groups="currentRepositoryStore.userGroups" />
     </div>
     <UserGroupList />
   </div>

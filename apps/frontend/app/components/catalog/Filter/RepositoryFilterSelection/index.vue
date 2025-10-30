@@ -6,7 +6,7 @@
     <SelectedFilter
       v-for="filter in orderedFilters"
       :key="filter.id"
-      v-bind="filter"
+      :name="filter.name"
       :icon="filterConfigs[filter.type].icon"
       @close="emit('close', filter)"
     />
@@ -27,7 +27,7 @@
 <script lang="ts" setup>
 import { filter as filterBy, flatMap } from 'lodash-es';
 
-import filterConfigs from '../repositoryFilterConfigs';
+import filterConfigs, { RepositoryFilterType } from '../repositoryFilterConfigs';
 import SelectedFilter from './SelectedFilter.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
@@ -36,11 +36,9 @@ const store = useRepositoryStore();
 const emit = defineEmits(['close', 'clear:all']);
 
 const repositoryFilter = computed(() => store.queryParams.filter);
-const orderedFilters = computed(() => {
-  return flatMap(filterConfigs, ({ type }) =>
-    filterBy(repositoryFilter.value, { type }),
-  ) as any[];
-});
+const orderedFilters = computed(() => flatMap(RepositoryFilterType, (type) =>
+  filterBy(repositoryFilter.value, { type }),
+));
 </script>
 
 <style lang="scss" scoped>

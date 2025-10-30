@@ -1,17 +1,17 @@
 import request from './request';
 
 const urls = {
-  base: (repositoryId) => `/repositories/${repositoryId}/assets`,
+  base: (repositoryId: number) => `/repositories/${repositoryId}/assets`,
 };
 
-function getUrl(repositoryId, key) {
+function getUrl(repositoryId: number, key: string) {
   const params = { key };
   return request
     .get(urls.base(repositoryId), { params })
     .then((res) => res.data.url);
 }
 
-function upload(repositoryId, data) {
+function upload(repositoryId: number, data: FormData) {
   return request
     .post(urls.base(repositoryId), data, {
       headers: {

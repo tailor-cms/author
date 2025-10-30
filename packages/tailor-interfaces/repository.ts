@@ -1,4 +1,21 @@
 import type { Activity } from './activity';
+import type { UserGroup } from './user-group';
+
+export interface RepositoryFilters {
+  tagIds: number[];
+  schemas: string[];
+}
+
+export interface RepositoryQueryParams extends RepositoryFilters {
+  offset: number;
+  limit: number;
+  search: string;
+  sortBy: string;
+  sortOrder: string;
+  pinned: boolean;
+  userGroupId: number;
+  repositoryId: number;
+}
 
 export interface RepositoryTag {
   repositoryId: number;
@@ -60,7 +77,7 @@ export interface Repository {
   schema: string;
   name: string;
   description: string;
-  data: any;
+  data: Record<string, any>;
   tags: Tag[];
   activities?: Activity[];
   revisions: Revision[];
@@ -70,6 +87,7 @@ export interface Repository {
   repositoryUser?: RepositoryUser;
   hasUnpublishedChanges: boolean;
   hasAdminAccess?: boolean;
+  userGroups?: UserGroup[];
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;

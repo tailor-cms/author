@@ -1,6 +1,6 @@
-import { get, uniqBy } from 'lodash-es';
 import { computed } from 'vue';
 import { InsertLocation } from '@tailor-cms/utils';
+import { uniqBy } from 'lodash-es';
 
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -24,11 +24,11 @@ export const useSelectedActivity = (activity: StoreActivity | null) => {
   const sameLevel = computed(() => {
     if (!repoStore.taxonomy) return [];
     if (!parent.value)
-      return repoStore.taxonomy.filter((it: any) => it.rootLevel);
+      return repoStore.taxonomy.filter((it) => it.rootLevel);
     const { type } = parent.value;
-    const parentConfig = repoStore.taxonomy.find((it: any) => it.type === type);
-    const sameLevelTypes = get(parentConfig, 'subLevels', []);
-    return repoStore.taxonomy.filter((it: any) =>
+    const parentConfig = repoStore.taxonomy.find((it) => it.type === type);
+    const sameLevelTypes = parentConfig?.subLevels ?? [];
+    return repoStore.taxonomy.filter((it) =>
       sameLevelTypes.includes(it.type),
     );
   });
@@ -36,9 +36,9 @@ export const useSelectedActivity = (activity: StoreActivity | null) => {
   const subLevels = computed(() => {
     if (!repoStore.taxonomy || !activity) return [];
     const { type } = activity;
-    const config = repoStore.taxonomy.find((it: any) => it.type === type);
-    const configuredSubLevels = get(config, 'subLevels', []);
-    return repoStore.taxonomy.filter((it: any) =>
+    const config = repoStore.taxonomy.find((it) => it.type === type);
+    const configuredSubLevels = config?.subLevels ?? [];
+    return repoStore.taxonomy.filter((it) =>
       configuredSubLevels.includes(it.type),
     );
   });
@@ -53,7 +53,7 @@ export const useSelectedActivity = (activity: StoreActivity | null) => {
   const toggleOutlineItemExpand = (uid: string, expand?: boolean) =>
     repoStore.toggleOutlineItemExpand(uid, expand);
 
-  const expandOutlineItemParent = (item: any) => {
+  const expandOutlineItemParent = (item: StoreActivity) => {
     const uid = activityStore.getParent(item.uid)?.uid;
     if (uid) repoStore.toggleOutlineItemExpand(uid, true);
   };

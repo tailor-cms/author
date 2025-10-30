@@ -83,8 +83,8 @@
         :list="children"
         group="activities"
         item-key="uid"
-        @update="(data) => reorder(data, children)"
-        @change="(e) => currentRepositoryStore.handleOutlineItemDrag(e, activity.id)"
+        @update="(data: UpdateEvent) => reorder(data, children)"
+        @change="handleOutlineItemDrag"
       >
         <template #item="{ element, index: i }">
           <OutlineItem
@@ -108,6 +108,7 @@ import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';
 import type { StoreActivity } from '@/stores/activity';
+import type { ChangeEvent, UpdateEvent } from '@/lib/vue-dragggable';
 
 const currentRepositoryStore = useCurrentRepository();
 
@@ -161,6 +162,10 @@ const icon = computed(() => {
   if (!hasChildren.value) icon += '-outline';
   return icon;
 });
+
+const handleOutlineItemDrag = (event: ChangeEvent) => {
+  return currentRepositoryStore.handleOutlineItemDrag(event, props.activity.id);
+};
 </script>
 
 <style lang="scss" scoped>

@@ -6,6 +6,6 @@ export const useStorageService = () => {
 
   return {
     getUrl: (key: string) => storage.getUrl(repositoryStore.repositoryId, key),
-    upload: (file: any) => storage.upload(repositoryStore.repositoryId, file),
+    upload: (form: FormData) => storage.upload(repositoryStore.repositoryId, form),
   };
 };

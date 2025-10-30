@@ -38,7 +38,6 @@
 <script lang="ts" setup>
 import { cloneDeep, find, set } from 'lodash-es';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
-import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
@@ -63,9 +62,7 @@ const notify = useNotification();
 
 const isPublishing = ref(false);
 
-const repository = computed(
-  () => currentRepositoryStore.repository as Repository,
-);
+const repository = computed(() => currentRepositoryStore.repository!);
 const metadata = computed(() =>
   $schemaService.getRepositoryMetadata(repository.value),
 );
@@ -88,8 +85,9 @@ const updateKey = async (key: string, value: any) => {
 };
 
 const publish = async () => {
+  if (!repository.value) return;
   isPublishing.value = true;
-  await api.publishRepositoryMeta(repository.value?.id);
+  await api.publishRepositoryMeta(repository.value.id);
   isPublishing.value = false;
   notify('Info successfully published', { immediate: true });
 };

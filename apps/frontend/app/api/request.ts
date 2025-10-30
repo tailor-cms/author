@@ -1,8 +1,21 @@
 import axios, { Axios } from 'axios';
-import buildFullPath from 'axios/unsafe/core/buildFullPath';
 
-Axios.prototype.submitForm = function (url, fields, options) {
-  const action = buildFullPath(this.defaults.baseURL, url);
+const buildFullPath = (base: string, url: string): string =>
+  base.replace(/\/+$/, '') + '/' + url.replace(/^\/+/, '');
+
+declare module 'axios' {
+  interface Axios {
+    submitForm(url: string, fields: any, options?: any): Promise<void>;
+    base: AxiosInstance;
+  }
+}
+
+Axios.prototype.submitForm = function (
+  url: string,
+  fields: Record<string, any> = {},
+  options?: Record<string, any>,
+): Promise<void> {
+  const action = buildFullPath(config.baseURL, url);
   return Promise.resolve(submitForm(action, fields, options));
 };
 
@@ -23,18 +36,16 @@ Object.defineProperty(client, 'base', {
   },
 });
 
-const isAuthError = (err) => [401, 403].includes(err.response?.status);
+const isAuthError = (err: any) => [401, 403].includes(err.response?.status);
 
 client.interceptors.response.use(
   (res) => res,
   (err) => {
     if (isAuthError(err)) {
-      // eslint-disable-next-line no-undef
       const isAuthenticated = useCookie('is-authenticated');
-      isAuthenticated.value = false;
+      isAuthenticated.value = 'false';
       const authRoute = '/auth';
       if (window.location.pathname === authRoute) return;
-      // eslint-disable-next-line no-undef
       if (import.meta.server) return navigateTo(authRoute);
       return window.location.replace(authRoute);
     }
@@ -44,7 +55,11 @@ client.interceptors.response.use(
 
 export default client;
 
-function submitForm(action, fields = {}, options) {
+const submitForm = (
+  action: string,
+  fields: Record<string, any> = {},
+  options: Record<string, any> = {},
+) => {
   const form = document.createElement('form');
   Object.assign(form, { method: 'POST', target: 'blank', action }, options);
   Object.entries(fields).forEach(([name, attrs]) => {
@@ -55,4 +70,4 @@ function submitForm(action, fields = {}, options) {
   document.body.appendChild(form);
   form.submit();
   form.remove();
-}
+};

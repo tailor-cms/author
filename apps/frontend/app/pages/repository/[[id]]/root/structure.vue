@@ -21,8 +21,8 @@
             class="mt-5"
             group="activities"
             item-key="uid"
-            @update="(data) => reorder(data, rootActivities)"
-            @change="(e) => repositoryStore.handleOutlineItemDrag(e)"
+            @update="(data: UpdateEvent) => reorder(data, rootActivities)"
+            @change="repositoryStore.handleOutlineItemDrag"
           >
             <template #item="{ element, index }">
               <OutlineItem
@@ -76,6 +76,7 @@ import SearchResult from '@/components/repository/Outline/SearchResult.vue';
 import Sidebar from '@/components/repository/Sidebar/index.vue';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+import type { UpdateEvent } from '@/lib/vue-dragggable';
 
 definePageMeta({
   name: 'repository',
@@ -135,14 +136,14 @@ onMounted(() => {
   if (activityId) {
     repositoryStore.selectActivity(parseInt(activityId as string, 10));
   } else if (rootActivities.value.length) {
-    repositoryStore.selectActivity(rootActivities.value[0].id);
+    repositoryStore.selectActivity(rootActivities.value[0]!.id);
   } else {
     // If there are no activities
     return;
   }
   const isFirstActivitySelected =
     selectedActivity.value &&
-    rootActivities.value[0].id === selectedActivity.value.id;
+    rootActivities.value[0]!.id === selectedActivity.value.id;
   if (!isFirstActivitySelected) {
     scrollToActivity(selectedActivity.value as StoreActivity, 200);
   }

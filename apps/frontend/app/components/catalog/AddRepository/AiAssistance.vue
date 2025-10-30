@@ -118,10 +118,10 @@ const emit = defineEmits(['structure', 'aiAssistanceToggle']);
 
 const isAssistaceEnabled = ref(false);
 const isFetchingData = ref(false);
-const topicTagOptions = ref([]);
-const selectedTopicTags = ref([]);
-const styleTagOptions = ref([]);
-const selectedStyleTags = ref([]);
+const topicTagOptions = ref<string[]>([]);
+const selectedTopicTags = ref<number[]>([]);
+const styleTagOptions = ref<string[]>([]);
+const selectedStyleTags = ref<number[]>([]);
 const difficultyOptions: { [key: number]: AiTargetAudience } = {
   0: AiTargetAudience.Beginner,
   1: AiTargetAudience.Intermediate,
@@ -147,10 +147,10 @@ const createAiContext = (input: AiInput): AiContext => {
     throw new Error('Missing required properties for the AiContext');
   }
   const topicTags = selectedTopicTags.value.map(
-    (index) => topicTagOptions.value[index],
+    (index) => topicTagOptions.value[index] as string,
   );
   const styleTags = selectedStyleTags.value.map(
-    (index) => styleTagOptions.value[index],
+    (index) => styleTagOptions.value[index] as string,
   );
   return {
     repository: {

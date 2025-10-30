@@ -6,7 +6,7 @@ import { feed as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
 
-interface ActivityContext {
+export interface ActivityContext {
   sseId: string;
   repositoryId: number;
   activityId?: number;

@@ -110,7 +110,7 @@ const roles = computed<Role[]>(() =>
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   initialValues: {
-    email: [],
+    email: [] as string[],
     role: UserRole.USER,
   },
   validationSchema: computed(() =>
@@ -130,7 +130,7 @@ const onEmailValueChange = (val: string[]) =>
   (emailInput.value = val.filter((v: string) => EMAIL_PATTERN.test(v)));
 
 const onEmailInputFocusChange = (isFocused: boolean) => {
-  if (isFocused) return;
+  if (isFocused || !emailInputEl.value) return;
   const searchValue = emailInputEl.value.search;
   const isValidEmail = EMAIL_PATTERN.test(searchValue);
   const isEmailAlreadyAdded = emailInput.value.find(

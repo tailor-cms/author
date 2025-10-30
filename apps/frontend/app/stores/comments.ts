@@ -40,7 +40,7 @@ export const useCommentStore = defineStore('comments', () => {
   async function fetch(
     repositoryId: number,
     params: {
-      activityId?: number | null;
+      activityId?: number;
       contentElementId?: number | null;
     },
   ): Promise<Comment[]> {
@@ -99,10 +99,10 @@ export const useCommentStore = defineStore('comments', () => {
     $seen.value[entity][resolvedKey] = lastCommentAt;
   };
 
-  const updateResolvement = (repositoryId: number, data: any) => {
+  const updateResolvement = (repositoryId: number, comment: Comment) => {
     return api
-      .resolve(repositoryId, data)
-      .then(() => fetch(repositoryId, data));
+      .resolve(repositoryId, comment)
+      .then(() => fetch(repositoryId, comment));
   };
 
   const $subscribeToSSE = () => {

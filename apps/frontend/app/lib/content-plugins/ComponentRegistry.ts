@@ -3,18 +3,37 @@ import {
   getToolbarName,
   getSidebarName,
 } from '@tailor-cms/utils';
+import type { App } from 'vue';
 
 /**
  * Used to resolve component name that should be used for rendering.
  * If a templateId exists then use it. If not it tries to find which type to
  * use.
  */
-const getIdentifier = ({ templateId, type }) => templateId || type;
+const getIdentifier = (
+  { templateId, type }: { templateId?: string; type: string },
+) => templateId || type;
 
 export default class ComponentRegistry {
+  private app: any;
+  private _name: string;
+  private _type: string;
+  private _attrs: string[];
+  private _registry: any[];
+  private _getName: (type: string) => string;
+  private _getCondition: (type: string) => (it: any) => boolean;
+  private _validator: (element: any) => void;
+
   constructor(
-    app,
-    { name, elements, attrs, getName, getCondition, validator },
+    app: App<Element>,
+    { name, elements, attrs, getName, getCondition, validator }: {
+      name: string;
+      elements: any[];
+      attrs: string[];
+      getName: (type: string) => string;
+      getCondition: (type: string) => (it: any) => boolean;
+      validator?: (element: any) => void;
+    },
   ) {
     this.app = app;
     this._registry = [];
@@ -27,7 +46,7 @@ export default class ComponentRegistry {
     elements.forEach((element) => this.load(element));
   }
 
-  load(element) {
+  load(element: any) {
     const { app, _attrs: attrs, _registry: registry } = this;
     const position = registry.length;
     // this._validator(element);
@@ -55,7 +74,7 @@ export default class ComponentRegistry {
     return sortBy(cloneDeep(this._registry), 'position');
   }
 
-  get(type) {
+  get(type: string) {
     if (!type) return null;
     const res = find(this._registry, this._getCondition(type));
     return res && cloneDeep(res);

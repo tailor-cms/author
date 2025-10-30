@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { find, map } from 'lodash-es';
+import { find, map, some } from 'lodash-es';
 import { SCHEMAS } from '@tailor-cms/config';
 import { storeToRefs } from 'pinia';
 
@@ -158,16 +158,17 @@ const togglePinFilter = () => {
 
 const filters = computed(() => {
   const { SCHEMA, TAG } = repositoryFilterConfigs;
-  const filters = [{ ...TAG, values: tags.value }];
-  if (config.availableSchemas.length > 1) {
-    filters.push({ ...SCHEMA, values: SCHEMAS as any[] });
-  }
+  const hasSchemas = config.availableSchemas.length > 1;
+  const filters = [
+    { ...TAG, values: tags.value },
+    ...(hasSchemas ? [{ ...SCHEMA, values: SCHEMAS }] : []),
+  ];
   return map(filters, ({ type, values, ...config }) => {
-    values = map(values, (it) => {
-      const isSelected = !!find(queryParams.value.filter, { id: it.id, type });
+    const mappedValues = values.map((it) => {
+      const isSelected = some(queryParams.value.filter, { id: it.id, type });
       return { ...it, type, isSelected };
     });
-    return { type, values, ...config };
+    return { type, values: mappedValues, ...config };
   });
 });
 

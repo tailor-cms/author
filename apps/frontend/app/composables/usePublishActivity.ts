@@ -46,6 +46,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
       title: 'Publish content',
       message: getPublishMessage(activities),
       action: async () => {
+        if (!currentRepository.repositoryId) return;
         await api.publishRepositoryMeta(currentRepository.repositoryId);
         await publish(activities.filter((it) => !it.detached));
       },

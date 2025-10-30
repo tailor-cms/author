@@ -10,6 +10,7 @@ import {
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
 import { repository as repositoryApi } from '@/api';
+import type { ChangeEvent } from '~/lib/vue-dragggable';
 
 const { getOutlineLevels, getSchema } = schemaConfig;
 const { getWorkflow } = workflowConfig;
@@ -56,6 +57,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const repository = computed(() => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
   });
+
+  const userGroups = computed(() => repository.value?.userGroups ?? []);
 
   const schemaName = computed(() => {
     return repository.value && getSchema(repository.value.schema).name;
@@ -142,7 +145,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   // Used for drag & drop of outline activities
   const handleOutlineItemDrag = async (
-    context: any = {},
+    context: ChangeEvent = {},
     parentId: number | null = null,
   ) => {
     const { added } = context;
@@ -219,6 +222,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     repository,
     $users,
     users,
+    userGroups,
     outlineState,
     schemaName,
     taxonomy,
