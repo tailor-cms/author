@@ -22,7 +22,7 @@
           :elements="elements"
           :container="subcontainer"
           :is-disabled="disabled"
-          :content-element-config="contentElementConfig"
+          :content-element-config="config[subcontainer.type].contentElementConfig || contentElementConfig"
           @add:element="emit('add:element', $event)"
           @save:element="emit('save:element', $event)"
           @delete:element="emit('delete:element', $event)"

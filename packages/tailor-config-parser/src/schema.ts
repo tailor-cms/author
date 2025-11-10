@@ -53,6 +53,24 @@ const processElementConfig = (config: ElementConfig[]) => {
   }, [] as ContentElementCategory[]);
 };
 
+const processSubcontainerConfigs = (config: any) => {
+  if (!config) return undefined;
+  return reduce(
+    config,
+    (acc, subcontainer, key) => {
+      const nestedConfig = get(subcontainer, 'contentElementConfig');
+      acc[key] = {
+        ...subcontainer,
+        ...(nestedConfig && {
+          contentElementConfig: processElementConfig(nestedConfig),
+        }),
+      };
+      return acc;
+    },
+    {} as any,
+  );
+};
+
 export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   return {
     getSchemaId,
@@ -225,6 +243,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
         types,
         contentElementConfig = types || ceRegistry,
         embedElementConfig = DEFAULT_EMBED_ELEMENTS,
+        config,
         ...container
       } = find(schemaConfig, { type }) as ContentContainerConfig;
       if (types) {
@@ -233,10 +252,12 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
           schema config has been replaced with 'contentElementConfig'
         `);
       }
+
       return {
         ...container,
         contentElementConfig: processElementConfig(contentElementConfig),
         embedElementConfig: processElementConfig(embedElementConfig),
+        config: processSubcontainerConfigs(config),
       };
     });
   }
