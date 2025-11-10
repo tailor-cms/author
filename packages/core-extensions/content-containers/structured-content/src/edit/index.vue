@@ -55,12 +55,13 @@
       <VBtn
         v-for="subcontainerType in subcontainerTypes"
         :key="subcontainerType"
+        class="mr-3"
         color="teal-lighten-4"
         min-width="200"
         variant="tonal"
         @click="createSubcontainer(subcontainerType)"
       >
-        <div class="mr-2">
+        <div class="pr-2">
           <VIcon size="x-small">mdi-plus</VIcon>
           <VIcon size="small">{{ config[subcontainerType].icon }}</VIcon>
         </div>
