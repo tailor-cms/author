@@ -9,7 +9,7 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
-const SchemaId = 'DEMO_SCHEMA';
+const SchemaId = 'PT_SCHEMA';
 
 enum ActivityType {
   // Outline
@@ -192,7 +192,7 @@ const LessonConfig: ActivityConfig = {
 export const SCHEMA: Schema = {
   id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
-  name: 'Demo',
+  name: 'Partner training course',
   description: 'A classic course structure featuring modules and pages.',
   meta: [
     {
