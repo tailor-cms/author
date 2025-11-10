@@ -69,7 +69,6 @@ const StructuredContentContainer: ContentContainerConfig = {
     [ActivityType.VideoUnit]: {
       label: 'Video unit',
       icon: 'mdi-video-outline',
-      // TODO: Add thumbnail
       meta: () => unitMeta,
       contentElementConfig: [
         {

@@ -22,7 +22,7 @@
           :elements="elements"
           :container="subcontainer"
           :is-disabled="disabled"
-          :content-element-config="config[subcontainer.type].contentElementConfig || contentElementConfig"
+          :content-element-config="getContentElementConfig(subcontainer.type)"
           @add:element="emit('add:element', $event)"
           @save:element="emit('save:element', $event)"
           @delete:element="emit('delete:element', $event)"
@@ -156,5 +156,12 @@ const createSubcontainer = (type: string) => {
   const position = nextPosition.value;
   const data = config[type]?.initMeta();
   emit('add:subcontainer', { type, parentId, position, data });
+};
+
+const getContentElementConfig = (subcontainerType: string) => {
+  return (
+    props.config[subcontainerType]?.contentElementConfig ||
+    props.contentElementConfig
+  );
 };
 </script>
