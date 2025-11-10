@@ -14,10 +14,108 @@ const SchemaId = 'DEMO_SCHEMA';
 enum ActivityType {
   // Outline
   Module = 'MODULE',
-  Page = 'PAGE',
+  Lesson = 'LESSON',
   // Content containers
+  LessonContent = 'LESSON_CONTENT',
   Section = 'SECTION',
+  VideoUnit = 'VIDEO_UNIT',
+  PodcastUnit = 'PODCAST_UNIT',
+  Takeaways = 'TAKEAWAYS',
 }
+
+const sectionMeta = [
+  {
+    key: 'title',
+    type: MetaInputType.TextField,
+    label: 'Title',
+    placeholder: 'Title',
+  },
+  {
+    key: 'tags',
+    type: MetaInputType.Combobox,
+    label: 'Tags',
+    placeholder: 'Tags',
+    multiple: true,
+    options: [],
+  },
+];
+
+const unitMeta = [
+  ...sectionMeta,
+  {
+    key: 'thumbnailImage',
+    type: MetaInputType.File,
+    label: 'Thumbnail Image',
+    placeholder: 'Click to upload a thumbnail image',
+    icon: 'mdi-image',
+    validate: {
+      ext: ['jpg', 'jpeg', 'png'],
+    },
+    hideOnCreate: true,
+    showPreview: true,
+  },
+];
+
+const StructuredContentContainer: ContentContainerConfig = {
+  templateId: ContentContainerType.StructuredContent,
+  type: ActivityType.LessonContent,
+  label: 'Lesson content',
+  displayHeading: true,
+  config: {
+    [ActivityType.Section]: {
+      label: 'Section',
+      meta: () => sectionMeta,
+    },
+    [ActivityType.VideoUnit]: {
+      label: 'Video unit',
+      icon: 'mdi-video-outline',
+      // TODO: Add thumbnail
+      meta: () => unitMeta,
+      contentElementConfig: [
+        {
+          name: 'Content Elements',
+          items: [
+            ContentElementType.MuxVideo,
+            ContentElementType.TiptapHtml,
+            ContentElementType.Image,
+          ],
+        },
+      ],
+    },
+    [ActivityType.PodcastUnit]: {
+      label: 'Podcast unit',
+      icon: 'mdi-speaker-wireless',
+      meta: () => unitMeta,
+      contentElementConfig: [
+        {
+          name: 'Content Elements',
+          items: [
+            ContentElementType.TiptapHtml,
+            ContentElementType.Embed,
+            ContentElementType.Audio,
+            ContentElementType.Image,
+          ],
+        },
+      ],
+    },
+  },
+};
+
+const TakeawaysConfig: ContentContainerConfig = {
+  type: ActivityType.Takeaways,
+  templateId: ContentContainerType.Default,
+  label: 'Takeaways',
+  multiple: false,
+  displayHeading: true,
+  config: { disableAi: true },
+  required: true,
+  contentElementConfig: [
+    {
+      name: 'Content Elements',
+      items: [ContentElementType.File],
+    },
+  ],
+};
 
 const ModuleConfig: ActivityConfig = {
   type: ActivityType.Module,
@@ -25,7 +123,7 @@ const ModuleConfig: ActivityConfig = {
   isTrackedInWorkflow: true,
   label: 'Module',
   color: '#5187C7',
-  subLevels: [ActivityType.Page],
+  subLevels: [ActivityType.Lesson],
   ai: {
     definition: `
       Modules are a way to organize knowledge into chunks that are easier to
@@ -33,22 +131,22 @@ const ModuleConfig: ActivityConfig = {
   },
   meta: [
     {
-      key: 'posterImage',
+      key: 'description',
+      type: MetaInputType.Textarea,
+      label: 'Description',
+      placeholder: 'Enter module description',
+    },
+    {
+      key: 'thumbnailImage',
       type: MetaInputType.File,
-      label: 'Poster Image',
-      placeholder: 'Click to upload a poster image',
+      label: 'Thumbnail Image',
+      placeholder: 'Click to upload a thumbnail image',
       icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],
       },
       hideOnCreate: true,
       showPreview: true,
-    },
-    {
-      key: 'description',
-      type: MetaInputType.Textarea,
-      label: 'Description',
-      placeholder: 'Enter module description',
     },
     {
       key: 'estimatedTime',
@@ -63,16 +161,16 @@ const ModuleConfig: ActivityConfig = {
   ],
 };
 
-const PageConfig: ActivityConfig = {
-  type: ActivityType.Page,
+const LessonConfig: ActivityConfig = {
+  type: ActivityType.Lesson,
   isTrackedInWorkflow: true,
-  label: 'Page',
+  label: 'Lesson',
   ai: {
     definition: `
-      Pages contain the actual content that the user will interact with.`,
+      Lessons contain the actual content that the user will interact with.`,
   },
   color: '#08A9AD',
-  contentContainers: [ActivityType.Section],
+  contentContainers: [ActivityType.LessonContent, ActivityType.Takeaways],
   meta: [
     {
       key: 'description',
@@ -86,82 +184,9 @@ const PageConfig: ActivityConfig = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the page',
       inputType: 'number',
-      validate: {
-        min: 1,
-      },
+      validate: { min: 1 },
     },
   ],
-};
-
-const SectionConfig: ContentContainerConfig = {
-  type: ActivityType.Section,
-  templateId: ContentContainerType.Default,
-  label: 'Section',
-  multiple: true,
-  embedElementConfig: [
-    ContentElementType.TiptapHtml,
-    ContentElementType.Image,
-    ContentElementType.Video,
-  ],
-  contentElementConfig: [
-    {
-      name: 'Content Elements',
-      items: [
-        ContentElementType.TiptapHtml,
-        ContentElementType.HtmlRaw,
-        ContentElementType.Image,
-        ContentElementType.Video,
-        ContentElementType.Embed,
-        ContentElementType.Audio,
-        ContentElementType.Break,
-        ContentElementType.Pdf,
-        ContentElementType.Accordion,
-        ContentElementType.Modal,
-        ContentElementType.Carousel,
-        ContentElementType.MuxVideo,
-      ],
-    },
-    {
-      name: 'Assessments',
-      config: { isGradable: true },
-      items: [
-        ContentElementType.MultipleChoice,
-        ContentElementType.SingleChoice,
-        ContentElementType.TextResponse,
-        ContentElementType.NumericalResponse,
-        ContentElementType.TrueFalse,
-        ContentElementType.MatchingQuestion,
-        ContentElementType.FillBlank,
-        ContentElementType.DragDrop,
-      ],
-    },
-    {
-      name: 'Nongraded questions',
-      config: { isGradable: false },
-      items: [
-        ContentElementType.MultipleChoice,
-        ContentElementType.SingleChoice,
-        ContentElementType.TextResponse,
-        ContentElementType.TrueFalse,
-        ContentElementType.FillBlank,
-      ],
-    },
-  ],
-  ai: {
-    definition: 'Sections are a way to organize content within a Page.',
-    outputRules: {
-      prompt: `
-        - Split the content contextually to couple of { "content": "" } blocks
-          based on the context. Headings might be a good place to split.
-          Dont include more than 3 headings.
-        - Use at least 1000 words and don't exceed 2000 words.
-        - Format the content as a HTML with suitable tags and headings.
-        You are trying to teach the audience, so make sure the content is easy to
-        understand, has a friendly tone and is engaging to the reader.
-        Make sure to include the latest relevant information on the topic.`,
-      useDalle: true,
-    },
-  },
 };
 
 export const SCHEMA: Schema = {
@@ -171,10 +196,10 @@ export const SCHEMA: Schema = {
   description: 'A classic course structure featuring modules and pages.',
   meta: [
     {
-      key: 'posterImage',
+      key: 'thumbnailImage',
       type: MetaInputType.File,
-      label: 'Poster Image',
-      placeholder: 'Click to upload a poster image',
+      label: 'Thumbnail Image',
+      placeholder: 'Click to upload a thumbnail image',
       icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],
@@ -193,6 +218,6 @@ export const SCHEMA: Schema = {
       },
     },
   ],
-  structure: [ModuleConfig, PageConfig],
-  contentContainers: [SectionConfig],
+  structure: [ModuleConfig, LessonConfig],
+  contentContainers: [StructuredContentContainer, TakeawaysConfig],
 };
