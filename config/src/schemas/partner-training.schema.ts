@@ -192,7 +192,7 @@ export const SCHEMA: Schema = {
   id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Partner training course',
-  description: 'A classic course structure featuring modules and pages.',
+  description: 'A classic course structure featuring modules and lessons.',
   meta: [
     {
       key: 'thumbnailImage',
@@ -215,6 +215,12 @@ export const SCHEMA: Schema = {
       validate: {
         min: 1,
       },
+    },
+    {
+      key: 'author',
+      type: MetaInputType.TextField,
+      label: 'Author',
+      placeholder: 'Enter course author',
     },
   ],
   structure: [ModuleConfig, LessonConfig],
