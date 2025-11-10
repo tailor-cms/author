@@ -12,11 +12,13 @@ import { SCHEMA as KnowledgeBase } from './schemas/knowledge-base.schema';
 import { SCHEMA as QASchema } from './schemas/q&a.schema';
 import { SCHEMA as HeasSchema } from './schemas/heas.schema';
 import { SCHEMA as TestSchema } from './schemas/test.schema';
+import { SCHEMA as PartnerTrainingSchema } from './schemas/partner-training.schema';
 
 export const WORKFLOWS = [DefaultWorkflow];
 export const SCHEMAS = processSchemas([
   CourseSchema,
   HeasSchema,
+  PartnerTrainingSchema,
   FeedSchema,
   KnowledgeBase,
   QASchema,
