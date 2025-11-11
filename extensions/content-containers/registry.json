@@ -6,7 +6,7 @@
   },
   {
     "name": "@tailor-cms/tcc-structured-content",
-    "clientPackage": "@tailor-cms/tcc-structured-content",
+    "clientPackage": "@tailor-cms/tcc-structured-content-edit",
     "serverPackage": "@tailor-cms/tcc-structured-content-server"
   },
   {

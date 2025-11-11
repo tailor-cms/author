@@ -564,7 +564,7 @@ importers:
       '@tailor-cms/tcc-page':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/page
-      '@tailor-cms/tcc-structured-content':
+      '@tailor-cms/tcc-structured-content-edit':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/structured-content
       '@tailor-cms/tcc-structured-content-server':
@@ -998,9 +998,6 @@ importers:
 
   packages/core-extensions/content-containers/structured-content-server:
     dependencies:
-      bluebird:
-        specifier: ^3.7.2
-        version: 3.7.2
       lodash-es:
         specifier: '*'
         version: 4.17.21
