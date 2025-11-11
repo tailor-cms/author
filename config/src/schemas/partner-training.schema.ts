@@ -21,6 +21,9 @@ enum ActivityType {
   VideoUnit = 'VIDEO_UNIT',
   PodcastUnit = 'PODCAST_UNIT',
   Takeaways = 'TAKEAWAYS',
+  RelatedContent = 'RELATED_CONTENT',
+  RelatedArticle = 'RELATED_ARTICLE',
+  RelatedWebinar = 'RELATED_WEBINAR',
 }
 
 const sectionMeta = [
@@ -48,15 +51,12 @@ const unitMeta = [
     label: 'Thumbnail Image',
     placeholder: 'Click to upload a thumbnail image',
     icon: 'mdi-image',
-    validate: {
-      ext: ['jpg', 'jpeg', 'png'],
-    },
-    hideOnCreate: true,
+    ext: ['jpg', 'jpeg', 'png'],
     showPreview: true,
   },
 ];
 
-const StructuredContentContainer: ContentContainerConfig = {
+const LessonContentContainer: ContentContainerConfig = {
   templateId: ContentContainerType.StructuredContent,
   type: ActivityType.LessonContent,
   label: 'Lesson content',
@@ -64,7 +64,14 @@ const StructuredContentContainer: ContentContainerConfig = {
   config: {
     [ActivityType.Section]: {
       label: 'Section',
-      meta: () => sectionMeta,
+      meta: () => [
+        sectionMeta,
+        {
+          type: MetaInputType.Switch,
+          key: 'accentuate',
+          label: 'Accentuate section',
+        },
+      ],
     },
     [ActivityType.VideoUnit]: {
       label: 'Video unit',
@@ -96,6 +103,65 @@ const StructuredContentContainer: ContentContainerConfig = {
           ],
         },
       ],
+    },
+  },
+};
+
+const relatedContentMeta = [
+  {
+    key: 'title',
+    type: MetaInputType.TextField,
+    label: 'Title',
+    placeholder: 'Title',
+  },
+  {
+    key: 'description',
+    type: MetaInputType.Textarea,
+    label: 'Description',
+    placeholder: 'Description',
+  },
+  {
+    key: 'thumbnailImage',
+    type: MetaInputType.File,
+    label: 'Thumbnail Image',
+    placeholder: 'Click to upload a thumbnail image',
+    icon: 'mdi-image',
+    ext: ['jpg', 'jpeg', 'png'],
+    showPreview: true,
+  },
+  {
+    key: 'url',
+    type: MetaInputType.TextField,
+    label: 'Url',
+    placeholder: 'Url',
+  },
+  {
+    key: 'tags',
+    type: MetaInputType.Combobox,
+    label: 'Tags',
+    placeholder: 'Tags',
+    multiple: true,
+    options: [],
+  },
+];
+
+const RelatedContentContainer: ContentContainerConfig = {
+  templateId: ContentContainerType.StructuredContent,
+  type: ActivityType.RelatedContent,
+  label: 'Related external content',
+  displayHeading: true,
+  config: {
+    [ActivityType.RelatedArticle]: {
+      label: 'Article',
+      icon: 'mdi-post',
+      meta: () => relatedContentMeta,
+      disableContentElementList: true,
+    },
+    [ActivityType.RelatedWebinar]: {
+      label: 'Webinar',
+      icon: 'mdi-laptop-account',
+      meta: () => relatedContentMeta,
+      disableContentElementList: true,
     },
   },
 };
@@ -169,7 +235,11 @@ const LessonConfig: ActivityConfig = {
       Lessons contain the actual content that the user will interact with.`,
   },
   color: '#08A9AD',
-  contentContainers: [ActivityType.LessonContent, ActivityType.Takeaways],
+  contentContainers: [
+    ActivityType.LessonContent,
+    ActivityType.RelatedContent,
+    ActivityType.Takeaways,
+  ],
   meta: [
     {
       key: 'description',
@@ -200,9 +270,7 @@ export const SCHEMA: Schema = {
       label: 'Thumbnail Image',
       placeholder: 'Click to upload a thumbnail image',
       icon: 'mdi-image',
-      validate: {
-        ext: ['jpg', 'jpeg', 'png'],
-      },
+      ext: ['jpg', 'jpeg', 'png'],
       hideOnCreate: true,
       showPreview: true,
     },
@@ -224,5 +292,9 @@ export const SCHEMA: Schema = {
     },
   ],
   structure: [ModuleConfig, LessonConfig],
-  contentContainers: [StructuredContentContainer, TakeawaysConfig],
+  contentContainers: [
+    LessonContentContainer,
+    RelatedContentContainer,
+    TakeawaysConfig,
+  ],
 };

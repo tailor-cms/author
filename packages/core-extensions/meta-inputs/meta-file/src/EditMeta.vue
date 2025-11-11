@@ -33,6 +33,9 @@ const options = computed(() => {
     id: props.meta.key,
     fileKey: get(props.meta.value, 'key', ''),
     fileName: get(props.meta.value, 'name', ''),
+    // Allowed file extensions (e.g. ['jpg', 'png'])
+    // If not provided, will use validate.ext
+    ext: props.meta.ext,
     validate: props.meta.validate,
     label: props.meta.label,
     icon: props.meta.icon,
