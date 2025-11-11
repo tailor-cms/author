@@ -64,7 +64,14 @@ const LessonContentContainer: ContentContainerConfig = {
   config: {
     [ActivityType.Section]: {
       label: 'Section',
-      meta: () => sectionMeta,
+      meta: () => [
+        sectionMeta,
+        {
+          type: MetaInputType.Switch,
+          key: 'accentuate',
+          label: 'Accentuate section',
+        },
+      ],
     },
     [ActivityType.VideoUnit]: {
       label: 'Video unit',
