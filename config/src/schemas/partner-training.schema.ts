@@ -65,7 +65,7 @@ const LessonContentContainer: ContentContainerConfig = {
     [ActivityType.Section]: {
       label: 'Section',
       meta: () => [
-        sectionMeta,
+        ...sectionMeta,
         {
           type: MetaInputType.Switch,
           key: 'accentuate',
