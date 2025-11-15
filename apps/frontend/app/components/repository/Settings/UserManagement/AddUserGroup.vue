@@ -4,7 +4,7 @@
       <VBtn
         v-bind="activatorProps"
         aria-label="Add user group"
-        class="add-user"
+        class="add-user mt-6"
         color="primary-darken-2"
         prepend-icon="mdi-plus"
         size="small"
