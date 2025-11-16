@@ -88,6 +88,9 @@ interface Props {
   id: string;
   fileKey: string;
   fileName: string;
+  // Allowed file extensions (e.g. ['jpg', 'png'])
+  // If not provided, will use validate.ext
+  ext?: string[];
   validate: Record<string, any>;
   label: string;
   placeholder: string;
@@ -117,7 +120,7 @@ const isLoading = ref(false);
 const publicUrl = ref('');
 
 const acceptedFileTypes = computed(() => {
-  const ext = props.validate.ext;
+  const ext = props.ext || props.validate?.ext;
   return ext?.length ? `.${ext.join(',.')}` : '';
 });
 

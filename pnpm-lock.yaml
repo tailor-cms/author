@@ -564,9 +564,12 @@ importers:
       '@tailor-cms/tcc-page':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/page
-      '@tailor-cms/tcc-structured-content':
+      '@tailor-cms/tcc-structured-content-edit':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/structured-content
+      '@tailor-cms/tcc-structured-content-server':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/structured-content-server
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -989,6 +992,16 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../../../tailor-interfaces
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
+
+  packages/core-extensions/content-containers/structured-content-server:
+    dependencies:
+      lodash-es:
+        specifier: '*'
+        version: 4.17.21
+    devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
