@@ -1,4 +1,6 @@
+import { consumer } from '#config';
 import { createLogger } from '#logger';
+import oauth2 from '../oAuth2Provider.js';
 import Repository from '#app/repository/repository.model.js';
 import storage from '#app/repository/storage.js';
 import User from '#app/user/user.model.js';
@@ -117,8 +119,31 @@ class PublishAccessService {
 
     // Save to S3
     const buffer = Buffer.from(JSON.stringify(data, null, 2), 'utf8');
-    await storage.saveFile(getAccessFilePath(repositoryId), buffer);
+    const filePath = getAccessFilePath(repositoryId);
+    await storage.saveFile(filePath, buffer);
     logger.info(`Saved access for repository ${repositoryId}`);
+    // Notify consumer webhook if configured
+    await this.notifyConsumer(data);
+  }
+
+  /**
+   * Notify consumer webhook of access update
+   * Sends notification to CONSUMER_ACCESS_UPDATE_WEBHOOK with the full
+   * access data including users and groups
+   * @param {Object} data - Access data object
+   */
+  async notifyConsumer(data) {
+    if (!oauth2.isConfigured || !consumer.accessUpdateWebhookUrl) {
+      logger.debug('Access update webhook not configured');
+      return;
+    }
+    logger.info(`Notifying consumer webhook for repository ${data.id}`);
+    oauth2
+      .send(consumer.accessUpdateWebhookUrl, data)
+      .then(() => logger.info(`Successfully notified consumer for ${data.id}`))
+      .catch((err) =>
+        logger.error(`Failed to notify consumer for ${data.id}`, err),
+      );
   }
 
   /**

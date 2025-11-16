@@ -4,6 +4,7 @@ import type * as studion from '@studion/infra-code-blocks';
 
 const aiConfig = new pulumi.Config('ai');
 const awsConfig = new pulumi.Config('aws');
+const consumerConfig = new pulumi.Config('consumer');
 const dnsConfig = new pulumi.Config('dns');
 const emailConfig = new pulumi.Config('email');
 const oidcConfg = new pulumi.Config('oidc');
@@ -63,6 +64,7 @@ export const getEnvVariables = (db: studion.Database): any => [
   },
   ...getAiConfig(),
   ...getOidcConfig(),
+  ...getConsumerConfig(),
 ];
 
 export const getSecrets = (db: studion.Database) => {
@@ -82,6 +84,8 @@ export const getSecrets = (db: studion.Database) => {
   if (statsigConfig.getBoolean('enabled')) keys.push('NUXT_PUBLIC_STATSIG_KEY');
   if (oidcConfg.getBoolean('enabled'))
     keys.push('OIDC_CLIENT_ID', 'OIDC_CLIENT_SECRET', 'OIDC_SESSION_SECRET');
+  if (consumerConfig.getBoolean('enabled'))
+    keys.push('CONSUMER_CLIENT_ID', 'CONSUMER_CLIENT_SECRET');
   return [
     ...keys.map((name) => ({ name, valueFrom: getSsmParam(name) })),
     { name: 'DATABASE_PASSWORD', valueFrom: db.password.secret.arn },
@@ -132,5 +136,31 @@ function getAiConfig() {
   return [
     { name: 'NUXT_PUBLIC_AI_UI_ENABLED', value: 'true' },
     { name: 'AI_MODEL_ID', value: aiConfig.get('modelId') },
+  ];
+}
+
+function getConsumerConfig() {
+  if (!consumerConfig.getBoolean('enabled')) return [];
+  return [
+    {
+      name: 'CONSUMER_CLIENT_TOKEN_HOST',
+      value: consumerConfig.require('tokenHost'),
+    },
+    {
+      name: 'CONSUMER_CLIENT_TOKEN_PATH',
+      value: consumerConfig.require('tokenPath'),
+    },
+    {
+      name: 'CONSUMER_PUBLISH_WEBHOOK',
+      value: consumerConfig.get('publishWebhook'),
+    },
+    {
+      name: 'CONSUMER_PUBLISH_WEBHOOK_THROTTLE',
+      value: consumerConfig.get('publishWebhookThrottle') || '0',
+    },
+    {
+      name: 'CONSUMER_ACCESS_UPDATE_WEBHOOK',
+      value: consumerConfig.get('accessUpdateWebhook'),
+    },
   ];
 }

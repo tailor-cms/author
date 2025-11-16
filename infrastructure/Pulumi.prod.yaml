@@ -24,3 +24,9 @@ config:
   oidc:postLogoutUriKey: ""
   schema:availableSchemas: ""
   statsig:enabled: "true"
+  consumer:enabled: "true"
+  consumer:tokenHost: https://lx.tailor-cms.com
+  consumer:tokenPath: /api/oauth/token
+  consumer:publishWebhook: https://lx.tailor-cms.com/api/content/webhook/publish
+  consumer:publishWebhookThrottle: "1000"
+  consumer:accessUpdateWebhook: https://lx.tailor-cms.com/api/content/webhook/access
