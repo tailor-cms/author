@@ -9,7 +9,8 @@ import UserGroupMember from '#app/user-group/userGroupMember.model.js';
 
 const logger = createLogger('publish:access');
 
-const getAccessFilePath = (repositoryId) => `${repositoryId}/access.json`;
+const getAccessFilePath = (repositoryId) =>
+  `repository/${repositoryId}/access.json`;
 
 class PublishAccessService {
   constructor() {
@@ -23,7 +24,9 @@ class PublishAccessService {
    * @param {number} repositoryId - Repository ID to update
    */
   scheduleUpdate(repositoryId) {
+    logger.debug(`Scheduling access update for repository ${repositoryId}`);
     if (this.debounceTimers.has(repositoryId)) {
+      logger.debug(`Clearing existing timer for repository ${repositoryId}`);
       clearTimeout(this.debounceTimers.get(repositoryId));
     }
     // Schedule new save
@@ -31,11 +34,15 @@ class PublishAccessService {
       try {
         await this.save(repositoryId);
         this.debounceTimers.delete(repositoryId);
+        logger.info(`Successfully completed save for ${repositoryId}`);
       } catch (err) {
-        logger.error(`Save failed for repo ${repositoryId}:`, err);
+        const msg = `Failed to save access data for repository ${repositoryId}`;
+        logger.error({ err, repositoryId }, msg, err.message);
+        logger.error(`Error stack:`, err.stack);
       }
     }, this.debounceDelay);
     this.debounceTimers.set(repositoryId, timer);
+    logger.debug(`Timer set for ${repositoryId} delay ${this.debounceDelay}ms`);
   }
 
   /**
@@ -46,7 +53,7 @@ class PublishAccessService {
    * @param {number} repositoryId - Repository ID to save
    */
   async save(repositoryId) {
-    logger.info(`Saving access for repository ${repositoryId}`);
+    logger.info(`Starting save for repository ${repositoryId}`);
     const repository = await Repository.findByPk(repositoryId, {
       include: [
         {
@@ -55,9 +62,8 @@ class PublishAccessService {
           attributes: ['id', 'email', 'firstName', 'lastName'],
         },
         {
-          as: 'groups',
           model: UserGroup,
-          attributes: ['id', 'uid', 'name'],
+          attributes: ['id', 'name', 'logoUrl'],
           include: [
             {
               model: User,
@@ -72,56 +78,52 @@ class PublishAccessService {
         },
       ],
     });
+
     if (!repository) {
       logger.warn(`Repository ${repositoryId} not found`);
       return;
     }
 
-    const usersMap = new Map();
-    repository.users?.forEach((user) => {
-      const key = `${user.id}-direct`;
-      usersMap.set(key, {
-        id: user.id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
+    const extractUserFields = (user) => ({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    });
+
+    const users =
+      repository.users?.map((user) => ({
+        ...extractUserFields(user),
         role: user.repositoryUser?.role || 'AUTHOR',
         assignedAt: user.repositoryUser?.createdAt,
-      });
-    });
-    // Add tenant members (users from associated user groups)
-    repository.groups?.forEach((group) => {
-      group.users?.forEach((user) => {
-        const key = `${user.id}-${group.id}`;
-        usersMap.set(key, {
-          id: user.id,
-          groupId: group.id,
-          role: user.userGroupMember?.role || 'USER',
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        });
-      });
-    });
-    // Serialize access data
+      })) || [];
+
+    const groups =
+      repository.userGroups?.map((group) => ({
+        id: group.id,
+        name: group.name,
+        logoUrl: group.logoUrl,
+        members:
+          group.users?.map((user) => ({
+            ...extractUserFields(user),
+            role: user.userGroupMember?.role || 'USER',
+          })) || [],
+      })) || [];
+
+    logger.info(`Processed ${users.length} users, ${groups.length} groups`);
+
     const data = {
       id: repository.id,
       uid: repository.uid,
-      users: Array.from(usersMap.values()),
-      groups:
-        repository.userGroups?.map((group) => ({
-          id: group.id,
-          name: group.name,
-          logoUrl: group.logoUrl,
-        })) || [],
+      users,
+      groups,
       updatedAt: new Date().toISOString(),
     };
 
-    // Save to S3
     const buffer = Buffer.from(JSON.stringify(data, null, 2), 'utf8');
-    const filePath = getAccessFilePath(repositoryId);
-    await storage.saveFile(filePath, buffer);
-    logger.info(`Saved access for repository ${repositoryId}`);
+    await storage.saveFile(getAccessFilePath(repositoryId), buffer);
+    logger.info(`Saved access file for repository ${repositoryId}`);
+
     // Notify consumer webhook if configured
     await this.notifyConsumer(data);
   }
@@ -134,7 +136,7 @@ class PublishAccessService {
    */
   async notifyConsumer(data) {
     if (!oauth2.isConfigured || !consumer.accessUpdateWebhookUrl) {
-      logger.debug('Access update webhook not configured');
+      logger.debug('Access update webhook not configured, skipping...');
       return;
     }
     logger.info(`Notifying consumer webhook for repository ${data.id}`);
@@ -151,8 +153,9 @@ class PublishAccessService {
    * @param {number} repositoryId - Repository ID to delete access for
    */
   async delete(repositoryId) {
+    logger.info(`Deleting access file for repository ${repositoryId}`);
     await storage.deleteFile(getAccessFilePath(repositoryId));
-    logger.info(`Deleted access for repository ${repositoryId}`);
+    logger.info(`Successfully deleted access file for ${repositoryId}`);
   }
 }
 
