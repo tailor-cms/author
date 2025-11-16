@@ -1,7 +1,7 @@
 import forEach from 'lodash/forEach.js';
 import publishAccessService from '#shared/publishing/publish.access.service.js';
 
-function add(RepositoryUserGroup, Hooks, Models) {
+function add(RepositoryUserGroup, Hooks) {
   const hooks = {
     [Hooks.afterCreate]: [scheduleAccessUpdate],
     [Hooks.afterDestroy]: [scheduleAccessUpdate],
