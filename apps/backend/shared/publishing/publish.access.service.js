@@ -1,6 +1,5 @@
 import { createLogger } from '#logger';
 import Repository from '#app/repository/repository.model.js';
-import sse from '#shared/sse/index.js';
 import storage from '#app/repository/storage.js';
 import User from '#app/user/user.model.js';
 import UserGroup from '#app/user-group/userGroup.model.js';
