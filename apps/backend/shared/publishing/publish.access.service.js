@@ -1,8 +1,11 @@
 import { createLogger } from '#logger';
-import db from '#shared/database/index.js';
+import Repository from '#app/repository/repository.model.js';
+import sse from '#shared/sse/index.js';
 import storage from '#app/repository/storage.js';
+import User from '#app/user/user.model.js';
+import UserGroup from '#app/user-group/userGroup.model.js';
+import UserGroupMember from '#app/user-group/userGroupMember.model.js';
 
-const { Repository, User, UserGroup, UserGroupMember } = db;
 const logger = createLogger('publish:access');
 
 const getAccessFilePath = (repositoryId) => `${repositoryId}/access.json`;
