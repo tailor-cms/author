@@ -61,7 +61,14 @@ async function upsertUser({ userGroup, body }, res) {
   for (const email of emails) {
     let user = await User.findOne({ where: { email } });
     if (!user) user = await User.inviteOrUpdate({ email });
-    await userGroup.addUser(user, { through: { role } });
+    const [member, created] = await UserGroupMember.findOrCreate({
+      where: { userId: user.id, groupId: userGroup.id },
+      defaults: { userId: user.id, groupId: userGroup.id, role },
+    });
+    // Update role if member already exists
+    if (!created && member.role !== role) {
+      await member.update({ role });
+    }
   }
   return res.sendStatus(StatusCodes.NO_CONTENT);
 }
@@ -69,7 +76,10 @@ async function upsertUser({ userGroup, body }, res) {
 async function removeUser({ params: { userId }, userGroup }, res) {
   const user = await User.findByPk(userId);
   if (!user) return createError(StatusCodes.NOT_FOUND, 'User not found');
-  await userGroup.removeUser(userId);
+  await UserGroupMember.destroy({
+    where: { userId, groupId: userGroup.id },
+    individualHooks: true,
+  });
   return res.sendStatus(StatusCodes.NO_CONTENT);
 }
 
