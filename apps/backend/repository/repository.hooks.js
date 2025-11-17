@@ -21,11 +21,11 @@ function add(Repository, Hooks) {
   }
 
   function scheduleAccessUpdate(_hookType, instance) {
-    publishAccessService.scheduleUpdate(instance.id);
+    return publishAccessService.scheduleUpdate(instance.id);
   }
 
-  async function deleteAccessFile(_hookType, instance) {
-    await publishAccessService.delete(instance.id);
+  function deleteAccessFile(_hookType, instance) {
+    return publishAccessService.delete(instance.id);
   }
 }
 

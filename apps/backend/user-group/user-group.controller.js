@@ -41,7 +41,11 @@ async function update({ userGroup, body }, res) {
 async function remove({ params: { id } }, res) {
   const transaction = await db.sequelize.transaction();
   await UserGroupMember.destroy({ where: { groupId: id }, transaction });
-  await RepositoryUserGroup.destroy({ where: { groupId: id }, transaction });
+  await RepositoryUserGroup.destroy({
+    where: { groupId: id },
+    individualHooks: true,
+    transaction,
+  });
   await UserGroup.destroy({ where: { id }, transaction });
   await transaction.commit();
   return res.sendStatus(StatusCodes.NO_CONTENT);

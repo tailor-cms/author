@@ -9,13 +9,23 @@ import UserGroupMember from '#app/user-group/userGroupMember.model.js';
 
 const logger = createLogger('publish:access');
 
+const DEBOUNCE_DELAY_MS = 2000;
+const DEFAULT_REPOSITORY_ROLE = 'AUTHOR';
+const DEFAULT_GROUP_ROLE = 'USER';
+
 const getAccessFilePath = (repositoryId) =>
   `repository/${repositoryId}/access.json`;
+
+const extractUserFields = (user) => ({
+  id: user.id,
+  email: user.email,
+  firstName: user.firstName,
+  lastName: user.lastName,
+});
 
 class PublishAccessService {
   constructor() {
     this.debounceTimers = new Map();
-    this.debounceDelay = 2000;
   }
 
   /**
@@ -24,37 +34,42 @@ class PublishAccessService {
    * @param {number} repositoryId - Repository ID to update
    */
   scheduleUpdate(repositoryId) {
-    logger.debug(`Scheduling access update for repository ${repositoryId}`);
     if (this.debounceTimers.has(repositoryId)) {
-      logger.debug(`Clearing existing timer for repository ${repositoryId}`);
       clearTimeout(this.debounceTimers.get(repositoryId));
     }
-    // Schedule new save
+
     const timer = setTimeout(async () => {
       try {
         await this.save(repositoryId);
         this.debounceTimers.delete(repositoryId);
-        logger.info(`Successfully completed save for ${repositoryId}`);
+        logger.info(`Saved access file for repository ${repositoryId}`);
       } catch (err) {
-        const msg = `Failed to save access data for repository ${repositoryId}`;
-        logger.error({ err, repositoryId }, msg, err.message);
-        logger.error(`Error stack:`, err.stack);
+        logger.error({ err, repositoryId }, `Failed to save access file`);
       }
-    }, this.debounceDelay);
+    }, DEBOUNCE_DELAY_MS);
+
     this.debounceTimers.set(repositoryId, timer);
-    logger.debug(`Timer set for ${repositoryId} delay ${this.debounceDelay}ms`);
+    logger.debug(`Scheduled access update for repository ${repositoryId}`);
   }
 
   /**
-   * Save repository access data to S3
-   * Fetches repository with user and tenant associations
-   * Includes both direct repository users and tenant members
-   * Stores as JSON at repository/{repositoryId}/access.json
+   * Save repository access data to storage
    * @param {number} repositoryId - Repository ID to save
    */
   async save(repositoryId) {
-    logger.info(`Starting save for repository ${repositoryId}`);
-    const repository = await Repository.findByPk(repositoryId, {
+    const repository = await this.#fetchRepository(repositoryId);
+    if (!repository) {
+      logger.warn(`Repository ${repositoryId} not found`);
+      return;
+    }
+
+    const data = this.#buildAccessData(repository);
+    await this.#persistAccessFile(repositoryId, data);
+    await this.#notifyConsumer(data);
+  }
+
+  async #fetchRepository(repositoryId) {
+    return Repository.findByPk(repositoryId, {
       include: [
         {
           model: User,
@@ -68,33 +83,20 @@ class PublishAccessService {
             {
               model: User,
               as: 'users',
-              through: {
-                model: UserGroupMember,
-                attributes: ['role'],
-              },
+              through: { model: UserGroupMember, attributes: ['role'] },
               attributes: ['id', 'email', 'firstName', 'lastName'],
             },
           ],
         },
       ],
     });
+  }
 
-    if (!repository) {
-      logger.warn(`Repository ${repositoryId} not found`);
-      return;
-    }
-
-    const extractUserFields = (user) => ({
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-    });
-
+  #buildAccessData(repository) {
     const users =
       repository.users?.map((user) => ({
         ...extractUserFields(user),
-        role: user.repositoryUser?.role || 'AUTHOR',
+        role: user.repositoryUser?.role || DEFAULT_REPOSITORY_ROLE,
         assignedAt: user.repositoryUser?.createdAt,
       })) || [];
 
@@ -106,46 +108,33 @@ class PublishAccessService {
         members:
           group.users?.map((user) => ({
             ...extractUserFields(user),
-            role: user.userGroupMember?.role || 'USER',
+            role: user.userGroupMember?.role || DEFAULT_GROUP_ROLE,
           })) || [],
       })) || [];
 
-    logger.info(`Processed ${users.length} users, ${groups.length} groups`);
-
-    const data = {
+    return {
       id: repository.id,
       uid: repository.uid,
       users,
       groups,
       updatedAt: new Date().toISOString(),
     };
-
-    const buffer = Buffer.from(JSON.stringify(data, null, 2), 'utf8');
-    await storage.saveFile(getAccessFilePath(repositoryId), buffer);
-    logger.info(`Saved access file for repository ${repositoryId}`);
-
-    // Notify consumer webhook if configured
-    await this.notifyConsumer(data);
   }
 
-  /**
-   * Notify consumer webhook of access update
-   * Sends notification to CONSUMER_ACCESS_UPDATE_WEBHOOK with the full
-   * access data including users and groups
-   * @param {Object} data - Access data object
-   */
-  async notifyConsumer(data) {
-    if (!oauth2.isConfigured || !consumer.accessUpdateWebhookUrl) {
-      logger.debug('Access update webhook not configured, skipping...');
-      return;
+  async #persistAccessFile(repositoryId, data) {
+    const buffer = Buffer.from(JSON.stringify(data, null, 2), 'utf8');
+    await storage.saveFile(getAccessFilePath(repositoryId), buffer);
+  }
+
+  async #notifyConsumer(data) {
+    if (!oauth2.isConfigured || !consumer.accessUpdateWebhookUrl) return;
+
+    try {
+      await oauth2.send(consumer.accessUpdateWebhookUrl, data);
+      logger.info(`Notified consumer webhook for repository ${data.id}`);
+    } catch (err) {
+      logger.error({ err, repositoryId: data.id }, `Failed to notify consumer`);
     }
-    logger.info(`Notifying consumer webhook for repository ${data.id}`);
-    oauth2
-      .send(consumer.accessUpdateWebhookUrl, data)
-      .then(() => logger.info(`Successfully notified consumer for ${data.id}`))
-      .catch((err) =>
-        logger.error(`Failed to notify consumer for ${data.id}`, err),
-      );
   }
 
   /**
@@ -153,9 +142,8 @@ class PublishAccessService {
    * @param {number} repositoryId - Repository ID to delete access for
    */
   async delete(repositoryId) {
-    logger.info(`Deleting access file for repository ${repositoryId}`);
     await storage.deleteFile(getAccessFilePath(repositoryId));
-    logger.info(`Successfully deleted access file for ${repositoryId}`);
+    logger.info(`Deleted access file for repository ${repositoryId}`);
   }
 }
 
