@@ -34,6 +34,22 @@ const sectionMeta = [
     placeholder: 'Title',
   },
   {
+    key: 'description',
+    type: MetaInputType.Textarea,
+    label: 'Description',
+    placeholder: 'Description',
+  },
+  {
+    key: 'estimatedTime',
+    type: MetaInputType.TextField,
+    label: 'Estimated time (minutes)',
+    placeholder: 'Enter estimated time to complete the module',
+    inputType: 'number',
+    validate: {
+      min: 1,
+    },
+  },
+  {
     key: 'tags',
     type: MetaInputType.Combobox,
     label: 'Tags',
@@ -246,6 +262,18 @@ const LessonConfig: ActivityConfig = {
       type: MetaInputType.Textarea,
       label: 'Description',
       placeholder: 'Enter page description',
+    },
+    {
+      key: 'thumbnailImage',
+      type: MetaInputType.File,
+      label: 'Thumbnail Image',
+      placeholder: 'Click to upload a thumbnail image',
+      icon: 'mdi-image',
+      validate: {
+        ext: ['jpg', 'jpeg', 'png'],
+      },
+      hideOnCreate: true,
+      showPreview: true,
     },
     {
       key: 'estimatedTime',
