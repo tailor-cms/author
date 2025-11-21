@@ -42,7 +42,7 @@
       :loading="isLoading"
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
-      class="pt-4"
+      class="pt-4 bg-transparent"
       item-value="id"
       must-sort
       @update:options="fetch"

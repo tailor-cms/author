@@ -116,6 +116,16 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 </script>
 
 <style lang="scss" scoped>
+.v-data-table {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  :deep(.v-table__wrapper) {
+    flex: 1 1 auto;
+  }
+}
+
 .v-table {
   line-height: 1.25;
 

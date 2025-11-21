@@ -4,7 +4,7 @@
     color="primary-lighten-4"
     rounded="lg"
   >
-    <VList bg-color="transparent" class="text-left mb-6">
+    <VList bg-color="transparent" class="text-left">
       <VListItem
         v-for="{ name, label, icon, query } in routes"
         :key="name"

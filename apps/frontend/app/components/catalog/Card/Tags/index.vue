@@ -1,27 +1,13 @@
 <template>
   <div class="tags-container">
-    <div class="tag-list mb-1 d-flex align-center">
+    <div class="tag-list d-flex flex-wrap align-center ga-2 py-2">
       <VChip
-        v-for="{ id, name, truncatedName } in tags"
+        v-for="{ id, name } in repository.tags"
         :key="id"
-        class="mr-2"
-        close-label="Remove tag"
+        close-label="Delete tag"
         color="primary-lighten-3"
-        variant="tonal"
-        label
       >
-        <VTooltip
-          :disabled="name.length === truncatedName.length"
-          content-class="bg-primary-darken-4"
-          location="bottom"
-          offset="34"
-          open-delay="100"
-        >
-          <template #activator="{ props: nameTooltipProps }">
-            <div v-bind="nameTooltipProps">{{ truncatedName }}</div>
-          </template>
-          <span>{{ name }}</span>
-        </VTooltip>
+        {{ name }}
         <template #close>
           <VTooltip
             content-class="bg-primary-darken-4"
@@ -55,6 +41,7 @@
         <VBtn
           v-bind="tooltipProps"
           aria-label="Add tag"
+          class="ml-2"
           color="primary-lighten-2"
           icon="mdi-tag-plus"
           @click.stop="showTagDialog = true"
@@ -71,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import { clamp, get, map, truncate } from 'lodash-es';
+import { get } from 'lodash-es';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import AddTag from './AddTag.vue';
@@ -87,16 +74,6 @@ const showTagDialog = ref(false);
 
 const tagCount = computed(() => get(props.repository, 'tags.length', 0));
 const exceededTagLimit = computed(() => tagCount.value >= TAG_LIMIT);
-const maxTagNameLength = computed(
-  () => [15, 6, 5][clamp(tagCount.value - 1, 0, 2)],
-);
-
-const tags = computed(() => {
-  return map(props.repository.tags, ({ name, ...rest }) => {
-    const truncatedName = truncate(name, { length: maxTagNameLength.value });
-    return { ...rest, name, truncatedName };
-  });
-});
 
 const closeAddTagDialog = () => {
   showTagDialog.value = false;
@@ -106,7 +83,7 @@ const showTagDeleteConfirmation = (tagId: number, tagName: string) => {
   const showConfirmationDialog = useConfirmationDialog();
   showConfirmationDialog({
     title: 'Delete tag',
-    message: `Are you sure you want to delete tag ${tagName}?`,
+    message: `Are you sure you want to delete tag '${tagName}'?`,
     action: () => repositoryStore.removeTag(props.repository.id, tagId),
   });
 };
@@ -117,9 +94,6 @@ const showTagDeleteConfirmation = (tagId: number, tagName: string) => {
   display: flex;
   justify-content: space-between;
   flex-basis: 100%;
-}
-
-.tag-list {
-  padding: 0.25rem 0 0 0.25rem;
+  min-height: 3rem;
 }
 </style>
