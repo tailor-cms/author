@@ -43,11 +43,8 @@ const sectionMeta = [
     key: 'estimatedTime',
     type: MetaInputType.TextField,
     label: 'Estimated time (minutes)',
-    placeholder: 'Enter estimated time to complete the module',
+    placeholder: 'Enter estimated time to complete the section',
     inputType: 'number',
-    validate: {
-      min: 1,
-    },
   },
   {
     key: 'tags',
@@ -235,9 +232,6 @@ const ModuleConfig: ActivityConfig = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the module',
       inputType: 'number',
-      validate: {
-        min: 1,
-      },
     },
   ],
 };
@@ -281,7 +275,6 @@ const LessonConfig: ActivityConfig = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the page',
       inputType: 'number',
-      validate: { min: 1 },
     },
   ],
 };
@@ -308,9 +301,6 @@ export const SCHEMA: Schema = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the course',
       inputType: 'number',
-      validate: {
-        min: 1,
-      },
     },
     {
       key: 'author',
