@@ -118,6 +118,21 @@ const LessonContentContainer: ContentContainerConfig = {
         },
       ],
     },
+    [ActivityType.Scenario]: {
+      label: 'Scenario',
+      icon: 'mdi-chart-bubble',
+      meta: () => unitMeta,
+      contentElementConfig: [
+        {
+          name: 'Survey Elements',
+          config: { isGradable: false },
+          items: [
+            ContentElementType.SingleChoice,
+            ContentElementType.MultipleChoice,
+          ],
+        },
+      ],
+    },
   },
 };
 
@@ -176,61 +191,6 @@ const RelatedContentContainer: ContentContainerConfig = {
       icon: 'mdi-laptop-account',
       meta: () => relatedContentMeta,
       disableContentElementList: true,
-    },
-  },
-};
-
-const scenarioMeta = [
-  {
-    key: 'title',
-    type: MetaInputType.TextField,
-    label: 'Title',
-    placeholder: 'Title',
-  },
-  {
-    key: 'description',
-    type: MetaInputType.Textarea,
-    label: 'Description',
-    placeholder: 'Description',
-  },
-  {
-    key: 'estimatedTime',
-    type: MetaInputType.TextField,
-    label: 'Estimated time (minutes)',
-    placeholder: 'Enter estimated time to complete the scenario',
-    inputType: 'number',
-  },
-  {
-    key: 'thumnailImage',
-    type: MetaInputType.File,
-    label: 'Thumbnail Image',
-    placeholder: 'Click to upload a thumbnail image',
-    icon: 'mdi-image',
-    ext: ['jpg', 'jpeg', 'png'],
-    showPreview: true,
-  },
-];
-
-const ScenarioContainer: ContentContainerConfig = {
-  templateId: ContentContainerType.StructuredContent,
-  type: ActivityType.Scenario,
-  label: 'Scenario',
-  displayHeading: true,
-  config: {
-    [ActivityType.Section]: {
-      label: 'Scenario',
-      icon: 'mdi-script-text-outline',
-      meta: () => scenarioMeta,
-      contentElementConfig: [
-        {
-          name: 'Survey Elements',
-          config: { isGradable: false },
-          items: [
-            ContentElementType.SingleChoice,
-            ContentElementType.MultipleChoice,
-          ],
-        },
-      ],
     },
   },
 };
@@ -369,7 +329,6 @@ export const SCHEMA: Schema = {
   structure: [ModuleConfig, LessonConfig],
   contentContainers: [
     LessonContentContainer,
-    ScenarioContainer,
     RelatedContentContainer,
     TakeawaysConfig,
   ],
