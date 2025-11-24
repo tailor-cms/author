@@ -263,7 +263,6 @@ const LessonConfig: ActivityConfig = {
   color: '#08A9AD',
   contentContainers: [
     ActivityType.LessonContent,
-    ActivityType.Scenario,
     ActivityType.RelatedContent,
     ActivityType.Takeaways,
   ],
