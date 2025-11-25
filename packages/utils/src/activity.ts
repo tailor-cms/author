@@ -1,12 +1,9 @@
+import { filter, find, get, sortBy } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import filter from 'lodash/filter';
-import find from 'lodash/find';
-import get from 'lodash/get';
-import sortBy from 'lodash/sortBy';
 
 interface NodeProcessor {
   filterNodesFn?: (it: Activity[]) => Activity[];
-  processNodeFn?: (it: Activity) => Activity;
+  processNodeFn?: (it: Activity) => any;
 }
 
 interface Internals {

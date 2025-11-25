@@ -5,14 +5,14 @@
       <VCard
         v-bind="hoverProps"
         :color="expanded ? 'primary-darken-2' : 'primary-lighten-5'"
-        :height="collapsable ? 48 : 38"
+        :height="collapsible ? 48 : 38"
         class="d-flex px-4"
         rounded="0"
         flat
-        v-on="{ click: collapsable ? () => emit('selected') : null }"
+        v-on="{ click: collapsible ? () => emit('selected') : null }"
       >
         <VRow class="w-100" dense>
-          <VCol cols="3" class="text-left align-content-center">
+          <VCol :cols="expanded ? 9 : 3" class="text-left align-content-center">
             <div class="d-flex align-center">
               <VIcon
                 :icon="icon"
@@ -24,28 +24,55 @@
             </div>
           </VCol>
           <VCol
+            v-if="!expanded"
             cols="6"
             class="text-subtitle-2 align-content-center text-truncate"
           >
-            <template v-if="!expanded">{{ question }}</template>
+            {{ question }}
           </VCol>
-          <VCol cols="3" class="text-right align-content-center">
+          <VCol cols="3" class="text-right d-flex justify-end align-center">
             <PublishDiffChip
               v-if="editorState.isPublishDiff && element.changeSincePublish"
               :change-type="publishDiffChangeType"
             />
             <VFadeTransition>
-              <VBtn
-                v-if="!isDisabled && collapsable && (isHovering || expanded)"
-                :color="`secondary-lighten-${expanded ? 3 : 1}`"
-                class="ml-2"
-                density="comfortable"
-                variant="tonal"
-                icon="mdi-delete-outline"
-                size="small"
-                @click.stop="$emit('delete')"
-              />
+              <div
+                v-if="!isDisabled && collapsible && (isHovering || expanded)"
+                class="d-flex justify-end ga-1"
+              >
+                <ElementGeneration
+                  v-if="showAI"
+                  :color="`indigo${expanded ? '-lighten-3' : ''}`"
+                  @generate="$emit('generate', $event)"
+                />
+                <VTooltip location="left" open-delay="1000">
+                  <template #activator="{ props: tooltipProps }">
+                    <VBtn
+                      v-bind="tooltipProps"
+                      :color="`teal${expanded ? '-lighten-3' : ''}`"
+                      aria-label="Reset element"
+                      icon="mdi-restore"
+                      size="x-small"
+                      variant="tonal"
+                      @click.stop="$emit('reset')"
+                    />
+                  </template>
+                  Reset element
+                </VTooltip>
+                <VBtn
+                  :color="`secondary${expanded ? '-lighten-3' : ''}`"
+                  icon="mdi-delete-outline"
+                  size="x-small"
+                  variant="tonal"
+                  @click.stop="$emit('delete')"
+                />
+              </div>
             </VFadeTransition>
+            <VIcon
+              v-if="collapsible"
+              :icon="`mdi-chevron-${expanded ? 'up' : 'down'}`"
+              class="my-1 ml-2"
+            />
           </VCol>
         </VRow>
       </VCard>
@@ -64,6 +91,7 @@
               isFocused,
               isDragged,
               isDisabled,
+              isReadonly: props.isDisabled,
               dense,
             }"
             :id="`element_${element.id}`"
@@ -97,14 +125,16 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, reactive, ref, watch } from 'vue';
 import { cloneDeep, isEqual, omit, map } from 'lodash-es';
+import { computed, inject, reactive, ref, watch } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
-import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import { getQuestionPromptPreview } from '@tailor-cms/utils';
+import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
+import ElementGeneration from './ElementGeneration.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
+import { useConfigStore } from '@/stores/config';
 
 const isLegacyQuestion = (type: string) => ceRegistry.isLegacyQuestion(type);
 
@@ -140,10 +170,11 @@ interface Props {
   icon?: string;
   embedElementConfig?: ContentElementCategory[];
   isDisabled?: boolean;
+  isReadonly?: boolean;
   isFocused?: boolean;
   isDragged?: boolean;
   dense?: boolean;
-  collapsable?: boolean;
+  collapsible?: boolean;
   isDirty?: boolean;
   expanded?: boolean;
 }
@@ -154,10 +185,11 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'Question element',
   icon: 'mdi-help-circle-outline',
   isDisabled: false,
+  isReadonly: false,
   isDragged: false,
   isFocused: false,
   dense: false,
-  collapsable: false,
+  collapsible: false,
   isDirty: false,
   expanded: true,
 });
@@ -171,6 +203,8 @@ const emit = defineEmits([
   'link',
   'update',
   'selected',
+  'generate',
+  'reset',
 ]);
 
 const ceRegistry = inject<any>('$ceRegistry');
@@ -179,6 +213,9 @@ const editorState = inject<any>('$editorState');
 const form = ref();
 const editedElement = reactive(initializeElement());
 
+const config = useConfigStore();
+
+const manifest = computed(() => ceRegistry.getByEntity(props.element));
 const isDirty = computed(() => {
   const dataChanged = !isEqual(editedElement.data, initializeElement().data);
   return dataChanged || props.isDirty;
@@ -189,6 +226,8 @@ const question = computed(() => {
   const questions = editedElement.data.question as string[];
   return getQuestionPromptPreview(questions.map((it) => embeds[it]));
 });
+
+const showAI = computed(() => !!config.props.aiUiEnabled && manifest.value?.ai);
 
 const publishDiffChangeType = computed(() =>
   props.element.changeSincePublish as PublishDiffChangeTypes);

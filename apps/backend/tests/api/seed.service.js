@@ -3,7 +3,7 @@ import path from 'node:path';
 import { faker } from '@faker-js/faker';
 import find from 'lodash/find.js';
 import mapKeys from 'lodash/mapKeys.js';
-import { packageDirectory } from 'pkg-dir';
+import { packageDirectory } from 'package-directory';
 import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
 import camelCase from 'lodash/camelCase.js';
 import Promise from 'bluebird';

@@ -17,7 +17,7 @@ dependencies:
 
 Before you begin, ensure you have the following installed:
 
-- [Node.js (version 22.14 or higher)](https://nodejs.org/en/download/)
+- [Node.js (version 24.2.0 or higher)](https://nodejs.org/en/download/)
 - [pnpm (version 9.8.0 or higher)](https://pnpm.io/installation)
 - Clone the Tailor repository to your local machine.
 
@@ -117,6 +117,15 @@ REVERSE_PROXY_PORT=8080
 # If the app is behind a reverse proxy and rate limiting is enabled
 # See https://expressjs.com/en/guide/behind-proxies.html
 REVERSE_PROXY_TRUST=false
+
+# -------------------------------------------------------------------
+# Content element configuration
+# -------------------------------------------------------------------
+# MUX Video
+TCE_MUX_TOKEN_ID=
+TCE_MUX_TOKEN_SECRET=
+TCE_MUX_JWT_SIGNING_KEY=
+TCE_MUX_JWT_PRIVATE_KEY=
 
 # -------------------------------------------------------------------
 # Database configuration
@@ -263,7 +272,7 @@ NUXT_PUBLIC_AVAILABLE_SCHEMAS=
 
 # Do not group published resources by outline item id.
 # repository/id/resourceId* instead of repository/id/outlineId/resourceId*
-FLAT_REPO_STRUCTURE=1
+FLAT_REPO_STRUCTURE=true
 
 # Force color output (for logs)
 # https://nodejs.org/api/tty.html#writestreamgetcolordepthenv

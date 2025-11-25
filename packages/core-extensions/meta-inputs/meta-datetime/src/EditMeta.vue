@@ -21,6 +21,8 @@
           <VWindowItem :value="1">
             <VDatePicker
               :model-value="dateInput && new Date(dateInput)"
+              elevation="0"
+              bg-color="transparent"
               @update:model-value="dateInput = $event"
             />
           </VWindowItem>
@@ -58,7 +60,6 @@
 import { computed, ref, watch } from 'vue';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { useDate } from 'vuetify';
-import { VTimePicker } from 'vuetify/labs/VTimePicker';
 
 interface Meta extends Metadata {
   value?: string;

@@ -1,4 +1,6 @@
-import { expect, type Locator, type Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+
 import { ConfirmationDialog } from './ConfirmationDialog';
 
 export class Comment {

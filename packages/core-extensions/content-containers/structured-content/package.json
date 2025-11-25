@@ -1,5 +1,5 @@
 {
-  "name": "@tailor-cms/tcc-structured-content",
+  "name": "@tailor-cms/tcc-structured-content-edit",
   "version": "0.0.1",
   "description": "Tailor structured content container",
   "author": "Studion <info@gostudion.com>",
@@ -10,14 +10,14 @@
   "main": "./src/index.js",
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "*"
+    "@types/lodash-es": "^4.17.12"
   },
   "peerDependencies": {
     "@tailor-cms/core-components": "workspace:*",
     "@tailor-cms/utils": "workspace:*",
-    "lodash": "*",
+    "lodash-es": "*",
     "vee-validate": "4.14.7",
-    "vue": "^3.5.13",
-    "vuetify": "^3.7.0"
+    "vue": "^3.5.22",
+    "vuetify": "^3.10.7"
   }
 }

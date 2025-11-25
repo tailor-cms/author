@@ -13,9 +13,9 @@
         <VAlert
           v-if="!size(elementData.embeds)"
           :text="alertMsg"
-          class="mx-6 mt-4 mb-2"
-          color="primary-darken-2"
-          icon="mdi-information-variant"
+          class="mx-6 mt-4 mb-2 text-center"
+          color="primary-darken-1"
+          icon="mdi-information-outline"
           variant="tonal"
           prominent
         />
@@ -26,7 +26,7 @@
             variant: 'text',
           }"
           :container="elementData"
-          :is-disabled="isDisabled"
+          :is-readonly="isReadonly"
           :allowed-element-config="allowedElementConfig"
           class="text-center"
           dense
@@ -45,7 +45,7 @@ import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 const props = defineProps<{
   elementData: Record<string, any>;
-  isDisabled: boolean;
+  isReadonly: boolean;
   allowedElementConfig: ContentElementCategory[];
 }>();
 const emit = defineEmits(['update']);
@@ -56,7 +56,7 @@ const editorChannel = eventBus.channel('editor');
 const isFocused = ref(false);
 
 const alertMsg = computed(() => {
-  return props.isDisabled
+  return props.isReadonly
     ? 'No question elements added.'
     : 'Click the button below to add a question element.';
 });

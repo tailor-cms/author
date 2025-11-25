@@ -4,7 +4,7 @@
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.8",
   "files": [
     "dist"
   ],
@@ -22,16 +22,15 @@
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
-    "@paralleldrive/cuid2": "^2.2.2",
-    "lodash": "^4.17.21",
-    "uuid": "^11.1.0"
+    "@paralleldrive/cuid2": "^3.1.0",
+    "lodash-es": "^4.17.21",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
-    "@types/lodash": "^4.17.16",
-    "@types/uuid": "^10.0.0",
-    "tsup": "^8.4.0",
-    "typescript": "^5.8.3"
+    "@types/lodash-es": "^4.17.12",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
   },
   "bundledDependencies": [
     "@tailor-cms/interfaces"

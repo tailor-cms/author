@@ -20,6 +20,9 @@ import pkg18 from '@tailor-cms/ce-table-server';
 import pkg19 from '@tailor-cms/ce-brightcove-video-server';
 import pkg20 from '@tailor-cms/ce-jodit-html-server';
 import pkg21 from '@tailor-cms/ce-quill-html-server';
+import pkg22 from '@tailor-cms/ce-file-server';
+import pkg23 from '@tailor-cms/ce-html-raw-server';
+import pkg24 from '@tailor-cms/ce-mux-video-server';
 
 // prettier-ignore
 export const elements = [
@@ -45,4 +48,7 @@ export const elements = [
   pkg19,
   pkg20,
   pkg21,
+  pkg22,
+  pkg23,
+  pkg24,
 ];

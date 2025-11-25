@@ -34,8 +34,7 @@
       />
       <AddNewElement
         v-model="isVisible"
-        :allowed-element-config="allowedElementConfig"
-        :library="library"
+        v-bind="{ allowedElementConfig, isAiGeneratingContent, library }"
         @add="addElements"
       >
         <template #header>
@@ -54,6 +53,7 @@
             </VBtnToggle>
           </div>
           <VBtn
+            v-if="!useAI"
             color="primary-darken-3"
             prepend-icon="mdi-content-copy"
             variant="tonal"
@@ -61,6 +61,24 @@
           >
             Copy existing
           </VBtn>
+          <VTextField
+            v-else
+            v-model="aiPrompt"
+            density="comfortable"
+            label="AI Prompt"
+            placeholder="Optional: give extra context"
+            hide-details
+          />
+          <VSpacer />
+          <VSwitch
+            v-if="doTheMagic"
+            v-model="useAI"
+            class="ml-4"
+            color="primary-darken-2"
+            label="Generate with AI"
+            density="compact"
+            hide-details
+          />
         </template>
       </AddNewElement>
     </template>
@@ -69,7 +87,7 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
-import { flatMap, pick, reject } from 'lodash-es';
+import { filter, flatMap, pick, reject } from 'lodash-es';
 import { getPositions, uuid } from '@tailor-cms/utils';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
@@ -78,6 +96,7 @@ import type { VBtn } from 'vuetify/components';
 
 import SelectElement from '../SelectElement/index.vue';
 import AddNewElement from './AddNewElement.vue';
+import { AiRequestType } from '@tailor-cms/interfaces/ai';
 
 const DEFAULT_GROUP = 'Content Elements';
 const DEFAULT_ELEMENT_WIDTH = 100;
@@ -112,6 +131,10 @@ const emit = defineEmits(['add', 'hidden']);
 
 const ceRegistry = inject<any>('$ceRegistry');
 
+const useAI = ref(false);
+const aiPrompt = ref('');
+const doTheMagic = inject<any>('$doTheMagic');
+const isAiGeneratingContent = ref(false);
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
 const showElementBrowser = ref(false);
@@ -135,32 +158,69 @@ const processedWidth = computed(() => {
 
 const allowedElementConfig = computed(() => {
   const elements = flatMap(library.value, 'items');
-  const allowedElements =
-    elementWidth.value === DEFAULT_ELEMENT_WIDTH
-      ? elements
-      : reject(elements, 'ui.forceFullWidth');
+  const isFullWidth = elementWidth.value === DEFAULT_ELEMENT_WIDTH;
+  const aiFiltered = useAI.value ? filter(elements, 'ai') : elements;
+  const allowedElements = isFullWidth
+    ? aiFiltered
+    : reject(aiFiltered, 'ui.forceFullWidth');
   return allowedElements.map(({ type, config }) => ({ type, config }));
 });
 
-const addElements = (elements: any[]) => {
+const addElements = async (elements: any[]) => {
   const positions = getPositions(props.items, props.position, elements.length);
-  const items = elements.map((it, index: number) => {
+  const items = await Promise.all(elements.map((it, index: number) => {
     return buildElement({ ...it, position: positions[index] });
-  });
+  }));
   emit('add', items);
   isVisible.value = false;
 };
 
-const buildElement = (el: any) => {
+const generateContent = async (element: ContentElement) => {
+  isAiGeneratingContent.value = true;
+  const input = {
+    type: AiRequestType.Create,
+    text: aiPrompt.value.trim() ?? 'Generate content element for this page.',
+    responseSchema: element.type,
+  };
+  const data = await doTheMagic({
+    containerType: props.activity?.type,
+    inputs: [input],
+  });
+  isAiGeneratingContent.value = false;
+  return data;
+};
+
+const buildElement = async (el: any) => {
   const { position, data = {}, initState = () => ({}), config } = el;
   const element = {
     ...pick(el, ['type', 'refs']),
     data: { ...initState(), ...data, width: processedWidth.value },
     position,
   };
+  if (useAI.value) {
+    const data = await generateContent(el);
+    Object.assign(element.data, data);
+    const contextData = props.activity
+      ? { activityId: props.activity.id } // If content element within activity
+      : { id: uuid(), embedded: true }; // If embed, assign id
+    Object.assign(element, contextData);
+    return element;
+  }
   if (!el.data && el.isQuestion) {
+    const id = uuid();
+    const question = {
+      id,
+      data: { content: '' },
+      type: 'TIPTAP_HTML',
+      position: 1,
+      embedded: true,
+    };
     const isGradable = config?.isGradable ?? el.isGradable ?? true;
-    element.data.isGradable = isGradable;
+    Object.assign(element.data, {
+      embeds: { [id]: question },
+      question: [id],
+      isGradable,
+    });
     if (!isGradable) delete element.data.correct;
   }
   const contextData = props.activity

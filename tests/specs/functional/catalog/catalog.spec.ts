@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import mockRepositories from 'tailor-seed/repositories.json';
+import mockRepositories from 'tailor-seed/repositories.json' assert { type: 'json' };
 
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import { Catalog } from '../../../pom/catalog/Catalog';

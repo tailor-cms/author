@@ -1,5 +1,6 @@
 import { Model } from 'sequelize';
 import { UserRole } from '@tailor-cms/common';
+import hooks from './userGroupMember.hooks.js';
 
 class UserGroupMember extends Model {
   static fields({ ENUM, INTEGER }) {
@@ -30,6 +31,10 @@ class UserGroupMember extends Model {
     this.belongsTo(UserGroup, {
       foreignKey: { name: 'groupId', field: 'group_id' },
     });
+  }
+
+  static hooks(Hooks, models) {
+    hooks.add(this, Hooks, models);
   }
 
   static options() {

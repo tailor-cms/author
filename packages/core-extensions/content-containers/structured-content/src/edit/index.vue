@@ -22,7 +22,7 @@
           :elements="elements"
           :container="subcontainer"
           :is-disabled="disabled"
-          :content-element-config="contentElementConfig"
+          :content-element-config="getContentElementConfig(subcontainer.type)"
           @add:element="emit('add:element', $event)"
           @save:element="emit('save:element', $event)"
           @delete:element="emit('delete:element', $event)"
@@ -55,12 +55,13 @@
       <VBtn
         v-for="subcontainerType in subcontainerTypes"
         :key="subcontainerType"
+        class="mr-3"
         color="teal-lighten-4"
         min-width="200"
         variant="tonal"
         @click="createSubcontainer(subcontainerType)"
       >
-        <div class="mr-2">
+        <div class="pr-2">
           <VIcon size="x-small">mdi-plus</VIcon>
           <VIcon size="small">{{ config[subcontainerType].icon }}</VIcon>
         </div>
@@ -72,7 +73,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { cloneDeep, filter, find, findIndex } from 'lodash';
+import { cloneDeep, filter, find, findIndex } from 'lodash-es';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 import type { Activity } from '@tailor-cms/interfaces/activity.js';
@@ -155,5 +156,12 @@ const createSubcontainer = (type: string) => {
   const position = nextPosition.value;
   const data = config[type]?.initMeta();
   emit('add:subcontainer', { type, parentId, position, data });
+};
+
+const getContentElementConfig = (subcontainerType: string) => {
+  return (
+    props.config[subcontainerType]?.contentElementConfig ||
+    props.contentElementConfig
+  );
 };
 </script>

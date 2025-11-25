@@ -1,6 +1,4 @@
-import capitalize from 'lodash/capitalize';
-import reduce from 'lodash/reduce';
-import words from 'lodash/words';
+import { capitalize, reduce, words } from 'lodash-es';
 
 const DefaultSubcontainers = {
   Section: 'SECTION',
@@ -27,6 +25,8 @@ export const parseConfig = (repository, outlineActivity, container, config) => {
         meta: val?.meta(repository, outlineActivity, container, val),
         initMeta: () =>
           val?.initMeta(repository, outlineActivity, container, val) || {},
+        contentElementConfig: val.contentElementConfig,
+        disableContentElementList: val.disableContentElementList || false,
       };
       return acc;
     },

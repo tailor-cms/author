@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import times from 'lodash/times';
+import { times } from 'lodash-es';
 
 import {
   GroupManagement,

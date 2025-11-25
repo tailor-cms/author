@@ -108,5 +108,20 @@
     "name": "@tailor-cms/ce-quill-html",
     "clientPackage": "@tailor-cms/ce-quill-html-edit",
     "serverPackage": "@tailor-cms/ce-quill-html-server"
+  },
+  {
+    "name": "@tailor-cms/ce-file",
+    "clientPackage": "@tailor-cms/ce-file-edit",
+    "serverPackage": "@tailor-cms/ce-file-server"
+  },
+  {
+    "name": "@tailor-cms/ce-html-raw",
+    "clientPackage": "@tailor-cms/ce-html-raw-edit",
+    "serverPackage": "@tailor-cms/ce-html-raw-server"
+  },
+  {
+    "name": "@tailor-cms/ce-mux-video",
+    "clientPackage": "@tailor-cms/ce-mux-video-edit",
+    "serverPackage": "@tailor-cms/ce-mux-video-server"
   }
 ]

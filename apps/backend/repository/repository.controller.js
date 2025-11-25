@@ -10,7 +10,7 @@ import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import sample from 'lodash/sample.js';
 import { schema } from '@tailor-cms/config';
-import { snakeCase } from 'change-case';
+import snakeCase from 'lodash/snakeCase.js';
 
 import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import publishingService from '#shared/publishing/publishing.service.js';
@@ -59,11 +59,6 @@ const JobCache = new Map();
 const logger = createLogger('repository:controller');
 const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
 
-const getFilter = (search) => {
-  const term = search.length < 3 ? `${search}%` : `%${search}%`;
-  return { [Op.iLike]: term };
-};
-
 const includeUser = () => ({
   model: User,
   paranoid: false,
@@ -109,7 +104,7 @@ async function index({ query, user, opts }, res) {
     { model: RepositoryUserGroup },
     ...includeRepositoryTags(query),
   ];
-  if (search) opts.where.name = getFilter(search);
+  if (search) opts.where.name = { [Op.iLike]: `%${search}%` };
   if (name) opts.where.name = name;
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
@@ -234,7 +229,7 @@ function removeUser(req, res) {
   const where = { userId, repositoryId: repository.id };
   return User.findByPk(userId)
     .then((user) => user || createError(NOT_FOUND, 'User not found'))
-    .then(() => RepositoryUser.destroy({ where, force: true }))
+    .then(() => RepositoryUser.destroy({ where, force: true, individualHooks: true }))
     .then(() => res.end());
 }
 
@@ -242,13 +237,16 @@ async function addUserGroup({ repository, body }, res) {
   const { userGroupId } = body;
   const userGroup = await UserGroup.findByPk(userGroupId);
   if (!userGroup) return createError(NOT_FOUND, 'User group not found');
-  await repository.addUserGroup([userGroup]);
+  await RepositoryUserGroup.create({
+    repositoryId: repository.id,
+    groupId: userGroupId,
+  });
   return res.json({ data: userGroup });
 }
 
 async function removeUserGroup({ repository, params: { userGroupId } }, res) {
   const where = { repositoryId: repository.id, groupId: userGroupId };
-  await RepositoryUserGroup.destroy({ where });
+  await RepositoryUserGroup.destroy({ where, individualHooks: true });
   return res.status(NO_CONTENT).send();
 }
 

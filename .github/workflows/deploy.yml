@@ -62,7 +62,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22.14.0
+          node-version: 24.2.0
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -83,7 +83,7 @@ jobs:
         uses: pulumi/actions@v6
         with:
           command: up
-          stack-name: extensionengine/tailor-cms/dev
+          stack-name: extensionengine/tailor-cms/prod
           work-dir: infrastructure
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

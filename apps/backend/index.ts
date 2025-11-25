@@ -1,6 +1,8 @@
+import type { Options as BoxenOptions } from 'boxen';
+import boxen from 'boxen';
 import { promisify } from 'node:util';
 import Promise from 'bluebird';
-import boxen, { type Options as BoxenOptions } from 'boxen';
+
 import app from './app.js';
 import config from '#config';
 import contentPluginRegistry from '#shared/content-plugins/index.js';

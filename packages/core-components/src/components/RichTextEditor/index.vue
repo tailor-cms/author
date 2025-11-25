@@ -37,11 +37,10 @@
 import { EditorContent, useEditor } from '@tiptap/vue-3';
 import { ref, watch } from 'vue';
 import type { VField, VInput } from 'vuetify/components';
-import CharacterCount from '@tiptap/extension-character-count';
+import { CharacterCount } from '@tiptap/extensions';
 import StarterKit from '@tiptap/starter-kit';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import Underline from '@tiptap/extension-underline';
 import { useFocusWithin } from '@vueuse/core';
 
 import EditorToolbar from './EditorToolbar.vue';
@@ -84,7 +83,6 @@ const editor = useEditor({
     StarterKit.configure({ heading: false, horizontalRule: false }),
     Subscript,
     Superscript,
-    Underline,
     CharacterCount.configure(),
   ],
 });
@@ -94,7 +92,8 @@ watch(
   (value) => {
     if (!editor.value) return;
     const isSame = editor.value.getHTML() === value;
-    return !isSame && editor.value?.commands.setContent(value, false);
+    if (isSame) return;
+    return editor.value?.commands.setContent(value, { emitUpdate: false });
   },
 );
 

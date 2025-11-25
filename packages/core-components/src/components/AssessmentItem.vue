@@ -1,5 +1,15 @@
 <template>
-  <div class="d-flex align-start justify-strech">
+  <VSheet
+    v-if="loading"
+    color="primary-lighten-5"
+    class="py-16 text-subtitle-2 rounded-lg text-center"
+  >
+    <CircularProgress />
+    <div class="pt-3 text-primary-darken-4 font-weight-bold">
+      <span>Content generation in progress...</span>
+    </div>
+  </VSheet>
+  <div v-else class="d-flex align-start justify-strech">
     <span v-if="!isDisabled && draggable" class="drag-handle">
       <VIcon
         icon="mdi-drag-vertical"
@@ -15,14 +25,17 @@
         element,
         embedElementConfig,
         isDisabled,
+        isReadonly: props.isDisabled,
       }"
       :class="[element.changeSincePublish, { diff: showPublishDiff }]"
       :is-dirty="isDirty"
       class="flex-grow-1"
-      collapsable
-      @selected="emit('selected')"
+      collapsible
       @delete="emit('delete')"
+      @generate="generateContent"
+      @reset="reset"
       @save="save"
+      @selected="emit('selected')"
     >
       <template #default>
         <slot name="header"></slot>
@@ -33,14 +46,18 @@
 
 <script lang="ts" setup>
 import { computed, inject } from 'vue';
-import { cloneDeep } from 'lodash-es';
 import type {
   ContentElementCategory,
   ElementRegistry,
 } from '@tailor-cms/interfaces/schema';
+import { AiRequestType } from '@tailor-cms/interfaces/ai';
+import { cloneDeep } from 'lodash-es';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
+import CircularProgress from './CircularProgress.vue';
 import QuestionElement from './QuestionElement.vue';
+import { useConfirmationDialog } from '../composables/useConfirmationDialog';
+import { useLoader } from '../composables/useLoader';
 
 interface Props {
   element: ContentElement;
@@ -62,11 +79,38 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['add', 'save', 'delete', 'selected']);
 
 const editorState = inject<any>('$editorState');
+const doTheMagic = inject<any>('$doTheMagic');
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
+
+const { loading, loader } = useLoader();
+const confirmationDialog = useConfirmationDialog();
 
 const manifest = computed(() => ceRegistry?.getByEntity(props.element));
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
 const componentName = computed(() => manifest.value?.componentName);
+
+const reset = () => {
+  if (!ceRegistry) return;
+  confirmationDialog({
+    title: 'Reset element?',
+    message: 'Are you sure you want to reset this element?',
+    action: () => {
+      const data = ceRegistry.resetData(props.element);
+      return save(data);
+    },
+  });
+};
+
+const generateContent = loader(async function (text) {
+  const data = cloneDeep(props.element.data);
+  const inputs = [{
+    type: AiRequestType.Create,
+    text: text ?? 'Generate content element for this page.',
+    responseSchema: props.element.type,
+  }];
+  const generatedContent = await doTheMagic({ inputs });
+  return save({ ...data, ...generatedContent });
+});
 
 const save = (data: ContentElement['data']) => {
   emit('save', { ...cloneDeep(props.element), data });

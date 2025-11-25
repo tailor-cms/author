@@ -1,0 +1,17 @@
+{
+  "name": "@tailor-cms/tcc-structured-content-server",
+  "version": "0.0.1",
+  "description": "Tailor structured content container server package",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.12"
+  },
+  "peerDependencies": {
+    "lodash-es": "*"
+  }
+}

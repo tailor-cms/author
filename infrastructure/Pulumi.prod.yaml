@@ -1,0 +1,32 @@
+config:
+  ai:enabled: "true"
+  ai:modelId: gpt-4.1
+  aws:region: us-east-1
+  dns:domain: tailor-cms.com
+  dns:hostedZoneId: Z03469864NDBKNYE5TS1
+  s3:bucket: tailor-prod
+  s3:region: us-east-1
+  email:host: email-smtp.us-east-1.amazonaws.com
+  email:senderAddress: tailor@extensionengine.com
+  ssm:keyPrefix: author/prod
+  tailor-cms:resourceNamePrefix: author
+  oidc:enabled: "true"
+  oidc:loginText: Sign in with Google
+  oidc:defaultRole: USER
+  oidc:allowSignup: "true"
+  oidc:issuer: https://accounts.google.com
+  oidc:jwksUrl: https://www.googleapis.com/oauth2/v3/certs
+  oidc:authorizationEndpoint: https://accounts.google.com/o/oauth2/v2/auth
+  oidc:tokenEndpoint: https://oauth2.googleapis.com/token
+  oidc:userinfoEndpoint: https://openidconnect.googleapis.com/v1/userinfo
+  oidc:logoutEnabled: ""
+  oidc:logoutEndpoint: ""
+  oidc:postLogoutUriKey: ""
+  schema:availableSchemas: ""
+  statsig:enabled: "true"
+  consumer:enabled: "true"
+  consumer:tokenHost: https://lx.tailor-cms.com
+  consumer:tokenPath: /api/oauth/token
+  consumer:publishWebhook: https://lx.tailor-cms.com/api/content/webhook/publish
+  consumer:publishWebhookThrottle: "1000"
+  consumer:accessUpdateWebhook: https://lx.tailor-cms.com/api/content/webhook/access
