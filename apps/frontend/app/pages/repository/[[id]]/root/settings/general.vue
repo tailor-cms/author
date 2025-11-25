@@ -1,9 +1,8 @@
 <template>
   <div class="pa-8 text-left">
-    <div class="actions">
+    <div class="actions d-flex justify-end">
       <VBtn
         :loading="isPublishing"
-        class="float-right"
         color="primary-darken-2"
         size="small"
         variant="tonal"
@@ -14,29 +13,33 @@
       </VBtn>
     </div>
     <RepositoryNameField
-      :repository-id="repository.id"
-      :value="repository.name"
-      class="my-2"
-      @change="updateKey('name', $event)"
+      :key="`name.${$pluginRegistry.dataVersion}`"
+      :value="nameValue"
+      :repository-id="repository?.id"
+      :entity-data="entityData"
+      class="meta-input"
+      @change="(val) => updateMeta('name', val)"
     />
     <MetaInput
-      :key="descriptionMeta.key"
+      :key="`description.${$pluginRegistry.dataVersion}`"
       :meta="descriptionMeta"
+      :entity-data="entityData"
       class="meta-input"
-      @update="updateKey"
+      @update="updateMeta"
     />
     <MetaInput
       v-for="it in metadata"
-      :key="it.key"
+      :key="`${it.key}.${$pluginRegistry.dataVersion}`"
       :meta="it"
+      :entity-data="entityData"
       class="meta-input"
-      @update="updateKey"
+      @update="updateMeta"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { cloneDeep, find, set } from 'lodash-es';
+import { cloneDeep, find } from 'lodash-es';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
@@ -51,7 +54,7 @@ definePageMeta({
   name: 'repository-settings-general',
 });
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
@@ -70,6 +73,26 @@ const metadata = computed(() =>
   $schemaService.getRepositoryMetadata(repository.value),
 );
 
+// Construct entity data for plugin hooks
+// Name/description at root level, other data spread from repository.data
+const entityData = computed(() => {
+  const repo = repository.value;
+  if (!repo) return {};
+  return {
+    name: repo.name,
+    description: repo.description,
+    ...repo.data,
+  };
+});
+
+// Get processed name value via plugin hooks
+const nameValue = computed(() => {
+  const data = entityData.value;
+  if (!data) return repository.value?.name ?? '';
+  const rawValue = data.name ?? '';
+  return $pluginRegistry.filter('data:value', rawValue, { data, key: 'name' });
+});
+
 const descriptionMeta = computed<Metadata>(() => ({
   key: 'description',
   type: 'TEXTAREA',
@@ -79,11 +102,39 @@ const descriptionMeta = computed<Metadata>(() => ({
   rows: 2,
 }));
 
-const updateKey = async (key: string, value: any) => {
-  if (find(metadata.value, { key })) key = `data.${key}`;
-  const data: any = cloneDeep(repository.value);
-  set(data, key, value);
-  await repositoryStore.update(data);
+const updateMeta = async (
+  key: string,
+  value: any,
+  updatedData?: Record<string, any>,
+) => {
+  const repoData: any = cloneDeep(repository.value);
+  const isRootField = ['name', 'description'].includes(key);
+
+  // Run transform hook if updatedData not provided
+  if (isRootField && !updatedData) {
+    updatedData = $pluginRegistry.transform('data:update', entityData.value, {
+      key,
+      value,
+    });
+  }
+
+  if (isRootField) {
+    // Name/description stored at root level, plugin data in repository.data
+    repoData[key] = updatedData?.[key] ?? value;
+    if (updatedData) {
+      // Copy plugin-specific data to repository.data
+      Object.keys(updatedData).forEach((k) => {
+        if (!['name', 'description'].includes(k)) {
+          repoData.data = { ...repoData.data, [k]: updatedData[k] };
+        }
+      });
+    }
+  } else if (find(metadata.value, { key })) {
+    // Schema metadata stored in data object
+    repoData.data = updatedData ?? { ...repoData.data, [key]: value };
+  }
+
+  await repositoryStore.update(repoData);
   notify('Saved', { immediate: true });
 };
 
