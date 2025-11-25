@@ -2,10 +2,7 @@ import {
   schema as schemaConfig,
   workflow as workflowConfig,
 } from '@tailor-cms/config';
-import {
-  calculatePosition,
-  InsertLocation,
-} from '@tailor-cms/utils';
+import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
 
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
@@ -39,6 +36,7 @@ const saveOutline = (repositoryId: Id, outlineState: OutlineState) => {
 };
 
 export const useCurrentRepository = defineStore('currentRepository', () => {
+  const { $pluginRegistry } = useNuxtApp() as any;
   const route = useRoute();
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
@@ -108,7 +106,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     if (!repository.value) return false;
     const totalItems = outlineActivities.value.length;
     const itemStates = outlineActivities.value.map((it) =>
-      outlineState.expanded.get(it.uid));
+      outlineState.expanded.get(it.uid),
+    );
     const expandedItems = itemStates.filter(Boolean).length;
     return expandedItems === totalItems;
   });
@@ -181,6 +180,15 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     Object.assign(outlineState, loadOutline(repoId));
     await Repository.get(repoId);
     await Activity.fetch(repoId, { outlineOnly: true });
+    // Notify plugins about repository change (e.g., i18n initialization)
+    const repo = Repository.findById(repoId);
+    if (repo) {
+      const schema = getSchema(repo.schema);
+      $pluginRegistry.filter('repository:change', null, {
+        schema,
+        repository: repo,
+      });
+    }
   };
 
   function $reset() {
@@ -188,6 +196,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     repositoryId.value = null;
     outlineState.expanded.clear();
     $users.clear();
+    // Notify plugins about repository unload (e.g., i18n reset)
+    $pluginRegistry.filter('repository:unload', null, {});
   }
 
   const getUsers = () => {

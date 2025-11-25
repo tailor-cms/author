@@ -208,6 +208,15 @@ export const SCHEMA: Schema = {
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Course',
   description: 'A classic course structure featuring modules and pages.',
+  i18n: {
+    enabled: true,
+    languages: [
+      { code: 'en', name: 'English' },
+      { code: 'es', name: 'Spanish' },
+      { code: 'fr', name: 'French' },
+    ],
+    defaultLanguage: 'en',
+  },
   meta: [
     {
       key: 'posterImage',

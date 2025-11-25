@@ -20,7 +20,7 @@
           </LabelChip>
         </VCardSubtitle>
         <VCardTitle class="pt-3 pl-5 text-h5 text-primary-lighten-5">
-          {{ activity.data.name }}
+          <ActivityName :activity="activity" />
         </VCardTitle>
         <VCardActions class="pb-2 pl-3">
           <VBtn
@@ -41,6 +41,7 @@
 <script lang="ts" setup>
 import { find } from 'lodash-es';
 
+import ActivityName from '@/components/common/ActivityName.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -53,10 +54,12 @@ const props = withDefaults(defineProps<Props>(), { isSelected: false });
 defineEmits(['select', 'show']);
 
 const store = useCurrentRepository();
+
 const config = computed(() =>
   find(store.taxonomy, { type: props.activity.type }),
 );
 const typeLabel = computed(() => config.value.label);
+
 </script>
 
 <style lang="scss" scoped>
