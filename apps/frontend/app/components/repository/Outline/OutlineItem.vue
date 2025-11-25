@@ -162,7 +162,6 @@ const icon = computed(() => {
   if (!hasChildren.value) icon += '-outline';
   return icon;
 });
-
 </script>
 
 <style lang="scss" scoped>

@@ -10,7 +10,7 @@
       :is-reviewer="isReviewer"
       @update="updateMeta"
     />
-    <!-- Plugin append components (e.g., i18n translation badge) - hidden for new items -->
+    <!-- Plugin append components - hidden for new items -->
     <div v-if="appendPlugins.length && !isNew" class="append-slot">
       <component
         :is="plugin.appendComponentName"

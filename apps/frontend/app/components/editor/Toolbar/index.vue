@@ -16,7 +16,7 @@
           <span>{{ config.label }}</span>
           <span class="px-2 text-grey">|</span>
           <span class="text-secondary-lighten-3">
-            {{ activity.data.name }}
+            <ActivityName :activity="activity" />
           </span>
           <template v-if="showPublishDiff">
             <span class="px-2 text-grey">|</span>
@@ -56,6 +56,7 @@ import { formatDate } from 'date-fns/format';
 import { useDisplay } from 'vuetify';
 
 import ActivityActions from './ActivityActions.vue';
+import ActivityName from '@/components/common/ActivityName.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';

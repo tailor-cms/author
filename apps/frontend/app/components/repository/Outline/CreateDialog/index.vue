@@ -37,6 +37,16 @@
         >
           Please select the item type you want to add to edit its properties
         </VAlert>
+        <VAlert
+          v-if="showI18nHint"
+          class="my-3"
+          color="secondary-darken-1"
+          icon="mdi-translate"
+          variant="tonal"
+          density="compact"
+        >
+          Items are created in the default language
+        </VAlert>
         <MetaInput
           v-for="input in metadata"
           :key="input.key"
@@ -111,7 +121,10 @@ const emit = defineEmits(['close', 'created', 'expand']);
 const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 const selectedActivity = useSelectedActivity(props.anchor);
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService, $i18n } = useNuxtApp() as any;
+
+// Check if i18n is enabled to show creation hint
+const showI18nHint = computed(() => $i18n?.isEnabled);
 
 const initActivityState = (type: string) => {
   return {

@@ -59,7 +59,6 @@ const config = computed(() =>
   find(store.taxonomy, { type: props.activity.type }),
 );
 const typeLabel = computed(() => config.value.label);
-
 </script>
 
 <style lang="scss" scoped>

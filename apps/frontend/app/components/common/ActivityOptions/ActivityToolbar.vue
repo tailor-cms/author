@@ -25,9 +25,7 @@
       v-if="showCreateDialog"
       :action="action"
       :anchor="activity"
-      :heading="`${selectedActivity?.getAddDialogHeading(action)}: ${
-        activity.data.name
-      }`"
+      :heading="`${selectedActivity?.getAddDialogHeading(action)}: ${activityName}`"
       :repository-id="activity.repositoryId"
       @close="showCreateDialog = false"
     />
@@ -40,10 +38,19 @@ import { InsertLocation } from '@tailor-cms/utils';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 
 const { AddAfter, AddBefore, AddInto } = InsertLocation;
+const { $pluginRegistry } = useNuxtApp() as any;
 
 const props = defineProps<{ activity: StoreActivity }>();
 
 const selectedActivity = useSelectedActivity(props.activity);
+
+// Get processed name via plugin hooks
+const activityName = computed(() => {
+  const data = props.activity?.data;
+  if (!data) return '';
+  const rawValue = data.name ?? '';
+  return $pluginRegistry.filter('data:value', rawValue, { data, key: 'name' });
+});
 const showCreateDialog = ref(false);
 const action = ref<InsertLocation>(AddAfter);
 

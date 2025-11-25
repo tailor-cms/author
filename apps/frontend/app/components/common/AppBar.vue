@@ -66,9 +66,9 @@
         <span class="toolbar-route text-truncate">{{ name }}</span>
       </VBtn>
       <component
+        :is="plugin.globalComponentName"
         v-for="plugin in globalPlugins"
         :key="plugin.id"
-        :is="plugin.globalComponentName"
       />
       <VMenu
         attach="#mainAppBar"
