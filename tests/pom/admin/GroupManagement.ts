@@ -13,7 +13,7 @@ export class UserGroupUserAssignment {
 
   constructor(page: Page) {
     const el = page.getByRole('dialog');
-    this.emailInput = el.getByLabel('Email', { exact: true });
+    this.emailInput = el.getByRole('textbox', { name: 'Email' });
     this.roleSelect = el.locator('.group-role-select');
     this.cancelBtn = el.getByRole('button', { name: 'Cancel' });
     this.addBtn = el.getByRole('button', { name: 'Add' });

@@ -16,7 +16,7 @@ export class UserDialog {
   constructor(page: Page) {
     const el = page.locator('div[role="dialog"]');
     this.alert = el.getByRole('alert');
-    this.email = el.getByLabel('Email');
+    this.email = el.getByRole('textbox', { name: 'Email' });
     this.firstName = el.getByLabel('First name');
     this.lastName = el.getByLabel('Last name');
     this.role = el.locator('.role-select');
