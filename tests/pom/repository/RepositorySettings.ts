@@ -102,7 +102,7 @@ export class AddUserDialog {
 
   constructor(page: Page) {
     const el = page.getByRole('dialog');
-    this.emailInput = el.getByLabel('Email');
+    this.emailInput = el.getByPlaceholder('Enter email...');
     this.roleSelect = el.locator('.role-select');
     this.cancelBtn = el.getByRole('button', { name: 'Cancel' });
     this.addBtn = el.getByRole('button', { name: 'Add' });
