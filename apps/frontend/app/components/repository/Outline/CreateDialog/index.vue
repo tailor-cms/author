@@ -37,16 +37,6 @@
         >
           Please select the item type you want to add to edit its properties
         </VAlert>
-        <VAlert
-          v-if="showI18nHint"
-          class="my-3"
-          color="secondary-darken-1"
-          icon="mdi-translate"
-          variant="tonal"
-          density="compact"
-        >
-          Items are created in the default language
-        </VAlert>
         <MetaInput
           v-for="input in metadata"
           :key="input.key"
@@ -55,6 +45,16 @@
           is-new
           @update="setMetaValue"
         />
+        <VAlert
+          v-if="showI18nHint"
+          class="mb-3"
+          color="primary-darken-1"
+          icon="mdi-information-outline"
+          variant="tonal"
+          density="compact"
+        >
+          Items are created in the default language
+        </VAlert>
         <VSpacer />
         <div class="d-flex justify-end pt-5 pb-3">
           <VBtn
