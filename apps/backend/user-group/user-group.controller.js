@@ -57,10 +57,10 @@ async function getUsers({ userGroup }, res) {
 }
 
 async function upsertUser({ userGroup, body }, res) {
-  const { emails, role } = body;
+  const { emails, role, skipInvite = false } = body;
   for (const email of emails) {
     let user = await User.findOne({ where: { email } });
-    if (!user) user = await User.inviteOrUpdate({ email });
+    if (!user) user = await User.inviteOrUpdate({ email }, { skipInvite });
     const [member, created] = await UserGroupMember.findOrCreate({
       where: { userId: user.id, groupId: userGroup.id },
       defaults: { userId: user.id, groupId: userGroup.id, role },

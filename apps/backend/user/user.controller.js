@@ -36,9 +36,9 @@ async function list(
 }
 
 async function upsert(req, res) {
-  const { uid, email, firstName, lastName, role, userGroupIds } = req.body;
+  const { uid, email, firstName, lastName, role, userGroupIds, skipInvite } = req.body;
   const payload = { uid, email, firstName, lastName, role };
-  const user = await User.inviteOrUpdate(payload);
+  const user = await User.inviteOrUpdate(payload, { skipInvite });
   if (isArray(userGroupIds)) {
     const userGroups = userGroupIds?.length
       ? await UserGroup.findAll({ where: { id: userGroupIds } })
