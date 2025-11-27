@@ -4,7 +4,6 @@
       <VChip
         v-bind="tooltipProps"
         :color="badgeColor"
-        :text-color="badgeTextColor"
         class="ml-2 i18n-badge"
         size="x-small"
         variant="tonal"
@@ -57,6 +56,7 @@ import { computed } from 'vue';
 interface Props {
   meta: { key: string; type: string };
   data: Record<string, any>;
+  dark: boolean;
 }
 
 interface Language {
@@ -97,14 +97,9 @@ const getLanguageName = (code: string): string => {
 
 const badgeColor = computed(() => {
   const ratio = translatedCount.value / totalLanguages.value;
-  if (ratio === 1) return 'teal-lighten-3';
-  if (ratio === 0) return 'orange-lighten-2';
-  return 'secondary-lighten-4';
-});
-
-const badgeTextColor = computed(() => {
-  // Dark text for light badge backgrounds
-  return 'grey-darken-4';
+  if (ratio === 1) return props.dark ? 'teal-lighten-3' : 'teal';
+  if (ratio === 0) return props.dark ? 'orange-lighten-2' : 'orange-darken-3';
+  return props.dark ? 'secondary-lighten-3' : 'secondary';
 });
 </script>
 

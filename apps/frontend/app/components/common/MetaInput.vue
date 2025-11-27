@@ -18,6 +18,7 @@
         :key="plugin.id"
         :meta="meta"
         :data="entityData"
+        :dark="dark"
       />
     </div>
   </div>
