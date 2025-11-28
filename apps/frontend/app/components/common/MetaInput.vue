@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { get } from 'lodash-es';
+import { get, size } from 'lodash-es';
 import { getMetaName } from '@tailor-cms/utils';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { useField } from 'vee-validate';
@@ -59,9 +59,7 @@ const appendPlugins = computed(() => $pluginRegistry.getAppendComponents());
 
 // Get value via plugin hooks (e.g., i18n localization)
 const processedValue = computed(() => {
-  if (!props.entityData || Object.keys(props.entityData).length === 0) {
-    return props.meta.value;
-  }
+  if (!size(props.entityData)) return props.meta.value;
   const key = props.meta.key;
   const rawValue = props.entityData[key];
   return $pluginRegistry.filter('data:value', rawValue, {

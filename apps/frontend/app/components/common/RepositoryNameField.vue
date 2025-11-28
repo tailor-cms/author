@@ -8,13 +8,11 @@
       :messages="warning"
       class="required"
       name="name"
-      variant="outlined"
       @change="update"
     >
       <template #message="{ message }">
-        <div v-if="warning" class="d-flex align-center">
-          <VIcon class="mr-1 text-body-1" color="warning">mdi-alert</VIcon>
-          <span class="warning--text">{{ message }}</span>
+        <div v-if="warning" class="d-flex align-center text-warning">
+          <VIcon class="text-body-1" start icon="mdi-alert" />{{ message }}
         </div>
         <template v-else>{{ message }}</template>
       </template>
