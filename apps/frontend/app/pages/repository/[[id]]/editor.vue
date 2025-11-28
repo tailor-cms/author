@@ -36,7 +36,7 @@ import VSidebar from '@/components/editor/Sidebar/index.vue';
 import VToolbar from '@/components/editor/Toolbar/index.vue';
 import EngagementSidebar from '@/components/editor/EngagementSidebar/index.vue';
 
-const { $ceRegistry } = useNuxtApp() as any;
+const { $ceRegistry, $pluginRegistry } = useNuxtApp() as any;
 
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
@@ -49,6 +49,7 @@ useHead({
 });
 
 provide('$ceRegistry', $ceRegistry);
+provide('$pluginRegistry', $pluginRegistry);
 provide('$editorState', {
   isPublishDiff: computed(() => editorStore.showPublishDiff),
 });

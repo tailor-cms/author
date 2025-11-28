@@ -300,6 +300,15 @@ export const SCHEMA: Schema = {
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Partner training course',
   description: 'A classic course structure featuring modules and lessons.',
+  i18n: {
+    enabled: true,
+    languages: [
+      { code: 'en', name: 'English' },
+      { code: 'es', name: 'Spanish' },
+      { code: 'fr', name: 'French' },
+    ],
+    defaultLanguage: 'en',
+  },
   meta: [
     {
       key: 'thumbnailImage',

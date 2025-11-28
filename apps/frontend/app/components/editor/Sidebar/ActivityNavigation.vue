@@ -28,7 +28,7 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import { sortBy } from 'lodash-es';
 import { TailorTreeview } from '@tailor-cms/core-components';
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
 
 const props = defineProps<{
   repository: Repository;
@@ -38,9 +38,16 @@ const props = defineProps<{
 
 const searchInput = ref('');
 
+// Get processed name via plugin hooks
+const getActivityName = (activity: Activity) => {
+  const data = activity.data;
+  const rawValue = data?.name ?? '';
+  return $pluginRegistry.filter('data:value', rawValue, { data, key: 'name' });
+};
+
 const attachActivityAttrs = (activity: Activity) => ({
   id: activity.id,
-  title: activity.data.name,
+  title: getActivityName(activity),
   isEditable: !!$schemaService.isEditable(activity.type),
   isGroup: !!$schemaService.getLevel(activity.type)?.subLevels?.length,
 });

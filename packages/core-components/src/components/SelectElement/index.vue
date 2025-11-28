@@ -130,6 +130,7 @@ const emit = defineEmits(['selected', 'close']);
 
 const api = inject<any>('$api');
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
+const pluginRegistry = inject<any>('$pluginRegistry');
 const currentRepository = inject<any>('$repository');
 const schemaService = inject<any>('$schemaService');
 
@@ -170,7 +171,8 @@ const processedContainers = computed<Activity[]>(() => {
     'position',
     'createdAt',
   ]) as Activity[];
-  return flatMap(containers, (it) => [it, ...getSubcontainers(it)]);
+  const filtered = pluginRegistry.filter('container:filter', containers);
+  return flatMap(filtered, (it) => [it, ...getSubcontainers(it)]);
 });
 
 const getContainerTypes = (type: string) => {
