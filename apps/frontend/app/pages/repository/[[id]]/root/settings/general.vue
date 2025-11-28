@@ -41,6 +41,7 @@
 <script lang="ts" setup>
 import { cloneDeep, find } from 'lodash-es';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
+import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import { repository as api } from '@/api';
@@ -95,7 +96,7 @@ const nameValue = computed(() => {
 
 const descriptionMeta = computed<Metadata>(() => ({
   key: 'description',
-  type: 'TEXTAREA',
+  type: MetaInputType.Textarea,
   label: 'Description',
   value: repository.value?.description,
   validate: { required: true, min: 2, max: 2000 },

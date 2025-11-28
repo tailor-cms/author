@@ -25,7 +25,7 @@
         :is="plugin.appendComponentName"
         v-for="plugin in appendPlugins"
         :key="plugin.id"
-        :meta="{ key: 'name', type: 'TEXT_FIELD' }"
+        :meta="{ key: 'name', type: MetaInputType.TextField }"
         :data="entityData"
       />
     </div>
@@ -34,6 +34,7 @@
 
 <script lang="ts" setup>
 import { debounce } from 'lodash-es';
+import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { string } from 'yup';
 import { useField } from 'vee-validate';
