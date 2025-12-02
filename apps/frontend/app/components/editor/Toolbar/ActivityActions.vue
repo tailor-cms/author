@@ -1,30 +1,28 @@
 <template>
-  <div>
-    <VList bg-color="transparent">
-      <VTooltip
-        v-for="{ active, title, icon, action, disabled } in actions"
-        :key="title"
-        content-class="bg-primary-darken-4"
-        location="bottom"
-        offset="24"
-      >
-        <template #activator="{ props: tooltipProps }">
-          <VBtn
-            v-bind="tooltipProps"
-            :active="active"
-            :aria-label="title"
-            :color="active ? 'secondary-lighten-3' : 'primary-lighten-4'"
-            :disabled="disabled"
-            :icon="`mdi-${icon}`"
-            class="mr-2"
-            variant="text"
-            @click.stop="action"
-          />
-        </template>
-        <span>{{ title }}</span>
-      </VTooltip>
-    </VList>
-  </div>
+  <VList bg-color="transparent" class="py-0">
+    <VTooltip
+      v-for="{ active, title, icon, action, disabled } in actions"
+      :key="title"
+      content-class="bg-primary-darken-4"
+      location="bottom"
+      offset="24"
+    >
+      <template #activator="{ props: tooltipProps }">
+        <VBtn
+          v-bind="tooltipProps"
+          :active="active"
+          :aria-label="title"
+          :color="active ? 'secondary-lighten-3' : 'primary-lighten-4'"
+          :disabled="disabled"
+          :icon="`mdi-${icon}`"
+          class="mr-2"
+          variant="text"
+          @click.stop="action"
+        />
+      </template>
+      <span>{{ title }}</span>
+    </VTooltip>
+  </VList>
 </template>
 
 <script lang="ts" setup>
