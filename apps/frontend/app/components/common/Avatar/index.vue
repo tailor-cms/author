@@ -9,29 +9,30 @@
     >
       <template #activator="{ props: activatorProps }">
         <VHover v-slot="{ isHovering, props: hoverProps }">
-          <VAvatar id="avatar" v-bind="hoverProps" :size="180">
-            <VFadeTransition class="d-flex align-center justify-space-around">
+          <VAvatar
+            id="avatar"
+            color="primary-lighten-5"
+            v-bind="hoverProps"
+            size="180"
+          >
+            <img v-if="imgUrl" :src="imgUrl" alt="Avatar" />
+            <VIcon
+              v-else
+              :icon="placeholderIcon"
+              class="placeholder"
+              color="primary-lighten-2"
+            />
+            <VFadeTransition>
               <VIcon
-                v-if="imgUrl && isHovering"
-                v-bind="activatorProps"
+                v-if="isHovering"
+                v-bind="(imgUrl && !isGravatar) ? activatorProps : {}"
                 aria-label="Change avatar"
                 class="overlay"
                 color="white"
                 icon="mdi-camera"
                 size="x-large"
+                @click="!(imgUrl && !isGravatar) && triggerUpload()"
               />
-              <div v-else>
-                <img v-if="imgUrl" :src="imgUrl" alt="Avatar" width="180" />
-                <VBtn
-                  v-else
-                  :icon="placeholderIcon"
-                  class="placeholder-icon"
-                  height="180"
-                  variant="tonal"
-                  width="180"
-                  @click.stop="openAvatarUploadDialog"
-                />
-              </div>
             </VFadeTransition>
           </VAvatar>
         </VHover>
@@ -49,7 +50,7 @@
         <VIcon>mdi-upload</VIcon>
       </VBtn>
       <VBtn
-        v-if="!isGravatar && imgUrl"
+        v-if="!isGravatar"
         key="2"
         aria-label="Delete avatar"
         color="secondary-lighten-2"
@@ -90,16 +91,15 @@ const emit = defineEmits(['save', 'delete']);
 
 const notify = useNotification();
 
-const fileInput = ref();
+const fileInput = ref<HTMLInputElement | null>(null);
+
 const isGravatar = computed(() => /gravatar.com/.test(props.imgUrl));
 
-const openAvatarUploadDialog = () => {
-  fileInput.value.click();
-};
+const triggerUpload = () => fileInput.value?.click();
 
 const selectPhoto = (event: Event) => {
   const { files } = event.target as HTMLInputElement;
-  if (!files?.length) return;
+  if (!files?.[0]) return;
   return new Compressor(files[0], {
     width: 250,
     height: 250,
@@ -123,10 +123,8 @@ const toBase64 = (file: Blob): Promise<string> => {
 </script>
 
 <style lang="scss" scoped>
-$image-border: 4px solid #cfd8dc;
-$image-bg-color: #cfd8dc;
-$image-width: 11.25rem;
-$image-height: 11.25rem;
+$image-border: 4px solid white;
+$image-bg-color: rgb(var(--v-theme-primary-lighten-4));
 
 .v-avatar {
   img,
@@ -135,6 +133,11 @@ $image-height: 11.25rem;
     border-radius: 50%;
     background-color: $image-bg-color;
     height: 100%;
+    width: 100%;
+
+    &.placeholder {
+      font-size: 6rem;
+    }
   }
 
   .overlay {
@@ -142,7 +145,6 @@ $image-height: 11.25rem;
     top: 0;
     left: 0;
     opacity: 0.7;
-    width: $image-width;
     background: #607d8b;
     cursor: pointer;
   }
