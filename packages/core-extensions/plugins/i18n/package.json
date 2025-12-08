@@ -1,0 +1,21 @@
+{
+  "name": "@tailor-cms/tp-i18n",
+  "version": "0.0.1",
+  "description": "Tailor plugin for i18n support",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js",
+  "devDependencies": {
+    "@tailor-cms/interfaces": "workspace:*"
+  },
+  "peerDependencies": {
+    "nuxt": "^4.0.0",
+    "pinia": "^3.0.0",
+    "vee-validate": "^4.15.0",
+    "vue": "^3.5.0",
+    "vuetify": "^3.10.0"
+  }
+}

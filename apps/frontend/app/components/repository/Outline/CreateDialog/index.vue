@@ -45,6 +45,16 @@
           is-new
           @update="setMetaValue"
         />
+        <VAlert
+          v-if="showI18nHint"
+          class="mb-3"
+          color="primary-darken-1"
+          icon="mdi-information-outline"
+          variant="tonal"
+          density="compact"
+        >
+          Items are created in the default language
+        </VAlert>
         <VSpacer />
         <div class="d-flex justify-end pt-5 pb-3">
           <VBtn
@@ -111,7 +121,10 @@ const emit = defineEmits(['close', 'created', 'expand']);
 const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 const selectedActivity = useSelectedActivity(props.anchor);
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService, $i18n } = useNuxtApp() as any;
+
+// Check if i18n is enabled to show creation hint
+const showI18nHint = computed(() => $i18n?.isEnabled);
 
 const initActivityState = (type: string) => {
   return {

@@ -5,14 +5,14 @@
     :name="meta.key"
     :placeholder="meta.placeholder"
     :type="meta.inputType || 'text'"
-    class="mt-2 mb-4"
+    class="my-2"
     variant="outlined"
     @change="onChange"
   />
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 interface Props {
   meta?: any;
@@ -32,4 +32,8 @@ const onChange = () => {
     : input.value;
   emit('update', props.meta.key, processedValue);
 };
+
+watch(() => props.meta.value, (val) => {
+  input.value = val;
+});
 </script>

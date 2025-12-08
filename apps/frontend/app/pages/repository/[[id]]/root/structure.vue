@@ -124,8 +124,9 @@ const scrollToActivity = (activity: StoreActivity, timeout = 500) => {
   repositoryStore.expandOutlineParents(activity.id);
   setTimeout(() => {
     const elementId = `#activity_${activity.uid}`;
-    const element = structureEl.value.querySelector(elementId);
-    element.scrollIntoView();
+    const container = structureEl.value?.$el ?? structureEl.value;
+    const element = container?.querySelector?.(elementId);
+    element?.scrollIntoView();
   }, timeout);
 };
 
