@@ -9,8 +9,10 @@
   ],
   "main": "./src/index.js",
   "peerDependencies": {
+    "nuxt": "^4.0.0",
     "pinia": "^3.0.0",
-    "vue": "^3.5.13",
-    "vuetify": "^3.7.0"
+    "vee-validate": "^4.15.0",
+    "vue": "^3.5.0",
+    "vuetify": "^3.10.0"
   }
 }

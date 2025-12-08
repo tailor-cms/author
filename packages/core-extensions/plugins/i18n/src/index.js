@@ -48,16 +48,24 @@ export default {
       };
     },
     // Get localized value from data object
-    'data:value': (value, { data, key }) => {
+    'data:value': (value, { data, key, lang, type }) => {
       const i18n = useI18nStore();
       if (!i18n.isEnabled) return value;
-      return i18n.getLocalizedValue(data, key);
+      if (type) {
+        const { $metaRegistry } = useNuxtApp();
+        if (!$metaRegistry.get(type)?.i18n) return value;
+      }
+      return i18n.getLocalizedValue(data, key, lang);
     },
     // Build updated data object for saving with localization
-    'data:update': (data, { key, value }) => {
+    'data:update': (data, { key, value, lang, type }) => {
       const i18n = useI18nStore();
       if (!i18n.isEnabled) return { ...data, [key]: value };
-      return i18n.setLocalizedValue(data, key, value);
+      if (type) {
+        const { $metaRegistry } = useNuxtApp();
+        if (!$metaRegistry.get(type)?.i18n) return { ...data, [key]: value };
+      }
+      return i18n.setLocalizedValue(data, key, value, lang);
     },
   },
   // TODO:

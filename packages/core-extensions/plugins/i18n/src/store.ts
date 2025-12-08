@@ -45,10 +45,10 @@ export const useI18nStore = defineStore('i18n', () => {
   }
 
   // Get value for current language with fallback to default
-  function getLocalizedValue<T>(data: any, key: string): T | undefined {
+  function getLocalizedValue<T>(data: any, key: string, lang?: string): T | undefined {
     if (!data) return undefined;
     if (!isEnabled.value) return data[key];
-    const currLang = currentLanguage.value;
+    const currLang = lang || currentLanguage.value;
     const defLang = defaultLanguage.value;
     // Default language reads from root level
     if (currLang === defLang) return data[key];
@@ -58,9 +58,9 @@ export const useI18nStore = defineStore('i18n', () => {
   }
 
   // Set value for current language
-  function setLocalizedValue(data: any, key: string, value: any): any {
+  function setLocalizedValue(data: any, key: string, value: any, lang?: string): any {
     if (!isEnabled.value) return { ...data, [key]: value };
-    const currLang = currentLanguage.value;
+    const currLang = lang || currentLanguage.value;
     const defLang = defaultLanguage.value;
     // Default language saves to root level
     if (currLang === defLang) return { ...data, [key]: value };

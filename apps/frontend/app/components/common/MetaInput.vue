@@ -16,9 +16,11 @@
         :is="plugin.appendComponentName"
         v-for="plugin in appendPlugins"
         :key="plugin.id"
+        :dark="dark"
         :meta="meta"
         :data="entityData"
-        :dark="dark"
+        :component-name="componentName"
+        @update="update"
       />
     </div>
   </div>
@@ -65,6 +67,7 @@ const processedValue = computed(() => {
   return $pluginRegistry.filter('data:value', rawValue, {
     data: props.entityData,
     key,
+    type: type.value,
   });
 });
 
@@ -93,12 +96,16 @@ const updateMeta = async (key: string, value: any) => {
     const updatedData = $pluginRegistry.transform(
       'data:update',
       props.entityData,
-      { key, value },
+      { key, value, type: type.value },
     );
-    emit('update', key, value, updatedData);
+    update(key, value, updatedData);
   } else {
-    emit('update', key, value);
+    update(key, value);
   }
+};
+
+const update = (key: string, value: any, data?: any) => {
+  emit('update', key, value, data);
 };
 </script>
 

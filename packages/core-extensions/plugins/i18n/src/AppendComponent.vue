@@ -1,5 +1,9 @@
 <template>
-  <VTooltip v-if="i18n.isEnabled && isTranslatable" location="top">
+  <VMenu
+    v-if="i18n.isEnabled && isTranslatable"
+    location="bottom end"
+    :close-on-content-click="false"
+  >
     <template #activator="{ props: tooltipProps }">
       <VChip
         v-bind="tooltipProps"
@@ -15,60 +19,79 @@
         </span>
       </VChip>
     </template>
-    <div class="pa-2">
-      <VAlert
-        v-if="displayedLang?.isFallback"
-        class="mb-3 pa-2 text-caption bg-grey-lighten-1"
-      >
-        <VIcon size="14" class="mr-1">mdi-alert</VIcon>
-        Showing {{ getLanguageName(displayedLang.code) }} (fallback)
-      </VAlert>
-      <div class="text-caption mb-2 font-weight-bold">Translation Status</div>
-      <div
-        v-for="lang in i18n.availableLanguages"
-        :key="lang.code"
-        class="d-flex align-center mb-1"
-      >
-        <VIcon
-          :icon="
-            translationStatus[lang.code]
-              ? 'mdi-check-circle'
-              : 'mdi-circle-outline'
-          "
-          :color="translationStatus[lang.code] ? 'success' : 'grey-lighten-1'"
-          class="mr-2"
-          size="16"
-        />
-        <span :class="{ 'text-grey': !translationStatus[lang.code] }">
-          {{ lang.name }}
-        </span>
-        <VChip v-if="lang.code === i18n.defaultLanguage" class="ml-2" size="x-small">
-          default
-        </VChip>
+    <VCard min-width="300">
+      <div class="px-4 pt-3">
+        <div class="text-caption text-medium-emphasis mb-2">Translations</div>
+        <VBtnToggle
+          v-model="activeLanguage"
+          mandatory
+          density="compact"
+          variant="outlined"
+          divided
+          class="mb-3"
+        >
+          <VBtn
+            v-for="lang in i18n.availableLanguages"
+            :key="lang.code"
+            :value="lang.code"
+            size="small"
+          >
+            {{ lang.name }}
+            <VIcon
+              v-if="translationStatus[lang.code]"
+              icon="mdi-check-circle"
+              color="success"
+              size="14"
+              class="ml-1"
+            />
+            <VIcon
+              v-else
+              icon="mdi-circle-outline"
+              size="14"
+              class="ml-1 text-medium-emphasis"
+            />
+          </VBtn>
+        </VBtnToggle>
       </div>
-    </div>
-  </VTooltip>
+      <div class="px-4 pb-4">
+        <component
+          :is="componentName"
+          :key="activeLanguage"
+          :meta="getMetaWithValue(activeLanguage)"
+          :dark="dark"
+          :error-messages="errorMessage"
+          :class="{ required: meta.validate?.required }"
+          @update="update"
+        />
+      </div>
+    </VCard>
+  </VMenu>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useField } from 'vee-validate';
 
 interface Props {
-  meta: { key: string; type: string };
+  meta: {
+    key: string;
+    type: string;
+    validate?: {
+      required?: boolean;
+      [key: string]: any;
+    };
+    [key: string]: any;
+  };
   data: Record<string, any>;
-  dark: boolean;
-}
-
-interface Language {
-  code: string;
-  name: string;
+  componentName: string;
+  dark?: boolean;
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits(['update']);
 
-const { $i18n: i18n, $metaRegistry } = useNuxtApp() as any;
+const { $i18n: i18n, $metaRegistry, $pluginRegistry } = useNuxtApp() as any;
 
-// Check if this meta type supports i18n
 const isTranslatable = computed(() => {
   const metaType = $metaRegistry.get(props.meta.type?.toUpperCase());
   return metaType?.i18n === true;
@@ -78,8 +101,8 @@ const translationStatus = computed(() =>
   i18n.getTranslationStatus(props.data, props.meta.key),
 );
 
-const translatedCount = computed(
-  () => Object.values(translationStatus.value).filter(Boolean).length,
+const translatedCount = computed(() =>
+  Object.values(translationStatus.value).filter(Boolean).length,
 );
 
 const totalLanguages = computed(() => i18n.availableLanguages.length);
@@ -89,25 +112,41 @@ const displayedLang = computed(() =>
   i18n.getDisplayedLanguage(props.data, props.meta.key),
 );
 
-// Get human-readable language name
-const getLanguageName = (code: string): string => {
-  const lang = i18n.availableLanguages.find((l: Language) => l.code === code);
-  return lang?.name ?? code.toUpperCase();
-};
-
 const badgeColor = computed(() => {
   const ratio = translatedCount.value / totalLanguages.value;
   if (ratio === 1) return props.dark ? 'teal-lighten-3' : 'teal';
   if (ratio === 0) return props.dark ? 'orange-lighten-2' : 'orange-darken-3';
   return props.dark ? 'secondary-lighten-3' : 'secondary';
 });
+
+const activeLanguage = ref(i18n.currentLanguage);
+
+const { errorMessage, handleChange, validate, resetField } = useField(
+  () => `${props.meta.key}_i18n`,
+  props.meta.validate || {},
+  { label: props.meta.key },
+);
+
+const getMetaWithValue = (lang: string) => {
+  const { data, meta } = props;
+  const context = { data, key: meta.key, lang };
+  const value = $pluginRegistry.filter('data:value', data?.[meta.key], context);
+  return { ...meta, value };
+};
+
+const update = async (key: string, value: any) => {
+  handleChange(value, false);
+  const { valid } = await validate();
+  if (!valid) return;
+  const context = { key, value, lang: activeLanguage.value };
+  const data = $pluginRegistry.transform('data:update', props.data, context);
+  emit('update', key, value, data);
+};
+
+watch(activeLanguage, () => resetField());
 </script>
 
 <style scoped>
-.i18n-badge {
-  cursor: help;
-}
-
 .fallback-indicator {
   font-size: 0.65rem;
   opacity: 0.8;
