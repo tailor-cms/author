@@ -3,9 +3,9 @@
   "type": "module",
   "main": "src/index.js",
   "dependencies": {
-    "commander": "^14.0.0",
-    "inquirer": "^12.7.0",
-    "jsonfile": "^6.1.0",
+    "commander": "^14.0.1",
+    "inquirer": "^12.10.0",
+    "jsonfile": "^6.2.0",
     "lodash-es": "^4.17.21",
     "shelljs": "^0.10.0"
   },

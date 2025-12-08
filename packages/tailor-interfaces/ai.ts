@@ -27,7 +27,7 @@ export type AiResponseSchemaLiteral = `${AiResponseSchema}`;
 export interface AiInput {
   type: AiRequestTypeLiteral;
   text: string;
-  responseSchema: AiResponseSchemaLiteral;
+  responseSchema: AiResponseSchemaLiteral | string;
   targetAudience?: AiTargetAudienceLiteral;
   useImageGenerationTool?: boolean;
   useSearchTool?: boolean;

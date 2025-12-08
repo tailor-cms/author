@@ -152,6 +152,7 @@ interface Props {
   contentElementConfig?: ContentElementCategory[];
   layout?: boolean;
   disabled?: boolean;
+  config?: Record<string, any>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -159,6 +160,7 @@ const props = withDefaults(defineProps<Props>(), {
   contentElementConfig: () => [],
   layout: true,
   disabled: false,
+  config: () => ({}),
 });
 
 const emit = defineEmits([
@@ -169,7 +171,7 @@ const emit = defineEmits([
 ]);
 
 const doTheMagic = inject<any>('$doTheMagic');
-const isAiEnabled = computed(() => !!doTheMagic);
+const isAiEnabled = computed(() => !props.config?.disableAi && !!doTheMagic);
 const isAiGeneratingContent = ref(false);
 const aiInputs = ref<AiInput[]>([]);
 

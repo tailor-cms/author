@@ -32,6 +32,7 @@
       </VCol>
     </VRow>
     <StructuredContent
+      v-if="!disableContentElementList"
       v-bind="$attrs"
       :activities="activities"
       :container="container"
@@ -69,6 +70,7 @@ const props = defineProps<{
   isDisabled: boolean;
   layout?: boolean;
   contentElementConfig?: Array<any>;
+  disableContentElementList?: boolean;
 }>();
 
 const emit = defineEmits([
