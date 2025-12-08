@@ -1,6 +1,13 @@
+import type { Repository } from '@tailor-cms/interfaces/repository';
+
+import { useNuxtApp } from '#app';
 import AppendComponent from './AppendComponent.vue';
 import GlobalComponent from './GlobalLanguageSelector.vue';
-import { useI18nStore } from './store.ts';
+import { useI18nStore } from './store';
+import type { Schema } from '@tailor-cms/interfaces/schema';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+
+type Data = Record<string, any>;
 
 export default {
   type: 'I18N',
@@ -16,9 +23,12 @@ export default {
   // Hooks for data filtering/transformation
   hooks: {
     // Initialize i18n from schema config when repository loads
-    'repository:change': (_data, { schema }) => {
+    'repository:change': (
+      _data: Data,
+      context: { schema: Schema; repository: Repository },
+    ) => {
       const i18n = useI18nStore();
-      i18n.initialize(schema?.i18n);
+      i18n.initialize(context.schema?.i18n);
     },
     // Reset i18n state when repository unloads
     'repository:unload': () => {
@@ -26,7 +36,7 @@ export default {
       i18n.$reset();
     },
     // Filter containers by current language
-    'container:filter': (containers) => {
+    'container:filter': (containers: Activity[]) => {
       const i18n = useI18nStore();
       if (!i18n.isEnabled) return containers;
       const currentLang = i18n.currentLanguage;
@@ -39,7 +49,7 @@ export default {
       });
     },
     // Tag new containers with current language
-    'container:transform': (data) => {
+    'container:transform': (data: Data) => {
       const i18n = useI18nStore();
       if (!i18n.isEnabled) return data;
       return {
@@ -48,24 +58,31 @@ export default {
       };
     },
     // Get localized value from data object
-    'data:value': (value, { data, key, lang, type }) => {
+    'data:value': (
+      value: any,
+      ctx: { data: Data; key: string; lang?: string; type?: string },
+    ) => {
       const i18n = useI18nStore();
       if (!i18n.isEnabled) return value;
-      if (type) {
-        const { $metaRegistry } = useNuxtApp();
-        if (!$metaRegistry.get(type)?.i18n) return value;
+      if (ctx.type) {
+        const { $metaRegistry } = useNuxtApp() as any;
+        if (!$metaRegistry.get(ctx.type)?.i18n) return value;
       }
-      return i18n.getLocalizedValue(data, key, lang);
+      return i18n.getLocalizedValue(ctx.data, ctx.key, ctx.lang);
     },
     // Build updated data object for saving with localization
-    'data:update': (data, { key, value, lang, type }) => {
+    'data:update': (
+      data: Data,
+      ctx: { value: any; key: string; lang?: string; type?: string },
+    ) => {
       const i18n = useI18nStore();
-      if (!i18n.isEnabled) return { ...data, [key]: value };
-      if (type) {
-        const { $metaRegistry } = useNuxtApp();
-        if (!$metaRegistry.get(type)?.i18n) return { ...data, [key]: value };
+      if (!i18n.isEnabled) return { ...data, [ctx.key]: ctx.value };
+      if (ctx.type) {
+        const { $metaRegistry } = useNuxtApp() as any;
+        if ($metaRegistry.get(ctx.type)?.i18n) return;
+        return { ...data, [ctx.key]: ctx.value };
       }
-      return i18n.setLocalizedValue(data, key, value, lang);
+      return i18n.setLocalizedValue(data, ctx.key, ctx.value, ctx.lang);
     },
   },
   // TODO:

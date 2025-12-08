@@ -8,6 +8,9 @@
     "src"
   ],
   "main": "./src/index.js",
+  "devDependencies": {
+    "@tailor-cms/interfaces": "workspace:*"
+  },
   "peerDependencies": {
     "nuxt": "^4.0.0",
     "pinia": "^3.0.0",
