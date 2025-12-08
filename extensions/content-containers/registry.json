@@ -7,7 +7,7 @@
   {
     "name": "@tailor-cms/tcc-structured-content",
     "clientPackage": "@tailor-cms/tcc-structured-content",
-    "serverPackage": ""
+    "serverPackage": "@tailor-cms/tcc-structured-content-server"
   },
   {
     "name": "@tailor-cms/tcc-assessment-pool",

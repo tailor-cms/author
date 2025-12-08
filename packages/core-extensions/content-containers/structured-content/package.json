@@ -1,5 +1,5 @@
 {
-  "name": "@tailor-cms/tcc-structured-content",
+  "name": "@tailor-cms/tcc-structured-content-edit",
   "version": "0.0.1",
   "description": "Tailor structured content container",
   "author": "Studion <info@gostudion.com>",
@@ -17,7 +17,7 @@
     "@tailor-cms/utils": "workspace:*",
     "lodash-es": "*",
     "vee-validate": "4.14.7",
-    "vue": "^3.5.17",
-    "vuetify": "^3.9.0"
+    "vue": "^3.5.22",
+    "vuetify": "^3.10.7"
   }
 }

@@ -21,6 +21,20 @@ export default defineNuxtPlugin(() => {
     return regex.test(value) || msg;
   });
 
+  defineRule('ext', (value: any, extensions: string[]) => {
+    // null and undefined are valid values, should be handled by required rule
+    if (value === null || value === undefined || value === '') return true;
+    // File input values are objects with key and name properties
+    const fileName = typeof value === 'string' ? value : value?.name;
+    if (!fileName) return true;
+    const fileExt = fileName.split('.').pop()?.toLowerCase();
+    const allowedExts = extensions.map((ext) => ext.toLowerCase());
+    return (
+      allowedExts.includes(fileExt) ||
+      `File must have one of the following extensions: ${extensions.join(', ')}`
+    );
+  });
+
   configure({
     validateOnModelUpdate: false,
     // TODO: messages have been modified to align with yup messages

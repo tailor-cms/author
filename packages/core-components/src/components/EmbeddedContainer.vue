@@ -10,6 +10,7 @@
   >
     <template #default="{ element, isDragged }">
       <ContainedContent
+        :key="element.id"
         :element="element"
         :is-disabled="isDisabled || isReadonly"
         :is-dragged="isDragged"
@@ -47,7 +48,10 @@ const props = withDefaults(defineProps<Props>(), {
   isDisabled: false,
   isReadonly: false,
   enableAdd: true,
-  allowedElementConfig: () => [],
+  allowedElementConfig: () => [{
+    name: 'Content Elements',
+    items: [{ id: 'TIPTAP_HTML' }, { id: 'IMAGE' }, { id: 'EMBED' }],
+  }],
   addElementOptions: () => ({}),
 });
 const emit = defineEmits(['save', 'delete']);

@@ -26,9 +26,9 @@
     "@tailor-cms/content-element-collection": "workspace:^",
     "@tailor-cms/interfaces": "workspace:^",
     "@tailor-cms/meta-element-collection": "workspace:^",
-    "del-cli": "^6.0.0",
+    "del-cli": "^7.0.0",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@tailor-cms/content-container-collection": "workspace:^",

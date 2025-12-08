@@ -87,6 +87,7 @@ const SectionConfig: ContentContainerConfig = {
       name: 'Content Elements',
       items: [
         ContentElementType.TiptapHtml,
+        ContentElementType.HtmlRaw,
         ContentElementType.Image,
         ContentElementType.Video,
         ContentElementType.Embed,
@@ -96,6 +97,7 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.Accordion,
         ContentElementType.Modal,
         ContentElementType.Carousel,
+        ContentElementType.MuxVideo,
       ],
     },
     {

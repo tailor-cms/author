@@ -10,6 +10,8 @@ export const publishWebhookThrottle = env.CONSUMER_PUBLISH_WEBHOOK_THROTTLE
   ? parseInt(env.CONSUMER_PUBLISH_WEBHOOK_THROTTLE, 10)
   : 0;
 
+export const accessUpdateWebhookUrl = env.CONSUMER_ACCESS_UPDATE_WEBHOOK;
+
 export const clientId = env.CONSUMER_CLIENT_ID;
 
 export const clientSecret = env.CONSUMER_CLIENT_SECRET;
@@ -25,6 +27,7 @@ export default {
   previewWebhookUrl,
   publishWebhookUrl,
   publishWebhookThrottle,
+  accessUpdateWebhookUrl,
   clientId,
   clientSecret,
   isAuthConfigured,

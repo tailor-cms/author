@@ -21,6 +21,8 @@
           <VWindowItem :value="1">
             <VDatePicker
               :model-value="dateInput && new Date(dateInput)"
+              elevation="0"
+              bg-color="transparent"
               @update:model-value="dateInput = $event"
             />
           </VWindowItem>

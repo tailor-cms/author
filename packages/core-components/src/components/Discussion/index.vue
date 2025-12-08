@@ -50,16 +50,16 @@
       <VTextarea
         ref="inputEl"
         v-model="contentInput"
-        :errors="errors.message"
+        :error-messages="errors.message"
         :placeholder="
           commentsCount ? 'Add a comment...' : 'Start the discussion...'
         "
         class="comment-input"
+        hide-details="auto"
         rows="3"
         variant="outlined"
         auto-grow
         clearable
-        hide-details
         @focus="emit('seen')"
       />
       <VBtn
