@@ -1176,15 +1176,21 @@ importers:
 
   packages/core-extensions/plugins/i18n:
     dependencies:
+      nuxt:
+        specifier: ^4.0.0
+        version: 4.2.0(@netlify/blobs@9.1.2)(@parcel/watcher@2.5.1)(@types/node@24.9.1)(@vue/compiler-sfc@3.5.22)(db0@0.3.4)(encoding@0.1.13)(eslint@9.38.0(jiti@2.6.1))(ioredis@5.8.2)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rollup@4.52.5)(sass@1.93.2)(terser@5.44.0)(typescript@5.9.3)(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1))(xml2js@0.6.2)(yaml@2.8.1)
       pinia:
         specifier: ^3.0.0
         version: 3.0.3(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+      vee-validate:
+        specifier: ^4.15.0
+        version: 4.15.1(vue@3.5.22(typescript@5.9.3))
       vue:
-        specifier: ^3.5.13
+        specifier: ^3.5.0
         version: 3.5.22(typescript@5.9.3)
       vuetify:
-        specifier: ^3.7.0
-        version: 3.8.4(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+        specifier: ^3.10.0
+        version: 3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/extension-installer:
     dependencies:
@@ -11103,22 +11109,6 @@ packages:
 
   vuetify@3.10.7:
     resolution: {integrity: sha512-I7eyv5hkJbaWpUT97aDtf17VQXIEnGfEWyNRD/6nqVfYIbVAUNVUiXCtoPnuSH/mxpA3Z/duxOr/94KPn2Rf8g==}
-    peerDependencies:
-      typescript: '>=4.7'
-      vite-plugin-vuetify: '>=2.1.0'
-      vue: ^3.5.0
-      webpack-plugin-vuetify: '>=3.1.0'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-      vite-plugin-vuetify:
-        optional: true
-      webpack-plugin-vuetify:
-        optional: true
-
-  vuetify@3.8.4:
-    resolution: {integrity: sha512-hfA1eqA6vhrF5LF8Yfk0uHdNUmh8Uckxn5wREiThO82HW/9Vfreh+IpxPgEtCsAhV33KW+NVamltQCu3HczRKw==}
-    engines: {node: ^12.20 || >=14.13}
     peerDependencies:
       typescript: '>=4.7'
       vite-plugin-vuetify: '>=2.1.0'
@@ -23520,12 +23510,6 @@ snapshots:
       vue: 3.5.22(typescript@5.9.3)
 
   vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)):
-    dependencies:
-      vue: 3.5.22(typescript@5.9.3)
-    optionalDependencies:
-      typescript: 5.9.3
-
-  vuetify@3.8.4(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)):
     dependencies:
       vue: 3.5.22(typescript@5.9.3)
     optionalDependencies:
