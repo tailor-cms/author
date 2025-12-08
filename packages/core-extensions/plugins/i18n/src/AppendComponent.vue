@@ -1,6 +1,7 @@
 <template>
   <VMenu
     v-if="i18n.isEnabled && isTranslatable"
+    v-model="isVisible"
     location="bottom end"
     :close-on-content-click="false"
   >
@@ -92,6 +93,8 @@ const emit = defineEmits(['update']);
 
 const { $i18n: i18n, $metaRegistry, $pluginRegistry } = useNuxtApp() as any;
 
+const isVisible = ref(false);
+
 const isTranslatable = computed(() => {
   const metaType = $metaRegistry.get(props.meta.type?.toUpperCase());
   return metaType?.i18n === true;
@@ -144,6 +147,7 @@ const update = async (key: string, value: any) => {
 };
 
 watch(activeLanguage, () => resetField());
+watch(isVisible, (val) => val && resetField());
 </script>
 
 <style scoped>
