@@ -229,7 +229,7 @@ function removeUser(req, res) {
   const where = { userId, repositoryId: repository.id };
   return User.findByPk(userId)
     .then((user) => user || createError(NOT_FOUND, 'User not found'))
-    .then(() => RepositoryUser.destroy({ where, force: true }))
+    .then(() => RepositoryUser.destroy({ where, force: true, individualHooks: true }))
     .then(() => res.end());
 }
 
@@ -237,13 +237,16 @@ async function addUserGroup({ repository, body }, res) {
   const { userGroupId } = body;
   const userGroup = await UserGroup.findByPk(userGroupId);
   if (!userGroup) return createError(NOT_FOUND, 'User group not found');
-  await repository.addUserGroup([userGroup]);
+  await RepositoryUserGroup.create({
+    repositoryId: repository.id,
+    groupId: userGroupId,
+  });
   return res.json({ data: userGroup });
 }
 
 async function removeUserGroup({ repository, params: { userGroupId } }, res) {
   const where = { repositoryId: repository.id, groupId: userGroupId };
-  await RepositoryUserGroup.destroy({ where });
+  await RepositoryUserGroup.destroy({ where, individualHooks: true });
   return res.status(NO_CONTENT).send();
 }
 

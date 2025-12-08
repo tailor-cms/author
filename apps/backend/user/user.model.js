@@ -175,17 +175,17 @@ class User extends Model {
     };
   }
 
-  static invite(user) {
+  static invite(user, { skipInvite = false } = {}) {
     return this.create(user).then((user) => {
-      this.sendInvitation(user);
+      if (!skipInvite) this.sendInvitation(user);
       return user.reload();
     });
   }
 
-  static inviteOrUpdate(data) {
+  static inviteOrUpdate(data, { skipInvite = false } = {}) {
     const { email } = data;
     return User.findOne({ where: { email }, paranoid: false }).then((user) => {
-      if (!user) return User.invite(data);
+      if (!user) return User.invite(data, { skipInvite });
       const payload = omit(data, ['id', 'uid']);
       map({ ...payload, deletedAt: null }, (v, k) => user.setDataValue(k, v));
       return user.save();

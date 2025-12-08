@@ -41,11 +41,23 @@
           :error-messages="errors.role"
           :items="roles"
           aria-label="Role"
-          class="group-role-select required my-4"
+          class="group-role-select required mt-4 mb-1"
           label="Role"
           placeholder="Role..."
           variant="outlined"
         />
+        <VSwitch
+          v-model="skipInviteInput"
+          class="ml-1 mb-1"
+          color="primary-darken-3"
+          label="Skip invitation email"
+          hide-details
+          inset
+        />
+        <div class="text-caption text-medium-emphasis ml-1 mb-3">
+          Useful for SSO users who don't need a password setup email.
+          You can always send the invite later using Reinvite.
+        </div>
         <div class="d-flex justify-end pb-2">
           <VBtn
             :disabled="isSaving"
@@ -71,7 +83,7 @@
 </template>
 
 <script lang="ts" setup>
-import { array, object, string } from 'yup';
+import { array, boolean, object, string } from 'yup';
 import { map, throttle } from 'lodash-es';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { titleCase } from '@tailor-cms/utils';
@@ -112,6 +124,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
   initialValues: {
     email: [],
     role: UserRole.USER,
+    skipInvite: false,
   },
   validationSchema: computed(() =>
     object({
@@ -119,12 +132,14 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
         .of(string().email('Invalid email address'))
         .min(1, 'At least one email is required'),
       role: string().required(),
+      skipInvite: boolean(),
     }),
   ),
 });
 
 const [emailInput] = defineField('email');
 const [roleInput] = defineField('role');
+const [skipInviteInput] = defineField('skipInvite');
 
 const onEmailValueChange = (val: string[]) =>
   (emailInput.value = val.filter((v: string) => EMAIL_PATTERN.test(v)));
@@ -152,6 +167,7 @@ const submit = handleSubmit(async () => {
   const payload = {
     emails: emailInput.value,
     role: roleInput.value,
+    skipInvite: skipInviteInput.value,
   };
   await userGroupApi.upsertUser(props.userGroupId, payload);
   suggestedUsers.value = [];
