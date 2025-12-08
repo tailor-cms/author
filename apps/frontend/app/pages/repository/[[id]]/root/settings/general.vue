@@ -18,7 +18,7 @@
       :repository-id="repository?.id"
       :entity-data="entityData"
       class="meta-input"
-      @change="(val) => updateMeta('name', val)"
+      @change="updateMeta"
     />
     <MetaInput
       :key="`description.${$pluginRegistry.dataVersion}`"

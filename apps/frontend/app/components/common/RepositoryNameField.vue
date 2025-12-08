@@ -8,11 +8,12 @@
       :messages="warning"
       class="required"
       name="name"
-      @change="update"
+      @change="validatedUpdate"
     >
       <template #message="{ message }">
-        <div v-if="warning" class="d-flex align-center text-warning">
-          <VIcon class="text-body-1" start icon="mdi-alert" />{{ message }}
+        <div v-if="warning" class="d-flex align-center">
+          <VIcon class="text-body-1" color="warning" icon="mdi-alert" start />
+          {{ message }}
         </div>
         <template v-else>{{ message }}</template>
       </template>
@@ -23,8 +24,10 @@
         :is="plugin.appendComponentName"
         v-for="plugin in appendPlugins"
         :key="plugin.id"
-        :meta="{ key: 'name', type: MetaInputType.TextField }"
+        :meta="meta"
         :data="entityData"
+        component-name="meta-text-field"
+        @update="update"
       />
     </div>
   </div>
@@ -59,9 +62,25 @@ const emit = defineEmits(['change']);
 
 const { $pluginRegistry } = useNuxtApp() as any;
 
-const existingRepositories = ref<Repository[]>([]);
 const warning = ref('');
+const existingRepositories = ref<Repository[]>([]);
+
+const meta = computed(() => ({
+  key: 'name',
+  type: MetaInputType.TextField,
+  label: 'Name',
+  value: props.value || '',
+  validate: { required: true, min: 2, max: 250 },
+}));
+
 const appendPlugins = computed(() => $pluginRegistry.getAppendComponents());
+const parsedRepos = computed(() => existingRepositories.value.map((repo) => {
+  const { name, description, data } = repo;
+  return $pluginRegistry.filter('data:value', name, {
+    data: { name, description, ...data },
+    key: 'name',
+  });
+}));
 
 const {
   value: nameInput,
@@ -71,27 +90,27 @@ const {
   initialValue: props.value,
 });
 
-const update = async () => {
+const validatedUpdate = async () => {
   const { valid } = await validate();
-  if (valid) emit('change', nameInput.value);
+  if (valid) update('name', nameInput.value);
+};
+
+const update = (key: string, value: string, data?: Record<string, any>) => {
+  emit('change', key, value, data);
 };
 
 // Update input when value prop changes
 watch(
   () => props.value,
-  (newValue) => {
-    if (newValue !== nameInput.value) {
-      nameInput.value = newValue;
-    }
+  (val) => {
+    if (val !== nameInput.value) nameInput.value = val;
   },
 );
 
 watch(
   nameInput,
   debounce((val) => {
-    const isDuplicate = existingRepositories.value.some(
-      (repo) => repo.name === val,
-    );
+    const isDuplicate = parsedRepos.value.some((repo) => repo === val);
     warning.value = isDuplicate ? EXISTING_NAME_MSG : '';
   }, 200),
 );
