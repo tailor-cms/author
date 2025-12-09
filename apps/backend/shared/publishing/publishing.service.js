@@ -17,12 +17,9 @@ class PublishingService {
   }
 
   async publishActivity(activity) {
-    log(`[queueAdd] intiated, activityId: ${activity.id}`);
-    const data = await this.queue.add(
+    return this.queue.add(
       createPublishJob(publishActivity, activity),
     );
-    log(`[queueAdd] completed, activityId: ${activity.id}`);
-    return data;
   }
 
   publishRepoDetails(repository) {
@@ -32,11 +29,15 @@ class PublishingService {
   }
 
   unpublishActivity(activity) {
-    return this.queue.add(() => unpublishActivity(activity));
+    return this.queue.add(
+      createPublishJob(unpublishActivity, activity),
+    );
   }
 
   updateRepositoryCatalog(repository) {
-    return this.queue.add(() => updateRepositoryCatalog(repository));
+    return this.queue.add(
+      createPublishJob(updateRepositoryCatalog, repository),
+    );
   }
 
   updatePublishingStatus(repository, activity) {
@@ -47,9 +48,17 @@ class PublishingService {
 export default new PublishingService();
 
 function createPublishJob(action, payload) {
-  log(`[createPublishJob] initiated, activityId: ${payload.id}`);
+  const isActivity = !!payload.repositoryId;
+  if (isActivity) {
+    log(
+      `[createPublishJob] initiated, activityId: ${payload.id}, ` +
+      `repositoryId: ${payload.repositoryId}`,
+    );
+  } else {
+    log(`[createPublishJob] initiated, repositoryId: ${payload.id}`);
+  }
   return async () => {
-    const webhookCtx = payload.repositoryId
+    const webhookCtx = isActivity
       ? { repositoryId: payload.repositoryId, activityId: payload.id }
       : { repositoryId: payload.id };
 

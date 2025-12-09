@@ -17,8 +17,8 @@ async function updateRepositoryCatalog(
   updateInfo = true, // if already exists
 ) {
   log(
-    `[updateRepositoryCatalog] initiated, repository id: ${repository.id},
-    publishedAt: ${publishedAt}`,
+    `[updateRepositoryCatalog] initiated, repository id: ${repository.id}, ` +
+    `publishedAt: ${publishedAt}`,
   );
   const catalog = await getRepositoryCatalog();
   const existing = catalog.find((it) => it.id === repository.id);
