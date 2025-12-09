@@ -18,25 +18,25 @@ class PublishingService {
 
   async publishActivity(activity) {
     return this.queue.add(
-      createPublishJob(publishActivity, activity),
+      createPublishJob(publishActivity, activity, 'publish'),
     );
   }
 
   publishRepoDetails(repository) {
     return this.queue.add(
-      createPublishJob(publishRepositoryDetails, repository),
+      createPublishJob(publishRepositoryDetails, repository, 'publish'),
     );
   }
 
   unpublishActivity(activity) {
     return this.queue.add(
-      createPublishJob(unpublishActivity, activity),
+      createPublishJob(unpublishActivity, activity, 'unpublish'),
     );
   }
 
   updateRepositoryCatalog(repository) {
     return this.queue.add(
-      createPublishJob(updateRepositoryCatalog, repository),
+      createPublishJob(updateRepositoryCatalog, repository, 'updateCatalog'),
     );
   }
 
@@ -47,23 +47,27 @@ class PublishingService {
 
 export default new PublishingService();
 
-function createPublishJob(action, payload) {
+function createPublishJob(actionFn, payload, action) {
   const isActivity = !!payload.repositoryId;
   if (isActivity) {
     log(
       `[createPublishJob] initiated, activityId: ${payload.id}, ` +
-      `repositoryId: ${payload.repositoryId}`,
+      `repositoryId: ${payload.repositoryId}, action: ${action}`,
     );
   } else {
-    log(`[createPublishJob] initiated, repositoryId: ${payload.id}`);
+    log(
+      `[createPublishJob] initiated, repositoryId: ${payload.id}, action: ${action}`,
+    );
   }
   return async () => {
-    const webhookCtx = isActivity
-      ? { repositoryId: payload.repositoryId, activityId: payload.id }
-      : { repositoryId: payload.id };
+    const webhookCtx = {
+      repositoryId: isActivity ? payload.repositoryId : payload.id,
+      ...(isActivity && { activityId: payload.id }),
+      action,
+    };
 
     await publishingThrottler.lock(webhookCtx.repositoryId);
-    const entity = await action(payload);
+    const entity = await actionFn(payload);
     await publishingThrottler.call(webhookCtx);
     return entity;
   };
