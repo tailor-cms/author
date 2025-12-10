@@ -71,6 +71,7 @@ export class TailorCollection {
     return {
       id: this.id,
       name: `${this.label} Collection`,
+      description: `A currated ${this.label} collection.`,
       outlineStyle: 'GRID' as OutlineStyle,
       workflowId: 'DEFAULT_WORKFLOW',
       contentContainers: [

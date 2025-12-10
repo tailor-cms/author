@@ -9,7 +9,7 @@ class Article {
   description: string;
 
   @Prop()
-  @IsContentElement(ContentElementType.Html)
+  @IsContentElement(ContentElementType.TiptapHtml)
   html: ContentElement;
 
   @Prop({ label: 'Overview Video' })
