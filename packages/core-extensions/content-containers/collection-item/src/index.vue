@@ -1,5 +1,5 @@
 <template>
-  <VCard class="collection-item bg-primary-lighten-5 py-11 px-9" rounded="xl">
+  <VCard class="collection-item bg-primary-lighten-5 py-11 px-9">
     <div v-for="input in config" :key="input.key">
       <div v-if="input.isContentElement" class="element-container pb-4">
         <div class="label ma-1 text-caption text-left">{{ input.label }}</div>
@@ -46,12 +46,13 @@ interface Props {
   activities: Record<string, Activity>;
   container: Activity;
   elements: Record<string, ContentElement>;
-  config: Array<any>;
+  config?: Record<number, any>;
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
+  config: () => ({}),
 });
 
 const emit = defineEmits<{ (e: 'update:container', container: any): void }>();
@@ -67,7 +68,7 @@ const initElement = (type: string, state: Record<PropertyKey, any> = {}) => {
 };
 
 const state = ref(
-  props.config.reduce((acc, it) => {
+  Object.values(props.config).reduce((acc, it) => {
     acc[it.key] =
       props.container.data?.[it.key] ||
       (it.isContentElement ? initElement(it.type) : it.defaultValue || '');
