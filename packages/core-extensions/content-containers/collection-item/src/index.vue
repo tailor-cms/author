@@ -24,7 +24,7 @@
         variant="tonal"
         @click="save"
       >
-        Save
+        Save {{ startCase(repository.schema) }}
       </VBtn>
     </VCardActions>
   </VCard>
@@ -35,7 +35,7 @@ import { inject, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element.js';
 import type { Repository } from '@tailor-cms/interfaces/repository.js';
-import { pick } from 'lodash-es';
+import { pick, startCase } from 'lodash-es';
 import { uuid } from '@tailor-cms/utils';
 
 import { ContainedContent } from '@tailor-cms/core-components';
