@@ -206,7 +206,6 @@ const ExamConfig: ContentContainerConfig = {
 export const SCHEMA: Schema = {
   id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
-  outlineStyle: 'GRID',
   name: 'Course',
   description: 'A classic course structure featuring modules and pages.',
   meta: [
