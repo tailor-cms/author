@@ -11,6 +11,7 @@ export const introductionElementConfig = [{
 },
 {
   name: 'Deprecated Elements',
+  config: { deprecated: true },
   items: [
     { id: ContentElementType.JoditHtml },
     { id: ContentElementType.Html },

@@ -82,6 +82,12 @@
           @link="onLink"
           @save="onSave"
         />
+        <DeprecationWarning
+          v-if="!isDisabled && deprecatedElements.includes(element.type)"
+          :component-name="componentName"
+          :element="element"
+          @update:element="onMigrate"
+        />
       </template>
       <VSheet v-else class="py-10" color="primary-lighten-5">
         <div class="text-h6">
@@ -160,12 +166,15 @@ import type { User } from '@tailor-cms/interfaces/user';
 
 import ActiveUsers from './ActiveUsers.vue';
 import CircularProgress from './CircularProgress.vue';
+import DeprecationWarning from './DeprecationWarning.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import ElementGeneration from './ElementGeneration.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 import { useLoader } from '../composables/useLoader';
+
+const deprecatedElements = ['JODIT_HTML', 'HTML'];
 
 interface Props {
   element: ContentElement;
@@ -192,7 +201,7 @@ const props = withDefaults(defineProps<Props>(), {
   showDiscussion: false,
 });
 
-const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
+const emit = defineEmits(['add', 'delete', 'save', 'save:meta', 'save:type']);
 
 const ceRegistry = inject<any>('$ceRegistry');
 const editorBus = inject<any>('$editorBus');
@@ -246,6 +255,10 @@ const focus = () => {
 };
 
 const onLink = (key?: string) => editorBus.emit('element:link', key);
+
+const onMigrate = (data: { type: string }) => {
+  emit('save:type', data.type);
+};
 
 const reset = () => {
   if (!ceRegistry) return;

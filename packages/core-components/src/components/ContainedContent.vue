@@ -20,6 +20,7 @@
       @delete="$emit('delete')"
       @save="$emit('save', $event)"
       @save:meta="$emit('save:meta', $event)"
+      @save:type="$emit('save:type', $event)"
     />
   </VCol>
 </template>
@@ -60,6 +61,7 @@ const emit = defineEmits([
   'dragstart',
   'save',
   'save:meta',
+  'save:type',
 ]);
 
 const isHovered = ref(false);

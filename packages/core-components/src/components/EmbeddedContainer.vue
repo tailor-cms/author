@@ -19,6 +19,7 @@
         @delete="requestDeleteConfirmation(element)"
         @save="save(element, 'data', $event)"
         @save:meta="save(element, 'meta', $event)"
+        @save:type="save(element, 'type', $event)"
       />
     </template>
   </ElementList>

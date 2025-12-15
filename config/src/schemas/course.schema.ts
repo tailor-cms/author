@@ -125,6 +125,14 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.FillBlank,
       ],
     },
+    {
+      name: 'Deprecated Elements',
+      config: { deprecated: true },
+      items: [
+        { id: ContentElementType.JoditHtml },
+        { id: ContentElementType.Html },
+      ],
+    },
   ],
   ai: {
     definition: 'Sections are a way to organize content within a Page.',

@@ -99,6 +99,7 @@
           @delete="emit('delete:element', element)"
           @save="saveElement(element, 'data', $event)"
           @save:meta="saveElement(element, 'meta', $event)"
+          @save:type="saveElement(element, 'type', $event)"
         />
       </template>
     </ElementList>
