@@ -2,6 +2,7 @@
   <component
     :is="componentName"
     :class="{ required: get(meta, 'validate.required') }"
+    :error-messages="errorMessage"
     :dark="false"
     :meta="meta"
     :readonly="isDisabled"
@@ -14,6 +15,7 @@
 import { computed } from 'vue';
 import { get } from 'lodash-es';
 import { getMetaName } from '@tailor-cms/utils';
+import { useField } from 'vee-validate';
 
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 
@@ -33,7 +35,17 @@ const emit = defineEmits(['update']);
 const type = computed(() => props.meta.type.toUpperCase());
 const componentName = computed(() => getMetaName(type.value));
 
-const updateMeta = async (_key: string, value: any) => {
+const { errorMessage, setValue } = useField(
+  () => props.meta.key,
+  props.meta.validate,
+  {
+    label: props.meta.key,
+    initialValue: props.meta.value,
+  },
+);
+
+const updateMeta = (_key: string, value: any) => {
+  setValue(value);
   emit('update', value);
 };
 </script>

@@ -5,19 +5,19 @@ import { IsContentElement, IsInput, Prop, TailorCollection } from '../lib/index.
 
 class Article {
   @Prop()
-  @IsInput(MetaInputType.Textarea)
+  @IsInput(MetaInputType.Textarea, { validate: { required: true, min: 2, max: 2000 } })
   description: string;
 
   @Prop()
-  @IsContentElement(ContentElementType.TiptapHtml)
+  @IsContentElement(ContentElementType.TiptapHtml, { required: true })
   html: ContentElement;
 
   @Prop({ label: 'Overview Video' })
-  @IsContentElement(ContentElementType.Video)
+  @IsContentElement(ContentElementType.Video, { required: true })
   video: ContentElement;
 
   @Prop()
-  @IsContentElement(ContentElementType.MultipleChoice)
+  @IsContentElement(ContentElementType.MultipleChoice, { required: true })
   question: ContentElement;
 }
 

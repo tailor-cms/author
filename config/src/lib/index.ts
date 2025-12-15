@@ -31,11 +31,14 @@ export function Prop(config?: PropConfig) {
   };
 }
 
-export function IsContentElement(type: ContentElementType) {
+export function IsContentElement(
+  type: ContentElementType,
+  config?: { isGradeable?: boolean; required?: boolean },
+) {
   return (_: any, context: Context) => {
     const meta = context.metadata || {};
     const propMeta = meta[context.name] || {};
-    meta[context.name] = { ...propMeta, type, isContentElement: true };
+    meta[context.name] = { ...propMeta, ...config, type, isContentElement: true };
   };
 }
 
