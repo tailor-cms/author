@@ -138,7 +138,7 @@ const save = async () => {
   }
 }
 
-.element-container > .contained-content :deep {
+.element-container > :deep(.contained-content) {
   // First level elements cannot be dragged
   > .drag-handle {
     display: none;
@@ -190,7 +190,7 @@ const save = async () => {
 }
 
 .element-container.text-error {
-  > .contained-content :deep > .content-element::after {
+  > :deep(.contained-content) > .content-element::after {
     opacity: 1;
   }
 
