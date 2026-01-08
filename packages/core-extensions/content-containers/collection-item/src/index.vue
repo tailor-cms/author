@@ -9,6 +9,7 @@
           :rules="required(input.type, input.label)"
           :model-value="state[input.key].data"
           :validate-on-model-update="false"
+          validate-on-input
         >
           <div
             class="label ma-1 text-caption text-left"

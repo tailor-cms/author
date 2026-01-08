@@ -83,7 +83,7 @@
         <VForm
           ref="form"
           class="content text-left pa-6"
-          :validate-on="autoSave ? 'input' : 'submit'"
+          validate-on="submit"
         >
           <component
             :is="componentName"
