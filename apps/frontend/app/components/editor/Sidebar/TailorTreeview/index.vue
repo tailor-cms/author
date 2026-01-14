@@ -15,13 +15,23 @@
     </VBtn>
   </div>
   <VList v-model:opened="expanded" slim>
-    <ItemGroup
-      v-for="item in processedItems"
-      :key="item.id"
-      :active-item-id="activeItemId"
-      :item="item"
-      @edit="emit('edit', $event)"
-    />
+    <Draggable
+      :list="processedItems"
+      :disabled="!!search"
+      :move="repositoryStore.isValidDrop"
+      group="activities"
+      item-key="uid"
+      @update="(data: any) => reorder(data, processedItems)"
+      @change="(e: any) => repositoryStore.handleOutlineItemDrag(e)"
+    >
+      <template #item="{ element }">
+        <ItemGroup
+          :active-item-id="activeItemId"
+          :item="element"
+          @edit="emit('edit', $event)"
+        />
+      </template>
+    </Draggable>
   </VList>
   <VAlert
     v-if="search && !hasItems"
@@ -36,8 +46,14 @@
 <script setup lang="ts">
 import { cloneDeep, uniq } from 'lodash-es';
 import { computed, ref, watch } from 'vue';
+import Draggable from 'vuedraggable';
+
+import { useCurrentRepository } from '@/stores/current-repository';
 
 import ItemGroup from './ItemGroup.vue';
+
+const repositoryStore = useCurrentRepository();
+const reorder = useOutlineReorder();
 
 const props = defineProps<{
   items: any[];

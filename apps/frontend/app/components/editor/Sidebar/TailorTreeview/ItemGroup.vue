@@ -8,19 +8,32 @@
         @edit="emit('edit', $event)"
       />
     </template>
-    <ItemGroup
-      v-for="(subItem) in item.children"
-      :key="subItem.id"
-      :active-item-id="activeItemId"
-      :item="subItem"
-      @edit="emit('edit', $event)"
-    />
+    <Draggable
+      :data-parent-id="item.id"
+      :list="item.children"
+      :move="repositoryStore.isValidDrop"
+      group="activities"
+      item-key="uid"
+      @update="(data: any) => reorder(data, item.children)"
+      @change="(e: any) => repositoryStore.handleOutlineItemDrag(e, item.id)"
+    >
+      <template #item="{ element }">
+        <ItemGroup
+          :active-item-id="activeItemId"
+          :item="element"
+          @edit="emit('edit', $event)"
+        />
+      </template>
+    </Draggable>
   </VListGroup>
   <ListItem v-else v-bind="bindings" @edit="emit('edit', $event)" />
 </template>
 
 <script lang="ts" setup>
 import { computed } from 'vue';
+import Draggable from 'vuedraggable';
+
+import { useCurrentRepository } from '@/stores/current-repository';
 
 import ItemGroup from './ItemGroup.vue';
 import ListItem from './ListItem.vue';
@@ -30,19 +43,20 @@ const props = defineProps<{
   activeItemId: number;
 }>();
 
+const emit = defineEmits(['edit']);
+
+const repositoryStore = useCurrentRepository();
+const reorder = useOutlineReorder();
+
 const bindings = computed(() => {
   const { id, isEditable, title } = props.item;
   return {
     id,
     title,
-    index: props.item.index,
-    siblings: props.item.siblings,
     isEditable,
     isActive: props.activeItemId === id,
   };
 });
-
-const emit = defineEmits(['edit']);
 </script>
 
 <style lang="scss" scoped>

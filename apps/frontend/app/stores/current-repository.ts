@@ -140,29 +140,37 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     ancestors.forEach((it) => toggleOutlineItemExpand(it.uid, true));
   };
 
-  // Used for drag & drop of outline activities
+  const isValidDrop = (evt: any): boolean => {
+    const draggedElement = evt.draggedContext?.element;
+    const elementType = draggedElement?.type;
+    if (!elementType) return false;
+    // Allow reordering within the same list
+    if (evt.from === evt.to) return true;
+
+    const targetParentId = evt.to?.dataset?.parentId
+      ? parseInt(evt.to.dataset.parentId, 10)
+      : null;
+
+    const config = taxonomy.value?.find((it: any) => it.type === elementType);
+    if (!config) return false;
+
+    if (targetParentId !== null) {
+      const parent = Activity.findById(targetParentId);
+      if (!parent) return false;
+      const parentConfig = taxonomy.value?.find(
+        (it: any) => it.type === parent.type,
+      );
+      return parentConfig?.subLevels?.includes(elementType) ?? false;
+    }
+    return config.rootLevel ?? false;
+  };
+
   const handleOutlineItemDrag = async (
     context: any = {},
     parentId: number | null = null,
   ) => {
     const { added } = context;
     if (!added?.element?.id) return;
-    const { element } = added;
-    const config = taxonomy.value?.find((it: any) => it.type === element.type);
-    if (!config) return;
-    // Check if the element can be moved to the new parent
-    // type must be in the subLevels of the parent type
-    if (parentId) {
-      const parent = Activity.findById(parentId);
-      if (!parent) return;
-      const parentConfig = taxonomy.value?.find(
-        (it: any) => it.type === parent.type,
-      );
-      if (!parentConfig?.subLevels?.includes(element.type)) return;
-    } else if (!config.rootLevel) {
-      // If parentId is null, the element must be a root level
-      return;
-    }
     const children = schemaConfig.getOutlineChildren(Activity.items, parentId);
     const position = calculatePosition({
       items: children,
@@ -234,6 +242,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     toggleOutlineItemExpand,
     toggleOutlineExpand,
     expandOutlineParents,
+    isValidDrop,
     handleOutlineItemDrag,
     getUsers,
     upsertUser,

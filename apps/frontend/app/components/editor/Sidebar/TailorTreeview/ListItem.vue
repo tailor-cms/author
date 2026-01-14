@@ -22,36 +22,16 @@
       <template #title>
         <div class="d-flex align-center">
           <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
-          <ActivityMenu
-            v-show="isHovered"
-            :activity="activity"
-            activator-size="x-small"
-            class="activity-menu ml-2"
-            @click.stop
-          />
         </div>
       </template>
       <template #append>
-        <div v-if="isHovered" class="d-flex flex-column align-center">
-          <VBtn
-            :disabled="index === 0"
-            color="primary-lighten-2"
-            icon="mdi-chevron-up"
-            density="compact"
-            variant="text"
-            size="small"
-            @click.stop="reoder(Direction.Up)"
-          />
-          <VBtn
-            :disabled="index === siblings.length - 1"
-            color="primary-lighten-2"
-            icon="mdi-chevron-down"
-            density="compact"
-            variant="text"
-            size="small"
-            @click.stop="reoder(Direction.Down)"
-          />
-        </div>
+        <ActivityMenu
+          v-show="isHovered"
+          :activity="activity"
+          activator-size="x-small"
+          class="activity-menu ml-2"
+          @click.stop
+        />
       </template>
     </VListItem>
   </VExpandTransition>
@@ -65,11 +45,6 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 
 import ActivityMenu from '~/components/common/ActivityOptions/ActivityMenu.vue';
 
-const Direction = {
-  Up: -1,
-  Down: 1,
-};
-
 const props = defineProps<{
   id: number;
   title: string;
@@ -79,8 +54,6 @@ const props = defineProps<{
   isOpen?: boolean;
   isActive?: boolean;
   activatorProps?: Record<string, any>;
-  index: number; // Location of the item in the list
-  siblings: any[]; // Siblings of the item in the list
 }>();
 
 const emit = defineEmits(['edit']);
@@ -88,10 +61,7 @@ const emit = defineEmits(['edit']);
 const activityStore = useActivityStore();
 
 const listItem = useTemplateRef<HTMLButtonElement>('listItem');
-const isHovered = useElementHover(listItem, {
-  delayEnter: 400,
-  delayLeave: 1000,
-});
+const isHovered = useElementHover(listItem);
 
 const activity = activityStore.findById(props.id) as Activity;
 
@@ -109,17 +79,17 @@ const onItemClick = (e: any) => {
   if (!props.isEditable) return props.activatorProps?.onClick(e);
   emit('edit', props.id);
 };
-
-const reoder = (direction: number) => {
-  const activity = activityStore.findById(props.id) as any;
-  return activityStore.reorder(activity, {
-    items: props.siblings,
-    position: props.index + direction,
-  });
-};
 </script>
 
 <style lang="scss" scoped>
+.list-item {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
 .activity-menu {
   :deep(.v-list-item-title),
   :deep(.v-list-item-title:hover) {

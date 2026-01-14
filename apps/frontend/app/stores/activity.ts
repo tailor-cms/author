@@ -120,15 +120,15 @@ export const useActivityStore = defineStore('activities', () => {
     // Await SSE event for store removal
   }
 
-  const reorder = async (reorderdActivity: StoreActivity, context: any) => {
-    const activity = findById(reorderdActivity.uid);
+  const reorder = async (
+    reorderedActivity: StoreActivity,
+    context: { items: any[]; newPosition: number },
+  ) => {
+    const activity = findById(reorderedActivity.uid);
     if (!activity) return;
-    // If activity is reordered via drag and drop, we need to recalculate its position
-    const position = context.position === undefined
-      ? calculatePosition(context) as number
-      : context.position;
-    const payload = { position: context.newPosition || position };
-    const data = await api.reorder(activity.repositoryId, activity.id, payload);
+    const data = await api.reorder(activity.repositoryId, activity.id, {
+      position: context.newPosition,
+    });
     Object.assign(activity, data);
   };
 

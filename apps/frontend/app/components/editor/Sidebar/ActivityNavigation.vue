@@ -40,6 +40,7 @@ const searchInput = ref('');
 
 const attachActivityAttrs = (activity: Activity) => ({
   id: activity.id,
+  uid: activity.uid,
   title: activity.data.name,
   isEditable: !!$schemaService.isEditable(activity.type),
   isGroup: !!$schemaService.getLevel(activity.type)?.subLevels?.length,
