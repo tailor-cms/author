@@ -5,7 +5,8 @@
   "files": [
     "client.js",
     "server.js",
-    "types.js"
+    "types.js",
+    "enum.ts"
   ],
   "scripts": {
     "cli": "node ./cli.js"
@@ -16,6 +17,7 @@
   "dependencies": {
     "@tailor-cms/tcc-assessment-pool-edit": "workspace:^",
     "@tailor-cms/tcc-assessment-pool-server": "workspace:^",
+    "@tailor-cms/tcc-collection-item": "workspace:^",
     "@tailor-cms/tcc-exam-edit": "workspace:^",
     "@tailor-cms/tcc-exam-server": "workspace:^",
     "@tailor-cms/tcc-page": "workspace:^",

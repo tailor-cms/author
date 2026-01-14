@@ -21,3 +21,4 @@ export { default as TailorDialog } from './components/TailorDialog.vue';
 export { default as AssessmentItem } from './components/AssessmentItem.vue';
 export { useLoader } from './composables/useLoader';
 export { useConfirmationDialog } from './composables/useConfirmationDialog';
+export { useValidation, useValidationProvider } from './composables/useValidation';
