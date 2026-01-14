@@ -1,6 +1,12 @@
 <template>
   <span>
-    <VMenu location="left" offset="-40" width="240" contained>
+    <VMenu
+      v-model="isOpen"
+      location="left"
+      offset="-40"
+      width="240"
+      contained
+    >
       <template #activator="{ props: menuProps }">
         <VBtn
           v-bind="menuProps"
@@ -9,7 +15,7 @@
           icon="mdi-dots-vertical"
           variant="text"
           :size="activatorSize"
-          rounded
+          :rounded="rounded"
         >
         </VBtn>
       </template>
@@ -67,14 +73,18 @@ const currentRepositoryStore = useCurrentRepository();
 export interface Props {
   activity: StoreActivity;
   activatorSize?: string;
+  rounded?: boolean | string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   activatorSize: 'small',
+  rounded: 'circle',
 });
 
 const { $eventBus } = useNuxtApp() as any;
 const selectedActivity = useSelectedActivity(props.activity);
+
+const isOpen = defineModel<boolean>({ default: false });
 
 const showCreateDialog = ref(false);
 const showCopyDialog = ref(false);

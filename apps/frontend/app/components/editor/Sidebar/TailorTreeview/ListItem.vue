@@ -26,7 +26,8 @@
       </template>
       <template #append>
         <ActivityMenu
-          v-show="isHovered"
+          v-show="isHovered || isMenuOpen"
+          v-model="isMenuOpen"
           :activity="activity"
           activator-size="x-small"
           class="activity-menu ml-2"
@@ -62,6 +63,7 @@ const activityStore = useActivityStore();
 
 const listItem = useTemplateRef<HTMLButtonElement>('listItem');
 const isHovered = useElementHover(listItem);
+const isMenuOpen = ref(false);
 
 const activity = activityStore.findById(props.id) as Activity;
 

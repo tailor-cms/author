@@ -52,7 +52,7 @@
                 </template>
                 <span>{{ isExpanded ? 'Collapse' : 'Expand' }}</span>
               </VTooltip>
-              <OptionsMenu :activity="activity" class="options-menu" />
+              <OptionsMenu :activity="activity" class="options-menu" rounded />
             </div>
           </template>
           <template v-else>
