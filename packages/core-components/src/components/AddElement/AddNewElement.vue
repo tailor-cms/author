@@ -1,8 +1,19 @@
 <template>
-  <VBottomSheet class="mx-sm-5">
+  <VBottomSheet class="mx-sm-5" max-width="1200">
     <div class="element-container bg-primary-lighten-5">
-      <div class="d-flex flex-wrap align-end pt-6 pb-5 px-10 ga-6">
-        <slot name="header"></slot>
+      <div class="header-section py-8 px-10">
+        <VTextField
+          v-model="searchQuery"
+          class="mb-5"
+          placeholder="Search elements..."
+          prepend-inner-icon="mdi-magnify"
+          variant="outlined"
+          clearable
+          hide-details
+        />
+        <div class="options-row d-flex flex-wrap align-end ga-4">
+          <slot name="header"></slot>
+        </div>
       </div>
       <VFadeTransition>
         <VSheet
@@ -16,7 +27,14 @@
           </div>
         </VSheet>
       </VFadeTransition>
-      <div v-for="group in library" :key="group.name" class="mb-6">
+      <div
+        v-if="searchQuery && !filteredLibrary.length"
+        class="empty-state text-center text-primary-darken-3 py-10"
+      >
+        <VIcon icon="mdi-magnify" size="48" class="mb-3 opacity-50" />
+        <div class="text-body-1">No elements match "{{ searchQuery }}"</div>
+      </div>
+      <div v-for="group in filteredLibrary" :key="group.name" class="mb-6">
         <div class="group-heading text-primary-darken-3 my-4 mx-10">
           {{ group.name }}
         </div>
@@ -51,12 +69,14 @@
 <script lang="ts" setup>
 import CircularProgress from '../CircularProgress.vue';
 import ElementBtn from './ElementBtn.vue';
+import { computed, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { some } from 'lodash-es';
 import { useDisplay } from 'vuetify';
 import { VFadeTransition } from 'vuetify/components';
 
 const { smAndUp } = useDisplay();
+const searchQuery = ref('');
 
 const props = defineProps<{
   library: any;
@@ -70,6 +90,19 @@ const isAllowed = (type: string) => {
   const hasElements = !props.allowedElementConfig.length;
   return hasElements || some(props.allowedElementConfig, { type });
 };
+
+const filteredLibrary = computed(() => {
+  const query = searchQuery.value?.toLowerCase().trim();
+  if (!query) return props.library;
+  return props.library
+    .map((group: any) => ({
+      ...group,
+      items: group.items.filter((el: any) =>
+        el.name.toLowerCase().includes(query),
+      ),
+    }))
+    .filter((group: any) => group.items.length > 0);
+});
 
 const emitAdd = (element: ContentElement) => emit('add', [element]);
 </script>

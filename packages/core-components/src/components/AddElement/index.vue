@@ -53,7 +53,8 @@
             </VBtnToggle>
           </div>
           <VBtn
-            v-if="!useAI"
+            :disabled="useAI"
+            class="mt-3"
             color="primary-darken-3"
             prepend-icon="mdi-content-copy"
             variant="tonal"
@@ -61,25 +62,29 @@
           >
             Copy existing
           </VBtn>
-          <VTextField
-            v-else
-            v-model="aiPrompt"
-            density="comfortable"
-            label="AI Prompt"
-            min-width="250"
-            placeholder="Optional: give extra context"
-            hide-details
-          />
           <VSpacer />
           <VSwitch
             v-if="doTheMagic"
             v-model="useAI"
-            class="ml-4"
-            color="primary-darken-2"
-            label="Generate with AI"
+            color="indigo-darken-3"
+            label="AI Mode"
             density="compact"
             hide-details
+            inset
           />
+          <VExpandTransition>
+            <div v-if="useAI" class="ai-prompt-wrapper w-100 mt-4">
+              <VTextarea
+                v-model="aiPrompt"
+                label="AI Prompt"
+                placeholder="Describe what you want to generate..."
+                hide-details
+                rows="3"
+                auto-grow
+                persistent-placeholder
+              />
+            </div>
+          </VExpandTransition>
         </template>
       </AddNewElement>
     </template>
