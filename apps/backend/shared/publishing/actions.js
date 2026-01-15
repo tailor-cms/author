@@ -1,3 +1,4 @@
+import { oneLine } from 'common-tags';
 import omit from 'lodash/omit.js';
 
 import { log, PublishEnv } from './utils.js';
@@ -16,10 +17,11 @@ async function updateRepositoryCatalog(
   publishedAt,
   updateInfo = true, // if already exists
 ) {
-  log(
-    `[updateRepositoryCatalog] initiated, repository id: ${repository.id}, ` +
-    `publishedAt: ${publishedAt}`,
-  );
+  log(oneLine`
+    [updateRepositoryCatalog] initiated,
+    repository id: ${repository.id},
+    publishedAt: ${publishedAt}
+  `);
   const catalog = await getRepositoryCatalog();
   const existing = catalog.find((it) => it.id === repository.id);
   if (!existing && repository.deletedAt) return;
@@ -67,10 +69,11 @@ async function publishActivity(activity, env = PublishEnv.DEFAULT) {
 }
 
 async function unpublishActivity(activity, env = PublishEnv.DEFAULT) {
-  log(
-    `[unpublishActivity] initiated, repository id: ${activity.repositoryId},
-    activity id: ${activity.id}`,
-  );
+  log(oneLine`
+    [unpublishActivity] initiated,
+    repository id: ${activity.repositoryId},
+    activity id: ${activity.id}
+  `);
   const repository = await activity.getRepository();
   const manifest = await RepositoryManifest.load(repository, env);
   const publishedManifest = manifest.unpublishActivity(activity);
