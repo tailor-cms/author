@@ -24,7 +24,7 @@
         </VTab>
       </VTabs>
       <VSpacer />
-      <ActiveUsers :users="activeUsers" class="mr-2" size="36" />
+      <ActiveUsers :users="activeUsers" class="mr-4" size="36" />
       <VBtn
         v-if="smAndDown && hasSidebar"
         icon="mdi-menu"

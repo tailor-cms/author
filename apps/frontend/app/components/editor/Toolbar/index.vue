@@ -34,7 +34,7 @@
         <ActiveUsers
           v-if="!showPublishDiff && usersWithActivity.length"
           :users="usersWithActivity"
-          class="mx-2"
+          class="mx-3"
         />
         <VAppBarNavIcon
           v-if="mdAndDown && !!editorStore.guidelines"

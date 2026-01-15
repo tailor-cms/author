@@ -86,14 +86,8 @@
           <div class="d-flex pa-4 align-center">
             <UserAvatar :img-url="user.imgUrl" size="48" />
             <div class="text-primary-lighten-4 ml-4">
-              <div
-                v-if="user.firstName || user.lastName"
-                class="text-subtitle-1 font-weight-bold"
-              >
-                {{ user.firstName }} {{ user.lastName }}
-              </div>
-              <div class="text-subtitle-2">
-                {{ user.email }}
+              <div class="text-subtitle-1 font-weight-bold">
+                {{ user.label }}
               </div>
             </div>
           </div>
