@@ -12,6 +12,7 @@
       :data-parent-id="item.id"
       :list="item.children"
       :move="repositoryStore.isValidDrop"
+      animation="150"
       group="activities"
       item-key="uid"
       @update="(data: any) => reorder(data, item.children)"

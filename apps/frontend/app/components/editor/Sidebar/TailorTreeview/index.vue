@@ -19,6 +19,7 @@
       :list="processedItems"
       :disabled="!!search"
       :move="repositoryStore.isValidDrop"
+      animation="150"
       group="activities"
       item-key="uid"
       @update="(data: any) => reorder(data, processedItems)"
@@ -138,3 +139,9 @@ watch(
   { deep: true },
 );
 </script>
+
+<style lang="scss" scoped>
+:deep(.sortable-ghost) {
+  opacity: 0.6;
+}
+</style>

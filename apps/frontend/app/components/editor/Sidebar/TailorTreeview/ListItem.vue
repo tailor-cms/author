@@ -20,9 +20,7 @@
         />
       </template>
       <template #title>
-        <div class="d-flex align-center">
-          <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
-        </div>
+        <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
       </template>
       <template #append>
         <ActivityMenu
