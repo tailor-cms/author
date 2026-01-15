@@ -38,7 +38,7 @@
         @add="addElements"
       >
         <template #header>
-          <div v-if="layout" class="mr-6 text-primary-darken-4">
+          <div v-if="layout" class="text-primary-darken-4">
             <div class="pb-2 text-subtitle-2 text-left">Element width</div>
             <VBtnToggle
               v-model="elementWidth"
@@ -66,6 +66,7 @@
             v-model="aiPrompt"
             density="comfortable"
             label="AI Prompt"
+            min-width="250"
             placeholder="Optional: give extra context"
             hide-details
           />

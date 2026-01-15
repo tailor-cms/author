@@ -1,7 +1,7 @@
 <template>
-  <VBottomSheet class="mx-5">
+  <VBottomSheet class="mx-sm-5">
     <div class="element-container bg-primary-lighten-5">
-      <div class="d-flex align-end pt-6 pb-5 px-10">
+      <div class="d-flex flex-wrap align-end pt-6 pb-5 px-10 ga-6">
         <slot name="header"></slot>
       </div>
       <VFadeTransition>
@@ -16,38 +16,33 @@
           </div>
         </VSheet>
       </VFadeTransition>
-      <div v-for="group in library" :key="group.name" class="mb-2 mx-10">
-        <div class="group-heading text-primary-darken-3 mt-3 mb-2">
+      <div v-for="group in library" :key="group.name" class="mb-6">
+        <div class="group-heading text-primary-darken-3 my-4 mx-10">
           {{ group.name }}
         </div>
-        <div class="group-elements ga-5">
-          <VBtn
+        <div v-if="smAndUp" class="group-elements d-flex ga-5 mx-10">
+          <ElementBtn
             v-for="element in group.items"
             :key="element.position"
+            :element="element"
             :disabled="!isAllowed(element.type)"
-            class="add-element"
-            color="primary-darken-3"
-            rounded="lg"
-            variant="text"
-            stacked
-            @click.stop="emitAdd(element)"
-          >
-            <template #prepend>
-              <VIcon v-if="element.ui.icon" size="28">
-                {{ element.ui.icon }}
-              </VIcon>
-            </template>
-            {{ element.name }}
-            <template #append>
-              <VIcon
-                v-tooltip="element.version"
-                class="version-info"
-                icon="mdi-information-outline"
-                size="16"
-              />
-            </template>
-          </VBtn>
+            @click="emitAdd(element)"
+          />
         </div>
+        <VSlideGroup v-else show-arrows>
+          <VSlideGroupItem
+            v-for="element in group.items"
+            :key="element.position"
+          >
+            <ElementBtn
+              :element="element"
+              :disabled="!isAllowed(element.type)"
+              class="mr-5"
+              border
+              @click="emitAdd(element)"
+            />
+          </VSlideGroupItem>
+        </VSlideGroup>
       </div>
     </div>
   </VBottomSheet>
@@ -55,9 +50,13 @@
 
 <script lang="ts" setup>
 import CircularProgress from '../CircularProgress.vue';
+import ElementBtn from './ElementBtn.vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { some } from 'lodash-es';
+import { useDisplay } from 'vuetify';
 import { VFadeTransition } from 'vuetify/components';
+
+const { smAndUp } = useDisplay();
 
 const props = defineProps<{
   library: any;
@@ -78,10 +77,11 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
 <style lang="scss" scoped>
 .element-container {
   min-height: 20rem;
+  max-height: 80vh;
   padding: 0 0 1.875rem;
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .group-heading {
@@ -92,37 +92,7 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
 }
 
 .group-elements {
-  display: flex;
   flex-wrap: wrap;
-  width: 100%;
-}
-
-.add-element {
-  width: 8.125rem;
-  min-width: 8.125rem;
-  height: auto !important;
-  min-height: 4.75rem;
-  padding: 0.5rem 0.375rem !important;
-
-  :deep(.v-btn__content) {
-    text-transform: none;
-  }
-
-  :deep(.v-btn__prepend) {
-    margin-bottom: 0.25rem;
-  }
-}
-
-.version-info {
-  position: absolute;
-  top: 0.375rem;
-  right: 0.5rem;
-  opacity: 0;
-}
-
-.v-btn:hover .version-info {
-  opacity: 1;
-  transition: all 0.5s ease-in;
 }
 
 .generation-loader {
