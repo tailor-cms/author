@@ -56,7 +56,6 @@
               :element="element"
               :disabled="!isAllowed(element.type)"
               class="mr-5"
-              border
               @click="emitAdd(element)"
             />
           </VSlideGroupItem>

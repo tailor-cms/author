@@ -6,7 +6,6 @@
     rounded="lg"
     variant="text"
     stacked
-    border
     @click.stop="$emit('click')"
   >
     <template #prepend>

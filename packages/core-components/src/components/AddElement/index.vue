@@ -63,15 +63,16 @@
             Copy existing
           </VBtn>
           <VSpacer />
-          <VSwitch
+          <VBtn
             v-if="doTheMagic"
-            v-model="useAI"
-            color="indigo-darken-3"
-            label="AI Mode"
-            density="compact"
-            hide-details
-            inset
-          />
+            :color="useAI ? 'indigo-darken-3' : 'primary-darken-3'"
+            :prepend-icon="useAI ? 'mdi-creation' : 'mdi-creation-outline'"
+            variant="tonal"
+            class="mt-3"
+            @click="useAI = !useAI"
+          >
+            AI Mode
+          </VBtn>
           <VExpandTransition>
             <div v-if="useAI" class="ai-prompt-wrapper w-100 mt-4">
               <VTextarea
