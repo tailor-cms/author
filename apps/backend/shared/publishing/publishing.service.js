@@ -17,26 +17,27 @@ class PublishingService {
   }
 
   async publishActivity(activity) {
-    log(`[queueAdd] intiated, activityId: ${activity.id}`);
-    const data = await this.queue.add(
-      createPublishJob(publishActivity, activity),
+    return this.queue.add(
+      createPublishJob(publishActivity, activity, 'publish'),
     );
-    log(`[queueAdd] completed, activityId: ${activity.id}`);
-    return data;
   }
 
   publishRepoDetails(repository) {
     return this.queue.add(
-      createPublishJob(publishRepositoryDetails, repository),
+      createPublishJob(publishRepositoryDetails, repository, 'publish'),
     );
   }
 
   unpublishActivity(activity) {
-    return this.queue.add(() => unpublishActivity(activity));
+    return this.queue.add(
+      createPublishJob(unpublishActivity, activity, 'unpublish'),
+    );
   }
 
   updateRepositoryCatalog(repository) {
-    return this.queue.add(() => updateRepositoryCatalog(repository));
+    return this.queue.add(
+      createPublishJob(updateRepositoryCatalog, repository, 'updateCatalog'),
+    );
   }
 
   updatePublishingStatus(repository, activity) {
@@ -46,15 +47,27 @@ class PublishingService {
 
 export default new PublishingService();
 
-function createPublishJob(action, payload) {
-  log(`[createPublishJob] initiated, activityId: ${payload.id}`);
+function createPublishJob(actionFn, payload, action) {
+  const isActivity = !!payload.repositoryId;
+  if (isActivity) {
+    log(
+      `[createPublishJob] initiated, activityId: ${payload.id}, ` +
+      `repositoryId: ${payload.repositoryId}, action: ${action}`,
+    );
+  } else {
+    log(
+      `[createPublishJob] initiated, repositoryId: ${payload.id}, action: ${action}`,
+    );
+  }
   return async () => {
-    const webhookCtx = payload.repositoryId
-      ? { repositoryId: payload.repositoryId, activityId: payload.id }
-      : { repositoryId: payload.id };
+    const webhookCtx = {
+      repositoryId: isActivity ? payload.repositoryId : payload.id,
+      ...(isActivity && { activityId: payload.id }),
+      action,
+    };
 
     await publishingThrottler.lock(webhookCtx.repositoryId);
-    const entity = await action(payload);
+    const entity = await actionFn(payload);
     await publishingThrottler.call(webhookCtx);
     return entity;
   };
