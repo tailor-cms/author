@@ -1,15 +1,21 @@
 <template>
-  <div>
-    <VMenu location="left" offset="-40" width="240" contained>
+  <span>
+    <VMenu
+      v-model="isOpen"
+      location="left"
+      offset="-40"
+      width="240"
+      contained
+    >
       <template #activator="{ props: menuProps }">
         <VBtn
           v-bind="menuProps"
           aria-label="Options menu"
           color="primary-lighten-3"
           icon="mdi-dots-vertical"
-          size="small"
           variant="text"
-          rounded
+          :size="activatorSize"
+          :rounded="rounded"
         >
         </VBtn>
       </template>
@@ -47,13 +53,13 @@
       :repository-id="activity.repositoryId"
       @close="showCopyDialog = false"
     />
-  </div>
+  </span>
 </template>
 
 <script lang="ts" setup>
 import { first, sortBy } from 'lodash-es';
-import type { Activity } from '@tailor-cms/interfaces/activity';
 import { InsertLocation } from '@tailor-cms/utils';
+import type { StoreActivity } from '@/stores/activity';
 
 import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
@@ -64,10 +70,21 @@ const { AddAfter, AddBefore, AddInto } = InsertLocation;
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
 
-const props = defineProps<{ activity: StoreActivity }>();
+export interface Props {
+  activity: StoreActivity;
+  activatorSize?: string;
+  rounded?: boolean | string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  activatorSize: 'small',
+  rounded: 'circle',
+});
 
 const { $eventBus } = useNuxtApp() as any;
 const selectedActivity = useSelectedActivity(props.activity);
+
+const isOpen = defineModel<boolean>({ default: false });
 
 const showCreateDialog = ref(false);
 const showCopyDialog = ref(false);

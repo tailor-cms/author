@@ -52,7 +52,7 @@
                 </template>
                 <span>{{ isExpanded ? 'Collapse' : 'Expand' }}</span>
               </VTooltip>
-              <OptionsMenu :activity="activity" class="options-menu" />
+              <OptionsMenu :activity="activity" class="options-menu" rounded />
             </div>
           </template>
           <template v-else>
@@ -77,10 +77,13 @@
         </VSheet>
       </template>
     </VHover>
-    <div v-if="!isSoftDeleted && isExpanded && hasChildren">
+    <div v-if="!isSoftDeleted && isExpanded && hasSubtypes">
       <Draggable
         v-bind="{ handle: '.activity' }"
+        :data-parent-id="activity.id"
         :list="children"
+        :move="currentRepositoryStore.isValidDrop"
+        animation="150"
         group="activities"
         item-key="uid"
         @update="(data) => reorder(data, children)"
@@ -91,7 +94,6 @@
             :activities="activities"
             :activity="element"
             :index="i + 1"
-            class="sub-activity"
           />
         </template>
       </Draggable>
@@ -223,7 +225,7 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
   }
 }
 
-.sub-activity {
+.activity-wrapper .activity-wrapper {
   margin-left: 1.25rem;
 }
 </style>

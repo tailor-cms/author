@@ -120,13 +120,15 @@ export const useActivityStore = defineStore('activities', () => {
     // Await SSE event for store removal
   }
 
-  const reorder = async (reorderdActivity: StoreActivity, context: any) => {
-    const activity = findById(reorderdActivity.uid);
+  const reorder = async (
+    reorderedActivity: StoreActivity,
+    context: { items: any[]; newPosition: number },
+  ) => {
+    const activity = findById(reorderedActivity.uid);
     if (!activity) return;
-    const position = calculatePosition(context) as number;
-    activity.position = position;
-    const payload = { position: context.newPosition };
-    const data = await api.reorder(activity.repositoryId, activity.id, payload);
+    const data = await api.reorder(activity.repositoryId, activity.id, {
+      position: context.newPosition,
+    });
     Object.assign(activity, data);
   };
 
