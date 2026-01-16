@@ -262,17 +262,6 @@ class ContentElement extends Model {
   }
 
   /**
-   * Check if the source element has been updated since linking.
-   * @returns {Promise<boolean>}
-   */
-  async hasSourceUpdate() {
-    if (!this.isLinkedCopy || !this.sourceId) return false;
-    const source = await ContentElement.findByPk(this.sourceId);
-    if (!source) return false;
-    return source.updatedAt > this.sourceModifiedAt;
-  }
-
-  /**
    * Get information about the source element.
    * @returns {Promise<Object|null>}
    */
@@ -288,9 +277,33 @@ class ContentElement extends Model {
       ...pick(source, ['id', 'uid', 'repositoryId', 'activityId', 'type']),
       outlineActivityId: outlineActivity?.id,
       activityName: source.activity?.data?.name,
-      modifiedAt: source.updatedAt,
-      hasUpdate: source.updatedAt > this.sourceModifiedAt,
     };
+  }
+
+  /**
+   * Find where this source element is being used (linked copies).
+   * @returns {Promise<Object[]>}
+   */
+  async findCopyLocations() {
+    const Repository = this.sequelize.model('Repository');
+    const Activity = this.sequelize.model('Activity');
+    const copies = await ContentElement.findAll({
+      where: { sourceId: this.id, isLinkedCopy: true },
+      include: [
+        { model: Repository, attributes: ['id', 'name'] },
+        { model: Activity, attributes: ['id', 'data'] },
+      ],
+    });
+    return Promise.all(
+      copies.map(async (copy) => {
+        const outline = await copy.activity?.getFirstOutlineItem();
+        return {
+          ...pick(copy, ['id', 'uid', 'repositoryId']),
+          repositoryName: copy.repository?.name,
+          outlineActivityId: outline?.id,
+        };
+      }),
+    );
   }
 }
 

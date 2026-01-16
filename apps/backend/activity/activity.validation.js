@@ -59,3 +59,9 @@ export const updateWorkflowStatus = defineRequestValidator([
     .isISO8601({ strict: true, strictSeparator: true })
     .optional({ nullable: true }),
 ]);
+
+export const link = defineRequestValidator([
+  body('sourceId').isInt(),
+  body('parentId').isInt().optional({ nullable: true }),
+  body('position').isFloat(),
+]);

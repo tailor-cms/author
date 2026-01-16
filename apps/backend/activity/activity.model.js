@@ -110,16 +110,6 @@ class Activity extends Model {
   }
 
   /**
-   * Check if source activity has been updated since we linked (isLinkedCopy).
-   */
-  async hasSourceUpdate() {
-    if (!this.isLinkedCopy || !this.sourceId) return false;
-    const source = await Activity.findByPk(this.sourceId);
-    if (!source) return false;
-    return source.modifiedAt > this.sourceModifiedAt;
-  }
-
-  /**
    * Get source activity info for linked copy.
    */
   async getSourceInfo() {
@@ -135,9 +125,49 @@ class Activity extends Model {
       name: source.data?.name,
       repositoryId: source.repositoryId,
       repositoryName: source.repository?.name,
-      modifiedAt: source.modifiedAt,
-      hasUpdate: source.modifiedAt > this.sourceModifiedAt,
     };
+  }
+
+  /**
+   * Find where this source activity is being used (as linked copies).
+   * When a hierarchy is linked, all descendants also become linked copies.
+   * This method returns only independent link entry points by excluding
+   * copies whose parent is also linked (those came along as part of a parent
+   * link). Single-level parent check suffices since linking marks ALL
+   * descendants - there can't be a gap in the chain.
+   */
+  async findCopyLocations() {
+    const Repository = this.sequelize.model('Repository');
+    const copies = await Activity.findAll({
+      where: { sourceId: this.id, isLinkedCopy: true },
+      include: [{ model: Repository, attributes: ['id', 'name'] }],
+    });
+    if (!copies.length) return [];
+    // Collect IDs of parents that are themselves linked (single batch query)
+    const parentIds = [...new Set(copies.map((c) => c.parentId).filter(Boolean))];
+    const linkedParentIds = new Set(
+      parentIds.length
+        ? (
+            await Activity.findAll({
+              where: { id: parentIds, isLinkedCopy: true },
+              attributes: ['id'],
+            })
+          ).map((p) => p.id)
+        : [],
+    );
+    // Entry point = not nested within another linked copy
+    const isEntryPoint = (copy) => !linkedParentIds.has(copy.parentId);
+    return Promise.all(
+      copies.filter(isEntryPoint).map(async (copy) => {
+        const outline = await copy.getFirstOutlineItem();
+        return {
+          ...pick(copy, ['id', 'uid', 'repositoryId']),
+          outlineActivityId: outline?.id,
+          name: copy.data?.name,
+          repositoryName: copy.repository?.name,
+        };
+      }),
+    );
   }
 
   static async create(data, opts) {

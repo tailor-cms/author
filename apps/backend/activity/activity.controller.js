@@ -9,10 +9,11 @@ import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { fetchActivityContent } from '#shared/publishing/actions.js';
 import consumerConfig from '#config/consumer.js';
+import linkService from '#app/library/link.service.js';
 import oauth2 from '#shared/oAuth2Provider.js';
 import publishingService from '#shared/publishing/publishing.service.js';
 
-const { Activity, sequelize } = db;
+const { Activity, Repository, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
 
 const logger = createLogger('activity:controller');
@@ -153,6 +154,49 @@ function updatePublishingStatus(repository, activity) {
   return publishingService.updatePublishingStatus(repository);
 }
 
+/**
+ * Link activity from library into this repository.
+ * Creates a linked copy that receives auto-sync updates from source.
+ * User must have access to both source (library) and target repositories.
+ */
+async function link({ repository, user, body }, res) {
+  const { sourceId, parentId, position } = body;
+  const context = { userId: user.id, repository };
+  const linked = await linkService.linkItem(
+    repository.id,
+    sourceId,
+    parentId,
+    position,
+    context,
+  );
+  return res.json({ data: linked });
+}
+
+/**
+ * Unlink activity from library source.
+ * Converts linked copy to independent local copy. Keeps sourceId for provenance
+ * tracking but clears isLinkedCopy flag to stop receiving auto-sync updates.
+ * For hierarchical links, also unlinks all descendant activities and elements.
+ */
+async function unlink({ activity, user, repository }, res) {
+  const context = { userId: user.id, repository };
+  const unlinked = await linkService.detach(activity.id, context);
+  return res.json({ data: unlinked });
+}
+
+/**
+ * Get locations where this source activity is being used.
+ */
+async function getCopies({ activity }, res) {
+  const copies = await activity.findCopyLocations();
+  return res.json({
+    data: {
+      totalCount: copies.length,
+      copies,
+    },
+  });
+}
+
 export default {
   create,
   show,
@@ -165,4 +209,7 @@ export default {
   publish,
   getPreviewUrl,
   updateWorkflowStatus,
+  link,
+  unlink,
+  getCopies,
 };

@@ -17,6 +17,8 @@ router
   .get(processQuery, validation.list, ctrl.list)
   .post(validation.create, ctrl.create);
 
+router.post('/link', validation.link, hasLinkSourceAccess, ctrl.link);
+
 router
   .route('/:activityId', validation.get)
   .get(ctrl.show)
@@ -38,7 +40,9 @@ router
     '/:activityId/status',
     validation.updateWorkflowStatus,
     ctrl.updateWorkflowStatus,
-  );
+  )
+  .post('/:activityId/unlink', ctrl.unlink)
+  .get('/:activityId/copies', ctrl.getCopies);
 
 function getActivity(req, _res, next, activityId) {
   return Activity.findByPk(activityId, { paranoid: false })
@@ -67,6 +71,16 @@ async function hasCloneTargetAccess({ body, user }, _res, next) {
         'Target parent does not exist',
       );
   }
+  next();
+}
+
+async function hasLinkSourceAccess({ body, user }, _res, next) {
+  const { sourceId } = body;
+  const source = await Activity.findByPk(sourceId, { include: [Repository] });
+  if (!source) throw createError(StatusCodes.NOT_FOUND, 'Source not found');
+  const hasAccess = await source.repository.hasAccess(user);
+  if (!hasAccess)
+    throw createError(StatusCodes.FORBIDDEN, 'No access to source repository');
   next();
 }
 

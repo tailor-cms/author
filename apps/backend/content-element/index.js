@@ -5,12 +5,13 @@ import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import processListQuery from '#shared/util/processListQuery.js';
 
-const { ContentElement } = db;
+const { ContentElement, Repository } = db;
 const processQuery = processListQuery();
 const router = express.Router();
 
 router.param('elementId', getContentElement);
 router.route('/').get(processQuery, ctrl.list).post(ctrl.create);
+router.post('/link', hasLinkSourceAccess, ctrl.link);
 
 router
   .route('/:elementId')
@@ -19,6 +20,8 @@ router
   .delete(ctrl.remove);
 
 router.post('/:elementId/reorder', ctrl.reorder);
+router.post('/:elementId/unlink', ctrl.unlink);
+router.get('/:elementId/copies', ctrl.getCopies);
 
 function getContentElement(req, _res, next, elementId) {
   if (!Number.isInteger(Number(elementId))) {
@@ -33,6 +36,18 @@ function getContentElement(req, _res, next, elementId) {
       req.contentElement = contentElement;
       next();
     });
+}
+
+async function hasLinkSourceAccess(req, _res, next) {
+  const { sourceId } = req.body;
+  const source = await ContentElement.findByPk(sourceId, {
+    include: [Repository],
+  });
+  if (!source) throw createError(StatusCodes.NOT_FOUND, 'Source not found');
+  const hasAccess = await source.repository.hasAccess(req.user);
+  if (!hasAccess)
+    throw createError(StatusCodes.FORBIDDEN, 'No access to source repository');
+  next();
 }
 
 export default {

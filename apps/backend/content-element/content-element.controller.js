@@ -45,6 +45,65 @@ async function reorder({ body, contentElement }, res) {
   return res.json({ data: contentElement });
 }
 
+/**
+ * Link element from library/other repository into this repository.
+ * Creates a linked copy that receives auto-sync updates from source.
+ * User must have access to both source (library) and target repositories.
+ */
+async function link({ user, repository, body }, res) {
+  const { sourceId, activityId, position } = body;
+  const source = await ContentElement.findByPk(sourceId);
+  if (!source) {
+    return res.status(404).json({ error: 'Source element not found' });
+  }
+  const context = { userId: user.id, repository };
+  const linkedElement = await ContentElement.create(
+    {
+      type: source.type,
+      data: source.data,
+      meta: source.meta,
+      refs: {},
+      repositoryId: repository.id,
+      activityId,
+      position,
+      isLinkedCopy: true,
+      sourceId: source.id,
+      sourceModifiedAt: source.updatedAt,
+      contentId: source.contentId,
+    },
+    { context },
+  );
+  return res.json({ data: linkedElement });
+}
+
+/**
+ * Unlink element from library source (keeps sourceId for provenance)
+ */
+async function unlink({ user, repository, contentElement }, res) {
+  const context = { userId: user.id, repository };
+  await contentElement.update(
+    {
+      isLinkedCopy: false,
+      sourceModifiedAt: null,
+    },
+    { context, hooks: false },
+  );
+  return res.json({ data: contentElement });
+}
+
+/**
+ * Get locations where this source element is being used.
+ */
+async function getCopies({ contentElement }, res) {
+  const copies = await contentElement.findCopyLocations();
+  return res.json({
+    data: {
+      totalCount: copies.length,
+      copies,
+    },
+  });
+}
+
 export default {
   list,
   show,
@@ -52,4 +111,7 @@ export default {
   patch,
   remove,
   reorder,
+  link,
+  unlink,
+  getCopies,
 };
