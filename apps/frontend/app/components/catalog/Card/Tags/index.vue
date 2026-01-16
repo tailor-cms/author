@@ -4,7 +4,7 @@
       <VChip
         v-for="{ id, name, truncatedName } in tags"
         :key="id"
-        close-label="Remove tag"
+        close-label="Delete tag"
         color="primary-lighten-3"
         variant="tonal"
         size="small"

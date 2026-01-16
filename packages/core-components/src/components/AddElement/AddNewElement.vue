@@ -70,10 +70,8 @@ import ElementBtn from './ElementBtn.vue';
 import { computed, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { some } from 'lodash-es';
-import { useDisplay } from 'vuetify';
 import { VFadeTransition } from 'vuetify/components';
 
-const { smAndUp } = useDisplay();
 const searchQuery = ref('');
 
 const props = defineProps<{
