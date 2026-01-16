@@ -38,51 +38,53 @@
         @add="addElements"
       >
         <template #header>
-          <div v-if="layout" class="text-primary-darken-4">
-            <div class="pb-2 text-subtitle-2 text-left">Element width</div>
+          <VBtn
+            :disabled="useAI"
+            color="primary-darken-3"
+            variant="tonal"
+            prepend-icon="mdi-content-copy"
+            text="Copy existing"
+            @click="showElementBrowser = !showElementBrowser"
+          />
+          <VSpacer />
+          <div v-if="layout" class="d-flex align-center ga-4">
+            <span class="text-subtitle-1 text-medium-emphasis">
+              Element width
+            </span>
             <VBtnToggle
               v-model="elementWidth"
-              color="primary-darken-3"
-              rounded="small"
-              variant="tonal"
+              density="compact"
+              variant="outlined"
               divided
               mandatory
             >
-              <VBtn :value="100" class="px-8" icon="mdi-square-outline" />
-              <VBtn :value="50" class="px-8" icon="mdi-select-compare" />
+              <VBtn v-tooltip:bottom="'Full width'" :value="100" size="small">
+                <VIcon size="18">mdi-square-outline</VIcon>
+              </VBtn>
+              <VBtn v-tooltip:bottom="'Half width'" :value="50" size="small">
+                <VIcon size="18">mdi-select-compare</VIcon>
+              </VBtn>
             </VBtnToggle>
           </div>
           <VBtn
-            :disabled="useAI"
-            class="mt-3"
-            color="primary-darken-3"
-            prepend-icon="mdi-content-copy"
-            variant="tonal"
-            @click="showElementBrowser = !showElementBrowser"
-          >
-            Copy existing
-          </VBtn>
-          <VSpacer />
-          <VBtn
             v-if="doTheMagic"
-            :color="useAI ? 'indigo-darken-3' : 'primary-darken-3'"
+            :color="useAI ? 'indigo-darken-2' : 'primary-darken-3'"
+            :variant="useAI ? 'flat' : 'tonal'"
             :prepend-icon="useAI ? 'mdi-creation' : 'mdi-creation-outline'"
-            variant="tonal"
-            class="mt-3"
+            text="Generate with AI"
             @click="useAI = !useAI"
-          >
-            AI Mode
-          </VBtn>
+          />
           <VExpandTransition>
-            <div v-if="useAI" class="ai-prompt-wrapper w-100 mt-4">
+            <div v-if="useAI" class="w-100 mt-4">
               <VTextarea
                 v-model="aiPrompt"
-                label="AI Prompt"
-                placeholder="Describe what you want to generate..."
-                hide-details
-                rows="3"
+                density="comfortable"
+                placeholder="Describe the content you want to generate..."
+                rows="2"
+                variant="solo"
                 auto-grow
-                persistent-placeholder
+                hide-details
+                flat
               />
             </div>
           </VExpandTransition>

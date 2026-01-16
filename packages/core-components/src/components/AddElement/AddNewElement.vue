@@ -1,17 +1,19 @@
 <template>
   <VBottomSheet class="mx-sm-5" max-width="1200">
-    <div class="element-container bg-primary-lighten-5">
-      <div class="header-section py-8 px-10">
+    <VSheet class="element-container" color="primary-lighten-5">
+      <div class="picker-header py-6 px-10">
         <VTextField
           v-model="searchQuery"
           class="mb-5"
+          density="comfortable"
           placeholder="Search elements..."
           prepend-inner-icon="mdi-magnify"
-          variant="outlined"
-          clearable
+          variant="solo"
           hide-details
+          clearable
+          flat
         />
-        <div class="options-row d-flex flex-wrap align-end ga-4">
+        <div class="d-flex flex-wrap align-end ga-4">
           <slot name="header"></slot>
         </div>
       </div>
@@ -23,45 +25,42 @@
         >
           <CircularProgress />
           <div class="pt-3 text-primary-darken-4 font-weight-bold">
-            <span>Content generation in progress...</span>
+            Content generation in progress...
           </div>
         </VSheet>
       </VFadeTransition>
-      <div
-        v-if="searchQuery && !filteredLibrary.length"
-        class="empty-state text-center text-primary-darken-3 py-10"
+      <VSheet
+        class="overflow-y-auto px-10 pb-8"
+        color="transparent"
+        max-height="60vh"
       >
-        <VIcon icon="mdi-magnify" size="48" class="mb-3 opacity-50" />
-        <div class="text-body-1">No elements match "{{ searchQuery }}"</div>
-      </div>
-      <div v-for="group in filteredLibrary" :key="group.name" class="mb-6">
-        <div class="group-heading text-primary-darken-3 my-4 mx-10">
-          {{ group.name }}
+        <div v-if="searchQuery && !filteredLibrary.length" class="text-center py-10">
+          <VAvatar class="mb-4" size="80" color="primary-lighten-4">
+            <VIcon icon="mdi-magnify" size="40" />
+          </VAvatar>
+          <p class="text-h6">No elements found</p>
+          <p class="text-subtitle-1 text-medium-emphasis">
+            No elements match "{{ searchQuery }}"
+          </p>
         </div>
-        <div v-if="smAndUp" class="group-elements d-flex ga-5 mx-10">
-          <ElementBtn
-            v-for="element in group.items"
-            :key="element.position"
-            :element="element"
-            :disabled="!isAllowed(element.type)"
-            @click="emitAdd(element)"
-          />
-        </div>
-        <VSlideGroup v-else show-arrows>
-          <VSlideGroupItem
-            v-for="element in group.items"
-            :key="element.position"
-          >
+        <div
+          v-for="(group) in filteredLibrary"
+          :key="group.name"
+          class="element-group"
+        >
+          <h3 class="text-overline mb-2">{{ group.name }}</h3>
+          <div class="element-grid">
             <ElementBtn
+              v-for="(element) in group.items"
+              :key="element.position"
               :element="element"
               :disabled="!isAllowed(element.type)"
-              class="mr-5"
               @click="emitAdd(element)"
             />
-          </VSlideGroupItem>
-        </VSlideGroup>
-      </div>
-    </div>
+          </div>
+        </div>
+      </VSheet>
+    </VSheet>
   </VBottomSheet>
 </template>
 
@@ -108,32 +107,27 @@ const emitAdd = (element: ContentElement) => emit('add', [element]);
 
 <style lang="scss" scoped>
 .element-container {
-  min-height: 20rem;
-  max-height: 80vh;
-  padding: 0 0 1.875rem;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-  overflow-y: auto;
+  position: relative;
 }
 
-.group-heading {
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1rem;
-  text-align: left;
+.element-group {
+  margin-bottom: 1.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
-.group-elements {
-  flex-wrap: wrap;
+.element-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.75rem;
 }
 
 .generation-loader {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9;
+  inset: 0;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   align-items: center;
