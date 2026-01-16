@@ -31,7 +31,7 @@ export class RepositoryCard {
     const tagSelector = '.v-chip';
     const tag = this.el.locator(tagSelector).filter({ hasText: tagName });
     await expect(tag).toBeVisible();
-    await tag.getByLabel('Remove tag').click();
+    await tag.getByLabel('Delete tag').click();
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
   }
