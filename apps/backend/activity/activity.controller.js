@@ -9,11 +9,11 @@ import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { fetchActivityContent } from '#shared/publishing/actions.js';
 import consumerConfig from '#config/consumer.js';
-import linkService from '#app/library/link.service.js';
+import linkService from './link.service.js';
 import oauth2 from '#shared/oAuth2Provider.js';
 import publishingService from '#shared/publishing/publishing.service.js';
 
-const { Activity, Repository, sequelize } = db;
+const { Activity, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
 
 const logger = createLogger('activity:controller');
@@ -155,16 +155,19 @@ function updatePublishingStatus(repository, activity) {
 }
 
 /**
- * Link activity from library into this repository.
+ * Link activity from another repository into this repository.
  * Creates a linked copy that receives auto-sync updates from source.
- * User must have access to both source (library) and target repositories.
+ * User must have access to both source and target repositories.
+ *
+ * For same-schema linking: type stays the same, validates against subLevels.
+ * For cross-schema linking: type transforms based on compatibleTypes config.
  */
 async function link({ repository, user, body }, res) {
   const { sourceId, parentId, position } = body;
   const context = { userId: user.id, repository };
-  const linked = await linkService.linkItem(
-    repository.id,
+  const linked = await linkService.linkActivity(
     sourceId,
+    repository,
     parentId,
     position,
     context,
@@ -173,14 +176,14 @@ async function link({ repository, user, body }, res) {
 }
 
 /**
- * Unlink activity from library source.
+ * Unlink activity from source.
  * Converts linked copy to independent local copy. Keeps sourceId for provenance
  * tracking but clears isLinkedCopy flag to stop receiving auto-sync updates.
  * For hierarchical links, also unlinks all descendant activities and elements.
  */
 async function unlink({ activity, user, repository }, res) {
   const context = { userId: user.id, repository };
-  const unlinked = await linkService.detach(activity.id, context);
+  const unlinked = await linkService.unlinkActivity(activity.id, context);
   return res.json({ data: unlinked });
 }
 

@@ -48,9 +48,13 @@ function add(ContentElement, Hooks, Models) {
 
   /**
    * Propagate source element updates to all linked copies.
+   * Check both current and previous isLinkedCopy - autoDetachOnEdit may have
+   * already cleared the flag if user edited a linked copy.
    */
   async function propagateToLinkedElements(_hookType, element, opts) {
-    if (isLibrarySync(opts) || element.isLinkedCopy) return;
+    const isOrWasLinkedCopy =
+      element.isLinkedCopy || element.previous('isLinkedCopy');
+    if (isLibrarySync(opts) || isOrWasLinkedCopy) return;
     const linkedElements = await findLinkedElements(element.id);
     for (const linked of linkedElements) {
       await linked.update(
@@ -195,10 +199,10 @@ function add(ContentElement, Hooks, Models) {
       touchOutline,
     ],
     [Hooks.afterUpdate]: [
+      autoDetachOnEdit,
       customElementHook,
       resolveAssets,
       propagateToLinkedElements,
-      autoDetachOnEdit,
       sseUpdate,
       touchRepository,
       touchOutline,

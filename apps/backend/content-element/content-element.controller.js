@@ -46,9 +46,9 @@ async function reorder({ body, contentElement }, res) {
 }
 
 /**
- * Link element from library/other repository into this repository.
+ * Link element from another repository into this repository.
  * Creates a linked copy that receives auto-sync updates from source.
- * User must have access to both source (library) and target repositories.
+ * User must have access to both source and target repositories.
  */
 async function link({ user, repository, body }, res) {
   const { sourceId, activityId, position } = body;
@@ -77,7 +77,7 @@ async function link({ user, repository, body }, res) {
 }
 
 /**
- * Unlink element from library source (keeps sourceId for provenance)
+ * Unlink element from source (keeps sourceId for provenance)
  */
 async function unlink({ user, repository, contentElement }, res) {
   const context = { userId: user.id, repository };
