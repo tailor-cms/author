@@ -18,7 +18,8 @@ const logger = createLogger('content-element:model');
 
 class ContentElement extends Model {
   static fields(DataTypes) {
-    const { BOOLEAN, DATE, DOUBLE, JSONB, STRING, UUID, UUIDV4 } = DataTypes;
+    const { BOOLEAN, DATE, DOUBLE, INTEGER, JSONB, STRING, UUID, UUIDV4 } =
+      DataTypes;
     return {
       uid: {
         type: UUID,
@@ -52,15 +53,37 @@ class ContentElement extends Model {
         type: JSONB,
         defaultValue: {},
       },
-      linked: {
-        type: BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
+      // Soft-delete flag. Set when parent activity is deleted.
       detached: {
         type: BOOLEAN,
         defaultValue: false,
         allowNull: false,
+      },
+      // Indicates this is an active linked copy from a library source.
+      // Editing data auto-detaches, preserving sourceId for provenance.
+      isLinkedCopy: {
+        type: BOOLEAN,
+        field: 'is_linked_copy',
+        defaultValue: false,
+        allowNull: false,
+      },
+      // References the source element this was copied from.
+      // Kept after unlinking to track provenance. NULL if source is deleted.
+      sourceId: {
+        type: INTEGER,
+        field: 'source_id',
+        allowNull: true,
+        references: {
+          model: 'content_element',
+          key: 'id',
+        },
+        onDelete: 'SET NULL',
+      },
+      // Timestamp of source when last synced. Used to detect available updates.
+      sourceModifiedAt: {
+        type: DATE,
+        field: 'source_modified_at',
+        allowNull: true,
       },
       createdAt: {
         type: DATE,
@@ -236,6 +259,38 @@ class ContentElement extends Model {
       if (this.type === 'ASSESSMENT') return { type: 'ASSESSMENT' };
       return { type: { [Op.not]: 'ASSESSMENT' } };
     });
+  }
+
+  /**
+   * Check if the source element has been updated since linking.
+   * @returns {Promise<boolean>}
+   */
+  async hasSourceUpdate() {
+    if (!this.isLinkedCopy || !this.sourceId) return false;
+    const source = await ContentElement.findByPk(this.sourceId);
+    if (!source) return false;
+    return source.updatedAt > this.sourceModifiedAt;
+  }
+
+  /**
+   * Get information about the source element.
+   * @returns {Promise<Object|null>}
+   */
+  async getSourceInfo() {
+    if (!this.sourceId) return null;
+    const Activity = this.sequelize.model('Activity');
+    const source = await ContentElement.findByPk(this.sourceId, {
+      include: [{ model: Activity }],
+    });
+    if (!source) return null;
+    const outlineActivity = await source.activity?.getFirstOutlineItem();
+    return {
+      ...pick(source, ['id', 'uid', 'repositoryId', 'activityId', 'type']),
+      outlineActivityId: outlineActivity?.id,
+      activityName: source.activity?.data?.name,
+      modifiedAt: source.updatedAt,
+      hasUpdate: source.updatedAt > this.sourceModifiedAt,
+    };
   }
 }
 

@@ -40,6 +40,9 @@ class Activity extends Model {
         type: JSONB,
         defaultValue: {},
       },
+      // Soft-delete flag for cascade deletion. When parent is deleted,
+      // descendants are marked detached, allowing restore operations.
+      // Hidden from normal queries until parent is restored or changes published.
       detached: {
         type: BOOLEAN,
         defaultValue: false,
@@ -52,13 +55,44 @@ class Activity extends Model {
           return type && isTrackedInWorkflow(type);
         },
       },
-      publishedAt: {
-        type: DATE,
-        field: 'published_at',
+      // Indicates this is an active linked copy from a library source.
+      // When true, receives automatic updates when source changes.
+      // Editing data auto-detaches (sets to false), preserving sourceId for
+      // provenance.
+      isLinkedCopy: {
+        type: BOOLEAN,
+        field: 'is_linked_copy',
+        defaultValue: false,
+        allowNull: false,
       },
+      // References the source activity this was copied from.
+      // Kept after unlinking to track provenance. NULL if source is deleted.
+      sourceId: {
+        type: DataTypes.INTEGER,
+        field: 'source_id',
+        allowNull: true,
+        references: {
+          model: 'activity',
+          key: 'id',
+        },
+        onDelete: 'SET NULL',
+      },
+      // Timestamp of source when last synced. Used to detect available updates.
+      // Cleared when the link is broken.
+      sourceModifiedAt: {
+        type: DATE,
+        field: 'source_modified_at',
+        allowNull: true,
+      },
+      // Aggregated timestamp representing when anything in the subtree last
+      // changed. Bubbles up from content tree descendants.
       modifiedAt: {
         type: DATE,
         field: 'modified_at',
+      },
+      publishedAt: {
+        type: DATE,
+        field: 'published_at',
       },
       createdAt: {
         type: DATE,
@@ -72,6 +106,37 @@ class Activity extends Model {
         type: DATE,
         field: 'deleted_at',
       },
+    };
+  }
+
+  /**
+   * Check if source activity has been updated since we linked (isLinkedCopy).
+   */
+  async hasSourceUpdate() {
+    if (!this.isLinkedCopy || !this.sourceId) return false;
+    const source = await Activity.findByPk(this.sourceId);
+    if (!source) return false;
+    return source.modifiedAt > this.sourceModifiedAt;
+  }
+
+  /**
+   * Get source activity info for linked copy.
+   */
+  async getSourceInfo() {
+    if (!this.sourceId) return null;
+    const Repository = this.sequelize.model('Repository');
+    const source = await Activity.findByPk(this.sourceId, {
+      include: [{ model: Repository }],
+    });
+    if (!source) return null;
+    return {
+      id: source.id,
+      uid: source.uid,
+      name: source.data?.name,
+      repositoryId: source.repositoryId,
+      repositoryName: source.repository?.name,
+      modifiedAt: source.modifiedAt,
+      hasUpdate: source.modifiedAt > this.sourceModifiedAt,
     };
   }
 
@@ -228,7 +293,10 @@ class Activity extends Model {
 
   static detectMissingReferences(activities, transaction) {
     return detectMissingReferences(
-      Activity, activities, this.sequelize, transaction,
+      Activity,
+      activities,
+      this.sequelize,
+      transaction,
     );
   }
 
