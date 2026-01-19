@@ -4,9 +4,13 @@
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
+      @toggle-sidebar="showSidebar = !showSidebar"
+      @toggle-guidelines="showGuidelines = !showGuidelines"
+
     />
     <div class="editor-content-container">
       <VSidebar
+        v-model="showSidebar"
         :activities="repositoryStore.outlineActivities as Activity[]"
         :repository="repositoryStore.repository as Repository"
         :selected-activity="editorStore.selectedActivity as Activity"
@@ -19,7 +23,10 @@
         :activity-id="activityId"
         class="activity-content"
       />
-      <EngagementSidebar v-if="!!editorStore.guidelines" />
+      <EngagementSidebar
+        v-if="!!editorStore.guidelines"
+        v-model="showGuidelines"
+      />
     </div>
   </div>
 </template>
@@ -54,6 +61,8 @@ provide('$editorState', {
 });
 
 const activityId = ref<number | null>(null);
+const showSidebar = ref(null);
+const showGuidelines = ref(null);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
 
