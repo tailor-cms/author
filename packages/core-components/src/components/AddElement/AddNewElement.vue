@@ -13,7 +13,7 @@
           clearable
           flat
         />
-        <div class="d-flex flex-wrap align-end ga-4">
+        <div class="d-flex flex-wrap align-center ga-4">
           <slot name="header"></slot>
         </div>
       </div>

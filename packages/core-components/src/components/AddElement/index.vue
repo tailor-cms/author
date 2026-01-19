@@ -66,16 +66,20 @@
               </VBtn>
             </VBtnToggle>
           </div>
-          <VBtn
-            v-if="doTheMagic"
-            :color="useAI ? 'indigo-darken-2' : 'primary-darken-3'"
-            :variant="useAI ? 'flat' : 'tonal'"
-            :prepend-icon="useAI ? 'mdi-creation' : 'mdi-creation-outline'"
-            text="Generate with AI"
-            @click="useAI = !useAI"
-          />
+          <div v-if="doTheMagic" class="d-flex align-center ga-2">
+            <span class="text-subtitle-1 text-medium-emphasis">
+              Generate with AI
+            </span>
+            <VSwitch
+              v-model="useAI"
+              color="indigo-darken-2"
+              density="compact"
+              inset
+              hide-details
+            />
+          </div>
           <VExpandTransition>
-            <div v-if="useAI" class="w-100 mt-4">
+            <div v-if="useAI" class="w-100">
               <VTextarea
                 v-model="aiPrompt"
                 density="comfortable"
