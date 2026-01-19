@@ -1,7 +1,7 @@
 <template>
   <VAlert
     v-if="groups.length === 0"
-    class="mt-12 ml-10 mr-5"
+    class="ma-6"
     color="primary-darken-2"
     variant="tonal"
     icon="mdi-information-outline"
@@ -13,7 +13,7 @@
     :headers="headers"
     :items="groups"
     :items-per-page="-1"
-    class="pt-5 px-6 bg-transparent"
+    class="pt-4 bg-transparent"
     no-data-text="No associated user groups."
   >
     <template #item="{ item }">
