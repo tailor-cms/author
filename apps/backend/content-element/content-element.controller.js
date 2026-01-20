@@ -18,7 +18,20 @@ function show({ contentElement }, res) {
 }
 
 async function create({ user, repository, body }, res) {
-  const attr = ['uid', 'activityId', 'type', 'data', 'position', 'refs'];
+  const attr = [
+    'uid',
+    'activityId',
+    'type',
+    'data',
+    'meta',
+    'position',
+    'refs',
+    // Content library linking fields
+    'isLinkedCopy',
+    'sourceId',
+    'sourceModifiedAt',
+    'contentId',
+  ];
   const data = { ...pick(body, attr), repositoryId: repository.id };
   const context = { userId: user.id, repository };
   const contentElement = await ContentElement.create(data, { context });
