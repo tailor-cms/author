@@ -83,8 +83,8 @@ const props = defineProps<{
 const emit = defineEmits(['add']);
 
 const isAllowed = (type: string) => {
-  const hasElements = !props.allowedElementConfig.length;
-  return hasElements || some(props.allowedElementConfig, { type });
+  const hasElements = !!props.allowedElementConfig.length;
+  return hasElements && some(props.allowedElementConfig, { type });
 };
 
 const filteredLibrary = computed(() => {
