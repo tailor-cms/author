@@ -31,6 +31,8 @@ export default (schemas: Schema[] = []) => {
     });
     schema.structure.forEach((it) => processActivityConfig(schema, it));
   });
+  // Second pass: validate and resolve mapsTo (needs all schemas)
+  processMapsTo(schemas);
   return schemas;
 };
 
@@ -121,4 +123,42 @@ function processActivityRelationships(activity: ActivityConfig) {
     });
   }
   return relationships;
+}
+
+/**
+ * Validate and resolve mapsTo entries.
+ * - Validates target schema exists
+ * - Validates target type exists in target schema
+ * - Resolves target type to full path (e.g., 'PAGE' → 'COURSE_SCHEMA/PAGE')
+ */
+function processMapsTo(schemas: Schema[]) {
+  for (const schema of schemas) {
+    for (const activity of schema.structure) {
+      if (!activity.mapsTo) continue;
+      for (const [targetSchemaId, mapping] of Object.entries(activity.mapsTo)) {
+        // Validate target schema exists
+        const targetSchema = schemas.find((s) => s.id === targetSchemaId);
+        if (!targetSchema) {
+          throw new Error(
+            `Schema "${schema.id}": activity "${activity.type}" ` +
+            `mapsTo unknown schema "${targetSchemaId}"`,
+          );
+        }
+        // Resolve target type to full path
+        const fullTargetType = processType(targetSchema, mapping.type);
+        // Validate target type exists in target schema
+        const targetTypeExists = targetSchema.structure.some(
+          (config) => config.type === fullTargetType,
+        );
+        if (!targetTypeExists) {
+          throw new Error(
+            `Schema "${schema.id}": activity "${activity.type}" mapsTo ` +
+            `unknown type "${mapping.type}" in schema "${targetSchemaId}"`,
+          );
+        }
+        // Resolve type to full path
+        mapping.type = fullTargetType;
+      }
+    }
+  }
 }

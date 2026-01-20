@@ -31,8 +31,12 @@ export interface ContentElement {
   refs: Record<string, Relationship | number>;
   /** Parent is soft-deleted */
   detached: boolean;
-  /** Missing implementation */
-  linked: boolean;
+  /** Whether this element is an active linked copy from a library source */
+  isLinkedCopy: boolean;
+  /** ID of the source element in the library */
+  sourceId?: number;
+  /** Timestamp of source element when linked */
+  sourceModifiedAt?: string;
   /** Origin ID, used to detect a copy */
   contentId: string;
   /** Hash of a element data field, can be used to detect duplicates */
