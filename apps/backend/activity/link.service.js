@@ -5,7 +5,8 @@ import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
 const { Activity, ContentElement, Repository, sequelize } = db;
-const { getCompatibleTargetType, isTypeAllowedAtLevel } = schema;
+const { getCompatibleTargetType, isOutlineActivity, isTypeAllowedAtLevel } =
+  schema;
 
 const { NOT_FOUND, BAD_REQUEST } = StatusCodes;
 
@@ -70,19 +71,18 @@ class LinkService {
   /**
    * Resolve target type, validates for same-schema, transforms for cross-schema.
    */
-  async #resolveType(sourceType, opts) {
+  async #resolveType(srcType, opts) {
+    // Containers aren't in outline hierarchy - keep same type
+    if (!isOutlineActivity(srcType)) return srcType;
     const { targetRepository, parentId, isSameSchema, transaction } = opts;
     const parentType = parentId
       ? (await Activity.findByPk(parentId, { transaction }))?.type
       : null;
-
     if (isSameSchema) {
-      if (
-        !isTypeAllowedAtLevel(sourceType, targetRepository.schema, parentType)
-      ) {
-        throw createError(BAD_REQUEST, `Type ${sourceType} not allowed here`);
+      if (!isTypeAllowedAtLevel(srcType, targetRepository.schema, parentType)) {
+        throw createError(BAD_REQUEST, `Type ${srcType} not allowed here`);
       }
-      return sourceType;
+      return srcType;
     }
 
     const targetType = getCompatibleTargetType(
