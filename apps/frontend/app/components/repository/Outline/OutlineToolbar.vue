@@ -1,5 +1,5 @@
 <template>
-  <VToolbar class="toolbar" color="transparent">
+  <div class="toolbar d-flex align-center justify-end flex-wrap ga-4 mb-2">
     <VHover v-if="hasActivities" v-slot="{ isHovering, props: hoverProps }">
       <VSpacer v-if="isListStyle" />
       <VTextField
@@ -12,6 +12,7 @@
         prepend-inner-icon="mdi-magnify"
         rounded="xl"
         variant="outlined"
+        min-width="220"
         clearable
         hide-details
         @click:clear="search = ''"
@@ -19,7 +20,7 @@
     </VHover>
     <template v-if="!isListStyle">
       <VHover
-        v-if="hasActivities && activityTypeOptions.length"
+        v-if="hasActivities && activityTypeOptions?.length"
         v-slot="{ isHovering, props: hoverProps }"
       >
         <VSelect
@@ -61,7 +62,7 @@
     >
       Toggle all
     </VBtn>
-  </VToolbar>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -75,7 +76,7 @@ import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue
 import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps<{
-  activityTypeOptions: ActivityConfig[];
+  activityTypeOptions?: ActivityConfig[] | null;
   hasActivities: boolean;
 }>();
 

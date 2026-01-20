@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
 import { ForgotPassword, ResetPassword, SignIn } from '../../../pom/auth';
@@ -20,7 +21,7 @@ const getMockUserData = (): UserData => ({
 
 const userAPI = new ApiClient('/api/users');
 
-const createUser = async (page): Promise<UserData> => {
+const createUser = async (page: Page): Promise<UserData> => {
   const initialLocation = page.url();
   const userData = getMockUserData();
   await userAPI.create(userData as any);

@@ -3,7 +3,7 @@
     <VMain class="structure-container">
       <VContainer
         ref="structureEl"
-        class="structure d-flex flex-column justify-start"
+        class="structure d-flex flex-column justify-start py-8 px-sm-15"
         max-width="1800"
       >
         <OutlineToolbar
@@ -46,7 +46,7 @@
               :list="rootActivities"
               class="mt-5"
               item-key="uid"
-              @update="(data) => reorder(data, rootActivities)"
+              @update="(e: SortableEvent) => reorder(e, rootActivities)"
             >
               <template #item="{ element, index }">
                 <OutlineItem
@@ -93,6 +93,7 @@
 <script lang="ts" setup>
 import Draggable from 'vuedraggable';
 import { OutlineStyle } from '@tailor-cms/interfaces/schema';
+import type { SortableEvent } from 'sortablejs';
 import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
 
@@ -177,14 +178,14 @@ onMounted(() => {
   if (activityId) {
     repositoryStore.selectActivity(parseInt(activityId as string, 10));
   } else if (rootActivities.value.length) {
-    repositoryStore.selectActivity(rootActivities.value[0].id);
+    repositoryStore.selectActivity(rootActivities.value[0]!.id);
   } else {
     // If there are no activities
     return;
   }
   const isFirstActivitySelected =
     selectedActivity.value &&
-    rootActivities.value[0].id === selectedActivity.value.id;
+    rootActivities.value[0]!.id === selectedActivity.value.id;
   if (!isFirstActivitySelected) {
     scrollToActivity(selectedActivity.value as StoreActivity, 200);
   }
@@ -204,7 +205,6 @@ onMounted(() => {
 .structure {
   position: relative;
   height: 100%;
-  padding: 2rem 5.625rem 0 3.75rem;
   overflow-y: scroll;
   overflow-y: overlay;
   -ms-overflow-style: none;

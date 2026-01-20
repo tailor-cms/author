@@ -1,13 +1,13 @@
 <template>
   <div class="tags-container">
-    <div class="tag-list mb-1 d-flex align-center">
+    <div class="tag-list d-flex align-center ga-2 py-2">
       <VChip
         v-for="{ id, name, truncatedName } in tags"
         :key="id"
-        class="mr-2"
-        close-label="Remove tag"
+        close-label="Delete tag"
         color="primary-lighten-3"
         variant="tonal"
+        size="small"
         label
       >
         <VTooltip
@@ -55,6 +55,7 @@
         <VBtn
           v-bind="tooltipProps"
           aria-label="Add tag"
+          class="ml-2"
           color="primary-lighten-2"
           icon="mdi-tag-plus"
           @click.stop="showTagDialog = true"
@@ -88,7 +89,7 @@ const showTagDialog = ref(false);
 const tagCount = computed(() => get(props.repository, 'tags.length', 0));
 const exceededTagLimit = computed(() => tagCount.value >= TAG_LIMIT);
 const maxTagNameLength = computed(
-  () => [15, 6, 5][clamp(tagCount.value - 1, 0, 2)],
+  () => [20, 15, 12][clamp(tagCount.value - 1, 0, 2)],
 );
 
 const tags = computed(() => {
@@ -117,9 +118,6 @@ const showTagDeleteConfirmation = (tagId: number, tagName: string) => {
   display: flex;
   justify-content: space-between;
   flex-basis: 100%;
-}
-
-.tag-list {
-  padding: 0.25rem 0 0 0.25rem;
+  min-height: 3rem;
 }
 </style>
