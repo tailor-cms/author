@@ -13,40 +13,39 @@ const SchemaId = 'VIDEO_COURSE_SCHEMA';
 
 enum ActivityType {
   // Outline
-  Section = 'SECTION',
+  Chapter = 'CHAPTER',
   Lesson = 'LESSON',
   // Content containers
-  VideoContent = 'VIDEO_CONTENT',
+  LessonContent = 'LESSON_CONTENT',
+  VideoUnit = 'VIDEO_UNIT',
 }
 
-const VideoContentContainer: ContentContainerConfig = {
-  templateId: ContentContainerType.Default,
-  type: ActivityType.VideoContent,
-  label: 'Video content',
+const LessonContentContainer: ContentContainerConfig = {
+  templateId: ContentContainerType.StructuredContent,
+  type: ActivityType.LessonContent,
+  label: 'Lesson Content',
   multiple: false,
-  displayHeading: true,
-  config: { disableAi: true },
-  required: true,
-  contentElementConfig: [
-    {
-      name: 'Video Elements',
-      items: [ContentElementType.MuxVideo, ContentElementType.Video],
+  config: {
+    [ActivityType.VideoUnit]: {
+      label: 'Video unit',
+      icon: 'mdi-video-outline',
+      contentElementConfig: [ContentElementType.MuxVideo],
     },
-  ],
+  },
 };
 
-const SectionConfig: ActivityConfig = {
-  type: ActivityType.Section,
+const ChapterConfig: ActivityConfig = {
+  type: ActivityType.Chapter,
   rootLevel: true,
   isTrackedInWorkflow: true,
-  label: 'Section',
+  label: 'Chapter',
   color: '#5187C7',
   subLevels: [ActivityType.Lesson],
   ai: {
     definition: `
-      Sections are thematic groupings that organize video lessons into logical
-      chapters or units. They help learners navigate the course by breaking down
-      the material into focused topics or skill areas.`,
+      Chapters are thematic groupings that organize video lessons into logical
+      units. They help learners navigate the course by breaking down the
+      material into focused topics or skill areas.`,
   },
 };
 
@@ -61,13 +60,13 @@ const LessonConfig: ActivityConfig = {
       specific concepts, skills, or topics within the course curriculum.`,
   },
   color: '#08A9AD',
-  contentContainers: [ActivityType.VideoContent],
+  contentContainers: [ActivityType.LessonContent],
   meta: [
     {
       key: 'description',
       type: MetaInputType.Textarea,
       label: 'Description',
-      placeholder: 'Enter page description',
+      placeholder: 'Enter lesson description',
     },
     {
       key: 'thumbnailImage',
@@ -85,7 +84,7 @@ const LessonConfig: ActivityConfig = {
       key: 'estimatedTime',
       type: MetaInputType.TextField,
       label: 'Estimated time (minutes)',
-      placeholder: 'Enter estimated time to complete the page',
+      placeholder: 'Enter estimated time to complete the lesson',
       inputType: 'number',
     },
   ],
@@ -95,7 +94,7 @@ export const SCHEMA: Schema = {
   id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Video course',
-  description: 'A video-based course structure featuring sections and video lessons.',
+  description: 'A video-based course structure featuring chapters and video lessons.',
   meta: [
     {
       key: 'thumbnailImage',
@@ -103,7 +102,9 @@ export const SCHEMA: Schema = {
       label: 'Thumbnail Image',
       placeholder: 'Click to upload a thumbnail image',
       icon: 'mdi-image',
-      ext: ['jpg', 'jpeg', 'png'],
+      validate: {
+        ext: ['jpg', 'jpeg', 'png'],
+      },
       hideOnCreate: true,
       showPreview: true,
     },
@@ -115,6 +116,6 @@ export const SCHEMA: Schema = {
       inputType: 'number',
     },
   ],
-  structure: [SectionConfig, LessonConfig],
-  contentContainers: [VideoContentContainer],
+  structure: [ChapterConfig, LessonConfig],
+  contentContainers: [LessonContentContainer],
 };
