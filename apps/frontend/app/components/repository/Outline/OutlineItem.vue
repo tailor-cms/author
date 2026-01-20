@@ -36,7 +36,11 @@
                 :activity="activity"
                 class="options-toolbar my-auto"
               />
-              <VTooltip content-class="bg-primary-darken-4" location="bottom">
+              <VTooltip
+                v-if="smAndUp"
+                content-class="bg-primary-darken-4"
+                location="bottom"
+              >
                 <template #activator="{ props: tooltipProps }">
                   <VBtn
                     v-show="hasSubtypes"
@@ -110,7 +114,9 @@ import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';
 import type { StoreActivity } from '@/stores/activity';
+import { useDisplay } from 'vuetify';
 
+const { smAndUp } = useDisplay();
 const currentRepositoryStore = useCurrentRepository();
 
 const { taxonomy } = storeToRefs(currentRepositoryStore);

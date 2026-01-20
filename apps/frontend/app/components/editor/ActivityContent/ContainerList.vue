@@ -217,10 +217,6 @@ onBeforeMount(() => {
 </script>
 
 <style lang="scss" scoped>
-.content-containers {
-  margin: 4.375rem 0;
-}
-
 .headline {
   margin: 3.125rem 0 1.25rem;
   padding: 0;

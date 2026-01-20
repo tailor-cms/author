@@ -1,8 +1,21 @@
 <template>
-  <VBottomSheet class="mx-5">
-    <div class="element-container bg-primary-lighten-5">
-      <div class="d-flex align-end pt-6 pb-5 px-10">
-        <slot name="header"></slot>
+  <VBottomSheet class="mx-sm-5" max-width="1200">
+    <VSheet class="element-container" color="primary-lighten-5">
+      <div class="picker-header py-6 px-10">
+        <VTextField
+          v-model="searchQuery"
+          class="mb-5"
+          density="comfortable"
+          placeholder="Search elements..."
+          prepend-inner-icon="mdi-magnify"
+          variant="solo"
+          hide-details
+          clearable
+          flat
+        />
+        <div class="d-flex flex-wrap align-center ga-4">
+          <slot name="header"></slot>
+        </div>
       </div>
       <VFadeTransition>
         <VSheet
@@ -12,52 +25,54 @@
         >
           <CircularProgress />
           <div class="pt-3 text-primary-darken-4 font-weight-bold">
-            <span>Content generation in progress...</span>
+            Content generation in progress...
           </div>
         </VSheet>
       </VFadeTransition>
-      <div v-for="group in library" :key="group.name" class="mb-2 mx-10">
-        <div class="group-heading text-primary-darken-3 mt-3 mb-2">
-          {{ group.name }}
+      <VSheet
+        class="overflow-y-auto px-10 pb-8"
+        color="transparent"
+        max-height="60vh"
+      >
+        <div v-if="searchQuery && !filteredLibrary.length" class="text-center py-10">
+          <VAvatar class="mb-4" size="80" color="primary-lighten-4">
+            <VIcon icon="mdi-magnify" size="40" />
+          </VAvatar>
+          <p class="text-h6">No elements found</p>
+          <p class="text-subtitle-1 text-medium-emphasis">
+            No elements match "{{ searchQuery }}"
+          </p>
         </div>
-        <div class="group-elements ga-5">
-          <VBtn
-            v-for="element in group.items"
-            :key="element.position"
-            :disabled="!isAllowed(element.type)"
-            class="add-element"
-            color="primary-darken-3"
-            rounded="lg"
-            variant="text"
-            stacked
-            @click.stop="emitAdd(element)"
-          >
-            <template #prepend>
-              <VIcon v-if="element.ui.icon" size="28">
-                {{ element.ui.icon }}
-              </VIcon>
-            </template>
-            {{ element.name }}
-            <template #append>
-              <VIcon
-                v-tooltip="element.version"
-                class="version-info"
-                icon="mdi-information-outline"
-                size="16"
-              />
-            </template>
-          </VBtn>
+        <div
+          v-for="(group) in filteredLibrary"
+          :key="group.name"
+          class="element-group"
+        >
+          <h3 class="text-overline mb-2">{{ group.name }}</h3>
+          <div class="element-grid">
+            <ElementBtn
+              v-for="(element) in group.items"
+              :key="element.position"
+              :element="element"
+              :disabled="!isAllowed(element.type)"
+              @click="emitAdd(element)"
+            />
+          </div>
         </div>
-      </div>
-    </div>
+      </VSheet>
+    </VSheet>
   </VBottomSheet>
 </template>
 
 <script lang="ts" setup>
 import CircularProgress from '../CircularProgress.vue';
+import ElementBtn from './ElementBtn.vue';
+import { computed, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { some } from 'lodash-es';
 import { VFadeTransition } from 'vuetify/components';
+
+const searchQuery = ref('');
 
 const props = defineProps<{
   library: any;
@@ -72,66 +87,45 @@ const isAllowed = (type: string) => {
   return hasElements || some(props.allowedElementConfig, { type });
 };
 
+const filteredLibrary = computed(() => {
+  const query = searchQuery.value?.toLowerCase().trim();
+  if (!query) return props.library;
+  return props.library
+    .map((group: any) => ({
+      ...group,
+      items: group.items.filter((el: any) =>
+        el.name.toLowerCase().includes(query),
+      ),
+    }))
+    .filter((group: any) => group.items.length > 0);
+});
+
 const emitAdd = (element: ContentElement) => emit('add', [element]);
 </script>
 
 <style lang="scss" scoped>
 .element-container {
-  min-height: 20rem;
-  padding: 0 0 1.875rem;
-  border-top-left-radius: 0.5rem;
-  border-top-right-radius: 0.5rem;
-  overflow: hidden;
+  position: relative;
 }
 
-.group-heading {
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1rem;
-  text-align: left;
-}
+.element-group {
+  margin-bottom: 1.5rem;
 
-.group-elements {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.add-element {
-  width: 8.125rem;
-  min-width: 8.125rem;
-  height: auto !important;
-  min-height: 4.75rem;
-  padding: 0.5rem 0.375rem !important;
-
-  :deep(.v-btn__content) {
-    text-transform: none;
-  }
-
-  :deep(.v-btn__prepend) {
-    margin-bottom: 0.25rem;
+  &:last-child {
+    margin-bottom: 0;
   }
 }
 
-.version-info {
-  position: absolute;
-  top: 0.375rem;
-  right: 0.5rem;
-  opacity: 0;
-}
-
-.v-btn:hover .version-info {
-  opacity: 1;
-  transition: all 0.5s ease-in;
+.element-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.75rem;
 }
 
 .generation-loader {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9;
+  inset: 0;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   align-items: center;

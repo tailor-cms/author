@@ -52,6 +52,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   });
 
   const repositoryId = ref<number | null>(null);
+  const isSidebarOpen = ref(false);
 
   const repository = computed(() => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
@@ -140,6 +141,10 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     ancestors.forEach((it) => toggleOutlineItemExpand(it.uid, true));
   };
 
+  const updateSidebar = (value: boolean) => {
+    isSidebarOpen.value = value;
+  };
+
   const isValidDrop = (evt: any): boolean => {
     const draggedElement = evt.draggedContext?.element;
     const elementType = draggedElement?.type;
@@ -165,6 +170,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return config.rootLevel ?? false;
   };
 
+  // Used for drag & drop of outline activities
   const handleOutlineItemDrag = async (
     context: any = {},
     parentId: number | null = null,
@@ -244,6 +250,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     expandOutlineParents,
     isValidDrop,
     handleOutlineItemDrag,
+    isSidebarOpen,
+    updateSidebar,
     getUsers,
     upsertUser,
     removeUser,
