@@ -84,14 +84,13 @@ class LinkService {
       }
       return srcType;
     }
-
     const targetType = getCompatibleTargetType(
-      sourceType,
+      srcType,
       targetRepository.schema,
       parentType,
     );
     if (!targetType) {
-      throw createError(BAD_REQUEST, `No compatible type for ${sourceType}`);
+      throw createError(BAD_REQUEST, `No compatible type for ${srcType}`);
     }
     return targetType;
   }
