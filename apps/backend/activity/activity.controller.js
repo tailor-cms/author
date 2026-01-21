@@ -9,7 +9,7 @@ import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { fetchActivityContent } from '#shared/publishing/actions.js';
 import consumerConfig from '#config/consumer.js';
-import linkService from './link.service.js';
+import linkService from '#shared/content-library/link.service.js';
 import oauth2 from '#shared/oAuth2Provider.js';
 import publishingService from '#shared/publishing/publishing.service.js';
 

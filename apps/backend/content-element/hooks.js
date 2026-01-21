@@ -1,3 +1,4 @@
+import { Activity as ActivityEvents } from '@tailor-cms/common/src/sse.js';
 import forEach from 'lodash/forEach.js';
 import get from 'lodash/get.js';
 import hash from 'hash-object';
@@ -7,6 +8,7 @@ import { schema } from '@tailor-cms/config';
 
 import { createLogger } from '#logger';
 import elementHooks from '#shared/content-plugins/elementHooks.js';
+import linkService from '#shared/content-library/link.service.js';
 import PluginRegistry from '#shared/content-plugins/index.js';
 import { resolveStatics } from '#shared/storage/helpers.js';
 import sse from '#shared/sse/index.js';
@@ -119,6 +121,36 @@ function add(ContentElement, Hooks, Models) {
     }
   }
 
+  /** Unlink activity tree when element created on linked activity. */
+  async function unlinkActivityOnCreate(_hookType, element, opts) {
+    if (isLibrarySync(opts)) return;
+    if (!element.activityId) return;
+    log('Checking activity unlink due to element creation');
+    const entryPoint = await linkService.unlinkActivityIfLinked(
+      element.activityId,
+      opts.context,
+      opts.transaction,
+    );
+    if (entryPoint) {
+      broadcast(entryPoint.repositoryId, ActivityEvents.Update, entryPoint);
+    }
+  }
+
+  /** Unlink activity tree when element deleted from linked activity. */
+  async function unlinkActivityOnDelete(_hookType, element, opts) {
+    if (isLibrarySync(opts)) return;
+    if (!element.activityId) return;
+    log('Checking activity unlink due to element deletion');
+    const entryPoint = await linkService.unlinkActivityIfLinked(
+      element.activityId,
+      opts.context,
+      opts.transaction,
+    );
+    if (entryPoint) {
+      broadcast(entryPoint.repositoryId, ActivityEvents.Update, entryPoint);
+    }
+  }
+
   const elementHookMappings = {
     [Hooks.beforeCreate]: [elementHooks.BEFORE_SAVE],
     [Hooks.beforeUpdate]: [elementHooks.BEFORE_SAVE],
@@ -191,6 +223,7 @@ function add(ContentElement, Hooks, Models) {
     [Hooks.beforeCreate]: [customElementHook, processAssets],
     [Hooks.beforeUpdate]: [customElementHook, processAssets],
     [Hooks.afterCreate]: [
+      unlinkActivityOnCreate,
       customElementHook,
       resolveAssets,
       propagateElementCreation,
@@ -208,7 +241,7 @@ function add(ContentElement, Hooks, Models) {
       touchOutline,
     ],
     [Hooks.beforeDestroy]: [touchRepository, touchOutline],
-    [Hooks.afterDestroy]: [propagateElementDeletion, sseDelete],
+    [Hooks.afterDestroy]: [unlinkActivityOnDelete, propagateElementDeletion, sseDelete],
   };
 
   forEach(mappings, (hooks, type) => {

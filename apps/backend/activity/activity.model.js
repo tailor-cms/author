@@ -170,6 +170,20 @@ class Activity extends Model {
     );
   }
 
+  /**
+   * Find the link entry point for this activity.
+   * Walks up the tree to find the root of the linked hierarchy.
+   * Returns null if this activity is not part of a linked tree.
+   * @param {Object} transaction - Optional transaction
+   * @returns {Promise<Activity|null>}
+   */
+  async findLinkEntryPoint(transaction) {
+    if (!this.isLinkedCopy) return null;
+    const parent = await this.getParent({ transaction });
+    if (!parent?.isLinkedCopy) return this;
+    return parent.findLinkEntryPoint(transaction);
+  }
+
   static async create(data, opts) {
     return this.sequelize.transaction(
       { transaction: opts.transaction },

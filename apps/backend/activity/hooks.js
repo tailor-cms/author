@@ -3,6 +3,7 @@ import groupBy from 'lodash/groupBy.js';
 import { schema } from '@tailor-cms/config';
 
 import { createLogger } from '#logger';
+import linkService from '#shared/content-library/link.service.js';
 import sse from '#shared/sse/index.js';
 
 const { isOutlineActivity } = schema;
@@ -14,7 +15,12 @@ function add(Activity, Hooks, Models) {
   const { Events } = Activity;
 
   const mappings = {
-    [Hooks.afterCreate]: [touchRepository, touchOutline, sseCreate],
+    [Hooks.afterCreate]: [
+      unlinkParentOnCreate,
+      touchRepository,
+      touchOutline,
+      sseCreate,
+    ],
     // Order matters: touchOutline must run before propagateToLinkedActivities
     // so modifiedAt is set before propagation uses it
     [Hooks.afterUpdate]: [
@@ -26,6 +32,7 @@ function add(Activity, Hooks, Models) {
     ],
     [Hooks.afterBulkUpdate]: [afterTransaction(sseBulkUpdate)],
     [Hooks.afterDestroy]: [
+      unlinkParentOnDelete,
       unlinkCopiesOnDelete,
       touchRepository,
       touchOutline,
@@ -34,46 +41,56 @@ function add(Activity, Hooks, Models) {
     [Hooks.afterRestore]: [touchRepository, touchOutline, sseUpdate],
   };
 
-  /**
-   * Unlink all copies when source activity is deleted.
-   * Copies become independent (isLinkedCopy: false) but keep sourceId for
-   * provenance.
-   */
-  async function unlinkCopiesOnDelete(_hookType, activity, opts) {
-    const linkedCopies = await Activity.unscoped().findAll({
-      where: { sourceId: activity.id, isLinkedCopy: true },
-    });
-    if (!linkedCopies.length) return;
-    log(`Unlinking ${linkedCopies.length} copies of del activity ${activity.id}`);
-    for (const copy of linkedCopies) {
-      await copy.update(
-        { isLinkedCopy: false, sourceModifiedAt: null },
-        { transaction: opts.transaction, hooks: false },
-      );
-      sse.channel(copy.repositoryId).send(Events.Update, copy);
+  /** Unlink parent tree when activity created under linked parent. */
+  async function unlinkParentOnCreate(_hookType, activity, opts) {
+    if (opts.context?.libraryUpdate) return;
+    if (!activity.parentId) return;
+    log(`Checking parent unlink due to child creation`);
+    const entryPoint = await linkService.unlinkParentIfLinked(
+      activity.parentId,
+      opts.context,
+      opts.transaction,
+    );
+    if (entryPoint) {
+      sse.channel(entryPoint.repositoryId).send(Events.Update, entryPoint);
     }
   }
 
-  /**
-   * Auto-detach linked activity when data is edited.
-   * "If you edit it, you own it" - user edits break the library link.
-   */
+  /** Unlink parent tree when activity deleted from linked parent. */
+  async function unlinkParentOnDelete(_hookType, activity, opts) {
+    if (opts.context?.libraryUpdate) return;
+    if (!activity.parentId) return;
+    log(`Checking parent unlink due to child deletion`);
+    const entryPoint = await linkService.unlinkParentIfLinked(
+      activity.parentId,
+      opts.context,
+      opts.transaction,
+    );
+    if (entryPoint) {
+      sse.channel(entryPoint.repositoryId).send(Events.Update, entryPoint);
+    }
+  }
+
+  /** Unlink all copies when source activity is deleted. */
+  async function unlinkCopiesOnDelete(_hookType, activity, opts) {
+    const unlinkedCopies = await linkService.unlinkCopiesOfSource(
+      activity.id,
+      opts.transaction,
+    );
+    if (unlinkedCopies.length) {
+      log(`Unlinked ${unlinkedCopies.length} copies of deleted activity ${activity.id}`);
+      for (const copy of unlinkedCopies) {
+        sse.channel(copy.repositoryId).send(Events.Update, copy);
+      }
+    }
+  }
+
+  /** Auto-detach linked activity when data is edited. */
   async function autoDetachOnEdit(_hookType, activity, opts) {
     if (!activity.isLinkedCopy) return;
     if (!opts.fields?.includes('data')) return;
-    // libraryUpdate: system is syncing from source, not a user edit - keep link
     if (opts.context?.libraryUpdate) return;
-    // Break the link (keep sourceId for provenance)
-    await activity.update(
-      {
-        isLinkedCopy: false,
-        sourceModifiedAt: null,
-      },
-      {
-        transaction: opts.transaction,
-        hooks: false, // Prevent recursion
-      },
-    );
+    await linkService.detachOnEdit(activity, opts.transaction);
   }
 
   /**
