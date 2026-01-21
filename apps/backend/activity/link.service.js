@@ -25,9 +25,17 @@ class LinkService {
       isSameSchema: source.repository.schema === targetRepository.schema,
       context,
     };
-    return sequelize.transaction((transaction) =>
-      this.#cloneTree(source, { ...opts, transaction }),
-    );
+    return sequelize.transaction(async (transaction) => {
+      // Auto-unlink parent if it's a linked activity
+      // adding children modifies it
+      if (parentId) {
+        const parent = await Activity.findByPk(parentId, { transaction });
+        if (parent?.isLinkedCopy) {
+          await this.#unlinkTree(parent, context, transaction);
+        }
+      }
+      return this.#cloneTree(source, { ...opts, transaction });
+    });
   }
 
   /**
@@ -136,22 +144,32 @@ class LinkService {
     const activity = await Activity.findByPk(activityId);
     if (!activity) throw createError(NOT_FOUND, 'Activity not found');
     if (!activity.isLinkedCopy) return activity;
-    const unlinkData = { isLinkedCopy: false, sourceModifiedAt: null };
     return sequelize.transaction(async (transaction) => {
-      // Update root with context (triggers hooks for SSE)
-      await activity.update(unlinkData, { transaction, context });
-      // Batch update descendants and elements
-      const { nodes } = await activity.descendants({ attributes: ['id'] });
-      const activityIds = nodes.map((n) => n.id);
+      await this.#unlinkTree(activity, context, transaction);
+      return activity.reload({ transaction });
+    });
+  }
+
+  /**
+   * Unlink activity tree within a transaction.
+   * @private
+   */
+  async #unlinkTree(activity, context, transaction) {
+    const unlinkData = { isLinkedCopy: false, sourceModifiedAt: null };
+    // Update root with context (triggers hooks for SSE)
+    await activity.update(unlinkData, { transaction, context });
+    // Batch update descendants and elements
+    const { nodes } = await activity.descendants({ attributes: ['id'] });
+    const activityIds = nodes.map((n) => n.id);
+    if (activityIds.length) {
       await Activity.update(unlinkData, {
         where: { id: activityIds },
         transaction,
       });
-      await ContentElement.update(unlinkData, {
-        where: { activityId: activityIds },
-        transaction,
-      });
-      return activity.reload({ transaction });
+    }
+    await ContentElement.update(unlinkData, {
+      where: { activityId: [activity.id, ...activityIds] },
+      transaction,
     });
   }
 }
