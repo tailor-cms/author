@@ -58,6 +58,19 @@
       :type="activity.type"
       class="mt-6 mb-3"
     />
+    <!-- Linked activity indicator -->
+    <LinkedIndicator
+      v-if="activity.isLinkedCopy"
+      :activity="activity"
+      class="mt-4"
+    />
+    <!-- Show if this activity has linked copies -->
+    <SourceUsages
+      v-if="showSourceUsages"
+      :activity="activity"
+      class="mt-4"
+      @copy:view="viewCopy"
+    />
     <div v-if="!isSoftDeleted">
       <div class="meta-elements">
         <MetaInput
@@ -89,6 +102,7 @@
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
 
+import { LinkedIndicator, SourceUsages } from '@/components/repository/Library';
 import ActivityDiscussion from '../Discussion/index.vue';
 import ActivityRelationship from './ActivityRelationship.vue';
 import ActivityStatus from './ActivityStatus.vue';
@@ -111,6 +125,18 @@ const metadata = computed(() =>
 const isSoftDeleted = computed(() =>
   activityUtils.doesRequirePublishing(props.activity),
 );
+
+const showSourceUsages = computed(() => !props.activity.isLinkedCopy);
+
+const viewCopy = (copy: {
+  repositoryId: number;
+  outlineActivityId: number;
+}) => {
+  const { repositoryId, outlineActivityId } = copy;
+  // Hard reload for cross-repository navigation to reset stores
+  window.location.href =
+    `/repository/${repositoryId}/root/structure?activityId=${outlineActivityId}`;
+};
 
 const updateActivity = async (key: string, value: any) => {
   const data = { ...props.activity.data, [key]: value };

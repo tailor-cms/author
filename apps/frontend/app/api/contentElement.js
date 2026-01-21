@@ -6,6 +6,9 @@ const urls = {
   root: (repositoryId) => `${urls.repository(repositoryId)}/content-elements`,
   resource: (repositoryId, id) => `${urls.root(repositoryId)}/${id}`,
   reorder: (repositoryId, id) => `${urls.resource(repositoryId, id)}/reorder`,
+  link: (repositoryId) => `${urls.root(repositoryId)}/link`,
+  unlink: (repositoryId, id) => `${urls.resource(repositoryId, id)}/unlink`,
+  copies: (repositoryId, id) => `${urls.resource(repositoryId, id)}/copies`,
 };
 
 function fetch(repositoryId, params) {
@@ -30,10 +33,25 @@ function remove(repositoryId, id) {
   return request.delete(urls.resource(repositoryId, id));
 }
 
+function link(repositoryId, payload) {
+  return request.post(urls.link(repositoryId), payload).then(extractData);
+}
+
+function unlink(repositoryId, elementId) {
+  return request.post(urls.unlink(repositoryId, elementId)).then(extractData);
+}
+
+function getCopies(repositoryId, elementId) {
+  return request.get(urls.copies(repositoryId, elementId)).then(extractData);
+}
+
 export default {
   fetch,
   create,
   patch,
   reorder,
   remove,
+  link,
+  unlink,
+  getCopies,
 };

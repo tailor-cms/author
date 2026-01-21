@@ -30,6 +30,14 @@
               class="activity-name my-auto text-truncate text-primary-lighten-4"
             >
               {{ activity.data.name }}
+              <VIcon
+                v-if="activity.isLinkedCopy"
+                color="lime-lighten-1"
+                size="small"
+                end
+              >
+                mdi-link-variant
+              </VIcon>
             </div>
             <div v-if="isSelected || isHovering" class="actions my-auto">
               <OutlineItemToolbar

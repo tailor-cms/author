@@ -200,6 +200,23 @@ async function getCopies({ activity }, res) {
   });
 }
 
+/**
+ * Get source activity info for a linked copy.
+ */
+async function getSource({ activity }, res) {
+  if (!activity.sourceId) return res.json({ data: null });
+  const source = await Activity.findByPk(activity.sourceId, {
+    include: ['repository'],
+  });
+  if (!source) return res.json({ data: null });
+  return res.json({
+    data: {
+      id: source.id,
+      repository: source.repository,
+    },
+  });
+}
+
 export default {
   create,
   show,
@@ -215,4 +232,5 @@ export default {
   link,
   unlink,
   getCopies,
+  getSource,
 };

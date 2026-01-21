@@ -42,6 +42,7 @@ router
     ctrl.updateWorkflowStatus,
   )
   .post('/:activityId/unlink', ctrl.unlink)
+  .get('/:activityId/source', ctrl.getSource)
   .get('/:activityId/copies', ctrl.getCopies);
 
 function getActivity(req, _res, next, activityId) {
