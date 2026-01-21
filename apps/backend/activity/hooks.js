@@ -25,9 +25,34 @@ function add(Activity, Hooks, Models) {
       sseUpdate,
     ],
     [Hooks.afterBulkUpdate]: [afterTransaction(sseBulkUpdate)],
-    [Hooks.afterDestroy]: [touchRepository, touchOutline, sseDelete],
+    [Hooks.afterDestroy]: [
+      unlinkCopiesOnDelete,
+      touchRepository,
+      touchOutline,
+      sseDelete,
+    ],
     [Hooks.afterRestore]: [touchRepository, touchOutline, sseUpdate],
   };
+
+  /**
+   * Unlink all copies when source activity is deleted.
+   * Copies become independent (isLinkedCopy: false) but keep sourceId for
+   * provenance.
+   */
+  async function unlinkCopiesOnDelete(_hookType, activity, opts) {
+    const linkedCopies = await Activity.unscoped().findAll({
+      where: { sourceId: activity.id, isLinkedCopy: true },
+    });
+    if (!linkedCopies.length) return;
+    log(`Unlinking ${linkedCopies.length} copies of del activity ${activity.id}`);
+    for (const copy of linkedCopies) {
+      await copy.update(
+        { isLinkedCopy: false, sourceModifiedAt: null },
+        { transaction: opts.transaction, hooks: false },
+      );
+      sse.channel(copy.repositoryId).send(Events.Update, copy);
+    }
+  }
 
   /**
    * Auto-detach linked activity when data is edited.
