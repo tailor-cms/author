@@ -171,6 +171,8 @@ class LinkService {
     const { Activity } = this.db;
     const { targetRepository, parentId, position, context, transaction } = opts;
     const targetType = await this.#resolveType(source.type, opts);
+    // Mark as libraryUpdate to prevent hooks from auto-unlinking the tree
+    const linkContext = { ...context, libraryUpdate: true };
     const linked = await Activity.create(
       {
         repositoryId: targetRepository.id,
@@ -183,7 +185,7 @@ class LinkService {
         sourceId: source.id,
         sourceModifiedAt: source.modifiedAt || source.updatedAt,
       },
-      { transaction, context },
+      { transaction, context: linkContext },
     );
     await this.#cloneElements(source.id, linked, opts);
     const children = await source.getChildren({
@@ -237,6 +239,8 @@ class LinkService {
   async #cloneElements(sourceActivityId, targetActivity, opts) {
     const { ContentElement } = this.db;
     const { context, transaction } = opts;
+    // Mark as libraryUpdate to prevent hooks from auto-unlinking
+    const linkContext = { ...context, libraryUpdate: true };
     const elements = await ContentElement.findAll({
       where: { activityId: sourceActivityId, detached: false },
       transaction,
@@ -255,7 +259,7 @@ class LinkService {
           sourceId: el.id,
           sourceModifiedAt: el.updatedAt,
         },
-        { transaction, context },
+        { transaction, context: linkContext },
       );
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <VMenu location="bottom end" :close-on-content-click="false">
+  <VMenu location="bottom end">
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
