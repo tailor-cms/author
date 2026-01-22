@@ -45,16 +45,14 @@ router
   .get('/:activityId/source', ctrl.getSource)
   .get('/:activityId/copies', ctrl.getCopies);
 
-function getActivity(req, _res, next, activityId) {
-  return Activity.findByPk(activityId, { paranoid: false })
-    .then((it) => it || createError(StatusCodes.NOT_FOUND, 'Not found'))
-    .then((activity) => {
-      if (activity.repositoryId !== req.repository.id) {
-        return createError(StatusCodes.FORBIDDEN, 'Access restricted');
-      }
-      req.activity = activity;
-      next();
-    });
+async function getActivity(req, _res, next, activityId) {
+  const activity = await Activity.findByPk(activityId, { paranoid: false });
+  if (!activity) throw createError(StatusCodes.NOT_FOUND, 'Not found');
+  if (activity.repositoryId !== req.repository.id) {
+    throw createError(StatusCodes.FORBIDDEN, 'Access restricted');
+  }
+  req.activity = activity;
+  next();
 }
 
 async function hasCloneTargetAccess({ body, user }, _res, next) {
