@@ -2,6 +2,7 @@ import { size } from 'lodash-es';
 
 type ElementData = Record<string, any>;
 
+// TODO: get isEmpty from CEK manifest
 export const isEmpty: Record<string, (data: ElementData) => boolean> = {
   TIPTAP_HTML: ({ content }: ElementData) => !content || content === '<p></p>',
   IMAGE: ({ url }: ElementData) => !url,

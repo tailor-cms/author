@@ -1,5 +1,5 @@
 <template>
-  <VCard class="collection-item" color="primary-lighten-5">
+  <VCard color="white" class="ccollection-item mb-5">
     <VCardText class="text-left pa-8 pb-4">
       <div v-for="input in config" :key="input.key">
         <Field
