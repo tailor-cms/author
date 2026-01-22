@@ -506,6 +506,9 @@ importers:
       '@types/promise-queue':
         specifier: ^2.2.3
         version: 2.2.3
+      '@types/sortablejs':
+        specifier: ^1.15.9
+        version: 1.15.9
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.6)
@@ -527,6 +530,9 @@ importers:
       '@tailor-cms/config-parser':
         specifier: workspace:^
         version: link:../packages/tailor-config-parser
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
       '@tailor-cms/content-container-collection':
         specifier: workspace:^
@@ -558,6 +564,9 @@ importers:
       '@tailor-cms/tcc-assessment-pool-server':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/assessment-pool-server
+      '@tailor-cms/tcc-collection-item':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/collection-item
       '@tailor-cms/tcc-exam-edit':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/exam-edit
@@ -903,6 +912,34 @@ importers:
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
+        version: 4.17.12
+
+  packages/core-extensions/content-containers/collection-item:
+    dependencies:
+      '@tailor-cms/core-components':
+        specifier: workspace:*
+        version: link:../../../core-components
+      '@tailor-cms/utils':
+        specifier: workspace:*
+        version: link:../../../utils
+      lodash-es:
+        specifier: '*'
+        version: 4.17.21
+      vee-validate:
+        specifier: 4.14.7
+        version: 4.14.7(vue@3.5.22(typescript@5.9.3))
+      vue:
+        specifier: ^3.5.15
+        version: 3.5.22(typescript@5.9.3)
+      vuetify:
+        specifier: ^3.8.6
+        version: 3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+    devDependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      '@types/lodash-es':
+        specifier: '*'
         version: 4.17.12
 
   packages/core-extensions/content-containers/exam-edit:
@@ -5080,6 +5117,9 @@ packages:
 
   '@types/shimmer@1.2.0':
     resolution: {integrity: sha512-UE7oxhQLLd9gub6JKIAhDq06T0F6FnztwMNRvYgjeQSBeMc1ZG/tA47EwfduvkuQS8apbkM/lpLpWsaCeYsXVg==}
+
+  '@types/sortablejs@1.15.9':
+    resolution: {integrity: sha512-7HP+rZGE2p886PKV9c9OJzLBI6BBJu1O7lJGYnPyG3fS4/duUCcngkNCjsLwIMV+WMqANe3tt4irrXHSIe68OQ==}
 
   '@types/tmp@0.2.6':
     resolution: {integrity: sha512-chhaNf2oKHlRkDGt+tiKE2Z5aJ6qalm7Z9rlLdBwmOiAAf09YQvvoLXjWK4HWPF1xU/fqvMgfNfpVoBscA/tKA==}
@@ -16707,6 +16747,8 @@ snapshots:
   '@types/semver@7.7.0': {}
 
   '@types/shimmer@1.2.0': {}
+
+  '@types/sortablejs@1.15.9': {}
 
   '@types/tmp@0.2.6': {}
 

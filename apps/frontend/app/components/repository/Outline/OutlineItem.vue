@@ -10,10 +10,10 @@
             highlighted: isHovering,
             disabled: isSoftDeleted,
           }"
-          :style="{ 'border-left-color': config.color }"
+          :style="{ 'border-left-color': config?.color }"
           class="activity"
           data-testid="repository__structureActivity"
-          @mousedown="currentRepositoryStore.selectActivity(activity.id)"
+          @mousedown="selectActivity(activity.id)"
         >
           <template v-if="!isSoftDeleted">
             <VBtn
@@ -87,8 +87,8 @@
         :list="children"
         group="activities"
         item-key="uid"
-        @update="(data) => reorder(data, children)"
-        @change="(e) => currentRepositoryStore.handleOutlineItemDrag(e, activity.id)"
+        @update="(e: SortableEvent) => reorder(e, children)"
+        @change="(e: SortableEvent) => handleOutlineItemDrag(e, activity.id)"
       >
         <template #item="{ element, index: i }">
           <OutlineItem
@@ -107,6 +107,7 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
 import Draggable from 'vuedraggable';
 import { size } from 'lodash-es';
+import type { SortableEvent } from 'sortablejs';
 
 import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
@@ -117,7 +118,8 @@ import { useDisplay } from 'vuetify';
 const { smAndUp } = useDisplay();
 const currentRepositoryStore = useCurrentRepository();
 
-const { taxonomy } = storeToRefs(currentRepositoryStore);
+const { selectedActivity, taxonomy } = storeToRefs(currentRepositoryStore);
+const { handleOutlineItemDrag, selectActivity } = currentRepositoryStore;
 
 interface Props {
   activity: StoreActivity;
@@ -133,11 +135,11 @@ const utils = useSelectedActivity(props.activity);
 const reorder = useOutlineReorder();
 
 const config = computed(() =>
-  taxonomy.value.find((it: any) => it.type === props.activity.type),
+  taxonomy.value?.find((it: any) => it.type === props.activity.type),
 );
 
 const isSelected = computed(
-  () => currentRepositoryStore.selectedActivity?.uid === props.activity.uid,
+  () => selectedActivity.value?.uid === props.activity.uid,
 );
 
 const isSoftDeleted = computed(() =>
@@ -147,7 +149,7 @@ const isSoftDeleted = computed(() =>
 const isExpanded = computed(() =>
   utils.isOutlineItemExpanded(props.activity.uid),
 );
-const hasSubtypes = computed(() => !!size(config.value.subLevels));
+const hasSubtypes = computed(() => !!size(config.value?.subLevels));
 const hasChildren = computed(() => children.value.length > 0 && hasSubtypes);
 const children = computed(() => {
   return props.activities
@@ -155,7 +157,7 @@ const children = computed(() => {
       return (
         props.activity.id &&
         props.activity.id === it.parentId &&
-        config.value.subLevels.includes(it.type)
+        config.value?.subLevels?.includes(it.type)
       );
     })
     .sort((x, y) => x.position - y.position);

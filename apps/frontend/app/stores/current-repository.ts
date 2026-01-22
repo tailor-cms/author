@@ -2,10 +2,9 @@ import {
   schema as schemaConfig,
   workflow as workflowConfig,
 } from '@tailor-cms/config';
-import {
-  calculatePosition,
-  InsertLocation,
-} from '@tailor-cms/utils';
+import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
+
+import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
@@ -58,8 +57,14 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
   });
 
-  const schemaName = computed(() => {
-    return repository.value && getSchema(repository.value.schema).name;
+  const schema = computed(() => {
+    return repository.value && getSchema(repository.value.schema);
+  });
+
+  const schemaName = computed(() => schema.value?.name || '');
+
+  const schemaOutlineStyle = computed(() => {
+    return schema.value?.outlineStyle || OutlineStyle.List;
   });
 
   const taxonomy = computed(() => {
@@ -109,7 +114,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     if (!repository.value) return false;
     const totalItems = outlineActivities.value.length;
     const itemStates = outlineActivities.value.map((it) =>
-      outlineState.expanded.get(it.uid));
+      outlineState.expanded.get(it.uid),
+    );
     const expandedItems = itemStates.filter(Boolean).length;
     return expandedItems === totalItems;
   });
@@ -226,6 +232,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     users,
     outlineState,
     schemaName,
+    schemaOutlineStyle,
     taxonomy,
     activities,
     outlineActivities,
