@@ -13,6 +13,7 @@ import { SCHEMA as QASchema } from './schemas/q&a.schema';
 import { SCHEMA as HeasSchema } from './schemas/heas.schema';
 import { SCHEMA as TestSchema } from './schemas/test.schema';
 import { SCHEMA as PartnerTrainingSchema } from './schemas/partner-training.schema';
+import { SCHEMA as ContentLibrarySchema } from './schemas/content-library.schema';
 
 export const WORKFLOWS = [DefaultWorkflow];
 export const SCHEMAS = processSchemas([
@@ -23,6 +24,7 @@ export const SCHEMAS = processSchemas([
   KnowledgeBase,
   QASchema,
   TestSchema,
+  ContentLibrarySchema,
 ]);
 
 export const schema = getSchemaApi(SCHEMAS, Object.values(ContentElementType));
