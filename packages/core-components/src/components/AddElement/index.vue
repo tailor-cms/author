@@ -32,6 +32,16 @@
         @close="showElementBrowser = false"
         @selected="addElements"
       />
+      <SelectElement
+        v-if="showLibraryBrowser"
+        :allowed-element-config="allowedElementConfig"
+        header-icon="mdi-link-variant"
+        heading="Link Content"
+        submit-label="Link"
+        multiple
+        @close="showLibraryBrowser = false"
+        @selected="addLinkedElements"
+      />
       <AddNewElement
         v-model="isVisible"
         v-bind="{ allowedElementConfig, isAiGeneratingContent, library }"
@@ -60,6 +70,16 @@
             @click="showElementBrowser = !showElementBrowser"
           >
             Copy existing
+          </VBtn>
+          <VBtn
+            v-if="!useAI"
+            class="ml-2"
+            color="primary-darken-3"
+            prepend-icon="mdi-link-variant"
+            variant="tonal"
+            @click="showLibraryBrowser = !showLibraryBrowser"
+          >
+            Link Content
           </VBtn>
           <VTextField
             v-else
@@ -138,6 +158,7 @@ const isAiGeneratingContent = ref(false);
 const isVisible = ref(false);
 const elementWidth = ref(DEFAULT_ELEMENT_WIDTH);
 const showElementBrowser = ref(false);
+const showLibraryBrowser = ref(false);
 
 // Determine if the element picker should show all elements or a subset
 const isSubset = computed(() => !!props.include && !!props.include.length);
@@ -171,6 +192,26 @@ const addElements = async (elements: any[]) => {
   const items = await Promise.all(elements.map((it, index: number) => {
     return buildElement({ ...it, position: positions[index] });
   }));
+  emit('add', items);
+  isVisible.value = false;
+};
+
+const addLinkedElements = async (elements: any[]) => {
+  const positions = getPositions(props.items, props.position, elements.length);
+  const items = elements.map((el, index: number) => {
+    return {
+      type: el.type,
+      data: { ...el.data, width: processedWidth.value },
+      meta: el.meta,
+      position: positions[index],
+      isLinkedCopy: true,
+      sourceId: el.id,
+      sourceModifiedAt: el.updatedAt,
+      ...(props.activity
+        ? { activityId: props.activity.id }
+        : { id: uuid(), embedded: true }),
+    };
+  });
   emit('add', items);
   isVisible.value = false;
 };
