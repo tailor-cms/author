@@ -8,6 +8,7 @@ const urls = {
   reorder: (repositoryId, id) => `${urls.resource(repositoryId, id)}/reorder`,
   link: (repositoryId) => `${urls.root(repositoryId)}/link`,
   unlink: (repositoryId, id) => `${urls.resource(repositoryId, id)}/unlink`,
+  source: (repositoryId, id) => `${urls.resource(repositoryId, id)}/source`,
   copies: (repositoryId, id) => `${urls.resource(repositoryId, id)}/copies`,
 };
 
@@ -41,6 +42,10 @@ function unlink(repositoryId, elementId) {
   return request.post(urls.unlink(repositoryId, elementId)).then(extractData);
 }
 
+function getSource(repositoryId, elementId) {
+  return request.get(urls.source(repositoryId, elementId)).then(extractData);
+}
+
 function getCopies(repositoryId, elementId) {
   return request.get(urls.copies(repositoryId, elementId)).then(extractData);
 }
@@ -53,5 +58,6 @@ export default {
   remove,
   link,
   unlink,
+  getSource,
   getCopies,
 };

@@ -60,10 +60,10 @@ import { getElementId } from '@tailor-cms/utils';
 import pMinDelay from 'p-min-delay';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
+import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
-import aiAPI from '@/api/ai';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
@@ -91,6 +91,8 @@ const route = useRoute();
 const config = useConfigStore();
 const { $eventBus, $schemaService } = useNuxtApp() as any;
 
+const editorChannel = $eventBus.channel('editor');
+
 const repositoryStore = useCurrentRepository();
 const authStore = useAuthStore();
 const editorStore = useEditorStore();
@@ -99,6 +101,7 @@ const contentElementStore = useContentElementStore();
 const commentStore = useCommentStore();
 const storageService = useStorageService();
 const userTrackingStore = useUserTracking();
+useContentLinking(editorChannel);
 
 const getOutlineLocationDesciption = (activity: Activity) => {
   const ancestors = activityStore.getAncestors(activity?.id);
@@ -109,10 +112,7 @@ const getOutlineLocationDesciption = (activity: Activity) => {
   );
 };
 
-const getAiConfig = (
-  outlineActivityType: string,
-  containerType: string,
-) => {
+const getAiConfig = (outlineActivityType: string, containerType: string) => {
   const config = $schemaService
     .getSupportedContainers(outlineActivityType)
     .find((it: any) => it?.type === containerType);
@@ -146,7 +146,6 @@ const doTheMagic = ({
   return aiAPI.generate(context);
 };
 
-const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);

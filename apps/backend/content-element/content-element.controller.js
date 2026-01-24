@@ -105,6 +105,14 @@ async function unlink({ user, repository, contentElement }, res) {
 }
 
 /**
+ * Get source info for a linked copy element.
+ */
+async function getSource({ contentElement }, res) {
+  const sourceInfo = await contentElement.getSourceInfo();
+  return res.json({ data: sourceInfo });
+}
+
+/**
  * Get locations where this source element is being used.
  */
 async function getCopies({ contentElement }, res) {
@@ -126,5 +134,6 @@ export default {
   reorder,
   link,
   unlink,
+  getSource,
   getCopies,
 };

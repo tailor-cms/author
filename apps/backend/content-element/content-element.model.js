@@ -267,15 +267,20 @@ class ContentElement extends Model {
    */
   async getSourceInfo() {
     if (!this.sourceId) return null;
+    const Repository = this.sequelize.model('Repository');
     const Activity = this.sequelize.model('Activity');
     const source = await ContentElement.findByPk(this.sourceId, {
-      include: [{ model: Activity }],
+      include: [
+        { model: Repository, attributes: ['id', 'name'] },
+        { model: Activity },
+      ],
     });
     if (!source) return null;
     const outlineActivity = await source.activity?.getFirstOutlineItem();
     return {
       ...pick(source, ['id', 'uid', 'repositoryId', 'activityId', 'type']),
       outlineActivityId: outlineActivity?.id,
+      repositoryName: source.repository?.name,
       activityName: source.activity?.data?.name,
     };
   }

@@ -21,6 +21,7 @@ router
 
 router.post('/:elementId/reorder', ctrl.reorder);
 router.post('/:elementId/unlink', ctrl.unlink);
+router.get('/:elementId/source', ctrl.getSource);
 router.get('/:elementId/copies', ctrl.getCopies);
 
 function getContentElement(req, _res, next, elementId) {
