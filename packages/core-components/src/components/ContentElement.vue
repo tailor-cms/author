@@ -10,6 +10,7 @@
         focused: isFocused,
         diff: showPublishDiff,
         frame,
+        linked: element.isLinkedCopy && !showPublishDiff,
       },
     ]"
     class="content-element"
@@ -162,6 +163,8 @@ import ActiveUsers from './ActiveUsers.vue';
 import CircularProgress from './CircularProgress.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import ElementGeneration from './ElementGeneration.vue';
+import ElementLinkedIndicator from './ElementLinkedIndicator.vue';
+import ElementSourceUsages from './ElementSourceUsages.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
@@ -354,6 +357,10 @@ onMounted(() => {
       display: block;
       background: $accent-2;
     }
+  }
+
+  &.linked {
+    border-left: 3px solid rgb(var(--v-theme-info));
   }
 }
 

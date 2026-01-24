@@ -291,16 +291,18 @@ class ContentElement extends Model {
       where: { sourceId: this.id, isLinkedCopy: true },
       include: [
         { model: Repository, attributes: ['id', 'name'] },
-        { model: Activity, attributes: ['id', 'data'] },
+        { model: Activity },
       ],
     });
     return Promise.all(
       copies.map(async (copy) => {
         const outline = await copy.activity?.getFirstOutlineItem();
         return {
-          ...pick(copy, ['id', 'uid', 'repositoryId']),
+          ...pick(copy, ['id', 'uid', 'repositoryId', 'activityId']),
           repositoryName: copy.repository?.name,
           outlineActivityId: outline?.id,
+          outlineActivityName: outline?.data?.name,
+          linkedAt: copy.createdAt,
         };
       }),
     );

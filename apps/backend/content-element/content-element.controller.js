@@ -108,11 +108,11 @@ async function unlink({ user, repository, contentElement }, res) {
  * Get locations where this source element is being used.
  */
 async function getCopies({ contentElement }, res) {
-  const copies = await contentElement.findCopyLocations();
+  const usages = await contentElement.findCopyLocations();
   return res.json({
     data: {
-      totalCount: copies.length,
-      copies,
+      totalCount: usages.length,
+      usages,
     },
   });
 }
