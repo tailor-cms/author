@@ -32,7 +32,7 @@
       <VList v-else density="compact">
         <VListItem
           :disabled="!sourceInfo"
-          :subtitle="sourceInfo?.sourceActivityName || 'Open source location'"
+          :subtitle="sourceInfo?.activityName || 'Open source location'"
           prepend-icon="mdi-open-in-new"
           title="View Source"
           @click="onViewSource"
@@ -55,12 +55,13 @@
 import { ref, watch } from 'vue';
 
 interface SourceInfo {
-  sourceId: number;
-  sourceUid?: string;
-  sourceRepositoryId: number;
-  sourceActivityId: number;
-  sourceOutlineActivityId: number;
-  sourceActivityName?: string;
+  id: number;
+  uid: string;
+  repositoryId: number;
+  repositoryName?: string;
+  activityId: number;
+  outlineActivityId: number;
+  activityName?: string;
 }
 
 interface Props {
