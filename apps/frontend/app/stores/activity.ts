@@ -199,6 +199,7 @@ export const useActivityStore = defineStore('activities', () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Activity) => add(it))
       .subscribe(Events.Update, (it: Activity) => add(it))
+      .subscribe(Events.BulkUpdate, (items: Activity[]) => items.forEach(add))
       .subscribe(Events.Delete, (it: Activity) => {
         const activity = it.deletedAt
           ? it
