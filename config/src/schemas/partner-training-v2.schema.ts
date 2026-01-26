@@ -59,6 +59,17 @@ const sectionMeta = [
 const outlineMeta = [
   ...baseMeta,
   {
+    key: 'thumbnailImage',
+    type: MetaInputType.File,
+    label: 'Thumbnail Image',
+    placeholder: 'Click to upload a thumbnail image',
+    icon: 'mdi-image',
+    validate: {
+      ext: ['jpg', 'jpeg', 'png'],
+    },
+    showPreview: true,
+  },
+  {
     key: 'keyTakeaways',
     type: MetaInputType.Html,
     label: 'Key Takeaways',
