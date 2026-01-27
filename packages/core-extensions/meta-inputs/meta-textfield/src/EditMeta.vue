@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 interface Props {
   meta?: any;
@@ -32,8 +32,4 @@ const onChange = () => {
     : input.value;
   emit('update', props.meta.key, processedValue);
 };
-
-watch(() => props.meta.value, (val) => {
-  input.value = val;
-});
 </script>

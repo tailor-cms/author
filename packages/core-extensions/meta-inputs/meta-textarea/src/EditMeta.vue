@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 
 interface Props {
   meta?: any;
@@ -30,8 +30,4 @@ const onChange = () => {
   if (input.value === props.meta.value) return;
   emit('update', props.meta.key, input.value);
 };
-
-watch(() => props.meta.value, (val) => {
-  input.value = val;
-});
 </script>

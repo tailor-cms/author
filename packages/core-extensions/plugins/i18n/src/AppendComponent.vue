@@ -32,7 +32,7 @@
           class="mb-3"
         >
           <VBtn
-            v-for="lang in i18n.availableLanguages"
+            v-for="lang in otherLanguages"
             :key="lang.code"
             :value="lang.code"
             size="small"
@@ -110,6 +110,12 @@ const translatedCount = computed(() =>
 
 const totalLanguages = computed(() => i18n.availableLanguages.length);
 
+const otherLanguages = computed(() =>
+  i18n.availableLanguages.filter(
+    (lang: { code: string }) => lang.code !== i18n.currentLanguage,
+  ),
+);
+
 // Detect which language is being displayed (fallback detection)
 const displayedLang = computed(() =>
   i18n.getDisplayedLanguage(props.data, props.meta.key),
@@ -122,7 +128,11 @@ const badgeColor = computed(() => {
   return props.dark ? 'secondary-lighten-3' : 'secondary';
 });
 
-const activeLanguage = ref(i18n.currentLanguage);
+const activeLanguage = ref(
+  i18n.availableLanguages.find(
+    (lang: { code: string }) => lang.code !== i18n.currentLanguage,
+  )?.code,
+);
 
 const { errorMessage, handleChange, validate, resetField } = useField(
   () => `${props.meta.key}_i18n`,
