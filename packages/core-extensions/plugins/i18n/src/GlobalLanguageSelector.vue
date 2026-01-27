@@ -7,7 +7,7 @@
         <VIcon icon="mdi-chevron-down" size="small" end />
       </VBtn>
     </template>
-    <VList density="compact" min-width="200">
+    <VList density="compact" min-width="200" slim>
       <VListSubheader>Content Language</VListSubheader>
       <VListItem
         v-for="{ code, name } in i18n.availableLanguages"
