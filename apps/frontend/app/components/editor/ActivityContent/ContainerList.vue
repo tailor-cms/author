@@ -7,7 +7,7 @@
       {{ capitalize(name) }}
     </h2>
     <VAlert
-      v-if="!containerGroup.length"
+      v-if="!filteredContainerGroup.length"
       color="primary-lighten-3"
       icon="mdi-information-outline"
       variant="tonal"
@@ -18,7 +18,7 @@
     </VAlert>
     <component
       :is="containerName"
-      v-for="(container, index) in containerGroup"
+      v-for="(container, index) in filteredContainerGroup"
       :key="container?.uid"
       v-bind="$attrs"
       :embed-element-config="embedElementConfig"
@@ -97,7 +97,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['focusoutElement', 'createdContainer']);
 
-const { $schemaService, $ccRegistry } = useNuxtApp() as any;
+const { $schemaService, $ccRegistry, $pluginRegistry } = useNuxtApp() as any;
 const eventBus = inject('$eventBus') as any;
 
 const notify = useNotification();
@@ -112,6 +112,11 @@ const editorStore = useEditorStore();
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 const elements = computed(() => contentElementStore.items);
 
+// Filter containers through plugin hooks (e.g., i18n language filtering)
+const filteredContainerGroup = computed(() => {
+  return $pluginRegistry.filter('container:filter', props.containerGroup);
+});
+
 const containerName = computed(() => {
   const id = $schemaService.getContainerTemplateId(props);
   return getContainerName($ccRegistry.get(id) ? id : 'DEFAULT');
@@ -120,23 +125,26 @@ const containerName = computed(() => {
 const name = computed(() => props.label.toLowerCase());
 
 const addBtnEnabled = computed(() => {
-  const isMultipleOrEmpty = props.multiple || !props.containerGroup.length;
+  const isMultipleOrEmpty = props.multiple || !filteredContainerGroup.value.length;
   return !showPublishDiff.value && isMultipleOrEmpty;
 });
 
+// Use all containers for position calculation to avoid conflicts across languages
 const nextPosition = computed(() => {
   const last = get(maxBy(props.containerGroup, 'position'), 'position', 0);
   return last + 1;
 });
 
-const addContainer = async (data = {}) => {
+const addContainer = async (data: Record<string, any> = {}) => {
   const { type, parentId } = props;
+  // Transform container data through plugin hooks (e.g., i18n language tagging)
+  const containerData = $pluginRegistry.transform('container:transform', { ...data });
   const payload = {
     type,
     repositoryId: currentRepository.repositoryId,
     parentId,
     position: nextPosition.value,
-    ...data,
+    ...containerData,
   };
   await activityStore.save(payload);
   emit('createdContainer', payload);
@@ -212,7 +220,8 @@ const requestElementDeletion = (
 };
 
 onBeforeMount(() => {
-  if (props.required && isEmpty(props.containerGroup)) addContainer();
+  // Auto-create required container if none exists for current language
+  if (props.required && isEmpty(filteredContainerGroup.value)) addContainer();
 });
 </script>
 

@@ -29,7 +29,7 @@
             <div
               class="activity-name my-auto text-truncate text-primary-lighten-4"
             >
-              {{ activity.data.name }}
+              <ActivityName :activity="activity" />
             </div>
             <div v-if="isSelected || isHovering" class="actions my-auto">
               <OutlineItemToolbar
@@ -75,7 +75,7 @@
                   Will be removed upon publishing
                 </VTooltip>
               </VChip>
-              {{ activity.data.name }}
+              <ActivityName :activity="activity" />
             </div>
           </template>
         </VSheet>
@@ -108,6 +108,7 @@ import { activity as activityUtils } from '@tailor-cms/utils';
 import Draggable from 'vuedraggable';
 import { size } from 'lodash-es';
 
+import ActivityName from '@/components/common/ActivityName.vue';
 import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';

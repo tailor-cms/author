@@ -1,4 +1,4 @@
-import { pick } from 'lodash-es';
+import { pick, sortBy } from 'lodash-es';
 
 const ATTRS = [
   'id',
@@ -18,9 +18,10 @@ const ATTRS = [
  */
 async function fetchSubcontainer(subcontainer) {
   const elements = await subcontainer.getContentElements({ raw: true });
+  const sortedElements = sortBy(elements, 'position');
   return {
     ...pick(subcontainer, ATTRS),
-    elements: elements.map((el, index) => ({ ...el, position: index + 1 })),
+    elements: sortedElements.map((el, i) => ({ ...el, position: i + 1 })),
   };
 }
 

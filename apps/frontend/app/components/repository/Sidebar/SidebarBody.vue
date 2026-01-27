@@ -62,8 +62,9 @@
       <div class="meta-elements">
         <MetaInput
           v-for="it in metadata"
-          :key="`${activity.uid}.${it.key}`"
+          :key="`${activity.uid}.${it.key}.${$pluginRegistry.dataVersion}`"
           :meta="it"
+          :entity-data="activity.data"
           dark
           @update="updateActivity"
         />
@@ -100,7 +101,7 @@ const props = defineProps<{ activity: StoreActivity }>();
 const route = useRoute();
 const store = useActivityStore();
 const notify = useNotification();
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
 
 const activityUrl = computed(() => route.query && window.location.href);
 const config = computed(() => $schemaService.getLevel(props.activity.type));
@@ -112,8 +113,13 @@ const isSoftDeleted = computed(() =>
   activityUtils.doesRequirePublishing(props.activity),
 );
 
-const updateActivity = async (key: string, value: any) => {
-  const data = { ...props.activity.data, [key]: value };
+const updateActivity = async (
+  key: string,
+  value: any,
+  updatedData?: Record<string, any>,
+) => {
+  // Use processed data if provided, otherwise fallback to simple update
+  const data = updatedData ?? { ...props.activity.data, [key]: value };
   await store.update({ id: props.activity.id, uid: props.activity.uid, data });
   notify(`${config.value.label} saved`, { immediate: true });
 };

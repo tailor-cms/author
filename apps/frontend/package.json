@@ -34,6 +34,7 @@
     "@tailor-cms/content-element-collection": "workspace:^",
     "@tailor-cms/core-components": "workspace:^",
     "@tailor-cms/meta-element-collection": "workspace:^",
+    "@tailor-cms/plugin-collection": "workspace:^",
     "@tailor-cms/utils": "workspace:*",
     "@vee-validate/i18n": "^4.15.1",
     "@vee-validate/rules": "^4.15.1",

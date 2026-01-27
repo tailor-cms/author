@@ -5,7 +5,7 @@ import ComponentRegistry from './ComponentRegistry';
 export default (appInstance) =>
   new ComponentRegistry(appInstance, {
     name: 'meta input',
-    attrs: ['type', 'version'],
+    attrs: ['type', 'version', 'i18n'],
     getCondition: (type) => (it) => it.type === type,
     getName,
     elements,
