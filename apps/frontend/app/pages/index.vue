@@ -1,16 +1,13 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
-    <VContainer
-      :class="{ 'catalog-empty': !hasRepositories, 'catalog': true }"
-      max-width="1360"
-    >
+    <VContainer class="catalog" max-width="1360">
       <VRow class="catalog-actions pb-5" no-gutters>
         <VCol
           cols="12"
           lg="4"
-          md="12"
+          md="6"
           offset-lg="4"
-          sm="12">
+        >
           <SearchInput
             :search-input="repositoryStore.queryParams.search"
             @update="onSearchInput"
@@ -20,8 +17,7 @@
           class="d-flex justify-end align-bottom pl-2 text-sm-left"
           cols="12"
           lg="4"
-          md="12"
-          sm="12"
+          md="6"
         >
           <VTooltip
             content-class="bg-primary-darken-4"
@@ -128,11 +124,9 @@
           <VCol
             v-for="repository in repositoryStore.items"
             :key="repository.uid"
-            class="px-3 pb-5"
             cols="12"
             lg="4"
             md="6"
-            sm="12"
           >
             <RepositoryCard
               :is-selected="selectedRepos.has(repository.id)"
@@ -348,17 +342,6 @@ onBeforeMount(async () => {
 .catalog-wrapper {
   position: relative;
   height: 100%;
-}
-
-.catalog {
-  margin-top: 0 !important;
-
-  &.catalog-empty {
-    &::before {
-      width: 100%;
-      height: 100%;
-    }
-  }
 }
 
 .catalog-actions {

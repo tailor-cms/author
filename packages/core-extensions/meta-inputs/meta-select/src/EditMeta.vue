@@ -9,6 +9,7 @@
     :small-chips="!hasImgProp"
     item-title="label"
     variant="outlined"
+    class="my-2"
     @update:model-value="$emit('update', meta.key, input)"
   >
     <template v-if="hasImgProp" #item="{ item, props: selectProps }">

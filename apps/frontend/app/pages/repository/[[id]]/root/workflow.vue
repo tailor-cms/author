@@ -1,7 +1,10 @@
 <template>
   <VLayout class="workflow-page" full-height>
     <VMain>
-      <VContainer class="workflow d-flex flex-column h-100" max-width="2000">
+      <VContainer
+        class="workflow d-flex flex-column h-100 py-8 px-sm-15"
+        max-width="2000"
+      >
         <WorkflowFilters
           v-if="workflow"
           v-model:assignee-ids="filters.assigneeIds"
@@ -11,7 +14,10 @@
           :assignee-options="assignees"
           :status-options="workflow.statuses"
         />
-        <WorkflowOverview :activities="filteredActivities" class="mt-5" />
+        <WorkflowOverview
+          :activities="filteredActivities"
+          class="mt-5"
+        />
       </VContainer>
     </VMain>
     <Sidebar />
@@ -98,9 +104,3 @@ onMounted(async () => {
   if (activityId) store.selectActivity(parseInt(activityId as string, 10));
 });
 </script>
-
-<style lang="scss" scoped>
-.workflow {
-  padding: 2rem 5.625rem 2rem 3.75rem;
-}
-</style>

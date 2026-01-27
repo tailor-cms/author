@@ -29,6 +29,7 @@ defineProps<{ editor: Editor; disabled: boolean; readonly: boolean }>();
 <style lang="scss" scoped>
 .v-sheet {
   display: flex;
+  flex-wrap: wrap;
   padding: 0.25rem;
   gap: 0.125rem;
 

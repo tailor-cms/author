@@ -5,7 +5,7 @@
     :name="meta.key"
     :placeholder="meta.placeholder"
     :type="meta.inputType || 'text'"
-    class="mt-2 mb-4"
+    class="my-2"
     variant="outlined"
     @change="onChange"
   />

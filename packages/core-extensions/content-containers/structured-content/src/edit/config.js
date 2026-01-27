@@ -22,9 +22,11 @@ export const parseConfig = (repository, outlineActivity, container, config) => {
         ...val,
         icon: val.icon || 'mdi-text',
         label: val.label || words(capitalize(key)),
-        meta: val?.meta(repository, outlineActivity, container, val),
+        meta: val?.meta?.(repository, outlineActivity, container, val) ?? [],
         initMeta: () =>
-          val?.initMeta(repository, outlineActivity, container, val) || {},
+          val?.initMeta(repository, outlineActivity, container, val) ?? {},
+        contentElementConfig: val.contentElementConfig,
+        disableContentElementList: val.disableContentElementList || false,
       };
       return acc;
     },

@@ -6,6 +6,7 @@ import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import { RepositoryRole } from '@tailor-cms/common/src/role.js';
 import { schema } from '@tailor-cms/config';
+import hooks from './repository.hooks.js';
 
 const { getRepositoryRelationships, getSchema } = schema;
 
@@ -111,13 +112,8 @@ class Repository extends Model {
     };
   }
 
-  static hooks(Hooks) {
-    [Hooks.beforeCreate, Hooks.beforeUpdate, Hooks.beforeDestroy].forEach(
-      (type) =>
-        this.addHook(type, (repository, { context }) => {
-          if (context) repository.hasUnpublishedChanges = true;
-        }),
-    );
+  static hooks(Hooks, models) {
+    hooks.add(this, Hooks, models);
   }
 
   static async createByUser(data, { context, transaction } = {}) {

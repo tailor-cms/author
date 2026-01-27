@@ -1,13 +1,15 @@
 <template>
   <VNavigationDrawer
     :key="store.selectedActivity?.uid"
+    :model-value="store.isSidebarOpen || mdAndUp"
     :width="sidebarWidth"
     class="ml-1"
     color="primary-darken-2"
     elevation="2"
     location="right"
+    mobile-breakpoint="md"
     absolute
-    permanent
+    @update:model-value="store.updateSidebar"
   >
     <div v-if="store.selectedActivity?.uid">
       <SidebarHeader :activity="store.selectedActivity" />
@@ -42,7 +44,7 @@ const props = withDefaults(defineProps<{ emptyMessage?: string }>(), {
 });
 
 const store = useCurrentRepository();
-const { width: pageInnerWidth } = useDisplay();
+const { width: pageInnerWidth, mdAndUp } = useDisplay();
 const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 680 : 480));
 </script>
 

@@ -73,6 +73,19 @@
           closable-chips
           multiple
         />
+        <VSwitch
+          v-if="isNewUser"
+          v-model="skipInviteInput"
+          class="mb-1"
+          color="primary-darken-2"
+          label="Skip invitation email"
+          hide-details
+          inset
+        />
+        <div v-if="isNewUser" class="text-caption text-medium-emphasis ml-1 mb-3">
+          Useful for SSO users who don't need a password setup email.
+          You can always send the invite later using Reinvite.
+        </div>
         <div class="d-flex justify-end pb-3">
           <VBtn color="primary-darken-4" variant="text" @click="close">
             Cancel
@@ -94,7 +107,7 @@
 
 <script lang="ts" setup>
 import { isEmpty, map } from 'lodash-es';
-import { object, string } from 'yup';
+import { boolean, object, string } from 'yup';
 import { role } from '@tailor-cms/common';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { titleCase } from '@tailor-cms/utils';
@@ -159,6 +172,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
     firstName: string().min(2).required(),
     lastName: string().min(2).required(),
     role: string().required(),
+    skipInvite: boolean(),
   }),
 });
 
@@ -167,6 +181,7 @@ const [firstNameInput] = defineField('firstName');
 const [lastNameInput] = defineField('lastName');
 const [roleInput] = defineField('role');
 const [groupInput] = defineField('userGroupIds');
+const [skipInviteInput] = defineField('skipInvite');
 
 watch(isDialogVisible, (val) => {
   if (!val) return;
@@ -196,6 +211,7 @@ const submit = handleSubmit(async () => {
     lastName: lastNameInput.value,
     role: roleInput.value,
     userGroupIds: groupInput.value,
+    skipInvite: isNewUser.value ? skipInviteInput.value : undefined,
   });
   emit(`${action}d`);
   close();

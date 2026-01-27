@@ -1,5 +1,6 @@
 import { Model } from 'sequelize';
 import { repository as role } from '@tailor-cms/common/src/role.js';
+import hooks from './repositoryUser.hooks.js';
 
 class RepositoryUser extends Model {
   static fields({ BOOLEAN, DATE, ENUM, INTEGER }) {
@@ -48,6 +49,10 @@ class RepositoryUser extends Model {
     this.belongsTo(User, {
       foreignKey: { name: 'userId', field: 'user_id' },
     });
+  }
+
+  static hooks(Hooks, models) {
+    hooks.add(this, Hooks, models);
   }
 
   static options() {

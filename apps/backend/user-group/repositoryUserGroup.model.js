@@ -1,4 +1,5 @@
 import { Model } from 'sequelize';
+import hooks from './repositoryUserGroup.hooks.js';
 
 class RepositoryUserGroup extends Model {
   static fields({ INTEGER }) {
@@ -25,6 +26,10 @@ class RepositoryUserGroup extends Model {
     this.belongsTo(UserGroup, {
       foreignKey: { name: 'groupId', field: 'group_id' },
     });
+  }
+
+  static hooks(Hooks, models) {
+    hooks.add(this, Hooks, models);
   }
 
   static options() {

@@ -107,7 +107,7 @@
         </div>
       </div>
       <VSpacer />
-      <VCardActions class="pb-2 px-2">
+      <VCardActions class="pb-2 px-2 align-start">
         <VTooltip
           content-class="bg-primary-darken-4"
           location="bottom"
@@ -120,7 +120,6 @@
               :color="isPinned ? 'lime-lighten-2' : 'primary-lighten-2'"
               :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
               aria-label="Pin repository"
-              class="mr-1"
               @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
             />
           </template>
