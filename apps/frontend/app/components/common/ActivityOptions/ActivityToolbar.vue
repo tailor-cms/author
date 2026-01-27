@@ -34,6 +34,7 @@
 
 <script lang="ts" setup>
 import { InsertLocation } from '@tailor-cms/utils';
+import { useDisplay } from 'vuetify';
 
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 
@@ -42,6 +43,7 @@ const { $pluginRegistry } = useNuxtApp() as any;
 
 const props = defineProps<{ activity: StoreActivity }>();
 
+const { smAndUp } = useDisplay();
 const selectedActivity = useSelectedActivity(props.activity);
 
 // Get processed name via plugin hooks
@@ -56,25 +58,26 @@ const action = ref<InsertLocation>(AddAfter);
 
 const options = computed(() => {
   const { subLevels, isEditable } = selectedActivity;
-  const items = [
-    {
+  const items = [];
+  if (smAndUp.value) {
+    items.push({
       name: 'Add item above',
       icon: 'add:above',
       action: () => setCreateContext(AddBefore),
-    },
-    {
+    });
+    items.push({
       name: 'Add item below',
       icon: 'add:below',
       action: () => setCreateContext(AddAfter),
-    },
-  ];
-  if (subLevels.value.length) {
-    items.push({
-      name: 'Add item into',
-      icon: 'add:into',
-      action: () => setCreateContext(AddInto),
     });
-  }
+    if (subLevels.value.length) {
+      items.push({
+        name: 'Add item into',
+        icon: 'add:into',
+        action: () => setCreateContext(AddInto),
+      });
+    }
+  };
   if (isEditable.value) {
     const { id: activityId, repositoryId } = props.activity;
     const params = { id: repositoryId, activityId };

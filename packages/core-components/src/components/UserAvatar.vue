@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
   label: '',
   size: 36,
   color: 'teal-lighten-3',
-  rounded: 'xl',
+  rounded: 'xxl',
 });
 
 const style = computed(() =>

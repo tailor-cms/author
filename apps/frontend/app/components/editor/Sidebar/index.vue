@@ -4,7 +4,7 @@
     class="sidebar"
     color="primary-darken-2"
     elevation="5"
-    permanent
+    mobile-breakpoint="md"
   >
     <div class="sidebar-container">
       <VWindow v-model="selectedTab">

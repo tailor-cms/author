@@ -1,6 +1,6 @@
 <template>
-  <div class="py-2 pr-4">
-    <VTabs class="mx-4">
+  <div>
+    <VTabs>
       <VTab :to="{ name: 'repository-settings-users' }">
         Users
       </VTab>

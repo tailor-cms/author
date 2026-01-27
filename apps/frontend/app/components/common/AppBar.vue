@@ -5,7 +5,7 @@
     color="primary-darken-3"
     height="84"
   >
-    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pt-2 pl-7">
+    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pl-7">
       <img
         alt="Tailor logo"
         class="mr-6"
@@ -25,46 +25,47 @@
         </span>
       </VAppBarTitle>
     </NuxtLink>
-    <div v-if="showUserGroupSelect" class="pt-2">
-      <VSelect
-        v-model="repositoryStore.selectedUserGroupId"
-        :items="repositoryStore.userGroupOptions"
-        item-title="name"
-        item-value="id"
-        min-width="300"
-        variant="outlined"
-        hide-details
-        @update:model-value="onUserGroupChange"
-      >
-        <template #selection="{ item }">
-          <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
-          {{ item.title }}
-        </template>
-        <template #item="{ item, props: { title, ...restProps } }">
-          <VListItem v-bind="restProps">
-            <UserGroupAvatar
-              :logo-url="item.raw.logoUrl"
-              class="mr-5"
-              placeholder-color="primary-darken-3"
-            />
-            {{ title }}
-          </VListItem>
-        </template>
-      </VSelect>
-    </div>
+    <VSelect
+      v-if="showUserGroupSelect"
+      v-model="repositoryStore.selectedUserGroupId"
+      :items="repositoryStore.userGroupOptions"
+      item-title="name"
+      item-value="id"
+      min-width="250"
+      max-width="300"
+      hide-details
+      @update:model-value="onUserGroupChange"
+    >
+      <template #selection="{ item }">
+        <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
+        <span class="text-truncate">{{ item.title }}</span>
+      </template>
+      <template #item="{ item, props: { title, ...restProps } }">
+        <VListItem v-bind="restProps">
+          <UserGroupAvatar
+            :logo-url="item.raw.logoUrl"
+            class="mr-5"
+            placeholder-color="primary-darken-3"
+          />
+          {{ title }}
+        </VListItem>
+      </template>
+    </VSelect>
     <template #append>
-      <VBtn
-        v-for="{ name, to } in routes"
-        :key="name"
-        :rounded="false"
-        :to="to"
-        color="teal-lighten-5"
-        height="100"
-        min-width="120"
-        variant="text"
-      >
-        <span class="toolbar-route text-truncate">{{ name }}</span>
-      </VBtn>
+      <template v-if="!smAndDown">
+        <VBtn
+          v-for="{ name, to } in routes"
+          :key="name"
+          :rounded="false"
+          :to="to"
+          color="teal-lighten-5"
+          height="100"
+          min-width="120"
+          variant="text"
+        >
+          <span class="toolbar-route text-truncate">{{ name }}</span>
+        </VBtn>
+      </template>
       <component
         :is="plugin.globalComponentName"
         v-for="plugin in globalPlugins"
@@ -72,7 +73,8 @@
       />
       <VMenu
         attach="#mainAppBar"
-        min-width="220px"
+        min-width="220"
+        max-width="350"
         offset="10"
         transition="slide-y-transition"
       >
@@ -85,17 +87,44 @@
             tag="button"
           />
         </template>
-        <VList class="text-left pt-0">
-          <VListItem class="py-5 bg-primary-lighten-4" disabled>
-            <VListItemTitle>{{ user.email }}</VListItemTitle>
-          </VListItem>
-          <VListItem :to="{ name: 'user-profile' }">
-            <VListItemTitle>Profile</VListItemTitle>
-          </VListItem>
-          <VListItem @click="logout">
-            <VListItemTitle>Logout</VListItemTitle>
-          </VListItem>
-        </VList>
+        <VCard color="primary-darken-3" class="text-left">
+          <div class="d-flex pa-4 align-center">
+            <UserAvatar :img-url="user.imgUrl" size="48" />
+            <div class="text-primary-lighten-4 ml-4">
+              <div class="text-subtitle-1 font-weight-bold">
+                {{ user.label }}
+              </div>
+            </div>
+          </div>
+          <VList
+            class="d-flex flex-column ga-1 pa-2"
+            color="primary-darken-3"
+            slim
+          >
+            <template v-if="smAndDown">
+              <VListItem
+                v-for="{ name, to, icon } in routes"
+                :key="name"
+                :to="to"
+                :title="name"
+                :prepend-icon="icon"
+                rounded="lg"
+              />
+            </template>
+            <VListItem
+              :to="{ name: 'user-profile' }"
+              title="Profile"
+              prepend-icon="mdi-account-circle-outline"
+              rounded="lg"
+            />
+            <VListItem
+              title="Logout"
+              prepend-icon="mdi-logout"
+              rounded="lg"
+              @click="logout"
+            />
+          </VList>
+        </VCard>
       </VMenu>
     </template>
   </VAppBar>
@@ -129,12 +158,13 @@ const { repository } = storeToRefs(currentRepositoryStore);
 
 const routes = computed(() => {
   const items = [
-    { name: 'Catalog', to: '/' },
+    { name: 'Catalog', to: '/', icon: 'mdi-view-grid-plus-outline' },
     {
       name: 'Admin',
       to: {
         name: authStore.isAdmin ? 'system-user-management' : 'user-groups',
       },
+      icon: 'mdi-account-cog-outline',
     },
   ];
   if (!authStore.hasAdminAccess) items.pop();
@@ -142,6 +172,7 @@ const routes = computed(() => {
     items.unshift({
       name: `${repository.value.name} structure`,
       to: `/repository/${repository.value?.id}/root/structure`,
+      icon: 'mdi-file-tree-outline',
     });
   }
   return items;

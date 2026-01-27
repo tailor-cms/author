@@ -5,7 +5,7 @@
     elevation="3"
     rounded="lg"
   >
-    <div v-if="!isAiGeneratingContent" class="d-flex justify-end ma-3">
+    <div v-if="!isAiGeneratingContent" class="d-flex flex-wrap justify-end ma-3 ga-3">
       <AIPrompt
         v-if="isAiEnabled && !disabled"
         :content-elements="containerElements"
@@ -14,7 +14,6 @@
       />
       <VBtn
         v-if="isAiEnabled && !disabled"
-        class="mx-3"
         color="teal-darken-2"
         size="small"
         variant="tonal"

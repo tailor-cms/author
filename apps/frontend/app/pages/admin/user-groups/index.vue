@@ -35,7 +35,7 @@
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
       no-data-text="No user groups."
-      class="pt-4 px-4"
+      class="pt-4 bg-transparent"
       item-value="id"
       must-sort
       @update:options="fetch"
