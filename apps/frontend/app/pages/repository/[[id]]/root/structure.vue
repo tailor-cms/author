@@ -17,7 +17,9 @@
           <Draggable
             v-bind="{ handle: '.activity' }"
             :list="rootActivities"
+            :move="repositoryStore.isValidDrop"
             class="mt-5"
+            animation="150"
             group="activities"
             item-key="uid"
             @update="(data) => reorder(data, rootActivities)"
@@ -149,6 +151,10 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.sortable-ghost) {
+  opacity: 0.6;
+}
+
 .structure-page {
   height: 100%;
 }
