@@ -48,7 +48,7 @@ export const useContentLinking = (editorChannel: any) => {
       callback,
     }: {
       element: ContentElement;
-      callback: Function;
+      callback: (sourceInfo: unknown) => void;
     }) => {
       if (!element.isLinkedCopy || !element.sourceId) return callback(null);
       try {
@@ -71,7 +71,7 @@ export const useContentLinking = (editorChannel: any) => {
       callback,
     }: {
       element: ContentElement;
-      callback: Function;
+      callback: (copiesData: unknown) => void;
     }) => {
       try {
         const copiesData = await contentElementAPI.getCopies(

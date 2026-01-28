@@ -73,5 +73,5 @@ export const SCHEMA: Schema = {
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Content Library',
   structure: [COLLECTION, ITEM],
-  contentContainers: [CONTENT],
+  contentContainers: [SECTION],
 };
