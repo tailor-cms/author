@@ -66,7 +66,8 @@ export default {
       if (!i18n.isEnabled) return value;
       if (ctx.type) {
         const { $metaRegistry } = useNuxtApp() as any;
-        if (!$metaRegistry.get(ctx.type)?.i18n) return value;
+        const supportsI18n = $metaRegistry.get(ctx.type)?.i18n;
+        if (!supportsI18n) return value;
       }
       return i18n.getLocalizedValue(ctx.data, ctx.key, ctx.lang);
     },
@@ -79,8 +80,8 @@ export default {
       if (!i18n.isEnabled) return { ...data, [ctx.key]: ctx.value };
       if (ctx.type) {
         const { $metaRegistry } = useNuxtApp() as any;
-        if ($metaRegistry.get(ctx.type)?.i18n) return;
-        return { ...data, [ctx.key]: ctx.value };
+        const supportsI18n = $metaRegistry.get(ctx.type)?.i18n;
+        if (!supportsI18n) return { ...data, [ctx.key]: ctx.value };
       }
       return i18n.setLocalizedValue(data, ctx.key, ctx.value, ctx.lang);
     },
