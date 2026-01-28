@@ -32,9 +32,7 @@
       v-if="showCreateDialog"
       :action="action"
       :anchor="activity"
-      :heading="`${selectedActivity?.getAddDialogHeading(action)}: ${
-        activity.data.name
-      }`"
+      :heading="`${selectedActivity?.getAddDialogHeading(action)}: ${activityName}`"
       :repository-id="activity.repositoryId"
       :visible="showCreateDialog"
       @close="showCreateDialog = false"
@@ -74,8 +72,16 @@ const currentRepositoryStore = useCurrentRepository();
 
 const props = defineProps<{ activity: StoreActivity }>();
 
-const { $eventBus } = useNuxtApp() as any;
+const { $eventBus, $pluginRegistry } = useNuxtApp() as any;
 const selectedActivity = useSelectedActivity(props.activity);
+
+// Get processed name via plugin hooks
+const activityName = computed(() => {
+  const data = props.activity?.data;
+  if (!data) return '';
+  const rawValue = data.name ?? '';
+  return $pluginRegistry.filter('data:value', rawValue, { data, key: 'name' });
+});
 
 const showCreateDialog = ref(false);
 const showCopyDialog = ref(false);
@@ -177,7 +183,7 @@ const deleteActivity = () => {
   };
   $eventBus.channel('app').emit('showConfirmationModal', {
     title: 'Delete item?',
-    message: `Are you sure you want to delete ${activity.data.name}?`,
+    message: `Are you sure you want to delete ${activityName.value}?`,
     action: actionFunc,
   });
 };

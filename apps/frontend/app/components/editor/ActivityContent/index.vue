@@ -16,6 +16,7 @@
           processedActivities,
           processedContainerGroups,
         }"
+        :class="{ 'd-flex flex-column ga-16': !isLoading }"
         :activities="repositoryStore.activities"
         :activity-id="editorStore.selectedActivity.id"
         :container-groups="rootContainerGroups"
@@ -359,7 +360,7 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .activity-content {
   min-height: 100%;
-  padding: 4rem 2.5rem 0 1.5625rem;
+  padding: 4rem 1.5rem;
   overflow-y: scroll;
   overflow-y: overlay;
   overflow-x: hidden;

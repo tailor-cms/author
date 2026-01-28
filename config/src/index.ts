@@ -14,17 +14,21 @@ import { SCHEMA as HeasSchema } from './schemas/heas.schema';
 import { SCHEMA as TestSchema } from './schemas/test.schema';
 import { SCHEMA as PartnerTrainingSchema } from './schemas/partner-training.schema';
 import { SCHEMA as ContentLibrarySchema } from './schemas/content-library.schema';
+import { SCHEMA as VideoCourseSchema } from './schemas/video-course.schema';
+import { SCHEMA as PartnerTrainingV2Schema } from './schemas/partner-training-v2.schema';
 
 export const WORKFLOWS = [DefaultWorkflow];
 export const SCHEMAS = processSchemas([
   CourseSchema,
   HeasSchema,
   PartnerTrainingSchema,
+  PartnerTrainingV2Schema,
   FeedSchema,
   KnowledgeBase,
   QASchema,
   TestSchema,
   ContentLibrarySchema,
+  VideoCourseSchema,
 ]);
 
 export const schema = getSchemaApi(SCHEMAS, Object.values(ContentElementType));

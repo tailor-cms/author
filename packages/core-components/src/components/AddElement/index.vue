@@ -48,29 +48,14 @@
         @add="addElements"
       >
         <template #header>
-          <div v-if="layout" class="mr-6 text-primary-darken-4">
-            <div class="pb-2 text-subtitle-2 text-left">Element width</div>
-            <VBtnToggle
-              v-model="elementWidth"
-              color="primary-darken-3"
-              rounded="small"
-              variant="tonal"
-              divided
-              mandatory
-            >
-              <VBtn :value="100" class="px-8" icon="mdi-square-outline" />
-              <VBtn :value="50" class="px-8" icon="mdi-select-compare" />
-            </VBtnToggle>
-          </div>
           <VBtn
-            v-if="!useAI"
+            :disabled="useAI"
             color="primary-darken-3"
-            prepend-icon="mdi-content-copy"
             variant="tonal"
+            prepend-icon="mdi-content-copy"
+            text="Copy existing"
             @click="showElementBrowser = !showElementBrowser"
-          >
-            Copy existing
-          </VBtn>
+          />
           <VBtn
             v-if="!useAI"
             class="ml-2"
@@ -81,24 +66,52 @@
           >
             Link Content
           </VBtn>
-          <VTextField
-            v-else
-            v-model="aiPrompt"
-            density="comfortable"
-            label="AI Prompt"
-            placeholder="Optional: give extra context"
-            hide-details
-          />
           <VSpacer />
-          <VSwitch
-            v-if="doTheMagic"
-            v-model="useAI"
-            class="ml-4"
-            color="primary-darken-2"
-            label="Generate with AI"
-            density="compact"
-            hide-details
-          />
+          <div v-if="layout" class="d-flex align-center ga-4">
+            <span class="text-subtitle-1 text-medium-emphasis">
+              Element width
+            </span>
+            <VBtnToggle
+              v-model="elementWidth"
+              density="compact"
+              variant="outlined"
+              divided
+              mandatory
+            >
+              <VBtn v-tooltip:bottom="'Full width'" :value="100" size="small">
+                <VIcon size="18">mdi-square-outline</VIcon>
+              </VBtn>
+              <VBtn v-tooltip:bottom="'Half width'" :value="50" size="small">
+                <VIcon size="18">mdi-select-compare</VIcon>
+              </VBtn>
+            </VBtnToggle>
+          </div>
+          <div v-if="doTheMagic" class="d-flex align-center ga-2">
+            <span class="text-subtitle-1 text-medium-emphasis">
+              Generate with AI
+            </span>
+            <VSwitch
+              v-model="useAI"
+              color="indigo-darken-2"
+              density="compact"
+              inset
+              hide-details
+            />
+          </div>
+          <VExpandTransition>
+            <div v-if="useAI" class="w-100">
+              <VTextarea
+                v-model="aiPrompt"
+                density="comfortable"
+                placeholder="Describe the content you want to generate..."
+                rows="2"
+                variant="solo"
+                auto-grow
+                hide-details
+                flat
+              />
+            </div>
+          </VExpandTransition>
         </template>
       </AddNewElement>
     </template>
