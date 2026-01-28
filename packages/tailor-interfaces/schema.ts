@@ -70,6 +70,21 @@ export interface AiActivityConfig {
   };
 }
 
+/**
+ * Type mapping configuration for cross-schema linking.
+ * Defined on SOURCE activity config, specifies what it becomes in target schemas.
+ */
+export interface TypeMappingConfig {
+  /**
+   * Target activity type
+   * (without schema prefix, resolved to full path during processing)
+   */
+  type: string;
+  // Future extensibility:
+  // transform?: (sourceData: Record<string, any>) => Record<string, any>;
+  // validate?: (source: Activity, context: LinkContext) => boolean;
+}
+
 export interface Guideline {
   id: string;
   icon: string;
@@ -98,6 +113,9 @@ export interface ActivityConfig {
   meta?: Metadata[];
   defaultMeta?: Record<string, any>;
   ai?: AiActivityConfig;
+  // Cross-schema type mapping - defined on SOURCE activity.
+  // Specifies what this type becomes when linked to other schemas.
+  mapsTo?: Record<string, TypeMappingConfig>;
   // @deprecated use relationships instead
   hasPrerequisites?: boolean;
   // @deprecated will be removed after migrating exam container

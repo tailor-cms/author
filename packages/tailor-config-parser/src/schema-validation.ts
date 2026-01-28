@@ -50,6 +50,18 @@ const relationships = yup.array().of(
   }),
 );
 
+// mapsTo: Record<SCHEMA_ID, { type: ACTIVITY_TYPE }>
+const CONST_CASE = /^[A-Z0-9_]+$/;
+const isConstCase = (val: string) => CONST_CASE.test(val);
+const mapsTo = yup.lazy((val) => {
+  if (!val || typeof val !== 'object') return yup.mixed().notRequired();
+  return yup.object()
+    .test('valid-keys', 'Keys must be CONST_CASE', (obj) =>
+      Object.keys(obj || {}).every(isConstCase))
+    .test('valid-values', 'Values must be { type: "CONST_CASE" }', (obj) =>
+      Object.values(obj || {}).every((v: any) => isConstCase(v?.type)));
+});
+
 const schema = yup.object().shape({
   id: yup.string().min(2).max(30).required(),
   name: yup.string().min(2).max(200).required(),
@@ -75,6 +87,7 @@ const schema = yup.object().shape({
         exams: yup.object().shape({ objectives: yup.array().of(activityType) }),
         relationships,
         meta,
+        mapsTo,
       }),
     )
     .min(1),

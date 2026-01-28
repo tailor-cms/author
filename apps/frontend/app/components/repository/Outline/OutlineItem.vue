@@ -29,6 +29,14 @@
             <div
               class="activity-name my-auto text-truncate text-primary-lighten-4"
             >
+              <VIcon
+                v-if="activity.isLinkedCopy"
+                color="lime-lighten-1"
+                size="small"
+                end
+              >
+                mdi-link-variant
+              </VIcon>
               <ActivityName :activity="activity" />
             </div>
             <div v-if="isSelected || isHovering" class="actions my-auto">

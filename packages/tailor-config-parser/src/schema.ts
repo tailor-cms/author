@@ -90,9 +90,12 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     getSiblingTypes,
     getSupportedContainers,
     getContainerTemplateId,
+    getCompatibleSchemaIds,
+    getCompatibleTargetType,
     isEditable: (activityType: string) => {
       return !!getSupportedContainers(activityType).length;
     },
+    isTypeAllowedAtLevel,
   };
 
   function getSchemaId(type: string) {
@@ -105,6 +108,57 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     return schema;
   }
 
+  /**
+   * Check if sourceType can be linked into targetSchema at the given parent
+   * level. Returns the target type it would become, or null if incompatible.
+   *
+   * - Same schema: type must be allowed at level (via subLevels/rootLevel)
+   * - Different schema: source's mapsTo must define target schema mapping,
+   *   and mapped type must be allowed at level
+   *
+   * Note: mapsTo target types are pre-resolved during schema processing.
+   */
+  function getCompatibleTargetType(
+    sourceType: string,
+    targetSchemaId: string,
+    targetParentType?: string | null,
+  ): string | null {
+    const sourceSchemaId = getSchemaId(sourceType);
+    // Same schema: just check if source type is allowed at this level
+    if (sourceSchemaId === targetSchemaId) {
+      return isTypeAllowedAtLevel(sourceType, targetSchemaId, targetParentType)
+        ? sourceType
+        : null;
+    }
+    // Lookup pre-resolved mapsTo
+    const sourceConfig = getActivityConfig(sourceType);
+    const mapping = sourceConfig.mapsTo?.[targetSchemaId];
+    if (!mapping) return null;
+    return isTypeAllowedAtLevel(mapping.type, targetSchemaId, targetParentType)
+      ? mapping.type
+      : null;
+  }
+
+  /**
+   * Get all schema ids that have types which can map to the targetSchema.
+   * Scans all schemas for mapsTo entries pointing to targetSchemaId.
+   */
+  function getCompatibleSchemaIds(targetSchemaId: string): string[] {
+    const schemaIds = new Set<string>();
+    // Check all schemas for types that map to target
+    for (const schema of schemas) {
+      for (const activityConfig of schema.structure) {
+        if (activityConfig.mapsTo?.[targetSchemaId]) {
+          schemaIds.add(schema.id);
+          break;
+        }
+      }
+    }
+    // Same schema is always compatible
+    schemaIds.add(targetSchemaId);
+    return Array.from(schemaIds);
+  }
+
   function getOutlineLevels(schemaId: string) {
     return getSchema(schemaId).structure;
   }
@@ -113,6 +167,42 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     const schemaId = getSchemaId(type);
     if (!schemaId) return false;
     return !!find(getOutlineLevels(schemaId), { type });
+  }
+
+  /**
+   * Get root-level activity types for a schema (with full type path)
+   * NOTE: Sublevels are prefixed upon schema processing with schema ID
+   * (e.g., "COURSE_SCHEMA/SECTION")
+   */
+  function getRootLevelTypes(schemaId: string): string[] {
+    return getSchema(schemaId)
+      .structure.filter((config) => config.rootLevel)
+      .map((config) => config.type);
+  }
+
+  /**
+   * Get allowed subLevel types for a parent type (with full type path)
+   * NOTE: Sublevels are prefixed upon schema processing with schema ID
+   * (e.g., "COURSE_SCHEMA/SECTION")
+   */
+  function getAllowedSubLevels(prefixedParentType: string): string[] {
+    const config = getActivityConfig(prefixedParentType);
+    if (!config.subLevels) return [];
+    return [...config.subLevels];
+  }
+
+  /**
+   * Check if a type is allowed at a given level in the target schema
+   */
+  function isTypeAllowedAtLevel(
+    type: string,
+    targetSchemaId: string,
+    targetParentType?: string | null,
+  ): boolean {
+    const allowedTypes = targetParentType
+      ? getAllowedSubLevels(targetParentType)
+      : getRootLevelTypes(targetSchemaId);
+    return allowedTypes.includes(type);
   }
 
   function isTrackedInWorkflow(type: string) {
@@ -197,8 +287,10 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     return filter(activities, (it) => isOutlineActivity(it.type));
   }
 
-  function getElementConfig(schemaId: string, type: string):
-    ElementMetaConfig | EmptyObject {
+  function getElementConfig(
+    schemaId: string,
+    type: string,
+  ): ElementMetaConfig | EmptyObject {
     if (!schemaId) return {};
     // tesMeta used to support legacy config
     const { elementMeta, tesMeta } = getSchema(schemaId);
@@ -282,7 +374,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   function getRepositoryRelationships(schemaId: string) {
     const structure = getOutlineLevels(schemaId);
     return flatMap(structure, (it) => it.relationships).reduce(
-      (acc, rel) => rel ? union(acc, [rel.type]) : acc,
+      (acc, rel) => (rel ? union(acc, [rel.type]) : acc),
       [],
     );
   }

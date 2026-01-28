@@ -96,8 +96,13 @@ const includeRepositoryTags = (query) => {
 };
 
 async function index({ query, user, opts }, res) {
-  const { search, name, userGroupId } = query;
-  const schemas = query.schemas || general.availableSchemas;
+  const { search, name, userGroupId, compatibleWith } = query;
+  let schemas = query.schemas || general.availableSchemas;
+  // Filter by compatible schemas if compatibleWith schema ID provided
+  if (compatibleWith) {
+    schemas = schema.getCompatibleSchemaIds(compatibleWith);
+  }
+
   opts.distinct = true;
   opts.include = [
     includeRepositoryUser(user, query),

@@ -40,6 +40,9 @@ class Activity extends Model {
         type: JSONB,
         defaultValue: {},
       },
+      // Soft-delete flag for cascade deletion. When parent is deleted,
+      // descendants are marked detached, allowing restore operations.
+      // Hidden from normal queries until parent is restored or changes published.
       detached: {
         type: BOOLEAN,
         defaultValue: false,
@@ -52,13 +55,44 @@ class Activity extends Model {
           return type && isTrackedInWorkflow(type);
         },
       },
-      publishedAt: {
-        type: DATE,
-        field: 'published_at',
+      // Indicates this is an active linked copy from a library source.
+      // When true, receives automatic updates when source changes.
+      // Editing data auto-detaches (sets to false), preserving sourceId for
+      // provenance.
+      isLinkedCopy: {
+        type: BOOLEAN,
+        field: 'is_linked_copy',
+        defaultValue: false,
+        allowNull: false,
       },
+      // References the source activity this was copied from.
+      // Kept after unlinking to track provenance. NULL if source is deleted.
+      sourceId: {
+        type: DataTypes.INTEGER,
+        field: 'source_id',
+        allowNull: true,
+        references: {
+          model: 'activity',
+          key: 'id',
+        },
+        onDelete: 'SET NULL',
+      },
+      // Timestamp of source when last synced. Used to detect available updates.
+      // Cleared when the link is broken.
+      sourceModifiedAt: {
+        type: DATE,
+        field: 'source_modified_at',
+        allowNull: true,
+      },
+      // Aggregated timestamp representing when anything in the subtree last
+      // changed. Bubbles up from content tree descendants.
       modifiedAt: {
         type: DATE,
         field: 'modified_at',
+      },
+      publishedAt: {
+        type: DATE,
+        field: 'published_at',
       },
       createdAt: {
         type: DATE,
@@ -73,6 +107,81 @@ class Activity extends Model {
         field: 'deleted_at',
       },
     };
+  }
+
+  /**
+   * Get source activity info for linked copy.
+   */
+  async getSourceInfo() {
+    if (!this.sourceId) return null;
+    const Repository = this.sequelize.model('Repository');
+    const source = await Activity.findByPk(this.sourceId, {
+      include: [{ model: Repository }],
+    });
+    if (!source) return null;
+    return {
+      id: source.id,
+      uid: source.uid,
+      name: source.data?.name,
+      repositoryId: source.repositoryId,
+      repositoryName: source.repository?.name,
+    };
+  }
+
+  /**
+   * Find where this source activity is being used (as linked copies).
+   * When a hierarchy is linked, all descendants also become linked copies.
+   * This method returns only independent link entry points by excluding
+   * copies whose parent is also linked (those came along as part of a parent
+   * link). Single-level parent check suffices since linking marks ALL
+   * descendants - there can't be a gap in the chain.
+   */
+  async findCopyLocations() {
+    const Repository = this.sequelize.model('Repository');
+    const copies = await Activity.findAll({
+      where: { sourceId: this.id, isLinkedCopy: true },
+      include: [{ model: Repository, attributes: ['id', 'name'] }],
+    });
+    if (!copies.length) return [];
+    // Collect IDs of parents that are themselves linked (single batch query)
+    const parentIds = [...new Set(copies.map((c) => c.parentId).filter(Boolean))];
+    const linkedParentIds = new Set(
+      parentIds.length
+        ? (
+            await Activity.findAll({
+              where: { id: parentIds, isLinkedCopy: true },
+              attributes: ['id'],
+            })
+          ).map((p) => p.id)
+        : [],
+    );
+    // Entry point = not nested within another linked copy
+    const isEntryPoint = (copy) => !linkedParentIds.has(copy.parentId);
+    return Promise.all(
+      copies.filter(isEntryPoint).map(async (copy) => {
+        const outline = await copy.getFirstOutlineItem();
+        return {
+          ...pick(copy, ['id', 'uid', 'repositoryId']),
+          outlineActivityId: outline?.id,
+          name: copy.data?.name,
+          repositoryName: copy.repository?.name,
+        };
+      }),
+    );
+  }
+
+  /**
+   * Find the link entry point for this activity.
+   * Walks up the tree to find the root of the linked hierarchy.
+   * Returns null if this activity is not part of a linked tree.
+   * @param {Object} transaction - Optional transaction
+   * @returns {Promise<Activity|null>}
+   */
+  async findLinkEntryPoint(transaction) {
+    if (!this.isLinkedCopy) return null;
+    const parent = await this.getParent({ transaction });
+    if (!parent?.isLinkedCopy) return this;
+    return parent.findLinkEntryPoint(transaction);
   }
 
   static async create(data, opts) {
@@ -228,7 +337,10 @@ class Activity extends Model {
 
   static detectMissingReferences(activities, transaction) {
     return detectMissingReferences(
-      Activity, activities, this.sequelize, transaction,
+      Activity,
+      activities,
+      this.sequelize,
+      transaction,
     );
   }
 

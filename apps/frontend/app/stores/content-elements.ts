@@ -90,10 +90,24 @@ export const useContentElementStore = defineStore('contentElements', () => {
       .then((data) => Object.assign(storeElement, data));
   };
 
+  // Unlink element from source, converting to a local copy.
+  async function unlink(
+    element: StoreContentElement,
+  ): Promise<StoreContentElement> {
+    const storeElement = findById(element.id);
+    if (!storeElement) throw new Error('Element not found');
+    const { repositoryId, id } = element;
+    const updated = await api.unlink(repositoryId, id);
+    return add(updated);
+  }
+
   const $subscribeToSSE = () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: ContentElement) => add(it))
       .subscribe(Events.Update, (it: ContentElement) => add(it))
+      .subscribe(Events.BulkUpdate, (items: ContentElement[]) =>
+        items.forEach(add),
+      )
       .subscribe(Events.Delete, (it: ContentElement) => $items.delete(it.uid));
   };
 
@@ -111,6 +125,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     save,
     remove,
     reorder,
+    unlink,
     $subscribeToSSE,
     $reset,
   };

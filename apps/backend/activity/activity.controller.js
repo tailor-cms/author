@@ -9,6 +9,7 @@ import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { fetchActivityContent } from '#shared/publishing/actions.js';
 import consumerConfig from '#config/consumer.js';
+import linkService from '#shared/content-library/link.service.js';
 import oauth2 from '#shared/oAuth2Provider.js';
 import publishingService from '#shared/publishing/publishing.service.js';
 
@@ -153,6 +154,69 @@ function updatePublishingStatus(repository, activity) {
   return publishingService.updatePublishingStatus(repository);
 }
 
+/**
+ * Link activity from another repository into this repository.
+ * Creates a linked copy that receives auto-sync updates from source.
+ * User must have access to both source and target repositories.
+ *
+ * For same-schema linking: type stays the same, validates against subLevels.
+ * For cross-schema linking: type transforms based on compatibleTypes config.
+ */
+async function link({ repository, user, body }, res) {
+  const { sourceId, parentId, position } = body;
+  const context = { userId: user.id, repository };
+  const linked = await linkService.linkActivity(
+    sourceId,
+    repository,
+    parentId,
+    position,
+    context,
+  );
+  return res.json({ data: linked });
+}
+
+/**
+ * Unlink activity from source.
+ * Converts linked copy to independent local copy. Keeps sourceId for provenance
+ * tracking but clears isLinkedCopy flag to stop receiving auto-sync updates.
+ * For hierarchical links, also unlinks all descendant activities and elements.
+ */
+async function unlink({ activity, user, repository }, res) {
+  const context = { userId: user.id, repository };
+  const unlinked = await linkService.unlinkActivity(activity.id, context);
+  return res.json({ data: unlinked });
+}
+
+/**
+ * Get locations where this source activity is being used.
+ */
+async function getCopies({ activity }, res) {
+  const copies = await activity.findCopyLocations();
+  return res.json({
+    data: {
+      totalCount: copies.length,
+      copies,
+    },
+  });
+}
+
+/**
+ * Get source activity info for a linked copy.
+ */
+async function getSource({ activity }, res) {
+  if (!activity.sourceId) return res.json({ data: null });
+  const source = await Activity.findByPk(activity.sourceId, {
+    include: ['repository'],
+  });
+  if (!source) return res.json({ data: null });
+  return res.json({
+    data: {
+      id: source.id,
+      repository: source.repository,
+    },
+  });
+}
+
 export default {
   create,
   show,
@@ -165,4 +229,8 @@ export default {
   publish,
   getPreviewUrl,
   updateWorkflowStatus,
+  link,
+  unlink,
+  getCopies,
+  getSource,
 };
