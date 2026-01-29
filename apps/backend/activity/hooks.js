@@ -12,6 +12,7 @@ const logger = createLogger('activity:hooks');
 const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
 
 function add(Activity, Hooks, Models) {
+  const { Repository } = Models;
   const { Events } = Activity;
 
   const mappings = {
@@ -117,6 +118,7 @@ function add(Activity, Hooks, Models) {
         to ${linkedActivities.length} linked activities`,
       );
       // Update each linked activity with the new data
+      const affectedRepoIds = new Set();
       for (const it of linkedActivities) {
         await it.update(
           {
@@ -128,8 +130,21 @@ function add(Activity, Hooks, Models) {
             hooks: false, // Prevent recursion
           },
         );
-        // Send SSE update
+        // Touch outline so modifiedAt reflects the change.
+        // For non-outline activities, hoist up to the outline parent.
+        const outlineActivity = isOutlineActivity(it.type)
+          ? it
+          : await it.getOutlineParent();
+        if (outlineActivity) await outlineActivity.touch();
+        affectedRepoIds.add(it.repositoryId);
         sse.channel(it.repositoryId).send(Events.Update, it);
+      }
+      // Mark affected repositories as having unpublished changes
+      if (affectedRepoIds.size) {
+        await Repository.update(
+          { hasUnpublishedChanges: true },
+          { where: { id: [...affectedRepoIds] } },
+        );
       }
     } catch (err) {
       logger.error('Error propagating to linked activities:', err);

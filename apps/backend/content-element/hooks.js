@@ -34,6 +34,39 @@ function add(ContentElement, Hooks, Models) {
   const findLinkedActivities = (sourceId) =>
     Activity.findAll({ where: { sourceId, isLinkedCopy: true } });
 
+  // Resolve unique outline activities for a list of elements
+  const resolveOutlineActivities = async (elements) => {
+    const resolved = await Promise.all(
+      elements.map((el) => resolveOutlineActivity(el)),
+    );
+    const result = new Map();
+    for (const activity of resolved) {
+      if (activity) result.set(activity.id, activity);
+    }
+    return [...result.values()];
+  };
+
+  // Mark repositories and outline activities as having unpublished changes
+  // after library sync propagation. Accepts pre-resolved outline activities
+  // (needed for deletion where elements are destroyed before touching).
+  const markLinkedAsChanged = async (
+    repoIds,
+    elements = [],
+    outlineActivities,
+  ) => {
+    if (!repoIds.size) return;
+    await Repository.update(
+      { hasUnpublishedChanges: true },
+      { where: { id: [...repoIds] } },
+    );
+    // Touch outline activities so per-item publish status reflects the change
+    if (!outlineActivities)
+      outlineActivities = await resolveOutlineActivities(elements);
+    for (const activity of outlineActivities) {
+      await activity.touch();
+    }
+  };
+
   /**
    * Auto-detach linked element when user edits data.
    * "If you edit it, you own it" - user edits break the library link.
@@ -58,6 +91,8 @@ function add(ContentElement, Hooks, Models) {
       element.isLinkedCopy || element.previous('isLinkedCopy');
     if (isLibrarySync(opts) || isOrWasLinkedCopy) return;
     const linkedElements = await findLinkedElements(element.id);
+    if (!linkedElements.length) return;
+    const affectedRepoIds = new Set();
     for (const linked of linkedElements) {
       await linked.update(
         {
@@ -69,8 +104,10 @@ function add(ContentElement, Hooks, Models) {
         SYNC_OPTS,
       );
       await resolveStatics(linked);
+      affectedRepoIds.add(linked.repositoryId);
       broadcast(linked.repositoryId, Events.Update, linked);
     }
+    await markLinkedAsChanged(affectedRepoIds, linkedElements);
   }
 
   /**
@@ -79,12 +116,13 @@ function add(ContentElement, Hooks, Models) {
   async function propagateElementCreation(_hookType, element, opts) {
     if (isLibrarySync(opts) || element.isLinkedCopy) return;
     const linkedActivities = await findLinkedActivities(element.activityId);
-    if (linkedActivities.length) {
-      log(
-        `Propagating element ${element.id} creation
-        to ${linkedActivities.length} linked activities`,
-      );
-    }
+    if (!linkedActivities.length) return;
+    log(
+      `Propagating element ${element.id} creation
+      to ${linkedActivities.length} linked activities`,
+    );
+    const affectedRepoIds = new Set();
+    const createdElements = [];
     for (const linkedActivity of linkedActivities) {
       const newElement = await ContentElement.create(
         {
@@ -99,8 +137,11 @@ function add(ContentElement, Hooks, Models) {
         SYNC_OPTS,
       );
       await resolveStatics(newElement);
+      createdElements.push(newElement);
+      affectedRepoIds.add(linkedActivity.repositoryId);
       broadcast(linkedActivity.repositoryId, Events.Create, newElement);
     }
+    await markLinkedAsChanged(affectedRepoIds, createdElements);
   }
 
   /**
@@ -109,16 +150,20 @@ function add(ContentElement, Hooks, Models) {
   async function propagateElementDeletion(_hookType, element, opts) {
     if (isLibrarySync(opts) || element.isLinkedCopy) return;
     const linkedElements = await findLinkedElements(element.id);
-    if (linkedElements.length) {
-      log(
-        `Propagating element ${element.id} deletion
-        to ${linkedElements.length} linked elements`,
-      );
-    }
+    if (!linkedElements.length) return;
+    log(
+      `Propagating element ${element.id} deletion
+      to ${linkedElements.length} linked elements`,
+    );
+    const affectedRepoIds = new Set();
+    // Resolve outline activities before destroying elements
+    const outlineActivities = await resolveOutlineActivities(linkedElements);
     for (const linked of linkedElements) {
       await linked.destroy(SYNC_OPTS);
+      affectedRepoIds.add(linked.repositoryId);
       broadcast(linked.repositoryId, Events.Delete, linked);
     }
+    await markLinkedAsChanged(affectedRepoIds, [], outlineActivities);
   }
 
   /** Unlink activity tree when element created on linked activity. */
@@ -241,7 +286,11 @@ function add(ContentElement, Hooks, Models) {
       touchOutline,
     ],
     [Hooks.beforeDestroy]: [touchRepository, touchOutline],
-    [Hooks.afterDestroy]: [unlinkActivityOnDelete, propagateElementDeletion, sseDelete],
+    [Hooks.afterDestroy]: [
+      unlinkActivityOnDelete,
+      propagateElementDeletion,
+      sseDelete,
+    ],
   };
 
   forEach(mappings, (hooks, type) => {
