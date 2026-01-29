@@ -31,9 +31,9 @@
             >
               <VIcon
                 v-if="activity.isLinkedCopy"
+                class="mr-2"
                 color="lime-lighten-1"
                 size="small"
-                end
               >
                 mdi-link-variant
               </VIcon>
