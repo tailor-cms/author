@@ -133,10 +133,11 @@ const viewCopy = (copy: {
   repositoryId: number;
   outlineActivityId: number;
 }) => {
-  const { repositoryId, outlineActivityId } = copy;
-  // Hard reload for cross-repository navigation to reset stores
-  window.location.href =
-    `/repository/${repositoryId}/root/structure?activityId=${outlineActivityId}`;
+  navigateTo({
+    name: 'repository',
+    params: { id: copy.repositoryId },
+    query: { activityId: copy.outlineActivityId },
+  });
 };
 
 const updateActivity = async (

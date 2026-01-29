@@ -5,16 +5,17 @@ import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-// NOTE: Intentionally not using nuxt routing to force a full reload
 const navigateToElement = (
   repositoryId: number,
   activityId: number,
   elementUid?: string,
 ) => {
   if (!repositoryId || !activityId) return;
-  let url = `/repository/${repositoryId}/editor/${activityId}`;
-  if (elementUid) url += `?elementId=${elementUid}`;
-  window.location.href = url;
+  navigateTo({
+    name: 'editor',
+    params: { id: repositoryId, activityId },
+    query: elementUid ? { elementId: elementUid } : undefined,
+  });
 };
 
 export const useContentLinking = (editorChannel: any) => {
