@@ -174,6 +174,9 @@ class ContentElement extends Model {
             'contentSignature',
             'refs',
             'meta',
+            'isLinkedCopy',
+            'sourceId',
+            'sourceModifiedAt',
           ]),
           { activityId, repositoryId },
         );

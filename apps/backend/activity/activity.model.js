@@ -279,7 +279,16 @@ class Activity extends Model {
       map(src, (it) => ({
         repositoryId: dstRepositoryId,
         parentId: dstParentId,
-        ...pick(it, ['type', 'position', 'data', 'refs', 'modifiedAt']),
+        ...pick(it, [
+          'type',
+          'position',
+          'data',
+          'refs',
+          'modifiedAt',
+          'isLinkedCopy',
+          'sourceId',
+          'sourceModifiedAt',
+        ]),
       })),
       { returning: true, context, transaction },
     );
