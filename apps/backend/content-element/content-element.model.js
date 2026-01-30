@@ -128,6 +128,8 @@ class ContentElement extends Model {
           'data',
           'meta',
           'refs',
+          'sourceId',
+          'isLinkedCopy',
           'createdAt',
           'updatedAt',
         ],

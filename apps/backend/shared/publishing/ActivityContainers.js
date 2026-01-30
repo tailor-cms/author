@@ -89,6 +89,8 @@ function fetchDefaultContainers(parent, config) {
     'uid',
     'type',
     'position',
+    'sourceId',
+    'isLinkedCopy',
     'createdAt',
     'updatedAt',
   ];
