@@ -118,7 +118,19 @@
         v-if="showDiscussion"
         :class="{ 'is-visible': isHighlighted || hasComments }"
       >
-        <ElementDiscussion v-bind="element" :user="currentUser" @open="focus" />
+        <ElementLinkedDiscussion
+          v-if="props.element.isLinkedCopy"
+          :is-loading="isLoadingSourceInfo"
+          :source-info="linkedSourceInfo"
+          @source:fetch="onFetchSource"
+          @source:view="onNavigateToElement"
+        />
+        <ElementDiscussion
+          v-else
+          v-bind="element"
+          :user="currentUser"
+          @open="focus"
+        />
       </div>
       <div v-if="showAI" :class="{ 'is-visible': isHighlighted }">
         <ElementGeneration @generate="generateContent" />
@@ -185,6 +197,7 @@ import ActiveUsers from './ActiveUsers.vue';
 import CircularProgress from './CircularProgress.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import ElementGeneration from './ElementGeneration.vue';
+import ElementLinkedDiscussion from './ElementLinkedDiscussion.vue';
 import ElementLinkedIndicator from './ElementLinkedIndicator.vue';
 import ElementSourceUsages from './ElementSourceUsages.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
