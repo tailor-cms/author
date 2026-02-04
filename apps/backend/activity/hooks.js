@@ -79,13 +79,13 @@ function add(Activity, Hooks, Models) {
         activity.id,
       );
       if (unlinkedCopies.length) {
-        log(`Unlinked ${unlinkedCopies.length} copies of deleted activity ${activity.id}`);
+        log(`Unlinked copies upon deletion for: ${activity.id}`);
         for (const copy of unlinkedCopies) {
           sse.channel(copy.repositoryId).send(Events.Update, copy);
         }
       }
     } catch (err) {
-      log(`Error unlinking copies of deleted activity ${activity.id}: ${err.message}`);
+      log(`Error unlinking upon deletion ${activity.id}: ${err.message}`);
     }
   }
 

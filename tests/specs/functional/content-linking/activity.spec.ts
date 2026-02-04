@@ -86,7 +86,7 @@ test('unlinking preserves content', async ({ page }) => {
   const element = editor.getElement();
   await expect(element.el).toBeVisible();
   const contentText = await element.el.textContent();
-  expect(contentText).toContain(outlineSeed.primaryPage.textContent)
+  expect(contentText).toContain(outlineSeed.primaryPage.textContent);
 });
 
 test('auto-detach on activity data edit', async ({ page }) => {
