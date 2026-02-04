@@ -31,7 +31,7 @@
             >
               <VIcon
                 v-if="activity.isLinkedCopy"
-                class="mr-2"
+                class="linked-copy-icon mr-2"
                 color="lime-lighten-1"
                 size="small"
               >

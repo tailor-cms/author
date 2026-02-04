@@ -2,6 +2,7 @@
   <VMenu
     v-model="menuOpen"
     :close-on-content-click="false"
+    class="element-source-usages"
     location="left"
     max-height="400"
     offset="4"
@@ -17,6 +18,7 @@
           >
             <VBtn
               v-bind="{ ...menuProps, ...tooltipProps }"
+              aria-label="Source usages"
               color="purple"
               icon="mdi-source-fork"
               size="x-small"

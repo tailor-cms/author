@@ -2,6 +2,7 @@
   <VMenu
     v-model="menuOpen"
     :close-on-content-click="false"
+    class="element-linked-indicator"
     location="left"
     offset="4"
   >
@@ -12,6 +13,7 @@
             v-bind="{ ...menuProps, ...tooltipProps }"
             :class="{ 'nested-link': !isEntryPoint }"
             :variant="isEntryPoint ? 'tonal' : 'text'"
+            aria-label="Linked content"
             color="info"
             icon="mdi-link-variant"
             size="x-small"

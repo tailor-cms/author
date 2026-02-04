@@ -108,14 +108,14 @@ class LinkService {
    * provenance.
    * @returns {Activity[]} Array of unlinked copies for SSE notification
    */
-  async unlinkCopiesOfSource(sourceId, transaction) {
+  async unlinkCopiesOfSource(sourceId) {
     const { Activity } = this.db;
     const linkedCopies = await Activity.unscoped().findAll({
       where: { sourceId, isLinkedCopy: true },
     });
     if (!linkedCopies.length) return [];
     for (const copy of linkedCopies) {
-      await copy.update(UNLINK_DATA, { transaction, hooks: false });
+      await copy.update(UNLINK_DATA, { hooks: false });
     }
     return linkedCopies;
   }

@@ -39,6 +39,7 @@ export class OutlineItem {
   readonly toggleBtn: Locator;
   readonly toggleAltBtn: Locator;
   readonly optionsMenu: OptionsMenu;
+  readonly linkIcon: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
@@ -53,6 +54,7 @@ export class OutlineItem {
     });
     this.toggleAltBtn = el.getByRole('button', { name: 'Toggle expand alt' });
     this.optionsMenu = new OptionsMenu(this.page, el.locator('.options-menu'));
+    this.linkIcon = el.locator('.linked-copy-icon');
   }
 
   select() {

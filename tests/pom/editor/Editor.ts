@@ -1,11 +1,11 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { outlineSeed } from '../../helpers/seed';
+import { ContentElement, HtmlContentElement } from './ContentElement';
 import { AddElementDialog } from './AddElementDialog';
 import { ContainerList } from './ContainerList';
-import { ContentElement } from './ContentElement';
 import { EditorSidebar } from './Sidebar';
+import { outlineSeed } from '../../helpers/seed';
 import { SelectElementDialog } from './SelectElementDialog';
 
 export class Editor {
@@ -47,6 +47,13 @@ export class Editor {
     return new ContentElement(this.page, element);
   }
 
+  getHtmlElement(content?: string) {
+    const element = content
+      ? this.page.locator(ContentElement.selector, { hasText: content })
+      : this.page.locator(ContentElement.selector).first();
+    return new HtmlContentElement(this.page, element);
+  }
+
   async focusElement(content?: string) {
     return this.getElement(content).focus();
   }
@@ -64,9 +71,8 @@ export class Editor {
   async addContentElement(content = 'This is a test element') {
     const { page, sidebar } = this;
     await this.addElementDialog.add('HTML');
-    // Temporary using the first one / assuming container is empty before adding
-    await this.focusElement();
-    await page.locator('.tiptap').fill(content);
+    const element = this.getHtmlElement();
+    await element.fill(content);
     // Focusout element to trigger the save
     await sidebar.el.focus();
     await expect(page.locator('.v-snackbar')).toHaveText('Element saved');

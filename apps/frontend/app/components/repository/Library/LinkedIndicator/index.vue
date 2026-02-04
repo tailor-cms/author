@@ -1,13 +1,12 @@
 <template>
-  <VCard class="d-flex align-center mb-1 pa-2" variant="tonal">
+  <VCard class="linked-indicator d-flex align-center mb-1 pa-2" variant="tonal">
     <VTooltip location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
-        <span
-          v-bind="tooltipProps"
-          class="d-flex align-center text-body-2 text-uppercase font-weight-bold"
-        >
+        <span v-bind="tooltipProps" class="linked-status d-flex align-center">
           <VIcon color="lime" icon="mdi-link-variant" size="small" start />
-          {{ isEntryPoint ? 'Linked' : 'Linked via parent' }}
+          <span class="text-body-2 text-uppercase font-weight-bold">
+            {{ isEntryPoint ? 'Linked' : 'Linked via parent' }}
+          </span>
         </span>
       </template>
       <template v-if="isEntryPoint">Linked content</template>

@@ -34,7 +34,7 @@ function add(Activity, Hooks, Models) {
     [Hooks.afterBulkUpdate]: [afterTransaction(sseBulkUpdate)],
     [Hooks.afterDestroy]: [
       unlinkParentOnDelete,
-      unlinkCopiesOnDelete,
+      afterTransaction(unlinkCopiesOnDelete),
       touchRepository,
       touchOutline,
       sseDelete,
@@ -73,16 +73,19 @@ function add(Activity, Hooks, Models) {
   }
 
   /** Unlink all copies when source activity is deleted. */
-  async function unlinkCopiesOnDelete(_hookType, activity, opts) {
-    const unlinkedCopies = await linkService.unlinkCopiesOfSource(
-      activity.id,
-      opts.transaction,
-    );
-    if (unlinkedCopies.length) {
-      log(`Unlinked ${unlinkedCopies.length} copies of deleted activity ${activity.id}`);
-      for (const copy of unlinkedCopies) {
-        sse.channel(copy.repositoryId).send(Events.Update, copy);
+  async function unlinkCopiesOnDelete(_hookType, activity) {
+    try {
+      const unlinkedCopies = await linkService.unlinkCopiesOfSource(
+        activity.id,
+      );
+      if (unlinkedCopies.length) {
+        log(`Unlinked ${unlinkedCopies.length} copies of deleted activity ${activity.id}`);
+        for (const copy of unlinkedCopies) {
+          sse.channel(copy.repositoryId).send(Events.Update, copy);
+        }
       }
+    } catch (err) {
+      log(`Error unlinking copies of deleted activity ${activity.id}: ${err.message}`);
     }
   }
 

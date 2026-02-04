@@ -3,6 +3,7 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
+        aria-label="Linked actions"
         color="primary-lighten-4"
         icon="mdi-dots-vertical"
         size="x-small"
