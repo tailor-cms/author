@@ -102,7 +102,9 @@ test('can link a leaf activity via footer button', async ({ page }) => {
   await expect(linkedItem.linkIcon).toBeVisible();
   // Verify persistence
   await page.reload({ waitUntil: 'networkidle' });
-  const reloaded = await outline.getOutlineItemByName(outlineSeed.group.title);
+  const reloaded = await outline.getOutlineItemByName(
+    outlineSeed.primaryPage.title,
+  );
   await expect(reloaded.linkIcon).toBeVisible();
 });
 
