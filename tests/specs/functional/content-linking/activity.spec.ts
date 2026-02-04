@@ -1,18 +1,109 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  outlineLevel,
   outlineSeed,
   toEditorPage,
+  toEmptyRepository,
   toLinkedRepositories,
   toStructurePage,
 } from '../../../helpers/seed';
 import { ActivityOutline } from '../../../pom/repository/Outline';
 import ApiClient from '../../../api/ApiClient';
 import { Editor } from '../../../pom/editor/Editor';
+import { LinkContentDialog } from '../../../pom/repository/LinkContentDialog';
+import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
+
+const seedSourceRepository = async () => {
+  const { data } = await SeedClient.seedTestRepository();
+  return data.repository;
+};
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
+});
+
+test('can link a leaf activity via options menu', async ({ page }) => {
+  const sourceRepo = await seedSourceRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentBelow();
+  await linkDialog.selectAndLink(
+    sourceRepo.name,
+    outlineSeed.primaryPage.title,
+  );
+  // Verify linked activity appears in outline with link icon
+  await outline.toggleExpand();
+  const linkedItem = await outline.getOutlineItemByName(
+    outlineSeed.primaryPage.title,
+  );
+  await expect(linkedItem.linkIcon).toBeVisible();
+  // Verify linked indicator in sidebar
+  await linkedItem.select();
+  const sidebar = new OutlineSidebar(page);
+  await sidebar.linkedIndicator.expectVisible();
+  await sidebar.linkedIndicator.expectLinkedStatus();
+  // Verify persistence
+  await page.reload({ waitUntil: 'networkidle' });
+  await outline.toggleExpand();
+  const reloadedItem = await outline.getOutlineItemByName(
+    outlineSeed.primaryPage.title,
+  );
+  await expect(reloadedItem.linkIcon).toBeVisible();
+});
+
+test('can link a group activity via options menu', async ({ page }) => {
+  const sourceRepo = await seedSourceRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  // Link source group into target module
+  const linkDialog = await module.optionsMenu.linkContentInto();
+  await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
+  // Expand and verify linked group appears with link icon
+  await module.toggleExpand();
+  const linkedGroup = await outline.getOutlineItemByName(
+    outlineSeed.group.title,
+  );
+  await expect(linkedGroup.linkIcon).toBeVisible();
+  // Verify linked indicator
+  await linkedGroup.select();
+  const sidebar = new OutlineSidebar(page);
+  await sidebar.linkedIndicator.expectVisible();
+  await sidebar.linkedIndicator.expectLinkedStatus();
+  // Verify persistence
+  await page.reload({ waitUntil: 'networkidle' });
+  await outline.toggleExpand();
+  const reloadedGroup = await outline.getOutlineItemByName(
+    outlineSeed.group.title,
+  );
+  await expect(reloadedGroup.linkIcon).toBeVisible();
+});
+
+test('can link a leaf activity via footer button', async ({ page }) => {
+  const sourceRepo = await seedSourceRepository();
+  await toEmptyRepository(page);
+  // Use the footer "Link Existing" button on empty repository
+  const linkBtn = page.getByRole('button', { name: 'Link Existing' });
+  await expect(linkBtn).toBeVisible();
+  await linkBtn.click();
+  const linkDialog = new LinkContentDialog(page);
+  await linkDialog.selectAndLink(
+    sourceRepo.name,
+    outlineSeed.primaryPage.title,
+  );
+  // Verify linked activity appears
+  const outline = new ActivityOutline(page);
+  const linkedItem = await outline.getOutlineItemByName(
+    outlineSeed.primaryPage.title,
+  );
+  await expect(linkedItem.linkIcon).toBeVisible();
+  // Verify persistence
+  await page.reload({ waitUntil: 'networkidle' });
+  const reloaded = await outline.getOutlineItemByName(outlineSeed.group.title);
+  await expect(reloaded.linkIcon).toBeVisible();
 });
 
 test('linked activity shows link icon in outline', async ({ page }) => {

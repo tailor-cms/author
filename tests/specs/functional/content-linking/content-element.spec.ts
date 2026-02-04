@@ -6,13 +6,41 @@ import { ContentElement } from '../../../pom/editor/ContentElement';
 import { Editor } from '../../../pom/editor/Editor';
 import SeedClient from '../../../api/SeedClient';
 import {
+  outlineSeed,
   toEditorPage,
   toLinkedRepositories,
+  toSeededRepository,
   toStructurePage,
 } from '../../../helpers/seed';
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
+});
+
+test('can link a content element via add element dialog', async ({ page }) => {
+  const { activity } = await toSeededRepository(page);
+  await toEditorPage(page, activity);
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  // Open add element drawer and link content from the primary page
+  const linkDialog = await editor.addElementDialog.openLinkDialog();
+  await linkDialog.select(
+    outlineSeed.primaryPage.title,
+    outlineSeed.primaryPage.textContent,
+  );
+  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  // Verify linked element appears and is marked as linked
+  const element = editor.getElement(outlineSeed.primaryPage.textContent);
+  await expect(element.el).toBeVisible();
+  await element.expectLinked();
+  await element.el.hover();
+  await expect(element.linkedIndicatorBtn).toBeVisible();
+  await expect(element.commentDisabledBtn).toBeVisible();
+  // Verify persistence
+  await page.reload({ waitUntil: 'networkidle' });
+  const reloadedElement = editor.getElement(outlineSeed.primaryPage.textContent);
+  await expect(reloadedElement.el).toBeVisible();
+  await reloadedElement.expectLinked();
 });
 
 test('linked element shows linked indicator', async ({ page }) => {

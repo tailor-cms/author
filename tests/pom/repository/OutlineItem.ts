@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { AddItemDialog } from './AddItemDialog';
+import { LinkContentDialog } from './LinkContentDialog';
 
 class OptionsMenu {
   readonly page: Page;
@@ -26,6 +27,18 @@ class OptionsMenu {
     await dialog.getByRole('button', { name: 'Confirm' }).click();
     // Wait for dialog to close
     await expect(this.page.getByText(dialogContent)).not.toBeVisible();
+  }
+
+  async linkContentBelow() {
+    await this.toggle();
+    await this.el.getByLabel('Link content below').click();
+    return new LinkContentDialog(this.page);
+  }
+
+  async linkContentInto() {
+    await this.toggle();
+    await this.el.getByLabel('Link content into').click();
+    return new LinkContentDialog(this.page);
   }
 }
 
