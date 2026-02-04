@@ -23,8 +23,9 @@ test('should be able to publish repository', async ({ page }) => {
     (it) => it.id === activity.id,
   );
   expect(publishedActivity).toBeDefined();
-  // Based on the seed data, the activity has 1 content container with 4 elements
-  expect(publishedActivity?.contentContainers.length).toBe(1);
+  // Based on the seed data, the activity has 2 content containers
+  // First has 4 elements
+  expect(publishedActivity?.contentContainers.length).toBe(2);
   expect(publishedActivity?.contentContainers[0].elements).toHaveLength(4);
   await publishedActivity?.makePublic();
   const imageElement = publishedActivity?.contentContainers[0].elements.find(
