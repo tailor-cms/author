@@ -199,6 +199,8 @@ class LinkService {
         ...opts,
         parentId: linked.id,
         position: child.position,
+        // Mark child activities as nested to skip revision creation in hooks
+        context: { ...context, isNestedLinkedContent: true },
       };
       results.push(...(await this.#cloneTree(child, childOpts)));
     }
@@ -239,8 +241,8 @@ class LinkService {
   async #cloneElements(sourceActivityId, targetActivity, opts) {
     const { ContentElement } = this.db;
     const { context, transaction } = opts;
-    // Mark as libraryUpdate to prevent hooks from auto-unlinking
-    const linkContext = { ...context, libraryUpdate: true };
+    // Mark as nested linked content to skip revision creation in hooks
+    const linkContext = { ...context, libraryUpdate: true, isNestedLinkedContent: true };
     const elements = await ContentElement.findAll({
       where: { activityId: sourceActivityId, detached: false },
       transaction,

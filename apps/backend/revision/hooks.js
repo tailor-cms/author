@@ -41,11 +41,20 @@ function add(Revision, Hooks, { Repository, Activity, ContentElement }) {
 
   function getRevision(hookType, instance, context = {}) {
     if (!context.userId) return;
+    const operation = hooks[hookType];
+    // Skip revisions for nested linked content (children/elements of linked activities)
+    // Context flag is set by link.service.js for nested items
+    if (
+      context.isNestedLinkedContent &&
+      instance.isLinkedCopy &&
+      operation === 'CREATE'
+    ) {
+      return;
+    }
     const repositoryId = isRepository(instance)
       ? instance.id
       : instance.repositoryId;
     const entity = constantCase(instance.constructor.name);
-    const operation = hooks[hookType];
     logger.info(`[Revision] ${entity}#${hookType}`, {
       entity,
       operation,

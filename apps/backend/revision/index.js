@@ -40,7 +40,7 @@ function getRevision(req, _res, next, revisionId) {
 function loadTargetActivity(req, _res, next) {
   const { activityId } = req.query;
   return Activity.findByPk(activityId).then((activity) => {
-    if (!activity || !activity.repositoryId === req.repository?.id)
+    if (!activity || activity.repositoryId !== req.repository?.id)
       return createError(NOT_FOUND, 'Activity not found');
     req.activity = activity;
     next();
