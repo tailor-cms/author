@@ -403,6 +403,9 @@ importers:
       '@tailor-cms/meta-element-collection':
         specifier: workspace:^
         version: link:../../extensions/meta-inputs
+      '@tailor-cms/plugin-collection':
+        specifier: workspace:^
+        version: link:../../extensions/plugins
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../../packages/utils
@@ -773,6 +776,16 @@ importers:
       '@tailor-cms/tme-textarea':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-textarea
+    devDependencies:
+      '@tailor-cms/extension-installer':
+        specifier: workspace:^
+        version: link:../../packages/extension-installer
+
+  extensions/plugins:
+    dependencies:
+      '@tailor-cms/tp-i18n':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/plugins/i18n
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -1163,6 +1176,28 @@ importers:
       vuetify:
         specifier: ^3.10.7
         version: 3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+
+  packages/core-extensions/plugins/i18n:
+    dependencies:
+      nuxt:
+        specifier: ^4.0.0
+        version: 4.2.0(@netlify/blobs@9.1.2)(@parcel/watcher@2.5.1)(@types/node@24.9.1)(@vue/compiler-sfc@3.5.22)(db0@0.3.4)(encoding@0.1.13)(eslint@9.38.0(jiti@2.6.1))(ioredis@5.8.2)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rollup@4.52.5)(sass@1.93.2)(terser@5.44.0)(typescript@5.9.3)(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1))(xml2js@0.6.2)(yaml@2.8.1)
+      pinia:
+        specifier: ^3.0.0
+        version: 3.0.3(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+      vee-validate:
+        specifier: ^4.15.0
+        version: 4.15.1(vue@3.5.22(typescript@5.9.3))
+      vue:
+        specifier: ^3.5.0
+        version: 3.5.22(typescript@5.9.3)
+      vuetify:
+        specifier: ^3.10.0
+        version: 3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+    devDependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
 
   packages/extension-installer:
     dependencies:
