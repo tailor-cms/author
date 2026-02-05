@@ -68,6 +68,26 @@ export class Editor {
     return elements;
   }
 
+  async expectAllElementsLinked() {
+    // Wait for at least one element to be visible
+    await expect(this.page.locator(ContentElement.selector).first()).toBeVisible();
+    const elements = await this.getElements();
+    expect(elements.length).toBeGreaterThanOrEqual(1);
+    for (const element of elements) {
+      await element.expectLinked();
+    }
+  }
+
+  async expectAllElementsNotLinked() {
+    // Wait for at least one element to be visible
+    await expect(this.page.locator(ContentElement.selector).first()).toBeVisible();
+    const elements = await this.getElements();
+    expect(elements.length).toBeGreaterThanOrEqual(1);
+    for (const element of elements) {
+      await element.expectNotLinked();
+    }
+  }
+
   async addContentElement(content = 'This is a test element') {
     const { page, sidebar } = this;
     await this.addElementDialog.add('HTML');

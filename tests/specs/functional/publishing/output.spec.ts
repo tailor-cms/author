@@ -3,7 +3,10 @@ import { expect, test } from '@playwright/test';
 import { isStorageConfigured, StorageClient } from '../../../api/StorageClient';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
 import SeedClient from '../../../api/SeedClient';
-import { toSeededRepositorySettings } from '../../../helpers/seed';
+import {
+  toLinkedRepositories,
+  toSeededRepositorySettings,
+} from '../../../helpers/seed';
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
@@ -34,6 +37,42 @@ test('should be able to publish repository', async ({ page }) => {
   expect(imageElement).toBeDefined();
   // Check if public URL is generated
   expect(imageElement?.data?.url).toBeDefined();
+});
+
+test('should publish linked content with sourceId and isLinkedCopy', async ({
+  page,
+}) => {
+  test.skip(!isStorageConfigured, 'Storage is not enabled');
+  const { activity, linkedActivity } = await toLinkedRepositories();
+  const targetRepoId = linkedActivity.repositoryId;
+  // Navigate to linked repository settings and publish
+  await page.goto(`/repository/${targetRepoId}/root/settings/general`);
+  await page.waitForLoadState('networkidle');
+  const settingsPage = new GeneralSettings(page);
+  await settingsPage.sidebar.publish();
+  // Read the published manifest from storage
+  const publishedRepo = await StorageClient.source().get(targetRepoId);
+  expect(publishedRepo).toBeDefined();
+  await publishedRepo.load();
+  // Verify linked activity in published structure
+  const publishedActivity = publishedRepo.structure.find(
+    (it: any) => it.id === linkedActivity.id,
+  );
+  expect(publishedActivity).toBeDefined();
+  expect(publishedActivity.sourceId).toBe(activity.id);
+  expect(publishedActivity.isLinkedCopy).toBe(true);
+  // Verify content elements preserve linked fields
+  const activityWithContainers =
+    publishedRepo.activitiesWithContainers.find(
+      (it: any) => it.id === linkedActivity.id,
+    );
+  expect(activityWithContainers).toBeDefined();
+  const container = activityWithContainers.contentContainers[0];
+  expect(container.elements.length).toBeGreaterThan(0);
+  for (const element of container.elements) {
+    expect(element.sourceId).toBeDefined();
+    expect(element.isLinkedCopy).toBe(true);
+  }
 });
 
 test.afterAll(async () => {

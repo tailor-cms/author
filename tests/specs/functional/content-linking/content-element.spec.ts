@@ -1,9 +1,13 @@
 import { expect, test } from '@playwright/test';
 
 import { ActivityOutline } from '../../../pom/repository/Outline';
+import BaseClient from '../../../api/BaseClient';
 import { ContainerList } from '../../../pom/editor/ContainerList';
 import { ContentElement } from '../../../pom/editor/ContentElement';
 import { Editor } from '../../../pom/editor/Editor';
+import {
+  ReorderLinkedElementDialog,
+} from '../../../pom/editor/ReorderLinkedElementDialog';
 import SeedClient from '../../../api/SeedClient';
 import {
   outlineSeed,
@@ -12,6 +16,8 @@ import {
   toSeededRepository,
   toStructurePage,
 } from '../../../helpers/seed';
+
+const api = new BaseClient('/api/repositories/');
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
@@ -38,7 +44,9 @@ test('can link a content element via add element dialog', async ({ page }) => {
   await expect(element.commentDisabledBtn).toBeVisible();
   // Verify persistence
   await page.reload({ waitUntil: 'networkidle' });
-  const reloadedElement = editor.getElement(outlineSeed.primaryPage.textContent);
+  const reloadedElement = editor.getElement(
+    outlineSeed.primaryPage.textContent,
+  );
   await expect(reloadedElement.el).toBeVisible();
   await reloadedElement.expectLinked();
 });
@@ -212,6 +220,73 @@ test('nested linked elements do not show unlink action', async ({ page }) => {
   const menu = await element.openLinkedMenu();
   await menu.expectNoUnlinkAction();
   await menu.expectViewSourceAction();
+});
+
+test('reordering individually linked element keeps it linked', async ({
+  page,
+}) => {
+  // Create a repository with an individually linked element
+  const { activity } = await toSeededRepository(page);
+  await toEditorPage(page, activity);
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  // Link an element from the primary page (individual link, not via activity)
+  const linkDialog = await editor.addElementDialog.openLinkDialog();
+  await linkDialog.select(
+    outlineSeed.primaryPage.title,
+    outlineSeed.primaryPage.textContent,
+  );
+  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  // Add another element so we have something to reorder against
+  await editor.addElementDialog.add('HTML');
+  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  // Reorder via API
+  const targetRepoId = activity.repositoryId;
+  const { data: allElements } = await api.get(
+    `${targetRepoId}/content-elements/`,
+  );
+  const linkedElement = allElements.find(
+    (el: any) => el.repositoryId === targetRepoId && el.isLinkedCopy,
+  );
+  expect(linkedElement).toBeDefined();
+  await api.post(
+    `${targetRepoId}/content-elements/${linkedElement.id}/reorder`,
+    { position: 1 },
+  );
+  // Reload and verify element is still linked
+  await page.reload({ waitUntil: 'networkidle' });
+  const element = editor.getElement(outlineSeed.primaryPage.textContent);
+  await element.expectLinked();
+});
+
+test('reordering nested linked element shows confirmation and unlinks activity', async ({
+  page,
+}) => {
+  // Set larger viewport height to ensure drag operation works correctly
+  await page.setViewportSize({ width: 1280, height: 1400 });
+  const { linkedActivity } = await toLinkedRepositories();
+  await toEditorPage(page, linkedActivity);
+  const editor = new Editor(page);
+  // Verify elements are initially linked
+  await editor.expectAllElementsLinked();
+  // Drag first element to trigger reorder
+  const firstElement = editor.getElement();
+  await firstElement.dragToReorder(600);
+  // Verify confirmation dialog appears and confirm
+  const dialog = new ReorderLinkedElementDialog(page);
+  await dialog.expectVisible();
+  await dialog.confirm();
+  // Wait for operations to complete and reload
+  await page.waitForTimeout(1000);
+  await page.reload({ waitUntil: 'networkidle' });
+  // Verify elements are no longer linked
+  await editor.expectAllElementsNotLinked();
+  // Verify parent activity is also unlinked in outline
+  await toStructurePage(page, linkedActivity);
+  await page.reload({ waitUntil: 'networkidle' });
+  const outline = new ActivityOutline(page);
+  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  await sidebar.linkedIndicator.expectNotVisible();
 });
 
 test.afterAll(async () => {

@@ -9,11 +9,15 @@ import {
   toStructurePage,
 } from '../../../helpers/seed';
 import { ActivityOutline } from '../../../pom/repository/Outline';
-import ApiClient from '../../../api/ApiClient';
+import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
+import BaseClient from '../../../api/BaseClient';
 import { Editor } from '../../../pom/editor/Editor';
+import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
 import { LinkContentDialog } from '../../../pom/repository/LinkContentDialog';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
+
+const api = new BaseClient('/api/repositories/');
 
 const seedSourceRepository = async () => {
   const { data } = await SeedClient.seedTestRepository();
@@ -80,6 +84,59 @@ test('can link a group activity via options menu', async ({ page }) => {
     outlineSeed.group.title,
   );
   await expect(reloadedGroup.linkIcon).toBeVisible();
+});
+
+test('can link a group activity below via options menu', async ({ page }) => {
+  const sourceRepo = await seedSourceRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentBelow();
+  await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
+  const linkedGroup = await outline.getOutlineItemByName(
+    outlineSeed.group.title,
+  );
+  await expect(linkedGroup.linkIcon).toBeVisible();
+  await linkedGroup.select();
+  const sidebar = new OutlineSidebar(page);
+  await sidebar.linkedIndicator.expectVisible();
+  await sidebar.linkedIndicator.expectLinkedStatus();
+  // Verify persistence
+  await page.reload({ waitUntil: 'networkidle' });
+  const reloadedGroup = await outline.getOutlineItemByName(
+    outlineSeed.group.title,
+  );
+  await expect(reloadedGroup.linkIcon).toBeVisible();
+});
+
+test('can link a leaf activity into a group via options menu', async ({
+  page,
+}) => {
+  const sourceRepo = await seedSourceRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentInto();
+  await linkDialog.selectAndLink(
+    sourceRepo.name,
+    outlineSeed.primaryPage.title,
+  );
+  await module.toggleExpand();
+  const linkedPage = await outline.getOutlineItemByName(
+    outlineSeed.primaryPage.title,
+  );
+  await expect(linkedPage.linkIcon).toBeVisible();
+  await linkedPage.select();
+  const sidebar = new OutlineSidebar(page);
+  await sidebar.linkedIndicator.expectVisible();
+  await sidebar.linkedIndicator.expectLinkedStatus();
+  // Verify persistence
+  await page.reload({ waitUntil: 'networkidle' });
+  await outline.toggleExpand();
+  const reloadedPage = await outline.getOutlineItemByName(
+    outlineSeed.primaryPage.title,
+  );
+  await expect(reloadedPage.linkIcon).toBeVisible();
 });
 
 test('can link a leaf activity via footer button', async ({ page }) => {
@@ -206,22 +263,15 @@ test('auto-unlink on structural change (add child to a linked module)', async ({
   page,
 }) => {
   const { repository, linkedActivity } = await toLinkedRepositories();
-  const activitiesApi = new ApiClient(
-    `/api/repositories/${repository.id}/activities/`,
-  );
-  const { data: activities } = await activitiesApi.list();
+  const { data: activities } = await api.get(`${repository.id}/activities/`);
   const sourceModule = activities.find(
     (a: any) => a.data.name === outlineSeed.group.title,
   );
   const targetRepoId = linkedActivity.repositoryId;
-  const linkApi = new ApiClient(
-    `/api/repositories/${targetRepoId}/activities/link`,
+  const { data: linkedActivities } = await api.post(
+    `${targetRepoId}/activities/link`,
+    { sourceId: sourceModule.id, parentId: null, position: 0 },
   );
-  const { data: linkedActivities } = await linkApi.create({
-    sourceId: sourceModule.id,
-    parentId: null,
-    position: 0,
-  } as any);
   const linkedModule = linkedActivities[0];
   await toStructurePage(page, { repositoryId: targetRepoId } as any);
   const outline = new ActivityOutline(page);
@@ -273,6 +323,109 @@ test('source activity deletion unlinks copies', async ({ page }) => {
   const targetOutline = new ActivityOutline(page);
   const { sidebar } = await targetOutline.expandAndSelect(linkedActivity.uid);
   await sidebar.linkedIndicator.expectNotVisible();
+});
+
+test('reordering linked activity does not detach it', async ({ page }) => {
+  const { linkedActivity } = await toLinkedRepositories();
+  const targetRepoId = linkedActivity.repositoryId;
+  await toStructurePage(page, linkedActivity);
+  const outline = new ActivityOutline(page);
+  // Add a sibling at root level to have something to reorder against
+  await outline.addRootItem(outlineLevel.LEAF, 'Sibling Page');
+  // Verify initial linked status
+  await outline.toggleExpand();
+  const linkedItem = await outline.getOutlineItemByUid(linkedActivity.uid);
+  await expect(linkedItem.linkIcon).toBeVisible();
+  // Reorder the linked activity via API (move to last position)
+  await api.post(`${targetRepoId}/activities/${linkedActivity.id}/reorder`, {
+    position: 1,
+  });
+  // Reload and verify reorder happened and link is preserved
+  await page.reload({ waitUntil: 'networkidle' });
+  await outline.toggleExpand();
+  // Verify the linked activity is now last in the list
+  const items = await outline.getOutlineItems();
+  const lastItemUid = await items[items.length - 1].getUid();
+  expect(lastItemUid).toBe(linkedActivity.uid);
+  // Verify link is preserved
+  const reorderedItem = await outline.getOutlineItemByUid(linkedActivity.uid);
+  await expect(reorderedItem.linkIcon).toBeVisible();
+  await reorderedItem.select();
+  const sidebar = new OutlineSidebar(page);
+  await sidebar.linkedIndicator.expectVisible();
+  await sidebar.linkedIndicator.expectLinkedStatus();
+});
+
+test('clone preserves linked content fields', async ({ page }) => {
+  const { activity, linkedActivity } = await toLinkedRepositories();
+  const targetRepoId = linkedActivity.repositoryId;
+  // Clone the linked repository via API
+  const { data: clonedRepo } = await api.post(`${targetRepoId}/clone`, {
+    name: 'Cloned Linked Repo',
+    description: 'Test clone',
+  });
+  // List activities in the cloned repository
+  const { data: activities } = await api.get(
+    `${clonedRepo.id}/activities/`,
+  );
+  // Find the cloned copy of the linked activity (by matching source)
+  const clonedLinked = activities.find(
+    (a: any) => a.sourceId === activity.id,
+  );
+  expect(clonedLinked).toBeDefined();
+  expect(clonedLinked.isLinkedCopy).toBe(true);
+  expect(clonedLinked.sourceModifiedAt).toBeDefined();
+  // Verify in UI
+  await toStructurePage(page, { repositoryId: clonedRepo.id } as any);
+  const outline = new ActivityOutline(page);
+  await outline.toggleExpand();
+  const clonedItem = await outline.getOutlineItemByUid(clonedLinked.uid);
+  await expect(clonedItem.linkIcon).toBeVisible();
+});
+
+test('export and reimport strips linked content fields', async ({ page }) => {
+  const { linkedActivity } = await toLinkedRepositories();
+  const targetRepoId = linkedActivity.repositoryId;
+  // Navigate to linked repository settings and export
+  await page.goto(`/repository/${targetRepoId}/root/settings/general`);
+  await page.waitForLoadState('networkidle');
+  const settingsPage = new GeneralSettings(page);
+  await settingsPage.sidebar.getSidebarAction('Export').click();
+  const dialog = page.locator('div[role="dialog"]');
+  await expect(dialog.getByText('Repository export is ready.')).toBeVisible({
+    timeout: 10000,
+  });
+  const downloadPromise = page.waitForEvent('download');
+  await dialog.getByRole('button', { name: 'Download' }).click();
+  const download = await downloadPromise;
+  const exportPath = `tmp/${download.suggestedFilename()}`;
+  await download.saveAs(exportPath);
+  // Import the exported archive via catalog UI
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+  const addRepoDialog = new AddRepositoryDialog(page);
+  await addRepoDialog.open();
+  await addRepoDialog.importTab.click();
+  await addRepoDialog.archiveInput.click({ force: true });
+  await addRepoDialog.archiveInput.setInputFiles(exportPath);
+  const importName = `Reimported ${Date.now()}`;
+  await addRepoDialog.nameInput.fill(importName);
+  await addRepoDialog.descriptionInput.fill('reimport test');
+  await addRepoDialog.createRepositoryBtn.click();
+  await page.waitForTimeout(5000);
+  // Find the imported repository
+  const { data: repos } = await api.get();
+  const importedRepo = repos.items.find((r: any) => r.name === importName);
+  expect(importedRepo).toBeDefined();
+  // List activities and verify linked fields are stripped
+  const { data: activities } = await api.get(
+    `${importedRepo.id}/activities/`,
+  );
+  expect(activities.length).toBeGreaterThan(0);
+  for (const activity of activities) {
+    expect(activity.isLinkedCopy).toBeFalsy();
+    expect(activity.sourceId).toBeNull();
+  }
 });
 
 test.afterAll(async () => {

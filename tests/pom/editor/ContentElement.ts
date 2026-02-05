@@ -84,6 +84,23 @@ export class ContentElement {
     await this.el.hover();
     await this.commentDisabledBtn.click();
   }
+
+  async dragToReorder(offsetY: number) {
+    // Drag handle is in ancestor .contained-content, not inside .content-element
+    const xpath = 'ancestor::div[contains(@class, "contained-content")]';
+    const container = this.el.locator(`xpath=${xpath}`);
+    await container.hover();
+    const dragHandle = container.locator('.drag-handle');
+    await expect(dragHandle).toBeVisible();
+    const box = await dragHandle.boundingBox();
+    if (!box) throw new Error('Could not get drag handle bounding box');
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
+    await this.page.mouse.move(centerX, centerY);
+    await this.page.mouse.down();
+    await this.page.mouse.move(centerX, centerY + offsetY);
+    await this.page.mouse.up();
+  }
 }
 
 export class ElementLinkedMenu {
