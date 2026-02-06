@@ -10,6 +10,7 @@ import {
 } from '../../../pom/editor/ReorderLinkedElementDialog';
 import { RevisionHistory } from '../../../pom/repository/RevisionHistory';
 import SeedClient from '../../../api/SeedClient';
+import { Toast } from '../../../pom/common/Toast';
 import {
   outlineSeed,
   toEditorPage,
@@ -35,7 +36,7 @@ test('can link a content element via add element dialog', async ({ page }) => {
     outlineSeed.primaryPage.title,
     outlineSeed.primaryPage.textContent,
   );
-  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  await new Toast(page).isSaved();
   // Verify linked element appears and is marked as linked
   const element = editor.getElement(outlineSeed.primaryPage.textContent);
   await expect(element.el).toBeVisible();
@@ -90,7 +91,7 @@ test('editing linked element triggers detach confirmation', async ({
   });
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'confirm' }).click();
-  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  await new Toast(page).isSaved();
   // Verify element is no longer linked after detach
   await page.waitForTimeout(1000);
   await page.reload();
@@ -115,7 +116,7 @@ test('source element edit propagates to linked copy', async ({ browser }) => {
     await sourceElement.fill(updatedContent);
     // Click another element to blur tiptap and trigger save
     await sourcePage.locator(ContentElement.selector).nth(1).click();
-    await expect(sourcePage.locator('.v-snackbar')).toHaveText('Element saved');
+    await new Toast(sourcePage).isSaved();
     // Verify propagation on target
     await targetPage.goto(
       `/repository/${linkedActivity.repositoryId}/editor/${linkedActivity.id}`,
@@ -237,10 +238,10 @@ test('reordering individually linked element keeps it linked', async ({
     outlineSeed.primaryPage.title,
     outlineSeed.primaryPage.textContent,
   );
-  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  await new Toast(page).isSaved();
   // Add another element so we have something to reorder against
   await editor.addElementDialog.add('HTML');
-  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  await new Toast(page).isSaved();
   // Reorder via API
   const targetRepoId = activity.repositoryId;
   const { data: allElements } = await api.get(
@@ -301,7 +302,7 @@ test('linking content element creates "Linked" revision', async ({ page }) => {
     outlineSeed.primaryPage.title,
     outlineSeed.primaryPage.textContent,
   );
-  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  await new Toast(page).isSaved();
   // Navigate to history page and verify "Linked" revision
   const history = await RevisionHistory.goTo(page, repository.id);
   await history.expectRevisionExists('Linked tiptap html element');

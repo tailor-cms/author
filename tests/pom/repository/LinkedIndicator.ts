@@ -1,13 +1,18 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+import { Toast } from '../common/Toast';
+
 export class LinkedIndicator {
   readonly page: Page;
   readonly el: Locator;
   readonly menuBtn: Locator;
 
+  readonly toast: Toast;
+
   constructor(page: Page, parent: Locator) {
     this.page = page;
+    this.toast = new Toast(page);
     this.el = parent.locator('.linked-indicator');
     this.menuBtn = this.el.getByRole('button', { name: 'Linked actions' });
   }
@@ -43,7 +48,7 @@ export class LinkedIndicator {
       .locator('.v-list-item')
       .filter({ hasText: 'Unlink' })
       .click();
-    await expect(this.page.locator('.v-snackbar')).toContainText('unlinked');
+    await this.toast.containsText('unlinked');
     await this.expectNotVisible();
   }
 

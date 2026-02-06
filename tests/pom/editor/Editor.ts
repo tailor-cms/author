@@ -7,6 +7,7 @@ import { ContainerList } from './ContainerList';
 import { EditorSidebar } from './Sidebar';
 import { outlineSeed } from '../../helpers/seed';
 import { SelectElementDialog } from './SelectElementDialog';
+import { Toast } from '../common/Toast';
 
 export class Editor {
   readonly page: Page;
@@ -19,9 +20,11 @@ export class Editor {
   readonly secondaryPageName = outlineSeed.secondaryPage.title;
   readonly primaryElementLabel = 'tiptap html';
   readonly containerList: ContainerList;
+  readonly toast: Toast;
 
   constructor(page: Page) {
     this.page = page;
+    this.toast = new Toast(page);
     this.copyDialog = new SelectElementDialog(page);
     this.sidebar = new EditorSidebar(page);
     this.topToolbar = this.page.locator('.activity-toolbar');
@@ -89,22 +92,21 @@ export class Editor {
   }
 
   async addContentElement(content = 'This is a test element') {
-    const { page, sidebar } = this;
+    const { page, sidebar, toast } = this;
     await this.addElementDialog.add('HTML');
     const element = this.getHtmlElement();
     await element.fill(content);
     // Focusout element to trigger the save
     await sidebar.el.focus();
-    await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
+    await toast.isSaved();
     await page.waitForLoadState('networkidle');
   }
 
   async copyContentElements(pageTitle: string, elementContent?: string) {
-    const { page, copyDialog } = this;
+    const { page, copyDialog, toast } = this;
     await this.addElementDialog.openCopyDialog();
     await copyDialog.select(pageTitle, elementContent);
-    await expect(page.locator('.v-snackbar'))
-      .toHaveText(elementContent ? 'Element saved' : 'Elements saved');
+    await toast.isSaved();
     await page.waitForLoadState('networkidle');
   }
 
