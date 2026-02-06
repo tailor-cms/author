@@ -142,6 +142,17 @@ export interface ContentContainerConfig {
   ai?: AiActivityConfig;
 }
 
+export interface I18nLanguage {
+  code: string;
+  name: string;
+}
+
+export interface I18nConfig {
+  enabled: boolean;
+  languages: I18nLanguage[];
+  defaultLanguage: string;
+}
+
 export interface Schema {
   id: string;
   workflowId: string;
@@ -153,6 +164,7 @@ export interface Schema {
   outlineStyle?: OutlineStyle;
   contentContainers: ContentContainerConfig[];
   elementMeta?: ElementMetaConfig[];
+  i18n?: I18nConfig;
   // @deprecated use elementMeta instead
   tesMeta?: any[];
 }

@@ -345,6 +345,15 @@ export const SCHEMA: Schema = {
       showPreview: true,
     },
   ],
+  i18n: {
+    enabled: true,
+    languages: [
+      { code: 'en', name: 'English' },
+      { code: 'es', name: 'Spanish' },
+      { code: 'fr', name: 'French' },
+    ],
+    defaultLanguage: 'en',
+  },
   structure: [
     ModuleConfig,
     LessonConfig,

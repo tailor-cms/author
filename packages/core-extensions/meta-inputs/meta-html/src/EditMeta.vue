@@ -3,6 +3,7 @@
     :model-value="meta.value"
     v-bind="meta"
     variant="outlined"
+    class="my-2"
     @change="$emit('update', props.meta.key, $event)"
   />
 </template>

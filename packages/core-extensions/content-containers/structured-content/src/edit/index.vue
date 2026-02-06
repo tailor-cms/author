@@ -51,10 +51,7 @@
         />
       </VCol>
     </VRow>
-    <VRow
-      v-if="config.multiple || !subcontainers.length"
-      class="py-8 pr-14 justify-center"
-    >
+    <VRow class="py-8 pr-14 justify-center">
       <VBtn
         v-for="subcontainerType in subcontainerTypes"
         :key="subcontainerType"

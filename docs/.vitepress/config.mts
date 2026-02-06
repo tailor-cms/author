@@ -28,6 +28,7 @@ export default defineConfig({
           { text: 'Content Element', link: '/concepts/content-element' },
           { text: 'Content Container', link: '/concepts/content-container' },
           { text: 'Meta Input', link: '/concepts/meta-input' },
+          { text: 'Plugin', link: '/concepts/plugin' },
           { text: 'Schema', link: '/concepts/schema' },
         ],
       },
@@ -115,6 +116,14 @@ export default defineConfig({
               {
                 text: 'Meta Inputs',
                 link: '/dev/extensions/meta-inputs',
+              },
+              {
+                text: 'Plugins',
+                link: '/dev/extensions/plugins',
+              },
+              {
+                text: 'i18n Plugin',
+                link: '/dev/extensions/i18n-plugin',
               },
             ],
           },
