@@ -383,6 +383,60 @@ test('clone preserves linked content fields', async ({ page }) => {
   await expect(clonedItem.linkIcon).toBeVisible();
 });
 
+test('linking activity with children creates single revision', async ({
+  page,
+}) => {
+  const sourceRepo = await seedSourceRepository();
+  const targetRepo = await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  // Link a group (which has child pages and content elements)
+  const linkDialog = await outline.addRootItem(outlineLevel.GROUP, 'Target Module')
+    .then((module) => module.optionsMenu.linkContentInto());
+  await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
+  // Navigate to history page
+  await page.goto(`/repository/${targetRepo.id}/root/revisions`);
+  await page.waitForLoadState('networkidle');
+  // Should show "Linked" revision for the root activity only
+  await expect(
+    page.getByText(`Linked ${outlineSeed.group.title}`, { exact: false }),
+  ).toBeVisible();
+  // Count total revisions - should be 3:
+  // 1. Created repository
+  // 2. Created "Target Module"
+  // 3. Linked "Introduction to Pizza Making" (single revision for group + children + elements)
+  const revisions = page.locator('.revision');
+  await expect(revisions).toHaveCount(3);
+  // Verify NO separate "Created" revisions for child pages or elements
+  const createdPageRevision = page.getByText(
+    `Created ${outlineSeed.primaryPage.title}`,
+    { exact: false },
+  );
+  await expect(createdPageRevision).not.toBeVisible();
+});
+
+test('unlinking activity does not create extra revision', async ({ page }) => {
+  const { linkedActivity } = await toLinkedRepositories();
+  const targetRepoId = linkedActivity.repositoryId;
+  // Count revisions before unlink (wait for revisions to load)
+  await page.goto(`/repository/${targetRepoId}/root/revisions`);
+  const revisions = page.locator('.revision');
+  await expect(revisions.first()).toBeVisible();
+  const revisionsBefore = await revisions.count();
+  // Unlink the activity
+  await toStructurePage(page, linkedActivity);
+  const outline = new ActivityOutline(page);
+  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  const indicator = sidebar.linkedIndicator;
+  await indicator.expectVisible();
+  await indicator.unlink();
+  // Navigate to history page and verify no new revision created
+  await page.goto(`/repository/${targetRepoId}/root/revisions`);
+  await expect(revisions.first()).toBeVisible();
+  const revisionsAfter = await revisions.count();
+  // Unlink should not create a revision (hooks disabled by design)
+  expect(revisionsAfter).toBe(revisionsBefore);
+});
+
 test('export and reimport strips linked content fields', async ({ page }) => {
   const { linkedActivity } = await toLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;

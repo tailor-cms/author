@@ -289,6 +289,27 @@ test('reordering nested linked element shows confirmation and unlinks activity',
   await sidebar.linkedIndicator.expectNotVisible();
 });
 
+test('linking content element creates "Linked" revision', async ({ page }) => {
+  const { activity, repository } = await toSeededRepository(page);
+  await toEditorPage(page, activity);
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  // Link an element from the primary page (individual link)
+  const linkDialog = await editor.addElementDialog.openLinkDialog();
+  await linkDialog.select(
+    outlineSeed.primaryPage.title,
+    outlineSeed.primaryPage.textContent,
+  );
+  await expect(page.locator('.v-snackbar')).toContainText('saved');
+  // Navigate to history page
+  await page.goto(`/repository/${repository.id}/root/revisions`);
+  await page.waitForLoadState('networkidle');
+  // Should show "Linked" revision for the element
+  await expect(
+    page.getByText('Linked tiptap html element', { exact: false }),
+  ).toBeVisible();
+});
+
 test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });
