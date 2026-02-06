@@ -80,7 +80,11 @@
     <VExpandTransition>
       <div v-if="expanded">
         <slot></slot>
-        <VForm ref="form" class="content text-left pa-6">
+        <VForm
+          ref="form"
+          class="content text-left pa-6"
+          :validate-on="autoSave ? 'input' : 'submit'"
+        >
           <component
             :is="componentName"
             v-bind="{

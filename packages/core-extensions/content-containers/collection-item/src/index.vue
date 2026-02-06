@@ -93,7 +93,6 @@ const initElement = (it: any, data: Record<PropertyKey, any> = {}) => {
   const element = {
     id: uuid(),
     type,
-    embedded: true,
     data: { width: 12, ...initState(), ...data },
   };
   if (isQuestion) {
@@ -112,7 +111,6 @@ const initElement = (it: any, data: Record<PropertyKey, any> = {}) => {
     });
     if (!isGradable) delete element.data.correct;
   }
-  debugger;
   return element;
 };
 
