@@ -126,6 +126,7 @@ export const useActivityStore = defineStore('activities', () => {
   ) => {
     const activity = findById(reorderedActivity.uid);
     if (!activity) return;
+    activity.position = calculatePosition(context) as number;
     const data = await api.reorder(activity.repositoryId, activity.id, {
       position: context.newPosition,
     });

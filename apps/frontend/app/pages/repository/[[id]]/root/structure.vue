@@ -22,8 +22,8 @@
             animation="150"
             group="activities"
             item-key="uid"
-            @update="(data) => reorder(data, rootActivities)"
-            @change="(e) => repositoryStore.handleOutlineItemDrag(e)"
+            @update="(data: SortableEvent) => reorder(data, rootActivities)"
+            @change="(e: ChangeEvent) => repositoryStore.onOutlineItemDrop(e)"
           >
             <template #item="{ element, index }">
               <OutlineItem
@@ -69,6 +69,7 @@ import { filter, find, map } from 'lodash-es';
 import Draggable from 'vuedraggable';
 import { storeToRefs } from 'pinia';
 
+import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
@@ -137,14 +138,14 @@ onMounted(() => {
   if (activityId) {
     repositoryStore.selectActivity(parseInt(activityId as string, 10));
   } else if (rootActivities.value.length) {
-    repositoryStore.selectActivity(rootActivities.value[0].id);
+    repositoryStore.selectActivity(rootActivities.value[0]!.id);
   } else {
     // If there are no activities
     return;
   }
   const isFirstActivitySelected =
     selectedActivity.value &&
-    rootActivities.value[0].id === selectedActivity.value.id;
+    rootActivities.value[0]!.id === selectedActivity.value.id;
   if (!isFirstActivitySelected) {
     scrollToActivity(selectedActivity.value as StoreActivity, 200);
   }

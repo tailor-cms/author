@@ -90,8 +90,8 @@
         animation="150"
         group="activities"
         item-key="uid"
-        @update="(data) => reorder(data, children)"
-        @change="(e) => currentRepositoryStore.handleOutlineItemDrag(e, activity.id)"
+        @update="(data: SortableEvent) => reorder(data, children)"
+        @change="(e: ChangeEvent) => onOutlineItemDrop(e, activity.id)"
       >
         <template #item="{ element, index: i }">
           <OutlineItem
@@ -109,18 +109,20 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
 import Draggable from 'vuedraggable';
 import { size } from 'lodash-es';
+import { useDisplay } from 'vuetify';
 
+import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import ActivityName from '@/components/common/ActivityName.vue';
 import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';
 import type { StoreActivity } from '@/stores/activity';
-import { useDisplay } from 'vuetify';
 
 const { smAndUp } = useDisplay();
 const currentRepositoryStore = useCurrentRepository();
 
 const { taxonomy } = storeToRefs(currentRepositoryStore);
+const { onOutlineItemDrop } = currentRepositoryStore;
 
 interface Props {
   activity: StoreActivity;

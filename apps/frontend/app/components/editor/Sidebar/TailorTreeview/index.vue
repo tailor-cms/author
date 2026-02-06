@@ -22,8 +22,8 @@
       animation="150"
       group="activities"
       item-key="uid"
-      @update="(data: any) => reorder(data, processedItems)"
-      @change="(e: any) => repositoryStore.handleOutlineItemDrag(e)"
+      @update="(data: SortableEvent) => reorder(data, processedItems)"
+      @change="(e: ChangeEvent) => repositoryStore.onOutlineItemDrop(e)"
     >
       <template #item="{ element }">
         <ItemGroup
@@ -49,9 +49,9 @@ import { cloneDeep, uniq } from 'lodash-es';
 import { computed, ref, watch } from 'vue';
 import Draggable from 'vuedraggable';
 
-import { useCurrentRepository } from '@/stores/current-repository';
-
+import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import ItemGroup from './ItemGroup.vue';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const repositoryStore = useCurrentRepository();
 const reorder = useOutlineReorder();

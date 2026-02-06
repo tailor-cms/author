@@ -7,6 +7,8 @@ import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
 import { repository as repositoryApi } from '@/api';
+import type { ChangeEvent, MoveEvent } from '@/types/draggable';
+import type { Activity } from '@tailor-cms/interfaces/activity';
 
 const { getOutlineLevels, getSchema } = schemaConfig;
 const { getWorkflow } = workflowConfig;
@@ -144,34 +146,30 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     isSidebarOpen.value = value;
   };
 
-  const isValidDrop = (evt: any): boolean => {
-    const draggedElement = evt.draggedContext?.element;
-    const elementType = draggedElement?.type;
+  const isValidDrop = (
+    { to, from, draggedContext }: MoveEvent<Activity>,
+  ): boolean => {
+    const elementType = draggedContext?.element?.type;
     if (!elementType) return false;
     // Allow reordering within the same list
-    if (evt.from === evt.to) return true;
-
-    const targetParentId = evt.to?.dataset?.parentId
-      ? parseInt(evt.to.dataset.parentId, 10)
+    if (from === to) return true;
+    const targetParentId = to?.dataset?.parentId
+      ? parseInt(to.dataset.parentId, 10)
       : null;
 
-    const config = taxonomy.value?.find((it: any) => it.type === elementType);
+    const config = taxonomy.value?.find((it) => it.type === elementType);
     if (!config) return false;
 
-    if (targetParentId !== null) {
-      const parent = Activity.findById(targetParentId);
-      if (!parent) return false;
-      const parentConfig = taxonomy.value?.find(
-        (it: any) => it.type === parent.type,
-      );
-      return parentConfig?.subLevels?.includes(elementType) ?? false;
-    }
-    return config.rootLevel ?? false;
+    if (targetParentId === null) return config.rootLevel ?? false;
+
+    const parent = Activity.findById(targetParentId);
+    if (!parent) return false;
+    const parentConfig = taxonomy.value?.find((it) => it.type === parent.type);
+    return parentConfig?.subLevels?.includes(elementType) ?? false;
   };
 
-  // Used for drag & drop of outline activities
-  const handleOutlineItemDrag = async (
-    context: any = {},
+  const onOutlineItemDrop = async (
+    context: ChangeEvent<Activity> = {},
     parentId: number | null = null,
   ) => {
     const { added } = context;
@@ -259,7 +257,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     toggleOutlineExpand,
     expandOutlineParents,
     isValidDrop,
-    handleOutlineItemDrag,
+    onOutlineItemDrop,
     isSidebarOpen,
     updateSidebar,
     getUsers,

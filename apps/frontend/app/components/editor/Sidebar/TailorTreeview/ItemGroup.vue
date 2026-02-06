@@ -15,8 +15,8 @@
       animation="150"
       group="activities"
       item-key="uid"
-      @update="(data: any) => reorder(data, item.children)"
-      @change="(e: any) => repositoryStore.handleOutlineItemDrag(e, item.id)"
+      @update="(data: SortableEvent) => reorder(data, item.children)"
+      @change="(e: ChangeEvent) => repositoryStore.onOutlineItemDrop(e, item.id)"
     >
       <template #item="{ element }">
         <ItemGroup
@@ -34,10 +34,10 @@
 import { computed } from 'vue';
 import Draggable from 'vuedraggable';
 
-import { useCurrentRepository } from '@/stores/current-repository';
-
+import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import ItemGroup from './ItemGroup.vue';
 import ListItem from './ListItem.vue';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
   item: any;
