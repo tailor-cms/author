@@ -8,6 +8,7 @@ import { Editor } from '../../../pom/editor/Editor';
 import {
   ReorderLinkedElementDialog,
 } from '../../../pom/editor/ReorderLinkedElementDialog';
+import { RevisionHistory } from '../../../pom/repository/RevisionHistory';
 import SeedClient from '../../../api/SeedClient';
 import {
   outlineSeed,
@@ -301,13 +302,9 @@ test('linking content element creates "Linked" revision', async ({ page }) => {
     outlineSeed.primaryPage.textContent,
   );
   await expect(page.locator('.v-snackbar')).toContainText('saved');
-  // Navigate to history page
-  await page.goto(`/repository/${repository.id}/root/revisions`);
-  await page.waitForLoadState('networkidle');
-  // Should show "Linked" revision for the element
-  await expect(
-    page.getByText('Linked tiptap html element', { exact: false }),
-  ).toBeVisible();
+  // Navigate to history page and verify "Linked" revision
+  const history = await RevisionHistory.goTo(page, repository.id);
+  await history.expectRevisionExists('Linked tiptap html element');
 });
 
 test.afterAll(async () => {

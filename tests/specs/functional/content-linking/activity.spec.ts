@@ -15,6 +15,7 @@ import { Editor } from '../../../pom/editor/Editor';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
 import { LinkContentDialog } from '../../../pom/repository/LinkContentDialog';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
+import { RevisionHistory } from '../../../pom/repository/RevisionHistory';
 import SeedClient from '../../../api/SeedClient';
 
 const api = new BaseClient('/api/repositories/');
@@ -390,49 +391,39 @@ test('linking activity with children creates single revision', async ({
   const targetRepo = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   // Link a group (which has child pages and content elements)
-  const linkDialog = await outline.addRootItem(outlineLevel.GROUP, 'Target Module')
-    .then((module) => module.optionsMenu.linkContentInto());
+  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentInto();
   await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
   // Navigate to history page
-  await page.goto(`/repository/${targetRepo.id}/root/revisions`);
-  await page.waitForLoadState('networkidle');
+  const history = await RevisionHistory.goTo(page, targetRepo.id);
   // Should show "Linked" revision for the root activity only
-  await expect(
-    page.getByText(`Linked ${outlineSeed.group.title}`, { exact: false }),
-  ).toBeVisible();
+  await history.expectRevisionExists(`Linked ${outlineSeed.group.title}`);
   // Count total revisions - should be 3:
   // 1. Created repository
   // 2. Created "Target Module"
   // 3. Linked "Introduction to Pizza Making" (single revision for group + children + elements)
-  const revisions = page.locator('.revision');
-  await expect(revisions).toHaveCount(3);
+  expect(await history.getCount()).toBe(3);
   // Verify NO separate "Created" revisions for child pages or elements
-  const createdPageRevision = page.getByText(
+  await history.expectRevisionNotExists(
     `Created ${outlineSeed.primaryPage.title}`,
-    { exact: false },
   );
-  await expect(createdPageRevision).not.toBeVisible();
 });
 
 test('unlinking activity does not create extra revision', async ({ page }) => {
   const { linkedActivity } = await toLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
-  // Count revisions before unlink (wait for revisions to load)
-  await page.goto(`/repository/${targetRepoId}/root/revisions`);
-  const revisions = page.locator('.revision');
-  await expect(revisions.first()).toBeVisible();
-  const revisionsBefore = await revisions.count();
+  // Count revisions before unlink
+  const historyBefore = await RevisionHistory.goTo(page, targetRepoId);
+  const revisionsBefore = await historyBefore.getCount();
   // Unlink the activity
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
   const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
-  const indicator = sidebar.linkedIndicator;
-  await indicator.expectVisible();
-  await indicator.unlink();
+  await sidebar.linkedIndicator.expectVisible();
+  await sidebar.linkedIndicator.unlink();
   // Navigate to history page and verify no new revision created
-  await page.goto(`/repository/${targetRepoId}/root/revisions`);
-  await expect(revisions.first()).toBeVisible();
-  const revisionsAfter = await revisions.count();
+  const historyAfter = await RevisionHistory.goTo(page, targetRepoId);
+  const revisionsAfter = await historyAfter.getCount();
   // Unlink should not create a revision (hooks disabled by design)
   expect(revisionsAfter).toBe(revisionsBefore);
 });
