@@ -1,5 +1,4 @@
 import type { Locator, Page } from '@playwright/test';
-import { expect } from '@playwright/test';
 
 import { Comments } from '../common/Comments';
 import { LinkedCopyNotice } from './LinkedCopyNotice';
