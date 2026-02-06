@@ -80,11 +80,7 @@
     <VExpandTransition>
       <div v-if="expanded">
         <slot></slot>
-        <VForm
-          ref="form"
-          class="content text-left pa-6"
-          validate-on="submit"
-        >
+        <VForm ref="form" class="content text-left pa-6">
           <component
             :is="componentName"
             v-bind="{

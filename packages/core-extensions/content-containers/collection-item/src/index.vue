@@ -8,8 +8,6 @@
           :name="input.key"
           :rules="required(input.type, input.label)"
           :model-value="state[input.key].data"
-          :validate-on-model-update="false"
-          validate-on-input
         >
           <div
             class="label ma-1 text-caption text-left"
@@ -89,21 +87,41 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{ (e: 'update:container', container: any): void }>();
 
-const initElement = (type: string, data: Record<PropertyKey, any> = {}) => {
-  const { initState = () => ({}) } = ceRegistry.get(type);
-  return {
+const initElement = (it: any, data: Record<PropertyKey, any> = {}) => {
+  const { type, isGradable } = it;
+  const { initState = () => ({}), isQuestion } = ceRegistry.get(type);
+  const element = {
     id: uuid(),
     type,
     embedded: true,
     data: { width: 12, ...initState(), ...data },
   };
+  if (isQuestion) {
+    const id = uuid();
+    const question = {
+      id,
+      data: { content: '' },
+      type: 'TIPTAP_HTML',
+      position: 1,
+      embedded: true,
+    };
+    Object.assign(element.data, {
+      embeds: { [id]: question },
+      question: [id],
+      isGradable,
+    });
+    if (!isGradable) delete element.data.correct;
+  }
+  debugger;
+  return element;
 };
 
 const initState = () =>
   Object.values(props.config).reduce((acc: Record<string, any>, it) => {
+    console.log(it);
     acc[it.key] =
       props.container.data?.[it.key] ||
-      (it.isContentElement ? initElement(it.type) : it.defaultValue || '');
+      (it.isContentElement ? initElement(it) : it.defaultValue || '');
     return acc;
   }, {});
 

@@ -16,7 +16,7 @@ class Article {
   @IsContentElement(ContentElementType.Video, { required: true })
   video: ContentElement;
 
-  @Prop()
+  @Prop({ label: 'Poll' })
   @IsContentElement(ContentElementType.MultipleChoice, { required: true })
   question: ContentElement;
 }

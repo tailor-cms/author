@@ -17,6 +17,10 @@ interface PropConfig {
   required?: boolean;
 }
 
+interface ContentElementConfig extends PropConfig {
+  isGradable?: boolean;
+}
+
 export function Prop(config?: PropConfig) {
   return (_target: any, context: Context) => {
     const meta = context.metadata || {};
@@ -33,7 +37,7 @@ export function Prop(config?: PropConfig) {
 
 export function IsContentElement(
   type: ContentElementType,
-  config?: { isGradeable?: boolean; required?: boolean },
+  config?: ContentElementConfig,
 ) {
   return (_: any, context: Context) => {
     const meta = context.metadata || {};
