@@ -1,11 +1,19 @@
-import map from 'lodash/map.js';
+import { map } from 'lodash-es';
 
-const attributes = [
-  'id', 'uid', 'type', 'position', 'parentId', 'data', 'createdAt', 'updatedAt',
+const ATTRS = [
+  'id',
+  'uid',
+  'type',
+  'position',
+  'parentId',
+  'createdAt',
+  'updatedAt',
 ];
 
 function fetch(parent, type) {
-  return parent.getChildren({ attributes, where: { type } }).map((it) => it.toJSON());
+  return parent
+    .getChildren({ attributes: ATTRS, where: { type } })
+    .map((it) => it.toJSON());
 }
 
 /**
