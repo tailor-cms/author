@@ -12,6 +12,18 @@ class Article {
   @IsContentElement(ContentElementType.TiptapHtml, { required: true })
   html: ContentElement;
 
+  @Prop()
+  @IsInput(
+    MetaInputType.File,
+    {
+      label: 'Thumbnail Image',
+      placeholder: 'Click to upload a thumbnail image',
+      icon: 'mdi-image',
+      ext: ['jpg', 'jpeg', 'png'],
+    },
+  )
+  thumbnail: string;
+
   @Prop({ label: 'Overview Video' })
   @IsContentElement(ContentElementType.Video, { required: true })
   video: ContentElement;
