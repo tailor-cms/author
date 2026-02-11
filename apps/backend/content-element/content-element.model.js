@@ -53,7 +53,9 @@ class ContentElement extends Model {
         type: JSONB,
         defaultValue: {},
       },
-      // Soft-delete flag. Set when parent activity is deleted.
+      // Unreachable within the repository structure because an ancestor
+      // activity was deleted, breaking the hierarchy chain. The record itself
+      // is intact (deletedAt handles actual soft-delete).
       detached: {
         type: BOOLEAN,
         defaultValue: false,

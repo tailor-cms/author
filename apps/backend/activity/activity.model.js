@@ -40,9 +40,9 @@ class Activity extends Model {
         type: JSONB,
         defaultValue: {},
       },
-      // Soft-delete flag for cascade deletion. When parent is deleted,
-      // descendants are marked detached, allowing restore operations.
-      // Hidden from normal queries until parent is restored or changes published.
+      // Unreachable within the repository structure because an ancestor
+      // activity was deleted, breaking the hierarchy chain. The record itself
+      // is intact (deletedAt handles actual soft-delete).
       detached: {
         type: BOOLEAN,
         defaultValue: false,
