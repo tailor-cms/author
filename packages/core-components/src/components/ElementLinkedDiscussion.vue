@@ -31,7 +31,7 @@
       <VList v-else density="compact">
         <VListItem
           :disabled="!sourceInfo"
-          :subtitle="sourceInfo?.activityName || 'Open source location'"
+          :subtitle="sourceInfo?.outlineActivityName || 'Open source location'"
           prepend-icon="mdi-open-in-new"
           title="View source"
           @click="onViewSource"
@@ -51,7 +51,7 @@ interface SourceInfo {
   repositoryName?: string;
   activityId: number;
   outlineActivityId: number;
-  activityName?: string;
+  outlineActivityName?: string;
 }
 
 interface Props {

@@ -67,7 +67,6 @@ interface Usage {
   repositoryId: number;
   repositoryName: string;
   activityId: number;
-  activityName: string;
   outlineActivityId: number;
   outlineActivityName: string;
   linkedAt: string;

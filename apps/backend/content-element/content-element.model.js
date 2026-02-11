@@ -286,7 +286,7 @@ class ContentElement extends Model {
       ...pick(source, ['id', 'uid', 'repositoryId', 'activityId', 'type']),
       outlineActivityId: outlineActivity?.id,
       repositoryName: source.repository?.name,
-      activityName: source.activity?.data?.name,
+      outlineActivityName: outlineActivity?.data?.name,
     };
   }
 

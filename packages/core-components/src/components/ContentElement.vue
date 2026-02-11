@@ -272,7 +272,7 @@ const linkedSourceInfo = ref<{
   repositoryName?: string;
   activityId: number;
   outlineActivityId: number;
-  activityName?: string;
+  outlineActivityName?: string;
 } | null>(null);
 
 // Source usages state (for non-linked elements that could have copies)
@@ -285,7 +285,6 @@ const sourceUsagesData = ref<{
     repositoryId: number;
     repositoryName: string;
     activityId: number;
-    activityName: string;
     outlineActivityId: number;
     outlineActivityName: string;
     linkedAt: string;
