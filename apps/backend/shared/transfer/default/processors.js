@@ -198,10 +198,8 @@ function normalize(it, Model) {
   return reduce(
     it,
     (acc, value, key) => {
-      const attr = Model.fieldRawAttributesMap[key];
-      // Skip fields not in model (handles schema changes gracefully)
-      if (!attr) return acc;
-      acc[attr.fieldName] = value;
+      const { fieldName } = Model.fieldRawAttributesMap[key];
+      acc[fieldName] = value;
       return acc;
     },
     {},
