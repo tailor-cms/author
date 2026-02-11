@@ -311,7 +311,7 @@ const onSave = (data: ContentElement['data']) => {
     confirmationDialog({
       title: 'Edit linked element?',
       message:
-        `This element is linked. Editing will detach it and you ` +
+        `This element is linked. Editing will unlink it and you ` +
         `will no longer receive updates. Do you want to continue?`,
       action: () => {
         isSaving.value = true;

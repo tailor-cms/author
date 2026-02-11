@@ -60,7 +60,7 @@ class ContentElement extends Model {
         allowNull: false,
       },
       // Indicates this is an active linked copy from a library source.
-      // Editing data auto-detaches, preserving sourceId for provenance.
+      // Editing data auto-unlinks, preserving sourceId for provenance.
       isLinkedCopy: {
         type: BOOLEAN,
         field: 'is_linked_copy',

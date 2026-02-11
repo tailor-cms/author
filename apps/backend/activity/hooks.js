@@ -25,7 +25,7 @@ function add(Activity, Hooks, Models) {
     // Order matters: touchOutline must run before propagateToLinkedActivities
     // so modifiedAt is set before propagation uses it
     [Hooks.afterUpdate]: [
-      autoDetachOnEdit,
+      autoUnlinkOnEdit,
       touchRepository,
       touchOutline,
       propagateToLinkedActivities,
@@ -89,12 +89,12 @@ function add(Activity, Hooks, Models) {
     }
   }
 
-  /** Auto-detach linked activity when data is edited. */
-  async function autoDetachOnEdit(_hookType, activity, opts) {
+  /** Auto-unlink linked activity when data is edited. */
+  async function autoUnlinkOnEdit(_hookType, activity, opts) {
     if (!activity.isLinkedCopy) return;
     if (!opts.fields?.includes('data')) return;
     if (opts.context?.libraryUpdate) return;
-    await linkService.detachOnEdit(activity, opts.transaction);
+    await linkService.unlinkOnEdit(activity, opts.transaction);
   }
 
   /**

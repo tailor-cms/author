@@ -49,7 +49,7 @@ class LinkService {
   }
 
   /**
-   * Unlink/detach an activity from its source.
+   * Unlink an activity from its source.
    * Converts linked copy to independent local copy.
    * Keeps sourceId for provenance but stops auto-sync updates.
    *
@@ -121,11 +121,11 @@ class LinkService {
   }
 
   /**
-   * Auto-detach linked activity when data is edited.
+   * Auto-unlink linked activity when data is edited.
    * "If you edit it, you own it" - user edits break the library link.
-   * @returns {boolean} True if activity was detached
+   * @returns {boolean} True if activity was unlinked
    */
-  async detachOnEdit(activity, transaction) {
+  async unlinkOnEdit(activity, transaction) {
     if (!activity.isLinkedCopy) return false;
     await activity.update(UNLINK_DATA, { transaction, hooks: false });
     return true;

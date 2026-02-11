@@ -57,7 +57,7 @@ class Activity extends Model {
       },
       // Indicates this is an active linked copy from a library source.
       // When true, receives automatic updates when source changes.
-      // Editing data auto-detaches (sets to false), preserving sourceId for
+      // Editing data auto-unlinks (sets to false), preserving sourceId for
       // provenance.
       isLinkedCopy: {
         type: BOOLEAN,

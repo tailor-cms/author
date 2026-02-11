@@ -77,7 +77,7 @@ test('comments disabled on linked element', async ({ page }) => {
   ).toBeVisible();
 });
 
-test('editing linked element triggers detach confirmation', async ({
+test('editing linked element triggers unlink confirmation', async ({
   page,
 }) => {
   const { linkedActivity } = await toLinkedRepositories();
@@ -92,7 +92,7 @@ test('editing linked element triggers detach confirmation', async ({
   await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'confirm' }).click();
   await new Toast(page).isSaved();
-  // Verify element is no longer linked after detach
+  // Verify element is no longer linked after unlink
   await page.waitForTimeout(1000);
   await page.reload();
   await page.waitForLoadState('networkidle');

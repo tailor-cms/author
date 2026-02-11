@@ -68,10 +68,10 @@ function add(ContentElement, Hooks, Models) {
   };
 
   /**
-   * Auto-detach linked element when user edits data.
+   * Auto-unlink linked element when user edits data.
    * "If you edit it, you own it" - user edits break the library link.
    */
-  async function autoDetachOnEdit(_hookType, element, opts) {
+  async function autoUnlinkOnEdit(_hookType, element, opts) {
     if (!element.isLinkedCopy) return;
     if (!opts.fields?.includes('data')) return;
     if (isLibrarySync(opts)) return;
@@ -83,7 +83,7 @@ function add(ContentElement, Hooks, Models) {
 
   /**
    * Propagate source element updates to all linked copies.
-   * Check both current and previous isLinkedCopy - autoDetachOnEdit may have
+   * Check both current and previous isLinkedCopy - autoUnlinkOnEdit may have
    * already cleared the flag if user edited a linked copy.
    */
   async function propagateToLinkedElements(_hookType, element, opts) {
@@ -277,7 +277,7 @@ function add(ContentElement, Hooks, Models) {
       touchOutline,
     ],
     [Hooks.afterUpdate]: [
-      autoDetachOnEdit,
+      autoUnlinkOnEdit,
       customElementHook,
       resolveAssets,
       propagateToLinkedElements,

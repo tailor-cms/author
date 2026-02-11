@@ -240,14 +240,14 @@ test('unlinking preserves content', async ({ page }) => {
   expect(contentText).toContain(outlineSeed.primaryPage.textContent);
 });
 
-test('auto-detach on activity data edit', async ({ page }) => {
+test('auto-unlink on activity data edit', async ({ page }) => {
   const { linkedActivity } = await toLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
   const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
   const indicator = sidebar.linkedIndicator;
   await indicator.expectVisible();
-  // Edit the activity name in sidebar, triggers auto-detach
+  // Edit the activity name in sidebar, triggers auto-unlink
   const newName = 'Edited Linked Activity';
   await sidebar.fillName(newName);
   await indicator.expectNotVisible();
@@ -326,7 +326,7 @@ test('source activity deletion unlinks copies', async ({ page }) => {
   await sidebar.linkedIndicator.expectNotVisible();
 });
 
-test('reordering linked activity does not detach it', async ({ page }) => {
+test('reordering linked activity does not unlink it', async ({ page }) => {
   const { linkedActivity } = await toLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   await toStructurePage(page, linkedActivity);
