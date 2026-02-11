@@ -188,11 +188,12 @@ const reorderContentElements = ({
   const outlineActivity = editorStore.selectedActivity;
   // Check if element is linked via parent activity (nested linked)
   if (outlineActivity?.isLinkedCopy) {
+    const activityLabel = $schemaService.getActivityLabel(outlineActivity);
     confirmationDialog({
       title: 'Reorder linked element?',
       message: `
-        This element is part of a linked activity. Reordering will
-        detach the activity from library updates. Do you want to continue?`,
+        This element is part of a linked ${activityLabel}. Reordering will
+        unlink the ${activityLabel} from receiving updates. Do you want to continue?`,
       action: async () => {
         await activityApi.unlink(
           outlineActivity.repositoryId,
