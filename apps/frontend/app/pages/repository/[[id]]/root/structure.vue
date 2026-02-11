@@ -7,14 +7,14 @@
         max-width="1800"
       >
         <OutlineToolbar
-          v-if="hasActivities || isGrid"
+          v-if="hasActivities || isCollection"
           v-model:activity-types="filters.activityTypes"
           v-model:search="filters.search"
           :activity-type-options="taxonomy"
           :has-activities="hasActivities"
         />
         <BrokenReferencesAlert />
-        <VRow v-if="isGrid" class="mt-5 flex-grow-0" dense>
+        <VRow v-if="isCollection" class="mt-5 flex-grow-0" dense>
           <template v-if="filteredActivities.length">
             <VCol
               v-for="item in filteredActivities"
@@ -92,7 +92,6 @@
 
 <script lang="ts" setup>
 import Draggable from 'vuedraggable';
-import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 import type { SortableEvent } from 'sortablejs';
 import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
@@ -124,7 +123,7 @@ const {
   rootActivities,
   selectedActivity,
   taxonomy,
-  schemaOutlineStyle,
+  isCollection,
 } = storeToRefs(repositoryStore);
 
 const reorder = useOutlineReorder();
@@ -141,7 +140,6 @@ const filters = reactive<Filters>({
 const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);
 
-const isGrid = computed(() => schemaOutlineStyle.value === OutlineStyle.Grid);
 const filteredActivities = computed(() => {
   const filterByType = (type: string) => filters.activityTypes.includes(type);
   return outlineActivities.value.filter(

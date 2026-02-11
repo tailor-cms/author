@@ -1,7 +1,7 @@
 <template>
   <div class="toolbar d-flex align-center justify-end flex-wrap ga-4 mb-2">
     <VHover v-if="hasActivities" v-slot="{ isHovering, props: hoverProps }">
-      <VSpacer v-if="isListStyle" />
+      <VSpacer v-if="!isCollection" />
       <VTextField
         v-bind="hoverProps"
         v-model="search"
@@ -18,7 +18,7 @@
         @click:clear="search = ''"
       />
     </VHover>
-    <template v-if="!isListStyle">
+    <template v-if="isCollection">
       <VHover
         v-if="hasActivities && activityTypeOptions?.length"
         v-slot="{ isHovering, props: hoverProps }"
@@ -66,10 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  type ActivityConfig,
-  OutlineStyle,
-} from '@tailor-cms/interfaces/schema';
+import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { filter, find, last, map } from 'lodash-es';
 
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
@@ -88,12 +85,8 @@ const activityTypes = defineModel<string[]>('activityTypes', {
 defineEmits(['search']);
 
 const repositoryStore = useCurrentRepository();
-const { outlineActivities, rootActivities, schemaOutlineStyle, taxonomy } =
+const { outlineActivities, rootActivities, isCollection, taxonomy } =
   storeToRefs(repositoryStore);
-
-const isListStyle = computed(
-  () => schemaOutlineStyle.value === OutlineStyle.List,
-);
 
 const isFlat = computed(() => {
   const types = map(

@@ -3,7 +3,6 @@ import {
   workflow as workflowConfig,
 } from '@tailor-cms/config';
 import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
-import { OutlineStyle } from '@tailor-cms/interfaces/schema';
 
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
@@ -63,9 +62,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const schemaName = computed(() => schema.value?.name || '');
 
-  const schemaOutlineStyle = computed(() => {
-    return schema.value?.outlineStyle || OutlineStyle.List;
-  });
+  const isCollection = computed(() => schema.value?.collection);
 
   const taxonomy = computed(() => {
     return repository.value && getOutlineLevels(repository.value.schema);
@@ -243,7 +240,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     users,
     outlineState,
     schemaName,
-    schemaOutlineStyle,
+    isCollection,
     taxonomy,
     activities,
     outlineActivities,

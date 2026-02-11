@@ -1,7 +1,7 @@
 // Ensure metadata symbol is available
 import './metadata.shim.js';
 
-import type { Metadata, OutlineStyle } from '@tailor-cms/interfaces/schema';
+import type { Metadata } from '@tailor-cms/interfaces/schema';
 import type { ContentElementType } from '@tailor-cms/content-element-collection/enum.ts';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import type { MetaInputType } from '@tailor-cms/meta-element-collection/enum.ts';
@@ -61,7 +61,6 @@ export class TailorCollection {
   id: string;
   label: string;
   props: Array<any>;
-
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     entity: Function,
@@ -79,7 +78,7 @@ export class TailorCollection {
       id: this.id,
       name: `${this.label} Collection`,
       description: `A currated ${this.label} collection.`,
-      outlineStyle: 'GRID' as OutlineStyle,
+      collection: true,
       workflowId: 'DEFAULT_WORKFLOW',
       contentContainers: [
         {
