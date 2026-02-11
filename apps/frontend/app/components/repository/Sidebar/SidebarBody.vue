@@ -58,15 +58,13 @@
       :type="activity.type"
       class="mt-6 mb-3"
     />
-    <!-- Linked activity indicator -->
     <LinkedIndicator
       v-if="activity.isLinkedCopy"
       :activity="activity"
       class="mt-4"
     />
-    <!-- Show if this activity has linked copies -->
     <SourceUsages
-      v-if="showSourceUsages"
+      v-if="!activity.isLinkedCopy"
       :activity="activity"
       class="mt-4"
       @copy:view="viewCopy"
@@ -126,8 +124,6 @@ const metadata = computed(() =>
 const isSoftDeleted = computed(() =>
   activityUtils.doesRequirePublishing(props.activity),
 );
-
-const showSourceUsages = computed(() => !props.activity.isLinkedCopy);
 
 const viewCopy = (copy: {
   repositoryId: number;
