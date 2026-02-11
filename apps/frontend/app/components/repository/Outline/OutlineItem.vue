@@ -81,10 +81,11 @@
         </VSheet>
       </template>
     </VHover>
-    <div v-if="!isSoftDeleted && isExpanded && hasChildren">
+    <div v-if="!isSoftDeleted && isExpanded && hasChildren" class="mt-2">
       <Draggable
         v-bind="{ handle: '.activity' }"
         :list="children"
+        class="d-flex flex-column ga-2"
         group="activities"
         item-key="uid"
         @update="(e: SortableEvent) => reorder(e, children)"
@@ -178,7 +179,6 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
 .activity {
   display: flex;
   height: 3.25rem;
-  margin: 0.625rem 0;
   padding: 0 0 0 0.375rem;
   background-color: $background-color;
   cursor: pointer;

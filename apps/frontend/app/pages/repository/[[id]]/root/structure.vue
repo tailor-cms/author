@@ -8,43 +8,32 @@
       >
         <OutlineToolbar
           v-if="hasActivities || isCollection"
-          v-model:activity-types="filters.activityTypes"
           v-model:search="filters.search"
-          :activity-type-options="taxonomy"
           :has-activities="hasActivities"
         />
         <BrokenReferencesAlert />
-        <VRow v-if="isCollection" class="mt-5 flex-grow-0" dense>
-          <template v-if="filteredActivities.length">
-            <VCol
-              v-for="item in filteredActivities"
-              :key="item.id"
-              :cols="xlAndUp ? 3 : lgAndUp ? 4 : mdAndUp ? 6 : 12"
-            >
-              <OutlineCard :activity="item" />
-            </VCol>
-          </template>
-          <VCol v-else cols="12">
-            <VAlert
-              :icon="`mdi-${hasActivities ? 'magnify' : 'information-outline'}`"
-              class="mb-5"
-              color="primary-lighten-3"
-              variant="tonal"
-              prominent
-            >
-              <template v-if="hasActivities">No matches found!</template>
-              <template v-else>
-                Click on the button above in order to create your first item!
-              </template>
-            </VAlert>
-          </VCol>
-        </VRow>
+        <div v-if="isCollection" class="collection-wrapper mt-5">
+          <CollectionTable
+            v-if="hasActivities"
+            :activities="filteredActivities"
+          />
+          <VAlert
+            v-else
+            class="mb-5"
+            color="primary-lighten-3"
+            icon="mdi-information-outline"
+            variant="tonal"
+            prominent
+          >
+            Click on the button above in order to create your first item!
+          </VAlert>
+        </div>
         <template v-else>
           <template v-if="!filters.search">
             <Draggable
               v-bind="{ handle: '.activity' }"
               :list="rootActivities"
-              class="mt-5"
+              class="mt-5 d-flex flex-column ga-2"
               item-key="uid"
               @update="(e: SortableEvent) => reorder(e, rootActivities)"
             >
@@ -94,10 +83,9 @@
 import Draggable from 'vuedraggable';
 import type { SortableEvent } from 'sortablejs';
 import { storeToRefs } from 'pinia';
-import { useDisplay } from 'vuetify';
 
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
-import OutlineCard from '@/components/repository/Outline/OutlineCard.vue';
+import CollectionTable from '@/components/repository/Outline/CollectionTable.vue';
 import OutlineFooter from '~/components/repository/Outline/OutlineFooter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
@@ -108,7 +96,6 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Filters {
   search: string;
-  activityTypes: string[];
 }
 
 definePageMeta({
@@ -122,30 +109,25 @@ const {
   outlineActivities,
   rootActivities,
   selectedActivity,
-  taxonomy,
   isCollection,
 } = storeToRefs(repositoryStore);
 
 const reorder = useOutlineReorder();
 const storageService = useStorageService();
-const { mdAndUp, lgAndUp, xlAndUp } = useDisplay();
 
 provide('$storageService', storageService);
 
 const filters = reactive<Filters>({
   search: '',
-  activityTypes: [],
 });
 
 const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);
 
 const filteredActivities = computed(() => {
-  const filterByType = (type: string) => filters.activityTypes.includes(type);
   return outlineActivities.value.filter(
     (activity: StoreActivity) =>
-      (!filters.search || filterBySearch(activity)) &&
-      (!filters.activityTypes.length || filterByType(activity.type)),
+      !filters.search || filterBySearch(activity),
   );
 });
 
@@ -213,8 +195,15 @@ onMounted(() => {
     display: none;
   }
 
-  > :deep(:last-child) {
+  > :deep(:last-child:not(.collection-wrapper)) {
     margin-bottom: 7.5rem;
   }
+}
+
+.collection-wrapper {
+  flex: 1 1 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 </style>

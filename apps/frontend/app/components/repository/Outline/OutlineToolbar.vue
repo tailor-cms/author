@@ -1,12 +1,11 @@
 <template>
-  <div class="toolbar d-flex align-center justify-end flex-wrap ga-4 mb-2">
+  <div class="toolbar d-flex align-center justify-end flex-wrap ga-4 mb-4">
     <VHover v-if="hasActivities" v-slot="{ isHovering, props: hoverProps }">
       <VSpacer v-if="!isCollection" />
       <VTextField
         v-bind="hoverProps"
         v-model="search"
         :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-        :class="{ 'mr-4': !isFlat }"
         density="comfortable"
         placeholder="Search by name or id..."
         prepend-inner-icon="mdi-magnify"
@@ -19,28 +18,6 @@
       />
     </VHover>
     <template v-if="isCollection">
-      <VHover
-        v-if="hasActivities && activityTypeOptions?.length"
-        v-slot="{ isHovering, props: hoverProps }"
-      >
-        <VSelect
-          v-bind="hoverProps"
-          v-model="activityTypes"
-          :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-          :items="activityTypeOptions"
-          density="comfortable"
-          item-title="label"
-          item-value="type"
-          max-width="232"
-          placeholder="Filter by type"
-          rounded="xl"
-          variant="solo"
-          clearable
-          flat
-          hide-details
-          multiple
-        />
-      </VHover>
       <VSpacer />
       <CreateDialog
         :anchor="anchor"
@@ -66,23 +43,16 @@
 </template>
 
 <script lang="ts" setup>
-import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { filter, find, last, map } from 'lodash-es';
 
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps<{
-  activityTypeOptions?: ActivityConfig[] | null;
   hasActivities: boolean;
 }>();
 
 const search = defineModel<string | null>('search', { default: null });
-const activityTypes = defineModel<string[]>('activityTypes', {
-  default: () => [],
-});
-
-defineEmits(['search']);
 
 const repositoryStore = useCurrentRepository();
 const { outlineActivities, rootActivities, isCollection, taxonomy } =
