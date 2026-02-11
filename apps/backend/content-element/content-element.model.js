@@ -286,8 +286,8 @@ class ContentElement extends Model {
     const outlineActivity = await source.activity?.getFirstOutlineItem();
     return {
       ...pick(source, ['id', 'uid', 'repositoryId', 'activityId', 'type']),
-      outlineActivityId: outlineActivity?.id,
       repositoryName: source.repository?.name,
+      outlineActivityId: outlineActivity?.id,
       outlineActivityName: outlineActivity?.data?.name,
     };
   }
