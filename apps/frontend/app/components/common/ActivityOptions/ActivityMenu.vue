@@ -47,7 +47,7 @@
     />
     <LinkContent
       v-if="showLinkDialog"
-      :action="linkAction"
+      :action="action"
       :anchor="activity"
       @close="showLinkDialog = false"
       @completed="showLinkDialog = false"
@@ -88,7 +88,6 @@ const showCopyDialog = ref(false);
 const showLinkDialog = ref(false);
 const action = ref<InsertLocation>(AddAfter);
 const supportedLevels = ref<string[]>([]);
-const linkAction = ref<InsertLocation>(AddAfter);
 
 const addMenuOptions = computed(() => {
   const items = [
@@ -168,7 +167,7 @@ const setCopyContext = (levels: Activity[], actionValue: InsertLocation) => {
 };
 
 const setLinkContext = (actionValue: InsertLocation) => {
-  linkAction.value = actionValue;
+  action.value = actionValue;
   showLinkDialog.value = true;
 };
 
