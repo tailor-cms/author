@@ -14,7 +14,7 @@ import { Toast } from '../../../pom/common/Toast';
 import {
   outlineSeed,
   toEditorPage,
-  toLinkedRepositories,
+  seedLinkedRepositories,
   toSeededRepository,
   toStructurePage,
 } from '../../../helpers/seed';
@@ -54,7 +54,7 @@ test('can link a content element via add element dialog', async ({ page }) => {
 });
 
 test('linked element shows linked indicator', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toEditorPage(page, linkedActivity);
   const editor = new Editor(page);
   const element = editor.getElement();
@@ -65,7 +65,7 @@ test('linked element shows linked indicator', async ({ page }) => {
 });
 
 test('comments disabled on linked element', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toEditorPage(page, linkedActivity);
   const editor = new Editor(page);
   const element = editor.getElement();
@@ -80,7 +80,7 @@ test('comments disabled on linked element', async ({ page }) => {
 test('editing linked element triggers unlink confirmation', async ({
   page,
 }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toEditorPage(page, linkedActivity);
   const editor = new Editor(page);
   const element = editor.getHtmlElement();
@@ -107,7 +107,7 @@ test('source element edit propagates to linked copy', async ({ browser }) => {
   const sourcePage = await context.newPage();
   const targetPage = await context.newPage();
   try {
-    const { activity, linkedActivity } = await toLinkedRepositories();
+    const { activity, linkedActivity } = await seedLinkedRepositories();
     await toEditorPage(sourcePage, activity);
     const sourceEditor = new Editor(sourcePage);
     const sourceElement = sourceEditor.getHtmlElement();
@@ -136,7 +136,7 @@ test('element creation propagates to linked copy', async ({ browser }) => {
   try {
     const sourcePage = await context.newPage();
     const targetPage = await context.newPage();
-    const { activity, linkedActivity } = await toLinkedRepositories();
+    const { activity, linkedActivity } = await seedLinkedRepositories();
     await toEditorPage(sourcePage, activity);
     const sourceEditor = new Editor(sourcePage);
     const sourceElements = sourcePage.locator(ContentElement.selector);
@@ -164,7 +164,7 @@ test('element deletion propagates to linked copy', async ({ browser }) => {
   const sourcePage = await context.newPage();
   const targetPage = await context.newPage();
   try {
-    const { activity, linkedActivity } = await toLinkedRepositories();
+    const { activity, linkedActivity } = await seedLinkedRepositories();
     await toEditorPage(sourcePage, activity);
     const sourceEditor = new Editor(sourcePage);
     const sourceElements = sourcePage.locator(ContentElement.selector);
@@ -188,7 +188,7 @@ test('element deletion propagates to linked copy', async ({ browser }) => {
 });
 
 test('source usages display on source element', async ({ page }) => {
-  const { activity } = await toLinkedRepositories();
+  const { activity } = await seedLinkedRepositories();
   await toEditorPage(page, activity);
   const editor = new Editor(page);
   const element = editor.getElement();
@@ -197,7 +197,7 @@ test('source usages display on source element', async ({ page }) => {
 });
 
 test('comments restore after unlink', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   // Navigate to structure and unlink
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
@@ -215,7 +215,7 @@ test('comments restore after unlink', async ({ page }) => {
 });
 
 test('nested linked elements do not show unlink action', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toEditorPage(page, linkedActivity);
   const editor = new Editor(page);
   const element = editor.getElement();
@@ -266,7 +266,7 @@ test('reordering nested linked element shows confirmation and unlinks activity',
 }) => {
   // Set larger viewport height to ensure drag operation works correctly
   await page.setViewportSize({ width: 1280, height: 1400 });
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toEditorPage(page, linkedActivity);
   const editor = new Editor(page);
   // Verify elements are initially linked

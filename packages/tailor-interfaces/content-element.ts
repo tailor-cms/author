@@ -31,9 +31,9 @@ export interface ContentElement {
   refs: Record<string, Relationship | number>;
   /** Parent is soft-deleted */
   detached: boolean;
-  /** Whether this element is an active linked copy from a library source */
+  /** Whether this element is an active linked copy */
   isLinkedCopy: boolean;
-  /** ID of the source element in the library */
+  /** ID of the source element */
   sourceId?: number;
   /** Timestamp of source element when linked */
   sourceModifiedAt?: string;

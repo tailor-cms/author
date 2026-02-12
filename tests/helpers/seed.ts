@@ -68,7 +68,7 @@ export const outlineSeed = {
   },
 };
 
-export const toLinkedRepositories = async () => {
+export const seedLinkedRepositories = async () => {
   const { data } = await SeedClient.seedTestRepository({
     includeLinkExample: true,
   });

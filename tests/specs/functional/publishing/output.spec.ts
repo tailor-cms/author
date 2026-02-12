@@ -4,7 +4,7 @@ import { isStorageConfigured, StorageClient } from '../../../api/StorageClient';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
 import SeedClient from '../../../api/SeedClient';
 import {
-  toLinkedRepositories,
+  seedLinkedRepositories,
   toSeededRepositorySettings,
 } from '../../../helpers/seed';
 
@@ -43,7 +43,7 @@ test('should publish linked content with sourceId and isLinkedCopy', async ({
   page,
 }) => {
   test.skip(!isStorageConfigured, 'Storage is not enabled');
-  const { activity, linkedActivity } = await toLinkedRepositories();
+  const { activity, linkedActivity } = await seedLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   // Navigate to linked repository settings and publish
   await page.goto(`/repository/${targetRepoId}/root/settings/general`);

@@ -5,7 +5,7 @@ import {
   outlineSeed,
   toEditorPage,
   toEmptyRepository,
-  toLinkedRepositories,
+  seedLinkedRepositories,
   toStructurePage,
 } from '../../../helpers/seed';
 import { ActivityOutline } from '../../../pom/repository/Outline';
@@ -167,7 +167,7 @@ test('can link a leaf activity via footer button', async ({ page }) => {
 });
 
 test('linked activity shows link icon in outline', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
   await outline.toggleExpand();
@@ -178,7 +178,7 @@ test('linked activity shows link icon in outline', async ({ page }) => {
 test('linked indicator shows in sidebar when linked activity is selected', async ({
   page,
 }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
   const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
@@ -188,7 +188,7 @@ test('linked indicator shows in sidebar when linked activity is selected', async
 });
 
 test('can unlink activity via indicator menu', async ({ page }) => {
-  const { linkedActivity: item } = await toLinkedRepositories();
+  const { linkedActivity: item } = await seedLinkedRepositories();
   await toStructurePage(page, item);
   const outline = new ActivityOutline(page);
   const { sidebar } = await outline.expandAndSelect(item.uid);
@@ -202,7 +202,7 @@ test('can unlink activity via indicator menu', async ({ page }) => {
 });
 
 test('comments disabled on linked activity', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
   const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
@@ -213,7 +213,7 @@ test('comments disabled on linked activity', async ({ page }) => {
 });
 
 test('can navigate to source from comments notice', async ({ page }) => {
-  const { repository, linkedActivity } = await toLinkedRepositories();
+  const { repository, linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
   const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
@@ -224,7 +224,7 @@ test('can navigate to source from comments notice', async ({ page }) => {
 });
 
 test('unlinking preserves content', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
   const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
@@ -241,7 +241,7 @@ test('unlinking preserves content', async ({ page }) => {
 });
 
 test('auto-unlink on activity data edit', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
   const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
@@ -263,7 +263,7 @@ test('auto-unlink on activity data edit', async ({ page }) => {
 test('auto-unlink on structural change (add child to a linked module)', async ({
   page,
 }) => {
-  const { repository, linkedActivity } = await toLinkedRepositories();
+  const { repository, linkedActivity } = await seedLinkedRepositories();
   const { data: activities } = await api.get(`${repository.id}/activities/`);
   const sourceModule = activities.find(
     (a: any) => a.data.name === outlineSeed.group.title,
@@ -293,7 +293,7 @@ test('auto-unlink on structural change (add child to a linked module)', async ({
 });
 
 test('source activity rename propagates to linked copy', async ({ page }) => {
-  const { activity, linkedActivity } = await toLinkedRepositories();
+  const { activity, linkedActivity } = await seedLinkedRepositories();
   // Rename the source activity
   await toStructurePage(page, activity);
   const sourceOutline = new ActivityOutline(page);
@@ -311,7 +311,7 @@ test('source activity rename propagates to linked copy', async ({ page }) => {
 });
 
 test('source activity deletion unlinks copies', async ({ page }) => {
-  const { activity, linkedActivity } = await toLinkedRepositories();
+  const { activity, linkedActivity } = await seedLinkedRepositories();
   // Navigate to source and delete
   await toStructurePage(page, activity);
   const sourceOutline = new ActivityOutline(page);
@@ -327,7 +327,7 @@ test('source activity deletion unlinks copies', async ({ page }) => {
 });
 
 test('reordering linked activity does not unlink it', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
@@ -358,7 +358,7 @@ test('reordering linked activity does not unlink it', async ({ page }) => {
 });
 
 test('clone preserves linked content fields', async ({ page }) => {
-  const { activity, linkedActivity } = await toLinkedRepositories();
+  const { activity, linkedActivity } = await seedLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   // Clone the linked repository via API
   const { data: clonedRepo } = await api.post(`${targetRepoId}/clone`, {
@@ -410,7 +410,7 @@ test('linking activity with children creates single revision', async ({
 });
 
 test('unlinking activity does not create extra revision', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   // Count revisions before unlink
   const historyBefore = await RevisionHistory.goTo(page, targetRepoId);
@@ -429,7 +429,7 @@ test('unlinking activity does not create extra revision', async ({ page }) => {
 });
 
 test('export and reimport strips linked content fields', async ({ page }) => {
-  const { linkedActivity } = await toLinkedRepositories();
+  const { linkedActivity } = await seedLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   // Navigate to linked repository settings and export
   await page.goto(`/repository/${targetRepoId}/root/settings/general`);
