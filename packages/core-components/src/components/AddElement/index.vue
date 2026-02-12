@@ -57,7 +57,7 @@
             @click="showElementBrowser = !showElementBrowser"
           />
           <VBtn
-            v-if="!useAI"
+            v-if="!useAI && props.activity"
             class="ml-2"
             color="primary-darken-3"
             prepend-icon="mdi-link-variant"
@@ -217,12 +217,10 @@ const addLinkedElements = async (elements: any[]) => {
       data: { ...el.data, width: processedWidth.value },
       meta: el.meta,
       position: positions[index],
+      activityId: props.activity!.id,
       isLinkedCopy: true,
       sourceId: el.id,
       sourceModifiedAt: el.updatedAt,
-      ...(props.activity
-        ? { activityId: props.activity.id }
-        : { id: uuid(), embedded: true }),
     };
   });
   emit('add', items);
