@@ -171,8 +171,8 @@ class LinkService {
     const { Activity } = this.db;
     const { targetRepository, parentId, position, context, transaction } = opts;
     const targetType = await this.#resolveType(source.type, opts);
-    // Mark as libraryUpdate to prevent hooks from auto-unlinking the tree
-    const linkContext = { ...context, libraryUpdate: true };
+    // Mark as linkSync to prevent hooks from auto-unlinking the tree
+    const linkContext = { ...context, linkSync: true };
     const linked = await Activity.create(
       {
         repositoryId: targetRepository.id,
@@ -242,7 +242,7 @@ class LinkService {
     const { ContentElement } = this.db;
     const { context, transaction } = opts;
     // Mark as nested linked content to skip revision creation in hooks
-    const linkContext = { ...context, libraryUpdate: true, isNestedLinkedContent: true };
+    const linkContext = { ...context, linkSync: true, isNestedLinkedContent: true };
     const elements = await ContentElement.findAll({
       where: { activityId: sourceActivityId, detached: false },
       transaction,

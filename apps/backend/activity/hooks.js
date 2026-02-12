@@ -17,7 +17,7 @@ function add(Activity, Hooks, Models) {
 
   const mappings = {
     [Hooks.afterCreate]: [
-      unlinkParentOnCreate,
+      unlinkParentOnStructuralChange,
       touchRepository,
       touchOutline,
       sseCreate,
@@ -33,7 +33,7 @@ function add(Activity, Hooks, Models) {
     ],
     [Hooks.afterBulkUpdate]: [afterTransaction(sseBulkUpdate)],
     [Hooks.afterDestroy]: [
-      unlinkParentOnDelete,
+      unlinkParentOnStructuralChange,
       afterTransaction(unlinkCopiesOnDelete),
       touchRepository,
       touchOutline,
@@ -42,26 +42,11 @@ function add(Activity, Hooks, Models) {
     [Hooks.afterRestore]: [touchRepository, touchOutline, sseUpdate],
   };
 
-  /** Unlink parent tree when activity created under linked parent. */
-  async function unlinkParentOnCreate(_hookType, activity, opts) {
-    if (opts.context?.libraryUpdate) return;
+  /** Unlink parent tree when structural change breaks the link. */
+  async function unlinkParentOnStructuralChange(_hookType, activity, opts) {
+    if (opts.context?.linkSync) return;
     if (!activity.parentId) return;
-    log(`Checking parent unlink due to child creation`);
-    const entryPoint = await linkService.unlinkParentIfLinked(
-      activity.parentId,
-      opts.context,
-      opts.transaction,
-    );
-    if (entryPoint) {
-      sse.channel(entryPoint.repositoryId).send(Events.Update, entryPoint);
-    }
-  }
-
-  /** Unlink parent tree when activity deleted from linked parent. */
-  async function unlinkParentOnDelete(_hookType, activity, opts) {
-    if (opts.context?.libraryUpdate) return;
-    if (!activity.parentId) return;
-    log(`Checking parent unlink due to child deletion`);
+    log(`Checking parent unlink due to structural change`);
     const entryPoint = await linkService.unlinkParentIfLinked(
       activity.parentId,
       opts.context,
@@ -93,7 +78,7 @@ function add(Activity, Hooks, Models) {
   async function autoUnlinkOnEdit(_hookType, activity, opts) {
     if (!activity.isLinkedCopy) return;
     if (!opts.fields?.includes('data')) return;
-    if (opts.context?.libraryUpdate) return;
+    if (opts.context?.linkSync) return;
     await linkService.unlinkOnEdit(activity, opts.transaction);
   }
 
@@ -102,8 +87,8 @@ function add(Activity, Hooks, Models) {
    * Automatic sync: when source changes, all linked copies update.
    */
   async function propagateToLinkedActivities(_hookType, activity, opts) {
-    // libraryUpdate: already syncing from source, skip to prevent infinite loop
-    if (opts.context?.libraryUpdate) return;
+    // linkSync: already syncing from source, skip to prevent infinite loop
+    if (opts.context?.linkSync) return;
     // Linked copies don't propagate - only sources do
     if (activity.isLinkedCopy) return;
 
@@ -129,7 +114,7 @@ function add(Activity, Hooks, Models) {
             sourceModifiedAt: activity.modifiedAt || new Date(),
           },
           {
-            context: { libraryUpdate: true },
+            context: { linkSync: true },
             hooks: false, // Prevent recursion
           },
         );

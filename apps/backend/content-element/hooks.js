@@ -17,14 +17,14 @@ const { elementRegistry } = PluginRegistry;
 const logger = createLogger('content-element:hooks');
 const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
 
-// Shared options for library sync operations (prevents hook recursion)
-const SYNC_OPTS = { context: { libraryUpdate: true }, hooks: false };
+// Shared options for link sync operations (prevents hook recursion)
+const SYNC_OPTS = { context: { linkSync: true }, hooks: false };
 
 function add(ContentElement, Hooks, Models) {
   const { Activity, Comment, Repository } = Models;
   const { Events } = ContentElement;
   const isRepository = (it) => it instanceof Repository;
-  const isLibrarySync = (opts) => opts.context?.libraryUpdate;
+  const isLinkSync = (opts) => opts.context?.linkSync;
   const broadcast = (repoId, event, payload) =>
     sse.channel(repoId).send(event, payload);
 
@@ -74,7 +74,7 @@ function add(ContentElement, Hooks, Models) {
   async function autoUnlinkOnEdit(_hookType, element, opts) {
     if (!element.isLinkedCopy) return;
     if (!opts.fields?.includes('data')) return;
-    if (isLibrarySync(opts)) return;
+    if (isLinkSync(opts)) return;
     await element.update(
       { isLinkedCopy: false, sourceModifiedAt: null },
       { transaction: opts.transaction, hooks: false },
@@ -89,7 +89,7 @@ function add(ContentElement, Hooks, Models) {
   async function propagateToLinkedElements(_hookType, element, opts) {
     const isOrWasLinkedCopy =
       element.isLinkedCopy || element.previous('isLinkedCopy');
-    if (isLibrarySync(opts) || isOrWasLinkedCopy) return;
+    if (isLinkSync(opts) || isOrWasLinkedCopy) return;
     const linkedElements = await findLinkedElements(element.id);
     if (!linkedElements.length) return;
     const affectedRepoIds = new Set();
@@ -114,7 +114,7 @@ function add(ContentElement, Hooks, Models) {
    * Propagate new element creation to all linked copies of the parent activity.
    */
   async function propagateElementCreation(_hookType, element, opts) {
-    if (isLibrarySync(opts) || element.isLinkedCopy) return;
+    if (isLinkSync(opts) || element.isLinkedCopy) return;
     const linkedActivities = await findLinkedActivities(element.activityId);
     if (!linkedActivities.length) return;
     log(
@@ -148,7 +148,7 @@ function add(ContentElement, Hooks, Models) {
    * Propagate source element deletion to all linked copies.
    */
   async function propagateElementDeletion(_hookType, element, opts) {
-    if (isLibrarySync(opts) || element.isLinkedCopy) return;
+    if (isLinkSync(opts) || element.isLinkedCopy) return;
     const linkedElements = await findLinkedElements(element.id);
     if (!linkedElements.length) return;
     log(
@@ -168,7 +168,7 @@ function add(ContentElement, Hooks, Models) {
 
   /** Unlink activity tree when element created on linked activity. */
   async function unlinkActivityOnCreate(_hookType, element, opts) {
-    if (isLibrarySync(opts)) return;
+    if (isLinkSync(opts)) return;
     if (!element.activityId) return;
     log('Checking activity unlink due to element creation');
     const entryPoint = await linkService.unlinkActivityIfLinked(
@@ -183,7 +183,7 @@ function add(ContentElement, Hooks, Models) {
 
   /** Unlink activity tree when element deleted from linked activity. */
   async function unlinkActivityOnDelete(_hookType, element, opts) {
-    if (isLibrarySync(opts)) return;
+    if (isLinkSync(opts)) return;
     if (!element.activityId) return;
     log('Checking activity unlink due to element deletion');
     const entryPoint = await linkService.unlinkActivityIfLinked(
