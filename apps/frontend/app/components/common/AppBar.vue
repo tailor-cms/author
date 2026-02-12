@@ -170,7 +170,7 @@ const routes = computed(() => {
   if (!authStore.hasAdminAccess) items.pop();
   if (repository.value) {
     items.unshift({
-      name: `${repository.value.name} ${isCollection ? 'items' : 'structure'}`,
+      name: `${repository.value.name} ${isCollection.value ? 'items' : 'structure'}`,
       to: `/repository/${repository.value?.id}/root/structure`,
       icon: 'mdi-file-tree-outline',
     });

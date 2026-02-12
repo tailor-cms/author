@@ -20,13 +20,12 @@
       {{ formatDate(item.updatedAt, 'MM/dd/yy HH:mm') }}
     </template>
     <template #[`item.actions`]="{ item }">
-      <VChip v-if="isSoftDeleted(item)" class="ml-3" size="small">
-        <span class="pr-1 font-weight-bold">Deleted:</span>
+      <VChip v-if="isSoftDeleted(item)" size="small">
+        <span class="mr-1 font-weight-bold">Deleted:</span>
         Publish required
         <VIcon
           v-tooltip:bottom="'Will be removed upon publishing'"
           class="ml-2"
-          color="secondary"
           icon="mdi-information-outline"
         />
       </VChip>
@@ -141,22 +140,27 @@ const deleteActivity = (activity: StoreActivity) =>
   :deep(tbody) tr {
     transition: background-color 0.3s ease;
 
+    &.soft-deleted {
+      background: rgba(var(--v-theme-secondary-darken-1), 0.1) !important;
+
+      &.selected,
+      &:hover {
+        background: rgba(var(--v-theme-secondary-lighten-2), 0.2) !important;
+      }
+    }
+
     &.selected,
     &:hover {
       background: rgba(var(--v-theme-primary-darken-1)) !important;
-    }
-
-    &.soft-deleted {
-      background: rgba(var(--v-theme-primary-darken-4)) !important;
     }
   }
 
   :deep(th) {
     background: rgba(var(--v-theme-primary-darken-2)) !important;
+    color: white !important;
 
     &:hover {
       font-weight: bold;
-      color: white !important;
     }
   }
 }
