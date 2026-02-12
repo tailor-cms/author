@@ -5,12 +5,8 @@ import { IsContentElement, IsInput, Prop, TailorCollection } from '../lib/index.
 
 class Article {
   @Prop()
-  @IsInput(MetaInputType.Textarea, { validate: { required: true, min: 2, max: 2000 } })
+  @IsInput(MetaInputType.Html, { validate: { required: true, min: 2, max: 2000 } })
   description: string;
-
-  @Prop()
-  @IsContentElement(ContentElementType.TiptapHtml, { required: true })
-  html: ContentElement;
 
   @Prop()
   @IsInput(
@@ -18,6 +14,7 @@ class Article {
     {
       label: 'Thumbnail Image',
       placeholder: 'Click to upload a thumbnail image',
+      showPreview: true,
       icon: 'mdi-image',
       ext: ['jpg', 'jpeg', 'png'],
     },

@@ -36,6 +36,8 @@
           :meta="{ ...input, value: state[input.key] }"
           :name="input.key"
           :is-disabled="disabled"
+          hide-details="auto"
+          class="pb-4"
           @update="(e) => (state[input.key] = e)"
         />
       </div>

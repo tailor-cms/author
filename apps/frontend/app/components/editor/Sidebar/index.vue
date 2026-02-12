@@ -69,6 +69,7 @@ import { useDisplay } from 'vuetify';
 import ActivityNavigation from './ActivityNavigation.vue';
 import ElementSidebar from './ElementSidebar/index.vue';
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
   repository: Repository;
@@ -83,14 +84,14 @@ const ELEMENT_TAB = 'ELEMENT_TAB';
 
 const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 const { lgAndUp } = useDisplay();
+const { isCollection } = storeToRefs(useCurrentRepository());
 
-const selectedTab = ref(BROWSER_TAB);
+const defaultTab = isCollection.value ? COMMENTS_TAB : BROWSER_TAB;
+const selectedTab = ref(defaultTab);
 const tabs: any = computed(() => [
-  {
-    name: BROWSER_TAB,
-    label: 'Browse',
-    icon: 'file-tree',
-  },
+  ...(!isCollection.value
+    ? [{ name: BROWSER_TAB, label: 'Browse', icon: 'file-tree' }]
+    : []),
   {
     name: COMMENTS_TAB,
     label: 'Comments',
@@ -130,7 +131,7 @@ watch(
       return;
     }
     if (selectedTab.value !== ELEMENT_TAB) return;
-    selectedTab.value = BROWSER_TAB;
+    selectedTab.value = defaultTab;
   },
 );
 
