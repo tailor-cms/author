@@ -203,12 +203,20 @@ const editorState = inject<any>('$editorState');
 const eventBus = inject<any>('$eventBus');
 const getCurrentUser = inject<any>('$getCurrentUser');
 const doTheMagic = inject<any>('$doTheMagic');
+const callElementAction = inject<any>('$callElementAction', null);
 
 const { loading, loader } = useLoader();
 const confirmationDialog = useConfirmationDialog();
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
+
+if (callElementAction) {
+  const { repositoryId, id } = props.element;
+  provide('$callElementAction', (action: string, payload?: any) =>
+    callElementAction(repositoryId, id, action, payload),
+  );
+}
 
 const isFocused = ref(false);
 const isSaving = ref(false);

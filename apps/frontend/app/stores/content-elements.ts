@@ -97,6 +97,15 @@ export const useContentElementStore = defineStore('contentElements', () => {
       .subscribe(Events.Delete, (it: ContentElement) => $items.delete(it.uid));
   };
 
+  async function call(
+    repositoryId: number,
+    elementId: number,
+    action: string,
+    payload?: any,
+  ): Promise<any> {
+    return api.call(repositoryId, elementId, action, payload);
+  }
+
   function $reset() {
     $items.clear();
   }
@@ -111,6 +120,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     save,
     remove,
     reorder,
+    call,
     $subscribeToSSE,
     $reset,
   };

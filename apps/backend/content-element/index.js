@@ -19,6 +19,7 @@ router
   .delete(ctrl.remove);
 
 router.post('/:elementId/reorder', ctrl.reorder);
+router.post('/:elementId/call/:action', ctrl.call);
 
 function getContentElement(req, _res, next, elementId) {
   if (!Number.isInteger(Number(elementId))) {

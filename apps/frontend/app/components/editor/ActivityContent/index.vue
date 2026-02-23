@@ -151,6 +151,7 @@ const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
+provide('$callElementAction', contentElementStore.call);
 if (config.props.aiUiEnabled) provide('$doTheMagic', doTheMagic);
 
 const isLoading = ref(true);
