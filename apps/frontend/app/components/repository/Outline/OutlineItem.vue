@@ -56,7 +56,7 @@
                 </template>
                 <span>{{ isExpanded ? 'Collapse' : 'Expand' }}</span>
               </VTooltip>
-              <OptionsMenu :activity="activity" class="options-menu" />
+              <OptionsMenu :activity="activity" class="options-menu" rounded />
             </div>
           </template>
           <template v-else>
@@ -81,21 +81,23 @@
         </VSheet>
       </template>
     </VHover>
-    <div v-if="!isSoftDeleted && isExpanded && hasChildren">
+    <div v-if="!isSoftDeleted && isExpanded && hasSubtypes">
       <Draggable
         v-bind="{ handle: '.activity' }"
+        :data-parent-id="activity.id"
         :list="children"
+        :move="currentRepositoryStore.isValidDrop"
+        animation="150"
         group="activities"
         item-key="uid"
-        @update="(data) => reorder(data, children)"
-        @change="(e) => currentRepositoryStore.handleOutlineItemDrag(e, activity.id)"
+        @update="(data: SortableEvent) => reorder(data, children)"
+        @change="(e: ChangeEvent) => onOutlineItemDrop(e, activity.id)"
       >
         <template #item="{ element, index: i }">
           <OutlineItem
             :activities="activities"
             :activity="element"
             :index="i + 1"
-            class="sub-activity"
           />
         </template>
       </Draggable>
@@ -107,18 +109,20 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
 import Draggable from 'vuedraggable';
 import { size } from 'lodash-es';
+import { useDisplay } from 'vuetify';
 
+import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import ActivityName from '@/components/common/ActivityName.vue';
 import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';
 import type { StoreActivity } from '@/stores/activity';
-import { useDisplay } from 'vuetify';
 
 const { smAndUp } = useDisplay();
 const currentRepositoryStore = useCurrentRepository();
 
 const { taxonomy } = storeToRefs(currentRepositoryStore);
+const { onOutlineItemDrop } = currentRepositoryStore;
 
 interface Props {
   activity: StoreActivity;
@@ -230,7 +234,7 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
   }
 }
 
-.sub-activity {
+.activity-wrapper .activity-wrapper {
   margin-left: 1.25rem;
 }
 </style>

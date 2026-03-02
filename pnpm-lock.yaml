@@ -409,6 +409,9 @@ importers:
       '@tailor-cms/utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@types/sortablejs':
+        specifier: ^1.15.9
+        version: 1.15.9
       '@vee-validate/i18n':
         specifier: ^4.15.1
         version: 4.15.1
@@ -5115,6 +5118,9 @@ packages:
 
   '@types/shimmer@1.2.0':
     resolution: {integrity: sha512-UE7oxhQLLd9gub6JKIAhDq06T0F6FnztwMNRvYgjeQSBeMc1ZG/tA47EwfduvkuQS8apbkM/lpLpWsaCeYsXVg==}
+
+  '@types/sortablejs@1.15.9':
+    resolution: {integrity: sha512-7HP+rZGE2p886PKV9c9OJzLBI6BBJu1O7lJGYnPyG3fS4/duUCcngkNCjsLwIMV+WMqANe3tt4irrXHSIe68OQ==}
 
   '@types/tmp@0.2.6':
     resolution: {integrity: sha512-chhaNf2oKHlRkDGt+tiKE2Z5aJ6qalm7Z9rlLdBwmOiAAf09YQvvoLXjWK4HWPF1xU/fqvMgfNfpVoBscA/tKA==}
@@ -16742,6 +16748,8 @@ snapshots:
   '@types/semver@7.7.0': {}
 
   '@types/shimmer@1.2.0': {}
+
+  '@types/sortablejs@1.15.9': {}
 
   '@types/tmp@0.2.6': {}
 
