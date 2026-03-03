@@ -33,9 +33,13 @@
             <Draggable
               v-bind="{ handle: '.activity' }"
               :list="rootActivities"
-              class="mt-5 d-flex flex-column ga-2"
+              :move="repositoryStore.isValidDrop"
+              class="mt-5"
+              animation="150"
+              group="activities"
               item-key="uid"
               @update="(e: SortableEvent) => reorder(e, rootActivities)"
+              @change="(e: ChangeEvent) => repositoryStore.onOutlineItemDrop(e)"
             >
               <template #item="{ element, index }">
                 <OutlineItem
@@ -81,9 +85,9 @@
 
 <script lang="ts" setup>
 import Draggable from 'vuedraggable';
-import type { SortableEvent } from 'sortablejs';
 import { storeToRefs } from 'pinia';
 
+import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import CollectionTable from '@/components/repository/Outline/CollectionTable.vue';
 import OutlineFooter from '~/components/repository/Outline/OutlineFooter.vue';
@@ -174,6 +178,10 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.sortable-ghost) {
+  opacity: 0.6;
+}
+
 .structure-page {
   height: 100%;
 }

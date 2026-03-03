@@ -37,6 +37,7 @@
     "@tailor-cms/meta-element-collection": "workspace:^",
     "@tailor-cms/plugin-collection": "workspace:^",
     "@tailor-cms/utils": "workspace:*",
+    "@types/sortablejs": "^1.15.9",
     "@vee-validate/i18n": "^4.15.1",
     "@vee-validate/rules": "^4.15.1",
     "@vueuse/core": "^14.0.0",
