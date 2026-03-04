@@ -91,8 +91,7 @@ const emit = defineEmits<{
 const menuOpen = ref(false);
 
 const badgeColor = computed(() => {
-  if (!props.usages) return 'grey';
-  return props.usages.length > 0 ? 'purple' : 'grey';
+  return props.usages?.length > 0 ? 'purple' : 'grey';
 });
 
 const onViewUsage = (usage: Usage) => {
