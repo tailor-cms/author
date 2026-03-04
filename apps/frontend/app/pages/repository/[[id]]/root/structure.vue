@@ -34,7 +34,7 @@
               v-bind="{ handle: '.activity' }"
               :list="rootActivities"
               :move="repositoryStore.isValidDrop"
-              class="mt-5"
+              class="mt-5 d-flex flex-column ga-2"
               animation="150"
               group="activities"
               item-key="uid"

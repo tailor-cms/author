@@ -81,13 +81,14 @@
         </VSheet>
       </template>
     </VHover>
-    <div v-if="!isSoftDeleted && isExpanded && hasSubtypes">
+    <div v-if="!isSoftDeleted && isExpanded && hasSubtypes" class="mt-2">
       <Draggable
         v-bind="{ handle: '.activity' }"
         :data-parent-id="activity.id"
         :list="children"
         :move="currentRepositoryStore.isValidDrop"
         animation="150"
+        class="d-flex flex-column ga-2"
         group="activities"
         item-key="uid"
         @update="(e: SortableEvent) => reorder(e, children)"
