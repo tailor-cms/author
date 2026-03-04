@@ -1,6 +1,10 @@
+import { StatusCodes } from 'http-status-codes';
 import pick from 'lodash/pick.js';
+
+import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 
+const { NOT_FOUND } = StatusCodes;
 const { Activity, ContentElement } = db;
 
 function list({ query, opts }, res) {
@@ -66,9 +70,7 @@ async function reorder({ body, contentElement }, res) {
 async function link({ user, repository, body }, res) {
   const { sourceId, activityId, position } = body;
   const source = await ContentElement.findByPk(sourceId);
-  if (!source) {
-    return res.status(404).json({ error: 'Source element not found' });
-  }
+  if (!source) return createError(NOT_FOUND, 'Source element not found');
   const context = { userId: user.id, repository };
   const linkedElement = await ContentElement.create(
     {
