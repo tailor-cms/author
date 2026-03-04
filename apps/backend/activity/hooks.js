@@ -6,10 +6,9 @@ import { createLogger } from '#logger';
 import linkService from '#shared/content-library/link.service.js';
 import sse from '#shared/sse/index.js';
 
-const { isOutlineActivity } = schema;
-
 const logger = createLogger('activity:hooks');
 const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
+const { isOutlineActivity } = schema;
 
 function add(Activity, Hooks, Models) {
   const { Repository } = Models;
@@ -47,7 +46,7 @@ function add(Activity, Hooks, Models) {
     if (opts.context?.linkSync) return;
     if (!activity.parentId) return;
     log(`Checking parent unlink due to structural change`);
-    const entryPoint = await linkService.unlinkParentIfLinked(
+    const entryPoint = await linkService.unlinkActivityIfLinked(
       activity.parentId,
       opts.context,
       opts.transaction,
@@ -87,7 +86,7 @@ function add(Activity, Hooks, Models) {
    * Automatic sync: when source changes, all linked copies update.
    */
   async function propagateToLinkedActivities(_hookType, activity, opts) {
-    // linkSync: already syncing from source, skip to prevent infinite loop
+    // linkSync: already syncing from source, skip to prevent loop
     if (opts.context?.linkSync) return;
     // Linked copies don't propagate - only sources do
     if (activity.isLinkedCopy) return;

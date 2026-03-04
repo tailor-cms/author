@@ -14,6 +14,7 @@ import { resolveStatics } from '#shared/storage/helpers.js';
 import sse from '#shared/sse/index.js';
 
 const { elementRegistry } = PluginRegistry;
+
 const logger = createLogger('content-element:hooks');
 const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
 

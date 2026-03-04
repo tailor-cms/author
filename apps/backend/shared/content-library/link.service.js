@@ -3,10 +3,9 @@ import { schema } from '@tailor-cms/config';
 
 import { createError } from '#shared/error/helpers.js';
 
+const { NOT_FOUND, BAD_REQUEST } = StatusCodes;
 const { getCompatibleTargetType, isOutlineActivity, isTypeAllowedAtLevel } =
   schema;
-
-const { NOT_FOUND, BAD_REQUEST } = StatusCodes;
 
 const UNLINK_DATA = { isLinkedCopy: false, sourceModifiedAt: null };
 
@@ -42,7 +41,7 @@ class LinkService {
     return sequelize.transaction(async (transaction) => {
       // Auto-unlink parent's linked tree if it's part of a linked hierarchy
       if (parentId) {
-        await this.unlinkParentIfLinked(parentId, context, transaction);
+        await this.unlinkActivityIfLinked(parentId, context, transaction);
       }
       return this.#cloneTree(source, { ...opts, transaction });
     });
@@ -73,23 +72,7 @@ class LinkService {
   // ─────────────────────────────────────────────────────────────────
 
   /**
-   * Check if parent is part of a linked tree and unlink from entry point.
-   * Used by activity hooks when structural modifications break the link.
-   * @returns {Activity|null} The unlinked entry point, or null if not linked
-   */
-  async unlinkParentIfLinked(parentId, context, transaction) {
-    const { Activity } = this.db;
-    const parent = await Activity.findByPk(parentId, { transaction });
-    if (!parent?.isLinkedCopy) return null;
-    const entryPoint = await parent.findLinkEntryPoint(transaction);
-    if (!entryPoint) return null;
-    await this.unlinkTree(entryPoint, context, transaction);
-    return entryPoint;
-  }
-
-  /**
    * Check if activity is part of a linked tree and unlink from entry point.
-   * Used by content element hooks when structural modifications break the link.
    * @returns {Activity|null} The unlinked entry point, or null if not linked
    */
   async unlinkActivityIfLinked(activityId, context, transaction) {
@@ -242,7 +225,11 @@ class LinkService {
     const { ContentElement } = this.db;
     const { context, transaction } = opts;
     // Mark as nested linked content to skip revision creation in hooks
-    const linkContext = { ...context, linkSync: true, isNestedLinkedContent: true };
+    const linkContext = {
+      ...context,
+      linkSync: true,
+      isNestedLinkedContent: true,
+    };
     const elements = await ContentElement.findAll({
       where: { activityId: sourceActivityId, detached: false },
       transaction,
