@@ -37,13 +37,20 @@ function add(ContentElement, Hooks, Models) {
 
   // Resolve unique outline activities for a list of elements
   const resolveOutlineActivities = async (elements) => {
-    const resolved = await Promise.all(
-      elements.map((el) => resolveOutlineActivity(el)),
-    );
+    const activityIds = [...new Set(elements.map((el) => el.activityId))];
+    const activities = await Activity.findAll({
+      where: { id: activityIds },
+      paranoid: true,
+    });
     const result = new Map();
-    for (const activity of resolved) {
-      if (activity) result.set(activity.id, activity);
-    }
+    await Promise.all(
+      activities.map(async (activity) => {
+        const outline = schema.isOutlineActivity(activity.type)
+          ? activity
+          : await activity.getOutlineParent();
+        if (outline) result.set(outline.id, outline);
+      }),
+    );
     return [...result.values()];
   };
 
@@ -84,8 +91,11 @@ function add(ContentElement, Hooks, Models) {
 
   /**
    * Propagate source element updates to all linked copies.
-   * Check both current and previous isLinkedCopy - autoUnlinkOnEdit may have
-   * already cleared the flag if user edited a linked copy.
+   * Skipped when:
+   * - linkSync: update originated from the sync system itself (prevents loops)
+   * - isOrWasLinkedCopy: element is a copy, not a source - only sources
+   *   propagate. Checks previous('isLinkedCopy') to catch the case where
+   *   autoUnlinkOnEdit cleared the flag in the same update cycle.
    */
   async function propagateToLinkedElements(_hookType, element, opts) {
     const isOrWasLinkedCopy =
@@ -113,6 +123,9 @@ function add(ContentElement, Hooks, Models) {
 
   /**
    * Propagate new element creation to all linked copies of the parent activity.
+   * Skipped when:
+   * - linkSync: creation originated from the sync system itself (prevents loops)
+   * - isLinkedCopy: element was created as a copy, not as a new source element
    */
   async function propagateElementCreation(_hookType, element, opts) {
     if (isLinkSync(opts) || element.isLinkedCopy) return;
@@ -147,6 +160,9 @@ function add(ContentElement, Hooks, Models) {
 
   /**
    * Propagate source element deletion to all linked copies.
+   * Skipped when:
+   * - linkSync: deletion originated from the sync system itself (prevents loops)
+   * - isLinkedCopy: a copy was deleted, not the source
    */
   async function propagateElementDeletion(_hookType, element, opts) {
     if (isLinkSync(opts) || element.isLinkedCopy) return;
