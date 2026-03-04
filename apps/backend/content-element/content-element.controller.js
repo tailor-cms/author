@@ -118,10 +118,7 @@ async function getSource({ contentElement }, res) {
 async function getCopies({ contentElement }, res) {
   const usages = await contentElement.findCopyLocations();
   return res.json({
-    data: {
-      totalCount: usages.length,
-      usages,
-    },
+    data: { usages },
   });
 }
 

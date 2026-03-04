@@ -108,7 +108,7 @@
       <div v-if="showSourceUsages" :class="{ 'is-visible': isHighlighted }">
         <ElementSourceUsages
           :element="element"
-          :usages-data="sourceUsagesData"
+          :usages="sourceUsages"
           :is-loading="isLoadingSourceUsages"
           @usages:fetch="onFetchSourceUsages"
           @usage:view="onNavigateToElement"
@@ -277,19 +277,16 @@ const linkedSourceInfo = ref<{
 
 // Source usages state (for non-linked elements that could have copies)
 const isLoadingSourceUsages = ref(false);
-const sourceUsagesData = ref<{
-  totalCount: number;
-  usages: Array<{
-    id: number;
-    uid: string;
-    repositoryId: number;
-    repositoryName: string;
-    activityId: number;
-    outlineActivityId: number;
-    outlineActivityName: string;
-    linkedAt: string;
-  }>;
-} | null>(null);
+const sourceUsages = ref<Array<{
+  id: number;
+  uid: string;
+  repositoryId: number;
+  repositoryName: string;
+  activityId: number;
+  outlineActivityId: number;
+  outlineActivityName: string;
+  linkedAt: string;
+}> | null>(null);
 const showSourceUsages = computed(
   () => !props.element.isLinkedCopy && !props.element.embedded,
 );
@@ -376,8 +373,8 @@ const onFetchSourceUsages = () => {
   isLoadingSourceUsages.value = true;
   editorBus.emit('element:fetchCopies', {
     element: props.element,
-    callback: (usagesData: typeof sourceUsagesData.value) => {
-      sourceUsagesData.value = usagesData;
+    callback: (usages: typeof sourceUsages.value) => {
+      sourceUsages.value = usages;
       isLoadingSourceUsages.value = false;
     },
   });

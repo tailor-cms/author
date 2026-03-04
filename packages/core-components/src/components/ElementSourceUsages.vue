@@ -12,7 +12,7 @@
         <template #activator="{ props: tooltipProps }">
           <VBadge
             :color="badgeColor"
-            :content="usagesData?.totalCount ?? '?'"
+            :content="usages?.length ?? '?'"
             offset-x="-2"
             offset-y="-2"
           >
@@ -35,12 +35,12 @@
       </div>
       <VDivider />
       <div v-if="isLoading" class="d-flex justify-center py-4">
-        <VProgressCircular color="primary" indeterminate size="24" />
+        <VProgressCircular color="primary" size="24" indeterminate />
       </div>
-      <template v-else-if="usagesData?.usages?.length">
+      <template v-else-if="usages?.length">
         <VList density="compact">
           <VListItem
-            v-for="usage in usagesData.usages"
+            v-for="usage in usages"
             :key="usage.uid"
             :subtitle="usage.outlineActivityName"
             :title="usage.repositoryName"
@@ -72,19 +72,14 @@ interface Usage {
   linkedAt: string;
 }
 
-interface UsagesData {
-  totalCount: number;
-  usages: Usage[];
-}
-
 interface Props {
   element: ContentElement;
-  usagesData?: UsagesData | null;
+  usages?: Usage[] | null;
   isLoading?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  usagesData: null,
+  usages: null,
   isLoading: false,
 });
 
@@ -96,8 +91,8 @@ const emit = defineEmits<{
 const menuOpen = ref(false);
 
 const badgeColor = computed(() => {
-  if (!props.usagesData) return 'grey';
-  return props.usagesData.totalCount > 0 ? 'purple' : 'grey';
+  if (!props.usages) return 'grey';
+  return props.usages.length > 0 ? 'purple' : 'grey';
 });
 
 const onViewUsage = (usage: Usage) => {
@@ -106,7 +101,7 @@ const onViewUsage = (usage: Usage) => {
 };
 
 watch(menuOpen, (open) => {
-  if (open && !props.usagesData && !props.isLoading) {
+  if (open && !props.usages && !props.isLoading) {
     emit('usages:fetch');
   }
 });

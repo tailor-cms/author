@@ -75,11 +75,11 @@ export const useContentLinking = (editorChannel: any) => {
       callback: (copiesData: unknown) => void;
     }) => {
       try {
-        const copiesData = await contentElementAPI.getCopies(
+        const { usages } = await contentElementAPI.getCopies(
           element.repositoryId ?? repositoryStore.repositoryId,
           element.id,
         );
-        callback(copiesData);
+        callback(usages);
       } catch {
         callback(null);
       }

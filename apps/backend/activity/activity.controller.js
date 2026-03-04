@@ -193,10 +193,7 @@ async function unlink({ activity, user, repository }, res) {
 async function getCopies({ activity }, res) {
   const copies = await activity.findCopyLocations();
   return res.json({
-    data: {
-      totalCount: copies.length,
-      copies,
-    },
+    data: { copies },
   });
 }
 
