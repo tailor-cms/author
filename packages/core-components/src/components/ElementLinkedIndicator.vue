@@ -29,7 +29,7 @@
       </div>
       <VDivider />
       <div v-if="isLoading" class="d-flex justify-center py-4">
-        <VProgressCircular color="primary" indeterminate size="24" />
+        <VProgressCircular color="primary" size="24" indeterminate />
       </div>
       <VList v-else density="compact">
         <VListItem
@@ -79,7 +79,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  'unlink': [];
+  unlink: [];
   'source:fetch': [];
   'source:view': [sourceInfo: SourceInfo];
 }>();
