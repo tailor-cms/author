@@ -58,7 +58,7 @@
           @delete="emit('delete')"
           @focus="onSelect"
           @generate="generateContent"
-          @link="onLink"
+          @link="onLinkRelationship"
           @reset="reset"
           @save="onSave"
         />
@@ -80,7 +80,7 @@
           @add="emit('add', $event)"
           @delete="emit('delete')"
           @focus="onSelect"
-          @link="onLink"
+          @link="onLinkRelationship"
           @save="onSave"
         />
       </template>
@@ -110,7 +110,7 @@
           :element="element"
           :usages="sourceUsages"
           :is-loading="isLoadingSourceUsages"
-          @usages:fetch="onFetchSourceUsages"
+          @usages:fetch="onFetchCopies"
           @usage:view="onNavigateToElement"
         />
       </div>
@@ -345,8 +345,8 @@ const generateContent = loader(async function (text) {
   return onSave({ ...data, ...generatedContent });
 });
 
-// Content linking
-const onLink = (key?: string) => editorBus.emit('element:link', key);
+// Element relationships (refs between elements)
+const onLinkRelationship = (key?: string) => editorBus.emit('element:link', key);
 
 const onUnlink = () => {
   confirmationDialog({
@@ -369,7 +369,7 @@ const onFetchSource = () => {
   });
 };
 
-const onFetchSourceUsages = () => {
+const onFetchCopies = () => {
   isLoadingSourceUsages.value = true;
   editorBus.emit('element:fetchCopies', {
     element: props.element,
