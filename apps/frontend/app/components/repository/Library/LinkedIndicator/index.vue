@@ -66,12 +66,10 @@ const sourceLabel = computed(() => {
 
 const linkedParent = computed(() => {
   let current = store.getParent(props.activity.id);
-  while (current) {
-    if (current.isLinkedCopy) {
-      const parent = store.getParent(current.id);
-      if (!parent?.isLinkedCopy) return current;
-    }
-    current = store.getParent(current.id);
+  while (current?.isLinkedCopy) {
+    const parent = store.getParent(current.id);
+    if (!parent?.isLinkedCopy) return current;
+    current = parent;
   }
   return null;
 });
@@ -99,8 +97,9 @@ const goToActivity = (repositoryId: number, activityId: number) => {
 };
 
 const viewSource = () => {
-  if (!source.value?.repository) return;
-  goToActivity(source.value.repository.id, source.value.id);
+  const { id, repository } = source.value ?? {};
+  if (!repository) return;
+  goToActivity(repository.id, id);
 };
 
 const goToLinkedParent = () => {
