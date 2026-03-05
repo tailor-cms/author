@@ -79,7 +79,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  unlink: [];
+  'unlink': [];
   'source:fetch': [];
   'source:view': [sourceInfo: SourceInfo];
 }>();

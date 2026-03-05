@@ -68,17 +68,18 @@
 </template>
 
 <script lang="ts" setup>
-import { activity as activityApi, repository as repositoryApi } from '@/api';
-import { storeToRefs } from 'pinia';
 import { TailorDialog, useLoader } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { Repository } from '@tailor-cms/interfaces/repository';
 import { InsertLocation } from '@tailor-cms/utils';
 import pluralize from 'pluralize-esm';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import RepositoryTree from '../Outline/CopyActivity/RepositoryTree.vue';
 import { sortBy } from 'lodash-es';
+import { storeToRefs } from 'pinia';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+
+import { activity as activityApi, repository as repositoryApi } from '@/api';
 
 const { AddAfter, AddInto } = InsertLocation;
 
@@ -158,23 +159,20 @@ const selectRepository = async (repo: Repository | null) => {
 };
 
 const linkActivity = async (activity: Activity, prevActivity?: Activity) => {
-  const { action } = props;
-  const anchor = (action === AddAfter && prevActivity) || props.anchor;
-  const position = await activityStore.calculateCopyPosition(action, anchor);
+  const anchor = props.action === AddAfter && prevActivity
+    ? prevActivity
+    : props.anchor;
+  const position = await activityStore.calculateCopyPosition(props.action, anchor);
   const parentId = anchor
-    ? action === AddInto
-      ? anchor.id
-      : anchor.parentId
+    ? props.action === AddInto ? anchor.id : anchor.parentId
     : null;
   const linked = await activityApi.link(repository.value!.id, {
     sourceId: activity.id,
     parentId,
     position,
   });
-  // Add linked activities to store
-  const linkedArray = Array.isArray(linked) ? linked : [linked];
-  linkedArray.forEach((a: Activity) => activityStore.add(a));
-  return linkedArray;
+  linked.forEach((a: Activity) => activityStore.add(a));
+  return linked;
 };
 
 const linkSelection = async () => {
