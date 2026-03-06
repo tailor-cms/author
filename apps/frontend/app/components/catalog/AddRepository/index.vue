@@ -288,7 +288,7 @@ const createActvities = async (
       parentId,
       type,
       data: { name: activity.name },
-      position: index,
+      position: index + 1,
     });
     if (!item || !activity.children?.length) return;
     return createActvities(repositoryId, activity.children, item.id);
