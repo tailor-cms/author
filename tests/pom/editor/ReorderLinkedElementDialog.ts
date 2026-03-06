@@ -10,7 +10,7 @@ export class ReorderLinkedElementDialog extends ConfirmationDialog {
 
   async expectVisible() {
     await expect(this.el).toBeVisible();
-    await expect(this.el).toContainText('linked activity');
-    await expect(this.el).toContainText('detach');
+    await expect(this.el).toContainText('linked');
+    await expect(this.el).toContainText('unlink');
   }
 }

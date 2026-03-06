@@ -139,9 +139,7 @@ export class ElementSourceUsagesMenu {
     await expect(
       this.el.locator('.text-caption', { hasText: 'Linked Copies' }),
     ).toBeVisible();
-    await expect(async () => {
-      await expect(this.el.locator('.v-list-item').first()).toBeVisible();
-    }).toPass({ timeout: 10000 });
+    await expect(this.el.locator('.v-list-item').first()).toBeVisible({ timeout: 10000 });
   }
 }
 
