@@ -8,6 +8,7 @@ class ElementsRegistry {
   constructor() {
     this._registry = elements;
     this._hooks = {};
+    this._callMethods = {};
     this._aiSchemas = {};
   }
 
@@ -23,6 +24,7 @@ class ElementsRegistry {
       Object.assign(this._aiSchemas, {
         [it.type]: it.ai,
       });
+      if (it.call) this._callMethods[it.type] = it.call;
     });
   }
 
@@ -41,6 +43,16 @@ class ElementsRegistry {
         { ...services, context },
         'authoring',
       );
+    };
+  }
+
+  getCallMethod(elementType, action) {
+    const methods = this._callMethods[elementType];
+    if (!methods || !methods[action]) return;
+    const services = { config: pick(config, ['tce']), storage };
+    return (element, payload, options) => {
+      const context = options?.context || {};
+      return methods[action](element, { ...services, context }, payload);
     };
   }
 }

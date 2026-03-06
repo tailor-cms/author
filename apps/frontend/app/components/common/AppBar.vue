@@ -154,7 +154,7 @@ const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
 const route = useRoute();
 
-const { repository } = storeToRefs(currentRepositoryStore);
+const { repository, isCollection } = storeToRefs(currentRepositoryStore);
 
 const routes = computed(() => {
   const items = [
@@ -170,7 +170,7 @@ const routes = computed(() => {
   if (!authStore.hasAdminAccess) items.pop();
   if (repository.value) {
     items.unshift({
-      name: `${repository.value.name} structure`,
+      name: `${repository.value.name} ${isCollection.value ? 'items' : 'structure'}`,
       to: `/repository/${repository.value?.id}/root/structure`,
       icon: 'mdi-file-tree-outline',
     });

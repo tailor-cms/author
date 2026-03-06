@@ -39,6 +39,7 @@
       @delete:subcontainer="requestContainerDeletion"
       @reorder:element="reorderContentElements"
       @save:element="saveContentElements"
+      @update:container="updateContainer"
       @update:element="(val: any) => saveContentElements([val])"
       @update:subcontainer="activityStore.update"
     />
@@ -148,6 +149,15 @@ const addContainer = async (data: Record<string, any> = {}) => {
   };
   await activityStore.save(payload);
   emit('createdContainer', payload);
+};
+
+const updateContainer = async (container: any) => {
+  try {
+    await activityStore.update(container);
+    showNotification(`${capitalize(name.value)} saved`);
+  } catch {
+    showNotification(`Failed to save ${name.value}`);
+  }
 };
 
 const saveContentElements = (elements: ContentElement[]) => {

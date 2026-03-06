@@ -6,6 +6,8 @@ const urls = {
   root: (repositoryId) => `${urls.repository(repositoryId)}/content-elements`,
   resource: (repositoryId, id) => `${urls.root(repositoryId)}/${id}`,
   reorder: (repositoryId, id) => `${urls.resource(repositoryId, id)}/reorder`,
+  call: (repositoryId, id, action) =>
+    `${urls.resource(repositoryId, id)}/call/${action}`,
 };
 
 function fetch(repositoryId, params) {
@@ -30,10 +32,17 @@ function remove(repositoryId, id) {
   return request.delete(urls.resource(repositoryId, id));
 }
 
+function call(repositoryId, id, action, payload = {}) {
+  return request
+    .post(urls.call(repositoryId, id, action), payload)
+    .then(extractData);
+}
+
 export default {
   fetch,
   create,
   patch,
   reorder,
   remove,
+  call,
 };
