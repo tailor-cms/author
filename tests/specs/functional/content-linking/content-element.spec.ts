@@ -282,7 +282,7 @@ test('reordering nested linked element shows confirmation and unlinks activity',
   await page.waitForTimeout(1000);
   await page.reload({ waitUntil: 'networkidle' });
   // Verify elements are no longer linked
-  await editor.expectAllElementsNotLinked();
+  await editor.expectAllElementsLinked(false);
   // Verify parent activity is also unlinked in outline
   await toStructurePage(page, linkedActivity);
   await page.reload({ waitUntil: 'networkidle' });
