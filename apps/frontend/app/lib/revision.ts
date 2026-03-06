@@ -12,10 +12,14 @@ const describe = {
   [Entity.ContentElement]: describeElementRevision,
 };
 
-function getAction(operation: string) {
+interface LinkedEntity {
+  isLinkedCopy?: boolean;
+}
+
+function getAction(operation: string, state?: LinkedEntity) {
   switch (operation) {
   case 'CREATE':
-    return 'Created';
+    return state?.isLinkedCopy ? 'Linked' : 'Created';
   case 'REMOVE':
     return 'Removed';
   case 'UPDATE':
@@ -43,7 +47,7 @@ function describeActivityRevision(rev: Revision, activity: Activity) {
   const state = rev.state as Activity;
   const name = get(rev, 'state.data.name', '');
   const typeLabel = getActivityTypeLabel(state);
-  const action = getAction(rev.operation);
+  const action = getAction(rev.operation, state);
   const activityConfig = schema.getLevel(state.type);
   const containerContext = activityConfig.rootLevel
     ? ''
@@ -52,11 +56,11 @@ function describeActivityRevision(rev: Revision, activity: Activity) {
 }
 
 function describeElementRevision(rev: Revision, activity: Activity) {
-  const action = getAction(rev.operation);
+  const state = rev.state as ContentElement;
+  const action = getAction(rev.operation, state);
   const activityText = activity
     ? getContainerContext(activity)
     : 'within deleted container';
-  const state = rev.state as ContentElement;
   return `${action} ${lowerCase(state.type)} element ${activityText}`;
 }
 

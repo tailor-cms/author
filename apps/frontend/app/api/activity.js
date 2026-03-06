@@ -62,8 +62,34 @@ function updateStatus(repositoryId, id, data) {
     .then(extractData);
 }
 
+function link(repositoryId, { sourceId, parentId, position }) {
+  return request
+    .post(`${urls.root(repositoryId)}/link`, { sourceId, parentId, position })
+    .then(extractData);
+}
+
+function unlink(repositoryId, activityId) {
+  return request
+    .post(`${urls.resource(repositoryId, activityId)}/unlink`)
+    .then(extractData);
+}
+
+function getCopies(repositoryId, activityId) {
+  return request
+    .get(`${urls.resource(repositoryId, activityId)}/copies`)
+    .then(extractData);
+}
+
+function getSource(repositoryId, activityId) {
+  return request
+    .get(`${urls.resource(repositoryId, activityId)}/source`)
+    .then(extractData);
+}
+
 export default {
   createPreview,
+  getActivities,
+  getSource,
   save,
   patch,
   reorder,
@@ -71,6 +97,8 @@ export default {
   remove,
   restore,
   publish,
-  getActivities,
   updateStatus,
+  link,
+  unlink,
+  getCopies,
 };

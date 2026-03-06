@@ -65,6 +65,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import pluralize from 'pluralize-esm';
 
+import { activity as activityApi } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -182,8 +183,27 @@ const reorderContentElements = ({
   newPosition: number;
   items: ContentElement[];
 }) => {
-  const element = items[newPosition];
+  const element = items[newPosition] as ContentElement;
   const context = { items, newPosition };
+  const outlineActivity = editorStore.selectedActivity;
+  // Check if element is linked via parent activity (nested linked)
+  if (outlineActivity?.isLinkedCopy) {
+    const activityLabel = $schemaService.getActivityLabel(outlineActivity);
+    confirmationDialog({
+      title: 'Reorder linked element?',
+      message: `
+        This element is part of a linked ${activityLabel}. Reordering will
+        unlink the ${activityLabel} from receiving updates. Do you want to continue?`,
+      action: async () => {
+        await activityApi.unlink(
+          outlineActivity.repositoryId,
+          outlineActivity.id,
+        );
+        window.location.reload();
+      },
+    });
+    return;
+  }
   return contentElementStore.reorder({ element, context });
 };
 

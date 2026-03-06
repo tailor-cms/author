@@ -1,7 +1,9 @@
+import { expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import type { Page } from '@playwright/test';
 
 import ApiClient from '../api/ApiClient';
+import { ContainerList } from '../pom/editor/ContainerList';
 import SeedClient from '../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
@@ -64,6 +66,26 @@ export const outlineSeed = {
     title: 'Different Pizza Styles Around the World',
     textContent: 'Click the button below to add content',
   },
+};
+
+export const seedLinkedRepositories = async () => {
+  const { data } = await SeedClient.seedTestRepository({
+    includeLinkExample: true,
+  });
+  return data;
+};
+
+export const toStructurePage = async (page: Page, activity: any) => {
+  await page.goto(`/repository/${activity.repositoryId}/root/structure`);
+  await page.waitForLoadState('networkidle');
+  return { activity };
+};
+
+export const toEditorPage = async (page: Page, activity: any) => {
+  await page.goto(`/repository/${activity.repositoryId}/editor/${activity.id}`);
+  const containerList = new ContainerList(page);
+  await expect(containerList.el.first()).toBeVisible();
+  return { activity };
 };
 
 export const outlineLevel = {

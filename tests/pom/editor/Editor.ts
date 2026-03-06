@@ -1,12 +1,13 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { outlineSeed } from '../../helpers/seed';
+import { ContentElement, HtmlContentElement } from './ContentElement';
 import { AddElementDialog } from './AddElementDialog';
 import { ContainerList } from './ContainerList';
-import { ContentElement } from './ContentElement';
 import { EditorSidebar } from './Sidebar';
+import { outlineSeed } from '../../helpers/seed';
 import { SelectElementDialog } from './SelectElementDialog';
+import { Toast } from '../common/Toast';
 
 export class Editor {
   readonly page: Page;
@@ -19,9 +20,11 @@ export class Editor {
   readonly secondaryPageName = outlineSeed.secondaryPage.title;
   readonly primaryElementLabel = 'tiptap html';
   readonly containerList: ContainerList;
+  readonly toast: Toast;
 
   constructor(page: Page) {
     this.page = page;
+    this.toast = new Toast(page);
     this.copyDialog = new SelectElementDialog(page);
     this.sidebar = new EditorSidebar(page);
     this.topToolbar = this.page.locator('.activity-toolbar');
@@ -47,6 +50,13 @@ export class Editor {
     return new ContentElement(this.page, element);
   }
 
+  getHtmlElement(content?: string) {
+    const element = content
+      ? this.page.locator(ContentElement.selector, { hasText: content })
+      : this.page.locator(ContentElement.selector).first();
+    return new HtmlContentElement(this.page, element);
+  }
+
   async focusElement(content?: string) {
     return this.getElement(content).focus();
   }
@@ -61,24 +71,31 @@ export class Editor {
     return elements;
   }
 
+  async expectAllElementsLinked(linked = true) {
+    await expect(this.page.locator(ContentElement.selector).first()).toBeVisible();
+    const elements = await this.getElements();
+    expect(elements.length).toBeGreaterThanOrEqual(1);
+    for (const element of elements) {
+      await (linked ? element.expectLinked() : element.expectNotLinked());
+    }
+  }
+
   async addContentElement(content = 'This is a test element') {
-    const { page, sidebar } = this;
+    const { page, sidebar, toast } = this;
     await this.addElementDialog.add('HTML');
-    // Temporary using the first one / assuming container is empty before adding
-    await this.focusElement();
-    await page.locator('.tiptap').fill(content);
+    const element = this.getHtmlElement();
+    await element.fill(content);
     // Focusout element to trigger the save
     await sidebar.el.focus();
-    await expect(page.locator('.v-snackbar')).toHaveText('Element saved');
+    await toast.isSaved();
     await page.waitForLoadState('networkidle');
   }
 
   async copyContentElements(pageTitle: string, elementContent?: string) {
-    const { page, copyDialog } = this;
+    const { page, copyDialog, toast } = this;
     await this.addElementDialog.openCopyDialog();
     await copyDialog.select(pageTitle, elementContent);
-    await expect(page.locator('.v-snackbar'))
-      .toHaveText(elementContent ? 'Element saved' : 'Elements saved');
+    await toast.isSaved();
     await page.waitForLoadState('networkidle');
   }
 
