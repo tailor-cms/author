@@ -41,7 +41,7 @@ interface Props {
   showDiscussion?: boolean;
   setWidth?: boolean;
   dense?: boolean;
-  autoSave?: boolean;
+  autosave?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
   showDiscussion: false,
   setWidth: true,
   dense: false,
-  autoSave: false,
+  autosave: false,
 });
 
 const emit = defineEmits([
@@ -75,7 +75,7 @@ const bindings = computed(() => {
     isDragged,
     dense,
     showDiscussion,
-    autoSave,
+    autosave,
   } = props;
   return {
     element,
@@ -86,7 +86,7 @@ const bindings = computed(() => {
     isHovered: isHovered.value,
     showDiscussion,
     dense,
-    autoSave,
+    autosave,
   };
 });
 

@@ -83,7 +83,7 @@
         <VForm
           ref="form"
           class="content text-left pa-6"
-          :validate-on="autoSave ? 'input' : 'submit'"
+          :validate-on="autosave ? 'input' : 'submit'"
         >
           <component
             :is="componentName"
@@ -108,7 +108,7 @@
           />
           <VFadeTransition>
             <div
-              v-if="!isDisabled && isDirty && !autoSave"
+              v-if="!isDisabled && isDirty && !autosave"
               class="d-flex justify-end"
             >
               <VBtn color="primary-darken-4" variant="text" @click="cancel">
@@ -185,7 +185,7 @@ interface Props {
   collapsible?: boolean;
   isDirty?: boolean;
   expanded?: boolean;
-  autoSave?: boolean;
+  autosave?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -201,7 +201,7 @@ const props = withDefaults(defineProps<Props>(), {
   collapsible: false,
   isDirty: false,
   expanded: true,
-  autoSave: false,
+  autosave: false,
 });
 
 const emit = defineEmits([
@@ -269,7 +269,7 @@ const cancel = () => {
 
 const update = (data: any) => {
   Object.assign(editedElement.data, data);
-  if (props.autoSave) emit('save', { ...editedElement.data });
+  if (props.autosave) emit('save', editedElement.data);
 };
 
 watch(

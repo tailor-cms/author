@@ -52,7 +52,7 @@
             isDisabled,
             isReadonly: props.isDisabled,
             dense,
-            autoSave,
+            autosave,
           }"
           @add="emit('add', $event)"
           @delete="emit('delete')"
@@ -179,7 +179,7 @@ interface Props {
   dense?: boolean;
   showDiscussion?: boolean;
   embedElementConfig?: ContentElementCategory[];
-  autoSave?: boolean;
+  autosave?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -192,7 +192,7 @@ const props = withDefaults(defineProps<Props>(), {
   frame: true,
   dense: false,
   showDiscussion: false,
-  autoSave: false,
+  autosave: false,
 });
 
 const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
