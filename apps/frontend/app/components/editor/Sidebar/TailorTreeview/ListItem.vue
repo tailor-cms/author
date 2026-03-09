@@ -90,6 +90,10 @@ const onItemClick = (e: any) => {
   }
 }
 
+.list-item-active:deep(.v-list-item-title) {
+  color: rgb(var(--v-theme-secondary-lighten-4)) !important;
+}
+
 .activity-menu {
   :deep(.v-list-item-title),
   :deep(.v-list-item-title:hover) {
