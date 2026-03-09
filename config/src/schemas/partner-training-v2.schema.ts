@@ -140,6 +140,50 @@ const SectionContainer: ContentContainerConfig = {
     [ActivityType.Section]: {
       label: 'Section',
       meta: () => [...sectionMeta],
+      contentElementConfig: [
+        {
+          name: 'Content Elements',
+          items: [
+            ContentElementType.TiptapHtml,
+            ContentElementType.HtmlRaw,
+            ContentElementType.Image,
+            ContentElementType.Video,
+            ContentElementType.Embed,
+            ContentElementType.Audio,
+            ContentElementType.Break,
+            ContentElementType.Pdf,
+            ContentElementType.Accordion,
+            ContentElementType.Modal,
+            ContentElementType.Carousel,
+            ContentElementType.MuxVideo,
+          ],
+        },
+        {
+          name: 'Assessments',
+          config: { isGradable: true },
+          items: [
+            ContentElementType.MultipleChoice,
+            ContentElementType.SingleChoice,
+            ContentElementType.TextResponse,
+            ContentElementType.NumericalResponse,
+            ContentElementType.TrueFalse,
+            ContentElementType.MatchingQuestion,
+            ContentElementType.FillBlank,
+            ContentElementType.DragDrop,
+          ],
+        },
+        {
+          name: 'Nongraded questions',
+          config: { isGradable: false },
+          items: [
+            ContentElementType.MultipleChoice,
+            ContentElementType.SingleChoice,
+            ContentElementType.TextResponse,
+            ContentElementType.TrueFalse,
+            ContentElementType.FillBlank,
+          ],
+        },
+      ],
     },
     [ActivityType.Scenario]: {
       label: 'Scenario',
