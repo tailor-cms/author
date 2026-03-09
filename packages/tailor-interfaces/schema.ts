@@ -3,6 +3,7 @@ import type { ContentElement } from './content-element';
 import type { Repository } from './repository';
 
 export type ElementManifest = Record<string, any>;
+
 export interface ElementRegistry {
   all: ElementManifest[];
   questions: ElementManifest[];
@@ -156,6 +157,7 @@ export interface Schema {
   defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];
   contentContainers: ContentContainerConfig[];
+  collection?: boolean;
   elementMeta?: ElementMetaConfig[];
   i18n?: I18nConfig;
   // @deprecated use elementMeta instead

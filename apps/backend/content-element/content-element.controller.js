@@ -1,5 +1,9 @@
 import pick from 'lodash/pick.js';
+import { StatusCodes } from 'http-status-codes';
 import db from '#shared/database/index.js';
+import PluginRegistry from '#shared/content-plugins/index.js';
+
+const { elementRegistry } = PluginRegistry;
 
 const { Activity, ContentElement } = db;
 
@@ -45,6 +49,19 @@ async function reorder({ body, contentElement }, res) {
   return res.json({ data: contentElement });
 }
 
+async function call({ contentElement, user, repository, body, params }, res) {
+  const { action } = params;
+  const { type } = contentElement;
+  const handler = elementRegistry.getCallMethod(type, action);
+  if (!handler) {
+    const error = `Action "${action}" not found for element type "${type}"`;
+    return res.status(StatusCodes.NOT_FOUND).json({ error });
+  }
+  const context = { userId: user.id, repository };
+  const result = await handler(contentElement, body, { context });
+  return res.json({ data: result });
+}
+
 export default {
   list,
   show,
@@ -52,4 +69,5 @@ export default {
   patch,
   remove,
   reorder,
+  call,
 };

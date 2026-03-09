@@ -58,9 +58,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
   });
 
-  const schemaName = computed(() => {
-    return repository.value && getSchema(repository.value.schema).name;
+  const schema = computed(() => {
+    return repository.value && getSchema(repository.value.schema);
   });
+
+  const schemaName = computed(() => schema.value?.name || '');
+
+  const isCollection = computed(() => schema.value?.collection);
 
   const taxonomy = computed(() => {
     return repository.value && getOutlineLevels(repository.value.schema);
@@ -243,6 +247,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     users,
     outlineState,
     schemaName,
+    isCollection,
     taxonomy,
     activities,
     outlineActivities,

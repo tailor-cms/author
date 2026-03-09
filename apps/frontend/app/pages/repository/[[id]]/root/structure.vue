@@ -7,56 +7,75 @@
         max-width="1800"
       >
         <OutlineToolbar
-          v-if="hasActivities"
-          :is-flat="isFlat"
-          :search="search"
-          @search="(val) => (search = val)"
+          v-if="hasActivities || isCollection"
+          v-model:search="filters.search"
+          :has-activities="hasActivities"
         />
         <BrokenReferencesAlert />
-        <template v-if="!search">
-          <Draggable
-            v-bind="{ handle: '.activity' }"
-            :list="rootActivities"
-            :move="repositoryStore.isValidDrop"
-            class="mt-5"
-            animation="150"
-            group="activities"
-            item-key="uid"
-            @update="(data: SortableEvent) => reorder(data, rootActivities)"
-            @change="(e: ChangeEvent) => repositoryStore.onOutlineItemDrop(e)"
-          >
-            <template #item="{ element, index }">
-              <OutlineItem
-                :activities="outlineActivities"
-                :activity="element"
-                :index="index + 1"
-                :level="1"
-              />
-            </template>
-          </Draggable>
-          <OutlineFooter class="mt-1" />
-        </template>
-        <template v-else>
-          <SearchResult
-            v-for="activity in filteredActivities"
-            :key="activity.uid"
-            :activity="activity"
-            :is-selected="repositoryStore.selectedActivity?.id === activity.id"
-            @select="repositoryStore.selectActivity(activity.id)"
-            @show="goTo(activity)"
+        <div v-if="isCollection" class="collection-wrapper mt-5">
+          <CollectionTable
+            v-if="hasActivities"
+            :activities="filteredActivities"
           />
-          <div class="my-6">
-            <VAlert
-              v-if="!filteredActivities.length"
-              class="mb-5"
-              color="primary-lighten-2"
-              icon="mdi-magnify"
-              variant="tonal"
-              prominent
+          <VAlert
+            v-else
+            class="mb-5"
+            color="primary-lighten-3"
+            icon="mdi-information-outline"
+            variant="tonal"
+            prominent
+          >
+            Click on the button above in order to create your first item!
+          </VAlert>
+        </div>
+        <template v-else>
+          <template v-if="!filters.search">
+            <Draggable
+              v-bind="{ handle: '.activity' }"
+              :list="rootActivities"
+              :move="repositoryStore.isValidDrop"
+              class="mt-5 d-flex flex-column ga-2"
+              animation="150"
+              group="activities"
+              item-key="uid"
+              @update="(e: SortableEvent) => reorder(e, rootActivities)"
+              @change="(e: ChangeEvent) => repositoryStore.onOutlineItemDrop(e)"
             >
-              No matches found!
-            </VAlert>
-          </div>
+              <template #item="{ element, index }">
+                <OutlineItem
+                  :activities="outlineActivities"
+                  :activity="element"
+                  :index="index + 1"
+                  :level="1"
+                />
+              </template>
+            </Draggable>
+            <OutlineFooter class="mt-1" />
+          </template>
+          <template v-else>
+            <SearchResult
+              v-for="activity in filteredActivities"
+              :key="activity.uid"
+              :activity="activity"
+              :is-selected="
+                repositoryStore.selectedActivity?.id === activity.id
+              "
+              @select="repositoryStore.selectActivity(activity.id)"
+              @show="goTo(activity)"
+            />
+            <div class="my-6">
+              <VAlert
+                v-if="!filteredActivities.length"
+                class="mb-5"
+                color="primary-lighten-3"
+                icon="mdi-magnify"
+                variant="tonal"
+                prominent
+              >
+                No matches found!
+              </VAlert>
+            </div>
+          </template>
         </template>
       </VContainer>
     </VMain>
@@ -65,19 +84,23 @@
 </template>
 
 <script lang="ts" setup>
-import { filter, find, map } from 'lodash-es';
 import Draggable from 'vuedraggable';
 import { storeToRefs } from 'pinia';
 
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
-import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
+import CollectionTable from '@/components/repository/Outline/CollectionTable.vue';
+import OutlineFooter from '~/components/repository/Outline/OutlineFooter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
 import Sidebar from '@/components/repository/Sidebar/index.vue';
 import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+
+interface Filters {
+  search: string;
+}
 
 definePageMeta({
   name: 'repository',
@@ -86,37 +109,39 @@ definePageMeta({
 
 const repositoryStore = useCurrentRepository();
 
-const { outlineActivities, rootActivities, selectedActivity, taxonomy } =
-  storeToRefs(repositoryStore);
+const {
+  outlineActivities,
+  rootActivities,
+  selectedActivity,
+  isCollection,
+} = storeToRefs(repositoryStore);
 
 const reorder = useOutlineReorder();
 const storageService = useStorageService();
 
 provide('$storageService', storageService);
 
-const search = ref('');
+const filters = reactive<Filters>({
+  search: '',
+});
+
 const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);
 
-const isFlat = computed(() => {
-  const types = map(
-    filter(taxonomy.value, (it) => !it.rootLevel),
-    'type',
+const filteredActivities = computed(() => {
+  return outlineActivities.value.filter(
+    (activity: StoreActivity) =>
+      !filters.search || filterBySearch(activity),
   );
-  if (!types.length) return false;
-  return !find(outlineActivities.value, (it) => types.includes(it.type));
 });
 
-const filteredActivities = computed(() => {
-  if (!search.value) return outlineActivities.value;
-  const regex = new RegExp(search.value.trim(), 'i');
-  return filter(outlineActivities.value, ({ shortId, data: { name } }) => {
-    return regex.test(shortId) || regex.test(name);
-  });
-});
+const filterBySearch = ({ shortId, data }: StoreActivity) => {
+  const regex = new RegExp(filters.search.trim(), 'i');
+  return regex.test(shortId) || regex.test(data.name);
+};
 
 const goTo = async (activity: StoreActivity) => {
-  search.value = '';
+  filters.search = '';
   repositoryStore.selectActivity(activity.id);
   await nextTick();
   scrollToActivity(activity);
@@ -178,8 +203,15 @@ onMounted(() => {
     display: none;
   }
 
-  > :deep(:last-child) {
+  > :deep(:last-child:not(.collection-wrapper)) {
     margin-bottom: 7.5rem;
   }
+}
+
+.collection-wrapper {
+  flex: 1 1 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 </style>

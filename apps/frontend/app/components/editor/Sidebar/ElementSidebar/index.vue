@@ -15,24 +15,31 @@ import { schema } from '@tailor-cms/config';
 
 import ElementMeta from './ElementMeta/index.vue';
 import { exposedApi } from '@/api';
+import { useContentElementStore } from '@/stores/content-elements';
 
 const eventBus = inject('$eventBus') as any;
 const authStore = useAuthStore();
+const { call } = useContentElementStore();
 const storageService = useStorageService();
 
 interface Props {
   element: ContentElement;
   metadata?: any;
 }
+
 const props = withDefaults(defineProps<Props>(), {
   metadata: () => ({}),
 });
+const { repositoryId, id: elementId } = props.element;
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 const editorChannel = eventBus.channel('editor');
 provide('$elementBus', elementBus);
 provide('$editorBus', editorChannel);
 provide('$storageService', storageService);
+provide('$callElementAction', (action: string, payload?: any) =>
+  call(repositoryId, elementId, action, payload),
+);
 provide('$api', exposedApi);
 provide('$schemaService', schema);
 provide('$getCurrentUser', () => authStore.user);

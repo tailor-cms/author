@@ -512,6 +512,9 @@ importers:
       '@types/promise-queue':
         specifier: ^2.2.3
         version: 2.2.3
+      '@types/sortablejs':
+        specifier: ^1.15.9
+        version: 1.15.9
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.6)
@@ -533,6 +536,9 @@ importers:
       '@tailor-cms/config-parser':
         specifier: workspace:^
         version: link:../packages/tailor-config-parser
+      lodash-es:
+        specifier: ^4.17.21
+        version: 4.17.21
     devDependencies:
       '@tailor-cms/content-container-collection':
         specifier: workspace:^
@@ -564,6 +570,12 @@ importers:
       '@tailor-cms/tcc-assessment-pool-server':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/assessment-pool-server
+      '@tailor-cms/tcc-collection-item':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/collection-item
+      '@tailor-cms/tcc-collection-item-server':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/collection-item-server
       '@tailor-cms/tcc-exam-edit':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/exam-edit
@@ -594,13 +606,13 @@ importers:
         version: 0.1.0
       '@tailor-cms/ce-audio-edit':
         specifier: ^0.1.1
-        version: 0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-audio-server':
         specifier: ^0.1.1
         version: 0.1.1
       '@tailor-cms/ce-brightcove-video-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-brightcove-video-server':
         specifier: ^0.1.0
         version: 0.1.0
@@ -612,25 +624,25 @@ importers:
         version: 0.1.0
       '@tailor-cms/ce-drag-drop-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-drag-drop-server':
         specifier: ^0.1.0
         version: 0.1.0
       '@tailor-cms/ce-embed-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-embed-server':
         specifier: ^0.1.0
         version: 0.1.0
       '@tailor-cms/ce-file-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-file-server':
         specifier: ^0.1.0
         version: 0.1.0
       '@tailor-cms/ce-fill-blank-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-fill-blank-server':
         specifier: ^0.1.0
         version: 0.1.0
@@ -639,7 +651,7 @@ importers:
         version: 0.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(vue@3.5.22(typescript@5.9.3))
       '@tailor-cms/ce-html-raw-edit':
         specifier: ^0.0.3
-        version: 0.0.3(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(codemirror@6.0.2)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.0.3(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(codemirror@6.0.2)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-html-raw-server':
         specifier: ^0.0.3
         version: 0.0.3
@@ -648,7 +660,7 @@ importers:
         version: 0.2.0
       '@tailor-cms/ce-image-edit':
         specifier: ^1.1.0
-        version: 1.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 1.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-image-server':
         specifier: ^1.1.0
         version: 1.1.0
@@ -660,7 +672,7 @@ importers:
         version: 0.1.0
       '@tailor-cms/ce-matching-question-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-matching-question-server':
         specifier: ^0.1.0
         version: 0.1.0
@@ -672,19 +684,19 @@ importers:
         version: 0.1.0
       '@tailor-cms/ce-multiple-choice-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-multiple-choice-server':
         specifier: ^0.1.0
         version: 0.1.0
       '@tailor-cms/ce-mux-video-edit':
         specifier: ^0.0.6
-        version: 0.0.6(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(react@19.1.1)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.0.6(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(react@19.1.1)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-mux-video-server':
         specifier: ^0.0.6
         version: 0.0.6(encoding@0.1.13)(pg@8.16.3)
       '@tailor-cms/ce-numerical-response-edit':
         specifier: ^0.1.1
-        version: 0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-numerical-response-server':
         specifier: ^0.1.1
         version: 0.1.1
@@ -696,7 +708,7 @@ importers:
         version: 0.1.0
       '@tailor-cms/ce-pdf-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-pdf-server':
         specifier: ^0.1.0
         version: 0.1.0
@@ -708,7 +720,7 @@ importers:
         version: 0.1.0
       '@tailor-cms/ce-single-choice-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-single-choice-server':
         specifier: ^0.1.0
         version: 0.1.0
@@ -720,19 +732,19 @@ importers:
         version: 0.1.0
       '@tailor-cms/ce-text-response-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-text-response-server':
         specifier: ^0.1.0
         version: 0.1.0
       '@tailor-cms/ce-true-false-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-true-false-server':
         specifier: ^0.1.0
         version: 0.1.0
       '@tailor-cms/ce-video-edit':
         specifier: ^0.1.0
-        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+        version: 0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       '@tailor-cms/ce-video-server':
         specifier: ^0.1.0
         version: 0.1.0
@@ -913,6 +925,44 @@ importers:
       bluebird:
         specifier: ^3.7.2
         version: 3.7.2
+      lodash-es:
+        specifier: '*'
+        version: 4.17.21
+    devDependencies:
+      '@types/lodash-es':
+        specifier: ^4.17.12
+        version: 4.17.12
+
+  packages/core-extensions/content-containers/collection-item:
+    dependencies:
+      '@tailor-cms/core-components':
+        specifier: workspace:*
+        version: link:../../../core-components
+      '@tailor-cms/utils':
+        specifier: workspace:*
+        version: link:../../../utils
+      lodash-es:
+        specifier: '*'
+        version: 4.17.21
+      vee-validate:
+        specifier: 4.14.7
+        version: 4.14.7(vue@3.5.22(typescript@5.9.3))
+      vue:
+        specifier: ^3.5.15
+        version: 3.5.22(typescript@5.9.3)
+      vuetify:
+        specifier: ^3.8.6
+        version: 3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+    devDependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../../../tailor-interfaces
+      '@types/lodash-es':
+        specifier: '*'
+        version: 4.17.12
+
+  packages/core-extensions/content-containers/collection-item-server:
+    dependencies:
       lodash-es:
         specifier: '*'
         version: 4.17.21
@@ -15662,10 +15712,10 @@ snapshots:
 
   '@tailor-cms/ce-accordion-server@0.1.0': {}
 
-  '@tailor-cms/ce-audio-edit@0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-audio-edit@0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
       '@tailor-cms/cek-common': 1.3.2
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -15685,9 +15735,9 @@ snapshots:
 
   '@tailor-cms/ce-audio-server@0.1.1': {}
 
-  '@tailor-cms/ce-brightcove-video-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-brightcove-video-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       url-join: 5.0.0
       vue: 3.5.22(typescript@5.9.3)
@@ -15717,9 +15767,9 @@ snapshots:
 
   '@tailor-cms/ce-carousel-server@0.1.0': {}
 
-  '@tailor-cms/ce-drag-drop-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-drag-drop-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       uuid: 11.1.0
       vue: 3.5.22(typescript@5.9.3)
@@ -15742,9 +15792,9 @@ snapshots:
     dependencies:
       lodash-es: 4.17.21
 
-  '@tailor-cms/ce-embed-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-embed-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       validator: 13.15.15
       vue: 3.5.22(typescript@5.9.3)
@@ -15765,9 +15815,9 @@ snapshots:
 
   '@tailor-cms/ce-embed-server@0.1.0': {}
 
-  '@tailor-cms/ce-file-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-file-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -15787,9 +15837,9 @@ snapshots:
 
   '@tailor-cms/ce-file-server@0.1.0': {}
 
-  '@tailor-cms/ce-fill-blank-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-fill-blank-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       pluralize-esm: 9.0.5
       vue: 3.5.22(typescript@5.9.3)
@@ -15822,24 +15872,24 @@ snapshots:
       '@tiptap/extension-table': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
       '@tiptap/extension-text-align': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-text-style': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
-      '@tiptap/extensions': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
+      '@tiptap/extensions': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
       '@tiptap/starter-kit': 3.2.0
-      '@tiptap/vue-3': 3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3))
+      '@tiptap/vue-3': 3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3))
       lodash-es: 4.17.21
       validator: 13.15.15
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
       - '@tiptap/core'
 
-  '@tailor-cms/ce-html-raw-edit@0.0.3(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(codemirror@6.0.2)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-html-raw-edit@0.0.3(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(codemirror@6.0.2)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
       '@codemirror/lang-css': 6.3.1
       '@codemirror/lang-html': 6.4.9
       '@codemirror/lang-javascript': 6.2.4
       '@codemirror/lang-json': 6.0.2
       '@codemirror/theme-one-dark': 6.1.3
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       sanitize-html: 2.17.0
       vue: 3.5.22(typescript@5.9.3)
@@ -15864,10 +15914,10 @@ snapshots:
 
   '@tailor-cms/ce-html-server@0.2.0': {}
 
-  '@tailor-cms/ce-image-edit@1.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-image-edit@1.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
       '@tailor-cms/cek-common': 1.3.2
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -15895,9 +15945,9 @@ snapshots:
 
   '@tailor-cms/ce-jodit-html-server@0.1.0': {}
 
-  '@tailor-cms/ce-matching-question-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-matching-question-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       uuid: 11.1.0
       vue: 3.5.22(typescript@5.9.3)
@@ -15927,9 +15977,9 @@ snapshots:
 
   '@tailor-cms/ce-modal-server@0.1.0': {}
 
-  '@tailor-cms/ce-multiple-choice-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-multiple-choice-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -15951,12 +16001,12 @@ snapshots:
     dependencies:
       lodash-es: 4.17.21
 
-  '@tailor-cms/ce-mux-video-edit@0.0.6(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(react@19.1.1)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-mux-video-edit@0.0.6(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(react@19.1.1)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
       '@mux/mux-player': 3.6.0(react@19.1.1)
       '@mux/upchunk': 3.5.0
       '@tailor-cms/cek-common': 1.3.2
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       srt-webvtt: 2.0.0
       vue: 3.5.22(typescript@5.9.3)
@@ -15995,9 +16045,9 @@ snapshots:
       - supports-color
       - tedious
 
-  '@tailor-cms/ce-numerical-response-edit@0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-numerical-response-edit@0.1.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -16025,10 +16075,10 @@ snapshots:
 
   '@tailor-cms/ce-page-break-server@0.1.0': {}
 
-  '@tailor-cms/ce-pdf-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-pdf-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
       '@tailor-cms/cek-common': 1.3.2
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -16060,9 +16110,9 @@ snapshots:
 
   '@tailor-cms/ce-quill-html-server@0.1.0': {}
 
-  '@tailor-cms/ce-single-choice-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-single-choice-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -16092,9 +16142,9 @@ snapshots:
 
   '@tailor-cms/ce-table-server@0.1.0': {}
 
-  '@tailor-cms/ce-text-response-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-text-response-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
       - '@tailor-cms/utils'
@@ -16116,9 +16166,9 @@ snapshots:
     dependencies:
       lodash-es: 4.17.21
 
-  '@tailor-cms/ce-true-false-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-true-false-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -16140,10 +16190,10 @@ snapshots:
     dependencies:
       lodash-es: 4.17.21
 
-  '@tailor-cms/ce-video-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/ce-video-edit@0.1.0(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
       '@tailor-cms/cek-common': 1.3.2
-      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
+      '@tailor-cms/core-components': 1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)
       lodash-es: 4.17.21
       vue: 3.5.22(typescript@5.9.3)
     transitivePeerDependencies:
@@ -16170,16 +16220,16 @@ snapshots:
       ky: 1.8.1
       mitt: 3.0.1
 
-  '@tailor-cms/core-components@1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
+  '@tailor-cms/core-components@1.2.1(@tailor-cms/utils@packages+utils)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(@tiptap/starter-kit@3.8.0)(@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3)))(@types/lodash-es@4.17.12)(date-fns@4.1.0)(lodash-es@4.17.21)(p-min-delay@4.2.0)(pluralize-esm@9.0.5)(vee-validate@4.15.1(vue@3.5.22(typescript@5.9.3)))(vue@3.5.22(typescript@5.9.3))(vuedraggable@4.1.0(vue@3.5.22(typescript@5.9.3)))(vuetify@3.10.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3)))(yup@1.7.1)':
     dependencies:
       '@tailor-cms/utils': link:packages/utils
-      '@tiptap/extension-character-count': 2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
-      '@tiptap/extension-subscript': 2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))
-      '@tiptap/extension-superscript': 2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))
-      '@tiptap/extension-underline': 2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))
+      '@tiptap/extension-character-count': 2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
+      '@tiptap/extension-subscript': 2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
+      '@tiptap/extension-superscript': 2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
+      '@tiptap/extension-underline': 2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/pm': 3.2.0
       '@tiptap/starter-kit': 3.8.0
-      '@tiptap/vue-3': 3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3))
+      '@tiptap/vue-3': 3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3))
       '@types/lodash-es': 4.17.12
       '@vueuse/core': 13.9.0(vue@3.5.22(typescript@5.9.3))
       chart.js: 4.5.1
@@ -16208,9 +16258,9 @@ snapshots:
       set-value: 4.1.0
       to-camel-case: 1.0.0
 
-  '@tiptap/core@3.2.0(@tiptap/pm@3.8.0)':
+  '@tiptap/core@3.2.0(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/pm': 3.8.0
+      '@tiptap/pm': 3.2.0
 
   '@tiptap/core@3.8.0(@tiptap/pm@3.8.0)':
     dependencies:
@@ -16218,7 +16268,7 @@ snapshots:
 
   '@tiptap/extension-blockquote@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-blockquote@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
@@ -16226,23 +16276,23 @@ snapshots:
 
   '@tiptap/extension-bold@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-bold@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
       '@tiptap/core': 3.8.0(@tiptap/pm@3.8.0)
 
-  '@tiptap/extension-bubble-menu@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)':
+  '@tiptap/extension-bubble-menu@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
       '@floating-ui/dom': 1.7.3
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
     optional: true
 
-  '@tiptap/extension-bubble-menu@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)':
+  '@tiptap/extension-bubble-menu@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
       '@floating-ui/dom': 1.7.3
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
     optional: true
 
@@ -16253,22 +16303,22 @@ snapshots:
       '@tiptap/pm': 3.8.0
     optional: true
 
-  '@tiptap/extension-bullet-list@3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))':
+  '@tiptap/extension-bullet-list@3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-bullet-list@3.8.0(@tiptap/extension-list@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
       '@tiptap/extension-list': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
 
-  '@tiptap/extension-character-count@2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)':
+  '@tiptap/extension-character-count@2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
 
   '@tiptap/extension-code-block@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.8.0
 
   '@tiptap/extension-code-block@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
@@ -16278,7 +16328,7 @@ snapshots:
 
   '@tiptap/extension-code@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-code@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
@@ -16286,31 +16336,31 @@ snapshots:
 
   '@tiptap/extension-document@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-document@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
       '@tiptap/core': 3.8.0(@tiptap/pm@3.8.0)
 
-  '@tiptap/extension-dropcursor@3.2.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))':
+  '@tiptap/extension-dropcursor@3.2.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
-  '@tiptap/extension-dropcursor@3.8.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0))':
+  '@tiptap/extension-dropcursor@3.8.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
-  '@tiptap/extension-floating-menu@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)':
+  '@tiptap/extension-floating-menu@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
       '@floating-ui/dom': 1.7.3
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
     optional: true
 
-  '@tiptap/extension-floating-menu@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)':
+  '@tiptap/extension-floating-menu@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
       '@floating-ui/dom': 1.7.3
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
     optional: true
 
@@ -16321,17 +16371,17 @@ snapshots:
       '@tiptap/pm': 3.8.0
     optional: true
 
-  '@tiptap/extension-gapcursor@3.2.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))':
+  '@tiptap/extension-gapcursor@3.2.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
-  '@tiptap/extension-gapcursor@3.8.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0))':
+  '@tiptap/extension-gapcursor@3.8.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-hard-break@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-hard-break@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
@@ -16339,7 +16389,7 @@ snapshots:
 
   '@tiptap/extension-heading@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-heading@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
@@ -16347,7 +16397,7 @@ snapshots:
 
   '@tiptap/extension-horizontal-rule@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.8.0
 
   '@tiptap/extension-horizontal-rule@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
@@ -16357,11 +16407,11 @@ snapshots:
 
   '@tiptap/extension-image@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-italic@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-italic@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
@@ -16369,13 +16419,13 @@ snapshots:
 
   '@tiptap/extension-link@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
       linkifyjs: 4.3.2
 
   '@tiptap/extension-link@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.8.0
       linkifyjs: 4.3.2
 
@@ -16385,35 +16435,35 @@ snapshots:
       '@tiptap/pm': 3.8.0
       linkifyjs: 4.3.2
 
-  '@tiptap/extension-list-item@3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))':
+  '@tiptap/extension-list-item@3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-list-item@3.8.0(@tiptap/extension-list@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
       '@tiptap/extension-list': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
 
-  '@tiptap/extension-list-keymap@3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))':
+  '@tiptap/extension-list-keymap@3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-list-keymap@3.8.0(@tiptap/extension-list@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
       '@tiptap/extension-list': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
 
-  '@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)':
+  '@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
-      '@tiptap/pm': 3.8.0
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
+      '@tiptap/pm': 3.2.0
 
   '@tiptap/extension-list@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
     dependencies:
       '@tiptap/core': 3.8.0(@tiptap/pm@3.8.0)
       '@tiptap/pm': 3.8.0
 
-  '@tiptap/extension-ordered-list@3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))':
+  '@tiptap/extension-ordered-list@3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-ordered-list@3.8.0(@tiptap/extension-list@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))':
     dependencies:
@@ -16421,7 +16471,7 @@ snapshots:
 
   '@tiptap/extension-paragraph@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-paragraph@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
@@ -16429,19 +16479,19 @@ snapshots:
 
   '@tiptap/extension-strike@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-strike@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
       '@tiptap/core': 3.8.0(@tiptap/pm@3.8.0)
 
-  '@tiptap/extension-subscript@2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))':
+  '@tiptap/extension-subscript@2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-subscript@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
 
   '@tiptap/extension-subscript@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
@@ -16449,13 +16499,13 @@ snapshots:
       '@tiptap/core': 3.8.0(@tiptap/pm@3.8.0)
       '@tiptap/pm': 3.8.0
 
-  '@tiptap/extension-superscript@2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))':
+  '@tiptap/extension-superscript@2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-superscript@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
 
   '@tiptap/extension-superscript@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
@@ -16465,46 +16515,46 @@ snapshots:
 
   '@tiptap/extension-table@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
 
   '@tiptap/extension-text-align@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-text-style@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-text@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-text@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
       '@tiptap/core': 3.8.0(@tiptap/pm@3.8.0)
 
-  '@tiptap/extension-underline@2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))':
+  '@tiptap/extension-underline@2.26.1(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-underline@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
 
   '@tiptap/extension-underline@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))':
     dependencies:
       '@tiptap/core': 3.8.0(@tiptap/pm@3.8.0)
 
-  '@tiptap/extensions@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)':
+  '@tiptap/extensions@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
 
-  '@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)':
+  '@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
-      '@tiptap/pm': 3.8.0
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
+      '@tiptap/pm': 3.2.0
 
   '@tiptap/extensions@3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)':
     dependencies:
@@ -16555,29 +16605,29 @@ snapshots:
 
   '@tiptap/starter-kit@3.2.0':
     dependencies:
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/extension-blockquote': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-bold': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
-      '@tiptap/extension-bullet-list': 3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))
+      '@tiptap/extension-bullet-list': 3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))
       '@tiptap/extension-code': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-code-block': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
       '@tiptap/extension-document': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
-      '@tiptap/extension-dropcursor': 3.2.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))
-      '@tiptap/extension-gapcursor': 3.2.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))
+      '@tiptap/extension-dropcursor': 3.2.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))
+      '@tiptap/extension-gapcursor': 3.2.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))
       '@tiptap/extension-hard-break': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-heading': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-horizontal-rule': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
       '@tiptap/extension-italic': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-link': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
-      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
-      '@tiptap/extension-list-item': 3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))
-      '@tiptap/extension-list-keymap': 3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))
-      '@tiptap/extension-ordered-list': 3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0))
+      '@tiptap/extension-list': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
+      '@tiptap/extension-list-item': 3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))
+      '@tiptap/extension-list-keymap': 3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))
+      '@tiptap/extension-ordered-list': 3.2.0(@tiptap/extension-list@3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))
       '@tiptap/extension-paragraph': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-strike': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-text': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-underline': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))
-      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.8.0)
+      '@tiptap/extensions': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.8.0
 
   '@tiptap/starter-kit@3.8.0':
@@ -16589,8 +16639,8 @@ snapshots:
       '@tiptap/extension-code': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-code-block': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
       '@tiptap/extension-document': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))
-      '@tiptap/extension-dropcursor': 3.8.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0))
-      '@tiptap/extension-gapcursor': 3.8.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0))
+      '@tiptap/extension-dropcursor': 3.8.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))
+      '@tiptap/extension-gapcursor': 3.8.0(@tiptap/extensions@3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0))
       '@tiptap/extension-hard-break': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-heading': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))
       '@tiptap/extension-horizontal-rule': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
@@ -16607,25 +16657,25 @@ snapshots:
       '@tiptap/extensions': 3.8.0(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)
       '@tiptap/pm': 3.8.0
 
-  '@tiptap/vue-3@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3))':
+  '@tiptap/vue-3@3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@floating-ui/dom': 1.7.3
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
       vue: 3.5.22(typescript@5.9.3)
     optionalDependencies:
-      '@tiptap/extension-bubble-menu': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
-      '@tiptap/extension-floating-menu': 3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
+      '@tiptap/extension-bubble-menu': 3.2.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
+      '@tiptap/extension-floating-menu': 3.2.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
-  '@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3))':
+  '@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@floating-ui/dom': 1.7.3
-      '@tiptap/core': 3.2.0(@tiptap/pm@3.8.0)
+      '@tiptap/core': 3.2.0(@tiptap/pm@3.2.0)
       '@tiptap/pm': 3.2.0
       vue: 3.5.22(typescript@5.9.3)
     optionalDependencies:
-      '@tiptap/extension-bubble-menu': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
-      '@tiptap/extension-floating-menu': 3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.2.0))(@tiptap/pm@3.2.0)
+      '@tiptap/extension-bubble-menu': 3.8.0(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
+      '@tiptap/extension-floating-menu': 3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.2.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.2.0)
 
   '@tiptap/vue-3@3.8.0(@floating-ui/dom@1.7.3)(@tiptap/core@3.8.0(@tiptap/pm@3.8.0))(@tiptap/pm@3.8.0)(vue@3.5.22(typescript@5.9.3))':
     dependencies:
