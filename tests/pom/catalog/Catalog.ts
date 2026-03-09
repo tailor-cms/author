@@ -89,4 +89,8 @@ export class Catalog {
   getCardCheckboxes() {
     return this.getRepositoryCards().locator('.v-checkbox');
   }
+
+  getCardCheckbox(hasText: string) {
+    return this.findRepositoryCard(hasText).locator('.v-checkbox');
+  }
 }

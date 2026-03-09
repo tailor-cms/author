@@ -7,7 +7,9 @@ import SeedClient from '../../../api/SeedClient';
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
   await SeedClient.seedCatalog();
-  await page.goto('/');
+  await page.goto('/', { waitUntil: 'networkidle' });
+  const catalog = new Catalog(page);
+  await expect(catalog.getRepositoryCards().first()).toBeVisible();
 });
 
 test('should be able to toggle delete mode on and off', async ({ page }) => {
@@ -30,16 +32,14 @@ test('should be able to toggle delete mode on and off', async ({ page }) => {
 test('should be able to select individual repositories', async ({ page }) => {
   const catalog = new Catalog(page);
   await catalog.toggleDeleteMode();
-  // Click checkbox on first card
-  const firstCardCheckbox = catalog.getCardCheckboxes().nth(0);
-  await firstCardCheckbox.click();
+  // Select Astronomy
+  await catalog.getCardCheckbox('Astronomy').click();
   await expect(page.getByRole('button', { name: 'Delete (1)' })).toBeVisible();
-  // Click checkbox on second card
-  const secondCardCheckbox = catalog.getCardCheckboxes().nth(1);
-  await secondCardCheckbox.click();
+  // Select Physics
+  await catalog.getCardCheckbox('Physics').click();
   await expect(page.getByRole('button', { name: 'Delete (2)' })).toBeVisible();
-  // Deselect first card
-  await firstCardCheckbox.click();
+  // Deselect Astronomy
+  await catalog.getCardCheckbox('Astronomy').click();
   await expect(page.getByRole('button', { name: 'Delete (1)' })).toBeVisible();
 });
 
@@ -63,7 +63,7 @@ test('should clear selection when exiting delete mode', async ({ page }) => {
   const catalog = new Catalog(page);
   await catalog.toggleDeleteMode();
   // Select a card
-  await catalog.getCardCheckboxes().nth(0).click();
+  await catalog.getCardCheckbox('Astronomy').click();
   await expect(page.getByRole('button', { name: 'Delete (1)' })).toBeVisible();
   // Exit and re-enter delete mode
   await catalog.toggleDeleteMode();
@@ -74,8 +74,9 @@ test('should clear selection when exiting delete mode', async ({ page }) => {
 
 test('should show confirmation dialog before deleting', async ({ page }) => {
   const catalog = new Catalog(page);
+  const initialCount = await catalog.getRepositoryCards().count();
   await catalog.toggleDeleteMode();
-  await catalog.getCardCheckboxes().nth(0).click();
+  await catalog.getCardCheckbox('Astronomy').click();
   await catalog.deleteSelectedBtn.click();
   // Confirmation dialog should appear
   const dialog = new ConfirmationDialog(page, 'Delete repository');
@@ -83,50 +84,57 @@ test('should show confirmation dialog before deleting', async ({ page }) => {
   // Cancel should close dialog and keep repositories
   await dialog.close();
   await expect(dialog.el).not.toBeVisible();
-  const cardCount = await catalog.getRepositoryCards().count();
-  expect(cardCount).toBeGreaterThan(0);
+  // All repositories should still be present after cancelling
+  await expect(catalog.getRepositoryCards()).toHaveCount(initialCount);
 });
 
 test('should delete selected repositories after confirmation', async ({
   page,
 }) => {
   const catalog = new Catalog(page);
-  const initialCount = await catalog.getRepositoryCards().count();
   await catalog.toggleDeleteMode();
-  // Select first repository
-  await catalog.getCardCheckboxes().nth(0).click();
+  // Select a specific repo by name
+  await catalog.getCardCheckbox('Astronomy').click();
   await catalog.deleteSelectedBtn.click();
   // Confirm deletion
   const dialog = new ConfirmationDialog(page, 'Delete repository');
+  await expect(dialog.el).toBeVisible();
   await dialog.confirm();
-  // Wait for deletion to complete and page to update
+  await expect(dialog.el).not.toBeVisible();
   await page.waitForLoadState('networkidle');
-  // Should have one less repository and exit delete mode
-  await expect(catalog.getRepositoryCards()).toHaveCount(initialCount - 1);
+  // The deleted repo should no longer be visible and delete mode should exit
+  await expect(catalog.findRepositoryCard('Astronomy')).toHaveCount(0, {
+    timeout: 10000,
+  });
   await expect(catalog.selectAllCheckbox).not.toBeVisible();
 });
 
 test('should delete multiple selected repositories', async ({ page }) => {
   const catalog = new Catalog(page);
-  const initialCount = await catalog.getRepositoryCards().count();
   await catalog.toggleDeleteMode();
-  // Select first two repositories
-  await catalog.getCardCheckboxes().nth(0).click();
-  await catalog.getCardCheckboxes().nth(1).click();
+  // Select two specific repos by name
+  await catalog.getCardCheckbox('Astronomy').click();
+  await catalog.getCardCheckbox('Physics').click();
   await expect(page.getByRole('button', { name: 'Delete (2)' })).toBeVisible();
   await catalog.deleteSelectedBtn.click();
   // Confirm deletion
-  const dialog = new ConfirmationDialog(page, 'Delete repository');
+  const dialog = new ConfirmationDialog(page, 'Delete repositories');
+  await expect(dialog.el).toBeVisible();
   await expect(dialog.el).toContainText('2 repositories');
   await dialog.confirm();
+  await expect(dialog.el).not.toBeVisible();
   await page.waitForLoadState('networkidle');
-  await expect(catalog.getRepositoryCards()).toHaveCount(initialCount - 2);
+  // Both deleted repos should no longer be visible
+  await expect(catalog.findRepositoryCard('Astronomy')).toHaveCount(0, {
+    timeout: 10000,
+  });
+  await expect(catalog.findRepositoryCard('Physics')).toHaveCount(0);
 });
 
 test('should clear selection when searching', async ({ page }) => {
   const catalog = new Catalog(page);
   await catalog.toggleDeleteMode();
-  await catalog.getCardCheckboxes().nth(0).click();
+  await catalog.getCardCheckbox('Astronomy').click();
   await expect(page.getByRole('button', { name: 'Delete (1)' })).toBeVisible();
   // Search should clear selection
   await catalog.searchInput.fill('test');
