@@ -161,6 +161,7 @@
 import { find, map } from 'lodash-es';
 import { SCHEMAS } from '@tailor-cms/config';
 import { storeToRefs } from 'pinia';
+import pluralize from 'pluralize-esm';
 import Promise from 'bluebird';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
@@ -235,17 +236,19 @@ const toggleSelectAll = () => {
 
 const deleteSelected = () => {
   const count = selectedRepos.value.size;
-  const itemText = count === 1 ? 'repository' : 'repositories';
 
   confirmationDialog({
-    title: 'Delete repositories?',
-    message: `Are you sure you want to delete ${count} ${itemText}?`,
+    title: `Delete ${pluralize('repository', count)}?`,
+    message: `Are you sure you want to delete ${pluralize('repository', count, true)}?`,
     action: async () => {
-      const repositories = Array.from(selectedRepos.value);
-      await Promise.each(repositories, (id) => repositoryStore.remove(id));
-      selectedRepos.value.clear();
-      isDeleteMode.value = false;
-      await refetchRepositories();
+      try {
+        const repositories = Array.from(selectedRepos.value);
+        await Promise.each(repositories, (id) => repositoryStore.remove(id));
+      } finally {
+        selectedRepos.value.clear();
+        isDeleteMode.value = false;
+        await refetchRepositories();
+      }
     },
   });
 };
