@@ -48,11 +48,16 @@ const Schema: OpenAISchema = {
 const generateTaxonomyDesc = (schemaId: string): string => {
   const outlineLevels = getOutlineLevels(schemaId);
   if (!outlineLevels) throw new Error('Schema not found!');
-  const generateTaxonDesc = (activityTypeConfig) => {
-    const subLevels = activityTypeConfig.subLevels?.map(getLevel);
+  const generateTaxonDesc = (
+    activityTypeConfig: Record<string, any>,
+  ): string => {
+    const subLevels: Record<string, any>[] =
+      activityTypeConfig.subLevels?.map(getLevel) || [];
     if (!subLevels?.length) return '';
     const { label } = activityTypeConfig;
-    const subLevelsLabel = subLevels.map(({ label }) => label).join(', ');
+    const subLevelsLabel = subLevels
+      .map(({ label }: Record<string, any>) => label)
+      .join(', ');
     const desc = `${label} contains the following sublevels: ${subLevelsLabel}.`;
     const withoutRecursion =
       subLevels?.filter((it) => it.type !== activityTypeConfig.type) || [];
@@ -77,6 +82,12 @@ const getPrompt = (context: AiContext): string => {
   const leafLevels = getOutlineLevels(schemaId).filter(
     (it) => it?.contentContainers?.length,
   );
+  const hasDocuments = !!context.repository.vectorStoreId;
+  const documentGuideline = hasDocuments
+    ? `- Base the outline structure on the provided source documents
+    - Derive sections and topics from the document content
+    - Do not invent topics not covered in the documents`
+    : '';
   return `
     Generate a structure/outline for this content.
     The structure should be created by following the taxonomy of the
@@ -87,7 +98,8 @@ const getPrompt = (context: AiContext): string => {
     array of the same format. If possible, generate at least 10 root nodes.
     Make sure to have content holder nodes in the structure. The content
     holder nodes are the following:
-    ${leafLevels.map((it) => it.label).join(', ')}.`;
+    ${leafLevels.map((it) => it.label).join(', ')}.
+    ${documentGuideline}`;
 };
 
 const spec: AiResponseSpec = {

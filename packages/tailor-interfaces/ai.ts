@@ -49,6 +49,8 @@ export interface AiRepositoryContext {
   topic?: string;
   // Additional information about the content
   tags?: string[];
+  // Vector store ID for document-based generation
+  vectorStoreId?: string;
 }
 
 export interface AiContext {

@@ -1,5 +1,6 @@
 import findIndex from 'lodash/findIndex.js';
 import hash from 'hash-object';
+import omit from 'lodash/omit.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
@@ -72,6 +73,7 @@ export class RepositoryManifest {
   static pickRepositoryAttrs(repository) {
     const attrs = ['id', 'uid', 'schema', 'name', 'description', 'data'];
     const temp = pick(repository, attrs);
+    if (temp.data) temp.data = omit(temp.data, '$$');
     renameKey(temp, 'data', 'meta');
     return temp;
   }
