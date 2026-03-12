@@ -31,4 +31,9 @@ function deleteVectorStore(vectorStoreId) {
   return request.delete(urls.vectorStore(vectorStoreId)).then(extractData);
 }
 
-export default { generate, uploadDocuments, getVectorStoreStatus, deleteVectorStore };
+export default {
+  generate,
+  uploadDocuments,
+  getVectorStoreStatus,
+  deleteVectorStore,
+};
