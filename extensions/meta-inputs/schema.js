@@ -1,0 +1,13 @@
+import { elements } from './client.js';
+
+const DEFAULT_SCHEMA = { type: 'string' };
+
+const schemaByType = Object.fromEntries(
+  elements.map((el) => [el.type, el.schema]),
+);
+
+export const getSchema = (type, field = {}) => {
+  const schema = schemaByType[type];
+  if (!schema) return DEFAULT_SCHEMA;
+  return typeof schema === 'function' ? schema(field) : schema;
+};
