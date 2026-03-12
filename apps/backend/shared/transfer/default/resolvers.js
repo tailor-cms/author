@@ -1,5 +1,6 @@
 import mapKeys from 'lodash/mapKeys.js';
 import miss from 'mississippi';
+import omit from 'lodash/omit.js';
 import QueryStream from 'pg-query-stream';
 import { schema } from '@tailor-cms/config';
 import { stringify } from 'JSONStream';
@@ -15,7 +16,11 @@ const prependStorage = (it) =>
 function createRepositoryResolver({ context, transaction }) {
   const where = { id: context.repositoryId };
   const srcStream = queryStream(Repository, { where, transaction });
-  return miss.pipe(srcStream, stringify(false /* isArray */));
+  const stripInternal = miss.through.obj((repo, _enc, cb) => {
+    if (repo.data) repo.data = omit(repo.data, '$$');
+    cb(null, repo);
+  });
+  return miss.pipe(srcStream, stripInternal, stringify(false /* isArray */));
 }
 
 function createActivitiesResolver({ context, transaction }) {

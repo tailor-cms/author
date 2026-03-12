@@ -44,7 +44,7 @@
       @add:subcontainer="emit('add:subcontainer', $event)"
       @update:subcontainer="emit('update:subcontainer', $event)"
       @delete:subcontainer="emit('delete:subcontainer', $event)"
-      @delete:element="emit('delete:element', $event)"
+      @delete:element="(el, force) => emit('delete:element', el, force)"
       @reorder:element="emit('reorder:element', $event)"
     />
   </VCard>

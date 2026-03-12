@@ -1,4 +1,3 @@
-import type { AiActivityConfig } from '@tailor-cms/interfaces/schema.ts';
 import type { AiRepositoryContext } from '@tailor-cms/interfaces/ai.ts';
 import { schema as schemaAPI } from '@tailor-cms/config';
 
@@ -7,7 +6,8 @@ export default class RepositoryContext {
   name: string;
   description: string;
   outlineLocation?: string;
-  containerConfig?: AiActivityConfig;
+  outlineActivityType?: string;
+  containerType?: string;
   topic?: string;
   tags?: string[];
 
@@ -16,8 +16,9 @@ export default class RepositoryContext {
     this.name = context.name;
     this.description = context.description;
     this.outlineLocation = context.outlineLocation;
+    this.outlineActivityType = context.outlineActivityType;
+    this.containerType = context.containerType;
     this.topic = context.topic;
-    this.containerConfig = context.containerConfig;
     this.tags = context.tags;
   }
 
@@ -44,7 +45,12 @@ export default class RepositoryContext {
   }
 
   get contentContainerDescription() {
-    return this.containerConfig?.definition || '';
+    const { outlineActivityType, containerType } = this;
+    if (!outlineActivityType || !containerType) return '';
+    const container = schemaAPI
+      .getSupportedContainers(outlineActivityType)
+      .find((c: any) => c.type === containerType);
+    return container?.ai?.definition || '';
   }
 
   get topicContext() {
