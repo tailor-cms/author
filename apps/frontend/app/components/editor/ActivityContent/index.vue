@@ -110,16 +110,6 @@ const getOutlineLocationDesciption = (activity: Activity) => {
   );
 };
 
-const getAiConfig = (
-  outlineActivityType: string,
-  containerType: string,
-) => {
-  const config = $schemaService
-    .getSupportedContainers(outlineActivityType)
-    .find((it: any) => it?.type === containerType);
-  return config?.ai || {};
-};
-
 const doTheMagic = ({
   containerType,
   inputs,
@@ -129,7 +119,8 @@ const doTheMagic = ({
   inputs: AiInput[];
   content?: string;
 }) => {
-  const { name, description, schema } = props.repository;
+  const { name, description, schema, data } = props.repository;
+  const aiData = (data as any)?.$$?.ai;
   const context: AiContext = {
     repository: {
       schemaId: schema,
@@ -138,8 +129,9 @@ const doTheMagic = ({
       outlineActivityType: props.activity?.type,
       outlineLocation: getOutlineLocationDesciption(props.activity),
       containerType,
-      containerConfig: getAiConfig(props.activity.type, containerType),
       topic: props.activity?.data?.name,
+      vectorStoreId: aiData?.vectorStoreId,
+      tags: [...(aiData?.topicTags || []), ...(aiData?.styleTags || [])],
     },
     inputs,
     content,
@@ -147,11 +139,21 @@ const doTheMagic = ({
   return aiAPI.generate(context);
 };
 
+const createActivity = async (payload: any) => {
+  return await activityStore.save({
+    ...payload,
+    repositoryId: repositoryStore.repositoryId as number,
+  });
+};
+
 const editorChannel = $eventBus.channel('editor');
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
-if (config.props.aiUiEnabled) provide('$doTheMagic', doTheMagic);
+if (config.props.aiUiEnabled) {
+  provide('$doTheMagic', doTheMagic);
+  provide('$createActivity', createActivity);
+}
 
 const isLoading = ref(true);
 const focusedElement = ref(null);

@@ -1,31 +1,30 @@
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import type { AiResponseSpec, OpenAISchema } from './interfaces.ts';
 
+export const HTML_TYPE = ContentElementType.TiptapHtml;
+
+export const ElementSchema = {
+  type: 'object',
+  properties: {
+    type: { enum: [HTML_TYPE] },
+    data: {
+      type: 'object',
+      properties: { content: { type: 'string' } },
+      required: ['content'],
+      additionalProperties: false,
+    },
+  },
+  required: ['type', 'data'],
+  additionalProperties: false,
+};
+
 export const Schema: OpenAISchema = {
   type: 'json_schema',
   name: 'ce_html_elements',
   schema: {
     type: 'object',
     properties: {
-      elements: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            type: { enum: [ContentElementType.TiptapHtml] },
-            data: {
-              type: 'object',
-              properties: {
-                content: { type: 'string' },
-              },
-              required: ['content'],
-              additionalProperties: false,
-            },
-          },
-          required: ['type', 'data'],
-          additionalProperties: false,
-        },
-      },
+      elements: { type: 'array', items: ElementSchema },
     },
     required: ['elements'],
     additionalProperties: false,

@@ -1,9 +1,4 @@
 import Edit from './EditMeta.vue';
+import manifest from './manifest.js';
 
-export default {
-  type: 'TEXTAREA',
-  version: '1.0',
-  i18n: true,
-  schema: { type: 'string' },
-  Edit,
-};
+export default { ...manifest, Edit };

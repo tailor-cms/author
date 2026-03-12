@@ -1,4 +1,4 @@
-import { elements } from './client.js';
+import { elements } from './server.js';
 
 const DEFAULT_SCHEMA = { type: 'string' };
 
