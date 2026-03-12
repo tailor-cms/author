@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "files": [
     "client.js",
+    "schema.js",
     "types.js"
   ],
   "scripts": {
