@@ -1,8 +1,4 @@
 import Edit from './EditMeta/index.vue';
+import manifest from './manifest.js';
 
-export default {
-  type: 'COLOR',
-  version: '1.0',
-  schema: { type: 'string' },
-  Edit,
-};
+export default { ...manifest, Edit };

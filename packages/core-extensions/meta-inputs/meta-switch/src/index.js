@@ -1,8 +1,4 @@
 import Edit from './EditMeta.vue';
+import manifest from './manifest.js';
 
-export default {
-  type: 'SWITCH',
-  version: '1.0',
-  schema: { type: 'boolean' },
-  Edit,
-};
+export default { ...manifest, Edit };

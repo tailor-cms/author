@@ -140,7 +140,7 @@ import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { filter, reduce, sortBy } from 'lodash-es';
 import { computed, inject, ref } from 'vue';
 
-import AIPrompt from './AIPrompt.vue';
+import { AiPrompt as AIPrompt } from '@tailor-cms/core-components';
 
 interface Props {
   name: string;

@@ -19,6 +19,7 @@ export enum AiResponseSchema {
   Html = 'HTML',
   Outline = 'OUTLINE',
   Question = 'QUESTION',
+  StructuredContent = 'STRUCTURED_CONTENT',
   Tag = 'TAG',
 }
 
@@ -43,8 +44,6 @@ export interface AiRepositoryContext {
   outlineLocation?: string;
   // If content is generated for a container
   containerType?: string;
-  // If content is generated for a container
-  containerConfig?: any;
   // General topic of the content, in case of a outline node title of the leaf
   topic?: string;
   // Additional information about the content

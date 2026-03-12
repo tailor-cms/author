@@ -5,44 +5,38 @@ import times from 'lodash/times.js';
 
 import type { AiResponseSpec, OpenAISchema } from './interfaces.ts';
 
+export const QUESTION_TYPE = ContentElementType.MultipleChoice;
+
+export const QuestionElementSchema = {
+  type: 'object',
+  properties: {
+    type: { enum: [QUESTION_TYPE] },
+    question: { type: 'string' },
+    answers: { type: 'array', items: { type: 'string' } },
+    correct: { type: 'array', items: { type: 'integer' } },
+    feedback: {
+      type: 'object',
+      // OpenAI does not support pattern properties
+      properties: times(4).reduce(
+        (acc, it) => ({ ...acc, [it]: { type: 'string' } }),
+        {},
+      ),
+      required: times(4, String),
+      additionalProperties: false,
+    },
+    hint: { type: 'string' },
+  },
+  required: ['type', 'question', 'answers', 'correct', 'feedback', 'hint'],
+  additionalProperties: false,
+};
+
 export const Schema: OpenAISchema = {
   type: 'json_schema',
   name: 'ce_question_elements',
   schema: {
     type: 'object',
     properties: {
-      elements: {
-        type: 'array',
-        items: {
-          type: 'object',
-          properties: {
-            type: { enum: [ContentElementType.MultipleChoice] },
-            question: { type: 'string' },
-            answers: { type: 'array', items: { type: 'string' } },
-            correct: { type: 'array', items: { type: 'integer' } },
-            feedback: {
-              type: 'object',
-              // OpenAI does not support pattern properties
-              properties: times(4).reduce(
-                (acc, it) => ({ ...acc, [it]: { type: 'string' } }),
-                {},
-              ),
-              required: times(4, String),
-              additionalProperties: false,
-            },
-            hint: { type: 'string' },
-          },
-          required: [
-            'type',
-            'question',
-            'answers',
-            'correct',
-            'feedback',
-            'hint',
-          ],
-          additionalProperties: false,
-        },
-      },
+      elements: { type: 'array', items: QuestionElementSchema },
     },
     required: ['elements'],
     additionalProperties: false,

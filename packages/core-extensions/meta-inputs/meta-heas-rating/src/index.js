@@ -1,8 +1,4 @@
 import Edit from './EditMeta.vue';
+import manifest from './manifest.js';
 
-export default {
-  type: 'HEAS_RATING',
-  version: '1.0',
-  schema: { type: 'number' },
-  Edit,
-};
+export default { ...manifest, Edit };
