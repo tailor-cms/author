@@ -98,6 +98,31 @@ test('editing linked element triggers unlink confirmation', async ({
   await page.waitForLoadState('networkidle');
   const updatedElement = editor.getElement();
   await updatedElement.expectNotLinked();
+  // Verify outline activity is also unlinked
+  await toStructurePage(page, linkedActivity);
+  const outline = new ActivityOutline(page);
+  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  await sidebar.linkedIndicator.expectNotVisible();
+});
+
+test('adding element to linked activity triggers unlink confirmation', async ({
+  page,
+}) => {
+  const { linkedActivity } = await seedLinkedRepositories();
+  await toEditorPage(page, linkedActivity);
+  const editor = new Editor(page);
+  await editor.addElementDialog.add('HTML');
+  const dialog = page.locator('div[role="dialog"]', {
+    hasText: 'Add element to linked activity',
+  });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole('button', { name: 'confirm' }).click();
+  // Verify outline activity is unlinked
+  await page.waitForTimeout(1000);
+  await toStructurePage(page, linkedActivity);
+  const outline = new ActivityOutline(page);
+  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  await sidebar.linkedIndicator.expectNotVisible();
 });
 
 test('source element edit propagates to linked copy', async ({ browser }) => {

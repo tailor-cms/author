@@ -292,6 +292,30 @@ test('auto-unlink on structural change (add child to a linked module)', async ({
   await reloadedSidebar.linkedIndicator.expectNotVisible();
 });
 
+test('opening empty linked activity does not auto-unlink', async ({ page }) => {
+  const { repository } = await seedLinkedRepositories();
+  const sourceRepoId = repository.id;
+  // Create an empty page in the source repository
+  const { data: emptyPage } = await api.post(`${sourceRepoId}/activities/`, {
+    type: 'PAGE',
+    data: { name: 'Empty Page' },
+  });
+  // Create target repo and link the empty page
+  const targetRepo = await toEmptyRepository(page);
+  const { data: linkedActivities } = await api.post(
+    `${targetRepo.id}/activities/link`,
+    { sourceId: emptyPage.id, parentId: null, position: 0 },
+  );
+  const linkedEmpty = linkedActivities[0];
+  // Open linked empty page in editor (triggers auto container creation)
+  await toEditorPage(page, linkedEmpty);
+  // Navigate to structure and verify activity is still linked
+  await toStructurePage(page, { repositoryId: targetRepo.id } as any);
+  const outline = new ActivityOutline(page);
+  const { sidebar } = await outline.expandAndSelect(linkedEmpty.uid);
+  await sidebar.linkedIndicator.expectVisible();
+});
+
 test('source activity rename propagates to linked copy', async ({ page }) => {
   const { activity, linkedActivity } = await seedLinkedRepositories();
   // Rename the source activity
