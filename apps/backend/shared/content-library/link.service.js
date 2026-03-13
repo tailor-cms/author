@@ -4,8 +4,11 @@ import { schema } from '@tailor-cms/config';
 import { createError } from '#shared/error/helpers.js';
 
 const { NOT_FOUND, BAD_REQUEST } = StatusCodes;
-const { getCompatibleTargetType, isOutlineActivity, isTypeAllowedAtLevel } =
-  schema;
+const {
+  getCompatibleTargetType,
+  isOutlineActivity,
+  isTypeAllowedAtLevel,
+} = schema;
 
 const UNLINK_DATA = { isLinkedCopy: false, sourceModifiedAt: null };
 

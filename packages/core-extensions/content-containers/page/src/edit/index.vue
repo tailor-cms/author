@@ -48,7 +48,7 @@
       variant="tonal"
       prominent
     >
-      Click the button below to add content.
+      {{ disabled ? `Empty ${name}` : 'Click the button below to add content.' }}
     </VAlert>
     <VSheet
       v-else-if="isAiGeneratingContent"

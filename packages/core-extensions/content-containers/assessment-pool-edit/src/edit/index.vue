@@ -34,7 +34,7 @@
       variant="tonal"
       prominent
     >
-      Click the button below to create first Assessment.
+      {{ disabled ? 'Empty assessment pool' : 'Click the button below to create first Assessment.' }}
     </VAlert>
     <VSheet
       v-else-if="isAiGeneratingContent"

@@ -54,7 +54,7 @@
         variant="tonal"
         prominent
       >
-        Click the button below to create first Assessment.
+        {{ isDisabled ? 'Empty assessment group' : 'Click the button below to create first Assessment.' }}
       </VAlert>
       <ElementList
         :activity="group"

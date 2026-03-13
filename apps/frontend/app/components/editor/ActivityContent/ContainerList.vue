@@ -13,8 +13,7 @@
       variant="tonal"
       prominent
     >
-      Click the button below to create {{ multiple ? 'first' : '' }}
-      {{ capitalize(name) }}.
+      {{ emptyMessage }}
     </VAlert>
     <component
       :is="containerName"
@@ -127,6 +126,12 @@ const containerName = computed(() => {
 
 const name = computed(() => props.label.toLowerCase());
 
+const emptyMessage = computed(() => {
+  if (isReadonly.value) return `Empty ${name.value}`;
+  const prefix = props.multiple ? 'first ' : '';
+  return `Click the button below to create ${prefix}${capitalize(name.value)}.`;
+});
+
 const addBtnEnabled = computed(() => {
   const isMultipleOrEmpty = props.multiple || !filteredContainerGroup.value.length;
   return !isReadonly.value && isMultipleOrEmpty;
@@ -223,8 +228,15 @@ const requestElementDeletion = (
 };
 
 onBeforeMount(() => {
-  // Auto-create required container if none exists for current language
-  if (props.required && isEmpty(filteredContainerGroup.value)) addContainer();
+  // Auto-create required container if none exists for current language.
+  // Skip for linked/readonly activities - creating a container would trigger
+  // structural change hooks and break the link.
+  const shouldCreate =
+    !isReadonly.value &&
+    props.required &&
+    isEmpty(filteredContainerGroup.value);
+
+  if (shouldCreate) addContainer();
 });
 </script>
 

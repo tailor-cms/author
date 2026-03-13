@@ -8,7 +8,7 @@
       variant="tonal"
       prominent
     >
-      Click the button below to create first Introduction item.
+      {{ isDisabled ? 'Empty introduction' : 'Click the button below to create first Introduction item.' }}
     </VAlert>
     <ElementList
       :activity="group"
