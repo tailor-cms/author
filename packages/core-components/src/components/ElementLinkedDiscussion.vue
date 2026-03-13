@@ -42,20 +42,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
 import { ref, watch } from 'vue';
 
-interface SourceInfo {
-  id: number;
-  uid: string;
-  repositoryId: number;
-  repositoryName?: string;
-  activityId: number;
-  outlineActivityId: number;
-  outlineActivityName?: string;
-}
-
 interface Props {
-  sourceInfo?: SourceInfo | null;
+  sourceInfo?: ElementSourceInfo | null;
   isLoading?: boolean;
 }
 

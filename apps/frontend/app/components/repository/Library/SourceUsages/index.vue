@@ -58,7 +58,5 @@ const fetchCopies = async () => {
   }
 };
 
-onMounted(fetchCopies);
-
-watch(() => props.activity.id, fetchCopies);
+watch(() => props.activity.id, fetchCopies, { immediate: true });
 </script>

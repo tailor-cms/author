@@ -183,10 +183,13 @@ import {
   provide,
   ref,
 } from 'vue';
+import type {
+  ContentElement,
+  ElementSourceInfo,
+} from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { AiRequestType } from '@tailor-cms/interfaces/ai';
 import { cloneDeep } from 'lodash-es';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getElementId } from '@tailor-cms/utils';
 import type { Meta } from '@tailor-cms/interfaces/common';
@@ -265,28 +268,11 @@ const showAI = computed(
 // Linked element state
 const isElementEntryPoint = ref(true);
 const isLoadingSourceInfo = ref(false);
-const linkedSourceInfo = ref<{
-  id: number;
-  uid: string;
-  repositoryId: number;
-  repositoryName?: string;
-  activityId: number;
-  outlineActivityId: number;
-  outlineActivityName?: string;
-} | null>(null);
+const linkedSourceInfo = ref<ElementSourceInfo | null>(null);
 
 // Source usages state (for non-linked elements that could have copies)
 const isLoadingSourceUsages = ref(false);
-const sourceUsages = ref<Array<{
-  id: number;
-  uid: string;
-  repositoryId: number;
-  repositoryName: string;
-  activityId: number;
-  outlineActivityId: number;
-  outlineActivityName: string;
-  linkedAt: string;
-}> | null>(null);
+const sourceUsages = ref<ElementSourceInfo[] | null>(null);
 const showSourceUsages = computed(
   () => !props.element.isLinkedCopy && !props.element.embedded,
 );

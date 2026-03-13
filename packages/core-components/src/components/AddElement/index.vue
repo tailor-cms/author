@@ -57,7 +57,8 @@
             @click="showElementBrowser = !showElementBrowser"
           />
           <VBtn
-            v-if="!useAI && props.activity"
+            v-if="props.activity"
+            :disabled="useAI"
             class="ml-2"
             color="primary-darken-3"
             prepend-icon="mdi-link-variant"

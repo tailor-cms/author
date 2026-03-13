@@ -13,6 +13,17 @@ export interface RelationshipType extends ElementRelationship {
   value?: Relationship[];
 }
 
+export interface ElementSourceInfo {
+  id: number;
+  uid: string;
+  repositoryId: number;
+  repositoryName?: string;
+  activityId: number;
+  outlineActivityId: number;
+  outlineActivityName?: string;
+  linkedAt?: string;
+}
+
 export interface ContentElement {
   id: number;
   uid: string;

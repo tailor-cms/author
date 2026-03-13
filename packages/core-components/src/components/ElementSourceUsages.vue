@@ -59,22 +59,14 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-
-interface Usage {
-  id: number;
-  uid: string;
-  repositoryId: number;
-  repositoryName: string;
-  activityId: number;
-  outlineActivityId: number;
-  outlineActivityName: string;
-  linkedAt: string;
-}
+import type {
+  ContentElement,
+  ElementSourceInfo,
+} from '@tailor-cms/interfaces/content-element';
 
 interface Props {
   element: ContentElement;
-  usages?: Usage[] | null;
+  usages?: ElementSourceInfo[] | null;
   isLoading?: boolean;
 }
 

@@ -37,13 +37,14 @@
 
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import { activity as activityApi } from '@/api';
 
 import ActionsMenu from './ActionsMenu.vue';
 
 interface SourceInfo {
   id: number;
-  repository: { id: number; name: string; schema: string };
+  repository: Pick<Repository, 'id' | 'name' | 'schema'>;
 }
 
 const { $schemaService } = useNuxtApp() as any;

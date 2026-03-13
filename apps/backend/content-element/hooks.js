@@ -193,11 +193,11 @@ function add(ContentElement, Hooks, Models) {
     await markLinkedAsChanged(affectedRepoIds, [], outlineActivities);
   }
 
-  /** Unlink activity tree when element created on linked activity. */
-  async function unlinkActivityOnCreate(_hookType, element, opts) {
+  // Unlink activity tree when a structural change occurs on a linked activity.
+  async function unlinkActivity(element, opts, reason) {
     if (isLinkSync(opts)) return;
     if (!element.activityId) return;
-    log('Checking activity unlink due to element creation');
+    log(`Checking activity unlink due to element ${reason}`);
     const entryPoint = await linkService.unlinkActivityIfLinked(
       element.activityId,
       opts.context,
@@ -208,19 +208,12 @@ function add(ContentElement, Hooks, Models) {
     }
   }
 
-  /** Unlink activity tree when element deleted from linked activity. */
+  async function unlinkActivityOnCreate(_hookType, element, opts) {
+    return unlinkActivity(element, opts, 'creation');
+  }
+
   async function unlinkActivityOnDelete(_hookType, element, opts) {
-    if (isLinkSync(opts)) return;
-    if (!element.activityId) return;
-    log('Checking activity unlink due to element deletion');
-    const entryPoint = await linkService.unlinkActivityIfLinked(
-      element.activityId,
-      opts.context,
-      opts.transaction,
-    );
-    if (entryPoint) {
-      broadcast(entryPoint.repositoryId, ActivityEvents.Update, entryPoint);
-    }
+    return unlinkActivity(element, opts, 'deletion');
   }
 
   const elementHookMappings = {

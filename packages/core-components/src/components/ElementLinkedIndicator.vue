@@ -11,7 +11,7 @@
         <template #activator="{ props: tooltipProps }">
           <VBtn
             v-bind="{ ...menuProps, ...tooltipProps }"
-            :class="{ 'nested-link': !isEntryPoint }"
+            :class="{ 'opacity-60': !isEntryPoint }"
             :variant="isEntryPoint ? 'tonal' : 'text'"
             aria-label="Linked content"
             color="info"
@@ -54,20 +54,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
 import { ref, watch } from 'vue';
 
-interface SourceInfo {
-  id: number;
-  uid: string;
-  repositoryId: number;
-  repositoryName?: string;
-  activityId: number;
-  outlineActivityId: number;
-  outlineActivityName?: string;
-}
-
 interface Props {
-  sourceInfo?: SourceInfo | null;
+  sourceInfo?: ElementSourceInfo | null;
   isLoading?: boolean;
   isEntryPoint?: boolean;
 }
@@ -81,7 +72,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'unlink': [];
   'source:fetch': [];
-  'source:view': [sourceInfo: SourceInfo];
+  'source:view': [sourceInfo: ElementSourceInfo];
 }>();
 
 const menuOpen = ref(false);
@@ -104,8 +95,3 @@ const onUnlink = () => {
 };
 </script>
 
-<style lang="scss" scoped>
-.nested-link {
-  opacity: 0.6;
-}
-</style>
