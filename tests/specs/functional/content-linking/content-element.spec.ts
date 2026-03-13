@@ -10,10 +10,10 @@ import SeedClient from '../../../api/SeedClient';
 import { Toast } from '../../../pom/common/Toast';
 import {
   outlineSeed,
-  toEditorPage,
   seedLinkedRepositories,
   toSeededRepository,
 } from '../../../helpers/seed';
+import { toEditorPage } from '../../../helpers/navigation';
 
 const api = new BaseClient('/api/repositories/');
 

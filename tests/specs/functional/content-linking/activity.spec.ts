@@ -3,11 +3,10 @@ import { expect, test } from '@playwright/test';
 import {
   outlineLevel,
   outlineSeed,
-  toEditorPage,
   toEmptyRepository,
   seedLinkedRepositories,
-  toStructurePage,
 } from '../../../helpers/seed';
+import { toEditorPage, toStructurePage } from '../../../helpers/navigation';
 import { ActivityOutline } from '../../../pom/repository/Outline';
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import BaseClient from '../../../api/BaseClient';
