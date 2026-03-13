@@ -78,6 +78,7 @@ function add(ContentElement, Hooks, Models) {
   /**
    * Auto-unlink linked element when user edits data.
    * "If you edit it, you own it" - user edits break the library link.
+   * Also unlinks the parent activity tree if the element is part of one.
    */
   async function autoUnlinkOnEdit(_hookType, element, opts) {
     if (!element.isLinkedCopy) return;
@@ -87,6 +88,15 @@ function add(ContentElement, Hooks, Models) {
       { isLinkedCopy: false, sourceModifiedAt: null },
       { transaction: opts.transaction, hooks: false },
     );
+    // Also unlink the parent activity tree if it's part of a linked hierarchy
+    const entryPoint = await linkService.unlinkActivityIfLinked(
+      element.activityId,
+      opts.context,
+      opts.transaction,
+    );
+    if (entryPoint) {
+      broadcast(entryPoint.repositoryId, ActivityEvents.Update, entryPoint);
+    }
   }
 
   /**
