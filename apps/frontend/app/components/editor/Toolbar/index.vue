@@ -10,10 +10,19 @@
       <ActivityActions />
       <h1 v-if="mdAndUp" class="py-2 px-6 text-h5 text-truncate">
         <span>{{ config.label }}</span>
-        <span class="px-2 text-grey">|</span>
-        <span class="text-secondary-lighten-3">
-          <ActivityName :activity="activity" />
+        <span class="px-3 text-grey">|</span>
+        <span v-if="activity?.isLinkedCopy" class="text-white">
+          <VIcon class="mr-1" color="lime-lighten-2" size="small">
+            mdi-link-variant
+          </VIcon>
+          Linked -
         </span>
+        <ActivityName
+          :activity="activity"
+          :class="[
+            activity?.isLinkedCopy ? 'text-white' : 'text-secondary-lighten-3',
+          ]"
+        />
         <template v-if="showPublishDiff">
           <span class="px-2 text-grey">|</span>
           <span class="text-white">comparing with published</span>
@@ -30,7 +39,27 @@
           </VChip>
         </template>
       </h1>
-      <div class="d-flex align-center">
+      <div v-if="activity?.isLinkedCopy" class="d-flex align-center mr-6">
+        <VBtn
+          :disabled="!source"
+          class="mr-3"
+          color="white"
+          prepend-icon="mdi-open-in-new"
+          size="small"
+          variant="outlined"
+          @click="source && viewSource(source)"
+        >
+          View source
+        </VBtn>
+        <VBtn
+          color="white"
+          prepend-icon="mdi-link-variant-off"
+          size="small"
+          variant="outlined"
+          @click="activity && unlinkActivity(activity.repositoryId, activity.id)"
+        >
+          Unlink
+        </VBtn>
         <ActiveUsers
           v-if="!showPublishDiff && usersWithActivity.length"
           :users="usersWithActivity"
@@ -58,9 +87,11 @@ import { ActiveUsers } from '@tailor-cms/core-components';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
 
+import { activity as activityApi } from '@/api';
 import ActivityActions from './ActivityActions.vue';
 import ActivityName from '@/components/common/ActivityName.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
+import { useActivityStore } from '@/stores/activity';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';
 import { useDisplay } from 'vuetify';
@@ -69,15 +100,23 @@ interface Props {
   element?: ContentElement | null;
 }
 
+interface SourceInfo {
+  id: number;
+  repository: { id: number; name: string };
+}
+
 const props = withDefaults(defineProps<Props>(), {
   element: null,
 });
+
 defineEmits(['toggle-sidebar', 'toggle-guidelines']);
 
 const { $schemaService } = useNuxtApp() as any;
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
+const notify = useNotification();
+const activityStore = useActivityStore();
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
 const { mdAndUp, smAndDown, mdAndDown } = useDisplay();
@@ -91,6 +130,35 @@ const toolbarColor = computed(() => {
   if (props.element) return 'white';
   return showPublishDiff.value ? '#1e282c' : 'primary-darken-4';
 });
+
+// Source info for linked activities
+const source = ref<SourceInfo | null>(null);
+
+const viewSource = (sourceInfo: SourceInfo) => {
+  navigateTo({
+    name: 'repository',
+    params: { id: sourceInfo.repository.id },
+    query: { activityId: sourceInfo.id },
+  });
+};
+
+const unlinkActivity = async (repositoryId: number, activityId: number) => {
+  try {
+    const unlinked = await activityApi.unlink(repositoryId, activityId);
+    activityStore.add(unlinked);
+    notify('Activity unlinked', { immediate: true });
+  } catch {
+    notify('Failed to unlink activity', { color: 'error' });
+  }
+};
+
+watch(activity, async (val) => {
+  source.value = null;
+  if (!val?.isLinkedCopy) return;
+  source.value = await activityApi
+    .getSource(val.repositoryId, val.id)
+    .catch(() => null);
+}, { immediate: true });
 
 const usersWithActivity = computed(() => {
   return userTrackingStore.getActiveUsers(
