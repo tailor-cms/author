@@ -14,6 +14,7 @@ import { Op } from 'sequelize';
 
 import { store as activityCache } from '../../repository/feed/store.js';
 import db from '#shared/database/index.js';
+import linkService from '#shared/content-library/link.service.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 
 const {
@@ -32,7 +33,7 @@ const DEFAULT_USER =
 
 class SeedService {
   async resetDatabase() {
-    await db.sequelize.drop({});
+    await db.sequelize.getQueryInterface().dropAllTables();
     await db.initialize();
     await Promise.each(
       sortBy(seedUsers, 'email'),
@@ -65,6 +66,7 @@ class SeedService {
     name = `Test ${crypto.randomBytes(12).toString('hex')}`,
     description = `Test repository description`,
     userEmail = null,
+    { includeLinkExample = false } = {},
   ) {
     // Get seed repository path
     const appDir = await packageDirectory();
@@ -95,7 +97,21 @@ class SeedService {
         },
       },
     });
-    return { repository, activity, contentElement };
+    const result = { repository, activity, contentElement };
+    if (!includeLinkExample) return result;
+    const context = { userId: user.id };
+    const targetRepository = await Repository.createByUser(
+      { schema: repository.schema, name: `Linked — ${name}`, description },
+      { context },
+    );
+    const [linkedActivity] = await linkService.linkActivity(
+      activity.id,
+      targetRepository,
+      null,
+      999,
+      { ...context, repository: targetRepository },
+    );
+    return { ...result, linkedActivity };
   }
 
   async createUser(

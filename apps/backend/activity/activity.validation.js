@@ -14,7 +14,7 @@ export const create = defineRequestValidator([
   body('uid').isUUID().optional(),
   body('parentId').isInt().optional({ nullable: true }),
   body('type').isString().trim().notEmpty(),
-  body('position').isFloat().optional(),
+  body('position').isFloat(),
   body('data').isObject().optional(),
   body('refs').isObject().optional(),
 ]);
@@ -58,4 +58,10 @@ export const updateWorkflowStatus = defineRequestValidator([
   body('dueDate')
     .isISO8601({ strict: true, strictSeparator: true })
     .optional({ nullable: true }),
+]);
+
+export const link = defineRequestValidator([
+  body('sourceId').isInt(),
+  body('parentId').isInt().optional({ nullable: true }),
+  body('position').isFloat(),
 ]);
