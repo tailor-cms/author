@@ -26,7 +26,7 @@
       :activities="processedActivities"
       :config="config"
       :container="container"
-      :disabled="showPublishDiff"
+      :disabled="isReadonly"
       :elements="processedElements"
       :name="name"
       :position="index"
@@ -65,7 +65,6 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import pluralize from 'pluralize-esm';
 
-import { activity as activityApi } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -111,6 +110,9 @@ const contentElementStore = useContentElementStore();
 const editorStore = useEditorStore();
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
+const isReadonly = computed(
+  () => showPublishDiff.value || !!editorStore.selectedActivity?.isLinkedCopy,
+);
 const elements = computed(() => contentElementStore.items);
 
 // Filter containers through plugin hooks (e.g., i18n language filtering)
@@ -127,7 +129,7 @@ const name = computed(() => props.label.toLowerCase());
 
 const addBtnEnabled = computed(() => {
   const isMultipleOrEmpty = props.multiple || !filteredContainerGroup.value.length;
-  return !showPublishDiff.value && isMultipleOrEmpty;
+  return !isReadonly.value && isMultipleOrEmpty;
 });
 
 // Use all containers for position calculation to avoid conflicts across languages
@@ -185,25 +187,6 @@ const reorderContentElements = ({
 }) => {
   const element = items[newPosition] as ContentElement;
   const context = { items, newPosition };
-  const outlineActivity = editorStore.selectedActivity;
-  // Check if element is linked via parent activity (nested linked)
-  if (outlineActivity?.isLinkedCopy) {
-    const activityLabel = $schemaService.getActivityLabel(outlineActivity);
-    confirmationDialog({
-      title: 'Reorder linked element?',
-      message: `
-        This element is part of a linked ${activityLabel}. Reordering will
-        unlink the ${activityLabel} from receiving updates. Do you want to continue?`,
-      action: async () => {
-        await activityApi.unlink(
-          outlineActivity.repositoryId,
-          outlineActivity.id,
-        );
-        window.location.reload();
-      },
-    });
-    return;
-  }
   return contentElementStore.reorder({ element, context });
 };
 
