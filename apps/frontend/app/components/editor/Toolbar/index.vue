@@ -11,7 +11,7 @@
       <h1 v-if="mdAndUp" class="py-2 px-6 text-h5 text-truncate">
         <span>{{ config.label }}</span>
         <span class="px-3 text-grey">|</span>
-        <span v-if="activity?.isLinkedCopy" class="text-white">
+        <span v-if="activity?.isLinkedCopy" class="linked-label text-white">
           <VIcon class="mr-1" color="lime-lighten-2" size="small">
             mdi-link-variant
           </VIcon>

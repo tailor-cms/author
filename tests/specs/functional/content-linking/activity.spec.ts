@@ -12,6 +12,7 @@ import { ActivityOutline } from '../../../pom/repository/Outline';
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import BaseClient from '../../../api/BaseClient';
 import { Editor } from '../../../pom/editor/Editor';
+import { EditorToolbar } from '../../../pom/editor/EditorToolbar';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
 import { LinkContentDialog } from '../../../pom/repository/LinkContentDialog';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
@@ -307,8 +308,17 @@ test('opening empty linked activity does not auto-unlink', async ({ page }) => {
     { sourceId: emptyPage.id, parentId: null, position: 0 },
   );
   const linkedEmpty = linkedActivities[0];
-  // Open linked empty page in editor (triggers auto container creation)
+  // Open linked empty page in editor
   await toEditorPage(page, linkedEmpty);
+  // Verify empty linked activity alert is shown
+  const alert = page.locator('.activity-content .v-alert');
+  await expect(alert).toContainText('linked');
+  await expect(alert).toContainText('without content');
+  // Toolbar should show linked state
+  const toolbar = new EditorToolbar(page);
+  await toolbar.expectLinkedState();
+  // No containers should be rendered
+  await expect(page.locator('.content-containers')).not.toBeVisible();
   // Navigate to structure and verify activity is still linked
   await toStructurePage(page, { repositoryId: targetRepo.id } as any);
   const outline = new ActivityOutline(page);
@@ -495,6 +505,64 @@ test('export and reimport strips linked content fields', async ({ page }) => {
     expect(activity.isLinkedCopy).toBeFalsy();
     expect(activity.sourceId).toBeNull();
   }
+});
+
+test('linked activity editor is disabled with toolbar actions', async ({
+  page,
+}) => {
+  const { linkedActivity } = await seedLinkedRepositories();
+  await toEditorPage(page, linkedActivity);
+  const toolbar = new EditorToolbar(page);
+  const editor = new Editor(page);
+  // Toolbar shows linked state with View source and Unlink buttons
+  await toolbar.expectLinkedState();
+  // Add element button should not be visible (editor is disabled)
+  await expect(editor.addElementDialog.addBtn).not.toBeVisible();
+  // Content elements should be visible but in disabled/readonly state
+  const element = editor.getElement();
+  await expect(element.el).toBeVisible();
+});
+
+test('unlinking from editor toolbar enables editing', async ({ page }) => {
+  const { linkedActivity } = await seedLinkedRepositories();
+  await toEditorPage(page, linkedActivity);
+  const toolbar = new EditorToolbar(page);
+  const editor = new Editor(page);
+  // Verify disabled state
+  await toolbar.expectLinkedState();
+  await expect(editor.addElementDialog.addBtn).not.toBeVisible();
+  await editor.expectAllElementsLinked();
+  // Unlink
+  await toolbar.unlink();
+  // Toolbar reverts, elements unlocked, add button visible
+  await toolbar.expectDefaultState();
+  await editor.expectAllElementsLinked(false);
+  await expect(editor.addElementDialog.addBtn).toBeVisible();
+  // Verify persistence
+  await page.reload({ waitUntil: 'networkidle' });
+  await toolbar.expectDefaultState();
+  await editor.expectAllElementsLinked(false);
+  // Linked indicator should be gone on structure page
+  await toStructurePage(page, linkedActivity);
+  const outline = new ActivityOutline(page);
+  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  await sidebar.linkedIndicator.expectNotVisible();
+});
+
+test('can navigate to source from editor toolbar', async ({ page }) => {
+  const { activity, repository, linkedActivity } = await seedLinkedRepositories();
+  await toEditorPage(page, linkedActivity);
+  const toolbar = new EditorToolbar(page);
+  await toolbar.expectLinkedState();
+  await toolbar.viewSource();
+  // Should navigate to the source repository with the source activity selected
+  await expect(page).toHaveURL(
+    new RegExp(`/repository/${repository.id}.*activityId=${activity.id}`),
+  );
+  const outline = new ActivityOutline(page);
+  await outline.toggleExpand();
+  const sourceItem = await outline.getOutlineItemByUid(activity.uid);
+  await expect(sourceItem.el).toBeVisible();
 });
 
 test.afterAll(async () => {

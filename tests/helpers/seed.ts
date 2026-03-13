@@ -84,7 +84,10 @@ export const toStructurePage = async (page: Page, activity: any) => {
 export const toEditorPage = async (page: Page, activity: any) => {
   await page.goto(`/repository/${activity.repositoryId}/editor/${activity.id}`);
   const containerList = new ContainerList(page);
-  await expect(containerList.el.first()).toBeVisible();
+  // Wait for either container list or empty linked activity alert to appear
+  await expect(
+    containerList.el.first().or(page.locator('.activity-content .v-alert')),
+  ).toBeVisible();
   return { activity };
 };
 

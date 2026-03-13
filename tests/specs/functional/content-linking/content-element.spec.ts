@@ -1,13 +1,10 @@
 import { expect, test } from '@playwright/test';
 
-import { ActivityOutline } from '../../../pom/repository/Outline';
 import BaseClient from '../../../api/BaseClient';
 import { ContainerList } from '../../../pom/editor/ContainerList';
 import { ContentElement } from '../../../pom/editor/ContentElement';
 import { Editor } from '../../../pom/editor/Editor';
-import {
-  ReorderLinkedElementDialog,
-} from '../../../pom/editor/ReorderLinkedElementDialog';
+import { EditorToolbar } from '../../../pom/editor/EditorToolbar';
 import { RevisionHistory } from '../../../pom/repository/RevisionHistory';
 import SeedClient from '../../../api/SeedClient';
 import { Toast } from '../../../pom/common/Toast';
@@ -16,7 +13,6 @@ import {
   toEditorPage,
   seedLinkedRepositories,
   toSeededRepository,
-  toStructurePage,
 } from '../../../helpers/seed';
 
 const api = new BaseClient('/api/repositories/');
@@ -77,14 +73,25 @@ test('comments disabled on linked element', async ({ page }) => {
   ).toBeVisible();
 });
 
-test('editing linked element triggers unlink confirmation', async ({
+test('editing individually linked element triggers unlink confirmation', async ({
   page,
 }) => {
-  const { linkedActivity } = await seedLinkedRepositories();
-  await toEditorPage(page, linkedActivity);
+  // Create a repository with an individually linked element (not via activity)
+  const { activity } = await toSeededRepository(page);
+  await toEditorPage(page, activity);
   const editor = new Editor(page);
-  const element = editor.getHtmlElement();
-  await element.fill('Edited content');
+  await editor.toSecondaryPage();
+  // Link an element from the primary page
+  const linkDialog = await editor.addElementDialog.openLinkDialog();
+  await linkDialog.select(
+    outlineSeed.primaryPage.title,
+    outlineSeed.primaryPage.textContent,
+  );
+  await new Toast(page).isSaved();
+  const element = editor.getHtmlElement(outlineSeed.primaryPage.textContent);
+  await element.expectLinked();
+  // Edit the individually linked element
+  await element.fill(' edited');
   await editor.sidebar.el.click();
   const dialog = page.locator('div[role="dialog"]', {
     hasText: 'Edit linked element',
@@ -94,35 +101,9 @@ test('editing linked element triggers unlink confirmation', async ({
   await new Toast(page).isSaved();
   // Verify element is no longer linked after unlink
   await page.waitForTimeout(1000);
-  await page.reload();
-  await page.waitForLoadState('networkidle');
-  const updatedElement = editor.getElement();
+  await page.reload({ waitUntil: 'networkidle' });
+  const updatedElement = editor.getElement(outlineSeed.primaryPage.textContent);
   await updatedElement.expectNotLinked();
-  // Verify outline activity is also unlinked
-  await toStructurePage(page, linkedActivity);
-  const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
-  await sidebar.linkedIndicator.expectNotVisible();
-});
-
-test('adding element to linked activity triggers unlink confirmation', async ({
-  page,
-}) => {
-  const { linkedActivity } = await seedLinkedRepositories();
-  await toEditorPage(page, linkedActivity);
-  const editor = new Editor(page);
-  await editor.addElementDialog.add('HTML');
-  const dialog = page.locator('div[role="dialog"]', {
-    hasText: 'Add element to linked activity',
-  });
-  await expect(dialog).toBeVisible();
-  await dialog.getByRole('button', { name: 'confirm' }).click();
-  // Verify outline activity is unlinked
-  await page.waitForTimeout(1000);
-  await toStructurePage(page, linkedActivity);
-  const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
-  await sidebar.linkedIndicator.expectNotVisible();
 });
 
 test('source element edit propagates to linked copy', async ({ browser }) => {
@@ -223,15 +204,11 @@ test('source usages display on source element', async ({ page }) => {
 
 test('comments restore after unlink', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
-  // Navigate to structure and unlink
-  await toStructurePage(page, linkedActivity);
-  const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
-  const indicator = sidebar.linkedIndicator;
-  await indicator.expectVisible();
-  await indicator.unlink();
-  // Navigate to editor — comments should be available again
   await toEditorPage(page, linkedActivity);
+  const toolbar = new EditorToolbar(page);
+  // Unlink from editor toolbar
+  await toolbar.unlink();
+  // Comments should be available after unlink
   const editor = new Editor(page);
   const element = editor.getElement();
   await element.el.hover();
@@ -284,36 +261,6 @@ test('reordering individually linked element keeps it linked', async ({
   await page.reload({ waitUntil: 'networkidle' });
   const element = editor.getElement(outlineSeed.primaryPage.textContent);
   await element.expectLinked();
-});
-
-test('reordering nested linked element shows confirmation and unlinks activity', async ({
-  page,
-}) => {
-  // Set larger viewport height to ensure drag operation works correctly
-  await page.setViewportSize({ width: 1280, height: 1400 });
-  const { linkedActivity } = await seedLinkedRepositories();
-  await toEditorPage(page, linkedActivity);
-  const editor = new Editor(page);
-  // Verify elements are initially linked
-  await editor.expectAllElementsLinked();
-  // Drag first element to trigger reorder
-  const firstElement = editor.getElement();
-  await firstElement.dragToReorder(600);
-  // Verify confirmation dialog appears and confirm
-  const dialog = new ReorderLinkedElementDialog(page);
-  await dialog.expectVisible();
-  await dialog.confirm();
-  // Wait for operations to complete and reload
-  await page.waitForTimeout(1000);
-  await page.reload({ waitUntil: 'networkidle' });
-  // Verify elements are no longer linked
-  await editor.expectAllElementsLinked(false);
-  // Verify parent activity is also unlinked in outline
-  await toStructurePage(page, linkedActivity);
-  await page.reload({ waitUntil: 'networkidle' });
-  const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
-  await sidebar.linkedIndicator.expectNotVisible();
 });
 
 test('linking content element creates "Linked" revision', async ({ page }) => {
