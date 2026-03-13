@@ -8,6 +8,9 @@
   "scripts": {
     "dev": "node ./scripts/boot.js",
     "dc": "docker compose -f docker-compose.dev.yaml up & pnpm dev",
+    "ac:up": "node ./scripts/containers.js start",
+    "ac:down": "node ./scripts/containers.js stop",
+    "ac:status": "node ./scripts/containers.js status",
     "build": "dotenv -- pnpm -r build",
     "start": "cd ./apps/backend && pnpm start",
     "dcs": "docker compose -f docker-compose.dev.yaml up & pnpm start",
