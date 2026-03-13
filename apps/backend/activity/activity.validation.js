@@ -14,7 +14,7 @@ export const create = defineRequestValidator([
   body('uid').isUUID().optional(),
   body('parentId').isInt().optional({ nullable: true }),
   body('type').isString().trim().notEmpty(),
-  body('position').isFloat().optional(),
+  body('position').isFloat(),
   body('data').isObject().optional(),
   body('refs').isObject().optional(),
 ]);

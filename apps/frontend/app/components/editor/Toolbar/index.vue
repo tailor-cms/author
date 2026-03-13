@@ -56,7 +56,7 @@
           prepend-icon="mdi-link-variant-off"
           size="small"
           variant="outlined"
-          @click="activity && unlinkActivity(activity.repositoryId, activity.id)"
+          @click="activity && unlinkActivity(activity.id)"
         >
           Unlink
         </VBtn>
@@ -91,7 +91,6 @@ import { activity as activityApi } from '@/api';
 import ActivityActions from './ActivityActions.vue';
 import ActivityName from '@/components/common/ActivityName.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
-import { useActivityStore } from '@/stores/activity';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';
 import { useDisplay } from 'vuetify';
@@ -116,7 +115,6 @@ const { $schemaService } = useNuxtApp() as any;
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
 const notify = useNotification();
-const activityStore = useActivityStore();
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
 const { mdAndUp, smAndDown, mdAndDown } = useDisplay();
@@ -142,10 +140,9 @@ const viewSource = (sourceInfo: SourceInfo) => {
   });
 };
 
-const unlinkActivity = async (repositoryId: number, activityId: number) => {
+const unlinkActivity = async (activityId: number) => {
   try {
-    const unlinked = await activityApi.unlink(repositoryId, activityId);
-    activityStore.add(unlinked);
+    await editorStore.unlinkActivity(activityId);
     notify('Activity unlinked', { immediate: true });
   } catch {
     notify('Failed to unlink activity', { color: 'error' });

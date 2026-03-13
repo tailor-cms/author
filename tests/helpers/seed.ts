@@ -86,7 +86,9 @@ export const toEditorPage = async (page: Page, activity: any) => {
   const containerList = new ContainerList(page);
   // Wait for either container list or empty linked activity alert to appear
   await expect(
-    containerList.el.first().or(page.locator('.activity-content .v-alert')),
+    containerList.el
+      .first()
+      .or(page.locator('.content-containers-wrapper > .v-alert')),
   ).toBeVisible();
   return { activity };
 };

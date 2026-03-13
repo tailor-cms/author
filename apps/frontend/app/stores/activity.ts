@@ -187,6 +187,14 @@ export const useActivityStore = defineStore('activities', () => {
     return calculatePosition(context);
   };
 
+  const unlink = async (id: Id) => {
+    const activity = findById(id);
+    if (!activity) return;
+    const unlinked = await api.unlink(activity.repositoryId, activity.id);
+    add(unlinked);
+    return unlinked;
+  };
+
   const saveStatus = async (id: number, status: Status) => {
     const activity = findById(id);
     if (!activity) return;
@@ -242,6 +250,7 @@ export const useActivityStore = defineStore('activities', () => {
     publish,
     clone,
     reorder,
+    unlink,
     calculateInsertPosition,
     calculateCopyPosition,
     saveStatus,

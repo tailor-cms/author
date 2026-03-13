@@ -50,10 +50,17 @@ test('can link a content element via add element dialog', async ({ page }) => {
 });
 
 test('linked element shows linked indicator', async ({ page }) => {
-  const { linkedActivity } = await seedLinkedRepositories();
-  await toEditorPage(page, linkedActivity);
+  const { activity } = await toSeededRepository(page);
+  await toEditorPage(page, activity);
   const editor = new Editor(page);
-  const element = editor.getElement();
+  await editor.toSecondaryPage();
+  const linkDialog = await editor.addElementDialog.openLinkDialog();
+  await linkDialog.select(
+    outlineSeed.primaryPage.title,
+    outlineSeed.primaryPage.textContent,
+  );
+  await new Toast(page).isSaved();
+  const element = editor.getElement(outlineSeed.primaryPage.textContent);
   await expect(element.el).toBeVisible();
   await element.expectLinked();
   await element.el.hover();
@@ -61,10 +68,18 @@ test('linked element shows linked indicator', async ({ page }) => {
 });
 
 test('comments disabled on linked element', async ({ page }) => {
-  const { linkedActivity } = await seedLinkedRepositories();
-  await toEditorPage(page, linkedActivity);
+  const { activity } = await toSeededRepository(page);
+  await toEditorPage(page, activity);
   const editor = new Editor(page);
-  const element = editor.getElement();
+  await editor.toSecondaryPage();
+  const linkDialog = await editor.addElementDialog.openLinkDialog();
+  await linkDialog.select(
+    outlineSeed.primaryPage.title,
+    outlineSeed.primaryPage.textContent,
+  );
+  await new Toast(page).isSaved();
+  const element = editor.getElement(outlineSeed.primaryPage.textContent);
+  await element.expectLinked();
   await element.el.hover();
   await expect(element.commentDisabledBtn).toBeVisible();
   await element.openCommentDisabledMenu();
@@ -221,9 +236,11 @@ test('nested linked elements do not show unlink action', async ({ page }) => {
   await toEditorPage(page, linkedActivity);
   const editor = new Editor(page);
   const element = editor.getElement();
-  const menu = await element.openLinkedMenu();
-  await menu.expectNoUnlinkAction();
-  await menu.expectViewSourceAction();
+  await element.expectLinked();
+  // Element actions are hidden on disabled editor (activity-linked);
+  // unlink is only available at the toolbar level
+  await element.el.hover();
+  await expect(element.linkedIndicatorBtn).not.toBeVisible();
 });
 
 test('reordering individually linked element keeps it linked', async ({

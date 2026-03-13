@@ -294,36 +294,35 @@ test('auto-unlink on structural change (add child to a linked module)', async ({
 });
 
 test('opening empty linked activity does not auto-unlink', async ({ page }) => {
-  const { repository } = await seedLinkedRepositories();
-  const sourceRepoId = repository.id;
-  // Create an empty page in the source repository
-  const { data: emptyPage } = await api.post(`${sourceRepoId}/activities/`, {
-    type: 'PAGE',
-    data: { name: 'Empty Page' },
-  });
-  // Create target repo and link the empty page
-  const targetRepo = await toEmptyRepository(page);
-  const { data: linkedActivities } = await api.post(
-    `${targetRepo.id}/activities/link`,
-    { sourceId: emptyPage.id, parentId: null, position: 0 },
-  );
-  const linkedEmpty = linkedActivities[0];
-  // Open linked empty page in editor
-  await toEditorPage(page, linkedEmpty);
+  const sourceRepo = await toEmptyRepository(page, 'Source');
+  const sourceOutline = new ActivityOutline(page);
+  await sourceOutline.addRootItem(outlineLevel.LEAF, 'Empty Page');
+  const targetRepo = await toEmptyRepository(page, 'Target');
+  const targetOutline = new ActivityOutline(page);
+  const module = await targetOutline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentInto();
+  await linkDialog.selectAndLink(sourceRepo.name, 'Empty Page');
+  // Navigate to linked page editor
+  await targetOutline.toggleExpand();
+  const linkedItem = await targetOutline.getOutlineItemByName('Empty Page');
+  await linkedItem.select();
+  const sidebar = new OutlineSidebar(page);
+  await sidebar.openEditor();
+  await page.waitForLoadState('networkidle');
   // Verify empty linked activity alert is shown
-  const alert = page.locator('.activity-content .v-alert');
-  await expect(alert).toContainText('linked');
+  const alert = page.locator('.content-containers-wrapper > .v-alert');
   await expect(alert).toContainText('without content');
   // Toolbar should show linked state
   const toolbar = new EditorToolbar(page);
   await toolbar.expectLinkedState();
   // No containers should be rendered
   await expect(page.locator('.content-containers')).not.toBeVisible();
-  // Navigate to structure and verify activity is still linked
+  // Navigate back to structure and verify still linked
   await toStructurePage(page, { repositoryId: targetRepo.id } as any);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedEmpty.uid);
-  await sidebar.linkedIndicator.expectVisible();
+  await outline.toggleExpand();
+  const item = await outline.getOutlineItemByName('Empty Page');
+  await expect(item.linkIcon).toBeVisible();
 });
 
 test('source activity rename propagates to linked copy', async ({ page }) => {

@@ -96,6 +96,16 @@ export const useEditorStore = defineStore('editor', () => {
     return resolvedAction(payload);
   };
 
+  const unlinkActivity = async (activityId: number) => {
+    const unlinked = await activityStore.unlink(activityId);
+    // Backend batch-updates elements without hooks, so no SSE events fire.
+    // Update elements locally to reflect the unlinked state.
+    elementStore.items.forEach((el) => {
+      if (el.isLinkedCopy) el.isLinkedCopy = false;
+    });
+    return unlinked;
+  };
+
   const togglePublishDiff = (value?: boolean) => {
     showPublishDiff.value = value ?? !showPublishDiff.value;
   };
@@ -119,6 +129,7 @@ export const useEditorStore = defineStore('editor', () => {
     guidelines,
     initialize,
     processCommentEvent,
+    unlinkActivity,
     togglePublishDiff,
     $reset,
   };
