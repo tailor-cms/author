@@ -41,7 +41,11 @@
           variant="tonal"
           prominent
         >
-          {{ disabled ? 'Empty exam' : 'Click the button below to create first question group.' }}
+          {{
+            disabled
+              ? 'Empty exam'
+              : 'Click the button below to create first question group.'
+          }}
         </VAlert>
         <VExpansionPanels v-model="expandedAssessmentGroup" rounded="lg" flat>
           <AssessmentGroup

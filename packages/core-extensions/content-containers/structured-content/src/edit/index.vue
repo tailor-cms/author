@@ -8,7 +8,11 @@
       variant="outlined"
       prominent
     >
-      {{ disabled ? 'Empty structured content' : 'Click the button below to add a first content section.' }}
+      {{
+        disabled
+          ? 'Empty structured content'
+          : 'Click the button below to add a first content section.'
+      }}
     </VAlert>
     <VRow
       v-for="subcontainer in subcontainers"
