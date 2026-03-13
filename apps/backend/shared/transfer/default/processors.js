@@ -66,6 +66,7 @@ async function processRepository(repository, _enc, { context, transaction }) {
   const { name, description, userId, userGroupIds } = context;
   repository = normalize(repository, Repository);
   Object.assign(repository, { description, name });
+  if (repository.data) repository.data = omit(repository.data, '$$');
   const options = { context: { userId }, transaction };
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
   const entity = await Repository.create(repositoryRecord, options);
