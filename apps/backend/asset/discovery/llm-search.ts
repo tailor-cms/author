@@ -1,6 +1,9 @@
 import AIService from '#shared/ai/ai.service.ts';
 import { ai as aiConfig } from '#config';
+import { createLogger } from '#logger';
 import type { SearchResult } from './types.ts';
+
+const logger = createLogger('asset:llm-search');
 
 const ResultItem = {
   type: 'object',
@@ -35,6 +38,7 @@ export async function webSearch(
   repositoryContext: string,
   count: number,
 ): Promise<SearchResult[]> {
+  logger.debug({ query, count }, 'Searching via LLM web search');
   const response = await AIService.client.responses.create({
     model: aiConfig.modelId,
     tools: [{ type: 'web_search_preview' }],
@@ -46,6 +50,7 @@ export async function webSearch(
   });
   const { results } = JSON.parse(response.output_text);
   const citedUrls = extractCitedUrls(response.output);
+  logger.debug({ total: results.length, cited: citedUrls.size }, 'LLM search complete');
   return results
     .filter((r: any) => r.url && r.title)
     // When citations are available, only keep URLs grounded in actual search results
