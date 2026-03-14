@@ -34,11 +34,16 @@ export interface Uploader {
   imgUrl: string | null;
 }
 
+export type AssetMeta = FileAssetMeta | LinkAssetMeta;
+
 interface AssetAttributes {
   id: number;
   uid: string;
   repositoryId: number;
   name: string;
+  type: AssetType;
+  storageKey: string | null;
+  meta: AssetMeta;
   processingStatus: ProcessingStatus | null;
   vectorStoreFileId: string | null;
   uploadedBy: number;
