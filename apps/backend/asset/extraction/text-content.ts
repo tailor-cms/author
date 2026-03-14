@@ -5,10 +5,10 @@
  * page content as clean text. This module extracts that content
  * using a two-tier strategy:
  *
- * 1. Jina Reader API (r.jina.ai) - free service that returns clean
- *    markdown. Handles JS-rendered SPAs, paywalls, and complex
- *    layouts better than raw HTML parsing. Higher timeout (15s)
- *    because Jina renders pages server-side.
+ * 1. Jina Reader API (r.jina.ai) - free service, returns structured JSON with
+ *    title, description, and clean markdown content. Handles
+ *    JS-rendered SPAs, paywalls, and complex layouts. Higher
+ *    timeout because Jina renders pages server-side.
  *
  * 2. html-to-text fallback - direct HTML fetch + conversion.
  *    Strips navigation, footer, sidebar, scripts, and styles to
@@ -35,11 +35,29 @@ const SKIP_SELECTORS = [
   'nav', 'footer', 'header', 'aside', 'script', 'style', 'img',
 ];
 
+interface JinaResponse {
+  data: {
+    title: string;
+    description: string;
+    url: string;
+    content: string;
+    usage: { tokens: number };
+  };
+}
+
+export interface ExtractedContent {
+  title: string;
+  description: string;
+  content: string;
+}
+
 /**
- * Extracts clean text content from a URL.
- * Tries Jina Reader first, falls back to direct HTML parsing.
+ * Extracts structured content from a URL.
+ * Tries Jina Reader (JSON mode) first, falls back to HTML parsing.
  */
-export async function fetchUrlText(url: string): Promise<string> {
+export async function fetchUrlContent(
+  url: string,
+): Promise<ExtractedContent> {
   try {
     return await fetchViaJina(url);
   } catch (err) {
@@ -47,18 +65,33 @@ export async function fetchUrlText(url: string): Promise<string> {
       err,
       `Jina Reader failed for ${url}, falling back to direct fetch`,
     );
-    return fetchViaHtmlToText(url);
+    const content = await fetchViaHtmlToText(url);
+    return { title: '', description: '', content };
   }
 }
 
-/** Fetches clean markdown via Jina Reader API. */
-async function fetchViaJina(url: string): Promise<string> {
-  const { data } = await axios.get(`${JINA_URL}/${url}`, {
-    timeout: JINA_TIMEOUT,
-    headers: { 'Accept': 'text/markdown', 'X-No-Cache': 'true' },
-    responseType: 'text',
-  });
-  return String(data).slice(0, MAX_LENGTH);
+/** Fetches structured JSON via Jina Reader API. */
+async function fetchViaJina(url: string): Promise<ExtractedContent> {
+  const { data: response } = await axios.get<JinaResponse>(
+    `${JINA_URL}/${url}`,
+    {
+      timeout: JINA_TIMEOUT,
+      headers: {
+        'Accept': 'application/json',
+        'X-No-Cache': 'true',
+      },
+    },
+  );
+  const { title, description, content } = response.data;
+  logger.debug(
+    { url, tokens: response.data.usage?.tokens },
+    'Jina extraction complete',
+  );
+  return {
+    title: title || '',
+    description: description || '',
+    content: (content || '').slice(0, MAX_LENGTH),
+  };
 }
 
 /** Fetches HTML directly and converts to plain text. */
