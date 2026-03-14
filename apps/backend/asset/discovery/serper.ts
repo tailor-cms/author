@@ -35,7 +35,7 @@ async function search(
 function detectType(url: string): SearchResult['type'] {
   try {
     if (new URL(url).pathname.toLowerCase().endsWith('.pdf')) return ContentType.Pdf;
-  } catch {}
+  } catch { /* malformed URL */ }
   return ContentType.Article;
 }
 

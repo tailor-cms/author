@@ -6,7 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { removeFromVectorStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.js';
 
-import type { Asset, AssetMeta } from './asset.model.js';
+import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
 
 const logger = createLogger('asset');
 const { Asset, User } = db;
@@ -35,12 +35,12 @@ const MIME_CATEGORY_MAP: Record<string, string[]> = {
   ],
 };
 
-function resolveType(mimeType: string | undefined) {
-  if (!mimeType) return 'other';
+function resolveType(mimeType: string | undefined): AssetType {
+  if (!mimeType) return AssetType.Other;
   for (const [type, prefixes] of Object.entries(MIME_CATEGORY_MAP)) {
-    if (prefixes.some((p) => mimeType.startsWith(p))) return type;
+    if (prefixes.some((p) => mimeType.startsWith(p))) return type as AssetType;
   }
-  return 'other';
+  return AssetType.Other;
 }
 
 function buildStorageKey(repositoryId: number, uid: string, filename: string) {
@@ -55,7 +55,7 @@ function safe(fn: (...args: any[]) => Promise<any>) {
     });
 }
 
-const safeRemoveFromVectorStore = safe(removeFromVectorStore);
+const safeRemoveFromVectorStore = safe(removeFromStore);
 const safeDeleteFile = safe(Storage.deleteFile.bind(Storage));
 
 export function list(repositoryId: number) {
@@ -128,7 +128,7 @@ export async function importFromLink(
     uid: randomUUID(),
     repositoryId,
     name: ogData.title || domain,
-    type: 'link',
+    type: AssetType.Link,
     meta: { url, ...ogData },
     uploadedBy: userId,
   });

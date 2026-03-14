@@ -1,7 +1,7 @@
 import type { Model, ModelStatic } from 'sequelize';
-import type { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset.ts';
+import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset.ts';
 
-export type { AssetType, ProcessingStatus };
+export { AssetType, ProcessingStatus };
 
 interface AssetMetaBase {
   description?: string;
@@ -13,6 +13,11 @@ export interface FileAssetMeta extends AssetMetaBase {
   mimeType: string;
 }
 
+export interface MediaAssetMeta extends FileAssetMeta {
+  /** Storage key for an uploaded caption/subtitle file (.vtt, .srt) */
+  captionKey?: string;
+}
+
 export interface LinkAssetMeta extends AssetMetaBase {
   url: string;
   title: string;
@@ -21,7 +26,7 @@ export interface LinkAssetMeta extends AssetMetaBase {
   favicon: string;
   domain: string;
   siteName?: string;
-  /** Open Graph type (og:type) — e.g. "website", "article", "video.movie" */
+  /** Open Graph type (og:type) - e.g. "website", "article", "video.movie" */
   ogType?: string;
 }
 
@@ -34,7 +39,7 @@ export interface Uploader {
   imgUrl: string | null;
 }
 
-export type AssetMeta = FileAssetMeta | LinkAssetMeta;
+export type AssetMeta = FileAssetMeta | MediaAssetMeta | LinkAssetMeta;
 
 interface AssetAttributes {
   id: number;
@@ -56,9 +61,15 @@ interface AssetAttributes {
 type AssetBase = AssetAttributes & Model<AssetAttributes>;
 
 export interface FileAsset extends AssetBase {
-  type: 'image' | 'document' | 'video' | 'audio' | 'other';
+  type: 'image' | 'document' | 'other';
   storageKey: string;
   meta: FileAssetMeta;
+}
+
+export interface MediaAsset extends AssetBase {
+  type: 'video' | 'audio';
+  storageKey: string;
+  meta: MediaAssetMeta;
 }
 
 export interface LinkAsset extends AssetBase {
@@ -67,7 +78,7 @@ export interface LinkAsset extends AssetBase {
   meta: LinkAssetMeta;
 }
 
-export type Asset = FileAsset | LinkAsset;
+export type Asset = FileAsset | MediaAsset | LinkAsset;
 
 declare const Asset: ModelStatic<Asset>;
 export default Asset;

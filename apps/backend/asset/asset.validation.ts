@@ -1,12 +1,8 @@
 import { body, param } from 'express-validator';
 import defineRequestValidator from '#shared/request/validation.js';
 
-const assetIdParam = param('assetId').isInt();
-
-export const entity = defineRequestValidator([assetIdParam]);
-
 export const update = defineRequestValidator([
-  assetIdParam,
+  param('assetId').isInt(),
   body('meta').isObject(),
 ]);
 
