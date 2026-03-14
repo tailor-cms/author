@@ -3,13 +3,14 @@ import db from '#shared/database/index.js';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { Op } from 'sequelize';
 import { randomUUID } from 'node:crypto';
-import { removeFromVectorStore } from './indexing/indexing.service.ts';
+import { removeFromStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.js';
 
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
+import type { MulterFile } from './types.ts';
 
-const logger = createLogger('asset');
 const { Asset, User } = db;
+const logger = createLogger('asset');
 
 export const uploaderInclude = {
   model: User,
@@ -51,7 +52,7 @@ function buildStorageKey(repositoryId: number, uid: string, filename: string) {
 function safe(fn: (...args: any[]) => Promise<any>) {
   return (...args: any[]) =>
     fn(...args).catch((err) => {
-      logger.warn(err, `${fn.name || 'cleanup'} failed`);
+      logger.warn({ err }, `${fn.name || 'cleanup'} failed`);
     });
 }
 
@@ -68,7 +69,7 @@ export function list(repositoryId: number) {
 
 export function upload(
   repositoryId: number,
-  files: Express.Multer.File[],
+  files: MulterFile[],
   userId: number,
 ) {
   return Promise.all(
@@ -93,6 +94,10 @@ export function upload(
 async function destroyAsset(repository: any, asset: Asset) {
   await safeRemoveFromVectorStore(repository, asset);
   if (asset.storageKey) await safeDeleteFile(asset.storageKey);
+  const files = asset.meta?.files;
+  if (files) {
+    await Promise.all(Object.values(files).map(safeDeleteFile));
+  }
   await asset.destroy();
 }
 
@@ -101,7 +106,33 @@ export function getDownloadUrl(key: string) {
 }
 
 export async function updateMeta(asset: Asset, meta: Partial<AssetMeta>) {
+  // Clean up stored files for any file key being removed
+  if (meta.files) {
+    const existing = asset.meta?.files;
+    if (existing) {
+      for (const [key, val] of Object.entries(meta.files)) {
+        if (!val && existing[key]) await safeDeleteFile(existing[key]);
+      }
+    }
+  }
   return asset.update({ meta: { ...asset.meta, ...meta } });
+}
+
+/**
+ * Attach a file to an asset under the given key in `meta.files`.
+ * Replaces any previously stored file for the same key.
+ */
+export async function attachFile(
+  asset: Asset,
+  fileKey: string,
+  file: MulterFile,
+) {
+  const oldKey = asset.meta?.files?.[fileKey];
+  if (oldKey) await safeDeleteFile(oldKey);
+  const storageKey = `${asset.storageKey}__${fileKey}__${file.originalname}`;
+  await Storage.saveFile(storageKey, file.buffer);
+  const files = { ...asset.meta?.files, [fileKey]: storageKey };
+  return asset.update({ meta: { ...asset.meta, files } });
 }
 
 export async function importFromLink(
@@ -144,8 +175,6 @@ export async function bulkRemove(repository: any, assetIds: number[]) {
   const assets = await Asset.findAll({
     where: { id: { [Op.in]: assetIds }, repositoryId: repository.id },
   });
-  await Promise.all(
-    assets.map((asset: Asset) => destroyAsset(repository, asset)),
-  );
+  await Promise.all(assets.map((it: Asset) => destroyAsset(repository, it)));
   return assets.map((a: Asset) => a.id);
 }

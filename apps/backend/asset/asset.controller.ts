@@ -10,11 +10,6 @@ export async function list({ repository }: AssetRequest, res: Response) {
 }
 
 export async function create({ repository, files, user }: AssetRequest, res: Response) {
-  if (!files?.length) {
-    return res
-      .status(StatusCodes.BAD_REQUEST)
-      .json({ error: 'No files provided' });
-  }
   const data = await service.upload(repository.id, files, user.id);
   return res.json({ data });
 }
@@ -42,6 +37,14 @@ export async function update(
   res: Response,
 ) {
   const data = await service.updateMeta(asset, body.meta);
+  return res.json({ data });
+}
+
+export async function attachFile(
+  { asset, body, file }: AssetRequest,
+  res: Response,
+) {
+  const data = await service.attachFile(asset, body.fileKey, file);
   return res.json({ data });
 }
 

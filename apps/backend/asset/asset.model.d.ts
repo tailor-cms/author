@@ -6,6 +6,8 @@ export { AssetType, ProcessingStatus };
 interface AssetMetaBase {
   description?: string;
   tags?: string[];
+  /** Storage keys for attached files (captions, thumbnails, etc.) */
+  files?: Record<string, string>;
 }
 
 export interface FileAssetMeta extends AssetMetaBase {
@@ -14,8 +16,7 @@ export interface FileAssetMeta extends AssetMetaBase {
 }
 
 export interface MediaAssetMeta extends FileAssetMeta {
-  /** Storage key for an uploaded caption/subtitle file (.vtt, .srt) */
-  captionKey?: string;
+  files?: Record<string, string> & { captions?: string };
 }
 
 export interface LinkAssetMeta extends AssetMetaBase {

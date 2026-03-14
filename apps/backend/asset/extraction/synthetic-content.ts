@@ -9,7 +9,7 @@ import { createLogger } from '#logger';
 import { parseCaptions } from './captions.ts';
 import Storage from '../../repository/storage.js';
 
-import type { Asset, MediaAssetMeta } from '../asset.model.js';
+import type { Asset } from '../asset.model.js';
 
 const logger = createLogger('asset:extraction');
 
@@ -35,7 +35,7 @@ export function buildSyntheticContent(
  * Returns empty string if no captions exist or on failure.
  */
 export async function fetchCaptionText(asset: Asset): Promise<string> {
-  const captionKey = (asset.meta as MediaAssetMeta)?.captionKey;
+  const captionKey = asset.meta?.files?.captions;
   if (!captionKey) return '';
   try {
     const buffer = await Storage.getFile(captionKey);
