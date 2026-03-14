@@ -1,4 +1,7 @@
 import { Model } from 'sequelize';
+import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset.ts';
+
+export { AssetType, ProcessingStatus };
 
 class Asset extends Model {
   static fields(DataTypes) {
