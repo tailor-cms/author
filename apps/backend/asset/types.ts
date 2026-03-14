@@ -1,4 +1,4 @@
-import type { Request } from 'express';
+import type { RequestHandler } from 'express';
 import type { Asset } from './asset.model.js';
 
 export interface MulterFile {
@@ -10,16 +10,22 @@ export interface MulterFile {
 }
 
 /**
- * Express Request extended with properties injected by middleware:
- * - repository: from repository param handler
- * - user: from passport authentication
- * - asset: from asset param handler (routes with :assetId)
- * - file/files: from multer (file upload routes)
+ * Properties available on the Express Request after middleware injection.
+ * Intentionally not extending Express.Request to avoid type conflicts
+ * with built-in properties (files, user). Controllers destructure only
+ * the properties they need; the `handler` cast bridges the type gap
+ * for router registration.
  */
-export interface AssetRequest extends Request {
-  repository: any; // TODO: type when repository.model.d.ts exists
-  user: any; // TODO: type when user.model.d.ts exists
+export interface AssetRequest {
+  repository: any;
+  user: any;
   asset: Asset;
+  body: any;
   file: MulterFile;
   files: MulterFile[];
 }
+
+type AsyncHandler = (req: AssetRequest, res: any) => Promise<any>;
+
+/** Cast typed handler to Express RequestHandler for router registration. */
+export const handler = (fn: AsyncHandler) => fn as unknown as RequestHandler;

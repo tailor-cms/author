@@ -9,7 +9,10 @@ export async function list({ repository }: AssetRequest, res: Response) {
   return res.json({ data });
 }
 
-export async function create({ repository, files, user }: AssetRequest, res: Response) {
+export async function create(
+  { repository, files, user }: AssetRequest,
+  res: Response,
+) {
   const data = await service.upload(repository.id, files, user.id);
   return res.json({ data });
 }
@@ -32,10 +35,7 @@ export async function download({ asset }: AssetRequest, res: Response) {
   return res.json({ data: { url } });
 }
 
-export async function update(
-  { asset, body }: AssetRequest,
-  res: Response,
-) {
+export async function update({ asset, body }: AssetRequest, res: Response) {
   const data = await service.updateMeta(asset, body.meta);
   return res.json({ data });
 }
@@ -56,7 +56,10 @@ export async function remove(
   return res.json({ data });
 }
 
-export async function bulkRemove({ repository, body }: AssetRequest, res: Response) {
+export async function bulkRemove(
+  { repository, body }: AssetRequest,
+  res: Response,
+) {
   const deletedIds = await service.bulkRemove(repository, body.assetIds);
   return res.json({ data: { deletedIds } });
 }

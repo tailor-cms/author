@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 import defineRequestValidator from '#shared/request/validation.js';
 
@@ -17,8 +17,11 @@ export function requireFile(req: any, res: any, next: any) {
 }
 
 export const update = defineRequestValidator([
-  param('assetId').isInt(),
   body('meta').isObject(),
+]);
+
+export const attachFile = defineRequestValidator([
+  body('fileKey').isString().trim().notEmpty(),
 ]);
 
 export const importFromLink = defineRequestValidator([
