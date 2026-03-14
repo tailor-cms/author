@@ -1,0 +1,76 @@
+import { Model } from 'sequelize';
+
+class Asset extends Model {
+  static fields(DataTypes) {
+    const { DATE, ENUM, JSONB, STRING, UUID, UUIDV4 } = DataTypes;
+    return {
+      uid: {
+        type: UUID,
+        unique: true,
+        defaultValue: UUIDV4,
+      },
+      name: {
+        type: STRING,
+        allowNull: false,
+      },
+      type: {
+        type: STRING(16),
+        allowNull: false,
+      },
+      storageKey: {
+        type: STRING(1024),
+        field: 'storage_key',
+        allowNull: true,
+      },
+      meta: {
+        type: JSONB,
+        defaultValue: {},
+      },
+      vectorStoreFileId: {
+        type: STRING,
+        field: 'vector_store_file_id',
+        allowNull: true,
+      },
+      processingStatus: {
+        type: ENUM('pending', 'processing', 'completed', 'failed'),
+        field: 'processing_status',
+        allowNull: true,
+      },
+      createdAt: {
+        type: DATE,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: DATE,
+        field: 'updated_at',
+      },
+      deletedAt: {
+        type: DATE,
+        field: 'deleted_at',
+      },
+    };
+  }
+
+  static associate({ Repository, User }) {
+    this.belongsTo(Repository, {
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
+    });
+    this.belongsTo(User, {
+      as: 'uploader',
+      foreignKey: { name: 'uploadedBy', field: 'uploaded_by' },
+    });
+  }
+
+  static options() {
+    return {
+      modelName: 'asset',
+      tableName: 'asset',
+      underscored: true,
+      timestamps: true,
+      paranoid: true,
+      freezeTableName: true,
+    };
+  }
+}
+
+export default Asset;
