@@ -117,6 +117,7 @@
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
+    "@types/express": "^5.0.6",
     "@types/html-to-text": "^9.0.4",
     "@types/json-schema": "^7.0.15",
     "dargs": "^8.1.0",
