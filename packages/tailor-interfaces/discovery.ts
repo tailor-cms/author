@@ -1,8 +1,18 @@
 // Category of a discovery result
-export type ContentType = 'article' | 'pdf' | 'image' | 'research' | 'data' | 'other';
+export const ContentType = {
+  Article: 'article',
+  Pdf: 'pdf',
+  Image: 'image',
+  Research: 'research',
+  Data: 'data',
+  Other: 'other',
+} as const;
+export type ContentType = typeof ContentType[keyof typeof ContentType];
+export const CONTENT_TYPES = Object.values(ContentType);
 
 // UI filter - 'all' plus any content type
-export type ContentFilter = 'all' | ContentType;
+export const ContentFilter = { All: 'all', ...ContentType } as const;
+export type ContentFilter = typeof ContentFilter[keyof typeof ContentFilter];
 
 export interface DiscoveryResult {
   title: string;

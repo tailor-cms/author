@@ -6,10 +6,10 @@
  * (title, description, thumbnail, favicon, etc.).
  *
  * Websites embed metadata using several standards:
- * - Open Graph (og:*) — Facebook's protocol, most widely adopted.
- * - Twitter Cards (twitter:*) — X/Twitter's variant, still uses
+ * - Open Graph (og:*) - Facebook's protocol, most widely adopted.
+ * - Twitter Cards (twitter:*) - X/Twitter's variant, still uses
  *   the `twitter:` prefix (not deprecated after the X rebrand).
- * - Dublin Core (dc:*) — academic / library standard, common on
+ * - Dublin Core (dc:*) - academic / library standard, common on
  *   arxiv, government portals, and digital libraries.
  *
  * The `open-graph-scraper` library parses all three from a single

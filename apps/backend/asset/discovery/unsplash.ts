@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { discovery as config } from '#config';
 import { createLogger } from '#logger';
-import { MAX_TITLE, truncate, type SearchResult } from './types.ts';
+import { ContentType, MAX_TITLE, truncate, type SearchResult } from './types.ts';
 
 const logger = createLogger('asset:unsplash');
 
@@ -39,6 +39,6 @@ function toSearchResult(photo: any): SearchResult {
     thumbnailUrl: photo.urls?.thumb || '',
     snippet: `Photo by ${author} on Unsplash. ${photo.alt_description || ''}`,
     source: 'unsplash',
-    type: 'image',
+    type: ContentType.Image,
   };
 }

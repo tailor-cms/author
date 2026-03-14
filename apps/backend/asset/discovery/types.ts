@@ -1,7 +1,8 @@
-export type {
+export {
   ContentFilter,
   ContentType,
-  DiscoveryResult,
+  CONTENT_TYPES,
+  type DiscoveryResult,
 } from '@tailor-cms/interfaces/discovery.ts';
 
 import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
@@ -15,7 +16,15 @@ export function truncate(value: unknown, max: number): string {
 export const MAX_TITLE = 500;
 export const MAX_SNIPPET = 1000;
 
-// Internal pipeline type — not exposed to frontend
+/** Thrown when a search provider rejects with a quota/rate-limit error. */
+export class QuotaExceededError extends Error {
+  constructor(provider: string) {
+    super(`${provider} quota exceeded`);
+    this.name = 'QuotaExceededError';
+  }
+}
+
+// Internal pipeline type - not exposed to frontend
 export interface SearchResult {
   title: string;
   url: string;
@@ -23,7 +32,7 @@ export interface SearchResult {
   source: string;
   /** Brief description or extract from the resource content */
   snippet: string;
-  /** Result category — set by each search provider mapper */
+  /** Result category - set by each search provider mapper */
   type: ContentType;
   thumbnailUrl?: string;
   imageUrl?: string;

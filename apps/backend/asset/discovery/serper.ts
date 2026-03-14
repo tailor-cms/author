@@ -2,7 +2,7 @@ import axios from 'axios';
 import { discovery as config } from '#config';
 import { createLogger } from '#logger';
 import {
-  MAX_SNIPPET, MAX_TITLE, truncate,
+  ContentType, MAX_SNIPPET, MAX_TITLE, QuotaExceededError, truncate,
   type SearchResult,
 } from './types.ts';
 
@@ -18,20 +18,25 @@ async function search(
   mapper: (item: any) => SearchResult,
 ): Promise<SearchResult[]> {
   logger.debug({ endpoint, query: params.q, count: params.num }, 'Searching');
-  const { data } = await axios.post(`${apiUrl}${endpoint}`, params, {
-    headers: HEADERS,
-    timeout,
-  });
-  const results = (data[key] || []).map(mapper);
-  logger.debug({ endpoint, results: results.length }, 'Search complete');
-  return results;
+  try {
+    const { data } = await axios.post(`${apiUrl}${endpoint}`, params, {
+      headers: HEADERS,
+      timeout,
+    });
+    const results = (data[key] || []).map(mapper);
+    logger.debug({ endpoint, results: results.length }, 'Search complete');
+    return results;
+  } catch (err: any) {
+    if (err.response?.status === 429) throw new QuotaExceededError('serper');
+    throw err;
+  }
 }
 
 function detectType(url: string): SearchResult['type'] {
   try {
-    if (new URL(url).pathname.toLowerCase().endsWith('.pdf')) return 'pdf';
+    if (new URL(url).pathname.toLowerCase().endsWith('.pdf')) return ContentType.Pdf;
   } catch {}
-  return 'article';
+  return ContentType.Article;
 }
 
 function toWebResult(item: any): SearchResult {
@@ -53,7 +58,7 @@ function toImageResult(item: any): SearchResult {
     thumbnailUrl: item.thumbnailUrl || '',
     snippet: `Image from ${item.source || item.domain || 'web'}`,
     source: 'google-images',
-    type: 'image',
+    type: ContentType.Image,
   };
 }
 
@@ -63,7 +68,7 @@ function toNewsResult(item: any): SearchResult {
     url: item.link || '',
     snippet: truncate(item.snippet, MAX_SNIPPET),
     source: 'google-news',
-    type: 'article',
+    type: ContentType.Article,
   };
 }
 
@@ -80,7 +85,7 @@ function toScholarResult(item: any): SearchResult {
     url: item.link || '',
     snippet: parts.join(' | '),
     source: 'google-scholar',
-    type: 'research',
+    type: ContentType.Research,
   };
 }
 

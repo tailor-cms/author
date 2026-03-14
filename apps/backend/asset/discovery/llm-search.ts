@@ -2,7 +2,7 @@ import AIService from '#shared/ai/ai.service.ts';
 import { ai as aiConfig } from '#config';
 import { createLogger } from '#logger';
 import {
-  MAX_SNIPPET, MAX_TITLE, truncate,
+  ContentFilter, ContentType, MAX_SNIPPET, MAX_TITLE, truncate,
   type SearchResult,
 } from './types.ts';
 
@@ -36,18 +36,29 @@ const PROMPT = `Search the web for the user's query.
 Return only URLs found in your search results - never fabricate or guess URLs.
 Derive titles and snippets from the actual page content.`;
 
+const FILTER_HINTS: Partial<Record<ContentFilter, string>> = {
+  [ContentFilter.Pdf]: 'Focus on PDF documents. Prefer URLs ending in .pdf.',
+  [ContentFilter.Research]: 'Focus on academic papers, preprints, and research publications.',
+  [ContentFilter.Data]: 'Focus on datasets, statistics, and open data repositories.',
+  [ContentFilter.Article]: 'Focus on articles and news coverage.',
+};
+
 export async function webSearch(
   query: string,
   repositoryContext: string,
+  filter: ContentFilter,
   count: number,
 ): Promise<SearchResult[]> {
-  logger.debug({ query, count }, 'Searching via LLM web search');
+  logger.debug({ query, filter, count }, 'Searching via LLM web search');
+  const hint = FILTER_HINTS[filter] || '';
+  const prompt = [PROMPT, hint, `Return up to ${count} results.`]
+    .filter(Boolean).join('\n');
   const response = await AIService.client.responses.create({
     model: aiConfig.modelId,
     tools: [{ type: 'web_search_preview' }],
     text: { format: SCHEMA },
     input: [
-      { role: 'developer', content: `${PROMPT}\nReturn up to ${count} results.` },
+      { role: 'developer', content: prompt },
       { role: 'user', content: `${repositoryContext}\n\nSearch: ${query}` },
     ],
   });
@@ -86,6 +97,6 @@ function toSearchResult(raw: any): SearchResult {
     url: raw.url,
     snippet: truncate(raw.snippet, MAX_SNIPPET),
     source: 'llm-web-search',
-    type: 'article',
+    type: ContentType.Article,
   };
 }
