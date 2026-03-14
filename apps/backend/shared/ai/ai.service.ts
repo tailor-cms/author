@@ -14,6 +14,10 @@ class AiService {
     this.vectorStore = new VectorStoreService(this.#openai);
   }
 
+  get client() {
+    return this.#openai;
+  }
+
   async generate(context: AiContext) {
     const prompt = new AiPrompt(this.#openai, context);
     return prompt.execute();

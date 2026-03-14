@@ -72,7 +72,7 @@ export async function removeFromStore(repository: any, asset: Asset) {
     { storeId, assetId: asset.id, fileId: asset.vectorStoreFileId },
     'Removing file from store',
   );
-  await AIService.vectorStore.removeFile(storeId, asset.vectorStoreFileId);
+  await AIService.vectorStore.remove(storeId, asset.vectorStoreFileId);
 }
 
 async function indexSynthetic(
@@ -81,7 +81,7 @@ async function indexSynthetic(
   filename: string,
 ): Promise<string> {
   logger.debug({ storeId, filename }, 'Indexing synthetic document');
-  const { fileId } = await AIService.vectorStore!.uploadSyntheticDocument(
+  const { fileId } = await AIService.vectorStore!.ingest(
     storeId,
     content,
     filename,
