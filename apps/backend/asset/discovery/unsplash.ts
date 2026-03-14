@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { discovery as config } from '#config';
 import { createLogger } from '#logger';
-import type { SearchResult } from './types.ts';
+import { MAX_TITLE, truncate, type SearchResult } from './types.ts';
 
 const logger = createLogger('asset:unsplash');
 
@@ -28,15 +28,16 @@ export async function search(
 }
 
 function toSearchResult(photo: any): SearchResult {
-  const snippetBase = `Photo by ${photo.user?.name || 'Unknown'} on Unsplash.`;
+  const author = photo.user?.name || 'Unknown';
   return {
-    title: String(
+    title: truncate(
       photo.description || photo.alt_description || 'Unsplash photo',
-    ).slice(0, 500),
+      MAX_TITLE,
+    ),
     url: photo.links?.html || `https://unsplash.com/photos/${photo.id}`,
     imageUrl: photo.urls?.regular || photo.urls?.small || '',
     thumbnailUrl: photo.urls?.thumb || '',
-    snippet: `${snippetBase} ${photo.alt_description || ''}`,
+    snippet: `Photo by ${author} on Unsplash. ${photo.alt_description || ''}`,
     source: 'unsplash',
     type: 'image',
   };

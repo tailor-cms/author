@@ -1,7 +1,10 @@
 import AIService from '#shared/ai/ai.service.ts';
 import { ai as aiConfig } from '#config';
 import { createLogger } from '#logger';
-import type { SearchResult } from './types.ts';
+import {
+  MAX_SNIPPET, MAX_TITLE, truncate,
+  type SearchResult,
+} from './types.ts';
 
 const logger = createLogger('asset:llm-search');
 
@@ -50,10 +53,13 @@ export async function webSearch(
   });
   const { results } = JSON.parse(response.output_text);
   const citedUrls = extractCitedUrls(response.output);
-  logger.debug({ total: results.length, cited: citedUrls.size }, 'LLM search complete');
+  logger.debug(
+    { total: results.length, cited: citedUrls.size },
+    'LLM search complete',
+  );
   return results
     .filter((r: any) => r.url && r.title)
-    // When citations are available, only keep URLs grounded in actual search results
+    // When citations are available, only keep URLs grounded in actual search
     .filter((r: any) => !citedUrls.size || citedUrls.has(r.url))
     .slice(0, count)
     .map(toSearchResult);
@@ -76,9 +82,9 @@ function extractCitedUrls(output: any[]): Set<string> {
 
 function toSearchResult(raw: any): SearchResult {
   return {
-    title: String(raw.title).slice(0, 500),
+    title: truncate(raw.title, MAX_TITLE),
     url: raw.url,
-    snippet: String(raw.snippet || '').slice(0, 1000),
+    snippet: truncate(raw.snippet, MAX_SNIPPET),
     source: 'llm-web-search',
     type: 'article',
   };

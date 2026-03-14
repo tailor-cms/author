@@ -1,7 +1,10 @@
 import axios from 'axios';
 import { discovery as config } from '#config';
 import { createLogger } from '#logger';
-import type { SearchResult } from './types.ts';
+import {
+  MAX_SNIPPET, MAX_TITLE, truncate,
+  type SearchResult,
+} from './types.ts';
 
 const logger = createLogger('asset:serper');
 
@@ -26,8 +29,7 @@ async function search(
 
 function detectType(url: string): SearchResult['type'] {
   try {
-    const path = new URL(url).pathname.toLowerCase();
-    if (path.endsWith('.pdf')) return 'pdf';
+    if (new URL(url).pathname.toLowerCase().endsWith('.pdf')) return 'pdf';
   } catch {}
   return 'article';
 }
@@ -35,10 +37,9 @@ function detectType(url: string): SearchResult['type'] {
 function toWebResult(item: any): SearchResult {
   const url = item.link || '';
   return {
-    title: String(item.title || '').slice(0, 500),
+    title: truncate(item.title, MAX_TITLE),
     url,
-    snippet: String(item.snippet || '').slice(0, 1000),
-    date: item.date || '',
+    snippet: truncate(item.snippet, MAX_SNIPPET),
     source: 'google',
     type: detectType(url),
   };
@@ -46,7 +47,7 @@ function toWebResult(item: any): SearchResult {
 
 function toImageResult(item: any): SearchResult {
   return {
-    title: String(item.title || '').slice(0, 500),
+    title: truncate(item.title, MAX_TITLE),
     url: item.link || '',
     imageUrl: item.imageUrl || '',
     thumbnailUrl: item.thumbnailUrl || '',
@@ -58,23 +59,26 @@ function toImageResult(item: any): SearchResult {
 
 function toNewsResult(item: any): SearchResult {
   return {
-    title: String(item.title || '').slice(0, 500),
+    title: truncate(item.title, MAX_TITLE),
     url: item.link || '',
-    snippet: String(item.snippet || '').slice(0, 1000),
-    date: item.date || '',
+    snippet: truncate(item.snippet, MAX_SNIPPET),
     source: 'google-news',
     type: 'article',
   };
 }
 
 function toScholarResult(item: any): SearchResult {
+  const authors = item.publicationInfo?.summary || '';
+  const year = item.year || '';
+  const cited = item.citedBy?.total;
+  const parts = [truncate(item.snippet, MAX_SNIPPET)];
+  if (authors) parts.push(`Authors: ${authors}`);
+  if (year) parts.push(`Year: ${year}`);
+  if (cited) parts.push(`Cited by: ${cited}`);
   return {
-    title: String(item.title || '').slice(0, 500),
+    title: truncate(item.title, MAX_TITLE),
     url: item.link || '',
-    snippet: String(item.snippet || '').slice(0, 1000),
-    year: item.year || '',
-    citedBy: item.citedBy?.total || 0,
-    authors: item.publicationInfo?.summary || '',
+    snippet: parts.join(' | '),
     source: 'google-scholar',
     type: 'research',
   };
