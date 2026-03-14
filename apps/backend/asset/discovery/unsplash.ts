@@ -1,17 +1,17 @@
 import axios from 'axios';
-import { ai as aiConfig } from '#config';
+import { discovery as config } from '#config';
 import { createLogger } from '#logger';
 import type { SearchResult } from './types.ts';
 
 const logger = createLogger('asset:unsplash');
 
-const { apiUrl, accessKey, timeout } = aiConfig.discovery.unsplash;
+const { apiUrl, accessKey, timeout } = config.unsplash;
 
 export async function search(
   query: string,
   count = 30,
 ): Promise<SearchResult[]> {
-  if (!aiConfig.discovery.unsplash.isEnabled) {
+  if (!config.unsplash.isEnabled) {
     logger.debug('Unsplash not configured, skipping');
     return [];
   }

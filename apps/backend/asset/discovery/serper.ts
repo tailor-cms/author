@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { ai as aiConfig } from '#config';
+import { discovery as config } from '#config';
 import { createLogger } from '#logger';
 import type { SearchResult } from './types.ts';
 
 const logger = createLogger('asset:serper');
 
-const { apiUrl, apiKey, timeout } = aiConfig.discovery.serper;
+const { apiUrl, apiKey, timeout } = config.serper;
 const HEADERS = { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' };
 
 async function search(
@@ -40,7 +40,6 @@ function toImageResult(item: any): SearchResult {
     url: item.link || '',
     imageUrl: item.imageUrl || '',
     thumbnailUrl: item.thumbnailUrl || '',
-    domain: item.domain || '',
     snippet: `Image from ${item.source || item.domain || 'web'}`,
     source: 'google-images',
   };
