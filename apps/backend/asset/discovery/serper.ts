@@ -24,13 +24,23 @@ async function search(
   return results;
 }
 
+function detectType(url: string): SearchResult['type'] {
+  try {
+    const path = new URL(url).pathname.toLowerCase();
+    if (path.endsWith('.pdf')) return 'pdf';
+  } catch {}
+  return 'article';
+}
+
 function toWebResult(item: any): SearchResult {
+  const url = item.link || '';
   return {
     title: String(item.title || '').slice(0, 500),
-    url: item.link || '',
+    url,
     snippet: String(item.snippet || '').slice(0, 1000),
     date: item.date || '',
     source: 'google',
+    type: detectType(url),
   };
 }
 
@@ -42,6 +52,7 @@ function toImageResult(item: any): SearchResult {
     thumbnailUrl: item.thumbnailUrl || '',
     snippet: `Image from ${item.source || item.domain || 'web'}`,
     source: 'google-images',
+    type: 'image',
   };
 }
 
@@ -52,6 +63,7 @@ function toNewsResult(item: any): SearchResult {
     snippet: String(item.snippet || '').slice(0, 1000),
     date: item.date || '',
     source: 'google-news',
+    type: 'article',
   };
 }
 
@@ -64,6 +76,7 @@ function toScholarResult(item: any): SearchResult {
     citedBy: item.citedBy?.total || 0,
     authors: item.publicationInfo?.summary || '',
     source: 'google-scholar',
+    type: 'research',
   };
 }
 

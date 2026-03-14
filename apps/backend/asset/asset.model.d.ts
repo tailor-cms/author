@@ -1,8 +1,7 @@
 import type { Model, ModelStatic } from 'sequelize';
+import type { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset.ts';
 
-export type AssetType = 'image' | 'document' | 'video' | 'audio' | 'link' | 'other';
-
-export type ProcessingStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type { AssetType, ProcessingStatus };
 
 interface AssetMetaBase {
   description?: string;

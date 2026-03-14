@@ -38,5 +38,6 @@ function toSearchResult(photo: any): SearchResult {
     thumbnailUrl: photo.urls?.thumb || '',
     snippet: `${snippetBase} ${photo.alt_description || ''}`,
     source: 'unsplash',
+    type: 'image',
   };
 }

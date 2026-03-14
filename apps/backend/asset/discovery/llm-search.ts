@@ -80,5 +80,6 @@ function toSearchResult(raw: any): SearchResult {
     url: raw.url,
     snippet: String(raw.snippet || '').slice(0, 1000),
     source: 'llm-web-search',
+    type: 'article',
   };
 }
