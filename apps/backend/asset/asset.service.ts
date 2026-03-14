@@ -6,7 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { removeFromVectorStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.js';
 
-import type { Asset } from './asset.model.js';
+import type { Asset, AssetMeta } from './asset.model.js';
 
 const logger = createLogger('asset');
 const { Asset, User } = db;
@@ -66,7 +66,11 @@ export function list(repositoryId: number) {
   });
 }
 
-export function upload(repositoryId: number, files: any[], userId: number) {
+export function upload(
+  repositoryId: number,
+  files: Express.Multer.File[],
+  userId: number,
+) {
   return Promise.all(
     files.map(async (file) => {
       const uid = randomUUID();
@@ -96,7 +100,7 @@ export function getDownloadUrl(key: string) {
   return Storage.getFileUrl(key);
 }
 
-export async function updateMeta(asset: Asset, meta: Record<string, unknown>) {
+export async function updateMeta(asset: Asset, meta: Partial<AssetMeta>) {
   return asset.update({ meta: { ...asset.meta, ...meta } });
 }
 
