@@ -1,5 +1,6 @@
-import type { Model, ModelStatic } from 'sequelize';
 import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset.ts';
+import type { Model, ModelStatic } from 'sequelize';
+import type { AssetSource } from './types.ts';
 
 export { AssetType, ProcessingStatus };
 
@@ -13,6 +14,8 @@ interface AssetMetaBase {
 export interface FileAssetMeta extends AssetMetaBase {
   fileSize: number;
   mimeType: string;
+  /** Origin data when the file was downloaded from the web. */
+  source?: AssetSource;
 }
 
 export interface MediaAssetMeta extends FileAssetMeta {

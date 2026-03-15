@@ -23,4 +23,8 @@ export interface DiscoveryResult {
   // Short note explaining why this result is relevant to the query
   relevanceNote?: string;
   thumbnailUrl?: string;
+  /** Direct file URL for downloadable content (e.g. image binary, PDF) */
+  downloadUrl?: string;
+  author?: string;
+  license?: string;
 }

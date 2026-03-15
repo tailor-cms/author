@@ -1,16 +1,22 @@
 import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
+import { downloadFile } from './utils/download.ts';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { Op } from 'sequelize';
+import pick from 'lodash/pick.js';
 import { randomUUID } from 'node:crypto';
 import { removeFromStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.js';
 
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
-import type { MulterFile } from './types.ts';
+import type {
+  ImportFileOptions,
+  ImportFromLinkOptions,
+  MulterFile,
+} from './types.ts';
+import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 
 const { Asset, User } = db;
-const logger = createLogger('asset');
 
 export const uploaderInclude = {
   model: User,
@@ -18,6 +24,8 @@ export const uploaderInclude = {
   attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'imgUrl'],
 };
 
+const logger = createLogger('asset');
+const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf', 'data']);
 const MIME_CATEGORY_MAP: Record<string, string[]> = {
   image: ['image/'],
   video: ['video/'],
@@ -59,36 +67,31 @@ function safe(fn: (...args: any[]) => Promise<any>) {
 const safeRemoveFromVectorStore = safe(removeFromStore);
 const safeDeleteFile = safe(Storage.deleteFile.bind(Storage));
 
-export function list(repositoryId: number) {
-  return Asset.findAll({
-    where: { repositoryId },
-    include: [uploaderInclude],
-    order: [['createdAt', 'DESC']],
+async function importFile({
+  repositoryId,
+  userId,
+  file,
+  description,
+  source,
+}: ImportFileOptions) {
+  const uid = randomUUID();
+  const key = buildStorageKey(repositoryId, uid, file.originalname);
+  await Storage.saveFile(key, file.buffer);
+  const asset = await Asset.create({
+    uid,
+    repositoryId,
+    name: source?.title || file.originalname,
+    type: resolveType(file.mimetype),
+    storageKey: key,
+    meta: {
+      fileSize: file.size,
+      mimeType: file.mimetype,
+      ...(description && { description }),
+      ...(source && { source }),
+    },
+    uploadedBy: userId,
   });
-}
-
-export function upload(
-  repositoryId: number,
-  files: MulterFile[],
-  userId: number,
-) {
-  return Promise.all(
-    files.map(async (file) => {
-      const uid = randomUUID();
-      const key = buildStorageKey(repositoryId, uid, file.originalname);
-      await Storage.saveFile(key, file.buffer);
-      const asset = await Asset.create({
-        uid,
-        repositoryId,
-        name: file.originalname,
-        type: resolveType(file.mimetype),
-        storageKey: key,
-        meta: { fileSize: file.size, mimeType: file.mimetype },
-        uploadedBy: userId,
-      });
-      return asset.reload({ include: [uploaderInclude] });
-    }),
-  );
+  return asset.reload({ include: [uploaderInclude] });
 }
 
 async function destroyAsset(repository: any, asset: Asset) {
@@ -99,6 +102,24 @@ async function destroyAsset(repository: any, asset: Asset) {
     await Promise.all(Object.values(files).map(safeDeleteFile));
   }
   await asset.destroy();
+}
+
+export function list(repositoryId: number) {
+  return Asset.findAll({
+    where: { repositoryId },
+    include: [uploaderInclude],
+    order: [['createdAt', 'DESC']],
+  });
+}
+
+export function upload(
+  repositoryId: number,
+  userId: number,
+  files: MulterFile[],
+) {
+  return Promise.all(
+    files.map((file) => importFile({ repositoryId, userId, file })),
+  );
 }
 
 export function getDownloadUrl(key: string) {
@@ -137,10 +158,35 @@ export async function attachFile(
 
 export async function importFromLink(
   repositoryId: number,
-  url: string,
   userId: number,
+  url: string,
+  meta: ImportFromLinkOptions = {},
 ) {
   const domain = new URL(url).hostname;
+  // Downloadable types: fetch the file and store it like a regular upload.
+  if (meta.contentType && DOWNLOADABLE_TYPES.has(meta.contentType)) {
+    try {
+      const file = await downloadFile(meta.downloadUrl || url);
+      const source = {
+        url,
+        domain,
+        ...pick(meta, ['title', 'author', 'license']),
+      };
+      return await importFile({
+        repositoryId,
+        userId,
+        file,
+        description: meta.description,
+        source,
+      });
+    } catch (err) {
+      logger.warn(
+        { err, url },
+        'File download failed, falling back to link import',
+      );
+    }
+  }
+  // Default: create as a link asset with OG metadata.
   let ogData;
   try {
     ogData = await fetchOpenGraph(url);

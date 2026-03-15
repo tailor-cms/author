@@ -1,4 +1,5 @@
 import { body } from 'express-validator';
+import { CONTENT_TYPES } from '@tailor-cms/interfaces/discovery.ts';
 import { StatusCodes } from 'http-status-codes';
 import defineRequestValidator from '#shared/request/validation.js';
 
@@ -26,6 +27,13 @@ export const attachFile = defineRequestValidator([
 
 export const importFromLink = defineRequestValidator([
   body('url').isURL(),
+  body('meta').optional().isObject(),
+  body('meta.contentType').optional().isIn(CONTENT_TYPES),
+  body('meta.title').optional().isString().trim(),
+  body('meta.description').optional().isString().trim(),
+  body('meta.downloadUrl').optional().isURL(),
+  body('meta.author').optional().isString().trim(),
+  body('meta.license').optional().isString().trim(),
 ]);
 
 export const bulkRemove = defineRequestValidator([

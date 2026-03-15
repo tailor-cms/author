@@ -37,8 +37,11 @@ function toSearchResult(photo: any): SearchResult {
     url: photo.links?.html || `https://unsplash.com/photos/${photo.id}`,
     imageUrl: photo.urls?.regular || photo.urls?.small || '',
     thumbnailUrl: photo.urls?.thumb || '',
+    downloadUrl: photo.urls?.full || photo.urls?.regular || '',
     snippet: `Photo by ${author} on Unsplash. ${photo.alt_description || ''}`,
     source: 'unsplash',
     type: ContentType.Image,
+    author,
+    license: 'Unsplash License',
   };
 }

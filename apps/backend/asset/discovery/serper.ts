@@ -56,6 +56,7 @@ function toImageResult(item: any): SearchResult {
     url: item.link || '',
     imageUrl: item.imageUrl || '',
     thumbnailUrl: item.thumbnailUrl || '',
+    downloadUrl: item.imageUrl || '',
     snippet: `Image from ${item.source || item.domain || 'web'}`,
     source: 'google-images',
     type: ContentType.Image,
@@ -73,11 +74,11 @@ function toNewsResult(item: any): SearchResult {
 }
 
 function toScholarResult(item: any): SearchResult {
-  const authors = item.publicationInfo?.summary || '';
+  // publicationInfo.summary is "Author1, Author2 - Journal, Year" format
+  const author = item.publicationInfo?.summary || '';
   const year = item.year || '';
   const cited = item.citedBy?.total;
   const parts = [truncate(item.snippet, MAX_SNIPPET)];
-  if (authors) parts.push(`Authors: ${authors}`);
   if (year) parts.push(`Year: ${year}`);
   if (cited) parts.push(`Cited by: ${cited}`);
   return {
@@ -86,6 +87,7 @@ function toScholarResult(item: any): SearchResult {
     snippet: parts.join(' | '),
     source: 'google-scholar',
     type: ContentType.Research,
+    ...(author && { author }),
   };
 }
 

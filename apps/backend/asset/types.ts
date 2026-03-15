@@ -1,12 +1,37 @@
+import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 import type { RequestHandler } from 'express';
 import type { Asset } from './asset.model.js';
 
 export interface MulterFile {
-  fieldname: string;
   originalname: string;
   mimetype: string;
   size: number;
   buffer: Buffer;
+}
+
+export interface AssetSource {
+  url: string;
+  domain: string;
+  title?: string;
+  author?: string;
+  license?: string;
+}
+
+export interface ImportFileOptions {
+  repositoryId: number;
+  userId: number;
+  file: MulterFile;
+  description?: string;
+  source?: AssetSource;
+}
+
+export interface ImportFromLinkOptions {
+  contentType?: ContentType;
+  title?: string;
+  description?: string;
+  downloadUrl?: string;
+  author?: string;
+  license?: string;
 }
 
 /**

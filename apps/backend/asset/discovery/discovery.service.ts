@@ -11,6 +11,7 @@
  */
 import { createLogger } from '#logger';
 import { discovery as config } from '#config';
+import pick from 'lodash/pick.js';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import * as llmSearch from './llm-search.ts';
 import * as serper from './serper.ts';
@@ -77,10 +78,7 @@ function dedupeByUrl(results: SearchResult[]): SearchResult[] {
 function toResult(raw: SearchResult): DiscoveryResult {
   const thumb = raw.thumbnailUrl || raw.imageUrl;
   return {
-    title: raw.title,
-    url: raw.url,
-    snippet: raw.snippet,
-    type: raw.type,
+    ...pick(raw, ['title', 'url', 'snippet', 'type', 'downloadUrl', 'author', 'license']),
     ...(thumb && { thumbnailUrl: thumb }),
   };
 }
@@ -133,11 +131,13 @@ const strategies: Record<ContentFilter, Strategy> = {
       `${q} ${RESEARCH_SITES}`, Math.ceil(n / 2),
     ),
   ],
-  [Data]: (q, n) => [
-    serper.webSearch(
-      `${q} dataset OR statistics ${DATA_SITES}`, n + DEDUP_BUFFER,
-    ),
-  ],
+  [Data]: (q, n) => {
+    const keywords = `${q} dataset OR "open data" OR statistics`;
+    return [
+      serper.webSearch(keywords, Math.ceil(n * 0.6) + DEDUP_BUFFER),
+      serper.webSearch(`${q} ${DATA_SITES}`, Math.ceil(n * 0.5) + DEDUP_BUFFER),
+    ];
+  },
   [Other]: (q, n) => [
     serper.webSearch(q, n + DEDUP_BUFFER),
   ],

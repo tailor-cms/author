@@ -13,7 +13,7 @@ export async function create(
   { repository, files, user }: AssetRequest,
   res: Response,
 ) {
-  const data = await service.upload(repository.id, files, user.id);
+  const data = await service.upload(repository.id, user.id, files);
   return res.json({ data });
 }
 
@@ -21,7 +21,9 @@ export async function importFromLink(
   { repository, body, user }: AssetRequest,
   res: Response,
 ) {
-  const data = await service.importFromLink(repository.id, body.url, user.id);
+  const data = await service.importFromLink(
+    repository.id, user.id, body.url, body.meta,
+  );
   return res.json({ data });
 }
 

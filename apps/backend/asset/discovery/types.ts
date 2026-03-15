@@ -36,4 +36,8 @@ export interface SearchResult {
   type: ContentType;
   thumbnailUrl?: string;
   imageUrl?: string;
+  /** Direct file URL for downloadable content (e.g. image binary, PDF) */
+  downloadUrl?: string;
+  author?: string;
+  license?: string;
 }
