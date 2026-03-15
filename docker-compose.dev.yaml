@@ -1,7 +1,7 @@
 services:
   author-dev-postgres:
     container_name: 'author-dev-postgres'
-    image: 'postgres:15.1'
+    image: 'docker.io/library/postgres:15.1'
     environment:
       POSTGRES_DB: 'tailor_dev'
       POSTGRES_USER: 'dev'
@@ -13,14 +13,14 @@ services:
     restart: 'no'
   author-dev-redis:
     container_name: 'author-dev-redis'
-    image: redis:7.4.0
+    image: docker.io/library/redis:7.4.0
     expose:
       - '6379'
     ports:
       - '6379:6379'
   author-dev-localstack:
     container_name: author-dev-localstack
-    image: localstack/localstack
+    image: docker.io/localstack/localstack
     expose:
       - '4566'
     ports:
