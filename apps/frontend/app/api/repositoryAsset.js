@@ -41,9 +41,9 @@ function bulkRemove(repositoryId, assetIds) {
     .then(extractData);
 }
 
-function importFromLink(repositoryId, url) {
+function importFromLink(repositoryId, url, meta) {
   return request
-    .post(`${urls.root(repositoryId)}/import/link`, { url })
+    .post(`${urls.root(repositoryId)}/import/link`, { url, meta })
     .then(extractData);
 }
 
