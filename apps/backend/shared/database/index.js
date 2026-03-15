@@ -22,6 +22,7 @@ import Activity from '../../activity/activity.model.js';
 import ContentElement from '../../content-element/content-element.model.js';
 import Revision from '../../revision/revision.model.js';
 import Comment from '../../comment/comment.model.js';
+import Asset from '../../asset/asset.model.js';
 import Tag from '../../tag/tag.model.js';
 import Hooks from './hooks.js';
 import { wrapMethods } from './helpers.js';
@@ -106,6 +107,7 @@ const models = {
   Revision: defineModel(Revision),
   ContentElement: defineModel(ContentElement),
   Comment: defineModel(Comment),
+  Asset: defineModel(Asset),
   Tag: defineModel(Tag),
 };
 

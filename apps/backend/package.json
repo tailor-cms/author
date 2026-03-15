@@ -81,6 +81,7 @@
     "mkdirp": "^3.0.1",
     "multer": "^2.0.2",
     "mustache": "^4.2.0",
+    "open-graph-scraper": "^6.11.0",
     "openai": "^6.3.0",
     "openid-client": "^5.7.1",
     "optional-require": "^2.1.0",
@@ -116,7 +117,10 @@
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
     "@types/bluebird": "^3.5.42",
+    "@types/express": "^5.0.6",
+    "@types/html-to-text": "^9.0.4",
     "@types/json-schema": "^7.0.15",
+    "@types/multer": "^2.1.0",
     "dargs": "^8.1.0",
     "del-cli": "^7.0.0",
     "dotenv-cli": "^10.0.0",

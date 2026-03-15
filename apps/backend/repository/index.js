@@ -11,6 +11,7 @@ import processQuery from '#shared/util/processListQuery.js';
 
 import AccessService from '#app/shared/auth/access.service.js';
 import activity from '../activity/index.js';
+import asset from '../asset/index.ts';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
@@ -81,6 +82,7 @@ router
 
 mount(router, '/:repositoryId', feed);
 mount(router, '/:repositoryId', activity);
+mount(router, '/:repositoryId', asset);
 mount(router, '/:repositoryId', revision);
 mount(router, '/:repositoryId', contentElement);
 mount(router, '/:repositoryId', comment);
