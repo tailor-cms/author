@@ -1,11 +1,11 @@
+import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
+
 export {
   ContentFilter,
   ContentType,
   CONTENT_TYPES,
   type DiscoveryResult,
 } from '@tailor-cms/interfaces/discovery.ts';
-
-import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 
 /** Truncate a string to max length, coercing nullish to empty. */
 export function truncate(value: unknown, max: number): string {

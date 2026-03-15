@@ -38,7 +38,8 @@ Derive titles and snippets from the actual page content.`;
 
 const FILTER_HINTS: Partial<Record<ContentFilter, string>> = {
   [ContentFilter.Pdf]: 'Focus on PDF documents. Prefer URLs ending in .pdf.',
-  [ContentFilter.Research]: 'Focus on academic papers, preprints, and research publications.',
+  [ContentFilter.Research]:
+    'Focus on academic papers, preprints, and research publications.',
   [ContentFilter.Data]: 'Focus on datasets, statistics, and open data repositories.',
   [ContentFilter.Article]: 'Focus on articles and news coverage.',
 };
