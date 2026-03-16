@@ -222,7 +222,7 @@ export const SCHEMA: Schema = {
       key: 'posterImage',
       type: MetaInputType.File,
       label: 'Poster Image',
-      placeholder: 'Click to upload a poster image',
+      placeholder: 'Click to add a poster image',
       icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],
