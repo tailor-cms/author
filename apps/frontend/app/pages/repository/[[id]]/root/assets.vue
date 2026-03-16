@@ -18,7 +18,13 @@
     <CategoryFilter v-model="selectedCategory" :categories="categories" />
     <!-- Loading skeleton -->
     <VRow v-if="isFetching">
-      <VCol v-for="n in 8" :key="n" cols="12" sm="6" md="4" lg="3">
+      <VCol
+        v-for="n in 8"
+        :key="n"
+        cols="12"
+        sm="6"
+        md="4"
+        lg="3">
         <VSkeletonLoader
           color="primary-darken-4"
           type="image, list-item-two-line, actions"

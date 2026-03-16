@@ -7,6 +7,7 @@ import pick from 'lodash/pick.js';
 import { randomUUID } from 'node:crypto';
 import { removeFromStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.js';
+import { storage as storageConfig } from '#config';
 
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
 import type {
@@ -122,8 +123,17 @@ export function upload(
   );
 }
 
-export function getDownloadUrl(key: string) {
-  return Storage.getFileUrl(key);
+/**
+ * Resolves a storage key to its public and internal URLs.
+ * Returns { key, publicUrl, url } where url is the storage:// protocol URL.
+ */
+export async function getDownloadUrl(key: string) {
+  const publicUrl = await Storage.getFileUrl(key);
+  return {
+    key,
+    publicUrl,
+    url: `${storageConfig.protocol}${key}`,
+  };
 }
 
 export async function updateMeta(asset: Asset, meta: Partial<AssetMeta>) {

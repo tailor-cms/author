@@ -1,11 +1,7 @@
-import path from 'node:path';
-
 import type { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import * as service from './asset.service.ts';
-import Storage from '../repository/storage.js';
-import StorageService from '#shared/storage/storage.service.js';
 
 import type { AssetRequest } from './types.ts';
 
@@ -16,45 +12,43 @@ import type { AssetRequest } from './types.ts';
  * GET /assets              → { data: [Asset, ...] }
  * GET /assets?key=<key>    → { url: "https://..." }
  */
-export async function list(
-  { repository, query }: AssetRequest,
-  res: Response,
-) {
+export async function list({ repository, query }: AssetRequest, res: Response) {
   if (query?.key) {
-    const url = await Storage.getFileUrl(query.key);
-    return res.json({ url });
+    const { publicUrl } = await service.getDownloadUrl(query.key);
+    return res.json({ url: publicUrl });
   }
   const data = await service.list(repository.id);
   return res.json({ data });
 }
 
 /**
- * Unified upload handler that supports two upload flows:
+ * Unified upload handler. All uploads go through the asset service, creating
+ * an asset library record for every file. The response shape varies by caller:
  *
- * Handling legacy single-file upload; e.g. content element storage upload
- * (single file via 'file' field):
+ * Content element single-file upload (via 'file' field):
  *   POST /assets  (multipart: file)
- *   → { key: "repo/1/...", publicUrl: "https://...", url: "storage://..." }
- *   Consolidates the endpoint previously provided by the shared storage router.
+ *   → { key, publicUrl, url: "storage://..." }
  *
- * Asset library upload (multiple files via 'files' field):
+ * Asset library upload (via 'files' field):
  *   POST /assets  (multipart: files[])
  *   → { data: [Asset, ...] }
  */
 export async function create(req: any, res: Response) {
-  const { file: [storageFile] = [], files: libraryFiles = [] } = req.files ?? {};
-  if (storageFile) {
-    const { name } = path.parse(storageFile.originalname);
-    const data = await StorageService.uploadFile(req.repository.id, storageFile, name);
-    return res.json(data);
-  }
-  if (!libraryFiles.length) {
+  const { file: [storageFile] = [], files: libraryFiles = [] } =
+    req.files ?? {};
+  const { repository, user } = req;
+  const files = storageFile ? [storageFile] : libraryFiles;
+  if (!files.length) {
     return res
       .status(StatusCodes.BAD_REQUEST)
       .json({ errors: [{ msg: 'No files provided' }] });
   }
-  const data = await service.upload(req.repository.id, req.user.id, libraryFiles);
-  return res.json({ data });
+  const assets = await service.upload(repository.id, user.id, files);
+  // CE single-file uploads expect { key, publicUrl, url } response shape
+  if (storageFile) {
+    return res.json(await service.getDownloadUrl(assets[0].storageKey));
+  }
+  return res.json({ data: assets });
 }
 
 /**
@@ -69,7 +63,10 @@ export async function importFromLink(
   res: Response,
 ) {
   const data = await service.importFromLink(
-    repository.id, user.id, body.url, body.meta,
+    repository.id,
+    user.id,
+    body.url,
+    body.meta,
   );
   return res.json({ data });
 }
@@ -87,8 +84,8 @@ export async function download({ asset }: AssetRequest, res: Response) {
       .status(StatusCodes.BAD_REQUEST)
       .json({ error: 'Asset has no downloadable file' });
   }
-  const url = await service.getDownloadUrl(asset.storageKey);
-  return res.json({ data: { url } });
+  const { publicUrl } = await service.getDownloadUrl(asset.storageKey);
+  return res.json({ data: { url: publicUrl } });
 }
 
 /**
