@@ -34,8 +34,10 @@ router
   .route('/')
   .get(handler(ctrl.list))
   .post(
-    upload.array('files', 10),
-    validation.requireFiles,
+    upload.fields([
+      { name: 'files', maxCount: 10 },
+      { name: 'file', maxCount: 1 },
+    ]),
     handler(ctrl.create),
   );
 

@@ -15,7 +15,9 @@ function upload(repositoryId, files) {
   const formData = new FormData();
   files.forEach((file) => formData.append('files', file));
   return request
-    .post(urls.root(repositoryId), formData)
+    .post(urls.root(repositoryId), formData, {
+      headers: { 'Content-Type': undefined },
+    })
     .then(extractData);
 }
 
@@ -52,7 +54,9 @@ function attachFile(repositoryId, assetId, fileKey, file) {
   formData.append('file', file);
   formData.append('fileKey', fileKey);
   return request
-    .post(`${urls.resource(repositoryId, assetId)}/file`, formData)
+    .post(`${urls.resource(repositoryId, assetId)}/file`, formData, {
+      headers: { 'Content-Type': undefined },
+    })
     .then(extractData);
 }
 

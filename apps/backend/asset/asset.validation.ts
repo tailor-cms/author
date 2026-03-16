@@ -4,7 +4,12 @@ import { StatusCodes } from 'http-status-codes';
 import defineRequestValidator from '#shared/request/validation.js';
 
 export function requireFiles(req: any, res: any, next: any) {
-  if (req.files?.length) return next();
+  const files = req.files;
+  // Support both upload.array() (files is array) and upload.fields() (files is object)
+  const hasFiles = Array.isArray(files)
+    ? files.length > 0
+    : files?.files?.length || files?.file?.length;
+  if (hasFiles) return next();
   return res
     .status(StatusCodes.BAD_REQUEST)
     .json({ errors: [{ msg: 'No files provided' }] });

@@ -46,6 +46,7 @@ export interface AssetRequest {
   user: any;
   asset: Asset;
   body: any;
+  query: any;
   file: MulterFile;
   files: MulterFile[];
 }
