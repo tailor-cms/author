@@ -43,6 +43,7 @@ const options = computed(() => {
     placeholder: props.meta.placeholder || '',
     showPreview: props.meta.showPreview,
     dark: props.dark,
+    inputAppearance: true,
   };
 });
 </script>

@@ -1,3 +1,10 @@
+import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
+import type {
+  ImportFileOptions,
+  ImportFromLinkOptions,
+  MulterFile,
+} from './types.ts';
+import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
 import { downloadFile } from './utils/download.ts';
@@ -9,15 +16,15 @@ import { removeFromStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.js';
 import { storage as storageConfig } from '#config';
 
-import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
-import type {
-  ImportFileOptions,
-  ImportFromLinkOptions,
-  MulterFile,
-} from './types.ts';
-import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
-
 const { Asset, User } = db;
+
+interface ListOptions {
+  search?: string;
+  type?: string;
+  offset?: number;
+  limit?: number;
+  signed?: boolean;
+}
 
 export const uploaderInclude = {
   model: User,
@@ -105,12 +112,20 @@ async function destroyAsset(repository: any, asset: Asset) {
   await asset.destroy();
 }
 
-export function list(repositoryId: number) {
-  return Asset.findAll({
-    where: { repositoryId },
+export async function list(repositoryId: number, options: ListOptions = {}) {
+  const { search, type, offset = 0, limit = 100, signed = false } = options;
+  const where: any = { repositoryId };
+  if (type) where.type = type;
+  if (search) where.name = { [Op.iLike]: `%${search}%` };
+  const { rows, count } = await Asset.findAndCountAll({
+    where,
     include: [uploaderInclude],
     order: [['createdAt', 'DESC']],
+    offset,
+    limit,
   });
+  if (signed) await Asset.resolvePublicUrls(rows);
+  return { items: rows, total: count };
 }
 
 export function upload(

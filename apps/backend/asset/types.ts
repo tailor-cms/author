@@ -1,20 +1,15 @@
+import type { AssetSource } from '@tailor-cms/interfaces/asset.ts';
 import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 import type { RequestHandler } from 'express';
 import type { Asset } from './asset.model.js';
+
+export type { AssetSource };
 
 export interface MulterFile {
   originalname: string;
   mimetype: string;
   size: number;
   buffer: Buffer;
-}
-
-export interface AssetSource {
-  url: string;
-  domain: string;
-  title?: string;
-  author?: string;
-  license?: string;
 }
 
 export interface ImportFileOptions {
@@ -47,6 +42,7 @@ export interface AssetRequest {
   asset: Asset;
   body: any;
   query: any;
+  options: { limit: number; offset: number; order?: any[] };
   file: MulterFile;
   files: MulterFile[];
 }

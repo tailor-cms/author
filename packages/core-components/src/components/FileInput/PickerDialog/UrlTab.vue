@@ -1,5 +1,5 @@
 <template>
-  <div class="pa-6">
+  <div class="url-tab">
     <VTextField
       v-model="url"
       :error-messages="error"
@@ -12,9 +12,15 @@
       variant="outlined"
       @keydown.enter="submit"
     />
-    <div class="mt-2 text-caption text-primary">
-      Enter a direct link to a file
-    </div>
+    <VTextField
+      v-model="title"
+      class="mt-3"
+      color="primary-darken-2"
+      density="comfortable"
+      label="Title (optional)"
+      variant="outlined"
+      hide-details
+    />
   </div>
 </template>
 
@@ -24,6 +30,7 @@ import { ref } from 'vue';
 const emit = defineEmits(['import']);
 
 const url = ref('');
+const title = ref('');
 const error = ref('');
 
 const submit = () => {
@@ -35,13 +42,17 @@ const submit = () => {
     return;
   }
   error.value = '';
-  emit('import', url.value.trim());
+  emit('import', {
+    url: url.value.trim(),
+    title: title.value.trim() || undefined,
+  });
 };
 
-const reset = () => {
-  url.value = '';
-  error.value = '';
-};
-
-defineExpose({ submit, reset });
+defineExpose({ submit });
 </script>
+
+<style lang="scss" scoped>
+.url-tab {
+  padding: 2rem;
+}
+</style>

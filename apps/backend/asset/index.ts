@@ -7,6 +7,7 @@ import discoveryRouter from './discovery/index.ts';
 import { uploaderInclude } from './asset.service.ts';
 import { handler } from './types.ts';
 import { createError } from '#shared/error/helpers.js';
+import { processPagination } from '#shared/database/pagination.js';
 import db from '#shared/database/index.js';
 
 const { Asset } = db;
@@ -32,7 +33,7 @@ router.param('assetId', getAsset);
 
 router
   .route('/')
-  .get(handler(ctrl.list))
+  .get(processPagination(Asset, false), handler(ctrl.list))
   .post(
     upload.fields([
       { name: 'files', maxCount: 10 },

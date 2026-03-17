@@ -34,8 +34,8 @@ export const useUpload = (emit: Emit) => {
     return storageService
       .upload(form)
       .then((data: any) => {
-        const { name, size } = form.get('file') as File;
-        emit('upload', { ...data, name, size });
+        const { name } = form.get('file') as File;
+        emit('upload', { key: data.key, name });
       })
       .catch(() => (error.value = 'An error has occurred!'));
   };

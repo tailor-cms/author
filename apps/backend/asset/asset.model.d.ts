@@ -1,66 +1,23 @@
-import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset.ts';
 import type { Model, ModelStatic } from 'sequelize';
-import type { AssetSource } from './types.ts';
+import type {
+  Asset as AssetAttributes,
+  FileAssetMeta,
+  LinkAssetMeta,
+  MediaAssetMeta,
+} from '@tailor-cms/interfaces/asset.ts';
 
-export { AssetType, ProcessingStatus };
-
-interface AssetMetaBase {
-  description?: string;
-  tags?: string[];
-  /** Storage keys for attached files (captions, thumbnails, etc.) */
-  files?: Record<string, string>;
-}
-
-export interface FileAssetMeta extends AssetMetaBase {
-  fileSize: number;
-  mimeType: string;
-  /** Origin data when the file was downloaded from the web. */
-  source?: AssetSource;
-}
-
-export interface MediaAssetMeta extends FileAssetMeta {
-  files?: Record<string, string> & { captions?: string };
-}
-
-export interface LinkAssetMeta extends AssetMetaBase {
-  url: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  favicon: string;
-  domain: string;
-  siteName?: string;
-  /** Open Graph type (og:type) - e.g. "website", "article", "video.movie" */
-  ogType?: string;
-}
-
-export interface Uploader {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  imgUrl: string | null;
-}
-
-export type AssetMeta = FileAssetMeta | MediaAssetMeta | LinkAssetMeta;
-
-interface AssetAttributes {
-  id: number;
-  uid: string;
-  repositoryId: number;
-  name: string;
-  type: AssetType;
-  storageKey: string | null;
-  meta: AssetMeta;
-  processingStatus: ProcessingStatus | null;
-  vectorStoreFileId: string | null;
-  uploadedBy: number;
-  uploader?: Uploader;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
-}
+export type {
+  AssetAttributes,
+  FileAssetMeta,
+  LinkAssetMeta,
+  MediaAssetMeta,
+};
+export {
+  AssetMeta,
+  AssetType,
+  ProcessingStatus,
+  Uploader,
+} from '@tailor-cms/interfaces/asset.ts';
 
 type AssetBase = AssetAttributes & Model<AssetAttributes>;
 

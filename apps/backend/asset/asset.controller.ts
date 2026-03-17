@@ -1,5 +1,6 @@
 import type { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import yn from 'yn';
 
 import * as service from './asset.service.ts';
 
@@ -12,12 +13,20 @@ import type { AssetRequest } from './types.ts';
  * GET /assets              → { data: [Asset, ...] }
  * GET /assets?key=<key>    → { url: "https://..." }
  */
-export async function list({ repository, query }: AssetRequest, res: Response) {
+export async function list(
+  { repository, query, options }: AssetRequest,
+  res: Response,
+) {
   if (query?.key) {
     const { publicUrl } = await service.getDownloadUrl(query.key);
     return res.json({ url: publicUrl });
   }
-  const data = await service.list(repository.id);
+  const data = await service.list(repository.id, {
+    search: query?.search,
+    type: query?.type,
+    signed: yn(query?.signed),
+    ...options,
+  });
   return res.json({ data });
 }
 

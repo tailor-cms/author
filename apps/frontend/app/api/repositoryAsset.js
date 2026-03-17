@@ -7,8 +7,16 @@ const urls = {
   resource: (repositoryId, id) => `${urls.root(repositoryId)}/${id}`,
 };
 
-function list(repositoryId) {
-  return request.get(urls.root(repositoryId)).then(extractData);
+function list(repositoryId, params = {}) {
+  const query = {};
+  if (params.signed) query.signed = 'true';
+  if (params.search) query.search = params.search;
+  if (params.type) query.type = params.type;
+  if (params.offset != null) query.offset = params.offset;
+  if (params.limit != null) query.limit = params.limit;
+  return request
+    .get(urls.root(repositoryId), { params: query })
+    .then(extractData);
 }
 
 function upload(repositoryId, files) {

@@ -1,11 +1,12 @@
-import { Model } from 'sequelize';
 import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset.ts';
+import { Model } from 'sequelize';
+import Storage from '../repository/storage.js';
 
 export { AssetType, ProcessingStatus };
 
 class Asset extends Model {
   static fields(DataTypes) {
-    const { DATE, ENUM, JSONB, STRING, UUID, UUIDV4 } = DataTypes;
+    const { DATE, ENUM, JSONB, STRING, UUID, UUIDV4, VIRTUAL } = DataTypes;
     return {
       uid: {
         type: UUID,
@@ -24,6 +25,9 @@ class Asset extends Model {
         type: STRING(1024),
         field: 'storage_key',
         allowNull: true,
+      },
+      publicUrl: {
+        type: VIRTUAL,
       },
       meta: {
         type: JSONB,
@@ -52,6 +56,16 @@ class Asset extends Model {
         field: 'deleted_at',
       },
     };
+  }
+
+  static async resolvePublicUrls(assets) {
+    const withKeys = assets.filter((a) => a.storageKey);
+    await Promise.all(
+      withKeys.map(async (a) => {
+        a.publicUrl = await Storage.getFileUrl(a.storageKey).catch(() => null);
+      }),
+    );
+    return assets;
   }
 
   static associate({ Repository, User }) {
