@@ -25,7 +25,7 @@
             Library
           </VTab>
           <VTab
-            v-if="allowUrl"
+            v-if="allowUrlSource"
             value="url"
             class="ml-2"
             color="primary-lighten-5"
@@ -43,11 +43,10 @@
           <LibraryTab
             v-model:selected="selectedAssets"
             :allowed-extensions="allowedExtensions"
-            :asset-types="assetTypes"
             :multiple="multiple"
           />
         </VWindowItem>
-        <VWindowItem v-if="allowUrl" value="url">
+        <VWindowItem v-if="allowUrlSource" value="url">
           <UrlTab ref="urlTabRef" @import="onUrlSelect" />
         </VWindowItem>
       </VWindow>
@@ -94,9 +93,8 @@ interface Props {
   heading?: string;
   icon?: string;
   accept?: string;
-  assetTypes?: string[];
   allowedExtensions?: string[];
-  allowUrl?: boolean;
+  allowUrlSource?: boolean;
   multiple?: boolean;
 }
 
@@ -104,9 +102,8 @@ const props = withDefaults(defineProps<Props>(), {
   heading: 'Add file',
   icon: 'mdi-file',
   accept: '',
-  assetTypes: () => [],
   allowedExtensions: () => [],
-  allowUrl: false,
+  allowUrlSource: false,
   multiple: false,
 });
 

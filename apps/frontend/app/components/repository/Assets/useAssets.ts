@@ -1,47 +1,56 @@
+import type { Asset } from '@tailor-cms/interfaces/asset.ts';
+import pMinDelay from 'p-min-delay';
+
 import api from '@/api/repositoryAsset';
 
+const MIN_LOADING_MS = 1000;
+export const ITEMS_PER_PAGE = 12;
+
 export function useAssets(repositoryId: Ref<number | undefined>) {
-  const assets = ref<any[]>([]);
+  const assets = ref<Asset[]>([]);
+  const total = ref(0);
+  const page = ref(1);
   const isFetching = ref(true);
 
-  async function fetch() {
+  async function fetch(params: Record<string, any> = {}) {
     if (!repositoryId.value) return;
     isFetching.value = true;
-    const MIN_LOADING_MS = 1000;
-    const start = Date.now();
-    assets.value = await api.list(repositoryId.value);
-    const elapsed = Date.now() - start;
-    if (elapsed < MIN_LOADING_MS) {
-      await new Promise((r) => setTimeout(r, MIN_LOADING_MS - elapsed));
-    }
+    const promise = api.list(repositoryId.value, {
+      offset: (page.value - 1) * ITEMS_PER_PAGE,
+      limit: ITEMS_PER_PAGE,
+      ...params,
+    });
+    const result = await pMinDelay(promise, MIN_LOADING_MS);
+    assets.value = result.items;
+    total.value = result.total;
     isFetching.value = false;
   }
 
   async function upload(files: File[]) {
     if (!repositoryId.value || !files.length) return;
     const uploaded = await api.upload(repositoryId.value, files);
-    assets.value = [...uploaded, ...assets.value];
+    // Refresh current page to include new uploads
+    await fetch();
     return uploaded;
   }
 
   async function remove(assetId: number) {
     if (!repositoryId.value) return;
     await api.remove(repositoryId.value, assetId);
-    assets.value = assets.value.filter((a) => a.id !== assetId);
+    await fetch();
   }
 
   async function bulkRemove(ids: number[]) {
     if (!repositoryId.value) return;
     const { deletedIds } = await api.bulkRemove(repositoryId.value, ids);
-    const deletedSet = new Set(deletedIds);
-    assets.value = assets.value.filter((a) => !deletedSet.has(a.id));
+    await fetch();
     return deletedIds;
   }
 
   async function addLink(url: string) {
     if (!repositoryId.value) return;
     const asset = await api.importFromLink(repositoryId.value, url);
-    assets.value = [asset, ...assets.value];
+    await fetch();
     return asset;
   }
 
@@ -60,21 +69,20 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     });
   }
 
-  // Patch an existing asset in-place by id (e.g. after rename, tag, or status change).
-  function updateAsset(updated: any) {
+  function updateAsset(updated: Partial<Asset> & { id: number }) {
     const idx = assets.value.findIndex((a) => a.id === updated.id);
-    if (idx !== -1) assets.value[idx] = { ...assets.value[idx], ...updated };
+    if (idx !== -1) {
+      assets.value[idx] = { ...assets.value[idx], ...updated } as Asset;
+    }
   }
 
-  // Prepend assets to the list. Used by child components that handle their own
-  // upload/import and emit the created assets back via @assets-added.
-  function prependAssets(newAssets: any[]) {
-    if (!newAssets?.length) return;
-    assets.value = [...newAssets, ...assets.value];
-  }
+  const pageCount = computed(() => Math.ceil(total.value / ITEMS_PER_PAGE));
 
   return {
     assets,
+    total,
+    page,
+    pageCount,
     isFetching,
     fetch,
     upload,
@@ -84,6 +92,5 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     bulkRemove,
     deindex,
     updateAsset,
-    prependAssets,
   };
 }

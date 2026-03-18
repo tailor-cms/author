@@ -102,7 +102,7 @@
         }}
       </div>
       <div
-        v-if="!assets.length"
+        v-if="selectedCategory === 'all'"
         class="text-caption text-primary-lighten-2 mt-1"
       >
         Upload files, add links, or use Discover.
@@ -122,14 +122,13 @@
     <AddLinkDialog v-model="showAddLinkDialog" @created="addLink" />
     <DiscoveryDialog
       v-model="showDiscoveryDialog"
-      @assets-added="prependAssets"
+      @assets-added="onAssetsAdded"
     />
   </VContainer>
 </template>
 
 <script lang="ts" setup>
 import AddLinkDialog from '@/components/repository/Assets/AddLinkDialog.vue';
-import AssetCard from '@/components/repository/Assets/AssetCard.vue';
 import AssetDetailDialog from '@/components/repository/Assets/Detail/index.vue';
 import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
 import CategoryFilter from '@/components/repository/Assets/CategoryFilter.vue';
@@ -165,7 +164,6 @@ const {
   bulkRemove,
   deindex,
   updateAsset,
-  prependAssets,
 } = useAssets(repositoryId);
 
 const {
@@ -176,15 +174,14 @@ const {
   clearAssetStatus,
 } = useAssetIndexing(repositoryId);
 
-const { categories, selectedCategory, filteredAssets } =
-  useAssetFiltering(assets);
+const { categories, selectedCategory } = useAssetFiltering();
 
 const {
   selectedIds,
   toggle: toggleSelect,
   selectAll,
   clear: clearSelection,
-} = useAssetSelection(filteredAssets);
+} = useAssetSelection(assets);
 
 // UI state
 const isBulkDeleting = ref(false);

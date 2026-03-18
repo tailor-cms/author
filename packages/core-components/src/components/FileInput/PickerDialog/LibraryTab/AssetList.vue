@@ -33,7 +33,7 @@
       </template>
       <VListItemTitle class="text-body-2">{{ asset.name }}</VListItemTitle>
       <VListItemSubtitle v-if="'fileSize' in asset.meta" class="text-caption">
-        {{ formatSize((asset.meta as FileAssetMeta).fileSize) }}
+        {{ formatFileSize((asset.meta as FileAssetMeta).fileSize) }}
       </VListItemSubtitle>
       <template #append>
         <VCheckboxBtn
@@ -55,19 +55,10 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  AssetType,
-  type Asset,
-  type FileAssetMeta,
-} from '@tailor-cms/interfaces/asset.ts';
+import { AssetType, type Asset, type FileAssetMeta } from '@tailor-cms/interfaces/asset.ts';
 
-const ICON_MAP: Record<string, string> = {
-  image: 'mdi-file-image',
-  video: 'mdi-file-video',
-  audio: 'mdi-file-music',
-  document: 'mdi-file-document',
-  other: 'mdi-file',
-};
+import { ASSET_TYPE_ICON } from '#config';
+import { formatFileSize } from '#utils';
 
 defineProps<{
   assets: Asset[];
@@ -77,13 +68,8 @@ defineProps<{
 
 const emit = defineEmits(['select', 'toggle']);
 
-const getIcon = (type: string) => ICON_MAP[type] || ICON_MAP.other;
-
-const formatSize = (bytes: number) => {
-  const units = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-};
+const getIcon = (type: string) =>
+  ASSET_TYPE_ICON[type] ?? ASSET_TYPE_ICON.other;
 
 const onSelect = ({ id }: { id: unknown }) => emit('select', id as number);
 </script>

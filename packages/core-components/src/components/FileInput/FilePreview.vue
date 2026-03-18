@@ -12,7 +12,7 @@
     >
       <VAvatar class="mr-3" color="primary" rounded="lg" size="75">
         <VProgressCircular v-if="isLoading" indeterminate />
-        <VImg v-else-if="showPreview && publicUrl" :src="publicUrl" cover />
+        <VImg v-else-if="showPreview && url" :src="url" cover />
         <VIcon v-else :icon="icon" size="x-large" />
       </VAvatar>
       <div
@@ -55,24 +55,27 @@
         variant="tonal"
         @click="expanded = false"
       />
-      <img v-if="publicUrl" :src="publicUrl" :alt="fileName" />
+      <img v-if="url" :src="url" :alt="fileName" />
     </VOverlay>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { inject, ref, watch } from 'vue';
+import { ref } from 'vue';
 
 interface Props {
-  fileKey: string;
   fileName: string;
+  url?: string;
+  isLoading?: boolean;
   label?: string;
   icon?: string;
   dark?: boolean;
   showPreview?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
+  isLoading: false,
+  url: '',
   label: '',
   icon: 'mdi-file',
   dark: false,
@@ -81,22 +84,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['download', 'delete']);
 
-const storageService = inject<any>('$storageService');
-
 const expanded = ref(false);
-const isLoading = ref(false);
-const publicUrl = ref('');
-
-watch(
-  () => props.fileKey,
-  async (key) => {
-    if (!props.showPreview) return;
-    isLoading.value = true;
-    publicUrl.value = key ? await storageService.getUrl(key) : '';
-    isLoading.value = false;
-  },
-  { immediate: true },
-);
 </script>
 
 <style lang="scss" scoped>

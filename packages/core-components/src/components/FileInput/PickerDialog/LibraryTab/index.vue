@@ -54,7 +54,11 @@
 </template>
 
 <script lang="ts" setup>
-import { AssetType, type Asset } from '@tailor-cms/interfaces/asset.ts';
+import {
+  AssetType,
+  inferAssetType,
+  type Asset,
+} from '@tailor-cms/interfaces/asset.ts';
 import { computed, inject, onMounted, ref, watch } from 'vue';
 import { debounce, xorBy } from 'lodash-es';
 import pMinDelay from 'p-min-delay';
@@ -78,16 +82,16 @@ const storageService = inject<any>('$storageService');
 
 const props = withDefaults(
   defineProps<{
-    assetTypes?: string[];
     allowedExtensions?: string[];
     multiple?: boolean;
   }>(),
   {
-    assetTypes: () => [],
     allowedExtensions: () => [],
     multiple: false,
   },
 );
+
+const inferredType = computed(() => inferAssetType(props.allowedExtensions));
 
 const selected = defineModel<Asset | Asset[] | null>('selected', {
   default: null,
@@ -100,15 +104,9 @@ const selectedIds = computed(() => {
     : [selected.value.id];
 });
 
-// Hide category filter when constraints narrow to a single type
+// Hide category filter when extensions narrow to a specific type
 const categoryFilters = computed(() => {
-  if (props.allowedExtensions.length) return [];
-  if (props.assetTypes.length === 1) return [];
-  if (props.assetTypes.length > 1) {
-    return ALL_CATEGORIES.filter(
-      (c) => c.value === 'all' || props.assetTypes.includes(c.value),
-    );
-  }
+  if (inferredType.value) return [];
   return ALL_CATEGORIES;
 });
 
@@ -136,8 +134,8 @@ const fetchAssets = async () => {
     if (search) params.search = search;
     if (selectedCategory.value !== 'all') {
       params.type = selectedCategory.value;
-    } else if (props.assetTypes.length === 1) {
-      params.type = props.assetTypes[0];
+    } else if (inferredType.value) {
+      params.type = inferredType.value;
     }
     const promise: Promise<{ items: Asset[]; total: number }> =
       storageService.list(params);
@@ -164,7 +162,6 @@ const onSelect = (id: number) => {
   const asset = assets.value.find((a) => a.id === id);
   if (asset) toggleSelection(asset);
 };
-
 
 const fetchFromStart = () => {
   if (page.value === 1) fetchAssets();
