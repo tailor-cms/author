@@ -40,4 +40,8 @@ export interface SearchResult {
   downloadUrl?: string;
   author?: string;
   license?: string;
+  /** Full description text (e.g. from Unsplash) */
+  description?: string;
+  /** Tags/keywords from the source */
+  tags?: string[];
 }

@@ -27,4 +27,8 @@ export interface DiscoveryResult {
   downloadUrl?: string;
   author?: string;
   license?: string;
+  /** Full description from source (e.g. Unsplash photo description) */
+  description?: string;
+  /** Tags/keywords from source */
+  tags?: string[];
 }

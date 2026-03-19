@@ -82,6 +82,7 @@ async function importFile({
   userId,
   file,
   description,
+  tags,
   source,
 }: ImportFileOptions) {
   const uid = randomUUID();
@@ -97,6 +98,7 @@ async function importFile({
       fileSize: file.size,
       mimeType: file.mimetype,
       ...(description && { description }),
+      ...(tags?.length && { tags }),
       ...(source && { source }),
     },
     uploadedBy: userId,
@@ -207,6 +209,7 @@ export async function importFromLink(
         userId,
         file,
         description: meta.description,
+        tags: meta.tags,
         source,
       });
     } catch (err) {
@@ -239,7 +242,11 @@ export async function importFromLink(
     repositoryId,
     name: ogData.title || domain,
     type: AssetType.Link,
-    meta: { url, ...ogData, ...(source && { source }) },
+    meta: {
+      url, ...ogData,
+      ...(meta.tags?.length && { tags: meta.tags }),
+      ...(source && { source }),
+    },
     uploadedBy: userId,
   });
   return asset.reload({ include: [uploaderInclude] });

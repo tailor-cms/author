@@ -8,6 +8,7 @@
       @discover="showDiscoveryDialog = true"
     />
     <BulkActionBar
+      :assets="assets"
       :selected-ids="selectedIds"
       :is-indexing="isIndexing"
       :is-bulk-deleting="isBulkDeleting"
@@ -79,6 +80,7 @@ import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
 import CategoryFilter from '@/components/repository/Assets/CategoryFilter.vue';
 import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
 import Toolbar from '@/components/repository/Assets/Toolbar.vue';
+import { isIndexable } from '@/components/repository/Assets/utils';
 import { useAssetFiltering } from '@/components/repository/Assets/useAssetFiltering';
 import { useAssetIndexing } from '@/components/repository/Assets/useAssetIndexing';
 import { useAssetSelection } from '@/components/repository/Assets/useAssetSelection';
@@ -187,7 +189,9 @@ async function downloadAsset(asset: Asset) {
 }
 
 async function indexSelected() {
-  const ids = [...selectedIds];
+  const ids = assets.value
+    .filter((a) => selectedIds.has(a.id) && isIndexable(a))
+    .map((a) => a.id);
   if (!ids.length) return;
   await startIndexing(ids);
   clearSelection();

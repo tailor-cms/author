@@ -17,6 +17,7 @@ export interface ImportFileOptions {
   userId: number;
   file: MulterFile;
   description?: string;
+  tags?: string[];
   source?: AssetSource;
 }
 
@@ -27,6 +28,7 @@ export interface ImportFromLinkOptions {
   downloadUrl?: string;
   author?: string;
   license?: string;
+  tags?: string[];
 }
 
 /**

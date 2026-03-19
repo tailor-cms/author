@@ -47,6 +47,8 @@ export const importFromLink = defineRequestValidator([
   body('meta.downloadUrl').optional().isURL(),
   body('meta.author').optional().isString().trim(),
   body('meta.license').optional().isString().trim(),
+  body('meta.tags').optional().isArray(),
+  body('meta.tags.*').optional().isString().trim(),
 ]);
 
 export const bulkRemove = defineRequestValidator([

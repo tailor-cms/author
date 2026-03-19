@@ -34,6 +34,17 @@ export function getAssetColor(asset: { type?: string }) {
   return ASSET_TYPE_COLOR[asset.type ?? 'other'] ?? ASSET_TYPE_COLOR.other;
 }
 
+const ALWAYS_INDEXABLE = new Set(['document', 'link']);
+const CAPTION_INDEXABLE = new Set(['video', 'audio']);
+
+export function isIndexable(asset: { type?: string; meta?: any }): boolean {
+  if (ALWAYS_INDEXABLE.has(asset.type ?? '')) return true;
+  const hasContent = asset.meta?.description || asset.meta?.tags?.length;
+  if (hasContent) return true;
+  if (CAPTION_INDEXABLE.has(asset.type ?? '')) return !!asset.meta?.files?.captions;
+  return false;
+}
+
 export function formatDate(date: string | Date): string {
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',

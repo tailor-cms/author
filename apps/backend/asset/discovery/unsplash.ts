@@ -29,11 +29,12 @@ export async function search(
 
 function toSearchResult(photo: any): SearchResult {
   const author = photo.user?.name || 'Unknown';
+  const description = photo.description || photo.alt_description || '';
+  const tags = (photo.tags || [])
+    .map((t: any) => t.title)
+    .filter(Boolean);
   return {
-    title: truncate(
-      photo.description || photo.alt_description || 'Unsplash photo',
-      MAX_TITLE,
-    ),
+    title: truncate(description || 'Unsplash photo', MAX_TITLE),
     url: photo.links?.html || `https://unsplash.com/photos/${photo.id}`,
     imageUrl: photo.urls?.regular || photo.urls?.small || '',
     thumbnailUrl: photo.urls?.thumb || '',
@@ -43,5 +44,7 @@ function toSearchResult(photo: any): SearchResult {
     type: ContentType.Image,
     author,
     license: 'Unsplash License',
+    description,
+    tags,
   };
 }

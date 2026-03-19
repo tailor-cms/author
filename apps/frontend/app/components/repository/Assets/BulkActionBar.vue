@@ -30,16 +30,27 @@
         Deselect all
       </VBtn>
       <VSpacer />
-      <VBtn
-        :loading="isIndexing"
-        color="primary-lighten-3"
-        prepend-icon="mdi-brain"
-        size="small"
-        variant="outlined"
-        @click="$emit('index')"
+      <VTooltip
+        :disabled="hasIndexable"
+        location="bottom"
+        text="Selected assets need a description or tags to be indexed"
       >
-        Index selected
-      </VBtn>
+        <template #activator="{ props: tooltipProps }">
+          <div v-bind="tooltipProps">
+            <VBtn
+              :disabled="!hasIndexable"
+              :loading="isIndexing"
+              color="primary-lighten-3"
+              prepend-icon="mdi-brain"
+              size="small"
+              variant="outlined"
+              @click="$emit('index')"
+            >
+              Index selected
+            </VBtn>
+          </div>
+        </template>
+      </VTooltip>
       <VBtn
         :loading="isBulkDeleting"
         color="primary-lighten-3"
@@ -64,11 +75,22 @@
 </template>
 
 <script lang="ts" setup>
-defineProps<{
+import type { Asset } from '@tailor-cms/interfaces/asset';
+
+import { isIndexable } from './utils';
+
+const props = defineProps<{
+  assets: Asset[];
   selectedIds: Set<number>;
   isIndexing: boolean;
   isBulkDeleting: boolean;
 }>();
 
 defineEmits(['select-all', 'index', 'delete', 'clear']);
+
+const hasIndexable = computed(() =>
+  props.assets
+    .filter((a) => props.selectedIds.has(a.id))
+    .some((a) => isIndexable(a)),
+);
 </script>

@@ -78,7 +78,10 @@ function dedupeByUrl(results: SearchResult[]): SearchResult[] {
 function toResult(raw: SearchResult): DiscoveryResult {
   const thumb = raw.thumbnailUrl || raw.imageUrl;
   return {
-    ...pick(raw, ['title', 'url', 'snippet', 'type', 'downloadUrl', 'author', 'license']),
+    ...pick(raw, [
+      'title', 'url', 'snippet', 'type', 'downloadUrl',
+      'author', 'license', 'description', 'tags',
+    ]),
     ...(thumb && { thumbnailUrl: thumb }),
   };
 }

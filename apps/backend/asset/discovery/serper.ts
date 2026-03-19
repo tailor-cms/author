@@ -51,13 +51,15 @@ function toWebResult(item: any): SearchResult {
 }
 
 function toImageResult(item: any): SearchResult {
+  const title = truncate(item.title, MAX_TITLE);
   return {
-    title: truncate(item.title, MAX_TITLE),
+    title,
     url: item.link || '',
     imageUrl: item.imageUrl || '',
     thumbnailUrl: item.thumbnailUrl || '',
     downloadUrl: item.imageUrl || '',
     snippet: `Image from ${item.source || item.domain || 'web'}`,
+    description: title,
     source: 'google-images',
     type: ContentType.Image,
   };
