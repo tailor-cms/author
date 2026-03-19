@@ -25,6 +25,8 @@ export async function list(
     search: query?.search,
     type: query?.type,
     signed: yn(query?.signed),
+    orderBy: query?.orderBy,
+    orderDirection: query?.orderDirection,
     ...options,
   });
   return res.json({ data });

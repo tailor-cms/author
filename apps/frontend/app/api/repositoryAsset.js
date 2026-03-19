@@ -14,6 +14,8 @@ function list(repositoryId, params = {}) {
   if (params.type) query.type = params.type;
   if (params.offset != null) query.offset = params.offset;
   if (params.limit != null) query.limit = params.limit;
+  if (params.orderBy) query.orderBy = params.orderBy;
+  if (params.orderDirection) query.orderDirection = params.orderDirection;
   return request
     .get(urls.root(repositoryId), { params: query })
     .then(extractData);

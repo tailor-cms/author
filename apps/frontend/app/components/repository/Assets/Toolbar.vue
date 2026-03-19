@@ -1,29 +1,26 @@
 <template>
-  <div class="toolbar d-flex align-center flex-wrap ga-4 mb-6">
-    <VHover v-slot="{ isHovering, props: hoverProps }">
-      <VFileInput
-        v-model="selectedFiles"
-        v-bind="hoverProps"
-        :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-        class="file-input"
-        density="comfortable"
-        label="Select files to upload"
-        prepend-icon=""
-        prepend-inner-icon="mdi-paperclip"
-        rounded="xl"
-        variant="solo"
-        hide-details
-        flat
-        multiple
-      />
-    </VHover>
+  <div class="toolbar d-flex align-center flex-wrap ga-3 mb-6">
+    <VTextField
+      v-model="search"
+      bg-color="primary-darken-2"
+      class="search-input"
+      color="primary-lighten-3"
+      density="comfortable"
+      placeholder="Search assets..."
+      prepend-inner-icon="mdi-magnify"
+      rounded="xl"
+      variant="solo"
+      clearable
+      flat
+      hide-details
+      @click:clear="search = ''"
+    />
     <VBtn
-      :disabled="!selectedFiles?.length"
       :loading="isUploading"
       color="primary-lighten-3"
       prepend-icon="mdi-upload"
       variant="outlined"
-      @click="uploadFiles"
+      @click="openFilePicker"
     >
       Upload
     </VBtn>
@@ -31,7 +28,7 @@
       color="primary-lighten-3"
       prepend-icon="mdi-link-plus"
       variant="outlined"
-      @click="$emit('add-link')"
+      @click="emit('link:add')"
     >
       Add Link
     </VBtn>
@@ -39,27 +36,42 @@
       color="primary-lighten-3"
       prepend-icon="mdi-earth-plus"
       variant="outlined"
-      @click="$emit('discover')"
+      @click="emit('discover')"
     >
       Discover
     </VBtn>
+    <input
+      ref="fileInputRef"
+      type="file"
+      class="d-none"
+      multiple
+      @change="onFilesSelected"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-const emit = defineEmits(['upload', 'add-link', 'discover']);
+const emit = defineEmits(['upload', 'link:add', 'discover']);
+
+const search = defineModel<string>('search', { default: '' });
 
 const isUploading = ref(false);
-const selectedFiles = ref<File[]>([]);
+const fileInputRef = ref<HTMLInputElement>();
 
-async function uploadFiles() {
-  if (!selectedFiles.value?.length) return;
+function openFilePicker() {
+  fileInputRef.value?.click();
+}
+
+function onFilesSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const files = input.files;
+  if (!files?.length) return;
   isUploading.value = true;
-  emit('upload', selectedFiles.value);
+  emit('upload', [...files]);
+  input.value = '';
 }
 
 function reset() {
-  selectedFiles.value = [];
   isUploading.value = false;
 }
 
@@ -67,12 +79,8 @@ defineExpose({ reset });
 </script>
 
 <style lang="scss" scoped>
-.file-input {
-  min-width: 17.5rem;
-  max-width: 26.25rem;
-}
-
-:deep(input::placeholder) {
-  opacity: 0.75;
+.search-input {
+  min-width: 10rem;
+  max-width: 16rem;
 }
 </style>

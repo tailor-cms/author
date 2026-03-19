@@ -1,7 +1,10 @@
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 import { CONTENT_TYPES } from '@tailor-cms/interfaces/discovery.ts';
 import { StatusCodes } from 'http-status-codes';
 import defineRequestValidator from '#shared/request/validation.js';
+
+const ALLOWED_ORDER_COLUMNS = ['createdAt', 'name', 'type'];
+const ALLOWED_ORDER_DIRECTIONS = ['ASC', 'DESC'];
 
 export function requireFiles(req: any, res: any, next: any) {
   const files = req.files;
@@ -21,6 +24,11 @@ export function requireFile(req: any, res: any, next: any) {
     .status(StatusCodes.BAD_REQUEST)
     .json({ errors: [{ msg: 'No file provided' }] });
 }
+
+export const list = defineRequestValidator([
+  query('orderBy').optional().isIn(ALLOWED_ORDER_COLUMNS),
+  query('orderDirection').optional().isIn(ALLOWED_ORDER_DIRECTIONS),
+]);
 
 export const update = defineRequestValidator([
   body('meta').isObject(),

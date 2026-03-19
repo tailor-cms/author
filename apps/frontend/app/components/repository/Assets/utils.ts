@@ -1,15 +1,30 @@
-import { ASSET_TYPE_ICON } from '@tailor-cms/core-components';
+import { ASSET_TYPE_COLOR, ASSET_TYPE_ICON } from '@tailor-cms/core-components';
 
-export { ASSET_TYPE_ICON, ASSET_TYPE_LABEL, formatFileSize } from '@tailor-cms/core-components';
+export {
+  ASSET_TYPE_COLOR,
+  ASSET_TYPE_ICON,
+  ASSET_TYPE_LABEL,
+  formatFileSize,
+} from '@tailor-cms/core-components';
 
-export const ASSET_TYPE_COLOR: Record<string, string> = {
-  image: 'blue',
-  video: 'purple',
-  audio: 'orange',
-  document: 'red',
-  link: 'cyan',
-  other: 'grey',
-};
+const UUID_PREFIX_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}__/i;
+
+function stripUidPrefix(value: string): string {
+  return value.replace(UUID_PREFIX_RE, '');
+}
+
+export function getAssetDisplayName(asset: {
+  name?: string;
+  storageKey?: string | null;
+}): string {
+  if (asset.name) return stripUidPrefix(asset.name);
+  if (asset.storageKey) {
+    const filename = asset.storageKey.split('/').pop() ?? 'Untitled';
+    return stripUidPrefix(filename);
+  }
+  return 'Untitled';
+}
 
 export function getAssetIcon(asset: { type?: string }) {
   return ASSET_TYPE_ICON[asset.type ?? 'other'] ?? ASSET_TYPE_ICON.other;

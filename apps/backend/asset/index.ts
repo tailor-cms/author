@@ -33,7 +33,7 @@ router.param('assetId', getAsset);
 
 router
   .route('/')
-  .get(processPagination(Asset, false), handler(ctrl.list))
+  .get(validation.list, processPagination(Asset, false), handler(ctrl.list))
   .post(
     upload.fields([
       { name: 'files', maxCount: 10 },

@@ -24,6 +24,8 @@ interface ListOptions {
   offset?: number;
   limit?: number;
   signed?: boolean;
+  orderBy?: string;
+  orderDirection?: 'ASC' | 'DESC';
 }
 
 export const uploaderInclude = {
@@ -113,14 +115,17 @@ async function destroyAsset(repository: any, asset: Asset) {
 }
 
 export async function list(repositoryId: number, options: ListOptions = {}) {
-  const { search, type, offset = 0, limit = 100, signed = false } = options;
+  const {
+    search, type, offset = 0, limit = 100, signed = false,
+    orderBy = 'createdAt', orderDirection = 'DESC',
+  } = options;
   const where: any = { repositoryId };
   if (type) where.type = type;
   if (search) where.name = { [Op.iLike]: `%${search}%` };
   const { rows, count } = await Asset.findAndCountAll({
     where,
     include: [uploaderInclude],
-    order: [['createdAt', 'DESC']],
+    order: [[orderBy, orderDirection]],
     offset,
     limit,
   });

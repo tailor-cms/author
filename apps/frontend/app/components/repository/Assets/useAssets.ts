@@ -4,7 +4,7 @@ import pMinDelay from 'p-min-delay';
 import api from '@/api/repositoryAsset';
 
 const MIN_LOADING_MS = 1000;
-export const ITEMS_PER_PAGE = 12;
+export const ITEMS_PER_PAGE = 10;
 
 export function useAssets(repositoryId: Ref<number | undefined>) {
   const assets = ref<Asset[]>([]);
@@ -28,30 +28,23 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
 
   async function upload(files: File[]) {
     if (!repositoryId.value || !files.length) return;
-    const uploaded = await api.upload(repositoryId.value, files);
-    // Refresh current page to include new uploads
-    await fetch();
-    return uploaded;
+    return api.upload(repositoryId.value, files);
   }
 
   async function remove(assetId: number) {
     if (!repositoryId.value) return;
     await api.remove(repositoryId.value, assetId);
-    await fetch();
   }
 
   async function bulkRemove(ids: number[]) {
     if (!repositoryId.value) return;
     const { deletedIds } = await api.bulkRemove(repositoryId.value, ids);
-    await fetch();
     return deletedIds;
   }
 
   async function addLink(url: string) {
     if (!repositoryId.value) return;
-    const asset = await api.importFromLink(repositoryId.value, url);
-    await fetch();
-    return asset;
+    return api.importFromLink(repositoryId.value, url);
   }
 
   async function getDownloadUrl(assetId: number) {
@@ -62,14 +55,14 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   async function deindex(assetId: number) {
     if (!repositoryId.value) return;
     await api.deindexAsset(repositoryId.value, assetId);
-    updateAsset({
+    update({
       id: assetId,
       processingStatus: null,
       vectorStoreFileId: null,
     });
   }
 
-  function updateAsset(updated: Partial<Asset> & { id: number }) {
+  function update(updated: Partial<Asset> & { id: number }) {
     const idx = assets.value.findIndex((a) => a.id === updated.id);
     if (idx !== -1) {
       assets.value[idx] = { ...assets.value[idx], ...updated } as Asset;
@@ -91,6 +84,6 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     remove,
     bulkRemove,
     deindex,
-    updateAsset,
+    update,
   };
 }

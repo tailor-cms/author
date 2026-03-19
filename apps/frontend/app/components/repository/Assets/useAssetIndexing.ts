@@ -9,7 +9,7 @@ const ACTIVE_STATUSES: Set<string> = new Set([
 
 export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
   const isIndexing = ref(false);
-  const indexingAssets = reactive(new Map<number, string>());
+  const indexingStatusMap = reactive(new Map<number, string>());
 
   const scope = getCurrentScope();
   let pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -19,7 +19,7 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
     if (!repositoryId.value) return;
     isIndexing.value = true;
     pendingSubmissions++;
-    assetIds.forEach((id) => indexingAssets.set(id, ProcessingStatus.Pending));
+    assetIds.forEach((id) => indexingStatusMap.set(id, ProcessingStatus.Pending));
     await api.indexAssets(repositoryId.value, assetIds);
     pendingSubmissions--;
     if (scope?.active) startPolling();
@@ -45,7 +45,7 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
     if (!repositoryId.value) return;
     try {
       const statuses = await api.getIndexingStatus(repositoryId.value);
-      for (const s of statuses) indexingAssets.set(s.id, s.processingStatus);
+      for (const s of statuses) indexingStatusMap.set(s.id, s.processingStatus);
       const hasActive = statuses.some(
         (s: { processingStatus: string }) => ACTIVE_STATUSES.has(s.processingStatus),
       );
@@ -56,23 +56,23 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
   }
 
   // Resume polling if any fetched assets have an active processing status.
-  function resumeIfActive(assets: { id: number; processingStatus: string }[]) {
+  function resumeIfActive(assets: { id: number; processingStatus: string | null }[]) {
     const active = assets.filter((a) => ACTIVE_STATUSES.has(a.processingStatus));
     if (!active.length) return;
     isIndexing.value = true;
-    active.forEach((a) => indexingAssets.set(a.id, a.processingStatus));
+    active.forEach((a) => indexingStatusMap.set(a.id, a.processingStatus));
     startPolling();
   }
 
   function clearAssetStatus(assetId: number) {
-    indexingAssets.delete(assetId);
+    indexingStatusMap.delete(assetId);
   }
 
   onScopeDispose(stopPolling);
 
   return {
     isIndexing,
-    indexingAssets,
+    indexingStatusMap,
     startIndexing,
     resumeIfActive,
     clearAssetStatus,

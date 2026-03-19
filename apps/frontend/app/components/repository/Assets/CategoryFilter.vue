@@ -4,7 +4,7 @@
       v-for="it in categories"
       :key="it.value"
       :active="modelValue === it.value"
-      :color="modelValue === it.value ? 'secondary-lighten-4' : 'primary-lighten-3'"
+      :color="modelValue === it.value ? 'blue-lighten-4' : 'primary-lighten-3'"
       size="small"
       variant="tonal"
       @click="$emit('update:modelValue', it.value)"

@@ -1,7 +1,9 @@
-export function useAssetSelection(items: Ref<any[]>) {
+import type { Asset } from '@tailor-cms/interfaces/asset';
+
+export function useAssetSelection(items: Ref<Asset[]>) {
   const selectedIds = reactive(new Set<number>());
 
-  function toggle(asset: any) {
+  function toggle(asset: Asset) {
     if (selectedIds.has(asset.id)) selectedIds.delete(asset.id);
     else selectedIds.add(asset.id);
   }

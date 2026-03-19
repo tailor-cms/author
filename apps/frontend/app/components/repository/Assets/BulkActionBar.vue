@@ -2,9 +2,16 @@
   <VSlideYTransition>
     <div
       v-if="selectedIds.size"
-      class="d-flex align-center flex-wrap ga-3 mb-4 pa-5 bg-primary-darken-2 rounded">
-      <VChip class="mr-1 px-4" color="lime" variant="flat" rounded>
-        {{ selectedIds.size }} selected
+      class="d-flex align-center flex-wrap ga-3 mb-4 pa-5 bg-primary-darken-2 rounded"
+    >
+      <VChip
+        class="mr-1 px-2 text-body-2"
+        color="primary-lighten-4"
+        density="compact"
+        variant="flat"
+        rounded="xl"
+      >
+        {{ selectedIds.size }}
       </VChip>
       <VBtn
         color="primary-lighten-3"
@@ -35,7 +42,7 @@
       </VBtn>
       <VBtn
         :loading="isBulkDeleting"
-        color="secondary-lighten-3"
+        color="primary-lighten-3"
         prepend-icon="mdi-delete"
         size="small"
         variant="outlined"

@@ -1,11 +1,18 @@
 <template>
-  <VChip :color="color" size="x-small" variant="flat">
+  <VChip
+    :color="`${color}-lighten-2`"
+    density="compact"
+    size="x-small"
+    variant="tonal"
+    rounded
+  >
     <VIcon
       v-if="status === ProcessingStatus.Processing"
       class="spin"
       icon="mdi-loading"
       size="12"
-      start />
+      start
+    />
     {{ label }}
   </VChip>
 </template>
@@ -23,10 +30,10 @@ const COLOR_MAP: Record<string, string> = {
 };
 
 const LABEL_MAP: Record<string, string> = {
-  [ProcessingStatus.Pending]: 'Pending',
+  [ProcessingStatus.Pending]: 'Indexing pending',
   [ProcessingStatus.Processing]: 'Indexing',
   [ProcessingStatus.Completed]: 'Indexed',
-  [ProcessingStatus.Failed]: 'Failed',
+  [ProcessingStatus.Failed]: 'Indexing failed',
 };
 
 const color = computed(() => COLOR_MAP[props.status] || 'grey');
@@ -39,7 +46,11 @@ const label = computed(() => LABEL_MAP[props.status] || props.status);
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
