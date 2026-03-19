@@ -231,12 +231,15 @@ export async function importFromLink(
       ogType: '',
     };
   }
+  const source = meta.contentType
+    ? { url, domain, ...pick(meta, ['title', 'author', 'license']) }
+    : undefined;
   const asset = await Asset.create({
     uid: randomUUID(),
     repositoryId,
     name: ogData.title || domain,
     type: AssetType.Link,
-    meta: { url, ...ogData },
+    meta: { url, ...ogData, ...(source && { source }) },
     uploadedBy: userId,
   });
   return asset.reload({ include: [uploaderInclude] });

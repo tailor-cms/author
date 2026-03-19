@@ -38,7 +38,7 @@
             <div class="text-subtitle-2 text-primary-lighten-5 text-truncate">
               {{ getAssetDisplayName(asset) }}
             </div>
-            <div class="d-flex align-center mt-1 text-body-2 text-primary-lighten-3">
+            <div class="d-flex align-center text-body-2 text-primary-lighten-3">
               <span class="text-capitalize">{{ asset.type }}</span>
               <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
               <template v-if="asset.meta?.fileSize">

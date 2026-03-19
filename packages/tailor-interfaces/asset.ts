@@ -44,6 +44,7 @@ export interface LinkAssetMeta extends AssetMetaBase {
   domain: string;
   siteName?: string;
   ogType?: string;
+  source?: AssetSource;
 }
 
 export type AssetMeta = FileAssetMeta | MediaAssetMeta | LinkAssetMeta;
