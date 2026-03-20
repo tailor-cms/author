@@ -9,6 +9,7 @@
     <VListItem
       v-for="asset in assets"
       :key="asset.id"
+      :disabled="!isCompatible(asset)"
       :value="asset.id"
       class="pa-3"
     >
@@ -28,11 +29,24 @@
           rounded="lg"
           size="52"
         >
-          <VIcon :icon="getIcon(asset.type)" color="primary-darken-2" size="26" />
+          <VIcon
+            :icon="getIcon(asset.type)"
+            color="primary-darken-2"
+            size="26"
+          />
         </VAvatar>
       </template>
       <VListItemTitle class="text-body-2">{{ asset.name }}</VListItemTitle>
-      <VListItemSubtitle v-if="'fileSize' in asset.meta" class="text-caption">
+      <VListItemSubtitle
+        v-if="!isCompatible(asset)"
+        class="text-caption text-medium-emphasis"
+      >
+        Unsupported format
+      </VListItemSubtitle>
+      <VListItemSubtitle
+        v-else-if="'fileSize' in asset.meta"
+        class="text-caption"
+      >
         {{ formatFileSize((asset.meta as FileAssetMeta).fileSize) }}
       </VListItemSubtitle>
       <template #append>
@@ -55,18 +69,38 @@
 </template>
 
 <script lang="ts" setup>
-import { AssetType, type Asset, type FileAssetMeta } from '@tailor-cms/interfaces/asset.ts';
+import { computed } from 'vue';
 
+import {
+  AssetType,
+  type Asset,
+  type FileAssetMeta,
+} from '@tailor-cms/interfaces/asset.ts';
 import { ASSET_TYPE_ICON } from '#config';
 import { formatFileSize } from '#utils';
 
-defineProps<{
+const props = defineProps<{
   assets: Asset[];
   selectedIds: number[];
+  allowedExtensions?: string[];
   multiple?: boolean;
 }>();
 
 const emit = defineEmits(['select', 'toggle']);
+
+const allowedExtensionsSet = computed(() => {
+  if (!props.allowedExtensions?.length) return null;
+  return new Set(
+    props.allowedExtensions.map((e) => e.replace(/^\./, '').toLowerCase()),
+  );
+});
+
+const isCompatible = (asset: Asset): boolean => {
+  if (!allowedExtensionsSet.value) return true;
+  const ext = (asset.meta as any)?.extension;
+  if (!ext) return true;
+  return allowedExtensionsSet.value.has(ext);
+};
 
 const getIcon = (type: string) =>
   ASSET_TYPE_ICON[type] ?? ASSET_TYPE_ICON.other;

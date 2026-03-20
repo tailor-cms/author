@@ -21,9 +21,12 @@ export async function list(
     const { publicUrl } = await service.getDownloadUrl(query.key);
     return res.json({ url: publicUrl });
   }
+  const type = query?.type?.includes(',')
+    ? query.type.split(',').map((t: string) => t.trim())
+    : query?.type;
   const data = await service.list(repository.id, {
     search: query?.search,
-    type: query?.type,
+    type,
     signed: yn(query?.signed),
     orderBy: query?.orderBy,
     orderDirection: query?.orderDirection,

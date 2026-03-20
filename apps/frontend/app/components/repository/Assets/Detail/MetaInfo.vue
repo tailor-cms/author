@@ -19,9 +19,14 @@
           {{ formatFileSize(meta.fileSize) }}
         </div>
       </div>
-      <div v-if="meta.mimeType" class="meta-item">
+      <div v-if="meta.extension || meta.mimeType" class="meta-item">
         <div class="meta-label">Format</div>
-        <div class="meta-value">{{ meta.mimeType }}</div>
+        <div class="meta-value">
+          <span v-if="meta.extension" class="mr-2">.{{ meta.extension }}</span>
+          <span v-if="meta.mimeType" class="text-primary-lighten-2">
+            {{ meta.mimeType }}
+          </span>
+        </div>
       </div>
       <div v-if="asset.createdAt" class="meta-item">
         <div class="meta-label">Uploaded</div>

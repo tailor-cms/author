@@ -28,6 +28,8 @@ interface AssetMetaBase {
 export interface FileAssetMeta extends AssetMetaBase {
   fileSize: number;
   mimeType: string;
+  // File extension without dot (e.g. 'jpg', 'pdf')
+  extension?: string;
   source?: AssetSource;
 }
 

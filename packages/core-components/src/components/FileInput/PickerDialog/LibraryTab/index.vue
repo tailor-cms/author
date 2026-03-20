@@ -31,6 +31,7 @@
     </div>
     <AssetList
       v-else
+      :allowed-extensions="allowedExtensions"
       :assets="assets"
       :class="{ 'opacity-70': isLoading }"
       :multiple="multiple"

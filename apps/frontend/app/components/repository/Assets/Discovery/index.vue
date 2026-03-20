@@ -79,7 +79,7 @@ const DOWNLOADABLE_TYPES = new Set(['image', 'pdf', 'video', 'audio']);
 const FETCH_COUNT = 100;
 
 const show = defineModel<boolean>({ default: false });
-const emit = defineEmits(['assets-added']);
+const emit = defineEmits(['added']);
 
 const currentRepositoryStore = useCurrentRepository();
 const repositoryId = computed(() => currentRepositoryStore.repository?.id);
@@ -158,7 +158,7 @@ async function addSelected(shouldIndex = false) {
     await api.indexAssets(repositoryId.value, assetIds);
   }
   isAdding.value = false;
-  emit('assets-added', addedAssets);
+  emit('added', addedAssets);
   show.value = false;
 }
 

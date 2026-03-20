@@ -11,7 +11,9 @@ function list(repositoryId, params = {}) {
   const query = {};
   if (params.signed) query.signed = 'true';
   if (params.search) query.search = params.search;
-  if (params.type) query.type = params.type;
+  if (params.type) {
+    query.type = Array.isArray(params.type) ? params.type.join(',') : params.type;
+  }
   if (params.offset != null) query.offset = params.offset;
   if (params.limit != null) query.limit = params.limit;
   if (params.orderBy) query.orderBy = params.orderBy;

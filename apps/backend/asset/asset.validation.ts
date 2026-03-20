@@ -1,3 +1,4 @@
+import { AssetType } from '@tailor-cms/interfaces/asset.ts';
 import { body, query } from 'express-validator';
 import { CONTENT_TYPES } from '@tailor-cms/interfaces/discovery.ts';
 import { StatusCodes } from 'http-status-codes';
@@ -5,6 +6,7 @@ import defineRequestValidator from '#shared/request/validation.js';
 
 const ALLOWED_ORDER_COLUMNS = ['createdAt', 'name', 'type'];
 const ALLOWED_ORDER_DIRECTIONS = ['ASC', 'DESC'];
+const ASSET_TYPES = Object.values(AssetType);
 
 export function requireFiles(req: any, res: any, next: any) {
   const files = req.files;
@@ -26,6 +28,12 @@ export function requireFile(req: any, res: any, next: any) {
 }
 
 export const list = defineRequestValidator([
+  query('type')
+    .optional()
+    .custom((val: string) =>
+      val.split(',').every((t: string) => ASSET_TYPES.includes(t.trim())),
+    )
+    .withMessage(`type must be one or more of: ${ASSET_TYPES.join(', ')}`),
   query('orderBy').optional().isIn(ALLOWED_ORDER_COLUMNS),
   query('orderDirection').optional().isIn(ALLOWED_ORDER_DIRECTIONS),
 ]);

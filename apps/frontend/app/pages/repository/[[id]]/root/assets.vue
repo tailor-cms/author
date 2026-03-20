@@ -64,7 +64,7 @@
     />
     <DiscoveryDialog
       v-model="showDiscoveryDialog"
-      @assets-added="fetchAssets(fetchParams)"
+      @added="fetchAssets(fetchParams)"
     />
   </VContainer>
 </template>

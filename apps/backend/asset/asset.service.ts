@@ -11,6 +11,7 @@ import { downloadFile } from './utils/download.ts';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
+import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { removeFromStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.js';
@@ -20,7 +21,7 @@ const { Asset, User } = db;
 
 interface ListOptions {
   search?: string;
-  type?: string;
+  type?: string | string[];
   offset?: number;
   limit?: number;
   signed?: boolean;
@@ -97,6 +98,7 @@ async function importFile({
     meta: {
       fileSize: file.size,
       mimeType: file.mimetype,
+      extension: path.extname(file.originalname).replace('.', '').toLowerCase(),
       ...(description && { description }),
       ...(tags?.length && { tags }),
       ...(source && { source }),
@@ -108,11 +110,8 @@ async function importFile({
 
 async function destroyAsset(repository: any, asset: Asset) {
   await safeRemoveFromVectorStore(repository, asset);
-  if (asset.storageKey) await safeDeleteFile(asset.storageKey);
-  const files = asset.meta?.files;
-  if (files) {
-    await Promise.all(Object.values(files).map(safeDeleteFile));
-  }
+  // Files are NOT deleted from storage - content elements may reference them
+  // via storage:// URIs. Only the library record is removed (soft-delete).
   await asset.destroy();
 }
 
@@ -122,7 +121,7 @@ export async function list(repositoryId: number, options: ListOptions = {}) {
     orderBy = 'createdAt', orderDirection = 'DESC',
   } = options;
   const where: any = { repositoryId };
-  if (type) where.type = type;
+  if (type) where.type = Array.isArray(type) ? { [Op.in]: type } : type;
   if (search) where.name = { [Op.iLike]: `%${search}%` };
   const { rows, count } = await Asset.findAndCountAll({
     where,
