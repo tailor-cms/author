@@ -1,10 +1,7 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 
-import {
-  ContentType,
-  type ContentType as ContentTypeValue,
-} from '@tailor-cms/interfaces/discovery.ts';
+import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 import imageSize from 'image-size';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
@@ -26,13 +23,16 @@ import type {
 
 const { Asset, User } = db;
 
+// Provider content categories
+const ProviderType = { Video: 'video', Audio: 'audio' } as const;
+
 // Known link providers: [domains, slug, content type]
 const PROVIDERS: [string[], string, string][] = [
-  [['youtube\\.com', 'youtu\\.be'], 'youtube', 'video'],
-  [['vimeo\\.com'], 'vimeo', 'video'],
-  [['dailymotion\\.com'], 'dailymotion', 'video'],
-  [['spotify\\.com'], 'spotify', 'audio'],
-  [['soundcloud\\.com'], 'soundcloud', 'audio'],
+  [['youtube\\.com', 'youtu\\.be'], 'youtube', ProviderType.Video],
+  [['vimeo\\.com'], 'vimeo', ProviderType.Video],
+  [['dailymotion\\.com'], 'dailymotion', ProviderType.Video],
+  [['spotify\\.com'], 'spotify', ProviderType.Audio],
+  [['soundcloud\\.com'], 'soundcloud', ProviderType.Audio],
 ];
 
 // Compiled regexes for runtime hostname matching
@@ -47,7 +47,7 @@ const PROVIDER_MATCHERS = PROVIDERS.map(
 // Postgres iregexp pattern for video provider URL filtering
 const VIDEO_URL_PATTERN = `(${
   PROVIDERS
-    .filter(([, , type]) => type === 'video')
+    .filter(([, , type]) => type === ProviderType.Video)
     .flatMap(([domains]) => domains)
     .join('|')
 })`;
@@ -162,16 +162,29 @@ async function importFile({
   const uid = randomUUID();
   const key = buildStorageKey(repositoryId, uid, file.originalname);
   await Storage.saveFile(key, file.buffer);
+  // Extract image dimensions if applicable
+  const assetType = resolveType(file.mimetype);
+  let dimensions: { width?: number; height?: number } = {};
+  if (assetType === AssetType.Image && file.buffer) {
+    try {
+      const result = imageSize(file.buffer);
+      if (result.width && result.height) {
+        dimensions = { width: result.width, height: result.height };
+      }
+    } catch { /* non-critical — skip dimensions */ }
+  }
+  const rawName = source?.title || file.originalname;
   const asset = await Asset.create({
     uid,
     repositoryId,
-    name: source?.title || file.originalname,
-    type: resolveType(file.mimetype),
+    name: rawName.length > 250 ? `${rawName.slice(0, 247)}...` : rawName,
+    type: assetType,
     storageKey: key,
     meta: {
       fileSize: file.size,
       mimeType: file.mimetype,
       extension: path.extname(file.originalname).replace('.', '').toLowerCase(),
+      ...(dimensions.width && dimensions),
       ...(description && { description }),
       ...(tags?.length && { tags }),
       ...(source && { source }),
