@@ -1,12 +1,16 @@
 import { AssetType } from '@tailor-cms/interfaces/asset.ts';
 import { body, query } from 'express-validator';
 import { CONTENT_TYPES } from '@tailor-cms/interfaces/discovery.ts';
-import { StatusCodes } from 'http-status-codes';
 import defineRequestValidator from '#shared/request/validation.js';
+import pick from 'lodash/pick.js';
+import { StatusCodes } from 'http-status-codes';
+import yn from 'yn';
+
+import { VideoLinkMode } from './asset.service.ts';
 
 const ALLOWED_ORDER_COLUMNS = ['createdAt', 'name', 'type'];
 const ALLOWED_ORDER_DIRECTIONS = ['ASC', 'DESC'];
-const ASSET_TYPES = Object.values(AssetType);
+const ASSET_TYPES: string[] = Object.values(AssetType);
 
 export function requireFiles(req: any, res: any, next: any) {
   const files = req.files;
@@ -27,16 +31,38 @@ export function requireFile(req: any, res: any, next: any) {
     .json({ errors: [{ msg: 'No file provided' }] });
 }
 
-export const list = defineRequestValidator([
-  query('type')
-    .optional()
-    .custom((val: string) =>
-      val.split(',').every((t: string) => ASSET_TYPES.includes(t.trim())),
-    )
-    .withMessage(`type must be one or more of: ${ASSET_TYPES.join(', ')}`),
-  query('orderBy').optional().isIn(ALLOWED_ORDER_COLUMNS),
-  query('orderDirection').optional().isIn(ALLOWED_ORDER_DIRECTIONS),
-]);
+function parseListQuery(req: any, _res: any, next: any) {
+  const q = req.query || {};
+  const PASSTHROUGH_PARAMS = ['search', 'orderBy', 'orderDirection'];
+  const parsed: Record<string, any> = pick(q, PASSTHROUGH_PARAMS);
+  if (q.signed) parsed.signed = yn(q.signed);
+  if (q.type) {
+    const types = q.type.split(',').map((t: string) => t.trim());
+    if (types.includes(AssetType.Video)) {
+      parsed.videoLinkMode = VideoLinkMode.Include;
+    } else if (types.length === 1 && types[0] === AssetType.Link) {
+      parsed.videoLinkMode = VideoLinkMode.Exclude;
+    } else {
+      parsed.type = types;
+    }
+  }
+  req.parsedQuery = parsed;
+  next();
+}
+
+export const list = [
+  ...defineRequestValidator([
+    query('type')
+      .optional()
+      .custom((val: string) =>
+        val.split(',').every((t: string) => ASSET_TYPES.includes(t.trim())),
+      )
+      .withMessage(`type must be one or more of: ${ASSET_TYPES.join(', ')}`),
+    query('orderBy').optional().isIn(ALLOWED_ORDER_COLUMNS),
+    query('orderDirection').optional().isIn(ALLOWED_ORDER_DIRECTIONS),
+  ]),
+  parseListQuery,
+];
 
 export const update = defineRequestValidator([
   body('meta').isObject(),

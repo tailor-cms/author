@@ -22,7 +22,15 @@ export interface ImportFileOptions {
 }
 
 export interface ImportFromLinkOptions {
+  // Discovery content type (video, image, pdf, article)
+  // Determines import strategy (download vs link)
   contentType?: ContentType;
+  // Provider-resolved content type from URL detection
+  // e.g. detectLinkProvider('youtube.com/...') → 'video'
+  linkContentType?: string;
+  // Known provider slug (youtube, vimeo, spotify)
+  // Auto-detected from URL if not provided
+  provider?: string;
   title?: string;
   description?: string;
   downloadUrl?: string;
@@ -44,6 +52,7 @@ export interface AssetRequest {
   asset: Asset;
   body: any;
   query: any;
+  parsedQuery?: Record<string, any>;
   options: { limit: number; offset: number; order?: any[] };
   file: MulterFile;
   files: MulterFile[];

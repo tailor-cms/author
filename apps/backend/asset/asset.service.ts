@@ -1,23 +1,78 @@
+import path from 'node:path';
+import { randomUUID } from 'node:crypto';
+
+import {
+  ContentType,
+  type ContentType as ContentTypeValue,
+} from '@tailor-cms/interfaces/discovery.ts';
+import imageSize from 'image-size';
+import { Op } from 'sequelize';
+import pick from 'lodash/pick.js';
+
+import { createLogger } from '#logger';
+import { storage as storageConfig } from '#config';
+import db from '#shared/database/index.js';
+
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
+import { downloadFile } from './utils/download.ts';
+import { fetchOpenGraph } from './extraction/open-graph.ts';
+import { removeFromStore } from './indexing/indexing.service.ts';
+import Storage from '../repository/storage.js';
 import type {
   ImportFileOptions,
   ImportFromLinkOptions,
   MulterFile,
 } from './types.ts';
-import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
-import { createLogger } from '#logger';
-import db from '#shared/database/index.js';
-import { downloadFile } from './utils/download.ts';
-import { fetchOpenGraph } from './extraction/open-graph.ts';
-import { Op } from 'sequelize';
-import pick from 'lodash/pick.js';
-import path from 'node:path';
-import { randomUUID } from 'node:crypto';
-import { removeFromStore } from './indexing/indexing.service.ts';
-import Storage from '../repository/storage.js';
-import { storage as storageConfig } from '#config';
 
 const { Asset, User } = db;
+
+// Known link providers: [domains, slug, content type]
+const PROVIDERS: [string[], string, string][] = [
+  [['youtube\\.com', 'youtu\\.be'], 'youtube', 'video'],
+  [['vimeo\\.com'], 'vimeo', 'video'],
+  [['dailymotion\\.com'], 'dailymotion', 'video'],
+  [['spotify\\.com'], 'spotify', 'audio'],
+  [['soundcloud\\.com'], 'soundcloud', 'audio'],
+];
+
+// Compiled regexes for runtime hostname matching
+const PROVIDER_MATCHERS = PROVIDERS.map(
+  ([domains, slug, type]) => ({
+    re: new RegExp(domains.join('|'), 'i'),
+    provider: slug,
+    contentType: type,
+  }),
+);
+
+// Postgres iregexp pattern for video provider URL filtering
+const VIDEO_URL_PATTERN = `(${
+  PROVIDERS
+    .filter(([, , type]) => type === 'video')
+    .flatMap(([domains]) => domains)
+    .join('|')
+})`;
+
+function detectProvider(
+  url: string,
+): { provider?: string; contentType?: string } {
+  try {
+    const hostname = new URL(url).hostname;
+    for (const { re, provider, contentType } of PROVIDER_MATCHERS) {
+      if (re.test(hostname)) return { provider, contentType };
+    }
+  } catch { /* malformed URL */ }
+  return {};
+}
+
+// Controls how video-provider links (YouTube, Vimeo) are classified
+export const VideoLinkMode = {
+  // Show video-provider links under the video filter
+  Include: 'include',
+  // Hide video-provider links from the link filter
+  Exclude: 'exclude',
+} as const;
+
+type VideoLinkMode = (typeof VideoLinkMode)[keyof typeof VideoLinkMode];
 
 interface ListOptions {
   search?: string;
@@ -27,6 +82,11 @@ interface ListOptions {
   signed?: boolean;
   orderBy?: string;
   orderDirection?: 'ASC' | 'DESC';
+  // How to handle link assets with video provider URLs
+  // 'include': merge them into video results (for video filter)
+  // 'exclude': remove them from link results (for link filter)
+  // undefined: no special handling (default)
+  videoLinkMode?: VideoLinkMode;
 }
 
 export const uploaderInclude = {
@@ -36,6 +96,7 @@ export const uploaderInclude = {
 };
 
 const logger = createLogger('asset');
+
 const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf', 'data']);
 const MIME_CATEGORY_MAP: Record<string, string[]> = {
   image: ['image/'],
@@ -53,6 +114,18 @@ const MIME_CATEGORY_MAP: Record<string, string[]> = {
     'text/html',
     'application/rtf',
   ],
+};
+
+const VIDEO_LINK_WHERE: Record<string, any> = {
+  type: AssetType.Link,
+};
+VIDEO_LINK_WHERE['meta.url'] = {
+  [Op.iRegexp]: VIDEO_URL_PATTERN,
+};
+
+const NOT_VIDEO_LINK_WHERE: Record<string, any> = {};
+NOT_VIDEO_LINK_WHERE['meta.url'] = {
+  [Op.notIRegexp]: VIDEO_URL_PATTERN,
 };
 
 function resolveType(mimeType: string | undefined): AssetType {
@@ -119,9 +192,22 @@ export async function list(repositoryId: number, options: ListOptions = {}) {
   const {
     search, type, offset = 0, limit = 100, signed = false,
     orderBy = 'createdAt', orderDirection = 'DESC',
+    videoLinkMode,
   } = options;
   const where: any = { repositoryId };
-  if (type) where.type = Array.isArray(type) ? { [Op.in]: type } : type;
+  if (videoLinkMode === VideoLinkMode.Include) {
+    where[Op.and] = [{
+      [Op.or]: [
+        { type: AssetType.Video },
+        VIDEO_LINK_WHERE,
+      ],
+    }];
+  } else if (videoLinkMode === VideoLinkMode.Exclude) {
+    where.type = AssetType.Link;
+    Object.assign(where, NOT_VIDEO_LINK_WHERE);
+  } else if (type) {
+    where.type = Array.isArray(type) ? { [Op.in]: type } : type;
+  }
   if (search) where.name = { [Op.iLike]: `%${search}%` };
   const { rows, count } = await Asset.findAndCountAll({
     where,
@@ -236,13 +322,20 @@ export async function importFromLink(
   const source = meta.contentType
     ? { url, domain, ...pick(meta, ['title', 'author', 'license']) }
     : undefined;
+  // Auto-detect provider and content type from URL (YouTube, Vimeo, etc.)
+  const detected = detectProvider(url);
+  const contentType = meta.contentType || detected.contentType;
+  const provider = meta.provider || detected.provider;
+  const rawName = meta.title || ogData.title || domain;
   const asset = await Asset.create({
     uid: randomUUID(),
     repositoryId,
-    name: ogData.title || domain,
+    name: rawName.length > 250 ? `${rawName.slice(0, 247)}...` : rawName,
     type: AssetType.Link,
     meta: {
       url, ...ogData,
+      ...(contentType && { contentType }),
+      ...(provider && { provider }),
       ...(meta.tags?.length && { tags: meta.tags }),
       ...(source && { source }),
     },

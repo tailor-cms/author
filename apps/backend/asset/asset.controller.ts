@@ -1,9 +1,7 @@
 import type { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import yn from 'yn';
 
 import * as service from './asset.service.ts';
-
 import type { AssetRequest } from './types.ts';
 
 /**
@@ -14,22 +12,15 @@ import type { AssetRequest } from './types.ts';
  * GET /assets?key=<key>    → { url: "https://..." }
  */
 export async function list(
-  { repository, query, options }: AssetRequest,
+  { repository, query, options, parsedQuery }: AssetRequest,
   res: Response,
 ) {
   if (query?.key) {
     const { publicUrl } = await service.getDownloadUrl(query.key);
     return res.json({ url: publicUrl });
   }
-  const type = query?.type?.includes(',')
-    ? query.type.split(',').map((t: string) => t.trim())
-    : query?.type;
   const data = await service.list(repository.id, {
-    search: query?.search,
-    type,
-    signed: yn(query?.signed),
-    orderBy: query?.orderBy,
-    orderDirection: query?.orderDirection,
+    ...parsedQuery,
     ...options,
   });
   return res.json({ data });
