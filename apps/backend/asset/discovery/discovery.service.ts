@@ -18,8 +18,10 @@ import * as serper from './serper.ts';
 import * as unsplash from './unsplash.ts';
 
 import {
-  ContentFilter, QuotaExceededError,
-  type DiscoveryResult, type SearchResult,
+  ContentFilter,
+  QuotaExceededError,
+  type DiscoveryResult,
+  type SearchResult,
 } from './types.ts';
 
 const logger = createLogger('asset:discovery');
@@ -79,17 +81,22 @@ function toResult(raw: SearchResult): DiscoveryResult {
   const thumb = raw.thumbnailUrl || raw.imageUrl;
   return {
     ...pick(raw, [
-      'title', 'url', 'snippet', 'type', 'downloadUrl',
-      'author', 'license', 'description', 'tags',
+      'title',
+      'url',
+      'snippet',
+      'type',
+      'downloadUrl',
+      'author',
+      'license',
+      'description',
+      'tags',
     ]),
     ...(thumb && { thumbnailUrl: thumb }),
   };
 }
 
 /** Dedup, trim to count, and map to frontend shape. */
-function normalize(
-  raw: SearchResult[], count: number,
-): DiscoveryResult[] {
+function normalize(raw: SearchResult[], count: number): DiscoveryResult[] {
   return dedupeByUrl(raw).slice(0, count).map(toResult);
 }
 
@@ -108,7 +115,8 @@ function normalize(
  */
 type Strategy = (q: string, n: number) => Promise<SearchResult[]>[];
 
-const { All, Article, Image, Pdf, Research, Data, Other } = ContentFilter;
+const { All, Article, Image, Video, Pdf, Research, Data, Other } =
+  ContentFilter;
 
 const strategies: Record<ContentFilter, Strategy> = {
   [All]: (q, n) => [
@@ -121,18 +129,15 @@ const strategies: Record<ContentFilter, Strategy> = {
     serper.imageSearch(q, n + DEDUP_BUFFER),
     unsplash.search(q, Math.ceil(n / 2)),
   ],
-  [Pdf]: (q, n) => [
-    serper.webSearch(`${q} filetype:pdf`, n + DEDUP_BUFFER),
-  ],
+  [Video]: (q, n) => [serper.videoSearch(q, n + DEDUP_BUFFER)],
+  [Pdf]: (q, n) => [serper.webSearch(`${q} filetype:pdf`, n + DEDUP_BUFFER)],
   [Article]: (q, n) => [
     serper.newsSearch(q, Math.ceil(n * 0.6) + DEDUP_BUFFER),
     serper.webSearch(q, Math.ceil(n * 0.5) + DEDUP_BUFFER),
   ],
   [Research]: (q, n) => [
     serper.scholarSearch(q, n + DEDUP_BUFFER),
-    serper.webSearch(
-      `${q} ${RESEARCH_SITES}`, Math.ceil(n / 2),
-    ),
+    serper.webSearch(`${q} ${RESEARCH_SITES}`, Math.ceil(n / 2)),
   ],
   [Data]: (q, n) => {
     const keywords = `${q} dataset OR "open data" OR statistics`;
@@ -141,34 +146,38 @@ const strategies: Record<ContentFilter, Strategy> = {
       serper.webSearch(`${q} ${DATA_SITES}`, Math.ceil(n * 0.5) + DEDUP_BUFFER),
     ];
   },
-  [Other]: (q, n) => [
-    serper.webSearch(q, n + DEDUP_BUFFER),
-  ],
+  [Other]: (q, n) => [serper.webSearch(q, n + DEDUP_BUFFER)],
 };
 
 async function fetchAll(
   promises: Promise<SearchResult[]>[],
 ): Promise<SearchResult[]> {
   const batches = await Promise.all(
-    promises.map((p) => p.catch((err: Error) => {
-      if (err instanceof QuotaExceededError) throw err;
-      logger.warn({ err: err.message }, 'Search source failed');
-      return [] as SearchResult[];
-    })),
+    promises.map((p) =>
+      p.catch((err: Error) => {
+        if (err instanceof QuotaExceededError) throw err;
+        logger.warn({ err: err.message }, 'Search source failed');
+        return [] as SearchResult[];
+      }),
+    ),
   );
   return batches.flat();
 }
 
 async function fetchWithSerper(
-  query: string, filter: ContentFilter, count: number,
+  query: string,
+  filter: ContentFilter,
+  count: number,
 ): Promise<SearchResult[]> {
   const strategy = strategies[filter] || strategies.all;
   return fetchAll(strategy(query, count));
 }
 
 async function fetchWithLlm(
-  query: string, repoContext: string,
-  filter: ContentFilter, count: number,
+  query: string,
+  repoContext: string,
+  filter: ContentFilter,
+  count: number,
 ): Promise<SearchResult[]> {
   const fetches: Promise<SearchResult[]>[] = [];
   if (filter !== ContentFilter.Image) {
