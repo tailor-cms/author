@@ -11,7 +11,7 @@
     :page="props.page"
   >
     <template #default="{ items }">
-      <template v-for="({ raw: asset }, i) in items" :key="asset.id">
+      <template v-for="{ raw: asset } in items" :key="asset.id">
         <VRow
           align="center"
           class="asset-row py-3"

@@ -2,6 +2,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 
 import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
+import { detectLinkProvider } from '@tailor-cms/interfaces/asset.ts';
 import imageSize from 'image-size';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
@@ -23,46 +24,11 @@ import type {
 
 const { Asset, User } = db;
 
-// Provider content categories
-const ProviderType = { Video: 'video', Audio: 'audio' } as const;
-
-// Known link providers: [domains, slug, content type]
-const PROVIDERS: [string[], string, string][] = [
-  [['youtube\\.com', 'youtu\\.be'], 'youtube', ProviderType.Video],
-  [['vimeo\\.com'], 'vimeo', ProviderType.Video],
-  [['dailymotion\\.com'], 'dailymotion', ProviderType.Video],
-  [['spotify\\.com'], 'spotify', ProviderType.Audio],
-  [['soundcloud\\.com'], 'soundcloud', ProviderType.Audio],
-];
-
-// Compiled regexes for runtime hostname matching
-const PROVIDER_MATCHERS = PROVIDERS.map(
-  ([domains, slug, type]) => ({
-    re: new RegExp(domains.join('|'), 'i'),
-    provider: slug,
-    contentType: type,
-  }),
-);
-
-// Postgres iregexp pattern for video provider URL filtering
-const VIDEO_URL_PATTERN = `(${
-  PROVIDERS
-    .filter(([, , type]) => type === ProviderType.Video)
-    .flatMap(([domains]) => domains)
-    .join('|')
-})`;
-
-function detectProvider(
-  url: string,
-): { provider?: string; contentType?: string } {
-  try {
-    const hostname = new URL(url).hostname;
-    for (const { re, provider, contentType } of PROVIDER_MATCHERS) {
-      if (re.test(hostname)) return { provider, contentType };
-    }
-  } catch { /* malformed URL */ }
-  return {};
-}
+// Postgres iregexp pattern for video provider URL filtering.
+// Used by Sequelize queries to classify link assets with video-provider
+// URLs (YouTube, Vimeo, Dailymotion) under the video filter.
+const VIDEO_URL_PATTERN =
+  '(youtube\\.com|youtu\\.be|vimeo\\.com|dailymotion\\.com)';
 
 // Controls how video-provider links (YouTube, Vimeo) are classified
 export const VideoLinkMode = {
@@ -161,6 +127,12 @@ async function importFile({
 }: ImportFileOptions) {
   const uid = randomUUID();
   const key = buildStorageKey(repositoryId, uid, file.originalname);
+  logger.debug({
+    repositoryId,
+    filename: file.originalname,
+    size: file.size,
+    mimetype: file.mimetype,
+  }, 'Importing file');
   await Storage.saveFile(key, file.buffer);
   // Extract image dimensions if applicable
   const assetType = resolveType(file.mimetype);
@@ -195,6 +167,7 @@ async function importFile({
 }
 
 async function destroyAsset(repository: any, asset: Asset) {
+  logger.debug({ assetId: asset.id, type: asset.type }, 'Destroying asset');
   await safeRemoveFromVectorStore(repository, asset);
   // Files are NOT deleted from storage - content elements may reference them
   // via storage:// URIs. Only the library record is removed (soft-delete).
@@ -207,6 +180,10 @@ export async function list(repositoryId: number, options: ListOptions = {}) {
     orderBy = 'createdAt', orderDirection = 'DESC',
     videoLinkMode,
   } = options;
+  logger.debug(
+    { repositoryId, search, type, videoLinkMode, offset, limit },
+    'Listing assets',
+  );
   const where: any = { repositoryId };
   if (videoLinkMode === VideoLinkMode.Include) {
     where[Op.and] = [{
@@ -257,6 +234,7 @@ export async function getDownloadUrl(key: string) {
 }
 
 export async function updateMeta(asset: Asset, meta: Partial<AssetMeta>) {
+  logger.debug({ assetId: asset.id }, 'Updating asset meta');
   // Clean up stored files for any file key being removed
   if (meta.files) {
     const existing = asset.meta?.files;
@@ -278,6 +256,10 @@ export async function attachFile(
   fileKey: string,
   file: MulterFile,
 ) {
+  logger.debug(
+    { assetId: asset.id, fileKey, filename: file.originalname },
+    'Attaching file to asset',
+  );
   const oldKey = asset.meta?.files?.[fileKey];
   if (oldKey) await safeDeleteFile(oldKey);
   const storageKey = `${asset.storageKey}__${fileKey}__${file.originalname}`;
@@ -293,6 +275,10 @@ export async function importFromLink(
   meta: ImportFromLinkOptions = {},
 ) {
   const domain = new URL(url).hostname;
+  logger.debug(
+    { repositoryId, url, contentType: meta.contentType },
+    'Importing from link',
+  );
   // Downloadable types: fetch the file and store it like a regular upload.
   if (meta.contentType && DOWNLOADABLE_TYPES.has(meta.contentType)) {
     try {
@@ -336,7 +322,7 @@ export async function importFromLink(
     ? { url, domain, ...pick(meta, ['title', 'author', 'license']) }
     : undefined;
   // Auto-detect provider and content type from URL (YouTube, Vimeo, etc.)
-  const detected = detectProvider(url);
+  const detected = detectLinkProvider(url);
   const contentType = meta.contentType || detected.contentType;
   const provider = meta.provider || detected.provider;
   const rawName = meta.title || ogData.title || domain;
