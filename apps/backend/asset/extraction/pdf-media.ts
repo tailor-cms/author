@@ -5,6 +5,7 @@
  * Most PDFs embed photos/diagrams as JPEG data - extracting these
  * yields valid JPEG files without needing canvas or native deps.
  */
+import imageSize from 'image-size';
 import { createLogger } from '#logger';
 import { PDFParse } from 'pdf-parse';
 import { v4 as uuidv4 } from 'uuid';
@@ -62,6 +63,15 @@ export function extractJpegImages(pdfBuffer: Buffer): ExtractedImage[] {
     if (length >= MIN_IMAGE_BYTES) {
       const buffer = Buffer.alloc(length);
       pdfBuffer.copy(buffer, 0, soiIdx, end);
+      // Validate the extracted buffer is a valid JPEG (filters out
+      // corrupted extractions from nested markers or progressive encoding)
+      try {
+        imageSize(buffer);
+      } catch {
+        logger.debug({ byteOffset: soiIdx, length }, 'Skipping invalid JPEG');
+        searchStart = end;
+        continue;
+      }
       images.push({
         filename: `${uuidv4()}.jpg`,
         buffer,
