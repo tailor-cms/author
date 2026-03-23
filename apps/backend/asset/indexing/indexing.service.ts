@@ -200,14 +200,31 @@ async function setStatus(
   });
 }
 
-async function processAssets(assets: Asset[], storeId: string) {
+/**
+ * Claims an asset for processing via atomic status transition.
+ * Returns a fresh instance if claimed, null if another worker got there first.
+ */
+async function claimAsset(assetId: number): Promise<Asset | null> {
+  const [count] = await AssetModel.update(
+    { processingStatus: ProcessingStatus.Processing },
+    { where: { id: assetId, processingStatus: ProcessingStatus.Pending } },
+  );
+  if (!count) return null;
+  return AssetModel.findByPk(assetId);
+}
+
+async function processAssets(assetIds: number[], storeId: string) {
   if (!AIService.vectorStore) {
     logger.error('StoreService not available - AI not configured');
     return;
   }
-  for (const asset of assets) {
+  for (const id of assetIds) {
+    const asset = await claimAsset(id);
+    if (!asset) {
+      logger.debug({ assetId: id }, 'Asset already claimed, skipping');
+      continue;
+    }
     try {
-      await setStatus(asset, ProcessingStatus.Processing);
       const handler = indexByType[asset.type] || indexDefault;
       const fileId = await handler({ storeId, asset });
       await setStatus(
@@ -216,7 +233,7 @@ async function processAssets(assets: Asset[], storeId: string) {
         fileId ? { vectorStoreFileId: fileId } : undefined,
       );
     } catch (err) {
-      logger.error({ err, assetId: asset.id }, 'Indexing failed');
+      logger.error({ err, assetId: id }, 'Indexing failed');
       await setStatus(asset, ProcessingStatus.Failed);
     }
   }
@@ -255,7 +272,7 @@ export async function index(repository: any, assetIds: number[]) {
     { repositoryId: repository.id, storeId, assetIds: foundIds },
     'Indexing started',
   );
-  setImmediate(() => void processAssets(assets, storeId));
+  setImmediate(() => void processAssets(foundIds, storeId));
   return { storeId, assetIds: foundIds };
 }
 
