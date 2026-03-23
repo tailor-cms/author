@@ -21,15 +21,27 @@
     </VSheet>
     <VSheet
       v-else-if="isImage && previewUrl"
-      class="rounded-lg overflow-hidden"
+      class="d-flex justify-center rounded-lg overflow-hidden"
       color="primary-darken-3"
     >
       <VImg
         :src="previewUrl"
-        :aspect-ratio="16 / 9"
-        max-height="300"
-        cover
+        max-height="480"
+        max-width="100%"
         @error="hasError = true"
+      />
+    </VSheet>
+    <VSheet
+      v-else-if="embedUrl"
+      class="rounded-lg overflow-hidden"
+      color="primary-darken-3"
+    >
+      <iframe
+        :src="embedUrl"
+        class="video-embed"
+        allow="autoplay"
+        frameborder="0"
+        allowfullscreen
       />
     </VSheet>
     <VSheet
@@ -73,7 +85,7 @@
 <script lang="ts" setup>
 import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
 
-import { getAssetColor, getAssetIcon } from '../utils';
+import { getAssetColor, getAssetIcon, toEmbedUrl } from '../utils';
 import api from '@/api/repositoryAsset';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -90,6 +102,11 @@ const assetIcon = computed(() => getAssetIcon(props.asset));
 const assetColor = computed(() => getAssetColor(props.asset));
 const isImage = computed(() => props.asset?.type === AssetType.Image);
 const isLink = computed(() => props.asset?.type === AssetType.Link);
+const embedUrl = computed(() => {
+  if (!isLink.value) return null;
+  return toEmbedUrl((props.asset?.meta as any)?.url || '');
+});
+
 const linkThumbnail = computed(() =>
   'thumbnail' in (props.asset?.meta || {})
     ? (props.asset.meta as any).thumbnail
@@ -119,5 +136,11 @@ watch(
 <style scoped>
 .preview-area {
   min-height: 7.5rem;
+}
+
+.video-embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: block;
 }
 </style>

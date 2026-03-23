@@ -1,7 +1,7 @@
 <template>
   <VSlideYTransition>
     <div
-      v-if="selectedIds.size"
+      v-if="hasSelection"
       class="d-flex align-center flex-wrap ga-3 mb-4 pa-5 bg-primary-darken-2 rounded"
     >
       <VChip
@@ -11,16 +11,8 @@
         variant="flat"
         rounded="xl"
       >
-        {{ selectedIds.size }}
+        {{ selectedIds.size }} selected
       </VChip>
-      <VBtn
-        color="primary-lighten-3"
-        size="small"
-        variant="outlined"
-        @click="$emit('select-all')"
-      >
-        Select all
-      </VBtn>
       <VBtn
         color="primary-lighten-3"
         size="small"
@@ -86,7 +78,9 @@ const props = defineProps<{
   isBulkDeleting: boolean;
 }>();
 
-defineEmits(['select-all', 'index', 'delete', 'clear']);
+defineEmits(['index', 'delete', 'clear']);
+
+const hasSelection = computed(() => props.selectedIds.size > 0);
 
 const hasIndexable = computed(() =>
   props.assets

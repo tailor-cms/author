@@ -23,6 +23,8 @@ interface AssetMetaBase {
   description?: string;
   tags?: string[];
   files?: Record<string, string>;
+  // Marks this asset as a primary knowledge source for content generation
+  isCoreSource?: boolean;
 }
 
 export interface FileAssetMeta extends AssetMetaBase {

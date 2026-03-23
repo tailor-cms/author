@@ -1,3 +1,4 @@
+import { AssetType } from '@tailor-cms/interfaces/asset';
 import { ASSET_TYPE_COLOR, ASSET_TYPE_ICON } from '@tailor-cms/core-components';
 
 export {
@@ -26,24 +27,90 @@ export function getAssetDisplayName(asset: {
   return 'Untitled';
 }
 
-export function getAssetIcon(asset: { type?: string }) {
-  return ASSET_TYPE_ICON[asset.type ?? 'other'] ?? ASSET_TYPE_ICON.other;
+const PROVIDER_ICONS: Record<string, string> = {
+  youtube: 'mdi-youtube',
+  vimeo: 'mdi-vimeo',
+  spotify: 'mdi-spotify',
+  soundcloud: 'mdi-soundcloud',
+};
+
+const PROVIDER_COLORS: Record<string, string> = {
+  youtube: 'red',
+  vimeo: 'blue',
+  spotify: 'green',
+  soundcloud: 'orange',
+};
+
+const LINK_CONTENT_TYPE_ICONS: Record<string, string> = {
+  [AssetType.Video]: 'mdi-play-circle',
+  [AssetType.Audio]: 'mdi-music-circle',
+  [AssetType.Image]: 'mdi-image',
+  [AssetType.Document]: 'mdi-file-document',
+};
+
+function detectProvider(asset: { type?: string; meta?: any }): string | null {
+  if (asset.type !== AssetType.Link) return null;
+  if (asset.meta?.provider) return asset.meta.provider;
+  const url = asset.meta?.url;
+  if (!url) return null;
+  try {
+    const hostname = new URL(url).hostname;
+    if (/youtube\.com|youtu\.be/i.test(hostname)) return 'youtube';
+    if (/vimeo\.com/i.test(hostname)) return 'vimeo';
+    if (/spotify\.com/i.test(hostname)) return 'spotify';
+    if (/soundcloud\.com/i.test(hostname)) return 'soundcloud';
+  } catch { /* malformed URL */ }
+  return null;
 }
 
-export function getAssetColor(asset: { type?: string }) {
-  return ASSET_TYPE_COLOR[asset.type ?? 'other'] ?? ASSET_TYPE_COLOR.other;
+export function getAssetIcon(asset: { type?: string; meta?: any }) {
+  const provider = detectProvider(asset);
+  if (provider && PROVIDER_ICONS[provider]) return PROVIDER_ICONS[provider];
+  if (asset.type === AssetType.Link && asset.meta) {
+    const ct = asset.meta.contentType || asset.meta.linkContentType;
+    if (ct && LINK_CONTENT_TYPE_ICONS[ct]) return LINK_CONTENT_TYPE_ICONS[ct];
+  }
+  return ASSET_TYPE_ICON[asset.type ?? AssetType.Other] ?? ASSET_TYPE_ICON.other;
 }
 
-const ALWAYS_INDEXABLE = new Set(['document', 'link']);
-const CAPTION_INDEXABLE = new Set(['video', 'audio']);
+export function getAssetColor(asset: { type?: string; meta?: any }) {
+  const provider = detectProvider(asset);
+  if (provider && PROVIDER_COLORS[provider]) return PROVIDER_COLORS[provider];
+  return ASSET_TYPE_COLOR[asset.type ?? AssetType.Other] ?? ASSET_TYPE_COLOR.other;
+}
+
+export function getAssetTypeLabel(asset: { type?: string; meta?: any }): string {
+  const provider = detectProvider(asset);
+  if (provider === 'youtube') return 'YouTube Video';
+  if (provider === 'vimeo') return 'Vimeo Video';
+  if (provider === 'spotify') return 'Spotify';
+  if (provider === 'soundcloud') return 'SoundCloud';
+  if (asset.type === AssetType.Link && asset.meta) {
+    const ct = asset.meta.contentType || asset.meta.linkContentType;
+    if (ct === AssetType.Video) return 'Video Link';
+    if (ct === AssetType.Audio) return 'Audio Link';
+    if (ct === AssetType.Document) return 'Document Link';
+  }
+  return asset.type || AssetType.Other;
+}
+
+const ALWAYS_INDEXABLE = new Set<string>([AssetType.Document, AssetType.Link]);
+const CAPTION_INDEXABLE = new Set<string>([AssetType.Video, AssetType.Audio]);
 
 export function isIndexable(asset: { type?: string; meta?: any }): boolean {
   if (ALWAYS_INDEXABLE.has(asset.type ?? '')) return true;
   const hasContent = asset.meta?.description || asset.meta?.tags?.length;
   if (hasContent) return true;
-  if (CAPTION_INDEXABLE.has(asset.type ?? '')) return !!asset.meta?.files?.captions;
+  if (CAPTION_INDEXABLE.has(asset.type ?? '')) {
+    return !!asset.meta?.files?.captions;
+  }
   return false;
 }
+
+export {
+  toEmbedUrl,
+  extractVideoId,
+} from '@tailor-cms/common/src/asset/video.js';
 
 export function formatDate(date: string | Date): string {
   return new Date(date).toLocaleDateString('en-US', {

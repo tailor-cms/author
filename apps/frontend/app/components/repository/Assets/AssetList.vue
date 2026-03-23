@@ -35,11 +35,22 @@
             />
           </VCol>
           <VCol class="px-2 overflow-hidden text-start">
-            <div class="text-subtitle-2 text-primary-lighten-5 text-truncate">
-              {{ getAssetDisplayName(asset) }}
+            <div class="d-flex align-center text-subtitle-2 ">
+              <span class="text-primary-lighten-5 text-truncate">
+                {{ getAssetDisplayName(asset) }}
+              </span>
+              <VIcon
+                v-if="(asset.meta as any)?.isCoreSource"
+                class="ml-1"
+                color="amber-lighten-1"
+                icon="mdi-star"
+                size="14"
+              />
             </div>
             <div class="d-flex align-center text-body-2 text-primary-lighten-3">
-              <span class="text-capitalize">{{ asset.type }}</span>
+              <span class="text-capitalize">{{
+                getAssetTypeLabel(asset)
+              }}</span>
               <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
               <template v-if="asset.meta?.fileSize">
                 {{ formatFileSize(asset.meta.fileSize) }}
@@ -135,6 +146,7 @@ import {
   getAssetColor,
   getAssetDisplayName,
   getAssetIcon,
+  getAssetTypeLabel,
 } from './utils';
 import { UserAvatar } from '@tailor-cms/core-components';
 import IndexingStatusBadge from './IndexingStatusBadge.vue';

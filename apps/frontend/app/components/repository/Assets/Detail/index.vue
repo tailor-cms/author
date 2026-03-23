@@ -1,5 +1,5 @@
 <template>
-  <VDialog v-model="isOpen" max-width="720" scrollable>
+  <VDialog v-model="isOpen" :max-width="isImage ? 900 : 720" scrollable>
     <VCard v-if="asset" color="primary-darken-4">
       <VToolbar color="primary-darken-3" density="comfortable">
         <VToolbarTitle
@@ -13,16 +13,42 @@
           {{ displayName }}
         </VToolbarTitle>
         <template #append>
-          <VBtn icon="mdi-close" class="mr-1 text-primary-lighten-4" @click="emit('close')" />
+          <MetaInspector :asset="asset" />
+          <VBtn
+            class="mr-1 text-primary-lighten-4"
+            icon="mdi-close"
+            @click="emit('close')"
+          />
         </template>
       </VToolbar>
       <VDivider />
       <VCardText class="detail-body pa-5">
         <Preview :asset="asset" />
         <MetaInfo :asset="asset" />
+        <div class="d-flex align-center justify-space-between mb-4 px-1">
+          <div class="d-flex align-center ga-2">
+            <VIcon
+              :color="isCoreSource ? 'amber-lighten-1' : 'primary-lighten-2'"
+              :icon="isCoreSource ? 'mdi-star' : 'mdi-star-outline'"
+              size="20"
+            />
+            <span
+              class="text-body-2 text-primary-lighten-3"
+              :class="{ 'text-amber-lighten-1 font-weight-medium': isCoreSource }"
+            >
+              Core Source
+            </span>
+          </div>
+          <VSwitch
+            v-model="isCoreSource"
+            color="amber-lighten-1"
+            density="compact"
+            hide-details
+            inset
+          />
+        </div>
         <div
-          class="section-header text-caption text-uppercase text-primary-lighten-2 mb-4"
-        >
+          class="section-header text-caption text-uppercase text-primary-lighten-2 mb-4">
           Edit Details
         </div>
         <VTextarea
@@ -54,7 +80,7 @@
           prepend-icon="mdi-delete-outline"
           size="small"
           variant="tonal"
-          @click="emit('delete', asset!)"
+          @click="emit('delete', asset)"
         >
           Delete
         </VBtn>
@@ -96,14 +122,15 @@
 </template>
 
 <script lang="ts" setup>
-import type { Asset } from '@tailor-cms/interfaces/asset';
 import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset';
+import type { Asset } from '@tailor-cms/interfaces/asset';
 
-import { getAssetColor, getAssetDisplayName, getAssetIcon } from '../utils';
 import api from '@/api/repositoryAsset';
-import MetaInfo from './MetaInfo.vue';
-import Preview from './Preview.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { getAssetColor, getAssetDisplayName, getAssetIcon } from '../utils';
+import MetaInfo from './MetaInfo.vue';
+import MetaInspector from './MetaInspector.vue';
+import Preview from './Preview.vue';
 
 const props = defineProps<{ asset: Asset | null }>();
 const emit = defineEmits<{
@@ -119,7 +146,7 @@ const repositoryId = computed(() => currentRepositoryStore.repository?.id);
 
 const description = ref('');
 const tags = ref<string[]>([]);
-
+const isCoreSource = ref(false);
 const isSaving = ref(false);
 
 const isOpen = computed({
@@ -129,32 +156,37 @@ const isOpen = computed({
   },
 });
 
+const meta = computed(() => (props.asset?.meta ?? {}) as Record<string, any>);
 const typeIcon = computed(() => getAssetIcon(props.asset!));
 const typeColor = computed(() => getAssetColor(props.asset!));
 const displayName = computed(() => getAssetDisplayName(props.asset!));
-
-const isLink = computed(() => props.asset?.type === AssetType.Link);
-const canDownload = computed(() => !isLink.value && !!props.asset?.storageKey);
+const isImage = computed(() => props.asset?.type === AssetType.Image);
+const canDownload = computed(
+  () => props.asset?.type !== AssetType.Link && !!props.asset?.storageKey,
+);
 const canDeindex = computed(
   () => props.asset?.processingStatus === ProcessingStatus.Completed,
 );
 
+// Dirty check against original meta
 const hasChanges = computed(() => {
   if (!props.asset) return false;
-  const origDesc = props.asset.meta?.description || '';
-  const origTags = props.asset.meta?.tags || [];
   return (
-    description.value !== origDesc ||
-    JSON.stringify(tags.value) !== JSON.stringify(origTags)
+    description.value !== (meta.value.description || '') ||
+    JSON.stringify(tags.value) !== JSON.stringify(meta.value.tags || []) ||
+    isCoreSource.value !== !!meta.value.isCoreSource
   );
 });
 
+// Sync form state when asset changes
 watch(
   () => props.asset,
   (asset) => {
     if (!asset) return;
-    description.value = asset.meta?.description || '';
-    tags.value = asset.meta?.tags || [];
+    const m = (asset.meta ?? {}) as Record<string, any>;
+    description.value = m.description || '';
+    tags.value = m.tags || [];
+    isCoreSource.value = !!m.isCoreSource;
   },
   { immediate: true },
 );
@@ -163,14 +195,15 @@ async function saveMeta() {
   if (!props.asset || !repositoryId.value) return;
   isSaving.value = true;
   try {
-    const meta = {
+    const patch = {
       description: description.value,
       tags: tags.value,
+      isCoreSource: isCoreSource.value,
     };
-    await api.updateMeta(repositoryId.value, props.asset.id, meta);
+    await api.updateMeta(repositoryId.value, props.asset.id, patch);
     emit('updated', {
       ...props.asset,
-      meta: { ...props.asset.meta, ...meta },
+      meta: { ...props.asset.meta, ...patch },
     });
   } finally {
     isSaving.value = false;

@@ -4,20 +4,22 @@ import pMinDelay from 'p-min-delay';
 import api from '@/api/repositoryAsset';
 
 const MIN_LOADING_MS = 1000;
-export const ITEMS_PER_PAGE = 10;
+export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
+export const DEFAULT_PAGE_SIZE = 25;
 
 export function useAssets(repositoryId: Ref<number | undefined>) {
   const assets = ref<Asset[]>([]);
   const total = ref(0);
   const page = ref(1);
+  const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
   const isFetching = ref(true);
 
   async function fetch(params: Record<string, any> = {}) {
     if (!repositoryId.value) return;
     isFetching.value = true;
     const promise = api.list(repositoryId.value, {
-      offset: (page.value - 1) * ITEMS_PER_PAGE,
-      limit: ITEMS_PER_PAGE,
+      offset: (page.value - 1) * itemsPerPage.value,
+      limit: itemsPerPage.value,
       ...params,
     });
     const result = await pMinDelay(promise, MIN_LOADING_MS);
@@ -69,13 +71,16 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     }
   }
 
-  const pageCount = computed(() => Math.ceil(total.value / ITEMS_PER_PAGE));
+  const pageCount = computed(() =>
+    Math.ceil(total.value / itemsPerPage.value),
+  );
 
   return {
     assets,
     total,
     page,
     pageCount,
+    itemsPerPage,
     isFetching,
     fetch,
     upload,

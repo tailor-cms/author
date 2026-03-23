@@ -3,6 +3,7 @@
     <Toolbar
       ref="toolbarRef"
       v-model:search="searchQuery"
+      :has-vector-store="hasVectorStore"
       @upload="uploadFiles"
       @link:add="showAddLinkDialog = true"
       @discover="showDiscoveryDialog = true"
@@ -12,7 +13,6 @@
       :selected-ids="selectedIds"
       :is-indexing="isIndexing"
       :is-bulk-deleting="isBulkDeleting"
-      @select-all="selectAll"
       @clear="clearSelection"
       @index="indexSelected"
       @delete="confirmBulkDelete"
@@ -20,6 +20,36 @@
     <div class="d-flex align-center flex-wrap ga-2 mb-4">
       <CategoryFilter v-model="selectedCategory" :categories="categories" />
       <VSpacer />
+      <VBtn
+        color="primary-lighten-4"
+        size="small"
+        variant="text"
+        @click="isAllSelected ? clearSelection() : selectAll()"
+      >
+        {{ isAllSelected ? 'Deselect all' : 'Select all' }}
+      </VBtn>
+      <VMenu>
+        <template #activator="{ props: menuProps }">
+          <VBtn
+            v-bind="menuProps"
+            append-icon="mdi-chevron-down"
+            color="primary-lighten-4"
+            variant="text"
+          >
+            {{ itemsPerPage }} per page
+          </VBtn>
+        </template>
+        <VList density="compact">
+          <VListItem
+            v-for="size in PAGE_SIZE_OPTIONS"
+            :key="size"
+            :active="itemsPerPage === size"
+            @click="changePageSize(size)"
+          >
+            {{ size }} per page
+          </VListItem>
+        </VList>
+      </VMenu>
       <VBtn
         :append-icon="
           sortDirection === 'DESC'
@@ -36,7 +66,7 @@
     <AssetList
       :assets="processedAssets"
       :is-fetching="isFetching"
-      :items-per-page="ITEMS_PER_PAGE"
+      :items-per-page="itemsPerPage"
       :page="page"
       :selected-ids="selectedIds"
       :selected-category="selectedCategory"
@@ -85,7 +115,7 @@ import { useAssetFiltering } from '@/components/repository/Assets/useAssetFilter
 import { useAssetIndexing } from '@/components/repository/Assets/useAssetIndexing';
 import { useAssetSelection } from '@/components/repository/Assets/useAssetSelection';
 import {
-  ITEMS_PER_PAGE,
+  PAGE_SIZE_OPTIONS,
   useAssets,
 } from '@/components/repository/Assets/useAssets';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
@@ -104,12 +134,16 @@ const activeAsset = ref<Asset | null>(null);
 const searchQuery = ref('');
 
 const repositoryId = computed(() => currentRepositoryStore.repository?.id);
+const hasVectorStore = computed(
+  () => !!currentRepositoryStore.repository?.data?.$$?.ai?.storeId,
+);
 
 const {
   isFetching,
   assets,
   page,
   total,
+  itemsPerPage,
   fetch: fetchAssets,
   upload,
   update: updateAsset,
@@ -138,6 +172,9 @@ const {
 } = useAssetSelection(assets);
 
 const isBulkDeleting = ref(false);
+const isAllSelected = computed(
+  () => assets.value.length > 0 && selectedIds.size === assets.value.length,
+);
 const showAddLinkDialog = ref(false);
 const showDiscoveryDialog = ref(false);
 const sortDirection = ref<'ASC' | 'DESC'>('DESC');
@@ -147,10 +184,18 @@ const fetchParams = computed(() => {
     orderBy: 'createdAt',
     orderDirection: sortDirection.value,
   };
-  if (selectedCategory.value !== 'all') params.type = selectedCategory.value;
+  const selected = selectedCategory.value;
+  // Backend handles "video" (includes YT links) and "link" (excludes YT) natively
+  if (selected !== 'all') params.type = selected;
   if (searchQuery.value.trim()) params.search = searchQuery.value.trim();
   return params;
 });
+
+function changePageSize(size: number) {
+  itemsPerPage.value = size;
+  page.value = 1;
+  fetchAssets(fetchParams.value);
+}
 
 function toggleSortDirection() {
   sortDirection.value = sortDirection.value === 'DESC' ? 'ASC' : 'DESC';

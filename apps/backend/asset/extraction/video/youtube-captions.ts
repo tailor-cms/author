@@ -6,22 +6,13 @@
  */
 import { createLogger } from '#logger';
 import { YoutubeTranscript } from './youtube-transcript.js';
+import { assetVideo } from '@tailor-cms/common';
 
-const logger = createLogger('asset:youtube-captions');
+export const { extractVideoId, isYouTubeUrl } = assetVideo;
 
 // Max caption text stored in meta (100KB - covers ~1hr of video)
+const logger = createLogger('asset:youtube-captions');
 const MAX_CAPTION_CHARS = 100_000;
-const YT_URL_RE =
-  /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/;
-
-export function extractVideoId(url: string): string | null {
-  const match = url.match(YT_URL_RE);
-  return match ? match[1] : null;
-}
-
-export function isYouTubeUrl(url: string): boolean {
-  return YT_URL_RE.test(url);
-}
 
 /**
  * Fetch transcript text from a YouTube video.
