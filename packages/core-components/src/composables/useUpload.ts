@@ -3,7 +3,7 @@ import { inject, ref } from 'vue';
 import { useConfirmationDialog } from './useConfirmationDialog';
 import { useLoader } from './useLoader';
 
-type Emit = (event: 'delete' | 'upload', ...args: any[]) => void;
+type Emit = (event: 'input' | 'delete', ...args: any[]) => void;
 
 const download = (url: string, fileName: string) => {
   const anchor = document.createElement('a');
@@ -30,12 +30,16 @@ export const useUpload = (emit: Emit) => {
     if (!file) return;
     const form = new FormData();
     form.append('file', file, file.name);
-
     return storageService
       .upload(form)
       .then((data: any) => {
-        const { name, size } = form.get('file') as File;
-        emit('upload', { ...data, name, size });
+        const { name } = form.get('file') as File;
+        emit('input', {
+          key: data.key,
+          name,
+          url: data.url,
+          publicUrl: data.publicUrl,
+        });
       })
       .catch(() => (error.value = 'An error has occurred!'));
   };

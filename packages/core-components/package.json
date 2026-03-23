@@ -9,6 +9,12 @@
   ],
   "type": "module",
   "main": "./src/index.ts",
+  "imports": {
+    "#config": "./src/config/index.ts",
+    "#config/*": "./src/config/*",
+    "#utils": "./src/utils/index.ts",
+    "#utils/*": "./src/utils/*"
+  },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
     "@types/pluralize": "^0.0.33"

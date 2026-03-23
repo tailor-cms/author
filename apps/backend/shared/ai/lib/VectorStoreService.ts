@@ -5,7 +5,6 @@ import { createLogger } from '#logger';
 
 const logger = createLogger('ai:vector-store');
 
-const PDF_MIME = { type: 'application/pdf' };
 const STORE_NAME = 'tailor-cms';
 const STORE_EXPIRY = { anchor: 'last_active_at' as const, days: 60 };
 
@@ -38,7 +37,7 @@ export class VectorStoreService {
   }
 
   async upload(
-    files: { buffer: Buffer; originalname: string }[],
+    files: { buffer: Buffer; originalname: string; mimetype?: string }[],
     vectorStoreId?: string,
   ): Promise<UploadResult> {
     const id = vectorStoreId || (await this.createStore());
@@ -49,6 +48,37 @@ export class VectorStoreService {
     return { vectorStoreId: id, documents };
   }
 
+  // For text content, we can directly create a buffer and upload
+  async ingest(
+    vectorStoreId: string,
+    content: string,
+    filename: string,
+  ): Promise<UploadedDocument> {
+    const buffer = Buffer.from(content, 'utf-8');
+    return this.uploadFile(vectorStoreId, {
+      buffer,
+      originalname: filename,
+      mimetype: 'text/markdown',
+    });
+  }
+
+  async remove(storeId: string, fileId: string): Promise<void> {
+    if (!storeId || !fileId) {
+      const msg = `Skipping remove: missing storeId=${storeId} fileId=${fileId}`;
+      logger.warn(msg);
+      return;
+    }
+    try {
+      await this.client.vectorStores.files.delete(fileId, {
+        vector_store_id: storeId,
+      });
+      await this.client.files.delete(fileId).catch(() => {});
+      logger.info(`Removed file ${fileId} from store ${storeId}`);
+    } catch (err) {
+      logger.error(err, `Failed to remove file ${fileId}`);
+    }
+  }
+
   async getStatus(vectorStoreId: string): Promise<StoreStatus> {
     const { data } = await this.client.vectorStores.files.list(vectorStoreId);
     const files = data.map((f) => ({ fileId: f.id, status: f.status }));
@@ -57,6 +87,15 @@ export class VectorStoreService {
       isFailed: files.some((f) => f.status === 'failed'),
       files,
     };
+  }
+
+  async createStore(): Promise<string> {
+    const store = await this.client.vectorStores.create({
+      name: STORE_NAME,
+      expires_after: STORE_EXPIRY,
+    });
+    logger.info(`Created vector store ${store.id}`);
+    return store.id;
   }
 
   async deleteStore(vectorStoreId: string): Promise<void> {
@@ -74,19 +113,16 @@ export class VectorStoreService {
 
   private async uploadFile(
     id: string,
-    { buffer, originalname }: { buffer: Buffer; originalname: string },
+    {
+      buffer,
+      originalname,
+      mimetype,
+    }: { buffer: Buffer; originalname: string; mimetype?: string },
   ): Promise<UploadedDocument> {
-    const file = await toFile(buffer, originalname, PDF_MIME);
+    const file = await toFile(buffer, originalname, {
+      type: mimetype || 'application/octet-stream',
+    });
     const result = await this.client.vectorStores.files.upload(id, file);
     return { fileId: result.id, name: originalname };
-  }
-
-  private async createStore(): Promise<string> {
-    const store = await this.client.vectorStores.create({
-      name: STORE_NAME,
-      expires_after: STORE_EXPIRY,
-    });
-    logger.info(`Created vector store ${store.id}`);
-    return store.id;
   }
 }

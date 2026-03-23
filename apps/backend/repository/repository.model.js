@@ -57,6 +57,7 @@ class Repository extends Model {
   static associate(db) {
     const {
       Activity,
+      Asset,
       Comment,
       RepositoryUser,
       Revision,
@@ -71,6 +72,9 @@ class Repository extends Model {
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.hasMany(Comment, {
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
+    });
+    this.hasMany(Asset, {
       foreignKey: { name: 'repositoryId', field: 'repository_id' },
     });
     this.hasMany(ContentElement, {
