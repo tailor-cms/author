@@ -6,6 +6,7 @@ import indexingRouter from './indexing/index.ts';
 import discoveryRouter from './discovery/index.ts';
 import { uploaderInclude } from './asset.service.ts';
 import { handler } from './types.ts';
+import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { processPagination } from '#shared/database/pagination.js';
 import db from '#shared/database/index.js';
@@ -23,7 +24,7 @@ async function getAsset(req: any, _res: any, next: any, assetId: any) {
     include: [uploaderInclude],
   });
   if (!asset || asset.repositoryId !== req.repository.id) {
-    return createError(404, 'Asset not found');
+    return createError(StatusCodes.NOT_FOUND, 'Asset not found');
   }
   req.asset = asset;
   next();
