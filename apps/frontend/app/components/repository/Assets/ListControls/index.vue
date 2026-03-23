@@ -16,6 +16,7 @@
           v-bind="menuProps"
           append-icon="mdi-chevron-down"
           color="primary-lighten-4"
+          size="small"
           variant="text"
         >
           {{ itemsPerPage }} per page
@@ -39,6 +40,7 @@
           : 'mdi-sort-ascending'
       "
       color="primary-lighten-4"
+      size="small"
       variant="text"
       @click="$emit('toggle-sort')"
     >
