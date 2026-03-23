@@ -218,4 +218,4 @@ async function search(
   return results;
 }
 
-export default { search };
+export { search };
