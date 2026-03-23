@@ -31,6 +31,19 @@ export function requireFile(req: any, res: any, next: any) {
     .json({ errors: [{ msg: 'No file provided' }] });
 }
 
+/**
+ * Parses and transforms the list query parameters.
+ *
+ * Video-provider links (YouTube, Vimeo, etc.) are stored as type='link'
+ * but should appear under the video filter and be hidden from the link
+ * filter. This middleware translates the UI type filter into a
+ * videoLinkMode directive that the service layer uses to build the
+ * correct Sequelize WHERE clause:
+ *
+ *   type=video  → videoLinkMode: 'include' (video assets + video-provider links)
+ *   type=link   → videoLinkMode: 'exclude' (link assets minus video-provider links)
+ *   type=other  → passed through as a plain type filter
+ */
 function parseListQuery(req: any, _res: any, next: any) {
   const q = req.query || {};
   const PASSTHROUGH_PARAMS = ['search', 'orderBy', 'orderDirection'];
