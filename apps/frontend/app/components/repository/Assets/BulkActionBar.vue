@@ -78,7 +78,11 @@ const props = defineProps<{
   isBulkDeleting: boolean;
 }>();
 
-defineEmits(['index', 'delete', 'clear']);
+defineEmits<{
+  index: [];
+  delete: [];
+  clear: [];
+}>();
 
 const hasSelection = computed(() => props.selectedIds.size > 0);
 

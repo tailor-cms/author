@@ -72,7 +72,9 @@ const props = defineProps<{
   selected: boolean;
 }>();
 
-defineEmits(['toggle']);
+defineEmits<{
+  toggle: [];
+}>();
 
 const typeIcon = computed(() => TYPE_ICON[props.suggestion.type]);
 const typeColor = computed(() => TYPE_COLOR[props.suggestion.type]);

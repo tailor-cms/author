@@ -21,7 +21,7 @@
       color="primary-lighten-3"
       icon="mdi-magnify"
       variant="tonal"
-      @click="query?.trim() &&emit('search')"
+      @click="query?.trim() && emit('search')"
     >
     </VBtn>
   </div>

@@ -24,8 +24,12 @@ export default defineNuxtPlugin(() => {
   defineRule('ext', (value: any, extensions: string[]) => {
     // null and undefined are valid values, should be handled by required rule
     if (value === null || value === undefined || value === '') return true;
-    // File input values are objects with key and name properties
-    const fileName = typeof value === 'string' ? value : value?.name;
+    // File input values are objects with key and name properties.
+    // Check key first (storage keys always include the extension),
+    // then fall back to name (may lack extension for link-imported assets).
+    const fileName = typeof value === 'string'
+      ? value
+      : value?.key || value?.name;
     if (!fileName) return true;
     const fileExt = fileName.split('.').pop()?.toLowerCase();
     const allowedExts = extensions.map((ext) => ext.toLowerCase());

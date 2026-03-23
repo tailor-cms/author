@@ -64,29 +64,25 @@ function formatEntry(key: string, value: any) {
   return { key, display, isSimple, color };
 }
 
+function getTopLevelFields(asset: Asset) {
+  return {
+    id: asset.id,
+    type: asset.type,
+    storageKey: asset.storageKey,
+    processingStatus: asset.processingStatus,
+    vectorStoreFileId: asset.vectorStoreFileId,
+  };
+}
+
 const props = defineProps<{ asset: Asset }>();
 
 const entries = computed(() => {
-  const flat: Record<string, any> = {
-    id: props.asset.id,
-    type: props.asset.type,
-    storageKey: props.asset.storageKey,
-    processingStatus: props.asset.processingStatus,
-    vectorStoreFileId: props.asset.vectorStoreFileId,
-    ...props.asset.meta,
-  };
+  const flat = { ...getTopLevelFields(props.asset), ...props.asset.meta };
   return Object.entries(flat).map(([k, v]) => formatEntry(k, v));
 });
 
 function copyToClipboard() {
-  const data = {
-    id: props.asset.id,
-    type: props.asset.type,
-    storageKey: props.asset.storageKey,
-    processingStatus: props.asset.processingStatus,
-    vectorStoreFileId: props.asset.vectorStoreFileId,
-    meta: props.asset.meta,
-  };
+  const data = { ...getTopLevelFields(props.asset), meta: props.asset.meta };
   navigator.clipboard.writeText(JSON.stringify(data, null, 2));
 }
 </script>

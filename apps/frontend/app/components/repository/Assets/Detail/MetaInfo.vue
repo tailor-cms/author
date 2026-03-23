@@ -116,6 +116,7 @@ const typeIcon = computed(() => getAssetIcon(props.asset));
 const typeColor = computed(() => getAssetColor(props.asset));
 const isLink = computed(() => props.asset.type === AssetType.Link);
 const meta = computed(() => props.asset.meta as Record<string, any>);
+const hasSourceInfo = computed(() => !!meta.value.source?.url);
 
 const truncatedUrl = computed(() => {
   const url = meta.value?.url;

@@ -51,7 +51,11 @@
 </template>
 
 <script lang="ts" setup>
-const emit = defineEmits(['upload', 'link:add', 'discover']);
+const emit = defineEmits<{
+  'upload': [files: File[]];
+  'link:add': [];
+  'discover': [];
+}>();
 
 const search = defineModel<string>('search', { default: '' });
 

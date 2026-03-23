@@ -78,6 +78,8 @@ import { useUpload } from '../../composables/useUpload';
 import { ASSET_TYPE_ICON, ASSET_TYPE_LABEL } from '#config';
 import type { VTextField } from 'vuetify/components';
 
+defineOptions({ inheritAttrs: false });
+
 interface Props {
   // Storage key or storage:// URI of the current file
   fileKey?: string;

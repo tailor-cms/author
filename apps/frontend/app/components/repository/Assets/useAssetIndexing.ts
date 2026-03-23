@@ -1,15 +1,17 @@
-import api from '@/api/repositoryAsset';
+import type { Asset } from '@tailor-cms/interfaces/asset';
 import { ProcessingStatus } from '@tailor-cms/interfaces/asset';
 
+import api from '@/api/repositoryAsset';
+
 const POLL_INTERVAL = 3000;
-const ACTIVE_STATUSES: Set<string> = new Set([
+const ACTIVE_STATUSES = new Set<ProcessingStatus>([
   ProcessingStatus.Pending,
   ProcessingStatus.Processing,
 ]);
 
 export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
   const isIndexing = ref(false);
-  const indexingStatusMap = reactive(new Map<number, string>());
+  const indexingStatusMap = reactive(new Map<number, ProcessingStatus>());
 
   const scope = getCurrentScope();
   let pollTimer: ReturnType<typeof setInterval> | null = null;
@@ -45,9 +47,12 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
     if (!repositoryId.value) return;
     try {
       const statuses = await api.getIndexingStatus(repositoryId.value);
-      for (const s of statuses) indexingStatusMap.set(s.id, s.processingStatus);
+      for (const s of statuses) {
+        indexingStatusMap.set(s.id, s.processingStatus as ProcessingStatus);
+      }
       const hasActive = statuses.some(
-        (s: { processingStatus: string }) => ACTIVE_STATUSES.has(s.processingStatus),
+        (s: { processingStatus: ProcessingStatus }) =>
+          ACTIVE_STATUSES.has(s.processingStatus),
       );
       if (!hasActive && !pendingSubmissions) finishPolling();
     } catch {
@@ -56,8 +61,13 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
   }
 
   // Resume polling if any fetched assets have an active processing status.
-  function resumeIfActive(assets: { id: number; processingStatus: string | null }[]) {
-    const active = assets.filter((a) => ACTIVE_STATUSES.has(a.processingStatus));
+  function resumeIfActive(
+    assets: { id: number; processingStatus: ProcessingStatus | null }[],
+  ) {
+    const active = assets.filter(
+      (a): a is typeof a & { processingStatus: ProcessingStatus } =>
+        !!a.processingStatus && ACTIVE_STATUSES.has(a.processingStatus),
+    );
     if (!active.length) return;
     isIndexing.value = true;
     active.forEach((a) => indexingStatusMap.set(a.id, a.processingStatus));
@@ -68,6 +78,23 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
     indexingStatusMap.delete(assetId);
   }
 
+  /**
+   * Returns a computed list of assets with live indexing status merged in.
+   * Overlays polled processingStatus from indexingStatusMap onto each asset,
+   * so the UI reflects real-time progress without re-fetching the full list.
+   */
+  function withStatus(assets: Ref<Asset[]>) {
+    return computed(() =>
+      assets.value.map((asset) => {
+        const status = indexingStatusMap.get(asset.id);
+        if (status && status !== asset.processingStatus) {
+          return { ...asset, processingStatus: status };
+        }
+        return asset;
+      }),
+    );
+  }
+
   onScopeDispose(stopPolling);
 
   return {
@@ -76,5 +103,6 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
     startIndexing,
     resumeIfActive,
     clearAssetStatus,
+    withStatus,
   };
 }

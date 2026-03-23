@@ -12,29 +12,13 @@
           Discover Resources
         </VToolbarTitle>
         <template #append>
-          <VBtn
-            v-if="selectedUrls.size"
-            :loading="isAdding"
-            :prepend-icon="hasDownloadable ? 'mdi-download' : 'mdi-link-plus'"
-            class="mr-4"
-            color="primary-lighten-3"
-            variant="outlined"
-            @click="addSelected(false)"
-          >
-            {{ hasDownloadable ? 'Import' : 'Add as links' }}
-            {{ selectedUrls.size }}
-          </VBtn>
-          <VBtn
-            v-if="selectedUrls.size"
-            :loading="isAdding"
-            class="mr-4"
-            color="primary-lighten-3"
-            prepend-icon="mdi-brain"
-            variant="tonal"
-            @click="addSelected(true)"
-          >
-            {{ hasDownloadable ? 'Import' : 'Add' }} & Index
-          </VBtn>
+          <DiscoveryActions
+            :selected-count="selectedUrls.size"
+            :has-downloadable="hasDownloadable"
+            :is-adding="isAdding"
+            @add="addSelected(false)"
+            @add-and-index="addSelected(true)"
+          />
           <VBtn icon="mdi-close" @click="show = false" />
         </template>
       </VToolbar>
@@ -47,6 +31,19 @@
               :is-searching="isSearching"
               @search="search"
             />
+            <VAlert
+              class="mb-4"
+              color="primary-lighten-2"
+              density="compact"
+              icon="mdi-shield-check-outline"
+              variant="tonal"
+            >
+              <span class="text-body-2">
+                Verify that you have the right to use any content you import.
+                Where available, licensing info is shown per result - review
+                before adding.
+              </span>
+            </VAlert>
             <SearchResults
               v-model:page="page"
               :suggestions="suggestions"
@@ -71,8 +68,9 @@ import type {
 } from '@tailor-cms/interfaces/discovery';
 
 import api from '@/api/repositoryAsset';
-import SearchResults from './SearchResults/index.vue';
+import DiscoveryActions from './DiscoveryActions.vue';
 import SearchBar from './SearchBar.vue';
+import SearchResults from './SearchResults/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const DOWNLOADABLE_TYPES = new Set(['image', 'pdf', 'video', 'audio']);
@@ -131,31 +129,33 @@ function selectAll() {
   suggestions.value.forEach((s) => selectedUrls.add(s.url));
 }
 
+function toImportMeta(result?: DiscoveryResult) {
+  if (!result) return {};
+  return {
+    contentType: result.type,
+    title: result.title,
+    description: result.description || result.snippet,
+    downloadUrl: result.downloadUrl,
+    author: result.author,
+    license: result.license,
+    tags: result.tags,
+  };
+}
+
 async function addSelected(shouldIndex = false) {
   if (!repositoryId.value) return;
   isAdding.value = true;
-  const resultByUrl = new Map(suggestions.value.map((s) => [s.url, s]));
-  const addedAssets: Array<{ id: number }> = [];
-  for (const url of selectedUrls) {
-    try {
-      const result = resultByUrl.get(url);
-      const asset = await api.importFromLink(repositoryId.value, url, {
-        contentType: result?.type,
-        title: result?.title,
-        description: result?.description || result?.snippet,
-        downloadUrl: result?.downloadUrl,
-        author: result?.author,
-        license: result?.license,
-        tags: result?.tags,
-      });
-      addedAssets.push(asset);
-    } catch {
-      // Skip failed individual links
-    }
-  }
+  const byUrl = new Map(suggestions.value.map((s) => [s.url, s]));
+  const imports = [...selectedUrls].map((url) =>
+    api.importFromLink(repositoryId.value!, url, toImportMeta(byUrl.get(url)))
+      .catch(() => null),
+  );
+  const addedAssets = (await Promise.all(imports)).filter(Boolean);
   if (shouldIndex && addedAssets.length) {
-    const assetIds = addedAssets.map((a) => a.id);
-    await api.indexAssets(repositoryId.value, assetIds);
+    await api.indexAssets(
+      repositoryId.value,
+      addedAssets.map((a: any) => a.id),
+    );
   }
   isAdding.value = false;
   emit('added', addedAssets);

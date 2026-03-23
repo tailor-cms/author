@@ -87,12 +87,11 @@ import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
 
 import { getAssetColor, getAssetIcon, toEmbedUrl } from '../utils';
 import api from '@/api/repositoryAsset';
-import { useCurrentRepository } from '@/stores/current-repository';
 
-const props = defineProps<{ asset: Asset }>();
-
-const currentRepositoryStore = useCurrentRepository();
-const repositoryId = computed(() => currentRepositoryStore.repository?.id);
+const props = defineProps<{
+  asset: Asset;
+  repositoryId?: number;
+}>();
 
 const isLoading = ref(false);
 const hasError = ref(false);
@@ -118,10 +117,10 @@ watch(
   async (asset) => {
     previewUrl.value = null;
     hasError.value = false;
-    if (!asset?.storageKey || !repositoryId.value) return;
+    if (!asset?.storageKey || !props.repositoryId) return;
     isLoading.value = true;
     try {
-      const { url } = await api.getDownloadUrl(repositoryId.value, asset.id);
+      const { url } = await api.getDownloadUrl(props.repositoryId, asset.id);
       previewUrl.value = url;
     } catch {
       hasError.value = true;

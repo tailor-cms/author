@@ -2,7 +2,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 
 import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
-import { detectLinkProvider } from '@tailor-cms/interfaces/asset.ts';
+import { detectLinkProvider } from '@tailor-cms/common/asset';
 import imageSize from 'image-size';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';

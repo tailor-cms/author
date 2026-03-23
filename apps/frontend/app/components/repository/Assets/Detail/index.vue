@@ -23,54 +23,12 @@
       </VToolbar>
       <VDivider />
       <VCardText class="detail-body pa-5">
-        <Preview :asset="asset" />
+        <Preview :asset="asset" :repository-id="props.repositoryId" />
         <MetaInfo :asset="asset" />
-        <div class="d-flex align-center justify-space-between mb-4 px-1">
-          <div class="d-flex align-center ga-2">
-            <VIcon
-              :color="isCoreSource ? 'amber-lighten-1' : 'primary-lighten-2'"
-              :icon="isCoreSource ? 'mdi-star' : 'mdi-star-outline'"
-              size="20"
-            />
-            <span
-              class="text-body-2 text-primary-lighten-3"
-              :class="{ 'text-amber-lighten-1 font-weight-medium': isCoreSource }"
-            >
-              Core Source
-            </span>
-          </div>
-          <VSwitch
-            v-model="isCoreSource"
-            color="amber-lighten-1"
-            density="compact"
-            hide-details
-            inset
-          />
-        </div>
-        <div
-          class="section-header text-caption text-uppercase text-primary-lighten-2 mb-4">
-          Edit Details
-        </div>
-        <VTextarea
-          v-model="description"
-          color="primary-lighten-3"
-          density="comfortable"
-          label="Description"
-          variant="outlined"
-          rows="3"
-          hide-details
-        />
-        <VCombobox
-          v-model="tags"
-          class="mt-3"
-          color="primary-lighten-3"
-          density="comfortable"
-          label="Tags"
-          variant="outlined"
-          closable-chips
-          chips
-          hide-details
-          multiple
+        <EditForm
+          v-model:description="description"
+          v-model:tags="tags"
+          v-model:is-core-source="isCoreSource"
         />
       </VCardText>
       <VDivider />
@@ -125,29 +83,28 @@
 import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset';
 import type { Asset } from '@tailor-cms/interfaces/asset';
 
-import api from '@/api/repositoryAsset';
-import { useCurrentRepository } from '@/stores/current-repository';
 import { getAssetColor, getAssetDisplayName, getAssetIcon } from '../utils';
+import EditForm from './EditForm.vue';
 import MetaInfo from './MetaInfo.vue';
 import MetaInspector from './MetaInspector.vue';
 import Preview from './Preview.vue';
 
-const props = defineProps<{ asset: Asset | null }>();
+const props = defineProps<{
+  asset: Asset | null;
+  repositoryId?: number;
+  isSaving?: boolean;
+}>();
 const emit = defineEmits<{
   close: [];
   download: [asset: Asset];
   delete: [asset: Asset];
   deindex: [asset: Asset];
-  updated: [asset: Asset];
+  save: [asset: Asset, meta: Record<string, any>];
 }>();
-
-const currentRepositoryStore = useCurrentRepository();
-const repositoryId = computed(() => currentRepositoryStore.repository?.id);
 
 const description = ref('');
 const tags = ref<string[]>([]);
 const isCoreSource = ref(false);
-const isSaving = ref(false);
 
 const isOpen = computed({
   get: () => !!props.asset,
@@ -191,23 +148,14 @@ watch(
   { immediate: true },
 );
 
-async function saveMeta() {
-  if (!props.asset || !repositoryId.value) return;
-  isSaving.value = true;
-  try {
-    const patch = {
-      description: description.value,
-      tags: tags.value,
-      isCoreSource: isCoreSource.value,
-    };
-    await api.updateMeta(repositoryId.value, props.asset.id, patch);
-    emit('updated', {
-      ...props.asset,
-      meta: { ...props.asset.meta, ...patch },
-    });
-  } finally {
-    isSaving.value = false;
-  }
+function saveMeta() {
+  if (!props.asset) return;
+  const patch = {
+    description: description.value,
+    tags: tags.value,
+    isCoreSource: isCoreSource.value,
+  };
+  emit('save', props.asset, patch);
 }
 </script>
 
@@ -215,9 +163,5 @@ async function saveMeta() {
 .detail-body {
   max-height: 70vh;
   overflow-y: auto;
-}
-
-.section-header {
-  letter-spacing: 0.08em;
 }
 </style>

@@ -13,6 +13,8 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   const page = ref(1);
   const itemsPerPage = ref(DEFAULT_PAGE_SIZE);
   const isFetching = ref(true);
+  const isSaving = ref(false);
+  const isBulkRemoving = ref(false);
 
   async function fetch(params: Record<string, any> = {}) {
     if (!repositoryId.value) return;
@@ -40,8 +42,15 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
 
   async function bulkRemove(ids: number[]) {
     if (!repositoryId.value) return;
-    const { deletedIds } = await api.bulkRemove(repositoryId.value, ids);
-    return deletedIds;
+    isBulkRemoving.value = true;
+    try {
+      const { deletedIds } = await api.bulkRemove(
+        repositoryId.value, ids,
+      );
+      return deletedIds;
+    } finally {
+      isBulkRemoving.value = false;
+    }
   }
 
   async function addLink(url: string) {
@@ -64,6 +73,21 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     });
   }
 
+  async function updateMeta(assetId: number, meta: Record<string, any>) {
+    if (!repositoryId.value) return;
+    isSaving.value = true;
+    try {
+      await api.updateMeta(repositoryId.value, assetId, meta);
+      const current = assets.value.find((a) => a.id === assetId);
+      if (!current) return;
+      // Shallow spread; matches backend updateMeta behavior.
+      // Intentional: allows null values to clear nested keys.
+      update({ id: assetId, meta: { ...current.meta, ...meta } });
+    } finally {
+      isSaving.value = false;
+    }
+  }
+
   function update(updated: Partial<Asset> & { id: number }) {
     const idx = assets.value.findIndex((a) => a.id === updated.id);
     if (idx !== -1) {
@@ -82,6 +106,8 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     pageCount,
     itemsPerPage,
     isFetching,
+    isSaving,
+    isBulkRemoving,
     fetch,
     upload,
     addLink,
@@ -89,6 +115,6 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     remove,
     bulkRemove,
     deindex,
-    update,
+    updateMeta,
   };
 }

@@ -3,254 +3,169 @@
     <Toolbar
       ref="toolbarRef"
       v-model:search="searchQuery"
-      :has-vector-store="hasVectorStore"
       @upload="uploadFiles"
       @link:add="showAddLinkDialog = true"
       @discover="showDiscoveryDialog = true"
     />
     <BulkActionBar
-      :assets="assets"
-      :selected-ids="selectedIds"
-      :is-indexing="isIndexing"
-      :is-bulk-deleting="isBulkDeleting"
-      @clear="clearSelection"
+      :assets="assetStore.assets.value"
+      :selected-ids="selection.selectedIds"
+      :is-indexing="indexing.isIndexing.value"
+      :is-bulk-deleting="assetStore.isBulkRemoving.value"
+      @clear="selection.clear"
       @index="indexSelected"
       @delete="confirmBulkDelete"
     />
-    <div class="d-flex align-center flex-wrap ga-2 mb-4">
-      <CategoryFilter v-model="selectedCategory" :categories="categories" />
-      <VSpacer />
-      <VBtn
-        color="primary-lighten-4"
-        size="small"
-        variant="text"
-        @click="isAllSelected ? clearSelection() : selectAll()"
-      >
-        {{ isAllSelected ? 'Deselect all' : 'Select all' }}
-      </VBtn>
-      <VMenu>
-        <template #activator="{ props: menuProps }">
-          <VBtn
-            v-bind="menuProps"
-            append-icon="mdi-chevron-down"
-            color="primary-lighten-4"
-            variant="text"
-          >
-            {{ itemsPerPage }} per page
-          </VBtn>
-        </template>
-        <VList density="compact">
-          <VListItem
-            v-for="size in PAGE_SIZE_OPTIONS"
-            :key="size"
-            :active="itemsPerPage === size"
-            @click="changePageSize(size)"
-          >
-            {{ size }} per page
-          </VListItem>
-        </VList>
-      </VMenu>
-      <VBtn
-        :append-icon="
-          sortDirection === 'DESC'
-            ? 'mdi-sort-descending'
-            : 'mdi-sort-ascending'
-        "
-        color="primary-lighten-4"
-        variant="text"
-        @click="toggleSortDirection"
-      >
-        {{ sortDirection === 'DESC' ? 'Newest first' : 'Oldest first' }}
-      </VBtn>
-    </div>
+    <ListControls
+      v-model:selected-category="selectedCategory"
+      v-model:items-per-page="assetStore.itemsPerPage.value"
+      :categories="categories"
+      :is-all-selected="isAllSelected"
+      :sort-direction="sortDirection"
+      @select-all="selection.selectAll"
+      @deselect-all="selection.clear"
+      @update:items-per-page="resetAndFetch"
+      @toggle-sort="toggleSortDirection"
+    />
     <AssetList
       :assets="processedAssets"
-      :is-fetching="isFetching"
-      :items-per-page="itemsPerPage"
-      :page="page"
-      :selected-ids="selectedIds"
+      :is-fetching="assetStore.isFetching.value"
+      :items-per-page="assetStore.itemsPerPage.value"
+      :page="assetStore.page.value"
+      :selected-ids="selection.selectedIds"
       :selected-category="selectedCategory"
-      :total="total"
+      :total="assetStore.total.value"
       @delete="confirmDelete"
       @download="downloadAsset"
       @select="activeAsset = $event"
-      @select:toggle="toggleSelect"
-      @update:page="page = $event"
+      @select:toggle="selection.toggle"
+      @update:page="assetStore.page.value = $event"
     />
     <AssetDetailDialog
       :asset="activeAsset"
+      :repository-id="repositoryId"
+      :is-saving="assetStore.isSaving.value"
       @close="activeAsset = null"
       @deindex="onDeindex"
-      @delete="
-        confirmDelete($event);
-        activeAsset = null;
-      "
+      @delete="confirmDelete($event); activeAsset = null"
       @download="downloadAsset"
-      @updated="onAssetUpdated"
+      @save="onSaveMeta"
     />
     <AddLinkDialog
       v-model="showAddLinkDialog"
-      @created="(url: string) => addLink(url).then(() => fetchAssets(fetchParams))"
+      @created="(url: string) => assetStore.addLink(url).then(refetch)"
     />
     <DiscoveryDialog
       v-model="showDiscoveryDialog"
-      @added="fetchAssets(fetchParams)"
+      @added="refetch()"
     />
   </VContainer>
 </template>
 
 <script lang="ts" setup>
-import type { Asset, ProcessingStatus } from '@tailor-cms/interfaces/asset';
+import type { Asset } from '@tailor-cms/interfaces/asset';
 import { debounce } from 'lodash-es';
 
 import AddLinkDialog from '@/components/repository/Assets/AddLinkDialog.vue';
 import AssetDetailDialog from '@/components/repository/Assets/Detail/index.vue';
 import AssetList from '@/components/repository/Assets/AssetList.vue';
 import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
-import CategoryFilter from '@/components/repository/Assets/CategoryFilter.vue';
 import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
+import ListControls from '@/components/repository/Assets/ListControls.vue';
 import Toolbar from '@/components/repository/Assets/Toolbar.vue';
 import { isIndexable } from '@/components/repository/Assets/utils';
 import { useAssetFiltering } from '@/components/repository/Assets/useAssetFiltering';
 import { useAssetIndexing } from '@/components/repository/Assets/useAssetIndexing';
 import { useAssetSelection } from '@/components/repository/Assets/useAssetSelection';
-import {
-  PAGE_SIZE_OPTIONS,
-  useAssets,
-} from '@/components/repository/Assets/useAssets';
+import { useAssets } from '@/components/repository/Assets/useAssets';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-definePageMeta({
-  name: 'repository-assets',
-});
+definePageMeta({ name: 'repository-assets' });
 
-const SEARCH_DEBOUNCE_MS = 300;
+type SortDirection = 'ASC' | 'DESC';
+const ASC: SortDirection = 'ASC';
+const DESC: SortDirection = 'DESC';
+
 const currentRepositoryStore = useCurrentRepository();
 const showConfirmation = useConfirmationDialog();
+const repositoryId = computed(() => currentRepositoryStore.repository?.id);
+
+const assetStore = useAssets(repositoryId);
+const indexing = useAssetIndexing(repositoryId);
+const { categories, selectedCategory } = useAssetFiltering();
+const selection = useAssetSelection(assetStore.assets);
+const processedAssets = indexing.withStatus(assetStore.assets);
 
 const toolbarRef = ref<InstanceType<typeof Toolbar>>();
 const activeAsset = ref<Asset | null>(null);
 const searchQuery = ref('');
-
-const repositoryId = computed(() => currentRepositoryStore.repository?.id);
-const hasVectorStore = computed(
-  () => !!currentRepositoryStore.repository?.data?.$$?.ai?.storeId,
-);
-
-const {
-  isFetching,
-  assets,
-  page,
-  total,
-  itemsPerPage,
-  fetch: fetchAssets,
-  upload,
-  update: updateAsset,
-  remove,
-  bulkRemove,
-  addLink,
-  getDownloadUrl,
-  deindex,
-} = useAssets(repositoryId);
-
-const {
-  isIndexing,
-  startIndexing,
-  resumeIfActive,
-  clearAssetStatus,
-  indexingStatusMap,
-} = useAssetIndexing(repositoryId);
-
-const { categories, selectedCategory } = useAssetFiltering();
-
-const {
-  selectedIds,
-  toggle: toggleSelect,
-  selectAll,
-  clear: clearSelection,
-} = useAssetSelection(assets);
-
-const isBulkDeleting = ref(false);
-const isAllSelected = computed(
-  () => assets.value.length > 0 && selectedIds.size === assets.value.length,
-);
 const showAddLinkDialog = ref(false);
 const showDiscoveryDialog = ref(false);
-const sortDirection = ref<'ASC' | 'DESC'>('DESC');
+const sortDirection = ref<SortDirection>(DESC);
+
+const isAllSelected = computed(
+  () => assetStore.assets.value.length > 0
+    && selection.selectedIds.size === assetStore.assets.value.length,
+);
 
 const fetchParams = computed(() => {
   const params: Record<string, any> = {
     orderBy: 'createdAt',
     orderDirection: sortDirection.value,
   };
-  const selected = selectedCategory.value;
-  // Backend handles "video" (includes YT links) and "link" (excludes YT) natively
-  if (selected !== 'all') params.type = selected;
-  if (searchQuery.value.trim()) params.search = searchQuery.value.trim();
+  if (selectedCategory.value !== 'all') {
+    params.type = selectedCategory.value;
+  }
+  if (searchQuery.value.trim()) {
+    params.search = searchQuery.value.trim();
+  }
   return params;
 });
 
-function changePageSize(size: number) {
-  itemsPerPage.value = size;
-  page.value = 1;
-  fetchAssets(fetchParams.value);
+function refetch() {
+  assetStore.fetch(fetchParams.value);
 }
 
-function toggleSortDirection() {
-  sortDirection.value = sortDirection.value === 'DESC' ? 'ASC' : 'DESC';
-  page.value = 1;
-  fetchAssets(fetchParams.value);
+function resetAndFetch() {
+  assetStore.page.value = 1;
+  refetch();
 }
-
-const debouncedSearch = debounce(() => {
-  page.value = 1;
-  fetchAssets(fetchParams.value);
-}, SEARCH_DEBOUNCE_MS);
-
-function processAsset(asset: Asset): Asset {
-  const status = indexingStatusMap.get(asset.id) as
-    | ProcessingStatus
-    | undefined;
-  if (status && status !== asset.processingStatus) {
-    return { ...asset, processingStatus: status };
-  }
-  return asset;
-}
-
-const processedAssets = computed(() =>
-  assets.value.map((it) => processAsset(it)),
-);
 
 async function uploadFiles(files: File[]) {
-  await upload(files);
+  await assetStore.upload(files);
   toolbarRef.value?.reset();
-  fetchAssets(fetchParams.value);
+  refetch();
 }
 
 async function downloadAsset(asset: Asset) {
-  const result = await getDownloadUrl(asset.id);
+  const result = await assetStore.getDownloadUrl(asset.id);
   if (result?.url) window.open(result.url, '_blank');
 }
 
 async function indexSelected() {
-  const ids = assets.value
-    .filter((a) => selectedIds.has(a.id) && isIndexable(a))
+  const ids = assetStore.assets.value
+    .filter((a) => selection.selectedIds.has(a.id) && isIndexable(a))
     .map((a) => a.id);
   if (!ids.length) return;
-  await startIndexing(ids);
-  clearSelection();
+  await indexing.startIndexing(ids);
+  selection.clear();
 }
 
 async function onDeindex(asset: Asset) {
-  await deindex(asset.id);
-  clearAssetStatus(asset.id);
+  await assetStore.deindex(asset.id);
+  indexing.clearAssetStatus(asset.id);
   activeAsset.value = null;
 }
 
-function onAssetUpdated(updated: Asset) {
-  updateAsset(updated);
+async function onSaveMeta(asset: Asset, meta: Record<string, any>) {
+  await assetStore.updateMeta(asset.id, meta);
   activeAsset.value = null;
+}
+
+function toggleSortDirection() {
+  sortDirection.value = sortDirection.value === DESC ? ASC : DESC;
+  resetAndFetch();
 }
 
 function confirmDelete(asset: Asset) {
@@ -258,9 +173,9 @@ function confirmDelete(asset: Asset) {
     title: 'Delete Asset',
     message: `Are you sure you want to delete "${asset.name}"?`,
     action: async () => {
-      await remove(asset.id);
-      selectedIds.delete(asset.id);
-      fetchAssets(fetchParams.value);
+      await assetStore.remove(asset.id);
+      selection.selectedIds.delete(asset.id);
+      refetch();
     },
   });
 }
@@ -268,26 +183,22 @@ function confirmDelete(asset: Asset) {
 function confirmBulkDelete() {
   showConfirmation({
     title: 'Delete Assets',
-    message: `Are you sure you want to delete ${selectedIds.size} selected assets?`,
+    message: `Delete ${selection.selectedIds.size} selected assets?`,
     action: async () => {
-      isBulkDeleting.value = true;
-      const deletedIds = await bulkRemove([...selectedIds]);
-      deletedIds?.forEach((id: number) => selectedIds.delete(id));
-      isBulkDeleting.value = false;
-      fetchAssets(fetchParams.value);
+      const ids = await assetStore.bulkRemove([...selection.selectedIds]);
+      ids?.forEach((id: number) => selection.selectedIds.delete(id));
+      refetch();
     },
   });
 }
 
-watch(selectedCategory, () => {
-  page.value = 1;
-  fetchAssets(fetchParams.value);
-});
+const debouncedSearch = debounce(resetAndFetch, 300);
+watch(selectedCategory, resetAndFetch);
 watch(searchQuery, debouncedSearch);
-watch(page, () => fetchAssets(fetchParams.value));
+watch(assetStore.page, refetch);
 
 onMounted(async () => {
-  await fetchAssets();
-  resumeIfActive(assets.value);
+  await assetStore.fetch();
+  indexing.resumeIfActive(assetStore.assets.value);
 });
 </script>

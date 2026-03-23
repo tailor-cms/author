@@ -59,28 +59,6 @@ export interface LinkAssetMeta extends AssetMetaBase {
   provider?: string;
 }
 
-const PROVIDER_PATTERNS: [RegExp, string, string][] = [
-  [/(?:youtube\.com|youtu\.be)/i, 'youtube', 'video'],
-  [/vimeo\.com/i, 'vimeo', 'video'],
-  [/dailymotion\.com/i, 'dailymotion', 'video'],
-  [/spotify\.com/i, 'spotify', 'audio'],
-  [/soundcloud\.com/i, 'soundcloud', 'audio'],
-];
-
-// Detect provider and content type from a URL
-export function detectLinkProvider(url: string): {
-  provider?: string;
-  contentType?: string;
-} {
-  try {
-    const hostname = new URL(url).hostname;
-    for (const [pattern, provider, contentType] of PROVIDER_PATTERNS) {
-      if (pattern.test(hostname)) return { provider, contentType };
-    }
-  } catch { /* malformed URL */ }
-  return {};
-}
-
 export type AssetMeta = FileAssetMeta | MediaAssetMeta | LinkAssetMeta;
 
 export interface AssetSource {

@@ -1,4 +1,5 @@
 import { AssetType } from '@tailor-cms/interfaces/asset';
+import { detectLinkProvider } from '@tailor-cms/common/asset';
 import { ASSET_TYPE_COLOR, ASSET_TYPE_ICON } from '@tailor-cms/core-components';
 
 export {
@@ -48,19 +49,14 @@ const LINK_CONTENT_TYPE_ICONS: Record<string, string> = {
   [AssetType.Document]: 'mdi-file-document',
 };
 
-function detectProvider(asset: { type?: string; meta?: any }): string | null {
+export function detectProvider(
+  asset: { type?: string; meta?: any },
+): string | null {
   if (asset.type !== AssetType.Link) return null;
   if (asset.meta?.provider) return asset.meta.provider;
   const url = asset.meta?.url;
   if (!url) return null;
-  try {
-    const hostname = new URL(url).hostname;
-    if (/youtube\.com|youtu\.be/i.test(hostname)) return 'youtube';
-    if (/vimeo\.com/i.test(hostname)) return 'vimeo';
-    if (/spotify\.com/i.test(hostname)) return 'spotify';
-    if (/soundcloud\.com/i.test(hostname)) return 'soundcloud';
-  } catch { /* malformed URL */ }
-  return null;
+  return detectLinkProvider(url).provider || null;
 }
 
 export function getAssetIcon(asset: { type?: string; meta?: any }) {
@@ -107,10 +103,7 @@ export function isIndexable(asset: { type?: string; meta?: any }): boolean {
   return false;
 }
 
-export {
-  toEmbedUrl,
-  extractVideoId,
-} from '@tailor-cms/common/src/asset/video.js';
+export { toEmbedUrl, extractVideoId } from '@tailor-cms/common/asset';
 
 export function formatDate(date: string | Date): string {
   return new Date(date).toLocaleDateString('en-US', {

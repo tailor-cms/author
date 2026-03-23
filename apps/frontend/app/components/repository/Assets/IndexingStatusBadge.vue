@@ -8,7 +8,7 @@
   >
     <VIcon
       v-if="status === ProcessingStatus.Processing"
-      class="spin"
+      class="mdi-spin"
       icon="mdi-loading"
       size="12"
       start
@@ -39,18 +39,3 @@ const LABEL_MAP: Record<string, string> = {
 const color = computed(() => COLOR_MAP[props.status] || 'grey');
 const label = computed(() => LABEL_MAP[props.status] || props.status);
 </script>
-
-<style scoped>
-.spin {
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-</style>
