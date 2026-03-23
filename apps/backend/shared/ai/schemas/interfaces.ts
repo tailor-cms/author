@@ -1,10 +1,9 @@
 import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
-import type { JSONSchema7 } from 'json-schema';
 
 export interface OpenAISchema {
   type: 'json_schema';
   name: string;
-  schema: JSONSchema7;
+  schema: Record<string, unknown>;
 }
 
 export interface AiResponseSpec {
