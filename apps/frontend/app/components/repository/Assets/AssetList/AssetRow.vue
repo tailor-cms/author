@@ -97,8 +97,8 @@ import {
   getAssetDisplayName,
   getAssetIcon,
   getAssetTypeLabel,
-} from './utils';
-import IndexingStatusBadge from './IndexingStatusBadge.vue';
+} from '../utils';
+import IndexingStatusBadge from '../IndexingStatusBadge.vue';
 
 defineProps<{
   asset: Asset;

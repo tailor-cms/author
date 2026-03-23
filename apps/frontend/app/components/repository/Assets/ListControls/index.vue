@@ -49,7 +49,7 @@
 
 <script lang="ts" setup>
 import CategoryFilter from './CategoryFilter.vue';
-import { PAGE_SIZE_OPTIONS } from './useAssets';
+import { PAGE_SIZE_OPTIONS } from '@/composables/useAssets';
 
 defineProps<{
   categories: { label: string; value: string }[];

@@ -67,18 +67,13 @@ import type { Asset } from '@tailor-cms/interfaces/asset';
 import { debounce } from 'lodash-es';
 
 import AddLinkDialog from '@/components/repository/Assets/AddLinkDialog.vue';
-import AssetDetailDialog from '@/components/repository/Assets/Detail/index.vue';
-import AssetList from '@/components/repository/Assets/AssetList.vue';
+import AssetDetailDialog from '@/components/repository/Assets/AssetDialog/index.vue';
+import AssetList from '@/components/repository/Assets/AssetList/index.vue';
 import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
 import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
-import ListControls from '@/components/repository/Assets/ListControls.vue';
+import ListControls from '@/components/repository/Assets/ListControls/index.vue';
 import Toolbar from '@/components/repository/Assets/Toolbar.vue';
 import { isIndexable } from '@/components/repository/Assets/utils';
-import { useAssetFiltering } from '@/components/repository/Assets/useAssetFiltering';
-import { useAssetIndexing } from '@/components/repository/Assets/useAssetIndexing';
-import { useAssetSelection } from '@/components/repository/Assets/useAssetSelection';
-import { useAssets } from '@/components/repository/Assets/useAssets';
-import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 definePageMeta({ name: 'repository-assets' });
