@@ -3,6 +3,7 @@ export const ContentType = {
   Article: 'article',
   Pdf: 'pdf',
   Image: 'image',
+  Video: 'video',
   Research: 'research',
   Data: 'data',
   Other: 'other',

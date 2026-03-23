@@ -5,13 +5,20 @@
  * Each asset type has a dedicated indexing strategy:
  * - document: uploads the binary file directly
  * - link: fetches page text, builds a synthetic markdown document
- * - image/video/audio/other: builds a synthetic document from metadata
+ * - image: describes via vision, builds a synthetic document
+ * - video/audio/other: builds a synthetic document from metadata
  *
  * 'Synthetic documents' are markdown files constructed from asset
  * metadata (description, tags) and optionally fetched body text.
  * They give the vector store searchable content for assets that
  * aren't natively text (images, links without accessible content).
  */
+import mime from 'mime-types';
+import { Op } from 'sequelize';
+
+import AIService from '#shared/ai/ai.service.ts';
+import { createLogger } from '#logger';
+import db from '#shared/database/index.js';
 import {
   AssetType,
   ProcessingStatus,
@@ -19,15 +26,12 @@ import {
   type FileAsset,
   type LinkAsset,
 } from '../asset.model.js';
-import {
-  buildSyntheticContent,
-  fetchCaptionText,
-} from '../extraction/synthetic-content.ts';
-import AIService from '#shared/ai/ai.service.ts';
-import { createLogger } from '#logger';
-import db from '#shared/database/index.js';
+import { buildSyntheticContent } from '../extraction/synthetic-content.ts';
+import { fetchCaptionText } from '../extraction/video/captions.ts';
+import { extractAndSaveImages } from '../extraction/pdf-media.ts';
+import { extractAndStoreCaptions } from '../extraction/video/youtube-captions.ts';
+import { describeWithVision } from '../extraction/vision-describe.ts';
 import { fetchUrlContent } from '../extraction/web-content.ts';
-import { Op } from 'sequelize';
 import Storage from '../../repository/storage.js';
 
 interface IndexingContext<T extends Asset = Asset> {
@@ -94,10 +98,7 @@ async function indexDocument(ctx: IndexingContext<FileAsset>) {
   logger.debug({ storeId, assetId: asset.id }, 'Indexing document');
   const buffer = await Storage.getFile(asset.storageKey);
   if (!buffer) {
-    logger.warn(
-      { assetId: asset.id, storageKey: asset.storageKey },
-      'Storage file missing',
-    );
+    logger.warn({ assetId: asset.id }, 'Storage file missing');
     return null;
   }
   const file = {
@@ -106,23 +107,64 @@ async function indexDocument(ctx: IndexingContext<FileAsset>) {
     mimetype: asset.meta.mimeType,
   };
   const result = await AIService.vectorStore!.upload([file], storeId);
+  if (asset.meta.mimeType === mime.lookup('pdf')) {
+    await extractAndSaveImages(asset, buffer);
+  }
   return result.documents[0]?.fileId || null;
 }
 
 async function indexLink(ctx: IndexingContext<LinkAsset>) {
   const { asset } = ctx;
-  logger.debug({ assetId: asset.id, url: asset.meta.url }, 'Indexing link');
-  let bodyText = '';
-  try {
-    const extracted = await fetchUrlContent(asset.meta.url);
-    bodyText = extracted.content;
-  } catch (err) {
-    logger.warn({ err }, `Failed to fetch content from ${asset.meta.url}`);
+  const url = asset.meta.url;
+  logger.debug({ assetId: asset.id, url }, 'Indexing link');
+  // Returns captions for YT links, empty string for others
+  let bodyText = await extractAndStoreCaptions(asset);
+  if (!bodyText) {
+    try {
+      bodyText = (await fetchUrlContent(url)).content;
+    } catch (err) {
+      logger.warn({ err }, `Failed to fetch content from ${url}`);
+    }
   }
   const content = buildSyntheticContent(asset, bodyText);
   if (!content) return null;
-  const { hostname } = new URL(asset.meta.url);
+  const { hostname } = new URL(url);
   return indexSynthetic(ctx.storeId, content, `${hostname}-${asset.id}.md`);
+}
+
+function hasUsefulDescription(asset: Asset): boolean {
+  const desc = asset.meta?.description?.trim();
+  if (!desc) return false;
+  const name = asset.name?.trim().toLowerCase();
+  const descLower = desc.toLowerCase();
+  // Skip if description is just the asset name
+  if (descLower === name) return false;
+  // Skip generic placeholders
+  if (/^(image from |extracted from )/i.test(desc)) return false;
+  // Skip if it's just a domain name
+  if (/^[\w.-]+\.\w{2,}$/.test(desc)) return false;
+  return true;
+}
+
+async function indexImage(ctx: IndexingContext) {
+  const { storeId, asset } = ctx;
+  logger.debug({ assetId: asset.id }, 'Indexing image');
+  let description = '';
+  if (hasUsefulDescription(asset)) {
+    description = asset.meta.description || '';
+  } else {
+    try {
+      description = await describeWithVision(asset);
+    } catch (err: any) {
+      logger.warn(
+        { err: err.message, assetId: asset.id },
+        'Vision describe failed',
+      );
+    }
+  }
+  const content = buildSyntheticContent(asset, description);
+  if (!content) return null;
+  return indexSynthetic(storeId, content, `${asset.name}.md`);
 }
 
 async function indexMedia(ctx: IndexingContext) {
@@ -135,11 +177,9 @@ async function indexMedia(ctx: IndexingContext) {
 }
 
 async function indexDefault(ctx: IndexingContext) {
-  const { storeId, asset } = ctx;
-  logger.debug({ assetId: asset.id, type: asset.type }, 'Indexing default');
-  const content = buildSyntheticContent(asset);
+  const content = buildSyntheticContent(ctx.asset);
   if (!content) return null;
-  return indexSynthetic(storeId, content, `${asset.name}.md`);
+  return indexSynthetic(ctx.storeId, content, `${ctx.asset.name}.md`);
 }
 
 const indexByType: Partial<Record<AssetType, IndexStrategy>> = {
@@ -147,6 +187,7 @@ const indexByType: Partial<Record<AssetType, IndexStrategy>> = {
   [AssetType.Link]: indexLink as IndexStrategy,
   [AssetType.Video]: indexMedia as IndexStrategy,
   [AssetType.Audio]: indexMedia as IndexStrategy,
+  [AssetType.Image]: indexImage as IndexStrategy,
 };
 
 async function setStatus(
@@ -155,14 +196,11 @@ async function setStatus(
   extra?: Record<string, unknown>,
 ) {
   return asset.update({ processingStatus: status, ...extra }).catch((err) => {
-    logger.error(
-      { err, assetId: asset.id, status },
-      'Failed to update processing status',
-    );
+    logger.error({ err, assetId: asset.id, status }, 'Status update failed');
   });
 }
 
-async function processAssets(assets: Asset[], storeId: string): Promise<void> {
+async function processAssets(assets: Asset[], storeId: string) {
   if (!AIService.vectorStore) {
     logger.error('StoreService not available - AI not configured');
     return;
@@ -178,7 +216,7 @@ async function processAssets(assets: Asset[], storeId: string): Promise<void> {
         fileId ? { vectorStoreFileId: fileId } : undefined,
       );
     } catch (err) {
-      logger.error({ err, assetId: asset.id }, 'Failed to index asset');
+      logger.error({ err, assetId: asset.id }, 'Indexing failed');
       await setStatus(asset, ProcessingStatus.Failed);
     }
   }
@@ -191,7 +229,10 @@ export async function index(repository: any, assetIds: number[]) {
     [Op.or]: [
       { processingStatus: { [Op.or]: [null, ProcessingStatus.Failed] } },
       {
-        processingStatus: [ProcessingStatus.Pending, ProcessingStatus.Processing],
+        processingStatus: [
+          ProcessingStatus.Pending,
+          ProcessingStatus.Processing,
+        ],
         updatedAt: { [Op.lt]: new Date(Date.now() - STALE_THRESHOLD_MS) },
       },
     ],
@@ -237,5 +278,8 @@ export async function deindex(repository: any, asset: Asset) {
     'Deindexing asset',
   );
   await removeFromStore(repository, asset);
-  return asset.update({ processingStatus: null, vectorStoreFileId: null });
+  return asset.update({
+    processingStatus: null,
+    vectorStoreFileId: null,
+  });
 }

@@ -30,6 +30,10 @@ export interface FileAssetMeta extends AssetMetaBase {
   mimeType: string;
   // File extension without dot (e.g. 'jpg', 'pdf')
   extension?: string;
+  // Image width in pixels (extracted on upload)
+  width?: number;
+  // Image height in pixels (extracted on upload)
+  height?: number;
   source?: AssetSource;
 }
 
@@ -47,6 +51,32 @@ export interface LinkAssetMeta extends AssetMetaBase {
   siteName?: string;
   ogType?: string;
   source?: AssetSource;
+  // What kind of content the link points to (video, image, document, etc.)
+  contentType?: 'video' | 'image' | 'document' | 'audio' | 'article' | 'other';
+  // Known provider for provider-specific UI (youtube, vimeo, spotify, etc.)
+  provider?: string;
+}
+
+const PROVIDER_PATTERNS: [RegExp, string, string][] = [
+  [/(?:youtube\.com|youtu\.be)/i, 'youtube', 'video'],
+  [/vimeo\.com/i, 'vimeo', 'video'],
+  [/dailymotion\.com/i, 'dailymotion', 'video'],
+  [/spotify\.com/i, 'spotify', 'audio'],
+  [/soundcloud\.com/i, 'soundcloud', 'audio'],
+];
+
+// Detect provider and content type from a URL
+export function detectLinkProvider(url: string): {
+  provider?: string;
+  contentType?: string;
+} {
+  try {
+    const hostname = new URL(url).hostname;
+    for (const [pattern, provider, contentType] of PROVIDER_PATTERNS) {
+      if (pattern.test(hostname)) return { provider, contentType };
+    }
+  } catch { /* malformed URL */ }
+  return {};
 }
 
 export type AssetMeta = FileAssetMeta | MediaAssetMeta | LinkAssetMeta;

@@ -1,25 +1,28 @@
 /**
- * Extract embedded images from PDF files.
+ * Extract embedded images from PDF files and save as assets.
  *
  * Strategy: scan the PDF binary for DCTDecode (JPEG) image streams.
  * Most PDFs embed photos/diagrams as JPEG data - extracting these
  * yields valid JPEG files without needing canvas or native deps.
- *
- * Also handles FlateDecode streams with raw image data when a
- * predictable PNG wrapper can be applied.
  */
 import { createLogger } from '#logger';
 import { PDFParse } from 'pdf-parse';
 import { v4 as uuidv4 } from 'uuid';
 
+import StorageService from '#shared/storage/storage.service.js';
+import db from '#shared/database/index.js';
+
+import { AssetType, type FileAsset } from '../asset.model.js';
+import { describeWithVision } from './vision-describe.ts';
+
 const logger = createLogger('asset:pdf-media');
+const { Asset: AssetModel } = db;
 
 // JPEG markers
 const JPEG_SOI = Buffer.from([0xff, 0xd8]); // Start of Image
 const JPEG_EOI = Buffer.from([0xff, 0xd9]); // End of Image
-
-// Minimum useful image size (skip tiny icons/artifacts)
-const MIN_IMAGE_BYTES = 5_000; // 5KB
+// Minimum size for extracted images to filter out icons/artifacts
+const MIN_IMAGE_BYTES = 5_000;
 const MAX_IMAGES_PER_PDF = 50;
 
 export interface ExtractedImage {
@@ -79,7 +82,8 @@ export function extractJpegImages(pdfBuffer: Buffer): ExtractedImage[] {
 
 /**
  * Extract text content from PDF using pdf-parse.
- * Returns page-level text for better indexing.
+ * Useful for injecting page content directly into the AI
+ * context window rather than relying on vector store retrieval.
  */
 export async function extractPdfText(
   pdfBuffer: Buffer,
@@ -98,19 +102,52 @@ export async function extractPdfText(
 }
 
 /**
- * Main extraction function: extracts both text and images from a PDF buffer.
+ * Extract JPEG images from a PDF, save each as an Image asset,
+ * and describe via vision.
  */
-export async function extractPdfMedia(pdfBuffer: Buffer): Promise<{
-  text: string;
-  pageCount: number;
-  images: ExtractedImage[];
-}> {
-  const [textResult, images] = await Promise.all([
-    extractPdfText(pdfBuffer),
-    Promise.resolve(extractJpegImages(pdfBuffer)),
-  ]);
-  return {
-    ...textResult,
-    images,
-  };
+export async function extractAndSaveImages(
+  parentAsset: FileAsset,
+  pdfBuffer: Buffer,
+) {
+  const images = extractJpegImages(pdfBuffer);
+  if (!images.length) return;
+  logger.info(
+    { assetId: parentAsset.id, count: images.length },
+    'Extracting images from PDF',
+  );
+  for (let i = 0; i < images.length; i++) {
+    const img = images[i];
+    try {
+      const url = await StorageService.saveBuffer(
+        img.filename,
+        img.buffer,
+        img.mimeType,
+      );
+      const created = await AssetModel.create({
+        repositoryId: parentAsset.repositoryId,
+        name: `${parentAsset.name} - Image ${i + 1}`,
+        type: AssetType.Image,
+        storageKey: url.replace(/^storage:\/\//, ''),
+        meta: {
+          fileSize: img.buffer.length,
+          mimeType: img.mimeType,
+          extension: 'jpg',
+          tags: ['pdf-image'],
+          source: { parentAssetId: parentAsset.id },
+        },
+        uploadedBy: parentAsset.uploadedBy,
+      });
+      describeWithVision(created).catch((err) =>
+        logger.warn(
+          { err: err?.message, assetId: created.id },
+          'Vision failed for PDF image',
+        ),
+      );
+    } catch (err: any) {
+      logger.warn(
+        { err: err.message, imageIndex: i },
+        'Failed to save extracted image',
+      );
+    }
+  }
 }
