@@ -6,9 +6,13 @@ export class SelectElementDialog {
   readonly confirmBtn: Locator;
   readonly selectAllBtn: Locator;
 
-  constructor(page: Page) {
-    const el = page.locator('div[role="dialog"]', { hasText: /^(Copy|Select) elements/ });
-    this.confirmBtn = el.getByRole('button', { name: /^(Copy|Save)/ });
+  constructor(page: Page, heading: RegExp = /^(Copy|Select) elements/) {
+    const el = page.locator('div[role="dialog"]', {
+      has: page.locator('.dialog-title', { hasText: heading }),
+    });
+    this.confirmBtn = el
+      .locator('.v-card-actions')
+      .getByRole('button', { name: /^(Copy|Save|Link)/ });
     this.selectAllBtn = el.getByRole('button', { name: 'Select all' });
     this.page = page;
     this.el = el;

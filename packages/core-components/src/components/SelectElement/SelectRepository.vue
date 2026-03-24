@@ -39,8 +39,7 @@ const selectRepository = (repository: Repository) => {
 
 const fetchRepositories = loader(async (search: string) => {
   const data = await api.fetchRepositories({ search });
-  const fetchedRepositories: Repository[] = data.items;
-  repositories.value = sortBy(fetchedRepositories, 'name');
+  repositories.value = sortBy(data.items, 'name');
 }, 500);
 
 onMounted(() => fetchRepositories());
