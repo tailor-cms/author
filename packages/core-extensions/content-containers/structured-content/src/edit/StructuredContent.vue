@@ -43,7 +43,7 @@
       variant="tonal"
       prominent
     >
-      Click the button below to add {{ label }}.
+      {{ isDisabled ? `Empty ${label}` : `Click the button below to add ${label}.` }}
     </VAlert>
     <ElementList
       v-if="!isAiGeneratingContent"

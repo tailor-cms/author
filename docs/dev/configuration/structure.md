@@ -76,6 +76,10 @@ interface ActivityConfig {
   isTrackedInWorkflow?: boolean;
   // Provides additional context for the AI upon use for content generation
   ai?: AiActivityConfig;
+  // Cross-schema type mapping for content reuse. Defined on SOURCE activity,
+  // specifies what this type becomes when linked into another schema.
+  // e.g. { COURSE_SCHEMA: { type: 'PAGE' } }
+  mapsTo?: Record<string, TypeMappingConfig>;
 }
 ```
 
@@ -285,4 +289,70 @@ const SCHEMA = {
     },
   ],
 };
+```
+
+## Content Reuse
+
+Activities can be linked across repositories, creating live copies that
+automatically stay in sync with the source. When the source is updated,
+all linked copies receive the changes. Editing a linked copy converts it
+to an independent local copy ("if you edit it, you own it").
+
+### Same-schema linking
+
+Linking within the same schema works out of the box. The only requirement
+is that the source activity type is allowed at the target level. For
+example, given the schema above, a `PAGE` from one `PAGE_COLLECTION`
+repository can be linked into a `MODULE` of another `PAGE_COLLECTION`
+repository because `PAGE` is a valid sub-level of `MODULE`.
+
+### Cross-schema linking
+
+To link activities between different schemas, the source activity must
+declare a `mapsTo` entry specifying what type it becomes in the target
+schema:
+
+```ts
+interface TypeMappingConfig {
+  // Target activity type (without schema prefix)
+  type: string;
+}
+```
+
+For example, consider a Content Library schema whose items should be
+reusable as pages in a Course schema:
+
+```js
+// content-library.schema.ts
+const ITEM = {
+  type: 'ITEM',
+  label: 'Library Item',
+  color: '#7B1FA2',
+  contentContainers: ['SECTION'],
+  mapsTo: {
+    COURSE_SCHEMA: { type: 'PAGE' },
+  },
+};
+
+const SCHEMA = {
+  id: 'CONTENT_LIBRARY',
+  name: 'Content Library',
+  structure: [COLLECTION, ITEM],
+  contentContainers: [SECTION],
+};
+```
+
+With this configuration, an `ITEM` from a Content Library repository can
+be linked into any Course repository wherever `PAGE` is allowed in its
+structure. The linked copy will have the `PAGE` type in the target
+repository and will receive updates when the source `ITEM` changes.
+
+`mapsTo` is defined on the **source** activity config. Multiple target
+schemas can be specified:
+
+```js
+mapsTo: {
+  COURSE_SCHEMA: { type: 'PAGE' },
+  KNOWLEDGE_BASE: { type: 'ARTICLE' },
+},
 ```

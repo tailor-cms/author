@@ -137,6 +137,9 @@ export class RepositoryManifest {
         'type',
         'position',
         'data',
+        // Included so consumers can resolve linked copy identity if needed
+        'sourceId',
+        'isLinkedCopy',
         'publishedAt',
         'createdAt',
         'updatedAt',

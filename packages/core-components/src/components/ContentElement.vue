@@ -10,6 +10,7 @@
         focused: isFocused,
         diff: showPublishDiff,
         frame,
+        linked: element.isLinkedCopy && !showPublishDiff,
       },
     ]"
     class="content-element"
@@ -57,7 +58,7 @@
           @delete="emit('delete')"
           @focus="onSelect"
           @generate="generateContent"
-          @link="onLink"
+          @link="onLinkRelationship"
           @reset="reset"
           @save="onSave"
         />
@@ -79,7 +80,7 @@
           @add="emit('add', $event)"
           @delete="emit('delete')"
           @focus="onSelect"
-          @link="onLink"
+          @link="onLinkRelationship"
           @save="onSave"
         />
       </template>
@@ -92,10 +93,44 @@
     </template>
     <div v-if="!props.isDisabled" class="element-actions ga-1">
       <div
+        v-if="element.isLinkedCopy"
+        :class="{ 'is-visible': isHighlighted || element.isLinkedCopy }"
+      >
+        <ElementLinkedIndicator
+          :is-entry-point="isElementEntryPoint"
+          :is-loading="isLoadingSourceInfo"
+          :source-info="linkedSourceInfo"
+          @source:fetch="onFetchSource"
+          @source:view="onNavigateToElement"
+          @unlink="onUnlink"
+        />
+      </div>
+      <div v-if="showSourceUsages" :class="{ 'is-visible': isHighlighted }">
+        <ElementSourceUsages
+          :element="element"
+          :usages="sourceUsages"
+          :is-loading="isLoadingSourceUsages"
+          @usages:fetch="onFetchCopies"
+          @usage:view="onNavigateToElement"
+        />
+      </div>
+      <div
         v-if="showDiscussion"
         :class="{ 'is-visible': isHighlighted || hasComments }"
       >
-        <ElementDiscussion v-bind="element" :user="currentUser" @open="focus" />
+        <ElementLinkedDiscussion
+          v-if="props.element.isLinkedCopy"
+          :is-loading="isLoadingSourceInfo"
+          :source-info="linkedSourceInfo"
+          @source:fetch="onFetchSource"
+          @source:view="onNavigateToElement"
+        />
+        <ElementDiscussion
+          v-else
+          v-bind="element"
+          :user="currentUser"
+          @open="focus"
+        />
       </div>
       <div v-if="showAI" :class="{ 'is-visible': isHighlighted }">
         <ElementGeneration @generate="generateContent" />
@@ -148,10 +183,13 @@ import {
   provide,
   ref,
 } from 'vue';
+import type {
+  ContentElement,
+  ElementSourceInfo,
+} from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { AiRequestType } from '@tailor-cms/interfaces/ai';
 import { cloneDeep } from 'lodash-es';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getElementId } from '@tailor-cms/utils';
 import type { Meta } from '@tailor-cms/interfaces/common';
@@ -162,6 +200,9 @@ import ActiveUsers from './ActiveUsers.vue';
 import CircularProgress from './CircularProgress.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import ElementGeneration from './ElementGeneration.vue';
+import ElementLinkedDiscussion from './ElementLinkedDiscussion.vue';
+import ElementLinkedIndicator from './ElementLinkedIndicator.vue';
+import ElementSourceUsages from './ElementSourceUsages.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
@@ -220,13 +261,21 @@ const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
 const isQuestion = computed(() => manifest.value?.isQuestion || false);
-const showAI = computed(() =>
-  !props.element.embedded && !!doTheMagic && manifest.value?.ai,
+const showAI = computed(
+  () => !props.element.embedded && !!doTheMagic && manifest.value?.ai,
 );
 
-onBeforeUnmount(() => {
-  elementBus.destroy();
-});
+// Linked element state
+const isElementEntryPoint = ref(true);
+const isLoadingSourceInfo = ref(false);
+const linkedSourceInfo = ref<ElementSourceInfo | null>(null);
+
+// Source usages state (for non-linked elements that could have copies)
+const isLoadingSourceUsages = ref(false);
+const sourceUsages = ref<ElementSourceInfo[] | null>(null);
+const showSourceUsages = computed(
+  () => !props.element.isLinkedCopy && !props.element.embedded,
+);
 
 const onSelect = (e: any) => {
   if (!props.isDisabled && !showPublishDiff.value && !e.component) {
@@ -235,17 +284,28 @@ const onSelect = (e: any) => {
   }
 };
 
-const onSave = (data: ContentElement['data']) => {
-  if (!isEmbed.value) isSaving.value = true;
-  emit('save', data);
-};
-
 const focus = () => {
   const { element, parent } = props;
   editorBus.emit('element:focus', { ...element, parent });
 };
 
-const onLink = (key?: string) => editorBus.emit('element:link', key);
+const onSave = (data: ContentElement['data']) => {
+  if (props.element.isLinkedCopy && !isEmbed.value) {
+    confirmationDialog({
+      title: 'Edit linked element?',
+      message:
+        `This element is linked. Editing will unlink it and you ` +
+        `will no longer receive updates. Do you want to continue?`,
+      action: () => {
+        isSaving.value = true;
+        emit('save', data);
+      },
+    });
+    return;
+  }
+  if (!isEmbed.value) isSaving.value = true;
+  emit('save', data);
+};
 
 const reset = () => {
   if (!ceRegistry) return;
@@ -271,7 +331,68 @@ const generateContent = loader(async function (text) {
   return onSave({ ...data, ...generatedContent });
 });
 
+// Element relationships (refs between elements)
+const onLinkRelationship = (key?: string) => editorBus.emit('element:link', key);
+
+const onUnlink = () => {
+  confirmationDialog({
+    title: 'Unlink element?',
+    message:
+      `This will convert the element to a local copy. ` +
+      `You will no longer receive updates. Do you want to continue?`,
+    action: () => editorBus.emit('element:unlink', props.element),
+  });
+};
+
+const onFetchSource = () => {
+  isLoadingSourceInfo.value = true;
+  editorBus.emit('element:fetchSource', {
+    element: props.element,
+    callback: (sourceInfo: typeof linkedSourceInfo.value) => {
+      linkedSourceInfo.value = sourceInfo;
+      isLoadingSourceInfo.value = false;
+    },
+  });
+};
+
+const onFetchCopies = () => {
+  isLoadingSourceUsages.value = true;
+  editorBus.emit('element:fetchCopies', {
+    element: props.element,
+    callback: (usages: typeof sourceUsages.value) => {
+      sourceUsages.value = usages;
+      isLoadingSourceUsages.value = false;
+    },
+  });
+};
+
+const onNavigateToElement = (location: {
+  repositoryId: number;
+  outlineActivityId: number;
+  uid?: string;
+}) => {
+  editorBus.emit('element:navigate', location);
+};
+
+const initLinking = () => {
+  if (!props.element.isLinkedCopy) return;
+  // Check if element is entry point (linked directly)
+  // or nested (linked via parent)
+  editorBus.emit('element:isLinkedViaParent', {
+    element: props.element,
+    callback: (isLinkedViaParent: boolean) => {
+      isElementEntryPoint.value = !isLinkedViaParent;
+    },
+  });
+};
+
+onBeforeUnmount(() => {
+  elementBus.destroy();
+});
+
 onMounted(() => {
+  initLinking();
+
   elementBus.on('delete', () => emit('delete'));
   elementBus.on('save:meta', (meta: Meta) => emit('save:meta', meta));
   elementBus.on('save', onSave);
@@ -354,6 +475,10 @@ onMounted(() => {
       display: block;
       background: $accent-2;
     }
+  }
+
+  &.linked {
+    border-left: 3px solid rgb(var(--v-theme-info));
   }
 }
 

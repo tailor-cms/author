@@ -3,6 +3,7 @@ import { expect } from '@playwright/test';
 
 import { AddItemDialog } from './AddItemDialog';
 import { OutlineItem } from './OutlineItem';
+import { OutlineSidebar } from './OutlineSidebar';
 
 export class ActivityOutline {
   readonly page: Page;
@@ -37,6 +38,20 @@ export class ActivityOutline {
     const item = this.el.locator('.activity').filter({ hasText: name }).first();
     await expect(item).toBeVisible();
     return new OutlineItem(this.page, item);
+  }
+
+  async getOutlineItemByUid(uid: string) {
+    const item = this.el.locator(`#activity_${uid}`);
+    await expect(item).toBeVisible();
+    return new OutlineItem(this.page, item);
+  }
+
+  async expandAndSelect(uid: string) {
+    await this.toggleExpand();
+    const item = await this.getOutlineItemByUid(uid);
+    await item.select();
+    const sidebar = new OutlineSidebar(this.page);
+    return { item, sidebar };
   }
 
   async addRootItem(type: string, name: string) {

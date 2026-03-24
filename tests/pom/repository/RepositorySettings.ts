@@ -1,6 +1,8 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+import { Toast } from '../common/Toast';
+
 export class Sidebar {
   readonly page: Page;
   readonly el: Locator;
@@ -64,10 +66,12 @@ export class GeneralSettings {
   readonly sidebar: Sidebar;
   readonly nameInput: Locator;
   readonly descriptionInput: Locator;
+  readonly toast: Toast;
 
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
     this.sidebar = new Sidebar(page, el.locator('.settings-sidebar'));
+    this.toast = new Toast(page);
     this.page = page;
     this.el = el;
     this.nameInput = el.getByLabel('Name');
@@ -81,13 +85,13 @@ export class GeneralSettings {
   async updateName(name: string) {
     await this.nameInput.fill(name);
     await this.nameInput.blur();
-    await expect(this.page.locator('.v-snackbar')).toHaveText(/Saved/);
+    await this.toast.isSaved();
   }
 
   async updateDescription(description: string) {
     await this.descriptionInput.fill(description);
     await this.descriptionInput.blur();
-    await expect(this.page.locator('.v-snackbar')).toHaveText(/Saved/);
+    await this.toast.isSaved();
   }
 }
 

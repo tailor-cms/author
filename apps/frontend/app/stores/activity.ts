@@ -39,6 +39,18 @@ export const useActivityStore = defineStore('activities', () => {
     return activity?.parentId ? findById(activity.parentId) : undefined;
   };
 
+  /**
+   * Check if activity is a link entry point (explicitly linked, not nested).
+   * Entry point = linked but parent is not linked.
+   * Nested copy = linked because parent was linked (came along for the ride).
+   */
+  const isLinkEntryPoint = (id: Id): boolean => {
+    const activity = findById(id);
+    if (!activity?.isLinkedCopy) return false;
+    const parent = getParent(id);
+    return !parent?.isLinkedCopy;
+  };
+
   function getDescendants(id: Id): StoreActivity[] {
     const activity = findById(id);
     return activity
@@ -175,6 +187,14 @@ export const useActivityStore = defineStore('activities', () => {
     return calculatePosition(context);
   };
 
+  const unlink = async (id: Id) => {
+    const activity = findById(id);
+    if (!activity) return;
+    const unlinked = await api.unlink(activity.repositoryId, activity.id);
+    add(unlinked);
+    return unlinked;
+  };
+
   const saveStatus = async (id: number, status: Status) => {
     const activity = findById(id);
     if (!activity) return;
@@ -190,6 +210,7 @@ export const useActivityStore = defineStore('activities', () => {
     sseRepositoryFeed
       .subscribe(Events.Create, (it: Activity) => add(it))
       .subscribe(Events.Update, (it: Activity) => add(it))
+      .subscribe(Events.BulkUpdate, (items: Activity[]) => items.forEach(add))
       .subscribe(Events.Delete, (it: Activity) => {
         const activity = it.deletedAt
           ? it
@@ -216,6 +237,7 @@ export const useActivityStore = defineStore('activities', () => {
     items,
     findById,
     getParent,
+    isLinkEntryPoint,
     getAncestors,
     getDescendants,
     getLineage,
@@ -228,6 +250,7 @@ export const useActivityStore = defineStore('activities', () => {
     publish,
     clone,
     reorder,
+    unlink,
     calculateInsertPosition,
     calculateCopyPosition,
     saveStatus,

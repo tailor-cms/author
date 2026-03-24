@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { AddItemDialog } from './AddItemDialog';
+import { LinkContentDialog } from './LinkContentDialog';
 
 class OptionsMenu {
   readonly page: Page;
@@ -27,6 +28,18 @@ class OptionsMenu {
     // Wait for dialog to close
     await expect(this.page.getByText(dialogContent)).not.toBeVisible();
   }
+
+  async linkContentBelow() {
+    await this.toggle();
+    await this.el.getByLabel('Link content below').click();
+    return new LinkContentDialog(this.page);
+  }
+
+  async linkContentInto() {
+    await this.toggle();
+    await this.el.getByLabel('Link content into').click();
+    return new LinkContentDialog(this.page);
+  }
 }
 
 export class OutlineItem {
@@ -39,6 +52,7 @@ export class OutlineItem {
   readonly toggleBtn: Locator;
   readonly toggleAltBtn: Locator;
   readonly optionsMenu: OptionsMenu;
+  readonly linkIcon: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
@@ -53,10 +67,16 @@ export class OutlineItem {
     });
     this.toggleAltBtn = el.getByRole('button', { name: 'Toggle expand alt' });
     this.optionsMenu = new OptionsMenu(this.page, el.locator('.options-menu'));
+    this.linkIcon = el.locator('.linked-copy-icon');
   }
 
   select() {
     return this.el.click();
+  }
+
+  async getUid(): Promise<string> {
+    const id = await this.el.locator('.activity').getAttribute('id');
+    return id?.replace('activity_', '') ?? '';
   }
 
   toggleExpand() {

@@ -39,6 +39,12 @@ export interface Activity {
   status: Status[];
   isTrackedInWorkflow: boolean;
   detached: boolean;
+  /** Whether this activity is an active linked copy */
+  isLinkedCopy: boolean;
+  /** ID of the source activity */
+  sourceId?: number | null;
+  /** Timestamp of source activity when linked */
+  sourceModifiedAt?: string | null;
   elements?: ContentElement[];
   containers?: Activity[];
   modifiedAt: string | null;

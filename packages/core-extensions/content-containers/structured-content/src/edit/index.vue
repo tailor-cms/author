@@ -35,7 +35,11 @@
       variant="outlined"
       prominent
     >
-      Click the button below to add a first content section.
+      {{
+        disabled
+          ? 'Empty structured content'
+          : 'Click the button below to add a first content section.'
+      }}
     </VAlert>
     <VRow
       v-for="subcontainer in subcontainers"
@@ -79,7 +83,7 @@
         />
       </VCol>
     </VRow>
-    <VRow v-show="!isAiGeneratingContent" class="py-8 pr-14 justify-center">
+    <VRow v-if="!disabled" v-show="!isAiGeneratingContent" class="py-8 pr-14 justify-center">
       <VBtn
         v-for="subcontainerType in subcontainerTypes"
         :key="subcontainerType"
