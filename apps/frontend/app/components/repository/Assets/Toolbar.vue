@@ -1,5 +1,5 @@
 <template>
-  <div class="toolbar d-flex align-center flex-wrap ga-3 mb-6">
+  <div class="asset-toolbar d-flex align-center flex-wrap ga-3 mb-6">
     <VTextField
       v-model="search"
       bg-color="primary-darken-2"

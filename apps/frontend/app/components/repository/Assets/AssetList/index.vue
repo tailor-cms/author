@@ -39,7 +39,7 @@
   </VDataIterator>
   <div
     v-if="!assets.length && !isFetching"
-    class="d-flex flex-column align-center py-16"
+    class="empty-state d-flex flex-column align-center py-16"
   >
     <VIcon color="primary-lighten-2" icon="mdi-folder-open-outline" size="64" />
     <div class="mt-4 text-body-1 text-primary-lighten-3">

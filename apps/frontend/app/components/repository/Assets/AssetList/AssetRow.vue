@@ -60,6 +60,7 @@
         <template #activator="{ props: menuProps }">
           <VBtn
             v-bind="menuProps"
+            aria-label="Actions"
             class="ml-1"
             color="primary-lighten-3"
             icon="mdi-dots-vertical"

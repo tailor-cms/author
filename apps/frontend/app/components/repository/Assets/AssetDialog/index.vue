@@ -15,6 +15,7 @@
         <template #append>
           <MetaInspector :asset="asset" />
           <VBtn
+            aria-label="Close"
             class="mr-1 text-primary-lighten-4"
             icon="mdi-close"
             @click="emit('close')"

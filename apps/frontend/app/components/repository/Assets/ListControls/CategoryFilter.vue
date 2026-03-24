@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-center flex-wrap ga-2 mb-6">
+  <div class="category-filter d-flex align-center flex-wrap ga-2 mb-6">
     <VBtn
       v-for="it in categories"
       :key="it.value"

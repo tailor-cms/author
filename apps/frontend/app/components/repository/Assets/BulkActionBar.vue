@@ -2,10 +2,10 @@
   <VSlideYTransition>
     <div
       v-if="hasSelection"
-      class="d-flex align-center flex-wrap ga-3 mb-4 pa-5 bg-primary-darken-2 rounded"
+      class="bulk-action-bar d-flex align-center flex-wrap ga-3 mb-4 pa-5 bg-primary-darken-2 rounded"
     >
       <VChip
-        class="mr-1 px-2 text-body-2"
+        class="selection-count mr-1 px-2 text-body-2"
         color="primary-lighten-4"
         density="compact"
         variant="flat"
