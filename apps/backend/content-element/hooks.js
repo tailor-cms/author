@@ -119,7 +119,6 @@ function add(ContentElement, Hooks, Models) {
         {
           data: element.data,
           meta: element.meta,
-          position: element.position,
           sourceModifiedAt: element.updatedAt,
         },
         SYNC_OPTS,
