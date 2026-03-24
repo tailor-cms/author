@@ -8,6 +8,7 @@ const schemaByType = Object.fromEntries(
 
 export const getSchema = (type, field = {}) => {
   const schema = schemaByType[type];
-  if (!schema) return DEFAULT_SCHEMA;
+  if (schema === undefined) return DEFAULT_SCHEMA;
+  if (schema === null) return null;
   return typeof schema === 'function' ? schema(field) : schema;
 };

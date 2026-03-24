@@ -1,8 +1,11 @@
 export default {
   type: 'SELECT',
   version: '1.0',
-  schema: (field) =>
-    field.multiple
-      ? { type: 'array', items: { type: 'string' } }
-      : { type: 'string' },
+  schema: (field) => {
+    const isNumeric = field.options?.some((o) => typeof o.value === 'number');
+    const valueType = isNumeric ? 'number' : 'string';
+    return field.multiple
+      ? { type: 'array', items: { type: valueType } }
+      : { type: valueType };
+  },
 };

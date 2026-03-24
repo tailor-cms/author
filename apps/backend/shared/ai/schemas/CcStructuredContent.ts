@@ -11,8 +11,8 @@ import { QUESTION_TYPE, QuestionElementSchema } from './CeQuestion.ts';
 interface MetaField {
   key: string;
   label: string;
-  schema: { type: string; items?: { type: string } };
-  options?: { value: string; label: string }[];
+  schema: { type: string; items?: { type: string } } | null;
+  options?: { value: string | number; label: string }[];
 }
 
 interface SubcontainerConfig {
@@ -48,8 +48,11 @@ const buildDataSchema = (configs: SubcontainerConfigs) => {
   const required: string[] = [];
   for (const { metaInputs = [] } of Object.values(configs)) {
     for (const field of metaInputs) {
-      if (properties[field.key]) continue;
-      properties[field.key] = field.schema;
+      if (properties[field.key] || !field.schema) continue;
+      const values = field.options?.map((o) => o.value);
+      properties[field.key] = values?.length
+        ? { ...field.schema, enum: values }
+        : field.schema;
       required.push(field.key);
     }
   }
@@ -73,7 +76,7 @@ const getConfigs = (context: AiContext): SubcontainerConfigs => {
         key: m.key,
         label: m.label,
         schema: getMetaInputSchema(m.type, m),
-        ...(m.options && { options: m.options }),
+        ...((m.options || m.items) && { options: m.options || m.items }),
       })),
     };
   }
