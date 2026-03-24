@@ -20,7 +20,7 @@ services:
       - '6379:6379'
   author-dev-localstack:
     container_name: author-dev-localstack
-    image: localstack/localstack
+    image: localstack/localstack:4.14.0
     expose:
       - '4566'
     ports:
