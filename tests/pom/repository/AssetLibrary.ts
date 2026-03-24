@@ -36,9 +36,9 @@ export class AssetLibrary {
   }
 
   async waitForLoad() {
-    await expect(
-      this.assetRows.first().or(this.emptyState),
-    ).toBeVisible({ timeout: 10000 });
+    await expect(this.assetRows.first().or(this.emptyState)).toBeVisible({
+      timeout: 10000,
+    });
   }
 
   getRow(name: string): AssetRow {
@@ -58,6 +58,21 @@ export class AssetLibrary {
   async uploadFiles(filePaths: string[]) {
     await this.toolbar.uploadFiles(filePaths);
     await this.waitForLoad();
+  }
+
+  async uploadAndVerify(
+    filePath: string,
+    expectedName: string,
+    expectedType: string,
+  ) {
+    await this.uploadFiles([filePath]);
+    const row = this.getRow(expectedName);
+    await expect(row.el).toBeVisible();
+    await expect(row.typeChip).toContainText(expectedType);
+    // Verify persistence
+    await this.page.reload({ waitUntil: 'networkidle' });
+    await this.waitForLoad();
+    await expect(row.el).toBeVisible();
   }
 
   async addLink(url: string) {

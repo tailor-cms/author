@@ -18,6 +18,16 @@ export class OutlineSidebar {
     this.comments = new Comments(page, this.el);
   }
 
+  getFileInput(placeholder: string): Locator {
+    return this.el.getByPlaceholder(placeholder);
+  }
+
+  async openFileInput(placeholder: string) {
+    const input = this.getFileInput(placeholder);
+    await expect(input).toBeVisible({ timeout: 5000 });
+    await input.click();
+  }
+
   async fillName(name) {
     await this.nameInput.fill(name);
     // Blur to trigger the save event

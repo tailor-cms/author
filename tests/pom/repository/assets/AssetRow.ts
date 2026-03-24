@@ -29,23 +29,26 @@ export class AssetRow {
     await this.el.click();
   }
 
+  get downloadMenuItem(): Locator {
+    return this.page.locator('.v-list-item').filter({ hasText: 'Download' });
+  }
+
+  get deleteMenuItem(): Locator {
+    return this.page.locator('.v-list-item').filter({ hasText: 'Delete' });
+  }
+
   async openMenu() {
     await this.menuBtn.click();
   }
 
   async download() {
     await this.openMenu();
-    await this.page
-      .locator('.v-list-item')
-      .filter({ hasText: 'Download' })
-      .click();
+    await this.downloadMenuItem.click();
   }
 
   async delete() {
     await this.openMenu();
-    await this.page
-      .locator('.v-list-item')
-      .filter({ hasText: 'Delete' })
+    await this.deleteMenuItem
       .click();
     const dialog = new ConfirmationDialog(this.page, 'Delete Asset');
     await dialog.confirm();
