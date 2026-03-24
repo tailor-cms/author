@@ -28,11 +28,13 @@ jobs:
         shell: bash
         run: sleep 30
       - name: Check if platform is running
-        uses: indiesdev/curl@v1.1
-        with:
-          url: http://localhost:3000/api/healthcheck
-          method: "GET"
-          accept: 200
+        shell: bash
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/api/healthcheck && exit 0
+            sleep 2
+          done
+          echo "Healthcheck failed" && exit 1
   e2e:
     runs-on: ubuntu-latest
     strategy:
@@ -89,11 +91,13 @@ jobs:
       - name: Install, build, seed, and start server
         uses: ./.github/actions/run
       - name: Check if platform is running
-        uses: indiesdev/curl@v1.1
-        with:
-          url: http://localhost:3000/api/healthcheck
-          method: "GET"
-          accept: 200
+        shell: bash
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3000/api/healthcheck && exit 0
+            sleep 2
+          done
+          echo "Healthcheck failed" && exit 1
       - name: Run functional tests
         shell: bash
         run: pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
