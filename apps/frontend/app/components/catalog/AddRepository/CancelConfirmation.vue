@@ -30,6 +30,7 @@
 
 <script lang="ts" setup>
 defineProps<{ modelValue: boolean }>();
+
 const emit = defineEmits<{
   'update:modelValue': [value: boolean];
   'confirm': [];

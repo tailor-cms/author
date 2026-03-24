@@ -1,3 +1,5 @@
+import { StatusCodes } from 'http-status-codes';
+
 import AIService from './ai.service.ts';
 
 async function generate({ body }, res) {
@@ -5,7 +7,7 @@ async function generate({ body }, res) {
   return res.json({ data });
 }
 
-async function uploadDocuments({ files, body }, res) {
+async function upload({ files, body }, res) {
   const result = await AIService.vectorStore.upload(files, body.vectorStoreId);
   return res.json({ data: result });
 }
@@ -17,12 +19,12 @@ async function getVectorStoreStatus({ params }, res) {
 
 async function deleteVectorStore({ params }, res) {
   await AIService.vectorStore.deleteStore(params.vectorStoreId);
-  return res.json({ data: { success: true } });
+  return res.sendStatus(StatusCodes.NO_CONTENT);
 }
 
 export default {
   generate,
-  uploadDocuments,
+  upload,
   getVectorStoreStatus,
   deleteVectorStore,
 };

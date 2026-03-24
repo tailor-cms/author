@@ -20,7 +20,7 @@
     >
       <template v-if="progress.message" #message>
         <span :class="progress.message.color">
-          <VIcon class="mr-1" :icon="progress.message.icon" size="small" />
+          <VIcon :icon="progress.message.icon" class="mr-1" size="small" />
           {{ progress.message.text }}
         </span>
       </template>
