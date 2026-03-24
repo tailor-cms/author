@@ -56,20 +56,27 @@ class Amazon {
     this.bucket = config.bucket;
     this.region = config.region;
     this.client = new S3Client(s3Config);
-    if (config.endpoint) this.initTestBucket();
+    if (config.endpoint) this.initTestBucket().catch(() => {});
   }
 
   static create(config) {
     return new Amazon(config);
   }
 
-  async initTestBucket() {
+  async initTestBucket(retries = 5) {
     const endpoint = await this.client.config.endpoint();
-    if (!endpoint.hostname === 'localhost') return;
+    // Only auto-create buckets against localhost (LocalStack)
+    if (endpoint.hostname !== 'localhost') return;
     try {
       await this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
     } catch {
-      await this.client.send(new CreateBucketCommand({ Bucket: this.bucket }));
+      try {
+        await this.client.send(new CreateBucketCommand({ Bucket: this.bucket }));
+      } catch {
+        if (!retries) return;
+        await new Promise((r) => setTimeout(r, 3000));
+        return this.initTestBucket(retries - 1);
+      }
     }
   }
 
