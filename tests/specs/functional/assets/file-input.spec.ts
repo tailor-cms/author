@@ -6,13 +6,13 @@ import { FileInputPicker } from '../../../pom/common/FileInputPicker';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 import { DOCUMENT, IMAGE } from '../../../fixtures/assets';
-import { setupFileMetaInput } from './helpers';
+import { toFileMetaInput } from './helpers';
 
 const INPUT_PLACEHOLDER = 'Click to add a poster image';
 
 test.describe('FileInput - upload tab', () => {
   test('can upload a file via the upload tab', async ({ page }) => {
-    await setupFileMetaInput(page);
+    await toFileMetaInput(page);
     const sidebar = new OutlineSidebar(page);
     await sidebar.openFileInput(INPUT_PLACEHOLDER);
     const picker = new FileInputPicker(page);
@@ -27,7 +27,7 @@ test.describe('FileInput - upload tab', () => {
   test('uploaded file appears in the asset library', async ({
     page,
   }) => {
-    const repositoryId = await setupFileMetaInput(page);
+    const repositoryId = await toFileMetaInput(page);
     const sidebar = new OutlineSidebar(page);
     await sidebar.openFileInput(INPUT_PLACEHOLDER);
     const picker = new FileInputPicker(page);
@@ -43,7 +43,7 @@ test.describe('FileInput - upload tab', () => {
 
 test.describe('FileInput - library tab', () => {
   test('can select an asset from the library', async ({ page }) => {
-    const repositoryId = await setupFileMetaInput(page);
+    const repositoryId = await toFileMetaInput(page);
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     const sidebar = new OutlineSidebar(page);
     await sidebar.openFileInput(INPUT_PLACEHOLDER);
@@ -54,7 +54,7 @@ test.describe('FileInput - library tab', () => {
   });
 
   test('library tab shows empty state when no assets', async ({ page }) => {
-    await setupFileMetaInput(page);
+    await toFileMetaInput(page);
     const sidebar = new OutlineSidebar(page);
     await sidebar.openFileInput(INPUT_PLACEHOLDER);
     const picker = new FileInputPicker(page);
@@ -68,7 +68,7 @@ test.describe('FileInput - library tab', () => {
 
 test.describe('FileInput - general', () => {
   test('can cancel the picker dialog', async ({ page }) => {
-    await setupFileMetaInput(page);
+    await toFileMetaInput(page);
     const sidebar = new OutlineSidebar(page);
     await sidebar.openFileInput(INPUT_PLACEHOLDER);
     const picker = new FileInputPicker(page);
@@ -80,7 +80,7 @@ test.describe('FileInput - general', () => {
   test('picker only shows matching assets for image-only input', async ({
     page,
   }) => {
-    const repositoryId = await setupFileMetaInput(page);
+    const repositoryId = await toFileMetaInput(page);
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
     const sidebar = new OutlineSidebar(page);

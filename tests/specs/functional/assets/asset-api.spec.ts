@@ -3,11 +3,11 @@ import { expect, test } from '@playwright/test';
 import AssetClient from '../../../api/AssetClient';
 import SeedClient from '../../../api/SeedClient';
 import { AUDIO, DOCUMENT, IMAGE, VIDEO } from '../../../fixtures/assets';
-import { setupRepository } from './helpers';
+import { createRepository } from './helpers';
 
 test.describe('Asset API', () => {
   test('can upload a file and list it', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     const upload = await AssetClient.uploadFile(repositoryId, IMAGE.path);
     expect(upload.status).toBe(200);
     const list = await AssetClient.list(repositoryId);
@@ -18,7 +18,7 @@ test.describe('Asset API', () => {
   });
 
   test('can add a link and list it', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     const add = await AssetClient.addLink(repositoryId, 'https://example.com');
     expect(add.status).toBe(200);
     const list = await AssetClient.list(repositoryId);
@@ -27,7 +27,7 @@ test.describe('Asset API', () => {
   });
 
   test('can update asset meta', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     const { data: { items } } = await AssetClient.list(repositoryId);
     const update = await AssetClient.updateMeta(repositoryId, items[0].id, {
@@ -40,7 +40,7 @@ test.describe('Asset API', () => {
   });
 
   test('can get download URL for file asset', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     const { data: { items } } = await AssetClient.list(repositoryId);
     const download = await AssetClient.getDownloadUrl(repositoryId, items[0].id);
@@ -49,7 +49,7 @@ test.describe('Asset API', () => {
   });
 
   test('can delete a single asset', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     const { data: { items } } = await AssetClient.list(repositoryId);
     const del = await AssetClient.remove(repositoryId, items[0].id);
@@ -59,7 +59,7 @@ test.describe('Asset API', () => {
   });
 
   test('can bulk delete assets', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
     const { data: { items } } = await AssetClient.list(repositoryId);
@@ -72,7 +72,7 @@ test.describe('Asset API', () => {
   });
 
   test('can filter assets by type', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
     const images = await AssetClient.list(repositoryId, { type: 'image' });
@@ -84,7 +84,7 @@ test.describe('Asset API', () => {
   });
 
   test('can search assets by name', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
     const results = await AssetClient.list(repositoryId, { search: IMAGE.name });
@@ -93,7 +93,7 @@ test.describe('Asset API', () => {
   });
 
   test('upload resolves correct asset type for each file', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     for (const fp of [IMAGE.path, DOCUMENT.path, VIDEO.path, AUDIO.path]) {
       await AssetClient.uploadFile(repositoryId, fp);
     }
@@ -103,7 +103,7 @@ test.describe('Asset API', () => {
   });
 
   test('link import extracts OG metadata', async () => {
-    const repositoryId = await setupRepository();
+    const repositoryId = await createRepository();
     const add = await AssetClient.addLink(
       repositoryId, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     );
