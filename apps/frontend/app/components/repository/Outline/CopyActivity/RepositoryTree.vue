@@ -20,7 +20,10 @@
     <template #prepend="{ item }">
       <VIcon
         v-if="item.selectable"
-        :class="[isSelectable(item) ? 'opacity-100' : 'opacity-50']"
+        :class="[
+          'activity-select-checkbox',
+          isSelectable(item) ? 'opacity-100' : 'opacity-50',
+        ]"
         :disabled="!isSelectable(item)"
         color="primary"
         @click.stop="toggleSelection(item)"

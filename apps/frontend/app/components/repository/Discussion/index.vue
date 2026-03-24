@@ -1,6 +1,12 @@
 <template>
   <VSheet v-bind="sheetStyles" class="activity-discussion py-2">
+    <LinkedCopyNotice
+      v-if="activity.isLinkedCopy"
+      :repository-id="activity.repositoryId"
+      :activity-id="activity.id"
+    />
     <ActivityDiscussion
+      v-else
       v-bind="{ comments, unseenComments, showHeading, user }"
       scroll-target="inputContainer"
       is-activity-thread
@@ -17,9 +23,9 @@
 <script lang="ts" setup>
 import { get, orderBy } from 'lodash-es';
 import { Discussion as ActivityDiscussion } from '@tailor-cms/core-components';
-import { computed } from 'vue';
 import type { User } from '@tailor-cms/interfaces/user';
 
+import LinkedCopyNotice from './LinkedCopyNotice.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
 
@@ -85,6 +91,7 @@ const updateResolvement = (data: any) =>
   commentStore.updateResolvement(props.activity.repositoryId, data);
 
 onBeforeMount(() => {
+  if (props.activity.isLinkedCopy) return;
   const { id: activityId, repositoryId } = props.activity;
   commentStore.fetch(repositoryId, { activityId });
 });

@@ -41,11 +41,10 @@ const add = (ActivityStatus, Hooks) => {
 
   function withActivity(...hooks) {
     const invokeHooks = (type, status, opts) =>
-      status
-        .getActivity({ paranoid: false })
-        .then((activity) =>
-          hooks.forEach((hook) => hook(type, activity, opts)),
-        );
+      status.getActivity({ paranoid: false }).then((activity) => {
+        if (!activity) return;
+        hooks.forEach((hook) => hook(type, activity, opts));
+      });
     return afterTransaction(invokeHooks);
   }
 };
