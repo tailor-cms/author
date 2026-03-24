@@ -280,6 +280,45 @@ test('reordering individually linked element keeps it linked', async ({
   await element.expectLinked();
 });
 
+test('source element edit preserves linked copy positions', async ({
+  page,
+}) => {
+  const { activity } = await toSeededRepository(page);
+  const repositoryId = activity.repositoryId;
+  await toEditorPage(page, activity);
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  // Occupy a low position so linked copies land at higher positions than
+  // their sources — ensuring the test catches position overwrites.
+  const toast = new Toast(page);
+  await editor.addElementDialog.add('HTML');
+  await toast.isSaved();
+  // Link all primary page elements into the secondary page
+  const linkDialog = await editor.addElementDialog.openLinkDialog();
+  await linkDialog.select(outlineSeed.primaryPage.title);
+  await toast.isSaved();
+  const { data: before } = await api.get(`${repositoryId}/content-elements/`);
+  const copies = before
+    .filter((el: any) => el.isLinkedCopy)
+    .sort((a: any, b: any) => a.position - b.position);
+  expect(copies.length).toBeGreaterThanOrEqual(2);
+  for (const copy of copies) {
+    const source = before.find((el: any) => el.id === copy.sourceId);
+    expect(copy.position).not.toBe(source.position);
+  }
+  // Edit source on the primary page - triggers propagation to copies
+  await editor.toPrimaryPage();
+  editor.getHtmlElement(outlineSeed.primaryPage.textContent).fill(' updated');
+  await editor.sidebar.el.click();
+  await toast.isSaved();
+  await page.waitForTimeout(1000);
+  // Positions must remain unchanged after propagation
+  const { data: after } = await api.get(`${repositoryId}/content-elements/`);
+  for (const { id, position } of copies) {
+    expect(after.find((el: any) => el.id === id).position).toBe(position);
+  }
+});
+
 test('linking content element creates "Linked" revision', async ({ page }) => {
   const { activity, repository } = await toSeededRepository(page);
   await toEditorPage(page, activity);
