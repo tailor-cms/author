@@ -1,11 +1,8 @@
 <template>
   <VSlideYTransition>
-    <div
-      v-if="hasSelection"
-      class="bulk-action-bar d-flex align-center flex-wrap ga-3 mb-4 pa-5 bg-primary-darken-2 rounded"
-    >
+    <div v-if="hasSelection" class="bulk-action-bar bg-primary-darken-2">
       <VChip
-        class="selection-count mr-1 px-2 text-body-2"
+        class="selection-count"
         color="primary-lighten-4"
         density="compact"
         variant="flat"
@@ -54,7 +51,7 @@
         Delete selected
       </VBtn>
       <VBtn
-        class="ml-3"
+        class="cancel-btn"
         color="primary-lighten-3"
         size="small"
         variant="text"
@@ -92,3 +89,26 @@ const hasIndexable = computed(() =>
     .some((a) => isIndexable(a)),
 );
 </script>
+
+<style lang="scss" scoped>
+.bulk-action-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 1.25rem;
+  border-radius: 4px;
+}
+
+.selection-count {
+  min-height: 1.75rem;
+  margin-right: 0.25rem;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
+}
+
+.cancel-btn {
+  margin-left: 0.25rem;
+}
+</style>
