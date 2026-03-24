@@ -20,6 +20,8 @@ definePageMeta({
 });
 
 const { $eventBus } = useNuxtApp() as any;
+
+const route = useRoute();
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const commentStore = useCommentStore();
@@ -37,22 +39,35 @@ provide(
 
 const isLoading = ref(true);
 
-onMounted(async () => {
-  const route = useRoute();
-  const repositoryId = parseInt(route.params.id as string, 10);
+// Teardown active connections and reset stores (for the current repository).
+const teardown = () => {
+  repositorySSE.disconnect();
+  currentRepositoryStore.$reset();
+  commentStore.$reset();
+};
+
+// Initialize repository context: fetch data, connect SSE, reset stores.
+// The nextTick ensures Vue flushes the DOM so children unmount before
+// stores are reset — preventing stale access in child lifecycle hooks.
+const initialize = async (repositoryId: number) => {
+  isLoading.value = true;
+  await nextTick();
+  teardown();
   await Promise.all([
     authStore.fetchUserInfo(),
     currentRepositoryStore.initialize(repositoryId),
     promiseTimeout(1200),
   ]);
-  commentStore.$reset();
   isLoading.value = false;
   repositorySSE.connect(repositoryId);
+};
+
+const repositoryId = computed(() => parseInt(route.params.id as string, 10));
+
+onMounted(() => initialize(repositoryId.value));
+watch(repositoryId, (newId, oldId) => {
+  if (newId && newId !== oldId) initialize(newId);
 });
 
-onUnmounted(() => {
-  currentRepositoryStore.$reset();
-  commentStore.$reset();
-  repositorySSE.disconnect();
-});
+onUnmounted(teardown);
 </script>

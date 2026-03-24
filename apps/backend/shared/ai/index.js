@@ -17,10 +17,10 @@ const upload = multer({
 router.post('/generate', validation.generate, ctrl.generate);
 
 router.post(
-  '/upload-documents',
+  '/upload',
   upload.array('files', 10),
-  validation.uploadDocuments,
-  ctrl.uploadDocuments,
+  validation.upload,
+  ctrl.upload,
 );
 
 router.get(

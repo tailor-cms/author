@@ -152,7 +152,7 @@ export const useDocumentProcessing = (emit: Emits) => {
     if (!val?.length) return;
     status.value = Status.Uploading;
     try {
-      const result = await aiAPI.uploadDocuments(
+      const result = await aiAPI.upload(
         val,
         vectorStoreId.value ?? undefined,
       );

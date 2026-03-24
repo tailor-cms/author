@@ -25,6 +25,7 @@ import Comment from '../../comment/comment.model.js';
 import Asset from '../../asset/asset.model.js';
 import Tag from '../../tag/tag.model.js';
 import Hooks from './hooks.js';
+import linkService from '#shared/content-library/link.service.js';
 import { wrapMethods } from './helpers.js';
 import config from '#config/database.js';
 
@@ -119,6 +120,16 @@ function defineModel(Model, connection = sequelize) {
   return Model.init(fields, options);
 }
 
+const db = {
+  Sequelize,
+  sequelize,
+  initialize,
+  ...models,
+};
+
+// Initialize services before hooks (they need db)
+linkService.init(db);
+
 forEach(models, (model) => {
   invoke(model, 'associate', models);
   addHooks(model, Hooks, models);
@@ -135,13 +146,6 @@ function addScopes(model, models) {
   const scopes = invoke(model, 'scopes', models);
   forEach(scopes, (it, name) => model.addScope(name, it, { override: true }));
 }
-
-const db = {
-  Sequelize,
-  sequelize,
-  initialize,
-  ...models,
-};
 
 wrapMethods(Sequelize.Model, Promise);
 // Patch Sequelize#method to support getting models by class name.

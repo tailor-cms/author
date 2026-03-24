@@ -12,7 +12,7 @@ export const generate = defineRequestValidator([
   body('inputs.*.responseSchema').isString().notEmpty(),
 ]);
 
-export const uploadDocuments = defineRequestValidator([
+export const upload = defineRequestValidator([
   check('files').custom((_val, { req }) => {
     const files = req.files || [];
     if (!files.length) throw new Error('At least one PDF file is required');

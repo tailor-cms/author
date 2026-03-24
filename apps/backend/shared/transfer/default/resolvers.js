@@ -9,6 +9,7 @@ import db from '../../database/index.js';
 const { Activity, ContentElement, Repository } = db;
 const reStorage = /^storage:\/\//;
 
+const IS_ARRAY_STREAM = false;
 const isString = (arg) => typeof arg === 'string';
 const prependStorage = (it) =>
   it.replace(/^(?!(?:storage:)?\/\/)(?=repository\/)/, 'storage://');
@@ -20,7 +21,7 @@ function createRepositoryResolver({ context, transaction }) {
     if (repo.data) repo.data = omit(repo.data, '$$');
     cb(null, repo);
   });
-  return miss.pipe(srcStream, stripInternal, stringify(false /* isArray */));
+  return miss.pipe(srcStream, stripInternal, stringify(IS_ARRAY_STREAM));
 }
 
 function createActivitiesResolver({ context, transaction }) {
@@ -45,7 +46,7 @@ function createManifestResolver({ context }) {
     schema: schema.getSchema(schemaId),
     date: new Date(),
   };
-  return miss.pipe(miss.from.obj([manifest]), stringify(false /* isArray */));
+  return miss.pipe(miss.from.obj([manifest]), stringify(IS_ARRAY_STREAM));
 }
 
 function createAssetResolver({ filename, storage }) {

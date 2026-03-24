@@ -51,6 +51,13 @@
       :repository-id="activity.repositoryId"
       @close="showCopyDialog = false"
     />
+    <LinkContent
+      v-if="showLinkDialog"
+      :action="action"
+      :anchor="activity"
+      @close="showLinkDialog = false"
+      @completed="showLinkDialog = false"
+    />
   </span>
 </template>
 
@@ -61,6 +68,7 @@ import type { StoreActivity } from '@/stores/activity';
 
 import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
+import LinkContent from '@/components/repository/Library/LinkContent.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useSelectedActivity } from '#imports';
 
@@ -94,6 +102,7 @@ const activityName = computed(() => {
 
 const showCreateDialog = ref(false);
 const showCopyDialog = ref(false);
+const showLinkDialog = ref(false);
 const action = ref<InsertLocation>(AddAfter);
 const supportedLevels = ref<string[]>([]);
 
@@ -134,10 +143,27 @@ const copyMenuOptions = computed(() => {
   });
 });
 
+const linkMenuOptions = computed(() => {
+  const items = [
+    {
+      name: 'Link content below',
+      icon: 'mdi-link-variant',
+      action: () => setLinkContext(AddAfter),
+    },
+  ];
+  if (!selectedActivity.subLevels.value.length) return items;
+  return items.concat({
+    name: 'Link content into',
+    icon: 'mdi-link-variant',
+    action: () => setLinkContext(AddInto),
+  });
+});
+
 const menuOptions = computed(() => {
   return [
     ...addMenuOptions.value,
     ...copyMenuOptions.value,
+    ...linkMenuOptions.value,
     {
       name: 'Remove',
       icon: 'mdi-delete',
@@ -155,6 +181,11 @@ const setCopyContext = (levels: Activity[], actionValue: InsertLocation) => {
   supportedLevels.value = levels.map((it) => it.type);
   action.value = actionValue;
   showCopyDialog.value = true;
+};
+
+const setLinkContext = (actionValue: InsertLocation) => {
+  action.value = actionValue;
+  showLinkDialog.value = true;
 };
 
 const deleteActivity = () => {

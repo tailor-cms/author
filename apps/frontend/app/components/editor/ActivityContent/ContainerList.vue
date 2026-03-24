@@ -13,8 +13,7 @@
       variant="tonal"
       prominent
     >
-      Click the button below to create {{ multiple ? 'first' : '' }}
-      {{ capitalize(name) }}.
+      {{ emptyMessage }}
     </VAlert>
     <component
       :is="containerName"
@@ -26,7 +25,7 @@
       :activities="processedActivities"
       :config="config"
       :container="container"
-      :disabled="showPublishDiff"
+      :disabled="isReadonly"
       :elements="processedElements"
       :name="name"
       :position="index"
@@ -110,6 +109,9 @@ const contentElementStore = useContentElementStore();
 const editorStore = useEditorStore();
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
+const isReadonly = computed(
+  () => showPublishDiff.value || !!editorStore.selectedActivity?.isLinkedCopy,
+);
 const elements = computed(() => contentElementStore.items);
 
 // Filter containers through plugin hooks (e.g., i18n language filtering)
@@ -124,9 +126,15 @@ const containerName = computed(() => {
 
 const name = computed(() => props.label.toLowerCase());
 
+const emptyMessage = computed(() => {
+  if (isReadonly.value) return `Empty ${name.value}`;
+  const prefix = props.multiple ? 'first ' : '';
+  return `Click the button below to create ${prefix}${capitalize(name.value)}.`;
+});
+
 const addBtnEnabled = computed(() => {
   const isMultipleOrEmpty = props.multiple || !filteredContainerGroup.value.length;
-  return !showPublishDiff.value && isMultipleOrEmpty;
+  return !isReadonly.value && isMultipleOrEmpty;
 });
 
 // Use all containers for position calculation to avoid conflicts across languages
@@ -182,7 +190,7 @@ const reorderContentElements = ({
   newPosition: number;
   items: ContentElement[];
 }) => {
-  const element = items[newPosition];
+  const element = items[newPosition] as ContentElement;
   const context = { items, newPosition };
   return contentElementStore.reorder({ element, context });
 };
@@ -220,8 +228,15 @@ const requestElementDeletion = (
 };
 
 onBeforeMount(() => {
-  // Auto-create required container if none exists for current language
-  if (props.required && isEmpty(filteredContainerGroup.value)) addContainer();
+  // Auto-create required container if none exists for current language.
+  // Skip for linked/readonly activities - creating a container would trigger
+  // structural change hooks and break the link.
+  const shouldCreate =
+    !isReadonly.value &&
+    props.required &&
+    isEmpty(filteredContainerGroup.value);
+
+  if (shouldCreate) addContainer();
 });
 </script>
 

@@ -74,6 +74,13 @@ export const outlineSeed = {
   },
 };
 
+export const seedLinkedRepositories = async () => {
+  const { data } = await SeedClient.seedTestRepository({
+    includeLinkExample: true,
+  });
+  return data;
+};
+
 export const outlineLevel = {
   GROUP: 'Module',
   LEAF: 'Page',

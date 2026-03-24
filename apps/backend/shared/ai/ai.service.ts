@@ -25,7 +25,7 @@ class AiService {
     return this.#openai;
   }
 
-  async generate(context: AiContext) {
+  generate(context: AiContext) {
     const prompt = new AiPrompt(this.#openai, context);
     return prompt.execute();
   }
