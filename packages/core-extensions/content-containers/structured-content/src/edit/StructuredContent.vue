@@ -96,6 +96,7 @@
 <script lang="ts" setup>
 import {
   AddElement,
+  AiPrompt as AIPrompt,
   CircularProgress,
   ContainedContent,
   ElementList,
@@ -108,8 +109,6 @@ import { filter, sortBy, transform } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-
-import { AiPrompt as AIPrompt } from '@tailor-cms/core-components';
 
 const props = defineProps<{
   container: Activity;

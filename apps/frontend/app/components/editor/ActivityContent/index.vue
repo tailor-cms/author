@@ -125,14 +125,6 @@ const getOutlineLocationDesciption = (activity: Activity) => {
   );
 };
 
-const getAiConfig = (outlineActivityType: string, containerType: string) => {
-  const config = $schemaService
-    .getSupportedContainers(outlineActivityType)
-    .find((it: any) => it?.type === containerType);
-  return config?.ai || {};
-};
-
-
 const doTheMagic = ({
   containerType,
   inputs,

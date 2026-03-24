@@ -83,7 +83,11 @@
         />
       </VCol>
     </VRow>
-    <VRow v-if="!disabled" v-show="!isAiGeneratingContent" class="py-8 pr-14 justify-center">
+    <VRow
+      v-if="!disabled"
+      v-show="!isAiGeneratingContent"
+      class="py-8 pr-14 justify-center"
+    >
       <VBtn
         v-for="subcontainerType in subcontainerTypes"
         :key="subcontainerType"

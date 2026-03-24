@@ -1,5 +1,9 @@
 <template>
-  <VDialog :model-value="modelValue" max-width="420" @update:model-value="emit('update:modelValue', $event)">
+  <VDialog
+    :model-value="modelValue"
+    max-width="420"
+    @update:model-value="emit('update:modelValue', $event)"
+  >
     <VCard>
       <VCardTitle class="text-h6 pt-5 px-6">
         Cancel repository creation?
