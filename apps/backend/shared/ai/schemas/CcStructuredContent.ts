@@ -5,12 +5,24 @@ import {
 import { schema as schemaAPI } from '@tailor-cms/config';
 
 import type { AiResponseSpec, OpenAISchema } from './interfaces.ts';
-import { HTML_TYPE, ElementSchema } from './CeHtml.ts';
-import { QUESTION_TYPE, QuestionElementSchema } from './CeQuestion.ts';
+import { HTML_TYPE } from './CeHtml.ts';
+import elementRegistry from '../../content-plugins/elementRegistry.js';
+
+// Resolve AI config (Schema + processResponse) for an element type.
+const getAiSpec = (type: string) => elementRegistry.getAiConfig(type);
+
+// Filter to element types with AI support, fall back to HTML.
+const resolveSupportedTypes = (types: string[]): string[] => {
+  const supported = types.filter((t) => getAiSpec(t)?.Schema);
+  return supported.length ? supported : [HTML_TYPE];
+};
 
 interface MetaField {
   key: string;
   label: string;
+  // JSON Schema inferred from meta-input manifest at runtime.
+  // e.g. { type: 'string' }, { type: 'array', items: { type: 'number' } }
+  // null when meta-input has no schema (e.g. FILE) - excluded from AI output.
   schema: { type: string; items?: { type: string } } | null;
   options?: { value: string | number; label: string }[];
 }
@@ -18,87 +30,157 @@ interface MetaField {
 interface SubcontainerConfig {
   label: string;
   metaInputs: MetaField[];
-  elementTypes?: string[];
+  elementTypes: string[];
 }
-
 type SubcontainerConfigs = Record<string, SubcontainerConfig>;
 
-const ELEMENT_SCHEMAS: Record<string, any> = {
-  [HTML_TYPE]: ElementSchema,
-  [QUESTION_TYPE]: QuestionElementSchema,
+interface ParsedConfig {
+  subcontainers: SubcontainerConfigs;
+  ai?: {
+    definition?: string;
+    outputRules?: { prompt?: string };
+  };
+}
+
+const obj = (properties: any, required: string[]) => ({
+  type: 'object' as const,
+  properties,
+  ...(required.length && { required }),
+  additionalProperties: false,
+});
+
+// Server packages export raw content schemas (e.g. { content: 'string' } for HTML).
+// Wrap into full element format with type discriminator and data envelope.
+const buildElementSchema = (type: string) => {
+  const contentSchema = getAiSpec(type).Schema.schema;
+  return {
+    type: 'object' as const,
+    properties: {
+      type: { enum: [type] },
+      ...contentSchema.properties,
+    },
+    required: ['type', ...(contentSchema.required || [])],
+    additionalProperties: false,
+  };
 };
 
-const getElementsSchema = (types?: string[]) => {
-  const schemas = (types || [HTML_TYPE])
-    .map((t) => ELEMENT_SCHEMAS[t])
-    .filter(Boolean);
+const getElementsSchema = (types: string[]) => {
+  const resolved = resolveSupportedTypes(types);
+  const schemas = resolved.map(buildElementSchema);
   const items = schemas.length === 1 ? schemas[0] : { anyOf: schemas };
   return { type: 'array', items };
 };
 
-const obj = (properties: any, required: string[]) => ({
-  type: 'object',
-  properties,
-  required,
-  additionalProperties: false,
-});
+// Processed contentElementConfig format:
+// [{ name: 'Group', items: [{ id: 'TYPE' }] }]
+const getElementTypeIds = (config?: any[]): string[] =>
+  config?.flatMap((group: any) =>
+    (group.items || []).map((it: any) => it.id || it),
+  ) ?? [];
 
-const buildDataSchema = (configs: SubcontainerConfigs) => {
-  const properties: Record<string, any> = {};
-  const required: string[] = [];
-  for (const { metaInputs = [] } of Object.values(configs)) {
-    for (const field of metaInputs) {
-      if (properties[field.key] || !field.schema) continue;
-      const values = field.options?.map((o) => o.value);
-      properties[field.key] = values?.length
-        ? { ...field.schema, enum: values }
-        : field.schema;
-      required.push(field.key);
-    }
-  }
-  return obj(properties, required);
-};
+// Subcontainer meta can be a static array or a factory fn.
+// e.g. meta: () => [{ key: 'title', type: 'TEXT_FIELD' }]
+const getMetaDefinitions = (val: any): any[] =>
+  typeof val.meta === 'function'
+    ? val.meta()
+    : val.meta || [];
 
-const getConfigs = (context: AiContext): SubcontainerConfigs => {
-  const { outlineActivityType, containerType } = context.repository;
-  if (!outlineActivityType || !containerType) return {};
-  const containers = schemaAPI.getSupportedContainers(outlineActivityType);
-  const container = containers.find((c: any) => c.type === containerType);
-  if (!container?.config) return {};
-  const configs: SubcontainerConfigs = {};
+// Map raw meta definitions to MetaField with resolved schema.
+// Options come from m.options (select) or m.items (radio).
+const toMetaFields = (meta: any[]): MetaField[] =>
+  meta.map((m: any) => ({
+    key: m.key,
+    label: m.label,
+    schema: getMetaInputSchema(m.type, m),
+    ...((m.options || m.items) && {
+      options: m.options || m.items,
+    }),
+  }));
+
+// Parse container schema config into per-subcontainer configs.
+// Resolves element types and meta field schemas for each
+// subcontainer type defined in the container config.
+const getConfigs = (context: AiContext): ParsedConfig => {
+  const empty: ParsedConfig = { subcontainers: {} };
+  const { outlineActivityType, containerType } =
+    context.repository;
+  if (!outlineActivityType || !containerType) return empty;
+  const containers = schemaAPI.getSupportedContainers(
+    outlineActivityType,
+  );
+  const container = containers.find(
+    (c: any) => c.type === containerType,
+  );
+  if (!container?.config) return empty;
+  // Container-level element types as default fallback
+  const defaultElementTypes = getElementTypeIds(
+    container.contentElementConfig,
+  );
+  const subcontainers: SubcontainerConfigs = {};
   for (const [type, val] of Object.entries(
     container.config as Record<string, any>,
   )) {
-    const meta = typeof val.meta === 'function' ? val.meta() : val.meta || [];
-    configs[type] = {
+    // Subcontainer config overrides container-level
+    const elementTypes = val.contentElementConfig
+      ? getElementTypeIds(val.contentElementConfig)
+      : defaultElementTypes;
+    subcontainers[type] = {
       label: val.label || type,
-      metaInputs: meta.map((m: any) => ({
-        key: m.key,
-        label: m.label,
-        schema: getMetaInputSchema(m.type, m),
-        ...((m.options || m.items) && { options: m.options || m.items }),
-      })),
+      elementTypes,
+      metaInputs: toMetaFields(getMetaDefinitions(val)),
     };
   }
-  return configs;
+  return { subcontainers, ai: container.ai };
 };
 
-export const Schema = (context: AiContext): OpenAISchema => {
-  const configs = getConfigs(context);
-  const hasConfigs = Object.keys(configs).length > 0;
-  const elementTypes = hasConfigs
-    ? [...new Set(Object.values(configs).flatMap((c) => c.elementTypes || []))]
-    : [];
-  const subcontainerProps: Record<string, any> = {
-    type: { type: 'string' },
-    elements: getElementsSchema(elementTypes.length ? elementTypes : undefined),
+// Build JSON schema for a single subcontainer type:
+// discriminated by type enum, with per-type elements and data.
+const buildSubcontainerSchema = (
+  type: string,
+  config: SubcontainerConfig,
+) => {
+  const { metaInputs, elementTypes } = config;
+  const props: Record<string, any> = {
+    type: { enum: [type] },
+    elements: getElementsSchema(elementTypes),
   };
   const required = ['type', 'elements'];
-  if (hasConfigs) {
-    subcontainerProps.data = buildDataSchema(configs);
+  const dataProps: Record<string, any> = {};
+  const dataRequired: string[] = [];
+  for (const field of metaInputs) {
+    if (!field.schema) continue;
+    const values = field.options?.map((o) => o.value);
+    dataProps[field.key] = values?.length
+      ? { ...field.schema, enum: values }
+      : field.schema;
+    dataRequired.push(field.key);
+  }
+  if (Object.keys(dataProps).length) {
+    props.data = obj(dataProps, dataRequired);
     required.push('data');
   }
-  const subcontainerSchema = obj(subcontainerProps, required);
+  return obj(props, required);
+};
+
+// Build OpenAI structured output schema from container config.
+// Each subcontainer type becomes a discriminated union variant
+// with its own allowed element types and metadata fields.
+export const Schema = (context: AiContext): OpenAISchema => {
+  const { subcontainers } = getConfigs(context);
+  // Default to generic section when no config is defined
+  const entries = Object.entries(subcontainers);
+  if (!entries.length) {
+    entries.push(['SECTION', {
+      label: 'Section', metaInputs: [], elementTypes: [],
+    }]);
+  }
+  // Build per-subcontainer schema with type discriminator
+  const schemas = entries.map(([type, config]) =>
+    buildSubcontainerSchema(type, config),
+  );
+  const subcontainerSchema = schemas.length === 1
+    ? schemas[0]
+    : { anyOf: schemas };
   return {
     type: 'json_schema',
     name: 'cc_structured_content',
@@ -115,6 +197,18 @@ const describeField = ({ key, label, options }: MetaField): string => {
   return opts ? `${base} [options: ${opts}]` : base;
 };
 
+const describeElementTypes = (types: string[]): string =>
+  resolveSupportedTypes(types)
+    .map((type) => {
+      const prompt = getAiSpec(type)?.getPrompt?.() || '';
+      // Extract element description from server package prompt.
+      // e.g. "Generate a accordion content element as an object..."
+      //   ->  "a accordion content element"
+      const match = prompt.match(/generate\s+(.+?)\s+as\s+an/i);
+      return `  - "${type}": ${match?.[1] || type}`;
+    })
+    .join('\n');
+
 const describeSubcontainerTypes = (configs: SubcontainerConfigs): string => {
   const entries = Object.entries(configs);
   if (!entries.length) return '  - Type "SECTION" (Section)';
@@ -127,39 +221,76 @@ const describeSubcontainerTypes = (configs: SubcontainerConfigs): string => {
     .join('\n');
 };
 
+// Build prompt with available element types, subcontainer types,
+// metadata fields, and container-level AI instructions.
 export const getPrompt = (context: AiContext) => {
-  const hasDocuments = !!context.repository.vectorStoreId;
-  const documentGuideline = hasDocuments
-    ? `- Base ALL content on the provided source documents
-  - Reference specific information, data, and examples from the documents
-  - Do not invent information not present in the documents`
-    : '';
+  const { subcontainers, ai } = getConfigs(context);
+  // Collect all unique element types across subcontainers
+  const allElementTypes = [
+    ...new Set(Object.values(subcontainers).flatMap((c) => c.elementTypes)),
+  ];
+  const guidelines: string[] = [
+    '- Fill in ALL metadata fields with values relevant to each subcontainer\'s content',
+    '- Each subcontainer should focus on a distinct topic or aspect',
+    '- Choose the best element type for each piece of content',
+    '- Skip media elements (images, videos, audio, files)',
+    '- Include at most one question element per subcontainer',
+  ];
+  // Container ai.definition describes the content purpose
+  // e.g. "Learning Bit content is organized into sections"
+  if (ai?.definition) {
+    guidelines.push(`- Context: ${ai.definition}`);
+  }
+  if (context.repository.vectorStoreId) {
+    guidelines.push(
+      '- Base ALL content on the provided source documents',
+      '- Reference specific information, data, and examples from the documents',
+      '- Do not invent information not present in the documents',
+    );
+  }
+  if (ai?.outputRules?.prompt) {
+    guidelines.push(ai.outputRules.prompt.trim());
+  }
   return `
   Response should be a JSON object with a "subcontainers" array.
   Each subcontainer has:
   - "type": one of the available subcontainer types
   - "data": metadata object with the described fields filled in
-  - "elements": array of content elements in
-    [{ type: "${HTML_TYPE}", data: { "content": "" } }] format
+  - "elements": array of content elements (format defined by the schema)
+
+  Available element types:
+  ${describeElementTypes(allElementTypes)}
 
   Available subcontainer types:
-  ${describeSubcontainerTypes(getConfigs(context))}
+  ${describeSubcontainerTypes(subcontainers)}
 
   Guidelines:
-  - Fill in ALL metadata fields described above with appropriate values
-  - Generate 2-4 subcontainers to cover the topic comprehensively
-  - Each subcontainer should have 2-5 content elements
-  - Each content element should have substantial HTML content (200+ words)
-  - Format content as HTML with suitable tags and headings
-  - Apply text-body-2 mb-5 to paragraphs, text-h3 mb-7 to headings
-  - Don't include more than 3 headings per subcontainer
-  ${documentGuideline}`;
+  ${guidelines.join('\n  ')}`;
+};
+
+// AI returns flat elements matching the content schema (e.g. { type, content } for HTML).
+// Server processResponse transforms raw content into the element's data format.
+const processElement = (el: any) => {
+  const { type, ...rawContent } = el;
+  const spec = getAiSpec(type);
+  const data = spec?.processResponse
+    ? spec.processResponse(rawContent)
+    : rawContent;
+  return { type, data };
+};
+
+const processResponse = (data: any = {}) => {
+  const subcontainers = data?.subcontainers || [];
+  return subcontainers.map((sc: any) => ({
+    ...sc,
+    elements: (sc.elements || []).map(processElement),
+  }));
 };
 
 const spec: AiResponseSpec = {
   getPrompt,
   Schema,
-  processResponse: (data: any = {}) => data?.subcontainers || [],
+  processResponse,
 };
 
 export default spec;

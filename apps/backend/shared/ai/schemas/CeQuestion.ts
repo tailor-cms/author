@@ -64,29 +64,31 @@ export const getPrompt = () => `
       keys. Feedback is optional and should provide more information
       about the answers.`;
 
+export const processQuestionElement = (it: any) => {
+  const uuid = uuidv4();
+  return {
+    type: ContentElementType.MultipleChoice,
+    data: {
+      isGradable: true,
+      question: [uuid],
+      ...pick(it, ['correct', 'answers', 'hint', 'feedback']),
+      embeds: {
+        [uuid]: {
+          id: uuid,
+          data: { content: it.question },
+          embedded: true,
+          position: 1,
+          type: ContentElementType.TiptapHtml,
+        },
+      },
+    },
+  };
+};
+
 export const processResponse = (data: any = {}) => {
   const { elements } = data;
   if (!elements?.length) return [];
-  return elements?.map((it) => {
-    const uuid = uuidv4();
-    return {
-      type: ContentElementType.MultipleChoice,
-      data: {
-        isGradable: true,
-        question: [uuid],
-        ...pick(it, ['correct', 'answers', 'hint', 'feedback']),
-        embeds: {
-          [uuid]: {
-            id: uuid,
-            data: { content: it.question },
-            embedded: true,
-            position: 1,
-            type: ContentElementType.TiptapHtml,
-          },
-        },
-      },
-    };
-  });
+  return elements.map(processQuestionElement);
 };
 
 const spec: AiResponseSpec = {

@@ -26,8 +26,8 @@ export const parseConfig = (repository, outlineActivity, container, config) => {
         initMeta: () =>
           val?.initMeta?.(repository, outlineActivity, container, val) ?? {},
         contentElementConfig: val.contentElementConfig,
-        disableContentElementList: val.disableContentElementList,
-        disableAi: val.disableAi,
+        disableContentElementList: !!val.disableContentElementList,
+        disableAi: !!val.disableAi,
       };
       return acc;
     },
