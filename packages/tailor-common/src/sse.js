@@ -14,6 +14,7 @@ export const Comment = {
 export const ContentElement = {
   Create: 'content_element:create',
   Update: 'content_element:update',
+  BulkUpdate: 'content_element:bulk_update',
   Delete: 'content_element:delete',
 };
 

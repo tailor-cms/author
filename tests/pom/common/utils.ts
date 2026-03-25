@@ -1,6 +1,8 @@
 import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+import { Toast } from './Toast';
+
 export const confirmAction = async (
   page: Page,
   confirmationBtnLabel = 'confirm',
@@ -11,7 +13,7 @@ export const confirmAction = async (
 };
 
 export const expectAlert = async (page: Page, message: string) => {
-  const alertLocator = page.locator('.v-snackbar');
-  await expect(alertLocator).toHaveText(message);
-  await expect(alertLocator).not.toBeVisible();
+  const toast = new Toast(page);
+  await toast.hasText(message);
+  await toast.waitForDismiss();
 };

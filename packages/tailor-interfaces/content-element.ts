@@ -13,6 +13,17 @@ export interface RelationshipType extends ElementRelationship {
   value?: Relationship[];
 }
 
+export interface ElementSourceInfo {
+  id: number;
+  uid: string;
+  repositoryId: number;
+  repositoryName?: string;
+  activityId: number;
+  outlineActivityId: number;
+  outlineActivityName?: string;
+  linkedAt?: string;
+}
+
 export interface ContentElement {
   id: number;
   uid: string;
@@ -31,8 +42,12 @@ export interface ContentElement {
   refs: Record<string, Relationship | number>;
   /** Parent is soft-deleted */
   detached: boolean;
-  /** Missing implementation */
-  linked: boolean;
+  /** Whether this element is an active linked copy */
+  isLinkedCopy: boolean;
+  /** ID of the source element */
+  sourceId?: number;
+  /** Timestamp of source element when linked */
+  sourceModifiedAt?: string;
   /** Origin ID, used to detect a copy */
   contentId: string;
   /** Hash of a element data field, can be used to detect duplicates */

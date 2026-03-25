@@ -22,7 +22,7 @@ services:
 
   author-dc-localstack:
     container_name: author-dc-localstack
-    image: localstack/localstack
+    image: localstack/localstack:4.14.0
     expose:
       - '4566'
     ports:
