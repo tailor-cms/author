@@ -11,12 +11,22 @@ export class ExtensionRegistry {
   extensionType = '';
   elements = [];
   location = './';
-  hasServerPackages = false;
+  hasServerPackage = false;
+  serverExportPath = '';
 
-  constructor(location, extensionType, hasServerPackages = false) {
+  // opts.serverPackage controls server.js generation:
+  //   - not set:  no server exports (e.g. plugins)
+  //   - true:     each extension has a dedicated server npm package
+  //               listed as `serverPackage` in registry.json (e.g. content-elements)
+  //   - 'path':   server export lives within the client package at given path
+  //               (e.g. 'src/manifest.js' for meta-inputs)
+  constructor(location, extensionType, opts = {}) {
     this.location = location;
     this.extensionType = extensionType;
-    this.hasServerPackages = hasServerPackages;
+    this.hasServerPackage = !!opts?.serverPackage;
+    this.serverExportPath = typeof opts?.serverPackage === 'string'
+      ? opts.serverPackage
+      : '';
     this.load();
   }
 
@@ -26,11 +36,25 @@ export class ExtensionRegistry {
       .filter(Boolean);
   }
 
+  // Returns import paths for the generated server.js.
+  // - serverExportPath set: derives paths from client packages
+  //   e.g. @tailor-cms/tme-textarea/src/manifest.js
+  // - hasSeparateServerPackage: reads dedicated server package names
+  //   from the registry e.g. @tailor-cms/ce-html-server
   get serverPackages() {
-    if (!this.hasServerPackages) return [];
+    if (!this.hasServerPackage) return [];
+    if (this.serverExportPath) {
+      return this.clientPackages.map((pkg) => `${pkg}/${this.serverExportPath}`);
+    }
     return this.elements
       .map(({ serverPackage }) => serverPackage)
       .filter(Boolean);
+  }
+
+  // True when each extension has a dedicated server npm package
+  // (e.g. @tailor-cms/ce-html-server) listed in the registry.
+  get hasSeparateServerPackage() {
+    return this.hasServerPackage && !this.serverExportPath;
   }
 
   get registryLocation() {
@@ -93,7 +117,7 @@ export class ExtensionRegistry {
       name: packageName,
       clientPackage,
       serverPackage,
-    } = await getInstallationInfo(this.hasServerPackages);
+    } = await getInstallationInfo(this.hasSeparateServerPackage);
     if (this.find(packageName)) {
       shell.echo(`${this.extensionType} already exists!`);
       shell.echo(`Reinstalling the ${packageName}...`);
@@ -130,33 +154,36 @@ export class ExtensionRegistry {
     this.onRegistryUpdate();
   }
 
-  async onRegistryUpdate() {
+  rebuild() {
     const {
       clientExportsLocation,
       clientPackages,
-      elements,
-      hasServerPackages,
       interfaceExportsLocation,
-      registryLocation,
       serverExportsLocation,
       serverPackages,
     } = this;
+    shell.echo('Generating export modules...');
+    fs.writeFileSync(clientExportsLocation, getExportModule(clientPackages));
+    const interfaceModuleExport = getInterfaceModule(
+      this.location,
+      this.elements,
+      this.extensionType,
+      this.serverExportPath,
+    );
+    fs.writeFileSync(interfaceExportsLocation, interfaceModuleExport);
+    if (serverPackages.length) {
+      fs.writeFileSync(serverExportsLocation, getExportModule(serverPackages));
+    }
+  }
+
+  onRegistryUpdate() {
+    const { elements, registryLocation } = this;
     shell.echo('Updating the registry file...');
     jsonfile.writeFileSync(registryLocation, elements, {
       spaces: 2,
       EOL: '\r\n',
     });
-    shell.echo('Generating export modules...');
-    fs.writeFileSync(clientExportsLocation, getExportModule(clientPackages));
-    const interfaceModuleExport = getInterfaceModule(
-      this.location,
-      elements,
-      this.extensionType,
-    );
-    fs.writeFileSync(interfaceExportsLocation, interfaceModuleExport);
-    if (hasServerPackages) {
-      fs.writeFileSync(serverExportsLocation, getExportModule(serverPackages));
-    }
+    this.rebuild();
   }
 }
 
@@ -182,9 +209,10 @@ const exportInterfaceTemplate = template(
 const getExportModule = (entries) =>
   exportModuleTemplate({ entries }).trim().concat('\n];\n');
 
-const getInterfaceModule = (dir, packages, extensionType) => {
+const getInterfaceModule = (dir, packages, extensionType, serverExportPath) => {
   const isBuilt = extensionType === 'content element';
-  const targetPath = isBuilt ? 'dist/index.cjs' : 'src/index.js';
+  const defaultPath = isBuilt ? 'dist/index.cjs' : 'src/index.js';
+  const targetPath = serverExportPath || defaultPath;
   const packageTypes = packages.map((it) =>
     parseType(`${dir}/node_modules/${it.clientPackage}/${targetPath}`),
   );
@@ -222,8 +250,8 @@ const findTypeVariableValue = (ast) => {
 const findTypeExportValue = (ast, key = 'type') => {
   const exportNodeType = 'ExportDefaultDeclaration';
   const exportNode = ast.body.find((it) => it.type === exportNodeType);
-  if (!exportNode) return '';
-  const { properties } = exportNode.declaration;
-  const typeNode = properties.find((it) => it.key.name === key);
+  const properties = exportNode?.declaration?.properties;
+  if (!properties) return '';
+  const typeNode = properties.find((it) => it.key?.name === key);
   return typeNode?.value?.value || '';
 };
