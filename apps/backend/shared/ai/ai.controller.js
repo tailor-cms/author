@@ -8,8 +8,8 @@ async function generate({ body }, res) {
 }
 
 async function upload({ files, body }, res) {
-  const result = await AIService.vectorStore.upload(files, body.vectorStoreId);
-  return res.json({ data: result });
+  const data = await AIService.vectorStore.upload(files, body.vectorStoreId);
+  return res.json({ data });
 }
 
 async function getVectorStoreStatus({ params }, res) {

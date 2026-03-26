@@ -1,6 +1,6 @@
 config:
   ai:enabled: "true"
-  ai:modelId: gpt-4.1
+  ai:modelId: gpt-5.4
   aws:region: us-east-1
   dns:domain: tailor-cms.com
   dns:hostedZoneId: Z03469864NDBKNYE5TS1

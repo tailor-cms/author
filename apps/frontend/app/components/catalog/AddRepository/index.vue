@@ -175,10 +175,6 @@
       </form>
     </template>
   </TailorDialog>
-  <CancelConfirmation
-    v-model="isCancelConfirmationVisible"
-    @confirm="confirmCancel"
-  />
 </template>
 
 <script lang="ts" setup>
@@ -192,7 +188,6 @@ import { useForm } from 'vee-validate';
 
 import aiAPI from '@/api/ai';
 import AiAssistance from './AiAssistance.vue';
-import CancelConfirmation from './CancelConfirmation.vue';
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
@@ -272,19 +267,22 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   }
 });
 
-const isCancelConfirmationVisible = ref(false);
+const confirmationDialog = useConfirmationDialog();
 
 const handleCancel = () => {
   if (isAiIndexing.value) {
-    isCancelConfirmationVisible.value = true;
+    confirmationDialog({
+      title: 'Cancel repository creation?',
+      message:
+        'Documents are still being processed and will be lost if you cancel now.',
+      action: () => {
+        const storeId = aiContext.value?.vectorStoreId;
+        if (storeId) aiAPI.deleteVectorStore(storeId).catch(() => {});
+        hide();
+      },
+    });
     return;
   }
-  hide();
-};
-
-const confirmCancel = () => {
-  const storeId = aiContext.value?.vectorStoreId;
-  if (storeId) aiAPI.deleteVectorStore(storeId).catch(() => {});
   hide();
 };
 
