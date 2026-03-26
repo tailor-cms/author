@@ -32,6 +32,16 @@ const ModuleConfig: ActivityConfig = {
       Modules are a way to organize knowledge into chunks that are easier to
       understand and learn. Modules can be nested if needed.`,
   },
+  meta: [
+    {
+      type: MetaInputType.File,
+      key: 'thumbnail',
+      label: 'Thumbnail',
+      placeholder: 'Click to add a thumbnail image',
+      showPreview: true,
+      validate: { ext: ['jpg', 'jpeg', 'png'] },
+    },
+  ],
   relationships: [
     {
       type: 'prerequisites',

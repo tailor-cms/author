@@ -8,7 +8,7 @@ import SeedClient from '../../../api/SeedClient';
 import { DOCUMENT, IMAGE } from '../../../fixtures/assets';
 import { toFileMetaInput } from './helpers';
 
-const INPUT_PLACEHOLDER = 'Click to add a poster image';
+const INPUT_PLACEHOLDER = 'Click to add a thumbnail image';
 
 test.describe('FileInput - upload tab', () => {
   test('can upload a file via the upload tab', async ({ page }) => {

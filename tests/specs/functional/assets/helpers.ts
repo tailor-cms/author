@@ -2,7 +2,10 @@ import type { Page } from '@playwright/test';
 
 import SeedClient from '../../../api/SeedClient';
 import { AssetLibrary } from '../../../pom/repository/AssetLibrary';
-import { toRepositoryAssets, toSeededRepository } from '../../../helpers/seed';
+import {
+  toRepositoryAssets,
+  toSeededRepository,
+} from '../../../helpers/seed';
 
 // Reset DB and seed a repository. Returns repositoryId (no page navigation).
 export async function createRepository() {
@@ -30,13 +33,12 @@ export async function toSeededAssetLibrary(
   return { repositoryId, lib };
 }
 
-// Seed a repository, navigate to structure, and open an activity sidebar.
+// Seed a repository, navigate to structure page.
+// The seed auto-selects the first module, opening the sidebar
+// with meta inputs including a File input (thumbnail).
 export async function toFileMetaInput(page: Page) {
   await SeedClient.resetDatabase();
   const { repository } = await toSeededRepository(page);
-  await page.waitForLoadState('networkidle');
-  const firstItem = page.locator('.activity-item').first();
-  if (await firstItem.isVisible()) await firstItem.click();
   await page.waitForLoadState('networkidle');
   return repository.id;
 }
