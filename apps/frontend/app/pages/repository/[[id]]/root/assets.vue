@@ -8,17 +8,17 @@
       @discover="showDiscoveryDialog = true"
     />
     <BulkActionBar
-      :assets="assetStore.assets.value"
+      :assets="assetStore.assets"
       :selected-ids="selection.selectedIds"
       :is-indexing="indexing.isIndexing.value"
-      :is-bulk-deleting="assetStore.isBulkRemoving.value"
+      :is-bulk-deleting="assetStore.isBulkRemoving"
       @clear="selection.clear"
       @index="indexSelected"
       @delete="confirmBulkDelete"
     />
     <ListControls
       v-model:selected-category="selectedCategory"
-      v-model:items-per-page="assetStore.itemsPerPage.value"
+      v-model:items-per-page="assetStore.itemsPerPage"
       :categories="categories"
       :is-all-selected="isAllSelected"
       :sort-direction="sortDirection"
@@ -28,21 +28,21 @@
     />
     <AssetList
       :assets="processedAssets"
-      :is-fetching="assetStore.isFetching.value"
-      :items-per-page="assetStore.itemsPerPage.value"
-      :page="assetStore.page.value"
+      :is-fetching="assetStore.isFetching"
+      :items-per-page="assetStore.itemsPerPage"
+      :page="assetStore.page"
       :selected-ids="selection.selectedIds"
       :selected-category="selectedCategory"
-      :total="assetStore.total.value"
+      :total="assetStore.total"
       @delete="confirmDelete"
       @download="downloadAsset"
       @select="activeAsset = $event"
       @select:toggle="selection.toggle"
-      @update:page="assetStore.page.value = $event"
+      @update:page="assetStore.page = $event"
     />
     <AssetDetailDialog
       :asset="activeAsset"
-      :is-saving="assetStore.isSaving.value"
+      :is-saving="assetStore.isSaving"
       @close="activeAsset = null"
       @deindex="onDeindex"
       @delete="confirmDelete($event); activeAsset = null"
@@ -84,11 +84,11 @@ const currentRepositoryStore = useCurrentRepository();
 const showConfirmation = useConfirmationDialog();
 const repositoryId = computed(() => currentRepositoryStore.repository?.id);
 
-const assetStore = useAssets(repositoryId);
+const assetStore = reactive(useAssets(repositoryId));
 const indexing = useAssetIndexing(repositoryId);
 const { categories, selectedCategory } = useAssetFiltering();
-const selection = useAssetSelection(assetStore.assets);
-const processedAssets = indexing.withStatus(assetStore.assets);
+const selection = useAssetSelection(toRef(() => assetStore.assets));
+const processedAssets = indexing.withStatus(toRef(() => assetStore.assets));
 
 const toolbarRef = ref<InstanceType<typeof Toolbar>>();
 const activeAsset = ref<Asset | null>(null);
@@ -98,8 +98,8 @@ const showDiscoveryDialog = ref(false);
 const sortDirection = ref<SortDirection>(DESC);
 
 const isAllSelected = computed(
-  () => assetStore.assets.value.length > 0
-    && selection.selectedIds.size === assetStore.assets.value.length,
+  () => assetStore.assets.length > 0
+    && selection.selectedIds.size === assetStore.assets.length,
 );
 
 const fetchParams = computed(() => {
@@ -121,9 +121,9 @@ function refetch() {
 }
 
 function resetAndFetch() {
-  if (assetStore.page.value === 1) return refetch();
+  if (assetStore.page === 1) return refetch();
   // Setting page triggers the page watcher which calls refetch
-  assetStore.page.value = 1;
+  assetStore.page = 1;
 }
 
 async function uploadFiles(files: File[]) {
@@ -138,7 +138,7 @@ async function downloadAsset(asset: Asset) {
 }
 
 async function indexSelected() {
-  const ids = assetStore.assets.value
+  const ids = assetStore.assets
     .filter((a) => selection.selectedIds.has(a.id) && isIndexable(a))
     .map((a) => a.id);
   if (!ids.length) return;
@@ -187,12 +187,12 @@ function confirmBulkDelete() {
 }
 
 const debouncedSearch = debounce(resetAndFetch, 300);
-watch([selectedCategory, assetStore.itemsPerPage], resetAndFetch);
+watch([selectedCategory, () => assetStore.itemsPerPage], resetAndFetch);
 watch(searchQuery, debouncedSearch);
-watch(assetStore.page, refetch);
+watch(() => assetStore.page, refetch);
 
 onMounted(async () => {
   await assetStore.fetch(fetchParams.value);
-  indexing.resumeIfActive(assetStore.assets.value);
+  indexing.resumeIfActive(assetStore.assets);
 });
 </script>
