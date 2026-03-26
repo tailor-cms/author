@@ -45,7 +45,7 @@
       :is-saving="assetStore.isSaving"
       @close="activeAsset = null"
       @deindex="onDeindex"
-      @delete="confirmDelete($event); activeAsset = null"
+      @delete="confirmDelete"
       @download="downloadAsset"
       @save="onSaveMeta"
     />
@@ -169,6 +169,7 @@ function confirmDelete(asset: Asset) {
     action: async () => {
       await assetStore.remove(asset.id);
       selection.selectedIds.delete(asset.id);
+      activeAsset.value = null;
       refetch();
     },
   });
