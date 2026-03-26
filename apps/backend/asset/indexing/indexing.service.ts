@@ -48,7 +48,7 @@ const { Asset: AssetModel } = db;
 const logger = createLogger('asset:indexing');
 
 async function findOrCreateStore(repository: any): Promise<string> {
-  const existing = repository.data?.$$?.ai?.storeId;
+  const existing = repository.getVectorStoreId();
   if (existing) {
     logger.debug(
       { repositoryId: repository.id, storeId: existing },
@@ -59,13 +59,25 @@ async function findOrCreateStore(repository: any): Promise<string> {
   const store = AIService.vectorStore;
   if (!store) throw new Error('StoreService not available');
   const storeId = await store.createStore();
-  logger.debug({ repositoryId: repository.id, storeId }, 'Created new store');
-  const $$ = {
-    ...repository.data?.$$,
-    ai: { ...repository.data?.$$?.ai, storeId },
-  };
-  await repository.update({ data: { ...repository.data, $$ } });
-  return storeId;
+  logger.debug(
+    { repositoryId: repository.id, storeId },
+    'Created new store',
+  );
+  const wasSet = await repository.setVectorStoreId(storeId);
+  if (wasSet) return storeId;
+  // Another request won the race; use their storeId,
+  // clean up the orphaned store we just created
+  await repository.reload();
+  const existingId = repository.getVectorStoreId();
+  if (!existingId) throw new Error('Failed to persist vector store ID');
+  logger.debug(
+    { repositoryId: repository.id, storeId: existingId },
+    'Using store from concurrent request',
+  );
+  store.deleteStore(storeId).catch((err: any) =>
+    logger.warn({ err, storeId }, 'Failed to clean up orphaned store'),
+  );
+  return existingId;
 }
 
 export async function removeFromStore(repository: any, asset: Asset) {

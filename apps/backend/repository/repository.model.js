@@ -1,4 +1,4 @@
-import { Model, Op } from 'sequelize';
+import { literal, Model, Op } from 'sequelize';
 import first from 'lodash/first.js';
 import intersection from 'lodash/intersection.js';
 import map from 'lodash/map.js';
@@ -160,6 +160,30 @@ class Repository extends Model {
     if (intersection(repositoryGroupIds, userGroupIds).length) return true;
     // If none of the above conditions are met, deny access
     return false;
+  }
+
+  /**
+   * Atomically sets the AI vector store ID in the repository's
+   * data JSONB. Returns true if the value was written, false if
+   * another request already set it (concurrent indexing race).
+   */
+  async setVectorStoreId(storeId) {
+    const path = `{$$,ai,storeId}`;
+    const [count] = await Repository.update(
+      { data: literal(`jsonb_set(COALESCE(data,'{}'),'${path}','"${storeId}"')`) },
+      {
+        where: {
+          id: this.id,
+          [Op.and]: literal(`data->'$$'->'ai'->'storeId' IS NULL`),
+        },
+      },
+    );
+    if (count > 0) await this.reload();
+    return count > 0;
+  }
+
+  getVectorStoreId() {
+    return this.data?.$$?.ai?.storeId ?? null;
   }
 
   async validateReferences(transaction) {
