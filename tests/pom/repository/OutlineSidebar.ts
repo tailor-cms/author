@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { type Locator, type Page, expect } from '@playwright/test';
 
 import { Comments } from '../common/Comments';
 import { LinkedCopyNotice } from './LinkedCopyNotice';
