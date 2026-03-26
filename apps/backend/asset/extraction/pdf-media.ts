@@ -10,7 +10,7 @@ import { createLogger } from '#logger';
 import { PDFParse } from 'pdf-parse';
 import { v4 as uuidv4 } from 'uuid';
 
-import StorageService from '#shared/storage/storage.service.js';
+import Storage from '../../repository/storage.js';
 import db from '#shared/database/index.js';
 
 import { AssetType, type FileAsset } from '../asset.model.js';
@@ -128,16 +128,13 @@ export async function extractAndSaveImages(
   for (let i = 0; i < images.length; i++) {
     const img = images[i];
     try {
-      const url = await StorageService.saveBuffer(
-        img.filename,
-        img.buffer,
-        img.mimeType,
-      );
+      const key = Storage.getPath(img.filename);
+      await Storage.saveFile(key, img.buffer, { ContentType: img.mimeType });
       const created = await AssetModel.create({
         repositoryId: parentAsset.repositoryId,
         name: `${parentAsset.name} - Image ${i + 1}`,
         type: AssetType.Image,
-        storageKey: url.replace(/^storage:\/\//, ''),
+        storageKey: key,
         meta: {
           fileSize: img.buffer.length,
           mimeType: img.mimeType,
