@@ -192,7 +192,7 @@ watch(searchQuery, debouncedSearch);
 watch(assetStore.page, refetch);
 
 onMounted(async () => {
-  await assetStore.fetch();
+  await assetStore.fetch(fetchParams.value);
   indexing.resumeIfActive(assetStore.assets.value);
 });
 </script>
