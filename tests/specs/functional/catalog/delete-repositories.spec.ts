@@ -10,6 +10,8 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/', { waitUntil: 'networkidle' });
   const catalog = new Catalog(page);
   await expect(catalog.getRepositoryCards().first()).toBeVisible();
+  await catalog.loadMore();
+  await expect(catalog.loadMoreBtn).not.toBeVisible();
 });
 
 test('should be able to toggle delete mode on and off', async ({ page }) => {
@@ -81,22 +83,6 @@ test('should delete selected repositories after confirmation', async ({
   const catalog = new Catalog(page);
   await catalog.toggleDeleteMode();
   await catalog.getCardCheckbox('Astronomy').click();
-  await catalog.deleteSelectedBtn.click();
-  const dialog = new ConfirmationDialog(page, 'Delete repository');
-  await expect(dialog.el).toBeVisible();
-  await dialog.confirm();
-  await expect(dialog.el).not.toBeVisible();
-  await page.waitForLoadState('networkidle');
-  await expect(catalog.findRepositoryCard('Astronomy')).toHaveCount(0, {
-    timeout: 10000,
-  });
-  await expect(catalog.selectAllCheckbox).not.toBeVisible();
-});
-
-test('should delete multiple selected repositories', async ({ page }) => {
-  const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
-  await catalog.getCardCheckbox('Astronomy').click();
   await catalog.getCardCheckbox('Physics').click();
   await expect(catalog.deleteSelectedBtn).toContainText('(2)');
   await catalog.deleteSelectedBtn.click();
@@ -106,10 +92,9 @@ test('should delete multiple selected repositories', async ({ page }) => {
   await dialog.confirm();
   await expect(dialog.el).not.toBeVisible();
   await page.waitForLoadState('networkidle');
-  await expect(catalog.findRepositoryCard('Astronomy')).toHaveCount(0, {
-    timeout: 10000,
-  });
+  await expect(catalog.findRepositoryCard('Astronomy')).toHaveCount(0);
   await expect(catalog.findRepositoryCard('Physics')).toHaveCount(0);
+  await expect(catalog.selectAllCheckbox).not.toBeVisible();
 });
 
 test('should clear selection when sorting', async ({ page }) => {

@@ -14,6 +14,7 @@
           <VCheckbox
             v-if="selectable"
             :model-value="isSelected"
+            aria-label="Select repository"
             class="ml-n1"
             color="secondary-lighten-3"
             hide-details

@@ -87,10 +87,12 @@ export class Catalog {
   }
 
   getCardCheckboxes() {
-    return this.getRepositoryCards().getByRole('checkbox');
+    return this.getRepositoryCards()
+      .getByRole('checkbox', { name: 'Select repository' });
   }
 
   getCardCheckbox(hasText: string) {
-    return this.findRepositoryCard(hasText).getByRole('checkbox');
+    return this.findRepositoryCard(hasText)
+      .getByRole('checkbox', { name: 'Select repository' });
   }
 }
