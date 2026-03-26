@@ -15,7 +15,7 @@
             v-if="selectable"
             :model-value="isSelected"
             class="ml-n1"
-            color="red-accent-3"
+            color="secondary-lighten-3"
             hide-details
             @click.stop
             @update:model-value="$emit('toggle-selection', repository.id)" />

@@ -45,7 +45,7 @@
             <template #activator="{ props: tooltipProps }">
               <VBtn
                 v-bind="tooltipProps"
-                :color="isDeleteMode ? 'red-accent-3' : 'primary-lighten-3'"
+                :color="isDeleteMode ? 'secondary-lighten-3' : 'primary-lighten-3'"
                 icon="mdi-delete-sweep"
                 aria-label="Toggle delete mode"
                 class="my-1 ml-2"
@@ -93,8 +93,8 @@
                 :disabled="!repositories.length"
                 :model-value="isAllSelected"
                 :indeterminate="someSelected"
+                color="secondary-lighten-3"
                 label="Select all"
-                color="red-accent-3"
                 hide-details
                 @update:model-value="toggleSelectAll"
               />
@@ -104,7 +104,8 @@
           <VBtn
             :disabled="selectedRepos.size === 0"
             class="ml-4"
-            color="red-accent-3"
+            color="secondary-lighten-3"
+            variant="tonal"
             prepend-icon="mdi-delete"
             @click="deleteSelected"
           >
