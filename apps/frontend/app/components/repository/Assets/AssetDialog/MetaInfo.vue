@@ -102,18 +102,14 @@
 import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
 import { UserAvatar } from '@tailor-cms/core-components';
 
-import {
-  formatDate,
-  formatFileSize,
-  getAssetColor,
-  getAssetIcon,
-} from '../utils';
+import { formatDate, formatFileSize } from '../utils';
 import IndexingStatusBadge from '../IndexingStatusBadge.vue';
 
-const props = defineProps<{ asset: Asset }>();
-
-const typeIcon = computed(() => getAssetIcon(props.asset));
-const typeColor = computed(() => getAssetColor(props.asset));
+const props = defineProps<{
+  asset: Asset;
+  typeIcon: string;
+  typeColor: string;
+}>();
 const isLink = computed(() => props.asset.type === AssetType.Link);
 const meta = computed(() => props.asset.meta as Record<string, any>);
 const hasSourceInfo = computed(() => !!meta.value.source?.url);

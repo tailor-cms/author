@@ -40,7 +40,7 @@
       <SearchResult
         v-for="it in paginatedSuggestions"
         :key="it.url"
-        :selected="selectedUrls.has(it.url)"
+        :is-selected="selectedUrls.has(it.url)"
         :suggestion="it"
         @toggle="emit('toggle', it.url)"
       />

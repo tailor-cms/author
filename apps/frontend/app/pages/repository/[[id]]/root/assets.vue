@@ -31,6 +31,7 @@
       :is-fetching="assetStore.isFetching"
       :items-per-page="assetStore.itemsPerPage"
       :page="assetStore.page"
+      :page-count="assetStore.pageCount"
       :selected-ids="selection.selectedIds"
       :selected-category="selectedCategory"
       :total="assetStore.total"
@@ -199,4 +200,6 @@ onMounted(async () => {
   await assetStore.fetch(fetchParams.value);
   indexing.resumeIfActive(assetStore.assets);
 });
+
+onBeforeUnmount(() => debouncedSearch.cancel());
 </script>

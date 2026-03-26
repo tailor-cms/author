@@ -24,6 +24,14 @@ import type {
 
 const { Asset, User } = db;
 
+// Asset name column is STRING (255 chars in PostgreSQL).
+// Cap at 250 to leave room for the ellipsis suffix.
+function truncateName(rawName: string, max = 250): string {
+  return rawName.length > max
+    ? `${rawName.slice(0, max - 3)}...`
+    : rawName;
+}
+
 // Postgres iregexp pattern for video provider URL filtering.
 // Used by Sequelize queries to classify link assets with video-provider
 // URLs (YouTube, Vimeo, Dailymotion) under the video filter.
@@ -149,7 +157,7 @@ async function importFile({
   const asset = await Asset.create({
     uid,
     repositoryId,
-    name: rawName.length > 250 ? `${rawName.slice(0, 247)}...` : rawName,
+    name: truncateName(rawName),
     type: assetType,
     storageKey: key,
     meta: {
@@ -336,7 +344,7 @@ export async function importFromLink(
   const asset = await Asset.create({
     uid: randomUUID(),
     repositoryId,
-    name: rawName.length > 250 ? `${rawName.slice(0, 247)}...` : rawName,
+    name: truncateName(rawName),
     type: AssetType.Link,
     meta: {
       url, ...ogData,

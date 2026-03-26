@@ -18,7 +18,7 @@
  */
 import ogs from 'open-graph-scraper';
 
-const TIMEOUT = 5000;
+import { discovery as config } from '#config';
 
 export interface OpenGraphData {
   title: string;
@@ -38,7 +38,7 @@ export interface OpenGraphData {
 export async function fetchOpenGraph(
   url: string,
 ): Promise<OpenGraphData> {
-  const { result } = await ogs({ url, timeout: TIMEOUT });
+  const { result } = await ogs({ url, timeout: config.ogs.timeout });
   const domain = new URL(url).hostname;
   return {
     title: result.ogTitle

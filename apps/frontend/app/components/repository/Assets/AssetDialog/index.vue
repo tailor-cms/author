@@ -25,7 +25,7 @@
       <VDivider />
       <VCardText class="detail-body pa-5">
         <Preview :asset="asset" />
-        <MetaInfo :asset="asset" />
+        <MetaInfo :asset="asset" :type-icon="typeIcon" :type-color="typeColor" />
         <EditForm
           v-model:description="description"
           v-model:tags="tags"

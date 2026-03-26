@@ -1,13 +1,13 @@
 <template>
   <VCard
-    :class="{ selected }"
+    :class="{ selected: isSelected }"
     class="search-result"
     variant="outlined"
     @click="$emit('toggle')"
   >
     <div class="d-flex align-start pa-3 ga-3">
       <VCheckbox
-        :model-value="selected"
+        :model-value="isSelected"
         class="flex-shrink-0 align-self-center"
         color="primary-lighten-4"
         density="compact"
@@ -45,31 +45,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ContentType, type DiscoveryResult } from '@tailor-cms/interfaces/discovery';
+import type { DiscoveryResult } from '@tailor-cms/interfaces/discovery';
 
+import { TYPE_COLOR, TYPE_ICON } from '../../constants';
 import Body from './Body.vue';
-
-const TYPE_ICON: Record<ContentType, string> = {
-  [ContentType.Article]: 'mdi-newspaper',
-  [ContentType.Pdf]: 'mdi-file-document-outline',
-  [ContentType.Image]: 'mdi-image-outline',
-  [ContentType.Research]: 'mdi-school',
-  [ContentType.Data]: 'mdi-database',
-  [ContentType.Other]: 'mdi-link',
-};
-
-const TYPE_COLOR: Record<ContentType, string> = {
-  [ContentType.Article]: 'cyan',
-  [ContentType.Pdf]: 'blue',
-  [ContentType.Image]: 'red',
-  [ContentType.Research]: 'purple',
-  [ContentType.Data]: 'orange',
-  [ContentType.Other]: 'primary',
-};
 
 const props = defineProps<{
   suggestion: DiscoveryResult;
-  selected: boolean;
+  isSelected: boolean;
 }>();
 
 defineEmits<{

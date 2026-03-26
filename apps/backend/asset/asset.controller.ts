@@ -1,4 +1,5 @@
 import type { Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
 import { createError } from '#shared/error/helpers.js';
 
@@ -44,7 +45,7 @@ export async function create(req: any, res: Response) {
     req.files ?? {};
   const { repository, user } = req;
   const files = storageFile ? [storageFile] : libraryFiles;
-  if (!files.length) return createError(400, 'No files provided');
+  if (!files.length) return createError(StatusCodes.BAD_REQUEST, 'No files provided');
   const assets = await service.upload(repository.id, user.id, files);
   // Legacy: CE single-file uploads expect { key, publicUrl, url } response shape
   if (storageFile) {
@@ -82,7 +83,7 @@ export async function importFromLink(
  */
 export async function download({ asset }: AssetRequest, res: Response) {
   if (!asset.storageKey) {
-    return createError(400, 'Asset has no downloadable file');
+    return createError(StatusCodes.BAD_REQUEST, 'Asset has no downloadable file');
   }
   const { publicUrl } = await service.getDownloadUrl(asset.storageKey);
   return res.json({ data: { url: publicUrl } });

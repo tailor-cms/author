@@ -68,12 +68,11 @@ const props = defineProps<{
   assets: Asset[];
   total: number;
   page: number;
+  pageCount: number;
   itemsPerPage: number;
   selectedIds: Set<number>;
   selectedCategory: string;
 }>();
-
-const pageCount = computed(() => Math.ceil(props.total / props.itemsPerPage));
 
 const emit = defineEmits<{
   'update:page': [page: number];

@@ -7,7 +7,7 @@
       :color="modelValue === it.value ? 'blue-lighten-4' : 'primary-lighten-3'"
       size="small"
       variant="tonal"
-      @click="$emit('update:modelValue', it.value)"
+      @click="modelValue = it.value"
     >
       {{ it.label }}
     </VBtn>
@@ -16,11 +16,8 @@
 
 <script lang="ts" setup>
 defineProps<{
-  modelValue: string;
   categories: { label: string; value: string }[];
 }>();
 
-defineEmits<{
-  'update:modelValue': [value: string];
-}>();
+const modelValue = defineModel<string>({ required: true });
 </script>

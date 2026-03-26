@@ -71,7 +71,7 @@
         </template>
         <VList density="compact">
           <VListItem
-            v-if="asset.type !== 'link'"
+            v-if="asset.type !== AssetType.Link"
             prepend-icon="mdi-download-outline"
             title="Download"
             @click="emit('download', asset)"
@@ -88,7 +88,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Asset } from '@tailor-cms/interfaces/asset';
+import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
 import { UserAvatar } from '@tailor-cms/core-components';
 
 import {

@@ -59,3 +59,13 @@ export const jina = validate(
   },
   'jina',
 );
+
+const ogsSchema = yup.object().shape({
+  timeout: yup.number().positive().integer().default(5000),
+});
+
+export const ogs = validate(
+  ogsSchema,
+  { timeout: Number(process.env.OGS_TIMEOUT) || 5000 },
+  'ogs',
+);
