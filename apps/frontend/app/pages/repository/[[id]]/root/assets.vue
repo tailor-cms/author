@@ -127,9 +127,12 @@ function resetAndFetch() {
 }
 
 async function uploadFiles(files: File[]) {
-  await assetStore.upload(files);
-  toolbarRef.value?.reset();
-  refetch();
+  try {
+    await assetStore.upload(files);
+    refetch();
+  } finally {
+    toolbarRef.value?.reset();
+  }
 }
 
 async function downloadAsset(asset: Asset) {

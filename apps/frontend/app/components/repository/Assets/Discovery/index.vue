@@ -115,9 +115,11 @@ async function search() {
       contentFilter.value,
       FETCH_COUNT,
     );
+    hasSearched.value = true;
+  } catch {
+    notify('Discovery search failed', { color: 'error' });
   } finally {
     isSearching.value = false;
-    hasSearched.value = true;
   }
 }
 
