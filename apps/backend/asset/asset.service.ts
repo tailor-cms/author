@@ -198,7 +198,11 @@ export async function list(repositoryId: number, options: ListOptions = {}) {
   } else if (type) {
     where.type = Array.isArray(type) ? { [Op.in]: type } : type;
   }
-  if (search) where.name = { [Op.iLike]: `%${search}%` };
+  if (search) {
+    // Escape LIKE wildcards (%, _) in Op.iLike values
+    const escaped = search.replace(/[\\%_]/g, '\\$&');
+    where.name = { [Op.iLike]: `%${escaped}%` };
+  }
   const { rows, count } = await Asset.findAndCountAll({
     where,
     include: [uploaderInclude],
