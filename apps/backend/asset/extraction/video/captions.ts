@@ -15,7 +15,7 @@ const CAPTION_EXTENSIONS = ['.vtt', '.srt'];
 
 // VTT header, cue timestamps (00:00:00.000 --> 00:00:05.000), numeric
 // cue IDs (SRT), position/alignment settings, and HTML-like tags
-const NOISE = /^(WEBVTT.*|STYLE\b.*|NOTE\b.*|\d+$|[\d:.]+\s*-->.*|.+:.+)/;
+const NOISE = /^(WEBVTT.*|STYLE\b.*|NOTE\b.*|\d+$|[\d:.]+\s*-->.*|\w+:\S+(\s+\w+:\S+)*$)/;
 const TAGS = /<[^>]+>/g;
 
 export function isCaptionFile(filename: string): boolean {
