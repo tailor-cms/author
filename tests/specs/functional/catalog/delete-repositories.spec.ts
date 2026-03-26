@@ -112,6 +112,34 @@ test('should delete multiple selected repositories', async ({ page }) => {
   await expect(catalog.findRepositoryCard('Physics')).toHaveCount(0);
 });
 
+test('should clear selection when sorting', async ({ page }) => {
+  const catalog = new Catalog(page);
+  await catalog.toggleDeleteMode();
+  await catalog.getCardCheckbox('Astronomy').click();
+  await expect(catalog.deleteSelectedBtn).toContainText('(1)');
+  await catalog.orderByName();
+  await expect(catalog.deleteSelectedBtn).toBeDisabled();
+});
+
+test('should clear selection when filtering', async ({ page }) => {
+  const catalog = new Catalog(page);
+  await catalog.toggleDeleteMode();
+  await catalog.getCardCheckbox('Astronomy').click();
+  await expect(catalog.deleteSelectedBtn).toContainText('(1)');
+  await catalog.filterBySchema('Course');
+  await expect(catalog.deleteSelectedBtn).toBeDisabled();
+});
+
+test('should not navigate when clicking a card in delete mode', async ({
+  page,
+}) => {
+  const catalog = new Catalog(page);
+  await catalog.toggleDeleteMode();
+  const urlBefore = page.url();
+  await catalog.findRepositoryCard('Astronomy').click();
+  await expect(page).toHaveURL(urlBefore);
+});
+
 test('should clear selection when searching', async ({ page }) => {
   const catalog = new Catalog(page);
   await catalog.toggleDeleteMode();
