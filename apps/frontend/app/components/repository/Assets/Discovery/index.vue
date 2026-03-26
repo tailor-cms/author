@@ -79,6 +79,7 @@ const FETCH_COUNT = 100;
 const show = defineModel<boolean>({ default: false });
 const emit = defineEmits(['added']);
 
+const notify = useNotification();
 const currentRepositoryStore = useCurrentRepository();
 const repositoryId = computed(() => currentRepositoryStore.repository?.id);
 
@@ -145,21 +146,31 @@ function toImportMeta(result?: DiscoveryResult) {
 async function addSelected(shouldIndex = false) {
   if (!repositoryId.value) return;
   isAdding.value = true;
-  const byUrl = new Map(suggestions.value.map((s) => [s.url, s]));
-  const imports = [...selectedUrls].map((url) =>
-    api.importFromLink(repositoryId.value!, url, toImportMeta(byUrl.get(url)))
-      .catch(() => null),
-  );
-  const addedAssets = (await Promise.all(imports)).filter(Boolean);
-  if (shouldIndex && addedAssets.length) {
-    await api.indexAssets(
-      repositoryId.value,
-      addedAssets.map((a: any) => a.id),
+  try {
+    const byUrl = new Map(suggestions.value.map((s) => [s.url, s]));
+    const imports = [...selectedUrls].map((url) =>
+      api.importFromLink(repositoryId.value!, url, toImportMeta(byUrl.get(url)))
+        .catch(() => null),
     );
+    const results = await Promise.all(imports);
+    const addedAssets = results.filter(Boolean);
+    const failCount = results.length - addedAssets.length;
+    if (failCount) {
+      notify(`${failCount} of ${results.length} imports failed`, {
+        color: 'warning',
+      });
+    }
+    if (shouldIndex && addedAssets.length) {
+      await api.indexAssets(
+        repositoryId.value,
+        addedAssets.map((a: any) => a.id),
+      );
+    }
+    emit('added', addedAssets);
+    show.value = false;
+  } finally {
+    isAdding.value = false;
   }
-  isAdding.value = false;
-  emit('added', addedAssets);
-  show.value = false;
 }
 
 watch(show, (v) => {
