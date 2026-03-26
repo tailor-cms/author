@@ -14,6 +14,7 @@
     :density="density"
     :dark="dark"
     @input="onInput"
+    @upload="onInput"
   />
 </template>
 

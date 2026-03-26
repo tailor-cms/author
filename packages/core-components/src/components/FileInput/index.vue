@@ -120,6 +120,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
+  (e: 'upload', value: Record<string, any>): void;
   (e: 'input', value: Record<string, any> | null): void;
   (e: 'delete'): void;
 }>();

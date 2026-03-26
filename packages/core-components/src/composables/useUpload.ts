@@ -3,7 +3,7 @@ import { inject, ref } from 'vue';
 import { useConfirmationDialog } from './useConfirmationDialog';
 import { useLoader } from './useLoader';
 
-type Emit = (event: 'input' | 'delete', ...args: any[]) => void;
+type Emit = (event: 'upload' | 'delete', ...args: any[]) => void;
 
 const download = (url: string, fileName: string) => {
   const anchor = document.createElement('a');
@@ -34,7 +34,7 @@ export const useUpload = (emit: Emit) => {
       .upload(form)
       .then((data: any) => {
         const { name } = form.get('file') as File;
-        emit('input', {
+        emit('upload', {
           key: data.key,
           name,
           url: data.url,
