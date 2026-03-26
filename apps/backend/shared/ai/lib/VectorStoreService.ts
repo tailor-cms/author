@@ -1,12 +1,11 @@
 import type OpenAI from 'openai';
 import { toFile } from 'openai';
 
+import { ai as aiConfig } from '#config';
 import { createLogger } from '#logger';
 
 const logger = createLogger('ai:vector-store');
-
-const STORE_NAME = 'tailor-cms';
-const STORE_EXPIRY = { anchor: 'last_active_at' as const, days: 60 };
+const { name: STORE_NAME, expiresAfter: STORE_EXPIRY } = aiConfig.vectorStore;
 
 interface UploadedDocument {
   fileId: string;
