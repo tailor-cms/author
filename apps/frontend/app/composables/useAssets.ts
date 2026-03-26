@@ -19,15 +19,18 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   async function fetch(params: Record<string, any> = {}) {
     if (!repositoryId.value) return;
     isFetching.value = true;
-    const promise = api.list(repositoryId.value, {
-      offset: (page.value - 1) * itemsPerPage.value,
-      limit: itemsPerPage.value,
-      ...params,
-    });
-    const result = await pMinDelay(promise, MIN_LOADING_MS);
-    assets.value = result.items;
-    total.value = result.total;
-    isFetching.value = false;
+    try {
+      const promise = api.list(repositoryId.value, {
+        offset: (page.value - 1) * itemsPerPage.value,
+        limit: itemsPerPage.value,
+        ...params,
+      });
+      const result = await pMinDelay(promise, MIN_LOADING_MS);
+      assets.value = result.items;
+      total.value = result.total;
+    } finally {
+      isFetching.value = false;
+    }
   }
 
   async function upload(files: File[]) {
