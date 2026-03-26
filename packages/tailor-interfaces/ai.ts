@@ -57,3 +57,13 @@ export interface AiContext {
   content?: string;
   inputs: AiInput[];
 }
+
+export interface ImageDescription {
+  description: string;
+  tags: string[];
+  analysis: string;
+  quality: 'high' | 'medium' | 'low';
+  qualityIssues: string[];
+  relevanceScore: number;
+  contentSuggestion: string;
+}

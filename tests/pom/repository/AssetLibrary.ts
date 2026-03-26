@@ -1,0 +1,92 @@
+import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+
+import { AddLinkDialog } from './assets/AddLinkDialog';
+import { AssetDetailDialog } from './assets/AssetDetailDialog';
+import { AssetRow } from './assets/AssetRow';
+import { AssetToolbar } from './assets/AssetToolbar';
+import { BulkActionBar } from './assets/BulkActionBar';
+import { CategoryFilter, type AssetCategory } from './assets/CategoryFilter';
+
+export class AssetLibrary {
+  readonly page: Page;
+  readonly toolbar: AssetToolbar;
+  readonly categoryFilter: CategoryFilter;
+  readonly addLinkDialog: AddLinkDialog;
+  readonly detailDialog: AssetDetailDialog;
+  readonly assetRows: Locator;
+  readonly bulkActionBar: BulkActionBar;
+  readonly emptyState: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.toolbar = new AssetToolbar(page);
+    this.categoryFilter = new CategoryFilter(page);
+    this.addLinkDialog = new AddLinkDialog(page);
+    this.assetRows = page.locator(AssetRow.selector);
+    this.detailDialog = new AssetDetailDialog(page);
+    this.bulkActionBar = new BulkActionBar(page);
+    this.emptyState = page.locator('.empty-state');
+  }
+
+  async goto(repositoryId: number) {
+    await this.page.goto(`/repository/${repositoryId}/root/assets`, {
+      waitUntil: 'networkidle',
+    });
+  }
+
+  async waitForLoad() {
+    await expect(this.assetRows.first().or(this.emptyState)).toBeVisible({
+      timeout: 10000,
+    });
+  }
+
+  getRow(name: string): AssetRow {
+    const el = this.assetRows.filter({ hasText: name });
+    return new AssetRow(this.page, el);
+  }
+
+  async getRows(): Promise<AssetRow[]> {
+    const items = await this.assetRows.all();
+    return items.map((el) => new AssetRow(this.page, el));
+  }
+
+  async getRowCount(): Promise<number> {
+    return this.assetRows.count();
+  }
+
+  async uploadFiles(filePaths: string[]) {
+    await this.toolbar.uploadFiles(filePaths);
+    await this.waitForLoad();
+  }
+
+  async uploadAndVerify(
+    filePath: string,
+    expectedName: string,
+    expectedType: string,
+  ) {
+    await this.uploadFiles([filePath]);
+    const row = this.getRow(expectedName);
+    await expect(row.el).toBeVisible();
+    await expect(row.typeChip).toContainText(expectedType);
+    // Verify persistence
+    await this.page.reload({ waitUntil: 'networkidle' });
+    await this.waitForLoad();
+    await expect(row.el).toBeVisible();
+  }
+
+  async addLink(url: string) {
+    await this.toolbar.addLinkBtn.click();
+    await expect(this.addLinkDialog.el).toBeVisible();
+    await this.addLinkDialog.addLink(url);
+    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForTimeout(1500);
+    await this.waitForLoad();
+  }
+
+  async filterByCategory(category: AssetCategory) {
+    await this.categoryFilter.select(category);
+    await this.page.waitForTimeout(1500);
+    await this.waitForLoad();
+  }
+}

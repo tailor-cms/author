@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { type Locator, type Page, expect } from '@playwright/test';
 
 import { Comments } from '../common/Comments';
 import { LinkedCopyNotice } from './LinkedCopyNotice';
@@ -24,6 +24,16 @@ export class OutlineSidebar {
     this.comments = new Comments(page, this.el);
     this.linkedIndicator = new LinkedIndicator(page, this.el);
     this.linkedCopyNotice = new LinkedCopyNotice(page, this.el);
+  }
+
+  getFileInput(placeholder: string): Locator {
+    return this.el.getByPlaceholder(placeholder);
+  }
+
+  async openFileInput(placeholder: string) {
+    const input = this.getFileInput(placeholder);
+    await expect(input).toBeVisible({ timeout: 5000 });
+    await input.click();
   }
 
   async fillName(name: string) {

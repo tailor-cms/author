@@ -2,8 +2,8 @@
   <FileInput
     v-bind="options"
     class="my-2"
+    @input="$emit('update', meta.key, $event)"
     @delete="$emit('update', meta.key, null)"
-    @upload="$emit('update', meta.key, $event)"
   />
 </template>
 
@@ -30,19 +30,15 @@ defineEmits(['update']);
 
 const options = computed(() => {
   return {
-    id: props.meta.key,
     fileKey: get(props.meta.value, 'key', ''),
     fileName: get(props.meta.value, 'name', ''),
-    // Allowed file extensions (e.g. ['jpg', 'png'])
-    // If not provided, will use validate.ext
-    ext: props.meta.ext,
-    validate: props.meta.validate,
+    allowedExtensions: props.meta.allowedExtensions,
     label: props.meta.label,
     icon: props.meta.icon,
-    value: props.meta.value,
     placeholder: props.meta.placeholder || '',
     showPreview: props.meta.showPreview,
     dark: props.dark,
+    useFieldInput: true,
   };
 });
 </script>
