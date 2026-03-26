@@ -119,7 +119,7 @@ class AssetClient extends BaseClient {
     assetIds: number[],
   ): Promise<EndpointResponse> => {
     const req = await this.getClient();
-    const res = await req.post(this.assetUrl(repositoryId, 'index'), {
+    const res = await req.post(this.assetUrl(repositoryId, 'indexing'), {
       data: { assetIds },
     });
     return formatResponse(res);
@@ -129,7 +129,7 @@ class AssetClient extends BaseClient {
     repositoryId: number,
   ): Promise<EndpointResponse> => {
     const req = await this.getClient();
-    const res = await req.get(this.assetUrl(repositoryId, 'index/status'));
+    const res = await req.get(this.assetUrl(repositoryId, 'indexing/status'));
     return formatResponse(res);
   };
 }

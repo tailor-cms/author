@@ -4,10 +4,8 @@ import * as ctrl from './asset.controller.ts';
 import * as validation from './asset.validation.ts';
 import indexingRouter from './indexing/index.ts';
 import discoveryRouter from './discovery/index.ts';
-import { uploaderInclude } from './asset.service.ts';
 import { handler } from './types.ts';
-import { StatusCodes } from 'http-status-codes';
-import { createError } from '#shared/error/helpers.js';
+import { getAsset } from './middleware.ts';
 import { processPagination } from '#shared/database/pagination.js';
 import db from '#shared/database/index.js';
 
@@ -18,17 +16,6 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 },
 });
-
-async function getAsset(req: any, _res: any, next: any, assetId: any) {
-  const asset = await Asset.findByPk(assetId, {
-    include: [uploaderInclude],
-  });
-  if (!asset || asset.repositoryId !== req.repository.id) {
-    return createError(StatusCodes.NOT_FOUND, 'Asset not found');
-  }
-  req.asset = asset;
-  next();
-}
 
 router.param('assetId', getAsset);
 
@@ -46,8 +33,8 @@ router
 router.post('/import/link', validation.importFromLink, handler(ctrl.importFromLink));
 router.post('/bulk/remove', validation.bulkRemove, handler(ctrl.bulkRemove));
 
-// Sub-features (static paths before parameterized)
-router.use('/index', indexingRouter);
+// Sub-features
+router.use('/indexing', indexingRouter);
 router.use('/discover', discoveryRouter);
 
 // Single asset
@@ -63,7 +50,6 @@ router.post(
   handler(ctrl.attachFile),
 );
 
-router.use('/:assetId/index', indexingRouter);
 router
   .route('/:assetId')
   .patch(validation.update, handler(ctrl.update))

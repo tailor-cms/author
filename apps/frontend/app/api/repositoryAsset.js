@@ -74,19 +74,19 @@ function attachFile(repositoryId, assetId, fileKey, file) {
 
 function indexAssets(repositoryId, assetIds) {
   return request
-    .post(`${urls.root(repositoryId)}/index`, { assetIds })
+    .post(`${urls.root(repositoryId)}/indexing`, { assetIds })
     .then(extractData);
 }
 
 function getIndexingStatus(repositoryId) {
   return request
-    .get(`${urls.root(repositoryId)}/index/status`)
+    .get(`${urls.root(repositoryId)}/indexing/status`)
     .then(extractData);
 }
 
 function deindexAsset(repositoryId, assetId) {
   return request
-    .delete(`${urls.resource(repositoryId, assetId)}/index`)
+    .delete(`${urls.root(repositoryId)}/indexing/${assetId}`)
     .then(extractData);
 }
 
