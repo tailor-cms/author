@@ -36,6 +36,14 @@ export class VectorStoreService {
     this.client = client;
   }
 
+  private async listFiles(vectorStoreId: string) {
+    const files = [];
+    for await (const f of this.client.vectorStores.files.list(vectorStoreId)) {
+      files.push(f);
+    }
+    return files;
+  }
+
   async upload(
     files: { buffer: Buffer; originalname: string; mimetype?: string }[],
     vectorStoreId?: string,
@@ -80,8 +88,8 @@ export class VectorStoreService {
   }
 
   async getStatus(vectorStoreId: string): Promise<StoreStatus> {
-    const { data } = await this.client.vectorStores.files.list(vectorStoreId);
-    const files = data.map((f) => ({ fileId: f.id, status: f.status }));
+    const storeFiles = await this.listFiles(vectorStoreId);
+    const files = storeFiles.map((f) => ({ fileId: f.id, status: f.status }));
     return {
       isReady: files.length > 0 && files.every((f) => f.status === 'completed'),
       isFailed: files.some((f) => f.status === 'failed'),
@@ -100,12 +108,12 @@ export class VectorStoreService {
 
   async deleteStore(vectorStoreId: string): Promise<void> {
     try {
-      const { data } = await this.client.vectorStores.files.list(vectorStoreId);
+      const files = await this.listFiles(vectorStoreId);
       await Promise.all(
-        data.map((f) => this.client.files.delete(f.id).catch(() => {})),
+        files.map((f) => this.client.files.delete(f.id).catch(() => {})),
       );
       await this.client.vectorStores.delete(vectorStoreId);
-      logger.info(`Deleted store ${vectorStoreId} with ${data.length} file(s)`);
+      logger.info(`Deleted store ${vectorStoreId} with ${files.length} file(s)`);
     } catch (err) {
       logger.error(err, 'Vector store cleanup failed');
     }
