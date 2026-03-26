@@ -7,6 +7,9 @@ import getContentSchema from '../schemas/index.ts';
 import RepositoryContext from './RepositoryContext.ts';
 
 import { ai as aiConfig } from '#config';
+import { createLogger } from '#logger';
+
+const logger = createLogger('ai:prompt');
 
 const systemPrompt = `
   Assistant is a bot desinged to help authors to create content for
@@ -15,6 +18,12 @@ const systemPrompt = `
   - Use the User rules to generate the content
   - Generated content should have a friendly tone and be easy to understand
   - Generated content should not include any offensive language`;
+
+const documentPrompt = `
+  The user has provided source documents indexed in a vector store.
+  Use the file_search tool to find relevant information from these documents.
+  Base ALL generated content on information found in the documents.
+  Do not invent information not present in the documents.`;
 
 export class AiPrompt {
   // OpenAI client
@@ -41,15 +50,24 @@ export class AiPrompt {
 
   async execute() {
     try {
-      const response = await this.client.responses.create({
+      const params: any = {
         model: aiConfig.modelId,
         input: this.toOpenAiInput(),
         text: { format: this.format },
-      } as OpenAI.Responses.ResponseCreateParamsNonStreaming);
+      };
+      // Add file_search tool when source documents are available
+      const { vectorStoreId } = this.context.repository;
+      if (vectorStoreId) {
+        params.tools = [
+          { type: 'file_search', vector_store_ids: [vectorStoreId] },
+        ];
+      }
+      const response = await this.client.responses.create(params);
       this.response = this.responseProcessor(response.output_text);
       this.response = await this.applyImageTool();
       return this.response;
-    } catch {
+    } catch (err) {
+      logger.error(err, 'Generation failed');
       return {};
     }
   }
@@ -70,9 +88,10 @@ export class AiPrompt {
 
   // JSON Schema for the OpenAI responses API
   get format() {
-    return this.isCustomPrompt
-      ? undefined
-      : getContentSchema(this.prompt.responseSchema)?.Schema;
+    if (this.isCustomPrompt) return undefined;
+    const schema = getContentSchema(this.prompt.responseSchema)?.Schema;
+    if (!schema) return undefined;
+    return typeof schema === 'function' ? schema(this.context) : schema;
   }
 
   get responseProcessor() {
@@ -85,11 +104,13 @@ export class AiPrompt {
 
   // TODO: Add option to control the size of the output
   // TODO: Add option to enable web search tool
-  // TODO: Add support for the file upload tool
   toOpenAiInput(): OpenAI.Responses.ResponseInputItem[] {
     const res: OpenAI.Responses.ResponseInputItem[] = [];
     res.push({ role: 'developer', content: systemPrompt });
     res.push({ role: 'developer', content: this.repositoryContext.toString() });
+    if (this.context.repository.vectorStoreId) {
+      res.push({ role: 'developer', content: documentPrompt });
+    }
     if (this.prevPrompt) res.push(this.processUserInput(this.prevPrompt));
     if (this.content) res.push({ role: 'assistant', content: this.content });
     res.push(this.processUserInput(this.prompt));

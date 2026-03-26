@@ -1,14 +1,17 @@
 import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
 import OpenAI from 'openai';
 
-import { AiPrompt } from './lib/AiPrompt.ts';
 import { ai as aiConfig } from '#config';
+import { AiPrompt } from './lib/AiPrompt.ts';
+import { VectorStoreService } from './lib/VectorStoreService.ts';
 
 class AiService {
   #openai;
+  vectorStore: VectorStoreService;
 
   constructor() {
     this.#openai = new OpenAI({ apiKey: aiConfig.secretKey });
+    this.vectorStore = new VectorStoreService(this.#openai);
   }
 
   generate(context: AiContext) {
@@ -17,4 +20,4 @@ class AiService {
   }
 }
 
-export default aiConfig.secretKey ? new AiService() : {};
+export default aiConfig.secretKey ? new AiService() : ({} as AiService);
