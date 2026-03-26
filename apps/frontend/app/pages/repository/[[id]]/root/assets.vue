@@ -24,7 +24,6 @@
       :sort-direction="sortDirection"
       @select-all="selection.selectAll"
       @deselect-all="selection.clear"
-      @update:items-per-page="resetAndFetch"
       @toggle-sort="toggleSortDirection"
     />
     <AssetList
@@ -122,8 +121,9 @@ function refetch() {
 }
 
 function resetAndFetch() {
+  if (assetStore.page.value === 1) return refetch();
+  // Setting page triggers the page watcher which calls refetch
   assetStore.page.value = 1;
-  refetch();
 }
 
 async function uploadFiles(files: File[]) {
@@ -187,7 +187,7 @@ function confirmBulkDelete() {
 }
 
 const debouncedSearch = debounce(resetAndFetch, 300);
-watch(selectedCategory, resetAndFetch);
+watch([selectedCategory, assetStore.itemsPerPage], resetAndFetch);
 watch(searchQuery, debouncedSearch);
 watch(assetStore.page, refetch);
 
