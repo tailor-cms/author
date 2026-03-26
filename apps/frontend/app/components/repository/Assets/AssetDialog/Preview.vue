@@ -90,7 +90,6 @@ import api from '@/api/repositoryAsset';
 
 const props = defineProps<{
   asset: Asset;
-  repositoryId?: number;
 }>();
 
 const isLoading = ref(false);
@@ -117,10 +116,10 @@ watch(
   async (asset) => {
     previewUrl.value = null;
     hasError.value = false;
-    if (!asset?.storageKey || !props.repositoryId) return;
+    if (!asset?.storageKey) return;
     isLoading.value = true;
     try {
-      const { url } = await api.getDownloadUrl(props.repositoryId, asset.id);
+      const { url } = await api.getDownloadUrl(asset.repositoryId, asset.id);
       previewUrl.value = url;
     } catch {
       hasError.value = true;

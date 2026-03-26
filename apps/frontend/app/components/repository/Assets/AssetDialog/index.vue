@@ -24,7 +24,7 @@
       </VToolbar>
       <VDivider />
       <VCardText class="detail-body pa-5">
-        <Preview :asset="asset" :repository-id="props.repositoryId" />
+        <Preview :asset="asset" />
         <MetaInfo :asset="asset" />
         <EditForm
           v-model:description="description"
@@ -92,7 +92,6 @@ import Preview from './Preview.vue';
 
 const props = defineProps<{
   asset: Asset | null;
-  repositoryId?: number;
   isSaving?: boolean;
 }>();
 const emit = defineEmits<{
@@ -115,9 +114,9 @@ const isOpen = computed({
 });
 
 const meta = computed(() => (props.asset?.meta ?? {}) as Record<string, any>);
-const typeIcon = computed(() => getAssetIcon(props.asset!));
-const typeColor = computed(() => getAssetColor(props.asset!));
-const displayName = computed(() => getAssetDisplayName(props.asset!));
+const typeIcon = computed(() => getAssetIcon(props.asset));
+const typeColor = computed(() => getAssetColor(props.asset));
+const displayName = computed(() => getAssetDisplayName(props.asset));
 const isImage = computed(() => props.asset?.type === AssetType.Image);
 const canDownload = computed(
   () => props.asset?.type !== AssetType.Link && !!props.asset?.storageKey,
@@ -143,7 +142,7 @@ watch(
     if (!asset) return;
     const m = (asset.meta ?? {}) as Record<string, any>;
     description.value = m.description || '';
-    tags.value = m.tags || [];
+    tags.value = [...(m.tags || [])];
     isCoreSource.value = !!m.isCoreSource;
   },
   { immediate: true },

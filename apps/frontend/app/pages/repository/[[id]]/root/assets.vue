@@ -43,7 +43,6 @@
     />
     <AssetDetailDialog
       :asset="activeAsset"
-      :repository-id="repositoryId"
       :is-saving="assetStore.isSaving.value"
       @close="activeAsset = null"
       @deindex="onDeindex"

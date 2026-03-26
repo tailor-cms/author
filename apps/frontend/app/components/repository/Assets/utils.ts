@@ -19,7 +19,8 @@ function stripUidPrefix(value: string): string {
 export function getAssetDisplayName(asset: {
   name?: string;
   storageKey?: string | null;
-}): string {
+} | null): string {
+  if (!asset) return '';
   if (asset.name) return stripUidPrefix(asset.name);
   if (asset.storageKey) {
     const filename = asset.storageKey.split('/').pop() ?? 'Untitled';
@@ -59,7 +60,8 @@ export function detectProvider(
   return detectLinkProvider(url).provider || null;
 }
 
-export function getAssetIcon(asset: { type?: string; meta?: any }) {
+export function getAssetIcon(asset: { type?: string; meta?: any } | null) {
+  if (!asset) return ASSET_TYPE_ICON.other;
   const provider = detectProvider(asset);
   if (provider && PROVIDER_ICONS[provider]) return PROVIDER_ICONS[provider];
   if (asset.type === AssetType.Link && asset.meta) {
@@ -69,7 +71,8 @@ export function getAssetIcon(asset: { type?: string; meta?: any }) {
   return ASSET_TYPE_ICON[asset.type ?? AssetType.Other] ?? ASSET_TYPE_ICON.other;
 }
 
-export function getAssetColor(asset: { type?: string; meta?: any }) {
+export function getAssetColor(asset: { type?: string; meta?: any } | null) {
+  if (!asset) return ASSET_TYPE_COLOR.other;
   const provider = detectProvider(asset);
   if (provider && PROVIDER_COLORS[provider]) return PROVIDER_COLORS[provider];
   return ASSET_TYPE_COLOR[asset.type ?? AssetType.Other] ?? ASSET_TYPE_COLOR.other;
