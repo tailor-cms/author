@@ -92,7 +92,7 @@
                 v-bind="tooltipProps"
                 :disabled="!repositories.length"
                 :model-value="isAllSelected"
-                :indeterminate="isIndeterminate"
+                :indeterminate="someSelected"
                 label="Select all"
                 color="red-accent-3"
                 hide-details
@@ -209,7 +209,8 @@ const isAllSelected = computed(() =>
   repositories.value.length > 0 &&
   selectedRepos.value.size === repositories.value.length,
 );
-const isIndeterminate = computed(() =>
+
+const someSelected = computed(() =>
   selectedRepos.value.size > 0 &&
   selectedRepos.value.size < repositories.value.length,
 );
