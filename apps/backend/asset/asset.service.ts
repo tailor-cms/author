@@ -260,6 +260,9 @@ export async function attachFile(
     { assetId: asset.id, fileKey, filename: file.originalname },
     'Attaching file to asset',
   );
+  if (!asset.storageKey) {
+    throw new Error('Cannot attach files to an asset without a storage key');
+  }
   const oldKey = asset.meta?.files?.[fileKey];
   if (oldKey) await safeDeleteFile(oldKey);
   const storageKey = `${asset.storageKey}__${fileKey}__${file.originalname}`;
