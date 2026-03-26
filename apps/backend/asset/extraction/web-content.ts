@@ -102,6 +102,7 @@ async function fetchViaHtmlToText(url: string): Promise<string> {
       'User-Agent': 'Mozilla/5.0 (compatible; TailorCMS/1.0)',
     },
     maxRedirects: 5,
+    maxContentLength: 100 * 1024 * 1024,
     responseType: 'text',
   });
   const text = htmlToText(html, {
