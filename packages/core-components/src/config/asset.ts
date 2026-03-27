@@ -1,26 +1,28 @@
+import { AssetType } from '@tailor-cms/interfaces/asset';
+
 export const ASSET_TYPE_ICON: Record<string, string> = {
-  image: 'mdi-image-outline',
-  video: 'mdi-video-outline',
-  audio: 'mdi-volume-medium',
-  document: 'mdi-file-document-outline',
-  link: 'mdi-link',
-  other: 'mdi-file',
+  [AssetType.Image]: 'mdi-image-outline',
+  [AssetType.Video]: 'mdi-video-outline',
+  [AssetType.Audio]: 'mdi-volume-medium',
+  [AssetType.Document]: 'mdi-file-document-outline',
+  [AssetType.Link]: 'mdi-link',
+  [AssetType.Other]: 'mdi-file',
 };
 
 export const ASSET_TYPE_LABEL: Record<string, string> = {
-  image: 'Image',
-  video: 'Video',
-  audio: 'Audio',
-  document: 'Document',
-  link: 'Link',
-  other: 'File',
+  [AssetType.Image]: 'Image',
+  [AssetType.Video]: 'Video',
+  [AssetType.Audio]: 'Audio',
+  [AssetType.Document]: 'Document',
+  [AssetType.Link]: 'Link',
+  [AssetType.Other]: 'File',
 };
 
 export const ASSET_TYPE_COLOR: Record<string, string> = {
-  image: 'red',
-  video: 'lime',
-  audio: 'lime',
-  document: 'blue',
-  link: 'primary',
-  other: 'primary',
+  [AssetType.Image]: 'red',
+  [AssetType.Video]: 'lime',
+  [AssetType.Audio]: 'lime',
+  [AssetType.Document]: 'blue',
+  [AssetType.Link]: 'primary',
+  [AssetType.Other]: 'primary',
 };

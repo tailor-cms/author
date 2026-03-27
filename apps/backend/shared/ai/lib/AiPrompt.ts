@@ -1,7 +1,8 @@
-import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai.ts';
+import type {
+  AiContext,
+  AiInput,
+} from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
-import StorageService from '../../storage/storage.service.js';
 
 import getContentSchema from '../schemas/index.ts';
 import RepositoryContext from './RepositoryContext.ts';
@@ -141,40 +142,4 @@ export class AiPrompt {
     };
   }
 
-  async applyImageTool() {
-    if (
-      !this.prompt.useImageGenerationTool ||
-      this.prompt.responseSchema !== 'HTML'
-    )
-      return this.response;
-    // output needs to be sliced to avoid exceeding the max length
-    const userPrompt = `
-      ${this.repositoryContext.toString()}
-      Generate appropriate image for the given topic and content:
-      ${JSON.stringify(this.response).slice(0, 1000)}`;
-    const imgUrl = await this.generateImage(userPrompt);
-    const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
-    const imageElement = {
-      type: ContentElementType.Image,
-      data: {
-        assets: { url: imgInternalUrl },
-      },
-    };
-    const [firstElement, ...restElements] = this.response;
-    return [firstElement, imageElement, ...restElements];
-  }
-
-  private async generateImage(prompt) {
-    const { data } = await this.client.images.generate({
-      model: 'dall-e-3',
-      prompt,
-      // amount of images, max 1 for dall-e-3
-      n: 1,
-      // 'standard' | 'hd'
-      quality: 'hd',
-      size: '1024x1024',
-      style: 'natural',
-    });
-    if (data) return new URL(data[0].url as string);
-  }
 }

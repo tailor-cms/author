@@ -61,21 +61,21 @@ export function detectProvider(
 }
 
 export function getAssetIcon(asset: { type?: string; meta?: any } | null) {
-  if (!asset) return ASSET_TYPE_ICON.other;
+  if (!asset) return ASSET_TYPE_ICON.OTHER;
   const provider = detectProvider(asset);
   if (provider && PROVIDER_ICONS[provider]) return PROVIDER_ICONS[provider];
   if (asset.type === AssetType.Link && asset.meta) {
     const ct = asset.meta.contentType || asset.meta.linkContentType;
     if (ct && LINK_CONTENT_TYPE_ICONS[ct]) return LINK_CONTENT_TYPE_ICONS[ct];
   }
-  return ASSET_TYPE_ICON[asset.type ?? AssetType.Other] ?? ASSET_TYPE_ICON.other;
+  return ASSET_TYPE_ICON[asset.type ?? AssetType.Other] ?? ASSET_TYPE_ICON.OTHER;
 }
 
 export function getAssetColor(asset: { type?: string; meta?: any } | null) {
-  if (!asset) return ASSET_TYPE_COLOR.other;
+  if (!asset) return ASSET_TYPE_COLOR.OTHER;
   const provider = detectProvider(asset);
   if (provider && PROVIDER_COLORS[provider]) return PROVIDER_COLORS[provider];
-  return ASSET_TYPE_COLOR[asset.type ?? AssetType.Other] ?? ASSET_TYPE_COLOR.other;
+  return ASSET_TYPE_COLOR[asset.type ?? AssetType.Other] ?? ASSET_TYPE_COLOR.OTHER;
 }
 
 export function getAssetTypeLabel(asset: { type?: string; meta?: any }): string {
@@ -90,7 +90,7 @@ export function getAssetTypeLabel(asset: { type?: string; meta?: any }): string 
     if (ct === AssetType.Audio) return 'Audio Link';
     if (ct === AssetType.Document) return 'Document Link';
   }
-  return asset.type || AssetType.Other;
+  return ASSET_TYPE_LABEL[asset.type ?? AssetType.Other] ?? ASSET_TYPE_LABEL.OTHER;
 }
 
 const ALWAYS_INDEXABLE = new Set<string>([AssetType.Document, AssetType.Link]);
