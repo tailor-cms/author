@@ -15,6 +15,7 @@
       hide-details
       @click:clear="query = ''"
       @keyup.enter="emit('search')"
+      @update:model-value="emit('search:input')"
     />
     <VBtn
       :loading="isSearching"
@@ -47,6 +48,7 @@ import type { ContentFilter } from '@tailor-cms/interfaces/discovery';
 const CONTENT_FILTERS: { label: string; value: ContentFilter; icon: string }[] = [
   { label: 'All types', value: 'all', icon: 'mdi-view-grid' },
   { label: 'Images', value: 'image', icon: 'mdi-image-outline' },
+  { label: 'Videos', value: 'video', icon: 'mdi-video-outline' },
   { label: 'PDFs', value: 'pdf', icon: 'mdi-file-document-outline' },
   { label: 'Articles', value: 'article', icon: 'mdi-newspaper' },
   { label: 'Research', value: 'research', icon: 'mdi-school' },
@@ -57,7 +59,10 @@ defineProps<{
   isSearching: boolean;
 }>();
 
-const emit = defineEmits<{ search: [] }>();
+const emit = defineEmits<{
+  'search': [];
+  'search:input': [];
+}>();
 
 const query = defineModel<string>('query', { required: true });
 const contentFilter = defineModel<ContentFilter>('contentFilter', { required: true });
