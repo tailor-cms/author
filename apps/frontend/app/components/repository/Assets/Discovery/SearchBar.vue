@@ -15,6 +15,7 @@
       hide-details
       @click:clear="query = ''"
       @keyup.enter="emit('search')"
+      @update:model-value="emit('search:input')"
     />
     <VBtn
       :loading="isSearching"
@@ -50,7 +51,10 @@ defineProps<{
   isSearching: boolean;
 }>();
 
-const emit = defineEmits<{ search: [] }>();
+const emit = defineEmits<{
+  'search': [];
+  'search:input': [];
+}>();
 
 const query = defineModel<string>('query', { required: true });
 const contentFilter = defineModel<ContentFilter>('contentFilter', { required: true });
