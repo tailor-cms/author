@@ -2,6 +2,7 @@ import type { Asset } from '@tailor-cms/interfaces/asset';
 import { ProcessingStatus } from '@tailor-cms/interfaces/asset';
 
 import api from '@/api/repositoryAsset';
+import { useRepositoryStore } from '@/stores/repository';
 
 const POLL_INTERVAL = 3000;
 const ACTIVE_STATUSES = new Set<ProcessingStatus>([
@@ -10,6 +11,7 @@ const ACTIVE_STATUSES = new Set<ProcessingStatus>([
 ]);
 
 export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
+  const repositoryStore = useRepositoryStore();
   const isIndexing = ref(false);
   const indexingStatusMap = reactive(new Map<number, ProcessingStatus>());
 
@@ -41,6 +43,11 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
   function finishPolling() {
     isIndexing.value = false;
     stopPolling();
+    // Refresh repository to pick up vector store ID
+    // created during indexing (data.$$.ai.storeId)
+    if (repositoryId.value) {
+      repositoryStore.get(repositoryId.value);
+    }
   }
 
   async function pollStatus() {
