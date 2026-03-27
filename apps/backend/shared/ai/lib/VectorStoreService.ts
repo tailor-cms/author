@@ -2,9 +2,9 @@ import type OpenAI from 'openai';
 import { toFile } from 'openai';
 
 import { ai as aiConfig } from '#config';
-import { createLogger } from '#logger';
+import { createAiLogger } from '../logger.ts';
 
-const logger = createLogger('ai:vector-store');
+const logger = createAiLogger('vector-store');
 const { name: STORE_NAME, expiresAfter: STORE_EXPIRY } = aiConfig.vectorStore;
 
 interface FileStatus {

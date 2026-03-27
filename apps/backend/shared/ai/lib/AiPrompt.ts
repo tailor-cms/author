@@ -9,9 +9,9 @@ import RepositoryContext from './RepositoryContext.ts';
 
 import { ai as aiConfig } from '#config';
 import db from '#shared/database/index.js';
-import { createLogger } from '#logger';
+import { createAiLogger, formatPrompt } from '../logger.ts';
 
-const logger = createLogger('ai:prompt');
+const logger = createAiLogger('prompt');
 
 const systemPrompt = `
   Assistant is a bot designed to help authors create content for
