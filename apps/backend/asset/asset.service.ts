@@ -53,9 +53,27 @@ const IS_NOT_VIDEO_LINK = {
 export const UPLOADER_INCLUDE = {
   model: User,
   as: 'uploader',
-  attributes: [
-    'id', 'email', 'firstName', 'lastName',
-    'fullName', 'label', 'imgUrl',
+  attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl'],
+};
+
+const logger = createLogger('asset');
+
+const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf', 'data']);
+const MIME_CATEGORY_MAP: Record<string, string[]> = {
+  [AssetType.Image]: ['image/'],
+  [AssetType.Video]: ['video/'],
+  [AssetType.Audio]: ['audio/'],
+  [AssetType.Document]: [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument',
+    'application/vnd.ms-excel',
+    'application/vnd.ms-powerpoint',
+    'text/plain',
+    'text/csv',
+    'text/markdown',
+    'text/html',
+    'application/rtf',
   ],
 };
 

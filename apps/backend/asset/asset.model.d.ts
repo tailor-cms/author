@@ -17,10 +17,26 @@ export {
   Uploader,
 } from '@tailor-cms/interfaces/asset.ts';
 
-// Sequelize model variants of the interface discriminated unions
-export type FileAsset = FileAssetAttrs & Model<AssetAttributes>;
-export type MediaAsset = MediaAssetAttrs & Model<AssetAttributes>;
-export type LinkAsset = LinkAssetAttrs & Model<AssetAttributes>;
+type AssetBase = AssetAttributes & Model<AssetAttributes>;
+
+export interface FileAsset extends AssetBase {
+  type: 'IMAGE' | 'DOCUMENT' | 'OTHER';
+  storageKey: string;
+  meta: FileAssetMeta;
+}
+
+export interface MediaAsset extends AssetBase {
+  type: 'VIDEO' | 'AUDIO';
+  storageKey: string;
+  meta: MediaAssetMeta;
+}
+
+export interface LinkAsset extends AssetBase {
+  type: 'LINK';
+  storageKey: null;
+  meta: LinkAssetMeta;
+}
+
 export type Asset = FileAsset | MediaAsset | LinkAsset;
 
 declare const Asset: ModelStatic<Asset>;

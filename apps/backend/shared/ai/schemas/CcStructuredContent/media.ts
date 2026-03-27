@@ -6,7 +6,7 @@
 // → native element data (storage:// URLs, alt text,
 // embed transforms).
 import type { AssetReference } from '@tailor-cms/interfaces/ai.ts';
-import { AssetType } from '@tailor-cms/interfaces/asset.ts';
+import { AssetType, LinkContentType } from '@tailor-cms/interfaces/asset.ts';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { oneLine } from 'common-tags';
 import { toEmbedUrl } from '@tailor-cms/common/asset';
@@ -65,11 +65,11 @@ export const MEDIA_DESCRIPTIONS: Record<string, string> = {
 // Uses asset.contentType set by detectLinkProvider
 // at creation — no URL parsing needed here.
 export const isVideoLink = (a: AssetReference) =>
-  a.type === AssetType.Link && a.contentType === 'video';
+  a.type === AssetType.Link && a.contentType === LinkContentType.Video;
 
 // TODO: Figure out MUX video support
 export const isVideoFile = (a: AssetReference) =>
-  a.type === AssetType.Video || (a.contentType === 'video' && !!a.storageKey);
+  a.type === AssetType.Video || (a.contentType === LinkContentType.Video && !!a.storageKey);
 
 // Resolve what element type an asset maps to.
 // Returns the element type and a display label.

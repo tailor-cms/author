@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { AssetType } from '@tailor-cms/interfaces/asset';
 
 import AssetClient from '../../../api/AssetClient';
 import SeedClient from '../../../api/SeedClient';
@@ -75,12 +76,12 @@ test.describe('Asset API', () => {
     const repositoryId = await createRepository();
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
-    const images = await AssetClient.list(repositoryId, { type: 'image' });
+    const images = await AssetClient.list(repositoryId, { type: AssetType.Image });
     expect(images.data.items.length).toBe(1);
-    expect(images.data.items[0].type).toBe('image');
-    const docs = await AssetClient.list(repositoryId, { type: 'document' });
+    expect(images.data.items[0].type).toBe(AssetType.Image);
+    const docs = await AssetClient.list(repositoryId, { type: AssetType.Document });
     expect(docs.data.items.length).toBe(1);
-    expect(docs.data.items[0].type).toBe('document');
+    expect(docs.data.items[0].type).toBe(AssetType.Document);
   });
 
   test('can search assets by name', async () => {

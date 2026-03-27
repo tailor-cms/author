@@ -92,7 +92,7 @@ export function getAssetTypeLabel(asset: { type?: string; meta?: any }): string 
     if (ct === AssetType.Audio) return 'Audio Link';
     if (ct === AssetType.Document) return 'Document Link';
   }
-  return asset.type || AssetType.Other;
+  return ASSET_TYPE_LABEL[asset.type ?? AssetType.Other] ?? ASSET_TYPE_LABEL.OTHER;
 }
 
 const ALWAYS_INDEXABLE = new Set<string>([AssetType.Document, AssetType.Link]);
