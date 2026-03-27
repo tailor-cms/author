@@ -121,6 +121,7 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.42",
+    "@types/common-tags": "^1.8.4",
     "@types/express": "^5.0.6",
     "@types/html-to-text": "^9.0.4",
     "@types/lodash": "^4.17.24",
