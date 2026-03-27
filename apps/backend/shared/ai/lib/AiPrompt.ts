@@ -7,12 +7,13 @@ import getContentSchema from '../schemas/index.ts';
 import RepositoryContext from './RepositoryContext.ts';
 
 import { ai as aiConfig } from '#config';
+import db from '#shared/database/index.js';
 import { createLogger } from '#logger';
 
 const logger = createLogger('ai:prompt');
 
 const systemPrompt = `
-  Assistant is a bot desinged to help authors to create content for
+  Assistant is a bot designed to help authors create content for
   Courses, Q&A content, Knowledge base, etc.
   Rules:
   - Use the User rules to generate the content
@@ -23,7 +24,11 @@ const documentPrompt = `
   The user has provided source documents indexed in a vector store.
   Use the file_search tool to find relevant information from these documents.
   Base ALL generated content on information found in the documents.
-  Do not invent information not present in the documents.`;
+  Do not invent information not present in the documents.
+  If any assets are marked as PRIMARY SOURCE, they represent the core knowledge
+  base. Structure and model your content primarily after these sources.
+  Supplementary assets provide additional context but should not override
+  the core sources.`;
 
 export class AiPrompt {
   // OpenAI client

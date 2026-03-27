@@ -14,6 +14,8 @@ export interface AiResponseSpec {
     | OpenAISchema
     | ((context: AiContext) => OpenAISchema)
     | undefined;
-  // Function for additional response processing & validation
-  processResponse?: (val: any) => any;
+  // Function for additional response processing & validation.
+  // Context passed for specs that need to resolve references
+  // (e.g., assetId → URL in structured content).
+  processResponse?: (val: any, context?: AiContext) => any;
 }

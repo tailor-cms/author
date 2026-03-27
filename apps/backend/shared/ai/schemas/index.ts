@@ -3,7 +3,7 @@ import type { AiResponseSchema } from '@tailor-cms/interfaces/ai.ts';
 import type { AiResponseSpec } from './interfaces';
 import CeHtml from './CeHtml.ts';
 import CeQuestion from './CeQuestion.ts';
-import CcStructuredContent from './CcStructuredContent.ts';
+import CcStructuredContent from './CcStructuredContent/index.ts';
 import Outline from './Outline.ts';
 import Tag from './Tag.ts';
 import PluginRegistry from '#shared/content-plugins/index.js';
