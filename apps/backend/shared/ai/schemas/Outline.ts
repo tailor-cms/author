@@ -99,6 +99,11 @@ const getPrompt = (context: AiContext): string => {
     Make sure to have content holder nodes in the structure. The content
     holder nodes are the following:
     ${leafLevels.map((it) => it.label).join(', ')}.
+    IMPORTANT: Do NOT wrap all content inside a single top-level node that
+    represents the course or repository - the repository already serves that
+    purpose. For example, if generating content about "${context.repository.name}",
+    return multiple root items (e.g. "Introduction", "Getting Started", etc.),
+    NOT a single "${context.repository.name}" wrapper containing them all.
     ${documentGuideline}`;
 };
 
