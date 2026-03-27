@@ -6,11 +6,11 @@ import type {
   AssetReference,
 } from '@tailor-cms/interfaces/ai.ts';
 
-import { createLogger } from '#logger';
 import elementRegistry from '../../../content-plugins/elementRegistry.js';
+import { createAiLogger } from '../../logger.ts';
 import { MEDIA_SCHEMAS, processMediaElement } from './media.ts';
 
-const logger = createLogger('ai:structured-content');
+const logger = createAiLogger('cc-structured-content');
 
 const getAiSpec = (type: string) =>
   elementRegistry.getAiConfig(type);

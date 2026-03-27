@@ -11,9 +11,9 @@ import { ContentElementType } from '@tailor-cms/content-element-collection/types
 import { oneLine } from 'common-tags';
 import { toEmbedUrl } from '@tailor-cms/common/asset';
 
-import { createLogger } from '#logger';
+import { createAiLogger } from '../../logger.ts';
 
-const logger = createLogger('ai:structured-content');
+const logger = createAiLogger('cc-structured-content');
 
 const obj = (properties: any, required: string[]) => ({
   type: 'object' as const,

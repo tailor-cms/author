@@ -5,14 +5,14 @@ import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import type { OpenAISchema } from '../interfaces.ts';
 
-import { createLogger } from '#logger';
 import { HTML_TYPE } from '../CeHtml.ts';
+import { createAiLogger } from '../../logger.ts';
 import elementRegistry from '../../../content-plugins/elementRegistry.js';
 import { getConfigs } from './config.ts';
 import { MEDIA_SCHEMAS } from './media.ts';
 import type { SubcontainerConfig } from './types.ts';
 
-const logger = createLogger('ai:structured-content');
+const logger = createAiLogger('cc-structured-content');
 
 const getAiSpec = (type: string) =>
   elementRegistry.getAiConfig(type);
