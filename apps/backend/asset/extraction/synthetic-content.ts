@@ -7,11 +7,19 @@
 import type { Asset } from '../asset.model.js';
 
 // Builds a markdown document from asset metadata and optional body text.
-// Returns null when there's nothing meaningful to index (name-only).
 export function buildSyntheticContent(
   asset: Asset, bodyText = '',
 ): string | null {
   const parts: string[] = [`# ${asset.name}`];
+  // Asset reference metadata - used by AI to identify and
+  // reference this asset when generating content elements.
+  parts.push([
+    `[Asset ID: ${asset.id}]`,
+    `[Type: ${asset.type}]`,
+    asset.storageKey
+      ? `[Storage: ${asset.storageKey}]`
+      : `[URL: ${(asset.meta as any)?.url || ''}]`,
+  ].join(' '));
   const desc = asset.meta?.description;
   const tags = asset.meta?.tags;
   if (desc) parts.push(`Description: ${desc}`);
