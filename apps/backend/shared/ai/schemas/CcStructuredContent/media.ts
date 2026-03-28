@@ -69,7 +69,8 @@ export const isVideoLink = (a: AssetReference) =>
 
 // TODO: Figure out MUX video support
 export const isVideoFile = (a: AssetReference) =>
-  a.type === AssetType.Video || (a.contentType === LinkContentType.Video && !!a.storageKey);
+  a.type === AssetType.Video ||
+  (a.contentType === LinkContentType.Video && !!a.storageKey);
 
 // Resolve what element type an asset maps to.
 // Returns the element type and a display label.

@@ -56,9 +56,11 @@ export class AiPrompt {
 
   async execute() {
     try {
+      await this.loadRepositoryData();
+      const input = this.toOpenAiInput();
       const params: any = {
         model: aiConfig.modelId,
-        input: this.toOpenAiInput(),
+        input,
         text: { format: this.format },
       };
       // Add file_search tool when source documents are available
@@ -68,13 +70,41 @@ export class AiPrompt {
           { type: 'file_search', vector_store_ids: [vectorStoreId] },
         ];
       }
+      logger.debug(`Final prompt:\n${formatPrompt(input)}`);
       const response = await this.client.responses.create(params);
       this.response = this.responseProcessor(response.output_text);
-      this.response = await this.applyImageTool();
+      logger.info(
+        { schema: this.prompt.responseSchema, type: this.prompt.type },
+        'Generation complete',
+      );
       return this.response;
     } catch (err) {
       logger.error(err, 'Generation failed');
       return {};
+    }
+  }
+
+    // Load assets if not already provided
+    if (this.context.assets?.length) return;
+    try {
+      const rows = await Asset.findAll({ where: { repositoryId } });
+      await Asset.resolvePublicUrls(rows);
+      const META_FIELDS = [
+        'contentType', 'provider', 'url',
+        'mimeType', 'extension', 'fileSize', 'width', 'height',
+        'description', 'tags',
+      ];
+      this.context.assets = rows.map((a: any) => ({
+        ...pick(a, ['id', 'name', 'type', 'storageKey', 'publicUrl']),
+        ...pick(a.meta || {}, META_FIELDS),
+        isCoreSource: !!a.meta?.isCoreSource,
+      }));
+      logger.info(
+        { repositoryId, count: this.context.assets?.length ?? 0 },
+        'Loaded repository assets',
+      );
+    } catch (err) {
+      logger.warn(err, 'Failed to load assets');
     }
   }
 
@@ -105,7 +135,7 @@ export class AiPrompt {
     const processor = this.isCustomPrompt
       ? noop
       : getContentSchema(this.prompt.responseSchema)?.processResponse || noop;
-    return (val) => processor(JSON.parse(val));
+    return (val: string) => processor(JSON.parse(val), this.context);
   }
 
   // TODO: Add option to control the size of the output

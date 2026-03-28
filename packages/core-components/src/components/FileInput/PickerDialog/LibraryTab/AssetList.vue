@@ -76,7 +76,6 @@ import {
   type Asset,
   type FileAssetMeta,
 } from '@tailor-cms/interfaces/asset.ts';
-import { AssetType } from '@tailor-cms/interfaces/asset';
 import { ASSET_TYPE_ICON } from '#config';
 import { formatFileSize } from '#utils';
 
