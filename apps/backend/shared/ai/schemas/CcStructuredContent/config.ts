@@ -13,7 +13,7 @@ import type {
   SubcontainerConfigs,
 } from './types.ts';
 
-const { flattenElementTypeIds } = schemaAPI;
+const { getSupportedElementTypes } = schemaAPI;
 
 const getMetaDefinitions = (val: any): any[] =>
   typeof val.meta === 'function'
@@ -40,13 +40,13 @@ export const getConfigs = (context: AiContext): ParsedConfig => {
   );
   const container = containers.find((c: any) => c.type === containerType);
   if (!container?.config) return empty;
-  const defaultTypes = flattenElementTypeIds(container.contentElementConfig);
+  const defaultTypes = getSupportedElementTypes(container.contentElementConfig);
   const subcontainers: SubcontainerConfigs = {};
   for (const [type, val] of Object.entries(
     container.config as Record<string, any>,
   )) {
     const elementTypes = val.contentElementConfig
-      ? flattenElementTypeIds(val.contentElementConfig)
+      ? getSupportedElementTypes(val.contentElementConfig)
       : defaultTypes;
     subcontainers[type] = {
       label: val.label || type,
