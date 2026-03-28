@@ -22,19 +22,19 @@ export {
 type AssetBase = AssetAttributes & Model<AssetAttributes>;
 
 export interface FileAsset extends AssetBase {
-  type: 'image' | 'document' | 'other';
+  type: 'IMAGE' | 'DOCUMENT' | 'OTHER';
   storageKey: string;
   meta: FileAssetMeta;
 }
 
 export interface MediaAsset extends AssetBase {
-  type: 'video' | 'audio';
+  type: 'VIDEO' | 'AUDIO';
   storageKey: string;
   meta: MediaAssetMeta;
 }
 
 export interface LinkAsset extends AssetBase {
-  type: 'link';
+  type: 'LINK';
   storageKey: null;
   meta: LinkAssetMeta;
 }

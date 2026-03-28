@@ -118,7 +118,16 @@ async function indexDocument(ctx: IndexingContext<FileAsset>) {
     originalname: asset.name,
     mimetype: asset.meta.mimeType,
   };
-  const result = await AIService.vectorStore!.upload([file], storeId);
+  const result = await AIService.vectorStore!.upload(
+    [file], storeId,
+  );
+  // Companion metadata doc so AI can discover this
+  // document's asset ID via file_search
+  const meta = buildSyntheticContent(asset);
+  if (meta) {
+    indexSynthetic(storeId, meta, `${asset.id}-meta.md`)
+      .catch(() => {});
+  }
   if (asset.meta.mimeType === mime.lookup('pdf')) {
     await extractAndSaveImages(asset, buffer);
   }

@@ -103,7 +103,7 @@ const isCompatible = (asset: Asset): boolean => {
 };
 
 const getIcon = (type: string) =>
-  ASSET_TYPE_ICON[type] ?? ASSET_TYPE_ICON.other;
+  ASSET_TYPE_ICON[type] ?? ASSET_TYPE_ICON.OTHER;
 
 const onSelect = ({ id }: { id: unknown }) => emit('select', id as number);
 </script>

@@ -126,8 +126,8 @@ const strategies: Record<ContentFilter, Strategy> = {
     serper.newsSearch(q, Math.ceil(n * 0.15) + DEDUP_BUFFER),
   ],
   [Image]: (q, n) => [
-    serper.imageSearch(q, n + DEDUP_BUFFER),
-    unsplash.search(q, Math.ceil(n / 2)),
+    unsplash.search(q, n),
+    serper.imageSearch(q, Math.ceil(n * 0.5) + DEDUP_BUFFER),
   ],
   [Video]: (q, n) => [serper.videoSearch(q, n + DEDUP_BUFFER)],
   [Pdf]: (q, n) => [serper.webSearch(`${q} filetype:pdf`, n + DEDUP_BUFFER)],

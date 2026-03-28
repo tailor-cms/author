@@ -1,10 +1,10 @@
 // Link provider detection; shared across frontend and backend
 const PROVIDER_PATTERNS = [
-  [/(?:youtube\.com|youtu\.be)/i, 'youtube', 'video'],
-  [/vimeo\.com/i, 'vimeo', 'video'],
-  [/dailymotion\.com/i, 'dailymotion', 'video'],
-  [/spotify\.com/i, 'spotify', 'audio'],
-  [/soundcloud\.com/i, 'soundcloud', 'audio'],
+  [/(?:youtube\.com|youtu\.be)/i, 'youtube', 'VIDEO'],
+  [/vimeo\.com/i, 'vimeo', 'VIDEO'],
+  [/dailymotion\.com/i, 'dailymotion', 'VIDEO'],
+  [/spotify\.com/i, 'spotify', 'AUDIO'],
+  [/soundcloud\.com/i, 'soundcloud', 'AUDIO'],
 ];
 
 /**

@@ -65,7 +65,6 @@ export interface AiActivityConfig {
   definition: string;
   outputRules?: {
     prompt: string;
-    useDalle?: boolean;
     isAssessment?: boolean;
   };
 }

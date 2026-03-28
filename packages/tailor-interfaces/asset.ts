@@ -1,13 +1,25 @@
 export const AssetType = {
-  Image: 'image',
-  Document: 'document',
-  Video: 'video',
-  Audio: 'audio',
-  Link: 'link',
-  Other: 'other',
+  Image: 'IMAGE',
+  Document: 'DOCUMENT',
+  Video: 'VIDEO',
+  Audio: 'AUDIO',
+  Link: 'LINK',
+  Other: 'OTHER',
 } as const;
 
 export type AssetType = (typeof AssetType)[keyof typeof AssetType];
+
+export const LinkContentType = {
+  Video: 'VIDEO',
+  Image: 'IMAGE',
+  Document: 'DOCUMENT',
+  Audio: 'AUDIO',
+  Article: 'ARTICLE',
+  Other: 'OTHER',
+} as const;
+
+export type LinkContentType =
+  (typeof LinkContentType)[keyof typeof LinkContentType];
 
 export const ProcessingStatus = {
   Pending: 'pending',
@@ -53,8 +65,7 @@ export interface LinkAssetMeta extends AssetMetaBase {
   siteName?: string;
   ogType?: string;
   source?: AssetSource;
-  // What kind of content the link points to (video, image, document, etc.)
-  contentType?: 'video' | 'image' | 'document' | 'audio' | 'article' | 'other';
+  contentType?: LinkContentType;
   // Known provider for provider-specific UI (youtube, vimeo, spotify, etc.)
   provider?: string;
 }
@@ -79,12 +90,12 @@ export interface Uploader {
 }
 
 const ASSET_TYPE_EXTENSIONS: Record<string, Set<string>> = {
-  image: new Set([
+  [AssetType.Image]: new Set([
     'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'tiff', 'avif',
   ]),
-  document: new Set(['pdf', 'doc', 'docx', 'pptx', 'txt', 'md', 'html']),
-  video: new Set(['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm', 'flv']),
-  audio: new Set(['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma']),
+  [AssetType.Document]: new Set(['pdf', 'doc', 'docx', 'pptx', 'txt', 'md', 'html']),
+  [AssetType.Video]: new Set(['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm', 'flv']),
+  [AssetType.Audio]: new Set(['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma']),
 };
 
 export function inferAssetType(extensions: string[]): AssetType | null {

@@ -40,9 +40,15 @@ export const getPrompt = () => `
   - The content property of each element in the array, should include more
     than 300 words of text if possible.
   - Format the content as a HTML with suitable tags and headings.
-    Apply the folllowing classes to the tags:
+    Apply the following classes to the tags:
     - Apply text-body-2 mb-5 to the paragraphs
-    - Apply text-h3 and mb-7 to the headings`;
+    - Apply text-h3 and mb-7 to the headings
+  - Structure some content blocks so they work well in collapsible panels:
+    start with a heading, followed by focused content (under 1500 chars).
+    Sequences of 3+ such blocks will be converted to accordions automatically.
+  - Mix content formats: some longer narrative blocks, some shorter
+    heading+content blocks suitable for accordion panels, and use
+    <ul>/<ol> lists, <blockquote>, <strong> for variety.`;
 
 const spec: AiResponseSpec = {
   Schema,

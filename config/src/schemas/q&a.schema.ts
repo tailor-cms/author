@@ -59,7 +59,6 @@ const RESPONSE: ContentContainerConfig = {
       prompt: `
         Try to answer the questions as clearly as possible.
         Response text should be in HTML format.`,
-      useDalle: false,
     },
   },
 };
