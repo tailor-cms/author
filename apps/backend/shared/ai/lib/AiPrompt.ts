@@ -8,7 +8,6 @@ import getContentSchema from '../schemas/index.ts';
 import RepositoryContext from './RepositoryContext.ts';
 
 import { ai as aiConfig } from '#config';
-import db from '#shared/database/index.js';
 import { createAiLogger, formatPrompt } from '../logger.ts';
 
 const logger = createAiLogger('prompt');
@@ -34,15 +33,11 @@ const documentPrompt = `
 export class AiPrompt {
   // OpenAI client
   private client: OpenAI;
-  // Context of the request
-  private context: AiContext;
   // Information about the repository, content location, topic, etc.
   private repositoryContext: RepositoryContext;
-  // User, assistant or system generated inputs
+  private requestContext: AiContext;
   private inputs: AiInput[];
-  // Existing content, relevant for the context
   private content: string;
-  // Response
   private response: any;
 
   constructor(client: OpenAI, context: AiContext) {
@@ -51,24 +46,38 @@ export class AiPrompt {
     this.content = context.content || '';
     this.inputs = context.inputs;
     this.client = client;
-    this.context = context;
+    this.requestContext = context;
+  }
+
+  get vectorStoreId() {
+    return this.repositoryContext.vectorStoreId;
+  }
+
+  get context(): AiContext {
+    return {
+      ...this.requestContext,
+      assets: this.repositoryContext.assets,
+      repository: {
+        ...this.requestContext.repository,
+        vectorStoreId: this.vectorStoreId,
+      },
+    };
   }
 
   async execute() {
     try {
-      await this.loadRepositoryData();
+      await this.repositoryContext.resolve(this.requestContext.repository);
       const input = this.toOpenAiInput();
       const params: any = {
         model: aiConfig.modelId,
         input,
         text: { format: this.format },
       };
-      // Add file_search tool when source documents are available
-      const { vectorStoreId } = this.context.repository;
-      if (vectorStoreId) {
-        params.tools = [
-          { type: 'file_search', vector_store_ids: [vectorStoreId] },
-        ];
+      if (this.vectorStoreId) {
+        params.tools = [{
+          type: 'file_search',
+          vector_store_ids: [this.vectorStoreId],
+        }];
       }
       logger.debug(`Final prompt:\n${formatPrompt(input)}`);
       const response = await this.client.responses.create(params);
@@ -81,30 +90,6 @@ export class AiPrompt {
     } catch (err) {
       logger.error(err, 'Generation failed');
       return {};
-    }
-  }
-
-    // Load assets if not already provided
-    if (this.context.assets?.length) return;
-    try {
-      const rows = await Asset.findAll({ where: { repositoryId } });
-      await Asset.resolvePublicUrls(rows);
-      const META_FIELDS = [
-        'contentType', 'provider', 'url',
-        'mimeType', 'extension', 'fileSize', 'width', 'height',
-        'description', 'tags',
-      ];
-      this.context.assets = rows.map((a: any) => ({
-        ...pick(a, ['id', 'name', 'type', 'storageKey', 'publicUrl']),
-        ...pick(a.meta || {}, META_FIELDS),
-        isCoreSource: !!a.meta?.isCoreSource,
-      }));
-      logger.info(
-        { repositoryId, count: this.context.assets?.length ?? 0 },
-        'Loaded repository assets',
-      );
-    } catch (err) {
-      logger.warn(err, 'Failed to load assets');
     }
   }
 
@@ -144,7 +129,7 @@ export class AiPrompt {
     const res: OpenAI.Responses.ResponseInputItem[] = [];
     res.push({ role: 'developer', content: systemPrompt });
     res.push({ role: 'developer', content: this.repositoryContext.toString() });
-    if (this.context.repository.vectorStoreId) {
+    if (this.vectorStoreId) {
       res.push({ role: 'developer', content: documentPrompt });
     }
     if (this.prevPrompt) res.push(this.processUserInput(this.prevPrompt));
@@ -171,5 +156,4 @@ export class AiPrompt {
       content: `${base} ${text}. ${responseSchemaDescription} ${target}`,
     };
   }
-
 }
