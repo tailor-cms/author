@@ -74,7 +74,7 @@ const describeSubcontainerTypes = (configs: SubcontainerConfigs): string => {
 // Includes ALL usable assets — vector store file_search
 // handles relevance, this just lists valid IDs for the AI.
 const buildAssetCatalog = (assets: AssetReference[]): string => {
-  const usable = assets.filter((it) => it.publicUrl || it.url || it.storageKey);
+  const usable = assets.filter((it) => it.publicUrl || it.meta?.url || it.storageKey);
   if (!usable.length) return '';
   const lines = usable.map((it) => {
     const media = resolveAssetElementType(it);

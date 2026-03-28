@@ -62,15 +62,15 @@ export const MEDIA_DESCRIPTIONS: Record<string, string> = {
     web page). Only for assets marked "→ use as EMBED".`,
 };
 
-// Uses asset.contentType set by detectLinkProvider
+// Uses asset.meta.contentType set by detectLinkProvider
 // at creation — no URL parsing needed here.
 export const isVideoLink = (a: AssetReference) =>
-  a.type === AssetType.Link && a.contentType === LinkContentType.Video;
+  a.type === AssetType.Link && a.meta?.contentType === LinkContentType.Video;
 
 // TODO: Figure out MUX video support
 export const isVideoFile = (a: AssetReference) =>
   a.type === AssetType.Video ||
-  (a.contentType === LinkContentType.Video && !!a.storageKey);
+  (a.meta?.contentType === LinkContentType.Video && !!a.storageKey);
 
 // Resolve what element type an asset maps to.
 // Returns the element type and a display label.
@@ -113,13 +113,13 @@ export const processMediaElement = (el: any, assets: AssetReference[]) => {
   if (el.type === ContentElementType.Image) {
     const url = asset.storageKey
       ? `storage://${asset.storageKey}`
-      : asset.publicUrl || asset.url || '';
+      : asset.publicUrl || asset.meta?.url || '';
     const isInternal = !!asset.storageKey;
     return {
       type: ContentElementType.Image,
       data: {
         url: isInternal ? '' : url,
-        alt: el.alt || asset.description || '',
+        alt: el.alt || asset.meta?.description || '',
         assets: isInternal ? { url } : {},
       },
     };
@@ -127,7 +127,7 @@ export const processMediaElement = (el: any, assets: AssetReference[]) => {
   if (el.type === ContentElementType.Video) {
     const url = asset.storageKey
       ? `storage://${asset.storageKey}`
-      : asset.publicUrl || asset.url || '';
+      : asset.publicUrl || asset.meta?.url || '';
     const isInternal = !!asset.storageKey;
     return {
       type: ContentElementType.Video,
@@ -138,7 +138,7 @@ export const processMediaElement = (el: any, assets: AssetReference[]) => {
     };
   }
   if (el.type === ContentElementType.Embed) {
-    const url = asset.url || asset.publicUrl || '';
+    const url = asset.meta?.url || asset.publicUrl || '';
     return {
       type: ContentElementType.Embed,
       data: { url: toEmbedUrl(url) || url, height: 400 },
