@@ -20,6 +20,11 @@
         not been edited yet. Content will appear here once the source is
         updated.
       </VAlert>
+      <ActivityMetadata
+        v-if="!isEmptyLinkedActivity && !showPublishDiff"
+        v-show="!isLoading"
+        :activity="activity"
+      />
       <PublishDiffProvider
         v-if="editorStore?.selectedActivity && !isEmptyLinkedActivity"
         v-show="!isLoading"
@@ -74,6 +79,7 @@ import pMinDelay from 'p-min-delay';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import aiAPI from '@/api/ai';
+import ActivityMetadata from './ActivityMetadata.vue';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
