@@ -142,7 +142,7 @@ import type { Activity } from '@tailor-cms/interfaces/activity.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element.js';
 import type { Repository } from '@tailor-cms/interfaces/repository.js';
 
-import { parseConfig } from './config';
+import { parseConfig } from './config.ts';
 import StructuredSubcontainer from './StructuredSubcontainer.vue';
 
 const Direction = { UP: -1, DOWN: 1 };
@@ -256,7 +256,7 @@ const createSubcontainer = (type: string) => {
 
 const getContentElementConfig = (subcontainerType: string) => {
   return (
-    props.subcontainerConfig[subcontainerType]?.contentElementConfig ||
+    subcontainerConfig.value[subcontainerType]?.contentElementConfig ||
     props.contentElementConfig
   );
 };

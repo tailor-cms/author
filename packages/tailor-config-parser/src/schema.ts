@@ -58,6 +58,12 @@ const processSubcontainerConfigs = (config: any) => {
   return reduce(
     config,
     (acc, subcontainer, key) => {
+      if (typeof subcontainer !== 'object'
+        || subcontainer === null
+        || Array.isArray(subcontainer)) {
+        acc[key] = subcontainer;
+        return acc;
+      }
       const nestedConfig = get(subcontainer, 'contentElementConfig');
       acc[key] = {
         ...subcontainer,

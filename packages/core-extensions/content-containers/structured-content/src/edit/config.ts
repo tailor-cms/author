@@ -1,11 +1,21 @@
 import { capitalize, reduce, words } from 'lodash-es';
 
-const DefaultSubcontainers = {
+// Container-level options that are not subcontainer type definitions:
+// - isCollapsible: enable collapse/expand for subcontainers
+// - collapsedPreviewKey: meta key shown in collapsed header
+// - defaultSubcontainers: subcontainers to create on mount
+const CONTAINER_OPTIONS = [
+  'isCollapsible',
+  'collapsedPreviewKey',
+  'defaultSubcontainers',
+];
+
+const DefaultSubcontainerType = {
   Section: 'SECTION',
 };
 
-const DEFAULT_CONFIG = {
-  [DefaultSubcontainers.Section]: {
+const DEFAULT_SUBCONTAINERS = {
+  [DefaultSubcontainerType.Section]: {
     label: 'Section',
     icon: 'mdi-text-box-outline',
     layout: true,
@@ -13,13 +23,19 @@ const DEFAULT_CONFIG = {
   },
 };
 
-export const parseConfig = (repository, outlineActivity, container, config) => {
-  if (!config) return { subcontainers: DEFAULT_CONFIG, defaultSubcontainers: [], isCollapsible: false };
-  // Container-level options (skipped by the sub-type reduce below):
-  // - isCollapsible: enable collapse/expand for subcontainers
-  // - collapsedPreviewKey: meta key to display in collapsed subcontainer header
-  // - defaultSubcontainers: initial subcontainers to create on mount
-  const CONTAINER_OPTIONS = ['isCollapsible', 'collapsedPreviewKey', 'defaultSubcontainers'];
+const DEFAULT_RESULT = {
+  subcontainers: DEFAULT_SUBCONTAINERS,
+  defaultSubcontainers: [] as any[],
+  isCollapsible: false,
+};
+
+export const parseConfig = (
+  repository: any,
+  outlineActivity: any,
+  container: any,
+  config: any,
+) => {
+  if (!config) return DEFAULT_RESULT;
   const {
     isCollapsible = false,
     collapsedPreviewKey = null,
@@ -27,7 +43,7 @@ export const parseConfig = (repository, outlineActivity, container, config) => {
   } = config;
   const subcontainers = reduce(
     config,
-    (acc, val, key) => {
+    (acc: Record<string, any>, val: any, key: string) => {
       if (CONTAINER_OPTIONS.includes(key)) return acc;
       acc[key] = {
         ...val,
@@ -40,11 +56,12 @@ export const parseConfig = (repository, outlineActivity, container, config) => {
         disableContentElementList: !!val.disableContentElementList,
         disableAi: !!val.disableAi,
         isCollapsible: val.isCollapsible ?? isCollapsible,
-        collapsedPreviewKey: val.collapsedPreviewKey || collapsedPreviewKey,
+        collapsedPreviewKey:
+          val.collapsedPreviewKey || collapsedPreviewKey,
       };
       return acc;
     },
-    {} as Record<string, any>,
+    {},
   );
   return { subcontainers, defaultSubcontainers, isCollapsible };
 };
