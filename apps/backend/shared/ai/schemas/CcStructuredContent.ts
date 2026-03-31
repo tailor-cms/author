@@ -204,24 +204,18 @@ export const Schema = (context: AiContext): OpenAISchema => {
       label: 'Section', metaInputs: [], elementTypes: [],
     }]);
   }
-  const configByType = Object.fromEntries(entries);
   let subcontainersSchema: Record<string, any>;
   if (defaultSubcontainers.length) {
-    const schemas = defaultSubcontainers.map((defaultSub) => {
-      const config =
-        configByType[defaultSub.type] || entries[0][1];
-      return buildSubcontainerSchema(
-        defaultSub.type, config, defaultSub.data,
-      );
-    });
+    const schemas = entries.map(([type, config]) =>
+      buildSubcontainerSchema(type, config));
     const itemSchema = schemas.length === 1
       ? schemas[0]
       : { anyOf: schemas };
     subcontainersSchema = {
       type: 'array',
       items: itemSchema,
-      minItems: schemas.length,
-      maxItems: schemas.length,
+      minItems: defaultSubcontainers.length,
+      maxItems: defaultSubcontainers.length,
     };
   } else {
     const schemas = entries.map(([type, config]) =>
@@ -315,7 +309,8 @@ export const getPrompt = (context: AiContext) => {
   }
   if (defaultSubcontainers.length) {
     guidelines.push(
-      '- Generate exactly these subcontainers in order:\n'
+      '- Generate exactly these subcontainers in this exact order,'
+      + ' one per entry, each with a unique title as listed:\n'
       + describeDefaultSubcontainers(
         defaultSubcontainers, subcontainers,
       ),

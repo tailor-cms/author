@@ -275,8 +275,12 @@ const generateStructuredContent = async () => {
       ],
     });
     if (!result?.length) return;
+    // Remove existing subcontainers before populating with AI content
+    subcontainers.value.forEach((sub) => {
+      emit('delete:subcontainer', sub, { force: true });
+    });
     const { id: parentId, repositoryId } = props.container;
-    let position = nextPosition.value;
+    let position = 1;
     for (const it of result) {
       const activity = await createActivity({
         type: it.type || subcontainerTypes.value[0],

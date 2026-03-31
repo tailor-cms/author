@@ -210,9 +210,11 @@ const requestDeletion = (
 
 const requestContainerDeletion = (
   container: Activity,
-  name: string = 'container',
+  opts: string | { force?: boolean } = 'container',
 ) => {
   const action = (val: Activity) => activityStore.remove(val.id);
+  if (typeof opts === 'object' && opts.force) return action(container);
+  const name = typeof opts === 'string' ? opts : 'container';
   requestDeletion(container, action, name);
 };
 
