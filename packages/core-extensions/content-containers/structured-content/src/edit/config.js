@@ -14,10 +14,21 @@ const DEFAULT_CONFIG = {
 };
 
 export const parseConfig = (repository, outlineActivity, container, config) => {
-  if (!config) return DEFAULT_CONFIG;
-  return reduce(
+  if (!config) return { subcontainers: DEFAULT_CONFIG, defaultSubcontainers: [], isCollapsible: false };
+  // Container-level options (skipped by the sub-type reduce below):
+  // - isCollapsible: enable collapse/expand for subcontainers
+  // - collapsedPreviewKey: meta key to display in collapsed subcontainer header
+  // - defaultSubcontainers: initial subcontainers to create on mount
+  const CONTAINER_OPTIONS = ['isCollapsible', 'collapsedPreviewKey', 'defaultSubcontainers'];
+  const {
+    isCollapsible = false,
+    collapsedPreviewKey = null,
+    defaultSubcontainers = [],
+  } = config;
+  const subcontainers = reduce(
     config,
     (acc, val, key) => {
+      if (CONTAINER_OPTIONS.includes(key)) return acc;
       acc[key] = {
         ...val,
         icon: val.icon || 'mdi-text',
@@ -28,9 +39,12 @@ export const parseConfig = (repository, outlineActivity, container, config) => {
         contentElementConfig: val.contentElementConfig,
         disableContentElementList: !!val.disableContentElementList,
         disableAi: !!val.disableAi,
+        isCollapsible: val.isCollapsible ?? isCollapsible,
+        collapsedPreviewKey: val.collapsedPreviewKey || collapsedPreviewKey,
       };
       return acc;
     },
-    {},
+    {} as Record<string, any>,
   );
+  return { subcontainers, defaultSubcontainers, isCollapsible };
 };
