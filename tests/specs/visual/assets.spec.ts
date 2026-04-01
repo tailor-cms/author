@@ -11,7 +11,7 @@ test('Asset library - populated list', async ({ page }) => {
   const repository = await toRepositoryAssets(page);
   await AssetClient.uploadFile(repository.id, IMAGE.path);
   await AssetClient.uploadFile(repository.id, DOCUMENT.path);
-  await AssetClient.addLink(repository.id, 'https://example.com');
+  await AssetClient.addLink(repository.id, 'https://docs.tailor-cms.com');
   await page.reload({ waitUntil: 'networkidle' });
   const lib = new AssetLibrary(page);
   await lib.waitForLoad();
