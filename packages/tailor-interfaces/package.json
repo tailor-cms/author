@@ -1,6 +1,45 @@
 {
   "name": "@tailor-cms/interfaces",
+  "description": "Tailor data interfaces",
   "type": "module",
   "version": "0.0.1",
-  "description": "Tailor data interfaces"
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
+    },
+    "./*.ts": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  },
+  "tsup": {
+    "entry": [
+      "*.ts"
+    ],
+    "target": [
+      "node14",
+      "es2022"
+    ],
+    "format": [
+      "cjs",
+      "esm"
+    ],
+    "bundle": true,
+    "minify": false,
+    "clean": true,
+    "dts": true
+  }
 }

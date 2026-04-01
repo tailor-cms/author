@@ -9,6 +9,7 @@
  * - LLM web search (fallback) - OpenAI web_search_preview tool
  *   when Serper is not configured or quota is exceeded.
  */
+import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { discovery as config } from '#config';
 import pick from 'lodash/pick.js';
@@ -169,8 +170,13 @@ async function fetchWithSerper(
   filter: ContentFilter,
   count: number,
 ): Promise<SearchResult[]> {
+  if (!Object.hasOwn(strategies, filter)) {
+    return createError(400, `Unknown content filter: ${filter}`);
+  }
   const strategy = strategies[filter as ContentFilter];
-  if (!strategy) throw new Error(`Unknown content filter: ${filter}`);
+  if (typeof strategy !== 'function') {
+    return createError(400, `Invalid strategy for filter: ${filter}`);
+  }
   return fetchAll(strategy(query, count));
 }
 
