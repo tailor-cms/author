@@ -1,12 +1,11 @@
 import AIService from '#shared/ai/ai.service.ts';
 import { ai as aiConfig } from '#config';
 import { createLogger } from '#logger';
-import {
-  ContentFilter, ContentType, MAX_SNIPPET, MAX_TITLE, truncate,
-  type SearchResult,
-} from './types.ts';
+import { ContentFilter, ContentType, type SearchResult } from './types.ts';
+import { truncate } from './utils.ts';
 
 const logger = createLogger('asset:llm-search');
+const SNIPPET_MAX_LENGTH = 1000;
 
 const ResultItem = {
   type: 'object',
@@ -40,7 +39,6 @@ const FILTER_HINTS: Partial<Record<ContentFilter, string>> = {
   [ContentFilter.Pdf]: 'Focus on PDF documents. Prefer URLs ending in .pdf.',
   [ContentFilter.Research]:
     'Focus on academic papers, preprints, and research publications.',
-  [ContentFilter.Data]: 'Focus on datasets, statistics, and open data repositories.',
   [ContentFilter.Article]: 'Focus on articles and news coverage.',
 };
 
@@ -77,10 +75,8 @@ export async function webSearch(
     .map(toSearchResult);
 }
 
-/**
- * Extracts URLs from url_citation annotations in the response output.
- * These are grounded in actual web search results.
- */
+// Extracts URLs from url_citation annotations in the response output.
+// These are grounded in actual web search results.
 function extractCitedUrls(output: any[]): Set<string> {
   const urls = output
     .filter((it) => it.type === 'message')
@@ -94,9 +90,9 @@ function extractCitedUrls(output: any[]): Set<string> {
 
 function toSearchResult(raw: any): SearchResult {
   return {
-    title: truncate(raw.title, MAX_TITLE),
+    title: truncate(raw.title),
     url: raw.url,
-    snippet: truncate(raw.snippet, MAX_SNIPPET),
+    snippet: truncate(raw.snippet, SNIPPET_MAX_LENGTH),
     source: 'llm-web-search',
     type: ContentType.Article,
   };

@@ -7,16 +7,7 @@ export {
   type DiscoveryResult,
 } from '@tailor-cms/interfaces/discovery.ts';
 
-/** Truncate a string to max length, coercing nullish to empty. */
-export function truncate(value: unknown, max: number): string {
-  return String(value ?? '').slice(0, max);
-}
-
-/** Max lengths for SearchResult fields. */
-export const MAX_TITLE = 500;
-export const MAX_SNIPPET = 1000;
-
-/** Thrown when a search provider rejects with a quota/rate-limit error. */
+// Thrown when a search provider rejects with a quota/rate-limit error.
 export class QuotaExceededError extends Error {
   constructor(provider: string) {
     super(`${provider} quota exceeded`);
@@ -26,22 +17,22 @@ export class QuotaExceededError extends Error {
 
 // Internal pipeline type - not exposed to frontend
 export interface SearchResult {
-  title: string;
-  url: string;
-  /** Search provider that returned this result (e.g. 'google', 'unsplash') */
-  source: string;
-  /** Brief description or extract from the resource content */
-  snippet: string;
-  /** Result category - set by each search provider mapper */
+  // Result category - set by each search provider mapper
   type: ContentType;
+  url: string;
+  title: string;
   thumbnailUrl?: string;
-  imageUrl?: string;
-  /** Direct file URL for downloadable content (e.g. image binary, PDF) */
+  // Full description text (e.g. from Unsplash)
+  description?: string;
+  // Search provider that returned this result (e.g. 'google', 'unsplash')
+  source: string;
+  // Brief description or extract from the resource content
+  snippet: string;
+  // Direct file URL for downloadable content (e.g. image binary, PDF)
   downloadUrl?: string;
+  tags?: string[];
   author?: string;
   license?: string;
-  /** Full description text (e.g. from Unsplash) */
-  description?: string;
-  /** Tags/keywords from the source */
-  tags?: string[];
+  imageUrl?: string;
+  altText?: string;
 }

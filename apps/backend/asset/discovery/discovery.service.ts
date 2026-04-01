@@ -1,14 +1,12 @@
-/**
- * Asset discovery - searches the web for resources relevant to a
- * repository. Routes queries to the right search APIs based on the
- * content filter, deduplicates results, and returns typed results.
- *
- * Two modes:
- * - Serper + Unsplash (primary) - parallel calls to Google Search,
- *   Images, News, Scholar, and Unsplash.
- * - LLM web search (fallback) - OpenAI web_search_preview tool
- *   when Serper is not configured or quota is exceeded.
- */
+// Asset discovery - searches the web for resources relevant to a
+// repository. Routes queries to the right search APIs based on the
+// content filter, deduplicates results, and returns typed results.
+//
+// Two modes:
+// - Serper + Unsplash (primary) - parallel calls to Google Search,
+//   Images, News, Scholar, and Unsplash.
+// - LLM web search (fallback) - OpenAI web_search_preview tool
+//   when Serper is not configured or quota is exceeded.
 import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { discovery as config } from '#config';
@@ -44,21 +42,6 @@ const RESEARCH_SITES = [
   'site:repec.org', // Economics papers & rankings
 ].join(' OR ');
 
-// Datasets, statistics, and open data repositories
-const DATA_SITES = [
-  'site:kaggle.com', // ML datasets & competitions
-  'site:data.gov', // US government open data
-  'site:github.com', // Code & data repositories
-  'site:huggingface.co', // ML models & datasets
-  'site:datasetsearch.research.google.com', // Google dataset search
-  'site:registry.opendata.aws', // AWS open data
-  'site:fred.stlouisfed.org', // Federal Reserve economic data
-  'site:data.worldbank.org', // World Bank development indicators
-  'site:data.imf.org', // IMF international finance data
-  'site:data.oecd.org', // OECD economic & social statistics
-  'site:data.europa.eu', // EU open data & Eurostat
-].join(' OR ');
-
 function buildRepoContext(repository: any): string {
   const parts = [`Repository: "${repository.name}"`];
   if (repository.description) {
@@ -91,32 +74,31 @@ function toResult(raw: SearchResult): DiscoveryResult {
       'license',
       'description',
       'tags',
+      'altText',
     ]),
     ...(thumb && { thumbnailUrl: thumb }),
   };
 }
 
-/** Dedup, trim to count, and map to frontend shape. */
+// Dedup, trim to count, and map to frontend shape.
 function normalize(raw: SearchResult[], count: number): DiscoveryResult[] {
   return dedupeByUrl(raw).slice(0, count).map(toResult);
 }
 
-/**
- * Budget allocation across Serper endpoints per filter.
- *
- * Each strategy distributes the requested count across search types,
- * adding DEDUP_BUFFER extra per source to compensate for duplicates
- * removed during normalization.
- *
- * Percentages (for "all" filter):
- * - 55% web - primary broad results
- * - 30% images - visual content
- * - 15% news - recent/topical
- * - 15% unsplash - high-quality stock photos
- */
+// Budget allocation across Serper endpoints per filter.
+//
+// Each strategy distributes the requested count across search types,
+// adding DEDUP_BUFFER extra per source to compensate for duplicates
+// removed during normalization.
+//
+// Percentages (for "all" filter):
+// - 55% web - primary broad results
+// - 30% images - visual content
+// - 15% news - recent/topical
+// - 15% unsplash - high-quality stock photos
 type Strategy = (q: string, n: number) => Promise<SearchResult[]>[];
 
-const { All, Article, Image, Video, Pdf, Research, Data, Other } =
+const { All, Article, Image, Video, Pdf, Research, Other } =
   ContentFilter;
 
 const strategies: Record<ContentFilter, Strategy> = {
@@ -140,13 +122,6 @@ const strategies: Record<ContentFilter, Strategy> = {
     serper.scholarSearch(q, n + DEDUP_BUFFER),
     serper.webSearch(`${q} ${RESEARCH_SITES}`, Math.ceil(n / 2)),
   ],
-  [Data]: (q, n) => {
-    const keywords = `${q} dataset OR "open data" OR statistics`;
-    return [
-      serper.webSearch(keywords, Math.ceil(n * 0.6) + DEDUP_BUFFER),
-      serper.webSearch(`${q} ${DATA_SITES}`, Math.ceil(n * 0.5) + DEDUP_BUFFER),
-    ];
-  },
   [Other]: (q, n) => [serper.webSearch(q, n + DEDUP_BUFFER)],
 };
 
@@ -196,7 +171,7 @@ async function fetchWithLlm(
   return fetchAll(fetches);
 }
 
-/** Searches the web for resources matching the query and filter. */
+// Searches the web for resources matching the query and filter.
 async function search(
   query: string,
   repository: any,

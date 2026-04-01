@@ -142,6 +142,7 @@ function toImportMeta(result?: DiscoveryResult) {
     author: result.author,
     license: result.license,
     tags: result.tags,
+    altText: result.altText,
   };
 }
 

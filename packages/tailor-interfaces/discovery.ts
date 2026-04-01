@@ -5,7 +5,6 @@ export const ContentType = {
   Image: 'image',
   Video: 'video',
   Research: 'research',
-  Data: 'data',
   Other: 'other',
 } as const;
 export type ContentType = typeof ContentType[keyof typeof ContentType];
@@ -24,12 +23,13 @@ export interface DiscoveryResult {
   // Short note explaining why this result is relevant to the query
   relevanceNote?: string;
   thumbnailUrl?: string;
-  /** Direct file URL for downloadable content (e.g. image binary, PDF) */
+  // Direct file URL for downloadable content (e.g. image binary, PDF)
   downloadUrl?: string;
   author?: string;
   license?: string;
-  /** Full description from source (e.g. Unsplash photo description) */
+  // Full description from source (e.g. Unsplash photo description)
   description?: string;
-  /** Tags/keywords from source */
+  // Tags/keywords from source
   tags?: string[];
+  altText?: string;
 }

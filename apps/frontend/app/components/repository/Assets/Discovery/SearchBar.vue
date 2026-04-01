@@ -50,7 +50,6 @@ const CONTENT_FILTERS: { label: string; value: ContentFilter; icon: string }[] =
   { label: 'PDFs', value: 'pdf', icon: 'mdi-file-document-outline' },
   { label: 'Articles', value: 'article', icon: 'mdi-newspaper' },
   { label: 'Research', value: 'research', icon: 'mdi-school' },
-  { label: 'Data', value: 'data', icon: 'mdi-database' },
 ];
 
 defineProps<{

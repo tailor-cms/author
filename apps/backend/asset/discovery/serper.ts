@@ -1,18 +1,14 @@
 import axios from 'axios';
 import { discovery as config } from '#config';
 import { createLogger } from '#logger';
-import {
-  ContentType,
-  MAX_SNIPPET,
-  MAX_TITLE,
-  QuotaExceededError,
-  truncate,
-  type SearchResult,
-} from './types.ts';
+import { ContentType, QuotaExceededError, type SearchResult } from './types.ts';
+import { truncate } from './utils.ts';
 
 const logger = createLogger('asset:serper');
 
 const { apiUrl, apiKey, timeout } = config.serper;
+
+const SNIPPET_MAX_LENGTH = 1000;
 const HEADERS = { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' };
 
 async function search(
@@ -48,7 +44,7 @@ function detectType(url: string): SearchResult['type'] {
     if (new URL(url).pathname.toLowerCase().endsWith('.pdf'))
       return ContentType.Pdf;
   } catch {
-    /* malformed URL */
+    // malformed URL
   }
   return ContentType.Article;
 }
@@ -56,16 +52,16 @@ function detectType(url: string): SearchResult['type'] {
 function toWebResult(item: any): SearchResult {
   const url = item.link || '';
   return {
-    title: truncate(item.title, MAX_TITLE),
+    title: truncate(item.title),
     url,
-    snippet: truncate(item.snippet, MAX_SNIPPET),
+    snippet: truncate(item.snippet, SNIPPET_MAX_LENGTH),
     source: 'google',
     type: detectType(url),
   };
 }
 
 function toImageResult(item: any): SearchResult {
-  const title = truncate(item.title, MAX_TITLE);
+  const title = truncate(item.title);
   // For images: prefer page link, fall back to the image URL itself
   const url = item.link || item.imageUrl || item.thumbnailUrl || '';
   return {
@@ -76,6 +72,7 @@ function toImageResult(item: any): SearchResult {
     downloadUrl: item.imageUrl || item.link || '',
     snippet: `Image from ${item.source || item.domain || 'web'}`,
     description: title,
+    altText: title,
     source: 'google-images',
     type: ContentType.Image,
   };
@@ -83,9 +80,9 @@ function toImageResult(item: any): SearchResult {
 
 function toNewsResult(item: any): SearchResult {
   return {
-    title: truncate(item.title, MAX_TITLE),
+    title: truncate(item.title),
     url: item.link || '',
-    snippet: truncate(item.snippet, MAX_SNIPPET),
+    snippet: truncate(item.snippet, SNIPPET_MAX_LENGTH),
     source: 'google-news',
     type: ContentType.Article,
   };
@@ -96,11 +93,11 @@ function toScholarResult(item: any): SearchResult {
   const author = item.publicationInfo?.summary || '';
   const year = item.year || '';
   const cited = item.citedBy?.total;
-  const parts = [truncate(item.snippet, MAX_SNIPPET)];
+  const parts = [truncate(item.snippet, SNIPPET_MAX_LENGTH)];
   if (year) parts.push(`Year: ${year}`);
   if (cited) parts.push(`Cited by: ${cited}`);
   return {
-    title: truncate(item.title, MAX_TITLE),
+    title: truncate(item.title),
     url: item.link || '',
     snippet: parts.join(' | '),
     source: 'google-scholar',
@@ -125,9 +122,9 @@ function resolveVideoUrl(item: any): string {
 
 function toVideoResult(item: any): SearchResult {
   return {
-    title: truncate(item.title, MAX_TITLE),
+    title: truncate(item.title),
     url: resolveVideoUrl(item),
-    snippet: truncate(item.snippet || item.description || '', MAX_SNIPPET),
+    snippet: truncate(item.snippet || item.description || '', SNIPPET_MAX_LENGTH),
     thumbnailUrl: item.imageUrl || item.thumbnailUrl || '',
     source: 'google-videos',
     type: ContentType.Video,
