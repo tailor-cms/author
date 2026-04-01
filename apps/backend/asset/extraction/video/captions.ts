@@ -5,6 +5,7 @@
  * timestamps, cue identifiers, and formatting tags. Used by the
  * indexing pipeline to make video/audio content searchable.
  */
+import { stripHtml } from 'string-strip-html';
 import { createLogger } from '#logger';
 
 import type { Asset } from '../../asset.model.js';
@@ -14,9 +15,8 @@ const logger = createLogger('asset:video-captions');
 const CAPTION_EXTENSIONS = ['.vtt', '.srt'];
 
 // VTT header, cue timestamps (00:00:00.000 --> 00:00:05.000), numeric
-// cue IDs (SRT), position/alignment settings, and HTML-like tags
+// cue IDs (SRT), position/alignment settings
 const NOISE = /^(WEBVTT.*|STYLE\b.*|NOTE\b.*|\d+$|[\d:.]+\s*-->.*|\w+:\S+(\s+\w+:\S+)*$)/;
-const TAGS = /<[^>]+>/g;
 
 export function isCaptionFile(filename: string): boolean {
   const lower = filename.toLowerCase();
@@ -29,7 +29,7 @@ export function parseCaptions(raw: string): string {
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line && !NOISE.test(line))
-    .map((line) => line.replace(TAGS, ''))
+    .map((line) => stripHtml(line).result)
     .filter(Boolean)
     .join(' ');
 }

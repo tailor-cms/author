@@ -169,7 +169,8 @@ async function fetchWithSerper(
   filter: ContentFilter,
   count: number,
 ): Promise<SearchResult[]> {
-  const strategy = strategies[filter] || strategies.all;
+  const strategy = strategies[filter as ContentFilter];
+  if (!strategy) throw new Error(`Unknown content filter: ${filter}`);
   return fetchAll(strategy(query, count));
 }
 
