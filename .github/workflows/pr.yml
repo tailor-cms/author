@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup node, pnpm, install dependencies
         uses: ./.github/actions/setup
       - name: Run linter
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Run service deps via Compose
         uses: hoverkraft-tech/compose-action@v2.0.1
         with:
@@ -33,17 +33,68 @@ jobs:
           url: http://localhost:3000/api/healthcheck
           method: "GET"
           accept: 200
-  e2e:
+  build:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.2.0
+          cache: 'pnpm'
+          cache-dependency-path: './pnpm-lock.yaml'
+      - name: Cache build output
+        uses: actions/cache@v4
+        id: build-cache
+        with:
+          path: |
+            apps/*/.output
+            apps/*/.nuxt
+            packages/*/dist
+            config/dist
+          key: build-${{ runner.os }}-${{ hashFiles('apps/frontend/app/**', 'apps/frontend/nuxt.config.ts', 'apps/frontend/package.json', 'packages/*/src/**', 'packages/*/package.json', 'packages/core-extensions/**', 'config/src/**', 'config/package.json', 'extensions/**', 'pnpm-lock.yaml') }}
+      - name: Install dependencies
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: pnpm i --frozen-lockfile --prefer-offline
+      - name: Build
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: pnpm build
+  e2e:
+    needs: build
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15.1
+        env:
+          POSTGRES_DB: tailor_dev
+          POSTGRES_USER: dev
+          POSTGRES_PASSWORD: dev
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7.4.0
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5]
-        shardTotal: [5]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8]
+        shardTotal: [8]
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup script .env
         run: |
           touch ./scripts/setup/.env
@@ -86,8 +137,28 @@ jobs:
           echo "PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}" >> ./tests/.env
           echo "OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}" >> ./tests/.env
           echo "OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}" >> ./tests/.env
-      - name: Install, build, seed, and start server
+      - name: Restore build output
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            apps/*/.output
+            apps/*/.nuxt
+            packages/*/dist
+            config/dist
+          key: build-${{ runner.os }}-${{ hashFiles('apps/frontend/app/**', 'apps/frontend/nuxt.config.ts', 'apps/frontend/package.json', 'packages/*/src/**', 'packages/*/package.json', 'packages/core-extensions/**', 'config/src/**', 'config/package.json', 'extensions/**', 'pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
+      - name: Start Localstack
+        run: |
+          docker run -d --name localstack \
+            -p 4566:4566 \
+            -e SERVICES=s3:4566 \
+            -e BUCKET_NAME=test \
+            localstack/localstack:4.14.0
+      - name: Install, configure, and start server
         uses: ./.github/actions/run
+        with:
+          skip-build: 'true'
+          skip-services: 'true'
       - name: Check if platform is running
         uses: indiesdev/curl@v1.1
         with:
