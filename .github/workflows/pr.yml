@@ -1,9 +1,6 @@
 name: PR checks
 env:
   PLAYWRIGHT_VERSION: 1.56.1
-  POSTGRES_IMAGE: postgres:15.1
-  REDIS_IMAGE: redis:7.4.0
-  LOCALSTACK_IMAGE: localstack/localstack:4.14.0
   # Force JS actions to run on Node 24 (most still bundle Node 20 which is
   # deprecated). Remove once action maintainers release Node 24 versions.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -77,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: ${{ env.POSTGRES_IMAGE }}
+        image: postgres:15.1
         env:
           POSTGRES_DB: tailor_dev
           POSTGRES_USER: dev
@@ -90,7 +87,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       redis:
-        image: ${{ env.REDIS_IMAGE }}
+        image: redis:7.4.0
         ports:
           - 6379:6379
         options: >-
@@ -99,7 +96,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       localstack:
-        image: ${{ env.LOCALSTACK_IMAGE }}
+        image: localstack/localstack:4.14.0
         env:
           SERVICES: s3
         ports:
