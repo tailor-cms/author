@@ -47,15 +47,15 @@ test.describe('Asset library', () => {
 
   test('can add a link', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.addLink('https://example.com');
-    const row = lib.getRow('example.com');
+    await lib.addLink('https://docs.tailor-cms.com');
+    const row = lib.getRow('Tailor Author');
     await expect(row.el).toBeVisible();
     await expect(row.typeChip).toContainText('link');
     await row.openMenu();
     await expect(row.downloadMenuItem).not.toBeVisible();
     await page.reload({ waitUntil: 'networkidle' });
     await lib.waitForLoad();
-    await expect(lib.getRow('example.com').el).toBeVisible();
+    await expect(lib.getRow('Tailor Author').el).toBeVisible();
   });
 
   test('can add a YouTube link (classified as video)', async ({ page }) => {
@@ -70,7 +70,7 @@ test.describe('Asset library', () => {
   test('can filter assets by category', async ({ page }) => {
     const { lib } = await toSeededAssetLibrary(page, async (id) => {
       await AssetClient.uploadFile(id, IMAGE.path);
-      await AssetClient.addLink(id, 'https://example.com');
+      await AssetClient.addLink(id, 'https://docs.tailor-cms.com');
       await AssetClient.addLink(id, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
     });
     expect(await lib.getRowCount()).toBe(3);
@@ -86,7 +86,7 @@ test.describe('Asset library', () => {
     // Regular links only (YouTube excluded)
     await lib.filterByCategory('Links');
     expect(await lib.getRowCount()).toBe(1);
-    await expect(lib.getRow('example.com').el).toBeVisible();
+    await expect(lib.getRow('Tailor Author').el).toBeVisible();
 
     await lib.filterByCategory('All');
     expect(await lib.getRowCount()).toBe(3);
