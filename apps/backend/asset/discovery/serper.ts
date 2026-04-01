@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { discovery as config } from '#config';
 import { createLogger } from '#logger';
-import { ContentType, QuotaExceededError, type SearchResult } from './types.ts';
+import { ContentType, QuotaExceededError, type DiscoveryResult } from './types.ts';
 import { truncate } from './utils.ts';
 
 const logger = createLogger('asset:serper');
@@ -11,12 +11,15 @@ const { apiUrl, apiKey, timeout } = config.serper;
 const SNIPPET_MAX_LENGTH = 1000;
 const HEADERS = { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' };
 
+// Serper response key per endpoint:
+// /search, /scholar -> 'organic'
+// /images -> 'images', /news -> 'news', /videos -> 'videos'
 async function search(
   endpoint: string,
   params: Record<string, unknown>,
   key: string,
-  mapper: (item: any) => SearchResult,
-): Promise<SearchResult[]> {
+  mapper: (item: any) => DiscoveryResult,
+): Promise<DiscoveryResult[]> {
   logger.debug({ endpoint, query: params.q, count: params.num }, 'Searching');
   try {
     const { data } = await axios.post(`${apiUrl}${endpoint}`, params, {
@@ -24,7 +27,7 @@ async function search(
       timeout,
     });
     const all = (data[key] || []).map(mapper);
-    const results = all.filter((r: SearchResult) => r.url);
+    const results = all.filter((r: DiscoveryResult) => r.url);
     if (all.length !== results.length) {
       logger.warn(
         { endpoint, dropped: all.length - results.length },
@@ -39,7 +42,7 @@ async function search(
   }
 }
 
-function detectType(url: string): SearchResult['type'] {
+function detectType(url: string): DiscoveryResult['type'] {
   try {
     if (new URL(url).pathname.toLowerCase().endsWith('.pdf'))
       return ContentType.Pdf;
@@ -49,46 +52,45 @@ function detectType(url: string): SearchResult['type'] {
   return ContentType.Article;
 }
 
-function toWebResult(item: any): SearchResult {
+function toWebResult(item: any): DiscoveryResult {
   const url = item.link || '';
   return {
-    title: truncate(item.title),
+    type: detectType(url),
     url,
+    title: truncate(item.title),
     snippet: truncate(item.snippet, SNIPPET_MAX_LENGTH),
     source: 'google',
-    type: detectType(url),
   };
 }
 
-function toImageResult(item: any): SearchResult {
+function toImageResult(item: any): DiscoveryResult {
   const title = truncate(item.title);
   // For images: prefer page link, fall back to the image URL itself
   const url = item.link || item.imageUrl || item.thumbnailUrl || '';
   return {
-    title,
+    type: ContentType.Image,
     url,
-    imageUrl: item.imageUrl || '',
-    thumbnailUrl: item.thumbnailUrl || '',
     downloadUrl: item.imageUrl || item.link || '',
+    thumbnailUrl: item.thumbnailUrl || item.imageUrl || '',
+    title,
+    altText: title,
     snippet: `Image from ${item.source || item.domain || 'web'}`,
     description: title,
-    altText: title,
     source: 'google-images',
-    type: ContentType.Image,
   };
 }
 
-function toNewsResult(item: any): SearchResult {
+function toNewsResult(item: any): DiscoveryResult {
   return {
-    title: truncate(item.title),
+    type: ContentType.Article,
     url: item.link || '',
+    title: truncate(item.title),
     snippet: truncate(item.snippet, SNIPPET_MAX_LENGTH),
     source: 'google-news',
-    type: ContentType.Article,
   };
 }
 
-function toScholarResult(item: any): SearchResult {
+function toScholarResult(item: any): DiscoveryResult {
   // publicationInfo.summary is "Author1, Author2 - Journal, Year" format
   const author = item.publicationInfo?.summary || '';
   const year = item.year || '';
@@ -97,37 +99,36 @@ function toScholarResult(item: any): SearchResult {
   if (year) parts.push(`Year: ${year}`);
   if (cited) parts.push(`Cited by: ${cited}`);
   return {
-    title: truncate(item.title),
+    type: ContentType.Research,
     url: item.link || '',
+    title: truncate(item.title),
     snippet: parts.join(' | '),
     source: 'google-scholar',
-    type: ContentType.Research,
     ...(author && { author }),
   };
 }
 
+// Serper /videos response is inconsistent about where the video URL lives.
+// Try in order: direct link, YouTube ID from thumbnail, source field.
 function resolveVideoUrl(item: any): string {
-  // Primary: direct link field
   if (item.link) return item.link;
-  // Fallback: try to extract YouTube URL from thumbnail (contains video ID)
+  // YouTube thumbnails embed the video ID (e.g. img.youtube.com/vi/<id>/...)
   const thumb = item.imageUrl || item.thumbnailUrl || '';
-  const ytThumbMatch = thumb.match(
-    /img\.youtube\.com\/vi\/([a-zA-Z0-9_-]+)\//,
-  );
-  if (ytThumbMatch) return `https://www.youtube.com/watch?v=${ytThumbMatch[1]}`;
-  // Fallback: source field (sometimes contains a URL)
+  const ytMatch = thumb.match(/img\.youtube\.com\/vi\/([a-zA-Z0-9_-]+)\//);
+  if (ytMatch) return `https://www.youtube.com/watch?v=${ytMatch[1]}`;
+  // source is normally a domain, but occasionally a full URL
   if (item.source && /^https?:\/\//.test(item.source)) return item.source;
   return '';
 }
 
-function toVideoResult(item: any): SearchResult {
+function toVideoResult(item: any): DiscoveryResult {
   return {
-    title: truncate(item.title),
+    type: ContentType.Video,
     url: resolveVideoUrl(item),
+    title: truncate(item.title),
     snippet: truncate(item.snippet || item.description || '', SNIPPET_MAX_LENGTH),
     thumbnailUrl: item.imageUrl || item.thumbnailUrl || '',
     source: 'google-videos',
-    type: ContentType.Video,
     ...(item.channel && { author: item.channel }),
   };
 }

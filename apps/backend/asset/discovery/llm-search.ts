@@ -1,10 +1,10 @@
 import AIService from '#shared/ai/ai.service.ts';
 import { ai as aiConfig } from '#config';
 import { createLogger } from '#logger';
-import { ContentFilter, ContentType, type SearchResult } from './types.ts';
+import { ContentFilter, ContentType, type DiscoveryResult } from './types.ts';
 import { truncate } from './utils.ts';
 
-const logger = createLogger('asset:llm-search');
+const logger = createLogger('asset:llm');
 const SNIPPET_MAX_LENGTH = 1000;
 
 const ResultItem = {
@@ -37,8 +37,7 @@ Derive titles and snippets from the actual page content.`;
 
 const FILTER_HINTS: Partial<Record<ContentFilter, string>> = {
   [ContentFilter.Pdf]: 'Focus on PDF documents. Prefer URLs ending in .pdf.',
-  [ContentFilter.Research]:
-    'Focus on academic papers, preprints, and research publications.',
+  [ContentFilter.Research]: 'Focus on academic papers, preprints, and publications.',
   [ContentFilter.Article]: 'Focus on articles and news coverage.',
 };
 
@@ -47,7 +46,7 @@ export async function webSearch(
   repositoryContext: string,
   filter: ContentFilter,
   count: number,
-): Promise<SearchResult[]> {
+): Promise<DiscoveryResult[]> {
   logger.debug({ query, filter, count }, 'Searching via LLM web search');
   const hint = FILTER_HINTS[filter] || '';
   const prompt = [PROMPT, hint, `Return up to ${count} results.`]
@@ -72,7 +71,7 @@ export async function webSearch(
     // When citations are available, only keep URLs grounded in actual search
     .filter((r: any) => !citedUrls.size || citedUrls.has(r.url))
     .slice(0, count)
-    .map(toSearchResult);
+    .map(toDiscoveryResult);
 }
 
 // Extracts URLs from url_citation annotations in the response output.
@@ -80,20 +79,22 @@ export async function webSearch(
 function extractCitedUrls(output: any[]): Set<string> {
   const urls = output
     .filter((it) => it.type === 'message')
+    // message -> content blocks
     .flatMap((it) => it.content || [])
     .filter((it) => it.type === 'output_text')
+    // text block -> citation annotations
     .flatMap((it) => it.annotations || [])
     .filter((it) => it.type === 'url_citation')
     .map((it) => it.url);
   return new Set(urls);
 }
 
-function toSearchResult(raw: any): SearchResult {
+function toDiscoveryResult(raw: any): DiscoveryResult {
   return {
-    title: truncate(raw.title),
-    url: raw.url,
-    snippet: truncate(raw.snippet, SNIPPET_MAX_LENGTH),
-    source: 'llm-web-search',
     type: ContentType.Article,
+    url: raw.url,
+    title: truncate(raw.title),
+    snippet: truncate(raw.snippet, SNIPPET_MAX_LENGTH),
+    source: 'llm-search',
   };
 }

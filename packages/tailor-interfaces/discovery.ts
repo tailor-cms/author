@@ -15,21 +15,19 @@ export const ContentFilter = { All: 'all', ...ContentType } as const;
 export type ContentFilter = typeof ContentFilter[keyof typeof ContentFilter];
 
 export interface DiscoveryResult {
-  title: string;
-  url: string;
-  // Brief description or extract from the resource content
-  snippet: string;
   type: ContentType;
-  // Short note explaining why this result is relevant to the query
-  relevanceNote?: string;
+  url: string;
+  title: string;
+  snippet: string;
+  // Search provider that returned this result (e.g. 'google', 'unsplash')
+  source: string;
   thumbnailUrl?: string;
   // Direct file URL for downloadable content (e.g. image binary, PDF)
   downloadUrl?: string;
-  author?: string;
-  license?: string;
   // Full description from source (e.g. Unsplash photo description)
   description?: string;
-  // Tags/keywords from source
   tags?: string[];
+  author?: string;
+  license?: string;
   altText?: string;
 }

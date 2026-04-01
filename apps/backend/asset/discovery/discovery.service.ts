@@ -10,7 +10,6 @@
 import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { discovery as config } from '#config';
-import pick from 'lodash/pick.js';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import * as llmSearch from './llm-search.ts';
 import * as serper from './serper.ts';
@@ -20,7 +19,6 @@ import {
   ContentFilter,
   QuotaExceededError,
   type DiscoveryResult,
-  type SearchResult,
 } from './types.ts';
 
 const logger = createLogger('asset:discovery');
@@ -42,17 +40,19 @@ const RESEARCH_SITES = [
   'site:repec.org', // Economics papers & rankings
 ].join(' OR ');
 
+// Used for LLM search to provide more context about the search
 function buildRepoContext(repository: any): string {
-  const parts = [`Repository: "${repository.name}"`];
-  if (repository.description) {
-    parts.push(`Description: "${repository.description}"`);
-  }
   const schema = schemaAPI.getSchema(repository.schema);
-  if (schema) parts.push(`Content type: ${schema.name}`);
+  const parts = [
+    `Repository: "${repository.name}"`,
+    `Description: "${repository.description}"`,
+    `Repository type: ${schema.name}`,
+  ];
   return parts.join('\n');
 }
 
-function dedupeByUrl(results: SearchResult[]): SearchResult[] {
+// Removes duplicates based on URL, keeping the first occurrence.
+function dedupeByUrl(results: DiscoveryResult[]): DiscoveryResult[] {
   const seen = new Set<string>();
   return results.filter((r) => {
     if (seen.has(r.url)) return false;
@@ -61,28 +61,9 @@ function dedupeByUrl(results: SearchResult[]): SearchResult[] {
   });
 }
 
-function toResult(raw: SearchResult): DiscoveryResult {
-  const thumb = raw.thumbnailUrl || raw.imageUrl;
-  return {
-    ...pick(raw, [
-      'title',
-      'url',
-      'snippet',
-      'type',
-      'downloadUrl',
-      'author',
-      'license',
-      'description',
-      'tags',
-      'altText',
-    ]),
-    ...(thumb && { thumbnailUrl: thumb }),
-  };
-}
-
-// Dedup, trim to count, and map to frontend shape.
-function normalize(raw: SearchResult[], count: number): DiscoveryResult[] {
-  return dedupeByUrl(raw).slice(0, count).map(toResult);
+// Dedup and trim to requested count.
+function normalize(raw: DiscoveryResult[], count: number): DiscoveryResult[] {
+  return dedupeByUrl(raw).slice(0, count);
 }
 
 // Budget allocation across Serper endpoints per filter.
@@ -92,25 +73,25 @@ function normalize(raw: SearchResult[], count: number): DiscoveryResult[] {
 // removed during normalization.
 //
 // Percentages (for "all" filter):
-// - 55% web - primary broad results
-// - 30% images - visual content
+// - 45% web - primary broad results
+// - 15% images - visual content (Google)
+// - 25% unsplash - high-quality stock photos
 // - 15% news - recent/topical
-// - 15% unsplash - high-quality stock photos
-type Strategy = (q: string, n: number) => Promise<SearchResult[]>[];
+type Strategy = (q: string, n: number) => Promise<DiscoveryResult[]>[];
 
 const { All, Article, Image, Video, Pdf, Research, Other } =
   ContentFilter;
 
 const strategies: Record<ContentFilter, Strategy> = {
   [All]: (q, n) => [
-    serper.webSearch(q, Math.ceil(n * 0.55) + DEDUP_BUFFER),
-    serper.imageSearch(q, Math.ceil(n * 0.3) + DEDUP_BUFFER),
-    unsplash.search(q, Math.ceil(n * 0.15)),
+    serper.webSearch(q, Math.ceil(n * 0.45) + DEDUP_BUFFER),
+    serper.imageSearch(q, Math.ceil(n * 0.15) + DEDUP_BUFFER),
+    unsplash.search(q, Math.ceil(n * 0.25)),
     serper.newsSearch(q, Math.ceil(n * 0.15) + DEDUP_BUFFER),
   ],
   [Image]: (q, n) => [
-    serper.imageSearch(q, n + DEDUP_BUFFER),
-    unsplash.search(q, Math.ceil(n / 2)),
+    unsplash.search(q, Math.ceil(n * 0.6)),
+    serper.imageSearch(q, Math.ceil(n * 0.4) + DEDUP_BUFFER),
   ],
   [Video]: (q, n) => [serper.videoSearch(q, n + DEDUP_BUFFER)],
   [Pdf]: (q, n) => [serper.webSearch(`${q} filetype:pdf`, n + DEDUP_BUFFER)],
@@ -125,50 +106,47 @@ const strategies: Record<ContentFilter, Strategy> = {
   [Other]: (q, n) => [serper.webSearch(q, n + DEDUP_BUFFER)],
 };
 
-async function fetchAll(
-  promises: Promise<SearchResult[]>[],
-): Promise<SearchResult[]> {
+async function gatherResults(
+  promises: Promise<DiscoveryResult[]>[],
+): Promise<DiscoveryResult[]> {
   const batches = await Promise.all(
     promises.map((p) =>
       p.catch((err: Error) => {
         if (err instanceof QuotaExceededError) throw err;
         logger.warn({ err: err.message }, 'Search source failed');
-        return [] as SearchResult[];
+        return [] as DiscoveryResult[];
       }),
     ),
   );
   return batches.flat();
 }
 
-async function fetchWithSerper(
+async function fetchFromProviders(
   query: string,
   filter: ContentFilter,
   count: number,
-): Promise<SearchResult[]> {
+): Promise<DiscoveryResult[]> {
   if (!Object.hasOwn(strategies, filter)) {
     return createError(400, `Unknown content filter: ${filter}`);
   }
-  const strategy = strategies[filter as ContentFilter];
-  if (typeof strategy !== 'function') {
-    return createError(400, `Invalid strategy for filter: ${filter}`);
-  }
-  return fetchAll(strategy(query, count));
+  return gatherResults(strategies[filter as ContentFilter](query, count));
 }
 
-async function fetchWithLlm(
+async function fetchFromLlm(
   query: string,
   repoContext: string,
   filter: ContentFilter,
   count: number,
-): Promise<SearchResult[]> {
-  const fetches: Promise<SearchResult[]>[] = [];
+): Promise<DiscoveryResult[]> {
+  const fetches: Promise<DiscoveryResult[]>[] = [];
   if (filter !== ContentFilter.Image) {
     fetches.push(llmSearch.webSearch(query, repoContext, filter, count));
   }
+  // LLM is weak for image search, so we supplement with Unsplash
   if (filter === ContentFilter.All || filter === ContentFilter.Image) {
     fetches.push(unsplash.search(query, Math.ceil(count / 3)));
   }
-  return fetchAll(fetches);
+  return gatherResults(fetches);
 }
 
 // Searches the web for resources matching the query and filter.
@@ -179,17 +157,17 @@ async function search(
   count = DEFAULT_COUNT,
 ): Promise<DiscoveryResult[]> {
   const repoContext = buildRepoContext(repository);
-  let raw: SearchResult[];
+  let raw: DiscoveryResult[];
   if (!config.serper.isEnabled) {
     logger.info('Serper not configured, using LLM fallback');
-    raw = await fetchWithLlm(query, repoContext, contentFilter, count);
+    raw = await fetchFromLlm(query, repoContext, contentFilter, count);
   } else {
     try {
-      raw = await fetchWithSerper(query, contentFilter, count);
+      raw = await fetchFromProviders(query, contentFilter, count);
     } catch (err) {
       if (!(err instanceof QuotaExceededError)) throw err;
       logger.warn('Serper quota exceeded, falling back to LLM search');
-      raw = await fetchWithLlm(query, repoContext, contentFilter, count);
+      raw = await fetchFromLlm(query, repoContext, contentFilter, count);
     }
   }
   const results = normalize(raw, count);
