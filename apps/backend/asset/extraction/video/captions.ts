@@ -23,7 +23,7 @@ export function isCaptionFile(filename: string): boolean {
   return CAPTION_EXTENSIONS.some((ext) => lower.endsWith(ext));
 }
 
-/** Extracts plain text from VTT/SRT content. */
+// Extracts plain text from VTT/SRT content.
 export function parseCaptions(raw: string): string {
   return raw
     .split('\n')

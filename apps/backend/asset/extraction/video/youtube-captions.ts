@@ -27,9 +27,7 @@ export async function fetchYouTubeCaptions(
   try {
     const transcript = await YoutubeTranscript.fetchTranscript(videoId);
     if (!transcript?.length) return '';
-    const text = transcript
-      .map((entry: any) => entry.text)
-      .join(' ');
+    const text = transcript.map(({ text }: any) => text).join(' ');
     logger.debug({ videoId, chars: text.length }, 'Captions fetched');
     return text;
   } catch (err: any) {
