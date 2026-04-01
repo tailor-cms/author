@@ -6,7 +6,7 @@ runs:
   - name: Setup node to enable caching
     uses: actions/setup-node@v4
     with:
-      node-version: 24.2.0
+      node-version: 24.14.2
       cache: 'pnpm'
       cache-dependency-path: './pnpm-lock.yaml'
   - name: Install dependencies

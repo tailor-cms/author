@@ -1,4 +1,4 @@
-FROM node:24.2.0-bookworm-slim AS base
+FROM node:24.14-bookworm-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
