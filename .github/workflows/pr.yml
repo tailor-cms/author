@@ -1,6 +1,12 @@
 name: PR checks
 env:
   PLAYWRIGHT_VERSION: 1.56.1
+  POSTGRES_IMAGE: postgres:15.1
+  REDIS_IMAGE: redis:7.4.0
+  LOCALSTACK_IMAGE: localstack/localstack:4.14.0
+  # Force JS actions to run on Node 24 (most still bundle Node 20 which is
+  # deprecated). Remove once action maintainers release Node 24 versions.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 on:
   push:
     branches: [ main, develop ]
@@ -14,20 +20,21 @@ jobs:
       - name: Setup node, pnpm, install dependencies
         uses: ./.github/actions/setup
       - name: Run linter
+        shell: bash
         run: pnpm lint
   default-compose-spec:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run service deps via Compose
+      - name: Start services via Compose
         uses: hoverkraft-tech/compose-action@v2.0.1
         with:
           compose-file: docker-compose.yaml
       - name: Wait for service to start
         shell: bash
         run: sleep 30
-      - name: Check if platform is running
+      - name: Health check
         uses: indiesdev/curl@v1.1
         with:
           url: http://localhost:3000/api/healthcheck
@@ -41,7 +48,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24.2.0
+          node-version-file: '.node-version'
           cache: 'pnpm'
           cache-dependency-path: './pnpm-lock.yaml'
       - name: Cache build output
@@ -53,19 +60,21 @@ jobs:
             apps/*/.nuxt
             packages/*/dist
             config/dist
-          key: build-${{ runner.os }}-${{ hashFiles('apps/frontend/app/**', 'apps/frontend/nuxt.config.ts', 'apps/frontend/package.json', 'packages/*/src/**', 'packages/*/package.json', 'packages/core-extensions/**', 'config/src/**', 'config/package.json', 'extensions/**', 'pnpm-lock.yaml') }}
+          key: build-${{ runner.os }}-${{ hashFiles('apps/**', 'packages/**', 'config/**', 'extensions/**', 'pnpm-lock.yaml') }}
       - name: Install dependencies
         if: steps.build-cache.outputs.cache-hit != 'true'
+        shell: bash
         run: pnpm i --frozen-lockfile --prefer-offline
       - name: Build
         if: steps.build-cache.outputs.cache-hit != 'true'
+        shell: bash
         run: pnpm build
   e2e:
     needs: build
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:15.1
+        image: ${{ env.POSTGRES_IMAGE }}
         env:
           POSTGRES_DB: tailor_dev
           POSTGRES_USER: dev
@@ -78,7 +87,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
       redis:
-        image: redis:7.4.0
+        image: ${{ env.REDIS_IMAGE }}
         ports:
           - 6379:6379
         options: >-
@@ -86,57 +95,74 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      localstack:
+        image: ${{ env.LOCALSTACK_IMAGE }}
+        env:
+          SERVICES: s3
+        ports:
+          - 4566:4566
+        options: >-
+          --health-cmd "curl -sf http://localhost:4566/_localstack/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8]
-        shardTotal: [8]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shardTotal: [10]
     timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup script .env
+        shell: bash
         run: |
-          touch ./scripts/setup/.env
-          echo "DB_USERNAME=dev" >> ./scripts/setup/.env
-          echo "DB_PASSWORD=dev" >> ./scripts/setup/.env
+          cat <<EOF > ./scripts/setup/.env
+          DB_USERNAME=dev
+          DB_PASSWORD=dev
+          EOF
       - name: Setup app .env
+        shell: bash
         run: |
-          touch .env
-          echo "EMAIL_SENDER_NAME=Tailor" >> .env
-          echo "EMAIL_SENDER_ADDRESS=tailor@gostudion.com" >> .env
-          echo "EMAIL_USER=${{ secrets.EMAIL_USER }}" >> .env
-          echo "EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}" >> .env
-          echo "EMAIL_HOST=sandbox.smtp.mailtrap.io" >> .env
-          echo "NUXT_PUBLIC_OIDC_ENABLED=${{ vars.NUXT_PUBLIC_OIDC_ENABLED }}" >> .env
-          echo "OIDC_ALLOW_SIGNUP=${{ vars.OIDC_ALLOW_SIGNUP }}" >> .env
-          echo "OIDC_CLIENT_ID=${{ secrets.OIDC_CLIENT_ID }}" >> .env
-          echo "OIDC_CLIENT_SECRET=${{ secrets.OIDC_CLIENT_SECRET }}" >> .env
-          echo "OIDC_ISSUER=${{ vars.OIDC_ISSUER }}" >> .env
-          echo "OIDC_JWKS_URL=${{ vars.OIDC_JWKS_URL }}" >> .env
-          echo "OIDC_AUTHORIZATION_ENDPOINT=${{ vars.OIDC_AUTHORIZATION_ENDPOINT }}" >> .env
-          echo "OIDC_TOKEN_ENDPOINT=${{ vars.OIDC_TOKEN_ENDPOINT }}" >> .env
-          echo "OIDC_USERINFO_ENDPOINT=${{ vars.OIDC_USERINFO_ENDPOINT }}" >> .env
-          echo "OIDC_SESSION_SECRET=${{ secrets.OIDC_SESSION_SECRET }}" >> .env
-          echo "STORAGE_PROVIDER=amazon" >> .env
-          echo "STORAGE_REGION=us-east-1" >> .env
-          echo "STORAGE_ENDPOINT=http://localhost:4566" >> .env
-          echo "STORAGE_BUCKET=test" >> .env
-          echo "STORAGE_KEY=test" >> .env
-          echo "STORAGE_SECRET=test" >> .env
+          cat <<EOF > .env
+          EMAIL_SENDER_NAME=Tailor
+          EMAIL_SENDER_ADDRESS=tailor@gostudion.com
+          EMAIL_USER=${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_HOST=sandbox.smtp.mailtrap.io
+          NUXT_PUBLIC_OIDC_ENABLED=${{ vars.NUXT_PUBLIC_OIDC_ENABLED }}
+          OIDC_ALLOW_SIGNUP=${{ vars.OIDC_ALLOW_SIGNUP }}
+          OIDC_CLIENT_ID=${{ secrets.OIDC_CLIENT_ID }}
+          OIDC_CLIENT_SECRET=${{ secrets.OIDC_CLIENT_SECRET }}
+          OIDC_ISSUER=${{ vars.OIDC_ISSUER }}
+          OIDC_JWKS_URL=${{ vars.OIDC_JWKS_URL }}
+          OIDC_AUTHORIZATION_ENDPOINT=${{ vars.OIDC_AUTHORIZATION_ENDPOINT }}
+          OIDC_TOKEN_ENDPOINT=${{ vars.OIDC_TOKEN_ENDPOINT }}
+          OIDC_USERINFO_ENDPOINT=${{ vars.OIDC_USERINFO_ENDPOINT }}
+          OIDC_SESSION_SECRET=${{ secrets.OIDC_SESSION_SECRET }}
+          STORAGE_PROVIDER=amazon
+          STORAGE_REGION=us-east-1
+          STORAGE_ENDPOINT=http://localhost:4566
+          STORAGE_BUCKET=test
+          STORAGE_KEY=test
+          STORAGE_SECRET=test
+          EOF
       - name: Setup E2E .env
+        shell: bash
         run: |
-          touch ./tests/.env
-          echo "MAILTRAP_ACCOUNT_ID=${{ secrets.MAILTRAP_ACCOUNT_ID }}" >> ./tests/.env
-          echo "MAILTRAP_TOKEN=${{ secrets.MAILTRAP_TOKEN }}" >> ./tests/.env
-          echo "MAILTRAP_INBOX_ID=${{ secrets.MAILTRAP_INBOX_ID }}" >> ./tests/.env
-          echo "MAILTRAP_INBOX_NAME=e2e" >> ./tests/.env
-          echo "LOCALSTACK_ENDPOINT=http://localhost:4566" >> ./tests/.env
-          echo "LOCALSTACK_REGION=us-east-1" >> ./tests/.env
-          echo "LOCALSTACK_BUCKET=test" >> ./tests/.env
-          echo "PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}" >> ./tests/.env
-          echo "OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}" >> ./tests/.env
-          echo "OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}" >> ./tests/.env
+          cat <<EOF > ./tests/.env
+          MAILTRAP_ACCOUNT_ID=${{ secrets.MAILTRAP_ACCOUNT_ID }}
+          MAILTRAP_TOKEN=${{ secrets.MAILTRAP_TOKEN }}
+          MAILTRAP_INBOX_ID=${{ secrets.MAILTRAP_INBOX_ID }}
+          MAILTRAP_INBOX_NAME=e2e
+          LOCALSTACK_ENDPOINT=http://localhost:4566
+          LOCALSTACK_REGION=us-east-1
+          LOCALSTACK_BUCKET=test
+          PERCY_TOKEN=${{ secrets.PERCY_TOKEN }}
+          OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}
+          OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}
+          EOF
       - name: Restore build output
         uses: actions/cache/restore@v4
         with:
@@ -145,26 +171,13 @@ jobs:
             apps/*/.nuxt
             packages/*/dist
             config/dist
-          key: build-${{ runner.os }}-${{ hashFiles('apps/frontend/app/**', 'apps/frontend/nuxt.config.ts', 'apps/frontend/package.json', 'packages/*/src/**', 'packages/*/package.json', 'packages/core-extensions/**', 'config/src/**', 'config/package.json', 'extensions/**', 'pnpm-lock.yaml') }}
+          key: build-${{ runner.os }}-${{ hashFiles('apps/**', 'packages/**', 'config/**', 'extensions/**', 'pnpm-lock.yaml') }}
           fail-on-cache-miss: true
-      - name: Start Localstack
-        run: |
-          docker run -d --name localstack \
-            -p 4566:4566 \
-            -e SERVICES=s3:4566 \
-            -e BUCKET_NAME=test \
-            localstack/localstack:4.14.0
       - name: Install, configure, and start server
         uses: ./.github/actions/run
         with:
           skip-build: 'true'
           skip-services: 'true'
-      - name: Check if platform is running
-        uses: indiesdev/curl@v1.1
-        with:
-          url: http://localhost:3000/api/healthcheck
-          method: "GET"
-          accept: 200
       - name: Run functional tests
         shell: bash
         run: pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
@@ -177,8 +190,8 @@ jobs:
       - name: Run a11y tests
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-
-      - uses: actions/upload-artifact@v4
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ matrix.shardIndex }}
