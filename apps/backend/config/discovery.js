@@ -1,17 +1,6 @@
 import * as yup from 'yup';
 import yn from 'yn';
 
-const apiServiceSchema = yup.object().shape({
-  apiKey: yup.string().default(''),
-  apiUrl: yup.string().url().required(),
-  timeout: yup.number().positive().integer().default(10000),
-});
-
-const jinaServiceSchema = yup.object().shape({
-  apiUrl: yup.string().url().required(),
-  timeout: yup.number().positive().integer().default(15000),
-});
-
 function validate(schema, config, label) {
   try {
     return schema.validateSync(config, { stripUnknown: true });
@@ -20,37 +9,48 @@ function validate(schema, config, label) {
   }
 }
 
-const serperRaw = validate(
+export const isEnabled = yn(process.env.NUXT_PUBLIC_DISCOVERY_ENABLED);
+
+const apiServiceSchema = yup.object().shape({
+  apiUrl: yup.string().url().required(),
+  apiKey: yup.string().default(''),
+  timeout: yup.number().positive().integer().default(10000),
+});
+
+const serperBase = validate(
   apiServiceSchema,
   {
-    apiKey: process.env.SERPER_API_KEY,
     apiUrl: process.env.SERPER_API_URL || 'https://google.serper.dev',
+    apiKey: process.env.SERPER_API_KEY,
     timeout: Number(process.env.SERPER_TIMEOUT) || 10000,
   },
   'serper',
 );
 
 export const serper = {
-  ...serperRaw,
-  isEnabled: !!serperRaw.apiKey,
+  ...serperBase,
+  isEnabled: !!serperBase.apiKey,
 };
 
-const unsplashRaw = validate(
+const unsplashBase = validate(
   apiServiceSchema,
   {
-    apiKey: process.env.UNSPLASH_ACCESS_KEY,
     apiUrl: process.env.UNSPLASH_API_URL || 'https://api.unsplash.com',
+    apiKey: process.env.UNSPLASH_ACCESS_KEY,
     timeout: Number(process.env.UNSPLASH_TIMEOUT) || 10000,
   },
   'unsplash',
 );
 
 export const unsplash = {
-  accessKey: unsplashRaw.apiKey,
-  apiUrl: unsplashRaw.apiUrl,
-  timeout: unsplashRaw.timeout,
-  isEnabled: !!unsplashRaw.apiKey,
+  ...unsplashBase,
+  isEnabled: !!unsplashBase.apiKey,
 };
+
+const jinaServiceSchema = yup.object().shape({
+  apiUrl: yup.string().url().required(),
+  timeout: yup.number().positive().integer().default(15000),
+});
 
 export const jina = validate(
   jinaServiceSchema,
@@ -70,5 +70,3 @@ export const ogs = validate(
   { timeout: Number(process.env.OGS_TIMEOUT) || 5000 },
   'ogs',
 );
-
-export const isEnabled = yn(process.env.NUXT_PUBLIC_DISCOVERY_ENABLED);

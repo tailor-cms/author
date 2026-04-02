@@ -7,6 +7,17 @@ import { createLogger } from '#logger';
 const logger = createLogger('ai:vector-store');
 const { name: STORE_NAME, expiresAfter: STORE_EXPIRY } = aiConfig.vectorStore;
 
+interface FileStatus {
+  fileId: string;
+  status: string;
+}
+
+interface StoreStatus {
+  isReady: boolean;
+  isFailed: boolean;
+  files: FileStatus[];
+}
+
 interface UploadedDocument {
   fileId: string;
   name: string;
@@ -17,15 +28,10 @@ interface UploadResult {
   documents: UploadedDocument[];
 }
 
-interface FileStatus {
-  fileId: string;
-  status: string;
-}
-
-interface StoreStatus {
-  isReady: boolean;
-  isFailed: boolean;
-  files: FileStatus[];
+interface FileInput {
+  buffer: Buffer;
+  originalname: string;
+  mimetype?: string;
 }
 
 export class VectorStoreService {
@@ -44,7 +50,7 @@ export class VectorStoreService {
   }
 
   async upload(
-    files: { buffer: Buffer; originalname: string; mimetype?: string }[],
+    files: FileInput[],
     vectorStoreId?: string,
   ): Promise<UploadResult> {
     const id = vectorStoreId || (await this.createStore());
@@ -71,14 +77,16 @@ export class VectorStoreService {
 
   async remove(storeId: string, fileId: string): Promise<void> {
     if (!storeId || !fileId) {
-      const msg = `Skipping remove: missing storeId=${storeId} fileId=${fileId}`;
-      logger.warn(msg);
+      logger.warn({ storeId, fileId }, 'Skipping remove: missing identifier');
       return;
     }
     try {
+      // Detach the file from the vector store
       await this.client.vectorStores.files.delete(fileId, {
         vector_store_id: storeId,
       });
+      // Delete the underlying file object (OpenAI file storage);
+      // best-effort since it may already be gone
       await this.client.files.delete(fileId).catch(() => {});
       logger.info(`Removed file ${fileId} from store ${storeId}`);
     } catch (err) {
@@ -119,17 +127,13 @@ export class VectorStoreService {
   }
 
   private async uploadFile(
-    id: string,
-    {
-      buffer,
-      originalname,
-      mimetype,
-    }: { buffer: Buffer; originalname: string; mimetype?: string },
+    storeId: string,
+    { buffer, originalname, mimetype }: FileInput,
   ): Promise<UploadedDocument> {
     const file = await toFile(buffer, originalname, {
       type: mimetype || 'application/octet-stream',
     });
-    const result = await this.client.vectorStores.files.upload(id, file);
+    const result = await this.client.vectorStores.files.upload(storeId, file);
     return { fileId: result.id, name: originalname };
   }
 }

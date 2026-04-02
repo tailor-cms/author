@@ -6,7 +6,7 @@ import { truncate } from './utils.ts';
 
 const logger = createLogger('asset:unsplash');
 
-const { apiUrl, accessKey, timeout } = config.unsplash;
+const { apiUrl, apiKey, timeout } = config.unsplash;
 
 export async function search(
   query: string,
@@ -18,7 +18,7 @@ export async function search(
   }
   logger.debug({ query, count }, 'Searching');
   const { data } = await axios.get(`${apiUrl}/search/photos`, {
-    headers: { Authorization: `Client-ID ${accessKey}` },
+    headers: { Authorization: `Client-ID ${apiKey}` },
     params: { query, per_page: count },
     timeout,
   });
