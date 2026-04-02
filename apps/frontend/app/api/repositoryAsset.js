@@ -28,6 +28,8 @@ function upload(repositoryId, files) {
   files.forEach((file) => formData.append('files', file));
   return request
     .post(urls.root(repositoryId), formData, {
+      // Unset default application/json so the browser sets multipart/form-data
+      // with the correct boundary for FormData serialization
       headers: { 'Content-Type': undefined },
     })
     .then(extractData);
@@ -67,6 +69,8 @@ function attachFile(repositoryId, assetId, fileKey, file) {
   formData.append('fileKey', fileKey);
   return request
     .post(`${urls.resource(repositoryId, assetId)}/file`, formData, {
+      // Unset default application/json so the browser sets multipart/form-data
+      // with the correct boundary for FormData serialization
       headers: { 'Content-Type': undefined },
     })
     .then(extractData);

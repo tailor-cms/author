@@ -13,7 +13,7 @@ export const TYPE_COLOR: Record<ContentType, string> = {
   [ContentType.Article]: 'cyan',
   [ContentType.Pdf]: 'blue',
   [ContentType.Image]: 'red',
-  [ContentType.Video]: 'orange',
+  [ContentType.Video]: 'red',
   [ContentType.Research]: 'purple',
   [ContentType.Other]: 'primary',
 };
