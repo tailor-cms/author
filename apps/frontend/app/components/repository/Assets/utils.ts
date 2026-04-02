@@ -106,7 +106,7 @@ export function isIndexable(asset: { type?: string; meta?: any }): boolean {
   return false;
 }
 
-export { toEmbedUrl, extractVideoId } from '@tailor-cms/common/asset';
+export { toEmbedUrl, extractYtVideoId } from '@tailor-cms/common/asset';
 
 export function formatDate(date: string | Date): string {
   return new Date(date).toLocaleDateString('en-US', {

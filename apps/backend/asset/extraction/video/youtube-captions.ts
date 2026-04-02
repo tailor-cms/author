@@ -8,7 +8,7 @@ import { createLogger } from '#logger';
 import { YoutubeTranscript } from './youtube-transcript.js';
 import { video } from '@tailor-cms/common';
 
-export const { extractVideoId, isYouTubeUrl } = video;
+export const { extractYtVideoId, isYouTubeUrl } = video;
 
 // Max caption text stored in meta (100KB - covers ~1hr of video)
 const logger = createLogger('asset:youtube-captions');
@@ -22,7 +22,7 @@ const MAX_CAPTION_CHARS = 100_000;
 export async function fetchYouTubeCaptions(
   url: string,
 ): Promise<string> {
-  const videoId = extractVideoId(url);
+  const videoId = extractYtVideoId(url);
   if (!videoId) return '';
   try {
     const transcript = await YoutubeTranscript.fetchTranscript(videoId);

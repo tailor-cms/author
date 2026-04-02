@@ -1,6 +1,6 @@
 export { detectLinkProvider } from './provider.js';
 export {
-  extractVideoId,
+  extractYtVideoId,
   isYouTubeUrl,
   toEmbedUrl,
 } from './video.js';

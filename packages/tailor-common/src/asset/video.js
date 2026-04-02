@@ -24,7 +24,7 @@ export function toEmbedUrl(url) {
   return null;
 }
 
-export function extractVideoId(url) {
+export function extractYtVideoId(url) {
   const match = url.match(YT_RE);
   return match ? match[1] : null;
 }
