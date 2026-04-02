@@ -12,10 +12,22 @@ export function buildSyntheticContent(
   asset: Asset, bodyText = '',
 ): string | null {
   const parts: string[] = [`# ${asset.name}`];
-  const desc = asset.meta?.description;
-  const tags = asset.meta?.tags;
-  if (desc) parts.push(`Description: ${desc}`);
-  if (tags?.length) parts.push(`Tags: ${tags.join(', ')}`);
+  const meta = asset.meta as Record<string, any>;
+  // Attribution and provenance
+  if (meta?.source?.author) parts.push(`Author: ${meta.source.author}`);
+  if (meta?.siteName || meta?.domain) {
+    parts.push(`Source: ${meta.siteName || meta.domain}`);
+  }
+  if (meta?.url) parts.push(`URL: ${meta.url}`);
+  // Short description - skip when it duplicates bodyText (e.g. images
+  // where vision-generated description is passed as both)
+  const desc = meta?.description;
+  if (desc && desc !== bodyText) parts.push(`Description: ${desc}`);
+  // Vision-generated fields (images)
+  if (meta?.analysis) parts.push(`Analysis: ${meta.analysis}`);
+  if (meta?.contentSuggestion) parts.push(`Suggested use: ${meta.contentSuggestion}`);
+  if (meta?.tags?.length) parts.push(`Tags: ${meta.tags.join(', ')}`);
+  // Full content (page text, captions, vision description)
   if (bodyText) parts.push(bodyText);
   // Name-only content isn't worth indexing
   return parts.length > 1 ? parts.join('\n\n') : null;

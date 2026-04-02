@@ -29,6 +29,11 @@ export interface OpenGraphData {
   siteName: string;
   // Open Graph type (og:type) e.g. "website", "article", "video.movie"
   ogType: string;
+  // Attribution - extracted from OG/Twitter/DC but NOT spread into
+  // Used to build `source` and `tags`.
+  author: string;
+  tags: string[];
+  license: string;
 }
 
 /**
@@ -53,10 +58,26 @@ export async function fetchOpenGraph(
     domain,
     siteName: result.ogSiteName || '',
     ogType: result.ogType || '',
+    // Attribution: OG → Twitter → DC → HTML meta
+    author: result.author || result.articleAuthor || result.ogArticleAuthor
+      || result.twitterCreator || result.dcCreator || '',
+    tags: parseTags(result),
+    license: result.dcRights || '',
   };
 }
 
-/** Resolves potentially relative favicon hrefs against the page URL. */
+// Collects tags from article:tag, og:article:tag, and dc:subject.
+// dc:subject is often comma-separated ("AI, ML, NLP"); article:tag is
+// a single value per meta element (ogs only captures the last one).
+function parseTags(result: any): string[] {
+  const raw = [result.articleTag, result.ogArticleTag, result.dcSubject]
+    .filter(Boolean)
+    .join(',');
+  if (!raw) return [];
+  return [...new Set(raw.split(',').map((t: string) => t.trim()).filter(Boolean))];
+}
+
+// Resolves potentially relative favicon hrefs against the page URL.
 function resolveUrl(href: string, baseUrl: string): string {
   if (!href) return '';
   if (href.startsWith('http')) return href;

@@ -23,7 +23,7 @@ import { htmlToText } from 'html-to-text';
 import { createLogger } from '#logger';
 import { discovery as config } from '#config';
 
-const logger = createLogger('asset:content-extraction');
+const logger = createLogger('asset:web-extraction');
 
 const { apiUrl: JINA_URL, timeout: JINA_TIMEOUT } = config.jina;
 
@@ -70,7 +70,7 @@ export async function fetchUrlContent(
   }
 }
 
-/** Fetches structured JSON via Jina Reader API. */
+// Fetches structured JSON via Jina Reader API.
 async function fetchViaJina(url: string): Promise<ExtractedContent> {
   const { data: response } = await axios.get<JinaResponse>(
     `${JINA_URL}/${url}`,
@@ -94,7 +94,7 @@ async function fetchViaJina(url: string): Promise<ExtractedContent> {
   };
 }
 
-/** Fetches HTML directly and converts to plain text. */
+// Fetches HTML directly and converts to plain text.
 async function fetchViaHtmlToText(url: string): Promise<string> {
   const { data: html } = await axios.get(url, {
     timeout: FALLBACK_TIMEOUT,

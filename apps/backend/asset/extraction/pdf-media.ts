@@ -1,15 +1,17 @@
 /**
- * Extract embedded images from PDF files and save as assets.
+ * Extract content from PDF files.
  *
- * Strategy: scan the PDF binary for DCTDecode (JPEG) image streams.
- * Most PDFs embed photos/diagrams as JPEG data - extracting these
- * yields valid JPEG files without needing canvas or native deps.
+ * Strategy for image extraction: scan the PDF binary for DCTDecode
+ * (JPEG) image streams. Most PDFs embed photos/diagrams as JPEG
+ * data - extracting these yields valid JPEG files without needing
+ * canvas or native deps.
  */
 import imageSize from 'image-size';
 import { createLogger } from '#logger';
 import { PDFParse } from 'pdf-parse';
 import { v4 as uuidv4 } from 'uuid';
 
+import { buildStorageKey } from '../utils/storage-key.ts';
 import Storage from '../../repository/storage.js';
 import db from '#shared/database/index.js';
 
@@ -91,6 +93,54 @@ export function extractJpegImages(pdfBuffer: Buffer): ExtractedImage[] {
 }
 
 /**
+ * Extract JPEG images from a PDF, save each as an Image asset,
+ * and describe via vision.
+ */
+export async function extractAndSaveImages(
+  asset: FileAsset,
+  pdfBuffer: Buffer,
+) {
+  const images = extractJpegImages(pdfBuffer);
+  if (!images.length) return;
+  logger.info(
+    { assetId: asset.id, count: images.length },
+    'Extracting images from PDF',
+  );
+  for (let i = 0; i < images.length; i++) {
+    const img = images[i];
+    try {
+      const { key } = buildStorageKey(asset.repositoryId, 'pdf-extract.jpg');
+      await Storage.saveFile(key, img.buffer, { ContentType: img.mimeType });
+      const created = await AssetModel.create({
+        type: AssetType.Image,
+        repositoryId: asset.repositoryId,
+        storageKey: key,
+        name: `${asset.name} - Image ${i + 1}`,
+        meta: {
+          fileSize: img.buffer.length,
+          mimeType: img.mimeType,
+          extension: 'jpg',
+          tags: ['pdf-image'],
+          source: { parentAssetId: asset.id },
+        },
+        uploadedBy: asset.uploadedBy,
+      });
+      describeWithVision(created).catch((err) =>
+        logger.warn(
+          { err: err?.message, assetId: created.id },
+          'Vision failed for PDF image',
+        ),
+      );
+    } catch (err: any) {
+      logger.warn(
+        { err: err.message, imageIndex: i },
+        'Failed to save extracted image',
+      );
+    }
+  }
+}
+
+/**
  * Extract text content from PDF using pdf-parse.
  * Useful for injecting page content directly into the AI
  * context window rather than relying on vector store retrieval.
@@ -108,53 +158,5 @@ export async function extractPdfText(
   } catch (err: any) {
     logger.error({ err: err.message }, 'PDF text extraction failed');
     return { text: '', pageCount: 0 };
-  }
-}
-
-/**
- * Extract JPEG images from a PDF, save each as an Image asset,
- * and describe via vision.
- */
-export async function extractAndSaveImages(
-  parentAsset: FileAsset,
-  pdfBuffer: Buffer,
-) {
-  const images = extractJpegImages(pdfBuffer);
-  if (!images.length) return;
-  logger.info(
-    { assetId: parentAsset.id, count: images.length },
-    'Extracting images from PDF',
-  );
-  for (let i = 0; i < images.length; i++) {
-    const img = images[i];
-    try {
-      const key = Storage.getPath(img.filename);
-      await Storage.saveFile(key, img.buffer, { ContentType: img.mimeType });
-      const created = await AssetModel.create({
-        repositoryId: parentAsset.repositoryId,
-        name: `${parentAsset.name} - Image ${i + 1}`,
-        type: AssetType.Image,
-        storageKey: key,
-        meta: {
-          fileSize: img.buffer.length,
-          mimeType: img.mimeType,
-          extension: 'jpg',
-          tags: ['pdf-image'],
-          source: { parentAssetId: parentAsset.id },
-        },
-        uploadedBy: parentAsset.uploadedBy,
-      });
-      describeWithVision(created).catch((err) =>
-        logger.warn(
-          { err: err?.message, assetId: created.id },
-          'Vision failed for PDF image',
-        ),
-      );
-    } catch (err: any) {
-      logger.warn(
-        { err: err.message, imageIndex: i },
-        'Failed to save extracted image',
-      );
-    }
   }
 }

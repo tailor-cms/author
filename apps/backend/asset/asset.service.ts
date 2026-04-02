@@ -12,6 +12,7 @@ import { storage as storageConfig } from '#config';
 import db from '#shared/database/index.js';
 
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
+import { buildStorageKey } from './utils/storage-key.ts';
 import { downloadFile } from './utils/download.ts';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { removeFromStore } from './indexing/indexing.service.ts';
@@ -71,7 +72,7 @@ export const uploaderInclude = {
 
 const logger = createLogger('asset');
 
-const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf', 'data']);
+const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf']);
 const MIME_CATEGORY_MAP: Record<string, string[]> = {
   image: ['image/'],
   video: ['video/'],
@@ -110,10 +111,6 @@ function resolveType(mimeType: string | undefined): AssetType {
   return AssetType.Other;
 }
 
-function buildStorageKey(repositoryId: number, uid: string, filename: string) {
-  return `repository/${repositoryId}/assets/${uid}__${filename}`;
-}
-
 /** Wraps an async fn so it logs warnings instead of throwing. */
 function safe(fn: (...args: any[]) => Promise<any>) {
   return (...args: any[]) =>
@@ -133,8 +130,7 @@ async function importFile({
   tags,
   source,
 }: ImportFileOptions) {
-  const uid = randomUUID();
-  const key = buildStorageKey(repositoryId, uid, file.originalname);
+  const { uid, key } = buildStorageKey(repositoryId, file.originalname);
   logger.debug({
     repositoryId,
     filename: file.originalname,
@@ -331,11 +327,31 @@ export async function importFromLink(
       domain,
       siteName: '',
       ogType: '',
+      author: '',
+      tags: [] as string[],
+      license: '',
     };
   }
-  const source = meta.contentType
-    ? { url, domain, ...pick(meta, ['title', 'author', 'license']) }
+  // Separate attribution fields from display metadata before spreading.
+  // Display fields (title, thumbnail, etc.) go into meta directly;
+  // attribution flows into `source` and `tags` explicitly.
+  const {
+    author: ogAuthor, tags: ogTags, license: ogLicense, ...ogMeta
+  } = ogData;
+  // Caller-provided values (from discovery) take precedence over OG-extracted
+  const author = meta.author || ogAuthor;
+  const license = meta.license || ogLicense;
+  const source = (meta.contentType || author || license)
+    ? {
+        url,
+        domain,
+        ...(meta.title && { title: meta.title }),
+        ...(author && { author }),
+        ...(license && { license }),
+      }
     : undefined;
+  // Merge caller tags with OG-extracted tags, deduped
+  const tags = [...new Set([...(meta.tags || []), ...ogTags])];
   // Auto-detect provider and content type from URL (YouTube, Vimeo, etc.)
   const detected = detectLinkProvider(url);
   const contentType = meta.contentType || detected.contentType;
@@ -347,10 +363,10 @@ export async function importFromLink(
     name: truncateName(rawName),
     type: AssetType.Link,
     meta: {
-      url, ...ogData,
+      url, ...ogMeta,
       ...(contentType && { contentType }),
       ...(provider && { provider }),
-      ...(meta.tags?.length && { tags: meta.tags }),
+      ...(tags.length && { tags }),
       ...(source && { source }),
     },
     uploadedBy: userId,
