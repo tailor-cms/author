@@ -33,6 +33,7 @@
       Add Link
     </VBtn>
     <VBtn
+      v-if="isDiscoveryEnabled"
       color="primary-lighten-3"
       prepend-icon="mdi-earth-plus"
       variant="outlined"
@@ -56,6 +57,11 @@ const emit = defineEmits<{
   'link:add': [];
   'discover': [];
 }>();
+
+const config = useConfigStore();
+const isDiscoveryEnabled = computed(
+  () => !!config.props.discoveryEnabled,
+);
 
 const search = defineModel<string>('search', { default: '' });
 

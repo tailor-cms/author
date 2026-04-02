@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import yn from 'yn';
 
 const apiServiceSchema = yup.object().shape({
   apiKey: yup.string().default(''),
@@ -69,3 +70,5 @@ export const ogs = validate(
   { timeout: Number(process.env.OGS_TIMEOUT) || 5000 },
   'ogs',
 );
+
+export const isEnabled = yn(process.env.NUXT_PUBLIC_DISCOVERY_ENABLED);
