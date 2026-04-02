@@ -6,6 +6,22 @@
  */
 import type { Asset } from '../asset.model.js';
 
+// Checks whether an asset's description is meaningful content vs noise
+// (duplicate of name, generic placeholder, bare domain).
+export function hasUsefulDescription(asset: Asset): boolean {
+  const desc = asset.meta?.description?.trim();
+  if (!desc) return false;
+  const name = asset.name?.trim().toLowerCase();
+  const descLower = desc.toLowerCase();
+  // Skip if description is just the asset name
+  if (descLower === name) return false;
+  // Skip generic placeholders
+  if (/^(image from |extracted from )/i.test(desc)) return false;
+  // Skip if it's just a domain name
+  if (/^[\w.-]+\.\w{2,}$/.test(desc)) return false;
+  return true;
+}
+
 // Builds a markdown document from asset metadata and optional body text.
 // Returns null when there's nothing meaningful to index (name-only).
 export function buildSyntheticContent(

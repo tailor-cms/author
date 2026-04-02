@@ -26,7 +26,10 @@ import {
   type FileAsset,
   type LinkAsset,
 } from '../asset.model.js';
-import { buildSyntheticContent } from '../extraction/synthetic-content.ts';
+import {
+  buildSyntheticContent,
+  hasUsefulDescription,
+} from '../extraction/synthetic-content.ts';
 import { fetchCaptionText } from '../extraction/video/captions.ts';
 import { extractAndSaveImages } from '../extraction/pdf-media.ts';
 import { extractAndStoreCaptions } from '../extraction/video/youtube-captions.ts';
@@ -41,7 +44,7 @@ interface IndexingContext<T extends Asset = Asset> {
 
 type IndexStrategy = (ctx: IndexingContext) => Promise<string | null>;
 
-// Assets stuck in Pending/Processing longer than this are considered stale (10 min)
+// Assets stuck in processing longer than this are considered stale (10 min)
 const STALE_THRESHOLD_MS = 10 * 60 * 1000;
 const { Asset: AssetModel } = db;
 
@@ -120,7 +123,10 @@ async function indexDocument(ctx: IndexingContext<FileAsset>) {
   };
   const result = await AIService.vectorStore!.upload([file], storeId);
   if (asset.meta.mimeType === mime.lookup('pdf')) {
-    await extractAndSaveImages(asset, buffer);
+    // Non-critical side effect - don't let image extraction fail the indexing
+    extractAndSaveImages(asset, buffer).catch((err) =>
+      logger.warn({ err, assetId: asset.id }, 'PDF image extraction failed'),
+    );
   }
   return result.documents[0]?.fileId || null;
 }
@@ -130,7 +136,12 @@ async function indexLink(ctx: IndexingContext<LinkAsset>) {
   const url = asset.meta.url;
   logger.debug({ assetId: asset.id, url }, 'Indexing link');
   // Returns captions for YT links, empty string for others
-  let bodyText = await extractAndStoreCaptions(asset);
+  let bodyText = '';
+  try {
+    bodyText = await extractAndStoreCaptions(asset);
+  } catch (err) {
+    logger.warn({ err, assetId: asset.id }, 'Caption extraction failed');
+  }
   if (!bodyText) {
     try {
       bodyText = (await fetchUrlContent(url)).content;
@@ -142,20 +153,6 @@ async function indexLink(ctx: IndexingContext<LinkAsset>) {
   if (!content) return null;
   const { hostname } = new URL(url);
   return indexSynthetic(ctx.storeId, content, `${hostname}-${asset.id}.md`);
-}
-
-function hasUsefulDescription(asset: Asset): boolean {
-  const desc = asset.meta?.description?.trim();
-  if (!desc) return false;
-  const name = asset.name?.trim().toLowerCase();
-  const descLower = desc.toLowerCase();
-  // Skip if description is just the asset name
-  if (descLower === name) return false;
-  // Skip generic placeholders
-  if (/^(image from |extracted from )/i.test(desc)) return false;
-  // Skip if it's just a domain name
-  if (/^[\w.-]+\.\w{2,}$/.test(desc)) return false;
-  return true;
 }
 
 async function indexImage(ctx: IndexingContext) {
@@ -179,9 +176,9 @@ async function indexImage(ctx: IndexingContext) {
   return indexSynthetic(storeId, content, `${asset.name}.md`);
 }
 
-async function indexMedia(ctx: IndexingContext) {
+async function indexAudioVideo(ctx: IndexingContext) {
   const { storeId, asset } = ctx;
-  logger.debug({ assetId: asset.id, type: asset.type }, 'Indexing media');
+  logger.debug({ assetId: asset.id, type: asset.type }, 'Indexing audio/video');
   const captionText = await fetchCaptionText(asset);
   const content = buildSyntheticContent(asset, captionText);
   if (!content) return null;
@@ -197,8 +194,8 @@ async function indexDefault(ctx: IndexingContext) {
 const indexByType: Partial<Record<AssetType, IndexStrategy>> = {
   [AssetType.Document]: indexDocument as IndexStrategy,
   [AssetType.Link]: indexLink as IndexStrategy,
-  [AssetType.Video]: indexMedia as IndexStrategy,
-  [AssetType.Audio]: indexMedia as IndexStrategy,
+  [AssetType.Video]: indexAudioVideo as IndexStrategy,
+  [AssetType.Audio]: indexAudioVideo as IndexStrategy,
   [AssetType.Image]: indexImage as IndexStrategy,
 };
 
@@ -212,14 +209,27 @@ async function setStatus(
   });
 }
 
-/**
- * Claims an asset for processing via atomic status transition.
- * Returns a fresh instance if claimed, null if another worker got there first.
- */
+// Claims an asset for processing via atomic status transition.
+// Accepts any eligible state (null, Failed, stale Pending/Processing).
+// Returns a fresh instance if claimed, null if another worker got there first.
 async function claimAsset(assetId: number): Promise<Asset | null> {
   const [count] = await AssetModel.update(
     { processingStatus: ProcessingStatus.Processing },
-    { where: { id: assetId, processingStatus: ProcessingStatus.Pending } },
+    {
+      where: {
+        id: assetId,
+        [Op.or]: [
+          { processingStatus: { [Op.or]: [null, ProcessingStatus.Failed] } },
+          {
+            processingStatus: [
+              ProcessingStatus.Pending,
+              ProcessingStatus.Processing,
+            ],
+            updatedAt: { [Op.lt]: new Date(Date.now() - STALE_THRESHOLD_MS) },
+          },
+        ],
+      },
+    },
   );
   if (!count) return null;
   return AssetModel.findByPk(assetId);
@@ -276,10 +286,6 @@ export async function index(repository: any, assetIds: number[]) {
   }
   const storeId = await findOrCreateStore(repository);
   const foundIds = assets.map((a: Asset) => a.id);
-  await AssetModel.update(
-    { processingStatus: ProcessingStatus.Pending },
-    { where: { id: { [Op.in]: foundIds } } },
-  );
   logger.info(
     { repositoryId: repository.id, storeId, assetIds: foundIds },
     'Indexing started',
@@ -306,7 +312,13 @@ export async function deindex(repository: any, asset: Asset) {
     { repositoryId: repository.id, assetId: asset.id },
     'Deindexing asset',
   );
-  await removeFromStore(repository, asset);
+  // Always clear local status even if remote removal fails -
+  // a stale vectorStoreFileId is harmless, but a stuck status blocks re-indexing
+  try {
+    await removeFromStore(repository, asset);
+  } catch (err) {
+    logger.warn({ err, assetId: asset.id }, 'Remote store removal failed');
+  }
   return asset.update({
     processingStatus: null,
     vectorStoreFileId: null,
