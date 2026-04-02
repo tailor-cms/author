@@ -29,10 +29,7 @@
     "entry": [
       "*.ts"
     ],
-    "target": [
-      "node14",
-      "es2022"
-    ],
+    "target": "node20",
     "format": [
       "cjs",
       "esm"
