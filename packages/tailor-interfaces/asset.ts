@@ -75,6 +75,7 @@ export interface Uploader {
   firstName: string;
   lastName: string;
   fullName: string;
+  label: string;
   imgUrl: string | null;
 }
 
@@ -112,4 +113,23 @@ export interface Asset {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+}
+
+// Discriminated unions narrowing Asset by type
+export interface FileAsset extends Asset {
+  type: 'image' | 'document' | 'other';
+  storageKey: string;
+  meta: FileAssetMeta;
+}
+
+export interface MediaAsset extends Asset {
+  type: 'video' | 'audio';
+  storageKey: string;
+  meta: MediaAssetMeta;
+}
+
+export interface LinkAsset extends Asset {
+  type: 'link';
+  storageKey: null;
+  meta: LinkAssetMeta;
 }

@@ -26,7 +26,7 @@ module.exports = {
         allowNull: false,
       },
       storageKey: {
-        type: Sequelize.STRING(1024),
+        type: Sequelize.STRING(255),
         field: 'storage_key',
         allowNull: true,
       },

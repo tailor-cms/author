@@ -16,13 +16,23 @@ class Asset extends Model {
       name: {
         type: STRING,
         allowNull: false,
+        set(val) {
+          // STRING defaults to 255 chars in PostgreSQL;
+          // cap at 250 to leave room for ellipsis
+          const max = 250;
+          const truncated = val.length > max
+            ? `${val.slice(0, max - 3)}...`
+            : val;
+          this.setDataValue('name', truncated);
+        },
       },
       type: {
+        // String instead of ENUM to allow future types without DB migration
         type: STRING(16),
         allowNull: false,
       },
       storageKey: {
-        type: STRING(1024),
+        type: STRING(255),
         field: 'storage_key',
         allowNull: true,
       },

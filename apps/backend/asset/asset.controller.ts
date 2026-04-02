@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 
 import * as service from './asset.service.ts';
-import type { AssetRequest } from './types.ts';
+import type { AssetItemRequest, AssetRequest } from './types.ts';
 
 /**
  * Lists all assets for a repository, or resolves a storage key to a signed URL.
@@ -81,7 +81,7 @@ export async function importFromLink(
  * GET /assets/:assetId/download
  *   → { data: { url: "https://signed-url..." } }
  */
-export async function download({ asset }: AssetRequest, res: Response) {
+export async function download({ asset }: AssetItemRequest, res: Response) {
   if (!asset.storageKey) {
     return createError(StatusCodes.BAD_REQUEST, 'Asset has no downloadable file');
   }
@@ -96,7 +96,7 @@ export async function download({ asset }: AssetRequest, res: Response) {
  *   body: { meta: { description: "...", tags: ["a", "b"] } }
  *   → { data: Asset }
  */
-export async function update({ asset, body }: AssetRequest, res: Response) {
+export async function update({ asset, body }: AssetItemRequest, res: Response) {
   const data = await service.updateMeta(asset, body.meta);
   return res.json({ data });
 }
@@ -110,10 +110,10 @@ export async function update({ asset, body }: AssetRequest, res: Response) {
  *   → { data: Asset }
  */
 export async function attachFile(
-  { asset, body, file }: AssetRequest,
+  { asset, body, file }: AssetItemRequest,
   res: Response,
 ) {
-  const data = await service.attachFile(asset, body.fileKey, file);
+  const data = await service.attachFile(asset, body.fileKey, file!);
   return res.json({ data });
 }
 
@@ -124,7 +124,7 @@ export async function attachFile(
  *   → { data: Asset }
  */
 export async function remove(
-  { repository, asset }: AssetRequest,
+  { repository, asset }: AssetItemRequest,
   res: Response,
 ) {
   const data = await service.remove(repository, asset);

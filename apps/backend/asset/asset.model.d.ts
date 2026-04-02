@@ -1,44 +1,26 @@
 import type { Model, ModelStatic } from 'sequelize';
 import type {
   Asset as AssetAttributes,
-  FileAssetMeta,
-  LinkAssetMeta,
-  MediaAssetMeta,
+  FileAsset as FileAssetAttrs,
+  LinkAsset as LinkAssetAttrs,
+  MediaAsset as MediaAssetAttrs,
 } from '@tailor-cms/interfaces/asset.ts';
 
-export type {
-  AssetAttributes,
-  FileAssetMeta,
-  LinkAssetMeta,
-  MediaAssetMeta,
-};
+export type { AssetAttributes };
 export {
   AssetMeta,
   AssetType,
+  FileAssetMeta,
+  LinkAssetMeta,
+  MediaAssetMeta,
   ProcessingStatus,
   Uploader,
 } from '@tailor-cms/interfaces/asset.ts';
 
-type AssetBase = AssetAttributes & Model<AssetAttributes>;
-
-export interface FileAsset extends AssetBase {
-  type: 'image' | 'document' | 'other';
-  storageKey: string;
-  meta: FileAssetMeta;
-}
-
-export interface MediaAsset extends AssetBase {
-  type: 'video' | 'audio';
-  storageKey: string;
-  meta: MediaAssetMeta;
-}
-
-export interface LinkAsset extends AssetBase {
-  type: 'link';
-  storageKey: null;
-  meta: LinkAssetMeta;
-}
-
+// Sequelize model variants of the interface discriminated unions
+export type FileAsset = FileAssetAttrs & Model<AssetAttributes>;
+export type MediaAsset = MediaAssetAttrs & Model<AssetAttributes>;
+export type LinkAsset = LinkAssetAttrs & Model<AssetAttributes>;
 export type Asset = FileAsset | MediaAsset | LinkAsset;
 
 declare const Asset: ModelStatic<Asset>;

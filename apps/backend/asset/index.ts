@@ -23,6 +23,8 @@ router
   .route('/')
   .get(validation.list, processPagination(Asset, false), handler(ctrl.list))
   .post(
+    // 'files'; asset library multi-file upload
+    // 'file'; legacy single-file upload used by content elements
     upload.fields([
       { name: 'files', maxCount: 10 },
       { name: 'file', maxCount: 1 },

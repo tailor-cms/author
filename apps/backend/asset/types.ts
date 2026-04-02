@@ -21,19 +21,44 @@ export interface ImportFileOptions {
   source?: AssetSource;
 }
 
+// Controls how video-provider links (YouTube, Vimeo) are classified
+// in list queries
+export const VideoLinkMode = {
+  // Show video-provider links under the video filter
+  Include: 'include',
+  // Hide video-provider links from the link filter
+  Exclude: 'exclude',
+} as const;
+
+export type VideoLinkMode =
+  (typeof VideoLinkMode)[keyof typeof VideoLinkMode];
+
+export interface ListOptions {
+  search?: string;
+  type?: string | string[];
+  offset?: number;
+  limit?: number;
+  signed?: boolean;
+  orderBy?: string;
+  orderDirection?: 'ASC' | 'DESC';
+  // How to handle link assets with video provider URLs
+  // 'include': merge them into video results (for video filter)
+  // 'exclude': remove them from link results (for link filter)
+  // undefined: no special handling (default)
+  videoLinkMode?: VideoLinkMode;
+}
+
 export interface ImportFromLinkOptions {
   // Discovery content type (video, image, pdf, article)
   // Determines import strategy (download vs link)
   contentType?: ContentType;
-  // Provider-resolved content type from URL detection
-  // e.g. detectLinkProvider('youtube.com/...') → 'video'
-  linkContentType?: string;
   // Known provider slug (youtube, vimeo, spotify)
   // Auto-detected from URL if not provided
   provider?: string;
   title?: string;
   description?: string;
   downloadUrl?: string;
+  altText?: string;
   author?: string;
   license?: string;
   tags?: string[];
@@ -49,16 +74,26 @@ export interface ImportFromLinkOptions {
 export interface AssetRequest {
   repository: any;
   user: any;
-  asset: Asset;
+  asset?: Asset;
   body: any;
   query: any;
   parsedQuery?: Record<string, any>;
   options: { limit: number; offset: number; order?: any[] };
-  file: MulterFile;
-  files: MulterFile[];
+  // Single file from upload.single() (attachFile route)
+  file?: MulterFile;
+  // Grouped files from upload.fields(); keyed by field name
+  files?: Record<string, MulterFile[]>;
 }
 
-type AsyncHandler = (req: AssetRequest, res: any) => Promise<any>;
+// Narrowed request for :assetId routes where getAsset middleware
+// guarantees asset is present
+export type AssetItemRequest = AssetRequest & { asset: Asset };
 
-/** Cast typed handler to Express RequestHandler for router registration. */
+type AsyncHandler = (req: AssetRequest | AssetItemRequest, res: any) => Promise<any>;
+
+// Bridges AssetRequest handlers to Express RequestHandler via type cast.
+// Controllers use AssetRequest (with injected repository, asset, etc.)
+// but Express routers expect standard RequestHandler. This cast is safe
+// because middleware (repository loader, getAsset, multer, pagination)
+// populates the required properties before the handler runs.
 export const handler = (fn: AsyncHandler) => fn as unknown as RequestHandler;

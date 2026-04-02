@@ -2,53 +2,16 @@ import { AssetType } from '@tailor-cms/interfaces/asset.ts';
 import { body, query } from 'express-validator';
 import { CONTENT_TYPES } from '@tailor-cms/interfaces/discovery.ts';
 import defineRequestValidator from '#shared/request/validation.js';
-import { isIP } from 'node:net';
 import pick from 'lodash/pick.js';
 import { StatusCodes } from 'http-status-codes';
 import yn from 'yn';
 
-import { VideoLinkMode } from './asset.service.ts';
+import { isPublicUrl } from './utils/url-guard.ts';
+import { VideoLinkMode } from './types.ts';
 
-const ALLOWED_ORDER_COLUMNS = ['createdAt', 'name', 'type'];
+const ALLOWED_ORDER_COLUMNS = ['name', 'type', 'createdAt'];
 const ALLOWED_ORDER_DIRECTIONS = ['ASC', 'DESC'];
 const ASSET_TYPES: string[] = Object.values(AssetType);
-const BLOCKED_HOSTNAMES = new Set(['localhost', '[::1]']);
-const PRIVATE_IP_RANGES = [
-  /^127\./, /^10\./, /^172\.(1[6-9]|2\d|3[01])\./, /^192\.168\./,
-  /^0\./, /^169\.254\./, /^::1$/, /^fc00:/, /^fe80:/, /^fd/,
-];
-
-/**
- * SSRF protection - rejects URLs pointing to private/internal hosts.
- * Checks protocol, hostname, and IP-literal format. Used as a custom
- * express-validator on user-supplied URLs.
- */
-function isPublicUrl(url: string) {
-  const parsed = new URL(url);
-  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-    throw new Error('Only http and https URLs are allowed');
-  }
-  const { hostname } = parsed;
-  if (BLOCKED_HOSTNAMES.has(hostname)) {
-    throw new Error('Requests to localhost are not allowed');
-  }
-  if (isIP(hostname) && PRIVATE_IP_RANGES.some((r) => r.test(hostname))) {
-    throw new Error('Requests to private IP addresses are not allowed');
-  }
-  return true;
-}
-
-export function requireFiles(req: any, res: any, next: any) {
-  const files = req.files;
-  // Support both upload.array() (files is array) and upload.fields() (files is object)
-  const hasFiles = Array.isArray(files)
-    ? files.length > 0
-    : files?.files?.length || files?.file?.length;
-  if (hasFiles) return next();
-  return res
-    .status(StatusCodes.BAD_REQUEST)
-    .json({ errors: [{ msg: 'No files provided' }] });
-}
 
 export function requireFile(req: any, res: any, next: any) {
   if (req.file) return next();
@@ -103,12 +66,26 @@ export const list = [
   parseListQuery,
 ];
 
-export const update = defineRequestValidator([
-  body('meta').isObject(),
-]);
+// Strip meta.files - file attachments are managed by the
+// attachFile endpoint, not the generic meta update
+function stripFiles(req: any, _res: any, next: any) {
+  if (req.body?.meta?.files) delete req.body.meta.files;
+  next();
+}
+
+export const update = [
+  ...defineRequestValidator([
+    body('meta').isObject(),
+    body('meta.description').optional().isString().trim(),
+    body('meta.tags').optional().isArray(),
+    body('meta.tags.*').optional().isString().trim(),
+    body('meta.isCoreSource').optional().isBoolean(),
+  ]),
+  stripFiles,
+];
 
 export const attachFile = defineRequestValidator([
-  body('fileKey').isString().trim().notEmpty(),
+  body('fileKey').isString().trim().notEmpty().isLength({ max: 32 }),
 ]);
 
 export const importFromLink = defineRequestValidator([
@@ -118,6 +95,7 @@ export const importFromLink = defineRequestValidator([
   body('meta.title').optional().isString().trim(),
   body('meta.description').optional().isString().trim(),
   body('meta.downloadUrl').optional().isURL().custom(isPublicUrl),
+  body('meta.altText').optional().isString().trim(),
   body('meta.author').optional().isString().trim(),
   body('meta.license').optional().isString().trim(),
   body('meta.tags').optional().isArray(),

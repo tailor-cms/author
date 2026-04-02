@@ -47,6 +47,7 @@ import type { ContentFilter } from '@tailor-cms/interfaces/discovery';
 const CONTENT_FILTERS: { label: string; value: ContentFilter; icon: string }[] = [
   { label: 'All types', value: 'all', icon: 'mdi-view-grid' },
   { label: 'Images', value: 'image', icon: 'mdi-image-outline' },
+  { label: 'Videos', value: 'video', icon: 'mdi-play-circle-outline' },
   { label: 'PDFs', value: 'pdf', icon: 'mdi-file-document-outline' },
   { label: 'Articles', value: 'article', icon: 'mdi-newspaper' },
   { label: 'Research', value: 'research', icon: 'mdi-school' },

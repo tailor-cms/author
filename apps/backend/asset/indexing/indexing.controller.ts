@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as indexingService from './indexing.service.ts';
 import { ai as aiConfig } from '#config';
 
-import type { AssetRequest } from '../types.ts';
+import type { AssetItemRequest, AssetRequest } from '../types.ts';
 
 export async function create({ repository, body }: AssetRequest, res: Response) {
   if (!aiConfig.isEnabled) {
@@ -27,7 +27,7 @@ export async function status({ repository, asset }: AssetRequest, res: Response)
 }
 
 export async function remove(
-  { repository, asset }: AssetRequest,
+  { repository, asset }: AssetItemRequest,
   res: Response,
 ) {
   const data = await indexingService.deindex(repository, asset);

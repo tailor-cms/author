@@ -3,113 +3,60 @@ import { randomUUID } from 'node:crypto';
 
 import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 import { detectLinkProvider } from '@tailor-cms/common/asset';
-import imageSize from 'image-size';
 import { Op } from 'sequelize';
-import pick from 'lodash/pick.js';
 
 import { createLogger } from '#logger';
 import { storage as storageConfig } from '#config';
 import db from '#shared/database/index.js';
 
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
-import { buildStorageKey } from './utils/storage-key.ts';
+import {
+  buildAttachmentKey,
+  buildStorageKey,
+} from './utils/storage-key.ts';
 import { downloadFile } from './utils/download.ts';
+import { extractDimensions } from './utils/image.ts';
+import { resolveType } from './utils/mime.ts';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { removeFromStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.js';
-import type {
-  ImportFileOptions,
-  ImportFromLinkOptions,
-  MulterFile,
+import {
+  VideoLinkMode,
+  type ImportFileOptions,
+  type ImportFromLinkOptions,
+  type ListOptions,
+  type MulterFile,
 } from './types.ts';
 
 const { Asset, User } = db;
 
-// Asset name column is STRING (255 chars in PostgreSQL).
-// Cap at 250 to leave room for the ellipsis suffix.
-function truncateName(rawName: string, max = 250): string {
-  return rawName.length > max
-    ? `${rawName.slice(0, max - 3)}...`
-    : rawName;
-}
-
-// Postgres iregexp pattern for video provider URL filtering.
-// Used by Sequelize queries to classify link assets with video-provider
-// URLs (YouTube, Vimeo, Dailymotion) under the video filter.
-const VIDEO_URL_PATTERN =
-  '(youtube\\.com|youtu\\.be|vimeo\\.com|dailymotion\\.com)';
-
-// Controls how video-provider links (YouTube, Vimeo) are classified
-export const VideoLinkMode = {
-  // Show video-provider links under the video filter
-  Include: 'include',
-  // Hide video-provider links from the link filter
-  Exclude: 'exclude',
-} as const;
-
-type VideoLinkMode = (typeof VideoLinkMode)[keyof typeof VideoLinkMode];
-
-interface ListOptions {
-  search?: string;
-  type?: string | string[];
-  offset?: number;
-  limit?: number;
-  signed?: boolean;
-  orderBy?: string;
-  orderDirection?: 'ASC' | 'DESC';
-  // How to handle link assets with video provider URLs
-  // 'include': merge them into video results (for video filter)
-  // 'exclude': remove them from link results (for link filter)
-  // undefined: no special handling (default)
-  videoLinkMode?: VideoLinkMode;
-}
-
-export const uploaderInclude = {
-  model: User,
-  as: 'uploader',
-  attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'imgUrl'],
-};
-
-const logger = createLogger('asset');
+const logger = createLogger('asset:svc');
 
 const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf']);
-const MIME_CATEGORY_MAP: Record<string, string[]> = {
-  image: ['image/'],
-  video: ['video/'],
-  audio: ['audio/'],
-  document: [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument',
-    'application/vnd.ms-excel',
-    'application/vnd.ms-powerpoint',
-    'text/plain',
-    'text/csv',
-    'text/markdown',
-    'text/html',
-    'application/rtf',
+
+// Sequelize WHERE fragments for video-provider link classification.
+// Link assets with YouTube/Vimeo/Dailymotion URLs are shown under
+// the video filter and hidden from the link filter.
+const VIDEO_PROVIDERS =
+  '(youtube\\.com|youtu\\.be|vimeo\\.com|dailymotion\\.com)';
+
+const IS_VIDEO_LINK = {
+  'type': AssetType.Link,
+  'meta.url': { [Op.iRegexp]: VIDEO_PROVIDERS },
+};
+
+const IS_NOT_VIDEO_LINK = {
+  'meta.url': { [Op.notIRegexp]: VIDEO_PROVIDERS },
+};
+
+export const UPLOADER_INCLUDE = {
+  model: User,
+  as: 'uploader',
+  attributes: [
+    'id', 'email', 'firstName', 'lastName',
+    'fullName', 'label', 'imgUrl',
   ],
 };
-
-const VIDEO_LINK_WHERE: Record<string, any> = {
-  type: AssetType.Link,
-};
-VIDEO_LINK_WHERE['meta.url'] = {
-  [Op.iRegexp]: VIDEO_URL_PATTERN,
-};
-
-const NOT_VIDEO_LINK_WHERE: Record<string, any> = {};
-NOT_VIDEO_LINK_WHERE['meta.url'] = {
-  [Op.notIRegexp]: VIDEO_URL_PATTERN,
-};
-
-function resolveType(mimeType: string | undefined): AssetType {
-  if (!mimeType) return AssetType.Other;
-  for (const [type, prefixes] of Object.entries(MIME_CATEGORY_MAP)) {
-    if (prefixes.some((p) => mimeType.startsWith(p))) return type as AssetType;
-  }
-  return AssetType.Other;
-}
 
 /** Wraps an async fn so it logs warnings instead of throwing. */
 function safe(fn: (...args: any[]) => Promise<any>) {
@@ -119,16 +66,16 @@ function safe(fn: (...args: any[]) => Promise<any>) {
     });
 }
 
-const safeRemoveFromVectorStore = safe(removeFromStore);
 const safeDeleteFile = safe(Storage.deleteFile.bind(Storage));
+const safeRemoveFromVectorStore = safe(removeFromStore);
 
 async function importFile({
   repositoryId,
   userId,
   file,
   description,
-  tags,
   source,
+  tags,
 }: ImportFileOptions) {
   const { uid, key } = buildStorageKey(repositoryId, file.originalname);
   logger.debug({
@@ -140,34 +87,28 @@ async function importFile({
   await Storage.saveFile(key, file.buffer);
   // Extract image dimensions if applicable
   const assetType = resolveType(file.mimetype);
-  let dimensions: { width?: number; height?: number } = {};
-  if (assetType === AssetType.Image && file.buffer) {
-    try {
-      const result = imageSize(file.buffer);
-      if (result.width && result.height) {
-        dimensions = { width: result.width, height: result.height };
-      }
-    } catch { /* non-critical — skip dimensions */ }
-  }
+  const dimensions = assetType === AssetType.Image
+    ? extractDimensions(file.buffer)
+    : null;
   const rawName = source?.title || file.originalname;
   const asset = await Asset.create({
     uid,
     repositoryId,
-    name: truncateName(rawName),
     type: assetType,
     storageKey: key,
+    name: rawName,
     meta: {
       fileSize: file.size,
       mimeType: file.mimetype,
       extension: path.extname(file.originalname).replace('.', '').toLowerCase(),
-      ...(dimensions.width && dimensions),
+      ...(dimensions && dimensions),
       ...(description && { description }),
       ...(tags?.length && { tags }),
       ...(source && { source }),
     },
     uploadedBy: userId,
   });
-  return asset.reload({ include: [uploaderInclude] });
+  return asset.reload({ include: [UPLOADER_INCLUDE] });
 }
 
 async function destroyAsset(repository: any, asset: Asset) {
@@ -191,14 +132,11 @@ export async function list(repositoryId: number, options: ListOptions = {}) {
   const where: any = { repositoryId };
   if (videoLinkMode === VideoLinkMode.Include) {
     where[Op.and] = [{
-      [Op.or]: [
-        { type: AssetType.Video },
-        VIDEO_LINK_WHERE,
-      ],
+      [Op.or]: [{ type: AssetType.Video }, IS_VIDEO_LINK],
     }];
   } else if (videoLinkMode === VideoLinkMode.Exclude) {
     where.type = AssetType.Link;
-    Object.assign(where, NOT_VIDEO_LINK_WHERE);
+    Object.assign(where, IS_NOT_VIDEO_LINK);
   } else if (type) {
     where.type = Array.isArray(type) ? { [Op.in]: type } : type;
   }
@@ -209,7 +147,7 @@ export async function list(repositoryId: number, options: ListOptions = {}) {
   }
   const { rows, count } = await Asset.findAndCountAll({
     where,
-    include: [uploaderInclude],
+    include: [UPLOADER_INCLUDE],
     order: [[orderBy, orderDirection]],
     offset,
     limit,
@@ -243,7 +181,11 @@ export async function getDownloadUrl(key: string) {
 
 export async function updateMeta(asset: Asset, meta: Partial<AssetMeta>) {
   logger.debug({ assetId: asset.id }, 'Updating asset meta');
-  // Clean up stored files for any file key being removed
+  // meta.files maps fileKey → storageKey (e.g. { captions: "repo/1/..." }).
+  // When a client sets a file key to null/empty, delete the stored file.
+  // Example: { captions: null } removes the captions file from storage.
+  // NOTE: meta.files is stripped from the update endpoint by validation;
+  // this path is only reachable internally (e.g. attachFile cleanup).
   if (meta.files) {
     const existing = asset.meta?.files;
     if (existing) {
@@ -271,9 +213,10 @@ export async function attachFile(
   if (!asset.storageKey) {
     throw new Error('Cannot attach files to an asset without a storage key');
   }
-  const oldKey = asset.meta?.files?.[fileKey];
-  if (oldKey) await safeDeleteFile(oldKey);
-  const storageKey = `${asset.storageKey}__${fileKey}__${file.originalname}`;
+  // NOTE: Old file is NOT deleted, published content may reference it
+  const storageKey = buildAttachmentKey(
+    asset.repositoryId, fileKey, file.originalname,
+  );
   await Storage.saveFile(storageKey, file.buffer);
   const files = { ...asset.meta?.files, [fileKey]: storageKey };
   return asset.update({ meta: { ...asset.meta, files } });
@@ -290,22 +233,37 @@ export async function importFromLink(
     { repositoryId, url, contentType: meta.contentType },
     'Importing from link',
   );
+  // OG scrape runs for all imports - enriches both file and link assets.
+  // For downloadable types, runs in parallel with the file download.
+  const ogPromise = fetchOpenGraph(url);
   // Downloadable types: fetch the file and store it like a regular upload.
   if (meta.contentType && DOWNLOADABLE_TYPES.has(meta.contentType)) {
     try {
-      const file = await downloadFile(meta.downloadUrl || url);
+      const [file, og] = await Promise.all([
+        downloadFile(meta.downloadUrl || url),
+        ogPromise,
+      ]);
+      // Discovery meta takes precedence, OG fills gaps
+      const author = meta.author || og.author;
+      const license = meta.license || og.license;
       const source = {
         url,
         domain,
-        ...pick(meta, ['title', 'author', 'license']),
+        ...(meta.title && { title: meta.title }),
+        ...(author && { author }),
+        ...(license && { license }),
       };
+      const tags = [...new Set([
+        ...(meta.tags || []),
+        ...og.tags,
+      ])];
       return await importFile({
         repositoryId,
         userId,
         file,
-        description: meta.description,
-        tags: meta.tags,
+        description: meta.description || meta.altText || og.description,
         source,
+        tags,
       });
     } catch (err) {
       logger.warn(
@@ -315,23 +273,7 @@ export async function importFromLink(
     }
   }
   // Default: create as a link asset with OG metadata.
-  let ogData;
-  try {
-    ogData = await fetchOpenGraph(url);
-  } catch {
-    ogData = {
-      title: domain,
-      description: '',
-      thumbnail: '',
-      favicon: '',
-      domain,
-      siteName: '',
-      ogType: '',
-      author: '',
-      tags: [] as string[],
-      license: '',
-    };
-  }
+  const ogData = await ogPromise;
   // Separate attribution fields from display metadata before spreading.
   // Display fields (title, thumbnail, etc.) go into meta directly;
   // attribution flows into `source` and `tags` explicitly.
@@ -360,7 +302,7 @@ export async function importFromLink(
   const asset = await Asset.create({
     uid: randomUUID(),
     repositoryId,
-    name: truncateName(rawName),
+    name: rawName,
     type: AssetType.Link,
     meta: {
       url, ...ogMeta,
@@ -368,10 +310,11 @@ export async function importFromLink(
       ...(provider && { provider }),
       ...(tags.length && { tags }),
       ...(source && { source }),
+      ...(meta.altText && { altText: meta.altText }),
     },
     uploadedBy: userId,
   });
-  return asset.reload({ include: [uploaderInclude] });
+  return asset.reload({ include: [UPLOADER_INCLUDE] });
 }
 
 export async function remove(repository: any, asset: Asset) {
@@ -383,6 +326,19 @@ export async function bulkRemove(repository: any, assetIds: number[]) {
   const assets = await Asset.findAll({
     where: { id: { [Op.in]: assetIds }, repositoryId: repository.id },
   });
-  await Promise.all(assets.map((it: Asset) => destroyAsset(repository, it)));
-  return assets.map((a: Asset) => a.id);
+  // allSettled so one failure doesn't block remaining deletions
+  const results = await Promise.allSettled(
+    assets.map((it: Asset) => destroyAsset(repository, it)),
+  );
+  return results.reduce<number[]>((ids, r, i) => {
+    if (r.status === 'rejected') {
+      logger.error(
+        { err: r.reason, assetId: assets[i].id },
+        'Bulk delete failed for asset',
+      );
+    } else {
+      ids.push(assets[i].id);
+    }
+    return ids;
+  }, []);
 }

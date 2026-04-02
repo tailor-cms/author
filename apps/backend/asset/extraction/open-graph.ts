@@ -18,7 +18,10 @@
  */
 import ogs from 'open-graph-scraper';
 
+import { createLogger } from '#logger';
 import { discovery as config } from '#config';
+
+const logger = createLogger('asset:og');
 
 export interface OpenGraphData {
   title: string;
@@ -36,45 +39,66 @@ export interface OpenGraphData {
   license: string;
 }
 
-/**
- * Scrapes structured metadata from a URL.
- * Falls back across OG → Twitter Card → Dublin Core → domain name.
- */
+// Scrapes structured metadata from a URL. Never throws; on failure,
+// returns domain-only defaults on failure.
+// Falls back across OG → Twitter Card → Dublin Core → domain name.
 export async function fetchOpenGraph(
   url: string,
 ): Promise<OpenGraphData> {
-  const { result } = await ogs({ url, timeout: config.ogs.timeout });
   const domain = new URL(url).hostname;
-  return {
-    title: result.ogTitle
-      || result.twitterTitle || result.dcTitle || domain,
-    description: result.ogDescription
-      || result.twitterDescription || result.dcDescription || '',
-    thumbnail: result.ogImage?.[0]?.url
-      || result.twitterImage?.[0]?.url || '',
-    favicon: result.favicon
-      ? resolveUrl(result.favicon, url)
-      : '',
-    domain,
-    siteName: result.ogSiteName || '',
-    ogType: result.ogType || '',
-    // Attribution: OG → Twitter → DC → HTML meta
-    author: result.author || result.articleAuthor || result.ogArticleAuthor
-      || result.twitterCreator || result.dcCreator || '',
-    tags: parseTags(result),
-    license: result.dcRights || '',
-  };
+  try {
+    const { result } = await ogs({ url, timeout: config.ogs.timeout });
+    return {
+      title: result.ogTitle
+        || result.twitterTitle || result.dcTitle || domain,
+      description: result.ogDescription
+        || result.twitterDescription || result.dcDescription || '',
+      thumbnail: result.ogImage?.[0]?.url
+        || result.twitterImage?.[0]?.url || '',
+      favicon: result.favicon
+        ? resolveUrl(result.favicon, url)
+        : '',
+      domain,
+      siteName: result.ogSiteName || '',
+      ogType: result.ogType || '',
+      author: result.author || result.articleAuthor
+        || result.ogArticleAuthor
+        || result.twitterCreator || result.dcCreator || '',
+      tags: parseTags(result),
+      license: result.dcRights || '',
+    };
+  } catch (err) {
+    logger.warn({ err, url }, 'OG scrape failed, using defaults');
+    return {
+      title: domain,
+      description: '',
+      thumbnail: '',
+      favicon: '',
+      domain,
+      siteName: '',
+      ogType: '',
+      author: '',
+      tags: [],
+      license: '',
+    };
+  }
 }
 
-// Collects tags from article:tag, og:article:tag, and dc:subject.
-// dc:subject is often comma-separated ("AI, ML, NLP"); article:tag is
-// a single value per meta element (ogs only captures the last one).
+// Collects tags from article, video, and Dublin Core metadata.
+// Sources: article:tag, og:article:tag, og:video:tag, dc:subject.
+// dc:subject is often comma-separated ("AI, ML, NLP"); others are
+// single values per meta element (ogs only captures the last one).
 function parseTags(result: any): string[] {
-  const raw = [result.articleTag, result.ogArticleTag, result.dcSubject]
-    .filter(Boolean)
-    .join(',');
+  const raw = [
+    result.articleTag,
+    result.ogArticleTag,
+    result.ogVideoTag,
+    result.dcSubject,
+  ].filter(Boolean).join(',');
   if (!raw) return [];
-  return [...new Set(raw.split(',').map((t: string) => t.trim()).filter(Boolean))];
+  return [...new Set(
+    raw.split(',').map((t: string) => t.trim()).filter(Boolean),
+  )];
 }
 
 // Resolves potentially relative favicon hrefs against the page URL.
