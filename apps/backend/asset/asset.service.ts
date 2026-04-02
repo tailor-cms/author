@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 import { detectLinkProvider } from '@tailor-cms/common/asset';
 import { Op } from 'sequelize';
+import pick from 'lodash/pick.js';
 
 import { createLogger } from '#logger';
 import { storage as storageConfig } from '#config';
@@ -222,6 +223,30 @@ export async function attachFile(
   return asset.update({ meta: { ...asset.meta, files } });
 }
 
+// Merges discovery metadata with OG-extracted attribution.
+// Discovery values take precedence; OG fills gaps.
+function mergeAttribution(
+  url: string,
+  meta: ImportFromLinkOptions,
+  og: { author: string; license: string; tags: string[] },
+) {
+  const domain = new URL(url).hostname;
+  const author = meta.author || og.author;
+  const license = meta.license || og.license;
+  const hasAttribution = meta.contentType || author || license;
+  const source = hasAttribution
+    ? {
+        url,
+        domain,
+        ...(meta.title && { title: meta.title }),
+        ...(author && { author }),
+        ...(license && { license }),
+      }
+    : undefined;
+  const tags = [...new Set([...(meta.tags || []), ...og.tags])];
+  return { source, tags };
+}
+
 export async function importFromLink(
   repositoryId: number,
   userId: number,
@@ -243,25 +268,12 @@ export async function importFromLink(
         downloadFile(meta.downloadUrl || url),
         ogPromise,
       ]);
-      // Discovery meta takes precedence, OG fills gaps
-      const author = meta.author || og.author;
-      const license = meta.license || og.license;
-      const source = {
-        url,
-        domain,
-        ...(meta.title && { title: meta.title }),
-        ...(author && { author }),
-        ...(license && { license }),
-      };
-      const tags = [...new Set([
-        ...(meta.tags || []),
-        ...og.tags,
-      ])];
+      const { source, tags } = mergeAttribution(url, meta, og);
       return await importFile({
         repositoryId,
         userId,
         file,
-        description: meta.description || meta.altText || og.description,
+        description: meta.description || og.description || meta.altText,
         source,
         tags,
       });
@@ -274,27 +286,7 @@ export async function importFromLink(
   }
   // Default: create as a link asset with OG metadata.
   const ogData = await ogPromise;
-  // Separate attribution fields from display metadata before spreading.
-  // Display fields (title, thumbnail, etc.) go into meta directly;
-  // attribution flows into `source` and `tags` explicitly.
-  const {
-    author: ogAuthor, tags: ogTags, license: ogLicense, ...ogMeta
-  } = ogData;
-  // Caller-provided values (from discovery) take precedence over OG-extracted
-  const author = meta.author || ogAuthor;
-  const license = meta.license || ogLicense;
-  const source = (meta.contentType || author || license)
-    ? {
-        url,
-        domain,
-        ...(meta.title && { title: meta.title }),
-        ...(author && { author }),
-        ...(license && { license }),
-      }
-    : undefined;
-  // Merge caller tags with OG-extracted tags, deduped
-  const tags = [...new Set([...(meta.tags || []), ...ogTags])];
-  // Auto-detect provider and content type from URL (YouTube, Vimeo, etc.)
+  const { source, tags } = mergeAttribution(url, meta, ogData);
   const detected = detectLinkProvider(url);
   const contentType = meta.contentType || detected.contentType;
   const provider = meta.provider || detected.provider;
@@ -305,7 +297,11 @@ export async function importFromLink(
     name: rawName,
     type: AssetType.Link,
     meta: {
-      url, ...ogMeta,
+      url,
+      ...pick(ogData, [
+        'title', 'description', 'thumbnail', 'favicon',
+        'domain', 'siteName', 'ogType',
+      ]),
       ...(contentType && { contentType }),
       ...(provider && { provider }),
       ...(tags.length && { tags }),
