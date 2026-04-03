@@ -76,17 +76,19 @@ export class AssetLibrary {
   }
 
   async addLink(url: string) {
+    await this.waitForLoad();
+    const countBefore = await this.getRowCount();
     await this.toolbar.addLinkBtn.click();
     await expect(this.addLinkDialog.el).toBeVisible();
     await this.addLinkDialog.addLink(url);
-    await this.page.waitForLoadState('networkidle');
-    await this.page.waitForTimeout(1500);
-    await this.waitForLoad();
+    // Wait for the new asset row to appear
+    await expect(this.assetRows).toHaveCount(countBefore + 1, {
+      timeout: 10000,
+    });
   }
 
   async filterByCategory(category: AssetCategory) {
     await this.categoryFilter.select(category);
-    await this.page.waitForTimeout(1500);
     await this.waitForLoad();
   }
 }
