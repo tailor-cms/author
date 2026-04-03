@@ -16,7 +16,7 @@
         :key="asset.id"
         :asset="asset"
         :is-selected="selectedIds.has(asset.id)"
-        @select="emit('select', $event)"
+        @preview="emit('preview', $event)"
         @toggle="emit('select:toggle', $event)"
         @download="emit('download', $event)"
         @delete="emit('delete', $event)"
@@ -76,7 +76,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:page': [page: number];
-  'select': [asset: Asset];
+  'preview': [asset: Asset];
   'select:toggle': [asset: Asset];
   'download': [asset: Asset];
   'delete': [asset: Asset];

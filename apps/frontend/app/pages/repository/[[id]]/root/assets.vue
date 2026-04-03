@@ -36,7 +36,7 @@
       :total="assetStore.total"
       @delete="confirmDelete"
       @download="downloadAsset"
-      @select="activeAsset = $event"
+      @preview="activeAsset = $event"
       @select:toggle="selection.toggle"
       @update:page="assetStore.page = $event"
     />

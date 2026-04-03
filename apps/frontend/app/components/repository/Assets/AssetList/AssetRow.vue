@@ -3,7 +3,7 @@
     align="center"
     class="asset-row py-3"
     no-gutters
-    @click="emit('select', asset)"
+    @click="emit('preview', asset)"
   >
     <VCol class="px-1" cols="auto">
       <VCheckboxBtn
@@ -22,7 +22,7 @@
       />
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
-      <div class="d-flex align-center text-subtitle-2 ">
+      <div class="d-flex align-center text-subtitle-2">
         <span class="text-primary-lighten-5 text-truncate">
           {{ getAssetDisplayName(asset) }}
         </span>
@@ -37,7 +37,7 @@
       <div class="d-flex align-center text-body-2 text-primary-lighten-3">
         <span class="text-capitalize">{{ getAssetTypeLabel(asset) }}</span>
         <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
-        <template v-if="asset.meta?.fileSize">
+        <template v-if="asset.meta && 'fileSize' in asset.meta">
           {{ formatFileSize(asset.meta.fileSize) }}
           <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
         </template>
@@ -52,7 +52,7 @@
       <UserAvatar
         v-if="asset.uploader"
         :img-url="asset.uploader.imgUrl ?? undefined"
-        :label="asset.uploader.fullName || asset.uploader.email"
+        :label="asset.uploader.label"
         class="mr-1"
         size="24"
       />
@@ -107,7 +107,7 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
-  select: [asset: Asset];
+  preview: [asset: Asset];
   toggle: [asset: Asset];
   download: [asset: Asset];
   delete: [asset: Asset];

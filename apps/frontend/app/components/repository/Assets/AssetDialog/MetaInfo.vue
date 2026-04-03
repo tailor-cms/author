@@ -44,7 +44,7 @@
         <div class="meta-label">By</div>
         <div class="meta-value d-flex align-center ga-2 mt-1">
           <UserAvatar :img-url="asset.uploader.imgUrl ?? undefined" size="20" />
-          {{ asset.uploader.fullName || asset.uploader.email }}
+          {{ asset.uploader.label }}
         </div>
       </div>
       <div v-if="asset.processingStatus" class="meta-item">
