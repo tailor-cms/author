@@ -27,5 +27,7 @@ defineProps<{
   categories: { label: string; value: string }[];
 }>();
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+  'update:modelValue': [value: string];
+}>();
 </script>

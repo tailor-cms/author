@@ -25,7 +25,9 @@ import { VFileUpload } from 'vuetify/labs/VFileUpload';
 
 defineProps<{ accept?: string }>();
 
-const emit = defineEmits(['select']);
+const emit = defineEmits<{
+  select: [file: File];
+}>();
 
 const onSelect = (files: File | File[] | null) => {
   if (!files) return;
@@ -47,8 +49,8 @@ const onSelect = (files: File | File[] | null) => {
   }
 
   .v-file-upload-icon {
-    font-size: 3rem;
     margin-bottom: 0.75rem;
+    font-size: 3rem;
     color: rgb(var(--v-theme-primary-darken-2));
 
     .v-icon {

@@ -92,7 +92,13 @@ const props = withDefaults(
   },
 );
 
-const inferredType = computed(() => inferAssetType(props.allowedExtensions));
+const isLoading = ref(false);
+const searchQuery = ref('');
+const selectedCategory = ref('all');
+const page = ref(1);
+const assets = ref<Asset[]>([]);
+const total = ref(0);
+const pageCount = computed(() => Math.ceil(total.value / ITEMS_PER_PAGE));
 
 const selected = defineModel<Asset | Asset[] | null>('selected', {
   default: null,
@@ -105,19 +111,14 @@ const selectedIds = computed(() => {
     : [selected.value.id];
 });
 
-// Hide category filter when extensions narrow to a specific type
+// When allowedExtensions all belong to one asset type
+// (e.g. ['.jpg', '.png'] → image), category filtering is redundant
+// since results are already scoped to that type.
+const inferredType = computed(() => inferAssetType(props.allowedExtensions));
 const categoryFilters = computed(() => {
   if (inferredType.value) return [];
   return ALL_CATEGORIES;
 });
-
-const isLoading = ref(false);
-const searchQuery = ref('');
-const selectedCategory = ref('all');
-const page = ref(1);
-const assets = ref<Asset[]>([]);
-const total = ref(0);
-const pageCount = computed(() => Math.ceil(total.value / ITEMS_PER_PAGE));
 
 const hasActiveFilters = computed(
   () => !!searchQuery.value.trim() || selectedCategory.value !== 'all',
@@ -158,6 +159,8 @@ const toggleSelection = (asset: Asset) => {
   }
 };
 
+// VList click:select handler - in multiple mode, selection is handled
+// by the checkbox toggle event, so we skip it here to avoid double-toggling.
 const onSelect = (id: number) => {
   if (props.multiple) return;
   const asset = assets.value.find((a) => a.id === id);

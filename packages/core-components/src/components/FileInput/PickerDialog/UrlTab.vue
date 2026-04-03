@@ -27,7 +27,9 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-const emit = defineEmits(['import']);
+const emit = defineEmits<{
+  submit: [data: { url: string; title?: string }];
+}>();
 
 const url = ref('');
 const title = ref('');
@@ -42,7 +44,7 @@ const submit = () => {
     return;
   }
   error.value = '';
-  emit('import', {
+  emit('submit', {
     url: url.value.trim(),
     title: title.value.trim() || undefined,
   });

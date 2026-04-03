@@ -82,7 +82,10 @@ withDefaults(defineProps<Props>(), {
   showPreview: false,
 });
 
-const emit = defineEmits(['download', 'delete']);
+const emit = defineEmits<{
+  download: [];
+  delete: [];
+}>();
 
 const expanded = ref(false);
 </script>

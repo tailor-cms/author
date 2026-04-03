@@ -76,7 +76,9 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 // Re-emit @input with legacy CE payload format
-const emit = defineEmits(['input']);
+const emit = defineEmits<{
+  input: [value: Record<string, any> | null];
+}>();
 
 const logDeprecation = (propName: string, alternative: string) => {
   console.warn(

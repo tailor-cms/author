@@ -86,8 +86,12 @@ const props = defineProps<{
   multiple?: boolean;
 }>();
 
-const emit = defineEmits(['select', 'toggle']);
+const emit = defineEmits<{
+  select: [id: number];
+  toggle: [asset: Asset];
+}>();
 
+// Normalize extensions to a Set for fast lookup (strip leading dots, lowercase)
 const allowedExtensionsSet = computed(() => {
   if (!props.allowedExtensions?.length) return null;
   return new Set(

@@ -47,7 +47,7 @@
           />
         </VWindowItem>
         <VWindowItem v-if="allowUrlSource" value="url">
-          <UrlTab ref="urlTabRef" @import="onUrlSelect" />
+          <UrlTab ref="urlTabRef" @submit="onUrlSubmit" />
         </VWindowItem>
       </VWindow>
     </template>
@@ -73,7 +73,7 @@
           variant="tonal"
           @click="urlTabRef?.submit()"
         >
-          Import
+          Submit
         </VBtn>
       </div>
     </template>
@@ -82,6 +82,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import type { Asset } from '@tailor-cms/interfaces/asset';
 
 import TailorDialog from '../../TailorDialog.vue';
 import LibraryTab from './LibraryTab/index.vue';
@@ -92,7 +93,11 @@ interface Props {
   modelValue: boolean;
   heading?: string;
   icon?: string;
+  // MIME/extension filter for the native file picker
+  // accept attribute (e.g. '.jpg,.png,image/*')
   accept?: string;
+  // Extension whitelist for the Library tab (e.g. ['.jpg', '.png'])
+  // Used to infer asset type for filtering and to disable incompatible items
   allowedExtensions?: string[];
   allowUrlSource?: boolean;
   multiple?: boolean;
@@ -108,20 +113,18 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  // Dialog open/close state (v-model)
-  (e: 'update:modelValue', value: boolean): void;
-  // File chosen via Upload tab - parent handles the upload to storage
-  (e: 'upload', file: File): void;
+  'update:modelValue': [value: boolean];
+  'upload': [file: File];
   // Single asset picked from Library or URL imported
-  (e: 'select', payload: Record<string, any>): void;
+  'select': [payload: Record<string, any>];
   // Multiple assets picked from Library (when multiple prop is enabled)
-  (e: 'select:multiple', payload: Record<string, any>[]): void;
+  'select:multiple': [payload: Record<string, any>[]];
 }>();
 
 // Incremented on each open; remounts tab content for fresh state
 const sessionKey = ref(0);
 const activeTab = ref('upload');
-const selectedAssets = ref<any>(null);
+const selectedAssets = ref<Asset | Asset[] | null>(null);
 const urlTabRef = ref<InstanceType<typeof UrlTab> | null>(null);
 
 const hasSelection = computed(() => {
@@ -157,19 +160,15 @@ const toPayload = (asset: any) => ({
 
 const onAssetPick = () => {
   if (!hasSelection.value) return;
-  if (props.multiple && Array.isArray(selectedAssets.value)) {
-    emit('select:multiple', selectedAssets.value.map(toPayload));
+  if (props.multiple) {
+    emit('select:multiple', (selectedAssets.value as Asset[]).map(toPayload));
   } else {
-    const asset = Array.isArray(selectedAssets.value)
-      ? selectedAssets.value[0]
-      : selectedAssets.value;
-    if (!asset?.storageKey) return;
-    emit('select', toPayload(asset));
+    emit('select', toPayload(selectedAssets.value as Asset));
   }
   onClose();
 };
 
-const onUrlSelect = (data: { url: string; title?: string }) => {
+const onUrlSubmit = (data: { url: string; title?: string }) => {
   emit('select', data);
   onClose();
 };
