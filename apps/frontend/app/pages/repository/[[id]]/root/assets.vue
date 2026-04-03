@@ -22,8 +22,7 @@
       :categories="categories"
       :is-all-selected="isAllSelected"
       :sort-direction="sortDirection"
-      @select-all="selection.selectAll"
-      @deselect-all="selection.clear"
+      @toggle-all="$event ? selection.selectAll() : selection.clear()"
       @toggle-sort="toggleSortDirection"
     />
     <AssetList

@@ -6,7 +6,7 @@
       color="primary-lighten-4"
       size="small"
       variant="text"
-      @click="isAllSelected ? $emit('deselect-all') : $emit('select-all')"
+      @click="$emit('toggle-all', !isAllSelected)"
     >
       {{ isAllSelected ? 'Deselect all' : 'Select all' }}
     </VBtn>
@@ -67,8 +67,7 @@ const itemsPerPage = defineModel<number>('itemsPerPage', {
 });
 
 defineEmits<{
-  'select-all': [];
-  'deselect-all': [];
+  'toggle-all': [selected: boolean];
   'toggle-sort': [];
 }>();
 </script>

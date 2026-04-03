@@ -21,7 +21,7 @@
         prepend-icon="mdi-close-circle-outline"
         size="small"
         variant="text"
-        @click="emit('deselect-all')"
+        @click="emit('toggle-all', false)"
       >
         Deselect all
       </VBtn>
@@ -31,7 +31,7 @@
         prepend-icon="mdi-checkbox-multiple-outline"
         size="small"
         variant="text"
-        @click="emit('select-all')"
+        @click="emit('toggle-all', true)"
       >
         Select all
       </VBtn>
@@ -86,8 +86,7 @@ const page = defineModel<number>('page', { required: true });
 
 const emit = defineEmits<{
   'toggle': [url: string];
-  'select-all': [];
-  'deselect-all': [];
+  'toggle-all': [selected: boolean];
 }>();
 
 const totalPages = computed(() =>

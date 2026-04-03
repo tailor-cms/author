@@ -51,8 +51,7 @@
               :is-searching="isSearching"
               :has-searched="hasSearched"
               @toggle="toggleSuggestion"
-              @select-all="selectAll"
-              @deselect-all="selectedUrls.clear()"
+              @toggle-all="$event ? selectAll() : selectedUrls.clear()"
             />
           </VCol>
         </VRow>
