@@ -1,24 +1,26 @@
 <template>
   <VBtn
     v-if="selectedCount"
+    :disabled="isAdding"
     :loading="isAdding"
     :prepend-icon="hasDownloadable ? 'mdi-download' : 'mdi-link-plus'"
     class="mr-4"
     color="primary-lighten-3"
     variant="outlined"
-    @click="$emit('add')"
+    @click="$emit('add', false)"
   >
     {{ hasDownloadable ? 'Import' : 'Add as links' }}
     {{ selectedCount }}
   </VBtn>
   <VBtn
     v-if="selectedCount"
+    :disabled="isAdding"
     :loading="isAdding"
     class="mr-4"
     color="primary-lighten-3"
     prepend-icon="mdi-brain"
     variant="tonal"
-    @click="$emit('add-and-index')"
+    @click="$emit('add', true)"
   >
     {{ hasDownloadable ? 'Import' : 'Add' }} & Index
   </VBtn>
@@ -32,7 +34,6 @@ defineProps<{
 }>();
 
 defineEmits<{
-  'add': [];
-  'add-and-index': [];
+  'add': [withIndexing: boolean];
 }>();
 </script>

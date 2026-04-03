@@ -16,8 +16,7 @@
             :selected-count="selectedUrls.size"
             :has-downloadable="hasDownloadable"
             :is-adding="isAdding"
-            @add="addSelected(false)"
-            @add-and-index="addSelected(true)"
+            @add="addSelected"
           />
           <VBtn icon="mdi-close" @click="show = false" />
         </template>
@@ -114,10 +113,10 @@ async function search() {
       contentFilter.value,
       FETCH_COUNT,
     );
-    hasSearched.value = true;
   } catch {
     notify('Discovery search failed', { color: 'error' });
   } finally {
+    hasSearched.value = true;
     isSearching.value = false;
   }
 }
