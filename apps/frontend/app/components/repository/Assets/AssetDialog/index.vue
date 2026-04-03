@@ -3,7 +3,7 @@
     <VCard v-if="asset" color="primary-darken-4">
       <VToolbar color="primary-darken-3" density="comfortable">
         <VToolbarTitle
-          class="text-body-1 font-weight-medium text-primary-lighten-4 ml-4"
+          class="ml-4 text-body-1 font-weight-medium text-primary-lighten-4"
         >
           <VIcon
             :color="`${typeColor}-lighten-3`"
@@ -33,7 +33,7 @@
         />
       </VCardText>
       <VDivider />
-      <VCardActions class="pa-4 ga-2">
+      <VCardActions class="ga-2 pa-4">
         <VBtn
           color="secondary-lighten-3"
           prepend-icon="mdi-delete-outline"
@@ -65,7 +65,7 @@
           Download
         </VBtn>
         <VBtn
-          :disabled="!hasChanges"
+          :disabled="!hasChanges || isSaving"
           :loading="isSaving"
           color="primary-lighten-3"
           prepend-icon="mdi-content-save-outline"
@@ -94,6 +94,7 @@ const props = defineProps<{
   asset: Asset | null;
   isSaving?: boolean;
 }>();
+
 const emit = defineEmits<{
   close: [];
   download: [asset: Asset];
@@ -118,14 +119,15 @@ const typeIcon = computed(() => getAssetIcon(props.asset));
 const typeColor = computed(() => getAssetColor(props.asset));
 const displayName = computed(() => getAssetDisplayName(props.asset));
 const isImage = computed(() => props.asset?.type === AssetType.Image);
+
 const canDownload = computed(
   () => props.asset?.type !== AssetType.Link && !!props.asset?.storageKey,
 );
+
 const canDeindex = computed(
   () => props.asset?.processingStatus === ProcessingStatus.Completed,
 );
 
-// Dirty check against original meta
 const hasChanges = computed(() => {
   if (!props.asset) return false;
   return (

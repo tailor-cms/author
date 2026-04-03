@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="pa-4 mb-5 rounded-lg" color="primary-darken-3">
+  <VSheet class="mb-5 pa-4 rounded-lg" color="primary-darken-3">
     <div class="meta-grid">
       <div class="meta-item">
         <div class="meta-label">Type</div>
@@ -110,6 +110,7 @@ const props = defineProps<{
   typeIcon: string;
   typeColor: string;
 }>();
+
 const isLink = computed(() => props.asset.type === AssetType.Link);
 const meta = computed(() => props.asset.meta as Record<string, any>);
 const hasSourceInfo = computed(() => !!meta.value.source?.url);
@@ -129,7 +130,7 @@ const truncatedUrl = computed(() => {
 }
 
 .meta-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: rgba(var(--v-theme-primary-lighten-2), 0.8);
   text-transform: uppercase;
   letter-spacing: 0.08em;

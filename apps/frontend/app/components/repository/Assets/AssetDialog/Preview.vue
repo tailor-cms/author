@@ -32,12 +32,12 @@
       />
     </VSheet>
     <VSheet
-      v-else-if="embedUrl"
+      v-else-if="videoEmbedUrl"
       class="rounded-lg overflow-hidden"
       color="primary-darken-3"
     >
       <iframe
-        :src="embedUrl"
+        :src="videoEmbedUrl"
         class="video-embed"
         allow="autoplay"
         frameborder="0"
@@ -100,7 +100,10 @@ const assetIcon = computed(() => getAssetIcon(props.asset));
 const assetColor = computed(() => getAssetColor(props.asset));
 const isImage = computed(() => props.asset?.type === AssetType.Image);
 const isLink = computed(() => props.asset?.type === AssetType.Link);
-const embedUrl = computed(() => {
+
+// Returns embed URL for supported video providers (YouTube, Vimeo, Dailymotion)
+// Detection handled by toEmbedUrl in @tailor-cms/common/asset
+const videoEmbedUrl = computed(() => {
   if (!isLink.value) return null;
   return toEmbedUrl((props.asset?.meta as any)?.url || '');
 });

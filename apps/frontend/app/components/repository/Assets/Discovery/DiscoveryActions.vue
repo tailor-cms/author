@@ -34,6 +34,6 @@ defineProps<{
 }>();
 
 defineEmits<{
-  'add': [withIndexing: boolean];
+  add: [withIndexing: boolean];
 }>();
 </script>

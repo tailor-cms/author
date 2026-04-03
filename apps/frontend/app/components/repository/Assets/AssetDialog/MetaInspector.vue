@@ -61,7 +61,7 @@ function formatEntry(key: string, value: any) {
   if (isNull) color = VALUE_COLORS.empty;
   else if (typeof value === 'boolean') color = VALUE_COLORS.flag;
   else if (typeof value === 'number') color = VALUE_COLORS.numeric;
-  return { key, display, isSimple, color };
+  return { key, display, color, isSimple };
 }
 
 function getTopLevelFields(asset: Asset) {
@@ -88,8 +88,10 @@ function copyToClipboard() {
 </script>
 
 <style lang="scss" scoped>
+$font-mono: 'Fira Code', 'Courier New', monospace;
+
 .entries-container {
-  max-height: 400px;
+  max-height: 25rem;
 }
 
 .entry {
@@ -104,23 +106,23 @@ function copyToClipboard() {
 }
 
 .entry-key {
-  font-family: 'Fira Code', 'Courier New', monospace;
-  font-size: 0.7rem;
+  font-family: $font-mono;
+  font-size: 0.75rem;
   font-weight: 600;
   color: rgba(var(--v-theme-primary-lighten-2), 0.9);
   letter-spacing: 0.02em;
 }
 
 .entry-value {
-  font-family: 'Fira Code', 'Courier New', monospace;
+  font-family: $font-mono;
   font-size: 0.75rem;
   margin-top: 1px;
   word-break: break-all;
 }
 
 .entry-object {
-  font-family: 'Fira Code', 'Courier New', monospace;
-  font-size: 0.7rem;
+  font-family: $font-mono;
+  font-size: 0.625rem;
   line-height: 1.4;
   color: rgb(var(--v-theme-primary-lighten-3));
   white-space: pre-wrap;

@@ -60,7 +60,7 @@ export function detectProvider(
   return detectLinkProvider(url).provider || null;
 }
 
-export function getAssetIcon(asset: { type?: string; meta?: any } | null) {
+export function getAssetIcon(asset: { type?: string; meta?: any } | null): string {
   if (!asset) return ASSET_TYPE_ICON.other;
   const provider = detectProvider(asset);
   if (provider && PROVIDER_ICONS[provider]) return PROVIDER_ICONS[provider];
@@ -71,7 +71,7 @@ export function getAssetIcon(asset: { type?: string; meta?: any } | null) {
   return ASSET_TYPE_ICON[asset.type ?? AssetType.Other] ?? ASSET_TYPE_ICON.other;
 }
 
-export function getAssetColor(asset: { type?: string; meta?: any } | null) {
+export function getAssetColor(asset: { type?: string; meta?: any } | null): string {
   if (!asset) return ASSET_TYPE_COLOR.other;
   const provider = detectProvider(asset);
   if (provider && PROVIDER_COLORS[provider]) return PROVIDER_COLORS[provider];
