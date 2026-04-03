@@ -51,7 +51,7 @@
     />
     <AddLinkDialog
       v-model="showAddLinkDialog"
-      @created="(url: string) => assetStore.addLink(url).then(refetch)"
+      @add="(url: string) => assetStore.addLink(url).then(refetch)"
     />
     <DiscoveryDialog
       v-model="showDiscoveryDialog"

@@ -27,7 +27,7 @@
         <template #activator="{ props: tooltipProps }">
           <div v-bind="tooltipProps">
             <VBtn
-              :disabled="!hasIndexable"
+              :disabled="!hasIndexable || isIndexing"
               :loading="isIndexing"
               color="primary-lighten-3"
               prepend-icon="mdi-brain"
@@ -42,6 +42,7 @@
       </VTooltip>
       <VBtn
         :loading="isBulkDeleting"
+        :disabled="isBulkDeleting"
         color="primary-lighten-3"
         prepend-icon="mdi-delete"
         size="small"

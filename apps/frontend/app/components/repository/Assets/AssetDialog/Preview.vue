@@ -85,7 +85,8 @@
 <script lang="ts" setup>
 import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
 
-import { getAssetColor, getAssetIcon, toEmbedUrl } from '../utils';
+import { toEmbedUrl } from '@tailor-cms/common/asset';
+import { getAssetColor, getAssetIcon } from '../utils';
 import api from '@/api/repositoryAsset';
 
 const props = defineProps<{

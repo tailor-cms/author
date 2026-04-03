@@ -17,6 +17,7 @@
     />
     <VBtn
       :loading="isUploading"
+      :disabled="isUploading"
       color="primary-lighten-3"
       prepend-icon="mdi-upload"
       variant="outlined"
@@ -59,14 +60,14 @@ const emit = defineEmits<{
 }>();
 
 const config = useConfigStore();
+const search = defineModel<string>('search', { default: '' });
+
+const fileInputRef = ref<HTMLInputElement>();
+const isUploading = ref(false);
+
 const isDiscoveryEnabled = computed(
   () => !!config.props.discoveryEnabled,
 );
-
-const search = defineModel<string>('search', { default: '' });
-
-const isUploading = ref(false);
-const fileInputRef = ref<HTMLInputElement>();
 
 function openFilePicker() {
   fileInputRef.value?.click();

@@ -56,10 +56,11 @@
 </template>
 
 <script lang="ts" setup>
-const show = defineModel<boolean>({ default: false });
 const emit = defineEmits<{
-  created: [url: string];
+  add: [url: string];
 }>();
+
+const show = defineModel<boolean>({ default: false });
 
 const url = ref('');
 const urlError = ref('');
@@ -84,7 +85,7 @@ function submit() {
     urlError.value = 'Please enter a valid URL';
     return;
   }
-  emit('created', url.value);
+  emit('add', url.value);
   show.value = false;
 }
 </script>

@@ -21,7 +21,7 @@ export function getAssetDisplayName(asset: {
   storageKey?: string | null;
 } | null): string {
   if (!asset) return '';
-  if (asset.name) return stripUidPrefix(asset.name);
+  if (asset.name) return asset.name;
   if (asset.storageKey) {
     const filename = asset.storageKey.split('/').pop() ?? 'Untitled';
     return stripUidPrefix(filename);
@@ -61,21 +61,23 @@ export function detectProvider(
 }
 
 export function getAssetIcon(asset: { type?: string; meta?: any } | null): string {
-  if (!asset) return ASSET_TYPE_ICON.other;
+  const DEFAULT_ICON = ASSET_TYPE_ICON.other!;
+  if (!asset) return DEFAULT_ICON;
   const provider = detectProvider(asset);
-  if (provider && PROVIDER_ICONS[provider]) return PROVIDER_ICONS[provider];
+  if (provider) return PROVIDER_ICONS[provider] ?? DEFAULT_ICON;
   if (asset.type === AssetType.Link && asset.meta) {
     const ct = asset.meta.contentType || asset.meta.linkContentType;
-    if (ct && LINK_CONTENT_TYPE_ICONS[ct]) return LINK_CONTENT_TYPE_ICONS[ct];
+    if (ct) return LINK_CONTENT_TYPE_ICONS[ct] ?? DEFAULT_ICON;
   }
-  return ASSET_TYPE_ICON[asset.type ?? AssetType.Other] ?? ASSET_TYPE_ICON.other;
+  return ASSET_TYPE_ICON[asset.type ?? AssetType.Other] ?? DEFAULT_ICON;
 }
 
 export function getAssetColor(asset: { type?: string; meta?: any } | null): string {
-  if (!asset) return ASSET_TYPE_COLOR.other;
+  const DEFAULT_COLOR = ASSET_TYPE_COLOR.other!;
+  if (!asset) return DEFAULT_COLOR;
   const provider = detectProvider(asset);
-  if (provider && PROVIDER_COLORS[provider]) return PROVIDER_COLORS[provider];
-  return ASSET_TYPE_COLOR[asset.type ?? AssetType.Other] ?? ASSET_TYPE_COLOR.other;
+  if (provider) return PROVIDER_COLORS[provider] ?? DEFAULT_COLOR;
+  return ASSET_TYPE_COLOR[asset.type ?? AssetType.Other] ?? DEFAULT_COLOR;
 }
 
 export function getAssetTypeLabel(asset: { type?: string; meta?: any }): string {
@@ -105,8 +107,6 @@ export function isIndexable(asset: { type?: string; meta?: any }): boolean {
   }
   return false;
 }
-
-export { toEmbedUrl, extractYtVideoId } from '@tailor-cms/common/asset';
 
 export function formatDate(date: string | Date): string {
   return new Date(date).toLocaleDateString('en-US', {
