@@ -9,10 +9,16 @@ const ACTIVE_STATUSES = new Set<ProcessingStatus>([
   ProcessingStatus.Processing,
 ]);
 
+function isActiveStatus(status: ProcessingStatus | null): status is ProcessingStatus {
+  return !!status && ACTIVE_STATUSES.has(status);
+}
+
 export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
   const isIndexing = ref(false);
   const indexingStatusMap = reactive(new Map<number, ProcessingStatus>());
 
+  // Capture the calling scope so we can guard against starting polling
+  // after the component has been unmounted (scope deactivated).
   const scope = getCurrentScope();
   let pollTimer: ReturnType<typeof setInterval> | null = null;
   let pendingSubmissions = 0;
@@ -50,10 +56,7 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
       for (const s of statuses) {
         indexingStatusMap.set(s.id, s.processingStatus as ProcessingStatus);
       }
-      const hasActive = statuses.some(
-        (s: { processingStatus: ProcessingStatus }) =>
-          ACTIVE_STATUSES.has(s.processingStatus),
-      );
+      const hasActive = statuses.some((s: any) => isActiveStatus(s.processingStatus));
       if (!hasActive && !pendingSubmissions) finishPolling();
     } catch {
       finishPolling();
@@ -64,13 +67,12 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
   function resumeIfActive(
     assets: { id: number; processingStatus: ProcessingStatus | null }[],
   ) {
-    const active = assets.filter(
-      (a): a is typeof a & { processingStatus: ProcessingStatus } =>
-        !!a.processingStatus && ACTIVE_STATUSES.has(a.processingStatus),
-    );
-    if (!active.length) return;
+    for (const a of assets) {
+      if (!isActiveStatus(a.processingStatus)) continue;
+      indexingStatusMap.set(a.id, a.processingStatus);
+    }
+    if (!indexingStatusMap.size) return;
     isIndexing.value = true;
-    active.forEach((a) => indexingStatusMap.set(a.id, a.processingStatus));
     startPolling();
   }
 
@@ -100,9 +102,9 @@ export function useAssetIndexing(repositoryId: Ref<number | undefined>) {
   return {
     isIndexing,
     indexingStatusMap,
+    withStatus,
     startIndexing,
     resumeIfActive,
     clearAssetStatus,
-    withStatus,
   };
 }

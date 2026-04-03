@@ -69,7 +69,7 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   async function deindex(assetId: number) {
     if (!repositoryId.value) return;
     await api.deindexAsset(repositoryId.value, assetId);
-    update({
+    localUpdate({
       id: assetId,
       processingStatus: null,
       vectorStoreFileId: null,
@@ -85,13 +85,13 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
       if (!current) return;
       // Shallow spread; matches backend updateMeta behavior.
       // Intentional: allows null values to clear nested keys.
-      update({ id: assetId, meta: { ...current.meta, ...meta } });
+      localUpdate({ id: assetId, meta: { ...current.meta, ...meta } });
     } finally {
       isSaving.value = false;
     }
   }
 
-  function update(updated: Partial<Asset> & { id: number }) {
+  function localUpdate(updated: Partial<Asset> & { id: number }) {
     const idx = assets.value.findIndex((a) => a.id === updated.id);
     if (idx !== -1) {
       assets.value[idx] = { ...assets.value[idx], ...updated } as Asset;
