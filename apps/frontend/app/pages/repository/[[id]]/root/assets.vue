@@ -77,30 +77,37 @@ import { useCurrentRepository } from '@/stores/current-repository';
 definePageMeta({ name: 'repository-assets' });
 
 type SortDirection = 'ASC' | 'DESC';
+
 const ASC: SortDirection = 'ASC';
 const DESC: SortDirection = 'DESC';
 
 const currentRepositoryStore = useCurrentRepository();
 const showConfirmation = useConfirmationDialog();
+
+const toolbarRef = ref<InstanceType<typeof Toolbar>>();
+const sortDirection = ref<SortDirection>(DESC);
+const searchQuery = ref('');
+const activeAsset = ref<Asset | null>(null);
+const showAddLinkDialog = ref(false);
+const showDiscoveryDialog = ref(false);
+
 const repositoryId = computed(() => currentRepositoryStore.repository?.id);
 
 const assetStore = reactive(useAssets(repositoryId));
+// reactive() unwraps inner refs, so assetStore.assets is a plain array.
+// toRef() re-wraps it as a Ref so downstream composables stay reactive.
+const assets = toRef(() => assetStore.assets);
+
 const indexing = useAssetIndexing(repositoryId);
+const processedAssets = indexing.withStatus(assets);
+
 const { categories, selectedCategory } = useAssetFiltering();
-const selection = useAssetSelection(toRef(() => assetStore.assets));
-const processedAssets = indexing.withStatus(toRef(() => assetStore.assets));
+const selection = useAssetSelection(assets);
 
-const toolbarRef = ref<InstanceType<typeof Toolbar>>();
-const activeAsset = ref<Asset | null>(null);
-const searchQuery = ref('');
-const showAddLinkDialog = ref(false);
-const showDiscoveryDialog = ref(false);
-const sortDirection = ref<SortDirection>(DESC);
-
-const isAllSelected = computed(
-  () => assetStore.assets.length > 0
-    && selection.selectedIds.size === assetStore.assets.length,
-);
+const isAllSelected = computed(() => {
+  const assetTotal = assets.value.length;
+  return assetTotal > 0 && selection.selectedIds.size === assetTotal;
+});
 
 const fetchParams = computed(() => {
   const params: Record<string, any> = {
