@@ -1,6 +1,7 @@
 import { type Locator, type Page, expect } from '@playwright/test';
 
 import { Comments } from '../common/Comments';
+import { FileInputPicker } from '../common/FileInputPicker';
 import { LinkedCopyNotice } from './LinkedCopyNotice';
 import { LinkedIndicator } from './LinkedIndicator';
 import { Toast } from '../common/Toast';
@@ -34,6 +35,9 @@ export class OutlineSidebar {
     const input = this.getFileInput(placeholder);
     await expect(input).toBeVisible({ timeout: 5000 });
     await input.click();
+    const picker = new FileInputPicker(this.page);
+    await picker.waitForOpen();
+    return picker;
   }
 
   async fillName(name: string) {

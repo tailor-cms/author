@@ -60,6 +60,10 @@ export class FileInputPicker {
     await expect(this.dialog).toBeVisible({ timeout: 5000 });
   }
 
+  async expectTabSelected(tab: Locator) {
+    await expect(tab).toHaveAttribute('aria-selected', 'true');
+  }
+
   async waitForClose() {
     await expect(this.dialog).not.toBeVisible({ timeout: 5000 });
   }
