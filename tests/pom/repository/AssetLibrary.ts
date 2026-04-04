@@ -55,6 +55,10 @@ export class AssetLibrary {
     return this.assetRows.count();
   }
 
+  async expectRowCount(count: number) {
+    await expect(this.assetRows).toHaveCount(count);
+  }
+
   async uploadFiles(filePaths: string[]) {
     await this.toolbar.uploadFiles(filePaths);
     await this.waitForLoad();

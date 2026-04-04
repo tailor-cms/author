@@ -73,23 +73,23 @@ test.describe('Asset library', () => {
       await AssetClient.addLink(id, 'https://docs.tailor-cms.com');
       await AssetClient.addLink(id, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
     });
-    expect(await lib.getRowCount()).toBe(3);
+    await lib.expectRowCount(3);
 
     await lib.filterByCategory('Images');
-    expect(await lib.getRowCount()).toBe(1);
+    await lib.expectRowCount(1);
     await expect(lib.getRow(IMAGE.name).el).toBeVisible();
 
     // YouTube links should appear under Video, not Links
     await lib.filterByCategory('Video');
-    expect(await lib.getRowCount()).toBe(1);
+    await lib.expectRowCount(1);
 
     // Regular links only (YouTube excluded)
     await lib.filterByCategory('Links');
-    expect(await lib.getRowCount()).toBe(1);
+    await lib.expectRowCount(1);
     await expect(lib.getRow('Tailor Author').el).toBeVisible();
 
     await lib.filterByCategory('All');
-    expect(await lib.getRowCount()).toBe(3);
+    await lib.expectRowCount(3);
   });
 
   test('can search assets by name', async ({ page }) => {
@@ -97,11 +97,10 @@ test.describe('Asset library', () => {
       await AssetClient.uploadFile(id, IMAGE.path);
       await AssetClient.uploadFile(id, DOCUMENT.path);
     });
-    expect(await lib.getRowCount()).toBe(2);
+    await lib.expectRowCount(2);
 
     await lib.toolbar.searchInput.fill('test-image');
-    await page.waitForTimeout(1500);
-    expect(await lib.getRowCount()).toBe(1);
+    await lib.expectRowCount(1);
     await expect(lib.getRow(IMAGE.name).el).toBeVisible();
   });
 
@@ -138,7 +137,7 @@ test.describe('Asset library', () => {
       await AssetClient.uploadFile(id, IMAGE.path);
       await AssetClient.uploadFile(id, DOCUMENT.path);
     });
-    expect(await lib.getRowCount()).toBe(2);
+    await lib.expectRowCount(2);
 
     await lib.getRow(IMAGE.name).select();
     await lib.bulkActionBar.selectAll();
