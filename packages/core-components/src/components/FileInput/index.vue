@@ -70,7 +70,7 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
-import { inferAssetType } from '@tailor-cms/interfaces/asset';
+import { AssetType, inferAssetType } from '@tailor-cms/interfaces/asset';
 import FilePreview from './FilePreview.vue';
 import PickerDialog from './PickerDialog/index.vue';
 import { useUpload } from '../../composables/useUpload';
@@ -150,14 +150,14 @@ const resolvedLabel = computed(
   () =>
     props.label ||
     (category.value && ASSET_TYPE_LABEL[category.value]) ||
-    ASSET_TYPE_LABEL.other,
+    ASSET_TYPE_LABEL[AssetType.Other],
 );
 
 const resolvedIcon = computed(
   () =>
     props.icon ||
     (category.value && ASSET_TYPE_ICON[category.value]) ||
-    ASSET_TYPE_ICON.other,
+    ASSET_TYPE_ICON[AssetType.Other],
 );
 
 const emptyLabel = computed(() => {

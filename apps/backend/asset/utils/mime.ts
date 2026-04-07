@@ -2,10 +2,10 @@
 import { AssetType } from '@tailor-cms/interfaces/asset.ts';
 
 const MIME_CATEGORY_MAP: Record<string, string[]> = {
-  image: ['image/'],
-  video: ['video/'],
-  audio: ['audio/'],
-  document: [
+  [AssetType.Image]: ['image/'],
+  [AssetType.Video]: ['video/'],
+  [AssetType.Audio]: ['audio/'],
+  [AssetType.Document]: [
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument',
