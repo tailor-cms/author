@@ -7,8 +7,10 @@ import { AssetLibrary } from '../../pom/repository/AssetLibrary';
 import { percySnapshot } from '../../utils/percy';
 import { toRepositoryAssets } from '../../helpers/seed';
 
+const REPOSITORY_NAME = 'Asset Library Visual Tests';
+
 test('Asset library - populated list', async ({ page }) => {
-  const repository = await toRepositoryAssets(page);
+  const repository = await toRepositoryAssets(page, REPOSITORY_NAME);
   await AssetClient.uploadFile(repository.id, IMAGE.path);
   await AssetClient.uploadFile(repository.id, DOCUMENT.path);
   await AssetClient.addLink(repository.id, 'https://docs.tailor-cms.com');
@@ -19,14 +21,14 @@ test('Asset library - populated list', async ({ page }) => {
 });
 
 test('Asset library - empty state', async ({ page }) => {
-  await toRepositoryAssets(page);
+  await toRepositoryAssets(page, REPOSITORY_NAME);
   const lib = new AssetLibrary(page);
   await lib.waitForLoad();
   await percySnapshot(page, 'Asset library - empty state');
 });
 
 test('Asset library - detail dialog', async ({ page }) => {
-  const repository = await toRepositoryAssets(page);
+  const repository = await toRepositoryAssets(page, REPOSITORY_NAME);
   await AssetClient.uploadFile(repository.id, IMAGE.path);
   await page.reload({ waitUntil: 'networkidle' });
   const lib = new AssetLibrary(page);
@@ -37,7 +39,7 @@ test('Asset library - detail dialog', async ({ page }) => {
 });
 
 test('Asset library - add link dialog', async ({ page }) => {
-  await toRepositoryAssets(page);
+  await toRepositoryAssets(page, REPOSITORY_NAME);
   const lib = new AssetLibrary(page);
   await lib.toolbar.addLinkBtn.click();
   await percySnapshot(page, 'Asset library - add link dialog');
