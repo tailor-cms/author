@@ -35,7 +35,6 @@ test.describe('FileInput - upload tab', () => {
     await fileInput.expectFileSet(IMAGE.name);
     const lib = new AssetLibrary(page);
     await lib.goto(repositoryId);
-    await lib.waitForLoad();
     await expect(lib.getRow(IMAGE.name).el).toBeVisible();
   });
 });
@@ -57,7 +56,7 @@ test.describe('FileInput - library tab', () => {
     await fileInput.picker.switchToLibrary();
     await expect(
       fileInput.picker.dialog.getByText('No assets found'),
-    ).toBeVisible({ timeout: 10000 });
+    ).toBeVisible();
   });
 });
 
@@ -80,7 +79,7 @@ test.describe('FileInput - general', () => {
     const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
     const { picker } = fileInput;
     await picker.switchToLibrary();
-    await expect(picker.libraryAssetList).toBeVisible({ timeout: 10000 });
+    await expect(picker.libraryAssetList).toBeVisible();
     await expect(picker.getLibraryAssetItem(IMAGE.name)).toBeVisible();
     await expect(
       picker.getLibraryAssetItem(DOCUMENT.name),

@@ -98,7 +98,7 @@ export class FileInputPicker {
   async selectAssetFromLibrary(assetName: string) {
     await this.switchToLibrary();
     // Wait for assets to load
-    await expect(this.libraryAssetList).toBeVisible({ timeout: 10000 });
+    await expect(this.libraryAssetList).toBeVisible();
     // Click on the asset item
     const assetItem = this.libraryAssetList
       .locator('.v-list-item')

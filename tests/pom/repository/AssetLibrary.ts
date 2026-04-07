@@ -33,12 +33,11 @@ export class AssetLibrary {
     await this.page.goto(`/repository/${repositoryId}/root/assets`, {
       waitUntil: 'networkidle',
     });
+    await this.waitForLoad();
   }
 
   async waitForLoad() {
-    await expect(this.assetRows.first().or(this.emptyState)).toBeVisible({
-      timeout: 10000,
-    });
+    await expect(this.assetRows.first().or(this.emptyState)).toBeVisible();
   }
 
   getRow(name: string): AssetRow {
@@ -86,9 +85,7 @@ export class AssetLibrary {
     await expect(this.addLinkDialog.el).toBeVisible();
     await this.addLinkDialog.addLink(url);
     // Wait for the new asset row to appear
-    await expect(this.assetRows).toHaveCount(countBefore + 1, {
-      timeout: 10000,
-    });
+    await expect(this.assetRows).toHaveCount(countBefore + 1);
   }
 
   async filterByCategory(category: AssetCategory) {

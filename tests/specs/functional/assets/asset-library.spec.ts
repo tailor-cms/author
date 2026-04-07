@@ -39,7 +39,7 @@ test.describe('Asset library', () => {
   test('can upload multiple files at once', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
     await lib.uploadFiles([IMAGE.path, DOCUMENT.path]);
-    await expect(lib.assetRows).toHaveCount(2, { timeout: 10000 });
+    await expect(lib.assetRows).toHaveCount(2);
     await page.reload({ waitUntil: 'networkidle' });
     await lib.waitForLoad();
     await expect(lib.assetRows).toHaveCount(2);
