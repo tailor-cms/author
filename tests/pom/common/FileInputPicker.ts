@@ -57,15 +57,19 @@ export class FileInputPicker {
   }
 
   async waitForOpen() {
-    await expect(this.dialog).toBeVisible({ timeout: 5000 });
+    await expect(this.dialog).toBeVisible();
   }
 
   async expectTabSelected(tab: Locator) {
     await expect(tab).toHaveAttribute('aria-selected', 'true');
   }
 
+  async expectEmptyLibrary() {
+    await expect(this.dialog.getByText('No assets found')).toBeVisible();
+  }
+
   async waitForClose() {
-    await expect(this.dialog).not.toBeVisible({ timeout: 5000 });
+    await expect(this.dialog).not.toBeVisible();
   }
 
   // Tab navigation

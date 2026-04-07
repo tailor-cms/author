@@ -54,9 +54,7 @@ test.describe('FileInput - library tab', () => {
     const sidebar = new OutlineSidebar(page);
     const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
     await fileInput.picker.switchToLibrary();
-    await expect(
-      fileInput.picker.dialog.getByText('No assets found'),
-    ).toBeVisible();
+    await fileInput.picker.expectEmptyLibrary();
   });
 });
 

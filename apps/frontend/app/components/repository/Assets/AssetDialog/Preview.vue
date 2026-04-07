@@ -39,7 +39,7 @@
       <iframe
         :src="videoEmbedUrl"
         class="video-embed"
-        allow="autoplay"
+        allow="autoplay; encrypted-media; picture-in-picture"
         frameborder="0"
         allowfullscreen
       />
