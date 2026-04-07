@@ -28,7 +28,6 @@
               v-if="hasOutline"
               v-model="selectedTopic"
               class="mb-4"
-              @topic:select="onTopicSelect"
               @topic:clear="clearTopic"
             />
             <SearchBar
@@ -60,7 +59,6 @@
               @result:toggle="toggleSuggestion"
               @select:all="selectAll"
               @select:clear="selectedUrls.clear()"
-
               @search:cancel="isSearching = false"
             />
           </VCol>
@@ -142,14 +140,6 @@ async function search() {
   }
 }
 
-function onTopicSelect(topic: TopicItem) {
-  query.value = topic.context
-    .join(' ')
-    .split(/\s+/)
-    .slice(0, MAX_QUERY_WORDS)
-    .join(' ');
-  search();
-}
 
 function clearTopic() {
   selectedTopic.value = null;
@@ -225,6 +215,16 @@ watch(show, (v) => {
   hasSearched.value = false;
   page.value = 1;
   selectedTopic.value = null;
+});
+
+watch(selectedTopic, (topic) => {
+  if (!topic) return;
+  query.value = topic.context
+    .join(' ')
+    .split(/\s+/)
+    .slice(0, MAX_QUERY_WORDS)
+    .join(' ');
+  search();
 });
 
 watch(contentFilter, () => {

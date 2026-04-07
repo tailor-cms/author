@@ -16,8 +16,8 @@ const buildTopicMeta = (
   return {
     id: activity.id,
     name,
-    parentName: ancestorNames.at(-1),
     isGroup: !isLeaf,
+    parentName: ancestorNames.at(-1),
     isLeaf,
     depth: ancestors.length,
     context: [name, ...ancestorNames, repositoryName].filter(Boolean),

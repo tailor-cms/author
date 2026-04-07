@@ -20,17 +20,17 @@
         </VBtn>
       </template>
       <VCard min-width="360">
-        <VCardTitle class="text-body-2"> Select outline topic </VCardTitle>
+        <VCardTitle class="text-body-2">Select outline topic</VCardTitle>
         <VDivider />
         <TopicList :items="items" @topic:select="onSelect" />
       </VCard>
     </VMenu>
     <VChip
       v-if="modelValue"
-      closable
       color="teal-lighten-3"
       size="small"
       variant="tonal"
+      closable
       @click:close="emit('topic:clear')"
     >
       {{ modelValue.name }}
@@ -49,16 +49,15 @@ defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [topic: TopicItem | null];
-  'topic:select': [topic: TopicItem];
   'topic:clear': [];
 }>();
 
-const isOpen = ref(false);
 const { items } = useOutlineTree();
+
+const isOpen = ref(false);
 
 function onSelect(topic: TopicItem) {
   isOpen.value = false;
   emit('update:modelValue', topic);
-  emit('topic:select', topic);
 }
 </script>
