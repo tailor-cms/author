@@ -18,22 +18,22 @@ test.describe('Asset library', () => {
 
   test('can upload an image file', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.uploadAndVerify(IMAGE.path, IMAGE.name, 'image');
+    await lib.uploadAndVerify(IMAGE.path, IMAGE.name, 'Image');
   });
 
   test('can upload a document file', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.uploadAndVerify(DOCUMENT.path, DOCUMENT.name, 'document');
+    await lib.uploadAndVerify(DOCUMENT.path, DOCUMENT.name, 'Document');
   });
 
   test('can upload a video file', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.uploadAndVerify(VIDEO.path, VIDEO.name, 'video');
+    await lib.uploadAndVerify(VIDEO.path, VIDEO.name, 'Video');
   });
 
   test('can upload an audio file', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.uploadAndVerify(AUDIO.path, AUDIO.name, 'audio');
+    await lib.uploadAndVerify(AUDIO.path, AUDIO.name, 'Audio');
   });
 
   test('can upload multiple files at once', async ({ page }) => {
@@ -50,7 +50,7 @@ test.describe('Asset library', () => {
     await lib.addLink('https://docs.tailor-cms.com');
     const row = lib.getRow('Tailor Author');
     await expect(row.el).toBeVisible();
-    await expect(row.typeChip).toContainText('link');
+    await expect(row.typeChip).toContainText('Link');
     await row.openMenu();
     await expect(row.downloadMenuItem).not.toBeVisible();
     await page.reload({ waitUntil: 'networkidle' });
