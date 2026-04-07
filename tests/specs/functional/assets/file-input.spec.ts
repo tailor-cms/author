@@ -13,10 +13,16 @@ test.describe('FileInput - upload tab', () => {
   test('can upload a file via the upload tab', async ({ page }) => {
     await toFileMetaInput(page);
     const sidebar = new OutlineSidebar(page);
-    const picker = await sidebar.openFileInput(INPUT_PLACEHOLDER);
-    await picker.expectTabSelected(picker.uploadTab);
-    await picker.uploadFile(IMAGE.path);
-    await page.waitForLoadState('networkidle');
+    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    await fileInput.picker.expectTabSelected(fileInput.picker.uploadTab);
+    await fileInput.picker.uploadFile(IMAGE.path);
+    await fileInput.expectFileSet(IMAGE.name);
+    // Verify persistence
+    await page.reload({ waitUntil: 'networkidle' });
+    await fileInput.expectFileSet(IMAGE.name);
+    // Verify download
+    const popup = await fileInput.download(IMAGE.name);
+    await popup.close();
   });
 
   test('uploaded file appears in the asset library', async ({
@@ -24,9 +30,9 @@ test.describe('FileInput - upload tab', () => {
   }) => {
     const repositoryId = await toFileMetaInput(page);
     const sidebar = new OutlineSidebar(page);
-    const picker = await sidebar.openFileInput(INPUT_PLACEHOLDER);
-    await picker.uploadFile(IMAGE.path);
-    await page.waitForLoadState('networkidle');
+    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    await fileInput.picker.uploadFile(IMAGE.path);
+    await fileInput.expectFileSet(IMAGE.name);
     const lib = new AssetLibrary(page);
     await lib.goto(repositoryId);
     await lib.waitForLoad();
@@ -39,18 +45,18 @@ test.describe('FileInput - library tab', () => {
     const repositoryId = await toFileMetaInput(page);
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     const sidebar = new OutlineSidebar(page);
-    const picker = await sidebar.openFileInput(INPUT_PLACEHOLDER);
-    await picker.selectAssetFromLibrary(IMAGE.name);
-    await page.waitForLoadState('networkidle');
+    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    await fileInput.picker.selectAssetFromLibrary(IMAGE.name);
+    await fileInput.expectFileSet(IMAGE.name);
   });
 
   test('library tab shows empty state when no assets', async ({ page }) => {
     await toFileMetaInput(page);
     const sidebar = new OutlineSidebar(page);
-    const picker = await sidebar.openFileInput(INPUT_PLACEHOLDER);
-    await picker.switchToLibrary();
+    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    await fileInput.picker.switchToLibrary();
     await expect(
-      picker.dialog.getByText('No assets found'),
+      fileInput.picker.dialog.getByText('No assets found'),
     ).toBeVisible({ timeout: 10000 });
   });
 });
@@ -59,9 +65,9 @@ test.describe('FileInput - general', () => {
   test('can cancel the picker dialog', async ({ page }) => {
     await toFileMetaInput(page);
     const sidebar = new OutlineSidebar(page);
-    const picker = await sidebar.openFileInput(INPUT_PLACEHOLDER);
-    await picker.cancel();
-    await expect(sidebar.getFileInput(INPUT_PLACEHOLDER)).toBeVisible();
+    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    await fileInput.picker.cancel();
+    await expect(sidebar.getMetaInput(INPUT_PLACEHOLDER)).toBeVisible();
   });
 
   test('picker only shows matching assets for image-only input', async ({
@@ -71,7 +77,8 @@ test.describe('FileInput - general', () => {
     await AssetClient.uploadFile(repositoryId, IMAGE.path);
     await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
     const sidebar = new OutlineSidebar(page);
-    const picker = await sidebar.openFileInput(INPUT_PLACEHOLDER);
+    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    const { picker } = fileInput;
     await picker.switchToLibrary();
     await expect(picker.libraryAssetList).toBeVisible({ timeout: 10000 });
     await expect(picker.getLibraryAssetItem(IMAGE.name)).toBeVisible();

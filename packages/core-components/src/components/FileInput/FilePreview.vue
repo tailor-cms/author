@@ -3,7 +3,7 @@
     <div class="v-label ma-1 text-caption">{{ label }}</div>
     <VCard
       :color="dark ? 'primary-lighten-4' : 'primary'"
-      class="d-flex align-center"
+      class="file-preview d-flex align-center"
       max-width="460"
       rounded="lg"
       variant="tonal"
@@ -25,6 +25,7 @@
       <div class="d-flex ma-3">
         <VBtn
           :color="dark ? 'primary-lighten-3' : 'primary-lighten-1'"
+          aria-label="Download file"
           class="ml-3"
           icon="mdi-download"
           size="small"
@@ -33,6 +34,7 @@
         />
         <VBtn
           :color="dark ? 'secondary-lighten-3' : 'secondary-lighten-1'"
+          aria-label="Delete file"
           class="ml-2"
           icon="mdi-trash-can-outline"
           size="small"
