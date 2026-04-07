@@ -1,10 +1,10 @@
 export const AssetType = {
-  Image: 'image',
-  Document: 'document',
-  Video: 'video',
-  Audio: 'audio',
-  Link: 'link',
-  Other: 'other',
+  Image: 'IMAGE',
+  Document: 'DOCUMENT',
+  Video: 'VIDEO',
+  Audio: 'AUDIO',
+  Link: 'LINK',
+  Other: 'OTHER',
 } as const;
 
 export type AssetType = (typeof AssetType)[keyof typeof AssetType];
@@ -54,7 +54,7 @@ export interface LinkAssetMeta extends AssetMetaBase {
   ogType?: string;
   source?: AssetSource;
   // What kind of content the link points to (video, image, document, etc.)
-  contentType?: 'video' | 'image' | 'document' | 'audio' | 'article' | 'other';
+  contentType?: 'VIDEO' | 'IMAGE' | 'DOCUMENT' | 'AUDIO' | 'article' | 'OTHER';
   // Known provider for provider-specific UI (youtube, vimeo, spotify, etc.)
   provider?: string;
 }
@@ -80,12 +80,12 @@ export interface Uploader {
 }
 
 const ASSET_TYPE_EXTENSIONS: Record<string, Set<string>> = {
-  image: new Set([
+  [AssetType.Image]: new Set([
     'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'tiff', 'avif',
   ]),
-  document: new Set(['pdf', 'doc', 'docx', 'pptx', 'txt', 'md', 'html']),
-  video: new Set(['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm', 'flv']),
-  audio: new Set(['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma']),
+  [AssetType.Document]: new Set(['pdf', 'doc', 'docx', 'pptx', 'txt', 'md', 'html']),
+  [AssetType.Video]: new Set(['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm', 'flv']),
+  [AssetType.Audio]: new Set(['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma']),
 };
 
 export function inferAssetType(extensions: string[]): AssetType | null {
@@ -117,19 +117,19 @@ export interface Asset {
 
 // Discriminated unions narrowing Asset by type
 export interface FileAsset extends Asset {
-  type: 'image' | 'document' | 'other';
+  type: 'IMAGE' | 'DOCUMENT' | 'OTHER';
   storageKey: string;
   meta: FileAssetMeta;
 }
 
 export interface MediaAsset extends Asset {
-  type: 'video' | 'audio';
+  type: 'VIDEO' | 'AUDIO';
   storageKey: string;
   meta: MediaAssetMeta;
 }
 
 export interface LinkAsset extends Asset {
-  type: 'link';
+  type: 'LINK';
   storageKey: null;
   meta: LinkAssetMeta;
 }
