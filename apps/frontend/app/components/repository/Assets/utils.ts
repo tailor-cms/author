@@ -1,6 +1,10 @@
 import { AssetType } from '@tailor-cms/interfaces/asset';
 import { detectLinkProvider } from '@tailor-cms/common/asset';
-import { ASSET_TYPE_COLOR, ASSET_TYPE_ICON } from '@tailor-cms/core-components';
+import {
+  ASSET_TYPE_COLOR,
+  ASSET_TYPE_ICON,
+  ASSET_TYPE_LABEL,
+} from '@tailor-cms/core-components';
 
 export {
   ASSET_TYPE_COLOR,
@@ -61,7 +65,7 @@ export function detectProvider(
 }
 
 export function getAssetIcon(asset: { type?: string; meta?: any } | null): string {
-  const DEFAULT_ICON = ASSET_TYPE_ICON.other!;
+  const DEFAULT_ICON = ASSET_TYPE_ICON[AssetType.Other];
   if (!asset) return DEFAULT_ICON;
   const provider = detectProvider(asset);
   if (provider) return PROVIDER_ICONS[provider] ?? DEFAULT_ICON;
@@ -73,7 +77,7 @@ export function getAssetIcon(asset: { type?: string; meta?: any } | null): strin
 }
 
 export function getAssetColor(asset: { type?: string; meta?: any } | null): string {
-  const DEFAULT_COLOR = ASSET_TYPE_COLOR.other!;
+  const DEFAULT_COLOR = ASSET_TYPE_COLOR[AssetType.Other];
   if (!asset) return DEFAULT_COLOR;
   const provider = detectProvider(asset);
   if (provider) return PROVIDER_COLORS[provider] ?? DEFAULT_COLOR;
@@ -92,7 +96,8 @@ export function getAssetTypeLabel(asset: { type?: string; meta?: any }): string 
     if (ct === AssetType.Audio) return 'Audio Link';
     if (ct === AssetType.Document) return 'Document Link';
   }
-  return ASSET_TYPE_LABEL[asset.type ?? AssetType.Other] ?? ASSET_TYPE_LABEL.OTHER;
+  const type = asset.type || AssetType.Other;
+  return ASSET_TYPE_LABEL[type] ?? type;
 }
 
 const ALWAYS_INDEXABLE = new Set<string>([AssetType.Document, AssetType.Link]);

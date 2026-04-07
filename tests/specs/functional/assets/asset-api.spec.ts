@@ -14,7 +14,7 @@ test.describe('Asset API', () => {
     const list = await AssetClient.list(repositoryId);
     expect(list.status).toBe(200);
     expect(list.data.items.length).toBe(1);
-    expect(list.data.items[0].type).toBe('image');
+    expect(list.data.items[0].type).toBe('IMAGE');
     expect(list.data.items[0].name).toContain(IMAGE.name);
   });
 
@@ -24,7 +24,7 @@ test.describe('Asset API', () => {
     expect(add.status).toBe(200);
     const list = await AssetClient.list(repositoryId);
     expect(list.data.items.length).toBe(1);
-    expect(list.data.items[0].type).toBe('link');
+    expect(list.data.items[0].type).toBe('LINK');
   });
 
   test('can update asset meta', async () => {
@@ -100,7 +100,7 @@ test.describe('Asset API', () => {
     }
     const { data: { items } } = await AssetClient.list(repositoryId);
     const types = items.map((a: any) => a.type).sort();
-    expect(types).toEqual(['audio', 'document', 'image', 'video']);
+    expect(types).toEqual(['AUDIO', 'DOCUMENT', 'IMAGE', 'VIDEO']);
   });
 
   test('link import extracts OG metadata', async () => {
@@ -109,7 +109,7 @@ test.describe('Asset API', () => {
       repositoryId, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     );
     expect(add.status).toBe(200);
-    expect(add.data.type).toBe('link');
+    expect(add.data.type).toBe('LINK');
     expect(add.data.meta.provider).toBe('youtube');
     expect(add.data.meta.url).toContain('youtube.com');
   });

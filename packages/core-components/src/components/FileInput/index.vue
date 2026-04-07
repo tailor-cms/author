@@ -150,14 +150,14 @@ const resolvedLabel = computed(
   () =>
     props.label ||
     (category.value && ASSET_TYPE_LABEL[category.value]) ||
-    ASSET_TYPE_LABEL.OTHER,
+    ASSET_TYPE_LABEL[AssetType.Other],
 );
 
 const resolvedIcon = computed(
   () =>
     props.icon ||
     (category.value && ASSET_TYPE_ICON[category.value]) ||
-    ASSET_TYPE_ICON.OTHER,
+    ASSET_TYPE_ICON[AssetType.Other],
 );
 
 const emptyLabel = computed(() => {
