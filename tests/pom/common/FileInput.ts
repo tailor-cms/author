@@ -28,11 +28,10 @@ export class FileInput {
   async download(fileName: string) {
     const downloadBtn = this.getPreview(fileName)
       .getByRole('button', { name: 'Download file' });
-    const [popup] = await Promise.all([
-      this.page.waitForEvent('popup'),
+    const [download] = await Promise.all([
+      this.page.waitForEvent('download'),
       downloadBtn.click(),
     ]);
-    expect(popup.url()).toBeTruthy();
-    return popup;
+    return download;
   }
 }
