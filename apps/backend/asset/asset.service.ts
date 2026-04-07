@@ -33,7 +33,7 @@ const { Asset, User } = db;
 
 const logger = createLogger('asset:svc');
 
-const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf']);
+const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf', 'data']);
 
 // Sequelize WHERE fragments for video-provider link classification.
 // Link assets with YouTube/Vimeo/Dailymotion URLs are shown under
@@ -54,27 +54,6 @@ export const UPLOADER_INCLUDE = {
   model: User,
   as: 'uploader',
   attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl'],
-};
-
-const logger = createLogger('asset');
-
-const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf', 'data']);
-const MIME_CATEGORY_MAP: Record<string, string[]> = {
-  [AssetType.Image]: ['image/'],
-  [AssetType.Video]: ['video/'],
-  [AssetType.Audio]: ['audio/'],
-  [AssetType.Document]: [
-    'application/pdf',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument',
-    'application/vnd.ms-excel',
-    'application/vnd.ms-powerpoint',
-    'text/plain',
-    'text/csv',
-    'text/markdown',
-    'text/html',
-    'application/rtf',
-  ],
 };
 
 /** Wraps an async fn so it logs warnings instead of throwing. */

@@ -1,10 +1,5 @@
 import type { Model, ModelStatic } from 'sequelize';
-import type {
-  Asset as AssetAttributes,
-  FileAsset as FileAssetAttrs,
-  LinkAsset as LinkAssetAttrs,
-  MediaAsset as MediaAssetAttrs,
-} from '@tailor-cms/interfaces/asset.ts';
+import type { Asset as AssetAttributes } from '@tailor-cms/interfaces/asset.ts';
 
 export type { AssetAttributes };
 export {

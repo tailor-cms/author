@@ -128,19 +128,19 @@ export interface Asset {
 
 // Discriminated unions narrowing Asset by type
 export interface FileAsset extends Asset {
-  type: 'image' | 'document' | 'other';
+  type: 'IMAGE' | 'DOCUMENT' | 'OTHER';
   storageKey: string;
   meta: FileAssetMeta;
 }
 
 export interface MediaAsset extends Asset {
-  type: 'video' | 'audio';
+  type: 'VIDEO' | 'AUDIO';
   storageKey: string;
   meta: MediaAssetMeta;
 }
 
 export interface LinkAsset extends Asset {
-  type: 'link';
+  type: 'LINK';
   storageKey: null;
   meta: LinkAssetMeta;
 }
