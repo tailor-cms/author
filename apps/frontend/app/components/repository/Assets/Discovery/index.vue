@@ -140,7 +140,6 @@ async function search() {
   }
 }
 
-
 function clearTopic() {
   selectedTopic.value = null;
   query.value = '';
