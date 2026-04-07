@@ -41,7 +41,6 @@ const emit = defineEmits<{
 
 <style lang="scss" scoped>
 .topic-list {
-  max-height: 30rem;
   overflow-y: auto;
 }
 

@@ -3,8 +3,9 @@
     <VMenu
       v-model="isOpen"
       :close-on-content-click="false"
-      max-height="400"
-      min-width="420"
+      offset="2"
+      max-height="600"
+      min-width="480"
     >
       <template #activator="{ props: menuProps }">
         <VBtn

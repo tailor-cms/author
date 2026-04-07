@@ -29,17 +29,6 @@
         Select all
       </VBtn>
       <VBtn
-        v-for="it in bulkImportTypes"
-        :key="it.value"
-        :prepend-icon="it.icon"
-        color="primary-lighten-3"
-        size="small"
-        variant="text"
-        @click="emit('select:type', it.value as ContentType)"
-      >
-        All {{ it.label.toLowerCase() }}
-      </VBtn>
-      <VBtn
         v-if="selectedUrls.size"
         color="primary-lighten-3"
         prepend-icon="mdi-close-circle-outline"
@@ -83,17 +72,9 @@
 </template>
 
 <script lang="ts" setup>
-import type {
-  ContentType,
-  DiscoveryResult,
-} from '@tailor-cms/interfaces/discovery';
+import type { DiscoveryResult } from '@tailor-cms/interfaces/discovery';
 
 import SearchResult from './SearchResult/index.vue';
-
-const BULK_TYPES: { label: string; value: ContentType; icon: string }[] = [
-  { label: 'images', value: 'image', icon: 'mdi-image-outline' },
-  { label: 'videos', value: 'video', icon: 'mdi-video-outline' },
-];
 
 const ITEMS_PER_PAGE = 20;
 
@@ -110,17 +91,8 @@ const emit = defineEmits<{
   'result:toggle': [url: string];
   'select:all': [];
   'select:clear': [];
-  'select:type': [type: ContentType];
   'search:cancel': [];
 }>();
-
-const bulkImportTypes = computed(() => {
-  const counts = new Map<string, number>();
-  props.suggestions.forEach((s) => {
-    counts.set(s.type, (counts.get(s.type) || 0) + 1);
-  });
-  return BULK_TYPES.filter((it) => (counts.get(it.value) || 0) > 0);
-});
 
 const totalPages = computed(() =>
   Math.ceil(props.suggestions.length / ITEMS_PER_PAGE),

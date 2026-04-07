@@ -29,7 +29,7 @@
               v-model="selectedTopic"
               class="mb-4"
               @topic:select="onTopicSelect"
-              @topic:clear="selectedTopic = null"
+              @topic:clear="clearTopic"
             />
             <SearchBar
               v-model:query="query"
@@ -60,7 +60,7 @@
               @result:toggle="toggleSuggestion"
               @select:all="selectAll"
               @select:clear="selectedUrls.clear()"
-              @select:type="selectByType"
+
               @search:cancel="isSearching = false"
             />
           </VCol>
@@ -73,7 +73,6 @@
 <script lang="ts" setup>
 import type {
   ContentFilter,
-  ContentType,
   DiscoveryResult,
 } from '@tailor-cms/interfaces/discovery';
 
@@ -152,6 +151,13 @@ function onTopicSelect(topic: TopicItem) {
   search();
 }
 
+function clearTopic() {
+  selectedTopic.value = null;
+  query.value = '';
+  suggestions.value = [];
+  hasSearched.value = false;
+}
+
 function toggleSuggestion(url: string) {
   if (selectedUrls.has(url)) selectedUrls.delete(url);
   else selectedUrls.add(url);
@@ -159,12 +165,6 @@ function toggleSuggestion(url: string) {
 
 function selectAll() {
   suggestions.value.forEach((s) => selectedUrls.add(s.url));
-}
-
-function selectByType(type: ContentType) {
-  suggestions.value
-    .filter((s) => s.type === type)
-    .forEach((s) => selectedUrls.add(s.url));
 }
 
 function toImportMeta(result?: DiscoveryResult) {
