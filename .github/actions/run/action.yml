@@ -46,7 +46,7 @@ runs:
       if [ "${{ inputs.skip-build }}" = "true" ]; then
         SETUP_FLAGS="$SETUP_FLAGS --skip-build"
       fi
-      pnpm setup:dev $SETUP_FLAGS
+      node ./scripts/setup/index.js $SETUP_FLAGS
   - name: Migrate DB
     shell: bash
     run: pnpm db:migrate
