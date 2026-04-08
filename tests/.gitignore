@@ -2,7 +2,7 @@ node_modules/
 
 # Playwright
 /test-results/
-/test-durations.json
+/test-durations*.json
 /playwright-report/
 /playwright/.cache/
 # State storage

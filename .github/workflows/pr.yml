@@ -187,7 +187,7 @@ jobs:
         shell: bash
         run: |
           PWTEST_SHARD_WEIGHTS=${{ steps.weights.outputs.value }} \
-          PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations.json \
+          PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
           pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=json,html
       - name: Run a11y tests
         shell: bash
@@ -204,7 +204,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: e2e-durations-${{ matrix.shardIndex }}
-          path: tests/test-durations.json
+          path: tests/test-durations-${{ matrix.shardIndex }}.json
           retention-days: 1
       - name: Upload test report
         if: ${{ !cancelled() }}
