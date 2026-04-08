@@ -44,11 +44,13 @@ function extractDurations(reportsDir) {
   return durations;
 }
 
+// Only keeps files present in the current run — stale entries
+// from renamed/deleted specs are automatically pruned.
 function applyEMA(previous, current) {
-  const merged = { ...previous };
+  const merged = {};
   for (const [file, duration] of Object.entries(current)) {
-    merged[file] = file in merged
-      ? Math.round(merged[file] * EMA_DECAY + duration * (1 - EMA_DECAY))
+    merged[file] = file in previous
+      ? Math.round(previous[file] * EMA_DECAY + duration * (1 - EMA_DECAY))
       : duration;
   }
   return merged;
