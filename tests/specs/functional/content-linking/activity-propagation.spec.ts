@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import {
+  outlineLevel,
   outlineSeed,
   seedLinkedRepositories,
   toEmptyRepository,
