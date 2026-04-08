@@ -69,9 +69,10 @@
 </template>
 
 <script lang="ts" setup>
-import type {
+import {
   ContentFilter,
-  DiscoveryResult,
+  ContentType,
+  type DiscoveryResult,
 } from '@tailor-cms/interfaces/discovery';
 
 import api from '@/api/repositoryAsset';
@@ -86,7 +87,9 @@ import { useOutlineTree } from './TopicPicker/useOutlineTree';
 const FETCH_COUNT = 100;
 const MAX_QUERY_WORDS = 15;
 const DOWNLOADABLE_TYPES = new Set([
-  'image', 'pdf', 'video', 'audio',
+  ContentType.Image,
+  ContentType.Pdf,
+  ContentType.Video,
 ]);
 
 const show = defineModel<boolean>({ default: false });
@@ -99,7 +102,7 @@ const repositoryId = computed(
 );
 
 const query = ref('');
-const contentFilter = ref<ContentFilter>('all');
+const contentFilter = ref<ContentFilter>(ContentFilter.All);
 const selectedTopic = ref<TopicItem | null>(null);
 
 const { hasOutline } = useOutlineTree();
@@ -208,7 +211,7 @@ async function addSelected(shouldIndex = false) {
 watch(show, (v) => {
   if (!v) return;
   query.value = '';
-  contentFilter.value = 'all';
+  contentFilter.value = ContentFilter.All;
   suggestions.value = [];
   selectedUrls.clear();
   hasSearched.value = false;

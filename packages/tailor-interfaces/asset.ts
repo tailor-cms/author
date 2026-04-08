@@ -54,7 +54,7 @@ export interface LinkAssetMeta extends AssetMetaBase {
   ogType?: string;
   source?: AssetSource;
   // What kind of content the link points to (video, image, document, etc.)
-  contentType?: 'VIDEO' | 'IMAGE' | 'DOCUMENT' | 'AUDIO' | 'article' | 'OTHER';
+  contentType?: 'VIDEO' | 'IMAGE' | 'DOCUMENT' | 'AUDIO' | 'ARTICLE' | 'OTHER';
   // Known provider for provider-specific UI (youtube, vimeo, spotify, etc.)
   provider?: string;
 }
