@@ -74,8 +74,8 @@ export class Comments {
 
   getComment(content?: string) {
     const element = content
-      ? this.thread.locator(Comment.selector, { hasText: content })
-      : this.thread.locator(Comment.selector).first();
+      ? this.el.locator(Comment.selector, { hasText: content })
+      : this.el.locator(Comment.selector).first();
     return new Comment(this.page, element);
   }
 }
