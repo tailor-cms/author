@@ -66,6 +66,43 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
+function formatDuration(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = Math.round(seconds % 60);
+  return m > 0 ? `${m}m${s}s` : `${s}s`;
+}
+
+// Diagnostic report via stderr — keeps stdout clean for the weights
+// value captured by the CI workflow ($WEIGHTS=$(node ...)).
+function logReport(durations, weights, shardTotal) {
+  const maxDuration = Math.max(...durations.values());
+  const minDuration = Math.min(...durations.values());
+  const spread = maxDuration - minDuration;
+
+  console.error('--- Shard weight computation ---');
+  console.error(`  Runs in history: ${runs.length}`);
+  console.error(`  Spread: ${formatDuration(spread)}`);
+  console.error('');
+  console.error('  Shard  Avg duration  Weight  Delta');
+  for (let i = 0; i < shardTotal; i++) {
+    const duration = durations.get(i + 1) || 0;
+    const weight = weights[i];
+    const delta = weight - NEUTRAL_WEIGHT;
+    const sign = delta > 0 ? '+' : delta < 0 ? '' : ' ';
+    console.error(
+      `  ${String(i + 1).padStart(5)}`
+      + `  ${formatDuration(duration).padStart(12)}`
+      + `  ${String(weight).padStart(6)}`
+      + `  ${(sign + delta).padStart(5)}`,
+    );
+  }
+  console.error('');
+  console.error(`  Output: ${weights.join(':')}`);
+  console.error('-------------------------------');
+}
+
+// --- Main ------------------------------------------------------------------
+
 const [durationsPath, shardTotalStr] = process.argv.slice(2);
 if (!durationsPath || !shardTotalStr) process.exit(0);
 
@@ -77,4 +114,5 @@ const durations = averageDurations(runs, shardTotal);
 const weights = computeWeights(durations, shardTotal);
 if (!weights) process.exit(0);
 
+logReport(durations, weights, shardTotal);
 process.stdout.write(weights.join(':'));
