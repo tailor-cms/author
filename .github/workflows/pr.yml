@@ -31,15 +31,10 @@ jobs:
         uses: hoverkraft-tech/compose-action@v2.0.1
         with:
           compose-file: docker-compose.yaml
-      - name: Wait for service to start
-        shell: bash
-        run: sleep 30
       - name: Health check
-        uses: indiesdev/curl@v1.1
-        with:
-          url: http://localhost:3000/api/healthcheck
-          method: "GET"
-          accept: 200
+        shell: bash
+        run: |
+          timeout 60 bash -c 'until curl -sf http://localhost:3000/api/healthcheck > /dev/null 2>&1; do sleep 2; done'
   build:
     runs-on: ubuntu-latest
     steps:
@@ -73,39 +68,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:15.1
-        env:
-          POSTGRES_DB: tailor_dev
-          POSTGRES_USER: dev
-          POSTGRES_PASSWORD: dev
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
       redis:
         image: redis:7.4.0
         ports:
           - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      localstack:
-        image: localstack/localstack:4.14.0
-        env:
-          SERVICES: s3
-        ports:
-          - 4566:4566
-        options: >-
-          --health-cmd "curl -sf http://localhost:4566/_localstack/health || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 3
     strategy:
       fail-fast: false
       matrix:
@@ -146,7 +117,7 @@ jobs:
           STORAGE_ENDPOINT=http://localhost:4566
           STORAGE_BUCKET=test
           STORAGE_KEY=test
-          STORAGE_SECRET=test
+          STORAGE_SECRET=test1234
           EOF
       - name: Setup E2E .env
         shell: bash
@@ -163,6 +134,26 @@ jobs:
           OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}
           OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}
           EOF
+      - name: Start PostgreSQL
+        shell: bash
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "CREATE USER dev WITH PASSWORD 'dev' SUPERUSER CREATEDB;"
+          sudo -u postgres createdb -O dev tailor_dev
+      - name: Start MinIO
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test1234
+          AWS_DEFAULT_REGION: us-east-1
+        run: |
+          docker run -d --name minio \
+            -p 4566:9000 \
+            -e MINIO_ROOT_USER=test \
+            -e MINIO_ROOT_PASSWORD=test1234 \
+            minio/minio server /data
+          timeout 30 bash -c 'until curl -sf http://localhost:4566/minio/health/live > /dev/null 2>&1; do sleep 1; done'
+          aws --endpoint-url http://localhost:4566 s3 mb s3://test
       - name: Restore build output
         uses: actions/cache/restore@v4
         with:
@@ -183,7 +174,7 @@ jobs:
         # Shard weights: higher = more tests assigned (inverse of duration)
         # Tune via Speedboard (HTML report) after runs
         run: |
-          PWTEST_SHARD_WEIGHTS=2:2:2:2:2:2:2:2:2:3:2:3 \
+          PWTEST_SHARD_WEIGHTS=2:2:2:1:1:2:2:2:2:2:1:4 \
           pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
         shell: bash
