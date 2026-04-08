@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 
-import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
+import { ContentType } from '@tailor-cms/interfaces/discovery.ts';
 import { detectLinkProvider } from '@tailor-cms/common/asset';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
@@ -33,7 +33,10 @@ const { Asset, User } = db;
 
 const logger = createLogger('asset:svc');
 
-const DOWNLOADABLE_TYPES: Set<ContentType> = new Set(['image', 'pdf']);
+const DOWNLOADABLE_TYPES: Set<ContentType> = new Set([
+  ContentType.Image,
+  ContentType.Pdf,
+]);
 
 // Sequelize WHERE fragments for video-provider link classification.
 // Link assets with YouTube/Vimeo/Dailymotion URLs are shown under

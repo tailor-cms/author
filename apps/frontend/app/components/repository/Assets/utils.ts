@@ -4,14 +4,10 @@ import {
   ASSET_TYPE_COLOR,
   ASSET_TYPE_ICON,
   ASSET_TYPE_LABEL,
-} from '@tailor-cms/core-components';
-
-export {
-  ASSET_TYPE_COLOR,
-  ASSET_TYPE_ICON,
-  ASSET_TYPE_LABEL,
   formatFileSize,
 } from '@tailor-cms/core-components';
+
+export { ASSET_TYPE_COLOR, ASSET_TYPE_ICON, ASSET_TYPE_LABEL, formatFileSize };
 
 const UUID_PREFIX_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}__/i;
@@ -65,7 +61,7 @@ export function detectProvider(
 }
 
 export function getAssetIcon(asset: { type?: string; meta?: any } | null): string {
-  const DEFAULT_ICON = ASSET_TYPE_ICON[AssetType.Other];
+  const DEFAULT_ICON = ASSET_TYPE_ICON[AssetType.Other]!;
   if (!asset) return DEFAULT_ICON;
   const provider = detectProvider(asset);
   if (provider) return PROVIDER_ICONS[provider] ?? DEFAULT_ICON;
@@ -77,7 +73,7 @@ export function getAssetIcon(asset: { type?: string; meta?: any } | null): strin
 }
 
 export function getAssetColor(asset: { type?: string; meta?: any } | null): string {
-  const DEFAULT_COLOR = ASSET_TYPE_COLOR[AssetType.Other];
+  const DEFAULT_COLOR = ASSET_TYPE_COLOR[AssetType.Other]!;
   if (!asset) return DEFAULT_COLOR;
   const provider = detectProvider(asset);
   if (provider) return PROVIDER_COLORS[provider] ?? DEFAULT_COLOR;

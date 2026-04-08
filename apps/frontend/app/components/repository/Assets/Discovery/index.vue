@@ -60,9 +60,10 @@
 </template>
 
 <script lang="ts" setup>
-import type {
-  ContentFilter,
-  DiscoveryResult,
+import {
+  ContentType,
+  type ContentFilter,
+  type DiscoveryResult,
 } from '@tailor-cms/interfaces/discovery';
 
 import api from '@/api/repositoryAsset';
@@ -71,7 +72,12 @@ import SearchBar from './SearchBar.vue';
 import SearchResults from './SearchResults/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const DOWNLOADABLE_TYPES = new Set(['image', 'pdf', 'video', 'audio']);
+const DOWNLOADABLE_TYPES = new Set([
+  ContentType.Image,
+  ContentType.Pdf,
+  ContentType.Video,
+  ContentType.Audio,
+]);
 const FETCH_COUNT = 100;
 
 const show = defineModel<boolean>({ default: false });
