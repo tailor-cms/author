@@ -75,7 +75,7 @@ import FilePreview from './FilePreview.vue';
 import PickerDialog from './PickerDialog/index.vue';
 import { useUpload } from '../../composables/useUpload';
 
-import { ASSET_TYPE_ICON, ASSET_TYPE_LABEL } from '#config';
+import { getAssetIcon, getAssetLabel } from '#utils';
 import type { VTextField } from 'vuetify/components';
 
 defineOptions({ inheritAttrs: false });
@@ -147,22 +147,16 @@ const resolvedFileKey = computed(
 const category = computed(() => inferAssetType(props.allowedExtensions));
 
 const resolvedLabel = computed(
-  () =>
-    props.label ||
-    (category.value && ASSET_TYPE_LABEL[category.value]) ||
-    ASSET_TYPE_LABEL[AssetType.Other],
+  () => props.label || getAssetLabel(category.value),
 );
 
 const resolvedIcon = computed(
-  () =>
-    props.icon ||
-    (category.value && ASSET_TYPE_ICON[category.value]) ||
-    ASSET_TYPE_ICON[AssetType.Other],
+  () => props.icon || getAssetIcon(category.value),
 );
 
 const emptyLabel = computed(() => {
   const cat = category.value;
-  if (cat) return `Choose ${ASSET_TYPE_LABEL[cat].toLowerCase()}`;
+  if (cat) return `Choose ${getAssetLabel(cat).toLowerCase()}`;
   return 'Choose file';
 });
 

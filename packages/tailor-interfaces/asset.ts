@@ -65,6 +65,7 @@ export interface LinkAssetMeta extends AssetMetaBase {
   siteName?: string;
   ogType?: string;
   source?: AssetSource;
+  // What kind of content the link points to (video, image, document, etc.)
   contentType?: LinkContentType;
   // Known provider for provider-specific UI (youtube, vimeo, spotify, etc.)
   provider?: string;

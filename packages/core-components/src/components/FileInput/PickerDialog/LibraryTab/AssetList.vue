@@ -30,7 +30,7 @@
           size="52"
         >
           <VIcon
-            :icon="getIcon(asset.type)"
+            :icon="getAssetIcon(asset.type)"
             color="primary-darken-2"
             size="26"
           />
@@ -76,8 +76,7 @@ import {
   type Asset,
   type FileAssetMeta,
 } from '@tailor-cms/interfaces/asset.ts';
-import { ASSET_TYPE_ICON } from '#config';
-import { formatFileSize } from '#utils';
+import { getAssetIcon, formatFileSize } from '#utils';
 
 const props = defineProps<{
   assets: Asset[];
@@ -105,9 +104,6 @@ const isCompatible = (asset: Asset): boolean => {
   if (!ext) return true;
   return allowedExtensionsSet.value.has(ext);
 };
-
-const getIcon = (type: string) =>
-  ASSET_TYPE_ICON[type] ?? ASSET_TYPE_ICON[AssetType.Other];
 
 const onSelect = ({ id }: { id: unknown }) => emit('select', id as number);
 </script>
