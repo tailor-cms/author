@@ -180,8 +180,11 @@ jobs:
           skip-services: 'true'
       - name: Run functional tests
         shell: bash
-        # Tune weights via Speedboard (HTML report) after runs
-        run: pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        # Shard weights: higher = more tests assigned (inverse of duration)
+        # Tune via Speedboard (HTML report) after runs
+        run: |
+          PWTEST_SHARD_WEIGHTS=2:2:3:1:1:1:2:2:3:6:2:6 \
+          pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
         shell: bash
         run: |
