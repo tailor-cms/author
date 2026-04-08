@@ -109,8 +109,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        shardTotal: [10]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        shardTotal: [12]
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -180,11 +180,8 @@ jobs:
           skip-services: 'true'
       - name: Run functional tests
         shell: bash
-        # Weights: inverse of measured shard durations to balance wall time
-        # Tune via Speedboard (HTML report) after runs
-        run: |
-          PWTEST_SHARD_WEIGHTS=3:2:4:2:3:1:5:3:2:10 \
-          pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        # Tune weights via Speedboard (HTML report) after runs
+        run: pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
         shell: bash
         run: |
