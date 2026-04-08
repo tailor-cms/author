@@ -228,6 +228,13 @@ jobs:
             echo "E2E tests failed"
             exit 1
           fi
+      - name: Restore previous duration history
+        if: always()
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/shard-durations.json
+          key: e2e-durations-${{ runner.os }}
+          restore-keys: e2e-durations-
       - name: Download shard durations
         if: always()
         uses: actions/download-artifact@v4
@@ -235,16 +242,15 @@ jobs:
           path: /tmp/durations
           pattern: e2e-duration-*
           merge-multiple: true
-      - name: Cache durations for next run
+      - name: Checkout
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: tests/scripts
+      - name: Merge shard durations
         if: always()
         shell: bash
-        run: |
-          node --input-type=module -e "
-            import { readdirSync, readFileSync, writeFileSync } from 'fs';
-            const files = readdirSync('/tmp/durations').filter(f => f.endsWith('.json'));
-            const data = files.map(f => JSON.parse(readFileSync('/tmp/durations/' + f)));
-            writeFileSync('/tmp/shard-durations.json', JSON.stringify(data));
-          "
+        run: node tests/scripts/merge-shard-durations.js /tmp/durations /tmp/shard-durations.json
       - if: always()
         uses: actions/cache/save@v4
         with:
