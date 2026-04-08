@@ -169,27 +169,49 @@ jobs:
         with:
           skip-build: 'true'
           skip-services: 'true'
+      - name: Restore shard durations
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/shard-durations.json
+          key: e2e-durations-${{ runner.os }}
+          restore-keys: e2e-durations-
+      - name: Compute shard weights
+        id: weights
+        shell: bash
+        run: |
+          WEIGHTS=$(node tests/scripts/compute-shard-weights.js /tmp/shard-durations.json ${{ matrix.shardTotal }})
+          echo "value=$WEIGHTS" >> "$GITHUB_OUTPUT"
       - name: Run functional tests
         shell: bash
-        # Shard weights: higher = more tests assigned (inverse of duration)
-        # Tune via Speedboard (HTML report) after runs
         run: |
-          PWTEST_SHARD_WEIGHTS=3:3:3:3:3:2:3:3:2:3:3:3 \
+          PWTEST_SHARD_WEIGHTS=${{ steps.weights.outputs.value }} \
           pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run a11y tests
+        shell: bash
+        run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
+        if: github.event_name == 'push'
         shell: bash
         run: |
           PERCY_PARALLEL_TOTAL=${{ matrix.shardTotal }} \
           PERCY_PARALLEL_NONCE=${{ github.run_id }} \
           pnpm e2e:visual --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Run a11y tests
+      - name: Record shard duration
+        if: always()
         shell: bash
-        run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Upload test report
+        run: echo '{"shard":${{ matrix.shardIndex }},"duration":'$SECONDS'}' > /tmp/shard-${{ matrix.shardIndex }}.json
+      - name: Upload shard duration
+        if: always()
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
         with:
-          name: playwright-report-${{ matrix.shardIndex }}
+          name: e2e-duration-${{ matrix.shardIndex }}
+          path: /tmp/shard-${{ matrix.shardIndex }}.json
+          retention-days: 1
+      - name: Upload test report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report-${{ matrix.shardIndex }}
           path: ./tests/playwright-report/
           retention-days: 1
   # Stable check name for branch protection - doesn't change when shard count
@@ -206,3 +228,25 @@ jobs:
             echo "E2E tests failed"
             exit 1
           fi
+      - name: Download shard durations
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          path: /tmp/durations
+          pattern: e2e-duration-*
+          merge-multiple: true
+      - name: Cache durations for next run
+        if: always()
+        shell: bash
+        run: |
+          node --input-type=module -e "
+            import { readdirSync, readFileSync, writeFileSync } from 'fs';
+            const files = readdirSync('/tmp/durations').filter(f => f.endsWith('.json'));
+            const data = files.map(f => JSON.parse(readFileSync('/tmp/durations/' + f)));
+            writeFileSync('/tmp/shard-durations.json', JSON.stringify(data));
+          "
+      - if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/shard-durations.json
+          key: e2e-durations-${{ runner.os }}-${{ github.run_id }}
