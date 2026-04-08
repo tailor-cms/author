@@ -174,7 +174,7 @@ jobs:
         # Shard weights: higher = more tests assigned (inverse of duration)
         # Tune via Speedboard (HTML report) after runs
         run: |
-          PWTEST_SHARD_WEIGHTS=2:2:2:1:1:2:2:2:2:2:1:4 \
+          PWTEST_SHARD_WEIGHTS=3:3:3:3:3:2:3:3:2:3:3:3 \
           pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
         shell: bash
