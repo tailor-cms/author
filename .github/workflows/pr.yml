@@ -171,26 +171,24 @@ jobs:
         with:
           skip-build: 'true'
           skip-services: 'true'
-      - name: Restore shard durations
+      - name: Restore file durations
         uses: actions/cache/restore@v4
         with:
-          path: /tmp/shard-durations.json
-          key: e2e-durations-${{ runner.os }}
-          restore-keys: e2e-durations-
+          path: /tmp/file-durations.json
+          key: e2e-file-durations-${{ runner.os }}
+          restore-keys: e2e-file-durations-
       - name: Compute shard weights
         id: weights
         shell: bash
         run: |
-          WEIGHTS=$(node tests/scripts/compute-shard-weights.js /tmp/shard-durations.json ${{ matrix.shardTotal }})
+          WEIGHTS=$(node tests/scripts/compute-shard-weights.js /tmp/file-durations.json ${{ matrix.shardTotal }})
           echo "value=$WEIGHTS" >> "$GITHUB_OUTPUT"
       - name: Run functional tests
-        id: functional
         shell: bash
         run: |
-          START=$SECONDS
           PWTEST_SHARD_WEIGHTS=${{ steps.weights.outputs.value }} \
-          pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-          echo "duration=$(( SECONDS - START ))" >> "$GITHUB_OUTPUT"
+          PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations.json \
+          pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=json,html
       - name: Run a11y tests
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
@@ -201,16 +199,12 @@ jobs:
           PERCY_PARALLEL_TOTAL=${{ matrix.shardTotal }} \
           PERCY_PARALLEL_NONCE=${{ github.run_id }} \
           pnpm e2e:visual --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Record shard duration
-        if: always()
-        shell: bash
-        run: echo '{"shard":${{ matrix.shardIndex }},"duration":${{ steps.functional.outputs.duration || 0 }}}' > /tmp/shard-${{ matrix.shardIndex }}.json
-      - name: Upload shard duration
+      - name: Upload file durations
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-duration-${{ matrix.shardIndex }}
-          path: /tmp/shard-${{ matrix.shardIndex }}.json
+          name: e2e-durations-${{ matrix.shardIndex }}
+          path: tests/test-durations.json
           retention-days: 1
       - name: Upload test report
         if: ${{ !cancelled() }}
@@ -233,31 +227,34 @@ jobs:
             echo "E2E tests failed"
             exit 1
           fi
-      - name: Restore previous duration history
+      - name: Restore previous durations
         if: always()
         uses: actions/cache/restore@v4
         with:
-          path: /tmp/shard-durations.json
-          key: e2e-durations-${{ runner.os }}
-          restore-keys: e2e-durations-
-      - name: Download shard durations
+          path: /tmp/file-durations.json
+          key: e2e-file-durations-${{ runner.os }}
+          restore-keys: e2e-file-durations-
+      - name: Download shard reports
         if: always()
         uses: actions/download-artifact@v4
         with:
           path: /tmp/durations
-          pattern: e2e-duration-*
+          pattern: e2e-durations-*
           merge-multiple: true
       - name: Checkout
         if: always()
         uses: actions/checkout@v4
         with:
           sparse-checkout: tests/scripts
-      - name: Merge shard durations
+      - name: Merge file durations
         if: always()
         shell: bash
-        run: node tests/scripts/merge-shard-durations.js /tmp/durations /tmp/shard-durations.json
-      - if: always()
+        run: >-
+          node tests/scripts/merge-file-durations.js
+          /tmp/durations /tmp/file-durations.json /tmp/file-durations.json
+      - name: Cache file durations
+        if: always()
         uses: actions/cache/save@v4
         with:
-          path: /tmp/shard-durations.json
-          key: e2e-durations-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/file-durations.json
+          key: e2e-file-durations-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
