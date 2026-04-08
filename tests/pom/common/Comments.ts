@@ -37,12 +37,11 @@ export class Comment {
 
   async edit(content: string) {
     await this.toggleEdit();
-    const input = this.page.locator('.comment-editor textarea')
-      .locator('visible=true');
-    const saveBtn = this.page.getByRole('button', { name: 'Save' });
-    await input.fill(content);
-    await saveBtn.click();
-    await expect(this.page.getByText(content)).toBeVisible();
+    const editor = this.el.locator('.comment-editor');
+    await expect(editor).toBeVisible();
+    await editor.locator('textarea').fill(content);
+    await this.el.getByRole('button', { name: 'Save' }).click();
+    await expect(this.el.getByText(content)).toBeVisible();
   }
 
   async remove() {
@@ -75,8 +74,8 @@ export class Comments {
 
   getComment(content?: string) {
     const element = content
-      ? this.page.locator(Comment.selector, { hasText: content })
-      : this.page.locator(Comment.selector).first();
+      ? this.thread.locator(Comment.selector, { hasText: content })
+      : this.thread.locator(Comment.selector).first();
     return new Comment(this.page, element);
   }
 }
