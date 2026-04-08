@@ -184,10 +184,13 @@ jobs:
           WEIGHTS=$(node tests/scripts/compute-shard-weights.js /tmp/shard-durations.json ${{ matrix.shardTotal }})
           echo "value=$WEIGHTS" >> "$GITHUB_OUTPUT"
       - name: Run functional tests
+        id: functional
         shell: bash
         run: |
+          START=$SECONDS
           PWTEST_SHARD_WEIGHTS=${{ steps.weights.outputs.value }} \
           pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          echo "duration=$(( SECONDS - START ))" >> "$GITHUB_OUTPUT"
       - name: Run a11y tests
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
@@ -201,7 +204,7 @@ jobs:
       - name: Record shard duration
         if: always()
         shell: bash
-        run: echo '{"shard":${{ matrix.shardIndex }},"duration":'$SECONDS'}' > /tmp/shard-${{ matrix.shardIndex }}.json
+        run: echo '{"shard":${{ matrix.shardIndex }},"duration":${{ steps.functional.outputs.duration || 0 }}}' > /tmp/shard-${{ matrix.shardIndex }}.json
       - name: Upload shard duration
         if: always()
         uses: actions/upload-artifact@v4
