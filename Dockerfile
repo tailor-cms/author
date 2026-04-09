@@ -35,4 +35,4 @@ COPY --chown=node:node --from=builder /tailor/apps/backend/node_modules/@tailor-
 USER node
 WORKDIR /tailor/apps/backend
 EXPOSE ${PORT}
-CMD ["pnpm", "start:docker"]
+CMD ["node", "./index.ts"]
