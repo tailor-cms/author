@@ -194,13 +194,32 @@ jobs:
             ${ASSIGNED_FILES:-$SHARD_FALLBACK}
       - name: Run a11y tests
         shell: bash
-        run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        env:
+          INDEX: ${{ matrix.shardIndex }}
+          TOTAL: ${{ matrix.shardTotal }}
+        run: |
+          SPECS=$(find tests/specs/a11y -name '*.spec.ts' | wc -l)
+          EFFECTIVE=$(( SPECS < TOTAL ? SPECS : TOTAL ))
+          if [ "$INDEX" -gt "$EFFECTIVE" ]; then
+            echo "Skip a11y: shard $INDEX > $EFFECTIVE (specs: $SPECS)"
+            exit 0
+          fi
+          pnpm e2e:a11y --shard=$INDEX/$EFFECTIVE
       - name: Run visual tests
         shell: bash
+        env:
+          INDEX: ${{ matrix.shardIndex }}
+          TOTAL: ${{ matrix.shardTotal }}
+          PERCY_PARALLEL_NONCE: ${{ github.run_id }}
         run: |
-          PERCY_PARALLEL_TOTAL=${{ matrix.shardTotal }} \
-          PERCY_PARALLEL_NONCE=${{ github.run_id }} \
-          pnpm e2e:visual --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          SPECS=$(find tests/specs/visual -name '*.spec.ts' | wc -l)
+          EFFECTIVE=$(( SPECS < TOTAL ? SPECS : TOTAL ))
+          if [ "$INDEX" -gt "$EFFECTIVE" ]; then
+            echo "Skip visual: shard $INDEX > $EFFECTIVE (specs: $SPECS)"
+            exit 0
+          fi
+          PERCY_PARALLEL_TOTAL=$EFFECTIVE \
+            pnpm e2e:visual --shard=$INDEX/$EFFECTIVE
       - name: Upload file durations
         if: always()
         uses: actions/upload-artifact@v4
