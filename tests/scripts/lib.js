@@ -1,5 +1,4 @@
 // Shared utilities for shard optimization scripts.
-
 import { existsSync, readFileSync } from 'fs';
 
 // Safely reads and parses a JSON file. Returns null if the file

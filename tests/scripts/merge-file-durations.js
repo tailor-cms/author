@@ -18,36 +18,37 @@ import { loadJSON } from './lib.js';
 // Blend factor: 0 = ignore history, 1 = ignore current
 const EMA_DECAY = 0.3;
 
-// Recursively walks the suite tree and sums test durations per file.
-// Handles both flat (file at top level) and nested (project > file)
-// structures from the Playwright JSON reporter.
-function collectFileDurations(suite, durations) {
-  if (suite.file) {
-    let total = 0;
-    for (const spec of suite.specs || []) {
-      for (const test of spec.tests || []) {
-        for (const result of test.results || []) {
-          total += result.duration || 0;
-        }
-      }
-    }
-    // Multiple shards/projects may report the same file
-    durations[suite.file] = (durations[suite.file] || 0) + total;
-  }
-  for (const child of suite.suites || []) {
-    collectFileDurations(child, durations);
-  }
+// Yields every suite in a Playwright JSON report. The suite tree
+// is nested as project > file > spec, so we walk recursively to
+// surface file-level suites regardless of depth.
+function* walkSuites(suite) {
+  yield suite;
+  for (const child of suite.suites || []) yield* walkSuites(child);
+}
+
+// Sums all test result durations within a single suite.
+function sumSuiteDuration(suite) {
+  return (suite.specs || [])
+    .flatMap((spec) => spec.tests || [])
+    .flatMap((test) => test.results || [])
+    .reduce((total, result) => total + (result.duration || 0), 0);
 }
 
 // Reads all JSON reports from a directory and extracts per-file durations.
 function extractDurations(reportsDir) {
   const durations = {};
-  const files = readdirSync(reportsDir).filter((f) => f.endsWith('.json'));
-  for (const file of files) {
-    const report = loadJSON(join(reportsDir, file));
-    if (!report?.suites) continue;
-    for (const suite of report.suites) {
-      collectFileDurations(suite, durations);
+  const reports = readdirSync(reportsDir)
+    .filter((f) => f.endsWith('.json'))
+    .map((f) => loadJSON(join(reportsDir, f)))
+    .filter((report) => report?.suites);
+
+  for (const report of reports) {
+    for (const root of report.suites) {
+      for (const suite of walkSuites(root)) {
+        if (!suite.file) continue;
+        // Multiple shards/projects may report the same file
+        durations[suite.file] = (durations[suite.file] || 0) + sumSuiteDuration(suite);
+      }
     }
   }
   return durations;

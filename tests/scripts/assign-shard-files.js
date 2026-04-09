@@ -77,7 +77,6 @@ function logReport(shards, shardIndex) {
 }
 
 // Main
-
 const [durationsPath, shardIndexStr, shardTotalStr] = process.argv.slice(2);
 if (!durationsPath || !shardIndexStr || !shardTotalStr) process.exit(0);
 
