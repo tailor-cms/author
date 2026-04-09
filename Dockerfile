@@ -1,4 +1,4 @@
-FROM node:24.14-bookworm-slim AS base
+FROM node:24.14.1-bookworm-slim AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
@@ -35,4 +35,4 @@ COPY --chown=node:node --from=builder /tailor/apps/backend/node_modules/@tailor-
 USER node
 WORKDIR /tailor/apps/backend
 EXPOSE ${PORT}
-CMD ["pnpm", "start:docker"]
+CMD ["node", "./index.ts"]
