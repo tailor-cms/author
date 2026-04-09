@@ -182,8 +182,12 @@ jobs:
       - name: Assign files to shard
         id: assign
         shell: bash
+        env:
+          DURATIONS: /tmp/file-durations.json
+          INDEX: ${{ matrix.shardIndex }}
+          TOTAL: ${{ matrix.shardTotal }}
         run: |
-          FILES=$(node tests/scripts/assign-shard-files.js /tmp/file-durations.json ${{ matrix.shardIndex }} ${{ matrix.shardTotal }})
+          FILES=$(node tests/scripts/assign-shard-files.js $DURATIONS $INDEX $TOTAL)
           echo "files=$FILES" >> "$GITHUB_OUTPUT"
       - name: Run functional tests
         shell: bash
