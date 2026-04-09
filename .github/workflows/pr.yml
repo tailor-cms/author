@@ -1,6 +1,8 @@
 name: PR checks
 env:
-  PLAYWRIGHT_VERSION: 1.56.1
+  PLAYWRIGHT_VERSION: 1.59.1
+  APP_URL: http://localhost:3000
+  MINIO_URL: http://localhost:4566
   # Force JS actions to run on Node 24 (most still bundle Node 20 which is
   # deprecated). Remove once action maintainers release Node 24 versions.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -31,15 +33,10 @@ jobs:
         uses: hoverkraft-tech/compose-action@v2.0.1
         with:
           compose-file: docker-compose.yaml
-      - name: Wait for service to start
-        shell: bash
-        run: sleep 30
       - name: Health check
-        uses: indiesdev/curl@v1.1
-        with:
-          url: http://localhost:3000/api/healthcheck
-          method: "GET"
-          accept: 200
+        shell: bash
+        run: |
+          timeout 60 bash -c "until curl -sf $APP_URL/api/healthcheck > /dev/null 2>&1; do sleep 2; done"
   build:
     runs-on: ubuntu-latest
     steps:
@@ -73,49 +70,25 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     services:
-      postgres:
-        image: postgres:15.1
-        env:
-          POSTGRES_DB: tailor_dev
-          POSTGRES_USER: dev
-          POSTGRES_PASSWORD: dev
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
       redis:
         image: redis:7.4.0
         ports:
           - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      localstack:
-        image: localstack/localstack:4.14.0
-        env:
-          SERVICES: s3
-        ports:
-          - 4566:4566
-        options: >-
-          --health-cmd "curl -sf http://localhost:4566/_localstack/health || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 3
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        shardTotal: [10]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        shardTotal: [16]
     timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup script .env
+      - name: Setup environment files
         shell: bash
         run: |
           cat <<EOF > ./scripts/setup/.env
@@ -146,7 +119,7 @@ jobs:
           STORAGE_ENDPOINT=http://localhost:4566
           STORAGE_BUCKET=test
           STORAGE_KEY=test
-          STORAGE_SECRET=test
+          STORAGE_SECRET=test1234
           EOF
       - name: Setup E2E .env
         shell: bash
@@ -163,6 +136,26 @@ jobs:
           OIDC_TEST_USER_EMAIL=${{ secrets.OIDC_TEST_USER_EMAIL }}
           OIDC_TEST_USER_PASSWORD=${{ secrets.OIDC_TEST_USER_PASSWORD }}
           EOF
+      - name: Start PostgreSQL
+        shell: bash
+        run: |
+          sudo systemctl start postgresql
+          sudo -u postgres psql -c "CREATE USER dev WITH PASSWORD 'dev' SUPERUSER CREATEDB;"
+          sudo -u postgres createdb -O dev tailor_dev
+      - name: Start MinIO
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test1234
+          AWS_DEFAULT_REGION: us-east-1
+        run: |
+          docker run -d --name minio \
+            -p 4566:9000 \
+            -e MINIO_ROOT_USER=test \
+            -e MINIO_ROOT_PASSWORD=test1234 \
+            minio/minio server /data
+          timeout 30 bash -c "until curl -sf $MINIO_URL/minio/health/live > /dev/null 2>&1; do sleep 0.5; done"
+          aws --endpoint-url $MINIO_URL s3 mb s3://test
       - name: Restore build output
         uses: actions/cache/restore@v4
         with:
@@ -178,23 +171,48 @@ jobs:
         with:
           skip-build: 'true'
           skip-services: 'true'
+      - name: Assign files to shard
+        id: assign
+        uses: ./.github/actions/assign-shard
+        with:
+          shard-index: ${{ matrix.shardIndex }}
+          shard-total: ${{ matrix.shardTotal }}
       - name: Run functional tests
         shell: bash
-        run: pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        env:
+          ASSIGNED_FILES: ${{ steps.assign.outputs.files }}
+          SHARD_FALLBACK: --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: |
+          cd tests
+          # Use bin-packed file list when available, otherwise native sharding
+          PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
+          pnpm playwright test \
+            --project=chrome-admin --project=chrome-default-user \
+            --project=chrome-collaborator --project=setup-admin \
+            --project=setup-default-user --project=setup-collaborator \
+            --reporter=json,html \
+            ${ASSIGNED_FILES:-$SHARD_FALLBACK}
+      - name: Run a11y tests
+        shell: bash
+        run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
         shell: bash
         run: |
           PERCY_PARALLEL_TOTAL=${{ matrix.shardTotal }} \
           PERCY_PARALLEL_NONCE=${{ github.run_id }} \
           pnpm e2e:visual --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Run a11y tests
-        shell: bash
-        run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - name: Upload test report
+      - name: Upload file durations
+        if: always()
         uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
         with:
-          name: playwright-report-${{ matrix.shardIndex }}
+          name: e2e-durations-${{ matrix.shardIndex }}
+          path: tests/test-durations-${{ matrix.shardIndex }}.json
+          retention-days: 1
+      - name: Upload test report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report-${{ matrix.shardIndex }}
           path: ./tests/playwright-report/
           retention-days: 1
   # Stable check name for branch protection - doesn't change when shard count
@@ -204,6 +222,12 @@ jobs:
     needs: e2e
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/actions/merge-shard-durations
+            tests/scripts
       - name: Check e2e results
         shell: bash
         run: |
@@ -211,3 +235,6 @@ jobs:
             echo "E2E tests failed"
             exit 1
           fi
+      - name: Merge and cache shard durations
+        if: always()
+        uses: ./.github/actions/merge-shard-durations
