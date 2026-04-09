@@ -20,7 +20,7 @@ runs:
       cache-dependency-path: './pnpm-lock.yaml'
   - name: Install dependencies
     shell: bash
-    run: pnpm i --frozen-lockfile --prefer-offline
+    run: pnpm i --frozen-lockfile --prefer-offline --ignore-scripts
   - uses: actions/cache@v4
     name: Check Playwright cache
     id: playwright-cache
@@ -58,5 +58,5 @@ runs:
     run: |
       pnpm start &
       echo "Waiting for application to be ready..."
-      timeout 60 bash -c 'until curl -sf http://localhost:3000/api/healthcheck > /dev/null 2>&1; do sleep 2; done'
+      timeout 60 bash -c 'until curl -sf http://localhost:3000/api/healthcheck > /dev/null 2>&1; do sleep 0.5; done'
       echo "Application is ready!"

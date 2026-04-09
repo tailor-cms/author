@@ -88,7 +88,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup script .env
+      - name: Setup environment files
         shell: bash
         run: |
           cat <<EOF > ./scripts/setup/.env
@@ -154,7 +154,7 @@ jobs:
             -e MINIO_ROOT_USER=test \
             -e MINIO_ROOT_PASSWORD=test1234 \
             minio/minio server /data
-          timeout 30 bash -c 'until curl -sf http://localhost:4566/minio/health/live > /dev/null 2>&1; do sleep 1; done'
+          timeout 30 bash -c 'until curl -sf http://localhost:4566/minio/health/live > /dev/null 2>&1; do sleep 0.5; done'
           aws --endpoint-url http://localhost:4566 s3 mb s3://test
       - name: Restore build output
         uses: actions/cache/restore@v4
@@ -192,25 +192,19 @@ jobs:
         shell: bash
         run: |
           cd tests
+          # Bin-pack mode: assigned files; fallback: native --shard
           if [ "${{ steps.assign.outputs.mode }}" = "binpack" ]; then
-            # Bin-packed: run only the assigned files
-            PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
-            pnpm playwright test \
-              --project=chrome-admin --project=chrome-default-user \
-              --project=chrome-collaborator --project=setup-admin \
-              --project=setup-default-user --project=setup-collaborator \
-              --reporter=json,html \
-              ${{ steps.assign.outputs.files }}
+            SHARD_ARGS="${{ steps.assign.outputs.files }}"
           else
-            # No cache yet: fall back to Playwright's native sharding
-            PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
-            pnpm playwright test \
-              --project=chrome-admin --project=chrome-default-user \
-              --project=chrome-collaborator --project=setup-admin \
-              --project=setup-default-user --project=setup-collaborator \
-              --reporter=json,html \
-              --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+            SHARD_ARGS="--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}"
           fi
+          PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
+          pnpm playwright test \
+            --project=chrome-admin --project=chrome-default-user \
+            --project=chrome-collaborator --project=setup-admin \
+            --project=setup-default-user --project=setup-collaborator \
+            --reporter=json,html \
+            $SHARD_ARGS
       - name: Run a11y tests
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
