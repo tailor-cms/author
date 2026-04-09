@@ -62,5 +62,5 @@ runs:
     run: |
       pnpm start &
       echo "Waiting for application to be ready..."
-      timeout 60 bash -c 'until curl -sf http://localhost:3000/api/healthcheck > /dev/null 2>&1; do sleep 0.5; done'
+      timeout 60 bash -c "until curl -sf $APP_URL/api/healthcheck > /dev/null 2>&1; do sleep 0.5; done"
       echo "Application is ready!"

@@ -1,6 +1,7 @@
 name: PR checks
 env:
   PLAYWRIGHT_VERSION: 1.59.1
+  APP_URL: http://localhost:3000
   # Force JS actions to run on Node 24 (most still bundle Node 20 which is
   # deprecated). Remove once action maintainers release Node 24 versions.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -36,7 +37,7 @@ jobs:
       - name: Health check
         shell: bash
         run: |
-          timeout 60 bash -c 'until curl -sf http://localhost:3000/api/healthcheck > /dev/null 2>&1; do sleep 2; done'
+          timeout 60 bash -c "until curl -sf $APP_URL/api/healthcheck > /dev/null 2>&1; do sleep 2; done"
   build:
     runs-on: ubuntu-latest
     steps:
