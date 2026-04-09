@@ -177,18 +177,23 @@ jobs:
           path: /tmp/file-durations.json
           key: e2e-file-durations-${{ runner.os }}
           restore-keys: e2e-file-durations-
-      - name: Compute shard weights
-        id: weights
+      - name: Assign files to shard
+        id: assign
         shell: bash
         run: |
-          WEIGHTS=$(node tests/scripts/compute-shard-weights.js /tmp/file-durations.json ${{ matrix.shardTotal }})
-          echo "value=$WEIGHTS" >> "$GITHUB_OUTPUT"
+          FILES=$(node tests/scripts/assign-shard-files.js /tmp/file-durations.json ${{ matrix.shardIndex }} ${{ matrix.shardTotal }})
+          echo "files=$FILES" >> "$GITHUB_OUTPUT"
       - name: Run functional tests
         shell: bash
         run: |
-          PWTEST_SHARD_WEIGHTS=${{ steps.weights.outputs.value }} \
+          cd tests
           PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
-          pnpm e2e:functional --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=json,html
+          pnpm playwright test \
+            --project=chrome-admin --project=chrome-default-user \
+            --project=chrome-collaborator --project=setup-admin \
+            --project=setup-default-user --project=setup-collaborator \
+            --reporter=json,html \
+            ${{ steps.assign.outputs.files || '' }}
       - name: Run a11y tests
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}

@@ -3,27 +3,21 @@
 // measurements across runs.
 //
 // Usage: node merge-file-durations.js <reports-dir> <output> [previous]
-//   reports-dir — directory with test-durations.json files from each shard
+//   reports-dir — directory with test-durations-*.json from each shard
 //   output      — path to write the merged duration map
 //   previous    — optional path to a previous duration map (for EMA)
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'fs';
+import { readdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
+
+import { loadJSON } from './lib.js';
 
 // Blend factor: 0 = ignore history, 1 = ignore current
 const EMA_DECAY = 0.3;
 
-function loadJSON(path) {
-  if (!existsSync(path)) return null;
-  try {
-    return JSON.parse(readFileSync(path, 'utf-8'));
-  } catch {
-    return null;
-  }
-}
-
 function extractDurations(reportsDir) {
   const durations = {};
   const files = readdirSync(reportsDir).filter((f) => f.endsWith('.json'));
+
   for (const file of files) {
     const report = loadJSON(join(reportsDir, file));
     if (!report?.suites) continue;
@@ -44,7 +38,7 @@ function extractDurations(reportsDir) {
   return durations;
 }
 
-// Only keeps files present in the current run — stale entries
+// Only keeps files present in the current run - stale entries
 // from renamed/deleted specs are automatically pruned.
 function applyEMA(previous, current) {
   const merged = {};
@@ -56,6 +50,7 @@ function applyEMA(previous, current) {
   return merged;
 }
 
+// Main
 const [reportsDir, outputPath, previousPath] = process.argv.slice(2);
 if (!reportsDir || !outputPath) {
   console.error(
