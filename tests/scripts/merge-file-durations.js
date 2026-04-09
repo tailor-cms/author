@@ -14,6 +14,27 @@ import { loadJSON } from './lib.js';
 // Blend factor: 0 = ignore history, 1 = ignore current
 const EMA_DECAY = 0.3;
 
+// Sums test durations per spec file from a suite tree.
+// Playwright JSON nests suites as project > file, so we walk
+// recursively until we find suites with a `file` property.
+function sumSuiteDurations(suite, durations) {
+  if (suite.file) {
+    let total = 0;
+    for (const spec of suite.specs || []) {
+      for (const test of spec.tests || []) {
+        for (const result of test.results || []) {
+          total += result.duration || 0;
+        }
+      }
+    }
+    durations[suite.file] = (durations[suite.file] || 0) + total;
+  }
+  // Recurse into nested suites (project > file nesting)
+  for (const child of suite.suites || []) {
+    sumSuiteDurations(child, durations);
+  }
+}
+
 function extractDurations(reportsDir) {
   const durations = {};
   const files = readdirSync(reportsDir).filter((f) => f.endsWith('.json'));
@@ -22,17 +43,7 @@ function extractDurations(reportsDir) {
     const report = loadJSON(join(reportsDir, file));
     if (!report?.suites) continue;
     for (const suite of report.suites) {
-      if (!suite.file) continue;
-      let total = 0;
-      for (const spec of suite.specs || []) {
-        for (const test of spec.tests || []) {
-          for (const result of test.results || []) {
-            total += result.duration || 0;
-          }
-        }
-      }
-      // Shards may report the same file (setup specs)
-      durations[suite.file] = (durations[suite.file] || 0) + total;
+      sumSuiteDurations(suite, durations);
     }
   }
   return durations;
