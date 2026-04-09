@@ -173,22 +173,12 @@ jobs:
         with:
           skip-build: 'true'
           skip-services: 'true'
-      - name: Restore file durations
-        uses: actions/cache/restore@v4
-        with:
-          path: /tmp/file-durations.json
-          key: e2e-file-durations-${{ runner.os }}
-          restore-keys: e2e-file-durations-
       - name: Assign files to shard
         id: assign
-        shell: bash
-        env:
-          DURATIONS: /tmp/file-durations.json
-          INDEX: ${{ matrix.shardIndex }}
-          TOTAL: ${{ matrix.shardTotal }}
-        run: |
-          FILES=$(node tests/scripts/assign-shard-files.js $DURATIONS $INDEX $TOTAL)
-          echo "files=$FILES" >> "$GITHUB_OUTPUT"
+        uses: ./.github/actions/assign-shard
+        with:
+          shard-index: ${{ matrix.shardIndex }}
+          shard-total: ${{ matrix.shardTotal }}
       - name: Run functional tests
         shell: bash
         env:
@@ -235,6 +225,12 @@ jobs:
     needs: e2e
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .github/actions/merge-shard-durations
+            tests/scripts
       - name: Check e2e results
         shell: bash
         run: |
@@ -242,34 +238,6 @@ jobs:
             echo "E2E tests failed"
             exit 1
           fi
-      - name: Restore previous durations
+      - name: Merge and cache shard durations
         if: always()
-        uses: actions/cache/restore@v4
-        with:
-          path: /tmp/file-durations.json
-          key: e2e-file-durations-${{ runner.os }}
-          restore-keys: e2e-file-durations-
-      - name: Download shard reports
-        if: always()
-        uses: actions/download-artifact@v4
-        with:
-          path: /tmp/durations
-          pattern: e2e-durations-*
-          merge-multiple: true
-      - name: Checkout
-        if: always()
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: tests/scripts
-      - name: Merge file durations
-        if: always()
-        shell: bash
-        run: >-
-          node tests/scripts/merge-file-durations.js
-          /tmp/durations /tmp/file-durations.json /tmp/file-durations.json
-      - name: Cache file durations
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: /tmp/file-durations.json
-          key: e2e-file-durations-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}
+        uses: ./.github/actions/merge-shard-durations
