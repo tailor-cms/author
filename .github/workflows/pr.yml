@@ -2,6 +2,7 @@ name: PR checks
 env:
   PLAYWRIGHT_VERSION: 1.59.1
   APP_URL: http://localhost:3000
+  MINIO_URL: http://localhost:4566
   # Force JS actions to run on Node 24 (most still bundle Node 20 which is
   # deprecated). Remove once action maintainers release Node 24 versions.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -155,8 +156,8 @@ jobs:
             -e MINIO_ROOT_USER=test \
             -e MINIO_ROOT_PASSWORD=test1234 \
             minio/minio server /data
-          timeout 30 bash -c 'until curl -sf http://localhost:4566/minio/health/live > /dev/null 2>&1; do sleep 0.5; done'
-          aws --endpoint-url http://localhost:4566 s3 mb s3://test
+          timeout 30 bash -c "until curl -sf $MINIO_URL/minio/health/live > /dev/null 2>&1; do sleep 0.5; done"
+          aws --endpoint-url $MINIO_URL s3 mb s3://test
       - name: Restore build output
         uses: actions/cache/restore@v4
         with:
@@ -184,28 +185,21 @@ jobs:
         run: |
           FILES=$(node tests/scripts/assign-shard-files.js /tmp/file-durations.json ${{ matrix.shardIndex }} ${{ matrix.shardTotal }})
           echo "files=$FILES" >> "$GITHUB_OUTPUT"
-          if [ -n "$FILES" ]; then
-            echo "mode=binpack" >> "$GITHUB_OUTPUT"
-          else
-            echo "mode=shard" >> "$GITHUB_OUTPUT"
-          fi
       - name: Run functional tests
         shell: bash
+        env:
+          ASSIGNED_FILES: ${{ steps.assign.outputs.files }}
+          SHARD_FALLBACK: --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         run: |
           cd tests
-          # Bin-pack mode: assigned files; fallback: native --shard
-          if [ "${{ steps.assign.outputs.mode }}" = "binpack" ]; then
-            SHARD_ARGS="${{ steps.assign.outputs.files }}"
-          else
-            SHARD_ARGS="--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}"
-          fi
+          # Use bin-packed file list when available, otherwise native sharding
           PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
           pnpm playwright test \
             --project=chrome-admin --project=chrome-default-user \
             --project=chrome-collaborator --project=setup-admin \
             --project=setup-default-user --project=setup-collaborator \
             --reporter=json,html \
-            $SHARD_ARGS
+            ${ASSIGNED_FILES:-$SHARD_FALLBACK}
       - name: Run a11y tests
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
