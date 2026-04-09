@@ -36,12 +36,14 @@ export class Comment {
   }
 
   async edit(content: string) {
-    await this.toggleEdit();
-    const input = this.page.locator('.comment-editor textarea')
-      .locator('visible=true');
-    const saveBtn = this.page.getByRole('button', { name: 'Save' });
-    await input.fill(content);
-    await saveBtn.click();
+    await this.editBtn.click();
+    // After clicking edit, CommentPreview unmounts (v-if) removing the
+    // comment text. The hasText filter on this.el stops matching, so
+    // target the editor directly via the unique .comment-editor class.
+    const editor = this.page.locator('.comment-editor').first();
+    await expect(editor).toBeVisible();
+    await editor.getByRole('textbox').fill(content);
+    await this.page.getByRole('button', { name: 'Save' }).click();
     await expect(this.page.getByText(content)).toBeVisible();
   }
 
@@ -75,8 +77,8 @@ export class Comments {
 
   getComment(content?: string) {
     const element = content
-      ? this.page.locator(Comment.selector, { hasText: content })
-      : this.page.locator(Comment.selector).first();
+      ? this.el.locator(Comment.selector, { hasText: content })
+      : this.el.locator(Comment.selector).first();
     return new Comment(this.page, element);
   }
 }

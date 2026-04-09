@@ -1,0 +1,46 @@
+name: Assign test files to shard
+description: >
+  Restores cached file durations from previous runs and uses bin-packing
+  to assign an optimal subset of test files to this shard. Falls back to
+  Playwright's native --shard distribution on the first run (no cache).
+
+inputs:
+  shard-index:
+    description: 'Current shard index (1-based)'
+    required: true
+  shard-total:
+    description: 'Total number of shards'
+    required: true
+  cache-key:
+    description: 'Cache key prefix for stored durations'
+    required: false
+    default: e2e-file-durations
+  durations-path:
+    description: 'Where to restore the durations file to'
+    required: false
+    default: /tmp/file-durations.json
+
+outputs:
+  files:
+    description: 'Space-separated file paths assigned to this shard (empty if no cache)'
+    value: ${{ steps.assign.outputs.files }}
+
+runs:
+  using: composite
+  steps:
+    - name: Restore cached durations
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ inputs.durations-path }}
+        key: ${{ inputs.cache-key }}-${{ runner.os }}
+        restore-keys: ${{ inputs.cache-key }}-
+    - name: Assign files via bin-packing
+      id: assign
+      shell: bash
+      env:
+        DURATIONS: ${{ inputs.durations-path }}
+        INDEX: ${{ inputs.shard-index }}
+        TOTAL: ${{ inputs.shard-total }}
+      run: |
+        FILES=$(node tests/scripts/assign-shard-files.js $DURATIONS $INDEX $TOTAL)
+        echo "files=$FILES" >> "$GITHUB_OUTPUT"

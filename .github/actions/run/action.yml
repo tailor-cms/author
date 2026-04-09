@@ -20,7 +20,9 @@ runs:
       cache-dependency-path: './pnpm-lock.yaml'
   - name: Install dependencies
     shell: bash
-    run: pnpm i --frozen-lockfile --prefer-offline
+    # --ignore-scripts skips Nuxt's postinstall (`nuxt prepare`),
+    # which is redundant since the build cache restores `.nuxt`.
+    run: pnpm i --frozen-lockfile --prefer-offline --ignore-scripts
   - uses: actions/cache@v4
     name: Check Playwright cache
     id: playwright-cache
@@ -41,12 +43,14 @@ runs:
     run: echo "REVERSE_PROXY_PORT=3000" >> .env.dev
   - name: Configure environment
     shell: bash
+    # Call the setup script directly instead of `pnpm setup:dev`,
+    # which would re-run `pnpm i` and trigger the Nuxt postinstall.
     run: |
       SETUP_FLAGS="--ci"
       if [ "${{ inputs.skip-build }}" = "true" ]; then
         SETUP_FLAGS="$SETUP_FLAGS --skip-build"
       fi
-      pnpm setup:dev $SETUP_FLAGS
+      node ./scripts/setup/index.js $SETUP_FLAGS
   - name: Migrate DB
     shell: bash
     run: pnpm db:migrate
@@ -58,5 +62,5 @@ runs:
     run: |
       pnpm start &
       echo "Waiting for application to be ready..."
-      timeout 60 bash -c 'until curl -sf http://localhost:3000/api/healthcheck > /dev/null 2>&1; do sleep 2; done'
+      timeout 60 bash -c "until curl -sf $APP_URL/api/healthcheck > /dev/null 2>&1; do sleep 0.5; done"
       echo "Application is ready!"
