@@ -20,6 +20,8 @@ runs:
       cache-dependency-path: './pnpm-lock.yaml'
   - name: Install dependencies
     shell: bash
+    # --ignore-scripts skips Nuxt's postinstall (`nuxt prepare`),
+    # which is redundant since the build cache restores `.nuxt`.
     run: pnpm i --frozen-lockfile --prefer-offline --ignore-scripts
   - uses: actions/cache@v4
     name: Check Playwright cache
@@ -41,6 +43,8 @@ runs:
     run: echo "REVERSE_PROXY_PORT=3000" >> .env.dev
   - name: Configure environment
     shell: bash
+    # Call the setup script directly instead of `pnpm setup:dev`,
+    # which would re-run `pnpm i` and trigger the Nuxt postinstall.
     run: |
       SETUP_FLAGS="--ci"
       if [ "${{ inputs.skip-build }}" = "true" ]; then
