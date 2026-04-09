@@ -16139,7 +16139,7 @@ snapshots:
   '@tailor-cms/ce-image-edit@1.1.1-beta.0(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@tailor-cms/cek-common': 2.0.0-beta.0
-      lodash-es: 4.17.23
+      lodash-es: 4.18.1
       vue: 3.5.22(typescript@5.9.3)
 
   '@tailor-cms/ce-image-server@1.1.0': {}
@@ -20959,7 +20959,7 @@ snapshots:
   netlify@13.3.5:
     dependencies:
       '@netlify/open-api': 2.37.0
-      lodash-es: 4.17.21
+      lodash-es: 4.18.1
       micro-api-client: 3.3.0
       node-fetch: 3.3.2
       p-wait-for: 5.0.2
