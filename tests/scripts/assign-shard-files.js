@@ -28,30 +28,32 @@ import { formatDuration, loadFileDurations } from './lib.js';
 // (slowest shard) is at most 4/3 of the optimal for 2 shards, and
 // converges toward optimal as shard count increases.
 function binPack(files, shardTotal) {
-  // Heaviest first gives the best greedy approximation
   const sorted = [...files].sort((a, b) => b.duration - a.duration);
   const shards = Array.from({ length: shardTotal }, () => ({
     files: [],
     duration: 0,
   }));
   for (const file of sorted) {
-    // Pick the shard with the least total work so far
-    const lightest = shards.reduce(
-      (min, s, i) => (s.duration < shards[min].duration ? i : min),
-      0,
-    );
+    const lightest = findLightestShard(shards);
     shards[lightest].files.push(file);
     shards[lightest].duration += file.duration;
   }
   return shards;
 }
 
+// Returns the index of the shard with the smallest total duration.
+function findLightestShard(shards) {
+  return shards.reduce(
+    (min, shard, i) => (shard.duration < shards[min].duration ? i : min),
+    0,
+  );
+}
+
 // Diagnostic report via stderr — keeps stdout clean for the file
 // paths captured by the CI workflow (FILES=$(node ...)).
 function logReport(shards, shardIndex) {
-  const durations = shards.map((s) => s.duration);
-  const max = Math.max(...durations);
-  const min = Math.min(...durations);
+  const max = Math.max(...shards.map((s) => s.duration));
+  const min = Math.min(...shards.map((s) => s.duration));
 
   const log = (...args) => console.error(...args);
   log('--- Shard file assignment (bin-packing) ---');
@@ -60,7 +62,6 @@ function logReport(shards, shardIndex) {
   log('  Shard  Duration  Files  Specs');
   for (let i = 0; i < shards.length; i++) {
     const { files, duration } = shards[i];
-    // Mark the current shard in the report
     const marker = i === shardIndex - 1 ? ' <-' : '';
     const specs = files
       .map((f) => f.file.split('/').pop().replace('.spec.ts', ''))
@@ -76,6 +77,7 @@ function logReport(shards, shardIndex) {
 }
 
 // Main
+
 const [durationsPath, shardIndexStr, shardTotalStr] = process.argv.slice(2);
 if (!durationsPath || !shardIndexStr || !shardTotalStr) process.exit(0);
 
