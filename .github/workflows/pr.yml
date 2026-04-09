@@ -183,17 +183,34 @@ jobs:
         run: |
           FILES=$(node tests/scripts/assign-shard-files.js /tmp/file-durations.json ${{ matrix.shardIndex }} ${{ matrix.shardTotal }})
           echo "files=$FILES" >> "$GITHUB_OUTPUT"
+          if [ -n "$FILES" ]; then
+            echo "mode=binpack" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=shard" >> "$GITHUB_OUTPUT"
+          fi
       - name: Run functional tests
         shell: bash
         run: |
           cd tests
-          PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
-          pnpm playwright test \
-            --project=chrome-admin --project=chrome-default-user \
-            --project=chrome-collaborator --project=setup-admin \
-            --project=setup-default-user --project=setup-collaborator \
-            --reporter=json,html \
-            ${{ steps.assign.outputs.files || '' }}
+          if [ "${{ steps.assign.outputs.mode }}" = "binpack" ]; then
+            # Bin-packed: run only the assigned files
+            PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
+            pnpm playwright test \
+              --project=chrome-admin --project=chrome-default-user \
+              --project=chrome-collaborator --project=setup-admin \
+              --project=setup-default-user --project=setup-collaborator \
+              --reporter=json,html \
+              ${{ steps.assign.outputs.files }}
+          else
+            # No cache yet: fall back to Playwright's native sharding
+            PLAYWRIGHT_JSON_OUTPUT_NAME=test-durations-${{ matrix.shardIndex }}.json \
+            pnpm playwright test \
+              --project=chrome-admin --project=chrome-default-user \
+              --project=chrome-collaborator --project=setup-admin \
+              --project=setup-default-user --project=setup-collaborator \
+              --reporter=json,html \
+              --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          fi
       - name: Run a11y tests
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
