@@ -10,8 +10,6 @@ on:
   push:
     branches: [ main, develop ]
   pull_request:
-  pull_request_review:
-    types: [ submitted ]
 permissions:
   contents: read
   packages: read
@@ -198,7 +196,6 @@ jobs:
         shell: bash
         run: pnpm e2e:a11y --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run visual tests
-        if: github.event_name == 'push' || github.event_name == 'pull_request_review'
         shell: bash
         run: |
           PERCY_PARALLEL_TOTAL=${{ matrix.shardTotal }} \
