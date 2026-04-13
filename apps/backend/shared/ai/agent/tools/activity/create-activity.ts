@@ -25,11 +25,10 @@ interface Input {
 }
 
 const description = stripIndent`
-  Create a new outline activity. The type must be
-  one of the schema's outline types - call
-  get_schema_info if unsure. Bare or namespaced
-  types both work. Rejects container types - use
-  create_subcontainer_with_elements for those.
+  Create a new outline activity. The type must be one of
+  the schema's outline types - call get_schema_info if unsure.
+  Bare or namespaced types both work. Rejects container types
+  - use create_subcontainer_with_elements for those.
 `;
 
 const parameters = {
@@ -38,7 +37,7 @@ const parameters = {
     type: {
       type: 'string',
       description: oneLine`
-        Outline type. Call get_schema_info
+        Outline activity type. Call get_schema_info
         for allowed values.
       `,
     },
@@ -62,7 +61,8 @@ const parameters = {
         Activity data object. Must include
         { name: string }. May include additional
         meta keys defined in the schema (e.g.
-        description, estimatedTime, tags).
+        description, estimatedTime, tags). Use get_schema_info
+        to check for allowed/required meta properties for the type.
       `,
       properties: { name: { type: 'string' } },
       required: ['name'],
@@ -86,11 +86,11 @@ function rejectNonOutline(schemaId: string, type: string) {
   return toolError({
     tool: TOOL,
     reason: 'invalid_type',
-    message: `"${type}" is not an outline type.`,
+    message: `"${type}" is not an outline activity type.`,
     allowedOutlineTypes: levels.map((it: any) => it.type),
     hint: oneLine`
       Use create_subcontainer_with_elements
-      for content sections.
+      for non-outline activities (content containers).
     `,
   });
 }
