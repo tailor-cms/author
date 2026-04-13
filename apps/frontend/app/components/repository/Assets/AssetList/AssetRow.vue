@@ -45,7 +45,7 @@
           {{ formatFileSize(asset.meta.fileSize) }}
           <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
         </template>
-        {{ formatDate(asset.createdAt) }}
+        <span data-percy="hide">{{ formatDate(asset.createdAt) }}</span>
         <template v-if="asset.processingStatus">
           <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
           <IndexingStatusBadge :status="asset.processingStatus" />
