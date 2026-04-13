@@ -56,6 +56,23 @@ test.describe('FileInput - library tab', () => {
     await fileInput.picker.switchToLibrary();
     await fileInput.picker.expectEmptyLibrary();
   });
+
+  test('picker only shows matching assets for image-only input', async ({
+    page,
+  }) => {
+    const repositoryId = await toFileMetaInput(page);
+    await AssetClient.uploadFile(repositoryId, IMAGE.path);
+    await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
+    const sidebar = new OutlineSidebar(page);
+    const { picker } = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    await picker.switchToLibrary();
+    await expect(picker.libraryAssetList).toBeVisible();
+    await expect(picker.getLibraryAssetItem(IMAGE.name)).toBeVisible();
+    await expect(
+      picker.getLibraryAssetItem(DOCUMENT.name),
+    ).not.toBeVisible();
+    await picker.cancel();
+  });
 });
 
 test.describe('FileInput - general', () => {
@@ -65,24 +82,6 @@ test.describe('FileInput - general', () => {
     const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
     await fileInput.picker.cancel();
     await expect(sidebar.getMetaInput(INPUT_PLACEHOLDER)).toBeVisible();
-  });
-
-  test('picker only shows matching assets for image-only input', async ({
-    page,
-  }) => {
-    const repositoryId = await toFileMetaInput(page);
-    await AssetClient.uploadFile(repositoryId, IMAGE.path);
-    await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
-    const sidebar = new OutlineSidebar(page);
-    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
-    const { picker } = fileInput;
-    await picker.switchToLibrary();
-    await expect(picker.libraryAssetList).toBeVisible();
-    await expect(picker.getLibraryAssetItem(IMAGE.name)).toBeVisible();
-    await expect(
-      picker.getLibraryAssetItem(DOCUMENT.name),
-    ).not.toBeVisible();
-    await picker.cancel();
   });
 });
 

@@ -23,7 +23,7 @@
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
       <div class="d-flex align-center text-subtitle-2">
-        <span class="text-primary-lighten-5 text-truncate">
+        <span data-testid="assetRow_name" class="text-primary-lighten-5 text-truncate">
           {{ getAssetDisplayName(asset) }}
         </span>
         <VIcon
@@ -35,7 +35,11 @@
         />
       </div>
       <div class="d-flex align-center text-body-2 text-primary-lighten-3">
-        <span class="text-capitalize">{{ getAssetTypeLabel(asset) }}</span>
+        <span
+          data-testid="assetRow_type"
+          class="text-capitalize">
+          {{ getAssetTypeLabel(asset) }}
+        </span>
         <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
         <template v-if="asset.meta && 'fileSize' in asset.meta">
           {{ formatFileSize(asset.meta.fileSize) }}
@@ -77,6 +81,12 @@
             @click="emit('download', asset)"
           />
           <VListItem
+            v-if="isIndexable(asset)"
+            prepend-icon="mdi-brain"
+            title="Index"
+            @click="emit('index', asset)"
+          />
+          <VListItem
             prepend-icon="mdi-delete-outline"
             title="Delete"
             @click="emit('delete', asset)"
@@ -98,6 +108,7 @@ import {
   getAssetDisplayName,
   getAssetIcon,
   getAssetTypeLabel,
+  isIndexable,
 } from '../utils';
 import IndexingStatusBadge from '../IndexingStatusBadge.vue';
 
@@ -110,6 +121,7 @@ const emit = defineEmits<{
   preview: [asset: Asset];
   toggle: [asset: Asset];
   download: [asset: Asset];
+  index: [asset: Asset];
   delete: [asset: Asset];
 }>();
 </script>

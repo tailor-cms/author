@@ -1,10 +1,11 @@
 <template>
   <VList
     :selected="selectedIds"
+    :select-strategy="multiple ? 'leaf' : 'single-leaf'"
     class="asset-list"
     color="primary-darken-4"
     rounded
-    @click:select="onSelect"
+    @update:selected="(ids: number[]) => emit('update:selected', ids)"
   >
     <VListItem
       v-for="asset in assets"
@@ -50,15 +51,8 @@
         {{ formatFileSize((asset.meta as FileAssetMeta).fileSize) }}
       </VListItemSubtitle>
       <template #append>
-        <VCheckboxBtn
-          v-if="multiple"
-          :model-value="selectedIds.includes(asset.id)"
-          color="primary-darken-2"
-          density="compact"
-          @click.stop="emit('toggle', asset)"
-        />
         <VIcon
-          v-else-if="selectedIds.includes(asset.id)"
+          v-if="selectedIds.includes(asset.id)"
           class="mr-2"
           color="primary-darken-2"
           icon="mdi-check-circle"
@@ -86,8 +80,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  select: [id: number];
-  toggle: [asset: Asset];
+  'update:selected': [ids: number[]];
 }>();
 
 // Normalize extensions to a Set for fast lookup (strip leading dots, lowercase)
@@ -104,8 +97,6 @@ const isCompatible = (asset: Asset): boolean => {
   if (!ext) return true;
   return allowedExtensionsSet.value.has(ext);
 };
-
-const onSelect = ({ id }: { id: unknown }) => emit('select', id as number);
 </script>
 
 <style lang="scss" scoped>

@@ -89,11 +89,11 @@ export interface AssetRequest {
 // guarantees asset is present
 export type AssetItemRequest = AssetRequest & { asset: Asset };
 
-type AsyncHandler = (req: AssetRequest | AssetItemRequest, res: any) => Promise<any>;
-
 // Bridges AssetRequest handlers to Express RequestHandler via type cast.
 // Controllers use AssetRequest (with injected repository, asset, etc.)
 // but Express routers expect standard RequestHandler. This cast is safe
 // because middleware (repository loader, getAsset, multer, pagination)
 // populates the required properties before the handler runs.
-export const handler = (fn: AsyncHandler) => fn as unknown as RequestHandler;
+export const handler = <T extends AssetRequest>(
+  fn: (req: T, res: any) => Promise<any>,
+) => fn as unknown as RequestHandler;

@@ -107,7 +107,7 @@ $font-mono: 'Fira Code', 'Courier New', monospace;
 
 .entry-key {
   font-family: $font-mono;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: rgba(var(--v-theme-primary-lighten-2), 0.9);
   letter-spacing: 0.02em;
@@ -122,7 +122,7 @@ $font-mono: 'Fira Code', 'Courier New', monospace;
 
 .entry-object {
   font-family: $font-mono;
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   line-height: 1.4;
   color: rgb(var(--v-theme-primary-lighten-3));
   white-space: pre-wrap;

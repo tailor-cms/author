@@ -1,7 +1,9 @@
 import { AssetType } from '@tailor-cms/interfaces/asset';
 
+export const CATEGORY_ALL = 'ALL';
+
 const categories = [
-  { label: 'All', value: 'all' },
+  { label: 'All', value: CATEGORY_ALL },
   { label: 'Documents', value: AssetType.Document },
   { label: 'Images', value: AssetType.Image },
   { label: 'Links', value: AssetType.Link },
@@ -11,6 +13,6 @@ const categories = [
 ];
 
 export function useAssetFiltering() {
-  const selectedCategory = ref('all');
+  const selectedCategory = ref(CATEGORY_ALL);
   return { categories, selectedCategory };
 }

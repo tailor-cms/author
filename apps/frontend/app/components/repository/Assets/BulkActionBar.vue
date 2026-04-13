@@ -10,14 +10,6 @@
       >
         {{ selectedIds.size }} selected
       </VChip>
-      <VBtn
-        color="primary-lighten-3"
-        size="small"
-        variant="outlined"
-        @click="$emit('clear')"
-      >
-        Deselect all
-      </VBtn>
       <VSpacer />
       <VTooltip
         :disabled="hasIndexable"
