@@ -1,45 +1,48 @@
 <template>
-  <div class="d-flex align-center ga-3">
-    <VMenu
-      v-model="isOpen"
-      :close-on-content-click="false"
-      offset="2"
-      max-height="600"
-      min-width="480"
-    >
-      <template #activator="{ props: menuProps }">
-        <VBtn
-          v-bind="menuProps"
-          :color="modelValue ? 'teal-lighten-3' : 'primary-lighten-3'"
-          prepend-icon="mdi-file-tree-outline"
-          size="small"
-          variant="tonal"
-        >
-          {{ modelValue ? modelValue.name : 'Search by topic' }}
-          <VIcon end>mdi-chevron-down</VIcon>
-        </VBtn>
-      </template>
-      <VCard min-width="360">
-        <VCardTitle class="text-body-2">Select outline topic</VCardTitle>
-        <VDivider />
-        <TopicList :items="items" @topic:select="onSelect" />
-      </VCard>
-    </VMenu>
-    <VChip
-      v-if="modelValue"
-      color="teal-lighten-3"
-      size="small"
-      variant="tonal"
-      closable
-      @click:close="emit('topic:clear')"
-    >
-      {{ modelValue.name }}
-    </VChip>
-  </div>
+  <VAutocomplete
+    :items="items"
+    :model-value="modelValue?.id ?? null"
+    color="primary-lighten-3"
+    density="default"
+    item-title="name"
+    item-value="id"
+    label="Outline topic"
+    min-width="550"
+    max-width="550"
+    placeholder="Browse topics..."
+    prepend-inner-icon="mdi-file-tree-outline"
+    variant="outlined"
+    clearable
+    hide-details
+    @update:model-value="onSelect"
+  >
+    <template #item="{ item, props: itemProps }">
+      <VListItem v-bind="itemProps">
+        <template #prepend>
+          <VIcon
+            :icon="item.raw.isLeaf
+              ? 'mdi-file-document-outline'
+              : 'mdi-folder-outline'"
+            size="small"
+          />
+        </template>
+        <VListItemSubtitle v-if="item.raw.breadcrumb" class="text-caption">
+          {{ item.raw.breadcrumb }}
+        </VListItemSubtitle>
+      </VListItem>
+    </template>
+    <template v-if="modelValue?.breadcrumb" #selection>
+      <div>
+        <div class="text-body-2">{{ modelValue.name }}</div>
+        <div class="text-caption text-primary-lighten-3">
+          {{ modelValue.breadcrumb }}
+        </div>
+      </div>
+    </template>
+  </VAutocomplete>
 </template>
 
 <script lang="ts" setup>
-import TopicList from './TopicList.vue';
 import type { TopicItem } from './types';
 import { useOutlineTree } from './useOutlineTree';
 
@@ -54,10 +57,12 @@ const emit = defineEmits<{
 
 const { items } = useOutlineTree();
 
-const isOpen = ref(false);
-
-function onSelect(topic: TopicItem) {
-  isOpen.value = false;
-  emit('update:modelValue', topic);
+function onSelect(id: number | null) {
+  if (!id) {
+    emit('topic:clear');
+    return;
+  }
+  const topic = items.value.find((it) => it.id === id);
+  if (topic) emit('update:modelValue', topic);
 }
 </script>
