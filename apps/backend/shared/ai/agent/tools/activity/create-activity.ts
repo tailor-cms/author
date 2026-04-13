@@ -4,16 +4,18 @@ import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   dbContext,
-  failWith,
   findActivity,
   nextPosition,
   recordOperation,
   resolveOutlineType,
   summarizeActivity,
+  toolError,
 } from '../helpers/index.ts';
 
 const { Activity } = db as any;
 const api = schemaAPI as any;
+
+const TOOL = 'create_activity';
 
 interface Input {
   type: string;
@@ -79,23 +81,18 @@ const parameters = {
  * @param type - The rejected type string
  * @returns Error with allowedOutlineTypes
  */
-function rejectNonOutline(
-  schemaId: string,
-  type: string,
-) {
+function rejectNonOutline(schemaId: string, type: string) {
   const levels = api.getOutlineLevels(schemaId);
-  const allowed = levels.map((it: any) => it.type);
-  return failWith(
-    'activity.invalid_type',
-    `"${type}" is not an outline type.`,
-    {
-      allowedOutlineTypes: allowed,
-      hint: oneLine`
-        Use create_subcontainer_with_elements
-        for content sections.
-      `,
-    },
-  );
+  return toolError({
+    tool: TOOL,
+    reason: 'invalid_type',
+    message: `"${type}" is not an outline type.`,
+    allowedOutlineTypes: levels.map((it: any) => it.type),
+    hint: oneLine`
+      Use create_subcontainer_with_elements
+      for content sections.
+    `,
+  });
 }
 
 /**
@@ -115,34 +112,38 @@ async function validateParent(
   const config = api.getLevel(type);
   if (!parentId) {
     if (config && !config.rootLevel) {
-      return failWith(
-        'activity.parent_required',
-        `"${type}" needs a parent.`,
-      );
+      return toolError({
+        tool: TOOL,
+        reason: 'parent_required',
+        message: `"${type}" needs a parent.`,
+      });
     }
     return null;
   }
   const parent = await findActivity(parentId, ctx);
   if (!parent) {
-    return failWith(
-      'activity.parent_not_found',
-      `Parent #${parentId} not found.`,
-      { hint: 'Call list_outline for current ids.' },
-    );
+    return toolError({
+      tool: TOOL,
+      reason: 'parent_not_found',
+      message: `Parent #${parentId} not found.`,
+      hint: 'Call list_outline for current ids.',
+    });
   }
   const parentConfig = api.getLevel(parent.type);
   const allowed = parentConfig?.subLevels || [];
   if (!allowed.length || allowed.includes(type)) {
     return null;
   }
-  return failWith(
-    'activity.invalid_child_type',
-    `"${type}" cannot be a child of "${parent.type}".`,
-    {
-      allowedChildTypes: allowed,
-      hint: `Allowed: ${allowed.join(', ')}`,
-    },
-  );
+  return toolError({
+    tool: TOOL,
+    reason: 'invalid_child',
+    message: oneLine`
+      "${type}" cannot be a child
+      of "${parent.type}".
+    `,
+    allowedChildTypes: allowed,
+    hint: `Allowed: ${allowed.join(', ')}`,
+  });
 }
 
 /**
@@ -158,52 +159,53 @@ async function execute(input: Input, ctx: ToolContext) {
   if (!api.isOutlineActivity(type)) {
     return rejectNonOutline(schemaId, input.type);
   }
-  const parentError = await validateParent(
-    type, input.parentId, ctx,
-  );
+  const parentError = await validateParent(type, input.parentId, ctx);
   if (parentError) return parentError;
   const outlineConfig = api.getLevel(type);
   // Use explicit position if provided, otherwise
   // append after the last sibling.
-  const position = typeof input.position === 'number'
-    ? input.position
-    : await nextPosition(
-        ctx.repository.id,
-        input.parentId ?? null,
-      );
+  const position =
+    typeof input.position === 'number'
+      ? input.position
+      : await nextPosition(ctx.repository.id, input.parentId ?? null);
 
   try {
-    const created = await Activity.create({
-      type,
-      parentId: input.parentId ?? null,
-      position,
-      data: {
-        ...(outlineConfig?.defaultMeta ?? {}),
-        ...input.data,
+    const created = await Activity.create(
+      {
+        type,
+        parentId: input.parentId ?? null,
+        position,
+        data: {
+          ...(outlineConfig?.defaultMeta ?? {}),
+          ...input.data,
+        },
+        repositoryId: ctx.repository.id,
       },
-      repositoryId: ctx.repository.id,
-    }, { context: dbContext(ctx) });
+      { context: dbContext(ctx) },
+    );
 
     const summary = summarizeActivity(created);
-    recordOperation(
-      ctx, 'create_activity', input, summary,
-      {
-        tool: 'delete_activity',
-        input: { id: created.id },
-      },
-    );
+    // Inverse: delete what we just created (for undo)
+    recordOperation(ctx, TOOL, input, summary, {
+      tool: 'delete_activity',
+      input: { id: created.id },
+    });
     return {
       ok: true,
       ...summary,
       _invalidates: ['outline'],
     };
   } catch (err: any) {
-    return failWith('activity.create_failed', err.message);
+    return toolError({
+      tool: TOOL,
+      reason: 'failed',
+      message: err.message,
+    });
   }
 }
 
 export const create_activity: ToolDef = {
-  name: 'create_activity',
+  name: TOOL,
   scope: 'write',
   description,
   parameters,
