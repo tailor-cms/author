@@ -39,9 +39,10 @@ interface NodeError {
 const description = stripIndent`
   Batch-create an entire outline tree from a generate_outline
   result. Pass the activities array directly - parent-child
-  relationships are resolved via _parentName. Any extra data
-  fields (description, estimatedTime, tags) are passed through
-  to activity.data.
+  relationships are resolved via _parentName. Schema-defined
+  meta fields (e.g. description, estimatedTime, tags) are passed
+  through to activity.data. Call get_schema_info to discover
+  which meta properties each activity type supports.
 `;
 
 const parameters = {
@@ -126,6 +127,16 @@ async function createNode(
   ctx: ToolContext,
 ): Promise<{ activity: any } | { error: NodeError }> {
   const type = resolveOutlineType(ctx.repository.schema, item.type);
+  if (!api.isOutlineActivity(type)) {
+    return {
+      error: {
+        name: item.name,
+        error: `"${item.type}" is not an outline activity type.`,
+      },
+    };
+  }
+
+  const outlineConfig = api.getLevel(type);
   // Resolve parent from already-created activities
   let parentId: number | null = null;
   if (item._parentName) {
@@ -143,12 +154,16 @@ async function createNode(
     if (violation) {
       return { error: { name: item.name, error: violation } };
     }
+  } else if (outlineConfig && !outlineConfig.rootLevel) {
+    return {
+      error: {
+        name: item.name,
+        error: `"${item.type}" cannot be a root-level activity.`,
+      },
+    };
   }
-
-  const outlineConfig = api.getLevel(type);
   const position = await nextPosition(ctx.repository.id, parentId);
-
-  const { type: _type, _parentName, name, ...meta } = item;
+  const { type: _type, _parentName: _parent, name, ...meta } = item;
   try {
     const activity = await Activity.create(
       {
