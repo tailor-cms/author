@@ -37,24 +37,6 @@
             </template>
             <span>{{ arePinnedShown ? 'Show all' : 'Show pinned' }}</span>
           </VTooltip>
-          <VTooltip
-            content-class="bg-primary-darken-4"
-            location="top"
-            open-delay="400"
-          >
-            <template #activator="{ props: tooltipProps }">
-              <VBtn
-                v-bind="tooltipProps"
-                :color="isDeleteMode ? 'secondary-lighten-3' : 'primary-lighten-3'"
-                icon="mdi-delete-sweep"
-                aria-label="Toggle delete mode"
-                class="my-1 ml-2"
-                variant="tonal"
-                @click="toggleDeleteMode"
-              />
-            </template>
-            <span>{{ isDeleteMode ? 'Cancel' : 'Delete mode' }}</span>
-          </VTooltip>
           <SelectOrder
             :sort-by="queryParams.sortBy"
             class="pl-2"
@@ -81,7 +63,7 @@
         @close="onFilterChange"
       />
       <VExpandTransition>
-        <div v-if="isDeleteMode" class="text-left d-flex align-center mb-4">
+        <div v-if="selectedRepos.size > 0" class="text-left d-flex align-center mb-4">
           <VTooltip
             content-class="bg-primary-darken-4"
             location="top"
@@ -93,7 +75,7 @@
                 :disabled="!repositories.length"
                 :model-value="isAllSelected"
                 :indeterminate="someSelected"
-                color="secondary-lighten-3"
+                color="primary-lighten-3"
                 label="Select all"
                 hide-details
                 @update:model-value="toggleSelectAll"
@@ -132,7 +114,6 @@
             <RepositoryCard
               :is-selected="selectedRepos.has(repository.id)"
               :repository="repository"
-              :selectable="isDeleteMode"
               @toggle-selection="toggleSelection"
             />
           </VCol>
@@ -194,7 +175,6 @@ const config = useConfigStore();
 const confirmationDialog = useConfirmationDialog();
 
 const isLoading = ref(true);
-const isDeleteMode = ref(false);
 const selectedRepos = ref<Set<number>>(new Set());
 
 const {
@@ -221,11 +201,6 @@ const togglePinFilter = () => {
   refetchRepositories();
 };
 
-const toggleDeleteMode = () => {
-  isDeleteMode.value = !isDeleteMode.value;
-  if (!isDeleteMode.value) selectedRepos.value.clear();
-};
-
 const toggleSelection = (id: number) => {
   if (selectedRepos.value.has(id)) return selectedRepos.value.delete(id);
   selectedRepos.value.add(id);
@@ -248,7 +223,6 @@ const deleteSelected = () => {
         await Promise.each(repositories, (id) => repositoryStore.remove(id));
       } finally {
         selectedRepos.value.clear();
-        isDeleteMode.value = false;
         await refetchRepositories();
       }
     },

@@ -14,22 +14,13 @@ test.beforeEach(async ({ page }) => {
   await expect(catalog.loadMoreBtn).not.toBeVisible();
 });
 
-test('should be able to toggle delete mode on and off', async ({ page }) => {
+test('should always show card checkboxes', async ({ page }) => {
   const catalog = new Catalog(page);
-  await expect(catalog.selectAllCheckbox).not.toBeVisible();
-  await catalog.toggleDeleteMode();
-  await expect(catalog.selectAllCheckbox).toBeVisible();
-  await expect(catalog.deleteSelectedBtn).toBeVisible();
-  await expect(catalog.deleteSelectedBtn).toBeDisabled();
   await expect(catalog.getCardCheckboxes().first()).toBeVisible();
-  await catalog.toggleDeleteMode();
-  await expect(catalog.selectAllCheckbox).not.toBeVisible();
-  await expect(catalog.getCardCheckboxes()).toHaveCount(0);
 });
 
 test('should be able to select individual repositories', async ({ page }) => {
   const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
   await catalog.getCardCheckbox('Astronomy').click();
   await expect(catalog.deleteSelectedBtn).toContainText('(1)');
   await catalog.getCardCheckbox('Physics').click();
@@ -42,31 +33,20 @@ test('should be able to select and deselect all repositories', async ({
   page,
 }) => {
   const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
+  await catalog.getCardCheckbox('Astronomy').click();
+  await expect(catalog.selectAllCheckbox).toBeVisible();
   const cardCount = await catalog.getRepositoryCards().count();
   await catalog.selectAllCheckbox.click();
   await expect(
     catalog.deleteSelectedBtn,
   ).toContainText(`(${cardCount})`);
   await catalog.selectAllCheckbox.click();
-  await expect(catalog.deleteSelectedBtn).toBeDisabled();
-});
-
-test('should clear selection when exiting delete mode', async ({ page }) => {
-  const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
-  await catalog.getCardCheckbox('Astronomy').click();
-  await expect(catalog.deleteSelectedBtn).toContainText('(1)');
-  // Exit and re-enter delete mode
-  await catalog.toggleDeleteMode();
-  await catalog.toggleDeleteMode();
-  await expect(catalog.deleteSelectedBtn).toBeDisabled();
+  await expect(catalog.deleteSelectedBtn).not.toBeVisible();
 });
 
 test('should show confirmation dialog before deleting', async ({ page }) => {
   const catalog = new Catalog(page);
   const initialCount = await catalog.getRepositoryCards().count();
-  await catalog.toggleDeleteMode();
   await catalog.getCardCheckbox('Astronomy').click();
   await catalog.deleteSelectedBtn.click();
   const dialog = new ConfirmationDialog(page, 'Delete repository');
@@ -81,7 +61,6 @@ test('should delete selected repositories after confirmation', async ({
   page,
 }) => {
   const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
   await catalog.getCardCheckbox('Astronomy').click();
   await catalog.getCardCheckbox('Physics').click();
   await expect(catalog.deleteSelectedBtn).toContainText('(2)');
@@ -94,44 +73,30 @@ test('should delete selected repositories after confirmation', async ({
   await page.waitForLoadState('networkidle');
   await expect(catalog.findRepositoryCard('Astronomy')).toHaveCount(0);
   await expect(catalog.findRepositoryCard('Physics')).toHaveCount(0);
-  await expect(catalog.selectAllCheckbox).not.toBeVisible();
 });
 
 test('should clear selection when sorting', async ({ page }) => {
   const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
   await catalog.getCardCheckbox('Astronomy').click();
   await expect(catalog.deleteSelectedBtn).toContainText('(1)');
   await catalog.orderByName();
-  await expect(catalog.deleteSelectedBtn).toBeDisabled();
+  await expect(catalog.deleteSelectedBtn).not.toBeVisible();
 });
 
 test('should clear selection when filtering', async ({ page }) => {
   const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
   await catalog.getCardCheckbox('Astronomy').click();
   await expect(catalog.deleteSelectedBtn).toContainText('(1)');
   await catalog.filterBySchema('Course');
-  await expect(catalog.deleteSelectedBtn).toBeDisabled();
-});
-
-test('should not navigate when clicking a card in delete mode', async ({
-  page,
-}) => {
-  const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
-  const urlBefore = page.url();
-  await catalog.findRepositoryCard('Astronomy').click();
-  await expect(page).toHaveURL(urlBefore);
+  await expect(catalog.deleteSelectedBtn).not.toBeVisible();
 });
 
 test('should clear selection when searching', async ({ page }) => {
   const catalog = new Catalog(page);
-  await catalog.toggleDeleteMode();
   await catalog.getCardCheckbox('Astronomy').click();
   await expect(catalog.deleteSelectedBtn).toContainText('(1)');
   await catalog.searchInput.fill('test');
-  await expect(catalog.deleteSelectedBtn).toBeDisabled();
+  await expect(catalog.deleteSelectedBtn).not.toBeVisible();
 });
 
 test.afterAll(async () => {

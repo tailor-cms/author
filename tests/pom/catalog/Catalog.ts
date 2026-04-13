@@ -8,7 +8,6 @@ export class Catalog {
   readonly orderByBtn: Locator;
   readonly orderDirectionBtn: Locator;
   readonly pinnedFilterBtn: Locator;
-  readonly deleteModeBtn: Locator;
   readonly selectAllCheckbox: Locator;
   readonly deleteSelectedBtn: Locator;
   readonly tagsFilterBtn: Locator;
@@ -19,7 +18,6 @@ export class Catalog {
     this.loadMoreBtn = page.getByRole('button', { name: 'Load more' });
     this.searchInput = page.getByLabel('Search repositories');
     this.pinnedFilterBtn = page.getByLabel('Toggle pinned items filter');
-    this.deleteModeBtn = page.getByLabel('Toggle delete mode');
     this.selectAllCheckbox = page.getByLabel('Select all');
     this.deleteSelectedBtn = page.getByRole('button', { name: /Delete \(/ });
     this.orderByBtn = page.getByRole('button', { name: 'Order by' });
@@ -80,10 +78,6 @@ export class Catalog {
       .locator('.v-list-item-title')
       .getByText(schema, { exact: true })
       .click();
-  }
-
-  toggleDeleteMode() {
-    return this.deleteModeBtn.click();
   }
 
   getCardCheckboxes() {

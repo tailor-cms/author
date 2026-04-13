@@ -12,15 +12,13 @@
       <div class="card-body">
         <div class="card-header d-flex align-center my-1 mx-3">
           <VCheckbox
-            v-if="selectable"
             :model-value="isSelected"
             aria-label="Select repository"
             class="ml-n1"
-            color="secondary-lighten-3"
+            color="primary-lighten-3"
             hide-details
             @click.stop
             @update:model-value="$emit('toggle-selection', repository.id)" />
-          <VChip v-else :color="repository.data.color" class="px-1" size="x-small" />
           <VTooltip
             :disabled="!isSchemaNameTruncated"
             content-class="bg-primary-darken-4"
@@ -147,7 +145,6 @@ const store = useRepositoryStore();
 
 const props = defineProps<{
   repository: Repository;
-  selectable: boolean;
   isSelected?: boolean;
 }>();
 defineEmits(['toggle-selection']);
