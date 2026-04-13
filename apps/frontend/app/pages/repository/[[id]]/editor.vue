@@ -4,9 +4,7 @@
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
-      @toggle-sidebar="showSidebar = !showSidebar"
       @toggle-guidelines="showGuidelines = !showGuidelines"
-
     />
     <div class="editor-content-container">
       <VSidebar
@@ -17,6 +15,18 @@
         :selected-element="editorStore.selectedContentElement as ContentElement"
         class="sidebar"
       />
+      <VFadeTransition>
+        <VBtn
+          v-if="!showSidebar"
+          v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
+          class="sidebar-toggle"
+          color="primary-darken-2"
+          icon="mdi-chevron-right"
+          variant="flat"
+          size="small"
+          @click="showSidebar = true"
+        />
+      </VFadeTransition>
       <NuxtPage
         v-if="activityId"
         :key="activityId"
@@ -62,7 +72,7 @@ provide('$editorState', {
 });
 
 const activityId = ref<number | null>(null);
-const showSidebar = ref(null);
+const showSidebar = ref(true);
 const showGuidelines = ref(null);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
@@ -106,6 +116,20 @@ $sidebar-width: 30rem;
 
   .sidebar {
     flex-basis: $sidebar-width;
+  }
+
+  .sidebar-toggle {
+    position: fixed;
+    bottom: 5.5rem;
+    left: 0;
+    z-index: 1004;
+    border-radius: 0 4px 4px 0 !important;
+    width: 2rem !important;
+    height: 3rem !important;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 
   .activity-content {
