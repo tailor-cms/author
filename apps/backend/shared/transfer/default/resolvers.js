@@ -1,5 +1,6 @@
 import mapKeys from 'lodash/mapKeys.js';
 import miss from 'mississippi';
+import omit from 'lodash/omit.js';
 import QueryStream from 'pg-query-stream';
 import { schema } from '@tailor-cms/config';
 import { stringify } from 'JSONStream';
@@ -8,6 +9,7 @@ import db from '../../database/index.js';
 const { Activity, ContentElement, Repository } = db;
 const reStorage = /^storage:\/\//;
 
+const IS_ARRAY_STREAM = false;
 const isString = (arg) => typeof arg === 'string';
 const prependStorage = (it) =>
   it.replace(/^(?!(?:storage:)?\/\/)(?=repository\/)/, 'storage://');
@@ -15,7 +17,11 @@ const prependStorage = (it) =>
 function createRepositoryResolver({ context, transaction }) {
   const where = { id: context.repositoryId };
   const srcStream = queryStream(Repository, { where, transaction });
-  return miss.pipe(srcStream, stringify(false /* isArray */));
+  const stripInternal = miss.through.obj((repo, _enc, cb) => {
+    if (repo.data) repo.data = omit(repo.data, '$$');
+    cb(null, repo);
+  });
+  return miss.pipe(srcStream, stripInternal, stringify(IS_ARRAY_STREAM));
 }
 
 function createActivitiesResolver({ context, transaction }) {
@@ -40,7 +46,7 @@ function createManifestResolver({ context }) {
     schema: schema.getSchema(schemaId),
     date: new Date(),
   };
-  return miss.pipe(miss.from.obj([manifest]), stringify(false /* isArray */));
+  return miss.pipe(miss.from.obj([manifest]), stringify(IS_ARRAY_STREAM));
 }
 
 function createAssetResolver({ filename, storage }) {

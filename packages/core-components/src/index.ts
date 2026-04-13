@@ -17,6 +17,7 @@ export { default as RadarChart } from './components/RadarChart.vue';
 export { default as QuestionContainer } from './components/QuestionContainer/index.vue';
 export { default as EmbeddedContainer } from './components/EmbeddedContainer.vue';
 export { default as TailorDialog } from './components/TailorDialog.vue';
+export { default as AiPrompt } from './components/AiPrompt.vue';
 export { default as AssessmentItem } from './components/AssessmentItem.vue';
 export { useLoader } from './composables/useLoader';
 export { useConfirmationDialog } from './composables/useConfirmationDialog';

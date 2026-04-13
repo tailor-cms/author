@@ -18,13 +18,25 @@ services:
       - '6379'
     ports:
       - '6379:6379'
-  author-dev-localstack:
-    container_name: author-dev-localstack
-    image: localstack/localstack
+  author-dev-minio:
+    container_name: author-dev-minio
+    image: minio/minio
+    command: server /data
     expose:
-      - '4566'
+      - '9000'
     ports:
-      - '4566:4566'
+      - '4566:9000'
     environment:
-      - SERVICES=s3:4566
-      - BUCKET_NAME=test
+      - MINIO_ROOT_USER=test
+      - MINIO_ROOT_PASSWORD=test1234
+  author-dev-createbucket:
+    image: minio/mc
+    depends_on:
+      - author-dev-minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 3;
+      mc alias set minio http://author-dev-minio:9000 test test1234;
+      mc mb minio/test --ignore-existing;
+      exit 0;
+      "

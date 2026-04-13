@@ -146,8 +146,10 @@
             :description="descriptionInput"
             :name="values.name"
             :schema-id="schemaInput"
-            @ai-assistance-toggle="isAssistaceEnabled = $event"
-            @structure="aiSuggestedOutline = $event"
+            @ai:toggle="isAiEnabled = $event"
+            @ai:outline="aiOutline = $event"
+            @ai:context="aiContext = $event"
+            @ai:indexing="isAiIndexing = $event"
           />
         </div>
         <div class="d-flex justify-end">
@@ -155,12 +157,12 @@
             :disabled="isSubmitting"
             color="primary-darken-4"
             variant="text"
-            @click="hide"
+            @click="handleCancel"
           >
             Cancel
           </VBtn>
           <VBtn
-            :disabled="isAssistaceEnabled && !aiSuggestedOutline?.length"
+            :disabled="isAiEnabled && !aiOutline?.length"
             :loading="isSubmitting"
             class="ml-2"
             color="primary-darken-2"
@@ -184,6 +186,7 @@ import { SCHEMAS } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
+import aiAPI from '@/api/ai';
 import AiAssistance from './AiAssistance.vue';
 import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
@@ -207,9 +210,11 @@ const isVisible = ref(false);
 const selectedTab = ref(NEW_TAB);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isSubmitting = ref(false);
-const isAssistaceEnabled = ref(false);
+const isAiEnabled = ref(false);
 const serverError = ref('');
-const aiSuggestedOutline = ref([]);
+const aiOutline = ref([]);
+const aiContext = ref<any>(null);
+const isAiIndexing = ref(false);
 
 const showUserGroupInput = computed(() => {
   if (authStore.hasDefaultUserGroup) return false;
@@ -262,15 +267,37 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   }
 });
 
+const confirmationDialog = useConfirmationDialog();
+
+const handleCancel = () => {
+  if (isAiIndexing.value) {
+    confirmationDialog({
+      title: 'Cancel repository creation?',
+      message:
+        'Documents are still being processed and will be lost if you cancel now.',
+      action: () => {
+        const storeId = aiContext.value?.vectorStoreId;
+        if (storeId) aiAPI.deleteVectorStore(storeId).catch(() => {});
+        hide();
+      },
+    });
+    return;
+  }
+  hide();
+};
+
 const create = async (formData: any) => {
+  const data = {
+    ...pick(formData, Object.keys(metaValidation)),
+    ...(aiContext.value && { $$: { ai: aiContext.value } }),
+  };
   const formPayload = {
     ...pick(formData, ['schema', 'name', 'description', 'userGroupIds']),
-    data: pick(formData, Object.keys(metaValidation)),
+    data,
   };
   const repository = await repositoryStore.create(formPayload);
-  if (!aiSuggestedOutline.value.length) return;
-  // Trigger creation without waiting for completion
-  await createActvities(repository.id, aiSuggestedOutline.value);
+  if (!aiOutline.value.length) return;
+  await createActvities(repository.id, aiOutline.value);
 };
 
 const createActvities = async (
@@ -318,6 +345,8 @@ const hide = () => {
   isVisible.value = false;
   isSubmitting.value = false;
   serverError.value = '';
+  aiContext.value = null;
+  isAiIndexing.value = false;
   resetForm();
 };
 

@@ -4,8 +4,10 @@
   "version": "1.0.0",
   "files": [
     "client.js",
-    "types.js",
-    "enum.ts"
+    "enum.ts",
+    "server.js",
+    "schema.js",
+    "types.js"
   ],
   "scripts": {
     "cli": "node ./cli.js"

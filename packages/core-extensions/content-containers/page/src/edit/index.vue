@@ -48,7 +48,7 @@
       variant="tonal"
       prominent
     >
-      Click the button below to add content.
+      {{ disabled ? `Empty ${name}` : 'Click the button below to add content.' }}
     </VAlert>
     <VSheet
       v-else-if="isAiGeneratingContent"
@@ -131,6 +131,7 @@ import type { AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import {
   AddElement,
+  AiPrompt as AIPrompt,
   CircularProgress,
   ContainedContent,
   ElementList,
@@ -139,8 +140,6 @@ import {
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { filter, reduce, sortBy } from 'lodash-es';
 import { computed, inject, ref } from 'vue';
-
-import AIPrompt from './AIPrompt.vue';
 
 interface Props {
   name: string;

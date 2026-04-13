@@ -4,12 +4,8 @@
 import { Command } from 'commander';
 import { ExtensionRegistry } from './ExtensionRegistry.js';
 
-export default (location, extensionType, hasServerPackages) => {
-  const registry = new ExtensionRegistry(
-    location,
-    extensionType,
-    hasServerPackages,
-  );
+export default (location, extensionType, opts) => {
+  const registry = new ExtensionRegistry(location, extensionType, opts);
 
   const program = new Command();
   program
@@ -41,6 +37,11 @@ export default (location, extensionType, hasServerPackages) => {
       'Remove an extension by selecting it from a list of installed extensions',
     )
     .action(() => registry.remove());
+
+  program
+    .command('rebuild')
+    .description('Regenerate export modules from the current registry')
+    .action(() => registry.rebuild());
 
   return program.parse(process.argv);
 };

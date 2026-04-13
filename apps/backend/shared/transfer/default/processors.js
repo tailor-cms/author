@@ -21,7 +21,11 @@ const { repository: role } = roleConfig;
 const noop = Function.prototype;
 
 const { ADMIN } = role;
-const IGNORE_ATTRS = ['id', 'uid', 'publishedAt', 'createdAt', 'updatedAt'];
+const IGNORE_ATTRS = [
+  'id', 'uid', 'publishedAt', 'createdAt', 'updatedAt',
+  // Strip linking fields; source references are not portable across environments
+  'isLinkedCopy', 'sourceId', 'sourceModifiedAt',
+];
 
 function createManifestProcessor(options) {
   const destStream = createProcessor(processManifest, options);
@@ -66,6 +70,7 @@ async function processRepository(repository, _enc, { context, transaction }) {
   const { name, description, userId, userGroupIds } = context;
   repository = normalize(repository, Repository);
   Object.assign(repository, { description, name });
+  if (repository.data) repository.data = omit(repository.data, '$$');
   const options = { context: { userId }, transaction };
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
   const entity = await Repository.create(repositoryRecord, options);

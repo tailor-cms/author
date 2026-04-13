@@ -8,8 +8,20 @@
   >
     <div class="content-containers-wrapper">
       <ContentLoader v-if="isLoading" class="loader" />
+      <VAlert
+        v-else-if="isEmptyLinkedActivity"
+        class="mt-8"
+        color="primary-lighten-3"
+        icon="mdi-link-variant"
+        variant="tonal"
+        prominent
+      >
+        This is a linked {{ activityLabel }} without content. The source has
+        not been edited yet. Content will appear here once the source is
+        updated.
+      </VAlert>
       <PublishDiffProvider
-        v-if="repositoryStore.repository && editorStore.selectedActivity"
+        v-if="editorStore?.selectedActivity && !isEmptyLinkedActivity"
         v-show="!isLoading"
         v-slot="{
           processedElements,
@@ -22,7 +34,7 @@
         :container-groups="rootContainerGroups"
         :elements="elementsWithComments"
         :publish-timestamp="editorStore.selectedActivity.publishedAt as string"
-        :repository-id="repositoryStore.repository.id"
+        :repository-id="repositoryStore.repository?.id!"
         :show-diff="showPublishDiff"
       >
         <ContentContainers
@@ -61,10 +73,10 @@ import { getElementId } from '@tailor-cms/utils';
 import pMinDelay from 'p-min-delay';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
+import aiAPI from '@/api/ai';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
-import aiAPI from '@/api/ai';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
@@ -92,6 +104,8 @@ const route = useRoute();
 const config = useConfigStore();
 const { $eventBus, $schemaService } = useNuxtApp() as any;
 
+const editorChannel = $eventBus.channel('editor');
+
 const repositoryStore = useCurrentRepository();
 const authStore = useAuthStore();
 const editorStore = useEditorStore();
@@ -100,6 +114,7 @@ const contentElementStore = useContentElementStore();
 const commentStore = useCommentStore();
 const storageService = useStorageService();
 const userTrackingStore = useUserTracking();
+useContentLinking(editorChannel);
 
 const getOutlineLocationDesciption = (activity: Activity) => {
   const ancestors = activityStore.getAncestors(activity?.id);
@@ -108,16 +123,6 @@ const getOutlineLocationDesciption = (activity: Activity) => {
     (acc, it) => acc + (acc === '' ? it.data.name : `, ${it.data.name}`),
     '',
   );
-};
-
-const getAiConfig = (
-  outlineActivityType: string,
-  containerType: string,
-) => {
-  const config = $schemaService
-    .getSupportedContainers(outlineActivityType)
-    .find((it: any) => it?.type === containerType);
-  return config?.ai || {};
 };
 
 const doTheMagic = ({
@@ -129,7 +134,8 @@ const doTheMagic = ({
   inputs: AiInput[];
   content?: string;
 }) => {
-  const { name, description, schema } = props.repository;
+  const { name, description, schema, data } = props.repository;
+  const aiData = (data as any)?.$$?.ai;
   const context: AiContext = {
     repository: {
       schemaId: schema,
@@ -138,8 +144,9 @@ const doTheMagic = ({
       outlineActivityType: props.activity?.type,
       outlineLocation: getOutlineLocationDesciption(props.activity),
       containerType,
-      containerConfig: getAiConfig(props.activity.type, containerType),
       topic: props.activity?.data?.name,
+      vectorStoreId: aiData?.vectorStoreId,
+      tags: [...(aiData?.topicTags || []), ...(aiData?.styleTags || [])],
     },
     inputs,
     content,
@@ -147,12 +154,20 @@ const doTheMagic = ({
   return aiAPI.generate(context);
 };
 
-const editorChannel = $eventBus.channel('editor');
+const createActivity = async (payload: any) => {
+  return await activityStore.save({
+    ...payload,
+    repositoryId: repositoryStore.repositoryId as number,
+  });
+};
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
 provide('$callElementAction', contentElementStore.call);
-if (config.props.aiUiEnabled) provide('$doTheMagic', doTheMagic);
+if (config.props.aiUiEnabled) {
+  provide('$doTheMagic', doTheMagic);
+  provide('$createActivity', createActivity);
+}
 
 const isLoading = ref(true);
 const focusedElement = ref(null);
@@ -160,6 +175,15 @@ const activityContentEl = ref();
 const mousedownCaptured = ref<boolean | null>(null);
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
+
+const activityLabel = computed(
+  () => $schemaService.getLevel(props.activity?.type)?.label?.toLowerCase(),
+);
+
+const isEmptyLinkedActivity = computed(
+  () => !isLoading.value && props.activity?.isLinkedCopy && !containerIds.value.length,
+);
+
 const elements = computed(() => contentElementStore.items);
 const containerIds = computed(
   () => props.contentContainers?.map((it: any) => it.id) as any[],
@@ -226,6 +250,7 @@ const onClick = (e: any) => {
 
 const loadContents = async () => {
   if (containerIds.value.length <= 0) {
+    isLoading.value = false;
     return;
   }
   await pMinDelay(

@@ -6,7 +6,7 @@ const { LOCALSTACK_ENDPOINT, LOCALSTACK_REGION, LOCALSTACK_BUCKET } =
 export const isStorageConfigured =
   LOCALSTACK_ENDPOINT && LOCALSTACK_BUCKET && LOCALSTACK_REGION;
 
-// Supporting only localstack based PR workflow
+// Supporting only MinIO based PR workflow
 export const StorageClient = new Garment({
   provider: 'aws',
   bucket: LOCALSTACK_BUCKET as string,
@@ -14,7 +14,7 @@ export const StorageClient = new Garment({
     endpoint: LOCALSTACK_ENDPOINT,
     region: LOCALSTACK_REGION as string,
     keyId: 'test',
-    secretKey: 'test',
+    secretKey: 'test1234',
     forcePathStyle: true,
   },
 });

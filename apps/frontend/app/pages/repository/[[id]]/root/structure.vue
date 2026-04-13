@@ -168,11 +168,12 @@ onMounted(() => {
     // If there are no activities
     return;
   }
+  if (!selectedActivity.value) return;
   const isFirstActivitySelected =
     selectedActivity.value &&
     rootActivities.value[0]!.id === selectedActivity.value.id;
   if (!isFirstActivitySelected) {
-    scrollToActivity(selectedActivity.value as StoreActivity, 200);
+    scrollToActivity(selectedActivity.value, 200);
   }
 });
 </script>

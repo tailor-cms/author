@@ -61,7 +61,7 @@ const errors = ref<ReferenceError[]>([]);
 
 const validateReferences = async () => {
   const { repositoryId } = repositoryStore;
-  if (!repositoryId) throw new Error('Repository not initialized!');
+  if (!repositoryId) return;
   const { activities, elements } = await api.validateReferences(repositoryId);
   errors.value = [];
   activities.forEach((it: any) => {
