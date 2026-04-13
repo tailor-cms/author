@@ -15,6 +15,7 @@ const log = (msg) => console.log(`${msg}\n`);
 
 const argv = minimist(process.argv.slice(2));
 const hasCiFlag = !!argv.ci;
+const hasSkipBuildFlag = !!argv['skip-build'];
 const envLabel = hasCiFlag ? 'CI' : 'DEV';
 const defaultUser = users[0];
 
@@ -49,9 +50,11 @@ const isUsingComposeSpec = !hasCiFlag && (await handleComposeSpecOption());
 log('◦ 🤫 Setup environment variables');
 const afterAllHooks = (await setEnv({ dbPrefix: argv.dbPrefix })) || [];
 log('◦ ✅ Environment successfully configured!');
-log('◦ 🏗️  Build');
-await execaCommand('pnpm build');
-log(`◦ ✅ App built`);
+if (!hasSkipBuildFlag) {
+  log('◦ 🏗️  Build');
+  await execaCommand('pnpm build');
+  log(`◦ ✅ App built`);
+}
 
 const hasUserRequestedSeed = !hasCiFlag && (await shouldSeedTheDatabase());
 if (hasUserRequestedSeed) {

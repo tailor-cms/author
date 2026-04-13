@@ -1,4 +1,5 @@
 name: Setup node, pnpm, install dependencies
+description: Install pnpm, configure Node.js with caching, and install project dependencies
 runs:
   using: composite
   steps:
@@ -6,9 +7,9 @@ runs:
   - name: Setup node to enable caching
     uses: actions/setup-node@v4
     with:
-      node-version: 24.2.0
+      node-version-file: '.node-version'
       cache: 'pnpm'
       cache-dependency-path: './pnpm-lock.yaml'
   - name: Install dependencies
     shell: bash
-    run: pnpm i --frozen-lockfile
+    run: pnpm i --frozen-lockfile --prefer-offline
