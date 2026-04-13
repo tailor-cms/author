@@ -108,7 +108,7 @@ export interface Asset {
   meta: AssetMeta;
   processingStatus: ProcessingStatus | null;
   vectorStoreFileId: string | null;
-  uploadedBy: number;
+  uploaderId: number;
   uploader?: Uploader;
   createdAt: Date;
   updatedAt: Date;

@@ -61,8 +61,8 @@
 
 <script lang="ts" setup>
 import {
+  ContentFilter,
   ContentType,
-  type ContentFilter,
   type DiscoveryResult,
 } from '@tailor-cms/interfaces/discovery';
 
@@ -76,7 +76,6 @@ const DOWNLOADABLE_TYPES = new Set([
   ContentType.Image,
   ContentType.Pdf,
   ContentType.Video,
-  ContentType.Audio,
 ]);
 const FETCH_COUNT = 100;
 
@@ -88,7 +87,7 @@ const currentRepositoryStore = useCurrentRepository();
 const repositoryId = computed(() => currentRepositoryStore.repository?.id);
 
 const query = ref('');
-const contentFilter = ref<ContentFilter>('all');
+const contentFilter = ref<ContentFilter>(ContentFilter.All);
 
 const isAdding = ref(false);
 const isSearching = ref(false);
@@ -183,7 +182,7 @@ async function addSelected(shouldIndex = false) {
 watch(show, (v) => {
   if (!v) return;
   query.value = '';
-  contentFilter.value = 'all';
+  contentFilter.value = ContentFilter.All;
   suggestions.value = [];
   selectedUrls.clear();
   hasSearched.value = false;
