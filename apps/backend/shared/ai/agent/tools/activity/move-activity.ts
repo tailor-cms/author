@@ -97,28 +97,35 @@ async function execute(input: Input, ctx: ToolContext) {
       message: `Activity #${input.id} not found.`,
     });
   }
-  const newParent = input.newParentId != null
-    ? await findActivity(input.newParentId, ctx)
-    : null;
-  if (input.newParentId != null && !newParent) {
-    return toolError({
-      tool: TOOL,
-      reason: 'parent_not_found',
-      message: `Parent #${input.newParentId} not found.`,
-      hint: 'Call get_outline for current ids.',
-    });
-  }
-  const moveError = validateMove(activity, newParent);
-  if (moveError) {
-    return toolError({
-      tool: TOOL,
-      reason: 'invalid_move',
-      message: moveError,
-    });
-  }
   const previousParentId = activity.parentId;
   const previousPosition = activity.position;
-  const targetParentId = input.newParentId ?? null;
+  // Omitted newParentId = reposition within current parent
+  const hasNewParent = 'newParentId' in input;
+  const targetParentId = hasNewParent
+    ? (input.newParentId ?? null)
+    : activity.parentId;
+
+  if (hasNewParent) {
+    const newParent = input.newParentId != null
+      ? await findActivity(input.newParentId, ctx)
+      : null;
+    if (input.newParentId != null && !newParent) {
+      return toolError({
+        tool: TOOL,
+        reason: 'parent_not_found',
+        message: `Parent #${input.newParentId} not found.`,
+        hint: 'Call get_outline for current ids.',
+      });
+    }
+    const moveError = validateMove(activity, newParent);
+    if (moveError) {
+      return toolError({
+        tool: TOOL,
+        reason: 'invalid_move',
+        message: moveError,
+      });
+    }
+  }
   const position = typeof input.position === 'number'
     ? input.position
     : await nextPosition(ctx.repository.id, targetParentId);
