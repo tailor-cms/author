@@ -8,7 +8,7 @@ import {
   toolError,
 } from '../helpers/index.ts';
 
-const TOOL = 'inspect_activity_subtree';
+const TOOL = 'get_activity_subtree';
 
 interface Input {
   activityId: number;
@@ -63,7 +63,7 @@ async function execute(input: Input, ctx: ToolContext) {
   };
 }
 
-export const inspect_activity_subtree: ToolDef = {
+export const get_activity_subtree: ToolDef = {
   name: TOOL,
   scope: 'read',
   description,
