@@ -29,7 +29,7 @@ import {
   type MulterFile,
 } from './types.ts';
 
-const { Asset, User, sequelize } = db;
+const { Asset, User } = db;
 
 const logger = createLogger('asset:svc');
 
