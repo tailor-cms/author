@@ -94,12 +94,7 @@ async function execute(input: Input, ctx: ToolContext) {
   const filter: ContentFilterType = (input.contentType || 'ALL') as ContentFilterType;
   const count = Math.min(input.count || 10, 30);
   try {
-    const results = await search(
-      input.query,
-      ctx.repository,
-      filter,
-      count,
-    );
+    const results = await search(input.query, ctx.repository, filter, count);
     return {
       query: input.query,
       contentType: filter,
