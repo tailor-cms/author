@@ -16,7 +16,7 @@ const description = stripIndent`
   Fetch a single activity by id with its full data object.
   Use before update_activity or attach_asset_to_activity to
   inspect the current state. For the full content tree under
-  a topic, use inspect_activity_subtree instead.
+  a topic, use get_activity_subtree instead.
 `;
 
 const parameters = {
