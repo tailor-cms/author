@@ -1,4 +1,5 @@
 import { oneLine, stripIndent } from 'common-tags';
+import { discovery as discoveryConfig } from '#config';
 import {
   ContentFilter,
   type ContentFilter as ContentFilterType,
@@ -83,6 +84,13 @@ function summarizeResult(result: DiscoveryResult) {
  * academic, general) based on contentType.
  */
 async function execute(input: Input, ctx: ToolContext) {
+  if (!discoveryConfig.isEnabled) {
+    return toolError({
+      tool: TOOL,
+      reason: 'not_configured',
+      message: 'Resource discovery is not enabled.',
+    });
+  }
   const filter: ContentFilterType = (input.contentType || 'ALL') as ContentFilterType;
   const count = Math.min(input.count || 10, 30);
   try {
