@@ -1,9 +1,10 @@
 import { oneLine, stripIndent } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import db from '#shared/database/index.js';
-import AiService from '../../../ai.service.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
-import { buildLabels, labelFor, toolError } from '../helpers/index.ts';
+import { buildTypeLabelMap, labelFor, toolError } from '../helpers/index.ts';
+import AiService from '../../../ai.service.ts';
+import type { TypeLabelMap } from '../helpers/index.ts';
 
 const api = schemaAPI as any;
 const { Asset } = db as any;
@@ -72,7 +73,7 @@ const parameters = {
  * Render a nested activity tree as indented markdown
  * for the LLM to reference in its reply.
  */
-function renderPreviewTree(nodes: any[], labels: any, depth = 0): string {
+function renderPreviewTree(nodes: any[], labels: TypeLabelMap, depth = 0): string {
   const lines: string[] = [];
   for (const node of nodes) {
     const indent = '  '.repeat(depth);
@@ -123,11 +124,22 @@ function flattenTree(
   return result;
 }
 
+interface AssetSummary {
+  name: string;
+  type: string;
+  description: string;
+  tags: string[];
+  isIndexed: boolean;
+}
+
 /**
  * Fetch asset metadata for the given ids. Filters to
  * assets belonging to the current repository.
  */
-async function resolveAssets(assetIds: number[], ctx: ToolContext) {
+async function resolveAssets(
+  assetIds: number[],
+  ctx: ToolContext,
+): Promise<AssetSummary[]> {
   const assets = await Asset.findAll({
     where: {
       id: assetIds,
@@ -164,8 +176,10 @@ async function execute(input: Input, ctx: ToolContext) {
   if (input.assetIds?.length) {
     const assets = await resolveAssets(input.assetIds, ctx);
     if (assets.length) {
-      assetContext = oneLine` Build the outline around these resources:
-        ${JSON.stringify(assets)}.`;
+      const listing = assets
+        .map((it) => `- ${it.name} (${it.type}): ${it.description || 'no desc'}`)
+        .join('\n');
+      assetContext = ` Build the outline around these resources:\n${listing}`;
     }
   }
 
@@ -193,15 +207,16 @@ async function execute(input: Input, ctx: ToolContext) {
   });
 
   // Schema type -> human label map for the preview tree
-  const labels = buildLabels(schemaId);
+  const labels = buildTypeLabelMap(schemaId);
   const nodes = Array.isArray(generated) ? generated : [];
   const markdown = nodes.length
     ? renderPreviewTree(nodes, labels)
     : '_(no activities generated)_';
+  const activities = flattenTree(nodes);
 
   return {
-    activities: flattenTree(nodes),
     markdown,
+    activities,
     typeHierarchy: buildTypeHierarchy(schemaId),
     NEXT_STEP: oneLine`
       You MUST now call create_outline and pass the entire
