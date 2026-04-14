@@ -71,9 +71,10 @@ const parameters = {
     data: {
       type: 'object',
       description: oneLine`
-        Metadata for the container. Schema-defined fields
-        (e.g. title, description, estimatedTime, tags). Missing
-        fields are filled with schema defaults. Call get_schema_info
+        REQUIRED metadata for the container. Pass item.data from
+        generate_container_content verbatim. Contains schema-defined
+        fields (title, description, estimatedTime, tags, etc.).
+        Omitting this creates a section with empty metadata. Call get_schema_info
         to see which meta properties each container type supports.
       `,
       additionalProperties: true,
