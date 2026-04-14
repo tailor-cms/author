@@ -126,7 +126,7 @@ async function validateParent(
       tool: TOOL,
       reason: 'parent_not_found',
       message: `Parent #${parentId} not found.`,
-      hint: 'Call list_outline for current ids.',
+      hint: 'Call get_outline for current ids.',
     });
   }
   const parentConfig = api.getLevel(parent.type);
