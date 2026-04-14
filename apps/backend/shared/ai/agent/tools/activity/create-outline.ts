@@ -225,7 +225,7 @@ async function execute(input: Input, ctx: ToolContext) {
     ...(errors.length ? { errors } : {}),
     _invalidates: ['outline'],
   };
-  recordOperation(ctx, TOOL, input, output);
+  recordOperation(TOOL, input, output, ctx);
   return output;
 }
 

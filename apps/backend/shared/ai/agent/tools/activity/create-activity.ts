@@ -28,7 +28,7 @@ const description = stripIndent`
   Create a new outline activity. The type must be one of
   the schema's outline types - call get_schema_info if unsure.
   Bare or namespaced types both work. Rejects container types
-  - use create_subcontainer_with_elements for those.
+  - use create_container_with_elements for those.
 `;
 
 const parameters = {
@@ -89,7 +89,7 @@ function rejectNonOutline(schemaId: string, type: string) {
     message: `"${type}" is not an outline activity type.`,
     allowedOutlineTypes: levels.map((it: any) => it.type),
     hint: oneLine`
-      Use create_subcontainer_with_elements
+      Use create_container_with_elements
       for non-outline activities (content containers).
     `,
   });
@@ -186,7 +186,7 @@ async function execute(input: Input, ctx: ToolContext) {
 
     const summary = summarizeActivity(created);
     // Inverse: delete what we just created (for undo)
-    recordOperation(ctx, TOOL, input, summary, {
+    recordOperation(TOOL, input, summary, ctx, {
       tool: 'delete_activity',
       input: { id: created.id },
     });
