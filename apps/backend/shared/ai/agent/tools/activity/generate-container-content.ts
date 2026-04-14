@@ -1,5 +1,8 @@
 import { oneLine, stripIndent } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
+import type { AssetReference } from '@tailor-cms/interfaces/ai.ts';
+import db from '#shared/database/index.js';
+import * as assetService from '../../../../../asset/asset.service.ts';
 import AiService from '../../../ai.service.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
@@ -9,6 +12,7 @@ import {
   toolError,
 } from '../helpers/index.ts';
 
+const { Asset } = db as any;
 const api = schemaAPI as any;
 
 const TOOL = 'generate_container_content';
@@ -17,17 +21,20 @@ interface Input {
   activityId: number;
   instructions: string;
   containerType?: string | null;
+  assetIds?: number[] | null;
 }
 
 const description = stripIndent`
   Generate content for an outline activity's container.
   Produces subcontainer data (with schema-defined metadata)
   and content elements matching the container template's
-  config. Specify containerType to target a specific
-  container or omit to use the primary. Call get_schema_info
-  to see available container types per activity. Does NOT
-  persist - pass each entry in the items array to
-  create_container_with_elements verbatim.
+  config. Pass assetIds to include library assets as media
+  elements (images, videos) in the generated content - call
+  list_assets first to find relevant ones. Specify
+  containerType to target a specific container or omit to
+  use the primary (call get_schema_info to see types).
+  Does NOT persist - pass each entry in the items array
+  to create_container_with_elements verbatim.
 `;
 
 const parameters = {
@@ -42,6 +49,16 @@ const parameters = {
       description: oneLine`
         What to write. Be specific about scope, length,
         examples, and tone.
+      `,
+    },
+    assetIds: {
+      type: ['array', 'null'],
+      items: { type: 'integer' },
+      description: oneLine`
+        Asset ids from the library to include in the
+        generated content. Images are inserted as IMAGE
+        elements, other assets provide context. Call
+        list_assets to find relevant assets first.
       `,
     },
     containerType: {
@@ -62,28 +79,71 @@ const parameters = {
  * Render a numbered markdown preview of generated
  * items showing the type label and element count.
  */
-function renderPreview(
-  items: any[],
-  typeLabel: string,
-): string {
-  return items.map((item: any, index: number) => {
-    const name = item.data?.title || item.data?.name;
-    const count = (item.elements || []).length;
-    const heading = name || `${typeLabel} ${index + 1}`;
-    return `${index + 1}. **${heading}** - ${count} element(s)`;
-  }).join('\n');
+function renderPreview(items: any[], typeLabel: string): string {
+  return items
+    .map((item: any, index: number) => {
+      const name = item.data?.title || item.data?.name;
+      const count = (item.elements || []).length;
+      const heading = name || `${typeLabel} ${index + 1}`;
+      return `${index + 1}. **${heading}** - ${count} element(s)`;
+    })
+    .join('\n');
+}
+
+/**
+ * Resolve asset references for the AI context. Returns
+ * AssetReference objects with signed URLs so the AI can
+ * insert them as media elements in generated content.
+ */
+async function resolveAssets(
+  assetIds: number[] | null | undefined,
+  ctx: ToolContext,
+): Promise<AssetReference[]> {
+  if (!assetIds?.length) return [];
+  const assets = await Asset.findAll({
+    where: {
+      id: assetIds,
+      repositoryId: ctx.repository.id,
+    },
+  });
+  const refs: AssetReference[] = [];
+  for (const asset of assets) {
+    let publicUrl: string | undefined;
+    if (asset.storageKey) {
+      try {
+        const dl = await assetService.getDownloadUrl(asset.storageKey);
+        publicUrl = dl.publicUrl;
+      } catch {
+        /* non-critical */
+      }
+    }
+    refs.push({
+      id: asset.id,
+      name: asset.name,
+      type: asset.type,
+      storageKey: asset.storageKey,
+      publicUrl,
+      meta: {
+        description: asset.meta?.description,
+        tags: asset.meta?.tags,
+        url: asset.meta?.url,
+      },
+    });
+  }
+  return refs;
 }
 
 /**
  * Generate content via the AI service for a given outline
  * activity. Resolves the container schema to inform the AI
- * about expected meta fields and element types, then
- * returns the result with schema context for the next step.
+ * about expected meta fields and element types. When assetIds
+ * are provided, assets are passed as context so the AI can
+ * insert them as media elements in the generated content.
  *
- * NOTE: currently uses STRUCTURED_CONTENT as the AI response
- * schema for all container types. Works well for structured
- * content containers but may need per-template response
- * schemas for containers like EXAM or ASSESSMENT_POOL.
+ * TODO: Uses the STRUCTURED_CONTENT response schema which builds
+ * output from the container's subcontainer config. Templates
+ * without schema-driven config (e.g. EXAM, ASSESSMENT_POOL)
+ * are rejected - use generate_elements_for_target for those.
  */
 async function execute(input: Input, ctx: ToolContext) {
   if (!(AiService as any).generate) {
@@ -117,8 +177,7 @@ async function execute(input: Input, ctx: ToolContext) {
     const activityConfig = api.getLevel(activity.type);
     const options = allContainerTypes.map((type: string) => {
       const schema = describeContainerSchema(schemaId, type);
-      const subTypes = (schema.subcontainers || [])
-        .map((s: any) => s.type);
+      const subTypes = (schema.subcontainers || []).map((s: any) => s.type);
       return { type, subcontainerTypes: subTypes };
     });
     return {
@@ -171,6 +230,11 @@ async function execute(input: Input, ctx: ToolContext) {
   const elementTypes = api.getSupportedElementTypes(
     primarySub.elementConfig || [],
   );
+
+  // Resolve library assets if provided - the AI service
+  // uses them to insert IMAGE/VIDEO/EMBED elements and
+  // for topic context during generation
+  const assets = await resolveAssets(input.assetIds, ctx);
   const generated = await (AiService as any).generate({
     repository: {
       schemaId,
@@ -182,11 +246,14 @@ async function execute(input: Input, ctx: ToolContext) {
       name: ctx.repository.name,
       description: ctx.repository.description || '',
     },
-    inputs: [{
-      type: 'CREATE',
-      text: input.instructions,
-      responseSchema: 'STRUCTURED_CONTENT',
-    }],
+    inputs: [
+      {
+        type: 'CREATE',
+        text: input.instructions,
+        responseSchema: 'STRUCTURED_CONTENT',
+      },
+    ],
+    ...(assets.length ? { assets } : {}),
   });
 
   const items = Array.isArray(generated) ? generated : [];
@@ -204,14 +271,12 @@ async function execute(input: Input, ctx: ToolContext) {
     markdown: renderPreview(items, targetLabel),
     NEXT_STEP: oneLine`
       You MUST now call create_container_with_elements for EACH
-      item in the items array. Pass data AND elements VERBATIM.
-      containerType should be "${targetType}".
-      ${metaKeys.length
-        ? `Expected data keys: ${metaKeys.join(', ')}.`
-        : ''}
-      ${elementTypes.length
-        ? `Allowed element types: ${elementTypes.join(', ')}.`
-        : ''}
+      item in the items array. For each item, pass:
+      containerType="${targetType}",
+      data=item.data (REQUIRED - contains ${metaKeys.join(', ')}),
+      elements=item.elements.
+      IMPORTANT: data and elements are SEPARATE top-level parameters.
+      Do NOT nest data inside elements or omit it.
       Do NOT stop here.
     `,
   };
