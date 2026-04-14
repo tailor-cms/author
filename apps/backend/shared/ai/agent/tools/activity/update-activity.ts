@@ -59,10 +59,8 @@ async function execute(input: Input, ctx: ToolContext) {
       message: `Activity #${input.id} not found.`,
     });
   }
-
   const previousData = { ...activity.data };
   const mergedData = { ...activity.data, ...input.data };
-
   try {
     await activity.update(
       { data: mergedData },
@@ -75,7 +73,6 @@ async function execute(input: Input, ctx: ToolContext) {
       message: error.message,
     });
   }
-
   const summary = summarizeActivity(activity);
   recordOperation(TOOL, input, summary, ctx, {
     tool: TOOL,
