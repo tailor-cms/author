@@ -116,16 +116,7 @@ const storageService = useStorageService();
 const userTrackingStore = useUserTracking();
 useContentLinking(editorChannel);
 
-const getOutlineLocationDesciption = (activity: Activity) => {
-  const ancestors = activityStore.getAncestors(activity?.id);
-  if (!ancestors.length) return '';
-  return ancestors.reduce(
-    (acc, it) => acc + (acc === '' ? it.data.name : `, ${it.data.name}`),
-    '',
-  );
-};
-
-const doTheMagic = ({
+const doTheMagic = async ({
   containerType,
   inputs,
   content,
@@ -134,19 +125,19 @@ const doTheMagic = ({
   inputs: AiInput[];
   content?: string;
 }) => {
-  const { name, description, schema, data } = props.repository;
-  const aiData = (data as any)?.$$?.ai;
+  const { id, name, description, schema, data } = props.repository;
+  const aiMeta = (data as any)?.$$?.ai;
   const context: AiContext = {
     repository: {
+      repositoryId: id,
+      activityId: props.activity?.id,
       schemaId: schema,
       name,
       description,
       outlineActivityType: props.activity?.type,
-      outlineLocation: getOutlineLocationDesciption(props.activity),
       containerType,
       topic: props.activity?.data?.name,
-      vectorStoreId: aiData?.vectorStoreId,
-      tags: [...(aiData?.topicTags || []), ...(aiData?.styleTags || [])],
+      vectorStoreId: aiMeta?.storeId,
     },
     inputs,
     content,

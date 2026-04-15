@@ -18,7 +18,6 @@
             type: AiRequestType.Create,
             text: 'Generate content for this section.',
             responseSchema: AiResponseSchema.Html,
-            useImageGenerationTool: false,
           })
         "
       >

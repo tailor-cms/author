@@ -22,7 +22,6 @@
             type: AiRequestType.Create,
             text: 'Generate content for this page.',
             responseSchema: AiResponseSchema.Html,
-            useImageGenerationTool: true,
           })
         "
       >

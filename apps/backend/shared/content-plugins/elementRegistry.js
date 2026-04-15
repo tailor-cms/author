@@ -30,6 +30,11 @@ class ElementsRegistry {
     return this._aiSchemas[elementType];
   }
 
+  isQuestion(type) {
+    const el = this._registry.find((it) => it.type === type);
+    return !!el?.isQuestion;
+  }
+
   getHook(elementType, hookName) {
     const elementHooks = this._hooks[elementType];
     if (!elementHooks || !elementHooks[hookName]) return;

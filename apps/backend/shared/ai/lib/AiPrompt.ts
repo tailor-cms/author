@@ -1,18 +1,19 @@
-import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai.ts';
+import type {
+  AiContext,
+  AiInput,
+} from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
-import StorageService from '../../storage/storage.service.js';
 
 import getContentSchema from '../schemas/index.ts';
 import RepositoryContext from './RepositoryContext.ts';
 
 import { ai as aiConfig } from '#config';
-import { createLogger } from '#logger';
+import { createAiLogger, formatPrompt } from '../logger.ts';
 
-const logger = createLogger('ai:prompt');
+const logger = createAiLogger('prompt');
 
 const systemPrompt = `
-  Assistant is a bot desinged to help authors to create content for
+  Assistant is a bot designed to help authors create content for
   Courses, Q&A content, Knowledge base, etc.
   Rules:
   - Use the User rules to generate the content
@@ -23,20 +24,20 @@ const documentPrompt = `
   The user has provided source documents indexed in a vector store.
   Use the file_search tool to find relevant information from these documents.
   Base ALL generated content on information found in the documents.
-  Do not invent information not present in the documents.`;
+  Do not invent information not present in the documents.
+  If any assets are marked as PRIMARY SOURCE, they represent the core knowledge
+  base. Structure and model your content primarily after these sources.
+  Supplementary assets provide additional context but should not override
+  the core sources.`;
 
 export class AiPrompt {
   // OpenAI client
   private client: OpenAI;
-  // Context of the request
-  private context: AiContext;
   // Information about the repository, content location, topic, etc.
   private repositoryContext: RepositoryContext;
-  // User, assistant or system generated inputs
+  private requestContext: AiContext;
   private inputs: AiInput[];
-  // Existing content, relevant for the context
   private content: string;
-  // Response
   private response: any;
 
   constructor(client: OpenAI, context: AiContext) {
@@ -45,26 +46,46 @@ export class AiPrompt {
     this.content = context.content || '';
     this.inputs = context.inputs;
     this.client = client;
-    this.context = context;
+    this.requestContext = context;
+  }
+
+  get vectorStoreId() {
+    return this.repositoryContext.vectorStoreId;
+  }
+
+  get context(): AiContext {
+    return {
+      ...this.requestContext,
+      assets: this.repositoryContext.assets,
+      repository: {
+        ...this.requestContext.repository,
+        vectorStoreId: this.vectorStoreId,
+      },
+    };
   }
 
   async execute() {
     try {
+      await this.repositoryContext.resolve(this.requestContext.repository);
+      const input = this.toOpenAiInput();
       const params: any = {
         model: aiConfig.modelId,
-        input: this.toOpenAiInput(),
+        input,
         text: { format: this.format },
       };
-      // Add file_search tool when source documents are available
-      const { vectorStoreId } = this.context.repository;
-      if (vectorStoreId) {
-        params.tools = [
-          { type: 'file_search', vector_store_ids: [vectorStoreId] },
-        ];
+      if (this.vectorStoreId) {
+        params.tools = [{
+          type: 'file_search',
+          vector_store_ids: [this.vectorStoreId],
+        }];
       }
+      logger.debug(`Final prompt:\n${formatPrompt(input)}`);
       const response = await this.client.responses.create(params);
       this.response = this.responseProcessor(response.output_text);
-      this.response = await this.applyImageTool();
+      logger.info(
+        { schema: this.prompt.responseSchema, type: this.prompt.type },
+        'Generation complete',
+      );
       return this.response;
     } catch (err) {
       logger.error(err, 'Generation failed');
@@ -99,7 +120,7 @@ export class AiPrompt {
     const processor = this.isCustomPrompt
       ? noop
       : getContentSchema(this.prompt.responseSchema)?.processResponse || noop;
-    return (val) => processor(JSON.parse(val));
+    return (val: string) => processor(JSON.parse(val), this.context);
   }
 
   // TODO: Add option to control the size of the output
@@ -108,7 +129,7 @@ export class AiPrompt {
     const res: OpenAI.Responses.ResponseInputItem[] = [];
     res.push({ role: 'developer', content: systemPrompt });
     res.push({ role: 'developer', content: this.repositoryContext.toString() });
-    if (this.context.repository.vectorStoreId) {
+    if (this.vectorStoreId) {
       res.push({ role: 'developer', content: documentPrompt });
     }
     if (this.prevPrompt) res.push(this.processUserInput(this.prevPrompt));
@@ -134,42 +155,5 @@ export class AiPrompt {
       role: 'user',
       content: `${base} ${text}. ${responseSchemaDescription} ${target}`,
     };
-  }
-
-  async applyImageTool() {
-    if (
-      !this.prompt.useImageGenerationTool ||
-      this.prompt.responseSchema !== 'HTML'
-    )
-      return this.response;
-    // output needs to be sliced to avoid exceeding the max length
-    const userPrompt = `
-      ${this.repositoryContext.toString()}
-      Generate appropriate image for the given topic and content:
-      ${JSON.stringify(this.response).slice(0, 1000)}`;
-    const imgUrl = await this.generateImage(userPrompt);
-    const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
-    const imageElement = {
-      type: ContentElementType.Image,
-      data: {
-        assets: { url: imgInternalUrl },
-      },
-    };
-    const [firstElement, ...restElements] = this.response;
-    return [firstElement, imageElement, ...restElements];
-  }
-
-  private async generateImage(prompt) {
-    const { data } = await this.client.images.generate({
-      model: 'dall-e-3',
-      prompt,
-      // amount of images, max 1 for dall-e-3
-      n: 1,
-      // 'standard' | 'hd'
-      quality: 'hd',
-      size: '1024x1024',
-      style: 'natural',
-    });
-    if (data) return new URL(data[0].url as string);
   }
 }

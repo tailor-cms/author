@@ -61,7 +61,6 @@ const SECTION: ContentContainerConfig = {
         - Format the content as HTML with suitable tags and headings.
         - Make the content modular and self-contained.
         - Use clear, concise language suitable for reuse in different contexts.`,
-      useDalle: false,
     },
   },
 };

@@ -136,6 +136,17 @@ const SectionContainer: ContentContainerConfig = {
   label: 'Sections',
   required: true,
   displayHeading: false,
+  ai: {
+    definition:
+      'Sections contain structured content including text, media, and exercises.',
+    outputRules: {
+      prompt: `
+        - This is a microlearning course: sections within one topic together
+          form a single cohesive learning unit.
+        - Use bullet lists, numbered lists, bold key terms for scannability.
+        - Include 1-2 practical examples or real-world scenarios if appropriate.`,
+    },
+  },
   config: {
     [ActivityType.Section]: {
       label: 'Section',

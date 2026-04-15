@@ -60,7 +60,6 @@ const SECTION: ContentContainerConfig = {
         You are trying to teach the audience, so make sure the content is easy to
         understand, has a friendly tone and is engaging to the reader.
         Make sure to include the latest relevant information on the topic.`,
-      useDalle: true,
     },
   },
 };

@@ -9,6 +9,18 @@ export const AssetType = {
 
 export type AssetType = (typeof AssetType)[keyof typeof AssetType];
 
+export const LinkContentType = {
+  Video: 'VIDEO',
+  Image: 'IMAGE',
+  Document: 'DOCUMENT',
+  Audio: 'AUDIO',
+  Article: 'ARTICLE',
+  Other: 'OTHER',
+} as const;
+
+export type LinkContentType =
+  (typeof LinkContentType)[keyof typeof LinkContentType];
+
 export const ProcessingStatus = {
   Pending: 'pending',
   Processing: 'processing',
@@ -54,7 +66,7 @@ export interface LinkAssetMeta extends AssetMetaBase {
   ogType?: string;
   source?: AssetSource;
   // What kind of content the link points to (video, image, document, etc.)
-  contentType?: 'VIDEO' | 'IMAGE' | 'DOCUMENT' | 'AUDIO' | 'ARTICLE' | 'OTHER';
+  contentType?: LinkContentType;
   // Known provider for provider-specific UI (youtube, vimeo, spotify, etc.)
   provider?: string;
 }

@@ -90,6 +90,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     getSiblingTypes,
     getSupportedContainers,
     getContainerTemplateId,
+    getSupportedElementTypes,
     getCompatibleSchemaIds,
     getCompatibleTargetType,
     isEditable: (activityType: string) => {
@@ -298,6 +299,16 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     const config =
       elementMeta || map(tesMeta, (it) => ({ ...it, inputs: it.meta }));
     return find(config, (it) => castArray(it.type).includes(type)) ?? {};
+  }
+
+  // Extract flat element type IDs from contentElementConfig
+  // e.g. [{ name: 'Group', items: [{ id: 'HTML' }] }] → ['HTML']
+  function getSupportedElementTypes(config: any[] = []): string[] {
+    return config.flatMap((cat: any) =>
+      (cat.items || []).map(
+        (it: any) => (isString(it) ? it : it.id),
+      ),
+    ).filter(Boolean);
   }
 
   function getSiblingTypes(type: string): string[] {

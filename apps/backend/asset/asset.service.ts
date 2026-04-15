@@ -56,10 +56,7 @@ const IS_NOT_VIDEO_LINK = {
 export const UPLOADER_INCLUDE = {
   model: User,
   as: 'uploader',
-  attributes: [
-    'id', 'email', 'firstName', 'lastName',
-    'fullName', 'label', 'imgUrl',
-  ],
+  attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl'],
 };
 
 /** Wraps an async fn so it logs warnings instead of throwing. */
