@@ -5,7 +5,6 @@
     elevation="3"
     order="1"
   >
-    <VAppBarNavIcon v-if="smAndDown" @click="$emit('toggle-sidebar')" />
     <div v-if="activity && !element" class="activity-toolbar w-100 px-3 py-2">
       <ActivityActions />
       <h1 v-if="mdAndUp" class="py-2 px-6 text-h5 text-truncate">
@@ -108,7 +107,7 @@ const props = withDefaults(defineProps<Props>(), {
   element: null,
 });
 
-defineEmits(['toggle-sidebar', 'toggle-guidelines']);
+defineEmits(['toggle-guidelines']);
 
 const { $schemaService } = useNuxtApp() as any;
 
@@ -117,7 +116,7 @@ const showPublishDiff = computed(() => editorStore.showPublishDiff);
 const notify = useNotification();
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
-const { mdAndUp, smAndDown, mdAndDown } = useDisplay();
+const { mdAndUp, mdAndDown } = useDisplay();
 
 const activity = computed(() => editorStore.selectedActivity);
 const config = computed(
