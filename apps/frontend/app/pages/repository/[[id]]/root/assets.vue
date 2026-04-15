@@ -1,0 +1,212 @@
+<template>
+  <VContainer class="py-8 px-sm-15" max-width="1440">
+    <Toolbar
+      ref="toolbarRef"
+      v-model:search="searchQuery"
+      @upload="uploadFiles"
+      @link:add="showAddLinkDialog = true"
+      @discover="showDiscoveryDialog = true"
+    />
+    <BulkActionBar
+      :assets="assetStore.assets"
+      :selected-ids="selection.selectedIds"
+      :is-indexing="indexing.isIndexing.value"
+      :is-bulk-deleting="assetStore.isBulkRemoving"
+      @clear="selection.clear"
+      @index="indexSelected"
+      @delete="confirmBulkDelete"
+    />
+    <ListControls
+      v-model:selected-category="selectedCategory"
+      v-model:items-per-page="assetStore.itemsPerPage"
+      :categories="categories"
+      :is-all-selected="isAllSelected"
+      :sort-direction="sortDirection"
+      @toggle-all="$event ? selection.selectAll() : selection.clear()"
+      @toggle-sort="toggleSortDirection"
+    />
+    <AssetList
+      :assets="processedAssets"
+      :is-fetching="assetStore.isFetching"
+      :items-per-page="assetStore.itemsPerPage"
+      :page="assetStore.page"
+      :page-count="assetStore.pageCount"
+      :selected-ids="selection.selectedIds"
+      :selected-category="selectedCategory"
+      :total="assetStore.total"
+      @delete="confirmDelete"
+      @download="downloadAsset"
+      @index="(asset: Asset) => indexing.startIndexing([asset.id])"
+      @preview="activeAsset = $event"
+      @select:toggle="selection.toggle"
+      @update:page="assetStore.page = $event"
+    />
+    <AssetDetailDialog
+      :asset="activeAsset"
+      :is-saving="assetStore.isSaving"
+      @close="activeAsset = null"
+      @deindex="onDeindex"
+      @delete="confirmDelete"
+      @download="downloadAsset"
+      @save="onSaveMeta"
+    />
+    <AddLinkDialog
+      v-model="showAddLinkDialog"
+      @add="(url: string) => assetStore.addLink(url).then(refetch)"
+    />
+    <DiscoveryDialog
+      v-model="showDiscoveryDialog"
+      @added="refetch()"
+    />
+  </VContainer>
+</template>
+
+<script lang="ts" setup>
+import type { Asset } from '@tailor-cms/interfaces/asset';
+import { debounce } from 'lodash-es';
+
+import AddLinkDialog from '@/components/repository/Assets/AddLinkDialog.vue';
+import AssetDetailDialog from '@/components/repository/Assets/AssetDialog/index.vue';
+import AssetList from '@/components/repository/Assets/AssetList/index.vue';
+import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
+import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
+import ListControls from '@/components/repository/Assets/ListControls/index.vue';
+import Toolbar from '@/components/repository/Assets/Toolbar.vue';
+import { isIndexable } from '@/components/repository/Assets/utils';
+import { useCurrentRepository } from '@/stores/current-repository';
+
+definePageMeta({ name: 'repository-assets' });
+
+type SortDirection = 'ASC' | 'DESC';
+
+const ASC: SortDirection = 'ASC';
+const DESC: SortDirection = 'DESC';
+
+const currentRepositoryStore = useCurrentRepository();
+const showConfirmation = useConfirmationDialog();
+
+const toolbarRef = ref<InstanceType<typeof Toolbar>>();
+const sortDirection = ref<SortDirection>(DESC);
+const searchQuery = ref('');
+const activeAsset = ref<Asset | null>(null);
+const showAddLinkDialog = ref(false);
+const showDiscoveryDialog = ref(false);
+
+const repositoryId = computed(() => currentRepositoryStore.repository?.id);
+
+const assetStore = reactive(useAssets(repositoryId));
+// reactive() unwraps inner refs, so assetStore.assets is a plain array.
+// toRef() re-wraps it as a Ref so downstream composables stay reactive.
+const assets = toRef(() => assetStore.assets);
+
+const indexing = useAssetIndexing(repositoryId);
+const processedAssets = indexing.withStatus(assets);
+
+const { categories, selectedCategory } = useAssetFiltering();
+const selection = useAssetSelection(assets);
+
+const isAllSelected = computed(() => {
+  const assetTotal = assets.value.length;
+  return assetTotal > 0 && selection.selectedIds.size === assetTotal;
+});
+
+const fetchParams = computed(() => {
+  const params: Record<string, any> = {
+    orderBy: 'createdAt',
+    orderDirection: sortDirection.value,
+  };
+  if (selectedCategory.value !== CATEGORY_ALL) {
+    params.type = selectedCategory.value;
+  }
+  if (searchQuery.value.trim()) {
+    params.search = searchQuery.value.trim();
+  }
+  return params;
+});
+
+function refetch() {
+  assetStore.fetch(fetchParams.value);
+}
+
+function resetAndFetch() {
+  if (assetStore.page === 1) return refetch();
+  // Setting page triggers the page watcher which calls refetch
+  assetStore.page = 1;
+}
+
+async function uploadFiles(files: File[]) {
+  try {
+    await assetStore.upload(files);
+    refetch();
+  } finally {
+    toolbarRef.value?.reset();
+  }
+}
+
+async function downloadAsset(asset: Asset) {
+  const result = await assetStore.getDownloadUrl(asset.id);
+  if (result?.url) window.open(result.url, '_blank');
+}
+
+async function indexSelected() {
+  const ids = assetStore.assets
+    .filter((a) => selection.selectedIds.has(a.id) && isIndexable(a))
+    .map((a) => a.id);
+  if (!ids.length) return;
+  await indexing.startIndexing(ids);
+  selection.clear();
+}
+
+async function onDeindex(asset: Asset) {
+  await assetStore.deindex(asset.id);
+  indexing.clearAssetStatus(asset.id);
+  activeAsset.value = null;
+}
+
+async function onSaveMeta(asset: Asset, meta: Record<string, any>) {
+  await assetStore.updateMeta(asset.id, meta);
+  activeAsset.value = null;
+}
+
+function toggleSortDirection() {
+  sortDirection.value = sortDirection.value === DESC ? ASC : DESC;
+  resetAndFetch();
+}
+
+function confirmDelete(asset: Asset) {
+  showConfirmation({
+    title: 'Delete Asset',
+    message: `Are you sure you want to delete "${asset.name}"?`,
+    action: async () => {
+      await assetStore.remove(asset.id);
+      selection.selectedIds.delete(asset.id);
+      activeAsset.value = null;
+      refetch();
+    },
+  });
+}
+
+function confirmBulkDelete() {
+  showConfirmation({
+    title: 'Delete Assets',
+    message: `Delete ${selection.selectedIds.size} selected assets?`,
+    action: async () => {
+      const ids = await assetStore.bulkRemove([...selection.selectedIds]);
+      ids?.forEach((id: number) => selection.selectedIds.delete(id));
+      refetch();
+    },
+  });
+}
+
+const debouncedSearch = debounce(resetAndFetch, 300);
+watch([selectedCategory, () => assetStore.itemsPerPage], resetAndFetch);
+watch(searchQuery, debouncedSearch);
+watch(() => assetStore.page, refetch);
+
+onMounted(async () => {
+  await assetStore.fetch(fetchParams.value);
+  indexing.resumeIfActive(assetStore.assets);
+});
+
+onBeforeUnmount(() => debouncedSearch.cancel());
+</script>
