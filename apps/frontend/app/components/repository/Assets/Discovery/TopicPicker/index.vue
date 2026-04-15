@@ -17,7 +17,7 @@
     @update:model-value="onSelect"
   >
     <template #item="{ item, props: itemProps }">
-      <VListItem v-bind="itemProps">
+      <VListItem v-bind="itemProps" color="primary-darken-4">
         <template #prepend>
           <VIcon
             :icon="item.raw.isLeaf
