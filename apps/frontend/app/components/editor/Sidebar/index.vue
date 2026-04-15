@@ -1,11 +1,21 @@
 <template>
   <VNavigationDrawer
+    v-model="modelValue"
     :width="lgAndUp ? 480 : 380"
     class="sidebar"
     color="primary-darken-2"
     elevation="5"
     mobile-breakpoint="md"
   >
+    <VBtn
+      v-tooltip:right="{ text: 'Close sidebar', openDelay: 500 }"
+      class="sidebar-collapse-btn"
+      color="primary-darken-3"
+      icon="mdi-chevron-left"
+      size="small"
+      variant="flat"
+      @click="modelValue = false"
+    />
     <div class="sidebar-container">
       <VWindow v-model="selectedTab">
         <VWindowItem :value="BROWSER_TAB">
@@ -70,6 +80,8 @@ import ActivityNavigation from './ActivityNavigation.vue';
 import ElementSidebar from './ElementSidebar/index.vue';
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+
+const modelValue = defineModel<boolean>({ required: true });
 
 const props = defineProps<{
   repository: Repository;
@@ -148,6 +160,20 @@ watch(
 <style lang="scss" scoped>
 .sidebar {
   text-align: left;
+
+  .sidebar-collapse-btn {
+    position: absolute;
+    bottom: 5.5rem;
+    right: 0;
+    z-index: 1;
+    border-radius: 4px 0 0 4px !important;
+    width: 2rem !important;
+    height: 3rem !important;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 
   :deep(.v-navigation-drawer__content) {
     -ms-overflow-style: none !important;

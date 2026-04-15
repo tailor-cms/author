@@ -1,20 +1,5 @@
 <template>
-  <VFileInput
-    v-if="!fileKey"
-    v-bind="$attrs"
-    :accept="acceptedFileTypes"
-    :clearable="false"
-    :density="density"
-    :label="label"
-    :loading="uploading"
-    :placeholder="placeholder"
-    :prepend-inner-icon="icon"
-    :variant="variant"
-    prepend-icon=""
-    @update:model-value="upload"
-  />
   <VOverlay
-    v-else
     v-model="expanded"
     :class="{ expanded }"
     content-class="d-flex align-center justify-center h-100 w-100"
@@ -25,6 +10,7 @@
         v-bind="$attrs"
         :density="density"
         :label="label"
+        :min-width="minWidth"
         :model-value="fileName"
         :variant="variant"
         readonly
@@ -32,8 +18,8 @@
         <template #prepend-inner>
           <VProgressCircular v-if="isLoading" indeterminate size="24" />
           <VImg
-            v-else-if="showPreview && imageUrl"
-            :src="imageUrl"
+            v-else-if="showPreview && url"
+            :src="url"
             height="24"
             width="24"
             cover
@@ -45,6 +31,7 @@
             v-if="showPreview"
             v-bind="dialogProps"
             :color="dark ? 'white' : 'primary'"
+            aria-label="Preview image"
             class="mr-1"
             size="x-small"
             variant="tonal"
@@ -54,20 +41,22 @@
           </VBtn>
           <VBtn
             :color="dark ? 'white' : 'primary'"
+            aria-label="Download file"
             class="mr-1"
             size="x-small"
             variant="tonal"
             icon
-            @click="downloadFile(fileKey, fileName)"
+            @click.stop="emit('download')"
           >
             <VIcon icon="mdi-download" size="large" />
           </VBtn>
           <VBtn
             :color="dark ? 'secondary-lighten-3' : 'secondary'"
+            aria-label="Remove file"
             size="x-small"
             variant="tonal"
             icon
-            @click.stop="deleteFile({ id, fileName })"
+            @click.stop="emit('delete')"
           >
             <VIcon icon="mdi-trash-can-outline" size="large" />
           </VBtn>
@@ -81,66 +70,44 @@
       variant="tonal"
       @click="expanded = false"
     />
-    <img :src="imageUrl" alt="Full image" />
+    <img :src="url" :alt="fileName" />
   </VOverlay>
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref, watch } from 'vue';
-import type { VFileInput } from 'vuetify/components';
-
-import { useUpload } from '../composables/useUpload';
+import type { VTextField } from 'vuetify/components';
 
 interface Props {
-  id: string;
-  fileKey: string;
   fileName: string;
-  ext?: string[];
-  validate: Record<string, any>;
-  label: string;
-  placeholder: string;
-  value?: Record<string, any>;
+  url?: string;
+  isLoading?: boolean;
+  label?: string;
   icon?: string;
-  variant?: VFileInput['variant'];
-  density?: VFileInput['density'];
   dark?: boolean;
+  minWidth?: string | number;
   showPreview?: boolean;
+  variant?: VTextField['variant'];
+  density?: VTextField['density'];
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  variant: 'outlined',
-  density: 'default',
+withDefaults(defineProps<Props>(), {
+  isLoading: false,
+  url: '',
+  label: '',
   icon: 'mdi-file',
   dark: false,
+  minWidth: '350',
   showPreview: false,
-  value: () => ({}),
+  variant: 'outlined',
+  density: 'default',
 });
-const emit = defineEmits(['upload', 'delete']);
 
-const storageService = inject<any>('$storageService');
-const { upload, deleteFile, downloadFile, uploading } = useUpload(emit);
+const emit = defineEmits<{
+  download: [];
+  delete: [];
+}>();
 
 const expanded = ref(false);
-const isLoading = ref(false);
-const publicUrl = ref('');
-
-const imageUrl = computed(() => publicUrl.value || props.value?.publicUrl || '');
-
-const acceptedFileTypes = computed(() => {
-  const ext = props.ext || props.validate?.ext;
-  return ext?.length ? `.${ext.join(',.')}` : '';
-});
-
-watch(
-  () => props.fileKey,
-  async (key) => {
-    if (!props.showPreview) return;
-    isLoading.value = true;
-    publicUrl.value = key ? await storageService.getUrl(key) : '';
-    isLoading.value = false;
-  },
-  { immediate: true },
-);
 </script>
 
 <style lang="scss" scoped>

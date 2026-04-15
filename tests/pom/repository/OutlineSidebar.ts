@@ -1,6 +1,7 @@
-import type { Locator, Page } from '@playwright/test';
+import { type Locator, type Page, expect } from '@playwright/test';
 
 import { Comments } from '../common/Comments';
+import { FileInput } from '../common/FileInput';
 import { LinkedCopyNotice } from './LinkedCopyNotice';
 import { LinkedIndicator } from './LinkedIndicator';
 import { Toast } from '../common/Toast';
@@ -47,5 +48,18 @@ export class OutlineSidebar {
     // Confirm publish
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
+  }
+
+  getMetaInput(placeholder: string): Locator {
+    return this.el.getByPlaceholder(placeholder);
+  }
+
+  async openFileMeta(placeholder: string) {
+    const input = this.getMetaInput(placeholder);
+    await expect(input).toBeVisible();
+    await input.click();
+    const fileInput = new FileInput(this.page, this.el);
+    await fileInput.picker.waitForOpen();
+    return fileInput;
   }
 }
