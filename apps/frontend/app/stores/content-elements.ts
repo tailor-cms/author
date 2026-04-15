@@ -111,13 +111,13 @@ export const useContentElementStore = defineStore('contentElements', () => {
       .subscribe(Events.Delete, (it: ContentElement) => $items.delete(it.uid));
   };
 
-  async function call(
+  async function rpc(
     repositoryId: number,
     elementId: number,
-    action: string,
+    procedure: string,
     payload?: any,
   ): Promise<any> {
-    return api.call(repositoryId, elementId, action, payload);
+    return api.rpc(repositoryId, elementId, procedure, payload);
   }
 
   function $reset() {
@@ -134,7 +134,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     save,
     remove,
     reorder,
-    call,
+    rpc,
     unlink,
     $subscribeToSSE,
     $reset,

@@ -65,12 +65,12 @@ async function reorder({ body, contentElement }, res) {
   return res.json({ data: contentElement });
 }
 
-async function call({ contentElement, user, repository, body, params }, res) {
-  const { action } = params;
+async function rpc({ contentElement, user, repository, body, params }, res) {
+  const { procedure } = params;
   const { type } = contentElement;
-  const handler = elementRegistry.getCallMethod(type, action);
+  const handler = elementRegistry.getProcedure(type, procedure);
   if (!handler) {
-    const error = `Action "${action}" not found for element type "${type}"`;
+    const error = `Procedure "${procedure}" not found for element type "${type}"`;
     return res.status(StatusCodes.NOT_FOUND).json({ error });
   }
   const context = { userId: user.id, repository };
@@ -147,7 +147,7 @@ export default {
   patch,
   remove,
   reorder,
-  call,
+  rpc,
   link,
   unlink,
   getSource,

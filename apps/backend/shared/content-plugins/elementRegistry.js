@@ -8,7 +8,7 @@ class ElementsRegistry {
   constructor() {
     this._registry = elements;
     this._hooks = {};
-    this._callMethods = {};
+    this._procedures = {};
     this._aiSchemas = {};
   }
 
@@ -24,7 +24,7 @@ class ElementsRegistry {
       Object.assign(this._aiSchemas, {
         [it.type]: it.ai,
       });
-      if (it.call) this._callMethods[it.type] = it.call;
+      if (it.procedures) this._procedures[it.type] = it.procedures;
     });
   }
 
@@ -46,13 +46,13 @@ class ElementsRegistry {
     };
   }
 
-  getCallMethod(elementType, action) {
-    const methods = this._callMethods[elementType];
-    if (!methods || !methods[action]) return;
+  getProcedure(elementType, procedure) {
+    const handlers = this._procedures[elementType];
+    if (!handlers || !handlers[procedure]) return;
     const services = { config: pick(config, ['tce']), storage };
     return (element, payload, options) => {
       const context = options?.context || {};
-      return methods[action](element, { ...services, context }, payload);
+      return handlers[procedure](element, { ...services, context }, payload);
     };
   }
 }

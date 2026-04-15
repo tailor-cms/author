@@ -23,7 +23,7 @@ router.post('/:elementId/reorder', ctrl.reorder);
 router.post('/:elementId/unlink', ctrl.unlink);
 router.get('/:elementId/source', ctrl.getSource);
 router.get('/:elementId/copies', ctrl.getCopies);
-router.post('/:elementId/call/:action', ctrl.call);
+router.post('/:elementId/rpc/:procedure', ctrl.rpc);
 
 function getContentElement(req, _res, next, elementId) {
   if (!Number.isInteger(Number(elementId))) {

@@ -19,7 +19,7 @@ import { useContentElementStore } from '@/stores/content-elements';
 
 const eventBus = inject('$eventBus') as any;
 const authStore = useAuthStore();
-const { call } = useContentElementStore();
+const { rpc } = useContentElementStore();
 const storageService = useStorageService();
 
 interface Props {
@@ -37,8 +37,8 @@ const editorChannel = eventBus.channel('editor');
 provide('$elementBus', elementBus);
 provide('$editorBus', editorChannel);
 provide('$storageService', storageService);
-provide('$callElementAction', (action: string, payload?: any) =>
-  call(repositoryId, elementId, action, payload),
+provide('$rpc', (procedure: string, payload?: any) =>
+  rpc(repositoryId, elementId, procedure, payload),
 );
 provide('$api', exposedApi);
 provide('$schemaService', schema);

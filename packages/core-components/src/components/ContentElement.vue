@@ -244,7 +244,7 @@ const editorState = inject<any>('$editorState');
 const eventBus = inject<any>('$eventBus');
 const getCurrentUser = inject<any>('$getCurrentUser');
 const doTheMagic = inject<any>('$doTheMagic');
-const callElementAction = inject<any>('$callElementAction', null);
+const rpc = inject<any>('$rpc', null);
 
 const { loading, loader } = useLoader();
 const confirmationDialog = useConfirmationDialog();
@@ -252,10 +252,10 @@ const confirmationDialog = useConfirmationDialog();
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
 
-if (callElementAction) {
+if (rpc) {
   const { repositoryId, id } = props.element;
-  provide('$callElementAction', (action: string, payload?: any) =>
-    callElementAction(repositoryId, id, action, payload),
+  provide('$rpc', (procedure: string, payload?: any) =>
+    rpc(repositoryId, id, procedure, payload),
   );
 }
 
