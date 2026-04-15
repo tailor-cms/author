@@ -5,7 +5,7 @@
         <VToolbarTitle class="text-primary-lighten-4 ml-4">
           <VIcon
             class="mx-2"
-            color="teal-lighten-4"
+            color="primary-lighten-4"
             icon="mdi-earth-plus"
             size="small"
           />
@@ -24,11 +24,18 @@
       <VContainer class="discovery-content pt-6" fluid>
         <VRow justify="center">
           <VCol cols="12" lg="10" xl="8">
+            <TopicPicker
+              v-if="hasOutline"
+              v-model="selectedTopic"
+              class="mb-4"
+              @topic:clear="clearTopic"
+            />
             <SearchBar
               v-model:query="query"
               v-model:content-filter="contentFilter"
               :is-searching="isSearching"
               @search="search"
+              @search:input="selectedTopic = null"
             />
             <VAlert
               class="mb-4"
@@ -49,8 +56,10 @@
               :selected-urls="selectedUrls"
               :is-searching="isSearching"
               :has-searched="hasSearched"
-              @toggle="toggleSuggestion"
-              @toggle-all="$event ? selectAll() : selectedUrls.clear()"
+              @result:toggle="toggleSuggestion"
+              @select:all="selectAll"
+              @select:clear="selectedUrls.clear()"
+              @search:cancel="isSearching = false"
             />
           </VCol>
         </VRow>
@@ -67,27 +76,36 @@ import {
 } from '@tailor-cms/interfaces/discovery';
 
 import api from '@/api/repositoryAsset';
+import { useCurrentRepository } from '@/stores/current-repository';
 import DiscoveryActions from './DiscoveryActions.vue';
 import SearchBar from './SearchBar.vue';
 import SearchResults from './SearchResults/index.vue';
-import { useCurrentRepository } from '@/stores/current-repository';
+import TopicPicker from './TopicPicker/index.vue';
+import type { TopicItem } from './TopicPicker/types';
+import { useOutlineTree } from './TopicPicker/useOutlineTree';
 
+const FETCH_COUNT = 100;
+const MAX_QUERY_WORDS = 15;
 const DOWNLOADABLE_TYPES = new Set([
   ContentType.Image,
   ContentType.Pdf,
   ContentType.Video,
 ]);
-const FETCH_COUNT = 100;
 
 const show = defineModel<boolean>({ default: false });
 const emit = defineEmits(['added']);
 
 const notify = useNotification();
-const currentRepositoryStore = useCurrentRepository();
-const repositoryId = computed(() => currentRepositoryStore.repository?.id);
+const store = useCurrentRepository();
+const repositoryId = computed(
+  () => store.repository?.id,
+);
 
 const query = ref('');
 const contentFilter = ref<ContentFilter>(ContentFilter.All);
+const selectedTopic = ref<TopicItem | null>(null);
+
+const { hasOutline } = useOutlineTree();
 
 const isAdding = ref(false);
 const isSearching = ref(false);
@@ -96,7 +114,6 @@ const hasSearched = ref(false);
 const suggestions = ref<DiscoveryResult[]>([]);
 const selectedUrls = reactive(new Set<string>());
 const page = ref(1);
-
 const hasDownloadable = computed(() => {
   if (!selectedUrls.size) return false;
   return suggestions.value
@@ -126,6 +143,13 @@ async function search() {
   }
 }
 
+function clearTopic() {
+  selectedTopic.value = null;
+  query.value = '';
+  suggestions.value = [];
+  hasSearched.value = false;
+}
+
 function toggleSuggestion(url: string) {
   if (selectedUrls.has(url)) selectedUrls.delete(url);
   else selectedUrls.add(url);
@@ -137,6 +161,11 @@ function selectAll() {
 
 function toImportMeta(result?: DiscoveryResult) {
   if (!result) return {};
+  const tags = [...(result.tags || [])];
+  if (selectedTopic.value) {
+    const topicName = selectedTopic.value.name;
+    if (!tags.includes(topicName)) tags.push(topicName);
+  }
   return {
     contentType: result.type,
     title: result.title,
@@ -144,7 +173,7 @@ function toImportMeta(result?: DiscoveryResult) {
     downloadUrl: result.downloadUrl,
     author: result.author,
     license: result.license,
-    tags: result.tags,
+    tags,
     altText: result.altText,
   };
 }
@@ -187,6 +216,17 @@ watch(show, (v) => {
   selectedUrls.clear();
   hasSearched.value = false;
   page.value = 1;
+  selectedTopic.value = null;
+});
+
+watch(selectedTopic, (topic) => {
+  if (!topic) return;
+  query.value = topic.context
+    .join(' ')
+    .split(/\s+/)
+    .slice(0, MAX_QUERY_WORDS)
+    .join(' ');
+  search();
 });
 
 watch(contentFilter, () => {

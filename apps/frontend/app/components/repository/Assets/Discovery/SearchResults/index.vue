@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isSearching" class="d-flex justify-center pa-12">
+  <div v-if="isSearching" class="d-flex flex-column align-center pa-12 ga-4">
     <span class="text-body-1 text-primary-lighten-3">
       Searching the web for relevant resources...
     </span>
@@ -13,27 +13,30 @@
         variant="tonal"
       >
         {{ suggestions.length }} results
+        <template v-if="selectedUrls.size">
+          <VIcon size="x-small">mdi-circle-small</VIcon>
+          {{ selectedUrls.size }} selected
+        </template>
       </VChip>
       <VSpacer />
+      <VBtn
+        color="primary-lighten-3"
+        prepend-icon="mdi-checkbox-multiple-outline"
+        size="small"
+        variant="text"
+        @click="emit('select:all')"
+      >
+        Select all
+      </VBtn>
       <VBtn
         v-if="selectedUrls.size"
         color="primary-lighten-3"
         prepend-icon="mdi-close-circle-outline"
         size="small"
         variant="text"
-        @click="emit('toggle-all', false)"
+        @click="emit('select:clear')"
       >
-        Deselect all
-      </VBtn>
-      <VBtn
-        v-else
-        color="primary-lighten-3"
-        prepend-icon="mdi-checkbox-multiple-outline"
-        size="small"
-        variant="text"
-        @click="emit('toggle-all', true)"
-      >
-        Select all
+        Clear
       </VBtn>
     </div>
     <div class="d-flex flex-column ga-2">
@@ -42,7 +45,7 @@
         :key="it.url"
         :is-selected="selectedUrls.has(it.url)"
         :suggestion="it"
-        @toggle="emit('toggle', it.url)"
+        @toggle="emit('result:toggle', it.url)"
       />
     </div>
     <div v-if="totalPages > 1" class="d-flex justify-center mt-4">
@@ -85,8 +88,10 @@ const props = defineProps<{
 const page = defineModel<number>('page', { required: true });
 
 const emit = defineEmits<{
-  'toggle': [url: string];
-  'toggle-all': [selected: boolean];
+  'result:toggle': [url: string];
+  'select:all': [];
+  'select:clear': [];
+  'search:cancel': [];
 }>();
 
 const totalPages = computed(() =>
