@@ -59,7 +59,6 @@ async function resolveOutlineAncestor(element: any) {
   return activity.getFirstOutlineItem();
 }
 
-
 /**
  * Refine a content element via the AI service. Sends the
  * current element data through per-element AI generation
