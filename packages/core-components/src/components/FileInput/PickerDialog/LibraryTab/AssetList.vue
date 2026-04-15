@@ -5,7 +5,7 @@
     class="asset-list"
     color="primary-darken-4"
     rounded
-    @update:selected="(ids: number[]) => emit('update:selected', ids)"
+    @update:selected="emit('update:selected', $event)"
   >
     <VListItem
       v-for="asset in assets"
