@@ -35,7 +35,7 @@ const resolveSupportedTypes = (
 
 export { getAiSpec, resolveSupportedTypes };
 
-const buildElementSchema = (type: string) => {
+export const buildElementSchema = (type: string) => {
   const contentSchema = getAiSpec(type).Schema.schema;
   return obj(
     { type: { enum: [type] }, ...contentSchema.properties },

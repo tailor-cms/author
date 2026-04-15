@@ -3,7 +3,7 @@ import { ContentElementType } from '@tailor-cms/content-element-collection/types
 import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
-  allowedElementTypesForActivity,
+  resolveElementTypes,
   dbContext,
   findActivity,
   nextElementPos,
@@ -113,7 +113,7 @@ async function execute(input: Input, ctx: ToolContext) {
   const parent = target.parentId
     ? await Activity.findByPk(target.parentId)
     : null;
-  const allowed = allowedElementTypesForActivity(
+  const allowed = resolveElementTypes(
     ctx.repository.schema,
     target.type,
     parent?.type,
@@ -122,7 +122,11 @@ async function execute(input: Input, ctx: ToolContext) {
     return toolError({
       tool: TOOL,
       reason: 'no_config',
-      message: `Activity #${target.id} cannot host elements.`,
+      message: oneLine`
+        Activity #${target.id} (${target.type}) cannot host
+        elements. Use get_activity_subtree to find the correct
+        subcontainer id.
+      `,
     });
   }
 
