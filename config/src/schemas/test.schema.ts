@@ -100,7 +100,7 @@ const ModuleConfig: ActivityConfig = {
       type: MetaInputType.File,
       key: 'file',
       label: 'Test file attachment',
-      placeholder: 'Click to upload the image',
+      placeholder: 'Click to add the image',
       showPreview: true,
       validate: { ext: ['jpg', 'jpeg', 'png'] },
     },
@@ -336,7 +336,7 @@ export const SCHEMA: Schema = {
       key: 'posterImage',
       type: MetaInputType.File,
       label: 'Poster Image',
-      placeholder: 'Click to upload a poster image',
+      placeholder: 'Click to add a poster image',
       icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],

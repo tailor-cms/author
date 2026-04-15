@@ -35,3 +35,8 @@ export const reverseProxyPolicy = parseProxyPolicy(env.REVERSE_PROXY_TRUST);
 
 export const aiUiEnabled = yn(env.NUXT_PUBLIC_AI_UI_ENABLED);
 export const availableSchemas = getAvailableSchemas();
+
+// When enabled, SSRF protection allows requests to localhost and private
+// IP ranges (127.x, 10.x, 192.168.x, etc.). Intended for local development
+// where asset discovery or link imports may target local services.
+export const allowPrivateUrls = yn(env.ALLOW_PRIVATE_URLS);

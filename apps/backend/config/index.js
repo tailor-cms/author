@@ -3,6 +3,7 @@ import resolveUrl from '@tailor-cms/common/src/url.js';
 import * as ai from './ai.js';
 import * as auth from './auth.js';
 import * as consumer from './consumer.js';
+import * as discovery from './discovery.js';
 import * as general from './general.js';
 import * as mail from './mail.js';
 import * as storage from './storage.js';
@@ -25,6 +26,7 @@ export {
   ai,
   auth,
   consumer,
+  discovery,
   general,
   hostname,
   kvStore,
@@ -44,6 +46,7 @@ export default {
   ai,
   auth,
   consumer,
+  discovery,
   general,
   hostname,
   kvStore,
