@@ -1,22 +1,45 @@
 <template>
   <div class="bg-primary-darken-3">
     <div
-      v-if="isAiEnabled && !disabled && !isAiGeneratingContent"
       :class="{
-        'pr-2 pb-0': !subcontainers?.length,
-        'pr-12 pb-6': !!subcontainers?.length,
+        'pr-2 pb-2': !subcontainers?.length,
+        'pr-0 pb-6': !!subcontainers?.length,
       }"
-      class="d-flex flex-wrap justify-end"
+      class="d-flex items-center justify-end"
     >
-      <VBtn
-        color="teal-lighten-4"
-        size="small"
-        variant="tonal"
-        @click="generateStructuredContent"
+      <span v-if="isAiEnabled && !disabled && !isAiGeneratingContent">
+        <VBtn
+          class="mr-2"
+          color="teal-lighten-4"
+          size="small"
+          variant="tonal"
+          @click="generateStructuredContent"
+        >
+          Generate content
+          <VIcon end>mdi-magic-staff</VIcon>
+        </VBtn>
+      </span>
+      <span
+        v-if="isCollapsible && subcontainers.length > 1 && !disabled"
+        v-show="!isAiGeneratingContent"
+        class="d-flex justify-end"
       >
-        Do the magic
-        <VIcon end>mdi-magic-staff</VIcon>
-      </VBtn>
+        <VBtn
+          color="primary-lighten-4"
+          size="small"
+          variant="tonal"
+          @click="toggleAll"
+        >
+          <VIcon start>
+            {{
+              expandAll
+                ? 'mdi-unfold-less-horizontal'
+                : 'mdi-unfold-more-horizontal'
+            }}
+          </VIcon>
+          {{ expandAll ? 'Collapse all' : 'Expand all' }}
+        </VBtn>
+      </span>
     </div>
     <VSheet
       v-if="isAiGeneratingContent"
@@ -49,11 +72,12 @@
     >
       <VCol>
         <StructuredSubcontainer
-          v-bind="config[subcontainer.type]"
+          v-bind="subcontainerConfig[subcontainer.type]"
           :activities="activities"
           :elements="elements"
           :container="subcontainer"
           :is-disabled="disabled"
+          :expand-all="expandAll"
           :content-element-config="getContentElementConfig(subcontainer.type)"
           @add:element="emit('add:element', $event)"
           @save:element="emit('save:element', $event)"
@@ -99,16 +123,16 @@
       >
         <div class="pr-2">
           <VIcon size="x-small">mdi-plus</VIcon>
-          <VIcon size="small">{{ config[subcontainerType].icon }}</VIcon>
+          <VIcon size="small">{{ subcontainerConfig[subcontainerType].icon }}</VIcon>
         </div>
-        Add {{ config[subcontainerType].label }}
+        Add {{ subcontainerConfig[subcontainerType].label }}
       </VBtn>
     </VRow>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref } from 'vue';
+import { computed, inject, onMounted, ref } from 'vue';
 import { cloneDeep, filter, find, findIndex } from 'lodash-es';
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { CircularProgress } from '@tailor-cms/core-components';
@@ -118,7 +142,7 @@ import type { Activity } from '@tailor-cms/interfaces/activity.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element.js';
 import type { Repository } from '@tailor-cms/interfaces/repository.js';
 
-import { parseConfig } from './config';
+import { parseConfig } from './config.ts';
 import StructuredSubcontainer from './StructuredSubcontainer.vue';
 
 const Direction = { UP: -1, DOWN: 1 };
@@ -165,12 +189,38 @@ const subcontainers = computed(() => {
   return items.sort((a, b) => a.position - b.position);
 });
 
-const config = computed(() => {
+const parsedConfig = computed(() => {
   const { repository, container, config } = props;
   return parseConfig(repository, containerParent.value, container, config);
 });
 
-const subcontainerTypes = computed(() => Object.keys(config.value || []));
+const subcontainerConfig = computed(() => parsedConfig.value.subcontainers);
+const subcontainerTypes = computed(() => Object.keys(subcontainerConfig.value || []));
+const defaultSubcontainers = computed(() => parsedConfig.value.defaultSubcontainers);
+
+const initDefaultSubcontainers = () => {
+  if (subcontainers.value.length > 0 || !defaultSubcontainers.value.length) return;
+  defaultSubcontainers.value.forEach((item: any, index: number) => {
+    const typeConfig = subcontainerConfig.value[item.type];
+    const initData = typeConfig?.initMeta?.() || {};
+    emit('add:subcontainer', {
+      type: item.type,
+      parentId: props.container.id,
+      position: index + 1,
+      data: { ...initData, ...item.data },
+    });
+  });
+};
+
+onMounted(initDefaultSubcontainers);
+
+const isCollapsible = computed(() => parsedConfig.value.isCollapsible);
+
+const expandAll = ref(true);
+
+const toggleAll = () => {
+  expandAll.value = !expandAll.value;
+};
 
 const nextPosition = computed(() => {
   if (!subcontainers.value.length) return 1;
@@ -200,13 +250,13 @@ const reorder = (id: number, step: number) => {
 const createSubcontainer = (type: string) => {
   const parentId = props.container.id;
   const position = nextPosition.value;
-  const data = config.value[type]?.initMeta?.();
+  const data = subcontainerConfig.value[type]?.initMeta?.();
   emit('add:subcontainer', { type, parentId, position, data });
 };
 
 const getContentElementConfig = (subcontainerType: string) => {
   return (
-    props.config[subcontainerType]?.contentElementConfig ||
+    subcontainerConfig.value[subcontainerType]?.contentElementConfig ||
     props.contentElementConfig
   );
 };
@@ -225,8 +275,12 @@ const generateStructuredContent = async () => {
       ],
     });
     if (!result?.length) return;
+    // Remove existing subcontainers before populating with AI content
+    subcontainers.value.forEach((sub) => {
+      emit('delete:subcontainer', sub, { force: true });
+    });
     const { id: parentId, repositoryId } = props.container;
-    let position = nextPosition.value;
+    let position = 1;
     for (const it of result) {
       const activity = await createActivity({
         type: it.type || subcontainerTypes.value[0],
