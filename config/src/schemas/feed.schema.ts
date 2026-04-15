@@ -28,7 +28,7 @@ const defaultMeta: Metadata[] = [
     key: 'thumbnail',
     type: MetaInputType.File,
     label: 'Thumbnail Image',
-    placeholder: 'Click to upload a thumbnail image',
+    placeholder: 'Click to add a thumbnail image',
     icon: 'mdi-image',
     validate: {
       ext: ['jpg', 'jpeg', 'png'],
