@@ -1,4 +1,5 @@
 import { oneLine, stripIndent } from 'common-tags';
+import { schema as schemaAPI } from '@tailor-cms/config';
 import AiService from '../../../ai.service.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
@@ -6,6 +7,8 @@ import {
   resolveElementTypes,
   toolError,
 } from '../helpers/index.ts';
+
+const api = schemaAPI as any;
 
 const TOOL = 'generate_elements_for_target';
 
@@ -70,7 +73,22 @@ async function execute(input: Input, ctx: ToolContext) {
     });
   }
 
-  // Resolve outline ancestor for AI prompt context
+  // Outline activities (topics, modules) don't host elements
+  // directly - elements live in their subcontainers. Use
+  // get_activity_subtree to find the correct section id.
+  if (api.isOutlineActivity(target.type)) {
+    return toolError({
+      tool: TOOL,
+      reason: 'outline_activity',
+      message: oneLine`
+        Activity #${target.id} is an outline activity
+        (${target.type}). Elements must be added to a
+        content container inside it. Call get_activity_subtree to
+        find container ids.
+      `,
+    });
+  }
+
   const topic = await target.getFirstOutlineItem();
   const parent = await target.getParent();
 

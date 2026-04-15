@@ -1,5 +1,6 @@
 import { oneLine, stripIndent } from 'common-tags';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
+import { schema as schemaAPI } from '@tailor-cms/config';
 import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
@@ -110,6 +111,21 @@ async function execute(input: Input, ctx: ToolContext) {
       message: `Activity #${input.activityId} not found.`,
     });
   }
+
+  // Outline activities don't host elements directly
+  if ((schemaAPI as any).isOutlineActivity(target.type)) {
+    return toolError({
+      tool: TOOL,
+      reason: 'outline_activity',
+      message: oneLine`
+        Activity #${target.id} is an outline activity
+        (${target.type}). Elements must be added to a
+        content container inside it. Call get_activity_subtree to
+        find container ids.
+      `,
+    });
+  }
+
   const parent = target.parentId
     ? await Activity.findByPk(target.parentId)
     : null;
