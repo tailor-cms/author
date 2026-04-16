@@ -1,15 +1,14 @@
 import { oneLine, stripIndent } from 'common-tags';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
-  resolveElementTypes,
   dbContext,
   findActivity,
   nextElementPos,
-  normalizeImageData,
+  normalizeElementData,
   recordOperation,
+  resolveElementTypes,
   toolError,
 } from '../helpers/index.ts';
 
@@ -153,12 +152,7 @@ async function execute(input: Input, ctx: ToolContext) {
   const created: any[] = [];
   for (const element of input.elements) {
     try {
-      // AI-generated IMAGE elements may contain raw storageKeys
-      // or presigned URLs - normalize to storage:// URIs that
-      // the editor and publisher can resolve persistently
-      const data = element.type === ContentElementType.Image
-        ? normalizeImageData(element.data)
-        : element.data;
+      const data = normalizeElementData(element.type, element.data);
       const record = await ContentElement.create(
         {
           type: element.type,

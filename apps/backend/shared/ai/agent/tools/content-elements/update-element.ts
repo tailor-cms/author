@@ -1,10 +1,9 @@
 import { oneLine, stripIndent } from 'common-tags';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   dbContext,
   findElement,
-  normalizeImageData,
+  normalizeElementData,
   recordOperation,
   toolError,
 } from '../helpers/index.ts';
@@ -65,11 +64,7 @@ function buildPatch(element: any, input: Input) {
   const patch: any = {};
   if (input.data) {
     const merged = { ...element.data, ...input.data };
-    // AI-generated IMAGE data may contain raw storageKeys
-    // or presigned URLs - normalize to storage:// URIs
-    patch.data = element.type === ContentElementType.Image
-      ? normalizeImageData(merged)
-      : merged;
+    patch.data = normalizeElementData(element.type, merged);
   }
   if (typeof input.position === 'number') {
     patch.position = input.position;
