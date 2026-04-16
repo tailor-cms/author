@@ -3,6 +3,7 @@
     v-if="!resolvedFileKey"
     :density="density"
     :label="resolvedLabel"
+    :max-width="maxWidth"
     :min-width="minWidth"
     :placeholder="placeholder || 'Click to add...'"
     :prepend-inner-icon="resolvedIcon"
@@ -20,6 +21,7 @@
     :label="resolvedLabel"
     :is-loading="isLoadingPublicUrl"
     :min-width="minWidth"
+    :max-width="maxWidth"
     :show-preview="isPreviewEnabled"
     :url="previewUrl"
     :variant="variant"
@@ -76,6 +78,8 @@ interface Props {
   dark?: boolean;
   // Minimum width of the input and preview field; defaults to 350px
   minWidth?: string | number;
+  // Maximum width of the input and preview field; optional
+  maxWidth?: string | number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -87,6 +91,7 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'outlined',
   density: 'default',
   dark: false,
+  maxWidth: '100%',
   minWidth: '350',
 });
 

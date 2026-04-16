@@ -10,6 +10,7 @@
         v-bind="$attrs"
         :density="density"
         :label="label"
+        :max-width="maxWidth"
         :min-width="minWidth"
         :model-value="fileName"
         :variant="variant"
@@ -84,6 +85,7 @@ interface Props {
   label?: string;
   icon?: string;
   dark?: boolean;
+  maxWidth?: string | number;
   minWidth?: string | number;
   showPreview?: boolean;
   variant?: VTextField['variant'];
@@ -96,6 +98,7 @@ withDefaults(defineProps<Props>(), {
   label: '',
   icon: 'mdi-file',
   dark: false,
+  maxWidth: '100%',
   minWidth: '350',
   showPreview: false,
   variant: 'outlined',
