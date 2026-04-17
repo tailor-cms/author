@@ -1,7 +1,7 @@
 <template>
   <VNavigationDrawer
     v-model="modelValue"
-    :width="lgAndUp ? 480 : 380"
+    :width="isContentCollapsed ? 92 : (lgAndUp ? 500 : 400)"
     class="sidebar"
     color="primary-darken-2"
     elevation="5"
@@ -16,55 +16,72 @@
       variant="flat"
       @click="modelValue = false"
     />
-    <div class="sidebar-container">
-      <VWindow v-model="selectedTab">
-        <VWindowItem :value="BROWSER_TAB">
-          <ActivityNavigation
-            :activities="activities"
-            :repository="repository"
-            :selected="selectedActivity"
-          />
-        </VWindowItem>
-        <VWindowItem :value="COMMENTS_TAB">
-          <ActivityDiscussion :activity="selectedActivity" />
-        </VWindowItem>
-        <VWindowItem :value="ELEMENT_TAB">
-          <ElementSidebar
-            v-if="selectedElement"
-            :key="getElementId(selectedElement)"
-            :element="selectedElement"
-            :metadata="metadata"
-          />
-        </VWindowItem>
-      </VWindow>
-    </div>
-    <template #append>
-      <VTabs
-        v-model="selectedTab"
-        bg-color="primary-darken-4"
-        color="secondary-lighten-4"
-        height="76"
-        fixed-tabs
-        stacked
+    <div class="sidebar-layout">
+      <VSheet
+        class="sidebar-rail-column text-center"
+        :color="isContentCollapsed ? 'primary-darken-2' : 'primary-darken-3'"
       >
-        <VTab
-          v-for="tab in tabs"
-          :key="tab.name"
-          :disabled="tab.disabled"
-          :value="tab.name"
+        <VBtn
+          v-tooltip:right="{
+            text: isContentCollapsed ? 'Expand panel' : 'Collapse panel',
+            openDelay: 500,
+          }"
+          class="mt-4 mb-2"
+          icon="mdi-menu"
+          variant="text"
+          color="white"
+          @click="toggleContent"
+        />
+        <VTabs
+          v-model="selectedTab"
+          class="sidebar-rail pa-2"
+          color="secondary-lighten-4"
+          direction="vertical"
+          hide-slider
+          height="68"
+          stacked
+          @update:model-value="onTabSelect"
         >
-          <VIcon class="ma-1">mdi-{{ tab.icon }}</VIcon>
-          <VBadge
-            v-if="tab.badgeData"
-            :content="tab.badgeData"
-            color="secondary"
-            offset-x="-16"
-            offset-y="18"
-          />
-          <span class="py-1">{{ tab.label }}</span>
-        </VTab>
-      </VTabs>
-    </template>
+          <VTab
+            v-for="tab in tabs"
+            :key="tab.name"
+            :disabled="tab.disabled"
+            :prepend-icon="`mdi-${tab.icon}`"
+            :text="tab.label"
+            :value="tab.name"
+            :variant="selectedTab === tab.name ? 'tonal' : 'text'"
+            class="pa-2 mb-1"
+            rounded="lg"
+          >
+            <template v-if="tab.badgeData" #append>
+              <VBadge :content="tab.badgeData" color="secondary" inline />
+            </template>
+          </VTab>
+        </VTabs>
+      </VSheet>
+      <div v-if="!isContentCollapsed" class="sidebar-content">
+        <VWindow v-model="selectedTab" class="h-100">
+          <VWindowItem :value="BROWSER_TAB">
+            <ActivityNavigation
+              :activities="activities"
+              :repository="repository"
+              :selected="selectedActivity"
+            />
+          </VWindowItem>
+          <VWindowItem :value="COMMENTS_TAB">
+            <ActivityDiscussion :activity="selectedActivity" />
+          </VWindowItem>
+          <VWindowItem :value="ELEMENT_TAB">
+            <ElementSidebar
+              v-if="selectedElement"
+              :key="getElementId(selectedElement)"
+              :element="selectedElement"
+              :metadata="metadata"
+            />
+          </VWindowItem>
+        </VWindow>
+      </div>
+    </div>
   </VNavigationDrawer>
 </template>
 
@@ -97,6 +114,16 @@ const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 const { lgAndUp } = useDisplay();
 
 const selectedTab = ref(BROWSER_TAB);
+const isContentCollapsed = ref(false);
+
+const toggleContent = () => {
+  isContentCollapsed.value = !isContentCollapsed.value;
+};
+
+const onTabSelect = () => {
+  if (isContentCollapsed.value) isContentCollapsed.value = false;
+};
+
 const tabs: any = computed(() => [
   {
     name: BROWSER_TAB,
@@ -175,14 +202,7 @@ watch(
   }
 
   :deep(.v-navigation-drawer__content) {
-    -ms-overflow-style: none !important;
-    /* IE and Edge */
-    scrollbar-width: none !important;
-    /* Firefox */
-
-    &::-webkit-scrollbar {
-      display: none !important;
-    }
+    overflow: hidden !important;
   }
 
   .v-btn--disabled {
@@ -190,8 +210,37 @@ watch(
   }
 }
 
-.sidebar-container {
+.sidebar-rail-column {
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-layout {
+  display: flex;
   height: 100%;
+}
+
+.sidebar-rail {
+  :deep(.v-tab) {
+    min-width: unset;
+    justify-content: center;
+    font-size: 0.75rem;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+}
+
+.sidebar-content {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+
+  :deep(.v-window),
+  :deep(.v-window__container) {
+    height: 100%;
+    overflow: visible;
+  }
 
   :deep(.activity-discussion) {
     margin: 1rem 0;

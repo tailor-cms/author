@@ -1,6 +1,6 @@
 <template>
   <div class="navigation-container">
-    <div class="navigation-header px-1 pt-3 pb-0 bg-primary-darken-2">
+    <div class="navigation-header px-1 pt-3 pb-0">
       <VTextField
         v-model="searchInput"
         class="mt-1 mx-4"

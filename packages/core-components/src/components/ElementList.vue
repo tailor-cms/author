@@ -1,5 +1,5 @@
 <template>
-  <VContainer class="list-group">
+  <VContainer class="list-group" fluid>
     <Draggable
       v-bind="options"
       :disabled="isDisabled"
