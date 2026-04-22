@@ -1,14 +1,8 @@
 import { oneLine, stripIndent } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  dbContext,
-  findActivity,
-  nextPosition,
-  recordOperation,
-  summarizeActivity,
-  toolError,
-} from '../helpers/index.ts';
+import { dbContext, recordOperation, toolError } from '../helpers/index.ts';
+import { findActivity, nextPosition, summarizeActivity } from './helpers.ts';
 
 const api = schemaAPI as any;
 

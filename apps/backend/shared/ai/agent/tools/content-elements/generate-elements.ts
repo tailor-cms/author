@@ -2,11 +2,9 @@ import { oneLine, stripIndent } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import AiService from '../../../ai.service.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  findActivity,
-  resolveElementTypes,
-  toolError,
-} from '../helpers/index.ts';
+import { getAllowedElementTypes, toolError } from '../helpers/index.ts';
+import { findActivity } from '../activity/helpers.ts';
+import { buildOutlineContext, formatEnvelope } from '../../context/index.ts';
 
 const api = schemaAPI as any;
 
@@ -15,6 +13,9 @@ const TOOL = 'generate_elements_for_target';
 interface Input {
   activityId: number;
   instructions: string;
+  // See generate_container_content: opt-out for the auto-built envelope.
+  skipOutlineContext?: boolean | null;
+  contextRadius?: number | null;
 }
 
 const description = stripIndent`
@@ -43,6 +44,17 @@ const parameters = {
         difficulty, tone, and what types of content you
         want (text, questions, exercises, etc.).
       `,
+    },
+    skipOutlineContext: {
+      type: ['boolean', 'null'],
+      description: oneLine`
+        Opt out of the auto-built outline-context envelope.
+        Default false = include neighbor awareness.
+      `,
+    },
+    contextRadius: {
+      type: ['integer', 'null'],
+      description: 'Sibling radius for the envelope. Defaults to 2.',
     },
   },
   required: ['activityId', 'instructions'],
@@ -93,7 +105,7 @@ async function execute(input: Input, ctx: ToolContext) {
   const parent = await target.getParent();
 
   // Resolve allowed element types via describeContainerSchema
-  const allowed = resolveElementTypes(
+  const allowed = getAllowedElementTypes(
     ctx.repository.schema, target.type, parent?.type,
   );
   if (!allowed.length) {
@@ -108,6 +120,29 @@ async function execute(input: Input, ctx: ToolContext) {
     });
   }
 
+  // Build the outline-context envelope (unless opted out) and prepend it
+  // to the user instructions so the generated elements complement what
+  // the preceding siblings already cover and match the existing voice.
+  // Anchor the envelope on the nearest outline ancestor (topic), not the
+  // subcontainer itself - sibling awareness is a topic-level concern.
+  let instructionsWithContext = input.instructions;
+  let envelopeMeta: { charBudgetUsed: number; charBudget: number } | null = null;
+  const envelopeAnchorId = topic?.id ?? target.id;
+  if (!input.skipOutlineContext && envelopeAnchorId) {
+    const envelope = await buildOutlineContext(envelopeAnchorId, ctx, {
+      radius: input.contextRadius ?? undefined,
+    });
+    if (envelope) {
+      const formatted = formatEnvelope(envelope);
+      instructionsWithContext =
+        `${formatted}\n\nUser instructions: ${input.instructions}`;
+      envelopeMeta = {
+        charBudgetUsed: envelope.charBudgetUsed,
+        charBudget: envelope.charBudget,
+      };
+    }
+  }
+
   // ELEMENTS schema dynamically builds from allowed types
   // so the AI can generate any supported element type
   const generated = await (AiService as any).generate({
@@ -120,10 +155,10 @@ async function execute(input: Input, ctx: ToolContext) {
       outlineActivityType: topic?.type,
       topic: topic?.data?.name,
     },
-    allowedElementTypes: allowed,
+    getAllowedElementTypes: allowed,
     inputs: [{
       type: 'CREATE',
-      text: input.instructions,
+      text: instructionsWithContext,
       responseSchema: 'ELEMENTS',
     }],
   });
@@ -131,8 +166,9 @@ async function execute(input: Input, ctx: ToolContext) {
   const elements = Array.isArray(generated) ? generated : [];
   return {
     targetActivityId: target.id,
-    allowedElementTypes: allowed,
+    getAllowedElementTypes: allowed,
     elements,
+    ...(envelopeMeta ? { outlineContext: envelopeMeta } : {}),
     NEXT_STEP: oneLine`
       You MUST now call add_elements_to_activity with
       activityId=${target.id} and the elements array.

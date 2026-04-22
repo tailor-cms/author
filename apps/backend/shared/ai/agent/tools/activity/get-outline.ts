@@ -1,7 +1,7 @@
 import { stripIndent } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import type { ToolContext, ToolDef } from '../types.ts';
-import { summarizeActivity } from '../helpers/index.ts';
+import { summarizeActivity } from './helpers.ts';
 
 // No input parameters for this tool.
 type Input = Record<string, never>;

@@ -3,12 +3,8 @@ import AiService from '../../../ai.service.ts';
 import elementRegistry from '../../../../content-plugins/elementRegistry.js';
 import { createAiLogger } from '../../../logger.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  dbContext,
-  findElement,
-  recordOperation,
-  toolError,
-} from '../helpers/index.ts';
+import { dbContext, recordOperation, toolError } from '../helpers/index.ts';
+import { findElement } from './helpers.ts';
 
 const logger = createAiLogger('agent.tools.content-elements');
 

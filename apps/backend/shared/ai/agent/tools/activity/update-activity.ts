@@ -1,12 +1,7 @@
 import { oneLine, stripIndent } from 'common-tags';
 import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  dbContext,
-  findActivity,
-  recordOperation,
-  summarizeActivity,
-  toolError,
-} from '../helpers/index.ts';
+import { dbContext, recordOperation, toolError } from '../helpers/index.ts';
+import { findActivity, summarizeActivity } from './helpers.ts';
 
 const TOOL = 'update_activity';
 

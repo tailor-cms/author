@@ -1,7 +1,8 @@
 import { stripIndent } from 'common-tags';
 import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
-import { findActivity, toolError } from '../helpers/index.ts';
+import { toolError } from '../helpers/index.ts';
+import { findActivity } from '../activity/helpers.ts';
 
 const { ContentElement } = db as any;
 

@@ -4,13 +4,12 @@ import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   dbContext,
-  findActivity,
-  nextElementPos,
-  normalizeElementData,
+  getAllowedElementTypes,
   recordOperation,
-  resolveElementTypes,
   toolError,
 } from '../helpers/index.ts';
+import { findActivity } from '../activity/helpers.ts';
+import { nextElementPosition, normalizeElementData } from './helpers.ts';
 
 const { Activity, ContentElement } = db as any;
 
@@ -90,7 +89,7 @@ function validateTypes(elements: ElementItem[], allowed: string[]) {
     tool: TOOL,
     reason: 'invalid_type',
     message: `${invalid.length} element(s) have disallowed types.`,
-    allowedElementTypes: allowed,
+    getAllowedElementTypes: allowed,
     invalidElementTypes: [...new Set(invalid.map((el) => el.type))],
   });
 }
@@ -128,7 +127,7 @@ async function execute(input: Input, ctx: ToolContext) {
   const parent = target.parentId
     ? await Activity.findByPk(target.parentId)
     : null;
-  const allowed = resolveElementTypes(
+  const allowed = getAllowedElementTypes(
     ctx.repository.schema,
     target.type,
     parent?.type,
@@ -148,7 +147,7 @@ async function execute(input: Input, ctx: ToolContext) {
   const typeError = validateTypes(input.elements, allowed);
   if (typeError) return typeError;
 
-  let position = await nextElementPos(ctx.repository.id, target.id);
+  let position = await nextElementPosition(ctx.repository.id, target.id);
   const created: any[] = [];
   for (const element of input.elements) {
     try {

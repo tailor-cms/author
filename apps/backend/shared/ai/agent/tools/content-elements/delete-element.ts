@@ -1,11 +1,7 @@
 import { stripIndent } from 'common-tags';
 import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  dbContext,
-  findElement,
-  recordOperation,
-  toolError,
-} from '../helpers/index.ts';
+import { dbContext, recordOperation, toolError } from '../helpers/index.ts';
+import { findElement } from './helpers.ts';
 
 const TOOL = 'delete_element';
 

@@ -4,12 +4,11 @@ import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   dbContext,
-  nextPosition,
   recordOperation,
   resolveOutlineType,
-  summarizeActivity,
   toolError,
 } from '../helpers/index.ts';
+import { nextPosition, summarizeActivity } from './helpers.ts';
 
 const { Activity } = db as any;
 const api = schemaAPI as any;
@@ -127,7 +126,7 @@ async function createNode(
   ctx: ToolContext,
 ): Promise<{ activity: any } | { error: NodeError }> {
   const type = resolveOutlineType(ctx.repository.schema, item.type);
-  if (!api.isOutlineActivity(type)) {
+  if (!type || !api.isOutlineActivity(type)) {
     return {
       error: {
         name: item.name,

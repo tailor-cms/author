@@ -1,12 +1,7 @@
 import { stripIndent } from 'common-tags';
 import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  buildTypeLabelMap,
-  describeSubtree,
-  findActivity,
-  summarizeActivity,
-  toolError,
-} from '../helpers/index.ts';
+import { toolError } from '../helpers/index.ts';
+import { describeSubtree, findActivity, summarizeActivity } from './helpers.ts';
 
 const TOOL = 'get_activity_subtree';
 
@@ -52,10 +47,7 @@ async function execute(input: Input, ctx: ToolContext) {
     });
   }
 
-  const labels = buildTypeLabelMap(ctx.repository.schema);
-  const subtree = await describeSubtree(
-    ctx.repository.id, activity, labels,
-  );
+  const subtree = await describeSubtree(ctx.repository.schema, activity);
 
   return {
     activity: summarizeActivity(activity),

@@ -4,13 +4,11 @@ import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   dbContext,
-  findActivity,
-  nextPosition,
   recordOperation,
   resolveOutlineType,
-  summarizeActivity,
   toolError,
 } from '../helpers/index.ts';
+import { findActivity, nextPosition, summarizeActivity } from './helpers.ts';
 
 const { Activity } = db as any;
 const api = schemaAPI as any;
@@ -156,7 +154,7 @@ async function validateParent(
 async function execute(input: Input, ctx: ToolContext) {
   const schemaId = ctx.repository.schema;
   const type = resolveOutlineType(schemaId, input.type);
-  if (!api.isOutlineActivity(type)) {
+  if (!type || !api.isOutlineActivity(type)) {
     return rejectNonOutline(schemaId, input.type);
   }
   const parentError = await validateParent(type, input.parentId, ctx);

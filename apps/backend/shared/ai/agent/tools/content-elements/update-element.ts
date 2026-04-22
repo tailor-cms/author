@@ -1,12 +1,7 @@
 import { oneLine, stripIndent } from 'common-tags';
 import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  dbContext,
-  findElement,
-  normalizeElementData,
-  recordOperation,
-  toolError,
-} from '../helpers/index.ts';
+import { dbContext, recordOperation, toolError } from '../helpers/index.ts';
+import { findElement, normalizeElementData } from './helpers.ts';
 
 const TOOL = 'update_element';
 

@@ -2,9 +2,8 @@ import { oneLine, stripIndent } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
-import { buildTypeLabelMap, labelFor, toolError } from '../helpers/index.ts';
+import { resolveLabel, toolError } from '../helpers/index.ts';
 import AiService from '../../../ai.service.ts';
-import type { TypeLabelMap } from '../helpers/index.ts';
 
 const api = schemaAPI as any;
 const { Asset } = db as any;
@@ -73,14 +72,14 @@ const parameters = {
  * Render a nested activity tree as indented markdown
  * for the LLM to reference in its reply.
  */
-function renderPreviewTree(nodes: any[], labels: TypeLabelMap, depth = 0): string {
+function renderPreviewTree(schemaId: string, nodes: any[], depth = 0): string {
   const lines: string[] = [];
   for (const node of nodes) {
     const indent = '  '.repeat(depth);
-    const label = labelFor(labels, node.type) || node.type;
+    const label = resolveLabel(schemaId, node.type);
     lines.push(`${indent}- **${node.name}** _(${label})_`);
     if (node.children?.length) {
-      lines.push(renderPreviewTree(node.children, labels, depth + 1));
+      lines.push(renderPreviewTree(schemaId, node.children, depth + 1));
     }
   }
   return lines.join('\n');
@@ -206,11 +205,9 @@ async function execute(input: Input, ctx: ToolContext) {
     ],
   });
 
-  // Schema type -> human label map for the preview tree
-  const labels = buildTypeLabelMap(schemaId);
   const nodes = Array.isArray(generated) ? generated : [];
   const markdown = nodes.length
-    ? renderPreviewTree(nodes, labels)
+    ? renderPreviewTree(schemaId, nodes)
     : '_(no activities generated)_';
   const activities = flattenTree(nodes);
 

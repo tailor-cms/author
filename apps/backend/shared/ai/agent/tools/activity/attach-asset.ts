@@ -3,11 +3,11 @@ import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   dbContext,
-  findActivity,
   metaInputsForActivity,
   recordOperation,
   toolError,
 } from '../helpers/index.ts';
+import { findActivity } from './helpers.ts';
 
 const { Asset } = db as any;
 

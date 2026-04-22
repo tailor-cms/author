@@ -1,6 +1,7 @@
 import { stripIndent } from 'common-tags';
 import type { ToolContext, ToolDef } from '../types.ts';
-import { findElement, toolError } from '../helpers/index.ts';
+import { toolError } from '../helpers/index.ts';
+import { findElement } from './helpers.ts';
 
 const TOOL = 'get_element';
 

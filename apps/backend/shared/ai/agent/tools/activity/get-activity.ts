@@ -1,10 +1,7 @@
 import { stripIndent } from 'common-tags';
 import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  findActivity,
-  summarizeActivity,
-  toolError,
-} from '../helpers/index.ts';
+import { toolError } from '../helpers/index.ts';
+import { findActivity, summarizeActivity } from './helpers.ts';
 
 const TOOL = 'get_activity';
 

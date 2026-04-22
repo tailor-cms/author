@@ -3,18 +3,16 @@ import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   containerTypesForActivity,
-  createElements,
   dbContext,
-  findActivity,
   logger,
   mergeMetaDefaults,
-  nextPosition,
   recordOperation,
-  subcontainerMetaInputs,
+  getContainerActivityMeta,
   subcontainerTypesForContainer,
-  summarizeActivity,
   toolError,
 } from '../helpers/index.ts';
+import { findActivity, nextPosition, summarizeActivity } from './helpers.ts';
+import { createElements } from '../content-elements/helpers.ts';
 
 const { Activity } = db as any;
 
@@ -186,9 +184,8 @@ async function createNestedContainer(
   ctx: ToolContext,
 ) {
   const { containerType } = input;
-  const metaFields = subcontainerMetaInputs(
+  const metaFields = getContainerActivityMeta(
     ctx.repository.schema,
-    outlineActivity.type,
     containerType,
   );
   const { mergedData, missingKeys, expectedKeys } = mergeMetaDefaults(
