@@ -31,7 +31,6 @@
           <VBtn
             v-if="showPreview"
             v-bind="dialogProps"
-            :color="dark ? 'white' : 'primary'"
             aria-label="Preview image"
             class="mr-1"
             size="x-small"
@@ -41,18 +40,6 @@
             <VIcon icon="mdi-magnify" size="large" />
           </VBtn>
           <VBtn
-            :color="dark ? 'white' : 'primary'"
-            aria-label="Download file"
-            class="mr-1"
-            size="x-small"
-            variant="tonal"
-            icon
-            @click.stop="emit('download')"
-          >
-            <VIcon icon="mdi-download" size="large" />
-          </VBtn>
-          <VBtn
-            :color="dark ? 'secondary-lighten-3' : 'secondary'"
             aria-label="Remove file"
             size="x-small"
             variant="tonal"
@@ -76,6 +63,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
 import type { VTextField } from 'vuetify/components';
 
 interface Props {
