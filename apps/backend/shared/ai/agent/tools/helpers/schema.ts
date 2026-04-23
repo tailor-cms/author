@@ -1,10 +1,17 @@
 // Schema-driven lookups via the config-parser API.
 import type { Schema } from '@tailor-cms/interfaces/schema';
 import { schema as schemaAPI } from '@tailor-cms/config';
+import { processElementConfig } from '@tailor-cms/config-parser';
+import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import PluginRegistry from '#shared/content-plugins/index.js';
 
 const api = schemaAPI as any;
 const { containerRegistry } = PluginRegistry;
+
+// All installed element types - used as fallback when a
+// container doesn't define contentElementConfig (same
+// default the config-parser uses in getSupportedContainers).
+const ALL_ELEMENT_TYPES = Object.values(ContentElementType);
 
 // Resolve a parsed schema by id.
 export function getSchema(schemaId: string): Schema {
@@ -73,18 +80,13 @@ export function resolveLabel(schemaId: string, type: string): string {
 // Look up a container or subcontainer label via the
 // containerRegistry. Checks top-level container types
 // first, then walks subcontainer definitions.
-function resolveContainerLabel(
-  schemaId: string,
-  type: string,
-): string | null {
+function resolveContainerLabel(schemaId: string, type: string): string | null {
   const schema = getSchema(schemaId);
   if (!schema) return null;
   for (const cc of schema.contentContainers || []) {
     if (cc.type === type) return cc.label || null;
     const desc = containerRegistry.describeSchema(cc);
-    const sub = (desc.subcontainers || []).find(
-      (s: any) => s.type === type,
-    );
+    const sub = (desc.subcontainers || []).find((s: any) => s.type === type);
     if (sub?.label) return sub.label;
   }
   return null;
@@ -98,25 +100,54 @@ export function containerTypesForActivity(activityType: string): string[] {
 }
 
 // Full container structure from its schema config.
-// Delegates to the template's describeSchema(config).
-// Returns { subcontainers: [] } for flat/unknown templates.
+// Delegates to the template's describeSchema(config) and
+// applies element config inheritance: subcontainers that
+// don't define their own contentElementConfig inherit the
+// container-level one (e.g. HEAS SECTION inherits from
+// its STRUCTURED_CONTENT container).
 //
-// describeContainerSchema("EXAMPLE_SCHEMA", "SECTION_CONTAINER")
+// Nested container:
+// describeContainerSchema("EXAMPLE_SCHEMA", "PANEL_CONTAINER")
 //   -> { subcontainers: [
-//        { type: "DEFAULT_SECTION", label: "Section",
-//          meta: [{ key: "estimatedTime", ... }],
-//          elementConfig: [...] }
+//        { type: "PANEL", label: "Panel",
+//          meta: [{ key: "mood", ... }],
+//          elementConfig: [...processed...] },
+//        { type: "SPLASH", label: "Splash Page", ... }
 //      ] }
 //
-// describeContainerSchema("EXAMPLE_SCHEMA", "ASSESSMENT_POOL")
-//   -> { subcontainers: [], elementConfig: [...] }
+// Flat container:
+// describeContainerSchema("COURSE_SCHEMA", "SECTION")
+//   -> { subcontainers: [], elementConfig: [...processed...] }
 export function describeContainerSchema(
   schemaId: string,
   containerType: string,
 ) {
   const container = findContainerDef(schemaId, containerType);
   if (!container) return { subcontainers: [] };
-  return containerRegistry.describeSchema(container);
+  const desc = containerRegistry.describeSchema(container);
+  // The template's describeSchema only sees container.config,
+  // not container-level contentElementConfig. Subcontainers
+  // without their own element config inherit from the
+  // container level, or from all installed types when neither
+  // defines one (same default the config-parser applies in
+  // getSupportedContainers).
+  const fallbackConfig = container.contentElementConfig || ALL_ELEMENT_TYPES;
+  if (desc.subcontainers?.length) {
+    for (const sub of desc.subcontainers) {
+      if (!sub.elementConfig?.length) {
+        sub.elementConfig = fallbackConfig;
+      }
+      // Raw configs from findContainerDef haven't been through
+      // processElementConfig yet (processSchemas doesn't touch
+      // contentContainers). Process now so getSupportedElementTypes
+      // gets the grouped format it expects.
+      sub.elementConfig = processElementConfig(sub.elementConfig);
+    }
+  }
+  if (desc.elementConfig) {
+    desc.elementConfig = processElementConfig(desc.elementConfig);
+  }
+  return desc;
 }
 
 // Subcontainer activity types allowed inside a container.
@@ -204,14 +235,16 @@ export function getAllowedElementTypes(
   // e.g. activityType="EXAMPLE_SCHEMA/TOPIC" which has
   // SECTION_CONTAINER + EXAM -> union of both element sets.
   if (api.isOutlineActivity(activityType)) {
-    return (api.getSupportedContainers(activityType) || [])
-      .reduce((acc: string[], c: any) => {
+    return (api.getSupportedContainers(activityType) || []).reduce(
+      (acc: string[], c: any) => {
         const desc = describeContainerSchema(schemaId, c.type);
         for (const t of elementTypesFromContainerDesc(desc)) {
           if (!acc.includes(t)) acc.push(t);
         }
         return acc;
-      }, []);
+      },
+      [],
+    );
   }
   // Container type - combine all its subcontainers' element types.
   // e.g. activityType="SECTION_CONTAINER"
@@ -262,7 +295,5 @@ export function getContainerActivityMeta(
 function findContainerDef(schemaId: string, containerType: string) {
   const schema = getSchema(schemaId);
   if (!schema) return undefined;
-  return schema.contentContainers?.find(
-    (it: any) => it.type === containerType,
-  );
+  return schema.contentContainers?.find((it: any) => it.type === containerType);
 }
