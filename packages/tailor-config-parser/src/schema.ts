@@ -32,7 +32,7 @@ const DEFAULT_EMBED_ELEMENTS = ['TIPTAP_HTML', 'IMAGE', 'EMBED'];
 
 type EmptyObject = Record<string, never>;
 
-const processElementConfig = (config: ElementConfig[]) => {
+export const processElementConfig = (config: ElementConfig[]) => {
   const processItem = (item: ContentElementItem | string, config?: any) => {
     const processed = isString(item) ? { id: item } : item;
     return Object.assign(processed, config);
