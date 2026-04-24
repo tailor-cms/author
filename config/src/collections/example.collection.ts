@@ -22,7 +22,7 @@ class Article {
   thumbnail: string;
 
   @Prop({ label: 'Overview Video' })
-  @IsContentElement(ContentElementType.Video, { required: true })
+  @IsContentElement(ContentElementType.MuxVideo, { required: true })
   video: ContentElement;
 
   @Prop({ label: 'Poll' })
