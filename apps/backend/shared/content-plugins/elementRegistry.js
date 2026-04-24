@@ -50,9 +50,9 @@ class ElementsRegistry {
     const handlers = this._procedures[elementType];
     if (!handlers || !handlers[procedure]) return;
     const services = { config: pick(config, ['tce']), storage };
-    return (element, payload, options) => {
+    return (payload, options) => {
       const context = options?.context || {};
-      return handlers[procedure](element, { ...services, context }, payload);
+      return handlers[procedure]({ ...services, context }, payload);
     };
   }
 }

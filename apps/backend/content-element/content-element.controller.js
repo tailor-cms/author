@@ -74,7 +74,7 @@ async function rpc({ contentElement, user, repository, body, params }, res) {
     return res.status(StatusCodes.NOT_FOUND).json({ error });
   }
   const context = { userId: user.id, repository };
-  const result = await handler(contentElement, body, { context });
+  const result = await handler(body, { context });
   return res.json({ data: result });
 }
 
