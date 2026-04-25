@@ -21,7 +21,7 @@
             <ContainedContent
               :element="state[input.key]"
               :is-disabled="disabled"
-              auto-save
+              autosave
               @save="(e) => (state[input.key] = { ...state[input.key], data: e })"
             />
             <div v-if="errorMessage" class="v-messages">
