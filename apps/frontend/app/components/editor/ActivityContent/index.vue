@@ -163,7 +163,14 @@ const createActivity = async (payload: any) => {
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
-provide('$rpc', contentElementStore.rpc);
+provide('$rpc', (type: string, procedure: string, payload?: any) =>
+  contentElementStore.rpc(
+    repositoryStore.repositoryId as number,
+    type,
+    procedure,
+    payload,
+  ),
+);
 if (config.props.aiUiEnabled) {
   provide('$doTheMagic', doTheMagic);
   provide('$createActivity', createActivity);

@@ -6,8 +6,6 @@ const urls = {
   root: (repositoryId) => `${urls.repository(repositoryId)}/content-elements`,
   resource: (repositoryId, id) => `${urls.root(repositoryId)}/${id}`,
   reorder: (repositoryId, id) => `${urls.resource(repositoryId, id)}/reorder`,
-  rpc: (repositoryId, id, procedure) =>
-    `${urls.resource(repositoryId, id)}/rpc/${procedure}`,
   link: (repositoryId) => `${urls.root(repositoryId)}/link`,
   unlink: (repositoryId, id) => `${urls.resource(repositoryId, id)}/unlink`,
   source: (repositoryId, id) => `${urls.resource(repositoryId, id)}/source`,
@@ -36,12 +34,6 @@ function remove(repositoryId, id) {
   return request.delete(urls.resource(repositoryId, id));
 }
 
-function rpc(repositoryId, id, procedure, payload = {}) {
-  return request
-    .post(urls.rpc(repositoryId, id, procedure), payload)
-    .then(extractData);
-}
-
 function link(repositoryId, payload) {
   return request.post(urls.link(repositoryId), payload).then(extractData);
 }
@@ -64,7 +56,6 @@ export default {
   patch,
   reorder,
   remove,
-  rpc,
   link,
   unlink,
   getSource,

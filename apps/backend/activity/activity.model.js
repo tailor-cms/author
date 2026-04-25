@@ -473,11 +473,10 @@ class Activity extends Model {
   }
 
   async processEmbeddedElements() {
-    if (this.type !== ContentContainerType.CollectionItemContent)
-      return Promise.resolve(this);
+    if (this.type !== ContentContainerType.CollectionItemContent) return this;
     for (const key of Object.keys(this.data)) {
-      if (!this.data?.[key]?.embedded) return;
-      contentElementHooks.applyFetchHooks(this.data[key]);
+      if (!this.data?.[key]?.embedded) continue;
+      await contentElementHooks.applyFetchHooks(this.data[key]);
     }
     return this;
   }

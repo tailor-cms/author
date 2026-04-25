@@ -253,9 +253,8 @@ const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
 
 if (rpc) {
-  const { repositoryId, id } = props.element;
   provide('$rpc', (procedure: string, payload?: any) =>
-    rpc(repositoryId, id, procedure, payload),
+    rpc(props.element.type, procedure, payload),
   );
 }
 

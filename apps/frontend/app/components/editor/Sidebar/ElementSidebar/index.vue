@@ -16,10 +16,12 @@ import { schema } from '@tailor-cms/config';
 import ElementMeta from './ElementMeta/index.vue';
 import { exposedApi } from '@/api';
 import { useContentElementStore } from '@/stores/content-elements';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const eventBus = inject('$eventBus') as any;
 const authStore = useAuthStore();
 const { rpc } = useContentElementStore();
+const repositoryStore = useCurrentRepository();
 const storageService = useStorageService();
 
 interface Props {
@@ -30,7 +32,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   metadata: () => ({}),
 });
-const { repositoryId, id: elementId } = props.element;
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 const editorChannel = eventBus.channel('editor');
@@ -38,7 +39,12 @@ provide('$elementBus', elementBus);
 provide('$editorBus', editorChannel);
 provide('$storageService', storageService);
 provide('$rpc', (procedure: string, payload?: any) =>
-  rpc(repositoryId, elementId, procedure, payload),
+  rpc(
+    repositoryStore.repositoryId as number,
+    props.element.type,
+    procedure,
+    payload,
+  ),
 );
 provide('$api', exposedApi);
 provide('$schemaService', schema);

@@ -3,7 +3,7 @@ import { calculatePosition } from '@tailor-cms/utils';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ContentElement as Events } from '@tailor-cms/common/src/sse.js';
 
-import { contentElement as api } from '@/api';
+import { contentElement as api, rpc as rpcApi } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useEditorStore } from '@/stores/editor';
 
@@ -113,11 +113,11 @@ export const useContentElementStore = defineStore('contentElements', () => {
 
   async function rpc(
     repositoryId: number,
-    elementId: number,
+    type: string,
     procedure: string,
     payload?: any,
   ): Promise<any> {
-    return api.rpc(repositoryId, elementId, procedure, payload);
+    return rpcApi.rpc(repositoryId, type, procedure, payload);
   }
 
   function $reset() {

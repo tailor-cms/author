@@ -85,27 +85,35 @@
           class="content text-left pa-6"
           :validate-on="autosave ? 'input' : 'submit'"
         >
-          <component
-            :is="componentName"
-            v-bind="{
-              ...$attrs,
-              embedElementConfig,
-              element: editedElement,
-              references,
-              isFocused,
-              isDragged,
-              isDisabled,
-              isReadonly: props.isDisabled,
-              dense,
-            }"
-            :id="`element_${element.id}`"
-            @add="emit('add', $event)"
-            @delete="emit('delete')"
-            @focus="emit('select', $event)"
-            @link="emit('link', $event)"
-            @save="save"
+          <QuestionContainer
+            :element-data="editedElement.data"
+            :embed-element-config="embedElementConfig"
+            :is-disabled="isDisabled"
+            :is-readonly="isDisabled"
             @update="update"
-          />
+          >
+            <component
+              :is="componentName"
+              v-bind="{
+                ...$attrs,
+                embedElementConfig,
+                element: editedElement,
+                references,
+                isFocused,
+                isDragged,
+                isDisabled,
+                isReadonly: props.isDisabled,
+                dense,
+              }"
+              :id="`element_${element.id}`"
+              @add="emit('add', $event)"
+              @delete="emit('delete')"
+              @focus="emit('select', $event)"
+              @link="emit('link', $event)"
+              @save="save"
+              @update="update"
+            />
+          </QuestionContainer>
           <VFadeTransition>
             <div
               v-if="!isDisabled && isDirty && !autosave"
@@ -141,6 +149,7 @@ import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
 import ElementGeneration from './ElementGeneration.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
+import QuestionContainer from './QuestionContainer/index.vue';
 import { useConfigStore } from '@/stores/config';
 import { useValidation } from '../composables/useValidation';
 

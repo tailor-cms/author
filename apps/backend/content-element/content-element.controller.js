@@ -3,9 +3,6 @@ import pick from 'lodash/pick.js';
 
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
-import PluginRegistry from '#shared/content-plugins/index.js';
-
-const { elementRegistry } = PluginRegistry;
 
 const { NOT_FOUND } = StatusCodes;
 const { Activity, ContentElement } = db;
@@ -63,19 +60,6 @@ async function remove({ repository, user, contentElement }, res) {
 async function reorder({ body, contentElement }, res) {
   await contentElement.reorder(body.position);
   return res.json({ data: contentElement });
-}
-
-async function rpc({ contentElement, user, repository, body, params }, res) {
-  const { procedure } = params;
-  const { type } = contentElement;
-  const handler = elementRegistry.getProcedure(type, procedure);
-  if (!handler) {
-    const error = `Procedure "${procedure}" not found for element type "${type}"`;
-    return res.status(StatusCodes.NOT_FOUND).json({ error });
-  }
-  const context = { userId: user.id, repository };
-  const result = await handler(body, { context });
-  return res.json({ data: result });
 }
 
 /**
@@ -147,7 +131,6 @@ export default {
   patch,
   remove,
   reorder,
-  rpc,
   link,
   unlink,
   getSource,
