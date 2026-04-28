@@ -140,9 +140,6 @@ const StructuredContentContainer: ContentContainerConfig = {
           Dont include more than 3 headings.
         - Try to use at least 2000 words.
         - Format the content as a HTML with suitable tags and headings.
-        - Apply the folllowing classes to the tags:
-          - Apply text-body-2 mb-5 to the paragraphs
-          - Apply text-h3 and mb-7 to the headings
         You are trying to teach the audience, so make sure the content is easy to
         understand, has a friendly tone and is engaging to the reader.
         Make sure to include the latest relevant information on the topic.`,

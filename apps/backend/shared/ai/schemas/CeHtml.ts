@@ -39,10 +39,7 @@ export const getPrompt = () => `
     Headings might be a good place to split. Don't include more than 5 headings.
   - The content property of each element in the array, should include more
     than 300 words of text if possible.
-  - Format the content as a HTML with suitable tags and headings.
-    Apply the folllowing classes to the tags:
-    - Apply text-body-2 mb-5 to the paragraphs
-    - Apply text-h3 and mb-7 to the headings`;
+  - Format the content as a HTML with suitable tags and headings.`;
 
 const spec: AiResponseSpec = {
   Schema,
