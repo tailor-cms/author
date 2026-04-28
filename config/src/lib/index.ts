@@ -61,37 +61,45 @@ export class TailorCollection {
   id: string;
   label: string;
   props: Array<any>;
+  embedElementConfig?: ContentElementType[];
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     entity: Function,
-    config?: { schemaId?: string; label?: string },
+    config?: {
+      schemaId?: string;
+      label?: string;
+      embedElementConfig?: ContentElementType[];
+    },
   ) {
-    const { schemaId, label } = config || {};
+    const { schemaId, label, embedElementConfig } = config || {};
     this.id = schemaId || entity.name.toUpperCase();
     this.label = label || capitalize(entity.name);
+    this.embedElementConfig = embedElementConfig;
     const meta = entity[Symbol.metadata] || {} as Record<PropertyKey, any>;
     this.props = Object.entries(meta).map(([key, val]) => ({ key, ...val }));
   }
 
   toSchema() {
+    const { id, label, props: config, embedElementConfig } = this;
     return {
-      id: this.id,
-      name: `${this.label} Collection`,
-      description: `A currated ${this.label} collection.`,
+      id,
+      name: `${label} Collection`,
+      description: `A currated ${label} collection.`,
       collection: true,
       workflowId: 'DEFAULT_WORKFLOW',
       contentContainers: [
         {
           type: ContentContainerType.CollectionItemContent,
           templateId: ContentContainerType.CollectionItemContent,
-          label: this.label,
-          config: this.props,
+          label,
+          config,
+          ...(embedElementConfig && { embedElementConfig }),
         },
       ],
       structure: [
         {
-          type: `${this.id}_ENTRY`,
-          label: this.label,
+          type: `${id}_ENTRY`,
+          label,
           rootLevel: true,
           isTrackedInWorkflow: true,
           color: '#5187C7',

@@ -3,6 +3,12 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { IsContentElement, IsInput, Prop, TailorCollection } from '../lib/index.ts';
 
+const embedElementConfig = [
+  ContentElementType.TiptapHtml,
+  ContentElementType.Image,
+  ContentElementType.Embed,
+];
+
 class Article {
   @Prop()
   @IsInput(MetaInputType.Html, { validate: { required: true, min: 2, max: 2000 } })
@@ -30,4 +36,6 @@ class Article {
   question: ContentElement;
 }
 
-export const exampleCollection = new TailorCollection(Article);
+export const exampleCollection = new TailorCollection(Article, {
+  embedElementConfig,
+});

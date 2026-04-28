@@ -210,7 +210,7 @@ onMounted(() => {
 }
 
 .collection-wrapper {
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   overflow: hidden;
   display: flex;
   flex-direction: column;

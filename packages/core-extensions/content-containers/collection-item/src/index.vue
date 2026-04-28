@@ -21,6 +21,7 @@
             <ContainedContent
               :element="state[input.key]"
               :is-disabled="disabled"
+              :embed-element-config="embedElementConfig"
               autosave
               @save="(e) => (state[input.key] = { ...state[input.key], data: e })"
             />
@@ -66,12 +67,16 @@ import { uuid } from '@tailor-cms/utils';
 
 import { ContainedContent, useValidationProvider } from '@tailor-cms/core-components';
 import MetaInput from './MetaInput.vue';
-import { required } from './isEmpty';
 
 const { validate } = useForm();
 const { validate: validateItems } = useValidationProvider();
 
 const ceRegistry = inject<any>('$ceRegistry');
+
+const required = (type: string, label: string) => (data: unknown) => {
+  const isEmpty = ceRegistry.get(type)?.isEmpty;
+  return isEmpty?.(data) ? `${label} is a required field` : true;
+};
 
 interface Props {
   repository: Repository;
@@ -79,12 +84,14 @@ interface Props {
   container: Activity;
   elements: Record<string, ContentElement>;
   config?: Record<number, any>;
+  embedElementConfig?: any[];
   disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   config: () => ({}),
+  embedElementConfig: () => [],
 });
 
 const emit = defineEmits<{ (e: 'update:container', container: any): void }>();

@@ -1,5 +1,6 @@
 import type {
   ActivityConfig,
+  ContentContainerConfig,
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
@@ -30,6 +31,7 @@ export default (schemas: Schema[] = []) => {
       it.type = processType(schema, it.type);
     });
     schema.structure.forEach((it) => processActivityConfig(schema, it));
+    if (schema.collection) processCollectionConfig(schema.contentContainers[0]);
   });
   // Second pass: validate and resolve mapsTo (needs all schemas)
   processMapsTo(schemas);
@@ -85,6 +87,12 @@ function resolveParentTypes(schema: Schema, activityConfig: ActivityConfig) {
   return schema.structure
     .filter((it) => it.subLevels?.includes(activityConfig.type))
     .map((it) => it.type);
+}
+
+function processCollectionConfig(container: ContentContainerConfig) {
+  const config = container.config ?? [];
+  const inputs = config.filter((it: any) => it.IsInput) as Metadata[];
+  normalizeFileMeta(inputs);
 }
 
 function processelementMetaConfig(elementMeta: any) {
