@@ -277,7 +277,7 @@ const cancel = () => {
 };
 
 const update = (data: any) => {
-  Object.assign(editedElement.data, data);
+  editedElement.data = { ...editedElement.data, ...data };
   if (props.autosave) emit('save', editedElement.data);
 };
 
