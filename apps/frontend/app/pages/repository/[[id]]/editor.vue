@@ -120,7 +120,7 @@ $sidebar-width: 30rem;
 
   .sidebar-toggle {
     position: fixed;
-    bottom: 5.5rem;
+    bottom: 0.5rem;
     left: 0;
     z-index: 1004;
     border-radius: 0 4px 4px 0 !important;

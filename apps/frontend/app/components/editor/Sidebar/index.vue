@@ -189,7 +189,7 @@ watch(
 
   .sidebar-collapse-btn {
     position: absolute;
-    bottom: 5.5rem;
+    bottom: 0.5rem;
     right: 0;
     z-index: 1;
     border-radius: 4px 0 0 4px !important;
