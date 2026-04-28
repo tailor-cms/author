@@ -40,7 +40,7 @@ async function list({ repository, query, opts }, res) {
   return res.json({ data: activities });
 }
 
-function create({ user, repository, body }, res) {
+async function create({ user, repository, body }, res) {
   const outlineConfig = find(getOutlineLevels(repository.schema), {
     type: body.type,
   });
@@ -50,10 +50,13 @@ function create({ user, repository, body }, res) {
     repositoryId: repository.id,
   };
   const context = { userId: user.id, repository };
-  return Activity.create(data, { context }).then((data) => res.json({ data }));
+  const activity = await Activity.create(data, { context });
+  await activity.processEmbeddedElements();
+  return res.json({ data: activity });
 }
 
-function show({ activity }, res) {
+async function show({ activity }, res) {
+  await activity.processEmbeddedElements();
   return res.json({ data: activity });
 }
 
@@ -70,6 +73,7 @@ async function patch({ repository, user, activity, body }, res) {
     await parent.touch();
   }
   const data = await activity.update(body, { context });
+  await data.processEmbeddedElements();
   return res.json({ data });
 }
 

@@ -3,7 +3,7 @@ import { calculatePosition } from '@tailor-cms/utils';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ContentElement as Events } from '@tailor-cms/common/src/sse.js';
 
-import { contentElement as api, rpc as rpcApi } from '@/api';
+import { contentElement as api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useEditorStore } from '@/stores/editor';
 
@@ -111,15 +111,6 @@ export const useContentElementStore = defineStore('contentElements', () => {
       .subscribe(Events.Delete, (it: ContentElement) => $items.delete(it.uid));
   };
 
-  async function rpc(
-    repositoryId: number,
-    type: string,
-    procedure: string,
-    payload?: any,
-  ): Promise<any> {
-    return rpcApi.rpc(repositoryId, type, procedure, payload);
-  }
-
   function $reset() {
     $items.clear();
   }
@@ -134,7 +125,6 @@ export const useContentElementStore = defineStore('contentElements', () => {
     save,
     remove,
     reorder,
-    rpc,
     unlink,
     $subscribeToSSE,
     $reset,
