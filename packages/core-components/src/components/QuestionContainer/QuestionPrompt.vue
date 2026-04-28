@@ -94,7 +94,7 @@ editorChannel.on('element:focus', (element: any = {}) => {
 }
 
 :deep(.list-group) {
-  padding: 1rem 2.5rem;
+  padding: 1rem 2.5rem !important;
 
   .contained-content {
     margin: 0;
