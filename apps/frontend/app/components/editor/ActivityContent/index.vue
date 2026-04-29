@@ -4,7 +4,7 @@
     ref="activityContentEl"
     class="activity-content"
     @click="onClick"
-    @mousedown="mousedownCaptured = true"
+    @mousedown="onMousedown"
   >
     <div class="content-containers-wrapper">
       <ContentLoader v-if="isLoading" class="loader" />
@@ -173,6 +173,7 @@ const isLoading = ref(true);
 const focusedElement = ref(null);
 const activityContentEl = ref();
 const mousedownCaptured = ref<boolean | null>(null);
+const mousedownInsideElement = ref(false);
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
@@ -242,10 +243,20 @@ const getContainerConfig = (type: string) => {
   return find(containerConfigs.value, { type });
 };
 
+const isContentElementEvent = (e: any) =>
+  get(e, 'component.name') === 'content-element';
+
+const onMousedown = (e: any) => {
+  mousedownCaptured.value = true;
+  mousedownInsideElement.value = isContentElementEvent(e);
+};
+
 const onClick = (e: any) => {
   if (!mousedownCaptured.value) return;
   mousedownCaptured.value = false;
-  if (get(e, 'component.name') !== 'content-element') focusoutElement();
+  if (!mousedownInsideElement.value && !isContentElementEvent(e)) {
+    focusoutElement();
+  }
 };
 
 const loadContents = async () => {
