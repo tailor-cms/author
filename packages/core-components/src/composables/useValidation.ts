@@ -1,9 +1,15 @@
 import { inject, onScopeDispose, provide, ref } from 'vue';
 
 type ValidateFn = () => Promise<{ valid: boolean }>;
+type ResetFn = () => void;
+
+interface RegisteredValidator {
+  validate: ValidateFn;
+  reset?: ResetFn;
+}
 
 interface ValidationRegistry {
-  register: (id: string, fn: ValidateFn) => void;
+  register: (id: string, validator: RegisteredValidator) => void;
   unregister: (id: string) => void;
 }
 
@@ -11,10 +17,10 @@ const VALIDATION_KEY = '$validationRegistry';
 
 // Provider (parent) - like vee-validate's useForm
 export function useValidationProvider() {
-  const validators = ref(new Map<string, ValidateFn>());
+  const validators = ref(new Map<string, RegisteredValidator>());
 
   const registry: ValidationRegistry = {
-    register: (id, fn) => validators.value.set(id, fn),
+    register: (id, validator) => validators.value.set(id, validator),
     unregister: (id) => validators.value.delete(id),
   };
 
@@ -22,17 +28,25 @@ export function useValidationProvider() {
 
   const validate = async () => {
     const results = await Promise.all(
-      [...validators.value.values()].map((fn) => fn()),
+      [...validators.value.values()].map(({ validate }) => validate()),
     );
     return { valid: results.every((r) => r.valid) };
   };
 
-  return { validate };
+  const reset = () => {
+    validators.value.forEach(({ reset }) => reset?.());
+  };
+
+  return { validate, reset };
 }
 
-export function useValidation(id: string, validateFn: ValidateFn) {
+export function useValidation(
+  id: string,
+  validateFn: ValidateFn,
+  resetFn?: ResetFn,
+) {
   const registry = inject<ValidationRegistry | null>(VALIDATION_KEY, null);
   if (!registry) return;
-  registry.register(id, validateFn);
+  registry.register(id, { validate: validateFn, reset: resetFn });
   onScopeDispose(() => registry.unregister(id));
 }

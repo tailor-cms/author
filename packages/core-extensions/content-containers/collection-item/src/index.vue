@@ -68,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref } from 'vue';
+import { computed, inject, nextTick, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element.js';
 import type { Repository } from '@tailor-cms/interfaces/repository.js';
@@ -79,8 +79,8 @@ import { uuid } from '@tailor-cms/utils';
 import { ContainedContent, useValidationProvider } from '@tailor-cms/core-components';
 import MetaInput from './MetaInput.vue';
 
-const { validate } = useForm();
-const { validate: validateItems } = useValidationProvider();
+const { validate, resetForm } = useForm();
+const { validate: validateItems, reset: resetItems } = useValidationProvider();
 
 const ceRegistry = inject<any>('$ceRegistry');
 
@@ -162,8 +162,11 @@ const save = async () => {
   initialState.value = cloneDeep(state.value);
 };
 
-const reset = () => {
+const reset = async () => {
   state.value = cloneDeep(initialState.value);
+  resetForm();
+  await nextTick();
+  resetItems();
 };
 </script>
 

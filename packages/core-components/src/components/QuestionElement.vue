@@ -272,6 +272,11 @@ const validate = async () => {
   return form.value.validate();
 };
 
+const resetValidation = () => {
+  if (!form.value) return;
+  return form.value.resetValidation();
+};
+
 const cancel = () => {
   editedElement.data = initializeElement().data;
 };
@@ -289,7 +294,7 @@ watch(
   },
 );
 
-useValidation(String(props.element.id), validate);
+useValidation(String(props.element.id), validate, resetValidation);
 </script>
 
 <style lang="scss" scoped>
