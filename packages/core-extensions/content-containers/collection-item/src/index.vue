@@ -1,5 +1,5 @@
 <template>
-  <VCard color="white" class="collection-item mb-5">
+  <VCard color="white" class="collection-item">
     <VCardText class="text-left pa-8 pb-4">
       <div v-for="input in config" :key="input.key">
         <Field
@@ -43,16 +43,27 @@
         />
       </div>
     </VCardText>
-    <VCardActions v-if="isDirty" class="d-flex justify-center pt-0 pb-12">
-      <VBtn
-        class="px-15"
-        color="primary-darken-4"
-        variant="tonal"
-        @click="save"
-      >
-        Save {{ startCase(repository.schema) }}
-      </VBtn>
-    </VCardActions>
+    <VDivider />
+    <VFadeTransition>
+      <VCardActions v-if="isDirty" class="px-6 py-3 justify-end">
+        <VBtn
+          :slim="false"
+          color="primary-darken-3"
+          variant="text"
+          @click="reset"
+        >
+          Cancel
+        </VBtn>
+        <VBtn
+          :slim="false"
+          color="success"
+          variant="tonal"
+          @click="save"
+        >
+          Save {{ startCase(repository.schema) }}
+        </VBtn>
+      </VCardActions>
+    </VFadeTransition>
   </VCard>
 </template>
 
@@ -150,9 +161,24 @@ const save = async () => {
   });
   initialState.value = cloneDeep(state.value);
 };
+
+const reset = () => {
+  state.value = cloneDeep(initialState.value);
+};
 </script>
 
 <style lang="scss" scoped>
+.collection-item {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--v-layout-top) - var(--v-layout-bottom) - 8rem);
+}
+
+.v-card-text {
+  overflow-y: auto;
+  min-height: 0;
+}
+
 .element-container {
   position: relative;
 }
