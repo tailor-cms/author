@@ -80,30 +80,45 @@
     <VExpandTransition>
       <div v-if="expanded">
         <slot></slot>
-        <VForm ref="form" class="content text-left pa-6" validate-on="submit">
-          <component
-            :is="componentName"
-            v-bind="{
-              ...$attrs,
-              embedElementConfig,
-              element: editedElement,
-              references,
-              isFocused,
-              isDragged,
-              isDisabled,
-              isReadonly: props.isDisabled,
-              dense,
-            }"
-            :id="`element_${element.id}`"
-            @add="emit('add', $event)"
-            @delete="emit('delete')"
-            @focus="emit('select', $event)"
-            @link="emit('link', $event)"
-            @save="save"
-            @update="Object.assign(editedElement.data, $event)"
-          />
+        <VForm
+          ref="form"
+          class="content text-left pa-6"
+          :validate-on="autosave ? 'input' : 'submit'"
+        >
+          <QuestionContainer
+            :element-data="editedElement.data"
+            :embed-element-config="embedElementConfig"
+            :is-disabled="isDisabled"
+            :is-readonly="isDisabled"
+            @update="update"
+          >
+            <component
+              :is="componentName"
+              v-bind="{
+                ...$attrs,
+                embedElementConfig,
+                element: editedElement,
+                references,
+                isFocused,
+                isDragged,
+                isDisabled,
+                isReadonly: props.isDisabled,
+                dense,
+              }"
+              :id="`element_${element.id}`"
+              @add="emit('add', $event)"
+              @delete="emit('delete')"
+              @focus="emit('select', $event)"
+              @link="emit('link', $event)"
+              @save="save"
+              @update="update"
+            />
+          </QuestionContainer>
           <VFadeTransition>
-            <div v-if="!isDisabled && isDirty" class="d-flex justify-end">
+            <div
+              v-if="!isDisabled && isDirty && !autosave"
+              class="d-flex justify-end"
+            >
               <VBtn color="primary-darken-4" variant="text" @click="cancel">
                 Cancel
               </VBtn>
@@ -134,7 +149,9 @@ import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
 import ElementGeneration from './ElementGeneration.vue';
 import PublishDiffChip from './PublishDiffChip.vue';
+import QuestionContainer from './QuestionContainer/index.vue';
 import { useConfigStore } from '@/stores/config';
+import { useValidation } from '../composables/useValidation';
 
 const isLegacyQuestion = (type: string) => ceRegistry.isLegacyQuestion(type);
 
@@ -177,6 +194,7 @@ interface Props {
   collapsible?: boolean;
   isDirty?: boolean;
   expanded?: boolean;
+  autosave?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -192,6 +210,7 @@ const props = withDefaults(defineProps<Props>(), {
   collapsible: false,
   isDirty: false,
   expanded: true,
+  autosave: false,
 });
 
 const emit = defineEmits([
@@ -248,8 +267,23 @@ const save = async () => {
   return emit('save', editedElement.data);
 };
 
+const validate = async () => {
+  if (!form.value) return { valid: true };
+  return form.value.validate();
+};
+
+const resetValidation = () => {
+  if (!form.value) return;
+  return form.value.resetValidation();
+};
+
 const cancel = () => {
   editedElement.data = initializeElement().data;
+};
+
+const update = (data: any) => {
+  editedElement.data = { ...editedElement.data, ...data };
+  if (props.autosave) emit('save', editedElement.data);
 };
 
 watch(
@@ -259,6 +293,8 @@ watch(
     editedElement.data = initializeElement().data;
   },
 );
+
+useValidation(String(props.element.id), validate, resetValidation);
 </script>
 
 <style lang="scss" scoped>

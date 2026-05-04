@@ -22,6 +22,7 @@ export { default as AiPrompt } from './components/AiPrompt.vue';
 export { default as AssessmentItem } from './components/AssessmentItem.vue';
 export { useLoader } from './composables/useLoader';
 export { useConfirmationDialog } from './composables/useConfirmationDialog';
+export { useValidation, useValidationProvider } from './composables/useValidation';
 export { ASSET_TYPE_COLOR, ASSET_TYPE_ICON, ASSET_TYPE_LABEL } from './config/asset';
 export { getAssetColor, getAssetIcon, getAssetLabel } from './utils/asset';
 export { formatFileSize } from './utils/format';

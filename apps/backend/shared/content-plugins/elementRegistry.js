@@ -8,6 +8,7 @@ class ElementsRegistry {
   constructor() {
     this._registry = elements;
     this._hooks = {};
+    this._procedures = {};
     this._aiSchemas = {};
   }
 
@@ -23,6 +24,7 @@ class ElementsRegistry {
       Object.assign(this._aiSchemas, {
         [it.type]: it.ai,
       });
+      if (it.procedures) this._procedures[it.type] = it.procedures;
     });
   }
 
@@ -41,6 +43,16 @@ class ElementsRegistry {
         { ...services, context },
         'authoring',
       );
+    };
+  }
+
+  getProcedure(elementType, procedure) {
+    const handlers = this._procedures[elementType];
+    if (!handlers || !handlers[procedure]) return;
+    const services = { config: pick(config, ['tce']), storage };
+    return (payload, options) => {
+      const context = options?.context || {};
+      return handlers[procedure]({ ...services, context }, payload);
     };
   }
 }

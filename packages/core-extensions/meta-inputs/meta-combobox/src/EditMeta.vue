@@ -7,6 +7,7 @@
     :multiple="meta.multiple"
     :name="meta.key"
     :placeholder="meta.placeholder"
+    :readonly="readonly"
     class="my-2"
     item-title="label"
     item-value="value"
@@ -23,7 +24,13 @@ import { ref } from 'vue';
 interface Meta extends Metadata {
   value?: string;
 }
-const props = defineProps<{ meta: Meta; dark: boolean }>();
+interface Props {
+  meta: Meta;
+  dark?: boolean;
+  readonly?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), { dark: false, readonly: false });
 defineEmits(['update']);
 
 const input = ref(props.meta.value);

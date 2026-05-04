@@ -6,7 +6,7 @@ import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
 
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
-import { repository as repositoryApi } from '@/api';
+import { repository as repositoryApi, rpc as rpcApi } from '@/api';
 import type { ChangeEvent, MoveEvent } from '@/types/draggable';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 
@@ -58,9 +58,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
   });
 
-  const schemaName = computed(() => {
-    return repository.value && getSchema(repository.value.schema).name;
+  const schema = computed(() => {
+    return repository.value && getSchema(repository.value.schema);
   });
+
+  const schemaName = computed(() => schema.value?.name || '');
+
+  const isCollection = computed(() => schema.value?.collection);
 
   const taxonomy = computed(() => {
     return repository.value && getOutlineLevels(repository.value.schema);
@@ -235,6 +239,11 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     });
   };
 
+  const rpc = (type: string, procedure: string, payload?: any) => {
+    if (!repositoryId.value) throw new Error('Repository not initialized!');
+    return rpcApi.rpc(repositoryId.value, type, procedure, payload);
+  };
+
   return {
     initialize,
     repositoryId,
@@ -243,6 +252,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     users,
     outlineState,
     schemaName,
+    isCollection,
     taxonomy,
     activities,
     outlineActivities,
@@ -263,6 +273,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     getUsers,
     upsertUser,
     removeUser,
+    rpc,
     $reset,
   };
 });

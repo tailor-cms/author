@@ -10,10 +10,10 @@
             highlighted: isHovering,
             disabled: isSoftDeleted,
           }"
-          :style="{ 'border-left-color': config.color }"
+          :style="{ 'border-left-color': config?.color }"
           class="activity"
           data-testid="repository__structureActivity"
-          @mousedown="currentRepositoryStore.selectActivity(activity.id)"
+          @mousedown="selectActivity(activity.id)"
         >
           <template v-if="!isSoftDeleted">
             <VBtn
@@ -89,16 +89,17 @@
         </VSheet>
       </template>
     </VHover>
-    <div v-if="!isSoftDeleted && isExpanded && hasSubtypes">
+    <div v-if="!isSoftDeleted && isExpanded && hasSubtypes" class="mt-2">
       <Draggable
         v-bind="{ handle: '.activity' }"
         :data-parent-id="activity.id"
         :list="children"
         :move="currentRepositoryStore.isValidDrop"
         animation="150"
+        class="d-flex flex-column ga-2"
         group="activities"
         item-key="uid"
-        @update="(data: SortableEvent) => reorder(data, children)"
+        @update="(e: SortableEvent) => reorder(e, children)"
         @change="(e: ChangeEvent) => onOutlineItemDrop(e, activity.id)"
       >
         <template #item="{ element, index: i }">
@@ -129,8 +130,8 @@ import type { StoreActivity } from '@/stores/activity';
 const { smAndUp } = useDisplay();
 const currentRepositoryStore = useCurrentRepository();
 
-const { taxonomy } = storeToRefs(currentRepositoryStore);
-const { onOutlineItemDrop } = currentRepositoryStore;
+const { selectedActivity, taxonomy } = storeToRefs(currentRepositoryStore);
+const { onOutlineItemDrop, selectActivity } = currentRepositoryStore;
 
 interface Props {
   activity: StoreActivity;
@@ -146,11 +147,11 @@ const utils = useSelectedActivity(props.activity);
 const reorder = useOutlineReorder();
 
 const config = computed(() =>
-  taxonomy.value.find((it: any) => it.type === props.activity.type),
+  taxonomy.value?.find((it: any) => it.type === props.activity.type),
 );
 
 const isSelected = computed(
-  () => currentRepositoryStore.selectedActivity?.uid === props.activity.uid,
+  () => selectedActivity.value?.uid === props.activity.uid,
 );
 
 const isSoftDeleted = computed(() =>
@@ -160,7 +161,7 @@ const isSoftDeleted = computed(() =>
 const isExpanded = computed(() =>
   utils.isOutlineItemExpanded(props.activity.uid),
 );
-const hasSubtypes = computed(() => !!size(config.value.subLevels));
+const hasSubtypes = computed(() => !!size(config.value?.subLevels));
 const hasChildren = computed(() => children.value.length > 0 && hasSubtypes);
 const children = computed(() => {
   return props.activities
@@ -168,7 +169,7 @@ const children = computed(() => {
       return (
         props.activity.id &&
         props.activity.id === it.parentId &&
-        config.value.subLevels.includes(it.type)
+        config.value?.subLevels?.includes(it.type)
       );
     })
     .sort((x, y) => x.position - y.position);
@@ -188,7 +189,6 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
 .activity {
   display: flex;
   height: 3.25rem;
-  margin: 0.625rem 0;
   padding: 0 0 0 0.375rem;
   background-color: $background-color;
   cursor: pointer;

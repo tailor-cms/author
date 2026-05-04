@@ -73,9 +73,9 @@ const getTabItems = ({
 }) =>
   [
     {
-      name: 'Structure',
+      name: store.isCollection ? 'Items' : 'Structure',
       route: 'repository',
-      icon: 'file-tree',
+      icon: store.isCollection ? 'view-list' : 'file-tree',
     },
     hasActivities &&
       hasWorkflow && {

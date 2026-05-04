@@ -14,10 +14,11 @@ export class FileInput {
     this.picker = new FileInputPicker(page);
   }
 
-  // Preview (filled state)
+  // Preview (filled state) — FilePreview renders a VTextField whose
+  // model-value is the file name; locate it via the native input value.
   getPreview(fileName: string): Locator {
-    return this.el.locator('.file-preview', {
-      has: this.page.locator('.file-name', { hasText: fileName }),
+    return this.el.locator('.v-text-field', {
+      has: this.page.locator(`input[value="${fileName}"]`),
     });
   }
 

@@ -177,7 +177,7 @@ const usersWithActivity = computed(() => {
       position: absolute;
       padding: 0 !important;
 
-      .v-messages {
+      .v-messages__message {
         margin-top: 0.5rem;
         border-radius: 4px;
         padding: 0.5rem 0.75rem;
