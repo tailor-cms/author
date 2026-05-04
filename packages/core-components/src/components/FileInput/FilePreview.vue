@@ -40,6 +40,7 @@
             <VIcon icon="mdi-magnify" size="large" />
           </VBtn>
           <VBtn
+            v-if="!readonly"
             aria-label="Remove file"
             size="x-small"
             variant="tonal"
@@ -78,6 +79,7 @@ interface Props {
   showPreview?: boolean;
   variant?: VTextField['variant'];
   density?: VTextField['density'];
+  readonly?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -91,6 +93,7 @@ withDefaults(defineProps<Props>(), {
   showPreview: false,
   variant: 'outlined',
   density: 'default',
+  readonly: false,
 });
 
 const emit = defineEmits<{

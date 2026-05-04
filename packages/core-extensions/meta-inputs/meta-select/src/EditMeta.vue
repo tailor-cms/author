@@ -6,6 +6,7 @@
     :multiple="meta.multiple"
     :name="meta.key"
     :placeholder="meta.placeholder"
+    :readonly="readonly"
     :small-chips="!hasImgProp"
     item-title="label"
     variant="outlined"
@@ -45,12 +46,21 @@ import type { Metadata } from '@tailor-cms/interfaces/schema';
 interface Meta extends Metadata {
   value?: string;
 }
-const props = defineProps<{ meta: Meta; dark: boolean }>();
+interface Props {
+  meta: Meta;
+  dark?: boolean;
+  readonly?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  dark: false,
+  readonly: false,
+});
 defineEmits(['update']);
 
 const input = ref(props.meta.value);
 
-const hasImgProp = computed(() => props.meta.options.some((it) => it.img));
+const hasImgProp = computed(() => props.meta.options.some((it: any) => it.img));
 </script>
 
 <style lang="scss" scoped>

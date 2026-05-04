@@ -10,7 +10,7 @@
     :variant="variant"
     append-inner-icon="mdi-upload"
     readonly
-    @click="dialogOpen = true"
+    @click="!readonly && (dialogOpen = true)"
   />
   <FilePreview
     v-else
@@ -25,6 +25,7 @@
     :show-preview="isPreviewEnabled"
     :url="previewUrl"
     :variant="variant"
+    :readonly="readonly"
     @delete="onClear"
     @download="downloadFile(resolvedFileKey, resolvedFileName)"
   />
@@ -80,6 +81,8 @@ interface Props {
   minWidth?: string | number;
   // Maximum width of the input and preview field; optional
   maxWidth?: string | number;
+  // Read-only mode; disables input interactions
+  readonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -93,6 +96,7 @@ const props = withDefaults(defineProps<Props>(), {
   dark: false,
   maxWidth: '100%',
   minWidth: '350',
+  readonly: false,
 });
 
 const emit = defineEmits<{

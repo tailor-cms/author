@@ -45,8 +45,9 @@
     </VCardText>
     <VDivider />
     <VFadeTransition>
-      <VCardActions v-if="isDirty" class="px-6 py-3 justify-end">
+      <VCardActions v-if="!disabled" class="px-6 py-3 justify-end">
         <VBtn
+          :disabled="!isDirty"
           :slim="false"
           color="primary-darken-3"
           variant="text"
@@ -55,6 +56,7 @@
           Cancel
         </VBtn>
         <VBtn
+          :disabled="!isDirty"
           :slim="false"
           color="success"
           variant="tonal"
@@ -137,7 +139,6 @@ const initElement = (it: any, data: Record<PropertyKey, any> = {}) => {
 
 const initState = () =>
   Object.values(props.config).reduce((acc: Record<string, any>, it) => {
-    console.log(it);
     acc[it.key] =
       props.container.data?.[it.key] ||
       (it.isContentElement ? initElement(it) : it.defaultValue || '');

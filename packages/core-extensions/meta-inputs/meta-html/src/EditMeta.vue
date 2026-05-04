@@ -1,10 +1,11 @@
 <template>
   <RichTextEditor
     :model-value="meta.value"
+    :readonly="readonly"
     v-bind="meta"
     variant="outlined"
     class="my-2"
-    @change="$emit('update', props.meta.key, $event)"
+    @change="$emit('update', meta.key, $event)"
   />
 </template>
 
@@ -16,6 +17,11 @@ interface Meta extends Metadata {
   value?: string;
 }
 
-const props = defineProps<{ meta: Meta }>();
+interface Props {
+  meta: Meta;
+  dark?: boolean;
+  readonly?: boolean;
+}
+withDefaults(defineProps<Props>(), { dark: false, readonly: false });
 defineEmits(['update']);
 </script>

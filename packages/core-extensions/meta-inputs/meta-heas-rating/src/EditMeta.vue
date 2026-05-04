@@ -6,6 +6,7 @@
         v-if="isNew"
         v-model="isEditing"
         :base-color="dark ? 'primary-lighten-4' : 'primary-darken-4'"
+        :readonly="readonly"
         density="compact"
         rounded="lg"
         variant="text"
@@ -135,12 +136,14 @@ interface Props {
   dark?: boolean;
   isNew?: boolean;
   isReviewer?: boolean;
+  readonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   dark: false,
   isNew: false,
   isReviewer: false,
+  readonly: false,
 });
 const emit = defineEmits(['update']);
 
