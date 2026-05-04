@@ -84,7 +84,7 @@
     "multer": "^2.0.2",
     "mustache": "^4.2.0",
     "open-graph-scraper": "^6.11.0",
-    "openai": "^6.3.0",
+    "openai": "^6.34.0",
     "openid-client": "^5.7.1",
     "optional-require": "^2.1.0",
     "package-directory": "^8.1.0",

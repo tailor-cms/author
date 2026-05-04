@@ -10,6 +10,9 @@ import {
 } from '../helpers/index.ts';
 import { findActivity } from '../activity/helpers.ts';
 import { nextElementPosition, normalizeElementData } from './helpers.ts';
+import { createAiLogger } from '../../../logger.ts';
+
+const logger = createAiLogger('agent.tools.add-elements');
 
 const { Activity, ContentElement } = db as any;
 
@@ -89,7 +92,7 @@ function validateTypes(elements: ElementItem[], allowed: string[]) {
     tool: TOOL,
     reason: 'invalid_type',
     message: `${invalid.length} element(s) have disallowed types.`,
-    getAllowedElementTypes: allowed,
+    allowedElementTypes: allowed,
     invalidElementTypes: [...new Set(invalid.map((el) => el.type))],
   });
 }
