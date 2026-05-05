@@ -6,10 +6,11 @@
         class="mt-1 mx-4"
         clear-icon="mdi-close"
         label="Search..."
+        bg-color="primary-darken-1"
         prepend-inner-icon="mdi-magnify"
-        variant="plain"
+        variant="solo"
+        flat
         clearable
-        hide-details
       />
     </div>
     <TailorTreeview

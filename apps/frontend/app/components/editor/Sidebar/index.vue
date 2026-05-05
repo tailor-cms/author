@@ -20,8 +20,8 @@
     <div class="sidebar-layout">
       <VTabs
         v-model="selectedTab"
-        class="sidebar-tabs ma-3"
-        color="secondary-lighten-4"
+        class="sidebar-tabs my-2 ma-2"
+        color="white"
         density="compact"
         hide-slider
       >
@@ -32,7 +32,7 @@
           :text="tab.label"
           :value="tab.name"
           :variant="selectedTab === tab.name ? 'tonal' : 'text'"
-          class="mx-1"
+          class="mr-1"
           rounded="lg"
         >
           <template v-if="tab.badgeData" #append>

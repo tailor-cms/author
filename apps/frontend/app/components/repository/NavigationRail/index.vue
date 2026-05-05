@@ -9,9 +9,8 @@
     permanent
   >
     <VTabs
-      :model-value="activeTab"
       class="rail-tabs"
-      color="primary-lighten-4"
+      color="white"
       direction="vertical"
       height="68"
       stacked
@@ -22,7 +21,6 @@
         :prepend-icon="`mdi-${tab.icon}`"
         :text="tab.label"
         :to="tab.to"
-        :value="tab.key"
         class="pa-2"
         rounded="0"
       />
@@ -40,7 +38,6 @@ interface RailTab {
   label: string;
   icon: string;
   to: RouteLocationRaw;
-  matches: (routeName: string) => boolean;
 }
 
 const route = useRoute();
@@ -53,14 +50,18 @@ const isEditable = (activity: any) =>
   !!activity && $schemaService.isEditable(activity.type);
 
 const editorActivityId = computed(() => {
-  const id = repoStore.repositoryId;
+  const { repositoryId: id, outlineActivities } = repoStore;
   if (!id) return null;
   const saved = lastEditorActivity.get(id);
-  const savedActivity = saved
-    ? repoStore.outlineActivities.find((a: any) => a.id === saved)
-    : null;
-  if (isEditable(savedActivity)) return saved;
+  const activity = id ? outlineActivities.find((a: any) => a.id === id) : null;
+  if (isEditable(activity)) return saved;
   return repoStore.outlineActivities.find(isEditable)?.id ?? null;
+});
+
+const carriedActivityQuery = computed(() => {
+  if (route.name !== 'editor') return undefined;
+  const id = Number(route.params.activityId) || null;
+  return id ? { activityId: String(id) } : undefined;
 });
 
 const repositoryTabs = computed<RailTab[]>(() => {
@@ -72,8 +73,11 @@ const repositoryTabs = computed<RailTab[]>(() => {
       key: 'structure',
       label: 'Structure',
       icon: 'file-tree',
-      to: { name: 'repository', params: { id } },
-      matches: (name) => name === 'repository',
+      to: {
+        name: 'repository',
+        params: { id },
+        query: carriedActivityQuery.value,
+      },
     },
   ];
 
@@ -86,7 +90,6 @@ const repositoryTabs = computed<RailTab[]>(() => {
         name: 'editor',
         params: { id, activityId: editorActivityId.value },
       },
-      matches: (name) => name === 'editor',
     });
   }
 
@@ -95,8 +98,11 @@ const repositoryTabs = computed<RailTab[]>(() => {
       key: 'progress',
       label: 'Progress',
       icon: 'chart-timeline-variant',
-      to: { name: 'progress', params: { id } },
-      matches: (name) => name === 'progress',
+      to: {
+        name: 'progress',
+        params: { id },
+        query: carriedActivityQuery.value,
+      },
     });
   }
 
@@ -106,14 +112,12 @@ const repositoryTabs = computed<RailTab[]>(() => {
       label: 'History',
       icon: 'history',
       to: { name: 'revisions', params: { id } },
-      matches: (name) => name === 'revisions',
     },
     {
       key: 'assets',
       label: 'Assets',
       icon: 'folder-multiple-image',
       to: { name: 'repository-assets', params: { id } },
-      matches: (name) => name === 'repository-assets',
     },
   );
 
@@ -123,16 +127,10 @@ const repositoryTabs = computed<RailTab[]>(() => {
       label: 'Settings',
       icon: 'cog',
       to: { name: 'repository-settings-general', params: { id } },
-      matches: (name) => name.startsWith('repository-settings'),
     });
   }
 
   return items;
-});
-
-const activeTab = computed(() => {
-  const current = String(route.name ?? '');
-  return repositoryTabs.value.find((tab) => tab.matches(current))?.key;
 });
 </script>
 

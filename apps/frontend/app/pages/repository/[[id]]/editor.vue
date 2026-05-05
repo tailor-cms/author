@@ -116,7 +116,7 @@ onUnmounted(() => {
 .sidebar-toggle {
   position: fixed;
   bottom: 0.5rem;
-  left: 92px;
+  left: 5.75rem;
   z-index: 1004;
   border-radius: 0 4px 4px 0 !important;
   width: 2rem !important;
