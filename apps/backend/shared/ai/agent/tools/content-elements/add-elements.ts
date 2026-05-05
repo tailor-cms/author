@@ -152,7 +152,9 @@ async function execute(input: Input, ctx: ToolContext) {
 
   let position = await nextElementPosition(ctx.repository.id, target.id);
   const created: any[] = [];
-  for (const element of input.elements) {
+  const failed: Array<{ index: number; type: string; reason: string }> = [];
+  for (let i = 0; i < input.elements.length; i++) {
+    const element = input.elements[i];
     try {
       const data = normalizeElementData(element.type, element.data);
       const record = await ContentElement.create(
@@ -169,14 +171,26 @@ async function execute(input: Input, ctx: ToolContext) {
         { context: dbContext(ctx) },
       );
       created.push(record);
-    } catch {
-      // Non-fatal - continue with remaining elements
+    } catch (err: any) {
+      // Per-element failures are non-fatal so the rest of the
+      // batch still persists, but report what failed so the LLM
+      // and the user can correct it on the next turn.
+      logger.warn(
+        { err: err.message, type: element.type, index: i },
+        'element create failed',
+      );
+      failed.push({
+        index: i,
+        type: element.type,
+        reason: err.message || 'unknown',
+      });
     }
   }
   const result = {
     ok: true,
     activityId: target.id,
     elements: created,
+    ...(failed.length ? { failed } : {}),
     _invalidates: [
       `activity:${target.id}`,
       ...(parent?.id ? [`activity:${parent.id}`] : []),

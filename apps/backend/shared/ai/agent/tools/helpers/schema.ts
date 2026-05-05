@@ -139,13 +139,19 @@ export function describeContainerSchema(
       }
       // Raw configs from findContainerDef haven't been through
       // processElementConfig yet (processSchemas doesn't touch
-      // contentContainers). Process now so getSupportedElementTypes
-      // gets the grouped format it expects.
-      sub.elementConfig = processElementConfig(sub.elementConfig);
+      // contentContainers). Clone before processing because
+      // processElementConfig mutates its input (deletes group
+      // config, remaps items) and the source objects are shared
+      // schema references.
+      sub.elementConfig = processElementConfig(
+        cloneElementConfig(sub.elementConfig),
+      );
     }
   }
   if (desc.elementConfig) {
-    desc.elementConfig = processElementConfig(desc.elementConfig);
+    desc.elementConfig = processElementConfig(
+      cloneElementConfig(desc.elementConfig),
+    );
   }
   return desc;
 }
@@ -296,4 +302,17 @@ function findContainerDef(schemaId: string, containerType: string) {
   const schema = getSchema(schemaId);
   if (!schema) return undefined;
   return schema.contentContainers?.find((it: any) => it.type === containerType);
+}
+
+// Shallow-clone element config so processElementConfig
+// doesn't mutate shared schema references. It deletes
+// group.config and remaps items in place.
+function cloneElementConfig(config: any[]): any[] {
+  return config.map((it: any) => {
+    if (typeof it === 'string') return it;
+    return {
+      ...it,
+      ...(it.items && { items: [...it.items] }),
+    };
+  });
 }

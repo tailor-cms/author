@@ -4,7 +4,7 @@ import AiService from '../../../ai.service.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 import { getAllowedElementTypes, toolError } from '../helpers/index.ts';
 import { findActivity } from '../activity/helpers.ts';
-import { buildOutlineContext, formatEnvelope } from '../../context/index.ts';
+import { prependEnvelope } from '../../context/index.ts';
 
 const api = schemaAPI as any;
 
@@ -54,7 +54,7 @@ const parameters = {
     },
     contextRadius: {
       type: ['integer', 'null'],
-      description: 'Sibling radius for the envelope. Defaults to 2.',
+      description: 'Nearest siblings with detailed summaries. Defaults to 2.',
     },
   },
   required: ['activityId', 'instructions'],
@@ -155,7 +155,7 @@ async function execute(input: Input, ctx: ToolContext) {
       outlineActivityType: topic?.type,
       topic: topic?.data?.name,
     },
-    getAllowedElementTypes: allowed,
+    allowedElementTypes: allowed,
     inputs: [{
       type: 'CREATE',
       text: instructionsWithContext,
@@ -166,7 +166,7 @@ async function execute(input: Input, ctx: ToolContext) {
   const elements = Array.isArray(generated) ? generated : [];
   return {
     targetActivityId: target.id,
-    getAllowedElementTypes: allowed,
+    allowedElementTypes: allowed,
     elements,
     ...(envelopeMeta ? { outlineContext: envelopeMeta } : {}),
     NEXT_STEP: oneLine`

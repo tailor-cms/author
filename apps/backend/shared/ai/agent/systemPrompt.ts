@@ -205,16 +205,17 @@ function outlineContextSection(): string {
     prepend a tiered context envelope to your instructions:
     - the focused activity's own summary (so generation can extend it
       instead of repeating it),
-    - nearest sibling summaries (default 2 each side),
-    - a rolled-up repository overview, and
-    - a voice sample drawn from a written sibling.
+    - nearest sibling summaries (default 2 each side), and
+    - a repository digest: the outline tree with cached leaf summaries
+      inlined where available.
     You don't need to call get_outline_context before generating. Use
     that tool explicitly only when (a) you want to inspect what the
     generator will see, (b) you're planning across many activities, or
-    (c) you need to widen the radius (\`nearestSiblings: 3+\`) or skip
-    the voice sample (\`includeStyle: false\`). Summaries refresh by
-    signature, so back-to-back generations in the same run see each
-    other's output without extra bookkeeping.
+    (c) you need to widen the radius (\`nearestSiblings: 3+\`). If you
+    want a tone/voice reference for matching style, fetch a specific
+    element with get_element instead. Summaries refresh by signature,
+    so back-to-back generations in the same run see each other's output
+    without extra bookkeeping.
   `;
 }
 

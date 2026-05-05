@@ -7,22 +7,19 @@ const TOOL = 'get_outline_context';
 
 interface Input {
   activityId: number;
-  radius?: number | null;
-  includeStyle?: boolean | null;
-  allowHoist?: boolean | null;
+  nearestSiblings?: number | null;
 }
 
 const description = stripIndent`
-  Return a bounded envelope of course context for an activity:
-  ancestor path, preceding siblings with content summaries,
-  following sibling titles, the focused activity's own summary
-  if it already has content, and optionally a voice sample
-  from a completed sibling. Use this before generating content
-  for a topic so the output fits the surrounding material and
-  does not repeat what earlier topics already cover.
-  Generation tools already auto-include this context, so call
-  this tool only when you want to inspect it yourself or pass
-  a custom radius.
+  Return a tiered context envelope for an activity:
+  ancestor path, nearest sibling summaries, a rolled-up
+  repository overview and focused activity's own summary.
+  Use this before generating content for a topic so the
+  output fits the surrounding material and does not repeat
+  what earlier topics already cover. Generation tools
+  already auto-include this context, so call this tool
+  only when you want to inspect it yourself or override
+  the defaults.
 `;
 
 const parameters = {
@@ -35,12 +32,12 @@ const parameters = {
         leaf (topic, page, etc.) you are about to fill.
       `,
     },
-    radius: {
+    nearestSiblings: {
       type: ['integer', 'null'],
       description: oneLine`
-        How many preceding and following siblings to include.
-        Defaults to 2. Use 4+ when filling many topics in a row
-        so each call sees more neighbors.
+        How many nearest siblings get detailed summaries.
+        Defaults to 2. Use 3+ when filling many topics in
+        a row so each call sees more neighbors in detail.
       `,
     },
     includeStyle: {
@@ -48,14 +45,6 @@ const parameters = {
       description: oneLine`
         Include one short excerpt from a written sibling as a
         voice reference. Defaults to true.
-      `,
-    },
-    allowHoist: {
-      type: ['boolean', 'null'],
-      description: oneLine`
-        When the focused activity is a branch (module, submodule),
-        include a single compacted summary built from its
-        descendants' leaf summaries. Defaults to true.
       `,
     },
   },
@@ -67,9 +56,8 @@ const parameters = {
 // and the formatted markdown the generation tools embed into prompts.
 async function execute(input: Input, ctx: ToolContext) {
   const context = await buildOutlineContext(input.activityId, ctx, {
-    radius: input.radius ?? undefined,
+    nearestSiblings: input.nearestSiblings ?? undefined,
     includeStyle: input.includeStyle ?? undefined,
-    allowHoist: input.allowHoist ?? undefined,
   });
   if (!context) {
     return toolError({

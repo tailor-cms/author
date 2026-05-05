@@ -8,9 +8,10 @@ import type { ToolContext, ToolDef } from '../types.ts';
 import {
   containerTypesForActivity,
   describeContainerSchema,
-  findActivity,
   toolError,
 } from '../helpers/index.ts';
+import { findActivity } from './helpers.ts';
+import { prependEnvelope } from '../../context/index.ts';
 
 const { Asset } = db as any;
 const api = schemaAPI as any;
@@ -22,6 +23,13 @@ interface Input {
   instructions: string;
   containerType?: string | null;
   assetIds?: number[] | null;
+  // Opt-out of the auto-built outline-context envelope (ancestors,
+  // preceding sibling summaries, style sample, etc.). Default off = include
+  // context. Set to true to save tokens when you don't want neighbor
+  // awareness (e.g. regenerating a throwaway topic).
+  skipOutlineContext?: boolean | null;
+  // How many nearest siblings get detailed summaries. Defaults to 2.
+  contextRadius?: number | null;
 }
 
 const description = stripIndent`
@@ -59,6 +67,22 @@ const parameters = {
         generated content. Images are inserted as IMAGE
         elements, other assets provide context. Call
         list_assets to find relevant assets first.
+      `,
+    },
+    skipOutlineContext: {
+      type: ['boolean', 'null'],
+      description: oneLine`
+        Opt out of the auto-built outline-context envelope
+        (ancestors, preceding siblings with content summaries,
+        voice sample). Default false = include context so the
+        generated content does not duplicate neighboring topics.
+      `,
+    },
+    contextRadius: {
+      type: ['integer', 'null'],
+      description: oneLine`
+        How many nearest siblings get detailed summaries
+        in the outline-context envelope. Defaults to 2.
       `,
     },
     containerType: {
@@ -269,6 +293,7 @@ async function execute(input: Input, ctx: ToolContext) {
     },
     items,
     markdown: renderPreview(items, targetLabel),
+    ...(envelopeMeta ? { outlineContext: envelopeMeta } : {}),
     NEXT_STEP: oneLine`
       You MUST now call create_container_with_elements for EACH
       item in the items array. For each item, pass:
