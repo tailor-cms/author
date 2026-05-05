@@ -83,9 +83,45 @@ async function resolve(container, resolveStatics) {
   return container;
 }
 
+/**
+ * Resolve subcontainer types from schema config.
+ * Config keys with a `label` property are subcontainer
+ * definitions; other keys are template settings.
+ */
+function getSubTypes(config) {
+  if (!config) return [];
+  return Object.entries(config)
+    .filter(([, value]) => value?.label)
+    .map(([key]) => key);
+}
+
+/**
+ * Describe the container's structure from its schema config.
+ * Returns subcontainer definitions with their meta inputs
+ * and allowed element types so consumers don't need to
+ * parse raw config themselves.
+ */
+function describeSchema(config) {
+  if (!config) return { subcontainers: [] };
+  const subcontainers = Object.entries(config)
+    .filter(([, value]) => value?.label)
+    .map(([type, sub]) => {
+      const meta = typeof sub.meta === 'function'
+        ? sub.meta()
+        : sub.meta || [];
+      const elementConfig = typeof sub.contentElementConfig === 'function'
+        ? sub.contentElementConfig()
+        : sub.contentElementConfig || [];
+      return { type, label: sub.label, meta, elementConfig };
+    });
+  return { subcontainers };
+}
+
 export default {
   templateId: 'STRUCTURED_CONTENT',
   version: '1.0',
   fetch,
   resolve,
+  getSubTypes,
+  describeSchema,
 };
