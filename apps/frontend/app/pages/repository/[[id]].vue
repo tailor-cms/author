@@ -3,7 +3,10 @@
     <div v-if="isLoading" class="pt-16">
       <CircularProgress />
     </div>
-    <NuxtPage v-else />
+    <template v-else>
+      <NavigationRail />
+      <NuxtPage />
+    </template>
   </NuxtLayout>
 </template>
 
@@ -11,6 +14,7 @@
 import { CircularProgress } from '@tailor-cms/core-components';
 import { promiseTimeout } from '@vueuse/core';
 
+import NavigationRail from '@/components/repository/NavigationRail/index.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
 import { useCurrentRepository } from '@/stores/current-repository';

@@ -1,65 +1,47 @@
 <template>
   <VNavigationDrawer
     v-model="modelValue"
-    :width="isContentCollapsed ? 92 : (lgAndUp ? 500 : 400)"
+    :width="lgAndUp ? 500 : 400"
     class="sidebar"
     color="primary-darken-2"
     elevation="5"
+    location="right"
     mobile-breakpoint="md"
   >
     <VBtn
-      v-tooltip:right="{ text: 'Close sidebar', openDelay: 500 }"
+      v-tooltip:left="{ text: 'Close sidebar', openDelay: 500 }"
       class="sidebar-collapse-btn"
       color="primary-darken-3"
-      icon="mdi-chevron-left"
+      icon="mdi-chevron-right"
       size="small"
       variant="flat"
       @click="modelValue = false"
     />
     <div class="sidebar-layout">
-      <VSheet
-        class="sidebar-rail-column text-center"
-        :color="isContentCollapsed ? 'primary-darken-2' : 'primary-darken-3'"
+      <VTabs
+        v-model="selectedTab"
+        class="sidebar-tabs ma-3"
+        color="secondary-lighten-4"
+        density="compact"
+        hide-slider
       >
-        <VBtn
-          v-tooltip:right="{
-            text: isContentCollapsed ? 'Expand panel' : 'Collapse panel',
-            openDelay: 500,
-          }"
-          class="mt-4 mb-2"
-          icon="mdi-menu"
-          variant="text"
-          color="white"
-          @click="toggleContent"
-        />
-        <VTabs
-          v-model="selectedTab"
-          class="sidebar-rail pa-2"
-          color="secondary-lighten-4"
-          direction="vertical"
-          hide-slider
-          height="68"
-          stacked
-          @update:model-value="onTabSelect"
+        <VTab
+          v-for="tab in tabs"
+          :key="tab.name"
+          :disabled="tab.disabled"
+          :text="tab.label"
+          :value="tab.name"
+          :variant="selectedTab === tab.name ? 'tonal' : 'text'"
+          class="mx-1"
+          rounded="lg"
         >
-          <VTab
-            v-for="tab in tabs"
-            :key="tab.name"
-            :disabled="tab.disabled"
-            :prepend-icon="`mdi-${tab.icon}`"
-            :text="tab.label"
-            :value="tab.name"
-            :variant="selectedTab === tab.name ? 'tonal' : 'text'"
-            class="pa-2 mb-1"
-            rounded="lg"
-          >
-            <template v-if="tab.badgeData" #append>
-              <VBadge :content="tab.badgeData" color="secondary" inline />
-            </template>
-          </VTab>
-        </VTabs>
-      </VSheet>
-      <div v-if="!isContentCollapsed" class="sidebar-content">
+          <template v-if="tab.badgeData" #append>
+            <VBadge :content="tab.badgeData" color="secondary" inline />
+          </template>
+        </VTab>
+      </VTabs>
+      <VDivider />
+      <div class="sidebar-content">
         <VWindow v-model="selectedTab" class="h-100">
           <VWindowItem :value="BROWSER_TAB">
             <ActivityNavigation
@@ -114,15 +96,6 @@ const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 const { lgAndUp } = useDisplay();
 
 const selectedTab = ref(BROWSER_TAB);
-const isContentCollapsed = ref(false);
-
-const toggleContent = () => {
-  isContentCollapsed.value = !isContentCollapsed.value;
-};
-
-const onTabSelect = () => {
-  if (isContentCollapsed.value) isContentCollapsed.value = false;
-};
 
 const tabs: any = computed(() => [
   {
@@ -190,9 +163,9 @@ watch(
   .sidebar-collapse-btn {
     position: absolute;
     bottom: 0.5rem;
-    right: 0;
+    left: 0;
     z-index: 1;
-    border-radius: 4px 0 0 4px !important;
+    border-radius: 0 4px 4px 0 !important;
     width: 2rem !important;
     height: 3rem !important;
 
@@ -210,20 +183,16 @@ watch(
   }
 }
 
-.sidebar-rail-column {
-  transition: background-color 0.3s ease;
-}
-
 .sidebar-layout {
   display: flex;
+  flex-direction: column;
   height: 100%;
 }
 
-.sidebar-rail {
+.sidebar-tabs {
   :deep(.v-tab) {
     min-width: unset;
-    justify-content: center;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     letter-spacing: normal;
     text-transform: none;
   }

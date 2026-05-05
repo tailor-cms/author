@@ -1,27 +1,26 @@
 <template>
-  <div v-if="editorStore.selectedActivity">
+  <VLayout v-if="editorStore.selectedActivity" class="h-100">
     <VToolbar
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
       @toggle-guidelines="showGuidelines = !showGuidelines"
     />
-    <div class="editor-content-container">
-      <VSidebar
-        v-model="showSidebar"
-        :activities="repositoryStore.outlineActivities as Activity[]"
-        :repository="repositoryStore.repository as Repository"
-        :selected-activity="editorStore.selectedActivity as Activity"
-        :selected-element="editorStore.selectedContentElement as ContentElement"
-        class="sidebar"
-      />
+    <VSidebar
+      v-model="showSidebar"
+      :activities="repositoryStore.outlineActivities as Activity[]"
+      :repository="repositoryStore.repository as Repository"
+      :selected-activity="editorStore.selectedActivity as Activity"
+      :selected-element="editorStore.selectedContentElement as ContentElement"
+    />
+    <VMain class="editor-main">
       <VFadeTransition>
         <VBtn
           v-if="!showSidebar"
-          v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
+          v-tooltip:left="{ text: 'Open sidebar', openDelay: 500 }"
           class="sidebar-toggle"
           color="primary-darken-2"
-          icon="mdi-chevron-right"
+          icon="mdi-chevron-left"
           variant="flat"
           size="small"
           @click="showSidebar = true"
@@ -31,14 +30,14 @@
         v-if="activityId"
         :key="activityId"
         :activity-id="activityId"
-        class="activity-content"
+        class="activity-content h-100"
       />
       <EngagementSidebar
         v-if="!!editorStore.guidelines"
         v-model="showGuidelines"
       />
-    </div>
-  </div>
+    </VMain>
+  </VLayout>
 </template>
 
 <script lang="ts" setup>
@@ -77,9 +76,15 @@ const showGuidelines = ref(null);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
 
+const lastEditorActivity = useLastEditorActivity();
+
 const parseActivityId = () => {
   if (!route.params.activityId) navigateTo({ name: 'catalog' });
   activityId.value = parseInt(route.params.activityId as string, 10);
+  const repositoryId = parseInt(route.params.id as string, 10);
+  if (repositoryId && activityId.value) {
+    lastEditorActivity.set(repositoryId, activityId.value);
+  }
   return activityId.value;
 };
 
@@ -108,33 +113,17 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-$sidebar-width: 30rem;
+.sidebar-toggle {
+  position: fixed;
+  bottom: 0.5rem;
+  right: 0;
+  z-index: 1004;
+  border-radius: 4px 0 0 4px !important;
+  width: 2rem !important;
+  height: 3rem !important;
 
-.editor-content-container {
-  display: flex;
-  height: calc(100% - 3.5rem);
-
-  .sidebar {
-    flex-basis: $sidebar-width;
-  }
-
-  .sidebar-toggle {
-    position: fixed;
-    bottom: 0.5rem;
-    left: 0;
-    z-index: 1004;
-    border-radius: 0 4px 4px 0 !important;
-    width: 2rem !important;
-    height: 3rem !important;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  .activity-content {
-    flex-grow: 1;
-    flex-basis: calc(100% - #{$sidebar-width});
+  &:hover {
+    opacity: 1;
   }
 }
 </style>
