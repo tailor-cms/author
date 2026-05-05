@@ -4,15 +4,15 @@
     :width="lgAndUp ? 500 : 400"
     class="sidebar"
     color="primary-darken-2"
-    elevation="5"
-    location="right"
+    elevation="2"
+    location="left"
     mobile-breakpoint="md"
   >
     <VBtn
-      v-tooltip:left="{ text: 'Close sidebar', openDelay: 500 }"
+      v-tooltip:right="{ text: 'Close sidebar', openDelay: 500 }"
       class="sidebar-collapse-btn"
       color="primary-darken-3"
-      icon="mdi-chevron-right"
+      icon="mdi-chevron-left"
       size="small"
       variant="flat"
       @click="modelValue = false"
@@ -163,9 +163,9 @@ watch(
   .sidebar-collapse-btn {
     position: absolute;
     bottom: 0.5rem;
-    left: 0;
+    right: 0;
     z-index: 1;
-    border-radius: 0 4px 4px 0 !important;
+    border-radius: 4px 0 0 4px !important;
     width: 2rem !important;
     height: 3rem !important;
 
@@ -209,6 +209,10 @@ watch(
   :deep(.v-window__container) {
     height: 100%;
     overflow: visible;
+  }
+
+  :deep(.v-window-item) {
+    padding-bottom: 4rem;
   }
 
   :deep(.activity-discussion) {

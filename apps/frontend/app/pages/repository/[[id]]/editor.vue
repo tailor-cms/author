@@ -17,10 +17,10 @@
       <VFadeTransition>
         <VBtn
           v-if="!showSidebar"
-          v-tooltip:left="{ text: 'Open sidebar', openDelay: 500 }"
+          v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
           class="sidebar-toggle"
           color="primary-darken-2"
-          icon="mdi-chevron-left"
+          icon="mdi-chevron-right"
           variant="flat"
           size="small"
           @click="showSidebar = true"
@@ -116,9 +116,9 @@ onUnmounted(() => {
 .sidebar-toggle {
   position: fixed;
   bottom: 0.5rem;
-  right: 0;
+  left: 92px;
   z-index: 1004;
-  border-radius: 4px 0 0 4px !important;
+  border-radius: 0 4px 4px 0 !important;
   width: 2rem !important;
   height: 3rem !important;
 

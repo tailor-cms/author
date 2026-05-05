@@ -2,17 +2,17 @@
   <VNavigationDrawer
     width="92"
     class="navigation-rail"
-    color="primary-darken-4"
-    elevation="5"
+    color="primary-darken-3"
+    elevation="0"
+    border="none"
     location="left"
     permanent
   >
     <VTabs
       :model-value="activeTab"
-      class="rail-tabs pa-2"
-      color="secondary-lighten-4"
+      class="rail-tabs"
+      color="primary-lighten-4"
       direction="vertical"
-      hide-slider
       height="68"
       stacked
     >
@@ -23,9 +23,8 @@
         :text="tab.label"
         :to="tab.to"
         :value="tab.key"
-        :variant="activeTab === tab.key ? 'tonal' : 'text'"
-        class="pa-2 mb-1"
-        rounded="lg"
+        class="pa-2"
+        rounded="0"
       />
     </VTabs>
   </VNavigationDrawer>
@@ -149,18 +148,6 @@ const activeTab = computed(() => {
     font-size: 0.75rem;
     letter-spacing: normal;
     text-transform: none;
-  }
-}
-
-.app-brand {
-  text-decoration: none;
-
-  .app-name {
-    font-family: Poppins, Roboto, sans-serif;
-    font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
   }
 }
 </style>
