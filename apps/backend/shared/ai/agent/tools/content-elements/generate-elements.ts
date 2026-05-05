@@ -120,28 +120,13 @@ async function execute(input: Input, ctx: ToolContext) {
     });
   }
 
-  // Build the outline-context envelope (unless opted out) and prepend it
-  // to the user instructions so the generated elements complement what
-  // the preceding siblings already cover and match the existing voice.
-  // Anchor the envelope on the nearest outline ancestor (topic), not the
-  // subcontainer itself - sibling awareness is a topic-level concern.
-  let instructionsWithContext = input.instructions;
-  let envelopeMeta: { charBudgetUsed: number; charBudget: number } | null = null;
+  // Pass surrounding context to help the model understand where these elements live
   const envelopeAnchorId = topic?.id ?? target.id;
-  if (!input.skipOutlineContext && envelopeAnchorId) {
-    const envelope = await buildOutlineContext(envelopeAnchorId, ctx, {
-      radius: input.contextRadius ?? undefined,
+  const { instructions: instructionsWithContext, meta: envelopeMeta } =
+    await prependEnvelope(envelopeAnchorId, input.instructions, ctx, {
+      skip: !!input.skipOutlineContext || !envelopeAnchorId,
+      nearestSiblings: input.contextRadius ?? undefined,
     });
-    if (envelope) {
-      const formatted = formatEnvelope(envelope);
-      instructionsWithContext =
-        `${formatted}\n\nUser instructions: ${input.instructions}`;
-      envelopeMeta = {
-        charBudgetUsed: envelope.charBudgetUsed,
-        charBudget: envelope.charBudget,
-      };
-    }
-  }
 
   // ELEMENTS schema dynamically builds from allowed types
   // so the AI can generate any supported element type

@@ -74,7 +74,7 @@ const parameters = {
       description: oneLine`
         Opt out of the auto-built outline-context envelope
         (ancestors, preceding siblings with content summaries,
-        voice sample). Default false = include context so the
+        repository digest). Default false = include context so the
         generated content does not duplicate neighboring topics.
       `,
     },
@@ -259,6 +259,14 @@ async function execute(input: Input, ctx: ToolContext) {
   // uses them to insert IMAGE/VIDEO/EMBED elements and
   // for topic context during generation
   const assets = await resolveAssets(input.assetIds, ctx);
+
+  // Tells the model what preceding topics cover and what's coming.
+  const { instructions: instructionsWithContext, meta: envelopeMeta } =
+    await prependEnvelope(activity.id, input.instructions, ctx, {
+      skip: !!input.skipOutlineContext,
+      nearestSiblings: input.contextRadius ?? undefined,
+    });
+
   const generated = await (AiService as any).generate({
     repository: {
       schemaId,
@@ -273,7 +281,7 @@ async function execute(input: Input, ctx: ToolContext) {
     inputs: [
       {
         type: 'CREATE',
-        text: input.instructions,
+        text: instructionsWithContext,
         responseSchema: 'STRUCTURED_CONTENT',
       },
     ],

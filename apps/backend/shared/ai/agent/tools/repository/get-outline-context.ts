@@ -40,13 +40,6 @@ const parameters = {
         a row so each call sees more neighbors in detail.
       `,
     },
-    includeStyle: {
-      type: ['boolean', 'null'],
-      description: oneLine`
-        Include one short excerpt from a written sibling as a
-        voice reference. Defaults to true.
-      `,
-    },
   },
   required: ['activityId'],
   additionalProperties: false,
@@ -57,7 +50,6 @@ const parameters = {
 async function execute(input: Input, ctx: ToolContext) {
   const context = await buildOutlineContext(input.activityId, ctx, {
     nearestSiblings: input.nearestSiblings ?? undefined,
-    includeStyle: input.includeStyle ?? undefined,
   });
   if (!context) {
     return toolError({

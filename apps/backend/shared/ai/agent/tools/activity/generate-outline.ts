@@ -216,10 +216,13 @@ async function execute(input: Input, ctx: ToolContext) {
     activities,
     typeHierarchy: buildTypeHierarchy(schemaId),
     NEXT_STEP: oneLine`
-      You MUST now call create_outline and pass the entire
-      activities array. It batch-creates all nodes in one call,
-      resolving parent-child via _parentName. Do NOT call
-      create_activity one by one - use create_outline instead.
+      THIS RESULT IS A DRAFT, NOTHING WAS WRITTEN TO THE DATABASE
+      YET. You MUST call create_outline next, in this same turn,
+      passing the entire activities array verbatim. It
+      batch-creates all nodes in one call, resolving parent-child
+      via _parentName. Do NOT stop here, do NOT reply with the
+      outline as if it's been saved, and do NOT loop with
+      create_activity - use create_outline.
     `,
   };
 }

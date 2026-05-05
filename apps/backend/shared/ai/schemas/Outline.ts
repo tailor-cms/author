@@ -95,15 +95,20 @@ const getPrompt = (context: AiContext): string => {
     Return the response as a JSON object with the following format:
     { "name": "", "type": "", children: [] }
     where type indicates one of the taxonomy node types and children is an
-    array of the same format. If possible, generate at least 10 root nodes.
-    Make sure to have content holder nodes in the structure. The content
-    holder nodes are the following:
+    array of the same format.
+    Scope: honour the user's instructions about breadth verbatim - e.g.
+    "1 chapter with 3 issues" or "5 modules" should produce exactly
+    that. When the user gives no explicit count, aim for a meaningful
+    starter outline that exercises the schema's structure and adapts
+    to the subject.
+    Make sure the structure includes content-holder nodes:
     ${leafLevels.map((it) => it.label).join(', ')}.
-    IMPORTANT: Do NOT wrap all content inside a single top-level node that
-    represents the course or repository - the repository already serves that
-    purpose. For example, if generating content about "${context.repository.name}",
-    return multiple root items (e.g. "Introduction", "Getting Started", etc.),
-    NOT a single "${context.repository.name}" wrapper containing them all.
+    Don't pad the result with a redundant top-level wrapper that simply
+    mirrors the repository's name - the repository already serves that
+    purpose. (For "${context.repository.name}", do NOT emit a single
+    "${context.repository.name}" wrapper containing all real content.)
+    A single legitimate root - e.g. one chapter the user explicitly
+    asked for - is fine.
     ${documentGuideline}`;
 };
 

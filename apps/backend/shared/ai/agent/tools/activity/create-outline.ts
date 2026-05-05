@@ -215,15 +215,23 @@ async function execute(input: Input, ctx: ToolContext) {
       created.push(summarizeActivity(result.activity));
     }
   }
-
-  const output = {
-    ok: true,
+  const ok = errors.length === 0;
+  const output: Record<string, any> = {
+    ok,
     created: created.length,
     failed: errors.length,
     activities: created,
-    ...(errors.length ? { errors } : {}),
     _invalidates: ['outline'],
   };
+  if (errors.length) {
+    output.errors = errors;
+    output.warning = oneLine`
+      ${errors.length} of ${input.activities.length} activities failed
+      to create. The remaining ${created.length} were persisted. Read
+      the errors array, fix the offending entries, and call
+      create_outline again with ONLY the failed nodes.
+    `;
+  }
   recordOperation(TOOL, input, output, ctx);
   return output;
 }
