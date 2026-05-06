@@ -2,9 +2,8 @@ import { isProduction } from './runtime.js';
 
 export const secretKey = process.env.AI_SECRET_KEY;
 export const modelId = process.env.AI_MODEL_ID;
-// Image generation model. Override via AI_IMAGE_MODEL_ID env.
-// Options: gpt-image-1.5 (best), gpt-image-1-mini (cost-efficient)
-export const imageModelId = process.env.AI_IMAGE_MODEL_ID || 'gpt-image-1.5';
+// Image generation and editing model
+export const imageModelId = process.env.AI_IMAGE_MODEL_ID || 'gpt-image-2';
 export const isEnabled = secretKey && modelId;
 
 const envSuffix = isProduction ? '' : `-${process.env.NODE_ENV || 'dev'}`;
