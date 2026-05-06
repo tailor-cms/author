@@ -114,6 +114,40 @@ function buildTypeHierarchy(schemaId: string): string {
 }
 
 /**
+ * Validate the generated structure rejects the "one mega-root
+ * containing the entire outline" pattern. A real single-root
+ * outline (e.g. "1 chapter with 3 issues" the user explicitly
+ * asked for) is fine because its children are sub-level types,
+ * not root-level ones. Returns a violation message when the
+ * shape is wrong, null when it's acceptable.
+ */
+function validateStructure(schemaId: string, nodes: any[]): string | null {
+  if (nodes.length !== 1) return null;
+  const root = nodes[0];
+  const children = root?.children || [];
+  if (children.length < 3) return null;
+  const rootTypes = new Set(
+    api
+      .getOutlineLevels(schemaId)
+      .filter((it: any) => it.rootLevel)
+      .map((it: any) => it.type),
+  );
+  const allChildrenAreRootEligible = children.every((c: any) =>
+    rootTypes.has(c.type),
+  );
+  if (!allChildrenAreRootEligible) return null;
+  return oneLine`
+    Single-wrapper outline rejected: produced one root
+    "${root.name}" (${root.type}) holding ${children.length}
+    children whose types are themselves root-eligible. The
+    repository is the wrapper - those children must be the roots.
+    Re-run generate_outline with instructions that explicitly
+    forbid a top-level wrapper, OR pass the major sections of
+    the source as the root activities directly.
+  `;
+}
+
+/**
  * Flatten a nested tree into a list with _parentName
  * for parent-child resolution in create_outline.
  */
@@ -218,6 +252,14 @@ async function execute(input: Input, ctx: ToolContext) {
   });
 
   const nodes = Array.isArray(generated) ? generated : [];
+  const violation = validateStructure(schemaId, nodes);
+  if (violation) {
+    return toolError({
+      tool: TOOL,
+      reason: 'invalid_structure',
+      message: violation,
+    });
+  }
   const markdown = nodes.length
     ? renderPreviewTree(schemaId, nodes)
     : '_(no activities generated)_';

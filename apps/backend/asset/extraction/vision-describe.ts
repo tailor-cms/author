@@ -1,9 +1,11 @@
 /**
  * Describe and grade an image asset using GPT-4o vision.
- * Returns the generated description (empty string if unavailable).
- * Updates the asset meta with description, tags, quality grade,
- * relevance score, and content suggestion.
+ * Returns the full grading result (or null when vision is
+ * unavailable / cannot reach the asset). Updates the asset
+ * meta with description, tags, quality grade, relevance
+ * score, content suggestion, and isInformative flag.
  */
+import type { ImageDescription } from '@tailor-cms/interfaces/ai.ts';
 import AIService from '#shared/ai/ai.service.ts';
 import { createLogger } from '#logger';
 
@@ -13,10 +15,10 @@ const logger = createLogger('asset:vision-describe');
 
 export async function describeWithVision(
   asset: any,
-): Promise<string> {
-  if (!asset.storageKey || !AIService.describeImage) return '';
+): Promise<ImageDescription | null> {
+  if (!asset.storageKey || !AIService.describeImage) return null;
   const publicUrl = await Storage.getFileUrl(asset.storageKey);
-  if (!publicUrl) return '';
+  if (!publicUrl) return null;
   const result = await AIService.describeImage(publicUrl);
   await asset.update({
     meta: {
@@ -27,12 +29,18 @@ export async function describeWithVision(
       qualityIssues: result.qualityIssues,
       relevanceScore: result.relevanceScore,
       contentSuggestion: result.contentSuggestion,
+      isInformative: result.isInformative,
       tags: [...(asset.meta?.tags || []), ...result.tags],
     },
   });
   logger.info(
-    { assetId: asset.id, quality: result.quality, relevance: result.relevanceScore },
+    {
+      assetId: asset.id,
+      quality: result.quality,
+      relevance: result.relevanceScore,
+      isInformative: result.isInformative,
+    },
     'Vision graded image',
   );
-  return result.description;
+  return result;
 }

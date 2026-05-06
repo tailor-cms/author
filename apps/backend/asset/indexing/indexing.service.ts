@@ -172,7 +172,8 @@ async function indexImage(ctx: IndexingContext) {
     description = asset.meta.description || '';
   } else {
     try {
-      description = await describeWithVision(asset);
+      const result = await describeWithVision(asset);
+      description = result?.description || '';
     } catch (err: any) {
       logger.warn(
         { err: err.message, assetId: asset.id },

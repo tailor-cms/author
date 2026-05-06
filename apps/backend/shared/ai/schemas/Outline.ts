@@ -115,12 +115,19 @@ const getPrompt = (context: AiContext): string => {
       as an EXPERT one - it just covers them differently.
     Make sure the structure includes content-holder nodes:
     ${leafLevels.map((it) => it.label).join(', ')}.
-    Don't pad the result with a redundant top-level wrapper that simply
-    mirrors the repository's name - the repository already serves that
-    purpose. (For "${context.repository.name}", do NOT emit a single
-    "${context.repository.name}" wrapper containing all real content.)
-    A single legitimate root - e.g. one chapter the user explicitly
-    asked for - is fine.
+    Top-level breadth is mandatory. When you derive an outline from a
+    source document or a single subject, do NOT collapse the entire
+    structure under one mega-root that mirrors the document's title or
+    the repository name. The repository itself is the wrapper. The major
+    sections OF the source become root-level activities - siblings, not
+    children of a single envelope.
+    Concretely: if you would have produced one root with 4+ children
+    that are themselves root-eligible types, emit those children AS the
+    roots instead. The only acceptable single-root case is when the user
+    explicitly asked for one (e.g. "one chapter with 3 issues") and its
+    children are sub-level types, not root-level types.
+    For "${context.repository.name}", do NOT emit a single
+    "${context.repository.name}" wrapper containing all real content.
     ${documentGuideline}`;
 };
 
