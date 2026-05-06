@@ -21,6 +21,12 @@ const description = stripIndent`
   a tree of activities matching the schema's structure types
   with a markdown preview. Does NOT persist - pass the result
   to create_outline which batch-creates all nodes in one call.
+  Sizing: when the user states a count, pass it through in
+  instructions. When unspecified, omit count guidance entirely
+  so the generator picks a realistic scope for the medium - do
+  not editorialise with "concise" or low caps the user did not
+  request (a 2-chapter comic book or 2-module course is rarely
+  what an author actually wants).
   Optionally pass assetIds to build the outline around existing
   resources (uploaded PDFs, imported articles, videos, etc.).
   Call list_assets first to find relevant resources.
@@ -39,9 +45,15 @@ const parameters = {
     instructions: {
       type: ['string', 'null'],
       description: oneLine`
-        Additional constraints for the outline. E.g. "keep
-        it short, 2 modules max" or "focus on practical
-        exercises".
+        Additional constraints for the outline. Pass through
+        any explicit count or breadth the user stated (e.g.
+        "2 modules max", "1 chapter with 3 issues") verbatim.
+        Use this for tone, topic emphasis, or pedagogical
+        constraints (e.g. "focus on practical exercises").
+        Do NOT add "short", "concise", or numeric caps the
+        user did not ask for - if breadth is unspecified, leave
+        it unspecified so the generator can produce a realistic
+        publishable scope for the medium.
       `,
     },
     targetAudience: {

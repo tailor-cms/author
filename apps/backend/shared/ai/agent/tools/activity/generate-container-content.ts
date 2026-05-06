@@ -303,14 +303,14 @@ async function execute(input: Input, ctx: ToolContext) {
     markdown: renderPreview(items, targetLabel),
     ...(envelopeMeta ? { outlineContext: envelopeMeta } : {}),
     NEXT_STEP: oneLine`
-      You MUST now call create_container_with_elements for EACH
-      item in the items array. For each item, pass:
-      containerType="${targetType}",
-      data=item.data (REQUIRED - contains ${metaKeys.join(', ')}),
-      elements=item.elements.
-      IMPORTANT: data and elements are SEPARATE top-level parameters.
-      Do NOT nest data inside elements or omit it.
-      Do NOT stop here.
+      You MUST now call create_container_with_elements ONCE per
+      item in the items array. For each item, pass BOTH
+      data=item.data AND elements=item.elements in the SAME call -
+      never split into a bare create + follow-up update_activity.
+      Required arguments per call: containerType="${targetType}",
+      data (object with ${metaKeys.join(', ')}), elements (array).
+      data and elements are separate top-level parameters; do NOT
+      nest data inside elements, do NOT omit data, do NOT stop here.
     `,
   };
 }

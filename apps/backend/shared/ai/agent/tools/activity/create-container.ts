@@ -40,12 +40,19 @@ interface ToolResultContext {
 }
 
 const description = stripIndent`
-  Create a container (or subcontainer) with content elements
-  for an outline activity. Resolves the container layer from
-  the schema automatically. For nested templates (e.g. structured
-  content, exam), creates a typed subcontainer with metadata.
-  For flat templates, attaches elements directly. Missing schema
-  meta fields in data are filled with defaults.
+  Persist content for an outline activity in ONE atomic call.
+  When called after generate_container_content, pass BOTH
+  item.data (subcontainer metadata defined by the schema, e.g.
+  a comic Panel exposes title/description/mood/layout) AND
+  item.elements verbatim - never just elements. Splitting into
+  a bare create + a follow-up update_activity is wasteful and
+  produces an empty-meta intermediate state. Resolves the
+  container layer from the schema automatically: nested
+  templates get a typed subcontainer with the meta from data;
+  flat templates attach elements directly. Missing meta keys
+  are defaulted, but you should always supply the complete
+  data object the generator produced. Call get_schema_info to
+  see which meta fields each container type defines.
 `;
 
 const parameters = {
@@ -69,11 +76,14 @@ const parameters = {
     data: {
       type: 'object',
       description: oneLine`
-        REQUIRED metadata for the container. Pass item.data from
-        generate_container_content verbatim. Contains schema-defined
-        fields (title, description, estimatedTime, tags, etc.).
-        Omitting this creates a section with empty metadata. Call get_schema_info
-        to see which meta properties each container type supports.
+        Subcontainer metadata. Pass item.data from
+        generate_container_content verbatim - it already contains
+        the schema-defined fields for this container type
+        (e.g. a comic Panel has title/description/mood/layout;
+        other templates expose their own keys). Call
+        get_schema_info to see the exact fields. Pass {} only for
+        flat containers with no metadata. Never omit; never split
+        into a bare create + follow-up update_activity.
       `,
       additionalProperties: true,
     },
@@ -106,7 +116,7 @@ const parameters = {
       },
     },
   },
-  required: ['outlineActivityId', 'containerType', 'elements'],
+  required: ['outlineActivityId', 'containerType', 'data', 'elements'],
   additionalProperties: false,
 };
 

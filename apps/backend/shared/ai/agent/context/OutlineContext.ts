@@ -110,9 +110,14 @@ export async function getActivitySummary(
   );
   if (cached) return cached.text;
   const { activities, elements } = await fetchSubtreeContent(activity);
-  if (!activities.length && !elements.length) return null;
+  // Bail when the subtree carries no real content.
+  if (!elements.length) return null;
   await Promise.all(elements.map(resolveStatics));
-  const payload = JSON.stringify({ activities, elements });
+  // Keep only content-related fields
+  const payload = JSON.stringify({
+    activities: activities.map(pickActivityContent),
+    elements: elements.map(pickElementContent),
+  });
   const ai = await aiSummary(payload, pickName(activity));
   if (!ai) return null;
   const text = ai.slice(0, MAX_LEAF_SUMMARY_CHARS);
@@ -313,6 +318,36 @@ async function summarizeAll(
 
 function activityFreshnessKey(activity: any): string {
   return String(activity.modifiedAt?.getTime?.() || 0);
+}
+
+// Drop certai keys before sending to the summarizer.
+// `data.$$` is Tailor's reserved bucket for system metadata
+function stripAdminDataKeys(
+  data: Record<string, any> | null | undefined,
+): Record<string, any> | null | undefined {
+  if (!data || typeof data !== 'object') return data;
+  return Object.fromEntries(
+    Object.entries(data).filter(([key]) => !key.startsWith('$$')),
+  );
+}
+
+function pickActivityContent(activity: any) {
+  const plain = activity.toJSON?.() ?? activity;
+  return {
+    id: plain.id,
+    type: plain.type,
+    parentId: plain.parentId ?? null,
+    data: stripAdminDataKeys(plain.data),
+  };
+}
+
+function pickElementContent(element: any) {
+  const plain = element.toJSON?.() ?? element;
+  return {
+    activityId: plain.activityId,
+    type: plain.type,
+    data: plain.data,
+  };
 }
 
 function toRef(activity: any): OutlineNode {

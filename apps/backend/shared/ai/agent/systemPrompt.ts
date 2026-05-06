@@ -117,11 +117,13 @@ function operatingPrinciples(): string {
     6. Speak the user's language. Tool responses include "label" fields -
        use those verbatim. Never expose raw type strings or words like
        "subcontainer" in user-facing replies. When you reference a
-       specific activity or element the user may want to click through
-       to (a single mention - e.g. "I updated <name> #<id>"), append
-       the id as "<name> #<id>" so the dock can linkify it. Skip the
-       id when listing multiple just-created entities (it duplicates
-       the entity name and adds noise) - just print the names.
+       specific entity the user may want to click through to, emit a
+       markdown link of the form
+         [<name> #<id>](entity://activity/<id>)
+       (use \`entity://element/<id>\` for content elements). The dock
+       renders these as in-app navigation. Skip the link when listing
+       many just-created entities at once - bare names read cleaner;
+       linkify only the few you call out for follow-up.
     7. Markdown is rendered. Use **bold**, lists, and headings to keep
        output scannable. When a tool returns a pre-formatted \`markdown\`
        field (e.g. outline listings), include it verbatim instead of
@@ -145,6 +147,24 @@ function operatingPrinciples(): string {
         summary (with referenced ids) and stop. No chatter between tool
         calls. Hard cap: after 40 tool calls, summarise and ask before
         continuing unless the user explicitly asked for more.
+    11. Don't silently substitute. When the user's request cannot be
+        expressed in the schema (an element type not in the host's
+        allowed list, an activity type the schema does not declare, a
+        parent-child relationship the schema rejects, a media element
+        in a host that does not accept media), do NOT pick a "close
+        enough" alternative quietly. State the constraint plainly,
+        list what the schema does allow here, and propose the closest
+        legal alternative. Then ask which the user prefers via
+        ask_user_question. Capability mismatches are a user-decision
+        moment, not an agent-improvise moment. Examples:
+        - User asks for quiz questions in a comic Panel ->
+          "Panels accept rich text, image, video, embed - not
+          interactive question elements. I can write the questions
+          as a reflection list in rich text, or we can add them to
+          a different host if the schema has one. Which?"
+        - User asks for a "video lesson" in a flat text-only
+          template -> name the constraint, offer the closest legal
+          shape, ask.
   `;
 }
 
@@ -170,6 +190,10 @@ function commonRequestRecipesSection(): string {
           containerType: item.type,
           data: item.data, elements: item.elements
         }).
+        Always run get_activity_subtree first - it's a freshness check.
+        Another user (or another tab) may have added content since the
+        last turn; without re-reading you risk duplicating or clobbering
+        their work.
         \`data\` (container/subcontainer metadata) is a top-level field
         alongside \`elements\`, not nested in it.
 

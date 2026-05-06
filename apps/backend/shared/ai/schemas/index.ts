@@ -1,6 +1,7 @@
 import type { AiResponseSchema } from '@tailor-cms/interfaces/ai.ts';
 
 import type { AiResponseSpec } from './interfaces';
+import CeElements from './CeElements.ts';
 import CeHtml from './CeHtml.ts';
 import CeQuestion from './CeQuestion.ts';
 import CcStructuredContent from './CcStructuredContent/index.ts';
@@ -11,6 +12,7 @@ import PluginRegistry from '#shared/content-plugins/index.js';
 const { elementRegistry } = PluginRegistry;
 
 const specs = {
+  ELEMENTS: CeElements,
   HTML: CeHtml,
   OUTLINE: Outline,
   QUESTION: CeQuestion,

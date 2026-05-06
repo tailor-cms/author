@@ -96,11 +96,23 @@ const getPrompt = (context: AiContext): string => {
     { "name": "", "type": "", children: [] }
     where type indicates one of the taxonomy node types and children is an
     array of the same format.
-    Scope: honour the user's instructions about breadth verbatim - e.g.
-    "1 chapter with 3 issues" or "5 modules" should produce exactly
-    that. When the user gives no explicit count, aim for a meaningful
-    starter outline that exercises the schema's structure and adapts
-    to the subject.
+    Scope:
+    - If the user states a count or range (e.g. "5 modules" or
+      "1 chapter with 3 issues"), produce EXACTLY that. Honour
+      explicit caps verbatim.
+    - Otherwise, infer a realistic publishable scope for a
+      "${schema.name}" of this subject. Use the subject and the
+      repository description (${context.repository.description ||
+      'no description provided'}) as the sizing signal. Match what
+      a real author of this medium would actually commit to:
+      a course usually has multiple modules with
+      multiple lessons; a knowledge base has many sections.
+      Do NOT emit a 1-2 root skeleton just to demonstrate the
+      structure - lean toward generous breadth. A user can shrink
+      afterwards, but an under-scoped outline forces a restart.
+    - Target audience affects depth, complexity, and tone, NOT
+      count. A BEGINNER course should have just as many modules
+      as an EXPERT one - it just covers them differently.
     Make sure the structure includes content-holder nodes:
     ${leafLevels.map((it) => it.label).join(', ')}.
     Don't pad the result with a redundant top-level wrapper that simply
@@ -116,6 +128,9 @@ const spec: AiResponseSpec = {
   Schema,
   getPrompt,
   processResponse: (val) => val?.activities || [],
+  // Outline generation is a one-shot planning task - structuring a
+  // whole repository's hierarchy benefits from deeper reasoning
+  reasoningEffort: 'high',
 };
 
 export default spec;

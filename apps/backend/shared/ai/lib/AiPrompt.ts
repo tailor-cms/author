@@ -12,13 +12,25 @@ import { createAiLogger, formatPrompt } from '../logger.ts';
 
 const logger = createAiLogger('prompt');
 
+// Models that accept the `reasoning.effort` parameter.
+// Passing `reasoning` to a non-reasoning model
+// is rejected by the API, so gate before adding it to the request.
+const REASONING_MODEL_PREFIXES = ['gpt-5', 'o1', 'o3', 'o4'];
+
+function supportsReasoning(modelId: string | undefined): boolean {
+  if (!modelId) return false;
+  return REASONING_MODEL_PREFIXES.some((prefix) => modelId.startsWith(prefix));
+}
+
 const systemPrompt = `
-  Assistant is a bot designed to help authors create content for
-  Courses, Q&A content, Knowledge base, etc.
+  Assistant helps authors generate content inside the user's repository.
   Rules:
-  - Use the User rules to generate the content
-  - Generated content should have a friendly tone and be easy to understand
-  - Generated content should not include any offensive language`;
+  - Follow the user-provided rules and the schema-defined content rules.
+  - Match the tone, voice, and conventions of the repository's medium
+    (a course is pedagogical; a comic book is narrative; a knowledge
+    base is reference; etc.). Do not impose a learning frame on
+    media that are not pedagogical.
+  - Keep language accessible and avoid offensive content.`;
 
 const documentPrompt = `
   The user has provided source documents indexed in a vector store.
@@ -79,6 +91,10 @@ export class AiPrompt {
           vector_store_ids: [this.vectorStoreId],
         }];
       }
+      const effort = this.reasoningEffort;
+      if (effort && supportsReasoning(aiConfig.modelId)) {
+        params.reasoning = { effort };
+      }
       logger.debug(`Final prompt:\n${formatPrompt(input)}`);
       const response = await this.client.responses.create(params);
       this.response = this.responseProcessor(response.output_text);
@@ -113,6 +129,13 @@ export class AiPrompt {
     const schema = getContentSchema(this.prompt.responseSchema)?.Schema;
     if (!schema) return undefined;
     return typeof schema === 'function' ? schema(this.context) : schema;
+  }
+
+  // Per-schema reasoning effort override
+  // (if defined for schema and model supports it)
+  get reasoningEffort() {
+    if (this.isCustomPrompt) return undefined;
+    return getContentSchema(this.prompt.responseSchema)?.reasoningEffort;
   }
 
   get responseProcessor() {

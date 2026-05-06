@@ -43,6 +43,9 @@ export async function aiSummary(
     - Bare facts. No phrases like "this section" or "this lesson".
     - No restatement of the prompt. No preamble. Just the summary.
     - Name specific concepts, skills, and topics covered.
+    - Ignore administrative metadata (workflow status, priority, due
+      dates, ownership, timestamps, linked-copy provenance,
+      identifiers). Summarize content only.
     - 3-6 sentences, up to 150 words.
   `;
   const user = hint ? `Context: ${hint}\n\n---\n${content}` : content;

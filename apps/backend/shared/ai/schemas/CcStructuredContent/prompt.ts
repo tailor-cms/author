@@ -96,24 +96,24 @@ const buildGuidelines = (
   const hasQuestions = elementTypes.some(
     (t) => elementRegistry.isQuestion(t),
   );
+  // Schema-defined content rules take precedence.
+  const hasSchemaContentRules = !!ai?.outputRules?.prompt;
   const guidelines = [
     '- Fill in ALL metadata fields',
-    '- Each subcontainer: distinct topic or aspect',
+    '- Each subcontainer: a distinct topic, scene, beat, or aspect',
+    '- Do NOT duplicate metadata inside the element body.',
+    '  When a subcontainer has a title / name / heading meta field,',
+    '  do not repeat it as a heading or label at the top of the',
+    '  content - the renderer shows meta separately. Likewise, do',
+    '  not narrate other meta (description, mood, layout, panel',
+    '  number, position) inline in prose; structure already conveys',
+    '  ordering.',
   ];
-  // Perspective and depth
-  guidelines.push(
-    '- Write from an educator/teacher perspective:',
-    '  clear explanations, progressive complexity,',
-    '  practical examples, learning objectives',
-    '- Each subcontainer must thoroughly cover its',
-    '  topic — substantive, not superficial',
-    '- Structure content for effective learning:',
-    '  introduce concepts, explain, illustrate, assess',
-  );
-  // HTML element formatting
+  // HTML element formatting - visual layer, applies regardless of medium.
   guidelines.push(
     '- HTML elements: use text-body-2 mb-5 on <p>,',
-    '  text-h3 mb-7 on headings',
+    '  text-h3 mb-7 on headings (use sparingly; do not lead every',
+    '  element with one)',
     '- Use <ul>/<ol>, <blockquote>, <strong> for variety',
     '- Accent important sections with CSS classes:',
     '  "ce-highlight" for key takeaways,',
@@ -122,13 +122,24 @@ const buildGuidelines = (
     '  Add minimal inline style as default fallback',
     '  (e.g. border-left, background) — presentation',
     '  layer can override these classes',
-    '- Each HTML element: focused content block,',
-    '  300-600 words per element',
-    '- Mix element types coherently: text for concepts,',
-    '  questions to reinforce learning, media to',
-    '  illustrate — each element should serve a',
-    '  pedagogical purpose, not just variety for its own sake',
   );
+  // Generic pedagogical defaults only when the schema does not
+  // define its own content shape
+  if (!hasSchemaContentRules) {
+    guidelines.push(
+      '- Write from an educator/teacher perspective:',
+      '  clear explanations, progressive complexity,',
+      '  practical examples, learning objectives',
+      '- Cover each subcontainer thoroughly — substantive,',
+      '  not superficial',
+      '- Structure content for effective learning:',
+      '  introduce concepts, explain, illustrate, assess',
+      '- Mix element types coherently: text for concepts,',
+      '  questions to reinforce learning, media to',
+      '  illustrate — each element should serve a',
+      '  pedagogical purpose, not just variety for its own sake',
+    );
+  }
   // Question element guidance
   if (hasQuestions) {
     guidelines.push(

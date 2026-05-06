@@ -6,6 +6,8 @@ export interface OpenAISchema {
   schema: Record<string, unknown>;
 }
 
+export type ReasoningEffort = 'minimal' | 'low' | 'medium' | 'high';
+
 export interface AiResponseSpec {
   // Prompt used to describe the response structure
   getPrompt: (context: AiContext) => string;
@@ -18,4 +20,8 @@ export interface AiResponseSpec {
   // Context passed for specs that need to resolve references
   // (e.g., assetId → URL in structured content).
   processResponse?: (val: any, context?: AiContext) => any;
+  // Reasoning effort override for the OpenAI Responses API.
+  // Only applied on reasoning-capable models (gpt-5, o-series).
+  // Omit to use the model's default ("medium" on reasoning models).
+  reasoningEffort?: ReasoningEffort;
 }
