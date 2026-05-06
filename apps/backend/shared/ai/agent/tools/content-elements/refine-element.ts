@@ -4,6 +4,7 @@ import elementRegistry from '../../../../content-plugins/elementRegistry.js';
 import { createAiLogger } from '../../../logger.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 import { dbContext, recordOperation, toolError } from '../helpers/index.ts';
+import { prependEnvelope } from '../../context/index.ts';
 import { findElement } from './helpers.ts';
 
 const logger = createAiLogger('agent.tools.content-elements');
@@ -86,6 +87,14 @@ async function execute(input: Input, ctx: ToolContext) {
     });
   }
   const topic = await resolveOutlineAncestor(element);
+  const host = await element.getActivity();
+  // Same envelope used by the generation tools - also carries
+  // the host meta so the model knows what NOT to duplicate inside
+  // the body (page title from the outline leaf, section subtitle
+  // from the host's title-like meta).
+  const { instructions: enrichedInstructions } = topic
+    ? await prependEnvelope(topic.id, input.instructions, ctx, { host })
+    : { instructions: input.instructions };
   const previousData = element.data;
 
   let generated: any;
@@ -105,7 +114,7 @@ async function execute(input: Input, ctx: ToolContext) {
       inputs: [
         {
           type: 'MODIFY',
-          text: input.instructions,
+          text: enrichedInstructions,
           responseSchema: element.type,
         },
       ],

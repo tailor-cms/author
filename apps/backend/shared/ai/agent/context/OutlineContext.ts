@@ -8,7 +8,12 @@
 //   3. Repository digest - outline tree, with cached leaf summaries
 //      inlined where the per-activity cache already has them
 import { schema as schemaAPI } from '@tailor-cms/config';
+import { oneLine } from 'common-tags';
 
+import {
+  getContainerActivityMeta,
+  metaInputsForActivity,
+} from '../tools/helpers/index.ts';
 import { aiSummary } from './summarizer.ts';
 import db from '#shared/database/index.js';
 import { summaryStore } from './SummaryStore.ts';
@@ -25,6 +30,20 @@ const MAX_LEAF_SUMMARY_CHARS = 1000;
 export interface OutlineContextOpts {
   // How many nearest siblings get detailed summaries.
   nearestSiblings?: number;
+  // Immediate host activity (subcontainer or container) that owns
+  // the element being refined or the slot the next element lands
+  // in. Drives the "Section subtitle / other meta" lines so the
+  // model knows which fields the renderer surfaces alongside the
+  // body and must not be duplicated.
+  host?: any;
+}
+
+interface HostMetaSnapshot {
+  type: string;
+  // Title-like value if any (renders as the section heading).
+  title?: string;
+  // Other declared meta with values (rendered alongside the body).
+  other: { key: string; label: string; value: any }[];
 }
 
 export interface OutlineNode {
@@ -46,6 +65,9 @@ export interface OutlineContextResult {
   // Cheap structural map for cross-module awareness.
   repoDigest: OutlineNode[];
   repositoryIntent: string | null;
+  // Immediate host of the element being created / refined. Only
+  // populated when `opts.host` is supplied (e.g. refine path).
+  host?: HostMetaSnapshot;
 }
 
 /**
@@ -89,6 +111,46 @@ export async function buildOutlineContext(
     nearestFollowing,
     repoDigest: await buildRepoDigest(ctx.repository.id),
     repositoryIntent: readRepositoryIntent(ctx.repository),
+    host:
+      opts.host && opts.host.id !== activity.id
+        ? snapshotHostMeta(ctx.repository.schema, opts.host)
+        : undefined,
+  };
+}
+
+/**
+ * Capture the host activity's schema-declared meta so the envelope
+ * can tell the model which fields are rendered separately. Returns
+ * undefined when the host has nothing worth surfacing (no title,
+ * no populated meta) - the caller can then skip the host block
+ * entirely instead of emitting an empty section.
+ */
+function snapshotHostMeta(
+  schemaId: string,
+  host: any,
+): HostMetaSnapshot | undefined {
+  const data = host.data || {};
+  const declared =
+    metaInputsForActivity(host.type) ||
+    getContainerActivityMeta(schemaId, host.type) ||
+    [];
+  // Field keys that map to a host's display title across schemas.
+  const TITLE_KEYS = new Set(['title', 'name', 'heading', 'label']);
+  const titleField = declared.find((it: any) => TITLE_KEYS.has(it.key));
+  const title = titleField && data[titleField.key];
+  const other = declared
+    .filter((field: any) => !TITLE_KEYS.has(field.key))
+    .map((field: any) => ({
+      key: field.key,
+      label: field.label || field.key,
+      value: data[field.key],
+    }))
+    .filter((entry: any) => entry.value !== undefined && entry.value !== '');
+  if (!title && !other.length) return undefined;
+  return {
+    type: host.type,
+    ...(title ? { title } : {}),
+    other,
   };
 }
 
@@ -190,6 +252,16 @@ export function formatEnvelope(ctx: OutlineContextResult): string {
     sections.push(`Intent: ${ctx.repositoryIntent}`);
   }
   sections.push(formatPathLine(ctx));
+  if (api.isOutlineActivity(ctx.focused.type)) {
+    sections.push(oneLine`
+      Page title: "${ctx.focused.name}". The renderer shows this
+      above the body - do not restate it as a heading inside the
+      content.
+    `);
+  }
+  if (ctx.host) {
+    sections.push(formatHostBlock(ctx.host));
+  }
   if (ctx.focused.summary) {
     sections.push(`Already inside THIS activity: ${ctx.focused.summary}`);
   }
@@ -204,10 +276,12 @@ export function formatEnvelope(ctx: OutlineContextResult): string {
     );
   }
   if (ctx.repoDigest.length) {
-    sections.push([
-      'Repository structure (broader context):',
-      ...renderTreeLines(ctx.repoDigest),
-    ].join('\n'));
+    sections.push(
+      [
+        'Repository structure (broader context):',
+        ...renderTreeLines(ctx.repoDigest),
+      ].join('\n'),
+    );
   }
   return [ENVELOPE_OPEN, sections.join('\n\n'), ENVELOPE_CLOSE].join('\n');
 }
@@ -218,6 +292,26 @@ function formatPathLine(ctx: OutlineContextResult): string {
   }
   const path = ctx.ancestors.map((a) => `"${a.name}"`).join(' > ');
   return `Path: ${path} > "${ctx.focused.name}" (focused)`;
+}
+
+function formatHostBlock(host: HostMetaSnapshot): string {
+  const lines: string[] = [];
+  if (host.title) {
+    lines.push(oneLine`
+      Section subtitle: "${host.title}" (${host.type}). Renders
+      above the body - do not lead the content with this as a
+      heading.
+    `);
+  }
+  if (host.other.length) {
+    lines.push(
+      'Other section meta (rendered alongside the body, do not narrate inline):',
+    );
+    for (const { key, label, value } of host.other) {
+      lines.push(`- ${label} (${key}): ${value}`);
+    }
+  }
+  return lines.join('\n');
 }
 
 function formatSiblingBlock(heading: string, siblings: OutlineNode[]): string {
@@ -253,11 +347,12 @@ export async function prependEnvelope(
   anchorActivityId: number,
   instructions: string,
   ctx: ToolContext,
-  opts?: { skip?: boolean; nearestSiblings?: number },
+  opts?: { skip?: boolean; nearestSiblings?: number; host?: any },
 ): Promise<EnvelopeResult> {
   if (opts?.skip) return { instructions, meta: null };
   const envelope = await buildOutlineContext(anchorActivityId, ctx, {
     nearestSiblings: opts?.nearestSiblings,
+    host: opts?.host,
   });
   if (!envelope) return { instructions, meta: null };
   const formatted = formatEnvelope(envelope);

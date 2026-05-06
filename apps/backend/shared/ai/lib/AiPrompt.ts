@@ -3,6 +3,8 @@ import type {
   AiInput,
 } from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
+import { oneLine, stripIndent } from 'common-tags';
+import { schema as schemaConfiguration } from '@tailor-cms/config';
 
 import getContentSchema from '../schemas/index.ts';
 import RepositoryContext from './RepositoryContext.ts';
@@ -22,25 +24,87 @@ function supportsReasoning(modelId: string | undefined): boolean {
   return REASONING_MODEL_PREFIXES.some((prefix) => modelId.startsWith(prefix));
 }
 
-const systemPrompt = `
+const systemPrompt = stripIndent`
   Assistant helps authors generate content inside the user's repository.
   Rules:
   - Follow the user-provided rules and the schema-defined content rules.
-  - Match the tone, voice, and conventions of the repository's medium
-    (a course is pedagogical; a comic book is narrative; a knowledge
-    base is reference; etc.). Do not impose a learning frame on
-    media that are not pedagogical.
-  - Keep language accessible and avoid offensive content.`;
+  - Match the tone, voice, and conventions of the repository's medium.
+    Most repositories are pedagogical (courses, knowledge bases,
+    training materials, references) - lean toward clear instruction,
+    progressive complexity, and learner-friendly framing. For other
+    media (narrative, editorial, catalog, feed, q&a) honour the
+    schema's own outputRules instead of forcing a learning frame.
+  - Keep language accessible and avoid offensive content.
+`;
 
-const documentPrompt = `
+// Per-mode shape line. Picked from schema.ai.contentMode and
+// folded into the universal authoring rules at request time.
+const SHAPE_BY_MODE: Record<string, string> = {
+  pedagogical: oneLine`
+    Pedagogical content shape. Teach the audience: clear
+    explanations, progressive complexity, practical examples, and
+    assessment where the host accepts question elements. Mix text,
+    media, and checks purposefully.
+  `,
+  reference: oneLine`
+    Reference content shape. Stay terse and scannable: lookup-first,
+    lists and tables over walls of prose, no padding, no greeting or
+    framing sentences. Bold key terms.
+  `,
+  editorial: oneLine`
+    Editorial content shape. Journalistic / newsletter voice: lead
+    with what is interesting, attribute claims, vary sentence rhythm.
+    No textbook framing or learning objectives.
+  `,
+  narrative: oneLine`
+    Narrative content shape. Story, scene, dialogue. Visuals are
+    artist directions in prose unless an asset is clearly meant to
+    be embedded. No learning-objective framing.
+  `,
+};
+
+// Build the universal authoring rules. Mode-specific content shape
+// is injected from the schema; the rest applies to every path.
+function buildAuthoringRules(contentMode: string): string {
+  const shape = SHAPE_BY_MODE[contentMode] || SHAPE_BY_MODE.pedagogical;
+  return stripIndent`
+    Authoring rules (apply to every element you produce or rewrite):
+    - No fixed length unless explicitly requested. Match the medium
+      and the brief: a reference entry is terse, a course lesson can
+      run hundreds of words, a glossary line is one sentence.
+    - Do NOT duplicate metadata inside the element body. When the
+      host activity or its parent subcontainer has a title / name /
+      heading field, do NOT lead the body with that text as a
+      heading or label; the renderer shows meta separately. Do not
+      narrate position, sequence number, mood, or layout in prose -
+      structure already conveys them.
+    - ${shape}
+  `;
+}
+
+// Read the schema's declared contentMode (defaults to pedagogical).
+// Lives at the top-level Schema config; per-container outputRules
+// can still override on top of this baseline.
+function resolveContentMode(schemaId: string | undefined): string {
+  if (!schemaId) return 'pedagogical';
+  try {
+    const schema = (schemaConfiguration as any).getSchema(schemaId);
+    return schema?.ai?.contentMode || 'pedagogical';
+  } catch {
+    return 'pedagogical';
+  }
+}
+
+const documentPrompt = stripIndent`
   The user has provided source documents indexed in a vector store.
-  Use the file_search tool to find relevant information from these documents.
-  Base ALL generated content on information found in the documents.
-  Do not invent information not present in the documents.
-  If any assets are marked as PRIMARY SOURCE, they represent the core knowledge
-  base. Structure and model your content primarily after these sources.
-  Supplementary assets provide additional context but should not override
-  the core sources.`;
+  Use the file_search tool to find relevant information from these
+  documents. Base ALL generated content on information found in the
+  documents. Do not invent information not present in the documents.
+  If any assets are marked as PRIMARY SOURCE, they represent the
+  core knowledge base. Structure and model your content primarily
+  after these sources. Supplementary assets provide additional
+  context but should not override the core sources.
+`;
 
 export class AiPrompt {
   // OpenAI client
@@ -151,6 +215,8 @@ export class AiPrompt {
   toOpenAiInput(): OpenAI.Responses.ResponseInputItem[] {
     const res: OpenAI.Responses.ResponseInputItem[] = [];
     res.push({ role: 'developer', content: systemPrompt });
+    const mode = resolveContentMode(this.requestContext.repository?.schemaId);
+    res.push({ role: 'developer', content: buildAuthoringRules(mode) });
     res.push({ role: 'developer', content: this.repositoryContext.toString() });
     if (this.vectorStoreId) {
       res.push({ role: 'developer', content: documentPrompt });

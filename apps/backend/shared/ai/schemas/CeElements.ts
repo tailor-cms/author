@@ -24,7 +24,7 @@ export const Schema = (context: AiContext): OpenAISchema => {
   if (!schemas.length) {
     // Fallback to accepting any object
     return {
-      name: 'ce_elements',
+      name: 'content_elements',
       type: 'json_schema',
       schema: {
         type: 'object',
@@ -57,10 +57,16 @@ export const getPrompt = (context: AiContext) => {
     Generate content elements as a JSON object with an "elements" array.
     Each element has a "type" field and type-specific data fields.
     Allowed element types: ${typeList}.
-    Mix element types as appropriate for the content.
-    For text content use TIPTAP_HTML with { content: "<html>" }.
-    For questions use the matching question type schema.
-    Generate multiple elements that form a cohesive learning unit.
+    Mix element types so the result holds together as a unit.
+    Reach for the primary forms first:
+    - Prose / narrative / explanation: TIPTAP_HTML.
+    - Comprehension checks: pick the question type that fits the
+      idea - MULTIPLE_CHOICE / SINGLE_CHOICE for distinctions,
+      TRUE_FALSE for facts, SHORT_ANSWER / TEXT_RESPONSE for
+      open-ended. Each has its own schema in the supported types
+      list above; only types in that list are valid.
+    Place questions after teaching a concept (not as a quiz dump),
+    one per major idea, with clear options and plausible distractors.
   `;
 };
 

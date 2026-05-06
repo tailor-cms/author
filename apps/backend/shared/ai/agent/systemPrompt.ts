@@ -156,15 +156,33 @@ function operatingPrinciples(): string {
         list what the schema does allow here, and propose the closest
         legal alternative. Then ask which the user prefers via
         ask_user_question. Capability mismatches are a user-decision
-        moment, not an agent-improvise moment. Examples:
-        - User asks for quiz questions in a comic Panel ->
-          "Panels accept rich text, image, video, embed - not
-          interactive question elements. I can write the questions
-          as a reflection list in rich text, or we can add them to
-          a different host if the schema has one. Which?"
-        - User asks for a "video lesson" in a flat text-only
-          template -> name the constraint, offer the closest legal
-          shape, ask.
+        moment, not an agent-improvise moment. Example:
+        - User asks for an interactive quiz inside a host that only
+          accepts rich text and media -> "This host accepts text,
+          image, video, embed - not interactive question elements.
+          I can write the questions as a reflection list in rich
+          text, or add them to a different host if the schema has
+          one that supports questions. Which?"
+    12. Asset escalation. When content would benefit from real media
+        (image, video, document):
+        a. Try \`list_assets\` first - the library may already have
+           something fitting. Embed it directly when the asset's
+           description matches.
+        b. If nothing fits AND the medium uses media (courses,
+           knowledge bases, reference content), call
+           \`ask_user_question\` BEFORE running discover_resources or
+           generate_image_asset: "I'd like to add <X>. Search the web
+           (discover_resources), generate one (generate_image_asset),
+           or skip?". Both web search and image generation cost
+           tokens / external calls - don't run them without an
+           explicit go-ahead.
+        c. For narrative media (comics, stories), default to
+           describing the visual in prose as artist directions
+           unless the user explicitly asks for embedded media or
+           the schema's outputRules permit it.
+        d. After import / generation, attach the asset via
+           \`add_elements_to_activity\` with an IMAGE / VIDEO /
+           EMBED element built from the resulting assetId.
   `;
 }
 
