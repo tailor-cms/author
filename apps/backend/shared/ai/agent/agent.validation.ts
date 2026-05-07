@@ -15,10 +15,13 @@ export const create = defineRequestValidator([
 
 export const remove = defineRequestValidator(sessionPathParams);
 
+const REASONING_EFFORTS = ['minimal', 'low', 'medium', 'high'];
+
 export const run = defineRequestValidator([
   body('sessionId').isUUID().optional(),
   body('message').isString().trim().notEmpty(),
   body('mode').isString().isIn(AGENT_MODES).optional(),
+  body('reasoningEffort').isString().isIn(REASONING_EFFORTS).optional(),
   body('focus').isArray().optional(),
   body('focus.*.kind').isIn([Entity.Activity, Entity.ContentElement]).optional(),
   body('focus.*.id').isInt().optional(),

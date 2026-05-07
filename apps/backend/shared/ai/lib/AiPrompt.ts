@@ -19,7 +19,7 @@ const logger = createAiLogger('prompt');
 // is rejected by the API, so gate before adding it to the request.
 const REASONING_MODEL_PREFIXES = ['gpt-5', 'o1', 'o3', 'o4'];
 
-function supportsReasoning(modelId: string | undefined): boolean {
+export function supportsReasoning(modelId: string | undefined): boolean {
   if (!modelId) return false;
   return REASONING_MODEL_PREFIXES.some((prefix) => modelId.startsWith(prefix));
 }
@@ -60,6 +60,15 @@ const SHAPE_BY_MODE: Record<string, string> = {
     Narrative content shape. Story, scene, dialogue. Visuals are
     artist directions in prose unless an asset is clearly meant to
     be embedded. No learning-objective framing.
+  `,
+  analytical: oneLine`
+    Analytical content shape. Every claim is falsifiable and either
+    quotes a source asset, names what it is inferred from, or marks
+    itself synthesized. Comparisons render as tables (criteria x
+    options), not prose. Risks and costs are itemised with
+    probability/impact or numeric estimate + assumptions; never
+    buried in narrative. Recommendations name a single option,
+    accept tradeoffs explicitly, and preserve dissent.
   `,
 };
 

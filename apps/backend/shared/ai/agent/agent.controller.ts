@@ -44,7 +44,7 @@ async function run(
   { user, repository, body }: AgentRequest,
   res: Response,
 ) {
-  const { sessionId, message, mode, focus } = body;
+  const { sessionId, message, mode, focus, reasoningEffort } = body;
   const data = await agentRunner.run({
     sessionId,
     userId: user.id,
@@ -52,6 +52,7 @@ async function run(
     mode,
     focus,
     message,
+    reasoningEffort,
   });
   return res.json({ data });
 }

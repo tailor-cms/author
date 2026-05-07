@@ -9,6 +9,7 @@ import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import { oneLine } from 'common-tags';
 import OpenAI from 'openai';
 import { ai as aiConfig } from '#config';
+import { supportsReasoning } from '../lib/AiPrompt.ts';
 
 import { buildFocusHeader } from './context/FocusContext.ts';
 import { buildSystemPrompt } from './systemPrompt.ts';
@@ -84,6 +85,9 @@ interface RunState {
   // after the run. Tools attach `_invalidates: string[]` to their
   // result; `extractInvalidationKeys` strips and accumulates them here.
   invalidates: Set<string>;
+  // Per-run reasoning effort. Applied only when the configured model
+  // supports the `reasoning.effort` parameter.
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
 }
 
 export class AgentRunner {
@@ -161,6 +165,7 @@ export class AgentRunner {
     //   { turns: 3, replyText: 'Created module + 2 topics.',
     //     toolCalls: [...], .... }
     const state = createRunState();
+    state.reasoningEffort = input.reasoningEffort;
 
     // Each iteration calls the model with the running history,
     // executes any tool calls returned, and appends function_call_output
@@ -196,7 +201,12 @@ export class AgentRunner {
       'agent loop iteration',
     );
 
-    const response = await this.callModel(systemPrompt, session.history, tools);
+    const response = await this.callModel(
+      systemPrompt,
+      session.history,
+      tools,
+      state.reasoningEffort,
+    );
     if (response.error) {
       state.replyText = `Agent error: ${response.error}`;
       return true;
@@ -349,16 +359,24 @@ export class AgentRunner {
     systemPrompt: string,
     history: ApiItem[],
     tools: any[],
+    reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high',
   ): Promise<{ output: ApiItem[]; error?: string }> {
     try {
-      const response = await openaiClient!.responses.create({
+      // Gate the reasoning param: passing it to a non-reasoning model
+      // (e.g. gpt-4o) is rejected by the API. Only attach when the
+      // configured model is in the reasoning family.
+      const params: any = {
         model: aiConfig.modelId!,
         input: [
           { role: ROLE.Developer, content: systemPrompt },
           ...history,
         ] as any,
         tools,
-      });
+      };
+      if (reasoningEffort && supportsReasoning(aiConfig.modelId)) {
+        params.reasoning = { effort: reasoningEffort };
+      }
+      const response = await openaiClient!.responses.create(params);
       return { output: response.output || [] };
     } catch (err: any) {
       logger.error(err, 'OpenAI responses.create failed');

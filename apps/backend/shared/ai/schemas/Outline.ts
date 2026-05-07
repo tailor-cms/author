@@ -14,8 +14,10 @@ const Schema: OpenAISchema = {
       activity: {
         type: 'object',
         properties: {
-          type: { type: 'string' },
-          name: { type: 'string' },
+          type: { type: 'string', minLength: 1 },
+          // Every activity MUST have a non-empty, human-readable name.
+          // Empty names render as anonymous tree nodes in the outline UI.
+          name: { type: 'string', minLength: 1 },
           children: {
             type: 'array',
             items: { $ref: '#/definitions/activity' },
@@ -90,6 +92,11 @@ const getPrompt = (context: AiContext): string => {
     : '';
   return `
     Generate a structure/outline for this content.
+    Every activity MUST carry a non-empty, descriptive name -
+    something a reader would see in the outline panel and
+    understand at a glance. Never emit empty strings, "Untitled",
+    or placeholder names; if you do not have a name yet, do not
+    emit the activity.
     The structure should be created by following the taxonomy of the
     "${schema.name}" specified as: ${generateTaxonomyDesc(schemaId).trim()}
     Return the response as a JSON object with the following format:

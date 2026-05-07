@@ -45,6 +45,9 @@ export interface RunInput {
   mode?: AgentMode;
   // Implicit context from the editor - what the user is currently looking at.
   focus?: FocusedTarget[];
+  // Optional reasoning effort - applied only when the configured model
+  // accepts the `reasoning.effort` parameter (gpt-5 / o-series).
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
 }
 
 // Structured error envelope every failed tool call produces. Mode-denied,
