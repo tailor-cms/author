@@ -43,7 +43,7 @@ const activityStore = useActivityStore();
 const editorStore = useEditorStore();
 const notify = useNotification();
 
-const PANEL_NAME = 'metadata';
+const PANEL_NAME = 'details';
 const panelValue = computed({
   get: () => (editorStore.isDetailsPanelExpanded ? PANEL_NAME : undefined),
   set: (val) => (editorStore.isDetailsPanelExpanded = val === PANEL_NAME),
