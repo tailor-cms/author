@@ -13,26 +13,26 @@ test.beforeEach(async ({ page }) => {
 
 test('should be able to delete owned repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
-  await settingsPage.sidebar.delete();
+  await settingsPage.rail.delete();
   await expect(page.getByText('0 available repositories')).toBeVisible();
 });
 
 test('should be able to export owned repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
-  await settingsPage.sidebar.export();
+  await settingsPage.rail.export();
 });
 
 test('should be able to clone owned repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
   const name = 'Cloned Repository';
-  await settingsPage.sidebar.clone(name);
+  await settingsPage.rail.clone(name);
   await page.goto('/');
   await expect(page.getByText(name)).toBeVisible();
 });
 
 test('should be able to publish owned repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
-  await settingsPage.sidebar.publish();
+  await settingsPage.rail.publish();
   const repositoryName = await settingsPage.getName();
   await page.goto('/');
   const catalog = new Catalog(page);

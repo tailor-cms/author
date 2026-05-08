@@ -53,4 +53,43 @@ export class NavigationRail {
     const menu = await this.openActionsMenu();
     await menu.locator('.v-list-item-title').filter({ hasText: name }).click();
   }
+
+  async clone(name = 'Cloned repository') {
+    await this.runAction('Clone');
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByLabel('Name').fill(name);
+    await dialog.getByLabel('Description').fill('Test description');
+    await dialog.getByRole('button', { name: 'Clone' }).click();
+    await expect(dialog).not.toBeVisible();
+  }
+
+  async publish() {
+    await this.runAction('Publish');
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByRole('button', { name: 'Confirm' }).click();
+    await expect(dialog.getByText('Please wait...')).toBeVisible();
+    await expect(dialog.getByText('Please wait...')).not.toBeVisible({
+      timeout: 10000,
+    });
+  }
+
+  async export() {
+    await this.runAction('Export');
+    const dialog = this.page.locator('div[role="dialog"]');
+    await expect(dialog.getByText('Repository export is ready.')).toBeVisible({
+      timeout: 10000,
+    });
+    const downloadEvent = this.page.waitForEvent('download');
+    await dialog.getByRole('button', { name: 'Download' }).click();
+    const download = await downloadEvent;
+    const path = `tmp/${download.suggestedFilename()}`;
+    await download.saveAs(path);
+    return path;
+  }
+
+  async delete() {
+    await this.runAction('Delete');
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByRole('button', { name: 'confirm' }).click();
+  }
 }

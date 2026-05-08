@@ -171,7 +171,7 @@ test('export and reimport strips linked content fields', async ({ page }) => {
   await page.goto(`/repository/${targetRepoId}/root/settings/general`);
   await page.waitForLoadState('networkidle');
   const settingsPage = new GeneralSettings(page);
-  const exportPath = await settingsPage.sidebar.export();
+  const exportPath = await settingsPage.rail.export();
   // Import the exported archive via catalog UI
   await page.goto('/');
   await page.waitForLoadState('networkidle');

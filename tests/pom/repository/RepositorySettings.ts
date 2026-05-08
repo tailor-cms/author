@@ -4,71 +4,20 @@ import { expect } from '@playwright/test';
 import { NavigationRail } from './NavigationRail';
 import { Toast } from '../common/Toast';
 
-export class Sidebar {
-  readonly page: Page;
-  readonly el: Locator;
-  readonly rail: NavigationRail;
-
-  public static getAccessRoute = (id: number) =>
-    `/repository/${id}/root/settings/access`;
-
-  constructor(page: Page) {
-    this.page = page;
-    this.rail = new NavigationRail(page);
-    this.el = this.rail.el;
-  }
-
-  async clone(name = 'Cloned repository') {
-    await this.rail.runAction('Clone');
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByLabel('Name').fill(name);
-    await dialog.getByLabel('Description').fill('Test description');
-    await dialog.getByRole('button', { name: 'Clone' }).click();
-    await expect(dialog).not.toBeVisible();
-  }
-
-  async publish() {
-    await this.rail.runAction('Publish');
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByRole('button', { name: 'Confirm' }).click();
-    await expect(dialog.getByText('Please wait...')).toBeVisible();
-    await expect(dialog.getByText('Please wait...')).not.toBeVisible({
-      timeout: 10000,
-    });
-  }
-
-  async export() {
-    await this.rail.runAction('Export');
-    const dialog = this.page.locator('div[role="dialog"]');
-    await expect(dialog.getByText('Repository export is ready.')).toBeVisible({
-      timeout: 10000,
-    });
-    const downloadEvent = this.page.waitForEvent('download');
-    await dialog.getByRole('button', { name: 'Download' }).click();
-    const download = await downloadEvent;
-    const path = `tmp/${download.suggestedFilename()}`;
-    await download.saveAs(path);
-    return path;
-  }
-
-  async delete() {
-    await this.rail.runAction('Delete');
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByRole('button', { name: 'confirm' }).click();
-  }
-}
+export const getAccessRoute = (id: number) =>
+  `/repository/${id}/root/settings/access`;
 
 export class GeneralSettings {
   readonly page: Page;
   readonly el: Locator;
-  readonly sidebar: Sidebar;
+  readonly rail: NavigationRail;
   readonly nameInput: Locator;
   readonly descriptionInput: Locator;
   readonly toast: Toast;
 
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
-    this.sidebar = new Sidebar(page);
+    this.rail = new NavigationRail(page);
     this.toast = new Toast(page);
     this.page = page;
     this.el = el;
@@ -142,12 +91,11 @@ export class AddUserDialog {
 }
 
 export class RepositoryUsers {
-  static getRoute = (id: number) =>
-    `/repository/${id.toString()}/root/settings/access`;
+  static getRoute = getAccessRoute;
 
   readonly page: Page;
   readonly el: Locator;
-  readonly sidebar: Sidebar;
+  readonly rail: NavigationRail;
   readonly userList: Locator;
   readonly groupList: Locator;
   readonly userEntriesLocator: Locator;
@@ -158,7 +106,7 @@ export class RepositoryUsers {
 
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
-    this.sidebar = new Sidebar(page);
+    this.rail = new NavigationRail(page);
     this.userList = el.locator('.user-list');
     this.groupList = el.locator('.group-list');
     this.userEntriesLocator = el.locator('.user-row');

@@ -9,8 +9,8 @@ import {
   UserGroupUserList,
 } from '../../../pom/admin/GroupManagement.ts';
 import {
+  getAccessRoute,
   RepositoryUsers,
-  Sidebar as SettingsSidebar,
 } from '../../../pom/repository/RepositorySettings.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 import { toEmptyRepository } from '../../../helpers/seed.ts';
@@ -126,10 +126,10 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
 
   test('should be able to access user listing', async ({ page }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
-    const accessRoute = SettingsSidebar.getAccessRoute(repository.id);
+    const accessRoute = getAccessRoute(repository.id);
     await page.goto(accessRoute);
     const access = new RepositoryUsers(page);
-    await expect(access.sidebar.el).toBeVisible();
+    await expect(access.rail.el).toBeVisible();
     await expect(access.userList).toBeVisible();
     await expect(page).toHaveURL(accessRoute);
   });
@@ -138,7 +138,7 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
     page,
   }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
-    const accessRoute = SettingsSidebar.getAccessRoute(repository.id);
+    const accessRoute = getAccessRoute(repository.id);
     await page.goto(accessRoute);
     const access = new RepositoryUsers(page);
     await access.showGroupsTab();
@@ -192,7 +192,7 @@ test.describe('Collaborator added to a User Group as Default User,', () => {
 
   test('should not be able to access access settings', async ({ page }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
-    const accessRoute = SettingsSidebar.getAccessRoute(repository.id);
+    const accessRoute = getAccessRoute(repository.id);
     await page.goto(accessRoute);
     await expect(page).toHaveURL('/');
   });
@@ -242,7 +242,7 @@ test.describe('Collaborator added to a User Group with Colaborator role', () => 
 
   test('should not be able to access access settings', async ({ page }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
-    const accessRoute = SettingsSidebar.getAccessRoute(repository.id);
+    const accessRoute = getAccessRoute(repository.id);
     await page.goto(accessRoute);
     await expect(page).toHaveURL('/');
   });
