@@ -1,46 +1,70 @@
 <template>
-  <VDataTable
-    v-if="!isLoading"
-    :headers="headers"
-    :items="store.users"
-    class="pt-4 bg-transparent"
-    no-data-text="No assigned users."
+  <VAlert
+    v-if="!isLoading && !store.users.length"
+    class="ma-6"
+    color="primary-lighten-3"
+    icon="mdi-information-outline"
+    variant="tonal"
   >
-    <template #item="{ item }">
-      <tr class="user-entry">
-        <td class="text-left">
-          <VAvatar :image="item.imgUrl" size="32" variant="tonal" />
-        </td>
-        <td class="text-left user-entry-email">{{ item.email }}</td>
-        <td class="user-entry-label text-body-2 text-left text-truncate">
-          {{ item.fullName || 'N/A' }}
-        </td>
-        <td class="user-entry-role">
-          <VSelect
-            :items="roles"
-            :model-value="item.repositoryRole"
-            bg-color="transparent"
-            density="compact"
-            rounded="lg"
-            variant="solo"
-            flat
-            hide-details
-            @update:model-value="(role: string) => upsertUser(item.email, role)"
-          />
-        </td>
-        <td class="user-entry-actions">
-          <VBtn
-            aria-label="Remove user"
-            color="blue-grey-darken-3"
-            icon="mdi-delete"
-            size="small"
-            variant="text"
-            @click="remove(item)"
-          />
-        </td>
-      </tr>
-    </template>
-  </VDataTable>
+    No assigned users.
+  </VAlert>
+  <VList v-else-if="!isLoading" bg-color="transparent" class="user-list pa-0">
+    <VListItem
+      v-for="user in store.users"
+      :key="user.id"
+      class="user-row py-3 px-4 mb-2"
+      rounded="lg"
+    >
+      <template #prepend>
+        <VAvatar :image="user.imgUrl" size="34" variant="tonal" />
+      </template>
+      <VListItemTitle class="text-body-1 font-weight-medium">
+        {{ user.fullName || user.email }}
+      </VListItemTitle>
+      <VListItemSubtitle v-if="user.fullName" class="text-body-2">
+        {{ user.email }}
+      </VListItemSubtitle>
+      <template #append>
+        <VMenu location="bottom end">
+          <template #activator="{ props: menuProps }">
+            <VBtn
+              v-bind="menuProps"
+              append-icon="mdi-chevron-down"
+              class="user-role-btn mr-2 text-none"
+              color="white"
+              rounded="pill"
+              size="small"
+              variant="tonal"
+            >
+              {{ roleLabel(user.repositoryRole) }}
+            </VBtn>
+          </template>
+          <VList max-width="360" min-width="240" slim>
+            <VListSubheader>Choose role</VListSubheader>
+            <VListItem
+              v-for="role in roles"
+              :key="role.value"
+              :active="user.repositoryRole === role.value"
+              :prepend-icon="roleIcon(user.repositoryRole, role.value)"
+              :subtitle="role.description"
+              :title="role.title"
+              class="role-option"
+              lines="two"
+              @click="upsertUser(user.email, role.value)"
+            />
+          </VList>
+        </VMenu>
+        <VBtn
+          aria-label="Remove user"
+          color="white"
+          icon="mdi-delete-outline"
+          size="small"
+          variant="text"
+          @click="remove(user)"
+        />
+      </template>
+    </VListItem>
+  </VList>
 </template>
 
 <script lang="ts" setup>
@@ -49,20 +73,20 @@ import type { User } from '@tailor-cms/interfaces/user';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-defineProps<{
-  roles: Array<{ title: string; value: string }>;
+const props = defineProps<{
+  roles: Array<{ title: string; value: string; description?: string }>;
 }>();
 
 const store = useCurrentRepository();
 const notify = useNotification();
 
 const isLoading = ref(true);
-const headers = computed(() =>
-  ['User', 'Email', 'Full Name', 'Role', ''].map((text) => ({
-    text,
-    sortable: false,
-  })),
-);
+
+const roleLabel = (value: string) =>
+  props.roles.find((r) => r.value === value)?.title ?? value;
+
+const roleIcon = (current: string, value: string) =>
+  current === value ? 'mdi-check-circle' : 'mdi-blank';
 
 const getUsers = async () => {
   await store.getUsers();
@@ -91,12 +115,12 @@ getUsers();
 </script>
 
 <style lang="scss" scoped>
-td.text-truncate {
-  max-width: 11rem;
+.user-list {
+  background: transparent;
+  text-align: left;
 }
 
-td.user-entry-role {
-  min-width: 6.5rem;
-  max-width: 7.5rem;
+.user-row {
+  background: rgba(var(--v-theme-primary-darken-2));
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
-  <div class="asset-toolbar d-flex align-center flex-wrap ga-3 mb-6">
+  <div class="asset-toolbar d-flex align-center flex-wrap ga-3">
     <VTextField
       v-model="search"
-      bg-color="primary-darken-2"
+      bg-color="transparent"
       class="search-input"
       color="primary-lighten-3"
       density="comfortable"
@@ -15,29 +15,36 @@
       hide-details
       @click:clear="search = ''"
     />
+    <VSpacer />
     <VBtn
       :loading="isUploading"
       :disabled="isUploading"
-      color="primary-lighten-3"
+      color="teal-lighten-3"
       prepend-icon="mdi-upload"
-      variant="outlined"
+      variant="tonal"
+      size="small"
+      class="text-none"
       @click="openFilePicker"
     >
       Upload
     </VBtn>
     <VBtn
-      color="primary-lighten-3"
+      color="teal-lighten-3"
       prepend-icon="mdi-link-plus"
-      variant="outlined"
+      variant="tonal"
+      size="small"
+      class="text-none"
       @click="emit('link:add')"
     >
       Add Link
     </VBtn>
     <VBtn
       v-if="isDiscoveryEnabled"
-      color="primary-lighten-3"
+      color="teal-lighten-3"
       prepend-icon="mdi-earth-plus"
-      variant="outlined"
+      variant="tonal"
+      size="small"
+      class="text-none"
       @click="emit('discover')"
     >
       Discover

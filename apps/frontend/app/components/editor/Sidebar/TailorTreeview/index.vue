@@ -1,11 +1,6 @@
 <template>
-  <div
-    v-if="hasItems"
-    :class="{ 'd-flex flex-column align-end': true, 'mt-5': search }"
-  >
+  <div v-if="hasItems" class="d-flex flex-column align-end mx-5">
     <VBtn
-      v-if="!search"
-      class="mr-5"
       color="teal-lighten-4"
       size="x-small"
       variant="tonal"
@@ -14,7 +9,7 @@
       Toggle all
     </VBtn>
   </div>
-  <VList v-model:opened="expanded" slim>
+  <VList v-model:opened="expanded" density="compact" slim nav>
     <Draggable
       :list="processedItems"
       :disabled="!!search"

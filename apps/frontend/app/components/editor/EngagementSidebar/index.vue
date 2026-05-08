@@ -3,12 +3,13 @@
     width="380"
     class="sidebar"
     color="primary-darken-2"
-    elevation="5"
+    elevation="0"
     location="right"
+    border="l surface"
     mobile-breakpoint="lg"
   >
     <div class="sidebar-container pa-4">
-      <div class="text-body-2 font-weight-bold text-primary-lighten-4 my-4">
+      <div class="text-body-2 font-weight-bold text-primary-lighten-4 mt-2 mb-4">
         High Engagement at Scale
       </div>
       <VList>

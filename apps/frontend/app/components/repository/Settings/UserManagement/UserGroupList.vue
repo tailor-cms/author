@@ -2,45 +2,38 @@
   <VAlert
     v-if="groups.length === 0"
     class="ma-6"
-    color="primary-darken-2"
-    variant="tonal"
+    color="primary-lighten-3"
     icon="mdi-information-outline"
+    variant="tonal"
   >
     No associated user groups.
   </VAlert>
-  <VDataTable
-    v-else
-    :headers="headers"
-    :items="groups"
-    :items-per-page="-1"
-    class="pt-4 bg-transparent"
-    no-data-text="No associated user groups."
-  >
-    <template #item="{ item }">
-      <tr :key="item.id">
-        <td class="text-truncate text-left">
-          <UserGroupAvatar :logo-url="item.logoUrl" />
-          <NuxtLink
-            :to="{ name: 'user-group', params: { userGroupId: item.id } }"
-            class="ml-5 text-primary-darken-4"
-          >
-            {{ item.name }}
-          </NuxtLink>
-        </td>
-        <td class="text-left">
-          <VBtn
-            aria-label="Deassociate user group"
-            icon="mdi-delete-outline"
-            label="Deassociate user group"
-            color="primary-darken-4"
-            size="small"
-            variant="text"
-            @click="remove(item)"
-          />
-        </td>
-      </tr>
-    </template>
-  </VDataTable>
+  <VList v-else bg-color="transparent" class="group-list pa-0">
+    <VListItem
+      v-for="group in groups"
+      :key="group.id"
+      :to="{ name: 'user-group', params: { userGroupId: group.id } }"
+      class="group-row py-3 px-4 mb-2"
+      rounded="lg"
+    >
+      <template #prepend>
+        <UserGroupAvatar :logo-url="group.logoUrl" :size="34" />
+      </template>
+      <VListItemTitle class="text-body-1 font-weight-medium">
+        {{ group.name }}
+      </VListItemTitle>
+      <template #append>
+        <VBtn
+          aria-label="Deassociate user group"
+          color="white"
+          icon="mdi-delete-outline"
+          size="small"
+          variant="text"
+          @click.stop.prevent="remove(group)"
+        />
+      </template>
+    </VListItem>
+  </VList>
 </template>
 
 <script lang="ts" setup>
@@ -51,11 +44,6 @@ import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
-
-const headers: any = [
-  { title: 'Group name', key: 'name', sortable: false },
-  { title: 'Actions', key: 'actions', sortable: false },
-];
 
 const groups = computed(
   () => currentRepositoryStore?.repository?.userGroups || [],
@@ -79,3 +67,14 @@ const remove = (group: UserGroup) => {
   showDialog(confirmation);
 };
 </script>
+
+<style lang="scss" scoped>
+.group-list {
+  background: transparent;
+  text-align: left;
+}
+
+.group-row {
+  background: rgba(var(--v-theme-primary-darken-2));
+}
+</style>

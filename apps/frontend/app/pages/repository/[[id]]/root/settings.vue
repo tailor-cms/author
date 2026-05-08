@@ -1,95 +1,58 @@
 <template>
   <div class="repository-settings">
-    <VContainer class="h-100 pt-14" max-width="1400">
-      <VSheet class="pa-5" color="primary-lighten-4" rounded="lg">
-        <VRow>
-          <VCol cols="12" md="3">
-            <SettingsSidebar @action="onActionClick" />
-          </VCol>
-          <VCol cols="12" md="9">
-            <VSheet class="h-100" color="primary-lighten-5" rounded="lg">
-              <NuxtPage />
-            </VSheet>
-          </VCol>
-        </VRow>
-      </VSheet>
-      <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
-      <ExportDialog
-        v-if="showExportModal"
-        :repository="currentRepositoryStore.repository as Repository"
-        @close="showExportModal = false"
-      />
-      <ProgressDialog
-        :show="publishUtils.isPublishing.value"
-        :status="publishPercentage"
-      />
-    </VContainer>
-    <AppFooter />
+    <VNavigationDrawer
+      width="380"
+      color="primary-darken-3"
+      elevation="0"
+      location="left"
+      border="surface"
+      order="1"
+      permanent
+    >
+      <VList class="pa-4 text-left" slim>
+        <VListItem
+          v-for="item in sections"
+          :key="item.name"
+          :prepend-icon="item.icon"
+          :subtitle="item.subtitle"
+          :title="item.label"
+          :to="{ name: item.name }"
+          class="mb-2"
+          lines="two"
+          rounded="lg"
+        />
+      </VList>
+    </VNavigationDrawer>
+    <VMain>
+      <NuxtPage />
+    </VMain>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { Repository } from '@tailor-cms/interfaces/repository';
-
-import AppFooter from '@/components/common/AppFooter.vue';
-import CloneModal from '@/components/repository/Settings/CloneModal.vue';
-import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
-import ProgressDialog from '@/components/common/ProgressDialog.vue';
-import SettingsSidebar from '@/components/repository/Settings/SettingsSidebar.vue';
-import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
-import { usePublishActivity } from '@/composables/usePublishActivity';
-import { useRepositoryStore } from '@/stores/repository';
 
 definePageMeta({
   name: 'repository-settings',
+  redirect: { name: 'repository-settings-general' },
 });
 
-const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
-const publishUtils = usePublishActivity();
-const confirmationDialog = useConfirmationDialog();
 
-const showCloneModal = ref(false);
-const showExportModal = ref(false);
-const publishPercentage = computed(
-  () => publishUtils.status.value.progress * 100,
-);
-
-const clone = () => {
-  showCloneModal.value = true;
-};
-
-const publishRepository = () => {
-  publishUtils.publishRepository(currentRepositoryStore.outlineActivities);
-};
-
-const exportRepository = () => {
-  showExportModal.value = true;
-};
-
-const showDeleteConfirmation = () => {
-  const repository = currentRepositoryStore.repository as Repository;
-  const { id, name } = repository;
-  confirmationDialog({
-    title: 'Delete repository?',
-    message: `Are you sure you want to delete repository ${name}?`,
-    action: async () => {
-      await repositoryStore.remove(id);
-      navigateTo('/');
-    },
-  });
-};
-
-const onActionClick = (name: string) => {
-  const actions = {
-    publish: publishRepository,
-    clone,
-    export: exportRepository,
-    delete: showDeleteConfirmation,
-  } as any;
-  actions[name]();
-};
+const sections = [
+  {
+    name: 'repository-settings-general',
+    label: 'General',
+    subtitle: 'Name, description, and metadata',
+    icon: 'mdi-tune',
+  },
+  {
+    name: 'repository-settings-access',
+    label: 'Access',
+    subtitle: 'Users and groups',
+    icon: 'mdi-shield-account-outline',
+  },
+];
 
 onMounted(() => {
   if (currentRepositoryStore?.repository?.hasAdminAccess) return;

@@ -14,5 +14,8 @@
   "peerDependencies": {
     "bluebird": "^3.7.2",
     "lodash-es": "*"
+  },
+  "dependencies": {
+    "vuetify": "~3.12.5"
   }
 }

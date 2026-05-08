@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "lodash-es": "^4.17.21",
+    "vuetify": "~3.12.5",
     "yup": "^1.7.1"
   },
   "devDependencies": {

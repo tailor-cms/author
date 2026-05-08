@@ -13,6 +13,7 @@
   "dependencies": {
     "@tailor-cms/config-parser": "workspace:*",
     "is-localhost": "0.0.2",
-    "url-parse": "^1.5.10"
+    "url-parse": "^1.5.10",
+    "vuetify": "~3.12.5"
   }
 }

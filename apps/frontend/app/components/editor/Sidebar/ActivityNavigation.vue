@@ -1,12 +1,12 @@
 <template>
   <div class="navigation-container">
-    <div class="navigation-header px-1 pt-3 pb-0">
+    <div class="navigation-heade pb-0">
       <VTextField
         v-model="searchInput"
-        class="mt-1 mx-4"
         clear-icon="mdi-close"
-        label="Search..."
-        bg-color="primary-darken-1"
+        placeholder="Search..."
+        bg-color="transparent"
+        density="comfortable"
         prepend-inner-icon="mdi-magnify"
         variant="solo"
         flat

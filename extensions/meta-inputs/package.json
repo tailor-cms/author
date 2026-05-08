@@ -26,6 +26,7 @@
     "@tailor-cms/tme-select": "workspace:^",
     "@tailor-cms/tme-switch": "workspace:^",
     "@tailor-cms/tme-text-field": "workspace:^",
-    "@tailor-cms/tme-textarea": "workspace:^"
+    "@tailor-cms/tme-textarea": "workspace:^",
+    "vuetify": "~3.12.5"
   }
 }

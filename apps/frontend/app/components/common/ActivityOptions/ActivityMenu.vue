@@ -16,8 +16,7 @@
           variant="text"
           :size="activatorSize"
           :rounded="rounded"
-        >
-        </VBtn>
+        />
       </template>
       <VList class="text-left text-uppercase">
         <VListItem
@@ -27,7 +26,7 @@
           dense
           @click="it.action()"
         >
-          <VListItemTitle>
+          <VListItemTitle clas="text-h6">
             <VIcon class="pr-1" size="20">{{ it.icon }}</VIcon>
             {{ it.name }}
           </VListItemTitle>

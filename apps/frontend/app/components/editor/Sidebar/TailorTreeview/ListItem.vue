@@ -13,14 +13,11 @@
           v-if="isGroup"
           :color="prependColor"
           :icon="prependIcon"
-          class="ml-n1 mr-2"
+          class="mr-n1"
           density="comfortable"
           variant="text"
           @click.stop="activatorProps?.onClick"
         />
-      </template>
-      <template #title>
-        <span :class="{ 'font-weight-bold': isActive }">{{ title }}</span>
       </template>
       <template #append>
         <ActivityMenu
@@ -90,8 +87,13 @@ const onItemClick = (e: any) => {
   }
 }
 
+.list-item :deep(.v-list-item-title) {
+  font-size: 1rem !important;
+}
+
 .list-item-active:deep(.v-list-item-title) {
   color: rgb(var(--v-theme-secondary-lighten-4)) !important;
+  font-weight: bold;
 }
 
 .activity-menu {

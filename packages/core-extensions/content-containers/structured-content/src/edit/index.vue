@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-primary-darken-3">
+  <div>
     <div
       v-if="isAiEnabled && !disabled && !isAiGeneratingContent"
       :class="{

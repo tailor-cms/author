@@ -1,19 +1,35 @@
 <template>
-  <VLayout class="workflow-page" full-height>
+  <div class="workflow-page h-100">
+    <VAppBar
+      v-if="workflow"
+      color="primary-darken-3"
+      border="b surface"
+      order="1"
+      height="64"
+      elevation="0"
+      class="pr-3"
+    >
+      <WorkflowFilters
+        v-model:assignee-ids="filters.assigneeIds"
+        v-model:recent-only="filters.recentOnly"
+        v-model:search="filters.search"
+        v-model:status="filters.status"
+        :assignee-options="assignees"
+        :status-options="workflow.statuses"
+        class="flex-grow-1 px-3 align-self-center"
+      />
+      <VAppBarNavIcon
+        v-if="smAndDown"
+        aria-label="Toggle sidebar"
+        color="white"
+        @click="store.updateSidebar(!store.isSidebarOpen)"
+      />
+    </VAppBar>
     <VMain>
       <VContainer
         class="workflow d-flex flex-column h-100 py-8 px-sm-15"
         max-width="2000"
       >
-        <WorkflowFilters
-          v-if="workflow"
-          v-model:assignee-ids="filters.assigneeIds"
-          v-model:recent-only="filters.recentOnly"
-          v-model:search="filters.search"
-          v-model:status="filters.status"
-          :assignee-options="assignees"
-          :status-options="workflow.statuses"
-        />
         <WorkflowOverview
           :activities="filteredActivities"
           class="mt-5"
@@ -21,13 +37,14 @@
       </VContainer>
     </VMain>
     <Sidebar />
-  </VLayout>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { compact, orderBy, overEvery, uniqBy } from 'lodash-es';
 import { isAfter, sub } from 'date-fns';
 import type { Status } from '@tailor-cms/interfaces/activity';
+import { useDisplay } from 'vuetify';
 
 import Sidebar from '@/components/repository/Workflow/Sidebar/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -54,6 +71,7 @@ const filters = reactive<Filters>({
 });
 
 const store = useCurrentRepository();
+const { smAndDown } = useDisplay();
 const { workflowActivities: activities, workflow } = storeToRefs(store);
 
 const filteredActivities = computed(() => {

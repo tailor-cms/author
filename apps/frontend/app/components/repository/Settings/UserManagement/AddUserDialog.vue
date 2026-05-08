@@ -4,11 +4,11 @@
       <VBtn
         v-bind="props"
         aria-label="Add user"
-        class="add-user mt-6"
-        color="primary-darken-2"
+        class="add-user text-none"
+        color="teal-lighten-4"
         prepend-icon="mdi-plus"
-        size="small"
         variant="tonal"
+        size="small"
       >
         Add user
       </VBtn>

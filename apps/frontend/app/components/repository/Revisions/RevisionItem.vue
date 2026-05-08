@@ -20,6 +20,12 @@
         {{ formatTimeAgo(date, { rounding: 'floor' }) }} by
         {{ revision.user.label }}
       </VListItemSubtitle>
+      <template v-if="isContentElement" #append>
+        <VIcon
+          :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+          class="text-primary-lighten-4"
+        />
+      </template>
     </VListItem>
     <VFadeTransition>
       <EntityRevisions

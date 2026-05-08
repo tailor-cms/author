@@ -3,12 +3,13 @@
     :key="store.selectedActivity?.uid"
     :model-value="store.isSidebarOpen || mdAndUp"
     :width="sidebarWidth"
-    class="ml-1"
+    class="repository-sidebar"
     color="primary-darken-2"
-    elevation="2"
+    elevation="0"
     location="right"
     mobile-breakpoint="md"
     absolute
+    border="surface"
     @update:model-value="store.updateSidebar"
   >
     <div v-if="store.selectedActivity?.uid">
@@ -49,7 +50,7 @@ const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 680 : 480));
 </script>
 
 <style lang="scss" scoped>
-.v-navigation-drawer {
+.repository-sidebar {
   text-align: left;
 
   :deep(.v-input) {

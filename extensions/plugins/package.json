@@ -13,6 +13,7 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
-    "@tailor-cms/tp-i18n": "workspace:^"
+    "@tailor-cms/tp-i18n": "workspace:^",
+    "vuetify": "~3.12.5"
   }
 }

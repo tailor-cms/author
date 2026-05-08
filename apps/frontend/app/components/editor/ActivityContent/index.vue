@@ -397,7 +397,7 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .activity-content {
   min-height: 100%;
-  padding: 4rem 1.5rem;
+  padding: 1.5rem;
   overflow-y: scroll;
   overflow-y: overlay;
   overflow-x: hidden;

@@ -4,8 +4,21 @@
       <CircularProgress />
     </div>
     <template v-else>
-      <NavigationRail />
-      <NuxtPage />
+      <NavigationRail @action="onRailAction" />
+      <VLayout
+        class="fill-height bg-primary-darken-3 rounded-t-xl border-surface border-sm mr-3">
+        <NuxtPage />
+      </VLayout>
+      <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
+      <ExportDialog
+        v-if="showExportModal"
+        :repository="currentRepositoryStore.repository as Repository"
+        @close="showExportModal = false"
+      />
+      <ProgressDialog
+        :show="publishUtils.isPublishing.value"
+        :status="publishPercentage"
+      />
     </template>
   </NuxtLayout>
 </template>
@@ -13,11 +26,18 @@
 <script lang="ts" setup>
 import { CircularProgress } from '@tailor-cms/core-components';
 import { promiseTimeout } from '@vueuse/core';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 
+import CloneModal from '@/components/repository/Settings/CloneModal.vue';
+import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
 import NavigationRail from '@/components/repository/NavigationRail/index.vue';
+import ProgressDialog from '@/components/common/ProgressDialog.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
+import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { usePublishActivity } from '@/composables/usePublishActivity';
+import { useRepositoryStore } from '@/stores/repository';
 
 definePageMeta({
   middleware: ['auth'],
@@ -42,6 +62,38 @@ provide(
 );
 
 const isLoading = ref(true);
+
+const repositoryStore = useRepositoryStore();
+const publishUtils = usePublishActivity();
+const confirmationDialog = useConfirmationDialog();
+
+const showCloneModal = ref(false);
+const showExportModal = ref(false);
+const publishPercentage = computed(
+  () => publishUtils.status.value.progress * 100,
+);
+
+const showDeleteConfirmation = () => {
+  const repository = currentRepositoryStore.repository as Repository;
+  if (!repository) return;
+  const { id, name } = repository;
+  confirmationDialog({
+    title: 'Delete repository?',
+    message: `Are you sure you want to delete repository ${name}?`,
+    action: async () => {
+      await repositoryStore.remove(id);
+      navigateTo('/');
+    },
+  });
+};
+
+const onRailAction = (name: 'clone' | 'publish' | 'export' | 'delete') => {
+  if (name === 'clone') showCloneModal.value = true;
+  else if (name === 'export') showExportModal.value = true;
+  else if (name === 'publish') {
+    publishUtils.publishRepository(currentRepositoryStore.outlineActivities);
+  } else if (name === 'delete') showDeleteConfirmation();
+};
 
 // Teardown active connections and reset stores (for the current repository).
 const teardown = () => {

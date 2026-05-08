@@ -7,6 +7,7 @@
       :class="{ active: isSelected(option?.id) }"
       :img-url="option?.imgUrl"
       :label="option?.label ?? 'Unassigned'"
+      size="28"
       color="primary-lighten-4"
       tag="button"
       @click="toggleAssignee(option?.id)"
@@ -17,7 +18,7 @@
           v-bind="menuProps"
           :class="{ active: moreOptions.some((it) => isSelected(it?.id)) }"
           color="primary-lighten-4"
-          size="36"
+          size="28"
         >
           +{{ moreOptions.length }}
         </VAvatar>

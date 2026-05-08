@@ -1,11 +1,11 @@
 <template>
-  <div class="toolbar d-flex align-center flex-wrap ga-4 mb-4">
+  <div class="toolbar d-flex align-center flex-wrap ga-4">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VTextField
         v-model="search"
         v-bind="hoverProps"
-        :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-        density="comfortable"
+        bg-color="transparent"
+        density="compact"
         max-width="280"
         min-width="232"
         name="Search"
@@ -18,16 +18,17 @@
         hide-details
       />
     </VHover>
-    <VHover v-slot="{ isHovering, props: hoverProps }">
+    <VSpacer />
+    <VHover v-slot="{ props: hoverProps }">
       <SelectStatus
         v-bind="hoverProps"
         v-model="status"
-        :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
         :items="statusOptions"
         data-testid="workflow_statusFilter"
-        density="comfortable"
-        max-width="280"
-        min-width="232"
+        bg-color="primary-darken-2"
+        density="compact"
+        max-width="220"
+        min-width="200"
         placeholder="Filter by status"
         rounded="xl"
         variant="solo"
@@ -42,14 +43,15 @@
       :options="assigneeOptions"
       data-testid="workflow_assigneeFilter"
     />
-    <VBtn
-      :active="recentOnly"
-      :color="recentOnly ? 'secondary-lighten-4' : 'primary-lighten-3'"
+    <VChip
+      :color="recentOnly ? 'lime-accent-3' : 'primary-lighten-4'"
+      :prepend-icon="recentOnly ? 'mdi-check' : undefined"
       variant="tonal"
+      rounded="lg"
       @click="recentOnly = !recentOnly"
     >
-      Recently updated
-    </VBtn>
+      Show only recent
+    </VChip>
   </div>
 </template>
 

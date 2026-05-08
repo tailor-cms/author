@@ -1,11 +1,11 @@
 <template>
-  <VList bg-color="transparent" class="py-0">
+  <div class="activity-actions d-flex align-center">
     <VTooltip
       v-for="{ active, title, icon, action, disabled } in actions"
       :key="title"
       content-class="bg-primary-darken-4"
       location="bottom"
-      offset="24"
+      offset="12"
     >
       <template #activator="{ props: tooltipProps }">
         <VBtn
@@ -15,14 +15,15 @@
           :color="active ? 'secondary-lighten-3' : 'primary-lighten-4'"
           :disabled="disabled"
           :icon="`mdi-${icon}`"
-          class="mr-2"
+          class="action-btn"
           variant="text"
+          size="small"
           @click.stop="action"
         />
       </template>
       <span>{{ title }}</span>
     </VTooltip>
-  </VList>
+  </div>
 </template>
 
 <script lang="ts" setup>
