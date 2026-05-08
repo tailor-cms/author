@@ -6,7 +6,7 @@
     <template v-else>
       <NavigationRail @action="onRailAction" />
       <VLayout
-        class="fill-height bg-primary-darken-3 rounded-t-xl border-surface border-sm mr-3">
+        class="h-100 bg-primary-darken-3 rounded-t-xl border-surface border-sm mr-3">
         <NuxtPage />
       </VLayout>
       <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />

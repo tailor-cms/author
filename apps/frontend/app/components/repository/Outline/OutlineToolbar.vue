@@ -1,7 +1,7 @@
 <template>
   <div class="toolbar d-flex align-center flex-wrap ga-4">
     <VHover>
-      <template #default="{ isHovering, props: hoverProps }">
+      <template #default="{ props: hoverProps }">
         <VTextField
           v-bind="hoverProps"
           v-model="searchInput"
