@@ -5,7 +5,6 @@
       location="left"
       offset="-40"
       width="240"
-      contained
     >
       <template #activator="{ props: menuProps }">
         <VBtn

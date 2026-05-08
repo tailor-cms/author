@@ -58,11 +58,14 @@ const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 680 : 480));
 
     .v-messages__message,
     .v-field__outline,
-    .v-field-label,
+    .v-field-label {
+      color: rgb(var(--v-theme-primary-lighten-5));
+      opacity: 1;
+    }
+
     input::placeholder,
     textarea::placeholder {
       color: rgb(var(--v-theme-primary-lighten-5));
-      opacity: 1;
     }
 
     &.v-input--error {
