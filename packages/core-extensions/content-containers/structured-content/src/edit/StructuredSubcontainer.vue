@@ -1,19 +1,16 @@
 <template>
   <VCard class="mb-8 py-2 px-5" elevation="4">
     <div
-      :class="{
-        'mb-8': isExpanded,
-        'subcontainer-header-collapsible': isCollapsible,
-      }"
-      class="d-flex align-center mt-3 mx-1"
+      :class="{ 'subcontainer-header-collapsible': isCollapsible }"
+      class="subcontainer-header d-flex align-center mx-1"
       @click="isCollapsible && toggleExpanded()"
     >
-      <VCardTitle class="pb-4 text-primary-darken-3 text-truncate">
-        <VIcon class="mr-2" color="primary-darken-4">{{ icon }}</VIcon>
+      <VCardTitle class="d-flex align-center pa-0 text-h6 text-truncate">
+        <VIcon class="mr-2" color="primary-darken-4" size="24">{{ icon }}</VIcon>
         {{ label }}
         <span
           v-if="!isExpanded && collapsedPreviewText"
-          class="ml-3 text-body-2 text-medium-emphasis font-weight-regular"
+          class="ml-3 text-body-2 text-medium-emphasis text-truncate"
         >
           {{ collapsedPreviewText }}
         </span>
@@ -49,7 +46,7 @@
       />
     </div>
     <VExpandTransition>
-      <div v-show="isExpanded" class="pt-2">
+      <div v-show="isExpanded" class="pt-6">
         <VRow v-if="processedMeta.length">
           <VCol
             v-for="input in processedMeta"
@@ -168,5 +165,9 @@ watch(
 .subcontainer-header-collapsible {
   cursor: pointer;
   user-select: none;
+}
+
+.subcontainer-header {
+  min-height: 4rem;
 }
 </style>
