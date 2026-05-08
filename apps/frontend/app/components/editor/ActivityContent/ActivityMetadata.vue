@@ -1,39 +1,30 @@
 <template>
-  <VCard
+  <VExpansionPanels
     v-if="metadata.length"
-    color="primary-lighten-5 text-primary-darken-5"
-    variant="flat"
-    rounded="lg"
+    v-model="panelValue"
     class="mb-10"
+    rounded="lg"
   >
-    <div
-      class="activity-metadata-header d-flex align-center px-6 py-4"
-      @click="isExpanded = !isExpanded"
-    >
-      <VIcon class="mr-3" size="small">mdi-text-box-edit-outline</VIcon>
-      <span class="text-subtitle-1 font-weight-bold">
-        {{ activityLabel }} Details
-      </span>
-      <VSpacer />
-      <VBtn
-        :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        size="small"
-        variant="text"
-        @click.stop="isExpanded = !isExpanded"
-      />
-    </div>
-    <VExpandTransition>
-      <div v-show="isExpanded" class="px-6 pb-6">
+    <VExpansionPanel :value="PANEL_NAME" bg-color="white" eager>
+      <VExpansionPanelTitle min-height="56" static>
+        <VIcon class="mr-2" color="primary-darken-4">
+          mdi-text-box-edit-outline
+        </VIcon>
+        <span class="text-h6 font-weight-medium text-primary-darken-3">
+          {{ activityLabel }} Details
+        </span>
+      </VExpansionPanelTitle>
+      <VExpansionPanelText>
         <MetaInput
           v-for="it in metadata"
-          :key="`${activity.uid}.${it.key}`"
+          :key="`${activity.uid}.${it.key}.${$pluginRegistry.dataVersion}`"
           :meta="it"
           :entity-data="activity.data"
           @update="updateActivity"
         />
-      </div>
-    </VExpandTransition>
-  </VCard>
+      </VExpansionPanelText>
+    </VExpansionPanel>
+  </VExpansionPanels>
 </template>
 
 <script lang="ts" setup>
@@ -41,16 +32,22 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 
 import MetaInput from '@/components/common/MetaInput.vue';
 import { useActivityStore } from '@/stores/activity';
+import { useEditorStore } from '@/stores/editor';
 
 const props = defineProps<{
   activity: Activity;
 }>();
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
 const activityStore = useActivityStore();
+const editorStore = useEditorStore();
 const notify = useNotification();
 
-const isExpanded = ref(false);
+const PANEL_NAME = 'metadata';
+const panelValue = computed({
+  get: () => (editorStore.isDetailsPanelExpanded ? PANEL_NAME : undefined),
+  set: (val) => (editorStore.isDetailsPanelExpanded = val === PANEL_NAME),
+});
 
 const activityConfig = computed(() =>
   $schemaService.getLevel(props.activity.type),
@@ -68,14 +65,22 @@ const updateActivity = async (
   updatedData?: Record<string, any>,
 ) => {
   const data = updatedData ?? { ...props.activity.data, [key]: value };
-  await activityStore.update({ id: props.activity.id, data });
-  notify(`${activityLabel.value} saved`, { immediate: true });
+  try {
+    await activityStore.update({ id: props.activity.id, data });
+    notify(`${activityLabel.value} saved`, { immediate: true });
+  } catch {
+    notify(`Failed to save ${activityLabel.value.toLowerCase()}`, {
+      immediate: true,
+      color: 'error',
+    });
+  }
 };
 </script>
 
 <style lang="scss" scoped>
-.activity-metadata-header {
-  cursor: pointer;
-  user-select: none;
+:deep(.v-expansion-panel-title:hover > .v-expansion-panel-title__overlay),
+:deep(.v-expansion-panel-title:focus > .v-expansion-panel-title__overlay),
+:deep(.v-expansion-panel-title--active > .v-expansion-panel-title__overlay) {
+  opacity: 0;
 }
 </style>
