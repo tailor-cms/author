@@ -38,8 +38,5 @@
     "minify": false,
     "clean": true,
     "dts": true
-  },
-  "dependencies": {
-    "vuetify": "~3.12.5"
   }
 }

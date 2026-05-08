@@ -63,7 +63,6 @@
     "@tailor-cms/ce-true-false-edit": "^0.1.0",
     "@tailor-cms/ce-true-false-server": "^0.1.0",
     "@tailor-cms/ce-video-edit": "^0.1.0",
-    "@tailor-cms/ce-video-server": "^0.1.0",
-    "vuetify": "~3.12.5"
+    "@tailor-cms/ce-video-server": "^0.1.0"
   }
 }

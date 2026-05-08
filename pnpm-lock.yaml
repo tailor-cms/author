@@ -351,9 +351,6 @@ importers:
       uuid:
         specifier: ^13.0.0
         version: 13.0.0
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       yn:
         specifier: ^5.1.0
         version: 5.1.0
@@ -566,9 +563,6 @@ importers:
       '@tailor-cms/config-parser':
         specifier: workspace:^
         version: link:../packages/tailor-config-parser
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/content-container-collection':
         specifier: workspace:^
@@ -615,9 +609,6 @@ importers:
       '@tailor-cms/tcc-structured-content-server':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/structured-content-server
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -775,9 +766,6 @@ importers:
       '@tailor-cms/ce-video-server':
         specifier: ^0.1.0
         version: 0.1.0
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -821,9 +809,6 @@ importers:
       '@tailor-cms/tme-textarea':
         specifier: workspace:^
         version: link:../../packages/core-extensions/meta-inputs/meta-textarea
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -834,9 +819,6 @@ importers:
       '@tailor-cms/tp-i18n':
         specifier: workspace:^
         version: link:../../packages/core-extensions/plugins/i18n
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/extension-installer':
         specifier: workspace:^
@@ -856,9 +838,6 @@ importers:
       '@studion/infra-code-blocks':
         specifier: ^0.7.0
         version: 0.7.0(typescript@5.9.3)
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@types/node':
         specifier: ^24.7.2
@@ -970,9 +949,6 @@ importers:
       lodash-es:
         specifier: '*'
         version: 4.17.21
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -1017,9 +993,6 @@ importers:
       lodash-es:
         specifier: '*'
         version: 4.17.21
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -1080,9 +1053,6 @@ importers:
       lodash-es:
         specifier: '*'
         version: 4.17.21
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -1282,9 +1252,6 @@ importers:
       shelljs:
         specifier: ^0.10.0
         version: 0.10.0
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       acorn:
         specifier: ^8.15.0
@@ -1316,18 +1283,12 @@ importers:
       url-parse:
         specifier: ^1.5.10
         version: 1.5.10
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
 
   packages/tailor-config-parser:
     dependencies:
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       yup:
         specifier: ^1.7.1
         version: 1.7.1
@@ -1349,10 +1310,6 @@ importers:
         version: 5.9.3
 
   packages/tailor-interfaces:
-    dependencies:
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       tsup:
         specifier: ^8.5.0
@@ -1361,11 +1318,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  packages/tailor-seed:
-    dependencies:
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
+  packages/tailor-seed: {}
 
   packages/utils:
     dependencies:
@@ -1378,9 +1331,6 @@ importers:
       uuid:
         specifier: ^13.0.0
         version: 13.0.0
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1424,9 +1374,6 @@ importers:
       tailor-seed:
         specifier: workspace:^
         version: link:../packages/tailor-seed
-      vuetify:
-        specifier: ~3.12.5
-        version: 3.12.5(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
     devDependencies:
       '@axe-core/playwright':
         specifier: 4.11.0

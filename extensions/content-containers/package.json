@@ -20,7 +20,6 @@
     "@tailor-cms/tcc-exam-server": "workspace:^",
     "@tailor-cms/tcc-page": "workspace:^",
     "@tailor-cms/tcc-structured-content-edit": "workspace:^",
-    "@tailor-cms/tcc-structured-content-server": "workspace:^",
-    "vuetify": "~3.12.5"
+    "@tailor-cms/tcc-structured-content-server": "workspace:^"
   }
 }

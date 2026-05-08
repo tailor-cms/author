@@ -18,8 +18,7 @@
     "prebuild": "del-cli dist"
   },
   "dependencies": {
-    "@tailor-cms/config-parser": "workspace:^",
-    "vuetify": "~3.12.5"
+    "@tailor-cms/config-parser": "workspace:^"
   },
   "devDependencies": {
     "@tailor-cms/content-container-collection": "workspace:^",

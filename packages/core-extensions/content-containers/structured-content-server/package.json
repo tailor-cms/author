@@ -13,8 +13,5 @@
   },
   "peerDependencies": {
     "lodash-es": "*"
-  },
-  "dependencies": {
-    "vuetify": "~3.12.5"
   }
 }
