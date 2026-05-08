@@ -38,46 +38,58 @@
         @click.stop="toggleExpanded"
       />
       <VBtn
-        v-if="isExpanded && !isDisabled"
-        class="mr-5"
+        v-if="!isDisabled"
+        class="mr-2"
         color="secondary-darken-3"
+        density="comfortable"
+        icon="mdi-delete-outline"
         size="small"
         variant="tonal"
         @click.stop="emit('delete:subcontainer', container, label)"
-      >
-        Delete {{ label }}
-      </VBtn>
+      />
     </div>
-    <VExpandTransition>
-      <div v-show="isExpanded">
-        <VRow v-if="processedMeta.length">
-          <VCol
-            v-for="input in processedMeta"
-            :key="input.key"
-            :cols="input.cols || 12"
-            class="pt-0 pb-3 px-8"
-          >
-            <MetaInput
-              :meta="input"
-              @update="(key, val) => (containerData[key] = val)"
-            />
-          </VCol>
-        </VRow>
-        <StructuredContent
-          v-if="!disableContentElementList"
-          v-bind="$attrs"
-          :activities="activities"
-          :container="container"
-          :elements="elements"
-          :is-disabled="isDisabled"
-          :label="'content elements'"
-          :layout="layout"
-          :supported-element-config="contentElementConfig"
-          @add:subcontainer="emit('add:subcontainer', $event)"
-          @update:subcontainer="emit('update:subcontainer', $event)"
-          @delete:subcontainer="emit('delete:subcontainer', $event)"
-          @delete:element="(el, force) => emit('delete:element', el, force)"
-          @reorder:element="emit('reorder:element', $event)"
+    <VExpandTransition
+      @before-enter="isAnimating = true"
+      @after-enter="isAnimating = false"
+      @before-leave="isAnimating = true"
+      @after-leave="isAnimating = false"
+    >
+      <div v-show="isExpanded" class="subcontainer-body">
+        <div :class="{ 'subcontainer-body-hidden': isAnimating }">
+          <VRow v-if="processedMeta.length">
+            <VCol
+              v-for="input in processedMeta"
+              :key="input.key"
+              :cols="input.cols || 12"
+              class="pt-0 pb-3 px-8"
+            >
+              <MetaInput
+                :meta="input"
+                @update="(key, val) => (containerData[key] = val)"
+              />
+            </VCol>
+          </VRow>
+          <StructuredContent
+            v-if="!disableContentElementList"
+            v-bind="$attrs"
+            :activities="activities"
+            :container="container"
+            :elements="elements"
+            :is-disabled="isDisabled"
+            :label="'content elements'"
+            :layout="layout"
+            :supported-element-config="contentElementConfig"
+            @add:subcontainer="emit('add:subcontainer', $event)"
+            @update:subcontainer="emit('update:subcontainer', $event)"
+            @delete:subcontainer="emit('delete:subcontainer', $event)"
+            @delete:element="(el, force) => emit('delete:element', el, force)"
+            @reorder:element="emit('reorder:element', $event)"
+          />
+        </div>
+        <VSkeletonLoader
+          v-if="isAnimating"
+          class="subcontainer-body-skeleton"
+          type="paragraph, sentences, paragraph, sentences, paragraph"
         />
       </div>
     </VExpandTransition>
@@ -125,6 +137,7 @@ const elementCount = computed(() => {
 });
 
 const isExpanded = ref(true);
+const isAnimating = ref(false);
 
 const collapsedPreviewText = computed(() => {
   const key = props.collapsedPreviewKey || props.meta?.[0]?.key;
@@ -167,5 +180,29 @@ watch(containerData, save, { deep: true });
 .subcontainer-header-collapsible {
   cursor: pointer;
   user-select: none;
+}
+
+.subcontainer-body {
+  position: relative;
+}
+
+.subcontainer-body-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.subcontainer-body-skeleton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding-top: 1rem;
+  background: transparent;
+
+  :deep(.v-skeleton-loader__text) {
+    height: 14px;
+    margin: 0.75rem 0;
+    border-radius: 4px;
+  }
 }
 </style>

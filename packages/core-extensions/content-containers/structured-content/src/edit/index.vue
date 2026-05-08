@@ -7,18 +7,17 @@
       }"
       class="d-flex items-center justify-end"
     >
-      <span v-if="isAiEnabled && !disabled && !isAiGeneratingContent">
-        <VBtn
-          class="mr-2"
-          color="teal-lighten-4"
-          size="small"
-          variant="tonal"
-          @click="generateStructuredContent"
-        >
-          Generate content
-          <VIcon end>mdi-magic-staff</VIcon>
-        </VBtn>
-      </span>
+      <VBtn
+        v-if="isAiEnabled && !disabled && !isAiGeneratingContent"
+        class="mr-2"
+        color="teal-lighten-4"
+        size="small"
+        variant="tonal"
+        @click="generateStructuredContent"
+      >
+        Generate content
+        <VIcon end>mdi-magic-staff</VIcon>
+      </VBtn>
       <span
         v-if="isCollapsible && subcontainers.length > 1 && !disabled"
         v-show="!isAiGeneratingContent"
@@ -26,6 +25,7 @@
       >
         <VBtn
           color="primary-lighten-4"
+          min-width="140"
           size="small"
           variant="tonal"
           @click="toggleAll"
