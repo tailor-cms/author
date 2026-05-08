@@ -123,7 +123,7 @@ export async function extractAndSaveImages(
           tags: ['pdf-image'],
           source: { parentAssetId: asset.id },
         },
-        uploadedBy: asset.uploadedBy,
+        uploaderId: asset.uploaderId,
       });
       describeWithVision(created).catch((err) =>
         logger.warn(

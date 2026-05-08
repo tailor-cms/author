@@ -35,21 +35,21 @@
           </VTab>
         </VTabs>
       </div>
-      <VWindow :key="sessionKey" v-model="activeTab">
-        <VWindowItem value="upload">
+      <VTabsWindow :key="sessionKey" v-model="activeTab">
+        <VTabsWindowItem value="upload">
           <UploadTab :accept="accept" @select="onFileSelect" />
-        </VWindowItem>
-        <VWindowItem value="library" eager>
+        </VTabsWindowItem>
+        <VTabsWindowItem value="library" eager>
           <LibraryTab
             v-model:selected="selectedAssets"
             :allowed-extensions="allowedExtensions"
             :multiple="multiple"
           />
-        </VWindowItem>
-        <VWindowItem v-if="allowUrlSource" value="url">
+        </VTabsWindowItem>
+        <VTabsWindowItem v-if="allowUrlSource" value="url">
           <UrlTab ref="urlTabRef" @submit="onUrlSubmit" />
-        </VWindowItem>
-      </VWindow>
+        </VTabsWindowItem>
+      </VTabsWindow>
     </template>
     <template #actions>
       <div class="px-2 pb-3">

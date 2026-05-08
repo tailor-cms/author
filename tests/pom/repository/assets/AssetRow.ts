@@ -16,8 +16,8 @@ export class AssetRow {
     this.page = page;
     this.el = el;
     this.checkbox = el.locator('.v-checkbox-btn');
-    this.nameEl = el.locator('.text-truncate').first();
-    this.typeChip = el.locator('.text-capitalize').first();
+    this.nameEl = el.getByTestId('assetRow_name');
+    this.typeChip = el.getByTestId('assetRow_type');
     this.menuBtn = el.getByRole('button', { name: 'Actions' });
   }
 

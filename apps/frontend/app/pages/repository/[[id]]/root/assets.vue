@@ -36,6 +36,7 @@
       :total="assetStore.total"
       @delete="confirmDelete"
       @download="downloadAsset"
+      @index="(asset: Asset) => indexing.startIndexing([asset.id])"
       @preview="activeAsset = $event"
       @select:toggle="selection.toggle"
       @update:page="assetStore.page = $event"
@@ -114,7 +115,7 @@ const fetchParams = computed(() => {
     orderBy: 'createdAt',
     orderDirection: sortDirection.value,
   };
-  if (selectedCategory.value !== 'all') {
+  if (selectedCategory.value !== CATEGORY_ALL) {
     params.type = selectedCategory.value;
   }
   if (searchQuery.value.trim()) {

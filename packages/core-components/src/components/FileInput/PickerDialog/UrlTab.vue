@@ -37,9 +37,7 @@ const error = ref('');
 
 const submit = () => {
   if (!url.value) return;
-  try {
-    new URL(url.value);
-  } catch {
+  if (!URL.canParse(url.value)) {
     error.value = 'Please enter a valid URL';
     return;
   }

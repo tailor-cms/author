@@ -107,7 +107,7 @@ async function importFile({
       ...(tags?.length && { tags }),
       ...(source && { source }),
     },
-    uploadedBy: userId,
+    uploaderId: userId,
   });
   return asset.reload({ include: [UPLOADER_INCLUDE] });
 }
@@ -308,7 +308,7 @@ export async function importFromLink(
       ...(source && { source }),
       ...(meta.altText && { altText: meta.altText }),
     },
-    uploadedBy: userId,
+    uploaderId: userId,
   });
   return asset.reload({ include: [UPLOADER_INCLUDE] });
 }

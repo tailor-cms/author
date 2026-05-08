@@ -48,9 +48,9 @@ module.exports = {
         type: Sequelize.JSONB,
         defaultValue: {},
       },
-      uploadedBy: {
+      uploaderId: {
         type: Sequelize.INTEGER,
-        field: 'uploaded_by',
+        field: 'uploader_id',
         references: { model: 'user', key: 'id' },
       },
       createdAt: {

@@ -37,8 +37,7 @@
       :multiple="multiple"
       :selected-ids="selectedIds"
       class="mt-2"
-      @select="onSelect"
-      @toggle="toggleSelection"
+      @update:selected="onSelectionChange"
     />
     <VPagination
       v-if="pageCount > 1"
@@ -61,7 +60,7 @@ import {
   type Asset,
 } from '@tailor-cms/interfaces/asset.ts';
 import { computed, inject, onMounted, ref, watch } from 'vue';
-import { debounce, xorBy } from 'lodash-es';
+import { debounce } from 'lodash-es';
 import pMinDelay from 'p-min-delay';
 
 import AssetList from './AssetList.vue';
@@ -71,7 +70,7 @@ const ITEMS_PER_PAGE = 10;
 const MIN_LOADING_MS = 800;
 
 const ALL_CATEGORIES: { label: string; value: string }[] = [
-  { label: 'All', value: 'all' },
+  { label: 'All', value: 'ALL' },
   { label: 'Images', value: AssetType.Image },
   { label: 'Documents', value: AssetType.Document },
   { label: 'Video', value: AssetType.Video },
@@ -94,7 +93,7 @@ const props = withDefaults(
 
 const isLoading = ref(false);
 const searchQuery = ref('');
-const selectedCategory = ref('all');
+const selectedCategory = ref('ALL');
 const page = ref(1);
 const assets = ref<Asset[]>([]);
 const total = ref(0);
@@ -121,7 +120,7 @@ const categoryFilters = computed(() => {
 });
 
 const hasActiveFilters = computed(
-  () => !!searchQuery.value.trim() || selectedCategory.value !== 'all',
+  () => !!searchQuery.value.trim() || selectedCategory.value !== 'ALL',
 );
 
 const fetchAssets = async () => {
@@ -134,7 +133,7 @@ const fetchAssets = async () => {
     };
     const search = searchQuery.value.trim();
     if (search) params.search = search;
-    if (selectedCategory.value !== 'all') {
+    if (selectedCategory.value !== 'ALL') {
       params.type = selectedCategory.value;
     } else if (inferredType.value) {
       params.type = inferredType.value;
@@ -149,22 +148,18 @@ const fetchAssets = async () => {
   }
 };
 
-const toggleSelection = (asset: Asset) => {
-  if (props.multiple) {
-    const current = Array.isArray(selected.value) ? selected.value : [];
-    selected.value = xorBy(current, [asset], 'id');
-  } else {
-    const current = Array.isArray(selected.value) ? null : selected.value;
-    selected.value = current?.id === asset.id ? null : asset;
+const onSelectionChange = (ids: number[]) => {
+  if (!props.multiple) {
+    selected.value = assets.value.find((a) => a.id === ids[0]) ?? null;
+    return;
   }
-};
-
-// VList click:select handler - in multiple mode, selection is handled
-// by the checkbox toggle event, so we skip it here to avoid double-toggling.
-const onSelect = (id: number) => {
-  if (props.multiple) return;
-  const asset = assets.value.find((a) => a.id === id);
-  if (asset) toggleSelection(asset);
+  // VList preserves non-rendered IDs internally, so ids includes
+  // selections from other pages - resolve all to Asset objects
+  const prev = Array.isArray(selected.value) ? selected.value : [];
+  const prevById = new Map(prev.map((a) => [a.id, a]));
+  selected.value = ids
+    .map((id) => assets.value.find((a) => a.id === id) ?? prevById.get(id))
+    .filter(Boolean) as Asset[];
 };
 
 const fetchFromStart = () => {

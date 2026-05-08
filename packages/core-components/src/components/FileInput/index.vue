@@ -31,7 +31,6 @@
       :loading="uploading"
       :prepend-icon="resolvedIcon"
       color="primary-darken-2"
-      variant="tonal"
       @click="dialogOpen = true"
     >
       {{ placeholder || emptyLabel }}
@@ -40,7 +39,6 @@
       v-else
       :prepend-icon="resolvedIcon"
       color="primary-darken-2"
-      variant="tonal"
       @click="dialogOpen = true"
     >
       <span class="file-name text-truncate">
