@@ -8,7 +8,7 @@
       class="d-flex items-center justify-end"
     >
       <VBtn
-        v-if="isAiEnabled && !disabled && !isAiGeneratingContent"
+        v-if="isAiEnabled && !isAiGeneratingContent && !disabled"
         class="mr-2"
         color="teal-lighten-4"
         size="small"
@@ -211,13 +211,10 @@ const initDefaultSubcontainers = () => {
     });
   });
 };
-
 onMounted(initDefaultSubcontainers);
 
 const isCollapsible = computed(() => parsedConfig.value.isCollapsible);
-
 const expandAll = ref(true);
-
 const toggleAll = () => {
   expandAll.value = !expandAll.value;
 };
