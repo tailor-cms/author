@@ -27,7 +27,6 @@ where it has server-side behaviour, a matching `*-server` package.
 Reference the `templateId` from a `ContentContainerConfig` entry under
 an outline activity's `contentContainers` field. Developers can extend
 this set by publishing new packages that follow the same shape.
-hooks).
 
 ## Structured Content container
 

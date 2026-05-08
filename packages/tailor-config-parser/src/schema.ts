@@ -58,8 +58,7 @@ const processElementConfig = (config: ElementConfig[]) => {
  * Each subcontainer-type entry has its `contentElementConfig` array expanded
  * via `processElementConfig` (groups + items resolved into the canonical
  * shape consumers expect). Container-level options are passed through
- * unchanged, so consumers downstream (frontend `parseConfig`, AI schema
- * builder) read them as authored.
+ * unchanged.
  */
 const processSubcontainerConfigs = (config: any) => {
   if (!config) return undefined;
