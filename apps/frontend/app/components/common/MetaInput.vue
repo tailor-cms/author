@@ -4,6 +4,7 @@
       :is="componentName"
       :class="{ required: get(meta, 'validate.required') }"
       :dark="dark"
+      :variant="variant"
       :error-messages="errorMessage"
       :meta="metaWithValue"
       :is-new="isNew"
@@ -19,6 +20,7 @@
         :dark="dark"
         :meta="meta"
         :data="entityData"
+        :variant="variant"
         :component-name="componentName"
         @update="update"
       />
@@ -38,6 +40,7 @@ interface Props {
   name?: string | null;
   dark?: boolean;
   isNew?: boolean;
+  variant?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,6 +48,7 @@ const props = withDefaults(defineProps<Props>(), {
   name: null,
   dark: false,
   isNew: false,
+  variant: 'outlined',
 });
 
 const emit = defineEmits(['update']);
