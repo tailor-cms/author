@@ -72,10 +72,10 @@ test('should be able to filter by name', async ({ page }) => {
   }
   await page.reload();
   const target = 'Test Group 1';
-  await userGroupPage.el.getByLabel('Search user groups').fill(target);
+  await userGroupPage.el.getByTestId('search-user-groups').fill(target);
   await expect(userGroupPage.groupTable).toContainText(target);
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(1);
-  await userGroupPage.el.getByLabel('Search user groups').fill('sdlkas');
+  await userGroupPage.el.getByTestId('search-user-groups').fill('sdlkas');
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(0);
 });
 
