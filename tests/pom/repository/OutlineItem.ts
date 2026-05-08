@@ -17,9 +17,16 @@ class OptionsMenu {
     return this.el.click();
   }
 
-  async remove() {
+  private async openMenu() {
     await this.toggle();
-    await this.el.getByLabel('Remove').click();
+    const overlay = this.page.locator('.activity-menu');
+    await expect(overlay).toBeVisible();
+    return overlay;
+  }
+
+  async remove() {
+    const overlay = await this.openMenu();
+    await overlay.getByLabel('Remove').click();
     // Wait for dialog to open
     const dialogContent = 'Are you sure you want to delete';
     await expect(this.page.getByText(dialogContent)).toBeVisible();
@@ -30,14 +37,14 @@ class OptionsMenu {
   }
 
   async linkContentBelow() {
-    await this.toggle();
-    await this.el.getByLabel('Link content below').click();
+    const overlay = await this.openMenu();
+    await overlay.getByLabel('Link content below').click();
     return new LinkContentDialog(this.page);
   }
 
   async linkContentInto() {
-    await this.toggle();
-    await this.el.getByLabel('Link content into').click();
+    const overlay = await this.openMenu();
+    await overlay.getByLabel('Link content into').click();
     return new LinkContentDialog(this.page);
   }
 }

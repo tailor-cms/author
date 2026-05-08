@@ -2,6 +2,7 @@
   <span>
     <VMenu
       v-model="isOpen"
+      content-class="activity-menu"
       location="left"
       offset="-40"
       width="240"
