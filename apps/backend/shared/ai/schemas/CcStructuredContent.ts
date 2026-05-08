@@ -1,4 +1,5 @@
 import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
+import type { Activity } from '@tailor-cms/interfaces/activity.ts';
 import {
   getSchema as getMetaInputSchema,
 } from '@tailor-cms/meta-element-collection/schema.js';
@@ -36,6 +37,7 @@ type SubcontainerConfigs = Record<string, SubcontainerConfig>;
 
 interface ParsedConfig {
   subcontainers: SubcontainerConfigs;
+  defaultSubcontainers: Pick<Activity, 'type' | 'data'>[];
   ai?: {
     definition?: string;
     outputRules?: { prompt?: string };
@@ -97,21 +99,32 @@ const toMetaFields = (meta: any[]): MetaField[] =>
     }),
   }));
 
+// Container-level options
+const CONTAINER_OPTIONS = [
+  'isCollapsible',
+  'collapsedPreviewKey',
+  'defaultSubcontainers',
+];
+
+const EMPTY_CONFIG: ParsedConfig = {
+  subcontainers: {},
+  defaultSubcontainers: [],
+};
+
 // Parse container schema config into per-subcontainer configs.
 // Resolves element types and meta field schemas for each
 // subcontainer type defined in the container config.
 const getConfigs = (context: AiContext): ParsedConfig => {
-  const empty: ParsedConfig = { subcontainers: {} };
   const { outlineActivityType, containerType } =
     context.repository;
-  if (!outlineActivityType || !containerType) return empty;
+  if (!outlineActivityType || !containerType) return EMPTY_CONFIG;
   const containers = schemaAPI.getSupportedContainers(
     outlineActivityType,
   );
   const container = containers.find(
     (c: any) => c.type === containerType,
   );
-  if (!container?.config) return empty;
+  if (!container?.config) return EMPTY_CONFIG;
   // Container-level element types as default fallback
   const defaultElementTypes = getElementTypeIds(
     container.contentElementConfig,
@@ -120,6 +133,8 @@ const getConfigs = (context: AiContext): ParsedConfig => {
   for (const [type, val] of Object.entries(
     container.config as Record<string, any>,
   )) {
+    // TODO: Brittle, update once getSubTypes is implemented
+    if (CONTAINER_OPTIONS.includes(type)) continue;
     // Subcontainer config overrides container-level
     const elementTypes = val.contentElementConfig
       ? getElementTypeIds(val.contentElementConfig)
@@ -130,14 +145,22 @@ const getConfigs = (context: AiContext): ParsedConfig => {
       metaInputs: toMetaFields(getMetaDefinitions(val)),
     };
   }
-  return { subcontainers, ai: container.ai };
+  return {
+    subcontainers,
+    defaultSubcontainers:
+      container.config.defaultSubcontainers || [],
+    ai: container.ai,
+  };
 };
 
 // Build JSON schema for a single subcontainer type:
 // discriminated by type enum, with per-type elements and data.
+// When defaultData is provided, matching meta fields are
+// pinned to exact values via JSON Schema `const`.
 const buildSubcontainerSchema = (
   type: string,
   config: SubcontainerConfig,
+  defaultData?: Record<string, any>,
 ) => {
   const { metaInputs, elementTypes } = config;
   const props: Record<string, any> = {
@@ -149,10 +172,27 @@ const buildSubcontainerSchema = (
   const dataRequired: string[] = [];
   for (const field of metaInputs) {
     if (!field.schema) continue;
-    const values = field.options?.map((o) => o.value);
-    dataProps[field.key] = values?.length
-      ? { ...field.schema, enum: values }
-      : field.schema;
+    // Three cases for how strictly the AI is constrained on this field:
+    //   1. Pinned by defaultData
+    //      The schema author seeded this field via `defaultSubcontainers`
+    //      (e.g. `data: { title: 'Intro' }`). Lock the AI to that exact
+    //      value with a single-element `enum` (acts as a JSON Schema
+    //      `const`). The AI is allowed to produce only this value.
+    //   2. Bounded by a meta-input options list
+    //      The meta input declares a fixed option set (e.g. a Select
+    //      with EASY/MEDIUM/HARD). Constrain the AI to those values
+    //      via `enum`.
+    //   3. Free-form
+    //      No defaultData and no options - emit the field's own JSON
+    //      schema (string/number/etc.) and let the AI fill freely.
+    if (defaultData?.[field.key] != null) {
+      dataProps[field.key] = { ...field.schema, enum: [defaultData[field.key]] };
+    } else {
+      const values = field.options?.map((o) => o.value);
+      dataProps[field.key] = values?.length
+        ? { ...field.schema, enum: values }
+        : field.schema;
+    }
     dataRequired.push(field.key);
   }
   if (Object.keys(dataProps).length) {
@@ -165,8 +205,12 @@ const buildSubcontainerSchema = (
 // Build OpenAI structured output schema from container config.
 // Each subcontainer type becomes a discriminated union variant
 // with its own allowed element types and metadata fields.
+// When defaultSubcontainers are defined, uses a tuple to
+// enforce exact count, types, and data at each position.
 export const Schema = (context: AiContext): OpenAISchema => {
-  const { subcontainers } = getConfigs(context);
+  const {
+    subcontainers, defaultSubcontainers,
+  } = getConfigs(context);
   // Default to generic section when no config is defined
   const entries = Object.entries(subcontainers);
   if (!entries.length) {
@@ -174,18 +218,28 @@ export const Schema = (context: AiContext): OpenAISchema => {
       label: 'Section', metaInputs: [], elementTypes: [],
     }]);
   }
-  // Build per-subcontainer schema with type discriminator
+  // Per-type schemas - one shape per subcontainer type. When more than
+  // one type is defined, the array items become a discriminated union.
   const schemas = entries.map(([type, config]) =>
-    buildSubcontainerSchema(type, config),
-  );
-  const subcontainerSchema = schemas.length === 1
+    buildSubcontainerSchema(type, config));
+  const itemSchema = schemas.length === 1
     ? schemas[0]
     : { anyOf: schemas };
+  // When defaultSubcontainers are defined, lock the array length to the
+  // exact number of seeded entries so the AI cannot add or omit any.
+  const subcontainersSchema: Record<string, any> = {
+    type: 'array',
+    items: itemSchema,
+    ...(defaultSubcontainers.length && {
+      minItems: defaultSubcontainers.length,
+      maxItems: defaultSubcontainers.length,
+    }),
+  };
   return {
     type: 'json_schema',
     name: 'cc_structured_content',
     schema: obj(
-      { subcontainers: { type: 'array', items: subcontainerSchema } },
+      { subcontainers: subcontainersSchema },
       ['subcontainers'],
     ),
   };
@@ -221,10 +275,25 @@ const describeSubcontainerTypes = (configs: SubcontainerConfigs): string => {
     .join('\n');
 };
 
+const describeDefaultSubcontainers = (
+  defaults: Pick<Activity, 'type' | 'data'>[],
+  configs: SubcontainerConfigs,
+): string =>
+  defaults
+    .map((defaultSub) => {
+      const label =
+        configs[defaultSub.type]?.label || defaultSub.type;
+      const title = defaultSub.data?.title;
+      return title
+        ? `  - "${title}" (${label})`
+        : `  - ${label}`;
+    })
+    .join('\n');
+
 // Build prompt with available element types, subcontainer types,
 // metadata fields, and container-level AI instructions.
 export const getPrompt = (context: AiContext) => {
-  const { subcontainers, ai } = getConfigs(context);
+  const { subcontainers, defaultSubcontainers, ai } = getConfigs(context);
   // Collect all unique element types across subcontainers
   const allElementTypes = [
     ...new Set(Object.values(subcontainers).flatMap((c) => c.elementTypes)),
@@ -246,6 +315,15 @@ export const getPrompt = (context: AiContext) => {
       '- Base ALL content on the provided source documents',
       '- Reference specific information, data, and examples from the documents',
       '- Do not invent information not present in the documents',
+    );
+  }
+  if (defaultSubcontainers.length) {
+    guidelines.push(
+      '- Generate exactly these subcontainers in this exact order,'
+      + ' one per entry, each with a unique title as listed:\n'
+      + describeDefaultSubcontainers(
+        defaultSubcontainers, subcontainers,
+      ),
     );
   }
   if (ai?.outputRules?.prompt) {
