@@ -24,6 +24,7 @@ export const useEditorStore = defineStore('editor', () => {
   const selectedContentElementId = ref<number | null>(null);
   const selectedContentElement = ref<StoreContentElement | null>(null);
   const showPublishDiff = ref(false);
+  const isDetailsPanelExpanded = ref(false);
 
   const selectedActivity = computed(() => {
     if (!selectedActivityId.value) return null;
@@ -124,6 +125,7 @@ export const useEditorStore = defineStore('editor', () => {
     selectedActivity,
     selectedContentElement,
     showPublishDiff,
+    isDetailsPanelExpanded,
     rootContainerGroups,
     contentContainers,
     guidelines,

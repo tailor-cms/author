@@ -137,6 +137,13 @@ const SectionContainer: ContentContainerConfig = {
   required: true,
   displayHeading: false,
   config: {
+    isCollapsible: true,
+    defaultSubcontainers: [
+      { type: ActivityType.Section, data: { title: 'Intro' } },
+      { type: ActivityType.Section, data: { title: 'Key Concepts' } },
+      { type: ActivityType.Section, data: { title: 'Top Advisors' } },
+      { type: ActivityType.Section, data: { title: 'Talking Points' } },
+    ],
     [ActivityType.Section]: {
       label: 'Section',
       meta: () => [...sectionMeta],

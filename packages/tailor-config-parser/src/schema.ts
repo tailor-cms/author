@@ -53,14 +53,51 @@ const processElementConfig = (config: ElementConfig[]) => {
   }, [] as ContentElementCategory[]);
 };
 
+/**
+ * Normalise a content container's `config` block during schema processing.
+ * Each subcontainer-type entry has its `contentElementConfig` array expanded
+ * via `processElementConfig` (groups + items resolved into the canonical
+ * shape consumers expect). Container-level options are passed through
+ * unchanged.
+ */
 const processSubcontainerConfigs = (config: any) => {
   if (!config) return undefined;
   return reduce(
     config,
-    (acc, subcontainer, key) => {
-      const nestedConfig = get(subcontainer, 'contentElementConfig');
+    (acc, value, key) => {
+      // A container's `config` block mixes two kinds of keys at the same
+      // level:
+      //   - subcontainer-type definitions, always plain objects
+      //   - container-level options, which are primitives, null, or arrays
+      //     (e.g. isCollapsible, collapsedPreviewKey, defaultSubcontainers)
+      //
+      // Only subcontainer-type definitions need processing - they fall
+      // through to the spread + contentElementConfig expansion below.
+      // Container-level options are copied as-is by the early return.
+      //
+      // The guard is required because the spread `{ ...value }` would
+      // mangle non-object values:
+      //   { ...true }   === {}                  // boolean lost
+      //   { ...'a' }    === { '0': 'a' }        // string shredded
+      //   { ...null }   === {}                  // typeof null is 'object'
+      //   { ...[a, b] } === { '0': a, '1': b }  // array flattened
+      const isPrimitive = typeof value !== 'object';
+      const isNull = value === null;
+      const isArray = Array.isArray(value);
+      const isContainerOption = isPrimitive || isNull || isArray;
+      if (isContainerOption) {
+        acc[key] = value;
+        return acc;
+      }
+      // Subcontainer-type definition: copy all fields through, and if the
+      // type defines its own `contentElementConfig`, normalise that array
+      // (resolves loose item ids and group `config` propagation) so
+      // consumers receive the canonical category/items shape. Types without
+      // their own list inherit the container-level `contentElementConfig`
+      // resolved separately by the caller.
+      const nestedConfig = get(value, 'contentElementConfig');
       acc[key] = {
-        ...subcontainer,
+        ...value,
         ...(nestedConfig && {
           contentElementConfig: processElementConfig(nestedConfig),
         }),
