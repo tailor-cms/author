@@ -7,26 +7,22 @@ import { LinkContentDialog } from './LinkContentDialog';
 class OptionsMenu {
   readonly page: Page;
   readonly el: Locator;
+  readonly menu: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
     this.el = el;
+    this.menu = page.locator('.activity-menu');
   }
 
-  toggle() {
-    return this.el.click();
-  }
-
-  private async openMenu() {
-    await this.toggle();
-    const overlay = this.page.locator('.activity-menu');
-    await expect(overlay).toBeVisible();
-    return overlay;
+  async toggle() {
+    await this.el.click();
+    await expect(this.menu).toBeVisible();
   }
 
   async remove() {
-    const overlay = await this.openMenu();
-    await overlay.getByLabel('Remove').click();
+    await this.toggle();
+    await this.menu.getByLabel('Remove').click();
     // Wait for dialog to open
     const dialogContent = 'Are you sure you want to delete';
     await expect(this.page.getByText(dialogContent)).toBeVisible();
@@ -37,14 +33,14 @@ class OptionsMenu {
   }
 
   async linkContentBelow() {
-    const overlay = await this.openMenu();
-    await overlay.getByLabel('Link content below').click();
+    await this.toggle();
+    await this.menu.getByLabel('Link content below').click();
     return new LinkContentDialog(this.page);
   }
 
   async linkContentInto() {
-    const overlay = await this.openMenu();
-    await overlay.getByLabel('Link content into').click();
+    await this.toggle();
+    await this.menu.getByLabel('Link content into').click();
     return new LinkContentDialog(this.page);
   }
 }
