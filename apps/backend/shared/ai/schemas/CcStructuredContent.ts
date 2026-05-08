@@ -99,7 +99,7 @@ const toMetaFields = (meta: any[]): MetaField[] =>
     }),
   }));
 
-// Container-level options – not subcontainer type definitions.
+// Container-level options
 const CONTAINER_OPTIONS = [
   'isCollapsible',
   'collapsedPreviewKey',
@@ -133,6 +133,7 @@ const getConfigs = (context: AiContext): ParsedConfig => {
   for (const [type, val] of Object.entries(
     container.config as Record<string, any>,
   )) {
+    // TODO: Brittle, update once getSubTypes is implemented
     if (CONTAINER_OPTIONS.includes(type)) continue;
     // Subcontainer config overrides container-level
     const elementTypes = val.contentElementConfig
@@ -171,6 +172,19 @@ const buildSubcontainerSchema = (
   const dataRequired: string[] = [];
   for (const field of metaInputs) {
     if (!field.schema) continue;
+    // Three cases for how strictly the AI is constrained on this field:
+    //   1. Pinned by defaultData
+    //      The schema author seeded this field via `defaultSubcontainers`
+    //      (e.g. `data: { title: 'Intro' }`). Lock the AI to that exact
+    //      value with a single-element `enum` (acts as a JSON Schema
+    //      `const`). The AI is allowed to produce only this value.
+    //   2. Bounded by a meta-input options list
+    //      The meta input declares a fixed option set (e.g. a Select
+    //      with EASY/MEDIUM/HARD). Constrain the AI to those values
+    //      via `enum`.
+    //   3. Free-form
+    //      No defaultData and no options - emit the field's own JSON
+    //      schema (string/number/etc.) and let the AI fill freely.
     if (defaultData?.[field.key] != null) {
       dataProps[field.key] = { ...field.schema, enum: [defaultData[field.key]] };
     } else {
@@ -204,27 +218,23 @@ export const Schema = (context: AiContext): OpenAISchema => {
       label: 'Section', metaInputs: [], elementTypes: [],
     }]);
   }
-  let subcontainersSchema: Record<string, any>;
-  if (defaultSubcontainers.length) {
-    const schemas = entries.map(([type, config]) =>
-      buildSubcontainerSchema(type, config));
-    const itemSchema = schemas.length === 1
-      ? schemas[0]
-      : { anyOf: schemas };
-    subcontainersSchema = {
-      type: 'array',
-      items: itemSchema,
+  // Per-type schemas - one shape per subcontainer type. When more than
+  // one type is defined, the array items become a discriminated union.
+  const schemas = entries.map(([type, config]) =>
+    buildSubcontainerSchema(type, config));
+  const itemSchema = schemas.length === 1
+    ? schemas[0]
+    : { anyOf: schemas };
+  // When defaultSubcontainers are defined, lock the array length to the
+  // exact number of seeded entries so the AI cannot add or omit any.
+  const subcontainersSchema: Record<string, any> = {
+    type: 'array',
+    items: itemSchema,
+    ...(defaultSubcontainers.length && {
       minItems: defaultSubcontainers.length,
       maxItems: defaultSubcontainers.length,
-    };
-  } else {
-    const schemas = entries.map(([type, config]) =>
-      buildSubcontainerSchema(type, config));
-    const itemSchema = schemas.length === 1
-      ? schemas[0]
-      : { anyOf: schemas };
-    subcontainersSchema = { type: 'array', items: itemSchema };
-  }
+    }),
+  };
   return {
     type: 'json_schema',
     name: 'cc_structured_content',
