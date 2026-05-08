@@ -210,7 +210,11 @@ watch(
   () => props.isVisible,
   async (val) => {
     if (!val && props.isActivityThread) return;
-    setTimeout(() => inputEl.value?.focus(), 500);
+    setTimeout(() => {
+      // Skip if focus is already within the discussion (e.g., editing a comment)
+      if (containerEl.value?.contains(document.activeElement)) return;
+      inputEl.value?.focus();
+    }, 500);
   },
   { immediate: true },
 );

@@ -34,7 +34,7 @@
     "@tailor-cms/ce-html-raw-edit": "^0.0.3",
     "@tailor-cms/ce-html-raw-server": "^0.0.3",
     "@tailor-cms/ce-html-server": "^0.2.0",
-    "@tailor-cms/ce-image-edit": "^1.1.0",
+    "@tailor-cms/ce-image-edit": "^1.1.1-beta.0",
     "@tailor-cms/ce-image-server": "^1.1.0",
     "@tailor-cms/ce-jodit-html-edit": "^0.1.0",
     "@tailor-cms/ce-jodit-html-server": "^0.1.0",

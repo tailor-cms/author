@@ -47,7 +47,7 @@ export class ContentElement {
   async openComments() {
     await this.el.hover();
     await this.commentPopoverToggle.click();
-    await this.commentsMenu.isVisible();
+    await expect(this.commentsMenu).toBeVisible();
   }
 
   async getComment(content?: string) {

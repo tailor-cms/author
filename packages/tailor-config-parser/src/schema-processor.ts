@@ -49,6 +49,7 @@ function processRepositoryConfig(schema: Schema) {
       validate: {},
     });
   }
+  normalizeFileMeta(schema.meta);
   schema.defaultMeta = getMetaDefaults(schema.meta);
 }
 
@@ -59,6 +60,7 @@ function processActivityConfig(schema: Schema, activity: ActivityConfig) {
   activity.parentTypes = resolveParentTypes(schema, activity);
   activity.relationships = processActivityRelationships(activity);
   activity.meta = activity.meta || [];
+  normalizeFileMeta(activity.meta);
   const hasNameMeta = find(activity.meta, { key: 'name' });
   if (!hasNameMeta) {
     activity.meta.unshift({
@@ -96,6 +98,18 @@ function processelementMetaConfig(elementMeta: any) {
 
 function processType(schema: Schema, type: string) {
   return `${schema.id}/${type}`;
+}
+
+// Normalize FILE meta: ensure `allowedExtensions` is always a top-level array
+// with dot-prefixed extensions (e.g. ['.jpg', '.png'])
+function normalizeFileMeta(meta: Metadata[]) {
+  meta.forEach((it) => {
+    if (it.type !== 'FILE') return;
+    const raw = it.allowedExtensions || it.ext || it.validate?.ext || [];
+    it.allowedExtensions = raw.map((e: string) =>
+      e.startsWith('.') ? e : `.${e}`,
+    );
+  });
 }
 
 function getMetaDefaults(meta: Metadata[]) {

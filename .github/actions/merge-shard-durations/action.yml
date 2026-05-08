@@ -1,0 +1,50 @@
+name: Merge and cache shard durations
+description: >
+  Downloads per-shard duration reports, merges them with the previous
+  cached durations using EMA smoothing, and writes a fresh cache for
+  the next workflow run.
+
+inputs:
+  artifact-pattern:
+    description: 'Glob pattern matching shard duration artifacts'
+    required: false
+    default: e2e-durations-*
+  cache-key:
+    description: 'Cache key prefix for stored durations'
+    required: false
+    default: e2e-file-durations
+  durations-path:
+    description: 'Where to write the merged durations file'
+    required: false
+    default: /tmp/file-durations.json
+  reports-dir:
+    description: 'Directory to download shard reports into'
+    required: false
+    default: /tmp/durations
+
+runs:
+  using: composite
+  steps:
+    - name: Restore previous durations
+      uses: actions/cache/restore@v4
+      with:
+        path: ${{ inputs.durations-path }}
+        key: ${{ inputs.cache-key }}-${{ runner.os }}
+        restore-keys: ${{ inputs.cache-key }}-
+    - name: Download shard reports
+      uses: actions/download-artifact@v4
+      with:
+        path: ${{ inputs.reports-dir }}
+        pattern: ${{ inputs.artifact-pattern }}
+        merge-multiple: true
+    - name: Merge file durations
+      shell: bash
+      env:
+        REPORTS_DIR: ${{ inputs.reports-dir }}
+        DURATIONS: ${{ inputs.durations-path }}
+      run: node tests/scripts/merge-file-durations.js $REPORTS_DIR $DURATIONS $DURATIONS
+    - name: Cache merged durations
+      uses: actions/cache/save@v4
+      with:
+        path: ${{ inputs.durations-path }}
+        key: ${{ inputs.cache-key }}-${{ runner.os }}-${{ github.run_id }}-${{ github.run_attempt }}

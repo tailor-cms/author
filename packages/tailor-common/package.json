@@ -5,6 +5,11 @@
     "src"
   ],
   "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./asset": "./src/asset/index.js",
+    "./src/*": "./src/*"
+  },
   "dependencies": {
     "@tailor-cms/config-parser": "workspace:*",
     "is-localhost": "0.0.2",

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <AppBar v-if="store.user" :user="store.user" />
-    <VMain class="view">
+    <VMain class="view bg-primary-darken-3">
       <slot></slot>
     </VMain>
     <ConfirmationDialog />
@@ -54,10 +54,6 @@ html {
   &::-webkit-scrollbar {
     display: none;
   }
-}
-
-.v-main {
-  background: #37474f;
 }
 
 .v-main .view {

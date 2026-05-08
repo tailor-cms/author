@@ -5,6 +5,7 @@ import { SCHEMAS } from '@tailor-cms/config';
 interface ConfigCookie {
   statsigKey?: string;
   aiUiEnabled?: boolean;
+  discoveryEnabled?: boolean;
   availableSchemas?: string;
   oidcEnabled?: boolean;
   oidcLoginText?: string;

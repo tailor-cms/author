@@ -41,6 +41,14 @@ export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
   return repository;
 };
 
+export const toRepositoryAssets = async (page: Page, name?: string) => {
+  const { data } = await SeedClient.seedTestRepository({ name });
+  const { repository } = data;
+  await page.goto(`/repository/${repository.id}/root/assets`);
+  await page.waitForLoadState('networkidle');
+  return repository;
+};
+
 export const toSeededRepositorySettings = async (
   page: Page,
   authorEmail?: string,

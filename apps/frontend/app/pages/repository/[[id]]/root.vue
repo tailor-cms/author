@@ -88,6 +88,11 @@ const getTabItems = ({
       route: 'revisions',
       icon: 'history',
     },
+    {
+      name: 'Assets',
+      route: 'repository-assets',
+      icon: 'folder-multiple-image',
+    },
     hasSettingsAvailable && {
       name: 'Settings',
       route: 'repository-settings-general',

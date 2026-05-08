@@ -1,17 +1,29 @@
 name: Setup Tailor for E2E testing
+description: Install deps, configure env, and start the app for E2E testing
+inputs:
+  skip-build:
+    description: 'Skip the build step (use when build artifacts are pre-built)'
+    required: false
+    default: 'false'
+  skip-services:
+    description: 'Skip starting docker-compose services (use when provided externally)'
+    required: false
+    default: 'false'
 runs:
   using: composite
   steps:
   - uses: pnpm/action-setup@v4
   - uses: actions/setup-node@v4
     with:
-      node-version: 24.2.0
+      node-version-file: '.node-version'
       cache: 'pnpm'
       cache-dependency-path: './pnpm-lock.yaml'
   - name: Install dependencies
     shell: bash
-    run: pnpm i --frozen-lockfile
-  - uses: actions/cache@v3
+    # --ignore-scripts skips Nuxt's postinstall (`nuxt prepare`),
+    # which is redundant since the build cache restores `.nuxt`.
+    run: pnpm i --frozen-lockfile --prefer-offline --ignore-scripts
+  - uses: actions/cache@v4
     name: Check Playwright cache
     id: playwright-cache
     with:
@@ -19,25 +31,36 @@ runs:
       key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
   - name: Install Playwright
     shell: bash
-    run: pnpm dlx playwright@${{ env.PLAYWRIGHT_VERSION }} install --with-deps
+    run: pnpm dlx playwright@${{ env.PLAYWRIGHT_VERSION }} install chromium --with-deps
     if: steps.playwright-cache.outputs.cache-hit != 'true'
   - name: Run service deps via Docker
+    if: inputs.skip-services != 'true'
     uses: hoverkraft-tech/compose-action@v2.0.1
     with:
       compose-file: docker-compose.dev.yaml
   - name: Update .env.dev config
     shell: bash
-    run: |
-      echo "REVERSE_PROXY_PORT=3000" >> .env.dev
-  - name: Configure env and build
+    run: echo "REVERSE_PROXY_PORT=3000" >> .env.dev
+  - name: Configure environment
     shell: bash
-    run: pnpm setup:dev --ci
+    # Call the setup script directly instead of `pnpm setup:dev`,
+    # which would re-run `pnpm i` and trigger the Nuxt postinstall.
+    run: |
+      SETUP_FLAGS="--ci"
+      if [ "${{ inputs.skip-build }}" = "true" ]; then
+        SETUP_FLAGS="$SETUP_FLAGS --skip-build"
+      fi
+      node ./scripts/setup/index.js $SETUP_FLAGS
   - name: Migrate DB
     shell: bash
     run: pnpm db:migrate
   - name: Seed DB
     shell: bash
     run: pnpm seed
-  - name: Run
+  - name: Start application
     shell: bash
-    run: pnpm start & sleep 15
+    run: |
+      pnpm start &
+      echo "Waiting for application to be ready..."
+      timeout 60 bash -c "until curl -sf $APP_URL/api/healthcheck > /dev/null 2>&1; do sleep 0.5; done"
+      echo "Application is ready!"

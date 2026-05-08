@@ -72,7 +72,7 @@ const LessonConfig: ActivityConfig = {
       key: 'thumbnailImage',
       type: MetaInputType.File,
       label: 'Thumbnail Image',
-      placeholder: 'Click to upload a thumbnail image',
+      placeholder: 'Click to add a thumbnail image',
       icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],
@@ -100,7 +100,7 @@ export const SCHEMA: Schema = {
       key: 'thumbnailImage',
       type: MetaInputType.File,
       label: 'Thumbnail Image',
-      placeholder: 'Click to upload a thumbnail image',
+      placeholder: 'Click to add a thumbnail image',
       icon: 'mdi-image',
       validate: {
         ext: ['jpg', 'jpeg', 'png'],

@@ -15,6 +15,7 @@ export { default as comment } from './comment';
 export { default as contentElement } from './contentElement';
 export { default as feed } from './feed';
 export { default as repository } from './repository';
+export { default as repositoryAsset } from './repositoryAsset';
 export { default as revision } from './revision';
 export { default as tag } from './tag';
 export { default as user } from './user';

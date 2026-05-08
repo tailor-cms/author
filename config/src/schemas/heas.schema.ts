@@ -226,7 +226,7 @@ export const SCHEMA: Schema = {
           key: 'transcript',
           type: MetaInputType.File,
           label: 'Video Transcript',
-          placeholder: 'Click to upload video transcript',
+          placeholder: 'Click to add video transcript',
           validate: {
             ext: ['pdf'],
           },
