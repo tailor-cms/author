@@ -2,8 +2,8 @@
   <VCard class="mb-8 py-2 px-5" elevation="4">
     <div
       :class="{
-        'subcontainer-header-collapsible': isCollapsible,
         'mb-8': isExpanded,
+        'subcontainer-header-collapsible': isCollapsible,
       }"
       class="d-flex align-center mt-3 mx-1"
       @click="isCollapsible && toggleExpanded()"
@@ -20,7 +20,7 @@
       </VCardTitle>
       <VSpacer />
       <VChip
-        v-if="!isExpanded && elementCount"
+        v-if="!isExpanded && elementCount && !disableContentElementList"
         class="mr-2 flex-shrink-0"
         color="primary-lighten-1"
         size="x-small"
@@ -48,48 +48,36 @@
         @click.stop="emit('delete:subcontainer', container, label)"
       />
     </div>
-    <VExpandTransition
-      @before-enter="isAnimating = true"
-      @after-enter="isAnimating = false"
-      @before-leave="isAnimating = true"
-      @after-leave="isAnimating = false"
-    >
-      <div v-show="isExpanded" class="subcontainer-body">
-        <div :class="{ 'subcontainer-body-hidden': isAnimating }">
-          <VRow v-if="processedMeta.length">
-            <VCol
-              v-for="input in processedMeta"
-              :key="input.key"
-              :cols="input.cols || 12"
-              class="pt-0 pb-3 px-8"
-            >
-              <MetaInput
-                :meta="input"
-                @update="(key, val) => (containerData[key] = val)"
-              />
-            </VCol>
-          </VRow>
-          <StructuredContent
-            v-if="!disableContentElementList"
-            v-bind="$attrs"
-            :activities="activities"
-            :container="container"
-            :elements="elements"
-            :is-disabled="isDisabled"
-            :label="'content elements'"
-            :layout="layout"
-            :supported-element-config="contentElementConfig"
-            @add:subcontainer="emit('add:subcontainer', $event)"
-            @update:subcontainer="emit('update:subcontainer', $event)"
-            @delete:subcontainer="emit('delete:subcontainer', $event)"
-            @delete:element="(el, force) => emit('delete:element', el, force)"
-            @reorder:element="emit('reorder:element', $event)"
-          />
-        </div>
-        <VSkeletonLoader
-          v-if="isAnimating"
-          class="subcontainer-body-skeleton"
-          type="paragraph, sentences, paragraph, sentences, paragraph"
+    <VExpandTransition>
+      <div v-show="isExpanded" class="pt-2">
+        <VRow v-if="processedMeta.length">
+          <VCol
+            v-for="input in processedMeta"
+            :key="input.key"
+            :cols="input.cols || 12"
+            class="pt-0 pb-3 px-8"
+          >
+            <MetaInput
+              :meta="input"
+              @update="(key, val) => (containerData[key] = val)"
+            />
+          </VCol>
+        </VRow>
+        <StructuredContent
+          v-if="!disableContentElementList"
+          v-bind="$attrs"
+          :activities="activities"
+          :container="container"
+          :elements="elements"
+          :is-disabled="isDisabled"
+          :label="'content elements'"
+          :layout="layout"
+          :supported-element-config="contentElementConfig"
+          @add:subcontainer="emit('add:subcontainer', $event)"
+          @update:subcontainer="emit('update:subcontainer', $event)"
+          @delete:subcontainer="emit('delete:subcontainer', $event)"
+          @delete:element="(el, force) => emit('delete:element', el, force)"
+          @reorder:element="emit('reorder:element', $event)"
         />
       </div>
     </VExpandTransition>
@@ -118,8 +106,8 @@ const props = defineProps<{
   contentElementConfig?: Array<any>;
   disableContentElementList?: boolean;
   isCollapsible?: boolean;
-  expandAll?: boolean;
   collapsedPreviewKey?: string | null;
+  expandAll?: boolean;
 }>();
 
 const emit = defineEmits([
@@ -137,7 +125,6 @@ const elementCount = computed(() => {
 });
 
 const isExpanded = ref(true);
-const isAnimating = ref(false);
 
 const collapsedPreviewText = computed(() => {
   const key = props.collapsedPreviewKey || props.meta?.[0]?.key;
@@ -147,13 +134,6 @@ const collapsedPreviewText = computed(() => {
 const toggleExpanded = () => {
   isExpanded.value = !isExpanded.value;
 };
-
-watch(
-  () => props.expandAll,
-  (expanded) => {
-    if (props.isCollapsible) isExpanded.value = !!expanded;
-  },
-);
 
 const containerData = ref({ ...props.container?.data }) as any;
 
@@ -170,6 +150,14 @@ const save = debounce(() => {
 }, 500);
 
 watch(containerData, save, { deep: true });
+
+watch(
+  () => props.expandAll,
+  (expanded) => {
+    if (props.isCollapsible) isExpanded.value = !!expanded;
+  },
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>
@@ -180,29 +168,5 @@ watch(containerData, save, { deep: true });
 .subcontainer-header-collapsible {
   cursor: pointer;
   user-select: none;
-}
-
-.subcontainer-body {
-  position: relative;
-}
-
-.subcontainer-body-hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.subcontainer-body-skeleton {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
-  padding-top: 1rem;
-  background: transparent;
-
-  :deep(.v-skeleton-loader__text) {
-    height: 14px;
-    margin: 0.75rem 0;
-    border-radius: 4px;
-  }
 }
 </style>
