@@ -1,29 +1,25 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+import { NavigationRail } from './NavigationRail';
 import { Toast } from '../common/Toast';
 
 export class Sidebar {
   readonly page: Page;
   readonly el: Locator;
+  readonly rail: NavigationRail;
 
-  public static getUserAccessRoute = (id: number) =>
-    `/repository/${id}/root/settings/access/user-management`;
+  public static getAccessRoute = (id: number) =>
+    `/repository/${id}/root/settings/access`;
 
-  public static getGroupAccessRoute = (id: number) =>
-    `/repository/${id}/root/settings/access/group-management`;
-
-  constructor(page: Page, el: Locator) {
+  constructor(page: Page) {
     this.page = page;
-    this.el = el;
-  }
-
-  getSidebarAction(name: string) {
-    return this.el.locator('.v-list-item-title').getByText(name);
+    this.rail = new NavigationRail(page);
+    this.el = this.rail.el;
   }
 
   async clone(name = 'Cloned repository') {
-    await this.getSidebarAction('Clone').click();
+    await this.rail.runAction('Clone');
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByLabel('Name').fill(name);
     await dialog.getByLabel('Description').fill('Test description');
@@ -32,7 +28,7 @@ export class Sidebar {
   }
 
   async publish() {
-    await this.getSidebarAction('Publish').click();
+    await this.rail.runAction('Publish');
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'Confirm' }).click();
     await expect(dialog.getByText('Please wait...')).toBeVisible();
@@ -42,7 +38,7 @@ export class Sidebar {
   }
 
   async export() {
-    await this.getSidebarAction('Export').click();
+    await this.rail.runAction('Export');
     const dialog = this.page.locator('div[role="dialog"]');
     await expect(dialog.getByText('Repository export is ready.')).toBeVisible({
       timeout: 10000,
@@ -50,11 +46,13 @@ export class Sidebar {
     const downloadEvent = this.page.waitForEvent('download');
     await dialog.getByRole('button', { name: 'Download' }).click();
     const download = await downloadEvent;
-    await download.saveAs(`tmp/${download.suggestedFilename()}`);
+    const path = `tmp/${download.suggestedFilename()}`;
+    await download.saveAs(path);
+    return path;
   }
 
   async delete() {
-    await this.getSidebarAction('Delete').click();
+    await this.rail.runAction('Delete');
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
   }
@@ -70,7 +68,7 @@ export class GeneralSettings {
 
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
-    this.sidebar = new Sidebar(page, el.locator('.settings-sidebar'));
+    this.sidebar = new Sidebar(page);
     this.toast = new Toast(page);
     this.page = page;
     this.el = el;
@@ -145,30 +143,39 @@ export class AddUserDialog {
 
 export class RepositoryUsers {
   static getRoute = (id: number) =>
-    `/repository/${id.toString()}/root/settings/access/user-management`;
+    `/repository/${id.toString()}/root/settings/access`;
 
   readonly page: Page;
   readonly el: Locator;
   readonly sidebar: Sidebar;
-  readonly userTable: Locator;
+  readonly userList: Locator;
+  readonly groupList: Locator;
   readonly userEntriesLocator: Locator;
+  readonly groupEntriesLocator: Locator;
   readonly addBtn: Locator;
-  readonly prevPage: Locator;
-  readonly nextPage: Locator;
-  readonly itemsPerPageBtn: Locator;
+  readonly usersTabBtn: Locator;
+  readonly groupsTabBtn: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
-    this.sidebar = new Sidebar(page, el.locator('.settings-sidebar'));
-    this.userTable = el.locator('.v-table');
-    this.userEntriesLocator = this.userTable.locator('.user-entry');
+    this.sidebar = new Sidebar(page);
+    this.userList = el.locator('.user-list');
+    this.groupList = el.locator('.group-list');
+    this.userEntriesLocator = el.locator('.user-row');
+    this.groupEntriesLocator = el.locator('.group-row');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.usersTabBtn = el.getByRole('button', { name: 'Users', exact: true });
+    this.groupsTabBtn = el.getByRole('button', { name: 'Groups', exact: true });
     this.page = page;
     this.el = el;
-    this.prevPage = el.getByRole('button', { name: 'Previous page' });
-    this.nextPage = el.getByRole('button', { name: 'Next page' });
-    const itemsPerPage = el.locator('.v-data-table-footer__items-per-page');
-    this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
+  }
+
+  showUsersTab() {
+    return this.usersTabBtn.click();
+  }
+
+  showGroupsTab() {
+    return this.groupsTabBtn.click();
   }
 
   getEntries() {
@@ -177,6 +184,13 @@ export class RepositoryUsers {
 
   getEntryByEmail(email: string) {
     return this.userEntriesLocator.filter({ hasText: email });
+  }
+
+  async setUserRole(email: string, role: 'Admin' | 'Author') {
+    const entry = this.getEntryByEmail(email);
+    await entry.locator('.user-role-btn').click();
+    const menu = this.page.locator('.v-overlay.v-menu').last();
+    await menu.locator('.role-option').filter({ hasText: role }).click();
   }
 
   async addUser(email: string, role: 'Admin' | 'Author' = 'Admin') {
@@ -193,13 +207,5 @@ export class RepositoryUsers {
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
     await expect(entry).not.toBeVisible();
-  }
-
-  async selectItemsPerPage(value: number = 10 | 25 | 50 | 100) {
-    await this.itemsPerPageBtn.click();
-    await this.page
-      .locator('.v-list-item .v-list-item-title')
-      .filter({ hasText: value.toString() })
-      .click();
   }
 }

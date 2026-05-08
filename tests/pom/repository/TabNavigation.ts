@@ -1,23 +1,27 @@
 import type { Page } from '@playwright/test';
 
+import { NavigationRail } from './NavigationRail';
+
 export class TabNavigation {
   readonly page: Page;
+  readonly rail: NavigationRail;
   readonly el;
 
   constructor(page: Page) {
     this.page = page;
-    this.el = page.getByTestId('repositoryRoot_nav');
+    this.rail = new NavigationRail(page);
+    this.el = this.rail.el;
   }
 
   goToHistory() {
-    return this.el.getByText('History').click();
+    return this.rail.goToHistory();
   }
 
   goToProgress() {
-    return this.el.getByText('Progress').click();
+    return this.rail.goToProgress();
   }
 
   goToSettings() {
-    return this.el.getByText('Settings').click();
+    return this.rail.goToSettings();
   }
 }
