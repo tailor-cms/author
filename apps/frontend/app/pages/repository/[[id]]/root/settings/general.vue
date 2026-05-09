@@ -1,41 +1,55 @@
 <template>
-  <div class="pa-8 text-left">
-    <div class="actions d-flex justify-end">
+  <VLayout class="general-page h-100">
+    <VAppBar
+      color="primary-darken-3"
+      class="px-4"
+      border="b surface"
+      elevation="0"
+      height="64"
+      order="1"
+    >
+      <VSpacer />
       <VBtn
         :loading="isPublishing"
-        color="primary-darken-2"
+        class="text-none"
+        color="teal-lighten-3"
+        prepend-icon="mdi-cloud-upload-outline"
         size="small"
         variant="tonal"
         @click="publish"
       >
-        <VIcon class="mr-2">mdi-cloud-upload-outline</VIcon>
         Publish info
       </VBtn>
-    </div>
-    <RepositoryNameField
-      :key="`name.${$pluginRegistry.dataVersion}`"
-      :value="nameValue"
-      :repository-id="repository?.id"
-      :entity-data="entityData"
-      class="meta-input"
-      @change="updateMeta"
-    />
-    <MetaInput
-      :key="`description.${$pluginRegistry.dataVersion}`"
-      :meta="descriptionMeta"
-      :entity-data="entityData"
-      class="meta-input"
-      @update="updateMeta"
-    />
-    <MetaInput
-      v-for="it in metadata"
-      :key="`${it.key}.${$pluginRegistry.dataVersion}`"
-      :meta="it"
-      :entity-data="entityData"
-      class="meta-input"
-      @update="updateMeta"
-    />
-  </div>
+    </VAppBar>
+    <VMain>
+      <VContainer class="pa-8 text-left" max-width="1440">
+        <RepositoryNameField
+          :key="`name.${$pluginRegistry.dataVersion}`"
+          :value="nameValue"
+          :entity-data="entityData"
+          :repository-id="repository?.id"
+          class="meta-input"
+          @change="updateMeta"
+        />
+        <MetaInput
+          :key="`description.${$pluginRegistry.dataVersion}`"
+          :meta="descriptionMeta"
+          :entity-data="entityData"
+          class="meta-input"
+          @update="updateMeta"
+        />
+        <MetaInput
+          v-for="it in metadata"
+          :key="`${it.key}.${$pluginRegistry.dataVersion}`"
+          :meta="it"
+          :entity-data="entityData"
+          class="meta-input"
+          dark
+          @update="updateMeta"
+        />
+      </VContainer>
+    </VMain>
+  </VLayout>
 </template>
 
 <script lang="ts" setup>

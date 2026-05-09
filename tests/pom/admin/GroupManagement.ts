@@ -173,11 +173,13 @@ export class GroupManagement {
   readonly prevPage: Locator;
   readonly nextPage: Locator;
   readonly itemsPerPageBtn: Locator;
+  readonly searchInput: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.group-management');
     this.groupTable = el.locator('.v-table');
     this.addBtn = el.getByRole('button', { name: 'Add user group' });
+    this.searchInput = el.getByTestId('search-user-groups').locator('input');
     this.groupEntriesLocator = this.groupTable.locator('.group-entry');
     this.prevPage = el.getByRole('button', { name: 'Previous page' });
     this.nextPage = el.getByRole('button', { name: 'Next page' });

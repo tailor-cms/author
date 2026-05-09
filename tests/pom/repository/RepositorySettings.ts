@@ -1,76 +1,23 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+import { NavigationRail } from './NavigationRail';
 import { Toast } from '../common/Toast';
 
-export class Sidebar {
-  readonly page: Page;
-  readonly el: Locator;
-
-  public static getUserAccessRoute = (id: number) =>
-    `/repository/${id}/root/settings/access/user-management`;
-
-  public static getGroupAccessRoute = (id: number) =>
-    `/repository/${id}/root/settings/access/group-management`;
-
-  constructor(page: Page, el: Locator) {
-    this.page = page;
-    this.el = el;
-  }
-
-  getSidebarAction(name: string) {
-    return this.el.locator('.v-list-item-title').getByText(name);
-  }
-
-  async clone(name = 'Cloned repository') {
-    await this.getSidebarAction('Clone').click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByLabel('Name').fill(name);
-    await dialog.getByLabel('Description').fill('Test description');
-    await dialog.getByRole('button', { name: 'Clone' }).click();
-    await expect(dialog).not.toBeVisible();
-  }
-
-  async publish() {
-    await this.getSidebarAction('Publish').click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByRole('button', { name: 'Confirm' }).click();
-    await expect(dialog.getByText('Please wait...')).toBeVisible();
-    await expect(dialog.getByText('Please wait...')).not.toBeVisible({
-      timeout: 10000,
-    });
-  }
-
-  async export() {
-    await this.getSidebarAction('Export').click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    await expect(dialog.getByText('Repository export is ready.')).toBeVisible({
-      timeout: 10000,
-    });
-    const downloadEvent = this.page.waitForEvent('download');
-    await dialog.getByRole('button', { name: 'Download' }).click();
-    const download = await downloadEvent;
-    await download.saveAs(`tmp/${download.suggestedFilename()}`);
-  }
-
-  async delete() {
-    await this.getSidebarAction('Delete').click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByRole('button', { name: 'confirm' }).click();
-  }
-}
+export const getAccessRoute = (id: number) =>
+  `/repository/${id}/root/settings/access`;
 
 export class GeneralSettings {
   readonly page: Page;
   readonly el: Locator;
-  readonly sidebar: Sidebar;
+  readonly rail: NavigationRail;
   readonly nameInput: Locator;
   readonly descriptionInput: Locator;
   readonly toast: Toast;
 
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
-    this.sidebar = new Sidebar(page, el.locator('.settings-sidebar'));
+    this.rail = new NavigationRail(page);
     this.toast = new Toast(page);
     this.page = page;
     this.el = el;
@@ -144,31 +91,45 @@ export class AddUserDialog {
 }
 
 export class RepositoryUsers {
-  static getRoute = (id: number) =>
-    `/repository/${id.toString()}/root/settings/access/user-management`;
+  static getRoute = getAccessRoute;
 
   readonly page: Page;
   readonly el: Locator;
-  readonly sidebar: Sidebar;
-  readonly userTable: Locator;
+  readonly rail: NavigationRail;
+  readonly userList: Locator;
+  readonly groupList: Locator;
   readonly userEntriesLocator: Locator;
+  readonly groupEntriesLocator: Locator;
   readonly addBtn: Locator;
+  readonly usersTabBtn: Locator;
+  readonly groupsTabBtn: Locator;
+  readonly pagination: Locator;
   readonly prevPage: Locator;
   readonly nextPage: Locator;
-  readonly itemsPerPageBtn: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
-    this.sidebar = new Sidebar(page, el.locator('.settings-sidebar'));
-    this.userTable = el.locator('.v-table');
-    this.userEntriesLocator = this.userTable.locator('.user-entry');
+    this.rail = new NavigationRail(page);
+    this.userList = el.locator('.user-list');
+    this.groupList = el.locator('.group-list');
+    this.userEntriesLocator = el.locator('.user-row');
+    this.groupEntriesLocator = el.locator('.group-row');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.usersTabBtn = el.getByRole('button', { name: 'Users', exact: true });
+    this.groupsTabBtn = el.getByRole('button', { name: 'Groups', exact: true });
+    this.pagination = el.locator('.v-pagination');
+    this.prevPage = this.pagination.getByRole('button', { name: 'Previous page' });
+    this.nextPage = this.pagination.getByRole('button', { name: 'Next page' });
     this.page = page;
     this.el = el;
-    this.prevPage = el.getByRole('button', { name: 'Previous page' });
-    this.nextPage = el.getByRole('button', { name: 'Next page' });
-    const itemsPerPage = el.locator('.v-data-table-footer__items-per-page');
-    this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
+  }
+
+  showUsersTab() {
+    return this.usersTabBtn.click();
+  }
+
+  showGroupsTab() {
+    return this.groupsTabBtn.click();
   }
 
   getEntries() {
@@ -177,6 +138,13 @@ export class RepositoryUsers {
 
   getEntryByEmail(email: string) {
     return this.userEntriesLocator.filter({ hasText: email });
+  }
+
+  async setUserRole(email: string, role: 'Admin' | 'Author') {
+    const entry = this.getEntryByEmail(email);
+    await entry.locator('.user-role-btn').click();
+    const menu = this.page.locator('.v-overlay.v-menu').last();
+    await menu.locator('.role-option').filter({ hasText: role }).click();
   }
 
   async addUser(email: string, role: 'Admin' | 'Author' = 'Admin') {
@@ -193,13 +161,5 @@ export class RepositoryUsers {
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
     await expect(entry).not.toBeVisible();
-  }
-
-  async selectItemsPerPage(value: number = 10 | 25 | 50 | 100) {
-    await this.itemsPerPageBtn.click();
-    await this.page
-      .locator('.v-list-item .v-list-item-title')
-      .filter({ hasText: value.toString() })
-      .click();
   }
 }

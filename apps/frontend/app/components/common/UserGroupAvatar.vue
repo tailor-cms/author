@@ -1,5 +1,5 @@
 <template>
-  <VAvatar :size="size" tile>
+  <VAvatar :size="size" color="primary">
     <VImg v-if="logoUrl" :src="logoUrl" alt="User group avatar" />
     <VIcon v-else :color="placeholderColor" :icon="placeholderIcon" />
   </VAvatar>
@@ -16,6 +16,6 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   size: 24,
   placeholderColor: 'primary-lighten-4',
-  placeholderIcon: 'mdi-account-multiple-outline',
+  placeholderIcon: 'mdi-account-multiple',
 });
 </script>

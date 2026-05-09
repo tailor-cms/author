@@ -1,12 +1,12 @@
 <template>
-  <div class="toolbar d-flex align-center justify-end flex-wrap ga-4 mb-2">
+  <div class="toolbar d-flex align-center flex-wrap ga-4">
     <VHover>
-      <template #default="{ isHovering, props: hoverProps }">
+      <template #default="{ props: hoverProps }">
         <VTextField
           v-bind="hoverProps"
           v-model="searchInput"
-          :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-          density="comfortable"
+          :bg-color="'transparent'"
+          density="compact"
           placeholder="Search by name or id..."
           prepend-inner-icon="mdi-magnify"
           rounded="xl"
@@ -18,13 +18,15 @@
         />
       </template>
     </VHover>
+    <VSpacer />
     <VBtn
       v-if="!isFlat"
       :disabled="!!props.search"
-      class="px-5"
-      color="primary-lighten-4"
-      height="42"
+      class="text-none"
+      color="teal-lighten-3"
       variant="tonal"
+      rounded="lg"
+      size="small"
       @click="currentRepositoryStore.toggleOutlineExpand"
     >
       Toggle all

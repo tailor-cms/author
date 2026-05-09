@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <AppBar v-if="store.user" :user="store.user" />
-    <VMain class="view bg-primary-darken-3">
+    <VMain class="view bg-primary-darken-4">
       <slot></slot>
     </VMain>
     <ConfirmationDialog />

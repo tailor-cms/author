@@ -124,12 +124,14 @@ export class UserManagement {
   readonly itemsPerPageBtn: Locator;
   readonly archiveToggle: Locator;
   readonly addBtn: Locator;
+  readonly searchInput: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.user-management');
     this.userTable = el.locator('.v-table');
     this.archiveToggle = el.getByLabel('Archived');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.searchInput = el.getByTestId('search-users').locator('input');
     this.userEntriesLocator = this.userTable.locator('.user-entry');
     this.prevPage = el.getByRole('button', { name: 'Previous page' });
     this.nextPage = el.getByRole('button', { name: 'Next page' });

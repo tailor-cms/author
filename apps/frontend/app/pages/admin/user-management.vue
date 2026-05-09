@@ -24,7 +24,7 @@
       <VCol>
         <VTextField
           v-model="filter"
-          aria-label="Search users"
+          data-testid="search-users"
           label="Search"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"

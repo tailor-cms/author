@@ -1,21 +1,17 @@
 <template>
   <VAppBar
     id="mainAppBar"
-    class="elevation-0"
-    color="primary-darken-3"
-    height="84"
+    class="app-bar elevation-0"
+    color="primary-darken-4"
   >
-    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pl-7">
+    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pl-5">
       <img
         alt="Tailor logo"
-        class="mr-6"
+        class="mr-4"
         src="/img/logo-new.svg"
-        width="52"
+        width="36"
       />
-      <VAppBarTitle
-        v-if="!showUserGroupSelect"
-        class="app-name pt-1 text-primary-lighten-3"
-      >
+      <VAppBarTitle class="app-name text-primary-lighten-3">
         Tailor
         <span v-if="!smAndDown" class="text-caption font-weight-bold">
           <span class="text-primary-lighten-3 text-uppercase">
@@ -25,43 +21,16 @@
         </span>
       </VAppBarTitle>
     </NuxtLink>
-    <VSelect
-      v-if="showUserGroupSelect"
-      v-model="repositoryStore.selectedUserGroupId"
-      :items="repositoryStore.userGroupOptions"
-      item-title="name"
-      item-value="id"
-      min-width="250"
-      max-width="300"
-      hide-details
-      @update:model-value="onUserGroupChange"
-    >
-      <template #selection="{ item }">
-        <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-5" />
-        <span class="text-truncate">{{ item.title }}</span>
-      </template>
-      <template #item="{ item, props: { title, ...restProps } }">
-        <VListItem v-bind="restProps">
-          <UserGroupAvatar
-            :logo-url="item.raw.logoUrl"
-            class="mr-5"
-            placeholder-color="primary-darken-3"
-          />
-          {{ title }}
-        </VListItem>
-      </template>
-    </VSelect>
     <template #append>
       <template v-if="!smAndDown">
         <VBtn
-          v-for="{ name, to } in routes"
+          v-for="{ name, to } in topLevelRoutes"
           :key="name"
-          :rounded="false"
           :to="to"
-          color="teal-lighten-5"
-          height="100"
-          min-width="120"
+          class="text-none"
+          min-width="96"
           variant="text"
+          rounded="lg"
         >
           <span class="toolbar-route text-truncate">{{ name }}</span>
         </VBtn>
@@ -83,7 +52,7 @@
             v-bind="props"
             :img-url="user.imgUrl"
             aria-label="User menu"
-            class="mx-5"
+            class="mx-4"
             tag="button"
           />
         </template>
@@ -131,15 +100,11 @@
 </template>
 
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
-import UserGroupAvatar from './UserGroupAvatar.vue';
-
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
-import { useCurrentRepository } from '@/stores/current-repository';
 
 defineProps<{ user: User }>();
 
@@ -150,13 +115,7 @@ const { $pluginRegistry } = useNuxtApp() as any;
 const globalPlugins = computed(() => $pluginRegistry.getGlobalComponents());
 const config = useConfigStore();
 const authStore = useAuthStore();
-const repositoryStore = useRepositoryStore();
-const currentRepositoryStore = useCurrentRepository();
-const route = useRoute();
-
-const { repository } = storeToRefs(currentRepositoryStore);
-
-const routes = computed(() => {
+const topLevelRoutes = computed(() => {
   const items = [
     { name: 'Catalog', to: '/', icon: 'mdi-view-grid-plus-outline' },
     {
@@ -168,24 +127,10 @@ const routes = computed(() => {
     },
   ];
   if (!authStore.hasAdminAccess) items.pop();
-  if (repository.value) {
-    items.unshift({
-      name: `${repository.value.name} structure`,
-      to: `/repository/${repository.value?.id}/root/structure`,
-      icon: 'mdi-file-tree-outline',
-    });
-  }
   return items;
 });
 
-const showUserGroupSelect = computed(
-  () => authStore.userGroups.length > 0 && route.name === 'catalog',
-);
-
-const onUserGroupChange = async () => {
-  repositoryStore.resetPaginationParams();
-  await repositoryStore.fetch();
-};
+const routes = computed(() => topLevelRoutes.value);
 
 const logout = async () => {
   if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {
@@ -197,10 +142,7 @@ const logout = async () => {
 </script>
 
 <style lang="scss" scoped>
-$container-height: 2.5rem;
-$font-color: #333;
-
-.v-toolbar {
+.app-bar {
   z-index: 10;
 
   .v-toolbar__content .v-btn.v-btn--icon {
@@ -215,25 +157,35 @@ $font-color: #333;
 
 .app-brand {
   display: flex;
+  align-items: center;
   text-decoration: none;
   cursor: pointer;
 
   .app-name {
     margin: 0 0 0 0.125rem;
     font-family: Poppins, Roboto, sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.125rem;
     font-weight: 600;
-    letter-spacing: 1px;
-    line-height: $container-height;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
     text-transform: uppercase;
   }
 }
 
+.top-route {
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
 .toolbar-route {
-  max-width: 12.5rem;
+  max-width: 14rem;
 }
 
 .v-avatar img {
   padding: 0.125rem;
+}
+
+:deep(.v-toolbar__append) {
+  gap: 0.25rem
 }
 </style>

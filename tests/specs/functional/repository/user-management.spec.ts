@@ -60,49 +60,40 @@ test('should be able to update user role', async ({ page }) => {
   await page.goto(RepositoryUsers.getRoute(repository.id));
   const repositoryUsers = new RepositoryUsers(page);
   await expect(repositoryUsers.el).toContainText('admin@gostudion.com');
-  const roleSelect = repositoryUsers
-    .getEntryByEmail('admin@gostudion.com')
-    .locator('.user-entry-role');
-  await roleSelect.click();
-  // Select mounted outside
-  const dropdownMenu = page.locator('.v-overlay.v-menu');
-  await dropdownMenu
-    .locator('.v-list-item-title')
-    .filter({ hasText: 'Author' })
-    .click();
+  const entry = repositoryUsers.getEntryByEmail('admin@gostudion.com');
+  const roleBtn = entry.locator('.user-role-btn');
+  await repositoryUsers.setUserRole('admin@gostudion.com', 'Author');
   await expect(page.getByText('User updated')).toBeVisible();
-  await expect(roleSelect).toHaveText('Author');
+  await expect(roleBtn).toHaveText('Author');
 });
 
 test('should be able to paginate', async ({ page }) => {
   const repository = await toEmptyRepository(page);
-  await page.goto(RepositoryUsers.getRoute(repository.id));
-  const userManagement = new RepositoryUsers(page);
-  // Make sure all of the newly created users are displayed
-  await userManagement.selectItemsPerPage(100);
-  // Calculate the number of users to create to have two pages
+  // Seed enough users to overflow the first page
   const userCreateCount = DEFAULT_USERS_PER_PAGE + 1;
   const createdUsers = await Promise.all(
     times(userCreateCount, () => SeedClient.seedUser()),
-  ).then((responses) => responses.map((res) => res.data));
+  ).then((res) => res.map((res) => res.data));
+  await page.goto(RepositoryUsers.getRoute(repository.id), {
+    waitUntil: 'networkidle',
+  });
+  const repositoryUsers = new RepositoryUsers(page);
   for (const user of createdUsers) {
-    // Assign the user to the repository
-    await userManagement.addUser(user.email, 'Author');
+    await repositoryUsers.addBtn.click();
+    const dialog = new AddUserDialog(page);
+    await dialog.addUser(user.email, 'Author');
+    await expect(dialog.el).not.toBeVisible();
   }
   await page.reload();
   await page.waitForLoadState('networkidle');
-  // First page should have the maximum number of users per page
-  await expect(userManagement.userEntriesLocator).toHaveCount(
-    DEFAULT_USERS_PER_PAGE,
-  );
-  await userManagement.nextPage.click();
+  await expect(repositoryUsers.userEntriesLocator).toHaveCount(DEFAULT_USERS_PER_PAGE);
+  await expect(repositoryUsers.pagination).toBeVisible();
+  await repositoryUsers.nextPage.click();
   const userTotal = userCreateCount + 1; // +1 for the repository creator
   const nextPageTotal = userTotal - DEFAULT_USERS_PER_PAGE;
-  await expect(userManagement.userEntriesLocator).toHaveCount(nextPageTotal);
-  await userManagement.prevPage.click();
-  await expect(userManagement.userEntriesLocator).toHaveCount(
-    DEFAULT_USERS_PER_PAGE,
-  );
+  await expect(repositoryUsers.userEntriesLocator).toHaveCount(nextPageTotal);
+  await repositoryUsers.prevPage.click();
+  await expect(repositoryUsers.userEntriesLocator).toHaveCount(DEFAULT_USERS_PER_PAGE);
 });
 
 test.afterAll(async () => {

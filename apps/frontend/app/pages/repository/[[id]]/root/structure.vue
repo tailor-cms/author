@@ -1,17 +1,34 @@
 <template>
-  <VLayout class="structure-page">
+  <div class="structure-page">
+    <VAppBar
+      v-if="hasActivities"
+      border="b surface"
+      class="pr-2"
+      color="primary-darken-3"
+      elevation="0"
+      height="64"
+      order="1"
+    >
+      <OutlineToolbar
+        :is-flat="isFlat"
+        :search="search"
+        class="flex-grow-1 align-self-center px-3"
+        @search="(val) => (search = val)"
+      />
+      <VAppBarNavIcon
+        v-if="smAndDown"
+        aria-label="Toggle sidebar"
+        class="mr-2"
+        color="white"
+        @click="repositoryStore.updateSidebar(!repositoryStore.isSidebarOpen)"
+      />
+    </VAppBar>
     <VMain class="structure-container">
       <VContainer
         ref="structureEl"
-        class="structure d-flex flex-column justify-start py-8 px-sm-15"
+        class="structure d-flex flex-column justify-start py-4 px-sm-15"
         max-width="1800"
       >
-        <OutlineToolbar
-          v-if="hasActivities"
-          :is-flat="isFlat"
-          :search="search"
-          @search="(val) => (search = val)"
-        />
         <BrokenReferencesAlert />
         <template v-if="!search">
           <Draggable
@@ -61,13 +78,14 @@
       </VContainer>
     </VMain>
     <Sidebar />
-  </VLayout>
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { filter, find, map } from 'lodash-es';
 import Draggable from 'vuedraggable';
 import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify';
 
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
@@ -85,6 +103,7 @@ definePageMeta({
 });
 
 const repositoryStore = useCurrentRepository();
+const { smAndDown } = useDisplay();
 
 const { outlineActivities, rootActivities, selectedActivity, taxonomy } =
   storeToRefs(repositoryStore);

@@ -1,64 +1,77 @@
 <template>
-  <VContainer class="py-8 px-sm-15" max-width="1440">
-    <Toolbar
-      ref="toolbarRef"
-      v-model:search="searchQuery"
-      @upload="uploadFiles"
-      @link:add="showAddLinkDialog = true"
-      @discover="showDiscoveryDialog = true"
-    />
-    <BulkActionBar
-      :assets="assetStore.assets"
-      :selected-ids="selection.selectedIds"
-      :is-indexing="indexing.isIndexing.value"
-      :is-bulk-deleting="assetStore.isBulkRemoving"
-      @clear="selection.clear"
-      @index="indexSelected"
-      @delete="confirmBulkDelete"
-    />
-    <ListControls
-      v-model:selected-category="selectedCategory"
-      v-model:items-per-page="assetStore.itemsPerPage"
-      :categories="categories"
-      :is-all-selected="isAllSelected"
-      :sort-direction="sortDirection"
-      @toggle-all="$event ? selection.selectAll() : selection.clear()"
-      @toggle-sort="toggleSortDirection"
-    />
-    <AssetList
-      :assets="processedAssets"
-      :is-fetching="assetStore.isFetching"
-      :items-per-page="assetStore.itemsPerPage"
-      :page="assetStore.page"
-      :page-count="assetStore.pageCount"
-      :selected-ids="selection.selectedIds"
-      :selected-category="selectedCategory"
-      :total="assetStore.total"
-      @delete="confirmDelete"
-      @download="downloadAsset"
-      @index="(asset: Asset) => indexing.startIndexing([asset.id])"
-      @preview="activeAsset = $event"
-      @select:toggle="selection.toggle"
-      @update:page="assetStore.page = $event"
-    />
-    <AssetDetailDialog
-      :asset="activeAsset"
-      :is-saving="assetStore.isSaving"
-      @close="activeAsset = null"
-      @deindex="onDeindex"
-      @delete="confirmDelete"
-      @download="downloadAsset"
-      @save="onSaveMeta"
-    />
-    <AddLinkDialog
-      v-model="showAddLinkDialog"
-      @add="(url: string) => assetStore.addLink(url).then(refetch)"
-    />
-    <DiscoveryDialog
-      v-model="showDiscoveryDialog"
-      @added="refetch()"
-    />
-  </VContainer>
+  <div class="assets-page h-100">
+    <VAppBar
+      border="b surface"
+      color="primary-darken-3"
+      elevation="0"
+      height="64"
+      order="1"
+    >
+      <Toolbar
+        ref="toolbarRef"
+        v-model:search="searchQuery"
+        class="flex-grow-1 align-self-center px-4"
+        @upload="uploadFiles"
+        @link:add="showAddLinkDialog = true"
+        @discover="showDiscoveryDialog = true"
+      />
+    </VAppBar>
+    <VMain>
+      <VContainer class="py-8 px-sm-15" max-width="1440">
+        <BulkActionBar
+          :assets="assetStore.assets"
+          :selected-ids="selection.selectedIds"
+          :is-indexing="indexing.isIndexing.value"
+          :is-bulk-deleting="assetStore.isBulkRemoving"
+          @clear="selection.clear"
+          @index="indexSelected"
+          @delete="confirmBulkDelete"
+        />
+        <ListControls
+          v-model:selected-category="selectedCategory"
+          v-model:items-per-page="assetStore.itemsPerPage"
+          :categories="categories"
+          :is-all-selected="isAllSelected"
+          :sort-direction="sortDirection"
+          @toggle-all="$event ? selection.selectAll() : selection.clear()"
+          @toggle-sort="toggleSortDirection"
+        />
+        <AssetList
+          :assets="processedAssets"
+          :is-fetching="assetStore.isFetching"
+          :items-per-page="assetStore.itemsPerPage"
+          :page="assetStore.page"
+          :page-count="assetStore.pageCount"
+          :selected-ids="selection.selectedIds"
+          :selected-category="selectedCategory"
+          :total="assetStore.total"
+          @delete="confirmDelete"
+          @download="downloadAsset"
+          @index="(asset: Asset) => indexing.startIndexing([asset.id])"
+          @preview="activeAsset = $event"
+          @select:toggle="selection.toggle"
+          @update:page="assetStore.page = $event"
+        />
+        <AssetDetailDialog
+          :asset="activeAsset"
+          :is-saving="assetStore.isSaving"
+          @close="activeAsset = null"
+          @deindex="onDeindex"
+          @delete="confirmDelete"
+          @download="downloadAsset"
+          @save="onSaveMeta"
+        />
+        <AddLinkDialog
+          v-model="showAddLinkDialog"
+          @add="(url: string) => assetStore.addLink(url).then(refetch)"
+        />
+        <DiscoveryDialog
+          v-model="showDiscoveryDialog"
+          @added="refetch()"
+        />
+      </VContainer>
+    </VMain>
+  </div>
 </template>
 
 <script lang="ts" setup>

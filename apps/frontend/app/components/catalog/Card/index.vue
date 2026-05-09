@@ -7,6 +7,7 @@
       :ripple="false"
       class="repository-card d-flex flex-column justify-space-between text-left"
       color="primary-darken-4"
+      rounded="xl"
       @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
     >
       <div class="card-body">
@@ -186,8 +187,15 @@ onMounted(() => nextTick(detectSchemaTruncation));
 <style lang="scss" scoped>
 .repository-card {
   height: 14.75rem;
-  transition: all 0.3s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   @media (max-width: 1263px) {
     height: 17.25rem;
