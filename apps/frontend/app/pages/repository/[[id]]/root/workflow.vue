@@ -2,12 +2,12 @@
   <div class="workflow-page h-100">
     <VAppBar
       v-if="workflow"
-      color="primary-darken-3"
       border="b surface"
-      order="1"
-      height="64"
-      elevation="0"
       class="pr-3"
+      color="primary-darken-3"
+      elevation="0"
+      height="64"
+      order="1"
     >
       <WorkflowFilters
         v-model:assignee-ids="filters.assigneeIds"
@@ -16,7 +16,7 @@
         v-model:status="filters.status"
         :assignee-options="assignees"
         :status-options="workflow.statuses"
-        class="flex-grow-1 px-3 align-self-center"
+        class="flex-grow-1 align-self-center px-3"
       />
       <VAppBarNavIcon
         v-if="smAndDown"

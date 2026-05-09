@@ -19,7 +19,7 @@
         <VAvatar :image="user.imgUrl" size="34" variant="tonal" />
       </template>
       <VListItemTitle class="text-body-1 font-weight-medium">
-        {{ user.fullName || user.email }}
+        {{ user.label || user.email }}
       </VListItemTitle>
       <VListItemSubtitle v-if="user.fullName" class="text-body-2">
         {{ user.email }}

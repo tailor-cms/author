@@ -19,12 +19,12 @@
           v-if="!showSidebar"
           v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
           class="sidebar-toggle"
-          color="primary-darken-2"
-          icon="mdi-chevron-double-right"
-          variant="flat"
-          size="small"
-          density="comfortable"
           aria-label="Open sidebar"
+          color="primary-darken-2"
+          density="comfortable"
+          icon="mdi-chevron-double-right"
+          size="small"
+          variant="flat"
           @click="showSidebar = true"
         />
       </VFadeTransition>
@@ -117,15 +117,15 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .sidebar-toggle {
   position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 76px;
-  z-index: 1004;
-  border-radius: 0 8px 8px 0 !important;
   width: 1.75rem !important;
   height: 3.5rem !important;
+  top: 50%;
+  left: 4.75rem;
+  transform: translateY(-50%);
+  z-index: 1004;
   opacity: 0.85;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.25);
+  border-radius: 0 8px 8px 0 !important;
+  box-shadow: 0.125rem 0 0.5rem rgba(0, 0, 0, 0.25);
   transition: opacity 160ms ease, transform 160ms ease;
 
   &:hover {

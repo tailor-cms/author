@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
     <VLayout
-      class="fill-height bg-primary-darken-3 rounded-t-xl border-surface border-sm mx-3">
+      class="fill-height mx-3 bg-primary-darken-3 rounded-t-xl border-surface border-sm">
       <VContainer class="catalog" max-width="1360">
         <VRow class="catalog-actions py-10" dense>
           <VCol cols="12" lg="4" md="6">
@@ -67,7 +67,7 @@
           @close="onFilterChange"
         />
         <VExpandTransition>
-          <div v-if="selectedRepos.size > 0" class="text-left d-flex align-center mb-4">
+          <div v-if="selectedRepos.size > 0" class="d-flex align-center mb-4 text-left">
             <VTooltip
               content-class="bg-primary-darken-4"
               location="top"
@@ -91,8 +91,8 @@
               :disabled="selectedRepos.size === 0"
               class="ml-4"
               color="secondary-lighten-3"
-              variant="tonal"
               prepend-icon="mdi-delete"
+              variant="tonal"
               @click="deleteSelected"
             >
               Delete ({{ selectedRepos.size }})
@@ -123,7 +123,7 @@
             </VCol>
           </VRow>
           <template #load-more="{ props: loadProps }">
-            <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="loadProps">
+            <VBtn v-if="!areAllItemsFetched" v-bind="loadProps" variant="tonal">
               Load more
             </VBtn>
           </template>

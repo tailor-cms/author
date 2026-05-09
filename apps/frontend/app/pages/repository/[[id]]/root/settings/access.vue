@@ -13,9 +13,9 @@
         base-color="white"
         color="primary-lighten-4"
         density="compact"
+        rounded="lg"
         variant="tonal"
         mandatory
-        rounded="lg"
       >
         <VBtn
           v-for="tab in tabs"

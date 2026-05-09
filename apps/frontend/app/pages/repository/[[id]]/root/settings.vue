@@ -1,12 +1,12 @@
 <template>
   <div class="repository-settings">
     <VNavigationDrawer
-      width="380"
+      border="surface"
       color="primary-darken-3"
       elevation="0"
       location="left"
-      border="surface"
       order="1"
+      width="380"
       permanent
     >
       <VList class="pa-4 text-left" slim>

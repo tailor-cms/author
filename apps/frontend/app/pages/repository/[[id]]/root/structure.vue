@@ -2,17 +2,17 @@
   <div class="structure-page">
     <VAppBar
       v-if="hasActivities"
-      color="primary-darken-3"
-      class="pr-2"
       border="b surface"
-      order="1"
-      height="64"
+      class="pr-2"
+      color="primary-darken-3"
       elevation="0"
+      height="64"
+      order="1"
     >
       <OutlineToolbar
         :is-flat="isFlat"
         :search="search"
-        class="flex-grow-1 px-3 align-self-center"
+        class="flex-grow-1 align-self-center px-3"
         @search="(val) => (search = val)"
       />
       <VAppBarNavIcon

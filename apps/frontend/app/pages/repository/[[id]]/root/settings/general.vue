@@ -4,18 +4,18 @@
       color="primary-darken-3"
       class="px-4"
       border="b surface"
-      order="1"
-      height="64"
       elevation="0"
+      height="64"
+      order="1"
     >
       <VSpacer />
       <VBtn
         :loading="isPublishing"
+        class="text-none"
         color="teal-lighten-3"
         prepend-icon="mdi-cloud-upload-outline"
-        variant="tonal"
-        class="text-none"
         size="small"
+        variant="tonal"
         @click="publish"
       >
         Publish info
@@ -26,8 +26,8 @@
         <RepositoryNameField
           :key="`name.${$pluginRegistry.dataVersion}`"
           :value="nameValue"
-          :repository-id="repository?.id"
           :entity-data="entityData"
+          :repository-id="repository?.id"
           class="meta-input"
           @change="updateMeta"
         />

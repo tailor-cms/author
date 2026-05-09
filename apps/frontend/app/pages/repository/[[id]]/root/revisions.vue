@@ -1,11 +1,11 @@
 <template>
   <div class="revisions-page h-100">
     <VAppBar
-      color="primary-darken-3"
       border="b surface"
-      order="1"
-      height="64"
+      color="primary-darken-3"
       elevation="0"
+      height="64"
+      order="1"
     >
       <VSpacer />
       <VSelect
@@ -42,7 +42,7 @@
             />
           </VList>
           <template #load-more="{ props: scrollProps }">
-            <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="scrollProps">
+            <VBtn v-if="!areAllItemsFetched" v-bind="scrollProps" variant="tonal">
               Load more
             </VBtn>
           </template>

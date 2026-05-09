@@ -1,16 +1,16 @@
 <template>
   <div class="assets-page h-100">
     <VAppBar
-      color="primary-darken-3"
       border="b surface"
-      order="1"
-      height="64"
+      color="primary-darken-3"
       elevation="0"
+      height="64"
+      order="1"
     >
       <Toolbar
         ref="toolbarRef"
         v-model:search="searchQuery"
-        class="flex-grow-1 px-4 align-self-center"
+        class="flex-grow-1 align-self-center px-4"
         @upload="uploadFiles"
         @link:add="showAddLinkDialog = true"
         @discover="showDiscoveryDialog = true"

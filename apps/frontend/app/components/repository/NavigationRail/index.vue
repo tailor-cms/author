@@ -46,6 +46,7 @@
           />
         </template>
         <VList density="compact" min-width="200" nav>
+          <VListSubheader>Repository actions</VListSubheader>
           <VListItem
             v-for="action in actions"
             :key="action.name"

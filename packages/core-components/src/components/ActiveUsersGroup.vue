@@ -26,8 +26,8 @@
         <template #activator="{ props: menuProps }">
           <VAvatar
             v-bind="menuProps"
-            class="v-avatar-group__overflow"
             :text="`+${overflow}`"
+            class="v-avatar-group__overflow"
           />
         </template>
         <VList density="compact" min-width="220" nav>
