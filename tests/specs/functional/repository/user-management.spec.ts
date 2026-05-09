@@ -11,7 +11,7 @@ import {
 } from '../../../helpers/seed.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
-const ITEMS_PER_PAGE = 10;
+const DEFAULT_USERS_PER_PAGE = 10;
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
@@ -70,7 +70,7 @@ test('should be able to update user role', async ({ page }) => {
 test('should be able to paginate', async ({ page }) => {
   const repository = await toEmptyRepository(page);
   // Seed enough users to overflow the first page
-  const userCreateCount = ITEMS_PER_PAGE + 1;
+  const userCreateCount = DEFAULT_USERS_PER_PAGE + 1;
   const createdUsers = await Promise.all(
     times(userCreateCount, () => SeedClient.seedUser()),
   ).then((res) => res.map((res) => res.data));
@@ -86,14 +86,14 @@ test('should be able to paginate', async ({ page }) => {
   }
   await page.reload();
   await page.waitForLoadState('networkidle');
-  await expect(repositoryUsers.userEntriesLocator).toHaveCount(ITEMS_PER_PAGE);
+  await expect(repositoryUsers.userEntriesLocator).toHaveCount(DEFAULT_USERS_PER_PAGE);
   await expect(repositoryUsers.pagination).toBeVisible();
   await repositoryUsers.nextPage.click();
   const userTotal = userCreateCount + 1; // +1 for the repository creator
-  const nextPageTotal = userTotal - ITEMS_PER_PAGE;
+  const nextPageTotal = userTotal - DEFAULT_USERS_PER_PAGE;
   await expect(repositoryUsers.userEntriesLocator).toHaveCount(nextPageTotal);
   await repositoryUsers.prevPage.click();
-  await expect(repositoryUsers.userEntriesLocator).toHaveCount(ITEMS_PER_PAGE);
+  await expect(repositoryUsers.userEntriesLocator).toHaveCount(DEFAULT_USERS_PER_PAGE);
 });
 
 test.afterAll(async () => {
