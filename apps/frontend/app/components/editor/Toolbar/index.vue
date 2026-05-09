@@ -1,10 +1,10 @@
 <template>
   <VAppBar
     :color="toolbarColor"
-    class="toolbar-wrapper"
-    order="1"
-    height="64"
     border="b surface"
+    class="toolbar-wrapper"
+    height="64"
+    order="1"
   >
     <div v-if="activity && !element" class="activity-toolbar w-100 px-3">
       <ActivityActions />
@@ -176,7 +176,7 @@ const usersWithActivity = computed(() => {
 <style lang="scss" scoped>
 .toolbar-wrapper {
   :deep(.v-toolbar__content) {
-    height: 64px !important;
+    height: 4rem !important;
     padding: 0;
   }
 
@@ -206,7 +206,7 @@ const usersWithActivity = computed(() => {
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  height: 64px;
+  height: 4rem;
   min-width: 0;
   gap: 0.25rem;
 }
@@ -224,13 +224,13 @@ const usersWithActivity = computed(() => {
   text-overflow: ellipsis;
 }
 
+.activity-name {
+  letter-spacing: 0.01em;
+}
+
 .title-separator {
   margin: 0 0.5rem;
   color: rgba(255, 255, 255, 0.32);
-}
-
-.activity-name {
-  letter-spacing: 0.01em;
 }
 
 .linked-label {
@@ -244,7 +244,7 @@ const usersWithActivity = computed(() => {
 }
 
 .rail-divider {
-  height: 24px;
+  height: 1.5rem;
   border-color: rgba(255, 255, 255, 0.12);
   align-self: center;
 }

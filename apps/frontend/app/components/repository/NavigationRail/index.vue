@@ -29,9 +29,9 @@
     <template #append>
       <ActiveUsersGroup
         :users="activeUsers"
-        class="rail-active-users pa-2"
         :limit="4"
         :size="32"
+        class="rail-active-users pa-2"
         vertical
       />
       <VMenu v-if="actions.length" location="end" offset="8">
@@ -111,7 +111,7 @@ const editorActivityId = computed(() => {
   return repoStore.outlineActivities.find(isEditable)?.id ?? null;
 });
 
-const carriedActivityQuery = computed(() => {
+const selectedActivityQuery = computed(() => {
   if (route.name !== 'editor') return undefined;
   const id = Number(route.params.activityId) || null;
   return id ? { activityId: String(id) } : undefined;
@@ -129,7 +129,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
       to: {
         name: 'repository',
         params: { id },
-        query: carriedActivityQuery.value,
+        query: selectedActivityQuery.value,
       },
     },
   ];
@@ -154,7 +154,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
       to: {
         name: 'progress',
         params: { id },
-        query: carriedActivityQuery.value,
+        query: selectedActivityQuery.value,
       },
     });
   }
@@ -215,11 +215,11 @@ const actions = computed<RailAction[]>(() => {
     min-width: unset;
     justify-content: center;
     padding: 0.5rem 0.25rem;
-    border-radius: 10px;
     font-size: 0.6875rem;
+    color: rgba(255, 255, 255, 0.72);
     letter-spacing: 0.02em;
     text-transform: none;
-    color: rgba(255, 255, 255, 0.72);
+    border-radius: 10px;
     transition: background-color 160ms ease, color 160ms ease;
 
     :deep(.v-tab__slider) {

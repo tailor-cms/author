@@ -2,15 +2,15 @@
   <VNavigationDrawer
     v-model="modelValue"
     :width="lgAndUp ? 480 : 380"
+    border="surface"
     class="sidebar"
     color="primary-darken-3"
     elevation="0"
     location="left"
-    border="surface"
     mobile-breakpoint="md"
   >
     <div class="sidebar-layout">
-      <div class="sidebar-tab-row mt-1 d-flex align-center">
+      <div class="sidebar-tab-row d-flex align-center mt-1">
         <VTabs
           v-model="selectedTab"
           class="sidebar-tabs flex-grow-1"
@@ -35,8 +35,8 @@
         </VTabs>
         <VBtn
           v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
-          class="sidebar-collapse-btn"
           aria-label="Collapse sidebar"
+          class="sidebar-collapse-btn"
           color="white"
           icon="mdi-chevron-double-left"
           size="small"

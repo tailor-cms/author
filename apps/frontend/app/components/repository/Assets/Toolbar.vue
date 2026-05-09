@@ -19,32 +19,32 @@
     <VBtn
       :loading="isUploading"
       :disabled="isUploading"
+      class="text-none"
       color="teal-lighten-3"
       prepend-icon="mdi-upload"
       variant="tonal"
       size="small"
-      class="text-none"
       @click="openFilePicker"
     >
       Upload
     </VBtn>
     <VBtn
+      class="text-none"
       color="teal-lighten-3"
       prepend-icon="mdi-link-plus"
       variant="tonal"
       size="small"
-      class="text-none"
       @click="emit('link:add')"
     >
       Add Link
     </VBtn>
     <VBtn
       v-if="isDiscoveryEnabled"
+      class="text-none"
       color="teal-lighten-3"
       prepend-icon="mdi-earth-plus"
       variant="tonal"
       size="small"
-      class="text-none"
       @click="emit('discover')"
     >
       Discover

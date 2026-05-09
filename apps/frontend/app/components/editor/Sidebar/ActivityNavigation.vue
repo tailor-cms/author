@@ -1,6 +1,6 @@
 <template>
   <div class="navigation-container">
-    <div class="navigation-heade pb-0">
+    <div class="navigation-header pb-0">
       <VTextField
         v-model="searchInput"
         clear-icon="mdi-close"
@@ -91,7 +91,7 @@ const navigateToActivity = (activityId: number) => {
 }
 
 .navigation-header {
-  padding: 0.75rem 0 0;
+  padding: 0.5rem 0 0;
 }
 
 .tree-node {

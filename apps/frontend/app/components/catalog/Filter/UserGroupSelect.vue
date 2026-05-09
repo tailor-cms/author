@@ -4,14 +4,14 @@
     :items="items"
     bg-color="primary-darken-2"
     class="user-group-select"
-    flat
-    hide-details
     item-title="name"
     item-value="id"
     max-width="240"
     min-width="200"
     rounded="pill"
     variant="solo"
+    flat
+    hide-details
   >
     <template #selection="{ item }">
       <UserGroupAvatar :logo-url="item.raw.logoUrl" :size="24" class="mr-2" />
@@ -22,7 +22,6 @@
         <UserGroupAvatar
           :logo-url="item.raw.logoUrl"
           class="mr-3"
-          placeholder-color="primary-darken-3"
         />
         {{ title }}
       </VListItem>

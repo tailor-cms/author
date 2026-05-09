@@ -22,11 +22,11 @@
     <VBtn
       v-if="!isFlat"
       :disabled="!!props.search"
+      class="text-none"
       color="teal-lighten-3"
       variant="tonal"
       rounded="lg"
       size="small"
-      class="text-none"
       @click="currentRepositoryStore.toggleOutlineExpand"
     >
       Toggle all
