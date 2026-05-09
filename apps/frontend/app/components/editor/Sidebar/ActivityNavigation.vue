@@ -1,15 +1,16 @@
 <template>
   <div class="navigation-container">
-    <div class="navigation-header px-1 pt-3 pb-0 bg-primary-darken-2">
+    <div class="navigation-header pb-0">
       <VTextField
         v-model="searchInput"
-        class="mt-1 mx-4"
         clear-icon="mdi-close"
-        label="Search..."
+        placeholder="Search..."
+        bg-color="transparent"
+        density="comfortable"
         prepend-inner-icon="mdi-magnify"
-        variant="plain"
+        variant="solo"
+        flat
         clearable
-        hide-details
       />
     </div>
     <TailorTreeview
@@ -90,7 +91,7 @@ const navigateToActivity = (activityId: number) => {
 }
 
 .navigation-header {
-  padding: 0.75rem 0 0;
+  padding: 0.5rem 0 0;
 }
 
 .tree-node {

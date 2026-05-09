@@ -7,6 +7,7 @@ export { default as AddElement } from './components/AddElement/index.vue';
 export { default as InlineActivator } from './components/AddElement/InlineActivator.vue';
 export { default as UserAvatar } from './components/UserAvatar.vue';
 export { default as ActiveUsers } from './components/ActiveUsers.vue';
+export { default as ActiveUsersGroup } from './components/ActiveUsersGroup.vue';
 export { default as SelectElement } from './components/SelectElement/index.vue';
 export { default as FileInput } from './components/FileInput/index.vue';
 export { default as FileInputLegacy } from './components/FileInput/LegacyWrapper.vue';

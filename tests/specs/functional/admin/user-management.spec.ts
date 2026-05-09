@@ -153,11 +153,10 @@ test('should be able to restore user access', async ({ page }) => {
 test('should be able to search by email', async ({ page }) => {
   const email = 'admin@gostudion.com';
   const userManagement = new UserManagement(page);
-  await userManagement.el.getByLabel('Search users').fill(email);
+  await userManagement.searchInput.fill(email);
   await expect(userManagement.userTable).toContainText(email);
-  const matches = await userManagement.getEntries();
-  expect(matches).toHaveLength(1);
-  await userManagement.el.getByLabel('Search users').fill('sdlkas');
+  await expect(userManagement.userEntriesLocator).toHaveCount(1);
+  await userManagement.searchInput.fill('sdlkas');
   await expect(userManagement.userTable).not.toContainText(email);
 });
 

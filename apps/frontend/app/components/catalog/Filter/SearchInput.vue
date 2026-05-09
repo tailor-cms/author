@@ -5,9 +5,9 @@
         v-model="internalValue"
         :bg-color="`primary-darken-${isExpanded ? 1 : 2}`"
         aria-label="Search repositories"
-        class="pb-5"
         placeholder="Search..."
         prepend-inner-icon="mdi-magnify"
+        rounded="pill"
         variant="solo"
         clearable
         flat

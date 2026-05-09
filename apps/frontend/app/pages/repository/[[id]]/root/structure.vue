@@ -1,16 +1,32 @@
 <template>
-  <VLayout class="structure-page">
+  <div class="structure-page">
+    <VAppBar
+      v-if="hasActivities || isCollection"
+      border="b surface"
+      class="pr-2"
+      color="primary-darken-3"
+      elevation="0"
+      height="64"
+      order="1"
+    >
+      <OutlineToolbar
+        v-model:search="filters.search"
+        class="flex-grow-1 align-self-center px-3"
+      />
+      <VAppBarNavIcon
+        v-if="smAndDown"
+        aria-label="Toggle sidebar"
+        class="mr-2"
+        color="white"
+        @click="repositoryStore.updateSidebar(!repositoryStore.isSidebarOpen)"
+      />
+    </VAppBar>
     <VMain class="structure-container">
       <VContainer
         ref="structureEl"
-        class="structure d-flex flex-column justify-start py-8 px-sm-15"
+        class="structure d-flex flex-column justify-start py-4 px-sm-15"
         max-width="1800"
       >
-        <OutlineToolbar
-          v-if="hasActivities || isCollection"
-          v-model:search="filters.search"
-          :has-activities="hasActivities"
-        />
         <BrokenReferencesAlert />
         <div v-if="isCollection" class="collection-wrapper mt-5">
           <CollectionTable
@@ -34,11 +50,11 @@
               v-bind="{ handle: '.activity' }"
               :list="rootActivities"
               :move="repositoryStore.isValidDrop"
-              class="mt-5 d-flex flex-column ga-2"
+              class="mt-5"
               animation="150"
               group="activities"
               item-key="uid"
-              @update="(e: SortableEvent) => reorder(e, rootActivities)"
+              @update="(data: SortableEvent) => reorder(data, rootActivities)"
               @change="(e: ChangeEvent) => repositoryStore.onOutlineItemDrop(e)"
             >
               <template #item="{ element, index }">
@@ -57,9 +73,7 @@
               v-for="activity in filteredActivities"
               :key="activity.uid"
               :activity="activity"
-              :is-selected="
-                repositoryStore.selectedActivity?.id === activity.id
-              "
+              :is-selected="repositoryStore.selectedActivity?.id === activity.id"
               @select="repositoryStore.selectActivity(activity.id)"
               @show="goTo(activity)"
             />
@@ -67,7 +81,7 @@
               <VAlert
                 v-if="!filteredActivities.length"
                 class="mb-5"
-                color="primary-lighten-3"
+                color="primary-lighten-2"
                 icon="mdi-magnify"
                 variant="tonal"
                 prominent
@@ -80,17 +94,19 @@
       </VContainer>
     </VMain>
     <Sidebar />
-  </VLayout>
+  </div>
 </template>
 
 <script lang="ts" setup>
+import { filter } from 'lodash-es';
 import Draggable from 'vuedraggable';
 import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify';
 
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import CollectionTable from '@/components/repository/Outline/CollectionTable.vue';
-import OutlineFooter from '~/components/repository/Outline/OutlineFooter.vue';
+import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
@@ -108,6 +124,7 @@ definePageMeta({
 });
 
 const repositoryStore = useCurrentRepository();
+const { smAndDown } = useDisplay();
 
 const {
   outlineActivities,
@@ -129,16 +146,12 @@ const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);
 
 const filteredActivities = computed(() => {
-  return outlineActivities.value.filter(
-    (activity: StoreActivity) =>
-      !filters.search || filterBySearch(activity),
-  );
-});
-
-const filterBySearch = ({ shortId, data }: StoreActivity) => {
+  if (!filters.search) return outlineActivities.value;
   const regex = new RegExp(filters.search.trim(), 'i');
-  return regex.test(shortId) || regex.test(data.name);
-};
+  return filter(outlineActivities.value, ({ shortId, data: { name } }) => {
+    return regex.test(shortId) || regex.test(name);
+  });
+});
 
 const goTo = async (activity: StoreActivity) => {
   filters.search = '';

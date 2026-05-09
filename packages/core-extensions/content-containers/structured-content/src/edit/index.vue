@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-primary-darken-3">
+  <div>
     <div
       :class="{
         'pr-2 pb-2': !subcontainers?.length,

@@ -16,7 +16,7 @@ test('should be able to publish repository', async ({ page }) => {
   test.skip(!isStorageConfigured, 'Storage is not enabled');
   const { repository, activity } = await toSeededRepositorySettings(page);
   const settingsPage = new GeneralSettings(page);
-  await settingsPage.sidebar.publish();
+  await settingsPage.rail.publish();
   const publishedRepository = await StorageClient.source().get(repository.id);
   expect(publishedRepository).toBeDefined();
   expect(publishedRepository.id).toBe(repository.id);
@@ -49,7 +49,7 @@ test('should publish linked content with sourceId and isLinkedCopy', async ({
   await page.goto(`/repository/${targetRepoId}/root/settings/general`);
   await page.waitForLoadState('networkidle');
   const settingsPage = new GeneralSettings(page);
-  await settingsPage.sidebar.publish();
+  await settingsPage.rail.publish();
   // Read the published manifest from storage
   const publishedRepo = await StorageClient.source().get(targetRepoId);
   expect(publishedRepo).toBeDefined();

@@ -5,8 +5,8 @@ import { ActivityOutline } from '../../../pom/repository/Outline.ts';
 import { Editor } from '../../../pom/editor/Editor.ts';
 import { expectAlert } from '../../../pom/common/utils.ts';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings.ts';
+import { NavigationRail } from '../../../pom/repository/NavigationRail.ts';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar.ts';
-import { TabNavigation } from '../../../pom/repository/TabNavigation.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
 const getHistoryRoute = (id) => `/repository/${id}/root/revisions`;
@@ -24,11 +24,11 @@ test('should display a revision for created repository', async ({ page }) => {
 
 test('should display a revision for updated repository', async ({ page }) => {
   await toEmptyRepository(page);
-  const tabNav = new TabNavigation(page);
-  await tabNav.goToSettings();
+  const rail = new NavigationRail(page);
+  await rail.goToSettings();
   const settings = new GeneralSettings(page);
   await settings.updateName('Test update');
-  await tabNav.goToHistory();
+  await rail.goToHistory();
   await expect(page.getByText('Updated repository')).toBeVisible();
 });
 
