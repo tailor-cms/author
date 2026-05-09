@@ -10,7 +10,7 @@
   </VAlert>
   <VList v-else-if="!isLoading" bg-color="transparent" class="user-list pa-0">
     <VListItem
-      v-for="user in store.users"
+      v-for="user in paginatedUsers"
       :key="user.id"
       class="user-row py-3 px-4 mb-2"
       rounded="lg"
@@ -64,6 +64,17 @@
         />
       </template>
     </VListItem>
+    <VPagination
+      v-if="pageCount > 1"
+      v-model="page"
+      :length="pageCount"
+      :total-visible="7"
+      active-color="primary-lighten-4"
+      class="pt-2"
+      color="primary-lighten-3"
+      density="comfortable"
+      rounded
+    />
   </VList>
 </template>
 
@@ -77,10 +88,22 @@ const props = defineProps<{
   roles: Array<{ title: string; value: string; description?: string }>;
 }>();
 
+const ITEMS_PER_PAGE = 10;
+
 const store = useCurrentRepository();
 const notify = useNotification();
 
 const isLoading = ref(true);
+const page = ref(1);
+
+const pageCount = computed(() =>
+  Math.max(1, Math.ceil(store.users.length / ITEMS_PER_PAGE)),
+);
+
+const paginatedUsers = computed(() => {
+  const start = (page.value - 1) * ITEMS_PER_PAGE;
+  return store.users.slice(start, start + ITEMS_PER_PAGE);
+});
 
 const roleLabel = (value: string) =>
   props.roles.find((r) => r.value === value)?.title ?? value;
@@ -112,6 +135,10 @@ const remove = (user: User) => {
 };
 
 getUsers();
+
+watch(pageCount, (count) => {
+  if (page.value > count) page.value = count;
+});
 </script>
 
 <style lang="scss" scoped>

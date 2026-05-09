@@ -23,7 +23,7 @@
         />
       </VList>
     </VNavigationDrawer>
-    <VMain>
+    <VMain class="settings-main">
       <NuxtPage />
     </VMain>
   </div>
@@ -59,3 +59,14 @@ onMounted(() => {
   navigateTo({ name: 'catalog' });
 });
 </script>
+
+<style lang="scss" scoped>
+.repository-settings {
+  height: 100%;
+}
+
+.settings-main {
+  height: 100%;
+  min-height: 0;
+}
+</style>

@@ -37,7 +37,7 @@
         :user-groups="(repository?.userGroups as UserGroup[]) ?? []"
       />
     </VAppBar>
-    <VMain>
+    <VMain class="access-main">
       <VContainer class="access-content pa-4" max-width="1440">
         <UserList v-show="selectedTab === 'users'" :roles="roles" />
         <UserGroupList v-show="selectedTab === 'groups'" />
@@ -106,3 +106,11 @@ const tabs = computed(() => [
   },
 ]);
 </script>
+
+<style lang="scss" scoped>
+.access-main {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+</style>

@@ -103,6 +103,9 @@ export class RepositoryUsers {
   readonly addBtn: Locator;
   readonly usersTabBtn: Locator;
   readonly groupsTabBtn: Locator;
+  readonly pagination: Locator;
+  readonly prevPage: Locator;
+  readonly nextPage: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
@@ -114,6 +117,9 @@ export class RepositoryUsers {
     this.addBtn = el.getByRole('button', { name: 'Add user' });
     this.usersTabBtn = el.getByRole('button', { name: 'Users', exact: true });
     this.groupsTabBtn = el.getByRole('button', { name: 'Groups', exact: true });
+    this.pagination = el.locator('.v-pagination');
+    this.prevPage = this.pagination.getByRole('button', { name: 'Previous page' });
+    this.nextPage = this.pagination.getByRole('button', { name: 'Next page' });
     this.page = page;
     this.el = el;
   }
