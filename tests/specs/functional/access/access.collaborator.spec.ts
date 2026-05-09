@@ -190,10 +190,10 @@ test.describe('Collaborator added to a User Group as Default User,', () => {
     await expect(page).toHaveURL('/');
   });
 
-  test('should not be able to access access settings', async ({ page }) => {
+  test('should not be able to access settings', async ({ page }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
     const accessRoute = getAccessRoute(repository.id);
-    await page.goto(accessRoute);
+    await page.goto(accessRoute, { waitUntil: 'networkidle' });
     await expect(page).toHaveURL('/');
   });
 });
@@ -240,10 +240,10 @@ test.describe('Collaborator added to a User Group with Colaborator role', () => 
     await expect(page).toHaveURL('/');
   });
 
-  test('should not be able to access access settings', async ({ page }) => {
+  test('should not be able to access settings', async ({ page }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
     const accessRoute = getAccessRoute(repository.id);
-    await page.goto(accessRoute);
+    await page.goto(accessRoute, { waitUntil: 'networkidle' });
     await expect(page).toHaveURL('/');
   });
 });

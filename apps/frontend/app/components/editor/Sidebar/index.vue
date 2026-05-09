@@ -3,7 +3,7 @@
     v-model="modelValue"
     :width="lgAndUp ? 480 : 380"
     border="surface"
-    class="sidebar"
+    class="editor-sidebar-main sidebar"
     color="primary-darken-3"
     elevation="0"
     location="left"
