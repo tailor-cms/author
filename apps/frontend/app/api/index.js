@@ -17,6 +17,7 @@ export { default as feed } from './feed';
 export { default as repository } from './repository';
 export { default as repositoryAsset } from './repositoryAsset';
 export { default as revision } from './revision';
+export { default as rpc } from './rpc';
 export { default as tag } from './tag';
 export { default as user } from './user';
 export { default as userGroup } from './userGroup';

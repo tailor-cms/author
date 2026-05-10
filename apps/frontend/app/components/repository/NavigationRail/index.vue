@@ -125,8 +125,8 @@ const repositoryTabs = computed<RailTab[]>(() => {
   const items: RailTab[] = [
     {
       key: 'structure',
-      label: 'Structure',
-      icon: 'file-tree',
+      label: repoStore.isCollection ? 'Items' : 'Structure',
+      icon: repoStore.isCollection ? 'view-list' : 'file-tree',
       to: {
         name: 'repository',
         params: { id },

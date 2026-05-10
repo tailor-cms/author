@@ -53,6 +53,7 @@
             isDisabled,
             isReadonly: props.isDisabled,
             dense,
+            autosave,
           }"
           @add="emit('add', $event)"
           @delete="emit('delete')"
@@ -219,6 +220,7 @@ interface Props {
   dense?: boolean;
   showDiscussion?: boolean;
   embedElementConfig?: ContentElementCategory[];
+  autosave?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -231,6 +233,7 @@ const props = withDefaults(defineProps<Props>(), {
   frame: true,
   dense: false,
   showDiscussion: false,
+  autosave: false,
 });
 
 const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
@@ -241,12 +244,19 @@ const editorState = inject<any>('$editorState');
 const eventBus = inject<any>('$eventBus');
 const getCurrentUser = inject<any>('$getCurrentUser');
 const doTheMagic = inject<any>('$doTheMagic');
+const rpc = inject<any>('$rpc', null);
 
 const { loading, loader } = useLoader();
 const confirmationDialog = useConfirmationDialog();
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 provide('$elementBus', elementBus);
+
+if (rpc) {
+  provide('$rpc', (procedure: string, payload?: any) =>
+    rpc(props.element.type, procedure, payload),
+  );
+}
 
 const isFocused = ref(false);
 const isSaving = ref(false);

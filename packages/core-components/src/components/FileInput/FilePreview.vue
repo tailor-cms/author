@@ -1,69 +1,71 @@
 <template>
-  <div class="mb-5 text-left">
-    <div class="v-label ma-1 text-caption">{{ label }}</div>
-    <VCard
-      :color="dark ? 'primary-lighten-4' : 'primary'"
-      class="file-preview d-flex align-center"
-      max-width="460"
-      rounded="lg"
-      variant="tonal"
-      border
-      @click="showPreview && (expanded = true)"
-    >
-      <VAvatar class="mr-3" color="primary" rounded="lg" size="75">
-        <VProgressCircular v-if="isLoading" indeterminate />
-        <VImg v-else-if="showPreview && url" :src="url" cover />
-        <VIcon v-else :icon="icon" size="x-large" />
-      </VAvatar>
-      <div
-        :class="dark ? 'text-primary-lighten-3' : 'text-primary-darken-2'"
-        class="file-name text-body-1 text-truncate"
+  <VOverlay
+    v-model="expanded"
+    :class="{ expanded }"
+    content-class="d-flex align-center justify-center h-100 w-100"
+    close-on-content-click
+  >
+    <template #activator="{ props: dialogProps }">
+      <VTextField
+        v-bind="$attrs"
+        :density="density"
+        :label="label"
+        :max-width="maxWidth"
+        :min-width="minWidth"
+        :model-value="fileName"
+        :variant="variant"
+        readonly
       >
-        {{ fileName }}
-      </div>
-      <VSpacer />
-      <div class="d-flex ma-3">
-        <VBtn
-          :color="dark ? 'primary-lighten-3' : 'primary-lighten-1'"
-          aria-label="Download file"
-          class="ml-3"
-          icon="mdi-download"
-          size="small"
-          variant="tonal"
-          @click.stop="emit('download')"
-        />
-        <VBtn
-          :color="dark ? 'secondary-lighten-3' : 'secondary-lighten-1'"
-          aria-label="Delete file"
-          class="ml-2"
-          icon="mdi-trash-can-outline"
-          size="small"
-          variant="tonal"
-          @click.stop="emit('delete')"
-        />
-      </div>
-    </VCard>
-    <VOverlay
-      v-if="showPreview"
-      v-model="expanded"
-      :class="{ expanded }"
-      content-class="d-flex align-center justify-center h-100 w-100"
-      close-on-content-click
-    >
-      <VBtn
-        class="position-absolute top-0 right-0 ma-4"
-        color="white"
-        icon="mdi-close"
-        variant="tonal"
-        @click="expanded = false"
-      />
-      <img v-if="url" :src="url" :alt="fileName" />
-    </VOverlay>
-  </div>
+        <template #prepend-inner>
+          <VProgressCircular v-if="isLoading" indeterminate size="24" />
+          <VImg
+            v-else-if="showPreview && url"
+            :src="url"
+            height="24"
+            width="24"
+            cover
+          />
+          <VIcon v-else :icon="icon" />
+        </template>
+        <template #append-inner>
+          <VBtn
+            v-if="showPreview"
+            v-bind="dialogProps"
+            aria-label="Preview image"
+            class="mr-1"
+            size="x-small"
+            variant="tonal"
+            icon
+          >
+            <VIcon icon="mdi-magnify" size="large" />
+          </VBtn>
+          <VBtn
+            v-if="!readonly"
+            aria-label="Remove file"
+            size="x-small"
+            variant="tonal"
+            icon
+            @click.stop="emit('delete')"
+          >
+            <VIcon icon="mdi-trash-can-outline" size="large" />
+          </VBtn>
+        </template>
+      </VTextField>
+    </template>
+    <VBtn
+      class="position-absolute top-0 right-0 ma-4"
+      color="white"
+      icon="mdi-close"
+      variant="tonal"
+      @click="expanded = false"
+    />
+    <img :src="url" :alt="fileName" />
+  </VOverlay>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import type { VTextField } from 'vuetify/components';
 
 interface Props {
   fileName: string;
@@ -72,7 +74,12 @@ interface Props {
   label?: string;
   icon?: string;
   dark?: boolean;
+  maxWidth?: string | number;
+  minWidth?: string | number;
   showPreview?: boolean;
+  variant?: VTextField['variant'];
+  density?: VTextField['density'];
+  readonly?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -81,7 +88,12 @@ withDefaults(defineProps<Props>(), {
   label: '',
   icon: 'mdi-file',
   dark: false,
+  maxWidth: '100%',
+  minWidth: '350',
   showPreview: false,
+  variant: 'outlined',
+  density: 'default',
+  readonly: false,
 });
 
 const emit = defineEmits<{
@@ -93,10 +105,6 @@ const expanded = ref(false);
 </script>
 
 <style lang="scss" scoped>
-.file-name {
-  max-width: 15rem;
-}
-
 .v-overlay {
   transition: all 0.3s ease;
 
@@ -106,10 +114,7 @@ const expanded = ref(false);
 
   :deep(img) {
     max-width: 100%;
+    max-height: 100%;
   }
-}
-
-.v-label {
-  opacity: 0.65;
 }
 </style>

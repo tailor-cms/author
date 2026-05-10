@@ -15,6 +15,7 @@ import asset from '../asset/index.ts';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
+import rpc from '../rpc/index.js';
 
 const { Repository, UserGroup } = db;
 const router = express.Router();
@@ -85,6 +86,7 @@ mount(router, '/:repositoryId', asset);
 mount(router, '/:repositoryId', revision);
 mount(router, '/:repositoryId', contentElement);
 mount(router, '/:repositoryId', comment);
+mount(router, '/:repositoryId', rpc);
 
 function mount(router, mountPath, subrouter) {
   return router.use(

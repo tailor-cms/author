@@ -5,6 +5,7 @@
         <VBtn
           v-bind="{ ...menuProps, ...hoverProps }"
           :color="color"
+          :readonly="readonly"
           class="picker ml-1 mr-3"
           icon
         >
@@ -51,7 +52,7 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 
-const props = defineProps<{ color: string }>();
+const props = defineProps<{ color: string; readonly: boolean }>();
 const emit = defineEmits(['input']);
 
 const menu = ref(false);

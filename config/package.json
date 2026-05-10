@@ -18,7 +18,8 @@
     "prebuild": "del-cli dist"
   },
   "dependencies": {
-    "@tailor-cms/config-parser": "workspace:^"
+    "@tailor-cms/config-parser": "workspace:^",
+    "lodash-es": "^4.17.21"
   },
   "devDependencies": {
     "@tailor-cms/content-container-collection": "workspace:^",

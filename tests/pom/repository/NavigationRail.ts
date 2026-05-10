@@ -14,12 +14,21 @@ export class NavigationRail {
     this.actionsMenuBtn = this.el.locator('.rail-menu-btn');
   }
 
-  getTab(name: 'Structure' | 'Editor' | 'Progress' | 'History' | 'Assets' | 'Settings') {
+  getTab(
+    name:
+      | 'Structure'
+      | 'Items'
+      | 'Editor'
+      | 'Progress'
+      | 'History'
+      | 'Assets'
+      | 'Settings',
+  ) {
     return this.el.getByRole('tab', { name, exact: true });
   }
 
   goToStructure() {
-    return this.getTab('Structure').click();
+    return this.el.getByRole('tab', { name: /^(Structure|Items)$/ }).click();
   }
 
   goToEditor() {

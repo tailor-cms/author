@@ -2,6 +2,7 @@
   <FileInput
     v-bind="options"
     class="my-2"
+    :readonly="readonly"
     @upload="$emit('update', meta.key, $event)"
     @input="$emit('update', meta.key, $event)"
     @delete="$emit('update', meta.key, null)"
@@ -21,12 +22,13 @@ interface Meta extends Metadata {
 interface Props {
   meta: Meta;
   dark?: boolean;
+  readonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   dark: false,
+  readonly: false,
 });
-
 defineEmits(['update']);
 
 const options = computed(() => {

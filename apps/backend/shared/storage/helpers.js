@@ -12,6 +12,7 @@ const isLegacyQuestion = (element) =>
   !isComposite(element) && !!get(element, 'data.question');
 const isStorageAsset = (v) => isString(v) && v.startsWith(config.protocol);
 const extractStorageKey = (v) => v.substr(config.protocol.length, v.length);
+const isContentElement = (v) => !!get(v, 'data');
 
 async function resolveAssetsMap(element) {
   if (!get(element, 'data.assets')) return element;
@@ -25,24 +26,28 @@ async function resolveAssetsMap(element) {
   return element;
 }
 
-async function resolveMetaMap(element) {
-  const meta = Object.values(element.meta || {});
-  await Promise.all(
-    meta.map(async (value) => {
-      const url = get(value, 'url');
-      if (!url || !isStorageAsset(url)) return Promise.resolve();
-      value.publicUrl = await storage.getFileUrl(extractStorageKey(url));
-    }),
-  );
+/**
+ * Resolves a single meta value with storage URL - mutates in place and returns value
+ */
+async function resolveMeta(element) {
+  const url = get(element, 'url');
+  if (url && isStorageAsset(url)) {
+    element.publicUrl = await storage.getFileUrl(extractStorageKey(url));
+  }
   return element;
 }
 
-function resolveStatics(element) {
-  return isComposite(element)
-    ? resolveComposite(element)
-    : isLegacyQuestion(element)
-      ? resolveLegacyQuestion(element)
-      : resolvePrimitive(element);
+async function resolveMetaMap(element) {
+  const meta = Object.values(element.meta || {});
+  await Promise.all(meta.map(resolveMeta));
+  return element;
+}
+
+async function resolveStatics(element) {
+  if (!isContentElement(element)) return resolveMeta(element);
+  if (isComposite(element)) return resolveComposite(element);
+  if (isLegacyQuestion(element)) return resolveLegacyQuestion(element);
+  return resolvePrimitive(element);
 }
 
 async function resolvePrimitive(primitive) {

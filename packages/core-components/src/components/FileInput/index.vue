@@ -1,59 +1,34 @@
 <template>
-  <template v-if="useFieldInput">
-    <VTextField
-      v-if="!resolvedFileKey"
-      :density="density"
-      :label="resolvedLabel"
-      :placeholder="placeholder || 'Click to add...'"
-      :prepend-inner-icon="resolvedIcon"
-      :variant="variant"
-      append-inner-icon="mdi-upload"
-      model-value=""
-      readonly
-      @click="dialogOpen = true"
-    />
-    <FilePreview
-      v-else
-      :dark="dark"
-      :file-name="resolvedFileName"
-      :icon="resolvedIcon"
-      :label="resolvedLabel"
-      :is-loading="isLoadingPublicUrl"
-      :show-preview="isPreviewEnabled"
-      :url="previewUrl"
-      @delete="onClear"
-      @download="downloadFile(resolvedFileKey, resolvedFileName)"
-    />
-  </template>
-  <template v-else>
-    <VBtn
-      v-if="!resolvedFileKey"
-      :loading="uploading"
-      :prepend-icon="resolvedIcon"
-      color="primary-darken-2"
-      @click="dialogOpen = true"
-    >
-      {{ placeholder || emptyLabel }}
-    </VBtn>
-    <VBtn
-      v-else
-      :prepend-icon="resolvedIcon"
-      color="primary-darken-2"
-      @click="dialogOpen = true"
-    >
-      <span class="file-name text-truncate">
-        {{ resolvedFileName }}
-      </span>
-      <template #append>
-        <VIcon
-          class="ml-2 pa-2"
-          icon="mdi-trash-can-outline"
-          size="large"
-          @click.stop="onClear"
-        />
-      </template>
-    </VBtn>
-  </template>
+  <VTextField
+    v-if="!resolvedFileKey"
+    :density="density"
+    :label="resolvedLabel"
+    :max-width="maxWidth"
+    :min-width="minWidth"
+    :placeholder="placeholder || 'Click to add...'"
+    :prepend-inner-icon="resolvedIcon"
+    :variant="variant"
+    append-inner-icon="mdi-upload"
+    readonly
+    @click="!readonly && (dialogOpen = true)"
+  />
+  <FilePreview
+    v-else
+    :density="density"
+    :dark="dark"
+    :file-name="resolvedFileName"
+    :icon="resolvedIcon"
+    :label="resolvedLabel"
+    :is-loading="isLoadingPublicUrl"
+    :min-width="minWidth"
+    :max-width="maxWidth"
+    :show-preview="isPreviewEnabled"
+    :url="previewUrl"
+    :variant="variant"
+    :readonly="readonly"
+    @delete="onClear"
+    @download="downloadFile(resolvedFileKey, resolvedFileName)"
+  />
   <PickerDialog
     v-model="dialogOpen"
     :accept="acceptedFileTypes"
@@ -88,8 +63,6 @@ interface Props {
   // Accepted extensions with dot prefix (e.g. ['.jpg', '.png']);
   // also drives icon/label auto-detection and library tab filtering
   allowedExtensions?: string[];
-  // Use field input + card rendering instead of default button mode
-  useFieldInput?: boolean;
   // Enable image thumbnail + overlay on the file card;
   // auto-enabled when extensions resolve to an image type
   showPreview?: boolean;
@@ -104,6 +77,12 @@ interface Props {
   density?: VTextField['density'];
   // Dark theme variant for the file preview card
   dark?: boolean;
+  // Minimum width of the input and preview field; defaults to 350px
+  minWidth?: string | number;
+  // Maximum width of the input and preview field; optional
+  maxWidth?: string | number;
+  // Read-only mode; disables input interactions
+  readonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -115,6 +94,9 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'outlined',
   density: 'default',
   dark: false,
+  maxWidth: '100%',
+  minWidth: '350',
+  readonly: false,
 });
 
 const emit = defineEmits<{
@@ -124,7 +106,7 @@ const emit = defineEmits<{
 }>();
 
 const storageService = inject<any>('$storageService');
-const { upload, downloadFile, uploading } = useUpload(emit as any);
+const { upload, downloadFile } = useUpload(emit as any);
 
 const dialogOpen = ref(false);
 
@@ -151,12 +133,6 @@ const resolvedLabel = computed(
 const resolvedIcon = computed(
   () => props.icon || getAssetIcon(category.value),
 );
-
-const emptyLabel = computed(() => {
-  const cat = category.value;
-  if (cat) return `Choose ${getAssetLabel(cat).toLowerCase()}`;
-  return 'Choose file';
-});
 
 const isPreviewEnabled = computed(
   () => props.showPreview || category.value === AssetType.Image,
@@ -202,9 +178,3 @@ const onClear = () => {
   emit('input', null);
 };
 </script>
-
-<style lang="scss" scoped>
-.file-name {
-  max-width: 10rem;
-}
-</style>

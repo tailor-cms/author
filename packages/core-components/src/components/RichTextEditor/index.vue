@@ -20,12 +20,12 @@
         <template #default="{ props: fieldProps }">
           <div class="w-100">
             <EditorContent v-bind="fieldProps" :editor="editor" class="w-100" />
-            <VDivider />
-            <EditorToolbar
-              :disabled="isDisabled.value"
-              :editor="editor"
-              :readonly="isReadonly.value"
-            />
+            <VExpandTransition>
+              <div v-if="!isReadonly.value">
+                <VDivider />
+                <EditorToolbar :disabled="isDisabled.value" :editor="editor" />
+              </div>
+            </VExpandTransition>
           </div>
         </template>
       </VField>
@@ -70,6 +70,7 @@ const { focused } = useFocusWithin(input);
 
 const editor = useEditor({
   content: content.value,
+  editable: !props.readonly,
   editorProps: {
     attributes: { role: 'textbox' },
   },

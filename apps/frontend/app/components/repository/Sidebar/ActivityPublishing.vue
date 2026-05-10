@@ -3,11 +3,12 @@
     <VMenu offset="10" position="left" contained>
       <template #activator="{ props: menuProps }">
         <VBtn
+          v-bind="isCollection ? {} : menuProps"
           :loading="publishingUtils.isPublishing.value"
           color="primary-lighten-4"
           size="small"
           variant="tonal"
-          v-bind="menuProps"
+          @click="isCollection && publishingUtils.confirmPublishing([activity])"
         >
           <VIcon class="mr-2">mdi-cloud-upload-outline</VIcon>
           Publish
@@ -43,6 +44,7 @@ import { activity as activityUtils } from '@tailor-cms/utils';
 import { format } from 'fecha';
 
 import PublishingBadge from './PublishingBadge.vue';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
   activity: StoreActivity;
@@ -53,6 +55,7 @@ const props = defineProps<{
 const { $schemaService } = useNuxtApp() as any;
 const { getDescendants } = activityUtils;
 const publishingUtils = usePublishActivity(props.activity);
+const { isCollection } = storeToRefs(useCurrentRepository());
 
 const config = computed(() => $schemaService.getLevel(props.activity.type));
 
