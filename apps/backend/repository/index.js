@@ -9,6 +9,7 @@ import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import processQuery from '#shared/util/processListQuery.js';
 
+import { ai as aiConfig } from '#config';
 import AccessService from '#app/shared/auth/access.service.js';
 import activity from '../activity/index.js';
 import agent from '../shared/ai/agent/index.ts';
@@ -16,7 +17,7 @@ import asset from '../asset/index.ts';
 import comment from '../comment/index.js';
 import revision from '../revision/index.js';
 import contentElement from '../content-element/index.js';
-import { ai as aiConfig } from '#config';
+import rpc from '../rpc/index.js';
 
 const { Repository, UserGroup } = db;
 const router = express.Router();
@@ -87,7 +88,9 @@ mount(router, '/:repositoryId', asset);
 mount(router, '/:repositoryId', revision);
 mount(router, '/:repositoryId', contentElement);
 mount(router, '/:repositoryId', comment);
+mount(router, '/:repositoryId', rpc);
 if (aiConfig.isEnabled) mount(router, '/:repositoryId', agent);
+
 
 function mount(router, mountPath, subrouter) {
   return router.use(

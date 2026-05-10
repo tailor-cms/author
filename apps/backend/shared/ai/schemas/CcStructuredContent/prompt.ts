@@ -70,6 +70,20 @@ const describeSubcontainerTypes = (configs: SubcontainerConfigs): string => {
     .join('\n');
 };
 
+const describeDefaultSubcontainers = (
+  defaults: ParsedConfig['defaultSubcontainers'],
+  configs: SubcontainerConfigs,
+): string =>
+  defaults
+    .map((sub) => {
+      const label = configs[sub.type]?.label || sub.type;
+      const title = sub.data?.title;
+      return title
+        ? `  - "${title}" (${label})`
+        : `  - ${label}`;
+    })
+    .join('\n');
+
 // Build asset catalog for the prompt.
 // Includes ALL usable assets — vector store file_search
 // handles relevance, this just lists valid IDs for the AI.
@@ -92,6 +106,8 @@ const buildGuidelines = (
   ai: ParsedConfig['ai'],
   hasAssets: boolean,
   elementTypes: string[],
+  defaultSubcontainers: ParsedConfig['defaultSubcontainers'],
+  subcontainers: SubcontainerConfigs,
 ): string[] => {
   const hasQuestions = elementTypes.some(
     (t) => elementRegistry.isQuestion(t),
@@ -191,6 +207,13 @@ const buildGuidelines = (
       '  and pedagogical framing beyond the sources',
     );
   }
+  if (defaultSubcontainers.length) {
+    guidelines.push(
+      '- Generate exactly these subcontainers, in this order, with'
+      + ' titles exactly as listed (do not rephrase the titles):\n'
+      + describeDefaultSubcontainers(defaultSubcontainers, subcontainers),
+    );
+  }
   if (ai?.outputRules?.prompt) {
     guidelines.push(ai.outputRules.prompt.trim());
   }
@@ -283,13 +306,14 @@ const buildGuidelines = (
 //     - ID:34 [video link] "Intro to ML - YouTube" → use as EMBED
 //     - ID:56 [document] "ML Textbook Chapter 1"
 export const getPrompt = (context: AiContext) => {
-  const { subcontainers, ai } = getConfigs(context);
+  const { subcontainers, defaultSubcontainers, ai } = getConfigs(context);
   const supportedElementTypes = [
     ...new Set(Object.values(subcontainers).flatMap((c) => c.elementTypes)),
   ];
   const hasAssets = !!context.assets?.length;
   const guidelines = buildGuidelines(
     context, ai, hasAssets, supportedElementTypes,
+    defaultSubcontainers, subcontainers,
   );
   const assetSection = hasAssets ? buildAssetCatalog(context.assets!) : '';
   return `

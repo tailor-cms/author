@@ -1,33 +1,44 @@
 <template>
-  <div v-if="editorStore.selectedActivity">
+  <div v-if="editorStore.selectedActivity" class="w-100">
     <VToolbar
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
-      @toggle-sidebar="showSidebar = !showSidebar"
       @toggle-guidelines="showGuidelines = !showGuidelines"
-
     />
-    <div class="editor-content-container">
-      <VSidebar
-        v-model="showSidebar"
-        :activities="repositoryStore.outlineActivities as Activity[]"
-        :repository="repositoryStore.repository as Repository"
-        :selected-activity="editorStore.selectedActivity as Activity"
-        :selected-element="editorStore.selectedContentElement as ContentElement"
-        class="sidebar"
-      />
+    <VSidebar
+      v-model="showSidebar"
+      :activities="repositoryStore.outlineActivities as Activity[]"
+      :repository="repositoryStore.repository as Repository"
+      :selected-activity="editorStore.selectedActivity as Activity"
+      :selected-element="editorStore.selectedContentElement as ContentElement"
+    />
+    <VMain class="editor-main">
+      <VFadeTransition>
+        <VBtn
+          v-if="!showSidebar"
+          v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
+          class="sidebar-toggle"
+          aria-label="Open sidebar"
+          color="primary-darken-2"
+          density="comfortable"
+          icon="mdi-chevron-double-right"
+          size="small"
+          variant="flat"
+          @click="showSidebar = true"
+        />
+      </VFadeTransition>
       <NuxtPage
         v-if="activityId"
         :key="activityId"
         :activity-id="activityId"
-        class="activity-content"
+        class="activity-content h-100"
       />
       <EngagementSidebar
         v-if="!!editorStore.guidelines"
         v-model="showGuidelines"
       />
-    </div>
+    </VMain>
   </div>
 </template>
 
@@ -62,14 +73,20 @@ provide('$editorState', {
 });
 
 const activityId = ref<number | null>(null);
-const showSidebar = ref(null);
+const showSidebar = ref(true);
 const showGuidelines = ref(null);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
 
+const lastEditorActivity = useLastEditorActivity();
+
 const parseActivityId = () => {
   if (!route.params.activityId) navigateTo({ name: 'catalog' });
   activityId.value = parseInt(route.params.activityId as string, 10);
+  const repositoryId = parseInt(route.params.id as string, 10);
+  if (repositoryId && activityId.value) {
+    lastEditorActivity.set(repositoryId, activityId.value);
+  }
   return activityId.value;
 };
 
@@ -98,19 +115,22 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-$sidebar-width: 30rem;
+.sidebar-toggle {
+  position: fixed;
+  width: 1.75rem !important;
+  height: 3.5rem !important;
+  top: 50%;
+  left: 4.75rem;
+  transform: translateY(-50%);
+  z-index: 1004;
+  opacity: 0.85;
+  border-radius: 0 8px 8px 0 !important;
+  box-shadow: 0.125rem 0 0.5rem rgba(0, 0, 0, 0.25);
+  transition: opacity 160ms ease, transform 160ms ease;
 
-.editor-content-container {
-  display: flex;
-  height: calc(100% - 3.5rem);
-
-  .sidebar {
-    flex-basis: $sidebar-width;
-  }
-
-  .activity-content {
-    flex-grow: 1;
-    flex-basis: calc(100% - #{$sidebar-width});
+  &:hover {
+    opacity: 1;
+    transform: translateY(-50%) translateX(2px);
   }
 }
 </style>

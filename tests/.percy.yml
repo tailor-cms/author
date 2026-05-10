@@ -3,7 +3,7 @@ snapshot:
   widths:
     - 1400
   minHeight: 1200
-  percyCSS: ""
+  percyCSS: "[data-percy=hide] { visibility: hidden; }"
   disableShadowDOM: false
   enable-javascript: false
 discovery:

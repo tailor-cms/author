@@ -18,6 +18,7 @@ const buildTopicMeta = (
     name,
     isGroup: !isLeaf,
     parentName: ancestorNames.at(-1),
+    breadcrumb: ancestorNames.toReversed().join(' / '),
     isLeaf,
     depth: ancestors.length,
     context: [name, ...ancestorNames, repositoryName].filter(Boolean),

@@ -1,3 +1,5 @@
+import type { Activity } from '@tailor-cms/interfaces/activity.ts';
+
 export interface MetaField {
   key: string;
   label: string;
@@ -16,6 +18,7 @@ export type SubcontainerConfigs = Record<string, SubcontainerConfig>;
 
 export interface ParsedConfig {
   subcontainers: SubcontainerConfigs;
+  defaultSubcontainers: Pick<Activity, 'type' | 'data'>[];
   ai?: {
     definition?: string;
     outputRules?: { prompt?: string };

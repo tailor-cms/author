@@ -1,65 +1,78 @@
 <template>
-  <div class="toolbar d-flex align-center justify-end flex-wrap ga-4 mb-2">
-    <VHover>
-      <template #default="{ isHovering, props: hoverProps }">
-        <VTextField
-          v-bind="hoverProps"
-          v-model="searchInput"
-          :bg-color="isHovering ? 'primary-darken-1' : 'primary-darken-2'"
-          density="comfortable"
-          placeholder="Search by name or id..."
-          prepend-inner-icon="mdi-magnify"
-          rounded="xl"
-          variant="outlined"
-          min-width="220"
-          clearable
-          hide-details
-          @click:clear="resetInput"
-        />
-      </template>
-    </VHover>
-    <VBtn
-      v-if="!isFlat"
-      :disabled="!!props.search"
-      class="px-5"
-      color="primary-lighten-4"
-      height="42"
-      variant="tonal"
-      @click="currentRepositoryStore.toggleOutlineExpand"
-    >
-      Toggle all
-    </VBtn>
+  <div class="toolbar d-flex align-center flex-wrap ga-4">
+    <template v-if="isCollection">
+      <VSpacer />
+      <CreateDialog
+        :anchor="anchor"
+        :repository-id="currentRepositoryStore.repositoryId as number"
+        activator-color="teal-lighten-3"
+        activator-icon="mdi-plus"
+        class="text-none mr-2"
+        size="small"
+        variant="tonal"
+        rounded="lg"
+        show-activator
+      />
+    </template>
+    <template v-else>
+      <VHover>
+        <template #default="{ props: hoverProps }">
+          <VTextField
+            v-bind="hoverProps"
+            v-model="search"
+            :bg-color="'transparent'"
+            density="compact"
+            min-width="220"
+            placeholder="Search by name or id..."
+            prepend-inner-icon="mdi-magnify"
+            rounded="xl"
+            variant="outlined"
+            clearable
+            hide-details
+            @click:clear="search = ''"
+          />
+        </template>
+      </VHover>
+      <VSpacer />
+      <VBtn
+        v-if="!isFlat"
+        :disabled="!!search"
+        class="text-none"
+        color="teal-lighten-3"
+        variant="tonal"
+        rounded="lg"
+        size="small"
+        @click="currentRepositoryStore.toggleOutlineExpand"
+      >
+        Toggle all
+      </VBtn>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { filter, find, last, map } from 'lodash-es';
+import { storeToRefs } from 'pinia';
+
+import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-interface Props {
-  isFlat?: boolean;
-  search?: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  isFlat: false,
-  search: '',
-});
-const emit = defineEmits(['search']);
+const search = defineModel<string>('search', { default: '' });
 
 const currentRepositoryStore = useCurrentRepository();
-const searchInput = ref('');
+const { outlineActivities, rootActivities, taxonomy, isCollection } =
+  storeToRefs(currentRepositoryStore);
 
-const resetInput = () => {
-  searchInput.value = '';
-  emit('search', '');
-};
+const isFlat = computed(() => {
+  const types = map(
+    filter(taxonomy.value, (it) => !it.rootLevel),
+    'type',
+  );
+  if (!types.length) return false;
+  return !find(outlineActivities.value, (it) => types.includes(it.type));
+});
 
-watch(
-  () => searchInput.value,
-  (value) => {
-    emit('search', value);
-  },
-);
+const anchor = computed(() => last(rootActivities.value));
 </script>
 
 <style lang="scss" scoped>

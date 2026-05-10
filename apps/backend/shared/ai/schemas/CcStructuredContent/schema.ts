@@ -67,6 +67,7 @@ const buildSubcontainerSchema = (
   type: string,
   config: SubcontainerConfig,
   hasAssets = false,
+  defaultData?: Record<string, any>,
 ) => {
   const { metaInputs, elementTypes } = config;
   const props: Record<string, any> = {
@@ -78,10 +79,30 @@ const buildSubcontainerSchema = (
   const dataRequired: string[] = [];
   for (const field of metaInputs) {
     if (!field.schema) continue;
-    const values = field.options?.map((o) => o.value);
-    dataProps[field.key] = values?.length
-      ? { ...field.schema, enum: values }
-      : field.schema;
+    // Three cases for how strictly the AI is constrained on this field:
+    //   1. Pinned by defaultData
+    //      The schema author seeded this field via `defaultSubcontainers`
+    //      (e.g. `data: { title: 'Intro' }`). Lock the AI to that exact
+    //      value with a single-element `enum` (acts as a JSON Schema
+    //      `const`). The AI is allowed to produce only this value.
+    //   2. Bounded by a meta-input options list
+    //      The meta input declares a fixed option set (e.g. a Select
+    //      with EASY/MEDIUM/HARD). Constrain the AI to those values
+    //      via `enum`.
+    //   3. Free-form
+    //      No defaultData and no options - emit the field's own JSON
+    //      schema (string/number/etc.) and let the AI fill freely.
+    if (defaultData?.[field.key] != null) {
+      dataProps[field.key] = {
+        ...field.schema,
+        enum: [defaultData[field.key]],
+      };
+    } else {
+      const values = field.options?.map((o) => o.value);
+      dataProps[field.key] = values?.length
+        ? { ...field.schema, enum: values }
+        : field.schema;
+    }
     dataRequired.push(field.key);
   }
   if (Object.keys(dataProps).length) {
@@ -94,13 +115,14 @@ const buildSubcontainerSchema = (
 export const Schema = (
   context: AiContext,
 ): OpenAISchema => {
-  const { subcontainers } = getConfigs(context);
+  const { subcontainers, defaultSubcontainers } = getConfigs(context);
   const hasAssets = !!context.assets?.length;
   logger.info({
     hasAssets,
     assetCount: context.assets?.length ?? 0,
     hasVectorStore: !!context.repository.vectorStoreId,
     subcontainerTypes: Object.keys(subcontainers),
+    presetCount: defaultSubcontainers.length,
   }, 'Building schema');
   const entries = Object.entries(subcontainers);
   if (!entries.length) {
@@ -110,22 +132,42 @@ export const Schema = (
       elementTypes: [],
     }]);
   }
-  const schemas = entries.map(([type, config]) =>
-    buildSubcontainerSchema(type, config, hasAssets),
-  );
-  const subcontainerSchema = schemas.length === 1
-    ? schemas[0]
-    : { anyOf: schemas };
+  let subcontainersSchema: Record<string, any>;
+  if (defaultSubcontainers.length) {
+    // Preset mode: build one pinned schema per seeded subcontainer.
+    // Each seed locks its data fields (e.g. title) via enum, and
+    // minItems/maxItems clamp the array length so the AI cannot
+    // add, drop, or reorder beyond the union of pinned shapes.
+    const configByType = Object.fromEntries(entries);
+    const presetSchemas = defaultSubcontainers.map((defaultSub) => {
+      const config = configByType[defaultSub.type] || entries[0][1];
+      return buildSubcontainerSchema(
+        defaultSub.type, config, hasAssets, defaultSub.data,
+      );
+    });
+    const itemSchema = presetSchemas.length === 1
+      ? presetSchemas[0]
+      : { anyOf: presetSchemas };
+    subcontainersSchema = {
+      type: 'array',
+      items: itemSchema,
+      minItems: presetSchemas.length,
+      maxItems: presetSchemas.length,
+    };
+  } else {
+    const schemas = entries.map(([type, config]) =>
+      buildSubcontainerSchema(type, config, hasAssets),
+    );
+    const itemSchema = schemas.length === 1
+      ? schemas[0]
+      : { anyOf: schemas };
+    subcontainersSchema = { type: 'array', items: itemSchema };
+  }
   return {
     type: 'json_schema',
     name: 'cc_structured_content',
     schema: obj(
-      {
-        subcontainers: {
-          type: 'array',
-          items: subcontainerSchema,
-        },
-      },
+      { subcontainers: subcontainersSchema },
       ['subcontainers'],
     ),
   };

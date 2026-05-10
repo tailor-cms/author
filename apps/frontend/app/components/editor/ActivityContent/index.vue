@@ -4,7 +4,7 @@
     ref="activityContentEl"
     class="activity-content"
     @click="onClick"
-    @mousedown="mousedownCaptured = true"
+    @mousedown="onMousedown"
   >
     <div class="content-containers-wrapper">
       <ContentLoader v-if="isLoading" class="loader" />
@@ -20,6 +20,11 @@
         not been edited yet. Content will appear here once the source is
         updated.
       </VAlert>
+      <ActivityMetadata
+        v-if="!isEmptyLinkedActivity && !showPublishDiff"
+        v-show="!isLoading"
+        :activity="activity"
+      />
       <PublishDiffProvider
         v-if="editorStore?.selectedActivity && !isEmptyLinkedActivity"
         v-show="!isLoading"
@@ -74,6 +79,7 @@ import pMinDelay from 'p-min-delay';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import aiAPI from '@/api/ai';
+import ActivityMetadata from './ActivityMetadata.vue';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
@@ -154,6 +160,7 @@ const createActivity = async (payload: any) => {
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
+provide('$rpc', repositoryStore.rpc);
 if (config.props.aiUiEnabled) {
   provide('$doTheMagic', doTheMagic);
   provide('$createActivity', createActivity);
@@ -163,6 +170,7 @@ const isLoading = ref(true);
 const focusedElement = ref(null);
 const activityContentEl = ref();
 const mousedownCaptured = ref<boolean | null>(null);
+const mousedownInsideElement = ref(false);
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
@@ -232,10 +240,20 @@ const getContainerConfig = (type: string) => {
   return find(containerConfigs.value, { type });
 };
 
+const isContentElementEvent = (e: any) =>
+  get(e, 'component.name') === 'content-element';
+
+const onMousedown = (e: any) => {
+  mousedownCaptured.value = true;
+  mousedownInsideElement.value = isContentElementEvent(e);
+};
+
 const onClick = (e: any) => {
   if (!mousedownCaptured.value) return;
   mousedownCaptured.value = false;
-  if (get(e, 'component.name') !== 'content-element') focusoutElement();
+  if (!mousedownInsideElement.value && !isContentElementEvent(e)) {
+    focusoutElement();
+  }
 };
 
 const loadContents = async () => {
@@ -377,7 +395,7 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .activity-content {
   min-height: 100%;
-  padding: 4rem 1.5rem;
+  padding: 1.5rem;
   overflow-y: scroll;
   overflow-y: overlay;
   overflow-x: hidden;

@@ -1,12 +1,14 @@
-// Container config resolution.
-// Parses schema config into per-subcontainer configs
-// with element types and metadata field schemas.
+// Subcontainer parsing via containerRegistry.describeSchema
+// (resolves function-form meta/elementConfig, surfaces
+// defaultSubcontainers). Container-level elementConfig
+// fallback and ai are read directly.
 import {
   getSchema as getMetaInputSchema,
 } from '@tailor-cms/meta-element-collection/schema.js';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
 
+import containerRegistry from '../../../content-plugins/containerRegistry.js';
 import type {
   MetaField,
   ParsedConfig,
@@ -14,11 +16,6 @@ import type {
 } from './types.ts';
 
 const { getSupportedElementTypes } = schemaAPI;
-
-const getMetaDefinitions = (val: any): any[] =>
-  typeof val.meta === 'function'
-    ? val.meta()
-    : val.meta || [];
 
 const toMetaFields = (meta: any[]): MetaField[] =>
   meta.map((m: any) => ({
@@ -30,29 +27,38 @@ const toMetaFields = (meta: any[]): MetaField[] =>
     }),
   }));
 
+const EMPTY_CONFIG: ParsedConfig = {
+  subcontainers: {},
+  defaultSubcontainers: [],
+};
+
 export const getConfigs = (context: AiContext): ParsedConfig => {
-  const empty: ParsedConfig = { subcontainers: {} };
-  const { repository } = context;
-  const { outlineActivityType, containerType } = repository;
-  if (!outlineActivityType || !containerType) return empty;
-  const containers = schemaAPI.getSupportedContainers(
-    outlineActivityType,
-  );
+  const { outlineActivityType, containerType } = context.repository;
+  if (!outlineActivityType || !containerType) return EMPTY_CONFIG;
+  const containers = schemaAPI.getSupportedContainers(outlineActivityType);
   const container = containers.find((c: any) => c.type === containerType);
-  if (!container?.config) return empty;
-  const defaultTypes = getSupportedElementTypes(container.contentElementConfig);
+  if (!container) return EMPTY_CONFIG;
+  const {
+    subcontainers: subDefs = [],
+    defaultSubcontainers = [],
+  } = containerRegistry.describeSchema(container);
+  const defaultElementTypes = getSupportedElementTypes(
+    container.contentElementConfig,
+  );
   const subcontainers: SubcontainerConfigs = {};
-  for (const [type, val] of Object.entries(
-    container.config as Record<string, any>,
-  )) {
-    const elementTypes = val.contentElementConfig
-      ? getSupportedElementTypes(val.contentElementConfig)
-      : defaultTypes;
-    subcontainers[type] = {
-      label: val.label || type,
+  for (const sub of subDefs) {
+    const elementTypes = sub.elementConfig?.length
+      ? getSupportedElementTypes(sub.elementConfig)
+      : defaultElementTypes;
+    subcontainers[sub.type] = {
+      label: sub.label,
       elementTypes,
-      metaInputs: toMetaFields(getMetaDefinitions(val)),
+      metaInputs: toMetaFields(sub.meta || []),
     };
   }
-  return { subcontainers, ai: container.ai };
+  return {
+    subcontainers,
+    defaultSubcontainers,
+    ai: container.ai,
+  };
 };

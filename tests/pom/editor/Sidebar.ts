@@ -21,7 +21,7 @@ export class EditorSidebar {
 
   constructor(page: Page) {
     this.page = page;
-    const el = page.locator('.sidebar-container');
+    const el = page.locator('.editor-sidebar-main');
     this.el = el;
     this.tabs = el.getByRole('tablist');
     this.navigation = new Navigation(page, el);

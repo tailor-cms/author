@@ -99,10 +99,12 @@ function getSubTypes(config) {
  * Describe the container's structure from its schema config.
  * Returns subcontainer definitions with their meta inputs
  * and allowed element types so consumers don't need to
- * parse raw config themselves.
+ * parse raw config themselves. Also surfaces template-level
+ * options (defaultSubcontainers) so consumers don't bypass
+ * this API for things the describer already filters out.
  */
 function describeSchema(config) {
-  if (!config) return { subcontainers: [] };
+  if (!config) return { subcontainers: [], defaultSubcontainers: [] };
   const subcontainers = Object.entries(config)
     .filter(([, value]) => value?.label)
     .map(([type, sub]) => {
@@ -114,7 +116,10 @@ function describeSchema(config) {
         : sub.contentElementConfig || [];
       return { type, label: sub.label, meta, elementConfig };
     });
-  return { subcontainers };
+  return {
+    subcontainers,
+    defaultSubcontainers: config.defaultSubcontainers || [],
+  };
 }
 
 export default {

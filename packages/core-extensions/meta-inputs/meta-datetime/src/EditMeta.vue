@@ -5,9 +5,9 @@
     :placeholder="placeholder"
     variant="outlined"
     persistent-placeholder
-    readonly
-    @click:control="openMenu"
-    @keydown.enter="openMenu"
+    :readonly="readonly"
+    @click:control="readonly ? null : openMenu"
+    @keydown.enter="readonly ? null : openMenu"
   >
     <VMenu
       v-model="menu"
@@ -64,7 +64,13 @@ import { useDate } from 'vuetify';
 interface Meta extends Metadata {
   value?: string;
 }
-const props = defineProps<{ meta: Meta; dark: boolean }>();
+interface Props {
+  meta: Meta;
+  dark?: boolean;
+  readonly?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), { dark: false, readonly: false });
 const emit = defineEmits(['update']);
 
 const date = useDate();

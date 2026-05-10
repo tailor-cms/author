@@ -38,6 +38,7 @@
       @delete:subcontainer="requestContainerDeletion"
       @reorder:element="reorderContentElements"
       @save:element="saveContentElements"
+      @update:container="updateContainer"
       @update:element="(val: any) => saveContentElements([val])"
       @update:subcontainer="activityStore.update"
     />
@@ -158,6 +159,15 @@ const addContainer = async (data: Record<string, any> = {}) => {
   emit('createdContainer', payload);
 };
 
+const updateContainer = async (container: any) => {
+  try {
+    await activityStore.update(container);
+    showNotification(`${capitalize(name.value)} saved`);
+  } catch {
+    showNotification(`Failed to save ${name.value}`);
+  }
+};
+
 const saveContentElements = (elements: ContentElement[]) => {
   const contentElements = castArray(elements);
   return BBPromise.map(contentElements, (element) =>
@@ -210,9 +220,11 @@ const requestDeletion = (
 
 const requestContainerDeletion = (
   container: Activity,
-  name: string = 'container',
+  opts: string | { force?: boolean } = 'container',
 ) => {
   const action = (val: Activity) => activityStore.remove(val.id);
+  if (typeof opts === 'object' && opts.force) return action(container);
+  const name = typeof opts === 'string' ? opts : 'container';
   requestDeletion(container, action, name);
 };
 

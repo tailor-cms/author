@@ -22,9 +22,11 @@ import * as utils from '@tailor-cms/utils';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 import DefaultToolbar from './DefaultToolbar.vue';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const { $ceRegistry } = useNuxtApp() as any;
 const elementBus = inject('$elementBus') as any;
+const repositoryStore = useCurrentRepository();
 
 interface Props {
   element: ContentElement;
@@ -38,6 +40,10 @@ const props = withDefaults(defineProps<Props>(), {
 const id = computed(() => utils.getElementId(props.element));
 const componentName = computed(() => utils.getToolbarName(props.element.type));
 const config = computed(() => $ceRegistry.get(props.element.type));
+
+provide('$rpc', (procedure: string, payload?: any) =>
+  repositoryStore.rpc(props.element.type, procedure, payload),
+);
 
 const componentExists = computed(
   () => !!$ceRegistry.get(props.element.type)?.hasTopToolbar,

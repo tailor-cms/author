@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { ActivityOutline } from '../../../pom/repository/Outline.ts';
 import { AppBar } from '../../../pom/common/AppBar.ts';
+import { NavigationRail } from '../../../pom/repository/NavigationRail.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 import { toSeededRepository } from '../../../helpers/seed.ts';
 
@@ -36,8 +37,7 @@ test('should be able to navigate to the current repository', async ({
   await outlineItem.select();
   await outlineItem.openBtn.click();
   await expect(page.getByText('The Origins of Pizza')).toBeVisible();
-  const appBar = new AppBar(page);
-  await appBar.repoLink.click();
+  await new NavigationRail(page).goToStructure();
   await expect(outlineItem.el).toBeVisible();
 });
 

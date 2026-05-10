@@ -7,11 +7,19 @@
       :ripple="false"
       class="repository-card d-flex flex-column justify-space-between text-left"
       color="primary-darken-4"
+      rounded="xl"
       @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
     >
       <div class="card-body">
         <div class="card-header d-flex align-center my-1 mx-3">
-          <VChip :color="repository.data.color" class="px-1" size="x-small" />
+          <VCheckbox
+            :model-value="isSelected"
+            aria-label="Select repository"
+            class="ml-n1"
+            color="primary-lighten-3"
+            hide-details
+            @click.stop
+            @update:model-value="$emit('toggle-selection', repository.id)" />
           <VTooltip
             :disabled="!isSchemaNameTruncated"
             content-class="bg-primary-darken-4"
@@ -136,7 +144,11 @@ import { useRepositoryStore } from '@/stores/repository';
 const { $schemaService } = useNuxtApp() as any;
 const store = useRepositoryStore();
 
-const props = defineProps<{ repository: Repository }>();
+const props = defineProps<{
+  repository: Repository;
+  isSelected?: boolean;
+}>();
+defineEmits(['toggle-selection']);
 
 // Template ref
 const schema = ref(null);
@@ -175,8 +187,15 @@ onMounted(() => nextTick(detectSchemaTruncation));
 <style lang="scss" scoped>
 .repository-card {
   height: 14.75rem;
-  transition: all 0.3s ease;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
   cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   @media (max-width: 1263px) {
     height: 17.25rem;
@@ -203,5 +222,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .v-card:hover > :deep(.v-card__overlay) {
   opacity: 0.01;
+}
+
+.v-checkbox :deep(.v-selection-control) {
+  min-height: unset !important;
 }
 </style>

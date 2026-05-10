@@ -19,7 +19,7 @@ const { getOutlineLevels, isOutlineActivity } = schema;
 const logger = createLogger('activity:controller');
 const log = (msg) => logger.info(msg.replace(/\n/g, ' '));
 
-function list({ repository, query, opts }, res) {
+async function list({ repository, query, opts }, res) {
   if (!query.detached) opts.where.detached = false;
   if (query.outlineOnly) {
     // Include deleted if published and deletion is not published yet
@@ -35,10 +35,12 @@ function list({ repository, query, opts }, res) {
       },
     ];
   }
-  return repository.getActivities(opts).then((data) => res.json({ data }));
+  const activities = await repository.getActivities(opts);
+  await Promise.all(activities.map((it) => it.processEmbeddedElements()));
+  return res.json({ data: activities });
 }
 
-function create({ user, repository, body }, res) {
+async function create({ user, repository, body }, res) {
   const outlineConfig = find(getOutlineLevels(repository.schema), {
     type: body.type,
   });
@@ -48,10 +50,13 @@ function create({ user, repository, body }, res) {
     repositoryId: repository.id,
   };
   const context = { userId: user.id, repository };
-  return Activity.create(data, { context }).then((data) => res.json({ data }));
+  const activity = await Activity.create(data, { context });
+  await activity.processEmbeddedElements();
+  return res.json({ data: activity });
 }
 
-function show({ activity }, res) {
+async function show({ activity }, res) {
+  await activity.processEmbeddedElements();
   return res.json({ data: activity });
 }
 
@@ -68,6 +73,7 @@ async function patch({ repository, user, activity, body }, res) {
     await parent.touch();
   }
   const data = await activity.update(body, { context });
+  await data.processEmbeddedElements();
   return res.json({ data });
 }
 

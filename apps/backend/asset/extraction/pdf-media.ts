@@ -157,7 +157,7 @@ export async function extractAndSaveImages(
           tags: ['pdf-image'],
           source: { parentAssetId: asset.id, contentHash: hash },
         },
-        uploadedBy: asset.uploadedBy,
+        uploaderId: asset.uploaderId,
       });
     } catch (err: any) {
       logger.warn(

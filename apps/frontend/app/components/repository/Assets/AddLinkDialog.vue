@@ -65,14 +65,7 @@ const show = defineModel<boolean>({ default: false });
 const url = ref('');
 const urlError = ref('');
 
-const isValid = computed(() => {
-  try {
-    new URL(url.value);
-    return true;
-  } catch {
-    return false;
-  }
-});
+const isValid = computed(() => URL.canParse(url.value));
 
 watch(show, (v) => {
   if (!v) return;

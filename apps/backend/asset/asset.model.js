@@ -84,7 +84,7 @@ class Asset extends Model {
     });
     this.belongsTo(User, {
       as: 'uploader',
-      foreignKey: { name: 'uploadedBy', field: 'uploaded_by' },
+      foreignKey: { name: 'uploaderId', field: 'uploader_id' },
     });
   }
 

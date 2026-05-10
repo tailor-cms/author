@@ -8,6 +8,7 @@
       :color="`primary-${dark ? 'lighten-4' : 'darken-1'}`"
       :label="meta.description"
       :name="meta.key"
+      :readonly="readonly"
       density="comfortable"
       @change="$emit('update', props.meta.key, input)"
     />
@@ -21,8 +22,13 @@ import { ref } from 'vue';
 interface Meta extends Metadata {
   value?: string;
 }
+interface Props {
+  meta: Meta;
+  dark?: boolean;
+  readonly?: boolean;
+}
 
-const props = defineProps<{ meta: Meta; dark: boolean }>();
+const props = withDefaults(defineProps<Props>(), { dark: false, readonly: false });
 defineEmits(['update']);
 
 const input = ref(props.meta.value);

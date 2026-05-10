@@ -1,5 +1,5 @@
 <template>
-  <VSheet v-bind="sheetStyles" class="activity-discussion py-2">
+  <VSheet color="transparent" class="activity-discussion py-2">
     <LinkedCopyNotice
       v-if="activity.isLinkedCopy"
       :repository-id="activity.repositoryId"
@@ -59,10 +59,6 @@ const unseenComments = computed(() =>
 
 const lastCommentAt = computed(() =>
   new Date(get(comments.value[0], 'createdAt', 0)).getTime(),
-);
-
-const sheetStyles = computed(() =>
-  props.panel ? { color: 'primary-darken-2' } : { color: 'transparent' },
 );
 
 const saveComment = (comment: any) => {

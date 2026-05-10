@@ -1,104 +1,146 @@
 <template>
   <NuxtLayout class="catalog-wrapper" name="main">
-    <VContainer class="catalog" max-width="1360">
-      <VRow class="catalog-actions pb-5" no-gutters>
-        <VCol
-          cols="12"
-          lg="4"
-          md="6"
-          offset-lg="4"
-        >
-          <SearchInput
-            :search-input="repositoryStore.queryParams.search"
-            @update="onSearchInput"
-          />
-        </VCol>
-        <VCol
-          class="d-flex justify-end align-bottom pl-2 text-sm-left"
-          cols="12"
-          lg="4"
-          md="6"
-        >
-          <VTooltip
-            content-class="bg-primary-darken-4"
-            location="top"
-            open-delay="400"
-          >
-            <template #activator="{ props: tooltipProps }">
-              <VBtn
-                v-bind="tooltipProps"
-                :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-3'"
-                :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
-                aria-label="Toggle pinned items filter"
-                class="my-1"
-                variant="tonal"
-                @click="togglePinFilter"
-              />
-            </template>
-            <span>{{ arePinnedShown ? 'Show all' : 'Show pinned' }}</span>
-          </VTooltip>
-          <SelectOrder
-            :sort-by="queryParams.sortBy"
-            class="pl-2"
-            @update="updateSort"
-          />
-          <span class="py-1">
-            <RepositoryFilter
-              v-for="filter in filters"
-              :key="filter.type"
-              v-bind="filter"
-              @update="onFilterChange"
+    <VLayout
+      class="fill-height mx-3 bg-primary-darken-3 rounded-t-xl border-surface border-sm">
+      <VContainer class="catalog" max-width="1360">
+        <VRow class="catalog-actions py-10" dense>
+          <VCol cols="12" lg="4" md="6">
+            <UserGroupSelect
+              v-if="userGroupOptions.length"
+              v-model="repositoryStore.selectedUserGroupId"
+              :items="userGroupOptions"
+              @update:model-value="onUserGroupChange"
             />
-          </span>
-          <span class="my-2 ml-5">
-            <AddRepository
-              :is-create-enabled="authStore.isAdmin || authStore.isDefaultUser"
-              @created="onRepositoryAdd"
+          </VCol>
+          <VCol cols="12" lg="4" md="6">
+            <SearchInput
+              :search-input="repositoryStore.queryParams.search"
+              @update="onSearchInput"
             />
-          </span>
-        </VCol>
-      </VRow>
-      <RepositoryFilterSelection
-        @clear:all="(queryParams.filter = []) && refetchRepositories()"
-        @close="onFilterChange"
-      />
-      <VInfiniteScroll
-        v-if="!isLoading && hasRepositories"
-        class="d-flex ma-0 pa-0"
-        color="primary-lighten-4"
-        empty-text=""
-        mode="manual"
-        @load="loadMore"
-      >
-        <VRow>
+          </VCol>
           <VCol
-            v-for="repository in repositoryStore.items"
-            :key="repository.uid"
+            class="d-flex justify-end align-bottom pl-2 text-sm-left"
             cols="12"
             lg="4"
-            md="6"
           >
-            <RepositoryCard :repository="repository" />
+            <VTooltip
+              content-class="bg-primary-darken-4"
+              location="top"
+              open-delay="400"
+            >
+              <template #activator="{ props: tooltipProps }">
+                <VBtn
+                  v-bind="tooltipProps"
+                  :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-3'"
+                  :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
+                  aria-label="Toggle pinned items filter"
+                  class="my-1"
+                  variant="tonal"
+                  @click="togglePinFilter"
+                />
+              </template>
+              <span>{{ arePinnedShown ? 'Show all' : 'Show pinned' }}</span>
+            </VTooltip>
+            <SelectOrder
+              :sort-by="queryParams.sortBy"
+              class="pl-2"
+              @update="updateSort"
+            />
+            <span class="py-1">
+              <RepositoryFilter
+                v-for="filter in filters"
+                :key="filter.type"
+                v-bind="filter"
+                @update="onFilterChange"
+              />
+            </span>
+            <span class="my-2 ml-5">
+              <AddRepository
+                :is-create-enabled="authStore.isAdmin || authStore.isDefaultUser"
+                @created="onRepositoryAdd"
+              />
+            </span>
           </VCol>
         </VRow>
-        <template #load-more="{ props: loadProps }">
-          <VBtn v-if="!areAllItemsFetched" variant="tonal" v-bind="loadProps">
-            Load more
-          </VBtn>
-        </template>
-      </VInfiniteScroll>
-      <VAlert
-        v-else-if="noRepositoriesMessage"
-        class="mt-4"
-        color="primary-lighten-3"
-        icon="mdi-alert-circle-outline"
-        rounded="lg"
-        variant="tonal"
-        prominent
-      >
-        {{ noRepositoriesMessage }}
-      </VAlert>
-    </VContainer>
+        <RepositoryFilterSelection
+          @clear:all="(queryParams.filter = []) && refetchRepositories()"
+          @close="onFilterChange"
+        />
+        <VExpandTransition>
+          <div v-if="selectedRepos.size > 0" class="d-flex align-center mb-4 text-left">
+            <VTooltip
+              content-class="bg-primary-darken-4"
+              location="top"
+              open-delay="400"
+            >
+              <template #activator="{ props: tooltipProps }">
+                <VCheckbox
+                  v-bind="tooltipProps"
+                  :disabled="!repositories.length"
+                  :model-value="isAllSelected"
+                  :indeterminate="someSelected"
+                  color="primary-lighten-3"
+                  label="Select all"
+                  hide-details
+                  @update:model-value="toggleSelectAll"
+                />
+              </template>
+              <span>{{ isAllSelected ? 'Deselect all' : 'Select all' }}</span>
+            </VTooltip>
+            <VBtn
+              :disabled="selectedRepos.size === 0"
+              class="ml-4"
+              color="secondary-lighten-3"
+              prepend-icon="mdi-delete"
+              variant="tonal"
+              @click="deleteSelected"
+            >
+              Delete ({{ selectedRepos.size }})
+            </VBtn>
+          </div>
+        </VExpandTransition>
+        <VInfiniteScroll
+          v-if="!isLoading && hasRepositories"
+          class="d-flex ma-0 pa-0"
+          color="primary-lighten-4"
+          empty-text=""
+          mode="manual"
+          @load="loadMore"
+        >
+          <VRow>
+            <VCol
+              v-for="repository in repositoryStore.items"
+              :key="repository.uid"
+              cols="12"
+              lg="4"
+              md="6"
+            >
+              <RepositoryCard
+                :is-selected="selectedRepos.has(repository.id)"
+                :repository="repository"
+                @toggle-selection="toggleSelection"
+              />
+            </VCol>
+          </VRow>
+          <template #load-more="{ props: loadProps }">
+            <VBtn v-if="!areAllItemsFetched" v-bind="loadProps" variant="tonal">
+              Load more
+            </VBtn>
+          </template>
+        </VInfiniteScroll>
+        <VAlert
+          v-else-if="noRepositoriesMessage"
+          class="mt-4"
+          color="primary-lighten-3"
+          icon="mdi-alert-circle-outline"
+          rounded="lg"
+          variant="tonal"
+          prominent
+        >
+          {{ noRepositoriesMessage }}
+        </VAlert>
+      </VContainer>
+    </VLayout>
   </NuxtLayout>
 </template>
 
@@ -106,6 +148,8 @@
 import { find, map } from 'lodash-es';
 import { SCHEMAS } from '@tailor-cms/config';
 import { storeToRefs } from 'pinia';
+import pluralize from 'pluralize-esm';
+import Promise from 'bluebird';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
 import RepositoryCard from '@/components/catalog/Card/index.vue';
@@ -115,7 +159,9 @@ import RepositoryFilterSelection
   from '@/components/catalog/Filter/RepositoryFilterSelection/index.vue';
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
+import UserGroupSelect from '@/components/catalog/Filter/UserGroupSelect.vue';
 import { useAuthStore } from '@/stores/auth';
+import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useConfigStore } from '@/stores/config';
 import { useRepositoryStore } from '@/stores/repository';
 
@@ -132,8 +178,10 @@ useHead({
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 const config = useConfigStore();
+const confirmationDialog = useConfirmationDialog();
 
 const isLoading = ref(true);
+const selectedRepos = ref<Set<number>>(new Set());
 
 const {
   queryParams,
@@ -144,10 +192,56 @@ const {
 
 const hasRepositories = computed(() => !!repositories.value.length);
 const arePinnedShown = computed(() => queryParams.value.pinned);
+const userGroupOptions = computed(() =>
+  authStore.userGroups.length ? repositoryStore.userGroupOptions : [],
+);
+
+const onUserGroupChange = async () => {
+  selectedRepos.value.clear();
+  repositoryStore.resetPaginationParams();
+  await repositoryStore.fetch();
+};
+const isAllSelected = computed(() =>
+  repositories.value.length > 0 &&
+  selectedRepos.value.size === repositories.value.length,
+);
+
+const someSelected = computed(() =>
+  selectedRepos.value.size > 0 &&
+  selectedRepos.value.size < repositories.value.length,
+);
 
 const togglePinFilter = () => {
   queryParams.value.pinned = !arePinnedShown.value;
   refetchRepositories();
+};
+
+const toggleSelection = (id: number) => {
+  if (selectedRepos.value.has(id)) return selectedRepos.value.delete(id);
+  selectedRepos.value.add(id);
+};
+
+const toggleSelectAll = () => {
+  if (isAllSelected.value) return selectedRepos.value.clear();
+  selectedRepos.value = new Set(repositories.value.map((repo) => repo.id));
+};
+
+const deleteSelected = () => {
+  const count = selectedRepos.value.size;
+
+  confirmationDialog({
+    title: `Delete ${pluralize('repository', count)}?`,
+    message: `Are you sure you want to delete ${pluralize('repository', count, true)}?`,
+    action: async () => {
+      try {
+        const repositories = Array.from(selectedRepos.value);
+        await Promise.each(repositories, (id) => repositoryStore.remove(id));
+      } finally {
+        selectedRepos.value.clear();
+        await refetchRepositories();
+      }
+    },
+  });
 };
 
 const filters = computed(() => {
@@ -166,6 +260,7 @@ const filters = computed(() => {
 });
 
 const updateSort = (payload: any) => {
+  selectedRepos.value.clear();
   queryParams.value.sortBy = {
     ...queryParams.value.sortBy,
     ...payload,
@@ -174,11 +269,13 @@ const updateSort = (payload: any) => {
 };
 
 const onSearchInput = (searchInput: string) => {
+  selectedRepos.value.clear();
   queryParams.value.search = searchInput;
   refetchRepositories();
 };
 
 const onFilterChange = (payload: any) => {
+  selectedRepos.value.clear();
   const { filter: catalogFilter } = queryParams.value;
   const existing = find(catalogFilter, { id: payload.id });
   if (!existing) queryParams.value.filter.push(payload);

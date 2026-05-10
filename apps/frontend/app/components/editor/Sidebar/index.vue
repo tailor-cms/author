@@ -1,60 +1,73 @@
 <template>
   <VNavigationDrawer
+    v-model="modelValue"
     :width="lgAndUp ? 480 : 380"
-    class="sidebar"
-    color="primary-darken-2"
-    elevation="5"
+    border="surface"
+    class="editor-sidebar-main sidebar"
+    color="primary-darken-3"
+    elevation="0"
+    location="left"
     mobile-breakpoint="md"
   >
-    <div class="sidebar-container">
-      <VWindow v-model="selectedTab">
-        <VWindowItem :value="BROWSER_TAB">
-          <ActivityNavigation
-            :activities="activities"
-            :repository="repository"
-            :selected="selectedActivity"
-          />
-        </VWindowItem>
-        <VWindowItem :value="COMMENTS_TAB">
-          <ActivityDiscussion :activity="selectedActivity" />
-        </VWindowItem>
-        <VWindowItem :value="ELEMENT_TAB">
-          <ElementSidebar
-            v-if="selectedElement"
-            :key="getElementId(selectedElement)"
-            :element="selectedElement"
-            :metadata="metadata"
-          />
-        </VWindowItem>
-      </VWindow>
-    </div>
-    <template #append>
-      <VTabs
-        v-model="selectedTab"
-        bg-color="primary-darken-4"
-        color="secondary-lighten-4"
-        height="76"
-        fixed-tabs
-        stacked
-      >
-        <VTab
-          v-for="tab in tabs"
-          :key="tab.name"
-          :disabled="tab.disabled"
-          :value="tab.name"
+    <div class="sidebar-layout">
+      <div class="sidebar-tab-row d-flex align-center mt-1">
+        <VTabs
+          v-model="selectedTab"
+          class="sidebar-tabs flex-grow-1"
+          color="white"
+          density="compact"
+          hide-slider
         >
-          <VIcon class="ma-1">mdi-{{ tab.icon }}</VIcon>
-          <VBadge
-            v-if="tab.badgeData"
-            :content="tab.badgeData"
-            color="secondary"
-            offset-x="-16"
-            offset-y="18"
-          />
-          <span class="py-1">{{ tab.label }}</span>
-        </VTab>
-      </VTabs>
-    </template>
+          <VTab
+            v-for="tab in tabs"
+            :key="tab.name"
+            :disabled="tab.disabled"
+            :text="tab.label"
+            :value="tab.name"
+            :variant="selectedTab === tab.name ? 'tonal' : 'text'"
+            class="mr-1"
+            rounded="pill"
+          >
+            <template v-if="tab.badgeData" #append>
+              <VBadge :content="tab.badgeData" color="secondary" inline />
+            </template>
+          </VTab>
+        </VTabs>
+        <VBtn
+          v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
+          aria-label="Collapse sidebar"
+          class="sidebar-collapse-btn"
+          color="white"
+          icon="mdi-chevron-double-left"
+          size="small"
+          variant="text"
+          @click="modelValue = false"
+        />
+      </div>
+      <VDivider class="sidebar-divider" />
+      <div class="sidebar-content">
+        <VWindow v-model="selectedTab" class="h-100">
+          <VWindowItem :value="BROWSER_TAB">
+            <ActivityNavigation
+              :activities="activities"
+              :repository="repository"
+              :selected="selectedActivity"
+            />
+          </VWindowItem>
+          <VWindowItem :value="COMMENTS_TAB">
+            <ActivityDiscussion :activity="selectedActivity" />
+          </VWindowItem>
+          <VWindowItem :value="ELEMENT_TAB">
+            <ElementSidebar
+              v-if="selectedElement"
+              :key="getElementId(selectedElement)"
+              :element="selectedElement"
+              :metadata="metadata"
+            />
+          </VWindowItem>
+        </VWindow>
+      </div>
+    </div>
   </VNavigationDrawer>
 </template>
 
@@ -69,6 +82,9 @@ import { useDisplay } from 'vuetify';
 import ActivityNavigation from './ActivityNavigation.vue';
 import ElementSidebar from './ElementSidebar/index.vue';
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
+import { useCurrentRepository } from '@/stores/current-repository';
+
+const modelValue = defineModel<boolean>({ required: true });
 
 const props = defineProps<{
   repository: Repository;
@@ -83,14 +99,15 @@ const ELEMENT_TAB = 'ELEMENT_TAB';
 
 const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 const { lgAndUp } = useDisplay();
+const { isCollection } = storeToRefs(useCurrentRepository());
 
-const selectedTab = ref(BROWSER_TAB);
+const defaultTab = isCollection.value ? COMMENTS_TAB : BROWSER_TAB;
+const selectedTab = ref(defaultTab);
+
 const tabs: any = computed(() => [
-  {
-    name: BROWSER_TAB,
-    label: 'Browse',
-    icon: 'file-tree',
-  },
+  ...(!isCollection.value
+    ? [{ name: BROWSER_TAB, label: 'Browse', icon: 'file-tree' }]
+    : []),
   {
     name: COMMENTS_TAB,
     label: 'Comments',
@@ -130,7 +147,7 @@ watch(
       return;
     }
     if (selectedTab.value !== ELEMENT_TAB) return;
-    selectedTab.value = BROWSER_TAB;
+    selectedTab.value = defaultTab;
   },
 );
 
@@ -149,14 +166,7 @@ watch(
   text-align: left;
 
   :deep(.v-navigation-drawer__content) {
-    -ms-overflow-style: none !important;
-    /* IE and Edge */
-    scrollbar-width: none !important;
-    /* Firefox */
-
-    &::-webkit-scrollbar {
-      display: none !important;
-    }
+    overflow: hidden !important;
   }
 
   .v-btn--disabled {
@@ -164,8 +174,58 @@ watch(
   }
 }
 
-.sidebar-container {
+.sidebar-layout {
+  display: flex;
+  flex-direction: column;
   height: 100%;
+}
+
+.sidebar-tab-row {
+  padding: 0.5rem 0.5rem 0.5rem 0.75rem;
+  gap: 0.25rem;
+}
+
+.sidebar-tabs {
+  min-width: 0;
+
+  :deep(.v-tab) {
+    min-width: unset;
+    font-size: 0.8125rem;
+    letter-spacing: 0.01em;
+    text-transform: none;
+  }
+}
+
+.sidebar-collapse-btn {
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 160ms ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.sidebar-divider {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-content {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+
+  :deep(.v-window),
+  :deep(.v-window__container) {
+    height: 100%;
+    overflow: visible;
+  }
+
+  :deep(.v-window-item) {
+    padding-bottom: 4rem;
+  }
 
   :deep(.activity-discussion) {
     margin: 1rem 0;

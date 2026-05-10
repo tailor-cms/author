@@ -52,7 +52,7 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 const repositoryStore = useCurrentRepository();
 const activity = computed(() => repositoryStore.selectedActivity);
 const { width: pageInnerWidth, mdAndUp } = useDisplay();
-const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 680 : 480));
+const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 480 : 380));
 </script>
 
 <style lang="scss" scoped>

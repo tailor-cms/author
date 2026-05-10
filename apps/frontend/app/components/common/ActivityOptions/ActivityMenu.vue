@@ -2,10 +2,10 @@
   <span>
     <VMenu
       v-model="isOpen"
+      content-class="activity-menu"
       location="left"
       offset="-40"
       width="240"
-      contained
     >
       <template #activator="{ props: menuProps }">
         <VBtn
@@ -16,8 +16,7 @@
           variant="text"
           :size="activatorSize"
           :rounded="rounded"
-        >
-        </VBtn>
+        />
       </template>
       <VList class="text-left text-uppercase">
         <VListItem
@@ -27,7 +26,7 @@
           dense
           @click="it.action()"
         >
-          <VListItemTitle>
+          <VListItemTitle clas="text-h6">
             <VIcon class="pr-1" size="20">{{ it.icon }}</VIcon>
             {{ it.name }}
           </VListItemTitle>

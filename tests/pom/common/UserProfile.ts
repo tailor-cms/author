@@ -42,8 +42,8 @@ export class UserProfile {
   }
 
   async openAvatarMenu() {
-    await this.avatar.hover();
-    return this.changeAvatarBtn.click();
+    await this.avatar.hover({ force: true });
+    await this.changeAvatarBtn.click({ force: true });
   }
 
   fillEmail(email: string) {

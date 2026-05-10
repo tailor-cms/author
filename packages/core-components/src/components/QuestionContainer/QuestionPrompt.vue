@@ -1,6 +1,6 @@
 <template>
   <div class="mb-4">
-    <div class="text-subtitle-2 mb-2">Question</div>
+    <div class="text-subtitle-2 mb-2">Prompt</div>
     <VInput
       :model-value="elementData.question"
       :rules="[requiredRule]"
@@ -21,7 +21,7 @@
         />
         <TailorEmbeddedContainer
           :add-element-options="{
-            label: 'Add question element',
+            label: 'Add element',
             large: true,
             variant: 'text',
           }"
@@ -94,7 +94,7 @@ editorChannel.on('element:focus', (element: any = {}) => {
 }
 
 :deep(.list-group) {
-  padding: 1rem 2.5rem;
+  padding: 1rem 2.5rem !important;
 
   .contained-content {
     margin: 0;

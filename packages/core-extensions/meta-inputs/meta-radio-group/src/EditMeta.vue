@@ -4,6 +4,7 @@
     :color="color"
     :label="meta.label"
     :name="meta.key"
+    :readonly="readonly"
     class="my-2"
     @change="$emit('update', meta.key, input)"
   >
@@ -14,9 +15,18 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-const props = withDefaults(defineProps<{ meta?: any; color?: string }>(), {
+interface Props {
+  meta?: any;
+  color?: string;
+  dark?: boolean;
+  readonly?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
   meta: () => ({ value: null }),
   color: 'primary-darken-3',
+  dark: false,
+  readonly: false,
 });
 defineEmits(['update']);
 

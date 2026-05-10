@@ -18,7 +18,7 @@
       <VCol md="6">
         <VTextField
           v-model="filter"
-          aria-label="Search user groups"
+          data-testid="search-user-groups"
           label="Search"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"

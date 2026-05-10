@@ -1,75 +1,83 @@
 <template>
   <VAppBar
     :color="toolbarColor"
+    border="b surface"
     class="toolbar-wrapper"
-    elevation="3"
+    height="64"
     order="1"
   >
-    <VAppBarNavIcon v-if="smAndDown" @click="$emit('toggle-sidebar')" />
-    <div v-if="activity && !element" class="activity-toolbar w-100 px-3 py-2">
+    <div v-if="activity && !element" class="activity-toolbar w-100 px-3">
       <ActivityActions />
-      <h1 v-if="mdAndUp" class="py-2 px-6 text-h5 text-truncate">
-        <span>{{ config.label }}</span>
-        <span class="px-3 text-grey">|</span>
+      <VDivider class="rail-divider mx-2" vertical />
+      <h1 v-if="mdAndUp" class="activity-title text-body-1 text-truncate">
+        <span class="text-primary-lighten-3 font-weight-medium">
+          {{ config.label }}
+        </span>
+        <span class="title-separator">/</span>
         <span v-if="activity?.isLinkedCopy" class="linked-label text-white">
           <VIcon class="mr-1" color="lime-lighten-2" size="small">
             mdi-link-variant
           </VIcon>
-          Linked -
+          Linked
+          <span class="title-separator">/</span>
         </span>
         <ActivityName
           :activity="activity"
           :class="[
+            'activity-name font-weight-medium',
             activity?.isLinkedCopy ? 'text-white' : 'text-secondary-lighten-3',
           ]"
         />
         <template v-if="showPublishDiff">
-          <span class="px-2 text-grey">|</span>
-          <span class="text-white">comparing with published</span>
-          <span class="px-2 text-grey">@</span>
+          <span class="title-separator">·</span>
+          <span class="text-grey-lighten-1 text-caption">
+            comparing with published
+          </span>
           <VChip
             v-if="activity.publishedAt"
-            class="readonly"
+            class="ml-2"
             color="primary-lighten-4"
             text-color="grey-darken-4"
+            size="x-small"
             label
-            small
           >
             {{ formatDate(activity.publishedAt, 'MM/dd/yy HH:mm') }}
           </VChip>
         </template>
       </h1>
-      <div v-if="activity?.isLinkedCopy" class="d-flex align-center mr-6">
-        <VBtn
-          :disabled="!source"
-          class="mr-3"
-          color="white"
-          prepend-icon="mdi-open-in-new"
-          size="small"
-          variant="outlined"
-          @click="source && viewSource(source)"
-        >
-          View source
-        </VBtn>
-        <VBtn
-          color="white"
-          prepend-icon="mdi-link-variant-off"
-          size="small"
-          variant="outlined"
-          @click="activity && unlinkActivity(activity.id)"
-        >
-          Unlink
-        </VBtn>
-        <ActiveUsers
+      <div class="toolbar-trailing d-flex align-center ga-2">
+        <template v-if="activity?.isLinkedCopy">
+          <VBtn
+            :disabled="!source"
+            color="white"
+            prepend-icon="mdi-open-in-new"
+            size="small"
+            variant="tonal"
+            @click="source && viewSource(source)"
+          >
+            View source
+          </VBtn>
+          <VBtn
+            color="white"
+            prepend-icon="mdi-link-variant-off"
+            size="small"
+            variant="tonal"
+            @click="activity && unlinkActivity(activity.id)"
+          >
+            Unlink
+          </VBtn>
+        </template>
+        <ActiveUsersGroup
           v-if="!showPublishDiff && usersWithActivity.length"
           :users="usersWithActivity"
-          class="mx-3"
+          :size="32"
         />
         <VAppBarNavIcon
           v-if="mdAndDown && !!editorStore.guidelines"
           color="lime"
           variant="tonal"
           icon="mdi-format-list-checks"
+          size="small"
           @click="$emit('toggle-guidelines')"
         />
       </div>
@@ -83,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ActiveUsers } from '@tailor-cms/core-components';
+import { ActiveUsersGroup } from '@tailor-cms/core-components';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
 
@@ -108,7 +116,7 @@ const props = withDefaults(defineProps<Props>(), {
   element: null,
 });
 
-defineEmits(['toggle-sidebar', 'toggle-guidelines']);
+defineEmits(['toggle-guidelines']);
 
 const { $schemaService } = useNuxtApp() as any;
 
@@ -117,7 +125,7 @@ const showPublishDiff = computed(() => editorStore.showPublishDiff);
 const notify = useNotification();
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
-const { mdAndUp, smAndDown, mdAndDown } = useDisplay();
+const { mdAndUp, mdAndDown } = useDisplay();
 
 const activity = computed(() => editorStore.selectedActivity);
 const config = computed(
@@ -126,7 +134,7 @@ const config = computed(
 
 const toolbarColor = computed(() => {
   if (props.element) return 'white';
-  return showPublishDiff.value ? '#1e282c' : 'primary-darken-4';
+  return showPublishDiff.value ? '#1e282c' : 'transparent';
 });
 
 // Source info for linked activities
@@ -168,7 +176,8 @@ const usersWithActivity = computed(() => {
 <style lang="scss" scoped>
 .toolbar-wrapper {
   :deep(.v-toolbar__content) {
-    height: unset !important;
+    height: 4rem !important;
+    padding: 0;
   }
 
   :deep(.v-input) {
@@ -178,7 +187,7 @@ const usersWithActivity = computed(() => {
       position: absolute;
       padding: 0 !important;
 
-      .v-messages {
+      .v-messages__message {
         margin-top: 0.5rem;
         border-radius: 4px;
         padding: 0.5rem 0.75rem;
@@ -189,21 +198,54 @@ const usersWithActivity = computed(() => {
   }
 
   &.bg-white {
-    border-bottom: 4px solid #cfd8dc;
+    border-bottom: 1px solid #cfd8dc;
   }
 }
 
 .activity-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  min-height: 5.625rem;
+  flex-wrap: nowrap;
+  height: 4rem;
+  min-width: 0;
+  gap: 0.25rem;
+}
 
-  h1 {
-    flex: 1;
-    color: #fff;
-    text-align: left;
-  }
+.activity-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0 0.5rem;
+  color: #fff;
+  text-align: left;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.activity-name {
+  letter-spacing: 0.01em;
+}
+
+.title-separator {
+  margin: 0 0.5rem;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.linked-label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.toolbar-trailing {
+  flex-shrink: 0;
+  padding-right: 0.5rem;
+}
+
+.rail-divider {
+  height: 1.5rem;
+  border-color: rgba(255, 255, 255, 0.12);
+  align-self: center;
 }
 </style>

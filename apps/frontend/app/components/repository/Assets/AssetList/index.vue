@@ -19,6 +19,7 @@
         @preview="emit('preview', $event)"
         @toggle="emit('select:toggle', $event)"
         @download="emit('download', $event)"
+        @index="emit('index', $event)"
         @delete="emit('delete', $event)"
       />
     </template>
@@ -44,13 +45,13 @@
     <VIcon color="primary-lighten-2" icon="mdi-folder-open-outline" size="64" />
     <div class="mt-4 text-body-1 text-primary-lighten-3">
       {{
-        selectedCategory !== 'all'
+        selectedCategory !== CATEGORY_ALL
           ? 'No assets match the selected filter.'
           : 'No assets uploaded yet.'
       }}
     </div>
     <div
-      v-if="selectedCategory === 'all'"
+      v-if="selectedCategory === CATEGORY_ALL"
       class="text-caption text-primary-lighten-2 mt-1"
     >
       Upload files, add links, or use Discover.
@@ -61,6 +62,7 @@
 <script lang="ts" setup>
 import type { Asset } from '@tailor-cms/interfaces/asset';
 
+import { CATEGORY_ALL } from '~/composables/useAssetFiltering';
 import AssetRow from './AssetRow.vue';
 
 const props = defineProps<{
@@ -79,6 +81,7 @@ const emit = defineEmits<{
   'preview': [asset: Asset];
   'select:toggle': [asset: Asset];
   'download': [asset: Asset];
+  'index': [asset: Asset];
   'delete': [asset: Asset];
 }>();
 </script>

@@ -2,7 +2,7 @@
   <div class="text-left mt-2 mb-8">
     <div class="label ma-1 text-caption">{{ meta.label }}</div>
     <div class="d-flex">
-      <ColorInput :color="selected" @input="select" />
+      <ColorInput :color="selected" :readonly="readonly" @input="select" />
       <div
         v-for="(group, index) in colors"
         :key="index"
@@ -13,6 +13,7 @@
           :key="color"
           :aria-label="color"
           :color="color"
+          :readonly="readonly"
           class="color-btn"
           size="24"
           flat
@@ -53,8 +54,13 @@ const DEFAULT_COLORS = [
 interface Meta extends Metadata {
   value?: string;
 }
+interface Props {
+  meta: Meta;
+  dark?: boolean;
+  readonly?: boolean;
+}
 
-const props = defineProps<{ meta: Meta }>();
+const props = withDefaults(defineProps<Props>(), { dark: false, readonly: false });
 const emit = defineEmits(['update']);
 
 const colors = ref(props.meta.colors ?? DEFAULT_COLORS);
