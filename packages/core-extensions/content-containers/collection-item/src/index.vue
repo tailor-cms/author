@@ -1,6 +1,6 @@
 <template>
   <VCard color="white" class="collection-item">
-    <VCardText class="text-left pa-8 pb-4">
+    <VCardText class="pa-8 pb-4 text-left">
       <div v-for="input in config" :key="input.key">
         <Field
           v-if="input.isContentElement"
@@ -15,13 +15,13 @@
             {{ input.label }}
           </div>
           <div
-            class="element-container pb-4"
             :class="{ 'text-error': errorMessage }"
+            class="element-container pb-4"
           >
             <ContainedContent
               :element="state[input.key]"
-              :is-disabled="disabled"
               :embed-element-config="embedElementConfig"
+              :is-disabled="disabled"
               autosave
               @save="(e) => (state[input.key] = { ...state[input.key], data: e })"
             />
@@ -37,8 +37,8 @@
           :meta="{ ...input, value: state[input.key] }"
           :name="input.key"
           :is-disabled="disabled"
-          hide-details="auto"
           class="pb-4"
+          hide-details="auto"
           @update="(e) => (state[input.key] = e)"
         />
       </div>
@@ -151,6 +151,9 @@ const state = ref(cloneDeep(initialState.value));
 const isDirty = computed(() => !isEqual(state.value, initialState.value));
 
 const save = async () => {
+  // Two validation gates: vee-validate covers the top-level Field inputs
+  // here; validateItems() runs validators that nested ContainedContent
+  // children registered via useValidation. Both must pass.
   const [formResult, contentResult] = await Promise.all([
     validate(),
     validateItems(),
