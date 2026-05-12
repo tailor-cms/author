@@ -1,10 +1,7 @@
 import type { Activity } from './activity';
 import type { Revision } from './revision';
 import type { UserGroup } from './user-group';
-import { RepositoryRole } from './role';
-
-export { RepositoryRole };
-export type { Revision };
+import type { RepositoryRole } from './role';
 
 // System-managed slot inside Repository.data.
 // Stripped from publish manifests and export archives - never persist

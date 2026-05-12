@@ -1,5 +1,6 @@
 import forEach from 'lodash/forEach.js';
 import publishAccessService from '#shared/publishing/publish.access.service.js';
+import type { OperationContext } from '#shared/database/types.ts';
 import type { Repository } from './repository.model.js';
 
 // Sequelize hook signature wrapped via Hooks.withType: receives the
@@ -7,7 +8,7 @@ import type { Repository } from './repository.model.js';
 type RepoHook = (
   hookType: string,
   instance: Repository,
-  options: { context?: { userId: number } },
+  options: { context?: OperationContext },
 ) => unknown;
 
 function add(Repository: any, Hooks: any) {
@@ -28,7 +29,7 @@ function add(Repository: any, Hooks: any) {
   function markAsUnpublished(
     _hookType: string,
     repository: Repository,
-    { context }: { context?: { userId: number } },
+    { context }: { context?: OperationContext },
   ) {
     if (context) repository.hasUnpublishedChanges = true;
   }
