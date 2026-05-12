@@ -20,6 +20,7 @@ import {
   QuotaExceededError,
   type DiscoveryResult,
 } from './types.ts';
+import type { Repository } from '../../repository/repository.model.js';
 
 const logger = createLogger('asset:discovery');
 
@@ -41,7 +42,7 @@ const RESEARCH_SITES = [
 ].join(' OR ');
 
 // Used for LLM search to provide more context about the search
-function buildRepoContext(repository: any): string {
+function buildRepoContext(repository: Repository): string {
   const schema = schemaAPI.getSchema(repository.schema);
   const parts = [
     `Repository: "${repository.name}"`,
@@ -152,7 +153,7 @@ async function fetchFromLlm(
 // Searches the web for resources matching the query and filter.
 async function search(
   query: string,
-  repository: any,
+  repository: Repository,
   contentFilter: ContentFilter = ContentFilter.All,
   count = DEFAULT_COUNT,
 ): Promise<DiscoveryResult[]> {

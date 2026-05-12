@@ -1,4 +1,4 @@
-import { role as roleConfig } from '@tailor-cms/common';
+import { role as roleConfig } from '@tailor-cms/interfaces/role';
 import yn from 'yn';
 
 const { env } = process;

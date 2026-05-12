@@ -1309,6 +1309,9 @@ importers:
       '@tailor-cms/config-parser':
         specifier: workspace:*
         version: link:../tailor-config-parser
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../tailor-interfaces
       is-localhost:
         specifier: 0.0.2
         version: 0.0.2

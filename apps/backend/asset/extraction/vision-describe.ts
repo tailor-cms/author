@@ -7,7 +7,7 @@
 import AIService from '#shared/ai/ai.service.ts';
 import { createLogger } from '#logger';
 
-import Storage from '../../repository/storage.js';
+import Storage from '../../repository/storage.ts';
 
 const logger = createLogger('asset:vision-describe');
 

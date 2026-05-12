@@ -1,5 +1,5 @@
 import { Model } from 'sequelize';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 import hooks from './userGroupMember.hooks.js';
 
 class UserGroupMember extends Model {

@@ -2,7 +2,7 @@ import { consumer } from '#config';
 import { createLogger } from '#logger';
 import oauth2 from '../oAuth2Provider.js';
 import Repository from '#app/repository/repository.model.js';
-import storage from '#app/repository/storage.js';
+import storage from '#app/repository/storage.ts';
 import User from '#app/user/user.model.js';
 import UserGroup from '#app/user-group/userGroup.model.js';
 import UserGroupMember from '#app/user-group/userGroupMember.model.js';

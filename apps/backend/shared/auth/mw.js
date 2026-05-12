@@ -1,5 +1,5 @@
 import get from 'lodash/get.js';
-import roleConfig from '@tailor-cms/common/src/role.js';
+import roleConfig from '@tailor-cms/interfaces/role';
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '../error/helpers.js';
 import { auth as authConfig } from '#config';

@@ -10,7 +10,7 @@
     "#config/*": "./config/*",
     "#logger": "./shared/logger.js",
     "#shared/*": "./shared/*",
-    "#storage": "./repository/storage.js"
+    "#storage": "./repository/storage.ts"
   },
   "scripts": {
     "dev": "node --watch --import ./script/preflight.js --experimental-transform-types ./index.ts || exit 0",

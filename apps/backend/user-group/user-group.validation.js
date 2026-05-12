@@ -1,5 +1,5 @@
 import { body, query } from 'express-validator';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 
 import defineRequestValidator from '#shared/request/validation.js';
 

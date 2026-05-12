@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 
-import { ContentType } from '@tailor-cms/interfaces/discovery.ts';
+import { ContentType } from '@tailor-cms/interfaces/discovery';
 import { detectLinkProvider } from '@tailor-cms/common/asset';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
@@ -11,6 +11,7 @@ import { storage as storageConfig } from '#config';
 import db from '#shared/database/index.js';
 
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
+import type { Repository } from '../repository/repository.model.js';
 import {
   buildAttachmentKey,
   buildStorageKey,
@@ -20,7 +21,7 @@ import { extractDimensions } from './utils/image.ts';
 import { resolveType } from './utils/mime.ts';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { removeFromStore } from './indexing/indexing.service.ts';
-import Storage from '../repository/storage.js';
+import Storage from '../repository/storage.ts';
 import {
   VideoLinkMode,
   type ImportFileOptions,
@@ -115,7 +116,7 @@ async function importFile({
   return asset.reload({ include: [UPLOADER_INCLUDE] });
 }
 
-async function destroyAsset(repository: any, asset: Asset) {
+async function destroyAsset(repository: Repository, asset: Asset) {
   logger.debug({ assetId: asset.id, type: asset.type }, 'Destroying asset');
   await safeRemoveFromVectorStore(repository, asset);
   // Files are NOT deleted from storage - content elements may reference them
@@ -316,12 +317,12 @@ export async function importFromLink(
   return asset.reload({ include: [UPLOADER_INCLUDE] });
 }
 
-export async function remove(repository: any, asset: Asset) {
+export async function remove(repository: Repository, asset: Asset) {
   await destroyAsset(repository, asset);
   return asset;
 }
 
-export async function bulkRemove(repository: any, assetIds: number[]) {
+export async function bulkRemove(repository: Repository, assetIds: number[]) {
   const assets = await Asset.findAll({
     where: { id: { [Op.in]: assetIds }, repositoryId: repository.id },
   });

@@ -4,7 +4,7 @@ import type {
   Tag,
 } from '@tailor-cms/interfaces/repository';
 import { intersectionBy } from 'lodash-es';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { useAuthStore } from './auth';
 import { repository as api, tag as tagApi } from '@/api';

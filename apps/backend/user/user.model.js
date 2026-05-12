@@ -7,7 +7,7 @@ import omit from 'lodash/omit.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import randomstring from 'randomstring';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 import mail from '#shared/mail/index.js';
 import Audience from '#shared/auth/audience.js';
 import { auth as authConfig } from '#config';

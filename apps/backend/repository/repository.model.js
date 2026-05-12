@@ -4,9 +4,9 @@ import intersection from 'lodash/intersection.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
-import { RepositoryRole } from '@tailor-cms/common/src/role.js';
+import { RepositoryRole } from '@tailor-cms/interfaces/role';
 import { schema } from '@tailor-cms/config';
-import hooks from './repository.hooks.js';
+import hooks from './repository.hooks.ts';
 
 const { getRepositoryRelationships, getSchema } = schema;
 

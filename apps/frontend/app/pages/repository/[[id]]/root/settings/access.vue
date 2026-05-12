@@ -48,7 +48,7 @@
 
 <script lang="ts" setup>
 import { map } from 'lodash-es';
-import { role } from '@tailor-cms/common';
+import { role } from '@tailor-cms/interfaces/role';
 import { storeToRefs } from 'pinia';
 import { titleCase } from '@tailor-cms/utils';
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';

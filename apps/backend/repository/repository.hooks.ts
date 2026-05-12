@@ -1,8 +1,17 @@
 import forEach from 'lodash/forEach.js';
 import publishAccessService from '#shared/publishing/publish.access.service.js';
+import type { Repository } from './repository.model.js';
 
-function add(Repository, Hooks) {
-  const hooks = {
+// Sequelize hook signature wrapped via Hooks.withType: receives the
+// hook type as the first arg, then the standard Sequelize args.
+type RepoHook = (
+  hookType: string,
+  instance: Repository,
+  options: { context?: { userId: number } },
+) => unknown;
+
+function add(Repository: any, Hooks: any) {
+  const hooks: Record<string, RepoHook[]> = {
     [Hooks.beforeCreate]: [markAsUnpublished],
     [Hooks.beforeUpdate]: [markAsUnpublished],
     [Hooks.beforeDestroy]: [markAsUnpublished],
@@ -16,15 +25,19 @@ function add(Repository, Hooks) {
     });
   });
 
-  function markAsUnpublished(_hookType, repository, { context }) {
+  function markAsUnpublished(
+    _hookType: string,
+    repository: Repository,
+    { context }: { context?: { userId: number } },
+  ) {
     if (context) repository.hasUnpublishedChanges = true;
   }
 
-  function scheduleAccessUpdate(_hookType, instance) {
+  function scheduleAccessUpdate(_hookType: string, instance: Repository) {
     return publishAccessService.scheduleUpdate(instance.id);
   }
 
-  function deleteAccessFile(_hookType, instance) {
+  function deleteAccessFile(_hookType: string, instance: Repository) {
     return publishAccessService.delete(instance.id);
   }
 }

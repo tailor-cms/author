@@ -4,7 +4,7 @@ import Promise from 'bluebird';
 import set from 'lodash/set.js';
 import toPairs from 'lodash/toPairs.js';
 import values from 'lodash/values.js';
-import storage from '../../repository/storage.js';
+import storage from '../../repository/storage.ts';
 import { storage as config } from '#config';
 
 const isComposite = (element) => !!get(element, 'data.embeds');

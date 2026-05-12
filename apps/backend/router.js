@@ -1,5 +1,5 @@
 import express from 'express';
-import repository from './repository/index.js';
+import repository from './repository/index.ts';
 import seedRouter from './tests/api/index.js';
 import tag from './tag/index.js';
 import user from './user/index.js';

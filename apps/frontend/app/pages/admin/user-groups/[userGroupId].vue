@@ -71,7 +71,7 @@
 import { map } from 'lodash-es';
 import { titleCase } from '@tailor-cms/utils';
 import { UserAvatar } from '@tailor-cms/core-components';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 
 import type { User } from '@tailor-cms/interfaces/user';
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
