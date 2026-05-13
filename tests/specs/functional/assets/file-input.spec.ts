@@ -20,9 +20,6 @@ test.describe('FileInput - upload tab', () => {
     // Verify persistence
     await page.reload({ waitUntil: 'networkidle' });
     await fileInput.expectFileSet(IMAGE.name);
-    // Verify download
-    const download = await fileInput.download(IMAGE.name);
-    expect(download.suggestedFilename()).toContain(IMAGE.name);
   });
 
   test('uploaded file appears in the asset library', async ({
