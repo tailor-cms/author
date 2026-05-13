@@ -13,6 +13,7 @@ import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
 import db from '../../database/index.js';
 import { createLogger } from '#logger';
+import { seedPasteSnapshot } from '#app/repository/lib/schema.ts';
 import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
 
 const logger = createLogger('processors');
@@ -60,15 +61,18 @@ export default {
   createAssetProcessor,
 };
 
+// Captures the archive's schema config into context for the later
+// repository step. Doesn't validate against the registry - that decision
+// is deferred to processRepository which has the row's actual schema id
+// and can pick "registry hit", "paste-mode fallback", or "fail".
 function processManifest(manifest, _enc, { context }) {
-  const schemas = map(SCHEMAS, 'id');
-  const isSupported = schemas.includes(manifest.schema.id);
-  if (!isSupported) throw new Error('Schema not supported');
+  if (!manifest?.schema?.id) throw new Error('Manifest missing schema');
+  context.manifestSchema = manifest.schema;
   context.assets.push(...manifest.assets);
 }
 
 async function processRepository(repository, _enc, { context, transaction }) {
-  const { name, description, userId, userGroupIds } = context;
+  const { name, description, userId, userGroupIds, manifestSchema } = context;
   repository = normalize(repository, Repository);
   Object.assign(repository, { description, name });
   // Defensive: archive may carry `$$.ai` (or other instance-specific
@@ -76,6 +80,28 @@ async function processRepository(repository, _enc, { context, transaction }) {
   // so paste-mode works when this instance doesn't have the schema id
   // in its registry.
   if (repository.data) repository.data = stripInstanceSpecific(repository.data);
+
+  // Schema resolution at import time:
+  //   - registered in this instance       -> proceed; syncSchemaSnapshot
+  //     (model hook) populates $$.schema from the registry on create.
+  //   - not registered, archive carried $$.schema in repository.data
+  //     -> already preserved by stripInstanceSpecific; nothing to do.
+  //   - not registered, archive only carried manifest.schema config
+  //     -> seed a paste-mode snapshot into data.$$.schema so the new
+  //       row can resolve its schema via fallback.
+  //   - not registered, no fallback available -> fail loud.
+  const isRegistered = map(SCHEMAS, 'id').includes(repository.schema);
+  const hasSnapshot = !!repository.data?.$$?.schema;
+  if (!isRegistered && !hasSnapshot && manifestSchema) {
+    repository.data = seedPasteSnapshot(repository.data, manifestSchema);
+  }
+  if (!isRegistered && !repository.data?.$$?.schema) {
+    throw new Error(
+      `Schema "${repository.schema}" not supported and archive provides ` +
+        'no fallback config',
+    );
+  }
+
   const options = { context: { userId }, transaction };
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
   const entity = await Repository.create(repositoryRecord, options);

@@ -53,6 +53,24 @@ export function resolveSchemaConfig(repository: Repository): Schema {
   );
 }
 
+// Returns a fresh `data` attr with `$$.schema` set to a paste-mode
+// snapshot of schema `config`.
+export function seedPasteSnapshot(
+  data: Record<string, unknown> | undefined | null,
+  config: Schema,
+): Record<string, unknown> {
+  const snapshot: RepositorySchemaSnapshot = {
+    sha: hashSchemaConfig(config),
+    config,
+    source: 'pasted',
+    updatedAt: new Date().toISOString(),
+  };
+  return {
+    ...(data ?? {}),
+    $$: { ...((data as any)?.$$ ?? {}), schema: snapshot },
+  };
+}
+
 interface WriteSnapshotArgs {
   // Target repository whose `data.$$.schema` is being updated.
   repository: Repository;

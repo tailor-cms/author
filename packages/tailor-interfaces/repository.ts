@@ -1,5 +1,6 @@
 import type { Activity } from './activity';
 import type { Revision } from './revision';
+import type { Schema } from './schema';
 import type { UserGroup } from './user-group';
 import type { RepositoryRole } from './role';
 
@@ -12,6 +13,29 @@ export interface RepositorySystemData {
     // OpenAI vector store id used for repo-scoped retrieval
     storeId?: string;
   };
+  // Frozen backup of the Schema configuration this repository was built
+  // against. Acts as a fallback when `Repository.schema` is no longer in
+  // the live `@tailor-cms/config` registry (schema deletion) and as the
+  // source of truth for pasted/custom schemas not in the registry at all.
+  schema?: RepositorySchemaSnapshot;
+}
+
+// Schema-config backup stored under `data.$$.schema`. The platform syncs
+// it against the live registry on writes; consumers should not read this
+// directly - go through Repository.getSchemaConfig() which handles the
+// registry-vs-snapshot fallback.
+export interface RepositorySchemaSnapshot {
+  // sha1 of `config` (via `hash-object`) - used to detect registry drift
+  // and short-circuit redundant writes.
+  sha: string;
+  // Frozen Schema config blob (processed form, ready for use).
+  config: Schema;
+  // Origin of the snapshot:
+  // - 'registry': resolved from @tailor-cms/config at create/sync time
+  // - 'pasted': supplied by the caller; not present in the registry
+  source: 'registry' | 'pasted';
+  // ISO timestamp of the last write.
+  updatedAt: string;
 }
 
 // Free-form bag of meta values attached to a Repository. Most keys come
