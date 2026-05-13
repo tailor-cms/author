@@ -18,7 +18,10 @@ export async function getRepository(
     paranoid: false,
   });
   if (!repository) {
-    throw createError(StatusCodes.NOT_FOUND, 'Not found');
+    // `createError` returns Promise.reject(httpError); returning it lets
+    // Express's async-middleware catch the rejection and route it to the
+    // error handler with the right httpError instance
+    return createError(StatusCodes.NOT_FOUND, 'Not found');
   }
   req.repository = repository;
   next();

@@ -1,6 +1,6 @@
 import { Model } from 'sequelize';
 import { repository as role } from '@tailor-cms/interfaces/role';
-import hooks from './repositoryUser.hooks.ts';
+import hooks from './repository-user.hooks.ts';
 
 class RepositoryUser extends Model {
   static fields({ BOOLEAN, DATE, ENUM, INTEGER }) {

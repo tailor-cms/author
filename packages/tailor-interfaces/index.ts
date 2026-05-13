@@ -18,6 +18,10 @@ export type { Revision } from './revision';
 export type { Schema } from './schema';
 export type { User } from './user';
 export type { UserGroup } from './user-group';
+export type {
+  UserActivityContext,
+  UserActivityContextStored,
+} from './user-activity';
 
 // Runtime enums commonly used alongside the entities above
 export { RepositoryRole, UserRole } from './role';

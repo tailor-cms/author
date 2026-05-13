@@ -1,7 +1,10 @@
 import forEach from 'lodash/forEach.js';
 import publishAccessService from '#shared/publishing/publish.access.service.js';
+import { createLogger } from '#logger';
 import type { OperationContext } from '#shared/database/types.ts';
 import type { Repository } from './repository.model.js';
+
+const logger = createLogger('repository:hooks');
 
 // Sequelize hook signature wrapped via Hooks.withType: receives the
 // hook type as the first arg, then the standard Sequelize args.
@@ -35,10 +38,18 @@ function add(Repository: any, Hooks: any) {
   }
 
   function scheduleAccessUpdate(_hookType: string, instance: Repository) {
+    logger.debug(
+      { repositoryId: instance.id },
+      'Scheduling published-access update',
+    );
     return publishAccessService.scheduleUpdate(instance.id);
   }
 
   function deleteAccessFile(_hookType: string, instance: Repository) {
+    logger.debug(
+      { repositoryId: instance.id },
+      'Deleting published-access file',
+    );
     return publishAccessService.delete(instance.id);
   }
 }

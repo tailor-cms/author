@@ -1,6 +1,6 @@
 import forEach from 'lodash/forEach.js';
 import publishAccessService from '#shared/publishing/publish.access.service.js';
-import type { RepositoryUser } from './repositoryUser.model.js';
+import type { RepositoryUser } from './repository-user.model.js';
 
 type RepoUserHook = (hookType: string, instance: RepositoryUser) => unknown;
 

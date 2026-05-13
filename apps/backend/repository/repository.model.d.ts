@@ -9,6 +9,7 @@ import type {
 } from 'sequelize';
 import type {
   Activity,
+  ContentElement,
   Repository as RepositoryAttrs,
   Schema,
   Tag,
@@ -19,12 +20,23 @@ import type { OperationContext } from '#shared/database/types.ts';
 // Helper: attach the platform's hook context option to a Sequelize options shape.
 type WithContext<T> = T & { context?: OperationContext };
 
-// Output of Repository.validateReferences: lists of activity and element
-// ids that reference missing entities (e.g. deleted activities still
-// referenced by a `prerequisites` relationship).
+// A single dangling reference detected during validation.
+// `src` is the entity that still holds the reference; `target` is what
+// the reference points to but no longer exists; `referenceName` is the
+// key on `src.refs` where the link lives (e.g. `prerequisites`).
+export interface BrokenReference<TSrc = Activity | ContentElement> {
+  src: TSrc;
+  target: { id: number; entity?: string };
+  referenceName: string;
+}
+
+// Output of Repository.validateReferences: dangling references grouped
+// by the entity kind that holds them. Element entries' `src` is enriched
+// by ContentElement.detectMissingReferences with its outline-activity
+// pointer so the UI can deep-link.
 export interface ReferenceValidationResult {
-  activities: unknown[];
-  elements: unknown[];
+  activities: BrokenReference<Activity>[];
+  elements: BrokenReference<ContentElement & { outlineActivity: Activity }>[];
 }
 
 // Subset of Sequelize-generated association mixins used by the controller.
