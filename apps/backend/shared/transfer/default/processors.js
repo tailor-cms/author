@@ -13,6 +13,7 @@ import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
 import db from '../../database/index.js';
 import { createLogger } from '#logger';
+import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
 
 const logger = createLogger('processors');
 
@@ -70,7 +71,11 @@ async function processRepository(repository, _enc, { context, transaction }) {
   const { name, description, userId, userGroupIds } = context;
   repository = normalize(repository, Repository);
   Object.assign(repository, { description, name });
-  if (repository.data) repository.data = omit(repository.data, '$$');
+  // Defensive: archive may carry `$$.ai` (or other instance-specific
+  // paths) from the source environment. Drop them but keep `$$.schema`
+  // so paste-mode works when this instance doesn't have the schema id
+  // in its registry.
+  if (repository.data) repository.data = stripInstanceSpecific(repository.data);
   const options = { context: { userId }, transaction };
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
   const entity = await Repository.create(repositoryRecord, options);

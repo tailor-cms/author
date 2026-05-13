@@ -10,7 +10,6 @@
 import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { discovery as config } from '#config';
-import { schema as schemaAPI } from '@tailor-cms/config';
 import * as llmSearch from './llm-search.ts';
 import * as serper from './serper.ts';
 import * as unsplash from './unsplash.ts';
@@ -41,9 +40,9 @@ const RESEARCH_SITES = [
   'site:repec.org', // Economics papers & rankings
 ].join(' OR ');
 
-// Used for LLM search to provide more context about the search
+// Used for LLM search to provide more context about the search.
 function buildRepoContext(repository: Repository): string {
-  const schema = schemaAPI.getSchema(repository.schema);
+  const schema = repository.getSchemaConfig();
   const parts = [
     `Repository: "${repository.name}"`,
     `Description: "${repository.description}"`,

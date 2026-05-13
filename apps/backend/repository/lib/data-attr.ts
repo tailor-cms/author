@@ -9,6 +9,7 @@
 //   2. Defensive-strip server-managed fields in the service layer before
 //      persisting (so a future server-only key can be added in one
 //      place rather than relying on every validator to be updated).
+import pick from 'lodash/pick.js';
 import unset from 'lodash/fp/unset.js';
 import { z } from 'zod';
 
@@ -57,4 +58,28 @@ export function stripServerManaged(
     (acc, path) => unset(path, acc),
     data,
   );
+}
+
+// $$ keys that ARE allowed to survive a transfer (clone, export, import).
+// Whitelist on purpose - any future $$.foo defaults to "instance-specific,
+// doesn't travel" unless we explicitly add it here. The schema snapshot
+// travels because the target instance may not have the schema registered
+// (paste-mode safety on import).
+const TRANSFERABLE_SYSTEM_KEYS = ['schema'];
+
+// Strips instance-specific paths from a data blob before persisting into
+// a *fresh* repository. Used by clone, export serialisation, and import
+// (defensive, in case an archive carries instance state from the source
+// environment - vector store ids, etc.). Preserves `$$.schema` so
+// snapshot/paste-mode survives transfers.
+export function stripInstanceSpecific(
+  data: Record<string, unknown> | undefined | null,
+): Record<string, unknown> | undefined {
+  if (!data) return data ?? undefined;
+  if (!data.$$) return data;
+  const $$ = pick(
+    data.$$ as Record<string, unknown>,
+    TRANSFERABLE_SYSTEM_KEYS,
+  );
+  return { ...data, $$ };
 }

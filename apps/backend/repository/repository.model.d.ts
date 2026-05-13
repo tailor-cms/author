@@ -58,8 +58,14 @@ export type Repository = RepositoryAttrs &
   RepositoryAssociations & {
     // True if the user has access via membership or user-group association
     hasAccess(user: User): Promise<boolean>;
-    // Returns the Schema configuration for this repository's schema id
+    // Resolves the Schema configuration via the registry, falling back
+    // to the `$$.schema` snapshot if the id has been removed from
+    // @tailor-cms/config
     getSchemaConfig(): Schema;
+    // Refreshes the `$$.schema` snapshot from the live registry when the
+    // stored sha has drifted. Returns true if a write happened, false if
+    // already in sync or the schema id is not in the registry.
+    syncSchemaSnapshot(transaction?: Transaction): Promise<boolean>;
     // Mutating methods accept the platform's hook context option
     update(
       values: Partial<RepositoryAttrs>,

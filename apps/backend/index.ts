@@ -11,14 +11,15 @@ import contentPluginRegistry from '#shared/content-plugins/index.js';
 Promise.config({ longStackTraces: !config.isProduction });
 
 /* eslint-disable */
-import database from '#shared/database/index.js';
+import db from '#shared/database/index.js';
 import { createLogger } from '#logger';
+import { syncAllSnapshots } from './repository/lib/schema.ts';
 /* eslint-enable */
 
 const logger = createLogger();
 const runApp = promisify(app.listen.bind(app));
 
-database
+db
   .initialize()
   .then(() => logger.info('Database initialized'))
   .then(() => contentPluginRegistry.initialize())
@@ -26,6 +27,11 @@ database
   .then(() => {
     logger.info(`Server listening on port ${config.port}`);
     welcome(config.packageName, config.packageVersion);
+    // Bootstrap schema snapshots for repos that don't have one
+    // or repos whose schema changed between deploys.
+    syncAllSnapshots(db.Repository).catch((err) =>
+      logger.error({ err }, 'Boot snapshot sync failed'),
+    );
   })
   .catch((err) => logger.error({ err }));
 

@@ -7,8 +7,10 @@ import Promise from 'bluebird';
 import { RepositoryRole } from '@tailor-cms/interfaces/role';
 import { schema } from '@tailor-cms/config';
 import hooks from './repository.hooks.ts';
+import { resolveSchemaConfig, syncSchemaSnapshot } from './lib/schema.ts';
+import { stripInstanceSpecific } from './lib/data-attr.ts';
 
-const { getRepositoryRelationships, getSchema } = schema;
+const { getRepositoryRelationships } = schema;
 
 class Repository extends Model {
   static fields(DataTypes) {
@@ -136,7 +138,15 @@ class Repository extends Model {
       },
       { transaction },
     );
+    // Snapshot the schema config so the repository can survive a future
+    // removal of `data.schema` from the registry. No-op for paste-mode
+    // (caller pre-populated data.$$.schema with an unregistered id).
+    await syncSchemaSnapshot(repository, transaction);
     return repository;
+  }
+
+  async syncSchemaSnapshot(transaction) {
+    return syncSchemaSnapshot(this, transaction);
   }
 
   async hasAccess(user) {
@@ -244,6 +254,10 @@ class Repository extends Model {
     const Repository = this.sequelize.model('Repository');
     const Activity = this.sequelize.model('Activity');
     const srcAttributes = pick(this, ['schema', 'data']);
+    // Strip instance-specific paths (e.g. $$.ai vector store id) so the
+    // clone starts with fresh AI state. $$.schema is preserved so the
+    // clone keeps the snapshot/paste-mode lifeline.
+    srcAttributes.data = stripInstanceSpecific(srcAttributes.data);
     const dstAttributes = Object.assign(srcAttributes, { name, description });
     const transaction = await this.sequelize.transaction();
     const dst = await Repository.createByUser(dstAttributes, {
@@ -305,7 +319,7 @@ class Repository extends Model {
   }
 
   getSchemaConfig() {
-    return getSchema(this.schema);
+    return resolveSchemaConfig(this);
   }
 }
 
