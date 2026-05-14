@@ -2,7 +2,7 @@ import type { AssetSource } from '@tailor-cms/interfaces/asset';
 import type { ContentType } from '@tailor-cms/interfaces/discovery';
 import type { RequestHandler } from 'express';
 import type { Asset } from './asset.model.js';
-import type { Repository } from '../repository/repository.model.js';
+import type { Repository } from '../repository/models/repository.model.js';
 
 export type { AssetSource };
 

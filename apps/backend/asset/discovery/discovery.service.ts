@@ -19,7 +19,7 @@ import {
   QuotaExceededError,
   type DiscoveryResult,
 } from './types.ts';
-import type { Repository } from '../../repository/repository.model.js';
+import type { Repository } from '../../repository/models/repository.model.js';
 
 const logger = createLogger('asset:discovery');
 

@@ -11,7 +11,7 @@ import { storage as storageConfig } from '#config';
 import db from '#shared/database/index.js';
 
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
-import type { Repository } from '../repository/repository.model.js';
+import type { Repository } from '../repository/models/repository.model.js';
 import {
   buildAttachmentKey,
   buildStorageKey,

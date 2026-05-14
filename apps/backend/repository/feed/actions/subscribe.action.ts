@@ -1,7 +1,7 @@
 import { UserActivity } from '@tailor-cms/common/src/sse.js';
 import sse from '#shared/sse/index.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import type { Repository } from '../../repository.model.js';
+import type { Repository } from '../../models/repository.model.js';
 import { removeContext } from '../store.ts';
 
 // Minimal slice of the runtime SSEConnection API we use here.

@@ -36,7 +36,7 @@ import { extractAndStoreCaptions } from '../extraction/video/youtube-captions.ts
 import { describeWithVision } from '../extraction/vision-describe.ts';
 import { fetchUrlContent } from '../extraction/web-content.ts';
 import Storage from '../../repository/storage.ts';
-import type { Repository } from '../../repository/repository.model.js';
+import type { Repository } from '../../repository/models/repository.model.js';
 
 interface IndexingContext<T extends Asset = Asset> {
   storeId: string;

@@ -16,7 +16,7 @@ import type { Transaction } from 'sequelize';
 import { createLogger } from '#logger';
 // Type-only import - erased at runtime, so no circular module load with
 // repository.model.js (which imports the *runtime* sync helpers below).
-import type { Repository } from '../repository.model.js';
+import type { Repository } from '../models/repository.model.js';
 
 const { getSchema } = schemaApi;
 

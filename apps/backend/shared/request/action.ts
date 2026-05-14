@@ -20,7 +20,7 @@ import {
   type HttpMethod,
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
-import type { Repository } from '../../repository/repository.model.js';
+import type { Repository } from '../../repository/models/repository.model.js';
 
 export type { OpenApiSpec };
 

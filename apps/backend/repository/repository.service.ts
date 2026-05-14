@@ -26,7 +26,7 @@ import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import { subQuery } from '#shared/database/helpers.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 import UserGroup from '#app/user-group/userGroup.model.js';
-import type { Repository } from './repository.model.js';
+import type { Repository } from './models/repository.model.js';
 
 import type { CreateBody } from './actions/create.action.ts';
 import type { PatchBody } from './actions/patch.action.ts';
