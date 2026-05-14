@@ -13,7 +13,7 @@ import comment from '../comment/index.js';
 import contentElement from '../content-element/index.js';
 import feed from './feed/index.ts';
 import revision from '../revision/index.js';
-import rpc from '../rpc/index.js';
+import rpc from './rpc/index.ts';
 
 const router = express.Router();
 const mount = createActionMounter(router, '/repositories');
