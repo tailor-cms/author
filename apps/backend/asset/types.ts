@@ -3,6 +3,7 @@ import type { ContentType } from '@tailor-cms/interfaces/discovery';
 import type { RequestHandler } from 'express';
 import type { Asset } from './asset.model.js';
 import type { Repository } from '../repository/models/repository.model.js';
+import type { User } from '../user/models/user.model.js';
 
 export type { AssetSource };
 
@@ -75,7 +76,7 @@ export interface ImportFromLinkOptions {
 export interface AssetRequest {
   // Loaded by the parent /:repositoryId param middleware
   repository: Repository;
-  user: any;
+  user: User;
   asset?: Asset;
   body: any;
   query: any;

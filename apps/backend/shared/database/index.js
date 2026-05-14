@@ -10,7 +10,7 @@ import Sequelize from 'sequelize';
 import sequelizeConfig from '../../sequelize.config.cjs';
 
 // Require models.
-import User from '../../user/user.model.js';
+import User from '../../user/models/user.model.js';
 import UserGroup from '#app/user-group/userGroup.model.js';
 import UserGroupMember from '#app/user-group/userGroupMember.model.js';
 import Repository from '../../repository/models/repository.model.js';

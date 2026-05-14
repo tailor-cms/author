@@ -27,6 +27,7 @@ import { subQuery } from '#shared/database/helpers.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 import UserGroup from '#app/user-group/userGroup.model.js';
 import type { Repository } from './models/repository.model.js';
+import type { User } from '../user/models/user.model.js';
 
 import type { CreateBody } from './actions/create.action.ts';
 import type { PatchBody } from './actions/patch.action.ts';
@@ -60,7 +61,7 @@ const includeUser = () => ({
   ],
 });
 
-const includeRepositoryUser = (user: any, query?: any) => {
+const includeRepositoryUser = (user: User, query?: { pinned?: boolean }) => {
   const options =
     query && query.pinned
       ? { where: { userId: user.id, pinned: true }, required: true }
@@ -106,7 +107,7 @@ export interface ListResult {
 // filters; pagination + sort key come from `opts` (built by processQuery).
 export async function list(
   opts: any,
-  user: any,
+  user: User,
   query: any,
 ): Promise<ListResult> {
   const { search, name, userGroupId, compatibleWith } = query;
@@ -155,7 +156,7 @@ export async function list(
 
 // Creates a repository seeded with schema-default meta + a sampled label
 // color, then optionally shares it with the supplied user groups.
-export async function create(payload: CreateBody, user: any) {
+export async function create(payload: CreateBody, user: User) {
   const defaultMeta = getVal(schemaApi.getSchema(payload.schema), 'defaultMeta', {});
   const data = {
     color: sample(DEFAULT_COLORS),
@@ -173,7 +174,7 @@ export async function create(payload: CreateBody, user: any) {
 }
 
 // Loads a detailed view of the repository
-export async function loadDetail(repository: Repository, user: any) {
+export async function loadDetail(repository: Repository, user: User) {
   const include: any[] = [
     includeLastRevision(),
     includeRepositoryUser(user),
@@ -191,7 +192,7 @@ export async function loadDetail(repository: Repository, user: any) {
 export async function update(
   repository: Repository,
   payload: PatchBody,
-  user: any,
+  user: User,
 ) {
   const updates: PatchBody = pick(payload, ['name', 'description', 'data']);
   if (updates.data) updates.data = stripServerManaged(updates.data);
@@ -203,7 +204,7 @@ export async function update(
 
 // Soft-deletes the repository and updates the published catalog so the
 // removal propagates to consumers immediately.
-export async function remove(repository: Repository, user: any) {
+export async function remove(repository: Repository, user: User) {
   const removed = await repository.destroy({ context: { userId: user.id } });
   // Fire-and-forget catalog update; failures are logged at the publishing layer.
   publishingService.updateRepositoryCatalog(removed);
@@ -212,7 +213,7 @@ export async function remove(repository: Repository, user: any) {
 
 // Toggles the pinned flag on the user's RepositoryUser row. Creates the
 // row on first pin so newly-invited users can pin without a prior visit.
-export async function pin(repository: Repository, user: any, pinned: boolean) {
+export async function pin(repository: Repository, user: User, pinned: boolean) {
   const opts = { where: { repositoryId: repository.id, userId: user.id } };
   const [repositoryUser] = await RepositoryUser.findOrCreate(opts);
   repositoryUser.pinned = pinned;
@@ -239,7 +240,7 @@ export async function upsertUser(
   email: string,
   role: string,
 ) {
-  const user: any = await User.inviteOrUpdate({ email });
+  const user = await (User as any).inviteOrUpdate({ email }) as User;
   await findOrCreateRole(repository, user, role);
   return { ...user.profile, repositoryRole: role };
 }
@@ -329,7 +330,7 @@ export async function cleanupReferences(
 // was previously soft-deleted. Internal helper for upsertUser().
 async function findOrCreateRole(
   repository: Repository,
-  user: any,
+  user: User,
   role: string,
 ) {
   const [cu, isNew] = await RepositoryUser.findOrCreate({

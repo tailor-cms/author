@@ -2,7 +2,8 @@ import { UserActivity } from '@tailor-cms/common/src/sse.js';
 import sse from '#shared/sse/index.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
 import type { Repository } from '../../models/repository.model.js';
-import { removeContext } from '../store.ts';
+import type { User } from '../../../user/models/user.model.js';
+import { removeContext, type FeedUser } from '../store.ts';
 
 // Minimal slice of the runtime SSEConnection API we use here.
 interface SSEConnection {
@@ -27,9 +28,9 @@ async function handler({ user, req, res }: Ctx) {
 async function onUnsubscribe(
   connection: SSEConnection,
   repository: Repository,
-  user: any,
+  user: User,
 ) {
-  await removeContext(user, (it: { sseId?: string }) =>
+  await removeContext(user as unknown as FeedUser, (it) =>
     it.sseId === connection.id,
   );
   sse.channel(repository.id).send(UserActivity.EndSession, {

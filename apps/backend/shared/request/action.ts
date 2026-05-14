@@ -21,6 +21,7 @@ import {
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
 import type { Repository } from '../../repository/models/repository.model.js';
+import type { User } from '../../user/models/user.model.js';
 
 export type { OpenApiSpec };
 
@@ -69,20 +70,29 @@ export interface ActionContext<
   body: TBody;
   query: TQuery;
   params: TParams;
-  user: any;
+  // Authenticated principal, set by upstream auth middleware. Optional
+  // on routes that allow anonymous access; typed as `User` everywhere
+  // else - cast at the slice level when the route guarantees presence.
+  user: User;
   // Convenience alias for `req.repository`. Populated by the
   // /:repositoryId param middleware. The Repository type comes through as
   // a type-only import - no runtime coupling.
   repository?: Repository;
   req: ExpressRequest & {
-    user?: any;
+    user?: User;
     repository?: Repository;
+    authData?: unknown;
     opts?: {
       limit: number;
       offset: number;
       where: any;
       order?: any[];
       [k: string]: any;
+    };
+    options?: {
+      limit: number;
+      offset: number;
+      order?: any[];
     };
     file?: {
       originalname: string;

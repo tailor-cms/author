@@ -40,15 +40,16 @@ class Store {
 
 const defaultStore = new Store();
 
-function requestLimiter({
-  limit = 30,
-  windowMs = DEFAULT_WINDOW_MS,
-  validate = false,
-  store = defaultStore,
-  ...opts
-} = {}) {
+function requestLimiter(opts = {}) {
+  const {
+    limit = 30,
+    windowMs = DEFAULT_WINDOW_MS,
+    validate = false,
+    store = defaultStore,
+    ...rest
+  } = opts;
   const max = limit > 0 ? limit : 0;
-  const options = { limit: max, validate, windowMs, store, ...opts };
+  const options = { limit: max, validate, windowMs, store, ...rest };
   if (!generalConfig.enableRateLimiting) options.skip = () => true;
   return rateLimit(options);
 }

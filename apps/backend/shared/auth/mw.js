@@ -8,7 +8,8 @@ const { user: role } = roleConfig;
 
 function authorize(...allowed) {
   allowed.push(role.ADMIN);
-  return ({ user }, res, next) => {
+  return (req, res, next) => {
+    const { user } = req;
     if (user && allowed.includes(user.role)) return next();
     return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
   };

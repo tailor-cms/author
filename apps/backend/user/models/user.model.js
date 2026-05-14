@@ -11,6 +11,7 @@ import { UserRole } from '@tailor-cms/interfaces/role';
 import mail from '#shared/mail/index.js';
 import Audience from '#shared/auth/audience.js';
 import { auth as authConfig } from '#config';
+import hooks from './user.hooks.ts';
 
 const { ADMIN, COLLABORATOR, INTEGRATION, USER } = UserRole;
 const gravatarConfig = { size: 130, default: 'identicon' };
@@ -148,21 +149,7 @@ class User extends Model {
   }
 
   static hooks(Hooks) {
-    return {
-      [Hooks.beforeCreate](user) {
-        return user.encryptPassword();
-      },
-      [Hooks.beforeUpdate](user) {
-        return user.changed('password')
-          ? user.encryptPassword()
-          : Promise.resolve();
-      },
-      [Hooks.beforeBulkCreate](users) {
-        const updates = [];
-        users.forEach((user) => updates.push(user.encryptPassword()));
-        return Promise.all(updates);
-      },
-    };
+    hooks.add(this, Hooks);
   }
 
   static options() {
