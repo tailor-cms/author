@@ -24,8 +24,9 @@ const SchemaSnapshot = z.object({
 });
 
 // AI property bag in the system namespace.
+// `storeId` is the OpenAI vector-store id;
 const AiContext = z.object({
-  vectorStoreId: z.string().optional(),
+  storeId: z.string().optional(),
 }).strict();
 
 const RepoSystemNs = z.object({

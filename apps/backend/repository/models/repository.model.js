@@ -3,12 +3,13 @@ import first from 'lodash/first.js';
 import intersection from 'lodash/intersection.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
+import set from 'lodash/fp/set.js';
 import Promise from 'bluebird';
 import { RepositoryRole } from '@tailor-cms/interfaces/role';
 import { schema } from '@tailor-cms/config';
 import hooks from './repository.hooks.ts';
-import { resolveSchemaConfig, syncSchemaSnapshot } from './lib/schema.ts';
-import { stripInstanceSpecific } from './lib/data-attr.ts';
+import { resolveSchemaConfig, syncSchemaSnapshot } from '../lib/schema.ts';
+import { stripInstanceSpecific } from '../lib/data-attr.ts';
 
 const { getRepositoryRelationships } = schema;
 
@@ -173,23 +174,34 @@ class Repository extends Model {
   }
 
   /**
-   * Atomically sets the AI vector store ID in the repository's
-   * data JSONB. Returns true if the value was written, false if
-   * another request already set it (concurrent indexing race).
+   * Ensures `data.$$.ai.storeId` is populated. Returns the persisted
+   * id - the existing one if another writer already set it, or
+   * `storeId` if we won the race. Compare against the argument to
+   * detect "we won" vs "we lost" and clean up the orphaned vector
+   * store accordingly.
    */
   async setVectorStoreId(storeId) {
-    const path = `{$$,ai,storeId}`;
+    const fresh = await Repository.findByPk(this.id);
+    const existing = fresh?.data?.$$?.ai?.storeId;
+    if (existing) return existing;
+    const nextData = set('$$.ai.storeId', storeId, fresh?.data ?? {});
     const [count] = await Repository.update(
-      { data: literal(`jsonb_set(COALESCE(data,'{}'),'${path}','"${storeId}"')`) },
+      { data: nextData },
       {
         where: {
           id: this.id,
-          [Op.and]: literal(`data->'$$'->'ai'->'storeId' IS NULL`),
+          // `$$$$` in the literal -> `$$` in the emitted SQL. Sequelize's
+          // bind-token parser treats `$$` as an escape for a literal `$`;
+          // without the doubling, the WHERE would look at `data.$.ai...`
+          [Op.and]: literal(`data->'$$$$'->'ai'->'storeId' IS NULL`),
         },
+        hooks: false,
       },
     );
-    if (count > 0) await this.reload();
-    return count > 0;
+    await this.reload();
+    if (count > 0) return storeId;
+    // Race: another writer slipped in between our read and our update.
+    return this.data?.$$?.ai?.storeId ?? null;
   }
 
   getVectorStoreId() {

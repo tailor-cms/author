@@ -72,8 +72,11 @@ export type Repository = RepositoryAttrs &
       options?: WithContext<InstanceUpdateOptions<RepositoryAttrs>>,
     ): Promise<Repository>;
     destroy(options?: WithContext<InstanceDestroyOptions>): Promise<Repository>;
-    // Atomically writes the AI vector store id into data.$$.ai.storeId.
-    setVectorStoreId(storeId: string): Promise<boolean>;
+    // Ensures `data.$$.ai.storeId` is populated. Returns the persisted
+    // id - the existing one if another writer already set it, or
+    // `storeId` if we won the race; `null` only if persistence failed
+    // entirely.
+    setVectorStoreId(storeId: string): Promise<string | null>;
     // Reads the AI vector store id from data.$$.ai.storeId; null if unset
     getVectorStoreId(): string | null;
     // Deep-clones this repository (activities + elements) under a new name

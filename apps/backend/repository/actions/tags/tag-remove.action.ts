@@ -6,7 +6,6 @@ import * as service from '../../repository.service.ts';
 // DELETE /repositories/:repositoryId/tags/:tagId
 // Detaches a tag from the repository (the Tag row is left in place).
 const Params = z.object({
-  repositoryId: IntParam(),
   tagId: IntParam(),
 });
 
@@ -17,7 +16,7 @@ export default defineAction({
     authenticated: true,
     responses: { 204: { description: 'No content' } },
   },
-  async handler({ params }) {
-    await service.removeTag(params.repositoryId, params.tagId);
+  async handler({ params, req }) {
+    await service.removeTag(req.repository!.id, params.tagId);
   },
 });

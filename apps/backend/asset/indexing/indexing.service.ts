@@ -67,21 +67,19 @@ async function findOrCreateStore(repository: Repository): Promise<string> {
     { repositoryId: repository.id, storeId },
     'Created new store',
   );
-  const wasSet = await repository.setVectorStoreId(storeId);
-  if (wasSet) return storeId;
-  // Another request won the race; use their storeId,
-  // clean up the orphaned store we just created
-  await repository.reload();
-  const existingId = repository.getVectorStoreId();
-  if (!existingId) throw new Error('Failed to persist vector store ID');
+  const persistedId = await repository.setVectorStoreId(storeId);
+  if (!persistedId) throw new Error('Failed to persist vector store ID');
+  if (persistedId === storeId) return storeId;
+  // Another request won the race; reuse their storeId and clean up
+  // the orphaned vector store we just created upstream.
   logger.debug(
-    { repositoryId: repository.id, storeId: existingId },
+    { repositoryId: repository.id, storeId: persistedId },
     'Using store from concurrent request',
   );
   store.deleteStore(storeId).catch((err: any) =>
     logger.warn({ err, storeId }, 'Failed to clean up orphaned store'),
   );
-  return existingId;
+  return persistedId;
 }
 
 export async function removeFromStore(repository: Repository, asset: Asset) {
