@@ -33,8 +33,22 @@ export const SCHEMAS = processSchemas([
   exampleCollection.toSchema(),
 ]);
 
-export const schema = getSchemaApi(SCHEMAS, Object.values(ContentElementType));
+const contentElementTypes: string[] = Object.values(ContentElementType);
+export const schema = getSchemaApi(SCHEMAS, contentElementTypes);
 export const workflow = getWorkflowApi(WORKFLOWS, schema);
+
+// Rebuild the schema API with additional schema configs merged in
+// (e.g. snapshots stored in `Repository.data.$$.schema.config` for repos
+// whose schema id has been removed from the registry). Registry-bundled
+// schemas take precedence: extras with an id already in the registry
+// are dropped, so a snapshot can never shadow a live schema.
+export function createAugmentedSchema(extras: ReadonlyArray<any>) {
+  if (!extras?.length) return schema;
+  const registryIds = new Set(SCHEMAS.map((s: any) => s.id));
+  const augment = extras.filter((s) => !registryIds.has(s.id));
+  if (!augment.length) return schema;
+  return getSchemaApi([...SCHEMAS, ...augment] as any, contentElementTypes);
+}
 
 export default {
   SCHEMAS,

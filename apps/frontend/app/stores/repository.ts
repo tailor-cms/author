@@ -7,6 +7,7 @@ import { intersectionBy } from 'lodash-es';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { useAuthStore } from './auth';
+import { useSchemaStore } from './schema';
 import { repository as api, tag as tagApi } from '@/api';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
 
@@ -24,6 +25,7 @@ const getDefaultQueryParams = () => ({
 
 export const useRepositoryStore = defineStore('repositories', () => {
   const authStore = useAuthStore();
+  const schemaStore = useSchemaStore();
 
   const $items = reactive(new Map<string, Repository>());
   const items = computed(() => Array.from($items.values()));
@@ -66,6 +68,11 @@ export const useRepositoryStore = defineStore('repositories', () => {
 
   function add(item: Repository) {
     processRepository(item);
+    // Register any schema snapshot the BE shipped in `data.$$.schema`
+    // here, so catalog cards and other multi-repo views can resolve
+    // schema names for repos whose schema id has been removed from the
+    // bundled `@tailor-cms/config` registry.
+    schemaStore.registerFromRepository(item);
     $items.set(item.uid, item);
     return item;
   }
