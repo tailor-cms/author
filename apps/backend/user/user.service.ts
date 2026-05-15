@@ -5,10 +5,11 @@
 // testable in isolation from Express. Functions accept already-loaded
 // model instances or primitive ids and return raw model instances /
 // POJO data.
+import type { User, UserProfile } from './models/user.model.js';
+import db from '#shared/database/index.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
-import db from '#shared/database/index.js';
-import type { User } from './models/user.model.js';
+import { UserRole } from '@tailor-cms/interfaces/role';
 
 const { User: UserModel, UserGroup } = db;
 
@@ -66,7 +67,7 @@ export interface UpsertPayload {
 // or updates the existing one matched by email. Replaces the user's
 // user-group memberships when `userGroupIds` is supplied (omit to leave
 // memberships untouched).
-export async function upsert(payload: UpsertPayload): Promise<User> {
+export async function upsert(payload: UpsertPayload): Promise<UserProfile> {
   const { skipInvite, userGroupIds, ...attrs } = payload;
   const user = await (UserModel as any).inviteOrUpdate(attrs, { skipInvite });
   if (Array.isArray(userGroupIds)) {
@@ -75,12 +76,31 @@ export async function upsert(payload: UpsertPayload): Promise<User> {
       : [];
     await user.setUserGroups(userGroups);
   }
-  return user;
+  return user.profile;
 }
 
-// Soft-deletes the user: the row stays in the DB with `deletedAt` set
-// and re-appears in `archived=true` list queries (restore flow).
+// Domain failure: refusing to delete the last remaining system admin
+// would strand every admin-gated operation. Caught by the action layer
+// and mapped to 409.
+export class LastSystemAdminError extends Error {
+  constructor(message = 'Cannot remove the last system admin') {
+    super(message);
+    this.name = 'LastSystemAdminError';
+  }
+}
+
+// Soft-deletes the user (paranoid). Idempotent: removing an id that
+// doesn't exist is a no-op. Throws `LastSystemAdminError` when the
+// target is the last remaining system admin.
 export async function remove(id: number): Promise<void> {
+  const target = await (UserModel as any).findByPk(id);
+  if (!target) return;
+  if (target.role === UserRole.ADMIN) {
+    const remainingAdmins = await (UserModel as any).count({
+      where: { role: UserRole.ADMIN, id: { [Op.ne]: id } },
+    });
+    if (remainingAdmins === 0) throw new LastSystemAdminError();
+  }
   await (UserModel as any).destroy({ where: { id } });
 }
 
