@@ -11,12 +11,12 @@ import sequelizeConfig from '../../sequelize.config.cjs';
 
 // Require models.
 import User from '../../user/models/user.model.js';
-import UserGroup from '#app/user-group/userGroup.model.js';
-import UserGroupMember from '#app/user-group/userGroupMember.model.js';
+import UserGroup from '#app/user-group/models/user-group.model.js';
+import UserGroupMember from '#app/user-group/models/user-group-member.model.js';
 import Repository from '../../repository/models/repository.model.js';
 import RepositoryTag from '../../tag/models/repository-tag.model.js';
 import RepositoryUser from '../../repository/models/repository-user.model.js';
-import RepositoryUserGroup from '#app/user-group/repositoryUserGroup.model.js';
+import RepositoryUserGroup from '#app/user-group/models/repository-user-group.model.js';
 import ActivityStatus from '../../activity/status.model.js';
 import Activity from '../../activity/activity.model.js';
 import ContentElement from '../../content-element/content-element.model.js';

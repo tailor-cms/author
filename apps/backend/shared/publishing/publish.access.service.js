@@ -4,8 +4,8 @@ import oauth2 from '../oAuth2Provider.js';
 import Repository from '#app/repository/models/repository.model.js';
 import storage from '#app/repository/storage.ts';
 import User from '#app/user/models/user.model.js';
-import UserGroup from '#app/user-group/userGroup.model.js';
-import UserGroupMember from '#app/user-group/userGroupMember.model.js';
+import UserGroup from '#app/user-group/models/user-group.model.js';
+import UserGroupMember from '#app/user-group/models/user-group-member.model.js';
 
 const logger = createLogger('publish:access');
 

@@ -1,5 +1,5 @@
 import { Model } from 'sequelize';
-import hooks from './repositoryUserGroup.hooks.js';
+import hooks from './repository-user-group.hooks.ts';
 
 class RepositoryUserGroup extends Model {
   static fields({ INTEGER }) {

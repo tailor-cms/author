@@ -24,7 +24,7 @@ import { stripServerManaged } from './lib/data-attr.ts';
 import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import { subQuery } from '#shared/database/helpers.js';
 import TransferService from '#shared/transfer/transfer.service.js';
-import UserGroup from '#app/user-group/userGroup.model.js';
+import UserGroup from '#app/user-group/models/user-group.model.js';
 import type { Repository } from './models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
 

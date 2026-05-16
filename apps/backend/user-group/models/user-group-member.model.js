@@ -1,6 +1,6 @@
 import { Model } from 'sequelize';
 import { UserRole } from '@tailor-cms/interfaces/role';
-import hooks from './userGroupMember.hooks.js';
+import hooks from './user-group-member.hooks.ts';
 
 class UserGroupMember extends Model {
   static fields({ ENUM, INTEGER }) {
