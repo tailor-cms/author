@@ -64,9 +64,7 @@ export async function list(
       { model: UserGroupMember, where: { userId: user.id }, required: true },
     ];
   }
-  const { rows, count } = await (UserGroupModel as any).findAndCountAll(
-    queryOpts,
-  );
+  const { rows, count } = await UserGroupModel.findAndCountAll(queryOpts);
   return { total: count, items: rows as UserGroup[] };
 }
 
@@ -81,7 +79,7 @@ export interface UpsertPayload {
 export async function create(payload: UpsertPayload): Promise<UserGroup> {
   logger.debug({ name: payload.name }, 'Creating user group');
   try {
-    return await (UserGroupModel as any).create(payload);
+    return await UserGroupModel.create(payload);
   } catch (err) {
     if (isUniqueNameError(err)) throw new DuplicateNameError();
     throw err;
@@ -95,7 +93,7 @@ export async function update(
 ): Promise<UserGroup> {
   const updates = pick(payload, ['name', 'logoUrl']);
   try {
-    return await (group as any).update(updates);
+    return await group.update(updates);
   } catch (err) {
     if (isUniqueNameError(err)) throw new DuplicateNameError();
     throw err;
@@ -142,7 +140,7 @@ export async function upsertMembers(
 ): Promise<void> {
   const { emails, role, skipInvite = false } = payload;
   for (const email of emails) {
-    let user = await (UserModel as any).findOne({ where: { email } });
+    let user = await UserModel.findOne({ where: { email } });
     if (!user) {
       user = await UserModel.inviteOrUpdate({ email }, { skipInvite });
     }
@@ -150,8 +148,8 @@ export async function upsertMembers(
       where: { userId: user.id, groupId: group.id },
       defaults: { userId: user.id, groupId: group.id, role },
     });
-    if (!created && (member as any).role !== role) {
-      await (member as any).update({ role });
+    if (!created && member.role !== role) {
+      await member.update({ role });
     }
   }
 }
@@ -162,7 +160,7 @@ export async function removeMember(
   group: UserGroup,
   userId: number,
 ): Promise<void> {
-  const user = await (UserModel as any).findByPk(userId);
+  const user = await UserModel.findByPk(userId);
   if (!user) throw new MemberUserNotFoundError();
   await UserGroupMember.destroy({
     where: { userId, groupId: group.id },

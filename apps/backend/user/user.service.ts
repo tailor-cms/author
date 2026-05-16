@@ -39,7 +39,7 @@ export async function list(
   if (query.filter) where[Op.or] = buildFilter(query.filter);
   if (query.email) where[Op.and].push({ email: query.email });
   if (query.role) where[Op.and].push({ role: query.role });
-  const { rows, count } = await (UserModel as any).findAndCountAll({
+  const { rows, count } = await UserModel.findAndCountAll({
     where,
     include: [{ model: UserGroup, as: 'userGroups' }],
     ...opts,
@@ -69,10 +69,10 @@ export interface UpsertPayload {
 // memberships untouched).
 export async function upsert(payload: UpsertPayload): Promise<UserProfile> {
   const { skipInvite, userGroupIds, ...attrs } = payload;
-  const user = await (UserModel as any).inviteOrUpdate(attrs, { skipInvite });
+  const user = await UserModel.inviteOrUpdate(attrs, { skipInvite });
   if (Array.isArray(userGroupIds)) {
     const userGroups = userGroupIds.length
-      ? await (UserGroup as any).findAll({ where: { id: userGroupIds } })
+      ? await UserGroup.findAll({ where: { id: userGroupIds } })
       : [];
     await user.setUserGroups(userGroups);
   }
@@ -93,23 +93,21 @@ export class LastSystemAdminError extends Error {
 // doesn't exist is a no-op. Throws `LastSystemAdminError` when the
 // target is the last remaining system admin.
 export async function remove(id: number): Promise<void> {
-  const target = await (UserModel as any).findByPk(id);
+  const target = await UserModel.findByPk(id);
   if (!target) return;
   if (target.role === UserRole.ADMIN) {
-    const remainingAdmins = await (UserModel as any).count({
+    const remainingAdmins = await UserModel.count({
       where: { role: UserRole.ADMIN, id: { [Op.ne]: id } },
     });
     if (remainingAdmins === 0) throw new LastSystemAdminError();
   }
-  await (UserModel as any).destroy({ where: { id } });
+  await UserModel.destroy({ where: { id } });
 }
 
 // Looks up the user by email (paranoid:false so soft-deleted rows
 // reset successfully) and triggers the reset-token mail flow.
 export async function startPasswordReset(email: string): Promise<User | null> {
-  const user = await (UserModel as any)
-    .unscoped()
-    .findOne({ where: { email } });
+  const user = await UserModel.unscoped().findOne({ where: { email } });
   if (!user) return null;
   await user.sendResetToken();
   return user;
@@ -166,8 +164,8 @@ export async function changePassword(
 // so soft-deleted users can be reinvited (admin reactivation flow).
 // Returns null when the id is unknown (caller maps to 404).
 export async function reinvite(id: number): Promise<User | null> {
-  const user = await (UserModel as any).unscoped().findByPk(id);
+  const user = await UserModel.unscoped().findByPk(id);
   if (!user) return null;
-  (UserModel as any).sendInvitation(user);
+  UserModel.sendInvitation(user);
   return user;
 }

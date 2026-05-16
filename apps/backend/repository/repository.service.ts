@@ -240,7 +240,7 @@ export async function upsertUser(
   email: string,
   role: string,
 ) {
-  const user = await (User as any).inviteOrUpdate({ email }) as User;
+  const user = await User.inviteOrUpdate({ email }) as User;
   await findOrCreateRole(repository, user, role);
   return { ...user.profile, repositoryRole: role };
 }
@@ -274,7 +274,7 @@ export async function addUserGroup(
   repository: Repository,
   userGroupId: number,
 ) {
-  const userGroup = await (UserGroup as any).findByPk(userGroupId);
+  const userGroup = await UserGroup.findByPk(userGroupId);
   if (!userGroup) return null;
   await RepositoryUserGroup.create({
     repositoryId: repository.id,
