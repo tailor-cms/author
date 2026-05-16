@@ -19,7 +19,7 @@ import { z } from 'zod';
 const SchemaSnapshot = z.object({
   sha: z.string(),
   config: z.unknown(),
-  source: z.enum(['registry', 'pasted']),
+  source: z.enum(['bundled', 'external']),
   updatedAt: z.string(),
 });
 

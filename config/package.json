@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@tailor-cms/config-parser": "workspace:^",
+    "hash-object": "^5.0.1",
     "lodash-es": "^4.17.21"
   },
   "devDependencies": {

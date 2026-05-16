@@ -20,8 +20,9 @@ const Query = z.object({
   userGroupId: IntParam().optional(),
   // Pinned filter for the current user's catalog view.
   pinned: QueryBoolean.optional(),
-  // Restrict to one or more schema ids
-  // (overrides the default general.availableSchemas list).
+  // Restrict to one or more schema ids. Default is unfiltered, LIST is
+  // a visibility view, not a validity gate. The env allowlist
+  // (`availableSchemas`) is only enforced at create time.
   schemas: StringArrayFromQuery(),
   // Restrict to repositories tagged with any of these tag ids.
   tagIds: StringArrayFromQuery(),

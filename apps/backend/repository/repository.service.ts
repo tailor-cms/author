@@ -7,6 +7,7 @@
 // Functions accept already-loaded model instances or primitive ids and
 // return raw model instances / POJO data - they don't know about res,
 // req, or HTTP status codes.
+import { schema as schemaApi } from '@tailor-cms/config';
 import * as fs from 'node:fs/promises';
 import { Op } from 'sequelize';
 import type { Transaction } from 'sequelize';
@@ -15,10 +16,8 @@ import groupBy from 'lodash/groupBy.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import sample from 'lodash/sample.js';
-import { schema as schemaApi } from '@tailor-cms/config';
 
 import { createLogger } from '#logger';
-import { general } from '#config';
 import publishingService from '#shared/publishing/publishing.service.js';
 import db from '#shared/database/index.js';
 import { stripServerManaged } from './lib/data-attr.ts';
@@ -70,9 +69,10 @@ const includeRepositoryUser = (user: User, query?: { pinned?: boolean }) => {
 };
 
 const includeRepositoryTags = (query: any) => {
+  const { tagIds } = query;
   const include: any[] = [{ model: Tag }];
-  return query.tagIds
-    ? [...include, { model: RepositoryTag, where: { tagId: query.tagIds } }]
+  return tagIds
+    ? [...include, { model: RepositoryTag, where: { tagId: tagIds } }]
     : include;
 };
 
@@ -111,7 +111,7 @@ export async function list(
   query: any,
 ): Promise<ListResult> {
   const { search, name, userGroupId, compatibleWith } = query;
-  let schemas = query.schemas || general.availableSchemas;
+  let { schemas } = query;
   if (compatibleWith) {
     schemas = schemaApi.getCompatibleSchemaIds(compatibleWith);
   }
@@ -245,16 +245,27 @@ export async function upsertUser(
   return { ...user.profile, repositoryRole: role };
 }
 
-// Hard-deletes the user's RepositoryUser row, revoking access. Returns
-// `false` if the user wasn't found (controller maps to 404).
-export async function removeUser(repository: Repository, userId: number) {
+export class UserNotFoundError extends Error {
+  constructor(message = 'User not found') {
+    super(message);
+    this.name = 'UserNotFoundError';
+  }
+}
+
+// Hard-deletes the user's RepositoryUser row, revoking access. Throws
+// `UserNotFoundError` for unknown user ids. Removing the last repo
+// admin is allowed - system admins always retain access
+export async function removeUser(
+  repository: Repository,
+  userId: number,
+): Promise<void> {
   const user = await User.findByPk(userId);
-  if (!user) return false;
-  const where = { userId, repositoryId: repository.id };
+  if (!user) throw new UserNotFoundError();
   await RepositoryUser.destroy({
-    where, force: true, individualHooks: true,
+    where: { userId, repositoryId: repository.id },
+    force: true,
+    individualHooks: true,
   });
-  return true;
 }
 
 // Shares the repository with a user group. Returns `null` if the group

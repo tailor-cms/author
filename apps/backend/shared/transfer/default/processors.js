@@ -13,7 +13,7 @@ import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
 import db from '../../database/index.js';
 import { createLogger } from '#logger';
-import { seedPasteSnapshot } from '#app/repository/lib/schema.ts';
+import { pinSchemaSnapshot } from '#app/repository/lib/schema.ts';
 import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
 
 const logger = createLogger('processors');
@@ -80,28 +80,18 @@ async function processRepository(repository, _enc, { context, transaction }) {
   // so paste-mode works when this instance doesn't have the schema id
   // in its registry.
   if (repository.data) repository.data = stripInstanceSpecific(repository.data);
-
   // Schema resolution at import time:
-  //   - registered in this instance       -> proceed; syncSchemaSnapshot
-  //     (model hook) populates $$.schema from the registry on create.
-  //   - not registered, archive carried $$.schema in repository.data
-  //     -> already preserved by stripInstanceSpecific; nothing to do.
-  //   - not registered, archive only carried manifest.schema config
-  //     -> seed a paste-mode snapshot into data.$$.schema so the new
-  //       row can resolve its schema via fallback.
-  //   - not registered, no fallback available -> fail loud.
-  const isRegistered = map(SCHEMAS, 'id').includes(repository.schema);
-  const hasSnapshot = !!repository.data?.$$?.schema;
-  if (!isRegistered && !hasSnapshot && manifestSchema) {
-    repository.data = seedPasteSnapshot(repository.data, manifestSchema);
+  //   - bundled in this instance: proceed; `$$.schema` is seeded
+  //     lazily by the `getRepository` middleware on first load.
+  //   - not bundled: pin the manifest's schema config (always
+  //     present - `processManifest` throws otherwise and runs before
+  //     this step). Pinning registers it with `@tailor-cms/config` so
+  //     activity bulkCreate hooks can resolve types, and embeds the
+  //     snapshot into the new repo's data.
+  const isBundled = map(SCHEMAS, 'id').includes(repository.schema);
+  if (!isBundled) {
+    repository.data = pinSchemaSnapshot(repository.data, manifestSchema);
   }
-  if (!isRegistered && !repository.data?.$$?.schema) {
-    throw new Error(
-      `Schema "${repository.schema}" not supported and archive provides ` +
-        'no fallback config',
-    );
-  }
-
   const options = { context: { userId }, transaction };
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
   const entity = await Repository.create(repositoryRecord, options);

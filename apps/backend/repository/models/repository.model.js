@@ -1,4 +1,5 @@
 import { literal, Model, Op } from 'sequelize';
+import { register as registerSchema, schema } from '@tailor-cms/config';
 import first from 'lodash/first.js';
 import intersection from 'lodash/intersection.js';
 import map from 'lodash/map.js';
@@ -6,12 +7,11 @@ import pick from 'lodash/pick.js';
 import set from 'lodash/fp/set.js';
 import Promise from 'bluebird';
 import { RepositoryRole } from '@tailor-cms/interfaces/role';
-import { schema } from '@tailor-cms/config';
 import hooks from './repository.hooks.ts';
-import { resolveSchemaConfig, syncSchemaSnapshot } from '../lib/schema.ts';
+import { syncSchemaSnapshot } from '../lib/schema.ts';
 import { stripInstanceSpecific } from '../lib/data-attr.ts';
 
-const { getRepositoryRelationships } = schema;
+const { getRepositoryRelationships, getSchema } = schema;
 
 class Repository extends Model {
   static fields(DataTypes) {
@@ -330,8 +330,12 @@ class Repository extends Model {
     return this.getUsers({ where: { id: user.id } }).then((users) => users[0]);
   }
 
+  // Resolves through `@tailor-cms/config`'s schema API, which sees both
+  // bundled schemas and any runtime extras registered via `register()`
   getSchemaConfig() {
-    return resolveSchemaConfig(this);
+    const snapshotConfig = this.data?.$$?.schema?.config;
+    if (snapshotConfig) registerSchema(snapshotConfig);
+    return getSchema(this.schema);
   }
 }
 

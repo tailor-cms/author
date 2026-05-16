@@ -566,6 +566,9 @@ importers:
       '@tailor-cms/config-parser':
         specifier: workspace:^
         version: link:../packages/tailor-config-parser
+      hash-object:
+        specifier: ^5.0.1
+        version: 5.0.1
       lodash-es:
         specifier: ^4.17.21
         version: 4.18.1

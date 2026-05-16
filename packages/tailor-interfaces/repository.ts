@@ -16,7 +16,7 @@ export interface RepositorySystemData {
   // Frozen backup of the Schema configuration this repository was built
   // against. Acts as a fallback when `Repository.schema` is no longer in
   // the live `@tailor-cms/config` registry (schema deletion) and as the
-  // source of truth for pasted/custom schemas not in the registry at all.
+  // source of truth for external (paste/import) schemas not bundled.
   schema?: RepositorySchemaSnapshot;
 }
 
@@ -31,9 +31,9 @@ export interface RepositorySchemaSnapshot {
   // Frozen Schema config blob (processed form, ready for use).
   config: Schema;
   // Origin of the snapshot:
-  // - 'registry': resolved from @tailor-cms/config at create/sync time
-  // - 'pasted': supplied by the caller; not present in the registry
-  source: 'registry' | 'pasted';
+  // - 'bundled': shipped in the `@tailor-cms/config` bundle at build time
+  // - 'external': brought in at runtime (paste, import, re-registration)
+  source: 'bundled' | 'external';
   // ISO timestamp of the last write.
   updatedAt: string;
 }

@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { defineAction } from '#shared/request/action.ts';
 import { Description, ShortText } from '#shared/request/schemas.ts';
+import { general } from '#config';
 import { RepoData } from '../lib/data-attr.ts';
 import * as service from '../repository.service.ts';
 
@@ -8,8 +9,14 @@ import * as service from '../repository.service.ts';
 // Creates a repository seeded with schema-default meta and label color;
 // optionally sharing it with the supplied user groups.
 const Body = z.object({
-  // Schema registry id this repo will follow (2..64 chars).
-  schema: ShortText(2, 64),
+  // Schema registry id this repo will follow. Must be in the env
+  // allowlist (`NUXT_PUBLIC_AVAILABLE_SCHEMAS`); defaults to every
+  // bundled schema when the env is unset. Imports bypass this gate;
+  // they carry their own schema config in the archive.
+  schema: ShortText(2, 64).refine(
+    (id) => general.availableSchemas.includes(id),
+    { message: 'Schema is not in the available schemas list' },
+  ),
   // Display name (2..250 chars).
   name: ShortText(2, 250),
   // Long description (2..2000 chars).

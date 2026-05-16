@@ -1,9 +1,10 @@
-import { workflow as workflowConfig } from '@tailor-cms/config';
+import {
+  schema as schemaApi,
+  workflow as workflowConfig,
+} from '@tailor-cms/config';
 import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
-
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
-import { useSchemaStore } from './schema';
 import { repository as repositoryApi, rpc as rpcApi } from '@/api';
 import type { ChangeEvent, MoveEvent } from '@/types/draggable';
 import type { Activity } from '@tailor-cms/interfaces/activity';
@@ -39,7 +40,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
-  const Schema = useSchemaStore();
 
   const $users = reactive(new Map<string, any>());
   const users = computed(() => Array.from($users.values()));
@@ -57,7 +57,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   });
 
   const schema = computed(() => {
-    return repository.value && Schema.api.getSchema(repository.value.schema);
+    return repository.value && schemaApi.getSchema(repository.value.schema);
   });
 
   const schemaName = computed(() => schema.value?.name || '');
@@ -66,7 +66,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const taxonomy = computed(() => {
     return (
-      repository.value && Schema.api.getOutlineLevels(repository.value.schema)
+      repository.value && schemaApi.getOutlineLevels(repository.value.schema)
     );
   });
 
@@ -98,9 +98,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return navigateTo({ query: { ...route.query, activityId } });
   }
   const workflow = computed(() => {
-    if (!repository.value) return null;
-    const schema = Schema.api.getSchema(repository.value.schema);
-    return getWorkflow(schema.workflowId);
+    if (!schema.value) return null;
+    return getWorkflow(schema.value.workflowId);
   });
 
   const workflowActivities = computed(() => {
@@ -180,7 +179,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   ) => {
     const { added } = context;
     if (!added?.element?.id) return;
-    const children = Schema.api.getOutlineChildren(Activity.items, parentId);
+    const children = schemaApi.getOutlineChildren(Activity.items, parentId);
     const position = calculatePosition({
       items: children,
       action: InsertLocation.AddBefore,
@@ -199,12 +198,10 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     await Repository.get(repoId);
     await Activity.fetch(repoId, { outlineOnly: true });
     // Notify plugins about repository change (e.g., i18n initialization)
-    const repo = Repository.findById(repoId);
-    if (repo) {
-      const schema = Schema.api.getSchema(repo.schema);
+    if (repository.value) {
       $pluginRegistry.filter('repository:change', null, {
-        schema,
-        repository: repo,
+        schema: schema.value,
+        repository: repository.value,
       });
     }
   };
