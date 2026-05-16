@@ -49,11 +49,21 @@ export function createRegistry(
   contentElementTypes: string[],
 ): Registry {
   const bundledIds = new Set(bundled.map((s) => s.id));
-  const shaCache = new Map<string, string>(
-    bundled.map((s) => [s.id, sha1(s)]),
-  );
+  // Lazy: hashing pulls Node's `crypto`, which doesn't exist in the
+  // browser bundle. The FE only uses `schema`; sha-touching helpers
+  // (`register`, `refreshSnapshot`, `adoptSchema`) are BE-only.
+  const shaCache = new Map<string, string>();
   const schemas: any[] = [...bundled];
   const schema = getSchemaApi(schemas, contentElementTypes);
+
+  function getSha(id: string): string | undefined {
+    if (shaCache.has(id)) return shaCache.get(id);
+    const config = schemas.find((s) => s.id === id);
+    if (!config) return undefined;
+    const sha = sha1(config);
+    shaCache.set(id, sha);
+    return sha;
+  }
 
   // Adds an external schema config. Idempotent on id. No-op for
   // bundled ids so a stale snapshot can never shadow a live schema.
@@ -62,13 +72,13 @@ export function createRegistry(
     const idx = schemas.findIndex((s) => s.id === config.id);
     if (idx >= 0) schemas[idx] = config;
     else schemas.push(config);
-    shaCache.set(config.id, sha1(config));
+    shaCache.delete(config.id);
   }
 
   // Internal: builds the snapshot envelope for a known id. Throws on
   // unknown - public entry points guard or ensure registration first.
   function makeSnapshot(id: string): Snapshot {
-    const sha = shaCache.get(id);
+    const sha = getSha(id);
     const config = schemas.find((s) => s.id === id);
     if (!sha || !config) throw new Error(`Schema "${id}" is not registered`);
     return {
@@ -83,7 +93,7 @@ export function createRegistry(
     id: string,
     stored: StoredSnapshot | undefined,
   ): Snapshot | null {
-    const sha = shaCache.get(id);
+    const sha = getSha(id);
     if (!sha) return null;
     // The pin (caller-owned) rule only applies while the id is still
     // external. If it migrates between bundled/external across deploys
