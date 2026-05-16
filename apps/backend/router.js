@@ -1,7 +1,7 @@
 import express from 'express';
 import repository from './repository/index.ts';
 import seedRouter from './tests/api/index.js';
-import tag from './tag/index.js';
+import tag from './tag/index.ts';
 import user from './user/index.ts';
 import userGroup from './user-group/index.js';
 import { extractAuthData } from '#shared/auth/mw.js';

@@ -9,14 +9,14 @@ import { getRepository } from './middleware.ts';
 
 import activity from '../activity/index.js';
 import asset from '../asset/index.ts';
-import comment from '../comment/index.js';
+import comment from '../comment/index.ts';
 import contentElement from '../content-element/index.js';
 import feed from './feed/index.ts';
-import revision from '../revision/index.js';
+import revision from '../revision/index.ts';
 import rpc from './rpc/index.ts';
 
 const router = express.Router();
-const mount = createActionMounter(router, '/repositories');
+const mount = createActionMounter(router, '/repositories', 'Repository');
 
 // NOTE: disk storage engine expects an object to be passed as the first
 // argument: https://github.com/expressjs/multer/blob/6b5fff5/storage/disk.js#L17-L18

@@ -35,9 +35,13 @@ function paramsFor(schema: ZodType | undefined, slot: 'path' | 'query') {
 }
 
 // Assemble the full OpenAPI operation object for one route record:
-// summary, parameters, requestBody, responses, security.
+// summary, parameters, requestBody, responses, security. The
+// slice-level tag from the mounter goes verbatim into `operation.tags`
+// so Scalar groups routes by feature; routes without a tag fall back
+// to "Misc" so they still land under a labelled sidebar section.
 function operationFor(route: RouteRecord) {
   const op: any = {
+    tags: [route.tag ?? 'Misc'],
     summary: route.openapi?.summary,
     description: route.openapi?.description,
     parameters: [
@@ -84,6 +88,22 @@ export function buildPaths() {
   return paths;
 }
 
+// Collect the distinct tag set used across the registered routes, in
+// first-seen order. Emitted as the document-level `tags[]` array so
+// Scalar renders sidebar sections (and tooling can introspect the
+// available groups).
+function collectTags() {
+  const order: string[] = [];
+  const seen = new Set<string>();
+  for (const route of getRegisteredRoutes()) {
+    const tag = route.tag ?? 'Misc';
+    if (seen.has(tag)) continue;
+    seen.add(tag);
+    order.push(tag);
+  }
+  return order.map((name) => ({ name }));
+}
+
 // Assemble the full OpenAPI 3.1 document.
 export function buildOpenApiDocument() {
   return {
@@ -92,6 +112,7 @@ export function buildOpenApiDocument() {
       title: 'Tailor CMS API',
       version: '1.0.0',
     },
+    tags: collectTags(),
     components: {
       securitySchemes: {
         bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },

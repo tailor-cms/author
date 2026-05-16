@@ -16,7 +16,7 @@ import {
 const { User } = db;
 
 const router = express.Router();
-const mount = createActionMounter(router, '/users');
+const mount = createActionMounter(router, '/users', 'User');
 
 // limiter + token-auth instance shared between the two
 // reset-password routes so they pull from the same per-key counter

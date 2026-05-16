@@ -52,7 +52,8 @@ export class UserDialog {
   }
 
   async selectRole(role: 'Admin' | 'User') {
-    await this.role.click();
+    await this.role.hover();
+    await this.role.click({ force: true });
     const dropdownMenu = this.page.locator('.v-overlay.v-menu');
     await dropdownMenu
       .locator('.v-list-item .v-list-item-title')

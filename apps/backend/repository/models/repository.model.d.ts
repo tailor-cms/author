@@ -1,6 +1,7 @@
 import type {
   BelongsToManyAddAssociationsMixin,
   BelongsToManyGetAssociationsMixin,
+  HasManyGetAssociationsMixin,
   InstanceDestroyOptions,
   InstanceUpdateOptions,
   Model,
@@ -16,6 +17,7 @@ import type {
   User,
 } from '@tailor-cms/interfaces';
 import type { OperationContext } from '#shared/database/types.ts';
+import type { Comment } from '../../comment/models/comment.model.js';
 
 // Helper: attach the platform's hook context option to a Sequelize options shape.
 type WithContext<T> = T & { context?: OperationContext };
@@ -41,12 +43,11 @@ export interface ReferenceValidationResult {
 
 // Subset of Sequelize-generated association mixins used by the controller.
 // Sequelize creates one per association at runtime; we declare only the
-// ones actually called from app code. The associated User and Tag types
-// reference the plain interface shapes; switching to full Sequelize-
-// instance types is gated on User/Tag getting their own model.d.ts.
+// ones actually called from app code.
 interface RepositoryAssociations {
   getUsers: BelongsToManyGetAssociationsMixin<User>;
   addTags: BelongsToManyAddAssociationsMixin<Tag, number>;
+  getComments: HasManyGetAssociationsMixin<Comment>;
 }
 
 // Sequelize instance type for a Repository row. Composes the canonical

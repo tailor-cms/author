@@ -1,8 +1,9 @@
 import { Model, Sequelize } from 'sequelize';
 import isNumber from 'lodash/isNumber.js';
 import Promise from 'bluebird';
-import { applyFetchHooks } from '../content-element/hooks.js';
-import hooks from './hooks.js';
+import { Entity, Operation } from '@tailor-cms/interfaces/revision';
+import { applyFetchHooks } from '../../content-element/hooks.js';
+import hooks from './revision.hooks.ts';
 
 const { literal } = Sequelize;
 
@@ -18,12 +19,12 @@ class Revision extends Model {
       },
       entity: {
         type: ENUM,
-        values: ['ACTIVITY', 'REPOSITORY', 'CONTENT_ELEMENT'],
+        values: Object.values(Entity),
         allowNull: false,
       },
       operation: {
         type: ENUM,
-        values: ['CREATE', 'UPDATE', 'REMOVE'],
+        values: Object.values(Operation),
         allowNull: false,
       },
       state: {
@@ -91,7 +92,7 @@ class Revision extends Model {
   }
 
   async applyFetchHooks() {
-    if (this.entity !== 'CONTENT_ELEMENT') return this;
+    if (this.entity !== Entity.ContentElement) return this;
     const state = await applyFetchHooks(this.state);
     this.state = state;
     return this;

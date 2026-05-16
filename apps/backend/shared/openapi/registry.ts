@@ -10,7 +10,6 @@ export type HttpMethod = 'get' | 'post' | 'patch' | 'put' | 'delete';
 export interface OpenApiSpec {
   summary?: string;
   description?: string;
-  tags?: string[];
   responses?: Record<
     number,
     { description?: string; schema?: ZodType } | ZodType
@@ -20,7 +19,9 @@ export interface OpenApiSpec {
 }
 
 // Captures everything the emitter needs to render one operation. Slices
-// register one of these per route via `appendRoute`.
+// register one of these per route via `appendRoute`. `tag` is the
+// sidebar grouping label (one per feature slice); the emitter folds it
+// into `operation.tags[]` so Scalar can cluster routes by feature.
 export interface RouteRecord {
   method: HttpMethod;
   path: string;
@@ -28,6 +29,7 @@ export interface RouteRecord {
   query?: ZodType;
   params?: ZodType;
   openapi?: OpenApiSpec;
+  tag?: string;
 }
 
 const routes: RouteRecord[] = [];

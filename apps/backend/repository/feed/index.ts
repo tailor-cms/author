@@ -11,6 +11,7 @@ const router = express.Router();
 const mountAction = createActionMounter(
   router,
   '/repositories/:repositoryId/feed',
+  'User Activity Feed',
 );
 
 mountAction.get('/subscribe', subscribe, { before: [sseMiddleware] });

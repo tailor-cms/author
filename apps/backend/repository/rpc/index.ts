@@ -7,6 +7,7 @@ const router = express.Router();
 const mount = createActionMounter(
   router,
   '/repositories/:repositoryId/rpc',
+  'RPC',
 );
 
 mount.post('/:type/:procedure', dispatch);

@@ -20,7 +20,10 @@ import {
   type HttpMethod,
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { Comment } from '../../comment/models/comment.model.js';
 import type { Repository } from '../../repository/models/repository.model.js';
+import type { Revision } from '../../revision/models/revision.model.js';
 import type { User } from '../../user/models/user.model.js';
 
 export type { OpenApiSpec };
@@ -80,7 +83,15 @@ export interface ActionContext<
   repository?: Repository;
   req: ExpressRequest & {
     user?: User;
+    // Param-middleware-loaded entities. Each slice's `getX` mw attaches
+    // the loaded row to `req` so action handlers read it as `req.X!`
+    // without an inline cast. Added here (rather than via per-slice
+    // module augmentation) because there's no tsconfig at apps/backend
+    // for the IDE to discover ambient declarations from.
     repository?: Repository;
+    comment?: Comment;
+    revision?: Revision;
+    activity?: Activity;
     authData?: unknown;
     opts?: {
       limit: number;
@@ -250,10 +261,13 @@ export interface ActionMounter {
 // Express router AND records the (method, path, action) triple in the
 // shared OpenAPI registry. `basePath` is prepended to every recorded path
 // so the captured table matches what the outside world sees (e.g.
-// `/repositories/:repositoryId/users`).
+// `/repositories/:repositoryId/users`). `tag` is the sidebar grouping
+// label used by Scalar; required so every slice declares its grouping
+// explicitly (no path-derivation magic).
 export function createActionMounter(
   router: Router,
-  basePath = '',
+  basePath: string,
+  tag: string,
 ): ActionMounter {
   function bind(method: HttpMethod) {
     return (
@@ -277,6 +291,7 @@ export function createActionMounter(
         query: action.spec.query,
         params: action.spec.params,
         openapi: action.spec.openapi,
+        tag,
       });
       return api;
     };
