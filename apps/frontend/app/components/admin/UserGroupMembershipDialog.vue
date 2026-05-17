@@ -89,7 +89,7 @@ import { TailorDialog } from '@tailor-cms/core-components';
 import { titleCase } from '@tailor-cms/utils';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { user as userApi, userGroup as userGroupApi } from '@/api';
 

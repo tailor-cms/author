@@ -1,10 +1,7 @@
-import {
-  getSchemaApi,
-  getWorkflowApi,
-  processSchemas,
-} from '@tailor-cms/config-parser';
+import { getWorkflowApi, processSchemas } from '@tailor-cms/config-parser';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
+import { createRegistry } from './lib/registry';
 import { SCHEMA as CourseSchema } from './schemas/course.schema';
 import { DEFAULT_WORKFLOW as DefaultWorkflow } from './workflows/default.workflow';
 import { exampleCollection } from './collections/example.collection';
@@ -18,7 +15,8 @@ import { SCHEMA as ContentLibrarySchema } from './schemas/content-library.schema
 import { SCHEMA as VideoCourseSchema } from './schemas/video-course.schema';
 import { SCHEMA as PartnerTrainingV2Schema } from './schemas/partner-training-v2.schema';
 
-export const WORKFLOWS = [DefaultWorkflow];
+export type { Snapshot } from './lib/registry';
+
 export const SCHEMAS = processSchemas([
   CourseSchema,
   HeasSchema,
@@ -33,12 +31,9 @@ export const SCHEMAS = processSchemas([
   exampleCollection.toSchema(),
 ]);
 
-export const schema = getSchemaApi(SCHEMAS, Object.values(ContentElementType));
-export const workflow = getWorkflowApi(WORKFLOWS, schema);
+const contentElementTypes: string[] = Object.values(ContentElementType);
 
-export default {
-  SCHEMAS,
-  WORKFLOWS,
-  schema,
-  workflow,
-};
+export const { schema, register, refreshSnapshot, adoptSchema } =
+  createRegistry(SCHEMAS, contentElementTypes);
+
+export const workflow = getWorkflowApi([DefaultWorkflow], schema);

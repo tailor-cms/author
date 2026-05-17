@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import roleConfig from '@tailor-cms/common/src/role.js';
+import roleConfig from '@tailor-cms/interfaces/role';
 
 // Dynamic import is needed in order for the `enabled` flag to be respected
 const { default: db } = await import('../shared/database/index.js');

@@ -1,12 +1,13 @@
 import express from 'express';
-import repository from './repository/index.js';
+import repository from './repository/index.ts';
 import seedRouter from './tests/api/index.js';
-import tag from './tag/index.js';
-import user from './user/index.js';
-import userGroup from './user-group/index.js';
+import tag from './tag/index.ts';
+import user from './user/index.ts';
+import userGroup from './user-group/index.ts';
 import { extractAuthData } from '#shared/auth/mw.js';
 import authenticator from '#shared/auth/index.js';
 import ai from '#shared/ai/index.js';
+import { buildOpenApiDocument } from '#shared/openapi/index.ts';
 import {
   ai as aiConfig,
   auth as authConfig,
@@ -22,6 +23,28 @@ router.use(extractAuthData);
 router.get('/healthcheck', (_req, res) => {
   res.status(200).json({ status: 'ok' });
 });
+
+router.get('/openapi.json', (_req, res) => {
+  res.json(buildOpenApiDocument());
+});
+
+router.get('/docs', (_req, res) => {
+  // Scalar API reference rendered from /api/openapi.json.
+  // Single CDN script tag - no extra dependency.
+  res.type('html').send(`<!doctype html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Tailor CMS - API reference</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+      </head>
+      <body>
+        <script id="api-reference" data-url="/api/openapi.json"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+      </body>
+    </html>`);
+});
+
 router.use(user.path, user.router);
 
 // SSO routes:

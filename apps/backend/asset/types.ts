@@ -1,7 +1,9 @@
-import type { AssetSource } from '@tailor-cms/interfaces/asset.ts';
-import type { ContentType } from '@tailor-cms/interfaces/discovery.ts';
+import type { AssetSource } from '@tailor-cms/interfaces/asset';
+import type { ContentType } from '@tailor-cms/interfaces/discovery';
 import type { RequestHandler } from 'express';
 import type { Asset } from './asset.model.js';
+import type { Repository } from '../repository/models/repository.model.js';
+import type { User } from '../user/models/user.model.js';
 
 export type { AssetSource };
 
@@ -72,8 +74,9 @@ export interface ImportFromLinkOptions {
  * for router registration.
  */
 export interface AssetRequest {
-  repository: any;
-  user: any;
+  // Loaded by the parent /:repositoryId param middleware
+  repository: Repository;
+  user: User;
   asset?: Asset;
   body: any;
   query: any;

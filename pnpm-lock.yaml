@@ -260,7 +260,7 @@ importers:
         version: 6.11.0
       openai:
         specifier: ^6.34.0
-        version: 6.37.0(ws@8.18.3)(zod@3.25.76)
+        version: 6.37.0(ws@8.18.3)(zod@4.4.3)
       openid-client:
         specifier: ^5.7.1
         version: 5.7.1
@@ -360,6 +360,9 @@ importers:
       yup:
         specifier: ^1.7.1
         version: 1.7.1
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@types/bluebird':
         specifier: ^3.5.42
@@ -563,6 +566,9 @@ importers:
       '@tailor-cms/config-parser':
         specifier: workspace:^
         version: link:../packages/tailor-config-parser
+      hash-object:
+        specifier: ^5.0.1
+        version: 5.0.1
       lodash-es:
         specifier: ^4.17.21
         version: 4.18.1
@@ -1309,6 +1315,9 @@ importers:
       '@tailor-cms/config-parser':
         specifier: workspace:*
         version: link:../tailor-config-parser
+      '@tailor-cms/interfaces':
+        specifier: workspace:*
+        version: link:../tailor-interfaces
       is-localhost:
         specifier: 0.0.2
         version: 0.0.2
@@ -11821,8 +11830,8 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+  zod@4.4.3:
+    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -21484,10 +21493,10 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openai@6.37.0(ws@8.18.3)(zod@3.25.76):
+  openai@6.37.0(ws@8.18.3)(zod@4.4.3):
     optionalDependencies:
       ws: 8.18.3
-      zod: 3.25.76
+      zod: 4.4.3
 
   openid-client@5.7.1:
     dependencies:
@@ -24315,7 +24324,6 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod@3.25.76:
-    optional: true
+  zod@4.4.3: {}
 
   zwitch@2.0.4: {}

@@ -35,7 +35,8 @@ import { extractAndSaveImages } from '../extraction/pdf-media.ts';
 import { extractAndStoreCaptions } from '../extraction/video/youtube-captions.ts';
 import { describeWithVision } from '../extraction/vision-describe.ts';
 import { fetchUrlContent } from '../extraction/web-content.ts';
-import Storage from '../../repository/storage.js';
+import Storage from '../../repository/storage.ts';
+import type { Repository } from '../../repository/models/repository.model.js';
 
 interface IndexingContext<T extends Asset = Asset> {
   storeId: string;
@@ -50,7 +51,7 @@ const { Asset: AssetModel } = db;
 
 const logger = createLogger('asset:indexing');
 
-async function findOrCreateStore(repository: any): Promise<string> {
+async function findOrCreateStore(repository: Repository): Promise<string> {
   const existing = repository.getVectorStoreId();
   if (existing) {
     logger.debug(
@@ -66,24 +67,22 @@ async function findOrCreateStore(repository: any): Promise<string> {
     { repositoryId: repository.id, storeId },
     'Created new store',
   );
-  const wasSet = await repository.setVectorStoreId(storeId);
-  if (wasSet) return storeId;
-  // Another request won the race; use their storeId,
-  // clean up the orphaned store we just created
-  await repository.reload();
-  const existingId = repository.getVectorStoreId();
-  if (!existingId) throw new Error('Failed to persist vector store ID');
+  const persistedId = await repository.setVectorStoreId(storeId);
+  if (!persistedId) throw new Error('Failed to persist vector store ID');
+  if (persistedId === storeId) return storeId;
+  // Another request won the race; reuse their storeId and clean up
+  // the orphaned vector store we just created upstream.
   logger.debug(
-    { repositoryId: repository.id, storeId: existingId },
+    { repositoryId: repository.id, storeId: persistedId },
     'Using store from concurrent request',
   );
   store.deleteStore(storeId).catch((err: any) =>
     logger.warn({ err, storeId }, 'Failed to clean up orphaned store'),
   );
-  return existingId;
+  return persistedId;
 }
 
-export async function removeFromStore(repository: any, asset: Asset) {
+export async function removeFromStore(repository: Repository, asset: Asset) {
   if (!asset.vectorStoreFileId || !AIService.vectorStore) return;
   const storeId = repository.data?.$$?.ai?.storeId;
   if (!storeId) return;
@@ -271,7 +270,7 @@ async function processAssets(assetIds: number[], storeId: string) {
   }
 }
 
-export async function index(repository: any, assetIds: number[]) {
+export async function index(repository: Repository, assetIds: number[]) {
   const where = {
     id: { [Op.in]: assetIds },
     repositoryId: repository.id,
@@ -317,7 +316,7 @@ export function getStatus(repositoryId: number, assetId?: number) {
   });
 }
 
-export async function deindex(repository: any, asset: Asset) {
+export async function deindex(repository: Repository, asset: Asset) {
   logger.info(
     { repositoryId: repository.id, assetId: asset.id },
     'Deindexing asset',

@@ -1,6 +1,6 @@
 import type { User } from '@tailor-cms/interfaces/user';
 import type { UserGroupWithRole } from '@tailor-cms/interfaces/user-group';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { auth as api } from '@/api';
 

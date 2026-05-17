@@ -9,10 +9,10 @@ import camelCase from 'lodash/camelCase.js';
 import Promise from 'bluebird';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
 import sortBy from 'lodash/sortBy.js';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 import { Op } from 'sequelize';
 
-import { store as activityCache } from '../../repository/feed/store.js';
+import { store as activityCache } from '../../repository/feed/store.ts';
 import db from '#shared/database/index.js';
 import linkService from '#shared/content-library/link.service.js';
 import TransferService from '#shared/transfer/transfer.service.js';

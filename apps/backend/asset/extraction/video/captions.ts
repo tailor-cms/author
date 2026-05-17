@@ -9,7 +9,7 @@ import { stripHtml } from 'string-strip-html';
 import { createLogger } from '#logger';
 
 import type { Asset } from '../../asset.model.js';
-import Storage from '../../../repository/storage.js';
+import Storage from '../../../repository/storage.ts';
 
 const logger = createLogger('asset:video-captions');
 const CAPTION_EXTENSIONS = ['.vtt', '.srt'];

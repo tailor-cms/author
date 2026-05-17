@@ -24,7 +24,7 @@ import { PDFParse } from 'pdf-parse';
 import { v4 as uuidv4 } from 'uuid';
 
 import { buildStorageKey } from '../utils/storage-key.ts';
-import Storage from '../../repository/storage.js';
+import Storage from '../../repository/storage.ts';
 import db from '#shared/database/index.js';
 
 import { AssetType, type FileAsset } from '../asset.model.js';

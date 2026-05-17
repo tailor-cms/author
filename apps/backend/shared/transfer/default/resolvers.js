@@ -1,10 +1,9 @@
 import mapKeys from 'lodash/mapKeys.js';
 import miss from 'mississippi';
-import omit from 'lodash/omit.js';
 import QueryStream from 'pg-query-stream';
-import { schema } from '@tailor-cms/config';
 import { stringify } from 'JSONStream';
 import db from '../../database/index.js';
+import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
 
 const { Activity, ContentElement, Repository } = db;
 const reStorage = /^storage:\/\//;
@@ -18,7 +17,10 @@ function createRepositoryResolver({ context, transaction }) {
   const where = { id: context.repositoryId };
   const srcStream = queryStream(Repository, { where, transaction });
   const stripInternal = miss.through.obj((repo, _enc, cb) => {
-    if (repo.data) repo.data = omit(repo.data, '$$');
+    // Drop instance-specific paths ($$.ai, etc.) but keep $$.schema so
+    // the archive carries the schema snapshot - the target instance may
+    // not have this schema id registered (paste-mode safety).
+    if (repo.data) repo.data = stripInstanceSpecific(repo.data);
     cb(null, repo);
   });
   return miss.pipe(srcStream, stripInternal, stringify(IS_ARRAY_STREAM));
@@ -39,11 +41,14 @@ function createElementsResolver({ context, transaction }) {
   return miss.pipe(srcStream, assetParser, stringify());
 }
 
-function createManifestResolver({ context }) {
-  const { assets, schemaId } = context;
+async function createManifestResolver({ context }) {
+  const { assets, repositoryId } = context;
+  const repository = await Repository.findByPk(repositoryId, {
+    paranoid: false,
+  });
   const manifest = {
     assets,
-    schema: schema.getSchema(schemaId),
+    schema: repository.getSchemaConfig(),
     date: new Date(),
   };
   return miss.pipe(miss.from.obj([manifest]), stringify(IS_ARRAY_STREAM));

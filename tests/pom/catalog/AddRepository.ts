@@ -51,11 +51,12 @@ export class AddRepositoryDialog {
   async importRepository(
     name = `${faker.lorem.words(2)} ${new Date().getTime()}`,
     description = faker.lorem.words(4),
+    archive = './fixtures/pizza.tgz',
   ) {
     await this.importTab.click();
     // https://github.com/vuetifyjs/vuetify/issues/21058
     await this.archiveInput.click({ force: true });
-    await this.archiveInput.setInputFiles('./fixtures/pizza.tgz');
+    await this.archiveInput.setInputFiles(archive);
     await this.nameInput.fill(name);
     await this.descriptionInput.fill(description);
     await this.createRepositoryBtn.click();

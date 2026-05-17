@@ -1,6 +1,6 @@
 import { elements } from '@tailor-cms/content-element-collection/server.js';
 import pick from 'lodash/pick.js';
-import storage from '../../repository/storage.js';
+import storage from '../../repository/storage.ts';
 import hooksTypes from './elementHooks.js';
 import config from '#config';
 
