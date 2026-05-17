@@ -11,14 +11,14 @@ import contentPluginRegistry from '#shared/content-plugins/index.js';
 Promise.config({ longStackTraces: !config.isProduction });
 
 /* eslint-disable */
-import database from '#shared/database/index.js';
+import db from '#shared/database/index.js';
 import { createLogger } from '#logger';
 /* eslint-enable */
 
 const logger = createLogger();
 const runApp = promisify(app.listen.bind(app));
 
-database
+db
   .initialize()
   .then(() => logger.info('Database initialized'))
   .then(() => contentPluginRegistry.initialize())

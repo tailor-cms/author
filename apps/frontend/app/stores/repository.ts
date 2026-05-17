@@ -4,7 +4,8 @@ import type {
   Tag,
 } from '@tailor-cms/interfaces/repository';
 import { intersectionBy } from 'lodash-es';
-import { UserRole } from '@tailor-cms/common';
+import { register as registerSchema } from '@tailor-cms/config';
+import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { useAuthStore } from './auth';
 import { repository as api, tag as tagApi } from '@/api';
@@ -66,6 +67,10 @@ export const useRepositoryStore = defineStore('repositories', () => {
 
   function add(item: Repository) {
     processRepository(item);
+    // Make any schema snapshot the BE shipped resolvable through the
+    // standard `schema.getXxx(...)` API
+    const snapshotConfig = (item as any).data?.$$?.schema?.config;
+    if (snapshotConfig) registerSchema(snapshotConfig);
     $items.set(item.uid, item);
     return item;
   }

@@ -108,7 +108,7 @@
 <script lang="ts" setup>
 import { isEmpty, map } from 'lodash-es';
 import { boolean, object, string } from 'yup';
-import { role } from '@tailor-cms/common';
+import { role } from '@tailor-cms/interfaces/role';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { titleCase } from '@tailor-cms/utils';
 import { useForm } from 'vee-validate';

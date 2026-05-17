@@ -27,10 +27,12 @@
         />
       </VCol>
     </VRow>
-    <VDataTable
+    <VDataTableServer
       :headers="headers"
       :items="userGroups"
       :items-length="totalItems"
+      :items-per-page="dataTable.itemsPerPage"
+      :items-per-page-options="[10, 25, 50, 100]"
       :loading="isLoading"
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
@@ -73,7 +75,7 @@
           </td>
         </tr>
       </template>
-    </VDataTable>
+    </VDataTableServer>
     <UserGroupDialog
       :group-data="editedGroup"
       :user-groups="userGroups"

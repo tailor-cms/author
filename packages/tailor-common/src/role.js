@@ -1,17 +1,13 @@
-const role = {
-  user: {
-    ADMIN: 'ADMIN',
-    COLLABORATOR: 'COLLABORATOR',
-    INTEGRATION: 'INTEGRATION',
-    USER: 'USER',
-  },
-  repository: { ADMIN: 'ADMIN', AUTHOR: 'AUTHOR' },
-};
+// Roles moved to @tailor-cms/interfaces/role. This module is preserved
+// as a thin re-export for backward compatibility; new code should import
+// from @tailor-cms/interfaces/role directly so TS types come along.
+import role from '@tailor-cms/interfaces/role';
 
-export const user = role.user;
-export const UserRole = role.user;
-
-export const repository = role.repository;
-export const RepositoryRole = role.repository;
+export {
+  RepositoryRole,
+  UserRole,
+  repository,
+  user,
+} from '@tailor-cms/interfaces/role';
 
 export default role;

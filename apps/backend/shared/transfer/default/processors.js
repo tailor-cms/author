@@ -8,11 +8,13 @@ import omit from 'lodash/omit.js';
 import { parse } from 'JSONStream';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
-import roleConfig from '@tailor-cms/common/src/role.js';
+import roleConfig from '@tailor-cms/interfaces/role';
 import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
 import db from '../../database/index.js';
 import { createLogger } from '#logger';
+import { pinSchemaSnapshot } from '#app/repository/lib/schema.ts';
+import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
 
 const logger = createLogger('processors');
 
@@ -59,18 +61,37 @@ export default {
   createAssetProcessor,
 };
 
+// Captures the archive's schema config into context for the later
+// repository step. Doesn't validate against the registry - that decision
+// is deferred to processRepository which has the row's actual schema id
+// and can pick "registry hit", "paste-mode fallback", or "fail".
 function processManifest(manifest, _enc, { context }) {
-  const schemas = map(SCHEMAS, 'id');
-  const isSupported = schemas.includes(manifest.schema.id);
-  if (!isSupported) throw new Error('Schema not supported');
+  if (!manifest?.schema?.id) throw new Error('Manifest missing schema');
+  context.manifestSchema = manifest.schema;
   context.assets.push(...manifest.assets);
 }
 
 async function processRepository(repository, _enc, { context, transaction }) {
-  const { name, description, userId, userGroupIds } = context;
+  const { name, description, userId, userGroupIds, manifestSchema } = context;
   repository = normalize(repository, Repository);
   Object.assign(repository, { description, name });
-  if (repository.data) repository.data = omit(repository.data, '$$');
+  // Defensive: archive may carry `$$.ai` (or other instance-specific
+  // paths) from the source environment. Drop them but keep `$$.schema`
+  // so paste-mode works when this instance doesn't have the schema id
+  // in its registry.
+  if (repository.data) repository.data = stripInstanceSpecific(repository.data);
+  // Schema resolution at import time:
+  //   - bundled in this instance: proceed; `$$.schema` is seeded
+  //     lazily by the `getRepository` middleware on first load.
+  //   - not bundled: pin the manifest's schema config (always
+  //     present - `processManifest` throws otherwise and runs before
+  //     this step). Pinning registers it with `@tailor-cms/config` so
+  //     activity bulkCreate hooks can resolve types, and embeds the
+  //     snapshot into the new repo's data.
+  const isBundled = map(SCHEMAS, 'id').includes(repository.schema);
+  if (!isBundled) {
+    repository.data = pinSchemaSnapshot(repository.data, manifestSchema);
+  }
   const options = { context: { userId }, transaction };
   const repositoryRecord = omit(repository, IGNORE_ATTRS);
   const entity = await Repository.create(repositoryRecord, options);

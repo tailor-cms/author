@@ -6,7 +6,7 @@ import pickBy from 'lodash/pickBy.js';
 import request from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
-import Storage from '../../repository/storage.js';
+import Storage from '../../repository/storage.ts';
 import { readFile, sha256 } from './util.js';
 import { storage as config } from '#config';
 

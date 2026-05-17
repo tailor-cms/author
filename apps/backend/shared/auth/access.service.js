@@ -1,7 +1,7 @@
 import first from 'lodash/first.js';
 import intersection from 'lodash/intersection.js';
 import { StatusCodes } from 'http-status-codes';
-import { UserRole } from '@tailor-cms/common';
+import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { createError } from '#shared/error/helpers.js';
 

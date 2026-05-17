@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import Promise from 'bluebird';
 import uniq from 'lodash/uniq.js';
 import { sequelize } from '../../database/index.js';
-import storage from '../../../repository/storage.js';
+import storage from '../../../repository/storage.ts';
 import { useTar } from '../formats.js';
 import resolvers from './resolvers.js';
 import processors from './processors.js';

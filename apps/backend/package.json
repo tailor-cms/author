@@ -10,7 +10,7 @@
     "#config/*": "./config/*",
     "#logger": "./shared/logger.js",
     "#shared/*": "./shared/*",
-    "#storage": "./repository/storage.js"
+    "#storage": "./repository/storage.ts"
   },
   "scripts": {
     "dev": "node --watch --import ./script/preflight.js --experimental-transform-types ./index.ts || exit 0",
@@ -117,7 +117,8 @@
     "uuid": "^13.0.0",
     "yn": "^5.1.0",
     "youtube-transcript": "1.3.0",
-    "yup": "^1.7.1"
+    "yup": "^1.7.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.42",

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@tailor-cms/config-parser": "workspace:*",
+    "@tailor-cms/interfaces": "workspace:*",
     "is-localhost": "0.0.2",
     "url-parse": "^1.5.10"
   }
