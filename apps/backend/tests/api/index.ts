@@ -1,6 +1,6 @@
 import express from 'express';
 
-import ctrl from './seed.controller.js';
+import ctrl from './seed.controller.ts';
 import { authorize } from '#shared/auth/mw.js';
 
 const router = express.Router();

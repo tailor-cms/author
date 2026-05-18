@@ -571,7 +571,7 @@ importers:
         version: 2.2.3
       autoprefixer:
         specifier: ^10.4.21
-        version: 10.4.21(postcss@8.5.14)
+        version: 10.4.21(postcss@8.5.6)
       nuxt:
         specifier: 4.2.0
         version: 4.2.0(@netlify/blobs@9.1.2)(@parcel/watcher@2.5.1)(@types/node@24.9.1)(@vue/compiler-sfc@3.5.34)(db0@0.3.4)(encoding@0.1.13)(eslint@9.38.0(jiti@2.6.1))(ioredis@5.8.2)(magicast@0.3.5)(meow@13.2.0)(optionator@0.9.4)(rollup@4.52.5)(sass@1.93.2)(terser@5.44.0)(typescript@5.9.3)(vite@7.1.12(@types/node@24.9.1)(jiti@2.6.1)(sass@1.93.2)(terser@5.44.0)(yaml@2.8.1))(xml2js@0.6.2)(yaml@2.8.1)
@@ -17918,16 +17918,6 @@ snapshots:
   atomic-sleep@1.0.0: {}
 
   auto-bind@5.0.1: {}
-
-  autoprefixer@10.4.21(postcss@8.5.14):
-    dependencies:
-      browserslist: 4.25.3
-      caniuse-lite: 1.0.30001735
-      fraction.js: 4.3.7
-      normalize-range: 0.1.2
-      picocolors: 1.1.1
-      postcss: 8.5.14
-      postcss-value-parser: 4.2.0
 
   autoprefixer@10.4.21(postcss@8.5.6):
     dependencies:

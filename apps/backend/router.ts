@@ -1,6 +1,7 @@
+import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import repository from './repository/index.ts';
-import seedRouter from './tests/api/index.js';
+import seedRouter from './tests/api/index.ts';
 import tag from './tag/index.ts';
 import user from './user/index.ts';
 import userGroup from './user-group/index.ts';
@@ -20,15 +21,15 @@ router.use(processBody);
 router.use(extractAuthData);
 
 // Public routes:
-router.get('/healthcheck', (_req, res) => {
+router.get('/healthcheck', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'ok' });
 });
 
-router.get('/openapi.json', (_req, res) => {
+router.get('/openapi.json', (_req: Request, res: Response) => {
   res.json(buildOpenApiDocument());
 });
 
-router.get('/docs', (_req, res) => {
+router.get('/docs', (_req: Request, res: Response) => {
   // Scalar API reference rendered from /api/openapi.json.
   // Single CDN script tag - no extra dependency.
   res.type('html').send(`<!doctype html>
@@ -48,11 +49,10 @@ router.get('/docs', (_req, res) => {
 router.use(user.path, user.router);
 
 // SSO routes:
-authConfig.oidc.enabled &&
-  (await (async () => {
-    const { default: oidc } = await import('./oidc/index.js');
-    router.use(oidc.path, oidc.router);
-  })());
+if (authConfig.oidc.enabled) {
+  const { default: oidc } = await import('./oidc/index.js');
+  router.use(oidc.path, oidc.router);
+}
 
 // Protected routes:
 router.use(authenticate('jwt'));
@@ -64,7 +64,7 @@ if (testConfig.isSeedApiEnabled) router.use(seedRouter.path, seedRouter.router);
 
 export default router;
 
-function processBody(req, _res, next) {
+function processBody(req: Request, _res: Response, next: NextFunction) {
   const { body } = req;
   if (body && body.email) body.email = body.email.toLowerCase();
   next();
