@@ -3,28 +3,26 @@
 // repository channel so other collaborators see the thread in
 // real time. Mail: Create + Update notify the repository's
 // collaborators (excluding the author).
-import type { ModelStatic } from 'sequelize';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import { schema } from '@tailor-cms/config';
 import without from 'lodash/without.js';
 import sse from '#shared/sse/index.js';
 import mail from '#shared/mail/index.js';
+import type ActivityModel from '../../activity/models/activity.model.js';
 import type { Comment } from './comment.model.js';
-import type { Repository } from '../../repository/models/repository.model.js';
-import type { RepositoryUser } from '../../repository/models/repository-user.model.js';
-import type { User } from '../../user/models/user.model.js';
+import type ContentElementModel
+  from '../../content-element/models/content-element.model.js';
+import type RepositoryModel from '../../repository/models/repository.model.js';
+import type RepositoryUserModel from '../../repository/models/repository-user.model.js';
+import type UserModel from '../../user/models/user.model.js';
 
-// Subset of the `db` bag this slice actually uses. Repository / User /
-// RepositoryUser have their own .d.ts and get precise types; Activity
-// and ContentElement don't yet, so they fall back to the generic
-// `ModelStatic` shape.
 interface ModelsBag {
-  Repository: ModelStatic<Repository>;
-  RepositoryUser: ModelStatic<RepositoryUser>;
-  User: ModelStatic<User>;
-  Activity: ModelStatic<any>;
-  ContentElement: ModelStatic<any>;
+  Repository: typeof RepositoryModel;
+  RepositoryUser: typeof RepositoryUserModel;
+  User: typeof UserModel;
+  Activity: typeof ActivityModel;
+  ContentElement: typeof ContentElementModel;
 }
 
 function add(Comment: any, Hooks: any, db: ModelsBag) {

@@ -20,7 +20,7 @@ import {
   type HttpMethod,
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
-import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { Activity } from '../../activity/models/activity.model.js';
 import type { Comment } from '../../comment/models/comment.model.js';
 import type { ContentElement }
   from '../../content-element/models/content-element.model.js';

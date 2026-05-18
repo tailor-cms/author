@@ -1,3 +1,8 @@
+// Activity lifecycle hooks: SSE broadcasts, linked-content propagation
+// (sync to copies, auto-unlink on edit, parent unlink on structural
+// change), and repository / outline-activity touch-up for the
+// hasUnpublishedChanges propagation chain.
+import type { Transaction } from 'sequelize';
 import forEach from 'lodash/forEach.js';
 import groupBy from 'lodash/groupBy.js';
 import { schema } from '@tailor-cms/config';
@@ -5,16 +10,30 @@ import { schema } from '@tailor-cms/config';
 import { createLogger } from '#logger';
 import linkService from '#shared/content-library/link.service.js';
 import sse from '#shared/sse/index.js';
+import type { OperationContext } from '#shared/database/types.ts';
+import type RepositoryModel from '../../repository/models/repository.model.js';
+import type ActivityModel from './activity.model.js';
+import type { Activity } from './activity.model.js';
 
 const logger = createLogger('activity:hooks');
-const log = (msg) => logger.debug(msg.replace(/\n/g, ' '));
+
+const log = (msg: string) => logger.debug(msg.replace(/\n/g, ' '));
 const { isOutlineActivity } = schema;
 
-function add(Activity, Hooks, Models) {
+// Narrowed slices of the full Sequelize hook-options bag.
+type CtxOpts = { context?: OperationContext; transaction?: Transaction };
+type UpdateOpts = CtxOpts & { fields?: string[] };
+
+interface ModelsBag {
+  Repository: typeof RepositoryModel;
+  Activity: typeof ActivityModel;
+}
+
+function add(Activity: typeof ActivityModel, Hooks: any, Models: ModelsBag) {
   const { Repository } = Models;
   const { Events } = Activity;
 
-  const mappings = {
+  const mappings: Record<string, any[]> = {
     [Hooks.afterCreate]: [
       unlinkParentOnStructuralChange,
       touchRepository,
@@ -22,7 +41,7 @@ function add(Activity, Hooks, Models) {
       sseCreate,
     ],
     // Order matters: touchOutline must run before propagateToLinkedActivities
-    // so modifiedAt is set before propagation uses it
+    // so modifiedAt is set before propagation uses it.
     [Hooks.afterUpdate]: [
       autoUnlinkOnEdit,
       touchRepository,
@@ -41,8 +60,12 @@ function add(Activity, Hooks, Models) {
     [Hooks.afterRestore]: [touchRepository, touchOutline, sseUpdate],
   };
 
-  /** Unlink parent tree when structural change breaks the link. */
-  async function unlinkParentOnStructuralChange(_hookType, activity, opts) {
+  // Unlink the parent tree when a structural change breaks the link.
+  async function unlinkParentOnStructuralChange(
+    _hookType: string,
+    activity: Activity,
+    opts: CtxOpts,
+  ) {
     if (opts.context?.linkSync) return;
     if (!activity.parentId) return;
     log(`Checking parent unlink due to structural change`);
@@ -56,8 +79,8 @@ function add(Activity, Hooks, Models) {
     }
   }
 
-  /** Unlink all copies when source activity is deleted. */
-  async function unlinkCopiesOnDelete(_hookType, activity) {
+  // Unlink all copies when the source activity is deleted.
+  async function unlinkCopiesOnDelete(_hookType: string, activity: Activity) {
     try {
       const unlinkedCopies = await linkService.unlinkCopiesOfSource(
         activity.id,
@@ -68,31 +91,35 @@ function add(Activity, Hooks, Models) {
           sse.channel(copy.repositoryId).send(Events.Update, copy);
         }
       }
-    } catch (err) {
-      log(`Error unlinking upon deletion ${activity.id}: ${err.message}`);
+    } catch (err: any) {
+      log(`Error unlinking upon deletion ${activity.id}: ${err?.message}`);
     }
   }
 
-  /** Auto-unlink linked activity when data is edited. */
-  async function autoUnlinkOnEdit(_hookType, activity, opts) {
+  // Auto-unlink the linked activity when its data is edited.
+  async function autoUnlinkOnEdit(
+    _hookType: string,
+    activity: Activity,
+    opts: UpdateOpts,
+  ) {
     if (!activity.isLinkedCopy) return;
     if (!opts.fields?.includes('data')) return;
     if (opts.context?.linkSync) return;
     await linkService.unlinkOnEdit(activity, opts.transaction);
   }
 
-  /**
-   * Propagate updates to all activities linked to this source activity.
-   * Automatic sync: when source changes, all linked copies update.
-   */
-  async function propagateToLinkedActivities(_hookType, activity, opts) {
-    // linkSync: already syncing from source, skip to prevent loop
+  // Propagate updates from a source activity to every linked copy.
+  // - `linkSync` short-circuits to prevent recursive loops.
+  // - linked copies don't propagate - only sources do.
+  async function propagateToLinkedActivities(
+    _hookType: string,
+    activity: Activity,
+    opts: CtxOpts,
+  ) {
     if (opts.context?.linkSync) return;
-    // Linked copies don't propagate - only sources do
     if (activity.isLinkedCopy) return;
 
     try {
-      // Find all activities linked to this source
       const linkedActivities = await Activity.unscoped().findAll({
         where: {
           sourceId: activity.id,
@@ -104,18 +131,17 @@ function add(Activity, Hooks, Models) {
         `Propagating update from activity ${activity.id}
         to ${linkedActivities.length} linked activities`,
       );
-      // Update each linked activity with the new data
-      const affectedRepoIds = new Set();
+      const affectedRepoIds = new Set<number>();
       for (const it of linkedActivities) {
         await it.update(
           {
             data: { ...activity.data },
             sourceModifiedAt: activity.modifiedAt || new Date(),
-          },
+          } as any,
           {
             context: { linkSync: true },
-            hooks: false, // Prevent recursion
-          },
+            hooks: false,
+          } as any,
         );
         // Touch outline so modifiedAt reflects the change.
         // For non-outline activities, hoist up to the outline parent.
@@ -126,60 +152,66 @@ function add(Activity, Hooks, Models) {
         affectedRepoIds.add(it.repositoryId);
         sse.channel(it.repositoryId).send(Events.Update, it);
       }
-      // Mark affected repositories as having unpublished changes
       if (affectedRepoIds.size) {
         await Repository.update(
-          { hasUnpublishedChanges: true },
+          { hasUnpublishedChanges: true } as any,
           { where: { id: [...affectedRepoIds] } },
         );
       }
     } catch (err) {
-      logger.error('Error propagating to linked activities:', err);
+      logger.error({ err }, 'Error propagating to linked activities');
     }
   }
 
   forEach(mappings, (hooks, type) => {
     forEach(hooks, (hook) =>
-      Activity.addHook(type, Hooks.withType(type, hook)),
+      Activity.addHook(
+        type as Parameters<typeof Activity.addHook>[0],
+        Hooks.withType(type, hook),
+      ),
     );
   });
 
-  function sseCreate(_, activity) {
+  function sseCreate(_hookType: string, activity: Activity) {
     sse.channel(activity.repositoryId).send(Events.Create, activity);
   }
 
-  function sseUpdate(_, activity) {
+  function sseUpdate(_hookType: string, activity: Activity) {
     sse.channel(activity.repositoryId).send(Events.Update, activity);
   }
 
-  async function sseBulkUpdate(_, { where }) {
+  async function sseBulkUpdate(_hookType: string, { where }: { where: any }) {
     const activities = await Models.Activity.findAll({ where });
     const activitiesByRepository = groupBy(activities, 'repositoryId');
     forEach(activitiesByRepository, (activities, repositoryId) => {
-      sse.channel(repositoryId).send(Events.BulkUpdate, activities);
+      sse.channel(Number(repositoryId)).send(Events.BulkUpdate, activities);
     });
   }
 
-  async function sseDelete(_, activity) {
+  async function sseDelete(_hookType: string, activity: Activity) {
     await activity.reload({ paranoid: false });
     sse.channel(activity.repositoryId).send(Events.Delete, activity);
   }
 
-  const isRepository = (it) => it instanceof Models.Repository;
+  const isRepository = (it: unknown) => it instanceof Models.Repository;
 
-  function touchRepository(hookType, activity, { context = {} }) {
+  function touchRepository(
+    hookType: string,
+    activity: Activity,
+    { context = {} as OperationContext }: CtxOpts,
+  ) {
     if (!isRepository(context.repository)) return Promise.resolve();
-    // setting correct hasUnpublishedChanges value is handled by
-    // remove activity middleware for outline activities
     return hookType === Hooks.afterDestroy && isOutlineActivity(activity.type)
       ? Promise.resolve()
-      : context.repository.update({ hasUnpublishedChanges: true });
+      : context.repository.update({
+          hasUnpublishedChanges: true,
+        } as any);
   }
 
   async function touchOutline(
-    _hookType,
-    activity,
-    { context = {}, transaction },
+    _hookType: string,
+    activity: Activity,
+    { context = {} as OperationContext, transaction }: CtxOpts,
   ) {
     if (!isRepository(context.repository)) return Promise.resolve();
     const outlineActivity = isOutlineActivity(activity.type)
@@ -189,11 +221,19 @@ function add(Activity, Hooks, Models) {
   }
 }
 
-const afterTransaction = (method) => (type, opts) => {
-  if (!opts.transaction) return method(type, opts);
-  opts.transaction.afterCommit(() => method(type, opts));
-};
+// `transaction.afterCommit` runs the wrapped handler only once the
+// surrounding transaction has been committed; falls back to immediate
+// invocation when no transaction is supplied. Typed loosely on the
+// second arg because Sequelize calls hooks with different shapes
+// (afterBulkUpdate gets `{ where, transaction }`, afterDestroy gets
+// `instance` + tail-args) - the runtime only relies on `.transaction`
+// being present-or-not.
+type AfterTransactionHook = (type: string, opts: any) => unknown;
+const afterTransaction =
+  (method: AfterTransactionHook): AfterTransactionHook =>
+    (type, opts) => {
+      if (!opts?.transaction) return method(type, opts);
+      opts.transaction.afterCommit(() => method(type, opts));
+    };
 
-export default {
-  add,
-};
+export default { add };

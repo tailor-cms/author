@@ -3,8 +3,8 @@ import { schema, workflow } from '@tailor-cms/config';
 import { Activity as Events } from '@tailor-cms/common/src/sse.js';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import calculatePosition from '#shared/util/calculatePosition.js';
-import contentElementHooks from '../content-element/hooks.js';
-import hooks from './hooks.js';
+import contentElementHooks from '../../content-element/models/content-element.hooks.ts';
+import hooks from './activity.hooks.ts';
 import isEmpty from 'lodash/isEmpty.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
@@ -58,7 +58,7 @@ class Activity extends Model {
           return type && isTrackedInWorkflow(type);
         },
       },
-      // Indicates this is an active linked copy from a library source.
+      // Indicates this is an active linked copy of a source activity.
       // When true, receives automatic updates when source changes.
       // Editing data auto-unlinks (sets to false), preserving sourceId for
       // provenance.
@@ -112,9 +112,8 @@ class Activity extends Model {
     };
   }
 
-  /**
-   * Get source activity info for linked copy.
-   */
+  // Returns the source activity's display info for a linked copy, or null
+  // when the activity is not a copy / the source has been hard-deleted.
   async getSourceInfo() {
     if (!this.sourceId) return null;
     const Repository = this.sequelize.model('Repository');
@@ -131,14 +130,10 @@ class Activity extends Model {
     };
   }
 
-  /**
-   * Find where this source activity is being used (as linked copies).
-   * When a hierarchy is linked, all descendants also become linked copies.
-   * This method returns only independent link entry points by excluding
-   * copies whose parent is also linked (those came along as part of a parent
-   * link). Single-level parent check suffices since linking marks ALL
-   * descendants - there can't be a gap in the chain.
-   */
+  // Returns active linked copies of this source activity across repositories,
+  // excluding copies whose parent is also a linked copy (those came along as
+  // part of a parent link). Single-level parent check suffices since linking
+  // marks ALL descendants - there can't be a gap in the chain.
   async findCopyLocations() {
     const Repository = this.sequelize.model('Repository');
     const copies = await Activity.findAll({
@@ -173,13 +168,8 @@ class Activity extends Model {
     );
   }
 
-  /**
-   * Find the link entry point for this activity.
-   * Walks up the tree to find the root of the linked hierarchy.
-   * Returns null if this activity is not part of a linked tree.
-   * @param {Object} transaction - Optional transaction
-   * @returns {Promise<Activity|null>}
-   */
+  // Walks up the parent chain to find the root of the linked hierarchy.
+  // Returns null if this activity is not part of a linked tree.
   async findLinkEntryPoint(transaction) {
     if (!this.isLinkedCopy) return null;
     const parent = await this.getParent({ transaction });
@@ -333,12 +323,9 @@ class Activity extends Model {
     });
   }
 
-  /**
-   * Maps references for cloned activity.
-   * @param {Object} mappings Dict where keys represent old and values new ids.
-   * @param {SequelizeTransaction} [transaction]
-   * @returns {Promise.<Activity>} Updated instance.
-   */
+  // Maps references for a cloned activity by replacing old ids in each
+  // relationship list with the corresponding new ids from `mappings`.
+  // Relationships not listed in `relationships` pass through untouched.
   mapClonedReferences(mappings, relationships, transaction) {
     const refs = this.refs || {};
     relationships.forEach((type) => {
@@ -375,13 +362,8 @@ class Activity extends Model {
     });
   }
 
-  /**
-   * Iterates through the parent chain until it finds the first outline
-   * Activity. Outline Activities are the ones that are defined in the schema
-   * as the structure of the repository.
-   * @param {Activity} item
-   * @returns {Promise.<Activity>}
-   */
+  // Walks the parent chain until it finds the first outline-level activity
+  // (one whose type is declared in the schema's outline structure).
   async getFirstOutlineItem(item = this) {
     if (!item.parentId) return item;
     if (isOutlineActivity(item.type)) return item;
