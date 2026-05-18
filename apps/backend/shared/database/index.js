@@ -19,7 +19,7 @@ import RepositoryUser from '../../repository/models/repository-user.model.js';
 import RepositoryUserGroup from '#app/user-group/models/repository-user-group.model.js';
 import ActivityStatus from '../../activity/status.model.js';
 import Activity from '../../activity/activity.model.js';
-import ContentElement from '../../content-element/content-element.model.js';
+import ContentElement from '../../content-element/models/content-element.model.js';
 import Revision from '../../revision/models/revision.model.js';
 import Comment from '../../comment/models/comment.model.js';
 import Asset from '../../asset/asset.model.js';

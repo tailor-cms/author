@@ -10,7 +10,7 @@ import { getRepository } from './middleware.ts';
 import activity from '../activity/index.js';
 import asset from '../asset/index.ts';
 import comment from '../comment/index.ts';
-import contentElement from '../content-element/index.js';
+import contentElement from '../content-element/index.ts';
 import feed from './feed/index.ts';
 import revision from '../revision/index.ts';
 import rpc from './rpc/index.ts';

@@ -41,7 +41,7 @@ export const useContentElementStore = defineStore('contentElements', () => {
     repositoryId: number,
     activityIds: number[],
   ): Promise<StoreContentElement[]> {
-    const params = { ids: activityIds };
+    const params = { activityIds };
     const contentElements: ContentElement[] = await api.fetch(
       repositoryId,
       params,
@@ -49,7 +49,9 @@ export const useContentElementStore = defineStore('contentElements', () => {
     // Make sure to fetch all referenced elements
     const ref = flatMap(contentElements, (v) => flatten(Object.values(v.refs)));
     if (ref.length) {
-      const opts = { ids: ref.map((it: any) => it?.containerId) };
+      const opts = {
+        activityIds: ref.map((it: any) => it?.containerId),
+      };
       const refElements = await api.fetch(repositoryId, opts);
       contentElements.push(...refElements);
     }

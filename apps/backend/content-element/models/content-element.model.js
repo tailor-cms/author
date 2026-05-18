@@ -6,7 +6,7 @@ import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import Promise from 'bluebird';
 import zipObject from 'lodash/zipObject.js';
-import hooks from './hooks.js';
+import hooks from './content-element.hooks.ts';
 import calculatePosition from '#shared/util/calculatePosition.js';
 import {
   detectMissingReferences,
@@ -61,7 +61,7 @@ class ContentElement extends Model {
         defaultValue: false,
         allowNull: false,
       },
-      // Indicates this is an active linked copy from a library source.
+      // Indicates this is an active linked copy of a source element.
       // Editing data auto-unlinks, preserving sourceId for provenance.
       isLinkedCopy: {
         type: BOOLEAN,
@@ -212,12 +212,10 @@ class ContentElement extends Model {
     this.refs = removeReference(this.refs, type, id);
   }
 
-  /**
-   * Maps references for cloned element.
-   * @param {Object} mappings Dict where keys represent old and values new ids.
-   * @param {SequelizeTransaction} [transaction]
-   * @returns {Promise.<ContentElement>} Updated instance.
-   */
+  // Maps references for a cloned element by replacing old ids/uids with new
+  // ones from the provided mappings. Each ref carries id, optional uid,
+  // outlineId and containerId - all four must resolve through `mappings`
+  // or the ref is dropped from the cloned element with an error log.
   mapClonedReferences(mappings, transaction) {
     const { refs } = this;
     // TODO: Refactor this and extract common logic so it can be reused.
@@ -268,10 +266,9 @@ class ContentElement extends Model {
     });
   }
 
-  /**
-   * Get information about the source element.
-   * @returns {Promise<Object|null>}
-   */
+  // Loads the source element's display info for a linked copy, returning
+  // null when the element is not a linked copy or the source row has been
+  // hard-deleted.
   async getSourceInfo() {
     if (!this.sourceId) return null;
     const Repository = this.sequelize.model('Repository');
@@ -292,10 +289,9 @@ class ContentElement extends Model {
     };
   }
 
-  /**
-   * Find where this source element is being used (linked copies).
-   * @returns {Promise<Object[]>}
-   */
+  // Locates active linked copies of this source element across repositories.
+  // The "who are my copies?" lookup; returns one row per copy decorated with
+  // its repository name and outline-activity pointer for deep-linking.
   async findCopyLocations() {
     const Repository = this.sequelize.model('Repository');
     const Activity = this.sequelize.model('Activity');
