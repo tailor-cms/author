@@ -8,9 +8,12 @@ export const Level = {
   Debug: 'debug',
   Trace: 'trace',
   Silent: 'silent',
-};
+} as const;
 
-export const logLevel = env.LOG_LEVEL?.toLowerCase() || Level.Info;
+export type LogLevel = (typeof Level)[keyof typeof Level];
+
+export const logLevel: LogLevel =
+  (env.LOG_LEVEL?.toLowerCase() as LogLevel) || Level.Info;
 
 if (!Object.values(Level).includes(logLevel)) {
   throw new Error(`Invalid log level: ${logLevel}`);

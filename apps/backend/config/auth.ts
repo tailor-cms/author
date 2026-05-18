@@ -4,12 +4,12 @@ import yn from 'yn';
 const { env } = process;
 const { user: role } = roleConfig;
 
-export const corsAllowedOrigins = (env.CORS_ALLOWED_ORIGINS || '')
+export const corsAllowedOrigins: string[] = (env.CORS_ALLOWED_ORIGINS || '')
   .split(',')
   .filter((s) => s)
   .map((s) => s.trim());
 
-export const saltRounds = parseInt(env.AUTH_SALT_ROUNDS, 10) || 10;
+export const saltRounds: number = parseInt(env.AUTH_SALT_ROUNDS || '', 10) || 10;
 
 export const jwt = {
   cookie: {

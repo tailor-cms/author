@@ -1,4 +1,4 @@
-export const provider = process.env.STORAGE_PROVIDER || 'filesystem';
+export const provider: string = process.env.STORAGE_PROVIDER || 'filesystem';
 
 // The path where assets will be stored inside repository/${repositoryId} folder.
 // For example, if path is equal to assets,

@@ -3,7 +3,18 @@ import yn from 'yn';
 
 import { createLogger } from '#logger';
 
-function parseConfig(config = process.env) {
+interface ParsedConnection {
+  url?: string;
+  database?: string;
+  username?: string | undefined;
+  password?: string | undefined;
+  host?: string | undefined;
+  port?: string | undefined;
+  dialect?: string;
+  dialectOptions?: Record<string, unknown>;
+}
+
+function parseConfig(config: NodeJS.ProcessEnv = process.env): ParsedConnection {
   const DATABASE_URI = config.DATABASE_URI || config.POSTGRES_URI;
   if (DATABASE_URI) return { url: DATABASE_URI };
   if (!config.DATABASE_NAME) {
@@ -27,6 +38,11 @@ function parseConfig(config = process.env) {
 
 const logger = createLogger('db');
 
+interface LogPayload {
+  msg: string;
+  duration?: string;
+}
+
 const config = {
   ...parseConfig(),
   benchmark: process.env.NODE_ENV === 'production',
@@ -34,8 +50,8 @@ const config = {
   migrateOnStartup: !yn(process.env.DATABASE_DISABLE_MIGRATIONS_ON_STARTUP),
   logger,
   // https://sequelize.org/docs/v6/getting-started/#logging
-  logging(msg, time) {
-    const info = { msg };
+  logging(msg: string, time?: number) {
+    const info: LogPayload = { msg };
     if (time) info.duration = `${time}ms`;
     return logger.info(info);
   },
