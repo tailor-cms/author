@@ -16,7 +16,7 @@ packages:
 # (ERR_PNPM_DEPLOY_NONINJECTED_WORKSPACE). Our Dockerfile runs
 # `pnpm --filter=tailor-server --prod deploy /pruned-backend` over a
 # workspace whose deps are symlinked, so we opt into the legacy behaviour
-# here. Long term we could enable `inject-workspace-packages: true` and
+# here. Long term we could enable `injectWorkspacePackages: true` and
 # verify every workspace dep is injectable, but that's a separate audit.
 forceLegacyDeploy: true
 # Bypass pnpm 11's (24h) minimum release-age supply-chain check
