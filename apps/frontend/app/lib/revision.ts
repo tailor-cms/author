@@ -18,13 +18,13 @@ interface LinkedEntity {
 
 function getAction(operation: string, state?: LinkedEntity) {
   switch (operation) {
-  case 'CREATE':
-    return state?.isLinkedCopy ? 'Linked' : 'Created';
-  case 'REMOVE':
-    return 'Removed';
-  case 'UPDATE':
-  default:
-    return 'Updated';
+    case 'CREATE':
+      return state?.isLinkedCopy ? 'Linked' : 'Created';
+    case 'REMOVE':
+      return 'Removed';
+    case 'UPDATE':
+    default:
+      return 'Updated';
   }
 }
 
@@ -78,33 +78,33 @@ export function getFormatDescription(rev: Revision, activity: Activity) {
 
 export function getRevisionAcronym(rev: Revision) {
   switch (rev.entity) {
-  case Entity.Activity: {
-    const state = rev.state as Activity;
-    const typeArray = state.type.split('_', 2);
-    return reduce(typeArray, (acc, val) => acc + val.charAt(0), '');
-  }
-  case Entity.Repository:
-    return 'R';
-  case Entity.ContentElement:
-    return 'CE';
-  default:
-    return 'N/A';
+    case Entity.Activity: {
+      const state = rev.state as Activity;
+      const typeArray = state.type.split('_', 2);
+      return reduce(typeArray, (acc, val) => acc + val.charAt(0), '');
+    }
+    case Entity.Repository:
+      return 'R';
+    case Entity.ContentElement:
+      return 'CE';
+    default:
+      return 'N/A';
   }
 }
 
 export function getRevisionColor(rev: Revision) {
   const DEFAULT_COLOR = 'primary-lighten-4';
   switch (rev.entity) {
-  case Entity.Activity: {
-    const state = rev.state as Activity;
-    const config = schema.getLevel(state.type);
-    return !isEmpty(config) ? config.color : DEFAULT_COLOR;
-  }
-  case Entity.Repository:
-    return 'primary-lighten-4';
-  case Entity.ContentElement:
-    return 'teal-lighten-4';
-  default:
-    return DEFAULT_COLOR;
+    case Entity.Activity: {
+      const state = rev.state as Activity;
+      const config = schema.getLevel(state.type);
+      return !isEmpty(config) ? config.color : DEFAULT_COLOR;
+    }
+    case Entity.Repository:
+      return 'primary-lighten-4';
+    case Entity.ContentElement:
+      return 'teal-lighten-4';
+    default:
+      return DEFAULT_COLOR;
   }
 }
