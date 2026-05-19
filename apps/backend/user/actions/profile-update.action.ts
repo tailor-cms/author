@@ -1,9 +1,8 @@
-import { z } from 'zod';
 import { StatusCodes } from 'http-status-codes';
 import { UniqueConstraintError, ValidationError } from 'sequelize';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import { Email, ShortText } from '#shared/request/schemas.ts';
+import * as schemas from '../user.schema.ts';
 import * as service from '../user.service.ts';
 
 // PATCH /users/me
@@ -11,18 +10,10 @@ import * as service from '../user.service.ts';
 // are optional - the service only writes what's supplied.
 // Email-uniqueness collisions surface as 409 (the model declares a
 // unique constraint on `email`).
-const Body = z.object({
-  email: Email().optional(),
-  firstName: ShortText(2, 50).optional(),
-  lastName: ShortText(2, 50).optional(),
-  // Generous ceiling: the FE sends a base64 data URL for the avatar
-  // (250x250 compressed JPEG via the Avatar component). 200_000 chars
-  // covers any reasonable upload while gating obvious DoS payloads.
-  imgUrl: z.string().max(200_000).optional(),
-});
-export type ProfileUpdateBody = z.infer<typeof Body>;
-
-async function handler({ body, user }: Ctx<{ body: typeof Body }>) {
+async function handler({
+  body,
+  user,
+}: Ctx<{ body: typeof schemas.ProfileUpdateInput }>) {
   try {
     const profile = await service.updateProfile(user, body);
     return { user: profile };
@@ -46,7 +37,7 @@ async function handler({ body, user }: Ctx<{ body: typeof Body }>) {
 }
 
 export default defineAction({
-  body: Body,
+  body: schemas.ProfileUpdateInput,
   raw: true,
   openapi: {
     summary: 'Update the current user profile',

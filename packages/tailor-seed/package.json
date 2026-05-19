@@ -2,5 +2,9 @@
   "name": "tailor-seed",
   "type": "module",
   "version": "0.0.1",
-  "description": "Tailor test dataset"
+  "description": "Tailor test dataset",
+  "exports": {
+    "./repositories.json": "./repositories.json",
+    "./user.json": "./user.json"
+  }
 }

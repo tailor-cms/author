@@ -11,28 +11,22 @@ import type {
 } from './models/content-element.model.js';
 import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
 
-import type { CreateBody } from './actions/create.action.ts';
-import type { PatchBody } from './actions/patch.action.ts';
-import type { LinkBody } from './actions/link.action.ts';
+import type {
+  CreateInput,
+  LinkInput,
+  ListFilter,
+  PatchInput,
+} from './content-element.schema.ts';
 
 const { Activity, ContentElement: ContentElementModel } = db;
 
 const logger = createLogger('content-element:svc');
 
-export interface ListFilters {
-  // When true, detached elements (unreachable in the outline because an
-  // ancestor activity was deleted) are included. Default: false.
-  detached?: boolean;
-  // Filter by parent activity ids. Built by the FE store to fetch every
-  // element under a set of activities in one call. Coerced to numeric ids.
-  activityIds?: number[];
-}
-
 // Returns the elements matched by `opts` (built by processQuery) and the
 // supplied filters. `detached=false` is applied by default; an
 // `activityIds` filter is implemented as an INNER JOIN on Activity so
 // the result is scoped to the supplied parent activities.
-export async function list(opts: any, filters: ListFilters) {
+export async function list(opts: any, filters: ListFilter) {
   if (!filters.detached) opts.where = { ...opts.where, detached: false };
   if (filters.activityIds) {
     const where = { id: filters.activityIds };
@@ -48,7 +42,7 @@ export async function list(opts: any, filters: ListFilters) {
 export async function create(
   repository: Repository,
   user: User,
-  body: CreateBody,
+  body: CreateInput,
 ): Promise<ContentElement> {
   const context = { userId: user.id, repository };
   return ContentElementModel.create(
@@ -64,7 +58,7 @@ export async function update(
   repository: Repository,
   user: User,
   element: ContentElement,
-  body: PatchBody,
+  body: PatchInput,
 ): Promise<ContentElement> {
   const context = { userId: user.id, repository };
   if (element.deletedAt) (element as any).setDataValue('deletedAt', null);
@@ -108,7 +102,7 @@ export class SourceNotFoundError extends Error {
 export async function link(
   repository: Repository,
   user: User,
-  body: LinkBody,
+  body: LinkInput,
 ): Promise<ContentElement> {
   const source = await ContentElementModel.findByPk(body.sourceId);
   if (!source) throw new SourceNotFoundError();

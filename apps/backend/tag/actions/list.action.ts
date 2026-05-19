@@ -1,23 +1,29 @@
+import { oneLine } from 'common-tags';
 import { z } from 'zod';
 import { defineAction } from '#shared/request/action.ts';
-import { QueryBoolean } from '#shared/request/schemas.ts';
+import { dataEnvelope } from '#shared/request/schemas.ts';
+import * as schemas from '../tag.schema.ts';
 import * as service from '../tag.service.ts';
 
 // GET /tags
 // Returns the tag catalog. The FE filter dropdowns use `associated=true`
 // to scope the list to tags reachable through the current user's
 // repositories;
-const Query = z.object({
-  // Restrict to tags attached to repositories the user can access.
-  associated: QueryBoolean.optional(),
-});
-export type ListQuery = z.infer<typeof Query>;
-
 export default defineAction({
-  query: Query,
+  query: schemas.ListFilter,
   openapi: {
-    summary: 'List tags (optionally scoped to the current user)',
+    summary: 'List tags',
+    description: oneLine`
+      Returns the tag catalog, optionally scoped to tags reachable
+      through the current user's repositories.
+    `,
     authenticated: true,
+    responses: {
+      200: {
+        description: 'Tag catalog (optionally scoped to the user).',
+        schema: dataEnvelope(z.array(schemas.Tag)),
+      },
+    },
   },
   async handler({ query, user }) {
     return service.list(user, query);

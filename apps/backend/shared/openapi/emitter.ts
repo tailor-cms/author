@@ -3,6 +3,12 @@
 // Walks the shared route registry, converts each action's Zod schemas to
 // JSON Schema via `z.toJSONSchema`, and assembles a single OpenAPI
 // document. Exposed at `/openapi.json` so FE codegen tools can consume it.
+//
+// Named entities (any Zod schema declared with `.meta({ id: 'Name' })`)
+// are promoted to `components.schemas` and referenced via `$ref` from
+// every operation that uses them. This is what makes Scalar render
+// "Tag[]" instead of "object[]", lets users navigate the Schemas
+// sidebar, and keeps the document compact when entities are reused.
 import { z, type ZodType } from 'zod';
 import { getRegisteredRoutes, type RouteRecord } from './registry.ts';
 
@@ -11,11 +17,49 @@ function toOpenApiPath(p: string): string {
   return p.replace(/:(\w+)/g, '{$1}');
 }
 
-// Render a Zod schema to a JSON Schema fragment; `undefined` when the
-// route doesn't declare that slot.
+// Document-scoped components registry. Populated as a side effect of
+// `schemaJson` while walking routes; assembled into the final document
+// by `buildOpenApiDocument` below.
+const components = new Map<string, unknown>();
+
+// Rewrites Zod's default `#/$defs/<id>` refs to OpenAPI's
+// `#/components/schemas/<id>` convention so Scalar resolves them.
+function rewriteRefs(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(rewriteRefs);
+  if (value && typeof value === 'object') {
+    const obj = value as Record<string, unknown>;
+    if (typeof obj.$ref === 'string') {
+      obj.$ref = obj.$ref.replace('#/$defs/', '#/components/schemas/');
+    }
+    for (const key of Object.keys(obj)) {
+      obj[key] = rewriteRefs(obj[key]);
+    }
+  }
+  return value;
+}
+
+// Pulls any `$defs` entries Zod emitted for nested named schemas into
+// the shared components map and strips `$defs` from the local fragment
+// so it doesn't leak into the operation body.
+function liftDefs(json: any): any {
+  if (json && typeof json === 'object' && json.$defs) {
+    for (const [id, def] of Object.entries(json.$defs)) {
+      if (!components.has(id)) {
+        components.set(id, rewriteRefs(def));
+      }
+    }
+    delete json.$defs;
+  }
+  return json;
+}
+
+// Render a Zod schema to a JSON Schema fragment with named entities
+// promoted to components. `undefined` when the route doesn't declare
+// that slot.
 function schemaJson(s: ZodType | undefined): unknown {
   if (!s) return undefined;
-  return z.toJSONSchema(s, { unrepresentable: 'any' });
+  const json: any = z.toJSONSchema(s, { unrepresentable: 'any' });
+  return rewriteRefs(liftDefs(json));
 }
 
 // Build OpenAPI `parameters[]` entries from a top-level Zod object's
@@ -23,14 +67,16 @@ function schemaJson(s: ZodType | undefined): unknown {
 // (`path` or `query`) with its required/optional state preserved.
 function paramsFor(schema: ZodType | undefined, slot: 'path' | 'query') {
   if (!schema) return [];
-  const json: any = z.toJSONSchema(schema, { unrepresentable: 'any' });
+  const json: any = liftDefs(
+    z.toJSONSchema(schema, { unrepresentable: 'any' }),
+  );
   if (json.type !== 'object' || !json.properties) return [];
   const required = new Set<string>(json.required ?? []);
   return Object.entries<any>(json.properties).map(([name, def]) => ({
     name,
     in: slot,
     required: required.has(name),
-    schema: def,
+    schema: rewriteRefs(def),
   }));
 }
 
@@ -77,7 +123,8 @@ function operationFor(route: RouteRecord) {
 }
 
 // Fold every registered route into the OpenAPI `paths` object in
-// registration order.
+// registration order. Side effect: populates the shared `components`
+// map with every named entity encountered.
 export function buildPaths() {
   const paths: Record<string, Record<string, any>> = {};
   for (const route of getRegisteredRoutes()) {
@@ -104,8 +151,11 @@ function collectTags() {
   return order.map((name) => ({ name }));
 }
 
-// Assemble the full OpenAPI 3.1 document.
+// Assemble the full OpenAPI 3.1 document. Paths are built first so the
+// `components.schemas` map is populated by the time we serialise it.
 export function buildOpenApiDocument() {
+  components.clear();
+  const paths = buildPaths();
   return {
     openapi: '3.1.0',
     info: {
@@ -117,7 +167,8 @@ export function buildOpenApiDocument() {
       securitySchemes: {
         bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       },
+      schemas: Object.fromEntries(components.entries()),
     },
-    paths: buildPaths(),
+    paths,
   };
 }

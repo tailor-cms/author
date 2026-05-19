@@ -5,7 +5,9 @@ import * as actions from './actions/index.ts';
 import { createActionMounter } from '#shared/request/action.ts';
 import { getContentElement, hasLinkSourceAccess } from './middleware.ts';
 
-const router = express.Router();
+// `mergeParams: true` so the parent's `:repositoryId` propagates into
+// `req.params`
+const router = express.Router({ mergeParams: true });
 const basePath = '/repositories/:repositoryId/content-elements';
 const mount = createActionMounter(router, basePath, 'Content Element');
 

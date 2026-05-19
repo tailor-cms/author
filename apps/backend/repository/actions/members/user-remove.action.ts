@@ -1,8 +1,7 @@
-import { z } from 'zod';
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import { IntParam } from '#shared/request/schemas.ts';
+import * as schemas from '../../repository.schema.ts';
 import * as service from '../../repository.service.ts';
 
 // DELETE /repositories/:repositoryId/users/:userId
@@ -10,14 +9,11 @@ import * as service from '../../repository.service.ts';
 // `UserNotFoundError` from the service maps to 404. There is no
 // "last repo admin" guard - system admins always retain access via
 // `hasRepositoryAdminAccess`, so the repo is never orphaned.
-const Params = z.object({
-  // Numeric id of the user whose access is being revoked.
-  userId: IntParam(),
-});
-
-async function handler(
-  { params, req, res }: Ctx<{ params: typeof Params }>,
-) {
+async function handler({
+  params,
+  req,
+  res,
+}: Ctx<{ params: typeof schemas.RemoveUserParams }>) {
   try {
     await service.removeUser(req.repository!, params.userId);
   } catch (err) {
@@ -30,7 +26,7 @@ async function handler(
 }
 
 export default defineAction({
-  params: Params,
+  params: schemas.RemoveUserParams,
   openapi: {
     summary: 'Remove a user from a repository',
     authenticated: true,
