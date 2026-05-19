@@ -1,4 +1,6 @@
+import { z } from 'zod';
 import { defineAction } from '#shared/request/action.ts';
+import { dataEnvelope } from '#shared/request/schemas.ts';
 import * as schemas from '../tag.schema.ts';
 import * as service from '../tag.service.ts';
 
@@ -11,6 +13,12 @@ export default defineAction({
   openapi: {
     summary: 'List tags (optionally scoped to the current user)',
     authenticated: true,
+    responses: {
+      200: {
+        description: 'Tag catalog (optionally scoped to the user).',
+        schema: dataEnvelope(z.array(schemas.Tag)),
+      },
+    },
   },
   async handler({ query, user }) {
     return service.list(user, query);

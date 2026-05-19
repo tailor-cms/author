@@ -1,7 +1,14 @@
 // Reusable Zod building blocks for Repository action input schemas.
 // Centralised here so a "trimmed short text" rule reads identically across
 // actions and any tightening happens in one place.
-import { z } from 'zod';
+import { z, type ZodType } from 'zod';
+
+// Standard `{ data: T }` response envelope. Non-`raw` actions wrap their
+// return value as `{ data: ... }` (see defineAction's response contract);
+// pass the inner shape through this helper when declaring an action's
+// 200 response schema so the OpenAPI spec mirrors the wire shape.
+export const dataEnvelope = <T extends ZodType>(inner: T) =>
+  z.object({ data: inner });
 
 // Trimmed non-empty string with an upper bound. Default max=250 matches the
 // historical limit applied to short-form fields (name, label, etc.).
