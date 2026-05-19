@@ -5,7 +5,9 @@ import * as actions from './actions/index.ts';
 import { createActionMounter } from '#shared/request/action.ts';
 import { getRevision, loadTargetActivity } from './middleware.ts';
 
-const router = express.Router();
+// `mergeParams: true` so the parent's `:repositoryId` propagates into
+// `req.params` inside this sub-router.
+const router = express.Router({ mergeParams: true });
 const basePath = '/repositories/:repositoryId/revisions';
 const mount = createActionMounter(router, basePath, 'Revision');
 
