@@ -19,11 +19,16 @@ packages:
 # here. Long term we could enable `inject-workspace-packages: true` and
 # verify every workspace dep is injectable, but that's a separate audit.
 force-legacy-deploy: true
-# Temp disable minimumReleaseAge for certain packages
-# pnpm 11 defaults `minimumReleaseAge` to 1440min (24h) as a supply-chain
-# defense. These packages are upstream and trusted; allowlist them so fresh
-# patches don't block the install when we bump.
+# Bypass pnpm 11's (24h) minimum release-age supply-chain check
+# for packages we trust by name (no version pin) or for specific fresh
+# patches we've already audited (version-pinned). Version-pinned entries
+# age out naturally; once an entry is >24h old, the global default
+# permits it without needing this list.
+# Add an entry when an install fails with `ERR_PNPM_PACKAGE_TOO_FRESH`
+# and the package is from a trusted upstream we've reviewed.
 minimumReleaseAgeExclude:
+  # PostgreSQL driver stack (pulled in by `pg` / Sequelize); upstream
+  # often ships patch releases together for the whole family.
   - date-fns
   - pg
   - pg-cloudflare
@@ -32,6 +37,8 @@ minimumReleaseAgeExclude:
   - pg-pool
   - pg-protocol
   - pg-query-stream
+  # AWS SDK v3 fan-out (each subpackage bumps in lockstep with the
+  # parent client). Pinned to the exact versions we last audited.
   - '@aws-sdk/client-s3@3.1049.0'
   - '@aws-sdk/core@3.974.12'
   - '@aws-sdk/credential-provider-env@3.972.38'
@@ -50,12 +57,7 @@ minimumReleaseAgeExclude:
   - '@aws-sdk/s3-request-presigner@3.1049.0'
   - '@aws-sdk/token-providers@3.1049.0'
   - '@aws-sdk/util-format-url@3.972.14'
-  - '@nuxt/kit@4.4.6'
-  - '@nuxt/nitro-server@4.4.6'
-  - '@nuxt/schema@4.4.6'
-  - '@nuxt/vite-builder@4.4.6'
-  - '@pulumi/pulumi@3.241.0'
-  - '@types/node@25.9.0'
+  # TypeScript-ESLint linter chain bumped together.
   - '@typescript-eslint/eslint-plugin@8.59.4'
   - '@typescript-eslint/parser@8.59.4'
   - '@typescript-eslint/project-service@8.59.4'
@@ -66,7 +68,13 @@ minimumReleaseAgeExclude:
   - '@typescript-eslint/typescript-estree@8.59.4'
   - '@typescript-eslint/utils@8.59.4'
   - '@typescript-eslint/visitor-keys@8.59.4'
-  - nuxt@4.4.6
+  # Singleton.
+  - '@pulumi/pulumi@3.241.0'
+# Allowlist of packages whose postinstall / build scripts pnpm 11 may run.
+# pnpm 11 blocks build scripts by default (supply-chain defense); each
+# entry below opts a specific package back in because we need its
+# native binary, downloaded asset, or generated artifact at install
+# time. Add an entry only after auditing what the script does.
 allowBuilds:
   # Native libuv file watcher used by Nuxt/Vite hot reload pipeline.
   '@parcel/watcher': true
