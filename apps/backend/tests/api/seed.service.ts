@@ -1,16 +1,23 @@
+// Business logic for the test-seed slice.
+// Test-only; gated by `ENABLE_TEST_API_ENDPOINTS`. Actions hand it
+// validated payloads inferred from `seed.schema.ts`.
 import crypto from 'node:crypto';
 import path from 'node:path';
 import { faker } from '@faker-js/faker';
-import find from 'lodash/find.js';
-import mapKeys from 'lodash/mapKeys.js';
+import _ from 'lodash';
 import { packageDirectory } from 'package-directory';
 import catalogSeed from 'tailor-seed/repositories.json' with { type: 'json' };
-import camelCase from 'lodash/camelCase.js';
 import seedUsers from 'tailor-seed/user.json' with { type: 'json' };
-import sortBy from 'lodash/sortBy.js';
 import { UserRole } from '@tailor-cms/interfaces/role';
 import { Op } from 'sequelize';
 
+import type {
+  CatalogInput,
+  CommentInput,
+  RepositoryInput,
+  UserGroupSpec,
+  UserInput,
+} from './seed.schema.ts';
 import { store as activityCache } from '../../repository/feed/store.ts';
 import db from '#shared/database/index.js';
 import linkService from '#shared/content-library/link.service.js';
@@ -38,47 +45,31 @@ interface SeedUser {
 }
 
 const DEFAULT_USER: SeedUser =
-  (find(seedUsers, { email: 'admin@gostudion.com' }) as SeedUser | undefined) ||
+  (_.find(seedUsers, { email: 'admin@gostudion.com' }) as SeedUser | undefined) ||
   (seedUsers[0] as SeedUser);
-
-export interface UserGroupSpec {
-  name?: string;
-  role?: string;
-}
-
-export interface SeedCatalogOptions {
-  repositorySeed?: typeof catalogSeed;
-  userGroup?: UserGroupSpec;
-}
-
-export interface ImportArchiveOptions {
-  includeLinkExample?: boolean;
-}
 
 class SeedService {
   async resetDatabase(): Promise<boolean> {
     await db.sequelize.getQueryInterface().dropAllTables();
     await db.initialize();
-    for (const it of sortBy(seedUsers, 'email') as SeedUser[]) {
+    for (const it of _.sortBy(seedUsers, 'email') as SeedUser[]) {
       await UserModel.create(
-        mapKeys(it, (_, k) => camelCase(k)) as Partial<User>,
+        _.mapKeys(it, (_v, k) => _.camelCase(k)) as Partial<User>,
       );
     }
     await activityCache.clear();
     return true;
   }
 
-  async seedCatalog({
-    repositorySeed = catalogSeed,
-    userGroup,
-  }: SeedCatalogOptions = {}) {
+  async seedCatalog(input: CatalogInput = {}) {
+    const { userGroup } = input;
     const user = await UserModel.findOne({
       where: { email: DEFAULT_USER.email },
     });
     if (!user) throw new Error('Seed user not found');
     const opts = { context: { userId: user.id } };
     const repositories = await Promise.all(
-      repositorySeed.map((it) => Repository.createByUser(it, opts)),
+      catalogSeed.map((it) => Repository.createByUser(it, opts)),
     );
     if (userGroup?.name) {
       const [group] = await UserGroup.findOrCreate({
@@ -94,18 +85,19 @@ class SeedService {
     return repositories;
   }
 
-  async importRepositoryArchive(
-    name: string = `Test ${crypto.randomBytes(12).toString('hex')}`,
-    description = 'Test repository description',
-    userEmail: string | null = null,
-    { includeLinkExample = false }: ImportArchiveOptions = {},
-  ) {
+  async importRepositoryArchive(input: RepositoryInput = {}) {
+    const {
+      name = `Test ${crypto.randomBytes(12).toString('hex')}`,
+      description = 'Test repository description',
+      authorEmail = null,
+      includeLinkExample = false,
+    } = input;
     // Get seed repository path
     const appDir = await packageDirectory();
     const projectDir = await packageDirectory({ cwd: path.join(appDir!, '..') });
     const seedPath = path.join(projectDir!, '/tests/fixtures/pizza.tgz');
     const user = await UserModel.findOne({
-      where: { email: userEmail || DEFAULT_USER.email },
+      where: { email: authorEmail || DEFAULT_USER.email },
     });
     if (!user) throw new Error('Seed user not found');
     const options = { name, description, userId: user.id };
@@ -130,7 +122,7 @@ class SeedService {
     if (!includeLinkExample) return result;
     const context = { userId: user.id };
     const targetRepository = await Repository.createByUser(
-      { schema: repository.schema, name: `Linked — ${name}`, description },
+      { schema: repository.schema, name: `Linked - ${name}`, description },
       { context },
     );
     const [linkedActivity] = await linkService.linkActivity(
@@ -143,12 +135,13 @@ class SeedService {
     return { ...result, linkedActivity };
   }
 
-  async createUser(
-    email: string = faker.internet.email(),
-    password: string = faker.internet.password(),
-    role: string = UserRole.ADMIN,
-    userGroup?: UserGroupSpec,
-  ) {
+  async createUser(input: UserInput = {}) {
+    const {
+      email = faker.internet.email(),
+      password = faker.internet.password(),
+      role = UserRole.ADMIN,
+      userGroup,
+    } = input;
     const [user] = await UserModel.findOrCreate({
       where: { email },
       defaults: { email, password, role } as Partial<User>,
@@ -162,12 +155,13 @@ class SeedService {
     };
   }
 
-  async createComment(
-    content: string,
-    repositoryId: number,
-    activityId: number,
-    contentElementId: number | null = null,
-  ) {
+  async createComment(input: CommentInput) {
+    const {
+      content,
+      repositoryId,
+      activityId,
+      contentElementId = null,
+    } = input;
     const repository = await Repository.findByPk(repositoryId);
     if (!repository) throw new Error('Repository not found');
     const activity = await Activity.findByPk(activityId);

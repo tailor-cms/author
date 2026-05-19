@@ -1,23 +1,23 @@
 import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
-import { z } from 'zod';
 import { StatusCodes } from 'http-status-codes';
 import snakeCase from 'lodash/snakeCase.js';
 import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
+import * as schemas from '../../repository.schema.ts';
 import { JobCache } from './job-cache.ts';
 
 const logger = createLogger('repository:export');
 
 // POST /repositories/:repositoryId/export/:jobId
 // Streams the export archive built by the paired /setup endpoint.
-const Params = z.object({
-  jobId: z.string().min(1),
-});
-
-async function handler({ params, req, res }: Ctx<{ params: typeof Params }>) {
+async function handler({
+  params,
+  req,
+  res,
+}: Ctx<{ params: typeof schemas.ExportJobParams }>) {
   const repository = req.repository!;
   const { jobId } = params;
   logger.debug(
@@ -48,7 +48,7 @@ async function handler({ params, req, res }: Ctx<{ params: typeof Params }>) {
 }
 
 export default defineAction({
-  params: Params,
+  params: schemas.ExportJobParams,
   openapi: {
     summary: 'Download the export archive for a repository',
     authenticated: true,

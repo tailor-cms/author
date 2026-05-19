@@ -11,7 +11,9 @@ import db from '#shared/database/index.js';
 
 const { Asset } = db;
 
-const router = express.Router();
+// `mergeParams: true` so the parent's `:repositoryId` propagates into
+// `req.params`
+const router = express.Router({ mergeParams: true });
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 },

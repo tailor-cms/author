@@ -6,7 +6,9 @@ import activityList from './actions/activity-list.action.ts';
 import activityAdd from './actions/activity-add.action.ts';
 import activityRemove from './actions/activity-remove.action.ts';
 
-const router = express.Router();
+// `mergeParams: true` so the parent's `:repositoryId` propagates into
+// `req.params`
+const router = express.Router({ mergeParams: true });
 
 const mountAction = createActionMounter(
   router,

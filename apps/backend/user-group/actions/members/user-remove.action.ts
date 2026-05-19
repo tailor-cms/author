@@ -1,17 +1,15 @@
-import { z } from 'zod';
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import { IntParam } from '#shared/request/schemas.ts';
+import * as schemas from '../../user-group.schema.ts';
 import * as service from '../../user-group.service.ts';
 
 // DELETE /user-group/:id/users/:userId
 // Removes a user from the group. 404 when the user id is unknown.
-const Params = z.object({
-  userId: IntParam(),
-});
-
-async function handler({ params, req }: Ctx<{ params: typeof Params }>) {
+async function handler({
+  params,
+  req,
+}: Ctx<{ params: typeof schemas.RemoveMemberParams }>) {
   try {
     await service.removeMember(req.userGroup!, params.userId);
   } catch (err) {
@@ -23,7 +21,7 @@ async function handler({ params, req }: Ctx<{ params: typeof Params }>) {
 }
 
 export default defineAction({
-  params: Params,
+  params: schemas.RemoveMemberParams,
   openapi: {
     summary: 'Remove a member from a user group',
     authenticated: true,

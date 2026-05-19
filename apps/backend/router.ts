@@ -50,7 +50,7 @@ router.use(user.path, user.router);
 
 // SSO routes:
 if (authConfig.oidc.enabled) {
-  const { default: oidc } = await import('./oidc/index.js');
+  const { default: oidc } = await import('./oidc/index.ts');
   router.use(oidc.path, oidc.router);
 }
 

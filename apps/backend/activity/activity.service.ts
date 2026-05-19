@@ -15,33 +15,26 @@ import type { Repository } from '../repository/models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
 import type { Activity, ActivityCopyLocation } from './models/activity.model.js';
 
-import type { CreateBody } from './actions/create.action.ts';
-import type { PatchBody } from './actions/patch.action.ts';
-import type { CloneBody } from './actions/clone.action.ts';
-import type { LinkBody } from './actions/link.action.ts';
-import type { WorkflowStatusBody } from './actions/workflow-status-update.action.ts';
+import type {
+  CloneInput,
+  CreateInput,
+  LinkInput,
+  ListFilter,
+  PatchInput,
+  WorkflowStatusInput,
+} from './activity.schema.ts';
 
 const { Activity: ActivityModel, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
 
 const logger = createLogger('activity:svc');
 
-export interface ListFilters {
-  // When true, include detached items (unreachable in the outline because
-  // an ancestor activity was deleted). Default: false.
-  detached?: boolean;
-  // When true, restrict to outline-level activities (those declared in
-  // the schema's outline structure). Soft-deleted-but-published items
-  // are included so the FE can show "deleted, awaiting publish" rows.
-  outlineOnly?: boolean;
-}
-
 // Returns the repository's activities, optionally restricted to
 // outline-only items + pending-unpublish soft-deleted entries.
 export async function list(
   repository: Repository,
   opts: any,
-  filters: ListFilters,
+  filters: ListFilter,
 ): Promise<Activity[]> {
   if (!filters.detached) opts.where.detached = false;
   if (filters.outlineOnly) {
@@ -72,7 +65,7 @@ export async function list(
 export async function create(
   repository: Repository,
   user: User,
-  body: CreateBody,
+  body: CreateInput,
 ): Promise<Activity> {
   const outlineConfig = find(getOutlineLevels(repository.schema), {
     type: body.type,
@@ -102,7 +95,7 @@ export async function update(
   repository: Repository,
   user: User,
   activity: Activity,
-  body: PatchBody,
+  body: PatchInput,
 ): Promise<Activity> {
   const context = { userId: user.id, repository };
   if (
@@ -175,7 +168,7 @@ export async function publish(activity: Activity): Promise<unknown> {
 export async function clone(
   user: User,
   activity: Activity,
-  body: CloneBody,
+  body: CloneInput,
 ): Promise<Activity[]> {
   const mappings = await activity.clone(
     body.repositoryId,
@@ -192,7 +185,7 @@ export async function clone(
 export async function updateWorkflowStatus(
   user: User,
   activity: Activity,
-  body: WorkflowStatusBody,
+  body: WorkflowStatusInput,
 ) {
   const context = { user };
   const status = await activity.createStatus(body, { context } as any);
@@ -206,7 +199,7 @@ export async function updateWorkflowStatus(
 export async function link(
   repository: Repository,
   user: User,
-  body: LinkBody,
+  body: LinkInput,
 ): Promise<Activity> {
   const context = { userId: user.id, repository };
   return linkService.linkActivity(

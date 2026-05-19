@@ -1,30 +1,32 @@
-import { z } from 'zod';
+import { oneLine } from 'common-tags';
 import { defineAction } from '#shared/request/action.ts';
-import { IntParam } from '#shared/request/schemas.ts';
+import { dataEnvelope } from '#shared/request/schemas.ts';
+import * as schemas from '../revision.schema.ts';
 import * as service from '../revision.service.ts';
 
 // GET /repositories/:repositoryId/revisions/time-travel
 // Reconstructs the state of an activity (and its descendants' elements)
 // at `timestamp`. The FE uses it for "show what was published" diffing -
 // it sends the current element ids and the publish timestamp.
-const Query = z.object({
-  // Target activity (the root of the subtree we'll reconstruct).
-  activityId: IntParam(),
-  // Strict ISO 8601 with a literal `T` separator. Matches the old
-  // express-validator config; rejects loose inputs like '2024-01-01 12:00'.
-  timestamp: z.iso.datetime({ offset: true }),
-  // ids of elements currently visible. Used in addition to "elements
-  // resurrected via REMOVE revisions" so the latest pre-timestamp state
-  // is fetched for everything the FE rendered.
-  elementIds: z.array(z.coerce.number().int()).default([]),
-});
-export type TimeTravelQuery = z.infer<typeof Query>;
-
 export default defineAction({
-  query: Query,
+  params: schemas.TimeTravelParams,
+  query: schemas.TimeTravelInput,
   openapi: {
-    summary: 'Reconstruct an activity\'s element state at a given moment',
+    summary: 'Time-travel an activity',
+    description: oneLine`
+      Reconstructs an activity and its descendants' element state at a
+      target moment. Used by the FE PublishDiff view to show what was
+      published.
+    `,
     authenticated: true,
+    responses: {
+      200: {
+        description:
+          'Reconstructed activity + element revisions at the target moment.',
+        schema: dataEnvelope(schemas.TimeTravelResult),
+      },
+      404: { description: 'Activity not found in this repository.' },
+    },
   },
   async handler({ query, req }) {
     return service.timeTravel(req.activity!, {

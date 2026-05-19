@@ -1,7 +1,26 @@
 // Reusable Zod building blocks for Repository action input schemas.
 // Centralised here so a "trimmed short text" rule reads identically across
 // actions and any tightening happens in one place.
-import { z } from 'zod';
+import { z, type ZodType } from 'zod';
+
+// Standard `{ data: T }` response envelope. Non-`raw` actions wrap their
+// return value as `{ data: ... }` (see defineAction's response contract);
+// pass the inner shape through this helper when declaring an action's
+// 200 response schema so the OpenAPI spec mirrors the wire shape.
+export const dataEnvelope = <T extends ZodType>(inner: T) =>
+  z.object({ data: inner });
+
+// Path-param schema for every route mounted under
+// `/repositories/:repositoryId/...`. Slices extend this with their own
+// path params via `RepositoryScopedParams.extend({ ... })` so the
+// OpenAPI doc shows the full path-param chain (the upstream
+// `getRepository` middleware already validated it at runtime).
+export const RepositoryScopedParams = z.object({
+  repositoryId: z.coerce
+    .number()
+    .int()
+    .describe('Repository the resource belongs to.'),
+});
 
 // Trimmed non-empty string with an upper bound. Default max=250 matches the
 // historical limit applied to short-form fields (name, label, etc.).
