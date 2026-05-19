@@ -14,11 +14,14 @@ export const ListFilter = z.object({
 
 export type ListFilter = z.infer<typeof ListFilter>;
 
-// Wire shape of a Tag entity as returned by the API.
+// Wire shape of a Tag entity as returned by the API. `.meta({ id })`
+// promotes it to `components.schemas.Tag` in the emitted OpenAPI spec
+// so Scalar renders the entity name everywhere it's referenced.
 export const Tag = z.object({
   id: z.number().int().describe('Numeric primary key.'),
   uid: z.uuid().describe('UUID based identifier.'),
   name: z.string().describe('Display name; unique across the system.'),
-}).describe('A Tag entity attachable to repositories.');
+}).meta({ id: 'Tag' })
+  .describe('A Tag entity attachable to repositories.');
 
 export type Tag = z.infer<typeof Tag>;

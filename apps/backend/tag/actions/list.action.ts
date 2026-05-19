@@ -1,3 +1,4 @@
+import { oneLine } from 'common-tags';
 import { z } from 'zod';
 import { defineAction } from '#shared/request/action.ts';
 import { dataEnvelope } from '#shared/request/schemas.ts';
@@ -11,7 +12,11 @@ import * as service from '../tag.service.ts';
 export default defineAction({
   query: schemas.ListFilter,
   openapi: {
-    summary: 'List tags (optionally scoped to the current user)',
+    summary: 'List tags',
+    description: oneLine`
+      Returns the tag catalog, optionally scoped to tags reachable
+      through the current user's repositories.
+    `,
     authenticated: true,
     responses: {
       200: {

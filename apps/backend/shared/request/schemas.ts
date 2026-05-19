@@ -10,6 +10,18 @@ import { z, type ZodType } from 'zod';
 export const dataEnvelope = <T extends ZodType>(inner: T) =>
   z.object({ data: inner });
 
+// Path-param schema for every route mounted under
+// `/repositories/:repositoryId/...`. Slices extend this with their own
+// path params via `RepositoryScopedParams.extend({ ... })` so the
+// OpenAPI doc shows the full path-param chain (the upstream
+// `getRepository` middleware already validated it at runtime).
+export const RepositoryScopedParams = z.object({
+  repositoryId: z.coerce
+    .number()
+    .int()
+    .describe('Repository the resource belongs to.'),
+});
+
 // Trimmed non-empty string with an upper bound. Default max=250 matches the
 // historical limit applied to short-form fields (name, label, etc.).
 export const ShortText = (min = 1, max = 250) =>

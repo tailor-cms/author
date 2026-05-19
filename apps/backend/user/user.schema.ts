@@ -11,6 +11,22 @@ import {
   ShortText,
 } from '#shared/request/schemas.ts';
 
+// Slim user projection attached to records that include the author /
+// uploader / assignee user (revisions, comments, activity-status,
+// repository member rows, etc.). Mirrors `user.profile` from the model.
+export const UserSummary = z.object({
+  id: z.number().int().describe('User numeric id.'),
+  email: Email().describe('User email (login key).'),
+  firstName: z.string().nullable().describe('First name.'),
+  lastName: z.string().nullable().describe('Last name.'),
+  fullName: z.string().nullable().describe('Computed full name.'),
+  label: z.string().describe('Display label fallback (full name or email).'),
+  imgUrl: z.string().nullable().describe('Avatar URL.'),
+}).meta({ id: 'UserSummary' })
+  .describe('Slim user projection attached to records that include the user.');
+
+export type UserSummary = z.infer<typeof UserSummary>;
+
 // GET /users
 export const ListFilter = z.object({
   // Substring match across email, firstName, lastName
