@@ -12,6 +12,13 @@ packages:
   - 'extensions/plugins'
   - 'infrastructure'
   - 'config'
+# pnpm 11 made `pnpm deploy` refuse non-injected workspaces by default
+# (ERR_PNPM_DEPLOY_NONINJECTED_WORKSPACE). Our Dockerfile runs
+# `pnpm --filter=tailor-server --prod deploy /pruned-backend` over a
+# workspace whose deps are symlinked, so we opt into the legacy behaviour
+# here. Long term we could enable `inject-workspace-packages: true` and
+# verify every workspace dep is injectable, but that's a separate audit.
+force-legacy-deploy: true
 # Temp disable minimumReleaseAge for certain packages
 # pnpm 11 defaults `minimumReleaseAge` to 1440min (24h) as a supply-chain
 # defense. These packages are upstream and trusted; allowlist them so fresh
