@@ -34,7 +34,7 @@ export class ResetPassword {
   async fetchInviteLink(email: string) {
     const linkTitle = 'Complete registration';
     const resetLink = await getAnchorFromLastRecievedEmail(email, linkTitle);
-    expect(resetLink.textContent).toBe(linkTitle);
+    expect(resetLink.textContent?.trim()).toBe(linkTitle);
     return resetLink.href;
   }
 }

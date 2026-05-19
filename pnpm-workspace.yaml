@@ -18,7 +18,7 @@ packages:
 # workspace whose deps are symlinked, so we opt into the legacy behaviour
 # here. Long term we could enable `inject-workspace-packages: true` and
 # verify every workspace dep is injectable, but that's a separate audit.
-force-legacy-deploy: true
+forceLegacyDeploy: true
 # Bypass pnpm 11's (24h) minimum release-age supply-chain check
 # for packages we trust by name (no version pin) or for specific fresh
 # patches we've already audited (version-pinned). Version-pinned entries
