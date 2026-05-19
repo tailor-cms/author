@@ -28,8 +28,11 @@ import UserGroup from '#app/user-group/models/user-group.model.js';
 import type { Repository } from './models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
 
-import type { CreateBody } from './actions/create.action.ts';
-import type { PatchBody } from './actions/patch.action.ts';
+import type {
+  CreateBody,
+  ListQuery,
+  PatchBody,
+} from './repository.schema.ts';
 
 const {
   Activity,
@@ -108,7 +111,7 @@ export interface ListResult {
 export async function list(
   opts: any,
   user: User,
-  query: any,
+  query: ListQuery,
 ): Promise<ListResult> {
   const { search, name, userGroupId, compatibleWith } = query;
   let { schemas } = query;

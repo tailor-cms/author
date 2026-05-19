@@ -15,33 +15,26 @@ import type { Repository } from '../repository/models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
 import type { Activity, ActivityCopyLocation } from './models/activity.model.js';
 
-import type { CreateBody } from './actions/create.action.ts';
-import type { PatchBody } from './actions/patch.action.ts';
-import type { CloneBody } from './actions/clone.action.ts';
-import type { LinkBody } from './actions/link.action.ts';
-import type { WorkflowStatusBody } from './actions/workflow-status-update.action.ts';
+import type {
+  CloneBody,
+  CreateBody,
+  LinkBody,
+  ListQuery,
+  PatchBody,
+  WorkflowStatusBody,
+} from './activity.schema.ts';
 
 const { Activity: ActivityModel, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;
 
 const logger = createLogger('activity:svc');
 
-export interface ListFilters {
-  // When true, include detached items (unreachable in the outline because
-  // an ancestor activity was deleted). Default: false.
-  detached?: boolean;
-  // When true, restrict to outline-level activities (those declared in
-  // the schema's outline structure). Soft-deleted-but-published items
-  // are included so the FE can show "deleted, awaiting publish" rows.
-  outlineOnly?: boolean;
-}
-
 // Returns the repository's activities, optionally restricted to
 // outline-only items + pending-unpublish soft-deleted entries.
 export async function list(
   repository: Repository,
   opts: any,
-  filters: ListFilters,
+  filters: ListQuery,
 ): Promise<Activity[]> {
   if (!filters.detached) opts.where.detached = false;
   if (filters.outlineOnly) {

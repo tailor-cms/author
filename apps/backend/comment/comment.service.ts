@@ -4,6 +4,11 @@
 import pickBy from 'lodash/pickBy.js';
 import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
+import type {
+  CreateBody,
+  ListQuery,
+  ResolveBody,
+} from './comment.schema.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
 import type { Comment } from './models/comment.model.js';
@@ -34,18 +39,13 @@ const includeElement = () => ({
 
 const standardIncludes = () => [includeAuthor(), includeElement()];
 
-export interface ListFilters {
-  activityId?: number;
-  contentElementId?: number;
-}
-
 // Lists the repository's comments, optionally scoped to a single
 // activity or element. `opts` is the `processQuery`-built shape
 // (where/order/paranoid/limit/offset).
 export async function list(
   repository: Repository,
   opts: any,
-  filters: ListFilters,
+  filters: ListQuery,
 ): Promise<Comment[]> {
   if (filters.activityId) opts.where.activityId = filters.activityId;
   if (filters.contentElementId) {
@@ -54,20 +54,13 @@ export async function list(
   return repository.getComments({ ...opts, include: standardIncludes() });
 }
 
-export interface CreatePayload {
-  uid?: string;
-  activityId: number;
-  contentElementId?: number;
-  content: string;
-}
-
 // Creates a comment authored by `user` and attached to `repository`.
 // Returns the reloaded row with `author` + `contentElement` populated so
 // the FE renders without an extra fetch.
 export async function create(
   repository: Repository,
   user: User,
-  payload: CreatePayload,
+  payload: CreateBody,
 ): Promise<Comment> {
   const attrs = {
     repositoryId: repository.id,
@@ -117,15 +110,6 @@ export class InvalidResolveSelectorError extends Error {
   }
 }
 
-export interface ResolvePayload {
-  id?: number;
-  contentElementId?: number;
-  // FE passes the existing `resolvedAt` value back; we flip its presence:
-  // a truthy value means "currently resolved" and we unresolve (set to
-  // null); a missing value means "currently open" and we resolve (now).
-  resolvedAt?: number | string | null;
-}
-
 // Toggles the resolved state of either a single comment (by `id`) or
 // every comment attached to a content element (by `contentElementId`).
 // At least one selector is required - throws `InvalidResolveSelectorError`
@@ -133,7 +117,7 @@ export interface ResolvePayload {
 // element-wide branch is one query.
 export async function updateResolvement(
   repository: Repository,
-  payload: ResolvePayload,
+  payload: ResolveBody,
 ): Promise<void> {
   if (!payload.id && !payload.contentElementId) {
     throw new InvalidResolveSelectorError();

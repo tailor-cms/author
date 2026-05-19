@@ -10,6 +10,7 @@ import db from '#shared/database/index.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 import { UserRole } from '@tailor-cms/interfaces/role';
+import type { ListQuery, UpsertBody } from './user.schema.ts';
 
 const { User: UserModel, UserGroup } = db;
 
@@ -28,12 +29,7 @@ export interface ListResult {
 // soft-deleted rows.
 export async function list(
   opts: { limit: number; offset: number; order?: any[] },
-  query: {
-    email?: string;
-    role?: string;
-    filter?: string;
-    archived?: boolean;
-  },
+  query: ListQuery,
 ): Promise<ListResult> {
   const where: any = { [Op.and]: [] };
   if (query.filter) where[Op.or] = buildFilter(query.filter);
@@ -53,21 +49,11 @@ export async function list(
   return { total: count, items };
 }
 
-export interface UpsertPayload {
-  email: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  // defaultValue: COLLABORATOR
-  role?: string;
-  userGroupIds?: number[];
-  skipInvite?: boolean;
-}
-
 // Invites a brand-new user (sends invitation mail unless `skipInvite`)
 // or updates the existing one matched by email. Replaces the user's
 // user-group memberships when `userGroupIds` is supplied (omit to leave
 // memberships untouched).
-export async function upsert(payload: UpsertPayload): Promise<UserProfile> {
+export async function upsert(payload: UpsertBody): Promise<UserProfile> {
   const { skipInvite, userGroupIds, ...attrs } = payload;
   const user = await UserModel.inviteOrUpdate(attrs, { skipInvite });
   if (Array.isArray(userGroupIds)) {

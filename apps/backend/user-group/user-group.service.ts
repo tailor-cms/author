@@ -6,7 +6,12 @@ import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
 import pick from 'lodash/pick.js';
 import type { User } from '../user/models/user.model.js';
-import type { UserRole } from '@tailor-cms/interfaces/role';
+import type {
+  CreateBody,
+  ListQuery,
+  PatchBody,
+  UpsertMembersBody,
+} from './user-group.schema.ts';
 import type { UserGroup } from './models/user-group.model.js';
 
 const {
@@ -40,10 +45,6 @@ export class MemberUserNotFoundError extends Error {
 const isUniqueNameError = (err: unknown) =>
   err instanceof UniqueConstraintError;
 
-export interface ListFilters {
-  filter?: string;
-}
-
 export interface ListResult {
   total: number;
   items: UserGroup[];
@@ -54,7 +55,7 @@ export interface ListResult {
 export async function list(
   user: User,
   opts: any,
-  filters: ListFilters,
+  filters: ListQuery,
 ): Promise<ListResult> {
   const where: any = { ...opts.where };
   if (filters.filter) where.name = { [Op.iLike]: `%${filters.filter}%` };
@@ -68,15 +69,10 @@ export async function list(
   return { total: count, items: rows as UserGroup[] };
 }
 
-export interface UpsertPayload {
-  name: string;
-  logoUrl?: string;
-}
-
 // Creates a group. Relies on the unique constraint on `name` for
 // duplicate detection (race-safe) - any UniqueConstraintError on the
 // `name` column is rethrown as `DuplicateNameError`.
-export async function create(payload: UpsertPayload): Promise<UserGroup> {
+export async function create(payload: CreateBody): Promise<UserGroup> {
   logger.debug({ name: payload.name }, 'Creating user group');
   try {
     return await UserGroupModel.create(payload);
@@ -89,7 +85,7 @@ export async function create(payload: UpsertPayload): Promise<UserGroup> {
 // Updates the group's mutable fields.
 export async function update(
   group: UserGroup,
-  payload: Partial<UpsertPayload>,
+  payload: PatchBody,
 ): Promise<UserGroup> {
   const updates = pick(payload, ['name', 'logoUrl']);
   try {
@@ -125,18 +121,12 @@ export async function listMembers(group: UserGroup) {
   return group.getUsers();
 }
 
-export interface UpsertMembersPayload {
-  emails: string[];
-  role: UserRole;
-  skipInvite?: boolean;
-}
-
 // Invites missing users by email and assigns each (or updates the role
 // of an existing member) on the supplied group. Sequential by design so
 // invitation mails aren't sent in a thundering herd.
 export async function upsertMembers(
   group: UserGroup,
-  payload: UpsertMembersPayload,
+  payload: UpsertMembersBody,
 ): Promise<void> {
   const { emails, role, skipInvite = false } = payload;
   for (const email of emails) {

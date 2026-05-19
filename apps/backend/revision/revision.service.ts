@@ -6,6 +6,7 @@ import map from 'lodash/map.js';
 import { Entity, Operation } from '@tailor-cms/interfaces/revision';
 import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
+import type { ListQuery } from './revision.schema.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { Revision } from './models/revision.model.js';
 
@@ -30,26 +31,20 @@ const includeUser = () => ({
   ],
 });
 
-export interface ListFilters {
-  entity?: Entity;
-  entityId?: number;
-}
-
 export interface ListResult {
   total: number;
   items: Revision[];
 }
 
 // Lists revisions for a repository, optionally narrowed to a specific
-// entity instance. `opts` is the `processQuery`; built pagination shape.
-// When `entity` is provided, callers must also supply `entityId` - we
-// match against the JSON `state.id` field so the result is the audit
-// trail for that specific entity (activity/element/repository). The action
-// layer's Zod refine guarantees the pairing.
+// entity instance. `opts` is the `processQuery`.
+// When `entity` is provided, callers must also supply `entityId`;
+// we match against the JSON `state.id` field so the result is the
+// audit trail for that specific entity.
 export async function list(
   repository: Repository,
   opts: any,
-  filters: ListFilters,
+  filters: ListQuery,
 ): Promise<ListResult> {
   const where: any = { repositoryId: repository.id };
   if (filters.entity) {

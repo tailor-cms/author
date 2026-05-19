@@ -1,6 +1,5 @@
-import { z } from 'zod';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import { Email } from '#shared/request/schemas.ts';
+import * as schemas from '../user.schema.ts';
 import * as service from '../user.service.ts';
 
 // POST /users/forgot-password
@@ -9,17 +8,14 @@ import * as service from '../user.service.ts';
 // registered would let any caller figure out which users are registered.
 // The mail is dispatched only for known emails; unknown
 // emails just no-op silently.
-const Body = z.object({
-  email: Email(),
-});
-export type ForgotPasswordBody = z.infer<typeof Body>;
-
-async function handler({ body }: Ctx<{ body: typeof Body }>) {
+async function handler({
+  body,
+}: Ctx<{ body: typeof schemas.ForgotPasswordBody }>) {
   await service.startPasswordReset(body.email);
 }
 
 export default defineAction({
-  body: Body,
+  body: schemas.ForgotPasswordBody,
   openapi: {
     summary: 'Mail a password-reset token',
     responses: { 204: { description: 'No content' } },
