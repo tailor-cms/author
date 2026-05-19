@@ -5,7 +5,7 @@
  * manual captions.
  */
 import { createLogger } from '#logger';
-import { YoutubeTranscript } from './youtube-transcript.js';
+import { YoutubeTranscript } from 'youtube-transcript';
 import { video } from '@tailor-cms/common';
 
 export const { extractYtVideoId, isYouTubeUrl } = video;
