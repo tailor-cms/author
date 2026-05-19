@@ -15,7 +15,8 @@ export interface Comment {
   uid: string;
   authorId: number;
   repositoryId: number;
-  activityId: number;
+  // `null` when element is removed to hide the comment from activity thread
+  activityId: number | null;
   contentElementId: number | null;
   content: string;
   author: Author;

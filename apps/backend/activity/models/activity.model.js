@@ -1,0 +1,482 @@
+import { Model, Op } from 'sequelize';
+import { schema, workflow } from '@tailor-cms/config';
+import { Activity as Events } from '@tailor-cms/common/src/sse.js';
+import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
+import calculatePosition from '#shared/util/calculatePosition.js';
+import contentElementHooks from '../../content-element/models/content-element.hooks.ts';
+import hooks from './activity.hooks.ts';
+import isEmpty from 'lodash/isEmpty.js';
+import map from 'lodash/map.js';
+import pick from 'lodash/pick.js';
+import Promise from 'bluebird';
+
+import {
+  detectMissingReferences,
+  removeReference,
+} from '#shared/util/modelReference.js';
+
+const { getSiblingTypes, isOutlineActivity, isTrackedInWorkflow } = schema;
+const { getDefaultActivityStatus } = workflow;
+
+class Activity extends Model {
+  static fields(DataTypes) {
+    const { STRING, DOUBLE, JSONB, BOOLEAN, DATE, UUID, UUIDV4, VIRTUAL } =
+      DataTypes;
+    return {
+      uid: {
+        type: UUID,
+        unique: true,
+        defaultValue: UUIDV4,
+      },
+      type: {
+        type: STRING,
+      },
+      position: {
+        type: DOUBLE,
+        allowNull: false,
+        validate: { min: 0 },
+      },
+      data: {
+        type: JSONB,
+      },
+      refs: {
+        type: JSONB,
+        defaultValue: {},
+      },
+      // Unreachable within the repository structure because an ancestor
+      // activity was deleted, breaking the hierarchy chain. The record itself
+      // is intact (deletedAt handles actual soft-delete).
+      detached: {
+        type: BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      isTrackedInWorkflow: {
+        type: VIRTUAL,
+        get() {
+          const type = this.get('type');
+          return type && isTrackedInWorkflow(type);
+        },
+      },
+      // Indicates this is an active linked copy of a source activity.
+      // When true, receives automatic updates when source changes.
+      // Editing data auto-unlinks (sets to false), preserving sourceId for
+      // provenance.
+      isLinkedCopy: {
+        type: BOOLEAN,
+        field: 'is_linked_copy',
+        defaultValue: false,
+        allowNull: false,
+      },
+      // References the source activity this was copied from.
+      // Kept after unlinking to track provenance. NULL if source is deleted.
+      sourceId: {
+        type: DataTypes.INTEGER,
+        field: 'source_id',
+        allowNull: true,
+        references: {
+          model: 'activity',
+          key: 'id',
+        },
+        onDelete: 'SET NULL',
+      },
+      // Timestamp of source when last synced. Used to detect available updates.
+      // Cleared when the link is broken.
+      sourceModifiedAt: {
+        type: DATE,
+        field: 'source_modified_at',
+        allowNull: true,
+      },
+      // Aggregated timestamp representing when anything in the subtree last
+      // changed. Bubbles up from content tree descendants.
+      modifiedAt: {
+        type: DATE,
+        field: 'modified_at',
+      },
+      publishedAt: {
+        type: DATE,
+        field: 'published_at',
+      },
+      createdAt: {
+        type: DATE,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: DATE,
+        field: 'updated_at',
+      },
+      deletedAt: {
+        type: DATE,
+        field: 'deleted_at',
+      },
+    };
+  }
+
+  // Returns the source activity's display info for a linked copy, or null
+  // when the activity is not a copy / the source has been hard-deleted.
+  async getSourceInfo() {
+    if (!this.sourceId) return null;
+    const Repository = this.sequelize.model('Repository');
+    const source = await Activity.findByPk(this.sourceId, {
+      include: [{ model: Repository }],
+    });
+    if (!source) return null;
+    return {
+      id: source.id,
+      uid: source.uid,
+      name: source.data?.name,
+      repositoryId: source.repositoryId,
+      repositoryName: source.repository?.name,
+    };
+  }
+
+  // Returns active linked copies of this source activity across repositories,
+  // excluding copies whose parent is also a linked copy (those came along as
+  // part of a parent link). Single-level parent check suffices since linking
+  // marks ALL descendants - there can't be a gap in the chain.
+  async findCopyLocations() {
+    const Repository = this.sequelize.model('Repository');
+    const copies = await Activity.findAll({
+      where: { sourceId: this.id, isLinkedCopy: true },
+      include: [{ model: Repository, attributes: ['id', 'name'] }],
+    });
+    if (!copies.length) return [];
+    // Collect IDs of parents that are themselves linked (single batch query)
+    const parentIds = [...new Set(copies.map((c) => c.parentId).filter(Boolean))];
+    const linkedParentIds = new Set(
+      parentIds.length
+        ? (
+            await Activity.findAll({
+              where: { id: parentIds, isLinkedCopy: true },
+              attributes: ['id'],
+            })
+          ).map((p) => p.id)
+        : [],
+    );
+    // Entry point = not nested within another linked copy
+    const isEntryPoint = (copy) => !linkedParentIds.has(copy.parentId);
+    return Promise.all(
+      copies.filter(isEntryPoint).map(async (copy) => {
+        const outline = await copy.getFirstOutlineItem();
+        return {
+          ...pick(copy, ['id', 'uid', 'repositoryId']),
+          outlineActivityId: outline?.id,
+          name: copy.data?.name,
+          repositoryName: copy.repository?.name,
+        };
+      }),
+    );
+  }
+
+  // Walks up the parent chain to find the root of the linked hierarchy.
+  // Returns null if this activity is not part of a linked tree.
+  async findLinkEntryPoint(transaction) {
+    if (!this.isLinkedCopy) return null;
+    const parent = await this.getParent({ transaction });
+    if (!parent?.isLinkedCopy) return this;
+    return parent.findLinkEntryPoint(transaction);
+  }
+
+  static async create(data, opts) {
+    return this.sequelize.transaction(
+      { transaction: opts.transaction },
+      async (transaction) => {
+        const activity = await super.create(data, { ...opts, transaction });
+        if (activity.isTrackedInWorkflow) {
+          const defaultStatus = getDefaultActivityStatus(activity.type);
+          await activity.createStatus(defaultStatus, { transaction });
+        }
+        return activity;
+      },
+    );
+  }
+
+  static async bulkCreate(data, opts) {
+    return this.sequelize.transaction(
+      { transaction: opts.transaction },
+      async (transaction) => {
+        const activities = await super.bulkCreate(data, {
+          ...opts,
+          transaction,
+        });
+        const statusData = activities
+          .filter((it) => it.isTrackedInWorkflow)
+          .map(getDefaultStatus);
+        const ActivityStatus = this.sequelize.model('ActivityStatus');
+        await ActivityStatus.bulkCreate(statusData, { transaction });
+        return activities;
+      },
+    );
+  }
+
+  static associate({ ActivityStatus, ContentElement, Comment, Repository }) {
+    this.hasMany(ContentElement, {
+      foreignKey: { name: 'activityId', field: 'activity_id' },
+    });
+    this.hasMany(Comment, {
+      foreignKey: { name: 'activityId', field: 'activity_id' },
+    });
+    this.belongsTo(Repository, {
+      foreignKey: { name: 'repositoryId', field: 'repository_id' },
+    });
+    this.belongsTo(this, {
+      as: 'parent',
+      foreignKey: { name: 'parentId', field: 'parent_id' },
+    });
+    this.hasMany(this, {
+      as: 'children',
+      foreignKey: { name: 'parentId', field: 'parent_id' },
+    });
+    this.hasMany(ActivityStatus, {
+      as: 'status',
+      foreignKey: { name: 'activityId', field: 'activity_id' },
+    });
+  }
+
+  static hooks(Hooks, models) {
+    hooks.add(this, Hooks, models);
+  }
+
+  static scopes({ ActivityStatus }) {
+    const notNull = { [Op.ne]: null };
+    return {
+      defaultScope: {
+        include: [{ model: ActivityStatus, as: 'status' }],
+      },
+      withReferences(relationships = []) {
+        const or = relationships.map((type) => ({ [`refs.${type}`]: notNull }));
+        return { where: { [Op.or]: or } };
+      },
+    };
+  }
+
+  static options() {
+    return {
+      modelName: 'activity',
+      underscored: true,
+      timestamps: true,
+      paranoid: true,
+      freezeTableName: true,
+    };
+  }
+
+  static get Events() {
+    return Events;
+  }
+
+  static async cloneActivities(src, dstRepositoryId, dstParentId, opts) {
+    if (!opts.idMappings)
+      opts.idMappings = { activityId: {}, elementId: {}, elementUid: {} };
+    const { idMappings, context, transaction } = opts;
+    const dstActivities = await Activity.bulkCreate(
+      map(src, (it) => ({
+        repositoryId: dstRepositoryId,
+        parentId: dstParentId,
+        ...pick(it, [
+          'type',
+          'position',
+          'data',
+          'refs',
+          'modifiedAt',
+          'isLinkedCopy',
+          'sourceId',
+          'sourceModifiedAt',
+        ]),
+      })),
+      { returning: true, context, transaction },
+    );
+    const ContentElement = this.sequelize.model('ContentElement');
+    return Promise.reduce(
+      src,
+      async (acc, it, index) => {
+        const parent = dstActivities[index];
+        acc.activityId[it.id] = parent.id;
+        const where = { activityId: it.id, detached: false };
+        const elements = await ContentElement.findAll({ where, transaction });
+        const { idMap, uidMap } = await ContentElement.cloneElements(
+          elements,
+          parent,
+          { context, transaction },
+        );
+        Object.assign(acc.elementId, idMap);
+        Object.assign(acc.elementUid, uidMap);
+        const children = await it.getChildren({ where: { detached: false } });
+        if (!children.length) return acc;
+        return Activity.cloneActivities(
+          children,
+          dstRepositoryId,
+          parent.id,
+          opts,
+        );
+      },
+      idMappings,
+    );
+  }
+
+  clone(repositoryId, parentId, position, context) {
+    return this.sequelize.transaction((transaction) => {
+      if (position) this.position = position;
+      return Activity.cloneActivities([this], repositoryId, parentId, {
+        context,
+        transaction,
+      });
+    });
+  }
+
+  // Maps references for a cloned activity by replacing old ids in each
+  // relationship list with the corresponding new ids from `mappings`.
+  // Relationships not listed in `relationships` pass through untouched.
+  mapClonedReferences(mappings, relationships, transaction) {
+    const refs = this.refs || {};
+    relationships.forEach((type) => {
+      if (refs[type]) refs[type] = refs[type].map((it) => mappings[it]);
+    });
+    return this.update({ refs }, { transaction });
+  }
+
+  static detectMissingReferences(activities, transaction) {
+    return detectMissingReferences(
+      Activity,
+      activities,
+      this.sequelize,
+      transaction,
+    );
+  }
+
+  removeReference(type, id) {
+    this.refs = removeReference(this.refs, type, id);
+  }
+
+  siblings({ filter = {}, transaction }) {
+    const { parentId, repositoryId } = this;
+    const where = { ...filter, parentId, repositoryId };
+    const options = { where, order: [['position', 'ASC']], transaction };
+    return Activity.findAll(options);
+  }
+
+  predecessors() {
+    if (!this.parentId) return Promise.resolve([]);
+    return this.getParent({ paranoid: false }).then((parent) => {
+      if (parent.deletedAt) return Promise.resolve([]);
+      return parent.predecessors().then((acc) => acc.concat(parent));
+    });
+  }
+
+  // Walks the parent chain until it finds the first outline-level activity
+  // (one whose type is declared in the schema's outline structure).
+  async getFirstOutlineItem(item = this) {
+    if (!item.parentId) return item;
+    if (isOutlineActivity(item.type)) return item;
+    const parent = await item.getParent({ paranoid: false });
+    return this.getFirstOutlineItem(parent);
+  }
+
+  descendants(options = {}, nodes = [], leaves = []) {
+    const { attributes } = options;
+    const node = !isEmpty(attributes) ? pick(this, attributes) : this;
+    nodes.push(node);
+    return Promise.resolve(this.getChildren(options))
+      .map((it) => it.descendants(options, nodes, leaves))
+      .then((children) => {
+        if (!isEmpty(children)) return { nodes, leaves };
+        const leaf = !isEmpty(attributes) ? pick(this, attributes) : this;
+        leaves.push(leaf);
+        return { nodes, leaves };
+      });
+  }
+
+  remove(options = {}) {
+    if (!options.recursive) return this.destroy(options);
+    const { soft } = options;
+    return this.sequelize.transaction((transaction) => {
+      return this.descendants({ attributes: ['id'] })
+        .then((descendants) => {
+          descendants.all = [...descendants.nodes, ...descendants.leaves];
+          return descendants;
+        })
+        .then((descendants) => {
+          const ContentElement = this.sequelize.model('ContentElement');
+          const activities = map(descendants.all, 'id');
+          const where = { activityId: [...activities, this.id] };
+          return removeAll(ContentElement, where, { soft, transaction }).then(
+            () => descendants,
+          );
+        })
+        .then((descendants) => {
+          const activities = map(descendants.nodes, 'id');
+          const where = { parentId: [...activities, this.id] };
+          return removeAll(Activity, where, { soft, transaction });
+        })
+        .then(() => this.destroy({ ...options, transaction }))
+        .then(() => this);
+    });
+  }
+
+  async restoreWithDescendants({ context }) {
+    const transaction = await this.sequelize.transaction();
+    await this.descendants({ attributes: ['id'] })
+      .then((descendants) => {
+        descendants.all = [...descendants.nodes, ...descendants.leaves];
+        return descendants;
+      })
+      .then(async (descendants) => {
+        const activities = map(descendants.all, 'id');
+        const where = { activityId: [...activities, this.id] };
+        await this.sequelize
+          .model('ContentElement')
+          .update({ detached: false }, { where, transaction });
+        return descendants;
+      })
+      .then((descendants) => {
+        const activities = map(descendants.nodes, 'id');
+        const where = { parentId: [...activities, this.id] };
+        return Activity.update({ detached: false }, { where, transaction });
+      })
+      .then(() => this.restore({ context, transaction }));
+    await transaction.commit();
+  }
+
+  reorder(index, context) {
+    return this.sequelize.transaction((transaction) => {
+      const filter = { type: getSiblingTypes(this.type) };
+      return this.siblings({ filter, transaction }).then((siblings) => {
+        this.position = calculatePosition(this.id, index, siblings);
+        return this.save({ transaction, context });
+      });
+    });
+  }
+
+  getOutlineParent(transaction) {
+    return this.getParent({ transaction }).then((parent) => {
+      if (!parent) return Promise.resolve();
+      if (isOutlineActivity(parent.type)) return parent;
+      return parent.getOutlineParent(transaction);
+    });
+  }
+
+  async processEmbeddedElements() {
+    if (this.type !== ContentContainerType.CollectionItemContent) return this;
+    for (const key of Object.keys(this.data)) {
+      if (!this.data?.[key]?.embedded) continue;
+      await contentElementHooks.applyFetchHooks(this.data[key]);
+    }
+    return this;
+  }
+
+  touch(transaction) {
+    return this.update({ modifiedAt: new Date() }, { transaction });
+  }
+}
+
+function removeAll(Model, where = {}, options = {}) {
+  const { soft, transaction } = options;
+  if (!soft) return Model.destroy({ where });
+  return Model.update({ detached: true }, { where, transaction });
+}
+
+function getDefaultStatus({ id, type }) {
+  const defaultStatus = getDefaultActivityStatus(type);
+  return { ...defaultStatus, activityId: id };
+}
+
+export default Activity;

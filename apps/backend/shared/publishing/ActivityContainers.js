@@ -5,7 +5,7 @@ import Promise from 'bluebird';
 import { schema } from '@tailor-cms/config';
 
 import { getBaseUrl, log } from './utils.js';
-import hooks from '#app/content-element/hooks.js';
+import hooks from '#app/content-element/models/content-element.hooks.ts';
 import db from '#shared/database/index.js';
 import PluginRegistry from '#shared/content-plugins/index.js';
 import storage from '#storage';

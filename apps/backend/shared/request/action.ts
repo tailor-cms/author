@@ -20,8 +20,10 @@ import {
   type HttpMethod,
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
-import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { Activity } from '../../activity/models/activity.model.js';
 import type { Comment } from '../../comment/models/comment.model.js';
+import type { ContentElement }
+  from '../../content-element/models/content-element.model.js';
 import type { Repository } from '../../repository/models/repository.model.js';
 import type { Revision } from '../../revision/models/revision.model.js';
 import type { User } from '../../user/models/user.model.js';
@@ -91,6 +93,7 @@ export interface ActionContext<
     // for the IDE to discover ambient declarations from.
     repository?: Repository;
     comment?: Comment;
+    contentElement?: ContentElement;
     revision?: Revision;
     activity?: Activity;
     userGroup?: UserGroup;

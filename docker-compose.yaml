@@ -11,6 +11,15 @@ services:
     ports:
       - '5432:5432'
     restart: 'no'
+    # Gates dependent services until Postgres is past its init-restart cycle
+    # and accepting connections (the official image briefly shuts down and
+    # restarts after running init scripts on first boot).
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dev -d tailor_dev']
+      interval: 2s
+      timeout: 5s
+      retries: 15
+      start_period: 5s
 
   author-dc-redis:
     container_name: author-dc-redis
@@ -34,9 +43,12 @@ services:
   author-dc-backend:
     container_name: author-dc-backend
     depends_on:
-      - 'author-dc-postgres'
-      - 'author-dc-redis'
-      - 'author-dc-localstack'
+      author-dc-postgres:
+        condition: service_healthy
+      author-dc-redis:
+        condition: service_started
+      author-dc-localstack:
+        condition: service_started
     build:
       dockerfile: './Dockerfile'
       context: '.'

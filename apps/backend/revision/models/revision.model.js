@@ -2,7 +2,7 @@ import { Model, Sequelize } from 'sequelize';
 import isNumber from 'lodash/isNumber.js';
 import Promise from 'bluebird';
 import { Entity, Operation } from '@tailor-cms/interfaces/revision';
-import { applyFetchHooks } from '../../content-element/hooks.js';
+import { applyFetchHooks } from '../../content-element/models/content-element.hooks.ts';
 import hooks from './revision.hooks.ts';
 
 const { literal } = Sequelize;

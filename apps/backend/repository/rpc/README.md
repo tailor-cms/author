@@ -27,7 +27,7 @@ type ProcedureHandler<P = Record<string, any>, R = any> = (
 At dispatch time Tailor supplies the procedure handler with this bag:
 
 - `config` — env-derived plugin config gathered from any `TCE_*` env
-  var (see `apps/backend/config/tce.js`).
+  var (see `apps/backend/config/tce.ts`).
 - `storage` — the repository file-storage abstraction. Lets a plugin
   persist files alongside the assets the repository already manages.
 - `context: { userId, repository }` — author-side scoping so the

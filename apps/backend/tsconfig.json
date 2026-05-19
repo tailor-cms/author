@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
+    "types": ["node"],
+    "noEmit": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+    "skipLibCheck": true,
+    "paths": {
+      "#app/*": ["./*"],
+      "#config": ["./config/index.ts"],
+      "#config/*": ["./config/*"],
+      "#logger": ["./shared/logger.js"],
+      "#shared/*": ["./shared/*"],
+      "#storage": ["./repository/storage.ts"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.js", "**/*.cjs"],
+  "exclude": ["node_modules", "dist"]
+}
