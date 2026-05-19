@@ -6,7 +6,7 @@ import * as service from '../content-element.service.ts';
 // Creates a new element under the scoped repository. `repositoryId` is
 // taken from the loaded repo on `req`.
 export default defineAction({
-  body: schemas.CreateBody,
+  body: schemas.CreateInput,
   openapi: {
     summary: 'Create a content element',
     authenticated: true,

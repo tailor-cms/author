@@ -7,7 +7,7 @@ import * as service from '../repository.service.ts';
 // + sort fields below are consumed by the `processQuery` middleware
 // mounted alongside (it reads them off req.query to build req.opts).
 export default defineAction({
-  query: schemas.ListQuery,
+  query: schemas.ListFilter,
   // The list response carries top-level metadata (`total`, `items`); pass
   // it through verbatim rather than wrapping in `{ data }`.
   raw: true,

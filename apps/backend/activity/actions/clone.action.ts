@@ -8,7 +8,7 @@ import * as service from '../activity.service.ts';
 // middleware verifies the caller can write into the target before this
 // fires.
 export default defineAction({
-  body: schemas.CloneBody,
+  body: schemas.CloneInput,
   openapi: {
     summary: 'Deep-clone an activity into a target location',
     authenticated: true,

@@ -5,9 +5,9 @@ import pickBy from 'lodash/pickBy.js';
 import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
 import type {
-  CreateBody,
-  ListQuery,
-  ResolveBody,
+  CreateInput,
+  ListFilter,
+  ResolveInput,
 } from './comment.schema.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
@@ -45,7 +45,7 @@ const standardIncludes = () => [includeAuthor(), includeElement()];
 export async function list(
   repository: Repository,
   opts: any,
-  filters: ListQuery,
+  filters: ListFilter,
 ): Promise<Comment[]> {
   if (filters.activityId) opts.where.activityId = filters.activityId;
   if (filters.contentElementId) {
@@ -60,7 +60,7 @@ export async function list(
 export async function create(
   repository: Repository,
   user: User,
-  payload: CreateBody,
+  payload: CreateInput,
 ): Promise<Comment> {
   const attrs = {
     repositoryId: repository.id,
@@ -117,7 +117,7 @@ export class InvalidResolveSelectorError extends Error {
 // element-wide branch is one query.
 export async function updateResolvement(
   repository: Repository,
-  payload: ResolveBody,
+  payload: ResolveInput,
 ): Promise<void> {
   if (!payload.id && !payload.contentElementId) {
     throw new InvalidResolveSelectorError();

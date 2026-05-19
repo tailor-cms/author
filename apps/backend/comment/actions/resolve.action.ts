@@ -6,7 +6,7 @@ import * as service from '../comment.service.ts';
 
 // POST /repositories/:repositoryId/comments/resolve
 // Toggles the resolved state.
-async function handler({ body, req }: Ctx<{ body: typeof schemas.ResolveBody }>) {
+async function handler({ body, req }: Ctx<{ body: typeof schemas.ResolveInput }>) {
   try {
     await service.updateResolvement(req.repository!, body);
   } catch (err) {
@@ -18,7 +18,7 @@ async function handler({ body, req }: Ctx<{ body: typeof schemas.ResolveBody }>)
 }
 
 export default defineAction({
-  body: schemas.ResolveBody,
+  body: schemas.ResolveInput,
   openapi: {
     summary: 'Toggle the resolved state of a comment (or every comment on an element)',
     authenticated: true,

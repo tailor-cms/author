@@ -7,7 +7,7 @@ import * as service from '../revision.service.ts';
 // at `timestamp`. The FE uses it for "show what was published" diffing -
 // it sends the current element ids and the publish timestamp.
 export default defineAction({
-  query: schemas.TimeTravelQuery,
+  query: schemas.TimeTravelInput,
   openapi: {
     summary: 'Reconstruct an activity\'s element state at a given moment',
     authenticated: true,

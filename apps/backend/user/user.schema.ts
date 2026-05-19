@@ -12,7 +12,7 @@ import {
 } from '#shared/request/schemas.ts';
 
 // GET /users
-export const ListQuery = z.object({
+export const ListFilter = z.object({
   // Substring match across email, firstName, lastName
   filter: z.string().trim().max(250).optional(),
   // Exact email match
@@ -30,25 +30,25 @@ export const ListQuery = z.object({
   sortOrder: z.enum(['ASC', 'DESC', 'asc', 'desc']).optional(),
 });
 
-export type ListQuery = z.infer<typeof ListQuery>;
+export type ListFilter = z.infer<typeof ListFilter>;
 
 // POST /users/login
-export const LoginBody = z.object({
+export const LoginInput = z.object({
   email: Email(),
   password: z.string().min(1),
 });
 
-export type LoginBody = z.infer<typeof LoginBody>;
+export type LoginInput = z.infer<typeof LoginInput>;
 
 // POST /users/forgot-password
-export const ForgotPasswordBody = z.object({
+export const ForgotPasswordInput = z.object({
   email: Email(),
 });
 
-export type ForgotPasswordBody = z.infer<typeof ForgotPasswordBody>;
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordInput>;
 
 // POST /users/reset-password
-export const ResetPasswordBody = z.object({
+export const ResetPasswordInput = z.object({
   // 5..100 mirrors the User model's column-level length validator.
   password: z.string().min(5).max(100),
   // The reset token rides along in the body so the auth strategy can
@@ -57,17 +57,17 @@ export const ResetPasswordBody = z.object({
   token: z.string().optional(),
 });
 
-export type ResetPasswordBody = z.infer<typeof ResetPasswordBody>;
+export type ResetPasswordInput = z.infer<typeof ResetPasswordInput>;
 
 // POST /users/reset-password/token-status
-export const TokenStatusBody = z.object({
+export const TokenStatusInput = z.object({
   token: z.string(),
 });
 
-export type TokenStatusBody = z.infer<typeof TokenStatusBody>;
+export type TokenStatusInput = z.infer<typeof TokenStatusInput>;
 
 // POST /users
-export const UpsertBody = z.object({
+export const UpsertInput = z.object({
   // Account email. Trimmed + lower-cased; doubles as the upsert key.
   email: Email(),
   // Optional first name (2..50 chars to match the DB validator).
@@ -84,7 +84,7 @@ export const UpsertBody = z.object({
   skipInvite: z.boolean().optional(),
 });
 
-export type UpsertBody = z.infer<typeof UpsertBody>;
+export type UpsertInput = z.infer<typeof UpsertInput>;
 
 // DELETE /users/:id
 export const RemoveParams = z.object({
@@ -101,7 +101,7 @@ export const ReinviteParams = z.object({
 export type ReinviteParams = z.infer<typeof ReinviteParams>;
 
 // PATCH /users/me
-export const ProfileUpdateBody = z.object({
+export const ProfileUpdateInput = z.object({
   email: Email().optional(),
   firstName: ShortText(2, 50).optional(),
   lastName: ShortText(2, 50).optional(),
@@ -111,13 +111,13 @@ export const ProfileUpdateBody = z.object({
   imgUrl: z.string().max(200_000).optional(),
 });
 
-export type ProfileUpdateBody = z.infer<typeof ProfileUpdateBody>;
+export type ProfileUpdateInput = z.infer<typeof ProfileUpdateInput>;
 
 // POST /users/me/change-password
-export const ChangePasswordBody = z.object({
+export const ChangePasswordInput = z.object({
   // No length floor: existing accounts may have any length the model allowed
   currentPassword: z.string().min(1),
   newPassword: z.string().min(6).max(100),
 });
 
-export type ChangePasswordBody = z.infer<typeof ChangePasswordBody>;
+export type ChangePasswordInput = z.infer<typeof ChangePasswordInput>;

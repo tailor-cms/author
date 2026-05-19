@@ -8,7 +8,7 @@ import * as service from '../activity.service.ts';
 // activities are seeded with the schema's `defaultMeta` so their `data`
 // blob lands with the right shape for the FE editor.
 export default defineAction({
-  body: schemas.CreateBody,
+  body: schemas.CreateInput,
   openapi: {
     summary: 'Create an activity',
     authenticated: true,

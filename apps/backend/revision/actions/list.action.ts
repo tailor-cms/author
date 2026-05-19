@@ -8,7 +8,7 @@ import * as service from '../revision.service.ts';
 //   - per-entity audit trail (EntityRevisions) - `entity` + `entityId`
 export default defineAction({
   raw: true,
-  query: schemas.ListQuery,
+  query: schemas.ListFilter,
   openapi: {
     summary: 'List revisions for the repository (optionally scoped to one entity)',
     authenticated: true,

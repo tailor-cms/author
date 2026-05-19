@@ -6,7 +6,7 @@ import * as service from '../activity.service.ts';
 // Scoped to the repository at /:repositoryId. Default order is by
 // `position`.
 export default defineAction({
-  query: schemas.ListQuery,
+  query: schemas.ListFilter,
   openapi: {
     summary: 'List activities in the repository',
     authenticated: true,

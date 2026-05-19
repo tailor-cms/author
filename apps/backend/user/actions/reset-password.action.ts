@@ -10,12 +10,12 @@ import * as service from '../user.service.ts';
 async function handler({
   body,
   req,
-}: Ctx<{ body: typeof schemas.ResetPasswordBody }>) {
+}: Ctx<{ body: typeof schemas.ResetPasswordInput }>) {
   await service.resetPassword(req.user!, body.password);
 }
 
 export default defineAction({
-  body: schemas.ResetPasswordBody,
+  body: schemas.ResetPasswordInput,
   openapi: {
     summary: 'Replace the password using a reset token',
     responses: { 204: { description: 'No content' } },

@@ -6,7 +6,7 @@ import * as service from '../activity.service.ts';
 // Recalculates the activity's `position` from the target index among
 // schema-defined sibling types.
 export default defineAction({
-  body: schemas.ReorderBody,
+  body: schemas.ReorderInput,
   openapi: {
     summary: 'Reorder an activity',
     authenticated: true,

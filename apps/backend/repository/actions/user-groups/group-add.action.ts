@@ -9,14 +9,14 @@ import * as service from '../../repository.service.ts';
 async function handler({
   body,
   req,
-}: Ctx<{ body: typeof schemas.AddUserGroupBody }>) {
+}: Ctx<{ body: typeof schemas.AddUserGroupInput }>) {
   const userGroup = await service.addUserGroup(req.repository!, body.userGroupId);
   if (!userGroup) return createError(StatusCodes.NOT_FOUND, 'User group not found');
   return userGroup;
 }
 
 export default defineAction({
-  body: schemas.AddUserGroupBody,
+  body: schemas.AddUserGroupInput,
   openapi: {
     summary: 'Share repository with a user group',
     authenticated: true,

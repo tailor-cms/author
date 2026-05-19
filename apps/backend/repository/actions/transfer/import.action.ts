@@ -30,7 +30,7 @@ async function handler({
   user,
   req,
   res,
-}: Ctx<{ body: typeof schemas.ImportBody }>) {
+}: Ctx<{ body: typeof schemas.ImportInput }>) {
   const archivePath = req.file!.path;
   try {
     await service.importArchive(archivePath, {
@@ -48,7 +48,7 @@ async function handler({
 }
 
 export default defineAction({
-  body: schemas.ImportBody,
+  body: schemas.ImportInput,
   openapi: {
     summary: 'Import a repository from a `.tgz` archive (multipart)',
     authenticated: true,

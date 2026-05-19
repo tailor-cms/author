@@ -8,7 +8,7 @@ import * as service from '../activity.service.ts';
 // `createdAt DESC`. The status hooks broadcast SSE and mail the assignee
 // when they're not the actor.
 export default defineAction({
-  body: schemas.WorkflowStatusBody,
+  body: schemas.WorkflowStatusInput,
   openapi: {
     summary: 'Update an activity\'s workflow status',
     authenticated: true,

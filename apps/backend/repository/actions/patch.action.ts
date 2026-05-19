@@ -6,7 +6,7 @@ import * as service from '../repository.service.ts';
 // Updates mutable fields. The service picks name/description/data and
 // drops anything else the body carries.
 export default defineAction({
-  body: schemas.PatchBody,
+  body: schemas.PatchInput,
   openapi: {
     summary: 'Patch a repository',
     authenticated: true,

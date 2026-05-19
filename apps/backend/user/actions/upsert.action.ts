@@ -8,7 +8,7 @@ import * as service from '../user.service.ts';
 // user is created and emailed an invitation (unless `skipInvite` is set,
 // e.g. for SSO accounts that don't need a password setup mail).
 export default defineAction({
-  body: schemas.UpsertBody,
+  body: schemas.UpsertInput,
   openapi: {
     summary: 'Invite or update a user (admin)',
     authenticated: true,

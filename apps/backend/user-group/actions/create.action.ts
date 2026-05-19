@@ -9,7 +9,7 @@ import * as service from '../user-group.service.ts';
 // `authorize()` middleware). Name uniqueness is enforced by the DB
 // constraint - the service maps the violation to `DuplicateNameError`
 // which lands here as 409.
-async function handler({ body }: Ctx<{ body: typeof schemas.CreateBody }>) {
+async function handler({ body }: Ctx<{ body: typeof schemas.CreateInput }>) {
   try {
     return await service.create(body);
   } catch (err) {
@@ -21,7 +21,7 @@ async function handler({ body }: Ctx<{ body: typeof schemas.CreateBody }>) {
 }
 
 export default defineAction({
-  body: schemas.CreateBody,
+  body: schemas.CreateInput,
   openapi: {
     summary: 'Create a user group (admin)',
     authenticated: true,

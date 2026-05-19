@@ -5,7 +5,7 @@ import * as service from '../user.service.ts';
 // GET /users
 // Admin-only listing with iLike search + email/role filters;
 export default defineAction({
-  query: schemas.ListQuery,
+  query: schemas.ListFilter,
   openapi: {
     summary: 'List users (admin)',
     authenticated: true,

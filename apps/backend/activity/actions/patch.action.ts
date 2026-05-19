@@ -5,7 +5,7 @@ import * as service from '../activity.service.ts';
 // PATCH /repositories/:repositoryId/activities/:activityId
 // Updates mutable fields.
 export default defineAction({
-  body: schemas.PatchBody,
+  body: schemas.PatchInput,
   openapi: {
     summary: 'Patch an activity',
     authenticated: true,

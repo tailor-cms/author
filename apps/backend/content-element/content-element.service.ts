@@ -12,10 +12,10 @@ import type {
 import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
 
 import type {
-  CreateBody,
-  LinkBody,
-  ListQuery,
-  PatchBody,
+  CreateInput,
+  LinkInput,
+  ListFilter,
+  PatchInput,
 } from './content-element.schema.ts';
 
 const { Activity, ContentElement: ContentElementModel } = db;
@@ -26,7 +26,7 @@ const logger = createLogger('content-element:svc');
 // supplied filters. `detached=false` is applied by default; an
 // `activityIds` filter is implemented as an INNER JOIN on Activity so
 // the result is scoped to the supplied parent activities.
-export async function list(opts: any, filters: ListQuery) {
+export async function list(opts: any, filters: ListFilter) {
   if (!filters.detached) opts.where = { ...opts.where, detached: false };
   if (filters.activityIds) {
     const where = { id: filters.activityIds };
@@ -42,7 +42,7 @@ export async function list(opts: any, filters: ListQuery) {
 export async function create(
   repository: Repository,
   user: User,
-  body: CreateBody,
+  body: CreateInput,
 ): Promise<ContentElement> {
   const context = { userId: user.id, repository };
   return ContentElementModel.create(
@@ -58,7 +58,7 @@ export async function update(
   repository: Repository,
   user: User,
   element: ContentElement,
-  body: PatchBody,
+  body: PatchInput,
 ): Promise<ContentElement> {
   const context = { userId: user.id, repository };
   if (element.deletedAt) (element as any).setDataValue('deletedAt', null);
@@ -102,7 +102,7 @@ export class SourceNotFoundError extends Error {
 export async function link(
   repository: Repository,
   user: User,
-  body: LinkBody,
+  body: LinkInput,
 ): Promise<ContentElement> {
   const source = await ContentElementModel.findByPk(body.sourceId);
   if (!source) throw new SourceNotFoundError();

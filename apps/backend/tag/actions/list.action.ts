@@ -7,7 +7,7 @@ import * as service from '../tag.service.ts';
 // to scope the list to tags reachable through the current user's
 // repositories;
 export default defineAction({
-  query: schemas.ListQuery,
+  query: schemas.ListFilter,
   openapi: {
     summary: 'List tags (optionally scoped to the current user)',
     authenticated: true,

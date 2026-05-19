@@ -1,5 +1,6 @@
 // Wire-shape contracts for the Revision slice.
 // Single source of truth: actions register these on `defineAction`, the
+// service types its parameters via `z.infer`.
 import { z } from 'zod';
 import { Entity } from '@tailor-cms/interfaces/revision';
 
@@ -9,7 +10,7 @@ import { IntParam } from '#shared/request/schemas.ts';
 // Two call shapes from the client:
 //   - bulk list (revisions page) - no filters
 //   - per-entity audit trail (EntityRevisions) - `entity` + `entityId`
-export const ListQuery = z
+export const ListFilter = z
   .object({
     // Restrict to one entity kind. When set, `entityId` is
     // required so the result is scoped.
@@ -27,7 +28,7 @@ export const ListQuery = z
     path: ['entityId'],
   });
 
-export type ListQuery = z.infer<typeof ListQuery>;
+export type ListFilter = z.infer<typeof ListFilter>;
 
 // GET /repositories/:repositoryId/revisions/:revisionId
 export const GetParams = z.object({
@@ -37,7 +38,7 @@ export const GetParams = z.object({
 export type GetParams = z.infer<typeof GetParams>;
 
 // GET /repositories/:repositoryId/revisions/time-travel
-export const TimeTravelQuery = z.object({
+export const TimeTravelInput = z.object({
   // Target activity (the root of the subtree we'll reconstruct).
   activityId: IntParam(),
   // Strict ISO 8601 with a literal `T` separator. Matches the old
@@ -49,4 +50,4 @@ export const TimeTravelQuery = z.object({
   elementIds: z.array(z.coerce.number().int()).default([]),
 });
 
-export type TimeTravelQuery = z.infer<typeof TimeTravelQuery>;
+export type TimeTravelInput = z.infer<typeof TimeTravelInput>;

@@ -7,13 +7,13 @@ import * as service from '../../repository.service.ts';
 async function handler({
   body,
   req,
-}: Ctx<{ body: typeof schemas.UpsertUserBody }>) {
+}: Ctx<{ body: typeof schemas.UpsertUserInput }>) {
   const user = await service.upsertUser(req.repository!, body.email, body.role);
   return { user };
 }
 
 export default defineAction({
-  body: schemas.UpsertUserBody,
+  body: schemas.UpsertUserInput,
   openapi: {
     summary: 'Invite or update a repository user',
     authenticated: true,

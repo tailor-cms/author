@@ -7,7 +7,7 @@ import * as service from '../../user-group.service.ts';
 // updates an existing member's role). Capped at 50 invites per call so
 // a single request cannot trigger a thundering herd of invitation mails.
 export default defineAction({
-  body: schemas.UpsertMembersBody,
+  body: schemas.UpsertMembersInput,
   openapi: {
     summary: 'Invite or update members of a user group',
     authenticated: true,

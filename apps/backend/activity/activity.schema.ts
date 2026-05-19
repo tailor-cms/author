@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { IntParam, QueryBoolean } from '#shared/request/schemas.ts';
 
 // GET /repositories/:repositoryId/activities
-export const ListQuery = z.object({
+export const ListFilter = z.object({
   // Include detached items (unreachable in the outline). Default: false.
   detached: QueryBoolean.optional(),
   // Restrict to outline-level activities (those declared in the schema's
@@ -21,10 +21,10 @@ export const ListQuery = z.object({
   paranoid: QueryBoolean.optional(),
 });
 
-export type ListQuery = z.infer<typeof ListQuery>;
+export type ListFilter = z.infer<typeof ListFilter>;
 
 // POST /repositories/:repositoryId/activities
-export const CreateBody = z.object({
+export const CreateInput = z.object({
   // Client-generated uid (model defaults to UUIDv4 when omitted).
   uid: z.uuid().optional(),
   // Parent activity (`null` for outline roots).
@@ -40,10 +40,10 @@ export const CreateBody = z.object({
   refs: z.record(z.string(), z.unknown()).optional(),
 });
 
-export type CreateBody = z.infer<typeof CreateBody>;
+export type CreateInput = z.infer<typeof CreateInput>;
 
 // PATCH /repositories/:repositoryId/activities/:activityId
-export const PatchBody = z.object({
+export const PatchInput = z.object({
   // New position among siblings (use /reorder for index-based moves).
   position: z.number().min(0).optional(),
   // Replacement data bag (JSONB); shape is owned by the schema's
@@ -57,20 +57,20 @@ export const PatchBody = z.object({
   parentId: z.number().int().positive().nullable().optional(),
 });
 
-export type PatchBody = z.infer<typeof PatchBody>;
+export type PatchInput = z.infer<typeof PatchInput>;
 
 // POST /repositories/:repositoryId/activities/:activityId/reorder
-export const ReorderBody = z.object({
+export const ReorderInput = z.object({
   // Zero-based target index in the sibling list. Float, because the
   // client may pass a normalized fractional position (the model recomputes
   // anyway via `calculatePosition`).
   position: z.number().min(0),
 });
 
-export type ReorderBody = z.infer<typeof ReorderBody>;
+export type ReorderInput = z.infer<typeof ReorderInput>;
 
 // POST /repositories/:repositoryId/activities/:activityId/clone
-export const CloneBody = z.object({
+export const CloneInput = z.object({
   // Target repository for the clone. Verified for access by middleware.
   repositoryId: z.number().int().positive(),
   // Target parent activity (`null` clones to the outline root).
@@ -79,10 +79,10 @@ export const CloneBody = z.object({
   position: z.number().min(0).optional(),
 });
 
-export type CloneBody = z.infer<typeof CloneBody>;
+export type CloneInput = z.infer<typeof CloneInput>;
 
 // POST /repositories/:repositoryId/activities/:activityId/status
-export const WorkflowStatusBody = z.object({
+export const WorkflowStatusInput = z.object({
   // Assignee user id (`null` clears assignment).
   assigneeId: z.number().int().positive().nullable().optional(),
   // Workflow status id (schema-defined).
@@ -95,10 +95,10 @@ export const WorkflowStatusBody = z.object({
   dueDate: z.union([z.iso.datetime({ offset: true }), z.null()]).optional(),
 });
 
-export type WorkflowStatusBody = z.infer<typeof WorkflowStatusBody>;
+export type WorkflowStatusInput = z.infer<typeof WorkflowStatusInput>;
 
 // POST /repositories/:repositoryId/activities/link
-export const LinkBody = z.object({
+export const LinkInput = z.object({
   // Source activity id (in a potentially different repository).
   sourceId: z.number().int().positive(),
   // Target parent activity (`null` links at the outline root).
@@ -107,4 +107,4 @@ export const LinkBody = z.object({
   position: z.number().min(0),
 });
 
-export type LinkBody = z.infer<typeof LinkBody>;
+export type LinkInput = z.infer<typeof LinkInput>;

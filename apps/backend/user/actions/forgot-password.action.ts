@@ -10,12 +10,12 @@ import * as service from '../user.service.ts';
 // emails just no-op silently.
 async function handler({
   body,
-}: Ctx<{ body: typeof schemas.ForgotPasswordBody }>) {
+}: Ctx<{ body: typeof schemas.ForgotPasswordInput }>) {
   await service.startPasswordReset(body.email);
 }
 
 export default defineAction({
-  body: schemas.ForgotPasswordBody,
+  body: schemas.ForgotPasswordInput,
   openapi: {
     summary: 'Mail a password-reset token',
     responses: { 204: { description: 'No content' } },

@@ -6,7 +6,7 @@ import map from 'lodash/map.js';
 import { Entity, Operation } from '@tailor-cms/interfaces/revision';
 import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
-import type { ListQuery } from './revision.schema.ts';
+import type { ListFilter } from './revision.schema.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { Revision } from './models/revision.model.js';
 
@@ -44,7 +44,7 @@ export interface ListResult {
 export async function list(
   repository: Repository,
   opts: any,
-  filters: ListQuery,
+  filters: ListFilter,
 ): Promise<ListResult> {
   const where: any = { repositoryId: repository.id };
   if (filters.entity) {

@@ -7,10 +7,10 @@ import db from '#shared/database/index.js';
 import pick from 'lodash/pick.js';
 import type { User } from '../user/models/user.model.js';
 import type {
-  CreateBody,
-  ListQuery,
-  PatchBody,
-  UpsertMembersBody,
+  CreateInput,
+  ListFilter,
+  PatchInput,
+  UpsertMembersInput,
 } from './user-group.schema.ts';
 import type { UserGroup } from './models/user-group.model.js';
 
@@ -55,7 +55,7 @@ export interface ListResult {
 export async function list(
   user: User,
   opts: any,
-  filters: ListQuery,
+  filters: ListFilter,
 ): Promise<ListResult> {
   const where: any = { ...opts.where };
   if (filters.filter) where.name = { [Op.iLike]: `%${filters.filter}%` };
@@ -72,7 +72,7 @@ export async function list(
 // Creates a group. Relies on the unique constraint on `name` for
 // duplicate detection (race-safe) - any UniqueConstraintError on the
 // `name` column is rethrown as `DuplicateNameError`.
-export async function create(payload: CreateBody): Promise<UserGroup> {
+export async function create(payload: CreateInput): Promise<UserGroup> {
   logger.debug({ name: payload.name }, 'Creating user group');
   try {
     return await UserGroupModel.create(payload);
@@ -85,7 +85,7 @@ export async function create(payload: CreateBody): Promise<UserGroup> {
 // Updates the group's mutable fields.
 export async function update(
   group: UserGroup,
-  payload: PatchBody,
+  payload: PatchInput,
 ): Promise<UserGroup> {
   const updates = pick(payload, ['name', 'logoUrl']);
   try {
@@ -126,7 +126,7 @@ export async function listMembers(group: UserGroup) {
 // invitation mails aren't sent in a thundering herd.
 export async function upsertMembers(
   group: UserGroup,
-  payload: UpsertMembersBody,
+  payload: UpsertMembersInput,
 ): Promise<void> {
   const { emails, role, skipInvite = false } = payload;
   for (const email of emails) {

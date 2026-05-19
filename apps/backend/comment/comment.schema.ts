@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { IntParam } from '#shared/request/schemas.ts';
 
 // GET /repositories/:repositoryId/comments
-export const ListQuery = z.object({
+export const ListFilter = z.object({
   // Restrict to comments on a single activity.
   activityId: IntParam().optional(),
   // Restrict to comments on a single content element. Both filters may
@@ -14,10 +14,10 @@ export const ListQuery = z.object({
   contentElementId: IntParam().optional(),
 });
 
-export type ListQuery = z.infer<typeof ListQuery>;
+export type ListFilter = z.infer<typeof ListFilter>;
 
 // POST /repositories/:repositoryId/comments
-export const CreateBody = z.object({
+export const CreateInput = z.object({
   // Client-generated uid. Optional; the
   // model defaults to UUIDv4 when absent.
   uid: z.uuid().optional(),
@@ -31,18 +31,18 @@ export const CreateBody = z.object({
   content: z.string().min(1).max(2000),
 });
 
-export type CreateBody = z.infer<typeof CreateBody>;
+export type CreateInput = z.infer<typeof CreateInput>;
 
 // PATCH /repositories/:repositoryId/comments/:commentId
-export const PatchBody = z.object({
+export const PatchInput = z.object({
   // Replacement body; same length bounds as create.
   content: z.string().min(1).max(2000),
 });
 
-export type PatchBody = z.infer<typeof PatchBody>;
+export type PatchInput = z.infer<typeof PatchInput>;
 
 // POST /repositories/:repositoryId/comments/resolve
-export const ResolveBody = z.object({
+export const ResolveInput = z.object({
   // Single-comment selector.
   id: IntParam().optional(),
   // Bulk selector: every comment on the given element.
@@ -52,4 +52,4 @@ export const ResolveBody = z.object({
   resolvedAt: z.union([z.number(), z.iso.datetime(), z.null()]).optional(),
 });
 
-export type ResolveBody = z.infer<typeof ResolveBody>;
+export type ResolveInput = z.infer<typeof ResolveInput>;

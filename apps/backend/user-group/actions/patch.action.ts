@@ -7,7 +7,7 @@ import * as service from '../user-group.service.ts';
 // PATCH /user-group/:id
 // Updates mutable fields.
 // 409 on a name collision with another group.
-async function handler({ body, req }: Ctx<{ body: typeof schemas.PatchBody }>) {
+async function handler({ body, req }: Ctx<{ body: typeof schemas.PatchInput }>) {
   try {
     return await service.update(req.userGroup!, body);
   } catch (err) {
@@ -19,7 +19,7 @@ async function handler({ body, req }: Ctx<{ body: typeof schemas.PatchBody }>) {
 }
 
 export default defineAction({
-  body: schemas.PatchBody,
+  body: schemas.PatchInput,
   openapi: {
     summary: 'Patch a user group',
     authenticated: true,

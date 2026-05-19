@@ -6,7 +6,7 @@ import * as service from '../content-element.service.ts';
 // Updates mutable fields. Passing `deletedAt: null` restores a previously
 // soft-deleted element.
 export default defineAction({
-  body: schemas.PatchBody,
+  body: schemas.PatchInput,
   openapi: {
     summary: 'Patch a content element',
     authenticated: true,

@@ -7,7 +7,7 @@ import * as service from '../comment.service.ts';
 // `activityId` (activity-level discussion) or `contentElementId` (inline
 // discussion);
 export default defineAction({
-  query: schemas.ListQuery,
+  query: schemas.ListFilter,
   openapi: {
     summary: 'List comments on the repository',
     authenticated: true,

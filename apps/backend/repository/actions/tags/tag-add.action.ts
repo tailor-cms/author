@@ -5,7 +5,7 @@ import * as service from '../../repository.service.ts';
 // POST /repositories/:repositoryId/tags
 // Attaches a tag to the repository, creating the Tag row if missing.
 export default defineAction({
-  body: schemas.AddTagBody,
+  body: schemas.AddTagInput,
   openapi: {
     summary: 'Attach a tag to a repository',
     authenticated: true,

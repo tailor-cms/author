@@ -8,7 +8,7 @@ import * as service from '../content-element.service.ts';
 //     under a set of parent activities.
 //   - no filters return every non-detached element in the repo
 export default defineAction({
-  query: schemas.ListQuery,
+  query: schemas.ListFilter,
   openapi: {
     summary: 'List content elements in the repository',
     authenticated: true,

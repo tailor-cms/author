@@ -12,7 +12,7 @@ async function handler({
   body,
   user,
   req,
-}: Ctx<{ body: typeof schemas.LinkBody }>) {
+}: Ctx<{ body: typeof schemas.LinkInput }>) {
   try {
     return await service.link(req.repository!, user, body);
   } catch (err) {
@@ -24,7 +24,7 @@ async function handler({
 }
 
 export default defineAction({
-  body: schemas.LinkBody,
+  body: schemas.LinkInput,
   openapi: {
     summary: 'Link a content element from another repository',
     authenticated: true,

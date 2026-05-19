@@ -10,7 +10,7 @@ import { IntParam, QueryBoolean } from '#shared/request/schemas.ts';
 //   - `{ activityIds: [activityId, ...] }`  bulk-load every element
 //     under a set of parent activities.
 //   - no filters return every non-detached element in the repo
-export const ListQuery = z.object({
+export const ListFilter = z.object({
   // Restrict to elements whose `activityId` is in the provided set. The
   // wire shape arrives either as a real array, a single value, or a
   // comma-separated string depending on the qs-serializer; coerced to ints.
@@ -40,10 +40,10 @@ export const ListQuery = z.object({
   paranoid: QueryBoolean.optional(),
 });
 
-export type ListQuery = z.infer<typeof ListQuery>;
+export type ListFilter = z.infer<typeof ListFilter>;
 
 // POST /repositories/:repositoryId/content-elements
-export const CreateBody = z.object({
+export const CreateInput = z.object({
   // Client-generated uid, defaults to UUIDv4 when omitted
   uid: z.uuid().optional(),
   // Parent activity, holding the element.
@@ -85,12 +85,12 @@ export const CreateBody = z.object({
   contentId: z.uuid().optional(),
 });
 
-export type CreateBody = z.infer<typeof CreateBody>;
+export type CreateInput = z.infer<typeof CreateInput>;
 
 // PATCH /repositories/:repositoryId/content-elements/:elementId
 // Updates mutable fields. Passing `deletedAt: null` restores a previously
 // soft-deleted element.
-export const PatchBody = z.object({
+export const PatchInput = z.object({
   // Note: `type` is intentionally NOT patchable. The type id is the
   // element's identity (it determines which plugin's hooks + data shape
   // apply); changing it post-creation would orphan `data` against the
@@ -116,20 +116,20 @@ export const PatchBody = z.object({
   deletedAt: z.null().optional(),
 });
 
-export type PatchBody = z.infer<typeof PatchBody>;
+export type PatchInput = z.infer<typeof PatchInput>;
 
 // POST /repositories/:repositoryId/content-elements/:elementId/reorder
-export const ReorderBody = z.object({
+export const ReorderInput = z.object({
   // Target index in the sibling list. Float accepted to match the
   // original `isFloat()` contract (the model recomputes the actual
   // fractional `DOUBLE` position via `calculatePosition`).
   position: z.number().min(0),
 });
 
-export type ReorderBody = z.infer<typeof ReorderBody>;
+export type ReorderInput = z.infer<typeof ReorderInput>;
 
 // POST /repositories/:repositoryId/content-elements/link
-export const LinkBody = z.object({
+export const LinkInput = z.object({
   // Source element id to copy from (in a potentially different repo).
   sourceId: z.number().int().positive(),
   // Target activity (container) the linked copy is being attached to.
@@ -137,4 +137,5 @@ export const LinkBody = z.object({
   // Position of the linked copy among siblings.
   position: z.number().min(0).max(1_000_000),
 });
-export type LinkBody = z.infer<typeof LinkBody>;
+
+export type LinkInput = z.infer<typeof LinkInput>;

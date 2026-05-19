@@ -10,14 +10,14 @@ async function handler({
   body,
   user,
   req,
-}: Ctx<{ body: typeof schemas.CloneBody }>) {
+}: Ctx<{ body: typeof schemas.CloneInput }>) {
   const repository = req.repository!;
   logger.debug({ repositoryId: repository.id }, 'Cloning repository');
   return repository.clone(body.name, body.description, { userId: user.id });
 }
 
 export default defineAction({
-  body: schemas.CloneBody,
+  body: schemas.CloneInput,
   openapi: {
     summary: 'Clone a repository',
     authenticated: true,

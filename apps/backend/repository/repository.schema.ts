@@ -17,7 +17,7 @@ import { general } from '#config';
 import { RepoData } from './lib/data-attr.ts';
 
 // GET /repositories
-export const ListQuery = z.object({
+export const ListFilter = z.object({
   // Substring match against repository name (iLike, up to 250 chars).
   search: z.string().trim().max(250).optional(),
   // Exact match against repository name.
@@ -43,10 +43,10 @@ export const ListQuery = z.object({
   paranoid: QueryBoolean.optional(),
 });
 
-export type ListQuery = z.infer<typeof ListQuery>;
+export type ListFilter = z.infer<typeof ListFilter>;
 
 // POST /repositories
-export const CreateBody = z.object({
+export const CreateInput = z.object({
   // Schema registry id this repo will follow. Must be in the env
   // allowlist (`NUXT_PUBLIC_AVAILABLE_SCHEMAS`); defaults to every
   // bundled schema when the env is unset. Imports bypass this gate;
@@ -66,10 +66,10 @@ export const CreateBody = z.object({
   userGroupIds: z.array(z.number().int()).optional(),
 });
 
-export type CreateBody = z.infer<typeof CreateBody>;
+export type CreateInput = z.infer<typeof CreateInput>;
 
 // PATCH /repositories/:repositoryId
-export const PatchBody = z.object({
+export const PatchInput = z.object({
   // New display name (2..250 chars).
   name: ShortText(2, 250).optional(),
   // New description (2..2000 chars).
@@ -80,35 +80,35 @@ export const PatchBody = z.object({
   data: RepoData.optional(),
 });
 
-export type PatchBody = z.infer<typeof PatchBody>;
+export type PatchInput = z.infer<typeof PatchInput>;
 
 // POST /repositories/:repositoryId/pin
-export const PinBody = z.object({
+export const PinInput = z.object({
   // Whether to pin (true) or unpin (false) the repo for the current user.
   pin: z.boolean(),
 });
 
-export type PinBody = z.infer<typeof PinBody>;
+export type PinInput = z.infer<typeof PinInput>;
 
 // POST /repositories/:repositoryId/clone
-export const CloneBody = z.object({
+export const CloneInput = z.object({
   // Display name for the clone (2..250 chars).
   name: ShortText(2, 250),
   // Description for the clone (2..2000 chars).
   description: Description(2, 2000),
 });
 
-export type CloneBody = z.infer<typeof CloneBody>;
+export type CloneInput = z.infer<typeof CloneInput>;
 
 // POST /repositories/:repositoryId/users
-export const UpsertUserBody = z.object({
+export const UpsertUserInput = z.object({
   // Invitee email; lower-cased + trimmed.
   email: Email(),
   // Repository-scoped role
   role: z.enum(RepositoryRole),
 });
 
-export type UpsertUserBody = z.infer<typeof UpsertUserBody>;
+export type UpsertUserInput = z.infer<typeof UpsertUserInput>;
 
 // DELETE /repositories/:repositoryId/users/:userId
 export const RemoveUserParams = z.object({
@@ -119,12 +119,12 @@ export const RemoveUserParams = z.object({
 export type RemoveUserParams = z.infer<typeof RemoveUserParams>;
 
 // POST /repositories/:repositoryId/user-group
-export const AddUserGroupBody = z.object({
+export const AddUserGroupInput = z.object({
   // Numeric id of the UserGroup to share with.
   userGroupId: z.number().int().positive(),
 });
 
-export type AddUserGroupBody = z.infer<typeof AddUserGroupBody>;
+export type AddUserGroupInput = z.infer<typeof AddUserGroupInput>;
 
 // DELETE /repositories/:repositoryId/user-group/:userGroupId
 export const RemoveUserGroupParams = z.object({
@@ -134,12 +134,12 @@ export const RemoveUserGroupParams = z.object({
 export type RemoveUserGroupParams = z.infer<typeof RemoveUserGroupParams>;
 
 // POST /repositories/:repositoryId/tags
-export const AddTagBody = z.object({
+export const AddTagInput = z.object({
   // Tag name; created on the fly if missing (1..100 chars).
   name: ShortText(1, 100),
 });
 
-export type AddTagBody = z.infer<typeof AddTagBody>;
+export type AddTagInput = z.infer<typeof AddTagInput>;
 
 // DELETE /repositories/:repositoryId/tags/:tagId
 export const RemoveTagParams = z.object({
@@ -149,17 +149,17 @@ export const RemoveTagParams = z.object({
 export type RemoveTagParams = z.infer<typeof RemoveTagParams>;
 
 // POST /repositories/:repositoryId/references/cleanup
-export const ReferenceCleanupBody = z.object({
+export const ReferenceCleanupInput = z.object({
   // Activities with dangling references to remove.
   activities: z.array(z.record(z.string(), z.unknown())).optional(),
   // Content elements with dangling references to remove.
   elements: z.array(z.record(z.string(), z.unknown())).optional(),
 });
 
-export type ReferenceCleanupBody = z.infer<typeof ReferenceCleanupBody>;
+export type ReferenceCleanupInput = z.infer<typeof ReferenceCleanupInput>;
 
 // POST /repositories/import
-export const ImportBody = z.object({
+export const ImportInput = z.object({
   // Display name for the imported repo (2..250 chars).
   name: ShortText(2, 250),
   // Description for the imported repo (2..2000 chars).
@@ -171,7 +171,7 @@ export const ImportBody = z.object({
   userGroupIds: IntArrayFromForm(),
 });
 
-export type ImportBody = z.infer<typeof ImportBody>;
+export type ImportInput = z.infer<typeof ImportInput>;
 
 // GET /repositories/:repositoryId/export/:jobId/status
 // POST /repositories/:repositoryId/export/:jobId

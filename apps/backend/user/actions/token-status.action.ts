@@ -8,7 +8,7 @@ import * as schemas from '../user.schema.ts';
 // The client can use it to validate a token before showing the
 // new-password form.
 export default defineAction({
-  body: schemas.TokenStatusBody,
+  body: schemas.TokenStatusInput,
   status: StatusCodes.ACCEPTED,
   openapi: {
     summary: 'Validate a password-reset token',

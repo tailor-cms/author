@@ -5,7 +5,7 @@ import * as service from '../repository.service.ts';
 // POST /repositories/:repositoryId/pin
 // Toggles the pinned flag on the user's RepositoryUser row.
 export default defineAction({
-  body: schemas.PinBody,
+  body: schemas.PinInput,
   openapi: {
     summary: 'Pin / unpin a repository for the current user',
     authenticated: true,

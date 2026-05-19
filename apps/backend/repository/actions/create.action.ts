@@ -6,7 +6,7 @@ import * as service from '../repository.service.ts';
 // Creates a repository seeded with schema-default meta and label color;
 // optionally sharing it with the supplied user groups.
 export default defineAction({
-  body: schemas.CreateBody,
+  body: schemas.CreateInput,
   openapi: {
     summary: 'Create a repository',
     authenticated: true,

@@ -11,13 +11,13 @@ import * as service from '../user.service.ts';
 // This action's body schema documents the wire shape (and gates obvious
 // malformed bodies), while passport-local owns the actual credential
 // check. On success the chain hands `req.user` to this handler
-async function handler({ user, req }: Ctx<{ body: typeof schemas.LoginBody }>) {
+async function handler({ user, req }: Ctx<{ body: typeof schemas.LoginInput }>) {
   return service.profile(user, req.authData);
 }
 
 export default defineAction({
   raw: true,
-  body: schemas.LoginBody,
+  body: schemas.LoginInput,
   openapi: {
     summary: 'Email + password login',
   },

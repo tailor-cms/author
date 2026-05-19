@@ -8,7 +8,7 @@ import * as service from '../activity.service.ts';
 // access to the source repository before this fires. The link service
 // handles same-schema and cross-schema linking (with type transform).
 export default defineAction({
-  body: schemas.LinkBody,
+  body: schemas.LinkInput,
   openapi: {
     summary: 'Link an activity from another repository',
     authenticated: true,

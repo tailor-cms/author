@@ -7,7 +7,7 @@ import * as service from '../comment.service.ts';
 // guarantees the actor is the comment's author. The model stamps
 // `editedAt` via the service so the FE can render an "(edited)" hint.
 export default defineAction({
-  body: schemas.PatchBody,
+  body: schemas.PatchInput,
   openapi: {
     summary: 'Edit a comment',
     authenticated: true,

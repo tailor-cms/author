@@ -13,7 +13,7 @@ import * as service from '../user.service.ts';
 async function handler({
   body,
   user,
-}: Ctx<{ body: typeof schemas.ProfileUpdateBody }>) {
+}: Ctx<{ body: typeof schemas.ProfileUpdateInput }>) {
   try {
     const profile = await service.updateProfile(user, body);
     return { user: profile };
@@ -37,7 +37,7 @@ async function handler({
 }
 
 export default defineAction({
-  body: schemas.ProfileUpdateBody,
+  body: schemas.ProfileUpdateInput,
   raw: true,
   openapi: {
     summary: 'Update the current user profile',

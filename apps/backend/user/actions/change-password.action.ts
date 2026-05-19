@@ -12,7 +12,7 @@ import * as service from '../user.service.ts';
 async function handler({
   body,
   user,
-}: Ctx<{ body: typeof schemas.ChangePasswordBody }>) {
+}: Ctx<{ body: typeof schemas.ChangePasswordInput }>) {
   if (body.currentPassword === body.newPassword) {
     return createError(StatusCodes.BAD_REQUEST);
   }
@@ -25,7 +25,7 @@ async function handler({
 }
 
 export default defineAction({
-  body: schemas.ChangePasswordBody,
+  body: schemas.ChangePasswordInput,
   openapi: {
     summary: 'Change the current user password',
     authenticated: true,

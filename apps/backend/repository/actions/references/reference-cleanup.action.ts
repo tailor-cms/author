@@ -8,7 +8,7 @@ import * as service from '../../repository.service.ts';
 async function handler({
   body,
   req,
-}: Ctx<{ body: typeof schemas.ReferenceCleanupBody }>) {
+}: Ctx<{ body: typeof schemas.ReferenceCleanupInput }>) {
   await service.cleanupReferences(
     req.repository!.id,
     body.activities as any[] | undefined,
@@ -17,7 +17,7 @@ async function handler({
 }
 
 export default defineAction({
-  body: schemas.ReferenceCleanupBody,
+  body: schemas.ReferenceCleanupInput,
   openapi: {
     summary: 'Remove dangling references from activities and elements',
     authenticated: true,

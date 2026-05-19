@@ -16,12 +16,12 @@ import type { User } from '../user/models/user.model.js';
 import type { Activity, ActivityCopyLocation } from './models/activity.model.js';
 
 import type {
-  CloneBody,
-  CreateBody,
-  LinkBody,
-  ListQuery,
-  PatchBody,
-  WorkflowStatusBody,
+  CloneInput,
+  CreateInput,
+  LinkInput,
+  ListFilter,
+  PatchInput,
+  WorkflowStatusInput,
 } from './activity.schema.ts';
 
 const { Activity: ActivityModel, sequelize } = db;
@@ -34,7 +34,7 @@ const logger = createLogger('activity:svc');
 export async function list(
   repository: Repository,
   opts: any,
-  filters: ListQuery,
+  filters: ListFilter,
 ): Promise<Activity[]> {
   if (!filters.detached) opts.where.detached = false;
   if (filters.outlineOnly) {
@@ -65,7 +65,7 @@ export async function list(
 export async function create(
   repository: Repository,
   user: User,
-  body: CreateBody,
+  body: CreateInput,
 ): Promise<Activity> {
   const outlineConfig = find(getOutlineLevels(repository.schema), {
     type: body.type,
@@ -95,7 +95,7 @@ export async function update(
   repository: Repository,
   user: User,
   activity: Activity,
-  body: PatchBody,
+  body: PatchInput,
 ): Promise<Activity> {
   const context = { userId: user.id, repository };
   if (
@@ -168,7 +168,7 @@ export async function publish(activity: Activity): Promise<unknown> {
 export async function clone(
   user: User,
   activity: Activity,
-  body: CloneBody,
+  body: CloneInput,
 ): Promise<Activity[]> {
   const mappings = await activity.clone(
     body.repositoryId,
@@ -185,7 +185,7 @@ export async function clone(
 export async function updateWorkflowStatus(
   user: User,
   activity: Activity,
-  body: WorkflowStatusBody,
+  body: WorkflowStatusInput,
 ) {
   const context = { user };
   const status = await activity.createStatus(body, { context } as any);
@@ -199,7 +199,7 @@ export async function updateWorkflowStatus(
 export async function link(
   repository: Repository,
   user: User,
-  body: LinkBody,
+  body: LinkInput,
 ): Promise<Activity> {
   const context = { userId: user.id, repository };
   return linkService.linkActivity(

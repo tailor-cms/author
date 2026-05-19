@@ -29,9 +29,9 @@ import type { Repository } from './models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
 
 import type {
-  CreateBody,
-  ListQuery,
-  PatchBody,
+  CreateInput,
+  ListFilter,
+  PatchInput,
 } from './repository.schema.ts';
 
 const {
@@ -111,7 +111,7 @@ export interface ListResult {
 export async function list(
   opts: any,
   user: User,
-  query: ListQuery,
+  query: ListFilter,
 ): Promise<ListResult> {
   const { search, name, userGroupId, compatibleWith } = query;
   let { schemas } = query;
@@ -159,7 +159,7 @@ export async function list(
 
 // Creates a repository seeded with schema-default meta + a sampled label
 // color, then optionally shares it with the supplied user groups.
-export async function create(payload: CreateBody, user: User) {
+export async function create(payload: CreateInput, user: User) {
   const defaultMeta = getVal(schemaApi.getSchema(payload.schema), 'defaultMeta', {});
   const data = {
     color: sample(DEFAULT_COLORS),
@@ -194,10 +194,10 @@ export async function loadDetail(repository: Repository, user: User) {
 // never overwrite them.
 export async function update(
   repository: Repository,
-  payload: PatchBody,
+  payload: PatchInput,
   user: User,
 ) {
-  const updates: PatchBody = pick(payload, ['name', 'description', 'data']);
+  const updates: PatchInput = pick(payload, ['name', 'description', 'data']);
   if (updates.data) updates.data = stripServerManaged(updates.data);
   return repository.update(
     updates as Partial<Repository>,

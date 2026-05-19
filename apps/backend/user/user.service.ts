@@ -10,7 +10,7 @@ import db from '#shared/database/index.js';
 import map from 'lodash/map.js';
 import { Op } from 'sequelize';
 import { UserRole } from '@tailor-cms/interfaces/role';
-import type { ListQuery, UpsertBody } from './user.schema.ts';
+import type { ListFilter, UpsertInput } from './user.schema.ts';
 
 const { User: UserModel, UserGroup } = db;
 
@@ -29,7 +29,7 @@ export interface ListResult {
 // soft-deleted rows.
 export async function list(
   opts: { limit: number; offset: number; order?: any[] },
-  query: ListQuery,
+  query: ListFilter,
 ): Promise<ListResult> {
   const where: any = { [Op.and]: [] };
   if (query.filter) where[Op.or] = buildFilter(query.filter);
@@ -53,7 +53,7 @@ export async function list(
 // or updates the existing one matched by email. Replaces the user's
 // user-group memberships when `userGroupIds` is supplied (omit to leave
 // memberships untouched).
-export async function upsert(payload: UpsertBody): Promise<UserProfile> {
+export async function upsert(payload: UpsertInput): Promise<UserProfile> {
   const { skipInvite, userGroupIds, ...attrs } = payload;
   const user = await UserModel.inviteOrUpdate(attrs, { skipInvite });
   if (Array.isArray(userGroupIds)) {
