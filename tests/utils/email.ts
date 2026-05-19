@@ -47,5 +47,5 @@ export const getAnchorFromLastRecievedEmail = async (
   const emailMessage = await getFirstEmail(address);
   const dom = new JSDOM(emailMessage);
   const anchors = dom.window.document.querySelectorAll('a');
-  return find(anchors, { textContent: anchorTitle });
+  return find(anchors, (a) => a.textContent?.trim() === anchorTitle);
 };
