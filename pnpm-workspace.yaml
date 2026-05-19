@@ -12,3 +12,68 @@ packages:
   - 'extensions/plugins'
   - 'infrastructure'
   - 'config'
+# Temp disable minimumReleaseAge for certain packages
+# pnpm 11 defaults `minimumReleaseAge` to 1440min (24h) as a supply-chain
+# defense. These packages are upstream and trusted; allowlist them so fresh
+# patches don't block the install when we bump.
+minimumReleaseAgeExclude:
+  - date-fns
+  - pg
+  - pg-cloudflare
+  - pg-connection-string
+  - pg-cursor
+  - pg-pool
+  - pg-protocol
+  - pg-query-stream
+  - '@aws-sdk/client-s3@3.1049.0'
+  - '@aws-sdk/core@3.974.12'
+  - '@aws-sdk/credential-provider-env@3.972.38'
+  - '@aws-sdk/credential-provider-http@3.972.40'
+  - '@aws-sdk/credential-provider-ini@3.972.42'
+  - '@aws-sdk/credential-provider-login@3.972.42'
+  - '@aws-sdk/credential-provider-node@3.972.43'
+  - '@aws-sdk/credential-provider-process@3.972.38'
+  - '@aws-sdk/credential-provider-sso@3.972.42'
+  - '@aws-sdk/credential-provider-web-identity@3.972.42'
+  - '@aws-sdk/lib-storage@3.1049.0'
+  - '@aws-sdk/middleware-bucket-endpoint@3.972.14'
+  - '@aws-sdk/middleware-flexible-checksums@3.974.20'
+  - '@aws-sdk/middleware-sdk-s3@3.972.41'
+  - '@aws-sdk/nested-clients@3.997.10'
+  - '@aws-sdk/s3-request-presigner@3.1049.0'
+  - '@aws-sdk/token-providers@3.1049.0'
+  - '@aws-sdk/util-format-url@3.972.14'
+  - '@nuxt/kit@4.4.6'
+  - '@nuxt/nitro-server@4.4.6'
+  - '@nuxt/schema@4.4.6'
+  - '@nuxt/vite-builder@4.4.6'
+  - '@pulumi/pulumi@3.241.0'
+  - '@types/node@25.9.0'
+  - '@typescript-eslint/eslint-plugin@8.59.4'
+  - '@typescript-eslint/parser@8.59.4'
+  - '@typescript-eslint/project-service@8.59.4'
+  - '@typescript-eslint/scope-manager@8.59.4'
+  - '@typescript-eslint/tsconfig-utils@8.59.4'
+  - '@typescript-eslint/type-utils@8.59.4'
+  - '@typescript-eslint/types@8.59.4'
+  - '@typescript-eslint/typescript-estree@8.59.4'
+  - '@typescript-eslint/utils@8.59.4'
+  - '@typescript-eslint/visitor-keys@8.59.4'
+  - nuxt@4.4.6
+allowBuilds:
+  # Native libuv file watcher used by Nuxt/Vite hot reload pipeline.
+  '@parcel/watcher': true
+  # Headless browser bundle for Percy visual snapshot CLI.
+  '@percy/core': true
+  # Pulumi resource provider plugin downloads (required for `pulumi up`).
+  '@pulumi/docker': true
+  '@pulumi/docker-build': true
+  '@upstash/pulumi': true
+  # Postinstall sponsorship notice; harmless to allow.
+  aws-sdk: true
+  # Platform-specific esbuild binary download (required for builds).
+  esbuild: true
+  # Optional type generation for protobufjs.
+  protobufjs: true
+  # Native bindings build for unrs-resolver (used by Nuxt resolution).
+  unrs-resolver: true
