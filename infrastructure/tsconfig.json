@@ -4,6 +4,7 @@
     "target": "es2016",
     "module": "commonjs",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "sourceMap": true,
     "experimentalDecorators": true,
     "pretty": true,
