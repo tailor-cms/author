@@ -1,7 +1,7 @@
 // Business logic for the Revision slice.
 // Revisions are append-only audit rows written by the per-model hooks.
 import { Op } from 'sequelize';
-import map from 'lodash/map.js';
+import _ from 'lodash';
 
 import { Entity, Operation } from '@tailor-cms/interfaces/revision';
 import { createLogger } from '#logger';
@@ -92,8 +92,8 @@ export async function timeTravel(
     'Reconstructing state at moment',
   );
   const removes = await getEntityRemovesSinceMoment(activity, timestamp);
-  const entityIds = [...elementIds, ...map(removes.elements, 'state.id')];
-  const removedActivityIds = map(removes.activities, 'state.id');
+  const entityIds = [...elementIds, ..._.map(removes.elements, 'state.id')];
+  const removedActivityIds = _.map(removes.activities, 'state.id');
   const elements = await getStateAt(entityIds, removedActivityIds, timestamp);
   return { ...removes, elements };
 }
@@ -107,7 +107,7 @@ async function getEntityRemovesSinceMoment(
   timestamp: string,
 ): Promise<TimeTravelResult> {
   const { nodes } = await activity.descendants({ paranoid: false });
-  const subtreeIds = map(nodes, 'id');
+  const subtreeIds = _.map(nodes, 'id');
   const where = {
     operation: Operation.Remove,
     createdAt: { [Op.gt]: timestamp },
