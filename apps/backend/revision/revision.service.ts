@@ -1,7 +1,7 @@
 // Business logic for the Revision slice.
 // Revisions are append-only audit rows written by the per-model hooks.
 import { Op } from 'sequelize';
-import { map } from 'lodash';
+import map from 'lodash/map.js';
 
 import { Entity, Operation } from '@tailor-cms/interfaces/revision';
 import { createLogger } from '#logger';
