@@ -36,6 +36,7 @@ test('Asset library - detail dialog', async ({ page }) => {
   await lib.getRow(IMAGE.name).openDetail();
   await lib.detailDialog.waitForOpen();
   await lib.detailDialog.waitForPreviewLoaded();
+  await page.waitForLoadState('networkidle');
   await percySnapshot(page, 'Asset library - detail dialog');
 });
 
