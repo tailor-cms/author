@@ -211,6 +211,8 @@ jobs:
           INDEX: ${{ matrix.shardIndex }}
           TOTAL: ${{ matrix.shardTotal }}
           PERCY_PARALLEL_NONCE: ${{ github.run_id }}
+          # Diagnostic — drop once asset-discovery 404 root cause is known.
+          PERCY_LOGLEVEL: debug
         run: |
           SPECS=$(find tests/specs/visual -name '*.spec.ts' | wc -l)
           EFFECTIVE=$(( SPECS < TOTAL ? SPECS : TOTAL ))

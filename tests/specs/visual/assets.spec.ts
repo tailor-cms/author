@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import AssetClient from '../../api/AssetClient';
 import SeedClient from '../../api/SeedClient';
@@ -29,15 +29,27 @@ test('Asset library - empty state', async ({ page }) => {
 
 test('Asset library - detail dialog', async ({ page }) => {
   const repository = await toRepositoryAssets(page, REPOSITORY_NAME);
-  await AssetClient.uploadFile(repository.id, IMAGE.path);
+  const { data: assets } = await AssetClient.uploadFile(
+    repository.id,
+    IMAGE.path,
+  );
+  // Verify the upload actually landed in MinIO. If this fails, the backend
+  // returned 200 without persisting; if it passes but Percy still 404s, the
+  // file is being removed between snapshot and asset discovery.
+  const [asset] = assets;
+  const { data: download } = await AssetClient.getDownloadUrl(
+    repository.id,
+    asset.id,
+  );
+  const fetched = await page.request.get(download.url);
+  expect(fetched.status(), `MinIO 404 for ${download.url}`).toBe(200);
+  expect((await fetched.body()).byteLength).toBeGreaterThan(0);
+
   await page.reload({ waitUntil: 'networkidle' });
   const lib = new AssetLibrary(page);
   await lib.waitForLoad();
   await lib.getRow(IMAGE.name).openDetail();
   await lib.detailDialog.waitForOpen();
-  await lib.detailDialog.waitForPreviewLoaded();
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(3000);
   await percySnapshot(page, 'Asset library - detail dialog');
 });
 

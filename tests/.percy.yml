@@ -7,10 +7,9 @@ snapshot:
   disableShadowDOM: false
   enable-javascript: false
 discovery:
-  allowedHostnames:
-    - localhost
+  allowedHostnames: []
   disallowedHostnames: []
-  networkIdleTimeout: 1000
+  networkIdleTimeout: 500
 upload:
   files: "**/*.{png,jpg,jpeg}"
   ignore: ""
