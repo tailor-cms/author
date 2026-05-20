@@ -1,7 +1,11 @@
 <template>
-  <NuxtLayout class="catalog-wrapper" name="main">
-    <VLayout
-      class="fill-height mx-3 bg-primary-darken-3 rounded-t-xl border-surface border-sm">
+  <NuxtLayout name="main">
+    <VSheet
+      class="catalog-scroll mx-3"
+      color="primary-darken-3"
+      rounded="t-xl"
+      border="sm surface"
+    >
       <VContainer class="catalog" max-width="1360">
         <VRow class="catalog-actions py-10" dense>
           <VCol cols="12" lg="4" md="6">
@@ -140,7 +144,7 @@
           {{ noRepositoriesMessage }}
         </VAlert>
       </VContainer>
-    </VLayout>
+    </VSheet>
   </NuxtLayout>
 </template>
 
@@ -333,9 +337,15 @@ onBeforeMount(async () => {
 </script>
 
 <style lang="scss" scoped>
-.catalog-wrapper {
-  position: relative;
+.catalog-scroll {
   height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .catalog-actions {
