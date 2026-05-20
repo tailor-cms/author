@@ -70,6 +70,7 @@ const actions = computed(() => {
             title: `${activityLabel.value} Details`,
             icon: 'text-box-edit-outline',
             active: editorStore.isDetailsPanelExpanded,
+            disabled: !editorStore.canExpandDetailsPanel,
             action: () => {
               editorStore.isDetailsPanelExpanded =
                 !editorStore.isDetailsPanelExpanded;
