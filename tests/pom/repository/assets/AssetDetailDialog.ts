@@ -32,6 +32,14 @@ export class AssetDetailDialog {
     await expect(this.el).toBeVisible({ timeout: 5000 });
   }
 
+  // Make sure the preview image is fully loaded before Percy snapshots the DOM.
+  // `img.decode()` resolves once the bytes are downloaded and ready to render.
+  async waitForPreviewLoaded() {
+    await this.el
+      .locator('.detail-body img')
+      .evaluate((img: HTMLImageElement) => img.decode());
+  }
+
   async close() {
     await this.closeBtn.click();
     await expect(this.el).not.toBeVisible();
