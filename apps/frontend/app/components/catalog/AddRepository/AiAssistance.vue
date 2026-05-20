@@ -22,21 +22,12 @@
     >
       Continue
     </VBtn>
-    <div v-if="topicTagOptions.length">
-      <div class="mb-4 text-body-2 font-weight-bold">
-        Tell us more about the topics you are interested in:
-      </div>
-      <VChipGroup v-model="selectedTopicTags" column multiple>
-        <VChip
-          v-for="chip in topicTagOptions"
-          :key="chip"
-          class="mr-2 mb-2"
-          variant="outlined"
-          filter
-        >
-          {{ chip }}
-        </VChip>
-      </VChipGroup>
+    <div v-if="topicTagOptions.length" class="mb-4">
+      <TagPicker
+        v-model="selectedTopicTags"
+        :options="topicTagOptions"
+        label="Tell us more about the topics you are interested in:"
+      />
       <VBtn
         v-if="!styleTagOptions.length"
         :loading="isFetchingData"
@@ -50,20 +41,12 @@
       </VBtn>
     </div>
     <div v-if="styleTagOptions.length">
-      <div class="my-4 text-body-2 font-weight-bold">
-        Select perspectives you are interested in:
-      </div>
-      <VChipGroup v-model="selectedStyleTags" column multiple>
-        <VChip
-          v-for="chip in styleTagOptions"
-          :key="chip"
-          class="mr-2 mb-2"
-          variant="outlined"
-          filter
-        >
-          {{ chip }}
-        </VChip>
-      </VChipGroup>
+      <TagPicker
+        v-model="selectedStyleTags"
+        :options="styleTagOptions"
+        class="mt-4"
+        label="Select perspectives you are interested in:"
+      />
       <div class="mt-5 mb-4 text-body-2 font-weight-bold">Audience:</div>
       <VSlider
         v-model="selectedDifficulty"
@@ -105,6 +88,7 @@ import {
 
 import DocumentUpload from './DocumentUpload.vue';
 import OutlinePreview from './OutlinePreview.vue';
+import TagPicker from './TagPicker.vue';
 import aiAPI from '@/api/ai';
 
 const props = defineProps<{
