@@ -32,11 +32,25 @@ import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
 
+const { $schemaService } = useNuxtApp() as any;
+
 const currentRepositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 const contentElementStore = useContentElementStore();
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
+
+const activityLabel = computed(
+  () =>
+    $schemaService.getLevel(editorStore.selectedActivity?.type)?.label ||
+    'Entry',
+);
+
+const hasMetadata = computed(() => {
+  if (!editorStore.selectedActivity) return false;
+  return !!$schemaService.getActivityMetadata(editorStore.selectedActivity)
+    ?.length;
+});
 
 const actions = computed(() => {
   const items = [
@@ -50,6 +64,19 @@ const actions = computed(() => {
         });
       },
     },
+    ...(hasMetadata.value
+      ? [
+          {
+            title: `${activityLabel.value} Details`,
+            icon: 'text-box-edit-outline',
+            active: editorStore.isDetailsPanelExpanded,
+            action: () => {
+              editorStore.isDetailsPanelExpanded =
+                !editorStore.isDetailsPanelExpanded;
+            },
+          },
+        ]
+      : []),
     {
       title: 'Preview',
       icon: 'eye',

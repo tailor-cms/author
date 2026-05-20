@@ -1,30 +1,27 @@
 <template>
-  <VExpansionPanels
-    v-if="metadata.length"
-    v-model="panelValue"
-    class="mb-10"
-    rounded="lg"
-  >
-    <VExpansionPanel :value="PANEL_NAME" bg-color="white" eager>
-      <VExpansionPanelTitle min-height="56" static>
-        <VIcon class="mr-2" color="primary-darken-4">
+  <div v-if="metadata.length" class="activity-metadata">
+    <div class="activity-metadata-wrapper">
+      <div class="activity-metadata-header d-flex align-center px-1 pt-4 pb-5">
+        <VIcon class="mr-2" color="primary-lighten-4" size="small">
           mdi-text-box-edit-outline
         </VIcon>
-        <span class="text-h6 font-weight-medium text-primary-darken-3">
+        <span class="text-subtitle-2 font-weight-bold text-primary-lighten-4">
           {{ activityLabel }} Details
         </span>
-      </VExpansionPanelTitle>
-      <VExpansionPanelText>
+      </div>
+      <div class="metadata-fields px-1 pb-4">
         <MetaInput
           v-for="it in metadata"
           :key="`${activity.uid}.${it.key}.${$pluginRegistry.dataVersion}`"
           :meta="it"
           :entity-data="activity.data"
+          class="mb-2"
+          dark
           @update="updateActivity"
         />
-      </VExpansionPanelText>
-    </VExpansionPanel>
-  </VExpansionPanels>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -32,7 +29,6 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 
 import MetaInput from '@/components/common/MetaInput.vue';
 import { useActivityStore } from '@/stores/activity';
-import { useEditorStore } from '@/stores/editor';
 
 const props = defineProps<{
   activity: Activity;
@@ -40,14 +36,7 @@ const props = defineProps<{
 
 const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
 const activityStore = useActivityStore();
-const editorStore = useEditorStore();
 const notify = useNotification();
-
-const PANEL_NAME = 'details';
-const panelValue = computed({
-  get: () => (editorStore.isDetailsPanelExpanded ? PANEL_NAME : undefined),
-  set: (val) => (editorStore.isDetailsPanelExpanded = val === PANEL_NAME),
-});
 
 const activityConfig = computed(() =>
   $schemaService.getLevel(props.activity.type),
@@ -78,9 +67,31 @@ const updateActivity = async (
 </script>
 
 <style lang="scss" scoped>
-:deep(.v-expansion-panel-title:hover > .v-expansion-panel-title__overlay),
-:deep(.v-expansion-panel-title:focus > .v-expansion-panel-title__overlay),
-:deep(.v-expansion-panel-title--active > .v-expansion-panel-title__overlay) {
-  opacity: 0;
+$error-color: rgb(var(--v-theme-secondary-lighten-4));
+
+.activity-metadata-wrapper {
+  position: relative;
+  max-width: 72.5rem;
+  padding: 1rem 1.25rem;
+
+  :deep(.v-input) {
+    position: relative !important;
+
+    .v-input__details {
+      text-align: left !important;
+    }
+  }
+
+  :deep(.v-input--error) {
+    .v-messages__message,
+    .v-field__outline,
+    .v-field-label {
+      color: $error-color !important;
+    }
+  }
+}
+
+.activity-metadata-header {
+  letter-spacing: 0.05em;
 }
 </style>
