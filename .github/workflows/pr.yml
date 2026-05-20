@@ -205,6 +205,9 @@ jobs:
             exit 0
           fi
           pnpm e2e:a11y --shard=$INDEX/$EFFECTIVE
+      # Cache Percy's bundled Chromium so we skip the GCS pull per shard.
+      # The revision must match @percy/core's bundled Chromium — bump the
+      # cache key and the download URL together when upgrading @percy/cli.
       - name: Cache Percy Chromium
         id: percy-chromium-cache
         uses: actions/cache@v4
@@ -234,10 +237,8 @@ jobs:
             echo "Skip visual: shard $INDEX > $EFFECTIVE (specs: $SPECS)"
             exit 0
           fi
-          # Point Percy at the pre-cached bundled Chromium (rev 1300309 =
-          # Chrome 126). Avoiding Playwright's Chromium (Chrome 148) because
-          # newer Chrome breaks Percy's render-side resolution for localhost
-          # assets.
+          # Don't substitute Playwright's Chromium here — newer Chrome
+          # breaks Percy's render of localhost assets.
           export PERCY_BROWSER_EXECUTABLE="$HOME/percy-chromium/chrome-linux/chrome"
           PERCY_PARALLEL_TOTAL=$EFFECTIVE \
             pnpm e2e:visual --shard=$INDEX/$EFFECTIVE
