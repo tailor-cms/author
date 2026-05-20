@@ -1,17 +1,16 @@
 import { setTimeout } from 'node:timers/promises';
 import { createId as cuid } from '@paralleldrive/cuid2';
-import Keyv from 'keyv';
 
 import oauth2 from '../oAuth2Provider.js';
+import { createKvStore } from '#shared/kvStore.ts';
 import { createLogger } from '#logger';
-import { consumer, kvStore } from '#config';
+import { consumer } from '#config';
 
 const logger = createLogger('webhook-throttler');
 
 class PublishingThrottler {
   constructor() {
-    this.cache = new Keyv({
-      ...kvStore.keyvDefaultConfig,
+    this.cache = createKvStore({
       namespace: 'publish-webhook',
       ttl: 2 * consumer.publishWebhookThrottle,
     });

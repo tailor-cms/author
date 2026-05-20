@@ -209,8 +209,11 @@ export async function update(
 // removal propagates to consumers immediately.
 export async function remove(repository: Repository, user: User) {
   const removed = await repository.destroy({ context: { userId: user.id } });
-  // Fire-and-forget catalog update; failures are logged at the publishing layer.
-  publishingService.updateRepositoryCatalog(removed);
+  // Fire-and-forget catalog update; catch here so a publish-side throw
+  // (e.g. a Keyv/storage breakage) can't escape and crash the process.
+  publishingService
+    .updateRepositoryCatalog(removed)
+    .catch((err: unknown) => logger.error({ err }, 'catalog update failed'));
   return removed;
 }
 
