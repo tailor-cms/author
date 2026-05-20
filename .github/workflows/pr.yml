@@ -205,14 +205,28 @@ jobs:
             exit 0
           fi
           pnpm e2e:a11y --shard=$INDEX/$EFFECTIVE
+      - name: Cache Percy Chromium
+        id: percy-chromium-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/percy-chromium
+          key: percy-chromium-1300309-${{ runner.os }}
+      - name: Download Percy Chromium
+        if: steps.percy-chromium-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          mkdir -p ~/percy-chromium
+          curl -fL --retry 5 --retry-delay 2 \
+            "https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1300309/chrome-linux.zip" \
+            -o /tmp/percy-chromium.zip
+          unzip -q /tmp/percy-chromium.zip -d ~/percy-chromium
+          rm /tmp/percy-chromium.zip
       - name: Run visual tests
         shell: bash
         env:
           INDEX: ${{ matrix.shardIndex }}
           TOTAL: ${{ matrix.shardTotal }}
           PERCY_PARALLEL_NONCE: ${{ github.run_id }}
-          # Diagnostic — drop once asset-discovery 404 root cause is known.
-          PERCY_LOGLEVEL: debug
         run: |
           SPECS=$(find tests/specs/visual -name '*.spec.ts' | wc -l)
           EFFECTIVE=$(( SPECS < TOTAL ? SPECS : TOTAL ))
@@ -220,12 +234,11 @@ jobs:
             echo "Skip visual: shard $INDEX > $EFFECTIVE (specs: $SPECS)"
             exit 0
           fi
-          # Reuse Playwright's pre-cached Chromium so Percy doesn't pull
-          # ~150MB from GCS each shard. Split assignment + export so
-          # `set -e` catches a resolution failure; `export VAR=$(cmd)`
-          # masks the command's exit (SC2155).
-          PERCY_BROWSER_EXECUTABLE=$(cd tests && node -e "console.log(require('@playwright/test').chromium.executablePath())")
-          export PERCY_BROWSER_EXECUTABLE
+          # Point Percy at the pre-cached bundled Chromium (rev 1300309 =
+          # Chrome 126). Avoiding Playwright's Chromium (Chrome 148) because
+          # newer Chrome breaks Percy's render-side resolution for localhost
+          # assets.
+          export PERCY_BROWSER_EXECUTABLE="$HOME/percy-chromium/chrome-linux/chrome"
           PERCY_PARALLEL_TOTAL=$EFFECTIVE \
             pnpm e2e:visual --shard=$INDEX/$EFFECTIVE
       - name: Upload file durations

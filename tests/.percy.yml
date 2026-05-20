@@ -7,11 +7,7 @@ snapshot:
   disableShadowDOM: false
   enable-javascript: false
 discovery:
-  # Percy's render-side trust treats auto-validated hosts differently from
-  # explicitly allowed ones, so `localhost` must be listed even though the
-  # CLI's auto-validator also picks it up.
-  allowedHostnames:
-    - localhost
+  allowedHostnames: []
   disallowedHostnames: []
   networkIdleTimeout: 500
 upload:
