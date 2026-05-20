@@ -32,10 +32,8 @@ const message = (name: string | undefined, version: string | undefined) =>
   `
     ${name} v${version}
 
-    It's aliveeeee 🚀
+    It's aliveeeee 🚀 📄
 
-    📘  Readme: https://git.io/vxrlj
-    🐛  Report bugs: https://git.io/vxr8U
     `.trim();
 
 function welcome(name: string | undefined, version: string | undefined) {

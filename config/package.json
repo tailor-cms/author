@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@tailor-cms/config-parser": "workspace:^",
-    "hash-object": "^5.0.1",
-    "lodash-es": "^4.17.21"
+    "hash-object": "^5.1.0",
+    "lodash-es": "^4.18.1"
   },
   "devDependencies": {
     "@tailor-cms/content-container-collection": "workspace:^",
@@ -28,8 +28,8 @@
     "@tailor-cms/interfaces": "workspace:^",
     "@tailor-cms/meta-element-collection": "workspace:^",
     "del-cli": "^7.0.0",
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.3"
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@tailor-cms/content-container-collection": "workspace:^",

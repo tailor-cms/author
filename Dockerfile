@@ -1,7 +1,5 @@
-FROM node:24.14.1-bookworm-slim AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@10.10.0 --activate
+FROM node:26.1.0-bookworm-slim AS base
+RUN npm install -g pnpm@11.1.3
 RUN apt update && apt install -y --no-install-recommends dumb-init
 ENTRYPOINT ["dumb-init", "--"]
 

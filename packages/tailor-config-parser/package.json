@@ -32,15 +32,15 @@
     "prebuild": "del-cli dist"
   },
   "dependencies": {
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.18.1",
     "yup": "^1.7.1"
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:^",
     "@types/lodash-es": "^4.17.12",
     "del-cli": "^7.0.0",
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.3"
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
   },
   "tsup": {
     "entry": [

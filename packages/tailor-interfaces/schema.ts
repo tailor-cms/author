@@ -14,7 +14,7 @@ export interface ElementRegistry {
   isLegacyQuestion: (type: string) => boolean;
   matchesAllowedElementConfig: (
     el: ContentElement,
-    config: Record<string, any>
+    config: Record<string, any>,
   ) => boolean;
   getByEntity: (el: ContentElement) => ElementManifest;
 }
