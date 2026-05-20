@@ -6,12 +6,14 @@
     @click="onClick"
     @mousedown="onMousedown"
   >
-    <div
-      :class="{ 'metadata-collapse--open': isMetadataPanelShown }"
-      class="metadata-collapse"
-    >
-      <div class="metadata-collapse__inner">
-        <ActivityMetadata :activity="activity" />
+    <div class="metadata-container">
+      <div
+        :class="{ 'metadata-collapse--open': isMetadataPanelShown }"
+        class="metadata-collapse"
+      >
+        <div class="metadata-collapse__inner">
+          <ActivityMetadata :activity="activity" />
+        </div>
       </div>
     </div>
     <div class="content-containers-wrapper">
@@ -423,6 +425,11 @@ onBeforeUnmount(() => {
 .activity-content {
   min-height: 100%;
   overflow-y: auto;
+}
+
+.metadata-container {
+  max-width: 69.25rem;
+  margin: auto;
 }
 
 .metadata-collapse {
