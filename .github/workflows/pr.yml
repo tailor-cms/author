@@ -224,7 +224,6 @@ jobs:
           # masks the command's exit (SC2155).
           PERCY_BROWSER_EXECUTABLE=$(cd tests && node -e "console.log(require('@playwright/test').chromium.executablePath())")
           export PERCY_BROWSER_EXECUTABLE
-          echo "PERCY_BROWSER_EXECUTABLE=$PERCY_BROWSER_EXECUTABLE"
           PERCY_PARALLEL_TOTAL=$EFFECTIVE \
             pnpm e2e:visual --shard=$INDEX/$EFFECTIVE
       - name: Upload file durations
