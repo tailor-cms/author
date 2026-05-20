@@ -107,9 +107,21 @@ export const useEditorStore = defineStore('editor', () => {
     return unlinked;
   };
 
+  const canExpandDetailsPanel = computed(
+    () =>
+      !!selectedActivity.value &&
+      !selectedActivity.value.isLinkedCopy &&
+      !showPublishDiff.value,
+  );
+
   const togglePublishDiff = (value?: boolean) => {
     showPublishDiff.value = value ?? !showPublishDiff.value;
+    if (showPublishDiff.value) isDetailsPanelExpanded.value = false;
   };
+
+  watch(canExpandDetailsPanel, (canExpand) => {
+    if (!canExpand) isDetailsPanelExpanded.value = false;
+  });
 
   function $reset() {
     selectedActivityId.value = null;
@@ -126,6 +138,7 @@ export const useEditorStore = defineStore('editor', () => {
     selectedContentElement,
     showPublishDiff,
     isDetailsPanelExpanded,
+    canExpandDetailsPanel,
     rootContainerGroups,
     contentContainers,
     guidelines,

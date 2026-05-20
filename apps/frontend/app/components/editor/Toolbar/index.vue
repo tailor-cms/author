@@ -94,7 +94,6 @@
 import { ActiveUsersGroup } from '@tailor-cms/core-components';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
-
 import { activity as activityApi } from '@/api';
 import ActivityActions from './ActivityActions.vue';
 import ActivityName from '@/components/common/ActivityName.vue';
