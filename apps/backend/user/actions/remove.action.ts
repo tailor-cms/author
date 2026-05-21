@@ -1,19 +1,14 @@
-import { z } from 'zod';
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
-import { IntParam } from '#shared/request/schemas.ts';
+import * as schemas from '../user.schema.ts';
 import * as service from '../user.service.ts';
 
 // DELETE /users/:id
 // Admin-driven user removal. Soft-delete via the model's paranoid mode.
 // `LastSystemAdminError` from the service maps to 409.
-const Params = z.object({
-  id: IntParam(),
-});
-
 export default defineAction({
-  params: Params,
+  params: schemas.RemoveParams,
   openapi: {
     summary: 'Remove a user (admin)',
     authenticated: true,

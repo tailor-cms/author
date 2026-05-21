@@ -4,6 +4,7 @@
     "lib": ["esnext"],
     "module": "ESNext",
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "resolveJsonModule": true,
     "strict": false,
     "strictNullChecks": true,

@@ -1,16 +1,11 @@
-import { z } from 'zod';
 import { defineAction } from '#shared/request/action.ts';
-import { IntParam } from '#shared/request/schemas.ts';
+import * as schemas from '../../repository.schema.ts';
 import * as service from '../../repository.service.ts';
 
 // DELETE /repositories/:repositoryId/user-group/:userGroupId
 // Unshares the repository from the given user group.
-const Params = z.object({
-  userGroupId: IntParam(),
-});
-
 export default defineAction({
-  params: Params,
+  params: schemas.RemoveUserGroupParams,
   openapi: {
     summary: 'Unshare a repository from a user group',
     authenticated: true,

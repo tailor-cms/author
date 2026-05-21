@@ -5,6 +5,7 @@
     "strict": false,
     "esModuleInterop": true,
     "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "skipLibCheck": true,
     "noUnusedLocals": true,
     "noImplicitAny": true,

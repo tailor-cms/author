@@ -24,6 +24,21 @@ const seedSourceRepository = async () => {
   return data.repository;
 };
 
+// Seed source pizza repo & create an empty target repo with "Target Module",
+// then link the source Module into it.
+const setupLinkedSourceModule = async (page: any) => {
+  const sourceRepo = await seedSourceRepository();
+  const targetRepo = await toEmptyRepository(page);
+  const targetOutline = new ActivityOutline(page);
+  const targetModule = await targetOutline.addRootItem(
+    outlineLevel.GROUP,
+    'Target Module',
+  );
+  const linkDialog = await targetModule.optionsMenu.linkContentInto();
+  await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
+  return { sourceRepo, targetRepo, targetOutline };
+};
+
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
 });
@@ -46,16 +61,16 @@ test('source activity rename propagates to linked copy', async ({ page }) => {
   await expect(targetItem.el).toContainText(newName);
 });
 
-test('source activity deletion unlinks copies', async ({ page }) => {
+test('source root delete unlinks target copy', async ({ page }) => {
   const { activity, linkedActivity } = await seedLinkedRepositories();
-  // Navigate to source and delete
   await toStructurePage(page, activity);
   const sourceOutline = new ActivityOutline(page);
   const { item: sourceItem } = await sourceOutline.expandAndSelect(
     activity.uid,
   );
   await sourceItem.optionsMenu.remove();
-  // Navigate to target, linked activity should no longer show indicator
+  // The target copy is the entry point of the link → survives as an
+  // independent activity, but the link indicator is gone.
   await toStructurePage(page, linkedActivity);
   const targetOutline = new ActivityOutline(page);
   const { sidebar } = await targetOutline.expandAndSelect(linkedActivity.uid);
@@ -102,13 +117,9 @@ test('clone preserves linked content fields', async ({ page }) => {
     description: 'Test clone',
   });
   // List activities in the cloned repository
-  const { data: activities } = await api.get(
-    `${clonedRepo.id}/activities/`,
-  );
+  const { data: activities } = await api.get(`${clonedRepo.id}/activities/`);
   // Find the cloned copy of the linked activity (by matching source)
-  const clonedLinked = activities.find(
-    (a: any) => a.sourceId === activity.id,
-  );
+  const clonedLinked = activities.find((a: any) => a.sourceId === activity.id);
   expect(clonedLinked).toBeDefined();
   expect(clonedLinked.isLinkedCopy).toBe(true);
   expect(clonedLinked.sourceModifiedAt).toBeDefined();
@@ -190,9 +201,7 @@ test('export and reimport strips linked content fields', async ({ page }) => {
   const importedRepo = repos.items.find((r: any) => r.name === importName);
   expect(importedRepo).toBeDefined();
   // List activities and verify linked fields are stripped
-  const { data: activities } = await api.get(
-    `${importedRepo.id}/activities/`,
-  );
+  const { data: activities } = await api.get(`${importedRepo.id}/activities/`);
   expect(activities.length).toBeGreaterThan(0);
   for (const activity of activities) {
     expect(activity.isLinkedCopy).toBeFalsy();
@@ -243,7 +252,8 @@ test('unlinking from editor toolbar enables editing', async ({ page }) => {
 });
 
 test('can navigate to source from editor toolbar', async ({ page }) => {
-  const { activity, repository, linkedActivity } = await seedLinkedRepositories();
+  const { activity, repository, linkedActivity } =
+    await seedLinkedRepositories();
   await toEditorPage(page, linkedActivity);
   const toolbar = new EditorToolbar(page);
   await toolbar.expectLinkedState();
@@ -256,6 +266,95 @@ test('can navigate to source from editor toolbar', async ({ page }) => {
   await outline.toggleExpand();
   const sourceItem = await outline.getOutlineItemByUid(activity.uid);
   await expect(sourceItem.el).toBeVisible();
+});
+
+// Once a source Module is linked into a target, any source-side addition
+// under that Module - including nested chains and deletions — should
+// appear in the target as a linked copy.
+test('source child create propagates to target', async ({ page }) => {
+  const newPageName = 'New Source Page';
+  const { sourceRepo, targetRepo, targetOutline } =
+    await setupLinkedSourceModule(page);
+  // Source: add a new Page under the seeded source Module.
+  await toStructurePage(page, { repositoryId: sourceRepo.id } as any);
+  const sourceOutline = new ActivityOutline(page);
+  await sourceOutline.toggleExpand();
+  const sourceModule = await sourceOutline.getOutlineItemByName(
+    outlineSeed.group.title,
+  );
+  await sourceModule.addInto(outlineLevel.LEAF, newPageName);
+  // Target: the new Page should appear as a linked copy.
+  await toStructurePage(page, { repositoryId: targetRepo.id } as any);
+  await targetOutline.toggleExpand();
+  const linkedNewPage = await targetOutline.getOutlineItemByName(newPageName);
+  await expect(linkedNewPage.linkIcon).toBeVisible();
+});
+
+test('source nested-tree create propagates to target', async ({ page }) => {
+  // Source: Module (linked) → new Submodule → new Nested Page.
+  const submoduleName = 'New Submodule';
+  const pageName = 'Nested Page';
+  const { sourceRepo, targetRepo, targetOutline } =
+    await setupLinkedSourceModule(page);
+  await toStructurePage(page, { repositoryId: sourceRepo.id } as any);
+  const sourceOutline = new ActivityOutline(page);
+  await sourceOutline.toggleExpand();
+  const sourceModule = await sourceOutline.getOutlineItemByName(
+    outlineSeed.group.title,
+  );
+  await sourceModule.addInto(outlineLevel.GROUP, submoduleName);
+  await sourceOutline.toggleExpand();
+  const submodule = await sourceOutline.getOutlineItemByName(submoduleName);
+  await submodule.addInto(outlineLevel.LEAF, pageName);
+  // Verify both levels propagated.
+  await toStructurePage(page, { repositoryId: targetRepo.id } as any);
+  await targetOutline.toggleExpand();
+  const linkedSubmodule =
+    await targetOutline.getOutlineItemByName(submoduleName);
+  await expect(linkedSubmodule.linkIcon).toBeVisible();
+  const linkedNestedPage =
+    await targetOutline.getOutlineItemByName(pageName);
+  await expect(linkedNestedPage.linkIcon).toBeVisible();
+});
+
+test('source nested delete cascades to target', async ({ page }) => {
+  const submoduleName = 'Temp Submodule';
+  const pageName = 'Temp Nested Page';
+  const { sourceRepo, targetRepo, targetOutline } =
+    await setupLinkedSourceModule(page);
+  // Build Submodule → Nested Page in source.
+  await toStructurePage(page, { repositoryId: sourceRepo.id } as any);
+  const sourceOutline = new ActivityOutline(page);
+  await sourceOutline.toggleExpand();
+  const sourceModule = await sourceOutline.getOutlineItemByName(
+    outlineSeed.group.title,
+  );
+  await sourceModule.addInto(outlineLevel.GROUP, submoduleName);
+  await sourceOutline.toggleExpand();
+  const submodule = await sourceOutline.getOutlineItemByName(submoduleName);
+  await submodule.addInto(outlineLevel.LEAF, pageName);
+  // Confirm initial propagation.
+  await toStructurePage(page, { repositoryId: targetRepo.id } as any);
+  await targetOutline.toggleExpand();
+  await expect(
+    (await targetOutline.getOutlineItemByName(submoduleName)).linkIcon,
+  ).toBeVisible();
+  // Delete the source Submodule.
+  await toStructurePage(page, { repositoryId: sourceRepo.id } as any);
+  await sourceOutline.toggleExpand();
+  const srcModuleTarget =
+    await sourceOutline.getOutlineItemByName(submoduleName);
+  await srcModuleTarget.select();
+  await srcModuleTarget.optionsMenu.remove();
+  // Linked item: both Submodule and Nested Page should be gone.
+  await toStructurePage(page, { repositoryId: targetRepo.id } as any);
+  await targetOutline.toggleExpand();
+  await expect(
+    page.locator('.activity').filter({ hasText: submoduleName }),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('.activity').filter({ hasText: pageName }),
+  ).toHaveCount(0);
 });
 
 test.afterAll(async () => {

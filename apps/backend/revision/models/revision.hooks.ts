@@ -2,21 +2,21 @@
 // ContentElement; appends an audit row to the Revision table. The
 // `context.userId` carried on the operation options identifies the
 // actor; ops without a userId are skipped (system-initiated changes).
-import type { ModelStatic, Transaction } from 'sequelize';
+import type { Transaction } from 'sequelize';
 import { constantCase } from '@tailor-cms/utils';
 import { createLogger } from '#logger';
 import forEach from 'lodash/forEach.js';
 import { Operation } from '@tailor-cms/interfaces/revision';
 import type { OperationContext } from '#shared/database/types.ts';
-import type { Repository } from '../../repository/models/repository.model.js';
+import type ActivityModel from '../../activity/models/activity.model.js';
+import type ContentElementModel
+  from '../../content-element/models/content-element.model.js';
+import type RepositoryModel from '../../repository/models/repository.model.js';
 
-// Subset of the `db` bag this slice actually uses. Activity and
-// ContentElement don't have their own .d.ts yet, so they fall back to
-// the generic `ModelStatic` shape;
 interface ModelsBag {
-  Repository: ModelStatic<Repository>;
-  Activity: ModelStatic<any>;
-  ContentElement: ModelStatic<any>;
+  Repository: typeof RepositoryModel;
+  Activity: typeof ActivityModel;
+  ContentElement: typeof ContentElementModel;
 }
 
 const castArray = <T>(arg: T | T[]): T[] => (Array.isArray(arg) ? arg : [arg]);

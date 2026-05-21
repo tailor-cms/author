@@ -12,3 +12,83 @@ packages:
   - 'extensions/plugins'
   - 'infrastructure'
   - 'config'
+# pnpm 11 made `pnpm deploy` refuse non-injected workspaces by default
+# (ERR_PNPM_DEPLOY_NONINJECTED_WORKSPACE). Our Dockerfile runs
+# `pnpm --filter=tailor-server --prod deploy /pruned-backend` over a
+# workspace whose deps are symlinked, so we opt into the legacy behaviour
+# here. Long term we could enable `injectWorkspacePackages: true` and
+# verify every workspace dep is injectable, but that's a separate audit.
+forceLegacyDeploy: true
+# Bypass pnpm 11's (24h) minimum release-age supply-chain check
+# for packages we trust by name (no version pin) or for specific fresh
+# patches we've already audited (version-pinned). Version-pinned entries
+# age out naturally; once an entry is >24h old, the global default
+# permits it without needing this list.
+# Add an entry when an install fails with `ERR_PNPM_PACKAGE_TOO_FRESH`
+# and the package is from a trusted upstream we've reviewed.
+minimumReleaseAgeExclude:
+  # PostgreSQL driver stack (pulled in by `pg` / Sequelize); upstream
+  # often ships patch releases together for the whole family.
+  - date-fns
+  - pg
+  - pg-cloudflare
+  - pg-connection-string
+  - pg-cursor
+  - pg-pool
+  - pg-protocol
+  - pg-query-stream
+  # AWS SDK v3 fan-out (each subpackage bumps in lockstep with the
+  # parent client). Pinned to the exact versions we last audited.
+  - '@aws-sdk/client-s3@3.1049.0'
+  - '@aws-sdk/core@3.974.12'
+  - '@aws-sdk/credential-provider-env@3.972.38'
+  - '@aws-sdk/credential-provider-http@3.972.40'
+  - '@aws-sdk/credential-provider-ini@3.972.42'
+  - '@aws-sdk/credential-provider-login@3.972.42'
+  - '@aws-sdk/credential-provider-node@3.972.43'
+  - '@aws-sdk/credential-provider-process@3.972.38'
+  - '@aws-sdk/credential-provider-sso@3.972.42'
+  - '@aws-sdk/credential-provider-web-identity@3.972.42'
+  - '@aws-sdk/lib-storage@3.1049.0'
+  - '@aws-sdk/middleware-bucket-endpoint@3.972.14'
+  - '@aws-sdk/middleware-flexible-checksums@3.974.20'
+  - '@aws-sdk/middleware-sdk-s3@3.972.41'
+  - '@aws-sdk/nested-clients@3.997.10'
+  - '@aws-sdk/s3-request-presigner@3.1049.0'
+  - '@aws-sdk/token-providers@3.1049.0'
+  - '@aws-sdk/util-format-url@3.972.14'
+  # TypeScript-ESLint linter chain bumped together.
+  - '@typescript-eslint/eslint-plugin@8.59.4'
+  - '@typescript-eslint/parser@8.59.4'
+  - '@typescript-eslint/project-service@8.59.4'
+  - '@typescript-eslint/scope-manager@8.59.4'
+  - '@typescript-eslint/tsconfig-utils@8.59.4'
+  - '@typescript-eslint/type-utils@8.59.4'
+  - '@typescript-eslint/types@8.59.4'
+  - '@typescript-eslint/typescript-estree@8.59.4'
+  - '@typescript-eslint/utils@8.59.4'
+  - '@typescript-eslint/visitor-keys@8.59.4'
+  # Singleton.
+  - '@pulumi/pulumi@3.241.0'
+# Allowlist of packages whose postinstall / build scripts pnpm 11 may run.
+# pnpm 11 blocks build scripts by default (supply-chain defense); each
+# entry below opts a specific package back in because we need its
+# native binary, downloaded asset, or generated artifact at install
+# time. Add an entry only after auditing what the script does.
+allowBuilds:
+  # Native libuv file watcher used by Nuxt/Vite hot reload pipeline.
+  '@parcel/watcher': true
+  # Headless browser bundle for Percy visual snapshot CLI.
+  '@percy/core': true
+  # Pulumi resource provider plugin downloads (required for `pulumi up`).
+  '@pulumi/docker': true
+  '@pulumi/docker-build': true
+  '@upstash/pulumi': true
+  # Postinstall sponsorship notice; harmless to allow.
+  aws-sdk: true
+  # Platform-specific esbuild binary download (required for builds).
+  esbuild: true
+  # Optional type generation for protobufjs.
+  protobufjs: true
+  # Native bindings build for unrs-resolver (used by Nuxt resolution).
+  unrs-resolver: true

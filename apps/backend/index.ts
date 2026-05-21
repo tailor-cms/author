@@ -1,45 +1,42 @@
 import type { Options as BoxenOptions } from 'boxen';
 import boxen from 'boxen';
-import { promisify } from 'node:util';
-import Promise from 'bluebird';
+import BluebirdPromise from 'bluebird';
 
-import app from './app.js';
+import app from './app.ts';
 import config from '#config';
 import contentPluginRegistry from '#shared/content-plugins/index.js';
-
-// NOTE: This needs to be done before db models get loaded!
-Promise.config({ longStackTraces: !config.isProduction });
-
-/* eslint-disable */
 import db from '#shared/database/index.js';
 import { createLogger } from '#logger';
-/* eslint-enable */
+
+// Bluebird long-stack-trace config (global for all bluebird instances).
+BluebirdPromise.config({ longStackTraces: !config.isProduction });
 
 const logger = createLogger();
-const runApp = promisify(app.listen.bind(app));
 
-db
-  .initialize()
+db.initialize()
   .then(() => logger.info('Database initialized'))
   .then(() => contentPluginRegistry.initialize())
-  .then(() => runApp(config.port))
+  .then(
+    () =>
+      new Promise<void>((resolve) => {
+        app.listen(Number(config.port), () => resolve());
+      }),
+  )
   .then(() => {
     logger.info(`Server listening on port ${config.port}`);
     welcome(config.packageName, config.packageVersion);
   })
-  .catch((err) => logger.error({ err }));
+  .catch((err: unknown) => logger.error({ err }));
 
-const message = (name, version) =>
+const message = (name: string | undefined, version: string | undefined) =>
   `
     ${name} v${version}
 
-    It's aliveeeee 🚀
+    It's aliveeeee 🚀 📄
 
-    📘  Readme: https://git.io/vxrlj
-    🐛  Report bugs: https://git.io/vxr8U
     `.trim();
 
-function welcome(name, version) {
+function welcome(name: string | undefined, version: string | undefined) {
   const options = {
     padding: 2,
     margin: 1,

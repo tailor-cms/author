@@ -1,6 +1,5 @@
-import { z } from 'zod';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import { Email } from '#shared/request/schemas.ts';
+import * as schemas from '../user.schema.ts';
 import * as service from '../user.service.ts';
 
 // POST /users/login
@@ -12,19 +11,13 @@ import * as service from '../user.service.ts';
 // This action's body schema documents the wire shape (and gates obvious
 // malformed bodies), while passport-local owns the actual credential
 // check. On success the chain hands `req.user` to this handler
-const Body = z.object({
-  email: Email(),
-  password: z.string().min(1),
-});
-export type LoginBody = z.infer<typeof Body>;
-
-async function handler({ user, req }: Ctx<{ body: typeof Body }>) {
+async function handler({ user, req }: Ctx<{ body: typeof schemas.LoginInput }>) {
   return service.profile(user, req.authData);
 }
 
 export default defineAction({
   raw: true,
-  body: Body,
+  body: schemas.LoginInput,
   openapi: {
     summary: 'Email + password login',
   },

@@ -1,11 +1,10 @@
-import type { ModelStatic } from 'sequelize';
 import forEach from 'lodash/forEach.js';
 import publishAccessService from '#shared/publishing/publish.access.service.js';
-import type { RepositoryUserGroup } from './repository-user-group.model.js';
+import type RepositoryUserGroupModel from './repository-user-group.model.js';
 import type { UserGroupMember } from './user-group-member.model.js';
 
 interface ModelsBag {
-  RepositoryUserGroup: ModelStatic<RepositoryUserGroup>;
+  RepositoryUserGroup: typeof RepositoryUserGroupModel;
 }
 
 type MemberHook = (hookType: string, instance: UserGroupMember) => unknown;

@@ -34,19 +34,18 @@ class LinkService {
     const { Activity, Repository, sequelize } = this.db;
     const source = await Activity.findByPk(sourceId, { include: [Repository] });
     if (!source) throw createError(NOT_FOUND, 'Source activity not found');
-    const opts = {
-      targetRepository,
-      parentId,
-      position,
-      isSameSchema: source.repository.schema === targetRepository.schema,
-      context,
-    };
     return sequelize.transaction(async (transaction) => {
       // Auto-unlink parent's linked tree if it's part of a linked hierarchy
       if (parentId) {
         await this.unlinkActivityIfLinked(parentId, context, transaction);
       }
-      return this.#cloneTree(source, { ...opts, transaction });
+      return this.cloneTree(source, {
+        targetRepository,
+        parentId,
+        position,
+        context,
+        transaction,
+      });
     });
   }
 
@@ -151,11 +150,21 @@ class LinkService {
   // ─────────────────────────────────────────────────────────────────
 
   /**
-   * Recursively clone activity and descendants with type mapping.
+   * Recursively clone an activity tree (activity + descendants + elements)
+   * into a target repository as linked copies.
    */
-  async #cloneTree(source, opts) {
+  async cloneTree(source, opts) {
     const { Activity } = this.db;
     const { targetRepository, parentId, position, context, transaction } = opts;
+    if (opts.isSameSchema === undefined) {
+      if (!source.repository) {
+        source.repository = await source.getRepository({ transaction });
+      }
+      opts = {
+        ...opts,
+        isSameSchema: source.repository.schema === targetRepository.schema,
+      };
+    }
     const targetType = await this.#resolveType(source.type, opts);
     // Mark as linkSync to prevent hooks from auto-unlinking the tree
     const linkContext = { ...context, linkSync: true };
@@ -188,7 +197,7 @@ class LinkService {
         // Mark child activities as nested to skip revision creation in hooks
         context: { ...context, isNestedLinkedContent: true },
       };
-      results.push(...(await this.#cloneTree(child, childOpts)));
+      results.push(...(await this.cloneTree(child, childOpts)));
     }
     return results;
   }

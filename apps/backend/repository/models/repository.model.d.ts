@@ -48,6 +48,7 @@ interface RepositoryAssociations {
   getUsers: BelongsToManyGetAssociationsMixin<User>;
   addTags: BelongsToManyAddAssociationsMixin<Tag, number>;
   getComments: HasManyGetAssociationsMixin<Comment>;
+  getActivities: HasManyGetAssociationsMixin<Activity>;
 }
 
 // Sequelize instance type for a Repository row. Composes the canonical

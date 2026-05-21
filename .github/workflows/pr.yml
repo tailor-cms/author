@@ -1,6 +1,6 @@
 name: PR checks
 env:
-  PLAYWRIGHT_VERSION: 1.59.1
+  PLAYWRIGHT_VERSION: 1.60.0
   APP_URL: http://localhost:3000
   MINIO_URL: http://localhost:4566
   # Force JS actions to run on Node 24 (most still bundle Node 20 which is
@@ -205,6 +205,25 @@ jobs:
             exit 0
           fi
           pnpm e2e:a11y --shard=$INDEX/$EFFECTIVE
+      # Cache Percy's bundled Chromium so we skip the GCS pull per shard.
+      # The revision must match @percy/core's bundled Chromium — bump the
+      # cache key and the download URL together when upgrading @percy/cli.
+      - name: Cache Percy Chromium
+        id: percy-chromium-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/percy-chromium
+          key: percy-chromium-1300309-${{ runner.os }}
+      - name: Download Percy Chromium
+        if: steps.percy-chromium-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          mkdir -p ~/percy-chromium
+          curl -fL --retry 5 --retry-delay 2 \
+            "https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1300309/chrome-linux.zip" \
+            -o /tmp/percy-chromium.zip
+          unzip -q /tmp/percy-chromium.zip -d ~/percy-chromium
+          rm /tmp/percy-chromium.zip
       - name: Run visual tests
         shell: bash
         env:
@@ -218,6 +237,9 @@ jobs:
             echo "Skip visual: shard $INDEX > $EFFECTIVE (specs: $SPECS)"
             exit 0
           fi
+          # Don't substitute Playwright's Chromium here — newer Chrome
+          # breaks Percy's render of localhost assets.
+          export PERCY_BROWSER_EXECUTABLE="$HOME/percy-chromium/chrome-linux/chrome"
           PERCY_PARALLEL_TOTAL=$EFFECTIVE \
             pnpm e2e:visual --shard=$INDEX/$EFFECTIVE
       - name: Upload file durations

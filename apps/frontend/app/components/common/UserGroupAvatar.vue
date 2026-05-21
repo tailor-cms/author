@@ -1,7 +1,7 @@
 <template>
   <VAvatar :size="size" color="primary">
     <VImg v-if="logoUrl" :src="logoUrl" alt="User group avatar" />
-    <VIcon v-else :color="placeholderColor" :icon="placeholderIcon" />
+    <VIcon v-else :color="placeholderColor" :icon="placeholderIcon" :size="size" />
   </VAvatar>
 </template>
 
@@ -10,7 +10,7 @@ interface Props {
   placeholderColor?: string;
   placeholderIcon?: string;
   logoUrl?: string;
-  size?: number;
+  size?: number | string;
 }
 
 withDefaults(defineProps<Props>(), {

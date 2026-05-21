@@ -1,8 +1,8 @@
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 
-import { isProduction } from '#config/runtime.js';
-import { logLevel } from '#config/logger.js';
+import { isProduction } from '#config/runtime.ts';
+import { logLevel } from '#config/logger.ts';
 
 const prettyTransport = {
   target: 'pino-pretty',

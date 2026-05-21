@@ -9,14 +9,14 @@ import { html } from './formatters.js';
 
 export { renderHtml, renderText };
 
-function renderHtml(templatePath, data, style) {
+async function renderHtml(templatePath, data, style) {
   const template = fs.readFileSync(templatePath, 'utf8');
   const $ = cheerio.load(template, { xmlMode: true });
   const $style = $('mj-attributes');
   $style.append(getAttributes($, style));
   const opts = { filePath: templatePath, minify: true };
   const mustacheOutput = mustache.render($.html(), data);
-  const output = mjml2html(mustacheOutput, opts).html;
+  const { html: output } = await mjml2html(mustacheOutput, opts);
   // NOTE: Additional `mustache.render` call handles mustache syntax within mjml
   // subcomponents. Subcomponents' mustache syntax is removed by `mjml2html` if
   // placed outside of tag attribute or mj-text tag.

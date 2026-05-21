@@ -5,7 +5,9 @@ import * as actions from './actions/index.ts';
 import { canEdit, getComment } from './middleware.ts';
 import { createActionMounter } from '#shared/request/action.ts';
 
-const router = express.Router();
+// `mergeParams: true` so the parent's `:repositoryId` propagates into
+// `req.params`
+const router = express.Router({ mergeParams: true });
 
 const mount = createActionMounter(
   router,

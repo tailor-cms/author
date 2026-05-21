@@ -1,5 +1,5 @@
 import { createLogger } from '#logger';
-import { isFlatPublishingStructure } from '#config/general.js';
+import { isFlatPublishingStructure } from '#config/general.ts';
 
 export const PublishEnv = {
   DRAFT: 'draft',

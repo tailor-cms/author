@@ -6,6 +6,16 @@
     @click="onClick"
     @mousedown="onMousedown"
   >
+    <div class="metadata-container">
+      <div
+        :class="{ 'metadata-collapse--open': isMetadataPanelShown }"
+        class="metadata-collapse"
+      >
+        <div class="metadata-collapse__inner">
+          <ActivityMetadata :activity="activity" />
+        </div>
+      </div>
+    </div>
     <div class="content-containers-wrapper">
       <ContentLoader v-if="isLoading" class="loader" />
       <VAlert
@@ -16,15 +26,9 @@
         variant="tonal"
         prominent
       >
-        This is a linked {{ activityLabel }} without content. The source has
-        not been edited yet. Content will appear here once the source is
-        updated.
+        This is a linked {{ activityLabel }} without content. The source has not
+        been edited yet. Content will appear here once the source is updated.
       </VAlert>
-      <ActivityMetadata
-        v-if="!isEmptyLinkedActivity && !showPublishDiff"
-        v-show="!isLoading"
-        :activity="activity"
-      />
       <PublishDiffProvider
         v-if="editorStore?.selectedActivity && !isEmptyLinkedActivity"
         v-show="!isLoading"
@@ -174,12 +178,19 @@ const mousedownInsideElement = ref(false);
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
 
-const activityLabel = computed(
-  () => $schemaService.getLevel(props.activity?.type)?.label?.toLowerCase(),
+const activityLabel = computed(() =>
+  $schemaService.getLevel(props.activity?.type)?.label?.toLowerCase(),
 );
 
 const isEmptyLinkedActivity = computed(
-  () => !isLoading.value && props.activity?.isLinkedCopy && !containerIds.value.length,
+  () =>
+    !isLoading.value &&
+    props.activity?.isLinkedCopy &&
+    !containerIds.value.length,
+);
+
+const isMetadataPanelShown = computed(
+  () => !isLoading.value && editorStore.isDetailsPanelExpanded,
 );
 
 const elements = computed(() => contentElementStore.items);
@@ -363,6 +374,15 @@ watch(showPublishDiff, (isOn) => {
   editorChannel.emit(CE_FOCUS_EVENT);
 });
 
+watch(
+  () => editorStore.isDetailsPanelExpanded,
+  async (isExpanded) => {
+    if (!isExpanded) return;
+    await nextTick();
+    activityContentEl.value?.scrollTo({ top: 0, behavior: 'smooth' });
+  },
+);
+
 watch(collaboratorSelections, (val, prevVal) => {
   if (isLoading.value || isEqual(val, prevVal)) return;
   const selectionComparator = (it: any) => `${it.elementId}-${it.id}`;
@@ -395,15 +415,34 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .activity-content {
   min-height: 100%;
-  padding: 1.5rem;
-  overflow-y: scroll;
-  overflow-y: overlay;
-  overflow-x: hidden;
+  overflow-y: auto;
+}
 
-  .content-containers-wrapper {
-    max-width: 68.75rem;
-    margin: auto;
+.metadata-container {
+  max-width: 69.25rem;
+  margin: auto;
+}
+
+.metadata-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 220ms ease;
+
+  &--open {
+    grid-template-rows: 1fr;
   }
+
+  &__inner {
+    min-height: 0;
+    overflow: hidden;
+    transition: border-color 220ms ease;
+  }
+}
+
+.content-containers-wrapper {
+  max-width: 68.75rem;
+  margin: auto;
+  padding: 1.5rem;
 }
 
 .loader {
