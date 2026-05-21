@@ -342,7 +342,9 @@ test('source nested delete cascades to target', async ({ page }) => {
   // Delete the source Submodule.
   await toStructurePage(page, { repositoryId: sourceRepo.id } as any);
   await sourceOutline.toggleExpand();
-  const srcModuleTarget = await sourceOutline.getOutlineItemByName(submoduleName);
+  const srcModuleTarget =
+    await sourceOutline.getOutlineItemByName(submoduleName);
+  await srcModuleTarget.select();
   await srcModuleTarget.optionsMenu.remove();
   // Linked item: both Submodule and Nested Page should be gone.
   await toStructurePage(page, { repositoryId: targetRepo.id } as any);
