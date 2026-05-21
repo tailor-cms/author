@@ -51,6 +51,27 @@ class LinkService {
   }
 
   /**
+   * Clone a source activity (and its descendants + elements) into a target
+   * parent activity. Used by hooks to propagate creates from a source onto its
+   * linked copies. Reuses the same cloning path as initial linking, including
+   * cross-schema type resolution and link metadata.
+   */
+  async cloneActivityInto(source, targetRepository, parentId, position, opts) {
+    const { context, transaction } = opts;
+    if (!source.repository) {
+      source.repository = await source.getRepository({ transaction });
+    }
+    return this.#cloneTree(source, {
+      targetRepository,
+      parentId,
+      position,
+      isSameSchema: source.repository.schema === targetRepository.schema,
+      context,
+      transaction,
+    });
+  }
+
+  /**
    * Unlink an activity from its source.
    * Converts linked copy to independent local copy.
    * Keeps sourceId for provenance but stops auto-sync updates.
