@@ -173,7 +173,7 @@ const usersWithActivity = computed(() => {
 
 <style lang="scss" scoped>
 .toolbar-wrapper {
-  :deep(.v-toolbar__content) {
+  > :deep(.v-toolbar__content) {
     height: auto !important;
     min-height: 4rem;
     padding: 0;
