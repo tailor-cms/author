@@ -202,16 +202,13 @@ function add(Activity: typeof ActivityModel, Hooks: any, Models: ModelsBag) {
         to ${linkedParents.length} linked parents`,
       );
       for (const linkedParent of linkedParents) {
-        await linkService.cloneActivityInto(
-          activity,
-          linkedParent.repository,
-          linkedParent.id,
-          activity.position,
-          {
-            context: { ...opts.context, repository: linkedParent.repository },
-            transaction: opts.transaction,
-          },
-        );
+        await linkService.cloneTree(activity, {
+          targetRepository: linkedParent.repository,
+          parentId: linkedParent.id,
+          position: activity.position,
+          context: { ...opts.context, repository: linkedParent.repository },
+          transaction: opts.transaction,
+        });
       }
     } catch (err) {
       logger.error({ err }, 'Error propagating activity creation');

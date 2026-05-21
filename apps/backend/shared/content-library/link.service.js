@@ -34,40 +34,18 @@ class LinkService {
     const { Activity, Repository, sequelize } = this.db;
     const source = await Activity.findByPk(sourceId, { include: [Repository] });
     if (!source) throw createError(NOT_FOUND, 'Source activity not found');
-    const opts = {
-      targetRepository,
-      parentId,
-      position,
-      isSameSchema: source.repository.schema === targetRepository.schema,
-      context,
-    };
     return sequelize.transaction(async (transaction) => {
       // Auto-unlink parent's linked tree if it's part of a linked hierarchy
       if (parentId) {
         await this.unlinkActivityIfLinked(parentId, context, transaction);
       }
-      return this.#cloneTree(source, { ...opts, transaction });
-    });
-  }
-
-  /**
-   * Clone a source activity (and its descendants + elements) into a target
-   * parent activity. Used by hooks to propagate creates from a source onto its
-   * linked copies. Reuses the same cloning path as initial linking, including
-   * cross-schema type resolution and link metadata.
-   */
-  async cloneActivityInto(source, targetRepository, parentId, position, opts) {
-    const { context, transaction } = opts;
-    if (!source.repository) {
-      source.repository = await source.getRepository({ transaction });
-    }
-    return this.#cloneTree(source, {
-      targetRepository,
-      parentId,
-      position,
-      isSameSchema: source.repository.schema === targetRepository.schema,
-      context,
-      transaction,
+      return this.cloneTree(source, {
+        targetRepository,
+        parentId,
+        position,
+        context,
+        transaction,
+      });
     });
   }
 
@@ -172,11 +150,21 @@ class LinkService {
   // ─────────────────────────────────────────────────────────────────
 
   /**
-   * Recursively clone activity and descendants with type mapping.
+   * Recursively clone an activity tree (activity + descendants + elements)
+   * into a target repository as linked copies.
    */
-  async #cloneTree(source, opts) {
+  async cloneTree(source, opts) {
     const { Activity } = this.db;
     const { targetRepository, parentId, position, context, transaction } = opts;
+    if (opts.isSameSchema === undefined) {
+      if (!source.repository) {
+        source.repository = await source.getRepository({ transaction });
+      }
+      opts = {
+        ...opts,
+        isSameSchema: source.repository.schema === targetRepository.schema,
+      };
+    }
     const targetType = await this.#resolveType(source.type, opts);
     // Mark as linkSync to prevent hooks from auto-unlinking the tree
     const linkContext = { ...context, linkSync: true };
@@ -209,7 +197,7 @@ class LinkService {
         // Mark child activities as nested to skip revision creation in hooks
         context: { ...context, isNestedLinkedContent: true },
       };
-      results.push(...(await this.#cloneTree(child, childOpts)));
+      results.push(...(await this.cloneTree(child, childOpts)));
     }
     return results;
   }
