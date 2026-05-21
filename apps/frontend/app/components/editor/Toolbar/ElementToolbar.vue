@@ -3,6 +3,7 @@
     :key="id"
     class="element-toolbar-wrapper d-flex align-center justify-center"
     color="transparent"
+    border="b"
   >
     <template v-if="componentExists">
       <component
