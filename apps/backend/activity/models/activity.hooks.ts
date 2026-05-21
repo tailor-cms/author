@@ -216,11 +216,11 @@ function add(Activity: typeof ActivityModel, Hooks: any, Models: ModelsBag) {
   }
 
   /**
-   * Propagate a source activity deletion to all linked copies.
-   *
-   * Uses the same `recursive: true, soft: true` options as the user-facing
-   * `service.remove` (see `activity.service.ts` -> `remove`) so the cascade
-   * is **indistinguishable from a manual delete and is fully revertable.
+   * Cascade source delete to nested linked copies only. Entry-point copies
+   * (target's parent is not itself a linked copy) fall through to
+   * `unlinkCopiesOnDelete` and become independent — link dissolved, target
+   * content preserved. Uses `recursive + soft` so the cascade matches a
+   * manual delete and stays revertable.
    */
   async function propagateActivityDeletion(
     _hookType: string,
@@ -232,11 +232,30 @@ function add(Activity: typeof ActivityModel, Hooks: any, Models: ModelsBag) {
     try {
       const linkedCopies = await findActiveLinkedCopies(activity.id);
       if (!linkedCopies.length) return;
-      log(
-        `Propagating activity ${activity.id} deletion
-        to ${linkedCopies.length} linked copies`,
+      // Filter to nested copies; entry-point (root) copies fall through to
+      // `unlinkCopiesOnDelete` and become independent.
+      const parentIds = [
+        ...new Set(linkedCopies.map((c) => c.parentId).filter(Boolean)),
+      ] as number[];
+      const linkedParentIds = new Set<number>(
+        parentIds.length
+          ? (
+              await Activity.unscoped().findAll({
+                where: { id: parentIds, isLinkedCopy: true },
+                attributes: ['id'],
+              })
+            ).map((p) => p.id)
+          : [],
       );
-      for (const copy of linkedCopies) {
+      const nested = linkedCopies.filter(
+        (c) => c.parentId != null && linkedParentIds.has(c.parentId),
+      );
+      if (!nested.length) return;
+      log(
+        `Cascading activity ${activity.id} deletion
+        to ${nested.length} nested linked copies`,
+      );
+      for (const copy of nested) {
         await copy.remove({
           recursive: true,
           soft: true,
