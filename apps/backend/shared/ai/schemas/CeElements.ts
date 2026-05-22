@@ -56,17 +56,14 @@ export const getPrompt = (context: AiContext) => {
   return `
     Generate content elements as a JSON object with an "elements" array.
     Each element has a "type" field and type-specific data fields.
-    Allowed element types: ${typeList}.
-    Mix element types so the result holds together as a unit.
-    Reach for the primary forms first:
-    - Prose / narrative / explanation: TIPTAP_HTML.
-    - Comprehension checks: pick the question type that fits the
-      idea - MULTIPLE_CHOICE / SINGLE_CHOICE for distinctions,
-      TRUE_FALSE for facts, SHORT_ANSWER / TEXT_RESPONSE for
-      open-ended. Each has its own schema in the supported types
-      list above; only types in that list are valid.
-    Place questions after teaching a concept (not as a quiz dump),
-    one per major idea, with clear options and plausible distractors.
+    Allowed element types: ${typeList}. Only these are valid - each has
+    its own schema.
+    Use a text element for prose and explanation, and mix in the other
+    allowed types so the result holds together as a unit.
+    When the allowed types include question elements, place one after
+    teaching a concept (not as a quiz dump), one per major idea, choosing
+    the question type that best fits it, with clear options and plausible
+    distractors.
   `;
 };
 
