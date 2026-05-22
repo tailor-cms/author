@@ -1,12 +1,13 @@
-import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
+import type {
+  AiContext,
+  ReasoningEffortLiteral,
+} from '@tailor-cms/interfaces/ai.ts';
 
 export interface OpenAISchema {
   type: 'json_schema';
   name: string;
   schema: Record<string, unknown>;
 }
-
-export type ReasoningEffort = 'minimal' | 'low' | 'medium' | 'high';
 
 export interface AiResponseSpec {
   // Prompt used to describe the response structure
@@ -23,5 +24,5 @@ export interface AiResponseSpec {
   // Reasoning effort override for the OpenAI Responses API.
   // Only applied on reasoning-capable models (gpt-5, o-series).
   // Omit to use the model's default ("medium" on reasoning models).
-  reasoningEffort?: ReasoningEffort;
+  reasoningEffort?: ReasoningEffortLiteral;
 }

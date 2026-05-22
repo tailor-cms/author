@@ -1,7 +1,6 @@
 // Schema-driven lookups via the config-parser API.
 import type { Schema } from '@tailor-cms/interfaces/schema';
-import { schema as schemaAPI } from '@tailor-cms/config';
-import { processElementConfig } from '@tailor-cms/config-parser';
+import { processElementConfig, schema as schemaAPI } from '@tailor-cms/config';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import PluginRegistry from '#shared/content-plugins/index.js';
 

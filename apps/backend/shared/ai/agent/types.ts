@@ -3,6 +3,7 @@ import type {
   AgentPendingQuestion,
   FocusedTarget,
 } from '@tailor-cms/interfaces/agent.ts';
+import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
 import type { RequestHandler, Response } from 'express';
 
 import type { AgentSession } from './session/index.ts';
@@ -47,7 +48,7 @@ export interface RunInput {
   focus?: FocusedTarget[];
   // Optional reasoning effort - applied only when the configured model
   // accepts the `reasoning.effort` parameter (gpt-5 / o-series).
-  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
+  reasoningEffort?: ReasoningEffortLiteral;
 }
 
 // Structured error envelope every failed tool call produces. Mode-denied,

@@ -6,6 +6,7 @@
 //      append a function_call_output item to history
 //   4. Loop until no more tool calls or maxTurns hit
 import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
+import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
 import { oneLine } from 'common-tags';
 import OpenAI from 'openai';
 import { ai as aiConfig } from '#config';
@@ -87,7 +88,7 @@ interface RunState {
   invalidates: Set<string>;
   // Per-run reasoning effort. Applied only when the configured model
   // supports the `reasoning.effort` parameter.
-  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
+  reasoningEffort?: ReasoningEffortLiteral;
 }
 
 export class AgentRunner {
@@ -359,7 +360,7 @@ export class AgentRunner {
     systemPrompt: string,
     history: ApiItem[],
     tools: any[],
-    reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high',
+    reasoningEffort?: ReasoningEffortLiteral,
   ): Promise<{ output: ApiItem[]; error?: string }> {
     try {
       // Gate the reasoning param: passing it to a non-reasoning model

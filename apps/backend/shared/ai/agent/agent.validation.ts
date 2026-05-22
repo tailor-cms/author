@@ -1,5 +1,6 @@
 import { AGENT_MODES } from '@tailor-cms/interfaces/agent.ts';
 import { Entity } from '@tailor-cms/interfaces/revision.ts';
+import { REASONING_EFFORTS } from '@tailor-cms/interfaces/ai.ts';
 import { body, param } from 'express-validator';
 import defineRequestValidator from '#shared/request/validation.js';
 
@@ -14,8 +15,6 @@ export const create = defineRequestValidator([
 ]);
 
 export const remove = defineRequestValidator(sessionPathParams);
-
-const REASONING_EFFORTS = ['minimal', 'low', 'medium', 'high'];
 
 export const run = defineRequestValidator([
   body('sessionId').isUUID().optional(),

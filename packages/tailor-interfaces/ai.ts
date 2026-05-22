@@ -27,6 +27,19 @@ export enum AiResponseSchema {
 
 export type AiResponseSchemaLiteral = `${AiResponseSchema}`;
 
+// Reasoning effort for the OpenAI Responses API. Only applied on
+// reasoning-capable models (gpt-5, o-series); omit for the model default.
+export enum ReasoningEffort {
+  Minimal = 'minimal',
+  Low = 'low',
+  Medium = 'medium',
+  High = 'high',
+}
+
+export type ReasoningEffortLiteral = `${ReasoningEffort}`;
+
+export const REASONING_EFFORTS = Object.values(ReasoningEffort);
+
 export interface AiInput {
   type: AiRequestTypeLiteral;
   text: string;
