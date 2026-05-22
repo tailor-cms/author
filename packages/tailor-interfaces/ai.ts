@@ -90,4 +90,6 @@ export interface ImageDescription {
   qualityIssues: string[];
   relevanceScore: number;
   contentSuggestion: string;
+  // true ONLY if the image carries real instructional content
+  isInformative: boolean;
 }

@@ -1,3 +1,4 @@
+import omit from 'lodash/omit.js';
 import { oneLine, stripIndent } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import db from '#shared/database/index.js';
@@ -68,7 +69,12 @@ const parameters = {
           },
           name: {
             type: 'string',
-            description: 'Display name for the activity.',
+            minLength: 1,
+            description: oneLine`
+              Display name for the activity. Must be a non-empty,
+              human-readable label - never an empty string,
+              "Untitled", or a placeholder.
+            `,
           },
           _parentName: {
             type: ['string', 'null'],
@@ -125,62 +131,57 @@ async function createNode(
   activityByName: Map<string, any>,
   ctx: ToolContext,
 ): Promise<{ activity: any } | { error: NodeError }> {
-  const type = resolveOutlineType(ctx.repository.schema, item.type);
-  if (!type || !api.isOutlineActivity(type)) {
+  const name = item.name?.trim();
+  if (!name) {
     return {
       error: {
-        name: item.name,
-        error: `"${item.type}" is not an outline activity type.`,
+        name: '(blank)',
+        error: oneLine`
+          Activity name is required and must be non-empty.
+          Re-emit the entry with a descriptive name.
+        `,
       },
     };
+  }
+  const fail = (error: string) => ({ error: { name, error } });
+  const type = resolveOutlineType(ctx.repository.schema, item.type);
+  if (!type || !api.isOutlineActivity(type)) {
+    return fail(`"${item.type}" is not an outline activity type.`);
   }
 
   const outlineConfig = api.getLevel(type);
-  // Resolve parent from already-created activities
+  // Find the parent among activities already created in this batch.
+  // Both names are trimmed, so stray spaces around a name still match.
   let parentId: number | null = null;
   if (item._parentName) {
-    const parent = activityByName.get(item._parentName);
-    if (!parent) {
-      return {
-        error: {
-          name: item.name,
-          error: `Parent "${item._parentName}" not found.`,
-        },
-      };
-    }
+    const parent = activityByName.get(item._parentName.trim());
+    if (!parent) return fail(`Parent "${item._parentName}" not found.`);
     parentId = parent.id;
     const violation = validateSubLevel(parent.type, type);
-    if (violation) {
-      return { error: { name: item.name, error: violation } };
-    }
+    if (violation) return fail(violation);
   } else if (outlineConfig && !outlineConfig.rootLevel) {
-    return {
-      error: {
-        name: item.name,
-        error: `"${item.type}" cannot be a root-level activity.`,
-      },
-    };
+    return fail(`"${item.type}" cannot be a root-level activity.`);
   }
+
   const position = await nextPosition(ctx.repository.id, parentId);
-  const { type: _type, _parentName: _parent, name, ...meta } = item;
+  const meta = omit(item, ['type', 'name', '_parentName']);
   try {
     const activity = await Activity.create(
       {
         type,
         parentId,
         position,
-        data: {
-          ...(outlineConfig?.defaultMeta ?? {}),
-          name,
-          ...meta,
-        },
+        data: { ...(outlineConfig?.defaultMeta ?? {}), name, ...meta },
         repositoryId: ctx.repository.id,
       },
       { context: dbContext(ctx) },
     );
+    // Register under the canonical (trimmed) name so later siblings
+    // and children resolve it via _parentName.
+    activityByName.set(name, activity);
     return { activity };
   } catch (err: any) {
-    return { error: { name: item.name, error: err.message } };
+    return fail(err.message);
   }
 }
 
@@ -211,7 +212,6 @@ async function execute(input: Input, ctx: ToolContext) {
     if ('error' in result) {
       errors.push(result.error);
     } else {
-      activityByName.set(item.name, result.activity);
       created.push(summarizeActivity(result.activity));
     }
   }

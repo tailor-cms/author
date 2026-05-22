@@ -253,14 +253,9 @@ const SectionConfig: ContentContainerConfig = {
     definition: 'Sections are a way to organize content within a Page.',
     outputRules: {
       prompt: `
-        - Split the content contextually to couple of { "content": "" } blocks
-          based on the context. Headings might be a good place to split.
-          Dont include more than 3 headings.
-        - Use at least 1000 words and don't exceed 2000 words.
-        - Format the content as a HTML with suitable tags and headings.
-        You are trying to teach the audience, so make sure the content is easy to
-        understand, has a friendly tone and is engaging to the reader.
-        Make sure to include the latest relevant information on the topic.`,
+        - You are trying to teach the audience, so make sure the content is easy
+          to understand, has a friendly tone and is engaging to the reader.
+        - Make sure to include the latest relevant information on the topic.`,
     },
   },
 };
@@ -293,11 +288,6 @@ const AssessmentPoolConfig: ContentContainerConfig = {
       various types of questions and are designed to provide comprehensive
       feedback.`,
     outputRules: {
-      prompt: `
-      - Format the 'question' content and 'feedback' content as a HTML with
-        suitable tags.
-      - Unlike 'question' and 'feeback' which are HTML content, 'hint' should
-        be plaintext.`,
       isAssessment: true,
     },
   },

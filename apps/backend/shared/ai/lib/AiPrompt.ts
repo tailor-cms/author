@@ -4,6 +4,7 @@ import type {
 } from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
 import { oneLine, stripIndent } from 'common-tags';
+import { ContentMode } from '@tailor-cms/interfaces/schema.ts';
 import { schema as schemaConfiguration } from '@tailor-cms/config';
 
 import getContentSchema from '../schemas/index.ts';
@@ -39,29 +40,29 @@ const systemPrompt = stripIndent`
 
 // Per-mode shape line. Picked from schema.ai.contentMode and
 // folded into the universal authoring rules at request time.
-const SHAPE_BY_MODE: Record<string, string> = {
-  pedagogical: oneLine`
+const SHAPE_BY_MODE: Record<ContentMode, string> = {
+  [ContentMode.Pedagogical]: oneLine`
     Pedagogical content shape. Teach the audience: clear
     explanations, progressive complexity, practical examples, and
     assessment where the host accepts question elements. Mix text,
     media, and checks purposefully.
   `,
-  reference: oneLine`
+  [ContentMode.Reference]: oneLine`
     Reference content shape. Stay terse and scannable: lookup-first,
     lists and tables over walls of prose, no padding, no greeting or
     framing sentences. Bold key terms.
   `,
-  editorial: oneLine`
+  [ContentMode.Editorial]: oneLine`
     Editorial content shape. Journalistic / newsletter voice: lead
     with what is interesting, attribute claims, vary sentence rhythm.
     No textbook framing or learning objectives.
   `,
-  narrative: oneLine`
+  [ContentMode.Narrative]: oneLine`
     Narrative content shape. Story, scene, dialogue. Visuals are
     artist directions in prose unless an asset is clearly meant to
     be embedded. No learning-objective framing.
   `,
-  analytical: oneLine`
+  [ContentMode.Analytical]: oneLine`
     Analytical content shape. Every claim is falsifiable and either
     quotes a source asset, names what it is inferred from, or marks
     itself synthesized. Comparisons render as tables (criteria x
@@ -74,8 +75,8 @@ const SHAPE_BY_MODE: Record<string, string> = {
 
 // Build the universal authoring rules. Mode-specific content shape
 // is injected from the schema; the rest applies to every path.
-function buildAuthoringRules(contentMode: string): string {
-  const shape = SHAPE_BY_MODE[contentMode] || SHAPE_BY_MODE.pedagogical;
+function buildAuthoringRules(contentMode: ContentMode): string {
+  const shape = SHAPE_BY_MODE[contentMode] || SHAPE_BY_MODE[ContentMode.Pedagogical];
   return stripIndent`
     Authoring rules (apply to every element you produce or rewrite):
     - No fixed length unless explicitly requested. Match the medium
@@ -94,13 +95,13 @@ function buildAuthoringRules(contentMode: string): string {
 // Read the schema's declared contentMode (defaults to pedagogical).
 // Lives at the top-level Schema config; per-container outputRules
 // can still override on top of this baseline.
-function resolveContentMode(schemaId: string | undefined): string {
-  if (!schemaId) return 'pedagogical';
+function resolveContentMode(schemaId: string | undefined): ContentMode {
+  if (!schemaId) return ContentMode.Pedagogical;
   try {
     const schema = (schemaConfiguration as any).getSchema(schemaId);
-    return schema?.ai?.contentMode || 'pedagogical';
+    return schema?.ai?.contentMode || ContentMode.Pedagogical;
   } catch {
-    return 'pedagogical';
+    return ContentMode.Pedagogical;
   }
 }
 

@@ -75,6 +75,20 @@ const LessonContentContainer: ContentContainerConfig = {
   type: ActivityType.LessonContent,
   label: 'Lesson content',
   displayHeading: true,
+  ai: {
+    definition: `
+      The main teaching surface for a Lesson, where its mixed-media
+      content lives.`,
+    outputRules: {
+      prompt: `
+        - Partner training shape: practical, applied teaching
+          aimed at adult professionals.
+        - Match each subcontainer to its medium rather than forcing
+          everything into written prose.
+        - Each subcontainer covers one focused idea. Be concrete and
+          example-led; lean on real workplace situations.`,
+    },
+  },
   config: {
     [ActivityType.Section]: {
       label: 'Section',
@@ -179,6 +193,19 @@ const RelatedContentContainer: ContentContainerConfig = {
   type: ActivityType.RelatedContent,
   label: 'Related external content',
   displayHeading: true,
+  ai: {
+    definition: `
+      Curated pointers to outside articles and webinars relevant to
+      the lesson.`,
+    outputRules: {
+      prompt: `
+        - Each entry is a pointer, not a body of content: fill the
+          meta fields rather than writing a body; the renderer
+          surfaces the link as a card.
+        - Description is one or two sentences explaining why the
+          resource is worth the learner's time. No teaser fluff.`,
+    },
+  },
   config: {
     [ActivityType.RelatedArticle]: {
       label: 'Article',
@@ -220,8 +247,10 @@ const ModuleConfig: ActivityConfig = {
   subLevels: [ActivityType.Lesson],
   ai: {
     definition: `
-      Modules are a way to organize knowledge into chunks that are easier to
-      understand and learn`,
+      Modules group Lessons into a coherent learning path for the
+      partner audience. A Module sets the theme; the Lessons
+      inside teach the individual skills. Geared toward applied
+      professional learning, not academic study.`,
   },
   meta: [
     {
@@ -258,7 +287,10 @@ const LessonConfig: ActivityConfig = {
   label: 'Lesson',
   ai: {
     definition: `
-      Lessons contain the actual content that the user will interact with.`,
+      A Lesson is the unit a partner actually completes: one
+      focused skill or topic taught with mixed media (sections,
+      video, podcast, scenario). Concludes with related external
+      content and key takeaways.`,
   },
   color: '#08A9AD',
   contentContainers: [

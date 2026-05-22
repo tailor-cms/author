@@ -3,6 +3,7 @@ import type {
   ContentContainerConfig,
   Schema,
 } from '@tailor-cms/interfaces/schema';
+import { ContentMode } from '@tailor-cms/interfaces/schema';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
@@ -57,8 +58,10 @@ const RESPONSE: ContentContainerConfig = {
       related to.`,
     outputRules: {
       prompt: `
-        Try to answer the questions as clearly as possible.
-        Response text should be in HTML format.`,
+        - Direct answer first, in 1-2 sentences. No preamble, no
+          "Great question!" framing, no restating the question.
+        - Elaborate only when it adds clarity (steps, edge cases,
+          worked examples). When elaboration adds nothing, stop.`,
     },
   },
 };
@@ -69,6 +72,7 @@ export const SCHEMA: Schema = {
     'A structured Q&A repository with organized categories and questions.',
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Q&A',
+  ai: { contentMode: ContentMode.Reference },
   structure: [CATEGORY, QUESTION],
   contentContainers: [RESPONSE],
 };

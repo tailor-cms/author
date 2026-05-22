@@ -22,7 +22,11 @@ const COLLECTION: ActivityConfig = {
   color: '#9C27B0',
   subLevels: [ActivityType.Item],
   ai: {
-    definition: 'Collections organize reusable content items in the library.',
+    definition: `
+      Collections group reusable Library Items by theme or domain.
+      A Collection is purely organizational - it has no body
+      content; the Items inside hold the reusable material that
+      other repositories link to.`,
   },
 };
 
@@ -57,10 +61,15 @@ const SECTION: ContentContainerConfig = {
     definition: 'Content section of a library item.',
     outputRules: {
       prompt: `
-        - Create educational content that can be reused across multiple courses.
-        - Format the content as HTML with suitable tags and headings.
-        - Make the content modular and self-contained.
-        - Use clear, concise language suitable for reuse in different contexts.`,
+        - Library shape: this content will be linked into multiple
+          repositories with different surrounding contexts. Keep
+          it modular and self-contained: no references to "this
+          course" / "the previous module" / repository-specific
+          examples.
+        - Lead with the concept itself; let the host repository
+          frame why it matters.
+        - Clear, concise language that reads naturally inserted
+          into any pedagogical context.`,
     },
   },
 };

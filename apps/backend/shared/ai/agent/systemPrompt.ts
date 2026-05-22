@@ -490,8 +490,8 @@ function formatContainerPurpose(c: any): string {
 // the situation to the user instead of retrying the same call.
 function modeRules(mode: AgentMode): string {
   switch (mode) {
-  case AgentMode.Edit:
-    return oneLine`
+    case AgentMode.Edit:
+      return oneLine`
       All tool calls are allowed - read, write, generate, and
       destructive (delete_*). Mutations are tracked in the
       session's transactionLog and most are recoverable
@@ -499,8 +499,8 @@ function modeRules(mode: AgentMode): string {
       for approval; only stop to ask when the request itself is
       ambiguous.
     `;
-  case AgentMode.Inspect:
-    return oneLine`
+    case AgentMode.Inspect:
+      return oneLine`
       Only read tools (get_*, list_*, ask_user_question) run.
       All write, generate, and destructive tools are BLOCKED.
       Use reads to investigate, then summarise a plan and ask
