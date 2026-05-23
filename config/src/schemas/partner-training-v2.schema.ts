@@ -110,7 +110,9 @@ const TopicConfig: ActivityConfig = {
   meta: [...outlineMeta],
   ai: {
     definition: `
-      Topics contain the actual content that the user will interact with.`,
+      A Topic is one microlearning unit. Sections inside a Topic
+      stitch together into a single cohesive lesson - covering
+      one focused idea end-to-end without padding.`,
   },
   color: '#08A9AD',
   contentContainers: [ActivityType.SectionContainer],
@@ -136,6 +138,16 @@ const SectionContainer: ContentContainerConfig = {
   label: 'Sections',
   required: true,
   displayHeading: false,
+  ai: {
+    definition:
+      'Sections contain structured content including text, media, and exercises.',
+    outputRules: {
+      prompt: `
+        - This is a microlearning course: sections within one topic together
+          form a single cohesive learning unit.
+        - Include 1-2 practical examples or real-world scenarios if appropriate.`,
+    },
+  },
   config: {
     isCollapsible: true,
     defaultSubcontainers: [

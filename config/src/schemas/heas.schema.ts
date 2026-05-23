@@ -109,7 +109,11 @@ const Module: ActivityConfig = {
   isTrackedInWorkflow: false,
   color: '#5187C7',
   ai: {
-    definition: 'Modules are a way to organize content.',
+    definition: `
+      Modules group related Learning Bits into a coherent path.
+      A Module sets the theme; the Learning Bits inside teach the
+      individual concepts. Modules can nest when a domain has
+      sub-areas worth surfacing.`,
   },
 };
 
@@ -122,7 +126,12 @@ const LearningBit: ActivityConfig = {
   color: '#08A9AD',
   guidelines,
   ai: {
-    definition: 'Learning Bit represents a small piece of knowledge.',
+    definition: `
+      A Learning Bit is a microlearning unit: one focused concept
+      taught end-to-end in a short, high-engagement format.
+      Includes learning objectives, key takeaways, and brief
+      assessment. Designed for quick consumption, not long
+      lectures.`,
   },
 };
 
@@ -135,15 +144,11 @@ const StructuredContentContainer: ContentContainerConfig = {
       'Learning Bit content is organized into structured content sections.',
     outputRules: {
       prompt: `
-        - Split the content contextually to couple of { "content": "" } blocks
-          based on the context. Headings might be a good place to split.
-          Dont include more than 3 headings.
-        - Try to use at least 2000 words.
-        - Format the content as a HTML with suitable tags and headings.
-        You are trying to teach the audience, so make sure the content is easy to
-        understand, has a friendly tone and is engaging to the reader.
-        Make sure to include the latest relevant information on the topic.`,
-      useDalle: true,
+        - Microlearning shape: this Learning Bit is meant for
+          short, high-engagement consumption. Stay focused; do
+          not pad to fill space.
+        - Teach the audience: clear explanations, friendly tone,
+          progressive complexity, current information.`,
     },
   },
   config: {

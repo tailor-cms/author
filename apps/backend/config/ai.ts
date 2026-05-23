@@ -2,6 +2,8 @@ import { isProduction } from './runtime.ts';
 
 export const secretKey: string | undefined = process.env.AI_SECRET_KEY;
 export const modelId: string | undefined = process.env.AI_MODEL_ID;
+// Image generation and editing model
+export const imageModelId = process.env.AI_IMAGE_MODEL_ID || 'gpt-image-2';
 export const isEnabled: boolean = !!(secretKey && modelId);
 
 const envSuffix = isProduction ? '' : `-${process.env.NODE_ENV || 'dev'}`;

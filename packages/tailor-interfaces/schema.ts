@@ -66,7 +66,6 @@ export interface AiActivityConfig {
   definition: string;
   outputRules?: {
     prompt: string;
-    useDalle?: boolean;
     isAssessment?: boolean;
   };
 }
@@ -166,11 +165,42 @@ export interface I18nConfig {
   defaultLanguage: string;
 }
 
+/**
+ * Authoring frame a schema declares for its medium. Picks the right
+ * voice and shape so each schema speaks for itself without inheriting
+ * course-flavoured defaults:
+ * - PEDAGOGICAL (default for course / KB / training): teach, explain,
+ *   progressive complexity, assessable.
+ * - REFERENCE: terse, scannable, lookup-first; no padding.
+ * - EDITORIAL: journalistic / blog / newsletter voice.
+ * - NARRATIVE: story, scenes, dialogue, artist-direction visuals.
+ * - ANALYTICAL: evidence-grounded analysis. Every claim cites a source
+ *   or marks itself synthesized; comparisons are tabular, risks and
+ *   costs itemised with explicit assumptions.
+ */
+export const ContentMode = {
+  Pedagogical: 'PEDAGOGICAL',
+  Reference: 'REFERENCE',
+  Editorial: 'EDITORIAL',
+  Narrative: 'NARRATIVE',
+  Analytical: 'ANALYTICAL',
+} as const;
+export type ContentMode = typeof ContentMode[keyof typeof ContentMode];
+export const CONTENT_MODES = Object.values(ContentMode);
+
+/**
+ * Top-level AI hints declared by the schema.
+ */
+export interface AiSchemaConfig {
+  contentMode?: ContentMode;
+}
+
 export interface Schema {
   id: string;
   workflowId: string;
   name: string;
   description?: string;
+  ai?: AiSchemaConfig;
   meta?: Metadata[];
   defaultMeta?: Record<string, any>;
   structure: ActivityConfig[];

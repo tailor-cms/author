@@ -2,15 +2,15 @@ import type { AiContext, ImageDescription } from '@tailor-cms/interfaces/ai.ts';
 import OpenAI from 'openai';
 
 import { ai as aiConfig } from '#config';
-import { createLogger } from '#logger';
 import { AiPrompt } from './lib/AiPrompt.ts';
+import { createAiLogger } from './logger.ts';
 import { VectorStoreService } from './lib/VectorStoreService.ts';
 import {
   PROMPT as IMAGE_PROMPT,
   Schema as IMAGE_SCHEMA,
 } from './schemas/ImageDescription.ts';
 
-const logger = createLogger('ai:service');
+const logger = createAiLogger('service');
 
 class AiService {
   #openai;

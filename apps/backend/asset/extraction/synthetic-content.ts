@@ -22,13 +22,22 @@ export function hasUsefulDescription(asset: Asset): boolean {
   return true;
 }
 
-// Builds a markdown document from asset metadata and optional body text.
-// Returns null when there's nothing meaningful to index (name-only).
+// Builds a markdown document from asset metadata
+// and optional body text (captions, page content, etc.).
+// Asset ID and type are included so the AI can discover
+// and reference relevant media via vector store search.
 export function buildSyntheticContent(
   asset: Asset, bodyText = '',
 ): string | null {
+  const meta = asset.meta as any;
   const parts: string[] = [`# ${asset.name}`];
-  const meta = asset.meta as Record<string, any>;
+  parts.push(`Asset ID: ${asset.id} | Type: ${asset.type}`);
+  if (meta?.contentType) {
+    parts[1] += ` | Content: ${meta.contentType}`;
+  }
+  if (meta?.provider) {
+    parts[1] += ` | Provider: ${meta.provider}`;
+  }
   // Attribution and provenance
   if (meta?.source?.author) parts.push(`Author: ${meta.source.author}`);
   if (meta?.siteName || meta?.domain) {
@@ -43,8 +52,6 @@ export function buildSyntheticContent(
   if (meta?.analysis) parts.push(`Analysis: ${meta.analysis}`);
   if (meta?.contentSuggestion) parts.push(`Suggested use: ${meta.contentSuggestion}`);
   if (meta?.tags?.length) parts.push(`Tags: ${meta.tags.join(', ')}`);
-  // Full content (page text, captions, vision description)
   if (bodyText) parts.push(bodyText);
-  // Name-only content isn't worth indexing
   return parts.length > 1 ? parts.join('\n\n') : null;
 }

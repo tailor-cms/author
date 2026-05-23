@@ -53,10 +53,35 @@ async function resolve(exam, resolveStatics) {
   return exam;
 }
 
+// Subcontainer types this template always creates.
+function getSubTypes() {
+  return ['ASSESSMENT_GROUP'];
+}
+
+/**
+ * Describe the container's structure. EXAM has a
+ * hardcoded ASSESSMENT_GROUP subcontainer that hosts
+ * question-type elements.
+ */
+function describeSchema() {
+  return {
+    subcontainers: [{
+      type: 'ASSESSMENT_GROUP',
+      label: 'Question Group',
+      meta: [],
+      elementConfig: questions.map((type) => ({
+        items: [{ id: type }],
+      })),
+    }],
+  };
+}
+
 export default {
   templateId: 'EXAM',
   version: '1.0',
   fetch,
   resolve,
+  getSubTypes,
+  describeSchema,
   publishedAs: 'exam',
 };
