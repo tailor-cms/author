@@ -14,8 +14,10 @@ const Schema: OpenAISchema = {
       activity: {
         type: 'object',
         properties: {
-          type: { type: 'string' },
-          name: { type: 'string' },
+          type: { type: 'string', minLength: 1 },
+          // Every activity MUST have a non-empty, human-readable name.
+          // Empty names render as anonymous tree nodes in the outline UI.
+          name: { type: 'string', minLength: 1 },
           children: {
             type: 'array',
             items: { $ref: '#/definitions/activity' },
@@ -90,15 +92,49 @@ const getPrompt = (context: AiContext): string => {
     : '';
   return `
     Generate a structure/outline for this content.
+    Every activity MUST carry a non-empty, descriptive name -
+    something a reader would see in the outline panel and
+    understand at a glance. Never emit empty strings, "Untitled",
+    or placeholder names; if you do not have a name yet, do not
+    emit the activity.
     The structure should be created by following the taxonomy of the
     "${schema.name}" specified as: ${generateTaxonomyDesc(schemaId).trim()}
     Return the response as a JSON object with the following format:
     { "name": "", "type": "", children: [] }
     where type indicates one of the taxonomy node types and children is an
-    array of the same format. If possible, generate at least 10 root nodes.
-    Make sure to have content holder nodes in the structure. The content
-    holder nodes are the following:
+    array of the same format.
+    Scope:
+    - If the user states a count or range (e.g. "5 modules" or
+      "1 chapter with 3 issues"), produce EXACTLY that. Honour
+      explicit caps verbatim.
+    - Otherwise, infer a realistic publishable scope for a
+      "${schema.name}" of this subject. Use the subject and the
+      repository description (${context.repository.description ||
+      'no description provided'}) as the sizing signal. Match what
+      a real author of this medium would actually commit to:
+      a course usually has multiple modules with
+      multiple lessons; a knowledge base has many sections.
+      Do NOT emit a 1-2 root skeleton just to demonstrate the
+      structure - lean toward generous breadth. A user can shrink
+      afterwards, but an under-scoped outline forces a restart.
+    - Target audience affects depth, complexity, and tone, NOT
+      count. A BEGINNER course should have just as many modules
+      as an EXPERT one - it just covers them differently.
+    Make sure the structure includes content-holder nodes:
     ${leafLevels.map((it) => it.label).join(', ')}.
+    Top-level breadth is mandatory. When you derive an outline from a
+    source document or a single subject, do NOT collapse the entire
+    structure under one mega-root that mirrors the document's title or
+    the repository name. The repository itself is the wrapper. The major
+    sections OF the source become root-level activities - siblings, not
+    children of a single envelope.
+    Concretely: if you would have produced one root with 4+ children
+    that are themselves root-eligible types, emit those children AS the
+    roots instead. The only acceptable single-root case is when the user
+    explicitly asked for one (e.g. "one chapter with 3 issues") and its
+    children are sub-level types, not root-level types.
+    For "${context.repository.name}", do NOT emit a single
+    "${context.repository.name}" wrapper containing all real content.
     ${documentGuideline}`;
 };
 
@@ -106,6 +142,9 @@ const spec: AiResponseSpec = {
   Schema,
   getPrompt,
   processResponse: (val) => val?.activities || [],
+  // Outline generation is a one-shot planning task - structuring a
+  // whole repository's hierarchy benefits from deeper reasoning
+  reasoningEffort: 'high',
 };
 
 export default spec;

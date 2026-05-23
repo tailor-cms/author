@@ -4,10 +4,12 @@ import processQuery from '#shared/util/processListQuery.js';
 import AccessService from '#app/shared/auth/access.service.js';
 
 import * as actions from './actions/index.ts';
+import { ai as aiConfig } from '#config';
 import { createActionMounter } from '#shared/request/action.ts';
 import { getRepository } from './middleware.ts';
 
 import activity from '../activity/index.ts';
+import agent from '../shared/ai/agent/index.ts';
 import asset from '../asset/index.ts';
 import comment from '../comment/index.ts';
 import contentElement from '../content-element/index.ts';
@@ -100,6 +102,8 @@ const SUB_ROUTERS = [
   revision,
   rpc,
 ];
+
+if (aiConfig.isEnabled) SUB_ROUTERS.push(agent);
 
 for (const sub of SUB_ROUTERS) {
   router.use(`/:repositoryId${sub.path}`, sub.router);

@@ -1,3 +1,5 @@
+import type { AssetType, LinkContentType } from './asset.ts';
+
 export enum AiRequestType {
   Create = 'CREATE',
   Add = 'ADD',
@@ -25,28 +27,61 @@ export enum AiResponseSchema {
 
 export type AiResponseSchemaLiteral = `${AiResponseSchema}`;
 
+// Reasoning effort for the OpenAI Responses API. Only applied on
+// reasoning-capable models (gpt-5, o-series); omit for the model default.
+export enum ReasoningEffort {
+  Minimal = 'minimal',
+  Low = 'low',
+  Medium = 'medium',
+  High = 'high',
+}
+
+export type ReasoningEffortLiteral = `${ReasoningEffort}`;
+
+export const REASONING_EFFORTS = Object.values(ReasoningEffort);
+
 export interface AiInput {
   type: AiRequestTypeLiteral;
   text: string;
   responseSchema: AiResponseSchemaLiteral | string;
   targetAudience?: AiTargetAudienceLiteral;
-  useImageGenerationTool?: boolean;
-  useSearchTool?: boolean;
+}
+
+export interface AssetReferenceMeta {
+  contentType?: LinkContentType;
+  // Permanent URL for link assets
+  url?: string;
+  description?: string;
+  tags?: string[];
+  // Marks this asset as a primary knowledge source
+  isCoreSource?: boolean;
+}
+
+export interface AssetReference {
+  id: number;
+  name: string;
+  type: AssetType;
+  // Internal storage key (e.g. repository/1/assets/uuid__f.png)
+  storageKey?: string | null;
+  // Signed public URL (temporary, for display)
+  publicUrl?: string;
+  meta?: AssetReferenceMeta;
 }
 
 export interface AiRepositoryContext {
+  repositoryId?: number;
+  // Activity ID for resolving outline hierarchy context
+  activityId?: number;
   schemaId: string;
   name: string;
   description: string;
   // If content is generated for a specific outline node
   outlineActivityType?: string;
-  // If content is generated for a specific outline node
-  outlineLocation?: string;
   // If content is generated for a container
   containerType?: string;
   // General topic of the content, in case of a outline node title of the leaf
   topic?: string;
-  // Additional information about the content
+  // Tags for context (used in outline generation before repository exists)
   tags?: string[];
   // Vector store ID for document-based generation
   vectorStoreId?: string;
@@ -56,6 +91,8 @@ export interface AiContext {
   repository: AiRepositoryContext;
   content?: string;
   inputs: AiInput[];
+  // Available assets from the library for AI to recommend
+  assets?: AssetReference[];
 }
 
 export interface ImageDescription {
@@ -66,4 +103,6 @@ export interface ImageDescription {
   qualityIssues: string[];
   relevanceScore: number;
   contentSuggestion: string;
+  // true ONLY if the image carries real instructional content
+  isInformative: boolean;
 }

@@ -16,6 +16,7 @@ import { SCHEMA as VideoCourseSchema } from './schemas/video-course.schema';
 import { SCHEMA as PartnerTrainingV2Schema } from './schemas/partner-training-v2.schema';
 
 export type { Snapshot } from './lib/registry';
+export { processElementConfig } from '@tailor-cms/config-parser';
 
 export const SCHEMAS = processSchemas([
   CourseSchema,

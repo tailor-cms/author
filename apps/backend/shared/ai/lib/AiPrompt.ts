@@ -1,42 +1,129 @@
-import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai.ts';
+import type {
+  AiContext,
+  AiInput,
+} from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
-import StorageService from '../../storage/storage.service.js';
+import { oneLine, stripIndent } from 'common-tags';
+import { ContentMode } from '@tailor-cms/interfaces/schema.ts';
+import { schema as schemaConfiguration } from '@tailor-cms/config';
 
 import getContentSchema from '../schemas/index.ts';
 import RepositoryContext from './RepositoryContext.ts';
 
 import { ai as aiConfig } from '#config';
-import { createLogger } from '#logger';
+import { createAiLogger, formatPrompt } from '../logger.ts';
 
-const logger = createLogger('ai:prompt');
+const logger = createAiLogger('prompt');
 
-const systemPrompt = `
-  Assistant is a bot desinged to help authors to create content for
-  Courses, Q&A content, Knowledge base, etc.
+// Models that accept the `reasoning.effort` parameter.
+// Passing `reasoning` to a non-reasoning model
+// is rejected by the API, so gate before adding it to the request.
+const REASONING_MODEL_PREFIXES = ['gpt-5', 'o1', 'o3', 'o4'];
+
+export function supportsReasoning(modelId: string | undefined): boolean {
+  if (!modelId) return false;
+  return REASONING_MODEL_PREFIXES.some((prefix) => modelId.startsWith(prefix));
+}
+
+const systemPrompt = stripIndent`
+  Assistant helps authors generate content inside the user's repository.
   Rules:
-  - Use the User rules to generate the content
-  - Generated content should have a friendly tone and be easy to understand
-  - Generated content should not include any offensive language`;
+  - Follow the user-provided rules and the schema-defined content rules.
+  - Match the tone, voice, and conventions of the repository's medium.
+    Most repositories are pedagogical (courses, knowledge bases,
+    training materials, references) - lean toward clear instruction,
+    progressive complexity, and learner-friendly framing. For other
+    media (narrative, editorial, catalog, feed, q&a) honour the
+    schema's own outputRules instead of forcing a learning frame.
+  - Keep language accessible and avoid offensive content.
+`;
 
-const documentPrompt = `
+// Per-mode shape line. Picked from schema.ai.contentMode and
+// folded into the universal authoring rules at request time.
+const SHAPE_BY_MODE: Record<ContentMode, string> = {
+  [ContentMode.Pedagogical]: oneLine`
+    Pedagogical content shape. Teach the audience: clear
+    explanations, progressive complexity, practical examples, and
+    assessment where the host accepts question elements. Mix text,
+    media, and checks purposefully.
+  `,
+  [ContentMode.Reference]: oneLine`
+    Reference content shape. Stay terse and scannable: lookup-first,
+    lists and tables over walls of prose, no padding, no greeting or
+    framing sentences. Bold key terms.
+  `,
+  [ContentMode.Editorial]: oneLine`
+    Editorial content shape. Journalistic / newsletter voice: lead
+    with what is interesting, attribute claims, vary sentence rhythm.
+    No textbook framing or learning objectives.
+  `,
+  [ContentMode.Narrative]: oneLine`
+    Narrative content shape. Story, scene, dialogue. Visuals are
+    artist directions in prose unless an asset is clearly meant to
+    be embedded. No learning-objective framing.
+  `,
+  [ContentMode.Analytical]: oneLine`
+    Analytical content shape. Every claim is falsifiable and either
+    quotes a source asset, names what it is inferred from, or marks
+    itself synthesized. Comparisons render as tables (criteria x
+    options), not prose. Risks and costs are itemised with
+    probability/impact or numeric estimate + assumptions; never
+    buried in narrative. Recommendations name a single option,
+    accept tradeoffs explicitly, and preserve dissent.
+  `,
+};
+
+// Build the universal authoring rules. Mode-specific content shape
+// is injected from the schema; the rest applies to every path.
+function buildAuthoringRules(contentMode: ContentMode): string {
+  const shape = SHAPE_BY_MODE[contentMode] || SHAPE_BY_MODE[ContentMode.Pedagogical];
+  return stripIndent`
+    Authoring rules (apply to every element you produce or rewrite):
+    - No fixed length unless explicitly requested. Match the medium
+      and the brief: a reference entry is terse, a course lesson can
+      run hundreds of words, a glossary line is one sentence.
+    - Do NOT duplicate metadata inside the element body. When the
+      host activity or its parent subcontainer has a title / name /
+      heading field, do NOT lead the body with that text as a
+      heading or label; the renderer shows meta separately. Do not
+      narrate position, sequence number, mood, or layout in prose -
+      structure already conveys them.
+    - ${shape}
+  `;
+}
+
+// Read the schema's declared contentMode (defaults to pedagogical).
+// Lives at the top-level Schema config; per-container outputRules
+// can still override on top of this baseline.
+function resolveContentMode(schemaId: string | undefined): ContentMode {
+  if (!schemaId) return ContentMode.Pedagogical;
+  try {
+    const schema = (schemaConfiguration as any).getSchema(schemaId);
+    return schema?.ai?.contentMode || ContentMode.Pedagogical;
+  } catch {
+    return ContentMode.Pedagogical;
+  }
+}
+
+const documentPrompt = stripIndent`
   The user has provided source documents indexed in a vector store.
-  Use the file_search tool to find relevant information from these documents.
-  Base ALL generated content on information found in the documents.
-  Do not invent information not present in the documents.`;
+  Use the file_search tool to find relevant information from these
+  documents. Base ALL generated content on information found in the
+  documents. Do not invent information not present in the documents.
+  If any assets are marked as PRIMARY SOURCE, they represent the
+  core knowledge base. Structure and model your content primarily
+  after these sources. Supplementary assets provide additional
+  context but should not override the core sources.
+`;
 
 export class AiPrompt {
   // OpenAI client
   private client: OpenAI;
-  // Context of the request
-  private context: AiContext;
   // Information about the repository, content location, topic, etc.
   private repositoryContext: RepositoryContext;
-  // User, assistant or system generated inputs
+  private requestContext: AiContext;
   private inputs: AiInput[];
-  // Existing content, relevant for the context
   private content: string;
-  // Response
   private response: any;
 
   constructor(client: OpenAI, context: AiContext) {
@@ -45,26 +132,50 @@ export class AiPrompt {
     this.content = context.content || '';
     this.inputs = context.inputs;
     this.client = client;
-    this.context = context;
+    this.requestContext = context;
+  }
+
+  get vectorStoreId() {
+    return this.repositoryContext.vectorStoreId;
+  }
+
+  get context(): AiContext {
+    return {
+      ...this.requestContext,
+      assets: this.repositoryContext.assets,
+      repository: {
+        ...this.requestContext.repository,
+        vectorStoreId: this.vectorStoreId,
+      },
+    };
   }
 
   async execute() {
     try {
+      await this.repositoryContext.resolve(this.requestContext.repository);
+      const input = this.toOpenAiInput();
       const params: any = {
         model: aiConfig.modelId,
-        input: this.toOpenAiInput(),
+        input,
         text: { format: this.format },
       };
-      // Add file_search tool when source documents are available
-      const { vectorStoreId } = this.context.repository;
-      if (vectorStoreId) {
-        params.tools = [
-          { type: 'file_search', vector_store_ids: [vectorStoreId] },
-        ];
+      if (this.vectorStoreId) {
+        params.tools = [{
+          type: 'file_search',
+          vector_store_ids: [this.vectorStoreId],
+        }];
       }
+      const effort = this.reasoningEffort;
+      if (effort && supportsReasoning(aiConfig.modelId)) {
+        params.reasoning = { effort };
+      }
+      logger.debug(`Final prompt:\n${formatPrompt(input)}`);
       const response = await this.client.responses.create(params);
       this.response = this.responseProcessor(response.output_text);
-      this.response = await this.applyImageTool();
+      logger.info(
+        { schema: this.prompt.responseSchema, type: this.prompt.type },
+        'Generation complete',
+      );
       return this.response;
     } catch (err) {
       logger.error(err, 'Generation failed');
@@ -94,12 +205,19 @@ export class AiPrompt {
     return typeof schema === 'function' ? schema(this.context) : schema;
   }
 
+  // Per-schema reasoning effort override
+  // (if defined for schema and model supports it)
+  get reasoningEffort() {
+    if (this.isCustomPrompt) return undefined;
+    return getContentSchema(this.prompt.responseSchema)?.reasoningEffort;
+  }
+
   get responseProcessor() {
     const noop = (val: any) => val;
     const processor = this.isCustomPrompt
       ? noop
       : getContentSchema(this.prompt.responseSchema)?.processResponse || noop;
-    return (val) => processor(JSON.parse(val));
+    return (val: string) => processor(JSON.parse(val), this.context);
   }
 
   // TODO: Add option to control the size of the output
@@ -107,8 +225,10 @@ export class AiPrompt {
   toOpenAiInput(): OpenAI.Responses.ResponseInputItem[] {
     const res: OpenAI.Responses.ResponseInputItem[] = [];
     res.push({ role: 'developer', content: systemPrompt });
+    const mode = resolveContentMode(this.requestContext.repository?.schemaId);
+    res.push({ role: 'developer', content: buildAuthoringRules(mode) });
     res.push({ role: 'developer', content: this.repositoryContext.toString() });
-    if (this.context.repository.vectorStoreId) {
+    if (this.vectorStoreId) {
       res.push({ role: 'developer', content: documentPrompt });
     }
     if (this.prevPrompt) res.push(this.processUserInput(this.prevPrompt));
@@ -134,42 +254,5 @@ export class AiPrompt {
       role: 'user',
       content: `${base} ${text}. ${responseSchemaDescription} ${target}`,
     };
-  }
-
-  async applyImageTool() {
-    if (
-      !this.prompt.useImageGenerationTool ||
-      this.prompt.responseSchema !== 'HTML'
-    )
-      return this.response;
-    // output needs to be sliced to avoid exceeding the max length
-    const userPrompt = `
-      ${this.repositoryContext.toString()}
-      Generate appropriate image for the given topic and content:
-      ${JSON.stringify(this.response).slice(0, 1000)}`;
-    const imgUrl = await this.generateImage(userPrompt);
-    const imgInternalUrl = await StorageService.downloadToStorage(imgUrl);
-    const imageElement = {
-      type: ContentElementType.Image,
-      data: {
-        assets: { url: imgInternalUrl },
-      },
-    };
-    const [firstElement, ...restElements] = this.response;
-    return [firstElement, imageElement, ...restElements];
-  }
-
-  private async generateImage(prompt) {
-    const { data } = await this.client.images.generate({
-      model: 'dall-e-3',
-      prompt,
-      // amount of images, max 1 for dall-e-3
-      n: 1,
-      // 'standard' | 'hd'
-      quality: 'hd',
-      size: '1024x1024',
-      style: 'natural',
-    });
-    if (data) return new URL(data[0].url as string);
   }
 }

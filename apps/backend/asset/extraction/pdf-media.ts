@@ -5,7 +5,19 @@
  * (JPEG) image streams. Most PDFs embed photos/diagrams as JPEG
  * data - extracting these yields valid JPEG files without needing
  * canvas or native deps.
+ *
+ * The byte-scan extraction is deliberately permissive: it pulls
+ * every JPEG-shaped run from the PDF, including slide chrome
+ * (templates, headers, repeated logos).
+ * We rely on two filters downstream:
+ * 1. Content-hash dedup - kills the N-copies-of-the-same-template
+ *    flood before we pay for vision grading.
+ * 2. Vision-gated import - each surviving image is graded; if
+ *    vision can't classify it as instructionally meaningful
+ *    (isInformative=false), the asset is deleted before it
+ *    reaches the library.
  */
+import { createHash } from 'crypto';
 import imageSize from 'image-size';
 import { createLogger } from '#logger';
 import { PDFParse } from 'pdf-parse';
@@ -93,8 +105,9 @@ export function extractJpegImages(pdfBuffer: Buffer): ExtractedImage[] {
 }
 
 /**
- * Extract JPEG images from a PDF, save each as an Image asset,
- * and describe via vision.
+ * Extract JPEG images from a PDF, save each unique one as an
+ * Image asset, grade it via vision, and drop assets vision
+ * cannot classify as meaningful content.
  */
 export async function extractAndSaveImages(
   asset: FileAsset,
@@ -106,38 +119,121 @@ export async function extractAndSaveImages(
     { assetId: asset.id, count: images.length },
     'Extracting images from PDF',
   );
+
+  const seenHashes = new Set<string>();
+  let imported = 0;
+  let droppedDuplicate = 0;
+  let droppedNonInformative = 0;
+  let droppedUngraded = 0;
+
   for (let i = 0; i < images.length; i++) {
     const img = images[i];
+    // Cheap dedup before storage/vision spend. Without this we'd
+    // upload and grade dozens of identical chrome JPEGs.
+    const hash = createHash('sha1').update(img.buffer).digest('hex');
+    if (seenHashes.has(hash)) {
+      droppedDuplicate++;
+      continue;
+    }
+    seenHashes.add(hash);
+
+    let created: any = null;
+    let storageKey: string | null = null;
     try {
-      const { key } = buildStorageKey(asset.repositoryId, 'pdf-extract.jpg');
-      await Storage.saveFile(key, img.buffer, { ContentType: img.mimeType });
-      const created = await AssetModel.create({
+      const built = buildStorageKey(asset.repositoryId, 'pdf-extract.jpg');
+      storageKey = built.key;
+      await Storage.saveFile(storageKey, img.buffer, {
+        ContentType: img.mimeType,
+      });
+      created = await AssetModel.create({
         type: AssetType.Image,
         repositoryId: asset.repositoryId,
-        storageKey: key,
-        name: `${asset.name} - Image ${i + 1}`,
+        storageKey,
+        name: `${asset.name} - Image ${imported + 1}`,
         meta: {
           fileSize: img.buffer.length,
           mimeType: img.mimeType,
           extension: 'jpg',
           tags: ['pdf-image'],
-          source: { parentAssetId: asset.id },
+          source: { parentAssetId: asset.id, contentHash: hash },
         },
         uploaderId: asset.uploaderId,
       });
-      describeWithVision(created).catch((err) =>
-        logger.warn(
-          { err: err?.message, assetId: created.id },
-          'Vision failed for PDF image',
-        ),
-      );
     } catch (err: any) {
       logger.warn(
         { err: err.message, imageIndex: i },
         'Failed to save extracted image',
       );
+      continue;
     }
+
+    // Synchronous vision grading is the gate. We can't tell
+    // "slide background with header on top" from a real diagram
+    // without looking at the pixels - so vision IS the filter.
+    let grade: Awaited<ReturnType<typeof describeWithVision>> = null;
+    try {
+      grade = await describeWithVision(created);
+    } catch (err: any) {
+      logger.warn(
+        { err: err?.message, assetId: created.id },
+        'Vision failed for PDF image',
+      );
+    }
+    const drop = shouldDrop(grade);
+    if (drop) {
+      try {
+        // force: skip paranoid soft-delete
+        await created.destroy({ force: true });
+        if (storageKey) await Storage.deleteFile(storageKey);
+      } catch (err: any) {
+        logger.warn(
+          { err: err.message, assetId: created.id },
+          'Failed to clean up dropped PDF image',
+        );
+      }
+      if (drop === 'ungraded') droppedUngraded++;
+      else droppedNonInformative++;
+      continue;
+    }
+    imported++;
   }
+
+  logger.info(
+    {
+      assetId: asset.id,
+      extracted: images.length,
+      imported,
+      droppedDuplicate,
+      droppedNonInformative,
+      droppedUngraded,
+    },
+    'PDF image extraction complete',
+  );
+}
+
+/**
+ * Decide whether to drop a freshly-extracted PDF image.
+ * - ungraded: vision couldn't grade it (disabled, no public URL,
+ *   API failure). Drop conservatively - PDF byte-scan extractions
+ *   are only worth keeping when something has confirmed they're
+ *   instructional content.
+ * - non-informative: vision graded it as slide chrome / decorative
+ *   / blank / extraction debris. Drop per the explicit contract
+ *   in the ImageDescription schema.
+ * Returns null when the image should be kept.
+ */
+function shouldDrop(
+  grade: Awaited<ReturnType<typeof describeWithVision>>,
+): 'ungraded' | 'non_informative' | null {
+  if (!grade) return 'ungraded';
+  if (grade.isInformative === false) return 'non_informative';
+  // Belt-and-braces: if the model marks it informative but quality
+  // is "low" AND relevance is near-zero, treat as debris. Vision
+  // models are sometimes too forgiving on the boolean.
+  if (grade.quality === 'low' && grade.relevanceScore < 2) {
+    return 'non_informative';
+  }
+  return null;
 }
 
 /**

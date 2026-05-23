@@ -29,13 +29,20 @@
           Modify
         </VBtn>
       </VBtnToggle>
-      <VTextarea v-model="promptText" label="Prompt" variant="outlined" />
+      <VTextarea
+        v-model="promptText"
+        label="Prompt"
+        variant="outlined"
+        @keydown.meta.enter="onSubmit"
+        @keydown.ctrl.enter="onSubmit"
+      />
       <VCardActions class="d-flex justify-end">
         <VBtn
+          :disabled="!hasInput"
           color="primary-lighten-3"
           density="comfortable"
           variant="tonal"
-          @click="onPromptSubmit"
+          @click="onSubmit"
         >
           <VIcon start>mdi-magic-staff</VIcon>
           Generate
@@ -47,9 +54,9 @@
 
 <script lang="ts" setup>
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
-import { ref, watch } from 'vue';
 import type { AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { computed, ref, watch } from 'vue';
 
 defineProps<{
   inputs: AiInput[];
@@ -64,14 +71,14 @@ const isVisible = ref(false);
 const promptText = ref('');
 const promptType = ref<AiRequestType>(AiRequestType.Add);
 
-const onPromptSubmit = async () => {
-  const text = promptText.value.trim();
-  if (!text) return;
+const hasInput = computed(() => !!promptText.value.trim());
+
+const onSubmit = () => {
+  if (!hasInput.value) return;
   emit('generate', {
     type: promptType.value,
-    text,
+    text: promptText.value.trim(),
     responseSchema: AiResponseSchema.Html,
-    useImageGenerationTool: true,
   });
   isVisible.value = false;
 };

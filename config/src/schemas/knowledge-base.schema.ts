@@ -3,6 +3,7 @@ import type {
   ContentContainerConfig,
   Schema,
 } from '@tailor-cms/interfaces/schema';
+import { ContentMode } from '@tailor-cms/interfaces/schema';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
@@ -22,7 +23,11 @@ const CATEGORY: ActivityConfig = {
   color: '#5187C7',
   subLevels: [ActivityType.Category, ActivityType.Entry],
   ai: {
-    definition: 'Categories are a way to organize content.',
+    definition: `
+      Categories group related Entries by topic area. A Category
+      defines what kind of questions belong here, but does not hold
+      content itself. Categories can nest when a topic area has
+      sub-topics worth distinguishing.`,
   },
 };
 
@@ -33,7 +38,11 @@ const ENTRY: ActivityConfig = {
   color: '#08A9AD',
   contentContainers: [ActivityType.Section],
   ai: {
-    definition: 'Entry represents a Topic within a Knowledge Base Category.',
+    definition: `
+      An Entry is a single self-contained reference topic the
+      reader looks up when they need an answer. Each Entry covers
+      one well-defined concept, term, procedure, or FAQ. Reads
+      lookup-first: scannable, terse, no preamble.`,
   },
 };
 
@@ -46,18 +55,14 @@ const SECTION: ContentContainerConfig = {
     ContentElementType.Image,
   ],
   ai: {
-    definition: 'Page content is organized into sections.',
+    definition: 'Entry content is organized into sections.',
     outputRules: {
       prompt: `
-        - Split the content contextually to couple of { "content": "" } blocks
-          based on the context. Headings might be a good place to split.
-          Dont include more than 3 headings.
-        - Try to use at least 2000 words and don't exceed 4000 words.
-        - Format the content as a HTML with suitable tags and headings.
-        You are trying to teach the audience, so make sure the content is easy to
-        understand, has a friendly tone and is engaging to the reader.
-        Make sure to include the latest relevant information on the topic.`,
-      useDalle: true,
+        - Reference shape: lookup-first. Lead with the direct
+          answer or definition; elaborate only if it adds clarity.
+          No greeting, no "in this section we'll cover..." framing.
+        - Prefer scannable, lookup-oriented content over walls of
+          prose; a short Entry needs no sectioning at all.`,
     },
   },
 };
@@ -68,6 +73,7 @@ export const SCHEMA: Schema = {
     'A structured knowledge base with organized categories and entries.',
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Knowledge Base',
+  ai: { contentMode: ContentMode.Reference },
   structure: [CATEGORY, ENTRY],
   contentContainers: [SECTION],
 };

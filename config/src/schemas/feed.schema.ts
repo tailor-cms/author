@@ -4,6 +4,7 @@ import type {
   Metadata,
   Schema,
 } from '@tailor-cms/interfaces/schema';
+import { ContentMode } from '@tailor-cms/interfaces/schema';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
@@ -85,7 +86,11 @@ const GROUP: ActivityConfig = {
     ActivityType.GrowthOpportunity,
   ],
   ai: {
-    definition: `Groups are a way to organize content into categories.`,
+    definition: `
+      Groups bucket Articles, Podcasts, Events, and Growth
+      Opportunities into themed channels (e.g. "Engineering",
+      "Community News"). A Group itself has no body content - it
+      surfaces and orders the items inside it.`,
   },
 };
 
@@ -114,7 +119,10 @@ const EVENT: ActivityConfig = {
     ...defaultMeta,
   ],
   ai: {
-    definition: 'Events are a way to promote gatherings.',
+    definition: `
+      An Event promotes a gathering: meetup, webinar, conference,
+      workshop. Body copy is a short editorial blurb (what, when,
+      who, why attend) - not a long article.`,
   },
 };
 
@@ -136,9 +144,10 @@ const PODCAST: ActivityConfig = {
     },
   ],
   ai: {
-    definition:
-      // eslint-disable-next-line max-len
-      'Provides a way to promote podcasts on various platforms and view aggregated engagement data.',
+    definition: `
+      A Podcast promotes an audio show: episode summary, hosts,
+      and platform links. Body copy is an editorial summary,
+      typically a paragraph or two - not a transcript.`,
   },
 };
 
@@ -150,7 +159,11 @@ const GROWTH_OPPORTUNITY: ActivityConfig = {
   color: '#08A9AD',
   contentContainers: [ActivityType.Section],
   ai: {
-    definition: 'Represents a learning opportunity for the community.',
+    definition: `
+      A learning or career opportunity surfaced to the community
+      (open role, scholarship, mentorship program, certification).
+      Body copy is an editorial pitch: who it's for, what's
+      offered, how to apply.`,
   },
 };
 
@@ -173,7 +186,10 @@ const ARTICLE: ActivityConfig = {
   color: '#08A9AD',
   contentContainers: [ActivityType.Section],
   ai: {
-    definition: 'Entry represents an article within a feed.',
+    definition: `
+      An Article is the long-form item in a feed: blog post, news
+      piece, opinion. Editorial / journalistic voice; lead with
+      what's interesting, attribute claims, vary rhythm.`,
   },
 };
 
@@ -182,18 +198,20 @@ const SECTION: ContentContainerConfig = {
   templateId: ContentContainerType.Default,
   label: 'Section',
   ai: {
-    definition: 'Page content is organized into sections.',
+    definition: 'Body copy for the parent feed entry.',
     outputRules: {
       prompt: `
-        - Split the content contextually to couple of { "content": "" } blocks
-          based on the context. Headings might be a good place to split.
-          Dont include more than 3 headings.
-        - Try to use at least 2000 words and don't exceed 4000 words.
-        - Format the content as a HTML with suitable tags and headings.
-        You are trying to teach the audience, so make sure the content is easy to
-        understand, has a friendly tone and is engaging to the reader.
-        Make sure to include the latest relevant information on the topic.`,
-      useDalle: true,
+        - Editorial / feed shape. The host activity decides the
+          voice and length:
+          - Article: long-form, journalistic. Lead with what's
+            interesting, attribute claims, vary sentence rhythm.
+          - Event: short editorial blurb (what / when / who /
+            why attend). A few short paragraphs at most.
+          - Podcast: short editorial summary of the show or
+            episode (a paragraph or two), not a transcript.
+          - Growth Opportunity: editorial pitch (who it's for,
+            what's offered, how to apply). Concise.
+        - No textbook framing or learning-objective scaffolding.`,
     },
   },
 };
@@ -203,6 +221,7 @@ export const SCHEMA: Schema = {
   name: 'Feed',
   description: 'A community feed with articles and growth opportunities.',
   workflowId: DEFAULT_WORKFLOW.id,
+  ai: { contentMode: ContentMode.Editorial },
   structure: [GROUP, EVENT, ARTICLE, PODCAST, GROWTH_OPPORTUNITY],
   contentContainers: [SECTION],
 };

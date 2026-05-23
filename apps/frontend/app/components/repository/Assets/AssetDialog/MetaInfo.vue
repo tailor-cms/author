@@ -10,7 +10,7 @@
             class="mr-1"
             size="18"
           />
-          <span class="meta-value text-capitalize">{{ asset.type }}</span>
+          <span class="meta-value">{{ getAssetTypeLabel(asset) }}</span>
         </div>
       </div>
       <div v-if="meta.fileSize" class="meta-item">
@@ -102,7 +102,7 @@
 import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
 import { UserAvatar } from '@tailor-cms/core-components';
 
-import { formatDate, formatFileSize } from '../utils';
+import { formatDate, formatFileSize, getAssetTypeLabel } from '../utils';
 import IndexingStatusBadge from '../IndexingStatusBadge.vue';
 
 const props = defineProps<{

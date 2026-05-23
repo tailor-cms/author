@@ -22,6 +22,17 @@ export const PROMPT = stripIndent`
      0 = irrelevant or unusable)
   7. Content suggestion: one sentence on where/how to best
      use this image in a course
+  8. isInformative: true ONLY if the image carries real
+     instructional content (a diagram, photo, illustration,
+     chart, screenshot of meaningful UI, or any subject a
+     reader would learn FROM). Set to false when the image
+     is slide chrome or extraction debris: a slide template
+     background, a header/footer band, a corporate logo
+     standalone, a decorative divider, a near-blank or
+     mostly-empty frame, a plain colour or gradient, a
+     watermark-only image, or a partial/corrupted fragment.
+     When uncertain, prefer false - non-informative images
+     pollute the library.
 `;
 
 export const Schema: OpenAISchema = {
@@ -40,11 +51,12 @@ export const Schema: OpenAISchema = {
       qualityIssues: { type: 'array', items: { type: 'string' } },
       relevanceScore: { type: 'number' },
       contentSuggestion: { type: 'string' },
+      isInformative: { type: 'boolean' },
     },
     required: [
       'description', 'tags', 'analysis',
       'quality', 'qualityIssues', 'relevanceScore',
-      'contentSuggestion',
+      'contentSuggestion', 'isInformative',
     ],
     additionalProperties: false,
   },

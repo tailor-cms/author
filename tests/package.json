@@ -19,6 +19,7 @@
   "dependencies": {
     "@faker-js/faker": "^10.4.0",
     "@tailor-cms/garment": "0.18.1-beta.2",
+    "@tailor-cms/interfaces": "workspace:*",
     "@types/jsdom": "^27.0.0",
     "date-fns": "^4.2.1",
     "dotenv": "^17.4.2",
