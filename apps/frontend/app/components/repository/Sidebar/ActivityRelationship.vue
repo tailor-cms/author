@@ -19,17 +19,17 @@
     @update:model-value="onRelationshipChanged"
   >
     <template #item="{ item, props: autocompleteProps }">
-      <VDivider v-if="'divider' in item.raw" />
+      <VDivider v-if="'divider' in item" />
       <VListSubheader
-        v-else-if="'header' in item.raw"
-        :title="item.raw.header as string"
+        v-else-if="'header' in item"
+        :title="item.header as string"
         class="text-black text-subtitle-2 font-weight-bold"
       />
       <VListItem
         v-else
         v-bind="autocompleteProps"
-        :title="item.title"
-        :value="item.value"
+        :title="item.data?.name"
+        :value="item.id"
       />
     </template>
   </VAutocomplete>

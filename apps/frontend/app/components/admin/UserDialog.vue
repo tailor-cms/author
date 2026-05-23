@@ -53,7 +53,7 @@
           <template #item="{ item, props: itemProps }">
             <VListItem
               v-bind="itemProps"
-              :subtitle="item.raw.description"
+              :subtitle="item.description"
               class="py-3"
             />
           </template>

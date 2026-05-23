@@ -13,10 +13,10 @@
     variant="outlined"
     @update:model-value="$emit('change', $event)"
   >
-    <template #item="{ props: itemProps, item: { raw } }">
+    <template #item="{ item, props: itemProps }">
       <VListItem
         v-bind="itemProps"
-        :prepend-icon="`mdi-${hasSubtypes(raw) ? 'folder' : 'file-outline'}`"
+        :prepend-icon="`mdi-${hasSubtypes(item) ? 'folder' : 'file-outline'}`"
       />
     </template>
   </VSelect>

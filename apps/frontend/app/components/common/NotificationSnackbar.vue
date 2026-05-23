@@ -5,7 +5,6 @@
     :timeout="context.timeout"
     class="ma-8 text-subtitle-2"
     location="bottom right"
-    multi-line
   >
     {{ context.message }}
     <template #actions>

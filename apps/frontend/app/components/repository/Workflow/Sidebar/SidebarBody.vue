@@ -33,13 +33,13 @@
       @update:model-value="updateStatus('assigneeId', $event)"
     >
       <template #selection="{ item }">
-        <VAvatar :image="item.raw.imgUrl" class="mr-4" size="26" />
-        {{ item.title }}
+        <VAvatar :image="item.imgUrl" class="mr-4" size="26" />
+        {{ item.label }}
       </template>
       <template #item="{ item, props: selectProps }">
         <VListItem v-bind="selectProps">
           <template #prepend>
-            <VAvatar :image="item.raw.imgUrl" size="26" />
+            <VAvatar :image="item.imgUrl" size="26" />
           </template>
         </VListItem>
       </template>
