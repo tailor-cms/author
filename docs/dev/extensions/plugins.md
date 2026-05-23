@@ -24,7 +24,7 @@ Plugins can provide Vue components that are rendered in specific locations:
 
 | Slot | Location | Use Case |
 |------|----------|----------|
-| `GlobalComponent` | Top navigation bar | Global controls, status indicators |
+| `GlobalComponent` | Repository navigation rail | Repository-scoped controls, status indicators |
 | `AppendComponent` | After Meta Input fields | Field-level enhancements |
 | `PrependComponent` | Before Meta Input fields | Field-level prefixes |
 | `ConfigComponent` | Configuration panels | Plugin settings UI |

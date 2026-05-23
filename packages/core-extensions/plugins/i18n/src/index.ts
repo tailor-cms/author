@@ -14,7 +14,7 @@ export default {
   version: '1.0',
   // Standard component slots
   AppendComponent, // Below meta inputs (translation status badge)
-  GlobalComponent, // Top nav (language selector dropdown)
+  GlobalComponent, // Repository navigation rail (language selector)
   PrependComponent: null,
   ConfigComponent: null,
   // Store factory and injection key

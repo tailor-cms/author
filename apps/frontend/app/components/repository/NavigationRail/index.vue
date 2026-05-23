@@ -34,6 +34,11 @@
         class="rail-active-users pa-2"
         vertical
       />
+      <component
+        :is="plugin.globalComponentName"
+        v-for="plugin in globalPlugins"
+        :key="plugin.id"
+      />
       <VMenu v-if="actions.length" location="end" offset="8">
         <template #activator="{ props: menuProps }">
           <VBtn
@@ -89,6 +94,8 @@ const emit = defineEmits<{ action: [name: RailAction['name']] }>();
 const route = useRoute();
 const repoStore = useCurrentRepository();
 const userTrackingStore = useUserTracking();
+const { $pluginRegistry } = useNuxtApp() as any;
+const globalPlugins = computed(() => $pluginRegistry.getGlobalComponents());
 
 const activeUsers = computed(() =>
   userTrackingStore.getActiveUsers(
