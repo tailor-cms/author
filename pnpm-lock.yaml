@@ -520,9 +520,6 @@ importers:
       vee-validate:
         specifier: ^4.15.1
         version: 4.15.1(vue@3.5.34(typescript@6.0.3))
-      vue3-tree-vue:
-        specifier: ^2.0.16
-        version: 2.0.16(vue@3.5.34(typescript@6.0.3))
       vuedraggable:
         specifier: 4.1.0
         version: 4.1.0(vue@3.5.34(typescript@6.0.3))
@@ -11479,12 +11476,6 @@ packages:
         optional: true
       pinia:
         optional: true
-
-  vue3-tree-vue@2.0.16:
-    resolution: {integrity: sha512-N4zFU6Ojh2TVHbfzhNYoKak9ONuqK2LZA+ZIdYuZUMnPoyDCkGv90jHe9yJ8fu6CjsBj4txnRs1mk5I2+l25hQ==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      vue: ^3.0.5
 
   vue@3.5.34:
     resolution: {integrity: sha512-WdLBG9gm02OgJIG9axd5Hpx0TFLdzVgfG2evFFu8Rur5O/IoGc5cMjnjh3tPL6GnRGsYvUhBSKVPYVcxRKpMCA==}
@@ -23496,10 +23487,6 @@ snapshots:
     optionalDependencies:
       '@vue/compiler-sfc': 3.5.34
       pinia: 3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
-
-  vue3-tree-vue@2.0.16(vue@3.5.34(typescript@6.0.3)):
-    dependencies:
-      vue: 3.5.34(typescript@6.0.3)
 
   vue@3.5.34(typescript@6.0.3):
     dependencies:

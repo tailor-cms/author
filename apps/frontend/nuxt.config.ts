@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   css: [
     '@mdi/font/css/materialdesignicons.min.css',
     'vuetify/styles',
+    '~/assets/css/reset.scss',
   ],
   build: {
     transpile: ['vuetify'],
@@ -30,8 +31,6 @@ export default defineNuxtConfig({
     port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
   vite: {
-    // TODO: Check if this is still needed
-    optimizeDeps: { include: ['lodash-es'] },
     plugins: [injectConfigHeaders()],
   },
   telemetry: false,
