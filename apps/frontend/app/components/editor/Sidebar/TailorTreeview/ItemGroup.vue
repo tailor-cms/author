@@ -59,9 +59,3 @@ const bindings = computed(() => {
   };
 });
 </script>
-
-<style lang="scss" scoped>
-.v-list-group {
-  --list-indent-size: 0.75rem;
-}
-</style>

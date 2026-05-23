@@ -16,6 +16,7 @@
           class="mr-n1"
           density="comfortable"
           variant="text"
+          size="small"
           @click.stop="activatorProps?.onClick"
         />
       </template>
@@ -88,7 +89,7 @@ const onItemClick = (e: any) => {
 }
 
 .list-item :deep(.v-list-item-title) {
-  font-size: 1rem !important;
+  font-size: 0.875rem !important;
 }
 
 .list-item-active:deep(.v-list-item-title) {

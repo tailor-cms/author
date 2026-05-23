@@ -1,6 +1,6 @@
 <template>
   <div class="navigation-container">
-    <div class="navigation-header pb-0">
+    <div class="d-flex align-center px-2">
       <VTextField
         v-model="searchInput"
         clear-icon="mdi-close"
@@ -11,9 +11,22 @@
         variant="solo"
         flat
         clearable
+        hide-details
       />
+      <VBtn
+        v-if="treeRef?.hasItems"
+        class="text-none"
+        color="primary-lighten-4"
+        size="small"
+        variant="text"
+        rounded="lg"
+        @click="treeRef?.toggleExpand()"
+      >
+        {{ treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all' }}
+      </VBtn>
     </div>
     <TailorTreeview
+      ref="treeRef"
       :active-item-id="selected?.id"
       :items="activityTreeData"
       :search="searchInput"
@@ -38,6 +51,7 @@ const props = defineProps<{
 }>();
 
 const searchInput = ref('');
+const treeRef = useTemplateRef<InstanceType<typeof TailorTreeview>>('treeRef');
 
 // Get processed name via plugin hooks
 const getActivityName = (activity: Activity) => {
@@ -88,10 +102,6 @@ const navigateToActivity = (activityId: number) => {
   display: flex;
   flex-direction: column;
   height: 100%;
-}
-
-.navigation-header {
-  padding: 0.5rem 0 0;
 }
 
 .tree-node {
