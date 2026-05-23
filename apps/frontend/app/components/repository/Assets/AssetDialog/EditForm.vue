@@ -8,7 +8,7 @@
       />
       <span
         :class="{ 'text-amber-lighten-1 font-weight-medium': isCoreSource }"
-        class="text-body-2 text-primary-lighten-3"
+        class="text-body-medium text-primary-lighten-3"
       >
         Core Source
       </span>
@@ -21,7 +21,7 @@
       inset
     />
   </div>
-  <div class="section-header text-caption text-uppercase text-primary-lighten-2 mb-4">
+  <div class="section-header text-body-small text-uppercase text-primary-lighten-2 mb-4">
     Edit Details
   </div>
   <VTextarea

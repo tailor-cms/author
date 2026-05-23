@@ -24,10 +24,10 @@
         <template #prepend>
           <VIcon size="large">mdi-file-link-outline</VIcon>
         </template>
-        <VListItemTitle class="text-body-2">
+        <VListItemTitle class="text-body-medium">
           {{ copy.repositoryName }}
         </VListItemTitle>
-        <VListItemSubtitle class="text-caption">
+        <VListItemSubtitle class="text-body-small">
           {{ copy.name }}
         </VListItemSubtitle>
       </VListItem>

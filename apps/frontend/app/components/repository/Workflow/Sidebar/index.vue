@@ -4,7 +4,7 @@
     :width="sidebarWidth"
     class="px-4 text-left"
     color="primary-darken-2"
-    elevation="2"
+    elevation="1"
     location="right"
     mobile-breakpoint="md"
     absolute

@@ -47,7 +47,7 @@ const style = computed(() =>
 <style lang="scss" scoped>
 .user-avatar-container {
   padding: 0.125rem;
-  overflow: hidden !important;
+  overflow: hidden;
 
   .user-avatar {
     background-position: center;

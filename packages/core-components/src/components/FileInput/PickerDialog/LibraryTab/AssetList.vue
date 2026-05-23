@@ -37,16 +37,16 @@
           />
         </VAvatar>
       </template>
-      <VListItemTitle class="text-body-2">{{ asset.name }}</VListItemTitle>
+      <VListItemTitle class="text-body-medium">{{ asset.name }}</VListItemTitle>
       <VListItemSubtitle
         v-if="!isCompatible(asset)"
-        class="text-caption text-medium-emphasis"
+        class="text-body-small text-medium-emphasis"
       >
         Unsupported format
       </VListItemSubtitle>
       <VListItemSubtitle
         v-else-if="'fileSize' in asset.meta"
-        class="text-caption"
+        class="text-body-small"
       >
         {{ formatFileSize((asset.meta as FileAssetMeta).fileSize) }}
       </VListItemSubtitle>

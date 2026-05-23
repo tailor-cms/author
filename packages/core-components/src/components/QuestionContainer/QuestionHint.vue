@@ -1,6 +1,6 @@
 <template>
   <div class="hint-container">
-    <div class="text-subtitle-2 mb-2">Hint</div>
+    <div class="text-title-small mb-2">Hint</div>
     <VTextField
       :model-value="hint"
       placeholder="Optional hint..."

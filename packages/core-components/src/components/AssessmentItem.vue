@@ -2,7 +2,7 @@
   <VSheet
     v-if="loading"
     color="primary-lighten-5"
-    class="py-16 text-subtitle-2 rounded-lg text-center"
+    class="py-16 text-title-small rounded-lg text-center"
   >
     <CircularProgress />
     <div class="pt-3 text-primary-darken-4 font-weight-bold">

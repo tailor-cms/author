@@ -129,8 +129,4 @@ const attachActivityAttrs = (activity: Activity) => {
 .v-treeview {
   max-height: 31.25rem;
 }
-
-.v-list {
-  border-radius: 4px !important;
-}
 </style>

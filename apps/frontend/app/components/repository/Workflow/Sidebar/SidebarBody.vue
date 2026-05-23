@@ -124,7 +124,7 @@ const updateStatus = async (key: string, value: any = null) => {
 }
 
 .v-select :deep(.v-select__menu-icon) {
-  color: rgb(var(--v-theme-primary-lighten-5)) !important;
+  color: rgb(var(--v-theme-primary-lighten-5));
   opacity: 1;
 }
 </style>

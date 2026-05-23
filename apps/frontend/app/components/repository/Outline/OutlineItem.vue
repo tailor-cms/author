@@ -199,8 +199,8 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
 
   &-name {
     padding: 0.125rem 0.75rem 0 0.375rem;
-    font-size: 1rem !important;
-    font-weight: 400 !important;
+    font-size: 1rem;
+    font-weight: 400;
     line-height: 2.5rem;
   }
 
@@ -227,10 +227,6 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
     height: 100%;
     margin: 0 0 0 auto;
     padding: 0;
-
-    .v-btn {
-      margin: 0.375rem 0.5rem;
-    }
 
     .options-menu :deep(.v-btn) {
       height: 100%;

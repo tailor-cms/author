@@ -27,7 +27,7 @@
           <VAvatar
             v-bind="menuProps"
             :text="`+${overflow}`"
-            class="text-caption font-weight-bold"
+            class="text-body-small font-weight-bold"
           />
         </template>
         <VList density="compact" min-width="220">

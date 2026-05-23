@@ -1,6 +1,6 @@
 <template>
   <div class="mb-4">
-    <div class="text-subtitle-2 mb-2">Prompt</div>
+    <div class="text-title-small mb-2">Prompt</div>
     <VInput
       :model-value="elementData.question"
       :rules="[requiredRule]"
@@ -85,16 +85,16 @@ editorChannel.on('element:focus', (element: any = {}) => {
 
 <style lang="scss" scoped>
 :deep(.add-element-container) {
-  margin-top: 1rem !important;
+  margin-top: 1rem;
 
   .v-btn {
-    margin-top: 0 !important;
-    margin-bottom: 0.5rem !important;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
   }
 }
 
 :deep(.list-group) {
-  padding: 1rem 2.5rem !important;
+  padding: 1rem 2.5rem;
 
   .contained-content {
     margin: 0;

@@ -47,12 +47,12 @@
     </div>
     <VExpandTransition>
       <div v-show="isExpanded" class="pt-6">
-        <VRow v-if="processedMeta.length">
+        <VRow v-if="processedMeta.length" no-gutters>
           <VCol
             v-for="input in processedMeta"
             :key="input.key"
             :cols="input.cols || 12"
-            class="pt-0 pb-3 px-8"
+            class="px-4"
           >
             <MetaInput
               :meta="input"

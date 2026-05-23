@@ -28,6 +28,8 @@ withDefaults(defineProps<{ disabled?: boolean }>(), {
   width: 100%;
   margin: 0;
   padding: 0 3.125rem;
+  background: transparent;
+  border: none;
   opacity: 0;
   transition:
     opacity 0.3s,

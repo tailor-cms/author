@@ -1,0 +1,8 @@
+/* Vuetify 4's reset no longer zeroes browser-default margins on typographic
+   elements (h1-h6, p). Authored HTML rendered inside content elements relies
+   on that baseline. Re-augment Vuetify's reset layer to restore it. */
+@layer vuetify-core.reset {
+  h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, figure {
+    margin: 0;
+  }
+}

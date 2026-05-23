@@ -123,11 +123,11 @@ watch(
     box-sizing: content-box;
     overflow-y: scroll;
     overflow-x: hidden;
-    -ms-overflow-style: none !important;
-    scrollbar-width: none !important;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 
     &::-webkit-scrollbar {
-      display: none !important;
+      display: none;
     }
   }
 

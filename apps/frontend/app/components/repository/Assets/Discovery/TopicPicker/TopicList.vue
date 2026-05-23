@@ -16,10 +16,10 @@
         class="topic-list-item"
         @click="emit('topic:select', item)"
       >
-        <VListItemTitle class="text-body-2">
+        <VListItemTitle class="text-body-medium">
           {{ item.name }}
         </VListItemTitle>
-        <VListItemSubtitle v-if="item.parentName" class="text-caption">
+        <VListItemSubtitle v-if="item.parentName" class="text-body-small">
           {{ item.parentName }}
         </VListItemSubtitle>
       </VListItem>

@@ -8,7 +8,7 @@
     <div v-if="activity && !element" class="activity-toolbar w-100 px-3">
       <ActivityActions />
       <VDivider class="rail-divider mx-2" vertical />
-      <h1 v-if="mdAndUp" class="activity-title text-body-1 text-truncate">
+      <h1 v-if="mdAndUp" class="activity-title text-body-large text-truncate">
         <span class="text-primary-lighten-3 font-weight-medium">
           {{ config.label }}
         </span>
@@ -29,7 +29,7 @@
         />
         <template v-if="showPublishDiff">
           <span class="title-separator">·</span>
-          <span class="text-grey-lighten-1 text-caption">
+          <span class="text-grey-lighten-1 text-body-small">
             comparing with published
           </span>
           <VChip
@@ -177,6 +177,7 @@ const usersWithActivity = computed(() => {
     height: auto !important;
     min-height: 4rem;
     padding: 0;
+    overflow: visible;
   }
 
   :deep(.v-input) {
@@ -184,14 +185,14 @@ const usersWithActivity = computed(() => {
 
     .v-input__details {
       position: absolute;
-      padding: 0 !important;
+      padding: 0;
 
       .v-messages__message {
         margin-top: 0.5rem;
         border-radius: 4px;
         padding: 0.5rem 0.75rem;
         background-color: #424242;
-        color: #fff !important;
+        color: #fff;
       }
     }
   }

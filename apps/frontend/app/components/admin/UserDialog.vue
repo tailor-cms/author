@@ -82,7 +82,7 @@
           hide-details
           inset
         />
-        <div v-if="isNewUser" class="text-caption text-medium-emphasis ml-1 mb-3">
+        <div v-if="isNewUser" class="text-body-small text-medium-emphasis ml-1 mb-3">
           Useful for SSO users who don't need a password setup email.
           You can always send the invite later using Reinvite.
         </div>

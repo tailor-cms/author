@@ -21,7 +21,7 @@
       </VTooltip>
     </template>
     <VSheet min-width="220" rounded="lg">
-      <div class="px-4 pt-3 pb-2 text-caption text-medium-emphasis">
+      <div class="px-4 pt-3 pb-2 text-body-small text-medium-emphasis">
         Comments are only available on the source element
       </div>
       <VDivider />

@@ -12,7 +12,7 @@
     >
       <template #message="{ message }">
         <div v-if="warning" class="d-flex align-center">
-          <VIcon class="text-body-1" color="warning" icon="mdi-alert" start />
+          <VIcon class="text-body-large" color="warning" icon="mdi-alert" start />
           {{ message }}
         </div>
         <template v-else>{{ message }}</template>

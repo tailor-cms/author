@@ -11,7 +11,7 @@
         flat
         v-on="{ click: collapsible ? () => emit('selected') : null }"
       >
-        <VRow class="w-100" dense>
+        <VRow class="w-100" density="compact">
           <VCol :cols="expanded ? 9 : 3" class="text-left align-content-center">
             <div class="d-flex align-center">
               <VIcon
@@ -20,13 +20,13 @@
                 size="small"
                 start
               />
-              <span class="text-subtitle-2">{{ type }}</span>
+              <span class="text-title-small">{{ type }}</span>
             </div>
           </VCol>
           <VCol
             v-if="!expanded"
             cols="6"
-            class="text-subtitle-2 align-content-center text-truncate"
+            class="text-title-small align-content-center text-truncate"
           >
             {{ question }}
           </VCol>

@@ -130,7 +130,7 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
   line-height: 1.25;
 
   :deep(td) {
-    padding: 0.5rem 1rem !important;
+    padding: 0.5rem 1rem;
   }
 }
 
@@ -139,7 +139,7 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 
   &.selected,
   &:hover {
-    background: rgba(var(--v-theme-primary-darken-1)) !important;
+    background: rgba(var(--v-theme-primary-darken-1));
   }
 
   &.selected {
@@ -148,11 +148,11 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 }
 
 .v-table :deep(th) {
-  background: rgba(var(--v-theme-primary-darken-2)) !important;
+  background: rgba(var(--v-theme-primary-darken-2));
 
   &:hover {
     font-weight: bold;
-    color: white !important;
+    color: white;
   }
 }
 </style>

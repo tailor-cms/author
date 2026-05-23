@@ -1,14 +1,14 @@
 <template>
   <div v-show="errors.length">
     <VAlert
-      class="mt-5 text-left text-subtitle-1"
+      class="mt-5 text-left text-body-large"
       color="yellow-lighten-4"
       icon="mdi-alert"
       variant="tonal"
       prominent
     >
-      <div class="mt-3 text-subtitle-1 font-weight-bold">Detected Issues:</div>
-      <div class="pl-1 pr-5 text-subtitle-1">
+      <div class="mt-3 text-body-large font-weight-bold">Detected Issues:</div>
+      <div class="pl-1 pr-5 text-body-large">
         <VCard
           v-for="({ id, link, message }, index) in errors"
           :key="index"

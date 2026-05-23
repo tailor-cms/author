@@ -7,7 +7,7 @@
       border="sm surface"
     >
       <VContainer class="catalog" max-width="1360">
-        <VRow class="catalog-actions py-10" dense>
+        <VRow class="catalog-actions py-10" density="compact">
           <VCol cols="12" lg="4" md="6">
             <UserGroupSelect
               v-if="userGroupOptions.length"
@@ -354,8 +354,8 @@ onBeforeMount(async () => {
 }
 
 .v-infinite-scroll {
-  overflow-y: unset !important;
-  overflow-x: unset !important;
+  overflow-y: unset;
+  overflow-x: unset;
 }
 
 :deep(.v-infinite-scroll__side) {

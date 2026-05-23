@@ -1,7 +1,7 @@
 <template>
   <div class="body">
     <VSheet class="d-flex align-center my-5 pa-1" color="transparent">
-      <div class="d-flex align-center mr-1 text-body-2 font-weight-bold">
+      <div class="d-flex align-center mr-1 text-body-medium font-weight-bold">
         <VIcon :color="config.color" class="mr-2" size="26">mdi-label</VIcon>
         <span>{{ config.label.toUpperCase() }}</span>
       </div>

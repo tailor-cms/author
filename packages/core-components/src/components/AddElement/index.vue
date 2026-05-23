@@ -69,7 +69,7 @@
           </VBtn>
           <VSpacer />
           <div v-if="layout" class="d-flex align-center ga-4">
-            <span class="text-subtitle-1 text-medium-emphasis">
+            <span class="text-body-large text-medium-emphasis">
               Element width
             </span>
             <VBtnToggle
@@ -88,7 +88,7 @@
             </VBtnToggle>
           </div>
           <div v-if="doTheMagic" class="d-flex align-center ga-2">
-            <span class="text-subtitle-1 text-medium-emphasis">
+            <span class="text-body-large text-medium-emphasis">
               Generate with AI
             </span>
             <VSwitch

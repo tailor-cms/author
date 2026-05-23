@@ -3,7 +3,7 @@
     <VAlert
       v-if="notificationText"
       :color="isError ? 'pink-lighten-4' : 'teal-lighten-4'"
-      class="mb-8 text-subtitle-2"
+      class="mb-8 text-title-small"
       variant="tonal"
     >
       {{ notificationText }}

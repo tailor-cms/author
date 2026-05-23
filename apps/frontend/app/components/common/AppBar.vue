@@ -13,7 +13,7 @@
       />
       <VAppBarTitle class="app-name text-primary-lighten-3">
         Tailor
-        <span v-if="!smAndDown" class="text-caption font-weight-bold">
+        <span v-if="!smAndDown" class="text-body-small font-weight-bold">
           <span class="text-primary-lighten-3 text-uppercase">
             authoring meets
           </span>
@@ -55,7 +55,7 @@
           <div class="d-flex pa-4 align-center">
             <UserAvatar :img-url="user.imgUrl" size="48" />
             <div class="text-primary-lighten-4 ml-4">
-              <div class="text-subtitle-1 font-weight-bold">
+              <div class="text-body-large font-weight-bold">
                 {{ user.label }}
               </div>
             </div>
@@ -141,10 +141,6 @@ const logout = async () => {
   .v-toolbar__content .v-btn.v-btn--icon {
     width: unset;
     height: unset;
-  }
-
-  .v-btn:not(.v-btn--active) {
-    color: #fff !important;
   }
 }
 
