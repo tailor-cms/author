@@ -4,7 +4,7 @@
       v-if="comment.author"
       :img-url="comment.author.imgUrl"
       :size="36"
-      class="ml-1 mt-2"
+      class="mt-1"
       color="primary-lighten-4"
     />
     <div class="info-container">

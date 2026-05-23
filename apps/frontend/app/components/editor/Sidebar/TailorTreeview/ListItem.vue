@@ -89,7 +89,7 @@ const onItemClick = (e: any) => {
 }
 
 .list-item :deep(.v-list-item-title) {
-  font-size: 0.875rem !important;
+  font-size: 0.9375rem !important;
 }
 
 .list-item-active:deep(.v-list-item-title) {
