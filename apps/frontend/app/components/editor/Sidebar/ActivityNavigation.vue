@@ -20,10 +20,9 @@
         size="small"
         variant="text"
         rounded="lg"
+        text="Toggle all"
         @click="treeRef?.toggleExpand()"
-      >
-        {{ treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all' }}
-      </VBtn>
+      />
     </div>
     <TailorTreeview
       ref="treeRef"
