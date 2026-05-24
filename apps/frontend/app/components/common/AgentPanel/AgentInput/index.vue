@@ -48,7 +48,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
 import type { AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
 import AgentEffortSelect from './AgentEffortSelect.vue';

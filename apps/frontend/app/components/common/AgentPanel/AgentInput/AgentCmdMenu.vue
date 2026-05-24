@@ -71,7 +71,6 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
 import { oneLine } from 'common-tags';
 import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
 
