@@ -29,7 +29,6 @@ body {
   --text-color-default: rgba(0, 0, 0, 0.87);
   height: 100vh;
   color: var(--text-color-default);
-  // font-family: $font-family-primary;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

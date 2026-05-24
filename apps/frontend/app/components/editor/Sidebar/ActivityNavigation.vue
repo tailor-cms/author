@@ -156,7 +156,6 @@ const navigateToActivity = (activityId: number) => {
 :deep(.v-list-item) {
   &:hover {
     .v-list-item-title {
-      font-weight: 600;
       color: #f8bbd0;
     }
 

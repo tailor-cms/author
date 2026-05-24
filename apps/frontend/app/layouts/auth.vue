@@ -42,7 +42,6 @@ const logoPath = '/img/logo-new.svg';
   align-items: center;
 
   .app-title {
-    font-family: Poppins, Roboto, sans-serif;
     font-size: 1.75rem;
   }
 

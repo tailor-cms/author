@@ -210,8 +210,11 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
 
     .activity-name {
       color: rgb(var(--v-theme-primary-lighten-5)) !important;
-      font-weight: 600 !important;
     }
+  }
+
+  &.selected .activity-name {
+    font-weight: 600 !important;
   }
 
   &.disabled {

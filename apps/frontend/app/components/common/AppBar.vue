@@ -152,7 +152,6 @@ const logout = async () => {
 
   .app-name {
     margin: 0 0 0 0.125rem;
-    font-family: Poppins, Roboto, sans-serif;
     font-size: 1.125rem;
     font-weight: 600;
     letter-spacing: 0.06em;

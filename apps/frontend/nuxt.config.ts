@@ -37,8 +37,7 @@ export default defineNuxtConfig({
   debug: true,
   googleFonts: {
     families: {
-      Roboto: true,
-      Poppins: true,
+      Inter: [400, 500, 600, 700],
     },
   },
   pinia: {
