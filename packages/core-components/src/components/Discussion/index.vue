@@ -7,9 +7,10 @@
       <VBtn
         v-if="hasHiddenComments"
         class="float-right mt-1"
-        color="teal-lighten-4"
-        size="x-small"
-        variant="tonal"
+        color="primary-lighten-4"
+        size="small"
+        variant="text"
+        rounded="lg"
         @click="showAll = !showAll"
       >
         Show {{ showAll ? 'less' : 'more' }}

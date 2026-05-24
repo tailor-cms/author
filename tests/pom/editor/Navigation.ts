@@ -12,7 +12,9 @@ export class Navigation {
     this.page = page;
     this.el = parent.locator('.navigation-container');
     this.searchInput = this.el.getByLabel('Search...');
-    this.toggleAllBtn = this.el.getByRole('button', { name: 'Toggle all' });
+    this.toggleAllBtn = this.el.getByRole('button', {
+      name: /^(Expand all|Collapse all)$/,
+    });
     this.treeView = this.el.locator('.tree-view');
   }
 

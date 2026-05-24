@@ -20,7 +20,7 @@
         size="small"
         variant="text"
         rounded="lg"
-        text="Toggle all"
+        :text="treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all'"
         @click="treeRef?.toggleExpand()"
       />
     </div>
