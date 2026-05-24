@@ -1,6 +1,6 @@
 <template>
   <div class="text-left mt-2 mb-8">
-    <div class="label ma-1 text-caption">{{ meta.label }}</div>
+    <div class="label ma-1 text-body-small">{{ meta.label }}</div>
     <div class="d-flex">
       <ColorInput :color="selected" :readonly="readonly" @input="select" />
       <div

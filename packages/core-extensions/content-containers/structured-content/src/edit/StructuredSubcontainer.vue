@@ -5,12 +5,12 @@
       class="subcontainer-header d-flex align-center mx-1"
       @click="isCollapsible && toggleExpanded()"
     >
-      <VCardTitle class="d-flex align-center pa-0 text-h6 text-truncate">
+      <VCardTitle class="d-flex align-center pa-0 text-title-large text-truncate">
         <VIcon class="mr-2" color="primary-darken-4" size="24">{{ icon }}</VIcon>
         {{ label }}
         <span
           v-if="!isExpanded && collapsedPreviewText"
-          class="ml-3 text-body-2 text-medium-emphasis text-truncate"
+          class="ml-3 text-body-medium text-medium-emphasis text-truncate"
         >
           {{ collapsedPreviewText }}
         </span>

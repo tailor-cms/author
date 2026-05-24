@@ -9,7 +9,7 @@
             :key="label"
             class="d-flex align-center"
           >
-            <div class="label text-caption font-weight-bold">{{ label }}</div>
+            <div class="label text-body-small font-weight-bold">{{ label }}</div>
             <VSlider
               v-model="input.rating[key]"
               color="primary"
@@ -18,7 +18,7 @@
               step="0.1"
               hide-details
             />
-            <div class="text-subtitle-2 ml-2 slider-value">
+            <div class="text-title-small ml-2 slider-value">
               {{ input.rating[key]?.toFixed(1) }}
             </div>
           </div>

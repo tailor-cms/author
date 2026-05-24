@@ -1,6 +1,6 @@
 <template>
   <div class="my-2">
-    <div v-if="meta.label" class="label ma-1 text-caption">
+    <div v-if="meta.label" class="label ma-1 text-body-small">
       {{ meta.label }}
     </div>
     <VCheckbox
