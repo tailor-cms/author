@@ -9,4 +9,3 @@
 <script lang="ts" setup>
 defineProps<{ label: string }>();
 </script>
-
