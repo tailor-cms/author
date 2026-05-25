@@ -61,7 +61,7 @@ const formatDate = (revision: Revision) => {
 <style lang="scss" scoped>
 .v-progress-linear {
   position: absolute;
-  top: unset !important;
+  top: unset;
   bottom: 0;
   left: 0;
 }

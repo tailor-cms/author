@@ -12,7 +12,7 @@
           :cols="isExamCollapsed ? 8 : 10"
           :offset="isExamCollapsed ? 2 : 0"
         >
-          <div class="text-subtitle-1 font-weight-bold">
+          <div class="text-body-large font-weight-bold">
             {{ title }}
           </div>
         </VCol>

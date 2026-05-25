@@ -1,6 +1,6 @@
 <template>
   <div class="element-sidebar">
-    <div class="pb-4 text-body-2 font-weight-bold text-primary-lighten-4">
+    <div class="pb-4 text-body-medium font-weight-bold text-primary-lighten-4">
       Additional settings
     </div>
     <component :is="sidebarName" :element="element" @save="onSave" />
@@ -62,7 +62,7 @@ $error-color: rgb(var(--v-theme-secondary-lighten-4));
     .v-messages__message,
     .v-field__outline,
     .v-field-label {
-      color: $error-color !important;
+      color: $error-color;
     }
   }
 }

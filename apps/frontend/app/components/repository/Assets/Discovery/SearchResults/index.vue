@@ -1,6 +1,6 @@
 <template>
   <div v-if="isSearching" class="d-flex flex-column align-center pa-12 ga-4">
-    <span class="text-body-1 text-primary-lighten-3">
+    <span class="text-body-large text-primary-lighten-3">
       Searching the web for relevant resources...
     </span>
   </div>

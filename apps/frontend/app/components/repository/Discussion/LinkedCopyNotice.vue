@@ -4,7 +4,7 @@
       <template #activator="{ props: tooltipProps }">
         <span
           v-bind="tooltipProps"
-          class="d-flex align-center text-body-2 text-uppercase font-weight-bold"
+          class="d-flex align-center text-body-medium text-uppercase font-weight-bold"
         >
           <VIcon
             color="lime"

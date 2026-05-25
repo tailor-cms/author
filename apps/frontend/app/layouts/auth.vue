@@ -42,7 +42,6 @@ const logoPath = '/img/logo-new.svg';
   align-items: center;
 
   .app-title {
-    font-family: Poppins, Roboto, sans-serif !important;
     font-size: 1.875rem;
     line-height: 1.1;
   }
@@ -61,7 +60,7 @@ const logoPath = '/img/logo-new.svg';
     .v-field__prepend-inner > .v-icon,
     .v-field__outline,
     .v-label.v-field-label {
-      color: #f8bbd0 !important;
+      color: #f8bbd0;
     }
   }
 }

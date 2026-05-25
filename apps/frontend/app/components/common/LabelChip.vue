@@ -1,7 +1,7 @@
 <template>
   <VChip
     :color="color"
-    class="flex-shrink-0 text-caption text-uppercase font-weight-bold readonly"
+    class="flex-shrink-0 text-body-small text-uppercase font-weight-bold readonly"
     label
   >
     <slot></slot>

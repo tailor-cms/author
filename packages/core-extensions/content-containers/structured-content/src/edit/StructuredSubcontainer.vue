@@ -5,12 +5,12 @@
       class="subcontainer-header d-flex align-center mx-1"
       @click="isCollapsible && toggleExpanded()"
     >
-      <VCardTitle class="d-flex align-center pa-0 text-h6 text-truncate">
+      <VCardTitle class="d-flex align-center pa-0 text-title-large text-truncate">
         <VIcon class="mr-2" color="primary-darken-4" size="24">{{ icon }}</VIcon>
         {{ label }}
         <span
           v-if="!isExpanded && collapsedPreviewText"
-          class="ml-3 text-body-2 text-medium-emphasis text-truncate"
+          class="ml-3 text-body-medium text-medium-emphasis text-truncate"
         >
           {{ collapsedPreviewText }}
         </span>
@@ -47,12 +47,12 @@
     </div>
     <VExpandTransition>
       <div v-show="isExpanded" class="pt-6">
-        <VRow v-if="processedMeta.length">
+        <VRow v-if="processedMeta.length" no-gutters>
           <VCol
             v-for="input in processedMeta"
             :key="input.key"
             :cols="input.cols || 12"
-            class="pt-0 pb-3 px-8"
+            class="px-4"
           >
             <MetaInput
               :meta="input"

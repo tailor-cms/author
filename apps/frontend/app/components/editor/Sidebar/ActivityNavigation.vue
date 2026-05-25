@@ -20,7 +20,7 @@
         size="small"
         variant="text"
         rounded="lg"
-        text="Toggle all"
+        :text="treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all'"
         @click="treeRef?.toggleExpand()"
       />
     </div>
@@ -152,14 +152,9 @@ const navigateToActivity = (activityId: number) => {
   opacity: 1;
 }
 
-:deep(.v-list-item-action) {
-  display: none !important;
-}
-
 :deep(.v-list-item) {
   &:hover {
     .v-list-item-title {
-      font-weight: 600 !important;
       color: #f8bbd0;
     }
 

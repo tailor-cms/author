@@ -19,7 +19,7 @@
             {{ activity.shortId }}
           </LabelChip>
         </VCardSubtitle>
-        <VCardTitle class="pt-3 pl-5 text-h5 text-primary-lighten-5">
+        <VCardTitle class="pt-3 pl-5 text-headline-small text-primary-lighten-5">
           <ActivityName :activity="activity" />
         </VCardTitle>
         <VCardActions class="pb-2 pl-3">

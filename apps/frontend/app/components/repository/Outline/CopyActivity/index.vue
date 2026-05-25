@@ -21,7 +21,7 @@
     </template>
     <template v-if="schema" #body>
       <div v-if="isCopyingActivities" class="ma-4">
-        <div class="text-subtitle-1 text-center mb-2">
+        <div class="text-body-large text-center mb-2">
           Copying {{ selectedActivities.length }} items...
         </div>
         <VProgressLinear color="primary-darken-2" indeterminate />

@@ -2,7 +2,7 @@
   <VExpansionPanel :value="group.uid" class="assessment-group">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle v-bind="hoverProps" min-height="64" static>
-        <div class="text-subtitle-1 font-weight-bold">
+        <div class="text-body-large font-weight-bold">
           Question group {{ numberToLetter(position) }}
         </div>
         <VSpacer />
@@ -36,7 +36,7 @@
         persistent-hint
         @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
       />
-      <div class="text-subtitle-2 text-left">Introduction</div>
+      <div class="text-title-small text-left">Introduction</div>
       <GroupIntroduction
         :elements="introductionElements"
         :group="group"
@@ -45,7 +45,7 @@
         @reorder:element="$emit('reorder:element', $event)"
         @save:element="$emit('save:element', $event)"
       />
-      <div class="text-subtitle-2 text-left mb-2">Questions</div>
+      <div class="text-title-small text-left mb-2">Questions</div>
       <VAlert
         v-if="!hasAssessments"
         class="mt-4"

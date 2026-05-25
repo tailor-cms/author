@@ -43,7 +43,7 @@
     class="empty-state d-flex flex-column align-center py-16"
   >
     <VIcon color="primary-lighten-2" icon="mdi-folder-open-outline" size="64" />
-    <div class="mt-4 text-body-1 text-primary-lighten-3">
+    <div class="mt-4 text-body-large text-primary-lighten-3">
       {{
         selectedCategory !== CATEGORY_ALL
           ? 'No assets match the selected filter.'
@@ -52,7 +52,7 @@
     </div>
     <div
       v-if="selectedCategory === CATEGORY_ALL"
-      class="text-caption text-primary-lighten-2 mt-1"
+      class="text-body-small text-primary-lighten-2 mt-1"
     >
       Upload files, add links, or use Discover.
     </div>

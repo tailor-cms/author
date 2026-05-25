@@ -13,7 +13,7 @@
       />
       <VAppBarTitle class="app-name text-primary-lighten-3">
         Tailor
-        <span v-if="!smAndDown" class="text-caption font-weight-bold">
+        <span v-if="!smAndDown" class="text-body-small font-weight-bold">
           <span class="text-primary-lighten-3 text-uppercase">
             authoring meets
           </span>
@@ -55,7 +55,7 @@
           <div class="d-flex pa-4 align-center">
             <UserAvatar :img-url="user.imgUrl" size="48" />
             <div class="text-primary-lighten-4 ml-4">
-              <div class="text-subtitle-1 font-weight-bold">
+              <div class="text-body-large font-weight-bold">
                 {{ user.label }}
               </div>
             </div>
@@ -142,10 +142,6 @@ const logout = async () => {
     width: unset;
     height: unset;
   }
-
-  .v-btn:not(.v-btn--active) {
-    color: #fff !important;
-  }
 }
 
 .app-brand {
@@ -156,7 +152,6 @@ const logout = async () => {
 
   .app-name {
     margin: 0 0 0 0.125rem;
-    font-family: Poppins, Roboto, sans-serif;
     font-size: 1.125rem;
     font-weight: 600;
     letter-spacing: 0.06em;

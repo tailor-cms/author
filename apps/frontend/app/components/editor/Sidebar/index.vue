@@ -165,10 +165,6 @@ watch(
 .sidebar {
   text-align: left;
 
-  :deep(.v-navigation-drawer__content) {
-    overflow: hidden !important;
-  }
-
   .v-btn--disabled {
     opacity: 0.35;
   }

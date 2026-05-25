@@ -1,6 +1,6 @@
 <template>
   <VFooter color="primary-darken-3" height="68" app>
-    <div class="d-flex flex-grow-1 align-center justify-center text-body-2">
+    <div class="d-flex flex-grow-1 align-center justify-center text-body-medium">
       <img
         alt="Tailor logo"
         class="py-1 mx-1"

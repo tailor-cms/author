@@ -20,7 +20,7 @@
       <VFadeTransition>
         <VSheet
           v-if="isAiGeneratingContent"
-          class="generation-loader text-subtitle-2 rounded-lg text-center"
+          class="generation-loader text-title-small rounded-lg text-center"
           color="primary-lighten-5"
         >
           <CircularProgress />
@@ -38,8 +38,8 @@
           <VAvatar class="mb-4" size="80" color="primary-lighten-4">
             <VIcon icon="mdi-magnify" size="40" />
           </VAvatar>
-          <p class="text-h6">No elements found</p>
-          <p class="text-subtitle-1 text-medium-emphasis">
+          <p class="text-title-large">No elements found</p>
+          <p class="text-body-large text-medium-emphasis">
             No elements match "{{ searchQuery }}"
           </p>
         </div>
@@ -48,7 +48,7 @@
           :key="group.name"
           class="element-group"
         >
-          <h3 class="text-overline mb-2">{{ group.name }}</h3>
+          <h3 class="text-label-medium mb-2">{{ group.name }}</h3>
           <div class="element-grid">
             <ElementBtn
               v-for="(element) in group.items"

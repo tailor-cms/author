@@ -89,23 +89,27 @@ const onItemClick = (e: any) => {
 }
 
 .list-item :deep(.v-list-item-title) {
-  font-size: 0.9375rem !important;
+  font-size: 0.9375rem;
 }
 
 .list-item-active:deep(.v-list-item-title) {
-  color: rgb(var(--v-theme-secondary-lighten-4)) !important;
+  color: rgb(var(--v-theme-secondary-lighten-4));
   font-weight: bold;
 }
 
 .activity-menu {
   :deep(.v-list-item-title),
   :deep(.v-list-item-title:hover) {
-    color: rgb(var(--v-theme-primary-darken-3)) !important;
-    font-weight: 400 !important;
+    color: rgb(var(--v-theme-primary-darken-3));
+    font-weight: 400;
   }
 }
 
 .v-list-item:hover .activity-menu :deep(.v-list-item__content) .v-list-item-title {
-  font-weight: 400 !important;
+  font-weight: 400;
+}
+
+:deep(.v-icon) {
+  font-size: 1.25rem;
 }
 </style>

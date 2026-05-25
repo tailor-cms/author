@@ -12,11 +12,11 @@
         <VAvatar color="primary-lighten-3" size="42">{{ acronym }}</VAvatar>
       </template>
       <VListItemTitle
-        class="text-subtitle-1 text-truncate text-primary-lighten-5"
+        class="text-body-large text-truncate text-primary-lighten-5"
       >
         {{ description }}
       </VListItemTitle>
-      <VListItemSubtitle class="text-body-2 text-primary-lighten-4">
+      <VListItemSubtitle class="text-body-medium text-primary-lighten-4">
         {{ formatTimeAgo(date, { rounding: 'floor' }) }} by
         {{ revision.user.label }}
       </VListItemSubtitle>

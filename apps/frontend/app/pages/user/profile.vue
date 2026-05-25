@@ -3,7 +3,7 @@
     <VContainer class="h-100 pt-14 user-panel">
       <VSheet color="primary-lighten-4" rounded="lg">
         <VLayout>
-          <VRow class="ma-2">
+          <VRow class="ma-5">
             <VCol
               class="d-flex flex-column align-center justify-center"
               cols="12"

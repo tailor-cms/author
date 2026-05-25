@@ -8,7 +8,7 @@
       <template #activator="{ props: tooltipProps }">
         <span
           v-bind="tooltipProps"
-          class="d-flex align-center text-body-2 font-weight-bold"
+          class="d-flex align-center text-body-medium font-weight-bold"
         >
           <VIcon
             :color="statusConfig.color"
@@ -43,7 +43,7 @@
         <DueDate
           v-bind="tooltipProps"
           :date="activityStatus.dueDate"
-          class="text-caption font-weight-bold"
+          class="text-body-small font-weight-bold"
           format="MM/dd/yy"
         />
       </template>

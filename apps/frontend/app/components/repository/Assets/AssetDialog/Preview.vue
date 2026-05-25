@@ -15,7 +15,7 @@
       height="300"
     >
       <VIcon color="red-lighten-3" icon="mdi-image-broken-variant" size="36" />
-      <span class="mt-3 text-body-2 text-primary-lighten-2">
+      <span class="mt-3 text-body-medium text-primary-lighten-2">
         Unable to load preview
       </span>
     </VSheet>
@@ -75,7 +75,7 @@
       >
         Open in new tab
       </VBtn>
-      <span v-else class="text-caption text-primary-lighten-2 mt-3">
+      <span v-else class="text-body-small text-primary-lighten-2 mt-3">
         No preview available
       </span>
     </VSheet>

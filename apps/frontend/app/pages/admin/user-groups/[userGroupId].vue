@@ -2,7 +2,7 @@
   <div class="user-group-users">
     <VRow class="mt-2 py-5">
       <VCol>
-        <div class="pl-7 text-subtitle-1 text-primary-darken-4 text-left">
+        <div class="pl-7 text-body-large text-primary-darken-4 text-left">
           <VBtn
             class="mr-1"
             icon="mdi-arrow-left"
@@ -35,7 +35,7 @@
             <UserAvatar :img-url="item.imgUrl" size="32" />
           </td>
           <td class="text-left user-entry-email">{{ item.email }}</td>
-          <td class="user-entry-label text-body-2 text-left text-truncate">
+          <td class="user-entry-label text-body-medium text-left text-truncate">
             {{ item.fullName || 'N/A' }}
           </td>
           <td class="user-entry-role">

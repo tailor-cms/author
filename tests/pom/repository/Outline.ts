@@ -15,7 +15,9 @@ export class ActivityOutline {
   constructor(page: Page) {
     const el = page.locator('.structure-page');
     this.searchInput = el.getByPlaceholder('Search by name or id...');
-    this.toggleAllBtn = el.getByRole('button', { name: 'Toggle all' });
+    this.toggleAllBtn = el.getByRole('button', {
+      name: /^(Expand all|Collapse all)$/,
+    });
     this.bottomAddBtn = el.getByTestId('repository__createRootActivityBtn');
     this.page = page;
     this.el = el;

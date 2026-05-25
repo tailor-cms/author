@@ -6,7 +6,7 @@
   >
     <template #header>{{ context.title }}</template>
     <template #body>
-      <div class="text-body-1 text-left">
+      <div class="text-body-large text-left">
         {{ context.message }}
       </div>
     </template>

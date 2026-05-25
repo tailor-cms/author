@@ -7,7 +7,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: [
     '@mdi/font/css/materialdesignicons.min.css',
-    'vuetify/lib/styles/main.sass',
+    'vuetify/styles',
+    '~/assets/css/reset.scss',
   ],
   build: {
     transpile: ['vuetify'],
@@ -30,16 +31,13 @@ export default defineNuxtConfig({
     port: parseInt(process.env.REVERSE_PROXY_PORT as string, 10),
   },
   vite: {
-    // TODO: Check if this is still needed
-    optimizeDeps: { include: ['lodash-es'] },
     plugins: [injectConfigHeaders()],
   },
   telemetry: false,
   debug: true,
   googleFonts: {
     families: {
-      Roboto: true,
-      Poppins: true,
+      Inter: [400, 500, 600, 700],
     },
   },
   pinia: {

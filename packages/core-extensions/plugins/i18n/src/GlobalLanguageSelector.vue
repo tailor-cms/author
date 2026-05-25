@@ -11,7 +11,7 @@
         rounded="lg"
       >
         <VIcon icon="mdi-translate" size="18" />
-        <span class="text-uppercase ml-1 text-caption font-weight-bold">
+        <span class="text-uppercase ml-1 text-body-small font-weight-bold">
           {{ currentLanguage ?? 'en' }}
         </span>
       </VBtn>

@@ -95,12 +95,12 @@
         <div class="d-flex justify-start px-4 text-primary-lighten-4">
           <UserAvatar :img-url="lastActivity.user.imgUrl" :size="38" />
           <div class="ml-3 overflow-hidden">
-            <div class="text-caption">
+            <div class="text-body-small">
               Edited
               {{ lastActivityTimeago }}
               by
             </div>
-            <div class="text-body-2 text-truncate">
+            <div class="text-body-medium text-truncate">
               {{ lastActivity.user.label }}
             </div>
           </div>
@@ -225,6 +225,6 @@ onMounted(() => nextTick(detectSchemaTruncation));
 }
 
 .v-checkbox :deep(.v-selection-control) {
-  min-height: unset !important;
+  min-height: unset;
 }
 </style>

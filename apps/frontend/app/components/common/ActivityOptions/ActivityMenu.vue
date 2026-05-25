@@ -26,7 +26,7 @@
           dense
           @click="it.action()"
         >
-          <VListItemTitle clas="text-h6">
+          <VListItemTitle class="text-title-large">
             <VIcon class="pr-1" size="20">{{ it.icon }}</VIcon>
             {{ it.name }}
           </VListItemTitle>

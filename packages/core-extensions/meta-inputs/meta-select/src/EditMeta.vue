@@ -7,7 +7,7 @@
     :name="meta.key"
     :placeholder="meta.placeholder"
     :readonly="readonly"
-    :small-chips="!hasImgProp"
+    :chips="!hasImgProp"
     item-title="label"
     variant="outlined"
     class="my-2"
@@ -22,19 +22,19 @@
             class="mr-2"
             density="compact"
           />
-          <VAvatar :image="item.raw.img" size="26" />
+          <VAvatar :image="item.img" size="26" />
         </template>
       </VListItem>
     </template>
     <template v-if="meta.multiple" #chip="{ item, props: selectProps }">
       <VChip v-bind="selectProps" rounded="pill" closable pill>
-        <VAvatar v-if="hasImgProp" :image="item.raw.img" start />
-        {{ item.title }}
+        <VAvatar v-if="hasImgProp" :image="item.img" start />
+        {{ item.label }}
       </VChip>
     </template>
     <template v-if="hasImgProp" #selection="{ item }">
-      <VAvatar :image="item.raw.img" class="mr-4" size="26" />
-      {{ item.title }}
+      <VAvatar :image="item.img" class="mr-4" size="26" />
+      {{ item.label }}
     </template>
   </VSelect>
 </template>

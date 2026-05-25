@@ -24,7 +24,7 @@
         <span>{{ activator.tooltip }}</span>
       </VTooltip>
     </template>
-    <VSheet class="pa-3" color="primary-darken-4" elevation="5">
+    <VSheet class="pa-3" color="primary-darken-4" elevation="2">
       <Discussion
         v-bind="{
           comments,

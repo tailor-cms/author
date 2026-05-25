@@ -15,7 +15,7 @@
       <template #activator="{ props: tooltipProps }">
         <span
           v-bind="tooltipProps"
-          class="d-flex align-center text-body-2 text-uppercase font-weight-bold"
+          class="d-flex align-center text-body-medium text-uppercase font-weight-bold"
         >
           <VIcon color="purple" icon="mdi-source-branch" size="small" start />
           Source
@@ -24,7 +24,7 @@
       This is a source - linked content exists
     </VTooltip>
     <VBadge :content="copies.length" color="lime" inline>
-      <span class="text-caption pl-1 pr-2">
+      <span class="text-body-small pl-1 pr-2">
         {{ pluralize('copy', copies.length) }}
       </span>
     </VBadge>

@@ -3,7 +3,7 @@
     <VAlert
       :color="errorMessage ? 'pink-lighten-4' : 'teal-lighten-4'"
       :model-value="showMessage"
-      class="mb-8 pa-4 text-subtitle-2"
+      class="mb-8 pa-4 text-title-small"
       variant="tonal"
       prominent
     >

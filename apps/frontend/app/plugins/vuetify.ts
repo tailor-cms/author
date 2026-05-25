@@ -8,6 +8,7 @@ import type { ThemeDefinition } from 'vuetify';
 import outlineIconset from '~/components/repository/Outline/icons/iconset';
 
 const defaultTheme: ThemeDefinition = {
+  dark: false,
   colors: {
     'primary': '#607D8B',
     'primary-darken-1': '#546E7A',
@@ -44,7 +45,6 @@ const defaultTheme: ThemeDefinition = {
 
 export default defineNuxtPlugin((nuxt) => {
   const vuetify = createVuetify({
-    ssr: true,
     blueprint: md3,
     components,
     directives,

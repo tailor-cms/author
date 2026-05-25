@@ -22,7 +22,7 @@
     </template>
     <VCard min-width="300">
       <div class="px-4 pt-3">
-        <div class="text-caption text-medium-emphasis mb-2">Translations</div>
+        <div class="text-body-small text-medium-emphasis mb-2">Translations</div>
         <VBtnToggle
           v-model="activeLanguage"
           mandatory

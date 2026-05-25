@@ -51,7 +51,7 @@
     </VAlert>
     <VSheet
       v-else-if="isAiGeneratingContent"
-      class="bg-transparent pt-16 text-subtitle-2 rounded-lg"
+      class="bg-transparent pt-16 text-title-small rounded-lg"
     >
       <CircularProgress />
       <div class="pt-3 text-primary-lighten-4 font-weight-bold">

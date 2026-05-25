@@ -56,7 +56,7 @@ const save = (data: any) => elementBus.emit('save', data);
 .element-toolbar-wrapper {
   width: 100%;
   min-height: 4rem;
-  padding: 0.5rem 2rem;
+  padding: 1rem 2rem;
 }
 
 :deep(.v-btn-group--density-compact.v-btn-group) {
