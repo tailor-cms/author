@@ -73,10 +73,12 @@ import { useAgentSession } from './composables/useAgentSession';
 import { useAgentStatusRotation } from './composables/useAgentStatusRotation';
 import { usePanelVisibility } from './composables/usePanelVisibility';
 import { useAuthStore } from '@/stores/auth';
+import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const route = useRoute();
 const authStore = useAuthStore();
+const config = useConfigStore();
 const repositoryStore = useCurrentRepository();
 
 const rootEl = ref<HTMLElement | null>(null);
@@ -93,9 +95,12 @@ const repositoryUid = computed(
   () => (repositoryStore.repository as any)?.uid || null,
 );
 
-// Gated to system admins for now
-const isPanelEnabled = computed(
-  () => authStore.isAdmin && Boolean(route.params.id),
+const isPanelEnabled = computed(() =>
+  Boolean(
+    authStore.isAdmin
+    && config.props.aiUiEnabled
+    && route.params.id,
+  ),
 );
 
 const { focusLabel, focusPayload } = useAgentFocus();

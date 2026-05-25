@@ -70,6 +70,11 @@ function createMarked(opts: RenderOptions): Marked {
       codespan(token: any) {
         return `<code class="agent-md-inline-code">${token.text}</code>`;
       },
+      // Drop raw HTML embedded in markdown. The agent never legitimately
+      // needs to emit raw HTML
+      html() {
+        return '';
+      },
       link(v: any) {
         const body = this.parser.parseInline(v.tokens);
         // Entity refs are internal deep-links into the editor. Route them
