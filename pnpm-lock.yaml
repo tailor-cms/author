@@ -530,9 +530,6 @@ importers:
         specifier: ^1.7.1
         version: 1.7.1
     devDependencies:
-      '@nuxt/devtools':
-        specifier: ^3.2.4
-        version: 3.2.4(vite@7.3.3(@types/node@25.9.1)(jiti@2.7.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(vue@3.5.34(typescript@6.0.3))
       '@nuxtjs/google-fonts':
         specifier: ^3.2.0
         version: 3.2.0(magicast@0.5.3)
@@ -13639,10 +13636,7 @@ snapshots:
     dependencies:
       '@percy/cli-command': 1.31.14(typescript@6.0.3)
     transitivePeerDependencies:
-      - bufferutil
-      - supports-color
       - typescript
-      - utf-8-validate
 
   '@percy/cli-command@1.31.14(typescript@6.0.3)':
     dependencies:
@@ -13659,10 +13653,7 @@ snapshots:
     dependencies:
       '@percy/cli-command': 1.31.14(typescript@6.0.3)
     transitivePeerDependencies:
-      - bufferutil
-      - supports-color
       - typescript
-      - utf-8-validate
 
   '@percy/cli-doctor@1.31.14(typescript@6.0.3)':
     dependencies:
@@ -13698,10 +13689,7 @@ snapshots:
       '@percy/cli-command': 1.31.14(typescript@6.0.3)
       yaml: 2.9.0
     transitivePeerDependencies:
-      - bufferutil
-      - supports-color
       - typescript
-      - utf-8-validate
 
   '@percy/cli-upload@1.31.14(typescript@6.0.3)':
     dependencies:
@@ -13709,10 +13697,7 @@ snapshots:
       fast-glob: 3.3.3
       image-size: 1.2.1
     transitivePeerDependencies:
-      - bufferutil
-      - supports-color
       - typescript
-      - utf-8-validate
 
   '@percy/cli@1.31.14(typescript@6.0.3)':
     dependencies:
