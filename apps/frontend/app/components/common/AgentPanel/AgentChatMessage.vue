@@ -150,17 +150,6 @@ const renderedContent = computed(() => {
     border-radius: 0.25rem;
   }
 
-  :deep(.agent-md-code) {
-    margin: 0.375rem 0;
-    padding: 0.5rem 0.6875rem;
-    color: rgb(var(--v-theme-on-surface));
-    font-size: 0.75rem;
-    line-height: 1.4375;
-    overflow-x: auto;
-    border-radius: 0.5rem;
-    background: rgb(var(--v-theme-surface-variant));
-  }
-
   :deep(.agent-md-link) {
     color: rgb(var(--v-theme-primary));
     text-decoration: underline;
