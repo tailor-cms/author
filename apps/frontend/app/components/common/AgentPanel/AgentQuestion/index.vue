@@ -73,19 +73,14 @@
 </template>
 
 <script lang="ts" setup>
+import type { AgentQuestionOption } from '@tailor-cms/interfaces/agent.ts';
 import QuestionOption from './QuestionOption.vue';
-
-interface QuestionOptionData {
-  label: string;
-  prompt: string;
-  hint?: string;
-}
 
 interface Props {
   title: string;
   question: string;
-  options: QuestionOptionData[];
-  // Matches the backend AgentPendingQuestion.allowOther contract
+  options: AgentQuestionOption[];
+  // Whether to show an "Other" option that opens a text field for freeform input.
   allowOther?: boolean;
 }
 
