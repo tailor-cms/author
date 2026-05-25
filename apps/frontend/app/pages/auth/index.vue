@@ -10,10 +10,11 @@
     >
       {{ errorMessage }}
     </VAlert>
-    <div v-if="config.props.oidcEnabled" class="mt-4">
+    <div v-if="config.props.oidcEnabled">
       <VBtn
         color="blue-lighten-4"
         data-testid="auth_oidcLoginBtn"
+        size="large"
         variant="tonal"
         block
         rounded
@@ -53,7 +54,9 @@
         variant="outlined"
       />
       <VBtn
+        class="mt-3"
         color="teal-lighten-3"
+        size="large"
         variant="tonal"
         block
         rounded

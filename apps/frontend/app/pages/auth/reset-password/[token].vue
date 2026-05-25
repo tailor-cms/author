@@ -3,7 +3,7 @@
     <VAlert
       v-if="notificationText"
       :color="isError ? 'pink-lighten-4' : 'teal-lighten-4'"
-      class="mb-8 text-title-small"
+      class="mb-8"
       variant="tonal"
     >
       {{ notificationText }}
@@ -24,6 +24,7 @@
         class="mt-7"
         color="primary-lighten-2"
         variant="tonal"
+        size="large"
       >
         <VIcon class="pr-2">mdi-arrow-left</VIcon>Sign in
       </VBtn>
@@ -54,6 +55,7 @@
       />
       <VBtn
         color="primary-lighten-2"
+        size="large"
         type="submit"
         variant="tonal"
         block
@@ -80,7 +82,7 @@ useHead({
   meta: [{ name: 'description', content: 'Tailor CMS - Reset password page' }],
 });
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const ERRORS = {
   default: 'An error has occurred!',
   resetToken: 'Invalid reset password token!',

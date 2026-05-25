@@ -1,24 +1,24 @@
 <template>
   <div class="auth-container fill-height bg-primary-darken-4 pa-4">
     <VSheet
-      class="auth-panel d-flex pa-5 bg-primary-darken-3"
+      class="auth-panel d-flex bg-primary-darken-3"
       border="surface sm"
       max-width="840"
       rounded="xl"
     >
-      <VRow>
+      <VRow no-gutters>
         <VCol
-          class="d-flex justify-start align-start pt-4 pl-7"
+          class="d-flex justify-start align-start pa-6"
           cols="12"
-          lg="6"
+          lg="5"
           md="12"
         >
-          <div class="d-flex align-center justify-center pt-4">
+          <div class="d-flex align-center justify-center">
             <img :src="logoPath" alt="Logo" class="logo" width="78" />
             <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
           </div>
         </VCol>
-        <VCol class="auth-body py-8" cols="12" lg="6" md="12">
+        <VCol class="auth-body py-8" cols="12" lg="7" md="12">
           <slot></slot>
         </VCol>
       </VRow>
@@ -42,7 +42,8 @@ const logoPath = '/img/logo-new.svg';
   align-items: center;
 
   .app-title {
-    font-size: 1.75rem;
+    font-size: 1.875rem;
+    line-height: 1.1;
   }
 
   // Override autofill styles
@@ -64,26 +65,16 @@ const logoPath = '/img/logo-new.svg';
   }
 }
 
-.auth-container .auth-panel.v-sheet {
-  position: absolute;
+.auth-container .auth-panel {
   width: 100%;
-  z-index: 1;
 
   .auth-body {
-    padding: 0.25rem 1.5rem 2rem;
+    padding: 2rem;
 
     a {
       color: inherit;
       font-weight: 400;
     }
   }
-}
-
-.auth-container .waves-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 15rem;
 }
 </style>
