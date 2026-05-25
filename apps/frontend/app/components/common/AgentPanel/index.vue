@@ -186,8 +186,8 @@ onMounted(scrollToLatest);
 <style lang="scss" scoped>
 .agent-panel {
   position: fixed;
-  right: 2rem;
-  bottom: 0.375rem;
+  right: 1.75rem;
+  bottom: 0.75rem;
   z-index: 9000;
 }
 
