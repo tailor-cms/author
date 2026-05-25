@@ -37,10 +37,10 @@ defineEmits(['click']);
 .add-element {
   width: 100%;
   min-width: 8.125rem;
-  height: auto !important;
+  height: auto;
   min-height: 4.75rem;
   background: rgba(var(--v-theme-surface), 0.7);
-  padding: 0.5rem 0.375rem !important;
+  padding: 0.5rem 0.375rem;
 
   :deep(.v-btn__content) {
     text-transform: none;

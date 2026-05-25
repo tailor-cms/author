@@ -526,15 +526,12 @@ importers:
       vee-validate:
         specifier: ^4.15.1
         version: 4.15.1(vue@3.5.34(typescript@6.0.3))
-      vue3-tree-vue:
-        specifier: ^2.0.16
-        version: 2.0.16(vue@3.5.34(typescript@6.0.3))
       vuedraggable:
         specifier: 4.1.0
         version: 4.1.0(vue@3.5.34(typescript@6.0.3))
       vuetify:
-        specifier: ^3.12.5
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
       yup:
         specifier: ^1.7.1
         version: 1.7.1
@@ -936,8 +933,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.5.34(typescript@6.0.3))
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
       yup:
         specifier: ^1.4.0
         version: 1.7.1
@@ -964,8 +961,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1005,8 +1002,8 @@ importers:
         specifier: ^3.5.15
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.8.6
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1043,8 +1040,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1081,8 +1078,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1109,8 +1106,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1138,8 +1135,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-color:
     dependencies:
@@ -1150,8 +1147,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-combobox:
     dependencies:
@@ -1162,8 +1159,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-datetime:
     dependencies:
@@ -1174,8 +1171,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-file:
     dependencies:
@@ -1192,8 +1189,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -1211,8 +1208,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -1230,8 +1227,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-radio-group:
     dependencies:
@@ -1239,8 +1236,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-select:
     dependencies:
@@ -1251,8 +1248,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-switch:
     dependencies:
@@ -1263,8 +1260,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-textarea:
     dependencies:
@@ -1272,8 +1269,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-textfield:
     dependencies:
@@ -1281,8 +1278,8 @@ importers:
         specifier: ^3.5.22
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/plugins/i18n:
     dependencies:
@@ -1299,8 +1296,8 @@ importers:
         specifier: ^3.5.0
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^3.12.0
-        version: 3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.0.7
+        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -11486,12 +11483,6 @@ packages:
       pinia:
         optional: true
 
-  vue3-tree-vue@2.0.16:
-    resolution: {integrity: sha512-N4zFU6Ojh2TVHbfzhNYoKak9ONuqK2LZA+ZIdYuZUMnPoyDCkGv90jHe9yJ8fu6CjsBj4txnRs1mk5I2+l25hQ==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      vue: ^3.0.5
-
   vue@3.5.34:
     resolution: {integrity: sha512-WdLBG9gm02OgJIG9axd5Hpx0TFLdzVgfG2evFFu8Rur5O/IoGc5cMjnjh3tPL6GnRGsYvUhBSKVPYVcxRKpMCA==}
     peerDependencies:
@@ -11505,8 +11496,8 @@ packages:
     peerDependencies:
       vue: ^3.0.1
 
-  vuetify@3.12.6:
-    resolution: {integrity: sha512-ARfflEJu+pKk+vya059qsUT/xUnYf0K6sIZdJwVh5w+kR6CJCXMQN1MONABb3Jm2kmhN/AXB4W5/MjYiKnVAFg==}
+  vuetify@4.0.7:
+    resolution: {integrity: sha512-SV+YJkBmudY3s9qfZO2ZGUsrD0TDQU8pMBH1ERga9AEyjGvioZuXXh93V9wHxXJphvqRC2NW10Nt2lW9IZQcPw==}
     peerDependencies:
       typescript: '>=4.7'
       vite-plugin-vuetify: '>=2.1.0'
@@ -23503,10 +23494,6 @@ snapshots:
       '@vue/compiler-sfc': 3.5.34
       pinia: 3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
-  vue3-tree-vue@2.0.16(vue@3.5.34(typescript@6.0.3)):
-    dependencies:
-      vue: 3.5.34(typescript@6.0.3)
-
   vue@3.5.34(typescript@6.0.3):
     dependencies:
       '@vue/compiler-dom': 3.5.34
@@ -23522,7 +23509,7 @@ snapshots:
       sortablejs: 1.14.0
       vue: 3.5.34(typescript@6.0.3)
 
-  vuetify@3.12.6(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)):
+  vuetify@4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)):
     dependencies:
       vue: 3.5.34(typescript@6.0.3)
     optionalDependencies:

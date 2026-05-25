@@ -1,6 +1,8 @@
 <template>
-  <VToolbar class="elevation-0" color="transparent">
-    <VToolbarTitle class="pl-1">{{ label }}</VToolbarTitle>
+  <VToolbar class="elevation-0" color="transparent" height="48">
+    <VToolbarTitle class="text-body-large font-weight-medium pl-1">
+      {{ label }}
+    </VToolbarTitle>
   </VToolbar>
 </template>
 

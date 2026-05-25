@@ -1,6 +1,6 @@
 <template>
   <div class="navigation-container">
-    <div class="navigation-header pb-0">
+    <div class="d-flex align-center px-2">
       <VTextField
         v-model="searchInput"
         clear-icon="mdi-close"
@@ -11,9 +11,21 @@
         variant="solo"
         flat
         clearable
+        hide-details
+      />
+      <VBtn
+        v-if="treeRef?.hasItems"
+        class="text-none"
+        color="primary-lighten-4"
+        size="small"
+        variant="text"
+        rounded="lg"
+        :text="treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all'"
+        @click="treeRef?.toggleExpand()"
       />
     </div>
     <TailorTreeview
+      ref="treeRef"
       :active-item-id="selected?.id"
       :items="activityTreeData"
       :search="searchInput"
@@ -38,6 +50,7 @@ const props = defineProps<{
 }>();
 
 const searchInput = ref('');
+const treeRef = useTemplateRef<InstanceType<typeof TailorTreeview>>('treeRef');
 
 // Get processed name via plugin hooks
 const getActivityName = (activity: Activity) => {
@@ -90,10 +103,6 @@ const navigateToActivity = (activityId: number) => {
   height: 100%;
 }
 
-.navigation-header {
-  padding: 0.5rem 0 0;
-}
-
 .tree-node {
   display: flex;
   align-items: center;
@@ -143,14 +152,9 @@ const navigateToActivity = (activityId: number) => {
   opacity: 1;
 }
 
-:deep(.v-list-item-action) {
-  display: none !important;
-}
-
 :deep(.v-list-item) {
   &:hover {
     .v-list-item-title {
-      font-weight: 600 !important;
       color: #f8bbd0;
     }
 

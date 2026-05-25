@@ -1,18 +1,12 @@
 <template>
-  <VRow
-    align="center"
-    class="asset-row py-3"
-    no-gutters
-    @click="emit('preview', asset)"
-  >
+  <VRow class="asset-row py-3 align-center" no-gutters @click="emit('preview', asset);">
     <VCol class="px-1" cols="auto">
       <VCheckboxBtn
         :model-value="isSelected"
         base-color="primary-lighten-2"
         color="primary-lighten-3"
         density="compact"
-        @click.stop="emit('toggle', asset)"
-      />
+        @click.stop="emit('toggle', asset);" />
     </VCol>
     <VCol cols="auto" class="px-1">
       <VIcon
@@ -22,7 +16,7 @@
       />
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
-      <div class="d-flex align-center text-subtitle-2">
+      <div class="d-flex align-center text-title-small">
         <span data-testid="assetRow_name" class="text-primary-lighten-5 text-truncate">
           {{ getAssetDisplayName(asset) }}
         </span>
@@ -31,13 +25,10 @@
           class="ml-1"
           color="amber-lighten-1"
           icon="mdi-star"
-          size="14"
-        />
+          size="14" />
       </div>
-      <div class="d-flex align-center text-body-2 text-primary-lighten-3">
-        <span
-          data-testid="assetRow_type"
-          class="text-capitalize">
+      <div class="d-flex align-center text-body-medium text-primary-lighten-3">
+        <span data-testid="assetRow_type" class="text-capitalize">
           {{ getAssetTypeLabel(asset) }}
         </span>
         <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
@@ -58,10 +49,12 @@
         :img-url="asset.uploader.imgUrl ?? undefined"
         :label="asset.uploader.label"
         class="mr-1"
-        size="24"
-      />
+        size="24" />
       <VMenu location="bottom end" @click.stop>
-        <template #activator="{ props: menuProps }">
+        <template
+          #activator="{
+            props: menuProps,
+          }">
           <VBtn
             v-bind="menuProps"
             aria-label="Actions"
@@ -70,26 +63,25 @@
             icon="mdi-dots-vertical"
             size="small"
             variant="text"
-            @click.stop
-          />
+            @click.stop />
         </template>
         <VList density="compact">
           <VListItem
             v-if="asset.type !== AssetType.Link"
             prepend-icon="mdi-download-outline"
             title="Download"
-            @click="emit('download', asset)"
+            @click="emit('download', asset);"
           />
           <VListItem
             v-if="isIndexable(asset)"
             prepend-icon="mdi-brain"
             title="Index"
-            @click="emit('index', asset)"
+            @click="emit('index', asset);"
           />
           <VListItem
             prepend-icon="mdi-delete-outline"
             title="Delete"
-            @click="emit('delete', asset)"
+            @click="emit('delete', asset);"
           />
         </VList>
       </VMenu>

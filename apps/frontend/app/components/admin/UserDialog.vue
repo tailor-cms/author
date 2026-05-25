@@ -53,7 +53,7 @@
           <template #item="{ item, props: itemProps }">
             <VListItem
               v-bind="itemProps"
-              :subtitle="item.raw.description"
+              :subtitle="item.description"
               class="py-3"
             />
           </template>
@@ -82,7 +82,7 @@
           hide-details
           inset
         />
-        <div v-if="isNewUser" class="text-caption text-medium-emphasis ml-1 mb-3">
+        <div v-if="isNewUser" class="text-body-small text-medium-emphasis ml-1 mb-3">
           Useful for SSO users who don't need a password setup email.
           You can always send the invite later using Reinvite.
         </div>

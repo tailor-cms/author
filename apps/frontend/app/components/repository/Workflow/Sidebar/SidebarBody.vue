@@ -33,13 +33,13 @@
       @update:model-value="updateStatus('assigneeId', $event)"
     >
       <template #selection="{ item }">
-        <VAvatar :image="item.raw.imgUrl" class="mr-4" size="26" />
-        {{ item.title }}
+        <VAvatar :image="item.imgUrl" class="mr-4" size="26" />
+        {{ item.label }}
       </template>
       <template #item="{ item, props: selectProps }">
         <VListItem v-bind="selectProps">
           <template #prepend>
-            <VAvatar :image="item.raw.imgUrl" size="26" />
+            <VAvatar :image="item.imgUrl" size="26" />
           </template>
         </VListItem>
       </template>
@@ -124,7 +124,7 @@ const updateStatus = async (key: string, value: any = null) => {
 }
 
 .v-select :deep(.v-select__menu-icon) {
-  color: rgb(var(--v-theme-primary-lighten-5)) !important;
+  color: rgb(var(--v-theme-primary-lighten-5));
   opacity: 1;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="bg-transparent">
     <div class="d-flex align-center mb-6">
-      <div class="text-primary-lighten-4 text-h6">Assessments</div>
+      <div class="text-primary-lighten-4 text-title-large">Assessments</div>
       <VSpacer />
       <div v-if="!isAiGeneratingContent" class="pb-1">
         <VBtn
@@ -43,7 +43,7 @@
     <VSheet
       v-else-if="isAiGeneratingContent"
       color="primary-darken-4"
-      class="py-16 text-subtitle-2 rounded-lg"
+      class="py-16 text-title-small rounded-lg"
     >
       <CircularProgress />
       <div class="pt-3 text-primary-lighten-4 font-weight-bold">

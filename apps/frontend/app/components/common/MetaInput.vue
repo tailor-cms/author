@@ -126,7 +126,7 @@ const update = (key: string, value: any, data?: any) => {
 
 :deep(.title) {
   color: #808080;
-  font-size: 0.875rem !important;
+  font-size: 0.875rem;
   font-weight: normal;
 }
 </style>

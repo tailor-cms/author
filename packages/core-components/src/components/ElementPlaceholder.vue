@@ -17,14 +17,14 @@
     <div
       :class="[
         isDisabled ? 'text-grey-darken-3' : 'text-grey-darken-4',
-        dense ? 'my-2 text-subtitle-2' : 'my-4 text-h5',
+        dense ? 'my-2 text-title-small' : 'my-4 text-headline-small',
       ]"
     >
       {{ name }}
     </div>
     <div
       v-if="!dense && !isDisabled"
-      class="text-grey-darken-2 text-subtitle-1"
+      class="text-grey-darken-2 text-body-large"
     >
       <template v-if="!isFocused">{{ placeholder }}</template>
       <template v-else>

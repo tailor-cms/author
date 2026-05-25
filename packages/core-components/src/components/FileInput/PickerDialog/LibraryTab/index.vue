@@ -25,7 +25,7 @@
       <VIcon class="mb-2" color="primary" size="48">
         mdi-folder-open-outline
       </VIcon>
-      <div class="text-body-2 text-medium-emphasis">
+      <div class="text-body-medium text-medium-emphasis">
         {{ hasActiveFilters ? 'No matching assets' : 'No assets found' }}
       </div>
     </div>

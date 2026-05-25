@@ -19,7 +19,7 @@
       <template #prepend>
         <UserGroupAvatar :logo-url="group.logoUrl" :size="34" />
       </template>
-      <VListItemTitle class="text-body-1 font-weight-medium">
+      <VListItemTitle class="text-body-large font-weight-medium">
         {{ group.name }}
       </VListItemTitle>
       <template #append>

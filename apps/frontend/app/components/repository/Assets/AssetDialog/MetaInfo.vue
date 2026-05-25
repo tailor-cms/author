@@ -73,7 +73,7 @@
         <a
           v-if="!isLink"
           :href="meta.source.url"
-          class="text-body-2 text-primary-lighten-4"
+          class="text-body-medium text-primary-lighten-4"
           target="_blank"
         >
           {{ meta.source.title || meta.source.domain }}
@@ -81,7 +81,7 @@
         </a>
         <span
           v-if="meta.source.author"
-          class="text-body-2 text-primary-lighten-3"
+          class="text-body-medium text-primary-lighten-3"
         >
           by {{ meta.source.author }}
         </span>

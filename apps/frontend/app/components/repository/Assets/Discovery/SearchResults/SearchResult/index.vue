@@ -66,17 +66,17 @@ const typeColor = computed(() => TYPE_COLOR[props.suggestion.type]);
 <style lang="scss" scoped>
 .search-result {
   cursor: pointer;
-  border-color: rgba(var(--v-theme-primary-lighten-2), 0.2) !important;
+  border-color: rgba(var(--v-theme-primary-lighten-2), 0.2);
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease;
 
   &:hover {
-    border-color: rgba(var(--v-theme-primary-lighten-2), 0.5) !important;
+    border-color: rgba(var(--v-theme-primary-lighten-2), 0.5);
   }
 
   &.selected {
-    border-color: rgb(var(--v-theme-primary-lighten-3)) !important;
+    border-color: rgb(var(--v-theme-primary-lighten-3));
     background: rgba(var(--v-theme-primary-lighten-3), 0.08);
   }
 }

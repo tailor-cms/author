@@ -24,7 +24,7 @@
         <span>{{ activator.tooltip }}</span>
       </VTooltip>
     </template>
-    <VSheet class="pa-3" color="primary-darken-4" elevation="5">
+    <VSheet class="pa-3" color="primary-darken-4" elevation="2">
       <Discussion
         v-bind="{
           comments,
@@ -180,7 +180,7 @@ const removeComment = (id: number) => {
 }
 
 :deep(.comment-body) {
-  padding: 0 0.25rem 0 3.9375rem;
+  padding: 0 0.25rem 0 3.25rem;
 }
 
 .unseen {

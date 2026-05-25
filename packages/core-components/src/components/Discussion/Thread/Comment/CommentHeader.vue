@@ -4,7 +4,7 @@
       v-if="comment.author"
       :img-url="comment.author.imgUrl"
       :size="36"
-      class="ml-1 mt-2"
+      class="mt-1"
       color="primary-lighten-4"
     />
     <div class="info-container">
@@ -25,7 +25,7 @@
       <div class="d-flex text-grey-lighten-2 align-center">
         <VTooltip location="right">
           <template #activator="{ props: tooltipProps }">
-            <span v-bind="tooltipProps" class="text-subtitle-2">
+            <span v-bind="tooltipProps" class="text-title-small">
               {{ formatDistanceToNow(comment.createdAt) }} ago
             </span>
           </template>

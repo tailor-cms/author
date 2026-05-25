@@ -149,8 +149,4 @@ $image-bg-color: rgb(var(--v-theme-primary-lighten-4));
     cursor: pointer;
   }
 }
-
-.placeholder-icon {
-  background-color: #cfd8dc !important;
-}
 </style>

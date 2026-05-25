@@ -1,10 +1,19 @@
 <template>
-  <VMenu v-if="i18n.isEnabled" location="bottom end">
+  <VMenu v-if="i18n.isEnabled" location="end" offset="8">
     <template #activator="{ props: menuProps }">
-      <VBtn v-bind="menuProps" color="primary-lighten-4">
-        <VIcon icon="mdi-translate" start />
-        <span class="text-uppercase">{{ currentLanguage ?? 'en' }}</span>
-        <VIcon icon="mdi-chevron-down" size="small" end />
+      <VBtn
+        v-bind="menuProps"
+        :aria-label="`Content language: ${currentLanguage?.toUpperCase() ?? 'EN'}`"
+        class="language-selector ma-2"
+        color="teal-accent-1"
+        size="small"
+        variant="tonal"
+        rounded="lg"
+      >
+        <VIcon icon="mdi-translate" size="18" />
+        <span class="text-uppercase ml-1 text-body-small font-weight-bold">
+          {{ currentLanguage ?? 'en' }}
+        </span>
       </VBtn>
     </template>
     <VList density="compact" min-width="200" slim>
@@ -15,6 +24,7 @@
         :active="isCurrent(code)"
         :subtitle="code.toUpperCase()"
         :title="name"
+        rounded="lg"
         @click="currentLanguage = code"
       >
         <template #prepend>
@@ -35,7 +45,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-// Get i18n store from Nuxt app context (injected by frontend)
 const { $i18n: i18n } = useNuxtApp() as any;
 const currentLanguage = computed({
   get: () => i18n.currentLanguage,
@@ -47,3 +56,10 @@ const currentLanguage = computed({
 const isCurrent = (code: string) => code === currentLanguage.value;
 const isDefault = (code: string) => code === i18n.defaultLanguage;
 </script>
+
+<style scoped>
+.language-selector {
+  min-width: unset;
+  padding-inline: 0.5rem;
+}
+</style>

@@ -42,12 +42,12 @@ const seen = () => emit('seen');
 
   :deep(.v-chip.v-chip--outlined.v-chip) {
     margin: -1.5rem 0 0.5rem 0;
-    border-radius: 1rem !important;
-    background-color: #fafafa !important;
+    border-radius: 1rem;
+    background-color: #fafafa;
 
     .v-chip__content .v-chip__close {
       margin-top: 0.125rem;
-      font-size: 0.75rem !important;
+      font-size: 0.75rem;
     }
   }
 }

@@ -43,7 +43,7 @@ const onSelect = (files: File | File[] | null) => {
 
   .upload-tab.v-sheet {
     padding: 3rem 1rem;
-    border: 2px dashed rgba(var(--v-theme-primary), 0.25) !important;
+    border: 2px dashed rgba(var(--v-theme-primary), 0.25);
     border-radius: 8px;
     background: transparent;
   }

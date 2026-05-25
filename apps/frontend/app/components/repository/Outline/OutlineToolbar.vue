@@ -44,7 +44,7 @@
         size="small"
         @click="currentRepositoryStore.toggleOutlineExpand"
       >
-        Toggle all
+        {{ isOutlineExpanded ? 'Collapse all' : 'Expand all' }}
       </VBtn>
     </template>
   </div>
@@ -60,8 +60,13 @@ import { useCurrentRepository } from '@/stores/current-repository';
 const search = defineModel<string>('search', { default: '' });
 
 const currentRepositoryStore = useCurrentRepository();
-const { outlineActivities, rootActivities, taxonomy, isCollection } =
-  storeToRefs(currentRepositoryStore);
+const {
+  outlineActivities,
+  rootActivities,
+  taxonomy,
+  isCollection,
+  isOutlineExpanded,
+} = storeToRefs(currentRepositoryStore);
 
 const isFlat = computed(() => {
   const types = map(

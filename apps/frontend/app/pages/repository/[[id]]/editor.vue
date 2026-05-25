@@ -117,14 +117,14 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .sidebar-toggle {
   position: fixed;
-  width: 1.75rem !important;
-  height: 3.5rem !important;
+  width: 1.75rem;
+  height: 3.5rem;
   top: 50%;
   left: 4.75rem;
   transform: translateY(-50%);
   z-index: 1004;
   opacity: 0.85;
-  border-radius: 0 8px 8px 0 !important;
+  border-radius: 0 8px 8px 0;
   box-shadow: 0.125rem 0 0.5rem rgba(0, 0, 0, 0.25);
   transition: opacity 160ms ease, transform 160ms ease;
 

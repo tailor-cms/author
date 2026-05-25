@@ -29,7 +29,7 @@
     <VSheet
       v-if="loading"
       color="primary-lighten-5"
-      class="py-16 text-subtitle-2 rounded-lg text-center"
+      class="py-16 text-title-small rounded-lg text-center"
     >
       <CircularProgress />
       <div class="pt-3 text-primary-darken-4 font-weight-bold">
@@ -86,10 +86,10 @@
         />
       </template>
       <VSheet v-else class="py-10" color="primary-lighten-5">
-        <div class="text-h6">
+        <div class="text-title-large">
           {{ element.type.replace('_', ' ') }}
         </div>
-        <div class="pt-4 text-subtitle-2">Component is not available!</div>
+        <div class="pt-4 text-title-small">Component is not available!</div>
       </VSheet>
     </template>
     <div v-if="!props.isDisabled" class="element-actions ga-1">

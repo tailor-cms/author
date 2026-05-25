@@ -23,7 +23,7 @@
       Continue
     </VBtn>
     <div v-if="topicTagOptions.length">
-      <div class="mb-4 text-body-2 font-weight-bold">
+      <div class="mb-4 text-body-medium font-weight-bold">
         Tell us more about the topics you are interested in:
       </div>
       <VChipGroup v-model="selectedTopicTags" column multiple>
@@ -50,7 +50,7 @@
       </VBtn>
     </div>
     <div v-if="styleTagOptions.length">
-      <div class="my-4 text-body-2 font-weight-bold">
+      <div class="my-4 text-body-medium font-weight-bold">
         Select perspectives you are interested in:
       </div>
       <VChipGroup v-model="selectedStyleTags" column multiple>
@@ -64,7 +64,7 @@
           {{ chip }}
         </VChip>
       </VChipGroup>
-      <div class="mt-5 mb-4 text-body-2 font-weight-bold">Audience:</div>
+      <div class="mt-5 mb-4 text-body-medium font-weight-bold">Audience:</div>
       <VSlider
         v-model="selectedDifficulty"
         :step="1"
@@ -89,7 +89,7 @@
       </VBtn>
     </div>
     <OutlinePreview :items="outlineTree" />
-    <div v-if="statusMessage" class="my-7 text-body-2 text-center">
+    <div v-if="statusMessage" class="my-7 text-body-medium text-center">
       {{ statusMessage }}
     </div>
   </div>

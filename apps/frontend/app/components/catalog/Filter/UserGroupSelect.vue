@@ -14,13 +14,13 @@
     hide-details
   >
     <template #selection="{ item }">
-      <UserGroupAvatar :logo-url="item.raw.logoUrl" class="mr-3" size="x-small" />
-      <span class="text-truncate">{{ item.title }}</span>
+      <UserGroupAvatar :logo-url="item.logoUrl" class="mr-3" size="x-small" />
+      <span class="text-truncate">{{ item.name }}</span>
     </template>
     <template #item="{ item, props: { title, ...restProps } }">
       <VListItem v-bind="restProps">
         <UserGroupAvatar
-          :logo-url="item.raw.logoUrl"
+          :logo-url="item.logoUrl"
           size="x-small"
           class="mr-3"
         />

@@ -4,7 +4,7 @@
       <template #activator="{ props: tooltipProps }">
         <span v-bind="tooltipProps" class="linked-status d-flex align-center">
           <VIcon color="lime" icon="mdi-link-variant" size="small" start />
-          <span class="text-body-2 text-uppercase font-weight-bold">
+          <span class="text-body-medium text-uppercase font-weight-bold">
             {{ isEntryPoint ? 'Linked' : 'Linked via parent' }}
           </span>
         </span>
@@ -18,7 +18,7 @@
       <template #activator="{ props: tooltipProps }">
         <span
           v-bind="tooltipProps"
-          class="source-name pl-2 text-body-2 text-truncate"
+          class="source-name pl-2 text-body-medium text-truncate"
         >
           {{ sourceLabel }}
         </span>

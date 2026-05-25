@@ -27,7 +27,7 @@
     </div>
     <VSheet
       v-if="isAiGeneratingContent"
-      class="bg-primary-darken-4 mb-4 pt-8 pb-8 text-subtitle-2 rounded-lg"
+      class="bg-primary-darken-4 mb-4 pt-8 pb-8 text-title-small rounded-lg"
     >
       <CircularProgress />
       <div class="pt-3 text-primary-lighten-4 font-weight-bold">

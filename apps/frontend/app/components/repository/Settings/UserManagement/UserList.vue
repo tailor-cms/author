@@ -18,10 +18,10 @@
       <template #prepend>
         <VAvatar :image="user.imgUrl" size="34" variant="tonal" />
       </template>
-      <VListItemTitle class="text-body-1 font-weight-medium">
+      <VListItemTitle class="text-body-large font-weight-medium">
         {{ user.label || user.email }}
       </VListItemTitle>
-      <VListItemSubtitle v-if="user.fullName" class="text-body-2">
+      <VListItemSubtitle v-if="user.fullName" class="text-body-medium">
         {{ user.email }}
       </VListItemSubtitle>
       <template #append>

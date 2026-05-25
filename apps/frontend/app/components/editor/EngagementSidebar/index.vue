@@ -9,7 +9,7 @@
     mobile-breakpoint="lg"
   >
     <div class="sidebar-container pa-4">
-      <div class="text-body-2 font-weight-bold text-primary-lighten-4 mt-2 mb-4">
+      <div class="text-body-medium font-weight-bold text-primary-lighten-4 mt-2 mb-4">
         High Engagement at Scale
       </div>
       <VList>
@@ -116,13 +116,13 @@ const chartData = computed(() => ({
   text-align: left;
 
   :deep(.v-navigation-drawer__content) {
-    -ms-overflow-style: none !important;
+    -ms-overflow-style: none;
     /* IE and Edge */
-    scrollbar-width: none !important;
+    scrollbar-width: none;
     /* Firefox */
 
     &::-webkit-scrollbar {
-      display: none !important;
+      display: none;
     }
   }
 

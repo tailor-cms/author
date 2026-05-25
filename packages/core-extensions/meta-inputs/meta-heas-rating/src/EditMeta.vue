@@ -1,7 +1,7 @@
 <template>
   <div class="mt-1 mb-6 mx-1">
     <div class="d-flex align-center justify-space-between mb-2">
-      <div class="text-caption my-1">{{ meta.label }}</div>
+      <div class="text-body-small my-1">{{ meta.label }}</div>
       <VBtnToggle
         v-if="isNew"
         v-model="isEditing"
@@ -39,7 +39,7 @@
         :key="key"
         class="d-flex align-center my-2"
       >
-        <div class="label text-caption">{{ label }}</div>
+        <div class="label text-body-small">{{ label }}</div>
         <VSlider
           :model-value="input.rating?.[key]"
           max="4"
@@ -48,7 +48,7 @@
           hide-details
           @update:model-value="updateRating({ [key]: $event })"
         />
-        <div class="text-subtitle-2 ml-2 slider-value">
+        <div class="text-title-small ml-2 slider-value">
           {{ input.rating?.[key]?.toFixed(1) }}
         </div>
       </div>
@@ -76,7 +76,7 @@
           <VAvatar size="64" variant="tonal">
             <VIcon icon="mdi-chart-timeline-variant-shimmer" size="x-large" />
           </VAvatar>
-          <div class="text-body-1 mt-4 px-8">{{ alertMsg }}</div>
+          <div class="text-body-large mt-4 px-8">{{ alertMsg }}</div>
         </div>
         <div v-else>
           <VSheet
@@ -87,11 +87,11 @@
             <RadarChart :dark="dark" :data="chartData" :max="4" :min="0" />
           </VSheet>
           <template v-if="meta.reviewable">
-            <div class="font-weight-bold text-subtitle-1 mb-1">
+            <div class="font-weight-bold text-body-large mb-1">
               Review Notes
             </div>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div class="review text-body-2" v-html="input.review"></div>
+            <div class="review text-body-medium" v-html="input.review"></div>
           </template>
         </div>
         <VBtn

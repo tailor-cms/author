@@ -3,9 +3,8 @@
     v-model="isVisible"
     :color="context.color"
     :timeout="context.timeout"
-    class="ma-8 text-subtitle-2"
+    class="ma-8 text-title-small"
     location="bottom right"
-    multi-line
   >
     {{ context.message }}
     <template #actions>

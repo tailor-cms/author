@@ -10,7 +10,7 @@
           :model-value="state[input.key].data"
         >
           <div
-            class="label ma-1 text-caption text-left"
+            class="label ma-1 text-body-small text-left"
             :class="{ 'text-error': errorMessage }">
             {{ input.label }}
           </div>

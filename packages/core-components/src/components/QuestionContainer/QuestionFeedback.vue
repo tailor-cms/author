@@ -1,7 +1,7 @@
 <template>
   <div class="feedback-container">
     <div class="mb-2">
-      <span class="text-subtitle-2">Feedback</span>
+      <span class="text-title-small">Feedback</span>
       <VBtn
         class="ml-2"
         color="primary-darken-4"
@@ -17,7 +17,7 @@
         <div
           v-for="(answer, index) in processedAnswers"
           :key="index"
-          class="text-subtitle-2 mb-6"
+          class="text-title-small mb-6"
         >
           <div class="mb-4">
             {{ answerType }} {{ index + 1 }}:

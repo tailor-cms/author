@@ -22,7 +22,7 @@
         </template>
       </VToolbar>
       <VContainer class="discovery-content pt-6" fluid>
-        <VRow justify="center">
+        <VRow class="justify-center">
           <VCol cols="12" lg="10" xl="8">
             <TopicPicker
               v-if="hasOutline"
@@ -44,7 +44,7 @@
               icon="mdi-shield-check-outline"
               variant="tonal"
             >
-              <span class="text-body-2">
+              <span class="text-body-medium">
                 Verify that you have the right to use any content you import.
                 Where available, licensing info is shown per result - review
                 before adding.

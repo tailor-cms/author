@@ -3,7 +3,7 @@
     <VCard v-if="asset" color="primary-darken-4">
       <VToolbar color="primary-darken-3" density="comfortable">
         <VToolbarTitle
-          class="ml-4 text-body-1 font-weight-medium text-primary-lighten-4"
+          class="ml-4 text-body-large font-weight-medium text-primary-lighten-4"
         >
           <VIcon
             :color="`${typeColor}-lighten-3`"

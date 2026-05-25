@@ -2,7 +2,7 @@
   <div class="content-containers">
     <h2
       v-if="displayHeading"
-      class="mb-4 text-h6 text-left text-primary-lighten-4"
+      class="mb-4 text-title-large text-left text-primary-lighten-4"
     >
       {{ capitalize(name) }}
     </h2>

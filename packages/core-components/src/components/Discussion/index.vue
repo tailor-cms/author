@@ -7,9 +7,10 @@
       <VBtn
         v-if="hasHiddenComments"
         class="float-right mt-1"
-        color="teal-lighten-4"
-        size="x-small"
-        variant="tonal"
+        color="primary-lighten-4"
+        size="small"
+        variant="text"
+        rounded="lg"
         @click="showAll = !showAll"
       >
         Show {{ showAll ? 'less' : 'more' }}
@@ -26,7 +27,7 @@
       variant="tonal"
       prominent
     >
-      <span class="px-1 text-primary-lighten-4 text-body-2">
+      <span class="px-1 text-primary-lighten-4 text-body-medium">
         Be the First to Comment!
       </span>
     </VAlert>
@@ -246,10 +247,6 @@ watch(
 
   .comment-input {
     margin: 0 0.25rem 0 0.25rem;
-  }
-
-  .alert :deep(.v-icon) {
-    color: var(--v-primary-darken2) !important;
   }
 
   .v-input :deep(textarea::placeholder) {

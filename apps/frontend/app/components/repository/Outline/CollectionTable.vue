@@ -134,30 +134,30 @@ const deleteActivity = (activity: StoreActivity) =>
   line-height: 1.25;
 
   :deep(td) {
-    padding: 0.5rem 1rem !important;
+    padding: 0.5rem 1rem;
   }
 
   :deep(tbody) tr {
     transition: background-color 0.3s ease;
 
     &.soft-deleted {
-      background: rgba(var(--v-theme-secondary-darken-1), 0.1) !important;
+      background: rgba(var(--v-theme-secondary-darken-1), 0.1);
 
       &.selected,
       &:hover {
-        background: rgba(var(--v-theme-secondary-lighten-2), 0.2) !important;
+        background: rgba(var(--v-theme-secondary-lighten-2), 0.2);
       }
     }
 
     &.selected,
     &:hover {
-      background: rgba(var(--v-theme-primary-darken-1)) !important;
+      background: rgba(var(--v-theme-primary-darken-1));
     }
   }
 
   :deep(th) {
-    background: rgba(var(--v-theme-primary-darken-2)) !important;
-    color: white !important;
+    background: rgba(var(--v-theme-primary-darken-2));
+    color: white;
 
     &:hover {
       font-weight: bold;

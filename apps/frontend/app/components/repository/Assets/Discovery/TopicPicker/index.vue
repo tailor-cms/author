@@ -20,21 +20,21 @@
       <VListItem v-bind="itemProps" color="primary-darken-4">
         <template #prepend>
           <VIcon
-            :icon="item.raw.isLeaf
+            :icon="item.isLeaf
               ? 'mdi-file-document-outline'
               : 'mdi-folder-outline'"
             size="small"
           />
         </template>
-        <VListItemSubtitle v-if="item.raw.breadcrumb" class="text-caption">
-          {{ item.raw.breadcrumb }}
+        <VListItemSubtitle v-if="item.breadcrumb" class="text-body-small">
+          {{ item.breadcrumb }}
         </VListItemSubtitle>
       </VListItem>
     </template>
     <template v-if="modelValue?.breadcrumb" #selection>
       <div>
-        <div class="text-body-2">{{ modelValue.name }}</div>
-        <div class="text-caption text-primary-lighten-3">
+        <div class="text-body-medium">{{ modelValue.name }}</div>
+        <div class="text-body-small text-primary-lighten-3">
           {{ modelValue.breadcrumb }}
         </div>
       </div>

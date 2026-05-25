@@ -11,7 +11,7 @@
     </template>
     <VCard color="primary-darken-4" max-height="480" min-width="800">
       <div class="d-flex align-center pa-3 pb-1">
-        <span class="text-caption font-weight-bold text-primary-lighten-3">
+        <span class="text-body-small font-weight-bold text-primary-lighten-3">
           Asset Metadata
         </span>
         <VSpacer />

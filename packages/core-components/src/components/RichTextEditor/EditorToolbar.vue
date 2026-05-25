@@ -39,10 +39,10 @@ defineProps<{ editor: Editor; disabled: boolean }>();
 }
 
 .v-btn {
-  color: currentColor !important;
+  color: currentColor;
 
   :deep(.v-icon) {
-    font-size: 1.24rem !important;
+    font-size: 1.24rem;
   }
 }
 </style>

@@ -5,7 +5,7 @@
         <VIcon class="mr-2" color="primary-lighten-4" size="small">
           mdi-text-box-edit-outline
         </VIcon>
-        <span class="text-subtitle-2 font-weight-bold text-primary-lighten-4">
+        <span class="text-title-small font-weight-bold text-primary-lighten-4">
           {{ activityLabel }} Details
         </span>
       </div>
@@ -75,10 +75,10 @@ $error-color: rgb(var(--v-theme-secondary-lighten-4));
   padding: 1rem 1.25rem;
 
   :deep(.v-input) {
-    position: relative !important;
+    position: relative;
 
     .v-input__details {
-      text-align: left !important;
+      text-align: left;
     }
   }
 
@@ -86,7 +86,7 @@ $error-color: rgb(var(--v-theme-secondary-lighten-4));
     .v-messages__message,
     .v-field__outline,
     .v-field-label {
-      color: $error-color !important;
+      color: $error-color;
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <VSheet class="rounded-b-lg" color="primary-darken-2" min-height="300">
-    <VRow class="ma-0 pa-2">
+    <VRow class="ma-0 pa-6">
       <VCol cols="12" md="8" sm="7">
         <VSheet v-if="selectedRevision" color="primary-lighten-5" rounded="lg">
           <ContentElementWrapper
