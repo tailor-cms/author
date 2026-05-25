@@ -335,11 +335,7 @@ defineExpose({ handleKeydown });
 .cmd-id {
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
-  background: color-mix(
-    in srgb,
-    rgb(var(--v-theme-primary)) 10%,
-    transparent
-  );
+  background: rgba(var(--v-theme-primary), 0.1);
   color: rgb(var(--v-theme-primary));
   font-family: Menlo, Consolas, monospace;
   font-size: 0.75rem;

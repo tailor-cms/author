@@ -192,18 +192,10 @@ watch(
   border-color: rgb(var(--v-theme-primary)) !important;
   border-width: 0.125rem !important;
   background: rgb(var(--v-theme-surface));
-  box-shadow: 0 0 0 0.25rem color-mix(
-    in srgb,
-    rgb(var(--v-theme-primary)) 12%,
-    transparent
-  );
+  box-shadow: 0 0 0 0.25rem rgba(var(--v-theme-primary), 0.12);
 
   &:focus-visible {
-    box-shadow: 0 0 0 0.25rem color-mix(
-      in srgb,
-      rgb(var(--v-theme-primary)) 22%,
-      transparent
-    );
+    box-shadow: 0 0 0 0.25rem rgba(var(--v-theme-primary), 0.22);
   }
 }
 

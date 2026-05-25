@@ -120,11 +120,7 @@ defineExpose({ focus: () => inputEl.value?.focus() });
   :deep(.v-field) {
     border: 1px solid rgb(var(--v-theme-outline-variant));
     border-radius: 0.875rem !important;
-    background: color-mix(
-      in srgb,
-      rgb(var(--v-theme-on-surface)) 4%,
-      rgb(var(--v-theme-surface))
-    ) !important;
+    background: rgba(var(--v-theme-on-surface), 0.04) !important;
     transition: box-shadow 120ms ease, border-color 120ms ease;
   }
 
@@ -134,11 +130,7 @@ defineExpose({ focus: () => inputEl.value?.focus() });
 
   :deep(.v-field--focused) {
     border-color: rgb(var(--v-theme-primary));
-    box-shadow: 0 0 0 2px color-mix(
-      in srgb,
-      rgb(var(--v-theme-primary)) 18%,
-      transparent
-    );
+    box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.18);
   }
 
   :deep(.v-field__input) {
