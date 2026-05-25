@@ -192,7 +192,7 @@ const COMMANDS: SlashCommand[] = [
 
 const props = defineProps<Props>();
 const text = defineModel<string>({ required: true });
-const emit = defineEmits<{ run: [prompt: string] }>();
+const emit = defineEmits<{ autorun: [prompt: string, label: string] }>();
 
 const isOpen = ref(false);
 const activeIndex = ref(0);
@@ -238,7 +238,7 @@ function commit(command: SlashCommand) {
   // Clear the input so the leading "/" doesn't bleed through to the
   // agent request, then dispatch the prompt immediately.
   text.value = '';
-  emit('run', command.prompt);
+  emit('autorun', command.prompt, command.label);
 }
 
 function toggleMenu() {
@@ -319,7 +319,7 @@ defineExpose({ handleKeydown });
 }
 
 .cmd-item {
-  margin-bottom: 2px;
+  margin-bottom: 0.125rem;
 
   :deep(.v-list-item__prepend) {
     padding-inline-end: 0.625rem;

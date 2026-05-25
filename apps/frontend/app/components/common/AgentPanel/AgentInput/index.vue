@@ -23,7 +23,7 @@
         ref="cmdMenuEl"
         v-model="text"
         :mode="mode"
-        @autorun="(prompt: string) => emit('autorun', prompt)"
+        @autorun="(prompt, label) => emit('autorun', prompt, label)"
       />
       <VSpacer />
       <AgentModeSelect v-model="mode" />
@@ -67,7 +67,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   submit: [];
-  autorun: [prompt: string];
+  autorun: [prompt: string, label: string];
   focus: [];
 }>();
 
@@ -110,8 +110,8 @@ defineExpose({ focus: () => inputEl.value?.focus() });
 .agent-input {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  padding: 0.85rem 1rem 1rem;
+  gap: 0.625rem;
+  padding: 0.875rem 1rem 1rem;
   border-top: 1px solid rgb(var(--v-theme-outline-variant));
   background: rgb(var(--v-theme-surface));
 }
@@ -130,14 +130,14 @@ defineExpose({ focus: () => inputEl.value?.focus() });
 
   :deep(.v-field--focused) {
     border-color: rgb(var(--v-theme-primary));
-    box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.18);
+    box-shadow: 0 0 0 0.125rem rgba(var(--v-theme-primary), 0.18);
   }
 
   :deep(.v-field__input) {
-    padding-top: 0.65rem;
-    padding-bottom: 0.65rem;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
     color: rgb(var(--v-theme-on-surface));
-    font-size: 0.92rem;
+    font-size: 0.9375rem;
     line-height: 1.5;
   }
 
