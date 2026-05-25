@@ -139,10 +139,10 @@ packages/core-extensions/plugins/my-plugin/
     "@tailor-cms/interfaces": "workspace:*"
   },
   "peerDependencies": {
-    "nuxt": "^4.0.0",
-    "pinia": "^3.0.0",
-    "vue": "^3.5.0",
-    "vuetify": "^3.10.0"
+    "nuxt": "^4.4.6",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.34",
+    "vuetify": "^4.0.7"
   }
 }
 ```
