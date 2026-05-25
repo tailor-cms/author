@@ -28,12 +28,15 @@ export enum AiResponseSchema {
 export type AiResponseSchemaLiteral = `${AiResponseSchema}`;
 
 // Reasoning effort for the OpenAI Responses API. Only applied on
-// reasoning-capable models (gpt-5, o-series); omit for the model default.
+// reasoning-capable models (gpt-5, o-series). The UI labels (Quick / Low /
+// Standard / Deep) are shifted one level above gpt-5.5's raw scale so the
+// "Quick" option still triggers some reasoning - the model's 'none' would
+// disable it entirely and isn't useful for an agent that does tool calls.
 export enum ReasoningEffort {
-  Minimal = 'minimal',
-  Low = 'low',
-  Medium = 'medium',
-  High = 'high',
+  Minimal = 'low',
+  Low = 'medium',
+  Medium = 'high',
+  High = 'xhigh',
 }
 
 export type ReasoningEffortLiteral = `${ReasoningEffort}`;

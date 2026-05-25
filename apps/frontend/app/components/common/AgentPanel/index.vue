@@ -9,7 +9,7 @@
       v-if="isPanelOpen"
       class="panel-card"
       data-agent-target="panel-card"
-      elevation="14"
+      elevation="5"
       rounded="xl"
     >
       <PanelHeader

@@ -16,8 +16,8 @@
     <template #item="{ item, props: itemProps }">
       <VListItem
         v-bind="itemProps"
-        :prepend-icon="item.raw.icon"
-        :subtitle="item.raw.subtitle"
+        :prepend-icon="item.icon"
+        :subtitle="item.subtitle"
       />
     </template>
   </VSelect>

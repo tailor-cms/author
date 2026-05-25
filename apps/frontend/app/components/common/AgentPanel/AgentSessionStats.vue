@@ -1,5 +1,5 @@
 <template>
-  <div class="session-stats text-caption">
+  <div class="session-stats text-body-small">
     <span>
       <VIcon class="mx-1" icon="mdi-flash" size="11" />
       {{ turns }} turns - {{ toolCount }} tool calls

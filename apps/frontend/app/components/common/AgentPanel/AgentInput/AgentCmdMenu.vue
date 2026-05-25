@@ -28,7 +28,7 @@
             icon="mdi-slash-forward-box"
             size="16"
           />
-          <span class="cmd-header-text text-primary-darken-3">
+          <span class="cmd-header-text">
             {{ slashQuery ? `/${slashQuery}` : 'Commands' }}
           </span>
         </div>
@@ -48,14 +48,16 @@
             </template>
             <VListItemTitle class="cmd-title">
               <code class="cmd-id">/{{ command.id }}</code>
-              <span class="cmd-label">{{ command.label }}</span>
+              <span class="cmd-label text-medium-emphasis">
+                {{ command.label }}
+              </span>
             </VListItemTitle>
             <VListItemSubtitle class="cmd-hint">
               {{ command.hint }}
             </VListItemSubtitle>
           </VListItem>
           <VListItem v-if="!visibleCommands.length" disabled>
-            <VListItemTitle class="text-medium-emphasis text-body-2">
+            <VListItemTitle class="text-medium-emphasis text-body-medium">
               No matching commands
             </VListItemTitle>
           </VListItem>
@@ -306,7 +308,7 @@ defineExpose({ handleKeydown });
 }
 
 .cmd-header-text {
-  color: rgb(var(--v-theme-on-surface-variant));
+  color: rgb(var(--v-theme-primary-darken-3));
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -343,9 +345,7 @@ defineExpose({ handleKeydown });
 }
 
 .cmd-label {
-  color: rgb(var(--v-theme-on-surface));
   font-size: 0.875rem;
-  font-weight: 500;
 }
 
 .cmd-hint {

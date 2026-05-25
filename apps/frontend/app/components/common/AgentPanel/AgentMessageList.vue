@@ -80,10 +80,10 @@ defineExpose({ scrollToBottom });
   align-items: center;
   margin-top: 0.625rem;
   padding: 0.5625rem 0.6875rem;
-  color: rgb(var(--v-theme-on-error-container, white));
+  color: rgb(var(--v-theme-on-error-container));
   font-size: 0.8125rem;
   border-radius: 0.5rem;
-  background: rgb(var(--v-theme-error-container, var(--v-theme-error)));
+  background: rgb(var(--v-theme-error-container));
 }
 
 @keyframes list-status-pulse {
