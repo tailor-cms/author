@@ -14,7 +14,7 @@ const getComponentName = (pluginId, slot) =>
  *   version: '1.0',
  *   // Component slots
  *   AppendComponent,      // Below meta inputs
- *   GlobalComponent,      // Top nav
+ *   GlobalComponent,      // Repository navigation rail
  *   PrependComponent,     // Before meta inputs
  *   ConfigComponent,      // Config panel
  *   // Store registration (accessible via useNuxtApp().$myStore)

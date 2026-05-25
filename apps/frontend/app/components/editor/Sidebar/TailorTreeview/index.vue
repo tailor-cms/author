@@ -1,14 +1,4 @@
 <template>
-  <div v-if="hasItems" class="d-flex flex-column align-end mx-5">
-    <VBtn
-      color="teal-lighten-4"
-      size="x-small"
-      variant="tonal"
-      @click="toggleExpand"
-    >
-      Toggle all
-    </VBtn>
-  </div>
   <VList v-model:opened="expanded" density="compact" slim nav>
     <Draggable
       :list="processedItems"
@@ -91,6 +81,8 @@ const isFullyExpanded = computed(
 const toggleExpand = () => {
   expanded.value = isFullyExpanded.value ? [] : expandableItemIds.value;
 };
+
+defineExpose({ hasItems, isFullyExpanded, toggleExpand });
 
 const flatTree = (tree: any) =>
   tree.reduce(

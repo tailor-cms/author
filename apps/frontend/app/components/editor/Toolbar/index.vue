@@ -3,7 +3,6 @@
     :color="toolbarColor"
     border="b surface"
     class="toolbar-wrapper"
-    height="64"
     order="1"
   >
     <div v-if="activity && !element" class="activity-toolbar w-100 px-3">
@@ -174,8 +173,9 @@ const usersWithActivity = computed(() => {
 
 <style lang="scss" scoped>
 .toolbar-wrapper {
-  :deep(.v-toolbar__content) {
-    height: 4rem !important;
+  > :deep(.v-toolbar__content) {
+    height: auto !important;
+    min-height: 4rem;
     padding: 0;
   }
 
@@ -205,7 +205,7 @@ const usersWithActivity = computed(() => {
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
-  height: 4rem;
+  min-height: 4rem;
   min-width: 0;
   gap: 0.25rem;
 }

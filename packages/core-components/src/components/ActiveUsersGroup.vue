@@ -5,7 +5,7 @@
     :limit="limit"
     :size="size"
     :vertical="vertical"
-    border="sm surface opacity-100"
+    :border="vertical ? undefined : 'sm surface opacity-100'"
   >
     <template #item="{ index }">
       <VTooltip :location="tooltipLocation">
@@ -27,10 +27,11 @@
           <VAvatar
             v-bind="menuProps"
             :text="`+${overflow}`"
-            class="v-avatar-group__overflow"
+            class="text-caption font-weight-bold"
           />
         </template>
-        <VList density="compact" min-width="220" nav>
+        <VList density="compact" min-width="220">
+          <VListSubheader>Active users</VListSubheader>
           <VListItem
             v-for="user in overflowUsers"
             :key="user.id"
@@ -68,5 +69,5 @@ const props = withDefaults(
   },
 );
 
-const overflowUsers = computed(() => props.users.slice(props.limit - 1));
+const overflowUsers = computed(() => props.users);
 </script>

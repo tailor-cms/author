@@ -3,6 +3,7 @@
     :key="id"
     class="element-toolbar-wrapper d-flex align-center justify-center"
     color="transparent"
+    border="b"
   >
     <template v-if="componentExists">
       <component
@@ -54,7 +55,7 @@ const save = (data: any) => elementBus.emit('save', data);
 <style lang="scss" scoped>
 .element-toolbar-wrapper {
   width: 100%;
-  min-height: 5.5rem;
+  min-height: 4rem;
   padding: 0.5rem 2rem;
 }
 

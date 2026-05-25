@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="comment header pa-2 bg-transparent" rounded="xl">
+  <VSheet class="comment header py-1 px-2 bg-transparent" rounded="xl">
     <CommentHeader
       v-bind="{
         comment,
@@ -123,7 +123,7 @@ watch(() => props.comment, reset, { deep: true });
 
   &-body {
     flex: 1;
-    padding: 0 0.25rem 0 3.25rem;
+    padding: 0 0.25rem 0 3rem;
   }
 
   &-editor.v-textarea {

@@ -180,7 +180,7 @@ const removeComment = (id: number) => {
 }
 
 :deep(.comment-body) {
-  padding: 0 0.25rem 0 3.9375rem;
+  padding: 0 0.25rem 0 3.25rem;
 }
 
 .unseen {

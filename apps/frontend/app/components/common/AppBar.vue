@@ -35,11 +35,6 @@
           <span class="toolbar-route text-truncate">{{ name }}</span>
         </VBtn>
       </template>
-      <component
-        :is="plugin.globalComponentName"
-        v-for="plugin in globalPlugins"
-        :key="plugin.id"
-      />
       <VMenu
         attach="#mainAppBar"
         min-width="220"
@@ -111,8 +106,6 @@ defineProps<{ user: User }>();
 const { smAndDown } = useDisplay();
 
 const { $oidc } = useNuxtApp() as any;
-const { $pluginRegistry } = useNuxtApp() as any;
-const globalPlugins = computed(() => $pluginRegistry.getGlobalComponents());
 const config = useConfigStore();
 const authStore = useAuthStore();
 const topLevelRoutes = computed(() => {

@@ -18,7 +18,7 @@
     >
       <VTextField
         v-model="emailInput"
-        :class="errors.email?.length ? 'mb-3' : 'mb-1'"
+        class="mb-4"
         :disabled="showMessage"
         :error-messages="errors.email"
         label="Email"
@@ -31,6 +31,7 @@
         <VBtn
           v-if="!showMessage"
           color="primary-lighten-2"
+          size="large"
           type="submit"
           variant="tonal"
           block
