@@ -11,7 +11,7 @@
       >
         Click on the button below in order to create your first item!
       </VAlert>
-      <div class="d-flex ga-2">
+      <div class="d-flex ga-1">
         <CreateDialog
           :anchor="anchor"
           :repository-id="repositoryId as number"

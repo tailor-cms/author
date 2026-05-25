@@ -12,7 +12,6 @@
         :data-testid="`${props.testIdPrefix}Btn`"
         :size="size"
         :variant="variant"
-        class="px-2"
       >
         <VIcon class="mr-2">{{ props.activatorIcon }}</VIcon>
         {{ activatorLabel || defaultModalHeading }}

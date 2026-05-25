@@ -66,7 +66,7 @@
                 />
               </template>
             </Draggable>
-            <OutlineFooter class="mt-1" />
+            <OutlineFooter class="mt-4" />
           </template>
           <template v-else>
             <SearchResult

@@ -8,7 +8,6 @@
     <template v-if="showActivator" #activator="{ props: dialogProps }">
       <VBtn
         v-bind="dialogProps"
-        class="px-1"
         color="primary-lighten-3"
         prepend-icon="mdi-link-variant"
         variant="text"
