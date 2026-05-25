@@ -1,13 +1,18 @@
 import type {
   AgentMode,
-  AgentPendingQuestion,
   FocusedTarget,
+  RunResult as WireRunResult,
 } from '@tailor-cms/interfaces/agent.ts';
 import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
 import type { RequestHandler, Response } from 'express';
 
 import type { AgentSession } from './session/index.ts';
 import type { OperationEntry } from './tools/types.ts';
+
+export type {
+  ToolCallRecord,
+  ToolError,
+} from '@tailor-cms/interfaces/agent.ts';
 
 // Properties available on the Express Request after middleware injection.
 // Intentionally not extending Express.Request to avoid built-in property
@@ -51,45 +56,9 @@ export interface RunInput {
   reasoningEffort?: ReasoningEffortLiteral;
 }
 
-// Structured error envelope every failed tool call produces. Mode-denied,
-// invalid-json, unknown-tool, tool-threw, and any tool using the
-// tools/helpers/common.ts:toolError helper all share this shape, so
-// { error, message } is reliable across the failure path.
-export interface ToolError {
-  error: string;
-  message: string;
-  // Tool-specific extras: scope/mode for mode_denied, allowedElementTypes
-  // for invalid_type, etc. Not enumerated here because each tool decides.
-  [extra: string]: unknown;
-}
-
-// One entry in RunResult.toolCalls. Discriminated on `ok` so consumers
-// narrow `result` without manual casts:
-//   if (tc.ok) tc.result.someSuccessField   // tool-specific success shape
-//   else       tc.result.error              // ToolError
-// `input` is intentionally `unknown`: usually parsed JSON args, but on
-// invalid_json it's the raw arguments string the model emitted.
-export type ToolCallRecord =
-  | { name: string; input: unknown; result: unknown; ok: true; durationMs: number }
-  | { name: string; input: unknown; result: ToolError; ok: false; durationMs: number };
-
-export interface RunResult {
-  sessionId: string;
-  // Assistant's reply text after the loop ended (the model's last
-  // text-only message). Empty string when the run produced no text.
-  replyText: string;
-  toolCalls: ToolCallRecord[];
-  // Number of (model call -> tool dispatch) iterations the loop ran.
-  turns: number;
-  // True when the run was cut off (today only by maxTurns; pair with a
-  // reason field if other truncation causes get added).
-  truncated: boolean;
-  // Cache keys the frontend should refetch after this run.
-  invalidates: string[];
-  // Cumulative operations across the whole session - includes prior runs
-  // in the same conversation, not just this one.
+// Narrows the shared (wire) RunResult.transactionLog from opaque
+// unknown[] to OperationEntry[] for backend-internal use; everything
+// else carries over unchanged.
+export interface RunResult extends Omit<WireRunResult, 'transactionLog'> {
   transactionLog: OperationEntry[];
-  // The most recent ask_user_question call (if any) - the dock renders
-  // it as a clickable picker above the input.
-  pendingQuestion?: AgentPendingQuestion | null;
 }
