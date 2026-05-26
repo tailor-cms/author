@@ -56,34 +56,52 @@ export const Email = () => z.email().toLowerCase().trim();
 //     or absent value) - treated as undefined
 //   - a real array of string ints (`['1', '2']`)
 export const IntArrayFromForm = () =>
-  z.preprocess(
-    (v) => {
-      if (v == null) return undefined;
-      if (Array.isArray(v)) {
-        return v.length ? v.map((x) => Number(x)) : undefined;
+  z.preprocess((v) => {
+    if (v == null) return undefined;
+    if (Array.isArray(v)) {
+      return v.length ? v.map((x) => Number(x)) : undefined;
+    }
+    if (typeof v === 'string') {
+      const trimmed = v.trim();
+      if (!trimmed || trimmed === 'undefined' || trimmed === 'null') {
+        return undefined;
       }
-      if (typeof v === 'string') {
-        const trimmed = v.trim();
-        if (!trimmed || trimmed === 'undefined' || trimmed === 'null') {
-          return undefined;
-        }
-        return trimmed.split(',').filter(Boolean).map(Number);
-      }
-      return v;
-    },
-    z.array(z.number().int()).optional(),
-  );
+      return trimmed.split(',').filter(Boolean).map(Number);
+    }
+    return v;
+  }, z.array(z.number().int()).optional());
 
 // Array of strings that may arrive as a single string or as
 // a real array (multiple). Used for `schemas[]`, `tagIds[]`, etc. URL
 // query params, where qs may return either shape depending on cardinality.
 export const StringArrayFromQuery = () =>
-  z.preprocess(
-    (v) => {
-      if (v == null) return undefined;
-      if (Array.isArray(v)) return v.length ? v.map(String) : undefined;
-      if (typeof v === 'string') return v ? [v] : undefined;
-      return v;
-    },
-    z.array(z.string()).optional(),
-  );
+  z.preprocess((v) => {
+    if (v == null) return undefined;
+    if (Array.isArray(v)) return v.length ? v.map(String) : undefined;
+    if (typeof v === 'string') return v ? [v] : undefined;
+    return v;
+  }, z.array(z.string()).optional());
+
+// Standard offset/limit pair for paginated list endpoints. Spread
+// into the schema's `.object({...})` argument so the fields land at
+// the top level alongside filters.
+export const Pagination = () => ({
+  offset: IntParam().optional().describe('Pagination offset.'),
+  limit: IntParam().optional().describe('Pagination limit.'),
+});
+
+// Standard sortBy/sortOrder pair. Pass an `as const` tuple of allowed
+// columns to lock sortBy to the enum; omit for loose `string().max(64)`
+// (free-form, validated downstream). sortOrder accepts upper and
+// lower-case for tolerance to existing callers.
+export const Sort = <T extends readonly [string, ...string[]]>(
+  columns?: T,
+) => ({
+  sortBy: (columns ? z.enum(columns) : z.string().max(64))
+    .optional()
+    .describe('Sort column.'),
+  sortOrder: z
+    .enum(['ASC', 'DESC', 'asc', 'desc'])
+    .optional()
+    .describe('Sort direction.'),
+});
