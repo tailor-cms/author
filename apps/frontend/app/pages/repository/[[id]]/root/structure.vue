@@ -1,7 +1,6 @@
 <template>
   <div class="structure-page">
     <VAppBar
-      v-if="hasActivities || isCollection"
       border="b surface"
       class="pr-2"
       color="primary-darken-3"
@@ -49,6 +48,7 @@
         <template v-else>
           <template v-if="!filters.search">
             <Draggable
+              v-if="hasActivities"
               v-bind="{ handle: '.activity' }"
               :list="rootActivities"
               :move="repositoryStore.isValidDrop"
@@ -68,7 +68,16 @@
                 />
               </template>
             </Draggable>
-            <OutlineFooter class="mt-4" />
+            <VAlert
+              v-else
+              class="mt-5 mb-5"
+              color="primary-lighten-3"
+              icon="mdi-information-outline"
+              variant="tonal"
+              prominent
+            >
+              Click the <strong>Create</strong> button above to add your first item.
+            </VAlert>
           </template>
           <template v-else>
             <div>
@@ -114,7 +123,6 @@ import {
   type CollectionSort,
   DEFAULT_COLLECTION_SORT,
 } from '@/components/repository/Outline/collectionSort';
-import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
@@ -170,14 +178,22 @@ const goTo = async (activity: StoreActivity) => {
   scrollToActivity(activity);
 };
 
-const scrollToActivity = (activity: StoreActivity, timeout = 500) => {
+const isOffscreen = (el: HTMLElement) => {
+  const { top, bottom } = el.getBoundingClientRect();
+  return top < 0 || bottom > window.innerHeight;
+};
+
+const scrollToActivity = (
+  activity: StoreActivity,
+  behavior: ScrollBehavior = 'smooth',
+) => {
   repositoryStore.expandOutlineParents(activity.id);
-  setTimeout(() => {
-    const elementId = `#activity_${activity.uid}`;
-    const container = structureEl.value?.$el ?? structureEl.value;
-    const element = container?.querySelector?.(elementId);
-    element?.scrollIntoView();
-  }, timeout);
+  const elementId = `#activity_${activity.uid}`;
+  const container = structureEl.value?.$el ?? structureEl.value;
+  const element = container?.querySelector?.(elementId) as HTMLElement | null;
+  if (element && isOffscreen(element)) {
+    element.scrollIntoView({ block: 'center', behavior });
+  }
 };
 
 onMounted(() => {
@@ -191,13 +207,7 @@ onMounted(() => {
     // If there are no activities
     return;
   }
-  if (!selectedActivity.value) return;
-  const isFirstActivitySelected =
-    selectedActivity.value &&
-    rootActivities.value[0]!.id === selectedActivity.value.id;
-  if (!isFirstActivitySelected) {
-    scrollToActivity(selectedActivity.value, 200);
-  }
+  if (selectedActivity.value) scrollToActivity(selectedActivity.value, 'auto');
 });
 </script>
 
@@ -233,9 +243,6 @@ onMounted(() => {
 }
 
 .collection-wrapper {
-  flex: 0 1 auto;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  flex: 0 0 auto;
 }
 </style>

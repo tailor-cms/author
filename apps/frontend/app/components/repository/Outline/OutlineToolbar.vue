@@ -76,11 +76,21 @@
         </template>
       </VHover>
       <VSpacer />
+      <LinkContent :anchor="anchor" show-activator />
+      <CreateDialog
+        :anchor="anchor"
+        :repository-id="currentRepositoryStore.repositoryId as number"
+        activator-color="teal-lighten-3"
+        activator-icon="mdi-plus"
+        size="small"
+        variant="tonal"
+        test-id-prefix="repository__createRootActivity"
+        show-activator
+      />
       <VBtn
         v-if="!isFlat"
         :disabled="!!search"
         class="text-none"
-        color="teal-lighten-3"
         variant="tonal"
         rounded="lg"
         size="small"
@@ -102,6 +112,7 @@ import {
   type CollectionSortOption,
 } from '@/components/repository/Outline/collectionSort';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
+import LinkContent from '@/components/repository/Library/LinkContent.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const search = defineModel<string>('search', { default: '' });

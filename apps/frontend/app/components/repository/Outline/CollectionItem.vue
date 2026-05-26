@@ -1,5 +1,6 @@
 <template>
   <VListItem
+    ref="rowEl"
     :class="{ 'is-selected': isSelected, 'is-deleted': isSoftDeleted }"
     :ripple="false"
     :style="{ '--row-accent': config?.color }"
@@ -84,6 +85,19 @@ const isSoftDeleted = computed(() =>
   activityUtils.doesRequirePublishing(props.activity),
 );
 
+const rowEl = ref<{ $el: HTMLElement } | null>(null);
+
+const isOffscreen = (el: HTMLElement) => {
+  const { top, bottom } = el.getBoundingClientRect();
+  return top < 0 || bottom > window.innerHeight;
+};
+
+const scrollIntoView = async (behavior: ScrollBehavior) => {
+  await nextTick();
+  const el = rowEl.value?.$el;
+  if (el && isOffscreen(el)) el.scrollIntoView({ behavior, block: 'center' });
+};
+
 const selectRow = () => repositoryStore.selectActivity(props.activity.id);
 
 const openActivity = () => {
@@ -101,6 +115,14 @@ const deleteActivity = () =>
       if (focusNode) repositoryStore.selectActivity(focusNode.id);
     },
   });
+
+onMounted(() => {
+  if (isSelected.value) scrollIntoView('auto');
+});
+
+watch(isSelected, (selected) => {
+  if (selected) scrollIntoView('smooth');
+});
 </script>
 
 <style lang="scss" scoped>
