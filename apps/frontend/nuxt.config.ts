@@ -34,7 +34,7 @@ export default defineNuxtConfig({
     plugins: [injectConfigHeaders()],
   },
   telemetry: false,
-  debug: true,
+  debug: false,
   googleFonts: {
     families: {
       Inter: [400, 500, 600, 700],
