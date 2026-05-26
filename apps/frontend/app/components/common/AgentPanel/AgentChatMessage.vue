@@ -22,9 +22,7 @@
           variant="text"
           @click="areToolsExpanded = !areToolsExpanded"
         >
-          {{ areToolsExpanded
-            ? 'Hide earlier calls'
-            : `Show ${hiddenToolCount} earlier ${hiddenToolCount === 1 ? 'call' : 'calls'}` }}
+          {{ toggleLabel }}
         </VBtn>
         <AgentToolCard
           v-for="(toolCall, i) in visibleToolCalls"
@@ -64,6 +62,12 @@ const visibleToolCalls = computed(() => {
   const all = props.toolCalls ?? [];
   if (areToolsExpanded.value || all.length <= TOOL_CALL_PREVIEW) return all;
   return all.slice(-TOOL_CALL_PREVIEW);
+});
+
+const toggleLabel = computed(() => {
+  if (areToolsExpanded.value) return 'Hide earlier calls';
+  const noun = hiddenToolCount.value === 1 ? 'call' : 'calls';
+  return `Show ${hiddenToolCount.value} earlier ${noun}`;
 });
 
 const authStore = useAuthStore();
