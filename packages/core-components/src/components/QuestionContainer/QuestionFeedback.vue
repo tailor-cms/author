@@ -48,13 +48,14 @@ import { isArray, some } from 'lodash-es';
 import RichTextEditor from '../RichTextEditor/index.vue';
 
 interface Props {
-  answers: string[];
+  answers?: string[];
   isReadonly: boolean;
   isGradable: boolean;
   feedback?: Record<number, string>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  answers: () => [],
   feedback: () => ({}),
 });
 const emit = defineEmits(['update']);
@@ -63,7 +64,9 @@ const isExpanded = ref(some(props.feedback));
 const answerType = computed(() => (props.isGradable ? 'Answer' : 'Option'));
 const buttonLabel = computed(() => (isExpanded.value ? 'hide' : 'show'));
 const processedAnswers = computed(() =>
-  isArray(props.answers) ? props.answers : ['True', 'False'],
+  isArray(props.answers) && props.answers.length
+    ? props.answers
+    : ['True', 'False'],
 );
 
 const update = (value: string, index: number) => {

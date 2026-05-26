@@ -40,19 +40,28 @@ interface ToolResultContext {
 }
 
 const description = stripIndent`
-  Persist content for an outline activity in ONE atomic call.
-  When called after generate_container_content, pass BOTH
-  item.data (subcontainer metadata defined by the schema, e.g.
-  a comic Panel exposes title/description/mood/layout) AND
-  item.elements verbatim - never just elements. Splitting into
-  a bare create + a follow-up update_activity is wasteful and
-  produces an empty-meta intermediate state. Resolves the
-  container layer from the schema automatically: nested
-  templates get a typed subcontainer with the meta from data;
-  flat templates attach elements directly. Missing meta keys
-  are defaulted, but you should always supply the complete
-  data object the generator produced. Call get_schema_info to
-  see which meta fields each container type defines.
+  Persist content for an outline activity in ONE call. When called
+  after generate_container_content, pass BOTH item.data (subcontainer
+  metadata defined by the schema, e.g. a SECTION might expose
+  title/description/mood/layout) AND item.elements verbatim - never
+  just elements. Splitting into a bare create + a follow-up
+  update_activity is wasteful and produces an empty-meta
+  intermediate state. Resolves the container layer from the schema
+  automatically: nested templates get a typed subcontainer with the
+  meta from data; flat templates attach elements directly.
+
+  This tool always APPENDS a fresh subcontainer. If the target
+  container already holds empty subcontainer stubs (editor
+  scaffolding materialised from defaultSubcontainers), they will
+  sit alongside the new ones - inspect with get_activity_subtree
+  first and delete unwanted stubs via delete_activity (or fill
+  them in place via update_activity + add_elements_to_activity)
+  BEFORE calling this tool (unless USER specifies otherwise,
+  e.g. adding additional items).
+
+  Some missing meta keys are defaulted, but you should always supply the
+  complete data object the generator produced. Call get_schema_info
+  to see which meta fields each container type defines.
 `;
 
 const parameters = {
