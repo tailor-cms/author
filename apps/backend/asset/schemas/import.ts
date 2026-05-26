@@ -1,5 +1,5 @@
 // Wire shape for importing an asset from a URL.
-// Scrapes Open Graph metadata, optionally downloads the linked file
+// Collects Open Graph metadata, optionally downloads the linked file
 // for IMAGE / PDF content types, and merges any caller-supplied attribution
 // into the resulting record.
 import {
@@ -24,7 +24,7 @@ const publicUrlRefine = (value: string) => {
 const safeUrl = () =>
   z.url().refine(publicUrlRefine, 'URL must be a public https URL.');
 
-// Caller-supplied attribution; merged with OG-scraped values by the
+// Caller-supplied attribution; merged with OG-collected values by the
 // service (caller wins on collisions).
 const ImportMeta = z
   .object({
