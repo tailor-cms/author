@@ -124,7 +124,7 @@ async function destroyAsset(repository: Repository, asset: Asset) {
 export async function list(repositoryId: number, options: ListOptions = {}) {
   const {
     search, type, offset = 0, limit = 100, signed = false,
-    orderBy = 'createdAt', orderDirection = 'DESC',
+    sortBy = 'createdAt', sortOrder = 'DESC',
     videoLinkMode,
   } = options;
   logger.debug(
@@ -150,7 +150,7 @@ export async function list(repositoryId: number, options: ListOptions = {}) {
   const { rows, count } = await Asset.findAndCountAll({
     where,
     include: [UPLOADER_INCLUDE],
-    order: [[orderBy, orderDirection]],
+    order: [[sortBy, sortOrder]],
     offset,
     limit,
   });
@@ -259,7 +259,7 @@ export async function importFromLink(
     { repositoryId, url, contentType: meta.contentType },
     'Importing from link',
   );
-  // OG scrape runs for all imports - enriches both file and link assets.
+  // OG collection runs for all imports - enriches both file and link assets.
   // For downloadable types, runs in parallel with the file download.
   const ogPromise = fetchOpenGraph(url);
   // Downloadable types: fetch the file and store it like a regular upload.
