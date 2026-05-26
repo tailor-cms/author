@@ -1,7 +1,12 @@
 import { stripIndent } from 'common-tags';
+
+import {
+  computeMissingMeta,
+  findActivity,
+  summarizeActivity,
+} from './helpers.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 import { toolError } from '../helpers/index.ts';
-import { findActivity, summarizeActivity } from './helpers.ts';
 
 const TOOL = 'get_activity';
 
@@ -10,10 +15,13 @@ interface Input {
 }
 
 const description = stripIndent`
-  Fetch a single activity by id with its full data object.
-  Use before update_activity or attach_asset_to_activity to
-  inspect the current state. For the full content tree under
-  a topic, use get_activity_subtree instead.
+  Fetch a single activity by id with its full data object and a
+  missingMeta list (schema-defined meta keys still unset on this
+  activity). Use before update_activity or attach_asset_to_activity
+  to inspect the current state and see what fields to fill. Call
+  get_schema_info for the meta key types and labels. For the full
+  content tree under a outline activity (children, containers, elements),
+  use get_activity_subtree instead.
 `;
 
 const parameters = {
@@ -29,9 +37,10 @@ const parameters = {
 };
 
 /**
- * Fetch one activity by id. Returns the summary plus
- * the full data object so the LLM can inspect all
- * schema-defined meta fields.
+ * Fetch one activity by id. Returns the summary, full data, and
+ * missingMeta (schema-defined meta keys still unset) so the LLM
+ * can decide what to patch via update_activity without an extra
+ * subtree fetch.
  */
 async function execute(input: Input, ctx: ToolContext) {
   const activity = await findActivity(input.id, ctx);
@@ -42,9 +51,11 @@ async function execute(input: Input, ctx: ToolContext) {
       message: `Activity #${input.id} not found.`,
     });
   }
+  const missingMeta = computeMissingMeta(ctx.repository.schema, activity);
   return {
     ...summarizeActivity(activity),
     data: activity.data,
+    ...(missingMeta.length ? { missingMeta } : {}),
   };
 }
 

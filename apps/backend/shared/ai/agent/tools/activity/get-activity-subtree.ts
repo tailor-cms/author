@@ -16,8 +16,19 @@ const description = stripIndent`
   depth regardless of nesting level. Both the outline
   hierarchy and container nesting are schema-defined so
   never assume a fixed structure.
-  Call this before modifying or adding content so you can
-  see the current state and find target activity/element ids.
+
+  Each node lists missingMeta (schema-defined meta keys still unset
+  on that activity). A non-outline node with missingMeta and zero
+  elements is an empty stub - typically editor scaffolding
+  materialised from the container's defaultSubcontainers. Fill stubs
+  in place via update_activity + add_elements_to_activity, or delete
+  them via delete_activity before calling
+  create_container_with_elements so the new subcontainers don't sit
+  alongside empty defaults.
+
+  Call get_schema_info for the meta key types and labels. Call
+  this tool before modifying or adding content so you can see
+  the current state and find target activity/element ids.
 `;
 
 const parameters = {
