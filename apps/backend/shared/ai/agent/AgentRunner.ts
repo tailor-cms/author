@@ -5,12 +5,12 @@
 //   3. For each function_call output item, dispatch the matching tool and
 //      append a function_call_output item to history
 //   4. Loop until no more tool calls or maxTurns hit
+import { isCompactModel, supportsReasoning } from '../lib/AiPrompt.ts';
 import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
-import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
+import { ai as aiConfig } from '#config';
 import { oneLine } from 'common-tags';
 import OpenAI from 'openai';
-import { ai as aiConfig } from '#config';
-import { supportsReasoning } from '../lib/AiPrompt.ts';
+import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
 
 import { buildFocusHeader } from './context/FocusContext.ts';
 import { buildSystemPrompt } from './systemPrompt.ts';
@@ -32,6 +32,15 @@ const openaiClient = aiConfig.isEnabled
 // runaway tool-call loops from chewing through API credits or hanging
 // the request indefinitely.
 const MAX_TURNS = 80;
+
+// Approximate char budgets for the session history we send back to the
+// model on each turn. Picked conservatively below known model context
+// windows so the system prompt (~15-20KB) + tool manifest (~30KB) +
+// model output + reasoning have headroom. Tune as we observe real budgets
+// for the configured model. Compaction snaps to user-message boundaries
+// so function_call / function_call_output pairs stay paired.
+const HISTORY_CHAR_CAP_DEFAULT = 600_000;
+const HISTORY_CHAR_CAP_COMPACT = 200_000;
 
 // Message roles in the OpenAI Responses API "input" array.
 const ROLE = { Developer: 'developer', User: 'user' } as const;
@@ -201,6 +210,7 @@ export class AgentRunner {
       { turn: state.turns, sessionId: session.id },
       'agent loop iteration',
     );
+    compactSession(session);
 
     const response = await this.callModel(
       systemPrompt,
@@ -377,6 +387,26 @@ export class AgentRunner {
       if (reasoningEffort && supportsReasoning(aiConfig.modelId)) {
         params.reasoning = { effort: reasoningEffort };
       }
+      // Approximate-size log so context-window blow-ups have an
+      // observable trail.
+      if (logger.isLevelEnabled('debug')) {
+        const promptChars = systemPrompt.length;
+        const historyChars = approxChars(history);
+        const toolsChars = approxChars(tools);
+        const totalChars = promptChars + historyChars + toolsChars;
+        logger.debug(
+          {
+            promptChars,
+            historyChars,
+            toolsChars,
+            totalChars,
+            approxTokens: Math.round(totalChars / 4),
+            historyItems: history.length,
+            toolCount: tools.length,
+          },
+          'agent input size (4 chars per token estimate)',
+        );
+      }
       const response = await openaiClient!.responses.create(params);
       return { output: response.output || [] };
     } catch (err: any) {
@@ -473,6 +503,74 @@ function buildToolContext(input: RunInput, session: AgentSession): ToolContext {
 
 function createRunState(): RunState {
   return { turns: 0, replyText: '', toolCalls: [], invalidates: new Set() };
+}
+
+// Rough character-count for any JSON-serialisable payload. Used only
+// for diagnostic logging of the agent's per-turn input size, so we
+// accept the cost of stringify and the lossiness of "approximate".
+function approxChars(value: unknown): number {
+  try {
+    return JSON.stringify(value).length;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Trim `session.history` in place when it has grown past the model's
+ * safe budget. Picks the cap from the configured model class, runs the
+ * pure history compaction, persists the result on the session, and logs
+ * what was dropped. No-op when the session is already inside the budget.
+ */
+function compactSession(session: AgentSession): void {
+  const cap = isCompactModel(aiConfig.modelId)
+    ? HISTORY_CHAR_CAP_COMPACT
+    : HISTORY_CHAR_CAP_DEFAULT;
+  const beforeChars = approxChars(session.history);
+  if (beforeChars <= cap) return;
+  const compacted = compactHistory(session.history, cap);
+  if (compacted.length === session.history.length) return;
+  logger.warn(
+    {
+      sessionId: session.id,
+      beforeItems: session.history.length,
+      afterItems: compacted.length,
+      beforeChars,
+      afterChars: approxChars(compacted),
+      cap,
+    },
+    'agent history compacted',
+  );
+  session.history = compacted;
+}
+
+/**
+ * Pure history-array transform: drop earliest items so the result fits
+ * within `maxChars`. Snaps to user-message boundaries so the OpenAI
+ * Responses API's function_call <-> function_call_output pairing stays
+ * intact (a user message marks the start of a closed turn block).
+ * Returns the input unchanged when it's already within budget, or just
+ * the last user-message tail when even that exceeds the cap (in which
+ * case the next API call may still reject - the session needs a manual
+ * reset).
+ */
+function compactHistory(history: ApiItem[], maxChars: number): ApiItem[] {
+  const userIndices: number[] = [];
+  for (let i = 0; i < history.length; i++) {
+    if (history[i].role === 'user') userIndices.push(i);
+  }
+  if (!userIndices.length) return history;
+  // Walk earliest -> latest, return the earliest user index whose tail
+  // fits the cap (preserves the most recent context that's still safe).
+  for (const startIdx of userIndices) {
+    if (approxChars(history.slice(startIdx)) <= maxChars) {
+      return history.slice(startIdx);
+    }
+  }
+  // Even keeping only the last user turn exceeds the cap. Return it
+  // anyway - the API may still reject, but the session continues with
+  // the smallest viable history shape.
+  return history.slice(userIndices[userIndices.length - 1]);
 }
 
 function assertReady(input: RunInput): void {

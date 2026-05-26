@@ -15,7 +15,7 @@
       <PanelHeader
         :is-running="isRunning"
         :focus-label="focusLabel"
-        @session:reset="onSessionReset"
+        @session:reset="runner.resetSession"
         @panel:close="closePanel"
       />
       <AgentMessageList
@@ -105,11 +105,7 @@ const isPanelEnabled = computed(() =>
 
 const { focusLabel, focusPayload } = useAgentFocus();
 
-const {
-  sessionId,
-  messages,
-  reset: resetSession,
-} = useAgentSession(repositoryUid);
+const { sessionId, messages } = useAgentSession(repositoryUid);
 
 const mode = useLocalStorage<AgentMode>('agent-panel:mode', AgentMode.Edit);
 if (!(AGENT_MODES as readonly string[]).includes(mode.value)) {
@@ -167,7 +163,7 @@ const {
 // Repo switch wipes transient UI state.
 watch(repositoryId, () => {
   prompt.value = '';
-  runner.reset();
+  runner.clearRunState();
   stopStatus();
 });
 
@@ -178,11 +174,6 @@ async function sendPrompt() {
   // Restore the text if the send was rejected (no repo or already running)
   // so the user doesn't lose what they typed.
   if (result.cancelled) prompt.value = message;
-}
-
-function onSessionReset() {
-  resetSession();
-  runner.reset();
 }
 
 onMounted(scrollToLatest);

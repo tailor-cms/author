@@ -18,7 +18,7 @@
     <component
       :is="containerName"
       v-for="(container, index) in filteredContainerGroup"
-      :key="container?.uid"
+      :key="`${container?.uid}.${$pluginRegistry.dataVersion}`"
       v-bind="$attrs"
       :embed-element-config="embedElementConfig"
       :content-element-config="contentElementConfig"
