@@ -9,8 +9,10 @@ import {
   Email,
   IntArrayFromForm,
   IntParam,
+  Pagination,
   QueryBoolean,
   ShortText,
+  Sort,
   StringArrayFromQuery,
 } from '#shared/request/schemas.ts';
 import { general } from '#config';
@@ -35,11 +37,8 @@ export const ListFilter = z.object({
   // Schema id used to find repos whose schema is link-compatible via the
   // mapsTo cross-schema rules (defined in the schema).
   compatibleWith: z.string().trim().max(64).optional(),
-  // Pagination + sort (consumed by processQuery middleware).
-  offset: IntParam().optional(),
-  limit: IntParam().optional(),
-  sortBy: z.string().max(64).optional(),
-  sortOrder: z.enum(['ASC', 'DESC', 'asc', 'desc']).optional(),
+  ...Pagination(),
+  ...Sort(),
   paranoid: QueryBoolean.optional(),
 });
 

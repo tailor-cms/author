@@ -4,17 +4,20 @@
 import { z } from 'zod';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
-import { Email, IntParam, ShortText } from '#shared/request/schemas.ts';
+import {
+  Email,
+  IntParam,
+  Pagination,
+  ShortText,
+  Sort,
+} from '#shared/request/schemas.ts';
 
 // GET /user-group
 export const ListFilter = z.object({
   // Substring match against group name (iLike).
   filter: z.string().trim().max(100).optional(),
-  // Pagination + sort (consumed by processQuery middleware).
-  offset: IntParam().optional(),
-  limit: IntParam().optional(),
-  sortBy: z.string().max(64).optional(),
-  sortOrder: z.enum(['ASC', 'DESC', 'asc', 'desc']).optional(),
+  ...Pagination(),
+  ...Sort(),
 });
 
 export type ListFilter = z.infer<typeof ListFilter>;

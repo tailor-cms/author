@@ -1,7 +1,7 @@
 /**
  * Open Graph metadata extraction for link assets.
  *
- * When a user adds a URL as a link asset, this module scrapes the
+ * When a user adds a URL as a link asset, this module collects the
  * page's structured metadata to populate the asset card preview
  * (title, description, thumbnail, favicon, etc.).
  *
@@ -39,7 +39,7 @@ export interface OpenGraphData {
   license: string;
 }
 
-// Scrapes structured metadata from a URL. Never throws; on failure,
+// Collects structured metadata from a URL. Never throws; on failure,
 // returns domain-only defaults on failure.
 // Falls back across OG → Twitter Card → Dublin Core → domain name.
 export async function fetchOpenGraph(
@@ -68,7 +68,7 @@ export async function fetchOpenGraph(
       license: result.dcRights || '',
     };
   } catch (err) {
-    logger.warn({ err, url }, 'OG scrape failed, using defaults');
+    logger.warn({ err, url }, 'OG collection failed, using defaults');
     return {
       title: domain,
       description: '',

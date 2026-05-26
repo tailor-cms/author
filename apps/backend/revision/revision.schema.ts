@@ -5,7 +5,9 @@ import { z } from 'zod';
 
 import {
   IntParam,
+  Pagination,
   RepositoryScopedParams,
+  Sort,
 } from '#shared/request/schemas.ts';
 import { UserSummary } from '#app/user/user.schema.ts';
 
@@ -62,13 +64,8 @@ export const ListFilter = z
     entityId: IntParam()
       .optional()
       .describe('The entity id; matched against the JSONB `state.id` field.'),
-    offset: IntParam().optional().describe('Pagination offset.'),
-    limit: IntParam().optional().describe('Pagination limit.'),
-    sortBy: z.string().max(64).optional().describe('Column to sort by.'),
-    sortOrder: z
-      .enum(['ASC', 'DESC', 'asc', 'desc'])
-      .optional()
-      .describe('Sort direction.'),
+    ...Pagination(),
+    ...Sort(),
   })
   .refine((q) => !q.entity || q.entityId !== undefined, {
     message: '`entityId` is required when `entity` is set',
