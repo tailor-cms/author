@@ -12,8 +12,22 @@
     <div class="message-column">
       <div v-if="content" class="message-bubble" v-html="renderedContent" />
       <div v-if="toolCalls?.length" class="message-tools">
+        <VBtn
+          v-if="hiddenToolCount > 0"
+          :prepend-icon="areToolsExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+          class="tool-toggle align-self-start"
+          color="primary-darken-4"
+          density="compact"
+          size="small"
+          variant="text"
+          @click="areToolsExpanded = !areToolsExpanded"
+        >
+          {{ areToolsExpanded
+            ? 'Hide earlier calls'
+            : `Show ${hiddenToolCount} earlier ${hiddenToolCount === 1 ? 'call' : 'calls'}` }}
+        </VBtn>
         <AgentToolCard
-          v-for="(toolCall, i) in toolCalls"
+          v-for="(toolCall, i) in visibleToolCalls"
           :key="i"
           :tool-call="toolCall"
         />
@@ -30,6 +44,8 @@ import { UserAvatar } from '@tailor-cms/core-components';
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 
+const TOOL_CALL_PREVIEW = 4;
+
 interface Props {
   role: 'user' | 'assistant';
   content?: string;
@@ -37,6 +53,18 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const areToolsExpanded = ref(false);
+
+const hiddenToolCount = computed(() =>
+  Math.max(0, (props.toolCalls?.length ?? 0) - TOOL_CALL_PREVIEW),
+);
+
+const visibleToolCalls = computed(() => {
+  const all = props.toolCalls ?? [];
+  if (areToolsExpanded.value || all.length <= TOOL_CALL_PREVIEW) return all;
+  return all.slice(-TOOL_CALL_PREVIEW);
+});
 
 const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
@@ -182,5 +210,9 @@ const renderedContent = computed(() => {
   flex-direction: column;
   gap: 0.375rem;
   margin-top: 0.4375rem;
+}
+
+.tool-toggle {
+  margin: 0 0 0.125rem -0.375rem;
 }
 </style>
