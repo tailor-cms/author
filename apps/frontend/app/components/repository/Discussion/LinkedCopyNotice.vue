@@ -1,33 +1,30 @@
 <template>
-  <VCard class="d-flex align-center pa-3" variant="tonal">
-    <VTooltip location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <span
-          v-bind="tooltipProps"
-          class="d-flex align-center text-body-medium text-uppercase font-weight-bold"
-        >
-          <VIcon
-            color="lime"
-            icon="mdi-comment-off-outline"
-            size="small"
-            start
-          />
-          Comments disabled
-        </span>
-      </template>
-      Comments are disabled for linked content
-    </VTooltip>
+  <VCard class="d-flex align-center pa-2 pl-3" variant="tonal">
+    <span
+      v-tooltip:bottom="{
+        text: 'Comments are disabled for linked content',
+        openDelay: 500,
+      }"
+      class="d-flex align-center text-body-medium text-uppercase font-weight-bold"
+    >
+      <VIcon
+        color="lime"
+        icon="mdi-comment-off-outline"
+        size="small"
+        start
+      />
+      Comments disabled
+    </span>
     <VSpacer />
     <VBtn
       :loading="isLoading"
       color="primary-lighten-4"
+      append-icon="mdi-arrow-right"
       size="small"
-      variant="tonal"
+      text="View on source"
+      variant="text"
       @click="viewSourceComments"
-    >
-      View on source
-      <VIcon end>mdi-arrow-right</VIcon>
-    </VBtn>
+    />
   </VCard>
 </template>
 

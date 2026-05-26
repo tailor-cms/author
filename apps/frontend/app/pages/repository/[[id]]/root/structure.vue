@@ -11,6 +11,7 @@
     >
       <OutlineToolbar
         v-model:search="filters.search"
+        v-model:sort="collectionSort"
         class="flex-grow-1 align-self-center px-3"
       />
       <VAppBarNavIcon
@@ -29,9 +30,10 @@
       >
         <BrokenReferencesAlert />
         <div v-if="isCollection" class="collection-wrapper mt-5">
-          <CollectionTable
+          <CollectionList
             v-if="hasActivities"
             :activities="filteredActivities"
+            :sort="collectionSort"
           />
           <VAlert
             v-else
@@ -69,14 +71,16 @@
             <OutlineFooter class="mt-4" />
           </template>
           <template v-else>
-            <SearchResult
-              v-for="activity in filteredActivities"
-              :key="activity.uid"
-              :activity="activity"
-              :is-selected="repositoryStore.selectedActivity?.id === activity.id"
-              @select="repositoryStore.selectActivity(activity.id)"
-              @show="goTo(activity)"
-            />
+            <div>
+              <SearchResult
+                v-for="activity in filteredActivities"
+                :key="activity.uid"
+                :activity="activity"
+                :is-selected="repositoryStore.selectedActivity?.id === activity.id"
+                @select="repositoryStore.selectActivity(activity.id)"
+                @show="goTo(activity)"
+              />
+            </div>
             <div class="my-6">
               <VAlert
                 v-if="!filteredActivities.length"
@@ -105,7 +109,11 @@ import { useDisplay } from 'vuetify';
 
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
-import CollectionTable from '@/components/repository/Outline/CollectionTable.vue';
+import CollectionList from '@/components/repository/Outline/CollectionList.vue';
+import {
+  type CollectionSort,
+  DEFAULT_COLLECTION_SORT,
+} from '@/components/repository/Outline/collectionSort';
 import OutlineFooter from '@/components/repository/Outline/OutlineFooter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
@@ -141,6 +149,8 @@ provide('$storageService', storageService);
 const filters = reactive<Filters>({
   search: '',
 });
+
+const collectionSort = ref<CollectionSort>({ ...DEFAULT_COLLECTION_SORT });
 
 const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);

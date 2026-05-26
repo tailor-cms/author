@@ -5,8 +5,9 @@
         v-bind="menuProps"
         aria-label="Linked actions"
         color="primary-lighten-4"
+        density="comfortable"
         icon="mdi-dots-vertical"
-        size="x-small"
+        size="small"
         variant="text"
         @click.stop
       />
