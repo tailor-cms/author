@@ -1,19 +1,22 @@
 import express from 'express';
 import multer from 'multer';
-import * as ctrl from './asset.controller.ts';
-import * as validation from './asset.validation.ts';
-import indexingRouter from './indexing/index.ts';
-import discoveryRouter from './discovery/index.ts';
-import { handler } from './types.ts';
-import { getAsset } from './middleware.ts';
+
+import { createActionMounter } from '#shared/request/action.ts';
 import { processPagination } from '#shared/database/pagination.js';
 import db from '#shared/database/index.js';
+
+import * as actions from './actions/index.ts';
+import discoveryRouter from './discovery/index.ts';
+import indexingRouter from './indexing/index.ts';
+import { getAsset } from './middleware.ts';
 
 const { Asset } = db;
 
 // `mergeParams: true` so the parent's `:repositoryId` propagates into
-// `req.params`
+// `req.params` inside this sub-router.
 const router = express.Router({ mergeParams: true });
+const mount = createActionMounter(router, '/assets', 'Asset');
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 50 * 1024 * 1024 },
@@ -21,43 +24,33 @@ const upload = multer({
 
 router.param('assetId', getAsset);
 
-router
-  .route('/')
-  .get(validation.list, processPagination(Asset, false), handler(ctrl.list))
-  .post(
-    // 'files'; asset library multi-file upload
-    // 'file'; legacy single-file upload used by content elements
-    upload.fields([
-      { name: 'files', maxCount: 10 },
-      { name: 'file', maxCount: 1 },
-    ]),
-    handler(ctrl.create),
-  );
+// Literal sibling routes (`/import/link`, `/bulk/remove`) registered
+// BEFORE the `/:assetId` param routes so they match first. Sub-routers
+// (`/discover`, `/indexing`) likewise mount between the literals and the
+// param routes — Express matches the first declared.
+mount
+  .get('/', actions.list, { after: [processPagination(Asset, false)] })
+  .post('/', actions.create, {
+    before: [
+      upload.fields([
+        { name: 'files', maxCount: 10 },
+        { name: 'file', maxCount: 1 },
+      ]),
+    ],
+  })
+  .post('/import/link', actions.importFromLink)
+  .post('/bulk/remove', actions.bulkRemove);
 
-router.post('/import/link', validation.importFromLink, handler(ctrl.importFromLink));
-router.post('/bulk/remove', validation.bulkRemove, handler(ctrl.bulkRemove));
-
-// Sub-features
-router.use('/indexing', indexingRouter);
 router.use('/discover', discoveryRouter);
+router.use('/indexing', indexingRouter);
 
-// Single asset
-// Get download URL for asset
-router.get('/:assetId/download', handler(ctrl.download));
-
-// Attach file to asset (e.g. adding captions to a video)
-router.post(
-  '/:assetId/file',
-  upload.single('file'),
-  validation.requireFile,
-  validation.attachFile,
-  handler(ctrl.attachFile),
-);
-
-router
-  .route('/:assetId')
-  .patch(validation.update, handler(ctrl.update))
-  .delete(handler(ctrl.remove));
+mount
+  .get('/:assetId/download', actions.download)
+  .post('/:assetId/file', actions.attachFile, {
+    before: [upload.single('file')],
+  })
+  .patch('/:assetId', actions.update)
+  .delete('/:assetId', actions.remove);
 
 export default {
   path: '/assets',
