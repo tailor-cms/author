@@ -18,7 +18,7 @@
  *    reaches the library.
  */
 import { createHash } from 'crypto';
-import imageSize from 'image-size';
+import { imageSize } from 'image-size';
 import { createLogger } from '#logger';
 import { PDFParse } from 'pdf-parse';
 import { v4 as uuidv4 } from 'uuid';

@@ -1,6 +1,6 @@
 // SSRF protection utilities for user-supplied URLs.
 // Two layers:
-// - isPublicUrl (sync); input validation (express-validator)
+// - isPublicUrl (sync); input validation (called from Zod `.refine`)
 // - assertPublicUrl (async); execution-time check with DNS resolution
 import dns from 'node:dns/promises';
 import { general as config } from '#config';
@@ -31,9 +31,8 @@ function assertHttpProtocol(protocol: string): void {
   }
 }
 
-// Sync SSRF check for express-validator .custom() chains.
-// Validates protocol and hostname/IP literals. Cannot detect
-// DNS rebinding (use assertPublicUrl for that).
+// Sync URL-string check (protocol + literal host/IP). Use
+// assertPublicUrl() to additionally catch DNS rebinding.
 export function isPublicUrl(url: string): true {
   const { protocol, hostname } = new URL(url);
   assertHttpProtocol(protocol);

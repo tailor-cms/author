@@ -25,6 +25,15 @@ export function supportsReasoning(modelId: string | undefined): boolean {
   return REASONING_MODEL_PREFIXES.some((prefix) => modelId.startsWith(prefix));
 }
 
+/**
+ * Compact-class model detector: mini / nano variants whose context
+ * windows are smaller than the default for that model family.
+ */
+export function isCompactModel(modelId: string | undefined): boolean {
+  if (!modelId) return false;
+  return /-mini\b|-nano\b/i.test(modelId);
+}
+
 const systemPrompt = stripIndent`
   Assistant helps authors generate content inside the user's repository.
   Rules:

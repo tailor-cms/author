@@ -15,8 +15,11 @@ const description = stripIndent`
   provided data into the existing activity.data, preserving
   any fields not included. Works for any activity type -
   outline, container, or subcontainer. Call get_schema_info
-  to see which meta properties each type supports. For
-  attaching assets to FILE fields, use attach_asset_to_activity.
+  for the meta key types and labels each activity type
+  supports; use get_activity or get_activity_subtree to read
+  current values and the missingMeta list (schema keys still
+  unset on the specific activity). For attaching assets to
+  FILE fields, use attach_asset_to_activity.
 `;
 
 const parameters = {

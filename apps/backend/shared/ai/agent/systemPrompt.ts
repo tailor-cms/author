@@ -208,10 +208,20 @@ function commonRequestRecipesSection(): string {
           containerType: item.type,
           data: item.data, elements: item.elements
         }).
-        Always run get_activity_subtree first - it's a freshness check.
-        Another user (or another tab) may have added content since the
-        last turn; without re-reading you risk duplicating or clobbering
-        their work.
+        Always run get_activity_subtree first - it's a freshness check
+        AND a stub check. Another user (or another tab) may have added
+        content since the last turn; without re-reading you risk
+        duplicating or clobbering their work.
+        If the target container holds empty subcontainer stubs - nodes
+        with zero elements and missingMeta in the subtree, typically
+        editor scaffolding materialised from defaultSubcontainers on
+        mount - call delete_activity on each stub id BEFORE
+        create_container_with_elements so the new subcontainers don't
+        sit alongside empty defaults. To keep a stub instead of
+        deleting it, fill it in place with update_activity (for its
+        meta) + add_elements_to_activity (for its content) - this is
+        the right path when the user has already populated the stub's
+        meta but not its body.
         \`data\` (container/subcontainer metadata) is a top-level field
         alongside \`elements\`, not nested in it.
 

@@ -125,8 +125,8 @@ const isAllSelected = computed(() => {
 
 const fetchParams = computed(() => {
   const params: Record<string, any> = {
-    orderBy: 'createdAt',
-    orderDirection: sortDirection.value,
+    sortBy: 'createdAt',
+    sortOrder: sortDirection.value,
   };
   if (selectedCategory.value !== CATEGORY_ALL) {
     params.type = selectedCategory.value;

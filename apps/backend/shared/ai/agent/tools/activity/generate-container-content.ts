@@ -309,8 +309,13 @@ async function execute(input: Input, ctx: ToolContext) {
       never split into a bare create + follow-up update_activity.
       Required arguments per call: containerType="${targetType}",
       data (object with ${metaKeys.join(', ')}), elements (array).
-      data and elements are separate top-level parameters; do NOT
-      nest data inside elements, do NOT omit data, do NOT stop here.
+      If the target container already holds empty subcontainer stubs
+      from a prior get_activity_subtree (editor scaffolding from
+      defaultSubcontainers - nodes with zero elements and missingMeta),
+      call delete_activity on each stub id FIRST so the new
+      subcontainers don't sit alongside empty defaults. data and
+      elements are separate top-level parameters; do NOT nest data
+      inside elements, do NOT omit data, do NOT stop here.
     `,
   };
 }

@@ -6,16 +6,19 @@ import { UserRole } from '@tailor-cms/interfaces/role';
 
 import {
   Email,
+  Int,
   IntParam,
+  Pagination,
   QueryBoolean,
   ShortText,
+  Sort,
 } from '#shared/request/schemas.ts';
 
 // Slim user projection attached to records that include the author /
 // uploader / assignee user (revisions, comments, activity-status,
 // repository member rows, etc.). Mirrors `user.profile` from the model.
 export const UserSummary = z.object({
-  id: z.number().int().describe('User numeric id.'),
+  id: Int().describe('User numeric id.'),
   email: Email().describe('User email (login key).'),
   firstName: z.string().nullable().describe('First name.'),
   lastName: z.string().nullable().describe('Last name.'),
@@ -39,11 +42,8 @@ export const ListFilter = z.object({
   role: z.enum(UserRole).optional(),
   // Include soft-deleted (archived) users in the result.
   archived: QueryBoolean.optional(),
-  // Pagination and sorting
-  offset: IntParam().optional(),
-  limit: IntParam().optional(),
-  sortBy: z.string().max(64).optional(),
-  sortOrder: z.enum(['ASC', 'DESC', 'asc', 'desc']).optional(),
+  ...Pagination(),
+  ...Sort(),
 });
 
 export type ListFilter = z.infer<typeof ListFilter>;
