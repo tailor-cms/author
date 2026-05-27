@@ -132,7 +132,7 @@ export const AssetMeta = z.union([FileAssetMeta, LinkAssetMeta])
 export type AssetMeta = z.infer<typeof AssetMeta>;
 
 // The full Asset entity as returned by the API. Single shape to mirror the
-// model declaration in `asset.model.d.ts`; consumers narrow by `type` when
+// model declaration in `models/asset.model.d.ts`; consumers narrow by `type` when
 // they need a specific variant.
 export const Asset = z
   .object({

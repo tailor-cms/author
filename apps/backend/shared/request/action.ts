@@ -21,7 +21,7 @@ import {
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
 import type { Activity } from '../../activity/models/activity.model.js';
-import type { Asset } from '../../asset/asset.model.js';
+import type { Asset } from '../../asset/models/asset.model.js';
 import type { Comment } from '../../comment/models/comment.model.js';
 import type { ContentElement }
   from '../../content-element/models/content-element.model.js';
@@ -274,6 +274,15 @@ export interface MountSpec {
   group?: string;
 }
 
+// Monotonic per-mounter creation index. Stamped onto every route a
+// mounter registers, so the OpenAPI emitter can order tags by
+// mounter declaration order rather than by route-registration order.
+// This is what lets a slice declare mounters in the order it wants
+// the docs sidebar to read (CRUD → Structure → ... → Linked content)
+// while still registering individual routes in whatever order Express
+// matching needs (e.g. literal `/link` before `/:activityId`).
+let mounterCounter = 0;
+
 /**
  * Returns a fluent route binder. Each call wires the route onto the
  * Express router AND records the (method, path, action) triple in the
@@ -290,6 +299,7 @@ export function createActionMounter(
   spec: string | MountSpec,
 ): ActionMounter {
   const { tag, group } = typeof spec === 'string' ? { tag: spec } : spec;
+  const mounterOrder = mounterCounter++;
   function bind(method: HttpMethod) {
     return (
       path: string,
@@ -314,6 +324,7 @@ export function createActionMounter(
         openapi: action.spec.openapi,
         tag,
         ...(group && { group }),
+        mounterOrder,
       });
       return api;
     };

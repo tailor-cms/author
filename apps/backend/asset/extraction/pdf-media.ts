@@ -27,7 +27,7 @@ import { buildStorageKey } from '../utils/storage-key.ts';
 import Storage from '../../repository/storage.ts';
 import db from '#shared/database/index.js';
 
-import { AssetType, type FileAsset } from '../asset.model.js';
+import { AssetType, type FileAsset } from '../models/asset.model.js';
 import { describeWithVision } from './vision-describe.ts';
 
 const logger = createLogger('asset:pdf-media');

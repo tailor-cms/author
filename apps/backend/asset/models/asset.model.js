@@ -1,6 +1,6 @@
 import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset';
 import { Model } from 'sequelize';
-import Storage from '../repository/storage.ts';
+import Storage from '../../repository/storage.ts';
 
 export { AssetType, ProcessingStatus };
 

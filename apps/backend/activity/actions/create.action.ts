@@ -1,17 +1,29 @@
 import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../activity.schema.ts';
+import {
+  RepositoryScopedParams,
+  dataEnvelope,
+} from '#shared/request/schemas.ts';
+
+import * as schemas from '../schemas/index.ts';
 import * as service from '../activity.service.ts';
 
 // POST /repositories/:repositoryId/activities
-// Creates an activity under the scoped repository. `repositoryId` is
-// always taken from the loaded repo, never the body. Outline-level
-// activities are seeded with the schema's `defaultMeta` so their `data`
-// blob lands with the right shape for the FE editor.
+// Creates an activity under the scoped repository. `repositoryId` always
+// comes from the loaded repo, never from the body. Outline-level
+// activities are seeded with the schema's `defaultMeta`.
 export default defineAction({
+  params: RepositoryScopedParams,
   body: schemas.CreateInput,
   openapi: {
-    summary: 'Create an activity',
     authenticated: true,
+    summary: 'Create an activity',
+    description: 'Creates a new activity under the scoped repository.',
+    responses: {
+      200: {
+        description: 'Created activity.',
+        schema: dataEnvelope(schemas.Activity),
+      },
+    },
   },
   async handler({ body, user, req }) {
     return service.create(req.repository!, user, body);
