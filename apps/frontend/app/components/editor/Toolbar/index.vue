@@ -18,7 +18,8 @@
         <span class="title-separator">/</span>
         <VIcon
           v-if="activity?.isLinkedCopy"
-          class="mr-1"
+          v-tooltip:bottom="'Linked from another repository'"
+          class="link-icon mr-1"
           color="lime-lighten-2"
           size="small"
           icon="mdi-link-box"
