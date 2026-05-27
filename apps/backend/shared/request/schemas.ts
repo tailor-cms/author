@@ -31,10 +31,28 @@ export const ShortText = (min = 1, max = 250) =>
 export const Description = (min = 1, max = 2000) =>
   z.string().trim().min(min).max(max);
 
-// Coerces a numeric path/query parameter from string to integer. Used for
-// :repositoryId, :userId, :userGroupId, :tagId path params and for numeric
-// filter query params.
-export const IntParam = () => z.coerce.number().int();
+// Positive integer (>=1) for body/response fields where JSON already
+// types numbers. Covers ids, foreign keys, dimensions (width, height),
+// and anything else that's naturally positive. The `positive`
+// constraint also lets JSON Schema emit `minimum: 1`, so Scalar
+// surfaces `1` as the example instead of MIN_SAFE_INTEGER.
+export const Int = () => z.number().int().positive();
+
+// Unsigned integer (>=0) for body/response fields where 0 is a
+// meaningful value: sizes (an empty file is 0 bytes), counts,
+// remaining-balance counters, etc.
+export const UInt = () => z.number().int().nonnegative();
+
+// Coerces a path / query string into a positive integer. Default for
+// numeric path params (`:assetId`, `:repositoryId`, ...) and most
+// query filters where 0 doesn't make sense (`limit`, `userId`,
+// `tagId`). Pairs with `NonNegIntParam` for the 0-allowed cases.
+export const IntParam = () => z.coerce.number().int().positive();
+
+// Coerces a path / query string into an unsigned integer (>=0).
+// Used for query params where 0 is legitimate — `offset` is the
+// canonical case (page 1 = offset 0).
+export const UIntParam = () => z.coerce.number().int().nonnegative();
 
 // Boolean query parameter: accepts 'true'/'false' string literals as well
 // as actual booleans. We avoid z.coerce.boolean() because it treats every
@@ -86,7 +104,7 @@ export const StringArrayFromQuery = () =>
 // into the schema's `.object({...})` argument so the fields land at
 // the top level alongside filters.
 export const Pagination = () => ({
-  offset: IntParam().optional().describe('Pagination offset.'),
+  offset: UIntParam().optional().describe('Pagination offset.'),
   limit: IntParam().optional().describe('Pagination limit.'),
 });
 

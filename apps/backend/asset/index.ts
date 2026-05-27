@@ -15,7 +15,10 @@ const { Asset } = db;
 // `mergeParams: true` so the parent's `:repositoryId` propagates into
 // `req.params` inside this sub-router.
 const router = express.Router({ mergeParams: true });
-const mount = createActionMounter(router, '/assets', 'Asset');
+const mount = createActionMounter(router, '/assets', {
+  tag: 'Asset',
+  group: 'Library',
+});
 
 const upload = multer({
   storage: multer.memoryStorage(),

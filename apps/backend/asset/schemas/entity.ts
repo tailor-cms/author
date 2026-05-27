@@ -7,7 +7,12 @@ import {
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
-import { IntParam, RepositoryScopedParams } from '#shared/request/schemas.ts';
+import {
+  Int,
+  IntParam,
+  RepositoryScopedParams,
+  UInt,
+} from '#shared/request/schemas.ts';
 import { UserSummary } from '#app/user/user.schema.ts';
 
 // Re-export the runtime enums so schema consumers can reach them through
@@ -74,14 +79,14 @@ const AssetMetaBase = z.object({
 
 // Metadata for file-based asset types
 export const FileAssetMeta = AssetMetaBase.extend({
-  fileSize: z.number().int().describe('Byte size of the stored file.'),
+  fileSize: UInt().describe('Byte size of the stored file.'),
   mimeType: z.string().describe('MIME type returned by the upload.'),
   extension: z
     .string()
     .optional()
     .describe('Lowercased extension without leading dot (e.g. "jpg").'),
-  width: z.number().int().optional().describe('Image width in pixels.'),
-  height: z.number().int().optional().describe('Image height in pixels.'),
+  width: Int().optional().describe('Image width in pixels.'),
+  height: Int().optional().describe('Image height in pixels.'),
 })
   .meta({ id: 'FileAssetMeta' })
   .describe('Metadata for file-based asset types.');
@@ -131,9 +136,9 @@ export type AssetMeta = z.infer<typeof AssetMeta>;
 // they need a specific variant.
 export const Asset = z
   .object({
-    id: z.number().int().describe('Numeric primary key.'),
+    id: Int().describe('Numeric primary key.'),
     uid: z.uuid().describe('Stable UUID, persists across clones / imports.'),
-    repositoryId: z.number().int().describe('Repository the asset belongs to.'),
+    repositoryId: Int().describe('Repository the asset belongs to.'),
     name: z.string().describe('Display name; auto-truncated to 250 chars.'),
     type: z.enum(AssetType).describe(oneLine`
       Asset kind
@@ -159,7 +164,7 @@ export const Asset = z
       .enum(ProcessingStatus)
       .nullable()
       .describe('Vector-store indexing state; null when never indexed.'),
-    uploaderId: z.number().int().describe('User who uploaded the asset.'),
+    uploaderId: Int().describe('User who uploaded the asset.'),
     uploader: UserSummary.optional().describe('Eager-loaded uploader'),
     createdAt: z.iso
       .datetime({ offset: true })

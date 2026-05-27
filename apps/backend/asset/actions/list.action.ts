@@ -14,7 +14,7 @@ export default defineAction({
   query: schemas.ListFilter,
   openapi: {
     authenticated: true,
-    summary: 'List assets (or resolve a storage key)',
+    summary: 'List assets or resolve a storage key',
     description: oneLine`
       Returns a paginated list of repository assets in the default mode,
       or a \`{ url }\` signed-URL response when \`?key=<storageKey>\` is set.

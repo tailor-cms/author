@@ -6,6 +6,7 @@ import { UserRole } from '@tailor-cms/interfaces/role';
 
 import {
   Email,
+  Int,
   IntParam,
   Pagination,
   QueryBoolean,
@@ -17,7 +18,7 @@ import {
 // uploader / assignee user (revisions, comments, activity-status,
 // repository member rows, etc.). Mirrors `user.profile` from the model.
 export const UserSummary = z.object({
-  id: z.number().int().describe('User numeric id.'),
+  id: Int().describe('User numeric id.'),
   email: Email().describe('User email (login key).'),
   firstName: z.string().nullable().describe('First name.'),
   lastName: z.string().nullable().describe('Last name.'),

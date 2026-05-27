@@ -10,6 +10,7 @@ import {
   Pagination,
   QueryBoolean,
   Sort,
+  UInt,
   dataEnvelope,
 } from '#shared/request/schemas.ts';
 
@@ -103,7 +104,9 @@ export type ListFilter = z.infer<typeof ListFilter>;
 export const ListResult = z
   .object({
     items: z.array(Asset).describe('Page of assets.'),
-    total: z.number().int().describe('Total assets matching the filter.'),
+    total: UInt()
+      .meta({ example: 1 })
+      .describe('Total assets matching the filter.'),
   })
   .meta({ id: 'AssetListResult' })
   .describe('Paginated asset list (default mode).');

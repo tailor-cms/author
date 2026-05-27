@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { IntParam } from '#shared/request/schemas.ts';
+import { Int, IntParam } from '#shared/request/schemas.ts';
 
 export const BulkRemoveInput = z
   .object({
@@ -18,7 +18,7 @@ export type BulkRemoveInput = z.infer<typeof BulkRemoveInput>;
 export const BulkRemoveResult = z
   .object({
     deletedIds: z
-      .array(z.number().int())
+      .array(Int())
       .describe('Subset of requested ids whose deletion succeeded.'),
   })
   .meta({ id: 'AssetBulkRemoveResult' })

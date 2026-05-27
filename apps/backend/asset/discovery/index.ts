@@ -9,7 +9,10 @@ import { discovery as config } from '#config';
 // `mergeParams: true` so the parent's `:repositoryId` propagates into
 // `req.params` inside this sub-router.
 const router = express.Router({ mergeParams: true });
-const mount = createActionMounter(router, '/discover', 'AssetDiscovery');
+const mount = createActionMounter(router, '/discover', {
+  tag: 'Discovery',
+  group: 'Library',
+});
 
 // Config gate: 503 if discovery is disabled at runtime.
 router.use((_req: Request, res: Response, next: NextFunction) => {

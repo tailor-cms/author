@@ -264,18 +264,32 @@ export interface ActionMounter {
   delete: (path: string, action: CompiledAction, opts?: MountOpts) => ActionMounter;
 }
 
-// Returns a fluent route binder. Each call wires the route onto the
-// Express router AND records the (method, path, action) triple in the
-// shared OpenAPI registry. `basePath` is prepended to every recorded path
-// so the captured table matches what the outside world sees (e.g.
-// `/repositories/:repositoryId/users`). `tag` is the sidebar grouping
-// label used by Scalar; required so every slice declares its grouping
-// explicitly (no path-derivation magic).
+// Per-slice spec passed to createActionMounter.
+//   - `tag`   : sidebar label (one per slice) shown in Scalar
+//   - `group` : optional thematic bucket; multiple slices can share
+//               one to render under a common `x-tagGroups` section
+//               (e.g. Asset, Discovery, Indexing in `group: 'Library'`).
+export interface MountSpec {
+  tag: string;
+  group?: string;
+}
+
+/**
+ * Returns a fluent route binder. Each call wires the route onto the
+ * Express router AND records the (method, path, action) triple in the
+ * shared OpenAPI registry. `basePath` is prepended to every recorded
+ * path so the captured table matches what the outside world sees
+ * (e.g. `/repositories/:repositoryId/users`).
+ *
+ * The third arg is either a plain tag string (most slices) or a
+ * `MountSpec` carrying both tag and an explicit theme group.
+ */
 export function createActionMounter(
   router: Router,
   basePath: string,
-  tag: string,
+  spec: string | MountSpec,
 ): ActionMounter {
+  const { tag, group } = typeof spec === 'string' ? { tag: spec } : spec;
   function bind(method: HttpMethod) {
     return (
       path: string,
@@ -299,6 +313,7 @@ export function createActionMounter(
         params: action.spec.params,
         openapi: action.spec.openapi,
         tag,
+        ...(group && { group }),
       });
       return api;
     };

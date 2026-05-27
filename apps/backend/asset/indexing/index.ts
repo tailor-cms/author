@@ -10,7 +10,10 @@ import { getAsset } from '../middleware.ts';
 // `mergeParams: true` so the parent's `:repositoryId` propagates into
 // `req.params` inside this sub-router.
 const router = express.Router({ mergeParams: true });
-const mount = createActionMounter(router, '/indexing', 'AssetIndexing');
+const mount = createActionMounter(router, '/indexing', {
+  tag: 'Indexing',
+  group: 'Library',
+});
 
 router.param('assetId', getAsset);
 

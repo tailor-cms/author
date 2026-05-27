@@ -3,7 +3,7 @@ import { ProcessingStatus } from '@tailor-cms/interfaces/asset.ts';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
-import { IntParam } from '#shared/request/schemas.ts';
+import { Int, IntParam } from '#shared/request/schemas.ts';
 
 // POST /repositories/:repositoryId/assets/indexing
 export const IndexInput = z
@@ -25,7 +25,7 @@ export const IndexResult = z
     storeId: z
       .string()
       .describe('OpenAI vector store id used for this repository.'),
-    assetIds: z.array(z.number().int()).describe(oneLine`
+    assetIds: z.array(Int()).describe(oneLine`
       Subset of the requested ids that were eligible
       and queued for processing.
     `),
@@ -40,7 +40,7 @@ export type IndexResult = z.infer<typeof IndexResult>;
 // entry depending on whether the asset has ever been indexed).
 export const StatusItem = z
   .object({
-    id: z.number().int().describe('Asset id.'),
+    id: Int().describe('Asset id.'),
     processingStatus: z
       .enum(ProcessingStatus)
       .nullable()
