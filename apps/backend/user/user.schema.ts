@@ -16,7 +16,18 @@ import {
 
 // Slim user projection attached to records that include the author /
 // uploader / assignee user (revisions, comments, activity-status,
-// repository member rows, etc.). Mirrors `user.profile` from the model.
+// repository member rows, etc.). A trimmed subset of `User.profile`
+// from the model (omits `role` + timestamps).
+export const USER_SUMMARY_ATTRS = [
+  'id',
+  'email',
+  'firstName',
+  'lastName',
+  'fullName',
+  'label',
+  'imgUrl',
+] as const;
+
 export const UserSummary = z.object({
   id: Int().describe('User numeric id.'),
   email: Email().describe('User email (login key).'),

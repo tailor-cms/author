@@ -8,12 +8,19 @@ import { createActionMounter } from '#shared/request/action.ts';
 // `mergeParams: true` so the parent's `:repositoryId` propagates into
 // `req.params`
 const router = express.Router({ mergeParams: true });
+const basePath = '/repositories/:repositoryId/comments';
 
-const mount = createActionMounter(
-  router,
-  '/repositories/:repositoryId/comments',
-  'Comment',
-);
+// Two mounters, one router. Each carries a distinct OpenAPI tag so the
+// Scalar sidebar splits the slice's surface into `CRUD` and `Resolution`,
+// both bundled under the `Comment` x-tagGroup. Mounter creation order
+// drives sidebar order (via createActionMounter's internal counter), so
+// declare them here in the order you want them rendered.
+const crud = createActionMounter(router, basePath, {
+  tag: 'CRUD', group: 'Comment',
+});
+const lifecycle = createActionMounter(router, basePath, {
+  tag: 'Resolution', group: 'Comment',
+});
 
 const defaultListQuery = {
   order: [['createdAt', 'DESC']],
@@ -22,16 +29,13 @@ const defaultListQuery = {
 
 router.param('commentId', getComment);
 
-// Registered FIRST so the literal
-// path matches before the `:commentId` param middleware would treat
-// 'resolve' as a comment id.
-mount.post('/resolve', actions.resolve);
+// Literal `/resolve` MUST register before any `/:commentId` route so
+// Express doesn't bind 'resolve' as the comment id and run getComment.
+lifecycle.post('/resolve', actions.resolve);
 
-mount
+crud
   .get('/', actions.list, { after: [processQuery(defaultListQuery)] })
-  .post('/', actions.create);
-
-mount
+  .post('/', actions.create)
   .patch('/:commentId', actions.patch, { before: [canEdit] })
   .delete('/:commentId', actions.remove, { before: [canEdit] });
 

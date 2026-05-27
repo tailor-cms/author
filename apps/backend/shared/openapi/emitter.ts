@@ -140,6 +140,11 @@ interface TagInfo {
   // Bucket key for x-tagGroups. Explicit theme from the mount spec
   // when set; otherwise the tag itself.
   group: string;
+  // Short label rendered in the sidebar via `x-displayName`. Populated
+  // when the mounter disambiguated a generic tag (`CRUD`, `Lifecycle`,
+  // …) by prefixing the group; omitted when `tag` is already the
+  // intended display name.
+  displayTag?: string;
   // Lowest mounter creation index seen for this tag — drives the
   // sidebar order so a tag declared earlier (via `createActionMounter`)
   // always sorts before a tag declared later, regardless of when their
@@ -159,7 +164,12 @@ function collectTagInfo(): TagInfo[] {
       if (order < existing.order) existing.order = order;
       continue;
     }
-    seen.set(tag, { tag, group: route.group ?? tag, order });
+    seen.set(tag, {
+      tag,
+      group: route.group ?? tag,
+      ...(route.displayTag && { displayTag: route.displayTag }),
+      order,
+    });
   }
   return Array.from(seen.values()).sort((a, b) => a.order - b.order);
 }
@@ -192,7 +202,10 @@ export function buildOpenApiDocument() {
       title: 'Tailor CMS API',
       version: '1.0.0',
     },
-    'tags': tagInfo.map(({ tag }) => ({ name: tag })),
+    'tags': tagInfo.map(({ tag, displayTag }) => ({
+      name: tag,
+      ...(displayTag && { 'x-displayName': displayTag }),
+    })),
     'x-tagGroups': buildTagGroups(tagInfo),
     'components': {
       securitySchemes: {

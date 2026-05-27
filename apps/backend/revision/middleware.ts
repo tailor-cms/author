@@ -2,6 +2,7 @@ import type { NextFunction, Response } from 'express';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import { StatusCodes } from 'http-status-codes';
+import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
 import type { TimeTravelInput } from './revision.schema.ts';
 
 const { Activity, Revision: RevisionModel, User } = db;
@@ -19,9 +20,7 @@ export async function getRevision(
   const include = [{
     model: User,
     paranoid: false,
-    attributes: [
-      'id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl',
-    ],
+    attributes: USER_SUMMARY_ATTRS,
   }];
   const revision = await RevisionModel.fetch(id, { include });
   if (!revision || revision.repositoryId !== req.repository?.id) {
