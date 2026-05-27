@@ -1,17 +1,31 @@
 import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../activity.schema.ts';
+import {
+  RepositoryScopedParams,
+  dataEnvelope,
+} from '#shared/request/schemas.ts';
+
+import * as schemas from '../schemas/index.ts';
 import * as service from '../activity.service.ts';
 
 // POST /repositories/:repositoryId/activities/link
-// Links an activity tree from potentially another repository into the target
-// repository. `hasLinkSourceAccess` middleware verified the user has
-// access to the source repository before this fires. The link service
-// handles same-schema and cross-schema linking (with type transform).
+// Links an activity tree from (potentially) another repository into the
+// target. The `hasLinkSourceAccess` middleware verifies the caller has
+// access to the source before this fires.
 export default defineAction({
+  params: RepositoryScopedParams,
   body: schemas.LinkInput,
   openapi: {
-    summary: 'Link an activity from another repository',
     authenticated: true,
+    summary: 'Link an activity from another repository',
+    description: 'Creates a linked-copy tree of the source under the target.',
+    responses: {
+      200: {
+        description: 'Linked-copy entry point in the target repository.',
+        schema: dataEnvelope(schemas.Activity),
+      },
+      403: { description: 'No access to the source repository.' },
+      404: { description: 'Source activity not found.' },
+    },
   },
   async handler({ body, user, req }) {
     return service.link(req.repository!, user, body);
