@@ -135,20 +135,38 @@ export function buildPaths() {
   return paths;
 }
 
-// Collect the distinct tag set used across the registered routes, in
-// first-seen order. Emitted as the document-level `tags[]` array so
-// Scalar renders sidebar sections (and tooling can introspect the
-// available groups).
-function collectTags() {
-  const order: string[] = [];
-  const seen = new Set<string>();
+interface TagInfo {
+  tag: string;
+  // Bucket key for x-tagGroups. Explicit theme from the mount spec
+  // when set; otherwise the tag itself.
+  group: string;
+}
+
+// Distinct tags from the route registry, deduped in first-seen order.
+function collectTagInfo(): TagInfo[] {
+  const seen = new Map<string, TagInfo>();
   for (const route of getRegisteredRoutes()) {
     const tag = route.tag ?? 'Misc';
     if (seen.has(tag)) continue;
-    seen.add(tag);
-    order.push(tag);
+    seen.set(tag, { tag, group: route.group ?? tag });
   }
-  return order.map((name) => ({ name }));
+  return Array.from(seen.values());
+}
+
+/**
+ * `x-tagGroups` (Scalar / Redoc extension). Slices without an
+ * explicit `group` get a singleton bucket named after themselves;
+ * slices sharing a `group: 'X'` co-locate under the "X" header.
+ * Order within a bucket is registration order.
+ */
+function buildTagGroups(tagInfo: TagInfo[]) {
+  const groups = new Map<string, string[]>();
+  for (const { tag, group } of tagInfo) {
+    const bucket = groups.get(group) ?? [];
+    if (!bucket.includes(tag)) bucket.push(tag);
+    groups.set(group, bucket);
+  }
+  return Array.from(groups, ([name, tags]) => ({ name, tags }));
 }
 
 // Assemble the full OpenAPI 3.1 document. Paths are built first so the
@@ -156,19 +174,21 @@ function collectTags() {
 export function buildOpenApiDocument() {
   components.clear();
   const paths = buildPaths();
+  const tagInfo = collectTagInfo();
   return {
-    openapi: '3.1.0',
-    info: {
+    'openapi': '3.1.0',
+    'info': {
       title: 'Tailor CMS API',
       version: '1.0.0',
     },
-    tags: collectTags(),
-    components: {
+    'tags': tagInfo.map(({ tag }) => ({ name: tag })),
+    'x-tagGroups': buildTagGroups(tagInfo),
+    'components': {
       securitySchemes: {
         bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       },
       schemas: Object.fromEntries(components.entries()),
     },
-    paths,
+    'paths': paths,
   };
 }

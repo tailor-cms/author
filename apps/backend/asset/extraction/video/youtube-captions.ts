@@ -1,6 +1,6 @@
 /**
  * Fetch captions/transcript from YouTube videos.
- * Uses the youtube-transcript package which scrapes YouTube's internal
+ * Uses the youtube-transcript package which collects YouTube's internal
  * caption API - no API key required. Works with auto-generated and
  * manual captions.
  */
