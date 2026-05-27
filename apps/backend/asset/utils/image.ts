@@ -1,4 +1,4 @@
-import imageSize from 'image-size';
+import { imageSize } from 'image-size';
 
 export interface ImageDimensions {
   width: number;

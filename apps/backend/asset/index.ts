@@ -1,9 +1,9 @@
 import express from 'express';
 import multer from 'multer';
 
+import db from '#shared/database/index.js';
 import { createActionMounter } from '#shared/request/action.ts';
 import { processPagination } from '#shared/database/pagination.js';
-import db from '#shared/database/index.js';
 
 import * as actions from './actions/index.ts';
 import discoveryRouter from './discovery/index.ts';
@@ -27,7 +27,7 @@ router.param('assetId', getAsset);
 // Literal sibling routes (`/import/link`, `/bulk/remove`) registered
 // BEFORE the `/:assetId` param routes so they match first. Sub-routers
 // (`/discover`, `/indexing`) likewise mount between the literals and the
-// param routes — Express matches the first declared.
+// param routes.
 mount
   .get('/', actions.list, { after: [processPagination(Asset, false)] })
   .post('/', actions.create, {
