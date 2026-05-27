@@ -9,6 +9,7 @@ import db from '#shared/database/index.js';
 import type { ListFilter } from './revision.schema.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { Revision } from './models/revision.model.js';
+import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
 
 const { Revision: RevisionModel, User } = db;
 
@@ -20,15 +21,7 @@ const logger = createLogger('revision:svc');
 const includeUser = () => ({
   model: User,
   paranoid: false,
-  attributes: [
-    'id',
-    'email',
-    'firstName',
-    'lastName',
-    'fullName',
-    'label',
-    'imgUrl',
-  ],
+  attributes: USER_SUMMARY_ATTRS,
 });
 
 export interface ListResult {

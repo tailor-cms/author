@@ -292,13 +292,24 @@ let mounterCounter = 0;
  *
  * The third arg is either a plain tag string (most slices) or a
  * `MountSpec` carrying both tag and an explicit theme group.
+ *
+ * Tag disambiguation: OpenAPI tags are global. When a `MountSpec`
+ * carries both `tag` and `group`, the registered tag is auto-prefixed
+ * to `<group> / <tag>` so two slices can both use short generic names
+ * (e.g. `CRUD`, `Lifecycle`) without their routes colliding under
+ * whichever slice declared the tag first. The original short label is
+ * preserved on `displayTag` and rendered via `x-displayName` so Scalar
+ * keeps showing the short name in the sidebar.
  */
 export function createActionMounter(
   router: Router,
   basePath: string,
   spec: string | MountSpec,
 ): ActionMounter {
-  const { tag, group } = typeof spec === 'string' ? { tag: spec } : spec;
+  const { tag: rawTag, group } =
+    typeof spec === 'string' ? { tag: spec } : spec;
+  const tag = group && rawTag ? `${group} / ${rawTag}` : rawTag;
+  const displayTag = group && rawTag ? rawTag : undefined;
   const mounterOrder = mounterCounter++;
   function bind(method: HttpMethod) {
     return (
@@ -323,6 +334,7 @@ export function createActionMounter(
         params: action.spec.params,
         openapi: action.spec.openapi,
         tag,
+        ...(displayTag && { displayTag }),
         ...(group && { group }),
         mounterOrder,
       });

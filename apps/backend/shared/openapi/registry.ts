@@ -20,12 +20,23 @@ export interface OpenApiSpec {
 
 // Captures everything the emitter needs to render one operation. Slices
 // register one of these per route via `appendRoute`.
-//   - `tag`   : the per-slice label that ends up in `operation.tags[]`
-//   - `group` : optional thematic bucket; multiple tags can share one.
-//               When set, the emitter places the tag into an
-//               `x-tagGroups` entry named after the group (Scalar /
-//               Redoc render this as a sidebar section). Tags without
-//               a group fall back to the slash-convention rules.
+//   - `tag`        : the canonical (globally unique) label used in
+//                    `operation.tags[]` and as the key of the
+//                    components.tags entry. When the mounter is given
+//                    both a tag and a group, this is auto-prefixed to
+//                    `<group> / <tag>` so two slices can both declare
+//                    short tags like `CRUD` without colliding.
+//   - `group`      : optional thematic bucket; multiple tags can share
+//                    one. The emitter places the tag into an
+//                    `x-tagGroups` entry named after the group (Scalar /
+//                    Redoc render this as a sidebar section). Tags
+//                    without a group fall back to the slash-convention
+//                    rules.
+//   - `displayTag` : the short label the mounter was originally given
+//                    (`CRUD`, `Lifecycle`, …). Emitted as
+//                    `x-displayName` on the tag definition so Scalar
+//                    keeps the short label in the sidebar even when
+//                    `tag` has been disambiguated above.
 export interface RouteRecord {
   method: HttpMethod;
   path: string;
@@ -34,6 +45,7 @@ export interface RouteRecord {
   params?: ZodType;
   openapi?: OpenApiSpec;
   tag?: string;
+  displayTag?: string;
   group?: string;
   // Per-mounter creation index, set by `createActionMounter`. The
   // emitter uses this to order tags in the OpenAPI doc by mounter

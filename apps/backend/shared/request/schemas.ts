@@ -10,18 +10,6 @@ import { z, type ZodType } from 'zod';
 export const dataEnvelope = <T extends ZodType>(inner: T) =>
   z.object({ data: inner });
 
-// Path-param schema for every route mounted under
-// `/repositories/:repositoryId/...`. Slices extend this with their own
-// path params via `RepositoryScopedParams.extend({ ... })` so the
-// OpenAPI doc shows the full path-param chain (the upstream
-// `getRepository` middleware already validated it at runtime).
-export const RepositoryScopedParams = z.object({
-  repositoryId: z.coerce
-    .number()
-    .int()
-    .describe('Repository the resource belongs to.'),
-});
-
 // Trimmed non-empty string with an upper bound. Default max=250 matches the
 // historical limit applied to short-form fields (name, label, etc.).
 export const ShortText = (min = 1, max = 250) =>
@@ -48,6 +36,15 @@ export const UInt = () => z.number().int().nonnegative();
 // query filters where 0 doesn't make sense (`limit`, `userId`,
 // `tagId`). Pairs with `NonNegIntParam` for the 0-allowed cases.
 export const IntParam = () => z.coerce.number().int().positive();
+
+// Path-param schema for every route mounted under
+// `/repositories/:repositoryId/...`. Slices extend this with their own
+// path params via `RepositoryScopedParams.extend({ ... })` so the
+// OpenAPI doc shows the full path-param chain (the upstream
+// `getRepository` middleware already validated it at runtime).
+export const RepositoryScopedParams = z.object({
+  repositoryId: IntParam().describe('Repository the resource belongs to.'),
+});
 
 // Coerces a path / query string into an unsigned integer (>=0).
 // Used for query params where 0 is legitimate — `offset` is the

@@ -8,10 +8,11 @@ import type {
   CreateInput,
   ListFilter,
   ResolveInput,
-} from './comment.schema.ts';
+} from './schemas/index.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
 import type { Comment } from './models/comment.model.js';
+import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
 
 const { Comment: CommentModel, ContentElement, User: UserModel } = db;
 
@@ -20,15 +21,7 @@ const logger = createLogger('comment:svc');
 const includeAuthor = () => ({
   model: UserModel,
   as: 'author',
-  attributes: [
-    'id',
-    'email',
-    'firstName',
-    'lastName',
-    'fullName',
-    'label',
-    'imgUrl',
-  ],
+  attributes: USER_SUMMARY_ATTRS,
 });
 
 const includeElement = () => ({
@@ -98,9 +91,9 @@ export async function update(
 }
 
 // Soft-deletes the comment (paranoid mode).
-export async function remove(comment: Comment): Promise<Comment> {
+export async function remove(comment: Comment): Promise<{ id: number }> {
   await comment.destroy();
-  return comment;
+  return { id: comment.id };
 }
 
 export class InvalidResolveSelectorError extends Error {

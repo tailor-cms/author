@@ -27,6 +27,7 @@ import TransferService from '#shared/transfer/transfer.service.js';
 import UserGroup from '#app/user-group/models/user-group.model.js';
 import type { Repository } from './models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
+import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
 
 import type {
   CreateInput,
@@ -57,10 +58,7 @@ const lowercaseName = sequelize.fn('lower', sequelize.col('repository.name'));
 const includeUser = () => ({
   model: User,
   paranoid: false,
-  attributes: [
-    'id', 'email', 'firstName', 'lastName',
-    'fullName', 'label', 'imgUrl',
-  ],
+  attributes: USER_SUMMARY_ATTRS,
 });
 
 const includeRepositoryUser = (user: User, query?: { pinned?: boolean }) => {
