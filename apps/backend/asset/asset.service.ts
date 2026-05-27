@@ -15,7 +15,7 @@ import {
   type MulterFile,
   VideoLinkMode,
 } from './schemas/index.ts';
-import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
+import { AssetType, type Asset, type AssetMeta } from './models/asset.model.js';
 import {
   buildAttachmentKey,
   buildStorageKey,

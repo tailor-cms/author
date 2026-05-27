@@ -21,7 +21,7 @@ import {
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
 import type { Activity } from '../../activity/models/activity.model.js';
-import type { Asset } from '../../asset/asset.model.js';
+import type { Asset } from '../../asset/models/asset.model.js';
 import type { Comment } from '../../comment/models/comment.model.js';
 import type { ContentElement }
   from '../../content-element/models/content-element.model.js';

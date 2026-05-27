@@ -22,7 +22,7 @@ import Activity from '../../activity/models/activity.model.js';
 import ContentElement from '../../content-element/models/content-element.model.js';
 import Revision from '../../revision/models/revision.model.js';
 import Comment from '../../comment/models/comment.model.js';
-import Asset from '../../asset/asset.model.js';
+import Asset from '../../asset/models/asset.model.js';
 import Tag from '../../tag/models/tag.model.js';
 import Hooks from './hooks.js';
 import linkService from '#shared/content-library/link.service.js';
