@@ -15,11 +15,11 @@ export default defineAction({
   body: schemas.DiscoverInput,
   openapi: {
     authenticated: true,
-    summary: 'Search the web for repository-relevant resources',
+    summary: 'Search the web for repository relevant resources',
     description: oneLine`
       Routes the query across Serper endpoints (web / image / news /
       video / scholar) and Unsplash based on the contentFilter; falls back
-      to OpenAI web_search when Serper is unavailable or quota-exceeded.
+      to OpenAI web_search when Serper is unavailable or quota exceeded.
     `,
     responses: {
       200: {
