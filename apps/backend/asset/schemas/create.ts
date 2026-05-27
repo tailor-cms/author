@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import { dataEnvelope } from '#shared/request/schemas.ts';
 
-import { Asset } from './entity.ts';
+import { Asset, StorageRef } from './entity.ts';
 
 // Modern library upload - N assets created, returned in the standard
 // `{ data: [...] }` envelope.
@@ -16,14 +16,9 @@ export const LibraryUploadResult = dataEnvelope(z.array(Asset))
 
 export type LibraryUploadResult = z.infer<typeof LibraryUploadResult>;
 
-// Legacy content-element single-file upload
-// Kept for backward compatibility with existing content element API
-export const LegacyUploadResult = z
-  .object({
-    key: z.string().describe('Storage key of the uploaded file.'),
-    publicUrl: z.string().describe('Pre-signed public URL for the file.'),
-    url: z.string().describe('storage:// protocol internal URL.'),
-  })
+// Legacy content-element single-file upload. Kept for backward
+// compatibility with the existing content element API.
+export const LegacyUploadResult = StorageRef
   .meta({ id: 'AssetLegacyUploadResult' })
   .describe('Legacy single-file upload response shape.');
 

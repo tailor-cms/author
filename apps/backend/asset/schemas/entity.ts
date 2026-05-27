@@ -40,6 +40,20 @@ export const AssetSource = z
 
 export type AssetSource = z.infer<typeof AssetSource>;
 
+// Resolved pointer to a stored file. Returned by service.getDownloadUrl.
+// Mirrors the FileInput CE convention where `url` is the internal storage:// URI
+// and `publicUrl` is the signed HTTPS URL clients actually render.
+export const StorageRef = z
+  .object({
+    key: z.string().describe('Storage key.'),
+    publicUrl: z.string().describe('Pre-signed HTTPS download URL.'),
+    url: z.string().describe('Internal `storage://<key>` URI.'),
+  })
+  .meta({ id: 'StorageRef' })
+  .describe('Resolved pointer to a stored file.');
+
+export type StorageRef = z.infer<typeof StorageRef>;
+
 // Fields shared by every asset meta variant. Lifted to a Base schema so
 // each variant only declares what's truly distinct.
 const AssetMetaBase = z.object({
