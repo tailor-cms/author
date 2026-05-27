@@ -35,6 +35,12 @@ export interface RouteRecord {
   openapi?: OpenApiSpec;
   tag?: string;
   group?: string;
+  // Per-mounter creation index, set by `createActionMounter`. The
+  // emitter uses this to order tags in the OpenAPI doc by mounter
+  // declaration order rather than route-registration order — so a
+  // literal-route-before-param ordering constraint (e.g. `/link`
+  // before `/:activityId`) doesn't leak into the docs sidebar.
+  mounterOrder?: number;
 }
 
 const routes: RouteRecord[] = [];
