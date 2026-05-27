@@ -13,8 +13,10 @@
       />
       <VBtn
         v-if="isAiEnabled && !disabled"
+        append-icon="mdi-shimmer"
         color="teal-darken-2"
         size="small"
+        text="Do the magic"
         variant="tonal"
         @click="
           generateContent({
@@ -23,19 +25,15 @@
             responseSchema: AiResponseSchema.Html,
           })
         "
-      >
-        Do the magic
-        <VIcon end>mdi-magic-staff</VIcon>
-      </VBtn>
+      />
       <VBtn
         v-if="!disabled"
+        :text="`Delete ${props.name}`"
         color="secondary-darken-1"
         size="small"
         variant="tonal"
         @click="emit('delete')"
-      >
-        Delete {{ props.name }}
-      </VBtn>
+      />
     </div>
     <VAlert
       v-if="!containerElements.length && !isAiGeneratingContent"

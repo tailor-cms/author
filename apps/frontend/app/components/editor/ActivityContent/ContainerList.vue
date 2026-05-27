@@ -2,7 +2,7 @@
   <div class="content-containers">
     <h2
       v-if="displayHeading"
-      class="mb-4 text-title-large text-left text-primary-lighten-4"
+      class="mb-4 text-title-medium text-left text-primary-lighten-4"
     >
       {{ capitalize(name) }}
     </h2>
@@ -42,17 +42,15 @@
       @update:element="(val: any) => saveContentElements([val])"
       @update:subcontainer="activityStore.update"
     />
-    <div v-if="addBtnEnabled">
-      <VBtn
-        class="my-6"
-        color="teal-accent-1"
-        variant="tonal"
-        @click="addContainer"
-      >
-        <VIcon class="pr-2">mdi-plus</VIcon>
-        Create {{ name }}
-      </VBtn>
-    </div>
+    <VBtn
+      v-if="addBtnEnabled"
+      class="mt-8"
+      :text="`Create ${name}`"
+      color="teal-accent-1"
+      variant="tonal"
+      prepend-icon="mdi-plus"
+      @click="addContainer"
+    />
   </div>
 </template>
 

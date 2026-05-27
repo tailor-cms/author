@@ -1,30 +1,26 @@
 <template>
-  <div class="bg-transparent">
-    <div class="d-flex align-center mb-6">
-      <div class="text-primary-lighten-4 text-title-large">Assessments</div>
+  <div>
+    <div class="d-flex align-center mb-4">
+      <div class="text-primary-lighten-4 text-title-medium">Assessments</div>
       <VSpacer />
-      <div v-if="!isAiGeneratingContent" class="pb-1">
+      <div v-if="!isAiGeneratingContent" class="pb-1 d-flex ga-2">
         <VBtn
           v-if="isAiEnabled && !disabled"
           color="primary-lighten-4"
           size="small"
           variant="tonal"
+          text="Generate questions"
+          append-icon="mdi-shimmer"
           @click="generateQuestions"
-        >
-          Generate questions
-          <VIcon class="pl-2" right>mdi-magic-staff</VIcon>
-        </VBtn>
+        />
         <VBtn
           v-if="hasAssessments"
-          class="ml-3"
+          :text="`${allSelected ? 'Hide' : 'Show'} All`"
           variant="tonal"
           size="small"
-          min-width="100"
           color="primary-lighten-3"
           @click="toggleAssessments"
-        >
-          {{ allSelected ? 'Hide' : 'Show' }} All
-        </VBtn>
+        />
       </div>
     </div>
     <VAlert
@@ -70,7 +66,6 @@
       :items="assessments"
       :layout="false"
       :position="assessments.length"
-      class="mt-8"
       color="teal-accent-1"
       label="Add assessment"
       variant="tonal"

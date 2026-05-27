@@ -10,8 +10,10 @@
         @generate="generateContent"
       />
       <VBtn
+        append-icon="mdi-shimmer"
         color="teal-darken-2"
         size="small"
+        text="Do the magic"
         variant="tonal"
         @click="
           generateContent({
@@ -20,10 +22,7 @@
             responseSchema: AiResponseSchema.Html,
           })
         "
-      >
-        Do the magic
-        <VIcon end>mdi-magic-staff</VIcon>
-      </VBtn>
+      />
     </div>
     <VSheet
       v-if="isAiGeneratingContent"
