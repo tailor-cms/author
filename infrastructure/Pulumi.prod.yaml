@@ -30,3 +30,4 @@ config:
   consumer:publishWebhook: https://lx.tailor-cms.com/api/content/webhook/publish
   consumer:publishWebhookThrottle: "1000"
   consumer:accessUpdateWebhook: https://lx.tailor-cms.com/api/content/webhook/access
+  discovery:enabled: "true"

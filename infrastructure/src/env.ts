@@ -5,6 +5,7 @@ import type * as studion from '@studion/infra-code-blocks';
 const aiConfig = new pulumi.Config('ai');
 const awsConfig = new pulumi.Config('aws');
 const consumerConfig = new pulumi.Config('consumer');
+const discoveryConfig = new pulumi.Config('discovery');
 const dnsConfig = new pulumi.Config('dns');
 const emailConfig = new pulumi.Config('email');
 const oidcConfg = new pulumi.Config('oidc');
@@ -65,6 +66,7 @@ export const getEnvVariables = (db: studion.Database): any => [
   ...getAiConfig(),
   ...getOidcConfig(),
   ...getConsumerConfig(),
+  ...getDiscoveryConfig(),
 ];
 
 export const getSecrets = (db: studion.Database) => {
@@ -86,6 +88,8 @@ export const getSecrets = (db: studion.Database) => {
     keys.push('OIDC_CLIENT_ID', 'OIDC_CLIENT_SECRET', 'OIDC_SESSION_SECRET');
   if (consumerConfig.getBoolean('enabled'))
     keys.push('CONSUMER_CLIENT_ID', 'CONSUMER_CLIENT_SECRET');
+  if (discoveryConfig.getBoolean('enabled'))
+    keys.push('SERPER_API_KEY', 'UNSPLASH_ACCESS_KEY');
   return [
     ...keys.map((name) => ({ name, valueFrom: getSsmParam(name) })),
     { name: 'DATABASE_PASSWORD', valueFrom: db.password.secret.arn },
@@ -137,6 +141,13 @@ function getAiConfig() {
     { name: 'NUXT_PUBLIC_AI_UI_ENABLED', value: 'true' },
     { name: 'AI_MODEL_ID', value: aiConfig.get('modelId') },
   ];
+}
+
+// Asset discovery feature gate. Sets the runtime master flag so the
+// `/discover` route is reachable and the FE shows the discovery UI.
+function getDiscoveryConfig() {
+  if (!discoveryConfig.getBoolean('enabled')) return [];
+  return [{ name: 'NUXT_PUBLIC_DISCOVERY_ENABLED', value: 'true' }];
 }
 
 function getConsumerConfig() {
