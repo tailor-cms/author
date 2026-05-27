@@ -4,7 +4,6 @@ import { defineAction } from '#shared/request/action.ts';
 
 import * as schemas from '../schemas/index.ts';
 import * as service from '../asset.service.ts';
-import type { ListOptions } from '../types.ts';
 
 // GET /repositories/:repositoryId/assets
 // Two call shapes share this single route. `?key=<storageKey>` short-
@@ -36,10 +35,7 @@ export default defineAction({
       return { url: publicUrl };
     }
     const { key: _key, ...options } = query;
-    const data = await service.list(
-      req.repository!.id,
-      options as ListOptions,
-    );
+    const data = await service.list(req.repository!.id, options);
     return { data };
   },
 });

@@ -20,6 +20,17 @@ const ASSET_TYPES = Object.values(AssetType) as string[];
 const SORT_COLUMNS = ['name', 'type', 'createdAt'] as const;
 
 /**
+ * Uniform shape returned by `parseType`. Both fields are optional so
+ * the transform's spread produces a single object type instead of a
+ * branch-by-branch union (which would force narrowing in every
+ * consumer just to read `videoLinkMode` or `type`).
+ */
+type ParsedTypeFilter = {
+  type?: string[];
+  videoLinkMode?: VideoLinkMode;
+};
+
+/**
  * Splits a `type=video,link` CSV, validates each token, and routes
  * the result into either a plain type filter or a videoLinkMode
  * directive. Video-provider links (YouTube, Vimeo, ...) are stored
@@ -29,12 +40,15 @@ const SORT_COLUMNS = ['name', 'type', 'createdAt'] as const;
  *   type=link (only)  -> videoLinkMode: 'exclude'
  *   any other set     -> plain { type: [...] } filter
  */
-function parseType(raw: string, ctx: z.RefinementCtx) {
+function parseType(
+  raw: string,
+  ctx: z.RefinementCtx,
+): ParsedTypeFilter | typeof z.NEVER {
   const types = raw
     .split(',')
     .map((t) => t.trim())
     .filter(Boolean);
-  if (!types.length) return undefined;
+  if (!types.length) return {};
   // Push a validation issue via ctx and bail with z.NEVER so the
   // surrounding transform reports failure
   if (types.some((t) => !ASSET_TYPES.includes(t))) {
@@ -67,10 +81,7 @@ export const ListFilter = z
     `),
     // When set, short-circuits to a signed-URL response - other
     // filter fields are ignored.
-    key: z
-      .string()
-      .optional()
-      .describe(oneLine`
+    key: z.string().optional().describe(oneLine`
         Legacy storage key lookup; response shape is \`{ url }\`.
         When set, other filters are ignored`),
     signed: QueryBoolean.optional().describe(

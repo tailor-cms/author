@@ -26,7 +26,7 @@ const safeUrl = () =>
 
 // Caller-supplied attribution; merged with OG-collected values by the
 // service (caller wins on collisions).
-const ImportMeta = z
+export const ImportLinkMeta = z
   .object({
     contentType: z.enum(ContentType).optional().describe(oneLine`
       Discovery content type (one of ${CONTENT_TYPES.join(', ')});
@@ -58,9 +58,11 @@ const ImportMeta = z
   })
   .describe('Optional metadata; merged with Open Graph metadata.');
 
+export type ImportLinkMeta = z.infer<typeof ImportLinkMeta>;
+
 export const ImportFromLinkInput = z.object({
   url: safeUrl().describe('Public https URL to import.'),
-  meta: ImportMeta.optional(),
+  meta: ImportLinkMeta.optional(),
 }).describe('Create an asset from a URL.');
 
 export type ImportFromLinkInput = z.infer<typeof ImportFromLinkInput>;

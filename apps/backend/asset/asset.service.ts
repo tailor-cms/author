@@ -1,34 +1,32 @@
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-
 import { ContentType } from '@tailor-cms/interfaces/discovery';
 import { detectLinkProvider } from '@tailor-cms/common/asset';
 import { Op } from 'sequelize';
 import pick from 'lodash/pick.js';
-
 import { createLogger } from '#logger';
 import { storage as storageConfig } from '#config';
 import db from '#shared/database/index.js';
 
+import {
+  type ImportFileOptions,
+  type ImportLinkMeta,
+  type ListFilter,
+  type MulterFile,
+  VideoLinkMode,
+} from './schemas/index.ts';
 import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
-import type { Repository } from '../repository/models/repository.model.js';
 import {
   buildAttachmentKey,
   buildStorageKey,
 } from './utils/storage-key.ts';
+import type { Repository } from '../repository/models/repository.model.js';
 import { downloadFile } from './utils/download.ts';
 import { extractDimensions } from './utils/image.ts';
 import { resolveType } from './utils/mime.ts';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { removeFromStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.ts';
-import {
-  VideoLinkMode,
-  type ImportFileOptions,
-  type ImportFromLinkOptions,
-  type ListOptions,
-  type MulterFile,
-} from './types.ts';
 
 const { Asset, User } = db;
 
@@ -121,7 +119,10 @@ async function destroyAsset(repository: Repository, asset: Asset) {
   await asset.destroy();
 }
 
-export async function list(repositoryId: number, options: ListOptions = {}) {
+export async function list(
+  repositoryId: number,
+  options: Omit<ListFilter, 'key'> = {},
+) {
   const {
     search, type, offset = 0, limit = 100, signed = false,
     sortBy = 'createdAt', sortOrder = 'DESC',
@@ -228,7 +229,7 @@ export async function attachFile(
 // Discovery values take precedence; OG fills gaps.
 function mergeAttribution(
   url: string,
-  meta: ImportFromLinkOptions,
+  meta: ImportLinkMeta,
   og: { author: string; license: string; tags: string[] },
 ) {
   const domain = new URL(url).hostname;
@@ -252,7 +253,7 @@ export async function importFromLink(
   repositoryId: number,
   userId: number,
   url: string,
-  meta: ImportFromLinkOptions = {},
+  meta: ImportLinkMeta = {},
 ) {
   const domain = new URL(url).hostname;
   logger.debug(
@@ -290,7 +291,6 @@ export async function importFromLink(
   const { source, tags } = mergeAttribution(url, meta, ogData);
   const detected = detectLinkProvider(url);
   const contentType = meta.contentType || detected.contentType;
-  const provider = meta.provider || detected.provider;
   const rawName = meta.title || ogData.title || domain;
   const asset = await Asset.create({
     uid: randomUUID(),
@@ -304,7 +304,7 @@ export async function importFromLink(
         'domain', 'siteName', 'ogType',
       ]),
       ...(contentType && { contentType }),
-      ...(provider && { provider }),
+      ...(detected.provider && { provider: detected.provider }),
       ...(tags.length && { tags }),
       ...(source && { source }),
       ...(meta.altText && { altText: meta.altText }),
