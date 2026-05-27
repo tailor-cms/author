@@ -1,21 +1,26 @@
+import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
+
+import * as actions from './actions/index.ts';
+import { createActionMounter } from '#shared/request/action.ts';
 import { discovery as config } from '#config';
-import * as ctrl from './discovery.controller.ts';
-import * as validation from './discovery.validation.ts';
-import { handler } from '../types.ts';
 
+// `mergeParams: true` so the parent's `:repositoryId` propagates into
+// `req.params` inside this sub-router.
 const router = express.Router({ mergeParams: true });
+const mount = createActionMounter(router, '/discover', 'AssetDiscovery');
 
-router.use((_req, res, next) => {
+// Config gate: 503 if discovery is disabled at runtime.
+router.use((_req: Request, res: Response, next: NextFunction) => {
   if (!config.isEnabled) {
     return res
       .status(StatusCodes.SERVICE_UNAVAILABLE)
       .json({ error: 'Discovery not configured' });
   }
-  next();
+  return next();
 });
 
-router.post('/', validation.discover, handler(ctrl.discover));
+mount.post('/', actions.discover);
 
 export default router;
