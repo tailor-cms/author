@@ -1,30 +1,25 @@
-import { role as roleConfig } from '@tailor-cms/interfaces/role';
-import yn from 'yn';
+import { env } from './env.ts';
 
-const { env } = process;
-const { user: role } = roleConfig;
+export const corsAllowedOrigins = env.CORS_ALLOWED_ORIGINS.split(',')
+  .map((s) => s.trim())
+  .filter((s) => s);
 
-export const corsAllowedOrigins: string[] = (env.CORS_ALLOWED_ORIGINS || '')
-  .split(',')
-  .filter((s) => s)
-  .map((s) => s.trim());
-
-export const saltRounds: number = parseInt(env.AUTH_SALT_ROUNDS || '', 10) || 10;
+export const saltRounds = env.AUTH_SALT_ROUNDS;
 
 export const jwt = {
   cookie: {
-    name: env.AUTH_JWT_COOKIE_NAME || 'access_token',
+    name: env.AUTH_JWT_COOKIE_NAME,
     secret: env.AUTH_JWT_COOKIE_SECRET,
     signed: !!env.AUTH_JWT_COOKIE_SECRET,
     secure: env.PROTOCOL === 'https' && env.HOSTNAME !== 'localhost',
     httpOnly: true,
   },
-  secret: env.AUTH_JWT_SECRET,
   issuer: env.AUTH_JWT_ISSUER,
+  secret: env.AUTH_JWT_SECRET,
 };
 
 export const oidc = {
-  enabled: yn(env.NUXT_PUBLIC_OIDC_ENABLED),
+  enabled: env.NUXT_PUBLIC_OIDC_ENABLED,
   clientID: env.OIDC_CLIENT_ID,
   clientSecret: env.OIDC_CLIENT_SECRET,
   issuer: env.OIDC_ISSUER,
@@ -34,15 +29,14 @@ export const oidc = {
   userInfoEndpoint: env.OIDC_USERINFO_ENDPOINT,
   logoutEndpoint: env.OIDC_LOGOUT_ENDPOINT,
   postLogoutUriKey: env.OIDC_POST_LOGOUT_URI_KEY,
-  enableSignup: yn(env.OIDC_ALLOW_SIGNUP),
-  defaultRole:
-    Object.values(role).find((it) => it === env.OIDC_DEFAULT_ROLE) || role.USER,
+  enableSignup: env.OIDC_ALLOW_SIGNUP,
+  defaultRole: env.OIDC_DEFAULT_ROLE,
 };
 
 export const session = {
-  resave: false,
-  saveUninitialized: false,
   secret: env.OIDC_SESSION_SECRET,
   proxy: true,
+  resave: false,
+  saveUninitialized: false,
   cookie: { secure: false },
 };

@@ -4,34 +4,36 @@ import * as ai from './ai.ts';
 import * as auth from './auth.ts';
 import * as consumer from './consumer.ts';
 import * as discovery from './discovery.ts';
+import { env, type Env } from './env.ts';
 import * as general from './general.ts';
-import * as mail from './mail.ts';
-import * as storage from './storage.ts';
 import * as kvStore from './kvStore.ts';
-import * as runtime from './runtime.ts';
+import * as mail from './mail.ts';
+import { isProduction } from './runtime.ts';
+import * as storage from './storage.ts';
 import tce from './tce.ts';
 import * as test from './test.ts';
 
-const env = process.env;
-const packageName = env.npm_package_name;
-const packageVersion = env.npm_package_version;
+export type { Env };
 
-const { isProduction } = runtime;
-const { hostname, protocol, port, origin } = resolveUrl(env);
+const packageName = process.env.npm_package_name;
+const packageVersion = process.env.npm_package_version;
+
+const { hostname, protocol, port, origin } = resolveUrl(process.env);
 
 export {
-  packageName,
-  packageVersion,
-  isProduction,
   ai,
   auth,
   consumer,
   discovery,
+  env,
   general,
   hostname,
+  isProduction,
   kvStore,
   mail,
   origin,
+  packageName,
+  packageVersion,
   port,
   protocol,
   storage,
@@ -40,18 +42,19 @@ export {
 };
 
 export default {
-  packageName,
-  packageVersion,
-  isProduction,
   ai,
   auth,
   consumer,
   discovery,
+  env,
   general,
   hostname,
+  isProduction,
   kvStore,
   mail,
   origin,
+  packageName,
+  packageVersion,
   port,
   protocol,
   storage,

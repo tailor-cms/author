@@ -38,13 +38,10 @@ if (config.general.reverseProxyPolicy)
 if (config.auth.oidc.enabled) {
   const { default: consolidate } = await import('consolidate');
   const { default: session } = await import('express-session');
-  const { secret, ...sessionOpts } = config.auth.session;
-  if (!secret) {
-    throw new Error('OIDC_SESSION_SECRET must be set when OIDC is enabled');
-  }
   app.engine('mustache', consolidate.mustache);
   app.set('view engine', 'mustache');
-  app.use(session({ ...sessionOpts, secret }));
+  const { secret, ...sessionOpts } = config.auth.session;
+  app.use(session({ ...sessionOpts, secret: secret! }));
 }
 
 app.use(

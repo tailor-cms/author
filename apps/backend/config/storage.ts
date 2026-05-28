@@ -1,20 +1,22 @@
-export const provider: string = process.env.STORAGE_PROVIDER || 'filesystem';
+import { env } from './env.ts';
 
-// The path where assets will be stored inside repository/${repositoryId} folder.
-// For example, if path is equal to assets,
-// assets will be stored inside repository/${repositoryId}/assets folder
+export const provider = env.STORAGE_PROVIDER;
+
+// Path where assets are stored inside repository/${repositoryId} folder.
+// e.g. path='assets' -> repository/${repositoryId}/assets/...
 export const path = 'assets';
 
+// Internal uri scheme used to reference internally stored assets.
 export const protocol = 'storage://';
 
 export const amazon = {
-  key: process.env.STORAGE_KEY,
-  secret: process.env.STORAGE_SECRET,
-  region: process.env.STORAGE_REGION,
-  bucket: process.env.STORAGE_BUCKET,
-  endpoint: process.env.STORAGE_ENDPOINT,
+  key: env.STORAGE_KEY,
+  secret: env.STORAGE_SECRET,
+  region: env.STORAGE_REGION,
+  bucket: env.STORAGE_BUCKET,
+  endpoint: env.STORAGE_ENDPOINT,
 };
 
 export const filesystem = {
-  path: process.env.STORAGE_PATH,
+  path: env.STORAGE_PATH,
 };

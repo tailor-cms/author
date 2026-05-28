@@ -1,3 +1,4 @@
-const env = process.env;
+import { env } from './env.ts';
 
-export const isProduction: boolean = env.NODE_ENV === 'production';
+export const nodeEnv = env.NODE_ENV;
+export const isProduction = nodeEnv === 'production';

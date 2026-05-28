@@ -1,23 +1,12 @@
 import { ClientCredentials } from 'simple-oauth2';
 import request from 'axios';
-import yup from 'yup';
 import oAuthConfig from '#config/consumer.ts';
-
-const schema = yup.object().shape({
-  clientId: yup.string().required(),
-  clientSecret: yup.string().required(),
-  tokenHost: yup.string().url().required(),
-  tokenPath: yup.string().required(),
-});
 
 function createOAuth2Provider() {
   if (!oAuthConfig.isAuthConfigured) {
     return { isConfigured: false };
   }
-  const { clientId, clientSecret, tokenHost, tokenPath } = schema.validateSync(
-    oAuthConfig,
-    { stripUnknown: true },
-  );
+  const { clientId, clientSecret, tokenHost, tokenPath } = oAuthConfig;
 
   const client = new ClientCredentials({
     client: { id: clientId, secret: clientSecret },

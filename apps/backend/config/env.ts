@@ -118,9 +118,12 @@ const Shape = z.object({
   OIDC_POST_LOGOUT_URI_KEY: optStr(),
   // Auto-create a local account the first time someone logs in via SSO.
   OIDC_ALLOW_SIGNUP: bool.default(false),
-  // Role for auto-created SSO users - one of the app's user roles
-  // (USER, ADMIN, COLLABORATOR, INTEGRATION); auth.ts falls back to USER.
-  OIDC_DEFAULT_ROLE: z.preprocess(parseUndef, z.enum(UserRole).optional()),
+  // Role for auto-created SSO users - one of USER, ADMIN, COLLABORATOR,
+  // INTEGRATION; defaults to USER.
+  OIDC_DEFAULT_ROLE: z.preprocess(
+    parseUndef,
+    z.enum(UserRole).default(UserRole.USER),
+  ),
   // Secret signing the server session during the SSO login handshake.
   OIDC_SESSION_SECRET: optStr(),
 
