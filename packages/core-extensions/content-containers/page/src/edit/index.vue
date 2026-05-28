@@ -1,7 +1,7 @@
 <template>
   <VSheet
     :color="isAiGeneratingContent ? 'primary-darken-4' : 'white'"
-    class="content-container mb-5 pr-4"
+    class="content-container pr-4"
     rounded="lg"
   >
     <div v-if="!isAiGeneratingContent" class="d-flex flex-wrap justify-end ma-3 ga-3">

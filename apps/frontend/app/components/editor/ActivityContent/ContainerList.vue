@@ -15,33 +15,35 @@
     >
       {{ emptyMessage }}
     </VAlert>
-    <component
-      :is="containerName"
-      v-for="(container, index) in filteredContainerGroup"
-      :key="`${container?.uid}.${$pluginRegistry.dataVersion}`"
-      v-bind="$attrs"
-      :embed-element-config="embedElementConfig"
-      :content-element-config="contentElementConfig"
-      :activities="processedActivities"
-      :config="config"
-      :container="container"
-      :disabled="isReadonly"
-      :elements="processedElements"
-      :name="name"
-      :position="index"
-      :repository="currentRepository.repository"
-      :tes="elements"
-      @add:element="(val: any) => saveContentElements([val])"
-      @add:subcontainer="addContainer"
-      @delete="requestContainerDeletion(container)"
-      @delete:element="requestElementDeletion"
-      @delete:subcontainer="requestContainerDeletion"
-      @reorder:element="reorderContentElements"
-      @save:element="saveContentElements"
-      @update:container="updateContainer"
-      @update:element="(val: any) => saveContentElements([val])"
-      @update:subcontainer="activityStore.update"
-    />
+    <div class="d-flex flex-column ga-4">
+      <component
+        :is="containerName"
+        v-for="(container, index) in filteredContainerGroup"
+        :key="`${container?.uid}.${$pluginRegistry.dataVersion}`"
+        v-bind="$attrs"
+        :embed-element-config="embedElementConfig"
+        :content-element-config="contentElementConfig"
+        :activities="processedActivities"
+        :config="config"
+        :container="container"
+        :disabled="isReadonly"
+        :elements="processedElements"
+        :name="name"
+        :position="index"
+        :repository="currentRepository.repository"
+        :tes="elements"
+        @add:element="(val: any) => saveContentElements([val])"
+        @add:subcontainer="addContainer"
+        @delete="requestContainerDeletion(container)"
+        @delete:element="requestElementDeletion"
+        @delete:subcontainer="requestContainerDeletion"
+        @reorder:element="reorderContentElements"
+        @save:element="saveContentElements"
+        @update:container="updateContainer"
+        @update:element="(val: any) => saveContentElements([val])"
+        @update:subcontainer="activityStore.update"
+      />
+    </div>
     <VBtn
       v-if="addBtnEnabled"
       :text="`Create ${name}`"
@@ -260,7 +262,6 @@ onBeforeMount(() => {
 .content-container {
   width: 100%;
   min-height: 15.5rem;
-  margin: 1.5rem 0;
   padding: 0.625rem;
   background-color: #fff;
 }

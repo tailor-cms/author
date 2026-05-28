@@ -2,7 +2,7 @@
   <VCard color="grey-lighten-5" flat>
     <div
       :class="{ 'subcontainer-header-collapsible': isCollapsible }"
-      class="subcontainer-header d-flex align-center mx-1 px-4 py-3"
+      class="subcontainer-header d-flex align-center mx-1 pa-4"
       @click="isCollapsible && toggleExpanded()"
     >
       <VCardTitle class="d-flex align-center pa-0 text-truncate">

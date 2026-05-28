@@ -68,16 +68,16 @@
                 />
               </template>
             </Draggable>
-            <VAlert
-              v-else
-              class="mt-5 mb-5"
-              color="primary-lighten-3"
-              icon="mdi-information-outline"
-              variant="tonal"
-              prominent
-            >
-              Click the <strong>Create</strong> button above to add your first item.
-            </VAlert>
+            <div v-else class="my-5">
+              <VAlert
+                color="primary-lighten-3"
+                icon="mdi-information-outline"
+                variant="tonal"
+                prominent
+              >
+                Click the <strong>Create</strong> button above to add your first item.
+              </VAlert>
+            </div>
           </template>
           <template v-else>
             <div>
