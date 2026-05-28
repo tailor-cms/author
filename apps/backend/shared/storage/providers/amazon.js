@@ -194,6 +194,14 @@ class Amazon {
     });
   }
 
+  // Bucket reachability probe (health checks). HeadBucket succeeds when the
+  // bucket exists and credentials are valid; it doesn't depend on any object
+  // existing, so an empty bucket is still healthy. Only a real
+  // connectivity/permission error rejects.
+  healthCheck() {
+    return this.client.send(new HeadBucketCommand({ Bucket: this.bucket }));
+  }
+
   // API docs: https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/getobjectcommand.html
   getFileUrl(key, options = {}) {
     const expires = options.expires || DEFAULT_EXPIRATION_TIME;
