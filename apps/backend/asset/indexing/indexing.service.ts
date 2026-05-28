@@ -25,7 +25,7 @@ import {
   type Asset,
   type FileAsset,
   type LinkAsset,
-} from '../asset.model.js';
+} from '../models/asset.model.js';
 import {
   buildSyntheticContent,
   hasUsefulDescription,

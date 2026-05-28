@@ -8,7 +8,7 @@
 import { stripHtml } from 'string-strip-html';
 import { createLogger } from '#logger';
 
-import type { Asset } from '../../asset.model.js';
+import type { Asset } from '../../models/asset.model.js';
 import Storage from '../../../repository/storage.ts';
 
 const logger = createLogger('asset:video-captions');

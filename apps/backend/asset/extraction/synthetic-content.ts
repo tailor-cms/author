@@ -4,7 +4,7 @@
  * Used by the indexing pipeline to create searchable content for
  * assets that aren't natively text (images, videos, links).
  */
-import type { Asset } from '../asset.model.js';
+import type { Asset } from '../models/asset.model.js';
 
 // Checks whether an asset's description is meaningful content vs noise
 // (duplicate of name, generic placeholder, bare domain).

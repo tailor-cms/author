@@ -22,7 +22,7 @@ import type {
   ListFilter,
   PatchInput,
   WorkflowStatusInput,
-} from './activity.schema.ts';
+} from './schemas/index.ts';
 
 const { Activity: ActivityModel, sequelize } = db;
 const { getOutlineLevels, isOutlineActivity } = schema;

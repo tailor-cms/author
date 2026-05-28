@@ -7,6 +7,7 @@ import pick from 'lodash/pick.js';
 import { createLogger } from '#logger';
 import { storage as storageConfig } from '#config';
 import db from '#shared/database/index.js';
+import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
 
 import {
   type ImportFileOptions,
@@ -15,11 +16,11 @@ import {
   type MulterFile,
   VideoLinkMode,
 } from './schemas/index.ts';
-import { AssetType, type Asset, type AssetMeta } from './asset.model.js';
 import {
   buildAttachmentKey,
   buildStorageKey,
 } from './utils/storage-key.ts';
+import { AssetType, type Asset, type AssetMeta } from './models/asset.model.js';
 import type { Repository } from '../repository/models/repository.model.js';
 import { downloadFile } from './utils/download.ts';
 import { extractDimensions } from './utils/image.ts';
@@ -55,7 +56,7 @@ const IS_NOT_VIDEO_LINK = {
 export const UPLOADER_INCLUDE = {
   model: User,
   as: 'uploader',
-  attributes: ['id', 'email', 'firstName', 'lastName', 'fullName', 'label', 'imgUrl'],
+  attributes: USER_SUMMARY_ATTRS,
 };
 
 /** Wraps an async fn so it logs warnings instead of throwing. */
