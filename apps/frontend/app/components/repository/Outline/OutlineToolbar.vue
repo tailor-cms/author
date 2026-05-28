@@ -91,9 +91,10 @@
         v-if="!isFlat"
         :disabled="!!search"
         class="text-none"
-        variant="tonal"
         rounded="lg"
         size="small"
+        variant="tonal"
+        width="90"
         @click="currentRepositoryStore.toggleOutlineExpand"
       >
         {{ isOutlineExpanded ? 'Collapse all' : 'Expand all' }}
@@ -106,21 +107,30 @@
 import { filter, find, last, map } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 
-import {
-  COLLECTION_SORT_OPTIONS,
-  type CollectionSort,
-  type CollectionSortOption,
-} from '@/components/repository/Outline/collectionSort';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import LinkContent from '@/components/repository/Library/LinkContent.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
+interface CollectionSort {
+  key: 'data.name' | 'createdAt';
+  order: 'asc' | 'desc';
+}
+
+interface SortOption extends CollectionSort {
+  title: string;
+}
+
 const search = defineModel<string>('search', { default: '' });
 const sort = defineModel<CollectionSort>('sort');
 
-const sortOptions = COLLECTION_SORT_OPTIONS;
+const sortOptions: SortOption[] = [
+  { key: 'createdAt', order: 'desc', title: 'Newest first' },
+  { key: 'createdAt', order: 'asc', title: 'Oldest first' },
+  { key: 'data.name', order: 'asc', title: 'Name (A–Z)' },
+  { key: 'data.name', order: 'desc', title: 'Name (Z–A)' },
+];
 
-const isActiveSort = (option: CollectionSortOption) =>
+const isActiveSort = (option: SortOption) =>
   sort.value?.key === option.key && sort.value?.order === option.order;
 
 const activeSortLabel = computed(

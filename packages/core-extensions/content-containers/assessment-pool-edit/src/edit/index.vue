@@ -15,10 +15,12 @@
         />
         <VBtn
           v-if="hasAssessments"
-          :text="`${allSelected ? 'Hide' : 'Show'} All`"
+          :text="allSelected ? 'Hide All' : 'Show All'"
+          width="74"
           variant="tonal"
           size="small"
           color="primary-lighten-3"
+          rounded="lg"
           @click="toggleAssessments"
         />
       </div>

@@ -90,13 +90,9 @@ interface SortOption {
   title: string;
 }
 
-const ROLE_DESCRIPTIONS: Record<string, string> = {
-  ADMIN:
-    'Full access. Edit content, manage users and groups, '
-    + 'publish, and delete the repository.',
-  AUTHOR:
-    'Edit content and structure. Cannot manage access or '
-    + 'delete the repository.',
+const ROLE_DESCRIPTIONS = {
+  ADMIN: 'Full access. Edit content, manage users and groups, publish, and delete the repository.',
+  AUTHOR: 'Edit content and structure. Cannot manage access or delete the repository.',
 };
 
 const USER_SORT_OPTIONS: SortOption[] = [

@@ -44,8 +44,8 @@
     />
     <VBtn
       v-if="addBtnEnabled"
-      class="mt-8"
       :text="`Create ${name}`"
+      class="mt-8"
       color="teal-accent-1"
       variant="tonal"
       prepend-icon="mdi-plus"

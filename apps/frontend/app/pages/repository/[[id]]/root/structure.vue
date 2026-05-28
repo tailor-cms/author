@@ -119,10 +119,6 @@ import { useDisplay } from 'vuetify';
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import CollectionList from '@/components/repository/Outline/CollectionList.vue';
-import {
-  type CollectionSort,
-  DEFAULT_COLLECTION_SORT,
-} from '@/components/repository/Outline/collectionSort';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
@@ -132,6 +128,11 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Filters {
   search: string;
+}
+
+interface CollectionSort {
+  key: 'data.name' | 'createdAt';
+  order: 'asc' | 'desc';
 }
 
 definePageMeta({
@@ -158,7 +159,10 @@ const filters = reactive<Filters>({
   search: '',
 });
 
-const collectionSort = ref<CollectionSort>({ ...DEFAULT_COLLECTION_SORT });
+const collectionSort = ref<CollectionSort>({
+  key: 'createdAt',
+  order: 'desc',
+});
 
 const structureEl = ref();
 const hasActivities = computed(() => !!rootActivities.value.length);

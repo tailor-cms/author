@@ -18,9 +18,10 @@
         <VBtn
           :text="expandAll ? 'Collapse all' : 'Expand all'"
           color="primary-lighten-4"
+          rounded="lg"
           size="small"
           variant="tonal"
-          rounded="lg"
+          width="90"
           @click="toggleAll"
         />
       </span>

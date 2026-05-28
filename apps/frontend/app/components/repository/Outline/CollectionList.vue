@@ -22,8 +22,12 @@
 import { orderBy } from 'lodash-es';
 
 import CollectionItem from '@/components/repository/Outline/CollectionItem.vue';
-import type { CollectionSort } from '@/components/repository/Outline/collectionSort';
 import type { StoreActivity } from '@/stores/activity';
+
+interface CollectionSort {
+  key: 'data.name' | 'createdAt';
+  order: 'asc' | 'desc';
+}
 
 const props = defineProps<{
   activities: StoreActivity[];
