@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
+import health from './health/index.ts';
 import repository from './repository/index.ts';
 import seedRouter from './tests/api/index.ts';
 import tag from './tag/index.ts';
@@ -21,14 +22,10 @@ router.use(processBody);
 router.use(extractAuthData);
 
 // Public routes:
-router.get('/healthcheck', (_req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok' });
-});
-
+// API reference
 router.get('/openapi.json', (_req: Request, res: Response) => {
   res.json(buildOpenApiDocument());
 });
-
 router.get('/docs', (_req: Request, res: Response) => {
   // Scalar API reference rendered from /api/openapi.json.
   // Single CDN script tag - no extra dependency.
@@ -45,6 +42,9 @@ router.get('/docs', (_req: Request, res: Response) => {
       </body>
     </html>`);
 });
+
+// Health routes
+router.use(health.path, health.router);
 
 router.use(user.path, user.router);
 
