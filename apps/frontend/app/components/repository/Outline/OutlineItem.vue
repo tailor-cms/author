@@ -3,14 +3,15 @@
     <VHover>
       <template #default="{ isHovering, props: hoverProps }">
         <VSheet
-          v-bind="hoverProps"
           :id="`activity_${activity.uid}`"
+          ref="rowEl"
+          v-bind="hoverProps"
           :class="{
             selected: isSelected,
             highlighted: isHovering,
             disabled: isSoftDeleted,
           }"
-          :style="{ 'border-left-color': config?.color }"
+          :style="{ '--row-accent': config?.color }"
           class="activity"
           data-testid="repository__structureActivity"
           @mousedown="selectActivity(activity.id)"
@@ -21,22 +22,21 @@
               :icon="`mdi-${icon}`"
               aria-label="Toggle expand"
               class="my-auto"
+              density="comfortable"
               color="primary-lighten-4"
               variant="text"
               @mousedown.stop="utils.toggleOutlineItemExpand(activity.uid)"
             >
             </VBtn>
             <div
-              class="activity-name my-auto text-truncate text-primary-lighten-4"
+              class="activity-name text-truncate text-primary-lighten-4"
             >
               <VIcon
                 v-if="activity.isLinkedCopy"
                 class="linked-copy-icon mr-2"
                 color="lime-lighten-1"
-                size="small"
-              >
-                mdi-link-variant
-              </VIcon>
+                icon="mdi-link-box"
+              />
               <ActivityName :activity="activity" />
             </div>
             <div v-if="isSelected || isHovering" class="actions my-auto">
@@ -67,25 +67,23 @@
               <OptionsMenu :activity="activity" class="options-menu" rounded />
             </div>
           </template>
-          <template v-else>
+          <div v-else class="d-flex align-center w-100 justify-space-between">
             <div
               class="activity-name my-auto text-truncate text-primary-lighten-4"
             >
-              <VChip class="mr-2">
-                <span class="pr-1 font-weight-bold">Deleted:</span>
-                Publish required
-                <VTooltip location="bottom">
-                  <template #activator="{ props: tooltipProps }">
-                    <VIcon v-bind="tooltipProps" class="ml-2" color="secondary">
-                      mdi-information-outline
-                    </VIcon>
-                  </template>
-                  Will be removed upon publishing
-                </VTooltip>
-              </VChip>
               <ActivityName :activity="activity" />
             </div>
-          </template>
+            <VChip class="mr-3" color="white" size="small">
+              <span class="pr-1 font-weight-bold">Deleted:</span>
+              Publish required
+              <VIcon
+                v-tooltip:bottom="'Will be removed upon publishing'"
+                class="ml-2"
+                color="secondary"
+                icon="mdi-information-outline"
+              />
+            </VChip>
+          </div>
         </VSheet>
       </template>
     </VHover>
@@ -146,6 +144,8 @@ const props = withDefaults(defineProps<Props>(), {
 const utils = useSelectedActivity(props.activity);
 const reorder = useOutlineReorder();
 
+const rowEl = ref<{ $el: HTMLElement } | null>(null);
+
 const config = computed(() =>
   taxonomy.value?.find((it: any) => it.type === props.activity.type),
 );
@@ -157,6 +157,25 @@ const isSelected = computed(
 const isSoftDeleted = computed(() =>
   activityUtils.doesRequirePublishing(props.activity),
 );
+
+const isOffscreen = (el: HTMLElement) => {
+  const { top, bottom } = el.getBoundingClientRect();
+  return top < 0 || bottom > window.innerHeight;
+};
+
+const scrollIntoView = async (behavior: ScrollBehavior) => {
+  await nextTick();
+  const el = rowEl.value?.$el;
+  if (el && isOffscreen(el)) el.scrollIntoView({ behavior, block: 'center' });
+};
+
+onMounted(() => {
+  if (isSelected.value) scrollIntoView('auto');
+});
+
+watch(isSelected, (selected) => {
+  if (selected) scrollIntoView('smooth');
+});
 
 const isExpanded = computed(() =>
   utils.isOutlineItemExpanded(props.activity.uid),
@@ -189,19 +208,17 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
 .activity {
   display: flex;
   height: 3.25rem;
-  padding: 0 0 0 0.375rem;
+  padding: 0 0 0 0.625rem;
   background-color: $background-color;
   cursor: pointer;
   border-radius: 0.25rem;
-  border-left-width: 8px;
-  border-left-style: solid;
+  border-left: 8px solid var(--row-accent);
   transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
 
   &-name {
-    padding: 0.125rem 0.75rem 0 0.375rem;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    padding: 0.125rem 0.75rem 0 0.25rem;
   }
 
   &.selected,
@@ -218,7 +235,13 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
   }
 
   &.disabled {
-    background-color: rgb(var(--v-theme-primary-darken-4));
+    background-color: rgba(var(--v-theme-secondary-lighten-3), 0.2);
+    border-left-color: rgb(var(--v-theme-secondary-lighten-3));
+
+    &.selected,
+    &.highlighted {
+      background-color: rgba(var(--v-theme-secondary-lighten-3), 0.3);
+    }
   }
 
   &.selected {

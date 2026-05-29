@@ -1,8 +1,7 @@
 <template>
   <VSheet
     :color="isAiGeneratingContent ? 'primary-darken-4' : 'white'"
-    class="content-container mb-5 pr-4"
-    elevation="3"
+    class="content-container pr-4"
     rounded="lg"
   >
     <div v-if="!isAiGeneratingContent" class="d-flex flex-wrap justify-end ma-3 ga-3">
@@ -14,8 +13,10 @@
       />
       <VBtn
         v-if="isAiEnabled && !disabled"
+        append-icon="mdi-shimmer"
         color="teal-darken-2"
         size="small"
+        text="Do the magic"
         variant="tonal"
         @click="
           generateContent({
@@ -24,19 +25,15 @@
             responseSchema: AiResponseSchema.Html,
           })
         "
-      >
-        Do the magic
-        <VIcon end>mdi-magic-staff</VIcon>
-      </VBtn>
+      />
       <VBtn
         v-if="!disabled"
+        :text="`Delete ${props.name}`"
         color="secondary-darken-1"
         size="small"
         variant="tonal"
         @click="emit('delete')"
-      >
-        Delete {{ props.name }}
-      </VBtn>
+      />
     </div>
     <VAlert
       v-if="!containerElements.length && !isAiGeneratingContent"

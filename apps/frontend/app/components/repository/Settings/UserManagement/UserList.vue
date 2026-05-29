@@ -8,6 +8,15 @@
   >
     No assigned users.
   </VAlert>
+  <VAlert
+    v-else-if="!isLoading && !users.length"
+    class="ma-6"
+    color="primary-lighten-3"
+    icon="mdi-magnify"
+    variant="tonal"
+  >
+    No users match your search.
+  </VAlert>
   <VList v-else-if="!isLoading" bg-color="transparent" class="user-list pa-0">
     <VListItem
       v-for="user in paginatedUsers"
@@ -64,18 +73,25 @@
         />
       </template>
     </VListItem>
+  </VList>
+  <div
+    v-if="!isLoading && users.length"
+    class="list-footer d-flex align-center justify-space-between mt-2 px-1"
+  >
+    <span class="text-caption text-primary-lighten-4">
+      Showing {{ rangeStart }}–{{ rangeEnd }} of {{ users.length }}
+    </span>
     <VPagination
       v-if="pageCount > 1"
       v-model="page"
       :length="pageCount"
       :total-visible="7"
       active-color="primary-lighten-4"
-      class="pt-2"
       color="primary-lighten-3"
       density="comfortable"
       rounded
     />
-  </VList>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -85,6 +101,7 @@ import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
+  users: User[];
   roles: Array<{ title: string; value: string; description?: string }>;
 }>();
 
@@ -97,13 +114,20 @@ const isLoading = ref(true);
 const page = ref(1);
 
 const pageCount = computed(() =>
-  Math.max(1, Math.ceil(store.users.length / ITEMS_PER_PAGE)),
+  Math.max(1, Math.ceil(props.users.length / ITEMS_PER_PAGE)),
 );
 
 const paginatedUsers = computed(() => {
   const start = (page.value - 1) * ITEMS_PER_PAGE;
-  return store.users.slice(start, start + ITEMS_PER_PAGE);
+  return props.users.slice(start, start + ITEMS_PER_PAGE);
 });
+
+const rangeStart = computed(() =>
+  props.users.length ? (page.value - 1) * ITEMS_PER_PAGE + 1 : 0,
+);
+const rangeEnd = computed(() =>
+  Math.min(page.value * ITEMS_PER_PAGE, props.users.length),
+);
 
 const roleLabel = (value: string) =>
   props.roles.find((r) => r.value === value)?.title ?? value;
@@ -139,6 +163,13 @@ getUsers();
 watch(pageCount, (count) => {
   if (page.value > count) page.value = count;
 });
+
+watch(
+  () => props.users.length,
+  () => {
+    page.value = 1;
+  },
+);
 </script>
 
 <style lang="scss" scoped>

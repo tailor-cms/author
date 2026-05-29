@@ -62,7 +62,7 @@
           variant="tonal"
           @click="save"
         >
-          Save {{ startCase(repository.schema) }}
+          Save
         </VBtn>
       </VCardActions>
     </VFadeTransition>
@@ -74,7 +74,7 @@ import { computed, inject, nextTick, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity.js';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element.js';
 import type { Repository } from '@tailor-cms/interfaces/repository.js';
-import { cloneDeep, isEqual, pick, startCase } from 'lodash-es';
+import { cloneDeep, isEqual, pick } from 'lodash-es';
 import { Field, useForm } from 'vee-validate';
 import { uuid } from '@tailor-cms/utils';
 

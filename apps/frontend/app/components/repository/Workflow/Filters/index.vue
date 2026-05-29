@@ -45,9 +45,9 @@
     />
     <VChip
       :color="recentOnly ? 'lime-accent-3' : 'primary-lighten-4'"
-      :prepend-icon="recentOnly ? 'mdi-check' : undefined"
-      variant="tonal"
+      :prepend-icon="recentOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
       rounded="lg"
+      variant="tonal"
       @click="recentOnly = !recentOnly"
     >
       Show only recent

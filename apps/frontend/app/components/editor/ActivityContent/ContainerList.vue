@@ -2,7 +2,7 @@
   <div class="content-containers">
     <h2
       v-if="displayHeading"
-      class="mb-4 text-title-large text-left text-primary-lighten-4"
+      class="mb-4 text-title-medium text-left text-primary-lighten-4"
     >
       {{ capitalize(name) }}
     </h2>
@@ -15,44 +15,44 @@
     >
       {{ emptyMessage }}
     </VAlert>
-    <component
-      :is="containerName"
-      v-for="(container, index) in filteredContainerGroup"
-      :key="`${container?.uid}.${$pluginRegistry.dataVersion}`"
-      v-bind="$attrs"
-      :embed-element-config="embedElementConfig"
-      :content-element-config="contentElementConfig"
-      :activities="processedActivities"
-      :config="config"
-      :container="container"
-      :disabled="isReadonly"
-      :elements="processedElements"
-      :name="name"
-      :position="index"
-      :repository="currentRepository.repository"
-      :tes="elements"
-      @add:element="(val: any) => saveContentElements([val])"
-      @add:subcontainer="addContainer"
-      @delete="requestContainerDeletion(container)"
-      @delete:element="requestElementDeletion"
-      @delete:subcontainer="requestContainerDeletion"
-      @reorder:element="reorderContentElements"
-      @save:element="saveContentElements"
-      @update:container="updateContainer"
-      @update:element="(val: any) => saveContentElements([val])"
-      @update:subcontainer="activityStore.update"
-    />
-    <div v-if="addBtnEnabled">
-      <VBtn
-        class="my-6"
-        color="teal-accent-1"
-        variant="tonal"
-        @click="addContainer"
-      >
-        <VIcon class="pr-2">mdi-plus</VIcon>
-        Create {{ name }}
-      </VBtn>
+    <div class="d-flex flex-column ga-4">
+      <component
+        :is="containerName"
+        v-for="(container, index) in filteredContainerGroup"
+        :key="`${container?.uid}.${$pluginRegistry.dataVersion}`"
+        v-bind="$attrs"
+        :embed-element-config="embedElementConfig"
+        :content-element-config="contentElementConfig"
+        :activities="processedActivities"
+        :config="config"
+        :container="container"
+        :disabled="isReadonly"
+        :elements="processedElements"
+        :name="name"
+        :position="index"
+        :repository="currentRepository.repository"
+        :tes="elements"
+        @add:element="(val: any) => saveContentElements([val])"
+        @add:subcontainer="addContainer"
+        @delete="requestContainerDeletion(container)"
+        @delete:element="requestElementDeletion"
+        @delete:subcontainer="requestContainerDeletion"
+        @reorder:element="reorderContentElements"
+        @save:element="saveContentElements"
+        @update:container="updateContainer"
+        @update:element="(val: any) => saveContentElements([val])"
+        @update:subcontainer="activityStore.update"
+      />
     </div>
+    <VBtn
+      v-if="addBtnEnabled"
+      :text="`Create ${name}`"
+      class="mt-8"
+      color="teal-accent-1"
+      variant="tonal"
+      prepend-icon="mdi-plus"
+      @click="addContainer"
+    />
   </div>
 </template>
 
@@ -262,7 +262,6 @@ onBeforeMount(() => {
 .content-container {
   width: 100%;
   min-height: 15.5rem;
-  margin: 1.5rem 0;
   padding: 0.625rem;
   background-color: #fff;
 }

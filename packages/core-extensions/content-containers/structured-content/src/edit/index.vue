@@ -1,58 +1,39 @@
 <template>
   <div>
-    <div
-      :class="{
-        'pr-2 pb-2': !subcontainers?.length,
-        'pr-0 pb-6': !!subcontainers?.length,
-      }"
-      class="d-flex items-center justify-end"
-    >
+    <div class="d-flex items-center justify-end ga-2 mb-6">
       <VBtn
         v-if="isAiEnabled && !isAiGeneratingContent && !disabled"
-        class="mr-2"
         color="teal-lighten-4"
         size="small"
         variant="tonal"
+        text="Generate content"
+        append-icon="mdi-shimmer"
         @click="generateStructuredContent"
-      >
-        Generate content
-        <VIcon end>mdi-magic-staff</VIcon>
-      </VBtn>
+      />
       <span
         v-if="isCollapsible && subcontainers.length > 1 && !disabled"
         v-show="!isAiGeneratingContent"
         class="d-flex justify-end"
       >
         <VBtn
+          :text="expandAll ? 'Collapse all' : 'Expand all'"
           color="primary-lighten-4"
-          min-width="140"
+          rounded="lg"
           size="small"
           variant="tonal"
+          width="90"
           @click="toggleAll"
-        >
-          <VIcon start>
-            {{
-              expandAll
-                ? 'mdi-unfold-less-horizontal'
-                : 'mdi-unfold-more-horizontal'
-            }}
-          </VIcon>
-          {{ expandAll ? 'Collapse all' : 'Expand all' }}
-        </VBtn>
+        />
       </span>
     </div>
-    <VSheet
-      v-if="isAiGeneratingContent"
-      class="bg-transparent pt-8 pb-8 rounded-lg text-title-small text-center"
-    >
+    <div v-if="isAiGeneratingContent" class="py-8">
       <CircularProgress />
-      <div class="pt-3 text-primary-lighten-4 font-weight-bold">
-        <span>Generating structured content...</span>
+      <div class="mt-3 text-title-medium text-primary-lighten-4">
+        Generating structured content...
       </div>
-    </VSheet>
+    </div>
     <VAlert
       v-if="!subcontainers.length && !isAiGeneratingContent"
-      class="my-8"
       color="primary-lighten-4"
       icon="mdi-information-outline"
       variant="outlined"
@@ -64,70 +45,52 @@
           : 'Click the button below to add a first content section.'
       }}
     </VAlert>
-    <VRow
+    <div
       v-for="subcontainer in subcontainers"
       v-show="!isAiGeneratingContent"
       :key="subcontainer.id"
-      class="subcontainer-list"
+      class="subcontainer-list-item mb-4"
     >
-      <VCol>
-        <StructuredSubcontainer
-          v-bind="subcontainerConfig[subcontainer.type]"
-          :activities="activities"
-          :elements="elements"
-          :container="subcontainer"
-          :is-disabled="disabled"
-          :expand-all="expandAll"
-          :content-element-config="getContentElementConfig(subcontainer.type)"
-          @add:element="emit('add:element', $event)"
-          @save:element="emit('save:element', $event)"
-          @delete:element="(el, force) => emit('delete:element', el, force)"
-          @reorder:element="emit('reorder:element', $event)"
-          @update:subcontainer="emit('update:subcontainer', $event)"
-          @delete:subcontainer="emit('delete:subcontainer', $event)"
-        />
-      </VCol>
-      <VCol class="px-1 py-2 flex-grow-0">
-        <VBtn
-          :disabled="isFirst(subcontainer.id)"
-          class="mb-3"
-          color="primary-lighten-5"
-          density="comfortable"
-          icon="mdi-chevron-up"
-          variant="tonal"
-          @click="reorder(subcontainer.id, Direction.UP)"
-        />
-        <VBtn
-          :disabled="isLast(subcontainer.id)"
-          color="primary-lighten-5"
-          density="comfortable"
-          icon="mdi-chevron-down"
-          variant="tonal"
-          @click="reorder(subcontainer.id, Direction.DOWN)"
-        />
-      </VCol>
-    </VRow>
-    <VRow
+      <StructuredSubcontainer
+        v-bind="subcontainerConfig[subcontainer.type]"
+        :activities="activities"
+        :container="subcontainer"
+        :content-element-config="getContentElementConfig(subcontainer.type)"
+        :elements="elements"
+        :expand-all="expandAll"
+        :is-disabled="disabled"
+        :is-first="isFirst(subcontainer.id)"
+        :is-last="isLast(subcontainer.id)"
+        @add:element="emit('add:element', $event)"
+        @delete:element="(el, force) => emit('delete:element', el, force)"
+        @delete:subcontainer="emit('delete:subcontainer', $event)"
+        @reorder:element="emit('reorder:element', $event)"
+        @reorder:subcontainer="(direction: number) => reorder(subcontainer.id, direction)"
+        @save:element="emit('save:element', $event)"
+        @update:subcontainer="emit('update:subcontainer', $event)"
+      />
+    </div>
+    <div
       v-if="!disabled"
       v-show="!isAiGeneratingContent"
-      class="py-8 pr-14 justify-center"
+      class="d-flex justify-center flex-wrap ga-3 mt-8"
     >
       <VBtn
         v-for="subcontainerType in subcontainerTypes"
         :key="subcontainerType"
-        class="mr-3"
+        :text="`Add ${subcontainerConfig[subcontainerType].label}`"
         color="teal-lighten-4"
-        min-width="200"
         variant="tonal"
         @click="createSubcontainer(subcontainerType)"
       >
-        <div class="pr-2">
-          <VIcon size="x-small">mdi-plus</VIcon>
-          <VIcon size="small">{{ subcontainerConfig[subcontainerType].icon }}</VIcon>
-        </div>
-        Add {{ subcontainerConfig[subcontainerType].label }}
+        <template #prepend>
+          <VIcon icon="mdi-plus" />
+          <VIcon
+            :icon="subcontainerConfig[subcontainerType].icon"
+          />
+        </template>
       </VBtn>
-    </VRow>
+    </div>
   </div>
 </template>
 
@@ -144,8 +107,6 @@ import type { Repository } from '@tailor-cms/interfaces/repository.js';
 
 import { parseConfig } from './config.ts';
 import StructuredSubcontainer from './StructuredSubcontainer.vue';
-
-const Direction = { UP: -1, DOWN: 1 };
 
 interface Props {
   repository: Repository;

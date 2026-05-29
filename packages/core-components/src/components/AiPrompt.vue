@@ -5,10 +5,9 @@
         v-bind="menuProps"
         color="indigo-darken-2"
         size="small"
+        text="AI Prompt"
         variant="tonal"
-      >
-        AI prompt
-      </VBtn>
+      />
     </template>
     <VCard class="mt-2 pa-7" color="primary-darken-4" min-width="410">
       <VBtnToggle
@@ -20,14 +19,8 @@
         variant="tonal"
         group
       >
-        <VBtn :value="AiRequestType.Add">
-          <VIcon start>mdi-plus</VIcon>
-          Add
-        </VBtn>
-        <VBtn :value="AiRequestType.Modify">
-          <VIcon start>mdi-update</VIcon>
-          Modify
-        </VBtn>
+        <VBtn :value="AiRequestType.Add" prepend-icon="mdi-plus" text="Add" />
+        <VBtn :value="AiRequestType.Modify" prepend-icon="mdi-update" text="Modify" />
       </VBtnToggle>
       <VTextarea
         v-model="promptText"
@@ -39,14 +32,13 @@
       <VCardActions class="d-flex justify-end">
         <VBtn
           :disabled="!hasInput"
+          :slim="false"
+          append-icon="mdi-shimmer"
           color="primary-lighten-3"
-          density="comfortable"
+          text="Generate"
           variant="tonal"
           @click="onSubmit"
-        >
-          <VIcon start>mdi-magic-staff</VIcon>
-          Generate
-        </VBtn>
+        />
       </VCardActions>
     </VCard>
   </VMenu>

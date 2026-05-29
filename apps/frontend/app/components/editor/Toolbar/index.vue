@@ -8,23 +8,27 @@
     <div v-if="activity && !element" class="activity-toolbar w-100 px-3">
       <ActivityActions />
       <VDivider class="rail-divider mx-2" vertical />
-      <h1 v-if="mdAndUp" class="activity-title text-body-large text-truncate">
+      <h1
+        v-if="mdAndUp"
+        class="activity-title align-center d-flex text-body-large text-truncate"
+      >
         <span class="text-primary-lighten-3 font-weight-medium">
           {{ config.label }}
         </span>
         <span class="title-separator">/</span>
-        <span v-if="activity?.isLinkedCopy" class="linked-label text-white">
-          <VIcon class="mr-1" color="lime-lighten-2" size="small">
-            mdi-link-variant
-          </VIcon>
-          Linked
-          <span class="title-separator">/</span>
-        </span>
+        <VIcon
+          v-if="activity?.isLinkedCopy"
+          v-tooltip:bottom="'Linked from another repository'"
+          class="link-icon mr-1"
+          color="lime-lighten-2"
+          size="small"
+          icon="mdi-link-box"
+        />
         <ActivityName
           :activity="activity"
           :class="[
             'activity-name font-weight-medium',
-            activity?.isLinkedCopy ? 'text-white' : 'text-secondary-lighten-3',
+            activity?.isLinkedCopy ? 'text-lime-lighten-2' : 'text-secondary-lighten-3',
           ]"
         />
         <template v-if="showPublishDiff">
@@ -231,11 +235,6 @@ const usersWithActivity = computed(() => {
 .title-separator {
   margin: 0 0.5rem;
   color: rgba(255, 255, 255, 0.32);
-}
-
-.linked-label {
-  display: inline-flex;
-  align-items: center;
 }
 
 .toolbar-trailing {
