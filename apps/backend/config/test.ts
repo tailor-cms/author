@@ -1,3 +1,3 @@
-import yn from 'yn';
+import { env } from './env.ts';
 
-export const isSeedApiEnabled = yn(process.env.ENABLE_TEST_API_ENDPOINTS);
+export const isSeedApiEnabled = env.ENABLE_TEST_API_ENDPOINTS;
