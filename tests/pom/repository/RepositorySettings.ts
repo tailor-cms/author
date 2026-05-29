@@ -4,8 +4,11 @@ import { expect } from '@playwright/test';
 import { NavigationRail } from './NavigationRail';
 import { Toast } from '../common/Toast';
 
-export const getAccessRoute = (id: number) =>
-  `/repository/${id}/root/settings/access`;
+export const getMembersRoute = (id: number) =>
+  `/repository/${id}/root/settings/members`;
+
+export const getGroupsRoute = (id: number) =>
+  `/repository/${id}/root/settings/groups`;
 
 export class GeneralSettings {
   readonly page: Page;
@@ -90,19 +93,15 @@ export class AddUserDialog {
   }
 }
 
-export class RepositoryUsers {
-  static getRoute = getAccessRoute;
+export class RepositoryMembers {
+  static getRoute = getMembersRoute;
 
   readonly page: Page;
   readonly el: Locator;
   readonly rail: NavigationRail;
   readonly userList: Locator;
-  readonly groupList: Locator;
   readonly userEntriesLocator: Locator;
-  readonly groupEntriesLocator: Locator;
   readonly addBtn: Locator;
-  readonly usersTabBtn: Locator;
-  readonly groupsTabBtn: Locator;
   readonly pagination: Locator;
   readonly prevPage: Locator;
   readonly nextPage: Locator;
@@ -111,25 +110,13 @@ export class RepositoryUsers {
     const el = page.locator('.repository-settings');
     this.rail = new NavigationRail(page);
     this.userList = el.locator('.user-list');
-    this.groupList = el.locator('.group-list');
     this.userEntriesLocator = el.locator('.user-row');
-    this.groupEntriesLocator = el.locator('.group-row');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
-    this.usersTabBtn = el.getByRole('button', { name: 'Users', exact: true });
-    this.groupsTabBtn = el.getByRole('button', { name: 'Groups', exact: true });
     this.pagination = el.locator('.v-pagination');
     this.prevPage = this.pagination.getByRole('button', { name: 'Previous page' });
     this.nextPage = this.pagination.getByRole('button', { name: 'Next page' });
     this.page = page;
     this.el = el;
-  }
-
-  showUsersTab() {
-    return this.usersTabBtn.click();
-  }
-
-  showGroupsTab() {
-    return this.groupsTabBtn.click();
   }
 
   getEntries() {
@@ -161,5 +148,41 @@ export class RepositoryUsers {
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
     await expect(entry).not.toBeVisible();
+  }
+}
+
+// Back-compat alias for existing tests that imported the old name.
+export const RepositoryUsers = RepositoryMembers;
+
+export class RepositoryGroups {
+  static getRoute = getGroupsRoute;
+
+  readonly page: Page;
+  readonly el: Locator;
+  readonly rail: NavigationRail;
+  readonly groupList: Locator;
+  readonly groupEntriesLocator: Locator;
+  readonly pagination: Locator;
+  readonly prevPage: Locator;
+  readonly nextPage: Locator;
+
+  constructor(page: Page) {
+    const el = page.locator('.repository-settings');
+    this.rail = new NavigationRail(page);
+    this.groupList = el.locator('.group-list');
+    this.groupEntriesLocator = el.locator('.group-row');
+    this.pagination = el.locator('.v-pagination');
+    this.prevPage = this.pagination.getByRole('button', { name: 'Previous page' });
+    this.nextPage = this.pagination.getByRole('button', { name: 'Next page' });
+    this.page = page;
+    this.el = el;
+  }
+
+  getEntries() {
+    return this.groupEntriesLocator.all();
+  }
+
+  getEntryByName(name: string) {
+    return this.groupEntriesLocator.filter({ hasText: name });
   }
 }

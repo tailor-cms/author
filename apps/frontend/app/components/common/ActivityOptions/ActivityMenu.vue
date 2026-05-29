@@ -18,19 +18,15 @@
           :rounded="rounded"
         />
       </template>
-      <VList class="text-left text-uppercase">
+      <VList>
         <VListItem
           v-for="it in menuOptions"
           :key="it.name"
           :aria-label="it.name"
-          dense
-          @click="it.action()"
-        >
-          <VListItemTitle class="text-title-large">
-            <VIcon class="pr-1" size="20">{{ it.icon }}</VIcon>
-            {{ it.name }}
-          </VListItemTitle>
-        </VListItem>
+          :prepend-icon="it.icon"
+          :title="it.name"
+          @click="it.action"
+        />
       </VList>
     </VMenu>
     <CreateDialog

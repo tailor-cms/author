@@ -3,14 +3,13 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
+        append-icon="mdi-cheron-down"
         color="primary-lighten-4"
-        size="x-small"
+        size="small"
+        text="View"
         variant="text"
         @click.stop
-      >
-        View
-        <VIcon end size="small">mdi-chevron-down</VIcon>
-      </VBtn>
+      />
     </template>
     <VList class="overflow-y-auto" density="compact" max-height="300">
       <VListSubheader>
@@ -22,7 +21,7 @@
         @click="$emit('select', copy)"
       >
         <template #prepend>
-          <VIcon size="large">mdi-file-link-outline</VIcon>
+          <VIcon icon="mdi-file-link-outline" size="large" />
         </template>
         <VListItemTitle class="text-body-medium">
           {{ copy.repositoryName }}

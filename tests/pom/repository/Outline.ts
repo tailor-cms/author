@@ -10,7 +10,7 @@ export class ActivityOutline {
   readonly el: Locator;
   readonly searchInput: Locator;
   readonly toggleAllBtn: Locator;
-  readonly bottomAddBtn: Locator;
+  readonly createRootBtn: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.structure-page');
@@ -18,7 +18,7 @@ export class ActivityOutline {
     this.toggleAllBtn = el.getByRole('button', {
       name: /^(Expand all|Collapse all)$/,
     });
-    this.bottomAddBtn = el.getByTestId('repository__createRootActivityBtn');
+    this.createRootBtn = el.getByTestId('repository__createRootActivityBtn');
     this.page = page;
     this.el = el;
   }
@@ -57,7 +57,7 @@ export class ActivityOutline {
   }
 
   async addRootItem(type: string, name: string) {
-    await this.bottomAddBtn.click();
+    await this.createRootBtn.click();
     const addActivityDialog = new AddItemDialog(this.page);
     await addActivityDialog.create(type, name);
     return this.getOutlineItemByName(name);

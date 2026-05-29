@@ -8,10 +8,10 @@
     <template v-if="showActivator" #activator="{ props: dialogProps }">
       <VBtn
         v-bind="dialogProps"
-        class="px-1"
-        color="primary-lighten-3"
+        color="teal-lighten-3"
         prepend-icon="mdi-link-variant"
-        variant="text"
+        variant="tonal"
+        size="small"
       >
         Link Existing
       </VBtn>
@@ -181,11 +181,14 @@ const linkSelection = async () => {
   try {
     const items = sortBy(selectedActivities.value, ['parentId', 'position']);
     let prevLinkedItem: Activity | undefined;
+    let firstLinked: Activity | undefined;
     for (const item of items) {
       const linked = await linkActivity(item, prevLinkedItem);
+      if (!firstLinked) firstLinked = linked[0];
       prevLinkedItem = linked[0];
     }
     emit('completed', items);
+    if (firstLinked) currentRepositoryStore.selectActivity(firstLinked.id);
     close();
   } finally {
     isLinking.value = false;

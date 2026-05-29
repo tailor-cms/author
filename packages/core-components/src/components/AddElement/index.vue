@@ -1,5 +1,5 @@
 <template>
-  <div class="add-element-container">
+  <div class="add-element-container mt-8">
     <slot :add-element="showElementPicker">
       <VBtn
         v-if="large"

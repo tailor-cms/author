@@ -47,10 +47,16 @@ const sections = [
     icon: 'mdi-tune',
   },
   {
-    name: 'repository-settings-access',
-    label: 'Access',
-    subtitle: 'Users and groups',
-    icon: 'mdi-shield-account-outline',
+    name: 'repository-settings-members',
+    label: 'Members',
+    subtitle: 'Individual user access and roles',
+    icon: 'mdi-account-multiple-outline',
+  },
+  {
+    name: 'repository-settings-groups',
+    label: 'Groups',
+    subtitle: 'Bulk access via user groups',
+    icon: 'mdi-account-group-outline',
   },
 ];
 

@@ -9,8 +9,8 @@ import {
   UserGroupUserList,
 } from '../../../pom/admin/GroupManagement.ts';
 import {
-  getAccessRoute,
-  RepositoryUsers,
+  RepositoryGroups,
+  RepositoryMembers,
 } from '../../../pom/repository/RepositorySettings.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 import { toEmptyRepository } from '../../../helpers/seed.ts';
@@ -126,24 +126,24 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
 
   test('should be able to access user listing', async ({ page }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
-    const accessRoute = getAccessRoute(repository.id);
-    await page.goto(accessRoute);
-    const access = new RepositoryUsers(page);
+    const membersRoute = RepositoryMembers.getRoute(repository.id);
+    await page.goto(membersRoute);
+    const access = new RepositoryMembers(page);
     await expect(access.rail.el).toBeVisible();
     await expect(access.userList).toBeVisible();
-    await expect(page).toHaveURL(accessRoute);
+    await expect(page).toHaveURL(membersRoute);
   });
 
   test('should be able to access repository group listing', async ({
     page,
   }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
-    const accessRoute = getAccessRoute(repository.id);
-    await page.goto(accessRoute);
-    const access = new RepositoryUsers(page);
-    await access.showGroupsTab();
+    const groupsRoute = RepositoryGroups.getRoute(repository.id);
+    await page.goto(groupsRoute);
+    const access = new RepositoryGroups(page);
+    await expect(access.rail.el).toBeVisible();
     await expect(access.groupList).toBeVisible();
-    await expect(page).toHaveURL(accessRoute);
+    await expect(page).toHaveURL(groupsRoute);
   });
 });
 
@@ -192,7 +192,7 @@ test.describe('Collaborator added to a User Group as Default User,', () => {
 
   test('should not be able to access settings', async ({ page }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
-    const accessRoute = getAccessRoute(repository.id);
+    const accessRoute = RepositoryMembers.getRoute(repository.id);
     await page.goto(accessRoute, { waitUntil: 'networkidle' });
     await expect(page).toHaveURL('/');
   });
@@ -242,7 +242,7 @@ test.describe('Collaborator added to a User Group with Colaborator role', () => 
 
   test('should not be able to access settings', async ({ page }) => {
     const repository = await toEmptyRepository(page, 'Test', [1]);
-    const accessRoute = getAccessRoute(repository.id);
+    const accessRoute = RepositoryMembers.getRoute(repository.id);
     await page.goto(accessRoute, { waitUntil: 'networkidle' });
     await expect(page).toHaveURL('/');
   });

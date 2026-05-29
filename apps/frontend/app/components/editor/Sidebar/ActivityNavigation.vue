@@ -17,9 +17,10 @@
         v-if="treeRef?.hasItems"
         class="text-none"
         color="primary-lighten-4"
+        rounded="lg"
         size="small"
         variant="text"
-        rounded="lg"
+        width="90"
         :text="treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all'"
         @click="treeRef?.toggleExpand()"
       />

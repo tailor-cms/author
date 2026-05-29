@@ -3,18 +3,18 @@
     <div v-if="showResolveButton" class="d-flex justify-center">
       <ResolveButton class="mb-2" @click.stop="resolveAll" />
     </div>
-    <div :class="{ 'pb-7': !showHeading && hasHiddenComments }">
+    <div :class="{ 'pb-7 mb-4': !showHeading && hasHiddenComments }">
       <VBtn
         v-if="hasHiddenComments"
-        class="float-right mt-1"
+        :text="showAll ? 'Show less' : 'Show more'"
+        class="float-right"
         color="primary-lighten-4"
+        rounded="lg"
         size="small"
         variant="text"
-        rounded="lg"
+        width="84"
         @click="showAll = !showAll"
-      >
-        Show {{ showAll ? 'less' : 'more' }}
-      </VBtn>
+      />
     </div>
     <div v-if="showHeading" class="discussion-heading text-primary-lighten-4">
       Comments
@@ -227,6 +227,7 @@ watch(
 
   .discussion-heading {
     padding: 0 0 0.5rem 0;
+    margin-bottom: 1rem;
     font-size: 0.875rem;
     font-weight: 700;
     text-transform: uppercase;

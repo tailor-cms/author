@@ -3,7 +3,7 @@
     <VTooltip location="bottom" open-delay="500">
       <template #activator="{ props: tooltipProps }">
         <span v-bind="tooltipProps" class="linked-status d-flex align-center">
-          <VIcon color="lime" icon="mdi-link-variant" size="small" start />
+          <VIcon color="lime" icon="mdi-link-box" size="small" start />
           <span class="text-body-medium text-uppercase font-weight-bold">
             {{ isEntryPoint ? 'Linked' : 'Linked via parent' }}
           </span>

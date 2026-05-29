@@ -12,7 +12,6 @@
         :data-testid="`${props.testIdPrefix}Btn`"
         :size="size"
         :variant="variant"
-        class="px-2"
       >
         <VIcon class="mr-2">{{ props.activatorIcon }}</VIcon>
         {{ activatorLabel || defaultModalHeading }}
@@ -116,7 +115,7 @@ const props = withDefaults(defineProps<Props>(), {
   activatorLabel: '',
   size: 'default',
   variant: 'text',
-  activatorColor: 'primary-darken-3',
+  activatorColor: undefined,
   activatorIcon: 'mdi-folder-plus',
   testIdPrefix: 'repository__createActivity',
 });
