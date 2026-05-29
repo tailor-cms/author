@@ -229,7 +229,8 @@ jobs:
         env:
           INDEX: ${{ matrix.shardIndex }}
           TOTAL: ${{ matrix.shardTotal }}
-          PERCY_PARALLEL_NONCE: ${{ github.run_id }}
+          # Include the run ATTEMPT so a re-run starts a fresh Percy build.
+          PERCY_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           SPECS=$(find tests/specs/visual -name '*.spec.ts' | wc -l)
           EFFECTIVE=$(( SPECS < TOTAL ? SPECS : TOTAL ))
