@@ -25,7 +25,7 @@
             <VBadge
               color="highlight"
               icon="mdi-check-bold"
-              :model-value="progress[it.id]"
+              :model-value="progress?.[it.id] ?? false"
             >
               <VAvatar :icon="it.icon" variant="tonal" />
             </VBadge>
@@ -35,11 +35,11 @@
             <template v-for="(metric, key) in it.metric" :key="key">
               <div
                 v-if="metric"
-                class="d-flex align-center text-label-medium text-high-emphasis"
+                class="d-flex align-center text-label-medium text-medium-emphasis"
               >
                 <VAvatar
                   class="font-weight-bold mr-2"
-                  :color="progress[it.id] ? 'highlight' : 'inverse-surface'"
+                  :color="progress?.[it.id] ? 'highlight' : 'inverse-surface'"
                   :text="`+${metric}`"
                   variant="tonal"
                   size="x-small"
@@ -57,23 +57,26 @@
 
 <script lang="ts" setup>
 import { startCase, sumBy } from 'lodash-es';
+import { useTheme } from 'vuetify';
 import { RadarChart } from '@tailor-cms/core-components';
+import type { Guideline } from '@tailor-cms/interfaces/schema';
+
+type GuidelineProgress = Record<Guideline['id'], boolean>;
 
 const editorStore = useEditorStore();
+const theme = useTheme();
 
+const colors = computed(() => theme.current.value.colors);
 const guidelines = computed(() => editorStore.guidelines);
 const progress = computed(() => {
-  const completed = guidelines.value?.reduce((acc, it) => {
+  return guidelines.value?.reduce<GuidelineProgress>((acc, it) => {
     acc[it.id] = it.isDone();
     return acc;
   }, {});
-  return completed;
 });
 
 const ratings = computed(() => {
-  const completed = guidelines.value?.filter(
-    (it: any) => progress.value?.[it.id],
-  );
+  const completed = guidelines.value?.filter((it) => progress.value?.[it.id]);
   return {
     learnerCenteredContent: sumBy(completed, 'metric.learnerCenteredContent'),
     activeLearning: sumBy(completed, 'metric.activeLearning'),
@@ -89,21 +92,21 @@ const heasParams = [
   { key: 'unboundedInclusion', label: 'Unbounded Inclusion' },
   { key: 'communityConnections', label: 'Community Connections' },
   { key: 'realWorldOutcomes', label: 'Real-World Outcomes' },
-];
+] as const;
 
 const chartData = computed(() => ({
   labels: heasParams.map((it) => it.label.split(' ')),
   datasets: [
     {
-      data: heasParams.map(({ key }) => ratings.value[key]),
-      backgroundColor: '#ECEFF140',
-      borderColor: '#ECEFF1BF',
+      data: heasParams.map(({ key }) => ratings.value[key] || 0),
+      backgroundColor: `${colors.value['on-surface']}40`,
+      borderColor: `${colors.value.outline}BF`,
       borderWidth: 1,
     },
     {
       data: [4, 3, 3, 2, 3],
-      backgroundColor: '#ECEFF140',
-      borderColor: '#ECEFF1BF',
+      backgroundColor: `${colors.value['on-surface']}40`,
+      borderColor: `${colors.value.outline}BF`,
       borderWidth: 1,
     },
   ],

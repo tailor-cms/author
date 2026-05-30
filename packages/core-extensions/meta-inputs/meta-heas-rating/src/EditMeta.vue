@@ -113,6 +113,7 @@
 <script lang="ts" setup>
 import { cloneDeep, isEmpty } from 'lodash-es';
 import { computed, ref } from 'vue';
+import { useTheme } from 'vuetify';
 import { RadarChart } from '@tailor-cms/core-components';
 
 import { heasParams } from './utils';
@@ -134,11 +135,14 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['update']);
 
+const theme = useTheme();
+
 const isEditing = ref(props.isNew);
 const input = ref(cloneDeep(props.meta.value ?? { rating: {} }));
 const dialogData = ref(cloneDeep(input.value));
 const isDialogVisible = ref(false);
 
+const colors = computed(() => theme.current.value.colors);
 const isReviewRequested = computed(() => input.value?.requestedReview);
 const isEditable = computed(() => {
   const { isReviewer, meta } = props;
@@ -151,8 +155,8 @@ const chartData = computed(() => ({
   datasets: [
     {
       data: heasParams.map(({ key }) => input.value?.rating[key]),
-      backgroundColor: props.dark ? '#ECEFF140' : '#455A6433',
-      borderColor: props.dark ? '#ECEFF1BF' : '#455A64BF',
+      backgroundColor: `${colors.value['on-surface']}40`,
+      borderColor: `${colors.value.outline}BF`,
       borderWidth: 1,
     },
   ],
@@ -180,13 +184,13 @@ const showRatingDialog = (input = {}) => {
   dialogData.value = cloneDeep(input);
 };
 
-const updateRating = (value) => {
+const updateRating = (value: any) => {
   const newValue = cloneDeep(input.value);
   Object.assign(newValue.rating, value);
   update(newValue);
 };
 
-const update = (value) => {
+const update = (value: any) => {
   input.value = value;
   emit('update', props.meta.key, input.value);
 };

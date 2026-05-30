@@ -11,10 +11,10 @@
     >
       <template #prepend>
         <VAvatar
+          :color="color"
           :text="acronym"
-          color="surface-container-lowest"
           size="42"
-          border
+          variant="tonal"
         />
       </template>
       <template v-if="isContentElement" #append>
@@ -38,7 +38,11 @@ import { formatTimeAgo } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import EntityRevisions from './EntityRevisions.vue';
-import { getFormatDescription, getRevisionAcronym } from '@/lib/revision';
+import {
+  getFormatDescription,
+  getRevisionAcronym,
+  getRevisionColor,
+} from '@/lib/revision';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -56,6 +60,7 @@ const activity = computed(() => {
 });
 
 const acronym = computed(() => getRevisionAcronym(props.revision));
+const color = computed(() => getRevisionColor(props.revision));
 const date = computed(() => new Date(props.revision.createdAt));
 
 const description = computed(() =>

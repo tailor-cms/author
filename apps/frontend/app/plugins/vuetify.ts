@@ -53,7 +53,7 @@ const lightTheme: ThemeDefinition = {
     'on-tertiary-container': '#5C0030',
 
     // Highlight — semantic state color (linked, pinned, recent indicators)
-    'highlight': '#AFB42B',
+    'highlight': '#C0CA33',
     'on-highlight': '#1A1F00',
     'highlight-container': '#F0F4C3',
     'on-highlight-container': '#33370B',
@@ -204,6 +204,12 @@ export default defineNuxtPlugin({
       directives,
       defaults: {
         VBtn: { color: undefined },
+        // MD3 spec: snackbars/tooltips use the inverse surface so they
+        // contrast with the page (dark on light theme, light on dark theme).
+        // Vuetify's default is `surface-variant` (same tonal family), so we
+        // override here. VTooltip has no `color` prop, so style its content.
+        VSnackbar: { color: 'inverse-surface' },
+        VTooltip: { contentClass: 'bg-inverse-surface' },
       },
       theme: {
         defaultTheme,

@@ -17,7 +17,7 @@
       </span>
     </VListItemSubtitle>
     <template #append>
-      <VChip v-if="isSoftDeleted" color="white" size="small">
+      <VChip v-if="isSoftDeleted" size="small">
         <span class="pr-1 font-weight-bold">Deleted:</span>
         Publish required
         <VIcon
