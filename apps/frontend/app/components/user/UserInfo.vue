@@ -24,21 +24,17 @@
     <div class="d-flex justify-end pb-3">
       <VBtn
         :disabled="!meta.dirty"
-        color="primary-darken-4"
+        text="Cancel"
         variant="text"
         @click="resetForm"
-      >
-        Cancel
-      </VBtn>
+      />
       <VBtn
         :disabled="!meta.dirty"
         class="ml-2 px-4"
-        color="primary-darken-4"
+        text="Save"
         type="submit"
         variant="tonal"
-      >
-        Save
-      </VBtn>
+      />
     </div>
   </form>
 </template>

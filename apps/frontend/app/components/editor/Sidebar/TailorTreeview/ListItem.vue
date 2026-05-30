@@ -3,7 +3,7 @@
     <VListItem
       ref="listItem"
       v-bind="omit(activatorProps, 'onClick')"
-      :class="{ 'list-item-active': isActive }"
+      :class="{ 'text-tertiary font-weight-bold': isActive }"
       :title="title"
       class="list-item"
       @click.prevent="onItemClick"
@@ -11,7 +11,6 @@
       <template #prepend>
         <VBtn
           v-if="isGroup"
-          :color="prependColor"
           :icon="prependIcon"
           class="mr-n1"
           density="comfortable"
@@ -69,10 +68,6 @@ const prependIcon = computed(() => {
   return props.isEmpty ? `${icon}-outline` : icon;
 });
 
-const prependColor = computed(() => {
-  return props.isOpen ? 'primary-lighten-3' : 'primary-lighten-2';
-});
-
 const onItemClick = (e: any) => {
   if (!props.isEditable) return props.activatorProps?.onClick(e);
   emit('edit', props.id);
@@ -90,23 +85,6 @@ const onItemClick = (e: any) => {
 
 .list-item :deep(.v-list-item-title) {
   font-size: 0.9375rem;
-}
-
-.list-item-active:deep(.v-list-item-title) {
-  color: rgb(var(--v-theme-secondary-lighten-4));
-  font-weight: bold;
-}
-
-.activity-menu {
-  :deep(.v-list-item-title),
-  :deep(.v-list-item-title:hover) {
-    color: rgb(var(--v-theme-primary-darken-3));
-    font-weight: 400;
-  }
-}
-
-.v-list-item:hover .activity-menu :deep(.v-list-item__content) .v-list-item-title {
-  font-weight: 400;
 }
 
 :deep(.v-icon) {

@@ -1,14 +1,10 @@
 <template>
   <div class="content-containers">
-    <h2
-      v-if="displayHeading"
-      class="mb-4 text-title-medium text-left text-primary-lighten-4"
-    >
+    <h2 v-if="displayHeading" class="mb-4 text-title-medium text-left">
       {{ capitalize(name) }}
     </h2>
     <VAlert
       v-if="!filteredContainerGroup.length"
-      color="primary-lighten-3"
       icon="mdi-information-outline"
       variant="tonal"
       prominent
@@ -48,7 +44,7 @@
       v-if="addBtnEnabled"
       :text="`Create ${name}`"
       class="mt-8"
-      color="teal-accent-1"
+      color="secondary"
       variant="tonal"
       prepend-icon="mdi-plus"
       @click="addContainer"
@@ -263,6 +259,5 @@ onBeforeMount(() => {
   width: 100%;
   min-height: 15.5rem;
   padding: 0.625rem;
-  background-color: #fff;
 }
 </style>

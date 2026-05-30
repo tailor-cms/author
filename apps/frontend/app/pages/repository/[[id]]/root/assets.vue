@@ -1,8 +1,8 @@
 <template>
   <div class="assets-page h-100">
     <VAppBar
-      border="b surface"
-      color="primary-darken-3"
+      border="b"
+      color="surface-container-low"
       elevation="0"
       height="64"
       order="1"
@@ -42,6 +42,7 @@
           :items-per-page="assetStore.itemsPerPage"
           :page="assetStore.page"
           :page-count="assetStore.pageCount"
+          :search="searchQuery"
           :selected-ids="selection.selectedIds"
           :selected-category="selectedCategory"
           :total="assetStore.total"

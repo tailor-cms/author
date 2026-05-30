@@ -10,21 +10,17 @@
     transition="slide-y-transition"
   >
     <template #activator="{ props: menuProps }">
-      <VTooltip location="left" open-delay="1000">
-        <template #activator="{ props: tooltipProps }">
-          <VBtn
-            v-bind="{ ...menuProps, ...tooltipProps }"
-            :color="color"
-            aria-label="Generate content"
-            icon="mdi-creation"
-            size="x-small"
-            variant="tonal"
-          />
-        </template>
-        Generate content
-      </VTooltip>
+      <VBtn
+        v-tooltip:[tooltipLocation]="{ text: 'Generate content', openDelay: 1000 }"
+        v-bind="menuProps"
+        :color="color"
+        aria-label="Generate content"
+        icon="mdi-creation"
+        size="x-small"
+        variant="tonal"
+      />
     </template>
-    <VSheet class="mt-2 pa-7" color="primary-darken-4">
+    <VSheet class="mt-2 pa-7">
       <VTextarea
         v-model="promptText"
         label="Prompt"
@@ -34,14 +30,11 @@
       />
       <div class="d-flex justify-end">
         <VBtn
-          :slim="false"
-          color="primary-lighten-3"
           prepend-icon="mdi-creation"
+          text="Generate"
           variant="tonal"
           @click="onPromptSubmit"
-        >
-          Generate
-        </VBtn>
+        />
       </div>
     </VSheet>
   </VMenu>
@@ -52,10 +45,12 @@ import { ref, watch } from 'vue';
 
 interface Props {
   color?: string;
+  tooltipLocation?: 'top' | 'bottom' | 'left' | 'right';
 }
 
 withDefaults(defineProps<Props>(), {
   color: 'indigo',
+  tooltipLocation: 'left',
 });
 const emit = defineEmits(['generate']);
 

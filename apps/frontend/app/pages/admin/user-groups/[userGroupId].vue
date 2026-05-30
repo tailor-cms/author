@@ -2,15 +2,15 @@
   <div class="user-group-users">
     <VRow class="mt-2 py-5">
       <VCol>
-        <div class="pl-7 text-body-large text-primary-darken-4 text-left">
+        <div class="pl-7 text-body-large text-left">
           <VBtn
+            :text="`${userGroup?.name} user group`"
             class="mr-1"
             icon="mdi-arrow-left"
             size="small"
             variant="text"
             @click="router.back()"
           />
-          {{ userGroup?.name }} user group
         </div>
       </VCol>
       <VCol>
@@ -54,7 +54,6 @@
           <td class="user-entry-actions">
             <VBtn
               aria-label="Remove user"
-              color="blue-grey-darken-3"
               icon="mdi-delete-outline"
               size="small"
               variant="text"

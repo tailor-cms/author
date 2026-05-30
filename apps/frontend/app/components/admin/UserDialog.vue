@@ -7,12 +7,10 @@
         :disabled="isReinviting"
         :loading="isReinviting"
         class="d-block ml-auto mb-4"
-        color="primary-darken-4"
+        text="Reinvite"
         variant="tonal"
         @click="reinvite"
-      >
-        Reinvite
-      </VBtn>
+      />
       <form class="form" novalidate @submit.prevent="submit">
         <VTextField
           v-model="emailInput"
@@ -77,7 +75,6 @@
           v-if="isNewUser"
           v-model="skipInviteInput"
           class="mb-1"
-          color="primary-darken-2"
           label="Skip invitation email"
           hide-details
           inset
@@ -86,19 +83,14 @@
           Useful for SSO users who don't need a password setup email.
           You can always send the invite later using Reinvite.
         </div>
-        <div class="d-flex justify-end pb-3">
-          <VBtn color="primary-darken-4" variant="text" @click="close">
-            Cancel
-          </VBtn>
+        <div class="d-flex justify-end pb-3 ga-2">
+          <VBtn text="Cancel" variant="text" @click="close" />
           <VBtn
             :disabled="!!errors?.length"
-            class="ml-2 px-4"
-            color="primary-darken-2"
+            text="Save"
             type="submit"
             variant="tonal"
-          >
-            Save
-          </VBtn>
+          />
         </div>
       </form>
     </template>

@@ -1,5 +1,5 @@
 <template>
-  <VFooter color="primary-darken-3" height="68" app>
+  <VFooter color="primary" height="68" app>
     <div class="d-flex flex-grow-1 align-center justify-center text-body-medium">
       <img
         alt="Tailor logo"
@@ -10,7 +10,6 @@
       />
       <VChip
         class="mx-4"
-        color="primary-lighten-4"
         rounded="lg"
         label
         small

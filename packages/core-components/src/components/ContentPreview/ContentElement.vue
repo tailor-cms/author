@@ -8,7 +8,6 @@
       :disabled="selectionDisabled && !isSelected"
       :model-value="isSelected"
       class="flex-shrink-0 mr-2"
-      color="primary-darken-4"
       @update:model-value="$emit('toggle')"
     />
     <VHover v-slot="{ isHovering, props: hoverProps }">
@@ -25,7 +24,6 @@
               <VBtn
                 v-if="isHovering"
                 class="open-element-button"
-                color="blue-grey-darken-4"
                 v-bind="tooltipProps"
                 icon="mdi-open-in-new"
                 size="small"

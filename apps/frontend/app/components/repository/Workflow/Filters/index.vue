@@ -25,7 +25,6 @@
         v-model="status"
         :items="statusOptions"
         data-testid="workflow_statusFilter"
-        bg-color="primary-darken-2"
         density="compact"
         max-width="220"
         min-width="200"
@@ -44,14 +43,13 @@
       data-testid="workflow_assigneeFilter"
     />
     <VChip
-      :color="recentOnly ? 'lime-accent-3' : 'primary-lighten-4'"
+      :color="recentOnly ? 'highlight' : ''"
       :prepend-icon="recentOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
       rounded="lg"
+      text="Show only recent"
       variant="tonal"
       @click="recentOnly = !recentOnly"
-    >
-      Show only recent
-    </VChip>
+    />
   </div>
 </template>
 

@@ -1,14 +1,13 @@
 <template>
   <NuxtLayout name="auth" title="Forgot password?">
     <VAlert
-      :color="errorMessage ? 'pink-lighten-4' : 'teal-lighten-4'"
+      :text="errorMessage || 'Sending reset email...'"
+      :color="errorMessage ? 'error' : ''"
       :model-value="showMessage"
       class="mb-8 pa-4 text-title-small"
       variant="tonal"
       prominent
-    >
-      {{ errorMessage || 'Sending reset email...' }}
-    </VAlert>
+    />
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
     <form
       v-if="!errorMessage"
@@ -30,35 +29,30 @@
       <div>
         <VBtn
           v-if="!showMessage"
-          color="primary-lighten-2"
           size="large"
           type="submit"
+          text="Send reset email"
           variant="tonal"
           block
           rounded
-        >
-          Send reset email
-        </VBtn>
+        />
         <VBtn
           class="mt-7"
-          color="primary-lighten-3"
+          prepend-icon="mdi-arrow-left"
+          text="Back"
           variant="text"
           @click.stop="$router.back()"
-        >
-          <VIcon class="pr-2">mdi-arrow-left</VIcon>Back
-        </VBtn>
+        />
       </div>
     </form>
     <VBtn
       v-else
-      color="primary-lighten-2"
+      text="Retry"
       variant="tonal"
       block
       rounded
       @click.stop="resetInput"
-    >
-      Retry
-    </VBtn>
+    />
   </NuxtLayout>
 </template>
 

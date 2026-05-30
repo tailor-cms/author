@@ -3,10 +3,9 @@
     <VCol class="px-1" cols="auto">
       <VCheckboxBtn
         :model-value="isSelected"
-        base-color="primary-lighten-2"
-        color="primary-lighten-3"
         density="compact"
-        @click.stop="emit('toggle', asset);" />
+        @click.stop="emit('toggle', asset);"
+      />
     </VCol>
     <VCol cols="auto" class="px-1">
       <VIcon
@@ -17,17 +16,18 @@
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
       <div class="d-flex align-center text-title-small">
-        <span data-testid="assetRow_name" class="text-primary-lighten-5 text-truncate">
+        <span data-testid="assetRow_name" class="text-truncate">
           {{ getAssetDisplayName(asset) }}
         </span>
         <VIcon
           v-if="(asset.meta as any)?.isCoreSource"
           class="ml-1"
-          color="amber-lighten-1"
+          color="highlight"
           icon="mdi-star"
-          size="14" />
+          size="14"
+        />
       </div>
-      <div class="d-flex align-center text-body-medium text-primary-lighten-3">
+      <div class="d-flex align-center text-medium-emphasis text-body-medium">
         <span data-testid="assetRow_type" class="text-capitalize">
           {{ getAssetTypeLabel(asset) }}
         </span>
@@ -49,7 +49,8 @@
         :img-url="asset.uploader.imgUrl ?? undefined"
         :label="asset.uploader.label"
         class="mr-1"
-        size="24" />
+        size="24"
+      />
       <VMenu location="bottom end" @click.stop>
         <template
           #activator="{
@@ -59,11 +60,11 @@
             v-bind="menuProps"
             aria-label="Actions"
             class="ml-1"
-            color="primary-lighten-3"
             icon="mdi-dots-vertical"
             size="small"
             variant="text"
-            @click.stop />
+            @click.stop
+          />
         </template>
         <VList density="compact">
           <VListItem
@@ -125,7 +126,7 @@ const emit = defineEmits<{
   transition: background 0.15s ease;
 
   &:hover {
-    background: rgba(var(--v-theme-primary-lighten-3), 0.08);
+    background: rgba(var(--v-theme-surface-container), 0.6);
   }
 }
 </style>

@@ -122,10 +122,9 @@ const displayedLang = computed(() =>
 );
 
 const badgeColor = computed(() => {
-  const ratio = translatedCount.value / totalLanguages.value;
-  if (ratio === 1) return props.dark ? 'teal-lighten-3' : 'teal';
-  if (ratio === 0) return props.dark ? 'orange-lighten-2' : 'orange-darken-3';
-  return props.dark ? 'secondary-lighten-3' : 'secondary';
+  if (translatedCount.value === 0) return 'tertiary';
+  if (translatedCount.value === totalLanguages.value) return 'secondary';
+  return 'warning';
 });
 
 const activeLanguage = ref(

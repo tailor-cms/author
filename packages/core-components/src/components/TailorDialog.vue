@@ -1,32 +1,26 @@
 <template>
-  <VDialog
-    :width="props.width"
-    v-bind="$attrs"
-    @update:model-value="onModelUpdate"
-  >
+  <VDialog :width="width" v-bind="$attrs" @update:model-value="onModelUpdate">
     <template v-if="$slots.activator" #activator="activatorProps">
       <slot v-bind="activatorProps" name="activator"></slot>
     </template>
-    <template v-if="$slots.default" #default="defaultProps">
-      <slot v-bind="defaultProps"></slot>
+    <template #default="defaultProps">
+      <slot v-if="$slots.default" v-bind="defaultProps"></slot>
+      <VCard :data-testid="dataTestid">
+        <VCardTitle class="dialog-title pa-5 align-center bg-surface-container">
+          <VIcon :icon="headerIcon" color="secondary" class="pa-5 mr-1" size="32" />
+          <div class="text-truncate">
+            <slot name="header"></slot>
+          </div>
+        </VCardTitle>
+        <VCardText :class="[paddingless ? 'pa-0' : 'pt-7 px-4 pb-2']">
+          <slot name="body"></slot>
+        </VCardText>
+        <VCardActions v-if="$slots.actions" class="px-4 pb-3">
+          <VSpacer />
+          <slot name="actions"></slot>
+        </VCardActions>
+      </VCard>
     </template>
-    <VCard :data-testid="dataTestid" color="primary-lighten-5">
-      <VCardTitle class="dialog-title pa-5 align-center bg-primary-darken-3">
-        <VIcon class="pa-5 mr-1" color="teal-lighten-4" size="26">
-          {{ props.headerIcon }}
-        </VIcon>
-        <div class="text-truncate text-primary-lighten-4">
-          <slot name="header"></slot>
-        </div>
-      </VCardTitle>
-      <VCardText :class="[props.paddingless ? 'pa-0' : 'pt-7 px-4 pb-2']">
-        <slot name="body"></slot>
-      </VCardText>
-      <VCardActions v-if="$slots.actions" class="px-4 pb-3">
-        <VSpacer />
-        <slot name="actions"></slot>
-      </VCardActions>
-    </VCard>
   </VDialog>
 </template>
 
@@ -38,7 +32,7 @@ export interface Props {
   dataTestid?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   headerIcon: 'mdi-alert',
   width: 500,
   paddingless: false,

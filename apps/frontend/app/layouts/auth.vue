@@ -1,7 +1,8 @@
 <template>
-  <div class="auth-container fill-height bg-primary-darken-4 pa-4">
+  <div class="auth-container fill-height bg-surface pa-4">
     <VSheet
-      class="auth-panel d-flex bg-primary-darken-3"
+      class="auth-panel d-flex pa-5"
+      color="surface-container-low"
       border="surface sm"
       max-width="840"
       rounded="xl"
@@ -15,7 +16,7 @@
         >
           <div class="d-flex align-center justify-center">
             <img :src="logoPath" alt="Logo" class="logo" width="78" />
-            <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
+            <h1 class="app-title ml-4">{{ title }}</h1>
           </div>
         </VCol>
         <VCol class="auth-body py-8" cols="12" lg="7" md="12">

@@ -8,7 +8,6 @@
       :img-url="option?.imgUrl"
       :label="option?.label ?? 'Unassigned'"
       size="28"
-      color="primary-lighten-4"
       tag="button"
       @click="toggleAssignee(option?.id)"
     />
@@ -17,17 +16,16 @@
         <VAvatar
           v-bind="menuProps"
           :class="{ active: moreOptions.some((it) => isSelected(it?.id)) }"
-          color="primary-lighten-4"
+          :text="`+${moreOptions.length}`"
           size="28"
-        >
-          +{{ moreOptions.length }}
-        </VAvatar>
+        />
       </template>
-      <VList color="primary-darken-3">
+      <VList color="primary">
         <VListItem
           v-for="option in moreOptions"
           :key="`assignee-${option?.id}`"
           :active="isSelected(option?.id)"
+          :title="option?.label ?? 'Unassigned'"
           @click="toggleAssignee(option?.id)"
         >
           <template #prepend>
@@ -37,11 +35,9 @@
             <UserAvatar
               :img-url="option?.imgUrl"
               class="menu-avatar"
-              color="primary-lighten-4"
               size="small"
             />
           </template>
-          <VListItemTitle>{{ option?.label ?? 'Unassigned' }}</VListItemTitle>
         </VListItem>
       </VList>
     </VMenu>
@@ -73,7 +69,7 @@ const isSelected = (id?: number) => props.modelValue.includes(id ?? null);
 <style lang="scss" scoped>
 :deep(.v-avatar):not(.menu-avatar) {
   transition: all 0.3s ease;
-  outline: 0 solid rgb(var(--v-theme-secondary));
+  outline: 0 solid rgb(var(--v-theme-tertiary));
 
   &:not(:first-of-type) {
     margin-left: -0.5rem;

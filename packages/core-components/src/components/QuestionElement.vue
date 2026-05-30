@@ -1,12 +1,12 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard class="question-container" color="grey-lighten-5">
+  <VCard class="question-container" color="surface-container-lowest">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VCard
         v-bind="hoverProps"
-        :color="expanded ? 'primary-darken-2' : 'primary-lighten-5'"
         :height="collapsible ? 48 : 38"
         class="d-flex px-4"
+        color="surface-container"
         rounded="0"
         flat
         v-on="{ click: collapsible ? () => emit('selected') : null }"
@@ -14,12 +14,7 @@
         <VRow class="w-100" density="compact">
           <VCol :cols="expanded ? 9 : 3" class="text-left align-content-center">
             <div class="d-flex align-center">
-              <VIcon
-                :icon="icon"
-                color="secondary-lighten-2"
-                size="small"
-                start
-              />
+              <VIcon :icon="icon" color="tertiary" size="small" start />
               <span class="text-title-small">{{ type }}</span>
             </div>
           </VCol>
@@ -42,25 +37,22 @@
               >
                 <ElementGeneration
                   v-if="showAI"
-                  :color="`indigo${expanded ? '-lighten-3' : ''}`"
+                  color="indigo"
+                  tooltip-location="bottom"
                   @generate="$emit('generate', $event)"
                 />
-                <VTooltip location="left" open-delay="1000">
-                  <template #activator="{ props: tooltipProps }">
-                    <VBtn
-                      v-bind="tooltipProps"
-                      :color="`teal${expanded ? '-lighten-3' : ''}`"
-                      aria-label="Reset element"
-                      icon="mdi-restore"
-                      size="x-small"
-                      variant="tonal"
-                      @click.stop="$emit('reset')"
-                    />
-                  </template>
-                  Reset element
-                </VTooltip>
                 <VBtn
-                  :color="`secondary${expanded ? '-lighten-3' : ''}`"
+                  v-tooltip:bottom="{ text: 'Reset element', openDelay: 1000 }"
+                  color="secondary"
+                  aria-label="Reset element"
+                  icon="mdi-restore"
+                  size="x-small"
+                  variant="tonal"
+                  @click.stop="$emit('reset')"
+                />
+                <VBtn
+                  v-tooltip:bottom="{ text: 'Delete element', openDelay: 1000 }"
+                  color="tertiary"
                   icon="mdi-delete-outline"
                   size="x-small"
                   variant="tonal"
@@ -117,20 +109,16 @@
           <VFadeTransition>
             <div
               v-if="!isDisabled && isDirty && !autosave"
-              class="d-flex justify-end"
+              class="d-flex justify-end ga-2"
             >
-              <VBtn color="primary-darken-4" variant="text" @click="cancel">
-                Cancel
-              </VBtn>
+              <VBtn text="Cancel" variant="text" @click="cancel" />
               <VBtn
-                class="ml-2"
                 color="success"
                 prepend-icon="mdi-check"
+                text="Save"
                 variant="tonal"
                 @click="save"
-              >
-                Save
-              </VBtn>
+              />
             </div>
           </VFadeTransition>
         </VForm>

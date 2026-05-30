@@ -2,18 +2,14 @@
   <div class="group-introduction">
     <VAlert
       v-if="!elements.length"
+      :text="isDisabled
+        ? 'Empty introduction'
+        : 'Click the button below to create first Introduction item.'"
       class="mt-4"
-      color="primary-darken-1"
       icon="mdi-information-outline"
       variant="tonal"
       prominent
-    >
-      {{
-        isDisabled
-          ? 'Empty introduction'
-          : 'Click the button below to create first Introduction item.'
-      }}
-    </VAlert>
+    />
     <ElementList
       :activity="group"
       :elements="elements"

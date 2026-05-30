@@ -4,30 +4,20 @@
     :model-value="store.isSidebarOpen || mdAndUp"
     :width="sidebarWidth"
     class="repository-sidebar"
-    color="primary-darken-2"
-    elevation="0"
+    color="surface-container"
     location="right"
     mobile-breakpoint="md"
     absolute
-    border="surface"
     @update:model-value="store.updateSidebar"
   >
     <div v-if="store.selectedActivity?.uid">
       <SidebarHeader :activity="store.selectedActivity" />
       <SidebarBody :activity="store.selectedActivity" />
     </div>
-    <div v-else class="placeholder mt-16 text-primary-lighten-5">
+    <div v-else class="placeholder mt-16">
       <div class="d-flex align-center">
-        <VIcon color="primary-lighten-3" size="x-large">
-          mdi-arrow-left-circle
-        </VIcon>
-        <VAlert
-          class="info-content ml-2"
-          color="primary-lighten-4"
-          variant="tonal"
-        >
-          {{ props.emptyMessage }}
-        </VAlert>
+        <VIcon icon="mdi-arrow-left-circle" size="x-large" />
+        <VAlert :text="emptyMessage" class="info-content ml-4" variant="tonal" />
       </div>
     </div>
   </VNavigationDrawer>
@@ -52,32 +42,6 @@ const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 680 : 480));
 <style lang="scss" scoped>
 .repository-sidebar {
   text-align: left;
-
-  :deep(.v-input) {
-    $error-color: rgb(var(--v-theme-secondary-lighten-4));
-
-    .v-messages__message,
-    .v-field__outline,
-    .v-field-label {
-      color: rgb(var(--v-theme-primary-lighten-5));
-      opacity: 1;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: rgb(var(--v-theme-primary-lighten-5));
-    }
-
-    &.v-input--error {
-      .v-messages__message,
-      .v-field__outline,
-      .v-field-label,
-      input::placeholder,
-      textarea::placeholder {
-        color: $error-color;
-      }
-    }
-  }
 }
 
 .placeholder {

@@ -5,7 +5,7 @@
         <VBtn
           v-bind="{ ...$attrs, ...tooltipProps }"
           :to="editorRoute"
-          color="teal-lighten-4"
+          color="secondary"
           size="x-small"
           variant="text"
         >

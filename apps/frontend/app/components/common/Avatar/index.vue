@@ -1,62 +1,42 @@
 <template>
   <div>
-    <!-- TODO: Replace content-props with content-class once it gets fixed -->
-    <VSpeedDial
-      :content-props="{ class: 'flex-column ga-3' }"
-      location="right"
-      offset="16"
-      target="#avatar"
-    >
+    <VSpeedDial content-class="flex-column" location="right" target="#avatar">
       <template #activator="{ props: activatorProps }">
-        <VHover v-slot="{ isHovering, props: hoverProps }">
-          <VAvatar
-            id="avatar"
-            color="primary-lighten-5"
-            v-bind="hoverProps"
-            size="180"
+        <VAvatar id="avatar" size="180" color="surface-container-low" border="lg">
+          <img v-if="imgUrl" :src="imgUrl" alt="Avatar" class="h-100 w-100" />
+          <VIcon
+            v-else
+            :icon="placeholderIcon"
+            color="surface-container-highest"
+            class="placeholder"
+            size="96"
+          />
+          <VSheet
+            v-bind="(imgUrl && !isGravatar) ? activatorProps : {}"
+            aria-label="Change avatar"
+            class="change-avatar h-100 w-100"
+            role="button"
+            @click="!(imgUrl && !isGravatar) && triggerUpload()"
           >
-            <img v-if="imgUrl" :src="imgUrl" alt="Avatar" />
-            <VIcon
-              v-else
-              :icon="placeholderIcon"
-              class="placeholder"
-              color="primary-lighten-2"
-            />
-            <VFadeTransition>
-              <VIcon
-                v-if="isHovering"
-                v-bind="(imgUrl && !isGravatar) ? activatorProps : {}"
-                aria-label="Change avatar"
-                class="overlay"
-                color="white"
-                icon="mdi-camera"
-                size="x-large"
-                @click="!(imgUrl && !isGravatar) && triggerUpload()"
-              />
-            </VFadeTransition>
-          </VAvatar>
-        </VHover>
+            <VIcon icon="mdi-camera" size="48" />
+          </VSheet>
+        </VAvatar>
       </template>
       <VBtn
         key="1"
         aria-label="Upload avatar"
-        color="primary-darken-4"
+        icon="mdi-upload"
         for="photoInput"
         tag="label"
         variant="tonal"
-        icon
-        small
-      >
-        <VIcon>mdi-upload</VIcon>
-      </VBtn>
+      />
       <VBtn
         v-if="!isGravatar"
         key="2"
         aria-label="Delete avatar"
-        color="secondary-lighten-2"
+        color="tertiary"
         icon="mdi-delete"
         variant="tonal"
-        small
         @click="$emit('delete')"
       />
     </VSpeedDial>
@@ -123,30 +103,19 @@ const toBase64 = (file: Blob): Promise<string> => {
 </script>
 
 <style lang="scss" scoped>
-$image-border: 4px solid white;
-$image-bg-color: rgb(var(--v-theme-primary-lighten-4));
+.change-avatar {
+  position: absolute;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  outline: none;
+  transition: opacity 0.2s ease;
 
-.v-avatar {
-  img,
-  .v-icon {
-    border: $image-border;
-    border-radius: 50%;
-    background-color: $image-bg-color;
-    height: 100%;
-    width: 100%;
-
-    &.placeholder {
-      font-size: 6rem;
-    }
-  }
-
-  .overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
+  &:hover,
+  &:focus-visible {
     opacity: 0.7;
-    background: #607d8b;
-    cursor: pointer;
   }
 }
 </style>

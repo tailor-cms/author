@@ -2,8 +2,6 @@
   <div class="library-tab">
     <VTextField
       v-model="searchQuery"
-      color="primary-darken-2"
-      density="compact"
       placeholder="Search assets..."
       prepend-inner-icon="mdi-magnify"
       variant="outlined"
@@ -15,20 +13,20 @@
       v-model="selectedCategory"
       :categories="categoryFilters"
     />
-    <div v-if="isLoading && !assets.length" class="d-flex justify-center py-12">
-      <VProgressCircular color="primary-darken-2" size="42" indeterminate />
+    <div v-if="isLoading && !assets.length" class="d-flex justify-center py-16">
+      <VProgressCircular color="primary" size="42" indeterminate />
     </div>
-    <div
+    <VEmptyState
       v-else-if="!assets.length && !isLoading"
-      class="d-flex flex-column align-center py-12"
-    >
-      <VIcon class="mb-2" color="primary" size="48">
-        mdi-folder-open-outline
-      </VIcon>
-      <div class="text-body-medium text-medium-emphasis">
-        {{ hasActiveFilters ? 'No matching assets' : 'No assets found' }}
-      </div>
-    </div>
+      class="py-8"
+      icon="mdi-folder-multiple-image"
+      :title="hasActiveFilters ? 'No matching assets' : 'No assets found'"
+      :text="
+        hasActiveFilters
+          ? 'Try adjusting your search or filters.'
+          : 'Upload assets to see them listed here.'
+      "
+    />
     <AssetList
       v-else
       :allowed-extensions="allowedExtensions"
@@ -45,7 +43,6 @@
       :length="pageCount"
       :total-visible="5"
       class="mt-2"
-      color="primary-darken-2"
       density="comfortable"
       size="small"
       rounded
@@ -178,5 +175,6 @@ onMounted(fetchAssets);
 <style lang="scss" scoped>
 .library-tab {
   padding: 2rem;
+  padding-bottom: 0;
 }
 </style>

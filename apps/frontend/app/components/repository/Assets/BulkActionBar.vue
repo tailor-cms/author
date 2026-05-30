@@ -1,15 +1,17 @@
 <template>
   <VSlideYTransition>
-    <div v-if="hasSelection" class="bulk-action-bar bg-primary-darken-2">
+    <VSheet
+      v-if="hasSelection"
+      color="surface-container"
+      class="bulk-action-bar mb-4 pa-6 ga-3"
+      rounded="lg"
+    >
       <VChip
+        :text="`${selectedIds.size} selected`"
         class="selection-count"
-        color="primary-lighten-4"
-        density="compact"
-        variant="flat"
-        rounded="xl"
-      >
-        {{ selectedIds.size }} selected
-      </VChip>
+        density="comfortable"
+        rounded="pill"
+      />
       <VSpacer />
       <VTooltip
         :disabled="hasIndexable"
@@ -21,38 +23,31 @@
             <VBtn
               :disabled="!hasIndexable || isIndexing"
               :loading="isIndexing"
-              color="primary-lighten-3"
               prepend-icon="mdi-brain"
               size="small"
+              text="Index selected"
               variant="outlined"
               @click="$emit('index')"
-            >
-              Index selected
-            </VBtn>
+            />
           </div>
         </template>
       </VTooltip>
       <VBtn
         :loading="isBulkDeleting"
         :disabled="isBulkDeleting"
-        color="primary-lighten-3"
         prepend-icon="mdi-delete"
         size="small"
+        text="Delete selected"
         variant="outlined"
         @click="$emit('delete')"
-      >
-        Delete selected
-      </VBtn>
+      />
       <VBtn
-        class="cancel-btn"
-        color="primary-lighten-3"
         size="small"
-        variant="text"
+        text="Cancel"
+        variant="tonal"
         @click="$emit('clear')"
-      >
-        Cancel
-      </VBtn>
-    </div>
+      />
+    </VSheet>
   </VSlideYTransition>
 </template>
 
@@ -88,20 +83,5 @@ const hasIndexable = computed(() =>
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding: 1.25rem;
-  border-radius: 4px;
-}
-
-.selection-count {
-  min-height: 1.75rem;
-  margin-right: 0.25rem;
-  padding: 0 0.75rem;
-  font-size: 0.875rem;
-}
-
-.cancel-btn {
-  margin-left: 0.25rem;
 }
 </style>

@@ -27,7 +27,6 @@
         () => notify('ID copied to the clipboard', { immediate: true })
       "
       class="ml-3 px-4"
-      color="primary-lighten-3"
       size="small"
       variant="tonal"
     >
@@ -42,7 +41,6 @@
         () => notify('Link copied to the clipboard', { immediate: true })
       "
       class="ml-2 px-4"
-      color="primary-lighten-3"
       size="small"
       variant="tonal"
     >

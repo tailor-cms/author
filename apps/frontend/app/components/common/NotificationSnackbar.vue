@@ -3,15 +3,14 @@
     v-model="isVisible"
     :color="context.color"
     :timeout="context.timeout"
-    class="ma-8 text-title-small"
+    class="ma-8"
     location="bottom right"
   >
     {{ context.message }}
     <template #actions>
       <VBtn
-        color="primary-lighten-3"
         icon="mdi-close"
-        variant="tonal"
+        density="comfortable"
         @click="close"
       />
     </template>
@@ -34,7 +33,6 @@ const queue = new Queue(1, Infinity);
 
 const initialData = (): NotificationOptions => ({
   message: '',
-  color: 'primary-darken-4',
   timeout: 2500,
   immediate: false,
 });
@@ -51,7 +49,10 @@ const close = () => {
   isVisible.value = false;
 };
 
-const addToQueue = (opts: NotificationOptions) => queue.add(() => show(opts));
+const addToQueue = (opts: NotificationOptions) => {
+  return queue.add(() => Promise.resolve(show(opts)));
+};
+
 const schedule = (opts: NotificationOptions) => {
   return (opts.immediate ? addToQueue : debounce(addToQueue, 2500))(opts);
 };

@@ -24,15 +24,14 @@
         <template #activator="{ props: menuProps }">
           <VBtn
             v-bind="menuProps"
+            :text="activeSortLabel"
             append-icon="mdi-chevron-down"
             class="sort-btn"
             prepend-icon="mdi-sort-variant"
             rounded="lg"
             size="small"
             variant="tonal"
-          >
-            {{ activeSortLabel }}
-          </VBtn>
+          />
         </template>
         <VList density="compact" min-width="220" slim>
           <VListSubheader>Sort by</VListSubheader>
@@ -49,7 +48,7 @@
       <CreateDialog
         :anchor="anchor"
         :repository-id="currentRepositoryStore.repositoryId as number"
-        activator-color="teal-lighten-3"
+        activator-color="secondary"
         activator-icon="mdi-plus"
         size="small"
         variant="tonal"
@@ -80,7 +79,7 @@
       <CreateDialog
         :anchor="anchor"
         :repository-id="currentRepositoryStore.repositoryId as number"
-        activator-color="teal-lighten-3"
+        activator-color="secondary"
         activator-icon="mdi-plus"
         size="small"
         variant="tonal"
@@ -90,15 +89,13 @@
       <VBtn
         v-if="!isFlat"
         :disabled="!!search"
-        class="text-none"
+        :text="isOutlineExpanded ? 'Collapse all' : 'Expand all' "
         rounded="lg"
         size="small"
         variant="tonal"
         width="90"
         @click="currentRepositoryStore.toggleOutlineExpand"
-      >
-        {{ isOutlineExpanded ? 'Collapse all' : 'Expand all' }}
-      </VBtn>
+      />
     </template>
   </div>
 </template>

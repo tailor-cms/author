@@ -1,6 +1,6 @@
 <template>
-  <VList bg-color="primary-darken-3" class="rounded-lg pa-0" max-height="32rem">
-    <VListSubheader color="white">Changes</VListSubheader>
+  <VList class="rounded-lg pa-0" max-height="32rem">
+    <VListSubheader color="text-high-emphasis">Changes</VListSubheader>
     <VDivider />
     <VHover
       v-for="(revision, index) in revisions"
@@ -20,7 +20,6 @@
           <VBtn
             v-show="!isDetached && index > 0 && !loading[revision.id]"
             class="rollback"
-            color="white"
             icon="mdi-restore"
             size="small"
             variant="tonal"

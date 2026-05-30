@@ -1,7 +1,7 @@
 <template>
   <VProgressCircular
     v-if="isLoading"
-    color="primary-darken-4"
+    color="primary"
     size="16"
     width="2"
     indeterminate
@@ -11,20 +11,22 @@
     class="d-flex align-center pa-2 ga-2"
     variant="tonal"
   >
-    <VTooltip location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <span
-          v-bind="tooltipProps"
-          class="d-flex align-center text-body-medium text-uppercase font-weight-bold"
-        >
-          <VIcon color="purple" icon="mdi-source-branch" size="small" start />
-          Source
-        </span>
+    <VChip
+      v-tooltip:bottom="{
+        text: 'This is a source - linked content exists',
+        openDelay: 500,
+      }"
+      text="Source"
+      class="text-uppercase font-weight-bold pl-2 pr-0"
+      density="compact"
+      variant="text"
+    >
+      <template #prepend>
+        <VIcon color="source" icon="mdi-source-branch" start />
       </template>
-      This is a source - linked content exists
-    </VTooltip>
-    <VBadge :content="copies.length" color="lime" inline>
-      <span class="text-body-small pl-1 pr-2">
+    </VChip>
+    <VBadge :content="copies.length" color="highlight" inline>
+      <span class="text-body-small pr-2">
         {{ pluralize('copy', copies.length) }}
       </span>
     </VBadge>

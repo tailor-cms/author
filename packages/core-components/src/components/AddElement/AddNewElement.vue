@@ -1,6 +1,6 @@
 <template>
   <VBottomSheet class="mx-sm-5" max-width="1200">
-    <VSheet class="element-container" color="primary-lighten-5">
+    <VSheet class="element-container">
       <div class="picker-header py-6 px-10">
         <VTextField
           v-model="searchQuery"
@@ -8,6 +8,7 @@
           density="comfortable"
           placeholder="Search elements..."
           prepend-inner-icon="mdi-magnify"
+          bg-color="surface-container-low"
           variant="solo"
           hide-details
           clearable
@@ -20,11 +21,11 @@
       <VFadeTransition>
         <VSheet
           v-if="isAiGeneratingContent"
-          class="generation-loader text-title-small rounded-lg text-center"
-          color="primary-lighten-5"
+          class="generation-loader text-title-small text-center"
+          rounded="lg"
         >
           <CircularProgress />
-          <div class="pt-3 text-primary-darken-4 font-weight-bold">
+          <div class="pt-3 font-weight-bold">
             Content generation in progress...
           </div>
         </VSheet>
@@ -34,15 +35,12 @@
         color="transparent"
         max-height="60vh"
       >
-        <div v-if="searchQuery && !filteredLibrary.length" class="text-center py-10">
-          <VAvatar class="mb-4" size="80" color="primary-lighten-4">
-            <VIcon icon="mdi-magnify" size="40" />
-          </VAvatar>
-          <p class="text-title-large">No elements found</p>
-          <p class="text-body-large text-medium-emphasis">
-            No elements match "{{ searchQuery }}"
-          </p>
-        </div>
+        <VEmptyState
+          v-if="searchQuery && !filteredLibrary.length"
+          icon="mdi-magnify"
+          title="No elements found"
+          :text="`No elements match “${searchQuery}”`"
+        />
         <div
           v-for="(group) in filteredLibrary"
           :key="group.name"

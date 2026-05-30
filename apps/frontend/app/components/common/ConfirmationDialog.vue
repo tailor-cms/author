@@ -11,16 +11,14 @@
       </div>
     </template>
     <template #actions>
-      <VBtn color="primary-darken-4" variant="text" @click="close">Close</VBtn>
+      <VBtn text="Close" variant="text" @click="close" />
       <VBtn
         :focus="isVisible"
         class="px-3"
-        color="primary-darken-2"
+        text="Confirm"
         variant="tonal"
         @click="confirm"
-      >
-        Confirm
-      </VBtn>
+      />
     </template>
   </TailorDialog>
 </template>

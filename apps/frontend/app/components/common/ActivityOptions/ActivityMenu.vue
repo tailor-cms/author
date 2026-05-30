@@ -11,7 +11,6 @@
         <VBtn
           v-bind="menuProps"
           aria-label="Options menu"
-          color="primary-lighten-3"
           icon="mdi-dots-vertical"
           variant="text"
           :size="activatorSize"
@@ -58,6 +57,7 @@
 
 <script lang="ts" setup>
 import { first, sortBy } from 'lodash-es';
+import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { InsertLocation } from '@tailor-cms/utils';
 import type { StoreActivity } from '@/stores/activity';
 
@@ -172,7 +172,7 @@ const setCreateContext = (actionValue: InsertLocation) => {
   showCreateDialog.value = true;
 };
 
-const setCopyContext = (levels: Activity[], actionValue: InsertLocation) => {
+const setCopyContext = (levels: ActivityConfig[], actionValue: InsertLocation) => {
   supportedLevels.value = levels.map((it) => it.type);
   action.value = actionValue;
   showCopyDialog.value = true;

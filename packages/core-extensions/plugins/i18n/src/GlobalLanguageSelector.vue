@@ -5,7 +5,7 @@
         v-bind="menuProps"
         :aria-label="`Content language: ${currentLanguage?.toUpperCase() ?? 'EN'}`"
         class="language-selector ma-2"
-        color="teal-accent-1"
+        color="secondary"
         size="small"
         variant="tonal"
         rounded="lg"
@@ -16,7 +16,7 @@
         </span>
       </VBtn>
     </template>
-    <VList density="compact" min-width="200" slim>
+    <VList density="compact" min-width="200" slim nav>
       <VListSubheader>Content Language</VListSubheader>
       <VListItem
         v-for="{ code, name } in i18n.availableLanguages"
@@ -24,18 +24,14 @@
         :active="isCurrent(code)"
         :subtitle="code.toUpperCase()"
         :title="name"
-        rounded="lg"
         @click="currentLanguage = code"
       >
         <template #prepend>
-          <VIcon
-            :icon="isDefault(code) ? 'mdi-star' : 'mdi-translate-variant'"
-            :color="isDefault(code) ? 'warning' : 'grey-darken-3'"
-            size="small"
-          />
+          <VIcon v-if="isDefault(code)" color="warning" icon="mdi-star" size="small" />
+          <VIcon v-else icon="mdi-translate-variant" size="small" />
         </template>
         <template v-if="isCurrent(code)" #append>
-          <VIcon color="primary" icon="mdi-check-circle" />
+          <VIcon color="primary" icon="mdi-check-circle" size="small" />
         </template>
       </VListItem>
     </VList>

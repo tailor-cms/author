@@ -49,21 +49,19 @@
         <VBtn
           :disabled="!isDirty"
           :slim="false"
-          color="primary-darken-3"
+          text="Cancel"
           variant="text"
           @click="reset"
-        >
-          Cancel
-        </VBtn>
+        />
         <VBtn
           :disabled="!isDirty"
           :slim="false"
           color="success"
+          prepend-icon="mdi-check"
+          text="Save"
           variant="tonal"
           @click="save"
-        >
-          Save
-        </VBtn>
+        />
       </VCardActions>
     </VFadeTransition>
   </VCard>

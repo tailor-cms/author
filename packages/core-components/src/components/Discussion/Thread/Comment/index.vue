@@ -32,24 +32,15 @@
           clearable
         />
         <!-- eslint-enable vuejs-accessibility/no-autofocus -->
-        <span class="d-flex justify-end mt-2">
+        <span class="d-flex justify-end ga-2">
+          <VBtn size="small" text="Cancel" variant="text" @click="reset" />
           <VBtn
-            class="mr-2"
-            color="grey-lighten-2"
+            prepend-icon="mdi-check"
             size="small"
-            variant="tonal"
-            @click="reset"
-          >
-            Cancel
-          </VBtn>
-          <VBtn
-            color="teal-lighten-4"
-            size="small"
+            text="Save"
             variant="tonal"
             @click="save"
-          >
-            <VIcon class="pr-1">mdi-check</VIcon>Save
-          </VBtn>
+          />
         </span>
       </template>
     </div>
@@ -119,7 +110,6 @@ watch(() => props.comment, reset, { deep: true });
 .comment {
   display: flex;
   flex-direction: column;
-  font-family: Roboto, Arial, sans-serif;
 
   &-body {
     flex: 1;

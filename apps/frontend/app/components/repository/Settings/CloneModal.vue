@@ -28,20 +28,16 @@
         <div class="d-flex justify-end mb-2">
           <VBtn
             :disabled="inProgress"
-            color="primary-darken-4"
+            text="Cancel"
             variant="text"
             @click="close"
-          >
-            Cancel
-          </VBtn>
+          />
           <VBtn
             :loading="inProgress"
-            color="primary-darken-4"
             type="submit"
-            variant="text"
-          >
-            Clone
-          </VBtn>
+            text="Clone"
+            variant="tonal"
+          />
         </div>
       </form>
     </template>

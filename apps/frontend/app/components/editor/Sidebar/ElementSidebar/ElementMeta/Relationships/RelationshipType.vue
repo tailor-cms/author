@@ -1,38 +1,31 @@
 <template>
-  <VListItem class="element-relationship pa-4" variant="tonal" rounded>
-    <VListItemTitle>{{ label }}</VListItemTitle>
-    <VListItemSubtitle>{{ overview }}</VListItemSubtitle>
+  <VListItem
+    :title="label"
+    :subtitle="overview"
+    class="element-relationship px-5 py-3 bg-surface-container"
+    rounded
+  >
     <template #append>
       <VListItemAction>
-        <VTooltip location="bottom">
-          <template #activator="{ props: tooltipProps }">
-            <VBtn
-              v-bind="tooltipProps"
-              :aria-label="`${hasRelationships ? 'Edit' : 'Add'} Relationship`"
-              :class="{ 'mr-3': hasRelationships }"
-              :icon="hasRelationships ? 'mdi-pencil' : 'mdi-plus'"
-              color="teal-lighten-3"
-              size="small"
-              variant="tonal"
-              @click="$emit('open')"
-            />
-          </template>
-          <span>{{ placeholder }}</span>
-        </VTooltip>
-        <VTooltip v-if="hasRelationships" location="bottom">
-          <template #activator="{ props: tooltipProps }">
-            <VBtn
-              v-bind="tooltipProps"
-              aria-label="Remove Relationship"
-              color="secondary-lighten-3"
-              icon="mdi-close"
-              size="small"
-              variant="tonal"
-              @click="removeAll"
-            />
-          </template>
-          <span>Clear All</span>
-        </VTooltip>
+        <VBtn
+          v-tooltip:bottom="placeholder"
+          :aria-label="`${hasRelationships ? 'Edit' : 'Add'} Relationship`"
+          :icon="hasRelationships ? 'mdi-pencil' : 'mdi-plus'"
+          size="x-small"
+          variant="tonal"
+          @click="$emit('open')"
+        />
+        <VBtn
+          v-if="hasRelationships"
+          v-tooltip:bottom="'Clear All'"
+          aria-label="Remove Relationship"
+          class="ml-2"
+          color="tertiary"
+          icon="mdi-close"
+          size="x-small"
+          variant="tonal"
+          @click="removeAll"
+        />
       </VListItemAction>
     </template>
   </VListItem>
@@ -94,7 +87,7 @@ const removeAll = () => {
   margin-top: 0.25rem;
 }
 
-.v-list-item.v-list-item--one-line .v-list-item-subtitle {
+.v-list-item.v-list-item--one-line :deep(.v-list-item-subtitle) {
   -webkit-line-clamp: unset;
 }
 </style>

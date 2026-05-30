@@ -2,7 +2,6 @@
   <VNavigationDrawer
     width="76"
     class="navigation-rail"
-    color="primary-darken-4"
     elevation="0"
     location="left"
     border="none"
@@ -10,9 +9,9 @@
   >
     <VTabs
       class="rail-tabs"
-      color="primary-lighten-4"
       direction="vertical"
       height="60"
+      hide-slider
       stacked
     >
       <VTab
@@ -23,7 +22,6 @@
         :text="tab.label"
         :to="tab.to"
         class="rail-tab mb-1"
-        rounded="lg"
       />
     </VTabs>
     <template #append>
@@ -44,7 +42,6 @@
           <VBtn
             v-bind="menuProps"
             class="rail-menu-btn ma-2"
-            color="white"
             icon="mdi-dots-horizontal"
             size="small"
             variant="tonal"
@@ -224,15 +221,10 @@ const actions = computed<RailAction[]>(() => {
     justify-content: center;
     padding: 0.5rem 0.25rem;
     font-size: 0.6875rem;
-    color: rgba(255, 255, 255, 0.72);
     letter-spacing: 0.02em;
     text-transform: none;
     border-radius: 10px;
     transition: background-color 160ms ease, color 160ms ease;
-
-    :deep(.v-tab__slider) {
-      display: none;
-    }
 
     :deep(.v-btn__prepend) {
       margin-inline: 0;

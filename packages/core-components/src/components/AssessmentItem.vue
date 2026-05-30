@@ -1,15 +1,18 @@
 <template>
   <VSheet
     v-if="loading"
-    color="primary-lighten-5"
-    class="py-16 text-title-small rounded-lg text-center"
+    class="py-16 text-title-small text-center"
+    rounded="lg"
   >
     <CircularProgress />
-    <div class="pt-3 text-primary-darken-4 font-weight-bold">
-      <span>Content generation in progress...</span>
-    </div>
+    <div class="pt-3 font-weight-bold">Content generation in progress...</div>
   </VSheet>
-  <div v-else class="d-flex align-start justify-strech">
+  <VSheet
+    v-else
+    class="d-flex align-start justify-stretch"
+    color="transparent"
+    theme="light"
+  >
     <span v-if="!isDisabled && draggable" class="drag-handle">
       <VIcon
         icon="mdi-drag-vertical"
@@ -41,7 +44,7 @@
         <slot name="header"></slot>
       </template>
     </QuestionElement>
-  </div>
+  </VSheet>
 </template>
 
 <script lang="ts" setup>
@@ -127,12 +130,12 @@ const save = (data: ContentElement['data']) => {
 
 .diff {
   &.new {
-    @include mixins.highlight(rgb(var(--v-theme-success-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-success)));
   }
 
   &.changed,
   &.removed {
-    @include mixins.highlight(rgb(var(--v-theme-secondary-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-tertiary)));
   }
 }
 </style>

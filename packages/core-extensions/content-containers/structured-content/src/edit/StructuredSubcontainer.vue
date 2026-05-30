@@ -1,12 +1,12 @@
 <template>
-  <VCard color="grey-lighten-5" flat>
+  <VCard color="surface-container-lowest" theme="light">
     <div
       :class="{ 'subcontainer-header-collapsible': isCollapsible }"
       class="subcontainer-header d-flex align-center mx-1 pa-4"
       @click="isCollapsible && toggleExpanded()"
     >
       <VCardTitle class="d-flex align-center pa-0 text-truncate">
-        <VIcon class="mr-2" color="primary-darken-4" size="20">{{ icon }}</VIcon>
+        <VIcon class="mr-2" size="20">{{ icon }}</VIcon>
         {{ label }}
         <span
           v-if="!isExpanded && collapsedPreviewText"
@@ -18,13 +18,11 @@
       <VSpacer />
       <VChip
         v-if="!isExpanded && elementCount && !disableContentElementList"
+        :text="elementCount === 1 ? '1 element' : `${elementCount} elements`"
         class="mr-2"
-        color="primary-darken-1"
         size="small"
         variant="tonal"
-      >
-        {{ elementCount }} {{ elementCount === 1 ? 'element' : 'elements' }}
-      </VChip>
+      />
       <template v-if="canReorder">
         <VBtn
           :disabled="isFirst"
@@ -47,7 +45,7 @@
       <VBtn
         v-if="!isDisabled"
         class="mr-2"
-        color="secondary"
+        color="tertiary"
         density="comfortable"
         icon="mdi-delete-outline"
         size="small"
@@ -58,7 +56,6 @@
         v-if="isCollapsible"
         :aria-label="isExpanded ? 'Collapse section' : 'Expand section'"
         :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        color="primary-darken-3"
         density="comfortable"
         variant="text"
         @click.stop="toggleExpanded"
@@ -82,7 +79,6 @@
         <VSheet
           v-if="!disableContentElementList"
           class="px-4 pt-5"
-          color="white"
           border="t"
         >
           <StructuredContent

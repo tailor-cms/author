@@ -1,8 +1,8 @@
 <template>
   <div class="revisions-page h-100">
     <VAppBar
-      border="b surface"
-      color="primary-darken-3"
+      border="b"
+      color="surface-container-low"
       elevation="0"
       height="64"
       order="1"
@@ -11,7 +11,6 @@
       <VSelect
         v-model="typeFilter"
         :items="typeOptions"
-        bg-color="primary-darken-2"
         class="mr-3"
         density="compact"
         max-width="240"
@@ -30,7 +29,6 @@
         <VInfiniteScroll
           v-if="filteredRevisions.length > 0"
           class="revisions"
-          color="primary-lighten-4"
           mode="manual"
           @load="loadMore"
         >
@@ -42,21 +40,22 @@
             />
           </VList>
           <template #load-more="{ props: scrollProps }">
-            <VBtn v-if="!areAllItemsFetched" v-bind="scrollProps" variant="tonal">
-              Load more
-            </VBtn>
+            <VBtn
+              v-if="!areAllItemsFetched"
+              :text="'Load more'"
+              v-bind="scrollProps"
+              variant="tonal"
+            />
           </template>
         </VInfiniteScroll>
         <VAlert
           v-else-if="!isFetching && filteredRevisions.length === 0"
+          :text="typeFilter ? 'No changes match this filter.' : 'No changes recorded!'"
           class="mt-8"
-          color="primary-lighten-4"
           icon="mdi-history"
           variant="tonal"
           prominent
-        >
-          {{ typeFilter ? 'No changes match this filter.' : 'No changes recorded!' }}
-        </VAlert>
+        />
       </VContainer>
     </VMain>
   </div>

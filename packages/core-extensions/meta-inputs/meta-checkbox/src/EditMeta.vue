@@ -5,7 +5,6 @@
     </div>
     <VCheckbox
       v-model="input"
-      :color="`primary-${dark ? 'lighten-4' : 'darken-1'}`"
       :label="meta.description"
       :name="meta.key"
       :readonly="readonly"
@@ -24,11 +23,10 @@ interface Meta extends Metadata {
 }
 interface Props {
   meta: Meta;
-  dark?: boolean;
   readonly?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), { dark: false, readonly: false });
+const props = withDefaults(defineProps<Props>(), { readonly: false });
 defineEmits(['update']);
 
 const input = ref(props.meta.value);

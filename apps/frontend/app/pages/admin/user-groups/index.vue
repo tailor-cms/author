@@ -5,14 +5,11 @@
       <VBtn
         v-if="authStore.isAdmin"
         aria-label="Add user group"
-        class="px-3"
-        color="primary-darken-2"
+        prepend-icon="mdi-account-multiple-plus"
+        text="Add user group"
         variant="tonal"
         @click.stop="showGroupDialog"
-      >
-        <VIcon class="px-4">mdi-account-multiple-plus</VIcon>
-        Add user group
-      </VBtn>
+      />
     </div>
     <VRow class="filters justify-end">
       <VCol md="6">
@@ -46,10 +43,10 @@
       <template #item="{ item }">
         <tr :key="item.id" class="group-entry">
           <td class="text-no-wrap text-left">
-            <UserGroupAvatar :logo-url="item.logoUrl" />
+            <UserGroupAvatar :logo-url="item.logoUrl" size="32" />
             <NuxtLink
               :to="{ name: 'user-group', params: { userGroupId: item.id } }"
-              class="ml-6 text-primary-darken-4"
+              class="ml-6"
             >
               {{ item.name }}
             </NuxtLink>
@@ -57,7 +54,6 @@
           <td v-if="authStore.isAdmin" class="text-no-wrap text-left">
             <VBtn
               aria-label="Edit user group"
-              color="primary-darken-4"
               icon="mdi-pencil"
               size="small"
               variant="text"
@@ -67,7 +63,6 @@
               aria-label="Delete user group"
               icon="mdi-delete-outline"
               label="Delete user group"
-              color="primary-darken-4"
               size="small"
               variant="text"
               @click="remove(item)"

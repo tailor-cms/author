@@ -2,14 +2,14 @@
   <VCard
     :class="{ selected: isSelected }"
     class="search-result"
-    variant="outlined"
+    variant="flat"
+    border
     @click="$emit('toggle')"
   >
     <div class="d-flex align-start pa-3 ga-3">
       <VCheckbox
         :model-value="isSelected"
         class="flex-shrink-0 align-self-center"
-        color="primary-lighten-4"
         density="compact"
         hide-details
         @click.stop
@@ -17,7 +17,7 @@
       />
       <VAvatar
         v-if="suggestion.thumbnailUrl"
-        class="flex-shrink-0"
+        class="flex-shrink-0 mt-1"
         rounded="lg"
         size="56"
       >
@@ -33,9 +33,8 @@
       <Body :suggestion="suggestion" :color="typeColor" :icon="typeIcon" />
       <VBtn
         :href="suggestion.url"
-        color="primary-lighten-2"
         icon="mdi-open-in-new"
-        size="x-small"
+        size="small"
         target="_blank"
         variant="text"
         @click.stop
@@ -66,18 +65,9 @@ const typeColor = computed(() => TYPE_COLOR[props.suggestion.type]);
 <style lang="scss" scoped>
 .search-result {
   cursor: pointer;
-  border-color: rgba(var(--v-theme-primary-lighten-2), 0.2);
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease;
-
-  &:hover {
-    border-color: rgba(var(--v-theme-primary-lighten-2), 0.5);
-  }
 
   &.selected {
-    border-color: rgb(var(--v-theme-primary-lighten-3));
-    background: rgba(var(--v-theme-primary-lighten-3), 0.08);
+    background: rgba(var(--v-theme-surface-container-low), 0.6);
   }
 }
 </style>

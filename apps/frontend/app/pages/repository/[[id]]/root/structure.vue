@@ -1,9 +1,9 @@
 <template>
   <div class="structure-page">
     <VAppBar
-      border="b surface"
+      border="b"
       class="pr-2"
-      color="primary-darken-3"
+      color="surface-container-low"
       elevation="0"
       height="64"
       order="1"
@@ -16,8 +16,8 @@
       <VAppBarNavIcon
         v-if="smAndDown"
         aria-label="Toggle sidebar"
+        density="comfortable"
         class="mr-2"
-        color="white"
         @click="repositoryStore.updateSidebar(!repositoryStore.isSidebarOpen)"
       />
     </VAppBar>
@@ -37,12 +37,11 @@
           <VAlert
             v-else
             class="mb-5"
-            color="primary-lighten-3"
             icon="mdi-information-outline"
             variant="tonal"
             prominent
           >
-            Click on the button above in order to create your first item!
+            Click the <strong>Create</strong> button above to add your first item.
           </VAlert>
         </div>
         <template v-else>
@@ -70,7 +69,6 @@
             </Draggable>
             <div v-else class="my-5">
               <VAlert
-                color="primary-lighten-3"
                 icon="mdi-information-outline"
                 variant="tonal"
                 prominent
@@ -94,13 +92,11 @@
               <VAlert
                 v-if="!filteredActivities.length"
                 class="mb-5"
-                color="primary-lighten-2"
                 icon="mdi-magnify"
+                text="No matches found!"
                 variant="tonal"
                 prominent
-              >
-                No matches found!
-              </VAlert>
+              />
             </div>
           </template>
         </template>

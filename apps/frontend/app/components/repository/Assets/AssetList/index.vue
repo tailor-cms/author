@@ -1,6 +1,6 @@
 <template>
   <div v-if="isFetching && !assets.length" class="d-flex justify-center py-16">
-    <VProgressCircular color="primary-lighten-3" indeterminate />
+    <VProgressCircular indeterminate />
   </div>
   <VDataIterator
     v-else-if="assets.length"
@@ -24,39 +24,24 @@
       />
     </template>
     <template #footer>
-      <div v-if="pageCount > 1" class="d-flex align-center justify-center pa-4">
-        <VPagination
-          :model-value="props.page"
-          :length="pageCount"
-          :total-visible="7"
-          active-color="primary-lighten-4"
-          color="primary-lighten-3"
-          density="comfortable"
-          rounded
-          @update:model-value="emit('update:page', $event)"
-        />
-      </div>
+      <VPagination
+        v-if="pageCount > 1"
+        :model-value="props.page"
+        :length="pageCount"
+        :total-visible="7"
+        density="comfortable"
+        rounded
+        @update:model-value="emit('update:page', $event)"
+      />
     </template>
   </VDataIterator>
-  <div
+  <VEmptyState
     v-if="!assets.length && !isFetching"
-    class="empty-state d-flex flex-column align-center py-16"
-  >
-    <VIcon color="primary-lighten-2" icon="mdi-folder-open-outline" size="64" />
-    <div class="mt-4 text-body-large text-primary-lighten-3">
-      {{
-        selectedCategory !== CATEGORY_ALL
-          ? 'No assets match the selected filter.'
-          : 'No assets uploaded yet.'
-      }}
-    </div>
-    <div
-      v-if="selectedCategory === CATEGORY_ALL"
-      class="text-body-small text-primary-lighten-2 mt-1"
-    >
-      Upload files, add links, or use Discover.
-    </div>
-  </div>
+    class="py-16 empty-state"
+    icon="mdi-folder-multiple-image"
+    :text="emptyStateText"
+    :title="emptyStateTitle"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -74,6 +59,7 @@ const props = defineProps<{
   itemsPerPage: number;
   selectedIds: Set<number>;
   selectedCategory: string;
+  search: string;
 }>();
 
 const emit = defineEmits<{
@@ -84,4 +70,15 @@ const emit = defineEmits<{
   'index': [asset: Asset];
   'delete': [asset: Asset];
 }>();
+
+const isFiltered = computed(
+  () => props.selectedCategory !== CATEGORY_ALL || Boolean(props.search.trim()),
+);
+const emptyStateTitle = computed(() => isFiltered.value
+  ? 'No assets match your search or filter.'
+  : 'No assets uploaded yet.',
+);
+const emptyStateText = computed(() =>
+  isFiltered.value ? undefined : 'Upload files, add links, or use Discover.',
+);
 </script>

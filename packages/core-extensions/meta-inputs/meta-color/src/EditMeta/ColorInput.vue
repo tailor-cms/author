@@ -28,22 +28,16 @@
         <VSpacer />
         <VBtn
           :slim="false"
-          color="primary-darken-4"
-          size="small"
+          text="Cancel"
           variant="text"
           @click="menu = false"
-        >
-          Cancel
-        </VBtn>
+        />
         <VBtn
           :slim="false"
-          color="primary-darken-3"
-          size="small"
+          text="Submit"
           variant="tonal"
           @click="submit"
-        >
-          Submit
-        </VBtn>
+        />
       </VCardActions>
     </VCard>
   </VMenu>

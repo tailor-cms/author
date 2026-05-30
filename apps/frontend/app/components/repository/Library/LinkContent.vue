@@ -8,13 +8,12 @@
     <template v-if="showActivator" #activator="{ props: dialogProps }">
       <VBtn
         v-bind="dialogProps"
-        color="teal-lighten-3"
+        color="secondary"
         prepend-icon="mdi-link-variant"
-        variant="tonal"
         size="small"
-      >
-        Link Existing
-      </VBtn>
+        text="Link Existing"
+        variant="tonal"
+      />
     </template>
     <template #header>Link existing content</template>
     <template #body>
@@ -47,22 +46,21 @@
     <template #actions>
       <VBtn
         :disabled="isLinking"
-        color="primary-darken-4"
+        :slim="false"
+
+        text="Cancel"
         variant="text"
         @click="close"
-      >
-        Cancel
-      </VBtn>
+      />
       <VBtn
         :disabled="!selectedActivities.length || isLinking"
         :loading="isLinking"
+        :slim="false"
+        :text="linkBtnLabel"
         class="ml-2"
-        color="primary-darken-2"
         variant="tonal"
         @click="linkSelection"
-      >
-        {{ linkBtnLabel }}
-      </VBtn>
+      />
     </template>
   </TailorDialog>
 </template>

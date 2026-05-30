@@ -2,29 +2,24 @@
   <NuxtLayout name="auth" title="Sign in">
     <VAlert
       v-if="errorMessage"
+      :text="errorMessage"
       class="mb-7 text-left"
-      color="pink-lighten-4"
+      type="error"
       density="compact"
       variant="tonal"
       closable
-    >
-      {{ errorMessage }}
-    </VAlert>
+    />
     <div v-if="config.props.oidcEnabled">
       <VBtn
-        color="blue-lighten-4"
+        :prepend-icon="config.oidcLoginText.includes('Google') ? 'mdi-google' : ''"
+        :text="config.oidcLoginText"
         data-testid="auth_oidcLoginBtn"
         size="large"
         variant="tonal"
         block
         rounded
         @click="loginOIDC"
-      >
-        <VIcon v-if="config.oidcLoginText.includes('Google')" start>
-          mdi-google
-        </VIcon>
-        {{ config.oidcLoginText }}
-      </VBtn>
+      />
       <VDivider class="my-10" />
     </div>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
@@ -54,16 +49,14 @@
         variant="outlined"
       />
       <VBtn
-        class="mt-3"
-        color="teal-lighten-3"
+        color="secondary"
         size="large"
+        text="Sign in"
         variant="tonal"
         block
         rounded
         @click="signIn"
-      >
-        Sign in
-      </VBtn>
+      />
       <div class="options">
         <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       </div>

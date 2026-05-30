@@ -2,9 +2,9 @@
   <div class="workflow-page h-100">
     <VAppBar
       v-if="workflow"
-      border="b surface"
+      border="b"
       class="pr-3"
-      color="primary-darken-3"
+      color="surface-container-low"
       elevation="0"
       height="64"
       order="1"

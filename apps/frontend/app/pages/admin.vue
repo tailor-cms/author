@@ -1,23 +1,22 @@
 <template>
   <NuxtLayout name="main">
-    <VContainer class="h-100 pt-14" max-width="1400">
-      <VSheet class="pa-5" color="primary-lighten-4" rounded="lg">
+    <VSheet
+      class="h-100 mx-3 overflow-auto"
+      color="surface-container-low"
+      rounded="t-xl"
+      border
+    >
+      <VContainer class="pt-14" max-width="1400">
         <VRow>
           <VCol cols="12" md="3">
             <AdminSidebar />
           </VCol>
           <VCol cols="12" md="9">
-            <VSheet
-              class="h-100"
-              color="primary-lighten-5"
-              rounded="lg"
-            >
-              <NuxtPage />
-            </VSheet>
+            <NuxtPage />
           </VCol>
         </VRow>
-      </VSheet>
-    </VContainer>
+      </VContainer>
+    </VSheet>
   </NuxtLayout>
 </template>
 

@@ -25,13 +25,8 @@
       type="file"
       @change="validateAndUpload($event.target as HTMLInputElement)"
     />
-    <VBtn
-      v-if="fileInput"
-      :loading="uploading"
-      color="grey-darken-4"
-      @click="fileInput.click()"
-    >
-      <VIcon color="secondary" icon="mdi-cloud-upload-outline" start />
+    <VBtn v-if="fileInput" :loading="uploading" @click="fileInput.click()">
+      <VIcon color="tertiary" icon="mdi-cloud-upload-outline" start />
       {{ props.label }}
     </VBtn>
   </template>

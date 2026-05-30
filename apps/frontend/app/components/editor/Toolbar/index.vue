@@ -1,7 +1,7 @@
 <template>
   <VAppBar
     :color="toolbarColor"
-    border="b surface"
+    border="b"
     class="toolbar-wrapper"
     order="1"
   >
@@ -10,65 +10,54 @@
       <VDivider class="rail-divider mx-2" vertical />
       <h1
         v-if="mdAndUp"
-        class="activity-title align-center d-flex text-body-large text-truncate"
+        class="activity-title text-body-large text-truncate"
       >
-        <span class="text-primary-lighten-3 font-weight-medium">
-          {{ config.label }}
-        </span>
+        <span class="font-weight-medium">{{ config.label }}</span>
         <span class="title-separator">/</span>
         <VIcon
           v-if="activity?.isLinkedCopy"
           v-tooltip:bottom="'Linked from another repository'"
           class="link-icon mr-1"
-          color="lime-lighten-2"
-          size="small"
+          color="highlight"
           icon="mdi-link-box"
+          size="small"
         />
         <ActivityName
           :activity="activity"
           :class="[
             'activity-name font-weight-medium',
-            activity?.isLinkedCopy ? 'text-lime-lighten-2' : 'text-secondary-lighten-3',
+            activity?.isLinkedCopy ? 'text-highlight' : 'text-tertiary',
           ]"
         />
         <template v-if="showPublishDiff">
           <span class="title-separator">·</span>
-          <span class="text-grey-lighten-1 text-body-small">
-            comparing with published
-          </span>
+          <span class="text-body-small">comparing with published</span>
           <VChip
             v-if="activity.publishedAt"
+            :text="formatDate(activity.publishedAt, 'MM/dd/yy HH:mm')"
             class="ml-2"
-            color="primary-lighten-4"
-            text-color="grey-darken-4"
             size="x-small"
             label
-          >
-            {{ formatDate(activity.publishedAt, 'MM/dd/yy HH:mm') }}
-          </VChip>
+          />
         </template>
       </h1>
       <div class="toolbar-trailing d-flex align-center ga-2">
         <template v-if="activity?.isLinkedCopy">
           <VBtn
             :disabled="!source"
-            color="white"
             prepend-icon="mdi-open-in-new"
             size="small"
+            text="View source"
             variant="tonal"
             @click="source && viewSource(source)"
-          >
-            View source
-          </VBtn>
+          />
           <VBtn
-            color="white"
             prepend-icon="mdi-link-variant-off"
             size="small"
+            text="Unlink"
             variant="tonal"
             @click="activity && unlinkActivity(activity.id)"
-          >
-            Unlink
-          </VBtn>
+          />
         </template>
         <ActiveUsersGroup
           v-if="!showPublishDiff && usersWithActivity.length"
@@ -77,7 +66,7 @@
         />
         <VAppBarNavIcon
           v-if="mdAndDown && !!editorStore.guidelines"
-          color="lime"
+          color="highlight"
           variant="tonal"
           icon="mdi-format-list-checks"
           size="small"
@@ -136,7 +125,7 @@ const config = computed(
 
 const toolbarColor = computed(() => {
   if (props.element) return 'white';
-  return showPublishDiff.value ? '#1e282c' : 'transparent';
+  return showPublishDiff.value ? 'surface-container-lowest' : 'surface-container-low';
 });
 
 // Source info for linked activities
@@ -216,11 +205,12 @@ const usersWithActivity = computed(() => {
 }
 
 .activity-title {
+  display: flex;
+  align-items: center;
   flex: 1 1 auto;
   min-width: 0;
   margin: 0;
   padding: 0 0.5rem;
-  color: #fff;
   text-align: left;
   letter-spacing: 0.01em;
   white-space: nowrap;
@@ -234,7 +224,6 @@ const usersWithActivity = computed(() => {
 
 .title-separator {
   margin: 0 0.5rem;
-  color: rgba(255, 255, 255, 0.32);
 }
 
 .toolbar-trailing {
@@ -244,7 +233,6 @@ const usersWithActivity = computed(() => {
 
 .rail-divider {
   height: 1.5rem;
-  border-color: rgba(255, 255, 255, 0.12);
   align-self: center;
 }
 </style>

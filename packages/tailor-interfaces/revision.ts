@@ -24,6 +24,7 @@ interface User {
   fullName: null | string;
   lastName: null | string;
   label: string;
+  imgUrl: string;
 }
 
 export interface Revision {

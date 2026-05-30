@@ -1,8 +1,8 @@
 <template>
-  <VSheet class="rounded-b-lg" color="primary-darken-2" min-height="300">
+  <VSheet class="rounded-b-lg" color="surface-container" min-height="300">
     <VRow class="ma-0 pa-6">
       <VCol cols="12" md="8" sm="7">
-        <VSheet v-if="selectedRevision" color="primary-lighten-5" rounded="lg">
+        <VSheet v-if="selectedRevision" rounded="lg" theme="light">
           <ContentElementWrapper
             :element="selectedRevision?.state as unknown as ContentElement"
             is-disabled

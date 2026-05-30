@@ -4,14 +4,13 @@
       <VBtn
         v-bind="props"
         aria-label="Add user"
-        class="add-user text-none"
-        color="teal-lighten-3"
+        class="add-user"
+        color="secondary"
         prepend-icon="mdi-plus"
+        text="Add user"
         variant="tonal"
         size="small"
-      >
-        Add user
-      </VBtn>
+      />
     </template>
     <template #header>Add user</template>
     <template #body>
@@ -42,20 +41,16 @@
           <VBtn
             :disabled="isSaving"
             class="mr-2"
-            color="primary-darken-4"
+            text="Cancel"
             variant="text"
             @click="close"
-          >
-            Cancel
-          </VBtn>
+          />
           <VBtn
             :disabled="isSaving"
-            color="primary-darken-4"
+            text="Add"
             type="submit"
             variant="tonal"
-          >
-            Add
-          </VBtn>
+          />
         </div>
       </form>
     </template>

@@ -2,56 +2,55 @@
   <VNavigationDrawer
     width="380"
     class="sidebar"
-    color="primary-darken-2"
+    color="surface-container"
     elevation="0"
     location="right"
-    border="l surface"
+    border="l"
     mobile-breakpoint="lg"
   >
     <div class="sidebar-container pa-4">
-      <div class="text-body-medium font-weight-bold text-primary-lighten-4 mt-2 mb-4">
+      <div class="text-body-medium font-weight-bold mt-2 mb-4">
         High Engagement at Scale
       </div>
       <VList>
         <VListItem
-          v-for="(it) in guidelines"
+          v-for="it in guidelines"
           :key="it.id"
           :subtitle="it.description"
           :title="it.title"
-          class="pa-4"
-          variant="tonal"
-          rounded
+          class="pa-4 bg-surface-container-high"
+          rounded="lg"
         >
           <template #prepend>
             <VBadge
-              color="lime-accent-4"
+              color="highlight"
               icon="mdi-check-bold"
               :model-value="progress[it.id]"
             >
-              <VAvatar variant="tonal">
-                <VIcon>{{ it.icon }}</VIcon>
-              </VAvatar>
+              <VAvatar :icon="it.icon" variant="tonal" />
             </VBadge>
           </template>
           <VDivider class="my-3" />
           <div class="d-flex flex-wrap ga-1">
             <template v-for="(metric, key) in it.metric" :key="key">
-              <VChip v-if="metric" size="small" rounded="pill" pill>
+              <div
+                v-if="metric"
+                class="d-flex align-center text-label-medium text-high-emphasis"
+              >
                 <VAvatar
-                  class="font-weight-bold"
-                  :color="progress[it.id] ? 'lime-accent-4' : 'white'"
+                  class="font-weight-bold mr-2"
+                  :color="progress[it.id] ? 'highlight' : 'inverse-surface'"
+                  :text="`+${metric}`"
                   variant="tonal"
-                  start
-                >
-                  +{{ metric }}
-                </VAvatar>
+                  size="x-small"
+                />
                 {{ startCase(key) }}
-              </VChip>
+              </div>
             </template>
           </div>
         </VListItem>
       </VList>
-      <RadarChart :data="chartData" :max="4" :min="0" dark />
+      <RadarChart :data="chartData" :max="4" :min="0" />
     </div>
   </VNavigationDrawer>
 </template>
@@ -64,7 +63,7 @@ const editorStore = useEditorStore();
 
 const guidelines = computed(() => editorStore.guidelines);
 const progress = computed(() => {
-  const completed = guidelines.value.reduce((acc, it) => {
+  const completed = guidelines.value?.reduce((acc, it) => {
     acc[it.id] = it.isDone();
     return acc;
   }, {});
@@ -73,7 +72,7 @@ const progress = computed(() => {
 
 const ratings = computed(() => {
   const completed = guidelines.value?.filter(
-    (it: any) => progress.value[it.id],
+    (it: any) => progress.value?.[it.id],
   );
   return {
     learnerCenteredContent: sumBy(completed, 'metric.learnerCenteredContent'),

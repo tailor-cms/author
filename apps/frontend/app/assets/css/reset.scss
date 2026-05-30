@@ -10,3 +10,12 @@
 body {
   font-family: 'Inter', sans-serif;
 }
+
+[class^="text-"], [class*=" text-"] {
+  font-family: 'Inter', sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

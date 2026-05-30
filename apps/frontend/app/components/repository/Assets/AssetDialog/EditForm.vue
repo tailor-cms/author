@@ -2,32 +2,29 @@
   <div class="d-flex align-center justify-space-between mb-4 px-1">
     <div class="d-flex align-center ga-2">
       <VIcon
-        :color="isCoreSource ? 'amber-lighten-1' : 'primary-lighten-2'"
+        :color="isCoreSource ? 'highlight' : ''"
         :icon="isCoreSource ? 'mdi-star' : 'mdi-star-outline'"
         size="20"
       />
       <span
-        :class="{ 'text-amber-lighten-1 font-weight-medium': isCoreSource }"
-        class="text-body-medium text-primary-lighten-3"
+        :class="{ 'text-highlight font-weight-medium': isCoreSource }"
+        class="text-body-medium"
       >
         Core Source
       </span>
     </div>
     <VSwitch
       v-model="isCoreSource"
-      color="amber-lighten-1"
       density="compact"
       hide-details
       inset
     />
   </div>
-  <div class="section-header text-body-small text-uppercase text-primary-lighten-2 mb-4">
+  <div class="section-header text-body-small text-uppercase mb-4">
     Edit Details
   </div>
   <VTextarea
     v-model="description"
-    color="primary-lighten-3"
-    density="comfortable"
     label="Description"
     variant="outlined"
     rows="3"
@@ -36,8 +33,6 @@
   <VCombobox
     v-model="tags"
     class="mt-3"
-    color="primary-lighten-3"
-    density="comfortable"
     label="Tags"
     variant="outlined"
     closable-chips

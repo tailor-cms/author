@@ -1,17 +1,21 @@
 <template>
-  <div class="category-filter d-flex align-center flex-wrap ga-2 mb-6">
-    <VBtn
-      v-for="it in categories"
-      :key="it.value"
-      :active="modelValue === it.value"
-      :color="modelValue === it.value ? 'blue-lighten-4' : 'primary-lighten-3'"
+  <VChipGroup
+    v-model="modelValue"
+    column
+    mandatory
+  >
+    <VChip
+      v-for="{ value, label } in categories"
+      :key="value"
+      :text="label"
+      :value="value"
+      color="secondary"
       size="small"
+      rounded="pill"
       variant="tonal"
-      @click="modelValue = it.value"
-    >
-      {{ it.label }}
-    </VBtn>
-  </div>
+      filter
+    />
+  </VChipGroup>
 </template>
 
 <script lang="ts" setup>

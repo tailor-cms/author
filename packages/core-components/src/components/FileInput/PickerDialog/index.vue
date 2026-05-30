@@ -8,31 +8,28 @@
   >
     <template #header>{{ heading }}</template>
     <template #body>
-      <div class="bg-primary-darken-3 px-5 pb-5">
+      <div class="bg-surface-container px-5 pb-5">
         <VTabs
           v-model="activeTab"
-          bg-color="primary-darken-3"
-          selected-class="bg-primary-darken-2"
+          selected-class="bg-surface-container-high"
+          color=""
           grow
           hide-slider
         >
-          <VTab value="upload" class="mr-2" color="primary-lighten-5">
-            <VIcon class="mr-2" size="small">mdi-upload</VIcon>
-            Upload
-          </VTab>
-          <VTab value="library" class="mx-2" color="primary-lighten-5">
-            <VIcon class="mr-2" size="small">mdi-folder-multiple-image</VIcon>
-            Library
-          </VTab>
+          <VTab value="upload" class="mr-2" prepend-icon="mdi-upload" text="Upload" />
+          <VTab
+            value="library"
+            class="mx-2"
+            prepend-icon="mdi-folder-multiple-image"
+            text="Library"
+          />
           <VTab
             v-if="allowUrlSource"
             value="url"
             class="ml-2"
-            color="primary-lighten-5"
-          >
-            <VIcon class="mr-2" size="small">mdi-link-variant</VIcon>
-            URL
-          </VTab>
+            prepend-icon="mdi-link-variant"
+            text="URL"
+          />
         </VTabs>
       </div>
       <VTabsWindow :key="sessionKey" v-model="activeTab">
@@ -53,28 +50,24 @@
     </template>
     <template #actions>
       <div class="px-2 pb-3">
-        <VBtn color="primary-darken-4" variant="text" @click="onClose">
-          Cancel
-        </VBtn>
+        <VBtn :slim="false" text="Cancel" variant="text" @click="onClose" />
         <VBtn
           v-if="activeTab === 'library'"
           :disabled="!hasSelection"
+          :slim="false"
+          :text="selectLabel"
           class="ml-2 px-4"
-          color="primary-darken-2"
           variant="tonal"
           @click="onAssetPick"
-        >
-          {{ selectLabel }}
-        </VBtn>
+        />
         <VBtn
           v-if="activeTab === 'url'"
+          :slim="false"
           class="ml-2"
-          color="primary-darken-2"
+          text="Submit"
           variant="tonal"
           @click="urlTabRef?.submit()"
-        >
-          Submit
-        </VBtn>
+        />
       </div>
     </template>
   </TailorDialog>

@@ -1,9 +1,9 @@
 <template>
   <VLayout class="groups-page h-100">
     <VAppBar
-      color="primary-darken-3"
       class="px-4"
-      border="b surface"
+      color="surface-container-low"
+      border="b"
       order="1"
       height="64"
       elevation="0"
@@ -32,15 +32,14 @@
         <template #activator="{ props: menuProps }">
           <VBtn
             v-bind="menuProps"
+            :text="activeSortLabel"
             append-icon="mdi-chevron-down"
             class="sort-btn mr-2"
             prepend-icon="mdi-sort-variant"
             rounded="lg"
             size="small"
             variant="tonal"
-          >
-            {{ activeSortLabel }}
-          </VBtn>
+          />
         </template>
         <VList density="compact" min-width="220" slim>
           <VListSubheader>Sort by</VListSubheader>

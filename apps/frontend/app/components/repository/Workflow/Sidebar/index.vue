@@ -3,8 +3,7 @@
     :model-value="repositoryStore.isSidebarOpen || mdAndUp"
     :width="sidebarWidth"
     class="px-4 text-left"
-    color="primary-darken-2"
-    elevation="1"
+    color="surface-container"
     location="right"
     mobile-breakpoint="md"
     absolute
@@ -15,17 +14,8 @@
       <SidebarBody :activity="activity" class="mt-9 mb-2" />
     </template>
     <div v-else class="d-flex align-center mt-16">
-      <VIcon
-        color="primary-lighten-3"
-        icon="mdi-arrow-left-circle"
-        size="x-large"
-      />
-      <VAlert
-        :text="emptyMessage"
-        class="ml-2"
-        color="primary-lighten-4"
-        variant="tonal"
-      />
+      <VIcon icon="mdi-arrow-left-circle" size="x-large" />
+      <VAlert :text="emptyMessage" class="ml-2" variant="tonal" />
     </div>
     <ActivityDiscussion
       v-if="activity"

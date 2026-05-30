@@ -5,13 +5,10 @@
         v-bind="activatorProps"
         aria-label="Add users to the group"
         class="add-user"
-        color="primary-darken-2"
         prepend-icon="mdi-plus"
-        size="small"
+        text=" Add user"
         variant="tonal"
-      >
-        Add user
-      </VBtn>
+      />
     </template>
     <template #header>Add users to the user group</template>
     <template #body>
@@ -49,7 +46,7 @@
         <VSwitch
           v-model="skipInviteInput"
           class="ml-1 mb-1"
-          color="primary-darken-3"
+          color="primary"
           label="Skip invitation email"
           hide-details
           inset
@@ -58,24 +55,19 @@
           Useful for SSO users who don't need a password setup email.
           You can always send the invite later using Reinvite.
         </div>
-        <div class="d-flex justify-end pb-2">
+        <div class="d-flex justify-end pb-2 ga-2">
           <VBtn
             :disabled="isSaving"
-            class="mr-2"
-            color="primary-darken-4"
             variant="text"
+            text="Cancel"
             @click="close"
-          >
-            Cancel
-          </VBtn>
+          />
           <VBtn
             :disabled="isSaving"
-            color="primary-darken-4"
             type="submit"
+            text="Add"
             variant="tonal"
-          >
-            Add
-          </VBtn>
+          />
         </div>
       </form>
     </template>
@@ -146,7 +138,7 @@ const onEmailValueChange = (val: string[]) =>
 
 const onEmailInputFocusChange = (isFocused: boolean) => {
   if (isFocused) return;
-  const searchValue = emailInputEl.value.search;
+  const searchValue = emailInputEl.value?.search ?? '';
   const isValidEmail = EMAIL_PATTERN.test(searchValue);
   const isEmailAlreadyAdded = emailInput.value.find(
     (v: string) => v === searchValue,

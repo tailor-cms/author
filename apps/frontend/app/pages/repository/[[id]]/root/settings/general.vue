@@ -1,9 +1,9 @@
 <template>
   <VLayout class="general-page h-100">
     <VAppBar
-      color="primary-darken-3"
       class="px-4"
-      border="b surface"
+      color="surface-container-low"
+      border="b"
       elevation="0"
       height="64"
       order="1"
@@ -11,15 +11,13 @@
       <VSpacer />
       <VBtn
         :loading="isPublishing"
-        class="text-none"
-        color="teal-lighten-3"
+        color="secondary"
         prepend-icon="mdi-cloud-upload-outline"
         size="small"
+        text="Publish info"
         variant="tonal"
         @click="publish"
-      >
-        Publish info
-      </VBtn>
+      />
     </VAppBar>
     <VMain>
       <VContainer class="pa-8 text-left" max-width="1440">

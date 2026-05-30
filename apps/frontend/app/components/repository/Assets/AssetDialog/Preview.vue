@@ -2,27 +2,30 @@
   <div class="preview-area mb-5">
     <VSheet
       v-if="isLoading"
-      class="d-flex justify-center align-center rounded-lg"
-      color="primary-darken-3"
+      class="d-flex justify-center align-center"
+      color="surface-container-low"
       height="300"
+      rounded="lg"
     >
-      <VProgressCircular color="primary-lighten-3" indeterminate />
+      <VProgressCircular indeterminate />
     </VSheet>
     <VSheet
       v-else-if="hasError"
-      class="d-flex flex-column justify-center align-center rounded-lg"
-      color="primary-darken-3"
+      class="d-flex flex-column justify-center align-center"
+      color="surface-container-low"
       height="300"
+      rounded="lg"
     >
-      <VIcon color="red-lighten-3" icon="mdi-image-broken-variant" size="36" />
-      <span class="mt-3 text-body-medium text-primary-lighten-2">
+      <VIcon color="error" icon="mdi-image-broken-variant" size="36" />
+      <span class="mt-3 text-body-medium">
         Unable to load preview
       </span>
     </VSheet>
     <VSheet
       v-else-if="isImage && previewUrl"
-      class="d-flex justify-center rounded-lg overflow-hidden"
-      color="primary-darken-3"
+      class="d-flex justify-center overflow-hidden"
+      color="surface-container-low"
+      max-height="480"
     >
       <VImg
         :src="previewUrl"
@@ -33,8 +36,9 @@
     </VSheet>
     <VSheet
       v-else-if="videoEmbedUrl"
-      class="rounded-lg overflow-hidden"
-      color="primary-darken-3"
+      class="overflow-hidden"
+      color="surface-container-low"
+      rounded="lg"
     >
       <iframe
         :src="videoEmbedUrl"
@@ -46,8 +50,9 @@
     </VSheet>
     <VSheet
       v-else-if="isLink && linkThumbnail"
-      class="rounded-lg overflow-hidden"
-      color="primary-darken-3"
+      class="overflow-hidden"
+      color="surface-container-low"
+      rounded="lg"
     >
       <VImg
         :src="linkThumbnail"
@@ -58,24 +63,22 @@
     </VSheet>
     <VSheet
       v-else
-      class="d-flex flex-column justify-center align-center rounded-lg"
-      color="primary-darken-3"
+      class="d-flex flex-column justify-center align-center"
+      color="surface-container-low"
       height="160"
+      rounded="lg"
     >
       <VIcon :color="`${assetColor}-lighten-3`" :icon="assetIcon" size="48" />
       <VBtn
         v-if="previewUrl"
         :href="previewUrl"
-        class="mt-3"
-        color="primary-lighten-3"
+        class="mt-4"
         prepend-icon="mdi-open-in-new"
-        size="small"
         target="_blank"
+        text="Open in new tab"
         variant="tonal"
-      >
-        Open in new tab
-      </VBtn>
-      <span v-else class="text-body-small text-primary-lighten-2 mt-3">
+      />
+      <span v-else class="text-body-large mt-3">
         No preview available
       </span>
     </VSheet>

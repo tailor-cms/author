@@ -1,27 +1,16 @@
 <template>
-  <VSheet
-    class="admin-sidebar overflow-hidden"
-    color="primary-lighten-4"
-    rounded="lg"
-  >
-    <VList bg-color="transparent" class="text-left">
+  <div class="admin-sidebar overflow-hidden">
+    <VList bg-color="transparent" class="text-left" nav>
       <VListItem
-        v-for="{ name, label, icon, query } in routes"
+        v-for="{ name, label, subtitle, icon, query } in routes"
         :key="name"
+        :prepend-icon="`mdi-${icon}`"
+        :subtitle="subtitle"
+        :title="label"
         :to="{ name, query }"
-        active-class="bg-primary-lighten-4 text-primary-darken-4"
-        class="mb-2 pa-4"
-        rounded="lg"
-      >
-        <template #prepend>
-          <VIcon>mdi-{{ icon }}</VIcon>
-        </template>
-        <VListItemTitle>
-          {{ label }}
-        </VListItemTitle>
-      </VListItem>
+      />
     </VList>
-  </VSheet>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -32,17 +21,25 @@ const routes = computed(() => {
   return [
     authStore.isAdmin && {
       label: 'System Users',
+      subtitle: 'Manage user accounts and roles',
       name: 'system-user-management',
       icon: 'account',
     },
-    { label: 'User Groups', name: 'user-groups', icon: 'account-group' },
+    {
+      label: 'User Groups',
+      subtitle: 'Manage user groups and members',
+      name: 'user-groups',
+      icon: 'account-group',
+    },
     authStore.isAdmin && {
       label: 'Structure Types',
+      subtitle: 'Browse installed repository schemas',
       name: 'installed-schemas',
       icon: 'file-tree',
     },
     authStore.isAdmin && {
       label: 'Installed Elements',
+      subtitle: 'Browse available content elements',
       name: 'installed-elements',
       icon: 'puzzle',
     },

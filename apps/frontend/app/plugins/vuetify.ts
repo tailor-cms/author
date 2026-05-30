@@ -6,66 +6,225 @@ import { mdi } from 'vuetify/iconsets/mdi';
 import type { ThemeDefinition } from 'vuetify';
 
 import outlineIconset from '~/components/repository/Outline/icons/iconset';
+import { colorMode } from '~/composables/useColorMode';
 
-const defaultTheme: ThemeDefinition = {
+const lightTheme: ThemeDefinition = {
   dark: false,
   colors: {
+    // Surfaces
+    'surface': '#FAFBFC',
+    'on-surface': '#37474F',
+    'surface-variant': '#D0D9DD',
+    'on-surface-variant': '#455A64',
+
+    'surface-container-highest': '#D7DEE2',
+    'on-surface-container-highest': '#37474F',
+    'surface-container-high': '#DCE2E5',
+    'on-surface-container-high': '#37474F',
+    'surface-container': '#E7EBEE',
+    'on-surface-container': '#37474F',
+    'surface-container-low': '#F2F5F7',
+    'on-surface-container-low': '#37474F',
+    'surface-container-lowest': '#FFFFFF',
+    'on-surface-container-lowest': '#37474F',
+
+    // Surface add-ons
+    'background': '#FAFBFC',
+    'on-background': '#37474F',
+    'surface-bright': '#FAFBFC',
+    'surface-dim': '#C7CFD3',
+
+    // Primary
     'primary': '#607D8B',
-    'primary-darken-1': '#546E7A',
-    'primary-darken-2': '#455A64',
-    'primary-darken-3': '#37474F',
-    'primary-darken-4': '#263238',
-    'primary-lighten-1': '#78909C',
-    'primary-lighten-2': '#90A4AE',
-    'primary-lighten-3': '#B0BEC5',
-    'primary-lighten-4': '#CFD8DC',
-    'primary-lighten-5': '#ECEFF1',
-    'secondary': '#E91E63',
-    'secondary-darken-1': '#D81B60',
-    'secondary-darken-2': '#C2185B',
-    'secondary-darken-3': '#AD1457',
-    'secondary-darken-4': '#880E4F',
-    'secondary-lighten-1': '#EC407A',
-    'secondary-lighten-2': '#F06292',
-    'secondary-lighten-3': '#F48FB1',
-    'secondary-lighten-4': '#F8BBD0',
-    'secondary-lighten-5': '#FCE4EC',
-    'success': '#4CAF50',
-    'success-darken-1': '#43A047',
-    'success-darken-2': '#2E7D32',
-    'success-darken-3': '#2E7D32',
-    'success-darken-4': '#1B5E20',
-    'success-lighten-1': '#66BB6A',
-    'success-lighten-2': '#81C784',
-    'success-lighten-3': '#A5D6A7',
-    'success-lighten-4': '#C8E6C9',
-    'success-lighten-5': '#E8F5E9',
+    'on-primary': '#FFFFFF',
+    'primary-container': '#E3EBEF',
+    'on-primary-container': '#263238',
+
+    // Secondary (teal — harmonic complement to blue-grey primary)
+    'secondary': '#00897B',
+    'on-secondary': '#FFFFFF',
+    'secondary-container': '#B2DFDB',
+    'on-secondary-container': '#004D40',
+
+    // Tertiary (pink — contrasting accent)
+    'tertiary': '#C2185B',
+    'on-tertiary': '#FFFFFF',
+    'tertiary-container': '#FCE4EC',
+    'on-tertiary-container': '#5C0030',
+
+    // Highlight — semantic state color (linked, pinned, recent indicators)
+    'highlight': '#AFB42B',
+    'on-highlight': '#1A1F00',
+    'highlight-container': '#F0F4C3',
+    'on-highlight-container': '#33370B',
+
+    // Source — content reuse / lineage indicator (purple)
+    'source': '#8E24AA',
+    'on-source': '#FFFFFF',
+    'source-container': '#F3E5F5',
+    'on-source-container': '#38006B',
+
+    // Warning (amber)
+    'warning': '#F57C00',
+    'on-warning': '#FFFFFF',
+    'warning-container': '#FFE0B2',
+    'on-warning-container': '#4A2800',
+
+    // Error (red)
+    'error': '#BA1A1A',
+    'on-error': '#FFFFFF',
+    'error-container': '#FFDAD6',
+    'on-error-container': '#410002',
+
+    // Success (green)
+    'success': '#2E7D32',
+    'on-success': '#FFFFFF',
+    'success-container': '#C8E6C9',
+    'on-success-container': '#0A3D0E',
+
+    // Info (blue)
+    'info': '#0277BD',
+    'on-info': '#FFFFFF',
+    'info-container': '#B3E5FC',
+    'on-info-container': '#013A57',
+
+    // Outline
+    'outline': '#6E7B82',
+    'outline-variant': '#C7CFD3',
+
+    // Inverse
+    'inverse-surface': '#263238',
+    'inverse-on-surface': '#ECEFF1',
+    'inverse-primary': '#90A4AE',
   },
 };
 
-export default defineNuxtPlugin((nuxt) => {
-  const vuetify = createVuetify({
-    blueprint: md3,
-    components,
-    directives,
-    theme: {
-      defaultTheme: 'default',
-      themes: {
-        default: defaultTheme,
+const darkTheme: ThemeDefinition = {
+  dark: true,
+  colors: {
+    // Surfaces
+    'surface': '#263238',
+    'on-surface': '#E4EAEC',
+    'surface-variant': '#313F47',
+    'on-surface-variant': '#B0BEC5',
+
+    'surface-container-highest': '#607D8B',
+    'on-surface-container-highest': '#E4EAEC',
+    'surface-container-high': '#546E7A',
+    'on-surface-container-high': '#E4EAEC',
+    'surface-container': '#455A64',
+    'on-surface-container': '#E4EAEC',
+    'surface-container-low': '#37474F',
+    'on-surface-container-low': '#E4EAEC',
+    'surface-container-lowest': '#1B262B',
+    'on-surface-container-lowest': '#E4EAEC',
+
+    // Surface add-ons
+    'background': '#263238',
+    'on-background': '#E4EAEC',
+    'surface-bright': '#78909C',
+    'surface-dim': '#1F2A30',
+
+    // Primary
+    'primary': '#90A4AE',
+    'on-primary': '#263238',
+    'primary-container': '#4F6873',
+    'on-primary-container': '#D9E3E8',
+
+    // Secondary (teal — harmonic complement to blue-grey primary)
+    'secondary': '#4DB6AC',
+    'on-secondary': '#003B33',
+    'secondary-container': '#00695C',
+    'on-secondary-container': '#B2DFDB',
+
+    // Tertiary (pink — contrasting accent)
+    'tertiary': '#F48FB1',
+    'on-tertiary': '#880E4F',
+    'tertiary-container': '#5C1B3D',
+    'on-tertiary-container': '#FCE4EC',
+
+    // Highlight — semantic state color (linked, pinned, recent indicators)
+    'highlight': '#D4E157',
+    'on-highlight': '#1A1F00',
+    'highlight-container': '#558B2F',
+    'on-highlight-container': '#F0F4C3',
+
+    // Source — content reuse / lineage indicator (purple)
+    'source': '#CE93D8',
+    'on-source': '#3B0764',
+    'source-container': '#4A148C',
+    'on-source-container': '#F3E5F5',
+
+    // Warning (amber)
+    'warning': '#FFB74D',
+    'on-warning': '#4A2800',
+    'warning-container': '#B45309',
+    'on-warning-container': '#FFE0B2',
+
+    // Error (red)
+    'error': '#EF9A9A',
+    'on-error': '#690005',
+    'error-container': '#93000A',
+    'on-error-container': '#FFCDD2',
+
+    // Success (green)
+    'success': '#81C784',
+    'on-success': '#0A3D0E',
+    'success-container': '#2E7D32',
+    'on-success-container': '#C8E6C9',
+
+    // Info (blue)
+    'info': '#4FC3F7',
+    'on-info': '#013A57',
+    'info-container': '#0277BD',
+    'on-info-container': '#B3E5FC',
+
+    // Outline
+    'outline': '#78909C',
+    'outline-variant': '#3F525B',
+
+    // Inverse
+    'inverse-surface': '#ECEFF1',
+    'inverse-on-surface': '#263238',
+    'inverse-primary': '#607D8B',
+  },
+  variables: {
+    'medium-emphasis-opacity': 0.7,
+  },
+};
+
+export default defineNuxtPlugin({
+  name: 'vuetify',
+  setup(nuxt) {
+    const defaultTheme = colorMode.value;
+
+    const vuetify = createVuetify({
+      blueprint: md3,
+      components,
+      directives,
+      defaults: {
+        VBtn: { color: undefined },
       },
-    },
-    icons: {
-      defaultSet: 'mdi',
-      sets: {
-        mdi,
-        add: outlineIconset,
+      theme: {
+        defaultTheme,
+        themes: {
+          light: lightTheme,
+          dark: darkTheme,
+        },
       },
-    },
-    display: {
-      thresholds: {
-        lg: 1440,
+      icons: {
+        defaultSet: 'mdi',
+        sets: {
+          mdi,
+          add: outlineIconset,
+        },
       },
-    },
-  });
-  nuxt.vueApp.use(vuetify);
+      display: {
+        thresholds: {
+          lg: 1440,
+        },
+      },
+    });
+    nuxt.vueApp.use(vuetify);
+  },
 });

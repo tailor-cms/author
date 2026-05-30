@@ -98,33 +98,3 @@ const updateStatus = async (key: string, value: any = null) => {
   return notify('Status saved', { immediate: true });
 };
 </script>
-
-<style lang="scss" scoped>
-:deep(.v-input) {
-  $error-color: rgb(var(--v-theme-secondary-lighten-4));
-
-  .v-messages__message,
-  .v-field__outline,
-  .v-field-label,
-  input::placeholder,
-  textarea::placeholder {
-    color: rgb(var(--v-theme-primary-lighten-5));
-    opacity: 1;
-  }
-
-  &.v-input--error {
-    .v-messages__message,
-    .v-field__outline,
-    .v-field-label,
-    input::placeholder,
-    textarea::placeholder {
-      color: $error-color;
-    }
-  }
-}
-
-.v-select :deep(.v-select__menu-icon) {
-  color: rgb(var(--v-theme-primary-lighten-5));
-  opacity: 1;
-}
-</style>

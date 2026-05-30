@@ -1,30 +1,28 @@
 <template>
   <VCard class="linked-indicator d-flex align-center mb-1 pa-2" variant="tonal">
-    <VTooltip location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <span v-bind="tooltipProps" class="linked-status d-flex align-center">
-          <VIcon color="lime" icon="mdi-link-box" size="small" start />
-          <span class="text-body-medium text-uppercase font-weight-bold">
-            {{ isEntryPoint ? 'Linked' : 'Linked via parent' }}
-          </span>
-        </span>
+    <VChip
+      v-tooltip:bottom="{
+        text: isEntryPoint
+          ? 'Linked content'
+          : `Part of linked hierarchy via '${linkedParentName}'`,
+        openDelay: 500,
+      }"
+      :text="isEntryPoint ? 'Linked' : 'Linked via parent'"
+      density="compact"
+      class="linked-status text-uppercase font-weight-bold pl-2 pr-0"
+      variant="text"
+    >
+      <template #prepend>
+        <VIcon color="highlight" icon="mdi-link-box" start />
       </template>
-      <template v-if="isEntryPoint">Linked content</template>
-      <template v-else>
-        Part of linked hierarchy via "{{ linkedParentName }}"
-      </template>
-    </VTooltip>
-    <VTooltip v-if="isEntryPoint && sourceLabel" location="bottom">
-      <template #activator="{ props: tooltipProps }">
-        <span
-          v-bind="tooltipProps"
-          class="source-name pl-2 text-body-medium text-truncate"
-        >
-          {{ sourceLabel }}
-        </span>
-      </template>
+    </VChip>
+    <span
+      v-if="isEntryPoint && sourceLabel"
+      v-tooltip:bottom="{ text: sourceLabel, openDelay: 500 }"
+      class="source-name pl-2 text-body-medium text-truncate"
+    >
       {{ sourceLabel }}
-    </VTooltip>
+    </span>
     <VSpacer />
     <ActionsMenu
       :is-entry-point="isEntryPoint"

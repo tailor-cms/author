@@ -29,14 +29,12 @@
         />
         <VAlert
           v-if="!metadata"
-          class="my-3"
-          color="primary-darken-3"
-          icon="mdi-information"
+          :text="'Please select the item type you want to add to edit its properties'"
+          class="mb-3"
+          density="comfortable"
+          icon="mdi-information-outline"
           variant="tonal"
-          prominent
-        >
-          Please select the item type you want to add to edit its properties
-        </VAlert>
+        />
         <MetaInput
           v-for="input in metadata"
           :key="input.key"
@@ -47,34 +45,27 @@
         />
         <VAlert
           v-if="showI18nHint"
+          :text="'Items are created in the default language'"
           class="mb-3"
-          color="primary-darken-1"
           icon="mdi-information-outline"
           variant="tonal"
-          density="compact"
-        >
-          Items are created in the default language
-        </VAlert>
+        />
         <VSpacer />
         <div class="d-flex justify-end pt-5 pb-3">
           <VBtn
             class="mr-2 px-4"
-            color="primary-darken-4"
+            text="Cancel"
             variant="text"
             @click="visible = false"
-          >
-            Cancel
-          </VBtn>
+          />
           <VBtn
             :disabled="submitting"
             :loading="submitting"
-            color="primary-darken-2"
+            text="Create"
             type="submit"
             variant="tonal"
             @click="submitForm"
-          >
-            Create
-          </VBtn>
+          />
         </div>
       </form>
     </template>

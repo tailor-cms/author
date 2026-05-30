@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="d-flex align-center mb-4">
-      <div class="text-primary-lighten-4 text-title-medium">Assessments</div>
+      <div class="text-title-medium">Assessments</div>
       <VSpacer />
       <div v-if="!isAiGeneratingContent" class="pb-1 d-flex ga-2">
         <VBtn
           v-if="isAiEnabled && !disabled"
-          color="primary-lighten-4"
+          color="secondary"
           size="small"
           variant="tonal"
           text="Generate questions"
@@ -19,7 +19,6 @@
           width="74"
           variant="tonal"
           size="small"
-          color="primary-lighten-3"
           rounded="lg"
           @click="toggleAssessments"
         />
@@ -27,28 +26,23 @@
     </div>
     <VAlert
       v-if="!hasAssessments && !isAiGeneratingContent"
-      color="primary-lighten-3"
+      :text="disabled
+        ? 'Empty assessment pool'
+        : 'Click the button below to create first Assessment.'"
       icon="mdi-information-outline"
       variant="tonal"
       prominent
-    >
-      {{
-        disabled
-          ? 'Empty assessment pool'
-          : 'Click the button below to create first Assessment.'
-      }}
-    </VAlert>
+    />
     <VSheet
       v-else-if="isAiGeneratingContent"
-      color="primary-darken-4"
-      class="py-16 text-title-small rounded-lg"
+      color="surface-container"
+      class="py-16 text-title-small"
+      rounded="lg"
     >
       <CircularProgress />
-      <div class="pt-3 text-primary-lighten-4 font-weight-bold">
-        <span>Content generation in progress...</span>
-      </div>
+      <div class="pt-3 font-weight-bold">Content generation in progress...</div>
     </VSheet>
-    <div v-else class="d-flex flex-column ga-2 mb-11">
+    <div v-else class="d-flex flex-column ga-2">
       <AssessmentItem
         v-for="it in assessments"
         :key="it.uid"
@@ -68,7 +62,7 @@
       :items="assessments"
       :layout="false"
       :position="assessments.length"
-      color="teal-accent-1"
+      color="secondary"
       label="Add assessment"
       variant="tonal"
       large

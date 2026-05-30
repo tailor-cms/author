@@ -1,10 +1,8 @@
 <template>
   <VDialog v-model="isOpen" :max-width="isImage ? 900 : 720" scrollable>
-    <VCard v-if="asset" color="primary-darken-4">
-      <VToolbar color="primary-darken-3" density="comfortable">
-        <VToolbarTitle
-          class="ml-4 text-body-large font-weight-medium text-primary-lighten-4"
-        >
+    <VCard v-if="asset">
+      <VToolbar color="surface-container-low">
+        <VToolbarTitle class="ml-4 text-body-large font-weight-medium">
           <VIcon
             :color="`${typeColor}-lighten-3`"
             :icon="typeIcon"
@@ -16,7 +14,7 @@
           <MetaInspector :asset="asset" />
           <VBtn
             aria-label="Close"
-            class="mr-1 text-primary-lighten-4"
+            class="mr-1"
             icon="mdi-close"
             @click="emit('close')"
           />
@@ -35,46 +33,39 @@
       <VDivider />
       <VCardActions class="ga-2 pa-4">
         <VBtn
-          color="secondary-lighten-3"
+          :slim="false"
+          color="tertiary"
           prepend-icon="mdi-delete-outline"
-          size="small"
+          text="Delete"
           variant="tonal"
           @click="emit('delete', asset)"
-        >
-          Delete
-        </VBtn>
+        />
         <VSpacer />
         <VBtn
           v-if="canDeindex"
-          color="primary-lighten-3"
+          :slim="false"
           prepend-icon="mdi-text-search-variant"
-          size="small"
+          text="De-index"
           variant="text"
           @click="emit('deindex', asset)"
-        >
-          De-index
-        </VBtn>
+        />
         <VBtn
           v-if="canDownload"
-          color="primary-lighten-3"
-          prepend-icon="mdi-download-outline"
-          size="small"
+          :slim="false"
+          prepend-icon="mdi-download"
+          text="Download"
           variant="text"
           @click="emit('download', asset)"
-        >
-          Download
-        </VBtn>
+        />
         <VBtn
           :disabled="!hasChanges || isSaving"
           :loading="isSaving"
-          color="primary-lighten-3"
-          prepend-icon="mdi-content-save-outline"
-          size="small"
+          :slim="false"
+          prepend-icon="mdi-content-save"
+          text="Save"
           variant="tonal"
           @click="saveMeta"
-        >
-          Save
-        </VBtn>
+        />
       </VCardActions>
     </VCard>
   </VDialog>

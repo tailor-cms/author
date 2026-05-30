@@ -3,7 +3,7 @@
     <div class="d-flex items-center justify-end ga-2 mb-6">
       <VBtn
         v-if="isAiEnabled && !isAiGeneratingContent && !disabled"
-        color="teal-lighten-4"
+        color="secondary"
         size="small"
         variant="tonal"
         text="Generate content"
@@ -17,7 +17,6 @@
       >
         <VBtn
           :text="expandAll ? 'Collapse all' : 'Expand all'"
-          color="primary-lighten-4"
           rounded="lg"
           size="small"
           variant="tonal"
@@ -28,23 +27,17 @@
     </div>
     <div v-if="isAiGeneratingContent" class="py-8">
       <CircularProgress />
-      <div class="mt-3 text-title-medium text-primary-lighten-4">
-        Generating structured content...
-      </div>
+      <div class="pt-3">Generating structured content...</div>
     </div>
     <VAlert
       v-if="!subcontainers.length && !isAiGeneratingContent"
-      color="primary-lighten-4"
+      :text="disabled
+        ? 'Empty structured content'
+        : 'Click the button below to add a first content section.'"
       icon="mdi-information-outline"
       variant="outlined"
       prominent
-    >
-      {{
-        disabled
-          ? 'Empty structured content'
-          : 'Click the button below to add a first content section.'
-      }}
-    </VAlert>
+    />
     <div
       v-for="subcontainer in subcontainers"
       v-show="!isAiGeneratingContent"
@@ -79,7 +72,7 @@
         v-for="subcontainerType in subcontainerTypes"
         :key="subcontainerType"
         :text="`Add ${subcontainerConfig[subcontainerType].label}`"
-        color="teal-lighten-4"
+        color="secondary"
         variant="tonal"
         @click="createSubcontainer(subcontainerType)"
       >

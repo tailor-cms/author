@@ -10,11 +10,7 @@
       @update:model-value="onSelect"
     >
       <template #browse="{ props: browseProps }">
-        <VBtn
-          v-bind="browseProps"
-          color="primary-darken-3"
-          variant="flat"
-        />
+        <VBtn v-bind="browseProps" variant="tonal" size="default" />
       </template>
     </VFileUpload>
   </div>
@@ -39,36 +35,26 @@ const onSelect = (files: File | File[] | null) => {
 <style lang="scss">
 .upload-tab-wrapper {
   padding: 2rem;
-  background: transparent;
+  padding-bottom: 0;
 
-  .upload-tab.v-sheet {
-    padding: 3rem 1rem;
-    border: 2px dashed rgba(var(--v-theme-primary), 0.25);
-    border-radius: 8px;
-    background: transparent;
+  .upload-tab .v-sheet {
+    padding: 2rem 1rem 3rem;
   }
 
   .v-file-upload-icon {
     margin-bottom: 0.75rem;
-    font-size: 3rem;
-    color: rgb(var(--v-theme-primary-darken-2));
 
     .v-icon {
-      color: inherit;
-      font-size: inherit;
+      font-size: 3.5rem;
     }
   }
 
   .v-file-upload-title {
-    font-size: 1.125rem;
-    font-weight: 500;
-    color: rgb(var(--v-theme-primary-darken-4));
+    font-size: 1.25rem;
   }
 
   .v-file-upload-divider {
     margin: 1.25rem 0;
-    color: rgb(var(--v-theme-primary-darken-4));
-    opacity: 0.9;
   }
 }
 </style>

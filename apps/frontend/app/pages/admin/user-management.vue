@@ -3,22 +3,20 @@
     <div class="d-flex py-6 px-4">
       <VSpacer />
       <VBtn
-        class="px-3"
-        color="primary-darken-2"
+        prepend-icon="mdi-account-multiple-plus"
+        color="secondary"
+        text="Add user"
         variant="tonal"
         @click.stop="showUserDialog"
-      >
-        <VIcon class="px-4">mdi-account-multiple-plus</VIcon>
-        Add user
-      </VBtn>
+      />
     </div>
     <VRow class="filters">
       <VCol>
         <VSwitch
           v-model="showArchiveToggle"
-          color="primary-darken-3"
           label="Archived"
           hide-details
+          inset
         />
       </VCol>
       <VCol>
@@ -71,7 +69,6 @@
           <td class="user-entry-actions text-no-wrap text-center">
             <VBtn
               aria-label="Edit user"
-              color="primary-darken-4"
               icon="mdi-pencil"
               size="small"
               variant="text"
@@ -82,7 +79,6 @@
               :disabled="currentUser?.id === item?.id"
               :icon="`mdi-account-${item.deletedAt ? 'convert' : 'off'}`"
               :label="item.deletedAt ? 'Restore user' : 'Archive user'"
-              color="primary-darken-4"
               size="small"
               variant="text"
               @click="archiveOrRestore(item)"

@@ -1,5 +1,5 @@
 <template>
-  <VCard class="mb-4" color="primary-lighten-5">
+  <VCard class="mb-4" color="surface-container-lowest">
     <VCard
       color="transparent"
       elevation="0"
@@ -17,18 +17,17 @@
           </div>
         </VCol>
         <VCol cols="2" class="text-right">
-          <VChip v-if="isExamCollapsed" color="green-darken-1" size="small">
+          <VChip v-if="isExamCollapsed" color="success" size="small">
             {{ label }}
           </VChip>
           <VBtn
             v-else-if="!disabled"
-            color="secondary-darken-1"
+            color="tertiary"
             size="small"
+            text="Delete Exam"
             variant="tonal"
             @click.stop="emit('delete')"
-          >
-            Delete Exam
-          </VBtn>
+          />
         </VCol>
       </VRow>
     </VCard>
@@ -36,17 +35,13 @@
       <div v-if="!isExamCollapsed" class="px-6 py-4">
         <VAlert
           v-if="!groups.length"
-          color="primary-darken-1"
+          :text="disabled
+            ? 'Empty exam'
+            : 'Click the button below to create first question group.'"
           icon="mdi-information-outline"
           variant="tonal"
           prominent
-        >
-          {{
-            disabled
-              ? 'Empty exam'
-              : 'Click the button below to create first question group.'
-          }}
-        </VAlert>
+        />
         <VExpansionPanels v-model="expandedAssessmentGroup" rounded="lg" flat>
           <AssessmentGroup
             v-for="(group, index) in groups"
@@ -68,14 +63,12 @@
         <VBtn
           v-if="!disabled"
           :disabled="!container.id"
-          color="primary-darken-2"
           class="my-5"
+          prepend-icon="mdi-folder-plus-outline"
+          text="Add Question Group"
           variant="tonal"
           @click.stop="createGroup"
-        >
-          <VIcon class="pr-2">mdi-folder-plus-outline</VIcon>
-          Add Question Group
-        </VBtn>
+        />
       </div>
     </VExpandTransition>
   </VCard>

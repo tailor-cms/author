@@ -4,12 +4,11 @@
       <VBtn
         v-bind="props"
         class="mt-6"
-        color="primary-darken-4"
+        color="secondary"
         prepend-icon="mdi-lock"
+        text="Change Password"
         variant="tonal"
-      >
-        Change Password
-      </VBtn>
+      />
     </template>
     <template #header>Change Password</template>
     <template #body>
@@ -42,25 +41,21 @@
           variant="outlined"
         />
         <div class="d-flex align-center pl-2 py-4">
-          <NuxtLink :to="{ name: 'forgot-password' }" class="text-primary">
+          <NuxtLink :to="{ name: 'forgot-password' }" class="text-body-medium">
             Forgot password ?
           </NuxtLink>
           <VBtn
             class="ml-auto"
-            color="primary-darken-4"
+            text="Cancel"
             variant="text"
             @click="close"
-          >
-            Cancel
-          </VBtn>
+          />
           <VBtn
             class="ml-2"
-            color="primary-darken-4"
             type="submit"
+            text="Save"
             variant="tonal"
-          >
-            Save
-          </VBtn>
+          />
         </div>
       </form>
     </template>

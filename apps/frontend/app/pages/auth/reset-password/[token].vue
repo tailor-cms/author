@@ -2,19 +2,18 @@
   <NuxtLayout name="auth" title="Reset password">
     <VAlert
       v-if="notificationText"
-      :color="isError ? 'pink-lighten-4' : 'teal-lighten-4'"
+      :text="notificationText"
+      :color="isError ? 'error' : 'secondary'"
       class="mb-8"
       variant="tonal"
-    >
-      {{ notificationText }}
-    </VAlert>
+    />
     <div v-if="isLoading" class="d-flex justify-center pt-14 pb-16">
-      <VProgressCircular color="primary-lighten-1" size="54" indeterminate />
+      <VProgressCircular size="54" indeterminate />
     </div>
     <div v-else-if="isError" class="d-flex flex-column justify-center">
       <NuxtLink
         :to="{ name: 'forgot-password' }"
-        class="text-center text-primary-lighten-5"
+        class="text-center"
       >
         <VIcon size="20">mdi-arrow-top-right-thick</VIcon>
         Click here to send another reset email.
@@ -22,12 +21,11 @@
       <VBtn
         :to="{ name: 'sign-in' }"
         class="mt-7"
-        color="primary-lighten-2"
+        prepend-icon="mdi-arrow-left"
+        text="Sign in"
         variant="tonal"
         size="large"
-      >
-        <VIcon class="pr-2">mdi-arrow-left</VIcon>Sign in
-      </VBtn>
+      />
     </div>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
     <form v-else novalidate @keydown.enter="submit" @submit.prevent="submit">
@@ -54,15 +52,13 @@
         variant="outlined"
       />
       <VBtn
-        color="primary-lighten-2"
         size="large"
         type="submit"
+        text="Change password"
         variant="tonal"
         block
         rounded
-      >
-        Change password
-      </VBtn>
+      />
     </form>
   </NuxtLayout>
 </template>

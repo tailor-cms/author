@@ -23,15 +23,14 @@
         <VIcon
           v-tooltip:bottom="'Will be removed upon publishing'"
           class="ml-2"
-          color="secondary"
+          color="tertiary"
           icon="mdi-information-outline"
         />
       </VChip>
       <div v-else class="row-actions d-flex align-center">
         <VBtn
           v-tooltip:bottom="'Open'"
-          class="mr-1 text-none"
-          color="primary-lighten-3"
+          class="mr-1"
           icon="mdi-page-next-outline"
           rounded="pill"
           size="small"
@@ -43,7 +42,6 @@
           v-tooltip:bottom="'Delete'"
           aria-label="Delete item"
           class="delete-btn"
-          color="primary-lighten-3"
           icon="mdi-trash-can-outline"
           size="small"
           variant="text"
@@ -127,7 +125,7 @@ watch(isSelected, (selected) => {
 
 <style lang="scss" scoped>
 .collection-row {
-  background: rgba(var(--v-theme-primary-darken-2));
+  background-color: rgba(var(--v-theme-surface-container));
   border-left: 8px solid var(--row-accent);
   transition:
     background-color 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
@@ -138,26 +136,25 @@ watch(isSelected, (selected) => {
   }
 
   &:hover {
-    background: rgba(var(--v-theme-primary-darken-1));
+    background-color: rgb(var(--v-theme-surface-container-high));
   }
 
   &.is-selected {
-    background: rgba(var(--v-theme-primary-darken-1));
+    background-color: rgb(var(--v-theme-surface-container-high));
     border-left-width: 2.25rem;
 
     .collection-title {
       font-weight: 600 !important;
-      color: rgb(var(--v-theme-primary-lighten-5));
     }
   }
 
   &.is-deleted {
-    background: rgba(var(--v-theme-secondary-lighten-3), 0.2);
-    border-left-color: rgb(var(--v-theme-secondary-lighten-3));
+    background-color: rgba(var(--v-theme-tertiary), 0.15);
+    border-left-color: rgb(var(--v-theme-tertiary));
 
     &:hover,
     &.is-selected {
-      background: rgba(var(--v-theme-secondary-lighten-3), 0.3);
+      background-color: rgba(var(--v-theme-tertiary), 0.2);
     }
   }
 

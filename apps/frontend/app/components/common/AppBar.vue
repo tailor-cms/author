@@ -1,9 +1,5 @@
 <template>
-  <VAppBar
-    id="mainAppBar"
-    class="app-bar elevation-0"
-    color="primary-darken-4"
-  >
+  <VAppBar id="mainAppBar" class="app-bar elevation-0">
     <NuxtLink :to="{ name: 'catalog' }" class="app-brand pl-5">
       <img
         alt="Tailor logo"
@@ -11,13 +7,13 @@
         src="/img/logo-new.svg"
         width="36"
       />
-      <VAppBarTitle class="app-name text-primary-lighten-3">
+      <VAppBarTitle class="app-name">
         Tailor
         <span v-if="!smAndDown" class="text-body-small font-weight-bold">
-          <span class="text-primary-lighten-3 text-uppercase">
+          <span class="text-uppercase">
             authoring meets
           </span>
-          <span class="text-teal-lighten-4">AI</span>
+          <span class="text-secondary">AI</span>
         </span>
       </VAppBarTitle>
     </NuxtLink>
@@ -27,7 +23,6 @@
           v-for="{ name, to } in topLevelRoutes"
           :key="name"
           :to="to"
-          class="text-none"
           min-width="96"
           variant="text"
           rounded="lg"
@@ -51,10 +46,10 @@
             tag="button"
           />
         </template>
-        <VCard color="primary-darken-3" class="text-left">
-          <div class="d-flex pa-4 align-center">
-            <UserAvatar :img-url="user.imgUrl" size="48" />
-            <div class="text-primary-lighten-4 ml-4">
+        <VCard color="surface-container-low" class="text-left">
+          <div class="d-flex px-4 py-3 align-center">
+            <UserAvatar :img-url="user.imgUrl" size="38" />
+            <div class="ml-4">
               <div class="text-body-large font-weight-bold">
                 {{ user.label }}
               </div>
@@ -62,7 +57,6 @@
           </div>
           <VList
             class="d-flex flex-column ga-1 pa-2"
-            color="primary-darken-3"
             slim
           >
             <template v-if="smAndDown">
@@ -82,6 +76,12 @@
               rounded="lg"
             />
             <VListItem
+              :prepend-icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
+              :title="isDark ? 'Light mode' : 'Dark mode'"
+              rounded="lg"
+              @click="toggle"
+            />
+            <VListItem
               title="Logout"
               prepend-icon="mdi-logout"
               rounded="lg"
@@ -99,11 +99,13 @@ import { useDisplay } from 'vuetify';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { useAuthStore } from '@/stores/auth';
+import { useColorMode } from '@/composables/useColorMode';
 import { useConfigStore } from '@/stores/config';
 
 defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
+const { isDark, toggle } = useColorMode();
 
 const { $oidc } = useNuxtApp() as any;
 const config = useConfigStore();
