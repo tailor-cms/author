@@ -1,5 +1,11 @@
+import { z } from 'zod';
+import {
+  RepositoryScopedParams,
+  dataEnvelope,
+} from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../content-element.schema.ts';
+
+import * as schemas from '../schemas/index.ts';
 import * as service from '../content-element.service.ts';
 
 // GET /repositories/:repositoryId/content-elements
@@ -8,10 +14,19 @@ import * as service from '../content-element.service.ts';
 //     under a set of parent activities.
 //   - no filters return every non-detached element in the repo
 export default defineAction({
+  params: RepositoryScopedParams,
   query: schemas.ListFilter,
   openapi: {
-    summary: 'List content elements in the repository',
     authenticated: true,
+    summary: 'List content elements in the repository',
+    description:
+      'Returns content elements, optionally narrowed to activity parents',
+    responses: {
+      200: {
+        description: 'List of content elements matching the filter.',
+        schema: dataEnvelope(z.array(schemas.ContentElement)),
+      },
+    },
   },
   async handler({ query, req }) {
     return service.list(req.opts!, query);

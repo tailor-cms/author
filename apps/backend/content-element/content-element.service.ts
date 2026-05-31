@@ -16,9 +16,18 @@ import type {
   LinkInput,
   ListFilter,
   PatchInput,
-} from './content-element.schema.ts';
+} from './schemas/index.ts';
 
 const { Activity, ContentElement: ContentElementModel } = db;
+
+// Domain failure: source element id does not exist. Caught by the action
+// layer and mapped to 404.
+export class SourceNotFoundError extends Error {
+  constructor(message = 'Source element not found') {
+    super(message);
+    this.name = 'SourceNotFoundError';
+  }
+}
 
 const logger = createLogger('content-element:svc');
 
@@ -84,15 +93,6 @@ export async function reorder(
 ): Promise<ContentElement> {
   await element.reorder(position);
   return element;
-}
-
-// Domain failure: source element id does not exist. Caught by the action
-// layer and mapped to 404.
-export class SourceNotFoundError extends Error {
-  constructor(message = 'Source element not found') {
-    super(message);
-    this.name = 'SourceNotFoundError';
-  }
 }
 
 // Links an element from another repository into the target repository.
