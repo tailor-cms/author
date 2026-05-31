@@ -1,11 +1,11 @@
-// Wire shape for the activity reorder endpoint.
+// Wire shape for the content-element reorder endpoint.
 import { z } from 'zod';
 
-import { Activity } from './entity.ts';
+import { ContentElement } from './entity.ts';
 
 export const ReorderInput = z
   .object({
-    position: Activity.shape.position,
+    position: ContentElement.shape.position,
   })
   .describe('Reorder payload.');
 

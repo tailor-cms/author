@@ -9,26 +9,38 @@ import { getContentElement, hasLinkSourceAccess } from './middleware.ts';
 // `req.params`
 const router = express.Router({ mergeParams: true });
 const basePath = '/repositories/:repositoryId/content-elements';
-const mount = createActionMounter(router, basePath, 'Content Element');
+
+// Three mounters, one router; each carries a distinct OpenAPI tag so the
+// Scalar sidebar splits the slice's surface into `CRUD`, `Structure`, and
+// `Linked content`, all bundled under the `Content Element` x-tagGroup.
+// The mounter is metadata only; route registration happens in call order
+// below.
+const crud = createActionMounter(router, basePath, {
+  tag: 'CRUD', group: 'Content Element',
+});
+const structure = createActionMounter(router, basePath, {
+  tag: 'Structure', group: 'Content Element',
+});
+const linked = createActionMounter(router, basePath, {
+  tag: 'Linked content', group: 'Content Element',
+});
 
 router.param('elementId', getContentElement);
 
-// /link is a sibling of the collection root, registered FIRST so the
-// literal path matches before the `:elementId` param middleware would
-// treat any following segment as an element id.
-mount.post('/link', actions.link, { before: [hasLinkSourceAccess] });
+// Literal `/link` MUST register before any `/:elementId` route so Express
+// doesn't bind 'link' as the element id and run getContentElement on it.
+linked.post('/link', actions.link, { before: [hasLinkSourceAccess] });
 
-mount
+crud
   .get('/', actions.list, { after: [processQuery()] })
-  .post('/', actions.create);
-
-mount
+  .post('/', actions.create)
   .get('/:elementId', actions.get)
   .patch('/:elementId', actions.patch)
   .delete('/:elementId', actions.remove);
 
-mount
-  .post('/:elementId/reorder', actions.reorder)
+structure.post('/:elementId/reorder', actions.reorder);
+
+linked
   .post('/:elementId/unlink', actions.unlink)
   .get('/:elementId/source', actions.getSource)
   .get('/:elementId/copies', actions.getCopies);
