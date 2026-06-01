@@ -1,29 +1,17 @@
-import type {
-  UserActivityContext,
-  UserActivityContextStored,
-} from '@tailor-cms/interfaces';
+import type { UserActivityContext } from '@tailor-cms/interfaces';
 import Keyv from 'keyv';
 
 import config from '#config';
+import type {
+  FeedPresenceRecord,
+  StoredUserActivityContext,
+} from './schemas/index.ts';
+import type { UserSummary } from '#app/user/user.schema.ts';
 
-// Picked subset of `User` shipped over SSE alongside presence events.
-// Mirrors the `USER_ATTRS` projection in `feed/actions/common.ts`.
-export interface FeedUser {
-  id: number;
-  email: string;
-  firstName: string | null;
-  lastName: string | null;
-  fullName: string | null;
-  label: string;
-  imgUrl: string;
-}
+// Re-export for convenience
+export type FeedUser = UserSummary;
 
-interface PresenceRecord extends FeedUser {
-  connectedAt: Date;
-  contexts: UserActivityContextStored[];
-}
-
-const store = new Keyv<PresenceRecord>({
+const store = new Keyv<FeedPresenceRecord>({
   ...config.kvStore.keyvDefaultConfig,
   namespace: 'active-users',
   ttl: 60 * 1000, // 1 minute in milliseconds
@@ -37,7 +25,7 @@ const keyOf = (user: FeedUser) => String(user.id);
 // active-context list, creating the user record on first call.
 async function addContext(user: FeedUser, context: UserActivityContext) {
   const record = await findOrCreate(user);
-  const contexts = [...record!.contexts, context as UserActivityContextStored];
+  const contexts = [...record!.contexts, context as StoredUserActivityContext];
   return store.set(keyOf(user), { ...record!, contexts });
 }
 
@@ -45,7 +33,7 @@ async function addContext(user: FeedUser, context: UserActivityContext) {
 // drops the user record entirely once their context list goes empty.
 async function removeContext(
   user: FeedUser,
-  predicate: (it: UserActivityContextStored) => boolean,
+  predicate: (it: StoredUserActivityContext) => boolean,
 ) {
   const record = await store.get(keyOf(user));
   if (!record) return;
@@ -56,20 +44,22 @@ async function removeContext(
 
 // Returns the in-memory map of currently-active users keyed by user id.
 async function getActiveUsers() {
-  const users: PresenceRecord[] = [];
+  const users: FeedPresenceRecord[] = [];
   for await (const [, value] of (store as any).iterator()) {
     users.push(value);
   }
-  return users.reduce<Record<number, PresenceRecord>>(
+  return users.reduce<Record<number, FeedPresenceRecord>>(
     (acc, user) => ({ ...acc, [user.id]: user }),
     {},
   );
 }
 
-async function findOrCreate(user: FeedUser): Promise<PresenceRecord | undefined> {
+async function findOrCreate(
+  user: FeedUser,
+): Promise<FeedPresenceRecord | undefined> {
   const hasKey = await store.has(keyOf(user));
   if (!hasKey) {
-    const connectedAt = new Date();
+    const connectedAt = new Date().toISOString();
     await store.set(keyOf(user), { ...user, connectedAt, contexts: [] });
   }
   return store.get(keyOf(user));

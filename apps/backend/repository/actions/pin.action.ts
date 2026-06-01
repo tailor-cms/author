@@ -1,14 +1,21 @@
 import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../repository.schema.ts';
+import { dataEnvelope } from '#shared/request/schemas.ts';
+import * as schemas from '../schemas/index.ts';
 import * as service from '../repository.service.ts';
 
 // POST /repositories/:repositoryId/pin
-// Toggles the pinned flag on the user's RepositoryUser row.
 export default defineAction({
+  params: schemas.RepositoryItemParams,
   body: schemas.PinInput,
   openapi: {
-    summary: 'Pin / unpin a repository for the current user',
     authenticated: true,
+    summary: 'Pin / unpin a repository for the current user',
+    responses: {
+      200: {
+        description: `Updated RepositoryUser row carrying the new pinned flag.`,
+        schema: dataEnvelope(schemas.RepositoryUser),
+      },
+    },
   },
   async handler({ body, user, req }) {
     return service.pin(req.repository!, user, body.pin);
