@@ -3,14 +3,13 @@
     v-if="isPanelEnabled"
     ref="rootEl"
     class="agent-panel"
-    data-agent-target="panel"
   >
     <VCard
       v-if="isPanelOpen"
       class="panel-card"
-      data-agent-target="panel-card"
       elevation="5"
-      rounded="xl"
+      max-height="68vh"
+      width="580"
     >
       <PanelHeader
         :is-running="isRunning"
@@ -25,7 +24,7 @@
         :status-text="activeStatus"
         :error="runnerError"
       />
-      <div v-if="pendingQuestion" class="question-host">
+      <div v-if="pendingQuestion" class="question-host ma-4">
         <AgentQuestion
           v-bind="pendingQuestion"
           @pick="runner.send"
@@ -191,14 +190,6 @@ onMounted(scrollToLatest);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  width: 36.25rem;
-  max-height: 68vh;
-  background: rgb(var(--v-theme-surface)) !important;
-}
-
-.question-host {
-  padding: 0.6875rem 0.9375rem 0;
-  background: rgba(var(--v-theme-on-surface), 0.04);
 }
 </style>
 

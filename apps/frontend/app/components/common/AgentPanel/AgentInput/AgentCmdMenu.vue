@@ -1,71 +1,78 @@
 <template>
   <div class="cmd-anchor">
     <VBtn
-      color="primary-darken-3"
-      density="comfortable"
       prepend-icon="mdi-slash-forward"
       size="small"
+      text="Commands"
       variant="text"
-      flat
+      rounded="lg"
       @click="toggleMenu"
-    >
-      Commands
-    </VBtn>
+    />
     <VMenu
       :close-on-content-click="false"
       :model-value="isOpen"
       :open-on-click="false"
-      :open-on-hover="false"
       :z-index="9999"
       activator="parent"
       location="top start"
       @update:model-value="(open) => !open && (isOpen = false)"
     >
       <VCard class="agent-cmd-menu" elevation="3">
-        <div class="cmd-header">
+        <div class="cmd-header py-1 px-3 border-b">
           <VIcon
             class="text-medium-emphasis"
             icon="mdi-slash-forward-box"
             size="16"
           />
-          <span class="cmd-header-text">
+          <span class="text-label-medium ml-2">
             {{ slashQuery ? `/${slashQuery}` : 'Commands' }}
           </span>
         </div>
-        <VList class="cmd-list" density="compact">
+        <VList class="cmd-list" nav>
           <VListItem
             v-for="(command, i) in visibleCommands"
             :key="command.id"
             :active="i === activeIndex"
-            active-color="primary-darken-3"
+            :prepend-icon="command.icon"
+            :subtitle="command.hint"
             class="cmd-item py-2"
-            rounded="lg"
             @click="commit(command)"
-            @mouseenter="activeIndex = i"
           >
-            <template #prepend>
-              <VIcon :icon="command.icon" size="18" />
-            </template>
-            <VListItemTitle class="cmd-title">
-              <code class="cmd-id">/{{ command.id }}</code>
-              <span class="cmd-label text-medium-emphasis">
+            <template #title>
+              <VListItemTitle class="cmd-title">
+                <code class="cmd-id mr-1">/{{ command.id }}</code>
                 {{ command.label }}
-              </span>
-            </VListItemTitle>
-            <VListItemSubtitle class="cmd-hint">
-              {{ command.hint }}
-            </VListItemSubtitle>
+              </VListItemTitle>
+            </template>
           </VListItem>
-          <VListItem v-if="!visibleCommands.length" disabled>
-            <VListItemTitle class="text-medium-emphasis text-body-medium">
-              No matching commands
-            </VListItemTitle>
-          </VListItem>
+          <VListItem
+            v-if="!visibleCommands.length"
+            title=" No matching commands"
+            disabled
+          />
         </VList>
-        <div class="cmd-footer">
-          <span><kbd>↑↓</kbd> navigate</span>
-          <span><kbd>↵</kbd> select</span>
-          <span><kbd>esc</kbd> close</span>
+        <div class="cmd-footer border-t">
+          <span>
+            <VHotkey keys="up" density="compact" variant="tonal" />
+            <VHotkey
+              keys="down"
+              suffix="navigate"
+              density="compact"
+              variant="tonal"
+            />
+          </span>
+          <VHotkey
+            keys="enter"
+            suffix="select"
+            density="compact"
+            variant="tonal"
+          />
+          <VHotkey
+            keys="escape"
+            suffix="close"
+            density="compact"
+            variant="tonal"
+          />
         </div>
       </VCard>
     </VMenu>
@@ -299,59 +306,19 @@ defineExpose({ handleKeydown });
   border-radius: 1rem;
 }
 
-.cmd-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 0.875rem 0.375rem;
-  border-bottom: 1px solid rgb(var(--v-theme-outline-variant));
-}
-
-.cmd-header-text {
-  color: rgb(var(--v-theme-primary-darken-3));
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
 .cmd-list {
   overflow-y: auto;
   max-height: 28rem;
-  padding: 0.375rem 0.5rem !important;
-}
-
-.cmd-item {
-  margin-bottom: 0.125rem;
-
-  :deep(.v-list-item__prepend) {
-    padding-inline-end: 0.625rem;
-  }
-}
-
-.cmd-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
 }
 
 .cmd-id {
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
-  background: rgba(var(--v-theme-primary), 0.1);
-  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-secondary), 0.1);
+  color: rgb(var(--v-theme-secondary));
   font-family: Menlo, Consolas, monospace;
   font-size: 0.75rem;
-  font-weight: 500;
-}
-
-.cmd-label {
-  font-size: 0.875rem;
-}
-
-.cmd-hint {
-  opacity: 0.75;
-  font-size: 0.75rem;
-  line-height: 1.375;
+  font-weight: 600;
 }
 
 .cmd-footer {
@@ -359,24 +326,27 @@ defineExpose({ handleKeydown });
   justify-content: center;
   gap: 0.875rem;
   padding: 0.5rem 0.875rem 1rem;
-  border-top: 1px solid rgb(var(--v-theme-outline-variant));
   font-size: 0.6875rem;
 
-  kbd {
+  span {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-width: 1rem;
-    height: 1rem;
-    margin-right: 0.1875rem;
-    padding: 0 0.3125rem;
-    border: 1px solid rgb(var(--v-theme-outline-variant));
-    border-radius: 0.1875rem;
-    background: rgb(var(--v-theme-surface-variant));
-    color: #eee;
-    font-family: Menlo, Consolas, monospace;
-    font-size: 0.625rem;
-    font-weight: 500;
+    gap: 0.125rem;
+  }
+
+  .v-hotkey {
+    :deep(.v-kbd) {
+      padding: 0.125rem 0.25rem;
+      font-size: 0.625rem;
+    }
+
+    :deep(.v-hotkey__suffix) {
+      font-size: 0.6875rem;
+    }
+
+    :deep(.v-hotkey__key-icon .v-icon) {
+      font-size: 0.625rem;
+    }
   }
 }
 </style>

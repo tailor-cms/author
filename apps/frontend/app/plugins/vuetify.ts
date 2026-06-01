@@ -99,6 +99,8 @@ const lightTheme: ThemeDefinition = {
   },
   variables: {
     'medium-emphasis-opacity': 0.7,
+    'theme-kbd': '#D0D9DD',
+    'theme-on-kbd': '#455A64',
   },
 };
 
@@ -193,6 +195,10 @@ const darkTheme: ThemeDefinition = {
   },
   variables: {
     'medium-emphasis-opacity': 0.7,
+    // Keyboard key (v-kbd) — theme variables, not colors. Mirrors
+    // surface-variant / on-surface-variant.
+    'theme-kbd': '#313F47',
+    'theme-on-kbd': '#B0BEC5',
   },
 };
 

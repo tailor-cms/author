@@ -7,12 +7,16 @@
   }
 }
 
-body {
-  font-family: 'Inter', sans-serif;
+:root {
+  --v-font-body: 'Inter', sans-serif;
 }
 
-[class^="text-"], [class*=" text-"] {
-  font-family: 'Inter', sans-serif;
+body {
+  font-family: var(--v-font-body);
+}
+
+.v-kbd {
+  font-family: Menlo, Consolas, monospace;
 }
 
 a {

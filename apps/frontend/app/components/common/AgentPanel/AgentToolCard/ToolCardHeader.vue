@@ -1,5 +1,9 @@
 <template>
-  <button class="tool-card-header" @click="$emit('toggle')">
+  <button
+    :aria-expanded="isOpen"
+    class="tool-card-header"
+    @click="$emit('toggle')"
+  >
     <VIcon
       v-if="isSuccess"
       class="card-status"
@@ -14,11 +18,9 @@
       icon="mdi-alert-circle"
       size="16"
     />
-    <code class="card-name">{{ name }}</code>
-    <span class="card-summary">{{ summary }}</span>
-    <span v-if="durationMs" class="card-time">
-      {{ formatDuration(durationMs) }}
-    </span>
+    <code class="card-name font-weight-bold">{{ name }}</code>
+    <span class="card-summary text-truncate">{{ summary }}</span>
+    <span v-if="durationMs" class="card-time">{{ formatDuration(durationMs) }}</span>
     <VIcon
       :icon="isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down'"
       class="card-toggle-icon"
@@ -52,34 +54,26 @@ function formatDuration(ms: number): string {
   gap: 0.5rem;
   width: 100%;
   padding: 0.5rem 0.75rem;
-  font: inherit;
-  text-align: left;
   border: 0;
+  text-align: left;
   background: transparent;
-  cursor: pointer;
   transition: background 80ms ease;
 }
+
 .tool-card-header:hover {
-  background: rgba(var(--v-theme-on-surface), 0.1);
+  background: rgba(var(--v-theme-surface-container), 0.5);
 }
 
-.card-name {
-  color: rgb(var(--v-theme-on-surface));
-  font-size: 0.75rem;
-  font-weight: 600;
+.card-summary,
+.card-time {
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
 
 .card-summary {
-  flex: 1;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  opacity: 0.55;
+  flex: 1
 }
 
 .card-time {
-  opacity: 0.45;
-  font-size: 0.6875rem;
   font-variant-numeric: tabular-nums;
 }
 

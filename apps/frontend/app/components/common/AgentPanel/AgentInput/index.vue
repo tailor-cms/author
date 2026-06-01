@@ -5,20 +5,19 @@
       v-model="text"
       :disabled="disabled"
       :placeholder="placeholder"
-      bg-color="surface"
       class="input-field"
-      data-agent-target="panel-input"
       density="comfortable"
+      bg-color="surface-container-low"
       max-rows="8"
       rows="2"
-      variant="solo-filled"
+      rounded="lg"
       auto-grow
       flat
       hide-details
       @focus="emit('focus')"
       @keydown="onKeydown"
     />
-    <div class="input-row">
+    <div class="d-flex align-center ga-2">
       <AgentCmdMenu
         ref="cmdMenuEl"
         v-model="text"
@@ -31,18 +30,13 @@
       <VBtn
         :disabled="!canSubmit"
         :loading="disabled"
-        class="input-send"
-        color="primary"
-        data-agent-target="panel-send"
-        rounded="lg"
-        variant="flat"
+        append-icon="mdi-arrow-up"
+        class="input-send ml-1"
+        color="secondary"
+        text="Send"
+        variant="tonal"
         @click="submit"
-      >
-        Send
-        <template #append>
-          <VIcon icon="mdi-arrow-up" size="18" />
-        </template>
-      </VBtn>
+      />
     </div>
   </div>
 </template>
@@ -111,52 +105,6 @@ defineExpose({ focus: () => inputEl.value?.focus() });
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
-  padding: 0.875rem 1rem 1rem;
-  border-top: 1px solid rgb(var(--v-theme-outline-variant));
-  background: rgb(var(--v-theme-surface));
-}
-
-.input-field {
-  :deep(.v-field) {
-    border: 1px solid rgb(var(--v-theme-outline-variant));
-    border-radius: 0.875rem !important;
-    background: rgba(var(--v-theme-on-surface), 0.04) !important;
-    transition: box-shadow 120ms ease, border-color 120ms ease;
-  }
-
-  :deep(.v-field__overlay) {
-    opacity: 0 !important;
-  }
-
-  :deep(.v-field--focused) {
-    border-color: rgb(var(--v-theme-primary));
-    box-shadow: 0 0 0 0.125rem rgba(var(--v-theme-primary), 0.18);
-  }
-
-  :deep(.v-field__input) {
-    padding-top: 0.625rem;
-    padding-bottom: 0.625rem;
-    color: rgb(var(--v-theme-on-surface));
-    font-size: 0.9375rem;
-    line-height: 1.5;
-  }
-
-  :deep(textarea::placeholder) {
-    opacity: 0.42 !important;
-    color: rgb(var(--v-theme-on-surface)) !important;
-  }
-}
-
-.input-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.input-send {
-  min-height: 2.25rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  text-transform: none;
+  padding: 0 1rem 1rem;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div ref="msgListEl" class="message-list">
+  <div ref="msgListEl" class="message-list text-left py-5 px-4 ">
     <AgentEmptyState v-if="!messages.length" />
     <AgentChatMessage
       v-for="(message, i) in messages"
@@ -8,14 +8,22 @@
       :role="message.role"
       :tool-calls="message.toolCalls"
     />
-    <div v-if="isRunning" class="list-status">
-      <VProgressCircular color="primary" :size="14" :width="2" indeterminate />
+    <div v-if="isRunning" class="list-status text-label-medium ga-2 mt-3 mx-1">
+      <span class="thinking-dots" aria-hidden="true">
+        <span class="dot" />
+        <span class="dot" />
+        <span class="dot" />
+      </span>
       <span>{{ statusText }}</span>
     </div>
-    <div v-if="error" class="list-error">
-      <VIcon class="ma-1" color="error" icon="mdi-alert-circle" size="14" />
-      {{ error }}
-    </div>
+    <VAlert
+      v-if="error"
+      :text="error"
+      class="mt-2 text-body-medium"
+      density="comfortable"
+      type="error"
+      variant="tonal"
+    />
   </div>
 </template>
 
@@ -47,13 +55,11 @@ defineExpose({ scrollToBottom });
 .message-list {
   flex: 1;
   overflow-y: auto;
-  padding: 1.125rem 1rem;
-  background: rgba(var(--v-theme-on-surface), 0.04);
-  text-align: left;
 
   // Match the system scrollbar to the muted palette
   &::-webkit-scrollbar {
     width: 0.5rem;
+    height: 0.5rem;
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 0.25rem;
@@ -67,31 +73,49 @@ defineExpose({ scrollToBottom });
 .list-status {
   display: flex;
   align-items: center;
-  gap: 0.4375rem;
-  margin: 0.875rem 0.1875rem 0;
-  color: rgb(var(--v-theme-on-surface));
-  font-size: 0.8125rem;
-  font-style: italic;
   animation: list-status-pulse 2.4s ease-in-out infinite;
 }
 
-.list-error {
-  display: flex;
+.thinking-dots {
+  display: inline-flex;
   align-items: center;
-  margin-top: 0.625rem;
-  padding: 0.5625rem 0.6875rem;
-  color: rgb(var(--v-theme-on-error-container));
-  font-size: 0.8125rem;
-  border-radius: 0.5rem;
-  background: rgb(var(--v-theme-error-container));
+  gap: 0.1875rem;
+
+  .dot {
+    width: 0.25rem;
+    height: 0.25rem;
+    border-radius: 50%;
+    background: rgb(var(--v-theme-on-surface));
+    animation: thinking-bounce 1.4s ease-in-out infinite both;
+
+    &:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.32s;
+    }
+  }
 }
 
 @keyframes list-status-pulse {
   0%,
   100% {
-    opacity: 0.85;
+    opacity: 0.5;
   }
   50% {
+    opacity: 1;
+  }
+}
+
+@keyframes thinking-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
     opacity: 1;
   }
 }

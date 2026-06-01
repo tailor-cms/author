@@ -2,16 +2,19 @@
   <VCard
     ref="rootEl"
     class="agent-question"
+    color="surface-variant-low"
     rounded="lg"
     tabindex="0"
-    variant="outlined"
+    border
+    flat
     @keydown="onKeydown"
   >
-    <div class="question-head">
-      <span class="question-title">{{ title }}</span>
+    <div class="question-head text-medium-emphasis">
+      <span class="question-title text-label-small text-uppercase">
+        {{ title }}
+      </span>
       <VSpacer />
       <VBtn
-        :ripple="false"
         density="comfortable"
         icon="mdi-close"
         size="x-small"
@@ -19,11 +22,8 @@
         @click="$emit('cancel')"
       />
     </div>
-    <div class="question-prompt">{{ question }}</div>
-    <VList
-      class="question-list bg-transparent pa-0"
-      density="compact"
-    >
+    <div class="question-prompt text-title-small mb-4">{{ question }}</div>
+    <VList class="question-list bg-transparent pa-0" nav>
       <QuestionOption
         v-for="(option, index) in options"
         :key="index"
@@ -56,17 +56,15 @@
     />
     <VBtn
       :disabled="!canSubmit"
-      class="question-submit"
-      color="primary"
+      class="mt-3"
       prepend-icon="mdi-keyboard-return"
       rounded="lg"
+      text="Submit answer"
       variant="tonal"
       block
       @click="submit"
-    >
-      Submit answer
-    </VBtn>
-    <div class="question-footer">
+    />
+    <div class="question-footer text-body-small mt-3">
       Esc to cancel, 1-{{ totalOptions }} to pick
     </div>
   </VCard>
@@ -189,14 +187,6 @@ watch(
   outline: none;
   padding: 1rem 1rem 1.125rem;
   text-align: left;
-  border-color: rgb(var(--v-theme-primary)) !important;
-  border-width: 0.125rem !important;
-  background: rgb(var(--v-theme-surface));
-  box-shadow: 0 0 0 0.25rem rgba(var(--v-theme-primary), 0.12);
-
-  &:focus-visible {
-    box-shadow: 0 0 0 0.25rem rgba(var(--v-theme-primary), 0.22);
-  }
 }
 
 .question-head {
@@ -205,41 +195,7 @@ watch(
   margin-bottom: 0.5rem;
 }
 
-.question-title {
-  opacity: 0.75;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.question-prompt {
-  margin: 0 0 1rem;
-  color: rgb(var(--v-theme-on-surface));
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.4375;
-}
-
-.question-list {
-  margin: 0 -0.25rem 0.5rem;
-}
-
 .question-other-field {
   margin: 0.5rem 0 0;
-}
-
-.question-submit {
-  margin-top: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.question-footer {
-  margin-top: 0.75rem;
-  opacity: 0.65;
-  font-size: 0.625rem;
-  letter-spacing: 0.02em;
 }
 </style>
