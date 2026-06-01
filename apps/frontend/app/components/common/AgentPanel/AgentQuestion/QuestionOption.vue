@@ -1,7 +1,7 @@
 <template>
   <VListItem
     :active="isActive"
-    :prepend-icon="radio.icon"
+    :prepend-icon="isActive ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
     class="question-option"
     @click="$emit('pick')"
     @mouseenter="$emit('hover')"
@@ -14,18 +14,10 @@
 </template>
 
 <script lang="ts" setup>
-interface Props {
+defineProps<{
   label: string;
   isActive: boolean;
   hint?: string;
-}
-
+}>();
 defineEmits<{ pick: []; hover: [] }>();
-
-const props = defineProps<Props>();
-
-const radio = computed(() => ({
-  icon: props.isActive ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank',
-  color: props.isActive ? 'primary' : 'medium-emphasis',
-}));
 </script>
