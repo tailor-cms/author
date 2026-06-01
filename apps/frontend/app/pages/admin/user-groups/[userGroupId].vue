@@ -6,7 +6,7 @@
           <VBtn
             :text="`${userGroup?.name} user group`"
             class="mr-1"
-            icon="mdi-arrow-left"
+            prepend-icon="mdi-arrow-left"
             size="small"
             variant="text"
             @click="router.back()"

@@ -1,6 +1,7 @@
 <template>
   <VChipGroup
     v-model="modelValue"
+    class="category-filter"
     column
     mandatory
   >
@@ -10,6 +11,7 @@
       :text="label"
       :value="value"
       color="secondary"
+      role="button"
       size="small"
       rounded="pill"
       variant="tonal"

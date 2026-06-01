@@ -29,7 +29,7 @@ import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const props = withDefaults(defineProps<{ emptyMessage?: string }>(), {
+withDefaults(defineProps<{ emptyMessage?: string }>(), {
   emptyMessage:
     'Please create your first Item on the left to view and edit its details here.',
 });

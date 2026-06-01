@@ -42,7 +42,7 @@
 import CategoryFilter from './CategoryFilter.vue';
 import { PAGE_SIZE_OPTIONS } from '@/composables/useAssets';
 
-const props = defineProps<{
+defineProps<{
   categories: { label: string; value: string }[];
   isAllSelected: boolean;
   sortDirection: 'ASC' | 'DESC';

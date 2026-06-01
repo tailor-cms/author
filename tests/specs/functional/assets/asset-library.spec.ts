@@ -222,7 +222,10 @@ test.describe('Asset library', () => {
     await lib.toolbar.addLinkBtn.click();
     await expect(lib.addLinkDialog.el).toBeVisible();
     await lib.addLinkDialog.urlInput.fill('not-a-url');
-    await expect(lib.addLinkDialog.addBtn).toBeDisabled();
+    await lib.addLinkDialog.addBtn.click();
+    // Dialog stays open and surfaces a validation error
+    await expect(lib.addLinkDialog.el).toBeVisible();
+    await expect(lib.addLinkDialog.el).toContainText('Please enter a valid URL');
   });
 });
 
