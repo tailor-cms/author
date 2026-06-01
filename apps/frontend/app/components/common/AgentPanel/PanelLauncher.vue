@@ -6,7 +6,7 @@
     icon
     @click="$emit('open')"
   >
-    <VAvatar color="transparent" image="/img/renoir-head.png" size="small" />
+    <VAvatar color="transparent" image="/img/renoir/head.png" size="small" />
   </VFab>
 </template>
 

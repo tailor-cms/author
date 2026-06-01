@@ -2,7 +2,7 @@
   <VSheet class="panel-header pa-3">
     <div class="d-flex align-center ga-2">
       <VAvatar
-        image="/img/renoir-head.png"
+        image="/img/renoir/head.png"
         class="pa-1"
         size="small"
       />
