@@ -12,9 +12,7 @@ export const LinkInput = z.object({
     caller's read access is verified by \`hasLinkSourceAccess\`
     middleware before this fires.
   `),
-  parentId: Activity.shape.parentId
-    .optional()
-    .describe('Target parent activity id; null links at the outline root.'),
+  parentId: Activity.shape.parentId.optional(),
   position: Activity.shape.position,
 }).describe(oneLine`
     Link payload; creates a linked-copy tree of the source under the

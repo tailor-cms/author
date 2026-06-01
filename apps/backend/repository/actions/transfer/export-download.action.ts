@@ -6,30 +6,26 @@ import snakeCase from 'lodash/snakeCase.js';
 import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../../repository.schema.ts';
+import * as schemas from '../../schemas/index.ts';
 import { JobCache } from './job-cache.ts';
 
 const logger = createLogger('repository:export');
 
 // POST /repositories/:repositoryId/export/:jobId
-// Streams the export archive built by the paired /setup endpoint.
 async function handler({
   params,
   req,
   res,
-}: Ctx<{ params: typeof schemas.ExportJobParams }>) {
-  const repository = req.repository!;
+}: Ctx<{ params: typeof schemas.ExportJobItemParams }>) {
   const { jobId } = params;
+  const repository = req.repository!;
   logger.debug(
     { repositoryId: repository.id, jobId },
     'Streaming export archive',
   );
   const job = JobCache.get(jobId);
   if (!job) {
-    logger.warn(
-      { repositoryId: repository.id, jobId },
-      'Export job not found',
-    );
+    logger.warn({ repositoryId: repository.id, jobId }, 'Export job not found');
     return createError(StatusCodes.NOT_FOUND);
   }
   res.attachment(`${snakeCase(repository.name)}.tgz`);
@@ -48,10 +44,10 @@ async function handler({
 }
 
 export default defineAction({
-  params: schemas.ExportJobParams,
+  params: schemas.ExportJobItemParams,
   openapi: {
-    summary: 'Download the export archive for a repository',
     authenticated: true,
+    summary: 'Download the export archive for a repository',
   },
   handler,
 });

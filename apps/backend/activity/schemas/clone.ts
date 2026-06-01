@@ -11,9 +11,7 @@ export const CloneInput = z.object({
       Target repository id. The caller's write access is verified by
       \`hasCloneTargetAccess\` middleware before this fires.
     `),
-  parentId: Activity.shape.parentId
-    .optional()
-    .describe('Target parent activity id; null clones to the outline root.'),
+  parentId: Activity.shape.parentId.optional(),
   position: Activity.shape.position
     .optional()
     .describe(`Target position. Omit to keep the source activity's position.`),

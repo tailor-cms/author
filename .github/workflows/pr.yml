@@ -3,6 +3,10 @@ env:
   PLAYWRIGHT_VERSION: 1.60.0
   APP_URL: http://localhost:3000
   MINIO_URL: http://localhost:4566
+  # Pinned MinIO image, pulled once by the `minio-image` job and cached; each
+  # e2e shard then loads it instead of pulling, so a run hits Docker Hub at most
+  # once.
+  MINIO_IMAGE: minio/minio:RELEASE.2025-09-07T16-13-09Z
   # Force JS actions to run on Node 24 (most still bundle Node 20 which is
   # deprecated). Remove once action maintainers release Node 24 versions.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -66,8 +70,25 @@ jobs:
         if: steps.build-cache.outputs.cache-hit != 'true'
         shell: bash
         run: pnpm build
+  # Pulls the pinned MinIO image once per run and caches
+  # it, so the e2e shards load it instead of each pulling from a registry.
+  minio-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache MinIO image
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/minio-image.tar
+          key: minio-image-${{ env.MINIO_IMAGE }}
+      - name: Pull and save image
+        if: steps.cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          docker pull "$MINIO_IMAGE"
+          docker save -o /tmp/minio-image.tar "$MINIO_IMAGE"
   e2e:
-    needs: build
+    needs: [build, minio-image]
     runs-on: ubuntu-latest
     services:
       redis:
@@ -142,6 +163,11 @@ jobs:
           sudo systemctl start postgresql
           sudo -u postgres psql -c "CREATE USER dev WITH PASSWORD 'dev' SUPERUSER CREATEDB;"
           sudo -u postgres createdb -O dev tailor_dev
+      - name: Restore MinIO image
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/minio-image.tar
+          key: minio-image-${{ env.MINIO_IMAGE }}
       - name: Start MinIO
         shell: bash
         env:
@@ -149,11 +175,13 @@ jobs:
           AWS_SECRET_ACCESS_KEY: test1234
           AWS_DEFAULT_REGION: us-east-1
         run: |
+          # Load the image cached by the minio-image job;
+          docker load -i /tmp/minio-image.tar || docker pull "$MINIO_IMAGE"
           docker run -d --name minio \
             -p 4566:9000 \
             -e MINIO_ROOT_USER=test \
             -e MINIO_ROOT_PASSWORD=test1234 \
-            minio/minio server /data
+            "$MINIO_IMAGE" server /data
           timeout 30 bash -c "until curl -sf $MINIO_URL/minio/health/live > /dev/null 2>&1; do sleep 0.5; done"
           aws --endpoint-url $MINIO_URL s3 mb s3://test
       - name: Restore build output
@@ -229,7 +257,8 @@ jobs:
         env:
           INDEX: ${{ matrix.shardIndex }}
           TOTAL: ${{ matrix.shardTotal }}
-          PERCY_PARALLEL_NONCE: ${{ github.run_id }}
+          # Include the run ATTEMPT so a re-run starts a fresh Percy build.
+          PERCY_PARALLEL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}
         run: |
           SPECS=$(find tests/specs/visual -name '*.spec.ts' | wc -l)
           EFFECTIVE=$(( SPECS < TOTAL ? SPECS : TOTAL ))

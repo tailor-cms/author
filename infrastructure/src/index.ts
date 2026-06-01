@@ -4,6 +4,7 @@ import * as pulumi from '@pulumi/pulumi';
 import * as studion from '@studion/infra-code-blocks';
 
 import { getEnvVariables, getSecrets, getSsmKey } from './env';
+import { setupMonitoring } from './monitoring';
 
 const config = new pulumi.Config();
 const dnsConfig = new pulumi.Config('dns');
@@ -65,7 +66,6 @@ const cluster = new aws.ecs.Cluster(`${projectPrefix}-ecs-cluster`, {
   name: `${projectPrefix}-ecs-cluster`,
 });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const webServer = new studion.WebServer(
   `${config.require('resourceNamePrefix')}-${STACK_NAME}-be`,
   {
@@ -87,6 +87,32 @@ const webServer = new studion.WebServer(
   },
 );
 
+// Reporting: CloudWatch + Route 53 alarms -> SNS -> email/Slack.
+//   - email:  ALERT_EMAIL env var, or the `alerts:email` stack config.
+//   - Slack:  `alerts:slackWorkspaceId` + `alerts:slackChannelId` (both),
+//             via AWS Chatbot, after the one-time console workspace auth.
+const alertsConfig = new pulumi.Config('alerts');
+const alertEmail = process.env.ALERT_EMAIL ?? alertsConfig.get('email');
+const slackWorkspaceId = alertsConfig.get('slackWorkspaceId');
+const slackChannelId = alertsConfig.get('slackChannelId');
+
+// Only provision monitoring when there's somewhere to send alerts;
+// to avoid additional costs
+const hasAlertChannel =
+  Boolean(alertEmail) || Boolean(slackWorkspaceId && slackChannelId);
+
+const monitoring = hasAlertChannel
+  ? setupMonitoring({
+      namePrefix: `${config.require('resourceNamePrefix')}-${STACK_NAME}`,
+      domain: dnsConfig.require('domain'),
+      db,
+      webServer,
+      alertEmail,
+      slackWorkspaceId,
+      slackChannelId,
+    })
+  : undefined;
+
 export const vpcId = vpc.vpcId;
 export const vpcCidrBlock = vpc.vpc.cidrBlock;
 export const vpcPublicSubnetIds = vpc.publicSubnetIds;
@@ -98,3 +124,7 @@ export const dbEndpoint = db.instance.address;
 export const dbPort = db.instance.port.apply((port: number) => String(port));
 export const dbName = db.instance.dbName;
 export const dbUser = db.instance.username;
+
+// Monitoring outputs (undefined on stacks with no alert channel configured).
+export const monitoringEnabled = hasAlertChannel;
+export const alertsTopicArn = monitoring?.snsTopic.arn;

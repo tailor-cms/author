@@ -11,12 +11,8 @@ export const PatchInput = z
       an outline activity bumps the old parent's \`modifiedAt\`.
     `),
     position: Activity.shape.position.optional(),
-    data: Activity.shape.data.optional().describe(oneLine`
-      Replacement data bag (JSONB). Editing \`data\` on a linked copy
-      auto-unlinks via the model's \`autoUnlinkOnEdit\` afterUpdate
-      hook.
-    `),
-    refs: Activity.shape.refs.optional().describe('Replacement refs bag.'),
+    data: Activity.shape.data.optional(),
+    refs: Activity.shape.refs.optional(),
   })
   .describe('Patch payload for an activity update operation.');
 

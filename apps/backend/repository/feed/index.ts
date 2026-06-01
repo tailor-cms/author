@@ -10,10 +10,13 @@ import activityRemove from './actions/activity-remove.action.ts';
 // `req.params`
 const router = express.Router({ mergeParams: true });
 
+// Realtime user-activity tracking: SSE stream of who's currently active
+// in the repo and what activity / element each user is focused on.
+// Keyv-backed with a 60s TTL heartbeat.
 const mountAction = createActionMounter(
   router,
   '/repositories/:repositoryId/feed',
-  'User Activity Feed',
+  { tag: 'User Activity', group: 'Repository' },
 );
 
 mountAction.get('/subscribe', subscribe, { before: [sseMiddleware] });

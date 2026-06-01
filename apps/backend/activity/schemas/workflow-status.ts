@@ -2,11 +2,13 @@
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
-import { Int, ShortText } from '#shared/request/schemas.ts';
+import { ShortText } from '#shared/request/schemas.ts';
+
+import { ActivityStatus } from './entity.ts';
 
 export const WorkflowStatusInput = z
   .object({
-    assigneeId: Int().nullable().optional().describe(oneLine`
+    assigneeId: ActivityStatus.shape.assigneeId.optional().describe(oneLine`
       Assignee user id; null clears the current assignment.
     `),
     status: ShortText(1, 64)
@@ -15,13 +17,8 @@ export const WorkflowStatusInput = z
     priority: ShortText(1, 64)
       .optional()
       .describe('Workflow priority id (schema-defined).'),
-    description: z
-      .string()
-      .nullable()
-      .optional()
-      .describe('Free-text note attached to the status entry.'),
-    dueDate: z
-      .union([z.iso.datetime({ offset: true }), z.null()])
+    description: ActivityStatus.shape.description.optional(),
+    dueDate: ActivityStatus.shape.dueDate
       .optional()
       .describe('ISO-8601 due date; null clears the existing date.'),
   })

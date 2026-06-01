@@ -45,10 +45,11 @@ export const Comment = z
     `),
     authorId: Int().describe('Author user id.'),
     author: UserSummary.optional().describe('Eager-loaded author.'),
-    content: z.string().describe(oneLine`
-      Comment body (1..2000 chars). For soft-deleted comments the
-      getter returns a "This comment has been deleted" placeholder;
-      \`deletedAt\` is the authoritative deletion signal.
+    content: z.string().min(1).max(2000).describe(oneLine`
+      Comment body. The model's \`len: [1, 2000]\` validator caps the
+      length. For soft-deleted comments the getter returns a
+      "This comment has been deleted" placeholder; \`deletedAt\` is the
+      authoritative deletion signal.
     `),
     contentElement: CommentElementRef
       .nullable()

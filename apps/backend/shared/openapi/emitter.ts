@@ -202,6 +202,8 @@ export function buildOpenApiDocument() {
       title: 'Tailor CMS API',
       version: '1.0.0',
     },
+    // API is served from `/api; prefix
+    'servers': [{ url: '/api' }],
     'tags': tagInfo.map(({ tag, displayTag }) => ({
       name: tag,
       ...(displayTag && { 'x-displayName': displayTag }),

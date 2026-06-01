@@ -42,6 +42,10 @@ class Storage {
     return this.provider.fileExists(key, options);
   }
 
+  healthCheck() {
+    return this.provider.healthCheck();
+  }
+
   getFileUrl(key, options = {}) {
     return this.provider.getFileUrl(key, options);
   }

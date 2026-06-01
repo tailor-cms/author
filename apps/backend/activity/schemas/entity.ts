@@ -97,7 +97,9 @@ export const Activity = z
     `),
     isLinkedCopy: z.boolean().describe(oneLine`
       True when this activity is an active linked copy of another;
-      receives automatic updates when the source changes.
+      receives automatic updates when the source changes. Editing
+      \`data\` auto-unlinks via the model's \`autoUnlinkOnEdit\`
+      afterUpdate hook.
     `),
     sourceId: Int().nullable().optional().describe(oneLine`
       Source activity id this entry was copied from; preserved after

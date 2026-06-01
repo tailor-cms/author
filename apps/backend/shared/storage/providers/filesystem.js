@@ -91,6 +91,16 @@ class FilesystemStorage {
     return pathExists(this.path(key));
   }
 
+  // Storage-root reachability probe (health checks). mkdirp ensures the
+  // directory exists; access() then confirms it's writable.
+  async healthCheck() {
+    await mkdirp(this.root);
+    // W_OK tests this process's write-permission bits on the directory and
+    // throws if absent. It's a no-write check, mirroring the S3 side's
+    // HeadBucket;
+    await fsp.access(this.root, fs.constants.W_OK);
+  }
+
   getFileUrl(key) {
     return Promise.resolve(`${config.origin}/${key}`);
   }

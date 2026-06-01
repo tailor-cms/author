@@ -1,18 +1,13 @@
-import yn from 'yn';
+import { env } from './env.ts';
+
+export const user = env.EMAIL_USER;
+export const password = env.EMAIL_PASSWORD;
+export const host = env.EMAIL_HOST;
+export const port = env.EMAIL_PORT;
+export const ssl = env.EMAIL_SSL;
+export const tls = env.EMAIL_TLS;
 
 export const sender = {
-  name: process.env.EMAIL_SENDER_NAME,
-  address: process.env.EMAIL_SENDER_ADDRESS,
+  name: env.EMAIL_SENDER_NAME,
+  address: env.EMAIL_SENDER_ADDRESS,
 };
-
-export const user: string | undefined = process.env.EMAIL_USER;
-
-export const password: string | undefined = process.env.EMAIL_PASSWORD;
-
-export const host: string | undefined = process.env.EMAIL_HOST;
-
-export const port: string | null = process.env.EMAIL_PORT || null;
-
-export const ssl = yn(process.env.EMAIL_SSL);
-
-export const tls = yn(process.env.EMAIL_TLS);

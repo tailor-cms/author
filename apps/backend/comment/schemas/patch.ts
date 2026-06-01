@@ -1,13 +1,11 @@
 // Wire shape for the comment PATCH endpoint.
 import { z } from 'zod';
 
+import { Comment } from './entity.ts';
+
 export const PatchInput = z
   .object({
-    content: z
-      .string()
-      .min(1)
-      .max(2000)
-      .describe('Replacement body; same length bounds as create.'),
+    content: Comment.shape.content,
   })
   .describe('Patch payload for a comment update operation.');
 

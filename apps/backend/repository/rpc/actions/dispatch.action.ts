@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import * as schemas from '../rpc.schema.ts';
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
@@ -22,23 +22,15 @@ type RpcDispatcher = (
 // POST /repositories/:repositoryId/rpc/:type/:procedure
 // Dispatches to a content-element plugin's server procedure; 404 when
 // no such procedure is registered for the element type.
-const Params = z.object({
-  // Content-element type id, e.g. `CE_ASSESSMENT`.
-  type: z.string().trim().min(1).max(64),
-  // Procedure name from the plugin's `procedures` map.
-  procedure: z.string().trim().min(1).max(64),
-});
-export type DispatchParams = z.infer<typeof Params>;
-
-// Opaque per-procedure payload.
-const Body = z.unknown();
-
 async function handler({
   body,
   params,
   user,
   req,
-}: Ctx<{ body: typeof Body; params: typeof Params }>) {
+}: Ctx<{
+  body: typeof schemas.DispatchBody;
+  params: typeof schemas.DispatchParams;
+}>) {
   const dispatcher = elementRegistry.getProcedure(
     params.type,
     params.procedure,
@@ -55,14 +47,14 @@ async function handler({
 }
 
 export default defineAction({
-  body: Body,
-  params: Params,
+  body: schemas.DispatchBody,
+  params: schemas.DispatchParams,
   openapi: {
+    authenticated: true,
     summary: 'Dispatch a content-element plugin procedure',
     description:
       'Calls a named server procedure on the plugin for ' +
       '`type`. Payload is opaque - each procedure defines its own shape.',
-    authenticated: true,
   },
   handler,
 });
