@@ -1,5 +1,5 @@
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../../repository.schema.ts';
+import * as schemas from '../../schemas/index.ts';
 import * as service from '../../repository.service.ts';
 
 // POST /repositories/:repositoryId/references/cleanup
@@ -8,19 +8,23 @@ import * as service from '../../repository.service.ts';
 async function handler({
   body,
   req,
-}: Ctx<{ body: typeof schemas.ReferenceCleanupInput }>) {
+}: Ctx<{
+  body: typeof schemas.ReferenceCleanupInput;
+  params: typeof schemas.RepositoryItemParams;
+}>) {
   await service.cleanupReferences(
     req.repository!.id,
-    body.activities as any[] | undefined,
-    body.elements as any[] | undefined,
+    body.activities,
+    body.elements,
   );
 }
 
 export default defineAction({
+  params: schemas.RepositoryItemParams,
   body: schemas.ReferenceCleanupInput,
   openapi: {
-    summary: 'Remove dangling references from activities and elements',
     authenticated: true,
+    summary: 'Remove dangling references from activities and elements',
     responses: { 204: { description: 'No content' } },
   },
   handler,

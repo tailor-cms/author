@@ -1,5 +1,6 @@
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../../repository.schema.ts';
+import { dataEnvelope } from '#shared/request/schemas.ts';
+import * as schemas from '../../schemas/index.ts';
 import * as service from '../../repository.service.ts';
 
 // POST /repositories/:repositoryId/users
@@ -7,16 +8,26 @@ import * as service from '../../repository.service.ts';
 async function handler({
   body,
   req,
-}: Ctx<{ body: typeof schemas.UpsertUserInput }>) {
+}: Ctx<{
+  body: typeof schemas.UpsertUserInput;
+  params: typeof schemas.RepositoryItemParams;
+}>) {
   const user = await service.upsertUser(req.repository!, body.email, body.role);
   return { user };
 }
 
 export default defineAction({
+  params: schemas.RepositoryItemParams,
   body: schemas.UpsertUserInput,
   openapi: {
-    summary: 'Invite or update a repository user',
     authenticated: true,
+    summary: 'Invite or update a repository user',
+    responses: {
+      200: {
+        description: 'Upserted repository member with their role.',
+        schema: dataEnvelope(schemas.UpsertUserResult),
+      },
+    },
   },
   handler,
 });

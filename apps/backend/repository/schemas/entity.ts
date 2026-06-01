@@ -9,6 +9,8 @@ import {
   RepositoryScopedParams,
   ShortText,
 } from '#shared/request/schemas.ts';
+import { Activity } from '#app/activity/schemas/entity.ts';
+import { ContentElement } from '#app/content-element/schemas/entity.ts';
 import { Tag } from '#app/tag/tag.schema.ts';
 import { UserSummary } from '#app/user/user.schema.ts';
 import { RepoData } from '../lib/data-attr.ts';
@@ -137,41 +139,56 @@ export const Repository = z
 export type Repository = z.infer<typeof Repository>;
 
 // Reference-integrity result types.
-// A single dangling reference detected during validation. `src` is the
-// entity that still holds the reference (activity or content element);
-// `target` is the missing entity it points to; `referenceName` is the
-// key on `src.refs` where the link lives (e.g. `prerequisites`).
-export const BrokenReference = z
-  .object({
-    src: z
-      .record(z.string(), z.unknown())
-      .describe('Activity / element row that still holds the reference.'),
-    referenceName: z
-      .string()
-      .describe(`Key on \`src.refs\` where the link lives.`),
-    target: z
-      .object({
-        id: Int().describe('Numeric id of the missing target.'),
-        entity: z
-          .string()
-          .optional()
-          .describe('Kind of the target (activity / element).'),
-      })
-      .describe('Pointer to the missing target.'),
-  })
-  .meta({ id: 'BrokenReference' })
-  .describe('A single dangling reference detected during validation.');
+// A dangling reference is keyed on the entity kind that holds it.
+// Common fields shared by both broken-reference variants.
+const BrokenReferenceCommon = {
+  referenceName: z
+    .string()
+    .describe(`Key on \`src.refs\` where the link lives.`),
+  target: z
+    .object({
+      id: Int().describe('Numeric id of the missing target.'),
+      entity: z
+        .string()
+        .optional()
+        .describe('Kind of the target (activity / element).'),
+    })
+    .describe('Pointer to the missing target.'),
+};
 
-export type BrokenReference = z.infer<typeof BrokenReference>;
+export const BrokenActivityReference = z
+  .object({
+    src: Activity.describe('Activity row that still holds the reference.'),
+    ...BrokenReferenceCommon,
+  })
+  .meta({ id: 'BrokenActivityReference' })
+  .describe('A dangling reference held by an activity.');
+
+export type BrokenActivityReference = z.infer<typeof BrokenActivityReference>;
+
+export const BrokenElementReference = z
+  .object({
+    src: ContentElement.extend({
+      outlineActivity: Activity.optional().describe(oneLine`
+        Closest outline-level ancestor of the element; added by
+        \`detectMissingReferences\` for FE deep-linking.
+      `),
+    }).describe('Content-element row that still holds the reference.'),
+    ...BrokenReferenceCommon,
+  })
+  .meta({ id: 'BrokenElementReference' })
+  .describe('A dangling reference held by a content element.');
+
+export type BrokenElementReference = z.infer<typeof BrokenElementReference>;
 
 // Dangling references grouped by the entity kind that holds them.
 export const ReferenceValidationResult = z
   .object({
     activities: z
-      .array(BrokenReference)
+      .array(BrokenActivityReference)
       .describe('Dangling references held by activities.'),
     elements: z
-      .array(BrokenReference)
+      .array(BrokenElementReference)
       .describe('Dangling references held by content elements.'),
   })
   .meta({ id: 'ReferenceValidationResult' })

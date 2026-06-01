@@ -1,11 +1,13 @@
 import * as os from 'node:os';
 import * as path from 'node:path';
 import * as fsp from 'node:fs/promises';
+import * as schemas from '../../schemas/index.ts';
 import { randomUUID } from 'node:crypto';
 import { createId as cuid } from '@paralleldrive/cuid2';
 import { createLogger } from '#logger';
 import TransferService from '#shared/transfer/transfer.service.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
+import { dataEnvelope } from '#shared/request/schemas.ts';
 import { JobCache } from './job-cache.ts';
 
 const logger = createLogger('repository:export');
@@ -18,7 +20,9 @@ const tmpExportPath = () =>
 // GET /repositories/:repositoryId/export/setup
 // Kicks off the export job fire-and-forget. The client polls /status with
 // the returned job id and downloads via the paired export endpoint.
-async function handler({ req }: Ctx) {
+async function handler({
+  req,
+}: Ctx<{ params: typeof schemas.RepositoryItemParams }>) {
   const repository = req.repository!;
   const outFile = tmpExportPath();
   const jobId = cuid();
@@ -44,9 +48,16 @@ async function handler({ req }: Ctx) {
 }
 
 export default defineAction({
+  params: schemas.RepositoryItemParams,
   openapi: {
-    summary: 'Initiate a repository export job',
     authenticated: true,
+    summary: 'Initiate a repository export job',
+    responses: {
+      200: {
+        description: 'Job id the caller polls status with and downloads via.',
+        schema: dataEnvelope(schemas.ExportInitiateResult),
+      },
+    },
   },
   handler,
 });

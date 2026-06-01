@@ -30,7 +30,8 @@ import type { User } from '../user/models/user.model.js';
 import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
 
 import type {
-  BrokenReference,
+  BrokenActivityReference,
+  BrokenElementReference,
   CreateInput,
   ListFilter,
   ListResult,
@@ -335,8 +336,8 @@ export async function importArchive(
 // Removes the supplied dangling references from activities + elements.
 export async function cleanupReferences(
   repositoryId: number,
-  activities: BrokenReference[] = [],
-  elements: BrokenReference[] = [],
+  activities: BrokenActivityReference[] = [],
+  elements: BrokenElementReference[] = [],
 ): Promise<void> {
   await removeInvalidReferences(Activity, repositoryId, activities);
   await removeInvalidReferences(ContentElement, repositoryId, elements);
