@@ -1,12 +1,13 @@
 <template>
-  <VSheet class="panel-header pa-3">
+  <VSheet class="panel-header pa-4">
     <div class="d-flex align-center ga-2">
       <VAvatar
+        color="secondary"
         image="/img/renoir/head.png"
         class="pa-1"
         size="small"
       />
-      <span class="text-title-medium font-weight-bold">Renoir</span>
+      <span class="text-title-large font-weight-semibold ml-1">Renoir</span>
       <VSpacer />
       <VHotkey
         class="text-label-small text-uppercase"

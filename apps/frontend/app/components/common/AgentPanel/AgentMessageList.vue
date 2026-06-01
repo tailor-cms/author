@@ -1,5 +1,5 @@
 <template>
-  <div ref="msgListEl" class="message-list text-left py-5 px-4 ">
+  <div ref="msgListEl" class="message-list text-left pa-5 ">
     <AgentEmptyState v-if="!messages.length" />
     <AgentChatMessage
       v-for="(message, i) in messages"

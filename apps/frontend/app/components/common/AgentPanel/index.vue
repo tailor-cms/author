@@ -10,6 +10,7 @@
       elevation="5"
       max-height="68vh"
       width="580"
+      rounded="xl"
     >
       <PanelHeader
         :is-running="isRunning"

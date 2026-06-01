@@ -23,7 +23,7 @@
         </Transition>
       </span>
     </button>
-    <div class="text-title-large font-weight-medium my-2">
+    <div class="text-title-large font-weight-semibold my-2">
       Bonjour! I'm Renoir.
     </div>
     <VSheet class="text-body-medium text-medium-emphasis" max-width="350">
