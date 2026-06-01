@@ -13,24 +13,24 @@ const lightTheme: ThemeDefinition = {
   colors: {
     // Surfaces
     'surface': '#FAFBFC',
-    'on-surface': '#37474F',
+    'on-surface': '#263238',
     'surface-variant': '#D0D9DD',
     'on-surface-variant': '#455A64',
 
     'surface-container-highest': '#D7DEE2',
-    'on-surface-container-highest': '#37474F',
+    'on-surface-container-highest': '#263238',
     'surface-container-high': '#DCE2E5',
-    'on-surface-container-high': '#37474F',
+    'on-surface-container-high': '#263238',
     'surface-container': '#E7EBEE',
-    'on-surface-container': '#37474F',
+    'on-surface-container': '#263238',
     'surface-container-low': '#F2F5F7',
-    'on-surface-container-low': '#37474F',
+    'on-surface-container-low': '#263238',
     'surface-container-lowest': '#FFFFFF',
-    'on-surface-container-lowest': '#37474F',
+    'on-surface-container-lowest': '#263238',
 
     // Surface add-ons
     'background': '#FAFBFC',
-    'on-background': '#37474F',
+    'on-background': '#263238',
     'surface-bright': '#FAFBFC',
     'surface-dim': '#C7CFD3',
 
@@ -96,6 +96,9 @@ const lightTheme: ThemeDefinition = {
     'inverse-surface': '#263238',
     'inverse-on-surface': '#ECEFF1',
     'inverse-primary': '#90A4AE',
+  },
+  variables: {
+    'medium-emphasis-opacity': 0.7,
   },
 };
 
@@ -206,8 +209,6 @@ export default defineNuxtPlugin({
         VBtn: { color: undefined },
         // MD3 spec: snackbars/tooltips use the inverse surface so they
         // contrast with the page (dark on light theme, light on dark theme).
-        // Vuetify's default is `surface-variant` (same tonal family), so we
-        // override here. VTooltip has no `color` prop, so style its content.
         VSnackbar: { color: 'inverse-surface' },
         VTooltip: { contentClass: 'bg-inverse-surface' },
       },
