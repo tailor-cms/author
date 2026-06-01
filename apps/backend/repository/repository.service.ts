@@ -30,10 +30,14 @@ import type { User } from '../user/models/user.model.js';
 import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
 
 import type {
+  BrokenReference,
   CreateInput,
   ListFilter,
+  ListResult,
   PatchInput,
-} from './repository.schema.ts';
+  RepositoryListItem,
+  RepositoryMember,
+} from './schemas/index.ts';
 
 const {
   Activity,
@@ -98,11 +102,6 @@ const selectGroupRepositories = (groupId: number | number[]) =>
     where: { group_id: groupId },
   });
 
-export interface ListResult {
-  total: number;
-  items: any[];
-}
-
 // Lists repositories visible to the acting user with last-revision
 // annotation per repo. Applies search/name/userGroup/compatibleWith
 // filters; pagination + sort key come from `opts` (built by processQuery).
@@ -148,7 +147,7 @@ export async function list(
     group: ['repositoryId', 'user.id'],
   });
   const revisionsByRepository = groupBy(revisions, 'repositoryId');
-  const items = repositories.map((repository: any) => ({
+  const items: RepositoryListItem[] = repositories.map((repository: any) => ({
     ...repository.toJSON(),
     revisions: revisionsByRepository[repository.id],
   }));
@@ -227,7 +226,9 @@ export async function pin(repository: Repository, user: User, pinned: boolean) {
 
 // Returns the active-access users of the repository decorated with their
 // repository role (joined through RepositoryUser).
-export async function listUsers(repository: Repository) {
+export async function listUsers(
+  repository: Repository,
+): Promise<RepositoryMember[]> {
   const users = await repository.getUsers({
     where: { '$repositoryUser.has_access$': true },
   });
@@ -243,10 +244,10 @@ export async function upsertUser(
   repository: Repository,
   email: string,
   role: string,
-) {
+): Promise<RepositoryMember> {
   const user = await User.inviteOrUpdate({ email }) as User;
   await findOrCreateRole(repository, user, role);
-  return { ...user.profile, repositoryRole: role };
+  return { ...user.profile, repositoryRole: role } as RepositoryMember;
 }
 
 export class UserNotFoundError extends Error {
@@ -334,9 +335,9 @@ export async function importArchive(
 // Removes the supplied dangling references from activities + elements.
 export async function cleanupReferences(
   repositoryId: number,
-  activities: any[] = [],
-  elements: any[] = [],
-) {
+  activities: BrokenReference[] = [],
+  elements: BrokenReference[] = [],
+): Promise<void> {
   await removeInvalidReferences(Activity, repositoryId, activities);
   await removeInvalidReferences(ContentElement, repositoryId, elements);
 }
