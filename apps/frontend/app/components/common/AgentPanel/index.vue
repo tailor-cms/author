@@ -4,52 +4,58 @@
     ref="rootEl"
     class="agent-panel"
   >
-    <VCard
-      v-if="isPanelOpen"
-      class="panel-card"
-      elevation="5"
-      max-height="68vh"
-      width="580"
-      rounded="xl"
-    >
-      <PanelHeader
-        :is-running="isRunning"
-        :focus-label="focusLabel"
-        @session:reset="runner.resetSession"
-        @panel:close="closePanel"
-      />
-      <AgentMessageList
-        ref="messageListEl"
-        :messages="messages"
-        :is-running="isRunning"
-        :status-text="activeStatus"
-        :error="runnerError"
-      />
-      <div v-if="pendingQuestion" class="question-host ma-4">
-        <AgentQuestion
-          v-bind="pendingQuestion"
-          @pick="runner.send"
-          @cancel="pendingQuestion = null"
+    <PanelLauncher
+      v-show="!isPanelOpen"
+      :is-running="isRunning"
+      @open="openPanel"
+    />
+    <Transition name="panel-pop">
+      <VCard
+        v-if="isPanelOpen"
+        class="panel-card"
+        elevation="5"
+        max-height="68vh"
+        width="580"
+        rounded="xl"
+      >
+        <PanelHeader
+          :is-running="isRunning"
+          :focus-label="focusLabel"
+          @session:reset="runner.resetSession"
+          @panel:close="closePanel"
         />
-      </div>
-      <AgentInput
-        ref="inputEl"
-        v-model="prompt"
-        v-model:mode="mode"
-        v-model:effort="effort"
-        :disabled="isRunning"
-        @autorun="runner.send"
-        @focus="scrollToLatest"
-        @submit="sendPrompt"
-      />
-      <AgentSessionStats
-        v-if="lastTurns != null"
-        :session-id="sessionId"
-        :turns="lastTurns"
-        :tool-count="lastToolCount || 0"
-      />
-    </VCard>
-    <PanelLauncher v-else :is-running="isRunning" @open="openPanel" />
+        <AgentMessageList
+          ref="messageListEl"
+          :messages="messages"
+          :is-running="isRunning"
+          :status-text="activeStatus"
+          :error="runnerError"
+        />
+        <div v-if="pendingQuestion" class="question-host ma-4">
+          <AgentQuestion
+            v-bind="pendingQuestion"
+            @pick="runner.send"
+            @cancel="pendingQuestion = null"
+          />
+        </div>
+        <AgentInput
+          ref="inputEl"
+          v-model="prompt"
+          v-model:mode="mode"
+          v-model:effort="effort"
+          :disabled="isRunning"
+          @autorun="runner.send"
+          @focus="scrollToLatest"
+          @submit="sendPrompt"
+        />
+        <AgentSessionStats
+          v-if="lastTurns != null"
+          :session-id="sessionId"
+          :turns="lastTurns"
+          :tool-count="lastToolCount || 0"
+        />
+      </VCard>
+    </Transition>
   </div>
 </template>
 
@@ -182,15 +188,32 @@ onMounted(scrollToLatest);
 <style lang="scss" scoped>
 .agent-panel {
   position: fixed;
-  right: 1.75rem;
-  bottom: 0.75rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
   z-index: 9000;
 }
 
 .panel-card {
+  position: absolute;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+.panel-pop-enter-active,
+.panel-pop-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom right;
+}
+
+.panel-pop-enter-from,
+.panel-pop-leave-to {
+  opacity: 0;
+  transform: scale(0.85) translateY(12px);
 }
 </style>
 
