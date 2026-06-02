@@ -9,58 +9,74 @@
       :is-running="isRunning"
       @open="openPanel"
     />
+    <DefinePanelBody>
+      <PanelHeader
+        :is-running="isRunning"
+        :is-expanded="isExpanded"
+        @session:reset="runner.resetSession"
+        @panel:toggle-expand="isExpanded = !isExpanded"
+        @panel:close="closePanel"
+      />
+      <AgentMessageList
+        ref="messageListEl"
+        :messages="messages"
+        :is-running="isRunning"
+        :status-text="activeStatus"
+        :error="runnerError"
+      />
+      <div v-if="pendingQuestion" class="question-host ma-4">
+        <AgentQuestion
+          v-bind="pendingQuestion"
+          @pick="runner.send"
+          @cancel="pendingQuestion = null"
+        />
+      </div>
+      <AgentInput
+        ref="inputEl"
+        v-model="prompt"
+        v-model:mode="mode"
+        v-model:effort="effort"
+        :disabled="isRunning"
+        :focus-chip="focusChip"
+        @autorun="runner.send"
+        @focus="scrollToLatest"
+        @submit="sendPrompt"
+      />
+      <AgentSessionStats
+        v-if="lastTurns != null"
+        :session-id="sessionId"
+        :turns="lastTurns"
+        :tool-count="lastToolCount || 0"
+      />
+    </DefinePanelBody>
+    <VDialog
+      v-model="isFullscreen"
+      fullscreen
+      transition="dialog-bottom-transition"
+    >
+      <VCard class="panel-card-full">
+        <div class="panel-body-column">
+          <ReusePanelBody />
+        </div>
+      </VCard>
+    </VDialog>
     <Transition name="panel-pop">
       <VCard
-        v-if="isPanelOpen"
+        v-if="isPanelOpen && !isExpanded"
         class="panel-card"
         elevation="5"
         max-height="68vh"
         width="580"
         rounded="xl"
       >
-        <PanelHeader
-          :is-running="isRunning"
-          @session:reset="runner.resetSession"
-          @panel:close="closePanel"
-        />
-        <AgentMessageList
-          ref="messageListEl"
-          :messages="messages"
-          :is-running="isRunning"
-          :status-text="activeStatus"
-          :error="runnerError"
-        />
-        <div v-if="pendingQuestion" class="question-host ma-4">
-          <AgentQuestion
-            v-bind="pendingQuestion"
-            @pick="runner.send"
-            @cancel="pendingQuestion = null"
-          />
-        </div>
-        <AgentInput
-          ref="inputEl"
-          v-model="prompt"
-          v-model:mode="mode"
-          v-model:effort="effort"
-          :focus-chip="focusChip"
-          :disabled="isRunning"
-          @autorun="runner.send"
-          @focus="scrollToLatest"
-          @submit="sendPrompt"
-        />
-        <AgentSessionStats
-          v-if="lastTurns != null"
-          :session-id="sessionId"
-          :turns="lastTurns"
-          :tool-count="lastToolCount || 0"
-        />
+        <ReusePanelBody />
       </VCard>
     </Transition>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useLocalStorage } from '@vueuse/core';
+import { createReusableTemplate, useLocalStorage } from '@vueuse/core';
 import { AGENT_MODES, AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import {
   REASONING_EFFORTS,
@@ -86,6 +102,8 @@ const route = useRoute();
 const authStore = useAuthStore();
 const config = useConfigStore();
 const repositoryStore = useCurrentRepository();
+
+const [DefinePanelBody, ReusePanelBody] = createReusableTemplate();
 
 const rootEl = ref<HTMLElement | null>(null);
 const inputEl = ref<{ focus: () => void } | null>(null);
@@ -127,6 +145,8 @@ if (!(REASONING_EFFORTS as readonly string[]).includes(effort.value)) {
   effort.value = ReasoningEffort.Medium;
 }
 
+const isExpanded = ref(false);
+
 const {
   isOpen: isPanelOpen,
   open: openPanel,
@@ -158,6 +178,13 @@ const runner = useAgentRunner({
   onRunEnd: stopStatus,
 });
 
+const isFullscreen = computed({
+  get: () => isPanelOpen.value && isExpanded.value,
+  set: (value) => {
+    if (!value) closePanel();
+  },
+});
+
 const {
   isRunning,
   error: runnerError,
@@ -165,6 +192,10 @@ const {
   lastToolCount,
   pendingQuestion,
 } = runner;
+
+watch(isPanelOpen, (open) => {
+  if (!open) isExpanded.value = false;
+});
 
 // Repo switch wipes transient UI state.
 watch(repositoryId, () => {
@@ -200,6 +231,25 @@ onMounted(scrollToLatest);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+// Fullscreen (expanded) dialog: card fills the viewport, content is capped
+// to a centered column so chat lines stay readable on wide screens.
+.panel-card-full {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+.panel-body-column {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  max-width: 60rem;
+  min-height: 0; // let the inner scroll area shrink instead of overflowing
 }
 
 .panel-pop-enter-active,

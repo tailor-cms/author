@@ -7,7 +7,7 @@
         class="pa-1"
         size="small"
       />
-      <span class="text-title-large font-weight-semibold ml-1">Renoir</span>
+      <span class="text-title-large header-title ml-1">Renoir</span>
       <VSpacer />
       <VHotkey
         class="text-label-small text-uppercase"
@@ -15,6 +15,14 @@
         prefix="Shortcut"
         density="compact"
         variant="tonal"
+      />
+      <VBtn
+        :icon="isExpanded ? 'mdi-arrow-collapse' : 'mdi-arrow-expand'"
+        :title="isExpanded ? 'Shrink' : 'Expand'"
+        density="comfortable"
+        size="small"
+        variant="tonal"
+        @click="$emit('panel:toggle-expand')"
       />
       <VBtn
         :disabled="isRunning"
@@ -40,12 +48,14 @@
 <script lang="ts" setup>
 interface Props {
   isRunning?: boolean;
+  isExpanded?: boolean;
 }
 
-withDefaults(defineProps<Props>(), { isRunning: false });
+withDefaults(defineProps<Props>(), { isRunning: false, isExpanded: false });
 
 defineEmits<{
   'session:reset': [];
+  'panel:toggle-expand': [];
   'panel:close': [];
 }>();
 </script>
@@ -64,5 +74,10 @@ defineEmits<{
   :deep(.v-hotkey__key-icon .v-icon) {
     font-size: 0.625rem;
   }
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 </style>

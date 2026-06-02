@@ -37,9 +37,9 @@
           class="input-send"
           color="primary"
           density="comfortable"
-          variant="flat"
           rounded="lg"
           size="small"
+          variant="flat"
           @click="submit"
         />
       </div>
