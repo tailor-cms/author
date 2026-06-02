@@ -124,7 +124,6 @@ const config = computed(
 );
 
 const toolbarColor = computed(() => {
-  if (props.element) return 'white';
   return showPublishDiff.value ? 'surface-container-lowest' : 'surface-container-low';
 });
 
