@@ -26,9 +26,23 @@ async function resolve(container, resolveStatics) {
   return container;
 }
 
+/**
+ * ASSESSMENT_POOL is a flat container; no subcontainers,
+ * elements live directly on the container. The schema's
+ * contentElementConfig declares which (question) element
+ * types are permitted.
+ */
+function describeSchema(container) {
+  return {
+    subcontainers: [],
+    elementConfig: container?.contentElementConfig || null,
+  };
+}
+
 export default {
   templateId: 'ASSESSMENT_POOL',
   version: '1.0',
   fetch,
   resolve,
+  describeSchema,
 };

@@ -2,7 +2,7 @@
   {
     "name": "@tailor-cms/tcc-page",
     "clientPackage": "@tailor-cms/tcc-page",
-    "serverPackage": ""
+    "serverPackage": "@tailor-cms/tcc-page-server"
   },
   {
     "name": "@tailor-cms/tcc-structured-content",
