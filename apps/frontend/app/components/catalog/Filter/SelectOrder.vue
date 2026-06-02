@@ -6,7 +6,7 @@
           v-tooltip:top="{ text: 'Order by', openDelay: 500 }"
           v-bind="menuProps"
           aria-label="Order by"
-          class="my-1"
+          class="text-medium-emphasis my-1"
           icon="mdi-sort-variant"
           variant="text"
         />
@@ -25,7 +25,7 @@
       v-tooltip:top="{ text: 'Order direction', openDelay: 500 }"
       :icon="sortIcon"
       aria-label="Order direction"
-      class="my-1"
+      class="text-medium-emphasis my-1"
       variant="text"
       @click="toggleOrder"
     />

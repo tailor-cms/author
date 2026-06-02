@@ -1,7 +1,7 @@
 <template>
   <div class="repository-settings">
     <VNavigationDrawer
-      color="surface-container"
+      color="surface-container-low"
       elevation="0"
       location="left"
       order="1"

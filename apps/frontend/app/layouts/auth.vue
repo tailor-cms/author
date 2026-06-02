@@ -3,9 +3,9 @@
     <VSheet
       class="auth-panel d-flex pa-5"
       color="surface-container-low"
-      border="surface sm"
       max-width="840"
       rounded="xl"
+      border
     >
       <VRow no-gutters>
         <VCol
@@ -50,9 +50,10 @@ const logoPath = '/img/logo-new.svg';
   // Override autofill styles
   input:-webkit-autofill {
     color: #fafafa !important;
-    background-color: #263238 !important;
+    background-color: rgba(var(--v-theme-surface-container-low)) !important;
     -webkit-text-fill-color: #fafafa !important;
-    -webkit-box-shadow: 0 0 0 1000px #263238 inset !important;
+    -webkit-box-shadow:
+      0 0 0 1000px rgba(var(--v-theme-surface-container-low)) inset !important;
   }
 
   // Override vuetify error styles for auth forms

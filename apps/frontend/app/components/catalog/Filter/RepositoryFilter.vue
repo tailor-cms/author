@@ -8,6 +8,7 @@
       <VBtn
         v-tooltip:top="{ text: `Filter by ${props.label}`, openDelay: 500 }"
         v-bind="menuProps"
+        class="text-medium-emphasis"
         :icon="icon"
         :aria-label="props.label"
         variant="text"

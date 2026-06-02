@@ -41,7 +41,7 @@
           v-if="repository?.hasAdminAccess"
           v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
           aria-label="Repository settings"
-          class="repo-info"
+          class="repo-info text-medium-emphasis"
           icon="mdi-cog"
           size="small"
           variant="text"
@@ -73,6 +73,7 @@
         }"
         :color="isPinned ? 'highlight' : ''"
         :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
+        class="text-medium-emphasis"
         aria-label="Pin repository"
         @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
       />

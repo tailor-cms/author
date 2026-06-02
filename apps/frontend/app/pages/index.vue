@@ -34,7 +34,7 @@
                   :color="arePinnedShown ? 'highlight' : '' "
                   :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                   aria-label="Toggle pinned items filter"
-                  class="my-1"
+                  class="text-medium-emphasis my-1"
                   variant="tonal"
                   @click="togglePinFilter"
                 />

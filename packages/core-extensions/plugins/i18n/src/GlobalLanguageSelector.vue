@@ -5,7 +5,7 @@
         v-bind="menuProps"
         :aria-label="`Content language: ${currentLanguage?.toUpperCase() ?? 'EN'}`"
         class="language-selector ma-2"
-        color="secondary"
+        color="primary"
         size="small"
         variant="tonal"
         rounded="lg"

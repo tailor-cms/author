@@ -27,7 +27,7 @@
       v-if="!exceededTagLimit"
       v-tooltip:bottom="{ text: 'Add tag', openDelay: 400 }"
       aria-label="Add tag"
-      class="ml-2"
+      class="text-medium-emphasis ml-2"
       icon="mdi-tag-plus"
       @click.stop="showTagDialog = true"
     />

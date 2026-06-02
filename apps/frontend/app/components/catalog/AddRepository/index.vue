@@ -16,7 +16,7 @@
         prepend-icon="mdi-plus"
         size="large"
         text="New"
-        variant="tonal"
+        variant="flat"
       />
     </template>
     <template #header>Create</template>
