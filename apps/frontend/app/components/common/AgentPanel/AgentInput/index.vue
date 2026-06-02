@@ -1,43 +1,48 @@
 <template>
-  <div class="agent-input">
-    <VTextarea
-      ref="inputEl"
-      v-model="text"
-      :disabled="disabled"
-      :placeholder="placeholder"
-      class="input-field"
-      density="comfortable"
-      bg-color="surface-container-low"
-      max-rows="8"
-      rows="2"
-      rounded="lg"
-      auto-grow
-      flat
-      hide-details
-      @focus="emit('focus')"
-      @keydown="onKeydown"
-    />
-    <div class="d-flex align-center ga-2">
-      <AgentCmdMenu
-        ref="cmdMenuEl"
+  <div class="ma-4 mt-0">
+    <VSheet class="agent-input" color="surface-container-low" border>
+      <VTextarea
+        ref="inputEl"
         v-model="text"
-        :mode="mode"
-        @autorun="(prompt, label) => emit('autorun', prompt, label)"
+        :disabled="disabled"
+        :placeholder="placeholder"
+        class="input-field"
+        density="comfortable"
+        bg-color="transparent"
+        max-rows="8"
+        rows="2"
+        auto-grow
+        flat
+        hide-details
+        variant="solo"
+        @focus="emit('focus')"
+        @keydown="onKeydown"
       />
-      <VSpacer />
-      <AgentModeSelect v-model="mode" />
-      <AgentEffortSelect v-model="effort" />
-      <VBtn
-        :disabled="!canSubmit"
-        :loading="disabled"
-        append-icon="mdi-arrow-up"
-        class="input-send ml-1"
-        color="secondary"
-        text="Send"
-        variant="tonal"
-        @click="submit"
-      />
-    </div>
+      <div class="d-flex align-center pa-2 pt-0 ga-2">
+        <AgentCmdMenu
+          ref="cmdMenuEl"
+          v-model="text"
+          :mode="mode"
+          @autorun="(prompt, label) => emit('autorun', prompt, label)"
+        />
+        <VSpacer />
+        <AgentModeSelect v-model="mode" />
+        <AgentEffortSelect v-model="effort" />
+        <VBtn
+          :disabled="!canSubmit"
+          :loading="disabled"
+          icon="mdi-arrow-up"
+          aria-label="Send"
+          class="input-send"
+          color="primary"
+          density="comfortable"
+          variant="flat"
+          rounded="lg"
+          size="small"
+          @click="submit"
+        />
+      </div>
+    </VSheet>
   </div>
 </template>
 
@@ -105,6 +110,6 @@ defineExpose({ focus: () => inputEl.value?.focus() });
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
-  padding: 0 1rem 1rem;
+  border-radius: 16px;
 }
 </style>

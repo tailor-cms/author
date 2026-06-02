@@ -6,12 +6,12 @@
         :aria-label="label"
         :prepend-icon="activeOption!.icon"
         :text="activeOption!.title"
-        color="surface-container-low"
+        color="secondary"
         class="agent-option-menu"
         append-icon="mdi-chevron-down"
         rounded="lg"
         size="small"
-        variant="flat"
+        variant="tonal"
       />
     </template>
     <VList nav>
