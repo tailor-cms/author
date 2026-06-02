@@ -140,7 +140,7 @@
         <VBtn
           v-tooltip:left="{ text: 'Reset element', openDelay: 1000 }"
           aria-label="Reset element"
-          color="secondary"
+          color="primary"
           icon="mdi-restore"
           size="x-small"
           variant="tonal"

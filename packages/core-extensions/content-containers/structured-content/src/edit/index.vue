@@ -3,7 +3,7 @@
     <div class="d-flex items-center justify-end ga-2 mb-6">
       <VBtn
         v-if="isAiEnabled && !isAiGeneratingContent && !disabled"
-        color="secondary"
+        color="primary"
         size="small"
         variant="tonal"
         text="Generate content"

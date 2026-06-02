@@ -49,7 +49,7 @@
         variant="outlined"
       />
       <VBtn
-        color="secondary"
+        color="primary"
         size="large"
         text="Sign in"
         variant="tonal"

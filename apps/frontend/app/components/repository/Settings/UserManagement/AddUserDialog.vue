@@ -5,7 +5,7 @@
         v-bind="props"
         aria-label="Add user"
         class="add-user"
-        color="secondary"
+        color="primary"
         prepend-icon="mdi-plus"
         text="Add user"
         variant="tonal"

@@ -34,17 +34,17 @@ const lightTheme: ThemeDefinition = {
     'surface-bright': '#FAFBFC',
     'surface-dim': '#C7CFD3',
 
-    // Primary
-    'primary': '#607D8B',
+    // Primary (teal — brand accent; chromatic so it stays distinct from the cool neutral surfaces)
+    'primary': '#00897B',
     'on-primary': '#FFFFFF',
-    'primary-container': '#E3EBEF',
-    'on-primary-container': '#263238',
+    'primary-container': '#B2DFDB',
+    'on-primary-container': '#004D40',
 
-    // Secondary (teal — harmonic complement to blue-grey primary)
-    'secondary': '#00897B',
+    // Secondary (muted teal — desaturated sibling of primary; MD3 lower-emphasis supporting tone)
+    'secondary': '#4F7C74',
     'on-secondary': '#FFFFFF',
-    'secondary-container': '#B2DFDB',
-    'on-secondary-container': '#004D40',
+    'secondary-container': '#D2E6E1',
+    'on-secondary-container': '#0B3D37',
 
     // Tertiary (pink — contrasting accent)
     'tertiary': '#C2185B',
@@ -95,7 +95,7 @@ const lightTheme: ThemeDefinition = {
     // Inverse
     'inverse-surface': '#263238',
     'inverse-on-surface': '#ECEFF1',
-    'inverse-primary': '#90A4AE',
+    'inverse-primary': '#4DB6AC',
   },
   variables: {
     'medium-emphasis-opacity': 0.7,
@@ -130,17 +130,17 @@ const darkTheme: ThemeDefinition = {
     'surface-bright': '#78909C',
     'surface-dim': '#1F2A30',
 
-    // Primary
-    'primary': '#90A4AE',
-    'on-primary': '#263238',
-    'primary-container': '#4F6873',
-    'on-primary-container': '#D9E3E8',
+    // Primary (teal — brand accent; chromatic so it stays distinct from the cool neutral surfaces)
+    'primary': '#4DB6AC',
+    'on-primary': '#003B33',
+    'primary-container': '#00695C',
+    'on-primary-container': '#B2DFDB',
 
-    // Secondary (teal — harmonic complement to blue-grey primary)
-    'secondary': '#4DB6AC',
-    'on-secondary': '#003B33',
-    'secondary-container': '#00695C',
-    'on-secondary-container': '#B2DFDB',
+    // Secondary (muted teal — desaturated sibling of primary; MD3 lower-emphasis supporting tone)
+    'secondary': '#A2C7C0',
+    'on-secondary': '#10312C',
+    'secondary-container': '#355C55',
+    'on-secondary-container': '#C4E5DF',
 
     // Tertiary (pink — contrasting accent)
     'tertiary': '#F48FB1',
@@ -191,7 +191,7 @@ const darkTheme: ThemeDefinition = {
     // Inverse
     'inverse-surface': '#ECEFF1',
     'inverse-on-surface': '#263238',
-    'inverse-primary': '#607D8B',
+    'inverse-primary': '#00897B',
   },
   variables: {
     'medium-emphasis-opacity': 0.7,

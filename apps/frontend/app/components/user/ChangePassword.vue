@@ -4,7 +4,7 @@
       <VBtn
         v-bind="props"
         class="mt-6"
-        color="secondary"
+        color="primary"
         prepend-icon="mdi-lock"
         text="Change Password"
         variant="tonal"

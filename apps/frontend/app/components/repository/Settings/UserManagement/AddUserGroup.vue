@@ -5,7 +5,7 @@
         v-bind="activatorProps"
         aria-label="Add user group"
         class="add-user"
-        color="secondary"
+        color="primary"
         prepend-icon="mdi-plus"
         text="Add user group"
         variant="tonal"

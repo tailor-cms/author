@@ -4,7 +4,7 @@
       <VSpacer />
       <VBtn
         prepend-icon="mdi-account-multiple-plus"
-        color="secondary"
+        color="primary"
         text="Add user"
         variant="tonal"
         @click.stop="showUserDialog"
