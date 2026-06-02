@@ -7,7 +7,7 @@
         class="pa-1"
         size="small"
       />
-      <span class="text-title-large header-title ml-1">Renoir</span>
+      <span class="header-title font-weight-semibold ml-1">Renoir</span>
       <VSpacer />
       <VHotkey
         class="text-label-small text-uppercase"
@@ -78,6 +78,5 @@ defineEmits<{
 
 .header-title {
   font-size: 1.25rem;
-  font-weight: 500;
 }
 </style>
