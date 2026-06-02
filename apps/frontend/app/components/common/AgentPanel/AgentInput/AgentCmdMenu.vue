@@ -1,11 +1,11 @@
 <template>
   <div class="cmd-anchor">
     <VBtn
-      prepend-icon="mdi-slash-forward"
+      density="comfortable"
+      icon="mdi-slash-forward"
       size="small"
-      text="Commands"
+      aria-label="Commands"
       variant="text"
-      rounded="lg"
       @click="toggleMenu"
     />
     <VMenu

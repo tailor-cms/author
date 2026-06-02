@@ -6,7 +6,6 @@
         :aria-label="label"
         :prepend-icon="activeOption!.icon"
         :text="activeOption!.title"
-        color="secondary"
         class="agent-option-menu"
         append-icon="mdi-chevron-down"
         rounded="lg"

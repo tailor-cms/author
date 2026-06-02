@@ -25,6 +25,7 @@
           :mode="mode"
           @autorun="(prompt, label) => emit('autorun', prompt, label)"
         />
+        <AgentTargetChip :chip="focusChip" />
         <VSpacer />
         <AgentModeSelect v-model="mode" />
         <AgentEffortSelect v-model="effort" />
@@ -52,16 +53,24 @@ import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
 import AgentEffortSelect from './AgentEffortSelect.vue';
 import AgentModeSelect from './AgentModeSelect.vue';
 import AgentCmdMenu from './AgentCmdMenu.vue';
+import AgentTargetChip from './AgentTargetChip.vue';
+
+interface FocusChip {
+  short: string;
+  full: string;
+}
 
 interface Props {
   disabled?: boolean;
   placeholder?: string;
+  focusChip?: FocusChip | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   placeholder:
     'Ask Renoir - generate, refine, restructure. Press / for shortcuts.',
+  focusChip: null,
 });
 
 const emit = defineEmits<{

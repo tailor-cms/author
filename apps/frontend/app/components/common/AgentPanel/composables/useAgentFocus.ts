@@ -2,7 +2,9 @@
  * The editor's "focus context"
  * the activity (and optional content element) the user is currently looking at
  * resolved into:
- *   - focusLabel: short breadcrumb shown in the panel header
+ *   - focusChip: { short, full } for the compact target chip in the input
+ *     toolbar - `short` is the level label + id, `full` the breadcrumb shown
+ *     in the tooltip. Null when nothing is selected.
  *   - focusPayload: structured FocusedTarget[] sent on every agent run,
  *     so the model can resolve "this" / "the topic" without an extra read
  */
@@ -30,9 +32,9 @@ export function useAgentFocus() {
   const getElementLabel = (type: string): string =>
     $ceRegistry.get(type)?.name || type;
 
-  const focusLabel = computed(() => {
+  const focusChip = computed(() => {
     const activity = focusedActivity.value;
-    if (!activity) return '';
+    if (!activity) return null;
     const activityName =
       activity.data?.name || activity.data?.title || '(untitled)';
     const levelConfig = $schemaService?.getLevel?.(activity.type);
@@ -45,8 +47,9 @@ export function useAgentFocus() {
     const elementSuffix = element
       ? ` › ${getElementLabel(element.type)} #${element.id}`
       : '';
-    const baseLabel = `${activityLabel} #${activity.id} ${activityName}`;
-    return `${baseLabel}${elementSuffix}`.slice(0, 80);
+    const short = `${activityLabel} #${activity.id}${elementSuffix}`;
+    const full = `${activityName}${elementSuffix}`;
+    return { short, full };
   });
 
   const focusPayload = computed(() => {
@@ -72,5 +75,5 @@ export function useAgentFocus() {
     return targets.length ? targets : undefined;
   });
 
-  return { focusLabel, focusPayload };
+  return { focusChip, focusPayload };
 }

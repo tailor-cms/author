@@ -20,7 +20,6 @@
       >
         <PanelHeader
           :is-running="isRunning"
-          :focus-label="focusLabel"
           @session:reset="runner.resetSession"
           @panel:close="closePanel"
         />
@@ -43,6 +42,7 @@
           v-model="prompt"
           v-model:mode="mode"
           v-model:effort="effort"
+          :focus-chip="focusChip"
           :disabled="isRunning"
           @autorun="runner.send"
           @focus="scrollToLatest"
@@ -109,7 +109,7 @@ const isPanelEnabled = computed(() =>
   ),
 );
 
-const { focusLabel, focusPayload } = useAgentFocus();
+const { focusChip, focusPayload } = useAgentFocus();
 
 const { sessionId, messages } = useAgentSession(repositoryUid);
 

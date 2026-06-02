@@ -34,18 +34,11 @@
         @click="$emit('panel:close')"
       />
     </div>
-    <div class="d-flex align-center text-body-small opacity-60 mt-2">
-      <VIcon icon="mdi-target" size="small" start />
-      <span class="text-truncate">
-        {{ focusLabel || 'No focus - select an activity in the editor' }}
-      </span>
-    </div>
   </VSheet>
 </template>
 
 <script lang="ts" setup>
 interface Props {
-  focusLabel: string;
   isRunning?: boolean;
 }
 
