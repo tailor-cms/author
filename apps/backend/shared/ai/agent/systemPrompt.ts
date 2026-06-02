@@ -109,8 +109,11 @@ function operatingPrinciples(): string {
        existing element-carrying activity - the host, i.e. a container
        or subcontainer that already exists (phrases like "add a question
        to this section", "extend it") - use add_elements_to_activity on
-       that host. Reach for create_container_with_elements only when a
-       NEW container instance is actually needed; it spawns a sibling.
+       that host. Reach for create_container_with_elements when you're
+       building structure that doesn't exist yet. For multi-instance
+       container types (multiple: true) it spawns a NEW sibling; for
+       single-instance types it find-or-creates and appends - safe
+       either way when the intent is "fill this slot".
     5. Recover from errors, don't repeat them. Tool errors carry a reason
        and hint - read them and adjust. Retrying the same call with the
        same arguments will fail the same way.
@@ -212,6 +215,18 @@ function commonRequestRecipesSection(): string {
         AND a stub check. Another user (or another tab) may have added
         content since the last turn; without re-reading you risk
         duplicating or clobbering their work.
+        \`generate_container_content\` adapts to the target container's
+        shape - check CONTAINERS above to see which bucket each one
+        falls into.
+          * Nested (container lists subcontainers): each item becomes
+            a subcontainer under the wrapper. item.type = subcontainer
+            type, item.data = its meta.
+          * Flat, multiple: true: each item becomes a NEW sibling
+            container under the outline activity. item.type = container
+            type, item.data = its own meta (e.g. a name field).
+          * Flat, multiple unset/false: one item with elements only.
+            The write side find-or-creates the container, so elements
+            append regardless of prior existence.
         If the target container holds empty subcontainer stubs - nodes
         with zero elements and missingMeta in the subtree, typically
         editor scaffolding materialised from defaultSubcontainers on
@@ -225,9 +240,14 @@ function commonRequestRecipesSection(): string {
         \`data\` (container/subcontainer metadata) is a top-level field
         alongside \`elements\`, not nested in it.
 
-    - Append elements to an existing host:
-        get_activity_subtree (to find the host id) ->
+    - Append elements to a host (you already have its id):
         generate_elements_for_target -> add_elements_to_activity.
+        Both tools target the exact id you pass - no spawning, no
+        find-or-create. Reach for create_container_with_elements
+        instead when the host doesn't exist yet. To populate an
+        empty stub the editor materialised (missingMeta + zero
+        elements in get_activity_subtree), use this chain for the
+        elements and update_activity for the meta.
 
     - Add an asset-backed media element:
         list_assets / generate_image_asset / discover_resources +
@@ -432,11 +452,15 @@ function describeContainers(schemaId: string): string {
 
 function formatContainer(schemaId: string, c: any): string {
   const desc = describeContainerSchema(schemaId, c.type) as any;
+  const labelInfo = `label: ${c.label ? `"${c.label}"` : `"${c.type}"`}`;
+  const multipleInfo = c.multiple ? '  multiple: true' : '';
   return [
-    `- ${c.type}  template: ${c.templateId}  label: "${c.label ?? c.type}"`,
+    `- ${c.type}  template: ${c.templateId} ${labelInfo}${multipleInfo}`,
     `  purpose: ${formatContainerPurpose(c)}`,
     formatContainerBody(desc),
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 // Body block for a container: either its subcontainer list (nested
@@ -466,7 +490,9 @@ function formatSubcontainer(sub: any): string {
     `    - ${sub.type}  label: "${label}"`,
     `      elements: [${elements}]`,
     metaKeys ? `      meta: [${metaKeys}]` : null,
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
 // Render a container's (or subcontainer's) elementConfig as a
@@ -492,7 +518,11 @@ function formatSupportedElementTypes(config: any): string {
 function formatContainerPurpose(c: any): string {
   const raw = c?.ai?.definition?.trim() ?? '';
   if (!raw) return '(no description)';
-  return raw.split('\n').map((l: string) => l.trim()).join(' ').slice(0, 160);
+  return raw
+    .split('\n')
+    .map((l: string) => l.trim())
+    .join(' ')
+    .slice(0, 160);
 }
 
 // The runner enforces these rules server-side. A blocked call returns
