@@ -21,3 +21,9 @@ defineProps<{
 }>();
 defineEmits<{ pick: []; hover: [] }>();
 </script>
+
+<style lang="scss" scoped>
+.v-list-item-subtitle {
+  -webkit-line-clamp: initial;
+}
+</style>
