@@ -10,7 +10,7 @@
         <VBtn
           v-tooltip:bottom="placeholder"
           :aria-label="`${hasRelationships ? 'Edit' : 'Add'} Relationship`"
-          :icon="hasRelationships ? 'mdi-pencil' : 'mdi-plus'"
+          :icon="hasRelationships ? 'mdi-pencil-box-outline' : 'mdi-plus'"
           size="x-small"
           variant="tonal"
           @click="$emit('open')"

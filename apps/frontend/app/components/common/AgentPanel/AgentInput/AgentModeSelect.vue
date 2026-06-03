@@ -23,7 +23,7 @@ const MODE_OPTIONS: ModeOption[] = [
   {
     title: 'Edit',
     value: AgentMode.Edit,
-    icon: 'mdi-pencil-outline',
+    icon: 'mdi-square-edit-outline',
     subtitle: 'Agent can read, write, generate, and delete',
   },
   {

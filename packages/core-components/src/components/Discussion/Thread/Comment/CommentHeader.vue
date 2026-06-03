@@ -94,7 +94,7 @@ const OPTIONS: Record<string, Option> = {
   edit: {
     label: 'Edit comment',
     action: 'enableEdit',
-    icon: 'pencil-outline',
+    icon: 'square-edit-outline',
     color: 'secondary',
   },
   remove: {

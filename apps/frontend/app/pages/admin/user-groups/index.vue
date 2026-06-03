@@ -54,7 +54,7 @@
           <td v-if="authStore.isAdmin" class="text-no-wrap text-left">
             <VBtn
               aria-label="Edit user group"
-              icon="mdi-pencil"
+              icon="mdi-square-edit-outline"
               size="small"
               variant="text"
               @click="showGroupDialog(item)"

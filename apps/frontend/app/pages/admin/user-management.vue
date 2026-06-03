@@ -69,7 +69,7 @@
           <td class="user-entry-actions text-no-wrap text-center">
             <VBtn
               aria-label="Edit user"
-              icon="mdi-pencil"
+              icon="mdi-square-edit-outline"
               size="small"
               variant="text"
               @click="showUserDialog(item)"
