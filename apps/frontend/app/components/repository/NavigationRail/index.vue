@@ -196,9 +196,9 @@ const actions = computed<RailAction[]>(() => {
   if (!repoStore.repository?.hasAdminAccess) return [];
   return [
     { name: 'clone', label: 'Clone', icon: 'content-copy' },
-    { name: 'publish', label: 'Publish', icon: 'upload' },
-    { name: 'export', label: 'Export', icon: 'export' },
-    { name: 'delete', label: 'Delete', icon: 'delete', color: 'error' },
+    { name: 'publish', label: 'Publish', icon: 'cloud-upload-outline' },
+    { name: 'export', label: 'Export', icon: 'archive-arrow-down-outline' },
+    { name: 'delete', label: 'Delete', icon: 'trash-can-outline', color: 'error' },
   ];
 });
 </script>

@@ -27,9 +27,9 @@
           <template #append>
             <VBtn
               aria-label="Deassociate user group"
-              color="tertiary"
+              color="error"
               density="comfortable"
-              icon="mdi-delete-outline"
+              icon="mdi-trash-can-outline"
               size="small"
               variant="tonal"
               @click.stop.prevent="remove(group)"

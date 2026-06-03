@@ -151,8 +151,8 @@
         <VBtn
           v-tooltip:left="{ text: 'Delete element', openDelay: 1000 }"
           aria-label="Delete element"
-          color="tertiary"
-          icon="mdi-delete-outline"
+          color="error"
+          icon="mdi-trash-can-outline"
           size="x-small"
           variant="tonal"
           @click="emit('delete')"
@@ -543,7 +543,7 @@ onMounted(() => {
 
   &.changed,
   &.removed {
-    @include mixins.highlight(rgb(var(--v-theme-tertiary-container)));
+    @include mixins.highlight(rgb(var(--v-theme-error-container)));
   }
 
   .element-actions {

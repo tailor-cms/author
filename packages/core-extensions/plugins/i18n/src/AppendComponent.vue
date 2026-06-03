@@ -122,8 +122,8 @@ const displayedLang = computed(() =>
 );
 
 const badgeColor = computed(() => {
-  if (translatedCount.value === 0) return 'tertiary';
-  if (translatedCount.value === totalLanguages.value) return 'secondary';
+  if (translatedCount.value === 0) return 'error';
+  if (translatedCount.value === totalLanguages.value) return 'success';
   return 'warning';
 });
 

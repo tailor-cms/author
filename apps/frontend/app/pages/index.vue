@@ -87,7 +87,7 @@
               :text="`Delete (${selectedRepos.size})`"
               class="ml-4"
               color="error"
-              prepend-icon="mdi-delete"
+              prepend-icon="mdi-trash-can-outline"
               variant="tonal"
               @click="deleteSelected"
             />

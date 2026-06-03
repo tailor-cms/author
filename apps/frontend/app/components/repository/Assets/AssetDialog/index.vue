@@ -35,7 +35,7 @@
         <VBtn
           :slim="false"
           color="tertiary"
-          prepend-icon="mdi-delete-outline"
+          prepend-icon="mdi-trash-can-outline"
           text="Delete"
           variant="tonal"
           @click="emit('delete', asset)"

@@ -80,7 +80,7 @@
             @click="emit('index', asset);"
           />
           <VListItem
-            prepend-icon="mdi-delete-outline"
+            prepend-icon="mdi-trash-can-outline"
             title="Delete"
             @click="emit('delete', asset);"
           />

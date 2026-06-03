@@ -20,7 +20,7 @@
           v-tooltip:bottom="'Clear All'"
           aria-label="Remove Relationship"
           class="ml-2"
-          color="tertiary"
+          color="error"
           icon="mdi-close"
           size="x-small"
           variant="tonal"

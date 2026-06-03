@@ -54,7 +54,7 @@
           <td class="user-entry-actions">
             <VBtn
               aria-label="Remove user"
-              icon="mdi-delete-outline"
+              icon="mdi-trash-can-outline"
               size="small"
               variant="text"
               @click="removeUser(item.id)"

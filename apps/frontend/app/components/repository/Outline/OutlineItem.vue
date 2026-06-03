@@ -68,7 +68,7 @@
               <VIcon
                 v-tooltip:bottom="'Will be removed upon publishing'"
                 class="ml-2"
-                color="tertiary"
+                color="error"
                 icon="mdi-information-outline"
               />
             </VChip>
@@ -221,12 +221,12 @@ const icon = computed(() => {
   }
 
   &.disabled {
-    background-color: rgba(var(--v-theme-tertiary), 0.15);
-    border-left-color: rgb(var(--v-theme-tertiary));
+    background-color: rgba(var(--v-theme-error), 0.15);
+    border-left-color: rgb(var(--v-theme-error));
 
     &.selected,
     &.highlighted {
-      background-color: rgba(var(--v-theme-tertiary), 0.2);
+      background-color: rgba(var(--v-theme-error), 0.2);
     }
   }
 

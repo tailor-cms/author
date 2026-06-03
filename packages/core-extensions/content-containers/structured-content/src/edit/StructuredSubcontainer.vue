@@ -45,9 +45,9 @@
       <VBtn
         v-if="!isDisabled"
         class="mr-2"
-        color="tertiary"
+        color="error"
         density="comfortable"
-        icon="mdi-delete-outline"
+        icon="mdi-trash-can-outline"
         size="small"
         variant="tonal"
         @click.stop="emit('delete:subcontainer', container, label)"

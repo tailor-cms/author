@@ -61,7 +61,7 @@
             />
             <VBtn
               aria-label="Delete user group"
-              icon="mdi-delete-outline"
+              icon="mdi-trash-can-outline"
               label="Delete user group"
               size="small"
               variant="text"

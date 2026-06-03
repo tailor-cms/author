@@ -135,7 +135,7 @@ const save = (data: ContentElement['data']) => {
 
   &.changed,
   &.removed {
-    @include mixins.highlight(rgb(var(--v-theme-tertiary)));
+    @include mixins.highlight(rgb(var(--v-theme-error)));
   }
 }
 </style>

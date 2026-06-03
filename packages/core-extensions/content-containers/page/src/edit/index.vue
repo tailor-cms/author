@@ -23,7 +23,7 @@
       <VBtn
         v-if="!disabled"
         :text="`Delete ${props.name}`"
-        color="tertiary"
+        color="error"
         size="small"
         variant="tonal"
         @click="emit('delete')"

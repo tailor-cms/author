@@ -3,7 +3,7 @@
     <VBtn
       v-if="isEditing"
       color="red"
-      icon="mdi-delete"
+      icon="mdi-trash-can-outline"
       @click="emit('delete')"
     />
     <VTextField

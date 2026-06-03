@@ -35,7 +35,7 @@
       <VBtn
         :loading="isBulkDeleting"
         :disabled="isBulkDeleting"
-        prepend-icon="mdi-delete"
+        prepend-icon="mdi-trash-can-outline"
         size="small"
         text="Delete selected"
         variant="outlined"

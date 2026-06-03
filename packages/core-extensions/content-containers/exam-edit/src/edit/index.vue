@@ -22,7 +22,7 @@
           </VChip>
           <VBtn
             v-else-if="!disabled"
-            color="tertiary"
+            color="error"
             size="small"
             text="Delete Exam"
             variant="tonal"

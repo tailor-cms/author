@@ -11,13 +11,13 @@
             v-if="!isDisabled && (isExpanded || isHovering)"
             v-tooltip:bottom="{ text: 'Delete Group', openDelay: 300 }"
             class="mr-2"
-            color="tertiary"
+            color="error"
             size="x-small"
             variant="tonal"
             icon
             @click.stop="$emit('delete')"
           >
-            <VIcon icon="mdi-delete-outline" size="large" />
+            <VIcon icon="mdi-trash-can-outline" size="large" />
           </VBtn>
         </VFadeTransition>
       </VExpansionPanelTitle>

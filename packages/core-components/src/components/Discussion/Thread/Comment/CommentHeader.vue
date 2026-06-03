@@ -101,7 +101,7 @@ const OPTIONS: Record<string, Option> = {
     label: 'Remove comment',
     action: 'remove',
     icon: 'trash-can-outline',
-    color: 'tertiary',
+    color: 'error',
   },
 };
 

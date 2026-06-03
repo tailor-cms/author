@@ -34,8 +34,8 @@
         v-if="!isGravatar"
         key="2"
         aria-label="Delete avatar"
-        color="tertiary"
-        icon="mdi-delete"
+        color="error"
+        icon="mdi-trash-can-outline"
         variant="tonal"
         @click="$emit('delete')"
       />

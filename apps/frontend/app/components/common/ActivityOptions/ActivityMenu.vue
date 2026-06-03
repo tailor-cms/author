@@ -161,7 +161,7 @@ const menuOptions = computed(() => {
     ...linkMenuOptions.value,
     {
       name: 'Remove',
-      icon: 'mdi-delete',
+      icon: 'mdi-trash-can-outline',
       action: () => deleteActivity(),
     },
   ];

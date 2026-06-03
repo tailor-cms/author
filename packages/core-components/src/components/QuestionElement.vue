@@ -52,8 +52,8 @@
                 />
                 <VBtn
                   v-tooltip:bottom="{ text: 'Delete element', openDelay: 1000 }"
-                  color="tertiary"
-                  icon="mdi-delete-outline"
+                  color="error"
+                  icon="mdi-trash-can-outline"
                   size="x-small"
                   variant="tonal"
                   @click.stop="$emit('delete')"

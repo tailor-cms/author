@@ -47,9 +47,9 @@ const chartOptions = computed(() => ({
       color: colors.value['on-secondary'],
       backgroundColor: (context: any) => {
         const value = context.dataset.data[context.dataIndex];
-        if (value >= 3) return colors.value.secondary;
-        if (value >= 1.5) return colors.value.highlight;
-        return colors.value.tertiary;
+        if (value >= 3) return colors.value.success;
+        if (value >= 1.5) return colors.value.warning;
+        return colors.value.error;
       },
       font: { weight: 500, size: 12 },
       borderRadius: 25,

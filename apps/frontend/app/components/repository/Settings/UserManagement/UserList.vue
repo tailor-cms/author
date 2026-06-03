@@ -55,9 +55,9 @@
             </VMenu>
             <VBtn
               aria-label="Remove user"
-              color="tertiary"
+              color="error"
               density="comfortable"
-              icon="mdi-delete-outline"
+              icon="mdi-trash-can-outline"
               size="small"
               variant="tonal"
               @click="remove(user)"
