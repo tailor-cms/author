@@ -59,10 +59,9 @@ function getSubTypes() {
 }
 
 /**
- * Describe the container's structure. EXAM has a
- * hardcoded ASSESSMENT_GROUP subcontainer that hosts
- * question-type elements - container arg is unused but
- * accepted to match the registry contract.
+ * Describe the container's structure. EXAM hardcodes a
+ * single ASSESSMENT_GROUP subcontainer hosting question
+ * elements.
  */
 function describeSchema() {
   return {

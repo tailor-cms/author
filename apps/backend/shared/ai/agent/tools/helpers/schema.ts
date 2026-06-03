@@ -1,5 +1,8 @@
 // Schema-driven lookups via the config-parser API.
-import type { Schema } from '@tailor-cms/interfaces/schema';
+import type {
+  ContainerStructure,
+  Schema,
+} from '@tailor-cms/interfaces/schema';
 import { processElementConfig, schema as schemaAPI } from '@tailor-cms/config';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import PluginRegistry from '#shared/content-plugins/index.js';
@@ -84,11 +87,16 @@ function resolveContainerLabel(schemaId: string, type: string): string | null {
   if (!schema) return null;
   for (const cc of schema.contentContainers || []) {
     if (cc.type === type) return cc.label || null;
-    const desc = containerRegistry.describeSchema(cc);
-    const sub = (desc.subcontainers || []).find((s: any) => s.type === type);
+    const desc = describeShape(cc);
+    const sub = desc.subcontainers.find((s) => s.type === type);
     if (sub?.label) return sub.label;
   }
   return null;
+}
+
+// Typed accessor for the registry's untyped describer.
+function describeShape(container: unknown): ContainerStructure {
+  return containerRegistry.describeSchema(container);
 }
 
 // Container types attached to an outline activity type.
@@ -120,21 +128,17 @@ export function containerTypesForActivity(activityType: string): string[] {
 export function describeContainerSchema(
   schemaId: string,
   containerType: string,
-) {
-  const container = findContainerDef(schemaId, containerType);
+): ContainerStructure {
+  const container = getContainerConfig(schemaId, containerType);
   if (!container) return { subcontainers: [] };
-  const desc = containerRegistry.describeSchema(container);
-  // The template's describeSchema only sees container.config,
-  // not container-level contentElementConfig. Subcontainers
-  // without their own element config inherit from the
-  // container level, or from all installed types when neither
-  // defines one (same default the config-parser applies in
-  // getSupportedContainers).
-  const fallbackConfig = container.contentElementConfig || ALL_ELEMENT_TYPES;
+  const desc = describeShape(container);
+  // Subcontainers inherit elementConfig from their container,
+  // or from all installed types when neither declares one.
+  const defaultCeConfig = container.contentElementConfig || ALL_ELEMENT_TYPES;
   if (desc.subcontainers?.length) {
     for (const sub of desc.subcontainers) {
       if (!sub.elementConfig?.length) {
-        sub.elementConfig = fallbackConfig;
+        sub.elementConfig = defaultCeConfig;
       }
       // Raw configs from findContainerDef haven't been through
       // processElementConfig yet (processSchemas doesn't touch
@@ -143,7 +147,7 @@ export function describeContainerSchema(
       // config, remaps items) and the source objects are shared
       // schema references.
       sub.elementConfig = processElementConfig(
-        cloneElementConfig(sub.elementConfig),
+        cloneElementConfig(sub.elementConfig || []),
       );
     }
   }
@@ -287,21 +291,16 @@ export function getContainerActivityMeta(
   const schema = getSchema(schemaId);
   if (!schema) return [];
   for (const cc of schema.contentContainers || []) {
-    const desc = containerRegistry.describeSchema(cc);
-    const match = (desc.subcontainers || []).find(
-      (s: any) => s.type === activityType,
-    );
+    const desc = describeShape(cc);
+    const match = desc.subcontainers.find((s) => s.type === activityType);
     if (match) return match.meta || [];
   }
   return [];
 }
 
-// Find raw container definition from the schema by type.
-function findContainerDef(schemaId: string, containerType: string) {
-  const schema = getSchema(schemaId);
-  if (!schema) return undefined;
-  return schema.contentContainers?.find((it: any) => it.type === containerType);
-}
+// Re-export the parser's lookup so tool-side imports stay
+// grouped under the helpers barrel.
+export const getContainerConfig = api.getContainerConfig;
 
 // Shallow-clone element config so processElementConfig
 // doesn't mutate shared schema references. It deletes

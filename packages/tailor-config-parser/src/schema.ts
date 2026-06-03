@@ -127,6 +127,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     getSiblingTypes,
     getSupportedContainers,
     getContainerTemplateId,
+    getContainerConfig,
     getSupportedElementTypes,
     getCompatibleSchemaIds,
     getCompatibleTargetType,
@@ -405,6 +406,17 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
   // type is checked because of legacy support
   function getContainerTemplateId(container: ContentContainerConfig) {
     return container.templateId || container.type;
+  }
+
+  // Direct lookup of a container's raw config by type.
+  function getContainerConfig(
+    schemaId: string,
+    containerType: string,
+  ): ContentContainerConfig | undefined {
+    const schema = getSchema(schemaId);
+    return schema?.contentContainers?.find(
+      (c: ContentContainerConfig) => c.type === containerType,
+    );
   }
 
   function getRepositoryMetadata(repository: Repository): Metadata[] {

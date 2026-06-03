@@ -2,6 +2,11 @@
 // one repository. Pulls live schema info via schemaAPI so the model
 // always knows the exact set of activity / container / element types
 // it is allowed to use - the prompt itself stays schema-agnostic.
+import type {
+  CollectionProp,
+  ContainerStructure,
+  ContentSubcontainer,
+} from '@tailor-cms/interfaces/schema';
 import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import { oneLine, stripIndent } from 'common-tags';
@@ -451,7 +456,7 @@ function describeContainers(schemaId: string): string {
 }
 
 function formatContainer(schemaId: string, c: any): string {
-  const desc = describeContainerSchema(schemaId, c.type) as any;
+  const desc = describeContainerSchema(schemaId, c.type);
   const labelInfo = `label: ${c.label ? `"${c.label}"` : `"${c.type}"`}`;
   const multipleInfo = c.multiple ? '  multiple: true' : '';
   return [
@@ -463,15 +468,20 @@ function formatContainer(schemaId: string, c: any): string {
     .join('\n');
 }
 
-// Body block for a container: either its subcontainer list (nested
-// templates) or its direct element types (flat templates). Returns
-// '' when neither is present so the caller can drop it via filter.
-function formatContainerBody(desc: any): string {
-  const subs = desc?.subcontainers ?? [];
+// Body block for a container, dispatched by the populated shape key:
+//  - subcontainers (nested)
+//  - props (collection-item / decorator-defined slots)
+//  - elementConfig (flat element host)
+// Returns '' when nothing applies so callers can drop the line.
+function formatContainerBody(desc: ContainerStructure): string {
+  const subs = desc.subcontainers ?? [];
   if (subs.length) {
     return ['  subcontainers:', ...subs.map(formatSubcontainer)].join('\n');
   }
-  if (desc?.elementConfig) {
+  if (desc.props?.length) {
+    return ['  props:', ...desc.props.map(formatProp)].join('\n');
+  }
+  if (desc.elementConfig) {
     return `  elements: [${formatSupportedElementTypes(desc.elementConfig)}]`;
   }
   return '';
@@ -482,10 +492,10 @@ function formatContainerBody(desc: any): string {
 // templates like STRUCTURED_CONTENT, where it can be a literal array
 // or a function returning one) or are hardcoded by the template
 // (e.g. EXAM's ASSESSMENT_GROUP).
-function formatSubcontainer(sub: any): string {
+function formatSubcontainer(sub: ContentSubcontainer): string {
   const label = sub.label ?? sub.type;
   const elements = formatSupportedElementTypes(sub.elementConfig);
-  const metaKeys = (sub.meta ?? []).map((m: any) => m.key).join(', ');
+  const metaKeys = (sub.meta ?? []).map((m) => m.key).join(', ');
   return [
     `    - ${sub.type}  label: "${label}"`,
     `      elements: [${elements}]`,
@@ -493,6 +503,15 @@ function formatSubcontainer(sub: any): string {
   ]
     .filter(Boolean)
     .join('\n');
+}
+
+// One prop entry for collection-item-style containers - either a
+// meta input or an embedded element of a fixed type.
+function formatProp(prop: CollectionProp): string {
+  const kind = prop.isContentElement
+    ? `element ${prop.type}`
+    : `meta ${prop.type}`;
+  return `    - ${prop.key}  label: "${prop.label}"  kind: ${kind}`;
 }
 
 // Render a container's (or subcontainer's) elementConfig as a

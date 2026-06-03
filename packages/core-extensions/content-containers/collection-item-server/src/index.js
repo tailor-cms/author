@@ -28,34 +28,33 @@ async function resolve(container, resolveStatics) {
 }
 
 /**
- * COLLECTION_ITEM_CONTENT is a flat container whose content
- * is embedded INSIDE container.data, keyed by prop name -
- * there are no ContentElement rows, the container itself
- * carries the content. Each slot is either a meta input or
- * an embedded content element of a fixed type. Slots are
- * defined via the TailorCollection decorators (@IsInput,
- * @IsContentElement) and surfaced through container.config.
- * Returns subcontainers/elementConfig empty so consumers
- * routing on those shapes correctly skip this template as
- * "not addressable as a flat element host". The `slots`
- * field surfaces the actual structure for consumers that
- * know how to fill named, typed slots.
+ * COLLECTION_ITEM_CONTENT carries its content embedded INSIDE
+ * container.data, keyed by the configured prop names - no
+ * ContentElement rows, the container itself IS the content.
+ * Each prop is either a meta input or an embedded content
+ * element of a fixed type, declared via TailorCollection's
+ * @IsInput / @IsContentElement decorators and surfaced
+ * through container.config.
+ *
+ * subcontainers/elementConfig stay empty. The `props`
+ * field carries the actual structure for consumers that
+ * know how to fill data by prop name.
  */
 function describeSchema(container) {
   const config = container?.config || {};
-  const slots = Object.values(config).map((slot) => ({
-    key: slot.key,
-    label: slot.label,
-    type: slot.type,
-    isContentElement: !!slot.isContentElement,
-    ...(slot.isGradable !== undefined && { isGradable: slot.isGradable }),
-    ...(slot.defaultValue !== undefined && { defaultValue: slot.defaultValue }),
-    ...(slot.required !== undefined && { required: slot.required }),
+  const props = Object.values(config).map((prop) => ({
+    key: prop.key,
+    label: prop.label,
+    type: prop.type,
+    isContentElement: !!prop.isContentElement,
+    ...(prop.isGradable !== undefined && { isGradable: prop.isGradable }),
+    ...(prop.defaultValue !== undefined && { defaultValue: prop.defaultValue }),
+    ...(prop.required !== undefined && { required: prop.required }),
   }));
   return {
     elementConfig: null,
     subcontainers: [],
-    slots,
+    props,
   };
 }
 

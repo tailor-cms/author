@@ -1,10 +1,44 @@
-// Media element schemas and processing.
-// IMAGE, VIDEO, and EMBED packages have no AI specs -
-// they're simple media containers. Schemas here use
-// assetId to map vector store asset references to
-// elements. processMediaElement then resolves assetId
-// → native element data (storage:// URLs, alt text,
-// embed transforms).
+// AI schemas + post-processing for asset-backed media elements.
+//
+// Why this file exists:
+// Text-content elements (HTML, QUESTION variants, ACCORDION, etc.)
+// expose AI specs via elementRegistry.getAiConfig(type) - the AI
+// generates the element's content from scratch. Media elements
+// (IMAGE, VIDEO, EMBED) are different: they REFERENCE an existing
+// library asset rather than have generated content, so their
+// element packages intentionally ship no AI spec. We need a
+// schema that lets the AI pick an asset by id - not invent one.
+//
+// What MEDIA_SCHEMAS does:
+// Provides JSON Schema fragments shaped for asset selection:
+//   { type: 'IMAGE', assetId: <n>, alt: '...' }
+// The AI emits an item that names one of the assets passed in
+// context (the asset catalog in the prompt). It does NOT produce
+// any URL or storage key.
+//
+// When they apply:
+// getElementsSchema (schema.ts) splices MEDIA_SCHEMAS into the
+// anyOf union for an `elements` field ONLY when hasAssets is true
+// AND the host's elementConfig doesn't already declare the media
+// type. Without assets in context, media elements are not
+// generatable - the AI can't reference what isn't catalogued.
+//
+// What MEDIA_DESCRIPTIONS does:
+// The prompt-side counterpart - one-line summaries the prompt
+// builder emits under "Available element types" so the AI knows
+// when to pick each media kind (e.g. EMBED for video LINKS, VIDEO
+// for uploaded video FILES). Without these the AI doesn't know
+// the distinction from the schema alone.
+//
+// What processMediaElement does:
+// After the AI returns { type, assetId, ... }, this resolves the
+// reference into the actual element data shape Tailor stores:
+//   - Internal assets: `data.assets.url = "storage://<key>"`,
+//     `data.url = ""` (the read pipeline expands `storage://` to
+//     a signed public URL).
+//   - External assets (links): `data.url = <publicUrl>` directly.
+//   - EMBED specifically: `toEmbedUrl(...)` rewrites video-page
+//     URLs (YouTube watch page, Vimeo page) into embeddable form.
 import type { AssetReference } from '@tailor-cms/interfaces/ai.ts';
 import { AssetType, LinkContentType } from '@tailor-cms/interfaces/asset.ts';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
@@ -13,7 +47,7 @@ import { toEmbedUrl } from '@tailor-cms/common/asset';
 
 import { createAiLogger } from '../../logger.ts';
 
-const logger = createAiLogger('cc-structured-content');
+const logger = createAiLogger('cc-container');
 
 const obj = (properties: any, required: string[]) => ({
   type: 'object' as const,

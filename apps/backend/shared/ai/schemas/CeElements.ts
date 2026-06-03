@@ -8,9 +8,9 @@ import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
 import type { AiResponseSpec, OpenAISchema } from './interfaces.ts';
 import {
   buildElementSchema,
-  getAiSpec,
+  getCeAiSpec,
   resolveSupportedTypes,
-} from './CcStructuredContent/schema.ts';
+} from './CcContainer/schema.ts';
 
 /**
  * Build the full OpenAI schema allowing any of the
@@ -78,7 +78,7 @@ export const processResponse = (data: any = {}) => {
   if (!elements?.length) return [];
   return elements.map((el: any) => {
     const { type, ...rawContent } = el;
-    const spec = getAiSpec(type);
+    const spec = getCeAiSpec(type);
     // processResponse transforms AI output into element data
     // (e.g. MULTIPLE_CHOICE adds embeds/questionId)
     const processedData = spec?.processResponse

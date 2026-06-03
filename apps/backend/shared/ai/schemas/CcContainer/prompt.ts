@@ -1,18 +1,20 @@
-// Prompt builder for structured content generation.
-// Assembles element descriptions, subcontainer types,
-// guidelines, and asset catalog into the system prompt.
-import type { AiContext, AssetReference } from '@tailor-cms/interfaces/ai.ts';
-
-import elementRegistry from '../../../content-plugins/elementRegistry.js';
-import { getConfigs } from './config.ts';
+// Prompt builder for CcContainer.
+import type {
+  ContentSubcontainer,
+  Metadata,
+} from '@tailor-cms/interfaces/schema';
 import {
   MEDIA_DESCRIPTIONS,
   isVideoFile,
   isVideoLink,
   resolveAssetElementType,
 } from './media.ts';
-import { getAiSpec, resolveSupportedTypes } from './schema.ts';
-import type { MetaField, ParsedConfig, SubcontainerConfigs } from './types.ts';
+import type { AiContext, AssetReference } from '@tailor-cms/interfaces/ai.ts';
+import { getCeAiSpec, resolveSupportedTypes } from './schema.ts';
+import type { FlatConfig, NestedConfig, PropsConfig } from './types.ts';
+import elementRegistry from '../../../content-plugins/elementRegistry.js';
+import { getConfigs } from './config.ts';
+import { schema as schemaAPI } from '@tailor-cms/config';
 
 const describeField = ({ key, label, options }: MetaField): string => {
   const base = `"${key}" (${label})`;
