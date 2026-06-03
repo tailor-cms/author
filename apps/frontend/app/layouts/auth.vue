@@ -55,16 +55,6 @@ const logoPath = '/img/logo-new.svg';
     -webkit-box-shadow:
       0 0 0 1000px rgba(var(--v-theme-surface-container-low)) inset !important;
   }
-
-  // Override vuetify error styles for auth forms
-  .v-input--error:not(.v-input--disabled) {
-    .v-input__details .v-messages,
-    .v-field__prepend-inner > .v-icon,
-    .v-field__outline,
-    .v-label.v-field-label {
-      color: #f8bbd0;
-    }
-  }
 }
 
 .auth-container .auth-panel {

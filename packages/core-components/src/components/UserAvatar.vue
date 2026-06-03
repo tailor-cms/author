@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   imgUrl: '',
   label: '',
   size: 36,
-  color: 'secondary',
+  color: 'surface-container-highest',
   rounded: 'xxl',
 });
 

@@ -86,7 +86,7 @@
               :disabled="selectedRepos.size === 0"
               :text="`Delete (${selectedRepos.size})`"
               class="ml-4"
-              color="tertiary"
+              color="error"
               prepend-icon="mdi-delete"
               variant="tonal"
               @click="deleteSelected"

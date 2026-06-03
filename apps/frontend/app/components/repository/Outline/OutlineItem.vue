@@ -47,11 +47,15 @@
                 v-tooltip:bottom="isExpanded ? 'Collapse' : 'Expand'"
                 :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
                 aria-label="Toggle expand alt"
-                class="my-auto mx-0"
+                class="my-auto text-medium-emphasis mx-0"
                 variant="text"
                 @click="utils.toggleOutlineItemExpand(activity.uid)"
               />
-              <OptionsMenu :activity="activity" class="options-menu" rounded />
+              <OptionsMenu
+                :activity="activity"
+                class="options-menu text-medium-emphasis"
+                rounded
+              />
             </div>
           </template>
           <div v-else class="d-flex align-center w-100 justify-space-between">

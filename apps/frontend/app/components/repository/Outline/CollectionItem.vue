@@ -23,14 +23,14 @@
         <VIcon
           v-tooltip:bottom="'Will be removed upon publishing'"
           class="ml-2"
-          color="tertiary"
+          color="error"
           icon="mdi-information-outline"
         />
       </VChip>
       <div v-else class="row-actions d-flex align-center">
         <VBtn
           v-tooltip:bottom="'Open'"
-          class="mr-1"
+          class="text-medium-emphasis mr-1"
           icon="mdi-page-next-outline"
           rounded="pill"
           size="small"
@@ -41,7 +41,7 @@
         <VBtn
           v-tooltip:bottom="'Delete'"
           aria-label="Delete item"
-          class="delete-btn"
+          class="delete-btn text-medium-emphasis"
           icon="mdi-trash-can-outline"
           size="small"
           variant="text"
@@ -149,12 +149,12 @@ watch(isSelected, (selected) => {
   }
 
   &.is-deleted {
-    background-color: rgba(var(--v-theme-tertiary), 0.15);
-    border-left-color: rgb(var(--v-theme-tertiary));
+    background-color: rgba(var(--v-theme-error), 0.15);
+    border-left-color: rgb(var(--v-theme-error));
 
     &:hover,
     &.is-selected {
-      background-color: rgba(var(--v-theme-tertiary), 0.2);
+      background-color: rgba(var(--v-theme-error), 0.2);
     }
   }
 

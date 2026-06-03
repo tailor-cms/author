@@ -6,6 +6,7 @@
       v-tooltip:bottom="it.name"
       :aria-label="it.name"
       :icon="it.icon"
+      class="text-medium-emphasis"
       size="small"
       variant="text"
       @click.stop="it.action"
