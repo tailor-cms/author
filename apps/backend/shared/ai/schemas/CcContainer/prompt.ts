@@ -1,5 +1,6 @@
 // Prompt builder for CcContainer.
 import type {
+  AiActivityConfig,
   ContentSubcontainer,
   Metadata,
 } from '@tailor-cms/interfaces/schema';
@@ -15,34 +16,36 @@ import type { FlatConfig, NestedConfig, PropsConfig } from './types.ts';
 import elementRegistry from '../../../content-plugins/elementRegistry.js';
 import { getConfigs } from './config.ts';
 import { schema as schemaAPI } from '@tailor-cms/config';
+import { oneLine } from 'common-tags';
 
-const describeField = ({ key, label, options }: MetaField): string => {
-  const base = `"${key}" (${label})`;
-  const opts = options?.map((o) => o.value).join(', ');
+type ContainerAi = AiActivityConfig | undefined;
+
+// Append the schema author's per-container override rule, when set.
+// Pushed last so it takes precedence over the upstream guidelines.
+const appendOutputRules = (guidelines: string[], ai: ContainerAi): void => {
+  if (ai?.outputRules?.prompt) guidelines.push(ai.outputRules.prompt.trim());
+};
+
+const describeField = (field: Metadata): string => {
+  const base = `"${field.key}" (${field.label})`;
+  const options = field.options || field.items;
+  const opts = options?.map((o: any) => o.value).join(', ');
   return opts ? `${base} [options: ${opts}]` : base;
 };
 
-// Extract a human-readable description from an element's
-// getPrompt(). Convention: prompts start with
-// "Generate a <description> as an object...".
-// Falls back to the raw type ID if no prompt or no match.
+// Extract a human-readable description from an element's getPrompt().
+// Convention: prompts start with "Generate a <description> as an
+// object...". Falls back to the raw type id if no prompt or no match.
 const extractElementDescription = (type: string): string => {
-  const spec = getAiSpec(type);
+  const spec = getCeAiSpec(type);
   if (!spec?.getPrompt) return type;
   const prompt = spec.getPrompt();
   if (!prompt) return type;
-  // "Generate a accordion content element as an" → "a accordion...."
   const match = prompt.match(/generate\s+(.+?)\s+as\s+an/i);
   return match?.[1] || type;
 };
 
-// Build element type descriptions for the prompt.
-// When hasAssets is true, IMAGE and EMBED types are
-// appended so the AI knows it can reference media.
-const describeElementTypes = (
-  types: string[],
-  hasAssets = false,
-): string => {
+const describeElementTypes = (types: string[], hasAssets = false): string => {
   const resolved = resolveSupportedTypes(types);
   const lines = resolved.map((type) => {
     const desc = extractElementDescription(type);
@@ -58,39 +61,33 @@ const describeElementTypes = (
   return lines.join('\n');
 };
 
-const describeSubcontainerTypes = (configs: SubcontainerConfigs): string => {
-  const entries = Object.entries(configs);
-  if (!entries.length) {
-    return '  - Type "SECTION" (Section)';
-  }
-  return entries
-    .map(([type, { label, metaInputs = [] }]) => {
-      const fields = metaInputs.map(describeField).join(', ');
+const describeSubcontainerTypes = (subs: ContentSubcontainer[]): string =>
+  subs
+    .map((sub) => {
+      const meta = sub.meta || [];
+      const fields = meta.map(describeField).join(', ');
       const suffix = fields ? `: metadata fields: ${fields}` : '';
-      return `  - Type "${type}" (${label})${suffix}`;
+      return `  - Type "${sub.type}" (${sub.label})${suffix}`;
     })
     .join('\n');
-};
 
 const describeDefaultSubcontainers = (
-  defaults: ParsedConfig['defaultSubcontainers'],
-  configs: SubcontainerConfigs,
+  defaults: NestedConfig['defaultSubcontainers'],
+  subs: ContentSubcontainer[],
 ): string =>
   defaults
     .map((sub) => {
-      const label = configs[sub.type]?.label || sub.type;
-      const title = sub.data?.title;
-      return title
-        ? `  - "${title}" (${label})`
-        : `  - ${label}`;
+      const label = subs.find((s) => s.type === sub.type)?.label || sub.type;
+      const title = sub.data?.title as string | undefined;
+      return title ? `  - "${title}" (${label})` : `  - ${label}`;
     })
     .join('\n');
 
-// Build asset catalog for the prompt.
-// Includes ALL usable assets — vector store file_search
-// handles relevance, this just lists valid IDs for the AI.
+// All currently-usable assets; vector store handles relevance.
 const buildAssetCatalog = (assets: AssetReference[]): string => {
-  const usable = assets.filter((it) => it.publicUrl || it.meta?.url || it.storageKey);
+  const usable = assets.filter(
+    (it) => it.publicUrl || it.meta?.url || it.storageKey,
+  );
   if (!usable.length) return '';
   const lines = usable.map((it) => {
     const media = resolveAssetElementType(it);
@@ -103,35 +100,19 @@ const buildAssetCatalog = (assets: AssetReference[]): string => {
   );
 };
 
-const buildGuidelines = (
+// Shared guidance lines applied to every shape that emits content
+// elements (nested, flat) and partially to props for element-typed
+// slots. HTML formatting, asset rules, vector store grounding,
+// schema-author ai.outputRules.
+const sharedElementGuidelines = (
   context: AiContext,
-  ai: ParsedConfig['ai'],
+  ai: ContainerAi,
   hasAssets: boolean,
   elementTypes: string[],
-  defaultSubcontainers: ParsedConfig['defaultSubcontainers'],
-  subcontainers: SubcontainerConfigs,
 ): string[] => {
-  const hasQuestions = elementTypes.some(
-    (t) => elementRegistry.isQuestion(t),
-  );
-  // Schema-defined content rules take precedence.
-  const hasSchemaContentRules = !!ai?.outputRules?.prompt;
-  const guidelines = [
-    '- Fill in ALL metadata fields',
-    '- Each subcontainer: a distinct topic, scene, beat, or aspect',
-    '- Do NOT duplicate metadata inside the element body.',
-    '  When a subcontainer has a title / name / heading meta field,',
-    '  do not repeat it as a heading or label at the top of the',
-    '  content - the renderer shows meta separately. Likewise, do',
-    '  not narrate other meta (description, mood, layout, panel',
-    '  number, position) inline in prose; structure already conveys',
-    '  ordering.',
-  ];
-  // HTML element formatting - visual layer, applies regardless of medium.
+  const guidelines: string[] = [];
   guidelines.push(
-    '- HTML elements: use text-body-2 mb-5 on <p>,',
-    '  text-h3 mb-7 on headings (use sparingly; do not lead every',
-    '  element with one)',
+    'HTML elements:',
     '- Use <ul>/<ol>, <blockquote>, <strong> for variety',
     '- Accent important sections with CSS classes:',
     '  "ce-highlight" for key takeaways,',
@@ -141,30 +122,15 @@ const buildGuidelines = (
     '  (e.g. border-left, background) — presentation',
     '  layer can override these classes',
   );
-  // Generic pedagogical defaults only when the schema does not
-  // define its own content shape
-  if (!hasSchemaContentRules) {
-    guidelines.push(
-      '- Write from an educator/teacher perspective:',
-      '  clear explanations, progressive complexity,',
-      '  practical examples, learning objectives',
-      '- Cover each subcontainer thoroughly — substantive,',
-      '  not superficial',
-      '- Structure content for effective learning:',
-      '  introduce concepts, explain, illustrate, assess',
-      '- Mix element types coherently: text for concepts,',
-      '  questions to reinforce learning, media to',
-      '  illustrate — each element should serve a',
-      '  pedagogical purpose, not just variety for its own sake',
-    );
-  }
-  // Question element guidance
+  // Perspective / voice / shape is set by the schema's
+  // ai.contentMode and injected by AiPrompt.buildAuthoringRules
+  // (Pedagogical / Reference / Editorial / Narrative / Analytical).
+  const hasQuestions = elementTypes.some((t) => elementRegistry.isQuestion(t));
   if (hasQuestions) {
     guidelines.push(
-      '- Place a question after teaching a concept —',
+      '- Place a question after teaching a concept -',
       '  it should check understanding of what was',
       '  just explained, not test random knowledge',
-      '- Max one question per subcontainer',
       '- Pick the question type best suited to the',
       '  concept being assessed (e.g. true/false for',
       '  facts, multiple choice for distinctions)',
@@ -187,7 +153,6 @@ const buildGuidelines = (
       '  Only for assets marked "→ use as EMBED"',
       '- NEVER use <img>, <video>, or iframes in HTML',
       '- Place media between text elements',
-      '- Max 3 media elements per subcontainer',
     );
     if (hasVideos) {
       guidelines.push(
@@ -209,114 +174,83 @@ const buildGuidelines = (
       '  and pedagogical framing beyond the sources',
     );
   }
-  if (defaultSubcontainers.length) {
-    guidelines.push(
-      '- Generate exactly these subcontainers, in this order, with'
-      + ' titles exactly as listed (do not rephrase the titles):\n'
-      + describeDefaultSubcontainers(defaultSubcontainers, subcontainers),
-    );
-  }
-  if (ai?.outputRules?.prompt) {
-    guidelines.push(ai.outputRules.prompt.trim());
-  }
   return guidelines;
 };
 
-// Example output (ideal case — assets, vector store, schema
-// definition all present):
-//
-//   Response: JSON with a "subcontainers" array.
-//   Each subcontainer has:
-//   - "type": one of the available subcontainer types
-//   - "data": metadata object with described fields
-//   - "elements": array of content elements
-//
-//   Available element types:
-//     - "TIPTAP_HTML": rich text for a page
-//     - "ACCORDION": a accordion content element
-//     - "MULTIPLE_CHOICE": a multiple choice question
-//     - "SINGLE_CHOICE": a single choice question
-//     - "TRUE_FALSE": a true/false question
-//     - "IMAGE": a standalone image element for photos,
-//       diagrams. NEVER use <img> tags inside HTML.
-//     - "VIDEO": a video player for uploaded video files.
-//       Only for assets marked "→ use as VIDEO".
-//     - "EMBED": an embedded video player (YouTube, Vimeo).
-//       Only for assets marked "→ use as EMBED".
-//
-//   Available subcontainer types:
-//     - Type "SECTION" (Section): metadata fields:
-//       "name" (Name)
-//
-//   Guidelines:
-//   - Fill in ALL metadata fields
-//   - Each subcontainer: distinct topic or aspect
-//   - Max one question element per subcontainer
-//   - Write from an educator/teacher perspective:
-//     clear explanations, progressive complexity,
-//     practical examples, learning objectives
-//   - Each subcontainer must thoroughly cover its
-//     topic — substantive, not superficial
-//   - Structure content for effective learning:
-//     introduce concepts, explain, illustrate, assess
-//   - HTML elements: use text-body-2 mb-5 on <p>,
-//     text-h3 mb-7 on headings
-//   - Use <ul>/<ol>, <blockquote>, <strong> for variety
-//   - Accent important sections with CSS classes:
-//     "ce-highlight" for key takeaways,
-//     "ce-callout" for tips/warnings,
-//     "ce-example" for worked examples.
-//     Add minimal inline style as default fallback
-//     (e.g. border-left, background) — presentation
-//     layer can override these classes
-//   - Each HTML element: focused content block,
-//     300-600 words per element
-//   - Mix element types coherently: text for concepts,
-//     questions to reinforce learning, media to
-//     illustrate — each element should serve a
-//     pedagogical purpose, not just variety for its sake
-//   - Place a question after teaching a concept —
-//     it should check understanding of what was
-//     just explained, not test random knowledge
-//   - Max one question per subcontainer
-//   - Pick the question type best suited to the
-//     concept being assessed (e.g. true/false for
-//     facts, multiple choice for distinctions)
-//   - Write clear, unambiguous answer options
-//   - Include plausible distractors in choices
-//   - Use assets as SEPARATE elements
-//   - Reference assets by their assetId number
-//   - Images: IMAGE element with assetId,
-//     NEVER <img> in HTML
-//   - Uploaded videos: VIDEO element with assetId.
-//     Only for assets marked "→ use as VIDEO"
-//   - Video links (YouTube, Vimeo): EMBED element.
-//     Only for assets marked "→ use as EMBED"
-//   - NEVER use <img>, <video>, or iframes in HTML
-//   - Place media between text elements
-//   - Max 2 media elements per subcontainer
-//   - Context: Introduction to machine learning
-//   - Base content on provided source documents
-//   - Reference specific data and examples
-//   - Do not invent facts, but enrich and deepen
-//     the material with explanations, context,
-//     and pedagogical framing beyond the sources
-//
-//   Assets available (reference by assetId):
-//     - ID:12 [image] "Neural network diagram" → use as IMAGE
-//     - ID:23 [video] "Lab demo recording" → use as VIDEO
-//     - ID:34 [video link] "Intro to ML - YouTube" → use as EMBED
-//     - ID:56 [document] "ML Textbook Chapter 1"
-export const getPrompt = (context: AiContext) => {
-  const { subcontainers, defaultSubcontainers, ai } = getConfigs(context);
+// Top-level container prompt builder.
+// Dispatches to shape-specific builders.
+export const getPrompt = (context: AiContext): string => {
+  const cfg = getConfigs(context);
+  switch (cfg.shape) {
+    case 'nested':
+      return getNestedPrompt(cfg, context);
+    case 'flat':
+      return getFlatPrompt(cfg, context);
+    case 'props':
+      return getPropsPrompt(cfg, context);
+  }
+};
+
+function getNestedPrompt(cfg: NestedConfig, context: AiContext): string {
+  const { container, subcontainers, defaultSubcontainers } = cfg;
+  const { ai: containerAiConfig, contentElementConfig } = container;
+  const defaultCeTypes =
+    schemaAPI.getSupportedElementTypes(contentElementConfig);
   const supportedElementTypes = [
-    ...new Set(Object.values(subcontainers).flatMap((c) => c.elementTypes)),
+    ...new Set(
+      subcontainers.flatMap((sub) =>
+        sub.elementConfig?.length
+          ? schemaAPI.getSupportedElementTypes(sub.elementConfig)
+          : defaultCeTypes,
+      ),
+    ),
   ];
   const hasAssets = !!context.assets?.length;
-  const guidelines = buildGuidelines(
-    context, ai, hasAssets, supportedElementTypes,
-    defaultSubcontainers, subcontainers,
+  const hasSchemaContentRules = !!containerAiConfig?.outputRules?.prompt;
+  const hasQuestions = supportedElementTypes.some((t) =>
+    elementRegistry.isQuestion(t),
   );
+  const guidelines: string[] = [
+    '- Fill in ALL metadata fields',
+    '- Each subcontainer: a distinct topic, scene, beat, or aspect',
+    '- Do NOT duplicate metadata inside the element body.',
+    '  When a subcontainer has a title / name / heading meta field,',
+    '  do not repeat it as a heading or label at the top of the',
+    '  content, the renderer shows meta separately. Likewise, do',
+    '  not narrate other meta (description, mood, layout, panel',
+    '  number, position) inline in prose; structure already conveys',
+    '  ordering.',
+  ];
+  guidelines.push(
+    ...sharedElementGuidelines(
+      context,
+      containerAiConfig,
+      hasAssets,
+      supportedElementTypes,
+    ),
+  );
+  if (!hasSchemaContentRules) {
+    guidelines.push(
+      '- Cover each subcontainer thoroughly — substantive,',
+      '  not superficial',
+    );
+  }
+  if (hasQuestions) {
+    guidelines.push(oneLine`
+      - Max one question per subcontainer unless the subcontiner is
+        specifically for questions (e.g. "Quiz" or "Exercise" type).`);
+  }
+  if (hasAssets) {
+    guidelines.push('- Max 3 media elements per subcontainer');
+  }
+  if (defaultSubcontainers.length) {
+    guidelines.push(`
+      - Generate exactly these subcontainers, in this order, with
+      titles exactly as listed (do not rephrase the titles).
+      ${describeDefaultSubcontainers(defaultSubcontainers, subcontainers)}
+      If they already exist (check by title) append new content to them`);
+  }
+  appendOutputRules(guidelines, containerAiConfig);
   const assetSection = hasAssets ? buildAssetCatalog(context.assets!) : '';
   return `
   Response: JSON with a "subcontainers" array.
@@ -334,4 +268,104 @@ export const getPrompt = (context: AiContext) => {
   Guidelines:
   ${guidelines.join('\n  ')}
   ${assetSection}`;
-};
+}
+
+function getFlatPrompt(cfg: FlatConfig, context: AiContext): string {
+  const { elementTypes, container } = cfg;
+  const { ai: containerAiConfig } = container;
+  const containerLabel = container.label || container.type;
+  const multiple = !!container.multiple;
+  const hasAssets = !!context.assets?.length;
+  const guidelines: string[] = [];
+  if (multiple) {
+    guidelines.push(
+      `- Each item is a NEW "${containerLabel}" sibling container`,
+      '- Vary across items: distinct angle, scope, or section per item',
+    );
+  } else {
+    guidelines.push(
+      `- Generate exactly one "${containerLabel}" item; elements append`,
+      '  into the existing container (find-or-create on the write side)',
+    );
+  }
+  guidelines.push(
+    ...sharedElementGuidelines(
+      context,
+      containerAiConfig,
+      hasAssets,
+      elementTypes,
+    ),
+  );
+  if (hasAssets) {
+    guidelines.push('- Max 3 media elements per container');
+  }
+  appendOutputRules(guidelines, containerAiConfig);
+  const assetSection = hasAssets ? buildAssetCatalog(context.assets!) : '';
+  const itemsCardinality = multiple ? 'one or more items' : 'exactly one item';
+  return `
+    Response: JSON with an "items" array (${itemsCardinality}).
+    Each item has:
+    - "type": "${container.type}"
+    - "elements": array of content elements
+
+    Available element types:
+    ${describeElementTypes(elementTypes, hasAssets)}
+
+    Guidelines:
+    ${guidelines.join('\n  ')}
+    ${assetSection}`;
+}
+
+function getPropsPrompt(cfg: PropsConfig, context: AiContext): string {
+  const { props, container } = cfg;
+  const containerLabel = container.label || container.type;
+  const hasAssets = !!context.assets?.length;
+  const { ai: containerAiConfig } = container;
+  const elementProps = props.filter((p) => p.isContentElement);
+  const elementTypes = [...new Set(elementProps.map((p) => p.type))];
+  const propLines = props
+    .map((p) => {
+      const required = p.required === false ? ' [optional]' : '';
+      const kind = p.isContentElement
+        ? `a "${p.type}" content element`
+        : `a ${p.type} value`;
+      return `  - "${p.key}" (${p.label})${required}: ${kind}`;
+    })
+    .join('\n');
+  const guidelines: string[] = [
+    `- Fill every listed slot in the "${containerLabel}" container`,
+    `- Match each slot's declared type exactly`,
+    `- Element-typed slots: emit the element's content body only`,
+    '  (no `type` wrapper) - the slot key fixes the type',
+  ];
+  if (elementTypes.length) {
+    guidelines.push(
+      ...sharedElementGuidelines(
+        context,
+        containerAiConfig,
+        hasAssets,
+        elementTypes,
+      ),
+    );
+  }
+  appendOutputRules(guidelines, containerAiConfig);
+  const elementSection = elementTypes.length
+    ? [
+        'Element-typed slot bodies follow these per-type schemas:',
+        `  ${describeElementTypes(elementTypes, hasAssets)}`,
+        '',
+      ].join('\n')
+    : '';
+  const assetSection = hasAssets ? buildAssetCatalog(context.assets!) : '';
+  return `
+    Response: JSON with a "data" object whose keys match the slot
+    names below. Each slot value follows the declared kind:
+
+    ${propLines}
+
+    ${elementSection}
+
+    Guidelines:
+    ${guidelines.join('\n  ')}
+    ${assetSection}`;
+}
