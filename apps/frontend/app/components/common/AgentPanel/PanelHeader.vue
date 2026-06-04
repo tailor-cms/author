@@ -17,14 +17,6 @@
         variant="tonal"
       />
       <VBtn
-        :icon="isExpanded ? 'mdi-arrow-collapse' : 'mdi-arrow-expand'"
-        :title="isExpanded ? 'Shrink' : 'Expand'"
-        density="comfortable"
-        size="small"
-        variant="tonal"
-        @click="$emit('panel:toggle-expand')"
-      />
-      <VBtn
         :disabled="isRunning"
         density="comfortable"
         icon="mdi-restart"
@@ -34,10 +26,18 @@
         @click="$emit('session:reset')"
       />
       <VBtn
+        :icon="isExpanded ? 'mdi-arrow-collapse' : 'mdi-arrow-expand'"
+        :title="isExpanded ? 'Shrink' : 'Expand'"
         density="comfortable"
-        icon="mdi-close"
         size="small"
-        title="Hide"
+        variant="tonal"
+        @click="$emit('panel:toggle-expand')"
+      />
+      <VBtn
+        density="comfortable"
+        icon="mdi-minus"
+        size="small"
+        title="Minimize"
         variant="tonal"
         @click="$emit('panel:close')"
       />
