@@ -2,7 +2,7 @@
   <VCard
     ref="rootEl"
     class="agent-question"
-    color="surface-variant-low"
+    color="surface-container-lowest"
     rounded="lg"
     tabindex="0"
     border
@@ -17,7 +17,7 @@
       <VBtn
         density="comfortable"
         icon="mdi-close"
-        size="x-small"
+        size="small"
         variant="text"
         @click="$emit('cancel')"
       />

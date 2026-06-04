@@ -18,7 +18,7 @@
         @focus="emit('focus')"
         @keydown="onKeydown"
       />
-      <div class="d-flex align-center pa-2 pt-0 ga-2">
+      <div class="d-flex align-center pa-4 pt-0 ga-2">
         <AgentCmdMenu
           ref="cmdMenuEl"
           v-model="text"

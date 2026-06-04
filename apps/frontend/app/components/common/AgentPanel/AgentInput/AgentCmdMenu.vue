@@ -5,7 +5,8 @@
       icon="mdi-slash-forward"
       size="small"
       aria-label="Commands"
-      variant="text"
+      variant="tonal"
+      rounded="lg"
       @click="toggleMenu"
     />
     <VMenu
