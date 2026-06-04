@@ -235,24 +235,32 @@ function commonRequestRecipesSection(): string {
         If the target container holds empty subcontainer stubs - nodes
         with zero elements and missingMeta in the subtree, typically
         editor scaffolding materialised from defaultSubcontainers on
-        mount - call delete_activity on each stub id BEFORE
-        create_container_with_elements so the new subcontainers don't
-        sit alongside empty defaults. To keep a stub instead of
-        deleting it, fill it in place with update_activity (for its
-        meta) + add_elements_to_activity (for its content) - this is
-        the right path when the user has already populated the stub's
-        meta but not its body.
+        mount - choose one path. To replace them with fresh
+        subcontainers, call delete_activity on each stub id BEFORE
+        create_container_with_elements. To fill the stubs in place
+        (preferred when the schema pins their type/title via
+        defaultSubcontainers), do NOT call create_container_with_elements;
+        instead run generate_container_content, then per item match
+        items[i] to stub[i] by position and call
+        update_activity(stub.id, item.data) +
+        add_elements_to_activity(stub.id, item.elements).
         \`data\` (container/subcontainer metadata) is a top-level field
         alongside \`elements\`, not nested in it.
 
-    - Append elements to a host (you already have its id):
+    - Append elements to a host (you already have its id, meta is
+      already set):
         generate_elements_for_target -> add_elements_to_activity.
         Both tools target the exact id you pass - no spawning, no
-        find-or-create. Reach for create_container_with_elements
-        instead when the host doesn't exist yet. To populate an
-        empty stub the editor materialised (missingMeta + zero
-        elements in get_activity_subtree), use this chain for the
-        elements and update_activity for the meta.
+        find-or-create. generate_elements_for_target is element-only;
+        it does NOT touch host meta. Reach for
+        create_container_with_elements instead when the host doesn't
+        exist yet. When the host is an empty subcontainer stub with
+        missingMeta (typical for defaultSubcontainers materialised
+        on mount), do NOT use this recipe - use the stub-fill recipe
+        under the parent container above (generate_container_content
+        -> match items to stub ids -> update_activity +
+        add_elements_to_activity per item) so meta and content land
+        together.
 
     - Add an asset-backed media element:
         list_assets / generate_image_asset / discover_resources +
