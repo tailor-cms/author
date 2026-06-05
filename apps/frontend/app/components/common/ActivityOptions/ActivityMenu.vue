@@ -194,6 +194,7 @@ const deleteActivity = () => {
   };
   $eventBus.channel('app').emit('showConfirmationModal', {
     title: 'Delete item?',
+    color: 'error',
     message: `Are you sure you want to delete ${activityName.value}?`,
     action: actionFunc,
   });

@@ -190,6 +190,7 @@ function toggleSortDirection() {
 function confirmDelete(asset: Asset) {
   showConfirmation({
     title: 'Delete Asset',
+    color: 'error',
     message: `Are you sure you want to delete "${asset.name}"?`,
     action: async () => {
       await assetStore.remove(asset.id);
@@ -203,6 +204,7 @@ function confirmDelete(asset: Asset) {
 function confirmBulkDelete() {
   showConfirmation({
     title: 'Delete Assets',
+    color: 'error',
     message: `Delete ${selection.selectedIds.size} selected assets?`,
     action: async () => {
       const ids = await assetStore.bulkRemove([...selection.selectedIds]);

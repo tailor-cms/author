@@ -142,6 +142,7 @@ const remove = (group: UserGroup) => {
   const showDialog = useConfirmationDialog();
   const confirmation = {
     title: 'Delete user group',
+    color: 'error',
     message: `Are you sure you want to delete "${group.name}" user group?`,
     action: () => api.remove(group.id).then(() => fetch()),
   };

@@ -115,6 +115,7 @@ async function removeUser(userId: number) {
   const showDialog = useConfirmationDialog();
   const confirmation = {
     title: 'Remove user',
+    color: 'error',
     message: 'Are you sure you want to remove user from a group?',
     action: async () => {
       await api.removeUser(userGroupId, userId);

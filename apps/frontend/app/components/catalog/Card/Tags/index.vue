@@ -75,6 +75,7 @@ const showTagDeleteConfirmation = (tagId: number, tagName: string) => {
   const showConfirmationDialog = useConfirmationDialog();
   showConfirmationDialog({
     title: 'Delete tag',
+    color: 'error',
     message: `Are you sure you want to delete tag ${tagName}?`,
     action: () => repositoryStore.removeTag(props.repository.id, tagId),
   });

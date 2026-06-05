@@ -12,7 +12,7 @@
             <div class="label text-body-small">{{ label }}</div>
             <VSlider
               v-model="input.rating[key]"
-              color="secondary"
+              color="primary"
               max="4"
               min="0"
               step="0.1"

@@ -64,9 +64,9 @@
           />
           <VBtn
             :disabled="isSaving"
+            color="primary"
             type="submit"
             text="Add"
-            variant="tonal"
           />
         </div>
       </form>

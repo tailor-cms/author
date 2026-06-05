@@ -26,9 +26,9 @@
           <VBtn text="Cancel" variant="text" @click="close" />
           <VBtn
             :disabled="!!errors?.length"
+            color="primary"
             text="Save"
             type="submit"
-            variant="tonal"
           />
         </div>
       </form>

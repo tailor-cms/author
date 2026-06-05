@@ -75,6 +75,7 @@
           v-if="isNewUser"
           v-model="skipInviteInput"
           class="mb-1"
+          color="primary"
           label="Skip invitation email"
           hide-details
           inset
@@ -87,9 +88,9 @@
           <VBtn text="Cancel" variant="text" @click="close" />
           <VBtn
             :disabled="!!errors?.length"
+            color="primary"
             text="Save"
             type="submit"
-            variant="tonal"
           />
         </div>
       </form>

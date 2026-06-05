@@ -58,6 +58,7 @@ const deleteAvatar = () => {
   const showConfirmationDialog = useConfirmationDialog();
   showConfirmationDialog({
     title: 'Delete avatar?',
+    color: 'error',
     message: 'Are you sure you want to delete your profile picture?',
     action: () => saveAvatar(''),
   });

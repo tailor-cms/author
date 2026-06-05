@@ -76,6 +76,7 @@ const removeAll = () => {
   const label = props.multiple ? pluralize(props.label) : props.label;
   showConfirmationDialog({
     title: `Remove ${label}?`,
+    color: 'error',
     message: `Are you sure you want to remove ${label.toLowerCase()}?`,
     action: () => emit('save', []),
   });

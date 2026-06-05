@@ -34,7 +34,7 @@
       <VCardActions class="ga-2 pa-4">
         <VBtn
           :slim="false"
-          color="tertiary"
+          color="error"
           prepend-icon="mdi-trash-can-outline"
           text="Delete"
           variant="tonal"

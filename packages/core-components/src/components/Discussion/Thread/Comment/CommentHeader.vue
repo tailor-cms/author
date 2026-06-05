@@ -63,7 +63,7 @@ interface Option {
   action: Action;
   label: string;
   icon: string;
-  color: string;
+  color?: string;
 }
 
 interface Props {
@@ -89,13 +89,11 @@ const OPTIONS: Record<string, Option> = {
     label: 'Resolve comment',
     action: 'resolve',
     icon: 'checkbox-outline',
-    color: '',
   },
   edit: {
     label: 'Edit comment',
     action: 'enableEdit',
     icon: 'square-edit-outline',
-    color: 'secondary',
   },
   remove: {
     label: 'Remove comment',

@@ -106,6 +106,7 @@ const openActivity = () => {
 const deleteActivity = () =>
   showConfirmationDialog({
     title: 'Delete item?',
+    color: 'error',
     message: `Are you sure you want to delete ${props.activity.data.name}?`,
     action: () => {
       activityStore.remove(props.activity.id);

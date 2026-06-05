@@ -39,7 +39,7 @@
         <div class="label text-body-small">{{ label }}</div>
         <VSlider
           :model-value="input.rating?.[key]"
-          color="secondary"
+          color="primary"
           max="4"
           min="0"
           step="0.1"
