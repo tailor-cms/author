@@ -2,6 +2,7 @@
   <TailorDialog
     v-model="isVisible"
     header-icon="mdi-alert"
+    :color="context.color"
     @click:outside="close"
   >
     <template #header>{{ context.title }}</template>
@@ -13,10 +14,11 @@
     <template #actions>
       <VBtn text="Close" variant="text" @click="close" />
       <VBtn
+        :color="context.color"
         :focus="isVisible"
         class="px-3"
         text="Confirm"
-        variant="tonal"
+        variant="flat"
         @click="confirm"
       />
     </template>
@@ -32,6 +34,7 @@ const { $eventBus } = useNuxtApp() as any;
 const createContext = () => ({
   title: '',
   message: '',
+  color: 'primary',
   action: () => {},
 });
 
@@ -40,7 +43,7 @@ const isVisible = ref(false);
 const context = ref(createContext());
 
 const open = (contextValue: any) => {
-  context.value = contextValue;
+  context.value = { ...createContext(), ...contextValue };
   isVisible.value = true;
   invoke(context.value, 'onOpen');
 };

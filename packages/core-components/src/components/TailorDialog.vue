@@ -5,14 +5,14 @@
     </template>
     <template #default="defaultProps">
       <slot v-if="$slots.default" v-bind="defaultProps"></slot>
-      <VCard :data-testid="dataTestid">
-        <VCardTitle class="dialog-title pa-5 align-center bg-surface-container">
-          <VIcon :icon="headerIcon" color="secondary" class="pa-5 mr-1" size="32" />
-          <div class="text-truncate">
+      <VCard :data-testid="dataTestid" rounded="xl">
+        <VCardTitle class="dialog-title pa-5 pb-0 align-center">
+          <VIcon :icon="headerIcon" :color="color" class="mr-3" />
+          <div class="text-truncate font-weight-semibold">
             <slot name="header"></slot>
           </div>
         </VCardTitle>
-        <VCardText :class="[paddingless ? 'pa-0' : 'pt-7 px-4 pb-2']">
+        <VCardText :class="[paddingless ? 'pa-0' : 'pt-6 px-4 pb-2']">
           <slot name="body"></slot>
         </VCardText>
         <VCardActions v-if="$slots.actions" class="px-4 pb-3">
@@ -30,10 +30,12 @@ export interface Props {
   width?: number | string;
   paddingless?: boolean;
   dataTestid?: string;
+  color?: string;
 }
 
 withDefaults(defineProps<Props>(), {
   headerIcon: 'mdi-alert',
+  color: 'primary',
   width: 500,
   paddingless: false,
   dataTestid: 'tailorDialog',
