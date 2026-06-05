@@ -54,14 +54,13 @@ export const UIntParam = () => z.coerce.number().int().nonnegative();
 // Boolean query parameter: accepts 'true'/'false' string literals as well
 // as actual booleans. We avoid z.coerce.boolean() because it treats every
 // truthy string as true, including 'false', which is the wrong shape for
-// query strings (matches express-validator .toBoolean() parity).
+// query strings.
 export const QueryBoolean = z.union([
   z.boolean(),
   z.enum(['true', 'false']).transform((v) => v === 'true'),
 ]);
 
-// Email field: lower-cased + trimmed. Matches the common subset of
-// express-validator's .normalizeEmail() that the slice actually relied on.
+// Email field: lower-cased + trimmed.
 export const Email = () => z.email().toLowerCase().trim();
 
 // Array of integers that may arrive as:
