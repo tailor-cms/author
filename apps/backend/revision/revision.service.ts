@@ -4,12 +4,14 @@ import { Op } from 'sequelize';
 import _ from 'lodash';
 
 import { Entity, Operation } from '@tailor-cms/interfaces/revision';
-import { createLogger } from '#logger';
-import db from '#shared/database/index.js';
-import type { ListFilter } from './revision.schema.ts';
+import type { Activity } from '#app/activity/models/activity.model.js';
+import type { ListFilter } from './schemas/index.ts';
+import type { ListQueryOptions } from '#shared/request/action.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { Revision } from './models/revision.model.js';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
+import { createLogger } from '#logger';
+import db from '#shared/database/index.js';
 
 const { Revision: RevisionModel, User } = db;
 
@@ -30,13 +32,12 @@ export interface ListResult {
 }
 
 // Lists revisions for a repository, optionally narrowed to a specific
-// entity instance. `opts` is the `processQuery`.
-// When `entity` is provided, callers must also supply `entityId`;
-// we match against the JSON `state.id` field so the result is the
-// audit trail for that specific entity.
+// entity instance via (entity, entityId). When `entity` is set, the
+// service matches against the JSONB `state.id` field so the result is
+// the audit trail for that one entity.
 export async function list(
   repository: Repository,
-  opts: any,
+  opts: ListQueryOptions,
   filters: ListFilter,
 ): Promise<ListResult> {
   const where: any = { repositoryId: repository.id };
@@ -75,7 +76,7 @@ export interface TimeTravelResult {
 // Returned shape mirrors the FE's `PublishDiffProvider` reducer:
 // `activities` and `elements` are flat revision lists
 export async function timeTravel(
-  activity: any,
+  activity: Activity,
   params: TimeTravelParams,
 ): Promise<TimeTravelResult> {
   const { timestamp } = params;
@@ -96,7 +97,7 @@ export async function timeTravel(
 // before `timestamp`. The combined filter is what "was visible then but
 // is gone now" actually means in revision-table terms.
 async function getEntityRemovesSinceMoment(
-  activity: any,
+  activity: Activity,
   timestamp: string,
 ): Promise<TimeTravelResult> {
   const { nodes } = await activity.descendants({ paranoid: false });
