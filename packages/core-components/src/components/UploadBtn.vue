@@ -2,7 +2,7 @@
   <template v-if="fileName">
     <VBtn
       v-if="isEditing"
-      color="red"
+      color="error"
       icon="mdi-trash-can-outline"
       @click="emit('delete')"
     />

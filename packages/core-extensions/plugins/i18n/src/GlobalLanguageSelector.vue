@@ -5,7 +5,6 @@
         v-bind="menuProps"
         :aria-label="`Content language: ${currentLanguage?.toUpperCase() ?? 'EN'}`"
         class="language-selector ma-2"
-        color="primary"
         size="small"
         variant="tonal"
         rounded="lg"
@@ -27,7 +26,7 @@
         @click="currentLanguage = code"
       >
         <template #prepend>
-          <VIcon v-if="isDefault(code)" color="warning" icon="mdi-star" size="small" />
+          <VIcon v-if="isDefault(code)" color="tertiary" icon="mdi-star" size="small" />
           <VIcon v-else icon="mdi-translate-variant" size="small" />
         </template>
         <template v-if="isCurrent(code)" #append>

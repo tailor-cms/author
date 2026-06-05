@@ -9,12 +9,6 @@
       />
       <VAppBarTitle class="app-name">
         Tailor
-        <span v-if="!smAndDown" class="text-body-small font-weight-bold">
-          <span class="text-uppercase">
-            authoring meets
-          </span>
-          <span class="text-secondary">AI</span>
-        </span>
       </VAppBarTitle>
     </NuxtLink>
     <template #append>
