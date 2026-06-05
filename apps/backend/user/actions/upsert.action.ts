@@ -7,7 +7,7 @@ export default defineAction({
   body: schemas.UpsertInput,
   openapi: {
     authenticated: true,
-    summary: 'Invite or update a user (admin)',
+    summary: 'Invite or update a user',
     responses: {
       200: {
         description: 'Upserted user profile.',

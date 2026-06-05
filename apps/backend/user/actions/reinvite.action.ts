@@ -16,7 +16,7 @@ export default defineAction({
   status: StatusCodes.ACCEPTED,
   openapi: {
     authenticated: true,
-    summary: 'Resend the invitation mail to a user (admin)',
+    summary: 'Resend the invitation mail to a user',
     responses: {
       202: { description: 'Accepted' },
       404: { description: 'User not found' },

@@ -7,7 +7,7 @@ export default defineAction({
   query: schemas.ListFilter,
   openapi: {
     authenticated: true,
-    summary: 'List users (admin)',
+    summary: 'List users',
     responses: {
       200: {
         description: 'Paginated user list.',

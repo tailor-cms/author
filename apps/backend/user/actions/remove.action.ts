@@ -8,7 +8,7 @@ export default defineAction({
   params: schemas.UserItemParams,
   openapi: {
     authenticated: true,
-    summary: 'Remove a user (admin)',
+    summary: 'Remove a user',
     responses: {
       204: { description: 'No content' },
       409: { description: 'Cannot remove the last system admin' },

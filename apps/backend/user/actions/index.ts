@@ -7,6 +7,7 @@ export { default as reinvite } from './reinvite.action.ts';
 
 // Auth + recovery (public + token-protected)
 export { default as login } from './login.action.ts';
+export { default as logout } from './logout.action.ts';
 export { default as forgotPassword } from './forgot-password.action.ts';
 export { default as resetPassword } from './reset-password.action.ts';
 export { default as tokenStatus } from './token-status.action.ts';
