@@ -26,50 +26,50 @@ const lightTheme: ThemeDefinition = {
     // Surfaces — One Light off-white ramp. Cards = surface; tray/toolbars =
     // surface-container-low; dialogs/menus = surface-container and up.
     'surface': '#F8F9FB',
-    'on-surface': '#383A42',
+    'on-surface': '#30323B',
     'surface-variant': '#E2E5EA',
     'on-surface-variant': '#62656F',
 
     'surface-container-highest': '#D2D7DE',
-    'on-surface-container-highest': '#383A42',
+    'on-surface-container-highest': '#30323B',
     'surface-container-high': '#DADEE4',
-    'on-surface-container-high': '#383A42',
+    'on-surface-container-high': '#30323B',
     'surface-container': '#E2E5EA',
-    'on-surface-container': '#383A42',
+    'on-surface-container': '#30323B',
     'surface-container-low': '#F0F1F3',
-    'on-surface-container-low': '#383A42',
+    'on-surface-container-low': '#30323B',
     'surface-container-lowest': '#FFFFFF',
-    'on-surface-container-lowest': '#383A42',
+    'on-surface-container-lowest': '#30323B',
 
     // Surface add-ons
     'background': '#F8F9FB',
-    'on-background': '#383A42',
+    'on-background': '#30323B',
     'surface-bright': '#F8F9FB',
     'surface-dim': '#D6D9E0',
 
-    // Primary — grass green (One Dark green)
-    'primary': '#228336',
+    // Primary — One Dark green
+    'primary': '#287D37',
     'on-primary': '#FFFFFF',
-    'primary-container': '#98F89C',
-    'on-primary-container': '#0A2100',
+    'primary-container': '#B5F3A5',
+    'on-primary-container': '#0B2100',
 
-    // Secondary — teal (One Dark cyan)
+    // Secondary — One Dark cyan/teal
     'secondary': '#007E89',
     'on-secondary': '#FFFFFF',
     'secondary-container': '#93F1FE',
     'on-secondary-container': '#001F23',
 
-    // Tertiary — purple (One Dark; contrast accent)
-    'tertiary': '#BD3DB9',
+    // Tertiary — warm gold (sparing accent)
+    'tertiary': '#976D00',
     'on-tertiary': '#FFFFFF',
-    'tertiary-container': '#FFD7F5',
-    'on-tertiary-container': '#380038',
+    'tertiary-container': '#F8E46C',
+    'on-tertiary-container': '#201C00',
 
-    // Highlight — linked / pinned / recent state (gold)
-    'highlight': '#976D00',
+    // Highlight — linked / pinned / recent state (purple)
+    'highlight': '#BD3DB9',
     'on-highlight': '#FFFFFF',
-    'highlight-container': '#F8E46C',
-    'on-highlight-container': '#201C00',
+    'highlight-container': '#FFD7F5',
+    'on-highlight-container': '#380038',
 
     // Source — content reuse / lineage (indigo)
     'source': '#4D75B3',
@@ -125,50 +125,50 @@ const darkTheme: ThemeDefinition = {
     // tray/toolbars = surface-container-low; dialogs/menus = surface-container
     // and up. Card borders provide the crisp edge, as in One Dark Pro.
     'surface': '#23272E',
-    'on-surface': '#ABB2BF',
+    'on-surface': '#AFB6C3',
     'surface-variant': '#3E4452',
     'on-surface-variant': '#9098A6',
 
     'surface-container-highest': '#3D4350',
-    'on-surface-container-highest': '#ABB2BF',
+    'on-surface-container-highest': '#AFB6C3',
     'surface-container-high': '#343A44',
-    'on-surface-container-high': '#ABB2BF',
+    'on-surface-container-high': '#AFB6C3',
     'surface-container': '#2C313A',
-    'on-surface-container': '#ABB2BF',
+    'on-surface-container': '#AFB6C3',
     'surface-container-low': '#1C2025',
-    'on-surface-container-low': '#ABB2BF',
+    'on-surface-container-low': '#AFB6C3',
     'surface-container-lowest': '#181A1F',
-    'on-surface-container-lowest': '#ABB2BF',
+    'on-surface-container-lowest': '#AFB6C3',
 
     // Surface add-ons
     'background': '#23272E',
-    'on-background': '#ABB2BF',
+    'on-background': '#AFB6C3',
     'surface-bright': '#434A57',
     'surface-dim': '#1A1C21',
 
-    // Primary — grass green (One Dark green #98C379)
+    // Primary — One Dark green
     'primary': '#98C379',
     'on-primary': '#163800',
     'primary-container': '#2B5013',
     'on-primary-container': '#C3F0A1',
 
-    // Secondary — teal (One Dark cyan)
+    // Secondary — One Dark cyan/teal
     'secondary': '#56B6C2',
     'on-secondary': '#003B41',
     'secondary-container': '#004F56',
     'on-secondary-container': '#93F1FE',
 
-    // Tertiary — purple (One Dark; contrast accent)
-    'tertiary': '#C678DD',
-    'on-tertiary': '#4D0065',
-    'tertiary-container': '#6D2486',
-    'on-tertiary-container': '#FAD7FF',
+    // Tertiary — One Dark gold (sparing accent)
+    'tertiary': '#E5C07B',
+    'on-tertiary': '#463100',
+    'tertiary-container': '#5C4308',
+    'on-tertiary-container': '#FFDEA4',
 
-    // Highlight — linked / pinned / recent state (gold)
-    'highlight': '#E5C07B',
-    'on-highlight': '#463100',
-    'highlight-container': '#5C4308',
-    'on-highlight-container': '#FFDEA4',
+    // Highlight — linked / pinned / recent state purple
+    'highlight': '#C678DD',
+    'on-highlight': '#4D0065',
+    'highlight-container': '#6D2486',
+    'on-highlight-container': '#FAD7FF',
 
     // Source — content reuse / lineage (indigo)
     'source': '#96BDFF',
@@ -207,7 +207,7 @@ const darkTheme: ThemeDefinition = {
     // Inverse
     'inverse-surface': '#E8E9EB',
     'inverse-on-surface': '#2C313A',
-    'inverse-primary': '#228336',
+    'inverse-primary': '#287D37',
   },
   variables: {
     'medium-emphasis-opacity': 0.7,
