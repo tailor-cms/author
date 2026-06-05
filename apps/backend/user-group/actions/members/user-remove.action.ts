@@ -1,15 +1,13 @@
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../../user-group.schema.ts';
+import * as schemas from '../../schemas/index.ts';
 import * as service from '../../user-group.service.ts';
 
-// DELETE /user-group/:id/users/:userId
-// Removes a user from the group. 404 when the user id is unknown.
 async function handler({
   params,
   req,
-}: Ctx<{ params: typeof schemas.RemoveMemberParams }>) {
+}: Ctx<{ params: typeof schemas.MemberItemParams }>) {
   try {
     await service.removeMember(req.userGroup!, params.userId);
   } catch (err) {
@@ -21,13 +19,14 @@ async function handler({
 }
 
 export default defineAction({
-  params: schemas.RemoveMemberParams,
+  params: schemas.MemberItemParams,
   openapi: {
-    summary: 'Remove a member from a user group',
     authenticated: true,
+    summary: 'Remove a member from a user group',
     responses: {
       204: { description: 'No content' },
-      404: { description: 'User not found' },
+      403: { description: 'Caller is not an admin or group admin' },
+      404: { description: 'User group or member user not found' },
     },
   },
   handler,
