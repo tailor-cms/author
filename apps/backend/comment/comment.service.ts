@@ -12,7 +12,7 @@ import type {
 import type { Repository } from '../repository/models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
 import type { Comment } from './models/comment.model.js';
-import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
 const { Comment: CommentModel, ContentElement, User: UserModel } = db;
 

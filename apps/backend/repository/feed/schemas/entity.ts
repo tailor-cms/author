@@ -3,7 +3,7 @@ import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
 import { Int, RepositoryScopedParams } from '#shared/request/schemas.ts';
-import { UserSummary } from '#app/user/user.schema.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Path params for every `/:repositoryId/feed/...` route.
 export const FeedItemParams = RepositoryScopedParams;

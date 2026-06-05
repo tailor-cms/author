@@ -7,25 +7,33 @@ import * as actions from './actions/index.ts';
 import { getUserGroup } from './middleware.ts';
 
 const router = express.Router();
-const mount = createActionMounter(router, '/user-group', 'User Group');
 
+// Sidebar order tracks mounter declaration order (via createActionMounter's
+// internal counter); declare here in the order the docs should read.
+const GROUP = 'User Group';
+
+const crud = createActionMounter(router, '/user-group', {
+  tag: 'CRUD', group: GROUP,
+});
+
+const members = createActionMounter(router, '/user-group', {
+  tag: 'Members', group: GROUP,
+});
+
+// Check getUserGroup for access control
 router.param('id', getUserGroup);
 
-mount
+crud
   .get('/', actions.list, { after: [processQuery({})] })
-  .post('/', actions.create, { before: [authorize()] });
-
-// CRUD
-mount
+  .post('/', actions.create, { before: [authorize()] })
   .get('/:id', actions.get)
   .patch('/:id', actions.patch)
   .delete('/:id', actions.remove);
 
-// Members
-mount
-  .get('/:id/users', actions.getUsers)
-  .post('/:id/users', actions.upsertUser)
-  .delete('/:id/users/:userId', actions.removeUser);
+members
+  .get('/:id/users', actions.listMembers)
+  .post('/:id/users', actions.upsertMembers)
+  .delete('/:id/users/:userId', actions.removeMember);
 
 export default {
   path: '/user-group',

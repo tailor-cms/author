@@ -10,7 +10,7 @@ import {
   StringArrayFromQuery,
   UInt,
 } from '#shared/request/schemas.ts';
-import { Revision } from '#app/revision/revision.schema.ts';
+import { Revision } from '#app/revision/schemas/entity.ts';
 
 import { Repository } from './entity.ts';
 

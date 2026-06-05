@@ -27,7 +27,7 @@ import TransferService from '#shared/transfer/transfer.service.js';
 import UserGroup from '#app/user-group/models/user-group.model.js';
 import type { Repository } from './models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
-import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
 import type {
   BrokenActivityReference,

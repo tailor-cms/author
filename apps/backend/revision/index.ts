@@ -9,7 +9,18 @@ import { getRevision, loadTargetActivity } from './middleware.ts';
 // `req.params` inside this sub-router.
 const router = express.Router({ mergeParams: true });
 const basePath = '/repositories/:repositoryId/revisions';
-const mount = createActionMounter(router, basePath, 'Revision');
+
+// Sidebar order tracks mounter declaration order (via createActionMounter's
+// internal counter); declare here in the order the docs should read.
+const GROUP = 'Revision';
+
+const records = createActionMounter(router, basePath, {
+  tag: 'Records', group: GROUP,
+});
+
+const timeTravel = createActionMounter(router, basePath, {
+  tag: 'Time travel', group: GROUP,
+});
 
 const defaultListQuery = { order: [['createdAt', 'DESC']] };
 
@@ -18,11 +29,11 @@ router.param('revisionId', getRevision);
 // /time-travel is a sibling of /:revisionId, registered FIRST so the
 // literal path matches before the `:revisionId` param middleware would
 // treat 'time-travel' as a numeric id.
-mount.get('/time-travel', actions.timeTravel, {
+timeTravel.get('/time-travel', actions.timeTravel, {
   after: [loadTargetActivity],
 });
 
-mount
+records
   .get('/', actions.list, { after: [processQuery(defaultListQuery)] })
   .get('/:revisionId', actions.get);
 

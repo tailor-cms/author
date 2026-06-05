@@ -1,5 +1,5 @@
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../user.schema.ts';
+import * as schemas from '../schemas/index.ts';
 import * as service from '../user.service.ts';
 
 // POST /users/forgot-password

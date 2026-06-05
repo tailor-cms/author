@@ -11,6 +11,6 @@ export { default as patch } from './patch.action.ts';
 export { default as remove } from './remove.action.ts';
 
 // Members
-export { default as getUsers } from './members/user-list.action.ts';
-export { default as upsertUser } from './members/user-upsert.action.ts';
-export { default as removeUser } from './members/user-remove.action.ts';
+export { default as listMembers } from './members/user-list.action.ts';
+export { default as upsertMembers } from './members/user-upsert.action.ts';
+export { default as removeMember } from './members/user-remove.action.ts';
