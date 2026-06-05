@@ -1,6 +1,6 @@
 import { defineAction } from '#shared/request/action.ts';
 import { dataEnvelope } from '#shared/request/schemas.ts';
-import { Tag } from '#app/tag/tag.schema.ts';
+import { Tag } from '#app/tag/schemas/entity.ts';
 import * as schemas from '../../schemas/index.ts';
 import * as service from '../../repository.service.ts';
 

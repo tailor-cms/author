@@ -11,7 +11,7 @@ import {
 } from '#shared/request/schemas.ts';
 import { Activity } from '#app/activity/schemas/entity.ts';
 import { ContentElement } from '#app/content-element/schemas/entity.ts';
-import { Tag } from '#app/tag/tag.schema.ts';
+import { Tag } from '#app/tag/schemas/entity.ts';
 import { UserSummary } from '#app/user/schemas/entity.ts';
 import { RepoData } from '../lib/data-attr.ts';
 
