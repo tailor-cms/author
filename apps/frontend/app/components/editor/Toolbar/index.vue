@@ -103,7 +103,7 @@ interface SourceInfo {
   repository: { id: number; name: string };
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   element: null,
 });
 
