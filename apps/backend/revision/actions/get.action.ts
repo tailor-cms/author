@@ -1,16 +1,16 @@
 import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../revision.schema.ts';
+import * as schemas from '../schemas/index.ts';
 
 // GET /repositories/:repositoryId/revisions/:revisionId
 // The `getRevision` param middleware loads the record, enforces repository
 // scoping, and returns 404 otherwise. This handler is a thin pass-through.
 export default defineAction({
   raw: true,
-  params: schemas.GetParams,
+  params: schemas.RevisionItemParams,
   openapi: {
+    authenticated: true,
     summary: 'Get a revision',
     description: 'Loads a single revision record scoped to the repository.',
-    authenticated: true,
     responses: {
       200: {
         description: 'The revision record.',

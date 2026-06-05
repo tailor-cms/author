@@ -3,7 +3,7 @@ import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
-import type { TimeTravelInput } from './revision.schema.ts';
+import type { TimeTravelInput } from './schemas/index.ts';
 
 const { Activity, Revision: RevisionModel, User } = db;
 
