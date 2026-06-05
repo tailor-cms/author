@@ -1,6 +1,6 @@
-import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
-import type { ListFilter } from './tag.schema.ts';
+import { createLogger } from '#logger';
+import type { ListFilter } from './schemas/index.ts';
 import type { Tag } from './models/tag.model.js';
 import type { User } from '../user/models/user.model.js';
 
