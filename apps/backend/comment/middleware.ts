@@ -2,7 +2,7 @@ import type { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
-import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
 const { Comment: CommentModel, User } = db;
 

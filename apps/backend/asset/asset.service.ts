@@ -7,7 +7,7 @@ import pick from 'lodash/pick.js';
 import { createLogger } from '#logger';
 import { storage as storageConfig } from '#config';
 import db from '#shared/database/index.js';
-import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
 import {
   type ImportFileOptions,

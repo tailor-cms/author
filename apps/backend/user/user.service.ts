@@ -2,15 +2,20 @@
 //
 // All DB orchestration, mail side effects (invitations, password resets)
 // and cross-model coordination live here so the service surface is
-// testable in isolation from Express. Functions accept already-loaded
-// model instances or primitive ids and return raw model instances /
-// POJO data.
+// testable in isolation from Express.
+import type {
+  ListFilter,
+  ListResult,
+  ProfileUpdateInput,
+  UpsertInput,
+} from './schemas/index.ts';
 import type { User, UserProfile } from './models/user.model.js';
+import { assertStrongPassword } from './lib/password-strength.ts';
+import { Op } from 'sequelize';
+import type { PaginationOptions } from '#shared/request/action.ts';
+import { UserRole } from '@tailor-cms/interfaces/role';
 import db from '#shared/database/index.js';
 import map from 'lodash/map.js';
-import { Op } from 'sequelize';
-import { UserRole } from '@tailor-cms/interfaces/role';
-import type { ListFilter, UpsertInput } from './user.schema.ts';
 
 const { User: UserModel, UserGroup } = db;
 
@@ -19,16 +24,11 @@ const SEARCH_FIELDS = ['email', 'firstName', 'lastName'] as const;
 const buildFilter = (q: string) =>
   map(SEARCH_FIELDS, (field) => ({ [field]: { [Op.iLike]: `%${q}%` } }));
 
-export interface ListResult {
-  total: number;
-  items: any[];
-}
-
 // Lists users with optional iLike search across email/firstName/lastName,
 // exact email + role filters, and an `archived` toggle that also returns
 // soft-deleted rows.
 export async function list(
-  opts: { limit: number; offset: number; order?: any[] },
+  opts: PaginationOptions,
   query: ListFilter,
 ): Promise<ListResult> {
   const where: any = { [Op.and]: [] };
@@ -101,10 +101,13 @@ export async function startPasswordReset(email: string): Promise<User | null> {
 
 // Replaces the password on the supplied (already-token-authenticated)
 // user. Hashing is handled by the User model's beforeUpdate hook.
+// Throws `WeakPasswordError` when the new password fails the shared
+// strength gate; the action layer maps it to 400 with feedback.
 export async function resetPassword(
   user: User,
   password: string,
 ): Promise<void> {
+  await assertStrongPassword(password, user);
   await user.update({ password });
 }
 
@@ -121,20 +124,17 @@ export async function profile(user: User, authData: unknown) {
 // fresh `profile` virtual.
 export async function updateProfile(
   user: User,
-  patch: {
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    imgUrl?: string;
-  },
-) {
+  patch: ProfileUpdateInput,
+): Promise<UserProfile> {
   const updated = await user.update(patch);
   return updated.profile;
 }
 
 // Verifies the supplied current password and replaces it with the new
 // one. Returns true on success, false if `currentPassword` did not
-// authenticate.
+// authenticate. Throws `WeakPasswordError` when the new password fails
+// the shared strength gate; the action layer maps it to 400 with
+// feedback.
 export async function changePassword(
   user: User,
   currentPassword: string,
@@ -142,6 +142,7 @@ export async function changePassword(
 ): Promise<boolean> {
   const authed = await user.authenticate(currentPassword);
   if (!authed) return false;
+  await assertStrongPassword(newPassword, authed);
   await authed.update({ password: newPassword });
   return true;
 }

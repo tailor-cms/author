@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../user.schema.ts';
+import * as schemas from '../schemas/index.ts';
 
 // POST /users/reset-password/token-status
 // Mounted with the same

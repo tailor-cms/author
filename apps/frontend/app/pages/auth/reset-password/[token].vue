@@ -95,9 +95,9 @@ const isLoading = ref(true);
 const isError = ref(false);
 const notificationText = ref('');
 
-const { defineField, errors, handleSubmit } = useForm({
+const { defineField, errors, handleSubmit, setFieldError } = useForm({
   validationSchema: object({
-    password: string().required().min(6),
+    password: string().required().min(8),
     passwordConfirmation: string()
       .required()
       .oneOf([yupRef('password')], 'Password confirmation does not match'),
@@ -117,9 +117,16 @@ const submit = handleSubmit(async ({ password }) => {
     notificationText.value = 'Password changed successfully. Redirecting...';
     await delay(3000);
     navigateTo({ name: 'sign-in' });
-  } catch {
+  } catch (err: any) {
+    // Strength-gate failures (422)
+    const status = err?.response?.status;
+    const msg = err?.response?.data?.error?.message;
+    if (status === 422 && msg) {
+      setFieldError('password', msg);
+      return;
+    }
     isError.value = true;
-    notificationText.value = ERRORS.default;
+    notificationText.value = msg || ERRORS.default;
   }
 });
 

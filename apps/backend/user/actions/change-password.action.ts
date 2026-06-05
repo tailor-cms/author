@@ -1,37 +1,47 @@
 import { StatusCodes } from 'http-status-codes';
-import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../user.schema.ts';
+import { createError } from '#shared/error/helpers.js';
+import { WeakPasswordError } from '../lib/password-strength.ts';
+import * as schemas from '../schemas/index.ts';
 import * as service from '../user.service.ts';
 
-// POST /users/me/change-password
-// 400 when current = new (no-op refusal) or when `currentPassword` does
-// not authenticate; 204 on success. We deliberately don't distinguish
-// the two failure modes - revealing "wrong password" would be a free
-// authentication oracle to anyone who's already past the cookie auth.
+const ERR_MSG = `Couldn't update password. Make sure your current password is correct.`;
+
 async function handler({
   body,
   user,
 }: Ctx<{ body: typeof schemas.ChangePasswordInput }>) {
   if (body.currentPassword === body.newPassword) {
-    return createError(StatusCodes.BAD_REQUEST);
+    return createError(StatusCodes.BAD_REQUEST, ERR_MSG);
   }
-  const ok = await service.changePassword(
-    user,
-    body.currentPassword,
-    body.newPassword,
-  );
-  if (!ok) return createError(StatusCodes.BAD_REQUEST);
+  try {
+    const ok = await service.changePassword(
+      user,
+      body.currentPassword,
+      body.newPassword,
+    );
+    if (!ok) return createError(StatusCodes.BAD_REQUEST, ERR_MSG);
+  } catch (err) {
+    if (err instanceof WeakPasswordError) {
+      return createError(StatusCodes.UNPROCESSABLE_ENTITY, err.message);
+    }
+    throw err;
+  }
 }
 
 export default defineAction({
   body: schemas.ChangePasswordInput,
   openapi: {
-    summary: 'Change the current user password',
     authenticated: true,
+    summary: 'Change the current user password',
     responses: {
       204: { description: 'No content' },
-      400: { description: 'Same password or wrong current password' },
+      400: {
+        description: 'Same password or wrong current password',
+      },
+      422: {
+        description: 'Weak new password (carries the zxcvbn warning)',
+      },
     },
   },
   handler,

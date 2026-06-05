@@ -2,6 +2,10 @@ import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
 
+import {
+  STRONG_TEST_PASSWORD,
+  WEAK_TEST_PASSWORD,
+} from '../../../fixtures/passwords';
 import { ChangePasswordDialog } from '../../../pom/common/ChangePasswordDiaog';
 import SeedClient from '../../../api/SeedClient';
 import { UserProfile } from '../../../pom/common/UserProfile';
@@ -134,22 +138,33 @@ test('updating password should fail if current password is incorrect', async ({
   const passwordDialog = new ChangePasswordDialog(page);
   await passwordDialog.open();
   await passwordDialog.fillCurrentPassword(faker.internet.password());
-  const newPassword = faker.internet.password();
-  await passwordDialog.fillNewPassword(newPassword);
-  await passwordDialog.fillPasswordConfirmation(newPassword);
+  await passwordDialog.fillNewPassword(STRONG_TEST_PASSWORD);
+  await passwordDialog.fillPasswordConfirmation(STRONG_TEST_PASSWORD);
   await passwordDialog.save();
-  await passwordDialog.hasVisibleStatusMessage('Failed to change password!');
+  await passwordDialog.hasVisibleAlert(/current password.*correct/i);
 });
 
 test('should be able to update password', async ({ page }) => {
   const passwordDialog = new ChangePasswordDialog(page);
   await passwordDialog.open();
   await passwordDialog.fillCurrentPassword(userSeed[0].password);
-  const newPassword = faker.internet.password();
-  await passwordDialog.fillNewPassword(newPassword);
-  await passwordDialog.fillPasswordConfirmation(newPassword);
+  await passwordDialog.fillNewPassword(STRONG_TEST_PASSWORD);
+  await passwordDialog.fillPasswordConfirmation(STRONG_TEST_PASSWORD);
   await passwordDialog.save();
   await expect(page).toHaveTitle('Sign in');
+});
+
+test('updating password should fail when the new password is weak', async ({
+  page,
+}) => {
+  const passwordDialog = new ChangePasswordDialog(page);
+  await passwordDialog.open();
+  await passwordDialog.fillCurrentPassword(userSeed[0].password);
+  await passwordDialog.fillNewPassword(WEAK_TEST_PASSWORD);
+  await passwordDialog.fillPasswordConfirmation(WEAK_TEST_PASSWORD);
+  await passwordDialog.save();
+  await expect(passwordDialog.dialog).toBeVisible();
+  await passwordDialog.hasVisibleAlert(/commonly used password/i);
 });
 
 test.afterAll(async () => {

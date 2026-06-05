@@ -13,7 +13,7 @@ import {
   RepositoryScopedParams,
   UInt,
 } from '#shared/request/schemas.ts';
-import { UserSummary } from '#app/user/user.schema.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Re-export the runtime enums so schema consumers can reach them through
 // the schema barrel without a second import.

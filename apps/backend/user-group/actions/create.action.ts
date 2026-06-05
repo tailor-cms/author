@@ -1,14 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../user-group.schema.ts';
+import { dataEnvelope } from '#shared/request/schemas.ts';
+import * as schemas from '../schemas/index.ts';
 import * as service from '../user-group.service.ts';
 
-// POST /user-group
-// Creates a new user group. Admin-only (enforced by the route-level
-// `authorize()` middleware). Name uniqueness is enforced by the DB
-// constraint - the service maps the violation to `DuplicateNameError`
-// which lands here as 409.
 async function handler({ body }: Ctx<{ body: typeof schemas.CreateInput }>) {
   try {
     return await service.create(body);
@@ -23,10 +19,13 @@ async function handler({ body }: Ctx<{ body: typeof schemas.CreateInput }>) {
 export default defineAction({
   body: schemas.CreateInput,
   openapi: {
-    summary: 'Create a user group (admin)',
     authenticated: true,
+    summary: 'Create a user group (admin)',
     responses: {
-      200: { description: 'Created group' },
+      200: {
+        description: 'Created group.',
+        schema: dataEnvelope(schemas.UserGroup),
+      },
       409: { description: 'Group name already exists' },
     },
   },

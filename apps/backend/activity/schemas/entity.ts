@@ -7,7 +7,7 @@ import {
   IntParam,
   RepositoryScopedParams,
 } from '#shared/request/schemas.ts';
-import { UserSummary } from '#app/user/user.schema.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Path param shape for every `/:activityId` route. Extends
 // RepositoryScopedParams so the OpenAPI doc reflects the full path
