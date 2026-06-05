@@ -9,7 +9,7 @@ import db from '#shared/database/index.js';
 import type { ListFilter } from './revision.schema.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { Revision } from './models/revision.model.js';
-import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
 const { Revision: RevisionModel, User } = db;
 

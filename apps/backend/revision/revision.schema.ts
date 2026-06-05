@@ -9,7 +9,7 @@ import {
   RepositoryScopedParams,
   Sort,
 } from '#shared/request/schemas.ts';
-import { UserSummary } from '#app/user/user.schema.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Wire shape of a Revision record.
 // `state` is a JSONB snapshot of the entity at the revision moment; its

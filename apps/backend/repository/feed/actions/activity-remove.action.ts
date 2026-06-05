@@ -6,7 +6,7 @@ import { UserActivity } from '@tailor-cms/common/src/sse.js';
 import sse from '#shared/sse/index.js';
 import { removeContext } from '../store.ts';
 import type { StoredUserActivityContext } from '../schemas/index.ts';
-import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
 // DELETE /repositories/:repositoryId/feed
 async function handler({

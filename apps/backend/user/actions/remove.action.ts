@@ -1,17 +1,14 @@
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../user.schema.ts';
+import * as schemas from '../schemas/index.ts';
 import * as service from '../user.service.ts';
 
-// DELETE /users/:id
-// Admin-driven user removal. Soft-delete via the model's paranoid mode.
-// `LastSystemAdminError` from the service maps to 409.
 export default defineAction({
-  params: schemas.RemoveParams,
+  params: schemas.UserItemParams,
   openapi: {
-    summary: 'Remove a user (admin)',
     authenticated: true,
+    summary: 'Remove a user (admin)',
     responses: {
       204: { description: 'No content' },
       409: { description: 'Cannot remove the last system admin' },

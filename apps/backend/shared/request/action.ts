@@ -32,6 +32,24 @@ import type { UserGroup } from '../../user-group/models/user-group.model.js';
 
 export type { OpenApiSpec };
 
+// Pagination context that the `processPagination` middleware (in
+// `shared/database/pagination.js`) parses from `?limit&offset&sortBy
+// &sortOrder` and stashes on `req.options`.
+export interface PaginationOptions {
+  limit: number;
+  offset: number;
+  order?: any[];
+}
+
+// Wider list-context that the `processListQuery` middleware (in
+// `shared/util/processListQuery.js`) builds on top of pagination: also
+// carries a `where` map for sequelize predicates and tolerates
+// slice-specific extras. Stashed on `req.opts`.
+export interface ListQueryOptions extends PaginationOptions {
+  where: any;
+  [k: string]: any;
+}
+
 type Slot = 'body' | 'query' | 'params';
 
 // Generic schema-aware validate middleware. On failure responds with the
@@ -100,18 +118,8 @@ export interface ActionContext<
     asset?: Asset;
     userGroup?: UserGroup;
     authData?: unknown;
-    opts?: {
-      limit: number;
-      offset: number;
-      where: any;
-      order?: any[];
-      [k: string]: any;
-    };
-    options?: {
-      limit: number;
-      offset: number;
-      order?: any[];
-    };
+    opts?: ListQueryOptions;
+    options?: PaginationOptions;
     file?: {
       originalname: string;
       mimetype: string;

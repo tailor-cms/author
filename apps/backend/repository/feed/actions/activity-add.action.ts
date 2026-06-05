@@ -2,7 +2,7 @@ import pick from 'lodash/pick.js';
 import { UserActivity } from '@tailor-cms/common/src/sse.js';
 import sse from '#shared/sse/index.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import { USER_SUMMARY_ATTRS } from '#app/user/user.schema.ts';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 import { addContext } from '../store.ts';
 import * as schemas from '../schemas/index.ts';
 
