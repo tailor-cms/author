@@ -86,8 +86,7 @@ Role-suffix, verb-first, layer-neutral:
 ## Plumbing details
 
 - **Validation.** `safeParse` per slot; on failure responds with
-  `{ errors: [{ msg, path, location }] }` (matches the legacy
-  express-validator envelope). Parsed values stash at
+  `{ errors: [{ msg, path, location }] }`. Parsed values stash at
   `req._validated.{slot}` because Express 5 made `req.query` a
   read-only getter.
 - **Response contract** — handler returns a value (200 + `{ data }` /
@@ -100,7 +99,6 @@ Role-suffix, verb-first, layer-neutral:
 - **Path ordering.** Literal sibling routes (`/link`, `/resolve`,
   `/import`, `/time-travel`) are registered *before* the corresponding
   `:id` param route so they match first.
-- **Two validation styles coexist.** New code uses `defineAction` +
-  Zod; `asset/` and `shared/ai/` still use express-validator (see
-  `shared/request/validation.js`). Both produce the same `{ errors }`
-  envelope.
+- **Single validation style.** Every slice uses `defineAction` + Zod;
+  the `{ errors }` response envelope is preserved from the codebase's
+  earlier express-validator era so FE error handlers stay compatible.

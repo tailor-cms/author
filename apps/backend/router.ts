@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import health from './health/index.ts';
+import ai from '#shared/ai/index.ts';
 import repository from './repository/index.ts';
 import seedRouter from './tests/api/index.ts';
 import tag from './tag/index.ts';
@@ -8,7 +9,6 @@ import user from './user/index.ts';
 import userGroup from './user-group/index.ts';
 import { extractAuthData } from '#shared/auth/mw.js';
 import authenticator from '#shared/auth/index.js';
-import ai from '#shared/ai/index.js';
 import { buildOpenApiDocument } from '#shared/openapi/index.ts';
 import {
   ai as aiConfig,
