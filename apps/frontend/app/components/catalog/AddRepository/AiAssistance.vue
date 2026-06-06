@@ -2,6 +2,7 @@
   <VSwitch
     v-model="isAssistaceEnabled"
     :disabled="!schemaId || !name || !description"
+    color="primary"
     inset
     label="AI assisted"
   />
@@ -15,6 +16,7 @@
       :disabled="isUploading"
       :loading="isFetchingData"
       class="mb-6"
+      color="secondary"
       text="Continue"
       variant="tonal"
       block
@@ -36,6 +38,7 @@
         v-if="!styleTagOptions.length"
         :loading="isFetchingData"
         class="mt-3 mb-3"
+        color="secondary"
         text="Next"
         variant="tonal"
         block
@@ -60,6 +63,7 @@
         :step="1"
         :ticks="difficultyOptions"
         class="mb-6"
+        color="primary"
         max="2"
         min="0"
         show-ticks="always"
@@ -69,6 +73,7 @@
         v-if="!outlineTree.length"
         :loading="isFetchingData"
         class="mt-3 mb-3"
+        color="secondary"
         text="Next"
         variant="tonal"
         block

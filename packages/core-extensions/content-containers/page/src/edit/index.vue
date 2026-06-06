@@ -10,7 +10,7 @@
       <VBtn
         v-if="isAiEnabled && !disabled"
         append-icon="mdi-shimmer"
-        color="primary"
+        color="secondary"
         size="small"
         text="Do the magic"
         variant="tonal"

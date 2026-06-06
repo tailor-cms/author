@@ -72,7 +72,7 @@
           text: `${isPinned ? 'Unpin' : 'Pin'} ${schemaName}`,
           openDelay: 400,
         }"
-        :color="isPinned ? 'highlight' : ''"
+        :color="isPinned ? 'tertiary' : ''"
         :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
         class="text-medium-emphasis"
         aria-label="Pin repository"

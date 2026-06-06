@@ -31,7 +31,7 @@
               <template #activator="{ props: tooltipProps }">
                 <VBtn
                   v-bind="tooltipProps"
-                  :color="arePinnedShown ? 'highlight' : '' "
+                  :color="arePinnedShown ? 'tertiary' : '' "
                   :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                   aria-label="Toggle pinned items filter"
                   class="text-medium-emphasis my-1"

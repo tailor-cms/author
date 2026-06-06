@@ -13,7 +13,7 @@
       variant="text"
     >
       <template #prepend>
-        <VIcon color="highlight" icon="mdi-link-box" start />
+        <VIcon color="tertiary" icon="mdi-link-box" start />
       </template>
     </VChip>
     <span

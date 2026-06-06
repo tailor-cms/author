@@ -41,7 +41,7 @@ import { range, sample, without } from 'lodash-es';
 
 const IDLE_INTERVAL = 7000;
 const POSES = range(1, 11); // [1..10]
-const ACCENTS = ['secondary', 'tertiary', 'highlight'];
+const ACCENTS = ['primary', 'secondary', 'tertiary'];
 
 const randomPose = (exclude?: number) => sample(without(POSES, exclude)) ?? 1;
 const randomAccent = (exclude?: string) =>

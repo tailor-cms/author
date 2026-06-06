@@ -43,7 +43,7 @@
       data-testid="workflow_assigneeFilter"
     />
     <VChip
-      :color="recentOnly ? 'highlight' : ''"
+      :color="recentOnly ? 'tertiary' : ''"
       :prepend-icon="recentOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
       rounded="lg"
       text="Show only recent"

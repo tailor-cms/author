@@ -49,7 +49,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  color: 'indigo',
+  color: 'secondary',
   tooltipLocation: 'left',
 });
 const emit = defineEmits(['generate']);

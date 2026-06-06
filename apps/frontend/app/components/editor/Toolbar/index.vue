@@ -18,7 +18,7 @@
           v-if="activity?.isLinkedCopy"
           v-tooltip:bottom="'Linked from another repository'"
           class="link-icon mr-1"
-          color="highlight"
+          color="tertiary"
           icon="mdi-link-box"
           size="small"
         />
@@ -26,7 +26,7 @@
           :activity="activity"
           :class="[
             'activity-name font-weight-medium',
-            activity?.isLinkedCopy ? 'text-highlight' : 'text-primary',
+            activity?.isLinkedCopy ? 'text-tertiary' : 'text-primary',
           ]"
         />
         <template v-if="showPublishDiff">
@@ -66,7 +66,7 @@
         />
         <VAppBarNavIcon
           v-if="mdAndDown && !!editorStore.guidelines"
-          color="highlight"
+          color="tertiary"
           variant="tonal"
           icon="mdi-format-list-checks"
           size="small"

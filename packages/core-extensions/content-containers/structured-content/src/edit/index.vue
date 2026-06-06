@@ -3,7 +3,7 @@
     <div class="d-flex items-center justify-end ga-2 mb-6">
       <VBtn
         v-if="isAiEnabled && !isAiGeneratingContent && !disabled"
-        color="primary"
+        color="secondary"
         size="small"
         variant="tonal"
         text="Generate content"
@@ -74,15 +74,10 @@
         :text="`Add ${subcontainerConfig[subcontainerType].label}`"
         color="secondary"
         variant="tonal"
+        prepend-icon="mdi-plus"
+        :append-icon="subcontainerConfig[subcontainerType].icon"
         @click="createSubcontainer(subcontainerType)"
-      >
-        <template #prepend>
-          <VIcon icon="mdi-plus" />
-          <VIcon
-            :icon="subcontainerConfig[subcontainerType].icon"
-          />
-        </template>
-      </VBtn>
+      />
     </div>
   </div>
 </template>

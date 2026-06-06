@@ -25,7 +25,7 @@
         <VIcon color="source" icon="mdi-source-branch" start />
       </template>
     </VChip>
-    <VBadge :content="copies.length" color="highlight" inline>
+    <VBadge :content="copies.length" color="tertiary" inline>
       <span class="text-body-small pr-2">
         {{ pluralize('copy', copies.length) }}
       </span>

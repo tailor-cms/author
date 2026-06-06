@@ -2,12 +2,12 @@
   <div class="d-flex align-center justify-space-between mb-4 px-1">
     <div class="d-flex align-center ga-2">
       <VIcon
-        :color="isCoreSource ? 'highlight' : ''"
+        :color="isCoreSource ? 'tertiary' : ''"
         :icon="isCoreSource ? 'mdi-star' : 'mdi-star-outline'"
         size="20"
       />
       <span
-        :class="{ 'text-highlight font-weight-medium': isCoreSource }"
+        :class="{ 'text-tertiary font-weight-medium': isCoreSource }"
         class="text-body-medium"
       >
         Core Source

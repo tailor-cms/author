@@ -6,6 +6,7 @@
         prepend-icon="mdi-account-multiple-plus"
         color="primary"
         text="Add user"
+        variant="flat"
         @click.stop="showUserDialog"
       />
     </div>

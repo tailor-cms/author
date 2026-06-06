@@ -14,7 +14,7 @@
         <VRow class="w-100" density="compact">
           <VCol :cols="expanded ? 9 : 3" class="text-left align-content-center">
             <div class="d-flex align-center">
-              <VIcon :icon="icon" color="tertiary" size="small" start />
+              <VIcon :icon="icon" color="secondary" size="small" start />
               <span class="text-title-small">{{ type }}</span>
             </div>
           </VCol>
@@ -37,13 +37,13 @@
               >
                 <ElementGeneration
                   v-if="showAI"
-                  color="indigo"
+                  color="secondary"
                   tooltip-location="bottom"
                   @generate="$emit('generate', $event)"
                 />
                 <VBtn
                   v-tooltip:bottom="{ text: 'Reset element', openDelay: 1000 }"
-                  color="secondary"
+                  color="warning"
                   aria-label="Reset element"
                   icon="mdi-restore"
                   size="x-small"

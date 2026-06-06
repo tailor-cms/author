@@ -6,7 +6,7 @@
       <div v-if="!isAiGeneratingContent" class="pb-1 d-flex ga-2">
         <VBtn
           v-if="isAiEnabled && !disabled"
-          color="primary"
+          color="secondary"
           size="small"
           variant="tonal"
           text="Generate questions"
@@ -62,9 +62,9 @@
       :items="assessments"
       :layout="false"
       :position="assessments.length"
-      color="secondary"
+      color="primary"
       label="Add assessment"
-      variant="tonal"
+      variant="flat"
       large
       @add="addAssessments"
     />
