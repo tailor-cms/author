@@ -59,7 +59,8 @@
         :disabled="!selectedActivities.length || isCopyingActivities"
         :slim="false"
         :text="copyBtnLabel"
-        variant="tonal"
+        color="primary"
+        variant="flat"
         @click="copySelection"
       />
     </template>

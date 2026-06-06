@@ -3,6 +3,7 @@
     <VCol class="px-1" cols="auto">
       <VCheckboxBtn
         :model-value="isSelected"
+        color="primary"
         density="compact"
         @click.stop="emit('toggle', asset);"
       />

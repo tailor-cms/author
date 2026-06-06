@@ -6,7 +6,6 @@
         prepend-icon="mdi-account-multiple-plus"
         color="primary"
         text="Add user"
-        variant="tonal"
         @click.stop="showUserDialog"
       />
     </div>
@@ -14,6 +13,7 @@
       <VCol>
         <VSwitch
           v-model="showArchiveToggle"
+          color="primary"
           label="Archived"
           hide-details
           inset

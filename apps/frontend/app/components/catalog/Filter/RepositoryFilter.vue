@@ -34,7 +34,7 @@
         @click:select="emit('update', $event.id)"
       >
         <template #prepend="{ isSelected, select }">
-          <VCheckboxBtn :model-value="isSelected" @click="select" />
+          <VCheckboxBtn :model-value="isSelected" color="primary" @click="select" />
         </template>
       </VList>
       <div v-else class="d-flex align-center py-5 px-6">

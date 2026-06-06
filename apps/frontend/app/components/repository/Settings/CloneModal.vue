@@ -34,9 +34,10 @@
           />
           <VBtn
             :loading="inProgress"
+            color="primary"
             type="submit"
             text="Clone"
-            variant="tonal"
+            variant="flat"
           />
         </div>
       </form>

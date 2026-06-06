@@ -143,6 +143,7 @@ const remove = (user: User) => {
   const showConfirmationModal = useConfirmationDialog();
   showConfirmationModal({
     title: 'Remove user',
+    color: 'error',
     message: `Are you sure you want to remove user "${user.email}" from this repository?`,
     action: () => removeUser(user.id),
   });

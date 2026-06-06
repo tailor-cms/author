@@ -9,8 +9,9 @@
       <VBtn
         :disabled="status.message !== STATUS.READY.message"
         :slim="false"
+        color="primary"
         text="Download"
-        variant="tonal"
+        variant="flat"
         @click="exportRepository"
       />
     </template>

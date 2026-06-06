@@ -58,7 +58,8 @@
         :slim="false"
         :text="linkBtnLabel"
         class="ml-2"
-        variant="tonal"
+        color="primary"
+        variant="flat"
         @click="linkSelection"
       />
     </template>

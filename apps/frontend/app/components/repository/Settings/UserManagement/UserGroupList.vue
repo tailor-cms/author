@@ -100,6 +100,7 @@ const remove = (group: UserGroup) => {
   };
   const confirmation = {
     title: 'Remove from user group?',
+    color: 'error',
     message: `Are you sure you want to remove "${group.name}" user group?`,
     action: () =>
       api

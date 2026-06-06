@@ -5,6 +5,7 @@
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
     elevation="0"
+    border
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <div class="card-body">
@@ -13,6 +14,7 @@
           :model-value="isSelected"
           aria-label="Select repository"
           class="ml-n1"
+          color="primary"
           hide-details
           @click.stop
           @update:model-value="$emit('toggle-selection', repository.id)"

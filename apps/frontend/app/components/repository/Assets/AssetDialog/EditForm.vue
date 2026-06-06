@@ -15,6 +15,7 @@
     </div>
     <VSwitch
       v-model="isCoreSource"
+      color="primary"
       density="compact"
       hide-details
       inset

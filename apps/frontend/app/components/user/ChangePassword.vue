@@ -4,7 +4,7 @@
       <VBtn
         v-bind="props"
         class="mt-6"
-        color="primary"
+        color="secondary"
         prepend-icon="mdi-lock"
         text="Change Password"
         variant="tonal"
@@ -52,9 +52,10 @@
           />
           <VBtn
             class="ml-2"
+            color="primary"
             type="submit"
             text="Save"
-            variant="tonal"
+            variant="flat"
           />
         </div>
       </form>

@@ -75,6 +75,7 @@
                   :disabled="!repositories.length"
                   :model-value="isAllSelected"
                   :indeterminate="someSelected"
+                  color="primary"
                   label="Select all"
                   hide-details
                   @update:model-value="toggleSelectAll"
@@ -225,6 +226,7 @@ const deleteSelected = () => {
 
   confirmationDialog({
     title: `Delete ${pluralize('repository', count)}?`,
+    color: 'error',
     message: `Are you sure you want to delete ${pluralize('repository', count, true)}?`,
     action: async () => {
       try {

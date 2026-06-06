@@ -79,6 +79,7 @@ const showDeleteConfirmation = () => {
   const { id, name } = repository;
   confirmationDialog({
     title: 'Delete repository?',
+    color: 'error',
     message: `Are you sure you want to delete repository ${name}?`,
     action: async () => {
       await repositoryStore.remove(id);

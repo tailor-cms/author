@@ -61,9 +61,10 @@
           <VBtn
             :disabled="submitting"
             :loading="submitting"
+            color="primary"
             text="Create"
             type="submit"
-            variant="tonal"
+            variant="flat"
             @click="submitForm"
           />
         </div>

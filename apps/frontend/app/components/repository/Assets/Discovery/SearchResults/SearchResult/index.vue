@@ -10,6 +10,7 @@
       <VCheckbox
         :model-value="isSelected"
         class="flex-shrink-0 align-self-center"
+        color="primary"
         density="compact"
         hide-details
         @click.stop

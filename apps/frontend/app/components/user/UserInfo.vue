@@ -31,9 +31,10 @@
       <VBtn
         :disabled="!meta.dirty"
         class="ml-2 px-4"
+        color="primary"
         text="Save"
         type="submit"
-        variant="tonal"
+        variant="flat"
       />
     </div>
   </form>

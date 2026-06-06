@@ -30,7 +30,7 @@
         >
           <template #prepend>
             <VListItemAction start>
-              <VCheckboxBtn :model-value="isSelected(option?.id)" />
+              <VCheckboxBtn :model-value="isSelected(option?.id)" color="primary" />
             </VListItemAction>
             <UserAvatar
               :img-url="option?.imgUrl"

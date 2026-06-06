@@ -18,11 +18,11 @@
     <VBtn
       :loading="isUploading"
       :disabled="isUploading"
-      color="secondary"
+      color="primary"
       prepend-icon="mdi-upload"
       size="small"
       text="Upload"
-      variant="tonal"
+      variant="flat"
       @click="openFilePicker"
     />
     <VBtn

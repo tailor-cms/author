@@ -20,7 +20,7 @@
     </template>
     <template #actions>
       <VBtn text="Cancel" variant="text" @click="show = false" />
-      <VBtn text="Add" variant="tonal" @click="submit" />
+      <VBtn color="primary" text="Add" variant="flat" @click="submit" />
     </template>
   </TailorDialog>
 </template>

@@ -11,11 +11,11 @@
       <VSpacer />
       <VBtn
         :loading="isPublishing"
-        color="secondary"
+        color="primary"
         prepend-icon="mdi-cloud-upload-outline"
-        size="small"
         text="Publish info"
-        variant="tonal"
+        size="small"
+        variant="flat"
         @click="publish"
       />
     </VAppBar>

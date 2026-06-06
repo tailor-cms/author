@@ -8,7 +8,7 @@
         color="primary"
         prepend-icon="mdi-plus"
         text="Add user"
-        variant="tonal"
+        variant="flat"
         size="small"
       />
     </template>
@@ -47,9 +47,10 @@
           />
           <VBtn
             :disabled="isSaving"
+            color="primary"
             text="Add"
             type="submit"
-            variant="tonal"
+            variant="flat"
           />
         </div>
       </form>

@@ -19,7 +19,7 @@
         />
         <div class="d-flex justify-end pb-2 pr-1 ga-2">
           <VBtn text="Cancel" variant="text" @click="closeAddTagDialog" />
-          <VBtn type="submit" text="Save" variant="tonal" />
+          <VBtn color="primary" type="submit" text="Save" variant="flat" />
         </div>
       </form>
     </template>

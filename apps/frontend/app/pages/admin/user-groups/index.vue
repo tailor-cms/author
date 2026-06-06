@@ -5,9 +5,9 @@
       <VBtn
         v-if="authStore.isAdmin"
         aria-label="Add user group"
+        color="primary"
         prepend-icon="mdi-account-multiple-plus"
         text="Add user group"
-        variant="tonal"
         @click.stop="showGroupDialog"
       />
     </div>
