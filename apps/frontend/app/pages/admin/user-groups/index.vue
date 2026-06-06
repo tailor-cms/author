@@ -8,6 +8,7 @@
         color="primary"
         prepend-icon="mdi-account-multiple-plus"
         text="Add user group"
+        variant="flat"
         @click.stop="showGroupDialog"
       />
     </div>

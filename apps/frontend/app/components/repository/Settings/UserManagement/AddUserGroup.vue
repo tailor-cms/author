@@ -8,8 +8,8 @@
         color="primary"
         prepend-icon="mdi-plus"
         text="Add user group"
-        variant="tonal"
         size="small"
+        variant="flat"
       />
     </template>
     <template #header>Assosciate user group</template>
@@ -35,9 +35,9 @@
           <VBtn
             :disabled="!!errors?.length"
             class="ml-2 px-4"
+            color="primary"
             text="Save"
             type="submit"
-            variant="tonal"
           />
         </div>
       </form>

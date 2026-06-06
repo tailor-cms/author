@@ -52,10 +52,11 @@
         variant="outlined"
       />
       <VBtn
+        color="primary"
         size="large"
         type="submit"
         text="Change password"
-        variant="tonal"
+        variant="flat"
         block
         rounded
       />

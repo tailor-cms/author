@@ -6,6 +6,7 @@
         :key="id"
         close-label="Delete tag"
         size="small"
+        rounded="lg"
       >
         <div
           v-tooltip:bottom="{

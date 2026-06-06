@@ -13,7 +13,7 @@
         <VTabs
           v-model="selectedTab"
           class="sidebar-tabs flex-grow-1"
-          color=""
+          color="primary"
           density="compact"
           hide-slider
         >

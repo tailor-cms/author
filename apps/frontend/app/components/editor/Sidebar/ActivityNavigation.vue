@@ -152,7 +152,7 @@ watch(() => props.selected.id, scrollSelectedItemIntoView);
 :deep(.v-list-item) {
   &:hover {
     .v-list-item-title {
-      color: rgb(var(--v-theme-tertiary));
+      color: rgb(var(--v-theme-primary));
     }
 
     .v-list-item__append {

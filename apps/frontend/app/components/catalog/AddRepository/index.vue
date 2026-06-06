@@ -21,7 +21,7 @@
     </template>
     <template #header>Create</template>
     <template #body>
-      <VSheet color="surface-container" class="px-5 pb-6">
+      <VSheet class="px-5 py-4">
         <VTabs
           v-model="selectedTab"
           selected-class="bg-surface-container-high on-surface"
@@ -155,8 +155,9 @@
             :disabled="isAiEnabled && !aiOutline?.length"
             :loading="isSubmitting"
             class="ml-2"
+            color="primary"
             type="submit"
-            variant="tonal"
+            variant="flat"
           >
             Create
           </VBtn>

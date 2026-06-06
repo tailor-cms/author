@@ -29,10 +29,10 @@
       <div>
         <VBtn
           v-if="!showMessage"
+          color="primary"
           size="large"
           type="submit"
           text="Send reset email"
-          variant="tonal"
           block
           rounded
         />
@@ -47,8 +47,8 @@
     </form>
     <VBtn
       v-else
+      color="primary"
       text="Retry"
-      variant="tonal"
       block
       rounded
       @click.stop="resetInput"

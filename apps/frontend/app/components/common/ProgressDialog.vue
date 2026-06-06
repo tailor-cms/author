@@ -3,7 +3,7 @@
     <VCard>
       <VCardText>
         {{ label }}
-        <VProgressLinear :model-value="status" class="mt-2" color="secondary" />
+        <VProgressLinear :model-value="status" class="mt-2" color="primary" />
       </VCardText>
     </VCard>
   </VDialog>

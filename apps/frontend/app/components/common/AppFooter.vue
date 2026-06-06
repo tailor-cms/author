@@ -1,5 +1,5 @@
 <template>
-  <VFooter color="primary" height="68" app>
+  <VFooter color="surface-container" height="68" app>
     <div class="d-flex flex-grow-1 align-center justify-center text-body-medium">
       <img
         alt="Tailor logo"

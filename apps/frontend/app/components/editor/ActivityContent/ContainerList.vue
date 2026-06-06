@@ -44,8 +44,8 @@
       v-if="addBtnEnabled"
       :text="`Create ${name}`"
       class="mt-8"
-      color="secondary"
-      variant="tonal"
+      color="primary"
+      variant="flat"
       prepend-icon="mdi-plus"
       @click="addContainer"
     />
@@ -209,6 +209,7 @@ const requestDeletion = (
 ) => {
   confirmationDialog({
     title: `Delete ${name}?`,
+    color: 'error',
     message: `Are you sure you want to delete ${name}?`,
     action: () => action(content).then(onDelete),
   });

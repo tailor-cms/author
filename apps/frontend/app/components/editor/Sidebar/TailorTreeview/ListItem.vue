@@ -3,8 +3,10 @@
     <VListItem
       ref="listItem"
       v-bind="omit(activatorProps, 'onClick')"
-      :class="{ 'text-tertiary font-weight-bold': isActive }"
+      :class="{ 'font-weight-bold': isActive }"
       :title="title"
+      :active="isActive"
+      color="primary"
       class="list-item"
       @click.prevent="onItemClick"
     >
