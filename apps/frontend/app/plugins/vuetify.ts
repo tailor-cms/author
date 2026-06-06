@@ -8,23 +8,10 @@ import type { ThemeDefinition } from 'vuetify';
 import outlineIconset from '~/components/repository/Outline/icons/iconset';
 import { colorMode } from '~/composables/useColorMode';
 
-/**
- * MD3 theme — "One Dark / One Light".
- *
- * An MD3 adaptation of the One Dark Pro Darker editor theme (Atom / VS Code),
- * with a matching cool One Light counterpart. Surfaces are anchored to One
- * Dark's real values (#23272E family); the accent trio is One Dark Pro's own
- * green / teal / purple. Light uses the same hues at darker tones for legibility.
- *
- * Tonal ramps were generated with Material Color Utilities. Every on-color /
- * surface pair meets WCAG AA (text ≥ 4.5:1, UI/outline ≥ 3:1) in both modes.
- * To re-tune, regenerate via MCU and remap tones rather than hand-picking hexes.
- */
 const lightTheme: ThemeDefinition = {
   dark: false,
   colors: {
-    // Surfaces — One Light off-white ramp. Cards = surface; tray/toolbars =
-    // surface-container-low; dialogs/menus = surface-container and up.
+    // Surfaces
     'surface': '#F8F9FB',
     'on-surface': '#30323B',
     'surface-variant': '#E2E5EA',
@@ -121,10 +108,8 @@ const lightTheme: ThemeDefinition = {
 const darkTheme: ThemeDefinition = {
   dark: true,
   colors: {
-    // Surfaces — One Dark Pro Darker ramp. Cards = surface (editor #23272E);
-    // tray/toolbars = surface-container-low; dialogs/menus = surface-container
-    // and up. Card borders provide the crisp edge, as in One Dark Pro.
-    'surface': '#23272E',
+    // Surfaces
+    'surface': '#1C2025',
     'on-surface': '#AFB6C3',
     'surface-variant': '#3E4452',
     'on-surface-variant': '#9098A6',
@@ -135,13 +120,13 @@ const darkTheme: ThemeDefinition = {
     'on-surface-container-high': '#AFB6C3',
     'surface-container': '#2C313A',
     'on-surface-container': '#AFB6C3',
-    'surface-container-low': '#1C2025',
+    'surface-container-low': '#23272E',
     'on-surface-container-low': '#AFB6C3',
     'surface-container-lowest': '#181A1F',
     'on-surface-container-lowest': '#AFB6C3',
 
     // Surface add-ons
-    'background': '#23272E',
+    'background': '#1C2025',
     'on-background': '#AFB6C3',
     'surface-bright': '#434A57',
     'surface-dim': '#1A1C21',
