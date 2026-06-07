@@ -3,7 +3,6 @@
     v-if="inline"
     :model-value="mode"
     class="theme-toggle"
-    color="secondary"
     rounded="lg"
     variant="text"
     border

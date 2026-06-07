@@ -16,16 +16,6 @@
     />
     <VSpacer />
     <VBtn
-      :loading="isUploading"
-      :disabled="isUploading"
-      color="primary"
-      prepend-icon="mdi-upload"
-      size="small"
-      text="Upload"
-      variant="flat"
-      @click="openFilePicker"
-    />
-    <VBtn
       color="secondary"
       prepend-icon="mdi-link-plus"
       size="small"
@@ -41,6 +31,16 @@
       text="Discover"
       size="small"
       @click="emit('discover')"
+    />
+    <VBtn
+      :loading="isUploading"
+      :disabled="isUploading"
+      color="primary"
+      prepend-icon="mdi-upload"
+      size="small"
+      text="Upload"
+      variant="flat"
+      @click="openFilePicker"
     />
     <input
       ref="fileInputRef"
