@@ -148,7 +148,7 @@ const renderedContent = computed(() => {
 
   :deep(.agent-md-inline-code) {
     padding: 0.25rem 0.375rem;
-    color: rgb(var(--v-theme-tertiary));
+    color: rgb(var(--v-theme-secondary));
     font-family: Menlo, Consolas, monospace;
     font-size: 0.6875rem;
     background: rgb(var(--v-theme-surface-container));

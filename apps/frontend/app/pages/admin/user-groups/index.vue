@@ -55,6 +55,8 @@
           <td v-if="authStore.isAdmin" class="text-no-wrap text-left">
             <VBtn
               aria-label="Edit user group"
+              class="mr-1"
+              density="comfortable"
               icon="mdi-square-edit-outline"
               size="small"
               variant="text"
@@ -62,6 +64,8 @@
             />
             <VBtn
               aria-label="Delete user group"
+              color="error"
+              density="comfortable"
               icon="mdi-trash-can-outline"
               label="Delete user group"
               size="small"

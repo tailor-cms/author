@@ -70,6 +70,8 @@
           <td class="user-entry-actions text-no-wrap text-center">
             <VBtn
               aria-label="Edit user"
+              class="mr-1"
+              density="comfortable"
               icon="mdi-square-edit-outline"
               size="small"
               variant="text"
@@ -80,6 +82,7 @@
               :disabled="currentUser?.id === item?.id"
               :icon="`mdi-account-${item.deletedAt ? 'convert' : 'off'}`"
               :label="item.deletedAt ? 'Restore user' : 'Archive user'"
+              density="comfortable"
               size="small"
               variant="text"
               @click="archiveOrRestore(item)"

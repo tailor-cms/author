@@ -4,10 +4,11 @@
       <VBtn
         v-bind="activatorProps"
         aria-label="Add users to the group"
+        color="primary"
         class="add-user"
         prepend-icon="mdi-plus"
         text=" Add user"
-        variant="tonal"
+        variant="flat"
       />
     </template>
     <template #header>Add users to the user group</template>
@@ -36,13 +37,23 @@
         <VSelect
           v-model="roleInput"
           :error-messages="errors.role"
-          :items="roles"
+          :items="GROUP_ROLES"
+          :menu-props="{ maxWidth: 420 }"
           aria-label="Role"
           class="group-role-select required mt-4 mb-1"
           label="Role"
           placeholder="Role..."
           variant="outlined"
-        />
+        >
+          <template #item="{ item, props: itemProps }">
+            <VListItem
+              v-bind="itemProps"
+              :subtitle="item.description"
+              :prepend-icon="item.icon"
+              lines="two"
+            />
+          </template>
+        </VSelect>
         <VSwitch
           v-model="skipInviteInput"
           class="ml-1 mb-1"
@@ -76,21 +87,16 @@
 
 <script lang="ts" setup>
 import { array, boolean, object, string } from 'yup';
-import { map, throttle } from 'lodash-es';
+import { throttle } from 'lodash-es';
 import { TailorDialog } from '@tailor-cms/core-components';
-import { titleCase } from '@tailor-cms/utils';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
+import { GROUP_ROLES } from '@/utils/groupRoles';
 import { user as userApi, userGroup as userGroupApi } from '@/api';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-interface Role {
-  title: string;
-  value: string;
-}
 
 const props = defineProps<{
   userGroupId: number;
@@ -104,13 +110,6 @@ const emailInputEl = useTemplateRef('emailInputEl');
 const isVisible = ref(false);
 const isSaving = ref(false);
 const suggestedUsers = ref([]);
-
-const roles = computed<Role[]>(() =>
-  map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({
-    title: titleCase(value),
-    value,
-  })),
-);
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   initialValues: {
