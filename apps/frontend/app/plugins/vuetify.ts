@@ -49,7 +49,7 @@ const lightTheme: ThemeDefinition = {
     // Tertiary — warm gold (sparing accent)
     'tertiary': '#976D00',
     'on-tertiary': '#FFFFFF',
-    'tertiary-container': '#F8E46C',
+    'tertiary-container': '#FFDEA5',
     'on-tertiary-container': '#201C00',
 
     // Highlight — linked / pinned / recent state (purple)
