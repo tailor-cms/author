@@ -6,7 +6,7 @@ import { mdi } from 'vuetify/iconsets/mdi';
 import type { ThemeDefinition } from 'vuetify';
 
 import outlineIconset from '~/components/repository/Outline/icons/iconset';
-import { colorMode } from '~/composables/useColorMode';
+import { colorMode, resolveTheme } from '~/composables/useColorMode';
 
 const lightTheme: ThemeDefinition = {
   dark: false,
@@ -205,7 +205,10 @@ const darkTheme: ThemeDefinition = {
 export default defineNuxtPlugin({
   name: 'vuetify',
   setup(nuxt) {
-    const defaultTheme = colorMode.value;
+    const prefersDark = import.meta.client
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
+      : false;
+    const defaultTheme = resolveTheme(colorMode.value, prefersDark);
 
     const vuetify = createVuetify({
       blueprint: md3,

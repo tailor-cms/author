@@ -25,6 +25,7 @@
         </VBtn>
       </template>
       <VMenu
+        :close-on-content-click="false"
         attach="#mainAppBar"
         min-width="220"
         max-width="350"
@@ -49,10 +50,7 @@
               </div>
             </div>
           </div>
-          <VList
-            class="d-flex flex-column ga-1 pa-2"
-            slim
-          >
+          <VList density="comfortable" nav>
             <template v-if="smAndDown">
               <VListItem
                 v-for="{ name, to, icon } in routes"
@@ -60,25 +58,21 @@
                 :to="to"
                 :title="name"
                 :prepend-icon="icon"
-                rounded="lg"
               />
             </template>
             <VListItem
               :to="{ name: 'user-profile' }"
               title="Profile"
               prepend-icon="mdi-account-circle-outline"
-              rounded="lg"
             />
-            <VListItem
-              :prepend-icon="isDark ? 'mdi-weather-sunny' : 'mdi-weather-night'"
-              :title="isDark ? 'Light mode' : 'Dark mode'"
-              rounded="lg"
-              @click="toggle"
-            />
+            <VListItem prepend-icon="mdi-theme-light-dark" title="Theme">
+              <template #append>
+                <ThemeSwitcher inline />
+              </template>
+            </VListItem>
             <VListItem
               title="Logout"
               prepend-icon="mdi-logout"
-              rounded="lg"
               @click="logout"
             />
           </VList>
@@ -93,13 +87,12 @@ import { useDisplay } from 'vuetify';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { useAuthStore } from '@/stores/auth';
-import { useColorMode } from '@/composables/useColorMode';
 import { useConfigStore } from '@/stores/config';
+import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue';
 
 defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
-const { isDark, toggle } = useColorMode();
 
 const { $oidc } = useNuxtApp() as any;
 const config = useConfigStore();

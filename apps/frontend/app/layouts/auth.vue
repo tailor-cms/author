@@ -1,25 +1,27 @@
 <template>
   <div class="auth-container fill-height bg-surface pa-4">
     <VSheet
-      class="auth-panel d-flex pa-5"
+      class="auth-panel d-flex pa-8"
       color="surface-container-low"
       max-width="840"
       rounded="xl"
       border
     >
-      <VRow no-gutters>
+      <div class="theme-switcher">
+        <ThemeSwitcher />
+      </div>
+      <VRow>
         <VCol
-          class="d-flex justify-start align-start pa-6"
+          class="d-flex justify-start align-start"
           cols="12"
           lg="5"
-          md="12"
         >
           <div class="d-flex align-center justify-center">
-            <img :src="logoPath" alt="Logo" class="logo" width="78" />
+            <img :src="logoPath" alt="Logo" class="logo" width="64" />
             <h1 class="app-title ml-4">{{ title }}</h1>
           </div>
         </VCol>
-        <VCol class="auth-body py-8" cols="12" lg="7" md="12">
+        <VCol class="auth-body" cols="12" lg="7">
           <slot></slot>
         </VCol>
       </VRow>
@@ -28,6 +30,8 @@
 </template>
 
 <script lang="ts" setup>
+import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue';
+
 const props = defineProps<{
   title: string;
 }>();
@@ -58,11 +62,23 @@ const logoPath = '/img/logo-new.svg';
 }
 
 .auth-container .auth-panel {
+  position: relative;
   width: 100%;
 
-  .auth-body {
-    padding: 2rem;
+  .theme-switcher {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
 
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .auth-body {
     a {
       color: inherit;
       font-weight: 400;

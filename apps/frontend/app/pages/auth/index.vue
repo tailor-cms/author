@@ -20,7 +20,7 @@
         rounded
         @click="loginOIDC"
       />
-      <VDivider class="my-10" />
+      <VDivider class="my-8">or</VDivider>
     </div>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
     <form novalidate @keydown.enter="signIn" @submit.prevent="signIn">
@@ -50,6 +50,7 @@
       />
       <VBtn
         color="primary"
+        class="mt-3"
         size="large"
         text="Sign in"
         variant="flat"
