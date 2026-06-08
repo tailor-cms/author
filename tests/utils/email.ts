@@ -1,4 +1,3 @@
-import { find } from 'lodash-es';
 import { JSDOM } from 'jsdom';
 import { MailtrapClient } from 'mailtrap';
 
@@ -9,43 +8,61 @@ const {
   MAILTRAP_INBOX_NAME,
 } = process.env;
 
-const timeout = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const timeout = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 const client = new MailtrapClient({
   accountId: parseInt(MAILTRAP_ACCOUNT_ID, 10),
   testInboxId: parseInt(MAILTRAP_INBOX_ID, 10),
   token: MAILTRAP_TOKEN || '',
 });
 
-// Get the first email from the inbox
-export const getFirstEmail = async (
-  toEmailAddress: string,
-  retries: number = 5,
-): Promise<string> => {
-  // Wait for the email to arrive
-  await timeout(2000);
-  const inboxesClient = client.testing.inboxes;
-  const inboxes = await inboxesClient.getList();
-  if (!inboxes?.length) return '';
-  const inboxId = inboxes.find((it) => it.name === MAILTRAP_INBOX_NAME)?.id;
-  if (!inboxId) return '';
-  const messagesClient = client.testing.messages;
-  const messages = await messagesClient.get(inboxId);
-  if (!messages?.length && retries)
-    return getFirstEmail(toEmailAddress, retries - 1);
-  const message = toEmailAddress
-    ? messages.find((it) => it.to_email === toEmailAddress.toLowerCase())
-    : messages[0];
-  if (message) return messagesClient.getHtmlMessage(inboxId, message.id);
-  if (!message && retries) return getFirstEmail(toEmailAddress, retries - 1);
-  return '';
-};
+const lower = (s: string) => s.toLowerCase();
 
+// Mailtrap inbox lookup. Memoised; the configured inbox name doesn't
+// change inside a test run.
+let cachedInboxId: number | undefined;
+async function getInboxId(): Promise<number | undefined> {
+  if (cachedInboxId !== undefined) return cachedInboxId;
+  const inboxes = await client.testing.inboxes.getList();
+  cachedInboxId = inboxes?.find((it) => it.name === MAILTRAP_INBOX_NAME)?.id;
+  return cachedInboxId;
+}
+
+// Pull the anchor with the requested visible text out of the most recent
+// email sent to `address` that actually contains that anchor.
+// The loop polls Mailtrap until that email arrives (bounded by
+// `retries` * `intervalMs`) and surfaces a clear error if it never does.
 export const getAnchorFromLastRecievedEmail = async (
   address: string,
   anchorTitle: string,
-) => {
-  const emailMessage = await getFirstEmail(address);
-  const dom = new JSDOM(emailMessage);
-  const anchors = dom.window.document.querySelectorAll('a');
-  return find(anchors, (a) => a.textContent?.trim() === anchorTitle);
+  options: { retries?: number; intervalMs?: number } = {},
+): Promise<HTMLAnchorElement> => {
+  const { retries = 10, intervalMs = 1500 } = options;
+  const target = lower(address);
+  for (let attempt = 0; attempt < retries; attempt++) {
+    await timeout(intervalMs);
+    const inbox = await getInboxId();
+    if (!inbox) continue;
+    const messages = await client.testing.messages.get(inbox);
+    // Mailtrap returns newest-first
+    const candidates = (messages ?? []).filter(
+      (m) => lower(m.to_email) === target,
+    );
+    for (const message of candidates) {
+      const html = await client.testing.messages.getHtmlMessage(
+        inbox,
+        message.id,
+      );
+      const anchors = new JSDOM(html).window.document.querySelectorAll('a');
+      const match = Array.from(anchors).find(
+        (a) => a.textContent?.trim() === anchorTitle,
+      );
+      if (match) return match as unknown as HTMLAnchorElement;
+    }
+  }
+  throw new Error(
+    `Email with anchor "${anchorTitle}" never arrived for ${address} ` +
+      `after ${retries} attempts (${(retries * intervalMs) / 1000}s).`,
+  );
 };
