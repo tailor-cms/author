@@ -1,12 +1,14 @@
 // Content-element-domain helpers: lookups, normalization, positioning,
 // and batch creation. Activity tools that create elements (create-container)
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
-import { toEmbedUrl } from '@tailor-cms/common/asset';
-import { storage as storageConfig } from '#config';
-import db from '#shared/database/index.js';
 import { createAiLogger } from '../../../logger.ts';
-import type { ToolContext } from '../types.ts';
 import { dbContext } from '../helpers/index.ts';
+import { randomUUID } from 'node:crypto';
+import { storage as storageConfig } from '#config';
+import { toEmbedUrl } from '@tailor-cms/common/asset';
+import type { ToolContext } from '../types.ts';
+import db from '#shared/database/index.js';
+import elementRegistry from '../../../../content-plugins/elementRegistry.js';
 
 const { ContentElement } = db as any;
 
@@ -83,31 +85,62 @@ function resolveStorageUri(data: any): string | null {
   return match ? `${protocol}${match[1]}` : null;
 }
 
-// Normalize AI-generated element data per type.
-// - IMAGE: convert raw storageKeys/presigned URLs to storage:// URIs
-// - EMBED: convert video page URLs to embeddable URLs
-export function normalizeElementData(type: string, data: any): any {
-  if (type === ContentElementType.Image) {
-    return normalizeImageData(data);
+// Wrap a question element's text body as an inline TIPTAP_HTML embed.
+function wrapQuestionContent(data: any): any {
+  if (typeof data?.question !== 'string') return data;
+  const id = randomUUID();
+  return {
+    ...data,
+    question: [id],
+    embeds: {
+      [id]: {
+        id,
+        type: ContentElementType.TiptapHtml,
+        embedded: true,
+        position: 1,
+        data: { content: data.question },
+      },
+    },
+  };
+}
+
+// Normalize AI-generated element data
+export function normalizeElementData(elementType: string, data: any): any {
+  let normalized = data;
+  if (elementType === ContentElementType.Image) {
+    normalized = normalizeImageData(normalized);
+  } else if (elementType === ContentElementType.Embed && normalized?.url) {
+    normalized = {
+      ...normalized,
+      url: toEmbedUrl(normalized.url) || normalized.url,
+    };
   }
-  if (type === ContentElementType.Embed && data?.url) {
-    return { ...data, url: toEmbedUrl(data.url) || data.url };
+  if (elementRegistry.isQuestion(elementType)) {
+    normalized = wrapQuestionContent(normalized);
   }
-  return data;
+  return normalized;
+}
+
+export interface FailedElement {
+  index: number;
+  type: string;
+  reason: string;
 }
 
 // Batch-create content elements under a parent activity.
-// Failures are non-fatal - skipped with a warning.
-// Position starts after the last existing element so this is safe to call
-// on containers that already have content.
+// Per-element failures are non-fatal; collected into `failed` so
+// callers can surface them in the tool result and the model can
+// self-correct. Position starts after the last existing element.
 export async function createElements(
   parentId: number,
   items: any[],
   ctx: ToolContext,
-) {
+): Promise<{ created: any[]; failed: FailedElement[] }> {
   const created: any[] = [];
+  const failed: FailedElement[] = [];
   let pos = await nextElementPosition(ctx.repository.id, parentId);
-  for (const it of items) {
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
     try {
       const data = normalizeElementData(it.type, it.data);
       const element = await ContentElement.create(
@@ -122,8 +155,16 @@ export async function createElements(
       );
       created.push(pickElementFields(element));
     } catch (err: any) {
-      logger.warn({ err: err.message, element: it }, 'element create failed');
+      logger.warn(
+        { err: err.message, type: it.type, index: i },
+        'element create failed',
+      );
+      failed.push({
+        index: i,
+        type: it.type,
+        reason: err.message || 'unknown',
+      });
     }
   }
-  return created;
+  return { created, failed };
 }

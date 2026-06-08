@@ -10,7 +10,7 @@ import type {
   PropsConfig,
 } from './types.ts';
 import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
-import containerRegistry from '../../../content-plugins/containerRegistry.js';
+import { describeContainerSchema } from './describer.ts';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import { oneLine } from 'common-tags';
 
@@ -26,10 +26,10 @@ import { oneLine } from 'common-tags';
  * empty agent result rather than silently produce junk.
  */
 export const getConfigs = (context: AiContext): ParsedConfig => {
-  const { outlineActivityType, containerType } = context.repository;
-  if (!outlineActivityType || !containerType) {
+  const { schemaId, outlineActivityType, containerType } = context.repository;
+  if (!schemaId || !outlineActivityType || !containerType) {
     throw new Error(oneLine`
-      CcContainer.getConfigs: missing outlineActivityType
+      CcContainer.getConfigs: missing schemaId, outlineActivityType,
       or containerType in context.repository.
     `);
   }
@@ -43,13 +43,14 @@ export const getConfigs = (context: AiContext): ParsedConfig => {
       a supported container for "${outlineActivityType}".
     `);
   }
-  const desc = containerRegistry.describeSchema(container) as ContainerStructure;
+  const desc = describeContainerSchema(schemaId, containerType);
   if (desc.props?.length) return parseProps(container, desc);
   if (desc.subcontainers?.length) return parseNested(container, desc);
   if (desc.elementConfig) return parseFlat(container, desc);
   throw new Error(oneLine`
     CcContainer.getConfigs: cannot detect shape for "${containerType}";
-    describeSchema returned no subcontainers, elementConfig, or props.
+    describeContainerSchema returned no subcontainers, elementConfig,
+    or props.
   `);
 };
 

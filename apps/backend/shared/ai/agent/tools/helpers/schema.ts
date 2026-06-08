@@ -3,17 +3,14 @@ import type {
   ContainerStructure,
   Schema,
 } from '@tailor-cms/interfaces/schema';
-import { processElementConfig, schema as schemaAPI } from '@tailor-cms/config';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
+import { describeContainerSchema } from '../../../schemas/CcContainer/describer.ts';
+import { schema as schemaAPI } from '@tailor-cms/config';
 import PluginRegistry from '#shared/content-plugins/index.js';
+
+export { describeContainerSchema };
 
 const api = schemaAPI as any;
 const { containerRegistry } = PluginRegistry;
-
-// All installed element types - used as fallback when a
-// container doesn't define contentElementConfig (same
-// default the config-parser uses in getSupportedContainers).
-const ALL_ELEMENT_TYPES = Object.values(ContentElementType);
 
 // Resolve a parsed schema by id.
 export function getSchema(schemaId: string): Schema {
@@ -106,59 +103,6 @@ export function containerTypesForActivity(activityType: string): string[] {
   return (containers || []).map((c: any) => c.type);
 }
 
-// Full container structure from its schema config.
-// Delegates to the template's describeSchema(config) and
-// applies element config inheritance: subcontainers that
-// don't define their own contentElementConfig inherit the
-// container-level one (e.g. HEAS SECTION inherits from
-// its STRUCTURED_CONTENT container).
-//
-// Nested container:
-// describeContainerSchema("EXAMPLE_SCHEMA", "PANEL_CONTAINER")
-//   -> { subcontainers: [
-//        { type: "PANEL", label: "Panel",
-//          meta: [{ key: "mood", ... }],
-//          elementConfig: [...processed...] },
-//        { type: "SPLASH", label: "Splash Page", ... }
-//      ] }
-//
-// Flat container:
-// describeContainerSchema("COURSE_SCHEMA", "SECTION")
-//   -> { subcontainers: [], elementConfig: [...processed...] }
-export function describeContainerSchema(
-  schemaId: string,
-  containerType: string,
-): ContainerStructure {
-  const container = getContainerConfig(schemaId, containerType);
-  if (!container) return { subcontainers: [] };
-  const desc = describeShape(container);
-  // Subcontainers inherit elementConfig from their container,
-  // or from all installed types when neither declares one.
-  const defaultCeConfig = container.contentElementConfig || ALL_ELEMENT_TYPES;
-  if (desc.subcontainers?.length) {
-    for (const sub of desc.subcontainers) {
-      if (!sub.elementConfig?.length) {
-        sub.elementConfig = defaultCeConfig;
-      }
-      // Raw configs from findContainerDef haven't been through
-      // processElementConfig yet (processSchemas doesn't touch
-      // contentContainers). Clone before processing because
-      // processElementConfig mutates its input (deletes group
-      // config, remaps items) and the source objects are shared
-      // schema references.
-      sub.elementConfig = processElementConfig(
-        cloneElementConfig(sub.elementConfig || []),
-      );
-    }
-  }
-  if (desc.elementConfig) {
-    desc.elementConfig = processElementConfig(
-      cloneElementConfig(desc.elementConfig),
-    );
-  }
-  return desc;
-}
-
 // Subcontainer activity types allowed inside a container.
 // Derived from the template's describeSchema method.
 // Returns [] for flat templates.
@@ -234,9 +178,7 @@ export function getAllowedElementTypes(
   activityType: string,
   parentType?: string,
 ): string[] {
-  // Subcontainer with known parent - authoritative lookup.
-  // e.g. activityType="DEFAULT_SECTION", parentType="SECTION_CONTAINER"
-  if (parentType) {
+  if (parentType && !api.isOutlineActivity(parentType)) {
     const desc = describeContainerSchema(schemaId, parentType);
     return elementTypesFromContainerDesc(desc, activityType);
   }
@@ -301,16 +243,3 @@ export function getContainerActivityMeta(
 // Re-export the parser's lookup so tool-side imports stay
 // grouped under the helpers barrel.
 export const getContainerConfig = api.getContainerConfig;
-
-// Shallow-clone element config so processElementConfig
-// doesn't mutate shared schema references. It deletes
-// group.config and remaps items in place.
-function cloneElementConfig(config: any[]): any[] {
-  return config.map((it: any) => {
-    if (typeof it === 'string') return it;
-    return {
-      ...it,
-      ...(it.items && { items: [...it.items] }),
-    };
-  });
-}
