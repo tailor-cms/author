@@ -57,10 +57,8 @@
         <VSwitch
           v-model="skipInviteInput"
           class="ml-1 mb-1"
-          color="primary"
           label="Skip invitation email"
           hide-details
-          inset
         />
         <div class="text-body-small text-medium-emphasis ml-1 mb-3">
           Useful for SSO users who don't need a password setup email.

@@ -13,13 +13,7 @@
         Core Source
       </span>
     </div>
-    <VSwitch
-      v-model="isCoreSource"
-      color="primary"
-      density="compact"
-      hide-details
-      inset
-    />
+    <VSwitch v-model="isCoreSource" hide-details />
   </div>
   <div class="section-header text-body-small text-uppercase mb-4">
     Edit Details

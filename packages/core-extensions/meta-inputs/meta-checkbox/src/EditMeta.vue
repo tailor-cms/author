@@ -1,6 +1,6 @@
 <template>
   <div class="my-2">
-    <div v-if="meta.label" class="label ma-1 text-body-small">
+    <div v-if="meta.label" class="text-medium-emphasis text-body-small">
       {{ meta.label }}
     </div>
     <VCheckbox
@@ -8,7 +8,7 @@
       :label="meta.description"
       :name="meta.key"
       :readonly="readonly"
-      density="comfortable"
+      hide-details
       @change="$emit('update', props.meta.key, input)"
     />
   </div>
@@ -32,8 +32,3 @@ defineEmits(['update']);
 const input = ref(props.meta.value);
 </script>
 
-<style lang="scss" scoped>
-.label {
-  opacity: 0.65;
-}
-</style>

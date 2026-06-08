@@ -87,7 +87,6 @@
             <VSwitch
               v-model="useAI"
               density="compact"
-              inset
               hide-details
             />
           </div>

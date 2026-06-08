@@ -71,7 +71,6 @@
 
 <script lang="ts" setup>
 import { RichTextEditor } from '@tailor-cms/core-components';
-import { VDateInput } from 'vuetify/labs/VDateInput';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import SelectPriority from '../SelectPriority.vue';

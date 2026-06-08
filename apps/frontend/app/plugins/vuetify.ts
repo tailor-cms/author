@@ -219,7 +219,16 @@ export default defineNuxtPlugin({
         // MD3 spec: snackbars/tooltips use the inverse surface so they
         // contrast with the page (dark on light theme, light on dark theme).
         VSnackbar: { color: 'inverse-surface' },
-        VTooltip: { contentClass: 'bg-inverse-surface' },
+        VTooltip: { color: 'inverse-surface' },
+        VSwitch: {
+          color: 'primary',
+          density: 'compact',
+          inset: 'material',
+          size: 'small',
+        },
+        // MD3 spec uses primary for the selected container; align with our
+        // switch accent (the md3 blueprint defaults checkboxes to secondary).
+        VCheckbox: { color: 'primary' },
       },
       theme: {
         defaultTheme,

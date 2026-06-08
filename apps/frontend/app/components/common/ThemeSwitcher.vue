@@ -3,6 +3,7 @@
     v-if="inline"
     :model-value="mode"
     class="theme-toggle"
+    density="comfortable"
     rounded="lg"
     variant="text"
     border
@@ -18,7 +19,7 @@
       :icon="icon"
       :aria-label="title"
       height="28"
-      size="x-small"
+      size="small"
     />
   </VBtnToggle>
   <VMenu

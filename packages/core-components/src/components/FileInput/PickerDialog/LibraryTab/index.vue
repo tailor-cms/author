@@ -18,7 +18,8 @@
     </div>
     <VEmptyState
       v-else-if="!assets.length && !isLoading"
-      class="py-8"
+      class="py-16 my-4 rounded-md"
+      bg-color="surface-container-low"
       icon="mdi-folder-multiple-image"
       :title="hasActiveFilters ? 'No matching assets' : 'No assets found'"
       :text="

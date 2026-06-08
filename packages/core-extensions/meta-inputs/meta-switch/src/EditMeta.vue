@@ -5,8 +5,7 @@
       :label="meta.label"
       :name="meta.key"
       :readonly="readonly"
-      density="comfortable"
-      inset
+      hide-details
       @change="$emit('update', props.meta.key, input)"
     />
   </div>

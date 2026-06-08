@@ -8,7 +8,7 @@
   >
     <template #header>{{ heading }}</template>
     <template #body>
-      <div class="bg-surface-container px-5 pb-5">
+      <div class="px-5 pt-5">
         <VTabs
           v-model="activeTab"
           selected-class="bg-surface-container-high"
@@ -57,15 +57,17 @@
           :slim="false"
           :text="selectLabel"
           class="ml-2 px-4"
-          variant="tonal"
+          color="primary"
+          variant="flat"
           @click="onAssetPick"
         />
         <VBtn
           v-if="activeTab === 'url'"
           :slim="false"
           class="ml-2"
+          color="primary"
           text="Submit"
-          variant="tonal"
+          variant="flat"
           @click="urlTabRef?.submit()"
         />
       </div>

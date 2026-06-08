@@ -75,10 +75,8 @@
           v-if="isNewUser"
           v-model="skipInviteInput"
           class="mb-1"
-          color="primary"
           label="Skip invitation email"
           hide-details
-          inset
         />
         <div v-if="isNewUser" class="text-body-small text-medium-emphasis ml-1 mb-3">
           Useful for SSO users who don't need a password setup email.

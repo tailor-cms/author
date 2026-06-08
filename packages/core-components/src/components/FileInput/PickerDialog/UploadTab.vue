@@ -4,21 +4,14 @@
       :filter-by-type="accept"
       browse-text="Browse files"
       class="upload-tab"
-      divider-text="or"
       icon="mdi-cloud-upload-outline"
       title="Drag & drop a file here"
       @update:model-value="onSelect"
-    >
-      <template #browse="{ props: browseProps }">
-        <VBtn v-bind="browseProps" variant="tonal" size="default" />
-      </template>
-    </VFileUpload>
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { VFileUpload } from 'vuetify/labs/VFileUpload';
-
 defineProps<{ accept?: string }>();
 
 const emit = defineEmits<{

@@ -2,8 +2,6 @@
   <VSwitch
     v-model="isAssistaceEnabled"
     :disabled="!schemaId || !name || !description"
-    color="primary"
-    inset
     label="AI assisted"
   />
   <div v-if="isAssistaceEnabled" class="ai-panel">

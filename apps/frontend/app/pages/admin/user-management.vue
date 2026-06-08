@@ -11,14 +11,8 @@
       />
     </div>
     <VRow class="filters">
-      <VCol>
-        <VSwitch
-          v-model="showArchiveToggle"
-          color="primary"
-          label="Archived"
-          hide-details
-          inset
-        />
+      <VCol class="d-flex align-center">
+        <VSwitch v-model="showArchiveToggle" label="Archived" hide-details />
       </VCol>
       <VCol>
         <VTextField
