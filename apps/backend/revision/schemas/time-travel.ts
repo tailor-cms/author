@@ -1,5 +1,5 @@
 // Wire shapes for the time-travel endpoint.
-import { IntParam } from '#shared/request/schemas.ts';
+import { IntParam, Timestamp } from '#shared/request/schemas.ts';
 import { Revision } from './entity.ts';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
@@ -9,9 +9,7 @@ export const TimeTravelInput = z
     activityId: IntParam().describe(oneLine`
       Target activity; the root of the subtree we reconstruct.
     `),
-    timestamp: z.iso
-      .datetime({ offset: true })
-      .describe('Strict ISO 8601 moment to reconstruct state at.'),
+    timestamp: Timestamp('Strict ISO 8601 moment to reconstruct state at.'),
     elementIds: z
       .array(z.coerce.number().int())
       .default([])
