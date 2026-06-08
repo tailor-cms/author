@@ -1,10 +1,11 @@
 // Wire shape for the admin user-listing endpoint.
+import { oneLine } from 'common-tags';
 import { z } from 'zod';
 import {
+  Paginated,
   Pagination,
   QueryBoolean,
   Sort,
-  UInt,
 } from '#shared/request/schemas.ts';
 import { User } from './entity.ts';
 import { UserRole } from '@tailor-cms/interfaces/role';
@@ -17,7 +18,7 @@ export const ListFilter = z
       .max(250)
       .optional()
       .describe('Substring match across email, firstName, lastName (iLike).'),
-    email: z.string().trim().max(250).optional().describe(`
+    email: z.string().trim().max(250).optional().describe(oneLine`
       Exact-equality match against User.email. Kept as a plain string
       (not validated as a real address) so a typo from the search box
       returns zero results instead of a 400.
@@ -47,12 +48,7 @@ export const UserListItem = User.extend({
 export type UserListItem = z.infer<typeof UserListItem>;
 
 // Top-level response envelope for the list endpoint.
-export const ListResult = z
-  .object({
-    items: z.array(UserListItem).describe('Page of users matching the filter.'),
-    total: UInt().describe('Total users matching the filter.'),
-  })
-  .meta({ id: 'UserListResult' })
+export const ListResult = Paginated(UserListItem, 'UserListResult')
   .describe('Paginated user list response.');
 
 export type ListResult = z.infer<typeof ListResult>;

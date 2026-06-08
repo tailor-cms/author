@@ -23,13 +23,21 @@ function toOpenApiPath(p: string): string {
 const components = new Map<string, unknown>();
 
 // Rewrites Zod's default `#/$defs/<id>` refs to OpenAPI's
-// `#/components/schemas/<id>` convention so Scalar resolves them.
+// `#/components/schemas/<id>` convention so Scalar resolves them, and
+// drops the strict `pattern` Zod adds to primitives that already declare
+// a `format` (date-time, uuid, ...).
 function rewriteRefs(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(rewriteRefs);
   if (value && typeof value === 'object') {
     const obj = value as Record<string, unknown>;
     if (typeof obj.$ref === 'string') {
       obj.$ref = obj.$ref.replace('#/$defs/', '#/components/schemas/');
+    }
+    if (
+      typeof obj.format === 'string' &&
+      typeof obj.pattern === 'string'
+    ) {
+      delete obj.pattern;
     }
     for (const key of Object.keys(obj)) {
       obj[key] = rewriteRefs(obj[key]);

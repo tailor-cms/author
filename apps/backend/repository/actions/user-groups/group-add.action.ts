@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
+import { oneLine } from 'common-tags';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
 import * as schemas from '../../schemas/index.ts';
@@ -28,6 +29,11 @@ export default defineAction({
   openapi: {
     authenticated: true,
     summary: 'Share repository with a user group',
+    description: oneLine`
+      Grants every member of the user group access to this repository.
+      Idempotent: returns the existing membership if the group is
+      already attached.
+    `,
   },
   handler,
 });

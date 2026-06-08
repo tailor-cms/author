@@ -4,11 +4,11 @@ import { z } from 'zod';
 
 import {
   IntParam,
+  Paginated,
   Pagination,
   QueryBoolean,
   Sort,
   StringArrayFromQuery,
-  UInt,
 } from '#shared/request/schemas.ts';
 import { Revision } from '#app/revision/schemas/entity.ts';
 
@@ -68,18 +68,8 @@ export const RepositoryListItem = Repository.extend({
 
 export type RepositoryListItem = z.infer<typeof RepositoryListItem>;
 
-// Top-level response envelope for the list endpoint - paginated rows +
-// total count.
-export const ListResult = z
-  .object({
-    items: z
-      .array(RepositoryListItem)
-      .describe('Page of repositories matching the filter.'),
-    total: UInt()
-      .meta({ example: 1 })
-      .describe('Total repositories matching the filter.'),
-  })
-  .meta({ id: 'RepositoryListResult' })
+// Top-level response envelope for the list endpoint
+export const ListResult = Paginated(RepositoryListItem, 'RepositoryListResult')
   .describe('Paginated repository list response.');
 
 export type ListResult = z.infer<typeof ListResult>;

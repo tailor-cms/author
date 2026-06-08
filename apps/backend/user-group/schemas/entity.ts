@@ -1,5 +1,6 @@
 // UserGroup entity and its related sub-shapes.
 import { UserRole } from '@tailor-cms/interfaces/role';
+import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
 import {
@@ -42,7 +43,7 @@ export const UserGroup = z
       .trim()
       .max(200_000)
       .nullable()
-      .describe(`
+      .describe(oneLine`
         Logo URL or base64 data URL. Capped at 200_000 chars to match the
         ceiling on user avatars.
       `),

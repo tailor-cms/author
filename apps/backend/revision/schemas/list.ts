@@ -1,5 +1,10 @@
 // Wire shapes for the revision-listing endpoint.
-import { IntParam, Pagination, Sort, UInt } from '#shared/request/schemas.ts';
+import {
+  IntParam,
+  Paginated,
+  Pagination,
+  Sort,
+} from '#shared/request/schemas.ts';
 import { Entity } from '@tailor-cms/interfaces/revision';
 import { oneLine } from 'common-tags';
 import { Revision } from './entity.ts';
@@ -25,12 +30,7 @@ export const ListFilter = z
 
 export type ListFilter = z.infer<typeof ListFilter>;
 
-export const ListResult = z
-  .object({
-    items: z.array(Revision).describe('Page of revisions.'),
-    total: UInt().describe('Total revisions matching the filter.'),
-  })
-  .meta({ id: 'RevisionListResult' })
+export const ListResult = Paginated(Revision, 'RevisionListResult')
   .describe('Paginated revision list response.');
 
 export type ListResult = z.infer<typeof ListResult>;

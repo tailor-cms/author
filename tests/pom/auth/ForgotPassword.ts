@@ -25,7 +25,13 @@ export class ForgotPassword {
 
   async requestPasswordReset(email: string) {
     await this.fillEmail(email);
+    const responded = this.page.waitForResponse(
+      (res) =>
+        res.url().includes('/users/forgot-password') &&
+        res.request().method() === 'POST',
+    );
     await this.submitBtn.click();
+    await responded;
   }
 
   async fetchResetLink(email: string) {
