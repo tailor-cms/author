@@ -1,12 +1,7 @@
 <template>
   <VSheet class="panel-header pa-4">
     <div class="d-flex align-center ga-2">
-      <VAvatar
-        color="secondary"
-        image="/img/renoir/head.png"
-        class="pa-1"
-        size="small"
-      />
+      <VImg src="/img/renoir/head.png" width="32" alt="" class="flex-grow-0" />
       <span class="header-title font-weight-semibold ml-1">Renoir</span>
       <VSpacer />
       <VHotkey
