@@ -53,7 +53,7 @@
                   {{ roleLabel(item.userGroupMember.role) }}
                 </VBtn>
               </template>
-              <VList max-width="350" nav>
+              <VList max-width="340" nav>
                 <VListSubheader>Choose role</VListSubheader>
                 <VListItem
                   v-for="role in roles"
@@ -62,7 +62,7 @@
                   :prepend-icon="role.icon"
                   :subtitle="role.description"
                   :title="role.title"
-                  class="role-option"
+                  class="role-option py-2"
                   @click="upsertUser(item.email, role.value)"
                 >
                   <template #append>

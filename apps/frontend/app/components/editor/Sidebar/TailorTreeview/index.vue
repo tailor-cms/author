@@ -1,5 +1,5 @@
 <template>
-  <VList v-model:opened="expanded" density="compact" slim nav>
+  <VList v-model:opened="expanded" density="compact" nav>
     <Draggable
       :list="processedItems"
       :disabled="!!search"

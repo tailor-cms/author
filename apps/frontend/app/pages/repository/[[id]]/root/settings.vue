@@ -8,7 +8,7 @@
       width="380"
       permanent
     >
-      <VList class="pa-4 text-left" slim nav>
+      <VList class="pa-4 text-left" nav>
         <VListItem
           v-for="item in sections"
           :key="item.name"
@@ -16,7 +16,6 @@
           :subtitle="item.subtitle"
           :title="item.label"
           :to="{ name: item.name }"
-          class="mb-2"
           rounded="lg"
         />
       </VList>

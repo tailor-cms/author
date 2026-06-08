@@ -36,7 +36,7 @@
         variant="text"
       />
     </template>
-    <VList density="comfortable" nav>
+    <VList density="compact" nav>
       <VListItem
         v-for="{ value, title, icon } in themeOptions"
         :key="value"

@@ -48,7 +48,7 @@
               {{ user.label }}
             </div>
           </div>
-          <VList density="comfortable" nav>
+          <VList density="compact" nav>
             <template v-if="smAndDown">
               <VListItem
                 v-for="{ name, to, icon } in routes"

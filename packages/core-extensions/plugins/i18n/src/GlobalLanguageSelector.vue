@@ -15,7 +15,7 @@
         </span>
       </VBtn>
     </template>
-    <VList density="compact" min-width="200" slim nav>
+    <VList density="comfortable" min-width="200" nav>
       <VListSubheader>Content Language</VListSubheader>
       <VListItem
         v-for="{ code, name } in i18n.availableLanguages"

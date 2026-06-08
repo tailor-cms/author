@@ -13,7 +13,7 @@
         variant="tonal"
       />
     </template>
-    <VList nav>
+    <VList max-width="260" nav>
       <VListItem
         v-for="option in options"
         :key="option.value"
@@ -21,6 +21,7 @@
         :prepend-icon="option.icon"
         :subtitle="option.subtitle"
         :title="option.title"
+        class="py-2"
         @click="model = option.value"
       />
     </VList>
@@ -47,3 +48,9 @@ const activeOption = computed(() =>
   props.options.find((option) => option.value === model.value),
 );
 </script>
+
+<style lang="scss" scoped>
+:deep(.v-list-item-subtitle) {
+  -webkit-line-clamp: unset;
+}
+</style>

@@ -17,13 +17,14 @@
           :rounded="rounded"
         />
       </template>
-      <VList>
+      <VList density="compact" nav>
         <VListItem
           v-for="it in menuOptions"
           :key="it.name"
           :aria-label="it.name"
           :prepend-icon="it.icon"
           :title="it.name"
+          :base-color="it.color"
           @click="it.action"
         />
       </VList>
@@ -162,6 +163,7 @@ const menuOptions = computed(() => {
     {
       name: 'Remove',
       icon: 'mdi-trash-can-outline',
+      color: 'error',
       action: () => deleteActivity(),
     },
   ];
