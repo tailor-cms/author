@@ -1,6 +1,10 @@
 // Wire shape for the user-group listing endpoint.
 import { z } from 'zod';
-import { Pagination, Sort, UInt } from '#shared/request/schemas.ts';
+import {
+  Paginated,
+  Pagination,
+  Sort,
+} from '#shared/request/schemas.ts';
 import { UserGroup } from './entity.ts';
 
 export const ListFilter = z
@@ -18,14 +22,7 @@ export const ListFilter = z
 
 export type ListFilter = z.infer<typeof ListFilter>;
 
-export const ListResult = z
-  .object({
-    items: z
-      .array(UserGroup)
-      .describe('Page of user groups matching the filter.'),
-    total: UInt().describe('Total groups matching the filter.'),
-  })
-  .meta({ id: 'UserGroupListResult' })
+export const ListResult = Paginated(UserGroup, 'UserGroupListResult')
   .describe('Paginated user-group list response.');
 
 export type ListResult = z.infer<typeof ListResult>;

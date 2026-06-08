@@ -1,5 +1,5 @@
 // Wire shape for an agent run.
-import { AgentMode, OpaqueLog, SessionId } from './entity.ts';
+import { AgentMode, AgentTransactionLog, SessionId } from './entity.ts';
 import { Int, UInt } from '#shared/request/schemas.ts';
 import { Entity } from '@tailor-cms/interfaces/revision.ts';
 import { oneLine } from 'common-tags';
@@ -153,7 +153,7 @@ export const RunResult = z
       (e.g. \`activity:42\`, \`element:17\`, \`outline\`, \`assets\`).
       Emitted by write-tools via their internal \`_invalidates\` field.
     `),
-    transactionLog: OpaqueLog().describe(
+    transactionLog: AgentTransactionLog.describe(
       'Cumulative write-operation log across the whole session.',
     ),
     pendingQuestion: PendingQuestion.nullable().optional().describe(oneLine`

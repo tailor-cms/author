@@ -2,6 +2,7 @@ import {
   Int,
   RepositoryScopedParams,
   UInt,
+  Uid,
 } from '#shared/request/schemas.ts';
 import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import { oneLine } from 'common-tags';
@@ -11,12 +12,22 @@ import { z } from 'zod';
 export { AgentMode };
 
 // UUID identifier for an agent session.
-export const SessionId = () => z.uuid().describe('Agent session id.');
+export const SessionId = () => Uid('Agent session UID.');
 
-// Opaque audit-log array. Used for `AgentSession.history` (the OpenAI
-// Responses-API input array) and `AgentSession.transactionLog` (the
-// write-operation log).
-export const OpaqueLog = () => z.array(z.unknown());
+// Conversation history; the OpenAI Responses-API input array, growing
+// across turns. Entries are passed through verbatim;
+export const AgentHistory = z
+  .array(z.unknown())
+  .meta({ id: 'AgentHistory' })
+  .describe('OpenAI Responses-API input array, accumulating across turns.');
+
+// Write-operation audit log used for undo and forensic inspection of an
+// agent run. Each entry is an opaque transaction record produced by a
+// write-tool; consumers replay them in reverse to undo.
+export const AgentTransactionLog = z
+  .array(z.unknown())
+  .meta({ id: 'AgentTransactionLog' })
+  .describe('Write-operation audit log; entries are opaque transaction records.');
 
 // Path param shape for every `/agent/sessions/:sessionId` route. Extends
 // RepositoryScopedParams so the OpenAPI doc reflects the full path
@@ -58,12 +69,8 @@ export const AgentSessionOverview = AgentSessionSummary.extend({
 export type AgentSessionOverview = z.infer<typeof AgentSessionOverview>;
 
 export const AgentSessionDetail = AgentSessionSummary.extend({
-  history: OpaqueLog().describe(
-    'OpenAI Responses-API "input" array, accumulating across turns.',
-  ),
-  transactionLog: OpaqueLog().describe(
-    'Write-operation log used for undo / audit.',
-  ),
+  history: AgentHistory,
+  transactionLog: AgentTransactionLog,
 })
   .meta({ id: 'AgentSessionDetail' })
   .describe('Full agent session payload (summary + history + transaction log).');

@@ -5,9 +5,13 @@ import { z } from 'zod';
 
 import {
   IntParam,
+  JsonObject,
+  Paginated,
   Pagination,
   RepositoryScopedParams,
   Sort,
+  Timestamp,
+  Uid,
 } from '#shared/request/schemas.ts';
 import { UserSummary } from '#app/user/schemas/entity.ts';
 
@@ -18,19 +22,19 @@ import { UserSummary } from '#app/user/schemas/entity.ts';
 // dependency on those slices' wire schemas.
 export const Revision = z.object({
   id: z.number().int().describe('Revision id (auto-increment).'),
-  uid: z.uuid().describe('UUID based identifier.'),
+  uid: Uid(),
   userId: z.number().int().describe('User who initiated the change.'),
   repositoryId: z.number().int().describe('Repository the revision belongs to.'),
   entity: z.enum(Entity).describe('Entity kind the snapshot represents.'),
   operation: z.enum(Operation).describe('Mutation kind: Create | Update | Remove.'),
-  state: z
-    .record(z.string(), z.unknown())
-    .describe('Snapshot of the entity at revision time; shape depends on `entity`.'),
+  state: JsonObject(
+    'Snapshot of the entity at revision time; shape depends on `entity`.',
+  ),
   user: UserSummary.optional().describe(
     'Populated when the record is loaded with the User include.',
   ),
-  createdAt: z.iso.datetime({ offset: true }).describe('When the revision was written.'),
-  updatedAt: z.iso.datetime({ offset: true }).describe(oneLine`
+  createdAt: Timestamp('When the revision was written.'),
+  updatedAt: Timestamp(oneLine`
     Last update timestamp (revisions are append-only;
     typically == createdAt).
   `),
@@ -86,9 +90,7 @@ export const TimeTravelInput = z.object({
   activityId: IntParam().describe(oneLine`
     Target activity; the root of the subtree we reconstruct.
   `),
-  timestamp: z.iso
-    .datetime({ offset: true })
-    .describe('Strict ISO 8601 moment to reconstruct state at.'),
+  timestamp: Timestamp('Strict ISO 8601 moment to reconstruct state at.'),
   elementIds: z
     .array(z.coerce.number().int())
     .default([])
@@ -103,11 +105,9 @@ export const TimeTravelInput = z.object({
 
 export type TimeTravelInput = z.infer<typeof TimeTravelInput>;
 
-// Top-level list response shape; not wrapped in `{ data }`
-export const ListResult = z.object({
-  total: z.number().int().describe('Total revisions matching the filter.'),
-  items: z.array(Revision).describe('Page of revisions.'),
-}).describe('Paginated list of revisions');
+// Top-level list response shape
+export const ListResult = Paginated(Revision, 'RevisionList')
+  .describe('Paginated list of revisions');
 
 export type ListResult = z.infer<typeof ListResult>;
 

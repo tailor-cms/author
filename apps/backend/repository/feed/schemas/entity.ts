@@ -2,7 +2,11 @@
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
-import { Int, RepositoryScopedParams } from '#shared/request/schemas.ts';
+import {
+  Int,
+  RepositoryScopedParams,
+  Timestamp,
+} from '#shared/request/schemas.ts';
 import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Path params for every `/:repositoryId/feed/...` route.
@@ -28,9 +32,7 @@ export type UserActivityContext = z.infer<typeof UserActivityContext>;
 
 // Stored variant adds the join timestamp written by the presence store.
 export const StoredUserActivityContext = UserActivityContext.extend({
-  connectedAt: z.iso
-    .datetime({ offset: true })
-    .describe('Timestamp the context was attached to the user.'),
+  connectedAt: Timestamp('Timestamp the context was attached to the user.'),
 })
   .meta({ id: 'StoredUserActivityContext' })
   .describe('A user-activity context as persisted in the presence store.');
@@ -43,9 +45,7 @@ export type StoredUserActivityContext = z.infer<
 // presence contexts. Keyed by user id in the presence map returned by
 // the list endpoint.
 export const FeedPresenceRecord = UserSummary.extend({
-  connectedAt: z.iso
-    .datetime({ offset: true })
-    .describe('Timestamp the user first joined the presence store.'),
+  connectedAt: Timestamp('Timestamp the user first joined the presence store.'),
   contexts: z
     .array(StoredUserActivityContext)
     .describe('Active focus contexts the user currently holds.'),

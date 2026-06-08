@@ -1,4 +1,4 @@
-// Reusable Zod building blocks for Repository action input schemas.
+// Reusable Zod building blocks for action input / response schemas.
 // Centralised here so a "trimmed short text" rule reads identically across
 // actions and any tightening happens in one place.
 import { z, type ZodType } from 'zod';
@@ -9,6 +9,45 @@ import { z, type ZodType } from 'zod';
 // 200 response schema so the OpenAPI spec mirrors the wire shape.
 export const dataEnvelope = <T extends ZodType>(inner: T) =>
   z.object({ data: inner });
+
+// ISO-8601 timestamp with offset. Runtime validation stays strict (Zod's
+// leap-year-aware regex); JSON Schema emits a clean `format: 'date-time'`
+// instead of the giant pattern so Scalar renders a useful hint.
+export const Timestamp = (desc = 'Timestamp (ISO-8601, with offset).') =>
+  z.iso
+    .datetime({ offset: true })
+    .meta({ format: 'date-time', pattern: undefined })
+    .describe(desc);
+
+export const Uid = (desc = 'UID identifier.') =>
+  z.uuid().meta({ format: 'uuid', pattern: undefined }).describe(desc);
+
+// Standard createdAt / updatedAt / deletedAt triplet. Spread into an
+// entity schema: `z.object({ ...timestamps(), ... })`. Pairs with the
+// singular `Timestamp()` building block: one field vs the standard set.
+export const timestamps = () => ({
+  createdAt: Timestamp('Insertion timestamp.'),
+  updatedAt: Timestamp('Last mutation timestamp.'),
+  deletedAt: Timestamp('Soft-delete timestamp; non-null for archived rows.')
+    .nullable(),
+});
+
+// Schema-driven JSONB blob. Used for `data` / `meta` / `refs` fields where
+// the shape is dictated by the activity schema or plugin and we don't
+// validate it at the API edge.
+export const JsonObject = (desc = 'Schema-driven JSON blob.') =>
+  z.record(z.string(), z.unknown()).describe(desc);
+
+// Standard `{ items, total }` list-response envelope. Use for paginated
+// collection endpoints so they all share one component in the OpenAPI
+// doc.
+export const Paginated = <T extends ZodType>(items: T, id?: string) => {
+  const schema = z.object({
+    items: z.array(items).describe('Page of rows.'),
+    total: UInt().describe('Total rows matching the query (ignoring pagination).'),
+  });
+  return id ? schema.meta({ id }) : schema;
+};
 
 // Trimmed non-empty string with an upper bound. Default max=250 matches the
 // historical limit applied to short-form fields (name, label, etc.).

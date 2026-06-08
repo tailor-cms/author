@@ -28,14 +28,14 @@ params?, openapi?, handler })` which:
 3. wraps the return value (`{ data: value }`, or raw, or 204),
 4. pushes route metadata into the OpenAPI registry.
 
-Schemas live in `<slice>.schema.ts` as Zod values — actions consume
-them via `defineAction({ body: schemas.CreateInput })`, services
-consume the same schema's inferred type (`payload: CreateInput`). The
-HTTP slot info lives in the `body:` / `query:` / `params:` key, not in
-the name.
+Schemas live in `<slice>/schemas/` (one file per shape, barrel-exported
+via `index.ts`) as Zod values — actions consume them via
+`defineAction({ body: schemas.CreateInput })`, services consume the
+same schema's inferred type (`payload: CreateInput`). The HTTP slot info
+lives in the `body:` / `query:` / `params:` key, not in the name.
 
 ```ts
-// repository/repository.schema.ts
+// repository/schemas/create.ts
 export const CreateInput = z.object({
   name: ShortText(2, 250),
   description: Description(2, 2000),
@@ -63,6 +63,29 @@ Role-suffix, verb-first, layer-neutral:
 | `Input` | write payload (body, or write-style query) | `CreateInput` |
 | `Filter` | read filter / list narrowing (query) | `ListFilter` |
 | `Params` | path identifier | `RemoveUserParams` |
+
+## Mounter pattern (docs grouping)
+
+`createActionMounter(router, basePath, { tag, group })` binds compiled
+actions onto the Express router AND records them in the OpenAPI
+registry. A slice typically declares several mounters — not because the
+routes need separate routers, but because each mounter becomes one
+section in the Scalar sidebar.
+
+```ts
+const GROUP = 'Repository';
+const crud      = createActionMounter(router, '/repositories', { tag: 'CRUD',      group: GROUP });
+const members   = createActionMounter(router, '/repositories', { tag: 'Members',   group: GROUP });
+const transfer  = createActionMounter(router, '/repositories', { tag: 'Transfer',  group: GROUP });
+
+crud.get('/', actions.list).post('/', actions.create, { before: [hasCreateRepositoryAccess] });
+members.post('/:repositoryId/users', actions.upsertUser, { before: [hasRepositoryAdminAccess] });
+```
+
+Mounter **declaration order** drives sidebar order. Slices that share a
+`group:` co-locate under one `x-tagGroups` header. The third arg's
+`before:` array runs per-route — auth guards, multipart parsers,
+anything that decides whether the request makes it to validation at all.
 
 ## Conventions
 
