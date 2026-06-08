@@ -6,7 +6,7 @@ export const ASSET_TYPE_ICON: Record<string, string> = {
   [AssetType.Audio]: 'mdi-volume-medium',
   [AssetType.Document]: 'mdi-file-document-outline',
   [AssetType.Link]: 'mdi-link',
-  [AssetType.Other]: 'mdi-file',
+  [AssetType.Other]: 'mdi-file-outline',
 };
 
 export const ASSET_TYPE_LABEL: Record<string, string> = {

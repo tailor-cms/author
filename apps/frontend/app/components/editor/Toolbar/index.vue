@@ -26,7 +26,7 @@
           :activity="activity"
           :class="[
             'activity-name font-weight-medium',
-            activity?.isLinkedCopy ? 'text-tertiary' : 'text-primary',
+            activity?.isLinkedCopy ? 'text-tertiary' : '',
           ]"
         />
         <template v-if="showPublishDiff">

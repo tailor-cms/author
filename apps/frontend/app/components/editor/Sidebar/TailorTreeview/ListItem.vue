@@ -3,9 +3,8 @@
     <VListItem
       ref="listItem"
       v-bind="omit(activatorProps, 'onClick')"
-      :class="{ 'font-weight-bold': isActive }"
+      :class="{ 'text-primary font-weight-bold': isActive }"
       :title="title"
-      :active="isActive"
       color="primary"
       class="list-item"
       @click.prevent="onItemClick"
@@ -87,6 +86,7 @@ const onItemClick = (e: any) => {
 
 .list-item :deep(.v-list-item-title) {
   font-size: 0.9375rem;
+  line-height: 1.2;
 }
 
 :deep(.v-icon) {

@@ -1,5 +1,9 @@
 <template>
-  <VRow class="asset-row py-3 align-center" no-gutters @click="emit('preview', asset);">
+  <VRow
+    class="asset-row px-2 py-3 align-center bg-surface-container"
+    density="compact"
+    @click="emit('preview', asset)"
+  >
     <VCol class="px-1" cols="auto">
       <VCheckboxBtn
         :model-value="isSelected"
@@ -9,10 +13,12 @@
       />
     </VCol>
     <VCol cols="auto" class="px-1">
-      <VIcon
-        :icon="getAssetIcon(asset)"
+      <VAvatar
         :color="`${getAssetColor(asset)}-lighten-3`"
-        size="28"
+        :icon="getAssetIcon(asset)"
+        size="40"
+        variant="tonal"
+        rounded="lg"
       />
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
@@ -67,7 +73,7 @@
             @click.stop
           />
         </template>
-        <VList density="compact">
+        <VList density="compact" nav>
           <VListItem
             v-if="asset.type !== AssetType.Link"
             prepend-icon="mdi-download-outline"
@@ -81,6 +87,7 @@
             @click="emit('index', asset);"
           />
           <VListItem
+            base-color="error"
             prepend-icon="mdi-trash-can-outline"
             title="Delete"
             @click="emit('delete', asset);"
@@ -127,7 +134,7 @@ const emit = defineEmits<{
   transition: background 0.15s ease;
 
   &:hover {
-    background: rgba(var(--v-theme-surface-container), 0.6);
+    background-color: rgb(var(--v-theme-surface-container-high));
   }
 }
 </style>

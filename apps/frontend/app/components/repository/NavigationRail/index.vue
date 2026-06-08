@@ -1,6 +1,6 @@
 <template>
   <VNavigationDrawer
-    width="76"
+    width="74"
     class="navigation-rail"
     elevation="0"
     location="left"
@@ -19,6 +19,7 @@
         :key="tab.key"
         :active="tab.matches?.(String(route.name ?? ''))"
         :prepend-icon="`mdi-${tab.icon}`"
+        :ripple="false"
         :text="tab.label"
         :to="tab.to"
         class="rail-tab mb-1"
@@ -174,7 +175,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
     {
       key: 'assets',
       label: 'Assets',
-      icon: 'folder-multiple-image',
+      icon: 'image-multiple',
       to: { name: 'repository-assets', params: { id } },
     },
   );
@@ -206,12 +207,9 @@ const actions = computed<RailAction[]>(() => {
 <style lang="scss" scoped>
 .navigation-rail {
   text-align: center;
-  padding-top: 0.25rem;
 }
 
 .rail-tabs {
-  padding: 0.5rem;
-
   :deep(.v-slide-group__container) {
     gap: 0.125rem;
   }
@@ -219,16 +217,56 @@ const actions = computed<RailAction[]>(() => {
   .rail-tab {
     min-width: unset;
     justify-content: center;
-    padding: 0.5rem 0.25rem;
+    padding: 0;
     font-size: 0.6875rem;
     letter-spacing: 0.02em;
     text-transform: none;
     border-radius: 10px;
-    transition: background-color 160ms ease, color 160ms ease;
+    transition: color 0.3s ease;
+
+    :deep(.v-btn__overlay) {
+      opacity: 0 !important;
+    }
 
     :deep(.v-btn__prepend) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.125rem;
+      height: 2.125rem;
       margin-inline: 0;
-      margin-bottom: 0.25rem;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+
+      .v-icon {
+        padding: 1rem;
+        transition: transform 0.3s ease;
+      }
+    }
+
+    &.v-btn--active {
+      color: rgba(var(--v-theme-on-surface), 1);
+    }
+
+    &:hover :deep(.v-btn__prepend) {
+      background: rgba(var(--v-theme-on-surface-container-highest), 0.2);
+      color: rgba(var(--v-theme-on-surface), 1);
+
+      .v-icon {
+        transform: scale(1.1);
+      }
+    }
+
+    &.v-tab--selected,
+    &.v-btn--active {
+      :deep(.v-btn__prepend) {
+        background: rgba(var(--v-theme-surface-container-highest), 1);
+        color: rgba(var(--v-theme-on-surface), 1);
+
+        .v-icon {
+          transform: scale(1.1);
+        }
+      }
     }
   }
 }
