@@ -6,14 +6,15 @@
           <VTextField
             v-bind="hoverProps"
             v-model="search"
-            :bg-color="'transparent'"
+            bg-color="transparent"
             density="compact"
             min-width="220"
             placeholder="Search by name..."
             prepend-inner-icon="mdi-magnify"
-            rounded="xl"
-            variant="outlined"
+            rounded="pill"
+            variant="solo-filled"
             clearable
+            flat
             hide-details
             @click:clear="search = ''"
           />
@@ -61,31 +62,20 @@
           <VTextField
             v-bind="hoverProps"
             v-model="search"
-            :bg-color="'transparent'"
+            bg-color="transparent"
             density="compact"
             min-width="220"
             placeholder="Search by name or id..."
             prepend-inner-icon="mdi-magnify"
-            rounded="xl"
-            variant="outlined"
+            rounded="pill"
+            variant="solo-filled"
             clearable
+            flat
             hide-details
             @click:clear="search = ''"
           />
         </template>
       </VHover>
-      <VSpacer />
-      <LinkContent :anchor="anchor" show-activator />
-      <CreateDialog
-        :anchor="anchor"
-        :repository-id="currentRepositoryStore.repositoryId as number"
-        activator-color="secondary"
-        activator-icon="mdi-plus"
-        size="small"
-        variant="tonal"
-        test-id-prefix="repository__createRootActivity"
-        show-activator
-      />
       <VBtn
         v-if="!isFlat"
         :disabled="!!search"
@@ -95,6 +85,17 @@
         variant="tonal"
         width="90"
         @click="currentRepositoryStore.toggleOutlineExpand"
+      />
+      <VSpacer />
+      <LinkContent :anchor="anchor" show-activator />
+      <CreateDialog
+        :anchor="anchor"
+        :repository-id="currentRepositoryStore.repositoryId as number"
+        activator-color="primary"
+        activator-icon="mdi-plus"
+        variant="flat"
+        test-id-prefix="repository__createRootActivity"
+        show-activator
       />
     </template>
   </div>
@@ -175,9 +176,5 @@ const anchor = computed(() => last(rootActivities.value));
   :deep(.v-field__outline) {
     display: none;
   }
-}
-
-:deep(input::placeholder) {
-  opacity: 0.75;
 }
 </style>

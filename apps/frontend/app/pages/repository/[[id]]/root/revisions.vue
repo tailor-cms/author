@@ -1,40 +1,16 @@
 <template>
   <div class="revisions-page h-100">
-    <VAppBar
-      border="b"
-      color="surface-container-low"
-      elevation="0"
-      height="64"
-      order="1"
-    >
-      <VSpacer />
-      <VSelect
-        v-model="typeFilter"
-        :items="typeOptions"
-        class="mr-3"
-        density="compact"
-        max-width="240"
-        min-width="200"
-        placeholder="Filter by type"
-        prepend-inner-icon="mdi-filter-variant"
-        rounded="xl"
-        variant="solo"
-        clearable
-        flat
-        hide-details
-      />
-    </VAppBar>
     <VMain>
       <VContainer max-width="1200">
         <VInfiniteScroll
-          v-if="filteredRevisions.length > 0"
+          v-if="bundledRevisions.length > 0"
           class="revisions"
           mode="manual"
           @load="loadMore"
         >
           <VList bg-color="transparent" lines="two" tag="ul">
             <RevisionItem
-              v-for="revision in filteredRevisions"
+              v-for="revision in bundledRevisions"
               :key="revision.uid"
               :revision="revision"
             />
@@ -49,10 +25,10 @@
           </template>
         </VInfiniteScroll>
         <VAlert
-          v-else-if="!isFetching && filteredRevisions.length === 0"
-          :text="typeFilter ? 'No changes match this filter.' : 'No changes recorded!'"
+          v-else-if="!isFetching && bundledRevisions.length === 0"
           class="mt-8"
           icon="mdi-history"
+          text="No changes recorded!"
           variant="tonal"
           prominent
         />
@@ -63,7 +39,6 @@
 
 <script lang="ts" setup>
 import { last, reduce, uniq, uniqBy } from 'lodash-es';
-import { titleCase } from '@tailor-cms/utils';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import api from '@/api/revision';
@@ -95,8 +70,6 @@ const revisions = ref<Revision[]>([]);
 const queryParams = reactive({ offset: 0, limit: 100 });
 const areAllItemsFetched = ref(false);
 
-const typeFilter = ref<Revision['entity'] | null>(null);
-
 const bundledRevisions = computed<Revision[]>(() => {
   if (!revisions.value.length) return [];
   return reduce(
@@ -111,17 +84,6 @@ const bundledRevisions = computed<Revision[]>(() => {
     },
     [revisions.value[0]] as Revision[],
   );
-});
-
-const typeOptions = computed(() =>
-  uniq(bundledRevisions.value.map((r) => r.entity))
-    .filter(Boolean)
-    .map((value) => ({ title: titleCase(value), value })),
-);
-
-const filteredRevisions = computed(() => {
-  if (!typeFilter.value) return bundledRevisions.value;
-  return bundledRevisions.value.filter((r) => r.entity === typeFilter.value);
 });
 
 const fetchRevisions = async () => {

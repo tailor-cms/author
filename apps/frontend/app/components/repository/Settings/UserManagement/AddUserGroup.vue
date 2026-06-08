@@ -8,7 +8,6 @@
         color="primary"
         prepend-icon="mdi-plus"
         text="Add user group"
-        size="small"
         variant="flat"
       />
     </template>

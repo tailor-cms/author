@@ -11,7 +11,12 @@
       @update:model-value="$emit('toggle')"
     />
     <VHover v-slot="{ isHovering, props: hoverProps }">
-      <div v-bind="hoverProps" class="element-wrapper flex-grow-1 mr-2">
+      <VSheet
+        v-bind="hoverProps"
+        class="element-wrapper flex-grow-1 mr-2"
+        rounded="md"
+        theme="light"
+      >
         <ContentElementWrapper
           v-bind="$attrs"
           :class="{ selected: isSelected }"
@@ -33,7 +38,7 @@
           </template>
           <span>Open in editor</span>
         </VTooltip>
-      </div>
+      </VSheet>
     </VHover>
   </VCol>
 </template>
@@ -78,6 +83,7 @@ const openInEditor = (element: ContentElement) => {
 <style lang="scss" scoped>
 .content-element {
   border: 1px solid #e1e1e1;
+  border-radius: 4px;
 
   &.selected {
     border-style: dashed;

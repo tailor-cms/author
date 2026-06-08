@@ -1,7 +1,7 @@
 <template>
   <VLayout class="general-page h-100">
     <VAppBar
-      class="px-4"
+      class="px-3"
       color="surface-container-low"
       border="b"
       elevation="0"
@@ -14,7 +14,6 @@
         color="primary"
         prepend-icon="mdi-cloud-upload-outline"
         text="Publish info"
-        size="small"
         variant="flat"
         @click="publish"
       />

@@ -1,5 +1,5 @@
 <template>
-  <div class="toolbar d-flex align-center flex-wrap ga-4">
+  <div class="toolbar d-flex align-center flex-wrap ga-3">
     <VHover v-slot="{ props: hoverProps }">
       <VTextField
         v-model="search"
@@ -12,25 +12,25 @@
         placeholder="Search by name or id..."
         prepend-inner-icon="mdi-magnify"
         rounded="xl"
-        variant="solo"
+        variant="solo-filled"
         clearable
         flat
         hide-details
       />
     </VHover>
-    <VSpacer />
     <VHover v-slot="{ props: hoverProps }">
       <SelectStatus
         v-bind="hoverProps"
         v-model="status"
         :items="statusOptions"
+        bg-color="transparent"
         data-testid="workflow_statusFilter"
         density="compact"
-        max-width="220"
+        max-width="230"
         min-width="200"
         placeholder="Filter by status"
-        rounded="xl"
-        variant="solo"
+        rounded="pill"
+        variant="solo-filled"
         clearable
         flat
         hide-details
@@ -69,9 +69,3 @@ const recentOnly = defineModel<boolean>('recentOnly', { default: false });
 const status = defineModel<string | null>('status', { default: null });
 const assigneeIds = defineModel<number[]>('assigneeIds', { default: () => [] });
 </script>
-
-<style lang="scss" scoped>
-:deep(input::placeholder) {
-  opacity: 0.75;
-}
-</style>

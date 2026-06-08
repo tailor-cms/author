@@ -13,28 +13,28 @@
           <VTextField
             v-bind="hoverProps"
             v-model="search"
-            :bg-color="'transparent'"
+            bg-color="transparent"
             class="groups-search"
             density="compact"
             min-width="220"
             placeholder="Search groups..."
             prepend-inner-icon="mdi-magnify"
             rounded="xl"
-            variant="outlined"
+            variant="solo-filled"
             clearable
             hide-details
+            flat
             @click:clear="search = ''"
           />
         </template>
       </VHover>
-      <VSpacer />
       <VMenu location="bottom end">
         <template #activator="{ props: menuProps }">
           <VBtn
             v-bind="menuProps"
             :text="activeSortLabel"
             append-icon="mdi-chevron-down"
-            class="sort-btn mr-2"
+            class="sort-btn ml-2"
             prepend-icon="mdi-sort-variant"
             rounded="lg"
             size="small"
@@ -53,6 +53,7 @@
           />
         </VList>
       </VMenu>
+      <VSpacer />
       <AddUserGroup
         :user-groups="(repository?.userGroups as UserGroup[]) ?? []"
       />

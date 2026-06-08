@@ -10,7 +10,6 @@
         v-bind="dialogProps"
         color="secondary"
         prepend-icon="mdi-link-variant"
-        size="small"
         text="Link Existing"
         variant="tonal"
       />

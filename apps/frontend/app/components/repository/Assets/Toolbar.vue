@@ -4,11 +4,12 @@
       v-model="search"
       bg-color="transparent"
       class="search-input"
-      density="comfortable"
+      density="compact"
       placeholder="Search assets..."
+      min-width="220"
       prepend-inner-icon="mdi-magnify"
-      rounded="xl"
-      variant="solo"
+      rounded="pill"
+      variant="solo-filled"
       clearable
       flat
       hide-details
@@ -18,7 +19,6 @@
     <VBtn
       color="secondary"
       prepend-icon="mdi-link-plus"
-      size="small"
       text="Add Link"
       variant="tonal"
       @click="emit('link:add')"
@@ -29,7 +29,6 @@
       prepend-icon="mdi-earth-plus"
       variant="tonal"
       text="Discover"
-      size="small"
       @click="emit('discover')"
     />
     <VBtn
@@ -37,7 +36,6 @@
       :disabled="isUploading"
       color="primary"
       prepend-icon="mdi-upload"
-      size="small"
       text="Upload"
       variant="flat"
       @click="openFilePicker"

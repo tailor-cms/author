@@ -9,7 +9,6 @@
         prepend-icon="mdi-plus"
         text="Add user"
         variant="flat"
-        size="small"
       />
     </template>
     <template #header>Add user</template>

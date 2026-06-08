@@ -10,7 +10,7 @@
       <Toolbar
         ref="toolbarRef"
         v-model:search="searchQuery"
-        class="flex-grow-1 align-self-center px-4"
+        class="flex-grow-1 align-self-center px-3"
         @upload="uploadFiles"
         @link:add="showAddLinkDialog = true"
         @discover="showDiscoveryDialog = true"
