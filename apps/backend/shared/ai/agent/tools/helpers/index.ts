@@ -13,6 +13,7 @@ export {
 export {
   containerTypesForActivity,
   describeContainerSchema,
+  getContainerConfig,
   getSchema,
   metaInputsForActivity,
   getAllowedElementTypes,

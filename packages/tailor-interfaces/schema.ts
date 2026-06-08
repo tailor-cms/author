@@ -154,6 +154,42 @@ export interface ContentContainerConfig {
   ai?: AiActivityConfig;
 }
 
+/**
+ * Structural shape of a container template, produced by a container
+ * package's `describeSchema(container)` and aggregated by
+ * `ContainerRegistry.describeSchema`. Exactly one of subcontainers /
+ * elementConfig / props will be populated, identifying which "shape"
+ * the template instantiates:
+ *  - subcontainers (+ optional defaultSubcontainers): nested
+ *  - elementConfig: flat (any container holding elements directly)
+ *  - props: collection-item (named typed slots stored in container.data)
+ * Consumers (AI specs, frontend renderers, publishing) branch on the
+ * populated key.
+ */
+export interface ContentSubcontainer {
+  type: string;
+  label: string;
+  meta: Metadata[];
+  elementConfig?: ElementConfig[];
+}
+
+export interface CollectionProp {
+  key: string;
+  label: string;
+  type: string;
+  isContentElement: boolean;
+  isGradable?: boolean;
+  defaultValue?: unknown;
+  required?: boolean;
+}
+
+export interface ContainerStructure {
+  subcontainers: ContentSubcontainer[];
+  defaultSubcontainers?: { type: string; data?: Record<string, unknown> }[];
+  elementConfig?: ElementConfig[] | null;
+  props?: CollectionProp[];
+}
+
 export interface I18nLanguage {
   code: string;
   name: string;

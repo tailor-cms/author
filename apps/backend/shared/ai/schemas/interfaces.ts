@@ -11,7 +11,7 @@ export interface OpenAISchema {
 
 export interface AiResponseSpec {
   // Prompt used to describe the response structure
-  getPrompt: (context: AiContext) => string;
+  getPrompt: (context?: AiContext) => string;
   // JSON schema for the OpenAI response formatting (static or context-dependent)
   Schema:
     | OpenAISchema

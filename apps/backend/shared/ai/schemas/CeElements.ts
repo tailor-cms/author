@@ -1,56 +1,42 @@
 // Content elements generation schema.
 // Builds an OpenAI structured output schema from the
-// allowed element types on the target activity. Reuses
-// the same schema building utilities as STRUCTURED_CONTENT
-// so both paths support the same element types.
+// allowed element types on the target activity.
 import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
 
 import type { AiResponseSpec, OpenAISchema } from './interfaces.ts';
 import {
   buildElementSchema,
-  getAiSpec,
+  getCeAiSpec,
   resolveSupportedTypes,
-} from './CcStructuredContent/schema.ts';
+} from './CcContainer/schema.ts';
 
 /**
- * Build the full OpenAI schema allowing any of the
- * provided element types. Returns an { elements: [] }
- * wrapper so the model generates an array.
+ * Build the OpenAI schema allowing any of the provided
+ * element types.
  */
 export const Schema = (context: AiContext): OpenAISchema => {
-  const types: string[] = (context as any).allowedElementTypes || [];
+  const types: string[] = (context as any)?.allowedElementTypes || [];
   const supported = resolveSupportedTypes(types);
   const schemas = supported.map(buildElementSchema);
-  if (!schemas.length) {
-    // Fallback to accepting any object
-    return {
-      name: 'content_elements',
-      type: 'json_schema',
-      schema: {
-        type: 'object',
-        properties: {
-          elements: { type: 'array', items: { type: 'object' } },
-        },
-        required: ['elements'],
-        additionalProperties: false,
-      },
-    };
-  }
-  const items = schemas.length === 1 ? schemas[0] : { anyOf: schemas };
+  const elementsItems = schemas.length
+    ? (schemas.length === 1 ? schemas[0] : { anyOf: schemas })
+    : { type: 'object' };
   return {
     type: 'json_schema',
     name: 'ce_elements',
     schema: {
       type: 'object',
-      properties: { elements: { type: 'array', items } },
+      properties: {
+        elements: { type: 'array', items: elementsItems },
+      },
       required: ['elements'],
       additionalProperties: false,
     },
   };
 };
 
-export const getPrompt = (context: AiContext) => {
-  const types: string[] = (context as any).allowedElementTypes || [];
+export const getPrompt = (context?: AiContext) => {
+  const types: string[] = (context as any)?.allowedElementTypes || [];
   const supported = resolveSupportedTypes(types);
   const typeList = supported.length ? supported.join(', ') : 'any';
   return `
@@ -69,16 +55,13 @@ export const getPrompt = (context: AiContext) => {
 
 /**
  * Process each element through its type's processResponse
- * and normalize to { type, data } format. Each element
- * manifest's processResponse returns the processed DATA
- * (not wrapped in { type, data }), so we wrap it here.
+ * and normalize to { type, data } format.
  */
-export const processResponse = (data: any = {}) => {
-  const { elements } = data;
-  if (!elements?.length) return [];
-  return elements.map((el: any) => {
+export const processResponse = (raw: any = {}) => {
+  const { elements = [] } = raw;
+  const processed = elements.map((el: any) => {
     const { type, ...rawContent } = el;
-    const spec = getAiSpec(type);
+    const spec = getCeAiSpec(type);
     // processResponse transforms AI output into element data
     // (e.g. MULTIPLE_CHOICE adds embeds/questionId)
     const processedData = spec?.processResponse
@@ -86,6 +69,7 @@ export const processResponse = (data: any = {}) => {
       : rawContent;
     return { type, data: processedData };
   });
+  return { elements: processed };
 };
 
 const spec: AiResponseSpec = {

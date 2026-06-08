@@ -41,17 +41,12 @@ class ContainerRegistry {
   }
 
   /**
-   * Describe the container's full structure. For nested
-   * templates with a registered describeSchema, delegates
-   * to the template. For flat templates (no describer),
-   * returns the container's direct contentElementConfig.
-   * This is the single source of truth for container
-   * structure - both nested and flat.
+   * Describe the container's full structure. Delegates to
+   * the extensions registered describeSchema.
    */
   describeSchema(container) {
     const describer = this._schemaDescribers[getId(container)];
-    if (describer) return describer(container.config);
-    // Flat container - no subcontainers, direct element config
+    if (describer) return describer(container);
     return {
       subcontainers: [],
       elementConfig: container.contentElementConfig || null,

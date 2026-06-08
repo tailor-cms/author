@@ -2,6 +2,11 @@
 // one repository. Pulls live schema info via schemaAPI so the model
 // always knows the exact set of activity / container / element types
 // it is allowed to use - the prompt itself stays schema-agnostic.
+import type {
+  CollectionProp,
+  ContainerStructure,
+  ContentSubcontainer,
+} from '@tailor-cms/interfaces/schema';
 import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import { oneLine, stripIndent } from 'common-tags';
@@ -109,8 +114,11 @@ function operatingPrinciples(): string {
        existing element-carrying activity - the host, i.e. a container
        or subcontainer that already exists (phrases like "add a question
        to this section", "extend it") - use add_elements_to_activity on
-       that host. Reach for create_container_with_elements only when a
-       NEW container instance is actually needed; it spawns a sibling.
+       that host. Reach for create_container_with_elements when you're
+       building structure that doesn't exist yet. For multi-instance
+       container types (multiple: true) it spawns a NEW sibling; for
+       single-instance types it find-or-creates and appends - safe
+       either way when the intent is "fill this slot".
     5. Recover from errors, don't repeat them. Tool errors carry a reason
        and hint - read them and adjust. Retrying the same call with the
        same arguments will fail the same way.
@@ -212,22 +220,47 @@ function commonRequestRecipesSection(): string {
         AND a stub check. Another user (or another tab) may have added
         content since the last turn; without re-reading you risk
         duplicating or clobbering their work.
+        \`generate_container_content\` adapts to the target container's
+        shape - check CONTAINERS above to see which bucket each one
+        falls into.
+          * Nested (container lists subcontainers): each item becomes
+            a subcontainer under the wrapper. item.type = subcontainer
+            type, item.data = its meta.
+          * Flat, multiple: true: each item becomes a NEW sibling
+            container under the outline activity. item.type = container
+            type, item.data = its own meta (e.g. a name field).
+          * Flat, multiple unset/false: one item with elements only.
+            The write side find-or-creates the container, so elements
+            append regardless of prior existence.
         If the target container holds empty subcontainer stubs - nodes
         with zero elements and missingMeta in the subtree, typically
         editor scaffolding materialised from defaultSubcontainers on
-        mount - call delete_activity on each stub id BEFORE
-        create_container_with_elements so the new subcontainers don't
-        sit alongside empty defaults. To keep a stub instead of
-        deleting it, fill it in place with update_activity (for its
-        meta) + add_elements_to_activity (for its content) - this is
-        the right path when the user has already populated the stub's
-        meta but not its body.
+        mount - choose one path. To replace them with fresh
+        subcontainers, call delete_activity on each stub id BEFORE
+        create_container_with_elements. To fill the stubs in place
+        (preferred when the schema pins their type/title via
+        defaultSubcontainers), do NOT call create_container_with_elements;
+        instead run generate_container_content, then per item match
+        items[i] to stub[i] by position and call
+        update_activity(stub.id, item.data) +
+        add_elements_to_activity(stub.id, item.elements).
         \`data\` (container/subcontainer metadata) is a top-level field
         alongside \`elements\`, not nested in it.
 
-    - Append elements to an existing host:
-        get_activity_subtree (to find the host id) ->
+    - Append elements to a host (you already have its id, meta is
+      already set):
         generate_elements_for_target -> add_elements_to_activity.
+        Both tools target the exact id you pass - no spawning, no
+        find-or-create. generate_elements_for_target is element-only;
+        it does NOT touch host meta. Reach for
+        create_container_with_elements instead when the host doesn't
+        exist yet. When the host is an empty subcontainer stub with
+        missingMeta (typical for defaultSubcontainers materialised
+        on mount), do NOT use this recipe - use the stub-fill recipe
+        under the parent container above (generate_container_content
+        -> match items to stub ids -> update_activity +
+        add_elements_to_activity per item) so meta and content land
+        together.
 
     - Add an asset-backed media element:
         list_assets / generate_image_asset / discover_resources +
@@ -431,23 +464,32 @@ function describeContainers(schemaId: string): string {
 }
 
 function formatContainer(schemaId: string, c: any): string {
-  const desc = describeContainerSchema(schemaId, c.type) as any;
+  const desc = describeContainerSchema(schemaId, c.type);
+  const labelInfo = `label: ${c.label ? `"${c.label}"` : `"${c.type}"`}`;
+  const multipleInfo = c.multiple ? '  multiple: true' : '';
   return [
-    `- ${c.type}  template: ${c.templateId}  label: "${c.label ?? c.type}"`,
+    `- ${c.type}  template: ${c.templateId} ${labelInfo}${multipleInfo}`,
     `  purpose: ${formatContainerPurpose(c)}`,
     formatContainerBody(desc),
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 }
 
-// Body block for a container: either its subcontainer list (nested
-// templates) or its direct element types (flat templates). Returns
-// '' when neither is present so the caller can drop it via filter.
-function formatContainerBody(desc: any): string {
-  const subs = desc?.subcontainers ?? [];
+// Body block for a container, dispatched by the populated shape key:
+//  - subcontainers (nested)
+//  - props (collection-item / decorator-defined slots)
+//  - elementConfig (flat element host)
+// Returns '' when nothing applies so callers can drop the line.
+function formatContainerBody(desc: ContainerStructure): string {
+  const subs = desc.subcontainers ?? [];
   if (subs.length) {
     return ['  subcontainers:', ...subs.map(formatSubcontainer)].join('\n');
   }
-  if (desc?.elementConfig) {
+  if (desc.props?.length) {
+    return ['  props:', ...desc.props.map(formatProp)].join('\n');
+  }
+  if (desc.elementConfig) {
     return `  elements: [${formatSupportedElementTypes(desc.elementConfig)}]`;
   }
   return '';
@@ -458,15 +500,26 @@ function formatContainerBody(desc: any): string {
 // templates like STRUCTURED_CONTENT, where it can be a literal array
 // or a function returning one) or are hardcoded by the template
 // (e.g. EXAM's ASSESSMENT_GROUP).
-function formatSubcontainer(sub: any): string {
+function formatSubcontainer(sub: ContentSubcontainer): string {
   const label = sub.label ?? sub.type;
   const elements = formatSupportedElementTypes(sub.elementConfig);
-  const metaKeys = (sub.meta ?? []).map((m: any) => m.key).join(', ');
+  const metaKeys = (sub.meta ?? []).map((m) => m.key).join(', ');
   return [
     `    - ${sub.type}  label: "${label}"`,
     `      elements: [${elements}]`,
     metaKeys ? `      meta: [${metaKeys}]` : null,
-  ].filter(Boolean).join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
+// One prop entry for collection-item-style containers - either a
+// meta input or an embedded element of a fixed type.
+function formatProp(prop: CollectionProp): string {
+  const kind = prop.isContentElement
+    ? `element ${prop.type}`
+    : `meta ${prop.type}`;
+  return `    - ${prop.key}  label: "${prop.label}"  kind: ${kind}`;
 }
 
 // Render a container's (or subcontainer's) elementConfig as a
@@ -492,7 +545,11 @@ function formatSupportedElementTypes(config: any): string {
 function formatContainerPurpose(c: any): string {
   const raw = c?.ai?.definition?.trim() ?? '';
   if (!raw) return '(no description)';
-  return raw.split('\n').map((l: string) => l.trim()).join(' ').slice(0, 160);
+  return raw
+    .split('\n')
+    .map((l: string) => l.trim())
+    .join(' ')
+    .slice(0, 160);
 }
 
 // The runner enforces these rules server-side. A blocked call returns

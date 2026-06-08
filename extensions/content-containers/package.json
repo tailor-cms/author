@@ -22,6 +22,7 @@
     "@tailor-cms/tcc-exam-edit": "workspace:^",
     "@tailor-cms/tcc-exam-server": "workspace:^",
     "@tailor-cms/tcc-page": "workspace:^",
+    "@tailor-cms/tcc-page-server": "workspace:^",
     "@tailor-cms/tcc-structured-content-edit": "workspace:^",
     "@tailor-cms/tcc-structured-content-server": "workspace:^"
   }

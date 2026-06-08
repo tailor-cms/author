@@ -27,6 +27,23 @@ const parameters = {
   additionalProperties: false,
 };
 
+// Project the value type the agent should send for a meta field.
+function projectValueType(field: any): 'number' | 'string' {
+  if (field.type === 'TEXT_FIELD' && field.inputType === 'number') {
+    return 'number';
+  }
+  return 'string';
+}
+
+function pickMetaField(field: any) {
+  return {
+    key: field.key,
+    type: field.type,
+    label: field.label,
+    valueType: projectValueType(field),
+  };
+}
+
 /**
  * Summarize an outline structure level with its type,
  * label, hierarchy rules, and meta field definitions.
@@ -38,11 +55,7 @@ function summarizeLevel(level: any) {
     rootLevel: !!level.rootLevel,
     subLevels: level.subLevels || [],
     contentContainers: level.contentContainers || [],
-    meta: (level.meta || []).map((m: any) => ({
-      key: m.key,
-      type: m.type,
-      label: m.label,
-    })),
+    meta: (level.meta || []).map(pickMetaField),
   };
 }
 
@@ -51,12 +64,7 @@ function summarizeLevel(level: any) {
 // subcontainer-level meta/elementTypes when present.
 function summarizeContainer(schemaId: string, container: any) {
   const desc = describeContainerSchema(schemaId, container.type);
-  const pickMeta = (meta: any[]) =>
-    (meta || []).map((m: any) => ({
-      key: m.key,
-      type: m.type,
-      label: m.label,
-    }));
+  const pickMeta = (meta: any[]) => (meta || []).map(pickMetaField);
   const pickElementTypes = (config: any) =>
     config ? api.getSupportedElementTypes(config) : [];
   const summary: Record<string, any> = {

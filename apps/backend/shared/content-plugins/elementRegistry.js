@@ -1,8 +1,23 @@
 import { elements } from '@tailor-cms/content-element-collection/server.js';
+import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import pick from 'lodash/pick.js';
 import storage from '../../repository/storage.ts';
 import hooksTypes from './elementHooks.js';
 import config from '#config';
+
+// Hardcoded because the per-element
+// server packages' default export (serverModule) doesn't carry
+// `isQuestion`
+const QUESTION_TYPES = new Set([
+  ContentElementType.MultipleChoice,
+  ContentElementType.SingleChoice,
+  ContentElementType.MatchingQuestion,
+  ContentElementType.TextResponse,
+  ContentElementType.TrueFalse,
+  ContentElementType.NumericalResponse,
+  ContentElementType.FillBlank,
+  ContentElementType.DragDrop,
+]);
 
 class ElementsRegistry {
   constructor() {
@@ -33,8 +48,7 @@ class ElementsRegistry {
   }
 
   isQuestion(type) {
-    const el = this._registry.find((it) => it.type === type);
-    return !!el?.isQuestion;
+    return QUESTION_TYPES.has(type);
   }
 
   getHook(elementType, hookName) {

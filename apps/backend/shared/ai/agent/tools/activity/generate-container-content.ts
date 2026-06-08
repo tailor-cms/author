@@ -1,15 +1,18 @@
+import {
+  containerTypesForActivity,
+  describeContainerSchema,
+  getContainerConfig,
+  toolError,
+} from '../helpers/index.ts';
 import { oneLine, stripIndent } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
+import type { ContainerShape } from '../../../schemas/CcContainer/types.ts';
+import { describeShape } from '../../../schemas/CcContainer/describer.ts';
+import type { ToolContext, ToolDef } from '../types.ts';
 import type { AssetReference } from '@tailor-cms/interfaces/ai.ts';
 import db from '#shared/database/index.js';
 import * as assetService from '../../../../../asset/asset.service.ts';
 import AiService from '../../../ai.service.ts';
-import type { ToolContext, ToolDef } from '../types.ts';
-import {
-  containerTypesForActivity,
-  describeContainerSchema,
-  toolError,
-} from '../helpers/index.ts';
 import { findActivity } from './helpers.ts';
 import { prependEnvelope } from '../../context/index.ts';
 
@@ -33,16 +36,21 @@ interface Input {
 }
 
 const description = stripIndent`
-  Generate content for an outline activity's container.
-  Produces subcontainer data (with schema-defined metadata)
-  and content elements matching the container template's
-  config. Pass assetIds to include library assets as media
-  elements (images, videos) in the generated content - call
-  list_assets first to find relevant ones. Specify
-  containerType to target a specific container or omit to
-  use the primary (call get_schema_info to see types).
-  Does NOT persist - pass each entry in the items array
-  to create_container_with_elements verbatim.
+  Generate content for an outline activity's container. The
+  output shape is determined by the container's template:
+  - Nested templates (container lists subcontainers): items[] of
+    subcontainers, each with schema-defined metadata and elements.
+  - Flat, multiple: true: items[] where each item is a NEW sibling
+    container; data is empty unless the schema declares container
+    meta, elements carry the body.
+  - Flat, multiple unset/false: exactly one item; elements belong
+    inside that container.
+  - Collection items (props-shaped): one item with a fully-
+    populated data record and no elements.
+  Specify containerType to target a specific container
+  (call get_schema_info to see types). assetIds (when provided)
+  embed library assets as media elements.
+  Does NOT persist.
 `;
 
 const parameters = {
@@ -63,10 +71,9 @@ const parameters = {
       type: ['array', 'null'],
       items: { type: 'integer' },
       description: oneLine`
-        Asset ids from the library to include in the
-        generated content. Images are inserted as IMAGE
-        elements, other assets provide context. Call
-        list_assets to find relevant assets first.
+        Asset ids from the library to include in the generated
+        content. Images are inserted as IMAGE elements, other assets
+        provide context. Call list_assets to find relevant assets first.
       `,
     },
     skipOutlineContext: {
@@ -81,17 +88,19 @@ const parameters = {
     contextRadius: {
       type: ['integer', 'null'],
       description: oneLine`
-        How many nearest siblings get detailed summaries
-        in the outline-context envelope. Defaults to 2.
+        How many nearest siblings get detailed summaries in the
+        outline-context envelope. Defaults to 2.
       `,
     },
     containerType: {
       type: ['string', 'null'],
       description: oneLine`
-        Container type to generate for (e.g. SECTION_CONTAINER,
-        EXAM). This is the parent container type, not the
-        subcontainer type. Omit to use the primary. Call
-        get_schema_info to see available types.
+        Container type to generate for. This is the parent container
+        type, not the subcontainer type. Omit only when the activity
+        has a single container type; when multiple exist the tool
+        returns the options and you must pick one. Call
+        get_schema_info or read CONTAINERS in the system prompt for
+        available types.
       `,
     },
   },
@@ -99,10 +108,7 @@ const parameters = {
   additionalProperties: false,
 };
 
-/**
- * Render a numbered markdown preview of generated
- * items showing the type label and element count.
- */
+// Render a numbered markdown preview of generated items.
 function renderPreview(items: any[], typeLabel: string): string {
   return items
     .map((item: any, index: number) => {
@@ -114,11 +120,7 @@ function renderPreview(items: any[], typeLabel: string): string {
     .join('\n');
 }
 
-/**
- * Resolve asset references for the AI context. Returns
- * AssetReference objects with signed URLs so the AI can
- * insert them as media elements in generated content.
- */
+// Resolve asset references with signed URLs so the AI can reference them
 async function resolveAssets(
   assetIds: number[] | null | undefined,
   ctx: ToolContext,
@@ -157,18 +159,6 @@ async function resolveAssets(
   return refs;
 }
 
-/**
- * Generate content via the AI service for a given outline
- * activity. Resolves the container schema to inform the AI
- * about expected meta fields and element types. When assetIds
- * are provided, assets are passed as context so the AI can
- * insert them as media elements in the generated content.
- *
- * TODO: Uses the STRUCTURED_CONTENT response schema which builds
- * output from the container's subcontainer config. Templates
- * without schema-driven config (e.g. EXAM, ASSESSMENT_POOL)
- * are rejected - use generate_elements_for_target for those.
- */
 async function execute(input: Input, ctx: ToolContext) {
   if (!(AiService as any).generate) {
     return toolError({
@@ -195,8 +185,8 @@ async function execute(input: Input, ctx: ToolContext) {
   }
   const schemaId = ctx.repository.schema;
   // When multiple container types exist and none specified,
-  // return the options so the LLM can make an informed choice
-  // based on the activity's schema definition.
+  // return the options so the model can pick from the activity's
+  // schema definition.
   if (!input.containerType && allContainerTypes.length > 1) {
     const activityConfig = api.getLevel(activity.type);
     const options = allContainerTypes.map((type: string) => {
@@ -228,39 +218,12 @@ async function execute(input: Input, ctx: ToolContext) {
       allowedContainerTypes: allContainerTypes,
     });
   }
-  // Resolve container structure from the template
-  const containerSchema = describeContainerSchema(schemaId, containerType);
-  const subcontainers = containerSchema.subcontainers || [];
-  const primarySub = subcontainers[0];
-  // TODO: Consolidate with other container schemas
-  // Content generation uses the STRUCTURED_CONTENT response
-  // schema which builds output from the container's subcontainer
-  // config (meta fields + element types). Templates without
-  // schema-driven config (e.g. EXAM with hardcoded subcontainers
-  // or flat DEFAULT) can't be generated this way - use
-  // generate_elements_for_target for those instead.
-  if (!primarySub?.meta?.length && !primarySub?.elementConfig?.length) {
-    return toolError({
-      tool: TOOL,
-      reason: 'unsupported_template',
-      message: oneLine`
-        Container "${containerType}" does not have schema-driven
-        subcontainer config. Use generate_elements_for_target to
-        generate content elements directly.
-      `,
-    });
-  }
-  const metaKeys = primarySub.meta.map((m: any) => m.key);
-  const elementTypes = api.getSupportedElementTypes(
-    primarySub.elementConfig || [],
-  );
 
-  // Resolve library assets if provided - the AI service
-  // uses them to insert IMAGE/VIDEO/EMBED elements and
-  // for topic context during generation
+  const containerCfg = getContainerConfig(schemaId, containerType);
+  const shape = describeShape(schemaId, containerType);
+  const containerLabel = containerCfg?.label || containerType;
   const assets = await resolveAssets(input.assetIds, ctx);
 
-  // Tells the model what preceding topics cover and what's coming.
   const { instructions: instructionsWithContext, meta: envelopeMeta } =
     await prependEnvelope(activity.id, input.instructions, ctx, {
       skip: !!input.skipOutlineContext,
@@ -282,42 +245,66 @@ async function execute(input: Input, ctx: ToolContext) {
       {
         type: 'CREATE',
         text: instructionsWithContext,
-        responseSchema: 'STRUCTURED_CONTENT',
+        responseSchema: 'CONTAINER',
       },
     ],
     ...(assets.length ? { assets } : {}),
   });
 
   const items = Array.isArray(generated) ? generated : [];
-  const targetType = primarySub?.type || containerType;
-  const targetLabel = primarySub?.label || targetType;
 
   return {
     containerType,
-    containerSchema: {
-      subcontainerTypes: subcontainers.map((s: any) => s.type),
-      metaKeys,
-      elementTypes,
-    },
+    containerSchema: shape,
     items,
-    markdown: renderPreview(items, targetLabel),
+    markdown: renderPreview(items, containerLabel),
     ...(envelopeMeta ? { outlineContext: envelopeMeta } : {}),
-    NEXT_STEP: oneLine`
-      You MUST now call create_container_with_elements ONCE per
-      item in the items array. For each item, pass BOTH
-      data=item.data AND elements=item.elements in the SAME call -
-      never split into a bare create + follow-up update_activity.
-      Required arguments per call: containerType="${targetType}",
-      data (object with ${metaKeys.join(', ')}), elements (array).
-      If the target container already holds empty subcontainer stubs
-      from a prior get_activity_subtree (editor scaffolding from
-      defaultSubcontainers - nodes with zero elements and missingMeta),
-      call delete_activity on each stub id FIRST so the new
-      subcontainers don't sit alongside empty defaults. data and
-      elements are separate top-level parameters; do NOT nest data
-      inside elements, do NOT omit data, do NOT stop here.
-    `,
+    NEXT_STEP: nextStepFor(
+      shape.shape,
+      activity.id,
+      containerType,
+      items.length,
+    ),
   };
+}
+
+function nextStepFor(
+  shape: ContainerShape,
+  activityId: number,
+  containerType: string,
+  itemCount: number,
+): string {
+  if (!itemCount) {
+    return oneLine`
+      No items were generated. Inspect the error log or try
+      re-running with different instructions.
+    `;
+  }
+  if (shape === 'props') {
+    return oneLine`
+      Call create_container_with_elements ONCE with
+      outlineActivityId=${activityId},
+      containerType="${containerType}", data=items[0].data,
+      elements=[] (collection items store all content under data;
+      no element rows). Do NOT stop here.
+    `;
+  }
+  if (shape === 'flat') {
+    return oneLine`
+      Call create_container_with_elements per item with
+      outlineActivityId=${activityId},
+      containerType=item.type, data=item.data,
+      elements=item.elements. Each item is a flat container
+      (multi-instance spawns siblings; single-instance
+      find-or-creates). Do NOT stop here.
+    `;
+  }
+  return oneLine`
+    items[] do NOT persist. Continue per the relevant write recipe
+    in the system prompt ("Fill a host with new content") based on
+    whether the container already holds defaulted stubs. Do NOT
+    stop here.
+  `;
 }
 
 export const generate_container_content: ToolDef = {

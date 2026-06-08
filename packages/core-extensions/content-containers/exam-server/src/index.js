@@ -59,9 +59,9 @@ function getSubTypes() {
 }
 
 /**
- * Describe the container's structure. EXAM has a
- * hardcoded ASSESSMENT_GROUP subcontainer that hosts
- * question-type elements.
+ * Describe the container's structure. EXAM hardcodes a
+ * single ASSESSMENT_GROUP subcontainer hosting question
+ * elements.
  */
 function describeSchema() {
   return {
@@ -69,9 +69,7 @@ function describeSchema() {
       type: 'ASSESSMENT_GROUP',
       label: 'Question Group',
       meta: [],
-      elementConfig: questions.map((type) => ({
-        items: [{ id: type }],
-      })),
+      elementConfig: questions,
     }],
   };
 }
