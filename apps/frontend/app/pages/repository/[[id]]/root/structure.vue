@@ -24,8 +24,8 @@
     <VMain class="structure-container">
       <VContainer
         ref="structureEl"
-        class="structure d-flex flex-column justify-start py-4 px-sm-15"
-        max-width="1800"
+        class="structure d-flex flex-column justify-start py-4 px-6"
+        max-width="1280"
       >
         <BrokenReferencesAlert />
         <div v-if="isCollection" class="collection-wrapper mt-5">

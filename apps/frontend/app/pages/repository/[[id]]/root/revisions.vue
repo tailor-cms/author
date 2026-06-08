@@ -1,7 +1,7 @@
 <template>
   <div class="revisions-page h-100">
     <VMain>
-      <VContainer max-width="1200">
+      <VContainer max-width="1280">
         <VInfiniteScroll
           v-if="bundledRevisions.length > 0"
           class="revisions"
@@ -115,7 +115,6 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .revisions {
-  padding: 1rem 0.75rem 1.875rem;
   text-align: left;
 
   ul {

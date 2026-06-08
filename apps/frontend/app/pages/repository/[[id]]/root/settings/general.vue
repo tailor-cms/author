@@ -19,7 +19,7 @@
       />
     </VAppBar>
     <VMain>
-      <VContainer class="pa-8 text-left" max-width="1440">
+      <VContainer class="pa-8 text-left" max-width="1280">
         <RepositoryNameField
           :key="`name.${$pluginRegistry.dataVersion}`"
           :value="nameValue"

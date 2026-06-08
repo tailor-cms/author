@@ -27,8 +27,8 @@
     </VAppBar>
     <VMain>
       <VContainer
-        class="workflow d-flex flex-column h-100 py-8 px-sm-15"
-        max-width="2000"
+        class="workflow d-flex flex-column h-100 py-8 px-6"
+        max-width="1280"
       >
         <WorkflowOverview
           :activities="filteredActivities"

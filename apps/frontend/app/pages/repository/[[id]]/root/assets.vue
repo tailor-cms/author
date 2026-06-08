@@ -17,7 +17,7 @@
       />
     </VAppBar>
     <VMain>
-      <VContainer class="py-8 px-sm-15" max-width="1440">
+      <VContainer class="py-8 px-6" max-width="1280">
         <BulkActionBar
           :assets="assetStore.assets"
           :selected-ids="selection.selectedIds"
