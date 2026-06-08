@@ -71,7 +71,7 @@ $size: 64px;
   height: 80%;
   border-radius: 50%;
   object-fit: cover;
-  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(0 4px 10px rgba(var(--v-theme-primary), 0.35));
   animation: launcher-bob 4.5s ease-in-out infinite;
   transition:
     filter 0.3s ease,
@@ -80,7 +80,7 @@ $size: 64px;
 }
 
 .panel-launcher:hover .launcher-head {
-  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0 6px 16px rgba(var(--v-theme-primary), 0.4));
 }
 
 // While running, the head grows and bobs faster.
