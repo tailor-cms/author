@@ -41,13 +41,11 @@
             tag="button"
           />
         </template>
-        <VCard color="surface-container-low" class="text-left">
-          <div class="d-flex px-4 py-3 align-center">
-            <UserAvatar :img-url="user.imgUrl" size="38" />
-            <div class="ml-4">
-              <div class="text-body-large font-weight-bold">
-                {{ user.label }}
-              </div>
+        <VCard class="text-left">
+          <div class="d-flex flex-column pa-4 align-center bg-surface-container">
+            <UserAvatar :img-url="user.imgUrl" size="x-large" />
+            <div class="text-body-large font-weight-bold mt-2">
+              {{ user.label }}
             </div>
           </div>
           <VList density="comfortable" nav>
