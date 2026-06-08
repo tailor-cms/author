@@ -35,8 +35,8 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 });
 
 const store = useCurrentRepository();
-const { width: pageInnerWidth, mdAndUp } = useDisplay();
-const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 680 : 480));
+const { mdAndUp, lgAndUp } = useDisplay();
+const sidebarWidth = computed(() => (lgAndUp.value ? 480 : 380));
 </script>
 
 <style lang="scss" scoped>

@@ -1,25 +1,21 @@
 <template>
   <div class="toolbar d-flex align-center flex-wrap ga-2">
     <template v-if="isCollection">
-      <VHover>
-        <template #default="{ props: hoverProps }">
-          <VTextField
-            v-bind="hoverProps"
-            v-model="search"
-            bg-color="transparent"
-            density="compact"
-            min-width="220"
-            placeholder="Search by name..."
-            prepend-inner-icon="mdi-magnify"
-            rounded="pill"
-            variant="solo-filled"
-            clearable
-            flat
-            hide-details
-            @click:clear="search = ''"
-          />
-        </template>
-      </VHover>
+      <VTextField
+        v-model="search"
+        bg-color="transparent"
+        density="compact"
+        min-width="220"
+        max-width="384"
+        placeholder="Search by name..."
+        prepend-inner-icon="mdi-magnify"
+        rounded="pill"
+        variant="solo-filled"
+        clearable
+        flat
+        hide-details
+        @click:clear="search = ''"
+      />
       <VSpacer />
       <VMenu location="bottom end">
         <template #activator="{ props: menuProps }">
@@ -57,25 +53,21 @@
       />
     </template>
     <template v-else>
-      <VHover>
-        <template #default="{ props: hoverProps }">
-          <VTextField
-            v-bind="hoverProps"
-            v-model="search"
-            bg-color="transparent"
-            density="compact"
-            min-width="220"
-            placeholder="Search by name or id..."
-            prepend-inner-icon="mdi-magnify"
-            rounded="pill"
-            variant="solo-filled"
-            clearable
-            flat
-            hide-details
-            @click:clear="search = ''"
-          />
-        </template>
-      </VHover>
+      <VTextField
+        v-model="search"
+        bg-color="transparent"
+        density="compact"
+        min-width="220"
+        max-width="384"
+        placeholder="Search by name or id..."
+        prepend-inner-icon="mdi-magnify"
+        rounded="pill"
+        variant="solo-filled"
+        clearable
+        flat
+        hide-details
+        @click:clear="search = ''"
+      />
       <VBtn
         v-if="!isFlat"
         :disabled="!!search"
@@ -166,15 +158,6 @@ const anchor = computed(() => last(rootActivities.value));
 
   &:hover {
     opacity: 1;
-  }
-}
-
-.v-text-field {
-  max-width: 24rem;
-  transition: all 1s;
-
-  :deep(.v-field__outline) {
-    display: none;
   }
 }
 </style>
