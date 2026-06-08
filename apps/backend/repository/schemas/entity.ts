@@ -8,11 +8,14 @@ import {
   Int,
   RepositoryScopedParams,
   ShortText,
+  Timestamp,
+  Uid,
+  timestamps,
 } from '#shared/request/schemas.ts';
 import { Activity } from '#app/activity/schemas/entity.ts';
 import { ContentElement } from '#app/content-element/schemas/entity.ts';
-import { Tag } from '#app/tag/tag.schema.ts';
-import { UserSummary } from '#app/user/user.schema.ts';
+import { Tag } from '#app/tag/schemas/entity.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 import { RepoData } from '../lib/data-attr.ts';
 
 // Path param shape for every `/:repositoryId` route. Repositories live
@@ -37,9 +40,7 @@ export const RepositorySchemaSnapshot = z
       \`@tailor-cms/config\` bundle at build time; \`external\` is
       brought in at runtime (paste / import / re-registration).
     `),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Timestamp of the last snapshot write.'),
+    updatedAt: Timestamp('Timestamp of the last snapshot write.'),
   })
   .meta({ id: 'RepositorySchemaSnapshot' })
   .describe('Schema-config backup stored under `data.$$.schema`.');
@@ -59,16 +60,7 @@ export const RepositoryUser = z
     `),
     role: z.enum(RepositoryRole).describe('Repository-scoped role.'),
     pinned: z.boolean().describe(`Pinned flag for the user's catalog view.`),
-    createdAt: z.iso
-      .datetime({ offset: true })
-      .describe('Insertion timestamp.'),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Last mutation timestamp.'),
-    deletedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Soft-delete timestamp; null while active.'),
+    ...timestamps(),
   })
   .meta({ id: 'RepositoryUser' }).describe(oneLine`
     Join row granting a user access to a repository with a specific
@@ -94,7 +86,7 @@ export type RepositoryMember = z.infer<typeof RepositoryMember>;
 export const Repository = z
   .object({
     id: Int().describe('Numeric primary key.'),
-    uid: z.uuid().describe('Stable UUID used as the client-side identity.'),
+    uid: Uid('Client-side UID identifier.'),
     schema: ShortText(2, 64).describe(oneLine`
       Schema id (key for the schema registry); selects which
       \`@tailor-cms/config\` schema this repository follows.
@@ -120,16 +112,7 @@ export const Repository = z
       True when any outline activity has draft changes since the last
       publish. Maintained by \`updatePublishingStatus\`.
     `),
-    createdAt: z.iso
-      .datetime({ offset: true })
-      .describe('Insertion timestamp.'),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Last mutation timestamp.'),
-    deletedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Soft-delete timestamp; non-null for archived rows.'),
+    ...timestamps(),
   })
   .meta({ id: 'Repository' }).describe(oneLine`
     A repository: top-level content container that follows the rules of
@@ -138,44 +121,40 @@ export const Repository = z
 
 export type Repository = z.infer<typeof Repository>;
 
-// Reference-integrity result types.
-// A dangling reference is keyed on the entity kind that holds it.
-// Common fields shared by both broken-reference variants.
-const BrokenReferenceCommon = {
-  referenceName: z
-    .string()
-    .describe(`Key on \`src.refs\` where the link lives.`),
-  target: z
-    .object({
-      id: Int().describe('Numeric id of the missing target.'),
-      entity: z
-        .string()
-        .optional()
-        .describe('Kind of the target (activity / element).'),
-    })
-    .describe('Pointer to the missing target.'),
-};
-
-export const BrokenActivityReference = z
+const BrokenReferenceCommon = z
   .object({
-    src: Activity.describe('Activity row that still holds the reference.'),
-    ...BrokenReferenceCommon,
+    referenceName: z
+      .string()
+      .describe(`Key on \`src.refs\` where the link lives.`),
+    target: z
+      .object({
+        id: Int().describe('Numeric id of the missing target.'),
+        entity: z
+          .string()
+          .optional()
+          .describe('Kind of the target (activity / element).'),
+      })
+      .describe('Pointer to the missing target.'),
   })
+  .meta({ id: 'BrokenReferenceCommon' })
+  .describe('Fields shared by every broken-reference variant.');
+
+export const BrokenActivityReference = BrokenReferenceCommon.extend({
+  src: Activity.describe('Activity row that still holds the reference.'),
+})
   .meta({ id: 'BrokenActivityReference' })
   .describe('A dangling reference held by an activity.');
 
 export type BrokenActivityReference = z.infer<typeof BrokenActivityReference>;
 
-export const BrokenElementReference = z
-  .object({
-    src: ContentElement.extend({
-      outlineActivity: Activity.optional().describe(oneLine`
-        Closest outline-level ancestor of the element; added by
-        \`detectMissingReferences\` for FE deep-linking.
-      `),
-    }).describe('Content-element row that still holds the reference.'),
-    ...BrokenReferenceCommon,
-  })
+export const BrokenElementReference = BrokenReferenceCommon.extend({
+  src: ContentElement.extend({
+    outlineActivity: Activity.optional().describe(oneLine`
+      Closest outline-level ancestor of the element; added by
+      \`detectMissingReferences\` for FE deep-linking.
+    `),
+  }).describe('Content-element row that still holds the reference.'),
+})
   .meta({ id: 'BrokenElementReference' })
   .describe('A dangling reference held by a content element.');
 

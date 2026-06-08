@@ -5,9 +5,13 @@ import { z } from 'zod';
 import {
   Int,
   IntParam,
+  JsonObject,
   RepositoryScopedParams,
+  Timestamp,
+  Uid,
+  timestamps,
 } from '#shared/request/schemas.ts';
-import { UserSummary } from '#app/user/user.schema.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Path param shape for every `/:activityId` route. Extends
 // RepositoryScopedParams so the OpenAPI doc reflects the full path
@@ -36,20 +40,8 @@ export const ActivityStatus = z
       .string()
       .nullable()
       .describe('Free-text note attached to the status entry.'),
-    dueDate: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Due date; null when no deadline is set.'),
-    createdAt: z.iso
-      .datetime({ offset: true })
-      .describe('Insertion timestamp.'),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Last mutation timestamp.'),
-    deletedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Soft-delete timestamp; non-null for archived rows.'),
+    dueDate: Timestamp('Due date; null when no deadline is set.').nullable(),
+    ...timestamps(),
   })
   .meta({ id: 'ActivityStatus' })
   .describe('A workflow-status entry for an activity.');
@@ -60,7 +52,7 @@ export type ActivityStatus = z.infer<typeof ActivityStatus>;
 export const Activity = z
   .object({
     id: Int().describe('Numeric primary key.'),
-    uid: z.uuid().describe('Stable UUID; persists across clones and links.'),
+    uid: Uid(),
     repositoryId: Int().describe('Repository the activity belongs to.'),
     parentId: Int().nullable().describe(oneLine`
       Parent activity id; null for outline-root activities. The same
@@ -78,13 +70,13 @@ export const Activity = z
       (e.g. 1.5 between rows at 1 and 2). The /reorder endpoint
       derives the stored value via \`calculatePosition\`.
     `),
-    data: z.record(z.string(), z.unknown()).describe(oneLine`
+    data: JsonObject(oneLine`
       Activity-level metadata bag (JSONB). Shape is owned by the
       schema's config for the activity's \`type\`. The display
       name for outline activities lives at \`data.name\` (typed as
       required in \`@tailor-cms/interfaces/activity\`).
     `),
-    refs: z.record(z.string(), z.unknown()).describe(oneLine`
+    refs: JsonObject(oneLine`
       Cross-activity references (JSONB). Keyed by relationship type
       declared in the schema's \`relationships\` config for this
       activity type; values are arrays of target activity ids
@@ -101,15 +93,13 @@ export const Activity = z
       \`data\` auto-unlinks via the model's \`autoUnlinkOnEdit\`
       afterUpdate hook.
     `),
-    sourceId: Int().nullable().optional().describe(oneLine`
+    sourceId: Int().nullable().describe(oneLine`
       Source activity id this entry was copied from; preserved after
       unlink for provenance. Null when the source has been hard-deleted.
     `),
-    sourceModifiedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .optional()
-      .describe(`Source \`modifiedAt\` at the moment of last sync.`),
+    sourceModifiedAt: Timestamp(
+      `Source \`modifiedAt\` at the moment of last sync.`,
+    ).nullable(),
     isTrackedInWorkflow: z.boolean().describe(oneLine`
       True when the activity type appears in the schema's workflow
       configuration.
@@ -118,24 +108,13 @@ export const Activity = z
       Workflow status history (latest first). Present when the
       defaultScope include was applied.
     `),
-    modifiedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Aggregated subtree last-modified timestamp.'),
-    publishedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Last publish timestamp; null when never published.'),
-    createdAt: z.iso
-      .datetime({ offset: true })
-      .describe('Insertion timestamp.'),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Last mutation timestamp.'),
-    deletedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Soft-delete timestamp; non-null for archived rows.'),
+    modifiedAt: Timestamp(
+      'Aggregated subtree last-modified timestamp.',
+    ).nullable(),
+    publishedAt: Timestamp(
+      'Last publish timestamp; null when never published.',
+    ).nullable(),
+    ...timestamps(),
   })
   .meta({ id: 'Activity' }).describe(oneLine`
     A repository activity (outline node, container, or flat collection item).
@@ -166,7 +145,7 @@ export type ActivitySourceInfo = z.infer<typeof ActivitySourceInfo>;
 export const ActivityCopyLocation = z
   .object({
     id: Int().describe('Linked-copy activity id.'),
-    uid: z.uuid().describe('Linked-copy uid.'),
+    uid: Uid('Linked-copy UID.'),
     repositoryId: Int().describe('Repository hosting the linked copy.'),
     outlineActivityId: Int().optional().describe(oneLine`
       Closest outline-level ancestor of the linked copy; used by the

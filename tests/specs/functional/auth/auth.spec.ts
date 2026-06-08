@@ -2,10 +2,14 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
+import {
+  STRONG_TEST_PASSWORD,
+  WEAK_TEST_PASSWORD,
+} from '../../../fixtures/passwords';
+import { ADMIN_TEST_USER as USER } from '../../../fixtures/auth';
 import { ForgotPassword, ResetPassword, SignIn } from '../../../pom/auth';
 import ApiClient from '../../../api/ApiClient';
 import { AppBar } from '../../../pom/common/AppBar';
-import { ADMIN_TEST_USER as USER } from '../../../fixtures/auth';
 
 const { OIDC_TEST_USER_EMAIL, OIDC_TEST_USER_PASSWORD } = process.env;
 
@@ -16,7 +20,7 @@ interface UserData {
 
 const getMockUserData = (): UserData => ({
   email: faker.internet.email({ provider: 'gostudion.com' }),
-  password: faker.internet.password(),
+  password: STRONG_TEST_PASSWORD,
 });
 
 const userAPI = new ApiClient('/api/users');
@@ -104,10 +108,24 @@ test('should be able to reset password', async ({ page }) => {
   await page.goto(resetLink);
   // Set new password
   const resetPasswordPage = new ResetPassword(page);
-  const newPassword = faker.internet.password();
-  await resetPasswordPage.resetPassword(newPassword);
-  await signInPage.signIn(user.email, newPassword);
+  await resetPasswordPage.resetPassword(STRONG_TEST_PASSWORD);
+  await signInPage.signIn(user.email, STRONG_TEST_PASSWORD);
   await expect(page).toHaveTitle('Catalog');
+});
+
+test('reset password should reject a weak password', async ({ page }) => {
+  const signInPage = new SignIn(page);
+  await signInPage.visit();
+  const user = await createUser(page);
+  await signInPage.forgotPasswordLink.click();
+  const forgotPasswordPage = new ForgotPassword(page);
+  await forgotPasswordPage.requestPasswordReset(user.email);
+  const resetLink = await forgotPasswordPage.fetchResetLink(user.email);
+  await page.goto(resetLink);
+  const resetPasswordPage = new ResetPassword(page);
+  await resetPasswordPage.resetPassword(WEAK_TEST_PASSWORD);
+  await expect(page).toHaveTitle(/reset password/i);
+  await expect(page.getByText(/commonly used password/i)).toBeVisible();
 });
 
 test.afterAll(async () => {

@@ -6,8 +6,11 @@ import {
   Int,
   IntParam,
   RepositoryScopedParams,
+  Timestamp,
+  Uid,
+  timestamps,
 } from '#shared/request/schemas.ts';
-import { UserSummary } from '#app/user/user.schema.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Path param shape for every `/:commentId` route. Extends
 // RepositoryScopedParams so the OpenAPI doc reflects the full path
@@ -21,7 +24,7 @@ export type CommentItemParams = z.infer<typeof CommentItemParams>;
 // element is loaded. Matches the include used by the service layer.
 export const CommentElementRef = z
   .object({
-    uid: z.uuid().describe('Content element UUID.'),
+    uid: Uid('Content-element UID identifier.'),
     type: z.string().describe('Content-element type id.'),
   })
   .meta({ id: 'CommentElementRef' })
@@ -33,7 +36,7 @@ export type CommentElementRef = z.infer<typeof CommentElementRef>;
 export const Comment = z
   .object({
     id: Int().describe('Numeric primary key.'),
-    uid: z.uuid().describe('Stable UUID; persists across clones / imports.'),
+    uid: Uid('UID identifier; persists across clones / imports.'),
     repositoryId: Int().describe('Repository the comment belongs to.'),
     activityId: Int().nullable().describe(oneLine`
       Parent activity id. Cleared to null when the parent element is
@@ -55,24 +58,13 @@ export const Comment = z
       .nullable()
       .optional()
       .describe('Eager-loaded element pointer; null when activity-level.'),
-    resolvedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Timestamp the thread was resolved at; null for open threads.'),
-    editedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Last edit timestamp; null when never edited.'),
-    createdAt: z.iso
-      .datetime({ offset: true })
-      .describe('Insertion timestamp.'),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Last mutation timestamp.'),
-    deletedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Soft-delete timestamp; non-null for archived rows.'),
+    resolvedAt: Timestamp(
+      'Timestamp the thread was resolved at; null for open threads.',
+    ).nullable(),
+    editedAt: Timestamp(
+      'Last edit timestamp; null when never edited.',
+    ).nullable(),
+    ...timestamps(),
   })
   .meta({ id: 'Comment' })
   .describe(oneLine`

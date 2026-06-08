@@ -2,7 +2,7 @@ import { oneLine } from 'common-tags';
 import { z } from 'zod';
 import { defineAction } from '#shared/request/action.ts';
 import { dataEnvelope } from '#shared/request/schemas.ts';
-import * as schemas from '../tag.schema.ts';
+import * as schemas from '../schemas/index.ts';
 import * as service from '../tag.service.ts';
 
 // GET /tags

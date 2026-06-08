@@ -1,5 +1,5 @@
 import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../seed.schema.ts';
+import * as schemas from '../schemas/index.ts';
 import service from '../seed.service.ts';
 
 // POST /seed/comment

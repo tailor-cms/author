@@ -21,6 +21,7 @@ import {
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
 import type { Activity } from '../../activity/models/activity.model.js';
+import type { AgentSession } from '../ai/agent/session/index.ts';
 import type { Asset } from '../../asset/models/asset.model.js';
 import type { Comment } from '../../comment/models/comment.model.js';
 import type { ContentElement }
@@ -32,16 +33,36 @@ import type { UserGroup } from '../../user-group/models/user-group.model.js';
 
 export type { OpenApiSpec };
 
+// Pagination context that the `processPagination` middleware (in
+// `shared/database/pagination.js`) parses from `?limit&offset&sortBy
+// &sortOrder` and stashes on `req.options`.
+export interface PaginationOptions {
+  limit: number;
+  offset: number;
+  order?: any[];
+}
+
+// Wider list-context that the `processListQuery` middleware (in
+// `shared/util/processListQuery.js`) builds on top of pagination: also
+// carries a `where` map for sequelize predicates and tolerates
+// slice-specific extras. Stashed on `req.opts`.
+export interface ListQueryOptions extends PaginationOptions {
+  where: any;
+  [k: string]: any;
+}
+
 type Slot = 'body' | 'query' | 'params';
 
-// Generic schema-aware validate middleware. On failure responds with the
-// same `{ errors: [...] }` envelope express-validator emits so existing FE
-// callers and tests stay unchanged. On success replaces req[slot] with the
-// parsed (coerced/transformed) value so the handler sees the inferred type.
-// Express 5 made `req.query` (and to a lesser degree `req.body`) read-only
-// getters, so we cannot reassign them in place. Instead we stash parsed
-// values on a private `_validated` bag on the request; the defineAction
-// wrapper reads from there when building the handler context.
+// Generic schema-aware validate middleware. On failure responds with
+// `{ errors: [...] }` to match the FE error-handling shape inherited
+// from this codebase's express-validator era. On success the parsed
+// (coerced/transformed) value lands on `req._validated[slot]` rather
+// than being reassigned in place - Express 5 made `req.query` a
+// read-only getter, so a stash is required for that slot, and using it
+// uniformly across body/params keeps the handler's read path consistent
+// and avoids mutating raw inputs. The defineAction wrapper reads from
+// the stash (falling back to `req[slot]`) when building the handler
+// context.
 const STASH = '_validated';
 
 function validate(slot: Slot, schema: ZodType): RequestHandler {
@@ -99,19 +120,10 @@ export interface ActionContext<
     activity?: Activity;
     asset?: Asset;
     userGroup?: UserGroup;
+    agentSession?: AgentSession;
     authData?: unknown;
-    opts?: {
-      limit: number;
-      offset: number;
-      where: any;
-      order?: any[];
-      [k: string]: any;
-    };
-    options?: {
-      limit: number;
-      offset: number;
-      order?: any[];
-    };
+    opts?: ListQueryOptions;
+    options?: PaginationOptions;
     file?: {
       originalname: string;
       mimetype: string;

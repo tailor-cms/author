@@ -2,6 +2,7 @@ import * as schemas from '../rpc.schema.ts';
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
+import { oneLine } from 'common-tags';
 import PluginRegistry from '#shared/content-plugins/index.js';
 import type { Repository } from '../../models/repository.model.js';
 
@@ -52,9 +53,10 @@ export default defineAction({
   openapi: {
     authenticated: true,
     summary: 'Dispatch a content-element plugin procedure',
-    description:
-      'Calls a named server procedure on the plugin for ' +
-      '`type`. Payload is opaque - each procedure defines its own shape.',
+    description: oneLine`
+      Calls a named server procedure on the plugin for \`type\`.
+      Payload is opaque; each procedure defines its own shape.
+    `,
   },
   handler,
 });

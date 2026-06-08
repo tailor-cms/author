@@ -15,8 +15,8 @@ export const CreateInput = z
     // Linked-content fields. Populated when this element is created as a
     // linked copy of a source element; left at defaults otherwise.
     isLinkedCopy: ContentElement.shape.isLinkedCopy.optional(),
-    sourceId: ContentElement.shape.sourceId,
-    sourceModifiedAt: ContentElement.shape.sourceModifiedAt,
+    sourceId: ContentElement.shape.sourceId.optional(),
+    sourceModifiedAt: ContentElement.shape.sourceModifiedAt.optional(),
     contentId: ContentElement.shape.contentId.optional(),
   })
   .describe('Create content-element payload.');

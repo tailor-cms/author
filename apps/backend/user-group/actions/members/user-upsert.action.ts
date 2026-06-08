@@ -1,17 +1,17 @@
-import { defineAction } from '#shared/request/action.ts';
-import * as schemas from '../../user-group.schema.ts';
+import * as schemas from '../../schemas/index.ts';
 import * as service from '../../user-group.service.ts';
+import { defineAction } from '#shared/request/action.ts';
 
-// POST /user-group/:id/users
-// Invites missing users by email and assigns each on the group (or
-// updates an existing member's role). Capped at 50 invites per call so
-// a single request cannot trigger a thundering herd of invitation mails.
 export default defineAction({
   body: schemas.UpsertMembersInput,
   openapi: {
-    summary: 'Invite or update members of a user group',
     authenticated: true,
-    responses: { 204: { description: 'No content' } },
+    summary: 'Invite or update members of a user group',
+    responses: {
+      204: { description: 'No content' },
+      403: { description: 'Caller is not an admin or group admin' },
+      404: { description: 'User group not found' },
+    },
   },
   async handler({ body, req }) {
     await service.upsertMembers(req.userGroup!, body);

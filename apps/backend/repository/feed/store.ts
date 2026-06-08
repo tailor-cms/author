@@ -6,7 +6,7 @@ import type {
   FeedPresenceRecord,
   StoredUserActivityContext,
 } from './schemas/index.ts';
-import type { UserSummary } from '#app/user/user.schema.ts';
+import type { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Re-export for convenience
 export type FeedUser = UserSummary;

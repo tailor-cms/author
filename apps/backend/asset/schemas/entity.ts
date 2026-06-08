@@ -12,8 +12,10 @@ import {
   IntParam,
   RepositoryScopedParams,
   UInt,
+  Uid,
+  timestamps,
 } from '#shared/request/schemas.ts';
-import { UserSummary } from '#app/user/user.schema.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Re-export the runtime enums so schema consumers can reach them through
 // the schema barrel without a second import.
@@ -137,7 +139,7 @@ export type AssetMeta = z.infer<typeof AssetMeta>;
 export const Asset = z
   .object({
     id: Int().describe('Numeric primary key.'),
-    uid: z.uuid().describe('Stable UUID, persists across clones / imports.'),
+    uid: Uid('UID identifier; persists across clones / imports.'),
     repositoryId: Int().describe('Repository the asset belongs to.'),
     name: z.string().describe('Display name; auto-truncated to 250 chars.'),
     type: z.enum(AssetType).describe(oneLine`
@@ -166,16 +168,7 @@ export const Asset = z
       .describe('Vector-store indexing state; null when never indexed.'),
     uploaderId: Int().describe('User who uploaded the asset.'),
     uploader: UserSummary.optional().describe('Eager-loaded uploader'),
-    createdAt: z.iso
-      .datetime({ offset: true })
-      .describe('Insertion timestamp.'),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Last mutation timestamp.'),
-    deletedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Soft-delete timestamp; non-null for archived rows.'),
+    ...timestamps(),
   })
   .meta({ id: 'Asset' }).describe(oneLine`
     A repository asset, either an uploaded file

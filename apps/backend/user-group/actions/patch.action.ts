@@ -1,12 +1,10 @@
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../user-group.schema.ts';
+import { dataEnvelope } from '#shared/request/schemas.ts';
+import * as schemas from '../schemas/index.ts';
 import * as service from '../user-group.service.ts';
 
-// PATCH /user-group/:id
-// Updates mutable fields.
-// 409 on a name collision with another group.
 async function handler({ body, req }: Ctx<{ body: typeof schemas.PatchInput }>) {
   try {
     return await service.update(req.userGroup!, body);
@@ -21,10 +19,15 @@ async function handler({ body, req }: Ctx<{ body: typeof schemas.PatchInput }>) 
 export default defineAction({
   body: schemas.PatchInput,
   openapi: {
-    summary: 'Patch a user group',
     authenticated: true,
+    summary: 'Patch a user group',
     responses: {
-      200: { description: 'Updated group' },
+      200: {
+        description: 'Updated group.',
+        schema: dataEnvelope(schemas.UserGroup),
+      },
+      403: { description: 'Caller is not an admin or group admin' },
+      404: { description: 'User group not found' },
       409: { description: 'Group name already exists' },
     },
   },

@@ -7,10 +7,10 @@ import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
 import {
+  Paginated,
   Pagination,
   QueryBoolean,
   Sort,
-  UInt,
   dataEnvelope,
 } from '#shared/request/schemas.ts';
 
@@ -101,14 +101,7 @@ export const ListFilter = z
 export type ListFilter = z.infer<typeof ListFilter>;
 
 // Default mode response: paginated rows + total count.
-export const ListResult = z
-  .object({
-    items: z.array(Asset).describe('Page of assets.'),
-    total: UInt()
-      .meta({ example: 1 })
-      .describe('Total assets matching the filter.'),
-  })
-  .meta({ id: 'AssetListResult' })
+export const ListResult = Paginated(Asset, 'AssetListResult')
   .describe('Paginated asset list (default mode).');
 
 export type ListResult = z.infer<typeof ListResult>;

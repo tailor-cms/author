@@ -79,12 +79,12 @@ const isVisible = ref(false);
 const store = useAuthStore();
 const notify = useNotification();
 
-const { defineField, errors, handleSubmit, resetForm } = useForm({
+const { defineField, errors, handleSubmit, resetForm, setFieldError } = useForm({
   validationSchema: object({
     currentPassword: string().required(),
     newPassword: string()
       .required()
-      .min(6)
+      .min(8)
       .notOneOf(
         [yupRef('currentPassword')],
         'New password must be different from the current',
@@ -99,6 +99,20 @@ const [currentPasswordInput] = defineField('currentPassword');
 const [newPasswordInput] = defineField('newPassword');
 const [passwordConfirmationInput] = defineField('passwordConfirmation');
 
+function handleError(err: any) {
+  const status = err?.response?.status;
+  const msg = err?.response?.data?.error?.message;
+  if (msg && status === 422) {
+    setFieldError('newPassword', msg);
+    return;
+  }
+  if (msg && status === 400) {
+    setFieldError('currentPassword', msg);
+    return;
+  }
+  notify('Failed to change password!', { immediate: true, color: 'error' });
+}
+
 const submit = handleSubmit(() => {
   store
     .changePassword({
@@ -110,9 +124,7 @@ const submit = handleSubmit(() => {
       store.logout();
       navigateTo('/auth');
     })
-    .catch(() => {
-      notify('Failed to change password!', { immediate: true, color: 'error' });
-    });
+    .catch(handleError);
 });
 
 const close = () => {

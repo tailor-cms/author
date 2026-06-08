@@ -1,6 +1,5 @@
 // Business logic for the test-seed slice.
-// Test-only; gated by `ENABLE_TEST_API_ENDPOINTS`. Actions hand it
-// validated payloads inferred from `seed.schema.ts`.
+// Test-only; gated by `ENABLE_TEST_API_ENDPOINTS`.
 import crypto from 'node:crypto';
 import path from 'node:path';
 import { faker } from '@faker-js/faker';
@@ -17,7 +16,7 @@ import type {
   RepositoryInput,
   UserGroupSpec,
   UserInput,
-} from './seed.schema.ts';
+} from './schemas/index.ts';
 import { store as activityCache } from '../../repository/feed/store.ts';
 import db from '#shared/database/index.js';
 import linkService from '#shared/content-library/link.service.js';

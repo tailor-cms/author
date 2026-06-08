@@ -5,13 +5,14 @@ import { Op, UniqueConstraintError } from 'sequelize';
 import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
 import pick from 'lodash/pick.js';
-import type { User } from '../user/models/user.model.js';
+import type { User } from '#app/user/models/user.model.js';
 import type {
   CreateInput,
   ListFilter,
   PatchInput,
   UpsertMembersInput,
-} from './user-group.schema.ts';
+} from './schemas/index.ts';
+import type { ListQueryOptions } from '#shared/request/action.ts';
 import type { UserGroup } from './models/user-group.model.js';
 
 const {
@@ -54,7 +55,7 @@ export interface ListResult {
 // see groups they are a member of (scoped via UserGroupMember include).
 export async function list(
   user: User,
-  opts: any,
+  opts: ListQueryOptions,
   filters: ListFilter,
 ): Promise<ListResult> {
   const where: any = { ...opts.where };
