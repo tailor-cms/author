@@ -38,7 +38,7 @@ export const getAnchorFromLastRecievedEmail = async (
   anchorTitle: string,
   options: { retries?: number; intervalMs?: number } = {},
 ): Promise<HTMLAnchorElement> => {
-  const { retries = 10, intervalMs = 1500 } = options;
+  const { retries = 20, intervalMs = 1500 } = options;
   const target = lower(address);
   for (let attempt = 0; attempt < retries; attempt++) {
     await timeout(intervalMs);
