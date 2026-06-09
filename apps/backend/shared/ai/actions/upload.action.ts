@@ -13,6 +13,7 @@ async function handler({
 
 export default defineAction({
   body: schemas.UploadInput,
+  multipart: schemas.UploadMultipart,
   openapi: {
     authenticated: true,
     summary: 'Upload PDFs to a vector store',

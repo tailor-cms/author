@@ -1,5 +1,6 @@
 // Wire shapes for the PDF upload endpoint.
 import { z } from 'zod';
+import { binaryFileArray } from '#shared/request/schemas.ts';
 
 export const UploadInput = z
   .object({
@@ -14,6 +15,10 @@ export const UploadInput = z
   .describe('Body for the PDF to vector store upload endpoint.');
 
 export type UploadInput = z.infer<typeof UploadInput>;
+
+export const UploadMultipart = UploadInput.extend({
+  files: binaryFileArray('PDFs to ingest into the vector store.'),
+}).describe('Multipart payload for the PDF to vector store endpoint.');
 
 const UploadedDocument = z
   .object({

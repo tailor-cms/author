@@ -46,7 +46,9 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'import',
   body: schemas.ImportInput,
+  multipart: schemas.ImportMultipart,
   openapi: {
     authenticated: true,
     summary: 'Import a repository from a `.tgz` archive (multipart)',

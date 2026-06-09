@@ -1,9 +1,9 @@
 import { oneLine } from 'common-tags';
 import { StatusCodes } from 'http-status-codes';
 
+import { dataEnvelope } from '#shared/request/schemas.ts';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
-import { dataEnvelope } from '#shared/request/schemas.ts';
 
 import * as schemas from '../schemas/index.ts';
 import * as service from '../asset.service.ts';
@@ -15,6 +15,7 @@ import * as service from '../asset.service.ts';
 export default defineAction({
   params: schemas.AssetItemParams,
   body: schemas.AttachFileInput,
+  multipart: schemas.AttachFileMultipart,
   openapi: {
     authenticated: true,
     summary: 'Attach a supplementary file to an asset',

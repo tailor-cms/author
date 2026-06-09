@@ -15,6 +15,7 @@ import * as service from '../asset.service.ts';
 // `raw: true` so the handler returns the chosen shape verbatim.
 export default defineAction({
   raw: true,
+  multipart: schemas.CreateMultipart,
   openapi: {
     authenticated: true,
     summary: 'Upload one or more assets',

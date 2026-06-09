@@ -1,6 +1,8 @@
-// The file itself arrives via multer (`upload.single('file')`); this body
-// schema only validates the companion `fileKey` field that tells the
-// service where to slot the attachment in `meta.files`.
+// The file itself arrives via multer (`upload.single('file')`); the
+// runtime body schema (`AttachFileInput`) only validates the companion
+// `fileKey` field. The full multipart wire shape (`AttachFileMultipart`)
+// adds the binary file field for OpenAPI emission.
+import { binaryFile } from '#shared/request/schemas.ts';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
@@ -12,3 +14,7 @@ export const AttachFileInput = z.object({
 }).describe('Payload for attaching a supplementary file to an asset.');
 
 export type AttachFileInput = z.infer<typeof AttachFileInput>;
+
+export const AttachFileMultipart = AttachFileInput.extend({
+  file: binaryFile('The file blob to attach.'),
+}).describe('Multipart payload for the attach-file endpoint.');

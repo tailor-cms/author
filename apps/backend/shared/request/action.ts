@@ -139,9 +139,15 @@ interface ActionSpec<
   TQ extends ZodType | undefined,
   TP extends ZodType | undefined,
 > {
+  // Optional verb  (name) override for the generated SDK / OpenAPI.
+  name?: string;
   body?: TB;
   query?: TQ;
   params?: TP;
+  // When set, the spec emits the route
+  // as `multipart/form-data` with this schema (which by convention
+  // describes both text fields and binary file fields).
+  multipart?: ZodType;
   // When true, the handler's return value is sent verbatim. By default
   // the wrapper wraps it in `{ data: ... }`. Use `raw: true` for
   // collection responses that already carry metadata at the top level
@@ -185,7 +191,9 @@ export interface CompiledAction {
   middleware: RequestHandler[];
   handler: RequestHandler;
   spec: {
+    name?: string;
     body?: ZodType;
+    multipart?: ZodType;
     query?: ZodType;
     params?: ZodType;
     openapi?: OpenApiSpec;
@@ -249,7 +257,9 @@ export function defineAction<
     middleware,
     handler,
     spec: {
+      name: spec.name,
       body: spec.body,
+      multipart: spec.multipart,
       query: spec.query,
       params: spec.params,
       openapi: spec.openapi,
@@ -341,7 +351,9 @@ export function createActionMounter(
       appendRoute({
         method,
         path: joinPath(basePath, path),
+        name: action.spec.name,
         body: action.spec.body,
+        multipart: action.spec.multipart,
         query: action.spec.query,
         params: action.spec.params,
         openapi: action.spec.openapi,
