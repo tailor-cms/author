@@ -24,4 +24,6 @@ export const ContentElementType = {
   File: 'FILE',
   HtmlRaw: 'HTML_RAW',
   MuxVideo: 'MUX_VIDEO',
+  Sequence: 'SEQUENCE',
+  Flashcards: 'FLASHCARDS',
 };

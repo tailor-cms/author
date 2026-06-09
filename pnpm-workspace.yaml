@@ -37,6 +37,9 @@ minimumReleaseAgeExclude:
   - pg-pool
   - pg-protocol
   - pg-query-stream
+  # Our own org's content-element packages; trusted by name so new
+  # versions don't need a fresh version-pin on every release.
+  - '@tailor-cms/*'
 # Allowlist of packages whose postinstall / build scripts pnpm 11 may run.
 # pnpm 11 blocks build scripts by default (supply-chain defense); each
 # entry below opts a specific package back in because we need its
