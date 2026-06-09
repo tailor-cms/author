@@ -2,9 +2,8 @@
   <VNavigationDrawer
     v-model="modelValue"
     :width="lgAndUp ? 480 : 380"
-    border="surface"
     class="editor-sidebar-main sidebar"
-    color="primary-darken-3"
+    color="surface-container-low"
     elevation="0"
     location="left"
     mobile-breakpoint="md"
@@ -14,7 +13,7 @@
         <VTabs
           v-model="selectedTab"
           class="sidebar-tabs flex-grow-1"
-          color="white"
+          color="primary"
           density="compact"
           hide-slider
         >
@@ -29,7 +28,7 @@
             rounded="pill"
           >
             <template v-if="tab.badgeData" #append>
-              <VBadge :content="tab.badgeData" color="secondary" inline />
+              <VBadge :content="tab.badgeData" color="tertiary" inline />
             </template>
           </VTab>
         </VTabs>

@@ -13,13 +13,10 @@
       <VBtn
         v-else
         :icon="icon"
-        color="primary-darken-2"
         size="small"
         variant="tonal"
         @click.stop="showElementPicker"
-      >
-        <VIcon>{{ icon }}</VIcon>
-      </VBtn>
+      />
     </slot>
     <template v-if="isVisible">
       <SelectElement
@@ -50,23 +47,19 @@
         <template #header>
           <VBtn
             :disabled="useAI"
-            color="primary-darken-3"
-            variant="tonal"
             prepend-icon="mdi-content-copy"
             text="Copy existing"
+            variant="tonal"
             @click="showElementBrowser = !showElementBrowser"
           />
           <VBtn
             v-if="props.activity"
             :disabled="useAI"
-            class="ml-2"
-            color="primary-darken-3"
             prepend-icon="mdi-link-variant"
+            text="Link Content"
             variant="tonal"
             @click="showContentLinker = !showContentLinker"
-          >
-            Link Content
-          </VBtn>
+          />
           <VSpacer />
           <div v-if="layout" class="d-flex align-center ga-4">
             <span class="text-body-large text-medium-emphasis">
@@ -80,10 +73,10 @@
               mandatory
             >
               <VBtn v-tooltip:bottom="'Full width'" :value="100" size="small">
-                <VIcon size="18">mdi-square-outline</VIcon>
+                <VIcon icon="mdi-square-outline" size="18" />
               </VBtn>
               <VBtn v-tooltip:bottom="'Half width'" :value="50" size="small">
-                <VIcon size="18">mdi-select-compare</VIcon>
+                <VIcon icon="mdi-select-compare" size="18" />
               </VBtn>
             </VBtnToggle>
           </div>
@@ -93,9 +86,7 @@
             </span>
             <VSwitch
               v-model="useAI"
-              color="indigo-darken-2"
               density="compact"
-              inset
               hide-details
             />
           </div>
@@ -103,6 +94,7 @@
             <div v-if="useAI" class="w-100">
               <VTextarea
                 v-model="aiPrompt"
+                bg-color="surface-container-low"
                 density="comfortable"
                 placeholder="Describe the content you want to generate..."
                 rows="2"
@@ -158,7 +150,7 @@ const props = withDefaults(defineProps<Props>(), {
   large: false,
   label: 'Add content',
   icon: 'mdi-plus',
-  color: 'primary-darken-4',
+  color: '',
   variant: 'tonal',
 });
 const emit = defineEmits(['add', 'hidden']);

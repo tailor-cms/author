@@ -3,7 +3,6 @@
     <VTooltip
       v-for="{ active, title, icon, action, disabled } in actions"
       :key="title"
-      content-class="bg-primary-darken-4"
       location="bottom"
       offset="12"
     >
@@ -12,7 +11,7 @@
           v-bind="tooltipProps"
           :active="active"
           :aria-label="title"
-          :color="active ? 'secondary-lighten-3' : 'primary-lighten-4'"
+          :color="active ? 'tertiary' : ''"
           :disabled="disabled"
           :icon="`mdi-${icon}`"
           class="action-btn"

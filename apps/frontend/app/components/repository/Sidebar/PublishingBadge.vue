@@ -1,10 +1,5 @@
 <template>
-  <VTooltip
-    content-class="bg-primary-darken-4"
-    location="left"
-    max-width="300"
-    open-delay="100"
-  >
+  <VTooltip location="left" max-width="300" open-delay="100">
     <template #activator="{ props: tooltipProps }">
       <span v-bind="tooltipProps">
         <VBadge :color="badgeColor" dot inline />
@@ -54,9 +49,7 @@ const getDescendantsInfo = (
 
 const label = computed(() => $schemaService.getActivityLabel(props.activity));
 const badgeColor = computed(() =>
-  hasChanges.value || subtreeHasChanges.value
-    ? 'orange-lighten-3'
-    : 'teal-lighten-2',
+  hasChanges.value || subtreeHasChanges.value ? 'warning' : 'secondary',
 );
 
 const hasChanges = computed(() => isChanged(props.activity));

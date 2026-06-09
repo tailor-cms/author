@@ -17,21 +17,20 @@
       </span>
     </VListItemSubtitle>
     <template #append>
-      <VChip v-if="isSoftDeleted" color="white" size="small">
+      <VChip v-if="isSoftDeleted" size="small">
         <span class="pr-1 font-weight-bold">Deleted:</span>
         Publish required
         <VIcon
           v-tooltip:bottom="'Will be removed upon publishing'"
           class="ml-2"
-          color="secondary"
+          color="error"
           icon="mdi-information-outline"
         />
       </VChip>
       <div v-else class="row-actions d-flex align-center">
         <VBtn
           v-tooltip:bottom="'Open'"
-          class="mr-1 text-none"
-          color="primary-lighten-3"
+          class="text-medium-emphasis mr-1"
           icon="mdi-page-next-outline"
           rounded="pill"
           size="small"
@@ -42,8 +41,7 @@
         <VBtn
           v-tooltip:bottom="'Delete'"
           aria-label="Delete item"
-          class="delete-btn"
-          color="primary-lighten-3"
+          class="delete-btn text-medium-emphasis"
           icon="mdi-trash-can-outline"
           size="small"
           variant="text"
@@ -108,6 +106,7 @@ const openActivity = () => {
 const deleteActivity = () =>
   showConfirmationDialog({
     title: 'Delete item?',
+    color: 'error',
     message: `Are you sure you want to delete ${props.activity.data.name}?`,
     action: () => {
       activityStore.remove(props.activity.id);
@@ -127,7 +126,7 @@ watch(isSelected, (selected) => {
 
 <style lang="scss" scoped>
 .collection-row {
-  background: rgba(var(--v-theme-primary-darken-2));
+  background-color: rgba(var(--v-theme-surface-container));
   border-left: 8px solid var(--row-accent);
   transition:
     background-color 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
@@ -138,26 +137,25 @@ watch(isSelected, (selected) => {
   }
 
   &:hover {
-    background: rgba(var(--v-theme-primary-darken-1));
+    background-color: rgb(var(--v-theme-surface-container-high));
   }
 
   &.is-selected {
-    background: rgba(var(--v-theme-primary-darken-1));
+    background-color: rgb(var(--v-theme-surface-container-high));
     border-left-width: 2.25rem;
 
     .collection-title {
       font-weight: 600 !important;
-      color: rgb(var(--v-theme-primary-lighten-5));
     }
   }
 
   &.is-deleted {
-    background: rgba(var(--v-theme-secondary-lighten-3), 0.2);
-    border-left-color: rgb(var(--v-theme-secondary-lighten-3));
+    background-color: rgba(var(--v-theme-error), 0.15);
+    border-left-color: rgb(var(--v-theme-error));
 
     &:hover,
     &.is-selected {
-      background: rgba(var(--v-theme-secondary-lighten-3), 0.3);
+      background-color: rgba(var(--v-theme-error), 0.2);
     }
   }
 

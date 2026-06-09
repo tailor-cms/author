@@ -3,7 +3,6 @@
     :model-value="show"
     class="align-center justify-center"
     opacity="0.9"
-    scrim="grey-darken-4"
     close-on-content-click
     contained
   >

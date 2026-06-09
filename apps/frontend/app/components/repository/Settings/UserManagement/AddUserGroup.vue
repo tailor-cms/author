@@ -4,14 +4,12 @@
       <VBtn
         v-bind="activatorProps"
         aria-label="Add user group"
-        class="add-user text-none"
-        color="teal-lighten-3"
+        class="add-user"
+        color="primary"
         prepend-icon="mdi-plus"
-        variant="tonal"
-        size="small"
-      >
-        Add user group
-      </VBtn>
+        text="Add user group"
+        variant="flat"
+      />
     </template>
     <template #header>Assosciate user group</template>
     <template #body>
@@ -32,18 +30,14 @@
           closable-chips
         />
         <div class="d-flex justify-end pb-3">
-          <VBtn color="primary-darken-4" variant="text" @click="close">
-            Cancel
-          </VBtn>
+          <VBtn text="Cancel" variant="text" @click="close" />
           <VBtn
             :disabled="!!errors?.length"
             class="ml-2 px-4"
-            color="primary-darken-2"
+            color="primary"
+            text="Save"
             type="submit"
-            variant="tonal"
-          >
-            Save
-          </VBtn>
+          />
         </div>
       </form>
     </template>

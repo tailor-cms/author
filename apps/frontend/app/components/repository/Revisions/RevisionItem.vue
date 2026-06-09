@@ -2,29 +2,23 @@
   <li>
     <VListItem
       :active="isExpanded"
-      :class="{ 'rounded-b-0': isExpanded }"
       :disabled="!isContentElement"
+      :rounded="isExpanded ? 'lg b-0' : 'lg'"
+      :subtitle="`${timeAgo} by ${revision.user.label}`"
+      :title="description"
       class="revision"
-      rounded="lg"
       @click="toggle"
     >
       <template #prepend>
-        <VAvatar color="primary-lighten-3" size="42">{{ acronym }}</VAvatar>
-      </template>
-      <VListItemTitle
-        class="text-body-large text-truncate text-primary-lighten-5"
-      >
-        {{ description }}
-      </VListItemTitle>
-      <VListItemSubtitle class="text-body-medium text-primary-lighten-4">
-        {{ formatTimeAgo(date, { rounding: 'floor' }) }} by
-        {{ revision.user.label }}
-      </VListItemSubtitle>
-      <template v-if="isContentElement" #append>
-        <VIcon
-          :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-          class="text-primary-lighten-4"
+        <VAvatar
+          :color="color"
+          :text="acronym"
+          size="42"
+          variant="tonal"
         />
+      </template>
+      <template v-if="isContentElement" #append>
+        <VIcon :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'" />
       </template>
     </VListItem>
     <VFadeTransition>
@@ -44,7 +38,11 @@ import { formatTimeAgo } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import EntityRevisions from './EntityRevisions.vue';
-import { getFormatDescription, getRevisionAcronym } from '@/lib/revision';
+import {
+  getFormatDescription,
+  getRevisionAcronym,
+  getRevisionColor,
+} from '@/lib/revision';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -62,11 +60,14 @@ const activity = computed(() => {
 });
 
 const acronym = computed(() => getRevisionAcronym(props.revision));
+const color = computed(() => getRevisionColor(props.revision));
 const date = computed(() => new Date(props.revision.createdAt));
 
 const description = computed(() =>
   getFormatDescription(props.revision, activity.value),
 );
+
+const timeAgo = computed(() => formatTimeAgo(date.value, { rounding: 'floor' }));
 
 const isContentElement = computed(
   () => props.revision.entity === 'CONTENT_ELEMENT',
@@ -93,10 +94,6 @@ li + li {
   transition: all 0.3s ease;
 
   &.v-list-item--disabled {
-    opacity: 1;
-  }
-
-  .v-list-item-subtitle {
     opacity: 1;
   }
 }

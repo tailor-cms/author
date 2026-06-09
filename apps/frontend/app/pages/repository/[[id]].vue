@@ -6,7 +6,7 @@
     <template v-else>
       <NavigationRail @action="onRailAction" />
       <VLayout
-        class="h-100 mr-3 bg-primary-darken-3 rounded-t-xl border-surface border-sm">
+        class="h-100 mr-3 bg-surface-container-low rounded-t-xl border-sm">
         <NuxtPage />
       </VLayout>
       <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
@@ -79,6 +79,7 @@ const showDeleteConfirmation = () => {
   const { id, name } = repository;
   confirmationDialog({
     title: 'Delete repository?',
+    color: 'error',
     message: `Are you sure you want to delete repository ${name}?`,
     action: async () => {
       await repositoryStore.remove(id);

@@ -3,19 +3,18 @@
     v-if="isPanelEnabled"
     ref="rootEl"
     class="agent-panel"
-    data-agent-target="panel"
   >
-    <VCard
-      v-if="isPanelOpen"
-      class="panel-card"
-      data-agent-target="panel-card"
-      elevation="5"
-      rounded="xl"
-    >
+    <PanelLauncher
+      v-show="!isPanelOpen"
+      :is-running="isRunning"
+      @open="openPanel"
+    />
+    <DefinePanelBody>
       <PanelHeader
         :is-running="isRunning"
-        :focus-label="focusLabel"
+        :is-expanded="isExpanded"
         @session:reset="runner.resetSession"
+        @panel:toggle-expand="isExpanded = !isExpanded"
         @panel:close="closePanel"
       />
       <AgentMessageList
@@ -25,7 +24,7 @@
         :status-text="activeStatus"
         :error="runnerError"
       />
-      <div v-if="pendingQuestion" class="question-host">
+      <div v-if="pendingQuestion" class="question-host ma-4">
         <AgentQuestion
           v-bind="pendingQuestion"
           @pick="runner.send"
@@ -38,6 +37,7 @@
         v-model:mode="mode"
         v-model:effort="effort"
         :disabled="isRunning"
+        :focus-chip="focusChip"
         @autorun="runner.send"
         @focus="scrollToLatest"
         @submit="sendPrompt"
@@ -48,13 +48,35 @@
         :turns="lastTurns"
         :tool-count="lastToolCount || 0"
       />
-    </VCard>
-    <PanelLauncher v-else :is-running="isRunning" @open="openPanel" />
+    </DefinePanelBody>
+    <VDialog
+      v-model="isFullscreen"
+      fullscreen
+      transition="dialog-bottom-transition"
+    >
+      <VCard class="panel-card-full">
+        <div class="panel-body-column">
+          <ReusePanelBody />
+        </div>
+      </VCard>
+    </VDialog>
+    <Transition name="panel-pop">
+      <VCard
+        v-if="isPanelOpen && !isExpanded"
+        class="panel-card"
+        elevation="5"
+        max-height="68vh"
+        width="580"
+        rounded="xl"
+      >
+        <ReusePanelBody />
+      </VCard>
+    </Transition>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { useLocalStorage } from '@vueuse/core';
+import { createReusableTemplate, useLocalStorage } from '@vueuse/core';
 import { AGENT_MODES, AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import {
   REASONING_EFFORTS,
@@ -81,6 +103,8 @@ const authStore = useAuthStore();
 const config = useConfigStore();
 const repositoryStore = useCurrentRepository();
 
+const [DefinePanelBody, ReusePanelBody] = createReusableTemplate();
+
 const rootEl = ref<HTMLElement | null>(null);
 const inputEl = ref<{ focus: () => void } | null>(null);
 const messageListEl = ref<{ scrollToBottom: () => void } | null>(null);
@@ -103,7 +127,7 @@ const isPanelEnabled = computed(() =>
   ),
 );
 
-const { focusLabel, focusPayload } = useAgentFocus();
+const { focusChip, focusPayload } = useAgentFocus();
 
 const { sessionId, messages } = useAgentSession(repositoryUid);
 
@@ -120,6 +144,8 @@ const effort = useLocalStorage<ReasoningEffortLiteral>(
 if (!(REASONING_EFFORTS as readonly string[]).includes(effort.value)) {
   effort.value = ReasoningEffort.Medium;
 }
+
+const isExpanded = ref(false);
 
 const {
   isOpen: isPanelOpen,
@@ -152,6 +178,13 @@ const runner = useAgentRunner({
   onRunEnd: stopStatus,
 });
 
+const isFullscreen = computed({
+  get: () => isPanelOpen.value && isExpanded.value,
+  set: (value) => {
+    if (!value) closePanel();
+  },
+});
+
 const {
   isRunning,
   error: runnerError,
@@ -159,6 +192,10 @@ const {
   lastToolCount,
   pendingQuestion,
 } = runner;
+
+watch(isPanelOpen, (open) => {
+  if (!open) isExpanded.value = false;
+});
 
 // Repo switch wipes transient UI state.
 watch(repositoryId, () => {
@@ -182,23 +219,51 @@ onMounted(scrollToLatest);
 <style lang="scss" scoped>
 .agent-panel {
   position: fixed;
-  right: 1.75rem;
-  bottom: 0.75rem;
+  right: 1.5rem;
+  bottom: 1.5rem;
   z-index: 9000;
 }
 
 .panel-card {
+  position: absolute;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  width: 36.25rem;
-  max-height: 68vh;
-  background: rgb(var(--v-theme-surface)) !important;
 }
 
-.question-host {
-  padding: 0.6875rem 0.9375rem 0;
-  background: rgba(var(--v-theme-on-surface), 0.04);
+// Fullscreen (expanded) dialog: card fills the viewport, content is capped
+// to a centered column so chat lines stay readable on wide screens.
+.panel-card-full {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+.panel-body-column {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  max-width: 60rem;
+  min-height: 0; // let the inner scroll area shrink instead of overflowing
+}
+
+.panel-pop-enter-active,
+.panel-pop-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: bottom right;
+}
+
+.panel-pop-enter-from,
+.panel-pop-leave-to {
+  opacity: 0;
+  transform: scale(0.85) translateY(12px);
 }
 </style>
 

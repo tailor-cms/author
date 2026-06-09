@@ -2,9 +2,9 @@
   <NuxtLayout name="main">
     <VSheet
       class="catalog-scroll mx-3"
-      color="primary-darken-3"
+      color="surface-container-low"
       rounded="t-xl"
-      border="sm surface"
+      border
     >
       <VContainer class="catalog" max-width="1360">
         <VRow class="catalog-actions py-10" density="compact">
@@ -27,18 +27,14 @@
             cols="12"
             lg="4"
           >
-            <VTooltip
-              content-class="bg-primary-darken-4"
-              location="top"
-              open-delay="400"
-            >
+            <VTooltip location="top" open-delay="400">
               <template #activator="{ props: tooltipProps }">
                 <VBtn
                   v-bind="tooltipProps"
-                  :color="arePinnedShown ? 'lime-accent-3' : 'primary-lighten-3'"
+                  :color="arePinnedShown ? 'tertiary' : '' "
                   :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                   aria-label="Toggle pinned items filter"
-                  class="my-1"
+                  class="text-medium-emphasis my-1"
                   variant="tonal"
                   @click="togglePinFilter"
                 />
@@ -72,18 +68,14 @@
         />
         <VExpandTransition>
           <div v-if="selectedRepos.size > 0" class="d-flex align-center mb-4 text-left">
-            <VTooltip
-              content-class="bg-primary-darken-4"
-              location="top"
-              open-delay="400"
-            >
+            <VTooltip location="top" open-delay="400">
               <template #activator="{ props: tooltipProps }">
                 <VCheckbox
                   v-bind="tooltipProps"
                   :disabled="!repositories.length"
                   :model-value="isAllSelected"
                   :indeterminate="someSelected"
-                  color="primary-lighten-3"
+                  color="primary"
                   label="Select all"
                   hide-details
                   @update:model-value="toggleSelectAll"
@@ -93,20 +85,18 @@
             </VTooltip>
             <VBtn
               :disabled="selectedRepos.size === 0"
+              :text="`Delete (${selectedRepos.size})`"
               class="ml-4"
-              color="secondary-lighten-3"
-              prepend-icon="mdi-delete"
+              color="error"
+              prepend-icon="mdi-trash-can-outline"
               variant="tonal"
               @click="deleteSelected"
-            >
-              Delete ({{ selectedRepos.size }})
-            </VBtn>
+            />
           </div>
         </VExpandTransition>
         <VInfiniteScroll
           v-if="!isLoading && hasRepositories"
           class="d-flex ma-0 pa-0"
-          color="primary-lighten-4"
           empty-text=""
           mode="manual"
           @load="loadMore"
@@ -127,22 +117,23 @@
             </VCol>
           </VRow>
           <template #load-more="{ props: loadProps }">
-            <VBtn v-if="!areAllItemsFetched" v-bind="loadProps" variant="tonal">
-              Load more
-            </VBtn>
+            <VBtn
+              v-if="!areAllItemsFetched"
+              v-bind="loadProps"
+              text="Load more"
+              variant="tonal"
+            />
           </template>
         </VInfiniteScroll>
         <VAlert
           v-else-if="noRepositoriesMessage"
+          :text="noRepositoriesMessage"
           class="mt-4"
-          color="primary-lighten-3"
           icon="mdi-alert-circle-outline"
           rounded="lg"
           variant="tonal"
           prominent
-        >
-          {{ noRepositoriesMessage }}
-        </VAlert>
+        />
       </VContainer>
     </VSheet>
   </NuxtLayout>
@@ -235,6 +226,7 @@ const deleteSelected = () => {
 
   confirmationDialog({
     title: `Delete ${pluralize('repository', count)}?`,
+    color: 'error',
     message: `Are you sure you want to delete ${pluralize('repository', count, true)}?`,
     action: async () => {
       try {

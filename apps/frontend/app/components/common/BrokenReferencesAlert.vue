@@ -1,42 +1,37 @@
 <template>
   <div v-show="errors.length">
     <VAlert
-      class="mt-5 text-left text-body-large"
-      color="yellow-lighten-4"
+      class="mt-2 text-left text-body-large"
+      type="warning"
       icon="mdi-alert"
       variant="tonal"
-      prominent
+      text="Detected issues"
     >
-      <div class="mt-3 text-body-large font-weight-bold">Detected Issues:</div>
-      <div class="pl-1 pr-5 text-body-large">
-        <VCard
-          v-for="({ id, link, message }, index) in errors"
-          :key="index"
-          class="my-4 pa-4"
-          variant="tonal"
-        >
-          {{ index + 1 }}. {{ message }}
-          <a
-            v-if="id"
-            class="text-yellow-accent-1"
-            href="#"
-            @click.stop="repositoryStore.selectActivity(id)"
-          >
-            Click to select the item.
-          </a>
-          <NuxtLink v-else-if="link" :to="link" class="text-yellow-accent-1">
-            Click to navigate to the item.
-          </NuxtLink>
-        </VCard>
-      </div>
-      <VBtn
-        class="mt-4 ml-1"
-        color="yellow-darken-2"
+      <VCard
+        v-for="({ id, link, message }, index) in errors"
+        :key="index"
+        class="my-4 pa-4 text-body-medium"
         variant="tonal"
-        @click="cleanupReferences"
       >
-        Remove all broken references
-      </VBtn>
+        {{ index + 1 }}. {{ message }}
+        <a
+          v-if="id"
+          href="#"
+          @click.stop="repositoryStore.selectActivity(id)"
+        >
+          Click to select the item.
+        </a>
+        <NuxtLink v-else-if="link" :to="link">
+          Click to navigate to the item.
+        </NuxtLink>
+      </VCard>
+      <VBtn
+        text="Remove all broken references"
+        color="warning"
+        variant="flat"
+        block
+        @click="cleanupReferences"
+      />
     </VAlert>
   </div>
 </template>
@@ -100,3 +95,9 @@ onMounted(() => {
   validateReferences();
 });
 </script>
+
+<style lang="scss" scoped>
+a {
+  text-decoration: underline;
+}
+</style>

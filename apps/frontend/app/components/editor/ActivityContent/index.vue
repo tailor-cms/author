@@ -21,7 +21,6 @@
       <VAlert
         v-else-if="isEmptyLinkedActivity"
         class="mt-8"
-        color="primary-lighten-3"
         icon="mdi-link-variant"
         variant="tonal"
         prominent

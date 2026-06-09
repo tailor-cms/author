@@ -1,32 +1,26 @@
 <template>
-  <VDialog
-    :width="props.width"
-    v-bind="$attrs"
-    @update:model-value="onModelUpdate"
-  >
+  <VDialog :width="width" v-bind="$attrs" @update:model-value="onModelUpdate">
     <template v-if="$slots.activator" #activator="activatorProps">
       <slot v-bind="activatorProps" name="activator"></slot>
     </template>
-    <template v-if="$slots.default" #default="defaultProps">
-      <slot v-bind="defaultProps"></slot>
+    <template #default="defaultProps">
+      <slot v-if="$slots.default" v-bind="defaultProps"></slot>
+      <VCard :data-testid="dataTestid" rounded="xl">
+        <VCardTitle class="dialog-title pa-5 pb-0 align-center">
+          <VIcon :icon="headerIcon" :color="color" class="mr-3" size="small" />
+          <div class="text-truncate font-weight-semibold">
+            <slot name="header"></slot>
+          </div>
+        </VCardTitle>
+        <VCardText :class="[paddingless ? 'pa-0' : 'pt-6 px-4 pb-2']">
+          <slot name="body"></slot>
+        </VCardText>
+        <VCardActions v-if="$slots.actions" class="px-4 pb-3">
+          <VSpacer />
+          <slot name="actions"></slot>
+        </VCardActions>
+      </VCard>
     </template>
-    <VCard :data-testid="dataTestid" color="primary-lighten-5">
-      <VCardTitle class="dialog-title pa-5 align-center bg-primary-darken-3">
-        <VIcon class="pa-5 mr-1" color="teal-lighten-4" size="26">
-          {{ props.headerIcon }}
-        </VIcon>
-        <div class="text-truncate text-primary-lighten-4">
-          <slot name="header"></slot>
-        </div>
-      </VCardTitle>
-      <VCardText :class="[props.paddingless ? 'pa-0' : 'pt-7 px-4 pb-2']">
-        <slot name="body"></slot>
-      </VCardText>
-      <VCardActions v-if="$slots.actions" class="px-4 pb-3">
-        <VSpacer />
-        <slot name="actions"></slot>
-      </VCardActions>
-    </VCard>
   </VDialog>
 </template>
 
@@ -36,10 +30,12 @@ export interface Props {
   width?: number | string;
   paddingless?: boolean;
   dataTestid?: string;
+  color?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   headerIcon: 'mdi-alert',
+  color: 'primary',
   width: 500,
   paddingless: false,
   dataTestid: 'tailorDialog',

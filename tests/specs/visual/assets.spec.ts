@@ -27,15 +27,15 @@ test('Asset library - empty state', async ({ page }) => {
   await percySnapshot(page, 'Asset library - empty state');
 });
 
-test('Asset library - detail dialog', async ({ page }) => {
+test('Asset library - detail sidebar', async ({ page }) => {
   const repository = await toRepositoryAssets(page, REPOSITORY_NAME);
   await AssetClient.uploadFile(repository.id, IMAGE.path);
   await page.reload({ waitUntil: 'networkidle' });
   const lib = new AssetLibrary(page);
   await lib.waitForLoad();
   await lib.getRow(IMAGE.name).openDetail();
-  await lib.detailDialog.waitForOpen();
-  await percySnapshot(page, 'Asset library - detail dialog');
+  await lib.sidebar.waitForOpen();
+  await percySnapshot(page, 'Asset library - detail sidebar');
 });
 
 test('Asset library - add link dialog', async ({ page }) => {

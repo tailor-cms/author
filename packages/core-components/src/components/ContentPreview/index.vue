@@ -2,12 +2,10 @@
   <VAlert
     v-if="!elements.length"
     class="text-center"
-    color="primary-darken-2"
     height="300"
+    text="No available elements."
     variant="tonal"
-  >
-    No available elements.
-  </VAlert>
+  />
   <VRow v-for="container in contentContainers" :key="container.id">
     <ContentElementWrapper
       v-for="it in container.elements"

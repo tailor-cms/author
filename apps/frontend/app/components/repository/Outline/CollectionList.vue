@@ -2,13 +2,11 @@
   <VAlert
     v-if="!sortedActivities.length"
     class="my-4"
-    color="primary-lighten-3"
     icon="mdi-magnify"
+    text="No matches found!"
     variant="tonal"
     prominent
-  >
-    No matches found!
-  </VAlert>
+  />
   <VList v-else bg-color="transparent" class="collection-list pa-0">
     <CollectionItem
       v-for="item in sortedActivities"

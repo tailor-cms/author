@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <AppBar v-if="store.user" :user="store.user" />
-    <VMain class="view bg-primary-darken-4">
+    <VMain class="view bg-surface">
       <slot></slot>
     </VMain>
     <AgentPanel v-if="store.user" />
@@ -51,6 +51,10 @@ body {
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.v-main {
+  transition: none;
 }
 
 .v-main .view {

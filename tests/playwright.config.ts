@@ -59,9 +59,20 @@ export default defineConfig({
       },
     },
     {
-      name: 'a11y',
+      name: 'a11y-dark',
       testDir: './specs/a11y',
       dependencies: ['setup-admin'],
+      metadata: { colorMode: 'dark' },
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth-admin.json',
+      },
+    },
+    {
+      name: 'a11y-light',
+      testDir: './specs/a11y',
+      dependencies: ['setup-admin'],
+      metadata: { colorMode: 'light' },
       use: {
         ...devices['Desktop Chrome'],
         storageState: '.auth-admin.json',

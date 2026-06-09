@@ -1,15 +1,13 @@
 <template>
-  <div v-if="metadata.length" class="activity-metadata">
-    <div class="activity-metadata-wrapper">
-      <div class="activity-metadata-header d-flex align-center px-1 pt-4 pb-5">
-        <VIcon class="mr-2" color="primary-lighten-4" size="small">
-          mdi-text-box-edit-outline
-        </VIcon>
-        <span class="text-title-small font-weight-bold text-primary-lighten-4">
+  <div v-if="metadata.length" class="activity-metadata text-left">
+    <div class="py-4 px-6">
+      <div class="d-flex align-center px-1 pt-4 pb-5">
+        <VIcon icon="mdi-text-box-edit-outline" size="small" start />
+        <span class="text-title-small font-weight-bold">
           {{ activityLabel }} Details
         </span>
       </div>
-      <div class="metadata-fields px-1 pb-4">
+      <div class="metadata-fields">
         <MetaInput
           v-for="it in metadata"
           :key="`${activity.uid}.${it.key}.${$pluginRegistry.dataVersion}`"
@@ -65,33 +63,3 @@ const updateActivity = async (
   }
 };
 </script>
-
-<style lang="scss" scoped>
-$error-color: rgb(var(--v-theme-secondary-lighten-4));
-
-.activity-metadata-wrapper {
-  position: relative;
-  max-width: 72.5rem;
-  padding: 1rem 1.25rem;
-
-  :deep(.v-input) {
-    position: relative;
-
-    .v-input__details {
-      text-align: left;
-    }
-  }
-
-  :deep(.v-input--error) {
-    .v-messages__message,
-    .v-field__outline,
-    .v-field-label {
-      color: $error-color;
-    }
-  }
-}
-
-.activity-metadata-header {
-  letter-spacing: 0.05em;
-}
-</style>

@@ -12,8 +12,7 @@
       bg-color="transparent"
       class="pa-0"
       rounded="lg"
-      divided
-      slim
+      nav
     >
       <VListGroup
         v-for="(elements, group) in filteredRegistry"
@@ -21,39 +20,37 @@
         :value="group"
       >
         <template #activator="{ props: activatorProps }">
-          <VListItem v-bind="activatorProps">
-            <VListItemTitle>{{ startCase(group) }}</VListItemTitle>
-          </VListItem>
+          <VListItem
+            v-bind="activatorProps"
+            :title="startCase(group)"
+            class="pa-0 px-4"
+          />
         </template>
         <VAlert
           v-if="!elements.length"
           class="ma-4"
-          color="primary-darken-4"
           icon="mdi-information-outline"
+          text="No elements found!"
           variant="tonal"
-        >
-          No elements found!
-        </VAlert>
+        />
         <VListItem
           v-for="{ name, ui, version, position, ai } in elements"
           v-else
           :key="position"
-          lines="two"
+          :prepend-icon="ui.icon || DEFAULT_ICON"
+          :subtitle="`Version ${version}`"
+          :title="name"
+          class="pa-0 px-8"
         >
-          <template #prepend>
-            <VIcon :icon="ui.icon || DEFAULT_ICON" size="x-large" />
-          </template>
-          <template #append>
+          <template v-if="ai" #append>
             <VChip
-              v-if="ai"
               text="AI Powered"
-              color="indigo-darken-2"
-              size="small"
+              size="x-small"
+              color="secondary"
               prepend-icon="mdi-creation"
-              rounded />
+              rounded
+            />
           </template>
-          <VListItemTitle>{{ name }}</VListItemTitle>
-          <VListItemSubtitle>Version {{ version }}</VListItemSubtitle>
         </VListItem>
       </VListGroup>
     </VList>

@@ -3,18 +3,17 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
-        color="indigo-darken-2"
+        color="secondary"
         size="small"
         text="AI Prompt"
         variant="tonal"
       />
     </template>
-    <VCard class="mt-2 pa-7" color="primary-darken-4" min-width="410">
+    <VCard class="mt-2 pa-7" min-width="410">
       <VBtnToggle
         v-model="promptType"
-        base-color="primary-lighten-5"
         class="mb-6"
-        color="secondary-lighten-3"
+        color="secondary"
         density="compact"
         variant="tonal"
         group
@@ -34,7 +33,6 @@
           :disabled="!hasInput"
           :slim="false"
           append-icon="mdi-shimmer"
-          color="primary-lighten-3"
           text="Generate"
           variant="tonal"
           @click="onSubmit"

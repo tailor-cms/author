@@ -1,26 +1,16 @@
 <template>
-  <div class="activity-options-container d-flex">
-    <VTooltip
+  <div class="activity-options-container d-flex ga-1 mr-1">
+    <VBtn
       v-for="it in options"
       :key="it.name"
-      content-class="bg-primary-darken-4"
-      location="bottom"
-    >
-      <template #activator="{ props: tooltipProps }">
-        <VBtn
-          v-bind="tooltipProps"
-          :aria-label="it.name"
-          :icon="it.icon"
-          class="mr-1"
-          color="primary-lighten-3"
-          size="small"
-          variant="text"
-          @click.stop="it.action"
-        >
-        </VBtn>
-      </template>
-      <span>{{ it.name }}</span>
-    </VTooltip>
+      v-tooltip:bottom="it.name"
+      :aria-label="it.name"
+      :icon="it.icon"
+      class="text-medium-emphasis"
+      size="small"
+      variant="text"
+      @click.stop="it.action"
+    />
     <CreateDialog
       v-if="showCreateDialog"
       :action="action"

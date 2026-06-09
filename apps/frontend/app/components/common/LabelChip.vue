@@ -1,17 +1,15 @@
 <template>
   <VChip
     :color="color"
-    class="flex-shrink-0 text-body-small text-uppercase font-weight-bold readonly"
-    label
+    :text="text"
+    class="flex-shrink-0 text-body-small text-uppercase font-weight-bold"
   >
-    <slot></slot>
+    <template v-if="$slots.default" #default>
+      <slot></slot>
+    </template>
   </VChip>
 </template>
 
 <script lang="ts" setup>
-interface Props {
-  color?: string;
-}
-
-withDefaults(defineProps<Props>(), { color: 'primary-lighten-5' });
+defineProps<{ color?: string; text?: string }>();
 </script>

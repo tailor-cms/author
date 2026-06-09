@@ -3,14 +3,12 @@
     <div class="mb-2">
       <span class="text-title-small">Feedback</span>
       <VBtn
+        :text="buttonLabel"
         class="ml-2"
-        color="primary-darken-4"
         size="small"
         variant="text"
         @click="isExpanded = !isExpanded"
-      >
-        {{ buttonLabel }}
-      </VBtn>
+      />
     </div>
     <VExpandTransition>
       <div v-show="isExpanded">

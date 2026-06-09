@@ -1,40 +1,24 @@
 <template>
   <VSheet
     :class="dense ? 'pt-3' : 'pa-12'"
-    class="text-center text-grey"
+    class="text-center"
     color="transparent"
   >
-    <VAvatar
-      :color="isDisabled ? 'primary-darken-3' : 'primary-darken-4'"
-      :size="dense ? 40 : 60"
-    >
+    <VAvatar color="inverse-surface" :size="dense ? 40 : 60">
       <VIcon
-        :color="isFocused ? activeColor : 'white'"
+        :color="isFocused ? activeColor : ''"
         :icon="icon"
         :size="iconSize"
       />
     </VAvatar>
-    <div
-      :class="[
-        isDisabled ? 'text-grey-darken-3' : 'text-grey-darken-4',
-        dense ? 'my-2 text-title-small' : 'my-4 text-headline-small',
-      ]"
-    >
+    <div :class="[dense ? 'my-2 text-title-small' : 'my-4 text-headline-small']">
       {{ name }}
     </div>
-    <div
-      v-if="!dense && !isDisabled"
-      class="text-grey-darken-2 text-body-large"
-    >
+    <div v-if="!dense && !isDisabled" class="text-body-large">
       <template v-if="!isFocused">{{ placeholder }}</template>
       <template v-else>
         {{ activePlaceholder }}
-        <VIcon
-          v-if="activeIcon"
-          :icon="activeIcon"
-          color="primary-darken-4"
-          size="20"
-        />
+        <VIcon v-if="activeIcon" :icon="activeIcon" size="20" />
       </template>
     </div>
   </VSheet>

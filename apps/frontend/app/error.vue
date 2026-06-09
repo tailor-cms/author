@@ -1,20 +1,22 @@
 <template>
-  <VApp class="py-15 bg-primary-darken-3">
-    <VContainer class="mt-16">
-      <div class="d-flex flex-column align-center justify-center">
-        <VEmptyState
-          :headline="`Whooops, ${headline}`"
-          image="/img/logo-new.svg"
-        />
-        <VBtn
-          class="mt-4"
-          color="primary-darken-4"
-          prepend-icon="mdi-arrow-left"
-          @click="handleError"
-        >
-          Back to the catalog
-        </VBtn>
-      </div>
+  <VApp class="bg-surface">
+    <VContainer class="d-flex align-center justify-center fill-height pb-16">
+      <VEmptyState
+        :headline="content.headline"
+        :title="content.title"
+        :text="content.text"
+        image="/img/logo-new.svg"
+      >
+        <template #actions>
+          <VBtn
+            prepend-icon="mdi-arrow-left"
+            size="large"
+            text="Back to the catalog"
+            flat
+            @click="handleError"
+          />
+        </template>
+      </VEmptyState>
     </VContainer>
   </VApp>
 </template>
@@ -26,19 +28,25 @@ const props = defineProps({
   error: Object as () => NuxtError,
 });
 
-const is404 = computed(() => props.error?.statusCode === 404);
-
-const headline = computed(() =>
-  is404.value ? 'looks like that Page has been ✂ 😉' : 'an error has occured!',
+const is404 = computed(() => props.error?.status === 404);
+const content = computed(() => is404.value
+  ? {
+      headline: 'Whoops, 404',
+      title: 'Page not found',
+      text: 'The page you were looking for does not exist.',
+    }
+  : {
+      headline: 'Whoops!',
+      title: 'Something went wrong',
+      text: props.error?.message || 'An unexpected error has occurred.',
+    },
 );
 
 const handleError = () => clearError({ redirect: '/' });
 </script>
 
 <style lang="scss" scoped>
-:deep(.v-empty-state__headline) {
-  margin: 4rem 0 2rem;
-  font-size: 2.5rem;
-  color: rgb(var(--v-theme-primary-lighten-5));
+:deep(.v-empty-state__media) {
+  padding-block: 2rem;
 }
 </style>

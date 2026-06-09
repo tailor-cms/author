@@ -10,21 +10,16 @@
     transition="slide-y-transition"
   >
     <template #activator="{ props: menuProps }">
-      <VTooltip location="left" open-delay="1000">
-        <template #activator="{ props: tooltipProps }">
-          <VBtn
-            v-bind="{ ...menuProps, ...tooltipProps }"
-            :color="activator?.color"
-            :icon="activator?.icon"
-            aria-label="View comments"
-            size="x-small"
-            variant="tonal"
-          />
-        </template>
-        <span>{{ activator.tooltip }}</span>
-      </VTooltip>
+      <VBtn
+        v-tooltip:left="{ text: activator.tooltip, openDelay: 1000 }"
+        v-bind="menuProps"
+        :icon="activator?.icon"
+        aria-label="View comments"
+        size="x-small"
+        variant="tonal"
+      />
     </template>
-    <VSheet class="pa-3" color="primary-darken-4" elevation="2">
+    <VSheet class="pa-3" elevation="2">
       <Discussion
         v-bind="{
           comments,
@@ -58,7 +53,6 @@ import Discussion from './Discussion/index.vue';
 const getActivatorOptions = (unseenComments: Comment[]) => ({
   unseen: {
     tooltip: 'View new comments',
-    color: 'primary-darken-2',
     icon:
       unseenComments.length > 9
         ? 'mdi-numeric-9-plus-box-multiple'
@@ -66,12 +60,10 @@ const getActivatorOptions = (unseenComments: Comment[]) => ({
   },
   preview: {
     icon: 'mdi-comment-text-multiple-outline',
-    color: 'primary-darken-2',
     tooltip: 'View comments',
   },
   post: {
     icon: 'mdi-message-plus-outline',
-    color: 'primary-darken-2',
     tooltip: 'Post a comment',
   },
 });

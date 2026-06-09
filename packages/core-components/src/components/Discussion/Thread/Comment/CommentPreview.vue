@@ -2,21 +2,15 @@
   <div :class="{ resolved: isResolved }" class="content">
     <div v-if="isResolved" class="resolvement-options mt-3">
       <span class="font-italic mr-1">Marked as resolved.</span>
-      <VTooltip location="right" open-delay="800">
-        <template #activator="{ props: tooltipProps }">
-          <VBtn
-            v-bind="tooltipProps"
-            class="ml-1"
-            color="secondary-lighten-5"
-            size="x-small"
-            variant="tonal"
-            @click.stop="emit('unresolve')"
-          >
-            Undo
-          </VBtn>
-        </template>
-        <span>Unresolve comment</span>
-      </VTooltip>
+      <VBtn
+        v-tooltip:right="{ text: 'Unresolve comment', openDelay: 800 }"
+        class="ml-1"
+        color="tertiary"
+        size="x-small"
+        text="Undo"
+        variant="tonal"
+        @click.stop="emit('unresolve')"
+      />
     </div>
     <pre class="text-left"><span>{{ content }}</span><br /></pre>
   </div>

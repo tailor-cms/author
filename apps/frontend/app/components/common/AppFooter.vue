@@ -1,5 +1,5 @@
 <template>
-  <VFooter color="primary-darken-3" height="68" app>
+  <VFooter color="surface-container" height="68" app>
     <div class="d-flex flex-grow-1 align-center justify-center text-body-medium">
       <img
         alt="Tailor logo"
@@ -9,14 +9,12 @@
         width="32px"
       />
       <VChip
+        :text="`${version} ${codename}`"
         class="mx-4"
-        color="primary-lighten-4"
         rounded="lg"
         label
         small
-      >
-        {{ version }} {{ codename }}
-      </VChip>
+      />
       Built with <VIcon class="mx-1" color="pink">mdi-heart</VIcon>
       Studion
     </div>

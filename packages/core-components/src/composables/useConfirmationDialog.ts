@@ -3,6 +3,7 @@ import { inject } from 'vue';
 interface ConfirmationDialogOptions {
   title: string;
   message: string;
+  color?: string;
   action: () => any;
 }
 

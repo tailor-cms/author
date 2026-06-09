@@ -1,5 +1,10 @@
 <template>
-  <div :class="['tool-card', toolCall.ok ? 'tool-card-ok' : 'tool-card-err']">
+  <VCard
+    :border="`sm opacity-50 ${toolCall.ok ? 'success' : 'error'}`"
+    class="tool-card text-body-small"
+    color="surface-container-low"
+    elevation="0"
+  >
     <ToolCardHeader
       :name="toolCall.name"
       :is-success="toolCall.ok"
@@ -8,17 +13,19 @@
       :summary="summary"
       @toggle="isOpen = !isOpen"
     />
-    <div v-if="isOpen" class="card-body">
-      <details v-if="hasInput" open>
-        <summary>input</summary>
-        <pre>{{ stringify(toolCall.input) }}</pre>
-      </details>
-      <details v-if="hasResult">
-        <summary>result</summary>
-        <pre>{{ stringify(toolCall.result) }}</pre>
-      </details>
-    </div>
-  </div>
+    <VExpandTransition>
+      <div v-if="isOpen" class="card-body ga-2">
+        <details v-if="hasInput" open>
+          <summary>input</summary>
+          <pre>{{ stringify(toolCall.input) }}</pre>
+        </details>
+        <details v-if="hasResult">
+          <summary>result</summary>
+          <pre>{{ stringify(toolCall.result) }}</pre>
+        </details>
+      </div>
+    </VExpandTransition>
+  </VCard>
 </template>
 
 <script lang="ts" setup>
@@ -61,27 +68,13 @@ function stringify(value: unknown): string {
 <style lang="scss" scoped>
 .tool-card {
   overflow: hidden;
-  border: 1px solid rgb(var(--v-theme-outline-variant));
-  border-radius: 0.625rem;
-  background: rgb(var(--v-theme-surface));
-  font-size: 0.75rem;
   transition: border-color 120ms ease;
-}
-
-.tool-card-ok {
-  border-color: rgba(var(--v-theme-success), 0.35);
-}
-
-.tool-card-err {
-  border-color: rgba(var(--v-theme-error), 0.5);
 }
 
 .card-body {
   display: flex;
   flex-direction: column;
-  gap: 0.375rem;
   padding: 0.5rem 0.75rem 0.75rem;
-  border-top: 1px solid rgb(var(--v-theme-outline-variant));
 }
 
 .card-body details summary {
@@ -105,7 +98,6 @@ function stringify(value: unknown): string {
   max-height: 15rem;
   margin: 0.3125rem 0 0;
   padding: 0.5rem 0.6875rem;
-  border: 1px solid rgb(var(--v-theme-outline-variant));
   border-radius: 0.5rem;
   background: rgba(var(--v-theme-on-surface), 0.06);
   color: rgb(var(--v-theme-on-surface));

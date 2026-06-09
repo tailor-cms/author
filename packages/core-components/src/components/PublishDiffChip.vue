@@ -28,6 +28,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const chipColor = computed(() => {
   const isNewItem = props.changeType === PublishDiffChangeTypes.New;
-  return isNewItem ? 'green-accent-4' : 'pink-accent-1';
+  return isNewItem ? 'secondary' : 'tertiary';
 });
 </script>

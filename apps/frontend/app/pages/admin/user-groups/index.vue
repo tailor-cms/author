@@ -5,14 +5,12 @@
       <VBtn
         v-if="authStore.isAdmin"
         aria-label="Add user group"
-        class="px-3"
-        color="primary-darken-2"
-        variant="tonal"
+        color="primary"
+        prepend-icon="mdi-account-multiple-plus"
+        text="Add user group"
+        variant="flat"
         @click.stop="showGroupDialog"
-      >
-        <VIcon class="px-4">mdi-account-multiple-plus</VIcon>
-        Add user group
-      </VBtn>
+      />
     </div>
     <VRow class="filters justify-end">
       <VCol md="6">
@@ -46,10 +44,10 @@
       <template #item="{ item }">
         <tr :key="item.id" class="group-entry">
           <td class="text-no-wrap text-left">
-            <UserGroupAvatar :logo-url="item.logoUrl" />
+            <UserGroupAvatar :logo-url="item.logoUrl" size="32" />
             <NuxtLink
               :to="{ name: 'user-group', params: { userGroupId: item.id } }"
-              class="ml-6 text-primary-darken-4"
+              class="ml-6"
             >
               {{ item.name }}
             </NuxtLink>
@@ -57,17 +55,19 @@
           <td v-if="authStore.isAdmin" class="text-no-wrap text-left">
             <VBtn
               aria-label="Edit user group"
-              color="primary-darken-4"
-              icon="mdi-pencil"
+              class="mr-1"
+              density="comfortable"
+              icon="mdi-square-edit-outline"
               size="small"
               variant="text"
               @click="showGroupDialog(item)"
             />
             <VBtn
               aria-label="Delete user group"
-              icon="mdi-delete-outline"
+              color="error"
+              density="comfortable"
+              icon="mdi-trash-can-outline"
               label="Delete user group"
-              color="primary-darken-4"
               size="small"
               variant="text"
               @click="remove(item)"
@@ -147,6 +147,7 @@ const remove = (group: UserGroup) => {
   const showDialog = useConfirmationDialog();
   const confirmation = {
     title: 'Delete user group',
+    color: 'error',
     message: `Are you sure you want to delete "${group.name}" user group?`,
     action: () => api.remove(group.id).then(() => fetch()),
   };

@@ -1,11 +1,10 @@
 <template>
-  <div class="mt-1 mb-6 mx-1">
+  <div class="mb-6">
     <div class="d-flex align-center justify-space-between mb-2">
       <div class="text-body-small my-1">{{ meta.label }}</div>
       <VBtnToggle
         v-if="isNew"
         v-model="isEditing"
-        :base-color="dark ? 'primary-lighten-4' : 'primary-darken-4'"
         :readonly="readonly"
         density="compact"
         rounded="lg"
@@ -17,13 +16,11 @@
       </VBtnToggle>
       <VBtn
         v-else-if="isEditable"
-        :color="dark ? 'primary-lighten-4' : 'primary-darken-2'"
         size="small"
+        text="Edit"
         variant="tonal"
         @click="showRatingDialog(input)"
-      >
-        Edit
-      </VBtn>
+      />
       <RateDialog
         :dark="dark"
         :value="dialogData"
@@ -37,11 +34,12 @@
       <div
         v-for="{ key, label } in heasParams"
         :key="key"
-        class="d-flex align-center my-2"
+        class="d-flex align-center my-1"
       >
         <div class="label text-body-small">{{ label }}</div>
         <VSlider
           :model-value="input.rating?.[key]"
+          color="primary"
           max="4"
           min="0"
           step="0.1"
@@ -57,21 +55,14 @@
       <VAlert
         v-if="isReviewRequested && !isReviewer"
         class="px-6 py-12"
-        color="teal-accent-1"
-        variant="tonal"
         icon="mdi-head-sync-outline"
         rounded="lg"
-        border
+        variant="tonal"
         prominent
       >
         {{ alertMsg }}
       </VAlert>
-      <VCard
-        v-else
-        :color="dark ? 'primary-lighten-4' : 'primary-darken-2'"
-        class="pa-4"
-        variant="tonal"
-      >
+      <VCard v-else class="pa-4" variant="tonal">
         <div v-if="isEmpty(input.rating)" class="text-center pa-4">
           <VAvatar size="64" variant="tonal">
             <VIcon icon="mdi-chart-timeline-variant-shimmer" size="x-large" />
@@ -84,7 +75,7 @@
             height="350"
             color="transparent"
           >
-            <RadarChart :dark="dark" :data="chartData" :max="4" :min="0" />
+            <RadarChart :data="chartData" :max="4" :min="0" />
           </VSheet>
           <template v-if="meta.reviewable">
             <div class="font-weight-bold text-body-large mb-1">
@@ -96,28 +87,24 @@
         </div>
         <VBtn
           v-if="meta.reviewable && !isReviewer && !isReviewRequested"
-          class="mt-4"
-          color="teal-accent-1"
+          :text="`${isEmpty(input?.rating) ? 'Request' : 'Re-Request'} Review`"
+          class="mt-2"
           variant="tonal"
           prepend-icon="mdi-eye-plus"
           rounded="lg"
           block
           @click="update({ ...input, requestedReview: true })"
-        >
-          {{ isEmpty(input?.rating) ? 'Request' : 'Re-Request' }} Review
-        </VBtn>
+        />
         <VBtn
           v-else-if="isReviewRequested && isReviewer"
-          class="mt-4"
-          color="pink-lighten-4"
+          class="mt-2"
+          text="Add Review"
           variant="tonal"
           prepend-icon="mdi-comment-text-outline"
           rounded="lg"
           block
           @click="showRatingDialog()"
-        >
-          Add Review
-        </VBtn>
+        />
       </VCard>
     </template>
   </div>
@@ -126,6 +113,7 @@
 <script lang="ts" setup>
 import { cloneDeep, isEmpty } from 'lodash-es';
 import { computed, ref } from 'vue';
+import { useTheme } from 'vuetify';
 import { RadarChart } from '@tailor-cms/core-components';
 
 import { heasParams } from './utils';
@@ -147,11 +135,14 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['update']);
 
+const theme = useTheme();
+
 const isEditing = ref(props.isNew);
 const input = ref(cloneDeep(props.meta.value ?? { rating: {} }));
 const dialogData = ref(cloneDeep(input.value));
 const isDialogVisible = ref(false);
 
+const colors = computed(() => theme.current.value.colors);
 const isReviewRequested = computed(() => input.value?.requestedReview);
 const isEditable = computed(() => {
   const { isReviewer, meta } = props;
@@ -164,8 +155,8 @@ const chartData = computed(() => ({
   datasets: [
     {
       data: heasParams.map(({ key }) => input.value?.rating[key]),
-      backgroundColor: props.dark ? '#ECEFF140' : '#455A6433',
-      borderColor: props.dark ? '#ECEFF1BF' : '#455A64BF',
+      backgroundColor: `${colors.value['on-surface']}40`,
+      borderColor: `${colors.value.outline}BF`,
       borderWidth: 1,
     },
   ],
@@ -193,13 +184,13 @@ const showRatingDialog = (input = {}) => {
   dialogData.value = cloneDeep(input);
 };
 
-const updateRating = (value) => {
+const updateRating = (value: any) => {
   const newValue = cloneDeep(input.value);
   Object.assign(newValue.rating, value);
   update(newValue);
 };
 
-const update = (value) => {
+const update = (value: any) => {
   input.value = value;
   emit('update', props.meta.key, input.value);
 };
@@ -212,12 +203,10 @@ const update = (value) => {
 
 .label {
   width: 10rem;
-  opacity: 0.7;
 }
 
 .slider-value {
   width: 1.25rem;
-  opacity: 0.7;
   text-align: right;
 }
 

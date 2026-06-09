@@ -11,8 +11,8 @@
       :items="schemas"
       :search="search"
       :slim="false"
-      base-color="primary-darken-3"
       bg-color="transparent"
+      density="comfortable"
       class="pa-0"
       item-title="label"
       item-value="id"
@@ -20,15 +20,8 @@
       rounded
     >
       <template #prepend="{ item, isActive }">
-        <VIcon
-          :icon="getNodeIcon(!!item.children, isActive)"
-          color="primary-darken-3"
-        />
-        <VIcon
-          v-if="item.recursive"
-          color="primary-darken-4"
-          icon="mdi-replay"
-        />
+        <VIcon :icon="getNodeIcon(!!item.children, isActive)" />
+        <VIcon v-if="item.recursive" icon="mdi-replay" />
       </template>
     </VTreeview>
   </div>

@@ -2,7 +2,6 @@
   <VBtn
     :disabled="disabled"
     class="add-element"
-    color="primary-darken-3"
     rounded="lg"
     variant="text"
     stacked
@@ -39,7 +38,7 @@ defineEmits(['click']);
   min-width: 8.125rem;
   height: auto;
   min-height: 4.75rem;
-  background: rgba(var(--v-theme-surface), 0.7);
+  background: rgba(var(--v-theme-surface-container-low), 0.7);
   padding: 0.5rem 0.375rem;
 
   :deep(.v-btn__content) {
