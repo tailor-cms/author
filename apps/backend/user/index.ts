@@ -70,8 +70,8 @@ auth.get('/logout', actions.logout, {
 
 // Authenticated self-service
 profile
-  .get('/me', actions.profileGet)
-  .patch('/me', actions.profileUpdate)
+  .get('/me', actions.getProfile)
+  .patch('/me', actions.updateProfile)
   .post('/me/change-password', actions.changePassword);
 
 // Admin CRUD on the user collection. `reinvite` sits here because it

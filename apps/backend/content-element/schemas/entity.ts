@@ -5,7 +5,11 @@ import { z } from 'zod';
 import {
   Int,
   IntParam,
+  JsonObject,
   RepositoryScopedParams,
+  Timestamp,
+  Uid,
+  timestamps,
 } from '#shared/request/schemas.ts';
 
 // Path param shape for every `/:elementId` route. Extends
@@ -22,7 +26,7 @@ export type ContentElementItemParams = z.infer<typeof ContentElementItemParams>;
 export const ContentElement = z
   .object({
     id: Int().describe('Numeric primary key.'),
-    uid: z.uuid().describe('Stable UUID; persists across clones and links.'),
+    uid: Uid(),
     repositoryId: Int().describe('Repository the element belongs to.'),
     activityId: Int().describe(oneLine`
       Parent activity holding the element.
@@ -40,7 +44,7 @@ export const ContentElement = z
       callers can wedge a row between existing positions. The /reorder
       endpoint derives the stored value via \`calculatePosition\`.
     `),
-    contentId: z.uuid().describe(oneLine`
+    contentId: Uid(oneLine`
       Origin id that survives clone/import so reuse and duplicates can be
       detected across repositories.
     `),
@@ -48,16 +52,16 @@ export const ContentElement = z
       SHA-1 hash of \`data\`, recomputed on every save by the
       \`processAssets\` beforeSave hook. Used to detect duplicate content.
     `),
-    data: z.record(z.string(), z.unknown()).describe(oneLine`
+    data: JsonObject(oneLine`
       Content element type defined property bag (JSONB). Shape is
       owned by the content element package's \`ElementData\`
       interface for this \`type\`.
     `),
-    meta: z.record(z.string(), z.unknown()).describe(oneLine`
+    meta: JsonObject(oneLine`
       Meta-input data bag (JSONB). Schema-configured fields collected via
       meta inputs (captions, labels, and similar element-level config).
     `),
-    refs: z.record(z.string(), z.unknown()).describe(oneLine`
+    refs: JsonObject(oneLine`
       Cross-element references (JSONB). Keyed by the relationship types
       the schema declares for this element type via
       \`elementMeta.relationships[]\`; values are arrays of
@@ -73,25 +77,14 @@ export const ContentElement = z
       automatic updates when the source changes. Editing \`data\`
       auto-unlinks via the model's \`autoUnlinkOnEdit\` afterUpdate hook.
     `),
-    sourceId: Int().nullable().optional().describe(oneLine`
+    sourceId: Int().nullable().describe(oneLine`
       Source element id this entry was copied from; preserved after unlink
       for provenance. Null when the source has been hard-deleted.
     `),
-    sourceModifiedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .optional()
-      .describe(`Source \`updatedAt\` at the moment of last sync.`),
-    createdAt: z.iso
-      .datetime({ offset: true })
-      .describe('Insertion timestamp.'),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Last mutation timestamp.'),
-    deletedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Soft-delete timestamp; non-null for archived rows.'),
+    sourceModifiedAt: Timestamp(
+      `Source \`updatedAt\` at the moment of last sync.`,
+    ).nullable(),
+    ...timestamps(),
   })
   .meta({ id: 'ContentElement' }).describe(oneLine`
     A content element inside a container activity. The element's \`type\`
@@ -106,7 +99,7 @@ export type ContentElement = z.infer<typeof ContentElement>;
 export const ElementSourceInfo = z
   .object({
     id: Int().describe('Source element id.'),
-    uid: z.uuid().describe('Source element uid.'),
+    uid: Uid('Source element UID.'),
     repositoryId: Int().describe('Source repository id.'),
     repositoryName: z
       .string()
@@ -133,7 +126,7 @@ export type ElementSourceInfo = z.infer<typeof ElementSourceInfo>;
 export const ElementCopyLocation = z
   .object({
     id: Int().describe('Linked-copy element id.'),
-    uid: z.uuid().describe('Linked-copy uid.'),
+    uid: Uid('Linked-copy UID.'),
     repositoryId: Int().describe('Repository hosting the linked copy.'),
     activityId: Int().describe('Container (activity) holding the copy.'),
     repositoryName: z.string().optional().describe('Host repository name.'),
@@ -145,9 +138,7 @@ export const ElementCopyLocation = z
       .string()
       .optional()
       .describe('Display name of the copy outline activity.'),
-    linkedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Timestamp the linked copy was created at.'),
+    linkedAt: Timestamp('Timestamp the linked copy was created at.'),
   })
   .meta({ id: 'ElementCopyLocation' })
   .describe('An active linked copy of a source content element.');

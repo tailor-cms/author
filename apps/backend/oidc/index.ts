@@ -2,16 +2,21 @@
 //
 // OIDC's request/response model is fundamentally a chain of passport
 // middlewares (`authenticate(...)`, `logout()`) that own the `(req, res,
-// next)` triple and end with `res.redirect(...)`. The action framework
-// in `#shared/request/action.ts` is designed for JSON APIs (typed
-// handler → JSON return), so wrapping passport here would mean Promise-
-// ifying every middleware call. We keep the native passport routing and
-// expose only the query schema for self-documentation.
+// next)` triple and end with `res.redirect(...)`
+//
+// IdP callback query shape (parsed by passport, NOT by this slice):
+//   - `code`, `state`, `iss`, `session_state`; standard OIDC code-flow
+//     fields (RFC 6749 §4.1.2 + OIDC Core 1.0)
+//   - `error`, `error_description`, `error_uri`; OIDC error response
+//     (RFC 6749 §4.1.2.1)
+//   - `action=logout`; our own marker on logout round-trips, branched
+//     on by `idpCallbackHandler` below.
+// Vendor-specific extras may also be present; openid-client tolerates them.
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import { errors as OIDCError } from 'openid-client';
 
-import type { AuthQuery } from './oidc.schema.ts';
+import type { AuthQuery } from './schemas/index.ts';
 import auth from '#shared/auth/index.js';
 import { requestLimiter } from '#shared/request/mw.js';
 import { origin } from '#config';

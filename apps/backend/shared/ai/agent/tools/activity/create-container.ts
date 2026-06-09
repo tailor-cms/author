@@ -8,6 +8,7 @@ import {
   mergeMetaDefaults,
   recordOperation,
   getContainerActivityMeta,
+  getContainerConfig,
   subcontainerTypesForContainer,
   toolError,
 } from '../helpers/index.ts';
@@ -35,33 +36,20 @@ interface ToolResultContext {
   container: any;
   subcontainer?: any | null;
   elements: any[];
+  failed?: { index: number; type: string; reason: string }[];
   expectedKeys?: string[];
   missingKeys?: string[];
 }
 
 const description = stripIndent`
-  Persist content for an outline activity in ONE call. When called
-  after generate_container_content, pass BOTH item.data (subcontainer
-  metadata defined by the schema, e.g. a SECTION might expose
-  title/description/mood/layout) AND item.elements verbatim - never
-  just elements. Splitting into a bare create + a follow-up
-  update_activity is wasteful and produces an empty-meta
-  intermediate state. Resolves the container layer from the schema
-  automatically: nested templates get a typed subcontainer with the
-  meta from data; flat templates attach elements directly.
-
-  This tool always APPENDS a fresh subcontainer. If the target
-  container already holds empty subcontainer stubs (editor
-  scaffolding materialised from defaultSubcontainers), they will
-  sit alongside the new ones - inspect with get_activity_subtree
-  first and delete unwanted stubs via delete_activity (or fill
-  them in place via update_activity + add_elements_to_activity)
-  BEFORE calling this tool (unless USER specifies otherwise,
-  e.g. adding additional items).
-
-  Some missing meta keys are defaulted, but you should always supply the
-  complete data object the generator produced. Call get_schema_info
-  to see which meta fields each container type defines.
+  Persist a container's content for an outline activity in ONE
+  call. Resolves the container layer from the schema: nested
+  templates get a typed subcontainer with the meta from data;
+  flat templates attach elements directly to the container; flat
+  multi-instance types spawn a new sibling per call. ALWAYS
+  appends; never updates existing rows. Missing meta keys are
+  defaulted when possible, but pass the complete data object
+  for this container type.
 `;
 
 const parameters = {
@@ -139,6 +127,7 @@ function buildToolResult(opts: ToolResultContext) {
     container,
     subcontainer,
     elements,
+    failed,
     missingKeys,
     expectedKeys,
   } = opts;
@@ -147,6 +136,7 @@ function buildToolResult(opts: ToolResultContext) {
     container: summarizeActivity(container),
     subcontainer: subcontainer ? summarizeActivity(subcontainer) : null,
     elements,
+    ...(failed?.length ? { failed } : {}),
     _invalidates: [
       'outline',
       `activity:${outlineActivity.id}`,
@@ -165,13 +155,8 @@ function buildToolResult(opts: ToolResultContext) {
 
 /**
  * Flat container path - elements go directly into the
- * container with no subcontainer layer.
- *
- * @param outlineActivity - Outline activity
- * @param container - Container activity
- * @param input - Tool input from the LLM
- * @param ctx - Tool context
- * @returns Formatted result
+ * container with no subcontainer layer. `input.data` (when
+ * present) is the container's own activity data.
  */
 async function createFlatContainer(
   outlineActivity: any,
@@ -179,8 +164,15 @@ async function createFlatContainer(
   input: Input,
   ctx: ToolContext,
 ) {
-  const elements = await createElements(container.id, input.elements, ctx);
-  const result = buildToolResult({ outlineActivity, container, elements });
+  const { created, failed } = await createElements(
+    container.id, input.elements, ctx,
+  );
+  const result = buildToolResult({
+    outlineActivity,
+    container,
+    elements: created,
+    failed,
+  });
   recordOperation(TOOL, input, result, ctx);
   return result;
 }
@@ -227,13 +219,16 @@ async function createNestedContainer(
     { context: dbContext(ctx) },
   );
 
-  const elements = await createElements(subcontainer.id, input.elements, ctx);
+  const { created, failed } = await createElements(
+    subcontainer.id, input.elements, ctx,
+  );
 
   const result = buildToolResult({
     outlineActivity,
     container,
     subcontainer,
-    elements,
+    elements: created,
+    failed,
     missingKeys,
     expectedKeys,
   });
@@ -248,35 +243,40 @@ async function createNestedContainer(
 }
 
 /**
- * Find or create the container activity for an outline
- * activity. Mirrors the editor's `required: true`
- * behaviour - if the container doesn't exist yet
- * (user never opened the outline leaf), create it.
+ * Resolve or create the container activity. Honors the schema's
+ * `multiple` flag for flat templates only - flat multi-instance
+ * types (e.g. SECTION with multiple: true) always get a fresh
+ * sibling so a generation batch produces N distinct units. Flat
+ * single-instance types (e.g. ASSESSMENT_POOL) find-or-create so
+ * append writes don't spawn duplicates.
+ * Nested wrappers are always find-or-create regardless.
  */
 async function findOrCreateContainer(
   outlineActivity: any,
   containerType: string,
+  data: Record<string, any>,
+  isFlat: boolean,
   ctx: ToolContext,
 ) {
-  const existing = await Activity.findOne({
-    where: {
-      repositoryId: ctx.repository.id,
-      parentId: outlineActivity.id,
-      type: containerType,
-      detached: false,
-    },
-  });
-  if (existing) return existing;
-
-  const pos = await nextPosition(
-    ctx.repository.id, outlineActivity.id,
-  );
-
+  const cfg = getContainerConfig(ctx.repository.schema, containerType);
+  const shouldCreateSibling = isFlat && !!cfg?.multiple;
+  if (!shouldCreateSibling) {
+    const existing = await Activity.findOne({
+      where: {
+        repositoryId: ctx.repository.id,
+        parentId: outlineActivity.id,
+        type: containerType,
+        detached: false,
+      },
+    });
+    if (existing) return existing;
+  }
+  const pos = await nextPosition(ctx.repository.id, outlineActivity.id);
   return Activity.create({
     type: containerType,
     parentId: outlineActivity.id,
     position: pos,
-    data: {},
+    data,
     repositoryId: ctx.repository.id,
   }, { context: dbContext(ctx) });
 }
@@ -359,14 +359,34 @@ async function execute(input: Input, ctx: ToolContext) {
     });
   }
 
+  /**
+   * Where input.data lands depends on the container's shape:
+   * - Nested (e.g. STRUCTURED_CONTENT, EXAM): the top level
+   *   wrapper is created empty; input.data belongs to the
+   *   subcontainer below.
+   * - Flat, no subcontainers (e.g. DEFAULT, ASSESSMENT_POOL):
+   *   input.data is the container's own meta; input.elements become
+   *   ContentElement rows under the container.
+   * - Collection item (COLLECTION_ITEM_CONTENT): input.data IS the
+   *   content - a record keyed by the schema-configured prop names
+   *   (set via @IsInput / @IsContentElement), with embedded element
+   *   objects inline for content-element props. No ContentElement
+   *   rows are created; input.elements should be empty. Routes
+   *   through the same isFlat branch today because
+   *   resolveTargetContainer treats any no-subcontainer container as
+   *   flat - acceptable mechanically but conceptually distinct.
+   */
+  const containerData = resolved.isFlat ? (input.data || {}) : {};
   const container = await findOrCreateContainer(
-    outlineActivity, resolved.parentType, ctx,
+    outlineActivity,
+    resolved.parentType,
+    containerData,
+    resolved.isFlat,
+    ctx,
   );
-
   if (resolved.isFlat) {
     return createFlatContainer(outlineActivity, container, input, ctx);
   }
-
   return createNestedContainer(outlineActivity, container, input, ctx);
 }
 

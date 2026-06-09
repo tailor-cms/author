@@ -1,0 +1,11 @@
+{
+  "name": "@tailor-cms/tcc-page-server",
+  "version": "0.0.1",
+  "description": "Tailor page (DEFAULT template) content container server package",
+  "author": "Studion <info@gostudion.com>",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "main": "./src/index.js"
+}

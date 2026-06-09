@@ -1,4 +1,10 @@
-import { Email, Int, IntParam, ShortText } from '#shared/request/schemas.ts';
+import {
+  Email,
+  Int,
+  IntParam,
+  ShortText,
+  timestamps,
+} from '#shared/request/schemas.ts';
 import { UserRole } from '@tailor-cms/interfaces/role';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
@@ -38,16 +44,7 @@ export const User = z
       Avatar URL. Defaults to a Gravatar identicon derived from the
       email when no custom image was uploaded.
     `),
-    createdAt: z.iso
-      .datetime({ offset: true })
-      .describe('Insertion timestamp.'),
-    updatedAt: z.iso
-      .datetime({ offset: true })
-      .describe('Last mutation timestamp.'),
-    deletedAt: z.iso
-      .datetime({ offset: true })
-      .nullable()
-      .describe('Soft-delete timestamp; null while active.'),
+    ...timestamps(),
   })
   .meta({ id: 'User' })
   .describe('A system user; the shape returned by the `profile` virtual.');

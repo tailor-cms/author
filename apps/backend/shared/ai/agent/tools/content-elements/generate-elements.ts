@@ -148,11 +148,10 @@ async function execute(input: Input, ctx: ToolContext) {
     }],
   });
 
-  const elements = Array.isArray(generated) ? generated : [];
   return {
     targetActivityId: target.id,
     allowedElementTypes: allowed,
-    elements,
+    elements: generated.elements,
     ...(envelopeMeta ? { outlineContext: envelopeMeta } : {}),
     NEXT_STEP: oneLine`
       You MUST now call add_elements_to_activity with

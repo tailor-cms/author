@@ -28,14 +28,14 @@ params?, openapi?, handler })` which:
 3. wraps the return value (`{ data: value }`, or raw, or 204),
 4. pushes route metadata into the OpenAPI registry.
 
-Schemas live in `<slice>.schema.ts` as Zod values — actions consume
-them via `defineAction({ body: schemas.CreateInput })`, services
-consume the same schema's inferred type (`payload: CreateInput`). The
-HTTP slot info lives in the `body:` / `query:` / `params:` key, not in
-the name.
+Schemas live in `<slice>/schemas/` (one file per shape, barrel-exported
+via `index.ts`) as Zod values — actions consume them via
+`defineAction({ body: schemas.CreateInput })`, services consume the
+same schema's inferred type (`payload: CreateInput`). The HTTP slot info
+lives in the `body:` / `query:` / `params:` key, not in the name.
 
 ```ts
-// repository/repository.schema.ts
+// repository/schemas/create.ts
 export const CreateInput = z.object({
   name: ShortText(2, 250),
   description: Description(2, 2000),
@@ -64,6 +64,29 @@ Role-suffix, verb-first, layer-neutral:
 | `Filter` | read filter / list narrowing (query) | `ListFilter` |
 | `Params` | path identifier | `RemoveUserParams` |
 
+## Mounter pattern (docs grouping)
+
+`createActionMounter(router, basePath, { tag, group })` binds compiled
+actions onto the Express router AND records them in the OpenAPI
+registry. A slice typically declares several mounters — not because the
+routes need separate routers, but because each mounter becomes one
+section in the Scalar sidebar.
+
+```ts
+const GROUP = 'Repository';
+const crud      = createActionMounter(router, '/repositories', { tag: 'CRUD',      group: GROUP });
+const members   = createActionMounter(router, '/repositories', { tag: 'Members',   group: GROUP });
+const transfer  = createActionMounter(router, '/repositories', { tag: 'Transfer',  group: GROUP });
+
+crud.get('/', actions.list).post('/', actions.create, { before: [hasCreateRepositoryAccess] });
+members.post('/:repositoryId/users', actions.upsertUser, { before: [hasRepositoryAdminAccess] });
+```
+
+Mounter **declaration order** drives sidebar order. Slices that share a
+`group:` co-locate under one `x-tagGroups` header. The third arg's
+`before:` array runs per-route — auth guards, multipart parsers,
+anything that decides whether the request makes it to validation at all.
+
 ## Conventions
 
 - **Schema-first** — Zod is the only source for validation, types, and
@@ -86,8 +109,7 @@ Role-suffix, verb-first, layer-neutral:
 ## Plumbing details
 
 - **Validation.** `safeParse` per slot; on failure responds with
-  `{ errors: [{ msg, path, location }] }` (matches the legacy
-  express-validator envelope). Parsed values stash at
+  `{ errors: [{ msg, path, location }] }`. Parsed values stash at
   `req._validated.{slot}` because Express 5 made `req.query` a
   read-only getter.
 - **Response contract** — handler returns a value (200 + `{ data }` /
@@ -100,7 +122,6 @@ Role-suffix, verb-first, layer-neutral:
 - **Path ordering.** Literal sibling routes (`/link`, `/resolve`,
   `/import`, `/time-travel`) are registered *before* the corresponding
   `:id` param route so they match first.
-- **Two validation styles coexist.** New code uses `defineAction` +
-  Zod; `asset/` and `shared/ai/` still use express-validator (see
-  `shared/request/validation.js`). Both produce the same `{ errors }`
-  envelope.
+- **Single validation style.** Every slice uses `defineAction` + Zod;
+  the `{ errors }` response envelope is preserved from the codebase's
+  earlier express-validator era so FE error handlers stay compatible.

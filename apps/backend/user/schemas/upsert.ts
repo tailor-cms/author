@@ -1,4 +1,5 @@
 // Wire shape for the admin invite-or-update endpoint.
+import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
 import { Int } from '#shared/request/schemas.ts';
@@ -10,11 +11,11 @@ export const UpsertInput = z
     firstName: User.shape.firstName.unwrap().optional(),
     lastName: User.shape.lastName.unwrap().optional(),
     role: User.shape.role.optional(),
-    userGroupIds: z.array(Int()).optional().describe(`
+    userGroupIds: z.array(Int()).optional().describe(oneLine`
       Replace the user's user-group memberships with this exact set.
       Omit to leave memberships untouched.
     `),
-    skipInvite: z.boolean().optional().describe(`
+    skipInvite: z.boolean().optional().describe(oneLine`
       Suppress the invitation mail on create. No effect on update.
     `),
   })

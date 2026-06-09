@@ -2,6 +2,7 @@ import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
 import { StatusCodes } from 'http-status-codes';
+import { oneLine } from 'common-tags';
 import snakeCase from 'lodash/snakeCase.js';
 import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
@@ -48,6 +49,10 @@ export default defineAction({
   openapi: {
     authenticated: true,
     summary: 'Download the export archive for a repository',
+    description: oneLine`
+      Streams the tarball built by a prior export-initiate call. The
+      archive is removed from the job cache once the stream completes.
+    `,
   },
   handler,
 });

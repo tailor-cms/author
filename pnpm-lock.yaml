@@ -189,9 +189,6 @@ importers:
       express-session:
         specifier: ^1.19.0
         version: 1.19.0
-      express-validator:
-        specifier: ^7.3.2
-        version: 7.3.2
       fs-blob-store:
         specifier: ^6.0.0
         version: 6.0.0
@@ -639,6 +636,9 @@ importers:
       '@tailor-cms/tcc-page':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/page
+      '@tailor-cms/tcc-page-server':
+        specifier: workspace:^
+        version: link:../../packages/core-extensions/content-containers/page-server
       '@tailor-cms/tcc-structured-content-edit':
         specifier: workspace:^
         version: link:../../packages/core-extensions/content-containers/structured-content
@@ -1093,6 +1093,8 @@ importers:
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
+
+  packages/core-extensions/content-containers/page-server: {}
 
   packages/core-extensions/content-containers/structured-content:
     dependencies:
@@ -6861,10 +6863,6 @@ packages:
   express-session@1.19.0:
     resolution: {integrity: sha512-0csaMkGq+vaiZTmSMMGkfdCOabYv192VbytFypcvI0MANrp+4i/7yEkJ0sbAEhycQjntaKGzYfjfXQyVb7BHMA==}
     engines: {node: '>= 0.8.0'}
-
-  express-validator@7.3.2:
-    resolution: {integrity: sha512-ctLw1Vl6dXVH62dIQMDdTAQkrh480mkFuG6/SGXOaVlwPNukhRAe7EgJIMJ2TSAni8iwHBRp530zAZE5ZPF2IA==}
-    engines: {node: '>= 8.0.0'}
 
   express@5.2.1:
     resolution: {integrity: sha512-hIS4idWWai69NezIdRt2xFVofaF4j+6INOpJlVOLDO8zXGpUVEVzIYk12UUi2JzjEzWL3IOAxcTubgz9Po0yXw==}
@@ -17127,11 +17125,6 @@ snapshots:
       uid-safe: 2.1.5
     transitivePeerDependencies:
       - supports-color
-
-  express-validator@7.3.2:
-    dependencies:
-      lodash: 4.18.1
-      validator: 13.15.35
 
   express@5.2.1:
     dependencies:

@@ -1,3 +1,4 @@
+import { oneLine } from 'common-tags';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
 import { removeContext, type FeedUser } from '../store.ts';
 import type { Repository } from '../../models/repository.model.js';
@@ -47,6 +48,10 @@ export default defineAction({
   openapi: {
     authenticated: true,
     summary: 'Subscribe to repository activity feed (SSE)',
+    description: oneLine`
+      Opens a long-lived SSE connection scoped to the repository; clients
+      receive presence and content-change events until the socket closes.
+    `,
   },
   handler,
 });
