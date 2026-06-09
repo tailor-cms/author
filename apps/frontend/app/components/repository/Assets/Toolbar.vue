@@ -4,7 +4,7 @@
       v-model="search"
       bg-color="transparent"
       class="search-input"
-      density="compact"
+      density="comfortable"
       placeholder="Search assets..."
       min-width="220"
       prepend-inner-icon="mdi-magnify"
@@ -17,7 +17,6 @@
     />
     <VSpacer />
     <VBtn
-      color="secondary"
       prepend-icon="mdi-link-plus"
       text="Add Link"
       variant="tonal"
@@ -25,7 +24,6 @@
     />
     <VBtn
       v-if="isDiscoveryEnabled"
-      color="secondary"
       prepend-icon="mdi-earth-plus"
       variant="tonal"
       text="Discover"

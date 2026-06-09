@@ -1,63 +1,56 @@
 <template>
   <VLayout class="members-page h-100">
-    <VAppBar
-      class="px-4"
-      color="surface-container-low"
-      border="b"
-      order="1"
-      height="64"
-      elevation="0"
-    >
-      <VHover>
-        <template #default="{ props: hoverProps }">
-          <VTextField
-            v-bind="hoverProps"
-            v-model="search"
-            bg-color="transparent"
-            class="members-search"
-            density="compact"
-            min-width="220"
-            placeholder="Search members..."
-            prepend-inner-icon="mdi-magnify"
-            rounded="xl"
-            variant="solo-filled"
-            clearable
-            hide-details
-            flat
-            @click:clear="search = ''"
-          />
-        </template>
-      </VHover>
-      <VMenu location="bottom end">
-        <template #activator="{ props: menuProps }">
-          <VBtn
-            v-bind="menuProps"
-            :text="activeSortLabel"
-            append-icon="mdi-chevron-down"
-            class="sort-btn ml-2"
-            prepend-icon="mdi-sort-variant"
-            rounded="lg"
-            size="small"
-            variant="tonal"
-          />
-        </template>
-        <VList density="compact" min-width="220" slim>
-          <VListSubheader>Sort by</VListSubheader>
-          <VListItem
-            v-for="option in USER_SORT_OPTIONS"
-            :key="`${option.key}-${option.order}`"
-            :active="isActiveSort(option)"
-            :prepend-icon="isActiveSort(option) ? 'mdi-check' : 'mdi-blank'"
-            :title="option.title"
-            @click="sort = { key: option.key, order: option.order }"
-          />
-        </VList>
-      </VMenu>
-      <VSpacer />
-      <AddUserDialog :roles="roles" />
-    </VAppBar>
     <VMain class="members-main">
-      <VContainer class="members-content pa-6" max-width="1280">
+      <VContainer class="members-content px-md-10 py-md-8" max-width="1280">
+        <div class="d-flex align-center ga-3 mb-4">
+          <VHover>
+            <template #default="{ props: hoverProps }">
+              <VTextField
+                v-bind="hoverProps"
+                v-model="search"
+                bg-color="transparent"
+                class="members-search"
+                density="comfortable"
+                min-width="220"
+                placeholder="Search members..."
+                prepend-inner-icon="mdi-magnify"
+                rounded="xl"
+                variant="solo-filled"
+                clearable
+                hide-details
+                flat
+                @click:clear="search = ''"
+              />
+            </template>
+          </VHover>
+          <VMenu location="bottom end">
+            <template #activator="{ props: menuProps }">
+              <VBtn
+                v-bind="menuProps"
+                :text="activeSortLabel"
+                append-icon="mdi-chevron-down"
+                class="sort-btn"
+                prepend-icon="mdi-sort-variant"
+                rounded="lg"
+                size="small"
+                variant="text"
+              />
+            </template>
+            <VList density="compact" nav>
+              <VListSubheader>Sort by</VListSubheader>
+              <VListItem
+                v-for="option in USER_SORT_OPTIONS"
+                :key="`${option.key}-${option.order}`"
+                :active="isActiveSort(option)"
+                :prepend-icon="isActiveSort(option) ? 'mdi-check' : 'mdi-blank'"
+                :title="option.title"
+                @click="sort = { key: option.key, order: option.order }"
+              />
+            </VList>
+          </VMenu>
+          <VSpacer />
+          <AddUserDialog :roles="roles" />
+        </div>
         <UserList :roles="roles" :users="filteredUsers" />
       </VContainer>
     </VMain>

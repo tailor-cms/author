@@ -4,7 +4,7 @@
       <VTextField
         v-model="search"
         bg-color="transparent"
-        density="compact"
+        density="comfortable"
         min-width="220"
         max-width="384"
         placeholder="Search by name..."
@@ -56,7 +56,7 @@
       <VTextField
         v-model="search"
         bg-color="transparent"
-        density="compact"
+        density="comfortable"
         min-width="220"
         max-width="384"
         placeholder="Search by name or id..."
@@ -68,17 +68,15 @@
         hide-details
         @click:clear="search = ''"
       />
+      <VSpacer />
       <VBtn
         v-if="!isFlat"
         :disabled="!!search"
         :text="isOutlineExpanded ? 'Collapse all' : 'Expand all' "
         rounded="lg"
-        size="small"
         variant="tonal"
-        width="90"
         @click="currentRepositoryStore.toggleOutlineExpand"
       />
-      <VSpacer />
       <LinkContent :anchor="anchor" show-activator />
       <CreateDialog
         :anchor="anchor"

@@ -1,32 +1,24 @@
 <template>
   <div class="structure-page">
-    <VAppBar
-      border="b"
-      class="pr-2"
-      color="surface-container-low"
-      elevation="0"
-      height="64"
-      order="1"
-    >
-      <OutlineToolbar
-        v-model:search="filters.search"
-        v-model:sort="collectionSort"
-        class="flex-grow-1 align-self-center px-3"
-      />
-      <VAppBarNavIcon
-        v-if="smAndDown"
-        aria-label="Toggle sidebar"
-        density="comfortable"
-        class="mr-2"
-        @click="repositoryStore.updateSidebar(!repositoryStore.isSidebarOpen)"
-      />
-    </VAppBar>
     <VMain class="structure-container">
       <VContainer
         ref="structureEl"
-        class="structure d-flex flex-column justify-start py-4 px-6"
+        class="structure d-flex flex-column justify-start px-md-10 py-md-8"
         max-width="1280"
       >
+        <div class="d-flex align-center ga-2 mb-4">
+          <OutlineToolbar
+            v-model:search="filters.search"
+            v-model:sort="collectionSort"
+            class="flex-grow-1"
+          />
+          <VAppBarNavIcon
+            v-if="smAndDown"
+            aria-label="Toggle sidebar"
+            density="comfortable"
+            @click="repositoryStore.updateSidebar(!repositoryStore.isSidebarOpen)"
+          />
+        </div>
         <BrokenReferencesAlert />
         <div v-if="isCollection" class="collection-wrapper mt-5">
           <CollectionList

@@ -1,23 +1,15 @@
 <template>
   <div class="assets-page h-100">
-    <VAppBar
-      border="b"
-      color="surface-container-low"
-      elevation="0"
-      height="64"
-      order="1"
-    >
-      <Toolbar
-        ref="toolbarRef"
-        v-model:search="searchQuery"
-        class="flex-grow-1 align-self-center px-3"
-        @upload="uploadFiles"
-        @link:add="showAddLinkDialog = true"
-        @discover="showDiscoveryDialog = true"
-      />
-    </VAppBar>
     <VMain>
-      <VContainer class="py-8 px-6" max-width="1280">
+      <VContainer class="px-md-10 py-md-8" max-width="1280">
+        <Toolbar
+          ref="toolbarRef"
+          v-model:search="searchQuery"
+          class="mb-4"
+          @upload="uploadFiles"
+          @link:add="showAddLinkDialog = true"
+          @discover="showDiscoveryDialog = true"
+        />
         <BulkActionBar
           :assets="assetStore.assets"
           :selected-ids="selection.selectedIds"

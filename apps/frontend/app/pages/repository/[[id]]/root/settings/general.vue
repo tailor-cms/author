@@ -1,25 +1,18 @@
 <template>
   <VLayout class="general-page h-100">
-    <VAppBar
-      class="px-3"
-      color="surface-container-low"
-      border="b"
-      elevation="0"
-      height="64"
-      order="1"
-    >
-      <VSpacer />
-      <VBtn
-        :loading="isPublishing"
-        color="primary"
-        prepend-icon="mdi-cloud-upload-outline"
-        text="Publish info"
-        variant="flat"
-        @click="publish"
-      />
-    </VAppBar>
     <VMain>
-      <VContainer class="pa-8 text-left" max-width="1280">
+      <VContainer class="px-md-10 py-md-8 text-left" max-width="1280">
+        <div class="d-flex align-center mb-4">
+          <VSpacer />
+          <VBtn
+            :loading="isPublishing"
+            color="primary"
+            prepend-icon="mdi-cloud-upload-outline"
+            text="Publish info"
+            variant="flat"
+            @click="publish"
+          />
+        </div>
         <RepositoryNameField
           :key="`name.${$pluginRegistry.dataVersion}`"
           :value="nameValue"
