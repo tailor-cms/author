@@ -10,8 +10,23 @@
 // "Tag[]" instead of "object[]", lets users navigate the Schemas
 // sidebar, and keeps the document compact when entities are reused.
 import { z, type ZodType } from 'zod';
+import { fileURLToPath } from 'node:url';
+import { packageDirectory } from 'package-directory';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
 import { deriveOperationNames, type OperationNames } from './naming.ts';
 import { getRegisteredRoutes, type RouteRecord } from './registry.ts';
+import { createLogger } from '#logger';
+import config from '#config';
+
+const logger = createLogger('openapi');
+
+const APP_DIR = (await packageDirectory({
+  cwd: path.dirname(fileURLToPath(import.meta.url)),
+}))!;
+
+export const OPENAPI_SPEC_PATH = path.join(APP_DIR, 'openapi.json');
 
 // Express `:param` -> OpenAPI `{param}`.
 function toOpenApiPath(p: string): string {
@@ -114,7 +129,14 @@ function operationFor(route: RouteRecord, names: OperationNames | undefined) {
     ],
     responses: {} as Record<string, any>,
   };
-  if (route.body) {
+  if (route.multipart) {
+    op.requestBody = {
+      required: true,
+      content: {
+        'multipart/form-data': { schema: schemaJson(route.multipart) },
+      },
+    };
+  } else if (route.body) {
     op.requestBody = {
       required: true,
       content: { 'application/json': { schema: schemaJson(route.body) } },
@@ -207,6 +229,17 @@ function buildTagGroups(tagInfo: TagInfo[]) {
     groups.set(group, bucket);
   }
   return Array.from(groups, ([name, tags]) => ({ name, tags }));
+}
+
+export async function writeOpenApiSnapshot(): Promise<void> {
+  if (config.isProduction) return;
+  try {
+    const doc = buildOpenApiDocument();
+    await fs.writeFile(OPENAPI_SPEC_PATH, JSON.stringify(doc, null, 2));
+    logger.info(`OpenAPI spec written to ${OPENAPI_SPEC_PATH}`);
+  } catch (err) {
+    logger.warn({ err }, 'Failed to write OpenAPI spec to disk');
+  }
 }
 
 // Assemble the full OpenAPI 3.1 document. Paths are built first so the

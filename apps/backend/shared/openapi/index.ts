@@ -7,4 +7,9 @@ export {
   type RouteRecord,
 } from './registry.ts';
 
-export { buildOpenApiDocument, buildPaths } from './emitter.ts';
+export {
+  OPENAPI_SPEC_PATH,
+  buildOpenApiDocument,
+  buildPaths,
+  writeOpenApiSnapshot,
+} from './emitter.ts';

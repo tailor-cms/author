@@ -91,34 +91,6 @@
       "x-displayName": "Time travel"
     },
     {
-      "name": "Tag / Catalog",
-      "x-displayName": "Catalog"
-    },
-    {
-      "name": "User / CRUD (admin)",
-      "x-displayName": "CRUD (admin)"
-    },
-    {
-      "name": "User / Authentication",
-      "x-displayName": "Authentication"
-    },
-    {
-      "name": "User / Password recovery",
-      "x-displayName": "Password recovery"
-    },
-    {
-      "name": "User / Profile",
-      "x-displayName": "Profile"
-    },
-    {
-      "name": "User Group / CRUD",
-      "x-displayName": "CRUD"
-    },
-    {
-      "name": "User Group / Members",
-      "x-displayName": "Members"
-    },
-    {
       "name": "Repository / CRUD",
       "x-displayName": "CRUD"
     },
@@ -152,6 +124,34 @@
     },
     {
       "name": "Seed (test-only)"
+    },
+    {
+      "name": "Tag / Catalog",
+      "x-displayName": "Catalog"
+    },
+    {
+      "name": "User / CRUD (admin)",
+      "x-displayName": "CRUD (admin)"
+    },
+    {
+      "name": "User / Authentication",
+      "x-displayName": "Authentication"
+    },
+    {
+      "name": "User / Password recovery",
+      "x-displayName": "Password recovery"
+    },
+    {
+      "name": "User / Profile",
+      "x-displayName": "Profile"
+    },
+    {
+      "name": "User Group / CRUD",
+      "x-displayName": "CRUD"
+    },
+    {
+      "name": "User Group / Members",
+      "x-displayName": "Members"
     },
     {
       "name": "Repository / User Activity",
@@ -219,6 +219,27 @@
       ]
     },
     {
+      "name": "Repository",
+      "tags": [
+        "Repository / CRUD",
+        "Repository / Publishing",
+        "Repository / Pinning",
+        "Repository / Cloning",
+        "Repository / Members",
+        "Repository / Tags",
+        "Repository / References",
+        "Repository / Transfer",
+        "Repository / User Activity",
+        "Repository / Content Element RPC"
+      ]
+    },
+    {
+      "name": "Seed (test-only)",
+      "tags": [
+        "Seed (test-only)"
+      ]
+    },
+    {
       "name": "Tag",
       "tags": [
         "Tag / Catalog"
@@ -238,27 +259,6 @@
       "tags": [
         "User Group / CRUD",
         "User Group / Members"
-      ]
-    },
-    {
-      "name": "Repository",
-      "tags": [
-        "Repository / CRUD",
-        "Repository / Publishing",
-        "Repository / Pinning",
-        "Repository / Cloning",
-        "Repository / Members",
-        "Repository / Tags",
-        "Repository / References",
-        "Repository / Transfer",
-        "Repository / User Activity",
-        "Repository / Content Element RPC"
-      ]
-    },
-    {
-      "name": "Seed (test-only)",
-      "tags": [
-        "Seed (test-only)"
       ]
     }
   ],
@@ -2428,657 +2428,6 @@
         ],
         "additionalProperties": false
       },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Numeric primary key."
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Account email; lower-cased + trimmed."
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "COLLABORATOR",
-              "INTEGRATION"
-            ],
-            "description": "System-level role."
-          },
-          "firstName": {
-            "anyOf": [
-              {
-                "type": "string",
-                "minLength": 2,
-                "maxLength": 50
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "First name (2..50 chars when present)."
-          },
-          "lastName": {
-            "anyOf": [
-              {
-                "type": "string",
-                "minLength": 2,
-                "maxLength": 50
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Last name (2..50 chars when present)."
-          },
-          "fullName": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Computed full name; null when both names are unset."
-          },
-          "label": {
-            "type": "string",
-            "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
-          },
-          "imgUrl": {
-            "type": "string",
-            "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Insertion timestamp."
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last mutation timestamp."
-          },
-          "deletedAt": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time",
-                "description": "Soft-delete timestamp; non-null for archived rows."
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "email",
-          "role",
-          "firstName",
-          "lastName",
-          "fullName",
-          "label",
-          "imgUrl",
-          "createdAt",
-          "updatedAt",
-          "deletedAt"
-        ],
-        "additionalProperties": false
-      },
-      "AccessibleUserGroup": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "User-group id."
-          },
-          "name": {
-            "type": "string",
-            "description": "User-group display name."
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "COLLABORATOR",
-              "INTEGRATION"
-            ],
-            "description": "Acting user's role within the group."
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "role"
-        ],
-        "additionalProperties": false
-      },
-      "UserProfileResult": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Numeric primary key."
-              },
-              "email": {
-                "type": "string",
-                "format": "email",
-                "description": "Account email; lower-cased + trimmed."
-              },
-              "role": {
-                "type": "string",
-                "enum": [
-                  "USER",
-                  "ADMIN",
-                  "COLLABORATOR",
-                  "INTEGRATION"
-                ],
-                "description": "System-level role."
-              },
-              "firstName": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "description": "First name (2..50 chars when present)."
-              },
-              "lastName": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "description": "Last name (2..50 chars when present)."
-              },
-              "fullName": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "description": "Computed full name; null when both names are unset."
-              },
-              "label": {
-                "type": "string",
-                "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
-              },
-              "imgUrl": {
-                "type": "string",
-                "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
-              },
-              "createdAt": {
-                "type": "string",
-                "format": "date-time",
-                "description": "Insertion timestamp."
-              },
-              "updatedAt": {
-                "type": "string",
-                "format": "date-time",
-                "description": "Last mutation timestamp."
-              },
-              "deletedAt": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "format": "date-time",
-                    "description": "Soft-delete timestamp; non-null for archived rows."
-                  },
-                  {
-                    "type": "null"
-                  }
-                ]
-              }
-            },
-            "required": [
-              "id",
-              "email",
-              "role",
-              "firstName",
-              "lastName",
-              "fullName",
-              "label",
-              "imgUrl",
-              "createdAt",
-              "updatedAt",
-              "deletedAt"
-            ],
-            "additionalProperties": false,
-            "description": "Current user's profile.",
-            "$ref": "#/components/schemas/User"
-          },
-          "userGroups": {
-            "type": "array",
-            "items": {
-              "description": "A user group decorated with the acting user's role.",
-              "$ref": "#/components/schemas/AccessibleUserGroup"
-            },
-            "description": "User groups accessible to the current user."
-          },
-          "authData": {
-            "description": "\n      Auth-context for the active session. Always carries a `strategy`\n      field ('local' | 'jwt' | 'oidc'); strategy-specific payload is\n      nested under the strategy's key.\n    "
-          }
-        },
-        "required": [
-          "user",
-          "userGroups",
-          "authData"
-        ],
-        "additionalProperties": false
-      },
-      "UserProfileUpdateResult": {
-        "type": "object",
-        "properties": {
-          "user": {
-            "description": "A system user; the shape returned by the `profile` virtual.",
-            "$ref": "#/components/schemas/User"
-          }
-        },
-        "required": [
-          "user"
-        ],
-        "additionalProperties": false
-      },
-      "UserListItem": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Numeric primary key."
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Account email; lower-cased + trimmed."
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "COLLABORATOR",
-              "INTEGRATION"
-            ],
-            "description": "System-level role."
-          },
-          "firstName": {
-            "anyOf": [
-              {
-                "type": "string",
-                "minLength": 2,
-                "maxLength": 50
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "First name (2..50 chars when present)."
-          },
-          "lastName": {
-            "anyOf": [
-              {
-                "type": "string",
-                "minLength": 2,
-                "maxLength": 50
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Last name (2..50 chars when present)."
-          },
-          "fullName": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Computed full name; null when both names are unset."
-          },
-          "label": {
-            "type": "string",
-            "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
-          },
-          "imgUrl": {
-            "type": "string",
-            "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Insertion timestamp."
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last mutation timestamp."
-          },
-          "deletedAt": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time",
-                "description": "Soft-delete timestamp; non-null for archived rows."
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "userGroups": {
-            "description": "Eager-loaded user-group membership rows attached to this user.",
-            "type": "array",
-            "items": {}
-          }
-        },
-        "required": [
-          "id",
-          "email",
-          "role",
-          "firstName",
-          "lastName",
-          "fullName",
-          "label",
-          "imgUrl",
-          "createdAt",
-          "updatedAt",
-          "deletedAt"
-        ],
-        "additionalProperties": false
-      },
-      "UserListResult": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "description": "User row in the admin list response.",
-              "$ref": "#/components/schemas/UserListItem"
-            },
-            "description": "Page of rows."
-          },
-          "total": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Total rows matching the query (ignoring pagination)."
-          }
-        },
-        "required": [
-          "items",
-          "total"
-        ],
-        "additionalProperties": false
-      },
-      "UserGroup": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Numeric primary key."
-          },
-          "name": {
-            "type": "string",
-            "minLength": 2,
-            "maxLength": 250,
-            "description": "Display name (2..250 chars; unique across groups)."
-          },
-          "logoUrl": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 200000
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "logoUrl"
-        ],
-        "additionalProperties": false
-      },
-      "UserGroupListResult": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "description": "A workspace user group; repositories are shared with groups.",
-              "$ref": "#/components/schemas/UserGroup"
-            },
-            "description": "Page of rows."
-          },
-          "total": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Total rows matching the query (ignoring pagination)."
-          }
-        },
-        "required": [
-          "items",
-          "total"
-        ],
-        "additionalProperties": false
-      },
-      "UserGroupMember": {
-        "type": "object",
-        "properties": {
-          "userId": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "User id."
-          },
-          "groupId": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Group id."
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "ADMIN",
-              "COLLABORATOR",
-              "USER"
-            ],
-            "description": "Group-scoped role (ADMIN | COLLABORATOR | USER)."
-          }
-        },
-        "required": [
-          "userId",
-          "groupId",
-          "role"
-        ],
-        "additionalProperties": false
-      },
-      "UserGroupMemberWithUser": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Numeric primary key."
-          },
-          "email": {
-            "type": "string",
-            "format": "email",
-            "description": "Account email; lower-cased + trimmed."
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "USER",
-              "ADMIN",
-              "COLLABORATOR",
-              "INTEGRATION"
-            ],
-            "description": "System-level role."
-          },
-          "firstName": {
-            "anyOf": [
-              {
-                "type": "string",
-                "minLength": 2,
-                "maxLength": 50
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "First name (2..50 chars when present)."
-          },
-          "lastName": {
-            "anyOf": [
-              {
-                "type": "string",
-                "minLength": 2,
-                "maxLength": 50
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Last name (2..50 chars when present)."
-          },
-          "fullName": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Computed full name; null when both names are unset."
-          },
-          "label": {
-            "type": "string",
-            "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
-          },
-          "imgUrl": {
-            "type": "string",
-            "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Insertion timestamp."
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Last mutation timestamp."
-          },
-          "deletedAt": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time",
-                "description": "Soft-delete timestamp; non-null for archived rows."
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "userGroupMember": {
-            "type": "object",
-            "properties": {
-              "userId": {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991,
-                "description": "User id."
-              },
-              "groupId": {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Group id."
-              },
-              "role": {
-                "type": "string",
-                "enum": [
-                  "ADMIN",
-                  "COLLABORATOR",
-                  "USER"
-                ],
-                "description": "Group-scoped role (ADMIN | COLLABORATOR | USER)."
-              }
-            },
-            "required": [
-              "userId",
-              "groupId",
-              "role"
-            ],
-            "additionalProperties": false,
-            "description": "Join row for this member; carries the group-scoped role.",
-            "$ref": "#/components/schemas/UserGroupMember"
-          }
-        },
-        "required": [
-          "id",
-          "email",
-          "role",
-          "firstName",
-          "lastName",
-          "fullName",
-          "label",
-          "imgUrl",
-          "createdAt",
-          "updatedAt",
-          "deletedAt",
-          "userGroupMember"
-        ],
-        "additionalProperties": false
-      },
       "RepositoryUser": {
         "type": "object",
         "properties": {
@@ -3974,6 +3323,657 @@
         ],
         "additionalProperties": false
       },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Numeric primary key."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Account email; lower-cased + trimmed."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "COLLABORATOR",
+              "INTEGRATION"
+            ],
+            "description": "System-level role."
+          },
+          "firstName": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "First name (2..50 chars when present)."
+          },
+          "lastName": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Last name (2..50 chars when present)."
+          },
+          "fullName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Computed full name; null when both names are unset."
+          },
+          "label": {
+            "type": "string",
+            "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
+          },
+          "imgUrl": {
+            "type": "string",
+            "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "role",
+          "firstName",
+          "lastName",
+          "fullName",
+          "label",
+          "imgUrl",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "additionalProperties": false
+      },
+      "AccessibleUserGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "User-group id."
+          },
+          "name": {
+            "type": "string",
+            "description": "User-group display name."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "COLLABORATOR",
+              "INTEGRATION"
+            ],
+            "description": "Acting user's role within the group."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "UserProfileResult": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Numeric primary key."
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "Account email; lower-cased + trimmed."
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "USER",
+                  "ADMIN",
+                  "COLLABORATOR",
+                  "INTEGRATION"
+                ],
+                "description": "System-level role."
+              },
+              "firstName": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "First name (2..50 chars when present)."
+              },
+              "lastName": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Last name (2..50 chars when present)."
+              },
+              "fullName": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Computed full name; null when both names are unset."
+              },
+              "label": {
+                "type": "string",
+                "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
+              },
+              "imgUrl": {
+                "type": "string",
+                "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Insertion timestamp."
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Last mutation timestamp."
+              },
+              "deletedAt": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "Soft-delete timestamp; non-null for archived rows."
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "email",
+              "role",
+              "firstName",
+              "lastName",
+              "fullName",
+              "label",
+              "imgUrl",
+              "createdAt",
+              "updatedAt",
+              "deletedAt"
+            ],
+            "additionalProperties": false,
+            "description": "Current user's profile.",
+            "$ref": "#/components/schemas/User"
+          },
+          "userGroups": {
+            "type": "array",
+            "items": {
+              "description": "A user group decorated with the acting user's role.",
+              "$ref": "#/components/schemas/AccessibleUserGroup"
+            },
+            "description": "User groups accessible to the current user."
+          },
+          "authData": {
+            "description": "\n      Auth-context for the active session. Always carries a `strategy`\n      field ('local' | 'jwt' | 'oidc'); strategy-specific payload is\n      nested under the strategy's key.\n    "
+          }
+        },
+        "required": [
+          "user",
+          "userGroups",
+          "authData"
+        ],
+        "additionalProperties": false
+      },
+      "UserProfileUpdateResult": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "description": "A system user; the shape returned by the `profile` virtual.",
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "required": [
+          "user"
+        ],
+        "additionalProperties": false
+      },
+      "UserListItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Numeric primary key."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Account email; lower-cased + trimmed."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "COLLABORATOR",
+              "INTEGRATION"
+            ],
+            "description": "System-level role."
+          },
+          "firstName": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "First name (2..50 chars when present)."
+          },
+          "lastName": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Last name (2..50 chars when present)."
+          },
+          "fullName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Computed full name; null when both names are unset."
+          },
+          "label": {
+            "type": "string",
+            "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
+          },
+          "imgUrl": {
+            "type": "string",
+            "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "userGroups": {
+            "description": "Eager-loaded user-group membership rows attached to this user.",
+            "type": "array",
+            "items": {}
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "role",
+          "firstName",
+          "lastName",
+          "fullName",
+          "label",
+          "imgUrl",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "additionalProperties": false
+      },
+      "UserListResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "description": "User row in the admin list response.",
+              "$ref": "#/components/schemas/UserListItem"
+            },
+            "description": "Page of rows."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total rows matching the query (ignoring pagination)."
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "UserGroup": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Numeric primary key."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 250,
+            "description": "Display name (2..250 chars; unique across groups)."
+          },
+          "logoUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "logoUrl"
+        ],
+        "additionalProperties": false
+      },
+      "UserGroupListResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "description": "A workspace user group; repositories are shared with groups.",
+              "$ref": "#/components/schemas/UserGroup"
+            },
+            "description": "Page of rows."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total rows matching the query (ignoring pagination)."
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "UserGroupMember": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "User id."
+          },
+          "groupId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Group id."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "ADMIN",
+              "COLLABORATOR",
+              "USER"
+            ],
+            "description": "Group-scoped role (ADMIN | COLLABORATOR | USER)."
+          }
+        },
+        "required": [
+          "userId",
+          "groupId",
+          "role"
+        ],
+        "additionalProperties": false
+      },
+      "UserGroupMemberWithUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Numeric primary key."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Account email; lower-cased + trimmed."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "ADMIN",
+              "COLLABORATOR",
+              "INTEGRATION"
+            ],
+            "description": "System-level role."
+          },
+          "firstName": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "First name (2..50 chars when present)."
+          },
+          "lastName": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 50
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Last name (2..50 chars when present)."
+          },
+          "fullName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Computed full name; null when both names are unset."
+          },
+          "label": {
+            "type": "string",
+            "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
+          },
+          "imgUrl": {
+            "type": "string",
+            "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "userGroupMember": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "description": "User id."
+              },
+              "groupId": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Group id."
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "ADMIN",
+                  "COLLABORATOR",
+                  "USER"
+                ],
+                "description": "Group-scoped role (ADMIN | COLLABORATOR | USER)."
+              }
+            },
+            "required": [
+              "userId",
+              "groupId",
+              "role"
+            ],
+            "additionalProperties": false,
+            "description": "Join row for this member; carries the group-scoped role.",
+            "$ref": "#/components/schemas/UserGroupMember"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "role",
+          "firstName",
+          "lastName",
+          "fullName",
+          "label",
+          "imgUrl",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "userGroupMember"
+        ],
+        "additionalProperties": false
+      },
       "StoredUserActivityContext": {
         "type": "object",
         "properties": {
@@ -4786,7 +4786,7 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "$schema": "https://json-schema.org/draft/2020-12/schema",
                 "type": "object",
@@ -4795,10 +4795,21 @@
                     "description": "Existing vector store to extend; omit to create a new one.",
                     "type": "string",
                     "minLength": 1
+                  },
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "PDFs to ingest into the vector store."
                   }
                 },
+                "required": [
+                  "files"
+                ],
                 "additionalProperties": false,
-                "description": "Body for the PDF to vector store upload endpoint."
+                "description": "Multipart payload for the PDF to vector store endpoint."
               }
             }
           }
@@ -7004,6 +7015,34 @@
             "description": "No files provided in the multipart body."
           }
         },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    "description": "Library upload: multiple assets (max 10)."
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Legacy single-file upload."
+                  }
+                },
+                "additionalProperties": false,
+                "description": "Asset upload payload; use `files[]` (library) OR `file` (legacy)."
+              }
+            }
+          }
+        },
         "security": [
           {
             "bearerAuth": []
@@ -7334,7 +7373,7 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "$schema": "https://json-schema.org/draft/2020-12/schema",
                 "type": "object",
@@ -7344,13 +7383,19 @@
                     "minLength": 1,
                     "maxLength": 32,
                     "description": "Key (property) name inside `meta.files` (e.g. `captions`). Replaces any prior file stored under this key."
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file blob to attach."
                   }
                 },
                 "required": [
-                  "fileKey"
+                  "fileKey",
+                  "file"
                 ],
                 "additionalProperties": false,
-                "description": "Payload for attaching a supplementary file to an asset."
+                "description": "Multipart payload for the attach-file endpoint."
               }
             }
           }
@@ -9218,1217 +9263,14 @@
         ]
       }
     },
-    "/tags": {
-      "get": {
-        "tags": [
-          "Tag / Catalog"
-        ],
-        "operationId": "tagList",
-        "x-tailor-slice": "tag",
-        "x-tailor-method": "list",
-        "summary": "List tags",
-        "description": "Returns the tag catalog, optionally scoped to tags reachable through the current user's repositories.",
-        "parameters": [
-          {
-            "name": "associated",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Restrict to tags attached to repositories the user can access.",
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {}
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Tag catalog (optionally scoped to the user).",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "description": "A user-defined label attachable to repositories.",
-                        "$ref": "#/components/schemas/Tag"
-                      }
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/login": {
-      "post": {
-        "tags": [
-          "User / Authentication"
-        ],
-        "operationId": "userPostLogin",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "postLogin",
-        "summary": "Email + password login",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Authenticated profile + auth-strategy metadata.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "description": "Current-user profile.",
-                  "$ref": "#/components/schemas/UserProfileResult"
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "Account email; lower-cased + trimmed."
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "Account password."
-                  }
-                },
-                "required": [
-                  "email",
-                  "password"
-                ],
-                "additionalProperties": false,
-                "description": "Email + password login payload."
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/forgot-password": {
-      "post": {
-        "tags": [
-          "User / Password recovery"
-        ],
-        "operationId": "userPostForgotPassword",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "postForgotPassword",
-        "summary": "Mail a password-reset token",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": "No content"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "Account email; lower-cased + trimmed."
-                  }
-                },
-                "required": [
-                  "email"
-                ],
-                "additionalProperties": false,
-                "description": "Mail a reset token to the supplied account email."
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/reset-password": {
-      "post": {
-        "tags": [
-          "User / Password recovery"
-        ],
-        "operationId": "userPostResetPassword",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "postResetPassword",
-        "summary": "Replace the password using a reset token",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": "No content"
-          },
-          "422": {
-            "description": "Weak password (carries the zxcvbn warning)"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "password": {
-                    "type": "string",
-                    "minLength": 8,
-                    "maxLength": 100,
-                    "description": "Replacement password."
-                  },
-                  "token": {
-                    "description": "Reset token (consumed by the auth middleware).",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "password"
-                ],
-                "additionalProperties": false,
-                "description": "Token-authenticated password reset payload."
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/reset-password/token-status": {
-      "post": {
-        "tags": [
-          "User / Password recovery"
-        ],
-        "operationId": "userPostResetPasswordTokenStatus",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "postResetPasswordTokenStatus",
-        "summary": "Validate a password-reset token",
-        "parameters": [],
-        "responses": {
-          "202": {
-            "description": "Token is valid"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "token": {
-                    "type": "string",
-                    "description": "Reset token to validate."
-                  }
-                },
-                "required": [
-                  "token"
-                ],
-                "additionalProperties": false,
-                "description": "Reset-token validation payload."
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users/logout": {
-      "get": {
-        "tags": [
-          "User / Authentication"
-        ],
-        "operationId": "userGetLogout",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "getLogout",
-        "summary": "Sign out",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": "Cookies cleared"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/me": {
-      "get": {
-        "tags": [
-          "User / Profile"
-        ],
-        "operationId": "userGetMe",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "getMe",
-        "summary": "Get the current user profile",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Current user profile bundle.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "description": "Current-user profile.",
-                  "$ref": "#/components/schemas/UserProfileResult"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "patch": {
-        "tags": [
-          "User / Profile"
-        ],
-        "operationId": "userPatchMe",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "patchMe",
-        "summary": "Update the current user profile",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Updated profile.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "description": "Updated current user profile.",
-                  "$ref": "#/components/schemas/UserProfileUpdateResult"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Email already in use"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "Account email; lower-cased + trimmed."
-                  },
-                  "firstName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
-                  },
-                  "lastName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
-                  },
-                  "imgUrl": {
-                    "description": "Avatar URL or base64 data URL (capped at 200_000 chars).",
-                    "type": "string",
-                    "maxLength": 200000
-                  }
-                },
-                "additionalProperties": false,
-                "description": "Editable subset of the current user's profile."
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/me/change-password": {
-      "post": {
-        "tags": [
-          "User / Profile"
-        ],
-        "operationId": "userPostMeChangePassword",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "postMeChangePassword",
-        "summary": "Change the current user password",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": "No content"
-          },
-          "400": {
-            "description": "Same password or wrong current password"
-          },
-          "422": {
-            "description": "Weak new password (carries the zxcvbn warning)"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "currentPassword": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "Current account password."
-                  },
-                  "newPassword": {
-                    "type": "string",
-                    "minLength": 8,
-                    "maxLength": 100,
-                    "description": "Replacement password; 8..100 chars to match the model validator."
-                  }
-                },
-                "required": [
-                  "currentPassword",
-                  "newPassword"
-                ],
-                "additionalProperties": false,
-                "description": "Change-password payload for the authenticated user."
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users": {
-      "get": {
-        "tags": [
-          "User / CRUD (admin)"
-        ],
-        "operationId": "userList",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "list",
-        "summary": "List users",
-        "parameters": [
-          {
-            "name": "filter",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Substring match across email, firstName, lastName (iLike).",
-              "type": "string",
-              "maxLength": 250
-            }
-          },
-          {
-            "name": "email",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Exact-equality match against User.email. Kept as a plain string (not validated as a real address) so a typo from the search box returns zero results instead of a 400.",
-              "type": "string",
-              "maxLength": 250
-            }
-          },
-          {
-            "name": "role",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Restrict to a specific role.",
-              "type": "string",
-              "enum": [
-                "USER",
-                "ADMIN",
-                "COLLABORATOR",
-                "INTEGRATION"
-              ]
-            }
-          },
-          {
-            "name": "archived",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Include soft-deleted (archived) users in the result.",
-              "anyOf": [
-                {
-                  "type": "boolean"
-                },
-                {}
-              ]
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Pagination offset.",
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 9007199254740991
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Pagination limit.",
-              "type": "integer",
-              "exclusiveMinimum": 0,
-              "maximum": 9007199254740991
-            }
-          },
-          {
-            "name": "sortBy",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Sort column.",
-              "type": "string",
-              "maxLength": 64
-            }
-          },
-          {
-            "name": "sortOrder",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Sort direction.",
-              "type": "string",
-              "enum": [
-                "ASC",
-                "DESC",
-                "asc",
-                "desc"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Paginated user list.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "Paginated user list response.",
-                      "$ref": "#/components/schemas/UserListResult"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "User / CRUD (admin)"
-        ],
-        "operationId": "userCreate",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "create",
-        "summary": "Invite or update a user",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Upserted user profile.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "A system user; the shape returned by the `profile` virtual.",
-                      "$ref": "#/components/schemas/User"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "description": "Account email; lower-cased + trimmed."
-                  },
-                  "firstName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
-                  },
-                  "lastName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
-                  },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "USER",
-                      "ADMIN",
-                      "COLLABORATOR",
-                      "INTEGRATION"
-                    ],
-                    "description": "System-level role."
-                  },
-                  "userGroupIds": {
-                    "description": "Replace the user's user-group memberships with this exact set. Omit to leave memberships untouched.",
-                    "type": "array",
-                    "items": {
-                      "type": "integer",
-                      "exclusiveMinimum": 0,
-                      "maximum": 9007199254740991
-                    }
-                  },
-                  "skipInvite": {
-                    "description": "Suppress the invitation mail on create. No effect on update.",
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "email"
-                ],
-                "additionalProperties": false,
-                "description": "Admin-driven invite-or-update payload."
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/{id}": {
-      "delete": {
-        "tags": [
-          "User / CRUD (admin)"
-        ],
-        "operationId": "userDelete",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "delete",
-        "summary": "Remove a user",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "exclusiveMinimum": 0,
-              "maximum": 9007199254740991,
-              "description": "Numeric user id (path param)."
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No content"
-          },
-          "409": {
-            "description": "Cannot remove the last system admin"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/users/{id}/reinvite": {
-      "post": {
-        "tags": [
-          "User / CRUD (admin)"
-        ],
-        "operationId": "userPostReinvite",
-        "x-tailor-slice": "user",
-        "x-tailor-method": "postReinvite",
-        "summary": "Resend the invitation mail to a user",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "exclusiveMinimum": 0,
-              "maximum": 9007199254740991,
-              "description": "Numeric user id (path param)."
-            }
-          }
-        ],
-        "responses": {
-          "202": {
-            "description": "Accepted"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/user-group": {
-      "get": {
-        "tags": [
-          "User Group / CRUD"
-        ],
-        "operationId": "userGroupList",
-        "x-tailor-slice": "userGroup",
-        "x-tailor-method": "list",
-        "summary": "List user groups visible to the current user",
-        "parameters": [
-          {
-            "name": "filter",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Substring match against group name (iLike).",
-              "type": "string",
-              "maxLength": 100
-            }
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Pagination offset.",
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 9007199254740991
-            }
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Pagination limit.",
-              "type": "integer",
-              "exclusiveMinimum": 0,
-              "maximum": 9007199254740991
-            }
-          },
-          {
-            "name": "sortBy",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Sort column.",
-              "type": "string",
-              "maxLength": 64
-            }
-          },
-          {
-            "name": "sortOrder",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "description": "Sort direction.",
-              "type": "string",
-              "enum": [
-                "ASC",
-                "DESC",
-                "asc",
-                "desc"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Paginated user group list.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "Paginated user-group list response.",
-                      "$ref": "#/components/schemas/UserGroupListResult"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "User Group / CRUD"
-        ],
-        "operationId": "userGroupCreate",
-        "x-tailor-slice": "userGroup",
-        "x-tailor-method": "create",
-        "summary": "Create a user group (admin)",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Created group.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "A workspace user group; repositories are shared with groups.",
-                      "$ref": "#/components/schemas/UserGroup"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Group name already exists"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 250,
-                    "description": "Display name (2..250 chars; unique across groups)."
-                  },
-                  "logoUrl": {
-                    "type": "string",
-                    "maxLength": 200000
-                  }
-                },
-                "required": [
-                  "name"
-                ],
-                "additionalProperties": false,
-                "description": "Create user group payload."
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/user-group/{id}": {
-      "get": {
-        "tags": [
-          "User Group / CRUD"
-        ],
-        "operationId": "userGroupGet",
-        "x-tailor-slice": "userGroup",
-        "x-tailor-method": "get",
-        "summary": "Get a user group by id",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "User group.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "A workspace user group; repositories are shared with groups.",
-                      "$ref": "#/components/schemas/UserGroup"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Caller is not an admin or group admin"
-          },
-          "404": {
-            "description": "User group not found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "patch": {
-        "tags": [
-          "User Group / CRUD"
-        ],
-        "operationId": "userGroupUpdate",
-        "x-tailor-slice": "userGroup",
-        "x-tailor-method": "update",
-        "summary": "Patch a user group",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Updated group.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "A workspace user group; repositories are shared with groups.",
-                      "$ref": "#/components/schemas/UserGroup"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Caller is not an admin or group admin"
-          },
-          "404": {
-            "description": "User group not found"
-          },
-          "409": {
-            "description": "Group name already exists"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 250,
-                    "description": "Display name (2..250 chars; unique across groups)."
-                  },
-                  "logoUrl": {
-                    "type": "string",
-                    "maxLength": 200000
-                  }
-                },
-                "additionalProperties": false,
-                "description": "Patch payload for a user-group update operation."
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "User Group / CRUD"
-        ],
-        "operationId": "userGroupDelete",
-        "x-tailor-slice": "userGroup",
-        "x-tailor-method": "delete",
-        "summary": "Delete a user group",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": "No content"
-          },
-          "403": {
-            "description": "Caller is not an admin or group admin"
-          },
-          "404": {
-            "description": "User group not found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/user-group/{id}/users": {
-      "get": {
-        "tags": [
-          "User Group / Members"
-        ],
-        "operationId": "userGroupGetUsers",
-        "x-tailor-slice": "userGroup",
-        "x-tailor-method": "getUsers",
-        "summary": "List members of a user group",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Members of the user group, each with their join row.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "description": "A user-group member: full user profile + join row.",
-                        "$ref": "#/components/schemas/UserGroupMemberWithUser"
-                      }
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Caller is not an admin or group admin"
-          },
-          "404": {
-            "description": "User group not found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "User Group / Members"
-        ],
-        "operationId": "userGroupPostUsers",
-        "x-tailor-slice": "userGroup",
-        "x-tailor-method": "postUsers",
-        "summary": "Invite or update members of a user group",
-        "parameters": [],
-        "responses": {
-          "204": {
-            "description": "No content"
-          },
-          "403": {
-            "description": "Caller is not an admin or group admin"
-          },
-          "404": {
-            "description": "User group not found"
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "emails": {
-                    "minItems": 1,
-                    "maxItems": 50,
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "email"
-                    },
-                    "description": "Emails to invite/assign. Each lower-cased + trimmed."
-                  },
-                  "role": {
-                    "type": "string",
-                    "enum": [
-                      "ADMIN",
-                      "COLLABORATOR",
-                      "USER"
-                    ],
-                    "description": "Group-scoped role (ADMIN | COLLABORATOR | USER)."
-                  },
-                  "skipInvite": {
-                    "description": "Suppress invitation mails on member creation.",
-                    "type": "boolean"
-                  }
-                },
-                "required": [
-                  "emails",
-                  "role"
-                ],
-                "additionalProperties": false,
-                "description": "Bulk-upsert members of a user group."
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/user-group/{id}/users/{userId}": {
-      "delete": {
-        "tags": [
-          "User Group / Members"
-        ],
-        "operationId": "userGroupDeleteUsersById",
-        "x-tailor-slice": "userGroup",
-        "x-tailor-method": "deleteUsersById",
-        "summary": "Remove a member from a user group",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "exclusiveMinimum": 0,
-              "maximum": 9007199254740991,
-              "description": "Numeric user-group id."
-            }
-          },
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "exclusiveMinimum": 0,
-              "maximum": 9007199254740991,
-              "description": "Numeric id of the group member."
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No content"
-          },
-          "403": {
-            "description": "Caller is not an admin or group admin"
-          },
-          "404": {
-            "description": "User group or member user not found"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/repositories/import": {
       "post": {
         "tags": [
           "Repository / Transfer"
         ],
-        "operationId": "repositoryPostImport",
+        "operationId": "repositoryImport",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postImport",
+        "x-tailor-method": "import",
         "summary": "Import a repository from a `.tgz` archive (multipart)",
         "parameters": [],
         "responses": {
@@ -10439,7 +9281,7 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "$schema": "https://json-schema.org/draft/2020-12/schema",
                 "type": "object",
@@ -10464,14 +9306,20 @@
                       "minimum": -9007199254740991,
                       "maximum": 9007199254740991
                     }
+                  },
+                  "archive": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Repository archive (`.tgz`)."
                   }
                 },
                 "required": [
                   "name",
-                  "description"
+                  "description",
+                  "archive"
                 ],
                 "additionalProperties": false,
-                "description": "Import-repo payload accompanying the multipart archive."
+                "description": "Multipart payload for the repository import endpoint."
               }
             }
           }
@@ -12149,6 +10997,1209 @@
                 "description": "Optional fields for seeding a repository from the fixture archive."
               }
             }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/tags": {
+      "get": {
+        "tags": [
+          "Tag / Catalog"
+        ],
+        "operationId": "tagList",
+        "x-tailor-slice": "tag",
+        "x-tailor-method": "list",
+        "summary": "List tags",
+        "description": "Returns the tag catalog, optionally scoped to tags reachable through the current user's repositories.",
+        "parameters": [
+          {
+            "name": "associated",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to tags attached to repositories the user can access.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {}
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tag catalog (optionally scoped to the user).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "description": "A user-defined label attachable to repositories.",
+                        "$ref": "#/components/schemas/Tag"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "User / Authentication"
+        ],
+        "operationId": "userPostLogin",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "postLogin",
+        "summary": "Email + password login",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authenticated profile + auth-strategy metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "description": "Current-user profile.",
+                  "$ref": "#/components/schemas/UserProfileResult"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Account email; lower-cased + trimmed."
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Account password."
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "additionalProperties": false,
+                "description": "Email + password login payload."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/forgot-password": {
+      "post": {
+        "tags": [
+          "User / Password recovery"
+        ],
+        "operationId": "userPostForgotPassword",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "postForgotPassword",
+        "summary": "Mail a password-reset token",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Account email; lower-cased + trimmed."
+                  }
+                },
+                "required": [
+                  "email"
+                ],
+                "additionalProperties": false,
+                "description": "Mail a reset token to the supplied account email."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/reset-password": {
+      "post": {
+        "tags": [
+          "User / Password recovery"
+        ],
+        "operationId": "userPostResetPassword",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "postResetPassword",
+        "summary": "Replace the password using a reset token",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "422": {
+            "description": "Weak password (carries the zxcvbn warning)"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 100,
+                    "description": "Replacement password."
+                  },
+                  "token": {
+                    "description": "Reset token (consumed by the auth middleware).",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "password"
+                ],
+                "additionalProperties": false,
+                "description": "Token-authenticated password reset payload."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/reset-password/token-status": {
+      "post": {
+        "tags": [
+          "User / Password recovery"
+        ],
+        "operationId": "userPostResetPasswordTokenStatus",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "postResetPasswordTokenStatus",
+        "summary": "Validate a password-reset token",
+        "parameters": [],
+        "responses": {
+          "202": {
+            "description": "Token is valid"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Reset token to validate."
+                  }
+                },
+                "required": [
+                  "token"
+                ],
+                "additionalProperties": false,
+                "description": "Reset-token validation payload."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/logout": {
+      "get": {
+        "tags": [
+          "User / Authentication"
+        ],
+        "operationId": "userGetLogout",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "getLogout",
+        "summary": "Sign out",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Cookies cleared"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "User / Profile"
+        ],
+        "operationId": "userGetMe",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "getMe",
+        "summary": "Get the current user profile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user profile bundle.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "description": "Current-user profile.",
+                  "$ref": "#/components/schemas/UserProfileResult"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "User / Profile"
+        ],
+        "operationId": "userPatchMe",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "patchMe",
+        "summary": "Update the current user profile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Updated profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "description": "Updated current user profile.",
+                  "$ref": "#/components/schemas/UserProfileUpdateResult"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already in use"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Account email; lower-cased + trimmed."
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  "imgUrl": {
+                    "description": "Avatar URL or base64 data URL (capped at 200_000 chars).",
+                    "type": "string",
+                    "maxLength": 200000
+                  }
+                },
+                "additionalProperties": false,
+                "description": "Editable subset of the current user's profile."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/me/change-password": {
+      "post": {
+        "tags": [
+          "User / Profile"
+        ],
+        "operationId": "userPostMeChangePassword",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "postMeChangePassword",
+        "summary": "Change the current user password",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Same password or wrong current password"
+          },
+          "422": {
+            "description": "Weak new password (carries the zxcvbn warning)"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "currentPassword": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Current account password."
+                  },
+                  "newPassword": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 100,
+                    "description": "Replacement password; 8..100 chars to match the model validator."
+                  }
+                },
+                "required": [
+                  "currentPassword",
+                  "newPassword"
+                ],
+                "additionalProperties": false,
+                "description": "Change-password payload for the authenticated user."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "User / CRUD (admin)"
+        ],
+        "operationId": "userList",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "list",
+        "summary": "List users",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Substring match across email, firstName, lastName (iLike).",
+              "type": "string",
+              "maxLength": 250
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Exact-equality match against User.email. Kept as a plain string (not validated as a real address) so a typo from the search box returns zero results instead of a 400.",
+              "type": "string",
+              "maxLength": 250
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to a specific role.",
+              "type": "string",
+              "enum": [
+                "USER",
+                "ADMIN",
+                "COLLABORATOR",
+                "INTEGRATION"
+              ]
+            }
+          },
+          {
+            "name": "archived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Include soft-deleted (archived) users in the result.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {}
+              ]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination offset.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination limit.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Sort column.",
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Sort direction.",
+              "type": "string",
+              "enum": [
+                "ASC",
+                "DESC",
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated user list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Paginated user list response.",
+                      "$ref": "#/components/schemas/UserListResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "User / CRUD (admin)"
+        ],
+        "operationId": "userCreate",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "create",
+        "summary": "Invite or update a user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Upserted user profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A system user; the shape returned by the `profile` virtual.",
+                      "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "description": "Account email; lower-cased + trimmed."
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "USER",
+                      "ADMIN",
+                      "COLLABORATOR",
+                      "INTEGRATION"
+                    ],
+                    "description": "System-level role."
+                  },
+                  "userGroupIds": {
+                    "description": "Replace the user's user-group memberships with this exact set. Omit to leave memberships untouched.",
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "skipInvite": {
+                    "description": "Suppress the invitation mail on create. No effect on update.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "email"
+                ],
+                "additionalProperties": false,
+                "description": "Admin-driven invite-or-update payload."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{id}": {
+      "delete": {
+        "tags": [
+          "User / CRUD (admin)"
+        ],
+        "operationId": "userDelete",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "delete",
+        "summary": "Remove a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric user id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "409": {
+            "description": "Cannot remove the last system admin"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/{id}/reinvite": {
+      "post": {
+        "tags": [
+          "User / CRUD (admin)"
+        ],
+        "operationId": "userPostReinvite",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "postReinvite",
+        "summary": "Resend the invitation mail to a user",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric user id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user-group": {
+      "get": {
+        "tags": [
+          "User Group / CRUD"
+        ],
+        "operationId": "userGroupList",
+        "x-tailor-slice": "userGroup",
+        "x-tailor-method": "list",
+        "summary": "List user groups visible to the current user",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Substring match against group name (iLike).",
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination offset.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination limit.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Sort column.",
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Sort direction.",
+              "type": "string",
+              "enum": [
+                "ASC",
+                "DESC",
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated user group list.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Paginated user-group list response.",
+                      "$ref": "#/components/schemas/UserGroupListResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "User Group / CRUD"
+        ],
+        "operationId": "userGroupCreate",
+        "x-tailor-slice": "userGroup",
+        "x-tailor-method": "create",
+        "summary": "Create a user group (admin)",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Created group.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A workspace user group; repositories are shared with groups.",
+                      "$ref": "#/components/schemas/UserGroup"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Group name already exists"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 250,
+                    "description": "Display name (2..250 chars; unique across groups)."
+                  },
+                  "logoUrl": {
+                    "type": "string",
+                    "maxLength": 200000
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "additionalProperties": false,
+                "description": "Create user group payload."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user-group/{id}": {
+      "get": {
+        "tags": [
+          "User Group / CRUD"
+        ],
+        "operationId": "userGroupGet",
+        "x-tailor-slice": "userGroup",
+        "x-tailor-method": "get",
+        "summary": "Get a user group by id",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User group.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A workspace user group; repositories are shared with groups.",
+                      "$ref": "#/components/schemas/UserGroup"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not an admin or group admin"
+          },
+          "404": {
+            "description": "User group not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "User Group / CRUD"
+        ],
+        "operationId": "userGroupUpdate",
+        "x-tailor-slice": "userGroup",
+        "x-tailor-method": "update",
+        "summary": "Patch a user group",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Updated group.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A workspace user group; repositories are shared with groups.",
+                      "$ref": "#/components/schemas/UserGroup"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not an admin or group admin"
+          },
+          "404": {
+            "description": "User group not found"
+          },
+          "409": {
+            "description": "Group name already exists"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 250,
+                    "description": "Display name (2..250 chars; unique across groups)."
+                  },
+                  "logoUrl": {
+                    "type": "string",
+                    "maxLength": 200000
+                  }
+                },
+                "additionalProperties": false,
+                "description": "Patch payload for a user-group update operation."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "User Group / CRUD"
+        ],
+        "operationId": "userGroupDelete",
+        "x-tailor-slice": "userGroup",
+        "x-tailor-method": "delete",
+        "summary": "Delete a user group",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "403": {
+            "description": "Caller is not an admin or group admin"
+          },
+          "404": {
+            "description": "User group not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user-group/{id}/users": {
+      "get": {
+        "tags": [
+          "User Group / Members"
+        ],
+        "operationId": "userGroupGetUsers",
+        "x-tailor-slice": "userGroup",
+        "x-tailor-method": "getUsers",
+        "summary": "List members of a user group",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Members of the user group, each with their join row.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "description": "A user-group member: full user profile + join row.",
+                        "$ref": "#/components/schemas/UserGroupMemberWithUser"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Caller is not an admin or group admin"
+          },
+          "404": {
+            "description": "User group not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "User Group / Members"
+        ],
+        "operationId": "userGroupPostUsers",
+        "x-tailor-slice": "userGroup",
+        "x-tailor-method": "postUsers",
+        "summary": "Invite or update members of a user group",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "403": {
+            "description": "Caller is not an admin or group admin"
+          },
+          "404": {
+            "description": "User group not found"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "emails": {
+                    "minItems": 1,
+                    "maxItems": 50,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "email"
+                    },
+                    "description": "Emails to invite/assign. Each lower-cased + trimmed."
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "ADMIN",
+                      "COLLABORATOR",
+                      "USER"
+                    ],
+                    "description": "Group-scoped role (ADMIN | COLLABORATOR | USER)."
+                  },
+                  "skipInvite": {
+                    "description": "Suppress invitation mails on member creation.",
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "emails",
+                  "role"
+                ],
+                "additionalProperties": false,
+                "description": "Bulk-upsert members of a user group."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/user-group/{id}/users/{userId}": {
+      "delete": {
+        "tags": [
+          "User Group / Members"
+        ],
+        "operationId": "userGroupDeleteUsersById",
+        "x-tailor-slice": "userGroup",
+        "x-tailor-method": "deleteUsersById",
+        "summary": "Remove a member from a user group",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric user-group id."
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric id of the group member."
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "403": {
+            "description": "Caller is not an admin or group admin"
+          },
+          "404": {
+            "description": "User group or member user not found"
           }
         },
         "security": [

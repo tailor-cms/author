@@ -9,7 +9,7 @@ import user from './user/index.ts';
 import userGroup from './user-group/index.ts';
 import { extractAuthData } from '#shared/auth/mw.js';
 import authenticator from '#shared/auth/index.js';
-import { buildOpenApiDocument } from '#shared/openapi/index.ts';
+import { OPENAPI_SPEC_PATH } from '#shared/openapi/index.ts';
 import {
   ai as aiConfig,
   auth as authConfig,
@@ -21,14 +21,13 @@ const router = express.Router();
 router.use(processBody);
 router.use(extractAuthData);
 
-// Public routes:
-// API reference
+// Raw OpenAPI spec
 router.get('/openapi.json', (_req: Request, res: Response) => {
-  res.json(buildOpenApiDocument());
+  res.sendFile(OPENAPI_SPEC_PATH);
 });
+
+// Scalar API docs
 router.get('/docs', (_req: Request, res: Response) => {
-  // Scalar API reference rendered from /api/openapi.json.
-  // Single CDN script tag - no extra dependency.
   res.type('html').send(`<!doctype html>
     <html>
       <head>

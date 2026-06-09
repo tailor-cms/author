@@ -72,15 +72,15 @@ const dbConfig = env.DATABASE_URI
 await testDatabaseConnection(dbConfig, 10, 3000);
 dbConnectionLoader.stop();
 
-const appCommands = await Promise.all(
-  ['backend', 'frontend'].map(async (name, index) => {
-    return {
-      name,
-      prefixColor: ['blue', 'green'][index],
-      command: `cd ./apps/${name} && pnpm dev`,
-    };
-  }),
-);
+const appCommands = [
+  { name: 'backend', prefixColor: 'blue', command: 'cd ./apps/backend && pnpm dev' },
+  { name: 'frontend', prefixColor: 'green', command: 'cd ./apps/frontend && pnpm dev' },
+  {
+    name: 'api-client',
+    prefixColor: 'magenta',
+    command: 'cd ./packages/api-client && pnpm watch',
+  },
+];
 
 const { result } = concurrently(appCommands, {
   killOthers: true,
