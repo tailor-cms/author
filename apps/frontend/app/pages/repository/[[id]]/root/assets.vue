@@ -1,7 +1,7 @@
 <template>
   <div class="assets-page h-100">
     <VMain>
-      <VContainer class="px-md-10 py-md-8" max-width="1280">
+      <VContainer class="px-md-10 py-md-8" max-width="1600">
         <Toolbar
           ref="toolbarRef"
           v-model:search="searchQuery"

@@ -6,7 +6,7 @@
         :aria-label="`Content language: ${currentLanguage?.toUpperCase() ?? 'EN'}`"
         class="language-selector ma-2"
         size="small"
-        variant="tonal"
+        variant="text"
         rounded="lg"
       >
         <VIcon icon="mdi-translate" size="18" />

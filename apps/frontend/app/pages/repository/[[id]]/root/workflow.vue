@@ -3,7 +3,7 @@
     <VMain>
       <VContainer
         class="workflow d-flex flex-column h-100 px-md-10 py-md-8"
-        max-width="1280"
+        max-width="1600"
       >
         <div v-if="workflow" class="d-flex align-center ga-2 mb-4">
           <WorkflowFilters
