@@ -568,7 +568,7 @@ importers:
         version: 10.5.0(postcss@8.5.15)
       nuxt:
         specifier: 4.4.6
-        version: 4.4.6(@babel/plugin-syntax-jsx@7.28.6(@babel/core@7.29.0))(@babel/plugin-syntax-typescript@7.28.6(@babel/core@7.29.0))(@parcel/watcher@2.5.6)(@types/node@25.9.1)(@vue/compiler-sfc@3.5.34)(cac@6.7.14)(db0@0.3.4)(eslint@10.4.0(jiti@2.7.0))(ioredis@5.10.1)(magicast@0.5.3)(meow@14.1.0)(optionator@0.9.4)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(rollup-plugin-visualizer@7.0.1(rollup@4.60.4))(rollup@4.60.4)(sass@1.100.0)(terser@5.48.0)(typescript@6.0.3)(vite@7.3.3(@types/node@25.9.1)(jiti@2.7.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(xml2js@0.6.2)(yaml@2.9.0)
+        version: 4.4.6(@babel/plugin-syntax-jsx@7.28.6(@babel/core@7.29.0))(@babel/plugin-syntax-typescript@7.28.6(@babel/core@7.29.0))(@parcel/watcher@2.5.6)(@types/node@25.9.1)(@vue/compiler-sfc@3.5.34)(cac@6.7.14)(db0@0.3.4)(eslint@10.4.0(jiti@2.7.0))(ioredis@5.10.1)(magicast@0.5.3)(meow@14.1.0)(optionator@0.9.4)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(rollup-plugin-visualizer@7.0.1(rollup@4.60.4))(rollup@4.60.4)(sass@1.100.0)(srvx@0.11.16)(terser@5.48.0)(typescript@6.0.3)(vite@7.3.3(@types/node@25.9.1)(jiti@2.7.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(xml2js@0.6.2)(yaml@2.9.0)
       sass:
         specifier: ^1.100.0
         version: 1.100.0
@@ -701,11 +701,11 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-flashcards-edit':
-        specifier: ^0.0.1
-        version: 0.0.1(vue@3.5.34(typescript@6.0.3))
+        specifier: ^0.0.2
+        version: 0.0.2(@types/sortablejs@1.15.9)(vue@3.5.34(typescript@6.0.3))
       '@tailor-cms/ce-flashcards-server':
-        specifier: ^0.0.1
-        version: 0.0.1
+        specifier: ^0.0.2
+        version: 0.0.2
       '@tailor-cms/ce-html-edit':
         specifier: ^2.0.0
         version: 2.0.0(@tiptap/core@3.23.6(@tiptap/pm@3.23.6))(vue@3.5.34(typescript@6.0.3))
@@ -1305,7 +1305,7 @@ importers:
     dependencies:
       nuxt:
         specifier: ^4.4.6
-        version: 4.4.6(@babel/plugin-syntax-jsx@7.28.6(@babel/core@7.29.0))(@babel/plugin-syntax-typescript@7.28.6(@babel/core@7.29.0))(@parcel/watcher@2.5.6)(@types/node@25.9.1)(@vue/compiler-sfc@3.5.34)(cac@6.7.14)(db0@0.3.4)(eslint@10.4.0(jiti@2.7.0))(ioredis@5.10.1)(magicast@0.5.3)(meow@14.1.0)(optionator@0.9.4)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(rollup-plugin-visualizer@7.0.1(rollup@4.60.4))(rollup@4.60.4)(sass@1.100.0)(srvx@0.11.16)(terser@5.48.0)(typescript@6.0.3)(vite@7.3.3(@types/node@25.9.1)(jiti@2.7.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(xml2js@0.6.2)(yaml@2.9.0)
+        version: 4.4.6(@babel/plugin-syntax-jsx@7.28.6(@babel/core@7.29.0))(@babel/plugin-syntax-typescript@7.28.6(@babel/core@7.29.0))(@parcel/watcher@2.5.6)(@types/node@25.9.1)(@vue/compiler-sfc@3.5.34)(cac@6.7.14)(db0@0.3.4)(eslint@10.4.0(jiti@2.7.0))(ioredis@5.10.1)(magicast@0.5.3)(meow@14.1.0)(optionator@0.9.4)(pinia@3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)))(rollup-plugin-visualizer@7.0.1(rollup@4.60.4))(rollup@4.60.4)(sass@1.100.0)(terser@5.48.0)(typescript@6.0.3)(vite@7.3.3(@types/node@25.9.1)(jiti@2.7.0)(sass@1.100.0)(terser@5.48.0)(yaml@2.9.0))(xml2js@0.6.2)(yaml@2.9.0)
       pinia:
         specifier: ^3.0.4
         version: 3.0.4(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
@@ -4371,18 +4371,18 @@ packages:
     resolution: {integrity: sha512-hBwV2zysA+NWzSzM1KuDwvec3i3Z4IaUrjMPBKmb/Wiv3SXO0eheJz6ADFus6u2D+oCfwpobSDL1t9EcOUCbFg==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-flashcards-edit@0.0.1':
-    resolution: {integrity: sha512-wS2tBnT0XuD25BgGYL8WXf9S4OexEpOgNZxUFKN4fbNVtLY2q8tG7CwH09BCXM/ED/3kSFvz7ESm+yiSrG0EEg==}
+  '@tailor-cms/ce-flashcards-edit@0.0.2':
+    resolution: {integrity: sha512-5ZtIcvwyl/UXImoInc/t7RXTvDze5yvUBfBXPs7B0QAjqI4Jo/oedBc4/iyIVMIbztidxaEcrewEg/Gc6QEpQQ==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-flashcards-manifest@0.0.1':
-    resolution: {integrity: sha512-EUcGbNjT/8/wda+sVyPpCpnlEcGnuUsNbtP2Vx6jwzLN1DYuxg16I2Kk58qBlAvEOuYybQvQ0jnjA3gogmnjqg==}
+  '@tailor-cms/ce-flashcards-manifest@0.0.2':
+    resolution: {integrity: sha512-C/Qo7iF8LdEA9bLmnipEplP8rKaO20HOtbcjj/AFL0r9875Jf+Ox/MCgBUc4qd0W6gorRC3hxv3z9w3PuV/bJw==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-flashcards-server@0.0.1':
-    resolution: {integrity: sha512-jNsvZvXSBaO/dyCG4Hkjn9xsTVhoV7K7FqBEHOQPZaSO+YSPqkJeWRLBsgFpwzMka/1dGww1FpfNXIs/fTVyYQ==}
+  '@tailor-cms/ce-flashcards-server@0.0.2':
+    resolution: {integrity: sha512-XiBUQMiT5KtHYYtbwVJyVG9NvabuNPTlGtsdDmC279LnEKfWgcnhsCUllkiUQr3rHpxpBAFUY8ezGblBZAf7LA==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-html-edit@2.0.0':
@@ -14512,18 +14512,24 @@ snapshots:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
-  '@tailor-cms/ce-flashcards-edit@0.0.1(vue@3.5.34(typescript@6.0.3))':
+  '@tailor-cms/ce-flashcards-edit@0.0.2(@types/sortablejs@1.15.9)(vue@3.5.34(typescript@6.0.3))':
     dependencies:
-      '@tailor-cms/cek-common': 2.0.1
+      lodash-es: 4.18.1
+      uuid: 14.0.0
       vue: 3.5.34(typescript@6.0.3)
+      vue-draggable-plus: 0.6.1(@types/sortablejs@1.15.9)
+    transitivePeerDependencies:
+      - '@types/sortablejs'
+      - '@vue/composition-api'
 
-  '@tailor-cms/ce-flashcards-manifest@0.0.1':
+  '@tailor-cms/ce-flashcards-manifest@0.0.2':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
+      uuid: 14.0.0
 
-  '@tailor-cms/ce-flashcards-server@0.0.1':
+  '@tailor-cms/ce-flashcards-server@0.0.2':
     dependencies:
-      '@tailor-cms/ce-flashcards-manifest': 0.0.1
+      '@tailor-cms/ce-flashcards-manifest': 0.0.2
       '@tailor-cms/cek-common': 2.0.1
 
   '@tailor-cms/ce-html-edit@2.0.0(@tiptap/core@3.23.6(@tiptap/pm@3.23.6))(vue@3.5.34(typescript@6.0.3))':

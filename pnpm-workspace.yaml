@@ -37,12 +37,9 @@ minimumReleaseAgeExclude:
   - pg-pool
   - pg-protocol
   - pg-query-stream
-  - '@tailor-cms/ce-flashcards-edit@0.0.1'
-  - '@tailor-cms/ce-flashcards-manifest@0.0.1'
-  - '@tailor-cms/ce-flashcards-server@0.0.1'
-  - '@tailor-cms/ce-sequence-edit@0.0.1'
-  - '@tailor-cms/ce-sequence-manifest@0.0.1'
-  - '@tailor-cms/ce-sequence-server@0.0.1'
+  # Our own org's content-element packages; trusted by name so new
+  # versions don't need a fresh version-pin on every release.
+  - '@tailor-cms/*'
 # Allowlist of packages whose postinstall / build scripts pnpm 11 may run.
 # pnpm 11 blocks build scripts by default (supply-chain defense); each
 # entry below opts a specific package back in because we need its
