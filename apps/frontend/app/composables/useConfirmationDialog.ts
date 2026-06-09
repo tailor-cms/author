@@ -1,6 +1,7 @@
 interface ConfirmationDialogOptions {
   title: string;
   message: string;
+  color?: string;
   action: () => any;
 }
 

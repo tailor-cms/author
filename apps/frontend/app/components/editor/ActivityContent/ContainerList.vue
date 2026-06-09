@@ -1,20 +1,15 @@
 <template>
   <div class="content-containers">
-    <h2
-      v-if="displayHeading"
-      class="mb-4 text-title-medium text-left text-primary-lighten-4"
-    >
+    <h2 v-if="displayHeading" class="mb-4 text-title-medium text-left">
       {{ capitalize(name) }}
     </h2>
     <VAlert
       v-if="!filteredContainerGroup.length"
-      color="primary-lighten-3"
+      :text="emptyMessage"
       icon="mdi-information-outline"
       variant="tonal"
       prominent
-    >
-      {{ emptyMessage }}
-    </VAlert>
+    />
     <div class="d-flex flex-column ga-4">
       <component
         :is="containerName"
@@ -48,8 +43,8 @@
       v-if="addBtnEnabled"
       :text="`Create ${name}`"
       class="mt-8"
-      color="teal-accent-1"
-      variant="tonal"
+      color="primary"
+      variant="flat"
       prepend-icon="mdi-plus"
       @click="addContainer"
     />
@@ -213,6 +208,7 @@ const requestDeletion = (
 ) => {
   confirmationDialog({
     title: `Delete ${name}?`,
+    color: 'error',
     message: `Are you sure you want to delete ${name}?`,
     action: () => action(content).then(onDelete),
   });
@@ -263,6 +259,5 @@ onBeforeMount(() => {
   width: 100%;
   min-height: 15.5rem;
   padding: 0.625rem;
-  background-color: #fff;
 }
 </style>

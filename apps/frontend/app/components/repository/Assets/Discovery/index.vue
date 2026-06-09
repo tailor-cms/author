@@ -1,14 +1,9 @@
 <template>
   <VDialog v-model="show" transition="dialog-bottom-transition" fullscreen>
-    <VCard class="discovery-dialog" color="primary-darken-4">
-      <VToolbar color="primary-darken-3" density="comfortable" height="84">
-        <VToolbarTitle class="text-primary-lighten-4 ml-4">
-          <VIcon
-            class="mx-2"
-            color="primary-lighten-4"
-            icon="mdi-earth-plus"
-            size="small"
-          />
+    <VCard class="discovery-dialog" color="surface" rounded="0">
+      <VToolbar color="surface-container-low" density="comfortable" height="84">
+        <VToolbarTitle>
+          <VIcon class="mx-2" icon="mdi-earth-plus" size="small" />
           Discover Resources
         </VToolbarTitle>
         <template #append>
@@ -39,8 +34,7 @@
             />
             <VAlert
               class="mb-4"
-              color="primary-lighten-2"
-              density="compact"
+              density="comfortable"
               icon="mdi-shield-check-outline"
               variant="tonal"
             >

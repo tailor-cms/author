@@ -8,7 +8,7 @@
       class="d-flex align-center text-body-medium text-uppercase font-weight-bold"
     >
       <VIcon
-        color="lime"
+        color="tertiary"
         icon="mdi-comment-off-outline"
         size="small"
         start
@@ -18,7 +18,6 @@
     <VSpacer />
     <VBtn
       :loading="isLoading"
-      color="primary-lighten-4"
       append-icon="mdi-arrow-right"
       size="small"
       text="View on source"

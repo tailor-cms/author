@@ -5,34 +5,21 @@
       :img-url="comment.author.imgUrl"
       :size="36"
       class="mt-1"
-      color="primary-lighten-4"
     />
-    <div class="info-container">
+    <div class="comment-info">
       <div v-if="comment.author" class="d-flex align-center">
-        <VTooltip location="right">
-          <template #activator="{ props: tooltipProps }">
-            <span
-              v-bind="tooltipProps"
-              class="author text-teal-lighten-5 text-truncate"
-            >
-              {{ comment.author.label }}
-            </span>
-          </template>
+        <span v-tooltip:right="comment.author.label" class="author text-truncate">
           {{ comment.author.label }}
-        </VTooltip>
+        </span>
         <span v-if="showEditedLabel" class="edited ml-1">(edited)</span>
       </div>
-      <div class="d-flex text-grey-lighten-2 align-center">
-        <VTooltip location="right">
-          <template #activator="{ props: tooltipProps }">
-            <span v-bind="tooltipProps" class="text-title-small">
-              {{ formatDistanceToNow(comment.createdAt) }} ago
-            </span>
-          </template>
-          <span>
-            {{ formatDate(comment.createdAt, 'dd MMM HH:mm') }}
-          </span>
-        </VTooltip>
+      <div class="d-flex align-center">
+        <span
+          v-tooltip:right="formatDate(comment.createdAt, 'dd MMM HH:mm')"
+          class="time text-label-large text-medium-emphasis"
+        >
+          {{ formatDistanceToNow(comment.createdAt) }} ago
+        </span>
         <template v-if="isActivityThread && elementLabel">
           <EditorLink
             v-if="!isDeleted"
@@ -76,7 +63,7 @@ interface Option {
   action: Action;
   label: string;
   icon: string;
-  color: string;
+  color?: string;
 }
 
 interface Props {
@@ -102,19 +89,17 @@ const OPTIONS: Record<string, Option> = {
     label: 'Resolve comment',
     action: 'resolve',
     icon: 'checkbox-outline',
-    color: 'primary-lighten-3',
   },
   edit: {
     label: 'Edit comment',
     action: 'enableEdit',
-    icon: 'pencil-outline',
-    color: 'teal-lighten-3',
+    icon: 'square-edit-outline',
   },
   remove: {
     label: 'Remove comment',
     action: 'remove',
     icon: 'trash-can-outline',
-    color: 'secondary-lighten-3',
+    color: 'error',
   },
 };
 
@@ -136,11 +121,11 @@ const options = computed(() => {
   display: flex;
   align-items: flex-start;
 
-  .info-container {
+  .comment-info {
     display: flex;
     flex-direction: column;
     flex: 0 100%;
-    max-width: calc(100% - 12rem);
+    max-width: calc(100% - 8rem);
     margin-left: 0.75rem;
 
     .author {
@@ -149,8 +134,7 @@ const options = computed(() => {
       font-size: 1rem;
     }
 
-    .edited,
-    .time {
+    .edited {
       font-size: 0.75rem;
     }
 

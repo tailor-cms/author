@@ -1,11 +1,11 @@
 <template>
-  <VSheet class="mb-5 pa-4 rounded-lg" color="primary-darken-3">
+  <VSheet class="mb-5 pa-4 rounded-lg" color="surface-container-low">
     <div class="meta-grid">
       <div class="meta-item">
         <div class="meta-label">Type</div>
         <div class="d-flex align-center mt-1">
           <VIcon
-            :color="`${typeColor}-lighten-3`"
+            :color="typeColor"
             :icon="typeIcon"
             class="mr-1"
             size="18"
@@ -15,17 +15,13 @@
       </div>
       <div v-if="meta.fileSize" class="meta-item">
         <div class="meta-label">Size</div>
-        <div class="meta-value">
-          {{ formatFileSize(meta.fileSize) }}
-        </div>
+        <div class="meta-value">{{ formatFileSize(meta.fileSize) }}</div>
       </div>
       <div v-if="meta.extension || meta.mimeType" class="meta-item">
         <div class="meta-label">Format</div>
         <div class="meta-value">
           <span v-if="meta.extension" class="mr-2">.{{ meta.extension }}</span>
-          <span v-if="meta.mimeType" class="text-primary-lighten-2">
-            {{ meta.mimeType }}
-          </span>
+          <span v-if="meta.mimeType">{{ meta.mimeType }}</span>
         </div>
       </div>
       <div v-if="meta.width && meta.height" class="meta-item">
@@ -57,11 +53,7 @@
     <template v-if="isLink && meta.url">
       <VDivider class="mt-5 mb-4" opacity="0.12" />
       <div class="meta-label">URL</div>
-      <a
-        :href="meta.url"
-        class="meta-value text-primary-lighten-4"
-        target="_blank"
-      >
+      <a :href="meta.url" class="meta-value" target="_blank">
         {{ truncatedUrl }}
         <VIcon class="ml-1" icon="mdi-open-in-new" size="x-small" />
       </a>
@@ -73,26 +65,21 @@
         <a
           v-if="!isLink"
           :href="meta.source.url"
-          class="text-body-medium text-primary-lighten-4"
+          class="text-body-medium"
           target="_blank"
         >
           {{ meta.source.title || meta.source.domain }}
           <VIcon class="ml-1" icon="mdi-open-in-new" size="x-small" />
         </a>
-        <span
-          v-if="meta.source.author"
-          class="text-body-medium text-primary-lighten-3"
-        >
+        <span v-if="meta.source.author" class="text-body-medium">
           by {{ meta.source.author }}
         </span>
         <VChip
           v-if="meta.source.license"
-          color="primary-lighten-2"
+          :text="meta.source.license"
           size="x-small"
-          variant="outlined"
-        >
-          {{ meta.source.license }}
-        </VChip>
+          variant="tonal"
+        />
       </div>
     </template>
   </VSheet>
@@ -130,8 +117,8 @@ const truncatedUrl = computed(() => {
 }
 
 .meta-label {
+  color: color-mix(in srgb, rgb(var(--v-theme-on-background)) 70%, transparent);
   font-size: 0.75rem;
-  color: rgba(var(--v-theme-primary-lighten-2), 0.8);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 600;
@@ -139,15 +126,10 @@ const truncatedUrl = computed(() => {
 
 .meta-value {
   font-size: 0.875rem;
-  color: rgb(var(--v-theme-primary-lighten-4));
   margin-top: 0.125rem;
 }
 
-a {
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
+a:hover {
+  text-decoration: underline;
 }
 </style>

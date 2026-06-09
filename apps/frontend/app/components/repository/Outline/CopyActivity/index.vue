@@ -9,12 +9,10 @@
       <VBtn
         v-bind="dialogProps"
         class="px-1"
-        color="grey darken-3"
         prepend-icon="mdi-content-copy"
+        text="Copy"
         variant="text"
-      >
-        Copy
-      </VBtn>
+      />
     </template>
     <template v-if="schema" #header>
       Copy items from {{ pluralize(schema.name) }}
@@ -24,7 +22,7 @@
         <div class="text-body-large text-center mb-2">
           Copying {{ selectedActivities.length }} items...
         </div>
-        <VProgressLinear color="primary-darken-2" indeterminate />
+        <VProgressLinear color="primary" indeterminate />
       </div>
       <VAutocomplete
         :items="repositories"
@@ -52,21 +50,19 @@
     <template #actions>
       <VBtn
         :disabled="isCopyingActivities"
-        color="primary-darken-4"
+        :slim="false"
+        text="Cancel"
         variant="text"
         @click="close"
-      >
-        Cancel
-      </VBtn>
+      />
       <VBtn
         :disabled="!selectedActivities.length || isCopyingActivities"
-        class="ml-2"
-        color="primary-darken-2"
-        variant="tonal"
+        :slim="false"
+        :text="copyBtnLabel"
+        color="primary"
+        variant="flat"
         @click="copySelection"
-      >
-        {{ copyBtnLabel }}
-      </VBtn>
+      />
     </template>
   </TailorDialog>
 </template>

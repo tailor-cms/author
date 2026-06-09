@@ -14,9 +14,9 @@
           :repository="selection.repository"
           @selected="selectRepository"
         />
-        <VSheet v-if="loading" class="text-center pa-8" color="transparent">
+        <div v-if="loading" class="text-center pa-8">
           <VProgressCircular class="mt-5" color="primary" indeterminate />
-        </VSheet>
+        </div>
         <SelectActivity
           v-else
           :activities="items.activities"
@@ -28,15 +28,14 @@
         <div v-if="toggleButton" class="d-flex justify-end mb-4">
           <VBtn
             :prepend-icon="`mdi-${toggleButton.icon}`"
+            :text="toggleButton.label"
             variant="tonal"
             @click="toggleSelectAll"
-          >
-            {{ toggleButton.label }}
-          </VBtn>
+          />
         </div>
-        <VSheet v-if="loading" class="text-center pa-8" color="transparent">
+        <div v-if="loading" class="text-center pa-8">
           <VProgressCircular class="mt-5" color="primary" indeterminate />
-        </VSheet>
+        </div>
         <ContentPreview
           v-else
           :content-containers="items.contentContainers"
@@ -52,19 +51,13 @@
       <VBtn
         v-if="selection.activity"
         class="mr-2"
-        color="primary-darken-4"
         prepend-icon="mdi-arrow-left"
+        text="Back"
         variant="text"
         @click="deselectActivity"
-      >
-        Back
-      </VBtn>
-      <VBtn color="primary-darken-4" variant="text" @click="close">
-        Cancel
-      </VBtn>
-      <VBtn class="ml-2" color="primary-darken-2" variant="tonal" @click="save">
-        {{ submitLabel }}
-      </VBtn>
+      />
+      <VBtn text="Cancel" variant="text" @click="close" />
+      <VBtn :text="submitLabel" class="ml-2" variant="tonal" @click="save" />
     </template>
   </TailorDialog>
 </template>

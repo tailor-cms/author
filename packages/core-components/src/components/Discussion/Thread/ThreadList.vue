@@ -55,7 +55,6 @@ const getElementLabel = (comment: Comment) => {
   .thread-list-item {
     .v-divider {
       margin: 0 0.25rem 1rem 0.25rem;
-      color: #fafafa;
       opacity: 0.3;
     }
 

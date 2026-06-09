@@ -1,5 +1,5 @@
 <template>
-  <VExpansionPanel :value="group.uid" class="assessment-group">
+  <VExpansionPanel :value="group.uid" class="assessment-group" border="b">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle v-bind="hoverProps" min-height="64" static>
         <div class="text-body-large font-weight-bold">
@@ -11,13 +11,13 @@
             v-if="!isDisabled && (isExpanded || isHovering)"
             v-tooltip:bottom="{ text: 'Delete Group', openDelay: 300 }"
             class="mr-2"
-            color="secondary-lighten-1"
+            color="error"
             size="x-small"
             variant="tonal"
             icon
             @click.stop="$emit('delete')"
           >
-            <VIcon icon="mdi-delete-outline" size="large" />
+            <VIcon icon="mdi-trash-can-outline" size="large" />
           </VBtn>
         </VFadeTransition>
       </VExpansionPanelTitle>
@@ -48,18 +48,15 @@
       <div class="text-title-small text-left mb-2">Questions</div>
       <VAlert
         v-if="!hasAssessments"
+        :text="isDisabled
+          ? 'Empty question group'
+          : 'Click the button below to create first question.'"
         class="mt-4"
-        color="primary-darken-1"
+        color="primary"
         icon="mdi-information-outline"
         variant="tonal"
         prominent
-      >
-        {{
-          isDisabled
-            ? 'Empty assessment group'
-            : 'Click the button below to create first Assessment.'
-        }}
-      </VAlert>
+      />
       <ElementList
         :activity="group"
         :elements="assessments"
@@ -210,10 +207,6 @@ watch(timeLimit, debounce((val: number) => {
 </script>
 
 <style lang="scss" scoped>
-.v-expansion-panel {
-  border: thin solid rgba(0, 0, 0, 0.12);
-}
-
 :deep(.list-group) > .v-row > .v-col {
   padding: 0.25rem 0.75rem;
 }

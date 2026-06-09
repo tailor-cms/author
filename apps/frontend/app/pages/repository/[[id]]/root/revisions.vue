@@ -1,62 +1,37 @@
 <template>
-  <div class="revisions-page h-100">
-    <VAppBar
-      border="b surface"
-      color="primary-darken-3"
-      elevation="0"
-      height="64"
-      order="1"
-    >
-      <VSpacer />
-      <VSelect
-        v-model="typeFilter"
-        :items="typeOptions"
-        bg-color="primary-darken-2"
-        class="mr-3"
-        density="compact"
-        max-width="240"
-        min-width="200"
-        placeholder="Filter by type"
-        prepend-inner-icon="mdi-filter-variant"
-        rounded="xl"
-        variant="solo"
-        clearable
-        flat
-        hide-details
-      />
-    </VAppBar>
+  <div class="revisions-page h-100 mt-8">
     <VMain>
-      <VContainer max-width="1200">
+      <VContainer max-width="1600">
         <VInfiniteScroll
-          v-if="filteredRevisions.length > 0"
+          v-if="bundledRevisions.length > 0"
           class="revisions"
-          color="primary-lighten-4"
           mode="manual"
           @load="loadMore"
         >
           <VList bg-color="transparent" lines="two" tag="ul">
             <RevisionItem
-              v-for="revision in filteredRevisions"
+              v-for="revision in bundledRevisions"
               :key="revision.uid"
               :revision="revision"
             />
           </VList>
           <template #load-more="{ props: scrollProps }">
-            <VBtn v-if="!areAllItemsFetched" v-bind="scrollProps" variant="tonal">
-              Load more
-            </VBtn>
+            <VBtn
+              v-if="!areAllItemsFetched"
+              :text="'Load more'"
+              v-bind="scrollProps"
+              variant="tonal"
+            />
           </template>
         </VInfiniteScroll>
         <VAlert
-          v-else-if="!isFetching && filteredRevisions.length === 0"
+          v-else-if="!isFetching && bundledRevisions.length === 0"
           class="mt-8"
-          color="primary-lighten-4"
           icon="mdi-history"
+          text="No changes recorded!"
           variant="tonal"
           prominent
-        >
-          {{ typeFilter ? 'No changes match this filter.' : 'No changes recorded!' }}
-        </VAlert>
+        />
       </VContainer>
     </VMain>
   </div>
@@ -64,7 +39,6 @@
 
 <script lang="ts" setup>
 import { last, reduce, uniq, uniqBy } from 'lodash-es';
-import { titleCase } from '@tailor-cms/utils';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import api from '@/api/revision';
@@ -96,8 +70,6 @@ const revisions = ref<Revision[]>([]);
 const queryParams = reactive({ offset: 0, limit: 100 });
 const areAllItemsFetched = ref(false);
 
-const typeFilter = ref<Revision['entity'] | null>(null);
-
 const bundledRevisions = computed<Revision[]>(() => {
   if (!revisions.value.length) return [];
   return reduce(
@@ -112,17 +84,6 @@ const bundledRevisions = computed<Revision[]>(() => {
     },
     [revisions.value[0]] as Revision[],
   );
-});
-
-const typeOptions = computed(() =>
-  uniq(bundledRevisions.value.map((r) => r.entity))
-    .filter(Boolean)
-    .map((value) => ({ title: titleCase(value), value })),
-);
-
-const filteredRevisions = computed(() => {
-  if (!typeFilter.value) return bundledRevisions.value;
-  return bundledRevisions.value.filter((r) => r.entity === typeFilter.value);
 });
 
 const fetchRevisions = async () => {
@@ -154,11 +115,9 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .revisions {
-  padding: 1rem 0.75rem 1.875rem;
   text-align: left;
 
   ul {
-    max-width: 75rem;
     padding: 0.5rem 0;
     list-style-type: none;
 

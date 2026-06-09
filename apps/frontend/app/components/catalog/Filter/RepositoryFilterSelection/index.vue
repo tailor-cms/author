@@ -12,14 +12,13 @@
     />
     <VBtn
       v-show="repositoryFilter.length"
-      color="teal-lighten-3"
+      append-icon="mdi-close-circle"
+      color="secondary"
       size="small"
+      text="Clear all"
       variant="tonal"
       @click="emit('clear:all')"
-    >
-      Clear all
-      <VIcon end>mdi-close-circle</VIcon>
-    </VBtn>
+    />
   </VRow>
 </template>
 

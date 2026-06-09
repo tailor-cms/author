@@ -1,10 +1,5 @@
 <template>
-  <VProgressCircular
-    bg-color="primary"
-    color="primary-darken-4"
-    size="68"
-    indeterminate
-  >
+  <VProgressCircular size="68" indeterminate color="outline">
     <template #default>
       <img
         alt="Tailor logo"

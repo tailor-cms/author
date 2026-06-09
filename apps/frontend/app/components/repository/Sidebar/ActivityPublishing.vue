@@ -5,25 +5,23 @@
         <VBtn
           v-bind="isCollection ? {} : menuProps"
           :loading="publishingUtils.isPublishing.value"
-          color="primary-lighten-4"
           size="small"
+          text="Publish"
           variant="tonal"
+          prepend-icon="mdi-cloud-upload-outline"
           @click="isCollection && publishingUtils.confirmPublishing([activity])"
-        >
-          <VIcon class="mr-2">mdi-cloud-upload-outline</VIcon>
-          Publish
-        </VBtn>
+        />
       </template>
       <VList class="text-left px-2">
-        <VListItem @click="publishingUtils.confirmPublishing([activity])">
-          <VListItemTitle>{{ config.label }}</VListItemTitle>
-        </VListItem>
+        <VListItem
+          :title="config.label"
+          @click="publishingUtils.confirmPublishing([activity])"
+        />
         <VListItem
           v-if="!isSoftDeleted && activityWithDescendants.length > 1"
+          :title="`${config.label} and children`"
           @click="publishingUtils.confirmPublishing(activityWithDescendants)"
-        >
-          <VListItemTitle>{{ config.label }} and children</VListItemTitle>
-        </VListItem>
+        />
       </VList>
     </VMenu>
     <div class="publish-status">

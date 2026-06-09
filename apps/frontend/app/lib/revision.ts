@@ -93,7 +93,7 @@ export function getRevisionAcronym(rev: Revision) {
 }
 
 export function getRevisionColor(rev: Revision) {
-  const DEFAULT_COLOR = 'primary-lighten-4';
+  const DEFAULT_COLOR = 'inverse-surface';
   switch (rev.entity) {
     case Entity.Activity: {
       const state = rev.state as Activity;
@@ -101,9 +101,9 @@ export function getRevisionColor(rev: Revision) {
       return !isEmpty(config) ? config.color : DEFAULT_COLOR;
     }
     case Entity.Repository:
-      return 'primary-lighten-4';
+      return 'tertiary';
     case Entity.ContentElement:
-      return 'teal-lighten-4';
+      return 'primary';
     default:
       return DEFAULT_COLOR;
   }

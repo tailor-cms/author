@@ -62,7 +62,7 @@
     "v-clipboard": "3.0.0-next.1",
     "vee-validate": "^4.15.1",
     "vuedraggable": "4.1.0",
-    "vuetify": "^4.0.7",
+    "vuetify": "^4.1.1",
     "yup": "^1.7.1"
   }
 }

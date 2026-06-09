@@ -1,9 +1,5 @@
 <template>
-  <VSheet
-    :color="isAiGeneratingContent ? 'primary-darken-4' : 'white'"
-    class="content-container pr-4"
-    rounded="lg"
-  >
+  <VCard class="content-container pr-4" theme="light" elevation="0">
     <div v-if="!isAiGeneratingContent" class="d-flex flex-wrap justify-end ma-3 ga-3">
       <AIPrompt
         v-if="isAiEnabled && !disabled"
@@ -14,22 +10,20 @@
       <VBtn
         v-if="isAiEnabled && !disabled"
         append-icon="mdi-shimmer"
-        color="teal-darken-2"
+        color="secondary"
         size="small"
         text="Do the magic"
         variant="tonal"
-        @click="
-          generateContent({
-            type: AiRequestType.Create,
-            text: 'Generate content for this page.',
-            responseSchema: AiResponseSchema.Html,
-          })
-        "
+        @click="generateContent({
+          type: AiRequestType.Create,
+          text: 'Generate content for this page.',
+          responseSchema: AiResponseSchema.Html,
+        })"
       />
       <VBtn
         v-if="!disabled"
         :text="`Delete ${props.name}`"
-        color="secondary-darken-1"
+        color="error"
         size="small"
         variant="tonal"
         @click="emit('delete')"
@@ -37,24 +31,19 @@
     </div>
     <VAlert
       v-if="!containerElements.length && !isAiGeneratingContent"
+      :text="disabled
+        ? `Empty ${name}`
+        : 'Click the button below to add content.'"
       class="mt-7 mb-5 mx-4"
-      color="primary-darken-1"
       density="comfortable"
       icon="mdi-information-outline"
       variant="tonal"
       prominent
-    >
-      {{ disabled ? `Empty ${name}` : 'Click the button below to add content.' }}
-    </VAlert>
-    <VSheet
-      v-else-if="isAiGeneratingContent"
-      class="bg-transparent pt-16 text-title-small rounded-lg"
-    >
+    />
+    <div v-else-if="isAiGeneratingContent" class="pt-16 text-title-small">
       <CircularProgress />
-      <div class="pt-3 text-primary-lighten-4 font-weight-bold">
-        <span>Content generation in progress...</span>
-      </div>
-    </VSheet>
+      <div class="pt-3 font-weight-bold">Content generation in progress...</div>
+    </div>
     <ElementList
       v-if="!isAiGeneratingContent"
       :activity="container"
@@ -63,7 +52,6 @@
         large: true,
         label: 'Add content',
         icon: 'mdi-plus',
-        color: 'primary-lighten-5',
         position: insertPosition,
         variant: 'elevated',
       }"
@@ -107,14 +95,13 @@
       :position="insertPosition ?? containerElements.length"
       :show="isElementDrawerVisible"
       class="my-4"
-      color="primary-lighten-5"
       icon="mdi-plus"
       label="Add content"
       variant="elevated"
       @add="onElementAdd"
       @hidden="onElementDrawerClose"
     />
-  </VSheet>
+  </VCard>
 </template>
 
 <script lang="ts" setup>

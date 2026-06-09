@@ -2,7 +2,6 @@
   <VSwitch
     v-model="isAssistaceEnabled"
     :disabled="!schemaId || !name || !description"
-    color="primary-darken-2"
     label="AI assisted"
   />
   <div v-if="isAssistaceEnabled" class="ai-panel">
@@ -15,13 +14,12 @@
       :disabled="isUploading"
       :loading="isFetchingData"
       class="mb-6"
-      color="primary-darken-2"
+      color="secondary"
+      text="Continue"
       variant="tonal"
       block
       @click="fetchTopics"
-    >
-      Continue
-    </VBtn>
+    />
     <div v-if="topicTagOptions.length">
       <div class="mb-4 text-body-medium font-weight-bold">
         Tell us more about the topics you are interested in:
@@ -30,24 +28,20 @@
         <VChip
           v-for="chip in topicTagOptions"
           :key="chip"
-          class="mr-2 mb-2"
-          variant="outlined"
+          :text="chip"
           filter
-        >
-          {{ chip }}
-        </VChip>
+        />
       </VChipGroup>
       <VBtn
         v-if="!styleTagOptions.length"
         :loading="isFetchingData"
         class="mt-3 mb-3"
-        color="primary-darken-2"
+        color="secondary"
+        text="Next"
         variant="tonal"
         block
         @click="fetchStyle"
-      >
-        Next
-      </VBtn>
+      />
     </div>
     <div v-if="styleTagOptions.length">
       <div class="my-4 text-body-medium font-weight-bold">
@@ -57,12 +51,9 @@
         <VChip
           v-for="chip in styleTagOptions"
           :key="chip"
-          class="mr-2 mb-2"
-          variant="outlined"
+          :text="chip"
           filter
-        >
-          {{ chip }}
-        </VChip>
+        />
       </VChipGroup>
       <div class="mt-5 mb-4 text-body-medium font-weight-bold">Audience:</div>
       <VSlider
@@ -70,7 +61,7 @@
         :step="1"
         :ticks="difficultyOptions"
         class="mb-6"
-        color="primary-darken-2"
+        color="primary"
         max="2"
         min="0"
         show-ticks="always"
@@ -80,13 +71,12 @@
         v-if="!outlineTree.length"
         :loading="isFetchingData"
         class="mt-3 mb-3"
-        color="primary-darken-2"
+        color="secondary"
+        text="Next"
         variant="tonal"
         block
         @click="fetchOutline"
-      >
-        Next
-      </VBtn>
+      />
     </div>
     <OutlinePreview :items="outlineTree" />
     <div v-if="statusMessage" class="my-7 text-body-medium text-center">

@@ -1,7 +1,7 @@
 <template>
-  <div class="session-stats text-body-small">
+  <div class="session-stats text-body-small border-t px-4 py-3">
     <span>
-      <VIcon class="mx-1" icon="mdi-flash" size="11" />
+      <VIcon icon="mdi-flash" size="x-small" />
       {{ turns }} turns - {{ toolCount }} tool calls
     </span>
     <span v-if="sessionId">session {{ sessionId.slice(0, 8) }}</span>
@@ -23,8 +23,5 @@ withDefaults(defineProps<Props>(), { sessionId: null });
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem 0.625rem;
-  border-top: 1px solid rgb(var(--v-theme-outline-variant));
-  background: rgb(var(--v-theme-surface));
 }
 </style>

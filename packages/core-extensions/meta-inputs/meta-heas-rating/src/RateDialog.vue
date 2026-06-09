@@ -7,9 +7,9 @@
           <div
             v-for="{ key, label } in heasParams"
             :key="label"
-            class="d-flex align-center"
+            class="d-flex align-center my-1"
           >
-            <div class="label text-body-small font-weight-bold">{{ label }}</div>
+            <div class="label text-body-small">{{ label }}</div>
             <VSlider
               v-model="input.rating[key]"
               color="primary"
@@ -31,21 +31,13 @@
           label="Review"
         />
         <div class="d-flex justify-end pb-3">
+          <VBtn text="Cancel" variant="text" @click="cancel" />
           <VBtn
-            color="primary-darken-4"
-            variant="text"
-            @click="cancel"
-          >
-            Cancel
-          </VBtn>
-          <VBtn
+            :text="value.rating ? 'Save' : 'Submit'"
             class="ml-2"
-            color="primary-darken-3"
-            variant="tonal"
             type="submit"
-          >
-            {{ value.rating ? 'Save' : 'Submit' }}
-          </VBtn>
+            variant="tonal"
+          />
         </div>
       </VForm>
     </template>
@@ -119,7 +111,7 @@ watch(
 }
 
 .slider-value {
-  width: 1.25rem;
+  width: 1.5rem;
   opacity: 0.7;
   text-align: right;
 }

@@ -149,59 +149,59 @@ test.describe('Asset library', () => {
     await expect(lib.emptyState).toBeVisible();
   });
 
-  test('can open asset detail dialog', async ({ page }) => {
+  test('can open asset detail sidebar', async ({ page }) => {
     const { lib } = await toSeededAssetLibrary(page, (id) =>
       AssetClient.uploadFile(id, IMAGE.path),
     );
     await lib.getRow(IMAGE.name).openDetail();
-    const detail = lib.detailDialog;
-    await detail.waitForOpen();
-    await expect(detail.descriptionInput).toBeVisible();
-    await expect(detail.tagsInput).toBeVisible();
-    await expect(detail.deleteBtn).toBeVisible();
-    await detail.close();
+    const sidebar = lib.sidebar;
+    await sidebar.waitForOpen();
+    await expect(sidebar.descriptionInput).toBeVisible();
+    await expect(sidebar.tagsInput).toBeVisible();
+    await expect(sidebar.actionsBtn).toBeVisible();
+    await sidebar.close();
   });
 
-  test('can edit asset description in detail dialog', async ({ page }) => {
+  test('can edit asset description in detail sidebar', async ({ page }) => {
     const { lib } = await toSeededAssetLibrary(page, (id) =>
       AssetClient.uploadFile(id, IMAGE.path),
     );
     await lib.getRow(IMAGE.name).openDetail();
-    const detail = lib.detailDialog;
-    await detail.waitForOpen();
-    await detail.editDescription('A test image for e2e tests');
-    await detail.save();
-    await expect(detail.el).not.toBeVisible();
+    const sidebar = lib.sidebar;
+    await sidebar.waitForOpen();
+    await sidebar.editDescription('A test image for e2e tests');
+    await sidebar.save();
+    await expect(sidebar.closeBtn).not.toBeVisible();
     // Verify persistence after reload
     await page.reload({ waitUntil: 'networkidle' });
     await lib.waitForLoad();
     await lib.getRow(IMAGE.name).openDetail();
-    await detail.waitForOpen();
-    await expect(detail.descriptionInput).toHaveValue(
+    await sidebar.waitForOpen();
+    await expect(sidebar.descriptionInput).toHaveValue(
       'A test image for e2e tests',
     );
-    await detail.close();
+    await sidebar.close();
   });
 
-  test('can add tags in detail dialog', async ({ page }) => {
+  test('can add tags in detail sidebar', async ({ page }) => {
     const { lib } = await toSeededAssetLibrary(page, (id) =>
       AssetClient.uploadFile(id, IMAGE.path),
     );
     await lib.getRow(IMAGE.name).openDetail();
-    const detail = lib.detailDialog;
-    await detail.waitForOpen();
-    await detail.addTag('e2e-test');
-    await detail.addTag('screenshot');
-    await detail.save();
-    await expect(detail.el).not.toBeVisible();
+    const sidebar = lib.sidebar;
+    await sidebar.waitForOpen();
+    await sidebar.addTag('e2e-test');
+    await sidebar.addTag('screenshot');
+    await sidebar.save();
+    await expect(sidebar.closeBtn).not.toBeVisible();
     // Verify persistence after reload
     await page.reload({ waitUntil: 'networkidle' });
     await lib.waitForLoad();
     await lib.getRow(IMAGE.name).openDetail();
-    await detail.waitForOpen();
-    await expect(detail.el.getByText('e2e-test')).toBeVisible();
-    await expect(detail.el.getByText('screenshot')).toBeVisible();
-    await detail.close();
+    await sidebar.waitForOpen();
+    await expect(sidebar.el.getByText('e2e-test')).toBeVisible();
+    await expect(sidebar.el.getByText('screenshot')).toBeVisible();
+    await sidebar.close();
   });
 
   test('can download an asset', async ({ page }) => {
@@ -222,7 +222,10 @@ test.describe('Asset library', () => {
     await lib.toolbar.addLinkBtn.click();
     await expect(lib.addLinkDialog.el).toBeVisible();
     await lib.addLinkDialog.urlInput.fill('not-a-url');
-    await expect(lib.addLinkDialog.addBtn).toBeDisabled();
+    await lib.addLinkDialog.addBtn.click();
+    // Dialog stays open and surfaces a validation error
+    await expect(lib.addLinkDialog.el).toBeVisible();
+    await expect(lib.addLinkDialog.el).toContainText('Please enter a valid URL');
   });
 });
 

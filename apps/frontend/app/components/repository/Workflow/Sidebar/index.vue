@@ -3,9 +3,9 @@
     :model-value="repositoryStore.isSidebarOpen || mdAndUp"
     :width="sidebarWidth"
     class="px-4 text-left"
-    color="primary-darken-2"
-    elevation="1"
+    color="surface-container"
     location="right"
+    border="surface"
     mobile-breakpoint="md"
     absolute
     @update:model-value="repositoryStore.updateSidebar"
@@ -15,17 +15,8 @@
       <SidebarBody :activity="activity" class="mt-9 mb-2" />
     </template>
     <div v-else class="d-flex align-center mt-16">
-      <VIcon
-        color="primary-lighten-3"
-        icon="mdi-arrow-left-circle"
-        size="x-large"
-      />
-      <VAlert
-        :text="emptyMessage"
-        class="ml-2"
-        color="primary-lighten-4"
-        variant="tonal"
-      />
+      <VIcon icon="mdi-arrow-left-circle" size="x-large" />
+      <VAlert :text="emptyMessage" class="ml-2" variant="tonal" />
     </div>
     <ActivityDiscussion
       v-if="activity"
@@ -51,8 +42,8 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 
 const repositoryStore = useCurrentRepository();
 const activity = computed(() => repositoryStore.selectedActivity);
-const { width: pageInnerWidth, mdAndUp } = useDisplay();
-const sidebarWidth = computed(() => (pageInnerWidth.value > 2000 ? 480 : 380));
+const { mdAndUp, lgAndUp } = useDisplay();
+const sidebarWidth = computed(() => (lgAndUp.value ? 480 : 380));
 </script>
 
 <style lang="scss" scoped>

@@ -12,9 +12,8 @@
     v-show="!noResultsMessage"
     :items="processedItems"
     :opened="expandedActivityIds"
-    base-color="primary-darken-3"
+    density="compact"
     class="pa-0"
-    border
     open-all
     rounded
   >
@@ -22,8 +21,9 @@
       <VChip
         v-if="groupedSelection[item.id]"
         class="ml-2"
-        color="teal-darken-1"
-        size="small"
+        color="secondary"
+        size="x-small"
+        rounded
       >
         {{ getChipLabel(groupedSelection[item.id]!.length) }}
       </VChip>
@@ -40,12 +40,10 @@
   </VTreeview>
   <VAlert
     v-if="noResultsMessage"
-    color="primary-darken-2"
+    :text="noResultsMessage"
     icon="mdi-information-outline"
     variant="tonal"
-  >
-    {{ noResultsMessage }}
-  </VAlert>
+  />
 </template>
 
 <script lang="ts" setup>

@@ -1,26 +1,10 @@
 <template>
-  <VSelect
+  <AgentOptionMenu
     v-model="effort"
-    :items="EFFORT_OPTIONS"
-    :menu-props="MENU_PROPS"
-    :prepend-inner-icon="activeIcon"
-    class="agent-effort-select"
-    density="compact"
-    item-title="title"
-    item-value="value"
-    rounded="lg"
-    variant="solo-filled"
-    flat
-    hide-details
-  >
-    <template #item="{ item, props: itemProps }">
-      <VListItem
-        v-bind="itemProps"
-        :prepend-icon="item.icon"
-        :subtitle="item.subtitle"
-      />
-    </template>
-  </VSelect>
+    :options="EFFORT_OPTIONS"
+    content-class="agent-panel-menu agent-effort-menu"
+    label="Reasoning effort"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -28,6 +12,8 @@ import {
   ReasoningEffort,
   type ReasoningEffortLiteral,
 } from '@tailor-cms/interfaces/ai.ts';
+
+import AgentOptionMenu from './AgentOptionMenu.vue';
 
 interface EffortOption {
   title: string;
@@ -66,25 +52,5 @@ const EFFORT_OPTIONS: EffortOption[] = [
   },
 ];
 
-const MENU_PROPS = {
-  contentClass: 'agent-panel-menu agent-effort-menu',
-  zIndex: 9100,
-};
-
 const effort = defineModel<ReasoningEffortLiteral>({ required: true });
-
-const activeIcon = computed(
-  () => EFFORT_OPTIONS.find((it) => it.value === effort.value)?.icon,
-);
 </script>
-
-<style lang="scss" scoped>
-.agent-effort-select {
-  max-width: 8.125rem;
-
-  :deep(.v-field__input) {
-    font-size: 0.82rem;
-    font-weight: 500;
-  }
-}
-</style>

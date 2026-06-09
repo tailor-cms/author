@@ -10,25 +10,21 @@
     <VBtn
       v-show="!isSoftDeleted && isEditable"
       class="px-4 mr-3 btn-open"
-      color="teal-lighten-4"
+      prepend-icon="mdi-page-next-outline"
       size="small"
+      text="Open"
       variant="tonal"
       @click.stop="edit"
-    >
-      <VIcon class="mr-2">mdi-page-next-outline</VIcon>
-      Open
-    </VBtn>
+    />
     <VBtn
       v-if="isSoftDeleted"
       class="mr-3"
-      color="orange-lighten-4"
+      prepend-icon="mdi-history"
       size="small"
+      text="Restore"
       variant="tonal"
       @click.stop="restore"
-    >
-      <VIcon class="mr-2">mdi-history</VIcon>
-      Restore
-    </VBtn>
+    />
     <ActivityPublishing
       v-if="store.repository?.hasAdminAccess"
       :activity="activity"

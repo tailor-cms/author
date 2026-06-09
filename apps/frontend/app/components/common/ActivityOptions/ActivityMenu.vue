@@ -11,20 +11,20 @@
         <VBtn
           v-bind="menuProps"
           aria-label="Options menu"
-          color="primary-lighten-3"
           icon="mdi-dots-vertical"
           variant="text"
           :size="activatorSize"
           :rounded="rounded"
         />
       </template>
-      <VList>
+      <VList density="compact" nav>
         <VListItem
           v-for="it in menuOptions"
           :key="it.name"
           :aria-label="it.name"
           :prepend-icon="it.icon"
           :title="it.name"
+          :base-color="it.color"
           @click="it.action"
         />
       </VList>
@@ -58,6 +58,7 @@
 
 <script lang="ts" setup>
 import { first, sortBy } from 'lodash-es';
+import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { InsertLocation } from '@tailor-cms/utils';
 import type { StoreActivity } from '@/stores/activity';
 
@@ -161,7 +162,8 @@ const menuOptions = computed(() => {
     ...linkMenuOptions.value,
     {
       name: 'Remove',
-      icon: 'mdi-delete',
+      icon: 'mdi-trash-can-outline',
+      color: 'error',
       action: () => deleteActivity(),
     },
   ];
@@ -172,7 +174,7 @@ const setCreateContext = (actionValue: InsertLocation) => {
   showCreateDialog.value = true;
 };
 
-const setCopyContext = (levels: Activity[], actionValue: InsertLocation) => {
+const setCopyContext = (levels: ActivityConfig[], actionValue: InsertLocation) => {
   supportedLevels.value = levels.map((it) => it.type);
   action.value = actionValue;
   showCopyDialog.value = true;
@@ -194,6 +196,7 @@ const deleteActivity = () => {
   };
   $eventBus.channel('app').emit('showConfirmationModal', {
     title: 'Delete item?',
+    color: 'error',
     message: `Are you sure you want to delete ${activityName.value}?`,
     action: actionFunc,
   });

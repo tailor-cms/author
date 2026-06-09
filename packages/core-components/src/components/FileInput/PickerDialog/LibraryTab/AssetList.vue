@@ -3,8 +3,6 @@
     :selected="selectedIds"
     :select-strategy="multiple ? 'leaf' : 'single-leaf'"
     class="asset-list"
-    color="primary-darken-4"
-    rounded
     @update:selected="emit('update:selected', $event)"
   >
     <VListItem
@@ -12,7 +10,8 @@
       :key="asset.id"
       :disabled="!isCompatible(asset)"
       :value="asset.id"
-      class="pa-3"
+      class="pa-3 mb-1"
+      rounded
     >
       <template #prepend>
         <VAvatar
@@ -26,15 +25,10 @@
         <VAvatar
           v-else
           class="mr-3"
-          color="primary-lighten-5"
           rounded="lg"
           size="52"
         >
-          <VIcon
-            :icon="getAssetIcon(asset.type)"
-            color="primary-darken-2"
-            size="26"
-          />
+          <VIcon :icon="getAssetIcon(asset.type)" size="26" />
         </VAvatar>
       </template>
       <VListItemTitle class="text-body-medium">{{ asset.name }}</VListItemTitle>
@@ -54,7 +48,6 @@
         <VIcon
           v-if="selectedIds.includes(asset.id)"
           class="mr-2"
-          color="primary-darken-2"
           icon="mdi-check-circle"
         />
       </template>

@@ -13,7 +13,7 @@
           with browser blocking the image load.
         -->
         <div v-if="imgUrl" :style="style" class="user-avatar h-100 w-100"></div>
-        <VIcon v-else color="primary-darken-3">mdi-account</VIcon>
+        <VIcon v-else icon="mdi-account" :size="Number(size) * 0.6" />
       </VAvatar>
     </template>
     {{ label }}
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
   imgUrl: '',
   label: '',
   size: 36,
-  color: 'teal-lighten-3',
+  color: 'surface-container-highest',
   rounded: 'xxl',
 });
 

@@ -1,7 +1,6 @@
 <template>
   <VChipGroup
     :model-value="modelValue"
-    base-color="primary-darken-1"
     class="mt-2"
     column
     mandatory
@@ -10,14 +9,14 @@
     <VChip
       v-for="it in categories"
       :key="it.value"
+      :text="it.label"
       :value="it.value"
-      color="primary-darken-2"
+      color="secondary"
       size="small"
+      rounded="pill"
       variant="tonal"
       filter
-    >
-      {{ it.label }}
-    </VChip>
+    />
   </VChipGroup>
 </template>
 

@@ -21,10 +21,10 @@ const PROVIDER_ICONS: Record<string, string> = {
 };
 
 const PROVIDER_COLORS: Record<string, string> = {
-  youtube: 'red',
-  vimeo: 'blue',
-  spotify: 'green',
-  soundcloud: 'orange',
+  youtube: '#FF0000', // YouTube red
+  vimeo: '#1AB7EA', // Vimeo blue
+  spotify: '#1DB954', // Spotify green
+  soundcloud: '#FF5500', // SoundCloud orange
 };
 
 const PROVIDER_LABELS: Record<string, string> = {

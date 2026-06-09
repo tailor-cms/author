@@ -4,7 +4,6 @@
       <VBtn
         v-bind="menuProps"
         aria-label="Linked actions"
-        color="primary-lighten-4"
         density="comfortable"
         icon="mdi-dots-vertical"
         size="small"

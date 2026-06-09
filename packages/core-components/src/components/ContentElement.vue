@@ -28,11 +28,11 @@
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <VSheet
       v-if="loading"
-      color="primary-lighten-5"
-      class="py-16 text-title-small rounded-lg text-center"
+      class="py-16 text-title-small text-center"
+      rounded="lg"
     >
       <CircularProgress />
-      <div class="pt-3 text-primary-darken-4 font-weight-bold">
+      <div class="pt-3 font-weight-bold">
         <span>Content generation in progress...</span>
       </div>
     </VSheet>
@@ -85,7 +85,7 @@
           @save="onSave"
         />
       </template>
-      <VSheet v-else class="py-10" color="primary-lighten-5">
+      <VSheet v-else class="py-10">
         <div class="text-title-large">
           {{ element.type.replace('_', ' ') }}
         </div>
@@ -137,26 +137,22 @@
         <ElementGeneration @generate="generateContent" />
       </div>
       <div :class="{ 'is-visible': isHighlighted }">
-        <VTooltip location="left" open-delay="1000">
-          <template #activator="{ props: tooltipProps }">
-            <VBtn
-              v-bind="tooltipProps"
-              aria-label="Reset element"
-              color="teal"
-              icon="mdi-restore"
-              size="x-small"
-              variant="tonal"
-              @click="reset"
-            />
-          </template>
-          Reset element
-        </VTooltip>
+        <VBtn
+          v-tooltip:left="{ text: 'Reset element', openDelay: 1000 }"
+          aria-label="Reset element"
+          color="warning"
+          icon="mdi-restore"
+          size="x-small"
+          variant="tonal"
+          @click="reset"
+        />
       </div>
       <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
         <VBtn
+          v-tooltip:left="{ text: 'Delete element', openDelay: 1000 }"
           aria-label="Delete element"
-          color="pink"
-          icon="mdi-delete-outline"
+          color="error"
+          icon="mdi-trash-can-outline"
           size="x-small"
           variant="tonal"
           @click="emit('delete')"
@@ -166,7 +162,7 @@
     <VProgressLinear
       v-if="isSaving"
       class="save-indicator"
-      color="teal-accent-1"
+      color="secondary"
       height="2"
       location="bottom"
       absolute
@@ -542,12 +538,12 @@ onMounted(() => {
 
 .diff {
   &.new {
-    @include mixins.highlight(rgb(var(--v-theme-success-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-success-container)));
   }
 
   &.changed,
   &.removed {
-    @include mixins.highlight(rgb(var(--v-theme-secondary-lighten-4)));
+    @include mixins.highlight(rgb(var(--v-theme-error-container)));
   }
 
   .element-actions {

@@ -6,7 +6,7 @@ export const ASSET_TYPE_ICON: Record<string, string> = {
   [AssetType.Audio]: 'mdi-volume-medium',
   [AssetType.Document]: 'mdi-file-document-outline',
   [AssetType.Link]: 'mdi-link',
-  [AssetType.Other]: 'mdi-file',
+  [AssetType.Other]: 'mdi-file-outline',
 };
 
 export const ASSET_TYPE_LABEL: Record<string, string> = {
@@ -19,10 +19,10 @@ export const ASSET_TYPE_LABEL: Record<string, string> = {
 };
 
 export const ASSET_TYPE_COLOR: Record<string, string> = {
-  [AssetType.Image]: 'red',
-  [AssetType.Video]: 'lime',
-  [AssetType.Audio]: 'lime',
-  [AssetType.Document]: 'blue',
-  [AssetType.Link]: 'primary',
-  [AssetType.Other]: 'primary',
+  [AssetType.Image]: 'asset-image',
+  [AssetType.Video]: 'asset-video',
+  [AssetType.Audio]: 'asset-audio',
+  [AssetType.Document]: 'asset-document',
+  [AssetType.Link]: 'asset-link',
+  [AssetType.Other]: 'asset-other',
 };

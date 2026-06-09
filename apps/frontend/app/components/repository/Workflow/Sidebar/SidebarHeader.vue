@@ -11,14 +11,12 @@
       :type-label="activityConfig.label"
       class="mb-8"
     />
-    <VTooltip location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <LabelChip v-bind="tooltipProps" density="compact">
-          {{ activity.shortId }}
-        </LabelChip>
-      </template>
-      {{ activityConfig.label }} ID
-    </VTooltip>
+    <LabelChip
+      v-tooltip:bottom="{ text: `${activityConfig.label} ID`, openDelay: 500 }"
+      density="compact"
+    >
+      {{ activity.shortId }}
+    </LabelChip>
     <VBtn
       :key="`${statusUrl}-identifier`"
       v-clipboard:copy="activity.shortId"
@@ -27,7 +25,6 @@
         () => notify('ID copied to the clipboard', { immediate: true })
       "
       class="ml-3 px-4"
-      color="primary-lighten-3"
       size="small"
       variant="tonal"
     >
@@ -42,7 +39,6 @@
         () => notify('Link copied to the clipboard', { immediate: true })
       "
       class="ml-2 px-4"
-      color="primary-lighten-3"
       size="small"
       variant="tonal"
     >

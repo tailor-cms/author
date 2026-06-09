@@ -19,7 +19,7 @@
             <VBtn
               v-bind="{ ...menuProps, ...tooltipProps }"
               aria-label="Source usages"
-              color="purple"
+              color="source"
               icon="mdi-source-fork"
               size="x-small"
               variant="tonal"

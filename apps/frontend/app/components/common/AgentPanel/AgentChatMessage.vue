@@ -1,29 +1,29 @@
 <template>
-  <div :class="`chat-message chat-message-${role}`">
-    <UserAvatar
-      v-if="role === 'user'"
-      :img-url="userImgUrl"
-      :size="28"
-      class="message-avatar"
-    />
-    <div v-else class="message-avatar message-avatar-assistant">
-      <img alt="Renoir" class="message-avatar-img" src="/img/renoir-head.png" />
-    </div>
-    <div class="message-column">
-      <div v-if="content" class="message-bubble" v-html="renderedContent" />
-      <div v-if="toolCalls?.length" class="message-tools">
+  <div class="chat-message">
+    <VSheet
+      v-if="isUserMessage"
+      color="surface-container"
+      class="user-bubble ml-auto"
+      max-width="85%"
+      rounded="lg"
+    >
+      {{ content }}
+    </VSheet>
+    <div v-else class="message-column">
+      <div v-if="content" class="message-content" v-html="renderedContent" />
+      <div
+        v-if="toolCalls?.length"
+        class="message-tools d-flex flex-column mt-2 ga-2"
+      >
         <VBtn
           v-if="hiddenToolCount > 0"
           :prepend-icon="areToolsExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-          class="tool-toggle align-self-start"
-          color="primary-darken-4"
-          density="compact"
-          size="small"
+          :text="toggleLabel"
+          class="align-self-start"
+          size="x-small"
           variant="text"
           @click="areToolsExpanded = !areToolsExpanded"
-        >
-          {{ toggleLabel }}
-        </VBtn>
+        />
         <AgentToolCard
           v-for="(toolCall, i) in visibleToolCalls"
           :key="i"
@@ -38,8 +38,6 @@
 import AgentToolCard from './AgentToolCard/index.vue';
 import { activityHref, elementHref } from './entityLinks';
 import { renderMarkdown } from './markdown';
-import { UserAvatar } from '@tailor-cms/core-components';
-import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const TOOL_CALL_PREVIEW = 4;
@@ -53,6 +51,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const areToolsExpanded = ref(false);
+
+const isUserMessage = computed(() => props.role === 'user');
 
 const hiddenToolCount = computed(() =>
   Math.max(0, (props.toolCalls?.length ?? 0) - TOOL_CALL_PREVIEW),
@@ -70,10 +70,7 @@ const toggleLabel = computed(() => {
   return `Show ${hiddenToolCount.value} earlier ${noun}`;
 });
 
-const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
-
-const userImgUrl = computed(() => (authStore.user as any)?.imgUrl || '');
 
 const renderedContent = computed(() => {
   if (!props.content) return '';
@@ -92,36 +89,12 @@ const renderedContent = computed(() => {
 <style lang="scss" scoped>
 .chat-message {
   display: flex;
-  align-items: flex-start;
-  gap: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.625;
 }
 
 .chat-message + .chat-message {
-  margin-top: 1rem;
-}
-
-.message-avatar {
-  display: flex;
-  flex: 0 0 1.75rem;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  width: 1.75rem;
-  height: 1.75rem;
-  margin-top: 0.125rem;
-  border-radius: 50%;
-}
-
-.message-avatar-assistant {
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  background: #fff5dd;
-}
-
-.message-avatar-img {
-  width: 100%;
-  height: 100%;
-  padding: 0.125rem;
-  object-fit: contain;
+  margin-top: 1.25rem;
 }
 
 .message-column {
@@ -129,16 +102,7 @@ const renderedContent = computed(() => {
   min-width: 0;
 }
 
-.message-bubble {
-  padding: 0.6875rem 0.9375rem;
-  color: rgb(var(--v-theme-on-surface));
-  font-size: 0.875rem;
-  line-height: 1.625;
-  border: 1px solid rgb(var(--v-theme-outline-variant));
-  border-radius: 0.875rem;
-  background: rgb(var(--v-theme-surface));
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
-
+.message-content {
   :deep(.agent-md-p) {
     margin: 0 0 0.5rem;
   }
@@ -164,6 +128,15 @@ const renderedContent = computed(() => {
     padding: 0;
   }
 
+  :deep(pre) {
+    padding: 0.5rem 0.6875rem;
+    border-radius: 0.5rem;
+    background: rgb(var(--v-theme-surface-container-low));
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
   :deep(li) {
     margin: 0.125rem 0;
   }
@@ -174,11 +147,11 @@ const renderedContent = computed(() => {
   }
 
   :deep(.agent-md-inline-code) {
-    padding: 0.125rem 0.375rem;
+    padding: 0.25rem 0.375rem;
     color: rgb(var(--v-theme-secondary));
     font-family: Menlo, Consolas, monospace;
     font-size: 0.6875rem;
-    background: rgb(var(--v-theme-surface-variant));
+    background: rgb(var(--v-theme-surface-container));
     border-radius: 0.25rem;
   }
 
@@ -202,21 +175,10 @@ const renderedContent = computed(() => {
   }
 }
 
-.chat-message-user .message-bubble {
-  color: rgb(var(--v-theme-on-surface));
-  border-color: rgba(var(--v-theme-primary), 0.55);
-  background: rgba(var(--v-theme-primary), 0.28);
-  box-shadow: 0 1px 0.125rem rgba(var(--v-theme-primary), 0.18);
-}
-
-.message-tools {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-  margin-top: 0.4375rem;
-}
-
-.tool-toggle {
-  margin: 0 0 0.125rem -0.375rem;
+.user-bubble {
+  flex: 0 1 auto;
+  padding: 0.625rem 0.875rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 </style>

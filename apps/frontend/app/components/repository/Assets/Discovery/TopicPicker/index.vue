@@ -2,7 +2,6 @@
   <VAutocomplete
     :items="items"
     :model-value="modelValue?.id ?? null"
-    color="primary-lighten-3"
     density="default"
     item-title="name"
     item-value="id"
@@ -17,7 +16,7 @@
     @update:model-value="onSelect"
   >
     <template #item="{ item, props: itemProps }">
-      <VListItem v-bind="itemProps" color="primary-darken-4">
+      <VListItem v-bind="itemProps">
         <template #prepend>
           <VIcon
             :icon="item.isLeaf
@@ -34,7 +33,7 @@
     <template v-if="modelValue?.breadcrumb" #selection>
       <div>
         <div class="text-body-medium">{{ modelValue.name }}</div>
-        <div class="text-body-small text-primary-lighten-3">
+        <div class="text-body-small text-medium-emphasis">
           {{ modelValue.breadcrumb }}
         </div>
       </div>

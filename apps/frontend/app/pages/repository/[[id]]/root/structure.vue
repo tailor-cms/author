@@ -1,32 +1,24 @@
 <template>
   <div class="structure-page">
-    <VAppBar
-      border="b surface"
-      class="pr-2"
-      color="primary-darken-3"
-      elevation="0"
-      height="64"
-      order="1"
-    >
-      <OutlineToolbar
-        v-model:search="filters.search"
-        v-model:sort="collectionSort"
-        class="flex-grow-1 align-self-center px-3"
-      />
-      <VAppBarNavIcon
-        v-if="smAndDown"
-        aria-label="Toggle sidebar"
-        class="mr-2"
-        color="white"
-        @click="repositoryStore.updateSidebar(!repositoryStore.isSidebarOpen)"
-      />
-    </VAppBar>
     <VMain class="structure-container">
       <VContainer
         ref="structureEl"
-        class="structure d-flex flex-column justify-start py-4 px-sm-15"
-        max-width="1800"
+        class="structure d-flex flex-column justify-start px-md-10 py-md-8"
+        max-width="1600"
       >
+        <div class="d-flex align-center ga-2 mb-4">
+          <OutlineToolbar
+            v-model:search="filters.search"
+            v-model:sort="collectionSort"
+            class="flex-grow-1"
+          />
+          <VAppBarNavIcon
+            v-if="smAndDown"
+            aria-label="Toggle sidebar"
+            density="comfortable"
+            @click="repositoryStore.updateSidebar(!repositoryStore.isSidebarOpen)"
+          />
+        </div>
         <BrokenReferencesAlert />
         <div v-if="isCollection" class="collection-wrapper mt-5">
           <CollectionList
@@ -37,12 +29,11 @@
           <VAlert
             v-else
             class="mb-5"
-            color="primary-lighten-3"
             icon="mdi-information-outline"
             variant="tonal"
             prominent
           >
-            Click on the button above in order to create your first item!
+            Click the <strong>Create</strong> button above to add your first item.
           </VAlert>
         </div>
         <template v-else>
@@ -70,7 +61,6 @@
             </Draggable>
             <div v-else class="my-5">
               <VAlert
-                color="primary-lighten-3"
                 icon="mdi-information-outline"
                 variant="tonal"
                 prominent
@@ -94,13 +84,11 @@
               <VAlert
                 v-if="!filteredActivities.length"
                 class="mb-5"
-                color="primary-lighten-2"
                 icon="mdi-magnify"
+                text="No matches found!"
                 variant="tonal"
                 prominent
-              >
-                No matches found!
-              </VAlert>
+              />
             </div>
           </template>
         </template>

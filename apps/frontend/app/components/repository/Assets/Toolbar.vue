@@ -4,12 +4,13 @@
       v-model="search"
       bg-color="transparent"
       class="search-input"
-      color="primary-lighten-3"
       density="comfortable"
+      max-width="384"
+      min-width="220"
       placeholder="Search assets..."
       prepend-inner-icon="mdi-magnify"
-      rounded="xl"
-      variant="solo"
+      rounded="pill"
+      variant="solo-filled"
       clearable
       flat
       hide-details
@@ -17,38 +18,27 @@
     />
     <VSpacer />
     <VBtn
-      :loading="isUploading"
-      :disabled="isUploading"
-      class="text-none"
-      color="teal-lighten-3"
-      prepend-icon="mdi-upload"
-      variant="tonal"
-      size="small"
-      @click="openFilePicker"
-    >
-      Upload
-    </VBtn>
-    <VBtn
-      class="text-none"
-      color="teal-lighten-3"
       prepend-icon="mdi-link-plus"
+      text="Add Link"
       variant="tonal"
-      size="small"
       @click="emit('link:add')"
-    >
-      Add Link
-    </VBtn>
+    />
     <VBtn
       v-if="isDiscoveryEnabled"
-      class="text-none"
-      color="teal-lighten-3"
       prepend-icon="mdi-earth-plus"
       variant="tonal"
-      size="small"
+      text="Discover"
       @click="emit('discover')"
-    >
-      Discover
-    </VBtn>
+    />
+    <VBtn
+      :loading="isUploading"
+      :disabled="isUploading"
+      color="primary"
+      prepend-icon="mdi-upload"
+      text="Upload"
+      variant="flat"
+      @click="openFilePicker"
+    />
     <input
       ref="fileInputRef"
       type="file"

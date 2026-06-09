@@ -2,39 +2,46 @@
   <VMenu :close-on-content-click="false" location="bottom end" max-width="800">
     <template #activator="{ props: menuProps }">
       <VBtn
+        v-tooltip:bottom="'View raw metadata'"
         v-bind="menuProps"
-        class="text-primary-lighten-3"
-        icon="mdi-code-json"
+        aria-label="View raw metadata"
         size="small"
+        icon="mdi-code-json"
         variant="text"
       />
     </template>
-    <VCard color="primary-darken-4" max-height="480" min-width="800">
-      <div class="d-flex align-center pa-3 pb-1">
-        <span class="text-body-small font-weight-bold text-primary-lighten-3">
-          Asset Metadata
-        </span>
+    <VCard max-height="480" width="800">
+      <div class="d-flex align-center px-3 py-2">
+        <span class="text-body-large font-weight-medium">Asset Metadata</span>
         <VSpacer />
         <VBtn
-          color="primary-lighten-3"
           icon="mdi-content-copy"
-          size="x-small"
+          size="small"
           variant="text"
           @click="copyToClipboard"
         />
       </div>
       <VDivider opacity="0.1" />
-      <div class="entries-container pa-3 overflow-y-auto">
+      <div class="entries-container pa-4 overflow-y-auto">
         <div
-          v-for="(entry, idx) in entries"
+          v-for="({ display, color, isSimple, key }, idx) in entries"
           :key="idx"
           class="entry"
         >
-          <span class="entry-key">{{ entry.key }}</span>
-          <span v-if="entry.isSimple" class="entry-value" :class="entry.color">
-            {{ entry.display }}
+          <VDivider v-if="idx > 0" class="my-2" opacity="0.1" />
+          <span class="entry-key text-label-large font-weight-bold">
+            {{ key }}
           </span>
-          <pre v-else class="entry-object">{{ entry.display }}</pre>
+          <span
+            v-if="isSimple"
+            :class="color"
+            class="entry-value text-label-medium"
+          >
+            {{ display }}
+          </span>
+          <VSheet v-else color="surface-container-low mt-1" rounded>
+            <pre class="entry-object text-label-medium ma-0">{{ display }}</pre>
+          </VSheet>
         </div>
       </div>
     </VCard>
@@ -45,10 +52,10 @@
 import type { Asset } from '@tailor-cms/interfaces/asset';
 
 const VALUE_COLORS = {
-  empty: 'text-primary-lighten-1',
-  flag: 'text-teal-lighten-3',
-  numeric: 'text-amber-lighten-2',
-  text: 'text-primary-lighten-4',
+  empty: 'text-medium-emphasis',
+  flag: 'text-secondary',
+  numeric: 'text-warning',
+  text: '',
 } as const;
 
 function formatEntry(key: string, value: any) {
@@ -97,39 +104,22 @@ $font-mono: 'Fira Code', 'Courier New', monospace;
 .entry {
   display: flex;
   flex-direction: column;
-  padding: 0.25rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-
-  &:last-child {
-    border-bottom: none;
-  }
 }
 
 .entry-key {
   font-family: $font-mono;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: rgba(var(--v-theme-primary-lighten-2), 0.9);
   letter-spacing: 0.02em;
 }
 
 .entry-value {
   font-family: $font-mono;
-  font-size: 0.75rem;
-  margin-top: 1px;
   word-break: break-all;
 }
 
 .entry-object {
   font-family: $font-mono;
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: rgb(var(--v-theme-primary-lighten-3));
   white-space: pre-wrap;
   word-break: break-all;
-  margin: 0.125rem 0 0;
   padding: 0.25rem 0.5rem;
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
 }
 </style>

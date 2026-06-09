@@ -2,7 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { AddLinkDialog } from './assets/AddLinkDialog';
-import { AssetDetailDialog } from './assets/AssetDetailDialog';
+import { AssetSidebar } from './assets/AssetSidebar';
 import { AssetRow } from './assets/AssetRow';
 import { AssetToolbar } from './assets/AssetToolbar';
 import { BulkActionBar } from './assets/BulkActionBar';
@@ -13,7 +13,7 @@ export class AssetLibrary {
   readonly toolbar: AssetToolbar;
   readonly categoryFilter: CategoryFilter;
   readonly addLinkDialog: AddLinkDialog;
-  readonly detailDialog: AssetDetailDialog;
+  readonly sidebar: AssetSidebar;
   readonly assetRows: Locator;
   readonly bulkActionBar: BulkActionBar;
   readonly emptyState: Locator;
@@ -24,7 +24,7 @@ export class AssetLibrary {
     this.categoryFilter = new CategoryFilter(page);
     this.addLinkDialog = new AddLinkDialog(page);
     this.assetRows = page.locator(AssetRow.selector);
-    this.detailDialog = new AssetDetailDialog(page);
+    this.sidebar = new AssetSidebar(page);
     this.bulkActionBar = new BulkActionBar(page);
     this.emptyState = page.locator('.empty-state');
   }

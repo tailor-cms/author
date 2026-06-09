@@ -1,9 +1,5 @@
 <template>
-  <VAppBar
-    id="mainAppBar"
-    class="app-bar elevation-0"
-    color="primary-darken-4"
-  >
+  <VAppBar id="mainAppBar" class="app-bar elevation-0">
     <NuxtLink :to="{ name: 'catalog' }" class="app-brand pl-5">
       <img
         alt="Tailor logo"
@@ -11,14 +7,8 @@
         src="/img/logo-new.svg"
         width="36"
       />
-      <VAppBarTitle class="app-name text-primary-lighten-3">
+      <VAppBarTitle class="app-name">
         Tailor
-        <span v-if="!smAndDown" class="text-body-small font-weight-bold">
-          <span class="text-primary-lighten-3 text-uppercase">
-            authoring meets
-          </span>
-          <span class="text-teal-lighten-4">AI</span>
-        </span>
       </VAppBarTitle>
     </NuxtLink>
     <template #append>
@@ -27,7 +17,6 @@
           v-for="{ name, to } in topLevelRoutes"
           :key="name"
           :to="to"
-          class="text-none"
           min-width="96"
           variant="text"
           rounded="lg"
@@ -36,6 +25,7 @@
         </VBtn>
       </template>
       <VMenu
+        :close-on-content-click="false"
         attach="#mainAppBar"
         min-width="220"
         max-width="350"
@@ -51,18 +41,16 @@
             tag="button"
           />
         </template>
-        <VCard color="primary-darken-3" class="text-left">
-          <div class="d-flex pa-4 align-center">
-            <UserAvatar :img-url="user.imgUrl" size="48" />
-            <div class="text-primary-lighten-4 ml-4">
-              <div class="text-body-large font-weight-bold">
-                {{ user.label }}
-              </div>
+        <VCard class="text-left">
+          <div class="d-flex flex-column pa-4 align-center bg-surface-container">
+            <UserAvatar :img-url="user.imgUrl" size="x-large" />
+            <div class="text-body-large font-weight-bold mt-2">
+              {{ user.label }}
             </div>
           </div>
           <VList
             class="d-flex flex-column ga-1 pa-2"
-            color="primary-darken-3"
+            density="compact"
             slim
           >
             <template v-if="smAndDown">
@@ -82,6 +70,15 @@
               rounded="lg"
             />
             <VListItem
+              prepend-icon="mdi-theme-light-dark"
+              title="Theme"
+              rounded="lg"
+            >
+              <template #append>
+                <ThemeSwitcher inline />
+              </template>
+            </VListItem>
+            <VListItem
               title="Logout"
               prepend-icon="mdi-logout"
               rounded="lg"
@@ -100,6 +97,7 @@ import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
+import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue';
 
 defineProps<{ user: User }>();
 
@@ -175,5 +173,9 @@ const logout = async () => {
 
 :deep(.v-toolbar__append) {
   gap: 0.25rem
+}
+
+:deep(.v-list-item){
+  padding-inline: 0.5rem;
 }
 </style>

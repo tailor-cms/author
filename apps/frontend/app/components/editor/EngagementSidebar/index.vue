@@ -2,79 +2,81 @@
   <VNavigationDrawer
     width="380"
     class="sidebar"
-    color="primary-darken-2"
+    color="surface-container"
     elevation="0"
     location="right"
-    border="l surface"
+    border="l"
     mobile-breakpoint="lg"
   >
     <div class="sidebar-container pa-4">
-      <div class="text-body-medium font-weight-bold text-primary-lighten-4 mt-2 mb-4">
+      <div class="text-body-medium font-weight-bold mt-2 mb-4">
         High Engagement at Scale
       </div>
       <VList>
         <VListItem
-          v-for="(it) in guidelines"
+          v-for="it in guidelines"
           :key="it.id"
           :subtitle="it.description"
           :title="it.title"
-          class="pa-4"
-          variant="tonal"
-          rounded
+          class="pa-4 bg-surface-container-high"
+          rounded="lg"
         >
           <template #prepend>
             <VBadge
-              color="lime-accent-4"
+              color="tertiary"
               icon="mdi-check-bold"
-              :model-value="progress[it.id]"
+              :model-value="progress?.[it.id] ?? false"
             >
-              <VAvatar variant="tonal">
-                <VIcon>{{ it.icon }}</VIcon>
-              </VAvatar>
+              <VAvatar :icon="it.icon" variant="tonal" />
             </VBadge>
           </template>
           <VDivider class="my-3" />
           <div class="d-flex flex-wrap ga-1">
             <template v-for="(metric, key) in it.metric" :key="key">
-              <VChip v-if="metric" size="small" rounded="pill" pill>
+              <div
+                v-if="metric"
+                class="d-flex align-center text-label-medium text-medium-emphasis"
+              >
                 <VAvatar
-                  class="font-weight-bold"
-                  :color="progress[it.id] ? 'lime-accent-4' : 'white'"
+                  class="font-weight-bold mr-2"
+                  :color="progress?.[it.id] ? 'tertiary' : 'inverse-surface'"
+                  :text="`+${metric}`"
                   variant="tonal"
-                  start
-                >
-                  +{{ metric }}
-                </VAvatar>
+                  size="x-small"
+                />
                 {{ startCase(key) }}
-              </VChip>
+              </div>
             </template>
           </div>
         </VListItem>
       </VList>
-      <RadarChart :data="chartData" :max="4" :min="0" dark />
+      <RadarChart :data="chartData" :max="4" :min="0" />
     </div>
   </VNavigationDrawer>
 </template>
 
 <script lang="ts" setup>
 import { startCase, sumBy } from 'lodash-es';
+import { useTheme } from 'vuetify';
 import { RadarChart } from '@tailor-cms/core-components';
+import type { Guideline } from '@tailor-cms/interfaces/schema';
+
+type GuidelineProgress = Record<Guideline['id'], boolean>;
 
 const editorStore = useEditorStore();
+const theme = useTheme();
 
+const colors = computed(() => theme.current.value.colors);
 const guidelines = computed(() => editorStore.guidelines);
 const progress = computed(() => {
-  const completed = guidelines.value.reduce((acc, it) => {
+  return guidelines.value?.reduce<GuidelineProgress>((acc, it) => {
     acc[it.id] = it.isDone();
     return acc;
   }, {});
-  return completed;
 });
 
 const ratings = computed(() => {
-  const completed = guidelines.value?.filter(
-    (it: any) => progress.value[it.id],
-  );
+  const completed = guidelines.value?.filter((it) => progress.value?.[it.id]);
   return {
     learnerCenteredContent: sumBy(completed, 'metric.learnerCenteredContent'),
     activeLearning: sumBy(completed, 'metric.activeLearning'),
@@ -90,21 +92,21 @@ const heasParams = [
   { key: 'unboundedInclusion', label: 'Unbounded Inclusion' },
   { key: 'communityConnections', label: 'Community Connections' },
   { key: 'realWorldOutcomes', label: 'Real-World Outcomes' },
-];
+] as const;
 
 const chartData = computed(() => ({
   labels: heasParams.map((it) => it.label.split(' ')),
   datasets: [
     {
-      data: heasParams.map(({ key }) => ratings.value[key]),
-      backgroundColor: '#ECEFF140',
-      borderColor: '#ECEFF1BF',
+      data: heasParams.map(({ key }) => ratings.value[key] || 0),
+      backgroundColor: `${colors.value['on-surface']}40`,
+      borderColor: `${colors.value.outline}BF`,
       borderWidth: 1,
     },
     {
       data: [4, 3, 3, 2, 3],
-      backgroundColor: '#ECEFF140',
-      borderColor: '#ECEFF1BF',
+      backgroundColor: `${colors.value['on-surface']}40`,
+      borderColor: `${colors.value.outline}BF`,
       borderWidth: 1,
     },
   ],

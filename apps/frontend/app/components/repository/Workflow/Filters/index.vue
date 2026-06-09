@@ -1,37 +1,36 @@
 <template>
-  <div class="toolbar d-flex align-center flex-wrap ga-4">
+  <div class="toolbar d-flex align-center flex-wrap ga-3">
     <VHover v-slot="{ props: hoverProps }">
       <VTextField
         v-model="search"
         v-bind="hoverProps"
         bg-color="transparent"
-        density="compact"
-        max-width="280"
-        min-width="232"
+        density="comfortable"
+        max-width="384"
+        min-width="220"
         name="Search"
         placeholder="Search by name or id..."
         prepend-inner-icon="mdi-magnify"
         rounded="xl"
-        variant="solo"
+        variant="solo-filled"
         clearable
         flat
         hide-details
       />
     </VHover>
-    <VSpacer />
     <VHover v-slot="{ props: hoverProps }">
       <SelectStatus
         v-bind="hoverProps"
         v-model="status"
         :items="statusOptions"
+        bg-color="transparent"
         data-testid="workflow_statusFilter"
-        bg-color="primary-darken-2"
-        density="compact"
-        max-width="220"
+        density="comfortable"
+        max-width="230"
         min-width="200"
         placeholder="Filter by status"
-        rounded="xl"
-        variant="solo"
+        rounded="pill"
+        variant="solo-filled"
         clearable
         flat
         hide-details
@@ -44,14 +43,13 @@
       data-testid="workflow_assigneeFilter"
     />
     <VChip
-      :color="recentOnly ? 'lime-accent-3' : 'primary-lighten-4'"
+      :color="recentOnly ? 'tertiary' : ''"
       :prepend-icon="recentOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
       rounded="lg"
+      text="Show only recent"
       variant="tonal"
       @click="recentOnly = !recentOnly"
-    >
-      Show only recent
-    </VChip>
+    />
   </div>
 </template>
 
@@ -71,9 +69,3 @@ const recentOnly = defineModel<boolean>('recentOnly', { default: false });
 const status = defineModel<string | null>('status', { default: null });
 const assigneeIds = defineModel<number[]>('assigneeIds', { default: () => [] });
 </script>
-
-<style lang="scss" scoped>
-:deep(input::placeholder) {
-  opacity: 0.75;
-}
-</style>

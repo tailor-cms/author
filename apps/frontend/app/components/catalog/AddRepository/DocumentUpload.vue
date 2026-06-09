@@ -28,28 +28,19 @@
     <div v-if="progress.isActive" class="mt-3 px-1">
       <div class="d-flex align-center justify-space-between mb-1">
         <span class="text-body-medium">{{ progress.label }}</span>
-        <span
-          v-if="progress.status === Status.Indexing"
-          class="text-body-medium text-medium-emphasis"
-        >
+        <span v-if="isIndexing" class="text-body-medium text-medium-emphasis">
           {{ progress.val }}%
         </span>
       </div>
       <VProgressLinear
-        :indeterminate="progress.status === Status.Uploading"
+        :indeterminate="isUploading"
         :model-value="progress.val"
-        color="primary-darken-2"
         height="6"
         rounded
       />
-      <p
-        v-if="progress.status === Status.Indexing"
-        class="text-body-small text-medium-emphasis mt-2 mb-0"
-      >
+      <p v-if="isIndexing" class="text-body-small text-medium-emphasis mt-2 mb-0">
         This may take a few minutes depending on file size.
-        <a :href="currentPath" class="text-primary" target="_blank">
-          Continue working in a new tab
-        </a>
+        <a :href="currentPath" target="_blank">Continue working in a new tab</a>
         while documents are being processed.
       </p>
     </div>
@@ -66,4 +57,7 @@ const emit = defineEmits<{
 
 const currentPath = useRoute().path;
 const { files, progress } = useDocumentProcessing(emit);
+
+const isIndexing = computed(() => progress.status === Status.Indexing);
+const isUploading = computed(() => progress.status === Status.Uploading);
 </script>

@@ -1,7 +1,7 @@
 <template>
   <button :class="{ disabled }" class="inline-activator">
     <hr />
-    <VAvatar color="primary-darken-2" size="20">
+    <VAvatar color="primary" size="20">
       <VIcon size="20">mdi-plus</VIcon>
     </VAvatar>
     <hr />
