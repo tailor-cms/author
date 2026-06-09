@@ -5,12 +5,11 @@
     </h2>
     <VAlert
       v-if="!filteredContainerGroup.length"
+      :text="emptyMessage"
       icon="mdi-information-outline"
       variant="tonal"
       prominent
-    >
-      {{ emptyMessage }}
-    </VAlert>
+    />
     <div class="d-flex flex-column ga-4">
       <component
         :is="containerName"

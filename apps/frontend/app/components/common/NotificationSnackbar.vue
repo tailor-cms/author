@@ -2,11 +2,11 @@
   <VSnackbar
     v-model="isVisible"
     :color="context.color"
+    :text="context.message"
     :timeout="context.timeout"
     class="ma-8"
     location="bottom right"
   >
-    {{ context.message }}
     <template #actions>
       <VBtn
         icon="mdi-close"

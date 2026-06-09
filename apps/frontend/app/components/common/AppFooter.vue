@@ -9,13 +9,12 @@
         width="32px"
       />
       <VChip
+        :text="`${version} ${codename}`"
         class="mx-4"
         rounded="lg"
         label
         small
-      >
-        {{ version }} {{ codename }}
-      </VChip>
+      />
       Built with <VIcon class="mx-1" color="pink">mdi-heart</VIcon>
       Studion
     </div>

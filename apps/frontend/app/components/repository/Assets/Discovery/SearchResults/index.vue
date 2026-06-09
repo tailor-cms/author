@@ -57,10 +57,9 @@
     v-else-if="hasSearched"
     class="mt-4"
     icon="mdi-magnify-close"
+    text="No results found. Try a different search query."
     variant="tonal"
-  >
-    No results found. Try a different search query.
-  </VAlert>
+  />
 </template>
 
 <script lang="ts" setup>

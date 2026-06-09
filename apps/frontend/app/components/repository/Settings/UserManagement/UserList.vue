@@ -29,14 +29,13 @@
               <template #activator="{ props: menuProps }">
                 <VBtn
                   v-bind="menuProps"
+                  :text="roleLabel(user.repositoryRole)"
                   append-icon="mdi-chevron-down"
                   class="user-role-btn mr-2"
                   rounded="pill"
                   size="small"
                   variant="tonal"
-                >
-                  {{ roleLabel(user.repositoryRole) }}
-                </VBtn>
+                />
               </template>
               <VList max-width="360" min-width="240" slim>
                 <VListSubheader>Choose role</VListSubheader>

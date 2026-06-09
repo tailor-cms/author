@@ -23,10 +23,9 @@
     v-if="search && !hasItems"
     class="mx-4"
     icon="mdi-information-outline"
+    text="No items found!"
     variant="tonal"
-  >
-    No items found!
-  </VAlert>
+  />
 </template>
 
 <script setup lang="ts">

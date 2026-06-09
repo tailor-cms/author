@@ -8,13 +8,12 @@
   >
     <span class="text-truncate">{{ chip?.short || 'No focus' }}</span>
     <VTooltip
+      :text="chip?.full || 'No focus - select an activity in the editor'"
       activator="parent"
       :z-index="9100"
       location="top"
       open-delay="200"
-    >
-      {{ chip?.full || 'No focus - select an activity in the editor' }}
-    </VTooltip>
+    />
   </VChip>
 </template>
 

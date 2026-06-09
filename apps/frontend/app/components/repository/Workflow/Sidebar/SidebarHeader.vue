@@ -11,14 +11,12 @@
       :type-label="activityConfig.label"
       class="mb-8"
     />
-    <VTooltip location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <LabelChip v-bind="tooltipProps" density="compact">
-          {{ activity.shortId }}
-        </LabelChip>
-      </template>
-      {{ activityConfig.label }} ID
-    </VTooltip>
+    <LabelChip
+      v-tooltip:bottom="{ text: `${activityConfig.label} ID`, openDelay: 500 }"
+      density="compact"
+    >
+      {{ activity.shortId }}
+    </LabelChip>
     <VBtn
       :key="`${statusUrl}-identifier`"
       v-clipboard:copy="activity.shortId"

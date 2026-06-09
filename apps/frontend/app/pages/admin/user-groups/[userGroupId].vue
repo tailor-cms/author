@@ -44,14 +44,13 @@
                 <VBtn
                   v-bind="menuProps"
                   :prepend-icon="roleMeta(item.userGroupMember.role)?.icon"
+                  :text="roleLabel(item.userGroupMember.role)"
                   append-icon="mdi-chevron-down"
                   class="user-role-btn"
                   rounded="lg"
                   size="small"
                   variant="tonal"
-                >
-                  {{ roleLabel(item.userGroupMember.role) }}
-                </VBtn>
+                />
               </template>
               <VList max-width="340" nav>
                 <VListSubheader>Choose role</VListSubheader>

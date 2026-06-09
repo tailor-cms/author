@@ -37,7 +37,6 @@ minimumReleaseAgeExclude:
   - pg-pool
   - pg-protocol
   - pg-query-stream
-  - vuetify@4.1.1
 # Allowlist of packages whose postinstall / build scripts pnpm 11 may run.
 # pnpm 11 blocks build scripts by default (supply-chain defense); each
 # entry below opts a specific package back in because we need its
