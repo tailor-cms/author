@@ -18,12 +18,12 @@
           variant="text"
         />
       </template>
-      <VList density="compact">
+      <VList density="compact" nav>
         <VListItem
           v-for="size in PAGE_SIZE_OPTIONS"
           :key="size"
           :active="itemsPerPage === size"
-          :text="`${size} per page`"
+          :title="`${size} per page`"
           @click="itemsPerPage = size"
         />
       </VList>

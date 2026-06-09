@@ -5,7 +5,7 @@
         <div class="meta-label">Type</div>
         <div class="d-flex align-center mt-1">
           <VIcon
-            :color="`${typeColor}-lighten-3`"
+            :color="typeColor"
             :icon="typeIcon"
             class="mr-1"
             size="18"

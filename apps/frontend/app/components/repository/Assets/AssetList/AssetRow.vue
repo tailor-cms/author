@@ -15,12 +15,13 @@
     </VCol>
     <VCol cols="auto" class="px-1">
       <VAvatar
-        :color="`${getAssetColor(asset)}-lighten-3`"
-        :icon="getAssetIcon(asset)"
+        color="surface-container-low"
+        class="asset-type-avatar"
         size="40"
-        variant="tonal"
         rounded="lg"
-      />
+      >
+        <VIcon :color="getAssetColor(asset)" :icon="getAssetIcon(asset)" size="20" />
+      </VAvatar>
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
       <div class="d-flex align-center text-title-small">

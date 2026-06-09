@@ -92,6 +92,14 @@ const lightTheme: ThemeDefinition = {
     'outline': '#7C7F88',
     'outline-variant': '#C7CAD0',
 
+    // Asset types — categorical, tuned for light surfaces
+    'asset-image': '#CD453A',
+    'asset-video': '#BD3DB9',
+    'asset-audio': '#007E89',
+    'asset-document': '#1D7AB7',
+    'asset-link': '#287D37',
+    'asset-other': '#62656F',
+
     // Inverse
     'inverse-surface': '#2C313A',
     'inverse-on-surface': '#E8E9EB',
@@ -188,6 +196,14 @@ const darkTheme: ThemeDefinition = {
     // Outline
     'outline': '#6E7585',
     'outline-variant': '#3E4452',
+
+    // Asset types — categorical, tuned for dark surfaces
+    'asset-image': '#E06C75',
+    'asset-video': '#C678DD',
+    'asset-audio': '#56B6C2',
+    'asset-document': '#61AFEF',
+    'asset-link': '#98C379',
+    'asset-other': '#9098A6',
 
     // Inverse
     'inverse-surface': '#E8E9EB',

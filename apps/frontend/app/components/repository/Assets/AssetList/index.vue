@@ -42,7 +42,7 @@
   </VDataIterator>
   <VEmptyState
     v-if="!assets.length && !isFetching"
-    class="py-16 empty-state rounded-md"
+    class="py-16 empty-state rounded-xl"
     bg-color="surface-container"
     icon="mdi-image-multiple"
     :text="emptyStateText"

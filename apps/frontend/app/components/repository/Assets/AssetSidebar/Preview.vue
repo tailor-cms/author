@@ -84,7 +84,7 @@
       height="250"
       rounded="lg"
     >
-      <VAvatar variant="tonal" size="100">
+      <VAvatar :color="assetColor" variant="tonal" size="100">
         <VIcon :icon="assetIcon" size="50" />
       </VAvatar>
       <VBtn
