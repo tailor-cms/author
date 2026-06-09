@@ -8,6 +8,7 @@ export class AssetSidebar {
 
   readonly page: Page;
   readonly el: Locator;
+  readonly header: Locator;
   readonly closeBtn: Locator;
   readonly actionsBtn: Locator;
   readonly descriptionInput: Locator;
@@ -16,8 +17,9 @@ export class AssetSidebar {
   constructor(page: Page) {
     this.page = page;
     this.el = page.locator(AssetSidebar.selector);
-    this.closeBtn = this.el.getByLabel('Close');
-    this.actionsBtn = this.el.getByRole('button', { name: 'Actions' });
+    this.header = this.el.locator('.header');
+    this.closeBtn = this.header.getByRole('button', { name: 'Close' });
+    this.actionsBtn = this.header.getByRole('button', { name: 'Actions' });
     this.descriptionInput = this.el.getByLabel('Description');
     this.tagsInput = this.el.getByLabel('Tags');
   }
