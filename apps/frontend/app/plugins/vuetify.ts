@@ -118,24 +118,24 @@ const darkTheme: ThemeDefinition = {
   colors: {
     // Surfaces
     'surface': '#1C2025',
-    'on-surface': '#AFB6C3',
+    'on-surface': '#C5CCDA',
     'surface-variant': '#3E4452',
-    'on-surface-variant': '#9098A6',
+    'on-surface-variant': '#AEB6C5',
 
     'surface-container-highest': '#3D4350',
-    'on-surface-container-highest': '#AFB6C3',
+    'on-surface-container-highest': '#C5CCDA',
     'surface-container-high': '#343A44',
-    'on-surface-container-high': '#AFB6C3',
+    'on-surface-container-high': '#C5CCDA',
     'surface-container': '#2C313A',
-    'on-surface-container': '#AFB6C3',
+    'on-surface-container': '#C5CCDA',
     'surface-container-low': '#23272E',
-    'on-surface-container-low': '#AFB6C3',
+    'on-surface-container-low': '#C5CCDA',
     'surface-container-lowest': '#181A1F',
-    'on-surface-container-lowest': '#AFB6C3',
+    'on-surface-container-lowest': '#C5CCDA',
 
     // Surface add-ons
     'background': '#1C2025',
-    'on-background': '#AFB6C3',
+    'on-background': '#C5CCDA',
     'surface-bright': '#434A57',
     'surface-dim': '#1A1C21',
 
@@ -203,7 +203,7 @@ const darkTheme: ThemeDefinition = {
     'asset-audio': '#56B6C2',
     'asset-document': '#61AFEF',
     'asset-link': '#98C379',
-    'asset-other': '#9098A6',
+    'asset-other': '#AEB6C5',
 
     // Inverse
     'inverse-surface': '#E8E9EB',
@@ -211,10 +211,9 @@ const darkTheme: ThemeDefinition = {
     'inverse-primary': '#287D37',
   },
   variables: {
-    'medium-emphasis-opacity': 0.7,
     // v-kbd key — mirrors surface-variant / on-surface-variant.
     'theme-kbd': '#3E4452',
-    'theme-on-kbd': '#9098A6',
+    'theme-on-kbd': '#AEB6C5',
   },
 };
 
