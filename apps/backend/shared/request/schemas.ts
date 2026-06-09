@@ -135,6 +135,17 @@ export const StringArrayFromQuery = () =>
     return v;
   }, z.array(z.string()).optional());
 
+// Binary file field for multipart/form-data action bodies. Emits
+// `{ type: 'string', format: 'binary' }` in JSON Schema;
+export const binaryFile = (description?: string) =>
+  z.string().meta({ format: 'binary', ...(description && { description }) });
+
+// Array of binary file fields, e.g. `files[]` in a multipart body.
+export const binaryFileArray = (description?: string) =>
+  z
+    .array(z.string().meta({ format: 'binary' }))
+    .meta({ ...(description && { description }) });
+
 // Standard offset/limit pair for paginated list endpoints. Spread
 // into the schema's `.object({...})` argument so the fields land at
 // the top level alongside filters.
