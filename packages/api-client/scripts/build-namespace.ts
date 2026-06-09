@@ -65,16 +65,15 @@ const HTTP_METHODS = new Set([
   'get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace',
 ]);
 
-// Type plumbing emitted into the generated module. `Operation` is the
-// raw shape hey-api gives us (an options object whose `client` field is
-// required); `Bound<O>` is the same function with `client` stripped,
-// because `createApiClient` threads the user-supplied client through
-// every call.
+// Type plumbing emitted into the generated module.
 const RUNTIME_TYPES = [
   'type Operation = (...args: any[]) => any;',
+  'type Data<O extends Operation> = NonNullable<',
+  '  Awaited<ReturnType<O>> extends { data: infer D } ? D : never',
+  '>;',
   'type Bound<O extends Operation> = (',
-  '  options?: Omit<Parameters<O>[0], "client">,',
-  ') => ReturnType<O>;',
+  '  options?: Omit<Parameters<O>[0], "client" | "throwOnError">,',
+  ') => Promise<Data<O>>;',
   '',
   'export interface ApiClientOptions {',
   '  client: Client;',
@@ -111,7 +110,14 @@ const renderModule = (
   '',
   'export function createApiClient({ client }: ApiClientOptions) {',
   '  const bind = <O extends Operation>(fn: O): Bound<O> =>',
-  '    ((options) => fn({ ...(options as object), client })) as Bound<O>;',
+  '    (async (options) => {',
+  '      const res = await fn({',
+  '        ...(options as object),',
+  '        client,',
+  '        throwOnError: true,',
+  '      });',
+  '      return res.data;',
+  '    }) as Bound<O>;',
   '',
   '  return {',
   ...namespaces.map(renderNamespace),

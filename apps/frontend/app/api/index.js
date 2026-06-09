@@ -1,3 +1,4 @@
+import { api } from './typed-client';
 import activity from './activity';
 import contentElement from './contentElement';
 import repository from './repository';
@@ -22,4 +23,7 @@ export { default as tag } from './tag';
 export { default as user } from './user';
 export { default as userGroup } from './userGroup';
 export { default as client } from './request';
+export { api, apiClient } from './typed-client';
 export { extractData } from './helpers';
+
+export default api;
