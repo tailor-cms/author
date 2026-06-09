@@ -10,6 +10,7 @@
 // "Tag[]" instead of "object[]", lets users navigate the Schemas
 // sidebar, and keeps the document compact when entities are reused.
 import { z, type ZodType } from 'zod';
+import { deriveOperationNames, type OperationNames } from './naming.ts';
 import { getRegisteredRoutes, type RouteRecord } from './registry.ts';
 
 // Express `:param` -> OpenAPI `{param}`.
@@ -93,9 +94,18 @@ function paramsFor(schema: ZodType | undefined, slot: 'path' | 'query') {
 // slice-level tag from the mounter goes verbatim into `operation.tags`
 // so Scalar groups routes by feature; routes without a tag fall back
 // to "Misc" so they still land under a labelled sidebar section.
-function operationFor(route: RouteRecord) {
+//
+// The `names` map is precomputed in `buildPaths` so that verb
+// derivation can see every route in the slice
+// (needed to decide whether REST shorthand applies and to resolve collisions).
+function operationFor(route: RouteRecord, names: OperationNames | undefined) {
   const op: any = {
     tags: [route.tag ?? 'Misc'],
+    ...(names && {
+      'operationId': names.operationId,
+      'x-tailor-slice': names.slice,
+      'x-tailor-method': names.verb,
+    }),
     summary: route.openapi?.summary,
     description: route.openapi?.description,
     parameters: [
@@ -131,14 +141,15 @@ function operationFor(route: RouteRecord) {
 }
 
 // Fold every registered route into the OpenAPI `paths` object in
-// registration order. Side effect: populates the shared `components`
-// map with every named entity encountered.
+// registration order.
 export function buildPaths() {
+  const routes = getRegisteredRoutes();
+  const names = deriveOperationNames(routes);
   const paths: Record<string, Record<string, any>> = {};
-  for (const route of getRegisteredRoutes()) {
+  for (const route of routes) {
     const apiPath = toOpenApiPath(route.path);
     paths[apiPath] = paths[apiPath] ?? {};
-    paths[apiPath][route.method] = operationFor(route);
+    paths[apiPath][route.method] = operationFor(route, names.get(route));
   }
   return paths;
 }
