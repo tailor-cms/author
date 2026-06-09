@@ -77,46 +77,48 @@ const description = ref('');
 const tags = ref<string[]>([]);
 const isCoreSource = ref(false);
 
-const meta = computed(() => (props.asset?.meta ?? {}) as Record<string, any>);
 const typeIcon = computed(() => getAssetIcon(props.asset));
 const typeColor = computed(() => getAssetColor(props.asset));
 
-const hasChanges = computed(() => {
-  if (!props.asset) return false;
+function hasChanges(asset: Asset) {
   return (
-    description.value !== (meta.value.description || '') ||
-    JSON.stringify(tags.value) !== JSON.stringify(meta.value.tags || []) ||
-    isCoreSource.value !== !!meta.value.isCoreSource
+    description.value !== (asset.meta.description || '') ||
+    JSON.stringify(tags.value) !== JSON.stringify(asset.meta.tags || []) ||
+    isCoreSource.value !== !!asset.meta.isCoreSource
   );
-});
+}
 
-function saveMeta() {
-  if (!props.asset || !hasChanges.value) return;
-  emit('save', props.asset, {
+function saveMeta(asset: Asset | null) {
+  if (!asset || !hasChanges(asset)) return;
+  emit('save', asset, {
     description: description.value,
     tags: tags.value,
     isCoreSource: isCoreSource.value,
   });
 }
 
-const debouncedSave = debounce(saveMeta, 500);
+const debouncedSave = debounce(() => saveMeta(props.asset), 500);
+
+function loadAsset(asset: Asset) {
+  description.value = asset.meta.description || '';
+  tags.value = [...(asset.meta.tags || [])];
+  isCoreSource.value = !!asset.meta.isCoreSource;
+}
 
 watch(
-  () => props.asset?.id,
-  (newId, oldId) => {
-    if (oldId && oldId !== newId) debouncedSave.flush();
-    if (!props.asset) return;
-    const m = (props.asset.meta ?? {}) as Record<string, any>;
-    description.value = m.description || '';
-    tags.value = [...(m.tags || [])];
-    isCoreSource.value = !!m.isCoreSource;
+  () => props.asset,
+  (asset, prevAsset) => {
+    if (prevAsset?.id === asset?.id) return;
+    debouncedSave.cancel();
+    saveMeta(prevAsset ?? null);
+    if (asset) loadAsset(asset);
   },
   { immediate: true },
 );
 
 watch(description, () => debouncedSave());
 watch(tags, () => debouncedSave(), { deep: true });
-watch(isCoreSource, () => saveMeta());
+watch(isCoreSource, () => saveMeta(props.asset));
 
 onBeforeUnmount(() => {
   debouncedSave.flush();

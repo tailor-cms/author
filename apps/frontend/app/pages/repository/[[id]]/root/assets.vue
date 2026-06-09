@@ -178,8 +178,10 @@ async function onDeindex(asset: Asset) {
 
 async function onSaveMeta(asset: Asset, meta: Record<string, any>) {
   await assetStore.updateMeta(asset.id, meta);
-  const updated = assetStore.assets.find((a) => a.id === asset.id);
-  if (updated) activeAsset.value = updated;
+  if (activeAsset.value?.id === asset.id) {
+    const updated = assetStore.assets.find((a) => a.id === asset.id);
+    if (updated) activeAsset.value = updated;
+  }
   notify('Saved', { immediate: true });
 }
 
