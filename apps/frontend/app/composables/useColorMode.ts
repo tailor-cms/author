@@ -16,7 +16,7 @@ export const themeOptions: { value: ColorMode; title: string; icon: string }[] =
   [
     { value: 'light', title: 'Light', icon: 'mdi-weather-sunny' },
     { value: 'dark', title: 'Dark', icon: 'mdi-weather-night' },
-    { value: 'system', title: 'System', icon: 'mdi-desktop-tower-monitor' },
+    { value: 'system', title: 'System', icon: 'mdi-laptop' },
   ];
 
 export function useColorMode() {

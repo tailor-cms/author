@@ -3,10 +3,8 @@
     v-if="inline"
     :model-value="mode"
     class="theme-toggle"
-    density="comfortable"
     rounded="lg"
-    variant="text"
-    border
+    variant="tonal"
     divided
     mandatory
     @update:model-value="set"
@@ -18,8 +16,8 @@
       :value="value"
       :icon="icon"
       :aria-label="title"
-      height="28"
-      size="small"
+      height="30"
+      size="x-small"
     />
   </VBtnToggle>
   <VMenu

@@ -48,7 +48,11 @@
               {{ user.label }}
             </div>
           </div>
-          <VList density="compact" nav>
+          <VList
+            class="d-flex flex-column ga-1 pa-2"
+            density="compact"
+            slim
+          >
             <template v-if="smAndDown">
               <VListItem
                 v-for="{ name, to, icon } in routes"
@@ -56,14 +60,20 @@
                 :to="to"
                 :title="name"
                 :prepend-icon="icon"
+                rounded="lg"
               />
             </template>
             <VListItem
               :to="{ name: 'user-profile' }"
               title="Profile"
               prepend-icon="mdi-account-circle-outline"
+              rounded="lg"
             />
-            <VListItem prepend-icon="mdi-theme-light-dark" title="Theme">
+            <VListItem
+              prepend-icon="mdi-theme-light-dark"
+              title="Theme"
+              rounded="lg"
+            >
               <template #append>
                 <ThemeSwitcher inline />
               </template>
@@ -71,6 +81,7 @@
             <VListItem
               title="Logout"
               prepend-icon="mdi-logout"
+              rounded="lg"
               @click="logout"
             />
           </VList>
@@ -162,5 +173,9 @@ const logout = async () => {
 
 :deep(.v-toolbar__append) {
   gap: 0.25rem
+}
+
+:deep(.v-list-item){
+  padding-inline: 0.5rem;
 }
 </style>
