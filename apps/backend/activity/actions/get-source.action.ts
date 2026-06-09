@@ -9,6 +9,7 @@ import * as service from '../activity.service.ts';
 // copy, or `null` when the activity is not a copy / the source has
 // been hard-deleted.
 export default defineAction({
+  name: 'getSource',
   params: schemas.ActivityItemParams,
   openapi: {
     authenticated: true,

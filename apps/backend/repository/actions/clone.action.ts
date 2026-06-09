@@ -21,6 +21,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'clone',
   params: schemas.RepositoryItemParams,
   body: schemas.CloneInput,
   openapi: {

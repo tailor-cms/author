@@ -10,6 +10,7 @@ import * as service from '../activity.service.ts';
 // Creates a new workflow-status entry for the activity. Status history
 // is append-only
 export default defineAction({
+  name: 'setStatus',
   params: schemas.ActivityItemParams,
   body: schemas.WorkflowStatusInput,
   openapi: {

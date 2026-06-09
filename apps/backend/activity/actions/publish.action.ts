@@ -11,6 +11,7 @@ import * as service from '../activity.service.ts';
 // Publishes the activity (or unpublishes it if soft-deleted).
 // Detached activities cannot be published.
 export default defineAction({
+  name: 'publish',
   params: schemas.ActivityItemParams,
   openapi: {
     authenticated: true,

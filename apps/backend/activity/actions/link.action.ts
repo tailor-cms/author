@@ -12,6 +12,7 @@ import * as service from '../activity.service.ts';
 // target. The `hasLinkSourceAccess` middleware verifies the caller has
 // access to the source before this fires.
 export default defineAction({
+  name: 'link',
   params: RepositoryScopedParams,
   body: schemas.LinkInput,
   openapi: {

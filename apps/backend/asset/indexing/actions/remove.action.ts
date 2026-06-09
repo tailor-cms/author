@@ -9,6 +9,7 @@ import * as service from '../indexing.service.ts';
 // DELETE /repositories/:repositoryId/assets/indexing/:assetId
 // Removes the asset from the vector store and clears the local status.
 export default defineAction({
+  name: 'stopIndexing',
   params: schemas.AssetItemParams,
   openapi: {
     authenticated: true,

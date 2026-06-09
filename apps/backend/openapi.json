@@ -4652,9 +4652,9 @@
         "tags": [
           "AI / Generation"
         ],
-        "operationId": "aiPostAiGenerate",
+        "operationId": "aiGenerate",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "postAiGenerate",
+        "x-tailor-method": "generate",
         "summary": "Generate AI content for a repository",
         "parameters": [],
         "responses": {
@@ -4755,9 +4755,9 @@
         "tags": [
           "AI / Vector store"
         ],
-        "operationId": "aiPostAiUpload",
+        "operationId": "aiUpload",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "postAiUpload",
+        "x-tailor-method": "upload",
         "summary": "Upload PDFs to a vector store",
         "parameters": [],
         "responses": {
@@ -4826,9 +4826,9 @@
         "tags": [
           "AI / Vector store"
         ],
-        "operationId": "aiGetAiVectorStoreStatus",
+        "operationId": "aiGetVectorStoreStatus",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "getAiVectorStoreStatus",
+        "x-tailor-method": "getVectorStoreStatus",
         "summary": "Get vector store status",
         "parameters": [
           {
@@ -4877,9 +4877,9 @@
         "tags": [
           "AI / Vector store"
         ],
-        "operationId": "aiDeleteAiVectorStoreById",
+        "operationId": "aiDeleteVectorStore",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "deleteAiVectorStoreById",
+        "x-tailor-method": "deleteVectorStore",
         "summary": "Delete a vector store",
         "parameters": [
           {
@@ -4910,9 +4910,9 @@
         "tags": [
           "Activity / Linked content"
         ],
-        "operationId": "activityPostActivitiesLink",
+        "operationId": "activityLink",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "postActivitiesLink",
+        "x-tailor-method": "link",
         "summary": "Link an activity from another repository",
         "description": "Creates a linked-copy tree of the source under the target.",
         "parameters": [
@@ -5012,9 +5012,9 @@
         "tags": [
           "Activity / CRUD"
         ],
-        "operationId": "activityGetActivities",
+        "operationId": "activityList",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "getActivities",
+        "x-tailor-method": "list",
         "summary": "List activities in the repository",
         "description": "Returns the repository's activities in outline order.",
         "parameters": [
@@ -5155,9 +5155,9 @@
         "tags": [
           "Activity / CRUD"
         ],
-        "operationId": "activityPostActivities",
+        "operationId": "activityCreate",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "postActivities",
+        "x-tailor-method": "create",
         "summary": "Create an activity",
         "description": "Creates a new activity under the scoped repository.",
         "parameters": [
@@ -5270,9 +5270,9 @@
         "tags": [
           "Activity / CRUD"
         ],
-        "operationId": "activityGetActivitiesById",
+        "operationId": "activityGet",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "getActivitiesById",
+        "x-tailor-method": "get",
         "summary": "Get a single activity by id",
         "description": "Returns the activity row.",
         "parameters": [
@@ -5338,9 +5338,9 @@
         "tags": [
           "Activity / CRUD"
         ],
-        "operationId": "activityPatchActivitiesById",
+        "operationId": "activityUpdate",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "patchActivitiesById",
+        "x-tailor-method": "update",
         "summary": "Patch an activity",
         "description": "Updates mutable fields on the activity.",
         "parameters": [
@@ -5455,9 +5455,9 @@
         "tags": [
           "Activity / CRUD"
         ],
-        "operationId": "activityDeleteActivitiesById",
+        "operationId": "activityDelete",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "deleteActivitiesById",
+        "x-tailor-method": "delete",
         "summary": "Soft-delete an activity; detach descendants",
         "description": "Soft-deletes the activity and detaches its descendants.",
         "parameters": [
@@ -5525,9 +5525,9 @@
         "tags": [
           "Activity / Structure"
         ],
-        "operationId": "activityPostActivitiesReorder",
+        "operationId": "activityReorder",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "postActivitiesReorder",
+        "x-tailor-method": "reorder",
         "summary": "Reorder an activity",
         "description": "Recalculates position from a sibling-index target.",
         "parameters": [
@@ -5618,9 +5618,9 @@
         "tags": [
           "Activity / Structure"
         ],
-        "operationId": "activityPostActivitiesClone",
+        "operationId": "activityClone",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "postActivitiesClone",
+        "x-tailor-method": "clone",
         "summary": "Deep-clone an activity into a target location",
         "description": "Copies the activity with descendants into the target.",
         "parameters": [
@@ -5733,9 +5733,9 @@
         "tags": [
           "Activity / Lifecycle"
         ],
-        "operationId": "activityPatchActivitiesRestore",
+        "operationId": "activityRestore",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "patchActivitiesRestore",
+        "x-tailor-method": "restore",
         "summary": "Restore an activity from soft-delete (recursive)",
         "description": "Removes soft-delete flag for activity and its descendants.",
         "parameters": [
@@ -5803,9 +5803,9 @@
         "tags": [
           "Activity / Lifecycle"
         ],
-        "operationId": "activityPostActivitiesStatus",
+        "operationId": "activitySetStatus",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "postActivitiesStatus",
+        "x-tailor-method": "setStatus",
         "summary": "Update an activity's workflow status",
         "description": "Appends a workflow-status row; SSE and assignee email run as side effects.",
         "parameters": [
@@ -5937,9 +5937,9 @@
         "tags": [
           "Activity / Publishing"
         ],
-        "operationId": "activityGetActivitiesPreview",
+        "operationId": "activityGetPreview",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "getActivitiesPreview",
+        "x-tailor-method": "getPreview",
         "summary": "Generate an external preview URL for an activity",
         "description": "Asks the configured consumer webhook for a preview URL.",
         "parameters": [
@@ -5998,9 +5998,9 @@
         "tags": [
           "Activity / Publishing"
         ],
-        "operationId": "activityGetActivitiesPublish",
+        "operationId": "activityPublish",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "getActivitiesPublish",
+        "x-tailor-method": "publish",
         "summary": "Publish an activity (or unpublish it when soft-deleted)",
         "description": "Publishes the activity through the publishing service; unpublishes when soft-deleted.",
         "parameters": [
@@ -6047,9 +6047,9 @@
         "tags": [
           "Activity / Linked content"
         ],
-        "operationId": "activityPostActivitiesUnlink",
+        "operationId": "activityUnlink",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "postActivitiesUnlink",
+        "x-tailor-method": "unlink",
         "summary": "Unlink an activity from its source",
         "description": "Detaches the linked tree so it becomes an independent copy.",
         "parameters": [
@@ -6117,9 +6117,9 @@
         "tags": [
           "Activity / Linked content"
         ],
-        "operationId": "activityGetActivitiesSource",
+        "operationId": "activityGetSource",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "getActivitiesSource",
+        "x-tailor-method": "getSource",
         "summary": "Get source info for a linked activity copy",
         "description": "Returns the source activity pointer for a linked copy.",
         "parameters": [
@@ -6194,9 +6194,9 @@
         "tags": [
           "Activity / Linked content"
         ],
-        "operationId": "activityGetActivitiesCopies",
+        "operationId": "activityGetCopies",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "getActivitiesCopies",
+        "x-tailor-method": "getCopies",
         "summary": "List active linked copies of a source activity",
         "description": "Returns linked copies of this activity across repositories.",
         "parameters": [
@@ -6264,9 +6264,9 @@
         "tags": [
           "AI / Agent"
         ],
-        "operationId": "aiGetAgentSessions",
+        "operationId": "aiListSessions",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "getAgentSessions",
+        "x-tailor-method": "listSessions",
         "summary": "List agent sessions",
         "parameters": [],
         "responses": {
@@ -6305,9 +6305,9 @@
         "tags": [
           "AI / Agent"
         ],
-        "operationId": "aiPostAgentSessions",
+        "operationId": "aiCreateSession",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "postAgentSessions",
+        "x-tailor-method": "createSession",
         "summary": "Create an agent session",
         "parameters": [],
         "responses": {
@@ -6368,9 +6368,9 @@
         "tags": [
           "AI / Agent"
         ],
-        "operationId": "aiGetAgentSessionsById",
+        "operationId": "aiGetSession",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "getAgentSessionsById",
+        "x-tailor-method": "getSession",
         "summary": "Get an agent session",
         "parameters": [
           {
@@ -6434,9 +6434,9 @@
         "tags": [
           "AI / Agent"
         ],
-        "operationId": "aiDeleteAgentSessionsById",
+        "operationId": "aiDeleteSession",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "deleteAgentSessionsById",
+        "x-tailor-method": "deleteSession",
         "summary": "Delete an agent session",
         "parameters": [
           {
@@ -6484,9 +6484,9 @@
         "tags": [
           "AI / Agent"
         ],
-        "operationId": "aiPostAgentRun",
+        "operationId": "aiRunAgent",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "postAgentRun",
+        "x-tailor-method": "runAgent",
         "summary": "Run an agent turn",
         "description": "Resumes or creates a session and dispatches one model + tool round-trip; returns the reply, tool log, and Frontend invalidation hints.",
         "parameters": [],
@@ -6578,9 +6578,9 @@
         "tags": [
           "Library / Discovery"
         ],
-        "operationId": "libraryPostDiscover",
+        "operationId": "libraryDiscover",
         "x-tailor-slice": "library",
-        "x-tailor-method": "postDiscover",
+        "x-tailor-method": "discover",
         "summary": "Search the web for repository relevant resources",
         "description": "Routes the query across Serper endpoints (web / image / news / video / scholar) and Unsplash based on the contentFilter; falls back to OpenAI web_search when Serper is unavailable or quota exceeded.",
         "parameters": [],
@@ -6668,9 +6668,9 @@
         "tags": [
           "Library / Indexing"
         ],
-        "operationId": "libraryGetIndexingStatus",
+        "operationId": "libraryListIndexingStatuses",
         "x-tailor-slice": "library",
-        "x-tailor-method": "getIndexingStatus",
+        "x-tailor-method": "listIndexingStatuses",
         "summary": "List indexing status for all repository assets",
         "description": "Returns indexing status rows for every asset that has been (or is being) indexed.",
         "parameters": [],
@@ -6712,9 +6712,9 @@
         "tags": [
           "Library / Indexing"
         ],
-        "operationId": "libraryPostIndexing",
+        "operationId": "libraryStartIndexing",
         "x-tailor-slice": "library",
-        "x-tailor-method": "postIndexing",
+        "x-tailor-method": "startIndexing",
         "summary": "Queue assets for vector-store indexing",
         "description": "Queues eligible assets (not yet indexed, failed, or stuck) and returns the store id plus the ids that were actually queued. Indexing runs in the background.",
         "parameters": [],
@@ -6785,9 +6785,9 @@
         "tags": [
           "Library / Indexing"
         ],
-        "operationId": "libraryGetIndexingStatusByAssetId",
+        "operationId": "libraryGetIndexingStatus",
         "x-tailor-slice": "library",
-        "x-tailor-method": "getIndexingStatusByAssetId",
+        "x-tailor-method": "getIndexingStatus",
         "summary": "Get indexing status for one asset",
         "description": "Returns the status row for a single asset; empty when the asset has never been indexed.",
         "parameters": [
@@ -6855,9 +6855,9 @@
         "tags": [
           "Library / Indexing"
         ],
-        "operationId": "libraryDeleteIndexingById",
+        "operationId": "libraryStopIndexing",
         "x-tailor-slice": "library",
-        "x-tailor-method": "deleteIndexingById",
+        "x-tailor-method": "stopIndexing",
         "summary": "Deindex an asset",
         "description": "Removes the asset's file from the OpenAI vector store and clears `processingStatus` / `vectorStoreFileId` locally.",
         "parameters": [
@@ -6922,9 +6922,9 @@
         "tags": [
           "Library / Asset"
         ],
-        "operationId": "libraryGetAssets",
+        "operationId": "libraryListAssets",
         "x-tailor-slice": "library",
-        "x-tailor-method": "getAssets",
+        "x-tailor-method": "listAssets",
         "summary": "List assets or resolve a storage key",
         "description": "Returns a paginated list of repository assets in the default mode, or a `{ url }` signed-URL response when `?key=<storageKey>` is set.",
         "parameters": [],
@@ -6970,9 +6970,9 @@
         "tags": [
           "Library / Asset"
         ],
-        "operationId": "libraryPostAssets",
+        "operationId": "libraryUploadAssets",
         "x-tailor-slice": "library",
-        "x-tailor-method": "postAssets",
+        "x-tailor-method": "uploadAssets",
         "summary": "Upload one or more assets",
         "description": "Multipart upload. Use the `files[]` field for asset-library uploads (returns the standard data envelope) or the legacy `file` field for content-element single-file uploads (returns the storage-key shape).",
         "parameters": [],
@@ -7055,9 +7055,9 @@
         "tags": [
           "Library / Asset"
         ],
-        "operationId": "libraryPostAssetsImportLink",
+        "operationId": "libraryImportFromLink",
         "x-tailor-slice": "library",
-        "x-tailor-method": "postAssetsImportLink",
+        "x-tailor-method": "importFromLink",
         "summary": "Create an asset from a URL",
         "description": "Collects OG metadata; for IMAGE / PDF content types also downloads and stores the binary. SSRF-guarded at both validation and execution.",
         "parameters": [],
@@ -7173,9 +7173,9 @@
         "tags": [
           "Library / Asset"
         ],
-        "operationId": "libraryPostAssetsBulkRemove",
+        "operationId": "libraryBulkRemoveAssets",
         "x-tailor-slice": "library",
-        "x-tailor-method": "postAssetsBulkRemove",
+        "x-tailor-method": "bulkRemoveAssets",
         "summary": "Bulk soft-delete assets",
         "description": "Soft-deletes each asset by id. Failures are logged and the request never partials out — the response contains the ids that did delete.",
         "parameters": [],
@@ -7242,9 +7242,9 @@
         "tags": [
           "Library / Asset"
         ],
-        "operationId": "libraryGetAssetsDownload",
+        "operationId": "libraryDownloadAsset",
         "x-tailor-slice": "library",
-        "x-tailor-method": "getAssetsDownload",
+        "x-tailor-method": "downloadAsset",
         "summary": "Get a signed download URL for an asset",
         "description": "Only applies to assets with a stored file (not LINK).",
         "parameters": [
@@ -7312,9 +7312,9 @@
         "tags": [
           "Library / Asset"
         ],
-        "operationId": "libraryPostAssetsFile",
+        "operationId": "libraryAttachFile",
         "x-tailor-slice": "library",
-        "x-tailor-method": "postAssetsFile",
+        "x-tailor-method": "attachFile",
         "summary": "Attach a supplementary file to an asset",
         "description": "Stores the multipart `file` under `meta.files[fileKey]`. Replaces any previously attached file at the same slot; the old file is left in storage since published content may still reference it.",
         "parameters": [
@@ -7412,9 +7412,9 @@
         "tags": [
           "Library / Asset"
         ],
-        "operationId": "libraryPatchAssetsById",
+        "operationId": "libraryUpdateAsset",
         "x-tailor-slice": "library",
-        "x-tailor-method": "patchAssetsById",
+        "x-tailor-method": "updateAsset",
         "summary": "Update asset metadata",
         "description": "Patches editable meta fields. Unknown keys (including `files`) are silently dropped.",
         "parameters": [
@@ -7517,9 +7517,9 @@
         "tags": [
           "Library / Asset"
         ],
-        "operationId": "libraryDeleteAssetsById",
+        "operationId": "libraryDeleteAsset",
         "x-tailor-slice": "library",
-        "x-tailor-method": "deleteAssetsById",
+        "x-tailor-method": "deleteAsset",
         "summary": "Soft-delete an asset",
         "description": "Soft-deletes the asset row and removes it from the vector store (if applicable). The underlying storage file is kept so content references stay valid.",
         "parameters": [
@@ -7584,9 +7584,9 @@
         "tags": [
           "Comment / Resolution"
         ],
-        "operationId": "commentPostCommentsResolve",
+        "operationId": "commentResolve",
         "x-tailor-slice": "comment",
-        "x-tailor-method": "postCommentsResolve",
+        "x-tailor-method": "resolve",
         "summary": "Toggle the resolved state of a comment or element thread",
         "description": "Toggle the resolved state for a single comment or entire thread.",
         "parameters": [
@@ -7664,9 +7664,9 @@
         "tags": [
           "Comment / CRUD"
         ],
-        "operationId": "commentGetComments",
+        "operationId": "commentList",
         "x-tailor-slice": "comment",
-        "x-tailor-method": "getComments",
+        "x-tailor-method": "list",
         "summary": "List comments in the repository",
         "description": "Returns the repository's comments in newest-first order.",
         "parameters": [
@@ -7805,9 +7805,9 @@
         "tags": [
           "Comment / CRUD"
         ],
-        "operationId": "commentPostComments",
+        "operationId": "commentCreate",
         "x-tailor-slice": "comment",
-        "x-tailor-method": "postComments",
+        "x-tailor-method": "create",
         "summary": "Create a comment",
         "description": "Creates a comment under the scoped repository.",
         "parameters": [
@@ -7899,9 +7899,9 @@
         "tags": [
           "Comment / CRUD"
         ],
-        "operationId": "commentPatchCommentsById",
+        "operationId": "commentUpdate",
         "x-tailor-slice": "comment",
-        "x-tailor-method": "patchCommentsById",
+        "x-tailor-method": "update",
         "summary": "Edit a comment",
         "description": "Replaces the body of an existing comment.",
         "parameters": [
@@ -7991,9 +7991,9 @@
         "tags": [
           "Comment / CRUD"
         ],
-        "operationId": "commentDeleteCommentsById",
+        "operationId": "commentDelete",
         "x-tailor-slice": "comment",
-        "x-tailor-method": "deleteCommentsById",
+        "x-tailor-method": "delete",
         "summary": "Soft-delete a comment",
         "description": "Soft-deletes the comment; the row stays for provenance.",
         "parameters": [
@@ -8061,9 +8061,9 @@
         "tags": [
           "Content Element / Linked content"
         ],
-        "operationId": "contentElementPostContentElementsLink",
+        "operationId": "contentElementLink",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "postContentElementsLink",
+        "x-tailor-method": "link",
         "summary": "Link a content element",
         "description": "Creates a linked copy of the source element.",
         "parameters": [
@@ -8158,9 +8158,9 @@
         "tags": [
           "Content Element / CRUD"
         ],
-        "operationId": "contentElementGetContentElements",
+        "operationId": "contentElementList",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "getContentElements",
+        "x-tailor-method": "list",
         "summary": "List content elements in the repository",
         "description": "Returns content elements, optionally narrowed to activity parents",
         "parameters": [
@@ -8301,9 +8301,9 @@
         "tags": [
           "Content Element / CRUD"
         ],
-        "operationId": "contentElementPostContentElements",
+        "operationId": "contentElementCreate",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "postContentElements",
+        "x-tailor-method": "create",
         "summary": "Create a content element",
         "description": "Creates a content element under the scoped repository.",
         "parameters": [
@@ -8454,9 +8454,9 @@
         "tags": [
           "Content Element / CRUD"
         ],
-        "operationId": "contentElementGetContentElementsById",
+        "operationId": "contentElementGet",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "getContentElementsById",
+        "x-tailor-method": "get",
         "summary": "Get a single content element by id",
         "description": "Returns the content element identified by the path id.",
         "parameters": [
@@ -8522,9 +8522,9 @@
         "tags": [
           "Content Element / CRUD"
         ],
-        "operationId": "contentElementPatchContentElementsById",
+        "operationId": "contentElementUpdate",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "patchContentElementsById",
+        "x-tailor-method": "update",
         "summary": "Patch a content element",
         "description": "Updates mutable fields; `deletedAt: null` restores the row.",
         "parameters": [
@@ -8639,9 +8639,9 @@
         "tags": [
           "Content Element / CRUD"
         ],
-        "operationId": "contentElementDeleteContentElementsById",
+        "operationId": "contentElementDelete",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "deleteContentElementsById",
+        "x-tailor-method": "delete",
         "summary": "Soft-delete a content element",
         "description": "Soft-deletes the element; the row stays for provenance.",
         "parameters": [
@@ -8691,9 +8691,9 @@
         "tags": [
           "Content Element / Structure"
         ],
-        "operationId": "contentElementPostContentElementsReorder",
+        "operationId": "contentElementReorder",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "postContentElementsReorder",
+        "x-tailor-method": "reorder",
         "summary": "Reorder a content element",
         "description": "Recomputes the element position from the target index.",
         "parameters": [
@@ -8785,9 +8785,9 @@
         "tags": [
           "Content Element / Linked content"
         ],
-        "operationId": "contentElementPostContentElementsUnlink",
+        "operationId": "contentElementUnlink",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "postContentElementsUnlink",
+        "x-tailor-method": "unlink",
         "summary": "Unlink a content element from its source",
         "description": "Detaches the linked copy so it becomes an independent copy.",
         "parameters": [
@@ -8855,9 +8855,9 @@
         "tags": [
           "Content Element / Linked content"
         ],
-        "operationId": "contentElementGetContentElementsSource",
+        "operationId": "contentElementGetSource",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "getContentElementsSource",
+        "x-tailor-method": "getSource",
         "summary": "Get source info for a linked content element",
         "description": "Returns the source element pointer for a linked copy.",
         "parameters": [
@@ -8932,9 +8932,9 @@
         "tags": [
           "Content Element / Linked content"
         ],
-        "operationId": "contentElementGetContentElementsCopies",
+        "operationId": "contentElementGetCopies",
         "x-tailor-slice": "contentElement",
-        "x-tailor-method": "getContentElementsCopies",
+        "x-tailor-method": "getCopies",
         "summary": "List active linked copies of a source content element",
         "description": "Returns linked copies of this element across repositories.",
         "parameters": [
@@ -9002,9 +9002,9 @@
         "tags": [
           "Revision / Time travel"
         ],
-        "operationId": "revisionGetRevisionsTimeTravel",
+        "operationId": "revisionTimeTravel",
         "x-tailor-slice": "revision",
-        "x-tailor-method": "getRevisionsTimeTravel",
+        "x-tailor-method": "timeTravel",
         "summary": "Time-travel an activity",
         "description": "Reconstructs an activity and its descendant element state at a target moment. Used by the FE PublishDiff view to show what was published.",
         "parameters": [
@@ -9094,9 +9094,9 @@
         "tags": [
           "Revision / Records"
         ],
-        "operationId": "revisionGetRevisions",
+        "operationId": "revisionList",
         "x-tailor-slice": "revision",
-        "x-tailor-method": "getRevisions",
+        "x-tailor-method": "list",
         "summary": "List revisions",
         "description": "Returns a page of revisions for the repository, optionally narrowed to a single entity's audit trail.",
         "parameters": [
@@ -9210,9 +9210,9 @@
         "tags": [
           "Revision / Records"
         ],
-        "operationId": "revisionGetRevisionsById",
+        "operationId": "revisionGet",
         "x-tailor-slice": "revision",
-        "x-tailor-method": "getRevisionsById",
+        "x-tailor-method": "get",
         "summary": "Get a revision",
         "description": "Loads a single revision record scoped to the repository.",
         "parameters": [
@@ -9855,9 +9855,9 @@
         "tags": [
           "Repository / Publishing"
         ],
-        "operationId": "repositoryPostPublish",
+        "operationId": "repositoryPublish",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postPublish",
+        "x-tailor-method": "publish",
         "summary": "Publish repository details",
         "description": "Republishes the catalog manifest for the repository so consumers see the latest details (name, description, tags).",
         "parameters": [
@@ -9890,9 +9890,9 @@
         "tags": [
           "Repository / Pinning"
         ],
-        "operationId": "repositoryPostPin",
+        "operationId": "repositoryPin",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postPin",
+        "x-tailor-method": "pin",
         "summary": "Pin / unpin a repository for the current user",
         "parameters": [
           {
@@ -9964,9 +9964,9 @@
         "tags": [
           "Repository / Cloning"
         ],
-        "operationId": "repositoryPostClone",
+        "operationId": "repositoryClone",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postClone",
+        "x-tailor-method": "clone",
         "summary": "Clone a repository",
         "parameters": [
           {
@@ -10100,9 +10100,9 @@
         "tags": [
           "Repository / Members"
         ],
-        "operationId": "repositoryPostUsers",
+        "operationId": "repositoryAddUser",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postUsers",
+        "x-tailor-method": "addUser",
         "summary": "Invite or update a repository user",
         "parameters": [
           {
@@ -10184,9 +10184,9 @@
         "tags": [
           "Repository / Members"
         ],
-        "operationId": "repositoryDeleteUsersById",
+        "operationId": "repositoryRemoveUser",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "deleteUsersById",
+        "x-tailor-method": "removeUser",
         "summary": "Remove a user from a repository",
         "parameters": [
           {
@@ -10232,9 +10232,9 @@
         "tags": [
           "Repository / Members"
         ],
-        "operationId": "repositoryPostUserGroup",
+        "operationId": "repositoryAddUserGroup",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postUserGroup",
+        "x-tailor-method": "addUserGroup",
         "summary": "Share repository with a user group",
         "description": "Grants every member of the user group access to this repository. Idempotent: returns the existing membership if the group is already attached.",
         "parameters": [
@@ -10291,9 +10291,9 @@
         "tags": [
           "Repository / Members"
         ],
-        "operationId": "repositoryDeleteUserGroupById",
+        "operationId": "repositoryRemoveUserGroup",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "deleteUserGroupById",
+        "x-tailor-method": "removeUserGroup",
         "summary": "Unshare a repository from a user group",
         "parameters": [
           {
@@ -10336,9 +10336,9 @@
         "tags": [
           "Repository / Tags"
         ],
-        "operationId": "repositoryPostTags",
+        "operationId": "repositoryAddTag",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postTags",
+        "x-tailor-method": "addTag",
         "summary": "Attach a tag to a repository",
         "parameters": [
           {
@@ -10412,9 +10412,9 @@
         "tags": [
           "Repository / Tags"
         ],
-        "operationId": "repositoryDeleteTagsById",
+        "operationId": "repositoryRemoveTag",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "deleteTagsById",
+        "x-tailor-method": "removeTag",
         "summary": "Detach a tag from a repository",
         "parameters": [
           {
@@ -10457,9 +10457,9 @@
         "tags": [
           "Repository / References"
         ],
-        "operationId": "repositoryGetReferencesValidate",
+        "operationId": "repositoryValidateReferences",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "getReferencesValidate",
+        "x-tailor-method": "validateReferences",
         "summary": "Validate cross-model references in the repository",
         "parameters": [
           {
@@ -10509,9 +10509,9 @@
         "tags": [
           "Repository / References"
         ],
-        "operationId": "repositoryPostReferencesCleanup",
+        "operationId": "repositoryCleanupReferences",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postReferencesCleanup",
+        "x-tailor-method": "cleanupReferences",
         "summary": "Remove dangling references from activities and elements",
         "parameters": [
           {
@@ -10574,9 +10574,9 @@
         "tags": [
           "Repository / Transfer"
         ],
-        "operationId": "repositoryGetExportSetup",
+        "operationId": "repositoryInitiateExport",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "getExportSetup",
+        "x-tailor-method": "initiateExport",
         "summary": "Initiate a repository export job",
         "parameters": [
           {
@@ -10688,9 +10688,9 @@
         "tags": [
           "Repository / Transfer"
         ],
-        "operationId": "repositoryPostExportById",
+        "operationId": "repositoryDownloadExport",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postExportById",
+        "x-tailor-method": "downloadExport",
         "summary": "Download the export archive for a repository",
         "description": "Streams the tarball built by a prior export-initiate call. The archive is removed from the job cache once the stream completes.",
         "parameters": [
@@ -10733,9 +10733,9 @@
         "tags": [
           "Seed (test-only)"
         ],
-        "operationId": "seedTestOnlyPostReset",
+        "operationId": "seedTestOnlyReset",
         "x-tailor-slice": "seedTestOnly",
-        "x-tailor-method": "postReset",
+        "x-tailor-method": "reset",
         "summary": "Reset the database",
         "description": "Drops all tables, re-runs migrations, reseeds the user table from the tailor-seed fixtures, and clears the in-memory activity feed cache. Test-only.",
         "parameters": [],
@@ -10756,9 +10756,9 @@
         "tags": [
           "Seed (test-only)"
         ],
-        "operationId": "seedTestOnlyPostUser",
+        "operationId": "seedTestOnlySeedUser",
         "x-tailor-slice": "seedTestOnly",
-        "x-tailor-method": "postUser",
+        "x-tailor-method": "seedUser",
         "summary": "Seed a user",
         "description": "Creates or finds-by-email a test user, optionally attaching them to a user group. Missing fields are faker-generated server-side.",
         "parameters": [],
@@ -10822,9 +10822,9 @@
         "tags": [
           "Seed (test-only)"
         ],
-        "operationId": "seedTestOnlyPostCatalog",
+        "operationId": "seedTestOnlySeedCatalog",
         "x-tailor-slice": "seedTestOnly",
-        "x-tailor-method": "postCatalog",
+        "x-tailor-method": "seedCatalog",
         "summary": "Seed the repository catalog",
         "description": "Seeds the repository catalog from the tailor-seed fixtures under the default seed user; optionally shares them with a user group.",
         "parameters": [],
@@ -10875,9 +10875,9 @@
         "tags": [
           "Seed (test-only)"
         ],
-        "operationId": "seedTestOnlyPostComment",
+        "operationId": "seedTestOnlySeedComment",
         "x-tailor-slice": "seedTestOnly",
-        "x-tailor-method": "postComment",
+        "x-tailor-method": "seedComment",
         "summary": "Seed a comment",
         "description": "Creates a comment authored by the default seed user.",
         "parameters": [],
@@ -10949,9 +10949,9 @@
         "tags": [
           "Seed (test-only)"
         ],
-        "operationId": "seedTestOnlyPostRepository",
+        "operationId": "seedTestOnlySeedRepository",
         "x-tailor-slice": "seedTestOnly",
-        "x-tailor-method": "postRepository",
+        "x-tailor-method": "seedRepository",
         "summary": "Seed a repository",
         "description": "Imports the pizza.tgz fixture archive and returns the seeded repository plus the canonical activity and content element. Optionally also creates a linked-content example pointing at it.",
         "parameters": [],
@@ -11070,9 +11070,9 @@
         "tags": [
           "User / Authentication"
         ],
-        "operationId": "userPostLogin",
+        "operationId": "userLogin",
         "x-tailor-slice": "user",
-        "x-tailor-method": "postLogin",
+        "x-tailor-method": "login",
         "summary": "Email + password login",
         "parameters": [],
         "responses": {
@@ -11125,9 +11125,9 @@
         "tags": [
           "User / Password recovery"
         ],
-        "operationId": "userPostForgotPassword",
+        "operationId": "userForgotPassword",
         "x-tailor-slice": "user",
-        "x-tailor-method": "postForgotPassword",
+        "x-tailor-method": "forgotPassword",
         "summary": "Mail a password-reset token",
         "parameters": [],
         "responses": {
@@ -11165,9 +11165,9 @@
         "tags": [
           "User / Password recovery"
         ],
-        "operationId": "userPostResetPassword",
+        "operationId": "userResetPassword",
         "x-tailor-slice": "user",
-        "x-tailor-method": "postResetPassword",
+        "x-tailor-method": "resetPassword",
         "summary": "Replace the password using a reset token",
         "parameters": [],
         "responses": {
@@ -11213,9 +11213,9 @@
         "tags": [
           "User / Password recovery"
         ],
-        "operationId": "userPostResetPasswordTokenStatus",
+        "operationId": "userCheckResetToken",
         "x-tailor-slice": "user",
-        "x-tailor-method": "postResetPasswordTokenStatus",
+        "x-tailor-method": "checkResetToken",
         "summary": "Validate a password-reset token",
         "parameters": [],
         "responses": {
@@ -11252,9 +11252,9 @@
         "tags": [
           "User / Authentication"
         ],
-        "operationId": "userGetLogout",
+        "operationId": "userLogout",
         "x-tailor-slice": "user",
-        "x-tailor-method": "getLogout",
+        "x-tailor-method": "logout",
         "summary": "Sign out",
         "parameters": [],
         "responses": {
@@ -11303,9 +11303,9 @@
         "tags": [
           "User / Profile"
         ],
-        "operationId": "userPatchMe",
+        "operationId": "userUpdateProfile",
         "x-tailor-slice": "user",
-        "x-tailor-method": "patchMe",
+        "x-tailor-method": "updateProfile",
         "summary": "Update the current user profile",
         "parameters": [],
         "responses": {
@@ -11372,9 +11372,9 @@
         "tags": [
           "User / Profile"
         ],
-        "operationId": "userPostMeChangePassword",
+        "operationId": "userChangePassword",
         "x-tailor-slice": "user",
-        "x-tailor-method": "postMeChangePassword",
+        "x-tailor-method": "changePassword",
         "summary": "Change the current user password",
         "parameters": [],
         "responses": {
@@ -11698,9 +11698,9 @@
         "tags": [
           "User / CRUD (admin)"
         ],
-        "operationId": "userPostReinvite",
+        "operationId": "userReinvite",
         "x-tailor-slice": "user",
-        "x-tailor-method": "postReinvite",
+        "x-tailor-method": "reinvite",
         "summary": "Resend the invitation mail to a user",
         "parameters": [
           {
@@ -12093,9 +12093,9 @@
         "tags": [
           "User Group / Members"
         ],
-        "operationId": "userGroupPostUsers",
+        "operationId": "userGroupAddUser",
         "x-tailor-slice": "userGroup",
-        "x-tailor-method": "postUsers",
+        "x-tailor-method": "addUser",
         "summary": "Invite or update members of a user group",
         "parameters": [],
         "responses": {
@@ -12163,9 +12163,9 @@
         "tags": [
           "User Group / Members"
         ],
-        "operationId": "userGroupDeleteUsersById",
+        "operationId": "userGroupRemoveUser",
         "x-tailor-slice": "userGroup",
-        "x-tailor-method": "deleteUsersById",
+        "x-tailor-method": "removeUser",
         "summary": "Remove a member from a user group",
         "parameters": [
           {
@@ -12214,9 +12214,9 @@
         "tags": [
           "Repository / User Activity"
         ],
-        "operationId": "repositoryGetFeedSubscribe",
+        "operationId": "repositorySubscribeFeed",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "getFeedSubscribe",
+        "x-tailor-method": "subscribeFeed",
         "summary": "Subscribe to repository activity feed (SSE)",
         "description": "Opens a long-lived SSE connection scoped to the repository; clients receive presence and content-change events until the socket closes.",
         "parameters": [
@@ -12299,9 +12299,9 @@
         "tags": [
           "Repository / User Activity"
         ],
-        "operationId": "repositoryPostFeed",
+        "operationId": "repositoryRecordActivity",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postFeed",
+        "x-tailor-method": "recordActivity",
         "summary": "Add a user activity context",
         "parameters": [
           {
@@ -12382,9 +12382,9 @@
         "tags": [
           "Repository / User Activity"
         ],
-        "operationId": "repositoryDeleteFeed",
+        "operationId": "repositoryRemoveActivity",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "deleteFeed",
+        "x-tailor-method": "removeActivity",
         "summary": "Remove a user activity context",
         "parameters": [
           {
@@ -12467,9 +12467,9 @@
         "tags": [
           "Repository / Content Element RPC"
         ],
-        "operationId": "repositoryPostRpcById",
+        "operationId": "repositoryCallRpc",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "postRpcById",
+        "x-tailor-method": "callRpc",
         "summary": "Dispatch a content-element plugin procedure",
         "description": "Calls a named server procedure on the plugin for `type`. Payload is opaque; each procedure defines its own shape.",
         "parameters": [],

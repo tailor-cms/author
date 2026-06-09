@@ -5,6 +5,7 @@ import * as schemas from '../schemas/index.ts';
 // The `getRevision` param middleware loads the record, enforces repository
 // scoping, and returns 404 otherwise. This handler is a thin pass-through.
 export default defineAction({
+  name: 'get',
   raw: true,
   params: schemas.RevisionItemParams,
   openapi: {

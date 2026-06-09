@@ -45,6 +45,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'downloadExport',
   params: schemas.ExportJobItemParams,
   openapi: {
     authenticated: true,

@@ -10,6 +10,7 @@ import * as service from '../activity.service.ts';
 // they fall out of the outline while remaining in the DB. For outline
 // activities, recomputes the repository's `hasUnpublishedChanges`.
 export default defineAction({
+  name: 'delete',
   params: schemas.ActivityItemParams,
   openapi: {
     authenticated: true,

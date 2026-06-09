@@ -13,6 +13,7 @@ import * as service from '../indexing.service.ts';
 // vector-store indexing. Returns immediately with the storeId and the
 // queued ids; the actual indexing runs in the background.
 export default defineAction({
+  name: 'startIndexing',
   body: schemas.IndexInput,
   openapi: {
     authenticated: true,

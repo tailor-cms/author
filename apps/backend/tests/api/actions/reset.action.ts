@@ -7,6 +7,7 @@ import service from '../seed.service.ts';
 // Drops all tables, re-runs migrations, reseeds the user table, and
 // clears the in-memory activity feed cache. Test-only.
 export default defineAction({
+  name: 'reset',
   status: StatusCodes.OK,
   openapi: {
     summary: 'Reset the database',

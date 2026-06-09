@@ -6,6 +6,7 @@ import { defineAction } from '#shared/request/action.ts';
 // This action exists so the route is registered in the OpenAPI doc;
 // returning undefined lets the wrapper emit 204.
 export default defineAction({
+  name: 'logout',
   openapi: {
     authenticated: true,
     summary: 'Sign out',

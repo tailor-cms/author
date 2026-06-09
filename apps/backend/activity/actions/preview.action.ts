@@ -12,6 +12,7 @@ import consumerConfig from '#config/consumer.ts';
 // Requests a preview URL for the activity from the configured consumer
 // webhook (OAuth2-signed).
 export default defineAction({
+  name: 'getPreview',
   raw: true,
   params: schemas.ActivityItemParams,
   openapi: {

@@ -48,6 +48,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'callRpc',
   body: schemas.DispatchBody,
   params: schemas.DispatchParams,
   openapi: {

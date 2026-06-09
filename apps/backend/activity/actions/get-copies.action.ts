@@ -9,6 +9,7 @@ import * as service from '../activity.service.ts';
 // repositories, filtered to entry-point copies (not nested under
 // another linked copy).
 export default defineAction({
+  name: 'getCopies',
   params: schemas.ActivityItemParams,
   openapi: {
     authenticated: true,

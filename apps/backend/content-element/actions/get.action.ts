@@ -8,6 +8,7 @@ import * as schemas from '../schemas/index.ts';
 // repository scoping, and returns 404/403 otherwise. This handler is a
 // thin pass-through.
 export default defineAction({
+  name: 'get',
   params: schemas.ContentElementItemParams,
   openapi: {
     authenticated: true,

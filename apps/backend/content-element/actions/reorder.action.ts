@@ -8,6 +8,7 @@ import * as service from '../content-element.service.ts';
 // Recalculates the element's position from the supplied target index
 // among reorder-eligible siblings
 export default defineAction({
+  name: 'reorder',
   params: schemas.ContentElementItemParams,
   body: schemas.ReorderInput,
   openapi: {

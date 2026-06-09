@@ -8,6 +8,7 @@ import * as service from '../activity.service.ts';
 // Restores a soft-deleted activity and its descendants (activities +
 // elements).
 export default defineAction({
+  name: 'restore',
   params: schemas.ActivityItemParams,
   openapi: {
     authenticated: true,

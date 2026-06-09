@@ -12,6 +12,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'reinvite',
   params: schemas.UserItemParams,
   status: StatusCodes.ACCEPTED,
   openapi: {

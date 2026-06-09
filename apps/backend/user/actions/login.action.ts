@@ -16,6 +16,7 @@ async function handler({ user, req }: Ctx<{ body: typeof schemas.LoginInput }>) 
 }
 
 export default defineAction({
+  name: 'login',
   raw: true,
   body: schemas.LoginInput,
   openapi: {

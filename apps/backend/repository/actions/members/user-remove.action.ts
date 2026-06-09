@@ -26,6 +26,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'removeUser',
   params: schemas.MemberItemParams,
   openapi: {
     authenticated: true,

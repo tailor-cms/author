@@ -23,6 +23,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'runAgent',
   body: schemas.RunInput,
   openapi: {
     authenticated: true,

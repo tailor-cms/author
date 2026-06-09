@@ -12,6 +12,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'upload',
   body: schemas.UploadInput,
   multipart: schemas.UploadMultipart,
   openapi: {

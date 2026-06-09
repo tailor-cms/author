@@ -27,6 +27,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'recordActivity',
   params: schemas.FeedItemParams,
   body: schemas.AddInput,
   openapi: {

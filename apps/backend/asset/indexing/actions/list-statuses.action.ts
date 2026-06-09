@@ -9,6 +9,7 @@ import * as service from '../indexing.service.ts';
 
 // GET /repositories/:repositoryId/assets/indexing/status
 export default defineAction({
+  name: 'listIndexingStatuses',
   openapi: {
     authenticated: true,
     summary: 'List indexing status for all repository assets',

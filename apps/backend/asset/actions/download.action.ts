@@ -11,6 +11,7 @@ import * as service from '../asset.service.ts';
 // Pre-signed download URL for file-based assets. LINK assets have no
 // stored binary, so 400 is the correct response.
 export default defineAction({
+  name: 'downloadAsset',
   params: schemas.AssetItemParams,
   openapi: {
     authenticated: true,

@@ -12,6 +12,7 @@ import * as service from '../activity.service.ts';
 // comes from the loaded repo, never from the body. Outline-level
 // activities are seeded with the schema's `defaultMeta`.
 export default defineAction({
+  name: 'create',
   params: RepositoryScopedParams,
   body: schemas.CreateInput,
   openapi: {

@@ -11,6 +11,7 @@ import * as service from '../asset.service.ts';
 // linked binary for IMAGE / PDF content types, and merges any
 // caller-supplied attribution into the resulting asset.
 export default defineAction({
+  name: 'importFromLink',
   body: schemas.ImportFromLinkInput,
   openapi: {
     authenticated: true,

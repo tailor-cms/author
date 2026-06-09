@@ -13,6 +13,7 @@ import * as service from '../asset.service.ts';
 // file itself is parsed upstream by multer (single-field upload); the
 // body carries only the slot name.
 export default defineAction({
+  name: 'attachFile',
   params: schemas.AssetItemParams,
   body: schemas.AttachFileInput,
   multipart: schemas.AttachFileMultipart,
