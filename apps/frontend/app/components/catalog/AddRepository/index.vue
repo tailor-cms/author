@@ -2,7 +2,7 @@
   <TailorDialog
     v-if="authStore.hasCreateRepositoryAccess"
     v-model="isVisible"
-    header-icon="mdi-folder-plus-outline"
+    header-icon="mdi-folder-plus"
     width="600"
     paddingless
     persistent

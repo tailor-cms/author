@@ -7,7 +7,7 @@
       <slot v-if="$slots.default" v-bind="defaultProps"></slot>
       <VCard :data-testid="dataTestid" rounded="xl">
         <VCardTitle class="dialog-title pa-5 pb-0 align-center">
-          <VIcon :icon="headerIcon" :color="color" class="mr-3" />
+          <VIcon :icon="headerIcon" :color="color" class="mr-3" size="small" />
           <div class="text-truncate font-weight-semibold">
             <slot name="header"></slot>
           </div>
