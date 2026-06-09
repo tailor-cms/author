@@ -1,10 +1,8 @@
 <template>
   <button :class="{ disabled }" class="inline-activator">
-    <hr />
-    <VAvatar color="primary" size="20">
-      <VIcon size="20">mdi-plus</VIcon>
-    </VAvatar>
-    <hr />
+    <VDivider content-offset="-16" opacity="0.5" gradient>
+      <VAvatar color="tertiary" icon="mdi-plus" size="x-small" />
+    </VDivider>
   </button>
 </template>
 
@@ -35,11 +33,10 @@ withDefaults(defineProps<{ disabled?: boolean }>(), {
     opacity 0.3s,
     padding 0.3s;
 
-  hr {
+  .v-divider__wrapper {
     flex: 1;
     display: inline-flex;
     margin: 0;
-    border-top: 0.0625rem solid #455a64;
   }
 
   &:hover,

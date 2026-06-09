@@ -9,13 +9,12 @@
       <VBtn
         v-bind="{ ...activatorProps, ...$attrs }"
         :color="activatorColor"
-        :data-testid="`${props.testIdPrefix}Btn`"
+        :data-testid="`${testIdPrefix}Btn`"
+        :prepend-icon="activatorIcon"
         :size="size"
+        :text="activatorLabel || defaultModalHeading"
         :variant="variant"
-      >
-        <VIcon class="mr-2">{{ props.activatorIcon }}</VIcon>
-        {{ activatorLabel || defaultModalHeading }}
-      </VBtn>
+      />
     </template>
     <template #header>{{ heading || defaultModalHeading }}</template>
     <template #body>

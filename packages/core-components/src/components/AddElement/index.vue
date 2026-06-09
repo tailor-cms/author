@@ -4,12 +4,11 @@
       <VBtn
         v-if="large"
         :color="color"
+        :prepend-icon="icon"
+        :text="label"
         :variant="variant"
         @click.stop="showElementPicker"
-      >
-        <VIcon class="pr-3">{{ icon }}</VIcon>
-        {{ label }}
-      </VBtn>
+      />
       <VBtn
         v-else
         :icon="icon"

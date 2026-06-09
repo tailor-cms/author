@@ -1,5 +1,5 @@
 <template>
-  <div class="activity-actions d-flex align-center">
+  <div class="activity-actions d-flex align-center ga-1">
     <VTooltip
       v-for="{ active, title, icon, action, disabled } in actions"
       :key="title"
@@ -13,12 +13,13 @@
           :aria-label="title"
           :color="active ? 'tertiary' : ''"
           :disabled="disabled"
-          :icon="`mdi-${icon}`"
           class="action-btn"
-          variant="text"
-          size="small"
+          density="comfortable"
+          icon
           @click.stop="action"
-        />
+        >
+          <VIcon :icon="`mdi-${icon}`" size="small" />
+        </VBtn>
       </template>
       <span>{{ title }}</span>
     </VTooltip>
