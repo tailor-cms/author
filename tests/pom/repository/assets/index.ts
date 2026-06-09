@@ -1,5 +1,5 @@
 export { AddLinkDialog } from './AddLinkDialog';
-export { AssetDetailDialog } from './AssetDetailDialog';
+export { AssetSidebar } from './AssetSidebar';
 export { AssetRow } from './AssetRow';
 export { AssetToolbar } from './AssetToolbar';
 export { BulkActionBar } from './BulkActionBar';

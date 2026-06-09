@@ -1,36 +1,46 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-export class AssetDetailDialog {
+import { ConfirmationDialog } from '../../common/ConfirmationDialog';
+
+export class AssetSidebar {
   static selector = '.asset-sidebar';
 
   readonly page: Page;
   readonly el: Locator;
   readonly closeBtn: Locator;
+  readonly actionsBtn: Locator;
   readonly descriptionInput: Locator;
   readonly tagsInput: Locator;
-  readonly saveBtn: Locator;
-  readonly deleteBtn: Locator;
-  readonly downloadBtn: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.el = page.locator(AssetDetailDialog.selector);
+    this.el = page.locator(AssetSidebar.selector);
     this.closeBtn = this.el.getByLabel('Close');
+    this.actionsBtn = this.el.getByRole('button', { name: 'Actions' });
     this.descriptionInput = this.el.getByLabel('Description');
     this.tagsInput = this.el.getByLabel('Tags');
-    this.saveBtn = this.el.getByRole('button', { name: 'Save' });
-    this.deleteBtn = this.el.getByRole('button', { name: 'Delete' });
-    this.downloadBtn = this.el.getByRole('button', { name: 'Download' });
+  }
+
+  get deleteMenuItem(): Locator {
+    return this.page.locator('.v-list-item').filter({ hasText: 'Delete' });
+  }
+
+  get downloadMenuItem(): Locator {
+    return this.page.locator('.v-list-item').filter({ hasText: 'Download' });
   }
 
   async waitForOpen() {
-    await expect(this.el).toBeVisible({ timeout: 5000 });
+    await expect(this.el).toBeInViewport({ timeout: 5000 });
   }
 
   async close() {
     await this.closeBtn.click();
-    await expect(this.el).not.toBeVisible();
+    await expect(this.el).not.toBeInViewport();
+  }
+
+  async openMenu() {
+    await this.actionsBtn.click();
   }
 
   async editDescription(text: string) {
@@ -46,7 +56,14 @@ export class AssetDetailDialog {
   }
 
   async save() {
-    await this.saveBtn.click();
+    await this.close();
     await this.page.waitForLoadState('networkidle');
+  }
+
+  async delete() {
+    await this.openMenu();
+    await this.deleteMenuItem.click();
+    const dialog = new ConfirmationDialog(this.page, 'Delete Asset');
+    await dialog.confirm();
   }
 }
