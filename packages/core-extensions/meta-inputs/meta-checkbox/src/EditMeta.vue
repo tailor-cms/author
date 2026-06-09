@@ -31,4 +31,3 @@ defineEmits(['update']);
 
 const input = ref(props.meta.value);
 </script>
-
