@@ -38,6 +38,7 @@
         <VEmptyState
           v-if="searchQuery && !filteredLibrary.length"
           icon="mdi-magnify"
+          class="py-16"
           title="No elements found"
           :text="`No elements match “${searchQuery}”`"
         />

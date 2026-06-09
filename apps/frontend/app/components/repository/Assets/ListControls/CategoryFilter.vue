@@ -10,7 +10,7 @@
       :key="value"
       :text="label"
       :value="value"
-      color="secondary"
+      color="tertiary"
       role="button"
       size="small"
       rounded="pill"

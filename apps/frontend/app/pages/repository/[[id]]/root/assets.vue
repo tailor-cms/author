@@ -37,6 +37,7 @@
           @toggle-sort="toggleSortDirection"
         />
         <AssetList
+          :active-asset-id="activeAsset?.id ?? null"
           :assets="processedAssets"
           :is-fetching="assetStore.isFetching"
           :items-per-page="assetStore.itemsPerPage"
@@ -47,20 +48,12 @@
           :selected-category="selectedCategory"
           :total="assetStore.total"
           @delete="confirmDelete"
+          @deindex="onDeindex"
           @download="downloadAsset"
           @index="(asset: Asset) => indexing.startIndexing([asset.id])"
           @preview="activeAsset = $event"
           @select:toggle="selection.toggle"
           @update:page="assetStore.page = $event"
-        />
-        <AssetDetailDialog
-          :asset="activeAsset"
-          :is-saving="assetStore.isSaving"
-          @close="activeAsset = null"
-          @deindex="onDeindex"
-          @delete="confirmDelete"
-          @download="downloadAsset"
-          @save="onSaveMeta"
         />
         <AddLinkDialog
           v-model="showAddLinkDialog"
@@ -72,6 +65,16 @@
         />
       </VContainer>
     </VMain>
+    <AssetSidebar
+      :asset="activeAsset"
+      :is-saving="assetStore.isSaving"
+      @close="activeAsset = null"
+      @deindex="onDeindex"
+      @delete="confirmDelete"
+      @download="downloadAsset"
+      @index="(asset: Asset) => indexing.startIndexing([asset.id])"
+      @save="onSaveMeta"
+    />
   </div>
 </template>
 
@@ -80,7 +83,7 @@ import type { Asset } from '@tailor-cms/interfaces/asset';
 import { debounce } from 'lodash-es';
 
 import AddLinkDialog from '@/components/repository/Assets/AddLinkDialog.vue';
-import AssetDetailDialog from '@/components/repository/Assets/AssetDialog/index.vue';
+import AssetSidebar from '@/components/repository/Assets/AssetSidebar/index.vue';
 import AssetList from '@/components/repository/Assets/AssetList/index.vue';
 import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
 import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
@@ -98,6 +101,7 @@ const DESC: SortDirection = 'DESC';
 
 const currentRepositoryStore = useCurrentRepository();
 const showConfirmation = useConfirmationDialog();
+const notify = useNotification();
 
 const toolbarRef = ref<InstanceType<typeof Toolbar>>();
 const sortDirection = ref<SortDirection>(DESC);
@@ -174,12 +178,17 @@ async function indexSelected() {
 async function onDeindex(asset: Asset) {
   await assetStore.deindex(asset.id);
   indexing.clearAssetStatus(asset.id);
-  activeAsset.value = null;
+  if (activeAsset.value?.id === asset.id) {
+    const updated = assetStore.assets.find((a) => a.id === asset.id);
+    if (updated) activeAsset.value = updated;
+  }
 }
 
 async function onSaveMeta(asset: Asset, meta: Record<string, any>) {
   await assetStore.updateMeta(asset.id, meta);
-  activeAsset.value = null;
+  const updated = assetStore.assets.find((a) => a.id === asset.id);
+  if (updated) activeAsset.value = updated;
+  notify('Saved', { immediate: true });
 }
 
 function toggleSortDirection() {

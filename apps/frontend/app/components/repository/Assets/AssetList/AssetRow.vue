@@ -1,5 +1,6 @@
 <template>
   <VRow
+    :class="{ active: isActive }"
     class="asset-row px-2 py-3 align-center bg-surface-container"
     density="compact"
     @click="emit('preview', asset)"
@@ -58,48 +59,20 @@
         class="mr-1"
         size="24"
       />
-      <VMenu location="bottom end" @click.stop>
-        <template
-          #activator="{
-            props: menuProps,
-          }">
-          <VBtn
-            v-bind="menuProps"
-            aria-label="Actions"
-            class="ml-1"
-            icon="mdi-dots-vertical"
-            size="small"
-            variant="text"
-            @click.stop
-          />
-        </template>
-        <VList density="compact" nav>
-          <VListItem
-            v-if="asset.type !== AssetType.Link"
-            prepend-icon="mdi-download-outline"
-            title="Download"
-            @click="emit('download', asset);"
-          />
-          <VListItem
-            v-if="isIndexable(asset)"
-            prepend-icon="mdi-brain"
-            title="Index"
-            @click="emit('index', asset);"
-          />
-          <VListItem
-            base-color="error"
-            prepend-icon="mdi-trash-can-outline"
-            title="Delete"
-            @click="emit('delete', asset);"
-          />
-        </VList>
-      </VMenu>
+      <AssetMenu
+        :asset="asset"
+        class="ml-1"
+        @download="emit('download', $event)"
+        @index="emit('index', $event)"
+        @deindex="emit('deindex', $event)"
+        @delete="emit('delete', $event)"
+      />
     </VCol>
   </VRow>
 </template>
 
 <script lang="ts" setup>
-import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
+import type { Asset } from '@tailor-cms/interfaces/asset';
 import { UserAvatar } from '@tailor-cms/core-components';
 
 import {
@@ -109,13 +82,14 @@ import {
   getAssetDisplayName,
   getAssetIcon,
   getAssetTypeLabel,
-  isIndexable,
 } from '../utils';
+import AssetMenu from '../AssetMenu.vue';
 import IndexingStatusBadge from '../IndexingStatusBadge.vue';
 
 defineProps<{
   asset: Asset;
   isSelected: boolean;
+  isActive: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -123,6 +97,7 @@ const emit = defineEmits<{
   toggle: [asset: Asset];
   download: [asset: Asset];
   index: [asset: Asset];
+  deindex: [asset: Asset];
   delete: [asset: Asset];
 }>();
 </script>
@@ -135,6 +110,10 @@ const emit = defineEmits<{
 
   &:hover {
     background-color: rgb(var(--v-theme-surface-container-high));
+  }
+
+  &.active {
+    background: rgb(var(--v-theme-surface-container-high));
   }
 }
 </style>

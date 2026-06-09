@@ -11,23 +11,28 @@
     :page="props.page"
   >
     <template #default="{ items }">
-      <AssetRow
-        v-for="{ raw: asset } in items"
-        :key="asset.id"
-        :asset="asset"
-        :is-selected="selectedIds.has(asset.id)"
-        @preview="emit('preview', $event)"
-        @toggle="emit('select:toggle', $event)"
-        @download="emit('download', $event)"
-        @index="emit('index', $event)"
-        @delete="emit('delete', $event)"
-      />
+      <div class="d-flex flex-column">
+        <AssetRow
+          v-for="{ raw: asset } in items"
+          :key="asset.id"
+          :asset="asset"
+          :is-active="asset.id === activeAssetId"
+          :is-selected="selectedIds.has(asset.id)"
+          @preview="emit('preview', $event)"
+          @toggle="emit('select:toggle', $event)"
+          @download="emit('download', $event)"
+          @index="emit('index', $event)"
+          @deindex="emit('deindex', $event)"
+          @delete="emit('delete', $event)"
+        />
+      </div>
     </template>
     <template #footer>
       <VPagination
         v-if="pageCount > 1"
         :model-value="props.page"
         :length="pageCount"
+        class="mt-4"
         :total-visible="7"
         density="comfortable"
         rounded
@@ -37,8 +42,9 @@
   </VDataIterator>
   <VEmptyState
     v-if="!assets.length && !isFetching"
-    class="py-16 empty-state"
-    icon="mdi-folder-multiple-image"
+    class="py-16 empty-state rounded-md"
+    bg-color="surface-container"
+    icon="mdi-image-multiple"
     :text="emptyStateText"
     :title="emptyStateTitle"
   />
@@ -60,6 +66,7 @@ const props = defineProps<{
   selectedIds: Set<number>;
   selectedCategory: string;
   search: string;
+  activeAssetId: number | null;
 }>();
 
 const emit = defineEmits<{
@@ -68,6 +75,7 @@ const emit = defineEmits<{
   'select:toggle': [asset: Asset];
   'download': [asset: Asset];
   'index': [asset: Asset];
+  'deindex': [asset: Asset];
   'delete': [asset: Asset];
 }>();
 
@@ -78,7 +86,8 @@ const emptyStateTitle = computed(() => isFiltered.value
   ? 'No assets match your search or filter.'
   : 'No assets uploaded yet.',
 );
-const emptyStateText = computed(() =>
-  isFiltered.value ? undefined : 'Upload files, add links, or use Discover.',
+const emptyStateText = computed(() => isFiltered.value
+  ? 'Try adjusting your search or filters.'
+  : 'Upload files, add links, or use Discover.',
 );
 </script>

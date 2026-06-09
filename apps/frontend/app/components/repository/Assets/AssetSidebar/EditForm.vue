@@ -1,28 +1,17 @@
 <template>
-  <div class="d-flex align-center justify-space-between mb-4 px-1">
-    <div class="d-flex align-center ga-2">
-      <VIcon
-        :color="isCoreSource ? 'tertiary' : ''"
-        :icon="isCoreSource ? 'mdi-star' : 'mdi-star-outline'"
-        size="20"
-      />
-      <span
-        :class="{ 'text-tertiary font-weight-medium': isCoreSource }"
-        class="text-body-medium"
-      >
-        Core Source
-      </span>
-    </div>
-    <VSwitch v-model="isCoreSource" hide-details />
-  </div>
-  <div class="section-header text-body-small text-uppercase mb-4">
-    Edit Details
-  </div>
+  <VSwitch
+    v-model="isCoreSource"
+    class="mb-4 ml-2"
+    color="tertiary"
+    false-icon="mdi-star-outline"
+    label="Core Source"
+    true-icon="mdi-star"
+    hide-details
+  />
   <VTextarea
     v-model="description"
     label="Description"
     variant="outlined"
-    rows="3"
     hide-details
   />
   <VCombobox

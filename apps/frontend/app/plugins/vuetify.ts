@@ -226,8 +226,6 @@ export default defineNuxtPlugin({
           inset: 'material',
           size: 'small',
         },
-        // MD3 spec uses primary for the selected container; align with our
-        // switch accent (the md3 blueprint defaults checkboxes to secondary).
         VCheckbox: { color: 'primary' },
       },
       theme: {

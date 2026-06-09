@@ -2,7 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 export class AssetDetailDialog {
-  static selector = '.v-dialog .v-card';
+  static selector = '.asset-sidebar';
 
   readonly page: Page;
   readonly el: Locator;
@@ -15,12 +15,8 @@ export class AssetDetailDialog {
 
   constructor(page: Page) {
     this.page = page;
-    this.el = page.locator(AssetDetailDialog.selector).filter({
-      has: page.locator('.detail-body'),
-    });
-    this.closeBtn = this.el
-      .locator('.v-toolbar')
-      .getByLabel('Close');
+    this.el = page.locator(AssetDetailDialog.selector);
+    this.closeBtn = this.el.getByLabel('Close');
     this.descriptionInput = this.el.getByLabel('Description');
     this.tagsInput = this.el.getByLabel('Tags');
     this.saveBtn = this.el.getByRole('button', { name: 'Save' });

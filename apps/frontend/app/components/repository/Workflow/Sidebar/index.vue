@@ -5,6 +5,7 @@
     class="px-4 text-left"
     color="surface-container"
     location="right"
+    border="surface"
     mobile-breakpoint="md"
     absolute
     @update:model-value="repositoryStore.updateSidebar"

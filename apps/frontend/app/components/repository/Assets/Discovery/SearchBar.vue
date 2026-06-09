@@ -29,7 +29,7 @@
       v-for="filter in CONTENT_FILTERS"
       :key="filter.value"
       :active="contentFilter === filter.value"
-      :color="contentFilter === filter.value ? 'secondary' : ''"
+      :color="contentFilter === filter.value ? 'tertiary' : ''"
       :prepend-icon="filter.icon"
       :text="filter.label"
       size="small"

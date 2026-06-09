@@ -1,9 +1,16 @@
 <template>
   <VMenu :close-on-content-click="false" location="bottom end" max-width="800">
     <template #activator="{ props: menuProps }">
-      <VBtn v-bind="menuProps" icon="mdi-code-json" size="small" variant="text" />
+      <VBtn
+        v-tooltip:bottom="'View raw metadata'"
+        v-bind="menuProps"
+        aria-label="View raw metadata"
+        size="small"
+        icon="mdi-code-json"
+        variant="text"
+      />
     </template>
-    <VCard max-height="480" min-width="800">
+    <VCard max-height="480" width="800">
       <div class="d-flex align-center px-3 py-2">
         <span class="text-body-large font-weight-medium">Asset Metadata</span>
         <VSpacer />

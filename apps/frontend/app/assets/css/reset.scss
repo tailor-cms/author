@@ -27,3 +27,23 @@ a {
 .v-list-item--nav .v-list-item__prepend .v-icon {
   font-size: 1.25rem;
 }
+
+/* VEmptyState: Vuetify gives the media no bottom margin, so the icon butts
+   against the title, and defaults the icon to a heavy 96px. Add breathing room
+   and trim the icon (image-based empty states use VImg, so are unaffected). */
+.v-empty-state__media {
+  margin-bottom: 1rem;
+}
+
+.v-empty-state__media .v-icon {
+  font-size: 4rem !important;
+  width: 4rem !important;
+  height: 4rem !important;
+}
+
+/* VBottomSheet: since v4.1 the overlay animates its `top` on resize (default
+   transition-property is `all`), so resizing content makes the sheet wobble.
+   Limit to `transform` to keep the slide-in without the jitter. */
+.v-bottom-sheet__content {
+  transition-property: transform;
+}

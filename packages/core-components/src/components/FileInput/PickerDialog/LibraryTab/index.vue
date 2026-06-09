@@ -20,7 +20,7 @@
       v-else-if="!assets.length && !isLoading"
       class="py-16 my-4 rounded-md"
       bg-color="surface-container-low"
-      icon="mdi-folder-multiple-image"
+      icon="mdi-image-multiple"
       :title="hasActiveFilters ? 'No matching assets' : 'No assets found'"
       :text="
         hasActiveFilters

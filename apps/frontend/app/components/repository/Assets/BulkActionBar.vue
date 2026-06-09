@@ -36,6 +36,7 @@
         :loading="isBulkDeleting"
         :disabled="isBulkDeleting"
         prepend-icon="mdi-trash-can-outline"
+        color="error"
         size="small"
         text="Delete selected"
         variant="outlined"
