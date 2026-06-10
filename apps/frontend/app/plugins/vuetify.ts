@@ -237,9 +237,7 @@ export default defineNuxtPlugin({
         VTooltip: { color: 'inverse-surface' },
         VSwitch: {
           color: 'primary',
-          density: 'compact',
           inset: 'material',
-          size: 'small',
         },
         VCheckbox: { color: 'primary' },
       },

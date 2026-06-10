@@ -3,86 +3,91 @@
     v-model="isAssistaceEnabled"
     :disabled="!schemaId || !name || !description"
     label="AI assisted"
+    hide-details
   />
-  <div v-if="isAssistaceEnabled" class="ai-panel">
-    <DocumentUpload
-      @doc:uploaded="vectorStoreId = $event"
-      @doc:processing="handleProcessingChange"
-    />
-    <VBtn
-      v-if="!topicTagOptions.length"
-      :disabled="isUploading"
-      :loading="isFetchingData"
-      class="mb-6"
-      color="secondary"
-      text="Continue"
-      variant="tonal"
-      block
-      @click="fetchTopics"
-    />
-    <div v-if="topicTagOptions.length">
-      <div class="mb-4 text-body-medium font-weight-bold">
-        Tell us more about the topics you are interested in:
-      </div>
-      <VChipGroup v-model="selectedTopicTags" column multiple>
-        <VChip
-          v-for="chip in topicTagOptions"
-          :key="chip"
-          :text="chip"
-          filter
-        />
-      </VChipGroup>
-      <VBtn
-        v-if="!styleTagOptions.length"
-        :loading="isFetchingData"
-        class="mt-3 mb-3"
-        color="secondary"
-        text="Next"
-        variant="tonal"
-        block
-        @click="fetchStyle"
-      />
-    </div>
-    <div v-if="styleTagOptions.length">
-      <div class="my-4 text-body-medium font-weight-bold">
-        Select perspectives you are interested in:
-      </div>
-      <VChipGroup v-model="selectedStyleTags" column multiple>
-        <VChip
-          v-for="chip in styleTagOptions"
-          :key="chip"
-          :text="chip"
-          filter
-        />
-      </VChipGroup>
-      <div class="mt-5 mb-4 text-body-medium font-weight-bold">Audience:</div>
-      <VSlider
-        v-model="selectedDifficulty"
-        :step="1"
-        :ticks="difficultyOptions"
-        class="mb-6"
-        color="primary"
-        max="2"
-        min="0"
-        show-ticks="always"
-        tick-size="0"
+  <VExpandTransition>
+    <VSheet
+      v-if="isAssistaceEnabled"
+      color="surface-container-low"
+      class="px-4 py-5 mx-n4 my-4 ai-panel"
+    >
+      <DocumentUpload
+        @doc:uploaded="vectorStoreId = $event"
+        @doc:processing="handleProcessingChange"
       />
       <VBtn
-        v-if="!outlineTree.length"
+        v-if="!topicTagOptions.length"
+        :disabled="isUploading"
         :loading="isFetchingData"
-        class="mt-3 mb-3"
-        color="secondary"
-        text="Next"
+        text="Continue"
         variant="tonal"
         block
-        @click="fetchOutline"
+        @click="fetchTopics"
       />
-    </div>
-    <OutlinePreview :items="outlineTree" />
-    <div v-if="statusMessage" class="my-7 text-body-medium text-center">
-      {{ statusMessage }}
-    </div>
-  </div>
+      <div v-if="topicTagOptions.length">
+        <div class="mb-4 text-body-medium font-weight-bold">
+          Tell us more about the topics you are interested in:
+        </div>
+        <VChipGroup v-model="selectedTopicTags" column multiple>
+          <VChip
+            v-for="chip in topicTagOptions"
+            :key="chip"
+            :text="chip"
+            color="tertiary"
+            filter
+          />
+        </VChipGroup>
+        <VBtn
+          v-if="!styleTagOptions.length"
+          :loading="isFetchingData"
+          class="mt-3 mb-3"
+          text="Next"
+          variant="tonal"
+          block
+          @click="fetchStyle"
+        />
+      </div>
+      <div v-if="styleTagOptions.length">
+        <div class="my-4 text-body-medium font-weight-bold">
+          Select perspectives you are interested in:
+        </div>
+        <VChipGroup v-model="selectedStyleTags" column multiple>
+          <VChip
+            v-for="chip in styleTagOptions"
+            :key="chip"
+            :text="chip"
+            color="tertiary"
+            filter
+          />
+        </VChipGroup>
+        <div class="mt-5 mb-4 text-body-medium font-weight-bold">Audience:</div>
+        <VSlider
+          v-model="selectedDifficulty"
+          :step="1"
+          :ticks="difficultyOptions"
+          class="mb-6"
+          color="primary"
+          max="2"
+          min="0"
+          show-ticks="always"
+          tick-size="0"
+        />
+        <VBtn
+          v-if="!outlineTree.length"
+          :loading="isFetchingData"
+          class="mt-3 mb-3"
+          text="Next"
+          variant="tonal"
+          block
+          @click="fetchOutline"
+        />
+      </div>
+      <OutlinePreview :items="outlineTree" />
+      <div v-if="statusMessage" class="mt-6 text-body-medium text-center">
+        {{ statusMessage }}
+      </div>
+    </VSheet>
+  </VExpandTransition>
 </template>
 
 <script lang="ts" setup>

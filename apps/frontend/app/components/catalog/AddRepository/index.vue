@@ -127,6 +127,7 @@
             label="User Group"
             placeholder="Select user group..."
             variant="outlined"
+            hide-details
             chips
             clearable
             closable-chips
