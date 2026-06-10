@@ -38,7 +38,7 @@ body {
 }
 
 .application,
-.v-application--wrap,
+.v-application__wrap,
 .v-main,
 .view {
   width: 100%;
