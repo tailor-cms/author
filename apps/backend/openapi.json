@@ -804,14 +804,15 @@
             "type": "string"
           },
           "repositoryName": {
-            "description": "Host repository name.",
-            "type": "string"
+            "type": "string",
+            "description": "Host repository name."
           }
         },
         "required": [
           "id",
           "uid",
-          "repositoryId"
+          "repositoryId",
+          "repositoryName"
         ],
         "additionalProperties": false
       },
@@ -5004,7 +5005,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Linked-copy entry point in the target repository.",
+            "description": "Linked-copy subtree in the target repository.",
             "content": {
               "application/json": {
                 "schema": {
@@ -5012,8 +5013,11 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "description": "A repository activity (outline node, container, or flat collection item). The activity's `type` selects which schema-defined behaviour and `data` shape applies.",
-                      "$ref": "#/components/schemas/Activity"
+                      "type": "array",
+                      "items": {
+                        "description": "A repository activity (outline node, container, or flat collection item). The activity's `type` selects which schema-defined behaviour and `data` shape applies.",
+                        "$ref": "#/components/schemas/Activity"
+                      }
                     }
                   },
                   "required": [
@@ -9929,9 +9933,9 @@
         "tags": [
           "Repository / Publishing"
         ],
-        "operationId": "repositoryPublish",
+        "operationId": "repositoryPublishMeta",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "publish",
+        "x-tailor-method": "publishMeta",
         "summary": "Publish repository details",
         "description": "Republishes the catalog manifest for the repository so consumers see the latest details (name, description, tags).",
         "parameters": [

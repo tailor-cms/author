@@ -51,8 +51,10 @@ const fetchCopies = async () => {
   isLoading.value = true;
   try {
     const { repositoryId, id } = props.activity;
-    const data = await activityApi.getCopies(repositoryId, id);
-    copies.value = data.copies;
+    const result = await api.activity.getCopies({
+      params: { repositoryId, activityId: id },
+    });
+    copies.value = result.copies;
   } finally {
     isLoading.value = false;
   }

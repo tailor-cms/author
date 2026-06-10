@@ -44,18 +44,24 @@
 </template>
 
 <script lang="ts" setup>
+import type { User } from '@tailor-cms/interfaces/user';
 import { object, string } from 'yup';
-import { pick } from 'lodash-es';
 import { useForm } from 'vee-validate';
 
-import { user as api } from '@/api';
+import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();
 const notify = useNotification();
 
+const initialFormValues = (user: User | null) => ({
+  email: user?.email,
+  firstName: user?.firstName ?? undefined,
+  lastName: user?.lastName ?? undefined,
+});
+
 const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
-  initialValues: pick(store.user, ['email', 'firstName', 'lastName']),
+  initialValues: initialFormValues(store.user),
   validationSchema: object({
     email: string()
       .required()
@@ -64,7 +70,9 @@ const { defineField, errors, handleSubmit, resetForm, meta } = useForm({
         message: 'Email is already taken',
         test: (email) => {
           if (store.user && email === (store.user as any).email) return true;
-          return api.fetch({ email }).then(({ total }) => !total);
+          return api.user
+            .list({ query: { email } })
+            .then(({ total }) => !total);
         },
       }),
     firstName: string().required().min(2),
@@ -85,9 +93,7 @@ const submit = handleSubmit(() => {
     })
     .then(() => {
       notify('User information updated!', { immediate: true });
-      resetForm({
-        values: pick(store.user, ['email', 'firstName', 'lastName']),
-      });
+      resetForm({ values: initialFormValues(store.user) });
     })
     .catch(() => {
       notify('Something went wrong!', { immediate: true, color: 'error' });

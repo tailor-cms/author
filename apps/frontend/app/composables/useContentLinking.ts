@@ -1,6 +1,6 @@
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
-import contentElementAPI from '@/api/contentElement';
+import { api } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -53,10 +53,13 @@ export const useContentLinking = (editorChannel: any) => {
     }) => {
       if (!element.isLinkedCopy || !element.sourceId) return callback(null);
       try {
-        const sourceInfo = await contentElementAPI.getSource(
-          element.repositoryId ?? repositoryStore.repositoryId,
-          element.id,
-        );
+        const sourceInfo = await api.contentElement.getSource({
+          params: {
+            repositoryId:
+              element.repositoryId ?? repositoryStore.repositoryId!,
+            elementId: element.id,
+          },
+        });
         callback(sourceInfo);
       } catch {
         callback(null);
@@ -75,10 +78,13 @@ export const useContentLinking = (editorChannel: any) => {
       callback: (copiesData: unknown) => void;
     }) => {
       try {
-        const { usages } = await contentElementAPI.getCopies(
-          element.repositoryId ?? repositoryStore.repositoryId,
-          element.id,
-        );
+        const { usages } = await api.contentElement.getCopies({
+          params: {
+            repositoryId:
+              element.repositoryId ?? repositoryStore.repositoryId!,
+            elementId: element.id,
+          },
+        });
         callback(usages);
       } catch {
         callback(null);

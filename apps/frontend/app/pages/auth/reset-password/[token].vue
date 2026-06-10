@@ -71,7 +71,7 @@
 import { object, string, ref as yupRef } from 'yup';
 import { useForm } from 'vee-validate';
 
-import { auth as api } from '@/api';
+import { api } from '@/api';
 
 definePageMeta({
   name: 'reset-password',
@@ -134,7 +134,9 @@ onMounted(async () => {
   // Make sure the loader is visible for at least 1 second
   await delay(1000);
   try {
-    await api.validateResetToken(route.params.token);
+    await api.user.checkResetToken({
+      body: { token: route.params.token as string },
+    });
   } catch {
     isError.value = true;
     notificationText.value = ERRORS.resetToken;

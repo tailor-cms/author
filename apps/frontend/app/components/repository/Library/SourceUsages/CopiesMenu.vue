@@ -42,8 +42,8 @@ export interface Copy {
   uid: string;
   repositoryId: number;
   repositoryName: string;
-  outlineActivityId: number;
-  name: string;
+  outlineActivityId?: number;
+  name?: string;
 }
 
 defineProps<{ copies: Copy[] }>();

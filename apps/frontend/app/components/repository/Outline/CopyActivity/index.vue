@@ -131,20 +131,21 @@ const selectRepository = async (repository: Repository) => {
   selectedActivities.value = [];
   if (repository.activities) return;
   isFetchingActivities.value = true;
-  const activities = await activityApi.getActivities(repository.id);
+  const activities = await api.activity.list({
+    params: { repositoryId: repository.id },
+  });
   repository.activities = sortBy(activities, 'position');
   isFetchingActivities.value = false;
 };
 
 const copyActivity = async (activity: Activity, prevActivity?: Activity) => {
   const { action, repositoryId } = props;
-  const { id: srcId, repositoryId: srcRepositoryId, type } = activity;
+  const { id: srcId, repositoryId: srcRepositoryId } = activity;
   const anchor = (action === AddAfter && prevActivity) || props.anchor;
   return activityStore.clone({
     srcId,
     srcRepositoryId,
     repositoryId,
-    type,
     position: await activityStore.calculateCopyPosition(action, anchor),
     ...(anchor && {
       parentId: action === AddInto ? anchor.id : anchor.parentId,

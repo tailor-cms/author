@@ -11,3 +11,15 @@ export interface User {
   updatedAt: string;
   deletedAt: string | null;
 }
+
+// Slim user projection eager-loaded onto records that reference a user
+// without needing the full row
+export interface UserSummary {
+  id: number;
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  fullName: string | null;
+  label: string;
+  imgUrl: string;
+}

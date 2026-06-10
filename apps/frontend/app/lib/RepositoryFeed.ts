@@ -1,7 +1,6 @@
 import urlJoin from 'url-join';
 
 import SSEConnection from './SSEConnection';
-import { feed as api } from '@/api';
 
 const noop = () => {};
 
@@ -29,7 +28,7 @@ class RepositoryFeed {
   };
 
   getRepositoryUrl(repositoryId: any) {
-    return urlJoin(this.baseUrl, api.urls.subscribe(repositoryId));
+    return urlJoin(this.baseUrl, `/repositories/${repositoryId}/feed/subscribe`);
   }
 
   disconnect() {

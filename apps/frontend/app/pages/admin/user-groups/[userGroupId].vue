@@ -68,15 +68,16 @@
 </template>
 
 <script lang="ts" setup>
+import type {
+  UserGroup,
+  UserGroupMemberWithUser,
+} from '@tailor-cms/interfaces/user-group';
 import { map } from 'lodash-es';
 import { titleCase } from '@tailor-cms/utils';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
-import type { User } from '@tailor-cms/interfaces/user';
-import type { UserGroup } from '@tailor-cms/interfaces/user-group';
-
-import { userGroup as api } from '@/api';
+import { api } from '@/api';
 import UserGroupMembershipDialog from '~/components/admin/UserGroupMembershipDialog.vue';
 
 interface Role {
@@ -94,7 +95,7 @@ const router = useRouter();
 const isLoading = ref(true);
 const userGroupId = parseInt(route.params.userGroupId as string, 10);
 const userGroup = ref<UserGroup | null>(null);
-const userGroupUsers = ref<User[]>([]);
+const userGroupUsers = ref<UserGroupMemberWithUser[]>([]);
 
 const roles = computed<Role[]>(() =>
   map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({
@@ -104,11 +105,16 @@ const roles = computed<Role[]>(() =>
 );
 
 async function fetchUsers() {
-  userGroupUsers.value = await api.fetchUsers(userGroupId);
+  userGroupUsers.value = await api.userGroup.getUsers({
+    params: { id: userGroupId },
+  });
 }
 
 async function upsertUser(email: string, role: string) {
-  await api.upsertUser(userGroupId, { emails: [email], role });
+  await api.userGroup.addUser({
+    params: { id: userGroupId },
+    body: { emails: [email], role } as any,
+  });
   await fetchUsers();
 }
 
@@ -118,7 +124,9 @@ async function removeUser(userId: number) {
     title: 'Remove user',
     message: 'Are you sure you want to remove user from a group?',
     action: async () => {
-      await api.removeUser(userGroupId, userId);
+      await api.userGroup.removeUser({
+        params: { id: userGroupId, userId },
+      });
       await fetchUsers();
     },
   };
@@ -126,7 +134,9 @@ async function removeUser(userId: number) {
 }
 
 onBeforeMount(async () => {
-  userGroup.value = await api.get(userGroupId);
+  userGroup.value = await api.userGroup.get({
+    params: { id: userGroupId },
+  });
   await fetchUsers();
   isLoading.value = false;
 });

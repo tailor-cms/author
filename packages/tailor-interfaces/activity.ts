@@ -1,5 +1,5 @@
 import type { ContentElement } from './content-element';
-import type { User } from './user';
+import type { UserSummary } from './user';
 
 export interface StatusConfig {
   id: string;
@@ -12,7 +12,7 @@ export interface Status {
   id: number;
   activityId: number;
   assigneeId: number | null;
-  assignee: User | null;
+  assignee: UserSummary | null;
   status: string;
   description: string | null;
   priority: string;
@@ -22,8 +22,9 @@ export interface Status {
   deletedAt: string | null;
 }
 
+// Activity-level metadata bag. `name` is present on outline activities
 interface Data {
-  name: string;
+  name?: string;
   [key: string]: any;
 }
 

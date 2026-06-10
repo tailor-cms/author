@@ -6,7 +6,7 @@ import * as schemas from '../schemas/index.ts';
 // POST /repositories/:repositoryId/publish
 // Publishes the repository's catalog entry.
 export default defineAction({
-  name: 'publish',
+  name: 'publishMeta',
   params: schemas.RepositoryItemParams,
   openapi: {
     authenticated: true,

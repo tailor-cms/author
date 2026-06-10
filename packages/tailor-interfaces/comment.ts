@@ -1,13 +1,9 @@
-import type { ContentElement } from './content-element';
+import type { UserSummary } from './user';
 
-interface Author {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  fullName: string;
-  label: string;
-  imgUrl: string;
+// Slim content-element projection eager-loaded onto Comment
+export interface CommentElementRef {
+  uid: string;
+  type: string;
 }
 
 export interface Comment {
@@ -19,8 +15,8 @@ export interface Comment {
   activityId: number | null;
   contentElementId: number | null;
   content: string;
-  author: Author;
-  contentElement: ContentElement | null;
+  author: UserSummary;
+  contentElement: CommentElementRef | null;
   resolvedAt: string | null;
   createdAt: string;
   editedAt: string | null;
