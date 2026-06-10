@@ -1,7 +1,7 @@
+import type { Guideline } from '@tailor-cms/interfaces/schema';
 import { activity as activityUtils, Events } from '@tailor-cms/utils';
 import { filter, flatMap, reduce } from 'lodash-es';
 import { schema } from '@tailor-cms/config';
-import type { Guideline } from '@tailor-cms/interfaces/schema';
 
 import type { StoreActivity } from './activity';
 import type { StoreContentElement } from './content-elements';
@@ -68,33 +68,44 @@ export const useEditorStore = defineStore('editor', () => {
   });
 
   const initialize = async (activityId: number) => {
-    await activityStore.fetch(repositoryId.value, { activityId });
+    await activityStore.fetch(repositoryId.value, { outlineOnly: true });
     $reset();
     selectedActivityId.value = activityId;
   };
 
+  // Comment events arrive via the editor channel; each `action` carries a
+  // different payload shape (save vs. remove vs. last-seen vs. resolve),
+  // so the outer payload is `unknown` and each branch refines it.
   const processCommentEvent = ({
     action,
     payload,
   }: {
     action: Events.Discussion;
-    payload: any;
+    payload: unknown;
   }) => {
     const { Save, Remove, SetLastSeen, Resolve } = Events.Discussion;
     const editorContext = {
       repositoryId: repositoryId.value,
-      activityId: selectedActivityId.value,
+      activityId: selectedActivityId.value!,
     };
-    const resolvedAction = {
-      [Save]: (payload: any) =>
-        commentStore.save({ ...payload, ...editorContext }),
-      [Remove]: (id: number) => commentStore.remove(repositoryId.value, id),
-      [SetLastSeen]: (payload: any) => commentStore.markSeenComments(payload),
-      [Resolve]: (payload: any) =>
-        commentStore.updateResolvement(repositoryId.value, payload),
-    }[action];
-    if (!resolvedAction) return;
-    return resolvedAction(payload);
+    switch (action) {
+      case Save:
+        return commentStore.save({
+          ...(payload as Parameters<typeof commentStore.save>[0]),
+          ...editorContext,
+        });
+      case Remove:
+        return commentStore.remove(repositoryId.value, payload as number);
+      case SetLastSeen:
+        return commentStore.markSeenComments(
+          payload as Parameters<typeof commentStore.markSeenComments>[0],
+        );
+      case Resolve:
+        return commentStore.updateResolvement(
+          repositoryId.value,
+          payload as Parameters<typeof commentStore.updateResolvement>[1],
+        );
+    }
   };
 
   const unlinkActivity = async (activityId: number) => {

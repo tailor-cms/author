@@ -4,7 +4,7 @@ import type {
   ActivityListData,
   ActivityUpdateData,
 } from '@tailor-cms/api-client';
-import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { Activity, Status } from '@tailor-cms/interfaces/activity';
 
 import {
   activity as activityUtils,

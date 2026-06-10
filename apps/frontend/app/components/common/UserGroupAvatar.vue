@@ -9,7 +9,7 @@
 interface Props {
   placeholderColor?: string;
   placeholderIcon?: string;
-  logoUrl?: string;
+  logoUrl?: string | null;
   size?: number | string;
 }
 

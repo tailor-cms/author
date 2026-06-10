@@ -1,6 +1,6 @@
 import type { User } from '@tailor-cms/interfaces/user';
 import type { UserGroupWithRole } from '@tailor-cms/interfaces/user-group';
-import type { UserUpdateProfileData } from '@tailor-cms/api-client';
+import type { UserUpdateProfileReq } from '@tailor-cms/api-client';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { api } from '@/api';
@@ -105,7 +105,7 @@ export const useAuthStore = defineStore('auth', () => {
       .catch(() => $reset());
   }
 
-  function updateInfo(payload: UserUpdateProfileData['body']) {
+  function updateInfo(payload: UserUpdateProfileReq['body']) {
     return api.user
       .updateProfile({ body: payload })
       .then(({ user: updated }) => (user.value = updated));

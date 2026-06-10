@@ -3518,6 +3518,17 @@
             "type": "string",
             "description": "User-group display name."
           },
+          "logoUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional group avatar URL."
+          },
           "role": {
             "type": "string",
             "enum": [
@@ -3532,6 +3543,7 @@
         "required": [
           "id",
           "name",
+          "logoUrl",
           "role"
         ],
         "additionalProperties": false

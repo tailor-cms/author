@@ -1,11 +1,12 @@
 import type { UserRole } from './role';
+import type { User } from './user';
 
 // Workspace entity. Repositories are shared with groups, and every
 // member of the group inherits access (see RepositoryUserGroup).
 export interface UserGroup {
   id: number;
   name: string;
-  logoUrl?: string;
+  logoUrl: string | null;
 }
 
 // Join row connecting a User to a UserGroup with a role.
@@ -23,4 +24,9 @@ export interface UserGroupMember {
 // that present a user's groups.
 export interface UserGroupWithRole extends UserGroup {
   role: UserRole;
+}
+
+// Full user row plus the join entry that carries the in-group role.
+export interface UserGroupMemberWithUser extends User {
+  userGroupMember: UserGroupMember;
 }

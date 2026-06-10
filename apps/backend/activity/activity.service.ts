@@ -200,7 +200,7 @@ export async function link(
   repository: Repository,
   user: User,
   body: LinkInput,
-): Promise<Activity> {
+): Promise<Activity[]> {
   const context = { userId: user.id, repository };
   return linkService.linkActivity(
     body.sourceId,

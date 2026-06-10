@@ -160,7 +160,7 @@ const updateMeta = async (
 
 const publish = async () => {
   isPublishing.value = true;
-  await api.repository.publish({
+  await api.repository.publishMeta({
     params: { repositoryId: repository.value!.id },
   });
   isPublishing.value = false;

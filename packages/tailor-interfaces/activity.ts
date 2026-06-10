@@ -1,4 +1,4 @@
-import type { ContentElement } from './content-element';
+import type { ContentElement, Relationship } from './content-element';
 import type { UserSummary } from './user';
 
 export interface StatusConfig {
@@ -36,7 +36,7 @@ export interface Activity {
   type: string;
   position: number;
   data: Data;
-  refs: Record<string, unknown>;
+  refs: Record<string, Relationship[]>;
   status: Status[];
   isTrackedInWorkflow: boolean;
   detached: boolean;

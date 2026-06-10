@@ -1,9 +1,14 @@
+import type {
+  CommentCreateReq,
+  CommentListReq,
+  CommentResolveReq,
+} from '@tailor-cms/api-client';
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import { Comment as Events } from '@tailor-cms/common/src/sse.js';
 import { merge } from 'lodash-es';
 import { useStorage } from '@vueuse/core';
 
-import { comment as api } from '@/api';
+import { api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
 
@@ -33,31 +38,40 @@ export const useCommentStore = defineStore('comments', () => {
     return $items.get(item.uid) as Comment;
   }
 
-  function update(uid: string, data: any) {
+  function update(uid: string, data: Partial<Comment>) {
     $items.set(uid, merge($items.get(uid), data));
   }
 
   async function fetch(
     repositoryId: number,
-    params: {
-      activityId?: number | null;
-      contentElementId?: number | null;
-    },
+    params: CommentListReq['query'],
   ): Promise<Comment[]> {
-    if (!params.activityId && !params.contentElementId)
+    if (!params?.activityId && !params?.contentElementId)
       throw new Error('Invalid params');
-    const comments: Comment[] = await api.fetch(repositoryId, params);
+    const comments = await api.comment.list({
+      params: { repositoryId },
+      query: params,
+    });
     comments.forEach((it) => add(it));
     return items.value;
   }
 
-  async function save(payload: any): Promise<Comment> {
-    const { id, repositoryId, ...rest } = payload;
+  type SaveInput = CommentCreateReq['body'] & {
+    repositoryId: number;
+    id?: number;
+  };
+
+  async function save(payload: SaveInput): Promise<Comment> {
+    const { id, repositoryId, content, ...createOnly } = payload;
     const comment = id
-      ? await api.patch(repositoryId, id, rest)
-      : await api.create(payload);
-    // TODO: Check if this is needed
-    // if (!hasUnresolvedComments) this.fetchComments({ elementId });
+      ? await api.comment.update({
+          params: { repositoryId, commentId: id },
+          body: { content },
+        })
+      : await api.comment.create({
+          params: { repositoryId },
+          body: { content, ...createOnly },
+        });
     return add(comment);
   }
 
@@ -101,7 +115,10 @@ export const useCommentStore = defineStore('comments', () => {
     $seen.value[entity][resolvedKey] = lastCommentAt;
   };
 
-  const updateResolvement = (repositoryId: number, data: any) => {
+  const updateResolvement = (
+    repositoryId: number,
+    data: CommentResolveReq['body'] & CommentListReq['query'],
+  ) => {
     return api.comment
       .resolve({ params: { repositoryId }, body: data })
       .then(() => fetch(repositoryId, data));

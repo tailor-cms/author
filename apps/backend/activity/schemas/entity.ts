@@ -151,7 +151,7 @@ export const ActivityCopyLocation = z
       FE to deep-link to the copy's location in the outline.
     `),
     name: z.string().optional().describe('Linked-copy display name.'),
-    repositoryName: z.string().optional().describe('Host repository name.'),
+    repositoryName: z.string().describe('Host repository name.'),
   })
   .meta({ id: 'ActivityCopyLocation' })
   .describe('A entry-point linked copy of a source activity.');

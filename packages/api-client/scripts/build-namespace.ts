@@ -5,7 +5,7 @@
 //
 //   createApiClient({ client })
 //      .repository.list(...)
-//      .repository.get({ path: { repositoryId } })
+//      .repository.get({ params: { repositoryId } })
 //      .....
 //
 // The backend's emitter stamps every operation with `operationId`,
@@ -68,12 +68,22 @@ const HTTP_METHODS = new Set([
 // Type plumbing emitted into the generated module.
 const RUNTIME_TYPES = [
   'type Operation = (...args: any[]) => any;',
-  'type Data<O extends Operation> = NonNullable<',
+  'type Body<O extends Operation> = NonNullable<',
   '  Awaited<ReturnType<O>> extends { data: infer D } ? D : never',
   '>;',
-  'type Bound<O extends Operation> = (',
-  '  options?: Omit<Parameters<O>[0], "client" | "throwOnError">,',
-  ') => Promise<Data<O>>;',
+  'type Unwrap<B> = B extends { data: infer D } ? D : B;',
+  'type Data<O extends Operation> = Unwrap<Body<O>>;',
+  'type RawOptions<O extends Operation> = Omit<',
+  '  Parameters<O>[0],',
+  '  "client" | "throwOnError" | "path"',
+  '>;',
+  'type PathOf<O extends Operation> = Parameters<O>[0] extends { path: infer P }',
+  '  ? P',
+  '  : undefined;',
+  'type Bound<O extends Operation> =',
+  '  PathOf<O> extends undefined',
+  '    ? (options?: RawOptions<O>) => Promise<Data<O>>',
+  '    : (options: RawOptions<O> & { params: PathOf<O> }) => Promise<Data<O>>;',
   '',
   'export interface ApiClientOptions {',
   '  client: Client;',
@@ -110,13 +120,20 @@ const renderModule = (
   '',
   'export function createApiClient({ client }: ApiClientOptions) {',
   '  const bind = <O extends Operation>(fn: O): Bound<O> =>',
-  '    (async (options) => {',
+  '    (async (options: Record<string, unknown> | undefined) => {',
+  '      // Translate caller-facing `params` to hey-api\'s `path`.',
+  '      const { params, ...rest } = options ?? {};',
   '      const res = await fn({',
-  '        ...(options as object),',
+  '        ...rest,',
+  '        ...(params !== undefined ? { path: params } : {}),',
   '        client,',
   '        throwOnError: true,',
   '      });',
-  '      return res.data;',
+  '      // Peel the `{ data: ... }` envelope (see `Bound`\'s `Unwrap`).',
+  '      const body = res.data;',
+  '      return body && typeof body === \'object\' && \'data\' in body',
+  '        ? body.data',
+  '        : body;',
   '    }) as Bound<O>;',
   '',
   '  return {',

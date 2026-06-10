@@ -17,7 +17,9 @@ export const BACKEND_SPEC_PATH = path.join(
 
 export const SPEC_PATH = path.join(DIST_DIR, 'spec.json');
 export const NAMESPACE_PATH = path.join(DIST_DIR, 'api.gen.ts');
+export const ALIASES_PATH = path.join(DIST_DIR, 'aliases.gen.ts');
 export const GENERATED_DIR = path.join(DIST_DIR, 'generated');
+export const TYPES_PATH = path.join(GENERATED_DIR, 'types.gen.ts');
 
 /**
  * True when the calling module is the CLI entrypoint (not imported),

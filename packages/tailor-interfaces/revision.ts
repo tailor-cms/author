@@ -1,30 +1,20 @@
-import type { Activity } from './activity';
-import type { ContentElement } from './content-element';
-import type { Repository } from './repository';
+import type { UserSummary } from './user';
 
-// Entity kind a revision was recorded against. Mirrors the model's
-// ENUM column
-export enum Entity {
-  Repository = 'REPOSITORY',
-  Activity = 'ACTIVITY',
-  ContentElement = 'CONTENT_ELEMENT',
-}
+export const Entity = {
+  Repository: 'REPOSITORY',
+  Activity: 'ACTIVITY',
+  ContentElement: 'CONTENT_ELEMENT',
+} as const;
 
-// Operation captured in the revision row, mirroring the model's ENUM:
-export enum Operation {
-  Create = 'CREATE',
-  Update = 'UPDATE',
-  Remove = 'REMOVE',
-}
+export type Entity = (typeof Entity)[keyof typeof Entity];
 
-interface User {
-  id: number;
-  email: string;
-  firstName: null | string;
-  fullName: null | string;
-  lastName: null | string;
-  label: string;
-}
+export const Operation = {
+  Create: 'CREATE',
+  Update: 'UPDATE',
+  Remove: 'REMOVE',
+} as const;
+
+export type Operation = (typeof Operation)[keyof typeof Operation];
 
 export interface Revision {
   id: number;
@@ -33,8 +23,8 @@ export interface Revision {
   repositoryId: number;
   entity: Entity;
   operation: Operation;
-  state: ContentElement | Activity | Repository;
-  user: User;
+  state: Record<string, unknown>;
+  user?: UserSummary;
   createdAt: string;
   updatedAt: string;
 }

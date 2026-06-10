@@ -172,9 +172,13 @@ const close = () => {
 };
 
 const fetchRepositories = loader(async (search = '') => {
-  const params = { search, schemas: store.repository?.schema };
-  const repositoriesData = await repositoryApi.getRepositories(params);
-  repositories.value = sortBy(repositoriesData.items, 'name');
+  const { items } = await api.repository.list({
+    query: {
+      search,
+      ...(store.repository?.schema ? { schemas: [store.repository.schema] } : {}),
+    },
+  });
+  repositories.value = sortBy(items, 'name');
 }, 500);
 
 onMounted(() => fetchRepositories());
