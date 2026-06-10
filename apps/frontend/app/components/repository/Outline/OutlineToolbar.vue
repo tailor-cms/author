@@ -74,7 +74,7 @@
         :disabled="!!search"
         :text="isOutlineExpanded ? 'Collapse all' : 'Expand all' "
         rounded="lg"
-        variant="tonal"
+        variant="text"
         @click="currentRepositoryStore.toggleOutlineExpand"
       />
       <LinkContent :anchor="anchor" show-activator />

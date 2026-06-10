@@ -82,7 +82,6 @@
     </div>
     <ActivityDiscussion
       :activity="activity"
-      class="mt-2 mb-10 mx-1"
       panel
       show-heading
     />

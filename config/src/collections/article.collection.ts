@@ -40,5 +40,6 @@ class Article {
 }
 
 export const exampleCollection = new TailorCollection(Article, {
+  label: 'Article',
   embedElementConfig,
 });

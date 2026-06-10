@@ -20,7 +20,7 @@
           />
         </div>
         <BrokenReferencesAlert />
-        <div v-if="isCollection" class="collection-wrapper mt-5">
+        <div v-if="isCollection" class="collection-wrapper mt-4">
           <CollectionList
             v-if="hasActivities"
             :activities="filteredActivities"
@@ -43,7 +43,7 @@
               v-bind="{ handle: '.activity' }"
               :list="rootActivities"
               :move="repositoryStore.isValidDrop"
-              class="d-flex flex-column mt-5 ga-2"
+              class="d-flex flex-column mt-4 ga-2"
               animation="150"
               group="activities"
               item-key="uid"

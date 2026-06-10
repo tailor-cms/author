@@ -21,7 +21,6 @@
     <ActivityDiscussion
       v-if="activity"
       :activity="activity"
-      class="mt-2 mb-5 mx-1"
       panel
       show-heading
     />

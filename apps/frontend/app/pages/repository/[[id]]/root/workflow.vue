@@ -23,7 +23,7 @@
         </div>
         <WorkflowOverview
           :activities="filteredActivities"
-          class="mt-5"
+          class="mt-4"
         />
       </VContainer>
     </VMain>
