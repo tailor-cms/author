@@ -1,4 +1,4 @@
-import { AssetType } from '@tailor-cms/interfaces/asset';
+import { AssetType, LinkContentType } from '@tailor-cms/interfaces/asset';
 import { detectLinkProvider } from '@tailor-cms/common/asset';
 
 import {
@@ -16,7 +16,7 @@ const DEFAULT_COLOR = ASSET_TYPE_COLOR[AssetType.Other]!;
 const PROVIDER_ICONS: Record<string, string> = {
   youtube: 'mdi-youtube',
   vimeo: 'mdi-vimeo',
-  spotify: 'mdi-spotify',
+  // spotify: 'mdi-spotify',
   soundcloud: 'mdi-soundcloud',
 };
 
@@ -35,16 +35,19 @@ const PROVIDER_LABELS: Record<string, string> = {
 };
 
 const LINK_CONTENT_TYPE_ICONS: Record<string, string> = {
-  [AssetType.Video]: 'mdi-play-circle',
-  [AssetType.Audio]: 'mdi-music-circle',
-  [AssetType.Image]: 'mdi-image',
-  [AssetType.Document]: 'mdi-file-document',
+  [LinkContentType.Video]: 'mdi-play-circle',
+  [LinkContentType.Image]: 'mdi-image',
+  [LinkContentType.Document]: 'mdi-file-document',
+  [LinkContentType.Audio]: 'mdi-music-circle',
+  [LinkContentType.Article]: 'mdi-newspaper-variant',
 };
 
 const LINK_CONTENT_TYPE_LABELS: Record<string, string> = {
-  [AssetType.Video]: 'Video Link',
-  [AssetType.Audio]: 'Audio Link',
-  [AssetType.Document]: 'Document Link',
+  [LinkContentType.Video]: 'Video Link',
+  [LinkContentType.Audio]: 'Audio Link',
+  [LinkContentType.Document]: 'Document Link',
+  [LinkContentType.Image]: 'Image Link',
+  [LinkContentType.Article]: 'Article Link',
 };
 
 function detectProvider(
@@ -65,10 +68,10 @@ export function getAssetIcon(
     return ASSET_TYPE_ICON[input] ?? DEFAULT_ICON;
   }
   const provider = detectProvider(input);
-  if (provider) return PROVIDER_ICONS[provider] ?? DEFAULT_ICON;
+  if (provider && PROVIDER_ICONS[provider]) return PROVIDER_ICONS[provider];
   if (input.type === AssetType.Link && input.meta) {
     const ct = input.meta.contentType || input.meta.linkContentType;
-    if (ct) return LINK_CONTENT_TYPE_ICONS[ct] ?? DEFAULT_ICON;
+    if (ct && LINK_CONTENT_TYPE_ICONS[ct]) return LINK_CONTENT_TYPE_ICONS[ct];
   }
   return ASSET_TYPE_ICON[input.type!] ?? DEFAULT_ICON;
 }
@@ -81,7 +84,7 @@ export function getAssetColor(
     return ASSET_TYPE_COLOR[input] ?? DEFAULT_COLOR;
   }
   const provider = detectProvider(input);
-  if (provider) return PROVIDER_COLORS[provider] ?? DEFAULT_COLOR;
+  if (provider && PROVIDER_COLORS[provider]) return PROVIDER_COLORS[provider];
   return ASSET_TYPE_COLOR[input.type!] ?? DEFAULT_COLOR;
 }
 
@@ -93,12 +96,10 @@ export function getAssetLabel(
     return ASSET_TYPE_LABEL[input] ?? DEFAULT_LABEL;
   }
   const provider = detectProvider(input);
-  if (provider) return PROVIDER_LABELS[provider] ?? DEFAULT_LABEL;
+  if (provider && PROVIDER_LABELS[provider]) return PROVIDER_LABELS[provider];
   if (input.type === AssetType.Link && input.meta) {
     const ct = input.meta.contentType || input.meta.linkContentType;
-    if (ct && LINK_CONTENT_TYPE_LABELS[ct]) {
-      return LINK_CONTENT_TYPE_LABELS[ct];
-    }
+    if (ct && LINK_CONTENT_TYPE_LABELS[ct]) return LINK_CONTENT_TYPE_LABELS[ct];
   }
   return ASSET_TYPE_LABEL[input.type!] ?? DEFAULT_LABEL;
 }

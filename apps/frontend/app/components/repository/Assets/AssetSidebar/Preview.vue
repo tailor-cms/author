@@ -16,10 +16,8 @@
       height="250"
       rounded="lg"
     >
-      <VAvatar color="error" variant="tonal" size="100">
-        <VIcon icon="mdi-image-broken-variant" size="50" />
-      </VAvatar>
-      <span class="mt-3 text-body-medium">
+      <VIcon icon="mdi-image-broken-variant" size="84" />
+      <span class="mt-3 text-title-medium">
         Unable to load preview
       </span>
     </VSheet>
@@ -84,9 +82,7 @@
       height="250"
       rounded="lg"
     >
-      <VAvatar :color="assetColor" variant="tonal" size="100">
-        <VIcon :icon="assetIcon" size="50" />
-      </VAvatar>
+      <VIcon :color="assetColor" :icon="assetIcon" size="84" />
       <VBtn
         v-if="previewUrl"
         :href="previewUrl"
@@ -96,7 +92,7 @@
         text="Open in new tab"
         variant="tonal"
       />
-      <span v-else class="text-label-large mt-3">
+      <span v-else class="text-title-medium mt-3">
         No preview available
       </span>
     </VSheet>
