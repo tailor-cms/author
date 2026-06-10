@@ -13,7 +13,7 @@
         linked: element.isLinkedCopy && !showPublishDiff,
       },
     ]"
-    class="content-element"
+    class="content-element rounded"
     @click="onSelect"
   >
     <div
@@ -447,6 +447,7 @@ onMounted(() => {
 @use '../mixins';
 
 .content-element {
+  // TO-DO: theme colors
   $accent-1: #1de9b6;
   $accent-2: #ff4081;
 
@@ -459,10 +460,10 @@ onMounted(() => {
     content: '';
     display: none;
     position: absolute;
-    top: 0;
-    right: -$width;
-    width: $width;
-    height: 100%;
+    inset: 0 0 -$width 0;
+    border-right: $width solid;
+    border-radius: inherit;
+    pointer-events: none;
   }
 
   &.focused {
@@ -470,7 +471,7 @@ onMounted(() => {
 
     &::after {
       display: block;
-      background: $accent-1;
+      border-color: $accent-1;
     }
   }
 
@@ -479,7 +480,7 @@ onMounted(() => {
 
     &::after {
       display: block;
-      background: $accent-2;
+      border-color: $accent-2;
     }
   }
 
@@ -490,7 +491,7 @@ onMounted(() => {
 
 .frame {
   padding: 10px 20px;
-  border: 1px solid #e1e1e1;
+  border: 1px solid rgba(var(--v-theme-outline), 0.2);
 }
 
 .element-actions {
