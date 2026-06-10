@@ -454,7 +454,6 @@
             "description": "Current assignee user id; null when unassigned."
           },
           "assignee": {
-            "description": "Eager-loaded assignee; null when unassigned.",
             "anyOf": [
               {
                 "description": "Slim user projection attached to records that include the user.",
@@ -463,7 +462,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Eager-loaded assignee; null when unassigned."
           },
           "status": {
             "type": "string",
@@ -523,6 +523,7 @@
           "id",
           "activityId",
           "assigneeId",
+          "assignee",
           "status",
           "priority",
           "description",
@@ -629,12 +630,12 @@
             "description": "True when the activity type appears in the schema's workflow configuration."
           },
           "status": {
-            "description": "Workflow status history (latest first). Present when the defaultScope include was applied.",
             "type": "array",
             "items": {
               "description": "A workflow-status entry for an activity.",
               "$ref": "#/components/schemas/ActivityStatus"
-            }
+            },
+            "description": "Workflow status history (latest first)."
           },
           "modifiedAt": {
             "anyOf": [
@@ -697,6 +698,7 @@
           "sourceId",
           "sourceModifiedAt",
           "isTrackedInWorkflow",
+          "status",
           "modifiedAt",
           "publishedAt",
           "createdAt",
@@ -1898,6 +1900,75 @@
             "description": "Author user id."
           },
           "author": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Numeric primary key."
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "Account email; lower-cased + trimmed."
+              },
+              "firstName": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "First name (2..50 chars when present)."
+              },
+              "lastName": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Last name (2..50 chars when present)."
+              },
+              "fullName": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Computed full name; null when both names are unset."
+              },
+              "label": {
+                "type": "string",
+                "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
+              },
+              "imgUrl": {
+                "type": "string",
+                "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
+              }
+            },
+            "required": [
+              "id",
+              "email",
+              "firstName",
+              "lastName",
+              "fullName",
+              "label",
+              "imgUrl"
+            ],
+            "additionalProperties": false,
             "description": "Eager-loaded author.",
             "$ref": "#/components/schemas/UserSummary"
           },
@@ -1908,7 +1979,6 @@
             "description": "Comment body. The model's `len: [1, 2000]` validator caps the length. For soft-deleted comments the getter returns a \"This comment has been deleted\" placeholder; `deletedAt` is the authoritative deletion signal."
           },
           "contentElement": {
-            "description": "Eager-loaded element pointer; null when activity-level.",
             "anyOf": [
               {
                 "description": "Slim content-element projection attached to a comment.",
@@ -1917,7 +1987,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Eager-loaded element pointer; null when activity-level."
           },
           "resolvedAt": {
             "anyOf": [
@@ -1973,7 +2044,9 @@
           "activityId",
           "contentElementId",
           "authorId",
+          "author",
           "content",
+          "contentElement",
           "resolvedAt",
           "editedAt",
           "createdAt",
@@ -3008,12 +3081,12 @@
                 "description": "True when the activity type appears in the schema's workflow configuration."
               },
               "status": {
-                "description": "Workflow status history (latest first). Present when the defaultScope include was applied.",
                 "type": "array",
                 "items": {
                   "description": "A workflow-status entry for an activity.",
                   "$ref": "#/components/schemas/ActivityStatus"
-                }
+                },
+                "description": "Workflow status history (latest first)."
               },
               "modifiedAt": {
                 "anyOf": [
@@ -3076,6 +3149,7 @@
               "sourceId",
               "sourceModifiedAt",
               "isTrackedInWorkflow",
+              "status",
               "modifiedAt",
               "publishedAt",
               "createdAt",
@@ -5937,9 +6011,9 @@
         "tags": [
           "Activity / Publishing"
         ],
-        "operationId": "activityGetPreview",
+        "operationId": "activityCreatePreview",
         "x-tailor-slice": "activity",
-        "x-tailor-method": "getPreview",
+        "x-tailor-method": "createPreview",
         "summary": "Generate an external preview URL for an activity",
         "description": "Asks the configured consumer webhook for a preview URL.",
         "parameters": [
@@ -11274,9 +11348,9 @@
         "tags": [
           "User / Profile"
         ],
-        "operationId": "userGetMe",
+        "operationId": "userMe",
         "x-tailor-slice": "user",
-        "x-tailor-method": "getMe",
+        "x-tailor-method": "me",
         "summary": "Get the current user profile",
         "parameters": [],
         "responses": {
@@ -11565,9 +11639,9 @@
         "tags": [
           "User / CRUD (admin)"
         ],
-        "operationId": "userCreate",
+        "operationId": "userUpsert",
         "x-tailor-slice": "user",
-        "x-tailor-method": "create",
+        "x-tailor-method": "upsert",
         "summary": "Invite or update a user",
         "parameters": [],
         "responses": {

@@ -42,7 +42,7 @@ import type { Repository, Tag } from '@tailor-cms/interfaces/repository';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
-import { tag as api } from '@/api';
+import { api } from '@/api';
 import { useRepositoryStore } from '@/stores/repository';
 
 const store = useRepositoryStore();
@@ -84,7 +84,7 @@ watch(
   () => props.isVisible,
   (isVisible) => {
     if (!isVisible) return;
-    api.fetch().then((fetchedTags) => (tags.value = fetchedTags));
+    api.tag.list().then((fetched) => (tags.value = fetched));
   },
 );
 </script>

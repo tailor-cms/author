@@ -56,13 +56,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { User } from '@tailor-cms/interfaces/user';
+import type { UserSummary } from '@tailor-cms/interfaces/user';
 
 import SelectStatus from '../SelectStatus.vue';
 import AssigneeFilter from './Assignee.vue';
 
 defineProps<{
-  assigneeOptions: Array<User | null>;
+  assigneeOptions: Array<UserSummary | null>;
   statusOptions: any[];
 }>();
 

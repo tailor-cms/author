@@ -24,7 +24,7 @@
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { TailorDialog } from '@tailor-cms/core-components';
 
-import { repository as api } from '@/api';
+import { api } from '@/api';
 
 const props = defineProps<{ repository: Repository }>();
 const emit = defineEmits(['close']);

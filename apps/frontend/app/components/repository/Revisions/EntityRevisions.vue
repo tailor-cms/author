@@ -33,10 +33,7 @@ import { promiseTimeout } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import EntitySidebar from './EntitySidebar.vue';
-import {
-  contentElement as contentElementApi,
-  revision as revisionApi,
-} from '@/api';
+import { api } from '@/api';
 
 interface Props {
   revision: Revision;
@@ -57,11 +54,10 @@ const repositoryId = computed(() => props.revision.repositoryId);
 
 const getRevisions = async () => {
   const { entity, state } = props.revision;
-  const params = { entity, entityId: state.id };
-  const { items }: { items: Revision[] } = await revisionApi.fetch(
-    repositoryId.value,
-    params,
-  );
+  const { items } = await api.revision.list({
+    params: { repositoryId: repositoryId.value },
+    query: { entity, entityId: state.id },
+  });
   return items;
 };
 

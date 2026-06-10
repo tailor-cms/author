@@ -81,10 +81,10 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import { SCHEMAS } from '@tailor-cms/config';
 import { sortBy } from 'lodash-es';
 
-import RepositoryTree from './RepositoryTree.vue';
-import { activity as activityApi, repository as repositoryApi } from '@/api';
+import { api } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+import RepositoryTree from './RepositoryTree.vue';
 
 const { AddAfter, AddInto } = InsertLocation;
 
@@ -160,7 +160,7 @@ const copySelection = async () => {
     const copied = await copyActivity(item, prevOutlineItem);
     prevOutlineItem = copied[0]; // Only first copied activity is outline item
   }
-  emit('completed', items[0].parentId);
+  emit('completed', items[0]?.parentId);
   isCopyingActivities.value = false;
   close();
 };

@@ -38,7 +38,7 @@
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import { activity as activityApi } from '@/api';
+import { api } from '@/api';
 
 import ActionsMenu from './ActionsMenu.vue';
 
@@ -83,7 +83,10 @@ const fetchSource = async () => {
   if (!props.activity.sourceId) return;
   const { repositoryId, id } = props.activity;
   try {
-    source.value = await activityApi.getSource(repositoryId, id);
+    const data = await api.activity.getSource({
+      params: { repositoryId, activityId: id },
+    });
+    source.value = data as SourceInfo;
   } catch {
     source.value = null;
   }
@@ -98,9 +101,8 @@ const goToActivity = (repositoryId: number, activityId: number) => {
 };
 
 const viewSource = () => {
-  const { id, repository } = source.value ?? {};
-  if (!repository) return;
-  goToActivity(repository.id, id);
+  if (!source.value?.repository) return;
+  goToActivity(source.value.repository.id, source.value.id);
 };
 
 const goToLinkedParent = () => {
@@ -111,7 +113,9 @@ const goToLinkedParent = () => {
 const handleUnlink = async () => {
   const { repositoryId, id } = props.activity;
   try {
-    const unlinked = await activityApi.unlink(repositoryId, id);
+    const unlinked = await api.activity.unlink({
+      params: { repositoryId, activityId: id },
+    });
     store.add(unlinked);
     notify('Activity unlinked', { immediate: true });
   } catch {

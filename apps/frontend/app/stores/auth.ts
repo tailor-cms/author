@@ -1,8 +1,11 @@
 import type { User } from '@tailor-cms/interfaces/user';
 import type { UserGroupWithRole } from '@tailor-cms/interfaces/user-group';
+import type { UserUpdateProfileData } from '@tailor-cms/api-client';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
-import { auth as api } from '@/api';
+import { api } from '@/api';
+
+type AuthData = { strategy?: string };
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref<User | null>(null);
@@ -56,17 +59,19 @@ export const useAuthStore = defineStore('auth', () => {
     email: string;
     password: string;
   }): Promise<void> {
-    return api
-      .login(credentials)
-      .then(({ data: { user, authData } }) => $reset(user, authData?.strategy));
+    return api.user
+      .login({ body: credentials })
+      .then(({ user, userGroups, authData }) =>
+        $reset(user, userGroups, (authData as AuthData)?.strategy),
+      );
   }
 
   function logout() {
-    return api.logout().then(() => $reset());
+    return api.user.logout().then(() => $reset());
   }
 
   function forgotPassword({ email }: { email: string }) {
-    return api.forgotPassword(email);
+    return api.user.forgotPassword({ body: { email } });
   }
 
   function resetPassword({
@@ -76,7 +81,7 @@ export const useAuthStore = defineStore('auth', () => {
     password: string;
     token: string;
   }) {
-    return api.resetPassword(token, password);
+    return api.user.resetPassword({ body: { password, token } });
   }
 
   function changePassword({
@@ -86,22 +91,24 @@ export const useAuthStore = defineStore('auth', () => {
     currentPassword: string;
     newPassword: string;
   }) {
-    return api.changePassword(currentPassword, newPassword);
+    return api.user.changePassword({
+      body: { currentPassword, newPassword },
+    });
   }
 
   function fetchUserInfo() {
-    return api
-      .getUserInfo()
-      .then(({ data: { user, userGroups, authData } }) =>
-        $reset(user, userGroups, authData?.strategy),
+    return api.user
+      .me()
+      .then(({ user, userGroups, authData }) =>
+        $reset(user, userGroups, (authData as AuthData)?.strategy),
       )
       .catch(() => $reset());
   }
 
-  function updateInfo(payload: any) {
-    return api
-      .updateUserInfo(payload)
-      .then(({ data }) => (user.value = data.user));
+  function updateInfo(payload: UserUpdateProfileData['body']) {
+    return api.user
+      .updateProfile({ body: payload })
+      .then(({ user: updated }) => (user.value = updated));
   }
 
   return {

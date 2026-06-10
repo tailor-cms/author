@@ -64,7 +64,9 @@ export const useCommentStore = defineStore('comments', () => {
   async function remove(repositoryId: number, id: number): Promise<undefined> {
     const comment = findById(id);
     if (!comment) throw new Error('Comment not found');
-    const commentWithoutContent = await api.remove(repositoryId, id);
+    const commentWithoutContent = await api.comment.delete({
+      params: { repositoryId, commentId: id },
+    });
     update(comment.uid, commentWithoutContent);
   }
 
@@ -100,8 +102,8 @@ export const useCommentStore = defineStore('comments', () => {
   };
 
   const updateResolvement = (repositoryId: number, data: any) => {
-    return api
-      .resolve(repositoryId, data)
+    return api.comment
+      .resolve({ params: { repositoryId }, body: data })
       .then(() => fetch(repositoryId, data));
   };
 

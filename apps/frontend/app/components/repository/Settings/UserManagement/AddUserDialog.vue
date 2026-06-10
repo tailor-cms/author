@@ -69,7 +69,7 @@ import { throttle } from 'lodash-es';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 
-import { user as api } from '@/api';
+import { api } from '@/api';
 
 defineProps<{
   roles: Array<{ title: string; value: string }>;
@@ -85,7 +85,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
         .required()
         .email()
         .notOneOf(
-          repositoryStore.users.map((user: User) => user.email),
+          repositoryStore.users.map((user) => user.email),
           'User with that email is already added',
         ),
       role: string().required(),
@@ -98,7 +98,7 @@ const [roleInput] = defineField('role');
 
 const isVisible = ref(false);
 const isSaving = ref(false);
-const suggestedUsers = ref([]);
+const suggestedUsers = ref<string[]>([]);
 
 const close = () => {
   isVisible.value = false;
@@ -120,7 +120,7 @@ const fetchUsers = throttle(async (filter) => {
     suggestedUsers.value = [];
     return;
   }
-  const { items: users } = await api.fetch({ filter });
+  const { items: users } = await api.user.list({ query: { filter } });
   suggestedUsers.value = users.map((it: User) => it.email);
 }, 350);
 </script>

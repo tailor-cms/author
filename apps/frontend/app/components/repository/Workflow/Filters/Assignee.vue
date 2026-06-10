@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { User } from '@tailor-cms/interfaces/user';
+import type { UserSummary } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { xor } from 'lodash-es';
 
@@ -57,7 +57,7 @@ const NO_BASE_OPTIONS = 3;
 
 const props = defineProps<{
   modelValue: Array<number | null>;
-  options: Array<User | null>;
+  options: Array<UserSummary | null>;
 }>();
 const emit = defineEmits(['update:model-value']);
 

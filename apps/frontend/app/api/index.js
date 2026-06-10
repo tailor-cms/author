@@ -1,29 +1,24 @@
 import { api } from './typed-client';
-import activity from './activity';
-import contentElement from './contentElement';
-import repository from './repository';
 
+// Exposed to content-element / content-container extensions via the
+// `$api` injection in plugins/core-services.ts.
 export const exposedApi = {
-  fetchRepositories: repository.getRepositories,
-  fetchActivities: activity.getActivities,
-  fetchContentElements: contentElement.fetch,
+  fetchRepositories: (params) => api.repository.list({ query: params }),
+  fetchActivities: (repositoryId, params) =>
+    api.activity.list({ params: { repositoryId }, query: params }),
+  fetchContentElements: (repositoryId, params) =>
+    api.contentElement.list({ params: { repositoryId }, query: params }),
 };
 
-export { default as activity } from './activity';
+// Legacy asset modules; the api exposes asset routes at
+// /assets/* (missing the /repositories/{repositoryId} prefix), so the
+// typed client can't reach them.
 export { default as asset } from './asset';
-export { default as auth } from './auth';
-export { default as comment } from './comment';
-export { default as contentElement } from './contentElement';
-export { default as feed } from './feed';
-export { default as repository } from './repository';
 export { default as repositoryAsset } from './repositoryAsset';
-export { default as revision } from './revision';
-export { default as rpc } from './rpc';
-export { default as tag } from './tag';
-export { default as user } from './user';
-export { default as userGroup } from './userGroup';
+// AI module also kept; agent routes share the same prefix problem.
+export { default as ai } from './ai';
+
 export { default as client } from './request';
 export { api, apiClient } from './typed-client';
-export { extractData } from './helpers';
 
 export default api;

@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-import { activity as api } from '@/api';
+import { api } from '@/api';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
@@ -105,9 +105,11 @@ const actions = computed(() => {
 const preview = () => {
   if (!editorStore.selectedActivity) return;
   const { repositoryId, id } = editorStore.selectedActivity;
-  return api.createPreview(repositoryId, id).then((location) => {
-    window.location.href = location;
-  });
+  return api.activity
+    .createPreview({ params: { repositoryId, activityId: id } })
+    .then(({ location }: any) => {
+      window.location.href = location;
+    });
 };
 
 const hasContentElements = computed(() => {

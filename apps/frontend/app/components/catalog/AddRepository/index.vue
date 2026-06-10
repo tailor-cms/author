@@ -186,9 +186,10 @@ import { SCHEMAS } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
+import { api } from '@/api';
+// TODO: Remove once API is consolidated
 import aiAPI from '@/api/ai';
 import AiAssistance from './AiAssistance.vue';
-import { repository as api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 
@@ -227,7 +228,7 @@ const { defineField, handleSubmit, resetForm, values, errors } = useForm({
   initialValues: {
     schema:
       config.availableSchemas.length === 1
-        ? config.availableSchemas[0].id
+        ? config.availableSchemas[0]!.id
         : null,
     name: '',
     description: '',
@@ -329,13 +330,9 @@ const importRepository = async ({
   userGroupIds,
 }: any) => {
   try {
-    const form = new FormData();
-    form.append('archive', archive);
-    form.append('name', name);
-    form.append('description', description);
-    form.append('userGroupIds', userGroupIds);
-    const headers = { 'content-type': 'multipart/form-data' };
-    await api.importRepository(form, { headers });
+    await api.repository.import({
+      body: { archive, name, description, userGroupIds },
+    });
   } catch {
     serverError.value = 'An error has occurred!';
   }
@@ -364,7 +361,7 @@ watch(
 watch(isVisible, (val) => {
   if (!val) return;
   groupInput.value = authStore.hasDefaultUserGroup
-    ? [authStore.userGroups[0].id]
+    ? [authStore.userGroups[0]!.id]
     : [];
 });
 </script>

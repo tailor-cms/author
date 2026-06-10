@@ -22,9 +22,9 @@ const client = createClient({ baseURL: '/api', withCredentials: true });
 const api = createApiClient({ client });
 
 await api.tag.list();
-await api.repository.get({ path: { repositoryId: 42 } });
-await api.repository.publish({ path: { repositoryId: 42 } });
-await api.activity.list({ path: { repositoryId: 42 } });
+await api.repository.get({ params: { repositoryId: 42 } });
+await api.repository.publish({ params: { repositoryId: 42 } });
+await api.activity.list({ params: { repositoryId: 42 } });
 ```
 
 The slice (`repository`, `tag`, `activity`, ...) and the method name

@@ -35,7 +35,7 @@
 
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import { activity as activityApi } from '@/api';
+import { api } from '@/api';
 import pluralize from 'pluralize-esm';
 
 import CopiesMenu, { type Copy } from './CopiesMenu.vue';

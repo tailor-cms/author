@@ -44,7 +44,7 @@ import { get } from 'lodash-es';
 
 import ActivityPublishing from './ActivityPublishing.vue';
 import ActivityOptions from '@/components/common/ActivityOptions/ActivityMenu.vue';
-import api from '@/api/activity';
+import { api } from '@/api';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useActivityStore } from '@/stores/activity';
 
@@ -74,7 +74,7 @@ const edit = () => {
 
 const restore = async () => {
   const { id: activityId, repositoryId } = props.activity;
-  await api.restore(repositoryId, activityId);
+  await api.activity.restore({ params: { repositoryId, activityId } });
   return activityStore.fetch(repositoryId, { outlineOnly: true });
 };
 </script>

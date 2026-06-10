@@ -16,7 +16,7 @@ export type { ContentElement } from './content-element';
 export type { Repository, Tag } from './repository';
 export type { Revision } from './revision';
 export type { Schema } from './schema';
-export type { User } from './user';
+export type { User, UserSummary } from './user';
 export type { UserGroup } from './user-group';
 export type {
   UserActivityContext,

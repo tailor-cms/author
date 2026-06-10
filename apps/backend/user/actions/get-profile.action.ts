@@ -3,6 +3,7 @@ import * as schemas from '../schemas/index.ts';
 import * as service from '../user.service.ts';
 
 export default defineAction({
+  name: 'me',
   raw: true,
   openapi: {
     authenticated: true,

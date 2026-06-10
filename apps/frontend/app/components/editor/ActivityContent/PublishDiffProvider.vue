@@ -26,7 +26,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { isAfter } from 'date-fns/isAfter';
 import { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
-import { revision as api } from '@/api';
+import { api } from '@/api';
 
 const { New, Removed, Changed } = PublishDiffChangeTypes;
 type Content = ContentElement | Activity;
@@ -95,7 +95,7 @@ const isModified = (element: ContentElement) => {
 };
 
 const isRemoved = (element: ContentElement) => {
-  element = props.elements[element.uid];
+  element = props.elements[element.uid] as ContentElement;
   return !element || element.detached;
 };
 
@@ -126,14 +126,16 @@ const addPublishedContainersToGroup = (
 };
 
 const fetchPublishedState = () => {
-  const query = {
-    activityId: props.activityId,
-    elementIds: map(props.elements, 'id'),
-    timestamp: props.publishTimestamp,
-  };
-  return api
-    .getStateAtMoment(props.repositoryId, query)
-    .then(({ activities, elements }) => {
+  return api.revision
+    .timeTravel({
+      params: { repositoryId: props.repositoryId },
+      query: {
+        activityId: props.activityId,
+        elementIds: map(props.elements, 'id'),
+        timestamp: props.publishTimestamp,
+      },
+    })
+    .then(({ data: { activities, elements } }: any) => {
       publishedElements.value = getPublishedState(elements);
       publishedActivities.value = getPublishedState(activities);
     });

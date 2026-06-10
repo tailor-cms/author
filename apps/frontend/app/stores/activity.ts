@@ -1,28 +1,57 @@
-import type { Activity, Status } from '@tailor-cms/interfaces/activity';
+import type {
+  ActivityCloneData,
+  ActivityCreateData,
+  ActivityListData,
+  ActivityUpdateData,
+} from '@tailor-cms/api-client';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+
 import {
   activity as activityUtils,
   calculatePosition,
   InsertLocation,
+  type PositionConfig,
 } from '@tailor-cms/utils';
 import { findIndex, orderBy } from 'lodash-es';
 import { schema, workflow as workflowConfig } from '@tailor-cms/config';
 import { Activity as Events } from '@tailor-cms/common/src/sse.js';
 import Hashids from 'hashids';
 
-import { activity as api } from '@/api';
+import { api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 const { getDefaultActivityStatus } = workflowConfig;
 
 type Id = number | string;
+
+// Mutable workflow fields the BE accepts on `setStatus`.
+type StatusUpdate = {
+  assigneeId?: number | null;
+  status?: string;
+  priority?: string;
+  description?: string | null;
+  dueDate?: string | null;
+};
+
+// Most-recent workflow row for an activity, falling back to the schema's
+// default `{ status, priority }` pair when no row exists yet, or
+// `undefined` when the type has no workflow at all.
+function getActivityStatus({ status, type }: Activity) {
+  const defaultStatus = getDefaultActivityStatus(type);
+  if (!Array.isArray(status)) return status || defaultStatus;
+  const ordered = orderBy(status, (it) => new Date(it.updatedAt), ['desc']);
+  return ordered[0] || defaultStatus;
+}
+
 export type StoreActivity = Activity & {
   shortId: string;
-  currentStatus: Status;
+  currentStatus: ReturnType<typeof getActivityStatus>;
 };
 export type FoundActivity = StoreActivity | undefined;
 
 const HASH_ALPHABET = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
 const hashids = new Hashids('', 0, HASH_ALPHABET);
+
 const { AddInto } = InsertLocation;
 
 export const useActivityStore = defineStore('activities', () => {
@@ -79,13 +108,13 @@ export const useActivityStore = defineStore('activities', () => {
     return items.value.filter(predicate);
   }
 
-  function add(item: Activity): StoreActivity | undefined {
+  function add(item: Activity): StoreActivity {
     $items.set(item.uid, {
       ...item,
       shortId: `A-${hashids.encode(item.id)}`,
       currentStatus: getActivityStatus(item),
     });
-    return $items.get(item.uid);
+    return $items.get(item.uid) as StoreActivity;
   }
 
   async function fetch(
@@ -167,7 +196,7 @@ export const useActivityStore = defineStore('activities', () => {
     anchor: StoreActivity,
   ) {
     const children = schema.getOutlineChildren(items.value, activity.parentId);
-    const context = { items: children, action } as any;
+    const context: PositionConfig = { items: children, action };
     if (action !== AddInto) {
       context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
     }
@@ -180,7 +209,7 @@ export const useActivityStore = defineStore('activities', () => {
   ) => {
     const id = anchor && (action === AddInto ? anchor.id : anchor.parentId);
     const children = schema.getOutlineChildren(items.value, id);
-    const context = { items: children, action } as any;
+    const context: PositionConfig = { items: children, action };
     if (action !== AddInto) {
       context.newPosition = anchor ? findIndex(children, { id: anchor.id }) : 1;
     }
@@ -190,19 +219,20 @@ export const useActivityStore = defineStore('activities', () => {
   const unlink = async (id: Id) => {
     const activity = findById(id);
     if (!activity) return;
-    const unlinked = await api.unlink(activity.repositoryId, activity.id);
+    const unlinked = await api.activity.unlink({
+      params: { repositoryId: activity.repositoryId, activityId: activity.id },
+    });
     add(unlinked);
     return unlinked;
   };
 
-  const saveStatus = async (id: number, status: Status) => {
+  const saveStatus = async (id: number, status: StatusUpdate) => {
     const activity = findById(id);
     if (!activity) return;
-    const data = await api.updateStatus(
-      activity.repositoryId,
-      activity.id,
-      status,
-    );
+    const data = await api.activity.setStatus({
+      params: { repositoryId: activity.repositoryId, activityId: activity.id },
+      body: status,
+    });
     Object.assign(activity, { status: data });
   };
 
@@ -223,13 +253,6 @@ export const useActivityStore = defineStore('activities', () => {
 
   function $reset() {
     $items.clear();
-  }
-
-  function getActivityStatus({ status, type }: Activity) {
-    const defaultStatus = getDefaultActivityStatus(type);
-    if (!Array.isArray(status)) return status || defaultStatus;
-    const ordered = orderBy(status, (it) => new Date(it.updatedAt), ['desc']);
-    return ordered[0] || defaultStatus;
   }
 
   return {

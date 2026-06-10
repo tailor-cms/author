@@ -2,7 +2,7 @@
 //
 //   import { api } from '@/api';
 //   const tags = await api.tag.list();
-//   const repo = await api.repository.get({ path: { repositoryId: 42 } });
+//   const repo = await api.repository.get({ params: { repositoryId: 42 } });
 
 import { createApiClient, createClient } from '@tailor-cms/api-client';
 import { applyAuthInterceptor } from './request';

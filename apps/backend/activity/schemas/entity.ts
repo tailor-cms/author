@@ -31,8 +31,8 @@ export const ActivityStatus = z
     assigneeId: Int()
       .nullable()
       .describe('Current assignee user id; null when unassigned.'),
-    assignee: UserSummary.nullable()
-      .optional()
+    assignee: UserSummary
+      .nullable()
       .describe('Eager-loaded assignee; null when unassigned.'),
     status: z.string().describe('Schema-defined workflow status id.'),
     priority: z.string().describe('Schema-defined workflow priority id.'),
@@ -104,10 +104,9 @@ export const Activity = z
       True when the activity type appears in the schema's workflow
       configuration.
     `),
-    status: z.array(ActivityStatus).optional().describe(oneLine`
-      Workflow status history (latest first). Present when the
-      defaultScope include was applied.
-    `),
+    status: z.array(ActivityStatus).describe(
+      'Workflow status history (latest first).',
+    ),
     modifiedAt: Timestamp(
       'Aggregated subtree last-modified timestamp.',
     ).nullable(),
