@@ -1,7 +1,11 @@
 <template>
   <button :class="{ disabled }" class="inline-activator">
     <VDivider content-offset="-16" opacity="0.5" gradient>
-      <VAvatar color="tertiary" icon="mdi-plus" size="x-small" />
+      <VAvatar
+        color="surface-container-highest"
+        icon="mdi-plus"
+        size="small"
+      />
     </VDivider>
   </button>
 </template>

@@ -17,7 +17,7 @@
         @click.stop="showElementPicker"
       />
     </slot>
-    <template v-if="isVisible">
+    <VSheet v-if="isVisible" :theme="$vuetify.theme.global.name">
       <SelectElement
         v-if="showElementBrowser"
         :allowed-element-config="allowedElementConfig"
@@ -106,7 +106,7 @@
           </VExpandTransition>
         </template>
       </AddNewElement>
-    </template>
+    </VSheet>
   </div>
 </template>
 
