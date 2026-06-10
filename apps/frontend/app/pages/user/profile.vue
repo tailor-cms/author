@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout name="main">
     <VSheet
-      class="h-100 mx-3"
+      class="profile-page overflow-auto h-100 mx-3"
       color="surface-container-low"
       rounded="t-xl"
       border
@@ -68,5 +68,14 @@ const deleteAvatar = () => {
 <style lang="scss" scoped>
 .user-panel {
   max-width: 75rem;
+}
+
+.profile-page {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>

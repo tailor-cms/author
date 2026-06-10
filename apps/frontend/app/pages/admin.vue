@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout name="main">
     <VSheet
-      class="h-100 mx-3 overflow-auto"
+      class="admin-page overflow-auto h-100 mx-3"
       color="surface-container-low"
       rounded="t-xl"
       border
@@ -28,3 +28,14 @@ definePageMeta({
   middleware: ['auth', 'has-admin-access'],
 });
 </script>
+
+<style lang="scss" scoped>
+.admin-page {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+</style>
