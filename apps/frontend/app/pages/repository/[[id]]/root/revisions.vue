@@ -1,39 +1,37 @@
 <template>
-  <div class="revisions-page h-100 mt-8">
-    <VMain>
-      <VContainer max-width="1600">
-        <VInfiniteScroll
-          v-if="bundledRevisions.length > 0"
-          class="revisions"
-          mode="manual"
-          @load="loadMore"
-        >
-          <VList bg-color="transparent" lines="two" tag="ul">
-            <RevisionItem
-              v-for="revision in bundledRevisions"
-              :key="revision.uid"
-              :revision="revision"
-            />
-          </VList>
-          <template #load-more="{ props: scrollProps }">
-            <VBtn
-              v-if="!areAllItemsFetched"
-              :text="'Load more'"
-              v-bind="scrollProps"
-              variant="tonal"
-            />
-          </template>
-        </VInfiniteScroll>
-        <VAlert
-          v-else-if="!isFetching && bundledRevisions.length === 0"
-          class="mt-8"
-          icon="mdi-history"
-          text="No changes recorded!"
-          variant="tonal"
-          prominent
-        />
-      </VContainer>
-    </VMain>
+  <div class="revisions-page overflow-auto h-100">
+    <VContainer max-width="1600">
+      <VInfiniteScroll
+        v-if="bundledRevisions.length > 0"
+        class="revisions"
+        mode="manual"
+        @load="loadMore"
+      >
+        <VList bg-color="transparent" lines="two" tag="ul">
+          <RevisionItem
+            v-for="revision in bundledRevisions"
+            :key="revision.uid"
+            :revision="revision"
+          />
+        </VList>
+        <template #load-more="{ props: scrollProps }">
+          <VBtn
+            v-if="!areAllItemsFetched"
+            :text="'Load more'"
+            v-bind="scrollProps"
+            variant="tonal"
+          />
+        </template>
+      </VInfiniteScroll>
+      <VAlert
+        v-else-if="!isFetching && bundledRevisions.length === 0"
+        class="mt-8"
+        icon="mdi-history"
+        text="No changes recorded!"
+        variant="tonal"
+        prominent
+      />
+    </VContainer>
   </div>
 </template>
 
@@ -124,6 +122,15 @@ onMounted(() => {
     li {
       width: 100%;
     }
+  }
+}
+
+.revisions-page {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 </style>

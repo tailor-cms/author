@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <AppBar v-if="store.user" :user="store.user" />
-    <VMain class="view bg-surface">
+    <VMain>
       <slot></slot>
     </VMain>
     <AgentPanel v-if="store.user" />
@@ -21,48 +21,25 @@ const store = useAuthStore();
 </script>
 
 <style lang="scss">
-html,
-body {
-  width: 100%;
-  height: 100%;
-}
-
 #app {
-  --text-color-default: rgba(0, 0, 0, 0.87);
   height: 100vh;
-  color: var(--text-color-default);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   overflow: hidden;
 }
 
-.application,
-.v-application__wrap,
-.v-main,
-.view {
-  width: 100%;
+.v-main {
   height: 100%;
-  overflow-y: scroll;
+  transition: none;
+}
 
+.v-main__scroller {
   -ms-overflow-style: none;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
     display: none;
   }
-}
-
-.v-main {
-  transition: none;
-}
-
-.v-main .view {
-  overflow-y: scroll;
-  overflow-y: overlay;
-}
-
-.text--default {
-  color: var(--text-color-default);
 }
 </style>

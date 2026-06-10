@@ -1,6 +1,6 @@
 <template>
-  <div class="structure-page">
-    <VMain class="structure-container">
+  <VLayout class="structure-page">
+    <VMain scrollable>
       <VContainer
         ref="structureEl"
         class="structure d-flex flex-column justify-start px-md-10 py-md-8"
@@ -95,7 +95,7 @@
       </VContainer>
     </VMain>
     <Sidebar />
-  </div>
+  </VLayout>
 </template>
 
 <script lang="ts" setup>
@@ -212,22 +212,10 @@ onMounted(() => {
   height: 100%;
 }
 
-.structure-container {
-  position: relative;
-  height: 100%;
-}
-
+// No longer the scroll container (the scroller is) and not height-locked, so
+// content grows naturally and the scroller scrolls.
 .structure {
   position: relative;
-  height: 100%;
-  overflow-y: scroll;
-  overflow-y: overlay;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
 
   > :deep(:last-child:not(.collection-wrapper)) {
     margin-bottom: 7.5rem;

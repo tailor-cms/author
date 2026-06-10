@@ -1,8 +1,8 @@
 <template>
-  <div class="workflow-page h-100">
-    <VMain>
+  <VLayout class="workflow-page h-100">
+    <VMain scrollable>
       <VContainer
-        class="workflow d-flex flex-column h-100 px-md-10 py-md-8"
+        class="workflow d-flex flex-column px-md-10 py-md-8"
         max-width="1600"
       >
         <div v-if="workflow" class="d-flex align-center ga-2 mb-4">
@@ -28,7 +28,7 @@
       </VContainer>
     </VMain>
     <Sidebar />
-  </div>
+  </VLayout>
 </template>
 
 <script lang="ts" setup>

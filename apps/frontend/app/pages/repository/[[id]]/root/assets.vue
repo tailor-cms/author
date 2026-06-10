@@ -1,6 +1,6 @@
 <template>
-  <div class="assets-page h-100">
-    <VMain>
+  <VLayout class="assets-page h-100">
+    <VMain scrollable>
       <VContainer class="px-md-10 py-md-8" max-width="1600">
         <Toolbar
           ref="toolbarRef"
@@ -67,7 +67,7 @@
       @index="(asset: Asset) => indexing.startIndexing([asset.id])"
       @save="onSaveMeta"
     />
-  </div>
+  </VLayout>
 </template>
 
 <script lang="ts" setup>
