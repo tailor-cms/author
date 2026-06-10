@@ -1,6 +1,6 @@
 <template>
   <div class="revisions-page overflow-auto h-100">
-    <VContainer max-width="1600">
+    <VContainer max-width="1100">
       <VInfiniteScroll
         v-if="bundledRevisions.length > 0"
         class="revisions"

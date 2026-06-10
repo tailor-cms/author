@@ -3,7 +3,7 @@
     <VMain scrollable>
       <VContainer
         class="workflow d-flex flex-column px-md-10 py-md-8"
-        max-width="1600"
+        max-width="1100"
       >
         <div v-if="workflow" class="d-flex align-center ga-2 mb-4">
           <WorkflowFilters

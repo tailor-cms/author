@@ -1,5 +1,5 @@
 <template>
-  <div class="toolbar d-flex align-center flex-wrap ga-2">
+  <div class="toolbar d-flex align-center flex-wrap ga-3">
     <template v-if="isCollection">
       <VTextField
         v-model="search"
@@ -16,7 +16,6 @@
         hide-details
         @click:clear="search = ''"
       />
-      <VSpacer />
       <VMenu location="bottom end">
         <template #activator="{ props: menuProps }">
           <VBtn
@@ -26,8 +25,7 @@
             class="sort-btn"
             prepend-icon="mdi-sort-variant"
             rounded="lg"
-            size="small"
-            variant="tonal"
+            variant="text"
           />
         </template>
         <VList density="compact" min-width="220" slim>
@@ -42,13 +40,13 @@
           />
         </VList>
       </VMenu>
+      <VSpacer />
       <CreateDialog
         :anchor="anchor"
         :repository-id="currentRepositoryStore.repositoryId as number"
-        activator-color="secondary"
+        activator-color="primary"
         activator-icon="mdi-plus"
-        size="small"
-        variant="tonal"
+        variant="flat"
         show-activator
       />
     </template>
