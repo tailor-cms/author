@@ -39,7 +39,7 @@ class Article {
   question: ContentElement;
 }
 
-export const exampleCollection = new TailorCollection(Article, {
+export const articleCollection = new TailorCollection(Article, {
   label: 'Article',
   embedElementConfig,
 });
