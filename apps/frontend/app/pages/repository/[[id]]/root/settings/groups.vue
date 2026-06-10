@@ -1,7 +1,7 @@
 <template>
   <VLayout class="groups-page h-100">
     <VMain class="groups-main">
-      <VContainer class="groups-content px-md-10 py-md-8" max-width="1100">
+      <VContainer class="groups-content px-md-10 py-md-8" max-width="1200">
         <div class="d-flex align-center ga-3 mb-4">
           <VHover>
             <template #default="{ props: hoverProps }">
