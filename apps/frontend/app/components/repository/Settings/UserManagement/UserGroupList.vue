@@ -71,7 +71,7 @@
 <script lang="ts" setup>
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
-import api from '@/api/repository.js';
+import { api } from '@/api';
 import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 
 const props = defineProps<{
@@ -94,17 +94,18 @@ const groups = computed(() => props.groups);
 const remove = (group: UserGroup) => {
   const showDialog = useConfirmationDialog();
   const { repositoryId } = currentRepositoryStore;
-  const payload = {
-    repositoryId,
-    userGroupId: group.id,
-  };
   const confirmation = {
     title: 'Remove from user group?',
     color: 'error',
     message: `Are you sure you want to remove "${group.name}" user group?`,
     action: () =>
-      api
-        .removeUserGroup(payload)
+      api.repository
+        .removeUserGroup({
+          params: {
+            repositoryId: repositoryId as number,
+            userGroupId: group.id,
+          },
+        })
         .then(() => repositoryStore.get(repositoryId as number)),
   };
   showDialog(confirmation);

@@ -10,6 +10,7 @@ import * as service from '../comment.service.ts';
 // POST /repositories/:repositoryId/comments
 // Creates a new comment authored by the current user.
 export default defineAction({
+  name: 'create',
   params: RepositoryScopedParams,
   body: schemas.CreateInput,
   openapi: {

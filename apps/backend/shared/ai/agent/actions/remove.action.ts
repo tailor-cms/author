@@ -3,6 +3,7 @@ import { defineAction } from '#shared/request/action.ts';
 import { sessionStore } from '../session/index.ts';
 
 export default defineAction({
+  name: 'deleteSession',
   params: schemas.SessionItemParams,
   openapi: {
     authenticated: true,

@@ -9,6 +9,7 @@ async function handler({ body }: Ctx<{ body: typeof schemas.GenerateInput }>) {
 }
 
 export default defineAction({
+  name: 'generate',
   body: schemas.GenerateInput,
   openapi: {
     authenticated: true,

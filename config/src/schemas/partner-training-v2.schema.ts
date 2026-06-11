@@ -7,6 +7,7 @@ import { ContentContainerType } from '@tailor-cms/content-container-collection/t
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
+import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 const SchemaId = 'PT_SCHEMA_V2';
@@ -92,7 +93,7 @@ const ModuleConfig: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Module',
-  color: '#5187C7',
+  color: OUTLINE_COLOR.NEUTRAL_1,
   subLevels: [ActivityType.Module, ActivityType.Topic, ActivityType.Practice],
   meta: [...outlineMeta],
   ai: {
@@ -114,7 +115,7 @@ const TopicConfig: ActivityConfig = {
       stitch together into a single cohesive lesson - covering
       one focused idea end-to-end without padding.`,
   },
-  color: '#08A9AD',
+  color: OUTLINE_COLOR.ACCENT_1,
   contentContainers: [ActivityType.SectionContainer],
 };
 
@@ -128,7 +129,7 @@ const PracticeConfig: ActivityConfig = {
     definition: `
       Practices contain guided exercises for learners to apply their knowledge.`,
   },
-  color: '#CDDC39',
+  color: OUTLINE_COLOR.ACCENT_4,
   contentContainers: [ActivityType.SectionContainer],
 };
 

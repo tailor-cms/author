@@ -10,6 +10,7 @@ import * as service from '../asset.service.ts';
 // Soft-deletes the asset row; storage files are intentionally retained
 // because published content elements may still hold storage:// references.
 export default defineAction({
+  name: 'deleteAsset',
   params: schemas.AssetItemParams,
   openapi: {
     authenticated: true,

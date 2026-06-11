@@ -9,6 +9,7 @@ import * as service from '../revision.service.ts';
 //   - bulk list (revisions page) - no filters
 //   - per-entity audit trail (EntityRevisions) - `entity` + `entityId`
 export default defineAction({
+  name: 'list',
   raw: true,
   params: RepositoryScopedParams,
   query: schemas.ListFilter,

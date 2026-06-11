@@ -8,6 +8,7 @@ import * as service from '../activity.service.ts';
 // Updates mutable fields. Editing `data` on a linked copy auto-unlinks
 // via the model's `autoUnlinkOnEdit` afterUpdate hook.
 export default defineAction({
+  name: 'update',
   params: schemas.ActivityItemParams,
   body: schemas.PatchInput,
   openapi: {

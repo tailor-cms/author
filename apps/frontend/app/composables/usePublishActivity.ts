@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 
-import { repository as api } from '@/api';
 import type { StoreActivity } from '@/stores/activity';
+import { api } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -19,7 +19,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
   const getPublishMessage = (items: StoreActivity[]) => {
     const activityCount = items.length;
     const totalActivities = currentRepository.outlineActivities.length;
-    if (activityCount === 1) return prefix(`${items[0].data.name} activity?`);
+    if (activityCount === 1) return prefix(`${items[0]?.data.name} activity?`);
     if (activityCount === totalActivities) return prefix('all activities?');
     return prefix(`${anchorActivity?.data.name} and all its descendants?`);
   };
@@ -46,7 +46,9 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
       title: 'Publish content',
       message: getPublishMessage(activities),
       action: async () => {
-        await api.publishRepositoryMeta(currentRepository.repositoryId);
+        await api.repository.publishMeta({
+          params: { repositoryId: currentRepository.repositoryId! },
+        });
         await publish(activities.filter((it) => !it.detached));
       },
     });

@@ -16,6 +16,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'createSession',
   raw: true,
   body: schemas.CreateInput,
   openapi: {

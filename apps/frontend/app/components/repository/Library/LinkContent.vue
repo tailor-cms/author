@@ -70,13 +70,13 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import { InsertLocation } from '@tailor-cms/utils';
 import pluralize from 'pluralize-esm';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import RepositoryTree from '../Outline/CopyActivity/RepositoryTree.vue';
 import { sortBy } from 'lodash-es';
 import { storeToRefs } from 'pinia';
+
+import { api } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
-
-import { activity as activityApi, repository as repositoryApi } from '@/api';
+import RepositoryTree from '../Outline/CopyActivity/RepositoryTree.vue';
 
 const { AddAfter, AddInto } = InsertLocation;
 
@@ -129,13 +129,12 @@ const linkBtnLabel = computed(() => {
 });
 
 const fetchRepositories = loader(async (search = '') => {
-  const result = await repositoryApi.getRepositories({
-    search,
-    compatibleWith: repository.value?.schema,
+  const { items } = await api.repository.list({
+    query: { search, compatibleWith: repository.value?.schema },
   });
   // Exclude current repository
   repositories.value = sortBy(
-    result.items.filter((repo: Repository) => repo.id !== repository.value?.id),
+    items.filter((repo) => repo.id !== repository.value?.id),
     'name',
   );
 }, 500);
@@ -146,8 +145,9 @@ const selectRepository = async (repo: Repository | null) => {
   selectedActivities.value = [];
   isLoadingActivities.value = true;
   try {
-    const activities = await activityApi.getActivities(repo.id, {
-      outlineOnly: true,
+    const activities = await api.activity.list({
+      params: { repositoryId: repo.id },
+      query: { outlineOnly: true },
     });
     repositoryActivities.value = sortBy(activities, 'position');
   } finally {
@@ -155,7 +155,10 @@ const selectRepository = async (repo: Repository | null) => {
   }
 };
 
-const linkActivity = async (activity: Activity, prevActivity?: Activity) => {
+const linkActivity = async (
+  activity: Activity,
+  prevActivity?: Activity,
+): Promise<Activity[]> => {
   const anchor = props.action === AddAfter && prevActivity
     ? prevActivity
     : props.anchor;
@@ -163,12 +166,11 @@ const linkActivity = async (activity: Activity, prevActivity?: Activity) => {
   const parentId = anchor
     ? props.action === AddInto ? anchor.id : anchor.parentId
     : null;
-  const linked = await activityApi.link(repository.value!.id, {
-    sourceId: activity.id,
-    parentId,
-    position,
+  const linked = await api.activity.link({
+    params: { repositoryId: repository.value!.id },
+    body: { sourceId: activity.id, parentId, position },
   });
-  linked.forEach((a: Activity) => activityStore.add(a));
+  linked.forEach((a) => activityStore.add(a));
   return linked;
 };
 

@@ -106,7 +106,7 @@ import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
-import { user as api } from '@/api';
+import { api } from '@/api';
 
 const UserRole = role.user;
 
@@ -157,7 +157,9 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
         test: (email) => {
           if (!isNewUser.value) return true;
           if (props.userData.email === email) return true;
-          return api.fetch({ email }).then(({ total }) => !total);
+          return api.user
+            .list({ query: { email } })
+            .then(({ total }) => !total);
         },
       }),
     firstName: string().min(2).required(),
@@ -195,14 +197,15 @@ const close = () => {
 
 const submit = handleSubmit(async () => {
   const action = isNewUser.value ? 'create' : 'update';
-  await api.upsert({
-    id: props.userData?.id,
-    email: emailInput.value,
-    firstName: firstNameInput.value,
-    lastName: lastNameInput.value,
-    role: roleInput.value,
-    userGroupIds: groupInput.value,
-    skipInvite: isNewUser.value ? skipInviteInput.value : undefined,
+  await api.user.upsert({
+    body: {
+      email: emailInput.value,
+      firstName: firstNameInput.value,
+      lastName: lastNameInput.value,
+      role: roleInput.value,
+      userGroupIds: groupInput.value,
+      skipInvite: isNewUser.value ? skipInviteInput.value : undefined,
+    },
   });
   emit(`${action}d`);
   close();
@@ -210,8 +213,8 @@ const submit = handleSubmit(async () => {
 
 const reinvite = () => {
   isReinviting.value = true;
-  api
-    .reinvite({ id: props.userData.id })
+  api.user
+    .reinvite({ params: { id: props.userData.id } })
     .finally(() => (isReinviting.value = false));
 };
 </script>

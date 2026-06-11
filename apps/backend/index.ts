@@ -1,12 +1,13 @@
 import type { Options as BoxenOptions } from 'boxen';
-import boxen from 'boxen';
 import BluebirdPromise from 'bluebird';
+import boxen from 'boxen';
 
+import { createLogger } from '#logger';
+import { writeOpenApiSnapshot } from '#shared/openapi/index.ts';
 import app from './app.ts';
 import config from '#config';
 import contentPluginRegistry from '#shared/content-plugins/index.js';
 import db from '#shared/database/index.js';
-import { createLogger } from '#logger';
 
 // Bluebird long-stack-trace config (global for all bluebird instances).
 BluebirdPromise.config({ longStackTraces: !config.isProduction });
@@ -26,6 +27,7 @@ db.initialize()
     logger.info(`Server listening on port ${config.port}`);
     welcome(config.packageName, config.packageVersion);
   })
+  .then(() => writeOpenApiSnapshot())
   .catch((err: unknown) => logger.error({ err }));
 
 const message = (name: string | undefined, version: string | undefined) =>

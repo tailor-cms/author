@@ -11,6 +11,7 @@ import * as service from '../indexing.service.ts';
 // GET /repositories/:repositoryId/assets/indexing/:assetId/status
 // Per-asset indexing status.
 export default defineAction({
+  name: 'getIndexingStatus',
   params: assetSchemas.AssetItemParams,
   openapi: {
     authenticated: true,

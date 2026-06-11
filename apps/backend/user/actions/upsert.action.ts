@@ -4,6 +4,7 @@ import * as schemas from '../schemas/index.ts';
 import * as service from '../user.service.ts';
 
 export default defineAction({
+  name: 'upsert',
   body: schemas.UpsertInput,
   openapi: {
     authenticated: true,

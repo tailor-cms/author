@@ -32,8 +32,8 @@ export const timestamps = () => ({
     .nullable(),
 });
 
-// Schema-driven JSONB blob. Used for `data` / `meta` / `refs` fields where
-// the shape is dictated by the activity schema or plugin and we don't
+// Schema-driven JSONB blob. Used for `data` / `meta` fields where the
+// shape is dictated by the activity schema or plugin and we don't
 // validate it at the API edge.
 export const JsonObject = (desc = 'Schema-driven JSON blob.') =>
   z.record(z.string(), z.unknown()).describe(desc);
@@ -64,6 +64,26 @@ export const Description = (min = 1, max = 2000) =>
 // constraint also lets JSON Schema emit `minimum: 1`, so Scalar
 // surfaces `1` as the example instead of MIN_SAFE_INTEGER.
 export const Int = () => z.number().int().positive();
+
+// Pointer entry stored inside an entity's `refs` bag.
+export const Relationship = z
+  .object({
+    id: Int().describe('Referenced entity id.'),
+    containerId: Int()
+      .optional()
+      .describe('Container activity id (for content-element refs).'),
+    outlineId: Int()
+      .optional()
+      .describe('Outline activity id (for content-element refs).'),
+    uid: z.string().optional().describe('Referenced entity UID.'),
+  })
+  .meta({ id: 'Relationship' });
+
+// Cross-reference bag stored under `refs`. Keys are relationship type
+// names declared by the schema for the owning entity; values are arrays
+// of `Relationship` pointers.
+export const Refs = (desc = 'Cross-entity references (JSONB).') =>
+  z.record(z.string(), z.array(Relationship)).describe(desc);
 
 // Unsigned integer (>=0) for body/response fields where 0 is a
 // meaningful value: sizes (an empty file is 0 bytes), counts,
@@ -134,6 +154,17 @@ export const StringArrayFromQuery = () =>
     if (typeof v === 'string') return v ? [v] : undefined;
     return v;
   }, z.array(z.string()).optional());
+
+// Binary file field for multipart/form-data action bodies. Emits
+// `{ type: 'string', format: 'binary' }` in JSON Schema;
+export const binaryFile = (description?: string) =>
+  z.string().meta({ format: 'binary', ...(description && { description }) });
+
+// Array of binary file fields, e.g. `files[]` in a multipart body.
+export const binaryFileArray = (description?: string) =>
+  z
+    .array(z.string().meta({ format: 'binary' }))
+    .meta({ ...(description && { description }) });
 
 // Standard offset/limit pair for paginated list endpoints. Spread
 // into the schema's `.object({...})` argument so the fields land at

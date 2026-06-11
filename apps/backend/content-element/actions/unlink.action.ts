@@ -8,6 +8,7 @@ import * as service from '../content-element.service.ts';
 // Converts a linked copy into a local copy. `sourceId` is preserved so
 // the provenance trail survives.
 export default defineAction({
+  name: 'unlink',
   params: schemas.ContentElementItemParams,
   openapi: {
     authenticated: true,

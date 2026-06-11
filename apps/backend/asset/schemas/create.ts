@@ -5,9 +5,23 @@
 // emits a `oneOf` 200 response.
 import { z } from 'zod';
 
-import { dataEnvelope } from '#shared/request/schemas.ts';
-
+import {
+  binaryFile,
+  binaryFileArray,
+  dataEnvelope,
+} from '#shared/request/schemas.ts';
 import { Asset, StorageRef } from './entity.ts';
+
+// Two upload modes share the route; the handler branches on which field
+// carried the upload.
+export const CreateMultipart = z
+  .object({
+    files: binaryFileArray('Library upload: multiple assets (max 10).')
+      .optional(),
+    file: binaryFile('Legacy single-file upload.')
+      .optional(),
+  })
+  .describe('Asset upload payload; use `files[]` (library) OR `file` (legacy).');
 
 // Modern library upload - N assets created, returned in the standard
 // `{ data: [...] }` envelope.

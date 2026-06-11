@@ -22,7 +22,7 @@
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { TailorDialog } from '@tailor-cms/core-components';
 
-import { repository as api } from '@/api';
+import { api } from '@/api';
 
 const props = defineProps<{ repository: Repository }>();
 const emit = defineEmits(['close']);
@@ -44,11 +44,15 @@ const STATUS = {
   },
 };
 
-const jobId = ref(null);
+const jobId = ref<string | null>(null);
 const status = ref(STATUS.INIT);
 
-const exportRepository = async () => {
-  await api.exportRepository(props.repository.id, jobId.value);
+const exportRepository = () => {
+  if (!jobId.value) return;
+  // GET endpoint streams a tgz with `Content-Disposition: attachment`,
+  // so the browser handles the download natively
+  const url = `/api/repositories/${props.repository.id}/export/${jobId.value}`;
+  window.open(url, '_blank');
   close();
 };
 
@@ -59,10 +63,9 @@ const setStatus = (val: { icon: string; color: string; message: string }) => {
 const getStatus = async (jobId: string | null, hits = 1) => {
   const MAX_HITS = 6;
   const INTERVAL = 3000;
-  const { isCompleted } = await api.getExportJobStatus(
-    props.repository.id,
-    jobId,
-  );
+  const { isCompleted } = await api.repository.getExportStatus({
+    params: { repositoryId: props.repository.id, jobId: jobId! },
+  });
   if (isCompleted) return setStatus(STATUS.READY);
   if (hits >= MAX_HITS) return setStatus(STATUS.ERROR);
   return setTimeout(() => getStatus(jobId, hits + 1), hits * INTERVAL);
@@ -70,7 +73,9 @@ const getStatus = async (jobId: string | null, hits = 1) => {
 
 const initiateExportJob = async () => {
   try {
-    jobId.value = await api.initiateExportJob(props.repository.id);
+    jobId.value = await api.repository.initiateExport({
+      params: { repositoryId: props.repository.id },
+    });
     return getStatus(jobId.value);
   } catch {
     status.value = STATUS.ERROR;

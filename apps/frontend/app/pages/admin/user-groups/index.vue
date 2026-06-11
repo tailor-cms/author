@@ -90,7 +90,7 @@
 <script lang="ts" setup>
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
-import { userGroup as api } from '@/api';
+import { api } from '@/api';
 import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 
@@ -121,9 +121,9 @@ const userGroups = ref<UserGroup[]>([]);
 const totalItems = ref(0);
 const dataTable = reactive(defaultPage());
 const filter = ref('');
-const editedGroup = ref(null);
+const editedGroup = ref<UserGroup | null>(null);
 
-const showGroupDialog = (group = null) => {
+const showGroupDialog = (group: UserGroup | null = null) => {
   isGroupDialogVisible.value = true;
   editedGroup.value = group;
 };
@@ -131,12 +131,14 @@ const showGroupDialog = (group = null) => {
 const fetch = async (opts = {}) => {
   Object.assign(dataTable, opts);
   isLoading.value = true;
-  const { items, total } = await api.fetch({
-    sortBy: dataTable.sortBy[0].key,
-    sortOrder: dataTable.sortBy[0].order === 'desc' ? 'DESC' : 'ASC',
-    offset: (dataTable.page - 1) * dataTable.itemsPerPage,
-    limit: dataTable.itemsPerPage,
-    filter: filter.value,
+  const { items, total } = await api.userGroup.list({
+    query: {
+      sortBy: dataTable.sortBy[0].key,
+      sortOrder: dataTable.sortBy[0].order === 'desc' ? 'DESC' : 'ASC',
+      offset: (dataTable.page - 1) * dataTable.itemsPerPage,
+      limit: dataTable.itemsPerPage,
+      filter: filter.value,
+    },
   });
   userGroups.value = items;
   totalItems.value = total;
@@ -149,7 +151,10 @@ const remove = (group: UserGroup) => {
     title: 'Delete user group',
     color: 'error',
     message: `Are you sure you want to delete "${group.name}" user group?`,
-    action: () => api.remove(group.id).then(() => fetch()),
+    action: () =>
+      api.userGroup
+        .delete({ params: { id: group.id } })
+        .then(() => fetch()),
   };
   showDialog(confirmation);
 };

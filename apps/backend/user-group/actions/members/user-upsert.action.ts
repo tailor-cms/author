@@ -3,6 +3,7 @@ import * as service from '../../user-group.service.ts';
 import { defineAction } from '#shared/request/action.ts';
 
 export default defineAction({
+  name: 'addUser',
   body: schemas.UpsertMembersInput,
   openapi: {
     authenticated: true,

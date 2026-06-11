@@ -21,7 +21,7 @@ export const AGENT_MODES = Object.values(AgentMode);
 // `Entity` enum (revision.ts) - REPOSITORY is implicit (the run is already
 // scoped to one) and "container" isn't a separate kind at the DB level
 // (containers are activities; the `type` field below disambiguates them).
-export type FocusedEntity = Entity.Activity | Entity.ContentElement;
+export type FocusedEntity = typeof Entity.Activity | typeof Entity.ContentElement;
 
 // What the user is currently looking at in the editor. Sent on each run so
 // the agent can resolve pronouns ("this", "the topic") without an extra read.

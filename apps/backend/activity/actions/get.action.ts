@@ -8,6 +8,7 @@ import * as service from '../activity.service.ts';
 // The `getActivity` param middleware loads the row, enforces repository
 // scoping, and returns 404 / 403 otherwise.
 export default defineAction({
+  name: 'get',
   params: schemas.ActivityItemParams,
   openapi: {
     authenticated: true,

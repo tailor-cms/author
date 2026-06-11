@@ -9,6 +9,7 @@ import * as service from '../activity.service.ts';
 // `sourceId` is preserved for provenance; descendants (activities +
 // elements) are unlinked transitively by the link service.
 export default defineAction({
+  name: 'unlink',
   params: schemas.ActivityItemParams,
   openapi: {
     authenticated: true,

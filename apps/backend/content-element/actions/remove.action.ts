@@ -6,6 +6,7 @@ import * as service from '../content-element.service.ts';
 // DELETE /repositories/:repositoryId/content-elements/:elementId
 // Soft-deletes the element.
 export default defineAction({
+  name: 'delete',
   params: schemas.ContentElementItemParams,
   openapi: {
     authenticated: true,

@@ -4,6 +4,7 @@ import * as schemas from '../../schemas/index.ts';
 
 // GET /repositories/:repositoryId/references/validate
 export default defineAction({
+  name: 'validateReferences',
   params: schemas.RepositoryItemParams,
   openapi: {
     authenticated: true,

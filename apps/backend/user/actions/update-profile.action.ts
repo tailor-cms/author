@@ -30,6 +30,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'updateProfile',
   body: schemas.ProfileUpdateInput,
   raw: true,
   openapi: {

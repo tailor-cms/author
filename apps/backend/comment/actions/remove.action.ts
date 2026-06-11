@@ -8,6 +8,7 @@ import * as service from '../comment.service.ts';
 // Soft-deletes the comment. Only the author may delete (gated by the
 // `canEdit` route middleware).
 export default defineAction({
+  name: 'delete',
   params: schemas.CommentItemParams,
   openapi: {
     authenticated: true,

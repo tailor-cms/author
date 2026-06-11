@@ -11,9 +11,7 @@ export const DispatchParams = RepositoryScopedParams.extend({
   procedure: ShortText(1, 64).describe(
     `Procedure name from the plugin's \`procedures\` map.`,
   ),
-})
-  .meta({ id: 'RpcDispatchParams' })
-  .describe('Path params for a content-element RPC dispatch.');
+}).describe('Path params for a content-element RPC dispatch.');
 
 export type DispatchParams = z.infer<typeof DispatchParams>;
 

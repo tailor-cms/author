@@ -86,7 +86,8 @@
 import { ActiveUsersGroup } from '@tailor-cms/core-components';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
-import { activity as activityApi } from '@/api';
+
+import { api } from '@/api';
 import ActivityActions from './ActivityActions.vue';
 import ActivityName from '@/components/common/ActivityName.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
@@ -150,8 +151,10 @@ const unlinkActivity = async (activityId: number) => {
 watch(activity, async (val) => {
   source.value = null;
   if (!val?.isLinkedCopy) return;
-  source.value = await activityApi
-    .getSource(val.repositoryId, val.id)
+  source.value = await api.activity
+    .getSource({
+      params: { repositoryId: val.repositoryId, activityId: val.id },
+    })
     .catch(() => null);
 }, { immediate: true });
 

@@ -8,6 +8,7 @@ import { ContentMode } from '@tailor-cms/interfaces/schema';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
+import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 enum ActivityType {
@@ -77,7 +78,7 @@ const GROUP: ActivityConfig = {
   type: ActivityType.Group,
   rootLevel: true,
   label: 'Group',
-  color: '#5187C7',
+  color: OUTLINE_COLOR.NEUTRAL_2,
   subLevels: [
     ActivityType.Group,
     ActivityType.Article,
@@ -98,7 +99,7 @@ const EVENT: ActivityConfig = {
   type: ActivityType.Event,
   rootLevel: true,
   label: 'Event',
-  color: '#7986CB',
+  color: OUTLINE_COLOR.ACCENT_6,
   meta: [
     {
       key: 'link',
@@ -130,7 +131,7 @@ const PODCAST: ActivityConfig = {
   type: ActivityType.Podcast,
   rootLevel: true,
   label: 'Podcast',
-  color: '#CDDC39',
+  color: OUTLINE_COLOR.ACCENT_3,
   meta: [
     ...podcastMeta,
     ...defaultMeta,
@@ -156,7 +157,7 @@ const GROWTH_OPPORTUNITY: ActivityConfig = {
   rootLevel: true,
   label: 'Growth Opportunity',
   meta: [...defaultMeta],
-  color: '#08A9AD',
+  color: OUTLINE_COLOR.ACCENT_5,
   contentContainers: [ActivityType.Section],
   ai: {
     definition: `
@@ -183,7 +184,7 @@ const ARTICLE: ActivityConfig = {
       options: [],
     },
   ],
-  color: '#08A9AD',
+  color: OUTLINE_COLOR.ACCENT_1,
   contentContainers: [ActivityType.Section],
   ai: {
     definition: `

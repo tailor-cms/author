@@ -14,6 +14,7 @@ import * as service from '../content-element.service.ts';
 //     under a set of parent activities.
 //   - no filters return every non-detached element in the repo
 export default defineAction({
+  name: 'list',
   params: RepositoryScopedParams,
   query: schemas.ListFilter,
   openapi: {

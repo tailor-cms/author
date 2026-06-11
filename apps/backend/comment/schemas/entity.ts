@@ -47,7 +47,7 @@ export const Comment = z
       Parent content-element id; null for activity-level discussion.
     `),
     authorId: Int().describe('Author user id.'),
-    author: UserSummary.optional().describe('Eager-loaded author.'),
+    author: UserSummary.describe('Eager-loaded author.'),
     content: z.string().min(1).max(2000).describe(oneLine`
       Comment body. The model's \`len: [1, 2000]\` validator caps the
       length. For soft-deleted comments the getter returns a
@@ -56,7 +56,6 @@ export const Comment = z
     `),
     contentElement: CommentElementRef
       .nullable()
-      .optional()
       .describe('Eager-loaded element pointer; null when activity-level.'),
     resolvedAt: Timestamp(
       'Timestamp the thread was resolved at; null for open threads.',

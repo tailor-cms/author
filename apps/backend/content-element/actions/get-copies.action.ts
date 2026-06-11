@@ -9,6 +9,7 @@ import * as service from '../content-element.service.ts';
 // decorated with outline-activity pointers for deep-linking. The wire
 // shape is `{ usages: ElementCopyLocation[] }`.
 export default defineAction({
+  name: 'getCopies',
   params: schemas.ContentElementItemParams,
   openapi: {
     authenticated: true,

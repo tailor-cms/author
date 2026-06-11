@@ -37,7 +37,7 @@
 
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import { activity as activityApi } from '@/api';
+import { api } from '@/api';
 import pluralize from 'pluralize-esm';
 
 import CopiesMenu, { type Copy } from './CopiesMenu.vue';
@@ -53,8 +53,10 @@ const fetchCopies = async () => {
   isLoading.value = true;
   try {
     const { repositoryId, id } = props.activity;
-    const data = await activityApi.getCopies(repositoryId, id);
-    copies.value = data.copies;
+    const result = await api.activity.getCopies({
+      params: { repositoryId, activityId: id },
+    });
+    copies.value = result.copies;
   } finally {
     isLoading.value = false;
   }

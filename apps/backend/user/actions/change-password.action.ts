@@ -30,6 +30,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'changePassword',
   body: schemas.ChangePasswordInput,
   openapi: {
     authenticated: true,

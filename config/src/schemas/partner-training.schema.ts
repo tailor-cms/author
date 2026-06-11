@@ -7,6 +7,7 @@ import { ContentContainerType } from '@tailor-cms/content-container-collection/t
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
+import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 const SchemaId = 'PT_SCHEMA';
@@ -243,7 +244,7 @@ const ModuleConfig: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Module',
-  color: '#5187C7',
+  color: OUTLINE_COLOR.NEUTRAL_1,
   subLevels: [ActivityType.Lesson],
   ai: {
     definition: `
@@ -292,7 +293,7 @@ const LessonConfig: ActivityConfig = {
       video, podcast, scenario). Concludes with related external
       content and key takeaways.`,
   },
-  color: '#08A9AD',
+  color: OUTLINE_COLOR.ACCENT_1,
   contentContainers: [
     ActivityType.LessonContent,
     ActivityType.RelatedContent,

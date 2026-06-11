@@ -87,6 +87,7 @@ export const AccessibleUserGroup = z
   .object({
     id: Int().describe('User-group id.'),
     name: z.string().describe('User-group display name.'),
+    logoUrl: z.string().nullable().describe('Optional group avatar URL.'),
     role: z.enum(UserRole).describe(`Acting user's role within the group.`),
   })
   .meta({ id: 'AccessibleUserGroup' })
