@@ -7,6 +7,7 @@ import { ContentContainerType } from '@tailor-cms/content-container-collection/t
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
+import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 const SchemaId = 'TEST_SCHEMA';
@@ -27,7 +28,7 @@ const ModuleConfig: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Module',
-  color: '#5187C7',
+  color: OUTLINE_COLOR.NEUTRAL_1,
   subLevels: [
     ActivityType.Module,
     ActivityType.Lesson,
@@ -145,7 +146,7 @@ const PageConfig: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Page',
-  color: '#08A9AD',
+  color: OUTLINE_COLOR.ACCENT_1,
   ai: {
     definition: `
       Pages contain the actual content that the user will interact with.`,
@@ -168,7 +169,7 @@ const IntroConfig: ContentContainerConfig = ({
 const LessonConfig: ActivityConfig = {
   type: ActivityType.Lesson,
   label: 'Lesson',
-  color: '#FFA000',
+  color: OUTLINE_COLOR.ACCENT_3,
   isTrackedInWorkflow: true,
   ai: {
     definition: `
@@ -192,7 +193,7 @@ const KnowledgeCheckConfig: ActivityConfig = {
       understanding of the material covered in the lesson. They help reinforce
       learning and provide immediate feedback to the learner.`,
   },
-  color: '#E91E63',
+  color: OUTLINE_COLOR.ACCENT_5,
   contentContainers: [ContentContainerType.Exam],
 };
 

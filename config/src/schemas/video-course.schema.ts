@@ -7,6 +7,7 @@ import { ContentContainerType } from '@tailor-cms/content-container-collection/t
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
+import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 const SchemaId = 'VIDEO_COURSE_SCHEMA';
@@ -39,7 +40,7 @@ const ChapterConfig: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Chapter',
-  color: '#5187C7',
+  color: OUTLINE_COLOR.NEUTRAL_1,
   subLevels: [ActivityType.Lesson],
   ai: {
     definition: `
@@ -59,7 +60,7 @@ const LessonConfig: ActivityConfig = {
       instructional content. Each lesson contains video content that teaches
       specific concepts, skills, or topics within the course curriculum.`,
   },
-  color: '#08A9AD',
+  color: OUTLINE_COLOR.ACCENT_1,
   contentContainers: [ActivityType.LessonContent],
   meta: [
     {
