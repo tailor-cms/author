@@ -324,6 +324,7 @@ const importRepository = async ({
     await api.repository.import({
       body: { archive, name, description, userGroupIds },
       ...formDataBodySerializer,
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
   } catch {
     serverError.value = 'An error has occurred!';
