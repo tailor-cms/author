@@ -68,7 +68,9 @@ export const useEditorStore = defineStore('editor', () => {
   });
 
   const initialize = async (activityId: number) => {
-    await activityStore.fetch(repositoryId.value, { outlineOnly: true });
+    // Pull the selected activity's subtree (the activity itself + its
+    // container descendants and any sub-containers) into the activity store.
+    await activityStore.fetch(repositoryId.value, { subtreeOf: activityId });
     $reset();
     selectedActivityId.value = activityId;
   };

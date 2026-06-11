@@ -5156,6 +5156,17 @@
             }
           },
           {
+            "name": "subtreeOf",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to the activity with this id and all its descendants (walked recursively via `parent_id`). Used by the editor to pull a selected outline activity's container children (and any sub-containers) into the FE store without scanning the whole repository.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
             "name": "detached",
             "in": "query",
             "required": false,

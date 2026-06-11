@@ -2,10 +2,11 @@
 // All DB orchestration, cross-model coordination (publishing, linked
 // content) and shape transforms live here so the service surface is
 // testable in isolation from Express.
-import { Op } from 'sequelize';
+import type { Literal } from 'sequelize/types/utils';
+import { literal, Op } from 'sequelize';
+import { schema } from '@tailor-cms/config';
 import find from 'lodash/find.js';
 import get from 'lodash/get.js';
-import { schema } from '@tailor-cms/config';
 
 import { createLogger } from '#logger';
 import db from '#shared/database/index.js';
@@ -30,14 +31,21 @@ const { getOutlineLevels, isOutlineActivity } = schema;
 const logger = createLogger('activity:svc');
 
 // Returns the repository's activities, optionally restricted to
-// outline-only items + pending-unpublish soft-deleted entries.
+// outline-only items + pending-unpublish soft-deleted entries, by an
+// explicit id list, or by the subtree rooted at a given activity.
 export async function list(
   repository: Repository,
   opts: any,
   filters: ListFilter,
 ): Promise<Activity[]> {
   if (!filters.detached) opts.where.detached = false;
+  // `ids` and `subtreeOf` are two ways to scope to a specific set of
+  // activities; callers pass one or the other, never both. The
+  // req validation rejects requests that send both.
   if (filters.ids?.length) opts.where.id = { [Op.in]: filters.ids };
+  else if (filters.subtreeOf) {
+    opts.where.id = { [Op.in]: subtreeIdsLiteral(repository.id, filters.subtreeOf) };
+  }
   if (filters.outlineOnly) {
     // Include deleted if published and deletion is not published yet
     opts.paranoid = false;
@@ -55,6 +63,27 @@ export async function list(
   const activities = (await repository.getActivities(opts)) as Activity[];
   await Promise.all(activities.map((it) => it.processEmbeddedElements()));
   return activities;
+}
+
+// `literal` skips Sequelize's escaping, so both inputs are coerced to
+// integers before interpolation
+function subtreeIdsLiteral(
+  repositoryId: number,
+  rootId: number,
+): Literal {
+  const root = Number(rootId);
+  const repo = Number(repositoryId);
+  return literal(`(
+    WITH RECURSIVE subtree(id) AS (
+      SELECT id FROM activity
+       WHERE id = ${root} AND repository_id = ${repo}
+      UNION ALL
+      SELECT a.id FROM activity a
+        JOIN subtree s ON a.parent_id = s.id
+       WHERE a.repository_id = ${repo}
+    )
+    SELECT id FROM subtree
+  )`);
 }
 
 // Creates an activity under `repository`. The action's Zod schema has
