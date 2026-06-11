@@ -1,8 +1,8 @@
 import type {
-  ActivityCloneData,
-  ActivityCreateData,
-  ActivityListData,
-  ActivityUpdateData,
+  ActivityCloneReq,
+  ActivityCreateReq,
+  ActivityListReq,
+  ActivityUpdateReq,
 } from '@tailor-cms/api-client';
 import type { Activity, Status } from '@tailor-cms/interfaces/activity';
 
@@ -12,7 +12,7 @@ import {
   InsertLocation,
   type PositionConfig,
 } from '@tailor-cms/utils';
-import { findIndex, orderBy } from 'lodash-es';
+import { findIndex, maxBy } from 'lodash-es';
 import { schema, workflow as workflowConfig } from '@tailor-cms/config';
 import { Activity as Events } from '@tailor-cms/common/src/sse.js';
 import Hashids from 'hashids';
@@ -33,19 +33,31 @@ type StatusUpdate = {
   dueDate?: string | null;
 };
 
-// Most-recent workflow row for an activity, falling back to the schema's
-// default `{ status, priority }` pair when no row exists yet, or
-// `undefined` when the type has no workflow at all.
-function getActivityStatus({ status, type }: Activity) {
-  const defaultStatus = getDefaultActivityStatus(type);
-  if (!Array.isArray(status)) return status || defaultStatus;
-  const ordered = orderBy(status, (it) => new Date(it.updatedAt), ['desc']);
-  return ordered[0] || defaultStatus;
+// Most-recent workflow row for an activity, or a `Status`-shaped
+// placeholder built from the schema's default `{ status, priority }`
+// pair when no row exists yet.
+function getActivityStatus(activity: Activity): Status {
+  const latest = maxBy(activity.status, 'updatedAt');
+  if (latest) return latest;
+  const defaults = getDefaultActivityStatus(activity.type);
+  return {
+    id: 0,
+    activityId: activity.id,
+    assigneeId: null,
+    assignee: null,
+    status: defaults?.status ?? '',
+    priority: defaults?.priority ?? '',
+    description: null,
+    dueDate: null,
+    createdAt: activity.createdAt,
+    updatedAt: activity.updatedAt,
+    deletedAt: null,
+  };
 }
 
 export type StoreActivity = Activity & {
   shortId: string;
-  currentStatus: ReturnType<typeof getActivityStatus>;
+  currentStatus: Status;
 };
 export type FoundActivity = StoreActivity | undefined;
 
@@ -82,24 +94,21 @@ export const useActivityStore = defineStore('activities', () => {
 
   function getDescendants(id: Id): StoreActivity[] {
     const activity = findById(id);
-    return activity
-      ? activityUtils.getDescendants(items.value, activity) as StoreActivity[]
-      : [];
+    return activity ? activityUtils.getDescendants(items.value, activity) : [];
   }
 
   function getAncestors(id: Id): StoreActivity[] {
     const activity = findById(id);
-    return activity
-      ? activityUtils.getAncestors(items.value, activity) as StoreActivity[]
-      : [];
+    return activity ? activityUtils.getAncestors(items.value, activity) : [];
   }
 
   function getLineage(id: Id): StoreActivity[] {
     const activity = findById(id);
     if (!activity) return [];
-    const ancestors = activityUtils.getAncestors(items.value, activity);
-    const descendants = activityUtils.getDescendants(items.value, activity);
-    return [...ancestors, ...descendants] as StoreActivity[];
+    return [
+      ...activityUtils.getAncestors(items.value, activity),
+      ...activityUtils.getDescendants(items.value, activity),
+    ];
   }
 
   function where(
@@ -119,16 +128,16 @@ export const useActivityStore = defineStore('activities', () => {
 
   async function fetch(
     repositoryId: number,
-    params = {},
+    params: ActivityListReq['query'] = {},
   ): Promise<StoreActivity[]> {
-    const activities: Activity[] = await api.getActivities(
-      repositoryId,
-      params,
-    );
+    const activities = await api.activity.list({
+      params: { repositoryId },
+      query: params,
+    });
     // Reset if repository is changed
     if (
       items.value.length > 0 &&
-      items.value[0].repositoryId !== repositoryId
+      items.value[0]!.repositoryId !== repositoryId
     ) {
       $items.clear();
     }
@@ -136,19 +145,27 @@ export const useActivityStore = defineStore('activities', () => {
     return items.value;
   }
 
-  async function save(payload: any): Promise<StoreActivity | undefined> {
-    const activity = await api.save(payload);
+  async function save(
+    payload: ActivityCreateReq['body'] & { repositoryId: number },
+  ): Promise<StoreActivity | undefined> {
+    const { repositoryId, ...body } = payload;
+    const activity = await api.activity.create({
+      params: { repositoryId },
+      body,
+    });
     add(activity);
     return $items.get(activity.uid);
   }
 
-  async function update(payload: any): Promise<FoundActivity> {
+  async function update(
+    payload: ActivityUpdateReq['body'] & { id: number },
+  ): Promise<FoundActivity> {
     const activity = findById(payload.id);
     if (!activity) return;
-    const updatedActivity = await api.patch({
-      ...payload,
-      id: activity.id,
-      repositoryId: activity.repositoryId,
+    const { id: _id, ...body } = payload;
+    const updatedActivity = await api.activity.update({
+      params: { repositoryId: activity.repositoryId, activityId: activity.id },
+      body,
     });
     Object.assign(activity, updatedActivity);
     return activity;
@@ -157,36 +174,46 @@ export const useActivityStore = defineStore('activities', () => {
   async function remove(id: Id): Promise<undefined> {
     const activity = findById(id);
     if (!activity) return;
-    await api.remove(activity.repositoryId, activity.id);
+    await api.activity.delete({
+      params: { repositoryId: activity.repositoryId, activityId: activity.id },
+    });
     // Await SSE event for store removal
   }
 
   const reorder = async (
     reorderedActivity: StoreActivity,
-    context: { items: any[]; newPosition: number },
+    context: PositionConfig & { newPosition: number },
   ) => {
     const activity = findById(reorderedActivity.uid);
     if (!activity) return;
-    activity.position = calculatePosition(context) as number;
-    const data = await api.reorder(activity.repositoryId, activity.id, {
-      position: context.newPosition,
+    activity.position = calculatePosition(context);
+    const data = await api.activity.reorder({
+      params: { repositoryId: activity.repositoryId, activityId: activity.id },
+      body: { position: context.newPosition },
     });
     Object.assign(activity, data);
   };
 
   const publish = async (activity: StoreActivity) => {
-    const { publishedAt } = await api.publish(
-      activity.repositoryId,
-      activity.id,
-    );
-    activity.publishedAt = publishedAt;
+    const data = await api.activity.publish({
+      params: { repositoryId: activity.repositoryId, activityId: activity.id },
+    });
+    activity.publishedAt = data.publishedAt;
     if (activity.deletedAt) $items.delete(activity.uid);
   };
 
-  const clone = async (mapping: any) => {
-    const { srcId, srcRepositoryId } = mapping;
-    const activities = await api.clone(srcRepositoryId, srcId, mapping);
-    activities.forEach((activity: Activity) => add(activity));
+  const clone = async (
+    mapping: ActivityCloneReq['body'] & {
+      srcId: number;
+      srcRepositoryId: number;
+    },
+  ) => {
+    const { srcId, srcRepositoryId, ...rest } = mapping;
+    const activities = await api.activity.clone({
+      params: { repositoryId: srcRepositoryId, activityId: srcId },
+      body: rest,
+    });
+    activities.forEach((activity) => add(activity));
     return activities;
   };
 

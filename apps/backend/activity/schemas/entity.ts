@@ -6,6 +6,7 @@ import {
   Int,
   IntParam,
   JsonObject,
+  Refs,
   RepositoryScopedParams,
   Timestamp,
   Uid,
@@ -76,12 +77,11 @@ export const Activity = z
       name for outline activities lives at \`data.name\` (typed as
       required in \`@tailor-cms/interfaces/activity\`).
     `),
-    refs: JsonObject(oneLine`
+    refs: Refs(oneLine`
       Cross-activity references (JSONB). Keyed by relationship type
       declared in the schema's \`relationships\` config for this
-      activity type; values are arrays of target activity ids
-      (e.g. \`{ prerequisites: [42, 17] }\`). Remapped on deep-clone
-      via \`mapClonedReferences\`.
+      activity type; values are arrays of \`Relationship\` pointers.
+      Remapped on deep-clone via \`mapClonedReferences\`.
     `),
     detached: z.boolean().describe(oneLine`
       True when an ancestor was deleted, leaving this row unreachable

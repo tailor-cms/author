@@ -128,7 +128,7 @@ references
 transfer
   .get('/:repositoryId/export/setup', actions.initiateExportJob)
   .get('/:repositoryId/export/:jobId/status', actions.getExportStatus)
-  .post('/:repositoryId/export/:jobId', actions.exportRepository);
+  .get('/:repositoryId/export/:jobId', actions.exportRepository);
 
 // Dynamic-import Repository-group sub-routers;
 // importing them here for docs sidbar order

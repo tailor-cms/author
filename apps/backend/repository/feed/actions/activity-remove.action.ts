@@ -35,7 +35,7 @@ async function handler({
 }
 
 export default defineAction({
-  name: 'removeActivity',
+  name: 'reportActivityEnd',
   params: schemas.FeedItemParams,
   body: schemas.RemoveInput,
   openapi: {

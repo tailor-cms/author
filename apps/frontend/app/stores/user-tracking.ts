@@ -1,26 +1,26 @@
 import { each, find, isEmpty, isEqual, omit, orderBy, pick } from 'lodash-es';
 import type { User } from '@tailor-cms/interfaces/user';
+import type { UserActivityContext } from '@tailor-cms/interfaces/user-activity';
 import { UserActivity } from '@tailor-cms/common/src/sse.js';
 
-import { feed as api } from '@/api';
+import { api } from '@/api';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
 
-interface ActivityContext {
-  sseId: string;
-  repositoryId: number;
-  activityId?: number;
-  elementId?: number;
-}
+// Locally we always know the sseId
+// (it's the connection that delivered the event)
+type ActivityContext = UserActivityContext & { sseId: string };
 
 interface UserWithContexts extends User {
   contexts: ActivityContext[];
 }
 
+// Active users keyed by entity scope. Outer keys are the entity kinds we
+// track; inner keys are the numeric/string entity ids serialized to strings
 interface ActivityByEntity {
-  repository: { number: User[] };
-  activity: { number: User[] };
-  element: { string: User[] };
+  repository: Record<string, User[]>;
+  activity: Record<string, User[]>;
+  element: Record<string, User[]>;
 }
 
 function isContextEqual(
@@ -35,23 +35,26 @@ function isContextEqual(
 
 export const useUserTracking = defineStore('userTracking', () => {
   const authStore = useAuthStore();
-
   const $users = reactive(new Map<string, UserWithContexts>());
   const users = computed(() => Array.from($users.values()));
 
-  const activityByEntity = computed(() => {
-    return users.value.reduce(
-      (acc: any, { contexts, ...user }: UserWithContexts): ActivityByEntity => {
-        contexts?.forEach((ctx: any) => setUserContext(acc, user, ctx));
+  const activityByEntity = computed<ActivityByEntity>(() =>
+    users.value.reduce<ActivityByEntity>(
+      (acc, { contexts, ...user }) => {
+        contexts?.forEach((ctx) => setUserContext(acc, user, ctx));
         return acc;
       },
       { repository: {}, activity: {}, element: {} },
-    );
-  });
+    ),
+  );
 
   const getActiveUsers = computed(() => {
-    return (entity: 'repository' | 'activity' | 'element', entityId: any) => {
-      const users = activityByEntity.value[entity][entityId] || [];
+    return (
+      entity: keyof ActivityByEntity,
+      entityId: number | string | undefined,
+    ) => {
+      if (entityId == null) return [];
+      const users = activityByEntity.value[entity][String(entityId)] || [];
       return orderBy(users, 'connectedAt', 'desc').filter(
         (user) => user.email !== authStore.user?.email,
       );
@@ -59,16 +62,24 @@ export const useUserTracking = defineStore('userTracking', () => {
   });
 
   const fetch = (repositoryId: number) => {
-    return api
-      .fetch(repositoryId)
+    return api.repository
+      .getFeed({ params: { repositoryId } })
       .then(({ items }) =>
-        each(items, (v: UserWithContexts, k) => $users.set(k, v)),
+        each(items, (v, k) => $users.set(k, v as unknown as UserWithContexts)),
       );
   };
 
-  const reportStart = (context: ActivityContext) => api.start(context);
+  const reportStart = (context: ActivityContext) =>
+    api.repository.reportActivityStart({
+      params: { repositoryId: context.repositoryId },
+      body: { context },
+    });
 
-  const reportEnd = (context: ActivityContext) => api.end(context);
+  const reportEnd = (context: ActivityContext) =>
+    api.repository.reportActivityEnd({
+      params: { repositoryId: context.repositoryId },
+      body: { context },
+    });
 
   const onStartEvent = ({
     user,
@@ -99,15 +110,12 @@ export const useUserTracking = defineStore('userTracking', () => {
     user: User;
     context: ActivityContext;
   }) => {
-    const userState: any = $users.get(user.id.toString());
+    const userState = $users.get(user.id.toString());
     if (!userState) return;
     const contexts = userState.contexts.filter(
-      (it: ActivityContext) => !isContextEqual(it, context),
+      (it) => !isContextEqual(it, context),
     );
-    $users.set(user.id.toString(), {
-      ...userState,
-      contexts,
-    });
+    $users.set(user.id.toString(), { ...userState, contexts });
   };
 
   const onEndSessionEvent = ({
@@ -117,16 +125,11 @@ export const useUserTracking = defineStore('userTracking', () => {
     sseId: string;
     userId: number;
   }) => {
-    const userState: any = $users.get(userId.toString()) as UserWithContexts;
+    const userState = $users.get(userId.toString());
     if (!userState) return;
-    const contexts = userState.contexts.filter(
-      (it: ActivityContext) => it.sseId !== sseId,
-    );
+    const contexts = userState.contexts.filter((it) => it.sseId !== sseId);
     if (isEmpty(contexts)) return $users.delete(userId.toString());
-    $users.set(userId.toString(), {
-      ...userState,
-      contexts,
-    });
+    $users.set(userId.toString(), { ...userState, contexts });
   };
 
   const $subscribeToSSE = () => {
@@ -165,17 +168,23 @@ export const useUserTracking = defineStore('userTracking', () => {
   };
 });
 
-function setUserContext(state: any, user: User, context: ActivityContext) {
-  const mappings = {
+function setUserContext(
+  state: ActivityByEntity,
+  user: User,
+  context: ActivityContext,
+) {
+  const mappings: Record<keyof ActivityByEntity, number | undefined> = {
     repository: context.repositoryId,
     activity: context.activityId,
     element: context.elementId,
   };
   each(mappings, (id, type) => {
     if (!id) return;
-    const entity = state[type][id];
+    const key = String(id);
+    const bucket = state[type as keyof ActivityByEntity];
+    const entity = bucket[key];
     if (!entity) {
-      state[type][id] = [user];
+      bucket[key] = [user];
       return;
     }
     if (find(entity, { id: user.id })) return;

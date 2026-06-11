@@ -42,10 +42,10 @@ export interface Activity {
   detached: boolean;
   /** Whether this activity is an active linked copy */
   isLinkedCopy: boolean;
-  /** ID of the source activity */
-  sourceId?: number | null;
-  /** Timestamp of source activity when linked */
-  sourceModifiedAt?: string | null;
+  /** Source activity ID (if link); null after the source is hard-deleted. */
+  sourceId: number | null;
+  /** Timestamp of source activity when linked; null when standalone. */
+  sourceModifiedAt: string | null;
   elements?: ContentElement[];
   containers?: Activity[];
   modifiedAt: string | null;

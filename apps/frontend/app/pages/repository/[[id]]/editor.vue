@@ -74,7 +74,7 @@ provide('$editorState', {
 
 const activityId = ref<number | null>(null);
 const showSidebar = ref(true);
-const showGuidelines = ref(null);
+const showGuidelines = ref(!!editorStore.guidelines);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
 

@@ -37,6 +37,7 @@ export async function list(
   filters: ListFilter,
 ): Promise<Activity[]> {
   if (!filters.detached) opts.where.detached = false;
+  if (filters.ids?.length) opts.where.id = { [Op.in]: filters.ids };
   if (filters.outlineOnly) {
     // Include deleted if published and deletion is not published yet
     opts.paranoid = false;

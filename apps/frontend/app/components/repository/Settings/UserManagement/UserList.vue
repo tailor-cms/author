@@ -95,6 +95,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { RepositoryRole } from '@tailor-cms/interfaces/role';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
@@ -102,7 +103,7 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
   users: User[];
-  roles: Array<{ title: string; value: string; description?: string }>;
+  roles: Array<{ title: string; value: RepositoryRole; description?: string }>;
 }>();
 
 const ITEMS_PER_PAGE = 10;
@@ -129,10 +130,10 @@ const rangeEnd = computed(() =>
   Math.min(page.value * ITEMS_PER_PAGE, props.users.length),
 );
 
-const roleLabel = (value: string) =>
+const roleLabel = (value: RepositoryRole) =>
   props.roles.find((r) => r.value === value)?.title ?? value;
 
-const roleIcon = (current: string, value: string) =>
+const roleIcon = (current: RepositoryRole, value: RepositoryRole) =>
   current === value ? 'mdi-check-circle' : 'mdi-blank';
 
 const getUsers = async () => {
@@ -140,7 +141,7 @@ const getUsers = async () => {
   isLoading.value = false;
 };
 
-const upsertUser = async (email: string, role: string) => {
+const upsertUser = async (email: string, role: RepositoryRole) => {
   await store.upsertUser(email, role);
   await notify('User updated', { immediate: true });
 };

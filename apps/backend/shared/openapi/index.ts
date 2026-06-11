@@ -13,3 +13,5 @@ export {
   buildPaths,
   writeOpenApiSnapshot,
 } from './emitter.ts';
+
+export { default as openApiDocsRouter } from './docs.ts';

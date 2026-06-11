@@ -2,6 +2,7 @@ import { oneLine } from 'common-tags';
 import { StatusCodes } from 'http-status-codes';
 
 import { createError } from '#shared/error/helpers.js';
+import { dataEnvelope } from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
 
 import * as schemas from '../schemas/index.ts';
@@ -21,7 +22,10 @@ export default defineAction({
       unpublishes when soft-deleted.
     `,
     responses: {
-      200: { description: 'Publish job acknowledged.' },
+      200: {
+        description: 'Activity row with refreshed `publishedAt` timestamp.',
+        schema: dataEnvelope(schemas.Activity),
+      },
       405: { description: 'Cannot publish a detached activity.' },
     },
   },

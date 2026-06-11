@@ -1,11 +1,18 @@
 // Wire shape for the activities listing endpoint.
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
-
-import { Pagination, QueryBoolean, Sort } from '#shared/request/schemas.ts';
+import {
+  IntArrayFromForm,
+  Pagination,
+  QueryBoolean,
+  Sort,
+} from '#shared/request/schemas.ts';
 
 export const ListFilter = z
   .object({
+    ids: IntArrayFromForm().describe(oneLine`
+      Restrict to activities with these ids.
+    `),
     detached: QueryBoolean.optional().describe(oneLine`
       Include detached items (rows unreachable in the outline because
       an ancestor was deleted). Default: false.

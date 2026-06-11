@@ -354,6 +354,37 @@
         ],
         "additionalProperties": false
       },
+      "Relationship": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Referenced entity id."
+          },
+          "containerId": {
+            "description": "Container activity id (for content-element refs).",
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "outlineId": {
+            "description": "Outline activity id (for content-element refs).",
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "uid": {
+            "description": "Referenced entity UID.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
       "UserSummary": {
         "type": "object",
         "properties": {
@@ -589,8 +620,13 @@
             "propertyNames": {
               "type": "string"
             },
-            "additionalProperties": {},
-            "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of target activity ids (e.g. `{ prerequisites: [42, 17] }`). Remapped on deep-clone via `mapClonedReferences`."
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            },
+            "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
           },
           "detached": {
             "type": "boolean",
@@ -2138,8 +2174,13 @@
             "propertyNames": {
               "type": "string"
             },
-            "additionalProperties": {},
-            "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `{ id, uid?, outlineId, containerId }` pointers. Remapped on deep-clone via `mapClonedReferences`."
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            },
+            "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
           },
           "detached": {
             "type": "boolean",
@@ -3041,8 +3082,13 @@
                 "propertyNames": {
                   "type": "string"
                 },
-                "additionalProperties": {},
-                "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of target activity ids (e.g. `{ prerequisites: [42, 17] }`). Remapped on deep-clone via `mapClonedReferences`."
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Relationship"
+                  }
+                },
+                "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
               },
               "detached": {
                 "type": "boolean",
@@ -3263,8 +3309,13 @@
                 "propertyNames": {
                   "type": "string"
                 },
-                "additionalProperties": {},
-                "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `{ id, uid?, outlineId, containerId }` pointers. Remapped on deep-clone via `mapClonedReferences`."
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Relationship"
+                  }
+                },
+                "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
               },
               "detached": {
                 "type": "boolean",
@@ -4234,35 +4285,6 @@
           "repositoryId"
         ],
         "additionalProperties": {}
-      },
-      "RpcDispatchParams": {
-        "type": "object",
-        "properties": {
-          "repositoryId": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Repository the resource belongs to."
-          },
-          "type": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 64,
-            "description": "Content-element type id, e.g. `CE_ASSESSMENT`."
-          },
-          "procedure": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 64,
-            "description": "Procedure name from the plugin's `procedures` map."
-          }
-        },
-        "required": [
-          "repositoryId",
-          "type",
-          "procedure"
-        ],
-        "additionalProperties": false
       }
     }
   },
@@ -5120,6 +5142,20 @@
             }
           },
           {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to activities with these ids.",
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          {
             "name": "detached",
             "in": "query",
             "required": false,
@@ -5334,8 +5370,13 @@
                     "propertyNames": {
                       "type": "string"
                     },
-                    "additionalProperties": {},
-                    "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of target activity ids (e.g. `{ prerequisites: [42, 17] }`). Remapped on deep-clone via `mapClonedReferences`."
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Relationship"
+                      }
+                    },
+                    "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   }
                 },
                 "required": [
@@ -5525,8 +5566,13 @@
                     "propertyNames": {
                       "type": "string"
                     },
-                    "additionalProperties": {},
-                    "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of target activity ids (e.g. `{ prerequisites: [42, 17] }`). Remapped on deep-clone via `mapClonedReferences`."
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Relationship"
+                      }
+                    },
+                    "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   }
                 },
                 "additionalProperties": false,
@@ -6119,7 +6165,25 @@
         ],
         "responses": {
           "200": {
-            "description": "Publish job acknowledged."
+            "description": "Activity row with refreshed `publishedAt` timestamp.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A repository activity (outline node, container, or flat collection item). The activity's `type` selects which schema-defined behaviour and `data` shape applies.",
+                      "$ref": "#/components/schemas/Activity"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "405": {
             "description": "Cannot publish a detached activity."
@@ -8483,8 +8547,13 @@
                     "propertyNames": {
                       "type": "string"
                     },
-                    "additionalProperties": {},
-                    "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `{ id, uid?, outlineId, containerId }` pointers. Remapped on deep-clone via `mapClonedReferences`."
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Relationship"
+                      }
+                    },
+                    "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   },
                   "isLinkedCopy": {
                     "type": "boolean",
@@ -8705,8 +8774,13 @@
                     "propertyNames": {
                       "type": "string"
                     },
-                    "additionalProperties": {},
-                    "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `{ id, uid?, outlineId, containerId }` pointers. Remapped on deep-clone via `mapClonedReferences`."
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Relationship"
+                      }
+                    },
+                    "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   },
                   "deletedAt": {
                     "description": "Restore from soft-delete: `null` brings the row back.",
@@ -9496,7 +9570,9 @@
               "description": "Restrict to repositories tagged with any of these tag ids.",
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
               }
             }
           },
@@ -10774,7 +10850,7 @@
       }
     },
     "/repositories/{repositoryId}/export/{jobId}": {
-      "post": {
+      "get": {
         "tags": [
           "Repository / Transfer"
         ],
@@ -12389,9 +12465,9 @@
         "tags": [
           "Repository / User Activity"
         ],
-        "operationId": "repositoryRecordActivity",
+        "operationId": "repositoryReportActivityStart",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "recordActivity",
+        "x-tailor-method": "reportActivityStart",
         "summary": "Add a user activity context",
         "parameters": [
           {
@@ -12472,9 +12548,9 @@
         "tags": [
           "Repository / User Activity"
         ],
-        "operationId": "repositoryRemoveActivity",
+        "operationId": "repositoryReportActivityEnd",
         "x-tailor-slice": "repository",
-        "x-tailor-method": "removeActivity",
+        "x-tailor-method": "reportActivityEnd",
         "summary": "Remove a user activity context",
         "parameters": [
           {
@@ -12562,7 +12638,41 @@
         "x-tailor-method": "callRpc",
         "summary": "Dispatch a content-element plugin procedure",
         "description": "Calls a named server procedure on the plugin for `type`. Payload is opaque; each procedure defines its own shape.",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "description": "Content-element type id, e.g. `CE_ASSESSMENT`."
+            }
+          },
+          {
+            "name": "procedure",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "description": "Procedure name from the plugin's `procedures` map."
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success"

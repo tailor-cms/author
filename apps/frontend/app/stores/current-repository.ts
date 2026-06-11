@@ -1,13 +1,17 @@
+import type { ChangeEvent, MoveEvent } from '@/types/draggable';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { RepositoryMember } from '@tailor-cms/interfaces/repository';
+import type { RepositoryRole } from '@tailor-cms/interfaces/role';
+
 import {
   schema as schemaApi,
   workflow as workflowConfig,
 } from '@tailor-cms/config';
 import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
+
+import { api } from '@/api';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
-import { repository as repositoryApi, rpc as rpcApi } from '@/api';
-import type { ChangeEvent, MoveEvent } from '@/types/draggable';
-import type { Activity } from '@tailor-cms/interfaces/activity';
 
 const { getWorkflow } = workflowConfig;
 
@@ -41,7 +45,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
 
-  const $users = reactive(new Map<string, any>());
+  const $users = reactive(new Map<string, RepositoryMember>());
   const users = computed(() => Array.from($users.values()));
 
   const outlineState = reactive({
@@ -77,7 +81,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const outlineActivities = computed(() => {
     if (!taxonomy.value) return [];
-    const outlineTypes: string[] = taxonomy.value.map((it: any) => it.type);
+    const outlineTypes: string[] = taxonomy.value.map((it) => it.type);
     return activities.value.filter((it) => outlineTypes.includes(it.type));
   });
 
@@ -217,30 +221,40 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const getUsers = () => {
     if (!repositoryId.value) throw new Error('Repository not initialized!');
-    return repositoryApi
-      .getUsers(repositoryId.value)
+    return api.repository
+      .getUsers({ params: { repositoryId: repositoryId.value } })
       .then((users) =>
-        users.forEach((it: any) => $users.set(it.id.toString(), it)),
+        users.forEach((it) => $users.set(it.id.toString(), it)),
       );
   };
 
-  const upsertUser = (email: string, role: string) => {
+  const upsertUser = (email: string, role: RepositoryRole) => {
     if (!repositoryId.value) throw new Error('Repository not initialized!');
-    return repositoryApi
-      .upsertUser(repositoryId.value, { email, role })
-      .then((user) => $users.set(user.id.toString(), user));
+    return api.repository
+      .addUser({
+        params: { repositoryId: repositoryId.value },
+        body: { email, role },
+      })
+      .then(({ user }) => $users.set(user.id.toString(), user));
   };
 
   const removeUser = (userId: number) => {
     if (!repositoryId.value) throw new Error('Repository not initialized!');
-    return repositoryApi.removeUser(repositoryId.value, userId).then(() => {
-      $users.delete(userId.toString());
-    });
+    return api.repository
+      .removeUser({ params: { repositoryId: repositoryId.value, userId } })
+      .then(() => {
+        $users.delete(userId.toString());
+      });
   };
 
-  const rpc = (type: string, procedure: string, payload?: any) => {
+  // Plugin RPC is by-design schema-opaque: each plugin owns its own
+  // payload shape, so `body` stays `unknown` end-to-end.
+  const rpc = (type: string, procedure: string, payload: unknown = {}) => {
     if (!repositoryId.value) throw new Error('Repository not initialized!');
-    return rpcApi.rpc(repositoryId.value, type, procedure, payload);
+    return api.repository.callRpc({
+      params: { repositoryId: repositoryId.value, type, procedure },
+      body: payload,
+    });
   };
 
   return {

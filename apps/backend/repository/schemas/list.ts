@@ -3,6 +3,7 @@ import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
 import {
+  IntArrayFromForm,
   IntParam,
   Paginated,
   Pagination,
@@ -39,7 +40,7 @@ export const ListFilter = z
     schemas: StringArrayFromQuery().describe(oneLine`
       Restrict to one or more schema ids. Default is unfiltered (all schemas).
     `),
-    tagIds: StringArrayFromQuery().describe(oneLine`
+    tagIds: IntArrayFromForm().describe(oneLine`
       Restrict to repositories tagged with any of these tag ids.
     `),
     compatibleWith: z.string().trim().max(64).optional().describe(oneLine`
