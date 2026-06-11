@@ -22,7 +22,7 @@
       variant="text"
     >
       <template #prepend>
-        <VIcon color="source" icon="mdi-source-branch" start />
+        <VIcon color="tertiary" icon="mdi-source-branch" start />
       </template>
     </VChip>
     <VBadge :content="copies.length" color="tertiary" inline>

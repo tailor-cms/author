@@ -52,18 +52,6 @@ const lightTheme: ThemeDefinition = {
     'tertiary-container': '#FFDBCB',
     'on-tertiary-container': '#2E1100',
 
-    // Highlight — linked / pinned / recent state (purple)
-    'highlight': '#BD3DB9',
-    'on-highlight': '#FFFFFF',
-    'highlight-container': '#FFD7F5',
-    'on-highlight-container': '#380038',
-
-    // Source — content reuse / lineage (indigo)
-    'source': '#4D75B3',
-    'on-source': '#FFFFFF',
-    'source-container': '#D6E3FF',
-    'on-source-container': '#001B3D',
-
     // Warning — honey amber (yellower than terracotta tertiary)
     'warning': '#B58A00',
     'on-warning': '#FFFFFF',
@@ -157,18 +145,6 @@ const darkTheme: ThemeDefinition = {
     'on-tertiary': '#4C1E00',
     'tertiary-container': '#683100',
     'on-tertiary-container': '#FFDBCB',
-
-    // Highlight — linked / pinned / recent state purple
-    'highlight': '#C678DD',
-    'on-highlight': '#4D0065',
-    'highlight-container': '#6D2486',
-    'on-highlight-container': '#FAD7FF',
-
-    // Source — content reuse / lineage (indigo)
-    'source': '#96BDFF',
-    'on-source': '#00346A',
-    'source-container': '#174782',
-    'on-source-container': '#D6E3FF',
 
     // Warning — honey amber (yellower than terracotta tertiary)
     'warning': '#E4C56F',
