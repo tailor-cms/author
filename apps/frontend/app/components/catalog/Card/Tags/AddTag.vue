@@ -17,18 +17,9 @@
           @keydown.enter="submitForm"
           @update-tag-name:search-input="(v: string) => (tagInput = v)"
         />
-        <div class="d-flex justify-end mt-4 pb-2 pr-1">
-          <VBtn
-            class="mr-2"
-            color="primary-darken-4"
-            variant="text"
-            @click="closeAddTagDialog"
-          >
-            Cancel
-          </VBtn>
-          <VBtn color="primary-darken-2" type="submit" variant="tonal">
-            Save
-          </VBtn>
+        <div class="d-flex justify-end pb-2 pr-1 ga-2">
+          <VBtn text="Cancel" variant="text" @click="closeAddTagDialog" />
+          <VBtn color="primary" type="submit" text="Save" variant="flat" />
         </div>
       </form>
     </template>

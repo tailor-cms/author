@@ -1,43 +1,38 @@
 <template>
   <div v-if="isSearching" class="d-flex flex-column align-center pa-12 ga-4">
-    <span class="text-body-large text-primary-lighten-3">
+    <span class="text-body-large">
       Searching the web for relevant resources...
     </span>
   </div>
   <template v-else-if="suggestions.length">
     <div class="d-flex align-center mb-3">
       <VChip
-        color="primary-lighten-2"
         prepend-icon="mdi-check-circle-outline"
         size="small"
         variant="tonal"
       >
         {{ suggestions.length }} results
         <template v-if="selectedUrls.size">
-          <VIcon size="x-small">mdi-circle-small</VIcon>
+          <VIcon icon="mdi-circle-small" size="x-small" />
           {{ selectedUrls.size }} selected
         </template>
       </VChip>
       <VSpacer />
       <VBtn
-        color="primary-lighten-3"
         prepend-icon="mdi-checkbox-multiple-outline"
         size="small"
+        text="Select all"
         variant="text"
         @click="emit('select:all')"
-      >
-        Select all
-      </VBtn>
+      />
       <VBtn
         v-if="selectedUrls.size"
-        color="primary-lighten-3"
         prepend-icon="mdi-close-circle-outline"
         size="small"
+        text="Clear"
         variant="text"
         @click="emit('select:clear')"
-      >
-        Clear
-      </VBtn>
+      />
     </div>
     <div class="d-flex flex-column ga-2">
       <SearchResult
@@ -48,13 +43,11 @@
         @toggle="emit('result:toggle', it.url)"
       />
     </div>
-    <div v-if="totalPages > 1" class="d-flex justify-center mt-4">
+    <div v-if="totalPages > 1" class="mt-4">
       <VPagination
         v-model="page"
         :length="totalPages"
         :total-visible="7"
-        active-color="primary-lighten-4"
-        color="primary-lighten-3"
         density="comfortable"
         rounded
       />
@@ -63,12 +56,10 @@
   <VAlert
     v-else-if="hasSearched"
     class="mt-4"
-    color="primary-lighten-4"
     icon="mdi-magnify-close"
+    text="No results found. Try a different search query."
     variant="tonal"
-  >
-    No results found. Try a different search query.
-  </VAlert>
+  />
 </template>
 
 <script lang="ts" setup>

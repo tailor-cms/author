@@ -1,7 +1,7 @@
 <template>
-  <VAvatar :size="size" color="primary">
+  <VAvatar :size="size" color="surface-container-highest">
     <VImg v-if="logoUrl" :src="logoUrl" alt="User group avatar" />
-    <VIcon v-else :color="placeholderColor" :icon="placeholderIcon" :size="size" />
+    <VIcon v-else :icon="placeholderIcon" :size="Number(size) * 0.6" />
   </VAvatar>
 </template>
 
@@ -15,7 +15,6 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   size: 24,
-  placeholderColor: 'primary-lighten-4',
   placeholderIcon: 'mdi-account-multiple',
 });
 </script>

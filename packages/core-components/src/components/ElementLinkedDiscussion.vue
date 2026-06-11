@@ -3,22 +3,18 @@
     v-model="menuOpen"
     :close-on-content-click="false"
     location="left"
+    max-width="350"
     offset="4"
   >
     <template #activator="{ props: menuProps }">
-      <VTooltip :disabled="menuOpen" location="left" open-delay="1000">
-        <template #activator="{ props: tooltipProps }">
-          <VBtn
-            v-bind="{ ...menuProps, ...tooltipProps }"
-            aria-label="Comments disabled"
-            color="primary-darken-2"
-            icon="mdi-comment-off-outline"
-            size="x-small"
-            variant="tonal"
-          />
-        </template>
-        <span>Comments disabled</span>
-      </VTooltip>
+      <VBtn
+        v-tooltip:left="{ text: 'Comments disabled', openDelay: 1000 }"
+        v-bind="menuProps"
+        aria-label="Comments disabled"
+        icon="mdi-comment-off-outline"
+        size="x-small"
+        variant="tonal"
+      />
     </template>
     <VSheet min-width="220" rounded="lg">
       <div class="px-4 pt-3 pb-2 text-body-small text-medium-emphasis">
@@ -28,7 +24,7 @@
       <div v-if="isLoading" class="d-flex justify-center py-4">
         <VProgressCircular color="primary" indeterminate size="24" />
       </div>
-      <VList v-else density="compact">
+      <VList v-else density="compact" nav>
         <VListItem
           :disabled="!sourceInfo"
           :subtitle="sourceInfo?.outlineActivityName || 'Open source location'"
@@ -57,7 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'source:fetch': [];
-  'source:view': [sourceInfo: SourceInfo];
+  'source:view': [sourceInfo: ElementSourceInfo];
 }>();
 
 const menuOpen = ref(false);

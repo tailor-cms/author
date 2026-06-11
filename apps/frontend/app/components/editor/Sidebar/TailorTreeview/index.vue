@@ -1,5 +1,5 @@
 <template>
-  <VList v-model:opened="expanded" density="compact" slim nav>
+  <VList v-model:opened="expanded" density="compact" nav>
     <Draggable
       :list="processedItems"
       :disabled="!!search"
@@ -23,10 +23,9 @@
     v-if="search && !hasItems"
     class="mx-4"
     icon="mdi-information-outline"
+    text="No items found!"
     variant="tonal"
-  >
-    No items found!
-  </VAlert>
+  />
 </template>
 
 <script setup lang="ts">

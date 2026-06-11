@@ -1,29 +1,24 @@
 <template>
-  <VBtn
-    v-if="selectedCount"
-    :disabled="isAdding"
-    :loading="isAdding"
-    :prepend-icon="hasDownloadable ? 'mdi-download' : 'mdi-link-plus'"
-    class="mr-4"
-    color="primary-lighten-3"
-    variant="outlined"
-    @click="$emit('add', false)"
-  >
-    {{ hasDownloadable ? 'Import' : 'Add as links' }}
-    {{ selectedCount }}
-  </VBtn>
-  <VBtn
-    v-if="selectedCount"
-    :disabled="isAdding"
-    :loading="isAdding"
-    class="mr-4"
-    color="primary-lighten-3"
-    prepend-icon="mdi-brain"
-    variant="tonal"
-    @click="$emit('add', true)"
-  >
-    {{ hasDownloadable ? 'Import' : 'Add' }} & Index
-  </VBtn>
+  <div class="d-flex ga-4 mr-4">
+    <VBtn
+      v-if="selectedCount"
+      :disabled="isAdding"
+      :loading="isAdding"
+      :prepend-icon="hasDownloadable ? 'mdi-download' : 'mdi-link-plus'"
+      :text="`${hasDownloadable ? 'Import' : 'Add as links'} (${selectedCount})`"
+      variant="outlined"
+      @click="$emit('add', false)"
+    />
+    <VBtn
+      v-if="selectedCount"
+      :disabled="isAdding"
+      :loading="isAdding"
+      :text="`${hasDownloadable ? 'Import' : 'Add'} & Index`"
+      prepend-icon="mdi-brain"
+      variant="tonal"
+      @click="$emit('add', true)"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>

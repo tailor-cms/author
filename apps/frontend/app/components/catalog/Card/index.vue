@@ -1,139 +1,92 @@
 <template>
-  <VHover v-slot="{ isHovering: isCardHovered, props: hoverProps }">
-    <VCard
-      v-bind="hoverProps"
-      :data-testid="`repositoryCard_${repository.id}`"
-      :elevation="isCardHovered ? 4 : 1"
-      :ripple="false"
-      class="repository-card d-flex flex-column justify-space-between text-left"
-      color="primary-darken-4"
-      rounded="xl"
-      @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
-    >
-      <div class="card-body">
-        <div class="card-header d-flex align-center my-1 mx-3">
-          <VCheckbox
-            :model-value="isSelected"
-            aria-label="Select repository"
-            class="ml-n1"
-            color="primary-lighten-3"
-            hide-details
-            @click.stop
-            @update:model-value="$emit('toggle-selection', repository.id)" />
-          <VTooltip
-            :disabled="!isSchemaNameTruncated"
-            content-class="bg-primary-darken-4"
-            location="top"
-            offset="26"
-            open-delay="300"
-          >
-            <template #activator="{ props: tooltipProps }">
-              <div
-                v-bind="tooltipProps"
-                ref="schema"
-                class="schema-name flex-grow-1 mx-2 text-truncate text-uppercase"
-              >
-                {{ schemaName }}
-              </div>
-            </template>
-            {{ schemaName }}
-          </VTooltip>
-          <VTooltip
-            content-class="bg-primary-darken-4"
-            location="top"
-            offset="28"
-            open-delay="100"
-          >
-            <template #activator="{ props: tooltipProps }">
-              <VBadge
-                v-bind="tooltipProps"
-                :aria-label="
-                  repository.hasUnpublishedChanges
-                    ? 'Has unpublished changes'
-                    : 'Published'
-                "
-                :color="
-                  repository.hasUnpublishedChanges ? 'orange-lighten-3' : 'teal'
-                "
-                class="mr-2"
-                dot
-                inline
-              />
-            </template>
-            {{ publishingInfo }}
-          </VTooltip>
-          <VTooltip
-            v-if="repository?.hasAdminAccess"
-            content-class="bg-primary-darken-4"
-            location="top"
-            offset="20"
-            open-delay="400"
-          >
-            <template #activator="{ props: tooltipProps }">
-              <VBtn
-                v-bind="tooltipProps"
-                aria-label="Repository settings"
-                class="repo-info"
-                color="primary-lighten-2"
-                icon="mdi-cog"
-                size="small"
-                variant="text"
-                @click.stop="
-                  navigateTo({
-                    name: 'repository-settings-general',
-                    params: { id: repository.id },
-                  })
-                "
-              />
-            </template>
-            Open settings
-          </VTooltip>
+  <VCard
+    :data-testid="`repositoryCard_${repository.id}`"
+    :ripple="false"
+    class="repository-card d-flex flex-column text-left"
+    rounded="xl"
+    elevation="0"
+    border
+    @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
+  >
+    <div class="card-body">
+      <div class="card-header d-flex align-center my-1 mx-3">
+        <VCheckbox
+          :model-value="isSelected"
+          aria-label="Select repository"
+          class="ml-n1"
+          color="primary"
+          hide-details
+          @click.stop
+          @update:model-value="$emit('toggle-selection', repository.id)"
+        />
+        <div
+          ref="schema"
+          v-tooltip="{
+            disabled: !isSchemaNameTruncated,
+            text: schemaName,
+            openDelay: 300,
+          }"
+          class="schema-name flex-grow-1 mx-2 text-truncate text-uppercase"
+        >
+          {{ schemaName }}
         </div>
-        <VCardTitle class="pt-0 text-primary-lighten-5 text-break">
-          {{ truncate(repository.name, { length: lgAndUp ? 60 : 40 }) }}
-        </VCardTitle>
-        <div class="d-flex justify-start px-4 text-primary-lighten-4">
-          <UserAvatar :img-url="lastActivity.user.imgUrl" :size="38" />
-          <div class="ml-3 overflow-hidden">
-            <div class="text-body-small">
-              Edited
-              {{ lastActivityTimeago }}
-              by
-            </div>
-            <div class="text-body-medium text-truncate">
-              {{ lastActivity.user.label }}
-            </div>
+        <VBadge
+          v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
+          :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
+          :color="hasUnpublishedChanges ? 'warning' : 'secondary'"
+          class="mr-2"
+          dot
+          inline
+        />
+        <VBtn
+          v-if="repository?.hasAdminAccess"
+          v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
+          aria-label="Repository settings"
+          class="repo-info text-medium-emphasis"
+          icon="mdi-cog"
+          size="small"
+          variant="text"
+          @click.stop="navigateTo({
+            name: 'repository-settings-general',
+            params: { id: repository.id },
+          })"
+        />
+      </div>
+      <VCardTitle class="pt-0 text-break">
+        {{ truncate(repository.name, { length: lgAndUp ? 60 : 40 }) }}
+      </VCardTitle>
+      <div class="d-flex justify-start px-4">
+        <UserAvatar :img-url="lastActivity.user.imgUrl" :size="38" />
+        <div class="ml-3 overflow-hidden">
+          <div class="text-body-small">Edited {{ lastActivityTimeago }} by</div>
+          <div class="text-body-medium text-truncate">
+            {{ lastActivity.user.label }}
           </div>
         </div>
       </div>
-      <VSpacer />
-      <VCardActions class="pb-2 px-2 align-start">
-        <VTooltip
-          content-class="bg-primary-darken-4"
-          location="bottom"
-          offset="20"
-          open-delay="400"
-        >
-          <template #activator="{ props: tooltipProps }">
-            <VBtn
-              v-bind="tooltipProps"
-              :color="isPinned ? 'lime-lighten-2' : 'primary-lighten-2'"
-              :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
-              aria-label="Pin repository"
-              @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
-            />
-          </template>
-          {{ isPinned ? 'Unpin' : 'Pin' }} {{ schemaName }}
-        </VTooltip>
-        <Tags :repository="repository" />
-      </VCardActions>
-    </VCard>
-  </VHover>
+    </div>
+    <VSpacer />
+    <VCardActions class="pb-2 px-2 align-start">
+      <VBtn
+        v-tooltip:bottom="{
+          text: `${isPinned ? 'Unpin' : 'Pin'} ${schemaName}`,
+          openDelay: 400,
+        }"
+        :color="isPinned ? 'tertiary' : ''"
+        :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
+        class="text-medium-emphasis"
+        aria-label="Pin repository"
+        @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
+      />
+      <Tags :repository="repository" />
+    </VCardActions>
+  </VCard>
 </template>
 
 <script lang="ts" setup>
 import { first, get, truncate } from 'lodash-es';
-import type { Repository, Revision } from '@tailor-cms/interfaces/repository';
+import type { Repository } from '@tailor-cms/interfaces/repository';
+import type { Revision } from '@tailor-cms/interfaces/revision';
 import { useDisplay } from 'vuetify';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { useTimeAgo } from '@vueuse/core';
@@ -167,10 +120,11 @@ const isPinned = computed(() =>
   get(props.repository, 'repositoryUser.pinned', false),
 );
 
-const publishingInfo = computed(() =>
-  props.repository.hasUnpublishedChanges
-    ? 'Has unpublished changes.'
-    : 'Published.',
+const hasUnpublishedChanges = computed(() => props.repository.hasUnpublishedChanges);
+
+const publishingInfo = computed(() => hasUnpublishedChanges.value
+  ? 'Has unpublished changes.'
+  : 'Published.',
 );
 
 const detectSchemaTruncation = () => {
@@ -195,10 +149,6 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
   &:hover {
     transform: translateY(-2px);
-  }
-
-  @media (max-width: 1263px) {
-    height: 17.25rem;
   }
 }
 

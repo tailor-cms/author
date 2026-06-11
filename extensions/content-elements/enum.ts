@@ -22,4 +22,8 @@ export enum ContentElementType {
   JoditHtml = 'JODIT_HTML',
   Html = 'HTML',
   File = 'FILE',
+  HtmlRaw = 'HTML_RAW',
+  MuxVideo = 'MUX_VIDEO',
+  Sequence = 'SEQUENCE',
+  Flashcards = 'FLASHCARDS',
 };

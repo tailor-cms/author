@@ -3,49 +3,38 @@
     <CategoryFilter v-model="selectedCategory" :categories="categories" />
     <VSpacer />
     <VBtn
-      color="primary-lighten-4"
+      :text="isAllSelected ? 'Deselect all' : 'Select all'"
       size="small"
       variant="text"
       @click="$emit('toggle-all', !isAllSelected)"
-    >
-      {{ isAllSelected ? 'Deselect all' : 'Select all' }}
-    </VBtn>
+    />
     <VMenu>
       <template #activator="{ props: menuProps }">
         <VBtn
           v-bind="menuProps"
+          :text="`${itemsPerPage} per page`"
           append-icon="mdi-chevron-down"
-          color="primary-lighten-4"
           size="small"
           variant="text"
-        >
-          {{ itemsPerPage }} per page
-        </VBtn>
+        />
       </template>
-      <VList density="compact">
+      <VList density="compact" nav>
         <VListItem
           v-for="size in PAGE_SIZE_OPTIONS"
           :key="size"
           :active="itemsPerPage === size"
+          :title="`${size} per page`"
           @click="itemsPerPage = size"
-        >
-          {{ size }} per page
-        </VListItem>
+        />
       </VList>
     </VMenu>
     <VBtn
-      :append-icon="
-        sortDirection === 'DESC'
-          ? 'mdi-sort-descending'
-          : 'mdi-sort-ascending'
-      "
-      color="primary-lighten-4"
+      :append-icon="`mdi-sort-${sortDirection === 'DESC' ? 'descending' : 'ascending'}`"
+      :text="sortDirection === 'DESC' ? 'Newest first' : 'Oldest first'"
       size="small"
       variant="text"
       @click="$emit('toggle-sort')"
-    >
-      {{ sortDirection === 'DESC' ? 'Newest first' : 'Oldest first' }}
-    </VBtn>
+    />
   </div>
 </template>
 

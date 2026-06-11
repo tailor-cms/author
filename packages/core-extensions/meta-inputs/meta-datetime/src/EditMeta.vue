@@ -5,9 +5,9 @@
     :placeholder="placeholder"
     variant="outlined"
     persistent-placeholder
-    :readonly="readonly"
-    @click:control="readonly ? null : openMenu"
-    @keydown.enter="readonly ? null : openMenu"
+    readonly
+    @click:control="readonly ? null : openMenu()"
+    @keydown.enter="readonly ? null : openMenu()"
   >
     <VMenu
       v-model="menu"
@@ -27,29 +27,31 @@
             />
           </VWindowItem>
           <VWindowItem :value="2">
-            <VTimePicker v-model="timeInput" ampm-in-title />
+            <VTimePicker v-model="timeInput" color="primary" ampm-in-title />
           </VWindowItem>
         </VWindow>
         <VCardActions class="d-flex pa-4">
-          <VBtn v-if="step === 2" prepend-icon="mdi-arrow-left" @click="step--">
-            Back
-          </VBtn>
+          <VBtn
+            v-if="step === 2"
+            prepend-icon="mdi-arrow-left"
+            text="Back"
+            @click="step--"
+          />
           <VSpacer />
           <VBtn
             v-if="step === 1 && !meta.hideTime"
             :disabled="!dateInput"
+            text="Next"
             @click="step++"
-          >
-            Next
-          </VBtn>
+          />
           <VBtn
             v-if="step === 2 || meta.hideTime"
             :disabled="!dateInput || (!meta.hideTime && !timeInput)"
-            variant="tonal"
+            color="primary"
+            text="Save"
+            variant="flat"
             @click="save"
-          >
-            Save
-          </VBtn>
+          />
         </VCardActions>
       </VCard>
     </VMenu>
@@ -131,10 +133,8 @@ watch(menu, (value) => {
   .v-time-picker-controls__ampm__pm,
   .v-time-picker-controls__ampm__am {
     border: none;
-    border-radius: 1rem !important;
     height: 2.375rem;
     font-size: 1rem;
-    font-weight: bold;
   }
 }
 </style>

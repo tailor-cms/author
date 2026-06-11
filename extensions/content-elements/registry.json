@@ -123,5 +123,15 @@
     "name": "@tailor-cms/ce-mux-video",
     "clientPackage": "@tailor-cms/ce-mux-video-edit",
     "serverPackage": "@tailor-cms/ce-mux-video-server"
+  },
+  {
+    "name": "@tailor-cms/ce-sequence",
+    "clientPackage": "@tailor-cms/ce-sequence-edit",
+    "serverPackage": "@tailor-cms/ce-sequence-server"
+  },
+  {
+    "name": "@tailor-cms/ce-flashcards",
+    "clientPackage": "@tailor-cms/ce-flashcards-edit",
+    "serverPackage": "@tailor-cms/ce-flashcards-server"
   }
 ]

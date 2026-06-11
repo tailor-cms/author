@@ -4,14 +4,12 @@
       <VBtn
         v-bind="activatorProps"
         aria-label="Add users to the group"
+        color="primary"
         class="add-user"
-        color="primary-darken-2"
         prepend-icon="mdi-plus"
-        size="small"
-        variant="tonal"
-      >
-        Add user
-      </VBtn>
+        text=" Add user"
+        variant="flat"
+      />
     </template>
     <template #header>Add users to the user group</template>
     <template #body>
@@ -39,43 +37,46 @@
         <VSelect
           v-model="roleInput"
           :error-messages="errors.role"
-          :items="roles"
+          :items="GROUP_ROLES"
+          :menu-props="{ maxWidth: 420 }"
           aria-label="Role"
           class="group-role-select required mt-4 mb-1"
           label="Role"
           placeholder="Role..."
           variant="outlined"
-        />
+        >
+          <template #item="{ item, props: itemProps }">
+            <VListItem
+              v-bind="itemProps"
+              :subtitle="item.description"
+              :prepend-icon="item.icon"
+              lines="two"
+            />
+          </template>
+        </VSelect>
         <VSwitch
           v-model="skipInviteInput"
           class="ml-1 mb-1"
-          color="primary-darken-3"
           label="Skip invitation email"
           hide-details
-          inset
         />
         <div class="text-body-small text-medium-emphasis ml-1 mb-3">
           Useful for SSO users who don't need a password setup email.
           You can always send the invite later using Reinvite.
         </div>
-        <div class="d-flex justify-end pb-2">
+        <div class="d-flex justify-end pb-2 ga-2">
           <VBtn
             :disabled="isSaving"
-            class="mr-2"
-            color="primary-darken-4"
             variant="text"
+            text="Cancel"
             @click="close"
-          >
-            Cancel
-          </VBtn>
+          />
           <VBtn
             :disabled="isSaving"
-            color="primary-darken-4"
+            color="primary"
             type="submit"
-            variant="tonal"
-          >
-            Add
-          </VBtn>
+            text="Add"
+          />
         </div>
       </form>
     </template>
@@ -84,21 +85,16 @@
 
 <script lang="ts" setup>
 import { array, boolean, object, string } from 'yup';
-import { map, throttle } from 'lodash-es';
+import { throttle } from 'lodash-es';
 import { TailorDialog } from '@tailor-cms/core-components';
-import { titleCase } from '@tailor-cms/utils';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { api } from '@/api';
+import { GROUP_ROLES } from '@/utils/groupRoles';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-interface Role {
-  title: string;
-  value: string;
-}
 
 const props = defineProps<{
   userGroupId: number;
@@ -112,13 +108,6 @@ const emailInputEl = useTemplateRef('emailInputEl');
 const isVisible = ref(false);
 const isSaving = ref(false);
 const suggestedUsers = ref<string[]>([]);
-
-const roles = computed<Role[]>(() =>
-  map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({
-    title: titleCase(value),
-    value,
-  })),
-);
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   initialValues: {
@@ -146,7 +135,7 @@ const onEmailValueChange = (val: string[]) =>
 
 const onEmailInputFocusChange = (isFocused: boolean) => {
   if (isFocused || !emailInputEl.value) return;
-  const searchValue = emailInputEl.value.search;
+  const searchValue = emailInputEl.value?.search ?? '';
   const isValidEmail = EMAIL_PATTERN.test(searchValue);
   const isEmailAlreadyAdded = emailInput.value.find(
     (v: string) => v === searchValue,

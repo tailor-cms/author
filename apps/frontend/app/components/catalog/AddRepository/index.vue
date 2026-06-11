@@ -2,7 +2,7 @@
   <TailorDialog
     v-if="authStore.hasCreateRepositoryAccess"
     v-model="isVisible"
-    header-icon="mdi-folder-plus-outline"
+    header-icon="mdi-folder-plus"
     width="600"
     paddingless
     persistent
@@ -12,20 +12,19 @@
         v-bind="props"
         aria-label="Add repository"
         class="add-repository-btn"
-        color="secondary-darken-1"
+        color="primary"
         prepend-icon="mdi-plus"
-        variant="elevated"
-      >
-        New
-      </VBtn>
+        size="large"
+        text="New"
+        variant="flat"
+      />
     </template>
     <template #header>Create</template>
     <template #body>
-      <div class="bg-primary-darken-3 px-5 pb-6">
+      <VSheet class="px-5 py-4">
         <VTabs
           v-model="selectedTab"
-          bg-color="primary-darken-3"
-          selected-class="bg-primary-darken-2"
+          selected-class="bg-surface-container-high on-surface"
           grow
           hide-slider
         >
@@ -33,35 +32,27 @@
             :value="NEW_TAB"
             aria-label="New repository"
             class="mr-2"
-            color="primary-lighten-5"
-          >
-            New
-          </VTab>
+            text="New"
+          />
           <VTab
             :value="IMPORT_TAB"
             aria-label="Import repository"
             class="ml-2"
-            color="primary-lighten-5"
-          >
-            Import
-          </VTab>
+            text="Import"
+          />
         </VTabs>
-      </div>
-      <form
-        class="pa-4 bg-primary-lighten-5"
-        novalidate
-        @submit.prevent="createRepository"
-      >
+      </VSheet>
+      <form class="pa-4" novalidate @submit.prevent="createRepository">
         <VAlert
           :model-value="!!serverError"
+          :text="serverError"
           class="mt-3 mb-5"
-          color="secondary"
           icon="mdi-alert"
+          type="error"
+          variant="tonal"
           closable
           @click:close="serverError = ''"
-        >
-          {{ serverError }}
-        </VAlert>
+        />
         <VWindow id="addDialogWindow" v-model="selectedTab">
           <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
             <VSelect
@@ -155,7 +146,6 @@
         <div class="d-flex justify-end">
           <VBtn
             :disabled="isSubmitting"
-            color="primary-darken-4"
             variant="text"
             @click="handleCancel"
           >
@@ -165,9 +155,9 @@
             :disabled="isAiEnabled && !aiOutline?.length"
             :loading="isSubmitting"
             class="ml-2"
-            color="primary-darken-2"
+            color="primary"
             type="submit"
-            variant="tonal"
+            variant="flat"
           >
             Create
           </VBtn>
@@ -369,10 +359,6 @@ watch(isVisible, (val) => {
 <style lang="scss" scoped>
 :deep(.v-list-item-subtitle) {
   margin: 0.25rem 0 0;
-}
-
-.v-alert :deep(.mdi-close) {
-  color: #eee;
 }
 
 .dialog-subcontainer {

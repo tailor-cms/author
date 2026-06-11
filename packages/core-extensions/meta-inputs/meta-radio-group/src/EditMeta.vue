@@ -24,7 +24,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   meta: () => ({ value: null }),
-  color: 'primary-darken-3',
+  color: '',
   dark: false,
   readonly: false,
 });

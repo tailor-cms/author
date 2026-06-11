@@ -20,7 +20,6 @@
           v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
           class="sidebar-toggle"
           aria-label="Open sidebar"
-          color="primary-darken-2"
           density="comfortable"
           icon="mdi-chevron-double-right"
           size="small"

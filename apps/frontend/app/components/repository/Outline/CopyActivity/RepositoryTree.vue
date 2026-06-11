@@ -11,9 +11,8 @@
     v-show="!noResultsMessage"
     :items="processedItems"
     :opened="expandedActivityIds"
-    base-color="primary-darken-3"
+    density="compact"
     class="pa-0"
-    border
     open-all
     rounded
   >
@@ -24,22 +23,21 @@
           'activity-select-checkbox',
           isSelectable(item) ? 'opacity-100' : 'opacity-50',
         ]"
+        :icon="isSelected(item)
+          ? 'mdi-checkbox-marked'
+          : 'mdi-checkbox-blank-outline'
+        "
         :disabled="!isSelectable(item)"
-        color="primary"
         @click.stop="toggleSelection(item)"
-      >
-        mdi-checkbox-{{ isSelected(item) ? 'marked' : 'blank-outline' }}
-      </VIcon>
+      />
     </template>
   </VTreeview>
   <VAlert
     v-if="noResultsMessage"
-    color="primary-darken-2"
+    :text="noResultsMessage"
     icon="mdi-information-outline"
     variant="tonal"
-  >
-    {{ noResultsMessage }}
-  </VAlert>
+  />
 </template>
 
 <script lang="ts" setup>

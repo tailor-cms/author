@@ -5,64 +5,33 @@
         v-for="{ id, name, truncatedName } in tags"
         :key="id"
         close-label="Delete tag"
-        color="primary-lighten-3"
-        variant="tonal"
         size="small"
-        label
+        rounded="lg"
       >
-        <VTooltip
-          :disabled="name.length === truncatedName.length"
-          content-class="bg-primary-darken-4"
-          location="bottom"
-          offset="34"
-          open-delay="100"
-        >
-          <template #activator="{ props: nameTooltipProps }">
-            <div v-bind="nameTooltipProps">{{ truncatedName }}</div>
-          </template>
-          <span>{{ name }}</span>
-        </VTooltip>
+        <div
+          v-tooltip:bottom="{
+            text: name,
+            openDelay: 100,
+            disabled: name.length === truncatedName.length,
+          }">
+          {{ truncatedName }}
+        </div>
         <template #close>
-          <VTooltip
-            content-class="bg-primary-darken-4"
-            location="bottom"
-            offset="20"
-            open-delay="100"
-          >
-            <template #activator="{ props: closeTooltipProps }">
-              <VBtn
-                v-bind="closeTooltipProps"
-                :ripple="false"
-                color="primary-lighten-3"
-                icon="mdi-close-circle"
-                variant="plain"
-                @click.stop="showTagDeleteConfirmation(id, name)"
-              />
-            </template>
-            Delete tag
-          </VTooltip>
+          <VIcon
+            v-tooltip:bottom="{ text: 'Delete tag', openDelay: 100 }"
+            @click.stop="showTagDeleteConfirmation(id, name)"
+          />
         </template>
       </VChip>
     </div>
-    <VTooltip
+    <VBtn
       v-if="!exceededTagLimit"
-      content-class="bg-primary-darken-4"
-      location="bottom"
-      offset="20"
-      open-delay="400"
-    >
-      <template #activator="{ props: tooltipProps }">
-        <VBtn
-          v-bind="tooltipProps"
-          aria-label="Add tag"
-          class="ml-2"
-          color="primary-lighten-2"
-          icon="mdi-tag-plus"
-          @click.stop="showTagDialog = true"
-        />
-      </template>
-      Add tag
-    </VTooltip>
+      v-tooltip:bottom="{ text: 'Add tag', openDelay: 400 }"
+      aria-label="Add tag"
+      class="text-medium-emphasis ml-2"
+      icon="mdi-tag-plus"
+      @click.stop="showTagDialog = true"
+    />
     <AddTag
       :is-visible="showTagDialog"
       :repository="repository"
@@ -107,6 +76,7 @@ const showTagDeleteConfirmation = (tagId: number, tagName: string) => {
   const showConfirmationDialog = useConfirmationDialog();
   showConfirmationDialog({
     title: 'Delete tag',
+    color: 'error',
     message: `Are you sure you want to delete tag ${tagName}?`,
     action: () => repositoryStore.removeTag(props.repository.id, tagId),
   });

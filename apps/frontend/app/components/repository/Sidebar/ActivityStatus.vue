@@ -4,51 +4,37 @@
     class="d-flex align-center pa-2 ga-3"
     variant="tonal"
   >
-    <VTooltip v-if="statusConfig" location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <span
-          v-bind="tooltipProps"
-          class="d-flex align-center text-body-medium font-weight-bold"
-        >
-          <VIcon
-            :color="statusConfig.color"
-            icon="mdi-circle"
-            size="small"
-            start
-          />
-          {{ statusConfig.label.toUpperCase() }}
-        </span>
+    <VChip
+      v-if="statusConfig"
+      v-tooltip:bottom="{ text: 'Status', openDelay: 500 }"
+      :text="statusConfig.label.toUpperCase()"
+      class="font-weight-bold pl-2 pr-0"
+      density="comfortable"
+      variant="text"
+    >
+      <template #prepend>
+        <VIcon :color="statusConfig.color" icon="mdi-circle" size="small" start />
       </template>
-      Status
-    </VTooltip>
+    </VChip>
     <UserAvatar
       :img-url="activityStatus.assignee?.imgUrl"
       :label="activityStatus.assignee?.label ?? 'Unassigned'"
-      color="primary-lighten-4"
       size="x-small"
     />
-    <VTooltip v-if="priorityConfig" location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <VIcon
-          :color="priorityConfig.color"
-          :icon="priorityConfig.icon"
-          v-bind="tooltipProps"
-          size="large"
-        />
-      </template>
-      {{ priorityConfig.label }} priority
-    </VTooltip>
-    <VTooltip v-if="activityStatus.dueDate" location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <DueDate
-          v-bind="tooltipProps"
-          :date="activityStatus.dueDate"
-          class="text-body-small font-weight-bold"
-          format="MM/dd/yy"
-        />
-      </template>
-      Due Date
-    </VTooltip>
+    <VIcon
+      v-if="priorityConfig"
+      v-tooltip:bottom="{ text: `${priorityConfig.label} priority`, openDelay: 500 }"
+      :color="priorityConfig.color"
+      :icon="priorityConfig.icon"
+      size="large"
+    />
+    <DueDate
+      v-if="activityStatus.dueDate"
+      v-tooltip:bottom="{ text: 'Due Date', openDelay: 500 }"
+      :date="activityStatus.dueDate"
+      class="text-body-small font-weight-bold"
+      format="MM/dd/yy"
+    />
     <VSpacer />
     <VIcon class="mx-1" icon="mdi-arrow-right" size="small" />
   </VCard>

@@ -1,15 +1,14 @@
 <template>
   <div class="repository-settings">
     <VNavigationDrawer
-      border="surface"
-      color="primary-darken-3"
+      color="surface-container-low"
       elevation="0"
       location="left"
       order="1"
       width="380"
       permanent
     >
-      <VList class="pa-4 text-left" slim>
+      <VList class="pa-4 text-left" nav>
         <VListItem
           v-for="item in sections"
           :key="item.name"
@@ -17,8 +16,6 @@
           :subtitle="item.subtitle"
           :title="item.label"
           :to="{ name: item.name }"
-          class="mb-2"
-          lines="two"
           rounded="lg"
         />
       </VList>

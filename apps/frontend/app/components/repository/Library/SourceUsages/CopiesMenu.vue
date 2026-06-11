@@ -3,33 +3,25 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
-        append-icon="mdi-cheron-down"
-        color="primary-lighten-4"
+        append-icon="mdi-chevron-down"
         size="small"
         text="View"
         variant="text"
         @click.stop
       />
     </template>
-    <VList class="overflow-y-auto" density="compact" max-height="300">
+    <VList class="overflow-y-auto" density="compact" max-height="300" nav>
       <VListSubheader>
         {{ copies.length }} linked {{ pluralize('copy', copies.length) }}
       </VListSubheader>
       <VListItem
         v-for="copy in copies"
         :key="copy.uid"
+        :title="copy.repositoryName"
+        :subtitle="copy.name"
+        prepend-icon="mdi-file-link-outline"
         @click="$emit('select', copy)"
-      >
-        <template #prepend>
-          <VIcon icon="mdi-file-link-outline" size="large" />
-        </template>
-        <VListItemTitle class="text-body-medium">
-          {{ copy.repositoryName }}
-        </VListItemTitle>
-        <VListItemSubtitle class="text-body-small">
-          {{ copy.name }}
-        </VListItemSubtitle>
-      </VListItem>
+      />
     </VList>
   </VMenu>
 </template>

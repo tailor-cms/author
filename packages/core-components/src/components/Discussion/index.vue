@@ -8,7 +8,6 @@
         v-if="hasHiddenComments"
         :text="showAll ? 'Show less' : 'Show more'"
         class="float-right"
-        color="primary-lighten-4"
         rounded="lg"
         size="small"
         variant="text"
@@ -16,21 +15,17 @@
         @click="showAll = !showAll"
       />
     </div>
-    <div v-if="showHeading" class="discussion-heading text-primary-lighten-4">
+    <div v-if="showHeading" class="discussion-heading">
       Comments
     </div>
     <VAlert
       v-if="!commentsCount && showNotifications"
       class="alert mt-1 mb-4"
-      color="primary-lighten-2"
       icon="mdi-keyboard-outline"
+      text="Be the First to Comment!"
       variant="tonal"
       prominent
-    >
-      <span class="px-1 text-primary-lighten-4 text-body-medium">
-        Be the First to Comment!
-      </span>
-    </VAlert>
+    />
     <DiscussionThread
       v-if="thread.length"
       :is-activity-thread="isActivityThread"
@@ -67,7 +62,6 @@
         :disabled="isTextEditorEmpty || error"
         aria-label="Post comment"
         class="mt-3"
-        color="teal-lighten-5"
         icon="mdi-send"
         variant="text"
         @click="post"
@@ -223,8 +217,6 @@ watch(
 
 <style lang="scss" scoped>
 .embedded-discussion {
-  font-family: Roboto, Arial, sans-serif;
-
   .discussion-heading {
     padding: 0 0 0.5rem 0;
     margin-bottom: 1rem;

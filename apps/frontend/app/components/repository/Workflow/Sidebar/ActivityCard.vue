@@ -5,14 +5,12 @@
     variant="tonal"
   >
     <VIcon :color="color" icon="mdi-label" />
-    <VTooltip location="bottom" open-delay="500">
-      <template #activator="{ props: tooltipProps }">
-        <span v-bind="tooltipProps" class="flex-shrink-0 mx-2">
-          {{ shortId }}
-        </span>
-      </template>
-      {{ typeLabel }} ID
-    </VTooltip>
+    <span
+      v-tooltip:bottom="{ text: `${typeLabel} ID`, openDelay: 500 }"
+      class="flex-shrink-0 mx-2"
+    >
+      {{ shortId }}
+    </span>
     <div class="text-truncate">{{ name }}</div>
     <VSpacer />
     <VIcon class="mx-1" icon="mdi-arrow-right" size="small" />

@@ -3,7 +3,6 @@
     <VTextField
       v-model="query"
       :disabled="isSearching"
-      color="primary-lighten-3"
       density="comfortable"
       label="What are you looking for?"
       max-width="500"
@@ -19,7 +18,6 @@
     />
     <VBtn
       :loading="isSearching"
-      color="primary-lighten-3"
       icon="mdi-magnify"
       variant="tonal"
       @click="query?.trim() && emit('search')"
@@ -31,14 +29,13 @@
       v-for="filter in CONTENT_FILTERS"
       :key="filter.value"
       :active="contentFilter === filter.value"
-      :color="contentFilter === filter.value ? 'blue-lighten-4' : 'primary-lighten-3'"
+      :color="contentFilter === filter.value ? 'tertiary' : ''"
       :prepend-icon="filter.icon"
+      :text="filter.label"
       size="small"
       variant="tonal"
       @click="contentFilter = filter.value"
-    >
-      {{ filter.label }}
-    </VBtn>
+    />
   </div>
 </template>
 

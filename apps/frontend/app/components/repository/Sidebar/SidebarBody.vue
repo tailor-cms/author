@@ -1,23 +1,16 @@
 <template>
   <div class="body">
-    <VSheet class="d-flex align-center my-5 pa-1" color="transparent">
+    <div class="d-flex align-center my-5 pa-1">
       <div class="d-flex align-center mr-1 text-body-medium font-weight-bold">
-        <VIcon :color="config.color" class="mr-2" size="26">mdi-label</VIcon>
+        <VIcon :color="config.color" class="mr-2" icon="mdi-label" size="26" />
         <span>{{ config.label.toUpperCase() }}</span>
       </div>
       <VDivider class="my-2 mx-3" vertical />
-      <VTooltip location="bottom" open-delay="100">
-        <template #activator="{ props: tooltipProps }">
-          <LabelChip
-            v-bind="tooltipProps"
-            color="primary-lighten-5"
-            density="compact"
-          >
-            {{ activity.shortId }}
-          </LabelChip>
-        </template>
-        {{ config.label }} ID
-      </VTooltip>
+      <LabelChip
+        v-tooltip:bottom="{ text: `${config.label} ID`, openDelay: 100 }"
+        :text="activity.shortId"
+        density="compact"
+      />
       <VSpacer />
       <VBtn
         :key="`${activityUrl}-identifier`"
@@ -27,12 +20,11 @@
           () => notify('ID copied to the clipboard', { immediate: true })
         "
         class="mr-2 px-4"
-        color="primary-lighten-3"
         size="small"
         variant="tonal"
       >
-        <VIcon class="mr-1" small>mdi-content-copy</VIcon>
-        <VIcon dense>mdi-identifier</VIcon>
+        <VIcon class="mr-1" icon="mdi-content-copy" />
+        <VIcon icon="mdi-identifier" />
       </VBtn>
       <VBtn
         :key="`${activityUrl}-link`"
@@ -42,14 +34,13 @@
           () => notify('Link copied to the clipboard', { immediate: true })
         "
         class="px-4"
-        color="primary-lighten-3"
         size="small"
         variant="tonal"
       >
-        <VIcon class="mr-1" small>mdi-content-copy</VIcon>
-        <VIcon dense>mdi-link</VIcon>
+        <VIcon class="mr-1" icon="mdi-content-copy" />
+        <VIcon icon="mdi-link" />
       </VBtn>
-    </VSheet>
+    </div>
     <ActivityStatus
       v-if="activity.isTrackedInWorkflow"
       :id="activity.id"
@@ -64,7 +55,7 @@
       class="mt-4"
     />
     <SourceUsages
-      v-if="!activity.isLinkedCopy"
+      v-else
       :activity="activity"
       class="mt-4"
       @copy:view="viewCopy"

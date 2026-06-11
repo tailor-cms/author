@@ -2,7 +2,7 @@
   <VSelect
     v-model="selectedId"
     :items="items"
-    bg-color="primary-darken-2"
+    bg-color="surface-container"
     class="user-group-select"
     item-title="name"
     item-value="id"

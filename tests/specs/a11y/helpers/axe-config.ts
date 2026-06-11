@@ -3,13 +3,35 @@ import { test as base } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
 type AxeFixture = {
+  // auto fixture exposes no value
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+  forceColorMode: void;
   makeAxeBuilder: () => AxeBuilder;
 };
+
+// Mirrors the app's persisted color-mode storage (see useColorMode.ts).
+const COLOR_MODE_STORAGE_KEY = 'tailor:color-mode';
 
 // Extend the base test by providing a "makeAxeBuilder" function.
 // This new "test" can be used in multiple test files, ensuring
 // that each test gets a consistently configured AxeBuilder instance.
 export const test = base.extend<AxeFixture>({
+  // Force the theme before any app code runs, so each a11y project can scan a
+  // specific color mode. The mode comes from the project's `metadata.colorMode`
+  // (set in playwright.config.ts) and defaults to dark.
+  forceColorMode: [
+    async ({ page }, use, testInfo) => {
+      const colorMode =
+        (testInfo.project.metadata as { colorMode?: 'light' | 'dark' })
+          .colorMode ?? 'dark';
+      await page.addInitScript(
+        ([key, mode]) => window.localStorage.setItem(key, mode),
+        [COLOR_MODE_STORAGE_KEY, colorMode] as const,
+      );
+      await use();
+    },
+    { auto: true },
+  ],
   makeAxeBuilder: async ({ page }, use) => {
     const makeAxeBuilder = () =>
       new AxeBuilder({ page })

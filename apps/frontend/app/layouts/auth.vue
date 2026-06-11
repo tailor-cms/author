@@ -1,24 +1,27 @@
 <template>
-  <div class="auth-container fill-height bg-primary-darken-4 pa-4">
+  <div class="auth-container fill-height bg-surface pa-4">
     <VSheet
-      class="auth-panel d-flex bg-primary-darken-3"
-      border="surface sm"
+      class="auth-panel d-flex pa-8"
+      color="surface-container-low"
       max-width="840"
       rounded="xl"
+      border
     >
-      <VRow no-gutters>
+      <div class="theme-switcher">
+        <ThemeSwitcher />
+      </div>
+      <VRow>
         <VCol
-          class="d-flex justify-start align-start pa-6"
+          class="d-flex justify-start align-start"
           cols="12"
           lg="5"
-          md="12"
         >
           <div class="d-flex align-center justify-center">
-            <img :src="logoPath" alt="Logo" class="logo" width="78" />
-            <h1 class="app-title ml-4 text-primary-lighten-5">{{ title }}</h1>
+            <img :src="logoPath" alt="Logo" class="logo" width="64" />
+            <h1 class="app-title ml-4">{{ title }}</h1>
           </div>
         </VCol>
-        <VCol class="auth-body py-8" cols="12" lg="7" md="12">
+        <VCol class="auth-body" cols="12" lg="7">
           <slot></slot>
         </VCol>
       </VRow>
@@ -27,6 +30,8 @@
 </template>
 
 <script lang="ts" setup>
+import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue';
+
 const props = defineProps<{
   title: string;
 }>();
@@ -49,28 +54,31 @@ const logoPath = '/img/logo-new.svg';
   // Override autofill styles
   input:-webkit-autofill {
     color: #fafafa !important;
-    background-color: #263238 !important;
+    background-color: rgba(var(--v-theme-surface-container-low)) !important;
     -webkit-text-fill-color: #fafafa !important;
-    -webkit-box-shadow: 0 0 0 1000px #263238 inset !important;
-  }
-
-  // Override vuetify error styles for auth forms
-  .v-input--error:not(.v-input--disabled) {
-    .v-input__details .v-messages,
-    .v-field__prepend-inner > .v-icon,
-    .v-field__outline,
-    .v-label.v-field-label {
-      color: #f8bbd0;
-    }
+    -webkit-box-shadow:
+      0 0 0 1000px rgba(var(--v-theme-surface-container-low)) inset !important;
   }
 }
 
 .auth-container .auth-panel {
+  position: relative;
   width: 100%;
 
-  .auth-body {
-    padding: 2rem;
+  .theme-switcher {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
 
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .auth-body {
     a {
       color: inherit;
       font-weight: 400;

@@ -1,7 +1,12 @@
 <template>
   <NuxtLayout name="main">
-    <VContainer class="h-100 pt-14 user-panel">
-      <VSheet color="primary-lighten-4" rounded="lg">
+    <VSheet
+      class="h-100 mx-3"
+      color="surface-container-low"
+      rounded="t-xl"
+      border
+    >
+      <VContainer class="h-100 pt-14 user-panel">
         <VLayout>
           <VRow class="ma-5">
             <VCol
@@ -17,14 +22,12 @@
               <ChangePassword />
             </VCol>
             <VCol>
-              <VSheet color="primary-lighten-5" rounded="lg">
-                <UserInfo />
-              </VSheet>
+              <UserInfo />
             </VCol>
           </VRow>
         </VLayout>
-      </VSheet>
-    </VContainer>
+      </VContainer>
+    </VSheet>
   </NuxtLayout>
 </template>
 
@@ -55,6 +58,7 @@ const deleteAvatar = () => {
   const showConfirmationDialog = useConfirmationDialog();
   showConfirmationDialog({
     title: 'Delete avatar?',
+    color: 'error',
     message: 'Are you sure you want to delete your profile picture?',
     action: () => saveAvatar(''),
   });

@@ -2,68 +2,50 @@
   <span>
     <VMenu offset="10">
       <template #activator="{ props: menuProps }">
-        <VTooltip
-          content-class="bg-primary-darken-4"
-          location="top"
-          open-delay="500"
-        >
-          <template #activator="{ props: tooltipProps }">
-            <VBtn
-              v-bind="{ ...menuProps, ...tooltipProps }"
-              aria-label="Order by"
-              class="my-1"
-              color="primary-lighten-2"
-              icon="mdi-sort-variant"
-              variant="text"
-            />
-          </template>
-          <span>Order by</span>
-        </VTooltip>
+        <VBtn
+          v-tooltip:top="{ text: 'Order by', openDelay: 500 }"
+          v-bind="menuProps"
+          aria-label="Order by"
+          class="text-medium-emphasis my-1"
+          icon="mdi-sort-variant"
+          variant="text"
+        />
       </template>
       <VList class="py-0">
         <VListItem
           v-for="{ text, field, direction } in options"
           :key="field"
-          :class="{ 'bg-primary-lighten-4': props.sortBy.field === field }"
+          :active="sortBy.field === field"
+          :title="text"
           @click="update({ field, direction })"
-        >
-          <VListItemTitle class="pr-3 text-left">{{ text }}</VListItemTitle>
-        </VListItem>
+        />
       </VList>
     </VMenu>
-    <VTooltip
-      content-class="bg-primary-darken-4"
-      location="top"
-      open-delay="500"
-    >
-      <template #activator="{ props: tooltipProps }">
-        <VBtn
-          v-bind="tooltipProps"
-          :icon="`mdi-sort-${
-            sortBy?.direction === 'ASC' ? 'ascending' : 'descending'
-          }`"
-          aria-label="Order direction"
-          class="my-1"
-          color="primary-lighten-2"
-          variant="text"
-          @click="toggleOrder"
-        />
-      </template>
-      <span>Order direction</span>
-    </VTooltip>
+    <VBtn
+      v-tooltip:top="{ text: 'Order direction', openDelay: 500 }"
+      :icon="sortIcon"
+      aria-label="Order direction"
+      class="text-medium-emphasis my-1"
+      variant="text"
+      @click="toggleOrder"
+    />
   </span>
 </template>
 
 <script lang="ts" setup>
-export interface Props {
-  sortBy?: { field: string; direction: string };
-}
+export interface SortBy { field: string; direction: string };
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<{ sortBy?: SortBy }>(), {
   sortBy: () => ({ field: 'createdAt', direction: 'DESC' }),
 });
 
 const emit = defineEmits(['update']);
+
+const sortIcon = computed(() =>
+  props.sortBy?.direction === 'ASC'
+    ? 'mdi-sort-ascending'
+    : 'mdi-sort-descending',
+);
 
 const options = computed(() => [
   { text: 'Creation date', field: 'createdAt', direction: 'DESC' },
@@ -76,6 +58,6 @@ const update = (sortOption: { field: string; direction: string }) => {
 
 const toggleOrder = () => {
   const direction = props.sortBy.direction === 'ASC' ? 'DESC' : 'ASC';
-  emit('update', { ...props.sortBy, direction });
+  update({ ...props.sortBy, direction });
 };
 </script>

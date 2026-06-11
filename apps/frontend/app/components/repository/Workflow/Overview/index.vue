@@ -3,32 +3,28 @@
     :headers="headers"
     :items="items"
     :row-props="({ item }) => ({ class: item.class })"
-    class="bg-primary-darken-2 rounded-lg text-left"
+    class="bg-surface-container rounded-lg text-left"
     items-per-page="25"
     fixed-header
     @click:row="selectActivity"
   >
     <template #[`item.status`]="{ item: { status } }">
-      <VChip size="small" rounded>
-        <VIcon :color="status.color" icon="mdi-circle" size="small" start />
-        {{ status.label }}
+      <VChip :text="status.label" size="small" rounded>
+        <template #prepend>
+          <VIcon :color="status.color" icon="mdi-circle" size="small" start />
+        </template>
       </VChip>
     </template>
     <template #[`item.assignee`]="{ item: { assignee } }">
       <div class="d-flex align-center gap-1">
-        <UserAvatar
-          :img-url="assignee?.imgUrl"
-          color="primary-lighten-4"
-          size="x-small"
-          start
-        />
+        <UserAvatar :img-url="assignee?.imgUrl" size="22" start />
         {{ assignee?.label ?? 'Unassigned' }}
       </div>
     </template>
     <template #[`item.priority`]="{ item: { priority } }">
       <VChip :color="priority.color" size="small" rounded>
         <VIcon :icon="priority.icon" size="x-large" start />
-        <div class="text-white">{{ priority.label }}</div>
+        <div class="text-inverse-surface">{{ priority.label }}</div>
       </VChip>
     </template>
     <template #[`item.dueDate`]="{ item }">
@@ -139,7 +135,7 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 
   &.selected,
   &:hover {
-    background: rgba(var(--v-theme-primary-darken-1));
+    background: rgba(var(--v-theme-surface-container-high));
   }
 
   &.selected {
@@ -148,11 +144,6 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 }
 
 .v-table :deep(th) {
-  background: rgba(var(--v-theme-primary-darken-2));
-
-  &:hover {
-    font-weight: bold;
-    color: white;
-  }
+  background: rgba(var(--v-theme-surface-container));
 }
 </style>

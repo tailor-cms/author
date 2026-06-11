@@ -3,8 +3,6 @@
     <VTextField
       v-model="url"
       :error-messages="error"
-      color="primary-darken-2"
-      density="comfortable"
       hide-details="auto"
       label="File URL"
       placeholder="https://example.com/file.pdf"
@@ -15,8 +13,6 @@
     <VTextField
       v-model="title"
       class="mt-3"
-      color="primary-darken-2"
-      density="comfortable"
       label="Title (optional)"
       variant="outlined"
       hide-details
@@ -36,14 +32,14 @@ const title = ref('');
 const error = ref('');
 
 const submit = () => {
-  if (!url.value) return;
-  if (!URL.canParse(url.value)) {
+  const value = url.value.trim();
+  if (!value || !URL.canParse(value)) {
     error.value = 'Please enter a valid URL';
     return;
   }
   error.value = '';
   emit('submit', {
-    url: url.value.trim(),
+    url: value,
     title: title.value.trim() || undefined,
   });
 };

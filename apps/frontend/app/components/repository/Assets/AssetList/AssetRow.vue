@@ -1,33 +1,42 @@
 <template>
-  <VRow class="asset-row py-3 align-center" no-gutters @click="emit('preview', asset);">
+  <VRow
+    :class="{ active: isActive }"
+    class="asset-row px-2 py-3 align-center bg-surface-container"
+    density="compact"
+    @click="emit('preview', asset)"
+  >
     <VCol class="px-1" cols="auto">
       <VCheckboxBtn
         :model-value="isSelected"
-        base-color="primary-lighten-2"
-        color="primary-lighten-3"
+        color="primary"
         density="compact"
-        @click.stop="emit('toggle', asset);" />
+        @click.stop="emit('toggle', asset);"
+      />
     </VCol>
     <VCol cols="auto" class="px-1">
-      <VIcon
-        :icon="getAssetIcon(asset)"
-        :color="`${getAssetColor(asset)}-lighten-3`"
-        size="28"
-      />
+      <VAvatar
+        color="surface-container-low"
+        class="asset-type-avatar"
+        size="40"
+        rounded="lg"
+      >
+        <VIcon :color="getAssetColor(asset)" :icon="getAssetIcon(asset)" size="20" />
+      </VAvatar>
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
       <div class="d-flex align-center text-title-small">
-        <span data-testid="assetRow_name" class="text-primary-lighten-5 text-truncate">
+        <span data-testid="assetRow_name" class="text-truncate">
           {{ getAssetDisplayName(asset) }}
         </span>
         <VIcon
           v-if="(asset.meta as any)?.isCoreSource"
           class="ml-1"
-          color="amber-lighten-1"
+          color="tertiary"
           icon="mdi-star"
-          size="14" />
+          size="14"
+        />
       </div>
-      <div class="d-flex align-center text-body-medium text-primary-lighten-3">
+      <div class="d-flex align-center text-medium-emphasis text-body-medium">
         <span data-testid="assetRow_type" class="text-capitalize">
           {{ getAssetTypeLabel(asset) }}
         </span>
@@ -49,48 +58,22 @@
         :img-url="asset.uploader.imgUrl ?? undefined"
         :label="asset.uploader.label"
         class="mr-1"
-        size="24" />
-      <VMenu location="bottom end" @click.stop>
-        <template
-          #activator="{
-            props: menuProps,
-          }">
-          <VBtn
-            v-bind="menuProps"
-            aria-label="Actions"
-            class="ml-1"
-            color="primary-lighten-3"
-            icon="mdi-dots-vertical"
-            size="small"
-            variant="text"
-            @click.stop />
-        </template>
-        <VList density="compact">
-          <VListItem
-            v-if="asset.type !== AssetType.Link"
-            prepend-icon="mdi-download-outline"
-            title="Download"
-            @click="emit('download', asset);"
-          />
-          <VListItem
-            v-if="isIndexable(asset)"
-            prepend-icon="mdi-brain"
-            title="Index"
-            @click="emit('index', asset);"
-          />
-          <VListItem
-            prepend-icon="mdi-delete-outline"
-            title="Delete"
-            @click="emit('delete', asset);"
-          />
-        </VList>
-      </VMenu>
+        size="24"
+      />
+      <AssetMenu
+        :asset="asset"
+        class="ml-1"
+        @download="emit('download', $event)"
+        @index="emit('index', $event)"
+        @deindex="emit('deindex', $event)"
+        @delete="emit('delete', $event)"
+      />
     </VCol>
   </VRow>
 </template>
 
 <script lang="ts" setup>
-import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
+import type { Asset } from '@tailor-cms/interfaces/asset';
 import { UserAvatar } from '@tailor-cms/core-components';
 
 import {
@@ -100,13 +83,14 @@ import {
   getAssetDisplayName,
   getAssetIcon,
   getAssetTypeLabel,
-  isIndexable,
 } from '../utils';
+import AssetMenu from '../AssetMenu.vue';
 import IndexingStatusBadge from '../IndexingStatusBadge.vue';
 
 defineProps<{
   asset: Asset;
   isSelected: boolean;
+  isActive: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -114,6 +98,7 @@ const emit = defineEmits<{
   toggle: [asset: Asset];
   download: [asset: Asset];
   index: [asset: Asset];
+  deindex: [asset: Asset];
   delete: [asset: Asset];
 }>();
 </script>
@@ -125,7 +110,11 @@ const emit = defineEmits<{
   transition: background 0.15s ease;
 
   &:hover {
-    background: rgba(var(--v-theme-primary-lighten-3), 0.08);
+    background-color: rgb(var(--v-theme-surface-container-high));
+  }
+
+  &.active {
+    background: rgb(var(--v-theme-surface-container-high));
   }
 }
 </style>

@@ -1,38 +1,34 @@
 <template>
   <div class="toolbar d-flex align-center flex-wrap ga-2">
     <template v-if="isCollection">
-      <VHover>
-        <template #default="{ props: hoverProps }">
-          <VTextField
-            v-bind="hoverProps"
-            v-model="search"
-            :bg-color="'transparent'"
-            density="compact"
-            min-width="220"
-            placeholder="Search by name..."
-            prepend-inner-icon="mdi-magnify"
-            rounded="xl"
-            variant="outlined"
-            clearable
-            hide-details
-            @click:clear="search = ''"
-          />
-        </template>
-      </VHover>
+      <VTextField
+        v-model="search"
+        bg-color="transparent"
+        density="comfortable"
+        max-width="384"
+        min-width="220"
+        placeholder="Search by name..."
+        prepend-inner-icon="mdi-magnify"
+        rounded="pill"
+        variant="solo-filled"
+        clearable
+        flat
+        hide-details
+        @click:clear="search = ''"
+      />
       <VSpacer />
       <VMenu location="bottom end">
         <template #activator="{ props: menuProps }">
           <VBtn
             v-bind="menuProps"
+            :text="activeSortLabel"
             append-icon="mdi-chevron-down"
             class="sort-btn"
             prepend-icon="mdi-sort-variant"
             rounded="lg"
             size="small"
             variant="tonal"
-          >
-            {{ activeSortLabel }}
-          </VBtn>
+          />
         </template>
         <VList density="compact" min-width="220" slim>
           <VListSubheader>Sort by</VListSubheader>
@@ -49,7 +45,7 @@
       <CreateDialog
         :anchor="anchor"
         :repository-id="currentRepositoryStore.repositoryId as number"
-        activator-color="teal-lighten-3"
+        activator-color="secondary"
         activator-icon="mdi-plus"
         size="small"
         variant="tonal"
@@ -57,48 +53,40 @@
       />
     </template>
     <template v-else>
-      <VHover>
-        <template #default="{ props: hoverProps }">
-          <VTextField
-            v-bind="hoverProps"
-            v-model="search"
-            :bg-color="'transparent'"
-            density="compact"
-            min-width="220"
-            placeholder="Search by name or id..."
-            prepend-inner-icon="mdi-magnify"
-            rounded="xl"
-            variant="outlined"
-            clearable
-            hide-details
-            @click:clear="search = ''"
-          />
-        </template>
-      </VHover>
+      <VTextField
+        v-model="search"
+        bg-color="transparent"
+        density="comfortable"
+        min-width="220"
+        max-width="384"
+        placeholder="Search by name or id..."
+        prepend-inner-icon="mdi-magnify"
+        rounded="pill"
+        variant="solo-filled"
+        clearable
+        flat
+        hide-details
+        @click:clear="search = ''"
+      />
       <VSpacer />
+      <VBtn
+        v-if="!isFlat"
+        :disabled="!!search"
+        :text="isOutlineExpanded ? 'Collapse all' : 'Expand all' "
+        rounded="lg"
+        variant="tonal"
+        @click="currentRepositoryStore.toggleOutlineExpand"
+      />
       <LinkContent :anchor="anchor" show-activator />
       <CreateDialog
         :anchor="anchor"
         :repository-id="currentRepositoryStore.repositoryId as number"
-        activator-color="teal-lighten-3"
+        activator-color="primary"
         activator-icon="mdi-plus"
-        size="small"
-        variant="tonal"
+        variant="flat"
         test-id-prefix="repository__createRootActivity"
         show-activator
       />
-      <VBtn
-        v-if="!isFlat"
-        :disabled="!!search"
-        class="text-none"
-        rounded="lg"
-        size="small"
-        variant="tonal"
-        width="90"
-        @click="currentRepositoryStore.toggleOutlineExpand"
-      >
-        {{ isOutlineExpanded ? 'Collapse all' : 'Expand all' }}
-      </VBtn>
     </template>
   </div>
 </template>
@@ -169,18 +157,5 @@ const anchor = computed(() => last(rootActivities.value));
   &:hover {
     opacity: 1;
   }
-}
-
-.v-text-field {
-  max-width: 24rem;
-  transition: all 1s;
-
-  :deep(.v-field__outline) {
-    display: none;
-  }
-}
-
-:deep(input::placeholder) {
-  opacity: 0.75;
 }
 </style>

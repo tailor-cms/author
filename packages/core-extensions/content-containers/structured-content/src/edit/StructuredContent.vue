@@ -11,38 +11,35 @@
       />
       <VBtn
         append-icon="mdi-shimmer"
-        color="teal-darken-2"
+        color="secondary"
         size="small"
         text="Do the magic"
         variant="tonal"
-        @click="
-          generateContent({
-            type: AiRequestType.Create,
-            text: 'Generate content for this section.',
-            responseSchema: AiResponseSchema.Html,
-          })
-        "
+        @click="generateContent({
+          type: AiRequestType.Create,
+          text: 'Generate content for this section.',
+          responseSchema: AiResponseSchema.Html,
+        })"
       />
     </div>
     <VSheet
       v-if="isAiGeneratingContent"
-      class="bg-primary-darken-4 mb-4 pt-8 pb-8 text-title-small rounded-lg"
+      class="bg-surface-container-high mb-4 pt-8 pb-8 text-title-small"
+      rounded="lg"
     >
       <CircularProgress />
-      <div class="pt-3 text-primary-lighten-4 font-weight-bold">
+      <div class="pt-3 font-weight-bold">
         <span>Content generation in progress...</span>
       </div>
     </VSheet>
     <VAlert
       v-else-if="!containerContent.length"
+      :text="isDisabled ? `Empty ${label}` : `Click the button below to add ${label}.`"
       class="mt-7 mr-2 mb-11"
-      color="primary-darken-2"
       icon="mdi-information-outline"
       variant="tonal"
       prominent
-    >
-      {{ isDisabled ? `Empty ${label}` : `Click the button below to add ${label}.` }}
-    </VAlert>
+    />
     <ElementList
       v-if="!isAiGeneratingContent"
       :activity="container"
@@ -79,7 +76,6 @@
           :position="Math.min(insertElementPosition, lastPosition)"
           :show="!isDisabled && isAddDrawerVisible"
           class="my-5"
-          color="primary-darken-3"
           label="Add content element"
           variant="tonal"
           large

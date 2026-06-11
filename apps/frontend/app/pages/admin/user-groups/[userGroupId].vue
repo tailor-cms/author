@@ -2,15 +2,15 @@
   <div class="user-group-users">
     <VRow class="mt-2 py-5">
       <VCol>
-        <div class="pl-7 text-body-large text-primary-darken-4 text-left">
+        <div class="pl-7 text-body-large text-left">
           <VBtn
+            :text="`${userGroup?.name} user group`"
             class="mr-1"
-            icon="mdi-arrow-left"
+            prepend-icon="mdi-arrow-left"
             size="small"
             variant="text"
             @click="router.back()"
           />
-          {{ userGroup?.name }} user group
         </div>
       </VCol>
       <VCol>
@@ -39,23 +39,48 @@
             {{ item.fullName || 'N/A' }}
           </td>
           <td class="user-entry-role">
-            <VSelect
-              :items="roles"
-              :model-value="item.userGroupMember.role"
-              bg-color="transparent"
-              density="compact"
-              rounded="lg"
-              variant="solo"
-              flat
-              hide-details
-              @update:model-value="(role: string) => upsertUser(item.email, role)"
-            />
+            <VMenu location="bottom end">
+              <template #activator="{ props: menuProps }">
+                <VBtn
+                  v-bind="menuProps"
+                  :prepend-icon="roleMeta(item.userGroupMember.role)?.icon"
+                  :text="roleLabel(item.userGroupMember.role)"
+                  append-icon="mdi-chevron-down"
+                  class="user-role-btn"
+                  rounded="lg"
+                  size="small"
+                  variant="tonal"
+                />
+              </template>
+              <VList max-width="340" nav>
+                <VListSubheader>Choose role</VListSubheader>
+                <VListItem
+                  v-for="role in roles"
+                  :key="role.value"
+                  :active="item.userGroupMember.role === role.value"
+                  :prepend-icon="role.icon"
+                  :subtitle="role.description"
+                  :title="role.title"
+                  class="role-option py-2"
+                  @click="upsertUser(item.email, role.value)"
+                >
+                  <template #append>
+                    <VIcon
+                      :icon="roleIcon(item.userGroupMember.role, role.value)"
+                      color="primary"
+                      size="small"
+                    />
+                  </template>
+                </VListItem>
+              </VList>
+            </VMenu>
           </td>
           <td class="user-entry-actions">
             <VBtn
               aria-label="Remove user"
-              color="blue-grey-darken-3"
-              icon="mdi-delete-outline"
+              color="error"
+              density="comfortable"
+              icon="mdi-trash-can-outline"
               size="small"
               variant="text"
               @click="removeUser(item.id)"
@@ -72,18 +97,10 @@ import type {
   UserGroup,
   UserGroupMemberWithUser,
 } from '@tailor-cms/interfaces/user-group';
-import { map } from 'lodash-es';
-import { titleCase } from '@tailor-cms/utils';
 import { UserAvatar } from '@tailor-cms/core-components';
-import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { api } from '@/api';
 import UserGroupMembershipDialog from '~/components/admin/UserGroupMembershipDialog.vue';
-
-interface Role {
-  title: string;
-  value: string;
-}
 
 definePageMeta({
   name: 'user-group',
@@ -97,12 +114,13 @@ const userGroupId = parseInt(route.params.userGroupId as string, 10);
 const userGroup = ref<UserGroup | null>(null);
 const userGroupUsers = ref<UserGroupMemberWithUser[]>([]);
 
-const roles = computed<Role[]>(() =>
-  map([UserRole.ADMIN, UserRole.USER, UserRole.COLLABORATOR], (value) => ({
-    title: titleCase(value),
-    value,
-  })),
-);
+const roles = GROUP_ROLES;
+
+const roleMeta = (value: string) => roles.find((r) => r.value === value);
+const roleLabel = (value: string) => roleMeta(value)?.title ?? value;
+
+const roleIcon = (current: string, value: string) =>
+  current === value ? 'mdi-check-circle' : 'mdi-blank';
 
 async function fetchUsers() {
   userGroupUsers.value = await api.userGroup.getUsers({
@@ -122,6 +140,7 @@ async function removeUser(userId: number) {
   const showDialog = useConfirmationDialog();
   const confirmation = {
     title: 'Remove user',
+    color: 'error',
     message: 'Are you sure you want to remove user from a group?',
     action: async () => {
       await api.userGroup.removeUser({
@@ -141,3 +160,9 @@ onBeforeMount(async () => {
   isLoading.value = false;
 });
 </script>
+
+<style lang="scss" scoped>
+:deep(.v-list-item-subtitle) {
+  -webkit-line-clamp: unset;
+}
+</style>

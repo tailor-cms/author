@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="{ 'text-primary-lighten-3': elapsed }"
+    :class="{ 'text-disabled': elapsed }"
     v-bind="$attrs"
     class="d-flex align-center"
   >

@@ -1,35 +1,26 @@
 <template>
   <div class="workflow-page h-100">
-    <VAppBar
-      v-if="workflow"
-      border="b surface"
-      class="pr-3"
-      color="primary-darken-3"
-      elevation="0"
-      height="64"
-      order="1"
-    >
-      <WorkflowFilters
-        v-model:assignee-ids="filters.assigneeIds"
-        v-model:recent-only="filters.recentOnly"
-        v-model:search="filters.search"
-        v-model:status="filters.status"
-        :assignee-options="assignees"
-        :status-options="workflow.statuses"
-        class="flex-grow-1 align-self-center px-3"
-      />
-      <VAppBarNavIcon
-        v-if="smAndDown"
-        aria-label="Toggle sidebar"
-        color="white"
-        @click="store.updateSidebar(!store.isSidebarOpen)"
-      />
-    </VAppBar>
     <VMain>
       <VContainer
-        class="workflow d-flex flex-column h-100 py-8 px-sm-15"
-        max-width="2000"
+        class="workflow d-flex flex-column h-100 px-md-10 py-md-8"
+        max-width="1600"
       >
+        <div v-if="workflow" class="d-flex align-center ga-2 mb-4">
+          <WorkflowFilters
+            v-model:assignee-ids="filters.assigneeIds"
+            v-model:recent-only="filters.recentOnly"
+            v-model:search="filters.search"
+            v-model:status="filters.status"
+            :assignee-options="assignees"
+            :status-options="workflow.statuses"
+            class="flex-grow-1"
+          />
+          <VAppBarNavIcon
+            v-if="smAndDown"
+            aria-label="Toggle sidebar"
+            @click="store.updateSidebar(!store.isSidebarOpen)"
+          />
+        </div>
         <WorkflowOverview
           :activities="filteredActivities"
           class="mt-5"

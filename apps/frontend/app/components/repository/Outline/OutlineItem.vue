@@ -23,18 +23,15 @@
               aria-label="Toggle expand"
               class="my-auto"
               density="comfortable"
-              color="primary-lighten-4"
               variant="text"
               @mousedown.stop="utils.toggleOutlineItemExpand(activity.uid)"
             >
             </VBtn>
-            <div
-              class="activity-name text-truncate text-primary-lighten-4"
-            >
+            <div class="activity-name text-truncate">
               <VIcon
                 v-if="activity.isLinkedCopy"
                 class="linked-copy-icon mr-2"
-                color="lime-lighten-1"
+                color="tertiary"
                 icon="mdi-link-box"
               />
               <ActivityName :activity="activity" />
@@ -44,42 +41,34 @@
                 :activity="activity"
                 class="options-toolbar my-auto"
               />
-              <VTooltip
+              <VBtn
                 v-if="smAndUp"
-                content-class="bg-primary-darken-4"
-                location="bottom"
-              >
-                <template #activator="{ props: tooltipProps }">
-                  <VBtn
-                    v-show="hasSubtypes"
-                    v-bind="tooltipProps"
-                    :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
-                    aria-label="Toggle expand alt"
-                    class="my-auto mx-0"
-                    color="primary-lighten-4"
-                    variant="text"
-                    @click="utils.toggleOutlineItemExpand(activity.uid)"
-                  >
-                  </VBtn>
-                </template>
-                <span>{{ isExpanded ? 'Collapse' : 'Expand' }}</span>
-              </VTooltip>
-              <OptionsMenu :activity="activity" class="options-menu" rounded />
+                v-show="hasSubtypes"
+                v-tooltip:bottom="isExpanded ? 'Collapse' : 'Expand'"
+                :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
+                aria-label="Toggle expand alt"
+                class="my-auto text-medium-emphasis mx-0"
+                variant="text"
+                @click="utils.toggleOutlineItemExpand(activity.uid)"
+              />
+              <OptionsMenu
+                :activity="activity"
+                class="options-menu text-medium-emphasis"
+                rounded
+              />
             </div>
           </template>
           <div v-else class="d-flex align-center w-100 justify-space-between">
-            <div
-              class="activity-name my-auto text-truncate text-primary-lighten-4"
-            >
+            <div class="activity-name my-auto text-truncate">
               <ActivityName :activity="activity" />
             </div>
-            <VChip class="mr-3" color="white" size="small">
+            <VChip class="mr-3" size="small">
               <span class="pr-1 font-weight-bold">Deleted:</span>
               Publish required
               <VIcon
                 v-tooltip:bottom="'Will be removed upon publishing'"
                 class="ml-2"
-                color="secondary"
+                color="error"
                 icon="mdi-information-outline"
               />
             </VChip>
@@ -203,13 +192,11 @@ const icon = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-$background-color: rgb(var(--v-theme-primary-darken-2));
-
 .activity {
   display: flex;
   height: 3.25rem;
   padding: 0 0 0 0.625rem;
-  background-color: $background-color;
+  background-color: rgb(var(--v-theme-surface-container));
   cursor: pointer;
   border-radius: 0.25rem;
   border-left: 8px solid var(--row-accent);
@@ -219,15 +206,14 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
     display: flex;
     align-items: center;
     padding: 0.125rem 0.75rem 0 0.25rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 2.5rem;
   }
 
   &.selected,
   &.highlighted {
-    background-color: rgb(var(--v-theme-primary-darken-1));
-
-    .activity-name {
-      color: rgb(var(--v-theme-primary-lighten-5)) !important;
-    }
+    background-color: rgb(var(--v-theme-surface-container-high));
   }
 
   &.selected .activity-name {
@@ -235,12 +221,12 @@ $background-color: rgb(var(--v-theme-primary-darken-2));
   }
 
   &.disabled {
-    background-color: rgba(var(--v-theme-secondary-lighten-3), 0.2);
-    border-left-color: rgb(var(--v-theme-secondary-lighten-3));
+    background-color: rgba(var(--v-theme-error), 0.15);
+    border-left-color: rgb(var(--v-theme-error));
 
     &.selected,
     &.highlighted {
-      background-color: rgba(var(--v-theme-secondary-lighten-3), 0.3);
+      background-color: rgba(var(--v-theme-error), 0.2);
     }
   }
 

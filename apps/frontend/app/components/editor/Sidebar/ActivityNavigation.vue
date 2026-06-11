@@ -1,5 +1,5 @@
 <template>
-  <div class="navigation-container">
+  <div ref="navigationContainer" class="navigation-container">
     <div class="d-flex align-center px-2">
       <VTextField
         v-model="searchInput"
@@ -15,8 +15,6 @@
       />
       <VBtn
         v-if="treeRef?.hasItems"
-        class="text-none"
-        color="primary-lighten-4"
         rounded="lg"
         size="small"
         variant="text"
@@ -52,6 +50,7 @@ const props = defineProps<{
 
 const searchInput = ref('');
 const treeRef = useTemplateRef<InstanceType<typeof TailorTreeview>>('treeRef');
+const navigationContainer = useTemplateRef<HTMLElement>('navigationContainer');
 
 // Get processed name via plugin hooks
 const getActivityName = (activity: Activity) => {
@@ -86,14 +85,16 @@ const navigateToActivity = (activityId: number) => {
   });
 };
 
-// TODO: Implement once VTreeView is officially released
-// onMounted(() => {
-// nextTick(() => {
-//   const activityTreeEl = $refs.activityTree.$el;
-//   const selectedNode = activityTreeEl.querySelector('.tree-node.selected');
-//   selectedNode.scrollIntoView({ behavior: 'smooth' });
-//   });
-// });
+const scrollSelectedItemIntoView = async () => {
+  await nextTick();
+  const selectedNode =
+    navigationContainer.value?.querySelector<HTMLElement>('.list-item-active');
+  selectedNode?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+onMounted(scrollSelectedItemIntoView);
+watch(() => props.selected.id, scrollSelectedItemIntoView);
+
 // Implement alert if there are no search results
 </script>
 
@@ -148,15 +149,10 @@ const navigateToActivity = (activityId: number) => {
   }
 }
 
-.v-input :deep(.v-label) {
-  color: rgb(var(--v-theme-primary-lighten-5));
-  opacity: 1;
-}
-
 :deep(.v-list-item) {
   &:hover {
     .v-list-item-title {
-      color: #f8bbd0;
+      color: rgb(var(--v-theme-primary));
     }
 
     .v-list-item__append {

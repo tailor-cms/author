@@ -539,8 +539,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(vue@3.5.34(typescript@6.0.3))
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
       yup:
         specifier: ^1.7.1
         version: 1.7.1
@@ -703,6 +703,12 @@ importers:
       '@tailor-cms/ce-fill-blank-server':
         specifier: ^2.0.0
         version: 2.0.0
+      '@tailor-cms/ce-flashcards-edit':
+        specifier: ^0.0.2
+        version: 0.0.2(@types/sortablejs@1.15.9)(vue@3.5.34(typescript@6.0.3))
+      '@tailor-cms/ce-flashcards-server':
+        specifier: ^0.0.2
+        version: 0.0.2
       '@tailor-cms/ce-html-edit':
         specifier: ^2.0.0
         version: 2.0.0(@tiptap/core@3.23.6(@tiptap/pm@3.23.6))(vue@3.5.34(typescript@6.0.3))
@@ -775,6 +781,12 @@ importers:
       '@tailor-cms/ce-quill-html-server':
         specifier: ^2.0.0
         version: 2.0.0
+      '@tailor-cms/ce-sequence-edit':
+        specifier: ^0.0.1
+        version: 0.0.1(@types/sortablejs@1.15.9)(vue@3.5.34(typescript@6.0.3))
+      '@tailor-cms/ce-sequence-server':
+        specifier: ^0.0.1
+        version: 0.0.1
       '@tailor-cms/ce-single-choice-edit':
         specifier: ^2.0.0
         version: 2.0.0(vue@3.5.34(typescript@6.0.3))
@@ -961,8 +973,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.5.34(typescript@6.0.3))
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
       yup:
         specifier: ^1.4.0
         version: 1.7.1
@@ -989,8 +1001,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1030,8 +1042,8 @@ importers:
         specifier: ^3.5.15
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1068,8 +1080,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1106,8 +1118,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1136,8 +1148,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -1165,8 +1177,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-color:
     dependencies:
@@ -1177,8 +1189,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-combobox:
     dependencies:
@@ -1189,8 +1201,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-datetime:
     dependencies:
@@ -1201,8 +1213,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-file:
     dependencies:
@@ -1219,8 +1231,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -1238,8 +1250,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@types/lodash-es':
         specifier: ^4.17.12
@@ -1257,8 +1269,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-radio-group:
     dependencies:
@@ -1266,8 +1278,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-select:
     dependencies:
@@ -1278,8 +1290,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-switch:
     dependencies:
@@ -1290,8 +1302,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-textarea:
     dependencies:
@@ -1299,8 +1311,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/meta-inputs/meta-textfield:
     dependencies:
@@ -1308,8 +1320,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
 
   packages/core-extensions/plugins/i18n:
     dependencies:
@@ -1326,8 +1338,8 @@ importers:
         specifier: ^3.5.34
         version: 3.5.34(typescript@6.0.3)
       vuetify:
-        specifier: ^4.0.7
-        version: 4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
+        specifier: ^4.1.1
+        version: 4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3))
     devDependencies:
       '@tailor-cms/interfaces':
         specifier: workspace:*
@@ -4420,6 +4432,20 @@ packages:
     resolution: {integrity: sha512-hBwV2zysA+NWzSzM1KuDwvec3i3Z4IaUrjMPBKmb/Wiv3SXO0eheJz6ADFus6u2D+oCfwpobSDL1t9EcOUCbFg==}
     engines: {node: '>=24'}
 
+  '@tailor-cms/ce-flashcards-edit@0.0.2':
+    resolution: {integrity: sha512-5ZtIcvwyl/UXImoInc/t7RXTvDze5yvUBfBXPs7B0QAjqI4Jo/oedBc4/iyIVMIbztidxaEcrewEg/Gc6QEpQQ==}
+    engines: {node: '>=24'}
+    peerDependencies:
+      vue: ^3.5.29
+
+  '@tailor-cms/ce-flashcards-manifest@0.0.2':
+    resolution: {integrity: sha512-C/Qo7iF8LdEA9bLmnipEplP8rKaO20HOtbcjj/AFL0r9875Jf+Ox/MCgBUc4qd0W6gorRC3hxv3z9w3PuV/bJw==}
+    engines: {node: '>=24'}
+
+  '@tailor-cms/ce-flashcards-server@0.0.2':
+    resolution: {integrity: sha512-XiBUQMiT5KtHYYtbwVJyVG9NvabuNPTlGtsdDmC279LnEKfWgcnhsCUllkiUQr3rHpxpBAFUY8ezGblBZAf7LA==}
+    engines: {node: '>=24'}
+
   '@tailor-cms/ce-html-edit@2.0.0':
     resolution: {integrity: sha512-8VexOAgLlEpc+eHw0CM5OaJ1A+4ACe7nIxjrY6dGY3lNiIyvy30GJh+HZFALXo009sJlyDz2mbeeIkBSCMRVAQ==}
     engines: {node: '>=24'}
@@ -4586,6 +4612,20 @@ packages:
 
   '@tailor-cms/ce-quill-html-server@2.0.0':
     resolution: {integrity: sha512-7J2TygESjAhh5m5/+ViZps1XxmAxZZAoqSlLFz3IrRNsvoqExmPP8cAur8ZWM/D8F78x8kf/1KndYnA3C89zeA==}
+    engines: {node: '>=24'}
+
+  '@tailor-cms/ce-sequence-edit@0.0.1':
+    resolution: {integrity: sha512-I4xehju242mNN/i105zF+RD6/3DPnwl/DEmZYO0zPc2WbZR75BFBxaUV5JoUEu1RDvOobdOxLYCmqi+A11UUsQ==}
+    engines: {node: '>=24'}
+    peerDependencies:
+      vue: ^3.5.29
+
+  '@tailor-cms/ce-sequence-manifest@0.0.1':
+    resolution: {integrity: sha512-6IvkTmnAHjZhC3jJO5Yb29erNeVA0E0nZ2KQe+Ljh3DbN4buIap75/TIYDPk6MxuzexxsUOenm53sdbDrnjWSA==}
+    engines: {node: '>=24'}
+
+  '@tailor-cms/ce-sequence-server@0.0.1':
+    resolution: {integrity: sha512-ipy/mRU/bPk+XLMbnZLOlfZ29FsSEZ3VPZpxT5u7tWr3N3QXLpMeTqqs0ktk7xe6UeTFWERhmu/IjKql+8a5PQ==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-single-choice-edit@2.0.0':
@@ -10877,6 +10917,15 @@ packages:
   vue-devtools-stub@0.1.0:
     resolution: {integrity: sha512-RutnB7X8c5hjq39NceArgXg28WZtZpGc3+J16ljMiYnFhKvd8hITxSWQSQ5bvldxMDU6gG5mkxl1MTQLXckVSQ==}
 
+  vue-draggable-plus@0.6.1:
+    resolution: {integrity: sha512-FbtQ/fuoixiOfTZzG3yoPl4JAo9HJXRHmBQZFB9x2NYCh6pq0TomHf7g5MUmpaDYv+LU2n6BPq2YN9sBO+FbIg==}
+    peerDependencies:
+      '@types/sortablejs': ^1.15.0
+      '@vue/composition-api': '*'
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
   vue-eslint-parser@10.4.0:
     resolution: {integrity: sha512-Vxi9pJdbN3ZnVGLODVtZ7y4Y2kzAAE2Cm0CZ3ZDRvydVYxZ6VrnBhLikBsRS+dpwj4Jv4UCv21PTEwF5rQ9WXg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -10914,8 +10963,8 @@ packages:
     peerDependencies:
       vue: ^3.0.1
 
-  vuetify@4.0.7:
-    resolution: {integrity: sha512-SV+YJkBmudY3s9qfZO2ZGUsrD0TDQU8pMBH1ERga9AEyjGvioZuXXh93V9wHxXJphvqRC2NW10Nt2lW9IZQcPw==}
+  vuetify@4.1.1:
+    resolution: {integrity: sha512-m75ZkDIBwstDhID/zPtQmh9m601G/C4wnvCmlA6hgvhD7EOwR9I4DClpxPQiNTd1toKWHCr3kD2XJqU1fh0tYA==}
     peerDependencies:
       typescript: '>=4.7'
       vite-plugin-vuetify: '>=2.1.0'
@@ -14597,6 +14646,26 @@ snapshots:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
+  '@tailor-cms/ce-flashcards-edit@0.0.2(@types/sortablejs@1.15.9)(vue@3.5.34(typescript@6.0.3))':
+    dependencies:
+      lodash-es: 4.18.1
+      uuid: 14.0.0
+      vue: 3.5.34(typescript@6.0.3)
+      vue-draggable-plus: 0.6.1(@types/sortablejs@1.15.9)
+    transitivePeerDependencies:
+      - '@types/sortablejs'
+      - '@vue/composition-api'
+
+  '@tailor-cms/ce-flashcards-manifest@0.0.2':
+    dependencies:
+      '@tailor-cms/cek-common': 2.0.1
+      uuid: 14.0.0
+
+  '@tailor-cms/ce-flashcards-server@0.0.2':
+    dependencies:
+      '@tailor-cms/ce-flashcards-manifest': 0.0.2
+      '@tailor-cms/cek-common': 2.0.1
+
   '@tailor-cms/ce-html-edit@2.0.0(@tiptap/core@3.23.6(@tiptap/pm@3.23.6))(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@floating-ui/dom': 1.7.6
@@ -14831,6 +14900,26 @@ snapshots:
   '@tailor-cms/ce-quill-html-server@2.0.0':
     dependencies:
       '@tailor-cms/ce-quill-html-manifest': 2.0.0
+      '@tailor-cms/cek-common': 2.0.1
+
+  '@tailor-cms/ce-sequence-edit@0.0.1(@types/sortablejs@1.15.9)(vue@3.5.34(typescript@6.0.3))':
+    dependencies:
+      lodash-es: 4.18.1
+      uuid: 14.0.0
+      vue: 3.5.34(typescript@6.0.3)
+      vue-draggable-plus: 0.6.1(@types/sortablejs@1.15.9)
+    transitivePeerDependencies:
+      - '@types/sortablejs'
+      - '@vue/composition-api'
+
+  '@tailor-cms/ce-sequence-manifest@0.0.1':
+    dependencies:
+      '@tailor-cms/cek-common': 2.0.1
+      uuid: 14.0.0
+
+  '@tailor-cms/ce-sequence-server@0.0.1':
+    dependencies:
+      '@tailor-cms/ce-sequence-manifest': 0.0.1
       '@tailor-cms/cek-common': 2.0.1
 
   '@tailor-cms/ce-single-choice-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
@@ -22076,6 +22165,10 @@ snapshots:
 
   vue-devtools-stub@0.1.0: {}
 
+  vue-draggable-plus@0.6.1(@types/sortablejs@1.15.9):
+    dependencies:
+      '@types/sortablejs': 1.15.9
+
   vue-eslint-parser@10.4.0(eslint@10.4.0(jiti@2.7.0)):
     dependencies:
       debug: 4.4.3
@@ -22134,7 +22227,7 @@ snapshots:
       sortablejs: 1.14.0
       vue: 3.5.34(typescript@6.0.3)
 
-  vuetify@4.0.7(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)):
+  vuetify@4.1.1(typescript@6.0.3)(vue@3.5.34(typescript@6.0.3)):
     dependencies:
       vue: 3.5.34(typescript@6.0.3)
     optionalDependencies:
