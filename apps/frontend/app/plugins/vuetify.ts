@@ -11,28 +11,28 @@ import { colorMode, resolveTheme } from '~/composables/useColorMode';
 const lightTheme: ThemeDefinition = {
   dark: false,
   colors: {
-    // Surfaces
-    'surface': '#F8F9FB',
+    // Surfaces — even MD3 tone steps (100 / 96 / 94 / 92 / 90)
+    'surface': '#F9FAFC',
     'on-surface': '#30323B',
-    'surface-variant': '#E2E5EA',
-    'on-surface-variant': '#62656F',
+    'surface-variant': '#DFE2E7',
+    'on-surface-variant': '#5E6470',
 
-    'surface-container-highest': '#D2D7DE',
+    'surface-container-highest': '#DEE2E7',
     'on-surface-container-highest': '#30323B',
-    'surface-container-high': '#DADEE4',
+    'surface-container-high': '#E6E9ED',
     'on-surface-container-high': '#30323B',
-    'surface-container': '#E2E5EA',
+    'surface-container': '#ECEFF3',
     'on-surface-container': '#30323B',
-    'surface-container-low': '#F0F1F3',
+    'surface-container-low': '#F2F4F7',
     'on-surface-container-low': '#30323B',
     'surface-container-lowest': '#FFFFFF',
     'on-surface-container-lowest': '#30323B',
 
     // Surface add-ons
-    'background': '#F8F9FB',
+    'background': '#F9FAFC',
     'on-background': '#30323B',
-    'surface-bright': '#F8F9FB',
-    'surface-dim': '#D6D9E0',
+    'surface-bright': '#F9FAFC',
+    'surface-dim': '#D5D8DD',
 
     // Primary — jade (contemporary, vibrant; tone-derived)
     'primary': '#1E9659',
@@ -40,17 +40,17 @@ const lightTheme: ThemeDefinition = {
     'primary-container': '#A6F0C5',
     'on-primary-container': '#00210E',
 
-    // Secondary — One Dark cyan/teal
-    'secondary': '#007E89',
+    // Secondary — ocean (cool complement to jade primary)
+    'secondary': '#2F6F8F',
     'on-secondary': '#FFFFFF',
-    'secondary-container': '#93F1FE',
-    'on-secondary-container': '#001F23',
+    'secondary-container': '#C9E6F5',
+    'on-secondary-container': '#001E2E',
 
-    // Tertiary — warm gold (sparing accent)
-    'tertiary': '#976D00',
+    // Tertiary — terracotta (warm accent, sparing use)
+    'tertiary': '#C45A2C',
     'on-tertiary': '#FFFFFF',
-    'tertiary-container': '#FFDEA5',
-    'on-tertiary-container': '#201C00',
+    'tertiary-container': '#FFDBCB',
+    'on-tertiary-container': '#2E1100',
 
     // Highlight — linked / pinned / recent state (purple)
     'highlight': '#BD3DB9',
@@ -64,41 +64,42 @@ const lightTheme: ThemeDefinition = {
     'source-container': '#D6E3FF',
     'on-source-container': '#001B3D',
 
-    // Warning — amber
-    'warning': '#AF6003',
+    // Warning — honey amber (yellower than terracotta tertiary)
+    'warning': '#B58A00',
     'on-warning': '#FFFFFF',
-    'warning-container': '#FFDCC2',
-    'on-warning-container': '#2E1500',
+    'warning-container': '#FFE38C',
+    'on-warning-container': '#251A00',
 
-    // Error — red
-    'error': '#CD453A',
+    // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
+    'error': '#C8112A',
     'on-error': '#FFFFFF',
-    'error-container': '#FFDAD5',
-    'on-error-container': '#410001',
+    'error-container': '#FFDADC',
+    'on-error-container': '#45000B',
 
-    // Success — emerald
-    'success': '#008561',
+    // Success — teal-emerald (cooler than jade primary; clear 'confirmation' read)
+    'success': '#0F9B85',
     'on-success': '#FFFFFF',
-    'success-container': '#8DF7CA',
-    'on-success-container': '#002115',
+    'success-container': '#9DF1E0',
+    'on-success-container': '#00261F',
 
-    // Info — blue
-    'info': '#1D7AB7',
+    // Info — editorial indigo (distinct from secondary ocean and source indigo)
+    'info': '#3A4FE0',
     'on-info': '#FFFFFF',
-    'info-container': '#CDE5FF',
-    'on-info-container': '#001D32',
+    'info-container': '#DDE1FF',
+    'on-info-container': '#00056F',
 
     // Outline
     'outline': '#7C7F88',
     'outline-variant': '#C7CAD0',
 
-    // Asset types — categorical, tuned for light surfaces
-    'asset-image': '#CD453A',
-    'asset-video': '#BD3DB9',
-    'asset-audio': '#007E89',
-    'asset-document': '#1D7AB7',
-    'asset-link': '#287D37',
-    'asset-other': '#62656F',
+    // Asset types — categorical only; decoupled from semantic roles.
+    // Lower-chroma so they read as labels, not action/error states.
+    'asset-image': '#B85C8E',
+    'asset-video': '#7E57C2',
+    'asset-audio': '#2BA597',
+    'asset-document': '#3A6EA5',
+    'asset-link': '#4B8B3B',
+    'asset-other': '#6B7280',
 
     // Inverse
     'inverse-surface': '#2C313A',
@@ -108,36 +109,36 @@ const lightTheme: ThemeDefinition = {
   variables: {
     'medium-emphasis-opacity': 0.7,
     // v-kbd key — mirrors surface-variant / on-surface-variant.
-    'theme-kbd': '#E2E5EA',
-    'theme-on-kbd': '#62656F',
+    'theme-kbd': '#DFE2E7',
+    'theme-on-kbd': '#5E6470',
   },
 };
 
 const darkTheme: ThemeDefinition = {
   dark: true,
   colors: {
-    // Surfaces
-    'surface': '#1C2025',
+    // Surfaces — even MD3 tone steps (4 / 10 / 12 / 17 / 22)
+    'surface': '#15181D',
     'on-surface': '#C5CCDA',
-    'surface-variant': '#3E4452',
-    'on-surface-variant': '#AEB6C5',
+    'surface-variant': '#454A52',
+    'on-surface-variant': '#B0B6C2',
 
-    'surface-container-highest': '#3D4350',
+    'surface-container-highest': '#393E45',
     'on-surface-container-highest': '#C5CCDA',
-    'surface-container-high': '#343A44',
+    'surface-container-high': '#2C3137',
     'on-surface-container-high': '#C5CCDA',
-    'surface-container': '#2C313A',
+    'surface-container': '#22262B',
     'on-surface-container': '#C5CCDA',
-    'surface-container-low': '#23272E',
+    'surface-container-low': '#1D2025',
     'on-surface-container-low': '#C5CCDA',
-    'surface-container-lowest': '#181A1F',
+    'surface-container-lowest': '#0F1114',
     'on-surface-container-lowest': '#C5CCDA',
 
     // Surface add-ons
-    'background': '#1C2025',
+    'background': '#15181D',
     'on-background': '#C5CCDA',
-    'surface-bright': '#434A57',
-    'surface-dim': '#1A1C21',
+    'surface-bright': '#404550',
+    'surface-dim': '#15181D',
 
     // Primary — jade (contemporary, vibrant; tone-derived)
     'primary': '#6FD49A',
@@ -145,17 +146,17 @@ const darkTheme: ThemeDefinition = {
     'primary-container': '#00522A',
     'on-primary-container': '#8FF0B7',
 
-    // Secondary — One Dark cyan/teal
-    'secondary': '#56B6C2',
-    'on-secondary': '#003B41',
-    'secondary-container': '#004F56',
-    'on-secondary-container': '#93F1FE',
+    // Secondary — ocean (cool complement to jade primary)
+    'secondary': '#9CCAE2',
+    'on-secondary': '#003549',
+    'secondary-container': '#004F69',
+    'on-secondary-container': '#CDE6F5',
 
-    // Tertiary — One Dark gold (sparing accent)
-    'tertiary': '#E5C07B',
-    'on-tertiary': '#463100',
-    'tertiary-container': '#5C4308',
-    'on-tertiary-container': '#FFDEA4',
+    // Tertiary — terracotta (warm accent, sparing use)
+    'tertiary': '#FFB597',
+    'on-tertiary': '#4C1E00',
+    'tertiary-container': '#683100',
+    'on-tertiary-container': '#FFDBCB',
 
     // Highlight — linked / pinned / recent state purple
     'highlight': '#C678DD',
@@ -169,41 +170,42 @@ const darkTheme: ThemeDefinition = {
     'source-container': '#174782',
     'on-source-container': '#D6E3FF',
 
-    // Warning — amber
-    'warning': '#D19A66',
-    'on-warning': '#502C01',
-    'warning-container': '#663E12',
-    'on-warning-container': '#FFDCBF',
+    // Warning — honey amber (yellower than terracotta tertiary)
+    'warning': '#E4C56F',
+    'on-warning': '#3B2C00',
+    'warning-container': '#574200',
+    'on-warning-container': '#FFE38C',
 
-    // Error — red
-    'error': '#E06C75',
-    'on-error': '#570214',
-    'error-container': '#822430',
-    'on-error-container': '#FFDADA',
+    // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
+    'error': '#FFB1B7',
+    'on-error': '#680016',
+    'error-container': '#91002A',
+    'on-error-container': '#FFDADC',
 
-    // Success — emerald
-    'success': '#65CFA4',
-    'on-success': '#003827',
-    'success-container': '#00513A',
-    'on-success-container': '#8DF7CA',
+    // Success — teal-emerald (cooler than jade primary; clear 'confirmation' read)
+    'success': '#65E1CB',
+    'on-success': '#003B32',
+    'success-container': '#00574A',
+    'on-success-container': '#9DF1E0',
 
-    // Info — blue
-    'info': '#61AFEF',
-    'on-info': '#003859',
-    'info-container': '#004A75',
-    'on-info-container': '#CDE5FF',
+    // Info — editorial indigo (distinct from secondary ocean and source indigo)
+    'info': '#BAC3FF',
+    'on-info': '#08148F',
+    'info-container': '#1F32B1',
+    'on-info-container': '#DDE1FF',
 
     // Outline
     'outline': '#6E7585',
     'outline-variant': '#3E4452',
 
-    // Asset types — categorical, tuned for dark surfaces
-    'asset-image': '#E06C75',
-    'asset-video': '#C678DD',
-    'asset-audio': '#56B6C2',
-    'asset-document': '#61AFEF',
-    'asset-link': '#98C379',
-    'asset-other': '#AEB6C5',
+    // Asset types — categorical only; decoupled from semantic roles.
+    // Lifted ~30 tone steps for dark surfaces, same hues as light.
+    'asset-image': '#E48BB8',
+    'asset-video': '#B79EE6',
+    'asset-audio': '#6FD4C5',
+    'asset-document': '#84B0E0',
+    'asset-link': '#8FC97D',
+    'asset-other': '#B0B6C2',
 
     // Inverse
     'inverse-surface': '#E8E9EB',
@@ -212,8 +214,8 @@ const darkTheme: ThemeDefinition = {
   },
   variables: {
     // v-kbd key — mirrors surface-variant / on-surface-variant.
-    'theme-kbd': '#3E4452',
-    'theme-on-kbd': '#AEB6C5',
+    'theme-kbd': '#454A52',
+    'theme-on-kbd': '#B0B6C2',
   },
 };
 
