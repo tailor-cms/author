@@ -1,6 +1,6 @@
 <template>
   <VList class="rounded-lg pa-0" max-height="32rem">
-    <VListSubheader color="text-high-emphasis">Changes</VListSubheader>
+    <VListSubheader color="text-medium-emphasis">Changes</VListSubheader>
     <VDivider />
     <VHover
       v-for="(revision, index) in revisions"

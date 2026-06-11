@@ -15,7 +15,7 @@
         label
         small
       />
-      Built with <VIcon class="mx-1" color="pink">mdi-heart</VIcon>
+      Built with <VIcon class="mx-1" color="tertiary">mdi-heart</VIcon>
       Studion
     </div>
   </VFooter>

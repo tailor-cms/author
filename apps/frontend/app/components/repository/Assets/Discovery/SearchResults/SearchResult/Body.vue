@@ -7,7 +7,7 @@
       {{ suggestion.snippet }}
     </div>
     <div class="d-flex align-center text-body-medium text-medium-emphasis mt-1">
-      <VIcon :color="`${color}-lighten-3`" :icon="icon" size="14" />
+      <VIcon :color="color" :icon="icon" size="14" />
       <span class="text-capitalize ml-1">{{ suggestion.type }}</span>
       <VIcon icon="mdi-circle-small" size="x-small" />
       <span class="text-truncate">{{ domain }}</span>

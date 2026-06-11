@@ -53,9 +53,9 @@ const logoPath = '/img/logo-new.svg';
 
   // Override autofill styles
   input:-webkit-autofill {
-    color: #fafafa !important;
+    color: rgb(var(--v-theme-on-surface)) !important;
     background-color: rgba(var(--v-theme-surface-container-low)) !important;
-    -webkit-text-fill-color: #fafafa !important;
+    -webkit-text-fill-color: rgb(var(--v-theme-on-surface)) !important;
     -webkit-box-shadow:
       0 0 0 1000px rgba(var(--v-theme-surface-container-low)) inset !important;
   }

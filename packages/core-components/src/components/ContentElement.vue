@@ -460,7 +460,7 @@ onMounted(() => {
     content: '';
     display: none;
     position: absolute;
-    inset: 0 0 -$width 0;
+    inset: 0 (-$width) 0 0;
     border-right: $width solid;
     border-radius: inherit;
     pointer-events: none;

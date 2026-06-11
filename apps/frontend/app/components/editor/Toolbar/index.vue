@@ -182,14 +182,10 @@ const usersWithActivity = computed(() => {
         margin-top: 0.5rem;
         border-radius: 4px;
         padding: 0.5rem 0.75rem;
-        background-color: #424242;
-        color: #fff;
+        background-color: rgb(var(--v-theme-inverse-surface));
+        color: rgb(var(--v-theme-inverse-on-surface));
       }
     }
-  }
-
-  &.bg-white {
-    border-bottom: 1px solid #cfd8dc;
   }
 }
 

@@ -26,7 +26,7 @@
       </VAvatar>
       <VIcon
         v-else
-        :color="`${typeColor}-lighten-3`"
+        :color="typeColor"
         :icon="typeIcon"
         class="flex-shrink-0 ma-4"
         size="28"
