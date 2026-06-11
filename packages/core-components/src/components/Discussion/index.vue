@@ -23,11 +23,10 @@
     </div>
     <VAlert
       v-if="!commentsCount && showNotifications"
-      class="alert mt-1 mb-4"
+      class="alert mb-4"
       icon="mdi-keyboard-outline"
       text="Be the First to Comment!"
       variant="tonal"
-      prominent
     />
     <DiscussionThread
       v-if="thread.length"

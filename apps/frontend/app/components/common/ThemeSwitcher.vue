@@ -1,25 +1,32 @@
 <template>
-  <VBtnToggle
-    v-if="inline"
-    :model-value="mode"
-    class="theme-toggle"
-    rounded="lg"
-    variant="tonal"
-    divided
-    mandatory
-    @update:model-value="set"
+  <VMenu
+    v-if="submenu"
+    location="end"
+    offset="4"
+    submenu
   >
-    <VBtn
-      v-for="{ value, icon, title } in themeOptions"
-      :key="value"
-      v-tooltip:bottom="title"
-      :value="value"
-      :icon="icon"
-      :aria-label="title"
-      height="30"
-      size="x-small"
-    />
-  </VBtnToggle>
+    <template #activator="{ props }">
+      <VListItem
+        v-bind="props"
+        title="Theme"
+        prepend-icon="mdi-theme-light-dark"
+        append-icon="mdi-chevron-right"
+        rounded="lg"
+      />
+    </template>
+    <VList class="d-flex flex-column pa-2 ga-1" density="compact" slim>
+      <VListItem
+        v-for="{ value, title, icon } in themeOptions"
+        :key="value"
+        :active="mode === value"
+        :prepend-icon="icon"
+        :title="title"
+        class="px-2"
+        rounded="lg"
+        @click="set(value)"
+      />
+    </VList>
+  </VMenu>
   <VMenu
     v-else
     location="bottom end"
@@ -51,13 +58,7 @@
 <script lang="ts" setup>
 import { themeOptions, useColorMode } from '@/composables/useColorMode';
 
-withDefaults(defineProps<{ inline?: boolean }>(), { inline: false });
+withDefaults(defineProps<{ submenu?: boolean }>(), { submenu: false });
 
 const { mode, set } = useColorMode();
 </script>
-
-<style lang="scss" scoped>
-.theme-toggle {
-  height: auto;
-}
-</style>
