@@ -34,11 +34,11 @@ const lightTheme: ThemeDefinition = {
     'surface-bright': '#F8F9FB',
     'surface-dim': '#D6D9E0',
 
-    // Primary — One Dark green
-    'primary': '#287D37',
+    // Primary — jade (contemporary, vibrant; tone-derived)
+    'primary': '#1E9659',
     'on-primary': '#FFFFFF',
-    'primary-container': '#B5F3A5',
-    'on-primary-container': '#0B2100',
+    'primary-container': '#A6F0C5',
+    'on-primary-container': '#00210E',
 
     // Secondary — One Dark cyan/teal
     'secondary': '#007E89',
@@ -103,7 +103,7 @@ const lightTheme: ThemeDefinition = {
     // Inverse
     'inverse-surface': '#2C313A',
     'inverse-on-surface': '#E8E9EB',
-    'inverse-primary': '#98C379',
+    'inverse-primary': '#6FD49A',
   },
   variables: {
     'medium-emphasis-opacity': 0.7,
@@ -139,11 +139,11 @@ const darkTheme: ThemeDefinition = {
     'surface-bright': '#434A57',
     'surface-dim': '#1A1C21',
 
-    // Primary — One Dark green
-    'primary': '#98C379',
-    'on-primary': '#163800',
-    'primary-container': '#2B5013',
-    'on-primary-container': '#C3F0A1',
+    // Primary — jade (contemporary, vibrant; tone-derived)
+    'primary': '#6FD49A',
+    'on-primary': '#00391C',
+    'primary-container': '#00522A',
+    'on-primary-container': '#8FF0B7',
 
     // Secondary — One Dark cyan/teal
     'secondary': '#56B6C2',
@@ -208,7 +208,7 @@ const darkTheme: ThemeDefinition = {
     // Inverse
     'inverse-surface': '#E8E9EB',
     'inverse-on-surface': '#2C313A',
-    'inverse-primary': '#287D37',
+    'inverse-primary': '#1E9659',
   },
   variables: {
     // v-kbd key — mirrors surface-variant / on-surface-variant.
