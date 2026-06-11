@@ -91,8 +91,8 @@ import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
+import { api } from '@/api';
 import { GROUP_ROLES } from '@/utils/groupRoles';
-import { user as userApi, userGroup as userGroupApi } from '@/api';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -107,11 +107,11 @@ const authStore = useAuthStore();
 const emailInputEl = useTemplateRef('emailInputEl');
 const isVisible = ref(false);
 const isSaving = ref(false);
-const suggestedUsers = ref([]);
+const suggestedUsers = ref<string[]>([]);
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   initialValues: {
-    email: [],
+    email: [] as string[],
     role: UserRole.USER,
     skipInvite: false,
   },
@@ -134,7 +134,7 @@ const onEmailValueChange = (val: string[]) =>
   (emailInput.value = val.filter((v: string) => EMAIL_PATTERN.test(v)));
 
 const onEmailInputFocusChange = (isFocused: boolean) => {
-  if (isFocused) return;
+  if (isFocused || !emailInputEl.value) return;
   const searchValue = emailInputEl.value?.search ?? '';
   const isValidEmail = EMAIL_PATTERN.test(searchValue);
   const isEmailAlreadyAdded = emailInput.value.find(
@@ -158,7 +158,10 @@ const submit = handleSubmit(async () => {
     role: roleInput.value,
     skipInvite: skipInviteInput.value,
   };
-  await userGroupApi.upsertUser(props.userGroupId, payload);
+  await api.userGroup.addUser({
+    params: { id: props.userGroupId },
+    body: payload,
+  });
   suggestedUsers.value = [];
   isSaving.value = false;
   emit('save', payload);
@@ -172,7 +175,7 @@ const fetchUsers = throttle(async (filter) => {
     suggestedUsers.value = [];
     return;
   }
-  const { items: users } = await userApi.fetch({ filter });
+  const { items: users } = await api.user.list({ query: { filter } });
   suggestedUsers.value = users.map((it: User) => it.email);
 }, 350);
 </script>

@@ -20,6 +20,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'cleanupReferences',
   params: schemas.RepositoryItemParams,
   body: schemas.ReferenceCleanupInput,
   openapi: {

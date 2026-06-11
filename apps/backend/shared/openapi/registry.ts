@@ -40,7 +40,14 @@ export interface OpenApiSpec {
 export interface RouteRecord {
   method: HttpMethod;
   path: string;
+  // Optional verb override. When set, naming.ts uses this verbatim as
+  // the route's `x-tailor-method`.
+  // the operation's intent.
+  name?: string;
   body?: ZodType;
+  // When set, the route's wire body is `multipart/form-data` rather
+  // than `application/json`.
+  multipart?: ZodType;
   query?: ZodType;
   params?: ZodType;
   openapi?: OpenApiSpec;

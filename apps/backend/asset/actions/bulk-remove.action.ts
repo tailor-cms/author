@@ -10,6 +10,7 @@ import * as service from '../asset.service.ts';
 // Soft-deletes the listed assets. Failures are logged server-side
 // and silently omitted from the returned deletedIds.
 export default defineAction({
+  name: 'bulkRemoveAssets',
   body: schemas.BulkRemoveInput,
   openapi: {
     authenticated: true,

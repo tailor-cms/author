@@ -12,6 +12,7 @@ import { z } from 'zod';
 // Budget allocation and dedup happen in the service; this action is a
 // thin wire boundary.
 export default defineAction({
+  name: 'discover',
   body: schemas.DiscoverInput,
   openapi: {
     authenticated: true,

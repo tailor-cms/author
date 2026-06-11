@@ -44,6 +44,7 @@ async function onUnsubscribe(
 }
 
 export default defineAction({
+  name: 'subscribeFeed',
   params: schemas.FeedItemParams,
   openapi: {
     authenticated: true,

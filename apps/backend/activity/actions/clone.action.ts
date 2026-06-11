@@ -12,6 +12,7 @@ import * as service from '../activity.service.ts';
 // middleware verifies the caller can write into the target before this
 // fires.
 export default defineAction({
+  name: 'clone',
   params: schemas.ActivityItemParams,
   body: schemas.CloneInput,
   openapi: {

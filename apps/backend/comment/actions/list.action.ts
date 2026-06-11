@@ -15,6 +15,7 @@ import * as service from '../comment.service.ts';
 // (content element thread); list defaults to `createdAt DESC` and includes
 // soft-deleted rows so deleted comments stay visible in the thread.
 export default defineAction({
+  name: 'list',
   params: RepositoryScopedParams,
   query: schemas.ListFilter,
   openapi: {

@@ -3,6 +3,7 @@ import { defineAction } from '#shared/request/action.ts';
 import { dataEnvelope } from '#shared/request/schemas.ts';
 
 export default defineAction({
+  name: 'getSession',
   raw: true,
   params: schemas.SessionItemParams,
   openapi: {

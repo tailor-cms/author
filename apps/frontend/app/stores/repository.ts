@@ -1,26 +1,34 @@
+import type { Repository, Tag } from '@tailor-cms/interfaces/repository';
 import type {
-  Repository,
-  RepositoryUser,
-  Tag,
-} from '@tailor-cms/interfaces/repository';
+  RepositoryCreateReq,
+  RepositoryUpdateReq,
+} from '@tailor-cms/api-client';
 import { intersectionBy } from 'lodash-es';
 import { register as registerSchema } from '@tailor-cms/config';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { useAuthStore } from './auth';
-import { repository as api, tag as tagApi } from '@/api';
-import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
+import { api } from '@/api';
+
+export type SortField = 'name' | 'description' | 'createdAt' | 'updatedAt';
+export type SortDirection = 'ASC' | 'DESC';
+
+export type RepositoryFilter =
+| { type: 'TAG'; id: number }
+| { type: 'SCHEMA'; id: string };
+
+type FilterQuery = { tagIds?: number[]; schemas?: string[] };
 
 const getDefaultQueryParams = () => ({
   offset: 0,
   limit: 18,
   search: '',
   sortBy: {
-    field: 'updatedAt',
-    direction: 'DESC',
+    field: 'updatedAt' as SortField,
+    direction: 'DESC' as SortDirection,
   },
   pinned: false,
-  filter: [] as any[],
+  filter: [] as RepositoryFilter[],
 });
 
 export const useRepositoryStore = defineStore('repositories', () => {
@@ -38,16 +46,15 @@ export const useRepositoryStore = defineStore('repositories', () => {
     { id: 0, name: 'All workspaces' },
     ...authStore.userGroups,
   ]);
-  const selectedUserGroupId = ref<number>(userGroupOptions.value[0].id);
+  const selectedUserGroupId = ref<number>(userGroupOptions.value[0]!.id);
 
   const query = computed(() => {
     const { sortBy, pinned, filter, ...rest } = queryParams;
-    const filters = filter.reduce((acc, { id, type }) => {
-      const filterTypeConfig = repositoryFilterConfigs[type];
-      acc[filterTypeConfig.queryParam] ||= [];
-      acc[filterTypeConfig.queryParam].push(id);
+    const filters = filter.reduce<FilterQuery>((acc, f) => {
+      if (f.type === 'TAG') (acc.tagIds ??= []).push(f.id);
+      else (acc.schemas ??= []).push(f.id);
       return acc;
-    }, {} as any);
+    }, {});
     return {
       ...rest,
       sortBy: sortBy.field,
@@ -68,20 +75,18 @@ export const useRepositoryStore = defineStore('repositories', () => {
   function add(item: Repository) {
     processRepository(item);
     // Make any schema snapshot the BE shipped resolvable through the
-    // standard `schema.getXxx(...)` API
-    const snapshotConfig = (item as any).data?.$$?.schema?.config;
+    // standard `schema.getXxx(...)` API. `Repository.data.$$` is the
+    // platform-managed namespace that carries the snapshot.
+    const snapshotConfig = item.data?.$$?.schema?.config;
     if (snapshotConfig) registerSchema(snapshotConfig);
     $items.set(item.uid, item);
     return item;
   }
 
   async function fetch(): Promise<Repository[]> {
-    const {
-      items: repositories,
-      total,
-    }: { items: Repository[]; total: number } = await api.getRepositories(
-      query.value,
-    );
+    const { items: repositories, total } = await api.repository.list({
+      query: query.value,
+    });
     if (query.value.offset === 0) $items.clear();
     repositories.forEach((it) => add(it));
     areAllItemsFetched.value = total <= query.value.offset + query.value.limit;
@@ -89,71 +94,76 @@ export const useRepositoryStore = defineStore('repositories', () => {
   }
 
   async function get(id: number): Promise<Repository> {
-    const repository: Repository = await api.get(id);
+    const repository = await api.repository.get({
+      params: { repositoryId: id },
+    });
     add(repository);
     return repository;
   }
 
-  const create = ({
-    schema,
-    name,
-    description,
-    userGroupIds,
-    data,
-  }: {
-    schema: string;
-    name: string;
-    description: string;
-    userGroupIds: number[];
-    data: any;
-  }) => {
-    return api.create({ schema, name, description, data, userGroupIds });
-  };
+  const create = (payload: RepositoryCreateReq['body']): Promise<Repository> =>
+    api.repository.create({ body: payload });
 
-  async function update(payload: any): Promise<Repository | undefined> {
+  async function update(
+    payload: RepositoryUpdateReq['body'] & { id: number },
+  ): Promise<Repository | undefined> {
     const repository = findById(payload.id);
     if (!repository) return;
-    const { id, ...rest } = payload;
-    const updatedRepository = await api.patch(id, rest);
-    Object.assign(repository, updatedRepository);
+    const { id, ...body } = payload;
+    const updated = await api.repository.update({
+      params: { repositoryId: id },
+      body,
+    });
+    Object.assign(repository, updated);
     return repository;
   }
 
   async function remove(id: number): Promise<void> {
-    await api.remove(id);
+    await api.repository.delete({ params: { repositoryId: id } });
   }
 
-  const clone = (id: number, name: string, description: string) => {
-    return api.clone(id, name, description);
-  };
+  const clone = (id: number, name: string, description: string) =>
+    api.repository.clone({
+      params: { repositoryId: id },
+      body: { name, description },
+    });
 
-  async function fetchTags(opts = { associated: true }) {
-    const tags: Tag[] = await tagApi.fetch(opts);
-    tags.forEach((it) => $tags.set(it.uid, it));
+  async function fetchTags(
+    opts: { associated?: boolean } = { associated: true },
+  ) {
+    const fetchedTags = await api.tag.list({ query: opts });
+    fetchedTags.forEach((it) => $tags.set(it.uid, it));
   }
 
   async function addTag(repositoryId: number, name: string) {
-    const addedTag = await api.addTag({ repositoryId, name });
+    const addedTag = await api.repository.addTag({
+      params: { repositoryId },
+      body: { name },
+    });
     const repository = findById(repositoryId);
     if (!repository) throw new Error('Repository not found!');
     if (!tags.value.find((it) => it.id === addedTag.id))
       $tags.set(addedTag.uid, addedTag);
-    if (!repository.tags.find((it) => it.id === addedTag.id))
-      repository.tags = [...repository.tags, addedTag];
+    const existingTags = repository.tags ?? [];
+    if (!existingTags.find((it) => it.id === addedTag.id))
+      repository.tags = [...existingTags, addedTag];
   }
 
   async function removeTag(repositoryId: number, tagId: number) {
-    await api.removeTag({ repositoryId, tagId });
+    await api.repository.removeTag({ params: { repositoryId, tagId } });
     const repository = findById(repositoryId);
     if (!repository) throw new Error('Repository not found!');
-    repository.tags = repository.tags.filter((it) => it.id !== tagId);
-    if (!queryParams.filter.find((item: any) => item.id === tagId)) return;
+    repository.tags = (repository.tags ?? []).filter((it) => it.id !== tagId);
+    if (!queryParams.filter.find((item) => item.id === tagId)) return;
     queryParams.offset = 0;
     await fetch();
   }
 
   async function pin({ id, pin }: { id: number; pin: boolean }) {
-    const repositoryUser: RepositoryUser = await api.pin(id, pin);
+    const repositoryUser = await api.repository.pin({
+      params: { repositoryId: id },
+      body: { pin },
+    });
     const repository = findById(id);
     if (!repository) throw new Error('Repository not found!');
     $items.set(repository.uid, { ...repository, repositoryUser });
@@ -178,7 +188,7 @@ export const useRepositoryStore = defineStore('repositories', () => {
   }
 
   function processRepository(repository: Repository) {
-    repository.lastChange = repository.revisions[0];
+    repository.lastChange = repository.revisions![0];
     repository.repositoryUser = repository.repositoryUsers?.[0];
     // If repository or global admin
     const { groupsWithAdminAccess: userAdminGroups } = authStore;

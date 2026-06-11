@@ -40,7 +40,7 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import { string } from 'yup';
 import { useField } from 'vee-validate';
 
-import api from '@/api/repository';
+import { api } from '@/api';
 
 const EXISTING_NAME_MSG =
   'Warning: a Repository with that name already exists.';
@@ -116,8 +116,7 @@ watch(
 );
 
 onMounted(async () => {
-  const params = props.repositoryId ? { repositoryId: props.repositoryId } : {};
-  const { items: repositories } = await api.getRepositories(params);
+  const { items: repositories } = await api.repository.list();
   existingRepositories.value = repositories;
 });
 </script>

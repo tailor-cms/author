@@ -7,6 +7,7 @@ import service from '../seed.service.ts';
 // Creates (or finds-by-email) a test user, optionally attaching them
 // to a user group. Generous defaults via faker for omitted fields.
 export default defineAction({
+  name: 'seedUser',
   body: schemas.UserInput,
   openapi: {
     summary: 'Seed a user',

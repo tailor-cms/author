@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { defineAction } from '#shared/request/action.ts';
 import {
   RepositoryScopedParams,
@@ -12,6 +13,7 @@ import * as service from '../activity.service.ts';
 // target. The `hasLinkSourceAccess` middleware verifies the caller has
 // access to the source before this fires.
 export default defineAction({
+  name: 'link',
   params: RepositoryScopedParams,
   body: schemas.LinkInput,
   openapi: {
@@ -20,8 +22,8 @@ export default defineAction({
     description: 'Creates a linked-copy tree of the source under the target.',
     responses: {
       200: {
-        description: 'Linked-copy entry point in the target repository.',
-        schema: dataEnvelope(schemas.Activity),
+        description: 'Linked-copy subtree in the target repository.',
+        schema: dataEnvelope(z.array(schemas.Activity)),
       },
       403: { description: 'No access to the source repository.' },
       404: { description: 'Source activity not found.' },

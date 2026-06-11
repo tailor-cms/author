@@ -39,7 +39,7 @@
 import { last, reduce, uniq, uniqBy } from 'lodash-es';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
-import api from '@/api/revision';
+import { api } from '@/api';
 import { isSameInstance } from '@/lib/revision';
 import RevisionItem from '@/components/repository/Revisions/RevisionItem.vue';
 import { useActivityStore } from '@/stores/activity';
@@ -88,14 +88,17 @@ const fetchRevisions = async () => {
   isFetching.value = true;
   const repositoryId = currentRepositoryStore.repository?.id;
   if (!repositoryId) return;
-  const { items, total }: { items: Revision[]; total: number } =
-    await api.fetch(repositoryId, queryParams);
-  revisions.value = uniqBy([...revisions.value, ...items], 'uid');
-  // Make sure to fetch all activities for the revisions
-  const activityIds = uniq(
-    items.map((it) => it.state.activityId || it.state.id),
+  const { items, total } = await api.revision.list({
+    params: { repositoryId },
+    query: queryParams,
+  });
+  revisions.value = uniqBy([...revisions.value, ...items], 'uid') as Revision[];
+  const ids = uniq(
+    items.map((it) => (it.state.activityId ?? it.state.id) as number),
   );
-  await activityStore.fetch(repositoryId, { activityIds });
+  if (ids.length) {
+    await activityStore.fetch(repositoryId, { ids, paranoid: false });
+  }
   areAllItemsFetched.value = total <= queryParams.offset + queryParams.limit;
   queryParams.offset += queryParams.limit;
   isFetching.value = false;
@@ -106,9 +109,7 @@ const loadMore = async (options: any) => {
   options.done('ok');
 };
 
-onMounted(() => {
-  return fetchRevisions();
-});
+onMounted(() => fetchRevisions());
 </script>
 
 <style lang="scss" scoped>

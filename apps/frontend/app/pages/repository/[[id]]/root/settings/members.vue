@@ -59,7 +59,7 @@
 
 <script lang="ts" setup>
 import { map, orderBy } from 'lodash-es';
-import { role } from '@tailor-cms/interfaces/role';
+import { role, type RepositoryRole } from '@tailor-cms/interfaces/role';
 import { storeToRefs } from 'pinia';
 import { titleCase } from '@tailor-cms/utils';
 
@@ -71,7 +71,7 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Role {
   title: string;
-  value: string;
+  value: RepositoryRole;
   description?: string;
 }
 

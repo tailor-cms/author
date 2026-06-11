@@ -1,4 +1,11 @@
-export default {
+export interface RepositoryFilterConfig {
+  type: 'TAG' | 'SCHEMA';
+  label: string;
+  queryParam: 'tagIds' | 'schemas';
+  icon: string;
+}
+
+const configs: Record<'TAG' | 'SCHEMA', RepositoryFilterConfig> = {
   TAG: {
     type: 'TAG',
     label: 'tags',
@@ -11,4 +18,6 @@ export default {
     queryParam: 'schemas',
     icon: 'mdi-file-tree',
   },
-} as any;
+};
+
+export default configs;

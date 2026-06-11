@@ -9,6 +9,7 @@ import * as service from '../comment.service.ts';
 // only the author reaches this handler; the service stamps `editedAt`
 // so the FE can render an "(edited)" hint.
 export default defineAction({
+  name: 'update',
   params: schemas.CommentItemParams,
   body: schemas.PatchInput,
   openapi: {

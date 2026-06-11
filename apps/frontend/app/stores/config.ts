@@ -10,7 +10,7 @@ interface ConfigCookie {
   oidcEnabled?: boolean;
   oidcLoginText?: string;
   oidcLogoutEnabled?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const parseSchemas = (schemas = '') =>
@@ -44,7 +44,7 @@ export const useConfigStore = defineStore('config', () => {
     if (!import.meta.dev) cookie.value = undefined;
   }
 
-  function personalize(statsigConfig: any) {
+  function personalize(statsigConfig: { value: Record<string, unknown> }) {
     Object.entries(statsigConfig.value).forEach(([key, value]) => {
       const parsedKey = camelCase(key);
       config[parsedKey] = value;

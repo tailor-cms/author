@@ -29,6 +29,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'link',
   params: RepositoryScopedParams,
   body: schemas.LinkInput,
   openapi: {

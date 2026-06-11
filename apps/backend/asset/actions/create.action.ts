@@ -14,7 +14,9 @@ import * as service from '../asset.service.ts';
 //   - `file`    (legacy file upload)   -> { key, publicUrl, url }
 // `raw: true` so the handler returns the chosen shape verbatim.
 export default defineAction({
+  name: 'uploadAssets',
   raw: true,
+  multipart: schemas.CreateMultipart,
   openapi: {
     authenticated: true,
     summary: 'Upload one or more assets',

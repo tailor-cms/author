@@ -8,6 +8,7 @@ import service from '../seed.service.ts';
 // repository, the canonical seeded activity, the canonical content
 // element, and (optionally) a linked-content example.
 export default defineAction({
+  name: 'seedRepository',
   body: schemas.RepositoryInput,
   openapi: {
     summary: 'Seed a repository',

@@ -48,7 +48,7 @@ import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
-import { repository as api } from '@/api';
+import { api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -80,7 +80,12 @@ const metadata = computed(() =>
 
 // Construct entity data for plugin hooks
 // Name/description at root level, other data spread from repository.data
-const entityData = computed(() => {
+type EntityData = {
+  name?: string;
+  description?: string;
+  [key: string]: unknown;
+};
+const entityData = computed<EntityData>(() => {
   const repo = repository.value;
   if (!repo) return {};
   return {
@@ -145,7 +150,9 @@ const updateMeta = async (
 
 const publish = async () => {
   isPublishing.value = true;
-  await api.publishRepositoryMeta(repository.value?.id);
+  await api.repository.publishMeta({
+    params: { repositoryId: repository.value!.id },
+  });
   isPublishing.value = false;
   notify('Info successfully published', { immediate: true });
 };

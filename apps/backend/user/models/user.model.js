@@ -231,19 +231,18 @@ class User extends Model {
   }
 
   async getAccessibleUserGroups() {
+    const processRes = (group, role) => ({
+      ...pick(group.dataValues, ['id', 'name', 'logoUrl']),
+      role,
+    });
     if (this.isAdmin()) {
       const UserGroup = this.sequelize.model('UserGroup');
       const groups = await UserGroup.findAll();
-      return groups.map((group) => ({
-        ...group.dataValues,
-        role: UserRole.ADMIN,
-      }));
+      return groups.map((group) => processRes(group, UserRole.ADMIN));
     }
-    return this.getUserGroups().then((groups) =>
-      groups.map((group) => ({
-        ...pick(group.dataValues, ['id', 'name']),
-        role: group?.userGroupMember?.role,
-      })),
+    const groups = await this.getUserGroups();
+    return groups.map((group) =>
+      processRes(group, group?.userGroupMember?.role),
     );
   }
 }

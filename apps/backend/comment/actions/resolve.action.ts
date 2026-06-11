@@ -28,6 +28,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'resolve',
   params: RepositoryScopedParams,
   body: schemas.ResolveInput,
   openapi: {

@@ -7,6 +7,7 @@ import service from '../seed.service.ts';
 // Seeds the repository catalog from `tailor-seed/repositories.json`
 // under the default seed user; optionally shares them with a user group.
 export default defineAction({
+  name: 'seedCatalog',
   body: schemas.CatalogInput,
   openapi: {
     summary: 'Seed the repository catalog',

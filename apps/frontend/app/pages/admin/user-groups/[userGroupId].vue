@@ -93,17 +93,14 @@
 </template>
 
 <script lang="ts" setup>
+import type {
+  UserGroup,
+  UserGroupMemberWithUser,
+} from '@tailor-cms/interfaces/user-group';
 import { UserAvatar } from '@tailor-cms/core-components';
 
-import type { User } from '@tailor-cms/interfaces/user';
-import type { UserGroup, UserGroupMember } from
-  '@tailor-cms/interfaces/user-group';
-
-import { GROUP_ROLES } from '@/utils/groupRoles';
-import { userGroup as api } from '@/api';
+import { api } from '@/api';
 import UserGroupMembershipDialog from '~/components/admin/UserGroupMembershipDialog.vue';
-
-type GroupMember = User & { userGroupMember: UserGroupMember };
 
 definePageMeta({
   name: 'user-group',
@@ -115,7 +112,7 @@ const router = useRouter();
 const isLoading = ref(true);
 const userGroupId = parseInt(route.params.userGroupId as string, 10);
 const userGroup = ref<UserGroup | null>(null);
-const userGroupUsers = ref<GroupMember[]>([]);
+const userGroupUsers = ref<UserGroupMemberWithUser[]>([]);
 
 const roles = GROUP_ROLES;
 
@@ -126,11 +123,16 @@ const roleIcon = (current: string, value: string) =>
   current === value ? 'mdi-check-circle' : 'mdi-blank';
 
 async function fetchUsers() {
-  userGroupUsers.value = await api.fetchUsers(userGroupId);
+  userGroupUsers.value = await api.userGroup.getUsers({
+    params: { id: userGroupId },
+  });
 }
 
 async function upsertUser(email: string, role: string) {
-  await api.upsertUser(userGroupId, { emails: [email], role });
+  await api.userGroup.addUser({
+    params: { id: userGroupId },
+    body: { emails: [email], role } as any,
+  });
   await fetchUsers();
 }
 
@@ -141,7 +143,9 @@ async function removeUser(userId: number) {
     color: 'error',
     message: 'Are you sure you want to remove user from a group?',
     action: async () => {
-      await api.removeUser(userGroupId, userId);
+      await api.userGroup.removeUser({
+        params: { id: userGroupId, userId },
+      });
       await fetchUsers();
     },
   };
@@ -149,7 +153,9 @@ async function removeUser(userId: number) {
 }
 
 onBeforeMount(async () => {
-  userGroup.value = await api.get(userGroupId);
+  userGroup.value = await api.userGroup.get({
+    params: { id: userGroupId },
+  });
   await fetchUsers();
   isLoading.value = false;
 });

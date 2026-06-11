@@ -24,6 +24,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'addUserGroup',
   params: schemas.RepositoryItemParams,
   body: schemas.AddUserGroupInput,
   openapi: {

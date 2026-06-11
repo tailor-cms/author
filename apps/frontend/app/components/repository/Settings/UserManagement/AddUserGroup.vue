@@ -46,11 +46,10 @@
 
 <script lang="ts" setup>
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
-
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
-import repositoryApi from '@/api/repository.js';
+import { api } from '@/api';
 
 const props = defineProps<{
   userGroups: UserGroup[];
@@ -68,9 +67,9 @@ const groupOptions = ref([]) as any;
 
 const submit = handleSubmit(async () => {
   const repositoryId = currentRepositoryStore.repositoryId as number;
-  await repositoryApi.addUserGroup({
-    repositoryId,
-    userGroupId: groupInput.value,
+  await api.repository.addUserGroup({
+    params: { repositoryId },
+    body: { userGroupId: groupInput.value },
   });
   await repositoryStore.get(repositoryId);
   close();

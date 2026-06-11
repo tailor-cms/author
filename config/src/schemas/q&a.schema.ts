@@ -7,6 +7,7 @@ import { ContentMode } from '@tailor-cms/interfaces/schema';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
+import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 enum ActivityType {
@@ -20,7 +21,7 @@ const CATEGORY: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: true,
   label: 'Category',
-  color: '#5187C7',
+  color: OUTLINE_COLOR.NEUTRAL_1,
   subLevels: [ActivityType.Category, ActivityType.Question],
   ai: {
     definition: `
@@ -34,7 +35,7 @@ const QUESTION: ActivityConfig = {
   type: ActivityType.Question,
   isTrackedInWorkflow: true,
   label: 'Question',
-  color: '#08A9AD',
+  color: OUTLINE_COLOR.ACCENT_1,
   contentContainers: [ActivityType.Response],
   ai: {
     definition: `

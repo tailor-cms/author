@@ -33,10 +33,7 @@ import { promiseTimeout } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import EntitySidebar from './EntitySidebar.vue';
-import {
-  contentElement as contentElementApi,
-  revision as revisionApi,
-} from '@/api';
+import { api } from '@/api';
 
 interface Props {
   revision: Revision;
@@ -57,11 +54,11 @@ const repositoryId = computed(() => props.revision.repositoryId);
 
 const getRevisions = async () => {
   const { entity, state } = props.revision;
-  const params = { entity, entityId: state.id };
-  const { items }: { items: Revision[] } = await revisionApi.fetch(
-    repositoryId.value,
-    params,
-  );
+  const entityId = (state as { id: number }).id;
+  const { items } = await api.revision.list({
+    params: { repositoryId: repositoryId.value },
+    query: { entity, entityId },
+  });
   return items;
 };
 
@@ -70,10 +67,9 @@ const previewRevision = async (revision: Revision) => {
   const resolvedRevision = find(resolvedRevisions.value, { id: revision.id });
   if (resolvedRevision) return (selectedRevision.value = resolvedRevision);
   loading.value[revision.id] = true;
-  selectedRevision.value = await revisionApi.get(
-    repositoryId.value,
-    revision.id,
-  );
+  selectedRevision.value = await api.revision.get({
+    params: { repositoryId: repositoryId.value, revisionId: revision.id },
+  });
   await promiseTimeout(600);
   loading.value[revision.id] = false;
 };
@@ -81,8 +77,11 @@ const previewRevision = async (revision: Revision) => {
 const rollback = async (revision: Revision) => {
   loading.value[revision.id] = true;
   const entity = { ...revision.state, paranoid: false } as any;
-  const { id, repositoryId } = entity;
-  await contentElementApi.patch(repositoryId, id, entity);
+  const { id, repositoryId: entityRepoId, ...body } = entity;
+  await api.contentElement.update({
+    params: { repositoryId: entityRepoId, elementId: id },
+    body,
+  });
   const items = await getRevisions();
   const newRevision = first(items);
   if (newRevision) {

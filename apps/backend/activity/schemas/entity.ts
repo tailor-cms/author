@@ -6,6 +6,7 @@ import {
   Int,
   IntParam,
   JsonObject,
+  Refs,
   RepositoryScopedParams,
   Timestamp,
   Uid,
@@ -31,8 +32,8 @@ export const ActivityStatus = z
     assigneeId: Int()
       .nullable()
       .describe('Current assignee user id; null when unassigned.'),
-    assignee: UserSummary.nullable()
-      .optional()
+    assignee: UserSummary
+      .nullable()
       .describe('Eager-loaded assignee; null when unassigned.'),
     status: z.string().describe('Schema-defined workflow status id.'),
     priority: z.string().describe('Schema-defined workflow priority id.'),
@@ -76,12 +77,11 @@ export const Activity = z
       name for outline activities lives at \`data.name\` (typed as
       required in \`@tailor-cms/interfaces/activity\`).
     `),
-    refs: JsonObject(oneLine`
+    refs: Refs(oneLine`
       Cross-activity references (JSONB). Keyed by relationship type
       declared in the schema's \`relationships\` config for this
-      activity type; values are arrays of target activity ids
-      (e.g. \`{ prerequisites: [42, 17] }\`). Remapped on deep-clone
-      via \`mapClonedReferences\`.
+      activity type; values are arrays of \`Relationship\` pointers.
+      Remapped on deep-clone via \`mapClonedReferences\`.
     `),
     detached: z.boolean().describe(oneLine`
       True when an ancestor was deleted, leaving this row unreachable
@@ -104,10 +104,9 @@ export const Activity = z
       True when the activity type appears in the schema's workflow
       configuration.
     `),
-    status: z.array(ActivityStatus).optional().describe(oneLine`
-      Workflow status history (latest first). Present when the
-      defaultScope include was applied.
-    `),
+    status: z.array(ActivityStatus).describe(
+      'Workflow status history (latest first).',
+    ),
     modifiedAt: Timestamp(
       'Aggregated subtree last-modified timestamp.',
     ).nullable(),
@@ -152,7 +151,7 @@ export const ActivityCopyLocation = z
       FE to deep-link to the copy's location in the outline.
     `),
     name: z.string().optional().describe('Linked-copy display name.'),
-    repositoryName: z.string().optional().describe('Host repository name.'),
+    repositoryName: z.string().describe('Host repository name.'),
   })
   .meta({ id: 'ActivityCopyLocation' })
   .describe('A entry-point linked copy of a source activity.');

@@ -3,6 +3,7 @@ import * as schemas from '../api-schemas/index.ts';
 import AIService from '../ai.service.ts';
 
 export default defineAction({
+  name: 'deleteVectorStore',
   params: schemas.VectorStoreItemParams,
   openapi: {
     authenticated: true,

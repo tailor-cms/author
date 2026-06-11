@@ -6,6 +6,7 @@ import service from '../seed.service.ts';
 // Creates a comment authored by the default seed user against an
 // existing activity / element pair.
 export default defineAction({
+  name: 'seedComment',
   body: schemas.CommentInput,
   openapi: {
     summary: 'Seed a comment',

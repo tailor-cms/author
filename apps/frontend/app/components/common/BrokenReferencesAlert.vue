@@ -39,7 +39,7 @@
 <script lang="ts" setup>
 import { schema as schemaConfig } from '@tailor-cms/config';
 
-import { repository as api } from '@/api';
+import { api } from '@/api';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface ReferenceError {
@@ -57,7 +57,9 @@ const errors = ref<ReferenceError[]>([]);
 const validateReferences = async () => {
   const { repositoryId } = repositoryStore;
   if (!repositoryId) return;
-  const { activities, elements } = await api.validateReferences(repositoryId);
+  const { activities, elements } = await api.repository.validateReferences({
+    params: { repositoryId },
+  });
   errors.value = [];
   activities.forEach((it: any) => {
     errors.value.push({
@@ -87,7 +89,10 @@ const validateReferences = async () => {
 const cleanupReferences = async () => {
   const { repositoryId } = repositoryStore;
   if (!repositoryId) throw new Error('Repository not initialized!');
-  await api.cleanupReferences(repositoryId, errorReport.value);
+  await api.repository.cleanupReferences({
+    params: { repositoryId },
+    body: errorReport.value,
+  });
   await validateReferences();
 };
 

@@ -4,10 +4,10 @@ import { z } from 'zod';
 import {
   IntArrayFromForm,
   RepositoryScopedParams,
+  binaryFile,
 } from '#shared/request/schemas.ts';
 import { Repository } from './entity.ts';
 
-// POST /repositories/import
 export const ImportInput = z
   .object({
     name: Repository.shape.name,
@@ -19,6 +19,10 @@ export const ImportInput = z
   .describe('Import-repo payload accompanying the multipart archive.');
 
 export type ImportInput = z.infer<typeof ImportInput>;
+
+export const ImportMultipart = ImportInput.extend({
+  archive: binaryFile('Repository archive (`.tgz`).'),
+}).describe('Multipart payload for the repository import endpoint.');
 
 export const ExportJobItemParams = RepositoryScopedParams.extend({
   jobId: z

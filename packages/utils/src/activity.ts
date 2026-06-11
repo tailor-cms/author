@@ -36,24 +36,31 @@ export function getChildren(activities: Activity[], parentId: number) {
   return sortBy(filter(activities, { parentId }), 'position');
 }
 
-export function getDescendants(
-  activities: Activity[],
+// Generic over the element type so callers using a refined shape
+// (e.g. `StoreActivity = Activity & { shortId; currentStatus }`) get the
+// refined type back instead of the base `Activity`. The function only
+// returns items it filtered out of `activities`, so the runtime types
+// are always preserved.
+export function getDescendants<T extends Activity>(
+  activities: T[],
   activity: Activity,
-): Activity[] {
-  const children = filter(activities, { parentId: activity.id });
+): T[] {
+  const children = activities.filter((it) => it.parentId === activity.id);
   if (!children.length) return [];
-  const reducer = (acc: Activity[], it: Activity) => {
-    return acc.concat(getDescendants(activities, it));
-  };
-  const descendants = children.reduce(reducer, []);
+  const descendants = children.reduce<T[]>(
+    (acc, it) => acc.concat(getDescendants(activities, it)),
+    [],
+  );
   return children.concat(descendants);
 }
 
-export function getAncestors(activities: Activity[], activity: Activity) {
-  const parent = find(activities, { id: activity.parentId });
+export function getAncestors<T extends Activity>(
+  activities: T[],
+  activity: Activity,
+): T[] {
+  const parent = activities.find((it) => it.id === activity.parentId);
   if (!parent) return [];
-  const ancestors: Activity[] = getAncestors(activities, parent);
-  return [...ancestors, parent];
+  return [...getAncestors(activities, parent), parent];
 }
 
 export function toTreeFormat(

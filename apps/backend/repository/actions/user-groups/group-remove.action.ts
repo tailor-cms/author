@@ -5,6 +5,7 @@ import * as service from '../../repository.service.ts';
 // DELETE /repositories/:repositoryId/user-group/:userGroupId
 // Unshares the repository from the given user group.
 export default defineAction({
+  name: 'removeUserGroup',
   params: schemas.UserGroupItemParams,
   openapi: {
     authenticated: true,

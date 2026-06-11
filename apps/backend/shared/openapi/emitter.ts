@@ -10,7 +10,23 @@
 // "Tag[]" instead of "object[]", lets users navigate the Schemas
 // sidebar, and keeps the document compact when entities are reused.
 import { z, type ZodType } from 'zod';
+import { fileURLToPath } from 'node:url';
+import { packageDirectory } from 'package-directory';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+import { deriveOperationNames, type OperationNames } from './naming.ts';
 import { getRegisteredRoutes, type RouteRecord } from './registry.ts';
+import { createLogger } from '#logger';
+import config from '#config';
+
+const logger = createLogger('openapi');
+
+const APP_DIR = (await packageDirectory({
+  cwd: path.dirname(fileURLToPath(import.meta.url)),
+}))!;
+
+export const OPENAPI_SPEC_PATH = path.join(APP_DIR, 'openapi.json');
 
 // Express `:param` -> OpenAPI `{param}`.
 function toOpenApiPath(p: string): string {
@@ -93,9 +109,18 @@ function paramsFor(schema: ZodType | undefined, slot: 'path' | 'query') {
 // slice-level tag from the mounter goes verbatim into `operation.tags`
 // so Scalar groups routes by feature; routes without a tag fall back
 // to "Misc" so they still land under a labelled sidebar section.
-function operationFor(route: RouteRecord) {
+//
+// The `names` map is precomputed in `buildPaths` so that verb
+// derivation can see every route in the slice
+// (needed to decide whether REST shorthand applies and to resolve collisions).
+function operationFor(route: RouteRecord, names: OperationNames | undefined) {
   const op: any = {
     tags: [route.tag ?? 'Misc'],
+    ...(names && {
+      'operationId': names.operationId,
+      'x-tailor-slice': names.slice,
+      'x-tailor-method': names.verb,
+    }),
     summary: route.openapi?.summary,
     description: route.openapi?.description,
     parameters: [
@@ -104,7 +129,14 @@ function operationFor(route: RouteRecord) {
     ],
     responses: {} as Record<string, any>,
   };
-  if (route.body) {
+  if (route.multipart) {
+    op.requestBody = {
+      required: true,
+      content: {
+        'multipart/form-data': { schema: schemaJson(route.multipart) },
+      },
+    };
+  } else if (route.body) {
     op.requestBody = {
       required: true,
       content: { 'application/json': { schema: schemaJson(route.body) } },
@@ -131,14 +163,15 @@ function operationFor(route: RouteRecord) {
 }
 
 // Fold every registered route into the OpenAPI `paths` object in
-// registration order. Side effect: populates the shared `components`
-// map with every named entity encountered.
+// registration order.
 export function buildPaths() {
+  const routes = getRegisteredRoutes();
+  const names = deriveOperationNames(routes);
   const paths: Record<string, Record<string, any>> = {};
-  for (const route of getRegisteredRoutes()) {
+  for (const route of routes) {
     const apiPath = toOpenApiPath(route.path);
     paths[apiPath] = paths[apiPath] ?? {};
-    paths[apiPath][route.method] = operationFor(route);
+    paths[apiPath][route.method] = operationFor(route, names.get(route));
   }
   return paths;
 }
@@ -196,6 +229,17 @@ function buildTagGroups(tagInfo: TagInfo[]) {
     groups.set(group, bucket);
   }
   return Array.from(groups, ([name, tags]) => ({ name, tags }));
+}
+
+export async function writeOpenApiSnapshot(): Promise<void> {
+  if (config.isProduction) return;
+  try {
+    const doc = buildOpenApiDocument();
+    await fs.writeFile(OPENAPI_SPEC_PATH, JSON.stringify(doc, null, 2));
+    logger.info(`OpenAPI spec written to ${OPENAPI_SPEC_PATH}`);
+  } catch (err) {
+    logger.warn({ err }, 'Failed to write OpenAPI spec to disk');
+  }
 }
 
 // Assemble the full OpenAPI 3.1 document. Paths are built first so the

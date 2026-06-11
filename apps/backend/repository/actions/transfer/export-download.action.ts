@@ -12,7 +12,7 @@ import { JobCache } from './job-cache.ts';
 
 const logger = createLogger('repository:export');
 
-// POST /repositories/:repositoryId/export/:jobId
+// GET /repositories/:repositoryId/export/:jobId
 async function handler({
   params,
   req,
@@ -45,6 +45,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'downloadExport',
   params: schemas.ExportJobItemParams,
   openapi: {
     authenticated: true,

@@ -10,6 +10,7 @@ import { ContentElementType } from '@tailor-cms/content-element-collection/types
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
+import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 const guidelines = (
@@ -107,7 +108,7 @@ const Module: ActivityConfig = {
   subLevels: [ActivityType.Module, ActivityType.LearningBit],
   rootLevel: true,
   isTrackedInWorkflow: false,
-  color: '#5187C7',
+  color: OUTLINE_COLOR.NEUTRAL_1,
   ai: {
     definition: `
       Modules group related Learning Bits into a coherent path.
@@ -123,7 +124,7 @@ const LearningBit: ActivityConfig = {
   contentContainers: [ContentContainerType.StructuredContent],
   rootLevel: true,
   isTrackedInWorkflow: true,
-  color: '#08A9AD',
+  color: OUTLINE_COLOR.ACCENT_1,
   guidelines,
   ai: {
     definition: `

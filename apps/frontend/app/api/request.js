@@ -6,6 +6,30 @@ Axios.prototype.submitForm = function (url, fields, options) {
   return Promise.resolve(submitForm(action, fields, options));
 };
 
+const isAuthError = (err) => [401, 403].includes(err.response?.status);
+
+// Response interceptor that bumps unauthenticated users back to /auth.
+// Exported so other axios instances can apply the same behaviour without
+// duplicating the logic.
+export function applyAuthInterceptor(target) {
+  target.interceptors.response.use(
+    (res) => res,
+    (err) => {
+      if (isAuthError(err)) {
+        // eslint-disable-next-line no-undef
+        const isAuthenticated = useCookie('is-authenticated');
+        isAuthenticated.value = false;
+        const authRoute = '/auth';
+        if (window.location.pathname === authRoute) return;
+        // eslint-disable-next-line no-undef
+        if (import.meta.server) return navigateTo(authRoute);
+        return window.location.replace(authRoute);
+      }
+      throw err;
+    },
+  );
+}
+
 const config = {
   baseURL: '/api',
   withCredentials: true,
@@ -23,24 +47,7 @@ Object.defineProperty(client, 'base', {
   },
 });
 
-const isAuthError = (err) => [401, 403].includes(err.response?.status);
-
-client.interceptors.response.use(
-  (res) => res,
-  (err) => {
-    if (isAuthError(err)) {
-      // eslint-disable-next-line no-undef
-      const isAuthenticated = useCookie('is-authenticated');
-      isAuthenticated.value = false;
-      const authRoute = '/auth';
-      if (window.location.pathname === authRoute) return;
-      // eslint-disable-next-line no-undef
-      if (import.meta.server) return navigateTo(authRoute);
-      return window.location.replace(authRoute);
-    }
-    throw err;
-  },
-);
+applyAuthInterceptor(client);
 
 export default client;
 

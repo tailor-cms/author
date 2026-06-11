@@ -6,6 +6,7 @@ import * as service from '../content-element.service.ts';
 
 // GET /repositories/:repositoryId/content-elements/:elementId/source
 export default defineAction({
+  name: 'getSource',
   params: schemas.ContentElementItemParams,
   openapi: {
     authenticated: true,

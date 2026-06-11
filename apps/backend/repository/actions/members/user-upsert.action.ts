@@ -17,6 +17,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'addUser',
   params: schemas.RepositoryItemParams,
   body: schemas.UpsertUserInput,
   openapi: {

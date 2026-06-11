@@ -159,7 +159,7 @@ const filteredActivities = computed(() => {
   if (!filters.search) return outlineActivities.value;
   const regex = new RegExp(filters.search.trim(), 'i');
   return filter(outlineActivities.value, ({ shortId, data: { name } }) => {
-    return regex.test(shortId) || regex.test(name);
+    return regex.test(shortId) || regex.test(name as string);
   });
 });
 

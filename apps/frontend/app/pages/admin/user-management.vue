@@ -96,12 +96,11 @@
 </template>
 
 <script lang="ts" setup>
+import type { User } from '@tailor-cms/interfaces/user';
 import { formatDate } from 'date-fns/format';
 import humanize from 'humanize-string';
-import type { User } from '@tailor-cms/interfaces/user';
 
-import { user as userApi, userGroup as userGroupApi } from '@/api';
-
+import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 import UserDialog from '@/components/admin/UserDialog.vue';
 
@@ -116,7 +115,7 @@ useHead({
 const authStore = useAuthStore();
 
 const defaultPage = () => ({
-  sortBy: [{ key: 'createdAt', order: 'desc' }],
+  sortBy: [{ key: 'createdAt', order: 'desc' as const }],
   page: 1,
   itemsPerPage: 10,
 });
@@ -132,8 +131,8 @@ const headers = [
 ];
 
 const actions = {
-  archive: (user: any) => userApi.remove(user),
-  restore: (user: any) => userApi.upsert(user),
+  archive: (user: any) => api.user.delete({ params: { id: user.id } }),
+  restore: (user: any) => api.user.upsert({ body: user }),
 };
 
 const isLoading = ref(true);
@@ -143,12 +142,12 @@ const dataTable = reactive(defaultPage());
 const totalItems = ref(0);
 const filter = ref('');
 const isUserDialogVisible = ref(false);
-const editedUser = ref(null);
+const editedUser = ref<User | null>(null);
 const showArchiveToggle = ref(false);
 
 const currentUser = computed(() => authStore.user);
 
-const showUserDialog = (user = null) => {
+const showUserDialog = (user: User | null = null) => {
   isUserDialogVisible.value = true;
   editedUser.value = user;
 };
@@ -156,13 +155,15 @@ const showUserDialog = (user = null) => {
 const fetch = async (opts = {}) => {
   Object.assign(dataTable, opts);
   isLoading.value = true;
-  const { items, total } = await userApi.fetch({
-    sortBy: dataTable.sortBy[0].key,
-    sortOrder: dataTable.sortBy[0].order === 'desc' ? 'DESC' : 'ASC',
-    offset: (dataTable.page - 1) * dataTable.itemsPerPage,
-    limit: dataTable.itemsPerPage,
-    filter: filter.value,
-    archived: showArchiveToggle.value || undefined,
+  const { items, total } = await api.user.list({
+    query: {
+      sortBy: dataTable.sortBy[0]?.key,
+      sortOrder: dataTable.sortBy[0]?.order === 'desc' ? 'DESC' : 'ASC',
+      offset: (dataTable.page - 1) * dataTable.itemsPerPage,
+      limit: dataTable.itemsPerPage,
+      filter: filter.value,
+      archived: showArchiveToggle.value || undefined,
+    },
   });
   users.value = items;
   totalItems.value = total;
@@ -184,7 +185,7 @@ watch(filter, () => fetch());
 watch(showArchiveToggle, () => fetch());
 
 onBeforeMount(async () => {
-  const { items } = await userGroupApi.fetch();
+  const { items } = await api.userGroup.list();
   userGroups.value = items;
 });
 </script>

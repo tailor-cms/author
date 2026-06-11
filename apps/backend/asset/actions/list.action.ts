@@ -10,6 +10,7 @@ import * as service from '../asset.service.ts';
 // circuits to a legacy signed-URL response (the storage router was
 // folded in here); everything else is the asset library listing.
 export default defineAction({
+  name: 'listAssets',
   raw: true,
   query: schemas.ListFilter,
   openapi: {

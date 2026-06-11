@@ -77,10 +77,10 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import { SCHEMAS } from '@tailor-cms/config';
 import { sortBy } from 'lodash-es';
 
-import RepositoryTree from './RepositoryTree.vue';
-import { activity as activityApi, repository as repositoryApi } from '@/api';
+import { api } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
+import RepositoryTree from './RepositoryTree.vue';
 
 const { AddAfter, AddInto } = InsertLocation;
 
@@ -127,20 +127,21 @@ const selectRepository = async (repository: Repository) => {
   selectedActivities.value = [];
   if (repository.activities) return;
   isFetchingActivities.value = true;
-  const activities = await activityApi.getActivities(repository.id);
+  const activities = await api.activity.list({
+    params: { repositoryId: repository.id },
+  });
   repository.activities = sortBy(activities, 'position');
   isFetchingActivities.value = false;
 };
 
 const copyActivity = async (activity: Activity, prevActivity?: Activity) => {
   const { action, repositoryId } = props;
-  const { id: srcId, repositoryId: srcRepositoryId, type } = activity;
+  const { id: srcId, repositoryId: srcRepositoryId } = activity;
   const anchor = (action === AddAfter && prevActivity) || props.anchor;
   return activityStore.clone({
     srcId,
     srcRepositoryId,
     repositoryId,
-    type,
     position: await activityStore.calculateCopyPosition(action, anchor),
     ...(anchor && {
       parentId: action === AddInto ? anchor.id : anchor.parentId,
@@ -156,7 +157,7 @@ const copySelection = async () => {
     const copied = await copyActivity(item, prevOutlineItem);
     prevOutlineItem = copied[0]; // Only first copied activity is outline item
   }
-  emit('completed', items[0].parentId);
+  emit('completed', items[0]?.parentId);
   isCopyingActivities.value = false;
   close();
 };
@@ -167,9 +168,13 @@ const close = () => {
 };
 
 const fetchRepositories = loader(async (search = '') => {
-  const params = { search, schemas: store.repository?.schema };
-  const repositoriesData = await repositoryApi.getRepositories(params);
-  repositories.value = sortBy(repositoriesData.items, 'name');
+  const { items } = await api.repository.list({
+    query: {
+      search,
+      ...(store.repository?.schema ? { schemas: [store.repository.schema] } : {}),
+    },
+  });
+  repositories.value = sortBy(items, 'name');
 }, 500);
 
 onMounted(() => fetchRepositories());

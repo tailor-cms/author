@@ -13,6 +13,7 @@ import * as service from '../activity.service.ts';
 // Scoped to the repository at /:repositoryId. Default order is by
 // `position` (applied via the processQuery middleware).
 export default defineAction({
+  name: 'list',
   params: RepositoryScopedParams,
   query: schemas.ListFilter,
   openapi: {

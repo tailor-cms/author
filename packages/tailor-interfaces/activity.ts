@@ -1,5 +1,5 @@
-import type { ContentElement } from './content-element';
-import type { User } from './user';
+import type { ContentElement, Relationship } from './content-element';
+import type { UserSummary } from './user';
 
 export interface StatusConfig {
   id: string;
@@ -12,7 +12,7 @@ export interface Status {
   id: number;
   activityId: number;
   assigneeId: number | null;
-  assignee: User | null;
+  assignee: UserSummary | null;
   status: string;
   description: string | null;
   priority: string;
@@ -22,8 +22,9 @@ export interface Status {
   deletedAt: string | null;
 }
 
+// Activity-level metadata bag. `name` is present on outline activities
 interface Data {
-  name: string;
+  name?: string;
   [key: string]: any;
 }
 
@@ -35,16 +36,16 @@ export interface Activity {
   type: string;
   position: number;
   data: Data;
-  refs: Record<string, unknown>;
+  refs: Record<string, Relationship[]>;
   status: Status[];
   isTrackedInWorkflow: boolean;
   detached: boolean;
   /** Whether this activity is an active linked copy */
   isLinkedCopy: boolean;
-  /** ID of the source activity */
-  sourceId?: number | null;
-  /** Timestamp of source activity when linked */
-  sourceModifiedAt?: string | null;
+  /** Source activity ID (if link); null after the source is hard-deleted. */
+  sourceId: number | null;
+  /** Timestamp of source activity when linked; null when standalone. */
+  sourceModifiedAt: string | null;
   elements?: ContentElement[];
   containers?: Activity[];
   modifiedAt: string | null;

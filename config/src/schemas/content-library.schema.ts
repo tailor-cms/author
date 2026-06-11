@@ -6,6 +6,7 @@ import type {
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
+import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
 
 enum ActivityType {
@@ -19,7 +20,7 @@ const COLLECTION: ActivityConfig = {
   rootLevel: true,
   isTrackedInWorkflow: false,
   label: 'Collection',
-  color: '#9C27B0',
+  color: OUTLINE_COLOR.ACCENT_6,
   subLevels: [ActivityType.Item],
   ai: {
     definition: `
@@ -34,7 +35,7 @@ const ITEM: ActivityConfig = {
   type: ActivityType.Item,
   isTrackedInWorkflow: true,
   label: 'Library Item',
-  color: '#7B1FA2',
+  color: OUTLINE_COLOR.ACCENT_1,
   contentContainers: [ActivityType.Section],
   ai: {
     definition:

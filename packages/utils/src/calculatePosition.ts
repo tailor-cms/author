@@ -7,8 +7,8 @@ const { AddAfter, Reorder } = InsertLocation;
 
 type Item = Activity | ContentElement;
 
-interface PositionConfig {
-  newPosition: number;
+export interface PositionConfig {
+  newPosition?: number;
   items: Item[];
   isFirstChild?: boolean;
   action?: InsertLocation;
@@ -57,15 +57,15 @@ export const getPositions = (items: Item[], index: number, count = 1) => {
  * @return {(number|Array)} Single position if `count` is 1 or an array containing
  *     `count` positions.
  */
-export function calculatePosition(config: PositionConfig) {
+export function calculatePosition(config: PositionConfig): number {
   const { newPosition, items, action = Reorder, count = 1 } = config;
   getDeprecationWarning(config);
   const arr = [...items];
-  if (action === Reorder) arr.splice(newPosition, count);
+  if (action === Reorder) arr.splice(newPosition!, count);
   let index = items.length;
   if (newPosition !== undefined) {
     index = action === AddAfter ? newPosition + 1 : newPosition;
   }
   const positions = getPositions(arr, index, count);
-  return count === 1 ? positions[0] : positions;
+  return (count === 1 ? positions[0] : positions) as number;
 }

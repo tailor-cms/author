@@ -5,6 +5,7 @@ import * as service from '../repository.service.ts';
 
 // POST /repositories/:repositoryId/pin
 export default defineAction({
+  name: 'pin',
   params: schemas.RepositoryItemParams,
   body: schemas.PinInput,
   openapi: {

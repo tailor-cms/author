@@ -26,6 +26,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'resetPassword',
   body: schemas.ResetPasswordInput,
   openapi: {
     summary: 'Replace the password using a reset token',

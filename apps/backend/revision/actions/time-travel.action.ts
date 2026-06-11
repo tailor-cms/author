@@ -8,6 +8,7 @@ import * as schemas from '../schemas/index.ts';
 import * as service from '../revision.service.ts';
 
 export default defineAction({
+  name: 'timeTravel',
   params: RepositoryScopedParams,
   query: schemas.TimeTravelInput,
   openapi: {

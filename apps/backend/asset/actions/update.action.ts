@@ -11,6 +11,7 @@ import * as service from '../asset.service.ts';
 // `.strip()` default drops it silently); file attachments go through
 // /:assetId/file instead.
 export default defineAction({
+  name: 'updateAsset',
   params: schemas.AssetItemParams,
   body: schemas.UpdateInput,
   openapi: {

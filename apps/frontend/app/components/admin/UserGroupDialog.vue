@@ -42,9 +42,8 @@ import { isEmpty } from 'lodash-es';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
+import { api } from '@/api';
 import GroupAvatar from '@/components/common/Avatar/index.vue';
-
-import { userGroup as api } from '@/api';
 
 export interface Props {
   visible?: boolean;
@@ -101,14 +100,19 @@ const close = () => {
 
 const submit = handleSubmit(async () => {
   const action = isNewGroup.value ? 'create' : 'update';
+  const body = {
+    name: nameInput.value || undefined,
+    logoUrl: logoUrlInput.value || undefined,
+  };
   try {
-    await api[action]({
-      id: props.groupData?.id,
-      ...{
-        name: nameInput.value || undefined,
-        logoUrl: logoUrlInput.value || undefined,
-      },
-    });
+    if (isNewGroup.value) {
+      await api.userGroup.create({ body });
+    } else {
+      await api.userGroup.update({
+        params: { id: props.groupData.id },
+        body,
+      });
+    }
   } catch (e: any) {
     const { message } = e?.response?.data?.error || {};
     setFieldError('name', message || 'An error occurred!');

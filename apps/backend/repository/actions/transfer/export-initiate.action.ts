@@ -48,6 +48,7 @@ async function handler({
 }
 
 export default defineAction({
+  name: 'initiateExport',
   params: schemas.RepositoryItemParams,
   openapi: {
     authenticated: true,

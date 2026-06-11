@@ -29,8 +29,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-
-import { activity as activityApi } from '@/api';
+import { api } from '@/api';
 
 interface Props {
   repositoryId: number;
@@ -44,10 +43,12 @@ const isLoading = ref(false);
 const viewSourceComments = async () => {
   isLoading.value = true;
   try {
-    const source = await activityApi.getSource(
-      props.repositoryId,
-      props.activityId,
-    );
+    const source = await api.activity.getSource({
+      params: {
+        repositoryId: props.repositoryId,
+        activityId: props.activityId,
+      },
+    });
     if (!source?.repository) return;
     navigateTo({
       name: 'repository',

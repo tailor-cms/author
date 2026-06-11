@@ -6,6 +6,7 @@ import {
   Int,
   IntParam,
   JsonObject,
+  Refs,
   RepositoryScopedParams,
   Timestamp,
   Uid,
@@ -61,12 +62,12 @@ export const ContentElement = z
       Meta-input data bag (JSONB). Schema-configured fields collected via
       meta inputs (captions, labels, and similar element-level config).
     `),
-    refs: JsonObject(oneLine`
+    refs: Refs(oneLine`
       Cross-element references (JSONB). Keyed by the relationship types
       the schema declares for this element type via
       \`elementMeta.relationships[]\`; values are arrays of
-      \`{ id, uid?, outlineId, containerId }\` pointers. Remapped on
-      deep-clone via \`mapClonedReferences\`.
+      \`Relationship\` pointers. Remapped on deep-clone via
+      \`mapClonedReferences\`.
     `),
     detached: z.boolean().describe(oneLine`
       True when an ancestor activity was deleted, leaving this row

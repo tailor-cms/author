@@ -5,6 +5,7 @@ import * as service from '../../repository.service.ts';
 // DELETE /repositories/:repositoryId/tags/:tagId
 // Detaches a tag from the repository (the Tag row is left in place).
 export default defineAction({
+  name: 'removeTag',
   params: schemas.TagItemParams,
   openapi: {
     authenticated: true,

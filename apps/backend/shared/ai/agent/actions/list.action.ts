@@ -7,6 +7,7 @@ import { sessionStore } from '../session/index.ts';
 // GET /repositories/:repositoryId/agent/sessions
 // Lists the current user's agent sessions in this repository.
 export default defineAction({
+  name: 'listSessions',
   raw: true,
   openapi: {
     authenticated: true,
