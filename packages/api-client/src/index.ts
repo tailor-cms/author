@@ -28,5 +28,14 @@ export * from '../dist/aliases.gen';
 
 export type { ApiClientOptions } from '../dist/api.gen';
 export type { Client } from '@hey-api/client-axios';
-export { createClient } from '@hey-api/client-axios';
+
+// `formDataBodySerializer` is the multipart body serializer; spread it
+// into a call's options for endpoints declared `multipart/form-data`
+// (e.g. `api.repository.import`, asset uploads). Without it, hey-api
+// JSON-serializes the body and multer rejects the request as missing
+// the expected file part.
+export {
+  createClient,
+  formDataBodySerializer,
+} from '@hey-api/client-axios';
 export { createApiClient } from '../dist/api.gen';

@@ -169,6 +169,7 @@
 
 <script lang="ts" setup>
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
+import { formDataBodySerializer } from '@tailor-cms/api-client';
 import { pick } from 'lodash-es';
 import pMinDelay from 'p-min-delay';
 import Promise from 'bluebird';
@@ -322,6 +323,7 @@ const importRepository = async ({
   try {
     await api.repository.import({
       body: { archive, name, description, userGroupIds },
+      ...formDataBodySerializer,
     });
   } catch {
     serverError.value = 'An error has occurred!';
