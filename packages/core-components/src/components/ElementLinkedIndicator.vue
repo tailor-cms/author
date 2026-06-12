@@ -14,6 +14,7 @@
             :class="{ 'opacity-60': !isEntryPoint }"
             :variant="isEntryPoint ? 'tonal' : 'text'"
             aria-label="Linked content"
+            color="tertiary"
             icon="mdi-link-variant"
             size="x-small"
           />

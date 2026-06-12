@@ -345,6 +345,7 @@ const onLinkRelationship = (key?: string) => editorBus.emit('element:link', key)
 const onUnlink = () => {
   confirmationDialog({
     title: 'Unlink element?',
+    color: 'warning',
     message:
       `This will convert the element to a local copy. ` +
       `You will no longer receive updates. Do you want to continue?`,
