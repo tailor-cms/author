@@ -57,7 +57,7 @@
         rounded
         @click="signIn"
       />
-      <div class="options">
+      <div class="text-right mt-4">
         <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       </div>
     </form>
@@ -137,10 +137,3 @@ const signIn = handleSubmit(({ email, password }) => {
     });
 });
 </script>
-
-<style lang="scss" scoped>
-.options {
-  padding: 0.875rem 0 0.25rem;
-  text-align: right;
-}
-</style>

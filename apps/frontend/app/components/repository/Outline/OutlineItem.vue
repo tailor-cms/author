@@ -77,7 +77,10 @@
       </template>
     </VHover>
     <VExpandTransition>
-      <div v-if="!isSoftDeleted && isExpanded && hasSubtypes" :class="{ 'mt-2': hasChildren }">
+      <div
+        v-if="!isSoftDeleted && isExpanded && hasSubtypes"
+        :class="{ 'mt-2': hasChildren }"
+      >
         <Draggable
           v-bind="{ handle: '.activity' }"
           :data-parent-id="activity.id"
