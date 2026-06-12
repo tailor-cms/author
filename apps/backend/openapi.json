@@ -83,6 +83,10 @@
       "x-displayName": "Linked content"
     },
     {
+      "name": "AI / Review",
+      "x-displayName": "Review"
+    },
+    {
       "name": "Revision / Records",
       "x-displayName": "Records"
     },
@@ -175,7 +179,8 @@
       "tags": [
         "AI / Generation",
         "AI / Vector store",
-        "AI / Agent"
+        "AI / Agent",
+        "AI / Review"
       ]
     },
     {
@@ -2382,6 +2387,301 @@
         },
         "required": [
           "usages"
+        ],
+        "additionalProperties": false
+      },
+      "FeedbackDimensionScore": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Dimension key from the scoring rubric."
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Awarded score."
+          },
+          "maxScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Upper bound from the rubric definition."
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Why this score, written to the author."
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Short quotes or observations backing the score."
+          }
+        },
+        "required": [
+          "key",
+          "score",
+          "maxScore",
+          "rationale",
+          "evidence"
+        ],
+        "additionalProperties": false
+      },
+      "FeedbackStrength": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "What the author did well, in one line."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Evidence-backed elaboration."
+          }
+        },
+        "required": [
+          "title",
+          "detail"
+        ],
+        "additionalProperties": false
+      },
+      "FeedbackSuggestion": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Actionable improvement, in one line."
+          },
+          "detail": {
+            "type": "string",
+            "description": "What to change and why it lifts the score."
+          },
+          "impact": {
+            "type": "string",
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "description": "Expected score impact if applied."
+          },
+          "dimensionKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Dimensions this suggestion would improve."
+          },
+          "targetElementId": {
+            "description": "Content element the suggestion concerns, when it targets one specific element; lets the editor scroll to it.",
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "agentPrompt": {
+            "description": "Self-contained instruction the author can hand to the authoring agent to apply this suggestion.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "title",
+          "detail",
+          "impact",
+          "dimensionKeys"
+        ],
+        "additionalProperties": false
+      },
+      "FeedbackResult": {
+        "type": "object",
+        "properties": {
+          "rubricId": {
+            "type": "string",
+            "description": "Scoring rubric that produced the review."
+          },
+          "activityId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Reviewed outline activity."
+          },
+          "overall": {
+            "type": "object",
+            "properties": {
+              "score": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Sum of dimension scores."
+              },
+              "maxScore": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Sum of dimension maximums."
+              },
+              "headline": {
+                "type": "string",
+                "description": "One-sentence verdict naming the highest-impact improvement."
+              },
+              "summary": {
+                "type": "string",
+                "description": "Short paragraph expanding the headline."
+              }
+            },
+            "required": [
+              "score",
+              "maxScore",
+              "headline",
+              "summary"
+            ],
+            "additionalProperties": false
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeedbackDimensionScore"
+            }
+          },
+          "strengths": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeedbackStrength"
+            }
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeedbackSuggestion"
+            }
+          },
+          "contentSignature": {
+            "type": "string",
+            "description": "Content freshness key (activity `modifiedAt`) the review was computed against; compared against the live value to detect staleness."
+          },
+          "computedAt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Unix ms when the review completed."
+          }
+        },
+        "required": [
+          "rubricId",
+          "activityId",
+          "overall",
+          "dimensions",
+          "strengths",
+          "suggestions",
+          "contentSignature",
+          "computedAt"
+        ],
+        "additionalProperties": false
+      },
+      "FeedbackTrendPoint": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Overall score at that point."
+          },
+          "maxScore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Overall maximum at that point."
+          },
+          "dimensions": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "Per-dimension scores keyed by dimension key."
+          },
+          "computedAt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Unix ms when the snapshot was taken."
+          }
+        },
+        "required": [
+          "score",
+          "maxScore",
+          "dimensions",
+          "computedAt"
+        ],
+        "additionalProperties": false
+      },
+      "FeedbackStatus": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "anyOf": [
+              {
+                "description": "A complete review of one activity against one rubric.",
+                "$ref": "#/components/schemas/FeedbackResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "empty",
+              "running",
+              "ready",
+              "failed"
+            ],
+            "description": "`empty` = never analyzed, `running` = analysis in flight, `ready` = result available, `failed` = last attempt errored (a previous result may still be present)."
+          },
+          "isStale": {
+            "type": "boolean",
+            "description": "True when the content changed since the result was computed."
+          },
+          "trend": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FeedbackTrendPoint"
+            },
+            "description": "Recent score snapshots, oldest first, current included."
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Failure message, when failed."
+          }
+        },
+        "required": [
+          "result",
+          "status",
+          "isStale",
+          "trend",
+          "error"
         ],
         "additionalProperties": false
       },
@@ -9163,6 +9463,183 @@
           },
           "404": {
             "description": "Content element not found."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/ai/review/{activityId}": {
+      "get": {
+        "tags": [
+          "AI / Review"
+        ],
+        "operationId": "aiGetReview",
+        "x-tailor-slice": "ai",
+        "x-tailor-method": "getReview",
+        "summary": "Get cached review for an activity",
+        "description": "Returns the cached review for an (activity, scoring rubric) pair, including staleness and in-flight run state.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Outline activity the review targets."
+            }
+          },
+          {
+            "name": "rubricId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "READINESS",
+                "CLARITY",
+                "ACCESSIBILITY",
+                "LEARNING_DESIGN",
+                "HEAS",
+                "COGNITIVE_DEPTH",
+                "CREDIBILITY",
+                "ASSESSMENT_CRAFT"
+              ],
+              "description": "Scoring rubric; defaults to the schema default. Must also be enabled by the repository's schema."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cached review state - status, staleness flag, last result, and recent score trend.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Cached review state for one (activity, rubric) pair.",
+                      "$ref": "#/components/schemas/FeedbackStatus"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "AI / Review"
+        ],
+        "operationId": "aiRequestReview",
+        "x-tailor-slice": "ai",
+        "x-tailor-method": "requestReview",
+        "summary": "Request a review analysis",
+        "description": "Triggers a background review unless one is already running or the cached result matches the current content signature - safe to call from deferred triggers (idle-after-save, page-leave) without re-running on unchanged content. Returns the immediate status; poll the GET endpoint for completion.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Outline activity the review targets."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Immediate review state, typically `running` when a new analysis was started.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Cached review state for one (activity, rubric) pair.",
+                      "$ref": "#/components/schemas/FeedbackStatus"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "rubricId": {
+                    "type": "string",
+                    "enum": [
+                      "READINESS",
+                      "CLARITY",
+                      "ACCESSIBILITY",
+                      "LEARNING_DESIGN",
+                      "HEAS",
+                      "COGNITIVE_DEPTH",
+                      "CREDIBILITY",
+                      "ASSESSMENT_CRAFT"
+                    ],
+                    "description": "Scoring rubric; defaults to the schema default. Must also be enabled by the repository's schema."
+                  },
+                  "force": {
+                    "description": "Re-run even when a fresh result exists. Used by the manual refresh button; deferred triggers omit it so unchanged content never re-runs.",
+                    "type": "boolean"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
           }
         },
         "security": [

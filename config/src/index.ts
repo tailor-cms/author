@@ -2,7 +2,7 @@ import { getWorkflowApi, processSchemas } from '@tailor-cms/config-parser';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
 import { createRegistry } from './lib/registry';
-import { getFeedbackApi, RUBRICS, validateRubricRefs } from './rubrics';
+import { getFeedbackApi, RUBRICS } from './rubrics';
 import { SCHEMA as CourseSchema } from './schemas/course.schema';
 import { DEFAULT_WORKFLOW as DefaultWorkflow } from './workflows/default.workflow';
 import { exampleCollection } from './collections/example.collection';
@@ -19,19 +19,22 @@ import { SCHEMA as PartnerTrainingV2Schema } from './schemas/partner-training-v2
 export type { Snapshot } from './lib/registry';
 export { processElementConfig } from '@tailor-cms/config-parser';
 
-export const SCHEMAS = processSchemas([
-  CourseSchema,
-  HeasSchema,
-  PartnerTrainingSchema,
-  PartnerTrainingV2Schema,
-  FeedSchema,
-  KnowledgeBase,
-  QASchema,
-  TestSchema,
-  ContentLibrarySchema,
-  VideoCourseSchema,
-  exampleCollection.toSchema(),
-]);
+export const SCHEMAS = processSchemas(
+  [
+    CourseSchema,
+    HeasSchema,
+    PartnerTrainingSchema,
+    PartnerTrainingV2Schema,
+    FeedSchema,
+    KnowledgeBase,
+    QASchema,
+    TestSchema,
+    ContentLibrarySchema,
+    VideoCourseSchema,
+    exampleCollection.toSchema(),
+  ],
+  { rubricIds: RUBRICS.map((it) => it.id) },
+);
 
 const contentElementTypes: string[] = Object.values(ContentElementType);
 
@@ -39,7 +42,5 @@ export const { schema, register, refreshSnapshot, adoptSchema } =
   createRegistry(SCHEMAS, contentElementTypes);
 
 export const workflow = getWorkflowApi([DefaultWorkflow], schema);
-
-validateRubricRefs(SCHEMAS, RUBRICS);
 
 export const feedback = getFeedbackApi(RUBRICS, schema);
