@@ -37,7 +37,7 @@
       :key="filter.value"
       :text="filter.label"
       :value="filter.value"
-      color="tertiary"
+      color="secondary"
       role="button"
       size="small"
       rounded="pill"
