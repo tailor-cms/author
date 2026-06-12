@@ -45,11 +45,11 @@
 <script lang="ts" setup>
 import type {
   FeedbackDimensionScore,
-  ScoringDimensionSummary,
+  RubricDimension,
 } from '@tailor-cms/interfaces/feedback';
 
 const props = defineProps<{
-  dimension: ScoringDimensionSummary;
+  dimension: RubricDimension;
   // The AI's scored assessment of this dimension
   assessment?: FeedbackDimensionScore | null;
 }>();

@@ -51,12 +51,12 @@
 <script lang="ts" setup>
 import type {
   FeedbackSuggestion,
-  ScoringDimensionSummary,
+  RubricDimension,
 } from '@tailor-cms/interfaces/feedback';
 
 const props = defineProps<{
   suggestion: FeedbackSuggestion;
-  dimensions: ScoringDimensionSummary[];
+  dimensions: RubricDimension[];
   isAgentAvailable: boolean;
   hasTargetElement: boolean;
 }>();

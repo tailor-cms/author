@@ -13,6 +13,7 @@ import agent from '../shared/ai/agent/index.ts';
 import asset from '../asset/index.ts';
 import comment from '../comment/index.ts';
 import contentElement from '../content-element/index.ts';
+import feedback from '../shared/ai/feedback/index.ts';
 import revision from '../revision/index.ts';
 
 const router = express.Router();
@@ -146,7 +147,7 @@ const SUB_ROUTERS = [
   rpc,
 ];
 
-if (aiConfig.isEnabled) SUB_ROUTERS.push(agent);
+if (aiConfig.isEnabled) SUB_ROUTERS.push(agent, feedback);
 
 for (const sub of SUB_ROUTERS) {
   router.use(`/:repositoryId${sub.path}`, sub.router);

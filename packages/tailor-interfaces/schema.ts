@@ -1,6 +1,4 @@
-import type { Activity } from './activity';
 import type { ContentElement } from './content-element';
-import type { Repository } from './repository';
 
 export type ElementManifest = Record<string, any>;
 
@@ -85,25 +83,10 @@ export interface TypeMappingConfig {
   // validate?: (source: Activity, context: LinkContext) => boolean;
 }
 
-export interface Guideline {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-  metric: Record<string, number | undefined>;
-  isDone: () => boolean;
-};
-
 export interface ActivityConfig {
   type: string;
   label: string;
   color: string;
-  guidelines?: (
-    repository: Repository,
-    contentContainers: Activity[],
-    contentElements: ContentElement[],
-    ceRegistry: any,
-  ) => Guideline[];
   rootLevel?: boolean;
   subLevels?: string[];
   parentTypes?: string[];
@@ -231,6 +214,18 @@ export interface AiSchemaConfig {
   contentMode?: ContentMode;
 }
 
+/**
+ * AI feedback (review sidebar) configuration. Feedback is enabled for
+ * every schema by default with all registered scoring rubrics;
+ * schemas opt out via `enabled: false` or narrow the set via
+ * `rubrics`.
+ */
+export interface FeedbackConfig {
+  enabled?: boolean;
+  // Scoring rubric ids, first entry is the default
+  rubrics?: string[];
+}
+
 export interface Schema {
   id: string;
   workflowId: string;
@@ -244,6 +239,7 @@ export interface Schema {
   collection?: boolean;
   elementMeta?: ElementMetaConfig[];
   i18n?: I18nConfig;
+  feedback?: FeedbackConfig;
   // @deprecated use elementMeta instead
   tesMeta?: any[];
 }

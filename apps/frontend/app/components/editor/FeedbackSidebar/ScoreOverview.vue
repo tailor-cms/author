@@ -42,14 +42,14 @@ import { RadarChart } from '@tailor-cms/core-components';
 import type {
   FeedbackResult,
   FeedbackTrendPoint,
-  ScoringDimensionSummary,
+  RubricDimension,
 } from '@tailor-cms/interfaces/feedback';
 import { useTheme } from 'vuetify';
 
 const props = defineProps<{
   result: FeedbackResult;
   trend: FeedbackTrendPoint[];
-  dimensions: ScoringDimensionSummary[];
+  dimensions: RubricDimension[];
 }>();
 
 const theme = useTheme();

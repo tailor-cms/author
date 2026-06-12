@@ -20,10 +20,10 @@
     <div class="sidebar-layout">
       <div class="sidebar-header px-4 py-3">
         <div class="d-flex align-center">
-          <ModelSwitcher
-            :model-value="feedbackStore.selectedModelId"
-            :models="feedbackStore.models"
-            @update:model-value="feedbackStore.selectModel($event)"
+          <RubricPicker
+            :model-value="feedbackStore.selectedRubricId"
+            :rubrics="feedbackStore.rubrics"
+            @update:model-value="feedbackStore.selectRubric($event)"
           />
           <VSpacer />
           <VBtn
@@ -73,9 +73,9 @@
         >
           <VProgressCircular color="tertiary" size="48" width="3" indeterminate />
           <div class="text-body-small text-medium-emphasis text-center">
-            Reading the content and scoring it against the
-            {{ feedbackStore.selectedModel?.name }} model. This usually
-            takes under a minute.
+            Reading the content through the
+            {{ feedbackStore.selectedRubric?.name }} lens. This
+            usually takes under a minute.
           </div>
         </div>
         <template v-else-if="result">
@@ -146,7 +146,7 @@ import { useDisplay } from 'vuetify';
 
 import AnalysisStatus from './AnalysisStatus.vue';
 import DimensionCard from './DimensionCard.vue';
-import ModelSwitcher from './ModelSwitcher.vue';
+import RubricPicker from './RubricPicker.vue';
 import ScoreOverview from './ScoreOverview.vue';
 import StrengthsList from './StrengthsList.vue';
 import SuggestionCard from './SuggestionCard.vue';
@@ -181,7 +181,7 @@ const feedbackStore = useFeedbackStore();
 const status = computed(() => feedbackStore.status);
 const result = computed(() => status.value?.result ?? null);
 const dimensions = computed(
-  () => feedbackStore.selectedModel?.dimensions ?? [],
+  () => feedbackStore.selectedRubric?.dimensions ?? [],
 );
 
 const assessmentByKey = computed(() =>

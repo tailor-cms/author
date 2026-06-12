@@ -4,7 +4,7 @@
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
-      @toggle-guidelines="showGuidelines = !showGuidelines"
+      @toggle-feedback="feedbackStore.isPanelOpen = !feedbackStore.isPanelOpen"
     />
     <VSidebar
       v-model="showSidebar"
@@ -33,9 +33,9 @@
         :activity-id="activityId"
         class="activity-content h-100"
       />
-      <EngagementSidebar
-        v-if="!!editorStore.guidelines"
-        v-model="showGuidelines"
+      <FeedbackSidebar
+        v-if="isFeedbackEnabled"
+        v-model="feedbackStore.isPanelOpen"
       />
     </VMain>
   </div>

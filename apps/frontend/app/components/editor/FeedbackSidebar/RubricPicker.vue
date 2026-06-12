@@ -1,5 +1,5 @@
 <template>
-  <div v-if="models.length <= 1" class="text-body-medium font-weight-bold">
+  <div v-if="rubrics.length <= 1" class="text-body-medium font-weight-bold">
     {{ selected?.name ?? 'Content feedback' }}
   </div>
   <VMenu v-else offset="6">
@@ -18,30 +18,30 @@
     <VCard min-width="320" max-width="360" rounded="lg">
       <VList density="comfortable" lines="three" slim>
         <VListSubheader class="text-label-small">
-          Scoring model
+          Scoring rubric
         </VListSubheader>
         <VListItem
-          v-for="model in models"
-          :key="model.id"
-          :active="model.id === modelValue"
+          v-for="rubric in rubrics"
+          :key="rubric.id"
+          :active="rubric.id === modelValue"
           color="tertiary"
           class="mx-2"
           rounded="lg"
-          @click="$emit('update:modelValue', model.id)"
+          @click="$emit('update:modelValue', rubric.id)"
         >
           <VListItemTitle class="text-body-small font-weight-bold">
-            {{ model.name }}
+            {{ rubric.name }}
           </VListItemTitle>
           <VListItemSubtitle class="text-body-small">
-            {{ model.description }}
+            {{ rubric.description }}
           </VListItemSubtitle>
           <div class="text-label-small text-medium-emphasis mt-1">
-            {{ model.dimensions.length }} dimensions ·
-            {{ maxScoreOf(model) }} points
+            {{ rubric.dimensions.length }} dimensions ·
+            {{ maxScoreOf(rubric) }} points
           </div>
           <template #append>
             <VIcon
-              v-if="model.id === modelValue"
+              v-if="rubric.id === modelValue"
               color="tertiary"
               icon="mdi-check-circle"
               size="18"
@@ -54,21 +54,21 @@
 </template>
 
 <script lang="ts" setup>
-import type { ScoringModelSummary } from '@tailor-cms/interfaces/feedback';
+import type { ScoringRubric } from '@tailor-cms/interfaces/feedback';
 
 const props = defineProps<{
   modelValue: string | null;
-  models: ScoringModelSummary[];
+  rubrics: ScoringRubric[];
 }>();
 
 defineEmits(['update:modelValue']);
 
 const selected = computed(() =>
-  props.models.find((it) => it.id === props.modelValue),
+  props.rubrics.find((it) => it.id === props.modelValue),
 );
 
-const maxScoreOf = (model: ScoringModelSummary) =>
-  model.dimensions.reduce((acc, it) => acc + it.maxScore, 0);
+const maxScoreOf = (rubric: ScoringRubric) =>
+  rubric.dimensions.reduce((acc, it) => acc + it.maxScore, 0);
 </script>
 
 <style lang="scss" scoped>
