@@ -450,9 +450,8 @@ onMounted(() => {
 @use '../mixins';
 
 .content-element {
-  // TO-DO: theme colors
-  $accent-1: #1de9b6;
-  $accent-2: #ff4081;
+  $accent-focused: #1de9b6;
+  $accent-selected: #ff4081;
 
   position: relative;
   border: 1px solid transparent;
@@ -470,20 +469,20 @@ onMounted(() => {
   }
 
   &.focused {
-    border: 1px dashed $accent-1;
+    border: 1px dashed $accent-focused;
 
     &::after {
       display: block;
-      border-color: $accent-1;
+      border-color: $accent-focused;
     }
   }
 
   &.selected {
-    border: 1px dashed $accent-2;
+    border: 1px dashed $accent-selected;
 
     &::after {
       display: block;
-      border-color: $accent-2;
+      border-color: $accent-selected;
     }
   }
 

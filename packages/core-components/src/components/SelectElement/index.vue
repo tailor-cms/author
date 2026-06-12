@@ -24,7 +24,7 @@
           @selected="showActivityElements"
         />
       </template>
-      <template v-else>
+      <VSheet v-else theme="light" class="ma-n4 pa-4">
         <div v-if="toggleButton" class="d-flex justify-end mb-4">
           <VBtn
             :prepend-icon="`mdi-${toggleButton.icon}`"
@@ -45,7 +45,7 @@
           selectable
           @toggle="toggleElementSelection"
         />
-      </template>
+      </VSheet>
     </template>
     <template #actions>
       <VBtn

@@ -28,6 +28,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const chipColor = computed(() => {
   const isNewItem = props.changeType === PublishDiffChangeTypes.New;
-  return isNewItem ? 'secondary' : 'tertiary';
+  return isNewItem ? 'success' : 'error';
 });
 </script>
