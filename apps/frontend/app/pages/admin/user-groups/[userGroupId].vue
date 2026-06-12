@@ -38,7 +38,7 @@
           <td class="user-entry-label text-body-medium text-left text-truncate">
             {{ item.fullName || 'N/A' }}
           </td>
-          <td class="user-entry-role">
+          <td class="user-entry-role text-left">
             <VMenu location="bottom end">
               <template #activator="{ props: menuProps }">
                 <VBtn
