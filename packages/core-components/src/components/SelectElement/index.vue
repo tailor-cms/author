@@ -57,7 +57,13 @@
         @click="deselectActivity"
       />
       <VBtn text="Cancel" variant="text" @click="close" />
-      <VBtn :text="submitLabel" class="ml-2" variant="tonal" @click="save" />
+      <VBtn
+        :text="submitLabel"
+        class="ml-2"
+        color="primary"
+        variant="flat"
+        @click="save"
+      />
     </template>
   </TailorDialog>
 </template>
