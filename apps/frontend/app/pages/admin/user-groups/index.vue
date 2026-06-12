@@ -1,10 +1,11 @@
 <template>
   <div class="group-management">
-    <div class="d-flex ga-3">
+    <div class="d-flex ga-3 mb-6 align-end">
       <VTextField
         v-model="filter"
         bg-color="transparent"
         data-testid="search-user-groups"
+        density="comfortable"
         label="Search"
         max-width="300"
         prepend-inner-icon="mdi-magnify"
@@ -35,7 +36,7 @@
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
       no-data-text="No user groups."
-      class="pt-4 bg-transparent"
+      class="mt-4 rounded-xl"
       item-value="id"
       must-sort
       @update:options="fetch"

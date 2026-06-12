@@ -1,10 +1,11 @@
 <template>
   <div class="user-management">
-    <div class="d-flex ga-3">
+    <div class="d-flex ga-3 mb-6 align-end">
       <VTextField
         v-model="filter"
         bg-color="transparent"
         data-testid="search-users"
+        density="comfortable"
         label="Search"
         max-width="300"
         prepend-inner-icon="mdi-magnify"
@@ -14,7 +15,12 @@
         flat
         hide-details
       />
-      <VSwitch v-model="showArchiveToggle" label="Archived" hide-details />
+      <VSwitch
+        v-model="showArchiveToggle"
+        label="Archived"
+        hide-details
+        density="comfortable"
+      />
       <VSpacer />
       <VBtn
         prepend-icon="mdi-account-multiple-plus"
@@ -33,7 +39,7 @@
       :loading="isLoading"
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
-      class="pt-4 bg-transparent"
+      class="mt-4 rounded-xl"
       item-value="id"
       must-sort
       @update:options="fetch"

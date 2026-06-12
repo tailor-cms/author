@@ -4,6 +4,7 @@
       v-model.trim="search"
       prepend-inner-icon="mdi-magnify"
       bg-color="transparent"
+      density="comfortable"
       label="Search"
       max-width="300"
       rounded="pill"

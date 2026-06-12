@@ -46,17 +46,17 @@ const lightTheme: ThemeDefinition = {
     'secondary-container': '#C9E6F5',
     'on-secondary-container': '#001E2E',
 
-    // Tertiary — terracotta (warm accent, sparing use)
-    'tertiary': '#C45A2C',
+    // Tertiary — rose-pink (MD3 hue ~345; cool warm accent, sparing use)
+    'tertiary': '#B4216B',
     'on-tertiary': '#FFFFFF',
-    'tertiary-container': '#FFDBCB',
-    'on-tertiary-container': '#2E1100',
+    'tertiary-container': '#FFD9E5',
+    'on-tertiary-container': '#3E0021',
 
-    // Warning — honey amber (yellower than terracotta tertiary)
-    'warning': '#B58A00',
+    // Warning — amber-orange (warmer/oranger than the old honey amber)
+    'warning': '#C57A00',
     'on-warning': '#FFFFFF',
-    'warning-container': '#FFE38C',
-    'on-warning-container': '#251A00',
+    'warning-container': '#FFDEB0',
+    'on-warning-container': '#2A1800',
 
     // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
     'error': '#C8112A',
@@ -142,17 +142,17 @@ const darkTheme: ThemeDefinition = {
     'secondary-container': '#004F69',
     'on-secondary-container': '#CDE6F5',
 
-    // Tertiary — terracotta (warm accent, sparing use)
-    'tertiary': '#FFB597',
-    'on-tertiary': '#4C1E00',
-    'tertiary-container': '#683100',
-    'on-tertiary-container': '#FFDBCB',
+    // Tertiary — rose-pink (MD3 hue ~345; cool warm accent, sparing use)
+    'tertiary': '#FFB0CC',
+    'on-tertiary': '#5E1138',
+    'tertiary-container': '#7C2950',
+    'on-tertiary-container': '#FFD9E5',
 
-    // Warning — honey amber (yellower than terracotta tertiary)
-    'warning': '#E4C56F',
-    'on-warning': '#3B2C00',
-    'warning-container': '#574200',
-    'on-warning-container': '#FFE38C',
+    // Warning — amber-orange (warmer/oranger than the old honey amber)
+    'warning': '#FFC080',
+    'on-warning': '#452B00',
+    'warning-container': '#634300',
+    'on-warning-container': '#FFDEB0',
 
     // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
     'error': '#FFB1B7',

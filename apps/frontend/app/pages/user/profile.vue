@@ -1,19 +1,10 @@
 <template>
   <NuxtLayout name="main">
-    <VSheet
-      class="profile-page overflow-auto h-100 mx-3"
-      color="surface-container-low"
-      rounded="t-xl"
-      border
-    >
-      <VContainer class="h-100 pt-14 user-panel">
+    <VContainer class="profile-page h-100 overflow-y-auto pt-14 user-panel">
+      <VSheet color="surface-container-low" rounded="xl" border>
         <VLayout>
-          <VRow class="ma-5">
-            <VCol
-              class="d-flex flex-column align-center justify-center"
-              cols="12"
-              md="5"
-            >
+          <VRow class="pa-8">
+            <VCol class="d-flex flex-column align-center mt-4" cols="12" md="4">
               <UserAvatar
                 :img-url="store.user?.imgUrl"
                 @save="saveAvatar"
@@ -21,13 +12,13 @@
               />
               <ChangePassword />
             </VCol>
-            <VCol>
+            <VCol class="">
               <UserInfo />
             </VCol>
           </VRow>
         </VLayout>
-      </VContainer>
-    </VSheet>
+      </VSheet>
+    </VContainer>
   </NuxtLayout>
 </template>
 

@@ -3,6 +3,7 @@
     <VTextField
       v-model.trim="search"
       prepend-inner-icon="mdi-magnify"
+      density="comfortable"
       bg-color="transparent"
       label="Search"
       max-width="300"

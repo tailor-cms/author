@@ -1,11 +1,6 @@
 <template>
   <NuxtLayout name="main">
-    <VSheet
-      class="admin-page overflow-auto h-100 mx-3"
-      color="surface-container-low"
-      rounded="t-xl"
-      border
-    >
+    <div class="admin-page overflow-auto h-100">
       <VContainer class="pt-14" max-width="1400">
         <VRow>
           <VCol cols="12" md="3">
@@ -16,7 +11,7 @@
           </VCol>
         </VRow>
       </VContainer>
-    </VSheet>
+    </div>
   </NuxtLayout>
 </template>
 

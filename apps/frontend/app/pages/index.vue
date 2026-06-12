@@ -1,11 +1,6 @@
 <template>
   <NuxtLayout name="main">
-    <VSheet
-      class="catalog-scroll mx-3"
-      color="surface-container-low"
-      rounded="t-xl"
-      border
-    >
+    <div class="catalog-scroll">
       <VContainer class="catalog" max-width="1360">
         <VRow class="catalog-actions py-10" density="compact">
           <VCol cols="12" lg="4" md="6">
@@ -135,7 +130,7 @@
           prominent
         />
       </VContainer>
-    </VSheet>
+    </div>
   </NuxtLayout>
 </template>
 

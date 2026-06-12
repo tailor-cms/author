@@ -1,33 +1,26 @@
 <template>
   <div class="user-group-users">
-    <VRow class="mt-2 py-5">
-      <VCol>
-        <div class="pl-7 text-body-large text-left">
-          <VBtn
-            :text="`${userGroup?.name} user group`"
-            class="mr-1"
-            prepend-icon="mdi-arrow-left"
-            size="small"
-            variant="text"
-            @click="router.back()"
-          />
-        </div>
-      </VCol>
-      <VCol>
-        <div class="d-flex justify-end mr-7">
-          <UserGroupMembershipDialog
-            :user-group-id="userGroupId"
-            @save="fetchUsers()"
-          />
-        </div>
-      </VCol>
-    </VRow>
+    <div class="d-flex ga-3 mb-6 align-end">
+      <VBtn
+        :text="`${userGroup?.name} user group`"
+        class="mr-1"
+        prepend-icon="mdi-arrow-left"
+        size="small"
+        variant="text"
+        @click="router.back()"
+      />
+      <VSpacer />
+      <UserGroupMembershipDialog
+        :user-group-id="userGroupId"
+        @save="fetchUsers()"
+      />
+    </div>
     <VDataTable
       v-if="!isLoading"
+      :headers="headers"
       :items="userGroupUsers"
-      class="px-6 bg-transparent"
+      class="mt-4 rounded-xl"
       no-data-text="No assigned users."
-      hide-default-header
     >
       <template #item="{ item }">
         <tr class="user-entry">
@@ -115,6 +108,14 @@ const userGroup = ref<UserGroup | null>(null);
 const userGroupUsers = ref<UserGroupMemberWithUser[]>([]);
 
 const roles = GROUP_ROLES;
+
+const headers: any = [
+  { title: 'User', key: 'avatar', sortable: false },
+  { title: 'Email', key: 'email', sortable: false },
+  { title: 'Name', key: 'fullName', sortable: false },
+  { title: 'Role', key: 'role', sortable: false },
+  { title: 'Actions', key: 'actions', sortable: false },
+];
 
 const roleMeta = (value: string) => roles.find((r) => r.value === value);
 const roleLabel = (value: string) => roleMeta(value)?.title ?? value;
