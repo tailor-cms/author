@@ -299,6 +299,7 @@ const onSave = (data: ContentElement['data']) => {
   if (props.element.isLinkedCopy && !isEmbed.value) {
     confirmationDialog({
       title: 'Edit linked element?',
+      color: 'warning',
       message:
         `This element is linked. Editing will unlink it and you ` +
         `will no longer receive updates. Do you want to continue?`,
@@ -317,7 +318,8 @@ const reset = () => {
   if (!ceRegistry) return;
   confirmationDialog({
     title: 'Reset element?',
-    message: 'Are you sure you want to reset element?',
+    color: 'warning',
+    message: 'Are you sure you want to reset element to its initial state?',
     action: () => {
       const data = ceRegistry.resetData(props.element);
       return onSave(data);

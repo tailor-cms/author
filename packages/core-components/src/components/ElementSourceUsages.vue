@@ -83,7 +83,7 @@ const emit = defineEmits<{
 const menuOpen = ref(false);
 
 const badgeColor = computed(() => {
-  return props.usages?.length > 0 ? 'tertiary' : 'tertiary-container';
+  return props.usages?.length > 0 ? 'tertiary' : 'inverse-surface';
 });
 
 const onViewUsage = (usage: Usage) => {
