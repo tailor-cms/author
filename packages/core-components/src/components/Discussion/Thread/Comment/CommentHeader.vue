@@ -31,14 +31,13 @@
         </template>
       </div>
     </div>
-    <div v-if="showOptions && !isEditing" class="actions">
+    <div v-if="showOptions && !isEditing" class="actions d-flex ga-1">
       <VBtn
         v-for="{ action, icon, label, color } in options"
         :key="action"
         :aria-label="label"
         :color="color"
         :icon="`mdi-${icon}`"
-        class="ml-2"
         size="x-small"
         variant="tonal"
         @click="emit(action)"

@@ -3,9 +3,8 @@
     <VAlert
       v-if="errorMessage"
       :text="errorMessage"
-      class="mb-7 text-left"
+      class="mb-7 "
       type="error"
-      density="compact"
       variant="tonal"
       closable
     />
@@ -143,9 +142,5 @@ const signIn = handleSubmit(({ email, password }) => {
 .options {
   padding: 0.875rem 0 0.25rem;
   text-align: right;
-}
-
-.v-alert :deep(.mdi-close) {
-  color: #eee;
 }
 </style>

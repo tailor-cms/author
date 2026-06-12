@@ -36,9 +36,11 @@
           v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
           aria-label="Collapse sidebar"
           class="sidebar-collapse-btn"
+          color="secondary"
           icon="mdi-chevron-double-left"
           size="small"
-          variant="text"
+          density="comfortable"
+          variant="tonal"
           @click="modelValue = false"
         />
       </div>

@@ -105,7 +105,6 @@
     >
       <VBtn
         class="position-absolute top-0 right-0 ma-4"
-        color="white"
         icon="mdi-close"
         variant="tonal"
         @click="showZoom = false"
