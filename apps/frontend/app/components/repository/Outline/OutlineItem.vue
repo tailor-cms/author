@@ -77,10 +77,9 @@
       </template>
     </VHover>
     <VExpandTransition>
-      <div v-if="!isSoftDeleted && isExpanded && hasSubtypes" class="mt-2">
+      <div v-if="!isSoftDeleted && isExpanded && hasSubtypes" :class="{ 'mt-2': hasChildren }">
         <Draggable
           v-bind="{ handle: '.activity' }"
-          :class="{ 'empty-drop': !hasChildren }"
           :data-parent-id="activity.id"
           :list="children"
           :move="currentRepositoryStore.isValidDrop"
@@ -255,24 +254,5 @@ const icon = computed(() => {
 
 .activity-wrapper .activity-wrapper {
   margin-left: 1.25rem;
-}
-
-.empty-drop {
-  min-height: 3.25rem;
-}
-
-.empty-drop:empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 1.25rem;
-  border: 1px dashed rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 0.25rem;
-
-  &::after {
-    content: 'No items yet';
-    color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
-    font-size: 0.875rem;
-  }
 }
 </style>
