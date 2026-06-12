@@ -11,7 +11,7 @@
         @click="isCollection && publishing.confirmPublishing([activity])"
       />
     </template>
-    <VList class="text-left px-2">
+    <VList class="text-left px-2" data-testid="publishMenu">
       <VListItem
         :title="config.label"
         @click="publishing.confirmPublishing([activity])"

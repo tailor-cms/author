@@ -78,7 +78,7 @@ test('comments disabled on linked element', async ({ page }) => {
   await expect(element.commentDisabledBtn).toBeVisible();
   await element.openCommentDisabledMenu();
   await expect(
-    page.getByText('Comments are only available on the source element'),
+    page.getByText('Comments are only available on the source'),
   ).toBeVisible();
 });
 
