@@ -11,26 +11,28 @@
         :model-value="isSelected"
         class="flex-shrink-0 align-self-center"
         color="primary"
-        density="compact"
         hide-details
         @click.stop
         @update:model-value="$emit('toggle')"
       />
       <VAvatar
-        v-if="suggestion.thumbnailUrl"
-        class="flex-shrink-0 mt-1"
+        class="align-self-center"
+        color="surface-container-low"
         rounded="lg"
         size="56"
       >
-        <VImg :src="suggestion.thumbnailUrl ?? ''" cover />
+        <VImg
+          v-if="suggestion.thumbnailUrl"
+          :src="suggestion.thumbnailUrl ?? ''"
+          cover
+        />
+        <VIcon
+          v-else
+          :color="typeColor"
+          :icon="typeIcon"
+          size="28"
+        />
       </VAvatar>
-      <VIcon
-        v-else
-        :color="typeColor"
-        :icon="typeIcon"
-        class="flex-shrink-0 ma-4"
-        size="28"
-      />
       <Body :suggestion="suggestion" :color="typeColor" :icon="typeIcon" />
       <VBtn
         :href="suggestion.url"

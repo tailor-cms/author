@@ -1585,6 +1585,7 @@
               "DOCUMENT",
               "AUDIO",
               "ARTICLE",
+              "RESEARCH",
               "OTHER"
             ]
           },

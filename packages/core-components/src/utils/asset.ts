@@ -16,15 +16,16 @@ const DEFAULT_COLOR = ASSET_TYPE_COLOR[AssetType.Other]!;
 const PROVIDER_ICONS: Record<string, string> = {
   youtube: 'mdi-youtube',
   vimeo: 'mdi-vimeo',
-  // spotify: 'mdi-spotify',
+  spotify: 'mdi-spotify',
   soundcloud: 'mdi-soundcloud',
 };
 
+// Hardcoded provider colors for link assets
 const PROVIDER_COLORS: Record<string, string> = {
-  youtube: '#FF0000', // YouTube red
-  vimeo: '#1AB7EA', // Vimeo blue
-  spotify: '#1DB954', // Spotify green
-  soundcloud: '#FF5500', // SoundCloud orange
+  youtube: '#FF0000',
+  vimeo: '#1AB7EA',
+  spotify: '#1DB954',
+  soundcloud: '#FF5500',
 };
 
 const PROVIDER_LABELS: Record<string, string> = {
@@ -40,6 +41,7 @@ const LINK_CONTENT_TYPE_ICONS: Record<string, string> = {
   [LinkContentType.Document]: 'mdi-file-document',
   [LinkContentType.Audio]: 'mdi-music-circle',
   [LinkContentType.Article]: 'mdi-newspaper-variant',
+  [LinkContentType.Research]: 'mdi-school',
 };
 
 const LINK_CONTENT_TYPE_LABELS: Record<string, string> = {
@@ -48,6 +50,7 @@ const LINK_CONTENT_TYPE_LABELS: Record<string, string> = {
   [LinkContentType.Document]: 'Document Link',
   [LinkContentType.Image]: 'Image Link',
   [LinkContentType.Article]: 'Article Link',
+  [LinkContentType.Research]: 'Research Link',
 };
 
 function detectProvider(

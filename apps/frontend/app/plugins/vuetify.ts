@@ -86,6 +86,8 @@ const lightTheme: ThemeDefinition = {
     'asset-video': '#7E57C2',
     'asset-audio': '#2BA597',
     'asset-document': '#3A6EA5',
+    'asset-article': '#A6772D',
+    'asset-research': '#2E8FA8',
     'asset-link': '#4B8B3B',
     'asset-other': '#6B7280',
 
@@ -180,6 +182,8 @@ const darkTheme: ThemeDefinition = {
     'asset-video': '#B79EE6',
     'asset-audio': '#6FD4C5',
     'asset-document': '#84B0E0',
+    'asset-article': '#DCBA6E',
+    'asset-research': '#79C5DB',
     'asset-link': '#8FC97D',
     'asset-other': '#B0B6C2',
 
