@@ -1,13 +1,20 @@
 <template>
   <VNavigationDrawer
     v-model="modelValue"
-    :width="lgAndUp ? 480 : 380"
+    :class="{ resizing: isResizing }"
+    :width="width"
     class="editor-sidebar-main sidebar"
     color="surface-container-low"
     elevation="0"
     location="left"
     mobile-breakpoint="md"
   >
+    <div
+      aria-orientation="vertical"
+      class="resize-handle"
+      role="separator"
+      @pointerdown="startResize"
+    />
     <div class="sidebar-layout">
       <div class="sidebar-tab-row d-flex align-center mt-1">
         <VTabs
@@ -100,6 +107,12 @@ const { $ceRegistry, $schemaService } = useNuxtApp() as any;
 const { lgAndUp } = useDisplay();
 const { isCollection } = storeToRefs(useCurrentRepository());
 
+const { width, isResizing, startResize } = useDrawerResize({
+  side: 'left',
+  storageKey: 'editor:sidebar:width',
+  defaultWidth: () => (lgAndUp.value ? 480 : 380),
+});
+
 const defaultTab = isCollection.value ? COMMENTS_TAB : BROWSER_TAB;
 const selectedTab = ref(defaultTab);
 
@@ -164,8 +177,29 @@ watch(
 .sidebar {
   text-align: left;
 
+  // Suppress the drawer's width animation while dragging
+  &.resizing {
+    transition-duration: 0s !important;
+  }
+
   .v-btn--disabled {
     opacity: 0.35;
+  }
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 0.3125rem;
+  z-index: 100;
+  cursor: col-resize;
+  touch-action: none;
+
+  &:hover,
+  &:active {
+    background: rgba(var(--v-theme-primary), 0.25);
   }
 }
 
