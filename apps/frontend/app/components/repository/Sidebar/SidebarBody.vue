@@ -1,6 +1,6 @@
 <template>
-  <div class="body">
-    <div class="d-flex align-center my-5 pa-1">
+  <div class="body position-relative">
+    <div class="d-flex align-center my-4 pa-1">
       <div class="d-flex align-center mr-1 text-body-medium font-weight-bold">
         <VIcon :color="config.color" class="mr-2" icon="mdi-label" size="26" />
         <span>{{ config.label.toUpperCase() }}</span>
@@ -47,7 +47,7 @@
       :activity-status="activity.currentStatus"
       :short-id="activity.shortId"
       :type="activity.type"
-      class="mt-6 mb-3"
+      class="mt-4 mb-3"
     />
     <LinkedIndicator
       v-if="activity.isLinkedCopy"
@@ -61,7 +61,7 @@
       @copy:view="viewCopy"
     />
     <div v-if="!isSoftDeleted">
-      <div class="meta-elements">
+      <div class="meta-elements mt-6">
         <MetaInput
           v-for="it in metadata"
           :key="`${activity.uid}.${it.key}.${$pluginRegistry.dataVersion}`"
@@ -137,14 +137,3 @@ const updateActivity = async (
   notify(`${config.value.label} saved`, { immediate: true });
 };
 </script>
-
-<style lang="scss" scoped>
-.body {
-  position: relative;
-  padding: 0.375rem 1rem;
-}
-
-.meta-elements {
-  padding-top: 0.625rem;
-}
-</style>

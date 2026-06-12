@@ -10,7 +10,7 @@
           ...$attrs,
         }"
         :element-label="getElementLabel(comment)"
-        class="pa-1"
+        class="pa-2"
       />
     </li>
   </ul>

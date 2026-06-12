@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header mt-4">
     <div class="options-container">
       <ActivityOptions
         v-if="!isSoftDeleted"
@@ -76,10 +76,6 @@ const restore = async () => {
 </script>
 
 <style lang="scss" scoped>
-.header {
-  padding: 1rem 1rem 0;
-}
-
 .options-container {
   min-height: 1.5rem;
 }

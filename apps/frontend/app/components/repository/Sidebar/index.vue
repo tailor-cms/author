@@ -3,7 +3,7 @@
     :key="store.selectedActivity?.uid"
     :model-value="store.isSidebarOpen || mdAndUp"
     :width="sidebarWidth"
-    class="repository-sidebar"
+    class="px-4 text-left"
     color="surface-container"
     location="right"
     mobile-breakpoint="md"
@@ -40,10 +40,6 @@ const sidebarWidth = computed(() => (lgAndUp.value ? 480 : 380));
 </script>
 
 <style lang="scss" scoped>
-.repository-sidebar {
-  text-align: left;
-}
-
 .placeholder {
   padding: 0 1rem;
 

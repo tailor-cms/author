@@ -5,14 +5,13 @@
     class="px-4 text-left"
     color="surface-container"
     location="right"
-    border="surface"
     mobile-breakpoint="md"
     absolute
     @update:model-value="repositoryStore.updateSidebar"
   >
     <template v-if="activity?.isTrackedInWorkflow">
       <SidebarHeader :activity="activity" class="pt-4" />
-      <SidebarBody :activity="activity" class="mt-9 mb-2" />
+      <SidebarBody :activity="activity" class="mt-6 mb-2" />
     </template>
     <div v-else class="d-flex align-center mt-16">
       <VIcon icon="mdi-arrow-left-circle" size="x-large" />
