@@ -2,7 +2,7 @@
   <VNavigationDrawer
     :model-value="repositoryStore.isSidebarOpen || mdAndUp"
     :width="sidebarWidth"
-    class="px-4 text-left"
+    class="px-4 py-6 text-left"
     color="surface-container"
     location="right"
     mobile-breakpoint="md"
@@ -10,7 +10,7 @@
     @update:model-value="repositoryStore.updateSidebar"
   >
     <template v-if="activity?.isTrackedInWorkflow">
-      <SidebarHeader :activity="activity" class="pt-4" />
+      <SidebarHeader :activity="activity" />
       <SidebarBody :activity="activity" class="mt-6 mb-2" />
     </template>
     <div v-else class="d-flex align-center mt-16">

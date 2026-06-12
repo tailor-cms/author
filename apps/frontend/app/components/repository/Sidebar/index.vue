@@ -3,7 +3,7 @@
     :key="store.selectedActivity?.uid"
     :model-value="store.isSidebarOpen || mdAndUp"
     :width="sidebarWidth"
-    class="px-4 text-left"
+    class="pa-4 text-left"
     color="surface-container"
     location="right"
     mobile-breakpoint="md"
@@ -12,7 +12,7 @@
   >
     <div v-if="store.selectedActivity?.uid">
       <SidebarHeader :activity="store.selectedActivity" />
-      <SidebarBody :activity="store.selectedActivity" />
+      <SidebarBody :activity="store.selectedActivity" class="mt-6 mb-2" />
     </div>
     <div v-else class="placeholder mt-16">
       <div class="d-flex align-center">

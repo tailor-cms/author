@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-body-medium mt-5 mb-2">
+    <div class="text-body-medium mb-2">
       Related <span class="text-lowercase">{{ activityConfig.label }}</span>
     </div>
     <ActivityCard

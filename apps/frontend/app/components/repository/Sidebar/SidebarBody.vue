@@ -1,6 +1,6 @@
 <template>
   <div class="body position-relative">
-    <div class="d-flex align-center my-4 pa-1">
+    <div class="d-flex align-center mb-4 pa-1">
       <div class="d-flex align-center mr-1 text-body-medium font-weight-bold">
         <VIcon :color="config.color" class="mr-2" icon="mdi-label" size="26" />
         <span>{{ config.label.toUpperCase() }}</span>
@@ -61,7 +61,7 @@
       @copy:view="viewCopy"
     />
     <div v-if="!isSoftDeleted">
-      <div class="meta-elements mt-6">
+      <div class="meta-elements mt-8">
         <MetaInput
           v-for="it in metadata"
           :key="`${activity.uid}.${it.key}.${$pluginRegistry.dataVersion}`"
