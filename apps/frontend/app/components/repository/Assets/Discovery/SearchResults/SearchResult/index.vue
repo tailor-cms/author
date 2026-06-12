@@ -1,48 +1,45 @@
 <template>
   <VCard
     :class="{ selected: isSelected }"
-    class="search-result"
+    class="search-result d-flex align-start ga-3 px-3 py-3"
+    color="surface-container-low"
     variant="flat"
-    border
     @click="$emit('toggle')"
   >
-    <div class="d-flex align-start pa-3 ga-3">
-      <VCheckbox
-        :model-value="isSelected"
-        class="flex-shrink-0 align-self-center"
-        color="primary"
-        hide-details
-        @click.stop
-        @update:model-value="$emit('toggle')"
+    <VCheckboxBtn
+      :model-value="isSelected"
+      class="flex-grow-0 align-self-center"
+      color="primary"
+      density="compact"
+      @click.stop="$emit('toggle')"
+    />
+    <VAvatar
+      class="align-self-center mr-1"
+      rounded="lg"
+      size="53"
+      variant="tonal"
+    >
+      <VImg
+        v-if="suggestion.thumbnailUrl"
+        :src="suggestion.thumbnailUrl ?? ''"
+        cover
       />
-      <VAvatar
-        class="align-self-center"
-        color="surface-container-low"
-        rounded="lg"
-        size="56"
-      >
-        <VImg
-          v-if="suggestion.thumbnailUrl"
-          :src="suggestion.thumbnailUrl ?? ''"
-          cover
-        />
-        <VIcon
-          v-else
-          :color="typeColor"
-          :icon="typeIcon"
-          size="28"
-        />
-      </VAvatar>
-      <Body :suggestion="suggestion" :color="typeColor" :icon="typeIcon" />
-      <VBtn
-        :href="suggestion.url"
-        icon="mdi-open-in-new"
-        size="small"
-        target="_blank"
-        variant="text"
-        @click.stop
+      <VIcon
+        v-else
+        :color="typeColor"
+        :icon="typeIcon"
+        size="24"
       />
-    </div>
+    </VAvatar>
+    <Body :suggestion="suggestion" :color="typeColor" :icon="typeIcon" />
+    <VBtn
+      :href="suggestion.url"
+      icon="mdi-open-in-new"
+      size="small"
+      target="_blank"
+      variant="text"
+      @click.stop
+    />
   </VCard>
 </template>
 
@@ -68,9 +65,15 @@ const typeColor = computed(() => TYPE_COLOR[props.suggestion.type]);
 <style lang="scss" scoped>
 .search-result {
   cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background-color: rgb(var(--v-theme-surface-container));
+  }
 
   &.selected {
-    background: rgba(var(--v-theme-surface-container-low), 0.6);
+    background: rgb(var(--v-theme-surface-container));
   }
 }
 </style>

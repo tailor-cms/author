@@ -1,12 +1,14 @@
 <template>
-  <div class="flex-grow-1 overflow-hidden ml-2">
-    <div class="text-title-medium font-weight-medium text-truncate">
+  <div class="flex-grow-1 overflow-hidden">
+    <div class="text-title-small font-weight-semibold text-truncate">
       {{ suggestion.title }}
     </div>
-    <div class="snippet text-title-small text-medium-emphasis">
+    <div class="snippet text-body-medium text-medium-emphasis">
       {{ suggestion.snippet }}
     </div>
-    <div class="d-flex align-center text-label-medium text-medium-emphasis mt-1">
+    <div
+      class="d-flex align-center flex-wrap text-label-medium text-medium-emphasis mt-1"
+    >
       <span class="type">
         <VIcon :color="color" :icon="icon" size="14" start />
         <span class="text-capitalize">{{ suggestion.type }}</span>
