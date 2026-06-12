@@ -76,28 +76,31 @@
         </VSheet>
       </template>
     </VHover>
-    <div v-if="!isSoftDeleted && isExpanded && hasSubtypes" class="mt-2">
-      <Draggable
-        v-bind="{ handle: '.activity' }"
-        :data-parent-id="activity.id"
-        :list="children"
-        :move="currentRepositoryStore.isValidDrop"
-        animation="150"
-        class="d-flex flex-column ga-2"
-        group="activities"
-        item-key="uid"
-        @update="(e: SortableEvent) => reorder(e, children)"
-        @change="(e: ChangeEvent) => onOutlineItemDrop(e, activity.id)"
-      >
-        <template #item="{ element, index: i }">
-          <OutlineItem
-            :activities="activities"
-            :activity="element"
-            :index="i + 1"
-          />
-        </template>
-      </Draggable>
-    </div>
+    <VExpandTransition>
+      <div v-if="!isSoftDeleted && isExpanded && hasSubtypes" class="mt-2">
+        <Draggable
+          v-bind="{ handle: '.activity' }"
+          :class="{ 'empty-drop': !hasChildren }"
+          :data-parent-id="activity.id"
+          :list="children"
+          :move="currentRepositoryStore.isValidDrop"
+          animation="150"
+          class="d-flex flex-column ga-2"
+          group="activities"
+          item-key="uid"
+          @update="(e: SortableEvent) => reorder(e, children)"
+          @change="(e: ChangeEvent) => onOutlineItemDrop(e, activity.id)"
+        >
+          <template #item="{ element, index: i }">
+            <OutlineItem
+              :activities="activities"
+              :activity="element"
+              :index="i + 1"
+            />
+          </template>
+        </Draggable>
+      </div>
+    </VExpandTransition>
   </div>
 </template>
 
@@ -252,5 +255,24 @@ const icon = computed(() => {
 
 .activity-wrapper .activity-wrapper {
   margin-left: 1.25rem;
+}
+
+.empty-drop {
+  min-height: 3.25rem;
+}
+
+.empty-drop:empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1.25rem;
+  border: 1px dashed rgba(var(--v-border-color), var(--v-border-opacity));
+  border-radius: 0.25rem;
+
+  &::after {
+    content: 'No items yet';
+    color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+    font-size: 0.875rem;
+  }
 }
 </style>

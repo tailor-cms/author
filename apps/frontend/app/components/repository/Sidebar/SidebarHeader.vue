@@ -29,10 +29,7 @@
       <VSpacer />
       <ActivityOptions v-if="!isSoftDeleted" :activity="props.activity" />
     </div>
-    <div
-      v-if="store.repository?.hasAdminAccess"
-      class="publish-status d-flex align-center my-6 mx-1"
-    >
+    <div class="publish-status d-flex align-center my-6 mx-1">
       <PublishingBadge :activity="activity" start />
       <span class="text-body-large">{{ publishStatusMessage }}</span>
     </div>
