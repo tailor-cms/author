@@ -4,7 +4,6 @@
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
-      @toggle-feedback="feedbackStore.isPanelOpen = !feedbackStore.isPanelOpen"
     />
     <VSidebar
       v-model="showSidebar"
@@ -34,8 +33,8 @@
         class="activity-content h-100"
       />
       <FeedbackSidebar
-        v-if="isFeedbackEnabled"
-        v-model="feedbackStore.isPanelOpen"
+        v-if="reviewStore.isLensAvailable"
+        v-model="reviewStore.isPanelOpen"
       />
     </VMain>
   </div>
@@ -47,17 +46,21 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import { useCommentStore } from '@/stores/comments';
+import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
+import { useReviewStore } from '@/stores/review';
+import FeedbackSidebar from '@/components/editor/FeedbackSidebar/index.vue';
 import VSidebar from '@/components/editor/Sidebar/index.vue';
 import VToolbar from '@/components/editor/Toolbar/index.vue';
-import EngagementSidebar from '@/components/editor/EngagementSidebar/index.vue';
 
 const { $ceRegistry, $pluginRegistry } = useNuxtApp() as any;
 
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 const commentStore = useCommentStore();
+const configStore = useConfigStore();
+const reviewStore = useReviewStore();
 const route = useRoute();
 
 useHead({
@@ -73,9 +76,14 @@ provide('$editorState', {
 
 const activityId = ref<number | null>(null);
 const showSidebar = ref(true);
-const showGuidelines = ref(!!editorStore.guidelines);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
+
+const initializeFeedback = (activityId: number) => {
+  if (!configStore.isAiAvailable) return;
+  const repositoryId = parseInt(route.params.id as string, 10);
+  if (repositoryId) reviewStore.initialize(repositoryId, activityId);
+};
 
 const lastEditorActivity = useLastEditorActivity();
 
@@ -98,6 +106,7 @@ watch(
   () => {
     const activityId = parseActivityId();
     initializeCommentStore(activityId);
+    initializeFeedback(activityId);
   },
 );
 
@@ -105,11 +114,13 @@ onBeforeMount(() => {
   const activityId = parseActivityId();
   editorStore.initialize(activityId);
   initializeCommentStore(activityId);
+  initializeFeedback(activityId);
 });
 
 onUnmounted(() => {
   editorStore.$reset();
   commentStore.$reset();
+  reviewStore.$reset();
 });
 </script>
 

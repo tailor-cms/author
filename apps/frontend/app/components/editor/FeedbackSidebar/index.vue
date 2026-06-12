@@ -21,20 +21,20 @@
       <div class="sidebar-header px-4 py-3">
         <div class="d-flex align-center">
           <RubricPicker
-            :model-value="feedbackStore.selectedRubricId"
-            :rubrics="feedbackStore.rubrics"
-            @update:model-value="feedbackStore.selectRubric($event)"
+            :model-value="reviewStore.selectedRubricId"
+            :rubrics="reviewStore.rubrics"
+            @update:model-value="reviewStore.selectRubric($event)"
           />
           <VSpacer />
           <VBtn
             v-tooltip:bottom="{ text: 'Refresh analysis', openDelay: 500 }"
-            :disabled="feedbackStore.isRunning"
+            :disabled="reviewStore.isRunning"
             aria-label="Refresh analysis"
             density="comfortable"
             icon="mdi-refresh"
             size="small"
             variant="text"
-            @click="feedbackStore.requestAnalysis(true)"
+            @click="reviewStore.requestAnalysis(true)"
           />
           <VBtn
             v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
@@ -49,7 +49,7 @@
         </div>
         <AnalysisStatus
           :computed-at="result?.computedAt"
-          :is-running="feedbackStore.isRunning"
+          :is-running="reviewStore.isRunning"
           :is-stale="status?.isStale ?? false"
           class="mt-1"
         />
@@ -68,13 +68,13 @@
           </span>
         </VAlert>
         <div
-          v-if="feedbackStore.isRunning"
+          v-if="reviewStore.isRunning"
           class="placeholder d-flex flex-column align-center ga-4 pa-6"
         >
           <VProgressCircular color="tertiary" size="48" width="3" indeterminate />
           <div class="text-body-small text-medium-emphasis text-center">
             Reading the content through the
-            {{ feedbackStore.selectedRubric?.name }} lens. This
+            {{ reviewStore.selectedRubric?.name }} lens. This
             usually takes under a minute.
           </div>
         </div>
@@ -96,7 +96,7 @@
                 :key="index"
                 :dimensions="dimensions"
                 :has-target-element="hasTargetElement(suggestion)"
-                :is-agent-available="isAgentAvailable"
+                :is-agent-available="config.isAiAvailable"
                 :suggestion="suggestion"
                 @agent:ask="askAgent"
                 @element:show="showElement"
@@ -131,7 +131,7 @@
             prepend-icon="mdi-creation"
             text="Analyze content"
             variant="tonal"
-            @click="feedbackStore.requestAnalysis()"
+            @click="reviewStore.requestAnalysis()"
           />
         </div>
       </div>
@@ -150,10 +150,9 @@ import RubricPicker from './RubricPicker.vue';
 import ScoreOverview from './ScoreOverview.vue';
 import StrengthsList from './StrengthsList.vue';
 import SuggestionCard from './SuggestionCard.vue';
-import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
 import { useContentElementStore } from '@/stores/content-elements';
-import { useFeedbackStore } from '@/stores/feedback';
+import { useReviewStore } from '@/stores/review';
 
 const IMPACT_ORDER = { high: 0, medium: 1, low: 2 } as const;
 
@@ -169,19 +168,18 @@ const isOpen = defineModel<boolean>();
 
 const { width, isResizing, startResize } = useDrawerResize({
   side: 'right',
-  storageKey: 'editor:feedback-sidebar:width',
+  storageKey: 'editor:review-sidebar:width',
   defaultWidth: () => (xlAndUp.value ? 480 : 380),
 });
 
-const authStore = useAuthStore();
 const config = useConfigStore();
 const elementStore = useContentElementStore();
-const feedbackStore = useFeedbackStore();
+const reviewStore = useReviewStore();
 
-const status = computed(() => feedbackStore.status);
+const status = computed(() => reviewStore.status);
 const result = computed(() => status.value?.result ?? null);
 const dimensions = computed(
-  () => feedbackStore.selectedRubric?.dimensions ?? [],
+  () => reviewStore.selectedRubric?.dimensions ?? [],
 );
 
 const assessmentByKey = computed(() =>
@@ -194,10 +192,6 @@ const sortedSuggestions = computed(() =>
   [...(result.value?.suggestions ?? [])].sort(
     (a, b) => IMPACT_ORDER[a.impact] - IMPACT_ORDER[b.impact],
   ),
-);
-
-const isAgentAvailable = computed(
-  () => !!authStore.isAdmin && !!config.props.aiUiEnabled,
 );
 
 const findElement = (elementId?: number | null) =>

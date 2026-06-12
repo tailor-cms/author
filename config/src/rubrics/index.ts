@@ -30,8 +30,7 @@ export const RUBRICS: ScoringRubric[] = [
  * Build the feedback api bound to a schema registry. Feedback is on
  * for every schema with all registered rubrics unless the schema opts
  * out (`feedback: { enabled: false }`) or narrows the set
- * (`feedback: { rubrics: [...] }`). Unknown rubric ids are dropped
- * with a warning rather than failing the whole feature.
+ * (`feedback: { rubrics: [...] }`).
  */
 export const getFeedbackApi = (rubrics: ScoringRubric[], schemaApi: any) => {
   const getRubric = (id: string): ScoringRubric | undefined =>
@@ -43,13 +42,7 @@ export const getFeedbackApi = (rubrics: ScoringRubric[], schemaApi: any) => {
     const isEnabled = config.enabled !== false;
     const resolved: ScoringRubric[] = config.rubrics?.length
       ? config.rubrics
-          .map((id: string) => {
-            const rubric = getRubric(id);
-            if (!rubric) {
-              console.warn(`Unknown scoring rubric "${id}" in ${schemaId}`);
-            }
-            return rubric;
-          })
+          .map((id: string) => getRubric(id))
           .filter((it): it is ScoringRubric => !!it)
       : rubrics;
     return { isEnabled: isEnabled && resolved.length > 0, rubrics: resolved };
