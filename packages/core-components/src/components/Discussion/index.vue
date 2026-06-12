@@ -44,7 +44,7 @@
       @unresolve="emit('unresolve', $event)"
       @update="emit('update', $event)"
     />
-    <div ref="inputContainerEl" class="text-right pt-2">
+    <div ref="inputContainerEl" class="text-right mt-4">
       <VTextarea
         ref="inputEl"
         v-model="contentInput"
