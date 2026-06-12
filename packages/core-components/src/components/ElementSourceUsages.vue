@@ -29,8 +29,8 @@
         Linked copies
       </VTooltip>
     </template>
-    <VSheet min-width="280" rounded="lg">
-      <div class="px-4 pt-3 pb-2 text-body-small text-medium-emphasis text-uppercase">
+    <VSheet :theme="$vuetify.theme.global.name" min-width="280" rounded="lg">
+      <div class="px-4 pt-3 pb-2 text-label-medium">
         Linked Copies
       </div>
       <VDivider />
@@ -38,19 +38,19 @@
         <VProgressCircular color="primary" size="24" indeterminate />
       </div>
       <template v-else-if="usages?.length">
-        <VList density="compact">
+        <VList density="compact" nav>
           <VListItem
             v-for="usage in usages"
             :key="usage.uid"
             :subtitle="usage.outlineActivityName"
             :title="usage.repositoryName"
-            append-icon="mdi-open-in-new"
+            prepend-icon="mdi-open-in-new"
             link
             @click="onViewUsage(usage)"
           />
         </VList>
       </template>
-      <div v-else class="px-4 py-3 text-body-medium text-medium-emphasis">
+      <div v-else class="px-4 py-3 text-label-medium text-medium-emphasis">
         No linked copies found
       </div>
     </VSheet>
@@ -83,7 +83,7 @@ const emit = defineEmits<{
 const menuOpen = ref(false);
 
 const badgeColor = computed(() => {
-  return props.usages?.length > 0 ? 'purple' : 'grey';
+  return props.usages?.length > 0 ? 'tertiary' : 'tertiary-container';
 });
 
 const onViewUsage = (usage: Usage) => {

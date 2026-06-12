@@ -19,7 +19,7 @@
         variant="tonal"
       />
     </template>
-    <VSheet class="pa-4">
+    <VSheet :theme="$vuetify.theme.global.name" class="pa-4" rounded="lg">
       <Discussion
         v-bind="{
           comments,
