@@ -21,7 +21,7 @@
     </template>
     <template #header>Create</template>
     <template #body>
-      <VSheet class="px-5 py-4">
+      <VSheet class="px-5 pb-4">
         <VTabs
           v-model="selectedTab"
           selected-class="bg-surface-container-high on-surface"
@@ -127,6 +127,7 @@
             label="User Group"
             placeholder="Select user group..."
             variant="outlined"
+            hide-details
             chips
             clearable
             closable-chips

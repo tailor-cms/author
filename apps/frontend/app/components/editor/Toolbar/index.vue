@@ -7,10 +7,9 @@
   >
     <div v-if="activity && !element" class="activity-toolbar w-100 px-3">
       <ActivityActions />
-      <VDivider class="rail-divider mx-2" vertical />
       <h1
         v-if="mdAndUp"
-        class="activity-title text-body-large text-truncate"
+        class="activity-title text-title-medium text-truncate ml-2"
       >
         <span class="font-weight-medium">{{ config.label }}</span>
         <span class="title-separator">/</span>
@@ -186,14 +185,10 @@ const usersWithActivity = computed(() => {
         margin-top: 0.5rem;
         border-radius: 4px;
         padding: 0.5rem 0.75rem;
-        background-color: #424242;
-        color: #fff;
+        background-color: rgb(var(--v-theme-inverse-surface));
+        color: rgb(var(--v-theme-inverse-on-surface));
       }
     }
-  }
-
-  &.bg-white {
-    border-bottom: 1px solid #cfd8dc;
   }
 }
 
@@ -211,7 +206,6 @@ const usersWithActivity = computed(() => {
   align-items: center;
   flex: 1 1 auto;
   min-width: 0;
-  margin: 0;
   padding: 0 0.5rem;
   text-align: left;
   letter-spacing: 0.01em;

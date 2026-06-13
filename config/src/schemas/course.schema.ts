@@ -16,7 +16,6 @@ enum ActivityType {
   // Outline
   Module = 'MODULE',
   Page = 'PAGE',
-  KnowledgeCheck = 'KNOWLEDGE_CHECK',
   // Content containers
   Section = 'SECTION',
 }
@@ -187,24 +186,6 @@ const AssessmentPoolConfig: ContentContainerConfig = {
   },
 };
 
-const ExamConfig: ContentContainerConfig = {
-  type: ContentContainerType.Exam,
-  templateId: ContentContainerType.Exam,
-  label: 'Exam',
-  displayHeading: true,
-  multiple: true,
-  publishedAs: 'exam',
-  config: {
-    objectives: [`${SchemaId}/${ActivityType.Page}`],
-  },
-  ai: {
-    definition: `
-      Exams are comprehensive assessments that evaluate the learner's
-      understanding of the material covered in the lesson. They are designed to
-      test the learner's knowledge and provide feedback on their progress.`,
-  },
-};
-
 export const SCHEMA: Schema = {
   id: SchemaId,
   workflowId: DEFAULT_WORKFLOW.id,
@@ -234,7 +215,7 @@ export const SCHEMA: Schema = {
     },
   ],
   structure: [ModuleConfig, PageConfig],
-  contentContainers: [SectionConfig, AssessmentPoolConfig, ExamConfig],
+  contentContainers: [SectionConfig, AssessmentPoolConfig],
   elementMeta: [
     {
       type: ContentElementType.Image,

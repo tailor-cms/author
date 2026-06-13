@@ -1,6 +1,20 @@
 <template>
   <div class="group-management">
-    <div class="d-flex py-6 px-4">
+    <div class="d-flex ga-3 mb-6 align-end">
+      <VTextField
+        v-model="filter"
+        bg-color="transparent"
+        data-testid="search-user-groups"
+        density="comfortable"
+        label="Search"
+        max-width="300"
+        prepend-inner-icon="mdi-magnify"
+        rounded="pill"
+        variant="solo-filled"
+        clearable
+        flat
+        hide-details
+      />
       <VSpacer />
       <VBtn
         v-if="authStore.isAdmin"
@@ -12,19 +26,6 @@
         @click.stop="showGroupDialog"
       />
     </div>
-    <VRow class="filters justify-end">
-      <VCol md="6">
-        <VTextField
-          v-model="filter"
-          data-testid="search-user-groups"
-          label="Search"
-          prepend-inner-icon="mdi-magnify"
-          variant="outlined"
-          clearable
-          hide-details
-        />
-      </VCol>
-    </VRow>
     <VDataTableServer
       :headers="headers"
       :items="userGroups"
@@ -35,7 +36,7 @@
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
       no-data-text="No user groups."
-      class="pt-4 bg-transparent"
+      class="mt-4 rounded-xl"
       item-value="id"
       must-sort
       @update:options="fetch"

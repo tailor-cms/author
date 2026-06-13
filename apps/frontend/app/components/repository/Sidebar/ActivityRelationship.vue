@@ -23,7 +23,7 @@
       <VListSubheader
         v-else-if="'header' in item"
         :title="item.header as string"
-        class="text-black text-title-small font-weight-bold"
+        class="text-title-small font-weight-bold"
       />
       <VListItem
         v-else

@@ -24,8 +24,14 @@ a {
   text-decoration: none;
 }
 
-.v-list-item--nav .v-list-item__prepend .v-icon {
-  font-size: 1.25rem;
+.v-list-item--nav {
+  .v-list-item-title {
+    font-size: 0.875rem;
+  }
+
+  .v-list-item__prepend .v-icon {
+    font-size: 1.125rem;
+  }
 }
 
 /* VEmptyState: Vuetify gives the media no bottom margin, so the icon butts

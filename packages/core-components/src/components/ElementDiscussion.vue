@@ -19,7 +19,7 @@
         variant="tonal"
       />
     </template>
-    <VSheet class="pa-3" elevation="2">
+    <VSheet :theme="$vuetify.theme.global.name" class="pa-4" rounded="lg">
       <Discussion
         v-bind="{
           comments,
@@ -29,7 +29,6 @@
           isVisible,
         }"
         v-model:confirmation-active="isConfirmationActive"
-        class="pa-2"
         @remove="removeComment"
         @resolve="updateResolvement"
         @save="save"
@@ -157,25 +156,3 @@ const removeComment = (id: number) => {
   });
 };
 </script>
-
-<style lang="scss" scoped>
-:deep(.v-menu__content) {
-  background: #fff;
-
-  .embedded-discussion {
-    text-align: left;
-  }
-
-  .comment .author {
-    font-size: 0.875rem;
-  }
-}
-
-:deep(.comment-body) {
-  padding: 0 0.25rem 0 3.25rem;
-}
-
-.unseen {
-  font-size: 0.75rem;
-}
-</style>

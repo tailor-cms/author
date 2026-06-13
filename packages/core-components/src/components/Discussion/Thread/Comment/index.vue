@@ -1,48 +1,55 @@
 <template>
-  <VSheet class="comment header py-1 px-2 bg-transparent" rounded="xl">
-    <CommentHeader
-      v-bind="{
-        comment,
-        isActivityThread,
-        isEditing,
-        isResolved,
-        elementLabel,
-        user,
-      }"
-      @remove="remove"
-      @resolve="handleResolvementUpdate"
-      @enable-edit="isEditing = true"
+  <VSheet class="comment" color="transparent">
+    <UserAvatar
+      v-if="comment.author"
+      :img-url="comment.author.imgUrl"
+      :size="34"
     />
-    <div class="comment-body">
-      <CommentPreview
-        v-if="!isEditing"
-        v-bind="{ content: comment.content, isResolved }"
-        @unresolve="handleResolvementUpdate"
+    <div class="comment-main">
+      <CommentHeader
+        v-bind="{
+          comment,
+          isActivityThread,
+          isEditing,
+          isResolved,
+          elementLabel,
+          user,
+        }"
+        @remove="remove"
+        @resolve="handleResolvementUpdate"
+        @enable-edit="isEditing = true"
       />
-      <template v-else>
-        <!-- eslint-disable vuejs-accessibility/no-autofocus -->
-        <VTextarea
-          v-model.trim="contentInput"
-          :error-messages="errors.message"
-          class="comment-editor"
-          rows="3"
-          variant="outlined"
-          auto-grow
-          autofocus
-          clearable
+      <div class="comment-body">
+        <CommentPreview
+          v-if="!isEditing"
+          v-bind="{ content: comment.content, isResolved }"
+          @unresolve="handleResolvementUpdate"
         />
-        <!-- eslint-enable vuejs-accessibility/no-autofocus -->
-        <span class="d-flex justify-end ga-2">
-          <VBtn size="small" text="Cancel" variant="text" @click="reset" />
-          <VBtn
-            prepend-icon="mdi-check"
-            size="small"
-            text="Save"
-            variant="tonal"
-            @click="save"
+        <template v-else>
+          <!-- eslint-disable vuejs-accessibility/no-autofocus -->
+          <VTextarea
+            v-model.trim="contentInput"
+            :error-messages="errors.message"
+            class="comment-editor"
+            rows="3"
+            variant="outlined"
+            auto-grow
+            autofocus
+            clearable
           />
-        </span>
-      </template>
+          <!-- eslint-enable vuejs-accessibility/no-autofocus -->
+          <span class="d-flex justify-end ga-2">
+            <VBtn size="small" text="Cancel" variant="text" @click="reset" />
+            <VBtn
+              prepend-icon="mdi-check"
+              size="small"
+              text="Save"
+              variant="tonal"
+              @click="save"
+            />
+          </span>
+        </template>
+      </div>
     </div>
   </VSheet>
 </template>
@@ -54,6 +61,7 @@ import type { User } from '@tailor-cms/interfaces/user';
 
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';
+import UserAvatar from '../../../UserAvatar.vue';
 import { object, string } from 'yup';
 import { useForm } from 'vee-validate';
 
@@ -109,11 +117,13 @@ watch(() => props.comment, reset, { deep: true });
 <style lang="scss" scoped>
 .comment {
   display: flex;
-  flex-direction: column;
+  gap: 0.75rem;
 
-  &-body {
+  &-main {
+    display: flex;
     flex: 1;
-    padding: 0 0.25rem 0 3rem;
+    flex-direction: column;
+    min-width: 0;
   }
 
   &-editor.v-textarea {

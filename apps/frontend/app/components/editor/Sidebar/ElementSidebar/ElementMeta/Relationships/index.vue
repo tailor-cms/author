@@ -1,5 +1,5 @@
 <template>
-  <VList>
+  <VList class="pa-0" nav>
     <RelationshipItem
       v-for="relationship in visibleRelationships"
       v-bind="relationship"

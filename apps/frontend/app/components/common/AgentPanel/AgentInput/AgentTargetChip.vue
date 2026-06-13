@@ -1,5 +1,10 @@
 <template>
   <VChip
+    v-tooltip:top="{
+      text: chip?.full || 'No focus - select an activity in the editor',
+      zIndex: 9100,
+      openDelay: 200,
+    }"
     class="agent-target-chip"
     prepend-icon="mdi-target"
     size="small"
@@ -7,13 +12,6 @@
     rounded="pill"
   >
     <span class="text-truncate">{{ chip?.short || 'No focus' }}</span>
-    <VTooltip
-      :text="chip?.full || 'No focus - select an activity in the editor'"
-      activator="parent"
-      :z-index="9100"
-      location="top"
-      open-delay="200"
-    />
   </VChip>
 </template>
 

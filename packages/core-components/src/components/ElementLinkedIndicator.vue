@@ -14,6 +14,7 @@
             :class="{ 'opacity-60': !isEntryPoint }"
             :variant="isEntryPoint ? 'tonal' : 'text'"
             aria-label="Linked content"
+            color="tertiary"
             icon="mdi-link-variant"
             size="x-small"
           />
@@ -22,15 +23,15 @@
         <span v-else>Part of linked activity - synced via parent</span>
       </VTooltip>
     </template>
-    <VSheet min-width="220" rounded="lg">
-      <div class="px-4 pt-3 pb-2 text-body-small text-medium-emphasis">
+    <VSheet :theme="$vuetify.theme.global.name" min-width="220" rounded="lg">
+      <div class="px-4 pt-3 pb-2 text-label-medium">
         {{ isEntryPoint ? 'Linked Element' : 'Nested Linked Element' }}
       </div>
       <VDivider />
       <div v-if="isLoading" class="d-flex justify-center py-4">
         <VProgressCircular color="primary" size="24" indeterminate />
       </div>
-      <VList v-else density="compact">
+      <VList v-else density="compact" nav>
         <VListItem
           :disabled="!sourceInfo"
           :subtitle="sourceInfo?.outlineActivityName || 'Open source location'"
@@ -39,7 +40,6 @@
           @click="onViewSource"
         />
         <template v-if="isEntryPoint">
-          <VDivider class="my-1" />
           <VListItem
             prepend-icon="mdi-link-variant-off"
             subtitle="Convert to local copy"

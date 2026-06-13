@@ -84,10 +84,6 @@ const removeAll = () => {
 </script>
 
 <style lang="scss" scoped>
-.v-list-item + .v-list-item {
-  margin-top: 0.25rem;
-}
-
 .v-list-item.v-list-item--one-line :deep(.v-list-item-subtitle) {
   -webkit-line-clamp: unset;
 }

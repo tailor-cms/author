@@ -55,7 +55,7 @@ const menuOptions = computed(() => {
   if (canDownload.value) {
     items.push({
       name: 'Download',
-      icon: 'mdi-download-outline',
+      icon: 'mdi-download',
       action: () => emit('download', props.asset),
     });
   }

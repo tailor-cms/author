@@ -15,16 +15,18 @@
         @click="showAll = !showAll"
       />
     </div>
-    <div v-if="showHeading" class="discussion-heading">
+    <div
+      v-if="showHeading"
+      class="text-uppercase text-label-medium font-weight-bold mb-4"
+    >
       Comments
     </div>
     <VAlert
       v-if="!commentsCount && showNotifications"
-      class="alert mt-1 mb-4"
+      class="alert mb-4"
       icon="mdi-keyboard-outline"
       text="Be the First to Comment!"
       variant="tonal"
-      prominent
     />
     <DiscussionThread
       v-if="thread.length"
@@ -42,7 +44,7 @@
       @unresolve="emit('unresolve', $event)"
       @update="emit('update', $event)"
     />
-    <div ref="inputContainerEl" class="text-right pt-2">
+    <div ref="inputContainerEl" class="text-right mt-4">
       <VTextarea
         ref="inputEl"
         v-model="contentInput"
@@ -179,6 +181,7 @@ const remove = (comment: Comment) => {
   showConfirmationDialog({
     title: 'Remove comment',
     message: 'Are you sure you want to remove this comment?',
+    color: 'error',
     action: () => emit('remove', comment.id),
     ...onConfirmationActive(),
   });
@@ -217,15 +220,6 @@ watch(
 
 <style lang="scss" scoped>
 .embedded-discussion {
-  .discussion-heading {
-    padding: 0 0 0.5rem 0;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
   .resolve-btn-container {
     display: flex;
     justify-content: flex-end;

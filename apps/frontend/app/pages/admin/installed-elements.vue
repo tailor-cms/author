@@ -1,11 +1,16 @@
 <template>
-  <div class="pa-7 text-left">
+  <div class="text-left">
     <VTextField
       v-model.trim="search"
-      append-inner-icon="mdi-magnify"
+      prepend-inner-icon="mdi-magnify"
+      bg-color="transparent"
+      density="comfortable"
       label="Search"
-      variant="outlined"
+      max-width="300"
+      rounded="pill"
+      variant="solo-filled"
       clearable
+      flat
     />
     <VList
       :opened="Object.keys(filteredRegistry)"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="text-body-medium mt-5 mb-2">
+    <div class="text-body-medium mb-2">
       Related <span class="text-lowercase">{{ activityConfig.label }}</span>
     </div>
     <ActivityCard
@@ -9,7 +9,7 @@
       :name="activity.data.name"
       :short-id="activity.shortId"
       :type-label="activityConfig.label"
-      class="mb-8"
+      class="mb-6"
     />
     <LabelChip
       v-tooltip:bottom="{ text: `${activityConfig.label} ID`, openDelay: 500 }"
@@ -45,7 +45,7 @@
       <VIcon class="mr-1" icon="mdi-content-copy" />
       <VIcon icon="mdi-link" />
     </VBtn>
-    <div class="mt-8 text-body-small">{{ timestampInfo }}</div>
+    <div class="mt-6 text-body-small">{{ timestampInfo }}</div>
   </div>
 </template>
 

@@ -83,7 +83,7 @@ const appCommands = [
 ];
 
 const { result } = concurrently(appCommands, {
-  killOthers: true,
+  killOthersOn: ['failure', 'success'],
   killSignal: 'SIGKILL',
 });
 result.then(() => process.exit(0)).catch(() => process.exit(1));

@@ -5,7 +5,7 @@
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
     elevation="0"
-    border
+    color="surface-container-low"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <div class="card-body">

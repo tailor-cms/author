@@ -1,7 +1,7 @@
 <template>
   <ul class="thread-list">
-    <li v-for="comment in comments" :key="comment.uid" class="thread-list-item">
-      <VDivider />
+    <li v-for="(comment, index) in comments" :key="comment.uid" class="thread-list-item">
+      <VDivider v-if="index !== 0" class="my-3" />
       <ThreadComment
         v-bind="{
           comment,
@@ -10,7 +10,7 @@
           ...$attrs,
         }"
         :element-label="getElementLabel(comment)"
-        class="mb-3"
+        class="pa-2"
       />
     </li>
   </ul>
@@ -51,16 +51,5 @@ const getElementLabel = (comment: Comment) => {
   margin: 0;
   padding: 0;
   list-style: none;
-
-  .thread-list-item {
-    .v-divider {
-      margin: 0 0.25rem 1rem 0.25rem;
-      opacity: 0.3;
-    }
-
-    &:first-child .v-divider {
-      display: none;
-    }
-  }
 }
 </style>

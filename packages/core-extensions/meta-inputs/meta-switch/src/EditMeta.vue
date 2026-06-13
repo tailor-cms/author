@@ -1,10 +1,12 @@
 <template>
-  <div class="my-2">
+  <div class="mb-4">
     <VSwitch
       v-model="input"
       :label="meta.label"
       :name="meta.key"
       :readonly="readonly"
+      density="compact"
+      size="small"
       hide-details
       @change="$emit('update', props.meta.key, input)"
     />
