@@ -47,7 +47,7 @@ const showCreateDialog = ref(false);
 const action = ref<InsertLocation>(AddAfter);
 
 const options = computed(() => {
-  const { subLevels, isEditable } = selectedActivity;
+  const { subLevels } = selectedActivity;
   const items = [];
   if (smAndUp.value) {
     items.push({
@@ -68,15 +68,13 @@ const options = computed(() => {
       });
     }
   };
-  if (isEditable.value) {
-    const { id: activityId, repositoryId } = props.activity;
-    const params = { id: repositoryId, activityId };
-    items.push({
-      name: 'Open',
-      icon: 'mdi-page-next-outline',
-      action: () => navigateTo({ name: 'editor', params }),
-    });
-  }
+  const { id: activityId, repositoryId } = props.activity;
+  const params = { id: repositoryId, activityId };
+  items.push({
+    name: 'Open',
+    icon: 'mdi-page-next-outline',
+    action: () => navigateTo({ name: 'editor', params }),
+  });
   return items;
 });
 
