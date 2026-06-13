@@ -22,12 +22,6 @@
       variant="tonal"
       prominent
     />
-    <ActivityDiscussion
-      v-if="activity"
-      :activity="activity"
-      panel
-      show-heading
-    />
   </VNavigationDrawer>
 </template>
 
@@ -35,7 +29,6 @@
 import { useDisplay } from 'vuetify';
 import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
-import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 withDefaults(defineProps<{ emptyMessage?: string }>(), {
