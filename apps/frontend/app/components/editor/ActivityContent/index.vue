@@ -8,7 +8,10 @@
   >
     <div class="metadata-container">
       <div
-        :class="{ 'metadata-collapse--open': isMetadataPanelShown }"
+        :class="{
+          'metadata-collapse--open': editorStore.isDetailsPanelExpanded,
+          'metadata-collapse--animated': editorStore.isDetailsPanelAnimated,
+        }"
         class="metadata-collapse"
       >
         <div class="metadata-collapse__inner">
@@ -17,7 +20,7 @@
       </div>
     </div>
     <div class="content-containers-wrapper">
-      <ContentLoader v-if="isLoading" class="loader" />
+      <ContentLoader v-if="isLoading" />
       <VAlert
         v-else-if="isEmptyLinkedActivity"
         class="mt-8"
@@ -28,8 +31,16 @@
         This is a linked {{ activityLabel }} without content. The source has not
         been edited yet. Content will appear here once the source is updated.
       </VAlert>
+      <SubactivityList
+        v-else-if="!containerConfigs.length"
+        :activity="activity"
+      />
       <PublishDiffProvider
-        v-if="editorStore?.selectedActivity && !isEmptyLinkedActivity"
+        v-if="
+          editorStore?.selectedActivity
+            && !isEmptyLinkedActivity
+            && containerConfigs.length
+        "
         v-show="!isLoading"
         v-slot="{
           processedElements,
@@ -86,6 +97,7 @@ import ActivityMetadata from './ActivityMetadata.vue';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
+import SubactivityList from './SubactivityList.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';
@@ -186,10 +198,6 @@ const isEmptyLinkedActivity = computed(
     !isLoading.value &&
     props.activity?.isLinkedCopy &&
     !containerIds.value.length,
-);
-
-const isMetadataPanelShown = computed(
-  () => !isLoading.value && editorStore.isDetailsPanelExpanded,
 );
 
 const elements = computed(() => contentElementStore.items);
@@ -373,10 +381,11 @@ watch(showPublishDiff, (isOn) => {
   editorChannel.emit(CE_FOCUS_EVENT);
 });
 
+// Scroll the panel into view only on a deliberate expand (toolbar toggle).
 watch(
   () => editorStore.isDetailsPanelExpanded,
   async (isExpanded) => {
-    if (!isExpanded) return;
+    if (!isExpanded || !editorStore.isDetailsPanelAnimated) return;
     await nextTick();
     activityContentEl.value?.scrollTo({ top: 0, behavior: 'smooth' });
   },
@@ -425,7 +434,10 @@ onBeforeUnmount(() => {
 .metadata-collapse {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 220ms ease;
+
+  &--animated {
+    transition: grid-template-rows 220ms ease;
+  }
 
   &--open {
     grid-template-rows: 1fr;
@@ -434,7 +446,6 @@ onBeforeUnmount(() => {
   &__inner {
     min-height: 0;
     overflow: hidden;
-    transition: border-color 220ms ease;
   }
 }
 
@@ -442,9 +453,5 @@ onBeforeUnmount(() => {
   max-width: 68.75rem;
   margin: auto;
   padding: 1.5rem;
-}
-
-.loader {
-  margin-top: 4.375rem;
 }
 </style>

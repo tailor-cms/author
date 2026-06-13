@@ -2,7 +2,7 @@
   <div class="header">
     <div class="options-container d-flex align-center">
       <VBtn
-        v-show="!isSoftDeleted && isEditable"
+        v-show="!isSoftDeleted"
         class="px-4 mr-3 btn-open"
         prepend-icon="mdi-page-next-outline"
         size="small"
@@ -39,7 +39,6 @@
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
 import { format } from 'fecha';
-import { get } from 'lodash-es';
 
 import ActivityPublishing from './ActivityPublishing.vue';
 import PublishingBadge from './PublishingBadge.vue';
@@ -50,14 +49,8 @@ import { useActivityStore } from '@/stores/activity';
 
 const props = defineProps<{ activity: StoreActivity }>();
 
-const { $schemaService } = useNuxtApp() as any;
 const activityStore = useActivityStore();
 const store = useCurrentRepository();
-
-const isEditable = computed(() => {
-  const type = get(props.activity, 'type');
-  return type && $schemaService.isEditable(type);
-});
 
 const isSoftDeleted = computed(() =>
   activityUtils.doesRequirePublishing(props.activity),
@@ -73,11 +66,10 @@ const publishStatusMessage = computed(() => {
 });
 
 const edit = () => {
-  if (!isEditable?.value) return;
   const { repositoryId, id: activityId } = props.activity;
   navigateTo({
     name: 'editor',
-    params: { repositoryId, activityId },
+    params: { id: repositoryId, activityId },
   });
 };
 

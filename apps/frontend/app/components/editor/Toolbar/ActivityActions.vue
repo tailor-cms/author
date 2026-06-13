@@ -71,10 +71,7 @@ const actions = computed(() => {
             icon: 'text-box-edit-outline',
             active: editorStore.isDetailsPanelExpanded,
             disabled: !editorStore.canExpandDetailsPanel,
-            action: () => {
-              editorStore.isDetailsPanelExpanded =
-                !editorStore.isDetailsPanelExpanded;
-            },
+            action: () => editorStore.toggleDetailsPanel(),
           },
         ]
       : []),
