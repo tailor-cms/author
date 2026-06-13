@@ -7,9 +7,7 @@
         src="/img/logo-new.svg"
         width="36"
       />
-      <VAppBarTitle class="app-name">
-        Tailor
-      </VAppBarTitle>
+      <VAppBarTitle class="app-name" text="Tailor" />
     </NuxtLink>
     <template #append>
       <template v-if="!smAndDown">
@@ -152,6 +150,7 @@ const logout = async () => {
     letter-spacing: 0.06em;
     line-height: 1.2;
     text-transform: uppercase;
+    color: rgb(var(--v-theme-on-surface));
   }
 }
 
