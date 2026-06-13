@@ -23,6 +23,8 @@ export const useEditorStore = defineStore('editor', () => {
   const selectedContentElement = ref<StoreContentElement | null>(null);
   const showPublishDiff = ref(false);
   const isDetailsPanelExpanded = ref(false);
+  // Only an explicit user toggle animates the panel
+  const isDetailsPanelAnimated = ref(false);
 
   const selectedActivity = computed(() => {
     if (!selectedActivityId.value) return null;
@@ -118,8 +120,28 @@ export const useEditorStore = defineStore('editor', () => {
     if (showPublishDiff.value) isDetailsPanelExpanded.value = false;
   };
 
+  const toggleDetailsPanel = () => {
+    if (!canExpandDetailsPanel.value) return;
+    isDetailsPanelAnimated.value = true;
+    isDetailsPanelExpanded.value = !isDetailsPanelExpanded.value;
+  };
+
   watch(canExpandDetailsPanel, (canExpand) => {
-    if (!canExpand) isDetailsPanelExpanded.value = false;
+    if (canExpand) return;
+    isDetailsPanelAnimated.value = false;
+    isDetailsPanelExpanded.value = false;
+  });
+
+  // When the selected activity has no content containers, the canvas is empty
+  // and the metadata fields are the only thing to interact with.
+  watch(selectedActivity, (activity) => {
+    if (!activity || !canExpandDetailsPanel.value) return;
+    const hasContainers = !!schema.getSupportedContainers(activity.type).length;
+    const hasMetadata = !!schema.getActivityMetadata(activity)?.length;
+    if (!hasContainers && hasMetadata) {
+      isDetailsPanelAnimated.value = false;
+      isDetailsPanelExpanded.value = true;
+    }
   });
 
   function $reset() {
@@ -137,6 +159,7 @@ export const useEditorStore = defineStore('editor', () => {
     selectedContentElement,
     showPublishDiff,
     isDetailsPanelExpanded,
+    isDetailsPanelAnimated,
     canExpandDetailsPanel,
     rootContainerGroups,
     contentContainers,
@@ -144,6 +167,7 @@ export const useEditorStore = defineStore('editor', () => {
     processCommentEvent,
     unlinkActivity,
     togglePublishDiff,
+    toggleDetailsPanel,
     $reset,
   };
 });

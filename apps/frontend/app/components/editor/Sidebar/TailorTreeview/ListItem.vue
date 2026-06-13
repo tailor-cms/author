@@ -69,10 +69,7 @@ const prependIcon = computed(() => {
   return props.isEmpty ? `${icon}-outline` : icon;
 });
 
-const onItemClick = (e: any) => {
-  if (!props.isEditable) return props.activatorProps?.onClick(e);
-  emit('edit', props.id);
-};
+const onItemClick = () => emit('edit', props.id);
 </script>
 
 <style lang="scss" scoped>
