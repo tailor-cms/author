@@ -1,0 +1,67 @@
+name: Infra preview
+# Runs `pulumi preview` on PRs that touch the infrastructure so the resource
+# diff is reviewable BEFORE merge. deploy.yml runs `pulumi up` unattended on
+# push to main, so this is the only gate where a destructive change (e.g. an
+# unintended Database replacement) can be caught by a human.
+on:
+  pull_request:
+    paths:
+      - 'infrastructure/**'
+      - '.github/workflows/infra-preview.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.node-version'
+          cache: 'pnpm'
+          cache-dependency-path: './pnpm-lock.yaml'
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Install dependencies
+        run: pnpm i --frozen-lockfile
+      # Human-readable diff, posted as a PR comment.
+      - name: Pulumi preview (comment diff on PR)
+        uses: pulumi/actions@v6
+        with:
+          command: preview
+          stack-name: extensionengine/tailor-cms/prod
+          work-dir: infrastructure
+          comment-on-pr: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          # Pin to the current main image so the preview surfaces infrastructure
+          # changes instead of triggering the in-stack ECR image build that
+          # index.ts falls back to when TAILOR_DOCKER_IMAGE is unset.
+          TAILOR_DOCKER_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
+      # Merge-blocking gate: fail (with a step-summary table) if anything would
+      # be deleted or replaced. The Pulumi CLI is installed by the step above.
+      - name: Gate on destructive changes
+        working-directory: infrastructure
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+          TAILOR_DOCKER_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
+        run: |
+          pulumi stack select extensionengine/tailor-cms/prod --non-interactive
+          pulumi preview --json --non-interactive > preview.json
+          node ../.github/scripts/check-destructive.js preview.json

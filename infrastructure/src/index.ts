@@ -31,7 +31,6 @@ function buildAndPushImage() {
 export const authorImage =
   process.env.TAILOR_DOCKER_IMAGE || buildAndPushImage().imageUri;
 
-// Prefixed by project to promote reuse within ecosystem
 const vpc = new awsx.ec2.Vpc(`${projectPrefix}-vpc`, {
   enableDnsHostnames: true,
   numberOfAvailabilityZones: 2,
@@ -49,18 +48,22 @@ const dbPasswordParam = aws.ssm.getParameterOutput({
   withDecryption: true,
 });
 
-// Prefixed by project to promote reuse within ecosystem
-const db = new studion.Database(`${projectPrefix}-db`, {
-  instanceClass: 'db.t4g.small',
-  username: 'tailor_cms',
-  password: dbPasswordParam.value,
-  dbName: 'author',
-  vpcId: vpc.vpcId,
-  vpcCidrBlock: vpc.vpc.cidrBlock,
-  isolatedSubnetIds: vpc.isolatedSubnetIds,
-  engineVersion: '17.6',
-  enableMonitoring: false,
-});
+// Prefixed by project to promote reuse within ecosystem.
+// `protect` makes Pulumi refuse any operation that would delete or replace the
+// database
+const db = new studion.Database(
+  `${projectPrefix}-db`,
+  {
+    instanceClass: 'db.t4g.small',
+    username: 'tailor_cms',
+    password: dbPasswordParam.value,
+    dbName: 'author',
+    vpc,
+    engineVersion: '17.6',
+    enableMonitoring: false,
+  },
+  { protect: true },
+);
 
 const cluster = new aws.ecs.Cluster(`${projectPrefix}-ecs-cluster`, {
   name: `${projectPrefix}-ecs-cluster`,
@@ -72,11 +75,8 @@ const webServer = new studion.WebServer(
     image: authorImage,
     port: 3000,
     domain: dnsConfig.require('domain'),
-    vpcId: vpc.vpcId,
-    vpcCidrBlock: vpc.vpc.cidrBlock,
-    publicSubnetIds: vpc.publicSubnetIds,
-    clusterId: cluster.id,
-    clusterName: cluster.name,
+    vpc,
+    cluster,
     hostedZoneId: dnsConfig.require('hostedZoneId'),
     autoscaling: { enabled: false },
     size: 'large', // 1 vCPU, 2GB RAM
