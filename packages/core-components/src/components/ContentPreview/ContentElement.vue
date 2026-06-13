@@ -22,22 +22,16 @@
           :element="element"
           :set-width="false"
         />
-        <VTooltip location="bottom" open-delay="400">
-          <template #activator="{ props: tooltipProps }">
-            <VFadeTransition>
-              <VBtn
-                v-if="isHovering"
-                class="open-element-button"
-                color="secondary"
-                v-bind="tooltipProps"
-                icon="mdi-open-in-new"
-                size="small"
-                @click="openInEditor(element)"
-              />
-            </VFadeTransition>
-          </template>
-          <span>Open in editor</span>
-        </VTooltip>
+        <VFadeTransition>
+          <VBtn
+            v-if="isHovering"
+            v-tooltip:bottom="{ text: 'Open in editor', openDelay: 400 }"
+            class="open-element-button"
+            icon="mdi-open-in-new"
+            size="small"
+            @click="openInEditor(element)"
+          />
+        </VFadeTransition>
       </VSheet>
     </VHover>
   </VCol>

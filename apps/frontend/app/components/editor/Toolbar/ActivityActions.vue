@@ -1,28 +1,20 @@
 <template>
   <div class="activity-actions d-flex align-center ga-1">
-    <VTooltip
+    <VBtn
       v-for="{ active, title, icon, action, disabled } in actions"
       :key="title"
-      location="bottom"
-      offset="12"
+      v-tooltip:bottom="{ text: title, offset: 12 }"
+      :active="active"
+      :aria-label="title"
+      :color="active ? 'tertiary' : ''"
+      :disabled="disabled"
+      class="action-btn"
+      density="comfortable"
+      icon
+      @click.stop="action"
     >
-      <template #activator="{ props: tooltipProps }">
-        <VBtn
-          v-bind="tooltipProps"
-          :active="active"
-          :aria-label="title"
-          :color="active ? 'tertiary' : ''"
-          :disabled="disabled"
-          class="action-btn"
-          density="comfortable"
-          icon
-          @click.stop="action"
-        >
-          <VIcon :icon="`mdi-${icon}`" size="small" />
-        </VBtn>
-      </template>
-      <span>{{ title }}</span>
-    </VTooltip>
+      <VIcon :icon="`mdi-${icon}`" size="small" />
+    </VBtn>
   </div>
 </template>
 

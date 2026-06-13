@@ -8,26 +8,26 @@
     offset="4"
   >
     <template #activator="{ props: menuProps }">
-      <VTooltip :disabled="menuOpen" location="left" open-delay="1000">
-        <template #activator="{ props: tooltipProps }">
-          <VBadge
-            :color="badgeColor"
-            :content="usages?.length ?? '?'"
-            offset-x="-2"
-            offset-y="-2"
-          >
-            <VBtn
-              v-bind="{ ...menuProps, ...tooltipProps }"
-              aria-label="Source usages"
-              color="tertiary"
-              icon="mdi-source-fork"
-              size="x-small"
-              variant="tonal"
-            />
-          </VBadge>
-        </template>
-        Linked copies
-      </VTooltip>
+      <VBadge
+        :color="badgeColor"
+        :content="usages?.length ?? '?'"
+        offset-x="-2"
+        offset-y="-2"
+      >
+        <VBtn
+          v-tooltip:left="{
+            text: 'Linked copies',
+            disabled: menuOpen,
+            openDelay: 1000,
+          }"
+          v-bind="menuProps"
+          aria-label="Source usages"
+          color="tertiary"
+          icon="mdi-source-fork"
+          size="x-small"
+          variant="tonal"
+        />
+      </VBadge>
     </template>
     <VSheet :theme="$vuetify.theme.global.name" min-width="280" rounded="lg">
       <div class="px-4 pt-3 pb-2 text-label-medium">
