@@ -1,7 +1,7 @@
 <template>
   <VDialog v-model="show" transition="dialog-bottom-transition" fullscreen>
-    <VCard class="discovery-dialog" color="surface" rounded="0">
-      <VToolbar color="surface-container-low" density="comfortable" height="84">
+    <VCard class="discovery-dialog" rounded="0">
+      <VToolbar color="surface" density="comfortable" height="84">
         <VToolbarTitle>
           <VIcon class="mx-2" icon="mdi-earth-plus" size="small" />
           Discover Resources

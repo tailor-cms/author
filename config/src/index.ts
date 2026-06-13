@@ -4,7 +4,7 @@ import { ContentElementType } from '@tailor-cms/content-element-collection/types
 import { createRegistry } from './lib/registry';
 import { SCHEMA as CourseSchema } from './schemas/course.schema';
 import { DEFAULT_WORKFLOW as DefaultWorkflow } from './workflows/default.workflow';
-import { exampleCollection } from './collections/example.collection';
+import { articleCollection } from './collections/article.collection';
 import { SCHEMA as FeedSchema } from './schemas/feed.schema';
 import { SCHEMA as KnowledgeBase } from './schemas/knowledge-base.schema';
 import { SCHEMA as QASchema } from './schemas/q&a.schema';
@@ -29,7 +29,7 @@ export const SCHEMAS = processSchemas([
   TestSchema,
   ContentLibrarySchema,
   VideoCourseSchema,
-  exampleCollection.toSchema(),
+  articleCollection.toSchema(),
 ]);
 
 const contentElementTypes: string[] = Object.values(ContentElementType);

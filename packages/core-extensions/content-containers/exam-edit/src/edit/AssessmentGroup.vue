@@ -1,5 +1,5 @@
 <template>
-  <VExpansionPanel :value="group.uid" class="assessment-group" border="b">
+  <VExpansionPanel :value="group.uid" class="assessment-group">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle v-bind="hoverProps" min-height="64" static>
         <div class="text-body-large font-weight-bold">
@@ -22,7 +22,7 @@
         </VFadeTransition>
       </VExpansionPanelTitle>
     </VHover>
-    <VExpansionPanelText class="mt-4">
+    <VExpansionPanelText>
       <VTextField
         v-model.number="timeLimit"
         :readonly="isDisabled"
@@ -52,7 +52,6 @@
           ? 'Empty question group'
           : 'Click the button below to create first question.'"
         class="mt-4"
-        color="primary"
         icon="mdi-information-outline"
         variant="tonal"
         prominent
@@ -62,7 +61,6 @@
         :elements="assessments"
         :is-disabled="isDisabled"
         :supported-element-config="supportedElementConfig"
-        class="px-0"
         @add="addAssessments"
         @update="$emit('reorder:element', $event)"
       >
@@ -207,7 +205,12 @@ watch(timeLimit, debounce((val: number) => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.list-group) > .v-row > .v-col {
-  padding: 0.25rem 0.75rem;
+:deep(.list-group) > .v-row--density-default {
+  --v-col-gap-y: 0.75rem;
+}
+
+.list-group {
+  padding: 0;
+  margin-bottom: 1rem
 }
 </style>

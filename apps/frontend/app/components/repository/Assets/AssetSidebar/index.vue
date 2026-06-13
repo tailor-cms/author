@@ -1,7 +1,7 @@
 <template>
   <VNavigationDrawer
     :model-value="!!asset"
-    :width="sidebarWidth"
+    :width="lgAndUp ? 480 : 380"
     class="asset-sidebar"
     color="surface-container"
     location="right"
@@ -9,8 +9,8 @@
     absolute
     @update:model-value="onModelValue"
   >
-    <template v-if="asset">
-      <div class="header d-flex align-center ga-1 px-4 pt-2">
+    <div v-if="asset" class="pa-4">
+      <div class="header d-flex align-center ga-1 mb-4">
         <VSpacer />
         <MetaInspector :asset="asset" />
         <AssetMenu
@@ -28,7 +28,7 @@
           @click="emit('close')"
         />
       </div>
-      <div class="body pa-4">
+      <div class="body">
         <Preview :asset="asset" />
         <MetaInfo
           :asset="asset"
@@ -41,7 +41,7 @@
           v-model:is-core-source="isCoreSource"
         />
       </div>
-    </template>
+    </div>
   </VNavigationDrawer>
 </template>
 
@@ -71,7 +71,6 @@ const emit = defineEmits<{
 }>();
 
 const { lgAndUp } = useDisplay();
-const sidebarWidth = computed(() => (lgAndUp.value ? 480 : 380));
 
 const description = ref('');
 const tags = ref<string[]>([]);
@@ -133,10 +132,6 @@ function onModelValue(val: boolean) {
 <style lang="scss" scoped>
 .asset-sidebar {
   text-align: left;
-}
-
-.header {
-  min-height: 3rem;
 }
 
 .body {

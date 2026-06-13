@@ -13,25 +13,22 @@
         rounded="pill"
       />
       <VSpacer />
-      <VTooltip
-        :disabled="hasIndexable"
-        location="bottom"
-        text="Selected assets need a description or tags to be indexed"
+      <div
+        v-tooltip:bottom="{
+          text: 'Selected assets need a description or tags to be indexed',
+          disabled: hasIndexable,
+        }"
       >
-        <template #activator="{ props: tooltipProps }">
-          <div v-bind="tooltipProps">
-            <VBtn
-              :disabled="!hasIndexable || isIndexing"
-              :loading="isIndexing"
-              prepend-icon="mdi-brain"
-              size="small"
-              text="Index selected"
-              variant="outlined"
-              @click="$emit('index')"
-            />
-          </div>
-        </template>
-      </VTooltip>
+        <VBtn
+          :disabled="!hasIndexable || isIndexing"
+          :loading="isIndexing"
+          prepend-icon="mdi-brain"
+          size="small"
+          text="Index selected"
+          variant="outlined"
+          @click="$emit('index')"
+        />
+      </div>
       <VBtn
         :loading="isBulkDeleting"
         :disabled="isBulkDeleting"

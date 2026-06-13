@@ -1,29 +1,26 @@
 <template>
   <VNavigationDrawer
     :model-value="repositoryStore.isSidebarOpen || mdAndUp"
-    :width="sidebarWidth"
-    class="px-4 text-left"
+    :width="lgAndUp ? 480 : 380"
+    class="text-left"
     color="surface-container"
     location="right"
-    border="surface"
     mobile-breakpoint="md"
     absolute
     @update:model-value="repositoryStore.updateSidebar"
   >
-    <template v-if="activity?.isTrackedInWorkflow">
-      <SidebarHeader :activity="activity" class="pt-4" />
-      <SidebarBody :activity="activity" class="mt-9 mb-2" />
-    </template>
-    <div v-else class="d-flex align-center mt-16">
-      <VIcon icon="mdi-arrow-left-circle" size="x-large" />
-      <VAlert :text="emptyMessage" class="ml-2" variant="tonal" />
+    <div v-if="activity?.isTrackedInWorkflow" class="pa-4 pb-16">
+      <SidebarHeader :activity="activity" />
+      <SidebarBody :activity="activity" class="my-6" />
     </div>
-    <ActivityDiscussion
-      v-if="activity"
-      :activity="activity"
-      class="mt-2 mb-5 mx-1"
-      panel
-      show-heading
+    <VAlert
+      v-else
+      :text="emptyMessage"
+      class="ma-4"
+      icon="mdi-arrow-left-circle"
+      rounded="lg"
+      variant="tonal"
+      prominent
     />
   </VNavigationDrawer>
 </template>
@@ -32,7 +29,6 @@
 import { useDisplay } from 'vuetify';
 import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
-import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 withDefaults(defineProps<{ emptyMessage?: string }>(), {
@@ -43,12 +39,4 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 const repositoryStore = useCurrentRepository();
 const activity = computed(() => repositoryStore.selectedActivity);
 const { mdAndUp, lgAndUp } = useDisplay();
-const sidebarWidth = computed(() => (lgAndUp.value ? 480 : 380));
 </script>
-
-<style lang="scss" scoped>
-:deep(.v-navigation-drawer__content) {
-  overflow-y: overlay;
-  scrollbar-width: none;
-}
-</style>

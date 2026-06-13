@@ -7,9 +7,7 @@
         src="/img/logo-new.svg"
         width="36"
       />
-      <VAppBarTitle class="app-name">
-        Tailor
-      </VAppBarTitle>
+      <VAppBarTitle class="app-name" text="Tailor" />
     </NuxtLink>
     <template #append>
       <template v-if="!smAndDown">
@@ -27,8 +25,7 @@
       <VMenu
         :close-on-content-click="false"
         attach="#mainAppBar"
-        min-width="220"
-        max-width="350"
+        width="250"
         offset="10"
         transition="slide-y-transition"
       >
@@ -42,12 +39,18 @@
           />
         </template>
         <VCard class="text-left">
-          <div class="d-flex flex-column pa-4 align-center bg-surface-container">
+          <VSheet
+            color="surface-container"
+            class="d-flex flex-column pa-6 align-center text-center"
+          >
             <UserAvatar :img-url="user.imgUrl" size="x-large" />
-            <div class="text-body-large font-weight-bold mt-2">
+            <div class="text-body-large font-weight-semibold mt-2">
               {{ user.label }}
             </div>
-          </div>
+            <div v-if="user.fullName" class="text-body-small text-medium-emphasis">
+              {{ user.email }}
+            </div>
+          </VSheet>
           <VList
             class="d-flex flex-column ga-1 pa-2"
             density="compact"
@@ -69,15 +72,7 @@
               prepend-icon="mdi-account-circle-outline"
               rounded="lg"
             />
-            <VListItem
-              prepend-icon="mdi-theme-light-dark"
-              title="Theme"
-              rounded="lg"
-            >
-              <template #append>
-                <ThemeSwitcher inline />
-              </template>
-            </VListItem>
+            <ThemeSwitcher submenu />
             <VListItem
               title="Logout"
               prepend-icon="mdi-logout"
@@ -155,6 +150,7 @@ const logout = async () => {
     letter-spacing: 0.06em;
     line-height: 1.2;
     text-transform: uppercase;
+    color: rgb(var(--v-theme-on-surface));
   }
 }
 

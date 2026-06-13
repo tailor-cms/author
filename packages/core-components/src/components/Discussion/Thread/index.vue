@@ -15,14 +15,12 @@
       @unresolve="emit('unresolve', $event)"
       @update="onUpdate"
     />
-    <transition name="fade">
-      <UnseenDivider
-        v-if="unseenCount"
-        ref="unseenDividerEl"
-        :count="unseenCount"
-        @seen="markSeen"
-      />
-    </transition>
+    <UnseenDivider
+      v-if="unseenCount"
+      ref="unseenDividerEl"
+      :count="unseenCount"
+      @seen="markSeen"
+    />
     <ThreadList
       v-bind="{
         isActivityThread,
@@ -97,7 +95,7 @@ const revealUnseen = (count = null) => {
   });
 };
 
-const markSeen = () => {
+const markSeen = async () => {
   emit('seen');
   emit('showAll', false);
 };
@@ -129,16 +127,6 @@ watch(
     &::-webkit-scrollbar {
       display: none;
     }
-  }
-
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.5s;
-  }
-
-  .fade-enter,
-  .fade-leave-to {
-    opacity: 0;
   }
 }
 </style>

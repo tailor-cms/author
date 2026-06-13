@@ -53,9 +53,13 @@
     <template v-if="isLink && meta.url">
       <VDivider class="mt-5 mb-4" opacity="0.12" />
       <div class="meta-label">URL</div>
-      <a :href="meta.url" class="meta-value" target="_blank">
-        {{ truncatedUrl }}
-        <VIcon class="ml-1" icon="mdi-open-in-new" size="x-small" />
+      <a
+        :href="meta.url"
+        class="meta-value d-flex align-center ga-1"
+        target="_blank"
+      >
+        <span class="text-truncate">{{ meta.url }}</span>
+        <VIcon icon="mdi-open-in-new" size="x-small" />
       </a>
     </template>
     <template v-if="hasSourceInfo">
@@ -101,12 +105,6 @@ const props = defineProps<{
 const isLink = computed(() => props.asset.type === AssetType.Link);
 const meta = computed(() => props.asset.meta as Record<string, any>);
 const hasSourceInfo = computed(() => !!meta.value.source?.url);
-
-const truncatedUrl = computed(() => {
-  const url = meta.value?.url;
-  if (!url) return '';
-  return url.length > 60 ? `${url.slice(0, 60)}...` : url;
-});
 </script>
 
 <style lang="scss" scoped>

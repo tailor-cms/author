@@ -33,6 +33,7 @@
           size="large"
           type="submit"
           text="Send reset email"
+          variant="flat"
           block
           rounded
         />

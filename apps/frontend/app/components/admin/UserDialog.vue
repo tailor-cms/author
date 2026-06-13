@@ -89,6 +89,7 @@
             color="primary"
             text="Save"
             type="submit"
+            variant="flat"
           />
         </div>
       </form>

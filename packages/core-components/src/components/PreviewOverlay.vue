@@ -6,7 +6,7 @@
     close-on-content-click
     contained
   >
-    <VBtn class="text-body-large" color="white" variant="text" rounded>
+    <VBtn class="text-body-large" variant="text" rounded>
       <slot>Click to preview</slot>
     </VBtn>
   </VOverlay>

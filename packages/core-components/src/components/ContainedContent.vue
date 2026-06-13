@@ -112,7 +112,7 @@ const scrollContainer = throttle((e) => {
   opacity: 0;
 
   .mdi {
-    color: #888;
+    color: rgba(var(--v-theme-on-surface), 0.4);
     font-size: 1.75rem;
   }
 }

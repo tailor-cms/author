@@ -5,7 +5,7 @@
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
     elevation="0"
-    border
+    color="surface-container-low"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <div class="card-body">
@@ -33,7 +33,7 @@
         <VBadge
           v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
           :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
-          :color="hasUnpublishedChanges ? 'warning' : 'secondary'"
+          :color="hasUnpublishedChanges ? 'warning' : 'success'"
           class="mr-2"
           dot
           inline

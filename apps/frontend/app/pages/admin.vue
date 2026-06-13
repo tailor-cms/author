@@ -1,11 +1,6 @@
 <template>
   <NuxtLayout name="main">
-    <VSheet
-      class="h-100 mx-3 overflow-auto"
-      color="surface-container-low"
-      rounded="t-xl"
-      border
-    >
+    <div class="admin-page overflow-auto h-100">
       <VContainer class="pt-14" max-width="1400">
         <VRow>
           <VCol cols="12" md="3">
@@ -16,7 +11,7 @@
           </VCol>
         </VRow>
       </VContainer>
-    </VSheet>
+    </div>
   </NuxtLayout>
 </template>
 
@@ -28,3 +23,14 @@ definePageMeta({
   middleware: ['auth', 'has-admin-access'],
 });
 </script>
+
+<style lang="scss" scoped>
+.admin-page {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+</style>

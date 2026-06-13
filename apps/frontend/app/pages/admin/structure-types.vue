@@ -1,11 +1,16 @@
 <template>
-  <div class="pa-7 text-left">
+  <div class="text-left">
     <VTextField
       v-model.trim="search"
-      append-inner-icon="mdi-magnify"
+      prepend-inner-icon="mdi-magnify"
+      density="comfortable"
+      bg-color="transparent"
       label="Search"
-      variant="outlined"
+      max-width="300"
+      rounded="pill"
+      variant="solo-filled"
       clearable
+      flat
     />
     <VTreeview
       :items="schemas"

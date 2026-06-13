@@ -123,7 +123,7 @@ const reorder = ({ newIndex: newPosition }: { newIndex: number }) => {
 
   .content-element {
     max-height: 9.375rem;
-    background: #f4f5f5;
+    background: rgb(var(--v-theme-surface-container-low));
 
     & > * {
       visibility: hidden;
@@ -132,7 +132,7 @@ const reorder = ({ newIndex: newPosition }: { newIndex: number }) => {
 }
 
 :deep(.sortable-drag .content-element) {
-  max-height: auto;
-  background: #fff;
+  max-height: none;
+  background: rgb(var(--v-theme-surface-container-low));
 }
 </style>

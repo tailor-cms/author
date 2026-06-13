@@ -1,14 +1,11 @@
 <template>
   <div class="header">
-    <UserAvatar
-      v-if="comment.author"
-      :img-url="comment.author.imgUrl"
-      :size="36"
-      class="mt-1"
-    />
     <div class="comment-info">
-      <div v-if="comment.author" class="d-flex align-center">
-        <span v-tooltip:right="comment.author.label" class="author text-truncate">
+      <div v-if="comment.author" class="d-flex align-center text-label-large">
+        <span
+          v-tooltip:right="comment.author.label"
+          class="author text-truncate font-weight-semibold"
+        >
           {{ comment.author.label }}
         </span>
         <span v-if="showEditedLabel" class="edited ml-1">(edited)</span>
@@ -16,7 +13,7 @@
       <div class="d-flex align-center">
         <span
           v-tooltip:right="formatDate(comment.createdAt, 'dd MMM HH:mm')"
-          class="time text-label-large text-medium-emphasis"
+          class="time text-label-medium text-medium-emphasis"
         >
           {{ formatDistanceToNow(comment.createdAt) }} ago
         </span>
@@ -31,14 +28,13 @@
         </template>
       </div>
     </div>
-    <div v-if="showOptions && !isEditing" class="actions">
+    <div v-if="showOptions && !isEditing" class="actions d-flex ga-1">
       <VBtn
         v-for="{ action, icon, label, color } in options"
         :key="action"
         :aria-label="label"
         :color="color"
         :icon="`mdi-${icon}`"
-        class="ml-2"
         size="x-small"
         variant="tonal"
         @click="emit(action)"
@@ -55,7 +51,6 @@ import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import EditorLink from '../../../EditorLink.vue';
-import UserAvatar from '../../..//UserAvatar.vue';
 
 type Action = 'resolve' | 'enableEdit' | 'remove';
 
@@ -124,18 +119,12 @@ const options = computed(() => {
   .comment-info {
     display: flex;
     flex-direction: column;
-    flex: 0 100%;
-    max-width: calc(100% - 8rem);
-    margin-left: 0.75rem;
+    flex: 1;
+    min-width: 0;
 
     .author {
       display: inline-block;
       max-width: 75%;
-      font-size: 1rem;
-    }
-
-    .edited {
-      font-size: 0.75rem;
     }
 
     hr.v-divider--vertical {
