@@ -58,7 +58,7 @@ const deleteAvatar = () => {
 
 <style lang="scss" scoped>
 .user-panel {
-  max-width: 75rem;
+  max-width: 56.25rem;
 }
 
 .profile-page {
