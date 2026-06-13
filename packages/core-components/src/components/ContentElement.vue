@@ -487,7 +487,7 @@ onMounted(() => {
   }
 
   &.linked {
-    border-left: 3px solid rgb(var(--v-theme-info));
+    border-left: 3px solid rgb(var(--v-theme-tertiary));
   }
 }
 
