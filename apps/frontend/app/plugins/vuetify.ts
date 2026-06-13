@@ -11,74 +11,74 @@ import { colorMode, resolveTheme } from '~/composables/useColorMode';
 const lightTheme: ThemeDefinition = {
   dark: false,
   colors: {
-    // Surfaces — even MD3 tone steps (100 / 96 / 94 / 92 / 90)
-    'surface': '#F9FAFC',
+    // Surfaces — cool-tinted MD3 neutral ramp
+    'surface': '#F6F9FE',
     'on-surface': '#30323B',
-    'surface-variant': '#DFE2E7',
+    'surface-variant': '#DDE3EA',
     'on-surface-variant': '#5E6470',
 
-    'surface-container-highest': '#DEE2E7',
+    'surface-container-highest': '#DFE3E8',
     'on-surface-container-highest': '#30323B',
-    'surface-container-high': '#E6E9ED',
+    'surface-container-high': '#E5E8ED',
     'on-surface-container-high': '#30323B',
-    'surface-container': '#ECEFF3',
+    'surface-container': '#EBEEF3',
     'on-surface-container': '#30323B',
-    'surface-container-low': '#F2F4F7',
+    'surface-container-low': '#F1F4F9',
     'on-surface-container-low': '#30323B',
     'surface-container-lowest': '#FFFFFF',
     'on-surface-container-lowest': '#30323B',
 
     // Surface add-ons
-    'background': '#F9FAFC',
+    'background': '#F6F9FE',
     'on-background': '#30323B',
-    'surface-bright': '#F9FAFC',
-    'surface-dim': '#D5D8DD',
+    'surface-bright': '#F6F9FE',
+    'surface-dim': '#D7DADF',
 
-    // Primary — jade (contemporary, vibrant; tone-derived)
+    // Primary — jade brand seed
     'primary': '#1E9659',
     'on-primary': '#FFFFFF',
     'primary-container': '#A6F0C5',
     'on-primary-container': '#00210E',
 
-    // Secondary — ocean (cool complement to jade primary)
+    // Secondary — ocean
     'secondary': '#2F6F8F',
     'on-secondary': '#FFFFFF',
     'secondary-container': '#C9E6F5',
     'on-secondary-container': '#001E2E',
 
-    // Tertiary — rose-pink (MD3 hue ~345; cool warm accent, sparing use)
+    // Tertiary — rose-pink
     'tertiary': '#B4216B',
     'on-tertiary': '#FFFFFF',
     'tertiary-container': '#FFD9E5',
     'on-tertiary-container': '#3E0021',
 
-    // Warning — amber-orange (warmer/oranger than the old honey amber)
+    // Warning — amber
     'warning': '#C57A00',
     'on-warning': '#FFFFFF',
     'warning-container': '#FFDEB0',
     'on-warning-container': '#2A1800',
 
-    // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
+    // Error — crimson
     'error': '#C8112A',
     'on-error': '#FFFFFF',
     'error-container': '#FFDADC',
     'on-error-container': '#45000B',
 
-    // Success — teal-emerald (cooler than jade primary; clear 'confirmation' read)
+    // Success — teal (distinct from jade primary)
     'success': '#0F9B85',
     'on-success': '#FFFFFF',
     'success-container': '#9DF1E0',
     'on-success-container': '#00261F',
 
-    // Info — editorial indigo (distinct from secondary ocean and source indigo)
+    // Info — indigo
     'info': '#3A4FE0',
     'on-info': '#FFFFFF',
     'info-container': '#DDE1FF',
     'on-info-container': '#00056F',
 
     // Outline
-    'outline': '#7C7F88',
-    'outline-variant': '#C7CAD0',
+    'outline': '#71787E',
+    'outline-variant': '#C1C7CE',
 
     // Asset types — categorical only; decoupled from semantic roles.
     // Lower-chroma so they read as labels, not action/error states.
@@ -99,7 +99,7 @@ const lightTheme: ThemeDefinition = {
   variables: {
     'medium-emphasis-opacity': 0.7,
     // v-kbd key — mirrors surface-variant / on-surface-variant.
-    'theme-kbd': '#DFE2E7',
+    'theme-kbd': '#DDE3EA',
     'theme-on-kbd': '#5E6470',
   },
 };
@@ -107,74 +107,74 @@ const lightTheme: ThemeDefinition = {
 const darkTheme: ThemeDefinition = {
   dark: true,
   colors: {
-    // Surfaces — even MD3 tone steps (4 / 10 / 12 / 17 / 22)
-    'surface': '#15181D',
+    // Surfaces — cool-tinted MD3 neutral ramp
+    'surface': '#101417',
     'on-surface': '#C5CCDA',
-    'surface-variant': '#454A52',
+    'surface-variant': '#41484D',
     'on-surface-variant': '#B0B6C2',
 
-    'surface-container-highest': '#393E45',
+    'surface-container-highest': '#313539',
     'on-surface-container-highest': '#C5CCDA',
-    'surface-container-high': '#2C3137',
+    'surface-container-high': '#262A2E',
     'on-surface-container-high': '#C5CCDA',
-    'surface-container': '#22262B',
+    'surface-container': '#1C2024',
     'on-surface-container': '#C5CCDA',
-    'surface-container-low': '#1D2025',
+    'surface-container-low': '#181C20',
     'on-surface-container-low': '#C5CCDA',
-    'surface-container-lowest': '#0F1114',
+    'surface-container-lowest': '#0A0F12',
     'on-surface-container-lowest': '#C5CCDA',
 
     // Surface add-ons
-    'background': '#15181D',
+    'background': '#101417',
     'on-background': '#C5CCDA',
-    'surface-bright': '#404550',
-    'surface-dim': '#15181D',
+    'surface-bright': '#353A3E',
+    'surface-dim': '#101417',
 
-    // Primary — jade (contemporary, vibrant; tone-derived)
+    // Primary — jade brand seed
     'primary': '#6FD49A',
     'on-primary': '#00391C',
     'primary-container': '#00522A',
     'on-primary-container': '#8FF0B7',
 
-    // Secondary — ocean (cool complement to jade primary)
+    // Secondary — ocean
     'secondary': '#9CCAE2',
     'on-secondary': '#003549',
     'secondary-container': '#004F69',
     'on-secondary-container': '#CDE6F5',
 
-    // Tertiary — rose-pink (MD3 hue ~345; cool warm accent, sparing use)
+    // Tertiary — rose-pink
     'tertiary': '#FFB0CC',
     'on-tertiary': '#5E1138',
     'tertiary-container': '#7C2950',
     'on-tertiary-container': '#FFD9E5',
 
-    // Warning — amber-orange (warmer/oranger than the old honey amber)
+    // Warning — amber
     'warning': '#FFC080',
     'on-warning': '#452B00',
     'warning-container': '#634300',
     'on-warning-container': '#FFDEB0',
 
-    // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
+    // Error — crimson
     'error': '#FFB1B7',
     'on-error': '#680016',
     'error-container': '#91002A',
     'on-error-container': '#FFDADC',
 
-    // Success — teal-emerald (cooler than jade primary; clear 'confirmation' read)
+    // Success — teal (distinct from jade primary)
     'success': '#65E1CB',
     'on-success': '#003B32',
     'success-container': '#00574A',
     'on-success-container': '#9DF1E0',
 
-    // Info — editorial indigo (distinct from secondary ocean and source indigo)
+    // Info — indigo
     'info': '#BAC3FF',
     'on-info': '#08148F',
     'info-container': '#1F32B1',
     'on-info-container': '#DDE1FF',
 
     // Outline
-    'outline': '#6E7585',
-    'outline-variant': '#3E4452',
+    'outline': '#8B9198',
+    'outline-variant': '#41484D',
 
     // Asset types — categorical only; decoupled from semantic roles.
     // Lifted ~30 tone steps for dark surfaces, same hues as light.
@@ -194,7 +194,7 @@ const darkTheme: ThemeDefinition = {
   },
   variables: {
     // v-kbd key — mirrors surface-variant / on-surface-variant.
-    'theme-kbd': '#454A52',
+    'theme-kbd': '#41484D',
     'theme-on-kbd': '#B0B6C2',
   },
 };
@@ -235,11 +235,6 @@ export default defineNuxtPlugin({
         sets: {
           mdi,
           add: outlineIconset,
-        },
-      },
-      display: {
-        thresholds: {
-          lg: 1440,
         },
       },
     });
