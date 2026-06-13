@@ -2,24 +2,27 @@
   <VNavigationDrawer
     :key="store.selectedActivity?.uid"
     :model-value="store.isSidebarOpen || mdAndUp"
-    :width="sidebarWidth"
-    class="pa-4 text-left"
+    :width="lgAndUp ? 480 : 380"
+    class="text-left"
     color="surface-container"
     location="right"
     mobile-breakpoint="md"
     absolute
     @update:model-value="store.updateSidebar"
   >
-    <div v-if="store.selectedActivity?.uid">
+    <div v-if="store.selectedActivity?.uid" class="pa-4 pb-16">
       <SidebarHeader :activity="store.selectedActivity" />
-      <SidebarBody :activity="store.selectedActivity" class="mt-6 mb-2" />
+      <SidebarBody :activity="store.selectedActivity" class="my-6" />
     </div>
-    <div v-else class="placeholder mt-16">
-      <div class="d-flex align-center">
-        <VIcon icon="mdi-arrow-left-circle" size="x-large" />
-        <VAlert :text="emptyMessage" class="info-content ml-4" variant="tonal" />
-      </div>
-    </div>
+    <VAlert
+      v-else
+      :text="emptyMessage"
+      class="ma-4"
+      icon="mdi-arrow-left-circle"
+      rounded="lg"
+      variant="tonal"
+      prominent
+    />
   </VNavigationDrawer>
 </template>
 
@@ -36,16 +39,4 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 
 const store = useCurrentRepository();
 const { mdAndUp, lgAndUp } = useDisplay();
-const sidebarWidth = computed(() => (lgAndUp.value ? 480 : 380));
 </script>
-
-<style lang="scss" scoped>
-.placeholder {
-  padding: 0 1rem;
-
-  h4 {
-    padding: 0.5rem 0 1.125rem;
-    text-align: center;
-  }
-}
-</style>
