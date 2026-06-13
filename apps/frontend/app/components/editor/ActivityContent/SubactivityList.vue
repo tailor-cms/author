@@ -7,7 +7,7 @@
       </div>
       <VList
         bg-color="transparent"
-        class="d-flex flex-column ga-2"
+        class="d-flex flex-column ga-2 text-left"
         lines="two"
       >
         <VListItem
@@ -75,12 +75,12 @@ const routeFor = (activity: Activity) => ({
   margin: auto;
 
   &__row {
-    border: thin solid rgb(var(--v-theme-outline-variant));
-    border-left: 4px solid var(--type-accent);
-    transition: border-color 0.15s ease;
+    background-color: rgb(var(--v-theme-surface-container));
+    border-left: 10px solid var(--type-accent);
+    transition: background-color 0.15s ease;
 
     &:hover {
-      border-color: rgb(var(--v-theme-primary));
+      background-color: rgb(var(--v-theme-surface-container-high));
       border-left-color: var(--type-accent);
     }
   }
