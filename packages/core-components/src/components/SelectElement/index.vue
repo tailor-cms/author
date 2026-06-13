@@ -2,6 +2,7 @@
   <TailorDialog
     :header-icon="headerIcon"
     :model-value="true"
+    :theme="selection.activity ? 'light' : undefined"
     width="650"
     persistent
     scrollable

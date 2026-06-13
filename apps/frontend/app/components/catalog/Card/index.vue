@@ -33,7 +33,7 @@
         <VBadge
           v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
           :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
-          :color="hasUnpublishedChanges ? 'warning' : 'secondary'"
+          :color="hasUnpublishedChanges ? 'warning' : 'success'"
           class="mr-2"
           dot
           inline
