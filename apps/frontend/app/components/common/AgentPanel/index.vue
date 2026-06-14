@@ -4,11 +4,6 @@
     ref="rootEl"
     class="agent-panel"
   >
-    <PanelLauncher
-      v-show="!isPanelOpen"
-      :is-running="isRunning"
-      @open="openPanel"
-    />
     <DefinePanelBody>
       <PanelHeader
         :is-running="isRunning"
@@ -88,18 +83,14 @@ import AgentMessageList from './AgentMessageList.vue';
 import AgentQuestion from './AgentQuestion/index.vue';
 import AgentSessionStats from './AgentSessionStats.vue';
 import PanelHeader from './PanelHeader.vue';
-import PanelLauncher from './PanelLauncher.vue';
 import { useAgentFocus } from './composables/useAgentFocus';
 import { useAgentRunner } from './composables/useAgentRunner';
 import { useAgentSession } from './composables/useAgentSession';
 import { useAgentStatusRotation } from './composables/useAgentStatusRotation';
 import { usePanelVisibility } from './composables/usePanelVisibility';
-import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-const route = useRoute();
-const authStore = useAuthStore();
 const config = useConfigStore();
 const repositoryStore = useCurrentRepository();
 
@@ -119,16 +110,13 @@ const repositoryUid = computed(
   () => (repositoryStore.repository as any)?.uid || null,
 );
 
+// The agent works on repository content, so the dock exists only
+// within an initialized repository context.
 const isPanelEnabled = computed(() =>
-  Boolean(
-    authStore.isAdmin
-    && config.props.aiUiEnabled
-    && route.params.id,
-  ),
+  Boolean(config.isAiAvailable && repositoryId.value),
 );
 
 const { focusChip, focusPayload } = useAgentFocus();
-
 const { sessionId, messages } = useAgentSession(repositoryUid);
 
 const mode = useLocalStorage<AgentMode>('agent-panel:mode', AgentMode.Edit);
@@ -213,7 +201,39 @@ async function sendPrompt() {
   if (result.cancelled) prompt.value = message;
 }
 
-onMounted(scrollToLatest);
+// Other features (e.g. the feedback sidebar's "Fix with AI") hand off
+// prefilled prompts through the agent bus channel; the user reviews and
+// sends, the panel never auto-runs handed-off prompts.
+const { $eventBus } = useNuxtApp() as any;
+const agentChannel = $eventBus.channel('agent');
+
+const onPanelOpen = () => {
+  if (isPanelEnabled.value) openPanel();
+};
+
+const onPromptSet = ({ prompt: text }: { prompt: string }) => {
+  if (!isPanelEnabled.value || isRunning.value) return;
+  openPanel();
+  prompt.value = text;
+};
+
+// Broadcast the run state so external launchers
+watch(
+  isRunning,
+  (value) => agentChannel.emit('run:state', { isRunning: value }),
+  { immediate: true },
+);
+
+onMounted(() => {
+  scrollToLatest();
+  agentChannel.on('prompt:set', onPromptSet);
+  agentChannel.on('panel:open', onPanelOpen);
+});
+
+onBeforeUnmount(() => {
+  agentChannel.off('prompt:set', onPromptSet);
+  agentChannel.off('panel:open', onPanelOpen);
+});
 </script>
 
 <style lang="scss" scoped>

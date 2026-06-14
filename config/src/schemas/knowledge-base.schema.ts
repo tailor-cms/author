@@ -75,6 +75,9 @@ export const SCHEMA: Schema = {
   workflowId: DEFAULT_WORKFLOW.id,
   name: 'Knowledge Base',
   ai: { contentMode: ContentMode.Reference },
+  feedback: {
+    rubrics: ['CLARITY', 'CREDIBILITY', 'ACCESSIBILITY', 'READINESS'],
+  },
   structure: [CATEGORY, ENTRY],
   contentContainers: [SECTION],
 };

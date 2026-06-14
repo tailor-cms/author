@@ -62,11 +62,17 @@ const mapsTo = yup.lazy((val) => {
       Object.values(obj || {}).every((v: any) => isConstCase(v?.type)));
 });
 
+const feedback = yup.object().shape({
+  enabled: yup.boolean(),
+  rubrics: yup.array().of(yup.string().min(2).max(50)),
+});
+
 const schema = yup.object().shape({
   id: yup.string().min(2).max(30).required(),
   name: yup.string().min(2).max(200).required(),
   meta,
   workflowId: yup.string(),
+  feedback,
   structure: yup
     .array()
     .of(
