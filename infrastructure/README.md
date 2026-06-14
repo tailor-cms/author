@@ -1,5 +1,13 @@
 # Infrastructure
 
+> **⚠️ Migrating a stack to v9 (infra-code-blocks 2.0):** the `WebServer`'s
+> Route 53 alias record was renamed, so Pulumi tries to create the new
+> `<domain> A` record before deleting the old one and AWS rejects the duplicate
+> (`InvalidChangeBatch: ... already exists`). **Manually delete the existing
+> `<domain>` A record first** (Route 53 console, or
+> `pulumi destroy --target '<urn>:Record::<prefix>-be-route53-record' --yes`),
+> then `pulumi up`. One-time per stack.
+
 Pulumi provisions the production AWS stack for Tailor CMS.
 It builds on top of [`@studion/infra-code-blocks`][icb] for main
 components (`Database`, `WebServer`) and hand-rolls the rest (VPC, ECS cluster,
