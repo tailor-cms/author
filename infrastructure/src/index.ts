@@ -59,7 +59,9 @@ const db = new studion.Database(
     password: dbPasswordParam.value,
     dbName: 'author',
     vpc,
-    engineVersion: '17.6',
+    // Pin the MAJOR version only. The provider prefix-matches, so the running
+    // minor (e.g. 17.9 after AWS auto-upgrades)
+    engineVersion: '17',
     enableMonitoring: false,
   },
   { protect: true },
