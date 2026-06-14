@@ -1,38 +1,45 @@
 <template>
   <div v-show="errors.length">
-    <VAlert
-      class="mt-2 text-left text-body-large"
-      type="warning"
+    <VCard
+      class="pa-4 text-left text-body-large"
+      color="warning"
       icon="mdi-alert"
       variant="tonal"
-      text="Detected issues"
     >
-      <VCard
-        v-for="({ id, link, message }, index) in errors"
-        :key="index"
-        class="my-4 pa-4 text-body-medium"
-        variant="tonal"
-      >
-        {{ index + 1 }}. {{ message }}
-        <a
-          v-if="id"
-          href="#"
-          @click.stop="repositoryStore.selectActivity(id)"
+      <div class="d-flex align-center text-title-medium ml-2 mb-4">
+        <VIcon icon="mdi-alert" class="mr-2" />
+        Detected issues
+        <VSpacer />
+        <VBtn
+          color="warning"
+          prepend-icon="mdi-broom"
+          size="small"
+          variant="flat"
+          text="Remove all broken references"
+          @click="cleanupReferences"
+        />
+      </div>
+      <div class="d-flex flex-column ga-4">
+        <VCard
+          v-for="({ id, link, message }, index) in errors"
+          :key="index"
+          class="pa-4 text-body-medium"
+          variant="tonal"
         >
-          Click to select the item.
-        </a>
-        <NuxtLink v-else-if="link" :to="link">
-          Click to navigate to the item.
-        </NuxtLink>
-      </VCard>
-      <VBtn
-        text="Remove all broken references"
-        color="warning"
-        variant="flat"
-        block
-        @click="cleanupReferences"
-      />
-    </VAlert>
+          {{ index + 1 }}. {{ message }}
+          <a
+            v-if="id"
+            href="#"
+            @click.stop="repositoryStore.selectActivity(id)"
+          >
+            Click to select the item.
+          </a>
+          <NuxtLink v-else-if="link" :to="link">
+            Click to navigate to the item.
+          </NuxtLink>
+        </VCard>
+      </div>
+    </VCard>
   </div>
 </template>
 

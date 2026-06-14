@@ -1,7 +1,7 @@
 <template>
   <div class="auth-container fill-height bg-surface pa-4">
     <VSheet
-      class="auth-panel d-flex pa-8"
+      class="auth-panel d-flex"
       color="surface-container-low"
       max-width="840"
       rounded="xl"
@@ -10,9 +10,9 @@
       <div class="theme-switcher">
         <ThemeSwitcher />
       </div>
-      <VRow>
+      <VRow no-gutters>
         <VCol
-          class="d-flex justify-start align-start"
+          class="d-flex justify-start align-start pa-8"
           cols="12"
           lg="5"
         >
@@ -21,7 +21,7 @@
             <h1 class="app-title ml-4">{{ title }}</h1>
           </div>
         </VCol>
-        <VCol class="auth-body" cols="12" lg="7">
+        <VCol class="auth-body pa-8 pa-sm-12" cols="12" lg="7">
           <slot></slot>
         </VCol>
       </VRow>
@@ -53,9 +53,9 @@ const logoPath = '/img/logo-new.svg';
 
   // Override autofill styles
   input:-webkit-autofill {
-    color: #fafafa !important;
+    color: rgb(var(--v-theme-on-surface)) !important;
     background-color: rgba(var(--v-theme-surface-container-low)) !important;
-    -webkit-text-fill-color: #fafafa !important;
+    -webkit-text-fill-color: rgb(var(--v-theme-on-surface)) !important;
     -webkit-box-shadow:
       0 0 0 1000px rgba(var(--v-theme-surface-container-low)) inset !important;
   }

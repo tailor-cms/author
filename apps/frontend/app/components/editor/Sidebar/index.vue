@@ -43,10 +43,11 @@
           v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
           aria-label="Collapse sidebar"
           class="sidebar-collapse-btn"
-          color="white"
+          color="secondary"
           icon="mdi-chevron-double-left"
           size="small"
-          variant="text"
+          density="comfortable"
+          variant="tonal"
           @click="modelValue = false"
         />
       </div>
@@ -236,7 +237,7 @@ watch(
 }
 
 .sidebar-divider {
-  border-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(var(--v-theme-on-surface), 0.08);
 }
 
 .sidebar-content {

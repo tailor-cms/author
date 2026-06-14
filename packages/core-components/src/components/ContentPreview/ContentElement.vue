@@ -15,7 +15,6 @@
         v-bind="hoverProps"
         class="element-wrapper flex-grow-1 mr-2"
         rounded="md"
-        theme="light"
       >
         <ContentElementWrapper
           v-bind="$attrs"
@@ -23,21 +22,16 @@
           :element="element"
           :set-width="false"
         />
-        <VTooltip location="bottom" open-delay="400">
-          <template #activator="{ props: tooltipProps }">
-            <VFadeTransition>
-              <VBtn
-                v-if="isHovering"
-                class="open-element-button"
-                v-bind="tooltipProps"
-                icon="mdi-open-in-new"
-                size="small"
-                @click="openInEditor(element)"
-              />
-            </VFadeTransition>
-          </template>
-          <span>Open in editor</span>
-        </VTooltip>
+        <VFadeTransition>
+          <VBtn
+            v-if="isHovering"
+            v-tooltip:bottom="{ text: 'Open in editor', openDelay: 400 }"
+            class="open-element-button"
+            icon="mdi-open-in-new"
+            size="small"
+            @click="openInEditor(element)"
+          />
+        </VFadeTransition>
       </VSheet>
     </VHover>
   </VCol>
@@ -82,12 +76,13 @@ const openInEditor = (element: ContentElement) => {
 
 <style lang="scss" scoped>
 .content-element {
-  border: 1px solid #e1e1e1;
+  border: 1px solid rgba(var(--v-theme-outline), 0.2);
   border-radius: 4px;
 
   &.selected {
-    border-style: dashed;
-    border-color: #444;
+    border-style: solid;
+    border-color: rgba(var(--v-theme-primary), 1);
+    background: rgba(var(--v-theme-primary), 0.1);
 
     &::after {
       display: none;

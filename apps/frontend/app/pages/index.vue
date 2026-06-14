@@ -1,11 +1,6 @@
 <template>
   <NuxtLayout name="main">
-    <VSheet
-      class="catalog-scroll mx-3"
-      color="surface-container-low"
-      rounded="t-xl"
-      border
-    >
+    <div class="catalog-scroll">
       <VContainer class="catalog" max-width="1360">
         <VRow class="catalog-actions py-10" density="compact">
           <VCol cols="12" lg="4" md="6">
@@ -27,20 +22,18 @@
             cols="12"
             lg="4"
           >
-            <VTooltip location="top" open-delay="400">
-              <template #activator="{ props: tooltipProps }">
-                <VBtn
-                  v-bind="tooltipProps"
-                  :color="arePinnedShown ? 'tertiary' : '' "
-                  :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
-                  aria-label="Toggle pinned items filter"
-                  class="text-medium-emphasis my-1"
-                  variant="tonal"
-                  @click="togglePinFilter"
-                />
-              </template>
-              <span>{{ arePinnedShown ? 'Show all' : 'Show pinned' }}</span>
-            </VTooltip>
+            <VBtn
+              v-tooltip:top="{
+                text: arePinnedShown ? 'Show all' : 'Show pinned',
+                openDelay: 400,
+              }"
+              :color="arePinnedShown ? 'tertiary' : '' "
+              :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
+              aria-label="Toggle pinned items filter"
+              class="text-medium-emphasis my-1"
+              variant="tonal"
+              @click="togglePinFilter"
+            />
             <SelectOrder
               :sort-by="queryParams.sortBy"
               class="pl-2"
@@ -68,21 +61,19 @@
         />
         <VExpandTransition>
           <div v-if="selectedRepos.size > 0" class="d-flex align-center mb-4 text-left">
-            <VTooltip location="top" open-delay="400">
-              <template #activator="{ props: tooltipProps }">
-                <VCheckbox
-                  v-bind="tooltipProps"
-                  :disabled="!repositories.length"
-                  :model-value="isAllSelected"
-                  :indeterminate="someSelected"
-                  color="primary"
-                  label="Select all"
-                  hide-details
-                  @update:model-value="toggleSelectAll"
-                />
-              </template>
-              <span>{{ isAllSelected ? 'Deselect all' : 'Select all' }}</span>
-            </VTooltip>
+            <VCheckbox
+              v-tooltip:top="{
+                text: isAllSelected ? 'Deselect all' : 'Select all',
+                openDelay: 400,
+              }"
+              :disabled="!repositories.length"
+              :model-value="isAllSelected"
+              :indeterminate="someSelected"
+              color="primary"
+              label="Select all"
+              hide-details
+              @update:model-value="toggleSelectAll"
+            />
             <VBtn
               :disabled="selectedRepos.size === 0"
               :text="`Delete (${selectedRepos.size})`"
@@ -135,7 +126,7 @@
           prominent
         />
       </VContainer>
-    </VSheet>
+    </div>
   </NuxtLayout>
 </template>
 

@@ -6,7 +6,7 @@
   >
     <VAvatar color="inverse-surface" :size="dense ? 40 : 60">
       <VIcon
-        :color="isFocused ? activeColor : ''"
+        :color="isFocused ? activeColor : 'surface-container'"
         :icon="icon"
         :size="iconSize"
       />
@@ -43,7 +43,7 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: 'Select to edit',
   activePlaceholder: 'Use toolbar to edit',
   activeIcon: null,
-  activeColor: '#fff',
+  activeColor: 'surface-container-lowest',
   dense: false,
   isFocused: false,
   isDisabled: false,

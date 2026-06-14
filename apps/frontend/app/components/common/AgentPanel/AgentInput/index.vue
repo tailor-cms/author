@@ -120,5 +120,14 @@ defineExpose({ focus: () => inputEl.value?.focus() });
   flex-direction: column;
   gap: 0.625rem;
   border-radius: 16px;
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: rgba(var(--v-border-color), 0.38);
+  }
+
+  &:focus-within {
+    border-color: rgba(var(--v-border-color), 0.6);
+  }
 }
 </style>

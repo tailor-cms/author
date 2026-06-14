@@ -46,29 +46,17 @@ const lightTheme: ThemeDefinition = {
     'secondary-container': '#C9E6F5',
     'on-secondary-container': '#001E2E',
 
-    // Tertiary — terracotta (warm accent, sparing use)
-    'tertiary': '#C45A2C',
+    // Tertiary — rose-pink (MD3 hue ~345; cool warm accent, sparing use)
+    'tertiary': '#B4216B',
     'on-tertiary': '#FFFFFF',
-    'tertiary-container': '#FFDBCB',
-    'on-tertiary-container': '#2E1100',
+    'tertiary-container': '#FFD9E5',
+    'on-tertiary-container': '#3E0021',
 
-    // Highlight — linked / pinned / recent state (purple)
-    'highlight': '#BD3DB9',
-    'on-highlight': '#FFFFFF',
-    'highlight-container': '#FFD7F5',
-    'on-highlight-container': '#380038',
-
-    // Source — content reuse / lineage (indigo)
-    'source': '#4D75B3',
-    'on-source': '#FFFFFF',
-    'source-container': '#D6E3FF',
-    'on-source-container': '#001B3D',
-
-    // Warning — honey amber (yellower than terracotta tertiary)
-    'warning': '#B58A00',
+    // Warning — amber-orange (warmer/oranger than the old honey amber)
+    'warning': '#C57A00',
     'on-warning': '#FFFFFF',
-    'warning-container': '#FFE38C',
-    'on-warning-container': '#251A00',
+    'warning-container': '#FFDEB0',
+    'on-warning-container': '#2A1800',
 
     // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
     'error': '#C8112A',
@@ -98,6 +86,8 @@ const lightTheme: ThemeDefinition = {
     'asset-video': '#7E57C2',
     'asset-audio': '#2BA597',
     'asset-document': '#3A6EA5',
+    'asset-article': '#A6772D',
+    'asset-research': '#2E8FA8',
     'asset-link': '#4B8B3B',
     'asset-other': '#6B7280',
 
@@ -152,29 +142,17 @@ const darkTheme: ThemeDefinition = {
     'secondary-container': '#004F69',
     'on-secondary-container': '#CDE6F5',
 
-    // Tertiary — terracotta (warm accent, sparing use)
-    'tertiary': '#FFB597',
-    'on-tertiary': '#4C1E00',
-    'tertiary-container': '#683100',
-    'on-tertiary-container': '#FFDBCB',
+    // Tertiary — rose-pink (MD3 hue ~345; cool warm accent, sparing use)
+    'tertiary': '#FFB0CC',
+    'on-tertiary': '#5E1138',
+    'tertiary-container': '#7C2950',
+    'on-tertiary-container': '#FFD9E5',
 
-    // Highlight — linked / pinned / recent state purple
-    'highlight': '#C678DD',
-    'on-highlight': '#4D0065',
-    'highlight-container': '#6D2486',
-    'on-highlight-container': '#FAD7FF',
-
-    // Source — content reuse / lineage (indigo)
-    'source': '#96BDFF',
-    'on-source': '#00346A',
-    'source-container': '#174782',
-    'on-source-container': '#D6E3FF',
-
-    // Warning — honey amber (yellower than terracotta tertiary)
-    'warning': '#E4C56F',
-    'on-warning': '#3B2C00',
-    'warning-container': '#574200',
-    'on-warning-container': '#FFE38C',
+    // Warning — amber-orange (warmer/oranger than the old honey amber)
+    'warning': '#FFC080',
+    'on-warning': '#452B00',
+    'warning-container': '#634300',
+    'on-warning-container': '#FFDEB0',
 
     // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
     'error': '#FFB1B7',
@@ -204,6 +182,8 @@ const darkTheme: ThemeDefinition = {
     'asset-video': '#B79EE6',
     'asset-audio': '#6FD4C5',
     'asset-document': '#84B0E0',
+    'asset-article': '#DCBA6E',
+    'asset-research': '#79C5DB',
     'asset-link': '#8FC97D',
     'asset-other': '#B0B6C2',
 
@@ -239,9 +219,7 @@ export default defineNuxtPlugin({
         VTooltip: { color: 'inverse-surface' },
         VSwitch: {
           color: 'primary',
-          density: 'compact',
           inset: 'material',
-          size: 'small',
         },
         VCheckbox: { color: 'primary' },
       },

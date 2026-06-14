@@ -1,13 +1,6 @@
 <template>
-  <VProgressCircular
-    v-if="isLoading"
-    color="primary"
-    size="16"
-    width="2"
-    indeterminate
-  />
   <VCard
-    v-else-if="hasCopies"
+    v-if="!isLoading && hasCopies"
     class="d-flex align-center pa-2 ga-2"
     variant="tonal"
   >
@@ -22,7 +15,7 @@
       variant="text"
     >
       <template #prepend>
-        <VIcon color="source" icon="mdi-source-branch" start />
+        <VIcon color="tertiary" icon="mdi-source-branch" start />
       </template>
     </VChip>
     <VBadge :content="copies.length" color="tertiary" inline>

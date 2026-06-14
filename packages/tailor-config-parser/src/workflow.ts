@@ -34,22 +34,22 @@ const priorities: WorkflowPriority[] = [
     id: 'CRITICAL',
     label: 'Critical',
     icon: 'mdi-chevron-double-up',
-    color: 'red',
+    color: 'error',
   },
-  { id: 'HIGH', label: 'High', icon: 'mdi-chevron-up', color: 'orange' },
+  { id: 'HIGH', label: 'High', icon: 'mdi-chevron-up', color: 'warning' },
   {
     id: 'MEDIUM',
     label: 'Medium',
     icon: 'mdi-minus',
     default: true,
-    color: 'grey',
+    color: '',
   },
-  { id: 'LOW', label: 'Low', icon: 'mdi-chevron-down', color: 'green' },
+  { id: 'LOW', label: 'Low', icon: 'mdi-chevron-down', color: 'success' },
   {
     id: 'TRIVIAL',
     label: 'Trivial',
     icon: 'mdi-chevron-double-down',
-    color: 'blue',
+    color: 'info',
   },
 ];
 

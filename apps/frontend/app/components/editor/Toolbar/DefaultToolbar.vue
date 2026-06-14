@@ -1,9 +1,7 @@
 <template>
-  <VToolbar class="elevation-0" color="transparent" height="48">
-    <VToolbarTitle class="text-body-large font-weight-medium pl-1">
-      {{ label }}
-    </VToolbarTitle>
-  </VToolbar>
+  <div class="text-title-medium font-weight-medium">
+    {{ label }}
+  </div>
 </template>
 
 <script lang="ts" setup>

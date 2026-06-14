@@ -3,7 +3,6 @@
     :is="componentName"
     :class="{ required: get(meta, 'validate.required') }"
     :error-messages="errorMessage"
-    :dark="false"
     :meta="meta"
     :is-new="isNew"
     persistent-placeholder
@@ -50,11 +49,3 @@ const updateMeta = async (key: string, value: any) => {
   if (valid) emit('update', key, value);
 };
 </script>
-
-<style lang="scss" scoped>
-:deep(.title) {
-  color: #808080;
-  font-size: 0.875rem !important;
-  font-weight: normal;
-}
-</style>

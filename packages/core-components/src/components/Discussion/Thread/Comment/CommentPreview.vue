@@ -12,7 +12,7 @@
         @click.stop="emit('unresolve')"
       />
     </div>
-    <pre class="text-left"><span>{{ content }}</span><br /></pre>
+    <pre class="text-left"><span>{{ content.trimEnd() }}</span><br /></pre>
   </div>
 </template>
 
@@ -38,8 +38,6 @@ const emit = defineEmits(['unresolve']);
 .content pre {
   height: 100%;
   margin: 0;
-  // NOTE: Preventing glitches (height changes, vertical scrollbar)
-  padding: 0 0.25rem 0.5rem 0;
   font: inherit;
   white-space: pre-wrap;
   word-break: break-all;

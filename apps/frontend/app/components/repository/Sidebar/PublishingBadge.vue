@@ -1,13 +1,10 @@
 <template>
-  <VTooltip location="left" max-width="300" open-delay="100">
-    <template #activator="{ props: tooltipProps }">
-      <span v-bind="tooltipProps">
-        <VBadge :color="badgeColor" dot inline />
-      </span>
-    </template>
-    <span v-if="subtreeHasChanges">{{ descendantsInfo }}</span>
-    <span v-else>{{ activityInfo }}</span>
-  </VTooltip>
+  <VIcon
+    v-tooltip:left="{ text: tooltipText, maxWidth: 300, openDelay: 100 }"
+    :color="badgeColor"
+    icon="mdi-circle"
+    size="12"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -41,15 +38,13 @@ const getDescendantsInfo = (
   count: number,
   label: string,
 ) => {
-  return `${descendants} within this ${label} ${pluralize(
-    'has',
-    count,
-  )} unpublished changes.`;
+  return `${descendants} within this ${label} ${pluralize('has', count)}
+    unpublished changes.`;
 };
 
 const label = computed(() => $schemaService.getActivityLabel(props.activity));
 const badgeColor = computed(() =>
-  hasChanges.value || subtreeHasChanges.value ? 'warning' : 'secondary',
+  hasChanges.value || subtreeHasChanges.value ? 'warning' : 'success',
 );
 
 const hasChanges = computed(() => isChanged(props.activity));
@@ -73,10 +68,8 @@ const descendantsInfo = computed(() => {
     label.value,
   );
 });
-</script>
 
-<style lang="scss" scoped>
-.v-badge {
-  margin-right: 0.125rem;
-}
-</style>
+const tooltipText = computed(() =>
+  subtreeHasChanges.value ? descendantsInfo.value : activityInfo.value,
+);
+</script>

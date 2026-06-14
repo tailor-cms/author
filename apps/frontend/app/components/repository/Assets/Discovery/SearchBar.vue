@@ -3,14 +3,16 @@
     <VTextField
       v-model="query"
       :disabled="isSearching"
+      bg-color="transparent"
       density="comfortable"
       label="What are you looking for?"
       max-width="500"
       placeholder="e.g. climate change statistics"
       prepend-inner-icon="mdi-magnify"
-      variant="outlined"
-      rounded="xl"
+      rounded="pill"
+      variant="solo-filled"
       clearable
+      flat
       hide-details
       @click:clear="query = ''"
       @keyup.enter="emit('search')"
@@ -24,19 +26,24 @@
     >
     </VBtn>
   </div>
-  <div class="d-flex flex-wrap align-center ga-2 ml-1 mb-6">
-    <VBtn
+  <VChipGroup
+    v-model="contentFilter"
+    class="ml-1 mb-4"
+    column
+    mandatory
+  >
+    <VChip
       v-for="filter in CONTENT_FILTERS"
       :key="filter.value"
-      :active="contentFilter === filter.value"
-      :color="contentFilter === filter.value ? 'tertiary' : ''"
-      :prepend-icon="filter.icon"
       :text="filter.label"
+      :value="filter.value"
+      color="secondary"
+      role="button"
       size="small"
-      variant="tonal"
-      @click="contentFilter = filter.value"
+      rounded="pill"
+      filter
     />
-  </div>
+  </VChipGroup>
 </template>
 
 <script lang="ts" setup>

@@ -13,7 +13,7 @@
         linked: element.isLinkedCopy && !showPublishDiff,
       },
     ]"
-    class="content-element"
+    class="content-element rounded"
     @click="onSelect"
   >
     <div
@@ -299,6 +299,7 @@ const onSave = (data: ContentElement['data']) => {
   if (props.element.isLinkedCopy && !isEmbed.value) {
     confirmationDialog({
       title: 'Edit linked element?',
+      color: 'warning',
       message:
         `This element is linked. Editing will unlink it and you ` +
         `will no longer receive updates. Do you want to continue?`,
@@ -317,7 +318,8 @@ const reset = () => {
   if (!ceRegistry) return;
   confirmationDialog({
     title: 'Reset element?',
-    message: 'Are you sure you want to reset element?',
+    color: 'warning',
+    message: 'Are you sure you want to reset element to its initial state?',
     action: () => {
       const data = ceRegistry.resetData(props.element);
       return onSave(data);
@@ -343,6 +345,7 @@ const onLinkRelationship = (key?: string) => editorBus.emit('element:link', key)
 const onUnlink = () => {
   confirmationDialog({
     title: 'Unlink element?',
+    color: 'warning',
     message:
       `This will convert the element to a local copy. ` +
       `You will no longer receive updates. Do you want to continue?`,
@@ -447,8 +450,8 @@ onMounted(() => {
 @use '../mixins';
 
 .content-element {
-  $accent-1: #1de9b6;
-  $accent-2: #ff4081;
+  $accent-focused: #1de9b6;
+  $accent-selected: #ff4081;
 
   position: relative;
   border: 1px solid transparent;
@@ -459,38 +462,38 @@ onMounted(() => {
     content: '';
     display: none;
     position: absolute;
-    top: 0;
-    right: -$width;
-    width: $width;
-    height: 100%;
+    inset: 0 (-$width) 0 0;
+    border-right: $width solid;
+    border-radius: inherit;
+    pointer-events: none;
   }
 
   &.focused {
-    border: 1px dashed $accent-1;
+    border: 1px dashed $accent-focused;
 
     &::after {
       display: block;
-      background: $accent-1;
+      border-color: $accent-focused;
     }
   }
 
   &.selected {
-    border: 1px dashed $accent-2;
+    border: 1px dashed $accent-selected;
 
     &::after {
       display: block;
-      background: $accent-2;
+      border-color: $accent-selected;
     }
   }
 
   &.linked {
-    border-left: 3px solid rgb(var(--v-theme-info));
+    border-left: 3px solid rgb(var(--v-theme-tertiary));
   }
 }
 
 .frame {
   padding: 10px 20px;
-  border: 1px solid #e1e1e1;
+  border: 1px solid rgba(var(--v-theme-outline), 0.2);
 }
 
 .element-actions {

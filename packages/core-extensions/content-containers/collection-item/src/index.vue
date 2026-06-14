@@ -43,27 +43,27 @@
         />
       </div>
     </VCardText>
-    <VDivider />
-    <VFadeTransition>
-      <VCardActions v-if="!disabled" class="px-6 py-3 justify-end">
+    <VSlideYTransition>
+      <VSheet
+        v-if="!disabled && isDirty"
+        color="surface-container-low"
+        class="px-6 py-3 d-flex justify-end ga-2"
+        border
+      >
         <VBtn
-          :disabled="!isDirty"
-          :slim="false"
           text="Cancel"
           variant="text"
           @click="reset"
         />
         <VBtn
-          :disabled="!isDirty"
-          :slim="false"
-          color="success"
+          color="primary"
           prepend-icon="mdi-check"
           text="Save"
-          variant="tonal"
+          variant="flat"
           @click="save"
         />
-      </VCardActions>
-    </VFadeTransition>
+      </VSheet>
+    </VSlideYTransition>
   </VCard>
 </template>
 

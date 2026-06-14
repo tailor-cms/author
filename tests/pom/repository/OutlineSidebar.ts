@@ -40,11 +40,9 @@ export class OutlineSidebar {
 
   async publish() {
     await this.publishBtn.click();
-    // Select last publish option (Publish element and children)
-    const options = await this.el
-      .locator('.publish-container .v-list-item-title')
-      .all();
-    await options[options.length - 1].click();
+    // Select last publish option (publish element and children)
+    const options = this.el.getByTestId('publishMenu').locator('.v-list-item');
+    await options.last().click();
     // Confirm publish
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();

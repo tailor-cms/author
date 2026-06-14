@@ -66,6 +66,11 @@
       @click:clear="updateStatus('dueDate', null)"
       @update:model-value="updateStatus('dueDate', $event)"
     />
+    <ActivityDiscussion
+      :activity="activity"
+      panel
+      show-heading
+    />
   </div>
 </template>
 
@@ -73,6 +78,7 @@
 import { RichTextEditor } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
+import ActivityDiscussion from '../../Discussion/index.vue';
 import SelectPriority from '../SelectPriority.vue';
 import SelectStatus from '../SelectStatus.vue';
 import { useActivityStore } from '@/stores/activity';

@@ -10,6 +10,7 @@
         prepend-icon="mdi-check-circle-outline"
         size="small"
         variant="tonal"
+        rounded="lg"
       >
         {{ suggestions.length }} results
         <template v-if="selectedUrls.size">
