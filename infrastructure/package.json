@@ -1,13 +1,18 @@
 {
   "name": "@tailor-cms/infrastucture",
   "main": "src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "preview": "pulumi preview --stack extensionengine/tailor-cms/prod",
+    "up": "pulumi up --stack extensionengine/tailor-cms/prod"
+  },
   "devDependencies": {
     "@types/node": "^25.9.1"
   },
   "dependencies": {
-    "@pulumi/aws": "^7.30.0",
+    "@pulumi/aws": "^7.32.0",
     "@pulumi/awsx": "^3.5.0",
-    "@pulumi/pulumi": "^3.243.0",
-    "@studion/infra-code-blocks": "^0.7.0"
+    "@pulumi/pulumi": "^3.244.0",
+    "@studion/infra-code-blocks": "2.0.0"
   }
 }

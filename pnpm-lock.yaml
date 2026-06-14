@@ -878,17 +878,17 @@ importers:
   infrastructure:
     dependencies:
       '@pulumi/aws':
-        specifier: ^7.30.0
-        version: 7.30.0(typescript@6.0.3)
+        specifier: ^7.32.0
+        version: 7.32.0(typescript@6.0.3)
       '@pulumi/awsx':
         specifier: ^3.5.0
         version: 3.5.0(typescript@6.0.3)
       '@pulumi/pulumi':
-        specifier: ^3.243.0
-        version: 3.243.0(typescript@6.0.3)
+        specifier: ^3.244.0
+        version: 3.246.0(typescript@6.0.3)
       '@studion/infra-code-blocks':
-        specifier: ^0.7.0
-        version: 0.7.0(typescript@6.0.3)
+        specifier: 2.0.0
+        version: 2.0.0(typescript@6.0.3)
     devDependencies:
       '@types/node':
         specifier: ^25.9.1
@@ -3893,23 +3893,17 @@ packages:
   '@protobufjs/utf8@1.1.1':
     resolution: {integrity: sha512-oOAWABowe8EAbMyWKM0tYDKi8Yaox52D+HWZhAIJqQXbqe0xI/GV7FhLWqlEKreMkfDjshR5FKgi3mnle0h6Eg==}
 
-  '@pulumi/aws@6.83.3':
-    resolution: {integrity: sha512-tq6xvgUoBDcg4hVR/DC7YvpZVgvq45NiYyfJrwRYrUeZloiyA9j3/2+fTWiODxE61KbwQkZzk5S/5bZ/3sC2hg==}
-
   '@pulumi/aws@7.30.0':
     resolution: {integrity: sha512-R1CnPcGD/ECRj/JZw2N+MLKwhKkm0C8aF+S5arBXf1j85qb+67lg+E2skgR2GtAIj6PJ1Qy8usEx+4ZlVeit7Q==}
 
-  '@pulumi/awsx@2.22.0':
-    resolution: {integrity: sha512-uajrWX6zkk8G9DCCkCkRaH2yzeGRkCElkC8FOE9viUtb9WyVt01EbNqJkje+QwYq4g055jWqcq2YRn7xT1Y44w==}
+  '@pulumi/aws@7.32.0':
+    resolution: {integrity: sha512-hSGfKOIN5ut1mO1PGT+NxEd7Tb48mY/MKezrvPgyR2B2pxOeXZ8hZxXu84M058ngVIqty3g7J7C1jOzS20sz/g==}
 
   '@pulumi/awsx@3.5.0':
     resolution: {integrity: sha512-sYEKL7SmgYrI/vUFrlWxLgGHTLgFeO/KYGc8YhHssNKb5gSdtAUEGqFHaUDy0a+ie5lKMwRATyzrdYyvbdeTXA==}
 
   '@pulumi/docker-build@0.0.14':
     resolution: {integrity: sha512-dLCta3BOrYRxHyp22QnVh06qlSiSORtmIypcQ6yb4+GZ2+ThbML06pINyERc5ClgJXGQFSVTtuWhMSiurTWU2w==}
-
-  '@pulumi/docker-build@0.0.8':
-    resolution: {integrity: sha512-tS6UUgmDjQ+LVekMXGC/6ND7riY75h3oO9fLiVOrvNafCBumxK+Cjm6ZZ9tUChLYvw6H+rZRExZEhfC8F/SQgQ==}
 
   '@pulumi/docker@3.6.1':
     resolution: {integrity: sha512-BZME50QkT556v+LvmTXPT8ssB2xxNkp9+msB5xYFEnUnWcdGAx5yUysQw70RJCb+U0GbkJSbxtlgMJgOQf/now==}
@@ -3929,8 +3923,23 @@ packages:
       typescript:
         optional: true
 
+  '@pulumi/pulumi@3.246.0':
+    resolution: {integrity: sha512-YvUQJatWpNpVlb6ftNvbSuS2ViCNa8LoG9FiJXtG24Rx/9leYQOMSTQ61vPeNtydGh8650lBal4pTmaB+JgkPA==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      ts-node: '>= 7.0.1 < 12'
+      typescript: '>= 3.8.3 < 7'
+    peerDependenciesMeta:
+      ts-node:
+        optional: true
+      typescript:
+        optional: true
+
   '@pulumi/random@4.21.0':
     resolution: {integrity: sha512-k4JHqQFOKXWkbSLZtX37xBlRsurfgZbLd1Zib0cLSDP4Dt3uTllR3CBWfMLSnXJGAoTr9MlwyHCer/5tmSaF0Q==}
+
+  '@pulumiverse/grafana@2.31.0':
+    resolution: {integrity: sha512-V3Fy9RJR/h1w+vqOLU9BDa01bmqGRe03njAjPvxTs7Etq70rDQUUMSkm03J2sy7HJFCXN8WXytZThA19mTyK8Q==}
 
   '@redis/client@5.12.1':
     resolution: {integrity: sha512-7aPGWeqA3uFm43o19umzdl16CEjK/JQGtSXVPevplTaOU3VJA/rseBC1QvYUz9lLDIMBimc4SW/zrW4S89BaCA==}
@@ -4311,8 +4320,8 @@ packages:
   '@statsig/web-analytics@3.33.1':
     resolution: {integrity: sha512-Kd0yOohtIVWQLcmudguJCg6hcOdQ7ioaY5MGgmEduza9UgfMrx3eN0VaR1UqJoT0Kz/sUvxm6dyQkK+hmSXgCA==}
 
-  '@studion/infra-code-blocks@0.7.0':
-    resolution: {integrity: sha512-8WGjSnwBIgphzoWtMBHAJpuAZURJBDVDklBgAst5c9fkxzXp5VnwZZL3bbPpf8p93dM8AITbxN5c0cLJ9cEd/g==}
+  '@studion/infra-code-blocks@2.0.0':
+    resolution: {integrity: sha512-gEEzzlM4sus2JL0FXLrdpWVlydjc3LL7xhvbodxNzrN6AXb3Ti4z12LN9mAvlfIqwFW0lTU7A7CSdWM+7l9B/w==}
 
   '@stylistic/eslint-plugin@5.10.0':
     resolution: {integrity: sha512-nPK52ZHvot8Ju/0A4ucSX1dcPV2/1clx0kLcH5wDmrE4naKso7TUC/voUyU1O9OTKTrR6MYip6LP0ogEMQ9jPQ==}
@@ -5242,8 +5251,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@upstash/pulumi@0.3.14':
-    resolution: {integrity: sha512-tM0muzOEGmOBVu1J8rY86ThaV4iuZE+tfB+hc84dHPHP9jkSgUcDxBIVRRUs22/5O6Tt9R0hcigJBSGNWvIWfA==}
+  '@upstash/pulumi@0.5.0':
+    resolution: {integrity: sha512-2DNbSCNX7jeBfkIT5V3+lUZ2BweqPidTSYEzhVBkhH5la1if+F06diVXrqCXZGPJVgkM40bycOHbwXRKRVLj+g==}
 
   '@vee-validate/i18n@4.15.1':
     resolution: {integrity: sha512-6ogEyxkoTr7IZk4EAUT0rD3pr34Nw/YEToez/c0DSlI1/cBeOpunSmGmoYPh32pmd3imxFPEawCB7IyFvRJSAw==}
@@ -10509,6 +10518,10 @@ packages:
     resolution: {integrity: sha512-xXnp4kTyor2Zq+J1FfPI6Eq3ew5h6Vl0F/8d9XU5zZQf1tX9s2Su1/3PiMmUANFULpmksxkClamIZcaUqryHsQ==}
     engines: {node: '>=20.18.1'}
 
+  undici@8.4.1:
+    resolution: {integrity: sha512-RNHlB4fxZK0IrkhBsxhlbx7s8kFWwr7rzzOqj5nvZugw3ig3RsB7KW3zVlV0eu8POl+rx5d1hmL7rRg0z1owow==}
+    engines: {node: '>=22.19.0'}
+
   unenv@2.0.0-rc.24:
     resolution: {integrity: sha512-i7qRCmY42zmCwnYlh9H2SvLEypEFGye5iRmEMKjcGi7zk9UquigRjFtTLz0TYqr0ZGLZhaMHl/foy1bZR+Cwlw==}
 
@@ -14029,15 +14042,6 @@ snapshots:
 
   '@protobufjs/utf8@1.1.1': {}
 
-  '@pulumi/aws@6.83.3(typescript@6.0.3)':
-    dependencies:
-      '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
-      mime: 2.6.0
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-      - typescript
-
   '@pulumi/aws@7.30.0(typescript@6.0.3)':
     dependencies:
       '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
@@ -14047,15 +14051,9 @@ snapshots:
       - ts-node
       - typescript
 
-  '@pulumi/awsx@2.22.0(typescript@6.0.3)':
+  '@pulumi/aws@7.32.0(typescript@6.0.3)':
     dependencies:
-      '@aws-sdk/client-ecs': 3.1053.0
-      '@pulumi/aws': 6.83.3(typescript@6.0.3)
-      '@pulumi/docker': 4.11.2(typescript@6.0.3)
-      '@pulumi/docker-build': 0.0.8(typescript@6.0.3)
       '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
-      '@types/aws-lambda': 8.10.161
-      docker-classic: '@pulumi/docker@3.6.1(typescript@6.0.3)'
       mime: 2.6.0
     transitivePeerDependencies:
       - supports-color
@@ -14078,14 +14076,6 @@ snapshots:
       - typescript
 
   '@pulumi/docker-build@0.0.14(typescript@6.0.3)':
-    dependencies:
-      '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-      - typescript
-
-  '@pulumi/docker-build@0.0.8(typescript@6.0.3)':
     dependencies:
       '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
     transitivePeerDependencies:
@@ -14145,7 +14135,49 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@pulumi/pulumi@3.246.0(typescript@6.0.3)':
+    dependencies:
+      '@grpc/grpc-js': 1.14.4
+      '@logdna/tail-file': 2.2.0
+      '@npmcli/arborist': 9.6.0
+      '@opentelemetry/api': 1.9.1
+      '@opentelemetry/exporter-trace-otlp-grpc': 0.57.2(@opentelemetry/api@1.9.1)
+      '@opentelemetry/exporter-zipkin': 1.30.1(@opentelemetry/api@1.9.1)
+      '@opentelemetry/instrumentation': 0.57.2(@opentelemetry/api@1.9.1)
+      '@opentelemetry/instrumentation-grpc': 0.57.2(@opentelemetry/api@1.9.1)
+      '@opentelemetry/resources': 1.30.1(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-trace-node': 1.30.1(@opentelemetry/api@1.9.1)
+      '@types/google-protobuf': 3.15.12
+      '@types/semver': 7.7.1
+      '@types/tmp': 0.2.6
+      execa: 5.1.1
+      fdir: 6.5.0(picomatch@4.0.4)
+      google-protobuf: 3.21.4
+      ini: 2.0.0
+      js-yaml: 3.14.2
+      minimist: 1.2.8
+      normalize-package-data: 6.0.2
+      picomatch: 4.0.4
+      require-from-string: 2.0.2
+      semver: 7.8.1
+      source-map-support: 0.5.21
+      tmp: 0.2.5
+      upath: 1.2.0
+    optionalDependencies:
+      typescript: 6.0.3
+    transitivePeerDependencies:
+      - supports-color
+
   '@pulumi/random@4.21.0(typescript@6.0.3)':
+    dependencies:
+      '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+      - typescript
+
+  '@pulumiverse/grafana@2.31.0(typescript@6.0.3)':
     dependencies:
       '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
     transitivePeerDependencies:
@@ -14490,13 +14522,17 @@ snapshots:
       '@statsig/js-client': 3.33.1
       web-vitals: 5.0.3
 
-  '@studion/infra-code-blocks@0.7.0(typescript@6.0.3)':
+  '@studion/infra-code-blocks@2.0.0(typescript@6.0.3)':
     dependencies:
-      '@pulumi/aws': 6.83.3(typescript@6.0.3)
-      '@pulumi/awsx': 2.22.0(typescript@6.0.3)
-      '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
+      '@pulumi/aws': 7.32.0(typescript@6.0.3)
+      '@pulumi/awsx': 3.5.0(typescript@6.0.3)
+      '@pulumi/pulumi': 3.246.0(typescript@6.0.3)
       '@pulumi/random': 4.21.0(typescript@6.0.3)
-      '@upstash/pulumi': 0.3.14(typescript@6.0.3)
+      '@pulumiverse/grafana': 2.31.0(typescript@6.0.3)
+      '@upstash/pulumi': 0.5.0(typescript@6.0.3)
+      exponential-backoff: 3.1.3
+      undici: 8.4.1
+      yaml: 2.9.0
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -15556,7 +15592,7 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@upstash/pulumi@0.3.14(typescript@6.0.3)':
+  '@upstash/pulumi@0.5.0(typescript@6.0.3)':
     dependencies:
       '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
     transitivePeerDependencies:
@@ -21756,6 +21792,8 @@ snapshots:
   undici@6.25.0: {}
 
   undici@7.25.0: {}
+
+  undici@8.4.1: {}
 
   unenv@2.0.0-rc.24:
     dependencies:
