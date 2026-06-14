@@ -4,12 +4,11 @@
       <VBtn
         v-if="large"
         :color="color"
+        :prepend-icon="icon"
+        :text="label"
         :variant="variant"
         @click.stop="showElementPicker"
-      >
-        <VIcon class="pr-3">{{ icon }}</VIcon>
-        {{ label }}
-      </VBtn>
+      />
       <VBtn
         v-else
         :icon="icon"
@@ -18,7 +17,7 @@
         @click.stop="showElementPicker"
       />
     </slot>
-    <template v-if="isVisible">
+    <VSheet v-if="isVisible" :theme="$vuetify.theme.global.name">
       <SelectElement
         v-if="showElementBrowser"
         :allowed-element-config="allowedElementConfig"
@@ -62,12 +61,13 @@
           />
           <VSpacer />
           <div v-if="layout" class="d-flex align-center ga-4">
-            <span class="text-body-large text-medium-emphasis">
+            <span class="text-label-large text-medium-emphasis">
               Element width
             </span>
             <VBtnToggle
               v-model="elementWidth"
               density="compact"
+              color="tertiary"
               variant="outlined"
               divided
               mandatory
@@ -81,14 +81,10 @@
             </VBtnToggle>
           </div>
           <div v-if="doTheMagic" class="d-flex align-center ga-2">
-            <span class="text-body-large text-medium-emphasis">
+            <span class="text-label-large text-medium-emphasis mr-1">
               Generate with AI
             </span>
-            <VSwitch
-              v-model="useAI"
-              density="compact"
-              hide-details
-            />
+            <VSwitch v-model="useAI" density="compact" hide-details />
           </div>
           <VExpandTransition>
             <div v-if="useAI" class="w-100">
@@ -107,7 +103,7 @@
           </VExpandTransition>
         </template>
       </AddNewElement>
-    </template>
+    </VSheet>
   </div>
 </template>
 

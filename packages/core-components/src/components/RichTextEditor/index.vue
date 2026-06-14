@@ -127,16 +127,15 @@ $toolbar-height: 2.25rem;
   }
 
   pre {
-    background: #0d0d0d;
-    color: #fff;
-    padding: 0.75rem 1rem;
+    background: rgba(var(--v-theme-surface-dim));
+    padding: 0.625rem 1rem;
     border-radius: 0.5rem;
 
     code {
       color: inherit;
       padding: 0;
       background: none;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
   }
 

@@ -1,26 +1,54 @@
 <template>
   <div class="repository-settings">
     <VNavigationDrawer
+      v-model="showSidebar"
       color="surface-container-low"
       elevation="0"
       location="left"
+      mobile-breakpoint="md"
       order="1"
       width="380"
-      permanent
     >
-      <VList class="pa-4 text-left" nav>
+      <div class="d-flex align-center justify-space-between px-4 pt-4 mb-1">
+        <div class="text-title-medium font-weight-bold ml-1">Settings</div>
+        <VBtn
+          v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
+          aria-label="Collapse sidebar"
+          color="secondary"
+          icon="mdi-chevron-double-left"
+          size="small"
+          density="comfortable"
+          variant="tonal"
+          @click="showSidebar = false"
+        />
+      </div>
+      <VList density="compact" class="px-3 text-left" nav>
         <VListItem
           v-for="item in sections"
           :key="item.name"
           :prepend-icon="item.icon"
-          :subtitle="item.subtitle"
           :title="item.label"
           :to="{ name: item.name }"
-          rounded="lg"
+          color="primary"
+          rounded="12"
         />
       </VList>
     </VNavigationDrawer>
     <VMain class="settings-main">
+      <VFadeTransition>
+        <VBtn
+          v-if="!showSidebar"
+          v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
+          class="sidebar-toggle"
+          color="secondary"
+          aria-label="Open sidebar"
+          density="comfortable"
+          icon="mdi-chevron-double-right"
+          size="small"
+          variant="tonal"
+          @click="showSidebar = true"
+        />
+      </VFadeTransition>
       <NuxtPage />
     </VMain>
   </div>
@@ -36,24 +64,23 @@ definePageMeta({
 
 const currentRepositoryStore = useCurrentRepository();
 
+const showSidebar = ref(true);
+
 const sections = [
   {
     name: 'repository-settings-general',
     label: 'General',
-    subtitle: 'Name, description, and metadata',
     icon: 'mdi-tune',
   },
   {
     name: 'repository-settings-members',
     label: 'Members',
-    subtitle: 'Individual user access and roles',
-    icon: 'mdi-account-multiple-outline',
+    icon: 'mdi-account-multiple',
   },
   {
     name: 'repository-settings-groups',
     label: 'Groups',
-    subtitle: 'Bulk access via user groups',
-    icon: 'mdi-account-group-outline',
+    icon: 'mdi-account-group',
   },
 ];
 
@@ -71,5 +98,16 @@ onMounted(() => {
 .settings-main {
   height: 100%;
   min-height: 0;
+}
+
+.sidebar-toggle {
+  position: fixed;
+  width: 1.75rem;
+  height: 3.5rem;
+  top: 50%;
+  left: 4.6875rem;
+  transform: translateY(-50%);
+  z-index: 1004;
+  border-radius: 0 8px 8px 0;
 }
 </style>

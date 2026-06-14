@@ -12,7 +12,7 @@
     &::after {
       position: absolute;
       content: '*';
-      color: rgb(var(--v-theme-primary-darken-5));
+      color: inherit;
       top: 0;
       // support also RTL direction
       inset-inline-end: 0;

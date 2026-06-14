@@ -1,12 +1,12 @@
 <template>
-  <VCard class="mb-4" color="surface-container-lowest">
+  <VCard color="surface-container" elevation="0" rounded="lg">
     <VCard
       color="transparent"
       elevation="0"
       rounded="0"
       @click="isExamCollapsed = !isExamCollapsed"
     >
-      <VRow class="d-flex justify-center align-center pa-4" no-gutters>
+      <VRow class="d-flex justify-center align-center py-5 px-6" no-gutters>
         <VCol
           :class="{ 'text-left': !isExamCollapsed }"
           :cols="isExamCollapsed ? 8 : 10"
@@ -32,7 +32,7 @@
       </VRow>
     </VCard>
     <VExpandTransition>
-      <div v-if="!isExamCollapsed" class="px-6 py-4">
+      <div v-if="!isExamCollapsed" class="px-6 mb-6">
         <VAlert
           v-if="!groups.length"
           :text="disabled
@@ -42,7 +42,12 @@
           variant="tonal"
           prominent
         />
-        <VExpansionPanels v-model="expandedAssessmentGroup" rounded="lg" flat>
+        <VExpansionPanels
+          v-model="expandedAssessmentGroup"
+          elevation="0"
+          rounded="lg"
+          theme="light"
+        >
           <AssessmentGroup
             v-for="(group, index) in groups"
             :key="group.uid"
@@ -63,7 +68,7 @@
         <VBtn
           v-if="!disabled"
           :disabled="!container.id"
-          class="my-5"
+          class="mt-5"
           prepend-icon="mdi-folder-plus-outline"
           text="Add Question Group"
           variant="tonal"

@@ -1,24 +1,15 @@
 <template>
   <div class="editor-link">
-    <VTooltip location="right">
-      <template #activator="{ props: tooltipProps }">
-        <VBtn
-          v-bind="{ ...$attrs, ...tooltipProps }"
-          :to="editorRoute"
-          color="secondary"
-          size="x-small"
-          variant="text"
-        >
-          {{ label }}
-          <slot name="icon">
-            <VIcon class="ml-1" size="small">mdi-arrow-top-right-thick</VIcon>
-          </slot>
-        </VBtn>
-      </template>
-      <slot name="tooltip">
-        <span>View element</span>
-      </slot>
-    </VTooltip>
+    <VBtn
+      v-tooltip:right="'View element'"
+      v-bind="$attrs"
+      :to="editorRoute"
+      :text="label"
+      color="secondary"
+      append-icon="mdi-arrow-top-right-thick"
+      size="x-small"
+      variant="text"
+    />
   </div>
 </template>
 

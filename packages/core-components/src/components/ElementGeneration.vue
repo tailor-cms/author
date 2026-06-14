@@ -20,7 +20,7 @@
         variant="tonal"
       />
     </template>
-    <VSheet class="mt-2 pa-7">
+    <VSheet :theme="$vuetify.theme.global.name" class="mt-2 pa-7" rounded="lg">
       <VTextarea
         v-model="promptText"
         label="Prompt"

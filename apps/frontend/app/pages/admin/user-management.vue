@@ -1,6 +1,26 @@
 <template>
   <div class="user-management">
-    <div class="d-flex py-6 px-4">
+    <div class="d-flex ga-3 mb-6 align-end">
+      <VTextField
+        v-model="filter"
+        bg-color="transparent"
+        data-testid="search-users"
+        density="comfortable"
+        label="Search"
+        max-width="300"
+        prepend-inner-icon="mdi-magnify"
+        rounded="pill"
+        variant="solo-filled"
+        clearable
+        flat
+        hide-details
+      />
+      <VSwitch
+        v-model="showArchiveToggle"
+        label="Archived"
+        hide-details
+        density="comfortable"
+      />
       <VSpacer />
       <VBtn
         prepend-icon="mdi-account-multiple-plus"
@@ -10,22 +30,6 @@
         @click.stop="showUserDialog"
       />
     </div>
-    <VRow class="filters">
-      <VCol class="d-flex align-center">
-        <VSwitch v-model="showArchiveToggle" label="Archived" hide-details />
-      </VCol>
-      <VCol>
-        <VTextField
-          v-model="filter"
-          data-testid="search-users"
-          label="Search"
-          prepend-inner-icon="mdi-magnify"
-          variant="outlined"
-          clearable
-          hide-details
-        />
-      </VCol>
-    </VRow>
     <VDataTableServer
       :headers="headers"
       :items="users"
@@ -35,7 +39,7 @@
       :loading="isLoading"
       :page="dataTable.page"
       :sort-by="dataTable.sortBy"
-      class="pt-4 bg-transparent"
+      class="mt-4 rounded-xl"
       item-value="id"
       must-sort
       @update:options="fetch"
@@ -193,10 +197,6 @@ onBeforeMount(async () => {
 </script>
 
 <style lang="scss" scoped>
-.filters {
-  margin: 0 1.125rem 0.5rem;
-}
-
 td.text-truncate {
   max-width: 7.25rem;
 }

@@ -223,17 +223,16 @@ const update = (value: any) => {
   }
 
   pre {
-    background: #0d0d0d;
+    background: rgba(var(--v-theme-surface-dim));
     white-space: break-spaces;
-    color: #fff;
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 1rem;
     border-radius: 0.5rem;
 
     code {
       color: inherit;
       padding: 0;
       background: none;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
     }
   }
 

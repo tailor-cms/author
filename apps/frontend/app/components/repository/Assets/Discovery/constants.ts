@@ -1,12 +1,12 @@
 import { ContentFilter, ContentType } from '@tailor-cms/interfaces/discovery';
 
 export const TYPE_COLOR: Record<ContentType, string> = {
-  [ContentType.Article]: 'cyan',
-  [ContentType.Pdf]: 'blue',
-  [ContentType.Image]: 'red',
-  [ContentType.Video]: 'red',
-  [ContentType.Research]: 'purple',
-  [ContentType.Other]: 'primary',
+  [ContentType.Article]: 'asset-article',
+  [ContentType.Pdf]: 'asset-document',
+  [ContentType.Image]: 'asset-image',
+  [ContentType.Video]: 'asset-video',
+  [ContentType.Research]: 'asset-research',
+  [ContentType.Other]: 'asset-other',
 };
 
 export const TYPE_LABEL: Record<ContentFilter, string> = {
@@ -21,10 +21,10 @@ export const TYPE_LABEL: Record<ContentFilter, string> = {
 
 export const TYPE_ICON: Record<ContentFilter, string> = {
   [ContentFilter.All]: 'mdi-view-grid',
-  [ContentType.Article]: 'mdi-newspaper',
-  [ContentType.Pdf]: 'mdi-file-document-outline',
-  [ContentType.Image]: 'mdi-image-outline',
-  [ContentType.Video]: 'mdi-play-circle-outline',
+  [ContentType.Article]: 'mdi-newspaper-variant',
+  [ContentType.Pdf]: 'mdi-file-pdf-box',
+  [ContentType.Image]: 'mdi-image',
+  [ContentType.Video]: 'mdi-play-circle',
   [ContentType.Research]: 'mdi-school',
   [ContentType.Other]: 'mdi-link',
 };

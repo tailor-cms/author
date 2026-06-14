@@ -16,9 +16,9 @@
         variant="tonal"
       />
     </template>
-    <VSheet min-width="220" rounded="lg">
-      <div class="px-4 pt-3 pb-2 text-body-small text-medium-emphasis">
-        Comments are only available on the source element
+    <VSheet :theme="$vuetify.theme.global.name" min-width="220" rounded="lg">
+      <div class="px-4 pt-3 pb-2 text-label-medium">
+        Comments are only available on the source
       </div>
       <VDivider />
       <div v-if="isLoading" class="d-flex justify-center py-4">

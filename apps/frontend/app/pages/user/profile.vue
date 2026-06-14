@@ -1,33 +1,23 @@
 <template>
   <NuxtLayout name="main">
-    <VSheet
-      class="h-100 mx-3"
-      color="surface-container-low"
-      rounded="t-xl"
-      border
+    <VContainer
+      class="profile-page h-100 overflow-y-auto pt-14"
+      max-width="1000"
     >
-      <VContainer class="h-100 pt-14 user-panel">
-        <VLayout>
-          <VRow class="ma-5">
-            <VCol
-              class="d-flex flex-column align-center justify-center"
-              cols="12"
-              md="5"
-            >
-              <UserAvatar
-                :img-url="store.user?.imgUrl"
-                @save="saveAvatar"
-                @delete="deleteAvatar"
-              />
-              <ChangePassword />
-            </VCol>
-            <VCol>
-              <UserInfo />
-            </VCol>
-          </VRow>
-        </VLayout>
-      </VContainer>
-    </VSheet>
+      <VRow>
+        <VCol class="d-flex flex-column align-center mt-4" cols="12" md="4">
+          <UserAvatar
+            :img-url="store.user?.imgUrl"
+            @save="saveAvatar"
+            @delete="deleteAvatar"
+          />
+          <ChangePassword />
+        </VCol>
+        <VCol class="">
+          <UserInfo />
+        </VCol>
+      </VRow>
+    </VContainer>
   </NuxtLayout>
 </template>
 
@@ -66,7 +56,12 @@ const deleteAvatar = () => {
 </script>
 
 <style lang="scss" scoped>
-.user-panel {
-  max-width: 75rem;
+.profile-page {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>

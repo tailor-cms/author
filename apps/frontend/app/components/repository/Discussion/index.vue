@@ -1,5 +1,5 @@
 <template>
-  <VSheet color="transparent" class="activity-discussion py-2">
+  <VSheet color="transparent" class="activity-discussion">
     <LinkedCopyNotice
       v-if="activity.isLinkedCopy"
       :repository-id="activity.repositoryId"

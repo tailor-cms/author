@@ -15,6 +15,7 @@ export const LinkContentType = {
   Document: 'DOCUMENT',
   Audio: 'AUDIO',
   Article: 'ARTICLE',
+  Research: 'RESEARCH',
   Other: 'OTHER',
 } as const;
 

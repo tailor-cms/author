@@ -1,6 +1,6 @@
 <template>
-  <div class="element-sidebar">
-    <div class="pb-4 text-body-medium font-weight-bold">
+  <div class="element-sidebar px-5 py-2">
+    <div class="mb-4 text-body-medium font-weight-bold">
       Additional settings
     </div>
     <component :is="sidebarName" :element="element" @save="onSave" />
@@ -50,8 +50,6 @@ const onSave = (data: any) => elementBus.emit('save', data);
 
 <style lang="scss" scoped>
 .element-sidebar {
-  padding: 1.75rem 0.875rem 1.5rem;
-
   h3 {
     margin: 0 0.25rem 1.5rem;
   }

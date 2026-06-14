@@ -3,9 +3,6 @@
     <div class="mb-3 text-body-medium font-weight-bold">
       Source documents (optional):
     </div>
-    <div class="text-body-small mb-3">
-      Upload PDF files to generate content based on your existing materials.
-    </div>
     <VFileInput
       v-model="files"
       :disabled="progress.isActive"
@@ -13,6 +10,8 @@
       label="Select PDF files"
       prepend-icon="mdi-file-document-outline"
       variant="outlined"
+      hint="Upload PDF files to generate content based on your existing materials."
+      persistent-hint
       chips
       counter
       multiple

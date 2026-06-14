@@ -123,10 +123,4 @@ const update = (key: string, value: any, data?: any) => {
   right: 0;
   bottom: 21px;
 }
-
-:deep(.title) {
-  color: #808080;
-  font-size: 0.875rem;
-  font-weight: normal;
-}
 </style>

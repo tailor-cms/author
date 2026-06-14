@@ -8,7 +8,7 @@
     <VIcon
       v-if="soon"
       class="ml-1"
-      color="amber"
+      color="warning"
       icon="mdi-alert-circle-outline"
       size="small"
     />
