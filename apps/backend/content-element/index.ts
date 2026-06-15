@@ -33,6 +33,9 @@ linked.post('/link', actions.link, { before: [hasLinkSourceAccess] });
 
 crud
   .get('/', actions.list, { after: [processQuery()] })
+  .get('/search', actions.search, {
+    after: [processQuery({ order: [['updatedAt', 'DESC']] })],
+  })
   .post('/', actions.create)
   .get('/:elementId', actions.get)
   .patch('/:elementId', actions.patch)

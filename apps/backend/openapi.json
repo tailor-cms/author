@@ -2265,6 +2265,183 @@
         ],
         "additionalProperties": false
       },
+      "ContentElementSearchItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Numeric primary key."
+          },
+          "uid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UID identifier."
+          },
+          "repositoryId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Repository the element belongs to."
+          },
+          "activityId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Parent activity holding the element."
+          },
+          "type": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Content-element type id, declared by an installed content-element extension package (e.g. `HTML`, `IMAGE`, `MULTIPLE_CHOICE`). Each package owns one type id; the elementRegistry dispatches lifecycle hooks and procedures by it. Capped at the model column length (`STRING` -> `VARCHAR(255)`)."
+          },
+          "position": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000000,
+            "description": "Position among siblings. Stored as `DOUBLE`; the model column validator caps the range at 0..1_000_000, and floats are allowed so callers can wedge a row between existing positions. The /reorder endpoint derives the stored value via `calculatePosition`."
+          },
+          "contentId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Origin id that survives clone/import so reuse and duplicates can be detected across repositories."
+          },
+          "contentSignature": {
+            "description": "SHA-1 hash of `data`, recomputed on every save by the `processAssets` beforeSave hook. Used to detect duplicate content.",
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {},
+            "description": "Content element type defined property bag (JSONB). Shape is owned by the content element package's `ElementData` interface for this `type`."
+          },
+          "meta": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {},
+            "description": "Meta-input data bag (JSONB). Schema-configured fields collected via meta inputs (captions, labels, and similar element-level config)."
+          },
+          "refs": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Relationship"
+              }
+            },
+            "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
+          },
+          "detached": {
+            "type": "boolean",
+            "description": "True when an ancestor activity was deleted, leaving this row unreachable in the outline. The record itself stays intact."
+          },
+          "isLinkedCopy": {
+            "type": "boolean",
+            "description": "True when this element is an active linked copy of another; receives automatic updates when the source changes. Editing `data` auto-unlinks via the model's `autoUnlinkOnEdit` afterUpdate hook."
+          },
+          "sourceId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Source element id this entry was copied from; preserved after unlink for provenance. Null when the source has been hard-deleted."
+          },
+          "sourceModifiedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Source `updatedAt` at the moment of last sync."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "outlineActivityId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Closest outline-level ancestor of the element's container; used by the FE for context display and editor deep-linking."
+          },
+          "searchSnippet": {
+            "description": "Best-matching text fragments for the search term, with matches wrapped in `⟪`/`⟫` markers (`ts_headline`); present only when a `search` term was provided.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "uid",
+          "repositoryId",
+          "activityId",
+          "type",
+          "position",
+          "contentId",
+          "data",
+          "meta",
+          "refs",
+          "detached",
+          "isLinkedCopy",
+          "sourceId",
+          "sourceModifiedAt",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "outlineActivityId"
+        ],
+        "additionalProperties": false
+      },
       "ElementSourceInfo": {
         "type": "object",
         "properties": {
@@ -8909,6 +9086,142 @@
                 ],
                 "additionalProperties": false,
                 "description": "Create content-element payload."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/content-elements/search": {
+      "get": {
+        "tags": [
+          "Content Element / CRUD"
+        ],
+        "operationId": "contentElementSearch",
+        "x-tailor-slice": "contentElement",
+        "x-tailor-method": "search",
+        "summary": "Search content elements in the repository",
+        "description": "Full-text search over element data with pagination; without a search term it acts as a paginated browse listing ordered by last update.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Full-text query matched against every string value inside the element's `data` JSONB (via the generated `search_vector` column). Terms match by prefix (typing `mov` matches `move`) and support quoted phrases and `-exclusion` through `websearch_to_tsquery`. When present and no explicit sort is requested, results are ordered by relevance.",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 250
+            }
+          },
+          {
+            "name": "types",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to the provided element type ids (e.g. `TIPTAP_HTML`, `MULTIPLE_CHOICE`).",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination offset.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination limit.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Sort column.",
+              "type": "string",
+              "enum": [
+                "updatedAt",
+                "createdAt"
+              ]
+            }
+          },
+          {
+            "name": "sortOrder",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Sort direction.",
+              "type": "string",
+              "enum": [
+                "ASC",
+                "DESC",
+                "asc",
+                "desc"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated content elements matching the query.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ContentElementSearchItem"
+                      },
+                      "description": "Page of rows."
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "Total rows matching the query (ignoring pagination)."
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "total"
+                  ],
+                  "additionalProperties": false
+                }
               }
             }
           }
