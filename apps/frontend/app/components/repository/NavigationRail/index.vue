@@ -178,6 +178,13 @@ const repositoryTabs = computed<RailTab[]>(() => {
       icon: 'image-multiple',
       to: { name: 'repository-assets', params: { id } },
     },
+    {
+      key: 'search',
+      label: 'Search',
+      icon: 'magnify',
+      to: { name: 'search', params: { id } },
+      matches: (name) => name === 'search',
+    },
   );
 
   if (repoStore.repository?.hasAdminAccess) {

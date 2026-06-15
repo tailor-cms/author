@@ -2,6 +2,7 @@
 
 // CRUD
 export { default as list } from './list.action.ts';
+export { default as search } from './search.action.ts';
 export { default as get } from './get.action.ts';
 export { default as create } from './create.action.ts';
 export { default as patch } from './patch.action.ts';

@@ -1,22 +1,29 @@
 // Business logic for the ContentElement slice.
 // All DB orchestration lives here so the service surface is testable in
 // isolation from Express.
-import { createLogger } from '#logger';
-import db from '#shared/database/index.js';
-import type { Repository } from '../repository/models/repository.model.js';
-import type { User } from '../user/models/user.model.js';
+import { Op, col, fn, where } from 'sequelize';
 import type {
   ContentElement,
   CopyLocation,
 } from './models/content-element.model.js';
+import { createLogger } from '#logger';
 import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
+import type { Repository } from '../repository/models/repository.model.js';
+import type { User } from '../user/models/user.model.js';
+import db from '#shared/database/index.js';
 
 import type {
   CreateInput,
   LinkInput,
   ListFilter,
   PatchInput,
+  SearchFilter,
 } from './schemas/index.ts';
+import {
+  prefixTsQuery,
+  resolveOutlineIds,
+  snippetAttribute,
+} from './lib/search.ts';
 
 const { Activity, ContentElement: ContentElementModel } = db;
 
@@ -42,6 +49,40 @@ export async function list(opts: any, filters: ListFilter) {
     opts.include = { model: Activity.unscoped(), attributes: [], where };
   }
   return ContentElementModel.fetch(opts);
+}
+
+// Paginated browse / full-text search over the repository's elements.
+// Matching runs against the generated `search_vector` column (every
+// string value inside `data`); when a term is present and no explicit
+// sort is requested, results are ordered by `ts_rank` relevance.
+// Items are decorated with the closest outline ancestor so the FE can
+// show context and deep-link into the editor (outline activities are
+// the only ones it has loaded).
+export async function search(
+  repository: Repository,
+  opts: any,
+  filters: SearchFilter,
+): Promise<{ items: Record<string, unknown>[]; total: number }> {
+  opts.where = { ...opts.where, repositoryId: repository.id, detached: false };
+  if (filters.types?.length) opts.where.type = filters.types;
+  if (filters.search) {
+    const tsQuery = prefixTsQuery(filters.search);
+    opts.where[Op.and] = [where(col('search_vector'), Op.match, tsQuery)];
+    opts.attributes = { include: [snippetAttribute(tsQuery)] };
+    if (!filters.sortBy) {
+      opts.order = [[fn('ts_rank', col('search_vector'), tsQuery), 'DESC']];
+    }
+  }
+  const total = await ContentElementModel.count({ where: opts.where });
+  const items = await ContentElementModel.fetch(opts);
+  const outlineIdByContainer = await resolveOutlineIds(items);
+  return {
+    items: items.map((it: ContentElement) => ({
+      ...it.toJSON(),
+      outlineActivityId: outlineIdByContainer.get(it.activityId) ?? null,
+    })),
+    total,
+  };
 }
 
 // Creates an element on `repository`. The action's Zod schema has

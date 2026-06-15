@@ -83,7 +83,19 @@ function createAssetParser() {
 
 function queryStream(Model, { where, transaction }) {
   where = mapKeys(where, (_, key) => Model.rawAttributes[key].field);
-  const select = Model.queryGenerator.selectQuery(Model.tableName, { where });
+  // Select real backing columns instead of `SELECT *`. Excludes generated
+  // columns (e.g. `content_element.search_vector`) which have no model
+  // attribute and break reimport (`normalize` can't map them, and they
+  // can't be inserted into a `GENERATED ALWAYS` column), while skipping
+  // VIRTUAL attributes (e.g. `activity.isTrackedInWorkflow`) that have no
+  // column at all - selecting those would throw "column does not exist".
+  const attributes = Object.values(Model.rawAttributes)
+    .filter((it) => !(it.type && it.type.key === 'VIRTUAL'))
+    .map((it) => it.field);
+  const select = Model.queryGenerator.selectQuery(Model.tableName, {
+    attributes,
+    where,
+  });
   const stream = new QueryStream(select);
   return transaction.connection.query(stream);
 }

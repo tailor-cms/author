@@ -14,6 +14,10 @@ import { useCurrentRepository } from './current-repository';
 const POLL_INTERVAL_MS = 5000;
 const POLL_LIMIT = 60;
 
+// Below this viewport width the Lens drawer overlays the main content
+// instead of pushing it (mirrors the drawer's mobile-breakpoint).
+export const LENS_OVERLAY_BELOW_WIDTH = 1800;
+
 export type RubricId = NonNullable<AiRequestReviewReq['body']['rubricId']>;
 
 export const useReviewStore = defineStore('review', () => {
