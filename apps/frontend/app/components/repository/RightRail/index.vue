@@ -5,24 +5,26 @@
     class="right-rail"
     elevation="0"
     location="right"
-    width="76"
+    width="62"
     permanent
   >
+    <div class="d-flex flex-column align-center">
+      <VBtn
+        v-if="isLensVisible"
+        :active="reviewStore.isPanelOpen"
+        :ripple="false"
+        class="rail-tab"
+        height="60"
+        prepend-icon="mdi-camera-iris"
+        text="Lens"
+        variant="text"
+        stacked
+        @click="reviewStore.isPanelOpen = !reviewStore.isPanelOpen"
+      />
+    </div>
     <template #append>
+      <!-- Renoir floating-launcher, rail's bottom. -->
       <div class="d-flex flex-column align-center pb-3">
-        <VBtn
-          v-if="isLensVisible"
-          :active="reviewStore.isPanelOpen"
-          :ripple="false"
-          class="rail-tab my-2"
-          height="60"
-          prepend-icon="mdi-camera-iris"
-          text="Lens"
-          variant="text"
-          stacked
-          @click="reviewStore.isPanelOpen = !reviewStore.isPanelOpen"
-        />
-        <!-- Renoir floating-launcher, perched at the rail's bottom. -->
         <PanelLauncher
           v-if="configStore.isAiAvailable"
           :is-running="isAgentRunning"
@@ -73,6 +75,8 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .right-rail {
+  // Inset from the viewport edge to mirror the main content's `mr-3` gutter,
+  margin: 0.25rem 0.375rem 0 0;
   text-align: center;
 }
 
@@ -128,11 +132,14 @@ onBeforeUnmount(() => {
   }
 }
 
-.right-rail :deep(.v-navigation-drawer__content) {
+// Let Renoir's glow spill out of the rail (above and to the sides)
+.right-rail,
+.right-rail :deep(.v-navigation-drawer__content),
+.right-rail :deep(.v-navigation-drawer__append) {
   overflow: visible;
 }
 
 .rail-renoir {
-  margin: 0.5rem 0.125rem 0.5rem 0;
+  margin: 0.75rem 0;
 }
 </style>
