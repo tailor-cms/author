@@ -9,32 +9,31 @@
           variant="tonal"
         />
         <div class="flex-grow-1">
-          <div class="text-body-small font-weight-bold">
+          <div class="text-title-small font-weight-bold">
             {{ dimension.label }}
           </div>
           <VProgressLinear
             :color="scoreColor"
             :max="dimension.maxScore"
             :model-value="score"
-            bg-color="surface-container-highest"
             class="mt-1"
             height="6"
             rounded
           />
         </div>
-        <span class="text-label-large font-weight-bold score-text">
+        <span class="text-label-medium font-weight-bold score-text">
           {{ score }}/{{ dimension.maxScore }}
         </span>
       </div>
     </VExpansionPanelTitle>
-    <VExpansionPanelText v-if="assessment">
-      <div class="text-body-small text-medium-emphasis">
+    <VExpansionPanelText v-if="assessment" class="px-0">
+      <div class="text-body-small text-medium-emphasis mb-2">
         {{ assessment.rationale }}
       </div>
       <blockquote
         v-for="(quote, index) in assessment.evidence"
         :key="index"
-        class="evidence text-body-small text-medium-emphasis mt-2 pl-3"
+        class="evidence text-body-small text-medium-emphasis"
       >
         {{ quote }}
       </blockquote>
@@ -75,7 +74,15 @@ const scoreColor = computed(() => {
 }
 
 .evidence {
-  border-left: 2px solid rgb(var(--v-theme-outline));
+  border-left: 3px solid rgb(var(--v-theme-outline));
+  background: rgb(var(--v-theme-surface-container-highest));
+  margin-top: 0.25rem;
+  padding: 0.375rem 0.5rem;
   font-style: italic;
+  border-radius: 2px;
+}
+
+:deep(.v-expansion-panel-text__wrapper) {
+  padding: 0.5rem 1rem 1rem;
 }
 </style>

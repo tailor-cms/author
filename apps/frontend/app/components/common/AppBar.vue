@@ -9,19 +9,19 @@
       />
       <VAppBarTitle class="app-name" text="Tailor" />
     </NuxtLink>
+    <template v-if="!smAndDown">
+      <VBtn
+        v-for="{ name, to } in topLevelRoutes"
+        :key="name"
+        :to="to"
+        min-width="96"
+        variant="text"
+        rounded="lg"
+      >
+        <span class="toolbar-route text-truncate">{{ name }}</span>
+      </VBtn>
+    </template>
     <template #append>
-      <template v-if="!smAndDown">
-        <VBtn
-          v-for="{ name, to } in topLevelRoutes"
-          :key="name"
-          :to="to"
-          min-width="96"
-          variant="text"
-          rounded="lg"
-        >
-          <span class="toolbar-route text-truncate">{{ name }}</span>
-        </VBtn>
-      </template>
       <VMenu
         :close-on-content-click="false"
         attach="#mainAppBar"

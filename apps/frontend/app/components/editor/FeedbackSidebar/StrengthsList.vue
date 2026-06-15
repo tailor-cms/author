@@ -3,17 +3,18 @@
     <VCard
       v-for="(strength, index) in strengths"
       :key="index"
-      class="d-flex ga-3 pa-3"
+      class="d-flex ga-3 px-4 py-3"
+      border="sm outline-variant"
       color="surface-container-high"
       rounded="lg"
       flat
     >
       <VIcon class="mt-1" color="success" icon="mdi-check-circle" size="18" />
       <div>
-        <div class="text-body-small font-weight-bold">
+        <div class="text-title-small font-weight-bold">
           {{ strength.title }}
         </div>
-        <div class="text-body-small text-medium-emphasis">
+        <div class="text-body-small text-medium-emphasis mt-1">
           {{ strength.detail }}
         </div>
       </div>

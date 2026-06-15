@@ -1,49 +1,54 @@
 <template>
-  <VCard class="pa-3" color="surface-container-high" rounded="lg" flat>
-    <div class="d-flex align-center ga-2">
-      <VChip
-        :color="impactColor"
-        :text="`${suggestion.impact} impact`"
-        class="text-capitalize flex-shrink-0"
-        size="x-small"
-        variant="tonal"
-        label
-      />
-      <span class="text-body-small font-weight-bold">
+  <VCard
+    border="sm outline-variant"
+    class="px-4 py-3"
+    color="surface-container-high"
+    rounded="lg"
+    flat
+  >
+    <div class="d-flex flex-column ga-1">
+      <span
+        :class="`text-${impactColor}`"
+        class="impact-label font-weight-bold text-uppercase"
+      >
+        {{ suggestion.impact }} impact
+      </span>
+      <span class="text-title-small font-weight-bold mb-1">
         {{ suggestion.title }}
       </span>
     </div>
-    <div class="text-body-small text-medium-emphasis mt-2">
+    <div class="text-body-small text-medium-emphasis">
       {{ suggestion.detail }}
     </div>
-    <div class="d-flex align-center flex-wrap ga-1 mt-2">
-      <VChip
-        v-for="label in dimensionLabels"
-        :key="label"
-        :text="label"
-        size="x-small"
-        variant="outlined"
-      />
+    <div class="d-flex align-center ga-1 mt-2">
+      <div class="d-flex flex-wrap ga-1">
+        <VChip
+          v-for="label in dimensionLabels"
+          :key="label"
+          :text="label"
+          size="x-small"
+        />
+      </div>
       <VSpacer />
-      <VBtn
-        v-if="hasTargetElement"
-        density="comfortable"
-        prepend-icon="mdi-target"
-        size="x-small"
-        text="Show element"
-        variant="text"
-        @click="$emit('element:show', suggestion.targetElementId)"
-      />
-      <VBtn
-        v-if="suggestion.agentPrompt && isAgentAvailable"
-        color="tertiary"
-        density="comfortable"
-        prepend-icon="mdi-creation"
-        size="x-small"
-        text="Fix with AI"
-        variant="text"
-        @click="$emit('agent:ask', suggestion.agentPrompt)"
-      />
+      <div class="d-flex justify-end flex-wrap ga-1">
+        <VBtn
+          v-if="hasTargetElement"
+          prepend-icon="mdi-target"
+          size="x-small"
+          text="Show element"
+          variant="text"
+          @click="$emit('element:show', suggestion.targetElementId)"
+        />
+        <VBtn
+          v-if="suggestion.agentPrompt && isAgentAvailable"
+          color="tertiary"
+          prepend-icon="mdi-creation"
+          size="x-small"
+          text="Fix with AI"
+          variant="text"
+          @click="$emit('agent:ask', suggestion.agentPrompt)"
+        />
+      </div>
     </div>
   </VCard>
 </template>
@@ -74,3 +79,10 @@ const dimensionLabels = computed(() =>
     .filter((it): it is string => !!it),
 );
 </script>
+
+<style lang="scss" scoped>
+.impact-label {
+  font-size: 0.625rem;
+  letter-spacing: 0.0625rem;
+}
+</style>

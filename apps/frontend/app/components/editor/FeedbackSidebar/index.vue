@@ -8,7 +8,6 @@
     color="surface-container"
     elevation="0"
     location="right"
-    border="l"
     disable-route-watcher
   >
     <div
@@ -19,12 +18,10 @@
     />
     <div class="sidebar-layout">
       <div class="sidebar-header px-4 py-3">
-        <div class="d-flex align-center">
-          <RubricPicker
-            :model-value="reviewStore.selectedRubricId"
-            :rubrics="reviewStore.rubrics"
-            @update:model-value="reviewStore.selectRubric($event)"
-          />
+        <div class="d-flex align-center mb-2">
+          <span class="text-title-medium font-weight-bold">
+            Review lens
+          </span>
           <VSpacer />
           <VBtn
             v-tooltip:bottom="{ text: 'Refresh analysis', openDelay: 500 }"
@@ -39,22 +36,27 @@
           <VBtn
             v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
             aria-label="Collapse sidebar"
-            class="sidebar-collapse-btn"
+            class="ml-2"
+            color="secondary"
             density="comfortable"
             icon="mdi-chevron-double-right"
             size="small"
-            variant="text"
+            variant="tonal"
             @click="isOpen = false"
           />
         </div>
+        <RubricPicker
+          :model-value="reviewStore.selectedRubricId"
+          :rubrics="reviewStore.rubrics"
+          @update:model-value="reviewStore.selectRubric($event)"
+        />
         <AnalysisStatus
           :computed-at="result?.computedAt"
           :is-running="reviewStore.isRunning"
           :is-stale="status?.isStale ?? false"
-          class="mt-1"
+          class="mt-2 mx-1"
         />
       </div>
-      <VDivider />
       <div class="sidebar-body pa-4 d-flex flex-column ga-3">
         <VAlert
           v-if="status?.status === 'failed'"
@@ -71,11 +73,13 @@
           v-if="reviewStore.isRunning"
           class="placeholder d-flex flex-column align-center ga-4 pa-6"
         >
-          <VProgressCircular color="tertiary" size="48" width="3" indeterminate />
-          <div class="text-body-small text-medium-emphasis text-center">
-            Reading the content through the
-            {{ reviewStore.selectedRubric?.name }} lens. This
-            usually takes under a minute.
+          <VProgressCircular color="tertiary" size="54" width="5" indeterminate />
+          <div class="text-title-small text-medium-emphasis text-center mt-4">
+            Reading the content through the <br />
+            <span class="font-weight-bold text-tertiary">
+              {{ reviewStore.selectedRubric?.name }}
+            </span> lens.<br />
+            This usually takes under a minute.
           </div>
         </div>
         <template v-else-if="result">
@@ -85,11 +89,11 @@
             :trend="status?.trend ?? []"
           />
           <template v-if="result.strengths.length">
-            <div class="section-title">What's working</div>
+            <div class="text-label-medium font-weight-bold mt-2">What's working</div>
             <StrengthsList :strengths="result.strengths" />
           </template>
           <template v-if="result.suggestions.length">
-            <div class="section-title">Suggestions</div>
+            <div class="text-label-medium font-weight-bold mt-2">Suggestions</div>
             <div class="d-flex flex-column ga-2">
               <SuggestionCard
                 v-for="(suggestion, index) in sortedSuggestions"
@@ -103,7 +107,7 @@
               />
             </div>
           </template>
-          <div class="section-title">Score breakdown</div>
+          <div class="text-label-medium font-weight-bold mt-2">Score breakdown</div>
           <VExpansionPanels class="dimension-panels pb-4" multiple flat>
             <DimensionCard
               v-for="dimension in dimensions"
@@ -119,10 +123,11 @@
         >
           <VIcon
             class="placeholder-icon"
+            color="tertiary"
             icon="mdi-creation"
             size="48"
           />
-          <div class="text-body-small text-medium-emphasis text-center">
+          <div class="text-body-medium text-medium-emphasis text-center">
             Get feedback on this content - engagement scoring, what
             works, and what to improve.
           </div>
@@ -261,15 +266,6 @@ const askAgent = (prompt: string) => {
   }
 }
 
-.sidebar-collapse-btn {
-  opacity: 0.7;
-  transition: opacity 160ms ease;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-
 .resize-handle {
   position: absolute;
   top: 0;
@@ -290,25 +286,16 @@ const askAgent = (prompt: string) => {
   min-height: 100%;
 }
 
-.section-title {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.7;
-}
-
 .dimension-panels :deep(.v-expansion-panel) {
-  margin-top: 0.5rem !important;
-  border-radius: 12px !important;
+  margin-top: 0.5rem;
+  border-radius: 0.5rem;
 
   &::after {
     display: none;
   }
 
   &:first-child {
-    margin-top: 0 !important;
+    margin-top: 0;
   }
 }
 
