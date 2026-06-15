@@ -1,8 +1,9 @@
 <template>
   <VNavigationDrawer
     :key="store.selectedActivity?.uid"
+    :class="{ resizing: isResizing }"
     :model-value="store.isSidebarOpen || mdAndUp"
-    :width="lgAndUp ? 480 : 380"
+    :width="width"
     class="text-left"
     color="surface-container"
     location="right"
@@ -10,6 +11,12 @@
     absolute
     @update:model-value="store.updateSidebar"
   >
+    <div
+      aria-orientation="vertical"
+      class="resize-handle"
+      role="separator"
+      @pointerdown="startResize"
+    />
     <div v-if="store.selectedActivity?.uid" class="pa-4 pb-16">
       <SidebarHeader :activity="store.selectedActivity" />
       <SidebarBody :activity="store.selectedActivity" class="my-6" />
@@ -39,4 +46,33 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 
 const store = useCurrentRepository();
 const { mdAndUp, lgAndUp } = useDisplay();
+
+const { width, isResizing, startResize } = useDrawerResize({
+  side: 'right',
+  storageKey: 'repository:activity-sidebar:width',
+  defaultWidth: () => (lgAndUp.value ? 480 : 380),
+});
 </script>
+
+<style lang="scss" scoped>
+// Suppress the drawer's width animation while dragging
+.resizing {
+  transition-duration: 0s !important;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0.3125rem;
+  z-index: 100;
+  cursor: col-resize;
+  touch-action: none;
+
+  &:hover,
+  &:active {
+    background: rgba(var(--v-theme-primary), 0.25);
+  }
+}
+</style>
