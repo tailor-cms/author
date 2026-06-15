@@ -36,7 +36,9 @@ export const SearchFilter = z
       \`MULTIPLE_CHOICE\`).
     `),
     ...Pagination(),
-    ...Sort(['updatedAt', 'createdAt'] as const),
+    // Only `updatedAt` is sortable: the UI maps newest/oldest to it, and
+    // relevance is handled by `ts_rank` (no explicit sort).
+    ...Sort(['updatedAt'] as const),
   })
   .describe(
     'Full-text search, filters, pagination, and sort for content elements.',

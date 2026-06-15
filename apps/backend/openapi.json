@@ -9172,8 +9172,7 @@
               "description": "Sort column.",
               "type": "string",
               "enum": [
-                "updatedAt",
-                "createdAt"
+                "updatedAt"
               ]
             }
           },
