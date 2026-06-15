@@ -1,7 +1,8 @@
 <template>
   <VNavigationDrawer
+    :class="{ resizing: isResizing }"
     :model-value="repositoryStore.isSidebarOpen || mdAndUp"
-    :width="lgAndUp ? 480 : 380"
+    :width="width"
     class="text-left"
     color="surface-container"
     location="right"
@@ -9,6 +10,12 @@
     absolute
     @update:model-value="repositoryStore.updateSidebar"
   >
+    <div
+      aria-orientation="vertical"
+      class="resize-handle"
+      role="separator"
+      @pointerdown="startResize"
+    />
     <div v-if="activity?.isTrackedInWorkflow" class="pa-4 pb-16">
       <SidebarHeader :activity="activity" />
       <SidebarBody :activity="activity" class="my-6" />
@@ -39,4 +46,33 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 const repositoryStore = useCurrentRepository();
 const activity = computed(() => repositoryStore.selectedActivity);
 const { mdAndUp, lgAndUp } = useDisplay();
+
+const { width, isResizing, startResize } = useDrawerResize({
+  side: 'right',
+  storageKey: 'repository:workflow-sidebar:width',
+  defaultWidth: () => (lgAndUp.value ? 480 : 380),
+});
 </script>
+
+<style lang="scss" scoped>
+// Suppress the drawer's width animation while dragging the handle
+.resizing {
+  transition-duration: 0s !important;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0.3125rem;
+  z-index: 100;
+  cursor: col-resize;
+  touch-action: none;
+
+  &:hover,
+  &:active {
+    background: rgba(var(--v-theme-primary), 0.25);
+  }
+}
+</style>

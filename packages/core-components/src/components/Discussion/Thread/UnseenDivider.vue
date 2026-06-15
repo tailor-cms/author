@@ -2,12 +2,15 @@
   <VDivider class="unseen-divider my-4" content-offset="-16">
     <VChip
       :text="unseenCommentsLabel"
-      close-icon="mdi-close"
       prepend-icon="mdi-arrow-down"
+      close-icon="mdi-close"
+      color="secondary"
       size="small"
       variant="tonal"
+      closable
       rounded
       @click="seen"
+      @click:close="seen"
     />
   </VDivider>
 </template>

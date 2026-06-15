@@ -65,8 +65,8 @@ export function setupMonitoring({
   // without them an alarm would read aggregate data across every ALB in the
   // account.
   const albDims = {
-    TargetGroup: webServer.lbTargetGroup.arnSuffix,
-    LoadBalancer: webServer.lb.arnSuffix,
+    TargetGroup: webServer.lb.targetGroup.arnSuffix,
+    LoadBalancer: webServer.lb.lb.arnSuffix,
   };
 
   // No healthy targets = app down / failing the shallow liveness check.

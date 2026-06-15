@@ -7,21 +7,20 @@
     offset="4"
   >
     <template #activator="{ props: menuProps }">
-      <VTooltip :disabled="menuOpen" location="left" open-delay="1000">
-        <template #activator="{ props: tooltipProps }">
-          <VBtn
-            v-bind="{ ...menuProps, ...tooltipProps }"
-            :class="{ 'opacity-60': !isEntryPoint }"
-            :variant="isEntryPoint ? 'tonal' : 'text'"
-            aria-label="Linked content"
-            color="tertiary"
-            icon="mdi-link-variant"
-            size="x-small"
-          />
-        </template>
-        <span v-if="isEntryPoint">Linked content</span>
-        <span v-else>Part of linked activity - synced via parent</span>
-      </VTooltip>
+      <VBtn
+        v-tooltip:left="{
+          text: tooltipText,
+          disabled: menuOpen,
+          openDelay: 1000,
+        }"
+        v-bind="menuProps"
+        :class="{ 'opacity-60': !isEntryPoint }"
+        aria-label="Linked content"
+        color="tertiary"
+        icon="mdi-link-variant"
+        size="x-small"
+        variant="tonal"
+      />
     </template>
     <VSheet :theme="$vuetify.theme.global.name" min-width="220" rounded="lg">
       <div class="px-4 pt-3 pb-2 text-label-medium">
@@ -54,7 +53,7 @@
 
 <script lang="ts" setup>
 import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface Props {
   sourceInfo?: ElementSourceInfo | null;
@@ -75,6 +74,12 @@ const emit = defineEmits<{
 }>();
 
 const menuOpen = ref(false);
+
+const tooltipText = computed(() =>
+  props.isEntryPoint
+    ? 'Linked content'
+    : 'Part of linked activity - synced via parent',
+);
 
 watch(menuOpen, (open) => {
   if (open && !props.sourceInfo && !props.isLoading) {
