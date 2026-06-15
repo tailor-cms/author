@@ -83,7 +83,16 @@ function createAssetParser() {
 
 function queryStream(Model, { where, transaction }) {
   where = mapKeys(where, (_, key) => Model.rawAttributes[key].field);
-  const select = Model.queryGenerator.selectQuery(Model.tableName, { where });
+  // Select only mapped model columns instead of `SELECT *`. Generated
+  // columns (e.g. `content_element.search_vector`) have no model attribute,
+  // so a `*` export leaks them into the archive and breaks reimport:
+  // `normalize` can't map an unknown column, and the value can't be inserted
+  // back into a `GENERATED ALWAYS` column.
+  const attributes = Object.values(Model.rawAttributes).map((it) => it.field);
+  const select = Model.queryGenerator.selectQuery(Model.tableName, {
+    attributes,
+    where,
+  });
   const stream = new QueryStream(select);
   return transaction.connection.query(stream);
 }
