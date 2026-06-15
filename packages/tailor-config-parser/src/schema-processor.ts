@@ -17,11 +17,17 @@ const LABEL_COLORS = [
   ['#FF9800', '#FF5722'],
 ];
 
+interface ProcessOptions {
+  // Registered scoring rubric ids; when provided, schema
+  // `feedback.rubrics` references are validated against them
+  rubricIds?: string[];
+}
+
 /**
  * Process and validate schema configurations.
  * Prefix activity types with schema id; SCHEMA_ID/TYPE.
  */
-export default (schemas: Schema[] = []) => {
+export default (schemas: Schema[] = [], options: ProcessOptions = {}) => {
   validate(schemas);
   schemas.forEach((schema) => {
     processRepositoryConfig(schema);
@@ -35,6 +41,7 @@ export default (schemas: Schema[] = []) => {
   });
   // Second pass: validate and resolve mapsTo (needs all schemas)
   processMapsTo(schemas);
+  if (options.rubricIds) validateRubricRefs(schemas, options.rubricIds);
   return schemas;
 };
 
@@ -145,6 +152,23 @@ function processActivityRelationships(activity: ActivityConfig) {
     });
   }
   return relationships;
+}
+
+/**
+ * Validate schema `feedback.rubrics` references against the registered
+ * scoring rubric ids - a typo fails the boot, same as mapsTo.
+ */
+function validateRubricRefs(schemas: Schema[], rubricIds: string[]) {
+  const known = new Set(rubricIds);
+  for (const schema of schemas) {
+    for (const id of schema.feedback?.rubrics ?? []) {
+      if (!known.has(id)) {
+        throw new Error(
+          `Schema "${schema.id}": unknown scoring rubric "${id}"`,
+        );
+      }
+    }
+  }
 }
 
 /**

@@ -1,7 +1,8 @@
 <template>
   <VNavigationDrawer
+    :class="{ resizing: isResizing }"
     :model-value="!!asset"
-    :width="lgAndUp ? 480 : 380"
+    :width="width"
     class="asset-sidebar"
     color="surface-container"
     location="right"
@@ -9,6 +10,12 @@
     absolute
     @update:model-value="onModelValue"
   >
+    <div
+      aria-orientation="vertical"
+      class="resize-handle"
+      role="separator"
+      @pointerdown="startResize"
+    />
     <div v-if="asset" class="pa-4">
       <div class="header d-flex align-center ga-1 mb-4">
         <VSpacer />
@@ -72,6 +79,12 @@ const emit = defineEmits<{
 
 const { lgAndUp } = useDisplay();
 
+const { width, isResizing, startResize } = useDrawerResize({
+  side: 'right',
+  storageKey: 'repository:assets-sidebar:width',
+  defaultWidth: () => (lgAndUp.value ? 480 : 380),
+});
+
 const description = ref('');
 const tags = ref<string[]>([]);
 const isCoreSource = ref(false);
@@ -132,6 +145,27 @@ function onModelValue(val: boolean) {
 <style lang="scss" scoped>
 .asset-sidebar {
   text-align: left;
+
+  // Suppress the drawer's width animation while dragging the handle
+  &.resizing {
+    transition-duration: 0s !important;
+  }
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0.3125rem;
+  z-index: 100;
+  cursor: col-resize;
+  touch-action: none;
+
+  &:hover,
+  &:active {
+    background: rgba(var(--v-theme-primary), 0.25);
+  }
 }
 
 .body {

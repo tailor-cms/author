@@ -2,6 +2,8 @@ import { camelCase } from 'lodash-es';
 import { computed } from 'vue';
 import { SCHEMAS } from '@tailor-cms/config';
 
+import { useAuthStore } from './auth';
+
 interface ConfigCookie {
   statsigKey?: string;
   aiUiEnabled?: boolean;
@@ -22,6 +24,10 @@ const parseSchemas = (schemas = '') =>
 export const useConfigStore = defineStore('config', () => {
   const rawConfig = ref({});
   const config = reactive<ConfigCookie>({});
+
+  const isAiAvailable = computed(
+    () => !!useAuthStore().isAdmin && !!config.aiUiEnabled,
+  );
 
   const availableSchemas = computed(() => {
     const availableSchemas = parseSchemas(config.availableSchemas);
@@ -57,6 +63,7 @@ export const useConfigStore = defineStore('config', () => {
     props: readonly(config),
     rawProps: readonly(rawConfig),
     availableSchemas,
+    isAiAvailable,
     oidcLoginText,
   };
 });

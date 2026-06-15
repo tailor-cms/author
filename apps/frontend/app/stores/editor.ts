@@ -1,4 +1,3 @@
-import type { Guideline } from '@tailor-cms/interfaces/schema';
 import { activity as activityUtils, Events } from '@tailor-cms/utils';
 import { filter, flatMap, reduce } from 'lodash-es';
 import { schema } from '@tailor-cms/config';
@@ -17,7 +16,6 @@ export const useEditorStore = defineStore('editor', () => {
   const activityStore = useActivityStore();
   const commentStore = useCommentStore();
   const elementStore = useContentElementStore();
-  const { $ceRegistry } = useNuxtApp();
 
   const repositoryId = computed(() => repositoryStore.repositoryId as number);
   const selectedActivityId = ref<number | null>(null);
@@ -31,18 +29,6 @@ export const useEditorStore = defineStore('editor', () => {
   const selectedActivity = computed(() => {
     if (!selectedActivityId.value) return null;
     return activityStore.findById(selectedActivityId.value);
-  });
-
-  const guidelines = computed(() => {
-    if (!repositoryStore.repository || !selectedActivity.value) return;
-    const { type } = selectedActivity.value;
-    const guidelines = schema.getLevel(type)?.guidelines?.(
-      repositoryStore.repository,
-      contentContainers.value,
-      elementStore.items,
-      $ceRegistry,
-    ) as Guideline[] | undefined;
-    return guidelines;
   });
 
   const rootContainerGroups = computed(() => {
@@ -177,7 +163,6 @@ export const useEditorStore = defineStore('editor', () => {
     canExpandDetailsPanel,
     rootContainerGroups,
     contentContainers,
-    guidelines,
     initialize,
     processCommentEvent,
     unlinkActivity,

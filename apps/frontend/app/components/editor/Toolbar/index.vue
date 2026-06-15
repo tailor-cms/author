@@ -63,14 +63,6 @@
           :users="usersWithActivity"
           :size="32"
         />
-        <VAppBarNavIcon
-          v-if="mdAndDown && !!editorStore.guidelines"
-          color="tertiary"
-          variant="tonal"
-          icon="mdi-format-list-checks"
-          size="small"
-          @click="$emit('toggle-guidelines')"
-        />
       </div>
     </div>
     <ElementToolbarContainer
@@ -107,8 +99,6 @@ withDefaults(defineProps<Props>(), {
   element: null,
 });
 
-defineEmits(['toggle-guidelines']);
-
 const { $schemaService } = useNuxtApp() as any;
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
@@ -116,7 +106,7 @@ const showPublishDiff = computed(() => editorStore.showPublishDiff);
 const notify = useNotification();
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
-const { mdAndUp, mdAndDown } = useDisplay();
+const { mdAndUp } = useDisplay();
 
 const activity = computed(() => editorStore.selectedActivity);
 const config = computed(
