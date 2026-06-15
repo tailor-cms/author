@@ -83,12 +83,15 @@ function createAssetParser() {
 
 function queryStream(Model, { where, transaction }) {
   where = mapKeys(where, (_, key) => Model.rawAttributes[key].field);
-  // Select only mapped model columns instead of `SELECT *`. Generated
-  // columns (e.g. `content_element.search_vector`) have no model attribute,
-  // so a `*` export leaks them into the archive and breaks reimport:
-  // `normalize` can't map an unknown column, and the value can't be inserted
-  // back into a `GENERATED ALWAYS` column.
-  const attributes = Object.values(Model.rawAttributes).map((it) => it.field);
+  // Select real backing columns instead of `SELECT *`. Excludes generated
+  // columns (e.g. `content_element.search_vector`) which have no model
+  // attribute and break reimport (`normalize` can't map them, and they
+  // can't be inserted into a `GENERATED ALWAYS` column), while skipping
+  // VIRTUAL attributes (e.g. `activity.isTrackedInWorkflow`) that have no
+  // column at all - selecting those would throw "column does not exist".
+  const attributes = Object.values(Model.rawAttributes)
+    .filter((it) => !(it.type && it.type.key === 'VIRTUAL'))
+    .map((it) => it.field);
   const select = Model.queryGenerator.selectQuery(Model.tableName, {
     attributes,
     where,
