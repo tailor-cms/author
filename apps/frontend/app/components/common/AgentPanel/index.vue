@@ -3,7 +3,6 @@
     <VNavigationDrawer
       v-model="isPanelOpen"
       :class="{ resizing: isResizing }"
-      :mobile-breakpoint="OVERLAY_BELOW_WIDTH"
       :width="width"
       class="agent-drawer"
       border="none"
@@ -83,10 +82,6 @@ import { useAgentStatusRotation } from './composables/useAgentStatusRotation';
 import { usePanelVisibility } from './composables/usePanelVisibility';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
-
-// Below this viewport width the drawer overlays the content instead of
-// pushing it (mirrors the Lens review sidebar).
-const OVERLAY_BELOW_WIDTH = 1800;
 
 const config = useConfigStore();
 const repositoryStore = useCurrentRepository();
