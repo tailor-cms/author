@@ -3,7 +3,7 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-if="compact"
-        v-tooltip:top="label"
+        v-tooltip:top="{ text: label, openDelay: 500 }"
         v-bind="menuProps"
         :aria-label="label"
         :icon="activeOption!.icon"

@@ -37,7 +37,6 @@
             v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
             aria-label="Collapse sidebar"
             class="ml-2"
-            color="secondary"
             density="comfortable"
             icon="mdi-chevron-double-right"
             size="small"
