@@ -26,7 +26,11 @@
     <div class="text-title-large font-weight-semibold my-2">
       Bonjour! I'm Renoir.
     </div>
-    <VSheet class="text-body-medium text-medium-emphasis" max-width="350">
+    <VSheet
+      class="text-body-medium text-medium-emphasis"
+      color="transparent"
+      max-width="350"
+    >
       Your authoring assistant. Try a slash command, or ask me anything about
       this repository. I see what's open in the editor and can act on it
       directly.

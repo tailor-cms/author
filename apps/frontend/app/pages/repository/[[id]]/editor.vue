@@ -1,5 +1,5 @@
 <template>
-  <div v-if="editorStore.selectedActivity" class="w-100">
+  <div v-if="editorStore.selectedActivity" class="editor-root w-100">
     <VToolbar
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
@@ -18,12 +18,11 @@
           v-if="!showSidebar"
           v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
           class="sidebar-toggle"
-          color="secondary"
+          color="secondary-container"
           aria-label="Open sidebar"
           density="comfortable"
           icon="mdi-chevron-double-right"
           size="small"
-          variant="tonal"
           @click="showSidebar = true"
         />
       </VFadeTransition>
@@ -38,6 +37,19 @@
         v-model="reviewStore.isPanelOpen"
       />
     </VMain>
+    <VFadeTransition>
+      <VBtn
+        v-if="reviewStore.isLensAvailable && !reviewStore.isPanelOpen"
+        v-tooltip:left="{ text: 'Open Lens review', openDelay: 500 }"
+        class="lens-toggle"
+        color="tertiary-container"
+        aria-label="Open Lens review"
+        density="comfortable"
+        icon="mdi-camera-iris"
+        size="small"
+        @click="reviewStore.isPanelOpen = true"
+      />
+    </VFadeTransition>
   </div>
 </template>
 
@@ -126,14 +138,26 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.editor-root {
+  position: relative;
+  height: 100%;
+}
+
 .sidebar-toggle {
-  position: fixed;
-  width: 1.75rem;
+  position: absolute;
+  width: 1.5rem;
   height: 3.5rem;
-  top: 50%;
-  left: 4.6875rem;
-  transform: translateY(-50%);
-  z-index: 1004;
-  border-radius: 0 8px 8px 0;
+  top: 5.5rem;
+  left: 0;
+  border-radius: 0 12px 12px 0;
+}
+
+.lens-toggle {
+  position: absolute;
+  width: 1.5rem;
+  height: 3.5rem;
+  top: 5.5rem;
+  right: 0;
+  border-radius: 12px 0 0 12px;
 }
 </style>

@@ -2,6 +2,19 @@
   <VMenu :content-class="contentClass" :z-index="9100" location="bottom end">
     <template #activator="{ props: menuProps }">
       <VBtn
+        v-if="compact"
+        v-tooltip:top="label"
+        v-bind="menuProps"
+        :aria-label="label"
+        :icon="activeOption!.icon"
+        class="agent-option-menu"
+        density="comfortable"
+        rounded="lg"
+        size="small"
+        variant="tonal"
+      />
+      <VBtn
+        v-else
         v-bind="menuProps"
         :aria-label="label"
         :prepend-icon="activeOption!.icon"
@@ -40,6 +53,7 @@ const props = defineProps<{
   options: OptionMenuItem[];
   label: string;
   contentClass?: string;
+  compact?: boolean;
 }>();
 
 const model = defineModel<T>({ required: true });

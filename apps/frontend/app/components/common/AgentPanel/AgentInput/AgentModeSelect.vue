@@ -1,6 +1,7 @@
 <template>
   <AgentOptionMenu
     v-model="mode"
+    :compact="compact"
     :options="MODE_OPTIONS"
     content-class="agent-panel-menu agent-mode-menu"
     label="Agent mode"
@@ -33,6 +34,8 @@ const MODE_OPTIONS: ModeOption[] = [
     subtitle: 'Read-only - agent can plan but not change anything',
   },
 ];
+
+defineProps<{ compact?: boolean }>();
 
 const mode = defineModel<AgentMode>({ required: true });
 </script>

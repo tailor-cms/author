@@ -17,8 +17,8 @@
       @pointerdown="startResize"
     />
     <div class="sidebar-layout">
-      <div class="sidebar-header px-4 py-3">
-        <div class="d-flex align-center mb-2">
+      <div class="sidebar-header pa-4">
+        <div class="d-flex align-center mb-3">
           <span class="text-title-medium font-weight-bold">
             Review lens
           </span>
@@ -71,7 +71,7 @@
         </VAlert>
         <div
           v-if="reviewStore.isRunning"
-          class="placeholder d-flex flex-column align-center ga-4 pa-6"
+          class="d-flex flex-column align-center ga-4 pa-6 mt-8"
         >
           <VProgressCircular color="tertiary" size="54" width="5" indeterminate />
           <div class="text-title-small text-medium-emphasis text-center mt-4">
@@ -117,28 +117,25 @@
             />
           </VExpansionPanels>
         </template>
-        <div
+        <VEmptyState
           v-else
-          class="placeholder d-flex flex-column align-center ga-4 pa-6"
+          class="justify-start pt-8"
+          color="tertiary"
+          icon="mdi-creation"
+          size="48"
+          text="Get feedback on this content - engagement scoring, what
+            works, and what to improve."
         >
-          <VIcon
-            class="placeholder-icon"
-            color="tertiary"
-            icon="mdi-creation"
-            size="48"
-          />
-          <div class="text-body-medium text-medium-emphasis text-center">
-            Get feedback on this content - engagement scoring, what
-            works, and what to improve.
-          </div>
-          <VBtn
-            color="tertiary"
-            prepend-icon="mdi-creation"
-            text="Analyze content"
-            variant="tonal"
-            @click="reviewStore.requestAnalysis()"
-          />
-        </div>
+          <template #actions>
+            <VBtn
+              color="tertiary"
+              prepend-icon="mdi-creation"
+              text="Analyze content"
+              variant="tonal"
+              @click="reviewStore.requestAnalysis()"
+            />
+          </template>
+        </VEmptyState>
       </div>
     </div>
   </VNavigationDrawer>
@@ -297,13 +294,5 @@ const askAgent = (prompt: string) => {
   &:first-child {
     margin-top: 0;
   }
-}
-
-.placeholder {
-  margin-top: 30%;
-}
-
-.placeholder-icon {
-  opacity: 0.4;
 }
 </style>

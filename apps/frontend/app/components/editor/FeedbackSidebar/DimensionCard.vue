@@ -1,10 +1,15 @@
 <template>
-  <VExpansionPanel bg-color="surface-container-high" elevation="0" rounded="lg">
+  <VExpansionPanel
+    class="border-outline-variant border-sm"
+    bg-color="surface-container-high"
+    elevation="0"
+    rounded="lg"
+  >
     <VExpansionPanelTitle class="pa-3" static>
       <div class="d-flex align-center ga-3 flex-grow-1">
         <VAvatar
           :icon="dimension.icon"
-          color="tertiary"
+          rounded="lg"
           size="34"
           variant="tonal"
         />

@@ -59,7 +59,7 @@ $size: 64px;
     .launcher-head {
       box-shadow:
         0 0 0 3px rgb(var(--v-theme-surface)),
-        0 0 0 5px rgb(var(--v-theme-secondary));
+        0 0 0 5px rgb(var(--v-theme-tertiary));
     }
   }
 }
@@ -85,7 +85,7 @@ $size: 64px;
 
 // While running, the head grows and bobs faster.
 .panel-launcher.is-running {
-  bottom: -1rem;
+  bottom: -0.125rem;
 
   .launcher-head {
     width: 115%;

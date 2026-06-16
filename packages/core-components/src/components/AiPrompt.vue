@@ -3,7 +3,7 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
-        color="secondary"
+        color="tertiary"
         size="small"
         text="AI Prompt"
         variant="tonal"
@@ -13,7 +13,7 @@
       <VBtnToggle
         v-model="promptType"
         class="mb-6"
-        color="secondary"
+        color="tertiary"
         density="compact"
         variant="tonal"
         group

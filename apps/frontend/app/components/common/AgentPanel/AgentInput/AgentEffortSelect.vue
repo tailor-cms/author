@@ -1,6 +1,7 @@
 <template>
   <AgentOptionMenu
     v-model="effort"
+    :compact="compact"
     :options="EFFORT_OPTIONS"
     content-class="agent-panel-menu agent-effort-menu"
     label="Reasoning effort"
@@ -51,6 +52,8 @@ const EFFORT_OPTIONS: EffortOption[] = [
     subtitle: 'Slower; for outlines, comparisons, hard analysis',
   },
 ];
+
+defineProps<{ compact?: boolean }>();
 
 const effort = defineModel<ReasoningEffortLiteral>({ required: true });
 </script>

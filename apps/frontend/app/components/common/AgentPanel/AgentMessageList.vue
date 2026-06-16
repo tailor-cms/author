@@ -1,6 +1,6 @@
 <template>
   <div ref="msgListEl" class="message-list text-left pa-5 ">
-    <AgentEmptyState v-if="!messages.length" />
+    <AgentEmptyState v-if="!messages.length" class="my-auto" />
     <AgentChatMessage
       v-for="(message, i) in messages"
       :key="i"
@@ -53,7 +53,9 @@ defineExpose({ scrollToBottom });
 
 <style lang="scss" scoped>
 .message-list {
+  display: flex;
   flex: 1;
+  flex-direction: column;
   overflow-y: auto;
 
   // Match the system scrollbar to the muted palette

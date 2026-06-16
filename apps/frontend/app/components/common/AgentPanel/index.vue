@@ -1,77 +1,70 @@
 <template>
-  <div
-    v-if="isPanelEnabled"
-    ref="rootEl"
-    class="agent-panel"
-  >
-    <DefinePanelBody>
-      <PanelHeader
-        :is-running="isRunning"
-        :is-expanded="isExpanded"
-        @session:reset="runner.resetSession"
-        @panel:toggle-expand="isExpanded = !isExpanded"
-        @panel:close="closePanel"
-      />
-      <AgentMessageList
-        ref="messageListEl"
-        :messages="messages"
-        :is-running="isRunning"
-        :status-text="activeStatus"
-        :error="runnerError"
-      />
-      <div v-if="pendingQuestion" class="question-host ma-4">
-        <AgentQuestion
-          v-bind="pendingQuestion"
-          @pick="runner.send"
-          @cancel="pendingQuestion = null"
-        />
-      </div>
-      <AgentInput
-        ref="inputEl"
-        v-model="prompt"
-        v-model:mode="mode"
-        v-model:effort="effort"
-        :disabled="isRunning"
-        :focus-chip="focusChip"
-        @autorun="runner.send"
-        @focus="scrollToLatest"
-        @submit="sendPrompt"
-      />
-      <AgentSessionStats
-        v-if="lastTurns != null"
-        :session-id="sessionId"
-        :turns="lastTurns"
-        :tool-count="lastToolCount || 0"
-      />
-    </DefinePanelBody>
-    <VDialog
-      v-model="isFullscreen"
-      fullscreen
-      transition="dialog-bottom-transition"
+  <template v-if="isPanelEnabled">
+    <VNavigationDrawer
+      v-model="isPanelOpen"
+      :class="{ resizing: isResizing }"
+      :mobile-breakpoint="OVERLAY_BELOW_WIDTH"
+      :width="width"
+      class="agent-drawer"
+      border="none"
+      color="transparent"
+      elevation="0"
+      location="right"
+      disable-route-watcher
     >
-      <VCard class="panel-card-full">
-        <div class="panel-body-column">
-          <ReusePanelBody />
+      <div class="agent-drawer-card bg-surface-container-low border-sm">
+        <div
+          aria-orientation="vertical"
+          class="resize-handle"
+          role="separator"
+          @pointerdown="startResize"
+        />
+        <div class="agent-drawer-layout">
+          <PanelHeader
+            :is-running="isRunning"
+            @session:reset="runner.resetSession"
+            @panel:close="closePanel"
+          />
+          <AgentMessageList
+            ref="messageListEl"
+            :messages="messages"
+            :is-running="isRunning"
+            :status-text="activeStatus"
+            :error="runnerError"
+          />
+          <div v-if="pendingQuestion" class="question-host ma-4">
+            <AgentQuestion
+              v-bind="pendingQuestion"
+              @pick="runner.send"
+              @cancel="pendingQuestion = null"
+            />
+          </div>
+          <AgentInput
+            ref="inputEl"
+            v-model="prompt"
+            v-model:mode="mode"
+            v-model:effort="effort"
+            :disabled="isRunning"
+            :focus-chip="focusChip"
+            @autorun="runner.send"
+            @focus="scrollToLatest"
+            @submit="sendPrompt"
+          />
+          <AgentSessionStats
+            v-if="lastTurns != null"
+            :session-id="sessionId"
+            :turns="lastTurns"
+            :tool-count="lastToolCount || 0"
+          />
         </div>
-      </VCard>
-    </VDialog>
-    <Transition name="panel-pop">
-      <VCard
-        v-if="isPanelOpen && !isExpanded"
-        class="panel-card"
-        elevation="5"
-        max-height="68vh"
-        width="580"
-        rounded="xl"
-      >
-        <ReusePanelBody />
-      </VCard>
-    </Transition>
-  </div>
+      </div>
+    </VNavigationDrawer>
+  </template>
 </template>
 
 <script lang="ts" setup>
-import { createReusableTemplate, useLocalStorage } from '@vueuse/core';
+import { useLocalStorage } from '@vueuse/core';
+import { useDisplay } from 'vuetify';
 import { AGENT_MODES, AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import {
   REASONING_EFFORTS,
@@ -91,13 +84,21 @@ import { usePanelVisibility } from './composables/usePanelVisibility';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
 
+// Below this viewport width the drawer overlays the content instead of
+// pushing it (mirrors the Lens review sidebar).
+const OVERLAY_BELOW_WIDTH = 1800;
+
 const config = useConfigStore();
 const repositoryStore = useCurrentRepository();
+const { xlAndUp } = useDisplay();
 
-const [DefinePanelBody, ReusePanelBody] = createReusableTemplate();
-
-const rootEl = ref<HTMLElement | null>(null);
 const inputEl = ref<{ focus: () => void } | null>(null);
+
+const { width, isResizing, startResize } = useDrawerResize({
+  side: 'right',
+  storageKey: 'agent-panel:width',
+  defaultWidth: () => (xlAndUp.value ? 520 : 420),
+});
 const messageListEl = ref<{ scrollToBottom: () => void } | null>(null);
 const prompt = ref('');
 
@@ -133,13 +134,12 @@ if (!(REASONING_EFFORTS as readonly string[]).includes(effort.value)) {
   effort.value = ReasoningEffort.Medium;
 }
 
-const isExpanded = ref(false);
-
 const {
   isOpen: isPanelOpen,
   open: openPanel,
   close: closePanel,
-} = usePanelVisibility({ rootEl, inputEl, isEnabled: isPanelEnabled });
+  toggle: togglePanel,
+} = usePanelVisibility({ inputEl, isEnabled: isPanelEnabled });
 
 const {
   activeStatus,
@@ -166,13 +166,6 @@ const runner = useAgentRunner({
   onRunEnd: stopStatus,
 });
 
-const isFullscreen = computed({
-  get: () => isPanelOpen.value && isExpanded.value,
-  set: (value) => {
-    if (!value) closePanel();
-  },
-});
-
 const {
   isRunning,
   error: runnerError,
@@ -180,10 +173,6 @@ const {
   lastToolCount,
   pendingQuestion,
 } = runner;
-
-watch(isPanelOpen, (open) => {
-  if (!open) isExpanded.value = false;
-});
 
 // Repo switch wipes transient UI state.
 watch(repositoryId, () => {
@@ -207,8 +196,8 @@ async function sendPrompt() {
 const { $eventBus } = useNuxtApp() as any;
 const agentChannel = $eventBus.channel('agent');
 
-const onPanelOpen = () => {
-  if (isPanelEnabled.value) openPanel();
+const onPanelToggle = () => {
+  if (isPanelEnabled.value) togglePanel();
 };
 
 const onPromptSet = ({ prompt: text }: { prompt: string }) => {
@@ -227,69 +216,79 @@ watch(
 onMounted(() => {
   scrollToLatest();
   agentChannel.on('prompt:set', onPromptSet);
-  agentChannel.on('panel:open', onPanelOpen);
+  agentChannel.on('panel:toggle', onPanelToggle);
 });
 
 onBeforeUnmount(() => {
   agentChannel.off('prompt:set', onPromptSet);
-  agentChannel.off('panel:open', onPanelOpen);
+  agentChannel.off('panel:toggle', onPanelToggle);
 });
 </script>
 
 <style lang="scss" scoped>
-.agent-panel {
-  position: fixed;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  z-index: 9000;
+.agent-drawer {
+  text-align: left;
+
+  // Suppress the drawer's width animation while dragging the handle so the
+  // edge tracks the pointer instead of easing behind it.
+  &.resizing {
+    transition-duration: 0s !important;
+  }
+
+  :deep(.v-navigation-drawer__content) {
+    overflow: hidden;
+  }
 }
 
-.panel-card {
-  position: absolute;
-  right: 0;
-  bottom: 0;
+// Floating card inside the drawer: top/right inset gutter mirroring the
+// content card's `mr-3`, rounded top corners, clips its content.
+.agent-drawer-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-}
-
-// Fullscreen (expanded) dialog: card fills the viewport, content is capped
-// to a centered column so chat lines stay readable on wide screens.
-.panel-card-full {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   height: 100%;
+  margin: 0 0.75rem 0 0;
+  border-radius: 24px 24px 0 0;
   overflow: hidden;
+
+  // In the overlay (mobile) layout the panel covers the content full-bleed,
+  // so drop the inset gutter and rounded corners.
+  .agent-drawer.v-navigation-drawer--mobile & {
+    margin: 0;
+    border-radius: 0;
+  }
 }
 
-.panel-body-column {
+.agent-drawer-layout {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   flex-direction: column;
-  width: 100%;
-  max-width: 60rem;
-  min-height: 0; // let the inner scroll area shrink instead of overflowing
+  min-height: 0;
 }
 
-.panel-pop-enter-active,
-.panel-pop-leave-active {
-  transition:
-    opacity 0.2s ease,
-    transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: bottom right;
-}
+// Drag seam over the card's left border, matching the other resizable
+// sidebars: a thin strip that fills with translucent primary on hover/drag.
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0.3125rem;
+  z-index: 100;
+  cursor: col-resize;
+  touch-action: none;
 
-.panel-pop-enter-from,
-.panel-pop-leave-to {
-  opacity: 0;
-  transform: scale(0.85) translateY(12px);
+  &:hover,
+  &:active,
+  .agent-drawer.resizing & {
+    background: rgba(var(--v-theme-primary), 0.25);
+  }
 }
 </style>
 
 <style lang="scss">
 // Vuetify teleports VMenu/VSelect overlays outside the panel DOM - lift
-// them above the panel card (z 9000) so dropdowns aren't clipped behind it.
+// them above the panel drawer so dropdowns aren't clipped behind it.
 .agent-panel-menu {
   z-index: 99999 !important;
 }

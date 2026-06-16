@@ -1,6 +1,6 @@
 <template>
   <VAppBar id="mainAppBar" class="app-bar elevation-0">
-    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pl-5">
+    <NuxtLink :to="{ name: 'catalog' }" class="app-brand ml-5">
       <img
         alt="Tailor logo"
         class="mr-4"
@@ -9,7 +9,7 @@
       />
       <VAppBarTitle class="app-name" text="Tailor" />
     </NuxtLink>
-    <template v-if="!smAndDown">
+    <div v-if="!smAndDown" class="d-flex ga-1 ml-5">
       <VBtn
         v-for="{ name, to } in topLevelRoutes"
         :key="name"
@@ -20,8 +20,11 @@
       >
         <span class="toolbar-route text-truncate">{{ name }}</span>
       </VBtn>
-    </template>
+    </div>
     <template #append>
+      <div v-if="showRenoir" class="app-renoir d-flex align-center mr-2">
+        <PanelLauncher :is-running="isAgentRunning" @open="openAgentPanel" />
+      </div>
       <VMenu
         :close-on-content-click="false"
         attach="#mainAppBar"
@@ -92,15 +95,36 @@ import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
+import { useCurrentRepository } from '@/stores/current-repository';
 import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue';
+import PanelLauncher from '@/components/common/AgentPanel/PanelLauncher.vue';
 
 defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
 
-const { $oidc } = useNuxtApp() as any;
+const { $oidc, $eventBus } = useNuxtApp() as any;
 const config = useConfigStore();
 const authStore = useAuthStore();
+const currentRepositoryStore = useCurrentRepository();
+
+// Renoir (agent launcher) lives in the app bar, but only within the
+// repository workspace where the assistant has content to act on.
+const showRenoir = computed(
+  () => config.isAiAvailable && Boolean(currentRepositoryStore.repository),
+);
+
+const agentChannel = $eventBus.channel('agent');
+
+// Mirrors the agent panel's run state (broadcast on the agent bus).
+const isAgentRunning = ref(false);
+const onRunState = ({ isRunning }: { isRunning: boolean }) => {
+  isAgentRunning.value = isRunning;
+};
+const openAgentPanel = () => agentChannel.emit('panel:toggle');
+
+onMounted(() => agentChannel.on('run:state', onRunState));
+onBeforeUnmount(() => agentChannel.off('run:state', onRunState));
 const topLevelRoutes = computed(() => {
   const items = [
     { name: 'Catalog', to: '/', icon: 'mdi-view-grid-plus-outline' },
@@ -168,7 +192,14 @@ const logout = async () => {
 }
 
 :deep(.v-toolbar__append) {
-  gap: 0.25rem
+  gap: 0.25rem;
+  // Let Renoir's glow/particles spill out of the bar.
+  overflow: visible;
+}
+
+.app-renoir :deep(.panel-launcher) {
+  width: 2.75rem;
+  height: 2.75rem;
 }
 
 :deep(.v-list-item){
