@@ -128,7 +128,7 @@ const Tags = new TailorEntity(Tag, {
 });
 
 export const articleCollection = new TailorCollection({
-  id: 'ARTICLE',
-  name: 'Article',
+  id: 'TEST_COLLECTION',
+  name: 'Test Collection',
   entities: [Articles, Authors, Tags],
 });

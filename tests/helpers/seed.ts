@@ -87,15 +87,19 @@ export const outlineSeed = {
 };
 
 export const collectionSeed = {
-  schema: 'ARTICLE',
+  schema: 'TEST_COLLECTION',
   entities: {
-    ARTICLE: { type: 'ARTICLE/ARTICLE', label: 'Articles', titleLabel: 'Title' },
+    ARTICLE: {
+      type: 'TEST_COLLECTION/ARTICLE',
+      label: 'Articles',
+      titleLabel: 'Title',
+    },
     AUTHOR: {
-      type: 'ARTICLE/AUTHOR',
+      type: 'TEST_COLLECTION/AUTHOR',
       label: 'Authors',
       titleLabel: 'Full name',
     },
-    TAG: { type: 'ARTICLE/TAG', label: 'Tags', titleLabel: 'Name' },
+    TAG: { type: 'TEST_COLLECTION/TAG', label: 'Tags', titleLabel: 'Name' },
   },
 };
 
