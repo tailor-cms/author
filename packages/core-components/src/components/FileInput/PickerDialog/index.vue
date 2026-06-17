@@ -2,6 +2,7 @@
   <TailorDialog
     :model-value="modelValue"
     :header-icon="icon"
+    :theme="$vuetify.theme.global.name"
     width="800"
     paddingless
     @close="onClose"

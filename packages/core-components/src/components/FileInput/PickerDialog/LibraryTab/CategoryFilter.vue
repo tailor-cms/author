@@ -1,7 +1,6 @@
 <template>
   <VChipGroup
     :model-value="modelValue"
-    class="mt-2"
     column
     mandatory
     @update:model-value="emit('update:modelValue', $event)"

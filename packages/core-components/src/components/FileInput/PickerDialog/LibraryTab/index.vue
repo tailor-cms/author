@@ -8,11 +8,26 @@
       hide-details
       @update:model-value="onSearchChange"
     />
-    <CategoryFilter
-      v-if="categoryFilters.length > 1"
-      v-model="selectedCategory"
-      :categories="categoryFilters"
-    />
+    <div class="d-flex align-center mt-2 ga-2">
+      <CategoryFilter
+        v-if="categoryFilters.length > 1"
+        v-model="selectedCategory"
+        :categories="categoryFilters"
+        class="flex-grow-1"
+      />
+      <VSpacer v-else />
+      <VBtnToggle
+        v-model="viewMode"
+        color="secondary"
+        variant="outlined"
+        density="compact"
+        divided
+        mandatory
+      >
+        <VBtn class="pl-5 pr-4" icon="mdi-view-grid" value="grid" size="small" />
+        <VBtn class="pl-4 pr-5" icon="mdi-view-list" value="list" size="small" />
+      </VBtnToggle>
+    </div>
     <div v-if="isLoading && !assets.length" class="d-flex justify-center py-16">
       <VProgressCircular color="primary" size="42" indeterminate />
     </div>
@@ -28,7 +43,8 @@
           : 'Upload assets to see them listed here.'
       "
     />
-    <AssetList
+    <component
+      :is="viewMode === 'grid' ? AssetGrid : AssetList"
       v-else
       :allowed-extensions="allowedExtensions"
       :assets="assets"
@@ -44,7 +60,6 @@
       :length="pageCount"
       :total-visible="5"
       class="mt-2"
-      density="comfortable"
       size="small"
       rounded
     />
@@ -61,10 +76,11 @@ import { computed, inject, onMounted, ref, watch } from 'vue';
 import { debounce } from 'lodash-es';
 import pMinDelay from 'p-min-delay';
 
+import AssetGrid from './AssetGrid.vue';
 import AssetList from './AssetList.vue';
 import CategoryFilter from './CategoryFilter.vue';
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 12;
 const MIN_LOADING_MS = 800;
 
 const ALL_CATEGORIES: { label: string; value: string }[] = [
@@ -90,6 +106,7 @@ const props = withDefaults(
 );
 
 const isLoading = ref(false);
+const viewMode = ref<'grid' | 'list'>('list');
 const searchQuery = ref('');
 const selectedCategory = ref('ALL');
 const page = ref(1);
