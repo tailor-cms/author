@@ -33,13 +33,14 @@
       </div>
     </template>
     <template #actions>
-      <VBtn text="Close" variant="text" @click="emit('close')" />
+      <VBtn :slim="false" text="Close" variant="text" @click="emit('close')" />
       <VBtn
         v-if="editorRoute"
+        :slim="false"
         color="primary"
-        prepend-icon="mdi-pencil-outline"
+        append-icon="mdi-arrow-right"
         text="Open in editor"
-        variant="tonal"
+        variant="flat"
         @click="emit('element:navigate', element, editorRoute)"
       />
     </template>
