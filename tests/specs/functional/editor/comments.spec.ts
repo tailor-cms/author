@@ -46,7 +46,7 @@ test('can remove element comment', async ({ page }) => {
   // Make sure changes are persisted
   await page.reload();
   await element.openComments();
-  await expect(page.getByText('This comment has been deleted')).toBeVisible();
+  await expect(page.getByText('This comment was deleted')).toBeVisible();
 });
 
 test('can resolve element comment', async ({ page }) => {
