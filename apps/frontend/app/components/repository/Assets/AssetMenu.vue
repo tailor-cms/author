@@ -7,6 +7,7 @@
         icon="mdi-dots-vertical"
         size="small"
         variant="text"
+        density="comfortable"
         @click.stop
       />
     </template>
