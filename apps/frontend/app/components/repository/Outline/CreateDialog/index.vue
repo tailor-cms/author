@@ -21,7 +21,7 @@
       <form class="activity-form" @submit.prevent="submitForm">
         <TypeSelect
           :container-id="`#${dialogTestId}`"
-          :disabled="hasSingleTypeOption"
+          :disabled="isTypeLocked"
           :options="taxonomyLevels"
           :value="activity.type"
           @change="activity.type = $event"
@@ -96,6 +96,10 @@ interface Props {
   activatorColor?: string;
   activatorIcon?: string;
   testIdPrefix?: string;
+  // Pre-selected
+  defaultType?: string;
+  // Navigate straight into the editor after creating
+  openInEditor?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -109,6 +113,8 @@ const props = withDefaults(defineProps<Props>(), {
   activatorColor: undefined,
   activatorIcon: 'mdi-folder-plus',
   testIdPrefix: 'repository__createActivity',
+  defaultType: undefined,
+  openInEditor: false,
 });
 
 const emit = defineEmits(['close', 'created', 'expand']);
@@ -144,12 +150,31 @@ const taxonomyLevels = computed<any[]>(() => {
 
 const hasSingleTypeOption = computed(() => taxonomyLevels.value.length === 1);
 
-const defaultModalHeading = computed(() => {
-  const firstTaxonomyOption: any = taxonomyLevels.value[0];
-  return hasSingleTypeOption.value ? `Add ${firstTaxonomyOption.label}` : 'Add';
-});
+// The type picker is locked to a single value when only one type is selectable
+const isDefaultTypeAvailable = computed(() =>
+  taxonomyLevels.value.some((it: any) => it.type === props.defaultType),
+);
 
-const activity = ref(initActivityState(taxonomyLevels.value?.[0]?.type)) as any;
+const isTypeLocked = computed(
+  () => hasSingleTypeOption.value || isDefaultTypeAvailable.value,
+);
+
+// The type the form opens on: the pinned default when selectable, else the first.
+const resolveInitialType = () =>
+  (isDefaultTypeAvailable.value ? props.defaultType : null) ??
+  taxonomyLevels.value?.[0]?.type;
+
+const initialTypeLabel = computed(
+  () =>
+    taxonomyLevels.value.find((it: any) => it.type === resolveInitialType())
+      ?.label ?? '',
+);
+
+const defaultModalHeading = computed(() =>
+  isTypeLocked.value ? `Add ${initialTypeLabel.value}` : 'Add',
+);
+
+const activity = ref(initActivityState(resolveInitialType())) as any;
 
 const metadata = computed(() => {
   if (!activity.value.type) return null;
@@ -180,17 +205,23 @@ const submitForm = handleSubmit(async () => {
       selectedActivity.expandOutlineItemParent(item);
     }
     emit('created', item);
-    currentRepositoryStore.selectActivity(item.id);
     visible.value = false;
+    if (props.openInEditor) {
+      await navigateTo({
+        name: 'editor',
+        params: { id: props.repositoryId, activityId: item.id },
+      });
+    } else {
+      currentRepositoryStore.selectActivity(item.id);
+    }
   } finally {
     submitting.value = false;
   }
 });
 
 watch(visible, (val) => {
-  if (val) return;
-  emit('close');
-  activity.value = initActivityState(taxonomyLevels.value?.[0]?.type);
+  if (!val) emit('close');
+  activity.value = initActivityState(resolveInitialType());
 });
 
 onMounted(() => {

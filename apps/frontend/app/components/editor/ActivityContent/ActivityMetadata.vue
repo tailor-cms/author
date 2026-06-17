@@ -33,8 +33,8 @@ const props = defineProps<{
 }>();
 
 const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
-const activityStore = useActivityStore();
 const notify = useNotification();
+const activityStore = useActivityStore();
 
 const activityConfig = computed(() =>
   $schemaService.getLevel(props.activity.type),

@@ -71,7 +71,7 @@
           @update="updateActivity"
         />
       </div>
-      <div>
+      <div v-if="!repositoryStore.isCollection">
         <ActivityRelationship
           v-for="relationship in config.relationships"
           :key="`${activity.uid}.${relationship.type}`"
@@ -92,6 +92,7 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
 
 import { LinkedIndicator, SourceUsages } from '@/components/repository/Library';
+import { useCurrentRepository } from '@/stores/current-repository';
 import ActivityDiscussion from '../Discussion/index.vue';
 import ActivityRelationship from './ActivityRelationship.vue';
 import ActivityStatus from './ActivityStatus.vue';
@@ -102,6 +103,7 @@ const props = defineProps<{ activity: StoreActivity }>();
 
 const route = useRoute();
 const store = useActivityStore();
+const repositoryStore = useCurrentRepository();
 const notify = useNotification();
 const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
 

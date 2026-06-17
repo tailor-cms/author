@@ -43,10 +43,12 @@
       <VSpacer />
       <CreateDialog
         :anchor="anchor"
+        :default-type="activeEntity"
         :repository-id="currentRepositoryStore.repositoryId as number"
         activator-color="primary"
         activator-icon="mdi-plus"
         variant="flat"
+        open-in-editor
         show-activator
       />
     </template>
@@ -70,7 +72,7 @@
       <VBtn
         v-if="!isFlat"
         :disabled="!!search"
-        :text="isOutlineExpanded ? 'Collapse all' : 'Expand all' "
+        :text="isOutlineExpanded ? 'Collapse all' : 'Expand all'"
         rounded="lg"
         variant="text"
         @click="currentRepositoryStore.toggleOutlineExpand"
@@ -93,18 +95,21 @@
 import { filter, find, last, map } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 
+import type { CollectionSort } from '@/composables/useCollectionEntities';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import LinkContent from '@/components/repository/Library/LinkContent.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-interface CollectionSort {
-  key: 'data.name' | 'createdAt';
-  order: 'asc' | 'desc';
-}
-
 interface SortOption extends CollectionSort {
   title: string;
 }
+
+withDefaults(
+  defineProps<{
+    activeEntity?: string;
+  }>(),
+  { activeEntity: '' },
+);
 
 const search = defineModel<string>('search', { default: '' });
 const sort = defineModel<CollectionSort>('sort');

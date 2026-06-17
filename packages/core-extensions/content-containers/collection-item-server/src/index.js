@@ -6,6 +6,7 @@ const ATTRS = [
   'type',
   'position',
   'parentId',
+  'data',
   'createdAt',
   'updatedAt',
 ];
@@ -17,10 +18,8 @@ function fetch(parent, type) {
 }
 
 /**
- * Resolve function to process static assets in collection item data
- * @param {Object} container - The container with data
- * @param {Function} resolveStatics - Resolves content elements and meta values
- * @returns {Promise<Object>} Container with resolved assets
+ * Resolve static assets (storage:// URLs) embedded in collection item slot
+ * data, delegating each slot value to the shared statics resolver.
  */
 async function resolve(container, resolveStatics) {
   if (container.data) await Promise.all(map(container.data, resolveStatics));

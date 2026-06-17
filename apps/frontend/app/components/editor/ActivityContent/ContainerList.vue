@@ -34,6 +34,7 @@
         @delete:subcontainer="requestContainerDeletion"
         @reorder:element="reorderContentElements"
         @save:element="saveContentElements"
+        @update:activity="activityStore.update"
         @update:container="updateContainer"
         @update:element="(val: any) => saveContentElements([val])"
         @update:subcontainer="activityStore.update"
@@ -108,6 +109,7 @@ const showPublishDiff = computed(() => editorStore.showPublishDiff);
 const isReadonly = computed(
   () => showPublishDiff.value || !!editorStore.selectedActivity?.isLinkedCopy,
 );
+
 const elements = computed(() => contentElementStore.items);
 
 // Filter containers through plugin hooks (e.g., i18n language filtering)

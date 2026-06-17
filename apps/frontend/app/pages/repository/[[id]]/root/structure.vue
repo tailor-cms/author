@@ -10,6 +10,7 @@
           <OutlineToolbar
             v-model:search="filters.search"
             v-model:sort="collectionSort"
+            :active-entity="selectedEntity"
             class="flex-grow-1"
           />
           <VAppBarNavIcon
@@ -21,9 +22,15 @@
         </div>
         <BrokenReferencesAlert />
         <div v-if="isCollection" class="collection-wrapper mt-4">
+          <EntityFilter
+            v-if="hasMultipleEntities"
+            v-model="selectedEntity"
+            :entities="entities"
+            class="mb-4"
+          />
           <CollectionList
             v-if="hasActivities"
-            :activities="filteredActivities"
+            :activities="visibleCollectionItems"
             :sort="collectionSort"
           />
           <VAlert
@@ -105,22 +112,19 @@ import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
 
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
+import type { CollectionSort } from '@/composables/useCollectionEntities';
+import type { StoreActivity } from '@/stores/activity';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import CollectionList from '@/components/repository/Outline/CollectionList.vue';
+import EntityFilter from '@/components/repository/Outline/EntityFilter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
 import Sidebar from '@/components/repository/Sidebar/index.vue';
-import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Filters {
   search: string;
-}
-
-interface CollectionSort {
-  key: 'data.name' | 'createdAt';
-  order: 'asc' | 'desc';
 }
 
 definePageMeta({
@@ -132,11 +136,23 @@ const repositoryStore = useCurrentRepository();
 const { smAndDown } = useDisplay();
 
 const {
+  // hierarchy
   outlineActivities,
   rootActivities,
+  // general
   selectedActivity,
   isCollection,
 } = storeToRefs(repositoryStore);
+
+// collection (inert unless the schema is a collection)
+const { entities, selectedEntity, hasMultipleEntities } =
+  useCollectionEntities();
+
+const visibleCollectionItems = computed(() =>
+  isCollection.value
+    ? filteredActivities.value.filter((it) => it.type === selectedEntity.value)
+    : [],
+);
 
 const reorder = useOutlineReorder();
 const storageService = useStorageService();

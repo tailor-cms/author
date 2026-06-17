@@ -87,6 +87,9 @@ export interface ActivityConfig {
   type: string;
   label: string;
   color: string;
+  // Optional mdi icon (e.g. 'mdi-account-tie'). Used by collection schemas to
+  // visually distinguish entity types ("fences") in the chip filter and list.
+  icon?: string;
   rootLevel?: boolean;
   subLevels?: string[];
   parentTypes?: string[];
@@ -160,10 +163,24 @@ export interface CollectionProp {
   key: string;
   label: string;
   type: string;
+  required?: boolean;
+  defaultValue?: unknown;
   isContentElement: boolean;
   isGradable?: boolean;
-  defaultValue?: unknown;
-  required?: boolean;
+}
+
+/**
+ * Config for a relationship authored via @IsRelationship. `entity` names a
+ * sibling entity ("fence") within the same collection schema; it becomes an
+ * ActivityRelationship on the entry activity during schema processing, with the
+ * linked values stored as `Relationship` pointers in that activity's refs.
+ */
+export interface EntityRelationshipConfig {
+  entity: string;
+  multiple?: boolean;
+  allowEmpty?: boolean;
+  allowCircularLinks?: boolean;
+  placeholder?: string;
 }
 
 export interface ContainerStructure {

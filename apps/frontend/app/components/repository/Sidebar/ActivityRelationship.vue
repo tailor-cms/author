@@ -96,13 +96,7 @@ const selectPlaceholder = computed(() => {
 
 const options = computed(() => {
   if (!repositoryStore.repository) return [];
-  const { allowedTypes: config } = props;
-  const { schema } = repositoryStore.repository;
-  const prefixWithSchema = (type: string) =>
-    type.includes(`${schema}/`) ? type : `${schema}/${type}`;
-  const allowedTypes = config
-    ? config.map((it: string) => prefixWithSchema(it))
-    : [];
+  const allowedTypes = props.allowedTypes ?? [];
   return filterBy(repositoryStore.outlineActivities, (it) => {
     if (allowedTypes.length && !allowedTypes.includes(it.type)) return false;
     if (!props.allowCircularLinks && it.id === props.activity.id) return false;
