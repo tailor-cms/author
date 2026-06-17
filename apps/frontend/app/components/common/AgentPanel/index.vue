@@ -257,8 +257,6 @@ onBeforeUnmount(() => {
   }
 }
 
-// Floating card inside the drawer: top/right inset gutter mirroring the
-// content card's `mr-3`, rounded top corners, clips its content.
 .agent-drawer-card {
   position: relative;
   display: flex;
@@ -267,13 +265,6 @@ onBeforeUnmount(() => {
   margin: 0 0.75rem 0 0;
   border-radius: 24px 24px 0 0;
   overflow: hidden;
-
-  // In the overlay (mobile) layout the panel covers the content full-bleed,
-  // so drop the inset gutter and rounded corners.
-  .agent-drawer.v-navigation-drawer--mobile & {
-    margin: 0;
-    border-radius: 0;
-  }
 }
 
 .agent-drawer-layout {
