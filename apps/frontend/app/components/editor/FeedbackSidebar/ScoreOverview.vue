@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-column ga-4">
-    <div class="d-flex align-center ga-4">
+    <div class="d-flex align-center ga-4 px-2">
       <VProgressCircular
         :model-value="scorePercentage"
         :color="scoreColor"
@@ -29,7 +29,7 @@
         />
       </div>
     </div>
-    <div class="text-body-medium text-medium-emphasis ">
+    <div class="text-body-medium text-medium-emphasis px-2">
       {{ result.overall.summary }}
     </div>
     <div class="radar-chart">

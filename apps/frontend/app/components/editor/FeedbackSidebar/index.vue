@@ -118,18 +118,17 @@
         </template>
         <VEmptyState
           v-else
-          class="justify-start pt-8"
+          class="justify-start pt-16"
           color="tertiary"
           icon="mdi-creation"
           size="48"
+          title="Review this content"
           text="Get feedback on this content - engagement scoring, what
             works, and what to improve."
         >
           <template #actions>
             <VBtn
-              color="tertiary"
-              prepend-icon="mdi-creation"
-              text="Analyze content"
+              text="Analyze"
               variant="tonal"
               @click="reviewStore.requestAnalysis()"
             />
