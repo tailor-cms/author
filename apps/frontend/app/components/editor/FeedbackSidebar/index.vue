@@ -2,6 +2,7 @@
   <VNavigationDrawer
     v-model="isOpen"
     :class="{ resizing: isResizing }"
+    :mobile-breakpoint="LENS_OVERLAY_BELOW_WIDTH"
     :width="width"
     class="sidebar"
     color="surface-container"
@@ -164,7 +165,7 @@ import StrengthsList from './StrengthsList.vue';
 import SuggestionCard from './SuggestionCard.vue';
 import { useConfigStore } from '@/stores/config';
 import { useContentElementStore } from '@/stores/content-elements';
-import { useReviewStore } from '@/stores/review';
+import { LENS_OVERLAY_BELOW_WIDTH, useReviewStore } from '@/stores/review';
 
 const IMPACT_ORDER = { high: 0, medium: 1, low: 2 } as const;
 
