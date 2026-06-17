@@ -85,7 +85,7 @@ const controlsEl = ref<HTMLElement | null>(null);
 const { width: controlsWidth } = useElementSize(controlsEl);
 // Collapse the mode/effort selects to icon-only when the row gets tight,
 // so the controls never wrap onto a second line.
-const compact = computed(() => controlsWidth.value > 0 && controlsWidth.value < 360);
+const compact = computed(() => controlsWidth.value > 0 && controlsWidth.value < 400);
 
 const inputEl = ref<{ focus: () => void } | null>(null);
 const cmdMenuEl = ref<{

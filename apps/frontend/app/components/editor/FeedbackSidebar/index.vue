@@ -136,6 +136,19 @@
       </div>
     </div>
   </VNavigationDrawer>
+  <VFadeTransition>
+    <VBtn
+      v-if="!isOpen"
+      v-tooltip:left="{ text: 'Open Lens review', openDelay: 500 }"
+      aria-label="Open Lens review"
+      class="lens-toggle"
+      color="tertiary-container"
+      density="comfortable"
+      icon="mdi-camera-iris"
+      size="small"
+      @click="isOpen = true"
+    />
+  </VFadeTransition>
 </template>
 
 <script lang="ts" setup>
@@ -220,6 +233,15 @@ const askAgent = (prompt: string) => {
 </script>
 
 <style lang="scss" scoped>
+.lens-toggle {
+  position: absolute;
+  width: 1.5rem;
+  height: 3.5rem;
+  top: 5.5rem;
+  right: 0;
+  border-radius: 12px 0 0 12px;
+}
+
 .sidebar {
   text-align: left;
 

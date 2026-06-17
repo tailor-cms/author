@@ -81,6 +81,19 @@
       </div>
     </div>
   </VNavigationDrawer>
+  <VFadeTransition>
+    <VBtn
+      v-if="!modelValue"
+      v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
+      :icon="activeTabIcon"
+      aria-label="Open sidebar"
+      class="sidebar-toggle"
+      color="secondary-container"
+      density="comfortable"
+      size="small"
+      @click="modelValue = true"
+    />
+  </VFadeTransition>
 </template>
 
 <script lang="ts" setup>
@@ -166,6 +179,11 @@ const metadata = computed(() => {
   return $schemaService.getElementMetadata(schemaId, props.selectedElement);
 });
 
+const activeTabIcon = computed(() => {
+  const active = tabs.value.find((tab: any) => tab.name === selectedTab.value);
+  return active ? `mdi-${active.icon}` : 'mdi-dock-left';
+});
+
 watch(
   () => props.selectedElement,
   () => {
@@ -200,6 +218,15 @@ watch(
   .v-btn--disabled {
     opacity: 0.35;
   }
+}
+
+.sidebar-toggle {
+  position: absolute;
+  width: 1.5rem;
+  height: 3.5rem;
+  top: 5.5rem;
+  left: 0;
+  border-radius: 0 12px 12px 0;
 }
 
 .resize-handle {

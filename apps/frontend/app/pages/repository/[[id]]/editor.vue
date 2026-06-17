@@ -13,43 +13,17 @@
       :selected-element="editorStore.selectedContentElement as ContentElement"
     />
     <VMain class="editor-main">
-      <VFadeTransition>
-        <VBtn
-          v-if="!showSidebar"
-          v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
-          class="sidebar-toggle"
-          color="secondary-container"
-          aria-label="Open sidebar"
-          density="comfortable"
-          icon="mdi-file-tree"
-          size="small"
-          @click="showSidebar = true"
-        />
-      </VFadeTransition>
       <NuxtPage
         v-if="activityId"
         :key="activityId"
         :activity-id="activityId"
         class="activity-content h-100"
       />
-      <FeedbackSidebar
-        v-if="reviewStore.isLensAvailable"
-        v-model="reviewStore.isPanelOpen"
-      />
     </VMain>
-    <VFadeTransition>
-      <VBtn
-        v-if="reviewStore.isLensAvailable && !reviewStore.isPanelOpen"
-        v-tooltip:left="{ text: 'Open Lens review', openDelay: 500 }"
-        class="lens-toggle"
-        color="tertiary-container"
-        aria-label="Open Lens review"
-        density="comfortable"
-        icon="mdi-camera-iris"
-        size="small"
-        @click="reviewStore.isPanelOpen = true"
-      />
-    </VFadeTransition>
+    <FeedbackSidebar
+      v-if="reviewStore.isLensAvailable"
+      v-model="reviewStore.isPanelOpen"
+    />
   </div>
 </template>
 
@@ -141,23 +115,5 @@ onUnmounted(() => {
 .editor-root {
   position: relative;
   height: 100%;
-}
-
-.sidebar-toggle {
-  position: absolute;
-  width: 1.5rem;
-  height: 3.5rem;
-  top: 5.5rem;
-  left: 0;
-  border-radius: 0 12px 12px 0;
-}
-
-.lens-toggle {
-  position: absolute;
-  width: 1.5rem;
-  height: 3.5rem;
-  top: 5.5rem;
-  right: 0;
-  border-radius: 12px 0 0 12px;
 }
 </style>
