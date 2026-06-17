@@ -14,9 +14,9 @@
       />
       <VBtn
         density="comfortable"
-        icon="mdi-close"
+        icon="mdi-chevron-double-right"
         size="small"
-        title="Minimize"
+        title="Collapse sidebar"
         variant="tonal"
         @click="$emit('panel:close')"
       />

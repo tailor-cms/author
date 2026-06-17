@@ -77,7 +77,7 @@ interface Props {
   density?: VTextField['density'];
   // Dark theme variant for the file preview card
   dark?: boolean;
-  // Minimum width of the input and preview field; defaults to 350px
+  // Minimum width of the input and preview field; optional
   minWidth?: string | number;
   // Maximum width of the input and preview field; optional
   maxWidth?: string | number;
@@ -95,7 +95,6 @@ const props = withDefaults(defineProps<Props>(), {
   density: 'default',
   dark: false,
   maxWidth: '100%',
-  minWidth: '350',
   readonly: false,
 });
 

@@ -8,7 +8,7 @@
       hide-details
       @update:model-value="onSearchChange"
     />
-    <div class="d-flex align-center mt-2 ga-2">
+    <div class="d-flex align-center mt-4 ga-2">
       <CategoryFilter
         v-if="categoryFilters.length > 1"
         v-model="selectedCategory"
@@ -51,7 +51,7 @@
       :class="{ 'opacity-70': isLoading }"
       :multiple="multiple"
       :selected-ids="selectedIds"
-      class="mt-2"
+      class="mt-4"
       @update:selected="onSelectionChange"
     />
     <VPagination
@@ -59,7 +59,8 @@
       v-model="page"
       :length="pageCount"
       :total-visible="5"
-      class="mt-2"
+      class="mt-4"
+      density="comfortable"
       size="small"
       rounded
     />

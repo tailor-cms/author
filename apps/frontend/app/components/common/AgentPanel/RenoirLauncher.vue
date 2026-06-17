@@ -26,7 +26,7 @@
         variant="contained"
       />
     </VBtn>
-    <VDivider class="renoir-divider my-4 mx-3" vertical />
+    <VDivider class="renoir-divider my-5 mx-3" opacity="0.2" vertical />
   </template>
 </template>
 

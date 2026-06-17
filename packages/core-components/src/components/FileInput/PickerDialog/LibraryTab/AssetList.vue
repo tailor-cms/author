@@ -2,7 +2,7 @@
   <VList
     :selected="selectedIds"
     :select-strategy="multiple ? 'leaf' : 'single-leaf'"
-    class="asset-list py-0"
+    class="asset-list d-flex flex-column py-0 ga-2"
     @update:selected="emit('update:selected', $event)"
   >
     <VListItem
@@ -11,8 +11,8 @@
       :disabled="!isCompatible(asset)"
       :value="asset.id"
       color="secondary"
-      class="bg-surface-container-low pa-2 mb-1"
-      rounded
+      class="bg-surface-container-low py-2 px-3"
+      rounded="lg"
     >
       <template #prepend>
         <VAvatar rounded="lg" size="40">

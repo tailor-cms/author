@@ -2,7 +2,6 @@
   <VNavigationDrawer
     v-model="isOpen"
     :class="{ resizing: isResizing }"
-    :mobile-breakpoint="OVERLAY_BELOW_WIDTH"
     :width="width"
     class="sidebar"
     color="surface-container"
@@ -155,9 +154,6 @@ import { useContentElementStore } from '@/stores/content-elements';
 import { useReviewStore } from '@/stores/review';
 
 const IMPACT_ORDER = { high: 0, medium: 1, low: 2 } as const;
-
-// Below this viewport width the drawer overlays the content
-const OVERLAY_BELOW_WIDTH = 1800;
 
 const { $eventBus } = useNuxtApp() as any;
 const { xlAndUp } = useDisplay();

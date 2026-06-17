@@ -6,7 +6,7 @@
       :disabled="!isCompatible(asset)"
       :color="selectedIds.includes(asset.id) ? 'secondary' : undefined"
       :variant="selectedIds.includes(asset.id) ? 'tonal' : 'flat'"
-      class="asset-card bg-surface-container-low pa-2"
+      class="asset-card bg-surface-container-low pa-3"
       rounded="lg"
       @click="toggle(asset)"
     >

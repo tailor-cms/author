@@ -21,7 +21,7 @@
           color="secondary-container"
           aria-label="Open sidebar"
           density="comfortable"
-          icon="mdi-chevron-double-right"
+          icon="mdi-file-tree"
           size="small"
           @click="showSidebar = true"
         />
