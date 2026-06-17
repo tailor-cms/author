@@ -52,10 +52,10 @@
           :computed-at="result?.computedAt"
           :is-running="reviewStore.isRunning"
           :is-stale="status?.isStale ?? false"
-          class="mt-2 mx-1"
+          class="mt-3 mx-1"
         />
       </div>
-      <div class="sidebar-body pa-4 d-flex flex-column ga-3">
+      <div class="sidebar-body px-4 d-flex flex-column ga-3">
         <VAlert
           v-if="status?.status === 'failed'"
           color="error"
