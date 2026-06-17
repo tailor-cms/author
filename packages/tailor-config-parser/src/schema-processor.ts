@@ -37,9 +37,11 @@ export default (schemas: Schema[] = [], options: ProcessOptions = {}) => {
       it.type = processType(schema, it.type);
     });
     schema.structure.forEach((it) => processActivityConfig(schema, it));
-    if (schema.collection) processCollectionConfig(schema.contentContainers[0]);
+    if (schema.collection) {
+      schema.contentContainers.forEach((it) => processCollectionConfig(it));
+    }
   });
-  // Second pass: validate and resolve mapsTo (needs all schemas)
+  // Second pass: validate and resolve cross-references (needs all schemas)
   processMapsTo(schemas);
   if (options.rubricIds) validateRubricRefs(schemas, options.rubricIds);
   return schemas;
@@ -67,18 +69,12 @@ function processActivityConfig(schema: Schema, activity: ActivityConfig) {
     processType(schema, type),
   );
   activity.parentTypes = resolveParentTypes(schema, activity);
-  activity.relationships = processActivityRelationships(activity);
+  activity.relationships = processActivityRelationships(schema, activity);
   activity.meta = activity.meta || [];
   normalizeFileMeta(activity.meta);
   const hasNameMeta = find(activity.meta, { key: 'name' });
   if (!hasNameMeta) {
-    activity.meta.unshift({
-      key: 'name',
-      type: 'TEXTAREA',
-      label: 'Name',
-      placeholder: 'Click to add...',
-      validate: { required: true, min: 2, max: 250 },
-    });
+    activity.meta.unshift(buildNameMeta(schema, activity));
   }
   activity.defaultMeta = getMetaDefaults(activity.meta);
   // Legacy support, remove after migrating exam container
@@ -97,9 +93,52 @@ function resolveParentTypes(schema: Schema, activityConfig: ActivityConfig) {
 }
 
 function processCollectionConfig(container: ContentContainerConfig) {
-  const config = container.config ?? [];
+  // A slot flagged `isTitle` becomes the entry activity's `name` meta (see
+  // buildNameMeta); drop it here so it isn't also rendered as a content slot.
+  const config = ((container.config ?? []) as any[]).filter((it) => !it.isTitle);
+  container.config = config;
   const inputs = config.filter((it: any) => it.IsInput) as Metadata[];
   normalizeFileMeta(inputs);
+}
+
+/**
+ * Build the entry activity's `name` meta. For a collection whose item type
+ * flags one of its slots `isTitle`, that slot defines the title - so the record
+ * itself defines its title, edited like any other activity metadata (creation
+ * dialog + editor details panel). Otherwise falls back to a generic Name.
+ */
+function buildNameMeta(schema: Schema, activity: ActivityConfig): Metadata {
+  const titleProp = schema.collection ? findTitleProp(schema, activity) : null;
+  if (titleProp) {
+    return {
+      key: 'name',
+      type: titleProp.type,
+      label: titleProp.label,
+      ...(titleProp.placeholder && { placeholder: titleProp.placeholder }),
+      validate: titleProp.validate ?? { required: true },
+    };
+  }
+  return {
+    key: 'name',
+    type: 'TEXTAREA',
+    label: 'Name',
+    placeholder: 'Click to add...',
+    validate: { required: true, min: 2, max: 250 },
+  };
+}
+
+// Find title prop for collection entity.
+// Each entity type is defined by an activity's content container.
+// Each entity type can specify one title.
+function findTitleProp(schema: Schema, activity: ActivityConfig): any {
+  for (const type of activity.contentContainers ?? []) {
+    const container = find(schema.contentContainers, { type });
+    const titleProp = ((container?.config ?? []) as any[]).find(
+      (it) => it.isTitle,
+    );
+    if (titleProp) return titleProp;
+  }
+  return null;
 }
 
 function processelementMetaConfig(elementMeta: any) {
@@ -137,7 +176,7 @@ function getMetaDefaults(meta: Metadata[]) {
   );
 }
 
-function processActivityRelationships(activity: ActivityConfig) {
+function processActivityRelationships(schema: Schema, activity: ActivityConfig) {
   const { hasPrerequisites, relationships = [] } = activity;
   if (hasPrerequisites && !find(relationships, { type: 'prerequisites' })) {
     relationships.unshift({
@@ -151,6 +190,13 @@ function processActivityRelationships(activity: ActivityConfig) {
       allowInsideLineage: false,
     });
   }
+  // Prefix allowedTypes with the schema id
+  relationships.forEach((relationship) => {
+    if (!relationship.allowedTypes) return;
+    relationship.allowedTypes = relationship.allowedTypes.map((type) =>
+      processType(schema, type),
+    );
+  });
   return relationships;
 }
 

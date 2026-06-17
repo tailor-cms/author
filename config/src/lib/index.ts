@@ -1,10 +1,16 @@
 // Ensure metadata symbol is available
 import './metadata.shim.js';
 
-import type { Metadata } from '@tailor-cms/interfaces/schema';
+import type {
+  ActivityRelationship,
+  AiActivityConfig,
+  EntityRelationshipConfig,
+  Metadata,
+  Schema,
+} from '@tailor-cms/interfaces/schema';
 import type { ContentElementType } from '@tailor-cms/content-element-collection/enum.ts';
-import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import type { MetaInputType } from '@tailor-cms/meta-element-collection/enum.ts';
+import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import { capitalize } from 'lodash-es';
 
 interface Context {
@@ -57,55 +63,138 @@ export function IsInput(
   };
 }
 
-export class TailorCollection {
-  id: string;
-  label: string;
-  props: Array<any>;
+/**
+ * Reference one or more items of a different entity within the same
+ * collection repository.
+ */
+export function IsRelationship(config: EntityRelationshipConfig) {
+  return (_: any, context: Context) => {
+    const meta = context.metadata || {};
+    const propMeta = meta[context.name] || {};
+    meta[context.name] = {
+      ...propMeta,
+      type: 'RELATIONSHIP',
+      isRelationship: true,
+      relationship: { ...config },
+    };
+  };
+}
+
+/**
+ * Maps a relationship prop to an ActivityRelationship on  activity, so
+ * collection relationships reuse the standard refs storage, picker, validation
+ * and publishing.
+ */
+function toActivityRelationship(prop: any): ActivityRelationship {
+  const { entity, multiple, allowEmpty, allowCircularLinks, placeholder } =
+    prop.relationship;
+  return {
+    type: prop.key,
+    label: prop.label,
+    placeholder: placeholder ?? 'Click to select',
+    multiple: multiple ?? false,
+    searchable: true,
+    allowEmpty: allowEmpty ?? true,
+    allowCircularLinks: allowCircularLinks ?? false,
+    allowInsideLineage: true,
+    allowedTypes: [entity],
+  };
+}
+
+interface EntityConfig {
+  // Unprefixed activity type acting as this entity's identity, e.g. 'WORKSHOP'.
+  type: string;
+  label?: string;
+  // mdi icon shown in the entity chip filter and on list rows.
+  icon?: string;
+  // Hex color accent for this entity's items.
+  color?: string;
   embedElementConfig?: ContentElementType[];
+  ai?: AiActivityConfig;
+  isTrackedInWorkflow?: boolean;
+}
+
+/**
+ * A single entity within a collection schema. Compose one or
+ * more into a `TailorCollection`.
+ */
+export class TailorEntity {
+  type: string;
+  label: string;
+  icon?: string;
+  color: string;
+  props: Array<any>;
+  ai?: AiActivityConfig;
+  isTrackedInWorkflow: boolean;
+  embedElementConfig?: ContentElementType[];
+
   constructor(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     entity: Function,
-    config?: {
-      schemaId?: string;
-      label?: string;
-      embedElementConfig?: ContentElementType[];
-    },
+    config: EntityConfig,
   ) {
-    const { schemaId, label, embedElementConfig } = config || {};
-    this.id = schemaId || entity.name.toUpperCase();
-    this.label = label || capitalize(entity.name);
-    this.embedElementConfig = embedElementConfig;
-    const meta = entity[Symbol.metadata] || {} as Record<PropertyKey, any>;
+    const meta = entity[Symbol.metadata] || ({} as Record<PropertyKey, any>);
+    this.type = config.type;
+    this.label = config.label || capitalize(entity.name);
+    this.icon = config.icon;
+    this.color = config.color || '#5187C7';
     this.props = Object.entries(meta).map(([key, val]) => ({ key, ...val }));
+    this.embedElementConfig = config.embedElementConfig;
+    this.ai = config.ai;
+    this.isTrackedInWorkflow = config.isTrackedInWorkflow ?? true;
   }
+}
 
-  toSchema() {
-    const { id, label, props: config, embedElementConfig } = this;
+interface CollectionConfig {
+  id: string;
+  name?: string;
+  description?: string;
+  entities: TailorEntity[];
+}
+
+/**
+ * A flat ("collection") schema aggregating one or more entities. Each
+ * entity becomes a root-level activity type plus its own COLLECTION_ITEM_CONTENT
+ * container, so a single repository can hold several distinct, entity types
+ * that reference each other.
+ */
+export class TailorCollection {
+  constructor(private config: CollectionConfig) {}
+
+  toSchema(): Schema {
+    const { id, name, description, entities } = this.config;
     return {
       id,
-      name: `${label} Collection`,
-      description: `A currated ${label} collection.`,
       collection: true,
+      name: name || capitalize(id),
+      description: description || `A curated ${name || capitalize(id)} collection.`,
       workflowId: 'DEFAULT_WORKFLOW',
-      contentContainers: [
-        {
-          type: ContentContainerType.CollectionItemContent,
-          templateId: ContentContainerType.CollectionItemContent,
-          label,
-          config,
-          ...(embedElementConfig && { embedElementConfig }),
-        },
-      ],
-      structure: [
-        {
-          type: `${id}_ENTRY`,
-          label,
+      structure: entities.map((entity) => {
+        const relationships = entity.props
+          .filter((prop) => prop.isRelationship)
+          .map(toActivityRelationship);
+        return {
+          type: entity.type,
+          label: entity.label,
+          ...(entity.icon && { icon: entity.icon }),
+          color: entity.color,
           rootLevel: true,
-          isTrackedInWorkflow: true,
-          color: '#5187C7',
-          contentContainers: [ContentContainerType.CollectionItemContent],
-        },
-      ],
+          isTrackedInWorkflow: entity.isTrackedInWorkflow,
+          contentContainers: [`${entity.type}_CONTENT`],
+          ...(relationships.length && { relationships }),
+          ...(entity.ai && { ai: entity.ai }),
+        };
+      }),
+      contentContainers: entities.map((entity) => ({
+        templateId: ContentContainerType.CollectionItemContent,
+        type: `${entity.type}_CONTENT`,
+        label: entity.label,
+        config: entity.props.filter((prop) => !prop.isRelationship),
+        ...(entity.embedElementConfig && {
+          embedElementConfig: entity.embedElementConfig,
+        }),
+        ...(entity.ai && { ai: entity.ai }),
+      })),
     };
   }
 }
