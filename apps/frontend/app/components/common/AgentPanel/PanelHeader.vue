@@ -1,7 +1,7 @@
 <template>
   <VSheet class="panel-header pa-4" color="transparent">
     <div class="d-flex align-center ga-2">
-      <span class="text-title-medium font-weight-bold">Renoir</span>
+      <span class="text-title-medium font-weight-bold ml-1">Renoir</span>
       <VSpacer />
       <VBtn
         :disabled="isRunning || !hasMessages"
