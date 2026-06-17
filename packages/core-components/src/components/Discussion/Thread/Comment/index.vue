@@ -30,6 +30,7 @@
           <VTextarea
             v-model.trim="contentInput"
             :error-messages="errors.message"
+            density="comfortable"
             class="comment-editor"
             rows="3"
             variant="outlined"
@@ -42,10 +43,10 @@
           <span class="d-flex justify-end mt-3 ga-2">
             <VBtn size="small" text="Cancel" variant="text" @click="reset" />
             <VBtn
-              prepend-icon="mdi-check"
+              color="primary"
               size="small"
               text="Save"
-              variant="tonal"
+              variant="flat"
               @click="save"
             />
           </span>
@@ -132,6 +133,12 @@ watch(() => props.comment, reset, { deep: true });
 
   &-editor.v-textarea {
     margin: 0.75rem 0 0 0;
+
+    // Match the rendered body (text-body-medium, 0.875rem) so toggling edit/view
+    // doesn't resize text. Vuetify's .v-field hardcodes 16px.
+    :deep(.v-field) {
+      font-size: 0.875rem;
+    }
   }
 }
 </style>

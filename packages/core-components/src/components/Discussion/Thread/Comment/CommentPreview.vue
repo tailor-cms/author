@@ -1,6 +1,6 @@
 <template>
-  <div :class="{ resolved: isResolved }" class="content mt-1 text-body-large">
-    <span v-if="isDeleted" class="deleted font-italic">
+  <div :class="{ resolved: isResolved }" class="content mt-1 text-body-medium">
+    <span v-if="isDeleted" class="deleted">
       This comment was deleted.
     </span>
     <template v-else>

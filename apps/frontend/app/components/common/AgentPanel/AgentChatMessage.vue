@@ -155,13 +155,13 @@ const renderedContent = computed(() => {
   }
 
   :deep(.agent-md-link) {
-    color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-secondary));
     text-decoration: underline;
   }
 
   :deep(.agent-md-entity) {
     border-bottom: 1px dashed currentColor;
-    color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-secondary));
     text-decoration: none;
   }
 

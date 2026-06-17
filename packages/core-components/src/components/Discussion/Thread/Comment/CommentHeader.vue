@@ -35,7 +35,7 @@
           variant="text"
         />
       </template>
-      <VList density="compact" min-width="180" nav>
+      <VList density="compact" nav>
         <VListItem
           v-for="{ action, icon, label, color } in options"
           :key="action"
@@ -148,11 +148,6 @@ const options = computed<Option[]>(() => {
     :deep(.editor-link) {
       display: inline-flex;
     }
-  }
-
-  .actions {
-    flex: none;
-    margin-top: -0.25rem;
   }
 }
 </style>
