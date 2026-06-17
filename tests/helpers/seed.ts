@@ -59,6 +59,18 @@ export const toSeededRepositorySettings = async (
   return { repository, activity };
 };
 
+export const toEmptyCollection = async (page: Page, name?: string) => {
+  const payload = {
+    schema: collectionSeed.schema,
+    name: name || `${faker.lorem.words(2)} ${new Date().getTime()}`,
+    description: faker.lorem.words(4),
+  };
+  const { data: repository } = await REPOSITORY_API.create(payload as any);
+  await page.goto(`/repository/${repository.id}/root/structure`);
+  await page.waitForLoadState('networkidle');
+  return repository;
+};
+
 export const outlineSeed = {
   schema: 'COURSE_SCHEMA',
   group: {
@@ -71,6 +83,19 @@ export const outlineSeed = {
   secondaryPage: {
     title: 'Different Pizza Styles Around the World',
     textContent: 'Click the button below to add content',
+  },
+};
+
+export const collectionSeed = {
+  schema: 'ARTICLE',
+  entities: {
+    ARTICLE: { type: 'ARTICLE/ARTICLE', label: 'Articles', titleLabel: 'Title' },
+    AUTHOR: {
+      type: 'ARTICLE/AUTHOR',
+      label: 'Authors',
+      titleLabel: 'Full name',
+    },
+    TAG: { type: 'ARTICLE/TAG', label: 'Tags', titleLabel: 'Name' },
   },
 };
 

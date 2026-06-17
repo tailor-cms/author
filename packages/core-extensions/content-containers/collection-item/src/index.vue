@@ -11,12 +11,16 @@
         hide-details="auto"
         @update="(e) => (entryMetaValues[meta.key] = e)"
       />
-      <div v-for="input in config" :key="input.key">
+      <div
+        v-for="input in config"
+        :key="input.key"
+        :data-testid="`collection-field-${input.key}`"
+      >
         <Field
           v-if="input.isContentElement"
           v-slot="{ errorMessage }"
           :name="input.key"
-          :rules="required(input.type, input.label)"
+          :rules="required(input)"
           :model-value="containerState[input.key].data"
         >
           <div
@@ -120,9 +124,11 @@ const { validate: validateItems, reset: resetItems } = useValidationProvider();
 const ceRegistry = inject<any>('$ceRegistry');
 const schemaService = inject<any>('$schemaService');
 
-const required = (type: string, label: string) => (data: unknown) => {
-  const isEmpty = ceRegistry.get(type)?.isEmpty;
-  return isEmpty?.(data) ? `${label} is a required field` : true;
+const required = (input: any) => (data: unknown) => {
+  // Honor the slot's `required` config; optional slots never block saving.
+  if (input.required === false) return true;
+  const isEmpty = ceRegistry.get(input.type)?.isEmpty;
+  return isEmpty?.(data) ? `${input.label} is a required field` : true;
 };
 
 interface Props {
