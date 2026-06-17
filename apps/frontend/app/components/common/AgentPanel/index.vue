@@ -208,6 +208,13 @@ watch(
   { immediate: true },
 );
 
+// Broadcast open state so the app-bar launcher can show an active state.
+watch(
+  isPanelOpen,
+  (value) => agentChannel.emit('open:state', { isOpen: value }),
+  { immediate: true },
+);
+
 onMounted(() => {
   scrollToLatest();
   agentChannel.on('prompt:set', onPromptSet);
