@@ -31,7 +31,7 @@
             :status-text="activeStatus"
             :error="runnerError"
           />
-          <div v-if="pendingQuestion" class="question-host ma-4">
+          <div v-if="pendingQuestion" class="question-host ma-4 mt-0">
             <AgentQuestion
               v-bind="pendingQuestion"
               @pick="runner.send"

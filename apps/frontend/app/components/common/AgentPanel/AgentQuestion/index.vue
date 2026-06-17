@@ -2,7 +2,7 @@
   <VCard
     ref="rootEl"
     class="agent-question"
-    color="surface-container-lowest"
+    color="surface"
     rounded="lg"
     tabindex="0"
     border
