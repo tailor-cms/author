@@ -106,7 +106,7 @@ watch(
 
 <style lang="scss" scoped>
 .label {
-  width: 10rem;
+  width: 11.5rem;
   opacity: 0.7;
 }
 

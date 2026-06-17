@@ -57,6 +57,10 @@
             :tool-count="lastToolCount || 0"
           />
         </div>
+        <ResetSessionDialog
+          v-model="isResetConfirmOpen"
+          @confirm="runner.resetSession"
+        />
       </div>
     </VNavigationDrawer>
   </template>
@@ -76,6 +80,7 @@ import AgentMessageList from './AgentMessageList.vue';
 import AgentQuestion from './AgentQuestion/index.vue';
 import AgentSessionStats from './AgentSessionStats.vue';
 import PanelHeader from './PanelHeader.vue';
+import ResetSessionDialog from './ResetSessionDialog.vue';
 import { useAgentFocus } from './composables/useAgentFocus';
 import { useAgentRunner } from './composables/useAgentRunner';
 import { useAgentSession } from './composables/useAgentSession';
@@ -90,7 +95,6 @@ const { xlAndUp } = useDisplay();
 
 const inputEl = ref<{ focus: () => void } | null>(null);
 
-const showConfirmationDialog = useConfirmationDialog();
 const { width, isResizing, startResize } = useDrawerResize({
   side: 'right',
   storageKey: 'agent-panel:width',
@@ -179,13 +183,12 @@ watch(repositoryId, () => {
   stopStatus();
 });
 
+// Confirm before wiping the transcript (no undo). The header disables
+// this on an empty panel, so there's always a conversation to lose here.
+const isResetConfirmOpen = ref(false);
+
 function resetSession() {
-  showConfirmationDialog({
-    title: 'Start a new session?',
-    message: 'This clears the current conversation. This cannot be undone.',
-    color: 'error',
-    action: () => runner.resetSession(),
-  });
+  isResetConfirmOpen.value = true;
 }
 
 async function sendPrompt() {
