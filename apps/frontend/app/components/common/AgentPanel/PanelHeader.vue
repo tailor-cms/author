@@ -4,12 +4,12 @@
       <span class="text-title-medium font-weight-bold">Renoir</span>
       <VSpacer />
       <VBtn
-        :disabled="isRunning"
+        :disabled="isRunning || !hasMessages"
         density="comfortable"
         icon="mdi-restart"
         size="small"
         title="New session"
-        variant="tonal"
+        variant="text"
         @click="$emit('session:reset')"
       />
       <VBtn
@@ -27,9 +27,11 @@
 <script lang="ts" setup>
 interface Props {
   isRunning?: boolean;
+  // Nothing to reset on an empty transcript, so the action is disabled.
+  hasMessages?: boolean;
 }
 
-withDefaults(defineProps<Props>(), { isRunning: false });
+withDefaults(defineProps<Props>(), { isRunning: false, hasMessages: false });
 
 defineEmits<{
   'session:reset': [];

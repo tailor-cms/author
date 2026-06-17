@@ -21,7 +21,8 @@
         <div class="agent-drawer-layout">
           <PanelHeader
             :is-running="isRunning"
-            @session:reset="runner.resetSession"
+            :has-messages="messages.length > 0"
+            @session:reset="resetSession"
             @panel:close="closePanel"
           />
           <AgentMessageList
@@ -89,11 +90,13 @@ const { xlAndUp } = useDisplay();
 
 const inputEl = ref<{ focus: () => void } | null>(null);
 
+const showConfirmationDialog = useConfirmationDialog();
 const { width, isResizing, startResize } = useDrawerResize({
   side: 'right',
   storageKey: 'agent-panel:width',
   defaultWidth: () => (xlAndUp.value ? 520 : 420),
 });
+
 const messageListEl = ref<{ scrollToBottom: () => void } | null>(null);
 const prompt = ref('');
 
@@ -175,6 +178,15 @@ watch(repositoryId, () => {
   runner.clearRunState();
   stopStatus();
 });
+
+function resetSession() {
+  showConfirmationDialog({
+    title: 'Start a new session?',
+    message: 'This clears the current conversation. This cannot be undone.',
+    color: 'error',
+    action: () => runner.resetSession(),
+  });
+}
 
 async function sendPrompt() {
   const message = prompt.value;
