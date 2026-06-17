@@ -1,21 +1,16 @@
 <template>
   <div class="header">
     <div class="comment-info">
-      <div v-if="comment.author" class="d-flex align-center text-label-large">
-        <span
-          v-tooltip:right="comment.author.label"
-          class="author text-truncate font-weight-semibold"
-        >
-          {{ comment.author.label }}
-        </span>
-        <span v-if="showEditedLabel" class="edited ml-1">(edited)</span>
-      </div>
-      <div class="d-flex align-center">
-        <span
-          v-tooltip:right="formatDate(comment.createdAt, 'dd MMM HH:mm')"
-          class="time text-label-medium text-medium-emphasis"
-        >
-          {{ formatDistanceToNow(comment.createdAt) }} ago
+      <span
+        v-if="comment.author"
+        v-tooltip:right="comment.author.label"
+        class="author text-label-large text-truncate font-weight-semibold"
+      >
+        {{ comment.author.label }}
+      </span>
+      <div class="meta d-flex align-center text-label-medium text-medium-emphasis">
+        <span v-tooltip:right="fullDate" class="time">
+          {{ timeAgo }}
         </span>
         <template v-if="isActivityThread && elementLabel">
           <EditorLink
@@ -28,27 +23,37 @@
         </template>
       </div>
     </div>
-    <div v-if="showOptions && !isEditing" class="actions d-flex ga-1">
-      <VBtn
-        v-for="{ action, icon, label, color } in options"
-        :key="action"
-        :aria-label="label"
-        :color="color"
-        :icon="`mdi-${icon}`"
-        size="x-small"
-        variant="tonal"
-        @click="emit(action)"
-      />
-    </div>
+    <VMenu v-if="showOptions && !isEditing" location="bottom end">
+      <template #activator="{ props: menuProps }">
+        <VBtn
+          v-bind="menuProps"
+          aria-label="Comment actions"
+          class="actions"
+          density="comfortable"
+          icon="mdi-dots-vertical"
+          size="x-small"
+          variant="text"
+        />
+      </template>
+      <VList density="compact" min-width="180" nav>
+        <VListItem
+          v-for="{ action, icon, label, color } in options"
+          :key="action"
+          :base-color="color"
+          :prepend-icon="`mdi-${icon}`"
+          :title="label"
+          @click="emit(action)"
+        />
+      </VList>
+    </VMenu>
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import { computed } from 'vue';
-import { formatDate } from 'date-fns/format';
-import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import type { User } from '@tailor-cms/interfaces/user';
+import { useDateFormat, useTimeAgo } from '@vueuse/core';
 
 import EditorLink from '../../../EditorLink.vue';
 
@@ -79,33 +84,38 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['remove', 'resolve', 'enableEdit']);
 
-const OPTIONS: Record<string, Option> = {
+const OPTIONS = {
   resolve: {
-    label: 'Resolve comment',
+    label: 'Resolve',
     action: 'resolve',
     icon: 'checkbox-outline',
   },
   edit: {
-    label: 'Edit comment',
+    label: 'Edit',
     action: 'enableEdit',
     icon: 'square-edit-outline',
   },
   remove: {
-    label: 'Remove comment',
+    label: 'Remove',
     action: 'remove',
     icon: 'trash-can-outline',
     color: 'error',
   },
-};
+} satisfies Record<string, Option>;
+
+const timeAgo = useTimeAgo(() => props.comment.createdAt);
+const fullDate = useDateFormat(
+  () => props.comment.createdAt,
+  'DD MMM YYYY HH:mm',
+);
 
 const elementUid = computed(() => props.comment.contentElement?.uid);
 const isAuthor = computed(() => props.comment.author?.id === props.user?.id);
 const isDeleted = computed(() => !!props.comment.deletedAt);
-const showEditedLabel = computed(() => !!props.comment.editedAt);
 const showOptions = computed(
   () => isAuthor.value && !isDeleted.value && !props.isResolved,
 );
-const options = computed(() => {
+const options = computed<Option[]>(() => {
   const { resolve, edit, remove } = OPTIONS;
   return props.isActivityThread ? [edit, remove] : [resolve, edit, remove];
 });
@@ -115,30 +125,34 @@ const options = computed(() => {
 .header {
   display: flex;
   align-items: flex-start;
+  gap: 0.25rem;
 
   .comment-info {
     display: flex;
-    flex-direction: column;
     flex: 1;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.375rem;
     min-width: 0;
 
     .author {
-      display: inline-block;
-      max-width: 75%;
+      flex: 0 1 auto;
+      min-width: 0;
     }
 
-    hr.v-divider--vertical {
-      margin: 0.25rem 0.125rem 0.125rem 0.625rem;
+    .meta {
+      flex: none;
+      line-height: 1.2;
     }
 
     :deep(.editor-link) {
       display: inline-flex;
-      align-self: flex-end;
     }
   }
 
   .actions {
-    margin-left: auto;
+    flex: none;
+    margin-top: -0.25rem;
   }
 }
 </style>

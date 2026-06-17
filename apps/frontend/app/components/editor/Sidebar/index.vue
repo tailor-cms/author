@@ -272,7 +272,6 @@ watch(
   }
 
   :deep(.activity-discussion) {
-    margin: 1rem 0;
     padding: 1rem;
     border: none;
   }
