@@ -16,7 +16,7 @@
     "@tailor-cms/core-components": "workspace:*",
     "@tailor-cms/utils": "workspace:*",
     "lodash-es": "*",
-    "vee-validate": "4.14.7",
+    "vee-validate": "^4.15.1",
     "vue": "^3.5.15",
     "vuetify": "^4.1.1"
   }
