@@ -31,6 +31,7 @@
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import { useDisplay } from 'vuetify';
 
 import { useCommentStore } from '@/stores/comments';
 import { useConfigStore } from '@/stores/config';
@@ -62,7 +63,11 @@ provide('$editorState', {
 });
 
 const activityId = ref<number | null>(null);
-const showSidebar = ref(true);
+// Open by default only when the sidebar is permanent (mirrors the drawer's
+// `mobile-breakpoint="md"`); on mobile it stays closed so it never overlays
+// the opened element. Runtime breakpoint crossings are handled by Vuetify.
+const { mdAndUp } = useDisplay();
+const showSidebar = ref(mdAndUp.value);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
 

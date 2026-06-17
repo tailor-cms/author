@@ -170,11 +170,18 @@ import { LENS_OVERLAY_BELOW_WIDTH, useReviewStore } from '@/stores/review';
 const IMPACT_ORDER = { high: 0, medium: 1, low: 2 } as const;
 
 const { $eventBus } = useNuxtApp() as any;
-const { xlAndUp } = useDisplay();
+const { width: viewportWidth, xlAndUp } = useDisplay();
 
 // Default v-model (the prop's wire name stays `modelValue` per Vue's
 // contract); locally named for readability.
 const isOpen = defineModel<boolean>();
+
+// On overlay-width viewports the drawer is temporary; mount it closed so it
+// never covers the editor. Desktop keeps the persisted preference, and
+// Vuetify's resize-watcher handles later breakpoint crossings.
+onMounted(() => {
+  if (viewportWidth.value < LENS_OVERLAY_BELOW_WIDTH) isOpen.value = false;
+});
 
 const { width, isResizing, startResize } = useDrawerResize({
   side: 'right',

@@ -73,7 +73,6 @@
 import type { RouteLocationRaw } from 'vue-router';
 import { debounce } from 'lodash-es';
 import { useLocalStorage } from '@vueuse/core';
-import { useDisplay } from 'vuetify';
 
 import {
   DEFAULT_PAGE_SIZE,
@@ -88,7 +87,6 @@ import ListControls from '@/components/repository/Search/ListControls.vue';
 import PreviewDialog from '@/components/repository/Search/PreviewDialog.vue';
 import Toolbar from '@/components/repository/Search/Toolbar.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
-import { LENS_OVERLAY_BELOW_WIDTH, useReviewStore } from '@/stores/review';
 
 definePageMeta({ name: 'search' });
 
@@ -99,9 +97,6 @@ const { $ceRegistry, $eventBus } = useNuxtApp() as any;
 const route = useRoute();
 const router = useRouter();
 const currentRepositoryStore = useCurrentRepository();
-const reviewStore = useReviewStore();
-
-const { width } = useDisplay();
 
 // Injection context the content-element renderer reads: `ceRegistry`
 // (and `editorState`, for question elements) are required; `editorBus` is
@@ -226,11 +221,6 @@ function clearFilters() {
 }
 
 function openInEditor(_element: SearchElement, editorRoute: RouteLocationRaw) {
-  // If the Lens review panel would overlay the editor at this width
-  // close it first so the opened element isn't hidden behind it.
-  if (reviewStore.isPanelOpen && width.value < LENS_OVERLAY_BELOW_WIDTH) {
-    reviewStore.isPanelOpen = false;
-  }
   navigateTo(editorRoute);
 }
 
