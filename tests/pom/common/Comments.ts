@@ -7,6 +7,7 @@ export class Comment {
   static selector = '.comment';
   readonly page: Page;
   readonly el: Locator;
+  readonly actionsBtn: Locator;
   readonly resolveBtn: Locator;
   readonly editBtn: Locator;
   readonly removeBtn: Locator;
@@ -15,9 +16,12 @@ export class Comment {
   constructor(page: Page, el: Locator) {
     this.page = page;
     this.el = el;
-    this.resolveBtn = el.getByRole('button', { name: 'Resolve comment' });
-    this.editBtn = el.getByRole('button', { name: 'Edit comment' });
-    this.removeBtn = el.getByRole('button', { name: 'Remove comment' });
+    this.actionsBtn = el.getByRole('button', { name: 'Comment actions' });
+    this.resolveBtn = page
+      .locator('.v-list-item')
+      .filter({ hasText: 'Resolve' });
+    this.editBtn = page.locator('.v-list-item').filter({ hasText: 'Edit' });
+    this.removeBtn = page.locator('.v-list-item').filter({ hasText: 'Remove' });
     this.confirmationDialog = new ConfirmationDialog(page, 'Remove comment');
   }
 
@@ -25,18 +29,24 @@ export class Comment {
     return this.el.click();
   }
 
+  openActions() {
+    return this.actionsBtn.click();
+  }
+
   async resolve() {
+    await this.openActions();
     await this.resolveBtn.click();
     await expect(this.page.getByText('Marked as resolved')).toBeVisible();
     await expect(this.page.getByRole('button', { name: 'Undo' })).toBeVisible();
   }
 
-  toggleEdit() {
-    return this.editBtn.click();
+  async toggleEdit() {
+    await this.openActions();
+    await this.editBtn.click();
   }
 
   async edit(content: string) {
-    await this.editBtn.click();
+    await this.toggleEdit();
     // After clicking edit, CommentPreview unmounts (v-if) removing the
     // comment text. The hasText filter on this.el stops matching, so
     // target the editor directly via the unique .comment-editor class.
@@ -48,6 +58,7 @@ export class Comment {
   }
 
   async remove() {
+    await this.openActions();
     await this.removeBtn.click();
     await this.confirmationDialog.confirm();
     await expect(this.el).not.toBeVisible();
