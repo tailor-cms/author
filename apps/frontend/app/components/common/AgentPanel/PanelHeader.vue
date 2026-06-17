@@ -14,7 +14,7 @@
       />
       <VBtn
         density="comfortable"
-        icon="mdi-chevron-double-right"
+        icon="mdi-close"
         size="small"
         title="Collapse sidebar"
         variant="tonal"

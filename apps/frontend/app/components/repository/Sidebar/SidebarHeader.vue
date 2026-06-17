@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header my-2">
     <div class="options-container d-flex align-center">
       <VBtn
         v-show="!isSoftDeleted"

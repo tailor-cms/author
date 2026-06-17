@@ -17,7 +17,7 @@
       @pointerdown="startResize"
     />
     <div v-if="asset" class="pa-4">
-      <div class="header d-flex align-center ga-1 mb-4">
+      <div class="header d-flex align-center ga-2 mb-4">
         <VSpacer />
         <MetaInspector :asset="asset" />
         <AssetMenu
@@ -31,7 +31,8 @@
           aria-label="Close"
           icon="mdi-close"
           size="small"
-          variant="text"
+          variant="tonal"
+          density="comfortable"
           @click="emit('close')"
         />
       </div>
