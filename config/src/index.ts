@@ -21,7 +21,6 @@ export { processElementConfig } from '@tailor-cms/config-parser';
 export const SCHEMAS = processSchemas(
   [
     CourseSchema,
-    HeasSchema,
     PartnerTrainingSchema,
     PartnerTrainingV2Schema,
     FeedSchema,
