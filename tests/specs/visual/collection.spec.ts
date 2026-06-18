@@ -23,7 +23,6 @@ test.describe('Collection visuals', () => {
       'The Origins of Pizza',
     );
     await editor.fillRichText('description', 'A short history of pizza.');
-    await editor.contentElement('body').fill('Pizza began in Naples.');
     await percySnapshot(page, 'Collection - entity editor');
   });
 });
