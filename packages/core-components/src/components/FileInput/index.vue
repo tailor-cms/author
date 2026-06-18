@@ -54,8 +54,9 @@ import type { VTextField } from 'vuetify/components';
 defineOptions({ inheritAttrs: false });
 
 interface Props {
-  // Current value: a storage:// URI (signed for preview) or an external URL
-  // (rendered as-is). Internal/external is decided by the storage:// prefix.
+  // Current value: a storage reference (storage:// URI or a bare storage key,
+  // both signed for preview) or an external URL (rendered as-is). External is
+  // detected by the http(s):// scheme; everything else is treated as a key.
   fileKey?: string;
   // Display name; falls back to parsing from fileKey
   fileName?: string;
@@ -120,9 +121,10 @@ const acceptedFileTypes = computed(() =>
   props.allowedExtensions.join(','),
 );
 
-const isStorageAsset = computed(
-  () => props.fileKey?.startsWith('storage://') ?? false,
-);
+// External URLs are rendered as-is; any other value (storage:// URI or a bare
+// storage key) is a storage reference that gets stripped and signed. Testing
+// the http(s) scheme positively tolerates the prefix being present or not.
+const isExternalUrl = computed(() => /^https?:\/\//.test(props.fileKey || ''));
 
 // Normalize storage:// URI to bare key
 const resolvedFileKey = computed(
@@ -161,15 +163,15 @@ watch(
   async ([key, propUrl]) => {
     if (!isPreviewEnabled.value || !key) return;
     if (propUrl) return;
-    // External URLs are rendered as-is; only storage:// assets need signing.
-    if (!isStorageAsset.value) {
+    // External URLs are rendered as-is; storage references need signing.
+    if (isExternalUrl.value) {
       internalPublicUrl.value = key;
       return;
     }
     internalPublicUrl.value = '';
     isLoadingPublicUrl.value = true;
     try {
-      internalPublicUrl.value = key ? await storageService?.getUrl(key) : '';
+      internalPublicUrl.value = await storageService?.getUrl(key);
     } finally {
       isLoadingPublicUrl.value = false;
     }
