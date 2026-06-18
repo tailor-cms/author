@@ -8,13 +8,14 @@
     >
       <VBtn
         v-tooltip:bottom="'Clear selection'"
+        aria-label="Clear selection"
         icon="mdi-close"
         size="small"
         variant="text"
         density="comfortable"
         @click="$emit('clear')"
       />
-      <span class="text-label-large font-weight-semibold">
+      <span class="selection-count text-label-large font-weight-semibold">
         {{ selected.size }} selected
       </span>
       <VBtn

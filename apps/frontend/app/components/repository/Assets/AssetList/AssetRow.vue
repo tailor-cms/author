@@ -8,8 +8,8 @@
     <VCol cols="auto" class="px-1">
       <div
         :aria-checked="isSelected"
-        :class="{ 'asset-lead--reveal': isSelected }"
-        class="asset-lead"
+        :class="{ selected: isSelected }"
+        class="asset-select"
         role="checkbox"
         tabindex="0"
         @click.stop="emit('toggle', asset)"
@@ -17,8 +17,8 @@
         @keydown.space.prevent="emit('toggle', asset)"
       >
         <VAvatar
-          class="asset-lead__avatar"
           color="surface-container-low"
+          class="thumbnail"
           size="40"
           rounded="lg"
         >
@@ -28,12 +28,11 @@
             size="24"
           />
         </VAvatar>
-        <VCheckboxBtn
-          :model-value="isSelected"
-          class="asset-lead__check"
-          color="primary"
-          density="compact"
-          tabindex="-1"
+        <VIcon
+          :color="isSelected ? 'primary' : undefined"
+          :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
+          class="checkbox"
+          size="24"
         />
       </div>
     </VCol>
@@ -132,14 +131,10 @@ const emit = defineEmits<{
   }
 }
 
-// Gmail/Contacts swap: the type avatar and the checkbox share one leading
-// slot. Avatar at rest; the checkbox takes over on row hover/focus, when
-// selected, or once select mode latches — so there's no gap and no shift, and
-// the whole slot is the click target (works on touch, where hover is absent).
-.asset-lead {
+.asset-select {
   position: relative;
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   cursor: pointer;
   border-radius: 8px;
 
@@ -147,32 +142,24 @@ const emit = defineEmits<{
     outline: 2px solid rgb(var(--v-theme-primary));
     outline-offset: 2px;
   }
+
+  .thumbnail, .checkbox {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    transition: opacity 0.15s ease;
+  }
+
+  .checkbox {
+    opacity: 0;
+    pointer-events: none;
+  }
 }
 
-.asset-lead__avatar,
-.asset-lead__check {
-  position: absolute;
-  inset: 0;
-  transition: opacity 0.15s ease;
-}
-
-.asset-lead__check {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.asset-row:hover .asset-lead__check,
-.asset-lead:focus-visible .asset-lead__check,
-.asset-lead--reveal .asset-lead__check {
-  opacity: 1;
-}
-
-.asset-row:hover .asset-lead__avatar,
-.asset-lead:focus-visible .asset-lead__avatar,
-.asset-lead--reveal .asset-lead__avatar {
-  opacity: 0;
+.asset-row:hover,
+.asset-select:focus-visible,
+.asset-select.selected {
+  .checkbox { opacity: 1; }
+  .thumbnail { opacity: 0; }
 }
 </style>

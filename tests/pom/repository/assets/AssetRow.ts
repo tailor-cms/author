@@ -15,7 +15,7 @@ export class AssetRow {
   constructor(page: Page, el: Locator) {
     this.page = page;
     this.el = el;
-    this.checkbox = el.locator('.v-checkbox-btn');
+    this.checkbox = el.locator('.asset-select');
     this.nameEl = el.getByTestId('assetRow_name');
     this.typeChip = el.getByTestId('assetRow_type');
     this.menuBtn = el.getByRole('button', { name: 'Actions' });
