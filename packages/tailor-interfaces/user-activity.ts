@@ -17,7 +17,8 @@ export interface UserActivityContext {
   repositoryId: number;
   // Optional sub-focus within the repository.
   activityId?: number;
-  elementId?: number;
+  // Content element in focus, identified by its uid.
+  elementId?: string;
   // Forward-compatible: clients may carry additional focus keys
   // (page, view, ...) that the server stores verbatim and matches
   // structurally on end.

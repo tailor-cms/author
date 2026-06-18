@@ -6,6 +6,7 @@ import {
   Int,
   RepositoryScopedParams,
   Timestamp,
+  Uid,
 } from '#shared/request/schemas.ts';
 import { UserSummary } from '#app/user/schemas/entity.ts';
 
@@ -23,7 +24,8 @@ export const UserActivityContext = z
     `),
     repositoryId: Int().describe('Repository the context is scoped to.'),
     activityId: Int().optional().describe('Outline activity in focus.'),
-    elementId: Int().optional().describe('Content element in focus.'),
+    elementId: Uid('Content element in focus, identified by its uid.')
+      .optional(),
   })
   .meta({ id: 'UserActivityContext' })
   .describe('A single focus context attached to a user in the feed.');
