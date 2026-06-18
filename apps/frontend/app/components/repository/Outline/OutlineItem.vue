@@ -12,7 +12,7 @@
             disabled: isSoftDeleted,
           }"
           :style="{ '--row-accent': config?.color }"
-          class="activity border-outline border-sm"
+          class="activity"
           data-testid="repository__structureActivity"
           @mousedown="selectActivity(activity.id)"
         >
