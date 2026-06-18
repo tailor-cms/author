@@ -120,11 +120,6 @@ const ModuleConfig: ActivityConfig = {
       key: 'color',
       label: 'Test color selection',
     },
-    {
-      type: MetaInputType.HeasRating,
-      key: 'heasRating',
-      label: 'Test HE@S rating',
-    },
   ],
   relationships: [
     {

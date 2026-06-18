@@ -75,15 +75,6 @@ const PageConfig: ActivityConfig = {
     ActivityType.Section,
     ContentContainerType.AssessmentPool,
   ],
-  meta: [
-    {
-      key: 'heasRating',
-      type: MetaInputType.HeasRating,
-      label: 'HE@S rating',
-      reviewable: true,
-      hideOnCreate: true,
-    },
-  ],
 };
 
 const SectionConfig: ContentContainerConfig = {

@@ -9,7 +9,6 @@ import { articleCollection } from './collections/article.collection';
 import { SCHEMA as FeedSchema } from './schemas/feed.schema';
 import { SCHEMA as KnowledgeBase } from './schemas/knowledge-base.schema';
 import { SCHEMA as QASchema } from './schemas/q&a.schema';
-import { SCHEMA as HeasSchema } from './schemas/heas.schema';
 import { SCHEMA as TestSchema } from './schemas/test.schema';
 import { SCHEMA as PartnerTrainingSchema } from './schemas/partner-training.schema';
 import { SCHEMA as ContentLibrarySchema } from './schemas/content-library.schema';
