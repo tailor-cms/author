@@ -87,6 +87,16 @@ const ModuleConfig: ActivityConfig = {
       options: ['Option 1', 'Option 2', 'Option 3'],
     },
     {
+      type: MetaInputType.RadioGroup,
+      key: 'radioGroup',
+      label: 'Test radio group',
+      items: [
+        { value: 'OPT1', label: 'Option 1' },
+        { value: 'OPT2', label: 'Option 2' },
+        { value: 'OPT3', label: 'Option 3' },
+      ],
+    },
+    {
       type: MetaInputType.Switch,
       key: 'switch',
       label: 'Test switch',
