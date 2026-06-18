@@ -2,11 +2,11 @@
   <TailorDialog
     :model-value="modelValue"
     color="error"
-    contained
     header-icon="mdi-restart"
+    title="Start a new session?"
+    contained
     @update:model-value="$emit('update:modelValue', $event)"
   >
-    <template #header>Start a new session?</template>
     <template #body>
       <div class="text-body-medium text-left">
         This clears the current conversation. This cannot be undone.

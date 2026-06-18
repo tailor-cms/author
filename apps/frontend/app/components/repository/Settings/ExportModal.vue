@@ -1,14 +1,17 @@
 <template>
-  <TailorDialog :model-value="true" header-icon="mdi-export" persistent>
-    <template #header>Export {{ repository.name }}</template>
+  <TailorDialog
+    :model-value="true"
+    :title="`Export ${repository.name}`"
+    header-icon="mdi-export"
+    persistent
+  >
     <template #body>
       <VAlert v-bind="status" :text="status.message" variant="tonal" prominent />
     </template>
     <template #actions>
-      <VBtn :slim="false" text="Cancel" variant="text" @click="close" />
+      <VBtn text="Cancel" variant="text" @click="close" />
       <VBtn
         :disabled="status.message !== STATUS.READY.message"
-        :slim="false"
         color="primary"
         text="Download"
         variant="flat"

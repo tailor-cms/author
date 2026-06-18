@@ -193,7 +193,7 @@ onMounted(fetchAssets);
 
 <style lang="scss" scoped>
 .library-tab {
-  padding: 2rem;
+  padding: 1rem;
   padding-bottom: 0;
 }
 </style>

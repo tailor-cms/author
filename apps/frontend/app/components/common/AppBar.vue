@@ -14,8 +14,6 @@
         v-for="{ name, to } in topLevelRoutes"
         :key="name"
         :to="to"
-        min-width="96"
-        variant="text"
         rounded="lg"
       >
         <span class="toolbar-route text-truncate">{{ name }}</span>

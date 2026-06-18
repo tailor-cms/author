@@ -1,6 +1,7 @@
 <template>
   <TailorDialog
     v-model="visible"
+    :title="schema ? `Copy items from ${pluralize(schema.name)}` : 'Copy items'"
     header-icon="mdi-content-copy"
     width="650"
     persistent
@@ -13,9 +14,6 @@
         text="Copy"
         variant="text"
       />
-    </template>
-    <template v-if="schema" #header>
-      Copy items from {{ pluralize(schema.name) }}
     </template>
     <template v-if="schema" #body>
       <div v-if="isCopyingActivities" class="ma-4">
@@ -50,14 +48,12 @@
     <template #actions>
       <VBtn
         :disabled="isCopyingActivities"
-        :slim="false"
         text="Cancel"
         variant="text"
         @click="close"
       />
       <VBtn
         :disabled="!selectedActivities.length || isCopyingActivities"
-        :slim="false"
         :text="copyBtnLabel"
         color="primary"
         variant="flat"

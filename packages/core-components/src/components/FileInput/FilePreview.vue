@@ -88,7 +88,7 @@ withDefaults(defineProps<Props>(), {
   icon: 'mdi-file',
   dark: false,
   maxWidth: '100%',
-  minWidth: '350',
+  minWidth: '287',
   showPreview: false,
   variant: 'outlined',
   density: 'default',

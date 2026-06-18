@@ -94,6 +94,7 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'outlined',
   density: 'default',
   dark: false,
+  minWidth: '287',
   maxWidth: '100%',
   readonly: false,
 });

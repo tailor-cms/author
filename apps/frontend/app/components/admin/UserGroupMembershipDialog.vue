@@ -1,5 +1,11 @@
 <template>
-  <TailorDialog v-model="isVisible" header-icon="mdi-account" persistent>
+  <TailorDialog
+    v-model="isVisible"
+    header-icon="mdi-account"
+    title="Add users to the user group"
+    persistent
+    @submit="submit"
+  >
     <template #activator="{ props: activatorProps }">
       <VBtn
         v-bind="activatorProps"
@@ -11,74 +17,72 @@
         variant="flat"
       />
     </template>
-    <template #header>Add users to the user group</template>
     <template #body>
-      <form novalidate @submit.prevent="submit">
-        <VCombobox
-          ref="emailInputEl"
-          v-model="emailInput"
-          :clear-on-select="false"
-          :error-messages="errors.email"
-          :items="suggestedUsers"
-          class="required mb-4"
-          item-title="email"
-          item-value="email"
-          label="Email"
-          placeholder="Enter email..."
-          variant="outlined"
-          chips
-          clearable
-          closable-chips
-          multiple
-          @update:focused="onEmailInputFocusChange"
-          @update:model-value="onEmailValueChange"
-          @update:search="fetchUsers"
-        />
-        <VSelect
-          v-model="roleInput"
-          :error-messages="errors.role"
-          :items="GROUP_ROLES"
-          :menu-props="{ maxWidth: 420 }"
-          aria-label="Role"
-          class="group-role-select required mt-4 mb-1"
-          label="Role"
-          placeholder="Role..."
-          variant="outlined"
-        >
-          <template #item="{ item, props: itemProps }">
-            <VListItem
-              v-bind="itemProps"
-              :subtitle="item.description"
-              :prepend-icon="item.icon"
-              lines="two"
-            />
-          </template>
-        </VSelect>
-        <VSwitch
-          v-model="skipInviteInput"
-          class="ml-1 mb-1"
-          label="Skip invitation email"
-          hide-details
-        />
-        <div class="text-body-small text-medium-emphasis ml-1 mb-3">
-          Useful for SSO users who don't need a password setup email.
-          You can always send the invite later using Reinvite.
-        </div>
-        <div class="d-flex justify-end pb-2 ga-2">
-          <VBtn
-            :disabled="isSaving"
-            variant="text"
-            text="Cancel"
-            @click="close"
+      <VCombobox
+        ref="emailInputEl"
+        v-model="emailInput"
+        :clear-on-select="false"
+        :error-messages="errors.email"
+        :items="suggestedUsers"
+        class="required mb-4"
+        item-title="email"
+        item-value="email"
+        label="Email"
+        placeholder="Enter email..."
+        variant="outlined"
+        chips
+        clearable
+        closable-chips
+        multiple
+        @update:focused="onEmailInputFocusChange"
+        @update:model-value="onEmailValueChange"
+        @update:search="fetchUsers"
+      />
+      <VSelect
+        v-model="roleInput"
+        :error-messages="errors.role"
+        :items="GROUP_ROLES"
+        :menu-props="{ maxWidth: 420 }"
+        aria-label="Role"
+        class="group-role-select required mt-4 mb-1"
+        label="Role"
+        placeholder="Role..."
+        variant="outlined"
+      >
+        <template #item="{ item, props: itemProps }">
+          <VListItem
+            v-bind="itemProps"
+            :subtitle="item.description"
+            :prepend-icon="item.icon"
+            lines="two"
           />
-          <VBtn
-            :disabled="isSaving"
-            color="primary"
-            type="submit"
-            text="Add"
-          />
-        </div>
-      </form>
+        </template>
+      </VSelect>
+      <VSwitch
+        v-model="skipInviteInput"
+        class="ml-1 mb-1"
+        label="Skip invitation email"
+        hide-details
+      />
+      <div class="text-body-small text-medium-emphasis ml-1 mb-3">
+        Useful for SSO users who don't need a password setup email.
+        You can always send the invite later using Reinvite.
+      </div>
+    </template>
+    <template #actions>
+      <VBtn
+        :disabled="isSaving"
+        variant="text"
+        text="Cancel"
+        @click="close"
+      />
+      <VBtn
+        :disabled="isSaving"
+        color="primary"
+        type="submit"
+        text="Add"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

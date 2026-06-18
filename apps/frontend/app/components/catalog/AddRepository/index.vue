@@ -3,9 +3,11 @@
     v-if="authStore.hasCreateRepositoryAccess"
     v-model="isVisible"
     header-icon="mdi-folder-plus-outline"
+    title="Create"
     width="600"
-    paddingless
     persistent
+    scrollable
+    @submit="createRepository"
   >
     <template #activator="{ props }">
       <VBtn
@@ -19,9 +21,8 @@
         variant="flat"
       />
     </template>
-    <template #header>Create</template>
-    <template #body>
-      <VSheet class="px-5 pb-4">
+    <template #subheader>
+      <div class="px-5 pb-4">
         <VTabs
           v-model="selectedTab"
           selected-class="bg-surface-container-high on-surface"
@@ -41,129 +42,126 @@
             text="Import"
           />
         </VTabs>
-      </VSheet>
-      <form class="pa-4" novalidate @submit.prevent="createRepository">
-        <VAlert
-          :model-value="!!serverError"
-          :text="serverError"
-          class="mt-3 mb-5"
-          icon="mdi-alert"
-          type="error"
-          variant="tonal"
-          closable
-          @click:close="serverError = ''"
-        />
-        <VWindow id="addDialogWindow" v-model="selectedTab">
-          <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
-            <VSelect
-              v-model="schemaInput"
-              :disabled="config.availableSchemas.length === 1"
-              :error-messages="errors.schema"
-              :items="config.availableSchemas"
-              :menu-props="{ attach: '#addDialogWindow' }"
-              class="required"
-              data-testid="type-input"
-              item-title="name"
-              item-value="id"
-              label="Type"
-              placeholder="Select type..."
-              variant="outlined"
-            >
-              <template #item="{ item, props: itemProps }">
-                <VListItem
-                  v-bind="itemProps"
-                  :subtitle="item.description"
-                  class="py-4"
-                />
-              </template>
-            </VSelect>
-          </VWindowItem>
-          <VWindowItem :value="IMPORT_TAB" class="pt-1">
-            <VFileInput
-              v-model="archiveInput"
-              :clearable="false"
-              :error-messages="errors.archive"
-              :label="archiveInput ? 'Selected archive' : 'Select archive'"
-              accept=".tgz"
-              class="mb-2 required"
-              name="archive"
-              prepend-icon=""
-              prepend-inner-icon="mdi-paperclip"
-              variant="outlined"
-            />
-          </VWindowItem>
-        </VWindow>
-        <div class="dialog-subcontainer">
-          <RepositoryNameField
-            class="mb-2"
-            name="name"
-            placeholder="Enter name..."
-          />
-          <VTextarea
-            v-model="descriptionInput"
-            :error-messages="errors.description"
-            class="required"
-            label="Description"
-            placeholder="Enter description..."
-            variant="outlined"
-          />
-          <template v-if="isCreate">
-            <MetaInput
-              v-for="it in schemaMeta"
-              :key="it.key"
-              :meta="it"
-              class="meta-input"
-              is-new
-            />
-          </template>
+      </div>
+    </template>
+    <template #body>
+      <VAlert
+        :model-value="!!serverError"
+        :text="serverError"
+        class="mt-3 mb-5"
+        icon="mdi-alert"
+        type="error"
+        variant="tonal"
+        closable
+        @click:close="serverError = ''"
+      />
+      <VWindow id="addDialogWindow" v-model="selectedTab">
+        <VWindowItem :value="NEW_TAB" class="pt-1 pb-2">
           <VSelect
-            v-show="showUserGroupInput"
-            v-model="groupInput"
-            :error-messages="errors.userGroupIds"
-            :items="authStore.groupsWithCreateRepositoryAccess"
-            class="user-group-select mb-3"
+            v-model="schemaInput"
+            :disabled="config.availableSchemas.length === 1"
+            :error-messages="errors.schema"
+            :items="config.availableSchemas"
+            :menu-props="{ attach: '#addDialogWindow' }"
+            class="required"
+            data-testid="type-input"
             item-title="name"
             item-value="id"
-            label="User Group"
-            placeholder="Select user group..."
+            label="Type"
+            placeholder="Select type..."
             variant="outlined"
-            hide-details
-            chips
-            clearable
-            closable-chips
-            multiple
-          />
-          <AiAssistance
-            v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
-            :description="descriptionInput"
-            :name="values.name"
-            :schema-id="schemaInput"
-            @ai:toggle="isAiEnabled = $event"
-            @ai:outline="aiOutline = $event"
-            @ai:context="aiContext = $event"
-            @ai:indexing="isAiIndexing = $event"
-          />
-        </div>
-        <div class="d-flex justify-end">
-          <VBtn
-            :disabled="isSubmitting"
-            variant="text"
-            @click="handleCancel"
           >
-            Cancel
-          </VBtn>
-          <VBtn
-            :disabled="isAiEnabled && !aiOutline?.length"
-            :loading="isSubmitting"
-            class="ml-2"
-            color="primary"
-            type="submit"
-            variant="flat"
-          >
-            Create
-          </VBtn>
-        </div>
-      </form>
+            <template #item="{ item, props: itemProps }">
+              <VListItem
+                v-bind="itemProps"
+                :subtitle="item.description"
+                class="py-4"
+              />
+            </template>
+          </VSelect>
+        </VWindowItem>
+        <VWindowItem :value="IMPORT_TAB" class="pt-1">
+          <VFileInput
+            v-model="archiveInput"
+            :clearable="false"
+            :error-messages="errors.archive"
+            :label="archiveInput ? 'Selected archive' : 'Select archive'"
+            accept=".tgz"
+            class="mb-2 required"
+            name="archive"
+            prepend-icon=""
+            prepend-inner-icon="mdi-paperclip"
+            variant="outlined"
+          />
+        </VWindowItem>
+      </VWindow>
+      <div class="dialog-subcontainer">
+        <RepositoryNameField
+          class="mb-2"
+          name="name"
+          placeholder="Enter name..."
+        />
+        <VTextarea
+          v-model="descriptionInput"
+          :error-messages="errors.description"
+          class="required"
+          label="Description"
+          placeholder="Enter description..."
+          variant="outlined"
+        />
+        <template v-if="isCreate">
+          <MetaInput
+            v-for="it in schemaMeta"
+            :key="it.key"
+            :meta="it"
+            class="meta-input"
+            is-new
+          />
+        </template>
+        <VSelect
+          v-show="showUserGroupInput"
+          v-model="groupInput"
+          :error-messages="errors.userGroupIds"
+          :items="authStore.groupsWithCreateRepositoryAccess"
+          class="user-group-select mb-3"
+          item-title="name"
+          item-value="id"
+          label="User Group"
+          placeholder="Select user group..."
+          variant="outlined"
+          hide-details
+          chips
+          clearable
+          closable-chips
+          multiple
+        />
+        <AiAssistance
+          v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
+          :description="descriptionInput"
+          :name="values.name"
+          :schema-id="schemaInput"
+          @ai:toggle="isAiEnabled = $event"
+          @ai:outline="aiOutline = $event"
+          @ai:context="aiContext = $event"
+          @ai:indexing="isAiIndexing = $event"
+        />
+      </div>
+    </template>
+    <template #actions>
+      <VBtn
+        :disabled="isSubmitting"
+        text="Cancel"
+        variant="text"
+        @click="handleCancel"
+      />
+      <VBtn
+        :disabled="isAiEnabled && !aiOutline?.length"
+        :loading="isSubmitting"
+        color="primary"
+        text="Create"
+        type="submit"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

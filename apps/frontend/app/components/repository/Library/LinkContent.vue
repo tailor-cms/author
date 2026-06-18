@@ -2,6 +2,7 @@
   <TailorDialog
     v-model="visible"
     header-icon="mdi-link-variant"
+    title="Link existing content"
     width="650"
     persistent
   >
@@ -13,7 +14,6 @@
         variant="tonal"
       />
     </template>
-    <template #header>Link existing content</template>
     <template #body>
       <VAutocomplete
         :items="repositories"
@@ -44,7 +44,6 @@
     <template #actions>
       <VBtn
         :disabled="isLinking"
-        :slim="false"
 
         text="Cancel"
         variant="text"
@@ -53,7 +52,6 @@
       <VBtn
         :disabled="!selectedActivities.length || isLinking"
         :loading="isLinking"
-        :slim="false"
         :text="linkBtnLabel"
         class="ml-2"
         color="primary"

@@ -1,38 +1,37 @@
 <template>
   <TailorDialog
     v-model="isDialogVisible"
+    :title="`${isNewGroup ? 'Create' : 'Edit'} User Group`"
     header-icon="mdi-account-group"
     persistent
+    @submit="submit"
   >
-    <template #header>{{ isNewGroup ? 'Create' : 'Edit' }} User Group</template>
     <template #body>
-      <form class="form" novalidate @submit.prevent="submit">
-        <div class="d-flex justify-center mt-2 mb-7">
-          <GroupAvatar
-            :img-url="logoUrlInput"
-            @save="onAvatarSave"
-            @delete="onAvatarSave('')"
-          />
-        </div>
-        <VTextField
-          v-model="nameInput"
-          :error-messages="errors.name"
-          class="mb-3 required"
-          label="Group name"
-          placeholder="Enter group name..."
-          variant="outlined"
+      <div class="d-flex justify-center mt-2 mb-7">
+        <GroupAvatar
+          :img-url="logoUrlInput"
+          @save="onAvatarSave"
+          @delete="onAvatarSave('')"
         />
-        <div class="d-flex justify-end pb-3 ga-2">
-          <VBtn text="Cancel" variant="text" @click="close" />
-          <VBtn
-            :disabled="!!errors?.length"
-            color="primary"
-            text="Save"
-            type="submit"
-            variant="flat"
-          />
-        </div>
-      </form>
+      </div>
+      <VTextField
+        v-model="nameInput"
+        :error-messages="errors.name"
+        class="mb-3 required"
+        label="Group name"
+        placeholder="Enter group name..."
+        variant="outlined"
+      />
+    </template>
+    <template #actions>
+      <VBtn text="Cancel" variant="text" @click="close" />
+      <VBtn
+        :disabled="!!errors?.length"
+        color="primary"
+        text="Save"
+        type="submit"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

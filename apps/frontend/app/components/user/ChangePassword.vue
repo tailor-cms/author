@@ -1,5 +1,11 @@
 <template>
-  <TailorDialog v-model="isVisible" header-icon="mdi-lock" persistent>
+  <TailorDialog
+    v-model="isVisible"
+    header-icon="mdi-lock"
+    title="Change Password"
+    persistent
+    @submit="submit"
+  >
     <template #activator="{ props }">
       <VBtn
         v-bind="props"
@@ -10,55 +16,51 @@
         variant="tonal"
       />
     </template>
-    <template #header>Change Password</template>
     <template #body>
-      <form novalidate @submit.prevent="submit">
-        <VTextField
-          v-model="currentPasswordInput"
-          :error-messages="errors.currentPassword"
-          class="required mb-4"
-          label="Current password"
-          placeholder="Enter current password..."
-          type="password"
-          variant="outlined"
-        />
-        <VTextField
-          v-model="newPasswordInput"
-          :error-messages="errors.newPassword"
-          class="required mb-4"
-          label="New password"
-          placeholder="Enter new password..."
-          type="password"
-          variant="outlined"
-        />
-        <VTextField
-          v-model="passwordConfirmationInput"
-          :error-messages="errors.passwordConfirmation"
-          class="required mb-4"
-          label="Confirm new password"
-          placeholder="Confirm new password..."
-          type="password"
-          variant="outlined"
-        />
-        <div class="d-flex align-center pl-2 py-4">
-          <NuxtLink :to="{ name: 'forgot-password' }" class="text-body-medium">
-            Forgot password ?
-          </NuxtLink>
-          <VBtn
-            class="ml-auto"
-            text="Cancel"
-            variant="text"
-            @click="close"
-          />
-          <VBtn
-            class="ml-2"
-            color="primary"
-            type="submit"
-            text="Save"
-            variant="flat"
-          />
-        </div>
-      </form>
+      <VTextField
+        v-model="currentPasswordInput"
+        :error-messages="errors.currentPassword"
+        class="required mb-4"
+        label="Current password"
+        placeholder="Enter current password..."
+        type="password"
+        variant="outlined"
+      />
+      <VTextField
+        v-model="newPasswordInput"
+        :error-messages="errors.newPassword"
+        class="required mb-4"
+        label="New password"
+        placeholder="Enter new password..."
+        type="password"
+        variant="outlined"
+      />
+      <VTextField
+        v-model="passwordConfirmationInput"
+        :error-messages="errors.passwordConfirmation"
+        class="required mb-4"
+        label="Confirm new password"
+        placeholder="Confirm new password..."
+        type="password"
+        variant="outlined"
+      />
+    </template>
+    <template #actions>
+      <NuxtLink :to="{ name: 'forgot-password' }" class="text-body-medium">
+        Forgot password ?
+      </NuxtLink>
+      <VSpacer />
+      <VBtn
+        text="Cancel"
+        variant="text"
+        @click="close"
+      />
+      <VBtn
+        color="primary"
+        type="submit"
+        text="Save"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

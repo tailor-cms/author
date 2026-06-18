@@ -1,5 +1,11 @@
 <template>
-  <TailorDialog v-model="isVisible" header-icon="mdi-account" persistent>
+  <TailorDialog
+    v-model="isVisible"
+    header-icon="mdi-account"
+    title="Add user"
+    persistent
+    @submit="submit"
+  >
     <template #activator="{ props }">
       <VBtn
         v-bind="props"
@@ -11,48 +17,44 @@
         variant="flat"
       />
     </template>
-    <template #header>Add user</template>
     <template #body>
-      <form novalidate @submit.prevent="submit">
-        <VCombobox
-          v-model="emailInput"
-          :error-messages="errors.email"
-          :items="suggestedUsers"
-          class="required mb-4"
-          item-title="email"
-          item-value="email"
-          label="Email"
-          placeholder="Enter email..."
-          variant="outlined"
-          @update:search="fetchUsers"
-        />
-        <VSelect
-          v-model="roleInput"
-          :error-messages="errors.role"
-          :items="roles"
-          aria-label="Role"
-          class="role-select required my-4"
-          label="Role"
-          placeholder="Role..."
-          variant="outlined"
-        />
-        <div class="d-flex justify-end pb-2">
-          <VBtn
-            :disabled="isSaving"
-            class="mr-2"
-            text="Cancel"
-            variant="text"
-            @click="close"
-          />
-          <VBtn
-            :disabled="isSaving"
-            color="primary"
-            text="Add"
-            type="submit"
-            variant="flat"
-          />
-        </div>
-      </form>
+      <VCombobox
+        v-model="emailInput"
+        :error-messages="errors.email"
+        :items="suggestedUsers"
+        class="required mb-4"
+        item-title="email"
+        item-value="email"
+        label="Email"
+        placeholder="Enter email..."
+        variant="outlined"
+        @update:search="fetchUsers"
+      />
+      <VSelect
+        v-model="roleInput"
+        :error-messages="errors.role"
+        :items="roles"
+        aria-label="Role"
+        class="role-select required my-4"
+        label="Role"
+        placeholder="Role..."
+        variant="outlined"
+      />
+    </template>
+    <template #actions>
+      <VBtn
+        :disabled="isSaving"
+        text="Cancel"
+        variant="text"
+        @click="close"
+      />
+      <VBtn
+        :disabled="isSaving"
+        color="primary"
+        text="Add"
+        type="submit"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

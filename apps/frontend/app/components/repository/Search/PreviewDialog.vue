@@ -2,11 +2,11 @@
   <TailorDialog
     :header-icon="manifest?.ui?.icon ?? 'mdi-magnify-expand'"
     :model-value="true"
+    :title="manifest?.name ?? element.type"
     width="1000"
     scrollable
     @close="emit('close')"
   >
-    <template #header>{{ manifest?.name ?? element.type }}</template>
     <template #body>
       <div
         v-if="breadcrumbs.length"
@@ -33,10 +33,9 @@
       </div>
     </template>
     <template #actions>
-      <VBtn :slim="false" text="Close" variant="text" @click="emit('close')" />
+      <VBtn text="Close" variant="text" @click="emit('close')" />
       <VBtn
         v-if="editorRoute"
-        :slim="false"
         color="primary"
         append-icon="mdi-arrow-right"
         text="Open in editor"

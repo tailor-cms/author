@@ -3,11 +3,11 @@
     :header-icon="headerIcon"
     :model-value="true"
     :theme="selection.activity ? 'light' : undefined"
+    :title="heading"
     width="650"
     persistent
     scrollable
   >
-    <template #header>{{ heading }}</template>
     <template #body>
       <template v-if="!selection.activity">
         <SelectRepository
