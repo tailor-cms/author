@@ -3,14 +3,27 @@
     <VSheet
       v-if="hasSelection"
       color="surface-container"
-      class="bulk-action-bar mb-4 pa-6 ga-3"
+      class="bulk-action-bar mb-4 pa-4 ga-2"
       rounded="lg"
     >
-      <VChip
-        :text="`${selectedIds.size} selected`"
-        class="selection-count"
+      <VBtn
+        v-tooltip:bottom="'Clear selection'"
+        icon="mdi-close"
+        size="small"
+        variant="text"
         density="comfortable"
-        rounded="pill"
+        @click="$emit('clear')"
+      />
+      <span class="text-label-large font-weight-semibold">
+        {{ selected.size }} selected
+      </span>
+      <VBtn
+        :text="isAllSelected ? 'Deselect all' : 'Select all'"
+        class="ml-1"
+        size="small"
+        variant="text"
+        rounded="lg"
+        @click="$emit('toggle-all', !isAllSelected)"
       />
       <VSpacer />
       <div
@@ -22,28 +35,23 @@
         <VBtn
           :disabled="!hasIndexable || isIndexing"
           :loading="isIndexing"
+          color="tertiary"
           prepend-icon="mdi-brain"
           size="small"
-          text="Index selected"
-          variant="outlined"
+          text="Index"
+          variant="tonal"
           @click="$emit('index')"
         />
       </div>
       <VBtn
         :loading="isBulkDeleting"
-        :disabled="isBulkDeleting"
+        :disabled="isBulkDeleting || !hasSelection"
         prepend-icon="mdi-trash-can-outline"
         color="error"
         size="small"
-        text="Delete selected"
-        variant="outlined"
-        @click="$emit('delete')"
-      />
-      <VBtn
-        size="small"
-        text="Cancel"
+        text="Delete"
         variant="tonal"
-        @click="$emit('clear')"
+        @click="$emit('delete')"
       />
     </VSheet>
   </VSlideYTransition>
@@ -55,24 +63,23 @@ import type { Asset } from '@tailor-cms/interfaces/asset';
 import { isIndexable } from './utils';
 
 const props = defineProps<{
-  assets: Asset[];
-  selectedIds: Set<number>;
+  selected: Map<number, Asset>;
+  isAllSelected: boolean;
   isIndexing: boolean;
   isBulkDeleting: boolean;
 }>();
 
 defineEmits<{
-  index: [];
-  delete: [];
-  clear: [];
+  'index': [];
+  'delete': [];
+  'clear': [];
+  'toggle-all': [selected: boolean];
 }>();
 
-const hasSelection = computed(() => props.selectedIds.size > 0);
+const hasSelection = computed(() => props.selected.size > 0);
 
 const hasIndexable = computed(() =>
-  props.assets
-    .filter((a) => props.selectedIds.has(a.id))
-    .some((a) => isIndexable(a)),
+  [...props.selected.values()].some((a) => isIndexable(a)),
 );
 </script>
 

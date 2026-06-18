@@ -17,7 +17,7 @@
           :key="asset.id"
           :asset="asset"
           :is-active="asset.id === activeAssetId"
-          :is-selected="selectedIds.has(asset.id)"
+          :is-selected="selected.has(asset.id)"
           @preview="emit('preview', $event)"
           @toggle="emit('select:toggle', $event)"
           @download="emit('download', $event)"
@@ -63,7 +63,7 @@ const props = defineProps<{
   page: number;
   pageCount: number;
   itemsPerPage: number;
-  selectedIds: Set<number>;
+  selected: Map<number, Asset>;
   selectedCategory: string;
   search: string;
   activeAssetId: number | null;

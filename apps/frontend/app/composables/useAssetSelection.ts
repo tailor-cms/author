@@ -1,20 +1,28 @@
 import type { Asset } from '@tailor-cms/interfaces/asset';
 
 export function useAssetSelection(items: Ref<Asset[]>) {
-  const selectedIds = reactive(new Set<number>());
+  const selected = reactive(new Map<number, Asset>());
+
+  const isAllSelected = computed(
+    () => items.value.length > 0 && items.value.every((a) => selected.has(a.id)),
+  );
 
   function toggle(asset: Asset) {
-    if (selectedIds.has(asset.id)) selectedIds.delete(asset.id);
-    else selectedIds.add(asset.id);
+    if (selected.has(asset.id)) selected.delete(asset.id);
+    else selected.set(asset.id, asset);
   }
 
   function selectAll() {
-    items.value.forEach((a) => selectedIds.add(a.id));
+    items.value.forEach((a) => selected.set(a.id, a));
+  }
+
+  function deselectAll() {
+    items.value.forEach((a) => selected.delete(a.id));
   }
 
   function clear() {
-    selectedIds.clear();
+    selected.clear();
   }
 
-  return { selectedIds, toggle, selectAll, clear };
+  return { selected, isAllSelected, toggle, selectAll, deselectAll, clear };
 }

@@ -2,12 +2,6 @@
   <div class="d-flex align-center flex-wrap ga-2 mb-4">
     <CategoryFilter v-model="selectedCategory" :categories="categories" />
     <VSpacer />
-    <VBtn
-      :text="isAllSelected ? 'Deselect all' : 'Select all'"
-      size="small"
-      variant="text"
-      @click="$emit('toggle-all', !isAllSelected)"
-    />
     <VMenu>
       <template #activator="{ props: menuProps }">
         <VBtn
@@ -44,7 +38,6 @@ import { PAGE_SIZE_OPTIONS } from '@/composables/useAssets';
 
 defineProps<{
   categories: { label: string; value: string }[];
-  isAllSelected: boolean;
   sortDirection: 'ASC' | 'DESC';
 }>();
 
@@ -56,7 +49,6 @@ const itemsPerPage = defineModel<number>('itemsPerPage', {
 });
 
 defineEmits<{
-  'toggle-all': [selected: boolean];
   'toggle-sort': [];
 }>();
 </script>

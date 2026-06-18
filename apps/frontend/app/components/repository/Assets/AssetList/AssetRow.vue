@@ -5,23 +5,37 @@
     density="compact"
     @click="emit('preview', asset)"
   >
-    <VCol class="px-1" cols="auto">
-      <VCheckboxBtn
-        :model-value="isSelected"
-        color="primary"
-        density="compact"
-        @click.stop="emit('toggle', asset);"
-      />
-    </VCol>
     <VCol cols="auto" class="px-1">
-      <VAvatar
-        color="surface-container-low"
-        class="asset-type-avatar"
-        size="40"
-        rounded="lg"
+      <div
+        :aria-checked="isSelected"
+        :class="{ 'asset-lead--reveal': isSelected }"
+        class="asset-lead"
+        role="checkbox"
+        tabindex="0"
+        @click.stop="emit('toggle', asset)"
+        @keydown.enter.prevent="emit('toggle', asset)"
+        @keydown.space.prevent="emit('toggle', asset)"
       >
-        <VIcon :color="getAssetColor(asset)" :icon="getAssetIcon(asset)" size="20" />
-      </VAvatar>
+        <VAvatar
+          class="asset-lead__avatar"
+          color="surface-container-low"
+          size="40"
+          rounded="lg"
+        >
+          <VIcon
+            :color="getAssetColor(asset)"
+            :icon="getAssetIcon(asset)"
+            size="24"
+          />
+        </VAvatar>
+        <VCheckboxBtn
+          :model-value="isSelected"
+          class="asset-lead__check"
+          color="primary"
+          density="compact"
+          tabindex="-1"
+        />
+      </div>
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
       <div class="d-flex align-center text-title-small">
@@ -46,13 +60,14 @@
           <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
         </template>
         <span data-percy="hide">{{ formatDate(asset.createdAt) }}</span>
-        <template v-if="asset.processingStatus">
-          <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
-          <IndexingStatusBadge :status="asset.processingStatus" />
-        </template>
       </div>
     </VCol>
     <VCol cols="auto" class="d-flex align-center px-1">
+      <IndexingStatusBadge
+        v-if="asset.processingStatus"
+        :status="asset.processingStatus"
+        class="mr-3"
+      />
       <UserAvatar
         v-if="asset.uploader"
         :img-url="asset.uploader.imgUrl ?? undefined"
@@ -115,5 +130,49 @@ const emit = defineEmits<{
   &.active {
     background: rgb(var(--v-theme-surface-container-high));
   }
+}
+
+// Gmail/Contacts swap: the type avatar and the checkbox share one leading
+// slot. Avatar at rest; the checkbox takes over on row hover/focus, when
+// selected, or once select mode latches — so there's no gap and no shift, and
+// the whole slot is the click target (works on touch, where hover is absent).
+.asset-lead {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  border-radius: 8px;
+
+  &:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+}
+
+.asset-lead__avatar,
+.asset-lead__check {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.15s ease;
+}
+
+.asset-lead__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.asset-row:hover .asset-lead__check,
+.asset-lead:focus-visible .asset-lead__check,
+.asset-lead--reveal .asset-lead__check {
+  opacity: 1;
+}
+
+.asset-row:hover .asset-lead__avatar,
+.asset-lead:focus-visible .asset-lead__avatar,
+.asset-lead--reveal .asset-lead__avatar {
+  opacity: 0;
 }
 </style>

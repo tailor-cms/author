@@ -11,21 +11,20 @@
           @discover="showDiscoveryDialog = true"
         />
         <BulkActionBar
-          :assets="assetStore.assets"
-          :selected-ids="selection.selectedIds"
+          :selected="selection.selected"
+          :is-all-selected="isAllSelected"
           :is-indexing="indexing.isIndexing.value"
           :is-bulk-deleting="assetStore.isBulkRemoving"
           @clear="selection.clear"
           @index="indexSelected"
           @delete="confirmBulkDelete"
+          @toggle-all="$event ? selection.selectAll() : selection.deselectAll()"
         />
         <ListControls
           v-model:selected-category="selectedCategory"
           v-model:items-per-page="assetStore.itemsPerPage"
           :categories="categories"
-          :is-all-selected="isAllSelected"
           :sort-direction="sortDirection"
-          @toggle-all="$event ? selection.selectAll() : selection.clear()"
           @toggle-sort="toggleSortDirection"
         />
         <AssetList
@@ -36,7 +35,7 @@
           :page="assetStore.page"
           :page-count="assetStore.pageCount"
           :search="searchQuery"
-          :selected-ids="selection.selectedIds"
+          :selected="selection.selected"
           :selected-category="selectedCategory"
           :total="assetStore.total"
           @delete="confirmDelete"
@@ -114,11 +113,7 @@ const processedAssets = indexing.withStatus(assets);
 
 const { categories, selectedCategory } = useAssetFiltering();
 const selection = useAssetSelection(assets);
-
-const isAllSelected = computed(() => {
-  const assetTotal = assets.value.length;
-  return assetTotal > 0 && selection.selectedIds.size === assetTotal;
-});
+const { isAllSelected } = selection;
 
 const fetchParams = computed(() => {
   const params: Record<string, any> = {
@@ -159,12 +154,14 @@ async function downloadAsset(asset: Asset) {
 }
 
 async function indexSelected() {
-  const ids = assetStore.assets
-    .filter((a) => selection.selectedIds.has(a.id) && isIndexable(a))
+  const ids = [...selection.selected.values()]
+    .filter((a) => isIndexable(a))
     .map((a) => a.id);
   if (!ids.length) return;
-  await indexing.startIndexing(ids);
+  const label = ids.length === 1 ? 'asset' : 'assets';
+  notify(`Indexing ${ids.length} ${label}`, { immediate: true });
   selection.clear();
+  await indexing.startIndexing(ids);
 }
 
 async function onDeindex(asset: Asset) {
@@ -197,7 +194,7 @@ function confirmDelete(asset: Asset) {
     message: `Are you sure you want to delete "${asset.name}"?`,
     action: async () => {
       await assetStore.remove(asset.id);
-      selection.selectedIds.delete(asset.id);
+      selection.selected.delete(asset.id);
       activeAsset.value = null;
       refetch();
     },
@@ -208,10 +205,10 @@ function confirmBulkDelete() {
   showConfirmation({
     title: 'Delete Assets',
     color: 'error',
-    message: `Delete ${selection.selectedIds.size} selected assets?`,
+    message: `Delete ${selection.selected.size} selected assets?`,
     action: async () => {
-      const ids = await assetStore.bulkRemove([...selection.selectedIds]);
-      ids?.forEach((id: number) => selection.selectedIds.delete(id));
+      const ids = await assetStore.bulkRemove([...selection.selected.keys()]);
+      ids?.forEach((id: number) => selection.selected.delete(id));
       refetch();
     },
   });
