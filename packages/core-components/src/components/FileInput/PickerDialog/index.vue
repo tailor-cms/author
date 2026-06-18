@@ -150,6 +150,7 @@ const onFileSelect = (file: File) => {
 const toPayload = (asset: any) => ({
   key: asset.storageKey,
   name: asset.name,
+  url: asset.url,
   publicUrl: asset.publicUrl || null,
 });
 

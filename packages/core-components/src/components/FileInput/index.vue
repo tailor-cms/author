@@ -54,7 +54,8 @@ import type { VTextField } from 'vuetify/components';
 defineOptions({ inheritAttrs: false });
 
 interface Props {
-  // Storage key or storage:// URI of the current file
+  // Current value: a storage:// URI (signed for preview) or an external URL
+  // (rendered as-is). Internal/external is decided by the storage:// prefix.
   fileKey?: string;
   // Display name; falls back to parsing from fileKey
   fileName?: string;
@@ -119,6 +120,10 @@ const acceptedFileTypes = computed(() =>
   props.allowedExtensions.join(','),
 );
 
+const isStorageAsset = computed(
+  () => props.fileKey?.startsWith('storage://') ?? false,
+);
+
 // Normalize storage:// URI to bare key
 const resolvedFileKey = computed(
   () => props.fileKey?.replace(/^storage:\/\//, '') || '',
@@ -147,7 +152,6 @@ const resolvedFileName = computed(() => {
     : resolvedFileKey.value.split('/').pop() || '';
 });
 
-// Component will attempt to fetch signed url for preview if no public url is provided
 const isLoadingPublicUrl = ref(false);
 const internalPublicUrl = ref('');
 const previewUrl = computed(() => props.publicUrl || internalPublicUrl.value || '');
@@ -157,6 +161,11 @@ watch(
   async ([key, propUrl]) => {
     if (!isPreviewEnabled.value || !key) return;
     if (propUrl) return;
+    // External URLs are rendered as-is; only storage:// assets need signing.
+    if (!isStorageAsset.value) {
+      internalPublicUrl.value = key;
+      return;
+    }
     internalPublicUrl.value = '';
     isLoadingPublicUrl.value = true;
     try {

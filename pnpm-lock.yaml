@@ -722,11 +722,11 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-image-edit':
-        specifier: ^2.0.0
-        version: 2.0.0(vue@3.5.34(typescript@6.0.3))
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.34(typescript@6.0.3))
       '@tailor-cms/ce-image-server':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@tailor-cms/ce-jodit-html-edit':
         specifier: ^2.0.0
         version: 2.0.0(vue@3.5.34(typescript@6.0.3))
@@ -4483,18 +4483,18 @@ packages:
     resolution: {integrity: sha512-SLL1ITOwEl/NaH6zRAF0MYLa97el1GDeAxvNx9+lK/tC5CHpgTvZNWMV+bIfJ4wqLBXTK1+fTSpvETIlraXx8g==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-image-edit@2.0.0':
-    resolution: {integrity: sha512-ytdrS1w3qKrD3J7x0jJqXSOfiKKajziCQIbw/VxHYtmPYEcLNdR7AClQk/XC94tYv6UJA0D0jTxSTHt9cCvvxw==}
+  '@tailor-cms/ce-image-edit@2.0.1':
+    resolution: {integrity: sha512-n2sQU+sT1wLVxf79KYbZNrDcCI46e49K2EZ6H/15AMqzW7CbR5qy946aLufdZ5ax4M6tidQ0z51iGNBT14Ug3Q==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-image-manifest@2.0.0':
-    resolution: {integrity: sha512-/O7HayZq3pfDJ1ESVPf2+X5Jzc/tvLTBN+n6Pv0UfXlsa4hwYu/daM4Iwogmyb2axMYMZWGLGNwyZx1zqInSXg==}
+  '@tailor-cms/ce-image-manifest@2.0.1':
+    resolution: {integrity: sha512-hnQZNRN3F8aUXqa1gz2SIe81bUUNulDtdffQwrJr31Caf/hbGXJzyvrsSvJypIO5c7Fm/d0hX8uHp0LPPreSng==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-image-server@2.0.0':
-    resolution: {integrity: sha512-Q8EQgALh1FxV42goPEZbeYzoSLvC5yExhyPJ52S9tfJh+USLXwf1bWEct//CgBKG+e3XcuE0Zq6QRafXcWGBuQ==}
+  '@tailor-cms/ce-image-server@2.0.1':
+    resolution: {integrity: sha512-8TNyAjM3lMm+hYhsR7ruZojW8rxJ8F6rEWWSKMJPVtDnQex1gW42OxTo5InCGjTOI57+beTE725u6yDVmuQomQ==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-jodit-html-edit@2.0.0':
@@ -14085,7 +14085,7 @@ snapshots:
 
   '@pulumi/docker@3.6.1(typescript@6.0.3)':
     dependencies:
-      '@pulumi/pulumi': 3.243.0(typescript@6.0.3)
+      '@pulumi/pulumi': 3.246.0(typescript@6.0.3)
       semver: 5.7.2
     transitivePeerDependencies:
       - supports-color
@@ -14757,18 +14757,18 @@ snapshots:
       '@tailor-cms/ce-html-manifest': 2.0.0
       '@tailor-cms/cek-common': 2.0.1
 
-  '@tailor-cms/ce-image-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
+  '@tailor-cms/ce-image-edit@2.0.1(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       vue: 3.5.34(typescript@6.0.3)
 
-  '@tailor-cms/ce-image-manifest@2.0.0':
+  '@tailor-cms/ce-image-manifest@2.0.1':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
 
-  '@tailor-cms/ce-image-server@2.0.0':
+  '@tailor-cms/ce-image-server@2.0.1':
     dependencies:
-      '@tailor-cms/ce-image-manifest': 2.0.0
+      '@tailor-cms/ce-image-manifest': 2.0.1
       '@tailor-cms/cek-common': 2.0.1
 
   '@tailor-cms/ce-jodit-html-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
