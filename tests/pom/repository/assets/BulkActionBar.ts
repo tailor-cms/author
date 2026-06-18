@@ -10,29 +10,33 @@ export class BulkActionBar {
   readonly selectionChip: Locator;
   readonly indexSelectedBtn: Locator;
   readonly deleteSelectedBtn: Locator;
-  readonly cancelBtn: Locator;
+  readonly clearBtn: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.el = page.locator(BulkActionBar.selector);
     this.selectionChip = this.el.locator('.selection-count');
-    this.cancelBtn = this.el.getByRole('button', { name: 'Cancel' });
+    this.clearBtn = this.el.getByRole('button', { name: 'Clear selection' });
     this.indexSelectedBtn = this.el.getByRole('button', {
-      name: 'Index selected',
+      name: 'Index',
+      exact: true,
     });
     this.deleteSelectedBtn = this.el.getByRole('button', {
-      name: 'Delete selected',
+      name: 'Delete',
+      exact: true,
     });
   }
 
   async selectAll() {
-    await this.page
+    await this.el
       .getByRole('button', { name: 'Select all', exact: true })
       .click();
   }
 
   async deselectAll() {
-    await this.cancelBtn.click();
+    await this.el
+      .getByRole('button', { name: 'Deselect all', exact: true })
+      .click();
   }
 
   async deleteSelected() {

@@ -3,7 +3,7 @@
     :color="color"
     size="x-small"
     variant="tonal"
-    rounded
+    rounded="md"
   >
     <VIcon
       v-if="status === ProcessingStatus.Processing"

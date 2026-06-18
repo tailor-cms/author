@@ -5,23 +5,36 @@
     density="compact"
     @click="emit('preview', asset)"
   >
-    <VCol class="px-1" cols="auto">
-      <VCheckboxBtn
-        :model-value="isSelected"
-        color="primary"
-        density="compact"
-        @click.stop="emit('toggle', asset);"
-      />
-    </VCol>
     <VCol cols="auto" class="px-1">
-      <VAvatar
-        color="surface-container-low"
-        class="asset-type-avatar"
-        size="40"
-        rounded="lg"
+      <div
+        :aria-checked="isSelected"
+        :class="{ selected: isSelected }"
+        class="asset-select"
+        role="checkbox"
+        tabindex="0"
+        @click.stop="emit('toggle', asset)"
+        @keydown.enter.prevent="emit('toggle', asset)"
+        @keydown.space.prevent="emit('toggle', asset)"
       >
-        <VIcon :color="getAssetColor(asset)" :icon="getAssetIcon(asset)" size="20" />
-      </VAvatar>
+        <VAvatar
+          color="surface-container-low"
+          class="thumbnail"
+          size="40"
+          rounded="lg"
+        >
+          <VIcon
+            :color="getAssetColor(asset)"
+            :icon="getAssetIcon(asset)"
+            size="24"
+          />
+        </VAvatar>
+        <VIcon
+          :color="isSelected ? 'primary' : undefined"
+          :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
+          class="checkbox"
+          size="24"
+        />
+      </div>
     </VCol>
     <VCol class="px-2 overflow-hidden text-start">
       <div class="d-flex align-center text-title-small">
@@ -46,13 +59,14 @@
           <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
         </template>
         <span data-percy="hide">{{ formatDate(asset.createdAt) }}</span>
-        <template v-if="asset.processingStatus">
-          <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
-          <IndexingStatusBadge :status="asset.processingStatus" />
-        </template>
       </div>
     </VCol>
     <VCol cols="auto" class="d-flex align-center px-1">
+      <IndexingStatusBadge
+        v-if="asset.processingStatus"
+        :status="asset.processingStatus"
+        class="mr-3"
+      />
       <UserAvatar
         v-if="asset.uploader"
         :img-url="asset.uploader.imgUrl ?? undefined"
@@ -115,5 +129,37 @@ const emit = defineEmits<{
   &.active {
     background: rgb(var(--v-theme-surface-container-high));
   }
+}
+
+.asset-select {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  cursor: pointer;
+  border-radius: 8px;
+
+  &:focus-visible {
+    outline: 2px solid rgb(var(--v-theme-primary));
+    outline-offset: 2px;
+  }
+
+  .thumbnail, .checkbox {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    transition: opacity 0.15s ease;
+  }
+
+  .checkbox {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+.asset-row:hover,
+.asset-select:focus-visible,
+.asset-select.selected {
+  .checkbox { opacity: 1; }
+  .thumbnail { opacity: 0; }
 }
 </style>
