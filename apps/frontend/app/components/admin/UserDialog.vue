@@ -1,6 +1,11 @@
 <template>
-  <TailorDialog v-model="isDialogVisible" header-icon="mdi-account" persistent>
-    <template #header>{{ isNewUser ? 'Create' : 'Edit' }} User</template>
+  <TailorDialog
+    v-model="isDialogVisible"
+    :title="`${isNewUser ? 'Create' : 'Edit'} User`"
+    header-icon="mdi-account"
+    persistent
+    @submit="submit"
+  >
     <template #body>
       <VBtn
         v-if="userData?.id"
@@ -11,88 +16,86 @@
         variant="tonal"
         @click="reinvite"
       />
-      <form class="form" novalidate @submit.prevent="submit">
-        <VTextField
-          v-model="emailInput"
-          :disabled="!isNewUser"
-          :error-messages="errors.email"
-          class="mb-3 required"
-          label="Email"
-          placeholder="Enter email..."
-          variant="outlined"
-        />
-        <VTextField
-          v-model="firstNameInput"
-          :error-messages="errors.firstName"
-          class="mb-3 required"
-          label="First name"
-          placeholder="Enter first name..."
-          variant="outlined"
-        />
-        <VTextField
-          v-model="lastNameInput"
-          :error-messages="errors.lastName"
-          class="mb-3 required"
-          label="Last name"
-          placeholder="Enter last name..."
-          variant="outlined"
-        />
-        <VSelect
-          v-model="roleInput"
-          :error-messages="errors.role"
-          :items="roles"
-          class="role-select mb-3 required"
-          item-title="title"
-          item-value="value"
-          label="Role"
-          placeholder="Select role..."
-          variant="outlined"
-        >
-          <template #item="{ item, props: itemProps }">
-            <VListItem
-              v-bind="itemProps"
-              :subtitle="item.description"
-              class="py-3"
-            />
-          </template>
-        </VSelect>
-        <VSelect
-          v-model="groupInput"
-          :error-messages="errors.userGroupIds"
-          :items="userGroups"
-          class="user-group-select mb-3"
-          item-title="name"
-          item-value="id"
-          label="User Group"
-          placeholder="Select user group..."
-          variant="outlined"
-          chips
-          clearable
-          closable-chips
-          multiple
-        />
-        <VSwitch
-          v-if="isNewUser"
-          v-model="skipInviteInput"
-          class="mb-1"
-          label="Skip invitation email"
-          hide-details
-        />
-        <div v-if="isNewUser" class="text-body-small text-medium-emphasis ml-1 mb-3">
-          Useful for SSO users who don't need a password setup email.
-          You can always send the invite later using Reinvite.
-        </div>
-        <div class="d-flex justify-end pb-3 ga-2">
-          <VBtn text="Cancel" variant="text" @click="close" />
-          <VBtn
-            :disabled="!!errors?.length"
-            color="primary"
-            text="Save"
-            type="submit"
-            variant="flat"
+      <VTextField
+        v-model="emailInput"
+        :disabled="!isNewUser"
+        :error-messages="errors.email"
+        class="mb-3 required"
+        label="Email"
+        placeholder="Enter email..."
+        variant="outlined"
+      />
+      <VTextField
+        v-model="firstNameInput"
+        :error-messages="errors.firstName"
+        class="mb-3 required"
+        label="First name"
+        placeholder="Enter first name..."
+        variant="outlined"
+      />
+      <VTextField
+        v-model="lastNameInput"
+        :error-messages="errors.lastName"
+        class="mb-3 required"
+        label="Last name"
+        placeholder="Enter last name..."
+        variant="outlined"
+      />
+      <VSelect
+        v-model="roleInput"
+        :error-messages="errors.role"
+        :items="roles"
+        class="role-select mb-3 required"
+        item-title="title"
+        item-value="value"
+        label="Role"
+        placeholder="Select role..."
+        variant="outlined"
+      >
+        <template #item="{ item, props: itemProps }">
+          <VListItem
+            v-bind="itemProps"
+            :subtitle="item.description"
+            class="py-3"
           />
-        </div>
-      </form>
+        </template>
+      </VSelect>
+      <VSelect
+        v-model="groupInput"
+        :error-messages="errors.userGroupIds"
+        :items="userGroups"
+        class="user-group-select mb-3"
+        item-title="name"
+        item-value="id"
+        label="User Group"
+        placeholder="Select user group..."
+        variant="outlined"
+        chips
+        clearable
+        closable-chips
+        multiple
+      />
+      <VSwitch
+        v-if="isNewUser"
+        v-model="skipInviteInput"
+        class="mb-1"
+        label="Skip invitation email"
+        hide-details
+      />
+      <div v-if="isNewUser" class="text-body-small text-medium-emphasis ml-1 mb-3">
+        Useful for SSO users who don't need a password setup email.
+        You can always send the invite later using Reinvite.
+      </div>
+    </template>
+    <template #actions>
+      <VBtn text="Cancel" variant="text" @click="close" />
+      <VBtn
+        :disabled="!!errors?.length"
+        color="primary"
+        text="Save"
+        type="submit"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

@@ -29,6 +29,10 @@ body {
   }
 }
 
+.v-empty-state__title {
+  font-weight: 600;
+}
+
 /* VEmptyState: Vuetify gives the media no bottom margin, so the icon butts
    against the title, and defaults the icon to a heavy 96px. Add breathing room
    and trim the icon (image-based empty states use VImg, so are unaffected). */

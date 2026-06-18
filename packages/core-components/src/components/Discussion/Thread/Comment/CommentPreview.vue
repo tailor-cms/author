@@ -1,18 +1,26 @@
 <template>
-  <div :class="{ resolved: isResolved }" class="content">
-    <div v-if="isResolved" class="resolvement-options mt-3">
-      <span class="font-italic mr-1">Marked as resolved.</span>
-      <VBtn
-        v-tooltip:right="{ text: 'Unresolve comment', openDelay: 800 }"
-        class="ml-1"
-        color="tertiary"
-        size="x-small"
-        text="Undo"
-        variant="tonal"
-        @click.stop="emit('unresolve')"
-      />
-    </div>
-    <pre class="text-left"><span>{{ content.trimEnd() }}</span><br /></pre>
+  <div :class="{ resolved: isResolved }" class="content mt-1 text-body-medium">
+    <span v-if="isDeleted" class="deleted font-italic">
+      This comment was deleted.
+    </span>
+    <template v-else>
+      <div v-if="isResolved" class="resolvement-options">
+        <span class="font-italic mr-1">Marked as resolved.</span>
+        <VBtn
+          v-tooltip:right="{ text: 'Unresolve comment', openDelay: 800 }"
+          class="ml-1"
+          color="tertiary"
+          size="x-small"
+          text="Undo"
+          variant="tonal"
+          @click.stop="emit('unresolve')"
+        />
+      </div>
+      <div class="body">
+        {{ content.trimEnd() }}
+        <span v-if="isEdited" class="edited text-medium-emphasis">(edited)</span>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -20,32 +28,30 @@
 interface Props {
   content?: string;
   isResolved?: boolean;
+  isDeleted?: boolean;
+  isEdited?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
   content: '',
   isResolved: false,
+  isDeleted: false,
+  isEdited: false,
 });
 
 const emit = defineEmits(['unresolve']);
 </script>
 
 <style lang="scss" scoped>
-.content {
-  margin-top: 0.375rem;
+.edited {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
 }
 
-.content pre {
-  height: 100%;
-  margin: 0;
-  font: inherit;
+.content .body {
   white-space: pre-wrap;
-  word-break: break-all;
-  word-wrap: break-word;
+  word-break: break-word;
   overflow-wrap: break-word;
-  background: inherit;
-  border: none;
-  overflow: hidden;
 }
 
 .content.resolved {

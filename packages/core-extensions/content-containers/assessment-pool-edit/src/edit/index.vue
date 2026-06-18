@@ -6,7 +6,7 @@
       <div v-if="!isAiGeneratingContent" class="pb-1 d-flex ga-2">
         <VBtn
           v-if="isAiEnabled && !disabled"
-          color="secondary"
+          color="tertiary"
           size="small"
           variant="tonal"
           text="Generate questions"

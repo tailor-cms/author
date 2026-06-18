@@ -9,7 +9,7 @@
         class="h-100 mr-3 bg-surface-container-low rounded-t-xl border-sm">
         <NuxtPage />
       </VLayout>
-      <RightRail />
+      <AgentPanel />
       <CloneModal v-if="showCloneModal" @close="showCloneModal = false" />
       <ExportDialog
         v-if="showExportModal"
@@ -32,7 +32,7 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import CloneModal from '@/components/repository/Settings/CloneModal.vue';
 import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
 import NavigationRail from '@/components/repository/NavigationRail/index.vue';
-import RightRail from '@/components/repository/RightRail/index.vue';
+import AgentPanel from '@/components/common/AgentPanel/index.vue';
 import ProgressDialog from '@/components/common/ProgressDialog.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useCommentStore } from '@/stores/comments';

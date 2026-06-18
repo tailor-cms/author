@@ -1,13 +1,13 @@
 <template>
   <div class="d-flex flex-column ga-4">
-    <div class="d-flex align-center ga-4">
+    <div class="d-flex align-center ga-4 px-2">
       <VProgressCircular
         :model-value="scorePercentage"
         :color="scoreColor"
         bg-color="surface-container-highest"
         class="score-ring flex-shrink-0"
-        size="92"
-        width="6"
+        size="72"
+        width="5"
       >
         <span class="score-value font-weight-bold">
           {{ result.overall.score }}
@@ -15,25 +15,26 @@
         </span>
       </VProgressCircular>
       <div class="d-flex flex-column ga-1">
-        <div class="text-body-medium font-weight-bold">
+        <div class="result-headline text-title-medium font-weight-semibold">
           {{ result.overall.headline }}
         </div>
         <VChip
           v-if="trendDelta !== null"
           :color="trendDelta >= 0 ? 'success' : 'error'"
-          :prepend-icon="trendDelta >= 0 ? 'mdi-trending-up' : 'mdi-trending-down'"
           :text="trendLabel"
-          class="align-self-start"
+          class="align-self-start mt-1"
           size="x-small"
           variant="tonal"
-          label
+          rounded="lg"
         />
       </div>
     </div>
-    <div class="text-body-small text-medium-emphasis">
+    <div class="text-body-medium text-medium-emphasis px-2">
       {{ result.overall.summary }}
     </div>
-    <RadarChart :data="chartData" :max="4" :min="0" />
+    <div class="radar-chart">
+      <RadarChart :data="chartData" :max="4" :min="0" />
+    </div>
   </div>
 </template>
 
@@ -120,5 +121,10 @@ const chartData = computed(() => {
 .max-score {
   font-size: 0.7em;
   opacity: 0.6;
+}
+
+.result-headline {
+  font-size: 1rem;
+  line-height: 1.2;
 }
 </style>

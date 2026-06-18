@@ -1,11 +1,11 @@
 <template>
   <TailorDialog
     v-model="isVisible"
-    header-icon="mdi-alert"
     :color="context.color"
+    :title="context.title"
+    header-icon="mdi-alert"
     @click:outside="close"
   >
-    <template #header>{{ context.title }}</template>
     <template #body>
       <div class="text-body-large text-left">
         {{ context.message }}

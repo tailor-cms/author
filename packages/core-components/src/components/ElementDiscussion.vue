@@ -5,7 +5,7 @@
     :close-on-content-click="false"
     class="element-discussion"
     location="left"
-    min-width="450"
+    width="450"
     offset="4"
     transition="slide-y-transition"
   >

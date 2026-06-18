@@ -4,9 +4,9 @@
       :text="unseenCommentsLabel"
       prepend-icon="mdi-arrow-down"
       close-icon="mdi-close"
-      color="secondary"
+      color="tertiary"
       size="small"
-      variant="tonal"
+      variant="flat"
       closable
       rounded
       @click="seen"

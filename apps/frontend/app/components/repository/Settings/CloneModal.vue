@@ -1,46 +1,45 @@
 <template>
-  <TailorDialog :model-value="show" header-icon="mdi-content-copy" persistent>
-    <template #header>
-      <div class="text-truncate">
-        Clone {{ currentRepositoryStore?.repository?.name }}
-      </div>
-    </template>
+  <TailorDialog
+    :model-value="show"
+    :title="`Clone ${currentRepositoryStore?.repository?.name}`"
+    header-icon="mdi-content-copy"
+    persistent
+    @submit="submit"
+  >
     <template #body>
-      <form novalidate @submit.prevent="submit">
-        <VTextField
-          v-model="nameInput"
-          :disabled="inProgress"
-          :error-messages="errors.name"
-          class="required mb-4"
-          label="Name"
-          placeholder="Enter name..."
-          variant="outlined"
-        />
-        <VTextarea
-          v-model="descriptionInput"
-          :disabled="inProgress"
-          :error-messages="errors.description"
-          class="required mb-4"
-          label="Description"
-          placeholder="Enter description..."
-          variant="outlined"
-        />
-        <div class="d-flex justify-end mb-2">
-          <VBtn
-            :disabled="inProgress"
-            text="Cancel"
-            variant="text"
-            @click="close"
-          />
-          <VBtn
-            :loading="inProgress"
-            color="primary"
-            type="submit"
-            text="Clone"
-            variant="flat"
-          />
-        </div>
-      </form>
+      <VTextField
+        v-model="nameInput"
+        :disabled="inProgress"
+        :error-messages="errors.name"
+        class="required mb-4"
+        label="Name"
+        placeholder="Enter name..."
+        variant="outlined"
+      />
+      <VTextarea
+        v-model="descriptionInput"
+        :disabled="inProgress"
+        :error-messages="errors.description"
+        class="required mb-4"
+        label="Description"
+        placeholder="Enter description..."
+        variant="outlined"
+      />
+    </template>
+    <template #actions>
+      <VBtn
+        :disabled="inProgress"
+        text="Cancel"
+        variant="text"
+        @click="close"
+      />
+      <VBtn
+        :loading="inProgress"
+        color="primary"
+        type="submit"
+        text="Clone"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

@@ -1,26 +1,21 @@
 import { nextTick, type Ref } from 'vue';
 
-import {
-  onClickOutside,
-  useEventListener,
-  useLocalStorage,
-} from '@vueuse/core';
+import { useEventListener, useLocalStorage } from '@vueuse/core';
 
 const STORAGE_KEY = 'agent-panel:open';
 
 interface UsePanelVisibilityOptions {
   isEnabled: Ref<unknown>;
-  rootEl: Ref<HTMLElement | null>;
   inputEl: Ref<{ focus: () => void } | null>;
 }
 
 /**
- * Owns the panel's open/close state, the Cmd+K toggle, and the
- * click-outside auto-collapse. Vuetify menus render in an overlay portal
- * outside the panel DOM, so they're ignored when detecting outside clicks.
+ * Owns the docked panel's open/close state and the Cmd+K toggle. The panel
+ * is a persistent drawer, so it stays open until explicitly dismissed (no
+ * click-outside auto-collapse).
  */
 export function usePanelVisibility(opts: UsePanelVisibilityOptions) {
-  const { rootEl, inputEl, isEnabled } = opts;
+  const { inputEl, isEnabled } = opts;
   const isOpen = useLocalStorage(STORAGE_KEY, false);
 
   function open() {
@@ -45,14 +40,6 @@ export function usePanelVisibility(opts: UsePanelVisibilityOptions) {
     e.preventDefault();
     toggle();
   });
-
-  onClickOutside(
-    rootEl,
-    () => {
-      if (isOpen.value) close();
-    },
-    { ignore: ['.v-overlay'] },
-  );
 
   return { isOpen, open, close, toggle };
 }

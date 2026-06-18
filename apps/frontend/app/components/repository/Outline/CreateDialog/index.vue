@@ -3,7 +3,10 @@
     :id="dialogTestId"
     v-model="visible"
     :data-testid="dialogTestId"
+    :title="heading || defaultModalHeading"
     header-icon="mdi-folder-plus-outline"
+    scrollable
+    @submit="submitForm"
   >
     <template v-if="showActivator" #activator="{ props: activatorProps }">
       <VBtn
@@ -16,9 +19,8 @@
         :variant="variant"
       />
     </template>
-    <template #header>{{ heading || defaultModalHeading }}</template>
     <template #body>
-      <form class="activity-form" @submit.prevent="submitForm">
+      <div class="activity-form">
         <TypeSelect
           :container-id="`#${dialogTestId}`"
           :disabled="isTypeLocked"
@@ -49,25 +51,22 @@
           icon="mdi-information-outline"
           variant="tonal"
         />
-        <VSpacer />
-        <div class="d-flex justify-end pt-5 pb-3">
-          <VBtn
-            class="mr-2 px-4"
-            text="Cancel"
-            variant="text"
-            @click="visible = false"
-          />
-          <VBtn
-            :disabled="submitting"
-            :loading="submitting"
-            color="primary"
-            text="Create"
-            type="submit"
-            variant="flat"
-            @click="submitForm"
-          />
-        </div>
-      </form>
+      </div>
+    </template>
+    <template #actions>
+      <VBtn
+        text="Cancel"
+        variant="text"
+        @click="visible = false"
+      />
+      <VBtn
+        :disabled="submitting"
+        :loading="submitting"
+        color="primary"
+        text="Create"
+        type="submit"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

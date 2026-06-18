@@ -57,12 +57,11 @@
         v-if="asset.uploader"
         :img-url="asset.uploader.imgUrl ?? undefined"
         :label="asset.uploader.label"
-        class="mr-1"
+        class="mr-2"
         size="24"
       />
       <AssetMenu
         :asset="asset"
-        class="ml-1"
         @download="emit('download', $event)"
         @index="emit('index', $event)"
         @deindex="emit('deindex', $event)"

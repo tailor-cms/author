@@ -1,5 +1,11 @@
 <template>
-  <TailorDialog v-model="isVisible" header-icon="mdi-account" persistent>
+  <TailorDialog
+    v-model="isVisible"
+    header-icon="mdi-account"
+    title="Assosciate user group"
+    persistent
+    @submit="submit"
+  >
     <template #activator="{ props: activatorProps }">
       <VBtn
         v-bind="activatorProps"
@@ -11,35 +17,31 @@
         variant="flat"
       />
     </template>
-    <template #header>Assosciate user group</template>
     <template #body>
-      <form class="form" novalidate @submit.prevent="submit">
-        <VSelect
-          v-model="groupInput"
-          :error-messages="errors.userGroupIds"
-          :items="groupOptions"
-          class="user-group-select mb-3"
-          item-title="name"
-          item-value="id"
-          label="User Group"
-          no-data-text="No user groups available"
-          placeholder="Select user group..."
-          variant="outlined"
-          chips
-          clearable
-          closable-chips
-        />
-        <div class="d-flex justify-end pb-3">
-          <VBtn text="Cancel" variant="text" @click="close" />
-          <VBtn
-            :disabled="!!errors?.length"
-            class="ml-2 px-4"
-            color="primary"
-            text="Save"
-            type="submit"
-          />
-        </div>
-      </form>
+      <VSelect
+        v-model="groupInput"
+        :error-messages="errors.userGroupIds"
+        :items="groupOptions"
+        class="user-group-select mb-3"
+        item-title="name"
+        item-value="id"
+        label="User Group"
+        no-data-text="No user groups available"
+        placeholder="Select user group..."
+        variant="outlined"
+        chips
+        clearable
+        closable-chips
+      />
+    </template>
+    <template #actions>
+      <VBtn text="Cancel" variant="text" @click="close" />
+      <VBtn
+        :disabled="!!errors?.length"
+        color="primary"
+        text="Save"
+        type="submit"
+      />
     </template>
   </TailorDialog>
 </template>

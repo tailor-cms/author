@@ -3,7 +3,7 @@
     <div v-if="showResolveButton" class="d-flex justify-center">
       <ResolveButton class="mb-2" @click.stop="resolveAll" />
     </div>
-    <div :class="{ 'pb-7 mb-4': !showHeading && hasHiddenComments }">
+    <div :class="{ 'pb-7 mb-2': !showHeading && hasHiddenComments }">
       <VBtn
         v-if="hasHiddenComments"
         :text="showAll ? 'Show less' : 'Show more'"
@@ -36,7 +36,6 @@
       :show-all="showAll"
       :unseen-count="unseenComments.length"
       :user="user"
-      class="mt-2"
       @remove="remove"
       @resolve="emit('resolve', $event)"
       @seen="emit('seen')"

@@ -2,10 +2,10 @@
   <TailorDialog
     v-model="show"
     header-icon="mdi-link-plus"
+    title="Add Link"
     width="480"
     @close="show = false"
   >
-    <template #header>Add Link</template>
     <template #body>
       <VTextField
         v-model="url"

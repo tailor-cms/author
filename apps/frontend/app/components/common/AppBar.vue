@@ -1,6 +1,6 @@
 <template>
   <VAppBar id="mainAppBar" class="app-bar elevation-0">
-    <NuxtLink :to="{ name: 'catalog' }" class="app-brand pl-5">
+    <NuxtLink :to="{ name: 'catalog' }" class="app-brand ml-5">
       <img
         alt="Tailor logo"
         class="mr-4"
@@ -9,19 +9,18 @@
       />
       <VAppBarTitle class="app-name" text="Tailor" />
     </NuxtLink>
+    <div v-if="!smAndDown" class="d-flex ga-1 ml-5">
+      <VBtn
+        v-for="{ name, to } in topLevelRoutes"
+        :key="name"
+        :to="to"
+        rounded="lg"
+      >
+        <span class="toolbar-route text-truncate">{{ name }}</span>
+      </VBtn>
+    </div>
     <template #append>
-      <template v-if="!smAndDown">
-        <VBtn
-          v-for="{ name, to } in topLevelRoutes"
-          :key="name"
-          :to="to"
-          min-width="96"
-          variant="text"
-          rounded="lg"
-        >
-          <span class="toolbar-route text-truncate">{{ name }}</span>
-        </VBtn>
-      </template>
+      <RenoirLauncher />
       <VMenu
         :close-on-content-click="false"
         attach="#mainAppBar"
@@ -34,7 +33,7 @@
             v-bind="props"
             :img-url="user.imgUrl"
             aria-label="User menu"
-            class="mx-4"
+            class="mr-4"
             tag="button"
           />
         </template>
@@ -93,6 +92,7 @@ import { UserAvatar } from '@tailor-cms/core-components';
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
 import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue';
+import RenoirLauncher from '@/components/common/AgentPanel/RenoirLauncher.vue';
 
 defineProps<{ user: User }>();
 
@@ -101,6 +101,7 @@ const { smAndDown } = useDisplay();
 const { $oidc } = useNuxtApp() as any;
 const config = useConfigStore();
 const authStore = useAuthStore();
+
 const topLevelRoutes = computed(() => {
   const items = [
     { name: 'Catalog', to: '/', icon: 'mdi-view-grid-plus-outline' },
@@ -168,7 +169,9 @@ const logout = async () => {
 }
 
 :deep(.v-toolbar__append) {
-  gap: 0.25rem
+  gap: 0.25rem;
+  // Let the Renoir launcher's thinking head spill out without being clipped.
+  overflow: visible;
 }
 
 :deep(.v-list-item){

@@ -1,5 +1,5 @@
 <template>
-  <div class="toolbar d-flex align-center flex-wrap ga-3">
+  <div class="toolbar d-flex align-center justify-space-between flex-wrap ga-3">
     <template v-if="isCollection">
       <VTextField
         v-model="search"
@@ -68,25 +68,27 @@
         hide-details
         @click:clear="search = ''"
       />
-      <VSpacer />
-      <VBtn
-        v-if="!isFlat"
-        :disabled="!!search"
-        :text="isOutlineExpanded ? 'Collapse all' : 'Expand all'"
-        rounded="lg"
-        variant="text"
-        @click="currentRepositoryStore.toggleOutlineExpand"
-      />
-      <LinkContent :anchor="anchor" show-activator />
-      <CreateDialog
-        :anchor="anchor"
-        :repository-id="currentRepositoryStore.repositoryId as number"
-        activator-color="primary"
-        activator-icon="mdi-plus"
-        variant="flat"
-        test-id-prefix="repository__createRootActivity"
-        show-activator
-      />
+      <div class="d-flex ga-3">
+        <VBtn
+          v-if="!isFlat"
+          :disabled="!!search"
+          :text="isOutlineExpanded ? 'Collapse all' : 'Expand all'"
+          rounded="lg"
+          variant="text"
+          width="112"
+          @click="currentRepositoryStore.toggleOutlineExpand"
+        />
+        <LinkContent :anchor="anchor" show-activator />
+        <CreateDialog
+          :anchor="anchor"
+          :repository-id="currentRepositoryStore.repositoryId as number"
+          activator-color="primary"
+          activator-icon="mdi-plus"
+          variant="flat"
+          test-id-prefix="repository__createRootActivity"
+          show-activator
+        />
+      </div>
     </template>
   </div>
 </template>

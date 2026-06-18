@@ -1,5 +1,5 @@
 <template>
-  <VCard class="content-container pr-4" theme="light" elevation="0">
+  <VCard class="content-container pr-4" theme="light">
     <div v-if="!isAiGeneratingContent" class="d-flex flex-wrap justify-end ma-3 ga-3">
       <AIPrompt
         v-if="isAiEnabled && !disabled"
@@ -10,7 +10,7 @@
       <VBtn
         v-if="isAiEnabled && !disabled"
         append-icon="mdi-shimmer"
-        color="secondary"
+        color="tertiary"
         size="small"
         text="Do the magic"
         variant="tonal"

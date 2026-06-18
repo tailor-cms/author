@@ -49,6 +49,6 @@ defineExpose({ submit });
 
 <style lang="scss" scoped>
 .url-tab {
-  padding: 2rem;
+  padding: 1rem;
 }
 </style>

@@ -8,7 +8,6 @@
     color="surface-container"
     elevation="0"
     location="right"
-    border="l"
     disable-route-watcher
   >
     <div
@@ -18,13 +17,11 @@
       @pointerdown="startResize"
     />
     <div class="sidebar-layout">
-      <div class="sidebar-header px-4 py-3">
-        <div class="d-flex align-center">
-          <RubricPicker
-            :model-value="reviewStore.selectedRubricId"
-            :rubrics="reviewStore.rubrics"
-            @update:model-value="reviewStore.selectRubric($event)"
-          />
+      <div class="sidebar-header pa-4">
+        <div class="d-flex align-center mb-3">
+          <span class="text-title-medium font-weight-bold">
+            Review lens
+          </span>
           <VSpacer />
           <VBtn
             v-tooltip:bottom="{ text: 'Refresh analysis', openDelay: 500 }"
@@ -39,23 +36,27 @@
           <VBtn
             v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
             aria-label="Collapse sidebar"
-            class="sidebar-collapse-btn"
+            class="ml-2"
             density="comfortable"
             icon="mdi-chevron-double-right"
             size="small"
-            variant="text"
+            variant="tonal"
             @click="isOpen = false"
           />
         </div>
+        <RubricPicker
+          :model-value="reviewStore.selectedRubricId"
+          :rubrics="reviewStore.rubrics"
+          @update:model-value="reviewStore.selectRubric($event)"
+        />
         <AnalysisStatus
           :computed-at="result?.computedAt"
           :is-running="reviewStore.isRunning"
           :is-stale="status?.isStale ?? false"
-          class="mt-1"
+          class="mt-3 mx-1"
         />
       </div>
-      <VDivider />
-      <div class="sidebar-body pa-4 d-flex flex-column ga-3">
+      <div class="sidebar-body px-4 d-flex flex-column ga-3">
         <VAlert
           v-if="status?.status === 'failed'"
           color="error"
@@ -69,13 +70,15 @@
         </VAlert>
         <div
           v-if="reviewStore.isRunning"
-          class="placeholder d-flex flex-column align-center ga-4 pa-6"
+          class="d-flex flex-column align-center ga-4 pa-6 mt-8"
         >
-          <VProgressCircular color="tertiary" size="48" width="3" indeterminate />
-          <div class="text-body-small text-medium-emphasis text-center">
-            Reading the content through the
-            {{ reviewStore.selectedRubric?.name }} lens. This
-            usually takes under a minute.
+          <VProgressCircular color="tertiary" size="54" width="5" indeterminate />
+          <div class="text-title-small text-medium-emphasis text-center mt-4">
+            Reading the content through the <br />
+            <span class="font-weight-bold text-tertiary">
+              {{ reviewStore.selectedRubric?.name }}
+            </span> lens.<br />
+            This usually takes under a minute.
           </div>
         </div>
         <template v-else-if="result">
@@ -85,11 +88,11 @@
             :trend="status?.trend ?? []"
           />
           <template v-if="result.strengths.length">
-            <div class="section-title">What's working</div>
+            <div class="text-label-medium font-weight-bold mt-2">What's working</div>
             <StrengthsList :strengths="result.strengths" />
           </template>
           <template v-if="result.suggestions.length">
-            <div class="section-title">Suggestions</div>
+            <div class="text-label-medium font-weight-bold mt-2">Suggestions</div>
             <div class="d-flex flex-column ga-2">
               <SuggestionCard
                 v-for="(suggestion, index) in sortedSuggestions"
@@ -103,7 +106,7 @@
               />
             </div>
           </template>
-          <div class="section-title">Score breakdown</div>
+          <div class="text-label-medium font-weight-bold mt-2">Score breakdown</div>
           <VExpansionPanels class="dimension-panels pb-4" multiple flat>
             <DimensionCard
               v-for="dimension in dimensions"
@@ -113,30 +116,40 @@
             />
           </VExpansionPanels>
         </template>
-        <div
+        <VEmptyState
           v-else
-          class="placeholder d-flex flex-column align-center ga-4 pa-6"
+          class="justify-start pt-16"
+          color="tertiary"
+          icon="mdi-creation"
+          size="48"
+          title="Review this content"
+          text="Get feedback on this content - engagement scoring, what
+            works, and what to improve."
         >
-          <VIcon
-            class="placeholder-icon"
-            icon="mdi-creation"
-            size="48"
-          />
-          <div class="text-body-small text-medium-emphasis text-center">
-            Get feedback on this content - engagement scoring, what
-            works, and what to improve.
-          </div>
-          <VBtn
-            color="tertiary"
-            prepend-icon="mdi-creation"
-            text="Analyze content"
-            variant="tonal"
-            @click="reviewStore.requestAnalysis()"
-          />
-        </div>
+          <template #actions>
+            <VBtn
+              text="Analyze"
+              variant="tonal"
+              @click="reviewStore.requestAnalysis()"
+            />
+          </template>
+        </VEmptyState>
       </div>
     </div>
   </VNavigationDrawer>
+  <VFadeTransition>
+    <VBtn
+      v-if="!isOpen"
+      v-tooltip:left="{ text: 'Open Lens review', openDelay: 500 }"
+      aria-label="Open Lens review"
+      class="lens-toggle"
+      color="tertiary-container"
+      density="comfortable"
+      icon="mdi-camera-iris"
+      size="small"
+      @click="isOpen = true"
+    />
+  </VFadeTransition>
 </template>
 
 <script lang="ts" setup>
@@ -157,11 +170,18 @@ import { LENS_OVERLAY_BELOW_WIDTH, useReviewStore } from '@/stores/review';
 const IMPACT_ORDER = { high: 0, medium: 1, low: 2 } as const;
 
 const { $eventBus } = useNuxtApp() as any;
-const { xlAndUp } = useDisplay();
+const { width: viewportWidth, xlAndUp } = useDisplay();
 
 // Default v-model (the prop's wire name stays `modelValue` per Vue's
 // contract); locally named for readability.
 const isOpen = defineModel<boolean>();
+
+// On overlay-width viewports the drawer is temporary; mount it closed so it
+// never covers the editor. Desktop keeps the persisted preference, and
+// Vuetify's resize-watcher handles later breakpoint crossings.
+onMounted(() => {
+  if (viewportWidth.value < LENS_OVERLAY_BELOW_WIDTH) isOpen.value = false;
+});
 
 const { width, isResizing, startResize } = useDrawerResize({
   side: 'right',
@@ -221,6 +241,15 @@ const askAgent = (prompt: string) => {
 </script>
 
 <style lang="scss" scoped>
+.lens-toggle {
+  position: absolute;
+  width: 1.5rem;
+  height: 3.5rem;
+  top: 5.5rem;
+  right: 0;
+  border-radius: 12px 0 0 12px;
+}
+
 .sidebar {
   text-align: left;
 
@@ -258,15 +287,6 @@ const askAgent = (prompt: string) => {
   }
 }
 
-.sidebar-collapse-btn {
-  opacity: 0.7;
-  transition: opacity 160ms ease;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-
 .resize-handle {
   position: absolute;
   top: 0;
@@ -287,33 +307,16 @@ const askAgent = (prompt: string) => {
   min-height: 100%;
 }
 
-.section-title {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.7;
-}
-
 .dimension-panels :deep(.v-expansion-panel) {
-  margin-top: 0.5rem !important;
-  border-radius: 12px !important;
+  margin-top: 0.5rem;
+  border-radius: 0.5rem;
 
   &::after {
     display: none;
   }
 
   &:first-child {
-    margin-top: 0 !important;
+    margin-top: 0;
   }
-}
-
-.placeholder {
-  margin-top: 30%;
-}
-
-.placeholder-icon {
-  opacity: 0.4;
 }
 </style>

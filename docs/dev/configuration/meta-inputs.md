@@ -324,9 +324,10 @@ HE@S style ratings.
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 const ratingField = {
-  type: MetaInputType.HeasRating,
-  key: 'rating',
-  label: 'HE@S Rating',
-  reviewable: false,
+  type: MetaInputType.File,
+  key: 'thumbnail',
+  label: 'Thumbnail',
+  placeholder: 'Click to add a thumbnail image',
+  showPreview: true,
 };
 ```

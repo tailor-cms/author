@@ -3,17 +3,17 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
-        color="secondary"
+        color="tertiary"
         size="small"
         text="AI Prompt"
         variant="tonal"
       />
     </template>
-    <VCard class="mt-2 pa-7" min-width="410">
+    <VCard :theme="$vuetify.theme.global.name" class="mt-2 pa-7" min-width="410">
       <VBtnToggle
         v-model="promptType"
         class="mb-6"
-        color="secondary"
+        color="tertiary"
         density="compact"
         variant="tonal"
         group
@@ -25,14 +25,16 @@
         v-model="promptText"
         label="Prompt"
         variant="outlined"
+        hide-details
         @keydown.meta.enter="onSubmit"
         @keydown.ctrl.enter="onSubmit"
       />
-      <VCardActions class="d-flex justify-end">
+      <VCardActions class="d-flex justify-end pa-0 mt-2">
         <VBtn
           :disabled="!hasInput"
           :slim="false"
           append-icon="mdi-shimmer"
+          color="tertiary"
           text="Generate"
           variant="tonal"
           @click="onSubmit"

@@ -2,7 +2,7 @@
   <VList
     :selected="selectedIds"
     :select-strategy="multiple ? 'leaf' : 'single-leaf'"
-    class="asset-list"
+    class="asset-list d-flex flex-column py-0 ga-2"
     @update:selected="emit('update:selected', $event)"
   >
     <VListItem
@@ -10,28 +10,21 @@
       :key="asset.id"
       :disabled="!isCompatible(asset)"
       :value="asset.id"
-      class="pa-3 mb-1"
-      rounded
+      color="secondary"
+      class="bg-surface-container-low py-2 px-3"
+      rounded="lg"
     >
       <template #prepend>
-        <VAvatar
-          v-if="asset.publicUrl && asset.type === AssetType.Image"
-          class="mr-3"
-          rounded="lg"
-          size="52"
-        >
-          <VImg :src="asset.publicUrl" cover />
-        </VAvatar>
-        <VAvatar
-          v-else
-          class="mr-3"
-          rounded="lg"
-          size="52"
-        >
-          <VIcon :icon="getAssetIcon(asset.type)" size="26" />
+        <VAvatar rounded="lg" size="40">
+          <VImg
+            v-if="asset.publicUrl && asset.type === AssetType.Image"
+            :src="asset.publicUrl"
+            cover
+          />
+          <VIcon v-else :icon="getAssetIcon(asset.type)" size="22" />
         </VAvatar>
       </template>
-      <VListItemTitle class="text-body-medium">{{ asset.name }}</VListItemTitle>
+      <VListItemTitle class="text-title-small">{{ asset.name }}</VListItemTitle>
       <VListItemSubtitle
         v-if="!isCompatible(asset)"
         class="text-body-small text-medium-emphasis"
@@ -40,7 +33,7 @@
       </VListItemSubtitle>
       <VListItemSubtitle
         v-else-if="'fileSize' in asset.meta"
-        class="text-body-small"
+        class="text-label-medium"
       >
         {{ formatFileSize((asset.meta as FileAssetMeta).fileSize) }}
       </VListItemSubtitle>
@@ -97,5 +90,13 @@ const isCompatible = (asset: Asset): boolean => {
   max-height: 40vh;
   overflow-y: auto;
   background: transparent;
+}
+
+.v-list-item {
+  transition: background 0.15s ease;
+
+  &:hover {
+    background-color: rgb(var(--v-theme-surface-container));
+  }
 }
 </style>

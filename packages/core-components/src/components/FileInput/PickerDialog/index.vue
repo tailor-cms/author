@@ -2,13 +2,13 @@
   <TailorDialog
     :model-value="modelValue"
     :header-icon="icon"
+    :theme="$vuetify.theme.global.name"
+    :title="heading"
     width="800"
-    paddingless
     @close="onClose"
   >
-    <template #header>{{ heading }}</template>
-    <template #body>
-      <div class="px-5 pt-4">
+    <template #subheader>
+      <div class="px-5 pb-2">
         <VTabs
           v-model="activeTab"
           selected-class="bg-surface-container-high"
@@ -32,6 +32,8 @@
           />
         </VTabs>
       </div>
+    </template>
+    <template #body>
       <VTabsWindow :key="sessionKey" v-model="activeTab">
         <VTabsWindowItem value="upload">
           <UploadTab :accept="accept" @select="onFileSelect" />
@@ -50,11 +52,10 @@
     </template>
     <template #actions>
       <div class="px-2 pb-3">
-        <VBtn :slim="false" text="Cancel" variant="text" @click="onClose" />
+        <VBtn text="Cancel" variant="text" @click="onClose" />
         <VBtn
           v-if="activeTab === 'library'"
           :disabled="!hasSelection"
-          :slim="false"
           :text="selectLabel"
           class="ml-2 px-4"
           color="primary"
@@ -63,7 +64,6 @@
         />
         <VBtn
           v-if="activeTab === 'url'"
-          :slim="false"
           color="primary"
           class="ml-2"
           text="Submit"
@@ -150,6 +150,7 @@ const onFileSelect = (file: File) => {
 const toPayload = (asset: any) => ({
   key: asset.storageKey,
   name: asset.name,
+  url: asset.url,
   publicUrl: asset.publicUrl || null,
 });
 

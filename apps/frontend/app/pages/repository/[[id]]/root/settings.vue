@@ -14,7 +14,6 @@
         <VBtn
           v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
           aria-label="Collapse sidebar"
-          color="secondary"
           icon="mdi-chevron-double-left"
           size="small"
           density="comfortable"

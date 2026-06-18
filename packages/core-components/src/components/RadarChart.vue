@@ -42,6 +42,7 @@ const borderColor = computed(() => `${colors.value['outline']}BF`);
 
 const chartOptions = computed(() => ({
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     datalabels: {
       color: colors.value['on-secondary'],

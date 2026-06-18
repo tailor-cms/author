@@ -1,6 +1,6 @@
 <template>
   <div class="ma-4 mt-0">
-    <VSheet class="agent-input" color="surface-container-low" border>
+    <VSheet class="agent-input" border>
       <VTextarea
         ref="inputEl"
         v-model="text"
@@ -18,7 +18,7 @@
         @focus="emit('focus')"
         @keydown="onKeydown"
       />
-      <div class="d-flex align-center pa-4 pt-0 ga-2">
+      <div ref="controlsEl" class="d-flex align-center pa-4 pt-0 ga-2">
         <AgentCmdMenu
           ref="cmdMenuEl"
           v-model="text"
@@ -26,28 +26,30 @@
           @autorun="(prompt, label) => emit('autorun', prompt, label)"
         />
         <AgentTargetChip :chip="focusChip" />
-        <VSpacer />
-        <AgentModeSelect v-model="mode" />
-        <AgentEffortSelect v-model="effort" />
-        <VBtn
-          :disabled="!canSubmit"
-          :loading="disabled"
-          icon="mdi-arrow-up"
-          aria-label="Send"
-          class="input-send"
-          color="primary"
-          density="comfortable"
-          rounded="lg"
-          size="small"
-          variant="flat"
-          @click="submit"
-        />
+        <div class="d-flex ga-2 ml-auto">
+          <AgentModeSelect v-model="mode" :compact="compact" />
+          <AgentEffortSelect v-model="effort" :compact="compact" />
+          <VBtn
+            :disabled="!canSubmit"
+            :loading="disabled"
+            icon="mdi-arrow-up"
+            aria-label="Send"
+            class="input-send"
+            color="primary"
+            density="comfortable"
+            rounded="lg"
+            size="small"
+            variant="flat"
+            @click="submit"
+          />
+        </div>
       </div>
     </VSheet>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { useElementSize } from '@vueuse/core';
 import type { AgentMode } from '@tailor-cms/interfaces/agent.ts';
 import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
 import AgentEffortSelect from './AgentEffortSelect.vue';
@@ -78,6 +80,12 @@ const emit = defineEmits<{
   autorun: [prompt: string, label: string];
   focus: [];
 }>();
+
+const controlsEl = ref<HTMLElement | null>(null);
+const { width: controlsWidth } = useElementSize(controlsEl);
+// Collapse the mode/effort selects to icon-only when the row gets tight,
+// so the controls never wrap onto a second line.
+const compact = computed(() => controlsWidth.value > 0 && controlsWidth.value < 400);
 
 const inputEl = ref<{ focus: () => void } | null>(null);
 const cmdMenuEl = ref<{

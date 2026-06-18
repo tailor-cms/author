@@ -1,6 +1,10 @@
 <template>
-  <TailorDialog v-model="isDialogVisible" header-icon="mdi-tune" persistent>
-    <template #header>{{ value.rating ? 'Edit' : 'Add' }} H@ES Rating</template>
+  <TailorDialog
+    v-model="isDialogVisible"
+    :title="`${value.rating ? 'Edit' : 'Add'} H@ES Rating`"
+    header-icon="mdi-tune"
+    persistent
+  >
     <template #body>
       <VForm ref="form" validate-on="submit" novalidate @submit.prevent="save">
         <div class="mb-8">
@@ -106,7 +110,7 @@ watch(
 
 <style lang="scss" scoped>
 .label {
-  width: 10rem;
+  width: 11.5rem;
   opacity: 0.7;
 }
 

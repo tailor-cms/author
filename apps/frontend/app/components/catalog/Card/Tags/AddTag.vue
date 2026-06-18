@@ -2,26 +2,30 @@
   <TailorDialog
     :model-value="isVisible"
     header-icon="mdi-tag-outline"
+    title="Add Tag"
     @close="closeAddTagDialog"
+    @submit="submitForm"
   >
-    <template #header>Add Tag</template>
     <template #body>
-      <form novalidate @submit.prevent="submitForm">
-        <VCombobox
-          v-model="tagInput"
-          :error-messages="errors.tag"
-          :items="availableTags"
-          label="Select a tag or add a new one"
-          name="tag"
-          variant="outlined"
-          @keydown.enter="submitForm"
-          @update-tag-name:search-input="(v: string) => (tagInput = v)"
-        />
-        <div class="d-flex justify-end pb-2 pr-1 ga-2">
-          <VBtn text="Cancel" variant="text" @click="closeAddTagDialog" />
-          <VBtn color="primary" type="submit" text="Save" variant="flat" />
-        </div>
-      </form>
+      <VCombobox
+        v-model="tagInput"
+        :error-messages="errors.tag"
+        :items="availableTags"
+        label="Select a tag or add a new one"
+        name="tag"
+        variant="outlined"
+        @keydown.enter="submitForm"
+        @update-tag-name:search-input="(v: string) => (tagInput = v)"
+      />
+    </template>
+    <template #actions>
+      <VBtn text="Cancel" variant="text" @click="closeAddTagDialog" />
+      <VBtn
+        color="primary"
+        type="submit"
+        text="Save"
+        variant="flat"
+      />
     </template>
   </TailorDialog>
 </template>

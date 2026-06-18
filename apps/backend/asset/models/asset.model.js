@@ -1,5 +1,6 @@
 import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset';
 import { Model } from 'sequelize';
+import { storage as storageConfig } from '#config';
 import Storage from '../../repository/storage.ts';
 
 export { AssetType, ProcessingStatus };
@@ -39,6 +40,9 @@ class Asset extends Model {
       publicUrl: {
         type: VIRTUAL,
       },
+      url: {
+        type: VIRTUAL,
+      },
       meta: {
         type: JSONB,
         defaultValue: {},
@@ -72,6 +76,7 @@ class Asset extends Model {
     const withKeys = assets.filter((a) => a.storageKey);
     await Promise.all(
       withKeys.map(async (a) => {
+        a.url = `${storageConfig.protocol}${a.storageKey}`;
         a.publicUrl = await Storage.getFileUrl(a.storageKey).catch(() => null);
       }),
     );

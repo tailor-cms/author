@@ -16,9 +16,10 @@
       @pointerdown="startResize"
     />
     <div class="sidebar-layout">
-      <div class="sidebar-tab-row d-flex align-center mt-1">
+      <div ref="tabRowEl" class="sidebar-tab-row d-flex align-center mt-1">
         <VTabs
           v-model="selectedTab"
+          :show-arrows="false"
           class="sidebar-tabs flex-grow-1"
           color="primary"
           density="compact"
@@ -27,13 +28,18 @@
           <VTab
             v-for="tab in tabs"
             :key="tab.name"
+            v-tooltip:bottom="
+              compact ? { text: tab.label, openDelay: 500 } : undefined
+            "
+            :aria-label="tab.label"
             :disabled="tab.disabled"
-            :text="tab.label"
             :value="tab.name"
             :variant="selectedTab === tab.name ? 'tonal' : 'text'"
             class="mr-1"
             rounded="pill"
           >
+            <VIcon v-if="compact" :icon="`mdi-${tab.icon}`" />
+            <template v-else>{{ tab.label }}</template>
             <template v-if="tab.badgeData" #append>
               <VBadge :content="tab.badgeData" color="tertiary" inline />
             </template>
@@ -43,7 +49,6 @@
           v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
           aria-label="Collapse sidebar"
           class="sidebar-collapse-btn"
-          color="secondary"
           icon="mdi-chevron-double-left"
           size="small"
           density="comfortable"
@@ -76,9 +81,23 @@
       </div>
     </div>
   </VNavigationDrawer>
+  <VFadeTransition>
+    <VBtn
+      v-if="!modelValue"
+      v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
+      :icon="activeTabIcon"
+      aria-label="Open sidebar"
+      class="sidebar-toggle"
+      color="secondary-container"
+      density="comfortable"
+      size="small"
+      @click="modelValue = true"
+    />
+  </VFadeTransition>
 </template>
 
 <script lang="ts" setup>
+import { useElementSize } from '@vueuse/core';
 import { get, reject } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
@@ -117,6 +136,14 @@ const { width, isResizing, startResize } = useDrawerResize({
 const defaultTab = isCollection.value ? COMMENTS_TAB : BROWSER_TAB;
 const selectedTab = ref(defaultTab);
 
+const tabRowEl = ref<HTMLElement | null>(null);
+const { width: tabRowWidth } = useElementSize(tabRowEl);
+// Collapse the tabs to icon-only when the row gets tight, so the labels
+// never wrap or overflow as the sidebar is narrowed.
+const compact = computed(
+  () => tabRowWidth.value > 0 && tabRowWidth.value < 340,
+);
+
 const tabs: any = computed(() => [
   ...(!isCollection.value
     ? [{ name: BROWSER_TAB, label: 'Browse', icon: 'file-tree' }]
@@ -150,6 +177,11 @@ const elementSidebarEnabled = computed(() => {
 const metadata = computed(() => {
   const schemaId = get(props.repository, 'schema');
   return $schemaService.getElementMetadata(schemaId, props.selectedElement);
+});
+
+const activeTabIcon = computed(() => {
+  const active = tabs.value.find((tab: any) => tab.name === selectedTab.value);
+  return active ? `mdi-${active.icon}` : 'mdi-dock-left';
 });
 
 watch(
@@ -186,6 +218,15 @@ watch(
   .v-btn--disabled {
     opacity: 0.35;
   }
+}
+
+.sidebar-toggle {
+  position: absolute;
+  width: 1.5rem;
+  height: 3.5rem;
+  top: 5.5rem;
+  left: 0;
+  border-radius: 0 12px 12px 0;
 }
 
 .resize-handle {
@@ -258,7 +299,6 @@ watch(
   }
 
   :deep(.activity-discussion) {
-    margin: 1rem 0;
     padding: 1rem;
     border: none;
   }

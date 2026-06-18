@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="comment" color="transparent">
+  <div :class="{ 'opacity-60': isDeleted }" class="comment ma-2">
     <UserAvatar
       v-if="comment.author"
       :img-url="comment.author.imgUrl"
@@ -22,7 +22,7 @@
       <div class="comment-body">
         <CommentPreview
           v-if="!isEditing"
-          v-bind="{ content: comment.content, isResolved }"
+          v-bind="{ content: comment.content, isResolved, isDeleted, isEdited }"
           @unresolve="handleResolvementUpdate"
         />
         <template v-else>
@@ -30,28 +30,30 @@
           <VTextarea
             v-model.trim="contentInput"
             :error-messages="errors.message"
+            density="comfortable"
             class="comment-editor"
             rows="3"
             variant="outlined"
+            hide-details="auto"
             auto-grow
             autofocus
             clearable
           />
           <!-- eslint-enable vuejs-accessibility/no-autofocus -->
-          <span class="d-flex justify-end ga-2">
+          <span class="d-flex justify-end mt-3 ga-2">
             <VBtn size="small" text="Cancel" variant="text" @click="reset" />
             <VBtn
-              prepend-icon="mdi-check"
+              color="primary"
               size="small"
               text="Save"
-              variant="tonal"
+              variant="flat"
               @click="save"
             />
           </span>
         </template>
       </div>
     </div>
-  </VSheet>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -81,6 +83,8 @@ const emit = defineEmits(['remove', 'resolve', 'unresolve', 'update']);
 
 const isEditing = ref(false);
 const isResolved = computed(() => !!props.comment.resolvedAt);
+const isDeleted = computed(() => !!props.comment.deletedAt);
+const isEdited = computed(() => !!props.comment.editedAt);
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
@@ -118,6 +122,7 @@ watch(() => props.comment, reset, { deep: true });
 .comment {
   display: flex;
   gap: 0.75rem;
+  transition: background-color 0.2s ease-in-out;
 
   &-main {
     display: flex;
@@ -129,8 +134,10 @@ watch(() => props.comment, reset, { deep: true });
   &-editor.v-textarea {
     margin: 0.75rem 0 0 0;
 
-    :deep(.v-input__slot) {
-      width: auto;
+    // Match the rendered body (text-body-medium, 0.875rem) so toggling edit/view
+    // doesn't resize text. Vuetify's .v-field hardcodes 16px.
+    :deep(.v-field) {
+      font-size: 0.875rem;
     }
   }
 }

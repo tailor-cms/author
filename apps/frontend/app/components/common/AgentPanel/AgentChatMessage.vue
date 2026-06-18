@@ -1,14 +1,15 @@
 <template>
   <div class="chat-message">
-    <VSheet
+    <VCard
       v-if="isUserMessage"
-      color="surface-container"
       class="user-bubble ml-auto"
+      color="tertiary"
       max-width="85%"
       rounded="lg"
+      variant="tonal"
     >
       {{ content }}
-    </VSheet>
+    </VCard>
     <div v-else class="message-column">
       <div v-if="content" class="message-content" v-html="renderedContent" />
       <div
@@ -148,21 +149,21 @@ const renderedContent = computed(() => {
 
   :deep(.agent-md-inline-code) {
     padding: 0.25rem 0.375rem;
-    color: rgb(var(--v-theme-secondary));
+    color: rgb(var(--v-theme-tertiary));
     font-family: Menlo, Consolas, monospace;
     font-size: 0.6875rem;
-    background: rgb(var(--v-theme-surface-container));
+    background: rgb(var(--v-theme-surface-container-low));
     border-radius: 0.25rem;
   }
 
   :deep(.agent-md-link) {
-    color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-secondary));
     text-decoration: underline;
   }
 
   :deep(.agent-md-entity) {
     border-bottom: 1px dashed currentColor;
-    color: rgb(var(--v-theme-primary));
+    color: rgb(var(--v-theme-secondary));
     text-decoration: none;
   }
 

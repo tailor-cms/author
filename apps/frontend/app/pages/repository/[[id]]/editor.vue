@@ -1,5 +1,5 @@
 <template>
-  <div v-if="editorStore.selectedActivity" class="w-100">
+  <div v-if="editorStore.selectedActivity" class="editor-root w-100">
     <VToolbar
       :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
       :active-users="activeUsers"
@@ -13,31 +13,17 @@
       :selected-element="editorStore.selectedContentElement as ContentElement"
     />
     <VMain class="editor-main">
-      <VFadeTransition>
-        <VBtn
-          v-if="!showSidebar"
-          v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
-          class="sidebar-toggle"
-          color="secondary"
-          aria-label="Open sidebar"
-          density="comfortable"
-          icon="mdi-chevron-double-right"
-          size="small"
-          variant="tonal"
-          @click="showSidebar = true"
-        />
-      </VFadeTransition>
       <NuxtPage
         v-if="activityId"
         :key="activityId"
         :activity-id="activityId"
         class="activity-content h-100"
       />
-      <FeedbackSidebar
-        v-if="reviewStore.isLensAvailable"
-        v-model="reviewStore.isPanelOpen"
-      />
     </VMain>
+    <FeedbackSidebar
+      v-if="reviewStore.isLensAvailable"
+      v-model="reviewStore.isPanelOpen"
+    />
   </div>
 </template>
 
@@ -45,6 +31,7 @@
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import { useDisplay } from 'vuetify';
 
 import { useCommentStore } from '@/stores/comments';
 import { useConfigStore } from '@/stores/config';
@@ -76,7 +63,11 @@ provide('$editorState', {
 });
 
 const activityId = ref<number | null>(null);
-const showSidebar = ref(true);
+// Open by default only when the sidebar is permanent (mirrors the drawer's
+// `mobile-breakpoint="md"`); on mobile it stays closed so it never overlays
+// the opened element. Runtime breakpoint crossings are handled by Vuetify.
+const { mdAndUp } = useDisplay();
+const showSidebar = ref(mdAndUp.value);
 // TODO: Needs to be implemented
 const activeUsers: any = [];
 
@@ -126,14 +117,8 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.sidebar-toggle {
-  position: fixed;
-  width: 1.75rem;
-  height: 3.5rem;
-  top: 50%;
-  left: 4.6875rem;
-  transform: translateY(-50%);
-  z-index: 1004;
-  border-radius: 0 8px 8px 0;
+.editor-root {
+  position: relative;
+  height: 100%;
 }
 </style>

@@ -27,7 +27,7 @@ const onSelect = (files: File | File[] | null) => {
 
 <style lang="scss">
 .upload-tab-wrapper {
-  padding: 2rem;
+  padding: 1rem;
   padding-bottom: 0;
 
   .upload-tab .v-sheet {

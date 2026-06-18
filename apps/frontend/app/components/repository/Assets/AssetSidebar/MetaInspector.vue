@@ -5,6 +5,7 @@
         v-tooltip:bottom="'View raw metadata'"
         v-bind="menuProps"
         aria-label="View raw metadata"
+        density="comfortable"
         size="small"
         icon="mdi-code-json"
         variant="text"

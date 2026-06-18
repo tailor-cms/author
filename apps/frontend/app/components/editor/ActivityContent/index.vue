@@ -452,6 +452,6 @@ onBeforeUnmount(() => {
 .content-containers-wrapper {
   max-width: 68.75rem;
   margin: auto;
-  padding: 1.5rem;
+  padding: 1.75rem;
 }
 </style>

@@ -40,17 +40,19 @@ const lightTheme: ThemeDefinition = {
     'primary-container': '#A6F0C5',
     'on-primary-container': '#00210E',
 
-    // Secondary — ocean (cool complement to jade primary)
-    'secondary': '#2F6F8F',
+    // Secondary — muted jade: primary hue 157 at primary's tone (~55) but
+    // chroma ~30 (vs primary's 53), so it reads as a desaturated sibling at the
+    // same lightness. A quiet "dim primary" for supporting actions/filter chips.
+    'secondary': '#5F8E6D',
     'on-secondary': '#FFFFFF',
-    'secondary-container': '#C9E6F5',
-    'on-secondary-container': '#001E2E',
+    'secondary-container': '#BBEFC8',
+    'on-secondary-container': '#002611',
 
-    // Tertiary — rose-pink (MD3 hue ~345; cool warm accent, sparing use)
-    'tertiary': '#B4216B',
+    // Tertiary — ocean (the distinct cool accent ~hue 235; AI brand + lineage).
+    'tertiary': '#2F6F8F',
     'on-tertiary': '#FFFFFF',
-    'tertiary-container': '#FFD9E5',
-    'on-tertiary-container': '#3E0021',
+    'tertiary-container': '#C9E6F5',
+    'on-tertiary-container': '#001E2E',
 
     // Warning — amber-orange (warmer/oranger than the old honey amber)
     'warning': '#C57A00',
@@ -136,17 +138,18 @@ const darkTheme: ThemeDefinition = {
     'primary-container': '#00522A',
     'on-primary-container': '#8FF0B7',
 
-    // Secondary — ocean (cool complement to jade primary)
-    'secondary': '#9CCAE2',
-    'on-secondary': '#003549',
-    'secondary-container': '#004F69',
-    'on-secondary-container': '#CDE6F5',
+    // Secondary — muted jade (MD3 spec: primary hue 157, low chroma ~24).
+    // A quiet "dim primary" for supporting actions/filter chips, not a brand accent.
+    'secondary': '#AAD0B2',
+    'on-secondary': '#1A3B26',
+    'secondary-container': '#31533C',
+    'on-secondary-container': '#C5ECCD',
 
-    // Tertiary — rose-pink (MD3 hue ~345; cool warm accent, sparing use)
-    'tertiary': '#FFB0CC',
-    'on-tertiary': '#5E1138',
-    'tertiary-container': '#7C2950',
-    'on-tertiary-container': '#FFD9E5',
+    // Tertiary — ocean (the distinct cool accent ~hue 235; AI brand + lineage).
+    'tertiary': '#9CCAE2',
+    'on-tertiary': '#003549',
+    'tertiary-container': '#004F69',
+    'on-tertiary-container': '#CDE6F5',
 
     // Warning — amber-orange (warmer/oranger than the old honey amber)
     'warning': '#FFC080',
