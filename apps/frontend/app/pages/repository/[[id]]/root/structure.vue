@@ -132,6 +132,7 @@ definePageMeta({
   middleware: ['auth'],
 });
 
+const route = useRoute();
 const repositoryStore = useCurrentRepository();
 const { smAndDown } = useDisplay();
 
@@ -179,6 +180,13 @@ const filteredActivities = computed(() => {
   });
 });
 
+const queryActivityId = computed(() => {
+  const { activityId } = route.query;
+  if (!activityId) return null;
+  const id = parseInt(activityId as string, 10);
+  return Number.isNaN(id) ? null : id;
+});
+
 const goTo = async (activity: StoreActivity) => {
   filters.search = '';
   repositoryStore.selectActivity(activity.id);
@@ -204,18 +212,25 @@ const scrollToActivity = (
   }
 };
 
+const selectAndReveal = (id: number, behavior?: ScrollBehavior) => {
+  repositoryStore.selectActivity(id);
+  if (selectedActivity.value) scrollToActivity(selectedActivity.value, behavior);
+};
+
+// React to `activityId` query changes within the same repository.
+// The structure page is not remounted on same-route
+// navigation, so the updated selection must be applied here.
+watch(queryActivityId, (id) => {
+  if (id == null || selectedActivity.value?.id === id) return;
+  selectAndReveal(id);
+});
+
 onMounted(() => {
-  const route = useRoute();
-  const { activityId } = route.query;
-  if (activityId) {
-    repositoryStore.selectActivity(parseInt(activityId as string, 10));
+  if (queryActivityId.value != null) {
+    selectAndReveal(queryActivityId.value, 'auto');
   } else if (rootActivities.value.length) {
-    repositoryStore.selectActivity(rootActivities.value[0]!.id);
-  } else {
-    // If there are no activities
-    return;
+    selectAndReveal(rootActivities.value[0]!.id, 'auto');
   }
-  if (selectedActivity.value) scrollToActivity(selectedActivity.value, 'auto');
 });
 </script>
 
