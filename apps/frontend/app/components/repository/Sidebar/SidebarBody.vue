@@ -1,10 +1,16 @@
 <template>
   <div class="body position-relative">
     <div class="d-flex align-center mb-4 pa-1">
-      <div class="d-flex align-center mr-1 text-body-medium font-weight-bold">
-        <VIcon :color="config.color" class="mr-2" icon="mdi-label" size="26" />
-        <span>{{ config.label.toUpperCase() }}</span>
-      </div>
+      <VChip
+        :text="config.label.toUpperCase()"
+        density="compact"
+        class="font-weight-bold px-0"
+        variant="text"
+      >
+        <template #prepend>
+          <VIcon :color="config.color" icon="mdi-label" size="x-large" start />
+        </template>
+      </VChip>
       <VDivider class="my-2 mx-3" vertical />
       <LabelChip
         v-tooltip:bottom="{ text: `${config.label} ID`, openDelay: 100 }"
