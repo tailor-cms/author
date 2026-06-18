@@ -43,14 +43,14 @@ export const useRepositorySSE = () => {
   }
 
   const trackingParameters = computed(() => ({
-    sseId: sseId.value,
+    sseId: sseId.value ?? undefined,
     repositoryId: route.params.id
       ? parseInt(route.params.id as string, 10)
-      : null,
+      : undefined,
     activityId: route.params.activityId
       ? parseInt(route.params.activityId as string, 10)
-      : null,
-    elementId: route.query?.elementId,
+      : undefined,
+    elementId: (route.query?.elementId as string) || undefined,
   }));
 
   const isTracking = computed(() => {
