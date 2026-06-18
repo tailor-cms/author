@@ -11,7 +11,7 @@
             <template #prepend>
               <VIcon :icon="headerIcon" :color="color" />
             </template>
-            <VCardTitle class="font-weight-semibold">{{ title }}</VCardTitle>
+            <VCardTitle class="dialog-title">{{ title }}</VCardTitle>
           </VCardItem>
           <div v-if="$slots.subheader" class="dialog-subheader">
             <slot name="subheader"></slot>
@@ -65,3 +65,9 @@ const onModelUpdate = (val: boolean) => {
   emit(val ? 'open' : 'close');
 };
 </script>
+
+<style lang="scss" scoped>
+.dialog-title {
+  font-weight: 600;
+}
+</style>
