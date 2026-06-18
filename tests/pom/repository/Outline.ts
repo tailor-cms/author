@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { AddItemDialog } from './AddItemDialog';
+import { LinkContentDialog } from './LinkContentDialog';
 import { OutlineItem } from './OutlineItem';
 import { OutlineSidebar } from './OutlineSidebar';
 
@@ -11,6 +12,7 @@ export class ActivityOutline {
   readonly searchInput: Locator;
   readonly toggleAllBtn: Locator;
   readonly createRootBtn: Locator;
+  readonly linkRootBtn: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.structure-page');
@@ -19,6 +21,7 @@ export class ActivityOutline {
       name: /^(Expand all|Collapse all)$/,
     });
     this.createRootBtn = el.getByTestId('repository__createRootActivityBtn');
+    this.linkRootBtn = el.getByRole('button', { name: 'Link Existing' });
     this.page = page;
     this.el = el;
   }
@@ -61,5 +64,10 @@ export class ActivityOutline {
     const addActivityDialog = new AddItemDialog(this.page);
     await addActivityDialog.create(type, name);
     return this.getOutlineItemByName(name);
+  }
+
+  async linkExisting() {
+    await this.linkRootBtn.click();
+    return new LinkContentDialog(this.page);
   }
 }
