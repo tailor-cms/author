@@ -17,15 +17,10 @@
 </template>
 
 <script lang="ts" setup>
-import { orderBy } from 'lodash-es';
-
-import CollectionItem from '@/components/repository/Outline/CollectionItem.vue';
+import type { CollectionSort } from '@/composables/useCollectionEntities';
 import type { StoreActivity } from '@/stores/activity';
-
-interface CollectionSort {
-  key: 'data.name' | 'createdAt';
-  order: 'asc' | 'desc';
-}
+import CollectionItem from '@/components/repository/Outline/CollectionItem.vue';
+import { orderBy } from 'lodash-es';
 
 const props = defineProps<{
   activities: StoreActivity[];

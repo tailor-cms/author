@@ -6,7 +6,7 @@
     @click="onClick"
     @mousedown="onMousedown"
   >
-    <div class="metadata-container">
+    <div v-if="!repositoryStore.isCollection" class="metadata-container">
       <div
         :class="{
           'metadata-collapse--open': editorStore.isDetailsPanelExpanded,

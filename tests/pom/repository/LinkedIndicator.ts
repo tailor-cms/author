@@ -7,14 +7,15 @@ export class LinkedIndicator {
   readonly page: Page;
   readonly el: Locator;
   readonly menuBtn: Locator;
-
+  readonly status: Locator;
   readonly toast: Toast;
 
   constructor(page: Page, parent: Locator) {
     this.page = page;
-    this.toast = new Toast(page);
     this.el = parent.locator('.linked-indicator');
+    this.status = this.el.locator('.linked-status');
     this.menuBtn = this.el.getByRole('button', { name: 'Linked actions' });
+    this.toast = new Toast(page);
   }
 
   async expectVisible() {
@@ -26,8 +27,16 @@ export class LinkedIndicator {
   }
 
   async expectLinkedStatus() {
-    const status = this.el.locator('.linked-status');
-    await expect(status).toContainText(/linked/i);
+    await expect(this.status).toContainText(/linked/i);
+  }
+
+  async expectLinkedViaParentStatus() {
+    await expect(this.status).toContainText(/via parent/i);
+  }
+
+  async expectEntryPointStatus() {
+    await expect(this.status).toContainText(/linked/i);
+    await expect(this.status).not.toContainText(/via parent/i);
   }
 
   async openMenu() {

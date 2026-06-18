@@ -27,6 +27,10 @@ export class OutlineSidebar {
     this.linkedCopyNotice = new LinkedCopyNotice(page, this.el);
   }
 
+  async expectName(name: string) {
+    await expect(this.nameInput).toHaveValue(name);
+  }
+
   async fillName(name: string) {
     await this.nameInput.fill(name);
     // Blur to trigger the save event

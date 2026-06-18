@@ -10,6 +10,7 @@
           <OutlineToolbar
             v-model:search="filters.search"
             v-model:sort="collectionSort"
+            :active-entity="selectedEntity"
             class="flex-grow-1"
           />
           <VAppBarNavIcon
@@ -21,9 +22,15 @@
         </div>
         <BrokenReferencesAlert />
         <div v-if="isCollection" class="collection-wrapper mt-4">
+          <EntityFilter
+            v-if="hasMultipleEntities"
+            v-model="selectedEntity"
+            :entities="entities"
+            class="mb-4"
+          />
           <CollectionList
             v-if="hasActivities"
-            :activities="filteredActivities"
+            :activities="visibleCollectionItems"
             :sort="collectionSort"
           />
           <VAlert
@@ -105,22 +112,19 @@ import { storeToRefs } from 'pinia';
 import { useDisplay } from 'vuetify';
 
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
+import type { CollectionSort } from '@/composables/useCollectionEntities';
+import type { StoreActivity } from '@/stores/activity';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
 import CollectionList from '@/components/repository/Outline/CollectionList.vue';
+import EntityFilter from '@/components/repository/Outline/EntityFilter.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineToolbar from '@/components/repository/Outline/OutlineToolbar.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
 import Sidebar from '@/components/repository/Sidebar/index.vue';
-import type { StoreActivity } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Filters {
   search: string;
-}
-
-interface CollectionSort {
-  key: 'data.name' | 'createdAt';
-  order: 'asc' | 'desc';
 }
 
 definePageMeta({
@@ -128,15 +132,28 @@ definePageMeta({
   middleware: ['auth'],
 });
 
+const route = useRoute();
 const repositoryStore = useCurrentRepository();
 const { smAndDown } = useDisplay();
 
 const {
+  // hierarchy
   outlineActivities,
   rootActivities,
+  // general
   selectedActivity,
   isCollection,
 } = storeToRefs(repositoryStore);
+
+// collection (inert unless the schema is a collection)
+const { entities, selectedEntity, hasMultipleEntities } =
+  useCollectionEntities();
+
+const visibleCollectionItems = computed(() =>
+  isCollection.value
+    ? filteredActivities.value.filter((it) => it.type === selectedEntity.value)
+    : [],
+);
 
 const reorder = useOutlineReorder();
 const storageService = useStorageService();
@@ -161,6 +178,13 @@ const filteredActivities = computed(() => {
   return filter(outlineActivities.value, ({ shortId, data: { name } }) => {
     return regex.test(shortId) || regex.test(name as string);
   });
+});
+
+const queryActivityId = computed(() => {
+  const { activityId } = route.query;
+  if (!activityId) return null;
+  const id = parseInt(activityId as string, 10);
+  return Number.isNaN(id) ? null : id;
 });
 
 const goTo = async (activity: StoreActivity) => {
@@ -188,18 +212,25 @@ const scrollToActivity = (
   }
 };
 
+const selectAndReveal = (id: number, behavior?: ScrollBehavior) => {
+  repositoryStore.selectActivity(id);
+  if (selectedActivity.value) scrollToActivity(selectedActivity.value, behavior);
+};
+
+// React to `activityId` query changes within the same repository.
+// The structure page is not remounted on same-route
+// navigation, so the updated selection must be applied here.
+watch(queryActivityId, (id) => {
+  if (id == null || selectedActivity.value?.id === id) return;
+  selectAndReveal(id);
+});
+
 onMounted(() => {
-  const route = useRoute();
-  const { activityId } = route.query;
-  if (activityId) {
-    repositoryStore.selectActivity(parseInt(activityId as string, 10));
+  if (queryActivityId.value != null) {
+    selectAndReveal(queryActivityId.value, 'auto');
   } else if (rootActivities.value.length) {
-    repositoryStore.selectActivity(rootActivities.value[0]!.id);
-  } else {
-    // If there are no activities
-    return;
+    selectAndReveal(rootActivities.value[0]!.id, 'auto');
   }
-  if (selectedActivity.value) scrollToActivity(selectedActivity.value, 'auto');
 });
 </script>
 

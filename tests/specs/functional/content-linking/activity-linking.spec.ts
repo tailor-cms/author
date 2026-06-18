@@ -163,6 +163,31 @@ test('can link a leaf activity via footer button', async ({ page }) => {
   await expect(reloaded.linkIcon).toBeVisible();
 });
 
+test('can navigate to linked parent from a nested linked child', async ({
+  page,
+}) => {
+  const sourceRepo = await seedSourceRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const linkDialog = await outline.linkExisting();
+  await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
+  await outline.toggleExpand();
+  const childPage = await outline.getOutlineItemByName(
+    outlineSeed.primaryPage.title,
+  );
+  await childPage.select();
+  // The nested child is linked via its parent, not an entry point itself
+  const sidebar = new OutlineSidebar(page);
+  await sidebar.expectName(outlineSeed.primaryPage.title);
+  await sidebar.linkedIndicator.expectVisible();
+  await sidebar.linkedIndicator.expectLinkedViaParentStatus();
+  await sidebar.linkedIndicator.goToLinkedParent();
+  // The linked parent module should now be selected and shown as entry point
+  await sidebar.expectName(outlineSeed.group.title);
+  await sidebar.linkedIndicator.expectVisible();
+  await sidebar.linkedIndicator.expectEntryPointStatus();
+});
+
 test('linked activity shows link icon in outline', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
@@ -295,7 +320,10 @@ test('opening empty linked activity does not auto-unlink', async ({ page }) => {
   await sourceOutline.addRootItem(outlineLevel.LEAF, 'Empty Page');
   const targetRepo = await toEmptyRepository(page, 'Target');
   const targetOutline = new ActivityOutline(page);
-  const module = await targetOutline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await targetOutline.addRootItem(
+    outlineLevel.GROUP,
+    'Target Module',
+  );
   const linkDialog = await module.optionsMenu.linkContentInto();
   await linkDialog.selectAndLink(sourceRepo.name, 'Empty Page');
   // Navigate to linked page editor

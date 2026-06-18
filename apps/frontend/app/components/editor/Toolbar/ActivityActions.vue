@@ -40,6 +40,8 @@ const activityLabel = computed(
 
 const hasMetadata = computed(() => {
   if (!editorStore.selectedActivity) return false;
+  // Collection items edit their title inline in the container
+  if (currentRepositoryStore.isCollection) return false;
   return !!$schemaService.getActivityMetadata(editorStore.selectedActivity)
     ?.length;
 });

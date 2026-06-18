@@ -87,7 +87,7 @@
       </template>
       <VSheet v-else class="py-10">
         <div class="text-title-large">
-          {{ element.type.replace('_', ' ') }}
+          {{ (element.type || 'Unknown').replace('_', ' ') }}
         </div>
         <div class="pt-4 text-title-small">Component is not available!</div>
       </VSheet>
