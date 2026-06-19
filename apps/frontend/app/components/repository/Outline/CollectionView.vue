@@ -33,11 +33,23 @@
         </VList>
       </VMenu>
     </div>
-    <CollectionList
-      v-if="hasActivities"
-      :activities="visibleCollectionItems"
-      :sort="sort"
-    />
+    <template v-if="hasActivities">
+      <VEmptyState
+        v-if="!sortedItems.length"
+        class="py-16 rounded-lg"
+        bg-color="surface-container"
+        icon="mdi-magnify"
+        title="No matches found."
+        text="Try adjusting your search."
+      />
+      <VList v-else bg-color="transparent" class="collection-list pa-0">
+        <CollectionItem
+          v-for="item in sortedItems"
+          :key="item.id"
+          :activity="item"
+        />
+      </VList>
+    </template>
     <VEmptyState
       v-else
       class="py-16 rounded-lg"
@@ -50,10 +62,11 @@
 </template>
 
 <script lang="ts" setup>
+import { orderBy } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 
 import type { CollectionSort } from '@/composables/useCollectionEntities';
-import CollectionList from '@/components/repository/Outline/CollectionList.vue';
+import CollectionItem from '@/components/repository/Outline/CollectionItem.vue';
 import EntityFilter from '@/components/repository/Outline/EntityFilter.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -101,11 +114,20 @@ const filteredActivities = computed(() => {
 const visibleCollectionItems = computed(() =>
   filteredActivities.value.filter((it) => it.type === selectedEntity.value),
 );
+
+const sortedItems = computed(() =>
+  orderBy(visibleCollectionItems.value, [sort.value.key], [sort.value.order]),
+);
 </script>
 
 <style lang="scss" scoped>
 .collection-wrapper {
   flex: 0 0 auto;
+}
+
+.collection-list {
+  background: transparent;
+  text-align: left;
 }
 
 .sort-btn {
