@@ -496,9 +496,6 @@ importers:
       events:
         specifier: ^3.3.0
         version: 3.3.0
-      fecha:
-        specifier: ^4.2.3
-        version: 4.2.3
       hashids:
         specifier: ^2.3.0
         version: 2.3.0
@@ -7056,9 +7053,6 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
-
-  fecha@4.2.3:
-    resolution: {integrity: sha512-OP2IUU6HeYKJi3i0z4A19kHMQoLVs4Hc+DPqqxI2h/DPZHTm/vjsfC6P0b4jCMy14XizLBqvndQ+UilD7707Jw==}
 
   figures@6.1.0:
     resolution: {integrity: sha512-d+l3qxjSesT4V7v2fh+QnmFnUWv9lSpjarhShNTgBOfA0ttejbQUAlHLitbjkoRiDulW0OPoQPYIGhIC8ohejg==}
@@ -17493,8 +17487,6 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.4):
     optionalDependencies:
       picomatch: 4.0.4
-
-  fecha@4.2.3: {}
 
   figures@6.1.0:
     dependencies:

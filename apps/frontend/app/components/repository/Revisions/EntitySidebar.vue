@@ -10,7 +10,7 @@
       <VListItem
         v-bind="hoverProps"
         :active="isSelected(revision)"
-        :subtitle="revision.user.label"
+        :subtitle="revision.user?.label"
         :title="formatDate(revision)"
         class="position-relative"
         lines="two"
@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import { format } from 'fecha';
+import { formatDate as format } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 interface Props {
@@ -51,9 +51,9 @@ const props = withDefaults(defineProps<Props>(), {
 });
 defineEmits(['preview', 'rollback']);
 
-const isSelected = (revision: Revision) => props.selected?.id === revision.id;
-const formatDate = (revision: Revision) => {
-  return format(new Date(revision.createdAt), 'M/D/YY h:mm A');
+const isSelected = ({ id }: Revision) => props.selected?.id === id;
+const formatDate = ({ createdAt }: Revision) => {
+  return format(new Date(createdAt), 'M/D/YY h:mm A');
 };
 </script>
 
