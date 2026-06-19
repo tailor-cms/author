@@ -7,7 +7,6 @@
     <VChip
       v-for="{ value, label, icon } in entities"
       :key="value"
-      :prepend-icon="icon"
       :text="label"
       :value="value"
       color="tertiary"
