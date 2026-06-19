@@ -19,7 +19,7 @@
     <VAlert
       v-if="error"
       :text="error"
-      class="mt-2 text-body-medium"
+      class="mt-2 text-body-medium flex-0-0"
       density="comfortable"
       type="error"
       variant="tonal"

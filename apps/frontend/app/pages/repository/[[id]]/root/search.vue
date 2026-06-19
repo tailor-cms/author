@@ -32,7 +32,7 @@
         :text="emptyStateText"
         :title="isSearchActive ? 'No matches' : 'Nothing here yet'"
         bg-color="surface-container"
-        class="rounded-xl py-16 mt-4"
+        class="rounded-lg py-16 mt-4"
       >
         <template v-if="hasActiveFilters" #actions>
           <VBtn
@@ -249,9 +249,7 @@ onBeforeUnmount(() => applySearch.cancel());
 
 <style>
 ::highlight(search-term) {
-  background-color: #a6f0c5;
   background-color: rgb(var(--v-theme-primary-container));
-  color: #00210e;
   color: rgb(var(--v-theme-on-primary-container));
 }
 </style>

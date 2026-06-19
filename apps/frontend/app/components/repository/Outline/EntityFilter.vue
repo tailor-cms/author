@@ -5,9 +5,8 @@
     mandatory
   >
     <VChip
-      v-for="{ value, label, icon } in entities"
+      v-for="{ value, label } in entities"
       :key="value"
-      :prepend-icon="icon"
       :text="label"
       :value="value"
       color="tertiary"

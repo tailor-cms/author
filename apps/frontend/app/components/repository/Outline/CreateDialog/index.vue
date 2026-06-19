@@ -20,38 +20,36 @@
       />
     </template>
     <template #body>
-      <div class="activity-form">
-        <TypeSelect
-          :container-id="`#${dialogTestId}`"
-          :disabled="isTypeLocked"
-          :options="taxonomyLevels"
-          :value="activity.type"
-          @change="activity.type = $event"
-        />
-        <VAlert
-          v-if="!metadata"
-          :text="'Please select the item type you want to add to edit its properties'"
-          class="mb-3"
-          density="comfortable"
-          icon="mdi-information-outline"
-          variant="tonal"
-        />
-        <MetaInput
-          v-for="input in metadata"
-          :key="input.key"
-          :meta="input"
-          :name="`data.${input.key}`"
-          is-new
-          @update="setMetaValue"
-        />
-        <VAlert
-          v-if="showI18nHint"
-          :text="'Items are created in the default language'"
-          class="mb-3"
-          icon="mdi-information-outline"
-          variant="tonal"
-        />
-      </div>
+      <TypeSelect
+        :container-id="`#${dialogTestId}`"
+        :disabled="isTypeLocked"
+        :options="taxonomyLevels"
+        :value="activity.type"
+        @change="activity.type = $event"
+      />
+      <VAlert
+        v-if="!metadata"
+        :text="'Please select the item type you want to add to edit its properties'"
+        class="mb-3"
+        density="comfortable"
+        icon="mdi-information-outline"
+        variant="tonal"
+      />
+      <MetaInput
+        v-for="input in metadata"
+        :key="input.key"
+        :meta="input"
+        :name="`data.${input.key}`"
+        is-new
+        @update="setMetaValue"
+      />
+      <VAlert
+        v-if="showI18nHint"
+        :text="'Items are created in the default language'"
+        class="mb-3"
+        icon="mdi-information-outline"
+        variant="tonal"
+      />
     </template>
     <template #actions>
       <VBtn
@@ -227,12 +225,3 @@ onMounted(() => {
   visible.value = !props.showActivator;
 });
 </script>
-
-<style lang="scss" scoped>
-.activity-form {
-  display: flex;
-  flex-direction: column;
-  min-height: 17rem;
-  padding-top: 0.5rem;
-}
-</style>
