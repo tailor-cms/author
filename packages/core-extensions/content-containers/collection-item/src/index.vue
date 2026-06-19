@@ -1,92 +1,98 @@
 <template>
   <VCard theme="light" class="collection-item">
-    <VCardText class="pa-8 pb-4 text-left">
-      <MetaInput
-        v-for="meta in entryMeta"
-        :key="meta.key"
-        :meta="{ ...meta, value: entryMetaValues[meta.key] }"
-        :name="meta.key"
-        :is-disabled="disabled"
-        class="pb-4"
-        hide-details="auto"
-        @update="(e) => (entryMetaValues[meta.key] = e)"
-      />
-      <div
-        v-for="input in config"
-        :key="input.key"
-        :data-testid="`collection-field-${input.key}`"
-      >
-        <Field
-          v-if="input.isContentElement"
-          v-slot="{ errorMessage }"
-          :name="input.key"
-          :rules="required(input)"
-          :model-value="containerState[input.key].data"
-        >
-          <div
-            class="label ma-1 text-body-small text-left"
-            :class="{ 'text-error': errorMessage }">
-            {{ input.label }}
-          </div>
-          <div
-            :class="{ 'text-error': errorMessage }"
-            class="element-container pb-4"
-          >
-            <ContainedContent
-              :element="containerState[input.key]"
-              :embed-element-config="embedElementConfig"
-              :is-disabled="disabled"
-              autosave
-              @save="(e) => updateSlot(input.key, e)"
-            />
-            <div v-if="errorMessage" class="v-messages">
-              <div class="v-messages__message pl-4">
-                {{ errorMessage }}
-              </div>
-            </div>
-          </div>
-        </Field>
+    <VCardText class="pa-0 text-left">
+      <div class="pa-6 pb-0">
         <MetaInput
-          v-else
-          :meta="{ ...input, value: containerState[input.key] }"
-          :name="input.key"
+          v-for="meta in entryMeta"
+          :key="meta.key"
+          :meta="{ ...meta, value: entryMetaValues[meta.key] }"
+          :name="meta.key"
           :is-disabled="disabled"
           class="pb-4"
           hide-details="auto"
-          @update="(e) => (containerState[input.key] = e)"
+          @update="(e) => (entryMetaValues[meta.key] = e)"
         />
-      </div>
-      <div v-if="relationships.length" class="relationships pt-2">
-        <VDivider class="mb-5" />
-        <div class="label pb-5 text-body-small font-weight-medium">
-          Relationships
-        </div>
-        <Field
-          v-for="rel in relationships"
-          :key="rel.type"
-          v-slot="{ errorMessage }"
-          :name="`rel.${rel.type}`"
-          :rules="validateRelationship(rel)"
-          :model-value="refsState[rel.type]"
+        <div
+          v-for="input in config"
+          :key="input.key"
+          :data-testid="`collection-field-${input.key}`"
         >
-          <CollectionRelationship
-            :activities="activities"
-            :config="rel"
-            :error-message="errorMessage"
+          <Field
+            v-if="input.isContentElement"
+            v-slot="{ errorMessage }"
+            :name="input.key"
+            :rules="required(input)"
+            :model-value="containerState[input.key].data"
+          >
+            <div
+              class="label ma-1 text-body-small text-left"
+              :class="{ 'text-error': errorMessage }">
+              {{ input.label }}
+            </div>
+            <div
+              :class="{ 'text-error': errorMessage }"
+              class="element-container pb-4"
+            >
+              <ContainedContent
+                :element="containerState[input.key]"
+                :embed-element-config="embedElementConfig"
+                :is-disabled="disabled"
+                autosave
+                @save="(e) => updateSlot(input.key, e)"
+              />
+              <div v-if="errorMessage" class="v-messages">
+                <div class="v-messages__message pl-4">
+                  {{ errorMessage }}
+                </div>
+              </div>
+            </div>
+          </Field>
+          <MetaInput
+            v-else
+            :meta="{ ...input, value: containerState[input.key] }"
+            :name="input.key"
             :is-disabled="disabled"
-            :model-value="refsState[rel.type]"
-            :owner-id="container.parentId"
-            @update="(ids) => (refsState[rel.type] = ids)"
+            class="pb-4"
+            hide-details="auto"
+            @update="(e) => (containerState[input.key] = e)"
           />
-        </Field>
+        </div>
       </div>
+      <template v-if="relationships.length">
+        <VDivider class="my-1" />
+        <VSheet
+          class="relationships px-6 pt-4 pb-0"
+          color="surface-container-lowest"
+        >
+          <div class="label pb-5 text-body-small font-weight-medium">
+            Relationships
+          </div>
+          <Field
+            v-for="rel in relationships"
+            :key="rel.type"
+            v-slot="{ errorMessage }"
+            :name="`rel.${rel.type}`"
+            :rules="validateRelationship(rel)"
+            :model-value="refsState[rel.type]"
+          >
+            <CollectionRelationship
+              :activities="activities"
+              :config="rel"
+              :error-message="errorMessage"
+              :is-disabled="disabled"
+              :model-value="refsState[rel.type]"
+              :owner-id="container.parentId"
+              @update="(ids) => (refsState[rel.type] = ids)"
+            />
+          </Field>
+        </VSheet>
+      </template>
     </VCardText>
     <VSlideYTransition>
       <VSheet
         v-if="!disabled && isDirty"
-        color="surface-container-low"
-        class="px-6 py-3 d-flex justify-end ga-2"
-        border
+        color="tertiary-container"
+        class="px-4 py-3 d-flex justify-end ga-2"
       >
         <VBtn
           text="Cancel"
@@ -94,8 +100,7 @@
           @click="reset"
         />
         <VBtn
-          color="primary"
-          prepend-icon="mdi-check"
+          color="surface"
           text="Save"
           variant="flat"
           @click="save"

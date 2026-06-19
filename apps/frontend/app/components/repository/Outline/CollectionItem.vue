@@ -8,14 +8,6 @@
     rounded
     @click="selectRow"
   >
-    <template v-if="config?.icon" #prepend>
-      <VIcon
-        v-tooltip:bottom="config?.label"
-        :color="config?.color"
-        :icon="config.icon"
-        class="mr-3"
-      />
-    </template>
     <VListItemTitle class="collection-title font-weight-medium">
       {{ activity.data.name }}
     </VListItemTitle>

@@ -6,7 +6,7 @@
         class="structure d-flex flex-column justify-start px-md-10 py-md-8"
         max-width="1200"
       >
-        <div class="d-flex align-center ga-2 mb-4">
+        <div class="d-flex align-center ga-2 mb-6">
           <OutlineToolbar
             v-model:search="filters.search"
             v-model:sort="collectionSort"
@@ -21,7 +21,7 @@
           />
         </div>
         <BrokenReferencesAlert />
-        <div v-if="isCollection" class="collection-wrapper mt-4">
+        <div v-if="isCollection" class="collection-wrapper">
           <EntityFilter
             v-if="hasMultipleEntities"
             v-model="selectedEntity"
@@ -33,15 +33,14 @@
             :activities="visibleCollectionItems"
             :sort="collectionSort"
           />
-          <VAlert
+          <VEmptyState
             v-else
-            class="mb-5"
-            icon="mdi-information-outline"
-            variant="tonal"
-            prominent
-          >
-            Click the <strong>Create</strong> button above to add your first item.
-          </VAlert>
+            class="py-16 rounded-lg"
+            bg-color="surface-container"
+            icon="mdi-view-list"
+            title="No items yet."
+            text="Click the Create button above to add your first item."
+          />
         </div>
         <template v-else>
           <template v-if="!filters.search">
@@ -50,7 +49,7 @@
               v-bind="{ handle: '.activity' }"
               :list="rootActivities"
               :move="repositoryStore.isValidDrop"
-              class="d-flex flex-column mt-4 ga-2"
+              class="d-flex flex-column ga-2"
               animation="150"
               group="activities"
               item-key="uid"
@@ -66,15 +65,14 @@
                 />
               </template>
             </Draggable>
-            <div v-else class="my-5">
-              <VAlert
-                icon="mdi-information-outline"
-                variant="tonal"
-                prominent
-              >
-                Click the <strong>Create</strong> button above to add your first item.
-              </VAlert>
-            </div>
+            <VEmptyState
+              v-else
+              class="py-16 rounded-lg"
+              bg-color="surface-container"
+              icon="mdi-file-tree"
+              title="No items yet."
+              text="Click the Create button above to add your first item."
+            />
           </template>
           <template v-else>
             <div>
@@ -87,16 +85,14 @@
                 @show="goTo(activity)"
               />
             </div>
-            <div class="my-6">
-              <VAlert
-                v-if="!filteredActivities.length"
-                class="mb-5"
-                icon="mdi-magnify"
-                text="No matches found!"
-                variant="tonal"
-                prominent
-              />
-            </div>
+            <VEmptyState
+              v-if="!filteredActivities.length"
+              class="py-16 rounded-lg"
+              bg-color="surface-container"
+              icon="mdi-magnify"
+              title="No matches found."
+              text="Try adjusting your search."
+            />
           </template>
         </template>
       </VContainer>
