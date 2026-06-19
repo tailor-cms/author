@@ -91,8 +91,9 @@
     <VSlideYTransition>
       <VSheet
         v-if="!disabled && isDirty"
-        color="tertiary-container"
+        color="surface-container-low"
         class="px-4 py-3 d-flex justify-end ga-2"
+        border="t"
       >
         <VBtn
           text="Cancel"
@@ -100,7 +101,8 @@
           @click="reset"
         />
         <VBtn
-          color="surface"
+          color="primary"
+          prepend-icon="mdi-check"
           text="Save"
           variant="flat"
           @click="save"
