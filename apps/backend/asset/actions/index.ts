@@ -4,6 +4,7 @@ export { default as create } from './create.action.ts';
 export { default as importFromLink } from './import-from-link.action.ts';
 export { default as bulkRemove } from './bulk-remove.action.ts';
 export { default as download } from './download.action.ts';
+export { default as usages } from './usages.action.ts';
 export { default as update } from './update.action.ts';
 export { default as attachFile } from './attach-file.action.ts';
 export { default as remove } from './remove.action.ts';

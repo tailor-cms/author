@@ -49,6 +49,7 @@ router.use('/indexing', indexingRouter);
 
 mount
   .get('/:assetId/download', actions.download)
+  .get('/:assetId/usages', actions.usages)
   .post('/:assetId/file', actions.attachFile, {
     before: [upload.single('file')],
   })

@@ -10,6 +10,7 @@ import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 import db from '#shared/database/index.js';
 import pick from 'lodash/pick.js';
 import uniq from 'lodash/uniq.js';
+import upperFirst from 'lodash/upperFirst.js';
 
 import {
   type ImportFileOptions,
@@ -72,6 +73,20 @@ function safe(fn: (...args: any[]) => Promise<any>) {
 const safeDeleteFile = safe(Storage.deleteFile.bind(Storage));
 const safeRemoveFromVectorStore = safe(removeFromStore);
 
+/**
+ * Derives a human-friendly display name from a storage filename, used when the
+ * archive carries no original asset name. The extension is surfaced separately
+ * (meta.extension), so it's dropped; separators become spaces and the first
+ * letter is capitalised: `pizza-poster.png` -> `Pizza poster`. Slug-like names
+ * (e.g. `img-4tv0...`) stay as-is - only the export-side original name fixes
+ * those.
+ */
+function toReadableName(filename: string): string {
+  const base = filename.replace(/\.[^.]+$/, '');
+  const words = base.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return upperFirst(words) || filename;
+}
+
 async function importFile({
   repositoryId,
   userId,
@@ -132,7 +147,8 @@ export async function registerStorageAsset({
 }) {
   // Recover the original filename: asset keys are `<uid>__<filename>` (or the
   // legacy `<hash>___<uid>__<filename>`), so the segment after the last `__`
-  // is the filename.
+  // is the filename. Used for the mime/extension; the display name is
+  // humanised from it since the archive carries no original name.
   const basename = path.basename(storageKey);
   const filename = basename.split('__').pop() || basename;
   const mimeType = lookupMimeType(filename) || undefined;
@@ -161,7 +177,7 @@ export async function registerStorageAsset({
     repositoryId,
     type: assetType,
     storageKey,
-    name: filename,
+    name: toReadableName(filename),
     meta: {
       ...(fileSize !== undefined && { fileSize }),
       ...(mimeType && { mimeType }),
@@ -218,6 +234,93 @@ export async function list(
   });
   if (signed) await Asset.resolvePublicUrls(rows);
   return { items: rows, total: count };
+}
+
+/**
+ * WHERE fragment matching rows that reference `storageKey` anywhere in the given
+ * JSONB column (serialized to text). Storage keys are globally unique (uuid-
+ * based), so a substring hit is a real reference - and it catches every shape
+ * (data.assets map, meta `url`, embeds, activity/repo File meta) without knowing
+ * the path. `strpos` avoids LIKE wildcard escaping (keys contain `_`).
+ */
+function referencesAsset(column: string, storageKey: string) {
+  const haystack = db.sequelize.cast(db.sequelize.col(column), 'text');
+  return db.sequelize.where(db.sequelize.fn('strpos', haystack, storageKey), {
+    [Op.gt]: 0,
+  });
+}
+
+/**
+ * Finds where an asset is referenced within its repository: content elements
+ * (data/meta), activity-level File meta, and repository-level File meta.
+ * On-demand scan, no reverse index. LINK assets (no storageKey) are never
+ * embedded, so they have no usages. Bounded to one repository's rows.
+ */
+export async function findUsages(repository: Repository, asset: Asset) {
+  const repositoryId = repository.id;
+  const { storageKey } = asset;
+  if (!storageKey) return [];
+  const [elementRows, activityRows, repoMatch] = await Promise.all([
+    ContentElement.findAll({
+      where: {
+        repositoryId,
+        [Op.or]: [
+          referencesAsset('data', storageKey),
+          referencesAsset('meta', storageKey),
+        ],
+      },
+      attributes: ['id', 'uid', 'type', 'activityId'],
+    }),
+    Activity.findAll({
+      where: {
+        repositoryId,
+        detached: false,
+        [Op.and]: [referencesAsset('data', storageKey)],
+      },
+      attributes: ['id', 'type', 'data'],
+    }),
+    Repository.findOne({
+      where: {
+        id: repositoryId,
+        [Op.and]: [referencesAsset('data', storageKey)],
+      },
+      attributes: ['id', 'name'],
+    }),
+  ]);
+  // Elements live in container activities; resolve each to its outline activity
+  // so the usage can deep-link into the editor and show a page name.
+  const containerIds = uniq(elementRows.map((it: any) => it.activityId));
+  const containers = containerIds.length
+    ? await Activity.findAll({ where: { id: containerIds } })
+    : [];
+  const outlineByContainer = new Map<number, any>();
+  await Promise.all(
+    containers.map(async (container: any) => {
+      const outline = await container.getFirstOutlineItem();
+      if (outline) outlineByContainer.set(container.id, outline);
+    }),
+  );
+  const usages: any[] = elementRows.map((el: any) => {
+    const outline = outlineByContainer.get(el.activityId);
+    return {
+      type: 'element',
+      elementUid: el.uid,
+      elementType: el.type,
+      activityId: outline?.id ?? el.activityId,
+      activityName: outline?.data?.name ?? null,
+    };
+  });
+  activityRows.forEach((a: any) => {
+    usages.push({
+      type: 'activity',
+      activityId: a.id,
+      activityName: a.data?.name ?? null,
+    });
+  });
+  if (repoMatch) {
+    usages.push({ type: 'repository', repositoryName: repoMatch.name });
+  }
+  return usages;
 }
 
 export function upload(

@@ -7,5 +7,6 @@ export * from './attach.ts';
 export * from './import.ts';
 export * from './bulk.ts';
 export * from './download.ts';
+export * from './usages.ts';
 export * from '../types.ts';
 export * from '../types.ts';

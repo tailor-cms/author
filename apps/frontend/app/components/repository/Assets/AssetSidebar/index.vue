@@ -43,6 +43,7 @@
           :type-icon="typeIcon"
           :type-color="typeColor"
         />
+        <Usages v-if="asset.storageKey" :asset="asset" />
         <EditForm
           v-model:description="description"
           v-model:tags="tags"
@@ -64,6 +65,7 @@ import EditForm from './EditForm.vue';
 import MetaInfo from './MetaInfo.vue';
 import MetaInspector from './MetaInspector.vue';
 import Preview from './Preview.vue';
+import Usages from './Usages.vue';
 
 const props = defineProps<{
   asset: Asset | null;
