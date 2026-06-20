@@ -288,7 +288,9 @@ export async function findUsages(repository: Repository, asset: Asset) {
     }),
   ]);
   // Elements live in container activities; resolve each to its outline activity
-  // so the usage can deep-link into the editor and show a page name.
+  // so the usage can deep-link into the editor and show a page name. The
+  // paranoid findAll excludes deleted containers, and we skip deleted outlines,
+  // so elements orphaned in removed content resolve to nothing.
   const containerIds = uniq(elementRows.map((it: any) => it.activityId));
   const containers = containerIds.length
     ? await Activity.findAll({ where: { id: containerIds } })
@@ -297,18 +299,24 @@ export async function findUsages(repository: Repository, asset: Asset) {
   await Promise.all(
     containers.map(async (container: any) => {
       const outline = await container.getFirstOutlineItem();
-      if (outline) outlineByContainer.set(container.id, outline);
+      if (outline && !outline.deletedAt) {
+        outlineByContainer.set(container.id, outline);
+      }
     }),
   );
-  const usages: any[] = elementRows.map((el: any) => {
+  // Only report references that resolve to a live, navigable page; a reference
+  // sitting in deleted/detached content isn't a real usage.
+  const usages: any[] = [];
+  elementRows.forEach((el: any) => {
     const outline = outlineByContainer.get(el.activityId);
-    return {
+    if (!outline) return;
+    usages.push({
       type: 'element',
       elementUid: el.uid,
       elementType: el.type,
-      activityId: outline?.id ?? el.activityId,
-      activityName: outline?.data?.name ?? null,
-    };
+      activityId: outline.id,
+      activityName: outline.data?.name ?? null,
+    });
   });
   activityRows.forEach((a: any) => {
     usages.push({

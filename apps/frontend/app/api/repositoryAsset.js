@@ -12,7 +12,9 @@ function list(repositoryId, params = {}) {
   if (params.signed) query.signed = 'true';
   if (params.search) query.search = params.search;
   if (params.type) {
-    query.type = Array.isArray(params.type) ? params.type.join(',') : params.type;
+    query.type = Array.isArray(params.type)
+      ? params.type.join(',')
+      : params.type;
   }
   if (params.offset != null) query.offset = params.offset;
   if (params.limit != null) query.limit = params.limit;
@@ -44,6 +46,12 @@ function updateMeta(repositoryId, id, meta) {
 function getDownloadUrl(repositoryId, id) {
   return request
     .get(`${urls.resource(repositoryId, id)}/download`)
+    .then(extractData);
+}
+
+function getUsages(repositoryId, id) {
+  return request
+    .get(`${urls.resource(repositoryId, id)}/usages`)
     .then(extractData);
 }
 
@@ -96,7 +104,11 @@ function deindexAsset(repositoryId, assetId) {
 
 function discover(repositoryId, query, contentFilter = 'all', count = 20) {
   return request
-    .post(`${urls.root(repositoryId)}/discover`, { query, contentFilter, count })
+    .post(`${urls.root(repositoryId)}/discover`, {
+      query,
+      contentFilter,
+      count,
+    })
     .then(extractData);
 }
 
@@ -104,6 +116,7 @@ export default {
   list,
   upload,
   getDownloadUrl,
+  getUsages,
   remove,
   bulkRemove,
   updateMeta,
