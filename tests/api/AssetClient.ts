@@ -37,12 +37,13 @@ class AssetClient extends BaseClient {
   uploadFile = async (
     repositoryId: number,
     filePath: string,
+    filename = path.basename(filePath),
   ): Promise<EndpointResponse> => {
     const req = await this.getClient();
     const res = await req.post(this.assetUrl(repositoryId), {
       multipart: {
         files: {
-          name: path.basename(filePath),
+          name: filename,
           mimeType: getMimeType(filePath),
           buffer: fs.readFileSync(filePath),
         },
@@ -111,6 +112,15 @@ class AssetClient extends BaseClient {
     const res = await req.get(
       this.assetUrl(repositoryId, `${assetId}/download`),
     );
+    return formatResponse(res);
+  };
+
+  getUsages = async (
+    repositoryId: number,
+    assetId: number,
+  ): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    const res = await req.get(this.assetUrl(repositoryId, `${assetId}/usages`));
     return formatResponse(res);
   };
 
