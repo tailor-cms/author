@@ -1,13 +1,15 @@
 import path from 'node:path';
-import { randomUUID } from 'node:crypto';
 import { ContentType } from '@tailor-cms/interfaces/discovery';
-import { detectLinkProvider } from '@tailor-cms/common/asset';
-import { Op } from 'sequelize';
-import pick from 'lodash/pick.js';
 import { createLogger } from '#logger';
+import { detectLinkProvider } from '@tailor-cms/common/asset';
+import { lookup as lookupMimeType } from 'mime-types';
+import { Op } from 'sequelize';
+import { randomUUID } from 'node:crypto';
 import { storage as storageConfig } from '#config';
-import db from '#shared/database/index.js';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
+import db from '#shared/database/index.js';
+import pick from 'lodash/pick.js';
+import uniq from 'lodash/uniq.js';
 
 import {
   type ImportFileOptions,
@@ -29,7 +31,7 @@ import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { removeFromStore } from './indexing/indexing.service.ts';
 import Storage from '../repository/storage.ts';
 
-const { Asset, User } = db;
+const { Activity, Asset, ContentElement, Repository, User } = db;
 
 const logger = createLogger('asset:svc');
 
@@ -110,6 +112,64 @@ async function importFile({
     uploaderId: userId,
   });
   return asset.reload({ include: [UPLOADER_INCLUDE] });
+}
+
+/**
+ * Registers an already-stored file as a library asset.
+ * On repository import the archive's static files are written to storage under
+ * their original keys (and referenced by element `data.assets`), but no Asset
+ * library record is created. This adds that record, pointing at the existing
+ * storage object.
+ */
+export async function registerStorageAsset({
+  repositoryId,
+  userId,
+  storageKey,
+}: {
+  repositoryId: number;
+  userId: number;
+  storageKey: string;
+}) {
+  // Recover the original filename: asset keys are `<uid>__<filename>` (or the
+  // legacy `<hash>___<uid>__<filename>`), so the segment after the last `__`
+  // is the filename.
+  const basename = path.basename(storageKey);
+  const filename = basename.split('__').pop() || basename;
+  const mimeType = lookupMimeType(filename) || undefined;
+  const assetType = resolveType(mimeType);
+  const extension = path.extname(filename).replace('.', '').toLowerCase();
+  // Read bytes only for images, to capture dimensions (and size) without
+  // pulling large media (video/pdf) fully into memory.
+  let dimensions: ReturnType<typeof extractDimensions> = null;
+  let fileSize: number | undefined;
+  if (assetType === AssetType.Image) {
+    try {
+      const buffer = await Storage.getFile(storageKey);
+      if (buffer) {
+        fileSize = buffer.length;
+        dimensions = extractDimensions(buffer);
+      }
+    } catch (err) {
+      logger.warn({ err, storageKey }, 'Unable to read imported asset for meta');
+    }
+  }
+  logger.debug(
+    { repositoryId, storageKey, type: assetType },
+    'Registering imported asset',
+  );
+  return Asset.create({
+    repositoryId,
+    type: assetType,
+    storageKey,
+    name: filename,
+    meta: {
+      ...(fileSize !== undefined && { fileSize }),
+      ...(mimeType && { mimeType }),
+      ...(extension && { extension }),
+      ...(dimensions && dimensions),
+    },
+    uploaderId: userId,
+  });
 }
 
 async function destroyAsset(repository: Repository, asset: Asset) {

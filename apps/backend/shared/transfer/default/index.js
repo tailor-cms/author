@@ -1,3 +1,4 @@
+import * as assetService from '../../../asset/asset.service.ts';
 import * as yup from 'yup';
 import Promise from 'bluebird';
 import uniq from 'lodash/uniq.js';
@@ -93,9 +94,14 @@ class DefaultAdapter {
       });
       await importFile(blobStore, Filename.ELEMENTS, { context, transaction });
     });
-    return Promise.map(context.assets, (it) =>
+    const assetKeys = uniq(context.assets);
+    await Promise.map(assetKeys, (it) =>
       importFile(blobStore, it, { context }),
     );
+    // Files now live in storage and are referenced by element `data.assets`,
+    // but they're not in the repository Asset Library yet. Register each as a
+    // library asset.
+    await registerImportedAssets(assetKeys, context);
   }
 }
 
@@ -117,4 +123,27 @@ function importFile(blobStore, filename, { context, transaction } = {}) {
   const srcStream = blobStore.createReadStream(filename);
   const destStream = createProcessingStream(options);
   return miss.pipeAsync(srcStream, destStream);
+}
+
+// Registers a single imported static file in the repository's Asset Library.
+async function registerImportedAsset(context, storageKey) {
+  const { repositoryId, userId } = context;
+  try {
+    await assetService.registerStorageAsset({
+      repositoryId,
+      userId,
+      storageKey,
+    });
+  } catch (err) {
+    console.log(`Failed to register asset ${storageKey}: ${err.message}`);
+  }
+}
+
+// Registers every imported static file referenced by the archive.
+function registerImportedAssets(assetKeys, context) {
+  const { repositoryId, userId } = context;
+  if (!repositoryId || !userId) return Promise.resolve();
+  return Promise.map(assetKeys, (key) => registerImportedAsset(context, key), {
+    concurrency: 4,
+  });
 }

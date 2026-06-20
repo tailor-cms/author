@@ -23,22 +23,40 @@ function createRepositoryResolver({ context, transaction }) {
     if (repo.data) repo.data = stripInstanceSpecific(repo.data);
     cb(null, repo);
   });
-  return miss.pipe(srcStream, stripInternal, stringify(IS_ARRAY_STREAM));
+  // Collect repository-level meta assets (e.g. a `thumbnailImage` File meta
+  // input lives in `repository.data`) so their files get bundled too.
+  return miss.pipe(
+    srcStream,
+    stripInternal,
+    collectAssets(context),
+    stringify(IS_ARRAY_STREAM),
+  );
 }
 
 function createActivitiesResolver({ context, transaction }) {
   const where = { repositoryId: context.repositoryId };
   const srcStream = queryStream(Activity, { where, transaction });
-  return miss.pipe(srcStream, stringify());
+  // Collect activity-level meta assets (File meta inputs live in
+  // `activity.data`) alongside element assets.
+  return miss.pipe(srcStream, collectAssets(context), stringify());
 }
 
 function createElementsResolver({ context, transaction }) {
-  context.assets = context.assets || [];
   const where = { repositoryId: context.repositoryId };
   const srcStream = queryStream(ContentElement, { where, transaction });
+  return miss.pipe(srcStream, collectAssets(context), stringify());
+}
+
+// Wires an asset-collecting parser onto an export stream: every storage://
+// (or bare `repository/...`) reference found in a row's data/meta is recorded
+// into context.assets. Applied to the repository, activity and element
+// streams so File meta inputs at every level get bundled into the archive
+// (and later registered in the asset library).
+function collectAssets(context) {
+  context.assets = context.assets || [];
   const assetParser = createAssetParser();
   assetParser.on('asset', (asset) => context.assets.push(asset));
-  return miss.pipe(srcStream, assetParser, stringify());
+  return assetParser;
 }
 
 async function createManifestResolver({ context }) {
