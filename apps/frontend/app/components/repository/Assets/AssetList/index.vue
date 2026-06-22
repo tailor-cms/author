@@ -44,6 +44,7 @@
     v-if="!assets.length && !isFetching"
     class="py-16 empty-state rounded-lg"
     bg-color="surface-container"
+    data-testid="assetEmptyState"
     icon="mdi-image-multiple"
     :text="emptyStateText"
     :title="emptyStateTitle"

@@ -25,7 +25,7 @@ function list(repositoryId, params = {}) {
     .then(extractData);
 }
 
-function upload(repositoryId, files) {
+function upload(repositoryId, files, { onProgress } = {}) {
   const formData = new FormData();
   files.forEach((file) => formData.append('files', file));
   return request
@@ -33,6 +33,11 @@ function upload(repositoryId, files) {
       // Unset default application/json so the browser sets multipart/form-data
       // with the correct boundary for FormData serialization
       headers: { 'Content-Type': undefined },
+      ...(onProgress && {
+        onUploadProgress: ({ loaded, total }) => {
+          if (total) onProgress(Math.round((loaded / total) * 100));
+        },
+      }),
     })
     .then(extractData);
 }

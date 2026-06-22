@@ -71,8 +71,11 @@
 
 <script lang="ts" setup>
 import type { Asset } from '@tailor-cms/interfaces/asset';
+import { formatFileSize, isIndexable } from '@/components/repository/Assets/utils';
+import { useUploadStore } from '@/stores/uploads';
 import { debounce } from 'lodash-es';
-
+import { useConfigStore } from '@/stores/config';
+import { useCurrentRepository } from '@/stores/current-repository';
 import AddLinkDialog from '@/components/repository/Assets/AddLinkDialog.vue';
 import AssetSidebar from '@/components/repository/Assets/AssetSidebar/index.vue';
 import AssetList from '@/components/repository/Assets/AssetList/index.vue';
@@ -80,8 +83,6 @@ import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
 import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
 import ListControls from '@/components/repository/Assets/ListControls/index.vue';
 import Toolbar from '@/components/repository/Assets/Toolbar.vue';
-import { isIndexable } from '@/components/repository/Assets/utils';
-import { useCurrentRepository } from '@/stores/current-repository';
 
 definePageMeta({ name: 'repository-assets' });
 
@@ -90,9 +91,16 @@ type SortDirection = 'ASC' | 'DESC';
 const ASC: SortDirection = 'ASC';
 const DESC: SortDirection = 'DESC';
 
+const configStore = useConfigStore();
 const currentRepositoryStore = useCurrentRepository();
+const uploadStore = useUploadStore();
+
 const showConfirmation = useConfirmationDialog();
 const notify = useNotification();
+
+const maxUploadSize = computed(
+  () => Number(configStore.props.storageMaxUploadSize) || Infinity,
+);
 
 const toolbarRef = ref<InstanceType<typeof Toolbar>>();
 const sortDirection = ref<SortDirection>(DESC);
@@ -139,13 +147,21 @@ function resetAndFetch() {
   assetStore.page = 1;
 }
 
-async function uploadFiles(files: File[]) {
-  try {
-    await assetStore.upload(files);
-    refetch();
-  } finally {
-    toolbarRef.value?.reset();
+function uploadFiles(files: File[]) {
+  toolbarRef.value?.reset();
+  const id = repositoryId.value;
+  if (!id) return;
+  // Block the whole batch if any file exceeds the configured limit
+  const tooLarge = files.filter((file) => file.size > maxUploadSize.value);
+  if (tooLarge.length) {
+    const names = tooLarge.map((file) => file.name).join(', ');
+    notify(
+      `Exceeds the ${formatFileSize(maxUploadSize.value)} upload limit: ${names}`,
+      { color: 'error', immediate: true },
+    );
+    return;
   }
+  uploadStore.start(files, id);
 }
 
 async function downloadAsset(asset: Asset) {
@@ -215,9 +231,16 @@ function confirmBulkDelete() {
 }
 
 const debouncedSearch = debounce(resetAndFetch, 300);
+
 watch([selectedCategory, () => assetStore.itemsPerPage], resetAndFetch);
 watch(searchQuery, debouncedSearch);
 watch(() => assetStore.page, refetch);
+watch(
+  () => uploadStore.completedUploadsFor(repositoryId.value),
+  (count, prev) => {
+    if (count > prev) refetch();
+  },
+);
 
 onMounted(async () => {
   await assetStore.fetch(fetchParams.value);
