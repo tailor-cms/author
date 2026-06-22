@@ -26,6 +26,13 @@ class Storage {
     return this.provider.createWriteStream(key, options);
   }
 
+  // Streams a readable into storage and resolves only once the write has
+  // fully completed (or rejects on error). Unlike `createWriteStream`, the
+  // returned promise is awaitable.
+  saveStream(key, readable, options = {}) {
+    return this.provider.saveStream(key, readable, options);
+  }
+
   deleteFile(key, options = {}) {
     return this.provider.deleteFile(key, options);
   }
@@ -36,6 +43,22 @@ class Storage {
 
   listFiles(options = {}) {
     return this.provider.listFiles(options);
+  }
+
+  // Incomplete (orphaned) multipart uploads;
+  // provider without multipart (filesystem) report none.
+  listIncompleteUploads(options = {}) {
+    return this.provider.listIncompleteUploads
+      ? this.provider.listIncompleteUploads(options)
+      : Promise.resolve([]);
+  }
+
+  // Bucket lifecycle rules ([] when unsupported, e.g. filesystem). Used to
+  // verify the AbortIncompleteMultipartUpload backstop is enabled.
+  getLifecycleRules() {
+    return this.provider.getLifecycleRules
+      ? this.provider.getLifecycleRules()
+      : Promise.resolve([]);
   }
 
   fileExists(key, options = {}) {

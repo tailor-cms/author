@@ -40,7 +40,7 @@ export default defineAction({
     if (!files.length) {
       return createError(StatusCodes.BAD_REQUEST, 'No files provided');
     }
-    const assets = await service.upload(
+    const assets = await service.registerUploads(
       req.repository!.id,
       req.user!.id,
       files,

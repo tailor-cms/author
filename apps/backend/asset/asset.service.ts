@@ -13,10 +13,12 @@ import uniq from 'lodash/uniq.js';
 import upperFirst from 'lodash/upperFirst.js';
 
 import {
+  type AssetAttribution,
+  type BufferedFile,
   type ImportFileOptions,
   type ImportLinkMeta,
   type ListFilter,
-  type MulterFile,
+  type StoredFile,
   VideoLinkMode,
 } from './schemas/index.ts';
 import {
@@ -87,38 +89,26 @@ function toReadableName(filename: string): string {
   return upperFirst(words) || filename;
 }
 
-async function importFile({
-  repositoryId,
-  userId,
-  file,
-  description,
-  source,
-  tags,
-}: ImportFileOptions) {
-  const { uid, key } = buildStorageKey(repositoryId, file.originalname);
-  logger.debug({
-    repositoryId,
-    filename: file.originalname,
-    size: file.size,
-    mimetype: file.mimetype,
-  }, 'Importing file');
-  await Storage.saveFile(key, file.buffer);
-  // Extract image dimensions if applicable
-  const assetType = resolveType(file.mimetype);
-  const dimensions = assetType === AssetType.Image
-    ? extractDimensions(file.buffer)
-    : null;
-  const rawName = source?.title || file.originalname;
+/**
+ * Creates the library Asset record for a file already stored at `file.key`.
+ */
+async function createAssetRecord(
+  repositoryId: number,
+  userId: number,
+  file: StoredFile,
+  { description, source, tags }: AssetAttribution = {},
+) {
+  const { uid, key, originalname, mimetype, size, dimensions } = file;
   const asset = await Asset.create({
     uid,
     repositoryId,
-    type: assetType,
+    type: resolveType(mimetype),
     storageKey: key,
-    name: rawName,
+    name: source?.title || originalname,
     meta: {
-      fileSize: file.size,
-      mimeType: file.mimetype,
-      extension: path.extname(file.originalname).replace('.', '').toLowerCase(),
+      fileSize: size,
+      mimeType: mimetype,
+      extension: path.extname(originalname).replace('.', '').toLowerCase(),
       ...(dimensions && dimensions),
       ...(description && { description }),
       ...(tags?.length && { tags }),
@@ -127,6 +117,42 @@ async function importFile({
     uploaderId: userId,
   });
   return asset.reload({ include: [UPLOADER_INCLUDE] });
+}
+
+/**
+ * Persists an in-memory file (see `BufferedFile`) to storage and registers it as
+ * a library asset. Used when the server already holds the whole file in memory;
+ * link/remote downloads and AI-generated images.
+ */
+export async function importBufferedFile({
+  repositoryId,
+  userId,
+  file,
+  description,
+  source,
+  tags,
+}: ImportFileOptions) {
+  const { uid, key } = buildStorageKey(repositoryId, file.originalname);
+  logger.debug(
+    {
+      repositoryId,
+      filename: file.originalname,
+      size: file.size,
+      mimetype: file.mimetype,
+    },
+    'Importing buffered file',
+  );
+  await Storage.saveFile(key, file.buffer, { ContentType: file.mimetype });
+  const dimensions =
+    resolveType(file.mimetype) === AssetType.Image
+      ? extractDimensions(file.buffer)
+      : null;
+  return createAssetRecord(
+    repositoryId,
+    userId,
+    { ...file, uid, key, dimensions },
+    { description, source, tags },
+  );
 }
 
 /**
@@ -331,13 +357,15 @@ export async function findUsages(repository: Repository, asset: Asset) {
   return usages;
 }
 
-export function upload(
+// The multer engine already streamed each file to storage and stamped it with
+// uid/key/size/dimensions (a StoredFile), so here we just create the records.
+export function registerUploads(
   repositoryId: number,
   userId: number,
-  files: MulterFile[],
+  files: StoredFile[],
 ) {
   return Promise.all(
-    files.map((file) => importFile({ repositoryId, userId, file })),
+    files.map((file) => createAssetRecord(repositoryId, userId, file)),
   );
 }
 
@@ -379,7 +407,7 @@ export async function updateMeta(asset: Asset, meta: Partial<AssetMeta>) {
 export async function attachFile(
   asset: Asset,
   fileKey: string,
-  file: MulterFile,
+  file: BufferedFile,
 ) {
   logger.debug(
     { assetId: asset.id, fileKey, filename: file.originalname },
@@ -392,7 +420,7 @@ export async function attachFile(
   const storageKey = buildAttachmentKey(
     asset.repositoryId, fileKey, file.originalname,
   );
-  await Storage.saveFile(storageKey, file.buffer);
+  await Storage.saveFile(storageKey, file.buffer, { ContentType: file.mimetype });
   const files = { ...asset.meta?.files, [fileKey]: storageKey };
   return asset.update({ meta: { ...asset.meta, files } });
 }
@@ -443,7 +471,7 @@ export async function importFromLink(
         ogPromise,
       ]);
       const { source, tags } = mergeAttribution(url, meta, og);
-      return await importFile({
+      return await importBufferedFile({
         repositoryId,
         userId,
         file,
