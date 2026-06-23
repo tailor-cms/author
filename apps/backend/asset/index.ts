@@ -47,6 +47,7 @@ router.param('assetId', getAsset);
 // param routes.
 mount
   .get('/', actions.list, { after: [processPagination(Asset, false)] })
+  .get('/folders', actions.listFolders)
   .post('/', actions.create, {
     before: [
       upload.fields([
@@ -56,7 +57,8 @@ mount
     ],
   })
   .post('/import/link', actions.importFromLink)
-  .post('/bulk/remove', actions.bulkRemove);
+  .post('/bulk/remove', actions.bulkRemove)
+  .post('/bulk/move', actions.move);
 
 router.use('/discover', discoveryRouter);
 router.use('/indexing', indexingRouter);

@@ -10,7 +10,7 @@ import {
   binaryFileArray,
   dataEnvelope,
 } from '#shared/request/schemas.ts';
-import { Asset, StorageRef } from './entity.ts';
+import { Asset, FolderPath, StorageRef } from './entity.ts';
 
 // Two upload modes share the route; the handler branches on which field
 // carried the upload.
@@ -20,6 +20,9 @@ export const CreateMultipart = z
       .optional(),
     file: binaryFile('Legacy single-file upload.')
       .optional(),
+    folder: FolderPath.optional().describe(
+      'Virtual folder path for the uploaded assets.',
+    ),
   })
   .describe('Asset upload payload; use `files[]` (library) OR `file` (legacy).');
 

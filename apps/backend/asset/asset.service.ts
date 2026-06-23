@@ -21,27 +21,35 @@ import {
   type StoredFile,
   VideoLinkMode,
 } from './schemas/index.ts';
+import { AssetType, type Asset, type AssetMeta } from './models/asset.model.js';
 import {
   buildAttachmentKey,
   buildStorageKey,
 } from './utils/storage-key.ts';
-import { AssetType, type Asset, type AssetMeta } from './models/asset.model.js';
-import type { Repository } from '../repository/models/repository.model.js';
 import { downloadFile } from './utils/download.ts';
 import { extractDimensions } from './utils/image.ts';
-import { resolveType } from './utils/mime.ts';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
+import { normalizeFolder } from './utils/folder.ts';
 import { removeFromStore } from './indexing/indexing.service.ts';
+import type { Repository } from '../repository/models/repository.model.js';
+import { resolveType } from './utils/mime.ts';
 import Storage from '../repository/storage.ts';
 
 const { Activity, Asset, ContentElement, Repository, User } = db;
 
 const logger = createLogger('asset:svc');
 
+// Extra metadata stamped onto an asset at creation: attribution plus the
+// optional virtual folder it lands in.
+type CreateRecordOptions = AssetAttribution & { folder?: string };
+
 const DOWNLOADABLE_TYPES: Set<ContentType> = new Set([
   ContentType.Image,
   ContentType.Pdf,
 ]);
+
+// JSONB path to the virtual folder
+const FOLDER_COLUMN = 'meta.folder';
 
 // Sequelize WHERE fragments for video-provider link classification.
 // Link assets with YouTube/Vimeo/Dailymotion URLs are shown under
@@ -96,9 +104,10 @@ async function createAssetRecord(
   repositoryId: number,
   userId: number,
   file: StoredFile,
-  { description, source, tags }: AssetAttribution = {},
+  { description, source, tags, folder }: CreateRecordOptions = {},
 ) {
   const { uid, key, originalname, mimetype, size, dimensions } = file;
+  const normalizedFolder = normalizeFolder(folder);
   const asset = await Asset.create({
     uid,
     repositoryId,
@@ -110,6 +119,7 @@ async function createAssetRecord(
       mimeType: mimetype,
       extension: path.extname(originalname).replace('.', '').toLowerCase(),
       ...(dimensions && dimensions),
+      ...(normalizedFolder && { folder: normalizedFolder }),
       ...(description && { description }),
       ...(tags?.length && { tags }),
       ...(source && { source }),
@@ -227,30 +237,42 @@ export async function list(
   options: Omit<ListFilter, 'key'> = {},
 ) {
   const {
-    search, type, offset = 0, limit = 100, signed = false,
+    search, type, folder, offset = 0, limit = 100, signed = false,
     sortBy = 'createdAt', sortOrder = 'DESC',
     videoLinkMode,
   } = options;
   logger.debug(
-    { repositoryId, search, type, videoLinkMode, offset, limit },
+    { repositoryId, search, type, folder, videoLinkMode, offset, limit },
     'Listing assets',
   );
   const where: any = { repositoryId };
+  // Accumulates conditions that need `Op.and`
+  const and: any[] = [];
   if (videoLinkMode === VideoLinkMode.Include) {
-    where[Op.and] = [{
-      [Op.or]: [{ type: AssetType.Video }, IS_VIDEO_LINK],
-    }];
+    and.push({ [Op.or]: [{ type: AssetType.Video }, IS_VIDEO_LINK] });
   } else if (videoLinkMode === VideoLinkMode.Exclude) {
     where.type = AssetType.Link;
     Object.assign(where, IS_NOT_VIDEO_LINK);
   } else if (type) {
     where.type = Array.isArray(type) ? { [Op.in]: type } : type;
   }
+  // Folder is exact-match (one level, S3 Delimiter style). Root matches assets
+  // with no folder set
+  if (folder !== undefined) {
+    const normalized = normalizeFolder(folder);
+    if (normalized) where[FOLDER_COLUMN] = normalized;
+    else {
+      and.push({
+        [Op.or]: [{ [FOLDER_COLUMN]: { [Op.is]: null } }, { [FOLDER_COLUMN]: '' }],
+      });
+    }
+  }
   if (search) {
     // Escape LIKE wildcards (%, _) in Op.iLike values
     const escaped = search.replace(/[\\%_]/g, '\\$&');
     where.name = { [Op.iLike]: `%${escaped}%` };
   }
+  if (and.length) where[Op.and] = and;
   const { rows, count } = await Asset.findAndCountAll({
     where,
     include: [UPLOADER_INCLUDE],
@@ -359,14 +381,68 @@ export async function findUsages(repository: Repository, asset: Asset) {
 
 // The multer engine already streamed each file to storage and stamped it with
 // uid/key/size/dimensions (a StoredFile), so here we just create the records.
+// `folder` (optional) is the virtual folder the batch was uploaded into.
 export function registerUploads(
   repositoryId: number,
   userId: number,
   files: StoredFile[],
+  folder?: string,
 ) {
   return Promise.all(
-    files.map((file) => createAssetRecord(repositoryId, userId, file)),
+    files.map((file) =>
+      createAssetRecord(repositoryId, userId, file, { folder }),
+    ),
   );
+}
+
+/**
+ * Distinct, non-empty folder paths in use across a repository's assets. These
+ * are the folders that actually "exist" server-side (derived from `meta.folder`,
+ * S3-console style); empty folders the user created live only client-side until
+ * an asset lands in them. The frontend builds the folder tree from this flat
+ * list. Bounded to one repository.
+ */
+export async function listFolders(repositoryId: number): Promise<string[]> {
+  const rows: Array<{ folder: string | null }> = await Asset.findAll({
+    where: { repositoryId },
+    attributes: [
+      [db.sequelize.literal(`DISTINCT (meta->>'folder')`), 'folder'],
+    ],
+    raw: true,
+  });
+  const folders = rows.map((row) => normalizeFolder(row.folder)).filter(Boolean);
+  return uniq(folders).sort();
+}
+
+/**
+ * Moves the given assets into `folder` (root when empty). A move is purely a
+ * `meta.folder` update; the stored object's key never changes, so there is no
+ * S3 copy/delete. Returns the ids that were updated.
+ */
+export async function moveAssets(
+  repositoryId: number,
+  assetIds: number[],
+  folder: string,
+): Promise<number[]> {
+  const normalized = normalizeFolder(folder);
+  const assets = await Asset.findAll({
+    where: { repositoryId, id: { [Op.in]: assetIds } },
+  });
+  logger.debug(
+    { repositoryId, count: assets.length, folder: normalized },
+    'Moving assets',
+  );
+  await Promise.all(
+    assets.map((asset: Asset) => {
+      const meta = { ...asset.meta };
+      // Moving to root drops the key entirely (rather than storing `''`), so
+      // root assets stay uniform per the "absent = root" convention
+      if (normalized) meta.folder = normalized;
+      else delete meta.folder;
+      return asset.update({ meta });
+    }),
+  );
+  return assets.map((asset: Asset) => asset.id);
 }
 
 /**

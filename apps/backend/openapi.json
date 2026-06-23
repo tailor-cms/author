@@ -1469,6 +1469,10 @@
               "type": "string"
             }
           },
+          "folder": {
+            "type": "string",
+            "description": "Virtual folder path (`/`-delimited); absent = root."
+          },
           "files": {
             "description": "Map of fileKey -> stored attachment key (captions, etc.).",
             "type": "object",
@@ -1533,6 +1537,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "folder": {
+            "type": "string",
+            "description": "Virtual folder path (`/`-delimited); absent = root."
           },
           "files": {
             "description": "Map of fileKey -> stored attachment key (captions, etc.).",
@@ -1855,6 +1863,24 @@
         },
         "required": [
           "deletedIds"
+        ],
+        "additionalProperties": false
+      },
+      "AssetMoveResult": {
+        "type": "object",
+        "properties": {
+          "movedIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "Subset of requested ids that were moved."
+          }
+        },
+        "required": [
+          "movedIds"
         ],
         "additionalProperties": false
       },
@@ -7730,10 +7756,59 @@
                     "type": "string",
                     "format": "binary",
                     "description": "Legacy single-file upload."
+                  },
+                  "folder": {
+                    "description": "Virtual folder path for the uploaded assets.",
+                    "type": "string"
                   }
                 },
                 "additionalProperties": false,
                 "description": "Asset upload payload; use `files[]` (library) OR `file` (legacy)."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/assets/folders": {
+      "get": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryListFolders",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "listFolders",
+        "summary": "List asset folder paths",
+        "description": "Returns the distinct, non-empty `meta.folder` values across the repository's assets (sorted). Empty folders the user created but has not filled yet are tracked client-side and are not returned here.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Distinct folder paths in use.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Distinct folder paths in use (sorted)."
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Folder paths derived from `meta.folder`."
+                }
               }
             }
           }
@@ -7921,6 +7996,80 @@
                 ],
                 "additionalProperties": false,
                 "description": "Selector for bulk asset deletion."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/assets/bulk/move": {
+      "post": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryMove",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "move",
+        "summary": "Bulk move assets to a folder",
+        "description": "Reassigns each asset's virtual folder. Purely a metadata update; the underlying storage object is untouched. Returns the ids that were moved.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Subset of requested ids that were moved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Assets relocated by a bulk move.",
+                      "$ref": "#/components/schemas/AssetMoveResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "assetIds": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "description": "Numeric ids of the assets to move (at least one)."
+                  },
+                  "folder": {
+                    "type": "string",
+                    "description": "Destination folder path; empty string moves the assets to the repository root."
+                  }
+                },
+                "required": [
+                  "assetIds",
+                  "folder"
+                ],
+                "additionalProperties": false,
+                "description": "Selector and destination for a bulk asset move."
               }
             }
           }

@@ -14,7 +14,7 @@ import {
   dataEnvelope,
 } from '#shared/request/schemas.ts';
 
-import { Asset } from './entity.ts';
+import { Asset, FolderPath } from './entity.ts';
 import { VideoLinkMode } from '../types.ts';
 
 const ASSET_TYPES = Object.values(AssetType) as string[];
@@ -79,6 +79,10 @@ export const ListFilter = z
     type: z.string().optional().describe(oneLine`
       CSV of AssetType values; \`video\` includes provider
       links, lone \`link\` excludes them.
+    `),
+    folder: FolderPath.optional().describe(oneLine`
+      Virtual folder path; lists only assets directly in it
+      (one level, S3 Delimiter style). Empty string = root.
     `),
     // When set, short-circuits to a signed-URL response - other
     // filter fields are ignored.
