@@ -40,12 +40,14 @@ export const useUploadStore = defineStore('uploads', () => {
 
   // Uploads each file in its own request so progress is tracked per file and a
   // single failure does not abort the rest. Resolves once all are settled.
-  function start(files: File[], repositoryId: number) {
+  // `folder` (optional) is the virtual folder the batch lands in.
+  function start(files: File[], repositoryId: number, folder?: string) {
     return Promise.all(
       files.map(async (file) => {
         const item = add(file, repositoryId);
         try {
           await assetApi.upload(repositoryId, [file], {
+            folder,
             onProgress: (progress: number) => {
               item.progress = progress;
             },

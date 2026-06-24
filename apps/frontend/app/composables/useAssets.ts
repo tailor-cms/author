@@ -61,6 +61,13 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     return api.importFromLink(repositoryId.value, url);
   }
 
+  // Moves assets into `folder` ('' = root). Returns the moved ids.
+  async function move(assetIds: number[], folder: string): Promise<number[]> {
+    if (!repositoryId.value) return [];
+    const { movedIds } = await api.move(repositoryId.value, assetIds, folder);
+    return movedIds;
+  }
+
   async function getDownloadUrl(assetId: number) {
     if (!repositoryId.value) return;
     return api.getDownloadUrl(repositoryId.value, assetId);
@@ -91,6 +98,13 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     }
   }
 
+  // Drop the current rows immediately (e.g. when the folder context changes) so
+  // the previous view's assets don't linger during the next fetch.
+  function clear() {
+    assets.value = [];
+    total.value = 0;
+  }
+
   function localUpdate(updated: Partial<Asset> & { id: number }) {
     const idx = assets.value.findIndex((a) => a.id === updated.id);
     if (idx !== -1) {
@@ -117,7 +131,9 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     getDownloadUrl,
     remove,
     bulkRemove,
+    move,
     deindex,
     updateMeta,
+    clear,
   };
 }

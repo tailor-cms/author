@@ -79,6 +79,7 @@
         @download="emit('download', $event)"
         @index="emit('index', $event)"
         @deindex="emit('deindex', $event)"
+        @move="emit('move', $event)"
         @delete="emit('delete', $event)"
       />
     </VCol>
@@ -112,6 +113,7 @@ const emit = defineEmits<{
   download: [asset: Asset];
   index: [asset: Asset];
   deindex: [asset: Asset];
+  move: [asset: Asset];
   delete: [asset: Asset];
 }>();
 </script>

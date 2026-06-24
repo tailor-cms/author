@@ -36,6 +36,7 @@ const emit = defineEmits<{
   download: [asset: Asset];
   index: [asset: Asset];
   deindex: [asset: Asset];
+  move: [asset: Asset];
   delete: [asset: Asset];
 }>();
 
@@ -73,12 +74,19 @@ const menuOptions = computed(() => {
       action: () => emit('index', props.asset),
     });
   }
-  items.push({
-    name: 'Delete',
-    icon: 'mdi-trash-can-outline',
-    color: 'error',
-    action: () => emit('delete', props.asset),
-  });
+  items.push(
+    {
+      name: 'Move to...',
+      icon: 'mdi-folder-move-outline',
+      action: () => emit('move', props.asset),
+    },
+    {
+      name: 'Delete',
+      icon: 'mdi-trash-can-outline',
+      color: 'error',
+      action: () => emit('delete', props.asset),
+    },
+  );
   return items;
 });
 </script>

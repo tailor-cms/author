@@ -17,15 +17,26 @@
           :is-bulk-deleting="assetStore.isBulkRemoving"
           @clear="selection.clear"
           @index="indexSelected"
+          @move="openBulkMove"
           @delete="confirmBulkDelete"
           @toggle-all="$event ? selection.selectAll() : selection.deselectAll()"
         />
         <ListControls
           v-model:selected-category="selectedCategory"
           v-model:items-per-page="assetStore.itemsPerPage"
+          v-model:view-mode="viewMode"
           :categories="categories"
           :sort-direction="sortDirection"
           @toggle-sort="toggleSortDirection"
+        />
+        <FolderBar
+          v-if="viewMode === 'folders'"
+          :breadcrumbs="breadcrumbs"
+          :current-path="currentPath"
+          :existing-names="subfolders.map((folder) => folder.name)"
+          @navigate="navigateTo"
+          @navigate-up="navigateUp"
+          @create="onCreateFolder"
         />
         <AssetList
           :active-asset-id="activeAsset?.id ?? null"
@@ -54,6 +65,12 @@
           v-model="showDiscoveryDialog"
           @added="refetch()"
         />
+        <MoveToFolderDialog
+          v-model="showMoveDialog"
+          :count="moveTargetIds.length"
+          :folders="allFolders"
+          @move="onMoveConfirm"
+        />
       </VContainer>
     </VMain>
     <AssetSidebar
@@ -64,6 +81,7 @@
       @delete="confirmDelete"
       @download="downloadAsset"
       @index="(asset: Asset) => indexing.startIndexing([asset.id])"
+      @move="openMove"
       @save="onSaveMeta"
     />
   </VLayout>
@@ -81,7 +99,9 @@ import AssetSidebar from '@/components/repository/Assets/AssetSidebar/index.vue'
 import AssetList from '@/components/repository/Assets/AssetList/index.vue';
 import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
 import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
+import FolderBar from '@/components/repository/Assets/FolderBar/index.vue';
 import ListControls from '@/components/repository/Assets/ListControls/index.vue';
+import MoveToFolderDialog from '@/components/repository/Assets/MoveToFolderDialog.vue';
 import Toolbar from '@/components/repository/Assets/Toolbar.vue';
 
 definePageMeta({ name: 'repository-assets' });

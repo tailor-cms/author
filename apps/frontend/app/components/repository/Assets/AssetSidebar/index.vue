@@ -25,6 +25,7 @@
           @download="emit('download', $event)"
           @index="emit('index', $event)"
           @deindex="emit('deindex', $event)"
+          @move="emit('move', $event)"
           @delete="emit('delete', $event)"
         />
         <VBtn
@@ -77,6 +78,7 @@ const emit = defineEmits<{
   delete: [asset: Asset];
   index: [asset: Asset];
   deindex: [asset: Asset];
+  move: [asset: Asset];
   save: [asset: Asset, meta: Record<string, any>];
 }>();
 

@@ -16,6 +16,8 @@ function list(repositoryId, params = {}) {
       ? params.type.join(',')
       : params.type;
   }
+  // Empty string is meaningful (root folder), so guard on != null.
+  if (params.folder != null) query.folder = params.folder;
   if (params.offset != null) query.offset = params.offset;
   if (params.limit != null) query.limit = params.limit;
   if (params.sortBy) query.sortBy = params.sortBy;
@@ -25,9 +27,11 @@ function list(repositoryId, params = {}) {
     .then(extractData);
 }
 
-function upload(repositoryId, files, { onProgress } = {}) {
+function upload(repositoryId, files, { onProgress, folder } = {}) {
   const formData = new FormData();
   files.forEach((file) => formData.append('files', file));
+  // Virtual folder the batch lands in; empty/undefined means root.
+  if (folder) formData.append('folder', folder);
   return request
     .post(urls.root(repositoryId), formData, {
       // Unset default application/json so the browser sets multipart/form-data
@@ -67,6 +71,18 @@ function remove(repositoryId, id) {
 function bulkRemove(repositoryId, assetIds) {
   return request
     .post(`${urls.root(repositoryId)}/bulk/remove`, { assetIds })
+    .then(extractData);
+}
+
+function listFolders(repositoryId) {
+  return request
+    .get(`${urls.root(repositoryId)}/folders`)
+    .then(extractData);
+}
+
+function move(repositoryId, assetIds, folder) {
+  return request
+    .post(`${urls.root(repositoryId)}/bulk/move`, { assetIds, folder })
     .then(extractData);
 }
 
@@ -124,6 +140,8 @@ export default {
   getUsages,
   remove,
   bulkRemove,
+  listFolders,
+  move,
   updateMeta,
   importFromLink,
   attachFile,
