@@ -12,6 +12,7 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import history, { type Context as HistoryContext } from 'connect-history-api-fallback';
+import multer from 'multer';
 import qs from 'qs';
 import router from './router.ts';
 import origin from '#shared/origin.js';
@@ -91,6 +92,16 @@ app.use('/api', createHttpLogger(), router);
 // 4-argument signature; the `_next` is required for the dispatch table
 // even though we always terminate the response here.
 const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
+  // Multer errors carry no `.status`, so map them explicitly
+  if (err instanceof multer.MulterError) {
+    const status = err.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+    const message =
+      err.code === 'LIMIT_FILE_SIZE'
+        ? 'File exceeds the maximum allowed upload size.'
+        : err.message;
+    res.status(status).json({ error: { status, message } });
+    return;
+  }
   if (!err.status || err.status === 500) {
     (req as any).log?.error({ err });
     res.status(500).end();
