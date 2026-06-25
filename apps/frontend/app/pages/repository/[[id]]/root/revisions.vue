@@ -60,7 +60,7 @@ provide('$getCurrentUser', () => authStore.user);
 provide('$editorBus', editorChannel);
 provide('$ceRegistry', $ceRegistry);
 provide('$editorState', {
-  isPublishDiff: computed(() => editorStore.showPublishDiff),
+  showDiff: computed(() => editorStore.showPublishDiff),
 });
 
 const isFetching = ref(true);

@@ -107,7 +107,7 @@ const getChangeType = (element: ContentElement) => {
 };
 
 const addChangeType = (element: ContentElement) => {
-  return { ...element, changeSincePublish: getChangeType(element) };
+  return { ...element, diffChange: getChangeType(element) };
 };
 
 const addPublishedContainersToGroup = (

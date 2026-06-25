@@ -27,7 +27,7 @@
           </VCol>
           <VCol cols="3" class="text-right d-flex justify-end align-center">
             <PublishDiffChip
-              v-if="editorState.isPublishDiff && element.changeSincePublish"
+              v-if="editorState.showDiff && element.diffChange"
               :change-type="publishDiffChangeType"
             />
             <VFadeTransition>
@@ -237,7 +237,7 @@ const question = computed(() => {
 const showAI = computed(() => !!config.props.aiUiEnabled && manifest.value?.ai);
 
 const publishDiffChangeType = computed(() =>
-  props.element.changeSincePublish as PublishDiffChangeTypes);
+  props.element.diffChange as PublishDiffChangeTypes);
 
 const save = async () => {
   if (!form.value) return;

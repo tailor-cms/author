@@ -61,7 +61,7 @@ export interface ContentElement {
   hasUnresolvedComments?: boolean;
   embedded?: boolean;
   lastSeen?: number;
-  changeSincePublish?: string;
+  diffChange?: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: null | string;

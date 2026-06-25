@@ -4,13 +4,13 @@
 <template>
   <div
     :class="[
-      element.changeSincePublish,
+      element.diffChange,
       {
         selected: activeUsers.length,
         focused: isFocused,
-        diff: showPublishDiff,
+        diff: showDiff,
         frame,
-        linked: element.isLinkedCopy && !showPublishDiff,
+        linked: element.isLinkedCopy && !showDiff,
       },
     ]"
     class="content-element rounded"
@@ -18,11 +18,11 @@
   >
     <div
       v-if="!isQuestion"
-      :class="{ visible: showPublishDiff && element.changeSincePublish }"
+      :class="{ visible: showDiff && element.diffChange }"
       class="header d-flex"
     >
       <PublishDiffChip
-        :change-type="element.changeSincePublish as PublishDiffChangeTypes"
+        :change-type="element.diffChange as PublishDiffChangeTypes"
         class="ml-auto"
       />
     </div>
@@ -266,7 +266,7 @@ const componentName = computed(() => manifest.value?.componentName);
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
-const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
+const showDiff = computed(() => editorState?.showDiff.value);
 const isQuestion = computed(() => manifest.value?.isQuestion || false);
 const showAI = computed(
   () => !props.element.embedded && !!doTheMagic && manifest.value?.ai,
@@ -285,7 +285,7 @@ const showSourceUsages = computed(
 );
 
 const onSelect = (e: any) => {
-  if (!props.isDisabled && !showPublishDiff.value && !e.component) {
+  if (!props.isDisabled && !showDiff.value && !e.component) {
     focus();
     e.component = { name: 'content-element', data: props.element };
   }

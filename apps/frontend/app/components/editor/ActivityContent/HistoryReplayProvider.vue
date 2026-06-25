@@ -120,7 +120,7 @@ const processedContainerGroups = computed<Record<string, Activity[]>>(() => {
   });
 });
 
-// `change` maps onto `changeSincePublish` (ContentElement's diff styling); the
+// `change` maps onto `diffChange` (ContentElement's diff styling); the
 // live element is merged under to keep view-only fields like `comments`.
 const processedElements = computed<Record<string, ContentElement>>(() => {
   if (!hasLoaded.value) return props.elements;
@@ -128,7 +128,7 @@ const processedElements = computed<Record<string, ContentElement>>(() => {
     historicalElements.value.map(({ uid, state, change }) => ({
       ...(props.elements[uid] ?? {}),
       ...(state as unknown as ContentElement),
-      changeSincePublish: change ?? undefined,
+      diffChange: change ?? undefined,
     })),
     'uid',
   );
