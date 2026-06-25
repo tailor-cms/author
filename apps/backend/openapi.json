@@ -91,8 +91,8 @@
       "x-displayName": "Records"
     },
     {
-      "name": "Revision / Time travel",
-      "x-displayName": "Time travel"
+      "name": "Revision / History",
+      "x-displayName": "History"
     },
     {
       "name": "Repository / CRUD",
@@ -220,7 +220,7 @@
       "name": "Revision",
       "tags": [
         "Revision / Records",
-        "Revision / Time travel"
+        "Revision / History"
       ]
     },
     {
@@ -2863,6 +2863,117 @@
         ],
         "additionalProperties": false
       },
+      "RevisionReconstructEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Entity id (activity id or content-element id)."
+          },
+          "uid": {
+            "type": "string",
+            "description": "Entity uid."
+          },
+          "state": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {},
+            "description": "Snapshot of the entity at `at` - or at `against` for entities that were removed by `at`. Shape depends on the entity kind."
+          },
+          "change": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "new",
+                  "changed",
+                  "removed"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How the entity changed vs `against`; null when unchanged or when no baseline was supplied."
+          }
+        },
+        "required": [
+          "id",
+          "uid",
+          "state",
+          "change"
+        ],
+        "additionalProperties": false
+      },
+      "RevisionReconstructResult": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The reconstructed moment (echoed from the request)."
+          },
+          "against": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "The baseline moment, when one was supplied."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "activities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RevisionReconstructEntity"
+            },
+            "description": "Activity snapshots in the subtree."
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RevisionReconstructEntity"
+            },
+            "description": "Content-element snapshots in the subtree."
+          }
+        },
+        "required": [
+          "at",
+          "against",
+          "activities",
+          "elements"
+        ],
+        "additionalProperties": false
+      },
+      "RevisionRestoreResult": {
+        "type": "object",
+        "properties": {
+          "activityId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Restored activity id."
+          },
+          "elementCount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of content elements touched by the cascade."
+          }
+        },
+        "required": [
+          "activityId",
+          "elementCount"
+        ],
+        "additionalProperties": false
+      },
       "Revision": {
         "type": "object",
         "properties": {
@@ -2916,8 +3027,21 @@
             "description": "Snapshot of the entity at the revision moment; concrete shape is determined by `entity`. Kept loose at the schema layer to avoid a hard dependency on the per-entity wire schemas."
           },
           "user": {
-            "description": "Eager-loaded author of the change. Populated when the record is fetched with the User include (which is the default for list / get / time-travel actions).",
+            "description": "Eager-loaded author of the change. Populated when the record is fetched with the User include (the default for the list / get actions).",
             "$ref": "#/components/schemas/UserSummary"
+          },
+          "transactionId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid",
+                "description": "UID identifier."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Shared id for every revision produced by one logical operation (e.g. a restore); null for standalone edits. Lets the client group them into a single history entry."
           },
           "createdAt": {
             "type": "string",
@@ -2938,34 +3062,9 @@
           "entity",
           "operation",
           "state",
+          "transactionId",
           "createdAt",
           "updatedAt"
-        ],
-        "additionalProperties": false
-      },
-      "RevisionTimeTravelResult": {
-        "type": "object",
-        "properties": {
-          "activities": {
-            "type": "array",
-            "items": {
-              "description": "Append-only audit record capturing a single mutation to an Activity, ContentElement, or Repository.",
-              "$ref": "#/components/schemas/Revision"
-            },
-            "description": "Activity revisions visible at the target moment."
-          },
-          "elements": {
-            "type": "array",
-            "items": {
-              "description": "Append-only audit record capturing a single mutation to an Activity, ContentElement, or Repository.",
-              "$ref": "#/components/schemas/Revision"
-            },
-            "description": "Content-element revisions visible at the target moment."
-          }
-        },
-        "required": [
-          "activities",
-          "elements"
         ],
         "additionalProperties": false
       },
@@ -9960,16 +10059,16 @@
         ]
       }
     },
-    "/repositories/{repositoryId}/revisions/time-travel": {
+    "/repositories/{repositoryId}/revisions/reconstruct": {
       "get": {
         "tags": [
-          "Revision / Time travel"
+          "Revision / History"
         ],
-        "operationId": "revisionTimeTravel",
+        "operationId": "revisionReconstruct",
         "x-tailor-slice": "revision",
-        "x-tailor-method": "timeTravel",
-        "summary": "Time-travel an activity",
-        "description": "Reconstructs an activity and its descendant element state at a target moment. Used by the FE PublishDiff view to show what was published.",
+        "x-tailor-method": "reconstruct",
+        "summary": "Reconstruct an activity subtree at a moment",
+        "description": "Rebuilds the activity's whole subtree as it existed at `at`. When `against` is supplied, each returned entity is tagged with how it changed (new / changed / removed) between the two moments.",
         "parameters": [
           {
             "name": "repositoryId",
@@ -9990,38 +10089,33 @@
               "type": "integer",
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991,
-              "description": "Target activity; the root of the subtree we reconstruct."
+              "description": "Subtree root to reconstruct."
             }
           },
           {
-            "name": "timestamp",
+            "name": "at",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string",
               "format": "date-time",
-              "description": "Strict ISO 8601 moment to reconstruct state at."
+              "description": "ISO 8601 moment to reconstruct the subtree at."
             }
           },
           {
-            "name": "elementIds",
+            "name": "against",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "default": [],
-              "description": "Element ids currently rendered by the caller. The server adds elements that were live at `timestamp` but have since been deleted (so content visible then but gone now is reconstructed) and returns each one's state as of `timestamp`.",
-              "type": "array",
-              "items": {
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              }
+              "type": "string",
+              "format": "date-time",
+              "description": "Optional baseline moment. When set, each returned entity carries a `change` tag describing how it differs between `against` and `at`."
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Reconstructed activity + element revisions at the target moment.",
+            "description": "Reconstructed subtree state at the target moment.",
             "content": {
               "application/json": {
                 "schema": {
@@ -10029,8 +10123,8 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "description": "Reconstructed state at the target moment, mirroring the Frontend PublishDiffProvider shape.",
-                      "$ref": "#/components/schemas/RevisionTimeTravelResult"
+                      "description": "Reconstructed subtree state at the target moment.",
+                      "$ref": "#/components/schemas/RevisionReconstructResult"
                     }
                   },
                   "required": [
@@ -10043,6 +10137,92 @@
           },
           "404": {
             "description": "Activity not found in this repository."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/revisions/restore": {
+      "post": {
+        "tags": [
+          "Revision / History"
+        ],
+        "operationId": "revisionRestore",
+        "x-tailor-slice": "revision",
+        "x-tailor-method": "restore",
+        "summary": "Restore an activity to a moment",
+        "description": "Resets the target activity (and its directly-attached content elements) to the latest non-REMOVE state at or before `timestamp`. Subsequent edits since that moment are soft-deleted; elements that existed then but are soft-deleted now are restored.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cascade summary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Summary of the restore cascade.",
+                      "$ref": "#/components/schemas/RevisionRestoreResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Activity not found in this repository."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "activityId": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991,
+                    "description": "Activity to restore. Soft-deleted activities can be restored; hard-deleted ones cannot."
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "format": "date-time",
+                    "description": "ISO 8601 moment to restore the activity to."
+                  }
+                },
+                "required": [
+                  "activityId",
+                  "timestamp"
+                ],
+                "additionalProperties": false,
+                "description": "Restore an activity to a target moment."
+              }
+            }
           }
         },
         "security": [
@@ -10094,6 +10274,17 @@
             "required": false,
             "schema": {
               "description": "Entity id; matched against the JSONB `state.id` field.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Scope to a single activity's history: returns ACTIVITY revisions where `state.id` equals this id plus CONTENT_ELEMENT revisions where `state.activityId` equals this id. Mutually exclusive with the `entity`/`entityId` pair.",
               "type": "integer",
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991
