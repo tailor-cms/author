@@ -1,10 +1,13 @@
 <template>
-  <div>
-    <div v-if="isFetching" class="text-center pa-8">
-      <VProgressCircular indeterminate />
-    </div>
+  <div class="position-relative">
+    <VProgressLinear
+      v-if="isFetching"
+      absolute
+      location="top"
+      indeterminate
+      height="5"
+    />
     <slot
-      v-else
       v-bind="{
         processedElements,
         processedContainerGroups,
@@ -44,8 +47,11 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const isFetching = ref(true);
+const hasLoaded = ref(false);
 const historicalActivities = ref<RevisionReconstructEntity[]>([]);
 const historicalElements = ref<RevisionReconstructEntity[]>([]);
+
+const notify = useNotification();
 
 const fetchState = async () => {
   if (!props.activityId || !props.timestamp) return;
@@ -61,6 +67,9 @@ const fetchState = async () => {
     });
     historicalActivities.value = activities;
     historicalElements.value = elements;
+    hasLoaded.value = true;
+  } catch {
+    notify('Failed to load revision', { color: 'error' });
   } finally {
     isFetching.value = false;
   }
@@ -78,6 +87,7 @@ const historicalActivityById = computed(() =>
 // Live rows overlaid with historical state, plus resurrected
 // (historical-only) activities appended.
 const processedActivities = computed<Activity[]>(() => {
+  if (!hasLoaded.value) return props.activities;
   const overlaid = props.activities.map((activity) => {
     const past = historicalActivityById.value[activity.id];
     return past ? { ...activity, ...past } : activity;
@@ -92,8 +102,9 @@ const processedActivities = computed<Activity[]>(() => {
 
 // Per group: containers alive at the moment (others dropped) + resurrected
 // historical-only ones re-added.
-const processedContainerGroups = computed<Record<string, Activity[]>>(() =>
-  mapValues(props.containerGroups, (group, type) => {
+const processedContainerGroups = computed<Record<string, Activity[]>>(() => {
+  if (!hasLoaded.value) return props.containerGroups;
+  return mapValues(props.containerGroups, (group, type) => {
     const alive = group
       .filter((container) => historicalActivityById.value[container.id])
       .map((container) => ({
@@ -106,21 +117,22 @@ const processedContainerGroups = computed<Record<string, Activity[]>>(() =>
       'id',
     );
     return [...alive, ...resurrected];
-  }),
-);
+  });
+});
 
 // `change` maps onto `changeSincePublish` (ContentElement's diff styling); the
 // live element is merged under to keep view-only fields like `comments`.
-const processedElements = computed<Record<string, ContentElement>>(() =>
-  keyBy(
+const processedElements = computed<Record<string, ContentElement>>(() => {
+  if (!hasLoaded.value) return props.elements;
+  return keyBy(
     historicalElements.value.map(({ uid, state, change }) => ({
       ...(props.elements[uid] ?? {}),
       ...(state as unknown as ContentElement),
       changeSincePublish: change ?? undefined,
     })),
     'uid',
-  ),
-);
+  );
+});
 
 watch(
   () => [props.activityId, props.timestamp, props.previousTimestamp],
