@@ -120,7 +120,7 @@
           v-else
           class="justify-start pt-16"
           color="tertiary"
-          icon="mdi-creation"
+          icon="mdi-creation-outline"
           size="48"
           title="Review this content"
           text="Get feedback on this content - engagement scoring, what

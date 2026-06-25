@@ -133,7 +133,10 @@ const save = (data: ContentElement['data']) => {
     @include mixins.highlight(rgb(var(--v-theme-success)));
   }
 
-  &.changed,
+  &.changed {
+    @include mixins.highlight(rgb(var(--v-theme-warning)));
+  }
+
   &.removed {
     @include mixins.highlight(rgb(var(--v-theme-error)));
   }

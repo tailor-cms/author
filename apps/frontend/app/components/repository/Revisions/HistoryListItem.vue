@@ -47,7 +47,7 @@
 <script lang="ts" setup>
 import { find } from 'lodash-es';
 import pluralize from 'pluralize-esm';
-import { formatDate, formatTimeAgo } from '@vueuse/core';
+import { formatDate } from '@vueuse/core';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { Operation } from '@tailor-cms/interfaces/revision';
 
@@ -57,7 +57,7 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 const CHANGE = {
   [Operation.Create]: { icon: 'mdi-plus-circle-outline', color: 'success' },
-  [Operation.Update]: { icon: 'mdi-circle-edit-outline', color: '' },
+  [Operation.Update]: { icon: 'mdi-circle-edit-outline', color: 'warning' },
   [Operation.Remove]: { icon: 'mdi-minus-circle-outline', color: 'error' },
 } as const;
 
@@ -104,12 +104,7 @@ const description = computed(() => props.revision.isRestore
 
 const date = computed(() => new Date(props.revision.createdAt));
 const timeOfDay = computed(() => formatDate(date.value, 'h:mm A'));
-const fullTimestamp = computed(
-  () => `
-    ${formatDate(date.value, 'MMMM Do, YYYY')} ${timeOfDay.value} ·
-    ${formatTimeAgo(date.value, { rounding: 'floor' })}
-  `,
-);
+const fullTimestamp = computed(() => formatDate(date.value, 'MMMM Do, YYYY h:mm A'));
 
 const change = computed(() => {
   if (props.revision.isRestore) return { icon: 'mdi-restore', color: 'info' };

@@ -27,7 +27,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const chipColor = computed(() => {
-  const isNewItem = props.changeType === PublishDiffChangeTypes.New;
-  return isNewItem ? 'success' : 'error';
+  if (props.changeType === PublishDiffChangeTypes.New) return 'success';
+  if (props.changeType === PublishDiffChangeTypes.Changed) return 'warning';
+  return 'error';
 });
 </script>

@@ -551,7 +551,10 @@ onMounted(() => {
     @include mixins.highlight(rgb(var(--v-theme-success-container)));
   }
 
-  &.changed,
+  &.changed {
+    @include mixins.highlight(rgb(var(--v-theme-warning-container)));
+  }
+
   &.removed {
     @include mixins.highlight(rgb(var(--v-theme-error-container)));
   }
