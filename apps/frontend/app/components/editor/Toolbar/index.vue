@@ -5,7 +5,11 @@
     class="toolbar-wrapper"
     order="1"
   >
-    <div v-if="activity && !element" class="activity-toolbar w-100 px-3">
+    <HistoryToolbar v-if="isHistoryMode && !element" />
+    <div
+      v-else-if="activity && !element"
+      class="activity-toolbar w-100 px-3"
+    >
       <ActivityActions />
       <h1
         v-if="mdAndUp"
@@ -82,6 +86,7 @@ import { api } from '@/api';
 import ActivityActions from './ActivityActions.vue';
 import ActivityName from '@/components/common/ActivityName.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
+import HistoryToolbar from './HistoryToolbar.vue';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';
 import { useDisplay } from 'vuetify';
@@ -102,6 +107,7 @@ withDefaults(defineProps<Props>(), {
 const { $schemaService } = useNuxtApp() as any;
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
+const isHistoryMode = computed(() => editorStore.isHistoryMode);
 
 const notify = useNotification();
 const editorStore = useEditorStore();
@@ -114,7 +120,8 @@ const config = computed(
 );
 
 const toolbarColor = computed(() => {
-  return showPublishDiff.value ? 'surface-container-lowest' : 'surface-container-low';
+  if (isHistoryMode.value || showPublishDiff.value) return 'tertiary-container';
+  return 'surface-container-low';
 });
 
 // Source info for linked activities
