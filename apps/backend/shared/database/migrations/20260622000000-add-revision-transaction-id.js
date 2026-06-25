@@ -1,8 +1,6 @@
 'use strict';
 
-// Groups revisions produced by a single logical operation (e.g. a restore
-// cascade) so the UI can collapse them into one entry. Null for standalone
-// edits.
+// Groups the revisions of one logical operation (e.g. a restore cascade).
 const TABLE_NAME = 'revision';
 const COLUMN_NAME = 'transaction_id';
 

@@ -107,7 +107,7 @@ export function get(id: number): Promise<Revision> {
 
 // Resets an activity's whole subtree to its state at or before `timestamp` by
 // replaying through the live services - so each change emits a fresh revision
-// rather than rewriting history (additive restore, like Google Docs / Figma).
+// rather than rewriting history (additive restore).
 //
 // Limitations:
 //   - Hard-deleted ids can't be resurrected (lookup keys are gone).
@@ -119,8 +119,7 @@ export async function restoreToMoment(
   { id: activityId }: Activity,
   timestamp: string,
 ): Promise<RestoreResult> {
-  // One id stamped on every revision this cascade produces, so the UI can
-  // collapse the whole restore into a single history entry.
+  // One id shared by every revision this cascade produces.
   const audit = { transactionId: randomUUID() };
 
   const currentActivities = await getSubtreeActivities(activityId);
