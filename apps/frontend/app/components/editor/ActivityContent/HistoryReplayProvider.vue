@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { differenceBy, filter, keyBy, mapValues, omit } from 'lodash-es';
+import { differenceBy, filter, keyBy, mapValues } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { PublishDiffChangeTypes } from '@tailor-cms/utils';
@@ -47,11 +47,6 @@ const isFetching = ref(true);
 const historicalActivities = ref<RevisionReconstructEntity[]>([]);
 const historicalElements = ref<RevisionReconstructEntity[]>([]);
 
-// Strip lifecycle fields so it renders as its historical self, not live.
-function cleanState<T>(state: Record<string, unknown>): T {
-  return omit(state, ['createdAt', 'updatedAt', 'deletedAt', 'detached']) as unknown as T;
-}
-
 const fetchState = async () => {
   if (!props.activityId || !props.timestamp) return;
   isFetching.value = true;
@@ -74,8 +69,8 @@ const fetchState = async () => {
 const historicalActivityById = computed(() =>
   keyBy(
     historicalActivities.value
-      .filter((entity) => entity.change !== Removed)
-      .map((entity) => cleanState<Activity>(entity.state)),
+      .filter(({ change }) => change !== Removed)
+      .map(({ state }) => state as unknown as Activity),
     'id',
   ),
 );
@@ -116,18 +111,16 @@ const processedContainerGroups = computed<Record<string, Activity[]>>(() =>
 
 // `change` maps onto `changeSincePublish` (ContentElement's diff styling); the
 // live element is merged under to keep view-only fields like `comments`.
-const processedElements = computed<Record<string, ContentElement>>(() => {
-  const result: Record<string, ContentElement> = {};
-  for (const entity of historicalElements.value) {
-    const state = cleanState<ContentElement>(entity.state);
-    result[entity.uid] = {
-      ...(props.elements[entity.uid] ?? {}),
-      ...state,
-      changeSincePublish: entity.change ?? undefined,
-    };
-  }
-  return result;
-});
+const processedElements = computed<Record<string, ContentElement>>(() =>
+  keyBy(
+    historicalElements.value.map(({ uid, state, change }) => ({
+      ...(props.elements[uid] ?? {}),
+      ...(state as unknown as ContentElement),
+      changeSincePublish: change ?? undefined,
+    })),
+    'uid',
+  ),
+);
 
 watch(
   () => [props.activityId, props.timestamp, props.previousTimestamp],

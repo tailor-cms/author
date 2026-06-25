@@ -23,7 +23,6 @@
               <template #activator="{ props: activatorProps, isOpen }">
                 <HistoryListItem
                   :activator-props="activatorProps"
-                  :change-count="bundle.children.length"
                   :children-count="bundle.children.length"
                   :is-active="isPreviewed(bundle)"
                   :is-expanded="isOpen"
@@ -43,7 +42,6 @@
             </VListGroup>
             <HistoryListItem
               v-else
-              :change-count="1"
               :is-active="isPreviewed(bundle)"
               :is-published="bundle.uid === publishedRevision?.uid"
               :revision="bundle"

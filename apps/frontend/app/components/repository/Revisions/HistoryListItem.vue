@@ -10,15 +10,14 @@
     <template #prepend>
       <VIcon :color="change.color" :icon="change.icon" />
     </template>
-    <VListItemTitle class="title-line text-title-small font-weight-medium">
+    <VListItemTitle class="title-line text-title-small">
       {{ description }}
     </VListItemTitle>
     <VListItemSubtitle
       v-tooltip:bottom="{ text: fullTimestamp, openDelay: 300 }"
-      class="text-label-medium text-truncate"
+      class="text-label-medium"
     >
       {{ timeOfDay }} · {{ revision.user?.label ?? 'Unknown' }}
-      <template v-if="revision.isRestore"> · {{ changeCountLabel }}</template>
     </VListItemSubtitle>
     <template #append>
       <VChip
@@ -70,12 +69,10 @@ const props = withDefaults(defineProps<{
   childrenCount?: number;
   // False renders a static, non-clickable row.
   selectable?: boolean;
-  changeCount?: number;
   // VListGroup activator props - bound to the chevron so it toggles the group.
   activatorProps?: Record<string, unknown>;
 }>(), {
   childrenCount: 0,
-  changeCount: 0,
   selectable: true,
 });
 
@@ -103,10 +100,6 @@ const activity = computed(() => {
 const description = computed(() => props.revision.isRestore
   ? 'Restored a previous version'
   : getFormatDescription(props.revision, activity.value, { omitContainer: true }),
-);
-
-const changeCountLabel = computed(
-  () => `${props.changeCount} ${pluralize('change', props.changeCount)}`,
 );
 
 const date = computed(() => new Date(props.revision.createdAt));
