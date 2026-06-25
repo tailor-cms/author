@@ -1,10 +1,11 @@
 <template>
   <VListItem
     :active="isActive"
+    :link="selectable"
     class="history-item"
     rounded="lg"
     density="compact"
-    @click="$emit('select')"
+    @click="selectable && $emit('select')"
   >
     <template #prepend>
       <VIcon :color="change.color" :icon="change.icon" />
@@ -16,8 +17,8 @@
       v-tooltip:bottom="{ text: fullTimestamp, openDelay: 300 }"
       class="text-label-medium text-truncate"
     >
-      {{ timeOfDay }} · {{ revision.user?.label ?? 'Unknown'
-      }}<template v-if="isRestore"> · {{ changeCountLabel }}</template>
+      {{ timeOfDay }} · {{ revision.user?.label ?? 'Unknown' }}
+      <template v-if="revision.isRestore"> · {{ changeCountLabel }}</template>
     </VListItemSubtitle>
     <template #append>
       <VChip
@@ -33,11 +34,12 @@
       <VBtn
         v-if="childrenCount > 0"
         v-tooltip:bottom="{ text: expandLabel, openDelay: 300 }"
+        v-bind="activatorProps"
         :aria-label="expandLabel"
         :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
         size="x-small"
         variant="text"
-        @click.stop="$emit('toggle-expand')"
+        @click.stop
       />
     </template>
   </VListItem>
@@ -48,10 +50,9 @@ import { find } from 'lodash-es';
 import pluralize from 'pluralize-esm';
 import { formatDate, formatTimeAgo } from '@vueuse/core';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { Revision } from '@tailor-cms/interfaces/revision';
 import { Operation } from '@tailor-cms/interfaces/revision';
 
-import { getFormatDescription } from '@/lib/revision';
+import { getFormatDescription, type HistoryEntry } from '@/lib/revision';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -62,22 +63,24 @@ const CHANGE = {
 } as const;
 
 const props = withDefaults(defineProps<{
-  revision: Revision;
+  revision: HistoryEntry;
   isActive?: boolean;
   isPublished?: boolean;
-  isNested?: boolean;
   isExpanded?: boolean;
   childrenCount?: number;
-  // Restore group: one entry standing for a whole restore cascade.
-  isRestore?: boolean;
+  // False renders a static, non-clickable row.
+  selectable?: boolean;
   changeCount?: number;
+  // VListGroup activator props - bound to the chevron so it toggles the group.
+  activatorProps?: Record<string, unknown>;
 }>(), {
   childrenCount: 0,
   changeCount: 0,
+  selectable: true,
 });
 
 defineEmits<{
-  (e: 'select' | 'toggle-expand'): void;
+  (e: 'select'): void;
 }>();
 
 const activityStore = useActivityStore();
@@ -91,12 +94,13 @@ const getOutlineLocation: any = (activity: Activity) => {
 };
 
 const activity = computed(() => {
+  if (props.revision.isRestore) return null;
   const state = props.revision.state as any;
   const activityId = (state.activityId || state.id) as number;
   return getOutlineLocation(activityStore.getParent(activityId));
 });
 
-const description = computed(() => props.isRestore
+const description = computed(() => props.revision.isRestore
   ? 'Restored a previous version'
   : getFormatDescription(props.revision, activity.value, { omitContainer: true }),
 );
@@ -115,14 +119,15 @@ const fullTimestamp = computed(
 );
 
 const change = computed(() => {
-  if (props.isRestore) return { icon: 'mdi-restore', color: 'info' };
+  if (props.revision.isRestore) return { icon: 'mdi-restore', color: 'info' };
   return CHANGE[props.revision.operation] ?? CHANGE[Operation.Update];
 });
 
 const expandLabel = computed(() => {
-  const noun = pluralize(props.isRestore ? 'change' : 'edit', props.childrenCount);
+  const isRestore = props.revision.isRestore;
+  const noun = pluralize(isRestore ? 'change' : 'edit', props.childrenCount);
   if (props.isExpanded) return `Collapse ${noun}`;
-  return props.isRestore
+  return isRestore
     ? `Show ${props.childrenCount} ${noun}`
     : `Show ${props.childrenCount} more ${noun}`;
 });

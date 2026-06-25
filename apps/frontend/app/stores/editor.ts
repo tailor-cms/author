@@ -12,6 +12,13 @@ import { useContentElementStore } from './content-elements';
 
 const { getDescendants } = activityUtils;
 
+// The previewed entry only needs to identify a moment and its author - it may be
+// a synthetic restore entry, not a full revision.
+export type HistoryRevision = Pick<
+  Revision,
+  'uid' | 'createdAt' | 'user' | 'transactionId'
+>;
+
 export const useEditorStore = defineStore('editor', () => {
   const repositoryStore = useCurrentRepository();
   const activityStore = useActivityStore();
@@ -28,7 +35,7 @@ export const useEditorStore = defineStore('editor', () => {
   const isDetailsPanelAnimated = ref(false);
   // Set to preview a past revision: the editor reconstructs the activity at
   // this moment, read-only. Mutually exclusive with publish-diff.
-  const historyRevision = ref<Revision | null>(null);
+  const historyRevision = ref<HistoryRevision | null>(null);
   // Diff baseline for the preview - the preceding revision ("what changed
   // here"). Null on the oldest revision.
   const historyPreviousRevision = ref<Revision | null>(null);
@@ -135,7 +142,7 @@ export const useEditorStore = defineStore('editor', () => {
   };
 
   const enterHistoryMode = (
-    revision: Revision,
+    revision: HistoryRevision,
     previousRevision: Revision | null = null,
   ) => {
     historyRevision.value = revision;

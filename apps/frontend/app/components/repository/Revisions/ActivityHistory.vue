@@ -13,42 +13,31 @@
       prominent
     />
     <template v-else>
-      <VList
-        v-model:opened="openedBundleUids"
-        density="compact"
-        bg-color="transparent"
-        class="pa-0"
-        nav
-      >
+      <VList density="compact" bg-color="transparent" class="pa-0" nav>
         <template v-for="group in groupedRevisions" :key="group.key">
           <VListSubheader class="text-label-medium text-uppercase">
             {{ group.label }}
           </VListSubheader>
           <template v-for="bundle in group.items" :key="bundle.uid">
-            <VListGroup
-              v-if="bundle.children.length > 0"
-              :value="bundle.uid"
-            >
-              <template #activator>
+            <VListGroup v-if="bundle.children.length > 0" :value="bundle.uid">
+              <template #activator="{ props: activatorProps, isOpen }">
                 <HistoryListItem
+                  :activator-props="activatorProps"
                   :change-count="bundle.children.length"
                   :children-count="bundle.children.length"
                   :is-active="isPreviewed(bundle)"
-                  :is-expanded="openedBundleUids.includes(bundle.uid)"
-                  :is-published="bundle.uid === publishedRevisionUid"
-                  :is-restore="bundle.isRestore"
+                  :is-expanded="isOpen"
+                  :is-published="bundle.uid === publishedRevision?.uid"
                   :revision="bundle"
                   @select="previewRevision(bundle)"
-                  @toggle-expand="toggleExpand(bundle.uid)"
                 />
               </template>
               <HistoryListItem
                 v-for="child in bundle.children"
                 :key="child.uid"
                 :is-active="isPreviewed(child)"
-                :is-nested="true"
-                :is-published="child.uid === publishedRevisionUid"
                 :revision="child"
+                :selectable="!bundle.isRestore"
                 @select="previewRevision(child)"
               />
             </VListGroup>
@@ -56,8 +45,7 @@
               v-else
               :change-count="1"
               :is-active="isPreviewed(bundle)"
-              :is-published="bundle.uid === publishedRevisionUid"
-              :is-restore="bundle.isRestore"
+              :is-published="bundle.uid === publishedRevision?.uid"
               :revision="bundle"
               @select="previewRevision(bundle)"
             />
@@ -76,7 +64,7 @@
 </template>
 
 <script lang="ts" setup>
-import { last, map, uniqBy } from 'lodash-es';
+import { find, findIndex, findLastIndex, last, map, uniqBy } from 'lodash-es';
 import { formatDate, useIntersectionObserver } from '@vueuse/core';
 import { isToday } from 'date-fns/isToday';
 import { isYesterday } from 'date-fns/isYesterday';
@@ -87,61 +75,49 @@ import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import HistoryListItem from './HistoryListItem.vue';
 import { api } from '@/api';
-import { isSameInstance } from '@/lib/revision';
+import { isSameRun, type HistoryEntry } from '@/lib/revision';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useActivityStore } from '@/stores/activity';
-import { useEditorStore } from '@/stores/editor';
+import { useEditorStore, type HistoryRevision } from '@/stores/editor';
+
+type BundledRevision = HistoryEntry & { children: Revision[] };
 
 const props = defineProps<{ activity: Activity }>();
-
-const editorStore = useEditorStore();
-const activityStore = useActivityStore();
-
-interface BundledRevision extends Revision {
-  // Absorbed revisions: older same-run edits, or the rest of a restore cascade.
-  children: Revision[];
-  // True when this entry stands for a whole restore (shared `transactionId`).
-  isRestore?: boolean;
-}
 
 const isFetching = ref(false);
 const revisions = ref<Revision[]>([]);
 const queryParams = reactive({ offset: 0, limit: 50 });
 const areAllItemsFetched = ref(false);
-// Expanded bundle uids, managed here (not via VListGroup's activator) so our
-// chevron toggles expansion without triggering a preview.
-const openedBundleUids = ref<string[]>([]);
+const loadMoreEl = ref<HTMLElement | null>(null);
 
-// Two grouping passes over the DESC list: revisions sharing a `transactionId`
-// (a restore) collapse into one "Restored…" entry; otherwise consecutive
-// same-instance/same-operation edits collapse into a run. The transactionId is
-// a hard boundary - a manual edit never merges into a restore.
+const editorStore = useEditorStore();
+const activityStore = useActivityStore();
+useIntersectionObserver(loadMoreEl, ([entry]) => {
+  if (entry?.isIntersecting) fetchRevisions();
+});
+
 const bundledRevisions = computed<BundledRevision[]>(() => {
-  if (!revisions.value.length) return [];
   const result: BundledRevision[] = [];
-  for (const it of revisions.value) {
-    const prev = last(result);
-    if (it.transactionId) {
-      if (prev?.isRestore && prev.transactionId === it.transactionId) {
-        prev.children.push(it);
-      } else {
-        // Keep the member as a child too, so every change in the restore stays
-        // visible; the wrapper borrows its identity for keying/preview.
-        result.push({ ...it, children: [it], isRestore: true });
-      }
+  for (const revision of revisions.value) {
+    const previous = last(result);
+    // Restore members group by transactionId.
+    if (revision.transactionId) {
+      const isSameTransaction = previous?.transactionId === revision.transactionId;
+      if (previous?.isRestore && isSameTransaction) previous.children.push(revision);
+      else result.push({
+        isRestore: true,
+        uid: `restore:${revision.transactionId}`,
+        createdAt: revision.createdAt,
+        user: revision.user,
+        transactionId: revision.transactionId,
+        children: [revision],
+      });
       continue;
     }
-    const sameRun =
-      prev &&
-      !prev.isRestore &&
-      !prev.transactionId &&
-      isSameInstance(prev, it) &&
-      prev.operation === it.operation;
-    if (sameRun) {
-      (prev as BundledRevision).children.push(it);
-    } else {
-      result.push({ ...it, children: [] });
-    }
+    // Normal edits group into runs of the same entity + operation.
+    if (previous && !previous.isRestore && isSameRun(previous, revision))
+      previous.children.push(revision);
+    else result.push({ ...revision, children: [] });
   }
   return result;
 });
@@ -174,37 +150,25 @@ const groupedRevisions = computed<RevisionDayGroup[]>(() => {
   return groups;
 });
 
-const toggleExpand = (uid: string) => {
-  const idx = openedBundleUids.value.indexOf(uid);
-  if (idx >= 0) openedBundleUids.value.splice(idx, 1);
-  else openedBundleUids.value.push(uid);
-};
-
-// The bundle that was shipped: the newest revision at or before
-// `activity.publishedAt`. Null if never published (DESC list -> first match).
-const publishedRevisionUid = computed<string | null>(() => {
-  const publishedAt = props.activity.publishedAt;
-  if (!publishedAt) return null;
-  const cutoff = new Date(publishedAt).getTime();
-  const match = bundledRevisions.value.find(
-    (r) => new Date(r.createdAt).getTime() <= cutoff,
-  );
-  return match?.uid ?? null;
+const publishedRevision = computed<BundledRevision | undefined>(() => {
+  const { publishedAt } = props.activity;
+  if (!publishedAt) return;
+  return bundledRevisions.value.find(({ createdAt }) => createdAt <= publishedAt);
 });
 
-const isPreviewed = (revision: Revision) =>
+const isPreviewed = (revision: HistoryRevision) =>
   editorStore.historyRevision?.uid === revision.uid;
 
-const previewRevision = (revision: Revision) => {
-  if (isPreviewed(revision)) {
-    editorStore.exitHistoryMode();
-    return;
-  }
-  // Baseline = the preceding revision from the raw (un-bundled) DESC list, so
-  // bundle parents and absorbed children both diff correctly.
-  const idx = revisions.value.findIndex((r) => r.uid === revision.uid);
-  const previous = idx >= 0 ? revisions.value[idx + 1] ?? null : null;
-  editorStore.enterHistoryMode(revision, previous);
+const previewRevision = (revision: HistoryRevision) => {
+  if (isPreviewed(revision)) return editorStore.exitHistoryMode();
+  const { uid, transactionId } = revision;
+  // Diff baseline = the next-older revision. For a restore, anchor on the
+  // cascade's last (oldest) member so the baseline precedes the whole restore.
+  const index = transactionId
+    ? findLastIndex(revisions.value, { transactionId })
+    : findIndex(revisions.value, { uid });
+  const previousRevision = index >= 0 ? revisions.value[index + 1] ?? null : null;
+  editorStore.enterHistoryMode(revision, previousRevision);
 };
 
 const fetchRevisions = async () => {
@@ -214,14 +178,10 @@ const fetchRevisions = async () => {
     const { items, total }: { items: Revision[]; total: number } =
       await api.revision.list({
         params: { repositoryId: props.activity.repositoryId },
-        query: {
-          activityId: props.activity.id,
-          ...queryParams,
-        },
+        query: { activityId: props.activity.id, ...queryParams },
       });
     revisions.value = uniqBy([...revisions.value, ...items], 'uid');
-    areAllItemsFetched.value =
-      total <= queryParams.offset + queryParams.limit;
+    areAllItemsFetched.value = total <= queryParams.offset + queryParams.limit;
     queryParams.offset += queryParams.limit;
   } finally {
     isFetching.value = false;
@@ -233,12 +193,6 @@ const reset = () => {
   queryParams.offset = 0;
   areAllItemsFetched.value = false;
 };
-
-// Infinite scroll: fetch the next page when the sentinel scrolls into view.
-const loadMoreEl = ref<HTMLElement | null>(null);
-useIntersectionObserver(loadMoreEl, ([entry]) => {
-  if (entry?.isIntersecting) fetchRevisions();
-});
 
 watch(
   () => props.activity?.id,
