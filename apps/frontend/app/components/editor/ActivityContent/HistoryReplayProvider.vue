@@ -15,22 +15,15 @@
 </template>
 
 <script lang="ts" setup>
-import { keyBy, omit, reduce } from 'lodash-es';
+import { differenceBy, filter, keyBy, mapValues, omit } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { PublishDiffChangeTypes } from '@tailor-cms/utils';
+import type { RevisionReconstructEntity } from '@tailor-cms/api-client';
 
 import { api } from '@/api';
 
 const { Removed } = PublishDiffChangeTypes;
-
-// A reconstructed subtree entity; `change` is null when unchanged.
-interface ReconstructEntity {
-  id: number;
-  uid: string;
-  state: Record<string, any>;
-  change: PublishDiffChangeTypes | null;
-}
 
 interface Props {
   repositoryId: number;
@@ -51,18 +44,19 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const isFetching = ref(true);
-const historicalActivities = ref<ReconstructEntity[]>([]);
-const historicalElements = ref<ReconstructEntity[]>([]);
+const historicalActivities = ref<RevisionReconstructEntity[]>([]);
+const historicalElements = ref<RevisionReconstructEntity[]>([]);
 
 // Strip lifecycle fields so it renders as its historical self, not live.
-const cleanState = <T extends Record<string, any>>(state: T) =>
-  omit(state, ['createdAt', 'updatedAt', 'deletedAt', 'detached']) as T;
+function cleanState<T>(state: Record<string, unknown>): T {
+  return omit(state, ['createdAt', 'updatedAt', 'deletedAt', 'detached']) as unknown as T;
+}
 
 const fetchState = async () => {
   if (!props.activityId || !props.timestamp) return;
   isFetching.value = true;
   try {
-    const { activities, elements }: any = await api.revision.reconstruct({
+    const { activities, elements } = await api.revision.reconstruct({
       params: { repositoryId: props.repositoryId },
       query: {
         activityId: props.activityId,
@@ -77,11 +71,11 @@ const fetchState = async () => {
   }
 };
 
-const historicalActivityById = computed<Record<number, Activity>>(() =>
+const historicalActivityById = computed(() =>
   keyBy(
     historicalActivities.value
       .filter((entity) => entity.change !== Removed)
-      .map((entity) => cleanState(entity.state as Activity)),
+      .map((entity) => cleanState<Activity>(entity.state)),
     'id',
   ),
 );
@@ -89,51 +83,48 @@ const historicalActivityById = computed<Record<number, Activity>>(() =>
 // Live rows overlaid with historical state, plus resurrected
 // (historical-only) activities appended.
 const processedActivities = computed<Activity[]>(() => {
-  const merged: Activity[] = props.activities.map((act) => {
-    const past = historicalActivityById.value[act.id];
-    return past ? ({ ...act, ...past } as Activity) : act;
+  const overlaid = props.activities.map((activity) => {
+    const past = historicalActivityById.value[activity.id];
+    return past ? { ...activity, ...past } : activity;
   });
-  const seen = new Set(merged.map((a) => a.id));
-  for (const past of Object.values(historicalActivityById.value)) {
-    if (!seen.has(past.id)) merged.push(past as Activity);
-  }
-  return merged;
+  const resurrected = differenceBy(
+    Object.values(historicalActivityById.value),
+    props.activities,
+    'id',
+  );
+  return [...overlaid, ...resurrected];
 });
 
 // Per group: containers alive at the moment (others dropped) + resurrected
 // historical-only ones re-added.
-const processedContainerGroups = computed<Record<string, Activity[]>>(() => {
-  return reduce(
-    props.containerGroups,
-    (acc: Record<string, Activity[]>, group: Activity[], type: string) => {
-      const alive = group
-        .filter((c) => historicalActivityById.value[c.id])
-        .map((c) => ({ ...c, ...historicalActivityById.value[c.id] }));
-      const currentIds = new Set(group.map((c) => c.id));
-      const resurrected = Object.values(historicalActivityById.value).filter(
-        (a: any) =>
-          a.type === type
-          && a.parentId === props.activityId
-          && !currentIds.has(a.id),
-      );
-      acc[type] = [...alive, ...resurrected] as Activity[];
-      return acc;
-    },
-    {} as Record<string, Activity[]>,
-  );
-});
+const processedContainerGroups = computed<Record<string, Activity[]>>(() =>
+  mapValues(props.containerGroups, (group, type) => {
+    const alive = group
+      .filter((container) => historicalActivityById.value[container.id])
+      .map((container) => ({
+        ...container,
+        ...historicalActivityById.value[container.id],
+      }));
+    const resurrected = differenceBy(
+      filter(historicalActivityById.value, { type, parentId: props.activityId }),
+      group,
+      'id',
+    );
+    return [...alive, ...resurrected];
+  }),
+);
 
 // `change` maps onto `changeSincePublish` (ContentElement's diff styling); the
 // live element is merged under to keep view-only fields like `comments`.
 const processedElements = computed<Record<string, ContentElement>>(() => {
   const result: Record<string, ContentElement> = {};
   for (const entity of historicalElements.value) {
-    const state = cleanState(entity.state as ContentElement);
+    const state = cleanState<ContentElement>(entity.state);
     result[entity.uid] = {
       ...(props.elements[entity.uid] ?? {}),
       ...state,
-      changeSincePublish: entity.change,
-    } as ContentElement;
+      changeSincePublish: entity.change ?? undefined,
+    };
   }
   return result;
 });
