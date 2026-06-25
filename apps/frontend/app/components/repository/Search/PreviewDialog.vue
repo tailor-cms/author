@@ -10,7 +10,7 @@
     <template #body>
       <div
         v-if="breadcrumbs.length"
-        class="d-flex align-center flex-wrap text-body-2 text-medium-emphasis mb-4"
+        class="d-flex align-center flex-wrap text-body-medium text-medium-emphasis mb-4"
       >
         <template v-for="(name, index) in breadcrumbs" :key="index">
           <VIcon v-if="index" class="mx-1" icon="mdi-chevron-right" size="14" />
@@ -24,7 +24,7 @@
         rounded="lg"
       >
         <VIcon icon="mdi-eye-off-outline" size="32" />
-        <span class="text-body-2 mt-2">Preview unavailable</span>
+        <span class="text-body-medium mt-2">Preview unavailable</span>
       </VSheet>
       <div v-else ref="rootRef">
         <VThemeProvider class="pa-6 rounded-lg" theme="light" with-background>

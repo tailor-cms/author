@@ -37,7 +37,7 @@
       </div>
       <VSpacer />
       <span
-        class="text-caption text-medium-emphasis text-no-wrap ml-3"
+        class="text-body-small text-medium-emphasis text-no-wrap ml-3"
         data-percy="hide"
       >
         {{ formatDate(element.updatedAt) }}

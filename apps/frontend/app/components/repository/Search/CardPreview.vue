@@ -9,7 +9,7 @@
           rounded="lg"
         >
           <VIcon icon="mdi-eye-off-outline" size="32" />
-          <span class="mt-2 text-body-2">Preview unavailable</span>
+          <span class="mt-2 text-body-medium">Preview unavailable</span>
         </VSheet>
         <VSheet v-else class="preview-scale py-3" color="surface" rounded="lg">
           <ContentElementWrapper :element="element" is-disabled />
