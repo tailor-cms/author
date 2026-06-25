@@ -1,40 +1,55 @@
 <template>
-  <VRow
-    class="folder-row px-2 py-3 align-center bg-surface-container"
+  <VListItem
+    class="bg-surface-container"
     data-testid="folderRow"
-    density="compact"
+    lines="two"
+    rounded="lg"
     @click="emit('open', folder.path)"
   >
-    <VCol cols="auto" class="px-1">
-      <VAvatar
-        color="surface-container-low"
-        class="thumbnail"
-        size="40"
-        rounded="lg"
-      >
-        <VIcon icon="mdi-folder" size="24" />
-      </VAvatar>
-    </VCol>
-    <VCol class="px-2 overflow-hidden text-start">
-      <div class="d-flex align-center text-title-small">
-        <span data-testid="folderRow_name" class="text-truncate">
-          {{ folder.name }}
-        </span>
-      </div>
-    </VCol>
-    <VCol cols="auto" class="d-flex align-center px-1">
-      <VBtn
-        v-if="folder.isPending"
-        v-tooltip:bottom="'Remove empty folder'"
-        aria-label="Remove folder"
-        icon="mdi-folder-remove-outline"
-        size="small"
-        variant="text"
-        density="comfortable"
-        @click.stop="emit('remove', folder.path)"
+    <template #prepend>
+      <VIcon
+        :icon="folder.isLocal ? 'mdi-folder-outline' : 'mdi-folder'"
+        class="text-medium-emphasis"
+        size="28"
       />
-    </VCol>
-  </VRow>
+    </template>
+    <VListItemTitle class="text-title-small text-left" data-testid="folderRow_name">
+      {{ folder.name }}
+    </VListItemTitle>
+    <template #append>
+      <VMenu :offset="6" location="bottom end">
+        <template #activator="{ props: menuProps }">
+          <VBtn
+            v-bind="menuProps"
+            aria-label="Folder actions"
+            data-testid="folderMenuBtn"
+            density="comfortable"
+            icon="mdi-dots-vertical"
+            size="small"
+            variant="text"
+            @click.stop
+          />
+        </template>
+        <VList density="compact" nav>
+          <VListItem
+            v-if="folder.isLocal"
+            data-testid="folderRemoveAction"
+            prepend-icon="mdi-trash-can-outline"
+            title="Discard folder"
+            @click="emit('remove', folder.path)"
+          />
+          <VListItem
+            v-else
+            base-color="error"
+            data-testid="folderDeleteAction"
+            prepend-icon="mdi-trash-can-outline"
+            title="Delete folder"
+            @click="emit('delete', folder.path)"
+          />
+        </VList>
+      </VMenu>
+    </template>
+  </VListItem>
 </template>
 
 <script lang="ts" setup>
@@ -47,17 +62,6 @@ defineProps<{
 const emit = defineEmits<{
   open: [path: string];
   remove: [path: string];
+  delete: [path: string];
 }>();
 </script>
-
-<style lang="scss" scoped>
-.folder-row {
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background 0.15s ease;
-
-  &:hover {
-    background-color: rgb(var(--v-theme-surface-container-high));
-  }
-}
-</style>

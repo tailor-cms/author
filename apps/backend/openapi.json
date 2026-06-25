@@ -1800,6 +1800,24 @@
         ],
         "additionalProperties": false
       },
+      "AssetDeleteFolderResult": {
+        "type": "object",
+        "properties": {
+          "deletedIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "Ids of the assets removed along with the folder."
+          }
+        },
+        "required": [
+          "deletedIds"
+        ],
+        "additionalProperties": false
+      },
       "AssetLegacyUploadResult": {
         "type": "object",
         "properties": {
@@ -7808,6 +7826,55 @@
                   ],
                   "additionalProperties": false,
                   "description": "Folder paths derived from `meta.folder`."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryDeleteFolder",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "deleteFolder",
+        "summary": "Delete a folder and its contents",
+        "description": "Soft-deletes every asset in the folder (`?folder=<path>`) or nested beneath it. Folders are virtual (derived from `meta.folder`), so this removes the folder too. Returns the ids that were removed.",
+        "parameters": [
+          {
+            "name": "folder",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Folder to delete; every asset in it or nested beneath it (`folder/...`) is removed. The root (empty string) cannot be deleted."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ids of the assets removed along with the folder.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Assets removed by deleting a folder.",
+                      "$ref": "#/components/schemas/AssetDeleteFolderResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
                 }
               }
             }

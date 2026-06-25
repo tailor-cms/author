@@ -42,3 +42,25 @@ export const MoveResult = z
   .describe('Assets relocated by a bulk move.');
 
 export type MoveResult = z.infer<typeof MoveResult>;
+
+export const DeleteFolderQuery = z
+  .object({
+    folder: FolderPath.describe(oneLine`
+      Folder to delete; every asset in it or nested beneath it
+      (\`folder/...\`) is removed. The root (empty string) cannot be deleted.
+    `),
+  })
+  .describe('Folder to delete, contents and all.');
+
+export type DeleteFolderQuery = z.infer<typeof DeleteFolderQuery>;
+
+export const DeleteFolderResult = z
+  .object({
+    deletedIds: z
+      .array(Int())
+      .describe('Ids of the assets removed along with the folder.'),
+  })
+  .meta({ id: 'AssetDeleteFolderResult' })
+  .describe('Assets removed by deleting a folder.');
+
+export type DeleteFolderResult = z.infer<typeof DeleteFolderResult>;

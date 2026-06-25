@@ -1,74 +1,78 @@
 <template>
+  <VRow v-if="showSubfolders" class="folder-container" dense>
+    <VCol
+      v-for="folder in subfolders"
+      :key="folder.path"
+      cols="12"
+      lg="4"
+      sm="6"
+    >
+      <FolderRow
+        :folder="folder"
+        @open="emit('folder:open', $event)"
+        @remove="emit('folder:remove', $event)"
+        @delete="emit('folder:delete', $event)"
+      />
+    </VCol>
+  </VRow>
   <div
-    v-if="isFetching && !assets.length && !subfolders.length"
+    v-if="showLoading"
     class="d-flex justify-center py-16"
   >
     <VProgressCircular indeterminate />
   </div>
-  <template v-else>
-    <div
-      v-if="isFolderView && subfolders.length"
-      class="d-flex flex-column mb-1"
-    >
-      <FolderRow
-        v-for="folder in subfolders"
-        :key="folder.path"
-        :folder="folder"
-        @open="emit('folder:open', $event)"
-        @remove="emit('folder:remove', $event)"
-      />
-    </div>
-    <VDataIterator
-      v-if="assets.length"
-      :class="{ 'opacity-50': isFetching }"
-      :items="assets"
-      :items-length="total"
-      :items-per-page="props.itemsPerPage"
-      :page="props.page"
-    >
-      <template #default="{ items }">
-        <div class="d-flex flex-column">
-          <AssetRow
-            v-for="{ raw: asset } in items"
-            :key="asset.id"
-            :asset="asset"
-            :is-active="asset.id === activeAssetId"
-            :is-selected="selected.has(asset.id)"
-            @preview="emit('preview', $event)"
-            @toggle="emit('select:toggle', $event)"
-            @download="emit('download', $event)"
-            @index="emit('index', $event)"
-            @deindex="emit('deindex', $event)"
-            @move="emit('move', $event)"
-            @delete="emit('delete', $event)"
-          />
-        </div>
-      </template>
-      <template #footer>
-        <VPagination
-          v-if="pageCount > 1"
-          :model-value="props.page"
-          :length="pageCount"
-          :total-visible="7"
-          class="mt-4"
-          density="comfortable"
-          rounded
-          @update:model-value="emit('update:page', $event)"
+  <VDataIterator
+    v-else-if="assets.length"
+    :class="{ 'opacity-50': isFetching }"
+    :items="assets"
+    :items-length="total"
+    :items-per-page="props.itemsPerPage"
+    :page="props.page"
+  >
+    <template #default="{ items }">
+      <div class="d-flex flex-column">
+        <AssetRow
+          v-for="{ raw: asset } in items"
+          :key="asset.id"
+          :asset="asset"
+          :is-active="asset.id === activeAssetId"
+          :is-selected="selected.has(asset.id)"
+          :show-folder="isFiltered"
+          @preview="emit('preview', $event)"
+          @toggle="emit('select:toggle', $event)"
+          @download="emit('download', $event)"
+          @index="emit('index', $event)"
+          @deindex="emit('deindex', $event)"
+          @move="emit('move', $event)"
+          @delete="emit('delete', $event)"
+          @open-folder="emit('folder:open', $event)"
         />
-      </template>
-    </VDataIterator>
-    <VEmptyState
-      v-if="showEmptyState"
-      :action-text="isInFolder ? 'Go back' : undefined"
-      :icon="emptyStateIcon"
-      :text="emptyStateText"
-      :title="emptyStateTitle"
-      bg-color="surface-container"
-      class="py-16 empty-state rounded-lg"
-      data-testid="assetEmptyState"
-      @click:action="emit('folder:up')"
-    />
-  </template>
+      </div>
+    </template>
+    <template #footer>
+      <VPagination
+        v-if="pageCount > 1"
+        :model-value="props.page"
+        :length="pageCount"
+        :total-visible="7"
+        class="mt-4"
+        density="comfortable"
+        rounded
+        @update:model-value="emit('update:page', $event)"
+      />
+    </template>
+  </VDataIterator>
+  <VEmptyState
+    v-else-if="showEmptyState"
+    :action-text="isInFolder ? 'Go back' : undefined"
+    :icon="emptyStateIcon"
+    :text="emptyStateText"
+    :title="emptyStateTitle"
+    bg-color="surface-container"
+    class="py-16 empty-state rounded-lg"
+    data-testid="assetEmptyState"
+    @click:action="emit('folder:up')"
+  />
 </template>
 
 <script lang="ts" setup>
@@ -81,6 +85,7 @@ import FolderRow from './FolderRow.vue';
 
 const props = defineProps<{
   isFetching: boolean;
+  foldersLoaded: boolean;
   assets: Asset[];
   total: number;
   page: number;
@@ -90,7 +95,6 @@ const props = defineProps<{
   selectedCategory: string;
   search: string;
   activeAssetId: number | null;
-  viewMode: 'list' | 'folders';
   subfolders: FolderNode[];
   currentFolder: string;
   isLocalFolder: boolean;
@@ -107,25 +111,33 @@ const emit = defineEmits<{
   'delete': [asset: Asset];
   'folder:open': [path: string];
   'folder:remove': [path: string];
+  'folder:delete': [path: string];
   'folder:up': [];
 }>();
-
-const isFolderView = computed(() => props.viewMode === 'folders');
 
 const isFiltered = computed(
   () => props.selectedCategory !== CATEGORY_ALL || Boolean(props.search.trim()),
 );
 
-const showEmptyState = computed(
-  () =>
-    !props.isFetching &&
-    !props.assets.length &&
-    !(isFolderView.value && props.subfolders.length),
+const showSubfolders = computed(
+  () => !isFiltered.value && props.subfolders.length > 0,
 );
 
-// Browsing inside a specific folder (not the library root).
+const showLoading = computed(
+  () => !props.assets.length && (props.isFetching || !props.foldersLoaded),
+);
+
+const showEmptyState = computed(
+  () =>
+    props.foldersLoaded &&
+    !props.isFetching &&
+    !props.assets.length &&
+    !showSubfolders.value,
+);
+
+// Browsing inside a specific folder (not the library root, not search/filter).
 const isInFolder = computed(
-  () => isFolderView.value && !!props.currentFolder,
+  () => !!props.currentFolder && !isFiltered.value,
 );
 
 const emptyStateIcon = computed(() =>
@@ -152,3 +164,10 @@ const emptyStateText = computed(() => {
   return 'Upload files, add links, or use Discover.';
 });
 </script>
+
+<style lang="scss" scoped>
+.folder-container {
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <VMenu location="bottom end">
+  <VMenu :offset="6" location="bottom end">
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
@@ -57,7 +57,7 @@ const menuOptions = computed(() => {
   if (canDownload.value) {
     items.push({
       name: 'Download',
-      icon: 'mdi-download',
+      icon: 'mdi-download-outline',
       action: () => emit('download', props.asset),
     });
   }

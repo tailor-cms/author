@@ -89,9 +89,9 @@ const entityData = computed<EntityData>(() => {
   const repo = repository.value;
   if (!repo) return {};
   return {
+    ...repo.data,
     name: repo.name,
     description: repo.description,
-    ...repo.data,
   };
 });
 

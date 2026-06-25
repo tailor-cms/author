@@ -17,28 +17,47 @@
       @click:clear="search = ''"
     />
     <VSpacer />
-    <VBtn
-      prepend-icon="mdi-link-plus"
-      text="Add Link"
-      variant="tonal"
-      @click="emit('link:add')"
-    />
-    <VBtn
-      v-if="isDiscoveryEnabled"
-      prepend-icon="mdi-earth-plus"
-      variant="tonal"
-      text="Discover"
-      @click="emit('discover')"
-    />
-    <VBtn
-      :loading="isUploading"
-      :disabled="isUploading"
-      color="primary"
-      prepend-icon="mdi-upload"
-      text="Upload"
-      variant="flat"
-      @click="openFilePicker"
-    />
+    <VMenu :offset="6" location="bottom end">
+      <template #activator="{ props: menuProps }">
+        <VBtn
+          v-bind="menuProps"
+          color="primary"
+          data-testid="newMenuBtn"
+          min-width="100"
+          prepend-icon="mdi-plus"
+          text="New"
+          variant="flat"
+        />
+      </template>
+      <VList min-width="200" nav>
+        <VListItem
+          data-testid="uploadAction"
+          prepend-icon="mdi-upload-outline"
+          title="Upload files"
+          @click="openFilePicker"
+        />
+        <VListItem
+          data-testid="addLinkAction"
+          prepend-icon="mdi-link-plus"
+          title="Add link"
+          @click="emit('link:add')"
+        />
+        <VListItem
+          v-if="isDiscoveryEnabled"
+          data-testid="discoverAction"
+          prepend-icon="mdi-web-plus"
+          title="Discover"
+          @click="emit('discover')"
+        />
+        <VDivider class="my-1" />
+        <VListItem
+          data-testid="newFolderAction"
+          prepend-icon="mdi-folder-plus-outline"
+          title="New folder"
+          @click="emit('folder:new')"
+        />
+      </VList>
+    </VMenu>
     <input
       ref="fileInputRef"
       type="file"
@@ -54,13 +73,13 @@ const emit = defineEmits<{
   'upload': [files: File[]];
   'link:add': [];
   'discover': [];
+  'folder:new': [];
 }>();
 
 const config = useConfigStore();
 const search = defineModel<string>('search', { default: '' });
 
 const fileInputRef = ref<HTMLInputElement>();
-const isUploading = ref(false);
 
 const isDiscoveryEnabled = computed(
   () => !!config.props.discoveryEnabled,
@@ -74,16 +93,9 @@ function onFilesSelected(event: Event) {
   const input = event.target as HTMLInputElement;
   const files = input.files;
   if (!files?.length) return;
-  isUploading.value = true;
   emit('upload', [...files]);
   input.value = '';
 }
-
-function reset() {
-  isUploading.value = false;
-}
-
-defineExpose({ reset });
 </script>
 
 <style lang="scss" scoped>

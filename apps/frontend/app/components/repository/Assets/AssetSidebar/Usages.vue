@@ -10,7 +10,7 @@
       class="pa-0 bg-transparent"
       type="list-item-two-line@2"
     />
-    <p v-else-if="!usages.length" class="text-body-2 text-medium-emphasis">
+    <p v-else-if="!usages.length" class="text-body-small text-medium-emphasis">
       Not used anywhere in this repository.
     </p>
     <VList v-else class="py-0 bg-transparent" density="compact" nav>

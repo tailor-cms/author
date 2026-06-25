@@ -86,6 +86,12 @@ function move(repositoryId, assetIds, folder) {
     .then(extractData);
 }
 
+function deleteFolder(repositoryId, folder) {
+  return request
+    .delete(`${urls.root(repositoryId)}/folders`, { params: { folder } })
+    .then(extractData);
+}
+
 function importFromLink(repositoryId, url, meta) {
   return request
     .post(`${urls.root(repositoryId)}/import/link`, { url, meta })
@@ -142,6 +148,7 @@ export default {
   bulkRemove,
   listFolders,
   move,
+  deleteFolder,
   updateMeta,
   importFromLink,
   attachFile,

@@ -15,6 +15,7 @@
       <template #append>
         <VBtn
           v-if="uploadStore.hasCompleted"
+          aria-label="Clear completed uploads"
           density="comfortable"
           icon="mdi-close"
           size="small"
@@ -48,6 +49,7 @@
         <template #append>
           <VBtn
             v-if="item.status !== UploadStatus.Uploading"
+            aria-label="Dismiss"
             density="comfortable"
             icon="mdi-close"
             size="x-small"

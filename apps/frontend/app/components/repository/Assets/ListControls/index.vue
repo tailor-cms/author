@@ -1,7 +1,5 @@
 <template>
   <div class="d-flex align-center flex-wrap ga-2 mb-4">
-    <ViewToggle v-model="viewMode" />
-    <VDivider vertical class="ma-2" />
     <CategoryFilter v-model="selectedCategory" :categories="categories" />
     <VSpacer />
     <VMenu>
@@ -35,9 +33,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { AssetViewMode } from '@/composables/useAssetFolders';
 import CategoryFilter from './CategoryFilter.vue';
-import ViewToggle from './ViewToggle.vue';
 import { PAGE_SIZE_OPTIONS } from '@/composables/useAssets';
 
 defineProps<{
@@ -49,9 +45,6 @@ const selectedCategory = defineModel<string>('selectedCategory', {
   required: true,
 });
 const itemsPerPage = defineModel<number>('itemsPerPage', {
-  required: true,
-});
-const viewMode = defineModel<AssetViewMode>('viewMode', {
   required: true,
 });
 

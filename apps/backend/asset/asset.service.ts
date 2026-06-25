@@ -446,6 +446,47 @@ export async function moveAssets(
 }
 
 /**
+ * Deletes a folder and everything under it: soft-deletes every asset whose
+ * `meta.folder` is `folder` or nested beneath it (`folder/...`). Folders are
+ * virtual, so removing the assets removes the folder. Root ('') is not
+ * deletable. Returns the ids that were removed.
+ */
+export async function deleteFolder(
+  repository: Repository,
+  folder: string,
+): Promise<number[]> {
+  const normalized = normalizeFolder(folder);
+  if (!normalized) return [];
+  const assets = await Asset.findAll({
+    where: {
+      repositoryId: repository.id,
+      [Op.or]: [
+        { [FOLDER_COLUMN]: normalized },
+        { [FOLDER_COLUMN]: { [Op.like]: `${normalized}/%` } },
+      ],
+    },
+  });
+  logger.debug(
+    { repositoryId: repository.id, folder: normalized, count: assets.length },
+    'Deleting folder',
+  );
+  const results = await Promise.allSettled(
+    assets.map((it: Asset) => destroyAsset(repository, it)),
+  );
+  return results.reduce<number[]>((ids, r, i) => {
+    if (r.status === 'rejected') {
+      logger.error(
+        { err: r.reason, assetId: assets[i].id },
+        'Folder delete failed for asset',
+      );
+    } else {
+      ids.push(assets[i].id);
+    }
+    return ids;
+  }, []);
+}
+
+/**
  * Resolves a storage key to its public and internal URLs.
  * Returns { key, publicUrl, url } where url is the storage:// protocol URL.
  */

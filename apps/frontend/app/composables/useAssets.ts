@@ -16,8 +16,12 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   const isSaving = ref(false);
   const isBulkRemoving = ref(false);
 
+  // Monotonic token so a slower in-flight fetch (e.g. the previous folder's,
+  // still inside its min-delay) can't land after a newer one
+  let fetchToken = 0;
   async function fetch(params: Record<string, any> = {}) {
     if (!repositoryId.value) return;
+    const token = ++fetchToken;
     isFetching.value = true;
     try {
       const promise = api.list(repositoryId.value, {
@@ -26,16 +30,12 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
         ...params,
       });
       const result = await pMinDelay(promise, MIN_LOADING_MS);
+      if (token !== fetchToken) return; // superseded by a newer fetch
       assets.value = result.items;
       total.value = result.total;
     } finally {
-      isFetching.value = false;
+      if (token === fetchToken) isFetching.value = false;
     }
-  }
-
-  async function upload(files: File[]) {
-    if (!repositoryId.value || !files.length) return;
-    return api.upload(repositoryId.value, files);
   }
 
   async function remove(assetId: number) {
@@ -68,6 +68,13 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     return movedIds;
   }
 
+  // Deletes a folder and everything under it. Returns the deleted ids.
+  async function deleteFolder(folder: string): Promise<number[]> {
+    if (!repositoryId.value) return [];
+    const { deletedIds } = await api.deleteFolder(repositoryId.value, folder);
+    return deletedIds;
+  }
+
   async function getDownloadUrl(assetId: number) {
     if (!repositoryId.value) return;
     return api.getDownloadUrl(repositoryId.value, assetId);
@@ -98,11 +105,12 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     }
   }
 
-  // Drop the current rows immediately (e.g. when the folder context changes) so
-  // the previous view's assets don't linger during the next fetch.
-  function clear() {
+  // Invalidate the current rows ahead of a reload: drop them and switch the
+  // loader on.
+  function invalidate() {
     assets.value = [];
     total.value = 0;
+    isFetching.value = true;
   }
 
   function localUpdate(updated: Partial<Asset> & { id: number }) {
@@ -126,14 +134,14 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     isSaving,
     isBulkRemoving,
     fetch,
-    upload,
     addLink,
     getDownloadUrl,
     remove,
     bulkRemove,
     move,
+    deleteFolder,
     deindex,
     updateMeta,
-    clear,
+    invalidate,
   };
 }

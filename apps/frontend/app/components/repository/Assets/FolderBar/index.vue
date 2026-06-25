@@ -19,8 +19,12 @@
           size="small"
         />
         <span
-          :class="{ 'text-medium-emphasis': isLast(index) }"
-          class="crumb text-body-medium"
+          :class="
+            isLast(index)
+              ? 'crumb--current text-high-emphasis'
+              : 'text-medium-emphasis'
+          "
+          class="crumb text-title-small"
           role="button"
           @click="onCrumb(crumb, index)"
         >
@@ -28,41 +32,21 @@
         </span>
       </template>
     </nav>
-    <VSpacer />
-    <VBtn
-      data-testid="newFolderBtn"
-      prepend-icon="mdi-folder-plus-outline"
-      size="small"
-      text="New folder"
-      variant="tonal"
-      @click="showNewFolder = true"
-    />
-    <NewFolderDialog
-      v-model="showNewFolder"
-      :existing-names="existingNames"
-      :parent-path="currentPath"
-      @create="emit('create', $event)"
-    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { Breadcrumb } from '@/composables/useAssetFolders';
-import NewFolderDialog from './NewFolderDialog.vue';
 
 const props = defineProps<{
   breadcrumbs: Breadcrumb[];
   currentPath: string;
-  existingNames: string[];
 }>();
 
 const emit = defineEmits<{
   'navigate': [path: string];
   'navigate-up': [];
-  'create': [name: string];
 }>();
-
-const showNewFolder = ref(false);
 
 // The last crumb is the current folder
 const isLast = (index: number) => index === props.breadcrumbs.length - 1;
@@ -76,8 +60,13 @@ function onCrumb(crumb: Breadcrumb, index: number) {
 .crumb {
   cursor: pointer;
 
-  &.text-medium-emphasis {
+  &:not(.crumb--current):hover {
+    text-decoration: underline;
+  }
+
+  &.crumb--current {
     cursor: default;
+    font-weight: 500;
   }
 }
 </style>

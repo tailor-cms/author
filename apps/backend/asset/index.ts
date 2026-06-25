@@ -48,6 +48,7 @@ router.param('assetId', getAsset);
 mount
   .get('/', actions.list, { after: [processPagination(Asset, false)] })
   .get('/folders', actions.listFolders)
+  .delete('/folders', actions.deleteFolder)
   .post('/', actions.create, {
     before: [
       upload.fields([
