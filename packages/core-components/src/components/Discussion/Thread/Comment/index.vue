@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'opacity-60': isDeleted }" class="comment ma-2">
+  <div class="comment ma-2">
     <UserAvatar
       v-if="comment.author"
       :img-url="comment.author.imgUrl"
