@@ -59,7 +59,7 @@ useHead({
 provide('$ceRegistry', $ceRegistry);
 provide('$pluginRegistry', $pluginRegistry);
 provide('$editorState', {
-  isPublishDiff: computed(() => editorStore.showPublishDiff),
+  isPublishDiff: computed(() => editorStore.isPreviewMode),
 });
 
 const activityId = ref<number | null>(null);

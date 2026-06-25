@@ -105,9 +105,9 @@ const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
 const editorStore = useEditorStore();
 
-const showPublishDiff = computed(() => editorStore.showPublishDiff);
 const isReadonly = computed(
-  () => showPublishDiff.value || !!editorStore.selectedActivity?.isLinkedCopy,
+  () =>
+    editorStore.isPreviewMode || !!editorStore.selectedActivity?.isLinkedCopy,
 );
 
 const elements = computed(() => contentElementStore.items);

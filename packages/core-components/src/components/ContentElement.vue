@@ -17,6 +17,7 @@
     @click="onSelect"
   >
     <div
+      v-if="!isQuestion"
       :class="{ visible: showPublishDiff && element.changeSincePublish }"
       class="header d-flex"
     >

@@ -1,6 +1,7 @@
 import { activity as activityUtils, Events } from '@tailor-cms/utils';
 import { filter, flatMap, reduce } from 'lodash-es';
 import { schema } from '@tailor-cms/config';
+import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import type { StoreActivity } from './activity';
 import type { StoreContentElement } from './content-elements';
@@ -25,6 +26,12 @@ export const useEditorStore = defineStore('editor', () => {
   const isDetailsPanelExpanded = ref(false);
   // Only an explicit user toggle animates the panel
   const isDetailsPanelAnimated = ref(false);
+  // Set to preview a past revision: the editor reconstructs the activity at
+  // this moment, read-only. Mutually exclusive with publish-diff.
+  const historyRevision = ref<Revision | null>(null);
+  // Diff baseline for the preview - the preceding revision ("what changed
+  // here"). Null on the oldest revision.
+  const historyPreviousRevision = ref<Revision | null>(null);
 
   const selectedActivity = computed(() => {
     if (!selectedActivityId.value) return null;
@@ -108,16 +115,38 @@ export const useEditorStore = defineStore('editor', () => {
     return unlinked;
   };
 
+  const isHistoryMode = computed(() => historyRevision.value !== null);
+  const isPreviewMode = computed(
+    () => showPublishDiff.value || isHistoryMode.value,
+  );
+
   const canExpandDetailsPanel = computed(
     () =>
       !!selectedActivity.value &&
-      !selectedActivity.value.isLinkedCopy &&
-      !showPublishDiff.value,
+      !selectedActivity.value.isLinkedCopy,
   );
 
   const togglePublishDiff = (value?: boolean) => {
     showPublishDiff.value = value ?? !showPublishDiff.value;
-    if (showPublishDiff.value) isDetailsPanelExpanded.value = false;
+    if (showPublishDiff.value) {
+      isDetailsPanelExpanded.value = false;
+      historyRevision.value = null;
+    }
+  };
+
+  const enterHistoryMode = (
+    revision: Revision,
+    previousRevision: Revision | null = null,
+  ) => {
+    historyRevision.value = revision;
+    historyPreviousRevision.value = previousRevision;
+    showPublishDiff.value = false;
+    isDetailsPanelExpanded.value = false;
+  };
+
+  const exitHistoryMode = () => {
+    historyRevision.value = null;
+    historyPreviousRevision.value = null;
   };
 
   const toggleDetailsPanel = () => {
@@ -149,6 +178,8 @@ export const useEditorStore = defineStore('editor', () => {
     selectedContentElementId.value = null;
     selectedContentElement.value = null;
     showPublishDiff.value = false;
+    historyRevision.value = null;
+    historyPreviousRevision.value = null;
   }
 
   return {
@@ -158,6 +189,10 @@ export const useEditorStore = defineStore('editor', () => {
     selectedActivity,
     selectedContentElement,
     showPublishDiff,
+    historyRevision,
+    historyPreviousRevision,
+    isHistoryMode,
+    isPreviewMode,
     isDetailsPanelExpanded,
     isDetailsPanelAnimated,
     canExpandDetailsPanel,
@@ -168,6 +203,8 @@ export const useEditorStore = defineStore('editor', () => {
     unlinkActivity,
     togglePublishDiff,
     toggleDetailsPanel,
+    enterHistoryMode,
+    exitHistoryMode,
     $reset,
   };
 });
