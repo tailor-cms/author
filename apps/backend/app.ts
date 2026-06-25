@@ -17,21 +17,27 @@ import qs from 'qs';
 import router from './router.ts';
 import origin from '#shared/origin.js';
 
-import auth from '#shared/auth/index.js';
+import config, { env } from '#config';
 import { createHttpLogger } from '#logger';
-import config from '#config';
+import auth from '#shared/auth/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { STORAGE_PATH } = process.env;
 const app = express();
 
-const configCookie = JSON.stringify(
+// NUXT_PUBLIC_* config shipped to the frontend via the `config` cookie.
+// Undeclared keys (OIDC login text, Statsig key, ...) pass through from the
+// process; schema-declared ones are spread from `env` afterwards so their
+// defaults reach the frontend even when the var is unset.
+const publicEnv = (source: Record<string, unknown>) =>
   Object.fromEntries(
-    Object.entries(process.env).filter(([key]) =>
-      key.startsWith('NUXT_PUBLIC_'),
-    ),
-  ),
-);
+    Object.entries(source).filter(([key]) => key.startsWith('NUXT_PUBLIC_')),
+  );
+
+const configCookie = JSON.stringify({
+  ...publicEnv(process.env),
+  ...publicEnv(env),
+});
 
 if (config.general.reverseProxyPolicy)
   app.set('trust proxy', config.general.reverseProxyPolicy);
