@@ -35,39 +35,72 @@
         v-else-if="!containerConfigs.length"
         :activity="activity"
       />
-      <PublishDiffProvider
-        v-if="
+      <template
+        v-else-if="
           editorStore?.selectedActivity
             && !isEmptyLinkedActivity
             && containerConfigs.length
         "
-        v-show="!isLoading"
-        v-slot="{
-          processedElements,
-          processedActivities,
-          processedContainerGroups,
-        }"
-        :class="{ 'd-flex flex-column ga-16': !isLoading }"
-        :activities="repositoryStore.activities"
-        :activity-id="editorStore.selectedActivity.id"
-        :container-groups="rootContainerGroups"
-        :elements="elementsWithComments"
-        :publish-timestamp="editorStore.selectedActivity.publishedAt as string"
-        :repository-id="repositoryStore.repository?.id!"
-        :show-diff="showPublishDiff"
       >
-        <ContentContainers
-          v-for="(containerGroup, type) in processedContainerGroups"
-          :key="type"
-          v-bind="getContainerConfig(type)"
-          :container-group="containerGroup"
-          :parent-id="editorStore.selectedActivity.id"
-          :processed-activities="processedActivities"
-          :processed-elements="processedElements"
-          @created-container="handleContainerInit"
-          @focusout-element="focusoutElement"
-        />
-      </PublishDiffProvider>
+        <HistoryReplayProvider
+          v-if="historyRevision"
+          v-show="!isLoading"
+          v-slot="{
+            processedElements,
+            processedActivities,
+            processedContainerGroups,
+          }"
+          :class="{ 'd-flex flex-column ga-16': !isLoading }"
+          :activities="repositoryStore.activities"
+          :activity-id="editorStore.selectedActivity.id"
+          :container-groups="rootContainerGroups"
+          :elements="elementsWithComments"
+          :previous-timestamp="historyPreviousRevision?.createdAt ?? null"
+          :repository-id="repositoryStore.repository?.id!"
+          :timestamp="historyRevision.createdAt"
+        >
+          <ContentContainers
+            v-for="(containerGroup, type) in processedContainerGroups"
+            :key="type"
+            v-bind="getContainerConfig(type)"
+            :container-group="containerGroup"
+            :parent-id="editorStore.selectedActivity.id"
+            :processed-activities="processedActivities"
+            :processed-elements="processedElements"
+            @created-container="handleContainerInit"
+            @focusout-element="focusoutElement"
+          />
+        </HistoryReplayProvider>
+        <PublishDiffProvider
+          v-else
+          v-show="!isLoading"
+          v-slot="{
+            processedElements,
+            processedActivities,
+            processedContainerGroups,
+          }"
+          :class="{ 'd-flex flex-column ga-16': !isLoading }"
+          :activities="repositoryStore.activities"
+          :activity-id="editorStore.selectedActivity.id"
+          :container-groups="rootContainerGroups"
+          :elements="elementsWithComments"
+          :publish-timestamp="editorStore.selectedActivity.publishedAt as string"
+          :repository-id="repositoryStore.repository?.id!"
+          :show-diff="showPublishDiff"
+        >
+          <ContentContainers
+            v-for="(containerGroup, type) in processedContainerGroups"
+            :key="type"
+            v-bind="getContainerConfig(type)"
+            :container-group="containerGroup"
+            :parent-id="editorStore.selectedActivity.id"
+            :processed-activities="processedActivities"
+            :processed-elements="processedElements"
+            @created-container="handleContainerInit"
+            @focusout-element="focusoutElement"
+          />
+        </PublishDiffProvider>
+      </template>
     </div>
   </div>
 </template>
@@ -96,6 +129,7 @@ import aiAPI from '@/api/ai';
 import ActivityMetadata from './ActivityMetadata.vue';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
+import HistoryReplayProvider from './HistoryReplayProvider.vue';
 import PublishDiffProvider from './PublishDiffProvider.vue';
 import SubactivityList from './SubactivityList.vue';
 import { useActivityStore } from '@/stores/activity';
@@ -188,6 +222,10 @@ const mousedownCaptured = ref<boolean | null>(null);
 const mousedownInsideElement = ref(false);
 
 const showPublishDiff = computed(() => editorStore.showPublishDiff);
+const historyRevision = computed(() => editorStore.historyRevision);
+const historyPreviousRevision = computed(
+  () => editorStore.historyPreviousRevision,
+);
 
 const activityLabel = computed(() =>
   $schemaService.getLevel(props.activity?.type)?.label?.toLowerCase(),
