@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts" setup>
-import { cloneDeep, filter, map, mapValues, merge, omit, reduce } from 'lodash-es';
+import { cloneDeep, filter, mapValues, merge, omit, reduce } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { isAfter } from 'date-fns/isAfter';
@@ -127,15 +127,14 @@ const addPublishedContainersToGroup = (
 
 const fetchPublishedState = () => {
   return api.revision
-    .timeTravel({
+    .reconstruct({
       params: { repositoryId: props.repositoryId },
       query: {
         activityId: props.activityId,
-        elementIds: map(props.elements, 'id'),
-        timestamp: props.publishTimestamp,
+        at: props.publishTimestamp,
       },
     })
-    .then(({ data: { activities, elements } }: any) => {
+    .then(({ activities, elements }: any) => {
       publishedElements.value = getPublishedState(elements);
       publishedActivities.value = getPublishedState(activities);
     });
