@@ -139,12 +139,15 @@ function importFile(blobStore, filename, { context, transaction } = {}) {
 
 // Registers a single imported static file in the repository's Asset Library.
 async function registerImportedAsset(context, storageKey) {
-  const { repositoryId, userId } = context;
+  const { repositoryId, userId, assetMeta = {} } = context;
   try {
     await assetService.registerStorageAsset({
       repositoryId,
       userId,
       storageKey,
+      // Restore the original name + meta (folder, tags, ...) when the archive
+      // carried them; otherwise derives a flat record.
+      ...assetMeta[storageKey],
     });
   } catch (err) {
     console.log(`Failed to register asset ${storageKey}: ${err.message}`);

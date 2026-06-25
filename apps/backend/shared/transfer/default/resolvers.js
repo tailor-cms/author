@@ -5,7 +5,7 @@ import { stringify } from 'JSONStream';
 import db from '../../database/index.js';
 import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
 
-const { Activity, ContentElement, Repository } = db;
+const { Activity, Asset, ContentElement, Repository } = db;
 const reStorage = /^storage:\/\//;
 
 const IS_ARRAY_STREAM = false;
@@ -64,10 +64,21 @@ async function createManifestResolver({ context }) {
   const repository = await Repository.findByPk(repositoryId, {
     paranoid: false,
   });
+  // Carry each bundled asset's library record (name + meta, incl. folder/tags)
+  // keyed by storage key, so import rebuilds the asset library structure rather
+  // than flattening to the root with a derived name.
+  const rows = await Asset.findAll({
+    where: { repositoryId, storageKey: assets },
+    attributes: ['storageKey', 'name', 'meta'],
+  });
+  const assetMeta = Object.fromEntries(
+    rows.map((it) => [it.storageKey, { name: it.name, meta: it.meta }]),
+  );
   const manifest = {
-    assets,
     schema: repository.getSchemaConfig(),
     date: new Date(),
+    assets,
+    assetMeta,
   };
   return miss.pipe(miss.from.obj([manifest]), stringify(IS_ARRAY_STREAM));
 }

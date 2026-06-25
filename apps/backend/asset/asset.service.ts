@@ -176,19 +176,33 @@ export async function registerStorageAsset({
   repositoryId,
   userId,
   storageKey,
+  name,
+  meta,
 }: {
   repositoryId: number;
   userId: number;
   storageKey: string;
+  // When the archive carried the source asset's library record, its original
+  // name + meta (folder, tags, dimensions, ...) flow through here
+  name?: string;
+  meta?: Record<string, any>;
 }) {
-  // Recover the original filename: asset keys are `<uid>__<filename>` (or the
-  // legacy `<hash>___<uid>__<filename>`), so the segment after the last `__`
-  // is the filename. Used for the mime/extension; the display name is
-  // humanised from it since the archive carries no original name.
   const basename = path.basename(storageKey);
   const filename = basename.split('__').pop() || basename;
   const mimeType = lookupMimeType(filename) || undefined;
   const assetType = resolveType(mimeType);
+  // Archive carried the original record: restore it as-is (same file, so its
+  // meta already holds folder/dimensions/etc.)
+  if (meta) {
+    return Asset.create({
+      repositoryId,
+      type: assetType,
+      storageKey,
+      name: name || toReadableName(filename),
+      meta,
+      uploaderId: userId,
+    });
+  }
   const extension = path.extname(filename).replace('.', '').toLowerCase();
   // Read bytes only for images, to capture dimensions (and size) without
   // pulling large media (video/pdf) fully into memory.
