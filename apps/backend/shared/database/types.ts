@@ -19,4 +19,8 @@ export interface OperationContext {
   // content-element hooks so the next propagation step can bump
   // `hasUnpublishedChanges`. Opaque to callers.
   repository?: unknown;
+  // Shared id stamped on every revision produced by one logical operation
+  // (e.g. a restore cascade) so the UI can group them. Null/absent for
+  // standalone edits.
+  transactionId?: string;
 }

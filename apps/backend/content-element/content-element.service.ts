@@ -109,8 +109,9 @@ export async function update(
   user: User,
   element: ContentElement,
   body: PatchInput,
+  audit: { transactionId?: string } = {},
 ): Promise<ContentElement> {
-  const context = { userId: user.id, repository };
+  const context = { userId: user.id, repository, ...audit };
   if (element.deletedAt) (element as any).setDataValue('deletedAt', null);
   await element.update(body as any, { context } as any);
   return element;
@@ -121,8 +122,9 @@ export async function remove(
   repository: Repository,
   user: User,
   element: ContentElement,
+  audit: { transactionId?: string } = {},
 ): Promise<void> {
-  const context = { userId: user.id, repository };
+  const context = { userId: user.id, repository, ...audit };
   await element.destroy({ context } as any);
 }
 
