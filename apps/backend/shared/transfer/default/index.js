@@ -62,13 +62,20 @@ class DefaultAdapter {
       });
       await exportFile(blobStore, Filename.ELEMENTS, { context, transaction });
     });
+    // Bundle each collected file; some keys are false positives (any
+    // storage://-shaped string is flagged) or dangling refs with no backing
+    // file. Keep only the ones that exported so the manifest doesn't list a
+    // file the archive never contained (which would fail import).
+    const exported = [];
     await Promise.map(uniq(context.assets), async (it) => {
       try {
         await exportFile(blobStore, it, { context });
+        exported.push(it);
       } catch (e) {
         console.log(`Unable to export file: ${it}\n`, e.message);
       }
     });
+    context.assets = exported;
     await exportFile(blobStore, Filename.MANIFEST, { context });
   }
 
@@ -94,14 +101,19 @@ class DefaultAdapter {
       });
       await importFile(blobStore, Filename.ELEMENTS, { context, transaction });
     });
-    const assetKeys = uniq(context.assets);
-    await Promise.map(assetKeys, (it) =>
-      importFile(blobStore, it, { context }),
-    );
-    // Files now live in storage and are referenced by element `data.assets`,
-    // but they're not in the repository Asset Library yet. Register each as a
-    // library asset.
-    await registerImportedAssets(assetKeys, context);
+    // Import each referenced file, tolerating keys with no archive entry. The
+    // manifest can over-list: the collector flags every storage://-shaped
+    // string, and the export skips ones whose file is missing.
+    const imported = [];
+    await Promise.map(uniq(context.assets), async (it) => {
+      try {
+        await importFile(blobStore, it, { context });
+        imported.push(it);
+      } catch (e) {
+        console.log(`Unable to import file: ${it}\n`, e.message);
+      }
+    });
+    await registerImportedAssets(imported, context);
   }
 }
 
