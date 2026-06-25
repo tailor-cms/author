@@ -141,11 +141,8 @@ const groupedRevisions = computed<RevisionDayGroup[]>(() => {
     const date = new Date(bundle.createdAt);
     const key = formatDate(date, 'YYYY-MM-DD');
     const current = last(groups);
-    if (current?.key === key) {
-      current.items.push(bundle);
-    } else {
-      groups.push({ key, label: dayLabel(date), items: [bundle] });
-    }
+    if (current?.key === key) current.items.push(bundle);
+    else groups.push({ key, label: dayLabel(date), items: [bundle] });
   }
   return groups;
 });
