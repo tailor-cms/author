@@ -1,7 +1,6 @@
 <template>
   <VListItem
-    class="bg-surface-container"
-    data-testid="folderRow"
+    class="folder-row bg-surface-container"
     lines="two"
     rounded="lg"
     @click="emit('open', folder.path)"
@@ -13,7 +12,7 @@
         size="28"
       />
     </template>
-    <VListItemTitle class="text-title-small text-left" data-testid="folderRow_name">
+    <VListItemTitle class="text-title-small text-left">
       {{ folder.name }}
     </VListItemTitle>
     <template #append>
@@ -22,7 +21,6 @@
           <VBtn
             v-bind="menuProps"
             aria-label="Folder actions"
-            data-testid="folderMenuBtn"
             density="comfortable"
             icon="mdi-dots-vertical"
             size="small"
@@ -33,7 +31,6 @@
         <VList density="compact" nav>
           <VListItem
             v-if="folder.isLocal"
-            data-testid="folderRemoveAction"
             prepend-icon="mdi-trash-can-outline"
             title="Discard folder"
             @click="emit('remove', folder.path)"
@@ -41,7 +38,6 @@
           <VListItem
             v-else
             base-color="error"
-            data-testid="folderDeleteAction"
             prepend-icon="mdi-trash-can-outline"
             title="Delete folder"
             @click="emit('delete', folder.path)"

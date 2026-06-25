@@ -1,5 +1,5 @@
 <template>
-  <div class="folder-bar d-flex align-center flex-wrap ga-2 mb-3">
+  <div class="folder-breadcrumbs d-flex align-center flex-wrap ga-2 mb-3">
     <VBtn
       v-tooltip:bottom="'Up one level'"
       :disabled="!currentPath"

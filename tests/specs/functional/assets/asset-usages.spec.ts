@@ -34,7 +34,9 @@ test('asset usages query is injection-safe', async () => {
   // matches inside JSONB. An unescaped single quote would break the SQL (500)
   // or inject;
   const filename = 'x\'); DROP TABLE asset; --.png';
-  const upload = await AssetClient.uploadFile(repository.id, IMAGE.path, filename);
+  const upload = await AssetClient.uploadFile(
+    repository.id, IMAGE.path, { name: filename },
+  );
   const asset = upload.data[0];
   expect(asset.storageKey).toContain('\'');
   const usages = await AssetClient.getUsages(repository.id, asset.id);

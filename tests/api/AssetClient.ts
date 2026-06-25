@@ -37,18 +37,19 @@ class AssetClient extends BaseClient {
   uploadFile = async (
     repositoryId: number,
     filePath: string,
-    filename = path.basename(filePath),
+    opts: { name?: string; folder?: string } = {},
   ): Promise<EndpointResponse> => {
+    const { name = path.basename(filePath), folder } = opts;
     const req = await this.getClient();
-    const res = await req.post(this.assetUrl(repositoryId), {
-      multipart: {
-        files: {
-          name: filename,
-          mimeType: getMimeType(filePath),
-          buffer: fs.readFileSync(filePath),
-        },
+    const multipart: Record<string, any> = {
+      files: {
+        name,
+        mimeType: getMimeType(filePath),
+        buffer: fs.readFileSync(filePath),
       },
-    });
+    };
+    if (folder) multipart.folder = folder;
+    const res = await req.post(this.assetUrl(repositoryId), { multipart });
     return formatResponse(res);
   };
 
@@ -88,6 +89,37 @@ class AssetClient extends BaseClient {
     const req = await this.getClient();
     const res = await req.post(this.assetUrl(repositoryId, 'bulk/remove'), {
       data: { assetIds },
+    });
+    return formatResponse(res);
+  };
+
+  listFolders = async (
+    repositoryId: number,
+  ): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    const res = await req.get(this.assetUrl(repositoryId, 'folders'));
+    return formatResponse(res);
+  };
+
+  move = async (
+    repositoryId: number,
+    assetIds: number[],
+    folder: string,
+  ): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    const res = await req.post(this.assetUrl(repositoryId, 'bulk/move'), {
+      data: { assetIds, folder },
+    });
+    return formatResponse(res);
+  };
+
+  deleteFolder = async (
+    repositoryId: number,
+    folder: string,
+  ): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    const res = await req.delete(this.assetUrl(repositoryId, 'folders'), {
+      params: { folder },
     });
     return formatResponse(res);
   };

@@ -28,7 +28,7 @@
           :sort-direction="sortDirection"
           @toggle-sort="toggleSortDirection"
         />
-        <FolderBar
+        <FolderBreadcrumbs
           :breadcrumbs="breadcrumbs"
           :current-path="currentPath"
           @navigate="browseTo"
@@ -111,7 +111,7 @@ import AssetSidebar from '@/components/repository/Assets/AssetSidebar/index.vue'
 import AssetList from '@/components/repository/Assets/AssetList/index.vue';
 import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
 import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
-import FolderBar from '@/components/repository/Assets/FolderBar/index.vue';
+import FolderBreadcrumbs from '@/components/repository/Assets/FolderBreadcrumbs.vue';
 import ListControls from '@/components/repository/Assets/ListControls/index.vue';
 import NewFolderDialog from '@/components/repository/Assets/NewFolderDialog.vue';
 import MoveToFolderDialog from '@/components/repository/Assets/MoveToFolderDialog.vue';
