@@ -6,6 +6,7 @@ import { DOCUMENT, IMAGE } from '../../fixtures/assets';
 import { AssetLibrary } from '../../pom/repository/AssetLibrary';
 import { percySnapshot } from '../../utils/percy';
 import { toRepositoryAssets } from '../../helpers/seed';
+import { toAssetLibrary } from '../functional/assets/helpers';
 
 const REPOSITORY_NAME = 'Asset Library Visual Tests';
 
@@ -21,8 +22,7 @@ test('Asset library - populated list', async ({ page }) => {
 });
 
 test('Asset library - empty state', async ({ page }) => {
-  await toRepositoryAssets(page, REPOSITORY_NAME);
-  const lib = new AssetLibrary(page);
+  const { lib } = await toAssetLibrary(page);
   await lib.waitForLoad();
   await percySnapshot(page, 'Asset library - empty state');
 });
