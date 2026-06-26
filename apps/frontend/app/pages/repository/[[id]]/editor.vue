@@ -13,12 +13,7 @@
       :selected-element="editorStore.selectedContentElement as ContentElement"
     />
     <VMain class="editor-main">
-      <NuxtPage
-        v-if="activityId"
-        :key="activityId"
-        :activity-id="activityId"
-        class="activity-content h-100"
-      />
+      <NuxtPage v-if="activityId" :key="activityId" :activity-id="activityId" />
     </VMain>
     <FeedbackSidebar
       v-if="reviewStore.isLensAvailable"

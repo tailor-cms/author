@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column w-100">
+  <div class="d-flex flex-column h-100 w-100">
     <ActivityContent
       v-if="editorStore.selectedActivity?.id"
       :key="editorStore.selectedActivity.id"
