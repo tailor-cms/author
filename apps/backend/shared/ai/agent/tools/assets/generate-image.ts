@@ -266,12 +266,11 @@ async function execute(input: Input, ctx: ToolContext) {
 
   let asset: any;
   try {
-    const [uploaded] = await assetService.upload(
-      ctx.repository.id,
-      ctx.userId,
-      [file] as any,
-    );
-    asset = uploaded;
+    asset = await assetService.importBufferedFile({
+      repositoryId: ctx.repository.id,
+      userId: ctx.userId,
+      file,
+    });
   } catch (error: any) {
     return toolError({
       tool: TOOL,

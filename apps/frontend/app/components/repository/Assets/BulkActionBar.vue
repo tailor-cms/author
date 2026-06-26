@@ -45,6 +45,14 @@
         />
       </div>
       <VBtn
+        :disabled="!hasSelection"
+        prepend-icon="mdi-folder-move-outline"
+        size="small"
+        text="Move"
+        variant="tonal"
+        @click="$emit('move')"
+      />
+      <VBtn
         :loading="isBulkDeleting"
         :disabled="isBulkDeleting || !hasSelection"
         prepend-icon="mdi-trash-can-outline"
@@ -72,6 +80,7 @@ const props = defineProps<{
 
 defineEmits<{
   'index': [];
+  'move': [];
   'delete': [];
   'clear': [];
   'toggle-all': [selected: boolean];

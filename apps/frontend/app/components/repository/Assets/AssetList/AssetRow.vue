@@ -16,18 +16,12 @@
         @keydown.enter.prevent="emit('toggle', asset)"
         @keydown.space.prevent="emit('toggle', asset)"
       >
-        <VAvatar
-          color="surface-container-low"
+        <VIcon
+          :color="getAssetColor(asset)"
+          :icon="getAssetIcon(asset)"
           class="thumbnail"
-          size="40"
-          rounded="lg"
-        >
-          <VIcon
-            :color="getAssetColor(asset)"
-            :icon="getAssetIcon(asset)"
-            size="24"
-          />
-        </VAvatar>
+          size="28"
+        />
         <VIcon
           :color="isSelected ? 'primary' : undefined"
           :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
@@ -59,6 +53,19 @@
           <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
         </template>
         <span data-percy="hide">{{ formatDate(asset.createdAt) }}</span>
+        <template v-if="showFolder">
+          <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
+          <VChip
+            class="folder-chip"
+            data-testid="assetRow_folder"
+            prepend-icon="mdi-folder-outline"
+            size="x-small"
+            variant="tonal"
+            @click.stop="emit('open-folder', folderPath)"
+          >
+            {{ folderLabel }}
+          </VChip>
+        </template>
       </div>
     </VCol>
     <VCol cols="auto" class="d-flex align-center px-1">
@@ -79,6 +86,7 @@
         @download="emit('download', $event)"
         @index="emit('index', $event)"
         @deindex="emit('deindex', $event)"
+        @move="emit('move', $event)"
         @delete="emit('delete', $event)"
       />
     </VCol>
@@ -100,24 +108,32 @@ import {
 import AssetMenu from '../AssetMenu.vue';
 import IndexingStatusBadge from '../IndexingStatusBadge.vue';
 
-defineProps<{
+const props = defineProps<{
   asset: Asset;
   isSelected: boolean;
   isActive: boolean;
+  // Show location (only in flat search/filter results).
+  showFolder: boolean;
 }>();
 
 const emit = defineEmits<{
-  preview: [asset: Asset];
-  toggle: [asset: Asset];
-  download: [asset: Asset];
-  index: [asset: Asset];
-  deindex: [asset: Asset];
-  delete: [asset: Asset];
+  'preview': [asset: Asset];
+  'toggle': [asset: Asset];
+  'download': [asset: Asset];
+  'index': [asset: Asset];
+  'deindex': [asset: Asset];
+  'move': [asset: Asset];
+  'delete': [asset: Asset];
+  'open-folder': [path: string];
 }>();
+
+const folderPath = computed(() => (props.asset.meta as any)?.folder ?? '');
+const folderLabel = computed(() => folderPath.value || 'Library');
 </script>
 
 <style lang="scss" scoped>
 .asset-row {
+  margin: 0.375rem 0;
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.15s ease;

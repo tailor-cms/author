@@ -40,10 +40,14 @@ export default defineAction({
     if (!files.length) {
       return createError(StatusCodes.BAD_REQUEST, 'No files provided');
     }
-    const assets = await service.upload(
+    // Optional virtual folder the library batch was uploaded into.
+    // Legacy single-file uploads ignore it.
+    const folder = (req.body as { folder?: string })?.folder;
+    const assets = await service.registerUploads(
       req.repository!.id,
       req.user!.id,
       files,
+      folder,
     );
     if (storageFile) return service.getDownloadUrl(assets[0].storageKey!);
     return { data: assets };

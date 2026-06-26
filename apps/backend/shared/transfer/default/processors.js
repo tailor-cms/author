@@ -69,6 +69,8 @@ function processManifest(manifest, _enc, { context }) {
   if (!manifest?.schema?.id) throw new Error('Manifest missing schema');
   context.manifestSchema = manifest.schema;
   context.assets.push(...manifest.assets);
+  // Per-asset library record keyed by storage key
+  context.assetMeta = manifest.assetMeta || {};
 }
 
 async function processRepository(repository, _enc, { context, transaction }) {

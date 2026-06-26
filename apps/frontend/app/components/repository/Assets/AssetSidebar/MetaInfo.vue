@@ -34,7 +34,9 @@
       </div>
       <div v-if="asset.createdAt" class="meta-item">
         <div class="meta-label">Uploaded</div>
-        <div class="meta-value">{{ formatDate(asset.createdAt) }}</div>
+        <div class="meta-value" data-percy="hide">
+          {{ formatDate(asset.createdAt) }}
+        </div>
       </div>
       <div v-if="asset.uploader" class="meta-item">
         <div class="meta-label">By</div>

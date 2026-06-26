@@ -10,6 +10,7 @@ export class AssetRow {
   readonly checkbox: Locator;
   readonly nameEl: Locator;
   readonly typeChip: Locator;
+  readonly folderChip: Locator;
   readonly menuBtn: Locator;
 
   constructor(page: Page, el: Locator) {
@@ -18,6 +19,7 @@ export class AssetRow {
     this.checkbox = el.locator('.asset-select');
     this.nameEl = el.getByTestId('assetRow_name');
     this.typeChip = el.getByTestId('assetRow_type');
+    this.folderChip = el.getByTestId('assetRow_folder');
     this.menuBtn = el.getByRole('button', { name: 'Actions' });
   }
 
@@ -35,6 +37,15 @@ export class AssetRow {
 
   get deleteMenuItem(): Locator {
     return this.page.locator('.v-list-item').filter({ hasText: 'Delete' });
+  }
+
+  get moveMenuItem(): Locator {
+    return this.page.locator('.v-list-item').filter({ hasText: 'Move to' });
+  }
+
+  async openMoveDialog() {
+    await this.openMenu();
+    await this.moveMenuItem.click();
   }
 
   async openMenu() {

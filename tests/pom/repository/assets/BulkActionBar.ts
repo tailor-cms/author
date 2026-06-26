@@ -9,6 +9,7 @@ export class BulkActionBar {
   readonly el: Locator;
   readonly selectionChip: Locator;
   readonly indexSelectedBtn: Locator;
+  readonly moveSelectedBtn: Locator;
   readonly deleteSelectedBtn: Locator;
   readonly clearBtn: Locator;
 
@@ -21,10 +22,18 @@ export class BulkActionBar {
       name: 'Index',
       exact: true,
     });
+    this.moveSelectedBtn = this.el.getByRole('button', {
+      name: 'Move',
+      exact: true,
+    });
     this.deleteSelectedBtn = this.el.getByRole('button', {
       name: 'Delete',
       exact: true,
     });
+  }
+
+  async moveSelected() {
+    await this.moveSelectedBtn.click();
   }
 
   async selectAll() {

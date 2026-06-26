@@ -6,6 +6,7 @@
     </VMain>
     <ConfirmationDialog />
     <NotificationSnackbar />
+    <UploadIndicator />
   </div>
 </template>
 
@@ -13,6 +14,7 @@
 import AppBar from '@/components/common/AppBar.vue';
 import ConfirmationDialog from '@/components/common/ConfirmationDialog.vue';
 import NotificationSnackbar from '@/components/common/NotificationSnackbar.vue';
+import UploadIndicator from '@/components/common/UploadIndicator.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();

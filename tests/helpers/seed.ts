@@ -6,18 +6,27 @@ import SeedClient from '../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
 
-export const toEmptyRepository = async (
-  page: Page,
+export const createCleanRepository = async (
   name?: string,
   userGroupIds?: number[],
 ) => {
   const payload = {
     schema: outlineSeed.schema,
-    name: name || `${faker.lorem.words(2)} ${new Date().getTime()}`,
+    name: name || `Test ${new Date().getTime()}-${faker.string.alphanumeric(6)}`,
     description: faker.lorem.words(4),
     userGroupIds,
   };
   const { data: repository } = await REPOSITORY_API.create(payload as any);
+  return repository;
+};
+
+// createCleanRepository + navigate to its (empty) structure page.
+export const toEmptyRepository = async (
+  page: Page,
+  name?: string,
+  userGroupIds?: number[],
+) => {
+  const repository = await createCleanRepository(name, userGroupIds);
   await page.goto(`/repository/${repository.id}/root/structure`);
   await page.waitForLoadState('networkidle');
   return repository;

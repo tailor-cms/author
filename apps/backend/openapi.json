@@ -1469,6 +1469,10 @@
               "type": "string"
             }
           },
+          "folder": {
+            "type": "string",
+            "description": "Virtual folder path (`/`-delimited); absent = root."
+          },
           "files": {
             "description": "Map of fileKey -> stored attachment key (captions, etc.).",
             "type": "object",
@@ -1533,6 +1537,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "folder": {
+            "type": "string",
+            "description": "Virtual folder path (`/`-delimited); absent = root."
           },
           "files": {
             "description": "Map of fileKey -> stored attachment key (captions, etc.).",
@@ -1792,6 +1800,24 @@
         ],
         "additionalProperties": false
       },
+      "AssetDeleteFolderResult": {
+        "type": "object",
+        "properties": {
+          "deletedIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "Ids of the assets removed along with the folder."
+          }
+        },
+        "required": [
+          "deletedIds"
+        ],
+        "additionalProperties": false
+      },
       "AssetLegacyUploadResult": {
         "type": "object",
         "properties": {
@@ -1858,6 +1884,24 @@
         ],
         "additionalProperties": false
       },
+      "AssetMoveResult": {
+        "type": "object",
+        "properties": {
+          "movedIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            },
+            "description": "Subset of requested ids that were moved."
+          }
+        },
+        "required": [
+          "movedIds"
+        ],
+        "additionalProperties": false
+      },
       "AssetDownloadResult": {
         "type": "object",
         "properties": {
@@ -1870,6 +1914,60 @@
           "url"
         ],
         "additionalProperties": false
+      },
+      "AssetUsage": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "element",
+              "activity",
+              "repository"
+            ],
+            "description": "Kind of entity referencing the asset."
+          },
+          "repositoryName": {
+            "description": "Repository name (repository-meta usages).",
+            "type": "string"
+          },
+          "activityId": {
+            "description": "Outline activity to show (element & activity usages).",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "activityName": {
+            "description": "Display name of the activity.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "elementUid": {
+            "description": "Element uid; used to focus it in the editor (element usages).",
+            "type": "string"
+          },
+          "elementType": {
+            "description": "Content element type, e.g. IMAGE (element usages).",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "AssetUsages": {
+        "type": "array",
+        "items": {
+          "description": "A single place an asset is referenced.",
+          "$ref": "#/components/schemas/AssetUsage"
+        }
       },
       "CommentElementRef": {
         "type": "object",
@@ -7775,10 +7873,108 @@
                     "type": "string",
                     "format": "binary",
                     "description": "Legacy single-file upload."
+                  },
+                  "folder": {
+                    "description": "Virtual folder path for the uploaded assets.",
+                    "type": "string"
                   }
                 },
                 "additionalProperties": false,
                 "description": "Asset upload payload; use `files[]` (library) OR `file` (legacy)."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/assets/folders": {
+      "get": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryListFolders",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "listFolders",
+        "summary": "List asset folder paths",
+        "description": "Returns the distinct, non-empty `meta.folder` values across the repository's assets (sorted). Empty folders the user created but has not filled yet are tracked client-side and are not returned here.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Distinct folder paths in use.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Distinct folder paths in use (sorted)."
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false,
+                  "description": "Folder paths derived from `meta.folder`."
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryDeleteFolder",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "deleteFolder",
+        "summary": "Delete a folder and its contents",
+        "description": "Soft-deletes every asset in the folder (`?folder=<path>`) or nested beneath it. Folders are virtual (derived from `meta.folder`), so this removes the folder too. Returns the ids that were removed.",
+        "parameters": [
+          {
+            "name": "folder",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "Folder to delete; every asset in it or nested beneath it (`folder/...`) is removed. The root (empty string) cannot be deleted."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ids of the assets removed along with the folder.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Assets removed by deleting a folder.",
+                      "$ref": "#/components/schemas/AssetDeleteFolderResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
               }
             }
           }
@@ -7977,6 +8173,80 @@
         ]
       }
     },
+    "/assets/bulk/move": {
+      "post": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryMove",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "move",
+        "summary": "Bulk move assets to a folder",
+        "description": "Reassigns each asset's virtual folder. Purely a metadata update; the underlying storage object is untouched. Returns the ids that were moved.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Subset of requested ids that were moved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Assets relocated by a bulk move.",
+                      "$ref": "#/components/schemas/AssetMoveResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "assetIds": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "description": "Numeric ids of the assets to move (at least one)."
+                  },
+                  "folder": {
+                    "type": "string",
+                    "description": "Destination folder path; empty string moves the assets to the repository root."
+                  }
+                },
+                "required": [
+                  "assetIds",
+                  "folder"
+                ],
+                "additionalProperties": false,
+                "description": "Selector and destination for a bulk asset move."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/assets/{assetId}/download": {
       "get": {
         "tags": [
@@ -8035,6 +8305,73 @@
           },
           "400": {
             "description": "Asset has no downloadable file (LINK type)."
+          },
+          "404": {
+            "description": "Asset not found in this repository."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/assets/{assetId}/usages": {
+      "get": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryGetUsages",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "getUsages",
+        "summary": "List with asset usages",
+        "description": "Scans content elements, activities and repository meta for references.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "assetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric asset id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Places the asset is referenced.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Everywhere an asset is referenced within its repository.",
+                      "$ref": "#/components/schemas/AssetUsages"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
             "description": "Asset not found in this repository."

@@ -113,6 +113,80 @@ test.describe('Asset API', () => {
     expect(add.data.meta.provider).toBe('youtube');
     expect(add.data.meta.url).toContain('youtube.com');
   });
+
+  test('folder filtering, listing, and moving', async () => {
+    const repositoryId = await createRepository();
+    // One asset in a folder, one at the root.
+    await AssetClient.uploadFile(repositoryId, IMAGE.path, { folder: 'images' });
+    await AssetClient.uploadFile(repositoryId, DOCUMENT.path);
+    const folders = await AssetClient.listFolders(repositoryId);
+    expect(folders.data).toEqual(['images']);
+    const inImages = await AssetClient.list(repositoryId, { folder: 'images' });
+    expect(inImages.data.items.length).toBe(1);
+    expect(inImages.data.items[0].type).toBe('IMAGE');
+    expect(inImages.data.items[0].meta.folder).toBe('images');
+    const atRoot = await AssetClient.list(repositoryId, { folder: '' });
+    expect(atRoot.data.items.length).toBe(1);
+    expect(atRoot.data.items[0].type).toBe('DOCUMENT');
+
+    // Move the root document into a new folder.
+    const documentId = atRoot.data.items[0].id;
+    const moved = await AssetClient.move(repositoryId, [documentId], 'docs');
+    expect(moved.data.movedIds).toEqual([documentId]);
+
+    const foldersAfter = await AssetClient.listFolders(repositoryId);
+    expect(foldersAfter.data).toEqual(['docs', 'images']);
+    const inDocs = await AssetClient.list(repositoryId, { folder: 'docs' });
+    expect(inDocs.data.items.map((a: any) => a.id)).toEqual([documentId]);
+
+    // Root is now empty.
+    const rootAfter = await AssetClient.list(repositoryId, { folder: '' });
+    expect(rootAfter.data.items.length).toBe(0);
+  });
+
+  test('deleting a folder removes its whole subtree', async () => {
+    const repositoryId = await createRepository();
+    await AssetClient.uploadFile(
+      repositoryId, IMAGE.path, { name: 'pic.png', folder: 'media' },
+    );
+    await AssetClient.uploadFile(
+      repositoryId, DOCUMENT.path, { name: 'doc.pdf', folder: 'media/docs' },
+    );
+    await AssetClient.uploadFile(repositoryId, IMAGE.path, { name: 'root.png' });
+    const foldersBefore = await AssetClient.listFolders(repositoryId);
+    expect(foldersBefore.data).toEqual(['media', 'media/docs']);
+    // Deleting `media` removes the asset in it AND the nested `media/docs` one.
+    const mediaDelete = await AssetClient.deleteFolder(repositoryId, 'media');
+    expect(mediaDelete.data.deletedIds.length).toBe(2);
+    const remaining = await AssetClient.list(repositoryId);
+    expect(remaining.data.items.length).toBe(1);
+    const foldersAfter = await AssetClient.listFolders(repositoryId);
+    expect(foldersAfter.data).toEqual([]);
+
+    // The root cannot be deleted: it is a no-op that removes nothing.
+    const rootDelete = await AssetClient.deleteFolder(repositoryId, '');
+    expect(rootDelete.data.deletedIds).toEqual([]);
+    const unchanged = await AssetClient.list(repositoryId);
+    expect(unchanged.data.items.length).toBe(1);
+  });
+
+  test('listing a folder is one level deep, not recursive', async () => {
+    const repositoryId = await createRepository();
+    await AssetClient.uploadFile(
+      repositoryId, IMAGE.path, { name: 'top.png', folder: 'media' },
+    );
+    await AssetClient.uploadFile(
+      repositoryId, DOCUMENT.path, { name: 'nested.pdf', folder: 'media/docs' },
+    );
+    // Listing "media" returns only its direct child, not the nested one.
+    const inMedia = await AssetClient.list(repositoryId, { folder: 'media' });
+    expect(inMedia.data.items.length).toBe(1);
+    expect(inMedia.data.items[0].meta.folder).toBe('media');
+    // The nested asset is reachable under its own exact path.
+    const inDocs = await AssetClient.list(repositoryId, { folder: 'media/docs' });
+    expect(inDocs.data.items.length).toBe(1);
+    expect(inDocs.data.items[0].meta.folder).toBe('media/docs');
+  });
 });
 
 test.afterAll(async () => {

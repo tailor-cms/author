@@ -12,8 +12,12 @@ function list(repositoryId, params = {}) {
   if (params.signed) query.signed = 'true';
   if (params.search) query.search = params.search;
   if (params.type) {
-    query.type = Array.isArray(params.type) ? params.type.join(',') : params.type;
+    query.type = Array.isArray(params.type)
+      ? params.type.join(',')
+      : params.type;
   }
+  // Empty string is meaningful (root folder), so guard on != null.
+  if (params.folder != null) query.folder = params.folder;
   if (params.offset != null) query.offset = params.offset;
   if (params.limit != null) query.limit = params.limit;
   if (params.sortBy) query.sortBy = params.sortBy;
@@ -23,14 +27,21 @@ function list(repositoryId, params = {}) {
     .then(extractData);
 }
 
-function upload(repositoryId, files) {
+function upload(repositoryId, files, { onProgress, folder } = {}) {
   const formData = new FormData();
   files.forEach((file) => formData.append('files', file));
+  // Virtual folder the batch lands in; empty/undefined means root.
+  if (folder) formData.append('folder', folder);
   return request
     .post(urls.root(repositoryId), formData, {
       // Unset default application/json so the browser sets multipart/form-data
       // with the correct boundary for FormData serialization
       headers: { 'Content-Type': undefined },
+      ...(onProgress && {
+        onUploadProgress: ({ loaded, total }) => {
+          if (total) onProgress(Math.round((loaded / total) * 100));
+        },
+      }),
     })
     .then(extractData);
 }
@@ -47,6 +58,12 @@ function getDownloadUrl(repositoryId, id) {
     .then(extractData);
 }
 
+function getUsages(repositoryId, id) {
+  return request
+    .get(`${urls.resource(repositoryId, id)}/usages`)
+    .then(extractData);
+}
+
 function remove(repositoryId, id) {
   return request.delete(urls.resource(repositoryId, id)).then(extractData);
 }
@@ -54,6 +71,24 @@ function remove(repositoryId, id) {
 function bulkRemove(repositoryId, assetIds) {
   return request
     .post(`${urls.root(repositoryId)}/bulk/remove`, { assetIds })
+    .then(extractData);
+}
+
+function listFolders(repositoryId) {
+  return request
+    .get(`${urls.root(repositoryId)}/folders`)
+    .then(extractData);
+}
+
+function move(repositoryId, assetIds, folder) {
+  return request
+    .post(`${urls.root(repositoryId)}/bulk/move`, { assetIds, folder })
+    .then(extractData);
+}
+
+function deleteFolder(repositoryId, folder) {
+  return request
+    .delete(`${urls.root(repositoryId)}/folders`, { params: { folder } })
     .then(extractData);
 }
 
@@ -96,7 +131,11 @@ function deindexAsset(repositoryId, assetId) {
 
 function discover(repositoryId, query, contentFilter = 'all', count = 20) {
   return request
-    .post(`${urls.root(repositoryId)}/discover`, { query, contentFilter, count })
+    .post(`${urls.root(repositoryId)}/discover`, {
+      query,
+      contentFilter,
+      count,
+    })
     .then(extractData);
 }
 
@@ -104,8 +143,12 @@ export default {
   list,
   upload,
   getDownloadUrl,
+  getUsages,
   remove,
   bulkRemove,
+  listFolders,
+  move,
+  deleteFolder,
   updateMeta,
   importFromLink,
   attachFile,

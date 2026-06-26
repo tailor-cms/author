@@ -1,3 +1,4 @@
+import * as assetService from '../../../asset/asset.service.ts';
 import * as yup from 'yup';
 import Promise from 'bluebird';
 import uniq from 'lodash/uniq.js';
@@ -61,13 +62,20 @@ class DefaultAdapter {
       });
       await exportFile(blobStore, Filename.ELEMENTS, { context, transaction });
     });
+    // Bundle each collected file; some keys are false positives (any
+    // storage://-shaped string is flagged) or dangling refs with no backing
+    // file. Keep only the ones that exported so the manifest doesn't list a
+    // file the archive never contained (which would fail import).
+    const exported = [];
     await Promise.map(uniq(context.assets), async (it) => {
       try {
         await exportFile(blobStore, it, { context });
+        exported.push(it);
       } catch (e) {
         console.log(`Unable to export file: ${it}\n`, e.message);
       }
     });
+    context.assets = exported;
     await exportFile(blobStore, Filename.MANIFEST, { context });
   }
 
@@ -93,9 +101,19 @@ class DefaultAdapter {
       });
       await importFile(blobStore, Filename.ELEMENTS, { context, transaction });
     });
-    return Promise.map(context.assets, (it) =>
-      importFile(blobStore, it, { context }),
-    );
+    // Import each referenced file, tolerating keys with no archive entry. The
+    // manifest can over-list: the collector flags every storage://-shaped
+    // string, and the export skips ones whose file is missing.
+    const imported = [];
+    await Promise.map(uniq(context.assets), async (it) => {
+      try {
+        await importFile(blobStore, it, { context });
+        imported.push(it);
+      } catch (e) {
+        console.log(`Unable to import file: ${it}\n`, e.message);
+      }
+    });
+    await registerImportedAssets(imported, context);
   }
 }
 
@@ -117,4 +135,30 @@ function importFile(blobStore, filename, { context, transaction } = {}) {
   const srcStream = blobStore.createReadStream(filename);
   const destStream = createProcessingStream(options);
   return miss.pipeAsync(srcStream, destStream);
+}
+
+// Registers a single imported static file in the repository's Asset Library.
+async function registerImportedAsset(context, storageKey) {
+  const { repositoryId, userId, assetMeta = {} } = context;
+  try {
+    await assetService.registerStorageAsset({
+      repositoryId,
+      userId,
+      storageKey,
+      // Restore the original name + meta (folder, tags, ...) when the archive
+      // carried them; otherwise derives a flat record.
+      ...assetMeta[storageKey],
+    });
+  } catch (err) {
+    console.log(`Failed to register asset ${storageKey}: ${err.message}`);
+  }
+}
+
+// Registers every imported static file referenced by the archive.
+function registerImportedAssets(assetKeys, context) {
+  const { repositoryId, userId } = context;
+  if (!repositoryId || !userId) return Promise.resolve();
+  return Promise.map(assetKeys, (key) => registerImportedAsset(context, key), {
+    concurrency: 4,
+  });
 }

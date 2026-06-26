@@ -12,7 +12,10 @@
       {{ activity.data.name }}
     </VListItemTitle>
     <VListItemSubtitle class="collection-meta text-body-small">
-      <span v-tooltip:bottom="formatDate(activity.createdAt, 'MMM d, yyyy HH:mm')">
+      <span
+        v-tooltip:bottom="formatDate(activity.createdAt, 'MMM d, yyyy HH:mm')"
+        data-percy="hide"
+      >
         {{ formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true }) }}
       </span>
     </VListItemSubtitle>

@@ -25,6 +25,7 @@
           @download="emit('download', $event)"
           @index="emit('index', $event)"
           @deindex="emit('deindex', $event)"
+          @move="emit('move', $event)"
           @delete="emit('delete', $event)"
         />
         <VBtn
@@ -43,6 +44,7 @@
           :type-icon="typeIcon"
           :type-color="typeColor"
         />
+        <Usages v-if="asset.storageKey" :asset="asset" />
         <EditForm
           v-model:description="description"
           v-model:tags="tags"
@@ -64,6 +66,7 @@ import EditForm from './EditForm.vue';
 import MetaInfo from './MetaInfo.vue';
 import MetaInspector from './MetaInspector.vue';
 import Preview from './Preview.vue';
+import Usages from './Usages.vue';
 
 const props = defineProps<{
   asset: Asset | null;
@@ -75,6 +78,7 @@ const emit = defineEmits<{
   delete: [asset: Asset];
   index: [asset: Asset];
   deindex: [asset: Asset];
+  move: [asset: Asset];
   save: [asset: Asset, meta: Record<string, any>];
 }>();
 
