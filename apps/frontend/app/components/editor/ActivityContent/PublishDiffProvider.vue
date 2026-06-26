@@ -20,10 +20,9 @@
 </template>
 
 <script lang="ts" setup>
-import { cloneDeep, filter, mapValues, merge, omit, reduce } from 'lodash-es';
+import { cloneDeep, filter, isEqual, mapValues, merge, omit, reduce } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import { isAfter } from 'date-fns/isAfter';
 import { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
 import { api } from '@/api';
@@ -72,42 +71,28 @@ const processedActivities = computed(() => {
 });
 
 const processedElements = computed(() => {
-  const elements = cloneDeep(props.elements);
-  return mapValues(merge(elements, publishedElements.value), addChangeType);
+  const merged = merge(cloneDeep(props.elements), publishedElements.value);
+  return mapValues(merged, (element, uid) => ({
+    ...element,
+    diffChange: getChangeType(uid),
+  }));
 });
 
 const processedContainerGroups = computed(() => {
   return reduce(props.containerGroups, addPublishedContainersToGroup, {});
 });
 
-const isAdded = (element: ContentElement) => {
-  if (!props.publishTimestamp) return true;
-  const createdAt = new Date(element.createdAt);
-  const publishedAt = new Date(props.publishTimestamp);
-  return isAfter(createdAt, publishedAt);
-};
+const sameContent = (a: ContentElement, b: ContentElement) =>
+  isEqual(a.data, b.data) && isEqual(a.meta, b.meta) && isEqual(a.refs, b.refs);
 
-const isModified = (element: ContentElement) => {
-  if (!props.publishTimestamp) return false;
-  const updatedAt = new Date(element.updatedAt);
-  const publishedAt = new Date(props.publishTimestamp);
-  return isAfter(updatedAt, publishedAt);
-};
-
-const isRemoved = (element: ContentElement) => {
-  element = props.elements[element.uid] as ContentElement;
-  return !element || element.detached;
-};
-
-const getChangeType = (element: ContentElement) => {
-  if (isRemoved(element)) return Removed;
-  if (isAdded(element)) return New;
-  if (isModified(element)) return Changed;
-  return null;
-};
-
-const addChangeType = (element: ContentElement) => {
-  return { ...element, diffChange: getChangeType(element) };
+// Content diff vs the published snapshot (deep-equal on data/meta/refs), so a
+// no-op save - touched timestamp, identical content - isn't flagged as changed.
+const getChangeType = (uid: string) => {
+  const live = props.elements[uid];
+  const published = publishedElements.value[uid];
+  if (!live || live.detached) return Removed;
+  if (!published) return New;
+  return sameContent(live, published) ? null : Changed;
 };
 
 const addPublishedContainersToGroup = (

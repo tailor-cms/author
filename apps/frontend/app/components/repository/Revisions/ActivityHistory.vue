@@ -13,7 +13,7 @@
       prominent
     />
     <template v-else>
-      <VList density="compact" bg-color="transparent" class="pa-0" nav>
+      <VList color="tertiary" density="compact" bg-color="transparent" class="pa-0" nav>
         <template v-for="group in groupedRevisions" :key="group.key">
           <VListSubheader class="text-label-medium text-uppercase">
             {{ group.label }}

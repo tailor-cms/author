@@ -120,7 +120,7 @@ const config = computed(
 );
 
 const toolbarColor = computed(() => {
-  if (isHistoryMode.value || showPublishDiff.value) return 'tertiary-container';
+  if (isHistoryMode.value || showPublishDiff.value) return 'tertiary';
   return 'surface-container-low';
 });
 
