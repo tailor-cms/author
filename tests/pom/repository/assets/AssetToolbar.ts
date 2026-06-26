@@ -6,25 +6,43 @@ export class AssetToolbar {
   readonly page: Page;
   readonly el: Locator;
   readonly searchInput: Locator;
-  readonly uploadBtn: Locator;
-  readonly addLinkBtn: Locator;
-  readonly discoverBtn: Locator;
+  readonly newMenuBtn: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.el = page.locator(AssetToolbar.selector);
     this.searchInput = this.el.getByPlaceholder('Search assets...');
-    this.uploadBtn = this.el.getByRole('button', { name: 'Upload' });
-    this.addLinkBtn = this.el.getByRole('button', { name: 'Add Link' });
-    this.discoverBtn = this.el.getByRole('button', { name: 'Discover' });
+    this.newMenuBtn = this.el.getByTestId('newMenuBtn');
+  }
+
+  // Create actions (New folder / Upload files / Add link) live behind the
+  // "+ New" menu; the items render in an overlay outside the toolbar.
+  async openNewMenu() {
+    await this.newMenuBtn.click();
   }
 
   async uploadFiles(filePaths: string[]) {
+    await this.openNewMenu();
     const [fileChooser] = await Promise.all([
       this.page.waitForEvent('filechooser'),
-      this.uploadBtn.click(),
+      this.page.getByTestId('uploadAction').click(),
     ]);
     await fileChooser.setFiles(filePaths);
     await this.page.waitForLoadState('networkidle');
+  }
+
+  async openAddLink() {
+    await this.openNewMenu();
+    await this.page.getByTestId('addLinkAction').click();
+  }
+
+  async openNewFolder() {
+    await this.openNewMenu();
+    await this.page.getByTestId('newFolderAction').click();
+  }
+
+  async openDiscover() {
+    await this.openNewMenu();
+    await this.page.getByTestId('discoverAction').click();
   }
 }

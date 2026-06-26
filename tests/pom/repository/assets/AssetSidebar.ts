@@ -13,6 +13,8 @@ export class AssetSidebar {
   readonly actionsBtn: Locator;
   readonly descriptionInput: Locator;
   readonly tagsInput: Locator;
+  readonly usages: Locator;
+  readonly usageRows: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -22,6 +24,8 @@ export class AssetSidebar {
     this.actionsBtn = this.header.getByRole('button', { name: 'Actions' });
     this.descriptionInput = this.el.getByLabel('Description');
     this.tagsInput = this.el.getByLabel('Tags');
+    this.usages = this.el.getByTestId('assetUsages');
+    this.usageRows = this.usages.getByTestId('assetUsage');
   }
 
   get deleteMenuItem(): Locator {

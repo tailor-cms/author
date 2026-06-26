@@ -150,6 +150,13 @@ const Shape = z.object({
   STORAGE_BUCKET: optStr(),
   // Custom S3-compatible endpoint (MinIO, Cloudflare R2, ...); omit for AWS.
   STORAGE_ENDPOINT: optUrl(),
+  // Lifetime of presigned asset URLs (image previews / downloads), in seconds.
+  // Default 1 day; SigV4 allows up to 7 days.
+  STORAGE_SIGNED_URL_TTL: posInt(24 * 60 * 60),
+  // Max asset-library upload size, in BYTES (default 1 GiB). NUXT_PUBLIC_ so the
+  // frontend receives it via the config cookie and can reject oversized files
+  // before uploading; the backend uses the same value for the multer limit.
+  NUXT_PUBLIC_STORAGE_MAX_UPLOAD_SIZE: posInt(1024 * 1024 * 1024),
 
   // Outgoing email (SMTP), used for invites, password resets, etc.
   // SMTP server hostname.

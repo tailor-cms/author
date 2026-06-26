@@ -12,25 +12,32 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import history, { type Context as HistoryContext } from 'connect-history-api-fallback';
+import multer from 'multer';
 import qs from 'qs';
 import router from './router.ts';
 import origin from '#shared/origin.js';
 
-import auth from '#shared/auth/index.js';
+import config, { env } from '#config';
 import { createHttpLogger } from '#logger';
-import config from '#config';
+import auth from '#shared/auth/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { STORAGE_PATH } = process.env;
 const app = express();
 
-const configCookie = JSON.stringify(
+// NUXT_PUBLIC_* config shipped to the frontend via the `config` cookie.
+// Undeclared keys (OIDC login text, Statsig key, ...) pass through from the
+// process; schema-declared ones are spread from `env` afterwards so their
+// defaults reach the frontend even when the var is unset.
+const publicEnv = (source: Record<string, unknown>) =>
   Object.fromEntries(
-    Object.entries(process.env).filter(([key]) =>
-      key.startsWith('NUXT_PUBLIC_'),
-    ),
-  ),
-);
+    Object.entries(source).filter(([key]) => key.startsWith('NUXT_PUBLIC_')),
+  );
+
+const configCookie = JSON.stringify({
+  ...publicEnv(process.env),
+  ...publicEnv(env),
+});
 
 if (config.general.reverseProxyPolicy)
   app.set('trust proxy', config.general.reverseProxyPolicy);
@@ -91,6 +98,16 @@ app.use('/api', createHttpLogger(), router);
 // 4-argument signature; the `_next` is required for the dispatch table
 // even though we always terminate the response here.
 const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
+  // Multer errors carry no `.status`, so map them explicitly
+  if (err instanceof multer.MulterError) {
+    const status = err.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+    const message =
+      err.code === 'LIMIT_FILE_SIZE'
+        ? 'File exceeds the maximum allowed upload size.'
+        : err.message;
+    res.status(status).json({ error: { status, message } });
+    return;
+  }
   if (!err.status || err.status === 500) {
     (req as any).log?.error({ err });
     res.status(500).end();

@@ -20,3 +20,9 @@ export const amazon = {
 export const filesystem = {
   path: env.STORAGE_PATH,
 };
+
+// Max storage upload size in bytes
+export const maxUploadSize = env.NUXT_PUBLIC_STORAGE_MAX_UPLOAD_SIZE;
+
+// How long presigned asset URLs stay valid, in seconds
+export const signedUrlTtl = env.STORAGE_SIGNED_URL_TTL;

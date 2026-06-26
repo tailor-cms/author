@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios, { type AxiosHeaderValue } from 'axios';
 import mime from 'mime-types';
 import path from 'node:path';
 
+import type { BufferedFile } from '../types.ts';
 import { assertPublicUrl } from './url-guard.ts';
-import type { MulterFile } from '../types.ts';
 
 const TIMEOUT = 30_000;
 const MAX_SIZE = 50 * 1024 * 1024; // 50 MB
@@ -17,7 +17,11 @@ function safePathname(url: string): string {
   }
 }
 
-// Downloads a file from a URL and returns a MulterFile-compatible object.
+function headerString(value: AxiosHeaderValue | undefined): string {
+  return typeof value === 'string' ? value : '';
+}
+
+// Downloads a file from a URL and returns a BufferedFile object.
 //
 // Pipeline:
 // 1. SSRF check (protocol, hostname, resolved IP)
@@ -25,7 +29,7 @@ function safePathname(url: string): string {
 // 3. Extract MIME type from Content-Type header
 // 4. Derive filename from Content-Disposition header or URL path
 // 5. Append extension from MIME type if filename has none
-export async function downloadFile(url: string): Promise<MulterFile> {
+export async function downloadFile(url: string): Promise<BufferedFile> {
   await assertPublicUrl(url);
   const { data, headers } = await axios.get(url, {
     responseType: 'arraybuffer',
@@ -35,8 +39,9 @@ export async function downloadFile(url: string): Promise<MulterFile> {
   });
   const buffer = Buffer.from(data);
   // "text/html; charset=utf-8" → "text/html"
-  const mimeType = (headers['content-type'] || '').split(';')[0].trim();
-  let filename = extractFilename(headers['content-disposition'], url);
+  const mimeType = headerString(headers['content-type']).split(';')[0].trim();
+  const disposition = headerString(headers['content-disposition']);
+  let filename = extractFilename(disposition, url);
   if (!path.extname(filename)) {
     const ext = mime.extension(mimeType);
     if (ext) filename += `.${ext}`;

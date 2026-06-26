@@ -219,7 +219,7 @@ test.describe('Asset library', () => {
 
   test('add link dialog rejects invalid URL', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.toolbar.addLinkBtn.click();
+    await lib.toolbar.openAddLink();
     await expect(lib.addLinkDialog.el).toBeVisible();
     await lib.addLinkDialog.urlInput.fill('not-a-url');
     await lib.addLinkDialog.addBtn.click();

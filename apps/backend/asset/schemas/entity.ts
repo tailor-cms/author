@@ -61,11 +61,20 @@ export const StorageRef = z
 
 export type StorageRef = z.infer<typeof StorageRef>;
 
+// Shared shape for a virtual folder path.
+// Folders are `/`-delimited prefixes (no folder model); root is absent/empty.
+export const FolderPath = z
+  .string()
+  .describe('Virtual folder path (`/`-delimited); absent = root.');
+
+export type FolderPath = z.infer<typeof FolderPath>;
+
 // Fields shared by every asset meta variant. Lifted to a Base schema so
 // each variant only declares what's truly distinct.
 const AssetMetaBase = z.object({
   description: z.string().optional().describe('Free-form description.'),
   tags: z.array(z.string()).optional().describe('User-supplied tag labels.'),
+  folder: FolderPath.optional(),
   // fileKey -> storageKey, e.g. `{ captions: "repo/1/.../captions.vtt" }`.
   // Managed by the dedicated /:assetId/file endpoint
   files: z

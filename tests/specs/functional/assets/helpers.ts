@@ -1,24 +1,24 @@
 import type { Page } from '@playwright/test';
 
-import SeedClient from '../../../api/SeedClient';
+import { createCleanRepository, outlineLevel } from '../../../helpers/seed';
 import { AssetLibrary } from '../../../pom/repository/AssetLibrary';
-import {
-  toRepositoryAssets,
-  toSeededRepository,
-} from '../../../helpers/seed';
+import { ActivityOutline } from '../../../pom/repository/Outline';
+import SeedClient from '../../../api/SeedClient';
 
-// Reset DB and seed a repository. Returns repositoryId (no page navigation).
+// Reset DB and create a blank repository. Returns repositoryId (no navigation).
 export async function createRepository() {
   await SeedClient.resetDatabase();
-  const { data } = await SeedClient.seedTestRepository();
-  return data.repository.id as number;
+  const repository = await createCleanRepository();
+  return repository.id as number;
 }
 
-// Seed a repository and navigate to the assets page.
+// Create a blank repository and navigate to its (empty) asset library.
 export async function toAssetLibrary(page: Page) {
   await SeedClient.resetDatabase();
-  const repository = await toRepositoryAssets(page);
-  return { repositoryId: repository.id, lib: new AssetLibrary(page) };
+  const repository = await createCleanRepository();
+  await page.goto(`/repository/${repository.id}/root/assets`);
+  await page.waitForLoadState('networkidle');
+  return { repositoryId: repository.id as number, lib: new AssetLibrary(page) };
 }
 
 // Seed assets via API, navigate to asset library, and reload to pick them up.
@@ -33,12 +33,15 @@ export async function toSeededAssetLibrary(
   return { repositoryId, lib };
 }
 
-// Seed a repository, navigate to structure page.
-// The seed auto-selects the first module, opening the sidebar
-// with meta inputs including a File input (thumbnail).
+// Create a blank repository with a single empty module, then select it so the
+// structure sidebar shows an unset `thumbnail` File meta.
 export async function toFileMetaInput(page: Page) {
   await SeedClient.resetDatabase();
-  const { repository } = await toSeededRepository(page);
+  const repository = await createCleanRepository();
+  await page.goto(`/repository/${repository.id}/root/structure`);
   await page.waitForLoadState('networkidle');
-  return repository.id;
+  const outline = new ActivityOutline(page);
+  const module = await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
+  await module.select();
+  return repository.id as number;
 }

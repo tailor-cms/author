@@ -20,7 +20,10 @@ db.initialize()
   .then(
     () =>
       new Promise<void>((resolve) => {
-        app.listen(Number(config.port), () => resolve());
+        const server = app.listen(Number(config.port), () => resolve());
+        // Node caps the time to receive a full request body at `requestTimeout`
+        // (default 5 min). Multi-GB asset uploads legitimately take longer.
+        server.requestTimeout = 30 * 60 * 1000;
       }),
   )
   .then(() => {

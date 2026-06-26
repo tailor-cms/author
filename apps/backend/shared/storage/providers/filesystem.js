@@ -1,13 +1,14 @@
 import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
-import path from 'node:path';
-import expandPath from 'untildify';
-import { mkdirp } from 'mkdirp';
 import * as yup from 'yup';
 import { pathExists } from 'path-exists';
-import Promise from 'bluebird';
+import { pipeline } from 'node:stream/promises';
+import { mkdirp } from 'mkdirp';
 import { validateConfig } from '../validation.js';
 import config from '#config';
+import expandPath from 'untildify';
+import Promise from 'bluebird';
+import path from 'node:path';
 
 const isNotFound = (err) => err.code === 'ENOENT';
 const resolvePath = (str) => path.resolve(expandPath(str));
@@ -55,6 +56,15 @@ class FilesystemStorage {
     // TODO: Replace with async mkdir
     fs.mkdirSync(dirname, { recursive: true });
     return fs.createWriteStream(filepath, options);
+  }
+
+  // Streams `readable` to disk, resolving once fully written. `pipeline`
+  // awaits the finish event and cleans up the write stream on error.
+  async saveStream(key, readable) {
+    const filepath = this.path(key);
+    await mkdirp(path.dirname(filepath));
+    await pipeline(readable, fs.createWriteStream(filepath));
+    return { key };
   }
 
   copyFile(key, newKey) {

@@ -3,10 +3,7 @@
     v-model="isCoreSource"
     class="mb-4 ml-2"
     color="tertiary"
-    density="comfortable"
-    false-icon="mdi-star-outline"
     label="Core Source"
-    true-icon="mdi-star"
     hide-details
   />
   <VTextarea
