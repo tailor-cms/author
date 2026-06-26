@@ -13,7 +13,13 @@
       prominent
     />
     <template v-else>
-      <VList color="tertiary" density="compact" bg-color="transparent" class="pa-0" nav>
+      <VList
+        color="tertiary"
+        density="compact"
+        bg-color="transparent"
+        class="pa-0"
+        nav
+      >
         <template v-for="group in groupedRevisions" :key="group.key">
           <VListSubheader class="text-label-medium text-uppercase">
             {{ group.label }}
@@ -62,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { find, findIndex, findLastIndex, last, map, uniqBy } from 'lodash-es';
+import { findIndex, findLastIndex, last, map, uniqBy } from 'lodash-es';
 import { formatDate, useIntersectionObserver } from '@vueuse/core';
 import { isToday } from 'date-fns/isToday';
 import { isYesterday } from 'date-fns/isYesterday';
