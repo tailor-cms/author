@@ -3,6 +3,7 @@ import { filter, flatMap, reduce } from 'lodash-es';
 import { schema } from '@tailor-cms/config';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
+import type { HistoryEntry } from '@/lib/revision';
 import type { StoreActivity } from './activity';
 import type { StoreContentElement } from './content-elements';
 import { useActivityStore } from './activity';
@@ -11,13 +12,6 @@ import { useCurrentRepository } from './current-repository';
 import { useContentElementStore } from './content-elements';
 
 const { getDescendants } = activityUtils;
-
-// The previewed entry only needs to identify a moment and its author - it may be
-// a synthetic restore entry, not a full revision.
-export type HistoryRevision = Pick<
-  Revision,
-  'uid' | 'createdAt' | 'user' | 'transactionId'
->;
 
 export const useEditorStore = defineStore('editor', () => {
   const repositoryStore = useCurrentRepository();
@@ -35,7 +29,7 @@ export const useEditorStore = defineStore('editor', () => {
   const isDetailsPanelAnimated = ref(false);
   // Set to preview a past revision: the editor reconstructs the activity at
   // this moment, read-only. Mutually exclusive with publish-diff.
-  const historyRevision = ref<HistoryRevision | null>(null);
+  const historyRevision = ref<HistoryEntry | null>(null);
   // Diff baseline for the preview - the preceding revision ("what changed
   // here"). Null on the oldest revision.
   const historyPreviousRevision = ref<Revision | null>(null);
@@ -142,7 +136,7 @@ export const useEditorStore = defineStore('editor', () => {
   };
 
   const enterHistoryMode = (
-    revision: HistoryRevision,
+    revision: HistoryEntry,
     previousRevision: Revision | null = null,
   ) => {
     historyRevision.value = revision;

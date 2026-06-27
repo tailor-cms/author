@@ -82,7 +82,7 @@ import { api } from '@/api';
 import { isSameRun, type HistoryEntry } from '@/lib/revision';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useActivityStore } from '@/stores/activity';
-import { useEditorStore, type HistoryRevision } from '@/stores/editor';
+import { useEditorStore } from '@/stores/editor';
 
 type BundledRevision = HistoryEntry & { children: Revision[] };
 
@@ -157,10 +157,10 @@ const publishedRevision = computed<BundledRevision | undefined>(() => {
   return bundledRevisions.value.find(({ createdAt }) => createdAt <= publishedAt);
 });
 
-const isPreviewed = (revision: HistoryRevision) =>
+const isPreviewed = (revision: HistoryEntry) =>
   editorStore.historyRevision?.uid === revision.uid;
 
-const previewRevision = (revision: HistoryRevision) => {
+const previewRevision = (revision: HistoryEntry) => {
   if (isPreviewed(revision)) return editorStore.exitHistoryMode();
   const { uid, transactionId } = revision;
   // Diff baseline = the next-older revision. For a restore, anchor on the
