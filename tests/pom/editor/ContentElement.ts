@@ -153,8 +153,13 @@ export class HtmlContentElement extends ContentElement {
     this.tiptap = el.locator('.tiptap');
   }
 
-  async fill(content: string) {
+  async type(content: string) {
     await this.tiptap.click();
     await this.tiptap.pressSequentially(content);
+  }
+
+  async fill(content: string) {
+    await this.tiptap.click();
+    await this.tiptap.fill(content);
   }
 }

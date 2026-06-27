@@ -4,10 +4,10 @@ import { Comments } from '../common/Comments';
 import { Navigation } from './Navigation';
 
 enum SidebarTab {
-  Comments = 'COMMENTS_TAB',
-  Browser = 'BROWSER_TAB',
-  Element = 'ELEMENT_TAB',
-  History = 'HISTORY_TAB',
+  Comments = 'Comments',
+  Browser = 'Browser',
+  Element = 'Element',
+  History = 'History',
 }
 
 export class EditorSidebar {
