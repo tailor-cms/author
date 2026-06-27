@@ -104,8 +104,7 @@ test('should display a revision for updated content element', async ({
   await page.waitForLoadState('networkidle');
   const editor = new Editor(page);
   await editor.addContentElement();
-  const elements = await editor.getElements();
-  await elements[0].el.locator('.tiptap').fill('updated content');
+  await editor.getHtmlElement().fill('updated content');
   await expectAlert(page, 'Element saved');
   await page.waitForLoadState('networkidle');
   await page.goto(getHistoryRoute(repository.id));

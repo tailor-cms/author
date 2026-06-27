@@ -15,6 +15,7 @@ import {
 import { toEditorPage } from '../../../helpers/navigation';
 
 const api = new BaseClient('/api/repositories/');
+const { primaryPage: seed } = outlineSeed;
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
@@ -117,10 +118,7 @@ test('reordering individually linked element keeps it linked', async ({
   await editor.toSecondaryPage();
   // Link an element from the primary page (individual link, not via activity)
   const linkDialog = await editor.addElementDialog.openLinkDialog();
-  await linkDialog.select(
-    outlineSeed.primaryPage.title,
-    outlineSeed.primaryPage.textContent,
-  );
+  await linkDialog.select(seed.title, seed.textContent);
   await new Toast(page).isSaved();
   // Add another element so we have something to reorder against
   await editor.addElementDialog.add('HTML');
@@ -140,7 +138,7 @@ test('reordering individually linked element keeps it linked', async ({
   );
   // Reload and verify element is still linked
   await page.reload({ waitUntil: 'networkidle' });
-  const element = editor.getElement(outlineSeed.primaryPage.textContent);
+  const element = editor.getElement(seed.textContent);
   await element.expectLinked();
 });
 
@@ -159,7 +157,7 @@ test('source element edit preserves linked copy positions', async ({
   await toast.isSaved();
   // Link all primary page elements into the secondary page
   const linkDialog = await editor.addElementDialog.openLinkDialog();
-  await linkDialog.select(outlineSeed.primaryPage.title);
+  await linkDialog.select(seed.title);
   await toast.isSaved();
   const { data: before } = await api.get(`${repositoryId}/content-elements/`);
   const copies = before
@@ -172,7 +170,7 @@ test('source element edit preserves linked copy positions', async ({
   }
   // Edit source on the primary page - triggers propagation to copies
   await editor.toPrimaryPage();
-  editor.getHtmlElement(outlineSeed.primaryPage.textContent).fill(' updated');
+  await editor.getHtmlElement(seed.textContent).type(' updated');
   await editor.sidebar.el.click();
   await toast.isSaved();
   await page.waitForTimeout(1000);
@@ -190,10 +188,7 @@ test('linking content element creates "Linked" revision', async ({ page }) => {
   await editor.toSecondaryPage();
   // Link an element from the primary page (individual link)
   const linkDialog = await editor.addElementDialog.openLinkDialog();
-  await linkDialog.select(
-    outlineSeed.primaryPage.title,
-    outlineSeed.primaryPage.textContent,
-  );
+  await linkDialog.select(seed.title, seed.textContent);
   await new Toast(page).isSaved();
   // Navigate to history page and verify "Linked" revision
   const history = await RevisionHistory.goTo(page, repository.id);
