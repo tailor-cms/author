@@ -40,7 +40,7 @@ import { last, reduce, uniq, uniqBy } from 'lodash-es';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import { api } from '@/api';
-import { isSameInstance } from '@/lib/revision';
+import { isSameRun } from '@/lib/revision';
 import RevisionItem from '@/components/repository/Revisions/RevisionItem.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -59,9 +59,7 @@ const editorChannel = $eventBus.channel('editor');
 provide('$getCurrentUser', () => authStore.user);
 provide('$editorBus', editorChannel);
 provide('$ceRegistry', $ceRegistry);
-provide('$editorState', {
-  isPublishDiff: computed(() => editorStore.showPublishDiff),
-});
+provide('$editorState', { showDiff: computed(() => editorStore.showDiff) });
 
 const isFetching = ref(true);
 const revisions = ref<Revision[]>([]);
@@ -74,10 +72,7 @@ const bundledRevisions = computed<Revision[]>(() => {
     revisions.value,
     (acc: Revision[], it: Revision) => {
       const prevRevision = last(acc);
-      if (prevRevision) {
-        const isSameOperation = prevRevision.operation === it.operation;
-        if (!isSameInstance(prevRevision, it) || !isSameOperation) acc.push(it);
-      }
+      if (prevRevision && !isSameRun(prevRevision, it)) acc.push(it);
       return acc;
     },
     [revisions.value[0]] as Revision[],

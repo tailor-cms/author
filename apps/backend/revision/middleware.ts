@@ -3,7 +3,6 @@ import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
-import type { TimeTravelInput } from './schemas/index.ts';
 
 const { Activity, Revision: RevisionModel, User } = db;
 
@@ -30,17 +29,20 @@ export async function getRevision(
   next();
 }
 
+// Loads `req.activity` for the reconstruct/restore routes. `activityId` is
+// not a path param (so no `router.param`): it arrives as a query param on
+// GET (reconstruct) and in the body on POST (restore). Mounted as `after`
+// middleware, so validation has already stashed the Zod-typed values in
+// `_validated`. `paranoid: false` so a soft-deleted activity can still be
+// the target - restore brings it back, reconstruct can view its history.
 export async function loadTargetActivity(
   req: any,
   _res: Response,
   next: NextFunction,
 ) {
-  // `activityId` is a query param (not a path param) so we can't use
-  // `router.param`. Mounted as `after` middleware on the time-travel
-  // action; by then validation has run and the Zod-typed query lives
-  // in the framework's `_validated` stash.
-  const { activityId } = (req._validated?.query ?? {}) as TimeTravelInput;
-  const activity = await Activity.findByPk(activityId);
+  const activityId =
+    req._validated?.body?.activityId ?? req._validated?.query?.activityId;
+  const activity = await Activity.findByPk(activityId, { paranoid: false });
   if (!activity || activity.repositoryId !== req.repository?.id) {
     return createError(StatusCodes.NOT_FOUND, 'Activity not found');
   }

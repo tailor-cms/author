@@ -11,6 +11,8 @@ import {
 } from '../../../helpers/seed';
 import { toEditorPage } from '../../../helpers/navigation';
 
+const { primaryPage: seed } = outlineSeed;
+
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
 });
@@ -22,13 +24,10 @@ test('can link a content element via add element dialog', async ({ page }) => {
   await editor.toSecondaryPage();
   // Open add element drawer and link content from the primary page
   const linkDialog = await editor.addElementDialog.openLinkDialog();
-  await linkDialog.select(
-    outlineSeed.primaryPage.title,
-    outlineSeed.primaryPage.textContent,
-  );
+  await linkDialog.select(seed.title, seed.textContent);
   await new Toast(page).isSaved();
   // Verify linked element appears and is marked as linked
-  const element = editor.getElement(outlineSeed.primaryPage.textContent);
+  const element = editor.getElement(seed.textContent);
   await expect(element.el).toBeVisible();
   await element.expectLinked();
   await element.el.hover();
@@ -36,9 +35,7 @@ test('can link a content element via add element dialog', async ({ page }) => {
   await expect(element.commentDisabledBtn).toBeVisible();
   // Verify persistence
   await page.reload({ waitUntil: 'networkidle' });
-  const reloadedElement = editor.getElement(
-    outlineSeed.primaryPage.textContent,
-  );
+  const reloadedElement = editor.getElement(seed.textContent);
   await expect(reloadedElement.el).toBeVisible();
   await reloadedElement.expectLinked();
 });
@@ -49,12 +46,9 @@ test('linked element shows linked indicator', async ({ page }) => {
   const editor = new Editor(page);
   await editor.toSecondaryPage();
   const linkDialog = await editor.addElementDialog.openLinkDialog();
-  await linkDialog.select(
-    outlineSeed.primaryPage.title,
-    outlineSeed.primaryPage.textContent,
-  );
+  await linkDialog.select(seed.title, seed.textContent);
   await new Toast(page).isSaved();
-  const element = editor.getElement(outlineSeed.primaryPage.textContent);
+  const element = editor.getElement(seed.textContent);
   await expect(element.el).toBeVisible();
   await element.expectLinked();
   await element.el.hover();
@@ -67,12 +61,9 @@ test('comments disabled on linked element', async ({ page }) => {
   const editor = new Editor(page);
   await editor.toSecondaryPage();
   const linkDialog = await editor.addElementDialog.openLinkDialog();
-  await linkDialog.select(
-    outlineSeed.primaryPage.title,
-    outlineSeed.primaryPage.textContent,
-  );
+  await linkDialog.select(seed.title, seed.textContent);
   await new Toast(page).isSaved();
-  const element = editor.getElement(outlineSeed.primaryPage.textContent);
+  const element = editor.getElement(seed.textContent);
   await element.expectLinked();
   await element.el.hover();
   await expect(element.commentDisabledBtn).toBeVisible();
@@ -92,15 +83,12 @@ test('editing individually linked element triggers unlink confirmation', async (
   await editor.toSecondaryPage();
   // Link an element from the primary page
   const linkDialog = await editor.addElementDialog.openLinkDialog();
-  await linkDialog.select(
-    outlineSeed.primaryPage.title,
-    outlineSeed.primaryPage.textContent,
-  );
+  await linkDialog.select(seed.title, seed.textContent);
   await new Toast(page).isSaved();
-  const element = editor.getHtmlElement(outlineSeed.primaryPage.textContent);
+  const element = editor.getHtmlElement(seed.textContent);
   await element.expectLinked();
   // Edit the individually linked element
-  await element.fill(' edited');
+  await element.type(' edited');
   await editor.sidebar.el.click();
   const dialog = page.locator('div[role="dialog"]', {
     hasText: 'Edit linked element',
@@ -111,7 +99,7 @@ test('editing individually linked element triggers unlink confirmation', async (
   // Verify element is no longer linked after unlink
   await page.waitForTimeout(1000);
   await page.reload({ waitUntil: 'networkidle' });
-  const updatedElement = editor.getElement(outlineSeed.primaryPage.textContent);
+  const updatedElement = editor.getElement(seed.textContent);
   await updatedElement.expectNotLinked();
 });
 

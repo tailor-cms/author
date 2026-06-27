@@ -81,14 +81,14 @@ export class Editor {
   }
 
   async addContentElement(content = 'This is a test element') {
-    const { page, sidebar, toast } = this;
+    const elements = this.page.locator(ContentElement.selector);
+    const next = (await elements.count()) + 1;
     await this.addElementDialog.add('HTML');
-    const element = this.getHtmlElement();
-    await element.fill(content);
-    // Focusout element to trigger the save
-    await sidebar.el.focus();
-    await toast.isSaved();
-    await page.waitForLoadState('networkidle');
+    await expect(elements).toHaveCount(next);
+    const lastElement = this.page.locator(ContentElement.selector).last();
+    const element = new HtmlContentElement(this.page, lastElement);
+    await element.type(content);
+    await this.commitElementEdit();
   }
 
   async copyContentElements(pageTitle: string, elementContent?: string) {
@@ -104,5 +104,15 @@ export class Editor {
     for (const container of containers) {
       await container.deleteElements();
     }
+  }
+
+  async commitElementEdit() {
+    // Deselect element to trigger the save
+    await this.page
+      .locator('.content-containers')
+      .last()
+      .click({ position: { x: 4, y: 4 } });
+    await this.toast.isSaved();
+    await this.page.waitForLoadState('networkidle');
   }
 }

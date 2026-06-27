@@ -49,7 +49,6 @@
     "date-fns": "^4.3.0",
     "debug": "^4.4.3",
     "events": "^3.3.0",
-    "fecha": "^4.2.3",
     "hashids": "^2.3.0",
     "humanize-string": "^3.1.0",
     "lodash-es": "^4.18.1",

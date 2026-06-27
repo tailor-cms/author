@@ -1,6 +1,6 @@
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <p class="search-snippet text-body-2 mb-0" v-html="rendered" />
+  <p class="search-snippet text-body-medium mb-0" v-html="rendered" />
 </template>
 
 <script lang="ts" setup>

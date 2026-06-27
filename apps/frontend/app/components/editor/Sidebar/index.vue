@@ -19,7 +19,7 @@
       <div ref="tabRowEl" class="sidebar-tab-row d-flex align-center mt-1">
         <VTabs
           v-model="selectedTab"
-          :show-arrows="false"
+          show-arrows="never"
           class="sidebar-tabs flex-grow-1"
           color="primary"
           density="compact"
@@ -69,6 +69,9 @@
           <VWindowItem :value="COMMENTS_TAB">
             <ActivityDiscussion :activity="selectedActivity" />
           </VWindowItem>
+          <VWindowItem :value="HISTORY_TAB">
+            <ActivityHistory :activity="selectedActivity" />
+          </VWindowItem>
           <VWindowItem :value="ELEMENT_TAB">
             <ElementSidebar
               v-if="selectedElement"
@@ -108,6 +111,7 @@ import { useDisplay } from 'vuetify';
 import ActivityNavigation from './ActivityNavigation.vue';
 import ElementSidebar from './ElementSidebar/index.vue';
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
+import ActivityHistory from '@/components/repository/Revisions/ActivityHistory.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const modelValue = defineModel<boolean>({ required: true });
@@ -121,6 +125,7 @@ const props = defineProps<{
 
 const BROWSER_TAB = 'BROWSER_TAB';
 const COMMENTS_TAB = 'COMMENTS_TAB';
+const HISTORY_TAB = 'HISTORY_TAB';
 const ELEMENT_TAB = 'ELEMENT_TAB';
 
 const { $ceRegistry, $schemaService } = useNuxtApp() as any;
@@ -155,6 +160,11 @@ const tabs: any = computed(() => [
     // TODO: Need to implement
     // unseenCommentCount.value
     badgeData: null,
+  },
+  {
+    name: HISTORY_TAB,
+    label: 'History',
+    icon: 'history',
   },
   {
     name: ELEMENT_TAB,

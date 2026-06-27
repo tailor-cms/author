@@ -4,26 +4,24 @@
 <template>
   <div
     :class="[
-      element.changeSincePublish,
+      element.diffChange,
       {
         selected: activeUsers.length,
         focused: isFocused,
-        diff: showPublishDiff,
+        diff: showDiff,
         frame,
-        linked: element.isLinkedCopy && !showPublishDiff,
+        linked: element.isLinkedCopy && !showDiff,
       },
     ]"
     class="content-element rounded"
     @click="onSelect"
   >
     <div
-      :class="{ visible: showPublishDiff && element.changeSincePublish }"
+      v-if="!isQuestion"
+      :class="{ visible: showDiff && element.diffChange }"
       class="header d-flex"
     >
-      <PublishDiffChip
-        :change-type="element.changeSincePublish as PublishDiffChangeTypes"
-        class="ml-auto"
-      />
+      <DiffChip :change-type="element.diffChange" class="ml-auto" />
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <VSheet
@@ -190,17 +188,16 @@ import { cloneDeep } from 'lodash-es';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getElementId } from '@tailor-cms/utils';
 import type { Meta } from '@tailor-cms/interfaces/common';
-import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import ActiveUsers from './ActiveUsers.vue';
 import CircularProgress from './CircularProgress.vue';
+import DiffChip from './DiffChip.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import ElementGeneration from './ElementGeneration.vue';
 import ElementLinkedDiscussion from './ElementLinkedDiscussion.vue';
 import ElementLinkedIndicator from './ElementLinkedIndicator.vue';
 import ElementSourceUsages from './ElementSourceUsages.vue';
-import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 import { useLoader } from '../composables/useLoader';
@@ -265,7 +262,7 @@ const componentName = computed(() => manifest.value?.componentName);
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
-const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
+const showDiff = computed(() => editorState?.showDiff.value);
 const isQuestion = computed(() => manifest.value?.isQuestion || false);
 const showAI = computed(
   () => !props.element.embedded && !!doTheMagic && manifest.value?.ai,
@@ -284,7 +281,7 @@ const showSourceUsages = computed(
 );
 
 const onSelect = (e: any) => {
-  if (!props.isDisabled && !showPublishDiff.value && !e.component) {
+  if (!props.isDisabled && !showDiff.value && !e.component) {
     focus();
     e.component = { name: 'content-element', data: props.element };
   }
@@ -550,7 +547,10 @@ onMounted(() => {
     @include mixins.highlight(rgb(var(--v-theme-success-container)));
   }
 
-  &.changed,
+  &.changed {
+    @include mixins.highlight(rgb(var(--v-theme-warning-container)));
+  }
+
   &.removed {
     @include mixins.highlight(rgb(var(--v-theme-error-container)));
   }

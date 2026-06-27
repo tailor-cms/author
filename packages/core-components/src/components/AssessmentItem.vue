@@ -30,7 +30,7 @@
         isDisabled,
         isReadonly: props.isDisabled,
       }"
-      :class="[element.changeSincePublish, { diff: showPublishDiff }]"
+      :class="[element.diffChange, { diff: showDiff }]"
       :is-dirty="isDirty"
       class="flex-grow-1"
       collapsible
@@ -89,7 +89,7 @@ const { loading, loader } = useLoader();
 const confirmationDialog = useConfirmationDialog();
 
 const manifest = computed(() => ceRegistry?.getByEntity(props.element));
-const showPublishDiff = computed(() => editorState?.isPublishDiff.value);
+const showDiff = computed(() => editorState?.showDiff.value);
 const componentName = computed(() => manifest.value?.componentName);
 
 const reset = () => {
@@ -133,7 +133,10 @@ const save = (data: ContentElement['data']) => {
     @include mixins.highlight(rgb(var(--v-theme-success)));
   }
 
-  &.changed,
+  &.changed {
+    @include mixins.highlight(rgb(var(--v-theme-warning)));
+  }
+
   &.removed {
     @include mixins.highlight(rgb(var(--v-theme-error)));
   }
