@@ -419,6 +419,11 @@ watch(showPublishDiff, (isOn) => {
   editorChannel.emit(CE_FOCUS_EVENT);
 });
 
+watch(historyRevision, (revision) => {
+  if (!revision) return;
+  editorChannel.emit(CE_FOCUS_EVENT);
+});
+
 // Scroll the panel into view only on a deliberate expand (toolbar toggle).
 watch(
   () => editorStore.isDetailsPanelExpanded,
