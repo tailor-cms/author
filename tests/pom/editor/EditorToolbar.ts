@@ -9,6 +9,8 @@ export class EditorToolbar {
   readonly linkIcon: Locator;
   readonly viewSourceBtn: Locator;
   readonly unlinkBtn: Locator;
+  readonly publishBtn: Locator;
+  readonly compareBtn: Locator;
   readonly toast: Toast;
 
   constructor(page: Page) {
@@ -17,6 +19,8 @@ export class EditorToolbar {
     this.linkIcon = this.el.locator('.link-icon');
     this.viewSourceBtn = this.el.getByRole('button', { name: 'View source' });
     this.unlinkBtn = this.el.getByRole('button', { name: 'Unlink' });
+    this.publishBtn = this.el.getByRole('button', { name: 'Publish', exact: true });
+    this.compareBtn = this.el.getByRole('button', { name: 'Compare' });
     this.toast = new Toast(page);
   }
 
@@ -39,5 +43,18 @@ export class EditorToolbar {
   async unlink() {
     await this.unlinkBtn.click();
     await this.toast.containsText('unlinked');
+  }
+
+  async publish() {
+    await this.publishBtn.click();
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByRole('button', { name: 'confirm' }).click();
+    // The confirm dialog closes immediately (fire-and-forget); wait for the
+    // publish request to settle so `publishedAt` is set.
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async compareWithPublished() {
+    await this.compareBtn.click();
   }
 }
