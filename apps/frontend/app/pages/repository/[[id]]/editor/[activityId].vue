@@ -72,7 +72,7 @@ appChannel.on('openElement', (props: ElementRouteProps) => {
   navigateTo(route.href, { open: { target: '_blank' } });
 });
 
-const closePublishDiff = () => editorStore.togglePublishDiff(false);
+const closePublishDiff = () => editorStore.toggleDiff(false);
 
 const preventAccessIfDeleted = () => {
   const predecessors = activityUtils.getAncestors(

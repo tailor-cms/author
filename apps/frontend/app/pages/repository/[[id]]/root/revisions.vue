@@ -59,9 +59,7 @@ const editorChannel = $eventBus.channel('editor');
 provide('$getCurrentUser', () => authStore.user);
 provide('$editorBus', editorChannel);
 provide('$ceRegistry', $ceRegistry);
-provide('$editorState', {
-  showDiff: computed(() => editorStore.showPublishDiff),
-});
+provide('$editorState', { showDiff: computed(() => editorStore.showDiff) });
 
 const isFetching = ref(true);
 const revisions = ref<Revision[]>([]);

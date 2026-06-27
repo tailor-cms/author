@@ -29,7 +29,7 @@ export const useEditorStore = defineStore('editor', () => {
   const selectedActivityId = ref<number | null>(null);
   const selectedContentElementId = ref<number | null>(null);
   const selectedContentElement = ref<StoreContentElement | null>(null);
-  const showPublishDiff = ref(false);
+  const showDiff = ref(false);
   const isDetailsPanelExpanded = ref(false);
   // Only an explicit user toggle animates the panel
   const isDetailsPanelAnimated = ref(false);
@@ -124,7 +124,7 @@ export const useEditorStore = defineStore('editor', () => {
 
   const isHistoryMode = computed(() => historyRevision.value !== null);
   const isPreviewMode = computed(
-    () => showPublishDiff.value || isHistoryMode.value,
+    () => showDiff.value || isHistoryMode.value,
   );
 
   const canExpandDetailsPanel = computed(
@@ -133,9 +133,9 @@ export const useEditorStore = defineStore('editor', () => {
       !selectedActivity.value.isLinkedCopy,
   );
 
-  const togglePublishDiff = (value?: boolean) => {
-    showPublishDiff.value = value ?? !showPublishDiff.value;
-    if (showPublishDiff.value) {
+  const toggleDiff = (value?: boolean) => {
+    showDiff.value = value ?? !showDiff.value;
+    if (showDiff.value) {
       isDetailsPanelExpanded.value = false;
       historyRevision.value = null;
     }
@@ -147,7 +147,7 @@ export const useEditorStore = defineStore('editor', () => {
   ) => {
     historyRevision.value = revision;
     historyPreviousRevision.value = previousRevision;
-    showPublishDiff.value = false;
+    showDiff.value = false;
     isDetailsPanelExpanded.value = false;
   };
 
@@ -184,7 +184,7 @@ export const useEditorStore = defineStore('editor', () => {
     selectedActivityId.value = null;
     selectedContentElementId.value = null;
     selectedContentElement.value = null;
-    showPublishDiff.value = false;
+    showDiff.value = false;
     historyRevision.value = null;
     historyPreviousRevision.value = null;
   }
@@ -195,7 +195,7 @@ export const useEditorStore = defineStore('editor', () => {
     selectedContentElementId,
     selectedActivity,
     selectedContentElement,
-    showPublishDiff,
+    showDiff,
     historyRevision,
     historyPreviousRevision,
     isHistoryMode,
@@ -208,7 +208,7 @@ export const useEditorStore = defineStore('editor', () => {
     initialize,
     processCommentEvent,
     unlinkActivity,
-    togglePublishDiff,
+    toggleDiff,
     toggleDetailsPanel,
     enterHistoryMode,
     exitHistoryMode,

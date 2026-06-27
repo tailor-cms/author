@@ -8,6 +8,7 @@ export class ContentElement {
   readonly page: Page;
   readonly el: Locator;
   readonly deleteBtn: Locator;
+  readonly diffChip: Locator;
   readonly commentPopoverToggle: Locator;
   readonly commentsMenu: Locator;
   readonly comments: Comments;
@@ -19,6 +20,7 @@ export class ContentElement {
     this.page = page;
     this.el = el;
     this.deleteBtn = el.getByRole('button', { name: 'Delete element' });
+    this.diffChip = el.locator('.diff-chip');
     this.commentPopoverToggle = el.getByRole('button', {
       name: 'View comments',
     });

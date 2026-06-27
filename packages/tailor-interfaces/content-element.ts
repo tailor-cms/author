@@ -2,6 +2,12 @@ import type { Activity } from './activity';
 import type { Comment } from './comment';
 import type { ElementRelationship } from './schema';
 
+export enum DiffChangeTypes {
+  New = 'new',
+  Changed = 'changed',
+  Removed = 'removed',
+}
+
 // Pointer stored inside an element's/activity's `refs` bag.
 export interface Relationship {
   id: number;
@@ -61,7 +67,7 @@ export interface ContentElement {
   hasUnresolvedComments?: boolean;
   embedded?: boolean;
   lastSeen?: number;
-  diffChange?: string;
+  diffChange?: DiffChangeTypes;
   createdAt: string;
   updatedAt: string;
   deletedAt: null | string;

@@ -106,7 +106,7 @@ withDefaults(defineProps<Props>(), {
 
 const { $schemaService } = useNuxtApp() as any;
 
-const showPublishDiff = computed(() => editorStore.showPublishDiff);
+const showPublishDiff = computed(() => editorStore.showDiff);
 const isHistoryMode = computed(() => editorStore.isHistoryMode);
 
 const notify = useNotification();

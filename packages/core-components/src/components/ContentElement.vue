@@ -21,10 +21,7 @@
       :class="{ visible: showDiff && element.diffChange }"
       class="header d-flex"
     >
-      <PublishDiffChip
-        :change-type="element.diffChange as PublishDiffChangeTypes"
-        class="ml-auto"
-      />
+      <DiffChip :change-type="element.diffChange" class="ml-auto" />
     </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <VSheet
@@ -191,17 +188,16 @@ import { cloneDeep } from 'lodash-es';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getElementId } from '@tailor-cms/utils';
 import type { Meta } from '@tailor-cms/interfaces/common';
-import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import ActiveUsers from './ActiveUsers.vue';
 import CircularProgress from './CircularProgress.vue';
+import DiffChip from './DiffChip.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
 import ElementGeneration from './ElementGeneration.vue';
 import ElementLinkedDiscussion from './ElementLinkedDiscussion.vue';
 import ElementLinkedIndicator from './ElementLinkedIndicator.vue';
 import ElementSourceUsages from './ElementSourceUsages.vue';
-import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionElement from './QuestionElement.vue';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 import { useLoader } from '../composables/useLoader';

@@ -221,7 +221,7 @@ const activityContentEl = ref();
 const mousedownCaptured = ref<boolean | null>(null);
 const mousedownInsideElement = ref(false);
 
-const showPublishDiff = computed(() => editorStore.showPublishDiff);
+const showPublishDiff = computed(() => editorStore.showDiff);
 const historyRevision = computed(() => editorStore.historyRevision);
 const historyPreviousRevision = computed(
   () => editorStore.historyPreviousRevision,

@@ -26,10 +26,7 @@
             {{ question }}
           </VCol>
           <VCol cols="3" class="text-right d-flex justify-end align-center">
-            <PublishDiffChip
-              v-if="editorState.showDiff && element.diffChange"
-              :change-type="publishDiffChangeType"
-            />
+            <DiffChip :change-type="element.diffChange" />
             <VFadeTransition>
               <div
                 v-if="!isDisabled && collapsible && (isHovering || expanded)"
@@ -133,10 +130,9 @@ import { computed, inject, reactive, ref, watch } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { getQuestionPromptPreview } from '@tailor-cms/utils';
-import type { PublishDiffChangeTypes } from '@tailor-cms/utils';
 
+import DiffChip from './DiffChip.vue';
 import ElementGeneration from './ElementGeneration.vue';
-import PublishDiffChip from './PublishDiffChip.vue';
 import QuestionContainer from './QuestionContainer/index.vue';
 import { useConfigStore } from '@/stores/config';
 import { useValidation } from '../composables/useValidation';
@@ -215,7 +211,6 @@ const emit = defineEmits([
 ]);
 
 const ceRegistry = inject<any>('$ceRegistry');
-const editorState = inject<any>('$editorState');
 
 const form = ref();
 const editedElement = reactive(initializeElement());
@@ -235,9 +230,6 @@ const question = computed(() => {
 });
 
 const showAI = computed(() => !!config.props.aiUiEnabled && manifest.value?.ai);
-
-const publishDiffChangeType = computed(() =>
-  props.element.diffChange as PublishDiffChangeTypes);
 
 const save = async () => {
   if (!form.value) return;

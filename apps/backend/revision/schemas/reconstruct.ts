@@ -18,7 +18,7 @@ export const ReconstructInput = z
 export type ReconstructInput = z.infer<typeof ReconstructInput>;
 
 // Change of an entity between `against` and `at`. Values match the
-// frontend `PublishDiffChangeTypes` so the client can apply them verbatim;
+// frontend `DiffChangeTypes` so the client can apply them verbatim;
 // `null` means unchanged (or no baseline was supplied).
 export const ReconstructChange = z.enum(['new', 'changed', 'removed']);
 export type ReconstructChange = z.infer<typeof ReconstructChange>;

@@ -18,15 +18,15 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  DiffChangeTypes,
+  type ContentElement,
+} from '@tailor-cms/interfaces/content-element';
 import { differenceBy, filter, keyBy, mapValues } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import { PublishDiffChangeTypes } from '@tailor-cms/utils';
 import type { RevisionReconstructEntity } from '@tailor-cms/api-client';
 
 import { api } from '@/api';
-
-const { Removed } = PublishDiffChangeTypes;
 
 interface Props {
   repositoryId: number;
@@ -78,7 +78,7 @@ const fetchState = async () => {
 const historicalActivityById = computed(() =>
   keyBy(
     historicalActivities.value
-      .filter(({ change }) => change !== Removed)
+      .filter(({ change }) => change !== DiffChangeTypes.Removed)
       .map(({ state }) => state as unknown as Activity),
     'id',
   ),

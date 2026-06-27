@@ -31,12 +31,13 @@ import {
   reduce,
 } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import { PublishDiffChangeTypes } from '@tailor-cms/utils';
+import {
+  DiffChangeTypes,
+  type ContentElement,
+} from '@tailor-cms/interfaces/content-element';
 
 import { api } from '@/api';
 
-const { New, Removed, Changed } = PublishDiffChangeTypes;
 type Content = ContentElement | Activity;
 
 const getPublishedState = (revisions: any[]) =>
@@ -99,9 +100,9 @@ const sameContent = (a: ContentElement, b: ContentElement) =>
 const getChangeType = (uid: string) => {
   const live = props.elements[uid];
   const published = publishedElements.value[uid];
-  if (!live || live.detached) return Removed;
-  if (!published) return New;
-  return sameContent(live, published) ? null : Changed;
+  if (!live || live.detached) return DiffChangeTypes.Removed;
+  if (!published) return DiffChangeTypes.New;
+  return sameContent(live, published) ? null : DiffChangeTypes.Changed;
 };
 
 const addPublishedContainersToGroup = (
