@@ -20,7 +20,16 @@
 </template>
 
 <script lang="ts" setup>
-import { cloneDeep, filter, isEqual, mapValues, merge, omit, reduce } from 'lodash-es';
+import {
+  cloneDeep,
+  differenceBy,
+  filter,
+  isEqual,
+  mapValues,
+  merge,
+  omit,
+  reduce,
+} from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { PublishDiffChangeTypes } from '@tailor-cms/utils';
@@ -104,9 +113,11 @@ const addPublishedContainersToGroup = (
     type,
     parentId: props.activityId,
   });
+  // Only resurrect containers removed since publish; keep live ones single.
+  const removedContainers = differenceBy(publishedContainers, group, 'id');
   return {
     ...groups,
-    [type]: [...group, ...publishedContainers],
+    [type]: [...group, ...removedContainers],
   };
 };
 
