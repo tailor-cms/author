@@ -9,6 +9,7 @@
       :meta="metaWithValue"
       :is-new="isNew"
       :is-reviewer="isReviewer"
+      :readonly="readonly"
       @update="updateMeta"
     />
     <!-- Plugin append components - hidden for new items -->
@@ -17,11 +18,12 @@
         :is="plugin.appendComponentName"
         v-for="plugin in appendPlugins"
         :key="plugin.id"
-        :dark="dark"
-        :meta="meta"
-        :data="entityData"
-        :variant="variant"
         :component-name="componentName"
+        :dark="dark"
+        :data="entityData"
+        :meta="meta"
+        :readonly="readonly"
+        :variant="variant"
         @update="update"
       />
     </div>
@@ -41,6 +43,7 @@ interface Props {
   dark?: boolean;
   isNew?: boolean;
   variant?: string;
+  readonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {

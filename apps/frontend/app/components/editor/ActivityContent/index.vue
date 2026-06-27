@@ -15,7 +15,10 @@
         class="metadata-collapse"
       >
         <div class="metadata-collapse__inner">
-          <ActivityMetadata :activity="activity" />
+          <ActivityMetadata
+            :activity="activity"
+            :readonly="editorStore.isPreviewMode"
+          />
         </div>
       </div>
     </div>
