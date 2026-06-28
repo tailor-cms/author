@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { confirmAction } from '../../pom/common/utils.ts';
 import { Editor } from '../../pom/editor/Editor';
+import { EditorHistory } from '../../pom/editor/History';
 import { percySnapshot } from '../../utils/percy.ts';
 import SeedClient from '../../api/SeedClient';
 import { Relationship } from '../../pom/editor/Relationship.ts';
@@ -95,6 +96,17 @@ test('snapshot of the editor page displaying the publish diff', async ({
   await page.reload();
   await page.getByLabel('Compare with published').click();
   await percySnapshot(page, 'Editor page - publish diff');
+});
+
+test('snapshot of the editor page history tab', async ({ page }) => {
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  await editor.addContentElement('A revision');
+
+  const history = new EditorHistory(page);
+  await history.open();
+  await expect(page.getByText('Today')).toBeVisible();
+  await percySnapshot(page, 'Editor page - history');
 });
 
 test.afterAll(async () => {

@@ -7,7 +7,6 @@ export { default as InsertLocation } from './insertLocation';
 export * from './changeCase';
 export * as Events from './events';
 export { default as numberToLetter } from './numberToLetter';
-export { default as PublishDiffChangeTypes } from './publishDiffChangeTypes';
 export { default as uuid } from './uuid';
 
 const TEXT_CONTAINERS = ['HTML', 'JODIT_HTML', 'TIPTAP_HTML'];

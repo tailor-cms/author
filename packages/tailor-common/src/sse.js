@@ -23,3 +23,7 @@ export const UserActivity = {
   End: 'user_activity:end',
   EndSession: 'user_activity:end_session',
 };
+
+export const Revision = {
+  Create: 'revision:create',
+};

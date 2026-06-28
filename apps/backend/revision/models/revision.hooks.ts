@@ -7,6 +7,9 @@ import { constantCase } from '@tailor-cms/utils';
 import { createLogger } from '#logger';
 import forEach from 'lodash/forEach.js';
 import { Operation } from '@tailor-cms/interfaces/revision';
+import { Revision as RevisionEvents } from '@tailor-cms/common/src/sse.js';
+import sse from '#shared/sse/index.js';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 import type { OperationContext } from '#shared/database/types.ts';
 import type ActivityModel from '../../activity/models/activity.model.js';
 import type ContentElementModel
@@ -61,6 +64,8 @@ function add(
   addHook(Repository, Hooks.afterCreate, createRevisions);
   addHook(Repository, Hooks.afterUpdate, createRevisions);
 
+  addHook(Revision, Hooks.afterBulkCreate, sseCreate);
+
   forEach(hooks, (_, type) => addHook(Activity, type, createRevisions));
   forEach(hooks, (_, type) => addHook(ContentElement, type, createRevisions));
 
@@ -78,6 +83,21 @@ function add(
     }, []);
     if (!records.length) return;
     return Revision.bulkCreate(records, { transaction });
+  }
+
+  async function sseCreate(_hookType: string, created: any[]) {
+    if (!created.length) return;
+    const User = Revision.sequelize.model('User');
+    const user = await User.findByPk(created[0].userId, {
+      attributes: USER_SUMMARY_ATTRS,
+      paranoid: false,
+    });
+    created.forEach((revision: any) =>
+      sse.channel(revision.repositoryId).send(RevisionEvents.Create, {
+        ...revision.toJSON(),
+        user,
+      }),
+    );
   }
 
   function getRevision(
@@ -109,6 +129,7 @@ function add(
       operation,
       state: instance.toJSON(),
       userId: context.userId,
+      transactionId: context.transactionId ?? null,
     };
   }
 }

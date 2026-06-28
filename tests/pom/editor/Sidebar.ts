@@ -4,9 +4,10 @@ import { Comments } from '../common/Comments';
 import { Navigation } from './Navigation';
 
 enum SidebarTab {
-  Comments = 'COMMENTS_TAB',
-  Browser = 'BROWSER_TAB',
-  Element = 'ELEMENT_TAB',
+  Comments = 'Comments',
+  Browser = 'Browser',
+  Element = 'Element',
+  History = 'History',
 }
 
 export class EditorSidebar {
@@ -42,6 +43,10 @@ export class EditorSidebar {
 
   openElementTab() {
     return this.getTabByName(SidebarTab.Element).click();
+  }
+
+  openHistoryTab() {
+    return this.getTabByName(SidebarTab.History).click();
   }
 
   toggleOutlineItems() {

@@ -25,6 +25,9 @@ export interface Revision {
   operation: Operation;
   state: Record<string, unknown>;
   user?: UserSummary;
+  // Shared id for revisions produced by one logical operation (e.g. a
+  // restore); null for standalone edits.
+  transactionId?: string | null;
   createdAt: string;
   updatedAt: string;
 }

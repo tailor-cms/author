@@ -32,6 +32,11 @@ class Revision extends Model {
         allowNull: true,
         validate: { notEmpty: true },
       },
+      transactionId: {
+        type: UUID,
+        field: 'transaction_id',
+        allowNull: true,
+      },
       createdAt: {
         type: DATE,
         field: 'created_at',

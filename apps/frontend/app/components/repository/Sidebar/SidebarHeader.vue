@@ -38,7 +38,7 @@
 
 <script lang="ts" setup>
 import { activity as activityUtils } from '@tailor-cms/utils';
-import { format } from 'fecha';
+import { formatDate } from '@vueuse/core';
 
 import ActivityPublishing from './ActivityPublishing.vue';
 import PublishingBadge from './PublishingBadge.vue';
@@ -61,7 +61,7 @@ const publishStatusMessage = computed(() => {
   const { publishedAt } = props.activity;
   if (publishing.isPublishing.value) return publishing.status.value.message;
   return publishedAt
-    ? `Published on ${format(new Date(publishedAt), 'M/D/YY h:mm A')}`
+    ? `Published on ${formatDate(new Date(publishedAt), 'M/D/YY h:mm A')}`
     : 'Not published';
 });
 

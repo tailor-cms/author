@@ -30,7 +30,7 @@ const currentRepositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 const contentElementStore = useContentElementStore();
 
-const showPublishDiff = computed(() => editorStore.showPublishDiff);
+const showPublishDiff = computed(() => editorStore.showDiff);
 
 const activityLabel = computed(
   () =>
@@ -82,7 +82,7 @@ const actions = computed(() => {
       icon: 'plus-minus',
       active: showPublishDiff.value,
       disabled: !editorStore.selectedActivity?.publishedAt,
-      action: () => editorStore.togglePublishDiff(),
+      action: () => editorStore.toggleDiff(),
     },
   ];
   if (!currentRepositoryStore.repository?.hasAdminAccess) return items;
