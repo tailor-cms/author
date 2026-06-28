@@ -22,13 +22,10 @@
     <template #append>
       <VChip
         v-if="isPublished"
-        class="mr-1"
         color="tertiary"
-        density="comfortable"
-        size="small"
+        size="x-small"
         text="Published"
         variant="tonal"
-        rounded="pill"
       />
       <VBtn
         v-if="childrenCount > 0"
@@ -36,6 +33,7 @@
         v-bind="activatorProps"
         :aria-label="expandLabel"
         :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+        class="ml-1"
         size="x-small"
         variant="text"
         @click.stop
