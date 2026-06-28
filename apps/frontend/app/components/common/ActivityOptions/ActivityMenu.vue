@@ -13,7 +13,6 @@
           aria-label="Options menu"
           icon="mdi-dots-vertical"
           variant="text"
-          density="comfortable"
           :size="activatorSize"
           :rounded="rounded"
         />
