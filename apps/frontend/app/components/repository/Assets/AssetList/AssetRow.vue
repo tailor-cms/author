@@ -1,11 +1,14 @@
 <template>
-  <VRow
-    :class="{ active: isActive }"
-    class="asset-row px-2 py-3 align-center bg-surface-container"
+  <VListItem
+    :active="isActive"
+    :ripple="false"
+    class="asset-row bg-surface elevation-1 text-left"
     density="compact"
+    lines="two"
+    link
     @click="emit('preview', asset)"
   >
-    <VCol cols="auto" class="px-1">
+    <template #prepend>
       <div
         :aria-checked="isSelected"
         :class="{ selected: isSelected }"
@@ -20,7 +23,7 @@
           :color="getAssetColor(asset)"
           :icon="getAssetIcon(asset)"
           class="thumbnail"
-          size="28"
+          size="24"
         />
         <VIcon
           :color="isSelected ? 'primary' : undefined"
@@ -29,21 +32,21 @@
           size="24"
         />
       </div>
-    </VCol>
-    <VCol class="px-2 overflow-hidden text-start">
-      <div class="d-flex align-center text-title-small">
-        <span data-testid="assetRow_name" class="text-truncate">
-          {{ getAssetDisplayName(asset) }}
-        </span>
-        <VIcon
-          v-if="(asset.meta as any)?.isCoreSource"
-          class="ml-1"
-          color="tertiary"
-          icon="mdi-star"
-          size="14"
-        />
-      </div>
-      <div class="d-flex align-center text-medium-emphasis text-body-medium">
+    </template>
+    <VListItemTitle class="d-flex align-center text-title-small">
+      <span data-testid="assetRow_name" class="text-truncate">
+        {{ getAssetDisplayName(asset) }}
+      </span>
+      <VIcon
+        v-if="(asset.meta as any)?.isCoreSource"
+        class="ml-1"
+        color="tertiary"
+        icon="mdi-star"
+        size="14"
+      />
+    </VListItemTitle>
+    <VListItemSubtitle class="text-body-medium">
+      <template v-if="!compact">
         <span data-testid="assetRow_type" class="text-capitalize">
           {{ getAssetTypeLabel(asset) }}
         </span>
@@ -52,45 +55,53 @@
           {{ formatFileSize(asset.meta.fileSize) }}
           <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
         </template>
-        <span data-percy="hide">{{ formatDate(asset.createdAt) }}</span>
-        <template v-if="showFolder">
-          <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
-          <VChip
-            class="folder-chip"
-            data-testid="assetRow_folder"
-            prepend-icon="mdi-folder-outline"
-            size="x-small"
-            variant="tonal"
-            @click.stop="emit('open-folder', folderPath)"
-          >
-            {{ folderLabel }}
-          </VChip>
-        </template>
-      </div>
-    </VCol>
-    <VCol cols="auto" class="d-flex align-center px-1">
+      </template>
+      <span data-percy="hide">{{ formatDate(asset.createdAt) }}</span>
+      <template v-if="showFolder">
+        <VIcon class="mx-1" icon="mdi-circle-small" size="x-small" />
+        <VChip
+          :text="folderLabel"
+          class="folder-chip"
+          data-testid="assetRow_folder"
+          prepend-icon="mdi-folder-outline"
+          size="x-small"
+          variant="tonal"
+          @click.stop="emit('open-folder', folderPath)"
+        />
+      </template>
       <IndexingStatusBadge
-        v-if="asset.processingStatus"
+        v-if="asset.processingStatus && compact"
         :status="asset.processingStatus"
-        class="mr-3"
+        size="x-small"
+        density="comfortable"
+        class="ml-3"
       />
-      <UserAvatar
-        v-if="asset.uploader"
-        :img-url="asset.uploader.imgUrl ?? undefined"
-        :label="asset.uploader.label"
-        class="mr-2"
-        size="24"
-      />
-      <AssetMenu
-        :asset="asset"
-        @download="emit('download', $event)"
-        @index="emit('index', $event)"
-        @deindex="emit('deindex', $event)"
-        @move="emit('move', $event)"
-        @delete="emit('delete', $event)"
-      />
-    </VCol>
-  </VRow>
+    </VListItemSubtitle>
+    <template #append>
+      <div class="d-flex align-center">
+        <IndexingStatusBadge
+          v-if="asset.processingStatus && !compact"
+          :status="asset.processingStatus"
+          class="mr-3"
+        />
+        <UserAvatar
+          v-if="asset.uploader && !compact"
+          :img-url="asset.uploader.imgUrl ?? undefined"
+          :label="asset.uploader.label"
+          class="mr-2"
+          size="24"
+        />
+        <AssetMenu
+          :asset="asset"
+          @download="emit('download', $event)"
+          @index="emit('index', $event)"
+          @deindex="emit('deindex', $event)"
+          @move="emit('move', $event)"
+          @delete="emit('delete', $event)"
+        />
+      </div>
+    </template>
+  </VListItem>
 </template>
 
 <script lang="ts" setup>
@@ -114,6 +125,8 @@ const props = defineProps<{
   isActive: boolean;
   // Show location (only in flat search/filter results).
   showFolder: boolean;
+  // Collapse low-priority meta (type + size) when the list is narrow.
+  compact?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -133,18 +146,9 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 
 <style lang="scss" scoped>
 .asset-row {
-  margin: 0.375rem 0;
   cursor: pointer;
   border-radius: 8px;
-  transition: background 0.15s ease;
-
-  &:hover {
-    background-color: rgb(var(--v-theme-surface-container-high));
-  }
-
-  &.active {
-    background: rgb(var(--v-theme-surface-container-high));
-  }
+  padding-left: 0.5rem;
 }
 
 .asset-select {

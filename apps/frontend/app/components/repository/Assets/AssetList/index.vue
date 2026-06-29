@@ -23,6 +23,7 @@
   </div>
   <VDataIterator
     v-else-if="assets.length"
+    ref="iteratorEl"
     :class="{ 'opacity-50': isFetching }"
     :items="assets"
     :items-length="total"
@@ -30,11 +31,12 @@
     :page="props.page"
   >
     <template #default="{ items }">
-      <div class="d-flex flex-column">
+      <VList class="d-flex bg-transparent flex-column ga-2 overflow-visible">
         <AssetRow
           v-for="{ raw: asset } in items"
           :key="asset.id"
           :asset="asset"
+          :compact="compact"
           :is-active="asset.id === activeAssetId"
           :is-selected="selected.has(asset.id)"
           :show-folder="isFiltered"
@@ -47,7 +49,7 @@
           @delete="emit('delete', $event)"
           @open-folder="emit('folder:open', $event)"
         />
-      </div>
+      </VList>
     </template>
     <template #footer>
       <VPagination
@@ -80,6 +82,7 @@ import type { Asset } from '@tailor-cms/interfaces/asset';
 import type { FolderNode } from '~/composables/useAssetFolders';
 import { CATEGORY_ALL } from '~/composables/useAssetFiltering';
 import { oneLine } from 'common-tags';
+import { useElementSize } from '@vueuse/core';
 import AssetRow from './AssetRow.vue';
 import FolderRow from './FolderRow.vue';
 
@@ -114,6 +117,13 @@ const emit = defineEmits<{
   'folder:delete': [path: string];
   'folder:up': [];
 }>();
+
+// Collapse the row meta (type + size) when the list gets narrow, so the name +
+// date stay readable instead of truncating. Measured once here and passed down,
+// rather than a ResizeObserver per row.
+const iteratorEl = ref(null);
+const { width: listWidth } = useElementSize(iteratorEl);
+const compact = computed(() => listWidth.value > 0 && listWidth.value < 460);
 
 const isFiltered = computed(
   () => props.selectedCategory !== CATEGORY_ALL || Boolean(props.search.trim()),
