@@ -3,8 +3,10 @@
     :class="{ resizing: isResizing }"
     :model-value="!!asset"
     :width="width"
+    border="0"
     class="asset-sidebar"
-    color="surface-container"
+    color="surface"
+    elevation="1"
     location="right"
     mobile-breakpoint="md"
     absolute
@@ -16,7 +18,7 @@
       role="separator"
       @pointerdown="startResize"
     />
-    <div v-if="asset" class="pa-4">
+    <div v-if="asset" class="pa-5">
       <div class="header d-flex align-center ga-2 mb-4">
         <VSpacer />
         <MetaInspector :asset="asset" />

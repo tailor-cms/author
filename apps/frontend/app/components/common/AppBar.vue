@@ -1,5 +1,5 @@
 <template>
-  <VAppBar id="mainAppBar" class="app-bar elevation-0">
+  <VAppBar id="mainAppBar" class="app-bar elevation-0" color="transparent">
     <NuxtLink :to="{ name: 'catalog' }" class="app-brand ml-5">
       <img
         alt="Tailor logo"

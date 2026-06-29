@@ -11,7 +11,7 @@
       location="right"
       disable-route-watcher
     >
-      <div class="agent-drawer-card bg-surface-container-lowest border-sm">
+      <div class="agent-drawer-card bg-surface-container-lowest elevation-1">
         <div
           aria-orientation="vertical"
           class="resize-handle"
@@ -32,7 +32,7 @@
             :status-text="activeStatus"
             :error="runnerError"
           />
-          <div v-if="pendingQuestion" class="question-host ma-4 mt-0">
+          <div v-if="pendingQuestion" class="question-host ma-5 mt-0">
             <AgentQuestion
               v-bind="pendingQuestion"
               @pick="runner.send"

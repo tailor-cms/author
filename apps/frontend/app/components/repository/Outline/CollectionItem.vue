@@ -5,8 +5,8 @@
     :class="{ 'is-selected': isSelected, 'is-deleted': isSoftDeleted }"
     :ripple="false"
     :style="{ '--row-accent': config?.color }"
-    class="collection-row py-2 px-4 mb-2"
-    link
+    class="collection-row bg-surface py-2 px-4 mb-2"
+    elevation="1"
     rounded
     @click="selectRow"
   >
@@ -131,7 +131,6 @@ watch(isSelected, (selected) => {
 
 <style lang="scss" scoped>
 .collection-row {
-  background-color: rgba(var(--v-theme-surface-container));
   border-left: 8px solid var(--row-accent);
   transition:
     background-color 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),

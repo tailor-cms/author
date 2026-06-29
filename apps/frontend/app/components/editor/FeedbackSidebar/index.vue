@@ -5,8 +5,9 @@
     :mobile-breakpoint="LENS_OVERLAY_BELOW_WIDTH"
     :width="width"
     class="sidebar"
-    color="surface-container"
-    elevation="0"
+    border="0"
+    color="surface"
+    elevation="1"
     location="right"
     disable-route-watcher
   >
@@ -17,7 +18,7 @@
       @pointerdown="startResize"
     />
     <div class="sidebar-layout">
-      <div class="sidebar-header pa-4">
+      <div class="sidebar-header pa-5">
         <div class="d-flex align-center mb-3">
           <span class="text-title-medium font-weight-bold">
             Review lens
@@ -56,7 +57,7 @@
           class="mt-3 mx-1"
         />
       </div>
-      <div class="sidebar-body px-4 d-flex flex-column ga-3">
+      <div class="sidebar-body px-5 d-flex flex-column ga-3">
         <VAlert
           v-if="status?.status === 'failed'"
           color="error"

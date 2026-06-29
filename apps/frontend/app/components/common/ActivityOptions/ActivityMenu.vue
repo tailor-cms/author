@@ -13,6 +13,7 @@
           aria-label="Options menu"
           icon="mdi-dots-vertical"
           variant="text"
+          :density="density"
           :size="activatorSize"
           :rounded="rounded"
         />
@@ -76,6 +77,7 @@ export interface Props {
   activity: StoreActivity;
   activatorSize?: string;
   rounded?: boolean | string;
+  density?: 'default' | 'comfortable' | 'compact';
 }
 
 const props = withDefaults(defineProps<Props>(), {

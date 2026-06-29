@@ -4,7 +4,7 @@
     :ripple="false"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    elevation="0"
+    elevation="2"
     color="surface-container-low"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >

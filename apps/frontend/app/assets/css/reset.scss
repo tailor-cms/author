@@ -54,3 +54,15 @@ body {
 .v-bottom-sheet__content {
   transition-property: transform;
 }
+
+/* Softer, airier elevation ramp — overrides Vuetify's default (harder, MD2-era)
+   box-shadows. Unlayered, so it beats Vuetify's layered `.elevation-*` utilities
+   without `!important`. Only affects elements that use elevation (menus, dialogs,
+   cards, raised buttons, and the content rows that opt in via `elevation-1`). */
+@for $i from 1 through 24 {
+  .elevation-#{$i} {
+    box-shadow:
+      0 #{$i * 0.5}px #{$i + 1}px rgba(0, 0, 0, 0.06),
+      0 #{$i}px #{$i * 3}px rgba(0, 0, 0, 0.07);
+  }
+}

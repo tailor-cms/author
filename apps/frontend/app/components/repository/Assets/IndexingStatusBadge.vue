@@ -1,7 +1,8 @@
 <template>
   <VChip
     :color="color"
-    size="x-small"
+    :density="density"
+    :size="size"
     variant="tonal"
     rounded="md"
   >
@@ -18,8 +19,18 @@
 
 <script lang="ts" setup>
 import { ProcessingStatus } from '@tailor-cms/interfaces/asset';
+import type { VChip } from 'vuetify/components/VChip';
 
-const props = defineProps<{ status: string }>();
+interface Props {
+  status: string;
+  density?: VChip['density'];
+  size?: VChip['size'];
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  density: 'default',
+  size: 'small',
+});
 
 const COLOR_MAP: Record<string, string> = {
   [ProcessingStatus.Pending]: 'warning',

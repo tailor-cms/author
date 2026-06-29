@@ -1,5 +1,5 @@
 <template>
-  <VCard class="activity-content-loader" theme="light">
+  <VCard class="activity-content-loader" theme="light" elevation="2">
     <div class="mb-3">
       <VSkeletonLoader class="justify-end" type="button" />
     </div>

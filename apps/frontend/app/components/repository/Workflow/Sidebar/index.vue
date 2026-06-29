@@ -3,8 +3,10 @@
     :class="{ resizing: isResizing }"
     :model-value="repositoryStore.isSidebarOpen || mdAndUp"
     :width="width"
+    border="0"
     class="text-left"
-    color="surface-container"
+    color="surface"
+    elevation="1"
     location="right"
     mobile-breakpoint="md"
     absolute
@@ -16,7 +18,7 @@
       role="separator"
       @pointerdown="startResize"
     />
-    <div v-if="activity?.isTrackedInWorkflow" class="pa-4 pb-16">
+    <div v-if="activity?.isTrackedInWorkflow" class="pa-5 pb-16">
       <SidebarHeader :activity="activity" />
       <SidebarBody :activity="activity" class="my-6" />
     </div>

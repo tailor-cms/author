@@ -6,7 +6,7 @@
     <template v-else>
       <NavigationRail @action="onRailAction" />
       <VLayout
-        class="h-100 mr-3 bg-surface-container-low rounded-t-xl border-sm">
+        class="h-100 mr-3 bg-surface-container-low rounded-t-xl elevation-2">
         <NuxtPage />
       </VLayout>
       <AgentPanel />

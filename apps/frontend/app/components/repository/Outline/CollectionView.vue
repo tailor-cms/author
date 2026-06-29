@@ -126,7 +126,7 @@ const sortedItems = computed(() =>
 }
 
 .collection-list {
-  background: transparent;
+  overflow: visible;
   text-align: left;
 }
 

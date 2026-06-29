@@ -10,8 +10,9 @@
           :class="{ selected: isSelected, disabled: isSoftDeleted }"
           :ripple="false"
           :style="{ '--row-accent': config?.color }"
-          class="activity bg-surface-container"
+          class="activity bg-surface"
           data-testid="repository__structureActivity"
+          elevation="1"
           link
           @mousedown="selectActivity(activity.id)"
         >
@@ -202,8 +203,6 @@ const icon = computed(() => {
 
 <style lang="scss" scoped>
 .activity {
-  --v-activated-opacity: 0.06;
-
   height: 3.25rem;
   min-height: 3.25rem;
   padding: 0 0 0 0.625rem;
