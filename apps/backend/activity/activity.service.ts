@@ -8,14 +8,7 @@ import { schema } from '@tailor-cms/config';
 import find from 'lodash/find.js';
 import get from 'lodash/get.js';
 
-import { createLogger } from '#logger';
-import db from '#shared/database/index.js';
-import linkService from '#shared/content-library/link.service.js';
-import publishingService from '#shared/publishing/publishing.service.js';
-import type { Repository } from '../repository/models/repository.model.js';
-import type { User } from '../user/models/user.model.js';
 import type { Activity, ActivityCopyLocation } from './models/activity.model.js';
-
 import type {
   CloneInput,
   CreateInput,
@@ -24,9 +17,18 @@ import type {
   PatchInput,
   WorkflowStatusInput,
 } from './schemas/index.ts';
+import type { Repository } from '../repository/models/repository.model.js';
+import type { User } from '../user/models/user.model.js';
+import { applyReferentialDeletion } from './reference.service.ts';
+import { createLogger } from '#logger';
+import db from '#shared/database/index.js';
+import linkService from '#shared/content-library/link.service.js';
+import publishingService from '#shared/publishing/publishing.service.js';
+
+export { RestrictedDeletionError } from './reference.service.ts';
 
 const { Activity: ActivityModel, sequelize } = db;
-const { getOutlineLevels, isOutlineActivity } = schema;
+const { getOutlineLevels, getSchema, isOutlineActivity } = schema;
 
 const logger = createLogger('activity:svc');
 
@@ -146,13 +148,17 @@ export async function update(
 // descendants (activities + content elements) as `detached: true` so they
 // drop out of the outline while staying in the DB. For outline activities,
 // recomputes the repository's `hasUnpublishedChanges` so the publish bar
-// reflects the deletion.
+// reflects the deletion. In collection repositories, first resolves referential
+// integrity for records that link to this one (RESTRICT / SET_NULL / CASCADE).
 export async function remove(
   repository: Repository,
   user: User,
   activity: Activity,
 ): Promise<{ id: number }> {
   const context = { userId: user.id, repository };
+  if (getSchema(repository.schema)?.collection) {
+    await applyReferentialDeletion(activity, context);
+  }
   const options = { recursive: true, soft: true, context };
   const deleted = await activity.remove(options);
   if (isOutlineActivity(activity.type)) {

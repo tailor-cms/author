@@ -48,6 +48,24 @@ export interface ElementMetaConfig {
   relationships?: ElementRelationship[];
 }
 
+/**
+ * What happens to a record that references a target record when that target is
+ * deleted. Resolved per relationship during schema processing.
+ *  - RESTRICT: block the delete while any record still links to the target
+ *  - SET_NULL: drop the now-dangling reference from the linking records
+ *  - CASCADE:  delete the linking records along with the target
+ */
+export const ReferenceDeletePolicy = {
+  Restrict: 'RESTRICT',
+  SetNull: 'SET_NULL',
+  Cascade: 'CASCADE',
+} as const;
+
+export const REFERENCE_DELETE_POLICIES = Object.values(ReferenceDeletePolicy);
+
+export type ReferenceDeletePolicy =
+  (typeof ReferenceDeletePolicy)[keyof typeof ReferenceDeletePolicy];
+
 export interface ActivityRelationship {
   type: string;
   label: string;
@@ -58,6 +76,7 @@ export interface ActivityRelationship {
   allowCircularLinks: boolean;
   allowInsideLineage: boolean;
   allowedTypes?: string[];
+  onDelete?: ReferenceDeletePolicy;
 }
 
 export interface AiActivityConfig {
@@ -181,6 +200,10 @@ export interface EntityRelationshipConfig {
   allowEmpty?: boolean;
   allowCircularLinks?: boolean;
   placeholder?: string;
+  // What happens to this record when a target it references is deleted. When
+  // omitted, resolves to RESTRICT for required relationships (so a delete can't
+  // silently break a required link) and SET_NULL for optional ones.
+  onDelete?: ReferenceDeletePolicy;
 }
 
 export interface ContainerStructure {

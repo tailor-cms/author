@@ -6232,6 +6232,9 @@
           },
           "404": {
             "description": "Activity not found."
+          },
+          "409": {
+            "description": "Referenced by a RESTRICT relationship."
           }
         },
         "security": [
