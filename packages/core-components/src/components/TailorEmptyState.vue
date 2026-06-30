@@ -5,7 +5,6 @@
     :rounded="rounded"
     :height="height"
     :variant="variant"
-    class="py-12"
   >
     <VEmptyState
       v-bind="{ actionText, icon, headline, href, text, title, size, image, textWidth }"
@@ -13,6 +12,17 @@
     >
       <template v-for="(_, name) in $slots" #[name]="slotProps">
         <slot :name="name" v-bind="slotProps ?? {}"></slot>
+      </template>
+      <template #actions>
+        <slot name="action" />
+        <VBtn
+          v-if="actionText"
+          :text="actionText"
+          :prepend-icon="prependActionIcon"
+          :append-icon="appendActionIcon"
+          variant="flat"
+          @click="emit('click:action')"
+        />
       </template>
     </VEmptyState>
   </VCard>
@@ -34,12 +44,15 @@ export interface Props {
   text?: string;
   title?: string;
   textWidth?: string | number;
+  appendActionIcon?: string;
+  prependActionIcon?: string;
   variant?: VCard['variant'];
 }
 defineOptions({ inheritAttrs: false });
 withDefaults(defineProps<Props>(), {
   rounded: 'lg',
   size: '64',
+  height: '300',
   variant: 'tonal',
 });
 

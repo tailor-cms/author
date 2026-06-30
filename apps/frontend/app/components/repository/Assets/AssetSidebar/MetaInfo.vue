@@ -47,7 +47,7 @@
       </div>
       <div v-if="asset.processingStatus" class="meta-item">
         <div class="meta-label">Indexing</div>
-        <IndexingStatusBadge :status="asset.processingStatus" />
+        <IndexingStatusBadge :status="asset.processingStatus" label />
       </div>
     </div>
     <template v-if="isLink && meta.url">

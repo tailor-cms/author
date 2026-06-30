@@ -10,23 +10,10 @@
           @discover="showDiscoveryDialog = true"
           @folder:new="showNewFolderDialog = true"
         />
-        <BulkActionBar
-          :selected="selection.selected"
-          :is-all-selected="isAllSelected"
-          :is-indexing="indexing.isIndexing.value"
-          :is-bulk-deleting="assetStore.isBulkRemoving"
-          @clear="selection.clear"
-          @index="indexSelected"
-          @move="openMove([...selection.selected.keys()])"
-          @delete="confirmDelete([...selection.selected.keys()])"
-          @toggle-all="$event ? selection.selectAll() : selection.deselectAll()"
-        />
-        <ListControls
-          v-model:selected-category="selectedCategory"
-          v-model:items-per-page="assetStore.itemsPerPage"
+        <CategoryFilter
+          v-model="selectedCategory"
           :categories="categories"
-          :sort-direction="sortDirection"
-          @toggle-sort="toggleSortDirection"
+          class="mb-4"
         />
         <FolderBreadcrumbs
           :breadcrumbs="breadcrumbs"
@@ -34,6 +21,51 @@
           @navigate="browseTo"
           @navigate-up="browseUp"
         />
+        <VRow
+          v-if="showSubfolders"
+          class="folder-container mb-4"
+          density="compact"
+        >
+          <VCol
+            v-for="folder in subfolders"
+            :key="folder.path"
+            cols="12"
+            lg="4"
+            sm="6"
+          >
+            <FolderRow
+              :folder="folder"
+              @open="browseTo"
+              @remove="removeLocalFolder"
+              @delete="onFolderDelete"
+            />
+          </VCol>
+        </VRow>
+        <template v-if="processedAssets.length">
+          <VSlideYTransition mode="out-in">
+            <BulkActionBar
+              v-if="selection.selected.size"
+              :selected="selection.selected"
+              :is-all-selected="isAllSelected"
+              :is-indexing="indexing.isIndexing.value"
+              :is-bulk-deleting="assetStore.isBulkRemoving"
+              @clear="selection.clear"
+              @index="indexSelected"
+              @move="openMove([...selection.selected.keys()])"
+              @delete="confirmDelete([...selection.selected.keys()])"
+              @toggle-all="
+                $event ? selection.selectAll() : selection.deselectAll()
+              "
+            />
+            <DisplayControls
+              v-else
+              v-model:items-per-page="assetStore.itemsPerPage"
+              v-model:view-mode="viewMode"
+              :sort-direction="sortDirection"
+              @toggle-sort="toggleSortDirection"
+            />
+          </VSlideYTransition>
+        </template>
         <AssetList
           :active-asset-id="activeAsset?.id ?? null"
           :assets="processedAssets"
@@ -47,14 +79,13 @@
           :search="searchQuery"
           :selected="selection.selected"
           :selected-category="selectedCategory"
-          :subfolders="subfolders"
+          :has-folders="showSubfolders"
           :total="assetStore.total"
+          :view-mode="viewMode"
           @delete="(asset: Asset) => confirmDelete([asset.id])"
           @deindex="onDeindex"
           @download="downloadAsset"
           @folder:open="browseTo"
-          @folder:remove="removeLocalFolder"
-          @folder:delete="onFolderDelete"
           @folder:up="browseUp"
           @index="(asset: Asset) => indexing.startIndexing([asset.id])"
           @move="(asset: Asset) => openMove([asset.id])"
@@ -66,10 +97,7 @@
           v-model="showAddLinkDialog"
           @add="(url: string) => assetStore.addLink(url).then(refetch)"
         />
-        <DiscoveryDialog
-          v-model="showDiscoveryDialog"
-          @added="refetch()"
-        />
+        <DiscoveryDialog v-model="showDiscoveryDialog" @added="refetch()" />
         <MoveToFolderDialog
           v-model="showMoveDialog"
           :count="moveTargetIds.length"
@@ -100,9 +128,13 @@
 
 <script lang="ts" setup>
 import type { Asset } from '@tailor-cms/interfaces/asset';
-import { formatFileSize, isIndexable } from '@/components/repository/Assets/utils';
+import {
+  formatFileSize,
+  isIndexable,
+} from '@/components/repository/Assets/utils';
 import { CATEGORY_ALL } from '@/composables/useAssetFiltering';
 import { debounce } from 'lodash-es';
+import { useLocalStorage } from '@vueuse/core';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useUploadStore } from '@/stores/uploads';
@@ -110,9 +142,11 @@ import AddLinkDialog from '@/components/repository/Assets/AddLinkDialog.vue';
 import AssetSidebar from '@/components/repository/Assets/AssetSidebar/index.vue';
 import AssetList from '@/components/repository/Assets/AssetList/index.vue';
 import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
+import CategoryFilter from '@/components/repository/Assets/CategoryFilter.vue';
+import DisplayControls from '@/components/repository/Assets/DisplayControls.vue';
 import DiscoveryDialog from '@/components/repository/Assets/Discovery/index.vue';
 import FolderBreadcrumbs from '@/components/repository/Assets/FolderBreadcrumbs.vue';
-import ListControls from '@/components/repository/Assets/ListControls/index.vue';
+import FolderRow from '@/components/repository/Assets/AssetList/FolderRow.vue';
 import NewFolderDialog from '@/components/repository/Assets/NewFolderDialog.vue';
 import MoveToFolderDialog from '@/components/repository/Assets/MoveToFolderDialog.vue';
 import Toolbar from '@/components/repository/Assets/Toolbar.vue';
@@ -136,6 +170,7 @@ const maxUploadSize = computed(
 );
 
 const sortDirection = ref<SortDirection>(DESC);
+const viewMode = useLocalStorage<'grid' | 'list'>('assets:view-mode', 'list');
 const searchQuery = ref('');
 const activeAsset = ref<Asset | null>(null);
 const showAddLinkDialog = ref(false);
@@ -181,10 +216,18 @@ const isQuerying = computed(
   () => selectedCategory.value !== CATEGORY_ALL || !!searchQuery.value.trim(),
 );
 
+// Folders only show while plain-browsing (search/filter switches to a flat,
+// global file listing). Also gates the asset list's empty state.
+const showSubfolders = computed(
+  () => !isQuerying.value && subfolders.value.length > 0,
+);
+
 const fetchParams = computed(() => {
   const params: Record<string, any> = {
     sortBy: 'createdAt',
     sortOrder: sortDirection.value,
+    // Pre-signed publicUrl per row so the grid can render image thumbnails.
+    signed: true,
   };
   if (selectedCategory.value !== CATEGORY_ALL) {
     params.type = selectedCategory.value;
@@ -237,7 +280,8 @@ const assetLabel = (n: number) => `${n} ${n === 1 ? 'asset' : 'assets'}`;
 
 // Close the detail sidebar when its asset is affected by a mutation.
 function closeSidebarIf(affected: (asset: Asset) => boolean) {
-  if (activeAsset.value && affected(activeAsset.value)) activeAsset.value = null;
+  if (activeAsset.value && affected(activeAsset.value))
+    activeAsset.value = null;
 }
 
 // Re-sync the open sidebar asset from the store after an in-place update.
@@ -356,7 +400,9 @@ function confirmDelete(ids: number[]) {
       ? `Are you sure you want to delete "${name}"?`
       : `Delete ${assetLabel(ids.length)}?`,
     action: async () => {
-      await (single ? assetStore.remove(ids[0] as number) : assetStore.bulkRemove(ids));
+      await (single
+        ? assetStore.remove(ids[0] as number)
+        : assetStore.bulkRemove(ids));
       ids.forEach((id) => selection.selected.delete(id));
       closeSidebarIf((a) => ids.includes(a.id));
       refetchAll();
@@ -368,7 +414,9 @@ const debouncedSearch = debounce(resetAndFetch, 300);
 
 // What the listing is scoped to: the current folder while browsing, or the
 // whole repo (null) while searching/filtering.
-const fetchScope = computed(() => (isQuerying.value ? null : currentPath.value));
+const fetchScope = computed(() =>
+  isQuerying.value ? null : currentPath.value,
+);
 watch(fetchScope, () => assetStore.invalidate());
 
 watch(

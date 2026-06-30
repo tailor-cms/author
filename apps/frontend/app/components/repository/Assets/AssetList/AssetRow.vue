@@ -19,7 +19,15 @@
         @keydown.enter.prevent="emit('toggle', asset)"
         @keydown.space.prevent="emit('toggle', asset)"
       >
+        <VImg
+          v-if="thumbnailUrl"
+          :src="thumbnailUrl"
+          :aspect-ratio="1"
+          class="thumbnail rounded"
+          cover
+        />
         <VIcon
+          v-else
           :color="getAssetColor(asset)"
           :icon="getAssetIcon(asset)"
           class="thumbnail"
@@ -66,6 +74,7 @@
           prepend-icon="mdi-folder-outline"
           size="x-small"
           variant="tonal"
+          rounded="lg"
           @click.stop="emit('open-folder', folderPath)"
         />
       </template>
@@ -105,7 +114,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Asset } from '@tailor-cms/interfaces/asset';
+import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
 import { UserAvatar } from '@tailor-cms/core-components';
 
 import {
@@ -140,6 +149,10 @@ const emit = defineEmits<{
   'open-folder': [path: string];
 }>();
 
+const thumbnailUrl = computed(() =>
+  props.asset.type === AssetType.Image ? props.asset.publicUrl : null,
+);
+
 const folderPath = computed(() => (props.asset.meta as any)?.folder ?? '');
 const folderLabel = computed(() => folderPath.value || 'Library');
 </script>
@@ -153,10 +166,11 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 
 .asset-select {
   position: relative;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
+  margin: 0.25rem 0 0.25rem 0.25rem;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: 4px;
 
   &:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
@@ -174,6 +188,10 @@ const folderLabel = computed(() => folderPath.value || 'Library');
     opacity: 0;
     pointer-events: none;
   }
+}
+
+.folder-chip {
+  padding-left: 0.625rem;
 }
 
 .asset-row:hover,

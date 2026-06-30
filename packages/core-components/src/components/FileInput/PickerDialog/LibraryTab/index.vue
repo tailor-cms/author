@@ -21,10 +21,9 @@
         color="secondary"
         variant="outlined"
         density="compact"
-        divided
         mandatory
       >
-        <VBtn class="pl-5 pr-4" icon="mdi-view-grid" value="grid" size="small" />
+        <VBtn class="pl-5 pr-4" icon="mdi-view-module" value="grid" size="small" />
         <VBtn class="pl-4 pr-5" icon="mdi-view-list" value="list" size="small" />
       </VBtnToggle>
     </div>

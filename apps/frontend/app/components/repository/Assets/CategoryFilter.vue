@@ -1,10 +1,5 @@
 <template>
-  <VChipGroup
-    v-model="modelValue"
-    class="category-filter"
-    column
-    mandatory
-  >
+  <VChipGroup v-model="modelValue" class="category-filter" column mandatory>
     <VChip
       v-for="{ value, label } in categories"
       :key="value"
