@@ -35,8 +35,20 @@
       density="compact"
       mandatory
     >
-      <VBtn class="pl-5 pr-4" icon="mdi-view-module" value="grid" size="small" />
-      <VBtn class="pl-4 pr-5" icon="mdi-view-list" value="list" size="small" />
+      <VBtn
+        v-tooltip:bottom="'Grid view'"
+        class="px-4"
+        icon="mdi-view-module-outline"
+        value="grid"
+        size="small"
+      />
+      <VBtn
+        v-tooltip:bottom="'List view'"
+        class="px-4"
+        icon="mdi-view-list-outline"
+        value="list"
+        size="small"
+      />
     </VBtnToggle>
   </div>
 </template>
