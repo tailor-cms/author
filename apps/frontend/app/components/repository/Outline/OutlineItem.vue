@@ -6,13 +6,11 @@
           :id="`activity_${activity.uid}`"
           ref="rowEl"
           v-bind="hoverProps"
-          :active="isSelected"
           :class="{ selected: isSelected, disabled: isSoftDeleted }"
           :ripple="false"
           :style="{ '--row-accent': config?.color }"
-          class="activity bg-surface"
+          class="activity bg-surface-container"
           data-testid="repository__structureActivity"
-          elevation="1"
           link
           @mousedown="selectActivity(activity.id)"
         >
@@ -220,6 +218,11 @@ const icon = computed(() => {
     line-height: 2.5rem;
   }
 
+  &.selected,
+  &.highlighted {
+    background-color: rgb(var(--v-theme-surface-container-high));
+  }
+
   &.selected .activity-name {
     font-weight: 600 !important;
   }
@@ -227,6 +230,11 @@ const icon = computed(() => {
   &.disabled {
     background-color: rgba(var(--v-theme-error), 0.15);
     border-left-color: rgb(var(--v-theme-error));
+
+    &.selected,
+    &.highlighted {
+      background-color: rgba(var(--v-theme-error), 0.2);
+    }
   }
 
   &.selected {

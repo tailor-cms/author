@@ -3,7 +3,7 @@
     :headers="headers"
     :items="items"
     :row-props="({ item }) => ({ class: item.class })"
-    class="text-left"
+    class="text-left bg-surface-container"
     items-per-page="25"
     fixed-header
     @click:row="selectActivity"

@@ -3,13 +3,12 @@
     :data-testid="`assetTile_${asset.id}`"
     :ripple="false"
     :class="{ active: isActive }"
-    class="asset-tile bg-surface text-left"
+    class="asset-tile bg-surface-container text-left"
     variant="flat"
     rounded="lg"
-    elevation="1"
     @click="emit('preview', asset)"
   >
-    <div class="thumbnail rounded-lg bg-surface-container">
+    <div class="thumbnail rounded-lg bg-surface-container-low">
       <VImg
         v-if="thumbnailUrl"
         :src="thumbnailUrl"
@@ -21,7 +20,7 @@
         v-else
         :color="getAssetColor(asset)"
         :icon="getAssetIcon(asset)"
-        size="48"
+        size="64"
       />
       <div
         :aria-checked="isSelected"
@@ -134,12 +133,8 @@ const folderLabel = computed(() => folderPath.value || 'Library');
   padding: 0.5rem;
   transition: background-color 0.15s ease;
 
-  &:hover {
-    background-color: rgb(var(--v-theme-surface-container-highest)) !important;
-  }
-
   &.active {
-    background-color: rgb(var(--v-theme-surface-container-highest)) !important;
+    background-color: rgb(var(--v-theme-surface-container-high)) !important;
   }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <VApp class="bg-surface-container">
+  <VApp>
     <NuxtPage />
   </VApp>
 </template>

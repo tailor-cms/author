@@ -3,7 +3,7 @@
     <div :style="{ width: mdAndDown || isExpanded ? '100%' : '85%' }">
       <VTextField
         v-model="internalValue"
-        :bg-color="isExpanded ? 'surface-container-highest' : 'surface-container-high' "
+        :bg-color="isExpanded ? 'surface-container-high' : 'surface-container' "
         aria-label="Search repositories"
         placeholder="Search..."
         prepend-inner-icon="mdi-magnify"

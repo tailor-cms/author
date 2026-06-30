@@ -3,10 +3,8 @@
     :class="{ resizing: isResizing }"
     :model-value="repositoryStore.isSidebarOpen || mdAndUp"
     :width="width"
-    border="0"
     class="text-left"
-    color="surface"
-    elevation="1"
+    color="surface-container"
     location="right"
     mobile-breakpoint="md"
     absolute

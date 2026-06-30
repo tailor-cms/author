@@ -5,9 +5,7 @@
     :mobile-breakpoint="LENS_OVERLAY_BELOW_WIDTH"
     :width="width"
     class="sidebar"
-    border="0"
-    color="surface"
-    elevation="1"
+    color="surface-container"
     location="right"
     disable-resize-watcher
     disable-route-watcher

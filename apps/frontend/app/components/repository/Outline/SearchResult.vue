@@ -1,10 +1,9 @@
 <template>
   <VListItem
-    :active="isSelected"
     :class="{ 'is-selected': isSelected }"
     :ripple="false"
     :style="{ '--row-accent': config?.color }"
-    class="search-result bg-surface py-2 px-4 mb-2"
+    class="search-result bg-surface-container py-2 px-4 mb-2"
     elevation="1"
     link
     rounded
@@ -66,6 +65,7 @@ const typeLabel = computed(() => config.value?.label);
   transition: border-left-width 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
 
   &.is-selected {
+    background-color: rgb(var(--v-theme-surface-container-high));
     border-left-width: 2.25rem;
 
     .search-title {

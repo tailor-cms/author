@@ -1,7 +1,6 @@
 <template>
   <VListItem
-    class="folder-row bg-surface py-4"
-    elevation="1"
+    class="folder-row bg-surface-container py-4"
     rounded="lg"
     link
     slim

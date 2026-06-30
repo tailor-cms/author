@@ -3,10 +3,8 @@
     :class="{ resizing: isResizing }"
     :model-value="!!asset"
     :width="width"
-    border="0"
     class="asset-sidebar"
-    color="surface"
-    elevation="1"
+    color="surface-container"
     location="right"
     mobile-breakpoint="md"
     absolute
