@@ -41,8 +41,10 @@ test.describe('Collection - relationships (cross-entity links)', () => {
     await editor.relationship('Author').expectSelected('Jane Austen');
     await editor.relationship('Tags').expectSelected('classics');
     await editor.save();
-    // Reopen the item and confirm the links persisted.
+    // Reopen the item and confirm the links persisted. The entity filter resets
+    // to the first entity on reload, so reselect Articles before looking it up.
     await collection.goto();
+    await collection.entityFilter.select(ENTITY.ARTICLE.label);
     const item = await collection.getItemByName('Pride and Prejudice');
     const reopened = await item.open();
     await reopened.relationship('Author').expectSelected('Jane Austen');

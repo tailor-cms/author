@@ -30,13 +30,13 @@ export class CollectionView {
     this.entityFilter = new EntityFilter(page);
     this.searchInput = this.el
       .locator('.toolbar')
-      .getByPlaceholder('Search by name...');
+      .getByPlaceholder('Search by name or id...');
     // The sort button's label changes with the active sort, so its stable hook
     // is the class rather than an accessible name.
     this.sortBtn = this.el.locator('.sort-btn');
     this.createBtn = this.el.getByTestId('repository__createActivityBtn');
     this.emptyAlert = this.el.getByText('Click the Create button above');
-    this.noMatchesAlert = this.el.getByText('No matches found!');
+    this.noMatchesAlert = this.el.getByText('No matches found');
   }
 
   async goto() {
