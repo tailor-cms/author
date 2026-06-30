@@ -64,14 +64,13 @@
       />
     </template>
   </VDataIterator>
-  <VEmptyState
+  <TailorEmptyState
     v-else-if="showEmptyState"
     :action-text="isInFolder ? 'Go back' : undefined"
     :icon="emptyStateIcon"
     :text="emptyStateText"
     :title="emptyStateTitle"
-    bg-color="surface-container"
-    class="py-16 empty-state rounded-lg"
+    class="empty-state"
     data-testid="assetEmptyState"
     @click:action="emit('folder:up')"
   />
@@ -85,6 +84,7 @@ import { oneLine } from 'common-tags';
 import { useElementSize } from '@vueuse/core';
 import AssetRow from './AssetRow.vue';
 import FolderRow from './FolderRow.vue';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 const props = defineProps<{
   isFetching: boolean;

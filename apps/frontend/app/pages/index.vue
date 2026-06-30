@@ -116,13 +116,11 @@
             />
           </template>
         </VInfiniteScroll>
-        <VEmptyState
+        <TailorEmptyState
           v-else-if="emptyState"
           :icon="emptyState.icon"
           :text="emptyState.text"
           :title="emptyState.title"
-          bg-color="surface-container"
-          class="rounded-lg py-16 mt-4"
         />
       </VContainer>
     </div>
@@ -132,6 +130,7 @@
 <script setup lang="ts">
 import { find, map } from 'lodash-es';
 import { SCHEMAS } from '@tailor-cms/config';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import { storeToRefs } from 'pinia';
 import pluralize from 'pluralize-esm';
 import Promise from 'bluebird';

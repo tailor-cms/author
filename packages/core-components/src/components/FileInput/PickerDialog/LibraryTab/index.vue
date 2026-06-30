@@ -31,10 +31,9 @@
     <div v-if="isLoading && !assets.length" class="d-flex justify-center py-16">
       <VProgressCircular color="primary" size="42" indeterminate />
     </div>
-    <VEmptyState
+    <TailorEmptyState
       v-else-if="!assets.length && !isLoading"
-      class="py-16 my-4 rounded-md"
-      bg-color="surface-container-low"
+      class="my-4"
       icon="mdi-image-multiple"
       :title="hasActiveFilters ? 'No matching assets' : 'No assets found'"
       :text="
@@ -80,6 +79,7 @@ import pMinDelay from 'p-min-delay';
 import AssetGrid from './AssetGrid.vue';
 import AssetList from './AssetList.vue';
 import CategoryFilter from './CategoryFilter.vue';
+import TailorEmptyState from '../../../TailorEmptyState.vue';
 
 const ITEMS_PER_PAGE = 12;
 const MIN_LOADING_MS = 800;
