@@ -28,3 +28,11 @@ export async function addItem(
   await collection.createItem(entity, title);
   await collection.goto();
 }
+
+// Create an article and fill its required content
+export async function createArticle(collection: CollectionView, title: string) {
+  const editor = await collection.createItem(ENTITY.ARTICLE, title);
+  await editor.fillRichText('description', 'Body required to save.');
+  await editor.contentElement('body').fill('Some content.');
+  return editor;
+}

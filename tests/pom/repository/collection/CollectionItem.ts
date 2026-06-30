@@ -30,9 +30,14 @@ export class CollectionItem {
     return new CollectionItemEditor(this.page).waitReady();
   }
 
-  async remove() {
+  async openRemoveDialog() {
     await this.el.hover();
     await this.deleteBtn.click();
+    return this.page.locator('div[role="dialog"]');
+  }
+
+  async remove() {
+    await this.openRemoveDialog();
     await confirmAction(this.page);
   }
 }
