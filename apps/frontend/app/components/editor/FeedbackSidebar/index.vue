@@ -9,6 +9,7 @@
     color="surface"
     elevation="1"
     location="right"
+    disable-resize-watcher
     disable-route-watcher
   >
     <div
@@ -178,8 +179,9 @@ const { width: viewportWidth, xlAndUp } = useDisplay();
 const isOpen = defineModel<boolean>();
 
 // On overlay-width viewports the drawer is temporary; mount it closed so it
-// never covers the editor. Desktop keeps the persisted preference, and
-// Vuetify's resize-watcher handles later breakpoint crossings.
+// never covers the editor. Desktop keeps the persisted preference. Later
+// breakpoint crossings don't re-toggle it (disable-resize-watcher), so a
+// closed panel stays closed when resizing up to desktop.
 onMounted(() => {
   if (viewportWidth.value < LENS_OVERLAY_BELOW_WIDTH) isOpen.value = false;
 });

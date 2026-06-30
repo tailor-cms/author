@@ -9,6 +9,7 @@
       color="transparent"
       elevation="0"
       location="right"
+      disable-resize-watcher
       disable-route-watcher
     >
       <div class="agent-drawer-card bg-surface-container-lowest elevation-1">
