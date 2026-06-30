@@ -11,7 +11,10 @@ import type {
 import type { ContentElementType } from '@tailor-cms/content-element-collection/enum.ts';
 import type { MetaInputType } from '@tailor-cms/meta-element-collection/enum.ts';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
+import { ReferenceDeletePolicy } from '@tailor-cms/interfaces/schema';
 import { capitalize } from 'lodash-es';
+
+export { ReferenceDeletePolicy };
 
 interface Context {
   name: string;
@@ -86,18 +89,24 @@ export function IsRelationship(config: EntityRelationshipConfig) {
  * and publishing.
  */
 function toActivityRelationship(prop: any): ActivityRelationship {
-  const { entity, multiple, allowEmpty, allowCircularLinks, placeholder } =
+  const { entity, multiple, allowEmpty, allowCircularLinks, placeholder, onDelete } =
     prop.relationship;
+  const resolvedAllowEmpty = allowEmpty ?? true;
   return {
     type: prop.key,
     label: prop.label,
     placeholder: placeholder ?? 'Click to select',
     multiple: multiple ?? false,
     searchable: true,
-    allowEmpty: allowEmpty ?? true,
+    allowEmpty: resolvedAllowEmpty,
     allowCircularLinks: allowCircularLinks ?? false,
     allowInsideLineage: true,
     allowedTypes: [entity],
+    onDelete:
+      onDelete ??
+      (resolvedAllowEmpty
+        ? ReferenceDeletePolicy.SetNull
+        : ReferenceDeletePolicy.Restrict),
   };
 }
 

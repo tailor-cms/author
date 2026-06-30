@@ -166,19 +166,19 @@ const doTheMagic = async ({
   return aiAPI.generate(context);
 };
 
-const createActivity = async (payload: any) => {
-  return await activityStore.save({
+const createActivity = async (payload: any) =>
+  activityStore.save({
     ...payload,
     repositoryId: repositoryStore.repositoryId as number,
   });
-};
+
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
 provide('$storageService', storageService);
 provide('$rpc', repositoryStore.rpc);
+provide('$createActivity', createActivity);
 if (config.props.aiUiEnabled) {
   provide('$doTheMagic', doTheMagic);
-  provide('$createActivity', createActivity);
 }
 
 const isLoading = ref(true);

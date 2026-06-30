@@ -88,6 +88,17 @@ function subtreeIdsLiteral(
   )`);
 }
 
+// Next position after the last sibling under `parentId` (null for root).
+async function nextPosition(
+  repositoryId: number,
+  parentId?: number | null,
+): Promise<number> {
+  const max = await ActivityModel.unscoped().max('position', {
+    where: { repositoryId, parentId: parentId ?? null },
+  });
+  return (Number(max) || 0) + 1;
+}
+
 // Creates an activity under `repository`. The action's Zod schema has
 // already stripped unknown keys from `body`, so the wire shape *is* the
 // persisted attribute set; we just seed `data` with the schema's
@@ -103,9 +114,12 @@ export async function create(
     type: body.type,
   });
   const context = { userId: user.id, repository };
+  const position =
+    body.position ?? (await nextPosition(repository.id, body.parentId));
   const activity = await ActivityModel.create(
     {
       ...body,
+      position,
       data: { ...get(outlineConfig, 'defaultMeta', {}), ...(body.data ?? {}) },
       repositoryId: repository.id,
     } as any,

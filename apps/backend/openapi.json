@@ -5965,8 +5965,7 @@
                   }
                 },
                 "required": [
-                  "type",
-                  "position"
+                  "type"
                 ],
                 "additionalProperties": false,
                 "description": "Create activity payload."
