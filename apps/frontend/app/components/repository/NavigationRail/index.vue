@@ -2,6 +2,7 @@
   <VNavigationDrawer
     width="74"
     class="navigation-rail"
+    color="transparent"
     elevation="0"
     location="left"
     border="none"

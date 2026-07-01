@@ -1,5 +1,5 @@
 <template>
-  <VCard theme="light" class="collection-item">
+  <VCard theme="light" class="collection-item" elevation="2">
     <VCardText class="pa-0 text-left">
       <div class="pa-6 pb-0">
         <MetaInput

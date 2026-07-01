@@ -26,13 +26,12 @@
           type="list-item-avatar, image"
         />
       </template>
-      <VEmptyState
+      <TailorEmptyState
         v-else-if="!results.elements.length"
         :icon="isSearchActive ? 'mdi-magnify-close' : 'mdi-magnify'"
         :text="emptyStateText"
         :title="isSearchActive ? 'No matches' : 'Nothing here yet'"
-        bg-color="surface-container"
-        class="rounded-lg py-16 mt-4"
+        class="mt-4"
       >
         <template v-if="hasActiveFilters" #actions>
           <VBtn
@@ -40,7 +39,7 @@
             @click="clearFilters"
           />
         </template>
-      </VEmptyState>
+      </TailorEmptyState>
       <template v-else>
         <ElementCard
           v-for="element in results.elements"
@@ -87,6 +86,7 @@ import ListControls from '@/components/repository/Search/ListControls.vue';
 import PreviewDialog from '@/components/repository/Search/PreviewDialog.vue';
 import Toolbar from '@/components/repository/Search/Toolbar.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 definePageMeta({ name: 'search' });
 

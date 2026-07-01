@@ -170,7 +170,7 @@ const darkTheme: ThemeDefinition = {
     'on-success-container': '#9DF1E0',
 
     // Info — editorial indigo (distinct from secondary ocean and source indigo)
-    'info': '#BAC3FF',
+    'info': '#A8B2FF',
     'on-info': '#08148F',
     'info-container': '#1F32B1',
     'on-info-container': '#DDE1FF',

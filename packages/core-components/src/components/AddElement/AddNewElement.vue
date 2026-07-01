@@ -35,10 +35,9 @@
         color="transparent"
         max-height="60vh"
       >
-        <VEmptyState
+        <TailorEmptyState
           v-if="searchQuery && !filteredLibrary.length"
           icon="mdi-magnify"
-          class="py-16"
           title="No elements found"
           :text="`No elements match “${searchQuery}”`"
         />
@@ -66,6 +65,7 @@
 <script lang="ts" setup>
 import CircularProgress from '../CircularProgress.vue';
 import ElementBtn from './ElementBtn.vue';
+import TailorEmptyState from '../TailorEmptyState.vue';
 import { computed, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { some } from 'lodash-es';

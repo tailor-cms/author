@@ -16,7 +16,7 @@
       role="separator"
       @pointerdown="startResize"
     />
-    <div v-if="activity?.isTrackedInWorkflow" class="pa-4 pb-16">
+    <div v-if="activity?.isTrackedInWorkflow" class="pa-5 pb-16">
       <SidebarHeader :activity="activity" />
       <SidebarBody :activity="activity" class="my-6" />
     </div>

@@ -5,15 +5,10 @@
     data-testid="assetUsages"
   >
     <div class="meta-label mb-2">Used in</div>
-    <VSkeletonLoader
-      v-if="isLoading"
-      class="pa-0 bg-transparent"
-      type="list-item-two-line@2"
-    />
-    <p v-else-if="!usages.length" class="text-body-small text-medium-emphasis">
+    <p v-if="!usages.length" class="text-body-small text-medium-emphasis">
       Not used anywhere in this repository.
     </p>
-    <VList v-else class="py-0 bg-transparent" density="compact" nav>
+    <VList v-else class="pa-0 bg-transparent" density="comfortable" nav>
       <VListItem
         v-for="(usage, index) in usages"
         :key="index"
@@ -21,7 +16,6 @@
         :subtitle="subtitleFor(usage)"
         :title="titleFor(usage)"
         :to="routeFor(usage)"
-        class="px-2"
         data-testid="assetUsage"
         rounded="lg"
       />
@@ -47,7 +41,6 @@ const ICONS: Record<AssetUsage['type'], string> = {
 
 const props = defineProps<{ asset: Asset }>();
 
-const isLoading = ref(true);
 const usages = ref<AssetUsage[]>([]);
 
 const iconFor = (usage: AssetUsage) => ICONS[usage.type];
@@ -76,13 +69,10 @@ const routeFor = (usage: AssetUsage) => {
 };
 
 async function fetchUsages(asset: Asset) {
-  isLoading.value = true;
   try {
     usages.value = await assetApi.getUsages(asset.repositoryId, asset.id);
   } catch {
     usages.value = [];
-  } finally {
-    isLoading.value = false;
   }
 }
 

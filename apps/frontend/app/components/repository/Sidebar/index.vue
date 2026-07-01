@@ -17,7 +17,7 @@
       role="separator"
       @pointerdown="startResize"
     />
-    <div v-if="store.selectedActivity?.uid" class="pa-4 pb-16">
+    <div v-if="store.selectedActivity?.uid" class="pa-5 pb-16">
       <SidebarHeader :activity="store.selectedActivity" />
       <SidebarBody :activity="store.selectedActivity" class="my-6" />
     </div>

@@ -17,7 +17,7 @@
           :subtitle="getLabel(child.type)"
           :title="getName(child)"
           :to="routeFor(child)"
-          class="subactivity-list__row"
+          class="subactivity-list__row bg-surface elevation-1"
           color="primary"
           rounded="lg"
         >
@@ -75,14 +75,7 @@ const routeFor = (activity: Activity) => ({
   margin: auto;
 
   &__row {
-    background-color: rgb(var(--v-theme-surface-container));
     border-left: 10px solid var(--type-accent);
-    transition: background-color 0.15s ease;
-
-    &:hover {
-      background-color: rgb(var(--v-theme-surface-container-high));
-      border-left-color: var(--type-accent);
-    }
   }
 }
 </style>

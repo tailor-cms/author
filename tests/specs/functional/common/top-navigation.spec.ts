@@ -24,7 +24,7 @@ test('should be able to navigate to the catalog page', async ({ page }) => {
   await expect(page.getByText('System users')).toBeVisible();
   await appBar.catalogLink.click();
   await expect(page).toHaveTitle('Catalog');
-  await expect(page.getByText('0 available repositories')).toBeVisible();
+  await expect(page.getByText('No repositories yet')).toBeVisible();
 });
 
 test('should be able to navigate to the current repository', async ({

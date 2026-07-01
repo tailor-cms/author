@@ -1,28 +1,10 @@
 <template>
-  <VRow v-if="showSubfolders" class="folder-container" dense>
-    <VCol
-      v-for="folder in subfolders"
-      :key="folder.path"
-      cols="12"
-      lg="4"
-      sm="6"
-    >
-      <FolderRow
-        :folder="folder"
-        @open="emit('folder:open', $event)"
-        @remove="emit('folder:remove', $event)"
-        @delete="emit('folder:delete', $event)"
-      />
-    </VCol>
-  </VRow>
-  <div
-    v-if="showLoading"
-    class="d-flex justify-center py-16"
-  >
+  <div v-if="showLoading" class="d-flex justify-center py-16">
     <VProgressCircular indeterminate />
   </div>
   <VDataIterator
     v-else-if="assets.length"
+    ref="iteratorEl"
     :class="{ 'opacity-50': isFetching }"
     :items="assets"
     :items-length="total"
@@ -30,8 +12,8 @@
     :page="props.page"
   >
     <template #default="{ items }">
-      <div class="d-flex flex-column">
-        <AssetRow
+      <div v-if="viewMode === 'grid'" class="asset-grid">
+        <AssetTile
           v-for="{ raw: asset } in items"
           :key="asset.id"
           :asset="asset"
@@ -48,6 +30,28 @@
           @open-folder="emit('folder:open', $event)"
         />
       </div>
+      <VList
+        v-else
+        class="d-flex bg-transparent flex-column ga-2 overflow-visible"
+      >
+        <AssetRow
+          v-for="{ raw: asset } in items"
+          :key="asset.id"
+          :asset="asset"
+          :compact="compact"
+          :is-active="asset.id === activeAssetId"
+          :is-selected="selected.has(asset.id)"
+          :show-folder="isFiltered"
+          @preview="emit('preview', $event)"
+          @toggle="emit('select:toggle', $event)"
+          @download="emit('download', $event)"
+          @index="emit('index', $event)"
+          @deindex="emit('deindex', $event)"
+          @move="emit('move', $event)"
+          @delete="emit('delete', $event)"
+          @open-folder="emit('folder:open', $event)"
+        />
+      </VList>
     </template>
     <template #footer>
       <VPagination
@@ -62,14 +66,14 @@
       />
     </template>
   </VDataIterator>
-  <VEmptyState
+  <TailorEmptyState
     v-else-if="showEmptyState"
     :action-text="isInFolder ? 'Go back' : undefined"
     :icon="emptyStateIcon"
     :text="emptyStateText"
     :title="emptyStateTitle"
-    bg-color="surface-container"
-    class="py-16 empty-state rounded-lg"
+    class="empty-state"
+    prepend-action-icon="mdi-arrow-left"
     data-testid="assetEmptyState"
     @click:action="emit('folder:up')"
   />
@@ -77,11 +81,12 @@
 
 <script lang="ts" setup>
 import type { Asset } from '@tailor-cms/interfaces/asset';
-import type { FolderNode } from '~/composables/useAssetFolders';
 import { CATEGORY_ALL } from '~/composables/useAssetFiltering';
 import { oneLine } from 'common-tags';
+import { useElementSize } from '@vueuse/core';
 import AssetRow from './AssetRow.vue';
-import FolderRow from './FolderRow.vue';
+import AssetTile from './AssetTile.vue';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 const props = defineProps<{
   isFetching: boolean;
@@ -95,9 +100,10 @@ const props = defineProps<{
   selectedCategory: string;
   search: string;
   activeAssetId: number | null;
-  subfolders: FolderNode[];
+  hasFolders: boolean;
   currentFolder: string;
   isLocalFolder: boolean;
+  viewMode: 'grid' | 'list';
 }>();
 
 const emit = defineEmits<{
@@ -110,17 +116,18 @@ const emit = defineEmits<{
   'move': [asset: Asset];
   'delete': [asset: Asset];
   'folder:open': [path: string];
-  'folder:remove': [path: string];
-  'folder:delete': [path: string];
   'folder:up': [];
 }>();
 
+// Collapse the row meta (type + size) when the list gets narrow, so the name +
+// date stay readable instead of truncating. Measured once here and passed down,
+// rather than a ResizeObserver per row.
+const iteratorEl = ref(null);
+const { width: listWidth } = useElementSize(iteratorEl);
+const compact = computed(() => listWidth.value > 0 && listWidth.value < 460);
+
 const isFiltered = computed(
   () => props.selectedCategory !== CATEGORY_ALL || Boolean(props.search.trim()),
-);
-
-const showSubfolders = computed(
-  () => !isFiltered.value && props.subfolders.length > 0,
 );
 
 const showLoading = computed(
@@ -132,13 +139,11 @@ const showEmptyState = computed(
     props.foldersLoaded &&
     !props.isFetching &&
     !props.assets.length &&
-    !showSubfolders.value,
+    !props.hasFolders,
 );
 
 // Browsing inside a specific folder (not the library root, not search/filter).
-const isInFolder = computed(
-  () => !!props.currentFolder && !isFiltered.value,
-);
+const isInFolder = computed(() => !!props.currentFolder && !isFiltered.value);
 
 const emptyStateIcon = computed(() =>
   isInFolder.value ? 'mdi-folder-open-outline' : 'mdi-image-multiple',
@@ -166,8 +171,9 @@ const emptyStateText = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-.folder-container {
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
 }
 </style>

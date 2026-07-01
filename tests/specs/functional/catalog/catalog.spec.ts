@@ -18,7 +18,7 @@ test('catalog page has a page title set', async ({ page }) => {
 test(`should have 'no available repositories' message visible`, async ({
   page,
 }) => {
-  await expect(page.getByText('0 available repositories')).toBeVisible();
+  await expect(page.getByText('No repositories yet')).toBeVisible();
 });
 
 test('should be able to create a new repository', async ({ page }) => {
@@ -109,7 +109,7 @@ test('should show a message in case of not matching the search', async ({
   const catalog = new Catalog(page);
   await catalog.searchInput.fill('sdasdassdas');
   await expect(catalog.getRepositoryCards()).toHaveCount(0);
-  await expect(page.getByText('No matches found')).toBeVisible();
+  await expect(page.getByText('No matches')).toBeVisible();
 });
 
 test('should show message in case of no pinned repositories', async ({
@@ -118,7 +118,7 @@ test('should show message in case of no pinned repositories', async ({
   const catalog = new Catalog(page);
   await catalog.pinnedFilterBtn.click();
   await expect(catalog.getRepositoryCards()).toHaveCount(0);
-  await expect(page.getByText('0 pinned items')).toBeVisible();
+  await expect(page.getByText('No pinned repositories')).toBeVisible();
 });
 
 test('should be able to tag a repository', async ({ page }) => {

@@ -3,7 +3,7 @@
     :headers="headers"
     :items="items"
     :row-props="({ item }) => ({ class: item.class })"
-    class="bg-surface-container rounded-lg text-left"
+    class="text-left bg-surface-container"
     items-per-page="25"
     fixed-header
     @click:row="selectActivity"
@@ -144,6 +144,6 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 }
 
 .v-table :deep(th) {
-  background: rgba(var(--v-theme-surface-container));
+  background: transparent;
 }
 </style>

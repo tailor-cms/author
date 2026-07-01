@@ -1,6 +1,7 @@
 <template>
   <VAppBar
-    :color="toolbarColor"
+    :class="{ 'diff-mode': isHistoryMode || showPublishDiff }"
+    color="surface-container-low"
     border="b"
     class="toolbar-wrapper"
     order="1"
@@ -119,11 +120,6 @@ const config = computed(
   () => activity.value && $schemaService.getLevel(activity.value?.type),
 );
 
-const toolbarColor = computed(() => {
-  if (isHistoryMode.value || showPublishDiff.value) return 'surface-container-lowest';
-  return 'surface-container-low';
-});
-
 // Source info for linked activities
 const source = ref<SourceInfo | null>(null);
 
@@ -164,6 +160,19 @@ const usersWithActivity = computed(() => {
 
 <style lang="scss" scoped>
 .toolbar-wrapper {
+  &.diff-mode {
+    border-bottom-color: rgb(var(--v-theme-tertiary-container));
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: rgb(var(--v-theme-tertiary-container));
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
   > :deep(.v-toolbar__content) {
     height: auto !important;
     min-height: 4rem;
