@@ -109,6 +109,11 @@ export const collectionSeed = {
       titleLabel: 'Full name',
     },
     TAG: { type: 'TEST_COLLECTION/TAG', label: 'Tags', titleLabel: 'Name' },
+    CATEGORY: {
+      type: 'TEST_COLLECTION/CATEGORY',
+      label: 'Categories',
+      titleLabel: 'Name',
+    },
   },
 };
 

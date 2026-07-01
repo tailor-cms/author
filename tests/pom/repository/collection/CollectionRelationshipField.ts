@@ -4,13 +4,15 @@ import { expect } from '@playwright/test';
 // Entity relationship input
 export class CollectionRelationshipField {
   readonly page: Page;
-  readonly field: Locator;
+  readonly el: Locator;
   readonly input: Locator;
 
   constructor(page: Page, card: Locator, label: string) {
     this.page = page;
-    this.field = card.locator('.v-autocomplete').filter({ hasText: label });
-    this.input = this.field.locator('input').first();
+    this.el = card
+      .locator('.collection-relationship')
+      .filter({ hasText: label });
+    this.input = this.el.locator('.v-autocomplete input').first();
   }
 
   async select(name: string) {
@@ -26,12 +28,22 @@ export class CollectionRelationshipField {
     await this.input.press('Escape');
   }
 
+  // Inline relationship creation
+  async createNew(name: string) {
+    await this.el.getByRole('button', { name: 'Create' }).click();
+    const dialog = this.page.getByTestId('createRelatedRecordDialog');
+    await dialog.waitFor({ state: 'visible' });
+    await dialog.locator('input').first().fill(name);
+    await dialog.getByRole('button', { name: 'Create' }).click();
+    await expect(dialog).toBeHidden();
+  }
+
   // Multi-select renders chips (text content); single-select shows the value on
   // the input - check both.
   async expectSelected(name: string) {
     await expect
       .poll(async () => {
-        const text = (await this.field.textContent()) ?? '';
+        const text = (await this.el.textContent()) ?? '';
         const value = await this.input.inputValue().catch(() => '');
         return `${text} ${value}`;
       })
@@ -39,6 +51,6 @@ export class CollectionRelationshipField {
   }
 
   expectError(message: string | RegExp) {
-    return expect(this.field).toContainText(message);
+    return expect(this.el).toContainText(message);
   }
 }

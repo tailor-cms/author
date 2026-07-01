@@ -124,6 +124,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     getElementMetadata,
     getLevelRelationships,
     getRepositoryRelationships,
+    getReferencingRelationships,
     getSiblingTypes,
     getSupportedContainers,
     getContainerTemplateId,
@@ -436,6 +437,21 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     return flatMap(structure, (it) => it.relationships).reduce(
       (acc, rel) => (rel ? union(acc, [rel.type]) : acc),
       [],
+    );
+  }
+
+  /**
+   * Reverse relationship config lookup. Used to resolve referential
+   * integrity when a record is deleted; each entry tells which entity type
+   * links to the target, through which relationship, under which delete policy.
+   */
+  function getReferencingRelationships(targetType: string) {
+    const schemaId = getSchemaId(targetType);
+    if (!schemaId) return [];
+    return getOutlineLevels(schemaId).flatMap((level) =>
+      (level.relationships ?? [])
+        .filter((rel) => rel.allowedTypes?.includes(targetType))
+        .map((relationship) => ({ sourceType: level.type, relationship })),
     );
   }
 };

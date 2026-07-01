@@ -1,5 +1,7 @@
-import { defineAction } from '#shared/request/action.ts';
+import { createError } from '#shared/error/helpers.js';
 import { dataEnvelope } from '#shared/request/schemas.ts';
+import { defineAction } from '#shared/request/action.ts';
+import { StatusCodes } from 'http-status-codes';
 
 import * as schemas from '../schemas/index.ts';
 import * as service from '../activity.service.ts';
@@ -23,9 +25,18 @@ export default defineAction({
       },
       403: { description: 'Activity belongs to a different repository.' },
       404: { description: 'Activity not found.' },
+      409: { description: 'Referenced by a RESTRICT relationship.' },
     },
   },
   async handler({ user, req }) {
-    return service.remove(req.repository!, user, req.activity!);
+    try {
+      // await so a rejection is caught
+      return await service.remove(req.repository!, user, req.activity!);
+    } catch (err) {
+      if (err instanceof service.RestrictedDeletionError) {
+        return createError(StatusCodes.CONFLICT, err.message);
+      }
+      throw err;
+    }
   },
 });
