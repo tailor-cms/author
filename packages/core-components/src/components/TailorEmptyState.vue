@@ -7,17 +7,31 @@
     :variant="variant"
   >
     <VEmptyState
-      v-bind="{ actionText, icon, headline, href, text, title, size, image, textWidth }"
+      v-bind="{ icon, headline, text, title, size, image, textWidth }"
       @click:action="emit('click:action')"
     >
-      <template v-for="(_, name) in $slots" #[name]="slotProps">
-        <slot :name="name" v-bind="slotProps ?? {}"></slot>
+      <template v-if="$slots.media" #media>
+        <slot name="media" />
       </template>
-      <template #actions>
-        <slot name="action" />
+      <template v-if="$slots.headline" #headline>
+        <slot name="headline" />
+      </template>
+      <template v-if="$slots.title" #title>
+        <slot name="title" />
+      </template>
+      <template v-if="$slots.text" #text>
+        <slot name="text" />
+      </template>
+      <template v-if="$slots.default" #default>
+        <slot />
+      </template>
+      <template v-if="actionText || $slots.actions" #actions>
+        <slot name="actions" />
         <VBtn
           v-if="actionText"
           :text="actionText"
+          :href="href"
+          :to="to"
           :prepend-icon="prependActionIcon"
           :append-icon="appendActionIcon"
           variant="flat"
@@ -29,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { VCard, VEmptyState } from 'vuetify/components';
+import type { VBtn, VCard, VEmptyState } from 'vuetify/components';
 
 export interface Props {
   actionText?: string;
@@ -43,6 +57,7 @@ export interface Props {
   size?: VEmptyState['size'];
   text?: string;
   title?: string;
+  to?: VBtn['to'];
   textWidth?: string | number;
   appendActionIcon?: string;
   prependActionIcon?: string;
