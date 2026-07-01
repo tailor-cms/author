@@ -1,26 +1,40 @@
 <template>
-  <VAutocomplete
-    :chips="config.multiple"
-    :class="{ required: config.allowEmpty === false }"
-    :clearable="!config.multiple"
-    :disabled="isDisabled || !items.length"
-    :error-messages="errorMessage"
-    :items="items"
-    :label="config.label"
-    :model-value="selected"
-    :multiple="config.multiple"
-    :placeholder="placeholder"
-    class="pb-2"
-    item-title="name"
-    item-value="id"
-    variant="outlined"
-    closable-chips
-    @update:model-value="onChange"
-  />
+  <div class="collection-relationship">
+    <div class="d-flex align-center mb-2">
+      <span
+        :class="errorMessage ? 'text-error' : 'text-medium-emphasis'"
+        class="text-body-small"
+      >
+        {{ config.label }}<template v-if="config.allowEmpty === false">*</template>
+      </span>
+      <CreateRelatedRecord
+        :config="config"
+        :is-disabled="isDisabled"
+        @created="appendSelection"
+      />
+    </div>
+    <VAutocomplete
+      v-model="model"
+      :chips="config.multiple"
+      :clearable="!config.multiple"
+      :disabled="isDisabled || !items.length"
+      :error-messages="errorMessage"
+      :items="items"
+      :multiple="config.multiple"
+      :placeholder="placeholder"
+      class="pb-1"
+      item-title="name"
+      item-value="id"
+      variant="outlined"
+      closable-chips
+      @update:model-value="onChange"
+    />
+  </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import CreateRelatedRecord from './CreateRelatedRecord.vue';
 
 const props = defineProps({
   // The ActivityRelationship config (label, multiple, allowEmpty, allowedTypes).
@@ -54,20 +68,40 @@ const items = computed(() =>
   })),
 );
 
-const selected = computed(() => {
-  // Tolerate both `{ id }` pointers and bare ids on read.
-  const ids = props.modelValue.map((it) => (it && typeof it === 'object' ? it.id : it));
-  return props.config.multiple ? ids : ids[0];
-});
-
 const placeholder = computed(() => {
   if (!items.value.length) return 'No items available';
   return props.config.placeholder || 'Click to select';
 });
 
+const toIds = (refs) =>
+  (refs ?? []).map((it) => (it && typeof it === 'object' ? it.id : it));
+
+const emitRefs = (ids) => emit('update', ids.map((id) => ({ id })));
+
+const fromModelValue = () => {
+  const ids = toIds(props.modelValue);
+  return props.config.multiple ? ids : (ids[0] ?? null);
+};
+
+const model = ref(fromModelValue());
+
+watch(
+  () => props.modelValue,
+  () => {
+    model.value = fromModelValue();
+  },
+  { deep: true },
+);
+
 const onChange = (value) => {
   const ids = value == null ? [] : Array.isArray(value) ? value : [value];
-  // Store the refs as `{ id }` pointers (the activity refs schema).
-  emit('update', ids.map((id) => ({ id })));
+  emitRefs(ids);
+};
+
+// Append a freshly created record to the current selection.
+const appendSelection = (id) => {
+  const existing = toIds(props.modelValue);
+  const ids = props.config.multiple ? [...new Set([...existing, id])] : [id];
+  emitRefs(ids);
 };
 </script>

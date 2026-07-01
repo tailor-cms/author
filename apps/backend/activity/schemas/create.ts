@@ -8,7 +8,7 @@ export const CreateInput = z
     uid: Activity.shape.uid.optional(),
     parentId: Activity.shape.parentId.optional(),
     type: Activity.shape.type,
-    position: Activity.shape.position,
+    position: Activity.shape.position.optional(),
     data: Activity.shape.data.optional(),
     refs: Activity.shape.refs.optional(),
   })

@@ -10,6 +10,7 @@ import {
   IsInput,
   IsRelationship,
   Prop,
+  ReferenceDeletePolicy,
   TailorCollection,
   TailorEntity,
 } from '../lib/index.ts';
@@ -57,7 +58,8 @@ class Article {
   })
   description: string;
 
-  // Cross-fence reference
+  // Cross-fence reference. Required, so it defaults to RESTRICT: an author
+  // can't be deleted while any article still credits them.
   @Prop({ label: 'Author' })
   @IsRelationship({
     entity: 'AUTHOR',
@@ -66,6 +68,8 @@ class Article {
   })
   author: Relationship[];
 
+  // Optional, so it defaults to SET_NULL: deleting a tag just unlinks it from
+  // the articles that used it.
   @Prop({ label: 'Tags' })
   @IsRelationship({
     entity: 'TAG',
@@ -73,6 +77,16 @@ class Article {
     placeholder: 'Add tags',
   })
   tags: Relationship[];
+
+  // Explicit CASCADE: an article belongs to a category, so deleting the
+  // category deletes the articles filed under it.
+  @Prop({ label: 'Category' })
+  @IsRelationship({
+    entity: 'CATEGORY',
+    placeholder: 'Select a category',
+    onDelete: ReferenceDeletePolicy.Cascade,
+  })
+  category: Relationship[];
 
   @Prop({ label: 'Thumbnail Image' })
   @IsInput(MetaInputType.File, {
@@ -86,17 +100,20 @@ class Article {
   @Prop({ label: 'Body' })
   @IsContentElement(ContentElementType.TiptapHtml, { required: true })
   body: ContentElement;
-
-  @Prop({ label: 'Poll' })
-  @IsContentElement(ContentElementType.MultipleChoice, {
-    required: false,
-    isGradable: false,
-  })
-  question: ContentElement;
 }
 
 // A tag is just a name/title - no other content.
 class Tag {
+  @Prop({ label: 'Name' })
+  @IsInput(MetaInputType.TextField, {
+    validate: { required: true, min: 2, max: 60 },
+    isTitle: true,
+  })
+  name: string;
+}
+
+// A category groups articles; like a tag it is just a name/title.
+class Category {
   @Prop({ label: 'Name' })
   @IsInput(MetaInputType.TextField, {
     validate: { required: true, min: 2, max: 60 },
@@ -127,8 +144,15 @@ const Tags = new TailorEntity(Tag, {
   color: OUTLINE_COLOR.ACCENT_3,
 });
 
+const Categories = new TailorEntity(Category, {
+  type: 'CATEGORY',
+  label: 'Categories',
+  icon: 'mdi-shape-outline',
+  color: OUTLINE_COLOR.ACCENT_1,
+});
+
 export const articleCollection = new TailorCollection({
   id: 'TEST_COLLECTION',
   name: 'Test Collection',
-  entities: [Articles, Authors, Tags],
+  entities: [Articles, Authors, Tags, Categories],
 });

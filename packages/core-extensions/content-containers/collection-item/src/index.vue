@@ -113,9 +113,9 @@
 </template>
 
 <script lang="ts" setup>
-import type { Activity } from '@tailor-cms/interfaces/activity.js';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element.js';
-import type { Repository } from '@tailor-cms/interfaces/repository.js';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import { computed, inject, nextTick, ref, watch } from 'vue';
 import { cloneDeep, isEqual, pick } from 'lodash-es';
 import { Field, useForm } from 'vee-validate';

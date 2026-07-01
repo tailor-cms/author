@@ -6064,8 +6064,7 @@
                   }
                 },
                 "required": [
-                  "type",
-                  "position"
+                  "type"
                 ],
                 "additionalProperties": false,
                 "description": "Create activity payload."
@@ -6331,6 +6330,9 @@
           },
           "404": {
             "description": "Activity not found."
+          },
+          "409": {
+            "description": "Referenced by a RESTRICT relationship."
           }
         },
         "security": [

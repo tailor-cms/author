@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import type { Schema } from '@tailor-cms/interfaces/schema';
 import { isString } from 'lodash-es';
+import { REFERENCE_DELETE_POLICIES } from '@tailor-cms/interfaces/schema';
 
 const activityType = yup.string().min(2).max(50);
 const contentElementType = yup.string().min(2).max(50);
@@ -45,6 +46,7 @@ const relationships = yup.array().of(
     allowCircularLinks: yup.boolean(),
     allowInsideLineage: yup.boolean(),
     allowedTypes: yup.array().of(activityType),
+    onDelete: yup.string().oneOf(REFERENCE_DELETE_POLICIES),
     filters: yup.array(),
     disableSidebarUi: yup.boolean(),
   }),

@@ -63,16 +63,15 @@ import { first, sortBy } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 
 import type { StoreActivity } from '@/stores/activity';
-import { useActivityStore } from '@/stores/activity';
-import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
+import { useCollectionItemDeletion } from '@/composables/useCollectionItemDeletion';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{ activity: StoreActivity }>();
 
 const repositoryStore = useCurrentRepository();
+const { requestDeletion } = useCollectionItemDeletion();
+
 const { selectedActivity, taxonomy } = storeToRefs(repositoryStore);
-const activityStore = useActivityStore();
-const showConfirmationDialog = useConfirmationDialog();
 
 const config = computed(() =>
   taxonomy.value?.find((it: any) => it.type === props.activity.type),
@@ -107,15 +106,9 @@ const openActivity = () => {
 };
 
 const deleteActivity = () =>
-  showConfirmationDialog({
-    title: 'Delete item?',
-    color: 'error',
-    message: `Are you sure you want to delete ${props.activity.data.name}?`,
-    action: () => {
-      activityStore.remove(props.activity.id);
-      const focusNode = first(sortBy(repositoryStore.rootActivities, 'position'));
-      if (focusNode) repositoryStore.selectActivity(focusNode.id);
-    },
+  requestDeletion(props.activity, () => {
+    const focusNode = first(sortBy(repositoryStore.rootActivities, 'position'));
+    if (focusNode) repositoryStore.selectActivity(focusNode.id);
   });
 
 onMounted(() => {
