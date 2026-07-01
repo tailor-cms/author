@@ -3,14 +3,13 @@
     <div v-if="isFetching && !revisions.length" class="text-center pa-6">
       <VProgressCircular indeterminate />
     </div>
-    <VAlert
+    <TailorEmptyState
       v-else-if="!bundledRevisions.length"
-      class="ma-2"
-      color="primary"
       icon="mdi-history"
-      text="No changes recorded for this activity yet."
-      variant="tonal"
-      prominent
+      size="48"
+      text="No changes have been recorded for this activity yet."
+      title="No history yet"
+      variant="text"
     />
     <template v-else>
       <VList
@@ -76,6 +75,8 @@ import { Revision as RevisionEvents } from '@tailor-cms/common/src/sse.js';
 import { Entity } from '@tailor-cms/interfaces/revision';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { Revision } from '@tailor-cms/interfaces/revision';
+
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 import HistoryListItem from './HistoryListItem.vue';
 import { api } from '@/api';

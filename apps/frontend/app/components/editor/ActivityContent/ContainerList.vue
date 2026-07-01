@@ -3,12 +3,11 @@
     <h2 v-if="displayHeading" class="mb-4 text-title-medium text-left">
       {{ capitalize(name) }}
     </h2>
-    <VAlert
+    <TailorEmptyState
       v-if="!filteredContainerGroup.length"
-      :text="emptyMessage"
-      icon="mdi-information-outline"
-      variant="tonal"
-      prominent
+      :text="emptyState.text"
+      :title="emptyState.title"
+      icon="mdi-tray-full"
     />
     <div class="d-flex flex-column ga-4">
       <component
@@ -55,6 +54,7 @@
 <script lang="ts" setup>
 import { capitalize, castArray, get, isEmpty, maxBy, throttle } from 'lodash-es';
 import { getContainerName, getElementId } from '@tailor-cms/utils';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import BBPromise from 'bluebird';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
@@ -124,10 +124,14 @@ const containerName = computed(() => {
 
 const name = computed(() => props.label.toLowerCase());
 
-const emptyMessage = computed(() => {
-  if (isReadonly.value) return `Empty ${name.value}`;
-  const prefix = props.multiple ? 'first ' : '';
-  return `Click the button below to create ${prefix}${capitalize(name.value)}.`;
+const emptyState = computed(() => {
+  const title = `No ${props.multiple ? pluralize(name.value) : name.value} yet`;
+  if (isReadonly.value) return { title, text: '' };
+  const prefix = props.multiple ? 'your first ' : '';
+  return {
+    title,
+    text: `Click the button below to add ${prefix}${name.value}.`,
+  };
 });
 
 const addBtnEnabled = computed(() => {

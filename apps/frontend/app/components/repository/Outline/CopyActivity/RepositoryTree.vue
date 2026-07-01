@@ -8,7 +8,7 @@
     clearable
   />
   <VTreeview
-    v-show="!noResultsMessage"
+    v-show="!emptyState"
     :items="processedItems"
     :opened="expandedActivityIds"
     density="compact"
@@ -32,11 +32,11 @@
       />
     </template>
   </VTreeview>
-  <VAlert
-    v-if="noResultsMessage"
-    :text="noResultsMessage"
-    icon="mdi-information-outline"
-    variant="tonal"
+  <TailorEmptyState
+    v-if="emptyState"
+    :icon="emptyState.icon"
+    :text="emptyState.text"
+    :title="emptyState.title"
   />
 </template>
 
@@ -45,6 +45,7 @@ import { cloneDeep, compact, xorBy } from 'lodash-es';
 import { computed, ref } from 'vue';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 interface TreeItem extends Activity {
   title: string;
@@ -80,10 +81,19 @@ const processedItems = computed(() => {
   return compact(items.map(searchRecursive));
 });
 
-const noResultsMessage = computed(() => {
-  if (!props.activities?.length) return `Selected ${props.schemaName} is empty`;
-  if (!search.value || !!processedItems.value.length) return '';
-  return 'No matches found';
+const emptyState = computed(() => {
+  if (!props.activities?.length)
+    return {
+      icon: 'mdi-file-tree-outline',
+      title: `Selected ${props.schemaName} is empty`,
+      text: '',
+    };
+  if (!search.value || !!processedItems.value.length) return null;
+  return {
+    icon: 'mdi-magnify',
+    title: 'No matches found',
+    text: 'Try adjusting your filter.',
+  };
 });
 
 const doesTitleMatchSearch = (title: string) => {

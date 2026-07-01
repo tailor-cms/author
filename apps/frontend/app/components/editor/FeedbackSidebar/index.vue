@@ -116,24 +116,16 @@
             />
           </VExpansionPanels>
         </template>
-        <VEmptyState
-          v-else
-          class="justify-start pt-16"
-          color="tertiary"
+        <TailorEmptyState
           icon="mdi-creation-outline"
           size="48"
           title="Review this content"
           text="Get feedback on this content - engagement scoring, what
             works, and what to improve."
-        >
-          <template #actions>
-            <VBtn
-              text="Analyze"
-              variant="tonal"
-              @click="reviewStore.requestAnalysis()"
-            />
-          </template>
-        </VEmptyState>
+          variant="text"
+          action-text="Analyze"
+          @click:action="reviewStore.requestAnalysis()"
+        />
       </div>
     </div>
   </VNavigationDrawer>
@@ -155,6 +147,7 @@
 <script lang="ts" setup>
 import type { FeedbackSuggestion } from '@tailor-cms/interfaces/feedback';
 import { getElementId } from '@tailor-cms/utils';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import { useDisplay } from 'vuetify';
 
 import AnalysisStatus from './AnalysisStatus.vue';
