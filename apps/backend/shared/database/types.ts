@@ -19,4 +19,6 @@ export interface OperationContext {
   // content-element hooks so the next propagation step can bump
   // `hasUnpublishedChanges`. Opaque to callers.
   repository?: unknown;
+  // Stamped onto every revision of one logical operation (e.g. a restore).
+  transactionId?: string;
 }

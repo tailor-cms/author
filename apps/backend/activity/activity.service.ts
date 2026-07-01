@@ -142,8 +142,9 @@ export async function update(
   user: User,
   activity: Activity,
   body: PatchInput,
+  audit: { transactionId?: string } = {},
 ): Promise<Activity> {
-  const context = { userId: user.id, repository };
+  const context = { userId: user.id, repository, ...audit };
   if (
     isOutlineActivity(activity.type) &&
     activity.parentId &&
@@ -168,8 +169,9 @@ export async function remove(
   repository: Repository,
   user: User,
   activity: Activity,
+  audit: { transactionId?: string } = {},
 ): Promise<{ id: number }> {
-  const context = { userId: user.id, repository };
+  const context = { userId: user.id, repository, ...audit };
   if (getSchema(repository.schema)?.collection) {
     await applyReferentialDeletion(activity, context);
   }
@@ -186,8 +188,9 @@ export async function restore(
   repository: Repository,
   user: User,
   activity: Activity,
+  audit: { transactionId?: string } = {},
 ): Promise<Activity> {
-  const context = { userId: user.id, repository };
+  const context = { userId: user.id, repository, ...audit };
   await activity.restoreWithDescendants({ context });
   return activity;
 }

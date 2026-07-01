@@ -46,7 +46,7 @@
         />
         <span
           v-else-if="index === MAX_VISIBLE_TYPES"
-          class="text-caption text-medium-emphasis ms-1"
+          class="text-body-small text-medium-emphasis ms-1"
         >
           +{{ types.length - MAX_VISIBLE_TYPES }}
         </span>

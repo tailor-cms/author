@@ -104,7 +104,7 @@ const currentRepositoryStore = useCurrentRepository();
 // a no-op safety net.
 provide('$editorBus', $eventBus.channel('editor'));
 provide('$ceRegistry', $ceRegistry);
-provide('$editorState', { isPublishDiff: computed(() => false) });
+provide('$editorState', { showDiff: computed(() => false) });
 
 const repositoryId = computed(() => currentRepositoryStore.repository?.id);
 const typeOptions = computed(() =>

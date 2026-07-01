@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex flex-column w-100">
+  <div class="d-flex flex-column h-100 w-100">
     <ActivityContent
       v-if="editorStore.selectedActivity?.id"
       :key="editorStore.selectedActivity.id"
@@ -72,7 +72,7 @@ appChannel.on('openElement', (props: ElementRouteProps) => {
   navigateTo(route.href, { open: { target: '_blank' } });
 });
 
-const closePublishDiff = () => editorStore.togglePublishDiff(false);
+const closePublishDiff = () => editorStore.toggleDiff(false);
 
 const preventAccessIfDeleted = () => {
   const predecessors = activityUtils.getAncestors(

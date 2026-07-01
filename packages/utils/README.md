@@ -29,7 +29,6 @@ Util list:
 - InsertLocation
 - Events
 - numberToLetter
-- publishDiffChangeTypes
 - uuid
 - getPositions
 - calculatePosition

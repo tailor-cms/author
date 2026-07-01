@@ -80,13 +80,4 @@ const onItemClick = () => emit('edit', props.id);
     cursor: grabbing;
   }
 }
-
-.list-item :deep(.v-list-item-title) {
-  font-size: 0.9375rem;
-  line-height: 1.2;
-}
-
-:deep(.v-icon) {
-  font-size: 1.25rem;
-}
 </style>

@@ -39,8 +39,13 @@ export const Revision = z
     `),
     user: UserSummary.optional().describe(oneLine`
       Eager-loaded author of the change. Populated when the record is
-      fetched with the User include (which is the default for list / get
-      / time-travel actions).
+      fetched with the User include (the default for the list / get
+      actions).
+    `),
+    transactionId: Uid().nullable().describe(oneLine`
+      Shared id for every revision produced by one logical operation
+      (e.g. a restore); null for standalone edits. Lets the client group
+      them into a single history entry.
     `),
     createdAt: Timestamp('When the revision was written.'),
     updatedAt: Timestamp(oneLine`

@@ -6,7 +6,7 @@
     >
       {{ selected?.name ?? 'Content feedback' }}
     </div>
-    <VMenu v-else offset="6">
+    <VMenu v-else max-height="800" offset="6">
       <template #activator="{ props: activatorProps }">
         <VBtn
           v-bind="activatorProps"

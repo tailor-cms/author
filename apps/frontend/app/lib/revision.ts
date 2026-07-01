@@ -6,6 +6,23 @@ import { Entity } from '@tailor-cms/interfaces/revision';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 import { schema } from '@tailor-cms/config';
 
+// A history-list row: a real revision, or a synthetic restore entry standing for
+// a whole cascade - so it has no single entity/operation/state to speak of.
+export interface RestoreEntry {
+  isRestore: true;
+  uid: string;
+  createdAt: string;
+  user?: Revision['user'];
+  transactionId: string;
+}
+export type HistoryEntry = (Revision & { isRestore?: false }) | RestoreEntry;
+
+interface DescribeOptions {
+  // Drop the "within {parent} {type}" suffix - for views already scoped to one
+  // activity (e.g. the editor history sidebar) where the parent is implicit.
+  omitContainer?: boolean;
+}
+
 const describe = {
   [Entity.Repository]: describeRepositoryRevision,
   [Entity.Activity]: describeActivityRevision,
@@ -43,25 +60,43 @@ function getContainerContext(activity: Activity) {
   return `within ${name} ${typeLabel}`;
 }
 
-function describeActivityRevision(rev: Revision, activity: Activity) {
+function describeActivityRevision(
+  rev: Revision,
+  activity: Activity,
+  opts: DescribeOptions = {},
+) {
   const state = rev.state as Activity;
-  const name = get(rev, 'state.data.name', '');
-  const typeLabel = getActivityTypeLabel(state);
+  const typeLabel = lowerCase(getActivityTypeLabel(state));
   const action = getAction(rev.operation, state);
+
+  // Also drop the entity's own name (implicit here too); "details" stops
+  // "Updated page" from reading as vague - it's a metadata change.
+  if (opts.omitContainer) {
+    const suffix = rev.operation === 'UPDATE' ? ' details' : '';
+    return `${action} ${typeLabel}${suffix}`;
+  }
+
+  const name = get(rev, 'state.data.name', '');
   const activityConfig = schema.getLevel(state.type);
   const containerContext = activityConfig.rootLevel
     ? ''
     : getContainerContext(activity);
-  return `${action} ${name} ${lowerCase(typeLabel)} ${containerContext}`;
+  return `${action} ${name} ${typeLabel} ${containerContext}`.trim();
 }
 
-function describeElementRevision(rev: Revision, activity: Activity) {
+function describeElementRevision(
+  rev: Revision,
+  activity: Activity,
+  opts: DescribeOptions = {},
+) {
   const state = rev.state as ContentElement;
   const action = getAction(rev.operation, state);
-  const activityText = activity
-    ? getContainerContext(activity)
-    : 'within deleted container';
-  return `${action} ${lowerCase(state.type)} element ${activityText}`;
+  const activityText = opts.omitContainer
+    ? ''
+    : activity
+      ? getContainerContext(activity)
+      : 'within deleted container';
+  return `${action} ${lowerCase(state.type)} element ${activityText}`.trim();
 }
 
 function describeRepositoryRevision(rev: Revision) {
@@ -72,8 +107,16 @@ export function isSameInstance(a: Revision, b: Revision) {
   return a.entity === b.entity && a.state.id === b.state.id;
 }
 
-export function getFormatDescription(rev: Revision, activity: Activity) {
-  return describe[rev.entity](rev, activity);
+export function isSameRun(a: Revision, b: Revision) {
+  return isSameInstance(a, b) && a.operation === b.operation;
+}
+
+export function getFormatDescription(
+  rev: Revision,
+  activity: Activity,
+  opts: DescribeOptions = {},
+) {
+  return describe[rev.entity](rev, activity, opts);
 }
 
 export function getRevisionAcronym(rev: Revision) {

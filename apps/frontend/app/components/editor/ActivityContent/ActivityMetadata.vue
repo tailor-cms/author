@@ -13,6 +13,7 @@
           :key="`${activity.uid}.${it.key}.${$pluginRegistry.dataVersion}`"
           :meta="it"
           :entity-data="activity.data"
+          :readonly="readonly"
           class="mb-2"
           dark
           @update="updateActivity"
@@ -30,6 +31,7 @@ import { useActivityStore } from '@/stores/activity';
 
 const props = defineProps<{
   activity: Activity;
+  readonly?: boolean;
 }>();
 
 const { $schemaService, $pluginRegistry } = useNuxtApp() as any;

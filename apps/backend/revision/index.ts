@@ -18,18 +18,22 @@ const records = createActionMounter(router, basePath, {
   tag: 'Records', group: GROUP,
 });
 
-const timeTravel = createActionMounter(router, basePath, {
-  tag: 'Time travel', group: GROUP,
+const history = createActionMounter(router, basePath, {
+  tag: 'History', group: GROUP,
 });
 
 const defaultListQuery = { order: [['createdAt', 'DESC']] };
 
 router.param('revisionId', getRevision);
 
-// /time-travel is a sibling of /:revisionId, registered FIRST so the
-// literal path matches before the `:revisionId` param middleware would
-// treat 'time-travel' as a numeric id.
-timeTravel.get('/time-travel', actions.timeTravel, {
+// /reconstruct and /restore are siblings of /:revisionId, registered
+// FIRST so their literal paths match before the `:revisionId` param
+// middleware would treat them as numeric ids.
+history.get('/reconstruct', actions.reconstruct, {
+  after: [loadTargetActivity],
+});
+
+history.post('/restore', actions.restore, {
   after: [loadTargetActivity],
 });
 
