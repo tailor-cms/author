@@ -1,4 +1,4 @@
-import { createArticle, ENTITY, toCollection } from './helpers';
+import { ENTITY, fillArticleInputs, toCollection } from './helpers';
 import { expect, test } from '@playwright/test';
 import SeedClient from '../../../api/SeedClient';
 
@@ -9,7 +9,7 @@ test.describe('Collection - inline relationship creation', () => {
     page,
   }) => {
     const { collection } = await toCollection(page);
-    const editor = await createArticle(collection, 'Animal Farm');
+    const editor = await fillArticleInputs(collection, 'Animal Farm');
     await editor.relationship('Author').createNew('George Orwell');
     await editor.relationship('Author').expectSelected('George Orwell');
     await editor.save();

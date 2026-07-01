@@ -100,13 +100,6 @@ class Article {
   @Prop({ label: 'Body' })
   @IsContentElement(ContentElementType.TiptapHtml, { required: true })
   body: ContentElement;
-
-  @Prop({ label: 'Poll' })
-  @IsContentElement(ContentElementType.MultipleChoice, {
-    required: false,
-    isGradable: false,
-  })
-  question: ContentElement;
 }
 
 // A tag is just a name/title - no other content.

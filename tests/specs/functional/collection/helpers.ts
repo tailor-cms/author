@@ -29,10 +29,26 @@ export async function addItem(
   await collection.goto();
 }
 
-// Create an article and fill its required content
-export async function createArticle(collection: CollectionView, title: string) {
+// Create an article and fill its editor inputs
+export async function fillArticleInputs(
+  collection: CollectionView,
+  title: string,
+  links: { author?: string; tag?: string; category?: string } = {},
+) {
   const editor = await collection.createItem(ENTITY.ARTICLE, title);
   await editor.fillRichText('description', 'Body required to save.');
   await editor.contentElement('body').fill('Some content.');
+  if (links.author) {
+    await editor.relationship('Author').select(links.author);
+    await editor.relationship('Author').expectSelected(links.author);
+  }
+  if (links.tag) {
+    await editor.relationship('Tags').select(links.tag);
+    await editor.relationship('Tags').expectSelected(links.tag);
+  }
+  if (links.category) {
+    await editor.relationship('Category').select(links.category);
+    await editor.relationship('Category').expectSelected(links.category);
+  }
   return editor;
 }

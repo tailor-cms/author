@@ -36,6 +36,16 @@ export class CollectionItem {
     return this.page.locator('div[role="dialog"]');
   }
 
+  async confirmRemoval() {
+    const deleted = this.page.waitForResponse(
+      (r) => r.request().method() === 'DELETE' && r.url().includes('/activities/'),
+    );
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByRole('button', { name: 'Confirm' }).click();
+    await deleted;
+    await this.page.waitForLoadState('networkidle');
+  }
+
   async remove() {
     await this.openRemoveDialog();
     await confirmAction(this.page);

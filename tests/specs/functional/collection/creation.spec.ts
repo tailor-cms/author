@@ -36,12 +36,10 @@ test.describe('Collection - item creation', () => {
   });
 
   test('opens a created item in the editor with all its content fields', async () => {
-    // Articles configure every content-field kind.
     const editor = await collection.createItem(ENTITY.ARTICLE, 'Rich Article');
     await expect(editor.richText('description')).toBeVisible(); // rich-text meta
     await expect(editor.field('thumbnail')).toBeVisible(); // file meta
     await expect(editor.contentElement('body').el).toBeVisible(); // html element
-    await expect(editor.contentElement('question').el).toBeVisible(); // question
   });
 
   test('locks the item type to the active entity', async ({ page }) => {
