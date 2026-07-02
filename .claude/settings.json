@@ -1,0 +1,61 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm build:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm type-check)",
+      "Bash(pnpm --filter:*)",
+      "Bash(pnpm e2e:functional:*)",
+      "Bash(pnpm playwright test:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.dev)",
+      "Read(./.env.local)",
+      "Read(./.env.production)",
+      "Edit(./.env)",
+      "Edit(./.env.dev)",
+      "Edit(./.env.local)",
+      "Edit(./.env.production)",
+      "Bash(rm -rf:*)",
+      "Bash(git push:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(sudo:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|MultiEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/block-env.mjs\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/format-edited-file.mjs\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
