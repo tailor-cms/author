@@ -2,7 +2,7 @@
   <VSlideYTransition>
     <VSheet
       v-if="hasSelection"
-      color="surface-container"
+      color="surface-container-high"
       class="bulk-action-bar mb-4 pa-4 ga-2"
       rounded="lg"
     >

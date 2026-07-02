@@ -4,7 +4,7 @@
     :model-value="repositoryStore.isSidebarOpen || mdAndUp"
     :width="width"
     class="text-left"
-    color="surface-container"
+    color="surface-raised"
     location="right"
     mobile-breakpoint="md"
     absolute

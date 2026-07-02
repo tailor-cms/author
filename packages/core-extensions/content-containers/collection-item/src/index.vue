@@ -1,5 +1,5 @@
 <template>
-  <VCard theme="light" class="collection-item" elevation="2">
+  <VCard class="collection-item" color="surface-raised" theme="light" elevation="2">
     <VCardText class="pa-0 text-left">
       <div class="pa-6 pb-0">
         <MetaInput
@@ -59,14 +59,12 @@
         </div>
       </div>
       <template v-if="relationships.length">
-        <VDivider class="my-1" />
-        <VSheet
-          class="relationships px-6 pt-4 pb-0"
-          color="surface-container-lowest"
-        >
-          <div class="label pb-5 text-body-small font-weight-medium">
+        <VDivider class="my-5">
+          <span class="text-uppercase text-disabled text-label-small">
             Relationships
-          </div>
+          </span>
+        </VDivider>
+        <div class="relationships px-6 pt-4 pb-0">
           <Field
             v-for="rel in relationships"
             :key="rel.type"
@@ -85,7 +83,7 @@
               @update="(ids) => (refsState[rel.type] = ids)"
             />
           </Field>
-        </VSheet>
+        </div>
       </template>
     </VCardText>
     <VSlideYTransition>

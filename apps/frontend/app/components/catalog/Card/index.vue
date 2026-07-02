@@ -140,7 +140,7 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 <style lang="scss" scoped>
 .repository-card {
-  height: 14.75rem;
+  height: 12.75rem;
   transition:
     border-color 0.2s ease,
     transform 0.2s ease,

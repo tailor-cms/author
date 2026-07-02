@@ -1,5 +1,10 @@
 <template>
-  <VCard class="content-container pr-4" theme="light" elevation="1">
+  <VCard
+    class="content-container pr-4"
+    color="surface-raised"
+    elevation="1"
+    theme="light"
+  >
     <div v-if="!isAiGeneratingContent" class="d-flex flex-wrap justify-end ma-3 ga-3">
       <AIPrompt
         v-if="isAiEnabled && !disabled"

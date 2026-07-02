@@ -1,7 +1,8 @@
 <template>
   <VListItem
-    class="folder-row bg-surface-container py-4"
+    class="folder-row bg-surface-raised py-4"
     rounded="lg"
+    elevation="1"
     link
     slim
     @click="emit('open', folder.path)"

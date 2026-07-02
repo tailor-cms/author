@@ -1,9 +1,10 @@
 <template>
   <VListItem
+    :active="isActive"
     :ripple="false"
-    :class="{ active: isActive }"
-    class="asset-row bg-surface-container text-left"
+    class="asset-row bg-surface-raised text-left"
     density="compact"
+    elevation="1"
     lines="two"
     link
     @click="emit('preview', asset)"
@@ -162,10 +163,6 @@ const folderLabel = computed(() => folderPath.value || 'Library');
   cursor: pointer;
   border-radius: 8px;
   padding-left: 0.5rem;
-
-  &.active {
-    background: rgb(var(--v-theme-surface-container-high));
-  }
 }
 
 .asset-select {

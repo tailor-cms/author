@@ -1,17 +1,19 @@
 <template>
   <VCard
     :class="{ 'pb-3': !showPreview }"
-    class="element-card text-start is-clickable"
+    :ripple="false"
+    color="surface-raised"
+    class="element-card text-start"
+    elevation="1"
     rounded="lg"
     variant="flat"
-    ripple
-    @click="onCardClick"
   >
     <div class="d-flex align-center px-4 pt-3">
       <VAvatar
         class="flex-shrink-0"
-        color="surface-container-low"
+        color="tertiary"
         rounded="lg"
+        variant="tonal"
         size="40"
       >
         <VIcon :icon="manifest?.ui?.icon ?? 'mdi-toy-brick-outline'" size="20" />
@@ -43,21 +45,23 @@
         {{ formatDate(element.updatedAt) }}
       </span>
       <VBtn
+        v-if="editorRoute"
+        aria-label="Open in new tab"
+        class="ml-4"
+        color="primary"
+        density="comfortable"
+        size="small"
+        variant="text"
+        icon="mdi-open-in-new"
+        @click.stop="openInNewTab"
+      />
+      <VBtn
         :aria-label="isExpanded ? 'Collapse preview' : 'Expand preview'"
         :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
         class="ml-1"
-        size="small"
+        density="comfortable"
         variant="text"
         @click.stop="isExpanded = !isExpanded"
-      />
-      <VBtn
-        v-if="editorRoute"
-        aria-label="Open in new tab"
-        class="ml-1"
-        icon="mdi-open-in-new"
-        size="small"
-        variant="text"
-        @click.stop="openInNewTab"
       />
     </div>
     <SearchSnippet
@@ -111,10 +115,6 @@ watch(
 
 const showPreview = computed(() => isExpanded.value);
 
-const onCardClick = () => {
-  isExpanded.value = !isExpanded.value;
-};
-
 const openInNewTab = () => {
   if (editorRoute.value) {
     navigateTo(editorRoute.value, { open: { target: '_blank' } });
@@ -123,20 +123,6 @@ const openInNewTab = () => {
 </script>
 
 <style lang="scss" scoped>
-.element-card {
-  background: rgb(var(--v-theme-surface-container));
-  transition: background 0.15s ease;
-  cursor: default;
-
-  &.is-clickable {
-    cursor: pointer;
-
-    &:hover {
-      background: rgb(var(--v-theme-surface-container-high));
-    }
-  }
-}
-
 .preview-region {
   position: relative;
 
