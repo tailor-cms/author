@@ -1,0 +1,113 @@
+name: Bug report
+description: Report a reproducible defect found during testing.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. **Search existing issues first** to avoid
+        duplicates, and keep it to one bug per issue.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One or two sentences describing the defect.
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Impact if shipped (not scheduling urgency - that is triage's call).
+      options:
+        - S1 - Critical (data loss, crash, security, blocked release)
+        - S2 - Major (core flow broken, no workaround)
+        - S3 - Minor (broken, but there is a workaround)
+        - S4 - Cosmetic / trivial
+      default: 2
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Authoring / editor
+        - Content elements
+        - Content containers
+        - Repository / structure
+        - Media / assets
+        - Content linking
+        - Collections
+        - Publishing
+        - AI features
+        - Admin / access / auth
+        - Backend / API
+        - Extensions (ce/cc/mi/pl)
+        - Infra / CI
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: schema
+    attributes:
+      label: Schema / container involved
+      description: Which repository schema or content container, if relevant.
+      placeholder: "e.g. Course schema, Structured Content container"
+  - type: input
+    id: regression
+    attributes:
+      label: Last known good commit / version
+      description: SHA or release where this worked, if known. Leave blank if unsure.
+      placeholder: "e.g. bfc0276c"
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered, deterministic steps. Include test data / URLs.
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Drag in screenshots, a video, or a Playwright `trace.zip` here.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        - Browser / Playwright project:
+        - OS:
+        - App commit (`git rev-parse --short HEAD`):
+        - Environment (local / staging / prod):
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Server / browser console logs. Rendered as a code block.
+      render: shell
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submit checklist
+      options:
+        - label: I searched existing issues for duplicates
+          required: true
+        - label: I attached a Playwright trace, screenshot, or video
+        - label: The steps reproduce on a clean session

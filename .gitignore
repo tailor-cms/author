@@ -23,5 +23,9 @@ node_modules
 # Config
 .env
 
+# Claude Code (personal, machine-local; team config is committed)
+.claude/settings.local.json
+.claude/.hook-output/
+
 # Tailor storage data
 apps/backend/data
