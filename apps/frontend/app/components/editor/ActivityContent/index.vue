@@ -122,7 +122,7 @@ import {
   without,
 } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { AiContext, AiInput } from '@tailor-cms/interfaces/ai';
+import type { AiGenerateRequest, AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { getElementId } from '@tailor-cms/utils';
 import pMinDelay from 'p-min-delay';
@@ -183,24 +183,17 @@ const doTheMagic = async ({
   inputs: AiInput[];
   content?: string;
 }) => {
-  const { id, name, description, schema, data } = props.repository;
-  const aiMeta = (data as any)?.$$?.ai;
-  const context: AiContext = {
+  const context: AiGenerateRequest = {
     repository: {
-      repositoryId: id,
-      activityId: props.activity?.id,
-      schemaId: schema,
-      name,
-      description,
+      outlineActivityId: props.activity?.id,
       outlineActivityType: props.activity?.type,
       containerType,
       topic: props.activity?.data?.name,
-      vectorStoreId: aiMeta?.storeId,
     },
     inputs,
     content,
   };
-  return aiAPI.generate(context);
+  return aiAPI.generate(props.repository.id, context);
 };
 
 const createActivity = async (payload: any) =>
