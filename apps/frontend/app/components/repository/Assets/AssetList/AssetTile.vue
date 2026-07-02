@@ -3,12 +3,13 @@
     :data-testid="`assetTile_${asset.id}`"
     :ripple="false"
     :class="{ active: isActive }"
-    class="asset-tile bg-surface-container text-left"
+    class="asset-tile bg-surface-raised text-left"
     variant="flat"
     rounded="lg"
+    elevation="1"
     @click="emit('preview', asset)"
   >
-    <div class="thumbnail rounded-lg bg-surface-container-low">
+    <VSheet class="thumbnail" color="surface-container-low" rounded="lg">
       <VImg
         v-if="thumbnailUrl"
         :src="thumbnailUrl"
@@ -38,7 +39,7 @@
           size="22"
         />
       </div>
-    </div>
+    </VSheet>
     <div class="d-flex align-center px-1 pt-2">
       <div class="flex-grow-1 overflow-hidden">
         <div class="d-flex align-center text-title-small">
@@ -130,11 +131,19 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 <style lang="scss" scoped>
 .asset-tile {
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.75rem;
   transition: background-color 0.15s ease;
+}
 
-  &.active {
-    background-color: rgb(var(--v-theme-surface-container-high)) !important;
+.asset-tile.active {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: currentColor;
+    opacity: calc(var(--v-activated-opacity) * var(--v-theme-overlay-multiplier));
+    pointer-events: none;
   }
 }
 

@@ -10,9 +10,10 @@
       :key="asset.id"
       :disabled="!isCompatible(asset)"
       :value="asset.id"
-      color="secondary"
-      class="bg-surface-container-low py-2 px-3"
+      class="bg-surface-raised py-2 px-3"
+      color="primary"
       rounded="lg"
+      elevation="1"
     >
       <template #prepend>
         <VAvatar rounded="lg" size="40">

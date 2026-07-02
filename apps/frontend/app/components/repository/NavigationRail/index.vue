@@ -157,7 +157,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
     items.push({
       key: 'progress',
       label: 'Progress',
-      icon: 'chart-timeline-variant',
+      icon: 'chart-timeline-variant-shimmer',
       to: {
         name: 'progress',
         params: { id },
@@ -182,7 +182,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
     {
       key: 'search',
       label: 'Search',
-      icon: 'magnify',
+      icon: 'folder-search',
       to: { name: 'search', params: { id } },
       matches: (name) => name === 'search',
     },

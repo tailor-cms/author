@@ -1,5 +1,5 @@
 <template>
-  <VCard color="surface-container-lowest" theme="light">
+  <VCard color="surface-raised" elevation="2" theme="light">
     <div
       :class="{ 'subcontainer-header-collapsible': isCollapsible }"
       class="subcontainer-header d-flex align-center mx-1 pa-4"

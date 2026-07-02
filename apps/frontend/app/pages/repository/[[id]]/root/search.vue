@@ -28,18 +28,13 @@
       </template>
       <TailorEmptyState
         v-else-if="!results.elements.length"
+        :action-text="hasActiveFilters ? 'Clear search & filters' : undefined"
         :icon="isSearchActive ? 'mdi-magnify-close' : 'mdi-magnify'"
         :text="emptyStateText"
         :title="isSearchActive ? 'No matches' : 'Nothing here yet'"
         class="mt-4"
-      >
-        <template v-if="hasActiveFilters" #actions>
-          <VBtn
-            text="Clear search & filters"
-            @click="clearFilters"
-          />
-        </template>
-      </TailorEmptyState>
+        @click:action="clearFilters"
+      />
       <template v-else>
         <ElementCard
           v-for="element in results.elements"

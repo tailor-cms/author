@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
-  <VCard class="question-container" color="surface-container-lowest">
+  <VCard class="question-container" elevation="1">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VCard
         v-bind="hoverProps"

@@ -1,25 +1,22 @@
 <template>
   <VListItem
-    :class="{ 'is-selected': isSelected }"
     :ripple="false"
-    :style="{ '--row-accent': config?.color }"
-    class="search-result bg-surface-container py-2 px-4 mb-2"
+    :active="isSelected"
+    class="search-result bg-surface-raised py-3 px-4 mb-2"
     elevation="1"
     link
     rounded
     @click="$emit('select')"
   >
-    <VListItemTitle class="search-title font-weight-medium">
-      <ActivityName :activity="activity" />
-    </VListItemTitle>
-    <VListItemSubtitle class="search-meta d-flex align-center ga-2 mt-1">
-      <LabelChip color="inverse-surface" size="x-small" variant="flat">
+    <VListItemTitle class="search-title d-flex ga-2 align-center font-weight-medium">
+      <LabelChip color="inverse-surface" size="x-small" variant="tonal">
         {{ typeLabel }}
       </LabelChip>
-      <LabelChip color="secondary" size="x-small" variant="flat">
+      <LabelChip color="secondary" size="x-small" variant="tonal">
         {{ activity.shortId }}
       </LabelChip>
-    </VListItemSubtitle>
+      <ActivityName :activity="activity" class="text-title-medium ml-2" />
+    </VListItemTitle>
     <template #append>
       <VBtn
         v-tooltip:bottom="'Go to'"
@@ -60,18 +57,7 @@ const typeLabel = computed(() => config.value?.label);
 
 <style lang="scss" scoped>
 .search-result {
-  border-left: 8px solid var(--row-accent);
   text-align: left;
-  transition: border-left-width 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-
-  &.is-selected {
-    background-color: rgb(var(--v-theme-surface-container-high));
-    border-left-width: 2.25rem;
-
-    .search-title {
-      font-weight: 600 !important;
-    }
-  }
 
   .go-to-btn {
     opacity: 0;
