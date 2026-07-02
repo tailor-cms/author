@@ -21,10 +21,8 @@
         />
       </template>
     </Draggable>
-    <VEmptyState
+    <TailorEmptyState
       v-else
-      class="py-16 rounded-lg"
-      bg-color="surface-container"
       icon="mdi-file-tree"
       title="No items yet."
       text="Click the Create button above to add your first item."
@@ -41,10 +39,8 @@
         @show="$emit('show', activity)"
       />
     </div>
-    <VEmptyState
+    <TailorEmptyState
       v-if="!filteredActivities.length"
-      class="py-16 rounded-lg"
-      bg-color="surface-container"
       icon="mdi-magnify"
       title="No matches found."
       text="Try adjusting your search."
@@ -61,6 +57,7 @@ import type { StoreActivity } from '@/stores/activity';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 const props = defineProps<{ search: string }>();
 defineEmits<{ show: [activity: StoreActivity] }>();

@@ -4,7 +4,7 @@
     :model-value="!!asset"
     :width="width"
     class="asset-sidebar"
-    color="surface-container"
+    color="surface-raised"
     location="right"
     mobile-breakpoint="md"
     absolute
@@ -16,7 +16,7 @@
       role="separator"
       @pointerdown="startResize"
     />
-    <div v-if="asset" class="pa-4">
+    <div v-if="asset" class="pa-5">
       <div class="header d-flex align-center ga-2 mb-4">
         <VSpacer />
         <MetaInspector :asset="asset" />

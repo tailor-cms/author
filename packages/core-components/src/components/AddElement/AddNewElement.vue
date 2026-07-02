@@ -1,14 +1,14 @@
 <template>
   <VBottomSheet class="mx-sm-5" max-width="1200">
-    <VSheet class="element-container">
+    <VSheet color="surface-container-low" class="element-container">
       <div class="picker-header py-6 px-10">
         <VTextField
           v-model="searchQuery"
+          bg-color="surface-container"
           class="mb-5"
           density="comfortable"
           placeholder="Search elements..."
           prepend-inner-icon="mdi-magnify"
-          bg-color="surface-container-low"
           variant="solo"
           hide-details
           clearable
@@ -35,10 +35,9 @@
         color="transparent"
         max-height="60vh"
       >
-        <VEmptyState
+        <TailorEmptyState
           v-if="searchQuery && !filteredLibrary.length"
           icon="mdi-magnify"
-          class="py-16"
           title="No elements found"
           :text="`No elements match “${searchQuery}”`"
         />
@@ -66,6 +65,7 @@
 <script lang="ts" setup>
 import CircularProgress from '../CircularProgress.vue';
 import ElementBtn from './ElementBtn.vue';
+import TailorEmptyState from '../TailorEmptyState.vue';
 import { computed, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { some } from 'lodash-es';

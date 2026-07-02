@@ -23,16 +23,15 @@
           v-bind="menuProps"
           color="primary"
           data-testid="newMenuBtn"
-          min-width="100"
           prepend-icon="mdi-plus"
           text="New"
           variant="flat"
         />
       </template>
-      <VList min-width="200" nav>
+      <VList density="compact" min-width="200" nav>
         <VListItem
           data-testid="uploadAction"
-          prepend-icon="mdi-upload-outline"
+          prepend-icon="mdi-upload"
           title="Upload files"
           @click="openFilePicker"
         />

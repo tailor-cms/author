@@ -54,17 +54,18 @@
       />
     </div>
   </template>
-  <VAlert
+  <TailorEmptyState
     v-else-if="hasSearched"
     class="mt-4"
     icon="mdi-magnify-close"
-    text="No results found. Try a different search query."
-    variant="tonal"
+    text="Try a different search query."
+    title="No results found"
   />
 </template>
 
 <script lang="ts" setup>
 import type { DiscoveryResult } from '@tailor-cms/interfaces/discovery';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 import SearchResult from './SearchResult/index.vue';
 

@@ -21,10 +21,9 @@
             @click="store.updateSidebar(!store.isSidebarOpen)"
           />
         </div>
-        <WorkflowOverview
-          :activities="filteredActivities"
-          class="mt-4"
-        />
+        <VSheet elevation="1" rounded="lg" class="mt-4">
+          <WorkflowOverview :activities="filteredActivities" />
+        </VSheet>
       </VContainer>
     </VMain>
     <Sidebar />

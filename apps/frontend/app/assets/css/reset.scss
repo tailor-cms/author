@@ -31,21 +31,12 @@ body {
   }
 }
 
-.v-empty-state__title {
-  font-weight: 600;
-}
-
-/* VEmptyState: Vuetify gives the media no bottom margin, so the icon butts
-   against the title, and defaults the icon to a heavy 96px. Add breathing room
-   and trim the icon (image-based empty states use VImg, so are unaffected). */
 .v-empty-state__media {
   margin-bottom: 1rem;
 }
 
-.v-empty-state__media .v-icon {
-  font-size: 4rem !important;
-  width: 4rem !important;
-  height: 4rem !important;
+.v-empty-state__title {
+  font-weight: 500;
 }
 
 /* VBottomSheet: since v4.1 the overlay animates its `top` on resize (default
@@ -53,4 +44,16 @@ body {
    Limit to `transform` to keep the slide-in without the jitter. */
 .v-bottom-sheet__content {
   transition-property: transform;
+}
+
+/* Softer, airier elevation ramp — overrides Vuetify's default (harder, MD2-era)
+   box-shadows. Unlayered, so it beats Vuetify's layered `.elevation-*` utilities
+   without `!important`. Only affects elements that use elevation (menus, dialogs,
+   cards, raised buttons, and the content rows that opt in via `elevation-1`). */
+@for $i from 1 through 24 {
+  .elevation-#{$i} {
+    box-shadow:
+      0 #{$i * 0.5}px #{$i + 1}px rgba(0, 0, 0, 0.06),
+      0 #{$i}px #{$i * 3}px rgba(0, 0, 0, 0.07);
+  }
 }

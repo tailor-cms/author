@@ -34,10 +34,8 @@
       </VMenu>
     </div>
     <template v-if="hasActivities">
-      <VEmptyState
+      <TailorEmptyState
         v-if="!sortedItems.length"
-        class="py-16 rounded-lg"
-        bg-color="surface-container"
         icon="mdi-magnify"
         title="No matches found."
         text="Try adjusting your search."
@@ -50,10 +48,8 @@
         />
       </VList>
     </template>
-    <VEmptyState
+    <TailorEmptyState
       v-else
-      class="py-16 rounded-lg"
-      bg-color="surface-container"
       icon="mdi-view-list"
       title="No items yet."
       text="Click the Create button above to add your first item."
@@ -69,6 +65,7 @@ import type { CollectionSort } from '@/composables/useCollectionEntities';
 import CollectionItem from '@/components/repository/Outline/CollectionItem.vue';
 import EntityFilter from '@/components/repository/Outline/EntityFilter.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 interface SortOption extends CollectionSort {
   title: string;
@@ -126,7 +123,7 @@ const sortedItems = computed(() =>
 }
 
 .collection-list {
-  background: transparent;
+  overflow: visible;
   text-align: left;
 }
 

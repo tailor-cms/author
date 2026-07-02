@@ -90,7 +90,7 @@
             <div v-if="useAI" class="w-100">
               <VTextarea
                 v-model="aiPrompt"
-                bg-color="surface-container-low"
+                bg-color="surface-container"
                 density="comfortable"
                 placeholder="Describe the content you want to generate..."
                 rows="2"

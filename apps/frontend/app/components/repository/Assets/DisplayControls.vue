@@ -1,6 +1,5 @@
 <template>
-  <div class="d-flex align-center flex-wrap ga-2 mb-4">
-    <CategoryFilter v-model="selectedCategory" :categories="categories" />
+  <div class="d-flex align-center ga-2 mb-4">
     <VSpacer />
     <VMenu>
       <template #activator="{ props: menuProps }">
@@ -29,22 +28,42 @@
       variant="text"
       @click="$emit('toggle-sort')"
     />
+    <VBtnToggle
+      v-model="viewMode"
+      color="secondary"
+      variant="outlined"
+      density="compact"
+      mandatory
+    >
+      <VBtn
+        v-tooltip:bottom="'Grid view'"
+        class="px-4"
+        icon="mdi-view-module-outline"
+        value="grid"
+        size="small"
+      />
+      <VBtn
+        v-tooltip:bottom="'List view'"
+        class="px-4"
+        icon="mdi-view-list-outline"
+        value="list"
+        size="small"
+      />
+    </VBtnToggle>
   </div>
 </template>
 
 <script lang="ts" setup>
-import CategoryFilter from './CategoryFilter.vue';
 import { PAGE_SIZE_OPTIONS } from '@/composables/useAssets';
 
 defineProps<{
-  categories: { label: string; value: string }[];
   sortDirection: 'ASC' | 'DESC';
 }>();
 
-const selectedCategory = defineModel<string>('selectedCategory', {
+const itemsPerPage = defineModel<number>('itemsPerPage', {
   required: true,
 });
-const itemsPerPage = defineModel<number>('itemsPerPage', {
+const viewMode = defineModel<'grid' | 'list'>('viewMode', {
   required: true,
 });
 

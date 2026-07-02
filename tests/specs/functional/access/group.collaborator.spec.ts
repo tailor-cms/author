@@ -31,7 +31,7 @@ test('should not be able to see non associated repositories', async ({
 }) => {
   await SeedClient.seedCatalog();
   await page.goto('/');
-  await expect(page.getByText('0 available repositories')).toBeVisible();
+  await expect(page.getByText('No repositories yet')).toBeVisible();
 });
 
 test('should be able to access group associated repositories', async ({

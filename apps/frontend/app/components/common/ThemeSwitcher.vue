@@ -14,7 +14,7 @@
         rounded="lg"
       />
     </template>
-    <VList class="d-flex flex-column pa-2 ga-1" density="compact" slim>
+    <VList class="d-flex flex-column" density="compact" slim nav>
       <VListItem
         v-for="{ value, title, icon } in themeOptions"
         :key="value"

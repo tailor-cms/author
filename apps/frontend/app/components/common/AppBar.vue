@@ -1,5 +1,5 @@
 <template>
-  <VAppBar id="mainAppBar" class="app-bar elevation-0">
+  <VAppBar id="mainAppBar" class="app-bar elevation-0" color="transparent">
     <NuxtLink :to="{ name: 'catalog' }" class="app-brand ml-5">
       <img
         alt="Tailor logo"
@@ -37,11 +37,8 @@
             tag="button"
           />
         </template>
-        <VCard class="text-left">
-          <VSheet
-            color="surface-container"
-            class="d-flex flex-column pa-6 align-center text-center"
-          >
+        <VList class="text-left" density="compact" rounded="lg" nav>
+          <div class="d-flex flex-column pa-4 align-center text-center">
             <UserAvatar :img-url="user.imgUrl" size="x-large" />
             <div class="text-body-large font-weight-semibold mt-2">
               {{ user.label }}
@@ -49,37 +46,31 @@
             <div v-if="user.fullName" class="text-body-small text-medium-emphasis">
               {{ user.email }}
             </div>
-          </VSheet>
-          <VList
-            class="d-flex flex-column ga-1 pa-2"
-            density="compact"
-            slim
-          >
-            <template v-if="smAndDown">
-              <VListItem
-                v-for="{ name, to, icon } in routes"
-                :key="name"
-                :to="to"
-                :title="name"
-                :prepend-icon="icon"
-                rounded="lg"
-              />
-            </template>
+          </div>
+          <VDivider class="mx-n2 mb-2" />
+          <template v-if="smAndDown">
             <VListItem
-              :to="{ name: 'user-profile' }"
-              title="Profile"
-              prepend-icon="mdi-account-circle-outline"
-              rounded="lg"
+              v-for="{ name, to, icon } in routes"
+              :key="name"
+              :to="to"
+              :title="name"
+              :prepend-icon="icon"
             />
-            <ThemeSwitcher submenu />
-            <VListItem
-              title="Logout"
-              prepend-icon="mdi-logout"
-              rounded="lg"
-              @click="logout"
-            />
-          </VList>
-        </VCard>
+          </template>
+          <VListItem
+            :to="{ name: 'user-profile' }"
+            title="Profile"
+            prepend-icon="mdi-account-circle-outline"
+            rounded="lg"
+          />
+          <ThemeSwitcher submenu />
+          <VListItem
+            title="Logout"
+            prepend-icon="mdi-logout"
+            rounded="lg"
+            @click="logout"
+          />
+        </VList>
       </VMenu>
     </template>
   </VAppBar>
@@ -172,9 +163,5 @@ const logout = async () => {
   gap: 0.25rem;
   // Let the Renoir launcher's thinking head spill out without being clipped.
   overflow: visible;
-}
-
-:deep(.v-list-item){
-  padding-inline: 0.5rem;
 }
 </style>

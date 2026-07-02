@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
 test('should be able to delete owned repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
   await settingsPage.rail.delete();
-  await expect(page.getByText('0 available repositories')).toBeVisible();
+  await expect(page.getByText('No repositories yet')).toBeVisible();
 });
 
 test('should be able to export owned repository', async ({ page }) => {

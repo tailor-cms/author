@@ -1,10 +1,12 @@
 <template>
   <VListItem
     ref="rowEl"
+    :active="isSelected"
     :class="{ 'is-selected': isSelected, 'is-deleted': isSoftDeleted }"
     :ripple="false"
     :style="{ '--row-accent': config?.color }"
-    class="collection-row py-2 px-4 mb-2"
+    class="collection-row bg-surface-raised py-2 px-4 mb-2"
+    elevation="1"
     rounded
     @click="selectRow"
   >
@@ -122,7 +124,6 @@ watch(isSelected, (selected) => {
 
 <style lang="scss" scoped>
 .collection-row {
-  background-color: rgba(var(--v-theme-surface-container));
   border-left: 8px solid var(--row-accent);
   transition:
     background-color 0.2s cubic-bezier(0.25, 0.8, 0.25, 1),
@@ -132,12 +133,7 @@ watch(isSelected, (selected) => {
     opacity: 0.65;
   }
 
-  &:hover {
-    background-color: rgb(var(--v-theme-surface-container-high));
-  }
-
   &.is-selected {
-    background-color: rgb(var(--v-theme-surface-container-high));
     border-left-width: 2.25rem;
 
     .collection-title {
@@ -148,11 +144,6 @@ watch(isSelected, (selected) => {
   &.is-deleted {
     background-color: rgba(var(--v-theme-error), 0.15);
     border-left-color: rgb(var(--v-theme-error));
-
-    &:hover,
-    &.is-selected {
-      background-color: rgba(var(--v-theme-error), 0.2);
-    }
   }
 
   .row-actions {

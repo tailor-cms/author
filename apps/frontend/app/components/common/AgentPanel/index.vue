@@ -9,6 +9,7 @@
       color="transparent"
       elevation="0"
       location="right"
+      disable-resize-watcher
       disable-route-watcher
     >
       <div class="agent-drawer-card bg-surface-container-lowest border-sm">
@@ -32,7 +33,7 @@
             :status-text="activeStatus"
             :error="runnerError"
           />
-          <div v-if="pendingQuestion" class="question-host ma-4 mt-0">
+          <div v-if="pendingQuestion" class="question-host ma-5 mt-0">
             <AgentQuestion
               v-bind="pendingQuestion"
               @pick="runner.send"

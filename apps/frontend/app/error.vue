@@ -10,9 +10,7 @@
         <template #actions>
           <VBtn
             prepend-icon="mdi-arrow-left"
-            size="large"
             text="Back to the catalog"
-            flat
             @click="handleError"
           />
         </template>

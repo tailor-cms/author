@@ -34,6 +34,11 @@ const lightTheme: ThemeDefinition = {
     'surface-bright': '#F9FAFC',
     'surface-dim': '#D5D8DD',
 
+    'surface-raised': '#F9FAFC', // cards, list rows
+    'on-surface-raised': '#30323B',
+    'surface-sidebar': '#FFFFFF', // sidebar panel
+    'on-surface-sidebar': '#30323B',
+
     // Primary — jade (contemporary, vibrant; tone-derived)
     'primary': '#1E9659',
     'on-primary': '#FFFFFF',
@@ -103,6 +108,7 @@ const lightTheme: ThemeDefinition = {
     // v-kbd key — mirrors surface-variant / on-surface-variant.
     'theme-kbd': '#DFE2E7',
     'theme-on-kbd': '#5E6470',
+    'theme-surface-raised-overlay-multiplier': 0.8,
   },
 };
 
@@ -131,6 +137,11 @@ const darkTheme: ThemeDefinition = {
     'on-background': '#C5CCDA',
     'surface-bright': '#404550',
     'surface-dim': '#15181D',
+
+    'surface-raised': '#22262B', // cards, list rows
+    'on-surface-raised': '#C5CCDA',
+    'surface-sidebar': '#262B31', // sidebar panel
+    'on-surface-sidebar': '#C5CCDA',
 
     // Primary — jade (contemporary, vibrant; tone-derived)
     'primary': '#6FD49A',
@@ -170,7 +181,7 @@ const darkTheme: ThemeDefinition = {
     'on-success-container': '#9DF1E0',
 
     // Info — editorial indigo (distinct from secondary ocean and source indigo)
-    'info': '#BAC3FF',
+    'info': '#A8B2FF',
     'on-info': '#08148F',
     'info-container': '#1F32B1',
     'on-info-container': '#DDE1FF',
@@ -199,6 +210,7 @@ const darkTheme: ThemeDefinition = {
     // v-kbd key — mirrors surface-variant / on-surface-variant.
     'theme-kbd': '#454A52',
     'theme-on-kbd': '#B0B6C2',
+    'theme-surface-raised-overlay-multiplier': 0.4,
   },
 };
 
@@ -215,6 +227,8 @@ export default defineNuxtPlugin({
       components,
       directives,
       defaults: {
+        VDialog: { VCard: { color: 'surface-container-low' } },
+        VMenu: { VList: { class: 'bg-surface-raised' } },
         VBtn: { color: undefined },
         // MD3 spec: snackbars/tooltips use the inverse surface so they
         // contrast with the page (dark on light theme, light on dark theme).

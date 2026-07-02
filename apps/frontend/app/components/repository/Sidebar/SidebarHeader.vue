@@ -27,7 +27,11 @@
         :publishing="publishing"
       />
       <VSpacer />
-      <ActivityOptions v-if="!isSoftDeleted" :activity="props.activity" />
+      <ActivityOptions
+        v-if="!isSoftDeleted"
+        density="comfortable"
+        :activity="props.activity"
+      />
     </div>
     <div class="publish-status d-flex align-center my-6 mx-1">
       <PublishingBadge :activity="activity" start />

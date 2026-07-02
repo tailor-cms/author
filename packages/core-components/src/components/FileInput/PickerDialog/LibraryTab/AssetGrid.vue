@@ -4,10 +4,11 @@
       v-for="asset in assets"
       :key="asset.id"
       :disabled="!isCompatible(asset)"
-      :color="selectedIds.includes(asset.id) ? 'secondary' : undefined"
+      :color="selectedIds.includes(asset.id) ? 'primary' : 'surface-raised'"
       :variant="selectedIds.includes(asset.id) ? 'tonal' : 'flat'"
-      class="asset-card bg-surface-container-low pa-3"
+      class="asset-card pa-3"
       rounded="lg"
+      elevation="1"
       @click="toggle(asset)"
     >
       <VImg
