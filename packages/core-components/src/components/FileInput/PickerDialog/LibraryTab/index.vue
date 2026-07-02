@@ -49,7 +49,7 @@
       :class="{ 'opacity-70': isLoading }"
       :multiple="multiple"
       :selected-ids="selectedIds"
-      class="mt-4"
+      class="mt-2"
       @update:selected="onSelectionChange"
     />
     <VPagination

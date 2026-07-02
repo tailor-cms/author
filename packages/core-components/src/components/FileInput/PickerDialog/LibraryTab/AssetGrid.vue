@@ -1,5 +1,5 @@
 <template>
-  <div class="asset-grid">
+  <div class="asset-grid py-1 mt-1">
     <VCard
       v-for="asset in assets"
       :key="asset.id"

@@ -6,6 +6,7 @@
       class="upload-tab"
       icon="mdi-cloud-upload-outline"
       title="Drag & drop a file here"
+      color="surface-container"
       @update:model-value="onSelect"
     />
   </div>
