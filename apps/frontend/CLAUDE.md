@@ -11,6 +11,28 @@ by area under `components/{editor,repository,catalog,admin,common,user}`.
 Cross-cutting libs in `lib/`; the content-plugin registries live in
 `lib/content-plugins/` (element / container / meta / plugin / component).
 
+## Nuxt setup
+
+- **SPA, not SSR** (`ssr: false`, built with `nuxt generate`). No
+  server-rendering / hydration - don't add SSR-only code or rely on request
+  context; everything runs client-side.
+- **API access**: default to the generated typed client
+  `@tailor-cms/api-client` (set up in `app/api/typed-client.ts`, injected as
+  `$api`) - call `api.<slice>.<method>()` from Pinia stores / composables.
+  The old `app/api/*` axios modules (`request` + `extractData`) are
+  **legacy**, kept only for assets and AI; don't extend them. Never use Nuxt
+  `useFetch` / `useAsyncData` / `$fetch`. The dev server reverse-proxies
+  `/api/**` to the backend (`routeRules` in `nuxt.config.ts`).
+- **App services** are provided in `plugins/core-services.ts`, consumed via
+  `inject`: `$schemaService`, `$storageService`, `$api`. The mitt event bus
+  is `plugins/eventbus.ts`.
+- **Vuetify** is wired by hand in `plugins/vuetify.ts` (+ `build.transpile`
+  and `vuetify/styles`), not a Nuxt module - register global config there.
+- **Plugins load in order** (`01.setup.ts` first). Forms use vee-validate +
+  yup (`plugins/vee-validate.ts`, `yup.ts`).
+- **Route guards** live in `middleware/` (`auth.ts`, `has-admin-access.ts`);
+  OIDC auth is `plugins/oidc.ts`.
+
 ## Component conventions
 
 - **Dumb by default.** Presentational components take props / emit events;
