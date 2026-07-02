@@ -116,14 +116,11 @@
             />
           </template>
         </VInfiniteScroll>
-        <VAlert
-          v-else-if="noRepositoriesMessage"
-          :text="noRepositoriesMessage"
-          class="mt-4"
-          icon="mdi-alert-circle-outline"
-          rounded="lg"
-          variant="tonal"
-          prominent
+        <TailorEmptyState
+          v-else-if="emptyState"
+          :icon="emptyState.icon"
+          :text="emptyState.text"
+          :title="emptyState.title"
         />
       </VContainer>
     </div>
@@ -133,6 +130,7 @@
 <script setup lang="ts">
 import { find, map } from 'lodash-es';
 import { SCHEMAS } from '@tailor-cms/config';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import { storeToRefs } from 'pinia';
 import pluralize from 'pluralize-esm';
 import Promise from 'bluebird';
@@ -298,12 +296,29 @@ const loadMore = async ({ done }: { done: Function }) => {
   done(status);
 };
 
-const noRepositoriesMessage = computed(() => {
-  if (isLoading.value) return;
-  if (hasRepositories.value) return;
-  if (queryParams.value.search) return 'No matches found';
-  if (arePinnedShown.value) return '0 pinned items';
-  return '0 available repositories';
+const emptyStateVariants = {
+  search: {
+    icon: 'mdi-magnify',
+    title: 'No matches',
+    text: 'No repositories match your search. Try a different term.',
+  },
+  pinned: {
+    icon: 'mdi-pin-outline',
+    title: 'No pinned repositories',
+    text: 'Pin a repository to keep it close at hand here.',
+  },
+  empty: {
+    icon: 'mdi-folder-open-outline',
+    title: 'No repositories yet',
+    text: 'Create your first repository to get started.',
+  },
+};
+
+const emptyState = computed(() => {
+  if (isLoading.value || hasRepositories.value) return null;
+  if (queryParams.value.search) return emptyStateVariants.search;
+  if (arePinnedShown.value) return emptyStateVariants.pinned;
+  return emptyStateVariants.empty;
 });
 
 onBeforeMount(async () => {

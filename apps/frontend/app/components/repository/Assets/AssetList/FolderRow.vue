@@ -1,15 +1,16 @@
 <template>
   <VListItem
-    class="folder-row bg-surface-container"
-    lines="two"
+    class="folder-row bg-surface-container py-4"
     rounded="lg"
+    link
+    slim
     @click="emit('open', folder.path)"
   >
     <template #prepend>
       <VIcon
         :icon="folder.isLocal ? 'mdi-folder-outline' : 'mdi-folder'"
         class="text-medium-emphasis"
-        size="28"
+        size="24"
       />
     </template>
     <VListItemTitle class="text-title-small text-left">

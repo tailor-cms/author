@@ -6,8 +6,8 @@
     :width="width"
     class="sidebar"
     color="surface-container"
-    elevation="0"
     location="right"
+    disable-resize-watcher
     disable-route-watcher
   >
     <div
@@ -17,7 +17,7 @@
       @pointerdown="startResize"
     />
     <div class="sidebar-layout">
-      <div class="sidebar-header pa-4">
+      <div class="sidebar-header pa-5">
         <div class="d-flex align-center mb-3">
           <span class="text-title-medium font-weight-bold">
             Review lens
@@ -56,7 +56,7 @@
           class="mt-3 mx-1"
         />
       </div>
-      <div class="sidebar-body px-4 d-flex flex-column ga-3">
+      <div class="sidebar-body px-5 d-flex flex-column ga-3">
         <VAlert
           v-if="status?.status === 'failed'"
           color="error"
@@ -116,24 +116,16 @@
             />
           </VExpansionPanels>
         </template>
-        <VEmptyState
-          v-else
-          class="justify-start pt-16"
-          color="tertiary"
+        <TailorEmptyState
           icon="mdi-creation-outline"
           size="48"
           title="Review this content"
           text="Get feedback on this content - engagement scoring, what
             works, and what to improve."
-        >
-          <template #actions>
-            <VBtn
-              text="Analyze"
-              variant="tonal"
-              @click="reviewStore.requestAnalysis()"
-            />
-          </template>
-        </VEmptyState>
+          variant="text"
+          action-text="Analyze"
+          @click:action="reviewStore.requestAnalysis()"
+        />
       </div>
     </div>
   </VNavigationDrawer>
@@ -155,6 +147,7 @@
 <script lang="ts" setup>
 import type { FeedbackSuggestion } from '@tailor-cms/interfaces/feedback';
 import { getElementId } from '@tailor-cms/utils';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import { useDisplay } from 'vuetify';
 
 import AnalysisStatus from './AnalysisStatus.vue';
@@ -177,8 +170,9 @@ const { width: viewportWidth, xlAndUp } = useDisplay();
 const isOpen = defineModel<boolean>();
 
 // On overlay-width viewports the drawer is temporary; mount it closed so it
-// never covers the editor. Desktop keeps the persisted preference, and
-// Vuetify's resize-watcher handles later breakpoint crossings.
+// never covers the editor. Desktop keeps the persisted preference. Later
+// breakpoint crossings don't re-toggle it (disable-resize-watcher), so a
+// closed panel stays closed when resizing up to desktop.
 onMounted(() => {
   if (viewportWidth.value < LENS_OVERLAY_BELOW_WIDTH) isOpen.value = false;
 });

@@ -2,23 +2,20 @@
   <div class="activity-wrapper">
     <VHover>
       <template #default="{ isHovering, props: hoverProps }">
-        <VSheet
+        <VListItem
           :id="`activity_${activity.uid}`"
           ref="rowEl"
           v-bind="hoverProps"
-          :class="{
-            selected: isSelected,
-            highlighted: isHovering,
-            disabled: isSoftDeleted,
-          }"
+          :class="{ selected: isSelected, disabled: isSoftDeleted }"
+          :ripple="false"
           :style="{ '--row-accent': config?.color }"
-          class="activity"
+          class="activity bg-surface-container"
           data-testid="repository__structureActivity"
+          link
           @mousedown="selectActivity(activity.id)"
         >
-          <template v-if="!isSoftDeleted">
+          <template v-if="!isSoftDeleted && hasSubtypes" #prepend>
             <VBtn
-              v-if="hasSubtypes"
               :icon="`mdi-${icon}`"
               aria-label="Toggle expand"
               class="my-auto"
@@ -27,16 +24,27 @@
               @mousedown.stop="utils.toggleOutlineItemExpand(activity.uid)"
             >
             </VBtn>
-            <div class="activity-name text-truncate">
-              <VIcon
-                v-if="activity.isLinkedCopy"
-                class="linked-copy-icon mr-2"
-                color="tertiary"
-                icon="mdi-link-box"
-              />
-              <ActivityName :activity="activity" />
-            </div>
-            <div v-if="isSelected || isHovering" class="actions my-auto">
+          </template>
+          <div
+            v-if="!isSoftDeleted"
+            class="activity-name text-truncate"
+          >
+            <VIcon
+              v-if="activity.isLinkedCopy"
+              class="linked-copy-icon mr-2"
+              color="tertiary"
+              icon="mdi-link-box"
+            />
+            <ActivityName :activity="activity" />
+          </div>
+          <div v-else class="activity-name my-auto text-truncate">
+            <ActivityName :activity="activity" />
+          </div>
+          <template #append>
+            <div
+              v-if="!isSoftDeleted && (isSelected || isHovering)"
+              class="actions my-auto"
+            >
               <OutlineItemToolbar
                 :activity="activity"
                 class="options-toolbar my-auto"
@@ -57,12 +65,7 @@
                 rounded
               />
             </div>
-          </template>
-          <div v-else class="d-flex align-center w-100 justify-space-between">
-            <div class="activity-name my-auto text-truncate">
-              <ActivityName :activity="activity" />
-            </div>
-            <VChip class="mr-3" size="small">
+            <VChip v-else-if="isSoftDeleted" class="mr-3" size="small">
               <span class="pr-1 font-weight-bold">Deleted:</span>
               Publish required
               <VIcon
@@ -72,8 +75,8 @@
                 icon="mdi-information-outline"
               />
             </VChip>
-          </div>
-        </VSheet>
+          </template>
+        </VListItem>
       </template>
     </VHover>
     <VExpandTransition>
@@ -198,10 +201,9 @@ const icon = computed(() => {
 
 <style lang="scss" scoped>
 .activity {
-  display: flex;
   height: 3.25rem;
+  min-height: 3.25rem;
   padding: 0 0 0 0.625rem;
-  background-color: rgb(var(--v-theme-surface-container));
   cursor: pointer;
   border-radius: 0.25rem;
   border-left: 8px solid var(--row-accent);

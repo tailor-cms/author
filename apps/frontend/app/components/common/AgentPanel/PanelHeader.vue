@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="panel-header pa-4" color="transparent">
+  <VSheet class="panel-header pa-5" color="transparent">
     <div class="d-flex align-center ga-2">
       <span class="text-title-medium font-weight-bold ml-1">Renoir</span>
       <VSpacer />
