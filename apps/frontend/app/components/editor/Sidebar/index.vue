@@ -28,18 +28,28 @@
           <VTab
             v-for="tab in tabs"
             :key="tab.name"
-            v-tooltip:bottom="
-              compact ? { text: tab.label, openDelay: 500 } : undefined
-            "
             :aria-label="tab.label"
             :disabled="tab.disabled"
             :value="tab.name"
             :variant="selectedTab === tab.name ? 'tonal' : 'text'"
-            class="mr-1"
             rounded="pill"
           >
-            <VIcon v-if="compact" :icon="`mdi-${tab.icon}`" />
+            <template v-if="compact">
+              <VIcon :icon="`mdi-${tab.icon}`" :start="selectedTab === tab.name" />
+              <VExpandXTransition>
+                <span v-if="selectedTab === tab.name" class="tab-label">
+                  {{ tab.label }}
+                </span>
+              </VExpandXTransition>
+            </template>
             <template v-else>{{ tab.label }}</template>
+            <VTooltip
+              v-if="compact && selectedTab !== tab.name"
+              :open-delay="500"
+              :text="tab.label"
+              activator="parent"
+              location="bottom"
+            />
             <template v-if="tab.badgeData" #append>
               <VBadge :content="tab.badgeData" color="tertiary" inline />
             </template>
@@ -275,6 +285,16 @@ watch(
     letter-spacing: 0.01em;
     text-transform: none;
   }
+
+  // Smooth the gap between the icon and the label as the active tab expands.
+  :deep(.v-tab .v-icon) {
+    transition: margin 0.2s ease;
+  }
+}
+
+// Keep the label on one line so its width animates cleanly during the expand.
+.tab-label {
+  white-space: nowrap;
 }
 
 .sidebar-collapse-btn {
@@ -302,10 +322,6 @@ watch(
   :deep(.v-window__container) {
     height: 100%;
     overflow: visible;
-  }
-
-  :deep(.v-window-item) {
-    padding-bottom: 4rem;
   }
 
   :deep(.activity-discussion) {
