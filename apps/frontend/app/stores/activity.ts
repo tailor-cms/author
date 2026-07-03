@@ -29,6 +29,7 @@ type StatusUpdate = {
   assigneeId?: number | null;
   status?: string;
   priority?: string;
+  position?: number | null;
   description?: string | null;
   dueDate?: string | null;
 };
@@ -47,6 +48,7 @@ function getActivityStatus(activity: Activity): Status {
     assignee: null,
     status: defaults?.status ?? '',
     priority: defaults?.priority ?? '',
+    position: null,
     description: null,
     dueDate: null,
     createdAt: activity.createdAt,

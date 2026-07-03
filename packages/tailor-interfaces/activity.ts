@@ -16,6 +16,7 @@ export interface Status {
   status: string;
   description: string | null;
   priority: string;
+  position: number | null;
   dueDate: string | null;
   createdAt: string;
   updatedAt: string;
