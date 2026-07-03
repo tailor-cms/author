@@ -12,13 +12,14 @@
     :items-per-page="ITEMS_PER_PAGE"
   >
     <template #default="{ items }">
-      <VList class="user-list pa-0" bg-color="transparent">
+      <VList class="user-list pa-0 overflow-visible" bg-color="transparent">
         <VListItem
           v-for="{ raw: user } in (items as unknown as { raw: RepositoryUser }[])"
           :key="user.id"
           :subtitle="user.fullName ? user.email : ''"
           :title="user.label || user.email"
-          class="user-row bg-surface-container py-3 px-4 mb-2"
+          class="user-row bg-surface-raised py-3 px-4 mb-2"
+          elevation="1"
           rounded="lg"
         >
           <template #prepend>
