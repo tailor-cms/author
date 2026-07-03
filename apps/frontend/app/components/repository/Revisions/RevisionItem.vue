@@ -1,7 +1,6 @@
 <template>
   <li class="elevation-1 rounded-lg">
     <VListItem
-      :active="isExpanded"
       :disabled="!isContentElement"
       :rounded="isExpanded ? 't-lg' : 'lg'"
       class="revision bg-surface-raised"
