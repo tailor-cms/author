@@ -2,7 +2,7 @@
   <VList
     :selected="selectedIds"
     :select-strategy="multiple ? 'leaf' : 'single-leaf'"
-    class="asset-list d-flex flex-column py-0 ga-2"
+    class="asset-list d-flex flex-column ga-2"
     @update:selected="emit('update:selected', $event)"
   >
     <VListItem

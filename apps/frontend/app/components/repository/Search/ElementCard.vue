@@ -1,14 +1,19 @@
 <template>
   <VCard
-    :class="{ 'pb-3': !showPreview }"
-    :ripple="false"
     color="surface-raised"
     class="element-card text-start"
     elevation="1"
     rounded="lg"
     variant="flat"
   >
-    <div class="d-flex align-center px-4 pt-3">
+    <VCard
+      :ripple="false"
+      class="d-flex align-center pa-3"
+      color="transparent"
+      rounded="0"
+      flat
+      @click="onCardClick"
+    >
       <VAvatar
         class="flex-shrink-0"
         color="tertiary"
@@ -19,12 +24,12 @@
         <VIcon :icon="manifest?.ui?.icon ?? 'mdi-toy-brick-outline'" size="20" />
       </VAvatar>
       <div class="ml-3 overflow-hidden">
-        <div class="text-title-small text-truncate">
+        <div class="text-label-large font-weight-semibold text-truncate">
           {{ manifest?.name ?? element.type }}
         </div>
         <div
           v-if="breadcrumbs.length"
-          class="d-flex align-center text-body-medium text-medium-emphasis"
+          class="d-flex align-center text-label-medium text-medium-emphasis"
         >
           <template v-for="(name, index) in breadcrumbs" :key="index">
             <VIcon
@@ -63,13 +68,13 @@
         variant="text"
         @click.stop="isExpanded = !isExpanded"
       />
-    </div>
+    </VCard>
     <SearchSnippet
       v-if="element.searchSnippet"
       :snippet="element.searchSnippet"
       class="mx-4 mt-3"
     />
-    <div v-if="showPreview" class="preview-region mx-4 my-3">
+    <div v-if="showPreview" class="preview-region mx-4 mb-3">
       <CardPreview :element="element" :search-terms="searchTerms" />
       <VBtn
         aria-label="Expand preview"
@@ -114,6 +119,10 @@ watch(
 );
 
 const showPreview = computed(() => isExpanded.value);
+
+const onCardClick = () => {
+  isExpanded.value = !isExpanded.value;
+};
 
 const openInNewTab = () => {
   if (editorRoute.value) {
