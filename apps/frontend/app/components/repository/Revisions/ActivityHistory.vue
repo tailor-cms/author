@@ -16,11 +16,13 @@
         color="tertiary"
         density="compact"
         bg-color="transparent"
-        class="pa-0"
+        class="history-list pa-0"
         nav
       >
         <template v-for="group in groupedRevisions" :key="group.key">
-          <VListSubheader class="text-label-medium text-uppercase">
+          <VListSubheader
+            class="history-day-header text-label-medium text-uppercase"
+          >
             {{ group.label }}
           </VListSubheader>
           <template v-for="bundle in group.items" :key="bundle.uid">
@@ -68,9 +70,7 @@
 
 <script lang="ts" setup>
 import { findIndex, findLastIndex, last, map, uniqBy } from 'lodash-es';
-import { formatDate, useIntersectionObserver } from '@vueuse/core';
-import { isToday } from 'date-fns/isToday';
-import { isYesterday } from 'date-fns/isYesterday';
+import { useIntersectionObserver } from '@vueuse/core';
 import { Revision as RevisionEvents } from '@tailor-cms/common/src/sse.js';
 import { Entity } from '@tailor-cms/interfaces/revision';
 import type { Activity } from '@tailor-cms/interfaces/activity';
@@ -80,7 +80,7 @@ import { TailorEmptyState } from '@tailor-cms/core-components';
 
 import HistoryListItem from './HistoryListItem.vue';
 import { api } from '@/api';
-import { isSameRun, type HistoryEntry } from '@/lib/revision';
+import { groupByDay, isSameRun, type HistoryEntry } from '@/lib/revision';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useActivityStore } from '@/stores/activity';
 import { useEditorStore } from '@/stores/editor';
@@ -127,30 +127,7 @@ const bundledRevisions = computed<BundledRevision[]>(() => {
   return result;
 });
 
-const dayLabel = (date: Date) => {
-  if (isToday(date)) return 'Today';
-  if (isYesterday(date)) return 'Yesterday';
-  return formatDate(date, 'MMMM Do, YYYY');
-};
-
-interface RevisionDayGroup {
-  key: string;
-  label: string;
-  items: BundledRevision[];
-}
-
-// Group bundles by calendar day; one linear pass works because the list is DESC.
-const groupedRevisions = computed<RevisionDayGroup[]>(() => {
-  const groups: RevisionDayGroup[] = [];
-  for (const bundle of bundledRevisions.value) {
-    const date = new Date(bundle.createdAt);
-    const key = formatDate(date, 'YYYY-MM-DD');
-    const current = last(groups);
-    if (current?.key === key) current.items.push(bundle);
-    else groups.push({ key, label: dayLabel(date), items: [bundle] });
-  }
-  return groups;
-});
+const groupedRevisions = computed(() => groupByDay(bundledRevisions.value));
 
 const publishedRevision = computed<BundledRevision | undefined>(() => {
   const { publishedAt } = props.activity;
@@ -233,5 +210,18 @@ onBeforeUnmount(() =>
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+// VList defaults to overflow:auto, which would trap the sticky day headers;
+// clear it so they resolve to the scrolling .sidebar-content.
+.history-list {
+  overflow: visible;
+}
+
+.history-day-header {
+  background: rgb(var(--v-theme-surface-container-low));
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 </style>
