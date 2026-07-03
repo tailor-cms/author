@@ -8,7 +8,7 @@
     >
       <template #subtitle>
         <span v-tooltip:bottom="{ text: fullTimestamp, openDelay: 300 }">
-          {{ timeOfDay }} · {{ revision.user.label }}
+          {{ timeOfDay }} · {{ revision.user?.label }}
         </span>
       </template>
       <template #title>

@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="changes-panel" color="surface-container-low" rounded="lg">
+  <VSheet class="changes-panel" color="surface" rounded="lg" elevation="1">
     <VListSubheader class="changes-header border-b" color="text-medium-emphasis">
       Changes
     </VListSubheader>
@@ -62,8 +62,6 @@ const formatDate = ({ createdAt }: Revision) => {
 
 <style lang="scss" scoped>
 .changes-panel {
-  --v-theme-overlay-multiplier: 0.8;
-
   display: flex;
   flex-direction: column;
   max-height: 32rem;
