@@ -60,13 +60,9 @@
         icon="mdi-open-in-new"
         @click.stop="openInNewTab"
       />
-      <VBtn
-        :aria-label="isExpanded ? 'Collapse preview' : 'Expand preview'"
+      <VIcon
         :icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-        class="ml-1"
-        density="comfortable"
-        variant="text"
-        @click.stop="isExpanded = !isExpanded"
+        class="mx-2"
       />
     </VCard>
     <SearchSnippet
@@ -74,18 +70,20 @@
       :snippet="element.searchSnippet"
       class="mx-4 mt-3"
     />
-    <div v-if="showPreview" class="preview-region mx-4 mb-3">
-      <CardPreview :element="element" :search-terms="searchTerms" />
-      <VBtn
-        aria-label="Expand preview"
-        class="expand-btn"
-        density="comfortable"
-        icon="mdi-arrow-expand"
-        size="small"
-        variant="elevated"
-        @click.stop="emit('element:preview', element)"
-      />
-    </div>
+    <VExpandTransition>
+      <div v-if="showPreview" class="preview-region mx-4 mb-3">
+        <CardPreview :element="element" :search-terms="searchTerms" />
+        <VBtn
+          aria-label="Expand preview"
+          class="expand-btn"
+          density="comfortable"
+          icon="mdi-arrow-expand"
+          size="small"
+          variant="elevated"
+          @click.stop="emit('element:preview', element)"
+        />
+      </div>
+    </VExpandTransition>
   </VCard>
 </template>
 
