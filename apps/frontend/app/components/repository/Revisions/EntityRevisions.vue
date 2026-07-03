@@ -1,5 +1,5 @@
 <template>
-  <VSheet class="rounded-b-xl" color="surface-raised" min-height="300">
+  <VSheet class="rounded-b-lg" color="surface-raised" min-height="300">
     <VRow class="pa-4" density="comfortable">
       <VCol cols="12" md="8" sm="7">
         <VSheet v-if="selectedRevision" rounded="lg" theme="light" border>

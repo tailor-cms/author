@@ -1,9 +1,9 @@
 <template>
-  <div class="changes-panel bg-surface-container-low rounded-lg">
+  <VSheet class="changes-panel" color="surface-container-low" rounded="lg">
     <VListSubheader class="changes-header border-b" color="text-medium-emphasis">
       Changes
     </VListSubheader>
-    <VList class="changes-list" bg-color="transparent" nav>
+    <VList class="changes-list py-0" bg-color="transparent">
       <VHover
         v-for="(revision, index) in revisions"
         :key="revision.id"
@@ -14,8 +14,8 @@
           :active="isSelected(revision)"
           :subtitle="revision.user?.label"
           :title="formatDate(revision)"
-          color="primary"
           class="position-relative"
+          lines="two"
           @click="$emit('preview', revision)"
         >
           <template v-if="isHovering" #append>
@@ -33,7 +33,7 @@
         </VListItem>
       </VHover>
     </VList>
-  </div>
+  </VSheet>
 </template>
 
 <script lang="ts" setup>
@@ -62,6 +62,8 @@ const formatDate = ({ createdAt }: Revision) => {
 
 <style lang="scss" scoped>
 .changes-panel {
+  --v-theme-overlay-multiplier: 0.8;
+
   display: flex;
   flex-direction: column;
   max-height: 32rem;
@@ -76,10 +78,6 @@ const formatDate = ({ createdAt }: Revision) => {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-}
-
-.changes-list :deep(.v-list-item) {
-  overflow: hidden;
 }
 
 .v-progress-linear {

@@ -159,7 +159,7 @@ onMounted(() => fetchRevisions());
 
   .revision-day-items {
     margin: 0;
-    padding: 0;
+    padding: 0.125rem 0 0.25rem;
   }
 }
 
@@ -168,7 +168,8 @@ onMounted(() => fetchRevisions());
   position: sticky;
   top: 0;
   z-index: 1;
-  padding: 0.75rem 0.5rem 0.5rem;
+  padding: 0.25rem 0.5rem 0.5rem;
+  margin-top: 0.75rem;
   margin-left: -0.125rem;
   width: calc(100% + 0.25rem);
 }
