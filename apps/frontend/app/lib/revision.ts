@@ -1,5 +1,8 @@
-import { get, isEmpty, reduce } from 'lodash-es';
+import { get, isEmpty, last, reduce } from 'lodash-es';
 import { lowerCase, titleCase } from '@tailor-cms/utils';
+import { formatDate } from '@vueuse/core';
+import { isToday } from 'date-fns/isToday';
+import { isYesterday } from 'date-fns/isYesterday';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { Entity } from '@tailor-cms/interfaces/revision';
@@ -101,6 +104,36 @@ function describeElementRevision(
 
 function describeRepositoryRevision(rev: Revision) {
   return `${getAction(rev.operation)} repository`;
+}
+
+export interface DayGroup<T> {
+  key: string;
+  label: string;
+  items: T[];
+}
+
+function dayLabel(date: Date) {
+  if (isToday(date)) return 'Today';
+  if (isYesterday(date)) return 'Yesterday';
+  return formatDate(date, 'MMMM Do, YYYY');
+}
+
+/**
+ * Buckets a DESC-ordered list of dated entries into calendar-day groups. A
+ * single linear pass suffices because the input is already sorted newest-first.
+ */
+export function groupByDay<T extends { createdAt: string | Date }>(
+  items: T[],
+): DayGroup<T>[] {
+  const groups: DayGroup<T>[] = [];
+  for (const item of items) {
+    const date = new Date(item.createdAt);
+    const key = formatDate(date, 'YYYY-MM-DD');
+    const current = last(groups);
+    if (current?.key === key) current.items.push(item);
+    else groups.push({ key, label: dayLabel(date), items: [item] });
+  }
+  return groups;
 }
 
 export function isSameInstance(a: Revision, b: Revision) {

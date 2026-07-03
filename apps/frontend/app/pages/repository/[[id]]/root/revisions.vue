@@ -1,5 +1,5 @@
 <template>
-  <div class="revisions-page overflow-auto h-100">
+  <div ref="scrollerEl" class="revisions-page overflow-auto h-100">
     <VContainer max-width="1200">
       <VInfiniteScroll
         v-if="bundledRevisions.length > 0"
@@ -8,11 +8,24 @@
         @load="loadMore"
       >
         <VList bg-color="transparent" lines="two" tag="ul">
-          <RevisionItem
-            v-for="revision in bundledRevisions"
-            :key="revision.uid"
-            :revision="revision"
-          />
+          <li
+            v-for="group in groupedRevisions"
+            :key="group.key"
+            class="revision-day-group"
+          >
+            <div class="revision-day-header">
+              <span class="text-label-medium text-uppercase text-medium-emphasis">
+                {{ group.label }}
+              </span>
+            </div>
+            <ul class="revision-day-items">
+              <RevisionItem
+                v-for="revision in group.items"
+                :key="revision.uid"
+                :revision="revision"
+              />
+            </ul>
+          </li>
         </VList>
         <template #load-more="{ props: scrollProps }">
           <VBtn
@@ -32,15 +45,28 @@
         prominent
       />
     </VContainer>
+    <VFadeTransition>
+      <VBtn
+        v-show="isScrolled"
+        aria-label="Back to top"
+        class="back-to-top"
+        color="primary"
+        icon="mdi-arrow-up"
+        size="small"
+        variant="tonal"
+        @click="scrollToTop"
+      />
+    </VFadeTransition>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { last, reduce, uniq, uniqBy } from 'lodash-es';
+import { useScroll } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import { api } from '@/api';
-import { isSameRun } from '@/lib/revision';
+import { groupByDay, isSameRun } from '@/lib/revision';
 import RevisionItem from '@/components/repository/Revisions/RevisionItem.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -79,6 +105,8 @@ const bundledRevisions = computed<Revision[]>(() => {
   );
 });
 
+const groupedRevisions = computed(() => groupByDay(bundledRevisions.value));
+
 const fetchRevisions = async () => {
   isFetching.value = true;
   const repositoryId = currentRepositoryStore.repository?.id;
@@ -104,21 +132,46 @@ const loadMore = async (options: any) => {
   options.done('ok');
 };
 
+const scrollerEl = ref<HTMLElement | null>(null);
+const { y } = useScroll(scrollerEl);
+const isScrolled = computed(() => y.value > 400);
+const scrollToTop = () =>
+  scrollerEl.value?.scrollTo({ top: 0, behavior: 'smooth' });
+
 onMounted(() => fetchRevisions());
 </script>
 
 <style lang="scss" scoped>
 .revisions {
   text-align: left;
+  // VInfiniteScroll and VList default to overflow:auto, which would trap the
+  // sticky headers; clear it so they resolve to the .revisions-page scroller.
+  overflow: visible;
 
   ul {
-    padding: 0.5rem 0;
+    overflow: visible;
     list-style-type: none;
 
     li {
       width: 100%;
     }
   }
+
+  .revision-day-items {
+    margin: 0;
+    padding: 0.125rem 0 0.25rem;
+  }
+}
+
+.revision-day-header {
+  background: rgb(var(--v-theme-surface-container-low));
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.25rem 0.5rem 0.5rem;
+  margin-top: 0.75rem;
+  margin-left: -0.125rem;
+  width: calc(100% + 0.25rem);
 }
 
 .revisions-page {
@@ -128,5 +181,12 @@ onMounted(() => fetchRevisions());
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.back-to-top {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 5;
 }
 </style>
