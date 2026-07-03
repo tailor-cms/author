@@ -1,14 +1,22 @@
 <template>
-  <li>
+  <li class="elevation-1 rounded-lg">
     <VListItem
       :active="isExpanded"
       :disabled="!isContentElement"
-      :rounded="isExpanded ? 'lg b-0' : 'lg'"
-      :subtitle="`${timeAgo} by ${revision.user.label}`"
-      :title="description"
-      class="revision"
+      :rounded="isExpanded ? 't-lg' : 'lg'"
+      class="revision bg-surface-raised"
       @click="toggle"
     >
+      <template #subtitle>
+        <span v-tooltip:bottom="{ text: fullTimestamp, openDelay: 300 }">
+          {{ timeOfDay }} · {{ revision.user.label }}
+        </span>
+      </template>
+      <template #title>
+        <VListItemTitle class="text-title-small font-weight-medium text-truncate">
+          {{ description }}
+        </VListItemTitle>
+      </template>
       <template #prepend>
         <VAvatar
           :color="color"
@@ -34,7 +42,7 @@
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import { find } from 'lodash-es';
-import { formatTimeAgo } from '@vueuse/core';
+import { formatDate } from '@vueuse/core';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 
 import EntityRevisions from './EntityRevisions.vue';
@@ -67,7 +75,10 @@ const description = computed(() =>
   getFormatDescription(props.revision, activity.value),
 );
 
-const timeAgo = computed(() => formatTimeAgo(date.value, { rounding: 'floor' }));
+const timeOfDay = computed(() => formatDate(date.value, 'h:mm A'));
+const fullTimestamp = computed(() =>
+  formatDate(date.value, 'MMMM Do, YYYY h:mm A'),
+);
 
 const isContentElement = computed(
   () => props.revision.entity === 'CONTENT_ELEMENT',
