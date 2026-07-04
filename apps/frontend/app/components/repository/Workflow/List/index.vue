@@ -1,0 +1,95 @@
+<template>
+  <div class="workflow-list">
+    <TailorEmptyState
+      v-if="!items.length"
+      class="mt-4"
+      icon="mdi-clipboard-text-outline"
+      text="No activities match the current filters."
+      title="No items"
+    />
+    <Draggable
+      v-else
+      :list="items"
+      animation="150"
+      class="workflow-list__items"
+      item-key="uid"
+      @change="onChange"
+    >
+      <template #item="{ element }">
+        <ListItem :activity="element" @select="selectActivity" />
+      </template>
+    </Draggable>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { calculatePosition } from '@tailor-cms/utils';
+import Draggable from 'vuedraggable';
+import { orderBy } from 'lodash-es';
+import { TailorEmptyState } from '@tailor-cms/core-components';
+
+import type { ChangeEvent } from '@/types/draggable';
+import ListItem from './ListItem.vue';
+import { useActivityStore } from '@/stores/activity';
+import { useCurrentRepository } from '@/stores/current-repository';
+
+const props = defineProps<{
+  activities: StoreActivity[];
+}>();
+
+const notify = useNotification();
+const repositoryStore = useCurrentRepository();
+const activityStore = useActivityStore();
+
+// Workflow position; null when never set — fall back to the id axis.
+const positionOf = (it: StoreActivity) => it.currentStatus.position ?? it.id;
+
+// vuedraggable mutates the list in place, so we keep a local position-ordered
+// copy and re-derive it whenever the source activities change.
+const items = ref<StoreActivity[]>([]);
+
+function syncItems() {
+  items.value = orderBy(props.activities, positionOf);
+}
+
+watch(() => props.activities, syncItems, { immediate: true });
+
+const selectActivity = (id: number) => repositoryStore.selectActivity(id);
+
+// Persists a drag-reorder as a new position on the activity's workflow status.
+async function onChange(event: ChangeEvent<StoreActivity>) {
+  const { moved } = event;
+  if (!moved) return;
+  const { element: activity, newIndex } = moved;
+  // The list already contains the row at its drop index; `calculatePosition`
+  // splices it out and positions it between its new neighbours.
+  const positions = items.value.map((it) => ({ position: positionOf(it) }));
+  const position = calculatePosition({
+    items: positions as any,
+    newPosition: newIndex,
+  });
+  try {
+    await activityStore.saveStatus(activity.id, {
+      ...activity.currentStatus,
+      position,
+    });
+  } catch {
+    notify('Failed to save order', { immediate: true });
+    syncItems();
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+// The page pane is height-bounded; rows scroll under the pinned filter bar.
+.workflow-list {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.workflow-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+</style>

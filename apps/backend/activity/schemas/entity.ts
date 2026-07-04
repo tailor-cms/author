@@ -40,7 +40,7 @@ export const ActivityStatus = z
     position: z
       .number()
       .nullable()
-      .describe('Workflow rank; orders board columns and the list view.'),
+      .describe('Workflow position; orders board columns and the list view.'),
     description: z
       .string()
       .nullable()

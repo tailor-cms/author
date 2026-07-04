@@ -518,7 +518,7 @@
                 "type": "null"
               }
             ],
-            "description": "Workflow rank; orders board columns and the list view."
+            "description": "Workflow position; orders board columns and the list view."
           },
           "description": {
             "anyOf": [
@@ -6737,7 +6737,7 @@
                         "type": "null"
                       }
                     ],
-                    "description": "Workflow rank; orders board columns and the list view."
+                    "description": "Workflow position; orders board columns and the list view."
                   },
                   "description": {
                     "anyOf": [
