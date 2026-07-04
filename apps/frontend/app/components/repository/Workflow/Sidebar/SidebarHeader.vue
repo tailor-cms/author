@@ -57,6 +57,10 @@
       <VIcon icon="mdi-link" />
     </VBtn>
     <div class="mt-6 text-body-small">{{ timestampInfo }}</div>
+    <div class="d-flex align-center mt-2 text-body-small">
+      <PublishingBadge :activity="activity" start />
+      {{ publishStatusMessage }}
+    </div>
   </div>
 </template>
 
@@ -65,6 +69,7 @@ import { formatDate } from 'date-fns/format';
 import { isBefore } from 'date-fns/isBefore';
 
 import ActivityCard from './ActivityCard.vue';
+import PublishingBadge from '../../Sidebar/PublishingBadge.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 
 const props = defineProps<{
@@ -80,6 +85,12 @@ const statusUrl = computed(() => route.query && window.location.href);
 const activityConfig = computed(() =>
   $schemaService.getLevel(props.activity.type),
 );
+
+const publishStatusMessage = computed(() => {
+  const { publishedAt } = props.activity;
+  if (!publishedAt) return 'Not published';
+  return `Published on ${formatDate(publishedAt, 'MM/dd/yy HH:mm')}`;
+});
 
 const timestampInfo = computed(() => {
   const format = 'MM/dd/yy HH:mm';
