@@ -32,7 +32,11 @@
           <VListItemAction start>
             <VCheckboxBtn :model-value="isSelected(option.id)" />
           </VListItemAction>
-          <VIcon :color="option.color" icon="mdi-circle" size="small" />
+          <VIcon
+            :color="option.color"
+            :icon="option.icon ?? 'mdi-circle'"
+            size="small"
+          />
         </template>
         <VListItemTitle>{{ option.label }}</VListItemTitle>
       </VListItem>
@@ -52,6 +56,7 @@ interface Item {
   id: string;
   label: string;
   color: string;
+  icon?: string;
 }
 
 defineOptions({ inheritAttrs: false });

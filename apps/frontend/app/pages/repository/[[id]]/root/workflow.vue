@@ -11,6 +11,7 @@
             v-model:recent-only="filters.recentOnly"
             v-model:search="filters.search"
             v-model:status="filters.status"
+            v-model:priority="filters.priority"
             v-model:type="filters.type"
             :assignee-options="assignees"
             :status-options="workflow.statuses"
@@ -89,6 +90,7 @@ const SEARCH_LENGTH_THRESHOLD = 2;
 interface Filters {
   search: string | null;
   status: string[];
+  priority: string[];
   type: string[];
   assigneeIds: number[];
   recentOnly: boolean;
@@ -99,6 +101,7 @@ definePageMeta({ name: 'progress' });
 const filters = reactive<Filters>({
   search: null,
   status: [],
+  priority: [],
   type: [],
   assigneeIds: [],
   recentOnly: false,
@@ -117,11 +120,12 @@ const view = useLocalStorage<'board' | 'list' | 'table'>(
 );
 
 const filteredActivities = computed(() => {
-  const { assigneeIds, search, status, type, recentOnly } = filters;
+  const { assigneeIds, search, status, priority, type, recentOnly } = filters;
   const searchFilterEnabled = search && search.length > SEARCH_LENGTH_THRESHOLD;
 
   const statusFilters = compact([
     status.length && filterByStatus,
+    priority.length && filterByPriority,
     assigneeIds.length && filterByAssignee,
     recentOnly && filterByRecency,
   ]);
@@ -158,6 +162,9 @@ const assignees = computed(() => {
 });
 
 const filterByStatus = ({ status }: Status) => filters.status.includes(status);
+
+const filterByPriority = ({ priority }: Status) =>
+  filters.priority.includes(priority);
 
 const filterByAssignee = ({ assigneeId }: Status) => {
   return filters.assigneeIds.includes(assigneeId as number);
