@@ -44,15 +44,7 @@ const activityStore = useActivityStore();
 // Workflow position; null when never set — fall back to the id axis.
 const positionOf = (it: StoreActivity) => it.currentStatus.position ?? it.id;
 
-// vuedraggable mutates the list in place, so we keep a local position-ordered
-// copy and re-derive it whenever the source activities change.
-const items = ref<StoreActivity[]>([]);
-
-function syncItems() {
-  items.value = orderBy(props.activities, positionOf);
-}
-
-watch(() => props.activities, syncItems, { immediate: true });
+const items = computed(() => orderBy(props.activities, positionOf));
 
 const selectActivity = (id: number) => repositoryStore.selectActivity(id);
 
@@ -60,19 +52,15 @@ const selectActivity = (id: number) => repositoryStore.selectActivity(id);
 async function onChange(event: ChangeEvent<StoreActivity>) {
   const { moved } = event;
   if (!moved) return;
-  const { element: activity, newIndex } = moved;
+  const { element: activity, newIndex: newPosition } = moved;
   // The list already contains the row at its drop index; `calculatePosition`
   // splices it out and positions it between its new neighbours.
   const positions = items.value.map((it) => ({ position: positionOf(it) }));
-  const position = calculatePosition({
-    items: positions as any,
-    newPosition: newIndex,
-  });
+  const position = calculatePosition({ items: positions as any, newPosition });
   try {
     await activityStore.saveStatus(activity.id, { position });
   } catch {
     notify('Failed to save order', { immediate: true });
-    syncItems();
   }
 }
 </script>

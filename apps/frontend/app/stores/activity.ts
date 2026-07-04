@@ -255,14 +255,23 @@ export const useActivityStore = defineStore('activities', () => {
     return unlinked;
   };
 
+  // Optimistic: the patched row renders immediately, the created row
+  // replaces it on success, and a failure restores the previous one.
   const saveStatus = async (id: number, patch: StatusUpdate) => {
     const activity = findById(id);
     if (!activity) return;
-    const data = await api.activity.setStatus({
-      params: { repositoryId: activity.repositoryId, activityId: activity.id },
-      body: { ...activity.currentStatus, ...patch },
-    });
-    Object.assign(activity, { status: data });
+    const previous = activity.currentStatus;
+    const updated = { ...previous, ...patch };
+    activity.currentStatus = updated;
+    try {
+      activity.currentStatus = await api.activity.setStatus({
+        params: { repositoryId: activity.repositoryId, activityId: activity.id },
+        body: updated,
+      });
+    } catch (error) {
+      activity.currentStatus = previous;
+      throw error;
+    }
   };
 
   const $subscribeToSSE = () => {

@@ -50,8 +50,6 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
   activities: StoreActivity[];
-  // Columns to render; the page narrows these when the status filter is
-  // active (status filter = column focus on the board).
   statuses: StatusConfig[];
 }>();
 
@@ -62,19 +60,13 @@ const activityStore = useActivityStore();
 // Workflow position; null when never set — fall back to the id axis.
 const positionOf = (it: StoreActivity) => it.currentStatus.position ?? it.id;
 
-// vuedraggable mutates the per-column lists in place, so we keep a local copy
-// grouped by status id and re-derive it whenever the source activities change.
-const columns = reactive<Record<string, StoreActivity[]>>({});
-
-function syncColumns() {
+const columns = computed<Record<string, StoreActivity[]>>(() => {
   const grouped = groupBy(props.activities, (it) => it.currentStatus.status);
-  props.statuses.forEach((status) => {
-    columns[status.id] = orderBy(grouped[status.id] ?? [], positionOf);
-  });
-}
-
-watch(() => [props.activities, props.statuses], syncColumns, {
-  immediate: true,
+  const entries = props.statuses.map((status) => [
+    status.id,
+    orderBy(grouped[status.id] ?? [], positionOf),
+  ]);
+  return Object.fromEntries(entries);
 });
 
 const selectActivity = (id: number) => repositoryStore.selectActivity(id);
@@ -85,21 +77,17 @@ const selectActivity = (id: number) => repositoryStore.selectActivity(id);
 async function onChange(event: ChangeEvent<StoreActivity>, statusId: string) {
   const change = event.added ?? event.moved;
   if (!change) return;
-  const { element: activity, newIndex } = change;
+  const { element: activity, newIndex: newPosition } = change;
   // The list already contains the card at its drop index; `calculatePosition`
   // splices it out and positions it between its new neighbours.
-  const items = columns[statusId]!.map((it) => ({ position: positionOf(it) }));
-  const position = calculatePosition({
-    items: items as any,
-    newPosition: newIndex,
-  });
+  const items = columns.value[statusId]!.map((it) => ({ position: positionOf(it) }));
+  const position = calculatePosition({ items: items as any, newPosition });
   const isStatusChange = activity.currentStatus.status !== statusId;
   try {
     await activityStore.saveStatus(activity.id, { status: statusId, position });
     if (isStatusChange) notify('Status saved', { immediate: true });
   } catch {
     notify('Failed to update status', { immediate: true });
-    syncColumns();
   }
 }
 </script>
