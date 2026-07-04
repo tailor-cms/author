@@ -18,32 +18,18 @@
       variant="outlined"
       @update:model-value="updateStatus('status', $event)"
     />
-    <VSelect
+    <SelectAssignee
       :items="users"
       :model-value="activityStatus.assigneeId"
       class="my-4"
       data-testid="workflow_assigneeInput"
-      item-title="label"
-      item-value="id"
       label="Assignee"
       placeholder="Click to set assignee"
       variant="outlined"
       clearable
       persistent-placeholder
       @update:model-value="updateStatus('assigneeId', $event)"
-    >
-      <template #selection="{ item }">
-        <VAvatar :image="item.imgUrl" class="mr-4" size="26" />
-        {{ item.label }}
-      </template>
-      <template #item="{ item, props: selectProps }">
-        <VListItem v-bind="selectProps">
-          <template #prepend>
-            <VAvatar :image="item.imgUrl" size="26" />
-          </template>
-        </VListItem>
-      </template>
-    </VSelect>
+    />
     <SelectPriority
       :items="workflowConfig.priorities"
       :model-value="activityStatus.priority"
@@ -79,8 +65,9 @@ import { RichTextEditor } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import ActivityDiscussion from '../../Discussion/index.vue';
-import SelectPriority from '../SelectPriority.vue';
-import SelectStatus from '../SelectStatus.vue';
+import SelectAssignee from './SelectAssignee.vue';
+import SelectPriority from './SelectPriority.vue';
+import SelectStatus from './SelectStatus.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
