@@ -85,8 +85,7 @@ const dueDate = computed(
 );
 
 const updateStatus = async (key: string, value: any = null) => {
-  const updatedData = { ...activityStatus.value, [key]: value } as any;
-  await activityStore.saveStatus(props.activity.id, updatedData);
+  await activityStore.saveStatus(props.activity.id, { [key]: value });
   return notify('Status saved', { immediate: true });
 };
 </script>

@@ -255,12 +255,12 @@ export const useActivityStore = defineStore('activities', () => {
     return unlinked;
   };
 
-  const saveStatus = async (id: number, status: StatusUpdate) => {
+  const saveStatus = async (id: number, patch: StatusUpdate) => {
     const activity = findById(id);
     if (!activity) return;
     const data = await api.activity.setStatus({
       params: { repositoryId: activity.repositoryId, activityId: activity.id },
-      body: status,
+      body: { ...activity.currentStatus, ...patch },
     });
     Object.assign(activity, { status: data });
   };

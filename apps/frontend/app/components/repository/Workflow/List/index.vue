@@ -69,10 +69,7 @@ async function onChange(event: ChangeEvent<StoreActivity>) {
     newPosition: newIndex,
   });
   try {
-    await activityStore.saveStatus(activity.id, {
-      ...activity.currentStatus,
-      position,
-    });
+    await activityStore.saveStatus(activity.id, { position });
   } catch {
     notify('Failed to save order', { immediate: true });
     syncItems();
