@@ -1,5 +1,6 @@
 <template>
   <VCard
+    ref="rootEl"
     :class="{ selected: isSelected }"
     :ripple="false"
     class="board-card text-left"
@@ -100,6 +101,9 @@ const caption = computed(() => {
 const isSelected = computed(
   () => selectedActivity.value?.id === props.activity.id,
 );
+
+const rootEl = ref<{ $el: HTMLElement } | null>(null);
+useScrollWhenSelected(() => rootEl.value?.$el, isSelected);
 </script>
 
 <style lang="scss" scoped>

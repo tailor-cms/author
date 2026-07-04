@@ -1,5 +1,6 @@
 <template>
   <VSheet
+    ref="rootEl"
     :class="{ selected: isSelected }"
     class="list-item text-left"
     color="surface-raised"
@@ -94,6 +95,9 @@ const typeConfig = computed(() =>
 const isSelected = computed(
   () => selectedActivity.value?.id === props.activity.id,
 );
+
+const rootEl = ref<{ $el: HTMLElement } | null>(null);
+useScrollWhenSelected(() => rootEl.value?.$el, isSelected);
 </script>
 
 <style lang="scss" scoped>

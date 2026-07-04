@@ -1,5 +1,6 @@
 <template>
   <VDataTable
+    ref="tableEl"
     :headers="headers"
     :items="items"
     :row-props="({ item }) => ({ class: item.class })"
@@ -90,6 +91,8 @@ const repositoryStore = useCurrentRepository();
 const { workflow, selectedActivity, activityTypes, hasMultipleTypes } =
   storeToRefs(repositoryStore);
 
+const tableEl = ref<{ $el: HTMLElement } | null>(null);
+
 const headers = computed(() => [
   // Sorts on the numeric id (creation order); the hashed shortId is only
   // the display value.
@@ -134,6 +137,17 @@ const items = computed(() =>
 const selectRow = (_event: Event, { item }: any) => {
   repositoryStore.selectActivity(item.id);
 };
+
+// All rows are in the DOM (no pagination/virtualization), so the selected
+// row is reachable through the `selected` class set via `row-props` -
+// sort-proof, since the DOM is the display order.
+const selectedRow = () =>
+  tableEl.value?.$el.querySelector<HTMLElement>('tbody tr.selected');
+
+useScrollWhenSelected(
+  selectedRow,
+  computed(() => selectedActivity.value?.id),
+);
 
 function isActivitySelected(id: number) {
   return selectedActivity.value && selectedActivity.value.id === id;
