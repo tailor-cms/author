@@ -15,13 +15,14 @@
         :focused="focused"
         :label="label"
         :readonly="isReadonly.value"
+        :style="{ '--toolbar-height': `${toolbarHeight}px` }"
         :variant="variant"
       >
         <template #default="{ props: fieldProps }">
           <div class="w-100">
             <EditorContent v-bind="fieldProps" :editor="editor" class="w-100" />
             <VExpandTransition>
-              <div v-if="!isReadonly.value">
+              <div v-if="!isReadonly.value" ref="toolbar">
                 <VDivider />
                 <EditorToolbar :disabled="isDisabled.value" :editor="editor" />
               </div>
@@ -41,7 +42,7 @@ import { CharacterCount } from '@tiptap/extensions';
 import StarterKit from '@tiptap/starter-kit';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
-import { useFocusWithin } from '@vueuse/core';
+import { useElementSize, useFocusWithin } from '@vueuse/core';
 
 import EditorToolbar from './EditorToolbar.vue';
 
@@ -67,6 +68,9 @@ const emit = defineEmits(['update:model-value', 'change']);
 const input = ref(null) as any;
 const content = ref(props.modelValue);
 const { focused } = useFocusWithin(input);
+
+const toolbar = ref<HTMLElement | null>(null);
+const { height: toolbarHeight } = useElementSize(toolbar);
 
 const editor = useEditor({
   content: content.value,
@@ -110,8 +114,6 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-$toolbar-height: 2.25rem;
-
 :deep(.ProseMirror) {
   overflow-y: auto;
   outline: none;
@@ -147,7 +149,7 @@ $toolbar-height: 2.25rem;
 
 .v-field--center-affix {
   :deep(.v-label.v-field-label:not(.v-field-label--floating)) {
-    top: calc(50% - $toolbar-height/2);
+    top: calc(50% - var(--toolbar-height, 2.25rem) / 2);
   }
 }
 </style>
