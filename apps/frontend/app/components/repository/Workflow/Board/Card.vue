@@ -91,9 +91,15 @@ const isSelected = computed(
   cursor: pointer;
   transition: background-color 0.2s ease;
 
-  // &.selected {
-  //   background: rgba(var(--v-theme-tertiary-container), 0.35);
-  // }
+  &.selected::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: currentColor;
+    opacity: calc(var(--v-activated-opacity) * var(--v-theme-overlay-multiplier));
+    pointer-events: none;
+  }
 }
 
 .board-card__name {
