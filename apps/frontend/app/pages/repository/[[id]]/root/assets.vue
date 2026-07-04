@@ -121,7 +121,7 @@
       @download="downloadAsset"
       @index="(asset: Asset) => indexing.startIndexing([asset.id])"
       @move="(asset: Asset) => openMove([asset.id])"
-      @save="onSaveMeta"
+      @save="onSave"
     />
   </VLayout>
 </template>
@@ -376,8 +376,11 @@ async function onDeindex(asset: Asset) {
   syncActiveAsset(asset.id);
 }
 
-async function onSaveMeta(asset: Asset, meta: Record<string, any>) {
-  await assetStore.updateMeta(asset.id, meta);
+async function onSave(
+  asset: Asset,
+  payload: { meta: Record<string, any>; name?: string },
+) {
+  await assetStore.updateAsset(asset.id, payload);
   syncActiveAsset(asset.id);
   notify('Saved', { immediate: true });
 }
