@@ -12,6 +12,7 @@ import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
 import { api } from '@/api';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
+import { filter } from 'lodash-es';
 
 const { getWorkflow } = workflowConfig;
 
@@ -114,13 +115,12 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     );
   });
 
-  // Outline types present among tracked activities, in taxonomy order (with
-  // their label/color). Type indicators are hidden below two types.
-  const activityTypes = computed(() => {
-    const present = new Set(workflowActivities.value.map((it) => it.type));
-    return (taxonomy.value ?? []).filter((it: any) => present.has(it.type));
-  });
-  const hasMultipleTypes = computed(() => activityTypes.value.length > 1);
+  // Unlike `taxonomy` (all outline levels), this holds only the levels that
+  // participate in workflow - the type vocabulary of the progress views.
+  const workflowTypes = computed(() =>
+    filter(taxonomy.value ?? [], 'isTrackedInWorkflow'),
+  );
+  const hasMultipleWorkflowTypes = computed(() => workflowTypes.value.length > 1);
 
   const isOutlineExpanded = computed(() => {
     if (!repository.value) return false;
@@ -281,8 +281,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     selectedActivity,
     workflow,
     workflowActivities,
-    activityTypes,
-    hasMultipleTypes,
+    workflowTypes,
+    hasMultipleWorkflowTypes,
     isOutlineExpanded,
     isOutlineItemExpanded,
     toggleOutlineItemExpand,

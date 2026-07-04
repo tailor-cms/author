@@ -12,6 +12,7 @@
     @click="emit('select', activity.id)"
   >
     <span
+      v-tooltip:bottom="hasMultipleWorkflowTypes ? typeConfig?.label : undefined"
       class="board-card__accent"
       :style="{ backgroundColor: typeConfig?.color }"
     />
@@ -32,8 +33,8 @@
         </template>
       </PriorityMenu>
       <VSpacer />
-      <span class="text-body-small text-medium-emphasis text-truncate">
-        {{ caption }}
+      <span class="text-body-small text-medium-emphasis">
+        {{ activity.shortId }}
       </span>
       <PublishingBadge :activity="activity" />
     </div>
@@ -72,6 +73,7 @@ import DueDate from '../DueDate.vue';
 import PriorityMenu from '../PriorityMenu.vue';
 import PublishingBadge from '../../Sidebar/PublishingBadge.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { find } from 'lodash-es';
 
 const props = defineProps<{
   activity: StoreActivity;
@@ -79,7 +81,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ select: [id: number] }>();
 
-const { selectedActivity, activityTypes, hasMultipleTypes } = storeToRefs(
+const { selectedActivity, workflowTypes, hasMultipleWorkflowTypes } = storeToRefs(
   useCurrentRepository(),
 );
 
@@ -89,17 +91,10 @@ const priority = computed(() =>
   workflowConfig.getPriority(currentStatus.value.priority),
 );
 const typeConfig = computed(() =>
-  activityTypes.value.find((it: any) => it.type === props.activity.type),
+  find(workflowTypes.value, { type: props.activity.type }),
 );
-// Type rides with the id as one quiet caption ("Page · A-MGW"); hidden
-// when the repo has a single type.
-const caption = computed(() => {
-  const label = hasMultipleTypes.value && typeConfig.value?.label;
-  const { shortId } = props.activity;
-  return label ? `${label} · ${shortId}` : shortId;
-});
-const isSelected = computed(
-  () => selectedActivity.value?.id === props.activity.id,
+const isSelected = computed(() =>
+  selectedActivity.value?.id === props.activity.id,
 );
 
 const rootEl = ref<{ $el: HTMLElement } | null>(null);

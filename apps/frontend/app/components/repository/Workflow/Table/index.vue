@@ -88,7 +88,7 @@ const props = defineProps<{
 }>();
 
 const repositoryStore = useCurrentRepository();
-const { workflow, selectedActivity, activityTypes, hasMultipleTypes } =
+const { workflow, selectedActivity, workflowTypes, hasMultipleWorkflowTypes } =
   storeToRefs(repositoryStore);
 
 const tableEl = ref<{ $el: HTMLElement } | null>(null);
@@ -98,7 +98,7 @@ const headers = computed(() => [
   // the display value.
   { title: 'ID', value: 'id', sortable: true, width: '5.5rem' },
   { title: 'Name', value: 'name', sortable: true, maxWidth: '20rem' },
-  ...(hasMultipleTypes.value
+  ...(hasMultipleWorkflowTypes.value
     ? [{ title: 'Type', value: 'type', sort: compareTypes }]
     : []),
   {
@@ -138,9 +138,6 @@ const selectRow = (_event: Event, { item }: any) => {
   repositoryStore.selectActivity(item.id);
 };
 
-// All rows are in the DOM (no pagination/virtualization), so the selected
-// row is reachable through the `selected` class set via `row-props` -
-// sort-proof, since the DOM is the display order.
 const selectedRow = () =>
   tableEl.value?.$el.querySelector<HTMLElement>('tbody tr.selected');
 
@@ -158,7 +155,7 @@ function getStatusById(id: string) {
 }
 
 function getTypeById(type: string) {
-  return activityTypes.value.find((it: TypeConfig) => it.type === type);
+  return workflowTypes.value.find((it: TypeConfig) => it.type === type);
 }
 
 function compareStatuses(first: StatusConfig, second: StatusConfig) {
@@ -167,7 +164,7 @@ function compareStatuses(first: StatusConfig, second: StatusConfig) {
 }
 
 function compareTypes(first: TypeConfig, second: TypeConfig) {
-  const typeIds = activityTypes.value.map((it: TypeConfig) => it.type);
+  const typeIds = workflowTypes.value.map((it: TypeConfig) => it.type);
   return typeIds.indexOf(first?.type) - typeIds.indexOf(second?.type);
 }
 

@@ -115,7 +115,7 @@ const store = useCurrentRepository();
 const {
   workflowActivities: activities,
   workflow,
-  activityTypes: types,
+  workflowTypes: types,
 } = storeToRefs(store);
 
 const view = useLocalStorage<'board' | 'list' | 'table'>(

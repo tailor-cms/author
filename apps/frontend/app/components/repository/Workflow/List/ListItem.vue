@@ -14,7 +14,7 @@
     />
     <div class="list-item__main">
       <div class="list-item__title text-body-medium text-truncate">
-        <VChip v-if="hasMultipleTypes" class="mr-2" size="x-small">
+        <VChip v-if="hasMultipleWorkflowTypes" class="mr-2" size="x-small">
           {{ typeConfig?.label }}
         </VChip>
         <VChip color="tertiary" class="mr-2" size="x-small">
@@ -80,7 +80,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ select: [id: number] }>();
 
-const { selectedActivity, activityTypes, hasMultipleTypes } = storeToRefs(
+const { selectedActivity, workflowTypes, hasMultipleWorkflowTypes } = storeToRefs(
   useCurrentRepository(),
 );
 
@@ -90,7 +90,7 @@ const priority = computed(() =>
   workflowConfig.getPriority(currentStatus.value.priority),
 );
 const typeConfig = computed(() =>
-  activityTypes.value.find((it: any) => it.type === props.activity.type),
+  workflowTypes.value.find((it: any) => it.type === props.activity.type),
 );
 const isSelected = computed(
   () => selectedActivity.value?.id === props.activity.id,
