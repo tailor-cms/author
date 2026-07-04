@@ -3,32 +3,46 @@
     :headers="headers"
     :items="items"
     :row-props="({ item }) => ({ class: item.class })"
-    class="text-left bg-surface-raised"
+    class="bg-surface-raised rounded-lg text-left elevation-1"
     items-per-page="25"
     fixed-header
-    @click:row="selectActivity"
+    @click:row="selectRow"
   >
-    <template #[`item.status`]="{ item: { status } }">
-      <VChip :text="status.label" size="small" rounded>
-        <template #prepend>
-          <VIcon :color="status.color" icon="mdi-circle" size="small" start />
+    <template #[`item.status`]="{ item: { activity } }">
+      <StatusMenu :activity="activity" />
+    </template>
+    <template #[`item.assignee`]="{ item: { activity, assignee } }">
+      <AssigneeMenu :activity="activity">
+        <template #activator="{ props: menuProps }">
+          <div
+            v-bind="menuProps"
+            class="d-inline-flex align-center ga-2 cursor-pointer"
+            @click.stop
+          >
+            <UserAvatar :img-url="assignee?.imgUrl" size="22" />
+            {{ assignee?.label ?? 'Unassigned' }}
+          </div>
         </template>
-      </VChip>
+      </AssigneeMenu>
     </template>
-    <template #[`item.assignee`]="{ item: { assignee } }">
-      <div class="d-flex align-center gap-1">
-        <UserAvatar :img-url="assignee?.imgUrl" size="22" start />
-        {{ assignee?.label ?? 'Unassigned' }}
-      </div>
-    </template>
-    <template #[`item.priority`]="{ item: { priority } }">
-      <VChip :color="priority.color" size="small" rounded>
-        <VIcon :icon="priority.icon" size="x-large" start />
-        <div class="text-inverse-surface">{{ priority.label }}</div>
-      </VChip>
+    <template #[`item.priority`]="{ item: { activity, priority } }">
+      <PriorityMenu :activity="activity">
+        <template #activator="{ props: menuProps }">
+          <VChip
+            v-bind="menuProps"
+            :color="priority?.color"
+            size="small"
+            rounded
+            @click.stop
+          >
+            <VIcon :icon="priority?.icon" size="x-large" start />
+            <div class="text-inverse-surface">{{ priority?.label }}</div>
+          </VChip>
+        </template>
+      </PriorityMenu>
     </template>
     <template #[`item.dueDate`]="{ item }">
-      <OverviewDueDate v-if="item.dueDate" :date="item.dueDate" />
+      <DueDate v-if="item.dueDate" :date="item.dueDate" />
     </template>
   </VDataTable>
 </template>
@@ -39,7 +53,10 @@ import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
-import OverviewDueDate from './DueDate.vue';
+import AssigneeMenu from '../AssigneeMenu.vue';
+import DueDate from '../DueDate.vue';
+import PriorityMenu from '../PriorityMenu.vue';
+import StatusMenu from '../StatusMenu.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface PriorityConfig extends StatusConfig {
@@ -59,7 +76,7 @@ const headers = computed(() => [
     title: 'Status',
     value: 'status',
     sort: compareStatuses,
-    width: '8.125rem',
+    width: '10rem',
   },
   {
     title: 'Assignee',
@@ -72,17 +89,19 @@ const headers = computed(() => [
 ]);
 
 const items = computed(() =>
-  props.activities.map(({ id, data, currentStatus }) => ({
-    ...currentStatus,
-    id,
-    name: data.name,
-    status: getStatusById(currentStatus.status),
-    priority: workflowConfig.getPriority(currentStatus.priority),
-    class: isActivitySelected(id) && 'selected',
+  props.activities.map((activity) => ({
+    id: activity.id,
+    activity,
+    name: activity.data.name,
+    status: getStatusById(activity.currentStatus.status),
+    assignee: activity.currentStatus.assignee,
+    priority: workflowConfig.getPriority(activity.currentStatus.priority),
+    dueDate: activity.currentStatus.dueDate,
+    class: isActivitySelected(activity.id) && 'selected',
   })),
 );
 
-const selectActivity = (_event: Event, { item }: any) => {
+const selectRow = (_event: Event, { item }: any) => {
   repositoryStore.selectActivity(item.id);
 };
 
@@ -115,6 +134,7 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 .v-data-table {
   display: flex;
   flex-direction: column;
+  min-height: 0;
   overflow: hidden;
 
   :deep(.v-table__wrapper) {
@@ -137,13 +157,9 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
   &:hover {
     background: rgba(var(--v-theme-surface-container-high));
   }
-
-  &.selected {
-    pointer-events: none;
-  }
 }
 
 .v-table :deep(th) {
-  background: transparent;
+  background: rgba(var(--v-theme-surface-raised));
 }
 </style>

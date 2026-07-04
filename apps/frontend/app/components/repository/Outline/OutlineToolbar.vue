@@ -3,7 +3,7 @@
     <VTextField
       v-model="search"
       placeholder="Search by name or id..."
-      bg-color="transparent"
+      bg-color="surface-container"
       density="comfortable"
       max-width="384"
       min-width="220"
