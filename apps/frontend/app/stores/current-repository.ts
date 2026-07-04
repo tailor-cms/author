@@ -114,6 +114,14 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     );
   });
 
+  // Outline types present among tracked activities, in taxonomy order (with
+  // their label/color). Type indicators are hidden below two types.
+  const activityTypes = computed(() => {
+    const present = new Set(workflowActivities.value.map((it) => it.type));
+    return (taxonomy.value ?? []).filter((it: any) => present.has(it.type));
+  });
+  const hasMultipleTypes = computed(() => activityTypes.value.length > 1);
+
   const isOutlineExpanded = computed(() => {
     if (!repository.value) return false;
     const totalItems = outlineActivities.value.length;
@@ -273,6 +281,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     selectedActivity,
     workflow,
     workflowActivities,
+    activityTypes,
+    hasMultipleTypes,
     isOutlineExpanded,
     isOutlineItemExpanded,
     toggleOutlineItemExpand,

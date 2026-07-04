@@ -9,6 +9,7 @@
           <WorkflowFilters
             v-model:assignee-ids="filters.assigneeIds"
             v-model:recent-only="filters.recentOnly"
+            v-model:unpublished-only="filters.unpublishedOnly"
             v-model:search="filters.search"
             v-model:status="filters.status"
             v-model:priority="filters.priority"
@@ -75,6 +76,7 @@
 import { compact, orderBy, overEvery, uniqBy } from 'lodash-es';
 import { isAfter, sub } from 'date-fns';
 import type { Status, StatusConfig } from '@tailor-cms/interfaces/activity';
+import { activity as activityUtils } from '@tailor-cms/utils';
 import { useLocalStorage } from '@vueuse/core';
 
 import Sidebar from '@/components/repository/Workflow/Sidebar/index.vue';
@@ -94,6 +96,7 @@ interface Filters {
   type: string[];
   assigneeIds: number[];
   recentOnly: boolean;
+  unpublishedOnly: boolean;
 }
 
 definePageMeta({ name: 'progress' });
@@ -105,13 +108,14 @@ const filters = reactive<Filters>({
   type: [],
   assigneeIds: [],
   recentOnly: false,
+  unpublishedOnly: false,
 });
 
 const store = useCurrentRepository();
 const {
   workflowActivities: activities,
   workflow,
-  taxonomy,
+  activityTypes: types,
 } = storeToRefs(store);
 
 const view = useLocalStorage<'board' | 'list' | 'table'>(
@@ -120,7 +124,8 @@ const view = useLocalStorage<'board' | 'list' | 'table'>(
 );
 
 const filteredActivities = computed(() => {
-  const { assigneeIds, search, status, priority, type, recentOnly } = filters;
+  const { assigneeIds, search, status, priority, type } = filters;
+  const { recentOnly, unpublishedOnly } = filters;
   const searchFilterEnabled = search && search.length > SEARCH_LENGTH_THRESHOLD;
 
   const statusFilters = compact([
@@ -134,7 +139,8 @@ const filteredActivities = computed(() => {
     (activity) =>
       (!statusFilters.length || overEvery(statusFilters)(activity.currentStatus)) &&
       (!searchFilterEnabled || filterBySearch(activity)) &&
-      (!type.length || type.includes(activity.type)),
+      (!type.length || type.includes(activity.type)) &&
+      (!unpublishedOnly || activityUtils.isChanged(activity)),
   );
 });
 
@@ -144,13 +150,6 @@ const visibleStatuses = computed<StatusConfig[]>(() => {
   const statuses = workflow.value?.statuses ?? [];
   if (!filters.status.length) return statuses;
   return statuses.filter((it: StatusConfig) => filters.status.includes(it.id));
-});
-
-// Activity types present among tracked activities, in taxonomy order (with
-// their label/color). Drives the type filter, which is hidden below 2 types.
-const types = computed(() => {
-  const present = new Set(activities.value.map((it) => it.type));
-  return (taxonomy.value ?? []).filter((it: any) => present.has(it.type));
 });
 
 const assignees = computed(() => {

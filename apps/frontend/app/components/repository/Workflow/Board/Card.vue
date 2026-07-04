@@ -10,6 +10,10 @@
     elevation="1"
     @click="emit('select', activity.id)"
   >
+    <span
+      class="board-card__accent"
+      :style="{ backgroundColor: typeConfig?.color }"
+    />
     <div class="d-flex align-center ga-2 mb-2">
       <PriorityMenu v-if="priority" :activity="activity">
         <template #activator="{ props: menuProps }">
@@ -27,9 +31,10 @@
         </template>
       </PriorityMenu>
       <VSpacer />
-      <span class="text-body-small text-medium-emphasis">
-        {{ activity.shortId }}
+      <span class="text-body-small text-medium-emphasis text-truncate">
+        {{ caption }}
       </span>
+      <PublishingBadge :activity="activity" />
     </div>
     <div class="board-card__name text-body-medium font-weight-medium">
       {{ activity.data.name }}
@@ -64,6 +69,7 @@ import { workflow as workflowConfig } from '@tailor-cms/config';
 import AssigneeMenu from '../AssigneeMenu.vue';
 import DueDate from '../DueDate.vue';
 import PriorityMenu from '../PriorityMenu.vue';
+import PublishingBadge from '../../Sidebar/PublishingBadge.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
@@ -72,13 +78,25 @@ const props = defineProps<{
 
 const emit = defineEmits<{ select: [id: number] }>();
 
-const { selectedActivity } = storeToRefs(useCurrentRepository());
+const { selectedActivity, activityTypes, hasMultipleTypes } = storeToRefs(
+  useCurrentRepository(),
+);
 
 const currentStatus = computed(() => props.activity.currentStatus);
 const assignee = computed(() => currentStatus.value.assignee);
 const priority = computed(() =>
   workflowConfig.getPriority(currentStatus.value.priority),
 );
+const typeConfig = computed(() =>
+  activityTypes.value.find((it: any) => it.type === props.activity.type),
+);
+// Type rides with the id as one quiet caption ("Page · A-MGW"); hidden
+// when the repo has a single type.
+const caption = computed(() => {
+  const label = hasMultipleTypes.value && typeConfig.value?.label;
+  const { shortId } = props.activity;
+  return label ? `${label} · ${shortId}` : shortId;
+});
 const isSelected = computed(
   () => selectedActivity.value?.id === props.activity.id,
 );
@@ -86,8 +104,10 @@ const isSelected = computed(
 
 <style lang="scss" scoped>
 .board-card {
+  position: relative;
   flex: 0 0 auto;
-  padding: 0.75rem;
+  padding: 0.75rem 0.75rem 0.75rem 1rem;
+  overflow: hidden;
   cursor: pointer;
   transition: background-color 0.2s ease;
 
@@ -100,6 +120,15 @@ const isSelected = computed(
     opacity: calc(var(--v-activated-opacity) * var(--v-theme-overlay-multiplier));
     pointer-events: none;
   }
+}
+
+// Type-colored accent, mirroring the list view so both card surfaces share
+// the same type-at-a-glance language.
+.board-card__accent {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 4px;
 }
 
 .board-card__name {

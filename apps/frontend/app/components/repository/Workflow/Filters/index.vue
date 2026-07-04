@@ -45,6 +45,15 @@
       variant="tonal"
       @click="recentOnly = !recentOnly"
     />
+    <VChip
+      :color="unpublishedOnly ? 'tertiary' : ''"
+      :prepend-icon="unpublishedOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
+      data-testid="workflow_unpublishedFilter"
+      rounded="lg"
+      text="Unpublished"
+      variant="tonal"
+      @click="unpublishedOnly = !unpublishedOnly"
+    />
     <AssigneeFilter
       v-if="assigneeOptions"
       v-model="assigneeIds"
@@ -73,6 +82,9 @@ const props = withDefaults(
 
 const search = defineModel<string | null>('search', { default: null });
 const recentOnly = defineModel<boolean>('recentOnly', { default: false });
+const unpublishedOnly = defineModel<boolean>('unpublishedOnly', {
+  default: false,
+});
 const status = defineModel<string[]>('status', { default: () => [] });
 const priority = defineModel<string[]>('priority', { default: () => [] });
 const type = defineModel<string[]>('type', { default: () => [] });

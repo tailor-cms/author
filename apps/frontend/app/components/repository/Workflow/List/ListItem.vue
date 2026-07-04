@@ -13,10 +13,10 @@
     />
     <div class="list-item__main">
       <div class="list-item__title text-body-medium text-truncate">
-        <VChip
-          class="font-weight-bold text-medium-emphasis mr-2"
-          size="x-small"
-        >
+        <VChip v-if="hasMultipleTypes" class="mr-2" size="x-small">
+          {{ typeConfig?.label }}
+        </VChip>
+        <VChip color="tertiary" class="mr-2" size="x-small">
           {{ activity.shortId }}
         </VChip>
         {{ activity.data.name }}
@@ -35,13 +35,14 @@
             v-tooltip:bottom="priority?.label"
             v-bind="menuProps"
             :color="priority?.color"
-            :icon="priority?.icon"
             class="list-item__editable"
-            density="comfortable"
             size="26"
             variant="tonal"
+            icon
             @click.stop
-          />
+          >
+            <VIcon :icon="priority?.icon" size="16" />
+          </VBtn>
         </template>
       </PriorityMenu>
       <AssigneeMenu :activity="activity">
@@ -56,6 +57,7 @@
           />
         </template>
       </AssigneeMenu>
+      <PublishingBadge :activity="activity" />
     </div>
   </VSheet>
 </template>
@@ -68,6 +70,7 @@ import AssigneeMenu from '../AssigneeMenu.vue';
 import DueDate from '../DueDate.vue';
 import PriorityMenu from '../PriorityMenu.vue';
 import StatusMenu from '../StatusMenu.vue';
+import PublishingBadge from '../../Sidebar/PublishingBadge.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{
@@ -76,7 +79,9 @@ const props = defineProps<{
 
 const emit = defineEmits<{ select: [id: number] }>();
 
-const { selectedActivity, taxonomy } = storeToRefs(useCurrentRepository());
+const { selectedActivity, activityTypes, hasMultipleTypes } = storeToRefs(
+  useCurrentRepository(),
+);
 
 const currentStatus = computed(() => props.activity.currentStatus);
 const assignee = computed(() => currentStatus.value.assignee);
@@ -84,7 +89,7 @@ const priority = computed(() =>
   workflowConfig.getPriority(currentStatus.value.priority),
 );
 const typeConfig = computed(() =>
-  taxonomy.value?.find((it: any) => it.type === props.activity.type),
+  activityTypes.value.find((it: any) => it.type === props.activity.type),
 );
 const isSelected = computed(
   () => selectedActivity.value?.id === props.activity.id,

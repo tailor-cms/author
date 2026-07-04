@@ -4,10 +4,21 @@
     :items="items"
     :row-props="({ item }) => ({ class: item.class })"
     class="bg-surface-raised rounded-lg text-left elevation-1"
-    items-per-page="25"
+    items-per-page="-1"
     fixed-header
+    hide-default-footer
     @click:row="selectRow"
   >
+    <template #[`item.id`]="{ item: { activity } }">
+      <span class="text-body-small text-medium-emphasis">
+        {{ activity.shortId }}
+      </span>
+    </template>
+    <template #[`item.type`]="{ item: { type } }">
+      <div class="d-inline-flex align-center ga-2">
+        {{ type?.label }}
+      </div>
+    </template>
     <template #[`item.status`]="{ item: { activity } }">
       <StatusMenu :activity="activity" />
     </template>
@@ -44,6 +55,9 @@
     <template #[`item.dueDate`]="{ item }">
       <DueDate v-if="item.dueDate" :date="item.dueDate" />
     </template>
+    <template #[`item.published`]="{ item: { activity } }">
+      <PublishingBadge :activity="activity" />
+    </template>
   </VDataTable>
 </template>
 
@@ -57,10 +71,15 @@ import AssigneeMenu from '../AssigneeMenu.vue';
 import DueDate from '../DueDate.vue';
 import PriorityMenu from '../PriorityMenu.vue';
 import StatusMenu from '../StatusMenu.vue';
+import PublishingBadge from '../../Sidebar/PublishingBadge.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface PriorityConfig extends StatusConfig {
   icon: string;
+}
+
+interface TypeConfig extends StatusConfig {
+  type: string;
 }
 
 const props = defineProps<{
@@ -68,10 +87,17 @@ const props = defineProps<{
 }>();
 
 const repositoryStore = useCurrentRepository();
-const { workflow, selectedActivity } = storeToRefs(repositoryStore);
+const { workflow, selectedActivity, activityTypes, hasMultipleTypes } =
+  storeToRefs(repositoryStore);
 
 const headers = computed(() => [
-  { title: 'Name', value: 'name', sortable: true, maxWidth: '17.75rem' },
+  // Sorts on the numeric id (creation order); the hashed shortId is only
+  // the display value.
+  { title: 'ID', value: 'id', sortable: true, width: '5.5rem' },
+  { title: 'Name', value: 'name', sortable: true, maxWidth: '20rem' },
+  ...(hasMultipleTypes.value
+    ? [{ title: 'Type', value: 'type', sort: compareTypes }]
+    : []),
   {
     title: 'Status',
     value: 'status',
@@ -86,6 +112,9 @@ const headers = computed(() => [
   },
   { title: 'Priority', value: 'priority', sort: comparePriorities },
   { title: 'Due date', value: 'dueDate', sortable: true },
+  // Icon-only; the badge tooltip explains the state, and the Unpublished
+  // filter chip covers the "group changed items" query a sort would serve.
+  { title: '', value: 'published', sortable: false, width: '3rem' },
 ]);
 
 const items = computed(() =>
@@ -93,6 +122,7 @@ const items = computed(() =>
     id: activity.id,
     activity,
     name: activity.data.name,
+    type: getTypeById(activity.type),
     status: getStatusById(activity.currentStatus.status),
     assignee: activity.currentStatus.assignee,
     priority: workflowConfig.getPriority(activity.currentStatus.priority),
@@ -113,9 +143,18 @@ function getStatusById(id: string) {
   return workflow.value.statuses.find((it: StatusConfig) => it.id === id);
 }
 
+function getTypeById(type: string) {
+  return activityTypes.value.find((it: TypeConfig) => it.type === type);
+}
+
 function compareStatuses(first: StatusConfig, second: StatusConfig) {
   const statusIds = workflow.value.statuses.map((it: StatusConfig) => it.id);
   return statusIds.indexOf(first.id) - statusIds.indexOf(second.id);
+}
+
+function compareTypes(first: TypeConfig, second: TypeConfig) {
+  const typeIds = activityTypes.value.map((it: TypeConfig) => it.type);
+  return typeIds.indexOf(first?.type) - typeIds.indexOf(second?.type);
 }
 
 function compareAssignees(first: User, second: User) {
@@ -131,8 +170,11 @@ function comparePriorities(first: PriorityConfig, second: PriorityConfig) {
 </script>
 
 <style lang="scss" scoped>
+// Content-sized but height-capped: grows with rows until the pane is full,
+// then the body scrolls under the fixed header (no pagination).
 .v-data-table {
   display: flex;
+  flex: 0 1 auto;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
