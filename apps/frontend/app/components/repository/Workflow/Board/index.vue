@@ -59,8 +59,8 @@ const notify = useNotification();
 const repositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 
-// Workflow rank; null = never manually ranked, fall back to the id axis.
-const rankOf = (it: StoreActivity) => it.currentStatus.position ?? it.id;
+// Workflow position; null when never set — fall back to the id axis.
+const positionOf = (it: StoreActivity) => it.currentStatus.position ?? it.id;
 
 // vuedraggable mutates the per-column lists in place, so we keep a local copy
 // grouped by status id and re-derive it whenever the source activities change.
@@ -69,7 +69,7 @@ const columns = reactive<Record<string, StoreActivity[]>>({});
 function syncColumns() {
   const grouped = groupBy(props.activities, (it) => it.currentStatus.status);
   props.statuses.forEach((status) => {
-    columns[status.id] = orderBy(grouped[status.id] ?? [], rankOf);
+    columns[status.id] = orderBy(grouped[status.id] ?? [], positionOf);
   });
 }
 
@@ -79,16 +79,16 @@ watch(() => [props.activities, props.statuses], syncColumns, {
 
 const selectActivity = (id: number) => repositoryStore.selectActivity(id);
 
-// Persists cross-column drops (`added`: status + rank) and within-column
-// reorders (`moved`: rank only). The source column's `removed` event is
+// Persists cross-column drops (`added`: status + position) and within-column
+// reorders (`moved`: position only). The source column's `removed` event is
 // ignored to avoid a duplicate update.
 async function onChange(event: ChangeEvent<StoreActivity>, statusId: string) {
   const change = event.added ?? event.moved;
   if (!change) return;
   const { element: activity, newIndex } = change;
   // The list already contains the card at its drop index; `calculatePosition`
-  // splices it out and ranks it between its new neighbours.
-  const items = columns[statusId]!.map((it) => ({ position: rankOf(it) }));
+  // splices it out and positions it between its new neighbours.
+  const items = columns[statusId]!.map((it) => ({ position: positionOf(it) }));
   const position = calculatePosition({
     items: items as any,
     newPosition: newIndex,
