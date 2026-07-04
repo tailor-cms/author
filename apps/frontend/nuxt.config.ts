@@ -37,7 +37,7 @@ export default defineNuxtConfig({
   debug: false,
   googleFonts: {
     families: {
-      Inter: [400, 500, 600, 700],
+      Geist: [400, 500, 600, 700],
     },
   },
   pinia: {
