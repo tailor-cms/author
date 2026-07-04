@@ -119,8 +119,11 @@ const editorActivityId = computed(() => {
 });
 
 const selectedActivityQuery = computed(() => {
-  if (route.name !== 'editor') return undefined;
-  const id = Number(route.params.activityId) || null;
+  const { params, query, name } = route;
+  const id =
+    name === 'editor'
+      ? Number(params.activityId) || null
+      : Number(query.activityId) || null;
   return id ? { activityId: String(id) } : undefined;
 });
 

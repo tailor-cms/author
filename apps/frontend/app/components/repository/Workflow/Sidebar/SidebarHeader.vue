@@ -1,5 +1,16 @@
 <template>
   <div>
+    <div class="d-flex justify-end">
+      <VBtn
+        v-tooltip:bottom="'Close'"
+        aria-label="Close"
+        density="comfortable"
+        icon="mdi-close"
+        size="small"
+        variant="tonal"
+        @click="repositoryStore.deselectActivity()"
+      />
+    </div>
     <div class="text-body-medium my-2">
       Related <span class="text-lowercase">{{ activityConfig.label }}</span>
     </div>
@@ -62,6 +73,7 @@ const props = defineProps<{
 
 const route = useRoute();
 const notify = useNotification();
+const repositoryStore = useCurrentRepository();
 const { $schemaService } = useNuxtApp() as any;
 
 const statusUrl = computed(() => route.query && window.location.href);
