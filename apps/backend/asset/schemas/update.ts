@@ -16,6 +16,7 @@ const EditableMeta = z.object({
 
 export const UpdateInput = z
   .object({
+    name: z.string().trim().min(1).optional().describe('Display name.'),
     meta: EditableMeta.describe('Editable meta fields'),
   })
   .describe('Patch payload for an asset update operation.');

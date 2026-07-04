@@ -513,8 +513,11 @@ export async function getDownloadUrl(key: string) {
   };
 }
 
-export async function updateMeta(asset: Asset, meta: Partial<AssetMeta>) {
-  logger.debug({ assetId: asset.id }, 'Updating asset meta');
+export async function updateAsset(
+  asset: Asset,
+  { meta, name }: { meta: Partial<AssetMeta>; name?: string },
+) {
+  logger.debug({ assetId: asset.id }, 'Updating asset');
   // meta.files maps fileKey → storageKey (e.g. { captions: "repo/1/..." }).
   // When a client sets a file key to null/empty, delete the stored file.
   // Example: { captions: null } removes the captions file from storage.
@@ -528,7 +531,10 @@ export async function updateMeta(asset: Asset, meta: Partial<AssetMeta>) {
       }
     }
   }
-  return asset.update({ meta: { ...asset.meta, ...meta } });
+  return asset.update({
+    meta: { ...asset.meta, ...meta },
+    ...(name ? { name } : {}),
+  });
 }
 
 /**
