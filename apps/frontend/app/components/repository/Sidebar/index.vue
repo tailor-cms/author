@@ -21,15 +21,6 @@
       <SidebarHeader :activity="store.selectedActivity" />
       <SidebarBody :activity="store.selectedActivity" class="my-6" />
     </div>
-    <VAlert
-      v-else
-      :text="emptyMessage"
-      class="ma-4"
-      icon="mdi-arrow-left-circle"
-      rounded="lg"
-      variant="tonal"
-      prominent
-    />
   </VNavigationDrawer>
 </template>
 
@@ -38,11 +29,6 @@ import { useDisplay } from 'vuetify';
 import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
-
-withDefaults(defineProps<{ emptyMessage?: string }>(), {
-  emptyMessage:
-    'Please create your first Item on the left to view and edit its details here.',
-});
 
 const store = useCurrentRepository();
 const { lgAndUp } = useDisplay();
