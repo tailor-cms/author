@@ -29,6 +29,7 @@
           >
             <VBtn
               v-tooltip:bottom="'Board view'"
+              aria-label="Board view"
               class="px-4"
               icon="mdi-view-column-outline"
               size="small"
@@ -36,6 +37,7 @@
             />
             <VBtn
               v-tooltip:bottom="'List view'"
+              aria-label="List view"
               class="px-4"
               icon="mdi-view-list-outline"
               size="small"
@@ -43,6 +45,7 @@
             />
             <VBtn
               v-tooltip:bottom="'Table view'"
+              aria-label="Table view"
               class="px-4"
               icon="mdi-table"
               size="small"

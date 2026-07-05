@@ -38,17 +38,20 @@
       label="Type"
     />
     <VChip
+      :aria-pressed="recentOnly"
       :color="recentOnly ? 'tertiary' : ''"
       :prepend-icon="recentOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
+      role="button"
       rounded="lg"
       text="Recent"
       variant="tonal"
       @click="recentOnly = !recentOnly"
     />
     <VChip
+      :aria-pressed="unpublishedOnly"
       :color="unpublishedOnly ? 'tertiary' : ''"
       :prepend-icon="unpublishedOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
-      data-testid="workflow_unpublishedFilter"
+      role="button"
       rounded="lg"
       text="Unpublished"
       variant="tonal"

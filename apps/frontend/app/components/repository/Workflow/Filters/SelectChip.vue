@@ -5,6 +5,7 @@
         v-bind="{ ...menuProps, ...$attrs }"
         :color="model.length ? 'tertiary' : ''"
         class="pr-2"
+        role="button"
         rounded="lg"
         variant="tonal"
       >
