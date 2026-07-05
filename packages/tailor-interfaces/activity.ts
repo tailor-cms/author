@@ -6,6 +6,7 @@ export interface StatusConfig {
   label: string;
   color: string;
   default?: boolean;
+  completed?: boolean;
 }
 
 export interface Status {
