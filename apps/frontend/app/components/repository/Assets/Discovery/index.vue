@@ -5,6 +5,17 @@
         <VToolbarTitle>
           <VIcon class="mx-2" icon="mdi-earth-plus" size="small" />
           Discover Resources
+          <VChip
+            v-if="importedCount"
+            class="ml-2"
+            color="success"
+            prepend-icon="mdi-check-circle"
+            rounded="lg"
+            size="small"
+            variant="tonal"
+          >
+            {{ importedCount }} imported
+          </VChip>
         </VToolbarTitle>
         <template #append>
           <DiscoveryActions
@@ -107,6 +118,8 @@ const hasSearched = ref(false);
 
 const suggestions = ref<DiscoveryResult[]>([]);
 const selectedUrls = reactive(new Set<string>());
+const importedUrls = reactive(new Set<string>());
+const importedCount = computed(() => importedUrls.size);
 const page = ref(1);
 const hasDownloadable = computed(() => {
   if (!selectedUrls.size) return false;
@@ -178,12 +191,15 @@ async function addSelected(shouldIndex = false) {
   try {
     const byUrl = new Map(suggestions.value.map((s) => [s.url, s]));
     const imports = [...selectedUrls].map((url) =>
-      api.importFromLink(repositoryId.value!, url, toImportMeta(byUrl.get(url)))
-        .catch(() => null),
+      api
+        .importFromLink(repositoryId.value!, url, toImportMeta(byUrl.get(url)))
+        .then((asset) => ({ url, asset }))
+        .catch(() => ({ url, asset: null })),
     );
     const results = await Promise.all(imports);
-    const addedAssets = results.filter(Boolean);
-    const failCount = results.length - addedAssets.length;
+    const succeeded = results.filter((r) => r.asset);
+    const addedAssets = succeeded.map((r) => r.asset);
+    const failCount = results.length - succeeded.length;
     if (failCount) {
       notify(`${failCount} of ${results.length} imports failed`, {
         color: 'warning',
@@ -195,8 +211,13 @@ async function addSelected(shouldIndex = false) {
         addedAssets.map((a: any) => a.id),
       );
     }
+    // Dialog stays open: clear only the URLs that landed, so a search
+    // session can span multiple queries before the user closes it.
+    succeeded.forEach(({ url }) => {
+      importedUrls.add(url);
+      selectedUrls.delete(url);
+    });
     emit('added', addedAssets);
-    show.value = false;
   } finally {
     isAdding.value = false;
   }
@@ -208,6 +229,7 @@ watch(show, (v) => {
   contentFilter.value = ContentFilter.All;
   suggestions.value = [];
   selectedUrls.clear();
+  importedUrls.clear();
   hasSearched.value = false;
   page.value = 1;
   selectedTopic.value = null;

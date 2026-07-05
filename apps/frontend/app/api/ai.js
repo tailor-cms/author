@@ -2,10 +2,8 @@ import { extractData } from './helpers';
 import request from './request';
 
 const urls = {
-  generate: () => '/ai/generate',
-  upload: () => '/ai/upload',
-  vectorStore: (id) => `/ai/vector-store/${id}`,
-  vectorStoreStatus: (id) => `${urls.vectorStore(id)}/status`,
+  generate: (repositoryId) =>
+    `/repositories/${repositoryId}/ai/generate`,
   agentRun: (repositoryId) =>
     `/repositories/${repositoryId}/agent/run`,
   agentSessions: (repositoryId) =>
@@ -14,27 +12,8 @@ const urls = {
     `${urls.agentSessions(repositoryId)}/${id}`,
 };
 
-function generate(payload) {
-  return request.post(urls.generate(), payload).then(extractData);
-}
-
-function upload(files, vectorStoreId) {
-  const form = new FormData();
-  files.forEach((file) => form.append('files', file));
-  if (vectorStoreId) form.append('vectorStoreId', vectorStoreId);
-  return request
-    .post(urls.upload(), form, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
-    .then(extractData);
-}
-
-function getVectorStoreStatus(vectorStoreId) {
-  return request.get(urls.vectorStoreStatus(vectorStoreId)).then(extractData);
-}
-
-function deleteVectorStore(vectorStoreId) {
-  return request.delete(urls.vectorStore(vectorStoreId)).then(extractData);
+function generate(repositoryId, payload) {
+  return request.post(urls.generate(repositoryId), payload).then(extractData);
 }
 
 function runAgent(repositoryId, payload) {
@@ -61,9 +40,6 @@ function deleteAgentSession(repositoryId, id) {
 
 export default {
   generate,
-  upload,
-  getVectorStoreStatus,
-  deleteVectorStore,
   runAgent,
   listAgentSessions,
   createAgentSession,

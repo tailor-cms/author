@@ -175,7 +175,10 @@ function operatingPrinciples(): string {
         (image, video, document):
         a. Try \`list_assets\` first - the library may already have
            something fitting. Embed it directly when the asset's
-           description matches.
+           description matches; when torn between candidates, or
+           before falling back to creating a new asset, re-run the
+           narrowed search with includeUsage: true and prefer
+           isUsed: false so the same media isn't repeated.
         b. If nothing fits AND the medium uses media (courses,
            knowledge bases, reference content), call
            \`ask_user_question\` BEFORE running discover_resources or
@@ -362,6 +365,15 @@ function assetsSection(): string {
       already fit. discover_resources searches the web; import_resource
       brings a URL into the library; index_assets makes it searchable
       via file_search.
+    - Reuse before create: at the point of generating or importing
+      a new asset, first re-run the narrowed list_assets search with
+      \`includeUsage: true\` and prefer \`isUsed: false\` matches -
+      you neither duplicate an existing file nor repeat media the
+      reader has already seen. Browse WITHOUT the flag otherwise;
+      it costs an extra repository scan per call. For the exact
+      places one asset is referenced (before deleting or replacing
+      it, or "where is this used?"), call get_asset with
+      \`includeUsages: true\`.
     - For meta fields of file type (thumbnails, hero images), pick or
       generate the asset, then attach_asset_to_activity. Don't ask
       "which section?" or "what kind of image?" when the surrounding
@@ -392,9 +404,11 @@ function analysisSection(): string {
     ANALYSIS & AUDITS (read-only)
     Some asks ("audit a11y", "find broken links", "what's missing?",
     "review naming", "find unused assets") are inspections. Walk
-    get_outline + get_activity_subtree, list_assets where relevant, and
-    return a markdown REPORT. Do NOT mutate during an audit unless the
-    user explicitly says "fix"/"update"/"rewrite".
+    get_outline + get_activity_subtree, list_assets where relevant
+    (\`includeUsage: true\` answers "find unused assets"; get_asset
+    with \`includeUsages: true\` answers "where is X used"), and
+    return a markdown REPORT. Do NOT mutate during an audit unless
+    the user explicitly says "fix"/"update"/"rewrite".
     Report shape: group findings by parent activity (h3 headings),
     reference entities clickably ("<label> #<id>"), one line per
     finding, end with a verdict ("X activities checked, Y issues

@@ -10,47 +10,59 @@ import { createAiLogger } from '../logger.ts';
 
 const logger = createAiLogger('context');
 
-export default class RepositoryContext {
+export default class GenerationContext implements AiRepositoryContext {
+  repositoryId: number;
   schemaId: string;
   name: string;
   description: string;
+  outlineActivityId?: number;
   outlineActivityType?: string;
   containerType?: string;
   topic?: string;
-  tags?: string[];
+  // Vector store id is resolved from the repository record
   vectorStoreId?: string;
   assets: AssetReference[] = [];
   // Resolved outline: ancestors + current activity
   private outlineLocation: any[] = [];
 
   constructor(context: AiRepositoryContext) {
+    this.repositoryId = context.repositoryId;
     this.schemaId = context.schemaId;
     this.name = context.name;
     this.description = context.description;
+    this.outlineActivityId = context.outlineActivityId;
     this.outlineActivityType = context.outlineActivityType;
     this.containerType = context.containerType;
     this.topic = context.topic;
-    // Fallback tags from frontend (e.g. outline generation before repo exists)
-    this.tags = context.tags;
-    this.vectorStoreId = context.vectorStoreId;
   }
 
-  async resolve(context: AiRepositoryContext) {
-    const { repositoryId, activityId } = context;
+  async resolve() {
+    const { repositoryId, outlineActivityId } = this;
     if (!repositoryId) return;
     await Promise.all([
-      this.resolveOutlineContext(activityId),
-      this.resolveRepository(repositoryId),
+      this.resolveOutlineContext(repositoryId, outlineActivityId),
+      this.resolveVectorStore(repositoryId),
       this.resolveAssets(repositoryId),
     ]);
   }
 
-  private async resolveOutlineContext(activityId?: number) {
+  private async resolveOutlineContext(
+    repositoryId: number,
+    activityId?: number,
+  ) {
     if (!activityId) return;
     try {
       const { Activity } = db;
-      const activity = await Activity.findByPk(activityId);
-      if (!activity) return;
+      const activity = await Activity.findOne({
+        where: { id: activityId, repositoryId },
+      });
+      if (!activity) {
+        logger.warn(
+          { repositoryId, activityId },
+          'Outline activity not found in repository',
+        );
+        return;
+      }
       const ancestors = await activity.predecessors();
       this.outlineLocation = [...ancestors, activity];
     } catch (err) {
@@ -58,25 +70,14 @@ export default class RepositoryContext {
     }
   }
 
-  private async resolveRepository(repositoryId: number) {
+  private async resolveVectorStore(repositoryId: number) {
     try {
       const { Repository } = db;
       const repo = await Repository.findByPk(repositoryId);
       if (!repo) return;
-      // Vector store ID
-      if (!this.vectorStoreId) {
-        this.vectorStoreId = repo.getVectorStoreId() || undefined;
-      }
-      // Tags from AI meta
-      const aiMeta = repo.data?.$$?.ai;
-      if (!aiMeta) return;
-      const tags = [
-        ...(aiMeta.topicTags || []),
-        ...(aiMeta.styleTags || []),
-      ].filter(Boolean);
-      if (tags.length) this.tags = tags;
+      this.vectorStoreId = repo.getVectorStoreId() || undefined;
     } catch (err) {
-      logger.warn(err, 'Failed to resolve repository');
+      logger.warn(err, 'Failed to resolve vector store');
     }
   }
 
@@ -140,13 +141,6 @@ export default class RepositoryContext {
     return `User is currently creating content about "${topic}".`;
   }
 
-  get tagContext() {
-    const { tags } = this;
-    if (!tags?.length) return '';
-    const base = 'The following tags were provided to inform the context:';
-    return `${base} ${tags.join(', ')}.`;
-  }
-
   get instructionContext() {
     const instructions = this.outlineLocation
       .map((a: any) => a.data?.aiPrompt?.trim())
@@ -162,7 +156,6 @@ export default class RepositoryContext {
       ${this.topicContext}
       ${this.locationContext}
       ${this.contentContainerDescription}
-      ${this.tagContext}
       ${this.instructionContext}`.trim();
   }
 }

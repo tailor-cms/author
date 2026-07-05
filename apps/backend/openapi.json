@@ -19,14 +19,6 @@
       "x-displayName": "Probes"
     },
     {
-      "name": "AI / Generation",
-      "x-displayName": "Generation"
-    },
-    {
-      "name": "AI / Vector store",
-      "x-displayName": "Vector store"
-    },
-    {
       "name": "Activity / CRUD",
       "x-displayName": "CRUD"
     },
@@ -49,6 +41,10 @@
     {
       "name": "AI / Agent",
       "x-displayName": "Agent"
+    },
+    {
+      "name": "AI / Generation",
+      "x-displayName": "Generation"
     },
     {
       "name": "Library / Discovery",
@@ -175,15 +171,6 @@
       ]
     },
     {
-      "name": "AI",
-      "tags": [
-        "AI / Generation",
-        "AI / Vector store",
-        "AI / Agent",
-        "AI / Review"
-      ]
-    },
-    {
       "name": "Activity",
       "tags": [
         "Activity / CRUD",
@@ -191,6 +178,14 @@
         "Activity / Lifecycle",
         "Activity / Publishing",
         "Activity / Linked content"
+      ]
+    },
+    {
+      "name": "AI",
+      "tags": [
+        "AI / Agent",
+        "AI / Generation",
+        "AI / Review"
       ]
     },
     {
@@ -276,89 +271,6 @@
       }
     },
     "schemas": {
-      "AiUploadedDocument": {
-        "type": "object",
-        "properties": {
-          "fileId": {
-            "type": "string",
-            "description": "OpenAI file id (e.g. `file_abc123`)."
-          },
-          "name": {
-            "type": "string",
-            "description": "Original filename."
-          }
-        },
-        "required": [
-          "fileId",
-          "name"
-        ],
-        "additionalProperties": false
-      },
-      "AiUploadResult": {
-        "type": "object",
-        "properties": {
-          "vectorStoreId": {
-            "type": "string",
-            "description": "Vector store the PDFs landed in."
-          },
-          "documents": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AiUploadedDocument"
-            },
-            "description": "Per-file upload result, in input order."
-          }
-        },
-        "required": [
-          "vectorStoreId",
-          "documents"
-        ],
-        "additionalProperties": false
-      },
-      "AiVectorStoreFileStatus": {
-        "type": "object",
-        "properties": {
-          "fileId": {
-            "type": "string",
-            "description": "OpenAI file id."
-          },
-          "status": {
-            "type": "string",
-            "description": "OpenAI file processing state."
-          }
-        },
-        "required": [
-          "fileId",
-          "status"
-        ],
-        "additionalProperties": false
-      },
-      "AiVectorStoreStatus": {
-        "type": "object",
-        "properties": {
-          "isReady": {
-            "type": "boolean",
-            "description": "True when every file has reached the `completed` state."
-          },
-          "isFailed": {
-            "type": "boolean",
-            "description": "True when at least one file is in the `failed` state."
-          },
-          "files": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AiVectorStoreFileStatus"
-            },
-            "description": "Per-file processing state."
-          }
-        },
-        "required": [
-          "isReady",
-          "isFailed",
-          "files"
-        ],
-        "additionalProperties": false
-      },
       "Relationship": {
         "type": "object",
         "properties": {
@@ -5429,264 +5341,6 @@
         ]
       }
     },
-    "/ai/generate": {
-      "post": {
-        "tags": [
-          "AI / Generation"
-        ],
-        "operationId": "aiGenerate",
-        "x-tailor-slice": "ai",
-        "x-tailor-method": "generate",
-        "summary": "Generate AI content for a repository",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Generated content. Shape varies per request - it matches the structured-output schema named in `inputs[*].responseSchema`."
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "repository": {
-                    "type": "object",
-                    "properties": {
-                      "schemaId": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Schema id of the target repository."
-                      },
-                      "name": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Repository name (shown to the AI)."
-                      },
-                      "description": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Repository description (shown to the AI)."
-                      }
-                    },
-                    "required": [
-                      "schemaId",
-                      "name",
-                      "description"
-                    ],
-                    "additionalProperties": {},
-                    "description": "Repository context the AI generates against."
-                  },
-                  "inputs": {
-                    "minItems": 1,
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "type": {
-                          "type": "string",
-                          "enum": [
-                            "CREATE",
-                            "ADD",
-                            "MODIFY"
-                          ],
-                          "description": "Generation mode for this item."
-                        },
-                        "text": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "User prompt for this generation step."
-                        },
-                        "responseSchema": {
-                          "type": "string",
-                          "minLength": 1,
-                          "description": "Key of the structured-output schema (Outline, CeHtml, etc.)."
-                        }
-                      },
-                      "required": [
-                        "type",
-                        "text",
-                        "responseSchema"
-                      ],
-                      "additionalProperties": {}
-                    },
-                    "description": "Ordered list of generation steps; processed in sequence."
-                  }
-                },
-                "required": [
-                  "repository",
-                  "inputs"
-                ],
-                "additionalProperties": {},
-                "description": "Payload for AI content generation."
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/ai/upload": {
-      "post": {
-        "tags": [
-          "AI / Vector store"
-        ],
-        "operationId": "aiUpload",
-        "x-tailor-slice": "ai",
-        "x-tailor-method": "upload",
-        "summary": "Upload PDFs to a vector store",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "Vector store id + per-file upload metadata.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "Result of a PDF to vector store upload.",
-                      "$ref": "#/components/schemas/AiUploadResult"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "$schema": "https://json-schema.org/draft/2020-12/schema",
-                "type": "object",
-                "properties": {
-                  "vectorStoreId": {
-                    "description": "Existing vector store to extend; omit to create a new one.",
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "files": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "binary"
-                    },
-                    "description": "PDFs to ingest into the vector store."
-                  }
-                },
-                "required": [
-                  "files"
-                ],
-                "additionalProperties": false,
-                "description": "Multipart payload for the PDF to vector store endpoint."
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/ai/vector-store/{vectorStoreId}/status": {
-      "get": {
-        "tags": [
-          "AI / Vector store"
-        ],
-        "operationId": "aiGetVectorStoreStatus",
-        "x-tailor-slice": "ai",
-        "x-tailor-method": "getVectorStoreStatus",
-        "summary": "Get vector store status",
-        "parameters": [
-          {
-            "name": "vectorStoreId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "description": "OpenAI vector store id (e.g. `vs_abc123`)."
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Vector store readiness + per-file processing state.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$schema": "https://json-schema.org/draft/2020-12/schema",
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "description": "Vector store processing status.",
-                      "$ref": "#/components/schemas/AiVectorStoreStatus"
-                    }
-                  },
-                  "required": [
-                    "data"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/ai/vector-store/{vectorStoreId}": {
-      "delete": {
-        "tags": [
-          "AI / Vector store"
-        ],
-        "operationId": "aiDeleteVectorStore",
-        "x-tailor-slice": "ai",
-        "x-tailor-method": "deleteVectorStore",
-        "summary": "Delete a vector store",
-        "parameters": [
-          {
-            "name": "vectorStoreId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "minLength": 1,
-              "description": "OpenAI vector store id (e.g. `vs_abc123`)."
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Vector store deleted."
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/repositories/{repositoryId}/activities/link": {
       "post": {
         "tags": [
@@ -7413,6 +7067,122 @@
         ]
       }
     },
+    "/repositories/{repositoryId}/ai/generate": {
+      "post": {
+        "tags": [
+          "AI / Generation"
+        ],
+        "operationId": "aiGenerate",
+        "x-tailor-slice": "ai",
+        "x-tailor-method": "generate",
+        "summary": "Generate AI content for a repository",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generated content. Shape varies per request - it matches the structured-output schema named in `inputs[*].responseSchema`."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "repository": {
+                    "description": "Location context within the repository.",
+                    "type": "object",
+                    "properties": {
+                      "outlineActivityId": {
+                        "description": "Outline activity the content is generated for.",
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "outlineActivityType": {
+                        "description": "Activity type of the targeted outline node.",
+                        "type": "string"
+                      },
+                      "containerType": {
+                        "description": "Content container type receiving the content.",
+                        "type": "string"
+                      },
+                      "topic": {
+                        "description": "Topic of the generated content (e.g. leaf node title).",
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": {}
+                  },
+                  "content": {
+                    "description": "Existing content the request builds on (Add/Modify modes).",
+                    "type": "string"
+                  },
+                  "inputs": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "CREATE",
+                            "ADD",
+                            "MODIFY"
+                          ],
+                          "description": "Generation mode for this item."
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "User prompt for this generation step."
+                        },
+                        "responseSchema": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Key of the structured-output schema (Outline, CeHtml, etc.)."
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "text",
+                        "responseSchema"
+                      ],
+                      "additionalProperties": {}
+                    },
+                    "description": "Ordered list of generation steps; processed in sequence."
+                  }
+                },
+                "required": [
+                  "inputs"
+                ],
+                "additionalProperties": {},
+                "description": "Payload for AI content generation."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/discover": {
       "post": {
         "tags": [
@@ -8554,6 +8324,11 @@
                 "$schema": "https://json-schema.org/draft/2020-12/schema",
                 "type": "object",
                 "properties": {
+                  "name": {
+                    "description": "Display name.",
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "meta": {
                     "type": "object",
                     "properties": {
@@ -10786,10 +10561,9 @@
                     "description": "Display name (2..250 chars)."
                   },
                   "description": {
+                    "description": "Leave empty to inherit the archived repository description.",
                     "type": "string",
-                    "minLength": 2,
-                    "maxLength": 2000,
-                    "description": "Long-form description (2..2000 chars)."
+                    "maxLength": 2000
                   },
                   "userGroupIds": {
                     "description": "Optional list of user-group ids to share the imported repo with.",
@@ -10808,7 +10582,6 @@
                 },
                 "required": [
                   "name",
-                  "description",
                   "archive"
                 ],
                 "additionalProperties": false,

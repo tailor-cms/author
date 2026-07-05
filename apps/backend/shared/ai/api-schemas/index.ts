@@ -3,5 +3,3 @@
 // the sibling `shared/ai/schemas/` directory, which holds AI
 // structured-output schemas
 export * from './generate.ts';
-export * from './upload.ts';
-export * from './vector-store.ts';

@@ -51,14 +51,15 @@ export class VectorStoreService {
 
   async upload(
     files: FileInput[],
-    vectorStoreId?: string,
+    vectorStoreId: string,
   ): Promise<UploadResult> {
-    const id = vectorStoreId || (await this.createStore());
     const documents = await Promise.all(
-      files.map((f) => this.uploadFile(id, f)),
+      files.map((f) => this.uploadFile(vectorStoreId, f)),
     );
-    logger.info(`Uploaded ${documents.length} file(s) to store ${id}`);
-    return { vectorStoreId: id, documents };
+    logger.info(
+      `Uploaded ${documents.length} file(s) to store ${vectorStoreId}`,
+    );
+    return { vectorStoreId, documents };
   }
 
   // For text content, we can directly create a buffer and upload

@@ -90,16 +90,24 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     });
   }
 
-  async function updateMeta(assetId: number, meta: Record<string, any>) {
+  async function updateAsset(
+    assetId: number,
+    payload: { meta: Record<string, any>; name?: string },
+  ) {
     if (!repositoryId.value) return;
+    const { meta, name } = payload;
     isSaving.value = true;
     try {
-      await api.updateMeta(repositoryId.value, assetId, meta);
+      await api.updateAsset(repositoryId.value, assetId, payload);
       const current = assets.value.find((a) => a.id === assetId);
       if (!current) return;
-      // Shallow spread; matches backend updateMeta behavior.
+      // Shallow spread; matches backend updateAsset behavior.
       // Intentional: allows null values to clear nested keys.
-      localUpdate({ id: assetId, meta: { ...current.meta, ...meta } });
+      localUpdate({
+        id: assetId,
+        meta: { ...current.meta, ...meta },
+        ...(name && { name }),
+      });
     } finally {
       isSaving.value = false;
     }
@@ -141,7 +149,7 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
     move,
     deleteFolder,
     deindex,
-    updateMeta,
+    updateAsset,
     invalidate,
   };
 }

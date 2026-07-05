@@ -30,6 +30,9 @@ export default defineAction({
     },
   },
   async handler({ body, req }) {
-    return service.updateMeta(req.asset!, body.meta);
+    return service.updateAsset(req.asset!, {
+      meta: body.meta,
+      name: body.name,
+    });
   },
 });

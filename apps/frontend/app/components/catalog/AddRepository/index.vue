@@ -103,10 +103,12 @@
         />
         <VTextarea
           v-model="descriptionInput"
+          :class="{ required: isCreate }"
           :error-messages="errors.description"
-          class="required"
+          :placeholder="
+            isCreate ? 'Enter description...' : 'Leave blank to inherit from the archive'
+          "
           label="Description"
-          placeholder="Enter description..."
           variant="outlined"
         />
         <template v-if="isCreate">
@@ -135,16 +137,6 @@
           closable-chips
           multiple
         />
-        <AiAssistance
-          v-if="config.props.aiUiEnabled && selectedTab === NEW_TAB"
-          :description="descriptionInput"
-          :name="values.name"
-          :schema-id="schemaInput"
-          @ai:toggle="isAiEnabled = $event"
-          @ai:outline="aiOutline = $event"
-          @ai:context="aiContext = $event"
-          @ai:indexing="isAiIndexing = $event"
-        />
       </div>
     </template>
     <template #actions>
@@ -152,10 +144,9 @@
         :disabled="isSubmitting"
         text="Cancel"
         variant="text"
-        @click="handleCancel"
+        @click="hide"
       />
       <VBtn
-        :disabled="isAiEnabled && !aiOutline?.length"
         :loading="isSubmitting"
         color="primary"
         text="Create"
@@ -169,25 +160,18 @@
 <script lang="ts" setup>
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { formDataBodySerializer } from '@tailor-cms/api-client';
-import { pick } from 'lodash-es';
+import { pick, startCase } from 'lodash-es';
 import pMinDelay from 'p-min-delay';
-import Promise from 'bluebird';
 import { SCHEMAS } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
 import { api } from '@/api';
-// TODO: Remove once API is consolidated
-import aiAPI from '@/api/ai';
-import AiAssistance from './AiAssistance.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 
-const { $schemaService } = useNuxtApp() as any;
-
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
-const activityStore = useActivityStore();
 const config = useConfigStore();
 
 const NEW_TAB = 'schema';
@@ -201,11 +185,7 @@ const isVisible = ref(false);
 const selectedTab = ref(NEW_TAB);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isSubmitting = ref(false);
-const isAiEnabled = ref(false);
 const serverError = ref('');
-const aiOutline = ref([]);
-const aiContext = ref<any>(null);
-const isAiIndexing = ref(false);
 
 const showUserGroupInput = computed(() => {
   if (authStore.hasDefaultUserGroup) return false;
@@ -214,7 +194,7 @@ const showUserGroupInput = computed(() => {
 
 const metaValidation = reactive<Record<string, any>>({});
 
-const { defineField, handleSubmit, resetForm, values, errors } = useForm({
+const { defineField, handleSubmit, resetForm, errors } = useForm({
   initialValues: {
     schema:
       config.availableSchemas.length === 1
@@ -222,21 +202,26 @@ const { defineField, handleSubmit, resetForm, values, errors } = useForm({
         : null,
     name: '',
     description: '',
-    archive: null,
+    archive: null as File | null,
+    userGroupIds: [] as number[],
   },
   validationSchema: computed(() => ({
     schema: { required: selectedTab.value === NEW_TAB },
+    // Name is always required - on the Import tab it's pre-filled from the
+    // archive (see the archiveInput watch). Description stays optional on
+    // Import: blank inherits the archive's own value via the backend fallback.
     name: 'required|min:2|max:250',
-    description: 'required|min:2|max:2000',
+    description: isCreate.value ? 'required|min:2|max:2000' : 'min:2|max:2000',
     archive: { required: selectedTab.value === IMPORT_TAB },
     ...metaValidation,
   })),
 });
 
 const [schemaInput] = defineField('schema');
+const [nameInput] = defineField('name');
 const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
-const [groupInput] = defineField('userGroupIds') as any;
+const [groupInput] = defineField('userGroupIds');
 
 const schema = computed<ActivityConfig>(
   () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
@@ -245,6 +230,14 @@ const schema = computed<ActivityConfig>(
 const schemaMeta = computed(() =>
   schema.value?.meta?.filter((it) => !it.hideOnCreate),
 );
+
+// Export names the download after the repository (see snakeCase(name) in
+// export-download.action.ts) - best-effort reverse it into the Name field
+// so the user isn't stuck retyping what's already in the filename.
+watch(archiveInput, (archive) => {
+  if (!archive || nameInput.value) return;
+  nameInput.value = startCase(archive.name.replace(/\.tgz$/i, ''));
+});
 
 const createRepository = handleSubmit(async (formPayload: any) => {
   isSubmitting.value = true;
@@ -258,59 +251,12 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   }
 });
 
-const confirmationDialog = useConfirmationDialog();
-
-const handleCancel = () => {
-  if (isAiIndexing.value) {
-    confirmationDialog({
-      title: 'Cancel repository creation?',
-      message:
-        'Documents are still being processed and will be lost if you cancel now.',
-      action: () => {
-        const storeId = aiContext.value?.vectorStoreId;
-        if (storeId) aiAPI.deleteVectorStore(storeId).catch(() => {});
-        hide();
-      },
-    });
-    return;
-  }
-  hide();
-};
-
 const create = async (formData: any) => {
-  const data = {
-    ...pick(formData, Object.keys(metaValidation)),
-    ...(aiContext.value && { $$: { ai: aiContext.value } }),
-  };
   const formPayload = {
     ...pick(formData, ['schema', 'name', 'description', 'userGroupIds']),
-    data,
+    data: pick(formData, Object.keys(metaValidation)),
   };
-  const repository = await repositoryStore.create(formPayload);
-  if (!aiOutline.value.length) return;
-  await createActvities(repository.id, aiOutline.value);
-};
-
-const createActvities = async (
-  repositoryId: number,
-  items: any,
-  parentId = null as null | number,
-) => {
-  const outlineLevels = $schemaService.getOutlineLevels(schemaInput.value);
-  await Promise.each(items, async (activity: any, index: number) => {
-    const type = outlineLevels.find(
-      (it: any) => it.label === activity.type,
-    ).type;
-    const item = await activityStore.save({
-      repositoryId,
-      parentId,
-      type,
-      data: { name: activity.name },
-      position: index + 1,
-    });
-    if (!item || !activity.children?.length) return;
-    return createActvities(repositoryId, activity.children, item.id);
-  });
+  await repositoryStore.create(formPayload);
 };
 
 const importRepository = async ({
@@ -334,8 +280,6 @@ const hide = () => {
   isVisible.value = false;
   isSubmitting.value = false;
   serverError.value = '';
-  aiContext.value = null;
-  isAiIndexing.value = false;
   resetForm();
 };
 
