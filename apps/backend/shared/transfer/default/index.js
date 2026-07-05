@@ -1,11 +1,14 @@
 import * as yup from 'yup';
+import { existsSync } from 'node:fs';
 import Promise from 'bluebird';
+import path from 'node:path';
 import uniq from 'lodash/uniq.js';
+
 import { sequelize } from '../../database/index.js';
-import storage from '../../../repository/storage.ts';
 import { useTar } from '../formats.js';
-import resolvers from './resolvers.js';
 import processors from './processors.js';
+import resolvers from './resolvers.js';
+import storage from '../../../repository/storage.ts';
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
 
@@ -106,8 +109,11 @@ class DefaultAdapter {
       });
       await importFile(blobStore, Filename.ELEMENTS, { context, transaction });
       // Recreate the full asset library (every type, incl. links) from the
-      // archive's records; storage files are imported below.
-      await importFile(blobStore, Filename.ASSETS, { context, transaction });
+      // archive's records; storage files are imported below. Older archives
+      // predate the asset-library bundle and carry no assets.json; skip
+      if (hasFile(blobStore, Filename.ASSETS)) {
+        await importFile(blobStore, Filename.ASSETS, { context, transaction });
+      }
     });
     // Import each bundled file into storage, tolerating keys with no archive
     // entry: the file list over-lists (every storage://-shaped string is
@@ -140,4 +146,8 @@ function importFile(blobStore, filename, { context, transaction } = {}) {
   const srcStream = blobStore.createReadStream(filename);
   const destStream = createProcessingStream(options);
   return miss.pipeAsync(srcStream, destStream);
+}
+
+function hasFile(blobStore, filename) {
+  return existsSync(path.join(blobStore.path, filename));
 }
