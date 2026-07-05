@@ -1,15 +1,15 @@
 <template>
-  <VSheet class="rounded-b-lg" color="surface-container" min-height="300">
-    <VRow class="ma-0 pa-6">
+  <VSheet class="rounded-b-lg" color="surface-container" min-height="274">
+    <VRow class="pa-4" density="comfortable">
       <VCol cols="12" md="8" sm="7">
-        <VSheet v-if="selectedRevision" rounded="lg" theme="light">
+        <VSheet v-if="selectedRevision" rounded="lg" theme="light" elevation="1">
           <ContentElementWrapper
             :element="selectedRevision?.state as unknown as ContentElement"
             is-disabled
           />
         </VSheet>
       </VCol>
-      <VCol cols="12" md="4" sm="5">
+      <VCol class="order-first order-sm-last" cols="12" md="4" sm="5">
         <EntitySidebar
           ref="sidebar"
           :is-detached="isDetached"

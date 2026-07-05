@@ -12,13 +12,14 @@
     :items-per-page="ITEMS_PER_PAGE"
   >
     <template #default="{ items }">
-      <VList class="group-list pa-0" bg-color="transparent">
+      <VList class="group-list pa-0 overflow-visible" bg-color="transparent">
         <VListItem
           v-for="{ raw: group } in items"
           :key="group.id"
           :to="{ name: 'user-group', params: { userGroupId: group.id } }"
           :title="group.name"
-          class="group-row bg-surface-container py-3 px-4 mb-2"
+          class="group-row bg-surface-raised py-3 px-4 mb-2"
+          elevation="1"
           rounded="lg"
         >
           <template #prepend>
