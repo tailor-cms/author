@@ -202,7 +202,7 @@ const { defineField, handleSubmit, resetForm, errors } = useForm({
         : null,
     name: '',
     description: '',
-    archive: null,
+    archive: null as File | null,
     userGroupIds: [] as number[],
   },
   validationSchema: computed(() => ({
