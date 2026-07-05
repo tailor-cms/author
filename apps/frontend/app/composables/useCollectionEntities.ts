@@ -22,7 +22,7 @@ export interface CollectionSort {
  */
 export function useCollectionEntities() {
   const repositoryStore = useCurrentRepository();
-  const { taxonomy } = storeToRefs(repositoryStore);
+  const { taxonomy, selectedActivity } = storeToRefs(repositoryStore);
   // The collection's item types as chip options. Empty for non-collection
   // (outline) schemas, so this composable stays idle there.
   const entities = computed<EntityFilterOption[]>(() => {
@@ -46,8 +46,28 @@ export function useCollectionEntities() {
       entities.value.some((it) => it.value === chosen.value)
         ? chosen.value
         : entities.value[0]?.value ?? '',
-    set: (value) => (chosen.value = value),
+    set: (value) => {
+      chosen.value = value;
+      // Switching the filter moves the selection onto an item of the new type
+      if (!repositoryStore.isCollection) return;
+      if (selectedActivity.value?.type === value) return;
+      const first = repositoryStore.rootActivities.find(
+        (it: any) => it.type === value,
+      );
+      if (first) repositoryStore.selectActivity(first.id);
+    },
   });
+
+  // Keep the filter in sync with whatever item ends up selected
+  watch(
+    () => selectedActivity.value?.type,
+    (type) => {
+      if (type && entities.value.some((it) => it.value === type)) {
+        chosen.value = type;
+      }
+    },
+    { immediate: true },
+  );
 
   return { entities, selectedEntity, hasMultipleEntities };
 }
