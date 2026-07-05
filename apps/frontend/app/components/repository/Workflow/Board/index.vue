@@ -64,7 +64,7 @@ const columns = computed<Record<string, StoreActivity[]>>(() => {
   const grouped = groupBy(props.activities, (it) => it.currentStatus.status);
   const entries = props.statuses.map((status) => [
     status.id,
-    orderBy(grouped[status.id] ?? [], positionOf),
+    orderBy(grouped[status.id] ?? [], [positionOf, 'id']),
   ]);
   return Object.fromEntries(entries);
 });

@@ -44,7 +44,9 @@ const activityStore = useActivityStore();
 // Workflow position; null when never set — fall back to the id axis.
 const positionOf = (it: StoreActivity) => it.currentStatus.position ?? it.id;
 
-const items = computed(() => orderBy(props.activities, positionOf));
+const items = computed(() =>
+  orderBy(props.activities, [positionOf, 'id']),
+);
 
 const selectActivity = (id: number) => repositoryStore.selectActivity(id);
 
