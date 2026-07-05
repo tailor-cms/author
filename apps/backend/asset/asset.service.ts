@@ -295,10 +295,8 @@ async function scanAssetReferences(
 }
 
 /**
- * Resolves the outline activity (the navigable page) each element sits under, so
- * a usage can deep-link into the editor. Containers whose outline is deleted are
- * skipped, so elements orphaned in removed content resolve to nothing. One
- * lookup per distinct container, not per element.
+ * Resolves the outline activity (the navigable page) each element sits
+ * under, so a usage can deep-link into the editor and show a page name.
  */
 async function resolveOutlineByContainer(elementRows: any[]) {
   const containerIds = uniq(elementRows.map((el) => el.activityId));
