@@ -17,21 +17,7 @@
       :style="{ backgroundColor: typeConfig?.color }"
     />
     <div class="d-flex align-center ga-2 mb-2">
-      <PriorityMenu v-if="priority" :activity="activity">
-        <template #activator="{ props: menuProps }">
-          <VChip
-            v-bind="menuProps"
-            :color="priority.color"
-            class="board-card__editable"
-            size="x-small"
-            rounded
-            @click.stop
-          >
-            <VIcon :icon="priority.icon" size="small" start />
-            {{ priority.label }}
-          </VChip>
-        </template>
-      </PriorityMenu>
+      <PriorityMenu :activity="activity" />
       <VSpacer />
       <span class="text-body-small text-medium-emphasis">
         {{ activity.shortId }}
@@ -42,28 +28,14 @@
       {{ activity.data.name }}
     </div>
     <div class="d-flex align-center ga-2 mt-3">
-      <AssigneeMenu :activity="activity">
-        <template #activator="{ props: menuProps }">
-          <UserAvatar
-            v-bind="menuProps"
-            :img-url="assignee?.imgUrl"
-            :label="assignee?.label ?? 'Unassigned'"
-            class="board-card__editable"
-            size="22"
-            @click.stop
-          />
-        </template>
-      </AssigneeMenu>
+      <AssigneeMenu :activity="activity" :size="22" compact />
       <VSpacer />
-      <DueDateMenu :activity="activity" />
+      <DueDateMenu :activity="activity" compact />
     </div>
   </VCard>
 </template>
 
 <script lang="ts" setup>
-import { UserAvatar } from '@tailor-cms/core-components';
-import { workflow as workflowConfig } from '@tailor-cms/config';
-
 import AssigneeMenu from '../AssigneeMenu.vue';
 import DueDateMenu from '../DueDateMenu.vue';
 import PriorityMenu from '../PriorityMenu.vue';
@@ -81,11 +53,6 @@ const { selectedActivity, workflowTypes, hasMultipleWorkflowTypes } = storeToRef
   useCurrentRepository(),
 );
 
-const currentStatus = computed(() => props.activity.currentStatus);
-const assignee = computed(() => currentStatus.value.assignee);
-const priority = computed(() =>
-  workflowConfig.getPriority(currentStatus.value.priority),
-);
 const typeConfig = computed(() =>
   find(workflowTypes.value, { type: props.activity.type }),
 );

@@ -23,44 +23,14 @@
     <template #[`item.status`]="{ item: { activity } }">
       <StatusMenu :activity="activity" />
     </template>
-    <template #[`item.assignee`]="{ item: { activity, assignee } }">
-      <AssigneeMenu :activity="activity">
-        <template #activator="{ props: menuProps }">
-          <div
-            v-bind="menuProps"
-            :aria-label="`Assignee: ${assignee?.label ?? 'Unassigned'}`"
-            class="d-inline-flex align-center ga-2 cursor-pointer"
-            role="button"
-            tabindex="0"
-            @click.stop
-          >
-            <UserAvatar :img-url="assignee?.imgUrl" size="22" />
-            {{ assignee?.label ?? 'Unassigned' }}
-          </div>
-        </template>
-      </AssigneeMenu>
+    <template #[`item.assignee`]="{ item: { activity } }">
+      <AssigneeMenu :activity="activity" :size="22" />
     </template>
-    <template #[`item.priority`]="{ item: { activity, priority } }">
-      <PriorityMenu :activity="activity">
-        <template #activator="{ props: menuProps }">
-          <VChip
-            v-bind="menuProps"
-            :aria-label="priority ? `Priority: ${priority.label}` : 'Priority'"
-            :color="priority?.color"
-            role="button"
-            tabindex="0"
-            size="small"
-            rounded
-            @click.stop
-          >
-            <VIcon :icon="priority?.icon" size="x-large" start />
-            <div class="text-inverse-surface">{{ priority?.label }}</div>
-          </VChip>
-        </template>
-      </PriorityMenu>
+    <template #[`item.priority`]="{ item: { activity } }">
+      <PriorityMenu :activity="activity" />
     </template>
     <template #[`item.dueDate`]="{ item }">
-      <DueDateMenu :activity="item.activity" empty-label="No due date" />
+      <DueDateMenu :activity="item.activity" />
     </template>
     <template #[`item.published`]="{ item: { activity } }">
       <PublishingBadge :activity="activity" />
@@ -71,7 +41,6 @@
 <script lang="ts" setup>
 import type { StatusConfig } from '@tailor-cms/interfaces/activity';
 import type { User } from '@tailor-cms/interfaces/user';
-import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import AssigneeMenu from '../AssigneeMenu.vue';

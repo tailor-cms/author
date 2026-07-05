@@ -32,6 +32,7 @@
       v-if="activityStatus.dueDate"
       v-tooltip:bottom="{ text: 'Due Date', openDelay: 500 }"
       :date="activityStatus.dueDate"
+      :status="activityStatus.status"
       class="text-body-small font-weight-bold"
       format="MM/dd/yy"
     />

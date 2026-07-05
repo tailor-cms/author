@@ -1,7 +1,34 @@
 <template>
   <VMenu>
     <template #activator="activator">
-      <slot name="activator" v-bind="activator" />
+      <VBtn
+        v-if="compact"
+        v-tooltip:bottom="priority?.label"
+        v-bind="activator.props"
+        :aria-label="ariaLabel"
+        :color="priority?.color"
+        size="26"
+        variant="tonal"
+        icon
+        @click.stop
+      >
+        <VIcon :icon="priority?.icon" size="16" />
+      </VBtn>
+      <VChip
+        v-else
+        v-bind="activator.props"
+        :aria-label="ariaLabel"
+        :color="priority?.color"
+        class="cursor-pointer"
+        role="button"
+        tabindex="0"
+        size="small"
+        rounded
+        @click.stop
+      >
+        <VIcon :icon="priority?.icon" start />
+        {{ priority?.label }}
+      </VChip>
     </template>
     <VList density="compact" min-width="180" nav>
       <VListItem
@@ -24,10 +51,18 @@ import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import { useStatusUpdate } from './useStatusUpdate';
 
-defineProps<{
+const props = defineProps<{
   activity: StoreActivity;
+  compact?: boolean;
 }>();
 
 const priorities = workflowConfig.priorities;
 const update = useStatusUpdate();
+
+const priority = computed(() =>
+  workflowConfig.getPriority(props.activity.currentStatus.priority),
+);
+const ariaLabel = computed(() =>
+  priority.value ? `Priority: ${priority.value.label}` : 'Priority',
+);
 </script>

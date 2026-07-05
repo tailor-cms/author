@@ -14,55 +14,34 @@
     />
     <div class="list-item__main">
       <div class="list-item__title text-body-medium text-truncate">
-        <VChip v-if="hasMultipleWorkflowTypes" class="mr-2" size="x-small">
-          {{ typeConfig?.label }}
-        </VChip>
-        <VChip color="tertiary" class="mr-2" size="x-small">
-          {{ activity.shortId }}
-        </VChip>
+        <VChip
+          v-if="hasMultipleWorkflowTypes"
+          :text="typeConfig?.label"
+          class="mr-2 text-uppercase font-weight-semibold"
+          size="x-small"
+        />
+        <VChip
+          :text="activity.shortId"
+          color="secondary"
+          class="mr-2 font-weight-semibold"
+          size="x-small"
+        />
         {{ activity.data.name }}
       </div>
     </div>
     <div class="list-item__meta d-flex align-center ga-3">
-      <DueDateMenu :activity="activity" />
       <StatusMenu :activity="activity" />
-      <PriorityMenu :activity="activity">
-        <template #activator="{ props: menuProps }">
-          <VBtn
-            v-tooltip:bottom="priority?.label"
-            v-bind="menuProps"
-            :color="priority?.color"
-            class="list-item__editable"
-            size="26"
-            variant="tonal"
-            icon
-            @click.stop
-          >
-            <VIcon :icon="priority?.icon" size="16" />
-          </VBtn>
-        </template>
-      </PriorityMenu>
-      <AssigneeMenu :activity="activity">
-        <template #activator="{ props: menuProps }">
-          <UserAvatar
-            v-bind="menuProps"
-            :img-url="assignee?.imgUrl"
-            :label="assignee?.label ?? 'Unassigned'"
-            class="list-item__editable"
-            size="26"
-            @click.stop
-          />
-        </template>
-      </AssigneeMenu>
+      <AssigneeMenu :activity="activity" :size="26" compact />
+      <PriorityMenu :activity="activity" compact />
+      <div class="list-item__date d-flex">
+        <DueDateMenu :activity="activity" />
+      </div>
       <PublishingBadge :activity="activity" />
     </div>
   </VSheet>
 </template>
 
 <script lang="ts" setup>
-import { UserAvatar } from '@tailor-cms/core-components';
-import { workflow as workflowConfig } from '@tailor-cms/config';
-
 import AssigneeMenu from '../AssigneeMenu.vue';
 import DueDateMenu from '../DueDateMenu.vue';
 import PriorityMenu from '../PriorityMenu.vue';
@@ -80,11 +59,6 @@ const { selectedActivity, workflowTypes, hasMultipleWorkflowTypes } = storeToRef
   useCurrentRepository(),
 );
 
-const currentStatus = computed(() => props.activity.currentStatus);
-const assignee = computed(() => currentStatus.value.assignee);
-const priority = computed(() =>
-  workflowConfig.getPriority(currentStatus.value.priority),
-);
 const typeConfig = computed(() =>
   workflowTypes.value.find((it: any) => it.type === props.activity.type),
 );
@@ -131,6 +105,11 @@ useScrollWhenSelected(() => rootEl.value?.$el, isSelected);
 
 .list-item__meta {
   flex: 0 0 auto;
+}
+
+.list-item__date {
+  font-variant-numeric: tabular-nums;
+  width: 7rem;
 }
 
 .list-item__editable {

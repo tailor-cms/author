@@ -1,28 +1,26 @@
 <template>
   <VMenu v-model="isOpen" :close-on-content-click="false">
     <template #activator="activator">
-      <slot name="activator" v-bind="activator">
-        <div
-          v-bind="activator.props"
-          :aria-label="dueDate ? `Due date: ${label}` : 'Due date'"
-          class="cursor-pointer d-inline-flex align-center"
-          role="button"
-          tabindex="0"
-          @click.stop
-        >
-          <DueDate v-if="dueDate" :date="dueDate" class="text-body-small" />
-          <span v-else-if="emptyLabel" class="text-body-small text-disabled">
-            {{ emptyLabel }}
-          </span>
-          <VIcon
-            v-else
-            v-tooltip:bottom="'Set due date'"
-            class="text-medium-emphasis"
-            icon="mdi-calendar-outline"
-            size="small"
-          />
+      <div
+        v-bind="activator.props"
+        :aria-label="dueDate ? `Due date: ${label}` : 'Due date'"
+        class="cursor-pointer d-inline-flex align-center"
+        role="button"
+        tabindex="0"
+        @click.stop
+      >
+        <DueDate
+          v-if="dueDate"
+          :date="dueDate"
+          :icon-position="compact ? 'end' : 'start'"
+          :status="activity.currentStatus.status"
+          class="text-body-small"
+        />
+        <div v-else class="d-flex align-center text-disabled text-body-small">
+          <VIcon icon="mdi-calendar" />
+          <span v-if="!compact" class="ml-2">No due date</span>
         </div>
-      </slot>
+      </div>
     </template>
     <VDatePicker
       :model-value="modelDate"
@@ -32,10 +30,10 @@
       <template #actions>
         <VBtn
           v-if="dueDate"
+          :slim="false"
           color="error"
-          size="small"
           text="Clear"
-          variant="text"
+          rounded="lg"
           @click="onClear"
         />
       </template>
@@ -51,9 +49,7 @@ import { useStatusUpdate } from './useStatusUpdate';
 
 const props = defineProps<{
   activity: StoreActivity;
-  // Empty-state text (the table uses a muted em-dash); omitted on the compact
-  // cards, which fall back to the icon affordance.
-  emptyLabel?: string;
+  compact?: boolean;
 }>();
 
 const update = useStatusUpdate();
