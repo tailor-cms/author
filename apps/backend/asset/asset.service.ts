@@ -2,7 +2,6 @@ import path from 'node:path';
 import { ContentType } from '@tailor-cms/interfaces/discovery';
 import { createLogger } from '#logger';
 import { detectLinkProvider } from '@tailor-cms/common/asset';
-import { lookup as lookupMimeType } from 'mime-types';
 import { Op } from 'sequelize';
 import { randomUUID } from 'node:crypto';
 import { storage as storageConfig } from '#config';
@@ -10,7 +9,6 @@ import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 import db from '#shared/database/index.js';
 import pick from 'lodash/pick.js';
 import uniq from 'lodash/uniq.js';
-import upperFirst from 'lodash/upperFirst.js';
 
 import {
   type AssetAttribution,
@@ -84,20 +82,6 @@ const safeDeleteFile = safe(Storage.deleteFile.bind(Storage));
 const safeRemoveFromVectorStore = safe(removeFromStore);
 
 /**
- * Derives a human-friendly display name from a storage filename, used when the
- * archive carries no original asset name. The extension is surfaced separately
- * (meta.extension), so it's dropped; separators become spaces and the first
- * letter is capitalised: `pizza-poster.png` -> `Pizza poster`. Slug-like names
- * (e.g. `img-4tv0...`) stay as-is - only the export-side original name fixes
- * those.
- */
-function toReadableName(filename: string): string {
-  const base = filename.replace(/\.[^.]+$/, '');
-  const words = base.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
-  return upperFirst(words) || filename;
-}
-
-/**
  * Creates the library Asset record for a file already stored at `file.key`.
  */
 async function createAssetRecord(
@@ -165,79 +149,6 @@ export async function importBufferedFile({
   );
 }
 
-/**
- * Registers an already-stored file as a library asset.
- * On repository import the archive's static files are written to storage under
- * their original keys (and referenced by element `data.assets`), but no Asset
- * library record is created. This adds that record, pointing at the existing
- * storage object.
- */
-export async function registerStorageAsset({
-  repositoryId,
-  userId,
-  storageKey,
-  name,
-  meta,
-}: {
-  repositoryId: number;
-  userId: number;
-  storageKey: string;
-  // When the archive carried the source asset's library record, its original
-  // name + meta (folder, tags, dimensions, ...) flow through here
-  name?: string;
-  meta?: Record<string, any>;
-}) {
-  const basename = path.basename(storageKey);
-  const filename = basename.split('__').pop() || basename;
-  const mimeType = lookupMimeType(filename) || undefined;
-  const assetType = resolveType(mimeType);
-  // Archive carried the original record: restore it as-is (same file, so its
-  // meta already holds folder/dimensions/etc.)
-  if (meta) {
-    return Asset.create({
-      repositoryId,
-      type: assetType,
-      storageKey,
-      name: name || toReadableName(filename),
-      meta,
-      uploaderId: userId,
-    });
-  }
-  const extension = path.extname(filename).replace('.', '').toLowerCase();
-  // Read bytes only for images, to capture dimensions (and size) without
-  // pulling large media (video/pdf) fully into memory.
-  let dimensions: ReturnType<typeof extractDimensions> = null;
-  let fileSize: number | undefined;
-  if (assetType === AssetType.Image) {
-    try {
-      const buffer = await Storage.getFile(storageKey);
-      if (buffer) {
-        fileSize = buffer.length;
-        dimensions = extractDimensions(buffer);
-      }
-    } catch (err) {
-      logger.warn({ err, storageKey }, 'Unable to read imported asset for meta');
-    }
-  }
-  logger.debug(
-    { repositoryId, storageKey, type: assetType },
-    'Registering imported asset',
-  );
-  return Asset.create({
-    repositoryId,
-    type: assetType,
-    storageKey,
-    name: toReadableName(filename),
-    meta: {
-      ...(fileSize !== undefined && { fileSize }),
-      ...(mimeType && { mimeType }),
-      ...(extension && { extension }),
-      ...(dimensions && dimensions),
-    },
-    uploaderId: userId,
-  });
-}
-
 async function destroyAsset(repository: Repository, asset: Asset) {
   logger.debug({ assetId: asset.id, type: asset.type }, 'Destroying asset');
   await safeRemoveFromVectorStore(repository, asset);
@@ -299,98 +210,179 @@ export async function list(
 }
 
 /**
- * WHERE fragment matching rows that reference `storageKey` anywhere in the given
- * JSONB column (serialized to text). Storage keys are globally unique (uuid-
- * based), so a substring hit is a real reference - and it catches every shape
- * (data.assets map, meta `url`, embeds, activity/repo File meta) without knowing
- * the path. `strpos` avoids LIKE wildcard escaping (keys contain `_`).
+ * Usage detection is deliberately a plain text search. Content references
+ * assets in several shapes and places (`storage://` URLs in element data,
+ * bare keys in File meta, embeds in rich text), so instead of teaching the
+ * scan every path, we check whether the asset's storage key appears
+ * anywhere in the row's JSON, cast to text - Ctrl+F in SQL. Matching the
+ * bare key catches shapes both with and without the `storage://` prefix.
+ * A hit is always a real usage of exactly this asset: keys embed a random
+ * uuid (`repository/8/assets/6b90c9e1-...__cat.png`), which never appears
+ * by accident and never collides with another asset's key. `strpos`
+ * searches literally, unlike LIKE, which treats `_` as a wildcard.
  */
 function referencesAsset(column: string, storageKey: string) {
-  const haystack = db.sequelize.cast(db.sequelize.col(column), 'text');
-  return db.sequelize.where(db.sequelize.fn('strpos', haystack, storageKey), {
+  const columnText = db.sequelize.cast(db.sequelize.col(column), 'text');
+  return db.sequelize.where(db.sequelize.fn('strpos', columnText, storageKey), {
     [Op.gt]: 0,
   });
 }
 
+// A matched content row paired with the ids of the assets it references.
+type AssetMatch = { row: any; assetIds: number[] };
+
 /**
- * Finds where an asset is referenced within its repository: content elements
- * (data/meta), activity-level File meta, and repository-level File meta.
- * On-demand scan, no reverse index. LINK assets (no storageKey) are never
- * embedded, so they have no usages. Bounded to one repository's rows.
+ * Scans the three places an asset can be referenced - content element
+ * data/meta, activity-level File meta and repository-level File meta - for
+ * the given assets' storage keys. Detached rows are leftovers of deleted
+ * content and don't count. Each matched row is returned with the ids of the
+ * assets it references. LINK assets carry no storage key and are never
+ * embedded, so they never match.
  */
-export async function findUsages(repository: Repository, asset: Asset) {
-  const repositoryId = repository.id;
-  const { storageKey } = asset;
-  if (!storageKey) return [];
-  const [elementRows, activityRows, repoMatch] = await Promise.all([
+async function scanAssetReferences(
+  repository: Repository,
+  assets: Asset[],
+): Promise<{
+  elementMatches: AssetMatch[];
+  activityMatches: AssetMatch[];
+  repositoryMatch: AssetMatch | null;
+}> {
+  const keyed = assets.filter(
+    (asset): asset is Asset & { storageKey: string } => !!asset.storageKey,
+  );
+  if (!keyed.length) {
+    return { elementMatches: [], activityMatches: [], repositoryMatch: null };
+  }
+  const anyKeyClause = (column: string) => ({
+    [Op.or]: keyed.map((asset) => referencesAsset(column, asset.storageKey)),
+  });
+  const [elementRows, activityRows, repositoryRow] = await Promise.all([
     ContentElement.findAll({
       where: {
-        repositoryId,
-        [Op.or]: [
-          referencesAsset('data', storageKey),
-          referencesAsset('meta', storageKey),
-        ],
+        repositoryId: repository.id,
+        detached: false,
+        [Op.or]: [anyKeyClause('data'), anyKeyClause('meta')],
       },
-      attributes: ['id', 'uid', 'type', 'activityId'],
+      attributes: ['id', 'uid', 'type', 'activityId', 'data', 'meta'],
     }),
     Activity.findAll({
       where: {
-        repositoryId,
+        repositoryId: repository.id,
         detached: false,
-        [Op.and]: [referencesAsset('data', storageKey)],
+        ...anyKeyClause('data'),
       },
       attributes: ['id', 'type', 'data'],
     }),
     Repository.findOne({
-      where: {
-        id: repositoryId,
-        [Op.and]: [referencesAsset('data', storageKey)],
-      },
-      attributes: ['id', 'name'],
+      where: { id: repository.id, ...anyKeyClause('data') },
+      attributes: ['id', 'name', 'data'],
     }),
   ]);
-  // Elements live in container activities; resolve each to its outline activity
-  // so the usage can deep-link into the editor and show a page name. The
-  // paranoid findAll excludes deleted containers, and we skip deleted outlines,
-  // so elements orphaned in removed content resolve to nothing.
-  const containerIds = uniq(elementRows.map((it: any) => it.activityId));
-  const containers = containerIds.length
-    ? await Activity.findAll({ where: { id: containerIds } })
-    : [];
-  const outlineByContainer = new Map<number, any>();
+  // Attributes a row to the assets it references: SQL only proved the row
+  // contains *some* scanned key, so re-run the contains check per key here.
+  const toMatch = (row: any, ...columns: string[]): AssetMatch => {
+    const text = columns
+      .map((column) => JSON.stringify(row[column]))
+      .join('\n');
+    const matched = keyed.filter((asset) => text.includes(asset.storageKey));
+    return { row, assetIds: matched.map((asset) => asset.id) };
+  };
+  return {
+    elementMatches: elementRows.map((row: any) => toMatch(row, 'data', 'meta')),
+    activityMatches: activityRows.map((row: any) => toMatch(row, 'data')),
+    repositoryMatch: repositoryRow && toMatch(repositoryRow, 'data'),
+  };
+}
+
+/**
+ * Resolves the outline activity (the navigable page) each element sits under, so
+ * a usage can deep-link into the editor. Containers whose outline is deleted are
+ * skipped, so elements orphaned in removed content resolve to nothing. One
+ * lookup per distinct container, not per element.
+ */
+async function resolveOutlineByContainer(elementRows: any[]) {
+  const containerIds = uniq(elementRows.map((el) => el.activityId));
+  const byContainer = new Map<number, any>();
+  if (!containerIds.length) return byContainer;
+  const containers = await Activity.findAll({ where: { id: containerIds } });
   await Promise.all(
     containers.map(async (container: any) => {
       const outline = await container.getFirstOutlineItem();
-      if (outline && !outline.deletedAt) {
-        outlineByContainer.set(container.id, outline);
-      }
+      if (outline && !outline.deletedAt) byContainer.set(container.id, outline);
     }),
   );
-  // Only report references that resolve to a live, navigable page; a reference
-  // sitting in deleted/detached content isn't a real usage.
-  const usages: any[] = [];
-  elementRows.forEach((el: any) => {
-    const outline = outlineByContainer.get(el.activityId);
-    if (!outline) return;
-    usages.push({
+  return byContainer;
+}
+
+/**
+ * Finds where each of the given assets is referenced within the repository:
+ * content elements (data/meta), activity-level File meta, and repository-level
+ * File meta. On-demand scan, no reverse index. findUsages() is the single-asset
+ * convenience wrapper; call this directly to resolve many assets at once (e.g. a
+ * "find unused assets" audit) instead of looping findUsages().
+ */
+export async function findUsagesBatch(
+  repository: Repository,
+  assets: Asset[],
+): Promise<Map<number, any[]>> {
+  const usagesByAsset = new Map<number, any[]>(assets.map((a) => [a.id, []]));
+  const { elementMatches, activityMatches, repositoryMatch } =
+    await scanAssetReferences(repository, assets);
+  const outlineByContainer = await resolveOutlineByContainer(
+    elementMatches.map(({ row }) => row),
+  );
+  const addUsage = (assetIds: number[], usage: any) => {
+    for (const id of assetIds) usagesByAsset.get(id)!.push(usage);
+  };
+  for (const { row, assetIds } of elementMatches) {
+    // Elements only count on a live, navigable page - a reference sitting in
+    // deleted content isn't a real usage.
+    const outline = outlineByContainer.get(row.activityId);
+    if (!outline) continue;
+    addUsage(assetIds, {
       type: 'element',
-      elementUid: el.uid,
-      elementType: el.type,
+      elementUid: row.uid,
+      elementType: row.type,
       activityId: outline.id,
       activityName: outline.data?.name ?? null,
     });
-  });
-  activityRows.forEach((a: any) => {
-    usages.push({
-      type: 'activity',
-      activityId: a.id,
-      activityName: a.data?.name ?? null,
-    });
-  });
-  if (repoMatch) {
-    usages.push({ type: 'repository', repositoryName: repoMatch.name });
   }
-  return usages;
+  // Activity- and repository-level File meta (thumbnails, hero images, ...).
+  for (const { row, assetIds } of activityMatches) {
+    addUsage(assetIds, {
+      type: 'activity',
+      activityId: row.id,
+      activityName: row.data?.name ?? null,
+    });
+  }
+  if (repositoryMatch) {
+    addUsage(repositoryMatch.assetIds, {
+      type: 'repository',
+      repositoryName: repositoryMatch.row.name,
+    });
+  }
+  return usagesByAsset;
+}
+
+export async function findUsages(repository: Repository, asset: Asset) {
+  const usagesByAsset = await findUsagesBatch(repository, [asset]);
+  return usagesByAsset.get(asset.id) ?? [];
+}
+
+/**
+ * Existence-only check for the reuse/dedup flow: which of the given assets
+ * are referenced by live content. Leaner than findUsagesBatch - it only
+ * answers "used at all", not where - so it skips outline resolution.
+ */
+export async function findUsedAssetIds(
+  repository: Repository,
+  assets: Asset[],
+): Promise<Set<number>> {
+  const { elementMatches, activityMatches, repositoryMatch } =
+    await scanAssetReferences(repository, assets);
+  const matches = [...elementMatches, ...activityMatches];
+  if (repositoryMatch) matches.push(repositoryMatch);
+  return new Set(matches.flatMap(({ assetIds }) => assetIds));
 }
 
 // The multer engine already streamed each file to storage and stamped it with
