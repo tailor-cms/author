@@ -55,11 +55,7 @@
         </template>
       </AssigneeMenu>
       <VSpacer />
-      <DueDate
-        v-if="currentStatus.dueDate"
-        :date="currentStatus.dueDate"
-        class="text-body-small"
-      />
+      <DueDateMenu :activity="activity" />
     </div>
   </VCard>
 </template>
@@ -69,7 +65,7 @@ import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import AssigneeMenu from '../AssigneeMenu.vue';
-import DueDate from '../DueDate.vue';
+import DueDateMenu from '../DueDateMenu.vue';
 import PriorityMenu from '../PriorityMenu.vue';
 import PublishingBadge from '../../Sidebar/PublishingBadge.vue';
 import { useCurrentRepository } from '@/stores/current-repository';

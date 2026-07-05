@@ -34,15 +34,27 @@ export class WorkflowTable {
   }
 
   statusMenu(name: string) {
-    return this.item(name).getByRole('button', { name: /^Status:/ });
+    return this.item(name).getByRole('button', { name: /^Status/ });
   }
 
   priorityMenu(name: string) {
-    return this.item(name).getByRole('button', { name: /^Priority:/ });
+    return this.item(name).getByRole('button', { name: /^Priority/ });
   }
 
   assigneeMenu(name: string) {
-    return this.item(name).getByRole('button', { name: /^Assignee:/ });
+    return this.item(name).getByRole('button', { name: /^Assignee/ });
+  }
+
+  dueDateMenu(name: string) {
+    return this.item(name).getByRole('button', { name: /^Due date/ });
+  }
+
+  async setDueDate(name: string, day: string) {
+    await this.dueDateMenu(name).click();
+    await this.page
+      .locator('.v-overlay .v-date-picker')
+      .getByText(day, { exact: true })
+      .click();
   }
 
   private async pick(menu: Locator, option: string) {

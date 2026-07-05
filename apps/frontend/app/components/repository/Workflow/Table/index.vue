@@ -60,7 +60,7 @@
       </PriorityMenu>
     </template>
     <template #[`item.dueDate`]="{ item }">
-      <DueDate v-if="item.dueDate" :date="item.dueDate" />
+      <DueDateMenu :activity="item.activity" empty-label="No due date" />
     </template>
     <template #[`item.published`]="{ item: { activity } }">
       <PublishingBadge :activity="activity" />
@@ -75,7 +75,7 @@ import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import AssigneeMenu from '../AssigneeMenu.vue';
-import DueDate from '../DueDate.vue';
+import DueDateMenu from '../DueDateMenu.vue';
 import PriorityMenu from '../PriorityMenu.vue';
 import StatusMenu from '../StatusMenu.vue';
 import PublishingBadge from '../../Sidebar/PublishingBadge.vue';

@@ -24,11 +24,7 @@
       </div>
     </div>
     <div class="list-item__meta d-flex align-center ga-3">
-      <DueDate
-        v-if="activity.currentStatus.dueDate"
-        :date="activity.currentStatus.dueDate"
-        class="text-body-small d-none d-sm-flex"
-      />
+      <DueDateMenu :activity="activity" />
       <StatusMenu :activity="activity" />
       <PriorityMenu :activity="activity">
         <template #activator="{ props: menuProps }">
@@ -68,7 +64,7 @@ import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
 import AssigneeMenu from '../AssigneeMenu.vue';
-import DueDate from '../DueDate.vue';
+import DueDateMenu from '../DueDateMenu.vue';
 import PriorityMenu from '../PriorityMenu.vue';
 import StatusMenu from '../StatusMenu.vue';
 import PublishingBadge from '../../Sidebar/PublishingBadge.vue';

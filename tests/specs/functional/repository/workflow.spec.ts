@@ -192,6 +192,19 @@ test.describe('with a seeded workflow', () => {
       await expect(table.assigneeMenu(name)).toContainText(assignee);
     });
 
+    test('should change due date inline on a row', async ({ page }) => {
+      const name = outlineSeed.group.title;
+      const dueDate = new Date();
+      dueDate.setDate(15);
+      const expected = format(dueDate, dateFormat.table);
+      const workflow = new Workflow(page);
+      const table = await workflow.showTable();
+      await table.setDueDate(name, '15');
+      await expect(table.dueDateMenu(name)).toContainText(expected);
+      await page.reload();
+      await expect(table.dueDateMenu(name)).toContainText(expected);
+    });
+
     test('should post a comment', async ({ page }) => {
       const name = outlineSeed.group.title;
       const workflow = new Workflow(page);
