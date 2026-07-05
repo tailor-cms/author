@@ -50,13 +50,10 @@ const items = computed(() =>
 
 const selectActivity = (id: number) => repositoryStore.selectActivity(id);
 
-// Persists a drag-reorder as a new position on the activity's workflow status.
 async function onChange(event: ChangeEvent<StoreActivity>) {
   const { moved } = event;
   if (!moved) return;
   const { element: activity, newIndex: newPosition } = moved;
-  // The list already contains the row at its drop index; `calculatePosition`
-  // splices it out and positions it between its new neighbours.
   const positions = items.value.map((it) => ({ position: positionOf(it) }));
   const position = calculatePosition({ items: positions as any, newPosition });
   try {

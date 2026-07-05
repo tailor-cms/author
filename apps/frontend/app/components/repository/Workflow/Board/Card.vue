@@ -84,8 +84,6 @@ useScrollWhenSelected(() => rootEl.value?.$el, isSelected);
   }
 }
 
-// Type-colored accent, mirroring the list view so both card surfaces share
-// the same type-at-a-glance language.
 .board-card__accent {
   position: absolute;
   inset-block: 0;
@@ -95,11 +93,5 @@ useScrollWhenSelected(() => rootEl.value?.$el, isSelected);
 
 .board-card__name {
   line-height: 1.3;
-}
-
-// Inline-editable affordances (priority chip, assignee) — clickable without
-// selecting the card.
-.board-card__editable {
-  cursor: pointer;
 }
 </style>

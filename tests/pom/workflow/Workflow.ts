@@ -1,4 +1,4 @@
-import type { Locator, Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 import { WorkflowBoard } from './Board';
 import { WorkflowList } from './List';
@@ -58,7 +58,6 @@ export class Workflow {
     return this.searchFilter.fill(name);
   }
 
-  // Multi-select chip: the menu stays open on toggle, so dismiss it after.
   private async toggleChip(chip: Locator, option: string) {
     await chip.click();
     const item = this.page
@@ -66,6 +65,7 @@ export class Workflow {
       .filter({ hasText: option });
     await item.click();
     await this.page.keyboard.press('Escape');
+    await expect(item).toBeHidden();
   }
 
   filterStatus(status: string) {

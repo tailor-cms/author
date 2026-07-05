@@ -1,7 +1,7 @@
 <template>
   <VLayout class="assets-page h-100">
     <VMain scrollable>
-      <VContainer class="px-md-10 py-md-8" max-width="1200">
+      <VContainer class="px-md-10 py-md-8" max-width="1400">
         <Toolbar
           v-model:search="searchQuery"
           class="mb-4"

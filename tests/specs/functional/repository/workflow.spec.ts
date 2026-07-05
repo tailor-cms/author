@@ -166,7 +166,7 @@ test.describe('with a seeded workflow', () => {
       const table = await workflow.showTable();
       await table.setStatus(name, 'Done');
       await expect(table.statusMenu(name)).toContainText('Done');
-      // Reload to confirm the inline edit persisted, not just optimistic UI.
+      // Reload to confirm the inline edit persisted
       await page.reload();
       await expect(table.statusMenu(name)).toContainText('Done');
     });

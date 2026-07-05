@@ -17,9 +17,13 @@
           {{ status.label }}
         </span>
         <VSpacer />
-        <VChip class="ml-1" size="x-small" variant="tonal" rounded="lg">
-          {{ columns[status.id]?.length ?? 0 }}
-        </VChip>
+        <VChip
+          :text="columns[status.id]?.length ?? 0"
+          class="ml-1 font-weight-bold"
+          color="tertiary"
+          size="x-small"
+          rounded="lg"
+        />
       </div>
       <Draggable
         :group="{ name: 'workflow-board' }"
@@ -71,15 +75,12 @@ const columns = computed<Record<string, StoreActivity[]>>(() => {
 
 const selectActivity = (id: number) => repositoryStore.selectActivity(id);
 
-// Persists cross-column drops (`added`: status + position) and within-column
-// reorders (`moved`: position only). The source column's `removed` event is
-// ignored to avoid a duplicate update.
+// Cross-column drops fire `added` (status + position), within-column reorders
+// fire `moved` (position only); the source `removed` is ignored as a dupe.
 async function onChange(event: ChangeEvent<StoreActivity>, statusId: string) {
   const change = event.added ?? event.moved;
   if (!change) return;
   const { element: activity, newIndex: newPosition } = change;
-  // The list already contains the card at its drop index; `calculatePosition`
-  // splices it out and positions it between its new neighbours.
   const items = columns.value[statusId]!.map((it) => ({ position: positionOf(it) }));
   const position = calculatePosition({ items: items as any, newPosition });
   const isStatusChange = activity.currentStatus.status !== statusId;
@@ -94,17 +95,15 @@ async function onChange(event: ChangeEvent<StoreActivity>, statusId: string) {
 
 <style lang="scss" scoped>
 // Full-bleed horizontal scroller: the board spans the full container width and
-// carries the page inset as its own padding (see template `px-*`), so columns
-// scroll edge-to-edge with breathing room at the start/end instead of being
-// clipped against the container's padding with dead space beside them.
+// carries the page inset as its own padding, so columns scroll edge-to-edge
+// with breathing room at the start/end instead of being clipped against the
+// container's padding with dead space beside them.
 .workflow-board {
   align-items: stretch;
   min-height: 0;
   overflow-x: auto;
 }
 
-// Unified column panel: a recessed well that fills the available height and
-// stays put. The header is pinned at the top; only the card list scrolls.
 .board-column {
   display: flex;
   flex: 1 1 0;
