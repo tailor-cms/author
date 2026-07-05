@@ -103,10 +103,12 @@
         />
         <VTextarea
           v-model="descriptionInput"
+          :class="{ required: isCreate }"
           :error-messages="errors.description"
-          class="required"
+          :placeholder="
+            isCreate ? 'Enter description...' : 'Leave blank to inherit from the archive'
+          "
           label="Description"
-          placeholder="Enter description..."
           variant="outlined"
         />
         <template v-if="isCreate">
@@ -158,7 +160,7 @@
 <script lang="ts" setup>
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import { formDataBodySerializer } from '@tailor-cms/api-client';
-import { pick } from 'lodash-es';
+import { pick, startCase } from 'lodash-es';
 import pMinDelay from 'p-min-delay';
 import { SCHEMAS } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
@@ -205,14 +207,18 @@ const { defineField, handleSubmit, resetForm, errors } = useForm({
   },
   validationSchema: computed(() => ({
     schema: { required: selectedTab.value === NEW_TAB },
+    // Name is always required - on the Import tab it's pre-filled from the
+    // archive (see the archiveInput watch). Description stays optional on
+    // Import: blank inherits the archive's own value via the backend fallback.
     name: 'required|min:2|max:250',
-    description: 'required|min:2|max:2000',
+    description: isCreate.value ? 'required|min:2|max:2000' : 'min:2|max:2000',
     archive: { required: selectedTab.value === IMPORT_TAB },
     ...metaValidation,
   })),
 });
 
 const [schemaInput] = defineField('schema');
+const [nameInput] = defineField('name');
 const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
 const [groupInput] = defineField('userGroupIds');
@@ -224,6 +230,14 @@ const schema = computed<ActivityConfig>(
 const schemaMeta = computed(() =>
   schema.value?.meta?.filter((it) => !it.hideOnCreate),
 );
+
+// Export names the download after the repository (see snakeCase(name) in
+// export-download.action.ts) - best-effort reverse it into the Name field
+// so the user isn't stuck retyping what's already in the filename.
+watch(archiveInput, (archive) => {
+  if (!archive || nameInput.value) return;
+  nameInput.value = startCase(archive.name.replace(/\.tgz$/i, ''));
+});
 
 const createRepository = handleSubmit(async (formPayload: any) => {
   isSubmitting.value = true;

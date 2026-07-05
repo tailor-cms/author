@@ -8324,6 +8324,11 @@
                 "$schema": "https://json-schema.org/draft/2020-12/schema",
                 "type": "object",
                 "properties": {
+                  "name": {
+                    "description": "Display name.",
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "meta": {
                     "type": "object",
                     "properties": {
@@ -10556,10 +10561,9 @@
                     "description": "Display name (2..250 chars)."
                   },
                   "description": {
+                    "description": "Leave empty to inherit the archived repository description.",
                     "type": "string",
-                    "minLength": 2,
-                    "maxLength": 2000,
-                    "description": "Long-form description (2..2000 chars)."
+                    "maxLength": 2000
                   },
                   "userGroupIds": {
                     "description": "Optional list of user-group ids to share the imported repo with.",
@@ -10578,7 +10582,6 @@
                 },
                 "required": [
                   "name",
-                  "description",
                   "archive"
                 ],
                 "additionalProperties": false,

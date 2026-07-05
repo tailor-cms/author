@@ -18,7 +18,7 @@ import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
 
 const logger = createLogger('processors');
 
-const { Activity, ContentElement, Repository, RepositoryUser, User } = db;
+const { Activity, Asset, ContentElement, Repository, RepositoryUser, User } = db;
 const { repository: role } = roleConfig;
 const noop = Function.prototype;
 
@@ -49,6 +49,11 @@ function createElementsProcessor(options) {
   return miss.pipeline(parse(), destStream);
 }
 
+function createAssetsProcessor(options) {
+  const destStream = createProcessor(processAssets, options);
+  return miss.pipeline(parse(), destStream);
+}
+
 function createAssetProcessor({ storage, filename }) {
   return storage.createWriteStream(filename);
 }
@@ -57,6 +62,7 @@ export default {
   createRepositoryProcessor,
   createActivitiesProcessor,
   createElementsProcessor,
+  createAssetsProcessor,
   createManifestProcessor,
   createAssetProcessor,
 };
@@ -69,14 +75,18 @@ function processManifest(manifest, _enc, { context }) {
   if (!manifest?.schema?.id) throw new Error('Manifest missing schema');
   context.manifestSchema = manifest.schema;
   context.assets.push(...manifest.assets);
-  // Per-asset library record keyed by storage key
-  context.assetMeta = manifest.assetMeta || {};
 }
 
 async function processRepository(repository, _enc, { context, transaction }) {
   const { name, description, userId, userGroupIds, manifestSchema } = context;
   repository = normalize(repository, Repository);
-  Object.assign(repository, { description, name });
+  // Omitted description inherits the archived repository's own value (already
+  // present on `repository`, straight from the archive's repository.json,
+  // before this overwrite).
+  Object.assign(repository, {
+    name,
+    description: description || repository.description,
+  });
   // Defensive: archive may carry `$$.ai` (or other instance-specific
   // paths) from the source environment. Drop them but keep `$$.schema`
   // so paste-mode works when this instance doesn't have the schema id
@@ -133,6 +143,26 @@ async function processElements(elements, _enc, options) {
     if (isEmpty(it.refs)) return;
     return remapElementRefs(it, options);
   });
+}
+
+// Recreates the whole asset library (every type, incl. links) from the
+// archive's records. Storage files are imported separately; link and
+// fileless records carry no bytes.
+async function processAssets(assets, _enc, { context, transaction }) {
+  const { repositoryId, userId } = context;
+  if (!repositoryId) throw new Error('Invalid repository id');
+  // Instance-specific fields ride into the archive
+  // and are stripped here, the same strip-on-import path as IGNORE_ATTRS.
+  const ignoreAttrs = [
+    'id', 'uid', 'createdAt', 'updatedAt', 'deletedAt',
+    'vectorStoreFileId', 'processingStatus',
+  ];
+  const records = map(assets, (it) => ({
+    ...omit(normalize(it, Asset), ignoreAttrs),
+    repositoryId,
+    uploaderId: userId,
+  }));
+  return Asset.bulkCreate(records, { transaction });
 }
 
 function insertActivities(activities, depth, { context, transaction }) {

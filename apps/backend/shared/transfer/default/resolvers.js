@@ -47,6 +47,15 @@ function createElementsResolver({ context, transaction }) {
   return miss.pipe(srcStream, collectAssets(context), stringify());
 }
 
+// Streams the whole asset library (every type, incl. links) into assets.json
+// and collects each record's files for bundling - so unused/unplaced assets
+// and their folders survive the round-trip, not just content-referenced ones.
+function createAssetsResolver({ context, transaction }) {
+  const where = { repositoryId: context.repositoryId, deletedAt: null };
+  const srcStream = queryStream(Asset, { where, transaction });
+  return miss.pipe(srcStream, collectAssetFiles(context), stringify());
+}
+
 // Wires an asset-collecting parser onto an export stream: every storage://
 // (or bare `repository/...`) reference found in a row's data/meta is recorded
 // into context.assets. Applied to the repository, activity and element
@@ -59,26 +68,54 @@ function collectAssets(context) {
   return assetParser;
 }
 
+// Bundling tap for the asset-library export. createAssetsResolver splices it
+// into the assets.json stream (queryStream(Asset) -> collectAssetFiles ->
+// stringify): every Asset row passes through on its way into assets.json, and
+// each one's file storage keys are recorded into context.assets - the set of
+// files export() writes into the archive.
+//
+// It's needed because the content scan (collectAssets, over repo/activity/
+// element rows) only sees storage:// strings embedded in data/meta - which
+// misses unused library assets; the asset lib is a separate entity and
+// its files have different structure and placement:
+//   - the primary file is a top-level `storage_key` COLUMN, not an embedded
+//     reference; and
+//   - meta.files sub-files (e.g. video captions) sit on the asset row, not in
+//     any content.
+// So without this, unused/unplaced library assets and all sub-files would be
+// left out of the archive. Link assets own no file and add nothing here; their
+// record still travels in assets.json.
+function collectAssetFiles(context) {
+  // Shared accumulator - collectAssets (content refs) also pushes here, so a
+  // placed library asset lands via both. Harmless: export/import uniq() the
+  // list before bundling.
+  context.assets = context.assets || [];
+  // Pass-through transform: tap each asset row for files, forward unchanged.
+  return miss.through.obj(function (asset, _enc, cb) {
+    // Primary file (absent on link/embed rows, which own no bytes).
+    if (asset.storage_key) context.assets.push(asset.storage_key);
+    // Sub-files attached to the asset (fileKey -> storageKey);
+    for (const key of Object.values(asset.meta?.files || {})) {
+      // Skip empty slots; drop any storage:// prefix for a raw storage key.
+      if (!isString(key) || !key) continue;
+      context.assets.push(key.replace(reStorage, ''));
+    }
+    // Forward the row to stringify() -> assets.json, unmodified.
+    cb(null, asset);
+  });
+}
+
 async function createManifestResolver({ context }) {
   const { assets, repositoryId } = context;
   const repository = await Repository.findByPk(repositoryId, {
     paranoid: false,
   });
-  // Carry each bundled asset's library record (name + meta, incl. folder/tags)
-  // keyed by storage key, so import rebuilds the asset library structure rather
-  // than flattening to the root with a derived name.
-  const rows = await Asset.findAll({
-    where: { repositoryId, storageKey: assets },
-    attributes: ['storageKey', 'name', 'meta'],
-  });
-  const assetMeta = Object.fromEntries(
-    rows.map((it) => [it.storageKey, { name: it.name, meta: it.meta }]),
-  );
+  // The full asset-library records travel in assets.json; the manifest only
+  // needs the schema and the list of bundled files.
   const manifest = {
     schema: repository.getSchemaConfig(),
     date: new Date(),
     assets,
-    assetMeta,
   };
   return miss.pipe(miss.from.obj([manifest]), stringify(IS_ARRAY_STREAM));
 }
@@ -91,6 +128,7 @@ export default {
   createRepositoryResolver,
   createActivitiesResolver,
   createElementsResolver,
+  createAssetsResolver,
   createManifestResolver,
   createAssetResolver,
 };

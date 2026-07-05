@@ -320,7 +320,12 @@ export async function removeTag(repositoryId: number, tagId: number) {
 // fetched/created inside the job pipeline.
 export async function importArchive(
   archivePath: string,
-  options: { name: string; description: string; userId: number; userGroupIds?: number[] },
+  options: {
+    name: string;
+    description?: string;
+    userId: number;
+    userGroupIds?: number[];
+  },
 ) {
   logger.debug(
     { userId: options.userId, name: options.name },
