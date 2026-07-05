@@ -4,9 +4,12 @@
       <slot name="activator" v-bind="activator">
         <VChip
           v-bind="activator.props"
+          :aria-label="currentStatus ? `Status: ${currentStatus.label}` : 'Status'"
           :text="currentStatus?.label"
           append-icon="mdi-menu-down"
           class="cursor-pointer"
+          role="button"
+          tabindex="0"
           size="small"
           rounded
           @click.stop

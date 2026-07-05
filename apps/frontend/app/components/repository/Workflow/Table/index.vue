@@ -28,7 +28,10 @@
         <template #activator="{ props: menuProps }">
           <div
             v-bind="menuProps"
+            :aria-label="`Assignee: ${assignee?.label ?? 'Unassigned'}`"
             class="d-inline-flex align-center ga-2 cursor-pointer"
+            role="button"
+            tabindex="0"
             @click.stop
           >
             <UserAvatar :img-url="assignee?.imgUrl" size="22" />
@@ -42,7 +45,10 @@
         <template #activator="{ props: menuProps }">
           <VChip
             v-bind="menuProps"
+            :aria-label="priority ? `Priority: ${priority.label}` : 'Priority'"
             :color="priority?.color"
+            role="button"
+            tabindex="0"
             size="small"
             rounded
             @click.stop

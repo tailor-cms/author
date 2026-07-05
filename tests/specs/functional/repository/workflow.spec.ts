@@ -160,6 +160,38 @@ test.describe('with a seeded workflow', () => {
       await expect(table.items()).toHaveCount(2);
     });
 
+    test('should change status inline on a row', async ({ page }) => {
+      const name = outlineSeed.group.title;
+      const workflow = new Workflow(page);
+      const table = await workflow.showTable();
+      await table.setStatus(name, 'Done');
+      await expect(table.statusMenu(name)).toContainText('Done');
+      // Reload to confirm the inline edit persisted, not just optimistic UI.
+      await page.reload();
+      await expect(table.statusMenu(name)).toContainText('Done');
+    });
+
+    test('should change priority inline on a row', async ({ page }) => {
+      const name = outlineSeed.group.title;
+      const workflow = new Workflow(page);
+      const table = await workflow.showTable();
+      await table.setPriority(name, 'Critical');
+      await expect(table.priorityMenu(name)).toContainText('Critical');
+      await page.reload();
+      await expect(table.priorityMenu(name)).toContainText('Critical');
+    });
+
+    test('should change assignee inline on a row', async ({ page }) => {
+      const name = outlineSeed.group.title;
+      const assignee = userSeed[0].email;
+      const workflow = new Workflow(page);
+      const table = await workflow.showTable();
+      await table.setAssignee(name, assignee);
+      await expect(table.assigneeMenu(name)).toContainText(assignee);
+      await page.reload();
+      await expect(table.assigneeMenu(name)).toContainText(assignee);
+    });
+
     test('should post a comment', async ({ page }) => {
       const name = outlineSeed.group.title;
       const workflow = new Workflow(page);

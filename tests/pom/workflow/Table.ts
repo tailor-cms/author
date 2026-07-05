@@ -32,4 +32,36 @@ export class WorkflowTable {
   sortBy(title: string) {
     return this.header(title).click();
   }
+
+  statusMenu(name: string) {
+    return this.item(name).getByRole('button', { name: /^Status:/ });
+  }
+
+  priorityMenu(name: string) {
+    return this.item(name).getByRole('button', { name: /^Priority:/ });
+  }
+
+  assigneeMenu(name: string) {
+    return this.item(name).getByRole('button', { name: /^Assignee:/ });
+  }
+
+  private async pick(menu: Locator, option: string) {
+    await menu.click();
+    await this.page
+      .locator('.v-overlay .v-list-item')
+      .filter({ hasText: option })
+      .click();
+  }
+
+  setStatus(name: string, status: string) {
+    return this.pick(this.statusMenu(name), status);
+  }
+
+  setPriority(name: string, priority: string) {
+    return this.pick(this.priorityMenu(name), priority);
+  }
+
+  setAssignee(name: string, assignee: string) {
+    return this.pick(this.assigneeMenu(name), assignee);
+  }
 }
