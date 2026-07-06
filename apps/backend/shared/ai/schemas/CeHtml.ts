@@ -43,9 +43,6 @@ export const getPrompt = () => `
     course lesson can run hundreds of words. Match what the
     request and the host actually need.
   - Format the content as HTML with suitable tags and headings.
-    Apply the following classes to the tags:
-    - Apply text-body-2 mb-5 to the paragraphs
-    - Apply text-h3 and mb-7 to the headings
   - Structure some content blocks so they work well in collapsible
     panels: start with a heading, followed by focused content.
     Sequences of 3+ such blocks will be converted to accordions
