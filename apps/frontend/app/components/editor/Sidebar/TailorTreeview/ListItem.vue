@@ -19,6 +19,14 @@
           size="small"
           @click.stop="activatorProps?.onClick"
         />
+        <VIcon
+          v-if="activity?.isLinkedCopy"
+          v-tooltip:bottom="'Linked from another repository'"
+          class="opacity-100"
+          color="tertiary"
+          icon="mdi-link-box"
+          size="small"
+        />
       </template>
       <template #append>
         <ActivityMenu
