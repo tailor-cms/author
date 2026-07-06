@@ -24,16 +24,14 @@
     </div>
     <div class="content-containers-wrapper">
       <ContentLoader v-if="isLoading" />
-      <VAlert
+      <TailorEmptyState
         v-else-if="isEmptyLinkedActivity"
-        class="mt-8"
         icon="mdi-link-variant"
-        variant="tonal"
-        prominent
-      >
-        This is a linked {{ activityLabel }} without content. The source has not
-        been edited yet. Content will appear here once the source is updated.
-      </VAlert>
+        title="No content yet"
+        :text="`This is a linked ${activityLabel} without content. The source `
+          + 'has not been edited yet — content will appear here once the '
+          + 'source is updated.'"
+      />
       <SubactivityList
         v-else-if="!containerConfigs.length"
         :activity="activity"
@@ -124,6 +122,7 @@ import {
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { AiGenerateRequest, AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import { getElementId } from '@tailor-cms/utils';
 import pMinDelay from 'p-min-delay';
 import type { Repository } from '@tailor-cms/interfaces/repository';
