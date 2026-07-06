@@ -117,6 +117,7 @@
           </VExpansionPanels>
         </template>
         <TailorEmptyState
+          v-else
           icon="mdi-creation-outline"
           size="48"
           title="Review this content"
