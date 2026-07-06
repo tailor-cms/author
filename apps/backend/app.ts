@@ -55,6 +55,18 @@ app.use(
   helmet({
     // TODO: Reevaluate and enable, for now, disabled as it breaks a lot of things
     contentSecurityPolicy: false,
+    // Helmet defaults to `no-referrer`, which strips the Referer on the served
+    // cross-origin requests. Third-party embeds (e.g. YouTube iframes)
+    // then refuse to play because they can't verify the embedding domain.
+    //
+    // `strict-origin-when-cross-origin` (the modern browser default) sends:
+    //   - same-origin request        -> full URL (path + query)
+    //   - cross-origin, same security -> origin only (scheme + host + port),
+    //                                    e.g. `https://ourdomain.com` - no path
+    //   - HTTPS -> HTTP downgrade     -> nothing (never leak over insecure hops)
+    // So YouTube gets our origin to authorize the embed, without exposing which
+    // page the user is on.
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   }),
 );
 
