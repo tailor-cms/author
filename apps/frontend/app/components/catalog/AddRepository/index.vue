@@ -4,7 +4,6 @@
     v-model="isVisible"
     header-icon="mdi-folder-plus-outline"
     title="Create"
-    width="600"
     persistent
     scrollable
     @submit="createRepository"
@@ -305,9 +304,5 @@ watch(isVisible, (val) => {
 <style lang="scss" scoped>
 :deep(.v-list-item-subtitle) {
   margin: 0.25rem 0 0;
-}
-
-.dialog-subcontainer {
-  min-height: 21.5rem;
 }
 </style>
