@@ -5,7 +5,7 @@
         text: 'Comments are disabled for linked content',
         openDelay: 500,
       }"
-      class="d-flex align-center text-body-medium text-uppercase font-weight-bold"
+      class="d-flex align-center text-label-medium text-uppercase font-weight-bold"
     >
       <VIcon
         color="tertiary"

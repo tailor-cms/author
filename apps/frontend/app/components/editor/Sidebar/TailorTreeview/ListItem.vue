@@ -22,7 +22,7 @@
         <VIcon
           v-if="activity?.isLinkedCopy"
           v-tooltip:bottom="'Linked from another repository'"
-          class="opacity-100"
+          class="linked-copy-icon"
           color="tertiary"
           icon="mdi-link-box"
           size="small"
@@ -87,5 +87,10 @@ const onItemClick = () => emit('edit', props.id);
   &:active {
     cursor: grabbing;
   }
+}
+
+.linked-copy-icon {
+  margin-left: 0.25rem;
+  opacity: 1;
 }
 </style>
