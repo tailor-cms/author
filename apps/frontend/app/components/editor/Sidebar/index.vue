@@ -253,7 +253,7 @@ watch(
   position: absolute;
   width: 1.5rem;
   height: 3.5rem;
-  top: 5.5rem;
+  top: 6rem;
   left: 0;
   border-radius: 0 12px 12px 0;
 }
