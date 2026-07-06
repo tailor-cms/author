@@ -4,13 +4,21 @@
       <div
         v-bind="activator.props"
         :aria-label="`Assignee: ${label}`"
-        class="cursor-pointer d-inline-flex align-center ga-2"
+        :class="compact ? 'd-inline-flex' : 'd-flex overflow-hidden'"
+        class="cursor-pointer align-center ga-2"
         role="button"
         tabindex="0"
         @click.stop
       >
-        <UserAvatar :img-url="assignee?.imgUrl" :label="label" :size="size" />
-        <span v-if="!compact" class="text-truncate">{{ label }}</span>
+        <UserAvatar
+          :img-url="assignee?.imgUrl"
+          :label="label"
+          :size="size"
+          class="flex-shrink-0"
+        />
+        <span v-if="!compact" class="assignee-label">
+          {{ label }}
+        </span>
       </div>
     </template>
     <VList density="compact" max-height="320" min-width="220" nav>
@@ -59,3 +67,12 @@ const update = useStatusUpdate();
 const assignee = computed(() => props.activity.currentStatus.assignee);
 const label = computed(() => assignee.value?.label ?? 'Unassigned');
 </script>
+
+<style lang="scss" scoped>
+// Let long emails wrap within the cell instead of overflowing into the next
+// column; overflow-wrap: anywhere breaks the address (which has no spaces).
+.assignee-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+</style>
