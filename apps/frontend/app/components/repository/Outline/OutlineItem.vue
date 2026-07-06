@@ -157,24 +157,7 @@ const isSoftDeleted = computed(() =>
   activityUtils.doesRequirePublishing(props.activity),
 );
 
-const isOffscreen = (el: HTMLElement) => {
-  const { top, bottom } = el.getBoundingClientRect();
-  return top < 0 || bottom > window.innerHeight;
-};
-
-const scrollIntoView = async (behavior: ScrollBehavior) => {
-  await nextTick();
-  const el = rowEl.value?.$el;
-  if (el && isOffscreen(el)) el.scrollIntoView({ behavior, block: 'center' });
-};
-
-onMounted(() => {
-  if (isSelected.value) scrollIntoView('auto');
-});
-
-watch(isSelected, (selected) => {
-  if (selected) scrollIntoView('smooth');
-});
+useScrollWhenSelected(() => rowEl.value?.$el, isSelected);
 
 const isExpanded = computed(() =>
   utils.isOutlineItemExpanded(props.activity.uid),

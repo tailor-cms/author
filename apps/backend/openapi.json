@@ -421,6 +421,17 @@
             "type": "string",
             "description": "Schema-defined workflow priority id."
           },
+          "position": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Workflow position; orders board columns and the list view."
+          },
           "description": {
             "anyOf": [
               {
@@ -474,6 +485,7 @@
           "assignee",
           "status",
           "priority",
+          "position",
           "description",
           "dueDate",
           "createdAt",
@@ -6369,6 +6381,17 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 64
+                  },
+                  "position": {
+                    "anyOf": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ],
+                    "description": "Workflow position; orders board columns and the list view."
                   },
                   "description": {
                     "anyOf": [

@@ -5,9 +5,11 @@ import {
   outlineSeed,
   toEmptyRepository,
   toSeededRepository,
+  toSeededRepositoryWorkflow,
 } from '../../helpers/seed';
 import { ActivityOutline } from '../../pom/repository/Outline.ts';
 import { NavigationRail } from '../../pom/repository/NavigationRail.ts';
+import { Workflow } from '../../pom/workflow/Workflow.ts';
 import { percySnapshot } from '../../utils/percy.ts';
 import SeedClient from '../../api/SeedClient';
 
@@ -29,13 +31,22 @@ test('Take a snapshot of the history page', async ({ page }) => {
   await percySnapshot(page, 'Repository history page');
 });
 
-test('Take a snapshot of the progress page', async ({ page }) => {
-  await toEmptyRepository(page, REPOSITORY_NAME);
-  const outline = new ActivityOutline(page);
-  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
-  await new NavigationRail(page).goToProgress();
-  await expect(page.getByText('Module 1')).toBeVisible();
-  await percySnapshot(page, 'Repository progress page');
+test('Take a snapshot of the progress views', async ({ page }) => {
+  await toSeededRepositoryWorkflow(page, REPOSITORY_NAME);
+  const workflow = new Workflow(page);
+  const name = outlineSeed.group.title;
+
+  const board = await workflow.showBoard();
+  await expect(board.item(name)).toBeVisible();
+  await percySnapshot(page, 'Repository progress page - board');
+
+  const list = await workflow.showList();
+  await expect(list.item(name)).toBeVisible();
+  await percySnapshot(page, 'Repository progress page - list');
+
+  const table = await workflow.showTable();
+  await expect(table.item(name)).toBeVisible();
+  await percySnapshot(page, 'Repository progress page - table');
 });
 
 test('Take a snapshot of the settings page', async ({ page }) => {

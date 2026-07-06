@@ -6,6 +6,7 @@ export interface StatusConfig {
   label: string;
   color: string;
   default?: boolean;
+  completed?: boolean;
 }
 
 export interface Status {
@@ -16,6 +17,7 @@ export interface Status {
   status: string;
   description: string | null;
   priority: string;
+  position: number | null;
   dueDate: string | null;
   createdAt: string;
   updatedAt: string;
