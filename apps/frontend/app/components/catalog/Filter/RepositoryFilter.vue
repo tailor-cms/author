@@ -14,7 +14,7 @@
         variant="text"
       />
     </template>
-    <VSheet min-width="300">
+    <VSheet class="bg-surface-container" min-width="300">
       <VTextField
         v-model="search"
         :label="`Filter ${props.label}...`"
