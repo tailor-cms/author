@@ -102,7 +102,7 @@ async function execute(input: Input, ctx: ToolContext) {
     generated = await (AiService as any).generate({
       repository: {
         repositoryId: ctx.repository.id,
-        activityId: topic?.id,
+        outlineActivityId: topic?.id,
         schemaId: ctx.repository.schema,
         name: ctx.repository.name,
         description: ctx.repository.description || '',

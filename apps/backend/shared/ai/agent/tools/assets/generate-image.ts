@@ -30,8 +30,9 @@ const description = stripIndent`
   asset library. Optionally pass referenceAssetId to use an
   existing library image as style/content inspiration - the
   generated image will incorporate the reference's visual
-  features. ALWAYS check list_assets first to see if a
-  suitable image already exists. After generating, you can:
+  features. ALWAYS check list_assets first - a suitable
+  image may already exist (includeUsage: true flags the
+  ones still unused). After generating, you can:
   - Pass the asset id in assetIds to generate_container_content
     so the AI inserts it as an IMAGE element in generated content
   - Use attach_asset_to_activity to set it on a FILE meta

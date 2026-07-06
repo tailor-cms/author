@@ -10,6 +10,7 @@ import { getRepository } from './middleware.ts';
 
 import activity from '../activity/index.ts';
 import agent from '../shared/ai/agent/index.ts';
+import ai from '../shared/ai/index.ts';
 import asset from '../asset/index.ts';
 import comment from '../comment/index.ts';
 import contentElement from '../content-element/index.ts';
@@ -147,7 +148,7 @@ const SUB_ROUTERS = [
   rpc,
 ];
 
-if (aiConfig.isEnabled) SUB_ROUTERS.push(agent, review);
+if (aiConfig.isEnabled) SUB_ROUTERS.push(ai, agent, review);
 
 for (const sub of SUB_ROUTERS) {
   router.use(`/:repositoryId${sub.path}`, sub.router);

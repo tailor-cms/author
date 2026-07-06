@@ -22,7 +22,6 @@ export enum AiResponseSchema {
   Outline = 'OUTLINE',
   Question = 'QUESTION',
   StructuredContent = 'STRUCTURED_CONTENT',
-  Tag = 'TAG',
 }
 
 export type AiResponseSchemaLiteral = `${AiResponseSchema}`;

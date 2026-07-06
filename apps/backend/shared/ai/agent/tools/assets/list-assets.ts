@@ -1,4 +1,4 @@
-import { stripIndent } from 'common-tags';
+import { oneLine, stripIndent } from 'common-tags';
 import { AssetType } from '@tailor-cms/interfaces/asset.ts';
 import * as assetService from '../../../../../asset/asset.service.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
@@ -10,6 +10,7 @@ interface Input {
   type?: string | null;
   search?: string | null;
   limit?: number | null;
+  includeUsage?: boolean | null;
 }
 
 const description = stripIndent`
@@ -23,6 +24,8 @@ const description = stripIndent`
   - Find reference material to index (index_assets)
     for file_search context during generation
   - Check isIndexed to know what's already searchable
+  - Decide reuse vs create: includeUsage adds isUsed per
+    item (false = not placed in any live content yet)
   Search matches asset names. Use discover_resources
   to search the web for new resources to import.
 `;
@@ -42,6 +45,17 @@ const parameters = {
     limit: {
       type: ['integer', 'null'],
       description: 'Max results (1-100). Defaults to 30.',
+    },
+    includeUsage: {
+      type: ['boolean', 'null'],
+      description: oneLine`
+        When true, adds isUsed per item - false means no live
+        content references it yet, so it can fill a new slot
+        without duplicating media already placed elsewhere.
+        Costs an extra repository scan - pass it only once a
+        narrowed search has candidates worth weighing (or for a
+        usage audit), never on a first exploratory browse.
+      `,
     },
   },
   additionalProperties: false,
@@ -72,6 +86,9 @@ async function execute(input: Input, ctx: ToolContext) {
     offset: 0,
     signed: true,
   } as any);
+  const usedIds = input.includeUsage
+    ? await assetService.findUsedAssetIds(ctx.repository, result.items)
+    : null;
   const items = (result.items || []).map((asset: any) => ({
     id: asset.id,
     name: asset.name,
@@ -80,6 +97,7 @@ async function execute(input: Input, ctx: ToolContext) {
     publicUrl: asset.publicUrl || null,
     isIndexed: !!asset.vectorStoreFileId,
     meta: asset.meta || {},
+    ...(usedIds && { isUsed: usedIds.has(asset.id) }),
   }));
   return { total: result.total, items };
 }

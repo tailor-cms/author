@@ -27,15 +27,21 @@ export * from '../dist/generated/types.gen';
 export * from '../dist/aliases.gen';
 
 export type { ApiClientOptions } from '../dist/api.gen';
-export type { Client } from '@hey-api/client-axios';
 
-// `formDataBodySerializer` is the multipart body serializer; spread it
-// into a call's options for endpoints declared `multipart/form-data`
-// (e.g. `api.repository.import`, asset uploads). Without it, hey-api
-// JSON-serializes the body and multer rejects the request as missing
-// the expected file part.
-export {
-  createClient,
-  formDataBodySerializer,
-} from '@hey-api/client-axios';
+// `Client` + `createClient` come from the external @hey-api/client-axios: the
+// wrapper's own `ApiClientOptions.client` (in api.gen.ts) is typed against it,
+// so the client the frontend builds and hands to `createApiClient` must be the
+// same type.
+export type { Client } from '@hey-api/client-axios';
+export { createClient } from '@hey-api/client-axios';
+
+// `formDataBodySerializer`, however, must come from the GENERATED bundled
+// client (openapi-ts >= 0.98 vendors its own client under dist/generated/
+// client). It's validated against the *SDK's* `Options.bodySerializer`, which
+// is typed against that bundled client - whose `BodySerializer` differs from
+// the external one (`body: unknown` vs `body: any`). Spread it into options
+// for `multipart/form-data` endpoints (e.g. `api.repository.import`, asset
+// uploads); without it, hey-api JSON-serializes the body and multer rejects
+// the request as missing the file part.
+export { formDataBodySerializer } from '../dist/generated/client';
 export { createApiClient } from '../dist/api.gen';

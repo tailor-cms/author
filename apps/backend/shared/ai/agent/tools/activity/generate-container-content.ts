@@ -235,7 +235,7 @@ async function execute(input: Input, ctx: ToolContext) {
       schemaId,
       repositoryId: ctx.repository.id,
       outlineActivityType: activity.type,
-      activityId: activity.id,
+      outlineActivityId: activity.id,
       topic: activity.data?.name,
       containerType,
       name: ctx.repository.name,

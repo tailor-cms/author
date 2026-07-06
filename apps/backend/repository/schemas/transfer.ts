@@ -11,7 +11,11 @@ import { Repository } from './entity.ts';
 export const ImportInput = z
   .object({
     name: Repository.shape.name,
-    description: Repository.shape.description,
+    description: z
+      .string()
+      .max(2000)
+      .optional()
+      .describe('Leave empty to inherit the archived repository description.'),
     userGroupIds: IntArrayFromForm().describe(
       'Optional list of user-group ids to share the imported repo with.',
     ),

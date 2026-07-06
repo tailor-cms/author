@@ -46,6 +46,7 @@
         />
         <Usages v-if="asset.storageKey" :asset="asset" />
         <EditForm
+          v-model:name="name"
           v-model:description="description"
           v-model:tags="tags"
           v-model:is-core-source="isCoreSource"
@@ -79,7 +80,7 @@ const emit = defineEmits<{
   index: [asset: Asset];
   deindex: [asset: Asset];
   move: [asset: Asset];
-  save: [asset: Asset, meta: Record<string, any>];
+  save: [asset: Asset, payload: { meta: Record<string, any>; name?: string }];
 }>();
 
 const { lgAndUp } = useDisplay();
@@ -90,6 +91,7 @@ const { width, isResizing, startResize } = useDrawerResize({
   defaultWidth: () => (lgAndUp.value ? 480 : 380),
 });
 
+const name = ref('');
 const description = ref('');
 const tags = ref<string[]>([]);
 const isCoreSource = ref(false);
@@ -99,24 +101,29 @@ const typeColor = computed(() => getAssetColor(props.asset));
 
 function hasChanges(asset: Asset) {
   return (
+    name.value !== asset.name ||
     description.value !== (asset.meta.description || '') ||
     JSON.stringify(tags.value) !== JSON.stringify(asset.meta.tags || []) ||
     isCoreSource.value !== !!asset.meta.isCoreSource
   );
 }
 
-function saveMeta(asset: Asset | null) {
+function saveChanges(asset: Asset | null) {
   if (!asset || !hasChanges(asset)) return;
   emit('save', asset, {
-    description: description.value,
-    tags: tags.value,
-    isCoreSource: isCoreSource.value,
+    meta: {
+      description: description.value,
+      tags: tags.value,
+      isCoreSource: isCoreSource.value,
+    },
+    name: name.value !== asset.name ? name.value : undefined,
   });
 }
 
-const debouncedSave = debounce(() => saveMeta(props.asset), 500);
+const debouncedSave = debounce(() => saveChanges(props.asset), 500);
 
 function loadAsset(asset: Asset) {
+  name.value = asset.name || '';
   description.value = asset.meta.description || '';
   tags.value = [...(asset.meta.tags || [])];
   isCoreSource.value = !!asset.meta.isCoreSource;
@@ -127,15 +134,14 @@ watch(
   (asset, prevAsset) => {
     if (prevAsset?.id === asset?.id) return;
     debouncedSave.cancel();
-    saveMeta(prevAsset ?? null);
+    saveChanges(prevAsset ?? null);
     if (asset) loadAsset(asset);
   },
   { immediate: true },
 );
 
-watch(description, () => debouncedSave());
-watch(tags, () => debouncedSave(), { deep: true });
-watch(isCoreSource, () => saveMeta(props.asset));
+watch([name, description, tags], () => debouncedSave(), { deep: true });
+watch(isCoreSource, () => saveChanges(props.asset));
 
 onBeforeUnmount(() => {
   debouncedSave.flush();

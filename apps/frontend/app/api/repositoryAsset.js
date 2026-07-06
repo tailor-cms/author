@@ -46,9 +46,9 @@ function upload(repositoryId, files, { onProgress, folder } = {}) {
     .then(extractData);
 }
 
-function updateMeta(repositoryId, id, meta) {
+function updateAsset(repositoryId, id, { meta, name }) {
   return request
-    .patch(urls.resource(repositoryId, id), { meta })
+    .patch(urls.resource(repositoryId, id), { meta, ...(name && { name }) })
     .then(extractData);
 }
 
@@ -149,7 +149,7 @@ export default {
   listFolders,
   move,
   deleteFolder,
-  updateMeta,
+  updateAsset,
   importFromLink,
   attachFile,
   indexAssets,

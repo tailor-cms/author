@@ -1,4 +1,5 @@
 // Wire shape for the AI generation endpoint.
+import { Int } from '#shared/request/schemas.ts';
 import { z } from 'zod';
 
 const InputType = z.enum(['CREATE', 'ADD', 'MODIFY']);
@@ -15,18 +16,34 @@ const GenerateInputItem = z.looseObject({
     .describe(`Key of the structured-output schema (Outline, CeHtml, etc.).`),
 });
 
+// Repository identity (id, schema, name, description) is resolved from
+// the repository-scoped route
 export const GenerateInput = z
   .looseObject({
     repository: z
       .looseObject({
-        schemaId: z.string().min(1).describe('Schema id of the target repository.'),
-        name: z.string().min(1).describe('Repository name (shown to the AI).'),
-        description: z
+        outlineActivityId: Int()
+          .optional()
+          .describe('Outline activity the content is generated for.'),
+        outlineActivityType: z
           .string()
-          .min(1)
-          .describe('Repository description (shown to the AI).'),
+          .optional()
+          .describe('Activity type of the targeted outline node.'),
+        containerType: z
+          .string()
+          .optional()
+          .describe('Content container type receiving the content.'),
+        topic: z
+          .string()
+          .optional()
+          .describe('Topic of the generated content (e.g. leaf node title).'),
       })
-      .describe('Repository context the AI generates against.'),
+      .optional()
+      .describe('Location context within the repository.'),
+    content: z
+      .string()
+      .optional()
+      .describe('Existing content the request builds on (Add/Modify modes).'),
     inputs: z.array(GenerateInputItem).min(1).describe(
       'Ordered list of generation steps; processed in sequence.',
     ),

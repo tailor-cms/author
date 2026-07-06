@@ -8,7 +8,7 @@ import { ContentMode } from '@tailor-cms/interfaces/schema.ts';
 import { schema as schemaConfiguration } from '@tailor-cms/config';
 
 import getContentSchema from '../schemas/index.ts';
-import RepositoryContext from './RepositoryContext.ts';
+import GenerationContext from './GenerationContext.ts';
 
 import { ai as aiConfig } from '#config';
 import { createAiLogger, formatPrompt } from '../logger.ts';
@@ -129,7 +129,7 @@ export class AiPrompt {
   // OpenAI client
   private client: OpenAI;
   // Information about the repository, content location, topic, etc.
-  private repositoryContext: RepositoryContext;
+  private generationContext: GenerationContext;
   private requestContext: AiContext;
   private inputs: AiInput[];
   private content: string;
@@ -137,7 +137,7 @@ export class AiPrompt {
 
   constructor(client: OpenAI, context: AiContext) {
     if (!context?.inputs?.length) throw new Error('Prompt not provided');
-    this.repositoryContext = new RepositoryContext(context.repository);
+    this.generationContext = new GenerationContext(context.repository);
     this.content = context.content || '';
     this.inputs = context.inputs;
     this.client = client;
@@ -145,23 +145,20 @@ export class AiPrompt {
   }
 
   get vectorStoreId() {
-    return this.repositoryContext.vectorStoreId;
+    return this.generationContext.vectorStoreId;
   }
 
   get context(): AiContext {
     return {
       ...this.requestContext,
-      assets: this.repositoryContext.assets,
-      repository: {
-        ...this.requestContext.repository,
-        vectorStoreId: this.vectorStoreId,
-      },
+      assets: this.generationContext.assets,
+      repository: this.generationContext,
     };
   }
 
   async execute() {
     try {
-      await this.repositoryContext.resolve(this.requestContext.repository);
+      await this.generationContext.resolve();
       const input = this.toOpenAiInput();
       const params: any = {
         model: aiConfig.modelId,
@@ -234,9 +231,9 @@ export class AiPrompt {
   toOpenAiInput(): OpenAI.Responses.ResponseInputItem[] {
     const res: OpenAI.Responses.ResponseInputItem[] = [];
     res.push({ role: 'developer', content: systemPrompt });
-    const mode = resolveContentMode(this.requestContext.repository?.schemaId);
+    const mode = resolveContentMode(this.generationContext.schemaId);
     res.push({ role: 'developer', content: buildAuthoringRules(mode) });
-    res.push({ role: 'developer', content: this.repositoryContext.toString() });
+    res.push({ role: 'developer', content: this.generationContext.toString() });
     if (this.vectorStoreId) {
       res.push({ role: 'developer', content: documentPrompt });
     }
