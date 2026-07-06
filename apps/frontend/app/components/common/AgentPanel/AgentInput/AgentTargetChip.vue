@@ -23,3 +23,14 @@ interface FocusChip {
 
 defineProps<{ chip: FocusChip | null }>();
 </script>
+
+<style lang="scss" scoped>
+.agent-target-chip {
+  max-width: 12rem;
+
+  :deep(.v-chip__content) {
+    min-width: 0;
+    overflow: hidden;
+  }
+}
+</style>
