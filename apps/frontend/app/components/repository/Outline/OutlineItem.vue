@@ -44,12 +44,14 @@
           </div>
           <template #append>
             <div
-              v-if="!isSoftDeleted && (isSelected || isHovering)"
+              v-if="!isSoftDeleted"
+              v-show="isSelected || isHovering || isMenuOpen"
               class="actions my-auto"
             >
               <OutlineItemToolbar
                 :activity="activity"
                 class="options-toolbar my-auto"
+                @mousedown.stop
               />
               <VBtn
                 v-if="smAndUp"
@@ -59,12 +61,15 @@
                 aria-label="Toggle expand alt"
                 class="my-auto text-medium-emphasis mx-0"
                 variant="text"
-                @click="utils.toggleOutlineItemExpand(activity.uid)"
+                @click.stop="utils.toggleOutlineItemExpand(activity.uid)"
+                @mousedown.stop
               />
               <OptionsMenu
+                v-model="isMenuOpen"
                 :activity="activity"
                 class="options-menu text-medium-emphasis"
                 rounded
+                @mousedown.stop
               />
             </div>
             <VChip v-else-if="isSoftDeleted" class="mr-3" size="small">
@@ -144,6 +149,7 @@ const utils = useSelectedActivity(props.activity);
 const reorder = useOutlineReorder();
 
 const rowEl = ref<{ $el: HTMLElement } | null>(null);
+const isMenuOpen = ref(false);
 
 const config = computed(() =>
   taxonomy.value?.find((it: any) => it.type === props.activity.type),
