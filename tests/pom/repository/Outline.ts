@@ -64,6 +64,10 @@ export class ActivityOutline {
   }
 
   async addRootItem(type: string, name: string) {
+    await this.addMenuBtn
+      .or(this.emptyCreateCard)
+      .first()
+      .waitFor({ state: 'visible' });
     if (await this.addMenuBtn.isVisible()) {
       await this.addMenuBtn.click();
       await this.page.getByText('Create new', { exact: true }).click();
@@ -76,6 +80,10 @@ export class ActivityOutline {
   }
 
   async linkExisting() {
+    await this.addMenuBtn
+      .or(this.emptyLinkCard)
+      .first()
+      .waitFor({ state: 'visible' });
     if (await this.addMenuBtn.isVisible()) {
       await this.addMenuBtn.click();
       await this.page.getByText('Link existing', { exact: true }).click();
