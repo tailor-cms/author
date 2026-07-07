@@ -24,10 +24,8 @@ export const ProfileUpdateInput = z
     email: User.shape.email.optional(),
     firstName: User.shape.firstName.unwrap().optional(),
     lastName: User.shape.lastName.unwrap().optional(),
-    // Generous ceiling
-    // covers any reasonable upload while gating obvious DoS payloads.
-    imgUrl: z.string().max(200_000).optional()
-      .describe('Avatar URL or base64 data URL (capped at 200_000 chars).'),
+    imgUrl: z.string().max(1_000_000).optional()
+      .describe('Avatar URL or base64 data URL (capped at 1_000_000 chars).'),
   })
   .describe(`Editable subset of the current user's profile.`);
 

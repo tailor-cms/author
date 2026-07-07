@@ -54,8 +54,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import Compressor from 'compressorjs';
+import { resizeAvatarImage } from './resize-image';
 
 export interface Props {
   imgUrl?: string;
@@ -77,28 +76,35 @@ const isGravatar = computed(() => /gravatar.com/.test(props.imgUrl));
 
 const triggerUpload = () => fileInput.value?.click();
 
-const selectPhoto = (event: Event) => {
-  const { files } = event.target as HTMLInputElement;
-  if (!files?.[0]) return;
-  return new Compressor(files[0], {
-    width: 250,
-    height: 250,
-    resize: 'cover',
-    success: async (result) => {
-      const imageUrl = await toBase64(result);
-      emit('save', imageUrl);
-    },
-    error: (err) => notify(err.message, { immediate: true, color: 'error' }),
-  });
-};
+const AVATAR_SIZE = 250;
+// A resized/compressed AVATAR_SIZE x AVATAR_SIZE JPEG data URL should land under
+const MAX_IMAGE_LENGTH = 300_000;
 
-const toBase64 = (file: Blob): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
+const selectPhoto = async (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  input.value = '';
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    notify('Please select an image file.', {
+      immediate: true,
+      color: 'error',
+    });
+    return;
+  }
+  try {
+    const imageUrl = await resizeAvatarImage(file, AVATAR_SIZE);
+    if (imageUrl.length > MAX_IMAGE_LENGTH) {
+      notify('Unable to compress that image enough, please try a different one.', {
+        immediate: true,
+        color: 'error',
+      });
+      return;
+    }
+    emit('save', imageUrl);
+  } catch (err: any) {
+    notify(err.message, { immediate: true, color: 'error' });
+  }
 };
 </script>
 

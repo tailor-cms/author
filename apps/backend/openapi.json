@@ -12721,9 +12721,9 @@
                     "maxLength": 50
                   },
                   "imgUrl": {
-                    "description": "Avatar URL or base64 data URL (capped at 200_000 chars).",
+                    "description": "Avatar URL or base64 data URL (capped at 1_000_000 chars).",
                     "type": "string",
-                    "maxLength": 200000
+                    "maxLength": 1000000
                   }
                 },
                 "additionalProperties": false,
