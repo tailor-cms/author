@@ -10,26 +10,26 @@
   >
     <template #actions>
       <div class="d-flex flex-wrap justify-center ga-4 mt-4">
-        <EmptyStateCard
+        <AddRepository
           v-for="option in options"
-          :key="option.key"
-          :icon="option.icon"
-          :test-id="option.testId"
-          :text="option.text"
-          :title="option.title"
-          @click="dialogTab = option.tab"
-        />
+          :key="option.tab"
+          :default-tab="option.tab"
+          :is-create-enabled="true"
+          @created="emit('created')"
+        >
+          <template #activator="{ props: activatorProps }">
+            <EmptyStateCard
+              v-bind="activatorProps"
+              :icon="option.icon"
+              :test-id="option.testId"
+              :text="option.text"
+              :title="option.title"
+            />
+          </template>
+        </AddRepository>
       </div>
     </template>
   </TailorEmptyState>
-  <AddRepository
-    v-if="dialogTab"
-    :default-tab="dialogTab"
-    :is-create-enabled="true"
-    :show-activator="false"
-    @close="dialogTab = null"
-    @created="emit('created')"
-  />
 </template>
 
 <script lang="ts" setup>
@@ -40,12 +40,8 @@ import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
 
 const emit = defineEmits(['created']);
 
-// Tab ids of the AddRepository dialog.
-const dialogTab = ref<string | null>(null);
-
 const options = [
   {
-    key: 'create',
     tab: 'schema',
     title: 'Create repository',
     text: 'Start fresh from one of the available schemas.',
@@ -53,7 +49,6 @@ const options = [
     icon: 'mdi-folder-plus-outline',
   },
   {
-    key: 'import',
     tab: 'import',
     title: 'Import repository',
     text: 'Restore a previously exported archive.',

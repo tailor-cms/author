@@ -8,17 +8,19 @@
     scrollable
     @submit="createRepository"
   >
-    <template v-if="showActivator" #activator="{ props: activatorProps }">
-      <VBtn
-        v-bind="activatorProps"
-        aria-label="Add repository"
-        class="add-repository-btn"
-        color="primary"
-        prepend-icon="mdi-plus"
-        size="large"
-        text="New"
-        variant="flat"
-      />
+    <template #activator="activatorSlotProps">
+      <slot name="activator" v-bind="activatorSlotProps">
+        <VBtn
+          v-bind="activatorSlotProps.props"
+          aria-label="Add repository"
+          class="add-repository-btn"
+          color="primary"
+          prepend-icon="mdi-plus"
+          size="large"
+          text="New"
+          variant="flat"
+        />
+      </slot>
     </template>
     <template #subheader>
       <div class="px-5 pb-4">
@@ -179,15 +181,14 @@ const IMPORT_TAB = 'import';
 const props = withDefaults(
   defineProps<{
     isCreateEnabled: boolean;
-    showActivator?: boolean;
     defaultTab?: string;
   }>(),
-  { showActivator: true, defaultTab: NEW_TAB },
+  { defaultTab: NEW_TAB },
 );
 
 const emit = defineEmits(['created', 'close']);
 
-const isVisible = ref(!props.showActivator);
+const isVisible = ref(false);
 const selectedTab = ref(props.defaultTab);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isSubmitting = ref(false);
