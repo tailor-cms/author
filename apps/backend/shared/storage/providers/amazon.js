@@ -22,7 +22,13 @@ import mime from 'mime-types';
 import path from 'node:path';
 
 const noop = () => {};
-const isNotFound = (err) => err.Code === 'NoSuchKey';
+
+// File isn't in storage;
+// callers can treat a miss as "absent" instead of erroring.
+const isNotFound = (err) =>
+  err?.Code === 'NoSuchKey' ||
+  err?.name === 'NotFound' ||
+  err?.$metadata?.httpStatusCode === 404;
 
 export const schema = yup.object().shape({
   region: yup.string().required(),

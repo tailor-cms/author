@@ -4,6 +4,7 @@ import QueryStream from 'pg-query-stream';
 import { stringify } from 'JSONStream';
 import db from '../../database/index.js';
 import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
+import { stripTransientAssetMeta } from '#app/asset/utils/meta.ts';
 
 const { Activity, Asset, ContentElement, Repository } = db;
 const reStorage = /^storage:\/\//;
@@ -100,7 +101,11 @@ function collectAssetFiles(context) {
       if (!isString(key) || !key) continue;
       context.assets.push(key.replace(reStorage, ''));
     }
-    // Forward the row to stringify() -> assets.json, unmodified.
+    // Drop cache flags (hasThumbnail/thumbnailFailed) so the
+    // imported copy regenerates its thumbnail instead of pointing at a file
+    // that isn't in the archive.
+    if (asset.meta) asset.meta = stripTransientAssetMeta(asset.meta);
+    // Forward the row to stringify() -> assets.json.
     cb(null, asset);
   });
 }
