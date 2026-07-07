@@ -39,9 +39,18 @@ const store = useAuthStore();
 const notify = useNotification();
 
 const saveAvatar = (imgUrl?: string) => {
-  return store.updateInfo({ imgUrl }).then(() => {
-    notify('Your profile picture has been updated!', { immediate: true });
-  });
+  return store
+    .updateInfo({ imgUrl })
+    .then(() => {
+      notify('Your profile picture has been updated!', { immediate: true });
+    })
+    .catch((err) => {
+      const message = err?.response?.data?.error?.message;
+      notify(message || 'Failed to update your profile picture!', {
+        immediate: true,
+        color: 'error',
+      });
+    });
 };
 
 const deleteAvatar = () => {
