@@ -30,7 +30,7 @@ const setupLinkedSourceModule = async (page: any) => {
   const sourceRepo = await seedSourceRepository();
   const targetRepo = await toEmptyRepository(page);
   const targetOutline = new ActivityOutline(page);
-  const targetModule = await targetOutline.addRootItem(
+  const targetModule = await targetOutline.addFirstItem(
     outlineLevel.GROUP,
     'Target Module',
   );
@@ -138,7 +138,7 @@ test('linking activity with children creates single revision', async ({
   const targetRepo = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   // Link a group (which has child pages and content elements)
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   const linkDialog = await module.optionsMenu.linkContentInto();
   await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
   // Navigate to history page

@@ -30,7 +30,7 @@ test(`should create a ${outlineLevel.GROUP} using bottom add button`, async ({
 }) => {
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  await outline.addRootItem(outlineLevel.GROUP, `${outlineLevel.GROUP} 1`);
+  await outline.addFirstItem(outlineLevel.GROUP, `${outlineLevel.GROUP} 1`);
 });
 
 test(`should be able to create a new sub ${outlineLevel.GROUP}`, async ({
@@ -39,7 +39,7 @@ test(`should be able to create a new sub ${outlineLevel.GROUP}`, async ({
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const parentName = `${outlineLevel.GROUP} 1`;
-  const parent = await outline.addRootItem(outlineLevel.GROUP, parentName);
+  const parent = await outline.addFirstItem(outlineLevel.GROUP, parentName);
   const subLevelName = `Sub ${outlineLevel.GROUP}`;
   await parent.addInto(outlineLevel.GROUP, subLevelName);
   await outline.getOutlineItemByName(subLevelName);
@@ -51,7 +51,7 @@ test(`should be able to add a new ${outlineLevel.GROUP} above`, async ({
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const anchorName = `${outlineLevel.GROUP} 1`;
-  const anchor = await outline.addRootItem(outlineLevel.GROUP, anchorName);
+  const anchor = await outline.addFirstItem(outlineLevel.GROUP, anchorName);
   const itemName = `${outlineLevel.GROUP} above`;
   await anchor.addAbove(outlineLevel.GROUP, itemName);
   await outline.getOutlineItemByName(itemName);
@@ -63,7 +63,7 @@ test(`should be able to add a new ${outlineLevel.GROUP} below`, async ({
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const anchorName = `${outlineLevel.GROUP} 1`;
-  const anchor = await outline.addRootItem(outlineLevel.GROUP, anchorName);
+  const anchor = await outline.addFirstItem(outlineLevel.GROUP, anchorName);
   const itemName = `${outlineLevel.GROUP} below`;
   await anchor.addBelow(outlineLevel.GROUP, itemName);
   await outline.getOutlineItemByName(itemName);

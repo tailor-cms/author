@@ -64,32 +64,30 @@ export class ActivityOutline {
   }
 
   async addRootItem(type: string, name: string) {
-    await this.addMenuBtn
-      .or(this.emptyCreateCard)
-      .first()
-      .waitFor({ state: 'visible' });
-    if (await this.addMenuBtn.isVisible()) {
-      await this.addMenuBtn.click();
-      await this.page.getByText('Create new', { exact: true }).click();
-    } else {
-      await this.emptyCreateCard.click();
-    }
+    await this.addMenuBtn.waitFor({ state: 'visible' });
+    await this.addMenuBtn.click();
+    await this.page.getByText('Create new', { exact: true }).click();
+    const addActivityDialog = new AddItemDialog(this.page);
+    await addActivityDialog.create(type, name);
+    return this.getOutlineItemByName(name);
+  }
+
+  async addFirstItem(type: string, name: string) {
+    await this.emptyCreateCard.click();
     const addActivityDialog = new AddItemDialog(this.page);
     await addActivityDialog.create(type, name);
     return this.getOutlineItemByName(name);
   }
 
   async linkExisting() {
-    await this.addMenuBtn
-      .or(this.emptyLinkCard)
-      .first()
-      .waitFor({ state: 'visible' });
-    if (await this.addMenuBtn.isVisible()) {
-      await this.addMenuBtn.click();
-      await this.page.getByText('Link existing', { exact: true }).click();
-    } else {
-      await this.emptyLinkCard.click();
-    }
+    await this.addMenuBtn.waitFor({ state: 'visible' });
+    await this.addMenuBtn.click();
+    await this.page.getByText('Link existing', { exact: true }).click();
+    return new LinkContentDialog(this.page);
+  }
+
+  async linkFirst() {
+    await this.emptyLinkCard.click();
     return new LinkContentDialog(this.page);
   }
 }

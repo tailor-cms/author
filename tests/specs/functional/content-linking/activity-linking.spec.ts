@@ -29,7 +29,7 @@ test('can link a leaf activity via options menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   const linkDialog = await module.optionsMenu.linkContentBelow();
   await linkDialog.selectAndLink(
     sourceRepo.name,
@@ -59,7 +59,7 @@ test('can link a group activity via options menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   // Link source group into target module
   const linkDialog = await module.optionsMenu.linkContentInto();
   await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
@@ -87,7 +87,7 @@ test('can link a group activity below via options menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   const linkDialog = await module.optionsMenu.linkContentBelow();
   await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
   const linkedGroup = await outline.getOutlineItemByName(
@@ -112,7 +112,7 @@ test('can link a leaf activity into a group via options menu', async ({
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   const linkDialog = await module.optionsMenu.linkContentInto();
   await linkDialog.selectAndLink(
     sourceRepo.name,
@@ -140,7 +140,7 @@ test('can link a leaf activity via toolbar menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const linkDialog = await outline.linkExisting();
+  const linkDialog = await outline.linkFirst();
   await linkDialog.selectAndLink(
     sourceRepo.name,
     outlineSeed.primaryPage.title,
@@ -164,7 +164,7 @@ test('can navigate to linked parent from a nested linked child', async ({
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const linkDialog = await outline.linkExisting();
+  const linkDialog = await outline.linkFirst();
   await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
   await outline.toggleExpand();
   const childPage = await outline.getOutlineItemByName(
@@ -312,10 +312,10 @@ test('auto-unlink on structural change (add child to a linked module)', async ({
 test('opening empty linked activity does not auto-unlink', async ({ page }) => {
   const sourceRepo = await toEmptyRepository(page, 'Source');
   const sourceOutline = new ActivityOutline(page);
-  await sourceOutline.addRootItem(outlineLevel.LEAF, 'Empty Page');
+  await sourceOutline.addFirstItem(outlineLevel.LEAF, 'Empty Page');
   const targetRepo = await toEmptyRepository(page, 'Target');
   const targetOutline = new ActivityOutline(page);
-  const module = await targetOutline.addRootItem(
+  const module = await targetOutline.addFirstItem(
     outlineLevel.GROUP,
     'Target Module',
   );
