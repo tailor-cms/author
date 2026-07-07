@@ -1,15 +1,15 @@
 <template>
   <div class="collection-wrapper">
-    <div class="d-flex align-center ga-3 mb-4">
-      <EntityFilter
-        v-if="hasMultipleEntities"
-        v-model="selectedEntity"
-        :entities="entities"
-      />
-      <VSpacer />
-      <CollectionSortMenu v-model="sort" />
-    </div>
     <template v-if="hasActivities">
+      <div class="d-flex align-center ga-3 mb-4">
+        <EntityFilter
+          v-if="hasMultipleEntities"
+          v-model="selectedEntity"
+          :entities="entities"
+        />
+        <VSpacer />
+        <CollectionSortMenu v-model="sort" />
+      </div>
       <TailorEmptyState
         v-if="!sortedItems.length"
         icon="mdi-magnify"
@@ -24,16 +24,13 @@
         />
       </VList>
     </template>
-    <TailorEmptyState
-      v-else
-      icon="mdi-view-list"
-      title="No items yet."
-      text="Click the Create button above to add your first item."
-    />
+    <CollectionEmptyState v-else :selected-entity="selectedEntity" />
   </div>
 </template>
 
 <script lang="ts" setup>
+import CollectionEmptyState
+  from '@/components/repository/Outline/CollectionEmptyState/index.vue';
 import CollectionItem from '@/components/repository/Outline/CollectionItem.vue';
 import CollectionSortMenu from '@/components/repository/Outline/CollectionSortMenu.vue';
 import EntityFilter from '@/components/repository/Outline/EntityFilter.vue';

@@ -6,7 +6,7 @@
         class="structure d-flex flex-column justify-start px-md-10 py-md-8"
         max-width="1300"
       >
-        <div class="d-flex align-center ga-2 mb-4">
+        <div v-if="hasToolbar" class="d-flex align-center ga-2 mb-4">
           <OutlineToolbar
             v-model:search="filters.search"
             :active-entity="selectedEntity"
@@ -64,6 +64,12 @@ provide('$storageService', storageService);
 
 const filters = reactive<Filters>({ search: '' });
 const structureEl = ref();
+
+// Both the outline and collection empty states offer their own actions, so
+// the toolbar would be redundant when there's nothing yet.
+const hasToolbar = computed(
+  () => !!rootActivities.value.length || !!filters.search,
+);
 
 const queryActivityId = computed(() => {
   const { activityId } = route.query;

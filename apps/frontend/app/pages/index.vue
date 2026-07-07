@@ -2,7 +2,11 @@
   <NuxtLayout name="main">
     <div class="catalog-scroll">
       <VContainer class="catalog" max-width="1360">
-        <VRow class="catalog-actions py-10" density="compact">
+        <VRow
+          v-if="!isEmptyCatalog"
+          class="catalog-actions py-10"
+          density="compact"
+        >
           <VCol cols="12" lg="4" md="6">
             <UserGroupSelect
               v-if="userGroupOptions.length"
@@ -105,11 +109,18 @@
             />
           </template>
         </VInfiniteScroll>
+        <CatalogEmptyState
+          v-else-if="hasEmptyStateActions"
+          class="mt-8"
+          @created="onRepositoryAdd"
+        />
         <TailorEmptyState
           v-else-if="emptyState"
+          :action-text="hasSearchOrFilter ? 'Clear search & filters' : undefined"
           :icon="emptyState.icon"
           :text="emptyState.text"
           :title="emptyState.title"
+          @click:action="clearSearchAndFilters"
         />
       </VContainer>
     </div>
@@ -127,6 +138,7 @@ import Promise from 'bluebird';
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
 import BulkActionBar from '@/components/catalog/BulkActionBar.vue';
 import BulkAddTagDialog from '@/components/catalog/BulkAddTagDialog.vue';
+import CatalogEmptyState from '@/components/catalog/EmptyState/index.vue';
 import RepositoryCard from '@/components/catalog/Card/index.vue';
 import RepositoryFilter from '~/components/catalog/Filter/RepositoryFilter.vue';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
@@ -292,29 +304,59 @@ const loadMore = async ({ done }: { done: Function }) => {
   done(status);
 };
 
-const emptyStateVariants = {
-  search: {
-    icon: 'mdi-magnify',
-    title: 'No matches',
-    text: 'No repositories match your search. Try a different term.',
-  },
-  pinned: {
-    icon: 'mdi-pin-outline',
-    title: 'No pinned repositories',
-    text: 'Pin a repository to keep it close at hand here.',
-  },
-  empty: {
-    icon: 'mdi-folder-open-outline',
-    title: 'No repositories yet',
-    text: 'Create your first repository to get started.',
-  },
+const hasSearchOrFilter = computed(
+  () => !!queryParams.value.search || queryParams.value.filter.length > 0,
+);
+
+const hasAnyQueryConstraint = computed(
+  () => hasSearchOrFilter.value || arePinnedShown.value,
+);
+
+const clearSearchAndFilters = async () => {
+  selectedRepos.value.clear();
+  queryParams.value.search = '';
+  queryParams.value.filter = [];
+  queryParams.value.pinned = false;
+  await refetchRepositories();
 };
+
+// True whenever the catalog holds no repositories at all (no active
+// search/pin/filter), regardless of the user's create access.
+const isEmptyCatalog = computed(
+  () =>
+    !isLoading.value &&
+    !hasRepositories.value &&
+    !hasAnyQueryConstraint.value,
+);
+
+const hasEmptyStateActions = computed(
+  () => isEmptyCatalog.value && authStore.hasCreateRepositoryAccess,
+);
 
 const emptyState = computed(() => {
   if (isLoading.value || hasRepositories.value) return null;
-  if (queryParams.value.search) return emptyStateVariants.search;
-  if (arePinnedShown.value) return emptyStateVariants.pinned;
-  return emptyStateVariants.empty;
+  if (hasSearchOrFilter.value) {
+    return {
+      icon: 'mdi-magnify-close',
+      title: 'No matches',
+      text: 'No repositories match your search or filters.',
+    };
+  }
+  if (arePinnedShown.value) {
+    return {
+      icon: 'mdi-pin-outline',
+      title: 'No pinned repositories',
+      text: 'Pin a repository to keep it close at hand here.',
+    };
+  }
+  if (!authStore.hasCreateRepositoryAccess) {
+    return {
+      icon: 'mdi-folder-open-outline',
+      title: 'No repositories yet',
+      text: 'No repositories have been shared with you yet.',
+    };
+  }
+  return null;
 });
 
 onBeforeMount(async () => {

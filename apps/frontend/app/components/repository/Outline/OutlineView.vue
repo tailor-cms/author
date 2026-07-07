@@ -21,12 +21,7 @@
         />
       </template>
     </Draggable>
-    <TailorEmptyState
-      v-else
-      icon="mdi-file-tree"
-      title="No items yet."
-      text="Click the Create button above to add your first item."
-    />
+    <StructureEmptyState v-else />
   </div>
   <div v-else>
     <div>
@@ -56,6 +51,8 @@ import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import type { StoreActivity } from '@/stores/activity';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import SearchResult from '@/components/repository/Outline/SearchResult.vue';
+import StructureEmptyState
+  from '@/components/repository/Outline/StructureEmptyState/index.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 
