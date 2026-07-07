@@ -182,10 +182,15 @@ function remapActivityRefs(activity, { context, transaction }) {
   const { activityIdMap } = context;
   forEach(activity.refs, (values, name) => {
     forEach(values, (oldId, index) => {
-      if (!activityIdMap[oldId]) {
-        throw new Error('Unable to resolve activity refs');
+      const newId = activityIdMap[oldId];
+      // A dangling ref (target not in the archive / not inserted)
+      if (!newId) {
+        return logger.error(
+          { activityId: activity.id, relationship: name, oldId },
+          'Unable to resolve activity ref',
+        );
       }
-      activity.refs[name][index] = activityIdMap[oldId];
+      activity.refs[name][index] = newId;
     });
   });
   activity.changed('refs', true);

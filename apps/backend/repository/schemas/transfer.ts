@@ -51,6 +51,13 @@ export const ExportStatusResult = z
     isCompleted: z
       .boolean()
       .describe('True when the export archive is ready for download.'),
+    isFailed: z
+      .boolean()
+      .describe('True when the export job failed and will not complete.'),
+    error: z
+      .string()
+      .optional()
+      .describe('Client-safe failure reason, present when `isFailed`.'),
   })
   .meta({ id: 'RepositoryExportStatusResult' })
   .describe('Polling response for an in-flight export job.');

@@ -66,10 +66,17 @@ const setStatus = (val: { icon: string; color: string; message: string }) => {
 const getStatus = async (jobId: string | null, hits = 1) => {
   const MAX_HITS = 6;
   const INTERVAL = 3000;
-  const { isCompleted } = await api.repository.getExportStatus({
-    params: { repositoryId: props.repository.id, jobId: jobId! },
-  });
+  const { isCompleted, isFailed, error } =
+    await api.repository.getExportStatus({
+      params: { repositoryId: props.repository.id, jobId: jobId! },
+    });
   if (isCompleted) return setStatus(STATUS.READY);
+  if (isFailed) {
+    return setStatus({
+      ...STATUS.ERROR,
+      message: error || STATUS.ERROR.message,
+    });
+  }
   if (hits >= MAX_HITS) return setStatus(STATUS.ERROR);
   return setTimeout(() => getStatus(jobId, hits + 1), hits * INTERVAL);
 };

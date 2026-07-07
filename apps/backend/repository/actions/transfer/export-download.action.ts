@@ -1,14 +1,15 @@
 import * as fs from 'node:fs';
 import * as fsp from 'node:fs/promises';
-import { pipeline } from 'node:stream/promises';
-import { StatusCodes } from 'http-status-codes';
-import { oneLine } from 'common-tags';
-import snakeCase from 'lodash/snakeCase.js';
+import * as schemas from '../../schemas/index.ts';
 import { createError } from '#shared/error/helpers.js';
 import { createLogger } from '#logger';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
-import * as schemas from '../../schemas/index.ts';
-import { JobCache } from './job-cache.ts';
+import { ExportJobStatus } from '#shared/transfer/types.ts';
+import { oneLine } from 'common-tags';
+import { pipeline } from 'node:stream/promises';
+import { StatusCodes } from 'http-status-codes';
+import snakeCase from 'lodash/snakeCase.js';
+import TransferService from '#shared/transfer/transfer.service.js';
 
 const logger = createLogger('repository:export');
 
@@ -24,8 +25,8 @@ async function handler({
     { repositoryId: repository.id, jobId },
     'Streaming export archive',
   );
-  const job = JobCache.get(jobId);
-  if (!job) {
+  const job = TransferService.getExportJob(jobId);
+  if (job?.status !== ExportJobStatus.Completed) {
     logger.warn({ repositoryId: repository.id, jobId }, 'Export job not found');
     return createError(StatusCodes.NOT_FOUND);
   }
@@ -39,7 +40,7 @@ async function handler({
       'Export stream failed',
     );
   } finally {
-    JobCache.delete(jobId);
+    TransferService.removeExportJob(jobId);
     fsp.unlink(job.filepath).catch(() => {});
   }
 }

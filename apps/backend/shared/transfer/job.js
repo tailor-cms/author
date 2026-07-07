@@ -1,8 +1,9 @@
+import { createId as cuid } from '@paralleldrive/cuid2';
+import { ExportJobStatus } from './types.ts';
 import EventEmitter from 'events';
 import BlobStore from 'fs-blob-store';
-import { createId as cuid } from '@paralleldrive/cuid2';
-import Promise from 'bluebird';
 import DefaultAdapter from './default/index.js';
+import Promise from 'bluebird';
 
 const tmp = Promise.promisifyAll((await import('tmp')).default, {
   multiArgs: true,
@@ -19,6 +20,9 @@ class TransferJob extends EventEmitter {
     this.filepath = filepath;
     this.options = options;
     this.type = this.constructor.name;
+    // Lifecycle state
+    this.status = ExportJobStatus.Pending;
+    this.error = null;
   }
 
   get adapter() {
@@ -28,8 +32,15 @@ class TransferJob extends EventEmitter {
   async run() {
     const blobStore = await createBlobStore();
     return this._run(blobStore)
-      .then(() => this.emit('success'))
-      .catch((err) => this.emit('error', err))
+      .then(() => {
+        this.status = ExportJobStatus.Completed;
+        this.emit('success');
+      })
+      .catch((err) => {
+        this.status = ExportJobStatus.Failed;
+        this.error = err;
+        this.emit('error', err);
+      })
       .finally(() => blobStore.cleanup());
   }
 

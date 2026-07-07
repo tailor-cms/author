@@ -7,13 +7,23 @@ const logger = createLogger('transfer:service');
 class TransferService {
   constructor() {
     this.queue = new PromiseQueue(1, Infinity);
+    this.exportJobs = new Map();
   }
 
   createExportJob(outFile, options, id) {
     const exportJob = new ExportJob(outFile, options, id);
+    this.exportJobs.set(exportJob.id, exportJob);
     this.queue.add(() => exportJob.run());
     setupLogging(exportJob);
     return exportJob;
+  }
+
+  getExportJob(id) {
+    return this.exportJobs.get(id);
+  }
+
+  removeExportJob(id) {
+    this.exportJobs.delete(id);
   }
 
   createImportJob(inFile, options) {
