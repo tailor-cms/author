@@ -42,7 +42,5 @@ test('should be able to access group associated repositories', async ({
   const catalog = new Catalog(page);
   await catalog.getFirstRepositoryCard().click();
   const structureContainer = page.locator('.structure-page');
-  await expect(structureContainer).toContainText(
-    'Click the Create button above to add your first item.',
-  );
+  await expect(structureContainer).toContainText('No items yet');
 });

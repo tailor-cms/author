@@ -137,20 +137,16 @@ test('can link a leaf activity into a group via options menu', async ({
   await expect(reloadedPage.linkIcon).toBeVisible();
 });
 
-test('can link a leaf activity via footer button', async ({ page }) => {
+test('can link a leaf activity via toolbar menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
-  // Use the footer "Link Existing" button on empty repository
-  const linkBtn = page.getByRole('button', { name: 'Link Existing' });
-  await expect(linkBtn).toBeVisible();
-  await linkBtn.click();
-  const linkDialog = new LinkContentDialog(page);
+  const outline = new ActivityOutline(page);
+  const linkDialog = await outline.linkExisting();
   await linkDialog.selectAndLink(
     sourceRepo.name,
     outlineSeed.primaryPage.title,
   );
   // Verify linked activity appears
-  const outline = new ActivityOutline(page);
   const linkedItem = await outline.getOutlineItemByName(
     outlineSeed.primaryPage.title,
   );

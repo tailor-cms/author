@@ -21,8 +21,12 @@ export class CreateItemDialog {
     return expect(this.typeSelect).toHaveClass(/v-input--disabled/);
   }
 
-  async create(title: string, titleLabel: string) {
+  async create(title: string, titleLabel: string, typeLabel?: string) {
     await expect(this.el).toBeVisible();
+    if (typeLabel) {
+      await this.typeSelect.click();
+      await this.page.getByRole('option', { name: typeLabel, exact: true }).click();
+    }
     await this.el.getByLabel(titleLabel).fill(title);
     await this.createBtn.click();
   }

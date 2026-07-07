@@ -43,8 +43,12 @@ test.describe('Collection - item creation', () => {
   });
 
   test('locks the item type to the active entity', async ({ page }) => {
+    // Need at least one item for the toolbar and entity filter to be visible.
+    await addItem(collection, ENTITY.TAG, 'seed');
+    await collection.goto();
     await collection.entityFilter.select(ENTITY.AUTHOR.label);
     await collection.createBtn.click();
+    await page.getByText('Create new', { exact: true }).click();
     const dialog = new CreateItemDialog(page);
     await dialog.expectTypeLocked();
     await expect(dialog.typeSelect).toContainText(ENTITY.AUTHOR.label);

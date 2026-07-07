@@ -22,8 +22,7 @@ test('repository root page has a title set', async ({ page }) => {
 
 test('should have default intro message visible', async ({ page }) => {
   await toEmptyRepository(page);
-  const intro = 'Click the Create button above to add your first item.';
-  await expect(page.getByText(intro)).toBeVisible();
+  await expect(page.getByText('No items yet')).toBeVisible();
 });
 
 test(`should create a ${outlineLevel.GROUP} using bottom add button`, async ({
