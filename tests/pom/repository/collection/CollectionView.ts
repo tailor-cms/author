@@ -63,20 +63,19 @@ export class CollectionView {
     return new CollectionItem(this.page, row);
   }
 
-  // Pick the entity, open the Create dialog, fill the title and submit.
+  async createFirstItem(entity: Entity, title: string) {
+    await this.emptyCreateBtn.click();
+    const dialog = new CreateItemDialog(this.page);
+    await dialog.create(title, entity.titleLabel, entity.label);
+    return new CollectionItemEditor(this.page).waitReady();
+  }
+
   async createItem(entity: Entity, title: string) {
-    const isEmpty = await this.emptyAlert.isVisible();
-    if (isEmpty) {
-      await this.emptyCreateBtn.click();
-      const dialog = new CreateItemDialog(this.page);
-      await dialog.create(title, entity.titleLabel, entity.label);
-    } else {
-      await this.entityFilter.select(entity.label);
-      await this.createBtn.click();
-      await this.page.getByText('Create new', { exact: true }).click();
-      const dialog = new CreateItemDialog(this.page);
-      await dialog.create(title, entity.titleLabel);
-    }
+    await this.entityFilter.select(entity.label);
+    await this.createBtn.click();
+    await this.page.getByText('Create new', { exact: true }).click();
+    const dialog = new CreateItemDialog(this.page);
+    await dialog.create(title, entity.titleLabel);
     return new CollectionItemEditor(this.page).waitReady();
   }
 
