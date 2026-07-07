@@ -11,7 +11,6 @@ import { ActivityOutline } from '../../../pom/repository/Outline';
 import BaseClient from '../../../api/BaseClient';
 import { Editor } from '../../../pom/editor/Editor';
 import { EditorToolbar } from '../../../pom/editor/EditorToolbar';
-import { LinkContentDialog } from '../../../pom/repository/LinkContentDialog';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 
