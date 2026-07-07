@@ -25,7 +25,6 @@
     v-if="isCreateOpen"
     :default-type="selectedEntity"
     :repository-id="repositoryId"
-    test-id-prefix="repository__createCollectionItem"
     open-in-editor
     @close="isCreateOpen = false"
   />
