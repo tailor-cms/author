@@ -6,15 +6,6 @@
     width="650"
     persistent
   >
-    <template v-if="showActivator" #activator="{ props: dialogProps }">
-      <VBtn
-        v-bind="dialogProps"
-        class="px-1"
-        prepend-icon="mdi-content-copy"
-        text="Copy"
-        variant="text"
-      />
-    </template>
     <template v-if="schema" #body>
       <div v-if="isCopyingActivities" class="ma-4">
         <div class="text-body-large text-center mb-2">
@@ -85,12 +76,10 @@ interface Props {
   levels: string[];
   action: InsertLocation;
   anchor?: Activity | null;
-  showActivator?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   anchor: null,
-  showActivator: false,
 });
 const emit = defineEmits(['close', 'completed']);
 
@@ -98,7 +87,7 @@ const store = useCurrentRepository();
 const activityStore = useActivityStore();
 const { loading: isFetchingRepositories, loader } = useLoader();
 
-const visible = ref(!props.showActivator);
+const visible = ref(true);
 const repositories = ref<Repository[]>([]);
 const selectedRepository = ref<Repository | null>(null);
 const selectedActivities = ref<Activity[]>([]);

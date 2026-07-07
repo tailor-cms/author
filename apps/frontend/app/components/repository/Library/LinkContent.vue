@@ -6,14 +6,6 @@
     width="650"
     persistent
   >
-    <template v-if="showActivator" #activator="{ props: dialogProps }">
-      <VBtn
-        v-bind="dialogProps"
-        prepend-icon="mdi-link-variant"
-        text="Link Existing"
-        variant="tonal"
-      />
-    </template>
     <template #body>
       <VAutocomplete
         :items="repositories"
@@ -81,14 +73,12 @@ const { AddAfter, AddInto } = InsertLocation;
 interface Props {
   anchor?: Activity | null;
   action?: InsertLocation;
-  showActivator?: boolean;
 }
 
 const emit = defineEmits(['close', 'completed']);
 const props = withDefaults(defineProps<Props>(), {
   action: InsertLocation.AddAfter,
   anchor: null,
-  showActivator: false,
 });
 
 const { $schemaService } = useNuxtApp() as any;
@@ -98,7 +88,7 @@ const activityStore = useActivityStore();
 const { loading: isLoadingRepositories, loader } = useLoader();
 const { repository } = storeToRefs(currentRepositoryStore);
 
-const visible = ref(!props.showActivator);
+const visible = ref(true);
 const repositories = ref<Repository[]>([]);
 const selectedRepository = ref<Repository | null>(null);
 const repositoryActivities = ref<Activity[]>([]);

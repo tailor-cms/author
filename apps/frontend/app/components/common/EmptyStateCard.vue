@@ -7,7 +7,7 @@
     min-width="200"
     rounded="lg"
     variant="flat"
-    @click="emit('click')"
+
   >
     <VAvatar v-if="icon" color="tertiary" size="64" variant="tonal">
       <VIcon :icon="icon" size="x-large" />
@@ -19,8 +19,6 @@
 
 <script lang="ts" setup>
 defineProps<{ title: string; text: string; icon?: string; testId?: string }>();
-
-const emit = defineEmits(['click']);
 </script>
 
 <style lang="scss" scoped>
