@@ -104,6 +104,7 @@
         />
         <VTextarea
           v-model="descriptionInput"
+          class="mb-2"
           :class="{ required: isCreate }"
           :error-messages="errors.description"
           :placeholder="
