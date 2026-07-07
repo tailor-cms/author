@@ -29,6 +29,20 @@ export function extractYtVideoId(url) {
   return match ? match[1] : null;
 }
 
+// Predictable still image for a YouTube video. `hqdefault` always exists for
+// public videos (unlike `maxresdefault`). null when the URL isn't YouTube.
+export function getYtThumbnailUrl(url) {
+  const id = extractYtVideoId(url);
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
+}
+
 export function isYouTubeUrl(url) {
   return YT_RE.test(url);
+}
+
+// External preview image for a link asset: a YouTube video's predictable still
+// (hqdefault, guaranteed for public videos), else the OpenGraph image collected
+// on import.
+export function getLinkPreviewUrl(meta) {
+  return getYtThumbnailUrl(meta?.url) || meta?.thumbnail || null;
 }

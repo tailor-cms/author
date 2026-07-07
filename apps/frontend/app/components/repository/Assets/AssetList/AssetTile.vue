@@ -11,11 +11,12 @@
   >
     <VSheet class="thumbnail" color="surface-container-low" rounded="lg">
       <VImg
-        v-if="thumbnailUrl"
-        :src="thumbnailUrl"
+        v-if="thumbnailSrc"
+        :src="thumbnailSrc"
         :aspect-ratio="4 / 3"
         class="rounded-lg"
         cover
+        @error="onThumbnailError"
       />
       <VIcon
         v-else
@@ -90,7 +91,7 @@
 </template>
 
 <script lang="ts" setup>
-import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
+import type { Asset } from '@tailor-cms/interfaces/asset';
 
 import {
   formatDate,
@@ -120,8 +121,8 @@ const emit = defineEmits<{
   'open-folder': [path: string];
 }>();
 
-const thumbnailUrl = computed(() =>
-  props.asset.type === AssetType.Image ? props.asset.publicUrl : null,
+const { src: thumbnailSrc, onError: onThumbnailError } = useAssetThumbnail(
+  () => props.asset,
 );
 
 const folderPath = computed(() => (props.asset.meta as any)?.folder ?? '');

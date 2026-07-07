@@ -38,6 +38,11 @@ interface AssetMetaBase {
   files?: Record<string, string>;
   // Marks this asset as a primary knowledge source for content generation
   isCoreSource?: boolean;
+  // A cached thumbnail has been generated (grid/list fast path). Any asset
+  // type can have one.
+  hasThumbnail?: boolean;
+  // Thumbnail generation failed; don't retry, fall back instead
+  thumbnailFailed?: boolean;
 }
 
 export interface FileAssetMeta extends AssetMetaBase {
@@ -118,6 +123,7 @@ export interface Asset {
   type: AssetType;
   storageKey: string | null;
   publicUrl?: string;
+  thumbnailUrl?: string;
   meta: AssetMeta;
   processingStatus: ProcessingStatus | null;
   vectorStoreFileId: string | null;
