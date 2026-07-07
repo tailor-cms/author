@@ -54,6 +54,7 @@
         type="error"
         variant="tonal"
         closable
+        prominent
         @click:close="serverError = ''"
       />
       <VWindow id="addDialogWindow" v-model="selectedTab">
@@ -247,6 +248,9 @@ watch(archiveInput, (archive) => {
   nameInput.value = startCase(archive.name.replace(/\.tgz$/i, ''));
 });
 
+const IMPORT_ERROR_MESSAGE =
+  'Whoops! The import failed. The archive may be corrupt or incompatible.';
+
 const createRepository = handleSubmit(async (formPayload: any) => {
   isSubmitting.value = true;
   const action = isCreate.value ? create : importRepository;
@@ -255,7 +259,11 @@ const createRepository = handleSubmit(async (formPayload: any) => {
     emit('created');
     hide();
   } catch {
-    serverError.value = 'An error has occurred!';
+    serverError.value = isCreate.value
+      ? 'An error has occurred!'
+      : IMPORT_ERROR_MESSAGE;
+  } finally {
+    isSubmitting.value = false;
   }
 });
 
@@ -273,15 +281,11 @@ const importRepository = async ({
   description,
   userGroupIds,
 }: any) => {
-  try {
-    await api.repository.import({
-      body: { archive, name, description, userGroupIds },
-      ...formDataBodySerializer,
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-  } catch {
-    serverError.value = 'An error has occurred!';
-  }
+  await api.repository.import({
+    body: { archive, name, description, userGroupIds },
+    ...formDataBodySerializer,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
 };
 
 const hide = () => {

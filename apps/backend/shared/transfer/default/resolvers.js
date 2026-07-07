@@ -105,6 +105,8 @@ function collectAssetFiles(context) {
     // imported copy regenerates its thumbnail instead of pointing at a file
     // that isn't in the archive.
     if (asset.meta) asset.meta = stripTransientAssetMeta(asset.meta);
+    delete asset.vector_store_file_id;
+    delete asset.processing_status;
     // Forward the row to stringify() -> assets.json.
     cb(null, asset);
   });

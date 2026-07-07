@@ -4061,10 +4061,19 @@
           "isCompleted": {
             "type": "boolean",
             "description": "True when the export archive is ready for download."
+          },
+          "isFailed": {
+            "type": "boolean",
+            "description": "True when the export job failed and will not complete."
+          },
+          "error": {
+            "description": "Client-safe failure reason, present when `isFailed`.",
+            "type": "string"
           }
         },
         "required": [
-          "isCompleted"
+          "isCompleted",
+          "isFailed"
         ],
         "additionalProperties": false
       },
