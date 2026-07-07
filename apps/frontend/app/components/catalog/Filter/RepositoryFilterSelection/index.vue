@@ -12,8 +12,8 @@
     />
     <VBtn
       v-show="repositoryFilter.length"
-      append-icon="mdi-close-circle"
-      color="secondary"
+      prepend-icon="mdi-close"
+      color="tertiary"
       size="small"
       text="Clear all"
       variant="tonal"
