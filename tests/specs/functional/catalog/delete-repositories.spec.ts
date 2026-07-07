@@ -14,40 +14,41 @@ test.beforeEach(async ({ page }) => {
   await expect(catalog.loadMoreBtn).not.toBeVisible();
 });
 
-test('should always show card checkboxes', async ({ page }) => {
+test('should reveal card checkbox on hover', async ({ page }) => {
   const catalog = new Catalog(page);
-  await expect(catalog.getCardCheckboxes().first()).toBeVisible();
+  const checkbox = catalog.getCardCheckboxes().first();
+  await expect(checkbox).not.toBeVisible();
+  await catalog.getFirstRepositoryCard().hover();
+  await expect(checkbox).toBeVisible();
 });
 
 test('should be able to select individual repositories', async ({ page }) => {
   const catalog = new Catalog(page);
-  await catalog.getCardCheckbox('Astronomy').click();
-  await expect(catalog.deleteSelectedBtn).toContainText('(1)');
-  await catalog.getCardCheckbox('Physics').click();
-  await expect(catalog.deleteSelectedBtn).toContainText('(2)');
-  await catalog.getCardCheckbox('Astronomy').click();
-  await expect(catalog.deleteSelectedBtn).toContainText('(1)');
+  await catalog.toggleRepository('Astronomy');
+  await expect(catalog.selectionCount).toContainText('1 selected');
+  await catalog.toggleRepository('Physics');
+  await expect(catalog.selectionCount).toContainText('2 selected');
+  await catalog.toggleRepository('Astronomy');
+  await expect(catalog.selectionCount).toContainText('1 selected');
 });
 
 test('should be able to select and deselect all repositories', async ({
   page,
 }) => {
   const catalog = new Catalog(page);
-  await catalog.getCardCheckbox('Astronomy').click();
-  await expect(catalog.selectAllCheckbox).toBeVisible();
+  await catalog.toggleRepository('Astronomy');
+  await expect(catalog.selectAllBtn).toBeVisible();
   const cardCount = await catalog.getRepositoryCards().count();
-  await catalog.selectAllCheckbox.click();
-  await expect(
-    catalog.deleteSelectedBtn,
-  ).toContainText(`(${cardCount})`);
-  await catalog.selectAllCheckbox.click();
+  await catalog.selectAllBtn.click();
+  await expect(catalog.selectionCount).toContainText(`${cardCount} selected`);
+  await catalog.selectAllBtn.click();
   await expect(catalog.deleteSelectedBtn).not.toBeVisible();
 });
 
 test('should show confirmation dialog before deleting', async ({ page }) => {
   const catalog = new Catalog(page);
   const initialCount = await catalog.getRepositoryCards().count();
-  await catalog.getCardCheckbox('Astronomy').click();
+  await catalog.toggleRepository('Astronomy');
   await catalog.deleteSelectedBtn.click();
   const dialog = new ConfirmationDialog(page, 'Delete repository');
   await expect(dialog.el).toBeVisible();
@@ -61,9 +62,9 @@ test('should delete selected repositories after confirmation', async ({
   page,
 }) => {
   const catalog = new Catalog(page);
-  await catalog.getCardCheckbox('Astronomy').click();
-  await catalog.getCardCheckbox('Physics').click();
-  await expect(catalog.deleteSelectedBtn).toContainText('(2)');
+  await catalog.toggleRepository('Astronomy');
+  await catalog.toggleRepository('Physics');
+  await expect(catalog.selectionCount).toContainText('2 selected');
   await catalog.deleteSelectedBtn.click();
   const dialog = new ConfirmationDialog(page, 'Delete repositories');
   await expect(dialog.el).toBeVisible();
@@ -75,26 +76,39 @@ test('should delete selected repositories after confirmation', async ({
   await expect(catalog.findRepositoryCard('Physics')).toHaveCount(0);
 });
 
+test('should bulk tag selected repositories', async ({ page }) => {
+  const catalog = new Catalog(page);
+  await catalog.toggleRepository('Astronomy');
+  await catalog.toggleRepository('Physics');
+  await catalog.bulkAddTag('bulk-tag');
+  await expect(
+    catalog.findRepositoryCard('Astronomy').getByText('bulk-tag'),
+  ).toBeVisible();
+  await expect(
+    catalog.findRepositoryCard('Physics').getByText('bulk-tag'),
+  ).toBeVisible();
+});
+
 test('should clear selection when sorting', async ({ page }) => {
   const catalog = new Catalog(page);
-  await catalog.getCardCheckbox('Astronomy').click();
-  await expect(catalog.deleteSelectedBtn).toContainText('(1)');
+  await catalog.toggleRepository('Astronomy');
+  await expect(catalog.selectionCount).toContainText('1 selected');
   await catalog.orderByName();
   await expect(catalog.deleteSelectedBtn).not.toBeVisible();
 });
 
 test('should clear selection when filtering', async ({ page }) => {
   const catalog = new Catalog(page);
-  await catalog.getCardCheckbox('Astronomy').click();
-  await expect(catalog.deleteSelectedBtn).toContainText('(1)');
+  await catalog.toggleRepository('Astronomy');
+  await expect(catalog.selectionCount).toContainText('1 selected');
   await catalog.filterBySchema('Course');
   await expect(catalog.deleteSelectedBtn).not.toBeVisible();
 });
 
 test('should clear selection when searching', async ({ page }) => {
   const catalog = new Catalog(page);
-  await catalog.getCardCheckbox('Astronomy').click();
-  await expect(catalog.deleteSelectedBtn).toContainText('(1)');
+  await catalog.toggleRepository('Astronomy');
+  await expect(catalog.selectionCount).toContainText('1 selected');
   await catalog.searchInput.fill('test');
   await expect(catalog.deleteSelectedBtn).not.toBeVisible();
 });
