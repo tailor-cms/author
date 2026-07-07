@@ -329,14 +329,14 @@ test('opening empty linked activity does not auto-unlink', async ({ page }) => {
   const sidebar = new OutlineSidebar(page);
   await sidebar.openEditor();
   await page.waitForLoadState('networkidle');
-  // Verify empty linked activity alert is shown
-  const alert = page.locator('.content-containers-wrapper > .v-alert');
-  await expect(alert).toContainText('without content');
+  const editor = new Editor(page);
+  // Verify empty linked activity notice is shown
+  await expect(editor.emptyLinkedNotice).toContainText('without content');
   // Toolbar should show linked state
   const toolbar = new EditorToolbar(page);
   await toolbar.expectLinkedState();
   // No containers should be rendered
-  await expect(page.locator('.content-containers')).not.toBeVisible();
+  await expect(editor.containers).not.toBeVisible();
   // Navigate back to structure and verify still linked
   await toStructurePage(page, { repositoryId: targetRepo.id } as any);
   const outline = new ActivityOutline(page);

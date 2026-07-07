@@ -26,6 +26,7 @@
       <ContentLoader v-if="isLoading" />
       <TailorEmptyState
         v-else-if="isEmptyLinkedActivity"
+        data-testid="empty-linked-notice"
         icon="mdi-link-variant"
         title="No content yet"
         :text="`This is a linked ${activityLabel} without content. The source `
