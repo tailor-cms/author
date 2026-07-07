@@ -86,6 +86,14 @@ const AssetMetaBase = z.object({
     .optional()
     .describe('Primary knowledge source for AI generation.'),
   source: AssetSource.optional().describe('Source attribution if imported.'),
+  hasThumbnail: z
+    .boolean()
+    .optional()
+    .describe('A cached thumbnail has been generated (image or link preview).'),
+  thumbnailFailed: z
+    .boolean()
+    .optional()
+    .describe('Thumbnail generation failed; do not retry, fall back instead.'),
 });
 
 // Metadata for file-based asset types
@@ -166,6 +174,10 @@ export const Asset = z
       .string()
       .optional()
       .describe('Pre-signed access URL; only present when `signed=true`.'),
+    thumbnailUrl: z
+      .string()
+      .optional()
+      .describe('Pre-signed URL of the cached thumbnail.'),
     meta: AssetMeta,
     vectorStoreFileId: z.string().nullable().describe(oneLine`
       OpenAI id for the indexed asset;

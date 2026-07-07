@@ -1415,6 +1415,14 @@
             "description": "Source attribution if imported.",
             "$ref": "#/components/schemas/AssetSource"
           },
+          "hasThumbnail": {
+            "description": "A cached thumbnail has been generated (image or link preview).",
+            "type": "boolean"
+          },
+          "thumbnailFailed": {
+            "description": "Thumbnail generation failed; do not retry, fall back instead.",
+            "type": "boolean"
+          },
           "fileSize": {
             "type": "integer",
             "minimum": 0,
@@ -1483,6 +1491,14 @@
           "source": {
             "description": "Source attribution if imported.",
             "$ref": "#/components/schemas/AssetSource"
+          },
+          "hasThumbnail": {
+            "description": "A cached thumbnail has been generated (image or link preview).",
+            "type": "boolean"
+          },
+          "thumbnailFailed": {
+            "description": "Thumbnail generation failed; do not retry, fall back instead.",
+            "type": "boolean"
           },
           "url": {
             "type": "string",
@@ -1594,6 +1610,10 @@
           },
           "publicUrl": {
             "description": "Pre-signed access URL; only present when `signed=true`.",
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "description": "Pre-signed URL of the cached thumbnail.",
             "type": "string"
           },
           "meta": {
@@ -8103,6 +8123,58 @@
           },
           "404": {
             "description": "Asset not found in this repository."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/assets/{assetId}/thumbnail": {
+      "get": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryGetThumbnail",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "getThumbnail",
+        "summary": "Redirect to an asset thumbnail",
+        "description": "Generates and caches a WebP thumbnail on first request, then 302-redirects to it. Uploaded images are shrunk; video links (YouTube) and links with an OpenGraph preview are fetched and cached. SVG and undecodable images redirect to the original. Assets with no image representation (audio, documents, plain links) return 415.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "assetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric asset id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to the thumbnail (or original) image URL."
+          },
+          "404": {
+            "description": "Asset not found in this repository."
+          },
+          "415": {
+            "description": "Asset has no image representation."
           }
         },
         "security": [

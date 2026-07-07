@@ -29,6 +29,14 @@ export function buildStorageKey(repositoryId: number, filename: string) {
   return { uid, key };
 }
 
+// Builds the derived key for an asset's thumbnail. Predictable from the
+// asset's own uid, so it can be resolved without a lookup. Lives in a
+// sibling `thumbnails/` folder and is always WebP regardless of the source
+// format. Key format: repository/<repoId>/assets/thumbnails/<uid>.webp
+export function buildThumbnailKey(repositoryId: number, uid: string) {
+  return `${assetDir(repositoryId)}/thumbnails/${uid}.webp`;
+}
+
 // Builds a repository-scoped key for a supplementary file (e.g. captions)
 // attached to an existing asset. Same base dir, own uuid.
 // Relationship to parent is tracked in meta.files, not in the key.
