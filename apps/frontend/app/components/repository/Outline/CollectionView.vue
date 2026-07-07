@@ -24,7 +24,7 @@
         />
       </VList>
     </template>
-    <CollectionEmptyState v-else :selected-entity="selectedEntity" />
+    <CollectionEmptyState v-else />
   </div>
 </template>
 

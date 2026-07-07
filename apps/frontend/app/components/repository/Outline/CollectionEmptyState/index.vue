@@ -23,7 +23,6 @@
   </TailorEmptyState>
   <CreateDialog
     v-if="isCreateOpen"
-    :default-type="selectedEntity"
     :repository-id="repositoryId"
     open-in-editor
     @close="isCreateOpen = false"
@@ -52,10 +51,6 @@ import EmptyStateCard from '@/components/common/EmptyStateCard.vue';
 import LinkContent from '@/components/repository/Library/LinkContent.vue';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
-
-withDefaults(defineProps<{ selectedEntity?: string }>(), {
-  selectedEntity: '',
-});
 
 const { AddAfter } = InsertLocation;
 
