@@ -59,32 +59,21 @@
           @clear:all="(queryParams.filter = []) && refetchRepositories()"
           @close="onFilterChange"
         />
-        <VExpandTransition>
-          <div v-if="selectedRepos.size > 0" class="d-flex align-center mb-4 text-left">
-            <VCheckbox
-              v-tooltip:top="{
-                text: isAllSelected ? 'Deselect all' : 'Select all',
-                openDelay: 400,
-              }"
-              :disabled="!repositories.length"
-              :model-value="isAllSelected"
-              :indeterminate="someSelected"
-              color="primary"
-              label="Select all"
-              hide-details
-              @update:model-value="toggleSelectAll"
-            />
-            <VBtn
-              :disabled="selectedRepos.size === 0"
-              :text="`Delete (${selectedRepos.size})`"
-              class="ml-4"
-              color="error"
-              prepend-icon="mdi-trash-can-outline"
-              variant="tonal"
-              @click="deleteSelected"
-            />
-          </div>
-        </VExpandTransition>
+        <BulkActionBar
+          :count="selectedRepos.size"
+          :is-all-selected="isAllSelected"
+          :is-deleting="isDeleting"
+          @clear="selectedRepos.clear()"
+          @toggle-all="toggleSelectAll"
+          @tag="showTagDialog = true"
+          @delete="deleteSelected"
+        />
+        <BulkAddTagDialog
+          :count="selectedRepos.size"
+          :is-visible="showTagDialog"
+          @close="showTagDialog = false"
+          @add="tagSelected"
+        />
         <VInfiniteScroll
           v-if="!isLoading && hasRepositories"
           class="d-flex ma-0 pa-0"
@@ -136,6 +125,8 @@ import pluralize from 'pluralize-esm';
 import Promise from 'bluebird';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
+import BulkActionBar from '@/components/catalog/BulkActionBar.vue';
+import BulkAddTagDialog from '@/components/catalog/BulkAddTagDialog.vue';
 import RepositoryCard from '@/components/catalog/Card/index.vue';
 import RepositoryFilter from '~/components/catalog/Filter/RepositoryFilter.vue';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
@@ -165,6 +156,8 @@ const config = useConfigStore();
 const confirmationDialog = useConfirmationDialog();
 
 const isLoading = ref(true);
+const isDeleting = ref(false);
+const showTagDialog = ref(false);
 const selectedRepos = ref<Set<number>>(new Set());
 
 const {
@@ -190,11 +183,6 @@ const isAllSelected = computed(() =>
   selectedRepos.value.size === repositories.value.length,
 );
 
-const someSelected = computed(() =>
-  selectedRepos.value.size > 0 &&
-  selectedRepos.value.size < repositories.value.length,
-);
-
 const togglePinFilter = () => {
   queryParams.value.pinned = !arePinnedShown.value;
   refetchRepositories();
@@ -218,15 +206,23 @@ const deleteSelected = () => {
     color: 'error',
     message: `Are you sure you want to delete ${pluralize('repository', count, true)}?`,
     action: async () => {
+      isDeleting.value = true;
       try {
         const repositories = Array.from(selectedRepos.value);
         await Promise.each(repositories, (id) => repositoryStore.remove(id));
       } finally {
         selectedRepos.value.clear();
         await refetchRepositories();
+        isDeleting.value = false;
       }
     },
   });
+};
+
+const tagSelected = async (tag: string) => {
+  const ids = Array.from(selectedRepos.value);
+  await Promise.each(ids, (id) => repositoryStore.addTag(id, tag));
+  selectedRepos.value.clear();
 };
 
 const filters = computed(() => {

@@ -2,6 +2,7 @@
   <VCard
     :data-testid="`repositoryCard_${repository.id}`"
     :ripple="false"
+    :class="{ selected: isSelected }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
     elevation="0"
@@ -9,11 +10,12 @@
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <div class="card-body">
-      <div class="card-header d-flex align-center my-1 mx-3">
-        <VCheckbox
+      <div class="card-header d-flex align-center mt-1 mx-3">
+        <VCheckboxBtn
           :model-value="isSelected"
+          :class="{ 'is-selected': isSelected }"
           aria-label="Select repository"
-          class="ml-n1"
+          class="select-checkbox ml-n1"
           color="primary"
           hide-details
           @click.stop
@@ -176,5 +178,26 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .v-checkbox :deep(.v-selection-control) {
   min-height: unset;
+}
+
+.repository-card.selected {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: -2px;
+}
+
+.select-checkbox {
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-width 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.repository-card:hover .select-checkbox,
+.select-checkbox:focus-within,
+.select-checkbox.is-selected {
+  max-width: 2.5rem;
+  opacity: 1;
 }
 </style>
