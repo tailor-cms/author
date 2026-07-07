@@ -4,6 +4,8 @@ import Promise from 'bluebird';
 import path from 'node:path';
 import uniq from 'lodash/uniq.js';
 
+import { createLogger } from '#logger';
+import { oneLine } from 'common-tags';
 import { sequelize } from '../../database/index.js';
 import { useTar } from '../formats.js';
 import processors from './processors.js';
@@ -11,6 +13,7 @@ import resolvers from './resolvers.js';
 import storage from '../../../repository/storage.ts';
 
 const miss = Promise.promisifyAll((await import('mississippi')).default);
+const logger = createLogger('transfer:default');
 
 const Filename = {
   REPOSITORY: 'repository.json',
@@ -72,18 +75,26 @@ class DefaultAdapter {
       // each record's files (primary + meta sub-files) for bundling below.
       await exportFile(blobStore, Filename.ASSETS, { context, transaction });
     });
-    // Bundle each collected file - content-referenced keys plus every library
-    // asset's files, gathered above.
-    const exported = [];
-    await Promise.map(uniq(context.assets), async (it) => {
+    // Bundle every collected file; content-referenced keys plus every library
+    // asset's files (assets.json).
+    const assetFiles = uniq(context.assets);
+    const failed = [];
+    await Promise.map(assetFiles, async (it) => {
       try {
         await exportFile(blobStore, it, { context });
-        exported.push(it);
       } catch (e) {
-        console.log(`Unable to export file: ${it}\n`, e.message);
+        logger.error({ err: e, key: it }, 'Failed to bundle asset file');
+        failed.push(it);
       }
     });
-    context.assets = exported;
+    if (failed.length) {
+      const summary = oneLine`
+        Export incomplete: ${failed.length} of ${assetFiles.length} asset files
+        are missing from storage and were not bundled
+      `;
+      throw new Error(`${summary}:\n${failed.join('\n')}`);
+    }
+    context.assets = assetFiles;
     await exportFile(blobStore, Filename.MANIFEST, { context });
   }
 
