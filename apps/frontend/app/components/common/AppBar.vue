@@ -37,7 +37,7 @@
             tag="button"
           />
         </template>
-        <VList class="text-left" density="compact" rounded="lg" nav>
+        <VList class="break-word text-left" density="compact" rounded="lg" nav>
           <div class="d-flex flex-column pa-4 align-center text-center">
             <UserAvatar :img-url="user.imgUrl" size="x-large" />
             <div class="text-body-large font-weight-semibold mt-2">
