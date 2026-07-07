@@ -5,7 +5,7 @@ import path from 'node:path';
 import uniq from 'lodash/uniq.js';
 
 import { createLogger } from '#logger';
-import { oneLine } from 'common-tags';
+import { IncompleteExportError } from '../errors.js';
 import { sequelize } from '../../database/index.js';
 import { useTar } from '../formats.js';
 import processors from './processors.js';
@@ -88,11 +88,11 @@ class DefaultAdapter {
       }
     });
     if (failed.length) {
-      const summary = oneLine`
-        Export incomplete: ${failed.length} of ${assetFiles.length} asset files
-        are missing from storage and were not bundled
-      `;
-      throw new Error(`${summary}:\n${failed.join('\n')}`);
+      logger.error(
+        { missing: failed },
+        'Export incomplete: asset files missing from storage',
+      );
+      throw new IncompleteExportError(failed, assetFiles.length);
     }
     context.assets = assetFiles;
     await exportFile(blobStore, Filename.MANIFEST, { context });

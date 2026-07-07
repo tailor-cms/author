@@ -5,10 +5,9 @@ import * as schemas from '../../schemas/index.ts';
 import { randomUUID } from 'node:crypto';
 import { createId as cuid } from '@paralleldrive/cuid2';
 import { createLogger } from '#logger';
-import TransferService from '#shared/transfer/transfer.service.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
 import { dataEnvelope } from '#shared/request/schemas.ts';
-import { JobCache } from './job-cache.ts';
+import TransferService from '#shared/transfer/transfer.service.js';
 
 const logger = createLogger('repository:export');
 
@@ -27,23 +26,9 @@ async function handler({
   const outFile = tmpExportPath();
   const jobId = cuid();
   const options = { repositoryId: repository.id, schemaId: repository.schema };
-  TransferService.createExportJob(outFile, options, jobId)
-    .toPromise()
-    .then((job: any) => {
-      logger.debug(
-        { repositoryId: repository.id, jobId: job.id },
-        'Export job initiated',
-      );
-      // TODO: unlink job.filepath after timeout
-      JobCache.set(job.id, job);
-    })
-    .catch((err: any) => {
-      logger.warn(
-        { err, repositoryId: repository.id, jobId },
-        'Export job failed',
-      );
-      fsp.unlink(outFile).catch(() => {});
-    });
+  const job = TransferService.createExportJob(outFile, options, jobId);
+  job.once('error', () => fsp.unlink(outFile).catch(() => {}));
+  logger.debug({ repositoryId: repository.id, jobId }, 'Export job initiated');
   return jobId;
 }
 
