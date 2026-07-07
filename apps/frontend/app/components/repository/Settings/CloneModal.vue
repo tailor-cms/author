@@ -1,7 +1,7 @@
 <template>
   <TailorDialog
     :model-value="show"
-    :title="`Clone ${currentRepositoryStore?.repository?.name}`"
+    :title="`Clone ${target?.name}`"
     header-icon="mdi-content-copy"
     persistent
     @submit="submit"
@@ -46,20 +46,28 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useRepositoryStore } from '@/stores/repository';
 
-withDefaults(defineProps<{ show?: boolean }>(), {
-  show: true,
-});
-const emit = defineEmits(['close']);
+const props = withDefaults(
+  defineProps<{ show?: boolean; repository?: Repository }>(),
+  { show: true },
+);
+const emit = defineEmits(['close', 'cloned']);
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
 const inProgress = ref(false);
+
+// Prefer an explicitly passed repository (e.g. from the catalog); fall back
+// to the loaded repository when used within the repository context.
+const target = computed(
+  () => props.repository ?? currentRepositoryStore?.repository,
+);
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
@@ -77,9 +85,10 @@ const close = () => {
 
 const submit = handleSubmit(async () => {
   inProgress.value = true;
-  const { id } = currentRepositoryStore?.repository || {};
+  const { id } = target.value || {};
   if (id) {
     await repositoryStore.clone(id, nameInput.value, descriptionInput.value);
+    emit('cloned');
   }
   close();
 });

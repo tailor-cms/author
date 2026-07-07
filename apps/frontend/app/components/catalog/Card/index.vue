@@ -47,20 +47,32 @@
           dot
           inline
         />
-        <VBtn
-          v-if="repository?.hasAdminAccess"
-          v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
-          aria-label="Repository settings"
-          class="repo-info text-medium-emphasis"
-          density="comfortable"
-          icon="mdi-cog"
-          size="small"
-          variant="text"
-          @click.stop="navigateTo({
-            name: 'repository-settings-general',
-            params: { id: repository.id },
-          })"
-        />
+        <VMenu v-if="repository?.hasAdminAccess" location="bottom end" offset="4">
+          <template #activator="{ props: menuProps }">
+            <VBtn
+              v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
+              v-bind="menuProps"
+              aria-label="Repository actions"
+              class="repo-info text-medium-emphasis"
+              density="comfortable"
+              icon="mdi-dots-vertical"
+              size="small"
+              variant="text"
+              @click.stop
+            />
+          </template>
+          <VList density="compact" min-width="200" nav>
+            <VListItem
+              v-for="action in actions"
+              :key="action.name"
+              :base-color="action.color"
+              :prepend-icon="`mdi-${action.icon}`"
+              :title="action.label"
+              rounded="lg"
+              @click.stop="onAction(action.name)"
+            />
+          </VList>
+        </VMenu>
       </div>
       <VCardTitle class="pt-0 text-break">
         {{ truncate(repository.name, { length: lgAndUp ? 60 : 40 }) }}
@@ -111,7 +123,38 @@ const props = defineProps<{
   repository: Repository;
   isSelected?: boolean;
 }>();
-defineEmits(['toggle-selection']);
+const emit = defineEmits([
+  'toggle-selection',
+  'clone',
+  'publish',
+  'export',
+  'delete',
+]);
+
+interface CardAction {
+  name: 'settings' | 'clone' | 'publish' | 'export' | 'delete';
+  label: string;
+  icon: string;
+  color?: string;
+}
+
+const actions = computed<CardAction[]>(() => [
+  { name: 'settings', label: 'Settings', icon: 'cog-outline' },
+  { name: 'clone', label: 'Clone', icon: 'content-copy' },
+  { name: 'publish', label: 'Publish', icon: 'cloud-upload-outline' },
+  { name: 'export', label: 'Export', icon: 'archive-arrow-down-outline' },
+  { name: 'delete', label: 'Delete', icon: 'trash-can-outline', color: 'error' },
+]);
+
+const onAction = (name: CardAction['name']) => {
+  if (name === 'settings') {
+    return navigateTo({
+      name: 'repository-settings-general',
+      params: { id: props.repository.id },
+    });
+  }
+  emit(name, props.repository);
+};
 
 // Template ref
 const schema = ref(null);

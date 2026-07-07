@@ -71,6 +71,21 @@
           @toggle-all="toggleSelectAll"
           @delete="deleteSelected"
         />
+        <CloneModal
+          v-if="cloneTarget"
+          :repository="cloneTarget"
+          @cloned="refetchRepositories"
+          @close="cloneTarget = null"
+        />
+        <ExportDialog
+          v-if="exportTarget"
+          :repository="exportTarget"
+          @close="exportTarget = null"
+        />
+        <ProgressDialog
+          :show="publishUtils.isPublishing.value"
+          :status="publishUtils.status.value.progress * 100"
+        />
         <VInfiniteScroll
           v-if="!isLoading && hasRepositories"
           class="d-flex ma-0 pa-0"
@@ -90,6 +105,10 @@
                 :is-selected="selectedRepos.has(repository.id)"
                 :repository="repository"
                 @toggle-selection="toggleSelection"
+                @clone="onCardClone"
+                @publish="onCardPublish"
+                @export="onCardExport"
+                @delete="deleteRepository"
               />
             </VCol>
           </VRow>
@@ -128,9 +147,14 @@ import { storeToRefs } from 'pinia';
 import pluralize from 'pluralize-esm';
 import Promise from 'bluebird';
 
+import type { Repository } from '@tailor-cms/interfaces/repository';
+
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
 import BulkActionBar from '@/components/catalog/BulkActionBar.vue';
 import CatalogEmptyState from '@/components/catalog/EmptyState/index.vue';
+import CloneModal from '@/components/repository/Settings/CloneModal.vue';
+import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
+import ProgressDialog from '@/components/common/ProgressDialog.vue';
 import RepositoryCard from '@/components/catalog/Card/index.vue';
 import RepositoryFilter from '~/components/catalog/Filter/RepositoryFilter.vue';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
@@ -158,9 +182,12 @@ const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 const config = useConfigStore();
 const confirmationDialog = useConfirmationDialog();
+const publishUtils = useCatalogPublish();
 
 const isLoading = ref(true);
 const isDeleting = ref(false);
+const cloneTarget = ref<Repository | null>(null);
+const exportTarget = ref<Repository | null>(null);
 const selectedRepos = ref<Set<number>>(new Set());
 
 const {
@@ -218,6 +245,30 @@ const deleteSelected = () => {
         await refetchRepositories();
         isDeleting.value = false;
       }
+    },
+  });
+};
+
+const onCardClone = (repository: Repository) => {
+  cloneTarget.value = repository;
+};
+
+const onCardExport = (repository: Repository) => {
+  exportTarget.value = repository;
+};
+
+const onCardPublish = (repository: Repository) => {
+  publishUtils.publishRepository(repository, refetchRepositories);
+};
+
+const deleteRepository = (repository: Repository) => {
+  confirmationDialog({
+    title: 'Delete repository?',
+    color: 'error',
+    message: `Are you sure you want to delete repository ${repository.name}?`,
+    action: async () => {
+      await repositoryStore.remove(repository.id);
+      await refetchRepositories();
     },
   });
 };
