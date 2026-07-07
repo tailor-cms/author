@@ -37,6 +37,10 @@ export const ActivityStatus = z
       .describe('Eager-loaded assignee; null when unassigned.'),
     status: z.string().describe('Schema-defined workflow status id.'),
     priority: z.string().describe('Schema-defined workflow priority id.'),
+    position: z
+      .number()
+      .nullable()
+      .describe('Workflow position; orders board columns and the list view.'),
     description: z
       .string()
       .nullable()

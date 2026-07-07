@@ -17,6 +17,7 @@ export const WorkflowStatusInput = z
     priority: ShortText(1, 64)
       .optional()
       .describe('Workflow priority id (schema-defined).'),
+    position: ActivityStatus.shape.position.optional(),
     description: ActivityStatus.shape.description.optional(),
     dueDate: ActivityStatus.shape.dueDate
       .optional()

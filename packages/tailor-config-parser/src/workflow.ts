@@ -7,6 +7,9 @@ export interface WorkflowStatus {
   label: string;
   color: string;
   default?: boolean;
+  // Marks the terminal status; an item in it is finished, so an elapsed due
+  // date reads as "done", not "overdue".
+  completed?: boolean;
 }
 
 export interface WorkflowPriority {

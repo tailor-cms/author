@@ -4,6 +4,7 @@ import { Activity as Events } from '@tailor-cms/common/src/sse.js';
 import { ContentContainerType } from '@tailor-cms/content-container-collection/types.js';
 import calculatePosition from '#shared/util/calculatePosition.js';
 import contentElementHooks from '../../content-element/models/content-element.hooks.ts';
+import filter from 'lodash/filter.js';
 import hooks from './activity.hooks.ts';
 import isEmpty from 'lodash/isEmpty.js';
 import map from 'lodash/map.js';
@@ -184,7 +185,15 @@ class Activity extends Model {
         const activity = await super.create(data, { ...opts, transaction });
         if (activity.isTrackedInWorkflow) {
           const defaultStatus = getDefaultActivityStatus(activity.type);
-          await activity.createStatus(defaultStatus, { transaction });
+          const max = await maxWorkflowPosition(
+            this.sequelize,
+            activity.repositoryId,
+            transaction,
+          );
+          await activity.createStatus(
+            { ...defaultStatus, position: max + 1 },
+            { transaction },
+          );
         }
         return activity;
       },
@@ -199,11 +208,20 @@ class Activity extends Model {
           ...opts,
           transaction,
         });
-        const statusData = activities
-          .filter((it) => it.isTrackedInWorkflow)
-          .map(getDefaultStatus);
-        const ActivityStatus = this.sequelize.model('ActivityStatus');
-        await ActivityStatus.bulkCreate(statusData, { transaction });
+        const tracked = filter(activities, 'isTrackedInWorkflow');
+        if (tracked.length) {
+          const base = await maxWorkflowPosition(
+            this.sequelize,
+            tracked[0].repositoryId,
+            transaction,
+          );
+          const statusData = tracked.map((it, i) => ({
+            ...getDefaultStatus(it),
+            position: base + i + 1,
+          }));
+          const ActivityStatus = this.sequelize.model('ActivityStatus');
+          await ActivityStatus.bulkCreate(statusData, { transaction });
+        }
         return activities;
       },
     );
@@ -477,6 +495,21 @@ function removeAll(Model, where = {}, options = {}) {
 function getDefaultStatus({ id, type }) {
   const defaultStatus = getDefaultActivityStatus(type);
   return { ...defaultStatus, activityId: id };
+}
+
+// Highest workflow position among a repository's live status rows, so a new
+// activity can be ranked past the current bottom.
+async function maxWorkflowPosition(sequelize, repositoryId, transaction) {
+  const [rows] = await sequelize.query(
+    `SELECT max(s.position) AS max_position
+       FROM activity_status s
+       JOIN activity a ON a.id = s.activity_id
+      WHERE a.repository_id = :repositoryId
+        AND a.deleted_at IS NULL
+        AND s.deleted_at IS NULL`,
+    { replacements: { repositoryId }, transaction },
+  );
+  return Number(rows[0]?.max_position) || 0;
 }
 
 export default Activity;

@@ -1,15 +1,15 @@
 <template>
   <VNavigationDrawer
-    :key="store.selectedActivity?.uid"
     :class="{ resizing: isResizing }"
-    :model-value="store.isSidebarOpen || mdAndUp"
+    :model-value="!!store.selectedActivity"
     :width="width"
     class="text-left"
     color="surface-raised"
     location="right"
     mobile-breakpoint="md"
     absolute
-    @update:model-value="store.updateSidebar"
+    disable-route-watcher
+    @update:model-value="(open) => !open && store.deselectActivity()"
   >
     <div
       aria-orientation="vertical"
@@ -21,15 +21,6 @@
       <SidebarHeader :activity="store.selectedActivity" />
       <SidebarBody :activity="store.selectedActivity" class="my-6" />
     </div>
-    <VAlert
-      v-else
-      :text="emptyMessage"
-      class="ma-4"
-      icon="mdi-arrow-left-circle"
-      rounded="lg"
-      variant="tonal"
-      prominent
-    />
   </VNavigationDrawer>
 </template>
 
@@ -39,13 +30,8 @@ import SidebarBody from './SidebarBody.vue';
 import SidebarHeader from './SidebarHeader.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
-withDefaults(defineProps<{ emptyMessage?: string }>(), {
-  emptyMessage:
-    'Please create your first Item on the left to view and edit its details here.',
-});
-
 const store = useCurrentRepository();
-const { mdAndUp, lgAndUp } = useDisplay();
+const { lgAndUp } = useDisplay();
 
 const { width, isResizing, startResize } = useDrawerResize({
   side: 'right',
