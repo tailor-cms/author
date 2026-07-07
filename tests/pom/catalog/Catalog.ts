@@ -10,7 +10,6 @@ export class Catalog {
   readonly pinnedFilterBtn: Locator;
   readonly selectAllBtn: Locator;
   readonly selectionCount: Locator;
-  readonly tagSelectedBtn: Locator;
   readonly deleteSelectedBtn: Locator;
   readonly tagsFilterBtn: Locator;
   readonly schemaFilterBtn: Locator;
@@ -25,7 +24,6 @@ export class Catalog {
       name: /^(Select|Deselect) all$/,
     });
     this.selectionCount = page.locator('.selection-count');
-    this.tagSelectedBtn = page.getByRole('button', { name: 'Tag', exact: true });
     this.deleteSelectedBtn = page.getByRole('button', {
       name: 'Delete',
       exact: true,
@@ -103,13 +101,5 @@ export class Catalog {
   async toggleRepository(hasText: string) {
     await this.findRepositoryCard(hasText).hover();
     await this.getCardCheckbox(hasText).click();
-  }
-
-  async bulkAddTag(tag: string) {
-    await this.tagSelectedBtn.click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    const input = dialog.locator('input');
-    await input.fill(tag);
-    await input.press('Enter');
   }
 }

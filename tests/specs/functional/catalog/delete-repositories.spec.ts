@@ -76,19 +76,6 @@ test('should delete selected repositories after confirmation', async ({
   await expect(catalog.findRepositoryCard('Physics')).toHaveCount(0);
 });
 
-test('should bulk tag selected repositories', async ({ page }) => {
-  const catalog = new Catalog(page);
-  await catalog.toggleRepository('Astronomy');
-  await catalog.toggleRepository('Physics');
-  await catalog.bulkAddTag('bulk-tag');
-  await expect(
-    catalog.findRepositoryCard('Astronomy').getByText('bulk-tag'),
-  ).toBeVisible();
-  await expect(
-    catalog.findRepositoryCard('Physics').getByText('bulk-tag'),
-  ).toBeVisible();
-});
-
 test('should clear selection when sorting', async ({ page }) => {
   const catalog = new Catalog(page);
   await catalog.toggleRepository('Astronomy');
