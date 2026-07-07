@@ -191,7 +191,8 @@ onMounted(() => nextTick(detectSchemaTruncation));
   border-radius: 4px;
   transition:
     max-width 0.3s ease,
-    opacity 0.3s ease;
+    opacity 0.3s ease,
+    margin-right 0.3s ease;
 
   &:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
@@ -205,5 +206,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
   max-width: 1.75rem;
   opacity: 1;
   margin-right: 0.5rem;
+}
+
+.repository-card:hover .select-checkbox {
+  transition-delay: 150ms;
 }
 </style>
