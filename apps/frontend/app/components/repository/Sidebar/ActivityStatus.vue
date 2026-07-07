@@ -32,6 +32,7 @@
       v-if="activityStatus.dueDate"
       v-tooltip:bottom="{ text: 'Due Date', openDelay: 500 }"
       :date="activityStatus.dueDate"
+      :status="activityStatus.status"
       class="text-body-small font-weight-bold"
       format="MM/dd/yy"
     />
@@ -45,7 +46,7 @@ import type { Status } from '@tailor-cms/interfaces/activity';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
-import DueDate from '../Workflow/Overview/DueDate.vue';
+import DueDate from '../Workflow/DueDate.vue';
 
 const props = defineProps<{
   id: number | null;

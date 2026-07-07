@@ -12,13 +12,13 @@ import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
 import { api } from '@/api';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
+import { filter } from 'lodash-es';
 
 const { getWorkflow } = workflowConfig;
 
 type Id = number | string;
 
 interface OutlineState {
-  selectedActivityId: Id | null;
   expanded: Map<string, boolean>;
 }
 
@@ -27,13 +27,12 @@ const getOutlineKey = (repositoryId: Id) =>
 
 const loadOutline = (repositoryId: Id) => {
   const outline = localStorage.getItem(getOutlineKey(repositoryId));
-  const { selectedActivityId = null, expanded } = JSON.parse(outline ?? '{}');
-  return { selectedActivityId, expanded: new Map(expanded) };
+  const { expanded } = JSON.parse(outline ?? '{}');
+  return { expanded: new Map<string, boolean>(expanded) };
 };
 
 const saveOutline = (repositoryId: Id, outlineState: OutlineState) => {
   const data = JSON.stringify({
-    selectedActivityId: outlineState.selectedActivityId,
     expanded: Array.from(outlineState.expanded.entries()),
   });
   localStorage.setItem(getOutlineKey(repositoryId), data);
@@ -49,12 +48,10 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const users = computed(() => Array.from($users.values()));
 
   const outlineState = reactive({
-    selectedActivityId: null as Id | null,
     expanded: new Map<string, boolean>(),
   });
 
   const repositoryId = ref<number | null>(null);
-  const isSidebarOpen = ref(false);
 
   const repository = computed(() => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
@@ -91,15 +88,21 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   });
 
   const selectedActivity = computed(() => {
-    const id = outlineState.selectedActivityId;
+    const id = parseInt(route.query.activityId as string, 10);
+    if (Number.isNaN(id)) return undefined;
     return outlineActivities.value.find((it) => it.id === id);
   });
 
   function selectActivity(activityId: number) {
     const activity = Activity.findById(activityId);
     if (!activity || selectedActivity.value?.id === activity.id) return;
-    outlineState.selectedActivityId = activity.id;
     return navigateTo({ query: { ...route.query, activityId } });
+  }
+
+  function deselectActivity() {
+    if (!route.query.activityId) return;
+    const { activityId: _omit, ...query } = route.query;
+    return navigateTo({ query });
   }
   const workflow = computed(() => {
     if (!schema.value) return null;
@@ -111,6 +114,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
       (it) => !it.detached && it.isTrackedInWorkflow,
     );
   });
+
+  // Unlike `taxonomy` (all outline levels), this holds only the levels that
+  // participate in workflow - the type vocabulary of the progress views.
+  const workflowTypes = computed(() =>
+    filter(taxonomy.value ?? [], 'isTrackedInWorkflow'),
+  );
+  const hasMultipleWorkflowTypes = computed(() => workflowTypes.value.length > 1);
 
   const isOutlineExpanded = computed(() => {
     if (!repository.value) return false;
@@ -147,10 +157,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const expandOutlineParents = (id: Id) => {
     const ancestors = Activity.getAncestors(id);
     ancestors.forEach((it) => toggleOutlineItemExpand(it.uid, true));
-  };
-
-  const updateSidebar = (value: boolean) => {
-    isSidebarOpen.value = value;
   };
 
   const isValidDrop = ({
@@ -271,9 +277,12 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     outlineActivities,
     rootActivities,
     selectActivity,
+    deselectActivity,
     selectedActivity,
     workflow,
     workflowActivities,
+    workflowTypes,
+    hasMultipleWorkflowTypes,
     isOutlineExpanded,
     isOutlineItemExpanded,
     toggleOutlineItemExpand,
@@ -281,8 +290,6 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     expandOutlineParents,
     isValidDrop,
     onOutlineItemDrop,
-    isSidebarOpen,
-    updateSidebar,
     getUsers,
     upsertUser,
     removeUser,

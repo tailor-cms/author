@@ -12,12 +12,6 @@
             :active-entity="selectedEntity"
             class="flex-grow-1"
           />
-          <VAppBarNavIcon
-            v-if="smAndDown"
-            aria-label="Toggle sidebar"
-            density="comfortable"
-            @click="repositoryStore.updateSidebar(!repositoryStore.isSidebarOpen)"
-          />
         </div>
         <BrokenReferencesAlert />
         <CollectionView
@@ -39,7 +33,6 @@
 
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia';
-import { useDisplay } from 'vuetify';
 
 import type { StoreActivity } from '@/stores/activity';
 import BrokenReferencesAlert from '@/components/common/BrokenReferencesAlert.vue';
@@ -60,7 +53,6 @@ definePageMeta({
 
 const route = useRoute();
 const repositoryStore = useCurrentRepository();
-const { smAndDown } = useDisplay();
 
 const { rootActivities, selectedActivity, isCollection } =
   storeToRefs(repositoryStore);
@@ -105,23 +97,19 @@ const scrollToActivity = (
   }
 };
 
-const selectAndReveal = (id: number, behavior?: ScrollBehavior) => {
-  repositoryStore.selectActivity(id);
+const selectAndReveal = async (id: number, behavior?: ScrollBehavior) => {
+  await repositoryStore.selectActivity(id);
   if (selectedActivity.value) scrollToActivity(selectedActivity.value, behavior);
 };
 
-// React to `activityId` query changes within the same repository.
-// The structure page is not remounted on same-route
-// navigation, so the updated selection must be applied here.
 watch(queryActivityId, (id) => {
-  if (id == null || selectedActivity.value?.id === id) return;
-  selectAndReveal(id);
+  if (id == null || !selectedActivity.value) return;
+  scrollToActivity(selectedActivity.value);
 });
 
 onMounted(() => {
-  if (queryActivityId.value != null) {
-    selectAndReveal(queryActivityId.value, 'auto');
-  } else if (rootActivities.value.length) {
+  if (selectedActivity.value) scrollToActivity(selectedActivity.value, 'auto');
+  else if (rootActivities.value.length) {
     selectAndReveal(rootActivities.value[0]!.id, 'auto');
   }
 });

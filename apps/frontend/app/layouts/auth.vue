@@ -1,11 +1,11 @@
 <template>
-  <div class="auth-container fill-height bg-surface pa-4">
+  <div class="auth-container fill-height bg-surface-container-low pa-4">
     <VSheet
       class="auth-panel d-flex"
-      color="surface-container-low"
+      color="surface-raised"
       max-width="840"
       rounded="xl"
-      border
+      elevation="2"
     >
       <div class="theme-switcher">
         <ThemeSwitcher />

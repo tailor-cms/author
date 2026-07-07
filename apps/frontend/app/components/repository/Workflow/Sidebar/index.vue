@@ -1,14 +1,15 @@
 <template>
   <VNavigationDrawer
     :class="{ resizing: isResizing }"
-    :model-value="repositoryStore.isSidebarOpen || mdAndUp"
+    :model-value="!!activity"
     :width="width"
     class="text-left"
     color="surface-raised"
     location="right"
     mobile-breakpoint="md"
     absolute
-    @update:model-value="repositoryStore.updateSidebar"
+    disable-route-watcher
+    @update:model-value="(open) => !open && repositoryStore.deselectActivity()"
   >
     <div
       aria-orientation="vertical"
@@ -45,7 +46,7 @@ withDefaults(defineProps<{ emptyMessage?: string }>(), {
 
 const repositoryStore = useCurrentRepository();
 const activity = computed(() => repositoryStore.selectedActivity);
-const { mdAndUp, lgAndUp } = useDisplay();
+const { lgAndUp } = useDisplay();
 
 const { width, isResizing, startResize } = useDrawerResize({
   side: 'right',

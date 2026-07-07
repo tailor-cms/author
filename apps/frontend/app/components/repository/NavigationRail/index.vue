@@ -119,8 +119,11 @@ const editorActivityId = computed(() => {
 });
 
 const selectedActivityQuery = computed(() => {
-  if (route.name !== 'editor') return undefined;
-  const id = Number(route.params.activityId) || null;
+  const { params, query, name } = route;
+  const id =
+    name === 'editor'
+      ? Number(params.activityId) || null
+      : Number(query.activityId) || null;
   return id ? { activityId: String(id) } : undefined;
 });
 
@@ -179,14 +182,17 @@ const repositoryTabs = computed<RailTab[]>(() => {
       icon: 'image-multiple',
       to: { name: 'repository-assets', params: { id } },
     },
-    {
+  );
+
+  if (repoStore.activities.length) {
+    items.push({
       key: 'search',
       label: 'Search',
       icon: 'folder-search',
       to: { name: 'search', params: { id } },
       matches: (name) => name === 'search',
-    },
-  );
+    });
+  }
 
   if (repoStore.repository?.hasAdminAccess) {
     items.push({

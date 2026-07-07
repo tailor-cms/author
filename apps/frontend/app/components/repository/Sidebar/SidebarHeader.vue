@@ -1,5 +1,5 @@
 <template>
-  <div class="header my-2">
+  <div class="header">
     <div class="options-container d-flex align-center">
       <VBtn
         v-show="!isSoftDeleted"
@@ -31,6 +31,16 @@
         v-if="!isSoftDeleted"
         density="comfortable"
         :activity="props.activity"
+      />
+      <VBtn
+        v-tooltip:bottom="'Close'"
+        aria-label="Close"
+        class="ml-2"
+        density="comfortable"
+        icon="mdi-close"
+        size="small"
+        variant="tonal"
+        @click="store.deselectActivity()"
       />
     </div>
     <div class="publish-status d-flex align-center my-6 mx-1">

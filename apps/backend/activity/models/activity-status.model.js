@@ -7,7 +7,7 @@ const { priorities } = workflow;
 const priorityIds = priorities.map((it) => it.id);
 
 class ActivityStatus extends Model {
-  static fields({ DATE, ENUM, STRING, TEXT }) {
+  static fields({ DATE, ENUM, FLOAT, STRING, TEXT }) {
     return {
       status: {
         type: STRING,
@@ -16,6 +16,9 @@ class ActivityStatus extends Model {
       priority: {
         type: ENUM(priorityIds),
         allowNull: false,
+      },
+      position: {
+        type: FLOAT,
       },
       description: {
         type: TEXT,
