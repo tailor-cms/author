@@ -69,14 +69,7 @@
           :is-deleting="isDeleting"
           @clear="selectedRepos.clear()"
           @toggle-all="toggleSelectAll"
-          @tag="showTagDialog = true"
           @delete="deleteSelected"
-        />
-        <BulkAddTagDialog
-          :count="selectedRepos.size"
-          :is-visible="showTagDialog"
-          @close="showTagDialog = false"
-          @add="tagSelected"
         />
         <VInfiniteScroll
           v-if="!isLoading && hasRepositories"
@@ -137,7 +130,6 @@ import Promise from 'bluebird';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
 import BulkActionBar from '@/components/catalog/BulkActionBar.vue';
-import BulkAddTagDialog from '@/components/catalog/BulkAddTagDialog.vue';
 import CatalogEmptyState from '@/components/catalog/EmptyState/index.vue';
 import RepositoryCard from '@/components/catalog/Card/index.vue';
 import RepositoryFilter from '~/components/catalog/Filter/RepositoryFilter.vue';
@@ -169,7 +161,6 @@ const confirmationDialog = useConfirmationDialog();
 
 const isLoading = ref(true);
 const isDeleting = ref(false);
-const showTagDialog = ref(false);
 const selectedRepos = ref<Set<number>>(new Set());
 
 const {
@@ -229,12 +220,6 @@ const deleteSelected = () => {
       }
     },
   });
-};
-
-const tagSelected = async (tag: string) => {
-  const ids = Array.from(selectedRepos.value);
-  await Promise.each(ids, (id) => repositoryStore.addTag(id, tag));
-  selectedRepos.value.clear();
 };
 
 const filters = computed(() => {

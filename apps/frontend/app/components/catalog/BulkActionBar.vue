@@ -28,14 +28,6 @@
       />
       <VSpacer />
       <VBtn
-        :disabled="!hasSelection"
-        prepend-icon="mdi-tag-plus"
-        size="small"
-        text="Tag"
-        variant="tonal"
-        @click="$emit('tag')"
-      />
-      <VBtn
         :loading="isDeleting"
         :disabled="isDeleting || !hasSelection"
         prepend-icon="mdi-trash-can-outline"
@@ -58,7 +50,6 @@ const props = defineProps<{
 
 defineEmits<{
   'delete': [];
-  'tag': [];
   'clear': [];
   'toggle-all': [];
 }>();
