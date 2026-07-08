@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { addItem, ENTITY, toCollection } from './helpers';
+import { addFirstItem, addItem, ENTITY, toCollection } from './helpers';
 import SeedClient from '../../../api/SeedClient';
 
 import type { CollectionView } from '../../../pom/repository/collection/CollectionView';
@@ -16,7 +16,7 @@ test.describe('Collection - filtering, search & sort', () => {
   });
 
   test('scopes the list to the active entity', async () => {
-    await addItem(collection, ENTITY.ARTICLE, 'Deep Dish');
+    await addFirstItem(collection, ENTITY.ARTICLE, 'Deep Dish');
     await addItem(collection, ENTITY.AUTHOR, 'Mario Rossi');
 
     // Articles is the default selection.
@@ -31,7 +31,7 @@ test.describe('Collection - filtering, search & sort', () => {
   });
 
   test('searches within the active entity', async () => {
-    await addItem(collection, ENTITY.ARTICLE, 'Pizza');
+    await addFirstItem(collection, ENTITY.ARTICLE, 'Pizza');
     await addItem(collection, ENTITY.ARTICLE, 'Pasta');
 
     await collection.entityFilter.select(ENTITY.ARTICLE.label);
@@ -45,7 +45,7 @@ test.describe('Collection - filtering, search & sort', () => {
   test('sorts items by name', async () => {
     // Created Apple-then-Banana, so the default "Newest first" yields Banana
     // first; sorting by name must reorder them.
-    await addItem(collection, ENTITY.ARTICLE, 'Apple');
+    await addFirstItem(collection, ENTITY.ARTICLE, 'Apple');
     await addItem(collection, ENTITY.ARTICLE, 'Banana');
     await collection.entityFilter.select(ENTITY.ARTICLE.label);
     expect(await collection.titles()).toEqual(['Banana', 'Apple']);

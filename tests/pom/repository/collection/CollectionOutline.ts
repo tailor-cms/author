@@ -14,6 +14,8 @@ export class CollectionOutline {
   readonly sortBtn: Locator;
   readonly createBtn: Locator;
   readonly emptyAlert: Locator;
+  readonly emptyCreateBtn: Locator;
+  readonly emptyCopyBtn: Locator;
   readonly noMatchesAlert: Locator;
 
   constructor(page: Page, repositoryId: number) {
@@ -25,8 +27,10 @@ export class CollectionOutline {
       .locator('.toolbar')
       .getByPlaceholder('Search by name...');
     this.sortBtn = this.el.locator('.sort-btn');
-    this.createBtn = this.el.getByTestId('repository__createActivityBtn');
-    this.emptyAlert = this.el.getByText('Click the Create button above');
+    this.createBtn = this.el.getByRole('button', { name: 'Add', exact: true });
+    this.emptyAlert = this.el.getByText('No items yet');
+    this.emptyCreateBtn = this.el.getByTestId('repository__emptyCreate');
+    this.emptyCopyBtn = this.el.getByTestId('repository__emptyCopy');
     this.noMatchesAlert = this.el.getByText('No matches found!');
   }
 
@@ -52,11 +56,19 @@ export class CollectionOutline {
   // Pick the entity, open the Create dialog, fill the title and submit. The
   // collection Create flow drops the user into the editor, so this returns the
   // ready item editor.
-  async createItem(entityLabel: string, title: string) {
-    await this.entityFilter.select(entityLabel);
-    await this.createBtn.click();
-    const dialog = new CreateItemDialog(this.page);
-    await dialog.create(title);
+  async createItem(entityLabel: string, title: string, titleLabel = 'Name') {
+    const isEmpty = await this.emptyAlert.isVisible();
+    if (isEmpty) {
+      await this.emptyCreateBtn.click();
+      const dialog = new CreateItemDialog(this.page);
+      await dialog.create(title, titleLabel, entityLabel);
+    } else {
+      await this.entityFilter.select(entityLabel);
+      await this.createBtn.click();
+      await this.page.getByText('Create new', { exact: true }).click();
+      const dialog = new CreateItemDialog(this.page);
+      await dialog.create(title, titleLabel);
+    }
     return new CollectionItemEditor(this.page).waitReady();
   }
 

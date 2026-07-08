@@ -1,6 +1,11 @@
 import { test } from '@playwright/test';
 
-import { addItem, ENTITY, toCollection } from '../functional/collection/helpers';
+import {
+  addFirstItem,
+  addItem,
+  ENTITY,
+  toCollection,
+} from '../functional/collection/helpers';
 import { percySnapshot } from '../../utils/percy';
 
 // Wide viewport so the editor's right sidebar docks beside the card.
@@ -9,7 +14,7 @@ test.use({ viewport: { width: 1920, height: 1080 } });
 test.describe('Collection visuals', () => {
   test('collection structure page', async ({ page }) => {
     const { collection } = await toCollection(page);
-    await addItem(collection, ENTITY.AUTHOR, 'Jane Doe');
+    await addFirstItem(collection, ENTITY.AUTHOR, 'Jane Doe');
     await addItem(collection, ENTITY.ARTICLE, 'The Origins of Pizza');
     await collection.entityFilter.select(ENTITY.ARTICLE.label);
     await collection.getItemByName('The Origins of Pizza');
@@ -18,7 +23,7 @@ test.describe('Collection visuals', () => {
 
   test('collection item editor', async ({ page }) => {
     const { collection } = await toCollection(page);
-    const editor = await collection.createItem(
+    const editor = await collection.createFirstItem(
       ENTITY.ARTICLE,
       'The Origins of Pizza',
     );

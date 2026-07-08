@@ -17,7 +17,7 @@
           :subtitle="getLabel(child.type)"
           :title="getName(child)"
           :to="routeFor(child)"
-          class="subactivity-list__row bg-surface elevation-1"
+          class="subactivity-list__row bg-surface-raised elevation-1"
           color="primary"
           rounded="lg"
         >

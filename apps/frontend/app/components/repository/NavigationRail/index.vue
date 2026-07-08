@@ -184,7 +184,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
     },
   );
 
-  if (repoStore.activities.length) {
+  if (!repoStore.isCollection && repoStore.activities.length) {
     items.push({
       key: 'search',
       label: 'Search',

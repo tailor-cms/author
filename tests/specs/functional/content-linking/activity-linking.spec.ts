@@ -11,7 +11,6 @@ import { ActivityOutline } from '../../../pom/repository/Outline';
 import BaseClient from '../../../api/BaseClient';
 import { Editor } from '../../../pom/editor/Editor';
 import { EditorToolbar } from '../../../pom/editor/EditorToolbar';
-import { LinkContentDialog } from '../../../pom/repository/LinkContentDialog';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 
@@ -30,7 +29,7 @@ test('can link a leaf activity via options menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   const linkDialog = await module.optionsMenu.linkContentBelow();
   await linkDialog.selectAndLink(
     sourceRepo.name,
@@ -60,7 +59,7 @@ test('can link a group activity via options menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   // Link source group into target module
   const linkDialog = await module.optionsMenu.linkContentInto();
   await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
@@ -88,7 +87,7 @@ test('can link a group activity below via options menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   const linkDialog = await module.optionsMenu.linkContentBelow();
   await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
   const linkedGroup = await outline.getOutlineItemByName(
@@ -113,7 +112,7 @@ test('can link a leaf activity into a group via options menu', async ({
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Target Module');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
   const linkDialog = await module.optionsMenu.linkContentInto();
   await linkDialog.selectAndLink(
     sourceRepo.name,
@@ -137,20 +136,16 @@ test('can link a leaf activity into a group via options menu', async ({
   await expect(reloadedPage.linkIcon).toBeVisible();
 });
 
-test('can link a leaf activity via footer button', async ({ page }) => {
+test('can link a leaf activity via toolbar menu', async ({ page }) => {
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
-  // Use the footer "Link Existing" button on empty repository
-  const linkBtn = page.getByRole('button', { name: 'Link Existing' });
-  await expect(linkBtn).toBeVisible();
-  await linkBtn.click();
-  const linkDialog = new LinkContentDialog(page);
+  const outline = new ActivityOutline(page);
+  const linkDialog = await outline.linkFirst();
   await linkDialog.selectAndLink(
     sourceRepo.name,
     outlineSeed.primaryPage.title,
   );
   // Verify linked activity appears
-  const outline = new ActivityOutline(page);
   const linkedItem = await outline.getOutlineItemByName(
     outlineSeed.primaryPage.title,
   );
@@ -169,7 +164,7 @@ test('can navigate to linked parent from a nested linked child', async ({
   const sourceRepo = await seedSourceRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
-  const linkDialog = await outline.linkExisting();
+  const linkDialog = await outline.linkFirst();
   await linkDialog.selectAndLink(sourceRepo.name, outlineSeed.group.title);
   await outline.toggleExpand();
   const childPage = await outline.getOutlineItemByName(
@@ -317,10 +312,10 @@ test('auto-unlink on structural change (add child to a linked module)', async ({
 test('opening empty linked activity does not auto-unlink', async ({ page }) => {
   const sourceRepo = await toEmptyRepository(page, 'Source');
   const sourceOutline = new ActivityOutline(page);
-  await sourceOutline.addRootItem(outlineLevel.LEAF, 'Empty Page');
+  await sourceOutline.addFirstItem(outlineLevel.LEAF, 'Empty Page');
   const targetRepo = await toEmptyRepository(page, 'Target');
   const targetOutline = new ActivityOutline(page);
-  const module = await targetOutline.addRootItem(
+  const module = await targetOutline.addFirstItem(
     outlineLevel.GROUP,
     'Target Module',
   );
@@ -333,14 +328,14 @@ test('opening empty linked activity does not auto-unlink', async ({ page }) => {
   const sidebar = new OutlineSidebar(page);
   await sidebar.openEditor();
   await page.waitForLoadState('networkidle');
-  // Verify empty linked activity alert is shown
-  const alert = page.locator('.content-containers-wrapper > .v-alert');
-  await expect(alert).toContainText('without content');
+  const editor = new Editor(page);
+  // Verify empty linked activity notice is shown
+  await expect(editor.emptyLinkedNotice).toContainText('without content');
   // Toolbar should show linked state
   const toolbar = new EditorToolbar(page);
   await toolbar.expectLinkedState();
   // No containers should be rendered
-  await expect(page.locator('.content-containers')).not.toBeVisible();
+  await expect(editor.containers).not.toBeVisible();
   // Navigate back to structure and verify still linked
   await toStructurePage(page, { repositoryId: targetRepo.id } as any);
   const outline = new ActivityOutline(page);

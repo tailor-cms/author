@@ -38,7 +38,7 @@ test('should display a revision for created group activity', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const groupName = 'Group 1';
-  await outline.addRootItem(outlineLevel.GROUP, groupName);
+  await outline.addFirstItem(outlineLevel.GROUP, groupName);
   await page.goto(getHistoryRoute(repository.id));
   await expect(page.getByText(`Created ${groupName}`)).toBeVisible();
 });
@@ -49,7 +49,7 @@ test('should display a revision for updated group activity', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const groupName = 'Group 1';
-  await outline.addRootItem(outlineLevel.GROUP, groupName);
+  await outline.addFirstItem(outlineLevel.GROUP, groupName);
   const item = await outline.getOutlineItemByName(groupName);
   await item.select();
   const sidebar = new OutlineSidebar(page);
@@ -64,7 +64,7 @@ test('should display a revision for deleted group activity', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const groupName = 'Group 1';
-  await outline.addRootItem(outlineLevel.GROUP, groupName);
+  await outline.addFirstItem(outlineLevel.GROUP, groupName);
   const item = await outline.getOutlineItemByName(groupName);
   await item.select();
   await item.optionsMenu.remove();
@@ -78,7 +78,7 @@ test('should display a revision for created content element', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const leafName = 'Leaf 1';
-  await outline.addRootItem(outlineLevel.LEAF, leafName);
+  await outline.addFirstItem(outlineLevel.LEAF, leafName);
   const item = await outline.getOutlineItemByName(leafName);
   await item.select();
   await item.openBtn.click();
@@ -97,7 +97,7 @@ test('should display a revision for updated content element', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const leafName = 'Leaf 1';
-  await outline.addRootItem(outlineLevel.LEAF, leafName);
+  await outline.addFirstItem(outlineLevel.LEAF, leafName);
   const item = await outline.getOutlineItemByName(leafName);
   await item.select();
   await item.openBtn.click();
@@ -119,7 +119,7 @@ test('should display a revision for deleted content element', async ({
   const repository = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const leafName = 'Leaf 1';
-  await outline.addRootItem(outlineLevel.LEAF, leafName);
+  await outline.addFirstItem(outlineLevel.LEAF, leafName);
   const item = await outline.getOutlineItemByName(leafName);
   await item.select();
   await item.openBtn.click();

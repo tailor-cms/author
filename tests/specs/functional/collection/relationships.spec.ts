@@ -1,4 +1,4 @@
-import { addItem, ENTITY, toCollection } from './helpers';
+import { addFirstItem, addItem, ENTITY, toCollection } from './helpers';
 import { expect, test } from '@playwright/test';
 import SeedClient from '../../../api/SeedClient';
 
@@ -20,7 +20,7 @@ test.describe('Collection - relationships (cross-entity links)', () => {
   });
 
   test('links an article to an author and tags', async () => {
-    await addItem(collection, ENTITY.AUTHOR, 'Jane Austen');
+    await addFirstItem(collection, ENTITY.AUTHOR, 'Jane Austen');
     await addItem(collection, ENTITY.TAG, 'classics');
     await addItem(collection, ENTITY.TAG, 'novel');
 

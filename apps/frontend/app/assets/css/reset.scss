@@ -39,6 +39,10 @@ body {
   font-weight: 500;
 }
 
+.break-word {
+  word-break: break-word;
+}
+
 /* VBottomSheet: since v4.1 the overlay animates its `top` on resize (default
    transition-property is `all`), so resizing content makes the sheet wobble.
    Limit to `transform` to keep the slide-in without the jitter. */

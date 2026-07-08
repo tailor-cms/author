@@ -13,6 +13,7 @@
         <EntitySidebar
           ref="sidebar"
           :is-detached="isDetached"
+          :is-rollback-disabled="isAgentRunning"
           :loading="loading"
           :revisions="revisions"
           :selected="selectedRevision"
@@ -50,6 +51,8 @@ const loading = ref<Record<string, boolean>>({});
 const resolvedRevisions = ref<Revision[]>([]);
 const selectedRevision = ref<Revision>();
 
+const { isAgentRunning } = useAgentRunState();
+
 const repositoryId = computed(() => props.revision.repositoryId);
 
 const getRevisions = async () => {
@@ -75,6 +78,7 @@ const previewRevision = async (revision: Revision) => {
 };
 
 const rollback = async (revision: Revision) => {
+  if (isAgentRunning.value) return;
   loading.value[revision.id] = true;
   const entity = { ...revision.state, paranoid: false } as any;
   const { id, repositoryId: entityRepoId, ...body } = entity;

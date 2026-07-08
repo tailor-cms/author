@@ -24,7 +24,7 @@ test('Take a snapshot of the repository structure page', async ({ page }) => {
 test('Take a snapshot of the history page', async ({ page }) => {
   await toEmptyRepository(page, REPOSITORY_NAME);
   const outline = new ActivityOutline(page);
-  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
+  await outline.addFirstItem(outlineLevel.GROUP, 'Module 1');
   await new NavigationRail(page).goToHistory();
   await expect(page.getByText('Created repository')).toBeVisible();
   await expect(page.getByText('Created Module 1 module')).toBeVisible();

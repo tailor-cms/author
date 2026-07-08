@@ -54,7 +54,7 @@ withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['generate']);
 
-const isVisible = ref(false);
+const isVisible = defineModel<boolean>({ default: false });
 const isConfirmationActive = ref(false);
 const promptText = ref('');
 

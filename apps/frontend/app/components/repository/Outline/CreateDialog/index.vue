@@ -8,17 +8,6 @@
     scrollable
     @submit="submitForm"
   >
-    <template v-if="showActivator" #activator="{ props: activatorProps }">
-      <VBtn
-        v-bind="{ ...activatorProps, ...$attrs }"
-        :color="activatorColor"
-        :data-testid="`${testIdPrefix}Btn`"
-        :prepend-icon="activatorIcon"
-        :size="size"
-        :text="activatorLabel || defaultModalHeading"
-        :variant="variant"
-      />
-    </template>
     <template #body>
       <TypeSelect
         :container-id="`#${dialogTestId}`"
@@ -83,15 +72,9 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Props {
   repositoryId: number;
-  size?: string;
-  variant?: string;
   anchor?: StoreActivity | null;
   heading?: string;
   action?: InsertLocation;
-  showActivator?: boolean;
-  activatorLabel?: string;
-  activatorColor?: string;
-  activatorIcon?: string;
   testIdPrefix?: string;
   // Pre-selected
   defaultType?: string;
@@ -103,12 +86,6 @@ const props = withDefaults(defineProps<Props>(), {
   anchor: null,
   heading: '',
   action: InsertLocation.AddAfter,
-  showActivator: false,
-  activatorLabel: '',
-  size: 'default',
-  variant: 'text',
-  activatorColor: undefined,
-  activatorIcon: 'mdi-folder-plus',
   testIdPrefix: 'repository__createActivity',
   defaultType: undefined,
   openInEditor: false,
@@ -132,7 +109,7 @@ const initActivityState = (type: string) => {
   };
 };
 
-const visible = ref(false);
+const visible = ref(true);
 const submitting = ref(false);
 
 const { handleSubmit } = useForm();
@@ -219,9 +196,5 @@ const submitForm = handleSubmit(async () => {
 watch(visible, (val) => {
   if (!val) emit('close');
   activity.value = initActivityState(resolveInitialType());
-});
-
-onMounted(() => {
-  visible.value = !props.showActivator;
 });
 </script>

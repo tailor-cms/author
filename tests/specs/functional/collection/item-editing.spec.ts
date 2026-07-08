@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import SeedClient from '../../../api/SeedClient';
-import { addItem, ENTITY, toCollection } from './helpers';
+import { addFirstItem, ENTITY, toCollection } from './helpers';
 import type { CollectionView } from '../../../pom/repository/collection/CollectionView';
 
 // Wide viewport so the editor's right sidebar docks beside the card instead of
@@ -20,7 +20,7 @@ test.describe('Collection - item metadata editing', () => {
   });
 
   test('updates an item title inline and persists it', async ({ page }) => {
-    const editor = await collection.createItem(ENTITY.AUTHOR, 'Jane');
+    const editor = await collection.createFirstItem(ENTITY.AUTHOR, 'Jane');
     await editor.fillText(ENTITY.AUTHOR.titleLabel, 'Jane Doe');
     await editor.expectDirty();
     await editor.save();
@@ -36,7 +36,7 @@ test.describe('Collection - item metadata editing', () => {
   });
 
   test('discards pending edits on cancel', async () => {
-    const editor = await collection.createItem(ENTITY.AUTHOR, 'Original');
+    const editor = await collection.createFirstItem(ENTITY.AUTHOR, 'Original');
 
     await editor.fillText(ENTITY.AUTHOR.titleLabel, 'Changed');
     await editor.expectDirty();
@@ -50,7 +50,7 @@ test.describe('Collection - item metadata editing', () => {
   });
 
   test('deletes an item', async () => {
-    await addItem(collection, ENTITY.TAG, 'obsolete');
+    await addFirstItem(collection, ENTITY.TAG, 'obsolete');
     await collection.entityFilter.select(ENTITY.TAG.label);
     const item = await collection.getItemByName('obsolete');
     await item.remove();

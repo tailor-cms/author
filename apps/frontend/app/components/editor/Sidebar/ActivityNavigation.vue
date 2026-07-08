@@ -1,35 +1,38 @@
 <template>
   <div ref="navigationContainer" class="navigation-container">
-    <div class="d-flex align-center px-2">
+    <div class="controls px-3 pt-2">
       <VTextField
         v-model="searchInput"
+        bg-color="surface-container"
         clear-icon="mdi-close"
+        density="compact"
         placeholder="Search..."
-        bg-color="transparent"
-        density="comfortable"
         prepend-inner-icon="mdi-magnify"
+        rounded="lg"
         variant="solo"
         flat
         clearable
         hide-details
       />
-      <VBtn
-        v-if="treeRef?.hasItems"
-        rounded="lg"
-        size="small"
-        variant="text"
-        width="90"
-        :text="treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all'"
-        @click="treeRef?.toggleExpand()"
+      <div v-if="treeRef?.hasItems" class="d-flex justify-end mt-3">
+        <VBtn
+          rounded="lg"
+          size="small"
+          variant="text"
+          :text="treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all'"
+          @click="treeRef?.toggleExpand()"
+        />
+      </div>
+    </div>
+    <div class="tree-scroll">
+      <TailorTreeview
+        ref="treeRef"
+        :active-item-id="selected?.id"
+        :items="activityTreeData"
+        :search="searchInput"
+        @edit="navigateToActivity"
       />
     </div>
-    <TailorTreeview
-      ref="treeRef"
-      :active-item-id="selected?.id"
-      :items="activityTreeData"
-      :search="searchInput"
-      @edit="navigateToActivity"
-    />
   </div>
 </template>
 
@@ -103,6 +106,16 @@ watch(() => props.selected.id, scrollSelectedItemIntoView);
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.controls {
+  flex: 0 0 auto;
+}
+
+.tree-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .tree-node {

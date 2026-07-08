@@ -21,6 +21,8 @@ export class Editor {
   readonly primaryElementLabel = 'tiptap html';
   readonly containerList: ContainerList;
   readonly toast: Toast;
+  readonly containers: Locator;
+  readonly emptyLinkedNotice: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -30,6 +32,8 @@ export class Editor {
     this.topToolbar = this.page.locator('.activity-toolbar');
     this.addElementDialog = new AddElementDialog(page);
     this.containerList = new ContainerList(page);
+    this.containers = this.page.locator('.content-containers');
+    this.emptyLinkedNotice = this.page.getByTestId('empty-linked-notice');
   }
 
   async toPrimaryPage() {
@@ -108,10 +112,7 @@ export class Editor {
 
   async commitElementEdit() {
     // Deselect element to trigger the save
-    await this.page
-      .locator('.content-containers')
-      .last()
-      .click({ position: { x: 4, y: 4 } });
+    await this.containers.last().click({ position: { x: 4, y: 4 } });
     await this.toast.isSaved();
     await this.page.waitForLoadState('networkidle');
   }

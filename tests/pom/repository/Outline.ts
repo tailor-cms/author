@@ -11,8 +11,10 @@ export class ActivityOutline {
   readonly el: Locator;
   readonly searchInput: Locator;
   readonly toggleAllBtn: Locator;
-  readonly createRootBtn: Locator;
-  readonly linkRootBtn: Locator;
+  readonly addMenuBtn: Locator;
+  readonly emptyCreateCard: Locator;
+  readonly emptyCopyCard: Locator;
+  readonly emptyLinkCard: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.structure-page');
@@ -20,8 +22,10 @@ export class ActivityOutline {
     this.toggleAllBtn = el.getByRole('button', {
       name: /^(Expand all|Collapse all)$/,
     });
-    this.createRootBtn = el.getByTestId('repository__createRootActivityBtn');
-    this.linkRootBtn = el.getByRole('button', { name: 'Link Existing' });
+    this.addMenuBtn = el.getByRole('button', { name: 'Add', exact: true });
+    this.emptyCreateCard = el.getByTestId('repository__emptyCreate');
+    this.emptyCopyCard = el.getByTestId('repository__emptyCopy');
+    this.emptyLinkCard = el.getByTestId('repository__emptyLink');
     this.page = page;
     this.el = el;
   }
@@ -60,14 +64,30 @@ export class ActivityOutline {
   }
 
   async addRootItem(type: string, name: string) {
-    await this.createRootBtn.click();
+    await this.addMenuBtn.waitFor({ state: 'visible' });
+    await this.addMenuBtn.click();
+    await this.page.getByText('Create new', { exact: true }).click();
+    const addActivityDialog = new AddItemDialog(this.page);
+    await addActivityDialog.create(type, name);
+    return this.getOutlineItemByName(name);
+  }
+
+  async addFirstItem(type: string, name: string) {
+    await this.emptyCreateCard.click();
     const addActivityDialog = new AddItemDialog(this.page);
     await addActivityDialog.create(type, name);
     return this.getOutlineItemByName(name);
   }
 
   async linkExisting() {
-    await this.linkRootBtn.click();
+    await this.addMenuBtn.waitFor({ state: 'visible' });
+    await this.addMenuBtn.click();
+    await this.page.getByText('Link existing', { exact: true }).click();
+    return new LinkContentDialog(this.page);
+  }
+
+  async linkFirst() {
+    await this.emptyLinkCard.click();
     return new LinkContentDialog(this.page);
   }
 }

@@ -115,6 +115,8 @@ test('should show a message in case of not matching the search', async ({
 test('should show message in case of no pinned repositories', async ({
   page,
 }) => {
+  await SeedClient.seedCatalog();
+  await page.reload();
   const catalog = new Catalog(page);
   await catalog.pinnedFilterBtn.click();
   await expect(catalog.getRepositoryCards()).toHaveCount(0);

@@ -8,17 +8,19 @@
     scrollable
     @submit="createRepository"
   >
-    <template #activator="{ props }">
-      <VBtn
-        v-bind="props"
-        aria-label="Add repository"
-        class="add-repository-btn"
-        color="primary"
-        prepend-icon="mdi-plus"
-        size="large"
-        text="New"
-        variant="flat"
-      />
+    <template #activator="activatorSlotProps">
+      <slot name="activator" v-bind="activatorSlotProps">
+        <VBtn
+          v-bind="activatorSlotProps.props"
+          aria-label="Add repository"
+          class="add-repository-btn"
+          color="primary"
+          prepend-icon="mdi-plus"
+          size="large"
+          text="New"
+          variant="flat"
+        />
+      </slot>
     </template>
     <template #subheader>
       <div class="px-5 pb-4">
@@ -103,6 +105,7 @@
         />
         <VTextarea
           v-model="descriptionInput"
+          class="mb-2"
           :class="{ required: isCreate }"
           :error-messages="errors.description"
           :placeholder="
@@ -177,12 +180,18 @@ const config = useConfigStore();
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
 
-defineProps<{ isCreateEnabled: boolean }>();
+const props = withDefaults(
+  defineProps<{
+    isCreateEnabled: boolean;
+    defaultTab?: string;
+  }>(),
+  { defaultTab: NEW_TAB },
+);
 
-const emit = defineEmits(['created']);
+const emit = defineEmits(['created', 'close']);
 
 const isVisible = ref(false);
-const selectedTab = ref(NEW_TAB);
+const selectedTab = ref(props.defaultTab);
 const isCreate = computed(() => selectedTab.value === NEW_TAB);
 const isSubmitting = ref(false);
 const serverError = ref('');
@@ -298,7 +307,7 @@ watch(
 );
 
 watch(isVisible, (val) => {
-  if (!val) return;
+  if (!val) return emit('close');
   groupInput.value = authStore.hasDefaultUserGroup
     ? [authStore.userGroups[0]!.id]
     : [];

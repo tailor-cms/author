@@ -5,6 +5,7 @@ import { faker } from '@faker-js/faker';
 export class AddRepositoryDialog {
   readonly page: Page;
   readonly openDialogBtn: Locator;
+  readonly emptyCreateCard: Locator;
   readonly dialog: Locator;
   readonly newTab: Locator;
   readonly importTab: Locator;
@@ -16,8 +17,10 @@ export class AddRepositoryDialog {
 
   constructor(page: Page) {
     this.page = page;
-    // Dialog activator
+    // Dialog activators — non-empty catalog uses the toolbar button;
+    // empty catalog uses the action card in the empty state.
     this.openDialogBtn = page.getByLabel('Add repository');
+    this.emptyCreateCard = page.getByTestId('catalog__emptyCreate');
     // Dialog internals
     const dialog = page.locator('div[role="dialog"]');
     this.dialog = dialog;
@@ -30,8 +33,10 @@ export class AddRepositoryDialog {
     this.createRepositoryBtn = dialog.getByRole('button', { name: 'Create' });
   }
 
-  open() {
-    return this.openDialogBtn.click();
+  async open() {
+    const isNonEmpty = await this.openDialogBtn.isVisible();
+    if (isNonEmpty) return this.openDialogBtn.click();
+    return this.emptyCreateCard.click();
   }
 
   async createRepository(

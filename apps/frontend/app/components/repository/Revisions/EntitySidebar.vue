@@ -19,15 +19,26 @@
           @click="$emit('preview', revision)"
         >
           <template v-if="isHovering" #append>
-            <VBtn
-              v-show="!isDetached && index > 0 && !loading[revision.id]"
-              class="rollback"
-              density="comfortable"
-              icon="mdi-restore"
-              size="small"
-              variant="tonal"
-              @click="$emit('rollback', revision)"
-            />
+            <VTooltip
+              :disabled="!isRollbackDisabled"
+              location="bottom"
+              text="Unavailable while Renoir is generating"
+            >
+              <template #activator="{ props: tooltipProps }">
+                <span v-bind="tooltipProps">
+                  <VBtn
+                    v-show="!isDetached && index > 0 && !loading[revision.id]"
+                    :disabled="isRollbackDisabled"
+                    class="rollback"
+                    density="comfortable"
+                    icon="mdi-restore"
+                    size="small"
+                    variant="tonal"
+                    @click="$emit('rollback', revision)"
+                  />
+                </span>
+              </template>
+            </VTooltip>
           </template>
           <VProgressLinear v-if="loading[revision.id]" indeterminate />
         </VListItem>
@@ -45,12 +56,14 @@ interface Props {
   loading: Record<string, boolean>;
   selected?: Revision | null;
   isDetached?: boolean;
+  isRollbackDisabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   revisions: () => [],
   selected: null,
   isDetached: false,
+  isRollbackDisabled: false,
 });
 defineEmits(['preview', 'rollback']);
 

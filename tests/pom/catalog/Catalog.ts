@@ -8,7 +8,8 @@ export class Catalog {
   readonly orderByBtn: Locator;
   readonly orderDirectionBtn: Locator;
   readonly pinnedFilterBtn: Locator;
-  readonly selectAllCheckbox: Locator;
+  readonly selectAllBtn: Locator;
+  readonly selectionCount: Locator;
   readonly deleteSelectedBtn: Locator;
   readonly tagsFilterBtn: Locator;
   readonly schemaFilterBtn: Locator;
@@ -18,8 +19,15 @@ export class Catalog {
     this.loadMoreBtn = page.getByRole('button', { name: 'Load more' });
     this.searchInput = page.getByLabel('Search repositories');
     this.pinnedFilterBtn = page.getByLabel('Toggle pinned items filter');
-    this.selectAllCheckbox = page.getByLabel('Select all');
-    this.deleteSelectedBtn = page.getByRole('button', { name: /Delete \(/ });
+    // The bulk action bar toggle button flips between the two labels.
+    this.selectAllBtn = page.getByRole('button', {
+      name: /^(Select|Deselect) all$/,
+    });
+    this.selectionCount = page.locator('.selection-count');
+    this.deleteSelectedBtn = page.getByRole('button', {
+      name: 'Delete',
+      exact: true,
+    });
     this.orderByBtn = page.getByRole('button', { name: 'Order by' });
     this.orderDirectionBtn = page.getByRole('button', {
       name: 'Order direction',
@@ -88,5 +96,10 @@ export class Catalog {
   getCardCheckbox(hasText: string) {
     return this.findRepositoryCard(hasText)
       .getByRole('checkbox', { name: 'Select repository' });
+  }
+
+  async toggleRepository(hasText: string) {
+    await this.findRepositoryCard(hasText).hover();
+    await this.getCardCheckbox(hasText).click();
   }
 }

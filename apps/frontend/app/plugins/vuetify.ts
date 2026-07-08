@@ -227,7 +227,6 @@ export default defineNuxtPlugin({
       components,
       directives,
       defaults: {
-        VDialog: { VCard: { color: 'surface-container-low' } },
         VMenu: { VList: { class: 'bg-surface-raised' } },
         VBtn: { color: undefined },
         // MD3 spec: snackbars/tooltips use the inverse surface so they

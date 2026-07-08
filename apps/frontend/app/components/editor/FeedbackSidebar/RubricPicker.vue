@@ -1,12 +1,18 @@
 <template>
-  <div>
+  <div ref="rootRef">
     <div
       v-if="rubrics.length <= 1"
       class="text-body-large font-weight-bold"
     >
       {{ selected?.name ?? 'Content feedback' }}
     </div>
-    <VMenu v-else max-height="800" offset="6">
+    <VMenu
+      v-else
+      :width="menuWidth || undefined"
+      max-height="800"
+      min-width="280"
+      rounded="lg"
+    >
       <template #activator="{ props: activatorProps }">
         <VBtn
           v-bind="activatorProps"
@@ -18,7 +24,7 @@
           block
         >
           <div class="d-flex flex-column flex-grow-1 text-start">
-            <span class="text-body-medium font-weight-bold">
+            <span class="text-label-large font-weight-bold">
               {{ selected?.name }}
             </span>
             <span
@@ -35,46 +41,43 @@
           />
         </VBtn>
       </template>
-      <VCard min-width="320" max-width="360" rounded="lg">
-        <VList density="comfortable" lines="three" slim>
-          <VListSubheader class="text-label-small">
-            Choose a lens
-          </VListSubheader>
-          <VListItem
-            v-for="rubric in rubrics"
-            :key="rubric.id"
-            :active="rubric.id === modelValue"
-            color="tertiary"
-            class="mx-2"
-            rounded="lg"
-            @click="$emit('update:modelValue', rubric.id)"
-          >
-            <VListItemTitle class="text-body-small font-weight-bold">
-              {{ rubric.name }}
-            </VListItemTitle>
-            <VListItemSubtitle class="text-body-small">
-              {{ rubric.description }}
-            </VListItemSubtitle>
-            <div class="text-label-small text-medium-emphasis mt-1">
-              {{ rubric.dimensions.length }} dimensions ·
-              {{ maxScoreOf(rubric) }} points
-            </div>
-            <template #append>
-              <VIcon
-                v-if="rubric.id === modelValue"
-                color="tertiary"
-                icon="mdi-check-circle"
-                size="18"
-              />
-            </template>
-          </VListItem>
-        </VList>
-      </VCard>
+      <VList density="comfortable" lines="three" slim>
+        <VListSubheader class="text-label-small">Choose a lens</VListSubheader>
+        <VListItem
+          v-for="rubric in rubrics"
+          :key="rubric.id"
+          :active="rubric.id === modelValue"
+          color="tertiary"
+          class="mx-2"
+          rounded="lg"
+          @click="$emit('update:modelValue', rubric.id)"
+        >
+          <VListItemTitle class="text-label-large font-weight-bold">
+            {{ rubric.name }}
+          </VListItemTitle>
+          <VListItemSubtitle class="text-label-medium">
+            {{ rubric.description }}
+          </VListItemSubtitle>
+          <div class="text-label-small text-medium-emphasis mt-1">
+            {{ rubric.dimensions.length }} dimensions ·
+            {{ maxScoreOf(rubric) }} points
+          </div>
+          <template #append>
+            <VIcon
+              v-if="rubric.id === modelValue"
+              color="tertiary"
+              icon="mdi-check-circle"
+              size="18"
+            />
+          </template>
+        </VListItem>
+      </VList>
     </VMenu>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { useElementBounding } from '@vueuse/core';
 import type { ScoringRubric } from '@tailor-cms/interfaces/feedback';
 
 const props = defineProps<{
@@ -83,6 +86,9 @@ const props = defineProps<{
 }>();
 
 defineEmits(['update:modelValue']);
+
+const rootRef = useTemplateRef('rootRef');
+const { width: menuWidth } = useElementBounding(rootRef);
 
 const selected = computed(() =>
   props.rubrics.find((it) => it.id === props.modelValue),
