@@ -41,9 +41,21 @@
           </VBtn>
           <VBtn
             v-if="!readonly"
+            aria-label="Replace file"
+            class="mr-1"
+            size="x-small"
+            variant="tonal"
+            icon
+            @click.stop="emit('replace')"
+          >
+            <VIcon icon="mdi-square-edit-outline" size="large" />
+          </VBtn>
+          <VBtn
+            v-if="!readonly"
             aria-label="Remove file"
             size="x-small"
             variant="tonal"
+            color="error"
             icon
             @click.stop="emit('delete')"
           >
@@ -98,6 +110,7 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   download: [];
   delete: [];
+  replace: [];
 }>();
 
 const expanded = ref(false);
