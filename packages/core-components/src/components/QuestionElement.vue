@@ -29,11 +29,16 @@
             <DiffChip :change-type="element.diffChange" />
             <VFadeTransition>
               <div
-                v-if="!isDisabled && collapsible && (isHovering || expanded)"
+                v-if="
+                  !isDisabled
+                    && collapsible
+                    && (isHovering || expanded || isGenerationMenuOpen)
+                "
                 class="d-flex justify-end ga-1"
               >
                 <ElementGeneration
                   v-if="showAI"
+                  v-model="isGenerationMenuOpen"
                   color="secondary"
                   tooltip-location="bottom"
                   @generate="$emit('generate', $event)"
@@ -213,6 +218,7 @@ const emit = defineEmits([
 const ceRegistry = inject<any>('$ceRegistry');
 
 const form = ref();
+const isGenerationMenuOpen = ref(false);
 const editedElement = reactive(initializeElement());
 
 const config = useConfigStore();
