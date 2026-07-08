@@ -20,7 +20,7 @@
       <div class="card-blur card-blur--3" />
     </div>
     <div class="card-body">
-      <div class="card-header d-flex align-center mt-4 mx-4 mb-1">
+      <div class="card-header d-flex align-center ma-3 mb-1">
         <div
           :aria-checked="isSelected"
           :class="{ 'is-selected': isSelected }"
@@ -149,7 +149,7 @@ import { useTimeAgo } from '@vueuse/core';
 import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService, $storageService } = useNuxtApp() as any;
 const store = useRepositoryStore();
 
 const props = defineProps<{
@@ -255,6 +255,7 @@ onMounted(() => nextTick(detectSchemaTruncation));
   }
 }
 
+// --- Poster artwork stack (behind the content) ---
 .card-bg {
   position: absolute;
   inset: 0;
@@ -262,16 +263,19 @@ onMounted(() => nextTick(detectSchemaTruncation));
   pointer-events: none;
 }
 
-// Full-width, heavily blurred copy of the poster. Fills the area left of the
-// sharp cover with matching colors so the scrim fades image-into-image
-// instead of image-into-empty-surface. Scaled up so the blur doesn't leave
-// translucent edges.
+// Mirror reflection of the cover, hinged at the 25% seam. Its box matches the
+// cover's dimensions (identical object-fit crop) but its right edge sits on the
+// seam and it's flipped horizontally, so the image's left-edge column lands
+// exactly where the cover's does — the two align at the seam and the reflection
+// continues leftward, giving the blur/scrim image-into-image to fade.
 .card-underlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 75%;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scaleX(-1);
 }
 
 .card-cover {
