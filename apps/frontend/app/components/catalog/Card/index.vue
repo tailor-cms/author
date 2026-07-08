@@ -119,7 +119,10 @@
 
 <script lang="ts" setup>
 import { first, get, truncate } from 'lodash-es';
-import type { Repository } from '@tailor-cms/interfaces/repository';
+import type {
+  Repository,
+  RepositoryFileMeta,
+} from '@tailor-cms/interfaces/repository';
 import type { Revision } from '@tailor-cms/interfaces/revision';
 import { useDisplay } from 'vuetify';
 import { UserAvatar } from '@tailor-cms/core-components';
@@ -128,7 +131,7 @@ import { useTimeAgo } from '@vueuse/core';
 import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
-const { $schemaService, $storageService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp() as any;
 const store = useRepositoryStore();
 
 const props = defineProps<{
@@ -176,27 +179,12 @@ const schemaName = computed(
   () => $schemaService.getSchema(props.repository.schema).name,
 );
 
-const posterImage = computed(
-  () =>
-    get(props.repository, 'data.posterImage') as
-      | { key: string; name: string }
-      | undefined,
-);
-const thumbnailUrl = ref('');
-watch(
-  posterImage,
-  async (poster) => {
-    const key = poster?.key?.replace(/^storage:\/\//, '');
-    if (!key) return (thumbnailUrl.value = '');
-    if (/^https?:\/\//.test(key)) return (thumbnailUrl.value = key);
-    try {
-      thumbnailUrl.value = await $storageService.getUrl(props.repository.id, key);
-    } catch {
-      thumbnailUrl.value = '';
-    }
-  },
-  { immediate: true },
-);
+// Signed URLs are delivered on the list payload (RepositoryFileMeta);
+// prefer the cached thumbnail and fall back to the original file.
+const thumbnailUrl = computed(() => {
+  const poster = props.repository.data.posterImage as RepositoryFileMeta | undefined;
+  return poster?.thumbnailUrl ?? poster?.publicUrl ?? '';
+});
 
 const lastActivity = computed(
   () => first(props.repository.revisions) as Revision,
