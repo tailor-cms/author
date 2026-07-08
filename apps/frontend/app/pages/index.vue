@@ -2,7 +2,11 @@
   <NuxtLayout name="main">
     <div class="catalog-scroll">
       <VContainer class="catalog" max-width="1360">
-        <VRow class="catalog-actions py-10" density="compact">
+        <VRow
+          v-if="!isEmptyCatalog"
+          class="catalog-actions py-10"
+          density="compact"
+        >
           <VCol cols="12" lg="4" md="6">
             <UserGroupSelect
               v-if="userGroupOptions.length"
@@ -59,32 +63,29 @@
           @clear:all="(queryParams.filter = []) && refetchRepositories()"
           @close="onFilterChange"
         />
-        <VExpandTransition>
-          <div v-if="selectedRepos.size > 0" class="d-flex align-center mb-4 text-left">
-            <VCheckbox
-              v-tooltip:top="{
-                text: isAllSelected ? 'Deselect all' : 'Select all',
-                openDelay: 400,
-              }"
-              :disabled="!repositories.length"
-              :model-value="isAllSelected"
-              :indeterminate="someSelected"
-              color="primary"
-              label="Select all"
-              hide-details
-              @update:model-value="toggleSelectAll"
-            />
-            <VBtn
-              :disabled="selectedRepos.size === 0"
-              :text="`Delete (${selectedRepos.size})`"
-              class="ml-4"
-              color="error"
-              prepend-icon="mdi-trash-can-outline"
-              variant="tonal"
-              @click="deleteSelected"
-            />
-          </div>
-        </VExpandTransition>
+        <BulkActionBar
+          :count="selectedRepos.size"
+          :is-all-selected="isAllSelected"
+          :is-deleting="isDeleting"
+          @clear="selectedRepos.clear()"
+          @toggle-all="toggleSelectAll"
+          @delete="deleteSelected"
+        />
+        <CloneModal
+          v-if="cloneTarget"
+          :repository="cloneTarget"
+          @cloned="refetchRepositories"
+          @close="cloneTarget = null"
+        />
+        <ExportDialog
+          v-if="exportTarget"
+          :repository="exportTarget"
+          @close="exportTarget = null"
+        />
+        <ProgressDialog
+          :show="publishUtils.isPublishing.value"
+          :status="publishUtils.status.value.progress * 100"
+        />
         <VInfiniteScroll
           v-if="!isLoading && hasRepositories"
           class="d-flex ma-0 pa-0"
@@ -104,6 +105,10 @@
                 :is-selected="selectedRepos.has(repository.id)"
                 :repository="repository"
                 @toggle-selection="toggleSelection"
+                @clone="onCardClone"
+                @publish="onCardPublish"
+                @export="onCardExport"
+                @delete="deleteRepository"
               />
             </VCol>
           </VRow>
@@ -116,11 +121,18 @@
             />
           </template>
         </VInfiniteScroll>
+        <CatalogEmptyState
+          v-else-if="hasEmptyStateActions"
+          class="mt-8"
+          @created="onRepositoryAdd"
+        />
         <TailorEmptyState
           v-else-if="emptyState"
+          :action-text="hasSearchOrFilter ? 'Clear search & filters' : undefined"
           :icon="emptyState.icon"
           :text="emptyState.text"
           :title="emptyState.title"
+          @click:action="clearSearchAndFilters"
         />
       </VContainer>
     </div>
@@ -135,7 +147,14 @@ import { storeToRefs } from 'pinia';
 import pluralize from 'pluralize-esm';
 import Promise from 'bluebird';
 
+import type { Repository } from '@tailor-cms/interfaces/repository';
+
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
+import BulkActionBar from '@/components/catalog/BulkActionBar.vue';
+import CatalogEmptyState from '@/components/catalog/EmptyState/index.vue';
+import CloneModal from '@/components/repository/Settings/CloneModal.vue';
+import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
+import ProgressDialog from '@/components/common/ProgressDialog.vue';
 import RepositoryCard from '@/components/catalog/Card/index.vue';
 import RepositoryFilter from '~/components/catalog/Filter/RepositoryFilter.vue';
 import repositoryFilterConfigs from '~/components/catalog/Filter/repositoryFilterConfigs';
@@ -163,8 +182,12 @@ const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 const config = useConfigStore();
 const confirmationDialog = useConfirmationDialog();
+const publishUtils = useCatalogPublish();
 
 const isLoading = ref(true);
+const isDeleting = ref(false);
+const cloneTarget = ref<Repository | null>(null);
+const exportTarget = ref<Repository | null>(null);
 const selectedRepos = ref<Set<number>>(new Set());
 
 const {
@@ -190,11 +213,6 @@ const isAllSelected = computed(() =>
   selectedRepos.value.size === repositories.value.length,
 );
 
-const someSelected = computed(() =>
-  selectedRepos.value.size > 0 &&
-  selectedRepos.value.size < repositories.value.length,
-);
-
 const togglePinFilter = () => {
   queryParams.value.pinned = !arePinnedShown.value;
   refetchRepositories();
@@ -218,13 +236,39 @@ const deleteSelected = () => {
     color: 'error',
     message: `Are you sure you want to delete ${pluralize('repository', count, true)}?`,
     action: async () => {
+      isDeleting.value = true;
       try {
         const repositories = Array.from(selectedRepos.value);
         await Promise.each(repositories, (id) => repositoryStore.remove(id));
       } finally {
         selectedRepos.value.clear();
         await refetchRepositories();
+        isDeleting.value = false;
       }
+    },
+  });
+};
+
+const onCardClone = (repository: Repository) => {
+  cloneTarget.value = repository;
+};
+
+const onCardExport = (repository: Repository) => {
+  exportTarget.value = repository;
+};
+
+const onCardPublish = (repository: Repository) => {
+  publishUtils.publishRepository(repository, refetchRepositories);
+};
+
+const deleteRepository = (repository: Repository) => {
+  confirmationDialog({
+    title: 'Delete repository?',
+    color: 'error',
+    message: `Are you sure you want to delete repository ${repository.name}?`,
+    action: async () => {
+      await repositoryStore.remove(repository.id);
+      await refetchRepositories();
     },
   });
 };
@@ -296,29 +340,59 @@ const loadMore = async ({ done }: { done: Function }) => {
   done(status);
 };
 
-const emptyStateVariants = {
-  search: {
-    icon: 'mdi-magnify',
-    title: 'No matches',
-    text: 'No repositories match your search. Try a different term.',
-  },
-  pinned: {
-    icon: 'mdi-pin-outline',
-    title: 'No pinned repositories',
-    text: 'Pin a repository to keep it close at hand here.',
-  },
-  empty: {
-    icon: 'mdi-folder-open-outline',
-    title: 'No repositories yet',
-    text: 'Create your first repository to get started.',
-  },
+const hasSearchOrFilter = computed(
+  () => !!queryParams.value.search || queryParams.value.filter.length > 0,
+);
+
+const hasAnyQueryConstraint = computed(
+  () => hasSearchOrFilter.value || arePinnedShown.value,
+);
+
+const clearSearchAndFilters = async () => {
+  selectedRepos.value.clear();
+  queryParams.value.search = '';
+  queryParams.value.filter = [];
+  queryParams.value.pinned = false;
+  await refetchRepositories();
 };
+
+// True whenever the catalog holds no repositories at all (no active
+// search/pin/filter), regardless of the user's create access.
+const isEmptyCatalog = computed(
+  () =>
+    !isLoading.value &&
+    !hasRepositories.value &&
+    !hasAnyQueryConstraint.value,
+);
+
+const hasEmptyStateActions = computed(
+  () => isEmptyCatalog.value && authStore.hasCreateRepositoryAccess,
+);
 
 const emptyState = computed(() => {
   if (isLoading.value || hasRepositories.value) return null;
-  if (queryParams.value.search) return emptyStateVariants.search;
-  if (arePinnedShown.value) return emptyStateVariants.pinned;
-  return emptyStateVariants.empty;
+  if (hasSearchOrFilter.value) {
+    return {
+      icon: 'mdi-magnify-close',
+      title: 'No matches',
+      text: 'No repositories match your search or filters.',
+    };
+  }
+  if (arePinnedShown.value) {
+    return {
+      icon: 'mdi-pin-outline',
+      title: 'No pinned repositories',
+      text: 'Pin a repository to keep it close at hand here.',
+    };
+  }
+  if (!authStore.hasCreateRepositoryAccess) {
+    return {
+      icon: 'mdi-folder-open-outline',
+      title: 'No repositories yet',
+      text: 'No repositories have been shared with you yet.',
+    };
+  }
+  return null;
 });
 
 onBeforeMount(async () => {

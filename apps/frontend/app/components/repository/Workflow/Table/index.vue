@@ -86,7 +86,7 @@ const headers = computed(() => [
     title: 'Assignee',
     value: 'assignee',
     sort: compareAssignees,
-    maxWidth: '11.5rem',
+    maxWidth: '12rem',
   },
   { title: 'Priority', value: 'priority', sort: comparePriorities },
   { title: 'Due date', value: 'dueDate', sortable: true },

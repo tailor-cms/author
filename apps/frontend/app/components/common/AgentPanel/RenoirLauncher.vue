@@ -47,12 +47,8 @@ const showRenoir = computed(
   () => config.isAiAvailable && Boolean(currentRepositoryStore.repository),
 );
 
-// Mirrors the agent panel's run/open state (broadcast on the agent bus).
-const isAgentRunning = ref(false);
+const { isAgentRunning } = useAgentRunState();
 const isPanelOpen = ref(false);
-const onRunState = ({ isRunning }: { isRunning: boolean }) => {
-  isAgentRunning.value = isRunning;
-};
 const onOpenState = ({ isOpen }: { isOpen: boolean }) => {
   isPanelOpen.value = isOpen;
 };
@@ -64,14 +60,8 @@ const renoirImage = computed(() =>
 
 const openAgentPanel = () => agentChannel.emit('panel:toggle');
 
-onMounted(() => {
-  agentChannel.on('run:state', onRunState);
-  agentChannel.on('open:state', onOpenState);
-});
-onBeforeUnmount(() => {
-  agentChannel.off('run:state', onRunState);
-  agentChannel.off('open:state', onOpenState);
-});
+onMounted(() => agentChannel.on('open:state', onOpenState));
+onBeforeUnmount(() => agentChannel.off('open:state', onOpenState));
 </script>
 
 <style lang="scss" scoped>

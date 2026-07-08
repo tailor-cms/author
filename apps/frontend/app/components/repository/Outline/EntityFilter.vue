@@ -7,12 +7,12 @@
     <VChip
       v-for="{ value, label } in entities"
       :key="value"
+      :rounded="rounded"
       :text="label"
       :value="value"
       color="tertiary"
       role="button"
       size="small"
-      rounded="pill"
       variant="tonal"
       filter
     />
@@ -21,10 +21,16 @@
 
 <script lang="ts" setup>
 import type { EntityFilterOption } from '@/composables/useCollectionEntities';
+import type { VChip } from 'vuetify/components';
 
-defineProps<{
+interface Props {
   entities: EntityFilterOption[];
-}>();
+  rounded?: VChip['rounded'];
+}
+
+withDefaults(defineProps<Props>(), {
+  rounded: 'pill',
+});
 
 const modelValue = defineModel<string>({ required: true });
 </script>

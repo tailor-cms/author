@@ -5,6 +5,7 @@
     closable
     :prepend-icon="icon"
     :text="name"
+    size="small"
     @click:close="emit('close')"
   />
 </template>

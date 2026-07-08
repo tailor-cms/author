@@ -9,7 +9,11 @@ test.describe('Collection - inline relationship creation', () => {
     page,
   }) => {
     const { collection } = await toCollection(page);
-    const editor = await fillArticleInputs(collection, 'Animal Farm');
+    const editor = await collection.createFirstItem(
+      ENTITY.ARTICLE,
+      'Animal Farm',
+    );
+    await fillArticleInputs(editor);
     await editor.relationship('Author').createNew('George Orwell');
     await editor.relationship('Author').expectSelected('George Orwell');
     await editor.save();

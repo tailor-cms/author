@@ -41,7 +41,7 @@ export async function toFileMetaInput(page: Page) {
   await page.goto(`/repository/${repository.id}/root/structure`);
   await page.waitForLoadState('networkidle');
   const outline = new ActivityOutline(page);
-  const module = await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Module 1');
   await module.select();
   return repository.id as number;
 }

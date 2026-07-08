@@ -217,12 +217,10 @@ const onPromptSet = ({ prompt: text }: { prompt: string }) => {
   prompt.value = text;
 };
 
-// Broadcast the run state so external launchers
-watch(
-  isRunning,
-  (value) => agentChannel.emit('run:state', { isRunning: value }),
-  { immediate: true },
-);
+// Publish the run state to the shared flag so external features (launcher,
+// history/revert actions) can react without missing an in-flight run.
+const { setAgentRunning } = useAgentRunState();
+watch(isRunning, setAgentRunning, { immediate: true });
 
 // Broadcast open state so the app-bar launcher can show an active state.
 watch(

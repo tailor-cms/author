@@ -117,6 +117,7 @@
           </VExpansionPanels>
         </template>
         <TailorEmptyState
+          v-else
           icon="mdi-creation-outline"
           size="48"
           title="Review this content"
@@ -239,7 +240,7 @@ const askAgent = (prompt: string) => {
   position: absolute;
   width: 1.5rem;
   height: 3.5rem;
-  top: 5.5rem;
+  top: 6rem;
   right: 0;
   border-radius: 12px 0 0 12px;
 }

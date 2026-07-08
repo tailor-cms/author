@@ -17,45 +17,75 @@
     />
     <div class="d-flex ga-3">
       <CreateDialog
-        v-if="isCollection"
+        v-if="showCreateDialog"
         :anchor="anchor"
-        :default-type="activeEntity"
+        :default-type="isCollection ? activeEntity : undefined"
+        :open-in-editor="isCollection"
         :repository-id="currentRepositoryStore.repositoryId as number"
-        activator-color="primary"
-        activator-icon="mdi-plus"
-        variant="flat"
-        open-in-editor
-        show-activator
+        @close="showCreateDialog = false"
       />
-      <template v-else>
-        <VBtn
-          v-if="!isFlat"
-          :disabled="!!search"
-          :text="isOutlineExpanded ? 'Collapse all' : 'Expand all'"
-          rounded="lg"
-          variant="text"
-          width="112"
-          @click="currentRepositoryStore.toggleOutlineExpand"
-        />
-        <LinkContent :anchor="anchor" show-activator />
-        <CreateDialog
-          :anchor="anchor"
-          :repository-id="currentRepositoryStore.repositoryId as number"
-          activator-color="primary"
-          activator-icon="mdi-plus"
-          variant="flat"
-          test-id-prefix="repository__createRootActivity"
-          show-activator
-        />
-      </template>
+      <CopyDialog
+        v-if="showCopyDialog"
+        :action="InsertLocation.AddAfter"
+        :anchor="anchor"
+        :levels="rootLevelTypes"
+        :repository-id="currentRepositoryStore.repositoryId as number"
+        @close="showCopyDialog = false"
+      />
+      <LinkContent
+        v-if="showLinkDialog"
+        :action="InsertLocation.AddAfter"
+        :anchor="anchor"
+        @close="showLinkDialog = false"
+        @completed="showLinkDialog = false"
+      />
+      <VBtn
+        v-if="!isCollection && !isFlat"
+        :disabled="!!search"
+        :text="isOutlineExpanded ? 'Collapse all' : 'Expand all'"
+        rounded="lg"
+        variant="text"
+        width="112"
+        @click="currentRepositoryStore.toggleOutlineExpand"
+      />
+      <VMenu :offset="6" location="bottom end">
+        <template #activator="{ props: menuProps }">
+          <VBtn
+            v-bind="menuProps"
+            color="primary"
+            prepend-icon="mdi-plus"
+            text="Add"
+            variant="flat"
+          />
+        </template>
+        <VList density="compact" min-width="200" nav>
+          <VListItem
+            prepend-icon="mdi-file-document-plus-outline"
+            title="Create new"
+            @click="showCreateDialog = true"
+          />
+          <VListItem
+            prepend-icon="mdi-content-copy"
+            title="Copy existing"
+            @click="showCopyDialog = true"
+          />
+          <VListItem
+            prepend-icon="mdi-link-variant"
+            title="Link existing"
+            @click="showLinkDialog = true"
+          />
+        </VList>
+      </VMenu>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { filter, find, last, map } from 'lodash-es';
+import { InsertLocation } from '@tailor-cms/utils';
 import { storeToRefs } from 'pinia';
 
+import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 import LinkContent from '@/components/repository/Library/LinkContent.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -78,6 +108,10 @@ const {
   isOutlineExpanded,
 } = storeToRefs(currentRepositoryStore);
 
+const showCreateDialog = ref(false);
+const showCopyDialog = ref(false);
+const showLinkDialog = ref(false);
+
 const isFlat = computed(() => {
   const types = map(
     filter(taxonomy.value, (it) => !it.rootLevel),
@@ -88,6 +122,10 @@ const isFlat = computed(() => {
 });
 
 const anchor = computed(() => last(rootActivities.value));
+
+const rootLevelTypes = computed(() =>
+  map(filter(taxonomy.value, (it: any) => it.rootLevel), 'type'),
+);
 </script>
 
 <style lang="scss" scoped>

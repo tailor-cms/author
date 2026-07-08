@@ -69,8 +69,14 @@
       <VDivider class="sidebar-divider" />
       <div class="sidebar-content">
         <VWindow v-model="selectedTab" class="h-100">
-          <VWindowItem :value="BROWSER_TAB">
+          <VWindowItem :value="BROWSER_TAB" class="h-100">
+            <CollectionNavigation
+              v-if="isCollection"
+              :repository="repository"
+              :selected="selectedActivity"
+            />
             <ActivityNavigation
+              v-else
               :activities="activities"
               :repository="repository"
               :selected="selectedActivity"
@@ -123,6 +129,7 @@ import ElementSidebar from './ElementSidebar/index.vue';
 import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
 import ActivityHistory from '@/components/repository/Revisions/ActivityHistory.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+import CollectionNavigation from '@/components/editor/Sidebar/CollectionNavigation.vue';
 
 const modelValue = defineModel<boolean>({ required: true });
 
@@ -148,7 +155,7 @@ const { width, isResizing, startResize } = useDrawerResize({
   defaultWidth: () => (lgAndUp.value ? 480 : 380),
 });
 
-const defaultTab = isCollection.value ? COMMENTS_TAB : BROWSER_TAB;
+const defaultTab = BROWSER_TAB;
 const selectedTab = ref(defaultTab);
 
 const tabRowEl = ref<HTMLElement | null>(null);
@@ -160,9 +167,11 @@ const compact = computed(
 );
 
 const tabs: any = computed(() => [
-  ...(!isCollection.value
-    ? [{ name: BROWSER_TAB, label: 'Browse', icon: 'file-tree' }]
-    : []),
+  {
+    name: BROWSER_TAB,
+    label: 'Browse',
+    icon: isCollection.value ? 'view-list' : 'file-tree',
+  },
   {
     name: COMMENTS_TAB,
     label: 'Comments',
@@ -244,7 +253,7 @@ watch(
   position: absolute;
   width: 1.5rem;
   height: 3.5rem;
-  top: 5.5rem;
+  top: 6rem;
   left: 0;
   border-radius: 0 12px 12px 0;
 }

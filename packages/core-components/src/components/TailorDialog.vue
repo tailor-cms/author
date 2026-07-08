@@ -6,7 +6,12 @@
     <template #default="defaultProps">
       <slot v-if="$slots.default" v-bind="defaultProps"></slot>
       <DefineCard>
-        <VCard :data-testid="dataTestid" rounded="xl" elevation="5">
+        <VCard
+          :data-testid="dataTestid"
+          color="surface-raised"
+          rounded="xl"
+          elevation="5"
+        >
           <VCardItem class="px-5 py-4">
             <template #prepend>
               <VIcon :icon="headerIcon" :color="color" />

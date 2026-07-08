@@ -3,6 +3,9 @@ import {
   CollectionView,
   type Entity,
 } from '../../../pom/repository/collection/CollectionView';
+import type {
+  CollectionItemEditor,
+} from '../../../pom/repository/collection/CollectionItemEditor';
 import { collectionSeed, toEmptyCollection } from '../../../helpers/seed';
 import SeedClient from '../../../api/SeedClient';
 
@@ -18,8 +21,18 @@ export async function toCollection(page: Page) {
   return { repository, collection };
 }
 
-// Create an item and return to the structure page, for populating the list (or
-// linkable siblings) when the editor itself is not under test.
+// Create the first item in an empty collection (empty-state flow), then return
+// to the list. For arrange steps where the editor isn't the subject.
+export async function addFirstItem(
+  collection: CollectionView,
+  entity: Entity,
+  title: string,
+) {
+  await collection.createFirstItem(entity, title);
+  await collection.goto();
+}
+
+// Add an item to an already-populated collection, then return to the list.
 export async function addItem(
   collection: CollectionView,
   entity: Entity,
@@ -29,13 +42,11 @@ export async function addItem(
   await collection.goto();
 }
 
-// Create an article and fill its editor inputs
+// Fill an article editor's required inputs plus the given relationship links.
 export async function fillArticleInputs(
-  collection: CollectionView,
-  title: string,
+  editor: CollectionItemEditor,
   links: { author?: string; tag?: string; category?: string } = {},
 ) {
-  const editor = await collection.createItem(ENTITY.ARTICLE, title);
   await editor.fillRichText('description', 'Body required to save.');
   await editor.contentElement('body').fill('Some content.');
   if (links.author) {
@@ -50,5 +61,4 @@ export async function fillArticleInputs(
     await editor.relationship('Category').select(links.category);
     await editor.relationship('Category').expectSelected(links.category);
   }
-  return editor;
 }

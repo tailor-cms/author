@@ -3,8 +3,9 @@
  * the activity (and optional content element) the user is currently looking at
  * resolved into:
  *   - focusChip: { short, full } for the compact target chip in the input
- *     toolbar - `short` is the level label + id, `full` the breadcrumb shown
- *     in the tooltip. Null when nothing is selected.
+ *     toolbar - `short` is the deepest focus (the element when one is
+ *     selected, else the activity), `full` the breadcrumb shown in the
+ *     tooltip. Null when nothing is selected.
  *   - focusPayload: structured FocusedTarget[] sent on every agent run,
  *     so the model can resolve "this" / "the topic" without an extra read
  */
@@ -44,11 +45,13 @@ export function useAgentFocus() {
         .split('/')
         .pop();
     const element = focusedElement.value;
-    const elementSuffix = element
-      ? ` › ${getElementLabel(element.type)} #${element.id}`
+    const elementLabel = element
+      ? `${getElementLabel(element.type)} #${element.id}`
       : '';
-    const short = `${activityLabel} #${activity.id}${elementSuffix}`;
-    const full = `${activityName}${elementSuffix}`;
+    // Chip surfaces the deepest focus (the element when selected); the
+    // tooltip carries the full activity › element breadcrumb.
+    const short = element ? elementLabel : `${activityLabel} #${activity.id}`;
+    const full = element ? `${activityName} › ${elementLabel}` : activityName;
     return { short, full };
   });
 

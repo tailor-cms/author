@@ -8,14 +8,25 @@
       edited by {{ revision.user?.label ?? 'Unknown' }}
     </div>
     <VSpacer />
-    <VBtn
-      :loading="isRestoring"
-      prepend-icon="mdi-restore"
-      size="small"
-      text="Restore this version"
-      variant="tonal"
-      @click="confirmRestore"
-    />
+    <VTooltip
+      :disabled="!isAgentRunning"
+      location="bottom"
+      text="Unavailable while Renoir is generating"
+    >
+      <template #activator="{ props: tooltipProps }">
+        <span v-bind="tooltipProps">
+          <VBtn
+            :disabled="isAgentRunning"
+            :loading="isRestoring"
+            prepend-icon="mdi-restore"
+            size="small"
+            text="Restore this version"
+            variant="tonal"
+            @click="confirmRestore"
+          />
+        </span>
+      </template>
+    </VTooltip>
     <VBtn
       v-tooltip:bottom="{ text: 'Exit history', openDelay: 300 }"
       :disabled="isRestoring"
@@ -39,6 +50,7 @@ import { useEditorStore } from '@/stores/editor';
 const editorStore = useEditorStore();
 const notify = useNotification();
 const showConfirmationDialog = useConfirmationDialog();
+const { isAgentRunning } = useAgentRunState();
 
 const isRestoring = ref(false);
 
@@ -50,7 +62,9 @@ const formattedDate = computed(() =>
 
 const confirmRestore = () => {
   const activity = editorStore.selectedActivity;
-  if (!activity) return;
+  // Guard against a stale entry point restoring over content Renoir is
+  // still writing; the button is disabled for the same reason.
+  if (!activity || isAgentRunning.value) return;
   const message =
     `Restore activity to its state from ${formattedDate.value}? ` +
     'Changes made since then will be undone. A new revision is recorded ' +

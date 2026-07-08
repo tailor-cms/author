@@ -57,6 +57,7 @@ const save = (data: any) => elementBus.emit('save', data);
   width: 100%;
   min-height: 4rem;
   padding: 0.625rem 1rem;
+  text-align: left;
 }
 
 :deep(.v-btn-group--density-compact.v-btn-group) {

@@ -1,4 +1,10 @@
-import { addItem, ENTITY, fillArticleInputs, toCollection } from './helpers';
+import {
+  addFirstItem,
+  addItem,
+  ENTITY,
+  fillArticleInputs,
+  toCollection,
+} from './helpers';
 import { expect, test } from '@playwright/test';
 import SeedClient from '../../../api/SeedClient';
 
@@ -13,10 +19,9 @@ test.describe('Collection referential integrity', () => {
     page,
   }) => {
     const { collection } = await toCollection(page);
-    await addItem(collection, ENTITY.AUTHOR, 'Mary Shelley');
-    const editor = await fillArticleInputs(collection, 'Frankenstein', {
-      author: 'Mary Shelley',
-    });
+    await addFirstItem(collection, ENTITY.AUTHOR, 'Mary Shelley');
+    const editor = await collection.createItem(ENTITY.ARTICLE, 'Frankenstein');
+    await fillArticleInputs(editor, { author: 'Mary Shelley' });
     await editor.save();
     await collection.goto();
     await collection.entityFilter.select(ENTITY.AUTHOR.label);
@@ -31,12 +36,13 @@ test.describe('Collection referential integrity', () => {
     page,
   }) => {
     const { collection } = await toCollection(page);
-    await addItem(collection, ENTITY.AUTHOR, 'Author A');
+    await addFirstItem(collection, ENTITY.AUTHOR, 'Author A');
     await addItem(collection, ENTITY.TAG, 'fiction');
-    const editor = await fillArticleInputs(collection, 'Tagged Article', {
-      author: 'Author A',
-      tag: 'fiction',
-    });
+    const editor = await collection.createItem(
+      ENTITY.ARTICLE,
+      'Tagged Article',
+    );
+    await fillArticleInputs(editor, { author: 'Author A', tag: 'fiction' });
     await editor.save();
 
     await collection.goto();
@@ -58,9 +64,10 @@ test.describe('Collection referential integrity', () => {
 
   test('deletes dependents for a CASCADE relationship', async ({ page }) => {
     const { collection } = await toCollection(page);
-    await addItem(collection, ENTITY.AUTHOR, 'Author B');
+    await addFirstItem(collection, ENTITY.AUTHOR, 'Author B');
     await addItem(collection, ENTITY.CATEGORY, 'Science');
-    const editor = await fillArticleInputs(collection, 'Cosmos', {
+    const editor = await collection.createItem(ENTITY.ARTICLE, 'Cosmos');
+    await fillArticleInputs(editor, {
       author: 'Author B',
       category: 'Science',
     });

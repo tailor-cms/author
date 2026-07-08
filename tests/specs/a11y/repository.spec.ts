@@ -34,7 +34,7 @@ test('a11y check of the history page', async ({
 }, testInfo) => {
   await toEmptyRepository(page, REPOSITORY_NAME);
   const outline = new ActivityOutline(page);
-  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
+  await outline.addFirstItem(outlineLevel.GROUP, 'Module 1');
   await new NavigationRail(page).goToHistory();
   await expect(page.getByText('Created repository')).toBeVisible();
   await expect(page.getByText('Created Module 1 module')).toBeVisible();
@@ -52,7 +52,7 @@ test('a11y check of the progress page', async ({
 }, testInfo) => {
   await toEmptyRepository(page, REPOSITORY_NAME);
   const outline = new ActivityOutline(page);
-  await outline.addRootItem(outlineLevel.GROUP, 'Module 1');
+  await outline.addFirstItem(outlineLevel.GROUP, 'Module 1');
   await new NavigationRail(page).goToProgress();
   await expect(page.getByText('Module 1')).toBeVisible();
   await analyzePageWithAxe(

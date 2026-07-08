@@ -1,5 +1,5 @@
 <template>
-  <VBottomSheet class="mx-sm-5" max-width="1200">
+  <VBottomSheet class="mx-sm-5" max-width="1300">
     <VSheet color="surface-container-low" class="element-container">
       <div class="picker-header py-6 px-10">
         <VTextField
