@@ -1,13 +1,14 @@
 import { literal, Model, Op } from 'sequelize';
 import { register as registerSchema, schema } from '@tailor-cms/config';
 import first from 'lodash/first.js';
+import hooks from './repository.hooks.ts';
 import intersection from 'lodash/intersection.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import set from 'lodash/fp/set.js';
 import Promise from 'bluebird';
+import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import { RepositoryRole } from '@tailor-cms/interfaces/role';
-import hooks from './repository.hooks.ts';
 import { syncSchemaSnapshot } from '../lib/schema.ts';
 import { stripInstanceSpecific } from '../lib/data-attr.ts';
 
@@ -336,6 +337,24 @@ class Repository extends Model {
     const snapshotConfig = this.data?.$$?.schema?.config;
     if (snapshotConfig) registerSchema(snapshotConfig);
     return getSchema(this.schema);
+  }
+
+  /**
+   * FILE-type meta on this repository as { metaKey, storageKey } refs - one per
+   * file field that holds a value. Empty when the schema can't be resolved.
+   */
+  getFileMetaInputs() {
+    let config;
+    try {
+      config = this.getSchemaConfig();
+    } catch {
+      return [];
+    }
+    return (config.meta ?? []).flatMap((field) => {
+      if (field.type !== MetaInputType.File) return [];
+      const value = this.data?.[field.key];
+      return value?.key ? [{ metaKey: field.key, storageKey: value.key }] : [];
+    });
   }
 }
 
