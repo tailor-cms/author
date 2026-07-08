@@ -29,10 +29,12 @@
       v-tooltip:bottom="{ text: 'Add tag', openDelay: 400 }"
       aria-label="Add tag"
       class="ml-2"
-      icon="mdi-tag-plus"
-      size="small"
+      size="x-small"
+      icon
       @click.stop="showTagDialog = true"
-    />
+    >
+      <VIcon icon="mdi-tag-plus" size="20" />
+    </VBtn>
     <AddTag
       :is-visible="showTagDialog"
       :repository="repository"

@@ -2,7 +2,7 @@
   <VCard
     :data-testid="`repositoryCard_${repository.id}`"
     :ripple="false"
-    :class="{ selected: isSelected }"
+    :class="{ 'selected': isSelected, 'has-artwork': !!thumbnailUrl }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
     color="surface-raised"
@@ -104,39 +104,41 @@
         </div>
       </div>
       <VCardTitle class="pt-0 text-break font-weight-medium">
-        {{ truncate(repository.name, { length: lgAndUp ? 60 : 40 }) }}
+        {{ repository.name }}
       </VCardTitle>
-      <div class="d-flex justify-start px-4">
-        <UserAvatar :img-url="lastActivity.user.imgUrl" :size="38" />
+      <div class="d-flex justify-start align-center px-4 py-2">
+        <UserAvatar :img-url="lastActivity.user.imgUrl" :size="34" />
         <div class="ml-3 overflow-hidden ">
-          <div class="text-body-small">Edited {{ lastActivityTimeago }} by</div>
-          <div class="text-body-medium text-truncate">
+          <div class="text-label-small">Edited {{ lastActivityTimeago }} by</div>
+          <div class="text-label-large text-truncate">
             {{ lastActivity.user.label }}
           </div>
         </div>
       </div>
     </div>
     <VSpacer />
-    <VCardActions class="pb-2 px-2 align-center">
+    <VCardActions class="px-3 py-3 align-center">
       <VBtn
         v-tooltip:bottom="{
           text: `${isPinned ? 'Unpin' : 'Pin'} ${schemaName}`,
           openDelay: 400,
         }"
-        :class="['glass-btn', { 'glass-btn--active': isPinned }]"
-        :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
         variant="text"
         aria-label="Pin repository"
-        size="small"
+        size="x-small"
+        :color="isPinned ? 'tertiary' : ''"
+        icon
         @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
-      />
+      >
+        <VIcon :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'" size="20" />
+      </VBtn>
       <Tags :repository="repository" class="glass-tags" />
     </VCardActions>
   </VCard>
 </template>
 
 <script lang="ts" setup>
-import { first, get, truncate } from 'lodash-es';
+import { first, get } from 'lodash-es';
 import type {
   Repository,
   RepositoryFileMeta,
@@ -149,7 +151,7 @@ import { useTimeAgo } from '@vueuse/core';
 import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
-const { $schemaService, $storageService } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp() as any;
 const store = useRepositoryStore();
 
 const props = defineProps<{
@@ -224,7 +226,7 @@ const detectSchemaTruncation = () => {
   isSchemaNameTruncated.value = clientWidth < scrollWidth;
 };
 
-const { width: innerWidth, lgAndUp } = useDisplay();
+const { width: innerWidth } = useDisplay();
 watch(() => innerWidth.value, detectSchemaTruncation);
 
 onMounted(() => nextTick(detectSchemaTruncation));
@@ -345,6 +347,18 @@ onMounted(() => nextTick(detectSchemaTruncation));
 }
 
 .card-body {
+  // Width-aware truncation: clamp to two lines instead of a character cap.
+  .v-card-title {
+    max-width: 60%;
+    line-height: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    white-space: normal;
+  }
+
   .schema-name {
     font-size: 0.75rem;
     font-weight: 600;
