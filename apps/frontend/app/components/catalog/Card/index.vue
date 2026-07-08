@@ -20,7 +20,7 @@
       <div class="card-blur card-blur--3" />
     </div>
     <div class="card-body">
-      <div class="card-header d-flex align-center ma-3 mb-1">
+      <div class="card-header d-flex align-center ma-3 ml-4 mb-1">
         <div
           :aria-checked="isSelected"
           :class="{ 'is-selected': isSelected }"
@@ -376,7 +376,6 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .repository-card.selected {
   outline: 2px solid rgb(var(--v-theme-primary));
-  outline-offset: -2px;
 }
 
 // Left slot cross-fades the published-status dot into the select checkbox on
