@@ -5,10 +5,20 @@
     :class="{ selected: isSelected }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    elevation="0"
-    color="surface-container-low"
+    color="surface-raised"
+    elevation="2"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
+    <!-- Poster artwork: sharp on the right, dissolving into the card surface on
+         the left via a theme-aware scrim + horizontal progressive blur -->
+    <div v-if="thumbnailUrl" aria-hidden="true" class="card-bg">
+      <img :src="thumbnailUrl" alt="" class="card-underlay" loading="lazy" />
+      <img :src="thumbnailUrl" alt="" class="card-cover" loading="lazy" />
+      <div class="card-scrim" />
+      <div class="card-blur card-blur--1" />
+      <div class="card-blur card-blur--2" />
+      <div class="card-blur card-blur--3" />
+    </div>
     <div class="card-body">
       <div class="card-header d-flex align-center mt-4 mx-4 mb-1">
         <div
@@ -39,47 +49,48 @@
         >
           {{ schemaName }}
         </div>
-        <VBadge
-          v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
-          :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
-          :color="hasUnpublishedChanges ? 'warning' : 'success'"
-          class="mr-2"
-          dot
-          inline
-        />
-        <VMenu v-if="repository?.hasAdminAccess" location="bottom end" offset="4">
-          <template #activator="{ props: menuProps }">
-            <VBtn
-              v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
-              v-bind="menuProps"
-              aria-label="Repository actions"
-              class="repo-info text-medium-emphasis"
-              density="comfortable"
-              icon="mdi-dots-vertical"
-              size="small"
-              variant="text"
-              @click.stop
-            />
-          </template>
-          <VList density="compact" min-width="200" nav>
-            <VListItem
-              v-for="action in actions"
-              :key="action.name"
-              :base-color="action.color"
-              :prepend-icon="`mdi-${action.icon}`"
-              :title="action.label"
-              rounded="lg"
-              @click.stop="onAction(action.name)"
-            />
-          </VList>
-        </VMenu>
+        <div class="glass glass-pill d-flex align-center pl-2 ga-1">
+          <VBadge
+            v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
+            :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
+            :color="hasUnpublishedChanges ? 'warning' : 'success'"
+            dot
+            inline
+          />
+          <VMenu v-if="repository?.hasAdminAccess" location="bottom end" offset="4">
+            <template #activator="{ props: menuProps }">
+              <VBtn
+                v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
+                v-bind="menuProps"
+                aria-label="Repository actions"
+                class="repo-info text-medium-emphasis"
+                density="comfortable"
+                icon="mdi-dots-vertical"
+                size="small"
+                variant="text"
+                @click.stop
+              />
+            </template>
+            <VList density="compact" min-width="200" nav>
+              <VListItem
+                v-for="action in actions"
+                :key="action.name"
+                :base-color="action.color"
+                :prepend-icon="`mdi-${action.icon}`"
+                :title="action.label"
+                rounded="lg"
+                @click.stop="onAction(action.name)"
+              />
+            </VList>
+          </VMenu>
+        </div>
       </div>
-      <VCardTitle class="pt-0 text-break">
+      <VCardTitle class="pt-0 text-break font-weight-medium">
         {{ truncate(repository.name, { length: lgAndUp ? 60 : 40 }) }}
       </VCardTitle>
       <div class="d-flex justify-start px-4">
         <UserAvatar :img-url="lastActivity.user.imgUrl" :size="38" />
-        <div class="ml-3 overflow-hidden">
+        <div class="ml-3 overflow-hidden ">
           <div class="text-body-small">Edited {{ lastActivityTimeago }} by</div>
           <div class="text-body-medium text-truncate">
             {{ lastActivity.user.label }}
@@ -88,19 +99,20 @@
       </div>
     </div>
     <VSpacer />
-    <VCardActions class="pb-2 px-2 align-start">
+    <VCardActions class="pb-2 px-2 align-center">
       <VBtn
         v-tooltip:bottom="{
           text: `${isPinned ? 'Unpin' : 'Pin'} ${schemaName}`,
           openDelay: 400,
         }"
-        :color="isPinned ? 'tertiary' : ''"
+        :class="['glass-btn', { 'glass-btn--active': isPinned }]"
         :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
-        class="text-medium-emphasis"
+        variant="text"
         aria-label="Pin repository"
+        size="small"
         @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
       />
-      <Tags :repository="repository" />
+      <Tags :repository="repository" class="glass-tags" />
     </VCardActions>
   </VCard>
 </template>
@@ -116,7 +128,7 @@ import { useTimeAgo } from '@vueuse/core';
 import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
 
-const { $schemaService } = useNuxtApp() as any;
+const { $schemaService, $storageService } = useNuxtApp() as any;
 const store = useRepositoryStore();
 
 const props = defineProps<{
@@ -164,6 +176,28 @@ const schemaName = computed(
   () => $schemaService.getSchema(props.repository.schema).name,
 );
 
+const posterImage = computed(
+  () =>
+    get(props.repository, 'data.posterImage') as
+      | { key: string; name: string }
+      | undefined,
+);
+const thumbnailUrl = ref('');
+watch(
+  posterImage,
+  async (poster) => {
+    const key = poster?.key?.replace(/^storage:\/\//, '');
+    if (!key) return (thumbnailUrl.value = '');
+    if (/^https?:\/\//.test(key)) return (thumbnailUrl.value = key);
+    try {
+      thumbnailUrl.value = await $storageService.getUrl(props.repository.id, key);
+    } catch {
+      thumbnailUrl.value = '';
+    }
+  },
+  { immediate: true },
+);
+
 const lastActivity = computed(
   () => first(props.repository.revisions) as Revision,
 ) as ComputedRef<Revision>;
@@ -192,8 +226,12 @@ onMounted(() => nextTick(detectSchemaTruncation));
 </script>
 
 <style lang="scss" scoped>
+@use '@tailor-cms/core-components/src/mixins';
+
 .repository-card {
+  position: relative;
   height: 12.75rem;
+  overflow: hidden;
   transition:
     border-color 0.2s ease,
     transform 0.2s ease,
@@ -203,6 +241,98 @@ onMounted(() => nextTick(detectSchemaTruncation));
   &:hover {
     transform: translateY(-2px);
   }
+
+  // Keep foreground content above the poster artwork.
+  .card-body,
+  :deep(.v-card-actions) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+// Full-width, heavily blurred copy of the poster. Fills the area left of the
+// sharp cover with matching colors so the scrim fades image-into-image
+// instead of image-into-empty-surface. Scaled up so the blur doesn't leave
+// translucent edges.
+.card-underlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-cover {
+  position: absolute;
+  inset: 0;
+  left: 25%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+// Fade the artwork into the card surface from the left. Theme-aware, so it
+// reads dark in dark mode and light in light mode. The stops follow an
+// ease curve — a plain linear fade leaves visible banding at each stop.
+.card-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgb(var(--v-theme-surface-raised)) 0%,
+    rgba(var(--v-theme-surface-raised), 0.97) 18%,
+    rgba(var(--v-theme-surface-raised), 0.89) 30.6%,
+    rgba(var(--v-theme-surface-raised), 0.76) 42.3%,
+    rgba(var(--v-theme-surface-raised), 0.58) 54%,
+    rgba(var(--v-theme-surface-raised), 0.38) 64.8%,
+    rgba(var(--v-theme-surface-raised), 0.2) 74.7%,
+    rgba(var(--v-theme-surface-raised), 0.07) 82.8%,
+    transparent 90%
+  );
+}
+
+// Progressive blur: three masked backdrop layers ramping 3 -> 9 -> 20px,
+// each revealed further left so the blur intensifies toward the left edge.
+.card-blur {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.card-blur--1 { @include mixins.blur-band(3px, 42%, 68%); }
+.card-blur--2 { @include mixins.blur-band(9px, 28%, 52%); }
+.card-blur--3 { @include mixins.blur-band(20px, 12%, 34%); }
+
+.glass {
+  @include mixins.glass;
+}
+
+.glass-pill {
+  border-radius: 999px;
+}
+
+// Pin button
+.glass-btn {
+  @include mixins.glass;
+
+  &--active {
+    color: rgb(var(--v-theme-tertiary));
+    background: rgba(var(--v-theme-tertiary), 0.15);
+    border-color: rgba(var(--v-theme-tertiary), 0.3);
+  }
+}
+
+// Tag chips + add-tag button rendered by the Tags child component
+.glass-tags :deep(.v-chip),
+.glass-tags :deep(.v-btn) {
+  @include mixins.glass;
 }
 
 .card-body {
