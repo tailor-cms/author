@@ -37,7 +37,7 @@ export function useAssetThumbnail(asset: MaybeRefOrGetter<Asset>) {
   return { src, onError };
 }
 
-function thumbnailCandidates(asset: Asset): string[] {
+function thumbnailCandidates(asset: AssetThumbnailSource): string[] {
   const fallback = fallbackImage(asset);
   // Images always have a generatable thumbnail; links only when a preview
   // exists to build one from.
@@ -48,20 +48,20 @@ function thumbnailCandidates(asset: Asset): string[] {
 
 // The image to show without a generated thumbnail: an uploaded image's own
 // file, or a link's external preview. null when the asset has neither.
-function fallbackImage(asset: Asset): string | null {
+function fallbackImage(asset: AssetThumbnailSource): string | null {
   if (asset.type === AssetType.Image) return asset.publicUrl ?? null;
   return linkPreview(asset);
 }
 
 // External preview for a link asset.
-function linkPreview(asset: Asset): string | null {
+function linkPreview(asset: AssetThumbnailSource): string | null {
   if (asset.type !== AssetType.Link) return null;
   return getLinkPreviewUrl(asset.meta);
 }
 
 // A URL for an <img> src, not an $api fetch: the browser loads it directly and
 // the server builds the thumbnail on first hit, then redirects to it.
-function thumbnailRoute(asset: Asset) {
+function thumbnailRoute(asset: AssetThumbnailSource) {
   return repositoryAsset.getThumbnailUrl(asset.repositoryId, asset.id);
 }
 

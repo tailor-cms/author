@@ -1,12 +1,12 @@
-import mime from 'mime-types';
+import type { Asset } from './models/asset.model.js';
 
+import { AssetType } from '@tailor-cms/interfaces/asset';
 import { createLogger } from '#logger';
 import { getLinkPreviewUrl } from '@tailor-cms/common/asset';
-
-import { AssetType, type Asset } from './models/asset.model.js';
 import { buildThumbnailKey } from './utils/storage-key.ts';
 import { downloadFile } from './utils/download.ts';
 import { generateThumbnail } from './utils/image.ts';
+import mime from 'mime-types';
 import Storage from '../repository/storage.ts';
 
 const logger = createLogger('asset:thumbnail');
@@ -84,13 +84,11 @@ async function generateAndCacheThumbnail(
 }
 
 /**
- * Resolves the URL of an asset's thumbnail, lazily generating and
- * caching it on first request. Once made, `meta.hasThumbnail` lets the listing
- * hand out the URL directly (see Asset.resolvePublicUrls) so most views never
- * reach the cold path.
+ * Resolves the URL of an asset's thumbnail.
  */
 export async function resolveThumbnailUrl(
   asset: Asset,
+  { generate = true }: { generate?: boolean } = {},
 ): Promise<string | null> {
   // SVG is already scalable - nothing to shrink.
   if (isSvg(asset)) return originalImageUrl(asset);
@@ -100,7 +98,9 @@ export async function resolveThumbnailUrl(
   if (!sourceLoader) return null;
 
   const thumbnailKey = buildThumbnailKey(asset.repositoryId, asset.uid);
-  // Warm path: generated on a prior request - hand out the cached WebP.
+  if (asset.meta.hasThumbnail) return Storage.getFileUrl(thumbnailKey);
+  if (!generate) return null;
+  // Warm path; generated
   if (await Storage.fileExists(thumbnailKey)) {
     return Storage.getFileUrl(thumbnailKey);
   }

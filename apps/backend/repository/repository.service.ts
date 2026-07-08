@@ -21,11 +21,13 @@ import { createLogger } from '#logger';
 import publishingService from '#shared/publishing/publishing.service.js';
 import db from '#shared/database/index.js';
 import { stripServerManaged } from './lib/data-attr.ts';
+import { resolveByStorageKey } from '../asset/asset.service.ts';
 import { removeInvalidReferences } from '#shared/util/modelReference.js';
 import { subQuery } from '#shared/database/helpers.js';
 import TransferService from '#shared/transfer/transfer.service.js';
 import UserGroup from '#app/user-group/models/user-group.model.js';
 import type { Repository } from './models/repository.model.js';
+import type { ResolvedStorageKey } from '../asset/types.ts';
 import type { User } from '../user/models/user.model.js';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
@@ -148,11 +150,41 @@ export async function list(
     group: ['repositoryId', 'user.id'],
   });
   const revisionsByRepository = groupBy(revisions, 'repositoryId');
-  const items: RepositoryListItem[] = repositories.map((repository: any) => ({
-    ...repository.toJSON(),
-    revisions: revisionsByRepository[repository.id],
-  }));
+  const fileMetaUrls = await resolveFileMetaUrls(repositories);
+  const items: RepositoryListItem[] = repositories.map((repository: any) => {
+    const item = repository.toJSON();
+    fileMetaUrls.get(repository.id)?.forEach((resolved, metaKey) => {
+      if (item.data?.[metaKey]) {
+        item.data[metaKey] = { ...item.data[metaKey], ...resolved };
+      }
+    });
+    return { ...item, revisions: revisionsByRepository[repository.id] };
+  });
   return { total: count, items };
+}
+
+/**
+ * Resolves signed URLs (original file + cached thumbnail) for every
+ * FILE-type meta value across the given repositories.
+ */
+async function resolveFileMetaUrls(repositories: any[]) {
+  const inputs = repositories.flatMap((repo) =>
+    repo
+      .getFileMetaInputs()
+      .map((input: any) => ({ repoId: repo.id, ...input })),
+  );
+  const byRepo = new Map<number, Map<string, ResolvedStorageKey>>();
+  if (!inputs.length) return byRepo;
+  const urlsByKey = await resolveByStorageKey(
+    inputs.map((input) => input.storageKey),
+  );
+  inputs.forEach(({ repoId, metaKey, storageKey }) => {
+    const resolved = urlsByKey.get(storageKey);
+    if (!resolved) return;
+    if (!byRepo.has(repoId)) byRepo.set(repoId, new Map());
+    byRepo.get(repoId)!.set(metaKey, resolved);
+  });
+  return byRepo;
 }
 
 // Creates a repository seeded with schema-default meta + a sampled label

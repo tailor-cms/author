@@ -54,6 +54,22 @@ export interface RepositoryData {
   [key: string]: unknown;
 }
 
+// A FILE-type meta value on a Repository. Stored as { key, name }; repository
+// listings enrich it with signed URLs (derived on read, never persisted) so
+// the catalog can render a cover image without a round-trip per card.
+export interface RepositoryFileMeta {
+  // Storage key of the uploaded file.
+  key: string;
+  // Original file name.
+  name: string;
+  // Signed URL of the original file (present on list payloads).
+  url?: string | null;
+  // Signed URL of the cached thumbnail, if one has been generated.
+  thumbnailUrl?: string | null;
+  // Backing library asset id (lets the client reach the /thumbnail route).
+  assetId?: number;
+}
+
 // Join row connecting a Repository to a Tag (many-to-many through table).
 export interface RepositoryTag {
   // Repository side of the join
