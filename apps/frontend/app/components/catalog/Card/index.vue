@@ -58,14 +58,11 @@
         >
           {{ schemaName }}
         </div>
-        <div
-          v-if="repository?.hasAdminAccess"
-          class="glass glass-pill d-flex align-center"
-        >
+        <div v-if="repository?.hasAdminAccess" class="d-flex align-center ga-1">
           <VBtn
             v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
             aria-label="Repository settings"
-            class="repo-info"
+            class="repo-info glass-btn"
             density="comfortable"
             icon="mdi-cog"
             size="small"
@@ -81,7 +78,7 @@
                 v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
                 v-bind="menuProps"
                 aria-label="Repository actions"
-                class="repo-info"
+                class="repo-info glass-btn"
                 density="comfortable"
                 icon="mdi-dots-vertical"
                 size="small"
@@ -321,23 +318,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
 .card-blur--2 { @include mixins.blur-band(9px, 28%, 52%); }
 .card-blur--3 { @include mixins.blur-band(20px, 12%, 34%); }
 
-.glass {
-  @include mixins.glass;
-}
-
-.glass-pill {
-  border-radius: 999px;
-}
-
-// Pin button
+// Icon buttons layered over the poster (settings cog, actions menu)
 .glass-btn {
   @include mixins.glass;
-
-  &--active {
-    color: rgb(var(--v-theme-tertiary));
-    background: rgba(var(--v-theme-tertiary), 0.15);
-    border-color: rgba(var(--v-theme-tertiary), 0.3);
-  }
 }
 
 // Tag chips + add-tag button rendered by the Tags child component
