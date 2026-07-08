@@ -63,7 +63,7 @@ export interface RepositoryFileMeta {
   // Original file name.
   name: string;
   // Signed URL of the original file (present on list payloads).
-  url?: string | null;
+  publicUrl?: string | null;
   // Signed URL of the cached thumbnail, if one has been generated.
   thumbnailUrl?: string | null;
   // Backing library asset id (lets the client reach the /thumbnail route).

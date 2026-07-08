@@ -1,6 +1,16 @@
-import { type Asset, AssetType } from '@tailor-cms/interfaces/asset';
+import { AssetType } from '@tailor-cms/interfaces/asset';
 import { getLinkPreviewUrl } from '@tailor-cms/common/asset';
 import repositoryAsset from '@/api/repositoryAsset';
+
+// The minimal asset shape this composable needs.
+interface AssetThumbnailSource {
+  id: number;
+  repositoryId: number;
+  type: AssetType;
+  publicUrl?: string | null;
+  thumbnailUrl?: string | null;
+  meta?: any;
+}
 
 /**
  * Reactive `<img>` source for an asset grid/list tile, with graceful
@@ -22,8 +32,13 @@ import repositoryAsset from '@/api/repositoryAsset';
  * caches the WebP and 302-redirects, and the tile renders it. On the next
  * visit the list carries `thumbnailUrl`, so the tile loads the WebP directly.
  */
-export function useAssetThumbnail(asset: MaybeRefOrGetter<Asset>) {
-  const candidates = computed(() => thumbnailCandidates(toValue(asset)));
+export function useAssetThumbnail(
+  asset: MaybeRefOrGetter<AssetThumbnailSource | null | undefined>,
+) {
+  const candidates = computed(() => {
+    const value = toValue(asset);
+    return value ? thumbnailCandidates(value) : [];
+  });
   const failed = ref(new Set<string>());
   const src = computed(
     () => candidates.value.find((url) => !failed.value.has(url)) ?? null,
