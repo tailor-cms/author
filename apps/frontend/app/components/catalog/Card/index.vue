@@ -65,7 +65,7 @@
           <VBtn
             v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
             aria-label="Repository settings"
-            class="repo-info text-medium-emphasis"
+            class="repo-info"
             density="comfortable"
             icon="mdi-cog"
             size="small"
@@ -81,7 +81,7 @@
                 v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
                 v-bind="menuProps"
                 aria-label="Repository actions"
-                class="repo-info text-medium-emphasis"
+                class="repo-info"
                 density="comfortable"
                 icon="mdi-dots-vertical"
                 size="small"
