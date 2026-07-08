@@ -25,7 +25,7 @@
           :aria-checked="isSelected"
           :class="{ 'is-selected': isSelected }"
           aria-label="Select repository"
-          class="select-checkbox d-flex align-center"
+          class="select-checkbox d-flex align-center justify-center"
           role="checkbox"
           tabindex="0"
           @click.stop="$emit('toggle-selection', repository.id)"
@@ -33,8 +33,17 @@
           @keydown.space.prevent="$emit('toggle-selection', repository.id)"
         >
           <VIcon
+            v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
+            :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
+            :color="hasUnpublishedChanges ? 'warning' : 'success'"
+            class="status-dot"
+            icon="mdi-circle"
+            size="14"
+          />
+          <VIcon
             :color="isSelected ? 'primary' : undefined"
             :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
+            class="checkbox"
             size="24"
           />
         </div>
@@ -49,15 +58,24 @@
         >
           {{ schemaName }}
         </div>
-        <div class="glass glass-pill d-flex align-center pl-2 ga-1">
-          <VBadge
-            v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
-            :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
-            :color="hasUnpublishedChanges ? 'warning' : 'success'"
-            dot
-            inline
+        <div
+          v-if="repository?.hasAdminAccess"
+          class="glass glass-pill d-flex align-center"
+        >
+          <VBtn
+            v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
+            aria-label="Repository settings"
+            class="repo-info text-medium-emphasis"
+            density="comfortable"
+            icon="mdi-cog"
+            size="small"
+            variant="text"
+            @click.stop="navigateTo({
+              name: 'repository-settings-general',
+              params: { id: repository.id },
+            })"
           />
-          <VMenu v-if="repository?.hasAdminAccess" location="bottom end" offset="4">
+          <VMenu location="bottom end" offset="4">
             <template #activator="{ props: menuProps }">
               <VBtn
                 v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
@@ -154,7 +172,6 @@ interface CardAction {
 }
 
 const actions = computed<CardAction[]>(() => [
-  { name: 'settings', label: 'Settings', icon: 'cog-outline' },
   { name: 'clone', label: 'Clone', icon: 'content-copy' },
   { name: 'publish', label: 'Publish', icon: 'cloud-upload-outline' },
   { name: 'export', label: 'Export', icon: 'archive-arrow-down-outline' },
@@ -344,32 +361,51 @@ onMounted(() => nextTick(detectSchemaTruncation));
   outline-offset: -2px;
 }
 
+// Left slot cross-fades the published-status dot into the select checkbox on
+// hover/selection (same footprint, no layout shift) — mirrors the asset list.
 .select-checkbox {
-  max-width: 0;
-  opacity: 0;
-  overflow: hidden;
+  position: relative;
+  flex: none;
+  margin-left: -0.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-right: 0.25rem;
   cursor: pointer;
   border-radius: 4px;
-  transition:
-    max-width 0.3s ease,
-    opacity 0.3s ease,
-    margin-right 0.3s ease;
 
   &:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
     outline-offset: 2px;
+  }
+
+  .status-dot,
+  .checkbox {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    transition:
+      opacity 0.28s ease-in-out,
+      transform 0.28s ease-in-out;
+  }
+
+  .checkbox {
+    opacity: 0;
+    transform: scale(0.7);
+    pointer-events: none;
   }
 }
 
 .repository-card:hover .select-checkbox,
 .select-checkbox:focus-visible,
 .select-checkbox.is-selected {
-  max-width: 1.75rem;
-  opacity: 1;
-  margin-right: 0.5rem;
-}
+  .checkbox {
+    opacity: 1;
+    transform: scale(1);
+  }
 
-.repository-card:hover .select-checkbox {
-  transition-delay: 150ms;
+  .status-dot {
+    opacity: 0;
+    transform: scale(0.7);
+  }
 }
 </style>
