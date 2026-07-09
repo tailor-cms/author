@@ -5,7 +5,7 @@
     :class="{ 'selected': isSelected, 'has-artwork': !!thumbnailUrl }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    color="surface-raised"
+    color="surface-container"
     elevation="2"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
@@ -20,7 +20,7 @@
       <div class="card-blur card-blur--3" />
     </div>
     <div class="card-body">
-      <div class="card-header d-flex align-center ma-3 ml-4 mb-1">
+      <div class="card-header d-flex align-center ma-3 ml-4 mb-2">
         <div
           :aria-checked="isSelected"
           :class="{ 'is-selected': isSelected }"
@@ -100,7 +100,7 @@
           </VMenu>
         </div>
       </div>
-      <VCardTitle class="pt-0 text-break font-weight-medium">
+      <VCardTitle class="text-break font-weight-medium mb-2 py-0">
         {{ repository.name }}
       </VCardTitle>
       <div class="d-flex justify-start align-center px-4 py-2">
@@ -234,7 +234,7 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .repository-card {
   position: relative;
-  height: 12.75rem;
+  height: 13.5rem;
   overflow: hidden;
   transition:
     border-color 0.2s ease,
@@ -329,10 +329,14 @@ onMounted(() => nextTick(detectSchemaTruncation));
   @include mixins.glass;
 }
 
+.glass-tags :deep(.v-chip .v-chip__underlay) {
+  border-radius: 0;
+}
+
 .card-body {
   // Width-aware truncation: clamp to two lines instead of a character cap.
   .v-card-title {
-    max-width: 60%;
+    max-width: 65%;
     line-height: 1;
     display: -webkit-box;
     -webkit-box-orient: vertical;
