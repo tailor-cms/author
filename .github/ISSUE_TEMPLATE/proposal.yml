@@ -1,0 +1,99 @@
+name: Proposal (feature / enhancement / task)
+description: Propose new capability, an improvement, or a unit of work.
+title: "[Proposal]: "
+labels: ["triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the proposal. **Search existing issues first** to avoid
+        duplicates, and keep it to one item per issue. For defects, use the
+        Bug report template instead.
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      description: What kind of work is this?
+      options:
+        - Feature (new capability)
+        - Enhancement (improve something that exists)
+        - Task (chore / refactor / config)
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One or two sentences describing the proposal.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Authoring / editor
+        - Content elements
+        - Content containers
+        - Repository / structure
+        - Media / assets
+        - Content linking
+        - Collections
+        - Publishing
+        - AI features
+        - Admin / access / auth
+        - Backend / API
+        - Extensions (ce/cc/mi/pl)
+        - Infra / CI
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: schema
+    attributes:
+      label: Schema / container involved
+      description: Which repository schema or content container, if relevant.
+      placeholder: "e.g. Course schema, Structured Content container"
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / problem
+      description: What problem does this solve, or what is the value? Who is
+        affected and when?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution / behavior
+      description: What should happen. Sketch the UX or approach; link code
+        paths if you have them.
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: How it works today, if this changes existing behavior.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: How we know it is done. Bullet the checks / cases.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives / additional context
+      description: Other approaches considered, mockups, links, prior art.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submit checklist
+      options:
+        - label: I searched existing issues for duplicates
+          required: true
+        - label: This is one item (not several bundled together)
