@@ -1,8 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import ApiClient from '../../../api/ApiClient.ts';
 import { AppBar } from '../../../pom/common/AppBar.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 import { createCleanRepository, toEmptyRepository } from '../../../helpers/seed.ts';
+
+const repositoryApi = new ApiClient('/api/repositories/');
 
 const uniqueName = (label: string) =>
   `${label} ${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -47,6 +50,17 @@ test('lists a previously visited repository as recent', async ({ page }) => {
   const recentItem = appBar.repositoryItem(recentName);
   await expect(recentItem).toBeVisible();
   await expect(recentItem.locator('.mdi-history')).toBeVisible();
+});
+
+test('drops a deleted repository from recents', async ({ page }) => {
+  const deletedName = uniqueName('Switcher Deleted');
+  // Visited so it is recorded as recent, then deleted server-side.
+  const deleted = await toEmptyRepository(page, deletedName);
+  await toEmptyRepository(page, uniqueName('Switcher Current'));
+  await repositoryApi.remove(deleted.id);
+  const appBar = new AppBar(page);
+  await appBar.openRepositorySwitcher();
+  await expect(appBar.repositoryItem(deletedName)).toHaveCount(0);
 });
 
 test.afterAll(async () => {
