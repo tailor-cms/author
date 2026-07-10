@@ -234,7 +234,7 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .repository-card {
   position: relative;
-  height: 13.5rem;
+  height: 13rem;
   overflow: hidden;
   transition:
     border-color 0.2s ease,
