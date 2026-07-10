@@ -26,8 +26,7 @@ export class RepositoryCard {
 
   async addTag(tag: string) {
     await this.addTagBtn.click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    const nameInput = dialog.locator('input');
+    const nameInput = this.addTagDialog.locator('input');
     await nameInput.fill(tag);
     await nameInput.press('Enter');
     await this.page.waitForTimeout(200);
@@ -38,7 +37,6 @@ export class RepositoryCard {
     const tag = this.el.locator(tagSelector).filter({ hasText: tagName });
     await expect(tag).toBeVisible();
     await tag.getByLabel('Delete tag').click();
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByRole('button', { name: 'confirm' }).click();
+    await this.addTagDialog.getByRole('button', { name: 'confirm' }).click();
   }
 }
