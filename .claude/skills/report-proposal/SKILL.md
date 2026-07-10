@@ -45,8 +45,8 @@ themselves.
 4. **Draft the body.** Write markdown mirroring the form fields - `gh` does
    NOT render the `.yml` form in non-interactive mode, so bake the
    structure into the body. Title: `[Proposal]: <area> - <summary>`
-   (matching the form's prefix; the type lives in the Type field and
-   labels, not the title). Save it to a scratch file for `--body-file`.
+   (matching the form's prefix; the type lives in the org issue type,
+   not the title). Save it to a scratch file for `--body-file`.
    Include an **Implementation notes** section with the code paths found
    in step 2.
 
