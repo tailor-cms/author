@@ -7,9 +7,6 @@ import { createCleanRepository, toEmptyRepository } from '../../../helpers/seed.
 
 const repositoryApi = new ApiClient('/api/repositories/');
 
-const uniqueName = (label: string) =>
-  `${label} ${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
 });
@@ -17,7 +14,7 @@ test.beforeEach(async () => {
 test('pins the current repository at the top of the switcher', async ({
   page,
 }) => {
-  const name = uniqueName('Switcher Current');
+  const name = 'Current Repository';
   await toEmptyRepository(page, name);
   const appBar = new AppBar(page);
   await appBar.openRepositorySwitcher();
@@ -28,10 +25,10 @@ test('pins the current repository at the top of the switcher', async ({
 });
 
 test('searches for a repository and switches to it', async ({ page }) => {
-  const targetName = uniqueName('Switcher Target');
+  const targetName = 'Target Repository';
   // Created but never visited, so it surfaces only through search.
   const target = await createCleanRepository(targetName);
-  await toEmptyRepository(page, uniqueName('Switcher Current'));
+  await toEmptyRepository(page, 'Current Repository');
   const appBar = new AppBar(page);
   await appBar.openRepositorySwitcher();
   await expect(appBar.repositoryItem(targetName)).toHaveCount(0);
@@ -42,9 +39,9 @@ test('searches for a repository and switches to it', async ({ page }) => {
 });
 
 test('lists a previously visited repository as recent', async ({ page }) => {
-  const recentName = uniqueName('Switcher Recent');
+  const recentName = 'Recent Repository';
   await toEmptyRepository(page, recentName);
-  await toEmptyRepository(page, uniqueName('Switcher Current'));
+  await toEmptyRepository(page, 'Current Repository');
   const appBar = new AppBar(page);
   await appBar.openRepositorySwitcher();
   const recentItem = appBar.repositoryItem(recentName);
@@ -53,10 +50,10 @@ test('lists a previously visited repository as recent', async ({ page }) => {
 });
 
 test('drops a deleted repository from recents', async ({ page }) => {
-  const deletedName = uniqueName('Switcher Deleted');
+  const deletedName = 'Deleted Repository';
   // Visited so it is recorded as recent, then deleted server-side.
   const deleted = await toEmptyRepository(page, deletedName);
-  await toEmptyRepository(page, uniqueName('Switcher Current'));
+  await toEmptyRepository(page, 'Current Repository');
   await repositoryApi.remove(deleted.id);
   const appBar = new AppBar(page);
   await appBar.openRepositorySwitcher();
