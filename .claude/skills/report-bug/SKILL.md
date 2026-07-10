@@ -16,7 +16,11 @@ themselves.
 
 ## Steps
 
-1. **Collect the facts** (ask for anything missing):
+1. **Verify it's a defect.** Check the code: if nothing is broken (works
+   as designed, missing affordance, "should allow X") it's a proposal,
+   not a bug - switch to `/report-proposal` and draft against
+   `proposal.yml` instead. Then collect the facts (ask for anything
+   missing):
    - Symptom in one line; deterministic **steps to reproduce** (with test
      data / URLs); **expected** vs **actual**.
    - **Affected area** (editor, content elements/containers, repository,
