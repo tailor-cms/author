@@ -51,12 +51,14 @@ themselves.
    in step 2.
 
 5. **Hand off - do not file.** Give the user the exact command to run
-   themselves, and suggest labels:
+   themselves:
    `gh issue create --title "[Proposal]: ..." --body-file <path>
-   --label "triage"` plus a type label matching step 1 (`enhancement`,
-   `task`, `documentation`) and `area:*` suggestions. Offer the
-   copy-paste markdown too (no hard-wrapped lines) for filing via the
-   web form.
+   --label "triage" --type <Type>` where `<Type>` is the step-1
+   classification - the org issue types map 1:1
+   (`Feature|Enhancement|Task|Documentation`). The issue type is the
+   canonical classification; labels only carry triage state and
+   `area:*` suggestions (the proposal form deliberately sets no
+   auto-type - the skill supplies it).
 
 6. **Offer** to implement it directly if the change is small (e.g. a
    config tweak) - sometimes the diff is faster than the issue.

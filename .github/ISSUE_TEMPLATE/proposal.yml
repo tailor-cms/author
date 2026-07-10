@@ -9,18 +9,6 @@ body:
         Thanks for the proposal. **Search existing issues first** to avoid
         duplicates, and keep it to one item per issue. For defects, use the
         Bug report template instead.
-  - type: dropdown
-    id: type
-    attributes:
-      label: Type
-      description: What kind of work is this?
-      options:
-        - Feature (new capability)
-        - Enhancement (improve something that exists)
-        - Task (chore / refactor / config)
-        - Documentation
-    validations:
-      required: true
   - type: textarea
     id: summary
     attributes:
