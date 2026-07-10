@@ -6,6 +6,7 @@ export class RepositoryCard {
   readonly el: Locator;
   readonly addTagBtn: Locator;
   readonly pinBtn: Locator;
+  readonly addTagDialog: Locator;
   readonly tagInput: Locator;
   readonly tagErrorMessage: Locator;
 
@@ -14,9 +15,9 @@ export class RepositoryCard {
     this.el = el;
     this.addTagBtn = el.getByLabel('Add tag');
     this.pinBtn = el.getByLabel('Pin repository');
-    const dialog = page.locator('div[role="dialog"]');
-    this.tagInput = dialog.locator('input');
-    this.tagErrorMessage = dialog.getByRole('alert');
+    this.addTagDialog = page.getByTestId('tailorDialog');
+    this.tagInput = this.addTagDialog.locator('input');
+    this.tagErrorMessage = this.addTagDialog.getByRole('alert');
   }
 
   togglePin() {
