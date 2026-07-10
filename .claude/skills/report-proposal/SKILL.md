@@ -47,6 +47,9 @@ themselves.
    structure into the body. Title: `[Proposal]: <area> - <summary>`
    (matching the form's prefix; the type lives in the org issue type,
    not the title). Save it to a scratch file for `--body-file`.
+   Do NOT hard-wrap lines (the repo's 80-col rule is for code): GitHub
+   renders newlines in issue bodies as line breaks, so keep each
+   paragraph/bullet on one source line.
    Include an **Implementation notes** section with the code paths found
    in step 2.
 

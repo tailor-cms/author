@@ -41,7 +41,9 @@ themselves.
 3. **Draft the body.** Write markdown mirroring the form fields - `gh` does
    NOT render the `.yml` form in non-interactive mode, so bake the
    structure into the body. Title: `[Bug]: <area> - <symptom>`. Save it to
-   a scratch file for `--body-file`.
+   a scratch file for `--body-file`. Do NOT hard-wrap lines (the repo's
+   80-col rule is for code): GitHub renders newlines in issue bodies as
+   line breaks, so keep each paragraph/bullet on one source line.
 
 4. **Hand off - do not file.** Give the user the exact command to run
    themselves, and suggest labels:
