@@ -9,18 +9,22 @@
       />
       <VAppBarTitle class="app-name" text="Tailor" />
     </NuxtLink>
-    <div v-if="!smAndDown" class="d-flex ga-1 ml-5">
-      <VBtn
-        v-for="{ name, to } in topLevelRoutes"
-        :key="name"
-        :to="to"
-        rounded="lg"
-      >
-        <span class="toolbar-route text-truncate">{{ name }}</span>
-      </VBtn>
+    <div v-if="!smAndDown && currentRepository" class="d-flex align-center ml-4">
+      <VDivider class="mx-2 align-self-center" length="24" opacity="0.2" vertical />
+      <RepositorySelector :repository="currentRepository" />
     </div>
     <template #append>
-      <RenoirLauncher />
+      <template v-if="!smAndDown">
+        <VBtn
+          v-for="{ name, to } in topLevelRoutes"
+          :key="name"
+          :to="to"
+          rounded="lg"
+        >
+          <span class="toolbar-route text-truncate">{{ name }}</span>
+        </VBtn>
+      </template>
+      <RenoirLauncher class="ml-2" />
       <VMenu
         :close-on-content-click="false"
         attach="#mainAppBar"
@@ -33,7 +37,7 @@
             v-bind="props"
             :img-url="user.imgUrl"
             aria-label="User menu"
-            class="mr-4"
+            class="mr-4 ml-3"
             tag="button"
           />
         </template>
@@ -82,6 +86,8 @@ import type { User } from '@tailor-cms/interfaces/user';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
+import { useCurrentRepository } from '@/stores/current-repository';
+import RepositorySelector from '@/components/common/RepositorySelector.vue';
 import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue';
 import RenoirLauncher from '@/components/common/AgentPanel/RenoirLauncher.vue';
 
@@ -92,6 +98,9 @@ const { smAndDown } = useDisplay();
 const { $oidc } = useNuxtApp() as any;
 const config = useConfigStore();
 const authStore = useAuthStore();
+const currentRepositoryStore = useCurrentRepository();
+
+const currentRepository = computed(() => currentRepositoryStore.repository);
 
 const topLevelRoutes = computed(() => {
   const items = [

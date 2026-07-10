@@ -1,9 +1,10 @@
 <template>
   <template v-if="showRenoir">
     <VBtn
+      v-bind="$attrs"
       :class="{ 'is-running': isAgentRunning }"
       :color="isPanelOpen ? 'tertiary' : undefined"
-      class="renoir-pill"
+      class="renoir-pill mr-3"
       height="40"
       rounded="pill"
       variant="tonal"
@@ -26,7 +27,7 @@
         variant="contained"
       />
     </VBtn>
-    <VDivider class="renoir-divider my-5 mx-3" opacity="0.2" vertical />
+    <VDivider class="align-self-center" length="24" opacity="0.2" vertical />
   </template>
 </template>
 
