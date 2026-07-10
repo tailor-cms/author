@@ -10736,6 +10736,20 @@
             }
           },
           {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to specific repository ids; visibility rules still apply, so ids the user cannot see are silently dropped.",
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          {
             "name": "userGroupId",
             "in": "query",
             "required": false,

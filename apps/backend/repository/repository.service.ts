@@ -113,7 +113,7 @@ export async function list(
   user: User,
   query: ListFilter,
 ): Promise<ListResult> {
-  const { search, name, userGroupId, compatibleWith } = query;
+  const { search, name, ids, userGroupId, compatibleWith } = query;
   let { schemas } = query;
   if (compatibleWith) {
     schemas = schemaApi.getCompatibleSchemaIds(compatibleWith);
@@ -128,8 +128,12 @@ export async function list(
   if (name) opts.where.name = name;
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
+  if (ids?.length) opts.where.id = { [Op.in]: ids };
   if (userGroupId) {
-    opts.where.id = { [Op.in]: selectGroupRepositories(userGroupId) };
+    const inGroup = { [Op.in]: selectGroupRepositories(userGroupId) };
+    opts.where.id = opts.where.id
+      ? { [Op.and]: [opts.where.id, inGroup] }
+      : inGroup;
   }
   if (!user.isAdmin()) {
     opts.where[Op.or] = [
