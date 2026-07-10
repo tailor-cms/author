@@ -2,7 +2,7 @@ import sharp from 'sharp';
 import { imageSize } from 'image-size';
 
 // Longest edge (px) of a generated thumbnail.
-const THUMBNAIL_SIZE = 600;
+const THUMBNAIL_SIZE = 750;
 
 export interface ImageDimensions {
   width: number;
