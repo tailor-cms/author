@@ -6,12 +6,17 @@ export class RepositoryCard {
   readonly el: Locator;
   readonly addTagBtn: Locator;
   readonly pinBtn: Locator;
+  readonly tagInput: Locator;
+  readonly tagErrorMessage: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
     this.el = el;
     this.addTagBtn = el.getByLabel('Add tag');
     this.pinBtn = el.getByLabel('Pin repository');
+    const dialog = page.locator('div[role="dialog"]');
+    this.tagInput = dialog.locator('input');
+    this.tagErrorMessage = dialog.getByRole('alert');
   }
 
   togglePin() {
