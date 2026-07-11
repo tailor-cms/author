@@ -98,13 +98,13 @@ const submit = handleSubmit(async () => {
   try {
     const { id } = target.value!;
     await repositoryStore.clone(id, nameInput.value, descriptionInput.value);
-    notify(`The ${repositoryTypeLabel.value.toLowerCase()} has been cloned`, {
+    notify(`The ${repositoryTypeLabel.value} has been cloned`, {
       immediate: true,
     });
     emit('cloned');
     close();
   } catch {
-    notify(`We couldn't clone the ${repositoryTypeLabel.value.toLowerCase()}`, {
+    notify(`We couldn't clone the ${repositoryTypeLabel.value}`, {
       color: 'error',
     });
   } finally {

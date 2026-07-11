@@ -1,4 +1,6 @@
 import type { Repository } from '@tailor-cms/interfaces/repository';
+
+import { schema as schemaApi } from '@tailor-cms/config';
 import Promise from 'bluebird';
 
 import { api } from '@/api';
@@ -14,6 +16,7 @@ const initialStatus = () => ({ progress: 0, message: '' });
  */
 export const useCatalogPublish = () => {
   const confirmationDialog = useConfirmationDialog();
+  const notify = useNotification();
 
   const status = ref(initialStatus());
   const isPublishing = computed(() => status.value.progress > 0);
@@ -33,14 +36,20 @@ export const useCatalogPublish = () => {
   };
 
   const publishRepository = (repository: Repository, onDone?: () => unknown) => {
+    const repositoryTypeName = schemaApi.getSchema(repository.schema).name;
     const message =
       `Are you sure you want to publish all content in ${repository.name}?`;
     confirmationDialog({
       title: 'Publish content',
       message,
       action: async () => {
-        await publish(repository.id);
-        await onDone?.();
+        try {
+          await publish(repository.id);
+          await onDone?.();
+          notify(`The ${repositoryTypeName} has been published`, { immediate: true });
+        } catch {
+          notify(`We couldn't publish the ${repositoryTypeName}`, { color: 'error' });
+        }
       },
     });
   };

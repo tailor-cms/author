@@ -1,6 +1,7 @@
+import type { StoreActivity } from '@/stores/activity';
+import { schema as schemaApi } from '@tailor-cms/config';
 import Promise from 'bluebird';
 
-import type { StoreActivity } from '@/stores/activity';
 import { api } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -12,6 +13,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
   const currentRepository = useCurrentRepository();
   const activityStore = useActivityStore();
   const confirmationDialog = useConfirmationDialog();
+  const notify = useNotification();
 
   const status = ref(initialStatus());
   const isPublishing = computed(() => status.value.progress > 0);
@@ -19,9 +21,12 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
   const getPublishMessage = (items: StoreActivity[]) => {
     const activityCount = items.length;
     const totalActivities = currentRepository.outlineActivities.length;
-    if (activityCount === 1) return prefix(`${items[0]?.data.name} activity?`);
-    if (activityCount === totalActivities) return prefix('all activities?');
-    return prefix(`${anchorActivity?.data.name} and all its descendants?`);
+    const activity = anchorActivity ?? items[0]!;
+    const label = schemaApi.getActivityLabel(activity) || 'item';
+    const target = `the ${label} "${activity.data.name}"`;
+    if (activityCount === 1) return prefix(`${target}?`);
+    if (activityCount === totalActivities) return prefix('all content?');
+    return prefix(`${target} and all its descendants?`);
   };
 
   const publish = (activities: StoreActivity[]) => {
@@ -34,22 +39,41 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
   };
 
   const confirmPublishing = (activities: StoreActivity[]) => {
-    confirmationDialog({
-      title: 'Publish content',
-      message: getPublishMessage(activities),
-      action: () => publish(activities.filter((it) => !it.detached)),
-    });
-  };
-
-  const publishRepository = (activities: StoreActivity[]) => {
+    const activity = anchorActivity ?? activities[0]!;
+    const label = schemaApi.getActivityLabel(activity) || 'Item';
     confirmationDialog({
       title: 'Publish content',
       message: getPublishMessage(activities),
       action: async () => {
-        await api.repository.publishMeta({
-          params: { repositoryId: currentRepository.repositoryId! },
-        });
-        await publish(activities.filter((it) => !it.detached));
+        try {
+          await publish(activities.filter((it) => !it.detached));
+          notify(`The ${label} has been published`, { immediate: true });
+        } catch {
+          notify(`We couldn't publish the ${label}`, { color: 'error' });
+        }
+      },
+    });
+  };
+
+  const publishRepository = (activities: StoreActivity[]) => {
+    const repositoryTypeName = currentRepository.schemaName || 'content';
+    confirmationDialog({
+      title: 'Publish content',
+      message: getPublishMessage(activities),
+      action: async () => {
+        try {
+          await api.repository.publishMeta({
+            params: { repositoryId: currentRepository.repositoryId! },
+          });
+          await publish(activities.filter((it) => !it.detached));
+          notify(`The ${repositoryTypeName} has been published`, {
+            immediate: true,
+          });
+        } catch {
+          notify(`We couldn't publish the ${repositoryTypeName}`, {
+            color: 'error',
+          });
+        }
       },
     });
   };

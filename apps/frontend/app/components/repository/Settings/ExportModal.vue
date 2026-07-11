@@ -61,7 +61,7 @@ const exportRepository = () => {
   const url = `/api/repositories/${props.repository.id}/export/${jobId.value}`;
   window.open(url, '_blank');
   const type = schemaApi.getSchema(props.repository.schema).name;
-  notify(`The ${type.toLowerCase()} has been exported`, { immediate: true });
+  notify(`The ${type} has been exported`, { immediate: true });
   close();
 };
 

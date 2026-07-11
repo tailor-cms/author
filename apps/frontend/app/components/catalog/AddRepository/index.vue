@@ -257,7 +257,7 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   const action = isCreate.value ? create : importRepository;
   try {
     await pMinDelay(action(formPayload), 2000);
-    const repositoryTypeLabel = (schema.value?.name ?? 'item').toLowerCase();
+    const repositoryTypeLabel = schema.value?.name ?? 'Item';
     notify(
       isCreate.value
         ? `A new ${repositoryTypeLabel} has been created`
