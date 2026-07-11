@@ -22,7 +22,7 @@ const embedElementConfig = [
   ContentElementType.Embed,
 ];
 
-class Author {
+class AuthorSchema {
   @Prop({ label: 'Full name' })
   @IsInput(MetaInputType.TextField, {
     isTitle: true,
@@ -44,7 +44,7 @@ class Author {
   avatar: string;
 }
 
-class Article {
+class ArticleSchema {
   @Prop({ label: 'Title' })
   @IsInput(MetaInputType.TextField, {
     isTitle: true,
@@ -103,7 +103,7 @@ class Article {
 }
 
 // A tag is just a name/title - no other content.
-class Tag {
+class TagSchema {
   @Prop({ label: 'Name' })
   @IsInput(MetaInputType.TextField, {
     validate: { required: true, min: 2, max: 60 },
@@ -113,7 +113,7 @@ class Tag {
 }
 
 // A category groups articles; like a tag it is just a name/title.
-class Category {
+class CategorySchema {
   @Prop({ label: 'Name' })
   @IsInput(MetaInputType.TextField, {
     validate: { required: true, min: 2, max: 60 },
@@ -122,31 +122,31 @@ class Category {
   name: string;
 }
 
-const Articles = new TailorEntity(Article, {
+const Article = new TailorEntity(ArticleSchema, {
   type: 'ARTICLE',
-  label: 'Articles',
+  label: 'Article',
   icon: 'mdi-newspaper-variant-outline',
   color: OUTLINE_COLOR.ACCENT_2,
   embedElementConfig,
 });
 
-const Authors = new TailorEntity(Author, {
+const Author = new TailorEntity(AuthorSchema, {
   type: 'AUTHOR',
-  label: 'Authors',
+  label: 'Author',
   icon: 'mdi-account-edit-outline',
   color: OUTLINE_COLOR.ACCENT_5,
 });
 
-const Tags = new TailorEntity(Tag, {
+const Tag = new TailorEntity(TagSchema, {
   type: 'TAG',
-  label: 'Tags',
+  label: 'Tag',
   icon: 'mdi-tag-outline',
   color: OUTLINE_COLOR.ACCENT_3,
 });
 
-const Categories = new TailorEntity(Category, {
+const Category = new TailorEntity(CategorySchema, {
   type: 'CATEGORY',
-  label: 'Categories',
+  label: 'Category',
   icon: 'mdi-shape-outline',
   color: OUTLINE_COLOR.ACCENT_1,
 });
@@ -154,5 +154,5 @@ const Categories = new TailorEntity(Category, {
 export const articleCollection = new TailorCollection({
   id: 'TEST_COLLECTION',
   name: 'Test Collection',
-  entities: [Articles, Authors, Tags, Categories],
+  entities: [Article, Author, Tag, Category],
 });
