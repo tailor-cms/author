@@ -7,6 +7,7 @@
         </div>
         <AssetsEmptyState
           v-else-if="isEmptyLibrary"
+          class="mt-4"
           @upload="uploadFiles"
           @link:add="showAddLinkDialog = true"
           @discover="showDiscoveryDialog = true"
