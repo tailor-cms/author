@@ -2,97 +2,109 @@
   <VLayout class="assets-page h-100">
     <VMain scrollable>
       <VContainer class="px-md-10 py-md-8" max-width="1400">
-        <Toolbar
-          v-model:search="searchQuery"
-          class="mb-4"
+        <div v-if="isInitialLoading" class="d-flex justify-center py-16">
+          <VProgressCircular indeterminate />
+        </div>
+        <AssetsEmptyState
+          v-else-if="isEmptyLibrary"
           @upload="uploadFiles"
           @link:add="showAddLinkDialog = true"
           @discover="showDiscoveryDialog = true"
           @folder:new="showNewFolderDialog = true"
         />
-        <CategoryFilter
-          v-model="selectedCategory"
-          :categories="categories"
-          class="mb-4"
-        />
-        <FolderBreadcrumbs
-          :breadcrumbs="breadcrumbs"
-          :current-path="currentPath"
-          @navigate="browseTo"
-          @navigate-up="browseUp"
-        />
-        <VRow
-          v-if="showSubfolders"
-          class="folder-container mb-4"
-          density="compact"
-        >
-          <VCol
-            v-for="folder in subfolders"
-            :key="folder.path"
-            cols="12"
-            lg="4"
-            sm="6"
+        <template v-else>
+          <Toolbar
+            v-model:search="searchQuery"
+            class="mb-4"
+            @upload="uploadFiles"
+            @link:add="showAddLinkDialog = true"
+            @discover="showDiscoveryDialog = true"
+            @folder:new="showNewFolderDialog = true"
+          />
+          <CategoryFilter
+            v-model="selectedCategory"
+            :categories="categories"
+            class="mb-4"
+          />
+          <FolderBreadcrumbs
+            v-if="currentPath"
+            :breadcrumbs="breadcrumbs"
+            @navigate="browseTo"
+            @navigate-up="browseUp"
+          />
+          <VRow
+            v-if="showSubfolders"
+            class="folder-container mb-4"
+            density="compact"
           >
-            <FolderRow
-              :folder="folder"
-              @open="browseTo"
-              @remove="removeLocalFolder"
-              @delete="onFolderDelete"
-            />
-          </VCol>
-        </VRow>
-        <template v-if="processedAssets.length">
-          <VSlideYTransition mode="out-in">
-            <BulkActionBar
-              v-if="selection.selected.size"
-              :selected="selection.selected"
-              :is-all-selected="isAllSelected"
-              :is-indexing="indexing.isIndexing.value"
-              :is-bulk-deleting="assetStore.isBulkRemoving"
-              @clear="selection.clear"
-              @index="indexSelected"
-              @move="openMove([...selection.selected.keys()])"
-              @delete="confirmDelete([...selection.selected.keys()])"
-              @toggle-all="
-                $event ? selection.selectAll() : selection.deselectAll()
-              "
-            />
-            <DisplayControls
-              v-else
-              v-model:items-per-page="assetStore.itemsPerPage"
-              v-model:view-mode="viewMode"
-              :sort-direction="sortDirection"
-              @toggle-sort="toggleSortDirection"
-            />
-          </VSlideYTransition>
+            <VCol
+              v-for="folder in subfolders"
+              :key="folder.path"
+              cols="12"
+              lg="4"
+              sm="6"
+            >
+              <FolderRow
+                :folder="folder"
+                @open="browseTo"
+                @remove="removeLocalFolder"
+                @delete="onFolderDelete"
+              />
+            </VCol>
+          </VRow>
+          <template v-if="processedAssets.length">
+            <VSlideYTransition mode="out-in">
+              <BulkActionBar
+                v-if="selection.selected.size"
+                :selected="selection.selected"
+                :is-all-selected="isAllSelected"
+                :is-indexing="indexing.isIndexing.value"
+                :is-bulk-deleting="assetStore.isBulkRemoving"
+                @clear="selection.clear"
+                @index="indexSelected"
+                @move="openMove([...selection.selected.keys()])"
+                @delete="confirmDelete([...selection.selected.keys()])"
+                @toggle-all="
+                  $event ? selection.selectAll() : selection.deselectAll()
+                "
+              />
+              <DisplayControls
+                v-else
+                v-model:items-per-page="assetStore.itemsPerPage"
+                v-model:view-mode="viewMode"
+                :sort-direction="sortDirection"
+                @toggle-sort="toggleSortDirection"
+              />
+            </VSlideYTransition>
+          </template>
+          <AssetList
+            :active-asset-id="activeAsset?.id ?? null"
+            :assets="processedAssets"
+            :is-fetching="assetStore.isFetching"
+            :folders-loaded="hasLoadedFolders"
+            :items-per-page="assetStore.itemsPerPage"
+            :page="assetStore.page"
+            :page-count="assetStore.pageCount"
+            :current-folder="currentPath"
+            :is-local-folder="isLocalFolder"
+            :search="searchQuery"
+            :selected="selection.selected"
+            :selected-category="selectedCategory"
+            :has-folders="showSubfolders"
+            :total="assetStore.total"
+            :view-mode="viewMode"
+            @delete="(asset: Asset) => confirmDelete([asset.id])"
+            @deindex="onDeindex"
+            @download="downloadAsset"
+            @folder:open="browseTo"
+            @folder:up="browseUp"
+            @index="(asset: Asset) => indexing.startIndexing([asset.id])"
+            @move="(asset: Asset) => openMove([asset.id])"
+            @preview="activeAsset = $event"
+            @select:toggle="selection.toggle"
+            @update:page="assetStore.page = $event"
+          />
         </template>
-        <AssetList
-          :active-asset-id="activeAsset?.id ?? null"
-          :assets="processedAssets"
-          :is-fetching="assetStore.isFetching"
-          :folders-loaded="hasLoadedFolders"
-          :items-per-page="assetStore.itemsPerPage"
-          :page="assetStore.page"
-          :page-count="assetStore.pageCount"
-          :current-folder="currentPath"
-          :is-local-folder="isLocalFolder"
-          :search="searchQuery"
-          :selected="selection.selected"
-          :selected-category="selectedCategory"
-          :has-folders="showSubfolders"
-          :total="assetStore.total"
-          :view-mode="viewMode"
-          @delete="(asset: Asset) => confirmDelete([asset.id])"
-          @deindex="onDeindex"
-          @download="downloadAsset"
-          @folder:open="browseTo"
-          @folder:up="browseUp"
-          @index="(asset: Asset) => indexing.startIndexing([asset.id])"
-          @move="(asset: Asset) => openMove([asset.id])"
-          @preview="activeAsset = $event"
-          @select:toggle="selection.toggle"
-          @update:page="assetStore.page = $event"
-        />
         <AddLinkDialog
           v-model="showAddLinkDialog"
           @add="(url: string) => assetStore.addLink(url).then(refetch)"
@@ -141,6 +153,7 @@ import { useUploadStore } from '@/stores/uploads';
 import AddLinkDialog from '@/components/repository/Assets/AddLinkDialog.vue';
 import AssetSidebar from '@/components/repository/Assets/AssetSidebar/index.vue';
 import AssetList from '@/components/repository/Assets/AssetList/index.vue';
+import AssetsEmptyState from '@/components/repository/Assets/AssetsEmptyState.vue';
 import BulkActionBar from '@/components/repository/Assets/BulkActionBar.vue';
 import CategoryFilter from '@/components/repository/Assets/CategoryFilter.vue';
 import DisplayControls from '@/components/repository/Assets/DisplayControls.vue';
@@ -220,6 +233,29 @@ const isQuerying = computed(
 // global file listing). Also gates the asset list's empty state.
 const showSubfolders = computed(
   () => !isQuerying.value && subfolders.value.length > 0,
+);
+
+// Gate the page's top-level layout on the first fetch settling, so we never
+// flash the toolbar + list spinner before resolving to the empty state.
+// Later navigations keep the toolbar; per-fetch loading is shown by the list.
+const hasFirstFetched = ref(false);
+const isInitialLoading = computed(
+  () => !hasFirstFetched.value || !hasLoadedFolders.value,
+);
+
+// True first-run state: nothing uploaded, no folders, at the library root, and
+// not searching/filtering. This is the only case that gets the action-card
+// empty state (with the toolbar hidden, since the cards offer the actions);
+// empty-folder and no-match states keep the contextual list empty state and
+// the toolbar.
+const isEmptyLibrary = computed(
+  () =>
+    hasLoadedFolders.value &&
+    !assetStore.isFetching &&
+    !processedAssets.value.length &&
+    !subfolders.value.length &&
+    !isQuerying.value &&
+    !currentPath.value,
 );
 
 const fetchParams = computed(() => {
@@ -439,6 +475,7 @@ watch(
 onMounted(async () => {
   refreshFolders();
   await assetStore.fetch(fetchParams.value);
+  hasFirstFetched.value = true;
   indexing.resumeIfActive(assetStore.assets);
 });
 
