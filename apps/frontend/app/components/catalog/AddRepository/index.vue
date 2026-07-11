@@ -161,17 +161,18 @@
 </template>
 
 <script lang="ts" setup>
-import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
-import { formDataBodySerializer } from '@tailor-cms/api-client';
 import { pick, startCase } from 'lodash-es';
-import pMinDelay from 'p-min-delay';
-import { SCHEMAS } from '@tailor-cms/config';
+import { formDataBodySerializer } from '@tailor-cms/api-client';
+import { schema as schemaApi } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
+import pMinDelay from 'p-min-delay';
 
 import { api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
+
+const notify = useNotification();
 
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
@@ -232,8 +233,8 @@ const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
 const [groupInput] = defineField('userGroupIds');
 
-const schema = computed<ActivityConfig>(
-  () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
+const schema = computed(() =>
+  schemaInput.value ? schemaApi.getSchema(schemaInput.value) : undefined,
 );
 
 const schemaMeta = computed(() =>
@@ -256,6 +257,13 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   const action = isCreate.value ? create : importRepository;
   try {
     await pMinDelay(action(formPayload), 2000);
+    const repositoryTypeLabel = (schema.value?.name ?? 'item').toLowerCase();
+    notify(
+      isCreate.value
+        ? `A new ${repositoryTypeLabel} has been created`
+        : 'Import successful',
+      { immediate: true },
+    );
     emit('created');
     hide();
   } catch {

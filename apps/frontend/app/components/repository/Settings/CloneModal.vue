@@ -45,8 +45,10 @@
 </template>
 
 <script lang="ts" setup>
-import { object, string } from 'yup';
 import type { Repository } from '@tailor-cms/interfaces/repository';
+
+import { object, string } from 'yup';
+import { schema as schemaApi } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
@@ -57,16 +59,24 @@ const props = withDefaults(
   defineProps<{ show?: boolean; repository?: Repository }>(),
   { show: true },
 );
+
 const emit = defineEmits(['close', 'cloned']);
+
+const notify = useNotification();
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
+
 const inProgress = ref(false);
 
 // Prefer an explicitly passed repository (e.g. from the catalog); fall back
 // to the loaded repository when used within the repository context.
 const target = computed(
   () => props.repository ?? currentRepositoryStore?.repository,
+);
+
+const repositoryTypeLabel = computed(
+  () => schemaApi.getSchema(target.value!.schema).name,
 );
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
@@ -85,11 +95,20 @@ const close = () => {
 
 const submit = handleSubmit(async () => {
   inProgress.value = true;
-  const { id } = target.value || {};
-  if (id) {
+  try {
+    const { id } = target.value!;
     await repositoryStore.clone(id, nameInput.value, descriptionInput.value);
+    notify(`The ${repositoryTypeLabel.value.toLowerCase()} has been cloned`, {
+      immediate: true,
+    });
     emit('cloned');
+    close();
+  } catch {
+    notify(`We couldn't clone the ${repositoryTypeLabel.value.toLowerCase()}`, {
+      color: 'error',
+    });
+  } finally {
+    inProgress.value = false;
   }
-  close();
 });
 </script>
