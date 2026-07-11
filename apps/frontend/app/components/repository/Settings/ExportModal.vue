@@ -23,12 +23,16 @@
 
 <script lang="ts" setup>
 import type { Repository } from '@tailor-cms/interfaces/repository';
+
+import { schema as schemaApi } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 
 import { api } from '@/api';
 
 const props = defineProps<{ repository: Repository }>();
 const emit = defineEmits(['close']);
+
+const notify = useNotification();
 
 const STATUS = {
   INIT: {
@@ -56,6 +60,8 @@ const exportRepository = () => {
   // so the browser handles the download natively
   const url = `/api/repositories/${props.repository.id}/export/${jobId.value}`;
   window.open(url, '_blank');
+  const type = schemaApi.getSchema(props.repository.schema).name;
+  notify(`The ${type.toLowerCase()} has been exported`, { immediate: true });
   close();
 };
 
