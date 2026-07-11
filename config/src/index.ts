@@ -6,6 +6,7 @@ import { getFeedbackApi, RUBRICS } from './rubrics';
 import { SCHEMA as CourseSchema } from './schemas/course.schema';
 import { DEFAULT_WORKFLOW as DefaultWorkflow } from './workflows/default.workflow';
 import { articleCollection } from './collections/article.collection';
+import { issueCollection } from './collections/issue.collection';
 import { SCHEMA as FeedSchema } from './schemas/feed.schema';
 import { SCHEMA as KnowledgeBase } from './schemas/knowledge-base.schema';
 import { SCHEMA as QASchema } from './schemas/q&a.schema';
@@ -30,6 +31,7 @@ export const SCHEMAS = processSchemas(
     ContentLibrarySchema,
     VideoCourseSchema,
     articleCollection.toSchema(),
+    issueCollection.toSchema(),
   ],
   { rubricIds: RUBRICS.map((it) => it.id) },
 );
