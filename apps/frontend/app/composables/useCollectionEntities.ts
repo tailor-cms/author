@@ -1,4 +1,5 @@
 import { storeToRefs } from 'pinia';
+import pluralize from 'pluralize-esm';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 // One option in the entity chip filter.
@@ -30,7 +31,9 @@ export function useCollectionEntities() {
     return (taxonomy.value ?? [])
       .filter((it: any) => it.rootLevel)
       .map((it: any) => ({
-        label: it.label,
+        // Entity labels are singular (e.g. "Bug"); the filter reads better
+        // as a plural group ("Bugs").
+        label: pluralize(it.label),
         value: it.type,
         icon: it.icon || 'mdi-shape-outline',
       }));
