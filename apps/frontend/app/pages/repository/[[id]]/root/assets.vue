@@ -236,19 +236,13 @@ const showSubfolders = computed(
   () => !isQuerying.value && subfolders.value.length > 0,
 );
 
-// Gate the page's top-level layout on the first fetch settling, so we never
-// flash the toolbar + list spinner before resolving to the empty state.
-// Later navigations keep the toolbar; per-fetch loading is shown by the list.
+// Gate the top-level layout on the first fetch settling, so we don't flash the
+// toolbar + list spinner before resolving to the empty state.
 const hasFirstFetched = ref(false);
 const isInitialLoading = computed(
   () => !hasFirstFetched.value || !hasLoadedFolders.value,
 );
 
-// True first-run state: nothing uploaded, no folders, at the library root, and
-// not searching/filtering. This is the only case that gets the action-card
-// empty state (with the toolbar hidden, since the cards offer the actions);
-// empty-folder and no-match states keep the contextual list empty state and
-// the toolbar.
 const isEmptyLibrary = computed(
   () =>
     hasLoadedFolders.value &&

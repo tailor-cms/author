@@ -92,11 +92,11 @@ const options = computed(() => [
       ]
     : []),
   {
-    key: 'folder',
+    key: 'newFolder',
     title: 'New folder',
     text: 'Group assets into folders.',
     icon: 'mdi-folder-plus-outline',
-    testId: 'assets__emptyFolder',
+    testId: 'assets__emptyNewFolder',
     open: () => emit('folder:new'),
   },
 ]);
