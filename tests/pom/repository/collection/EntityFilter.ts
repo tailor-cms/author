@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import pluralize from 'pluralize-esm';
 
 // The entity chip filter shown above a collection list.
 export class EntityFilter {
@@ -12,7 +13,7 @@ export class EntityFilter {
   }
 
   chip(label: string) {
-    return this.el.getByRole('button', { name: label });
+    return this.el.getByRole('button', { name: pluralize(label) });
   }
 
   async select(label: string) {
