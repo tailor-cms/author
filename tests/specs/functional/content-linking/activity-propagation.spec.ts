@@ -19,15 +19,12 @@ import SeedClient from '../../../api/SeedClient';
 
 const api = new BaseClient('/api/repositories/');
 
-const seedSourceRepository = async () => {
-  const { data } = await SeedClient.seedTestRepository();
-  return data.repository;
-};
-
 // Seed source pizza repo & create an empty target repo with "Target Module",
 // then link the source Module into it.
 const setupLinkedSourceModule = async (page: any) => {
-  const sourceRepo = await seedSourceRepository();
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
   const targetRepo = await toEmptyRepository(page);
   const targetOutline = new ActivityOutline(page);
   const targetModule = await targetOutline.addFirstItem(
@@ -134,7 +131,9 @@ test('clone preserves linked content fields', async ({ page }) => {
 test('linking activity with children creates single revision', async ({
   page,
 }) => {
-  const sourceRepo = await seedSourceRepository();
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
   const targetRepo = await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   // Link a group (which has child pages and content elements)

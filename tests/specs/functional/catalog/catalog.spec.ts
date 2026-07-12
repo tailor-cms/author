@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import mockRepositories from 'tailor-seed/repositories.json' assert { type: 'json' };
+import mockRepositories from 'tailor-seed/repositories.json' with { type: 'json' };
 
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import { Catalog } from '../../../pom/catalog/Catalog';
@@ -44,12 +44,14 @@ test('should be able to import a repository', async ({ page }) => {
 test('should be able to publish a repository from its card', async ({
   page,
 }) => {
-  const { data } = await SeedClient.seedTestRepository();
+  const {
+    data: { repository },
+  } = await SeedClient.seedTestRepository();
   await page.reload();
   const catalog = new Catalog(page);
   const card = new RepositoryCard(
     page,
-    catalog.findRepositoryCard(data.repository.name),
+    catalog.findRepositoryCard(repository.name),
   );
   await card.publish();
   await new Toast(page).expectPublished('Course');
@@ -59,12 +61,14 @@ test('should be able to publish a repository from its card', async ({
 test('should be able to clone a repository from its card', async ({
   page,
 }) => {
-  const { data } = await SeedClient.seedTestRepository();
+  const {
+    data: { repository },
+  } = await SeedClient.seedTestRepository();
   await page.reload();
   const catalog = new Catalog(page);
   const card = new RepositoryCard(
     page,
-    catalog.findRepositoryCard(data.repository.name),
+    catalog.findRepositoryCard(repository.name),
   );
   await card.runAction('Clone');
   const cloneDialog = new CloneDialog(page);
@@ -77,12 +81,14 @@ test('should be able to clone a repository from its card', async ({
 test('should be able to export a repository from its card', async ({
   page,
 }) => {
-  const { data } = await SeedClient.seedTestRepository();
+  const {
+    data: { repository },
+  } = await SeedClient.seedTestRepository();
   await page.reload();
   const catalog = new Catalog(page);
   const card = new RepositoryCard(
     page,
-    catalog.findRepositoryCard(data.repository.name),
+    catalog.findRepositoryCard(repository.name),
   );
   await card.runAction('Export');
   await new ExportDialog(page).download();
@@ -92,12 +98,14 @@ test('should be able to export a repository from its card', async ({
 test('should be able to delete a repository from its card', async ({
   page,
 }) => {
-  const { data } = await SeedClient.seedTestRepository();
+  const {
+    data: { repository },
+  } = await SeedClient.seedTestRepository();
   await page.reload();
   const catalog = new Catalog(page);
   const card = new RepositoryCard(
     page,
-    catalog.findRepositoryCard(data.repository.name),
+    catalog.findRepositoryCard(repository.name),
   );
   await card.delete();
   await new Toast(page).expectDeleted('Course');
