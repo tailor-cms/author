@@ -1,6 +1,9 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+import { confirmAction, selectMenuOption } from '../common/utils';
+import { CloneDialog } from './CloneDialog';
+
 type RailAction = 'Clone' | 'Publish' | 'Export' | 'Delete';
 
 export class NavigationRail {
@@ -51,25 +54,14 @@ export class NavigationRail {
     return this.getTab('Settings').click();
   }
 
-  async openActionsMenu() {
-    await this.actionsMenuBtn.click();
-    const menu = this.page.locator('.v-overlay.v-menu').last();
-    await expect(menu).toBeVisible();
-    return menu;
-  }
-
   async runAction(name: RailAction) {
-    const menu = await this.openActionsMenu();
-    await menu.locator('.v-list-item-title').filter({ hasText: name }).click();
+    await this.actionsMenuBtn.click();
+    await selectMenuOption(this.page, name);
   }
 
   async clone(name = 'Cloned repository') {
     await this.runAction('Clone');
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByLabel('Name').fill(name);
-    await dialog.getByLabel('Description').fill('Test description');
-    await dialog.getByRole('button', { name: 'Clone' }).click();
-    await expect(dialog).not.toBeVisible();
+    await new CloneDialog(this.page).clone(name);
   }
 
   async publish() {
@@ -85,7 +77,7 @@ export class NavigationRail {
   async export() {
     await this.runAction('Export');
     const dialog = this.page.locator('div[role="dialog"]');
-    await expect(dialog.getByText('Repository export is ready.')).toBeVisible({
+    await expect(dialog.getByText(/export is ready/i)).toBeVisible({
       timeout: 10000,
     });
     const downloadEvent = this.page.waitForEvent('download');
@@ -98,7 +90,6 @@ export class NavigationRail {
 
   async delete() {
     await this.runAction('Delete');
-    const dialog = this.page.locator('div[role="dialog"]');
-    await dialog.getByRole('button', { name: 'confirm' }).click();
+    await confirmAction(this.page);
   }
 }

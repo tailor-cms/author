@@ -18,7 +18,7 @@
       </p>
       <VAutocomplete
         :items="repositories"
-        :label="store.schemaName"
+        :label="`Select a ${store.schemaName}`"
         :loading="isFetchingRepositories"
         :menu-props="{ maxWidth: '100%' }"
         :model-value="selectedRepository"
