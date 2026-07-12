@@ -36,19 +36,20 @@ export const useCatalogPublish = () => {
   };
 
   const publishRepository = (repository: Repository, onDone?: () => unknown) => {
-    const repositoryTypeName = schemaApi.getSchema(repository.schema).name;
+    const { name } = repository;
+    const repositoryTypeLabel = schemaApi.getLabel(repository);
     const message =
-      `Are you sure you want to publish all content in ${repository.name}?`;
+      `Are you sure you want to publish the ${repositoryTypeLabel} "${name}"?`;
     confirmationDialog({
-      title: 'Publish content',
+      title: `Publish ${repositoryTypeLabel}`,
       message,
       action: async () => {
         try {
           await publish(repository.id);
           await onDone?.();
-          notify(`The ${repositoryTypeName} has been published`, { immediate: true });
+          notify(`The ${repositoryTypeLabel} has been published`, { immediate: true });
         } catch {
-          notify(`We couldn't publish the ${repositoryTypeName}`, { color: 'error' });
+          notify(`We couldn't publish the ${repositoryTypeLabel}`, { color: 'error' });
         }
       },
     });

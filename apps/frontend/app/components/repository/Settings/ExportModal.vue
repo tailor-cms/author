@@ -1,12 +1,19 @@
 <template>
   <TailorDialog
     :model-value="true"
-    :title="`Export ${repository.name}`"
+    :title="`Export ${repositoryTypeLabel}`"
     header-icon="mdi-export"
     persistent
   >
     <template #body>
-      <VAlert v-bind="status" :text="status.message" variant="tonal" prominent />
+      <VAlert
+        :class="{ 'pa-0': !isError }"
+        :color="isError ? 'error' : undefined"
+        :icon="status.icon"
+        :text="status.message"
+        :variant="isError ? 'tonal' : 'text'"
+        prominent
+      />
     </template>
     <template #actions>
       <VBtn text="Cancel" variant="text" @click="close" />
@@ -34,25 +41,34 @@ const emit = defineEmits(['close']);
 
 const notify = useNotification();
 
-const STATUS = {
+const { name } = props.repository;
+const repositoryTypeLabel = schemaApi.getLabel(props.repository);
+
+interface ExportStatus {
+  icon: string;
+  message: string;
+  isError?: boolean;
+}
+
+const STATUS: Record<'INIT' | 'READY' | 'ERROR', ExportStatus> = {
   INIT: {
     icon: 'mdi-loading mdi-spin',
-    message: 'Please wait while repository export is being prepared...',
+    message: `Preparing the "${name}" export...`,
   },
   READY: {
     icon: 'mdi-download-circle-outline',
-    color: '',
-    message: 'Repository export is ready. Click button below to download...',
+    message: `The "${name}" export is ready to download.`,
   },
   ERROR: {
     icon: 'mdi-alert-circle-outline',
-    color: 'error',
+    isError: true,
     message: 'Something went wrong. Please try again later.',
   },
 };
 
 const jobId = ref<string | null>(null);
 const status = ref(STATUS.INIT);
+const isError = computed(() => !!status.value.isError);
 
 const exportRepository = () => {
   if (!jobId.value) return;
@@ -60,12 +76,11 @@ const exportRepository = () => {
   // so the browser handles the download natively
   const url = `/api/repositories/${props.repository.id}/export/${jobId.value}`;
   window.open(url, '_blank');
-  const type = schemaApi.getSchema(props.repository.schema).name;
-  notify(`The ${type} has been exported`, { immediate: true });
+  notify(`The ${repositoryTypeLabel} has been exported`, { immediate: true });
   close();
 };
 
-const setStatus = (val: { icon: string; color: string; message: string }) => {
+const setStatus = (val: ExportStatus) => {
   status.value = val;
 };
 

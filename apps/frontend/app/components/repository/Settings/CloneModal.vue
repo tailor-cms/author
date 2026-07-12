@@ -1,12 +1,17 @@
 <template>
   <TailorDialog
     :model-value="show"
-    :title="`Clone ${target?.name}`"
+    :title="`Clone ${repositoryTypeLabel}`"
     header-icon="mdi-content-copy"
     persistent
     @submit="submit"
   >
     <template #body>
+      <p class="text-body-medium text-medium-emphasis mb-5">
+        You are about to clone the {{ repositoryTypeLabel }}
+        "{{ target?.name }}". Name the copy and adjust its description as
+        needed.
+      </p>
       <VTextField
         v-model="nameInput"
         :disabled="inProgress"
@@ -75,8 +80,8 @@ const target = computed(
   () => props.repository ?? currentRepositoryStore?.repository,
 );
 
-const repositoryTypeLabel = computed(
-  () => schemaApi.getSchema(target.value!.schema).name,
+const repositoryTypeLabel = computed(() =>
+  schemaApi.getLabel(target.value!),
 );
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
@@ -84,6 +89,11 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
     name: string().required().min(2).max(250),
     description: string().required().min(2).max(2000),
   }),
+  // The copy usually keeps the original description; the name must be new.
+  initialValues: {
+    name: '',
+    description: target.value?.description ?? '',
+  },
 });
 const [nameInput] = defineField('name');
 const [descriptionInput] = defineField('description');

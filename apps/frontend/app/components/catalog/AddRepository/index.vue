@@ -151,8 +151,8 @@
       />
       <VBtn
         :loading="isSubmitting"
+        :text="isCreate ? 'Create' : 'Import'"
         color="primary"
-        text="Create"
         type="submit"
         variant="flat"
       />
@@ -257,10 +257,9 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   const action = isCreate.value ? create : importRepository;
   try {
     await pMinDelay(action(formPayload), 2000);
-    const repositoryTypeLabel = schema.value?.name ?? 'Item';
     notify(
       isCreate.value
-        ? `A new ${repositoryTypeLabel} has been created`
+        ? `A new ${schema.value!.name} has been created`
         : 'Import successful',
       { immediate: true },
     );
