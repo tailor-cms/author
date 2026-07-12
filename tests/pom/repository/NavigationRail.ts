@@ -3,6 +3,7 @@ import { expect } from '@playwright/test';
 
 import { confirmAction, selectMenuOption } from '../common/utils';
 import { CloneDialog } from './CloneDialog';
+import { ExportDialog } from './ExportDialog';
 
 type RailAction = 'Clone' | 'Publish' | 'Export' | 'Delete';
 
@@ -76,16 +77,7 @@ export class NavigationRail {
 
   async export() {
     await this.runAction('Export');
-    const dialog = this.page.locator('div[role="dialog"]');
-    await expect(dialog.getByText(/export is ready/i)).toBeVisible({
-      timeout: 10000,
-    });
-    const downloadEvent = this.page.waitForEvent('download');
-    await dialog.getByRole('button', { name: 'Download' }).click();
-    const download = await downloadEvent;
-    const path = `tmp/${download.suggestedFilename()}`;
-    await download.saveAs(path);
-    return path;
+    return new ExportDialog(this.page).download();
   }
 
   async delete() {
