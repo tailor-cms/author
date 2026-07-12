@@ -135,6 +135,96 @@ test('should be able to tag a repository', async ({ page }) => {
   await expect(repositoryCard.el.getByText('tag1')).toBeVisible();
 });
 
+test(
+  'tag validation error clears once the input becomes valid',
+  {
+    tag: '@bug',
+    annotation: {
+      type: 'issue',
+      description: 'https://github.com/tailor-cms/author/issues/529',
+    },
+  },
+  async ({ page }) => {
+    test.fail(); // remove with @bug when #529 is fixed
+    await SeedClient.seedCatalog();
+    await page.reload();
+    const catalog = new Catalog(page);
+    const repositoryCard = new RepositoryCard(
+      page,
+      catalog.getFirstRepositoryCard(),
+    );
+    await repositoryCard.addTagBtn.click();
+    await repositoryCard.tagInput.fill('a');
+    await repositoryCard.tagInput.press('Enter');
+    await expect(repositoryCard.tagErrorMessage).toBeVisible();
+    await expect(repositoryCard.tagErrorMessage).toHaveText(
+      'Tag must be at least 2 characters',
+    );
+    await repositoryCard.tagInput.fill('feature');
+    await expect(repositoryCard.tagErrorMessage).toHaveCount(0);
+  },
+);
+
+test(
+  'tag validation error for invalid characters clears once the input becomes valid',
+  {
+    tag: '@bug',
+    annotation: {
+      type: 'issue',
+      description: 'https://github.com/tailor-cms/author/issues/529',
+    },
+  },
+  async ({ page }) => {
+    test.fail(); // remove with @bug when #529 is fixed
+    await SeedClient.seedCatalog();
+    await page.reload();
+    const catalog = new Catalog(page);
+    const repositoryCard = new RepositoryCard(
+      page,
+      catalog.getFirstRepositoryCard(),
+    );
+    await repositoryCard.addTagBtn.click();
+    await repositoryCard.tagInput.fill('!@#');
+    await repositoryCard.tagInput.press('Enter');
+    await expect(repositoryCard.tagErrorMessage).toBeVisible();
+    await expect(repositoryCard.tagErrorMessage).toHaveText(
+      'Tag can contain only letters, numbers, and spaces',
+    );
+    await repositoryCard.tagInput.fill('feature');
+    await expect(repositoryCard.tagErrorMessage).toHaveCount(0);
+  },
+);
+
+test(
+  'tag validation error for too long input clears once the input becomes valid',
+  {
+    tag: '@bug',
+    annotation: {
+      type: 'issue',
+      description: 'https://github.com/tailor-cms/author/issues/529',
+    },
+  },
+  async ({ page }) => {
+    test.fail(); // remove with @bug when #529 is fixed
+    await SeedClient.seedCatalog();
+    await page.reload();
+    const catalog = new Catalog(page);
+    const repositoryCard = new RepositoryCard(
+      page,
+      catalog.getFirstRepositoryCard(),
+    );
+    await repositoryCard.addTagBtn.click();
+    await repositoryCard.tagInput.fill('a'.repeat(21));
+    await repositoryCard.tagInput.press('Enter');
+    await expect(repositoryCard.tagErrorMessage).toBeVisible();
+    await expect(repositoryCard.tagErrorMessage).toHaveText(
+      'Tag must be at most 20 characters',
+    );
+    await repositoryCard.tagInput.fill('feature');
+    await expect(repositoryCard.tagErrorMessage).toHaveCount(0);
+  },
+);
+
 test('should be able to filter by tag', async ({ page }) => {
   await SeedClient.seedCatalog();
   await page.reload();
