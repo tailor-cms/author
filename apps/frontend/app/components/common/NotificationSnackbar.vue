@@ -57,11 +57,6 @@ const schedule = (opts: NotificationOptions) => {
   return (opts.immediate ? addToQueue : debounce(addToQueue, 2500))(opts);
 };
 
-watch(isVisible, (visible) => {
-  if (visible) return;
-  context.value = initialData();
-});
-
 onMounted(() => {
   const appChannel = $eventBus.channel('app');
   appChannel.on('showNotificationSnackbar', (opts: NotificationOptions) => {

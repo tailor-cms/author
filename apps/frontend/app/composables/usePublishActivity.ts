@@ -1,6 +1,8 @@
 import type { StoreActivity } from '@/stores/activity';
+
 import { schema as schemaApi } from '@tailor-cms/config';
 import Promise from 'bluebird';
+import pluralize from 'pluralize-esm';
 
 import { api } from '@/api';
 import { useActivityStore } from '@/stores/activity';
@@ -8,6 +10,9 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 const initialStatus = () => ({ progress: 0, message: '' });
 const prefix = (msg: string) => `Are you sure you want to publish ${msg}`;
+
+const activityLabel = (activity: StoreActivity) =>
+  pluralize.singular(schemaApi.getActivityLabel(activity) || 'item');
 
 export const usePublishActivity = (anchorActivity?: StoreActivity) => {
   const currentRepository = useCurrentRepository();
@@ -22,7 +27,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
     const activityCount = items.length;
     const totalActivities = currentRepository.outlineActivities.length;
     const activity = anchorActivity ?? items[0]!;
-    const label = schemaApi.getActivityLabel(activity) || 'item';
+    const label = activityLabel(activity);
     const target = `the ${label} "${activity.data.name}"`;
     if (activityCount === 1) return prefix(`${target}?`);
     if (activityCount === totalActivities) return prefix('all content?');
@@ -40,9 +45,10 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
 
   const confirmPublishing = (activities: StoreActivity[]) => {
     const activity = anchorActivity ?? activities[0]!;
-    const label = schemaApi.getActivityLabel(activity) || 'Item';
+    const label = activityLabel(activity);
     confirmationDialog({
-      title: 'Publish content',
+      title: `Publish ${label}`,
+      icon: 'mdi-cloud-upload-outline',
       message: getPublishMessage(activities),
       action: async () => {
         try {
@@ -56,21 +62,23 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
   };
 
   const publishRepository = (activities: StoreActivity[]) => {
-    const repositoryTypeName = currentRepository.schemaName || 'content';
+    const repositoryTypeLabel = currentRepository.schemaName;
+    const { name } = currentRepository.repository!;
     confirmationDialog({
-      title: 'Publish content',
-      message: getPublishMessage(activities),
+      title: `Publish ${repositoryTypeLabel}`,
+      icon: 'mdi-cloud-upload-outline',
+      message: `Are you sure you want to publish the ${repositoryTypeLabel} "${name}"?`,
       action: async () => {
         try {
           await api.repository.publishMeta({
             params: { repositoryId: currentRepository.repositoryId! },
           });
           await publish(activities.filter((it) => !it.detached));
-          notify(`The ${repositoryTypeName} has been published`, {
+          notify(`The ${repositoryTypeLabel} has been published`, {
             immediate: true,
           });
         } catch {
-          notify(`We couldn't publish the ${repositoryTypeName}`, {
+          notify(`We couldn't publish the ${repositoryTypeLabel}`, {
             color: 'error',
           });
         }

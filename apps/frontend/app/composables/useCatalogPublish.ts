@@ -42,6 +42,7 @@ export const useCatalogPublish = () => {
       `Are you sure you want to publish the ${repositoryTypeLabel} "${name}"?`;
     confirmationDialog({
       title: `Publish ${repositoryTypeLabel}`,
+      icon: 'mdi-cloud-upload-outline',
       message,
       action: async () => {
         try {

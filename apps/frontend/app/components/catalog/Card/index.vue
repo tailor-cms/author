@@ -160,9 +160,7 @@ const onAction = (name: CardAction['name']) => {
 const schema = ref(null);
 
 const isSchemaNameTruncated = ref(false);
-const schemaName = computed(
-  () => $schemaService.getSchema(props.repository.schema).name,
-);
+const schemaName = computed(() => $schemaService.getLabel(props.repository));
 
 const lastActivity = computed(
   () => first(props.repository.revisions) as Revision,

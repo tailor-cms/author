@@ -142,7 +142,7 @@
 <script setup lang="ts">
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
-import { find, map, uniq, upperFirst } from 'lodash-es';
+import { find, map, upperFirst } from 'lodash-es';
 import { SCHEMAS, schema as schemaApi } from '@tailor-cms/config';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 import { storeToRefs } from 'pinia';
@@ -163,6 +163,7 @@ import RepositoryFilterSelection
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
 import UserGroupSelect from '@/components/catalog/Filter/UserGroupSelect.vue';
+import { describeSelection } from '@/utils/describeSelection';
 import { useAuthStore } from '@/stores/auth';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useConfigStore } from '@/stores/config';
@@ -234,12 +235,9 @@ const deleteSelected = () => {
   const selected = repositories.value.filter((it) =>
     selectedRepos.value.has(it.id),
   );
-  const count = selected.length;
-  const types = uniq(
+  const { count, label, noun, verb } = describeSelection(
     selected.map((it) => schemaApi.getLabel(it)),
   );
-  const label = types.length === 1 ? types[0]! : 'item';
-  const noun = count === 1 ? `the ${label}` : `${count} ${pluralize(label)}`;
   const target = count === 1 ? `${noun} "${selected[0]!.name}"` : noun;
 
   confirmationDialog({
@@ -252,7 +250,6 @@ const deleteSelected = () => {
         await Promise.each(selected, ({ id }: Repository) =>
           repositoryStore.remove(id),
         );
-        const verb = count === 1 ? 'has' : 'have';
         notify(`${upperFirst(noun)} ${verb} been deleted`, { immediate: true });
       } catch {
         notify(`We couldn't delete the selected ${pluralize(label)}`, {
