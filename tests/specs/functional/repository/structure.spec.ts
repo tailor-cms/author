@@ -32,6 +32,7 @@ test(`should create a ${outlineLevel.GROUP} using bottom add button`, async ({
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   await outline.addFirstItem(outlineLevel.GROUP, `${outlineLevel.GROUP} 1`);
+  await new Toast(page).expectCreated(outlineLevel.GROUP);
 });
 
 test(`should be able to create a new sub ${outlineLevel.GROUP}`, async ({
@@ -43,6 +44,7 @@ test(`should be able to create a new sub ${outlineLevel.GROUP}`, async ({
   const parent = await outline.addFirstItem(outlineLevel.GROUP, parentName);
   const subLevelName = `Sub ${outlineLevel.GROUP}`;
   await parent.addInto(outlineLevel.GROUP, subLevelName);
+  await new Toast(page).expectCreated(outlineLevel.GROUP);
   await outline.getOutlineItemByName(subLevelName);
 });
 
