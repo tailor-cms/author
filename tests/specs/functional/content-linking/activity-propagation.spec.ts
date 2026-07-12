@@ -194,7 +194,7 @@ test('export and reimport strips linked content fields', async ({ page }) => {
   const importName = `Reimported ${Date.now()}`;
   await addRepoDialog.nameInput.fill(importName);
   await addRepoDialog.descriptionInput.fill('reimport test');
-  await addRepoDialog.createRepositoryBtn.click();
+  await addRepoDialog.submitBtn.click();
   await page.waitForTimeout(5000);
   // Find the imported repository
   const { data: repos } = await api.get();
