@@ -16,6 +16,7 @@
     <VListItemSubtitle
       v-tooltip:bottom="{ text: fullTimestamp, openDelay: 300 }"
       class="text-label-medium"
+      data-percy="hide"
     >
       {{ timeOfDay }} · {{ revision.user?.label ?? 'Unknown' }}
     </VListItemSubtitle>

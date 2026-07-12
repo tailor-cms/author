@@ -40,6 +40,7 @@
             v-if="activity.publishedAt"
             :text="formatDate(activity.publishedAt, 'MM/dd/yy HH:mm')"
             class="ml-2"
+            data-percy="hide"
             size="x-small"
             label
           />
