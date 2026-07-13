@@ -9,6 +9,7 @@ export class RepositoryCard {
   readonly addTagBtn: Locator;
   readonly pinBtn: Locator;
   readonly actionsBtn: Locator;
+  readonly settingsBtn: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
@@ -16,6 +17,12 @@ export class RepositoryCard {
     this.addTagBtn = el.getByLabel('Add tag');
     this.pinBtn = el.getByLabel('Pin repository');
     this.actionsBtn = el.getByLabel('Repository actions');
+    this.settingsBtn = el.getByLabel('Repository settings');
+  }
+
+  async openSettings() {
+    await this.el.hover();
+    await this.settingsBtn.click();
   }
 
   async runAction(name: 'Clone' | 'Publish' | 'Export' | 'Delete') {

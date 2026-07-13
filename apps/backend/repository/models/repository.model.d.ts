@@ -85,12 +85,20 @@ export type Repository = RepositoryAttrs &
     setVectorStoreId(storeId: string): Promise<string | null>;
     // Reads the AI vector store id from data.$$.ai.storeId; null if unset
     getVectorStoreId(): string | null;
-    // Deep-clones this repository (activities + elements) under a new name
+    // Deep-clones this repository (activities + elements) under a new name;
+    // optionally shares the clone with the same users and user groups
     clone(
       name: string,
       description: string,
-      context: OperationContext,
+      options: { context: OperationContext; shareWithSamePeople?: boolean },
     ): Promise<Repository>;
+    // Links the given repository to the same user groups and grants the
+    // active members their current roles (the acting user is skipped)
+    copyAccessTo(
+      dst: Repository,
+      context: OperationContext,
+      transaction?: Transaction,
+    ): Promise<void>;
     // Scans activities/elements for references to missing entities
     validateReferences(
       transaction?: Transaction,
