@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 
 import { Catalog } from '../../../pom/catalog/Catalog';
+import { CloneDialog } from '../../../pom/repository/CloneDialog';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
-import SeedClient from '../../../api/SeedClient';
+import { Toast } from '../../../pom/common/Toast';
 import { toSeededRepositorySettings } from '../../../helpers/seed';
+import SeedClient from '../../../api/SeedClient';
 
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
@@ -13,18 +15,24 @@ test.beforeEach(async ({ page }) => {
 test('should be able to delete the repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
   await settingsPage.rail.delete();
+  await new Toast(page).expectDeleted('Course');
   await expect(page.getByText('No repositories yet')).toBeVisible();
 });
 
 test('should be able to export the repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
   await settingsPage.rail.export();
+  await new Toast(page).expectExported('Course');
 });
 
 test('should be able to clone the repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
   const name = 'Cloned Repository';
-  await settingsPage.rail.clone(name);
+  await settingsPage.rail.runAction('Clone');
+  const cloneDialog = new CloneDialog(page);
+  await cloneDialog.expectTitle('Clone Course');
+  await cloneDialog.clone(name);
+  await new Toast(page).expectCloned('Course');
   await page.goto('/');
   await expect(page.getByText(name)).toBeVisible();
 });
@@ -32,6 +40,7 @@ test('should be able to clone the repository', async ({ page }) => {
 test('should be able to publish the repository', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
   await settingsPage.rail.publish();
+  await new Toast(page).expectPublished('Course');
   const repositoryName = await settingsPage.getName();
   await page.goto('/');
   const catalog = new Catalog(page);

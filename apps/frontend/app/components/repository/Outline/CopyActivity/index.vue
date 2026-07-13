@@ -1,27 +1,30 @@
 <template>
   <TailorDialog
     v-model="visible"
-    :title="schema ? `Copy items from ${pluralize(schema.name)}` : 'Copy items'"
     header-icon="mdi-content-copy"
+    title="Copy existing content"
     width="650"
     persistent
   >
-    <template v-if="schema" #body>
+    <template #body>
       <div v-if="isCopyingActivities" class="ma-4">
         <div class="text-body-large text-center mb-2">
-          Copying {{ selectedActivities.length }} items...
+          Copying {{ selectionSummary.countLabel }}...
         </div>
         <VProgressLinear color="primary" indeterminate />
       </div>
+      <p class="text-body-medium text-medium-emphasis mb-5">
+        The selected content will be copied {{ destination }}.
+      </p>
       <VAutocomplete
         :items="repositories"
-        :label="schema.name"
+        :label="`Select a ${store.schemaName}`"
         :loading="isFetchingRepositories"
         :menu-props="{ maxWidth: '100%' }"
         :model-value="selectedRepository"
+        :placeholder="`Type to search ${pluralize(store.schemaName)}...`"
         item-title="name"
         item-value="id"
-        placeholder="Type to search repositories..."
         prepend-inner-icon="mdi-magnify"
         variant="outlined"
         return-object
@@ -31,7 +34,7 @@
       <RepositoryTree
         v-if="selectedRepository && !isFetchingActivities"
         :activities="selectedRepository.activities || []"
-        :schema-name="schema.name"
+        :schema-name="store.schemaName"
         :supported-levels="levels"
         @change="selectedActivities = $event"
       />
@@ -55,16 +58,17 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import { TailorDialog, useLoader } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import { InsertLocation } from '@tailor-cms/utils';
-import pluralize from 'pluralize-esm';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import { SCHEMAS } from '@tailor-cms/config';
-import { sortBy } from 'lodash-es';
+
+import { sortBy, upperFirst } from 'lodash-es';
+import { TailorDialog, useLoader } from '@tailor-cms/core-components';
+import { InsertLocation } from '@tailor-cms/utils';
+import { schema as schemaApi } from '@tailor-cms/config';
+import pluralize from 'pluralize-esm';
 
 import { api } from '@/api';
+import { describeSelection } from '@/utils/describeSelection';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 import RepositoryTree from './RepositoryTree.vue';
@@ -81,7 +85,10 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   anchor: null,
 });
+
 const emit = defineEmits(['close', 'completed']);
+
+const notify = useNotification();
 
 const store = useCurrentRepository();
 const activityStore = useActivityStore();
@@ -94,16 +101,21 @@ const selectedActivities = ref<Activity[]>([]);
 const isFetchingActivities = ref(false);
 const isCopyingActivities = ref(false);
 
-const schema = computed(() =>
-  SCHEMAS.find((it) => store.repository?.schema === it.id),
+// Where the selection lands, e.g. `below "History of Pizza"`
+const destination = computed(() => {
+  const anchorName = props.anchor?.data?.name;
+  if (!anchorName) return `into this ${store.schemaName}`;
+  return `${props.action === AddInto ? 'into' : 'below'} "${anchorName}"`;
+});
+
+const selectionSummary = computed(() =>
+  describeSelection(selectedActivities.value.map((it) => activityLabel(it))),
 );
 
 const copyBtnLabel = computed(() => {
-  const selectedCount = selectedActivities.value.length;
-  const selectionLabel = selectedCount
-    ? `${pluralize('item', selectedCount, true)}`
-    : '';
-  return `Copy ${selectionLabel} ${props.action === AddInto ? 'inside' : ''}`;
+  const { count, countLabel } = selectionSummary.value;
+  if (!count) return 'Copy';
+  return `Copy ${countLabel}${props.action === AddInto ? ' inside' : ''}`;
 });
 
 const selectRepository = async (repository: Repository) => {
@@ -134,17 +146,31 @@ const copyActivity = async (activity: Activity, prevActivity?: Activity) => {
   });
 };
 
+const activityLabel = (item?: Activity) => {
+  const source = selectedRepository.value?.activities?.find(
+    (it) => it.id === item?.id,
+  );
+  return (source && schemaApi.getActivityLabel(source)) || 'Item';
+};
+
 const copySelection = async () => {
   isCopyingActivities.value = true;
   const items = sortBy(selectedActivities.value, ['parentId', 'position']);
-  let prevOutlineItem: Activity | undefined;
-  for (const item of items) {
-    const copied = await copyActivity(item, prevOutlineItem);
-    prevOutlineItem = copied[0]; // Only first copied activity is outline item
+  const { noun, verb } = selectionSummary.value;
+  try {
+    let prevOutlineItem: Activity | undefined;
+    for (const item of items) {
+      const copied = await copyActivity(item, prevOutlineItem);
+      prevOutlineItem = copied[0]; // Only first copied activity is outline item
+    }
+    notify(`${upperFirst(noun)} ${verb} been copied`, { immediate: true });
+    emit('completed', items[0]?.parentId);
+    close();
+  } catch {
+    notify(`We couldn't copy ${noun}`, { color: 'error' });
+  } finally {
+    isCopyingActivities.value = false;
   }
-  emit('completed', items[0]?.parentId);
-  isCopyingActivities.value = false;
-  close();
 };
 
 const close = () => {

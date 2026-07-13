@@ -59,14 +59,15 @@
 </template>
 
 <script lang="ts" setup>
-import { InsertLocation } from '@tailor-cms/utils';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
+import { InsertLocation } from '@tailor-cms/utils';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
+import pluralize from 'pluralize-esm';
 
+import type { StoreActivity } from '@/stores/activity';
 import TypeSelect from './TypeSelect.vue';
 import MetaInput from '@/components/common/MetaInput.vue';
-import type { StoreActivity } from '@/stores/activity';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -93,10 +94,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['close', 'created', 'expand']);
 
+const { $schemaService, $i18n } = useNuxtApp() as any;
+
 const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
 const selectedActivity = useSelectedActivity(props.anchor);
-const { $schemaService, $i18n } = useNuxtApp() as any;
+
+const notify = useNotification();
 
 // Check if i18n is enabled to show creation hint
 const showI18nHint = computed(() => $i18n?.isEnabled);
@@ -173,11 +177,16 @@ const submitForm = handleSubmit(async () => {
     action,
     anchor as StoreActivity,
   );
+  // Singularized - collection entity labels are plural
+  const label = pluralize.singular(
+    $schemaService.getActivityLabel(activity.value) || 'item',
+  );
   try {
     const item = (await activityStore.save(activity.value)) as StoreActivity;
     if (anchor && anchor.id === activity.value?.parentId) {
       selectedActivity.expandOutlineItemParent(item);
     }
+    notify(`A new ${label} has been created`, { immediate: true });
     emit('created', item);
     visible.value = false;
     if (props.openInEditor) {
@@ -188,6 +197,8 @@ const submitForm = handleSubmit(async () => {
     } else {
       currentRepositoryStore.selectActivity(item.id);
     }
+  } catch {
+    notify(`We couldn't create the ${label}`, { color: 'error' });
   } finally {
     submitting.value = false;
   }
