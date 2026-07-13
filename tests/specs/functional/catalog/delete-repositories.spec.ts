@@ -19,10 +19,15 @@ test.beforeEach(async ({ page }) => {
 
 test('should reveal card checkbox on hover', async ({ page }) => {
   const catalog = new Catalog(page);
-  const checkbox = catalog.getCardCheckboxes().first();
-  await expect(checkbox).not.toBeVisible();
+  const statusDot = catalog.getCardStatusDot().first();
+  const checkboxIcon = catalog.getCardCheckboxIcon().first();
+  // At rest the left slot shows the published-status dot, not the checkbox.
+  await expect(statusDot).toHaveCSS('opacity', '1');
+  await expect(checkboxIcon).toHaveCSS('opacity', '0');
+  // Hovering cross-fades the status dot out and the checkbox in.
   await catalog.getFirstRepositoryCard().hover();
-  await expect(checkbox).toBeVisible();
+  await expect(checkboxIcon).toHaveCSS('opacity', '1');
+  await expect(statusDot).toHaveCSS('opacity', '0');
 });
 
 test('should be able to select individual repositories', async ({ page }) => {
