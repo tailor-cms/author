@@ -3,8 +3,8 @@ import { expect, test } from '@playwright/test';
 import {
   outlineLevel,
   outlineSeed,
-  toEmptyRepository,
   seedLinkedRepositories,
+  toEmptyRepository,
 } from '../../../helpers/seed';
 import { toEditorPage, toStructurePage } from '../../../helpers/navigation';
 import { ActivityOutline } from '../../../pom/repository/Outline';
@@ -12,21 +12,19 @@ import BaseClient from '../../../api/BaseClient';
 import { Editor } from '../../../pom/editor/Editor';
 import { EditorToolbar } from '../../../pom/editor/EditorToolbar';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
+import { Toast } from '../../../pom/common/Toast';
 import SeedClient from '../../../api/SeedClient';
 
 const api = new BaseClient('/api/repositories/');
-
-const seedSourceRepository = async () => {
-  const { data } = await SeedClient.seedTestRepository();
-  return data.repository;
-};
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
 });
 
 test('can link a leaf activity via options menu', async ({ page }) => {
-  const sourceRepo = await seedSourceRepository();
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
@@ -35,6 +33,7 @@ test('can link a leaf activity via options menu', async ({ page }) => {
     sourceRepo.name,
     outlineSeed.primaryPage.title,
   );
+  await new Toast(page).expectLinked('Page');
   // Verify linked activity appears in outline with link icon
   await outline.toggleExpand();
   const linkedItem = await outline.getOutlineItemByName(
@@ -56,7 +55,9 @@ test('can link a leaf activity via options menu', async ({ page }) => {
 });
 
 test('can link a group activity via options menu', async ({ page }) => {
-  const sourceRepo = await seedSourceRepository();
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
@@ -84,7 +85,9 @@ test('can link a group activity via options menu', async ({ page }) => {
 });
 
 test('can link a group activity below via options menu', async ({ page }) => {
-  const sourceRepo = await seedSourceRepository();
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
@@ -109,7 +112,9 @@ test('can link a group activity below via options menu', async ({ page }) => {
 test('can link a leaf activity into a group via options menu', async ({
   page,
 }) => {
-  const sourceRepo = await seedSourceRepository();
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
@@ -137,14 +142,15 @@ test('can link a leaf activity into a group via options menu', async ({
 });
 
 test('can link a leaf activity via toolbar menu', async ({ page }) => {
-  const sourceRepo = await seedSourceRepository();
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const linkDialog = await outline.linkFirst();
-  await linkDialog.selectAndLink(
-    sourceRepo.name,
-    outlineSeed.primaryPage.title,
-  );
+  await linkDialog.selectRepository(sourceRepo.name);
+  await linkDialog.selectActivity(outlineSeed.primaryPage.title);
+  await linkDialog.link();
   // Verify linked activity appears
   const linkedItem = await outline.getOutlineItemByName(
     outlineSeed.primaryPage.title,
@@ -161,7 +167,9 @@ test('can link a leaf activity via toolbar menu', async ({ page }) => {
 test('can navigate to linked parent from a nested linked child', async ({
   page,
 }) => {
-  const sourceRepo = await seedSourceRepository();
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   const linkDialog = await outline.linkFirst();
