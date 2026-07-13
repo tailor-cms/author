@@ -159,6 +159,7 @@ interface CollectionConfig {
   name?: string;
   description?: string;
   entities: TailorEntity[];
+  meta?: Metadata[];
 }
 
 /**
@@ -171,13 +172,14 @@ export class TailorCollection {
   constructor(private config: CollectionConfig) {}
 
   toSchema(): Schema {
-    const { id, name, description, entities } = this.config;
+    const { id, name, description, entities, meta } = this.config;
     return {
       id,
       collection: true,
       name: name || capitalize(id),
       description: description || `A curated ${name || capitalize(id)} collection.`,
       workflowId: 'DEFAULT_WORKFLOW',
+      ...(meta && { meta }),
       structure: entities.map((entity) => {
         const relationships = entity.props
           .filter((prop) => prop.isRelationship)
