@@ -6,8 +6,8 @@
     class="board-card text-left"
     color="surface-raised"
     data-testid="workflow__boardCard"
-    rounded="lg"
     elevation="1"
+    rounded="lg"
     @click="emit('select', activity.id)"
   >
     <span
@@ -72,20 +72,13 @@ useScrollWhenSelected(() => rootEl.value?.$el, isSelected);
   cursor: pointer;
   transition: background-color 0.2s ease;
 
-  // Selected = brand-tinted surface + hairline ring (shared tokens). The solid
-  // tint sits behind content so text stays true and the accent bar keeps its
-  // full color; the overlay carries only the ring, so it wraps the whole card
-  // and the card keeps its elevation shadow.
-  &.selected {
-    background: var(--surface-selected);
-    border: 1px solid var(--border-selected);
-  }
-
   &.selected::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
+    background-color: currentColor;
+    opacity: calc(var(--v-activated-opacity) * var(--v-theme-overlay-multiplier));
     pointer-events: none;
   }
 }
