@@ -68,6 +68,10 @@ export type Repository = RepositoryAttrs &
     // stored sha has drifted. Returns true if a write happened, false if
     // already in sync or the schema id is not in the registry.
     syncSchemaSnapshot(transaction?: Transaction): Promise<boolean>;
+    // FILE-type meta on this repository as { metaKey, storageKey } refs;
+    // one per file field holding a value; empty when the schema can't be
+    // resolved
+    getFileMetaInputs(): Array<{ metaKey: string; storageKey: string }>;
     // Mutating methods accept the platform's hook context option
     update(
       values: Partial<RepositoryAttrs>,
