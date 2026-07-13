@@ -145,14 +145,14 @@
 </template>
 
 <script setup lang="ts">
-import { find, map } from 'lodash-es';
-import { SCHEMAS } from '@tailor-cms/config';
+import type { Repository } from '@tailor-cms/interfaces/repository';
+
+import { find, map, upperFirst } from 'lodash-es';
+import { SCHEMAS, schema as schemaApi } from '@tailor-cms/config';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 import { storeToRefs } from 'pinia';
 import pluralize from 'pluralize-esm';
 import Promise from 'bluebird';
-
-import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
 import BulkActionBar from '@/components/catalog/BulkActionBar.vue';
@@ -168,6 +168,7 @@ import RepositoryFilterSelection
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
 import UserGroupSelect from '@/components/catalog/Filter/UserGroupSelect.vue';
+import { describeSelection } from '@/utils/describeSelection';
 import { useAuthStore } from '@/stores/auth';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useConfigStore } from '@/stores/config';
@@ -186,8 +187,10 @@ useHead({
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
 const config = useConfigStore();
-const confirmationDialog = useConfirmationDialog();
+
 const publishUtils = useCatalogPublish();
+const confirmationDialog = useConfirmationDialog();
+const notify = useNotification();
 
 const isLoading = ref(true);
 const isDeleting = ref(false);
@@ -234,17 +237,29 @@ const toggleSelectAll = () => {
 };
 
 const deleteSelected = () => {
-  const count = selectedRepos.value.size;
+  const selected = repositories.value.filter((it) =>
+    selectedRepos.value.has(it.id),
+  );
+  const { count, label, noun, verb } = describeSelection(
+    selected.map((it) => schemaApi.getLabel(it)),
+  );
+  const target = count === 1 ? `${noun} "${selected[0]!.name}"` : noun;
 
   confirmationDialog({
-    title: `Delete ${pluralize('repository', count)}?`,
+    title: `Delete ${pluralize(label, count)}?`,
     color: 'error',
-    message: `Are you sure you want to delete ${pluralize('repository', count, true)}?`,
+    message: `Are you sure you want to delete ${target}?`,
     action: async () => {
       isDeleting.value = true;
       try {
-        const repositories = Array.from(selectedRepos.value);
-        await Promise.each(repositories, (id) => repositoryStore.remove(id));
+        await Promise.each(selected, ({ id }: Repository) =>
+          repositoryStore.remove(id),
+        );
+        notify(`${upperFirst(noun)} ${verb} been deleted`, { immediate: true });
+      } catch {
+        notify(`We couldn't delete the selected ${pluralize(label)}`, {
+          color: 'error',
+        });
       } finally {
         selectedRepos.value.clear();
         await refetchRepositories();
@@ -267,13 +282,19 @@ const onCardPublish = (repository: Repository) => {
 };
 
 const deleteRepository = (repository: Repository) => {
+  const type = schemaApi.getLabel(repository);
   confirmationDialog({
-    title: 'Delete repository?',
+    title: `Delete ${type}?`,
     color: 'error',
-    message: `Are you sure you want to delete repository ${repository.name}?`,
+    message: `Are you sure you want to delete the ${type} "${repository.name}"?`,
     action: async () => {
-      await repositoryStore.remove(repository.id);
-      await refetchRepositories();
+      try {
+        await repositoryStore.remove(repository.id);
+        notify(`The ${type} has been deleted`, { immediate: true });
+        await refetchRepositories();
+      } catch {
+        notify(`We couldn't delete the ${type}`, { color: 'error' });
+      }
     },
   });
 };

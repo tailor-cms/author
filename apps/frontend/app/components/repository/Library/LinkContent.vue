@@ -7,15 +7,18 @@
     persistent
   >
     <template #body>
+      <p class="text-body-medium text-medium-emphasis mb-5">
+        The selected content will be linked {{ destination }}.
+      </p>
       <VAutocomplete
         :items="repositories"
         :loading="isLoadingRepositories"
         :menu-props="{ maxWidth: '100%' }"
+        :label="sourceLabel"
         :model-value="selectedRepository"
+        :placeholder="sourcePlaceholder"
         item-title="name"
         item-value="id"
-        label="Select a Repository"
-        placeholder="Type to search repositories..."
         prepend-inner-icon="mdi-magnify"
         variant="outlined"
         return-object
@@ -36,7 +39,6 @@
     <template #actions>
       <VBtn
         :disabled="isLinking"
-
         text="Cancel"
         variant="text"
         @click="close"
@@ -55,15 +57,17 @@
 </template>
 
 <script lang="ts" setup>
-import { TailorDialog, useLoader } from '@tailor-cms/core-components';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import { InsertLocation } from '@tailor-cms/utils';
-import pluralize from 'pluralize-esm';
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import { sortBy } from 'lodash-es';
+
+import { TailorDialog, useLoader } from '@tailor-cms/core-components';
+import { InsertLocation } from '@tailor-cms/utils';
+import { sortBy, upperFirst } from 'lodash-es';
 import { storeToRefs } from 'pinia';
+import pluralize from 'pluralize-esm';
 
 import { api } from '@/api';
+import { describeSelection } from '@/utils/describeSelection';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 import RepositoryTree from '../Outline/CopyActivity/RepositoryTree.vue';
@@ -82,8 +86,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const { $schemaService } = useNuxtApp() as any;
+
 const currentRepositoryStore = useCurrentRepository();
 const activityStore = useActivityStore();
+const notify = useNotification();
 
 const { loading: isLoadingRepositories, loader } = useLoader();
 const { repository } = storeToRefs(currentRepositoryStore);
@@ -98,7 +104,35 @@ const isLinking = ref(false);
 
 const schemaName = computed(() => {
   if (!selectedRepository.value) return '';
-  return $schemaService.getSchema(selectedRepository.value.schema).name;
+  return $schemaService.getLabel(selectedRepository.value);
+});
+
+// Where the selection lands, e.g. `below "History of Pizza"`
+const destination = computed(() => {
+  const anchorName = props.anchor?.data?.name;
+  if (!anchorName) return `into this ${currentRepositoryStore.schemaName}`;
+  return `${props.action === AddInto ? 'into' : 'below'} "${anchorName}"`;
+});
+
+// Content can be linked from same-type repositories and from types that map
+// to it (mapsTo), so name them all, with the current type first.
+const sourceTypeNames = computed(() => {
+  const schemaId = repository.value!.schema;
+  const ids = $schemaService.getCompatibleSchemaIds(schemaId);
+  const ordered = [schemaId, ...ids.filter((id: string) => id !== schemaId)];
+  return ordered.map((id) => $schemaService.getSchema(id).name as string);
+});
+
+const sourceLabel = computed(() => {
+  const names = sourceTypeNames.value;
+  if (names.length > 2) return 'Select a source';
+  return `Select a ${names.join(' or ')}`;
+});
+
+const sourcePlaceholder = computed(() => {
+  const names = sourceTypeNames.value;
+  if (names.length > 2) return 'Type to search...';
+  return `Type to search ${names.map((it) => pluralize(it)).join(' or ')}...`;
 });
 
 // Get all outline activity types from the selected repository's schema
@@ -109,11 +143,14 @@ const supportedLevels = computed(() => {
   return outlineLevels.map((level: any) => level.type);
 });
 
+const selectionSummary = computed(() =>
+  describeSelection(selectedActivities.value.map((it) => activityLabel(it))),
+);
+
 const linkBtnLabel = computed(() => {
-  const count = selectedActivities.value.length;
+  const { count, countLabel } = selectionSummary.value;
   if (!count) return 'Link';
-  const label = pluralize('item', count, true);
-  return `Link ${label} ${props.action === AddInto ? 'inside' : ''}`;
+  return `Link ${countLabel}${props.action === AddInto ? ' inside' : ''}`;
 });
 
 const fetchRepositories = loader(async (search = '') => {
@@ -162,11 +199,17 @@ const linkActivity = async (
   return linked;
 };
 
+const activityLabel = (item?: Activity) => {
+  const source = repositoryActivities.value.find((it) => it.id === item?.id);
+  return (source && $schemaService.getActivityLabel(source)) || 'Item';
+};
+
 const linkSelection = async () => {
   if (!selectedActivities.value.length) return;
   isLinking.value = true;
+  const items = sortBy(selectedActivities.value, ['parentId', 'position']);
+  const { noun, verb } = selectionSummary.value;
   try {
-    const items = sortBy(selectedActivities.value, ['parentId', 'position']);
     let prevLinkedItem: Activity | undefined;
     let firstLinked: Activity | undefined;
     for (const item of items) {
@@ -174,9 +217,12 @@ const linkSelection = async () => {
       if (!firstLinked) firstLinked = linked[0];
       prevLinkedItem = linked[0];
     }
+    notify(`${upperFirst(noun)} ${verb} been linked`, { immediate: true });
     emit('completed', items);
     if (firstLinked) currentRepositoryStore.selectActivity(firstLinked.id);
     close();
+  } catch {
+    notify(`We couldn't link ${noun}`, { color: 'error' });
   } finally {
     isLinking.value = false;
   }

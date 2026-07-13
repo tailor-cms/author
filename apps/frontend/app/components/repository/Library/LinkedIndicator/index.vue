@@ -56,9 +56,7 @@ const source = ref<SourceInfo | null>(null);
 const sourceLabel = computed(() => {
   const repo = source.value?.repository;
   if (!repo?.name) return '';
-  const schemaName = repo.schema
-    ? $schemaService.getSchema(repo.schema).name
-    : '';
+  const schemaName = repo.schema ? $schemaService.getLabel(repo) : '';
   const label = schemaName ? `${repo.name} ${schemaName}` : repo.name;
   return `from ${label}`;
 });

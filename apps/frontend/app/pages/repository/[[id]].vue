@@ -68,6 +68,7 @@ const isLoading = ref(true);
 const repositoryStore = useRepositoryStore();
 const publishUtils = usePublishActivity();
 const confirmationDialog = useConfirmationDialog();
+const notify = useNotification();
 
 const showCloneModal = ref(false);
 const showExportModal = ref(false);
@@ -76,16 +77,20 @@ const publishPercentage = computed(
 );
 
 const showDeleteConfirmation = () => {
-  const repository = currentRepositoryStore.repository as Repository;
-  if (!repository) return;
-  const { id, name } = repository;
+  const { id, name } = currentRepositoryStore.repository as Repository;
+  const type = currentRepositoryStore.schemaName;
   confirmationDialog({
-    title: 'Delete repository?',
+    title: `Delete ${type}?`,
     color: 'error',
-    message: `Are you sure you want to delete repository ${name}?`,
+    message: `Are you sure you want to delete the ${type} "${name}"?`,
     action: async () => {
-      await repositoryStore.remove(id);
-      navigateTo('/');
+      try {
+        await repositoryStore.remove(id);
+        notify(`The ${type} has been deleted`, { immediate: true });
+        navigateTo('/');
+      } catch {
+        notify(`We couldn't delete the ${type}`, { color: 'error' });
+      }
     },
   });
 };
