@@ -1,8 +1,13 @@
 <template>
   <VApp>
     <NuxtPage />
+    <NotificationSnackbar />
   </VApp>
 </template>
+
+<script lang="ts" setup>
+import NotificationSnackbar from '@/components/common/NotificationSnackbar.vue';
+</script>
 
 <style lang="scss">
 .v-input.required {

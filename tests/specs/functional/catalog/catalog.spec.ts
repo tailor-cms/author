@@ -1,9 +1,13 @@
 import { expect, test } from '@playwright/test';
-import mockRepositories from 'tailor-seed/repositories.json' assert { type: 'json' };
+import mockRepositories from 'tailor-seed/repositories.json' with { type: 'json' };
 
 import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import { Catalog } from '../../../pom/catalog/Catalog';
+import { CloneDialog } from '../../../pom/repository/CloneDialog';
+import { createCleanRepository } from '../../../helpers/seed';
+import { ExportDialog } from '../../../pom/repository/ExportDialog';
 import { RepositoryCard } from '../../../pom/catalog/RepositoryCard';
+import { Toast } from '../../../pom/common/Toast';
 import SeedClient from '../../../api/SeedClient';
 
 test.beforeEach(async ({ page }) => {
@@ -25,14 +29,97 @@ test('should be able to create a new repository', async ({ page }) => {
   const dialog = new AddRepositoryDialog(page);
   await dialog.open();
   await dialog.createRepository();
+  await new Toast(page).expectCreated('Course');
 });
 
 test('should be able to import a repository', async ({ page }) => {
   const dialog = new AddRepositoryDialog(page);
   await dialog.open();
-  const { name } = await dialog.importRepository();
+  const { name } = await dialog.submitImport();
+  await new Toast(page).expectImportSucceeded();
   await page.reload();
   await expect(page.getByText(name)).toBeVisible({ timeout: 10000 });
+});
+
+test('should be able to publish a repository from its card', async ({
+  page,
+}) => {
+  const {
+    data: { repository },
+  } = await SeedClient.seedTestRepository();
+  await page.reload();
+  const catalog = new Catalog(page);
+  const card = new RepositoryCard(
+    page,
+    catalog.findRepositoryCard(repository.name),
+  );
+  await card.publish();
+  await new Toast(page).expectPublished('Course');
+  await expect(card.el.getByLabel('Published')).toBeVisible();
+});
+
+test('should be able to clone a repository from its card', async ({
+  page,
+}) => {
+  const {
+    data: { repository },
+  } = await SeedClient.seedTestRepository();
+  await page.reload();
+  const catalog = new Catalog(page);
+  const card = new RepositoryCard(
+    page,
+    catalog.findRepositoryCard(repository.name),
+  );
+  await card.runAction('Clone');
+  const cloneDialog = new CloneDialog(page);
+  await cloneDialog.expectTitle('Clone Course');
+  await cloneDialog.clone('Cloned From Card');
+  await new Toast(page).expectCloned('Course');
+  await expect(catalog.findRepositoryCard('Cloned From Card')).toBeVisible();
+});
+
+test('should be able to export a repository from its card', async ({
+  page,
+}) => {
+  const {
+    data: { repository },
+  } = await SeedClient.seedTestRepository();
+  await page.reload();
+  const catalog = new Catalog(page);
+  const card = new RepositoryCard(
+    page,
+    catalog.findRepositoryCard(repository.name),
+  );
+  await card.runAction('Export');
+  await new ExportDialog(page).download();
+  await new Toast(page).expectExported('Course');
+});
+
+test('should be able to delete a repository from its card', async ({
+  page,
+}) => {
+  const {
+    data: { repository },
+  } = await SeedClient.seedTestRepository();
+  await page.reload();
+  const catalog = new Catalog(page);
+  const card = new RepositoryCard(
+    page,
+    catalog.findRepositoryCard(repository.name),
+  );
+  await card.delete();
+  await new Toast(page).expectDeleted('Course');
+  await expect(page.getByText('No repositories yet')).toBeVisible();
+});
+
+test('should be able to bulk delete repositories', async ({ page }) => {
+  await createCleanRepository('Bulk Delete A');
+  await createCleanRepository('Bulk Delete B');
+  await page.reload();
+  const catalog = new Catalog(page);
+  await catalog.bulkDelete('Bulk Delete A', 'Bulk Delete B');
+  await new Toast(page).expectDeletedMany('2 Courses');
+  await expect(page.getByText('No repositories yet')).toBeVisible();
 });
 
 test('should be able to load repositories', async ({ page }) => {

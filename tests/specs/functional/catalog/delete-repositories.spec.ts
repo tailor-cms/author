@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import mockRepositories from 'tailor-seed/repositories.json' with { type: 'json' };
 
 import { Catalog } from '../../../pom/catalog/Catalog';
 import { ConfirmationDialog } from '../../../pom/common/ConfirmationDialog';
@@ -11,7 +12,9 @@ test.beforeEach(async ({ page }) => {
   const catalog = new Catalog(page);
   await expect(catalog.getRepositoryCards().first()).toBeVisible();
   await catalog.loadMore();
-  await expect(catalog.loadMoreBtn).not.toBeVisible();
+  await expect(catalog.getRepositoryCards()).toHaveCount(
+    mockRepositories.length,
+  );
 });
 
 test('should reveal card checkbox on hover', async ({ page }) => {
@@ -55,7 +58,7 @@ test('should show confirmation dialog before deleting', async ({ page }) => {
   const initialCount = await catalog.getRepositoryCards().count();
   await catalog.toggleRepository('Astronomy');
   await catalog.deleteSelectedBtn.click();
-  const dialog = new ConfirmationDialog(page, 'Delete repository');
+  const dialog = new ConfirmationDialog(page, 'Delete');
   await expect(dialog.el).toBeVisible();
   await dialog.close();
   await expect(dialog.el).not.toBeVisible();
@@ -71,9 +74,9 @@ test('should delete selected repositories after confirmation', async ({
   await catalog.toggleRepository('Physics');
   await expect(catalog.selectionCount).toContainText('2 selected');
   await catalog.deleteSelectedBtn.click();
-  const dialog = new ConfirmationDialog(page, 'Delete repositories');
+  const dialog = new ConfirmationDialog(page, 'Delete');
   await expect(dialog.el).toBeVisible();
-  await expect(dialog.el).toContainText('2 repositories');
+  await expect(dialog.el).toContainText(/delete 2 /i);
   await dialog.confirm();
   await expect(dialog.el).not.toBeVisible();
   await page.waitForLoadState('networkidle');

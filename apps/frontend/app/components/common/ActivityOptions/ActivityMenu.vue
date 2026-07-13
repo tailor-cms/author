@@ -58,10 +58,13 @@
 </template>
 
 <script lang="ts" setup>
-import { first, sortBy } from 'lodash-es';
 import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
-import { InsertLocation } from '@tailor-cms/utils';
 import type { StoreActivity } from '@/stores/activity';
+
+import { sortBy } from 'lodash-es';
+import { InsertLocation } from '@tailor-cms/utils';
+import { schema as schemaApi } from '@tailor-cms/config';
+import pluralize from 'pluralize-esm';
 
 import CopyDialog from '@/components/repository/Outline/CopyActivity/index.vue';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
@@ -72,6 +75,10 @@ import { useSelectedActivity } from '#imports';
 const { AddAfter, AddBefore, AddInto } = InsertLocation;
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
+const { requestDeletion } = useCollectionItemDeletion();
+
+const confirmationDialog = useConfirmationDialog();
+const notify = useNotification();
 
 export interface Props {
   activity: StoreActivity;
@@ -85,7 +92,7 @@ const props = withDefaults(defineProps<Props>(), {
   rounded: 'circle',
 });
 
-const { $eventBus, $pluginRegistry } = useNuxtApp() as any;
+const { $pluginRegistry } = useNuxtApp() as any;
 const selectedActivity = useSelectedActivity(props.activity);
 
 const isOpen = defineModel<boolean>({ default: false });
@@ -187,20 +194,40 @@ const setLinkContext = (actionValue: InsertLocation) => {
   showLinkDialog.value = true;
 };
 
+const focusNearestActivity = () => {
+  const { activity } = props;
+  const roots = sortBy(currentRepositoryStore.rootActivities, 'position');
+  const focusNode = activity.parentId
+    ? activityStore.findById(activity.parentId)
+    : roots.find((it) => it.id !== activity.id);
+  if (focusNode) return currentRepositoryStore.selectActivity(focusNode.id);
+  currentRepositoryStore.deselectActivity();
+};
+
 const deleteActivity = () => {
   const { activity } = props;
-  const actionFunc = () => {
-    const focusNode = activity.parentId
-      ? activityStore.findById(activity.parentId)
-      : first(sortBy(currentRepositoryStore.rootActivities, 'position'));
-    activityStore.remove(props.activity.id);
-    if (focusNode) currentRepositoryStore.selectActivity(focusNode.id);
-  };
-  $eventBus.channel('app').emit('showConfirmationModal', {
-    title: 'Delete item?',
+  // Collection records go through the reference-aware deletion flow
+  if (currentRepositoryStore.isCollection) {
+    return requestDeletion(activity, focusNearestActivity);
+  }
+  // Singularized - shared with grammar of other type-aware messages
+  const label = pluralize.singular(
+    schemaApi.getActivityLabel(activity) || 'item',
+  );
+  confirmationDialog({
+    title: `Delete ${label}?`,
     color: 'error',
-    message: `Are you sure you want to delete ${activityName.value}?`,
-    action: actionFunc,
+    message:
+      `Are you sure you want to delete the ${label} "${activityName.value}"?`,
+    action: async () => {
+      try {
+        await activityStore.remove(activity.id);
+        notify(`The ${label} has been deleted`, { immediate: true });
+        focusNearestActivity();
+      } catch {
+        notify(`We couldn't delete the ${label}`, { color: 'error' });
+      }
+    },
   });
 };
 </script>
