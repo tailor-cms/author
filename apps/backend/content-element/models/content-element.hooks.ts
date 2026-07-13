@@ -230,7 +230,13 @@ function add(
     await markLinkedAsChanged(affectedRepoIds, createdElements);
   }
 
-  // Propagate source element deletion to all linked copies.
+  // Propagate source element deletion to its linked copies. A copy nested
+  // inside a linked activity mirror is destroyed so the mirror stays
+  // consistent; an individually-linked ("entry-point") copy is detached
+  // instead - converted to an independent local copy so its content is
+  // preserved. Mirrors the activity behavior (activity.hooks.ts:
+  // propagateActivityDeletion cascades nested copies, unlinkCopiesOnDelete
+  // detaches entry-point copies).
   // Skipped when:
   // - linkSync: deletion originated from the sync system itself (prevents loops)
   // - isLinkedCopy: a copy was deleted, not the source
@@ -246,13 +252,34 @@ function add(
       `Propagating element ${element.id} deletion
       to ${linkedElements.length} linked elements`,
     );
-    const affectedRepoIds = new Set<number>();
-    // Resolve outline activities before destroying elements.
     const outlineActivities = await resolveOutlineActivities(linkedElements);
+    // A copy is "nested" when its parent activity is itself a linked copy.
+    const activityIds = [...new Set(linkedElements.map((el) => el.activityId))];
+    const linkedActivityIds = new Set(
+      (
+        await Activity.findAll({
+          where: { id: activityIds, isLinkedCopy: true },
+          attributes: ['id'],
+        })
+      ).map((activity) => activity.id),
+    );
+    const affectedRepoIds = new Set<number>();
     for (const linked of linkedElements) {
-      await linked.destroy(SYNC_OPTS);
+      if (linkedActivityIds.has(linked.activityId)) {
+        await linked.destroy(SYNC_OPTS);
+        broadcast(linked.repositoryId, Events.Delete, linked);
+      } else {
+        await linked.update(
+          {
+            isLinkedCopy: false,
+            sourceModifiedAt: null as unknown as undefined,
+          },
+          SYNC_OPTS,
+        );
+        await resolveStatics(linked);
+        broadcast(linked.repositoryId, Events.Update, linked);
+      }
       affectedRepoIds.add(linked.repositoryId);
-      broadcast(linked.repositoryId, Events.Delete, linked);
     }
     await markLinkedAsChanged(affectedRepoIds, [], outlineActivities);
   }

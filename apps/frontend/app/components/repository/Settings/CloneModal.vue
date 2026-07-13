@@ -1,12 +1,17 @@
 <template>
   <TailorDialog
     :model-value="show"
-    :title="`Clone ${target?.name}`"
+    :title="`Clone ${repositoryTypeLabel}`"
     header-icon="mdi-content-copy"
     persistent
     @submit="submit"
   >
     <template #body>
+      <p class="text-body-medium text-medium-emphasis mb-5">
+        You are about to clone the {{ repositoryTypeLabel }}
+        "{{ target?.name }}". Name the copy and adjust its description as
+        needed.
+      </p>
       <VTextField
         v-model="nameInput"
         :disabled="inProgress"
@@ -45,8 +50,10 @@
 </template>
 
 <script lang="ts" setup>
-import { object, string } from 'yup';
 import type { Repository } from '@tailor-cms/interfaces/repository';
+
+import { object, string } from 'yup';
+import { schema as schemaApi } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
@@ -57,10 +64,14 @@ const props = withDefaults(
   defineProps<{ show?: boolean; repository?: Repository }>(),
   { show: true },
 );
+
 const emit = defineEmits(['close', 'cloned']);
+
+const notify = useNotification();
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
+
 const inProgress = ref(false);
 
 // Prefer an explicitly passed repository (e.g. from the catalog); fall back
@@ -69,11 +80,20 @@ const target = computed(
   () => props.repository ?? currentRepositoryStore?.repository,
 );
 
+const repositoryTypeLabel = computed(() =>
+  schemaApi.getLabel(target.value!),
+);
+
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
     name: string().required().min(2).max(250),
     description: string().required().min(2).max(2000),
   }),
+  // The copy usually keeps the original description; the name must be new.
+  initialValues: {
+    name: '',
+    description: target.value?.description ?? '',
+  },
 });
 const [nameInput] = defineField('name');
 const [descriptionInput] = defineField('description');
@@ -85,11 +105,20 @@ const close = () => {
 
 const submit = handleSubmit(async () => {
   inProgress.value = true;
-  const { id } = target.value || {};
-  if (id) {
+  try {
+    const { id } = target.value!;
     await repositoryStore.clone(id, nameInput.value, descriptionInput.value);
+    notify(`The ${repositoryTypeLabel.value} has been cloned`, {
+      immediate: true,
+    });
     emit('cloned');
+    close();
+  } catch {
+    notify(`We couldn't clone the ${repositoryTypeLabel.value}`, {
+      color: 'error',
+    });
+  } finally {
+    inProgress.value = false;
   }
-  close();
 });
 </script>

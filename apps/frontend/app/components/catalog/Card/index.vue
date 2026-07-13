@@ -191,9 +191,7 @@ const onAction = (name: CardAction['name']) => {
 const schema = ref(null);
 
 const isSchemaNameTruncated = ref(false);
-const schemaName = computed(
-  () => $schemaService.getSchema(props.repository.schema).name,
-);
+const schemaName = computed(() => $schemaService.getLabel(props.repository));
 
 // Signed URLs are delivered on the list payload (RepositoryFileMeta);
 // prefer the cached thumbnail and fall back to the original file.

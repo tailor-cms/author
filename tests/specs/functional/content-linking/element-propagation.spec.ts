@@ -195,6 +195,31 @@ test('linking content element creates "Linked" revision', async ({ page }) => {
   await history.expectRevisionExists('Linked tiptap html element');
 });
 
+test('source element deletion detaches individually-linked copy', async ({
+  page,
+}) => {
+  const { activity } = await toSeededRepository(page);
+  await toEditorPage(page, activity);
+  const editor = new Editor(page);
+  // Link a primary-page element into the secondary page: an entry-point link
+  // whose container activity is NOT itself a linked copy. Confirm the copy
+  // renders there and is marked linked.
+  await editor.toSecondaryPage();
+  await editor.linkContentElements(seed.title, seed.textContent);
+  await editor.getElement(seed.textContent).expectLinked();
+  // Delete the source element on the primary page.
+  await editor.toPrimaryPage();
+  await editor.getElement(seed.textContent).remove();
+  await expect(editor.getElement(seed.textContent).el).toHaveCount(0);
+  await page.waitForLoadState('networkidle');
+  // Deleting the source UNLINKS the copy rather than deleting it
+  await page.reload({ waitUntil: 'networkidle' });
+  await editor.toSecondaryPage();
+  const copyElement = editor.getElement(seed.textContent);
+  await expect(copyElement.el).toBeVisible();
+  await copyElement.expectNotLinked();
+});
+
 test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });
