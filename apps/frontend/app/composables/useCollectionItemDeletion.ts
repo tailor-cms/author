@@ -3,6 +3,7 @@ import { ReferenceDeletePolicy } from '@tailor-cms/interfaces/schema';
 import { useActivityStore } from '@/stores/activity';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useCurrentRepository } from '@/stores/current-repository';
+import pluralize from 'pluralize-esm';
 
 // A record that still references the item being deleted
 interface ReferencingRecord {
@@ -99,19 +100,27 @@ export function useCollectionItemDeletion() {
       cascades.length && `${summarize(cascades)} will also be deleted`,
       unlinks.length && `${summarize(unlinks)} will be unlinked`,
     ].filter(Boolean);
+
+    // Entity labels are plural (they name the collection list, e.g. "Tags")
+    const label = pluralize.singular(
+      $schemaService.getActivityLabel(item) ?? 'item',
+    );
     const message = impact.length
-      ? `Delete "${name}"? ${impact.join('; ')}.`
-      : `Are you sure you want to delete "${name}"?`;
+      ? `Delete the ${label} "${name}"? ${impact.join('; ')}.`
+      : `Are you sure you want to delete the ${label} "${name}"?`;
     confirm({
-      title: 'Delete item?',
+      title: `Delete ${label}?`,
       color: 'error',
       message,
       action: async () => {
         try {
           await activityStore.remove(item.id);
+          notify(`The ${label} has been deleted`, { immediate: true });
           onDeleted?.();
         } catch {
-          notify('Failed to delete item. It may still be referenced.');
+          const failure =
+            `We couldn't delete the ${label}. It may still be referenced.`;
+          notify(failure, { color: 'error' });
         }
       },
     });

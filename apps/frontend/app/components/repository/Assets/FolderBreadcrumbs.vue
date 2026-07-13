@@ -2,7 +2,6 @@
   <div class="folder-breadcrumbs d-flex align-center flex-wrap ga-2 mb-3">
     <VBtn
       v-tooltip:bottom="'Up one level'"
-      :disabled="!currentPath"
       aria-label="Up one level"
       icon="mdi-arrow-up"
       size="small"
@@ -40,7 +39,6 @@ import type { Breadcrumb } from '@/composables/useAssetFolders';
 
 const props = defineProps<{
   breadcrumbs: Breadcrumb[];
-  currentPath: string;
 }>();
 
 const emit = defineEmits<{
