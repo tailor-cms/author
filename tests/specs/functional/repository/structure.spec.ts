@@ -10,6 +10,7 @@ import { ActivityOutline } from '../../../pom/repository/Outline';
 import { Editor } from '../../../pom/editor/Editor';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
+import { Toast } from '../../../pom/common/Toast';
 
 test.beforeEach(async () => {
   await SeedClient.resetDatabase();
@@ -31,6 +32,7 @@ test(`should create a ${outlineLevel.GROUP} using bottom add button`, async ({
   await toEmptyRepository(page);
   const outline = new ActivityOutline(page);
   await outline.addFirstItem(outlineLevel.GROUP, `${outlineLevel.GROUP} 1`);
+  await new Toast(page).expectCreated(outlineLevel.GROUP);
 });
 
 test(`should be able to create a new sub ${outlineLevel.GROUP}`, async ({
@@ -42,6 +44,7 @@ test(`should be able to create a new sub ${outlineLevel.GROUP}`, async ({
   const parent = await outline.addFirstItem(outlineLevel.GROUP, parentName);
   const subLevelName = `Sub ${outlineLevel.GROUP}`;
   await parent.addInto(outlineLevel.GROUP, subLevelName);
+  await new Toast(page).expectCreated(outlineLevel.GROUP);
   await outline.getOutlineItemByName(subLevelName);
 });
 
@@ -76,6 +79,7 @@ test('should be able to delete the activity', async ({ page }) => {
   const outline = new ActivityOutline(page);
   const item = await outline.getOutlineItemByName(targetItem);
   await item.optionsMenu.remove();
+  await new Toast(page).expectDeleted('Module');
   const itemLocator = page.getByText(targetItem);
   await expect(itemLocator).not.toBeVisible();
   // Test persistence
@@ -94,9 +98,8 @@ test('should be able to edit the activity name', async ({ page }) => {
   const newName = `${targetItemName} - edited`;
   await sidebar.fillName(newName);
   await outline.getOutlineItemByName(newName);
-  // Test persistence
   await page.reload();
-  await expect(page.getByText(newName)).toBeVisible();
+  await outline.getOutlineItemByName(newName);
 });
 
 test('should be able to publish activity', async ({ page }) => {
@@ -109,6 +112,7 @@ test('should be able to publish activity', async ({ page }) => {
   const sidebar = new OutlineSidebar(page);
   await expect(sidebar.el).toContainText(/Not published/);
   await sidebar.publish();
+  await new Toast(page).expectPublished('Module');
   await expect(sidebar.el).toContainText(/Published on/);
 });
 
