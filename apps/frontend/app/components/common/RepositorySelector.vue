@@ -10,14 +10,15 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
-        class="repository-selector text-none"
+        class="repository-selector px-2"
         variant="text"
         rounded="lg"
+        height="32"
       >
-        <span class="text-truncate text-body-medium font-weight-medium mr-2">
+        <span class="text-truncate text-body-medium font-weight-semibold mr-1">
           {{ repository.name }}
         </span>
-        <VIcon icon="mdi-menu-down" size="small" />
+        <VIcon class="mr-n1" icon="mdi-menu-down" size="small" />
       </VBtn>
     </template>
     <VCard color="surface-raised">

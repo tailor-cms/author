@@ -1,29 +1,31 @@
 <template>
   <VAppBar id="mainAppBar" class="app-bar elevation-0" color="transparent">
-    <NuxtLink :to="{ name: 'catalog' }" class="app-brand ml-5">
-      <img
-        alt="Tailor logo"
-        class="mr-4"
-        src="/img/logo-new.svg"
-        width="36"
-      />
-      <VAppBarTitle class="app-name" text="Tailor" />
+    <NuxtLink
+      :to="{ name: 'catalog' }"
+      class="app-brand ml-5 mr-2"
+      aria-label="Tailor"
+    >
+      <img alt="Tailor logo" src="/img/logo-new.svg" width="36" />
     </NuxtLink>
-    <div v-if="!smAndDown && currentRepository" class="d-flex align-center ml-4">
-      <VDivider class="mx-2 align-self-center" length="24" opacity="0.2" vertical />
-      <RepositorySelector :repository="currentRepository" />
-    </div>
-    <template #append>
-      <template v-if="!smAndDown">
-        <VBtn
-          v-for="{ name, to } in topLevelRoutes"
-          :key="name"
-          :to="to"
-          rounded="lg"
-        >
-          <span class="toolbar-route text-truncate">{{ name }}</span>
-        </VBtn>
+    <nav
+      v-if="!smAndDown"
+      class="d-flex align-center ml-2"
+      aria-label="Breadcrumb"
+    >
+      <VBtn
+        text="Catalog"
+        variant="text"
+        rounded="lg"
+        class="px-2 text-body-medium font-weight-medium"
+        height="32"
+        :to="{ name: 'catalog' }"
+      />
+      <template v-if="currentRepository">
+        <span class="text-disabled mx-1" aria-hidden="true">/</span>
+        <RepositorySelector :repository="currentRepository" />
       </template>
+    </nav>
+    <template #append>
       <RenoirLauncher class="ml-2" />
       <VMenu
         :close-on-content-click="false"
@@ -52,13 +54,13 @@
             </div>
           </div>
           <VDivider class="mx-n2 mb-2" />
-          <template v-if="smAndDown">
+          <template v-if="authStore.hasAdminAccess">
             <VListItem
-              v-for="{ name, to, icon } in routes"
-              :key="name"
-              :to="to"
-              :title="name"
-              :prepend-icon="icon"
+              :to="{
+                name: authStore.isAdmin ? 'system-user-management' : 'user-groups',
+              }"
+              title="Admin"
+              prepend-icon="mdi-account-cog-outline"
             />
           </template>
           <VListItem
@@ -102,23 +104,6 @@ const currentRepositoryStore = useCurrentRepository();
 
 const currentRepository = computed(() => currentRepositoryStore.repository);
 
-const topLevelRoutes = computed(() => {
-  const items = [
-    { name: 'Catalog', to: '/', icon: 'mdi-view-grid-plus-outline' },
-    {
-      name: 'Admin',
-      to: {
-        name: authStore.isAdmin ? 'system-user-management' : 'user-groups',
-      },
-      icon: 'mdi-account-cog-outline',
-    },
-  ];
-  if (!authStore.hasAdminAccess) items.pop();
-  return items;
-});
-
-const routes = computed(() => topLevelRoutes.value);
-
 const logout = async () => {
   if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {
     return $oidc.logout();
@@ -143,25 +128,6 @@ const logout = async () => {
   align-items: center;
   text-decoration: none;
   cursor: pointer;
-
-  .app-name {
-    margin: 0 0 0 0.125rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    line-height: 1.2;
-    text-transform: uppercase;
-    color: rgb(var(--v-theme-on-surface));
-  }
-}
-
-.top-route {
-  letter-spacing: 0.04em;
-  font-weight: 500;
-}
-
-.toolbar-route {
-  max-width: 14rem;
 }
 
 .v-avatar img {
