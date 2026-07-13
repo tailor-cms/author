@@ -12,7 +12,7 @@
       disable-resize-watcher
       disable-route-watcher
     >
-      <div class="agent-drawer-card bg-surface-container-lowest border-sm">
+      <div class="agent-drawer-card bg-surface-sidebar border-sm">
         <div
           aria-orientation="vertical"
           class="resize-handle"

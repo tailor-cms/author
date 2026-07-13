@@ -6,9 +6,8 @@
     class="board-card text-left"
     color="surface-raised"
     data-testid="workflow__boardCard"
-    rounded="lg"
-    variant="flat"
     elevation="1"
+    rounded="lg"
     @click="emit('select', activity.id)"
   >
     <span

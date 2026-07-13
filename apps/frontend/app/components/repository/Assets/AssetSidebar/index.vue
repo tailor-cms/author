@@ -4,7 +4,7 @@
     :model-value="!!asset"
     :width="width"
     class="asset-sidebar"
-    color="surface-raised"
+    color="surface-sidebar"
     location="right"
     mobile-breakpoint="md"
     absolute

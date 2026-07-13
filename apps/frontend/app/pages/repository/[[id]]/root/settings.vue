@@ -2,7 +2,7 @@
   <div class="repository-settings">
     <VNavigationDrawer
       v-model="showSidebar"
-      color="surface-container-low"
+      color="surface-canvas"
       elevation="0"
       location="left"
       mobile-breakpoint="md"
@@ -39,12 +39,11 @@
           v-if="!showSidebar"
           v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
           class="sidebar-toggle"
-          color="secondary"
+          color="secondary-container"
           aria-label="Open sidebar"
           density="comfortable"
           icon="mdi-chevron-double-right"
           size="small"
-          variant="tonal"
           @click="showSidebar = true"
         />
       </VFadeTransition>
@@ -100,11 +99,11 @@ onMounted(() => {
 }
 
 .sidebar-toggle {
-  position: fixed;
-  width: 1.75rem;
+  position: absolute;
+  width: 1.5rem;
   height: 3.5rem;
-  top: 50%;
-  left: 4.6875rem;
+  top: 4rem;
+  left: 0;
   transform: translateY(-50%);
   z-index: 1004;
   border-radius: 0 8px 8px 0;
