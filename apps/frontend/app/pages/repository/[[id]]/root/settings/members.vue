@@ -1,7 +1,7 @@
 <template>
   <VLayout class="members-page h-100">
     <VMain class="members-main">
-      <VContainer class="members-content px-md-10 py-md-8" max-width="1300">
+      <VContainer class="members-content px-md-10 py-md-8" max-width="1400">
         <div class="d-flex align-center ga-3 mb-4">
           <VHover>
             <template #default="{ props: hoverProps }">
