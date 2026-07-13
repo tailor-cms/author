@@ -22,9 +22,9 @@ const seedTwoAtRoot = async (id: number) => {
 test.describe('Asset folders', () => {
   test('can create an empty folder that persists locally', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await expect(lib.emptyState).toContainText('No assets uploaded yet.');
+    await expect(lib.emptyLibrary).toBeVisible();
     expect(await lib.folders.count()).toBe(0);
-    await lib.folders.create('Diagrams');
+    await lib.folders.createFirst('Diagrams');
     await expect(lib.folders.breadcrumbs).toContainText('Diagrams');
     await expect(lib.emptyState).toContainText(
       'saved on your device until you add a file',
@@ -38,7 +38,8 @@ test.describe('Asset folders', () => {
     await page.keyboard.press('Escape');
     // Empty folders live in localStorage, so they survive a reload.
     await page.reload({ waitUntil: 'networkidle' });
-    await expect(lib.folders.breadcrumbs).toBeVisible();
+    // Breadcrumbs are hidden at the root; the persisted folder row is the tell.
+    await expect(lib.folders.breadcrumbs).toBeHidden();
     await expect(lib.folders.row('Diagrams')).toBeVisible();
     await lib.folders.remove('Diagrams');
     await expect(lib.folders.rows).toHaveCount(0);
@@ -46,7 +47,7 @@ test.describe('Asset folders', () => {
 
   test('validates the new folder name', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.folders.create('Diagrams');
+    await lib.folders.createFirst('Diagrams');
     await lib.folders.navigateToCrumb('Home');
     const dialog = lib.folders.dialog;
     // Duplicate name is rejected and the dialog stays open.
@@ -67,7 +68,7 @@ test.describe('Asset folders', () => {
 
   test('can upload directly into a folder', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.folders.create('Photos');
+    await lib.folders.createFirst('Photos');
     await lib.uploadFiles([IMAGE.path]);
     await expect(lib.getRow(IMAGE.name).el).toBeVisible();
     await lib.folders.navigateToCrumb('Home');
@@ -81,7 +82,7 @@ test.describe('Asset folders', () => {
     await expect(lib.assetRows).toHaveCount(0);
     // Persists across reload.
     await page.reload({ waitUntil: 'networkidle' });
-    await expect(lib.folders.breadcrumbs).toBeVisible();
+    await expect(lib.folders.breadcrumbs).toBeHidden();
     await lib.folders.open('Photos');
     await expect(lib.getRow(IMAGE.name).el).toBeVisible();
   });
@@ -113,7 +114,8 @@ test.describe('Asset folders', () => {
 
   test('shows the folder bar and existing folders on load', async ({ page }) => {
     const { lib } = await toSeededAssetLibrary(page, seedImageInPhotos);
-    await expect(lib.folders.breadcrumbs).toBeVisible();
+    // At the root the breadcrumb trail is hidden; the folder rows still show.
+    await expect(lib.folders.breadcrumbs).toBeHidden();
     await expect(lib.folders.row('photos')).toBeVisible();
   });
 
@@ -181,7 +183,7 @@ test.describe('Asset folders', () => {
   test('supports nested folders and breadcrumb navigation', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
     // Create a nested folder by creating one inside another.
-    await lib.folders.create('Parent');
+    await lib.folders.createFirst('Parent');
     await expect(lib.folders.breadcrumbs).toContainText('Parent');
     await lib.folders.create('Child');
     await expect(lib.folders.breadcrumbs).toContainText('Child');
