@@ -10,7 +10,7 @@
     <nav
       v-if="!smAndDown"
       class="d-flex align-center ml-2"
-      aria-label="Breadcrumb"
+      aria-label="Global"
     >
       <VBtn
         text="Catalog"
