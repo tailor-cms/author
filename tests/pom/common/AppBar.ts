@@ -21,9 +21,18 @@ export class AppBar {
     this.repositoryList = page.locator('.repository-list');
   }
 
-  async logout() {
+  async openUserMenu() {
     await this.userMenu.click();
+  }
+
+  async logout() {
+    await this.openUserMenu();
     await this.el.getByText('Logout').click();
+  }
+
+  async goToAdmin() {
+    await this.openUserMenu();
+    await this.adminLink.click();
   }
 
   async openRepositorySwitcher() {
