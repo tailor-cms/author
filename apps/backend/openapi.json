@@ -11413,6 +11413,10 @@
                     "minLength": 2,
                     "maxLength": 2000,
                     "description": "Long-form description (2..2000 chars)."
+                  },
+                  "shareWithSamePeople": {
+                    "description": "Share the clone with the same users and user groups as the source.",
+                    "type": "boolean"
                   }
                 },
                 "required": [

@@ -122,10 +122,15 @@ export const useRepositoryStore = defineStore('repositories', () => {
     await api.repository.delete({ params: { repositoryId: id } });
   }
 
-  const clone = (id: number, name: string, description: string) =>
+  const clone = (
+    id: number,
+    name: string,
+    description: string,
+    shareWithSamePeople = false,
+  ) =>
     api.repository.clone({
       params: { repositoryId: id },
-      body: { name, description },
+      body: { name, description, shareWithSamePeople },
     });
 
   async function fetchTags(

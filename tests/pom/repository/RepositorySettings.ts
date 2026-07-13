@@ -4,13 +4,33 @@ import { expect } from '@playwright/test';
 import { NavigationRail } from './NavigationRail';
 import { Toast } from '../common/Toast';
 
+export const getGeneralRoute = (id: number) =>
+  `/repository/${id}/root/settings/general`;
+
 export const getMembersRoute = (id: number) =>
   `/repository/${id}/root/settings/members`;
 
 export const getGroupsRoute = (id: number) =>
   `/repository/${id}/root/settings/groups`;
 
+// Left navigation drawer shown on every repository settings page.
+export class SettingsSidebar {
+  readonly page: Page;
+  readonly el: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.el = page.locator('.repository-settings').getByRole('navigation');
+  }
+
+  open(section: 'General' | 'Members' | 'Groups') {
+    return this.el.getByRole('link', { name: section }).click();
+  }
+}
+
 export class GeneralSettings {
+  static getRoute = getGeneralRoute;
+
   readonly page: Page;
   readonly el: Locator;
   readonly rail: NavigationRail;
