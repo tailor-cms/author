@@ -2,7 +2,7 @@
 name: report-proposal
 description: >-
   Draft a GitHub proposal (feature / enhancement / task) - dedup, classify
-  the type, fill the proposal form fields, suggest labels. DRAFT ONLY: it
+  the type, fill the proposal form fields. DRAFT ONLY: it
   never files the issue; it hands you a ready `gh issue create` command to
   run yourself. Use when proposing new capability, an improvement, or a
   unit of work (not a defect - that's /report-bug).
@@ -56,12 +56,10 @@ themselves.
 5. **Hand off - do not file.** Give the user the exact command to run
    themselves:
    `gh issue create --title "[Proposal]: ..." --body-file <path>
-   --label "triage" --type <Type>` where `<Type>` is the step-1
-   classification - the org issue types map 1:1
-   (`Feature|Enhancement|Task|Documentation`). The issue type is the
-   canonical classification; labels only carry triage state and
-   `area:*` suggestions (the proposal form deliberately sets no
-   auto-type - the skill supplies it).
+   --type <Type>` where `<Type>` is the step-1 classification - the org
+   issue types map 1:1 (`Feature|Enhancement|Task|Documentation`). The
+   issue type is the canonical classification - no labels (the proposal
+   form deliberately sets no auto-type - the skill supplies it).
 
 6. **Offer** to implement it directly if the change is small (e.g. a
    config tweak) - sometimes the diff is faster than the issue.

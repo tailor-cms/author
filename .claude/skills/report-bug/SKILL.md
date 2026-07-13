@@ -2,7 +2,7 @@
 name: report-bug
 description: >-
   Draft a high-quality GitHub bug report from a QA observation - dedup,
-  fill the bug_report form fields, suggest labels. DRAFT ONLY: it never
+  fill the bug_report form fields. DRAFT ONLY: it never
   files the issue; it hands you a ready `gh issue create` command to run
   yourself. Use when QA finds a defect to report.
 ---
@@ -46,10 +46,10 @@ themselves.
    line breaks, so keep each paragraph/bullet on one source line.
 
 4. **Hand off - do not file.** Give the user the exact command to run
-   themselves, and suggest labels:
-   `gh issue create --title "[Bug]: ..." --body-file <path>
-   --label "bug,triage" --type Bug` (add `area:*` / severity labels as
-   suggestions; `--type` is needed because non-interactive `gh` bypasses
-   the form's auto-assigned issue type).
+   themselves:
+   `gh issue create --title "[Bug]: ..." --body-file <path> --type Bug`
+   (`--type` is needed because non-interactive `gh` bypasses the form's
+   auto-assigned issue type; the issue type is the canonical
+   classification - no labels).
 
 5. **Offer** to capture it as a failing spec via `/repro-spec`.

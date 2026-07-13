@@ -1,7 +1,6 @@
 name: Proposal (feature / enhancement / task)
 description: Propose new capability, an improvement, or a unit of work.
 title: "[Proposal]: "
-labels: ["triage"]
 body:
   - type: markdown
     attributes:
