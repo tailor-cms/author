@@ -95,14 +95,12 @@ export class Catalog {
       .getByRole('checkbox', { name: 'Select repository' });
   }
 
-  // The left slot cross-fades the published-status dot into the checkbox icon
-  // on hover, so these are toggled via opacity rather than mounted/unmounted.
   getCardStatusDot() {
-    return this.getRepositoryCards().locator('.select-checkbox .status-dot');
+    return this.getRepositoryCards().locator('.status-dot');
   }
 
-  getCardCheckboxIcon() {
-    return this.getRepositoryCards().locator('.select-checkbox .checkbox');
+  getCardCheckboxSlot() {
+    return this.getRepositoryCards().locator('.select-checkbox');
   }
 
   getCardCheckbox(hasText: string) {

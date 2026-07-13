@@ -5,8 +5,8 @@
     :class="{ 'selected': isSelected, 'has-artwork': !!thumbnailUrl }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    color="surface-container"
-    elevation="2"
+    color="surface-raised"
+    elevation="1"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <!-- Poster artwork: sharp on the right, dissolving into the card surface on
@@ -33,20 +33,20 @@
           @keydown.space.prevent="$emit('toggle-selection', repository.id)"
         >
           <VIcon
-            v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
-            :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
-            :color="hasUnpublishedChanges ? 'warning' : 'success'"
-            class="status-dot"
-            icon="mdi-circle"
-            size="14"
-          />
-          <VIcon
             :color="isSelected ? 'primary' : undefined"
             :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
             class="checkbox"
             size="24"
           />
         </div>
+        <VIcon
+          v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
+          :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
+          :color="hasUnpublishedChanges ? 'warning' : 'success'"
+          class="status-dot mr-2"
+          icon="mdi-circle"
+          size="14"
+        />
         <div
           ref="schema"
           v-tooltip="{
@@ -363,51 +363,33 @@ onMounted(() => nextTick(detectSchemaTruncation));
   outline: 2px solid rgb(var(--v-theme-primary));
 }
 
-// Left slot cross-fades the published-status dot into the select checkbox on
-// hover/selection (same footprint, no layout shift) — mirrors the asset list.
+// Select checkbox occupies zero width at rest and expands on
+// hover/focus/selection, nudging the status dot and schema name right
+// instead of covering them — the dot (and its tooltip) stays visible.
 .select-checkbox {
-  position: relative;
   flex: none;
-  margin-left: -0.25rem;
-  width: 1.75rem;
+  width: 0;
   height: 1.75rem;
-  margin-right: 0.25rem;
+  overflow: hidden;
+  opacity: 0;
   cursor: pointer;
   border-radius: 4px;
+  transition:
+    width 0.28s ease-in-out,
+    margin 0.28s ease-in-out,
+    opacity 0.28s ease-in-out;
+}
 
-  &:focus-visible {
-    outline: 2px solid rgb(var(--v-theme-primary));
-    outline-offset: 2px;
-  }
-
-  .status-dot,
-  .checkbox {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    transition:
-      opacity 0.28s ease-in-out,
-      transform 0.28s ease-in-out;
-  }
-
-  .checkbox {
-    opacity: 0;
-    transform: scale(0.7);
-    pointer-events: none;
-  }
+.status-dot {
+  flex: none;
 }
 
 .repository-card:hover .select-checkbox,
 .select-checkbox:focus-visible,
 .select-checkbox.is-selected {
-  .checkbox {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .status-dot {
-    opacity: 0;
-    transform: scale(0.7);
-  }
+  width: 1.75rem;
+  margin-left: -0.25rem;
+  margin-right: 0.25rem;
+  opacity: 1;
 }
 </style>
