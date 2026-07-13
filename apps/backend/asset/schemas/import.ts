@@ -40,6 +40,9 @@ export const ImportLinkMeta = z
     downloadUrl: safeUrl().optional().describe(oneLine`
       Explicit binary URL when different from the page URL
       (e.g. CDN URL).`),
+    thumbnailUrl: z.string().optional().describe(oneLine`
+      Caller-resolved preview (e.g. discovery's Google/Unsplash thumbnail);
+      wins over the page's own Open Graph image when present.`),
     altText: z
       .string()
       .trim()

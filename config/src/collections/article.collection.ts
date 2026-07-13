@@ -155,4 +155,18 @@ export const articleCollection = new TailorCollection({
   id: 'TEST_COLLECTION',
   name: 'Test Collection',
   entities: [Articles, Authors, Tags, Categories],
+  meta: [
+    {
+      key: 'posterImage',
+      type: MetaInputType.File,
+      label: 'Poster Image',
+      placeholder: 'Click to add a poster image',
+      icon: 'mdi-image',
+      validate: {
+        ext: ['jpg', 'jpeg', 'png'],
+      },
+      hideOnCreate: true,
+      showPreview: true,
+    },
+  ],
 });

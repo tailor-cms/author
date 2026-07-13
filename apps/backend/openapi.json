@@ -7888,6 +7888,10 @@
                         "type": "string",
                         "format": "uri"
                       },
+                      "thumbnailUrl": {
+                        "description": "Caller-resolved preview (e.g. discovery's Google/Unsplash thumbnail); wins over the page's own Open Graph image when present.",
+                        "type": "string"
+                      },
                       "altText": {
                         "description": "Alt text for image-like content.",
                         "type": "string"
