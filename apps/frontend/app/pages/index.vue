@@ -1,6 +1,11 @@
 <template>
   <NuxtLayout name="main">
-    <div class="catalog-scroll">
+    <VSheet
+      class="catalog-scroll mx-3"
+      color="surface-canvas"
+      rounded="t-xl"
+      border
+    >
       <VContainer class="catalog" max-width="1360">
         <VRow
           v-if="!isEmptyCatalog"
@@ -135,7 +140,7 @@
           @click:action="clearSearchAndFilters"
         />
       </VContainer>
-    </div>
+    </VSheet>
   </NuxtLayout>
 </template>
 

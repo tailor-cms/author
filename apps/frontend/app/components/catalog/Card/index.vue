@@ -5,8 +5,8 @@
     :class="{ selected: isSelected }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    elevation="0"
-    color="surface-container-low"
+    color="surface-raised"
+    elevation="1"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <div class="card-body">

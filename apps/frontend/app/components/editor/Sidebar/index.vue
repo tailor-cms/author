@@ -4,7 +4,7 @@
     :class="{ resizing: isResizing }"
     :width="width"
     class="editor-sidebar-main sidebar"
-    color="surface-container-low"
+    color="surface-canvas"
     elevation="0"
     location="left"
     mobile-breakpoint="md"

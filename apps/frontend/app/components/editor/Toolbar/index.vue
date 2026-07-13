@@ -1,7 +1,7 @@
 <template>
   <VAppBar
     :class="{ 'diff-mode': isHistoryMode || showPublishDiff }"
-    color="surface-container-low"
+    color="surface-canvas"
     border="b"
     class="toolbar-wrapper"
     order="1"
