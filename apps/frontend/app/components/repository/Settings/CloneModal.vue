@@ -12,12 +12,9 @@
         "{{ target?.name }}". Name the copy and adjust its description as
         needed.
       </p>
-      <VTextField
-        v-model="nameInput"
+      <RepositoryNameField
         :disabled="inProgress"
-        :error-messages="errors.name"
-        class="required mb-4"
-        label="Name"
+        class="mb-4"
         placeholder="Enter name..."
         variant="outlined"
       />
@@ -56,9 +53,9 @@ import { object, string } from 'yup';
 import { schema as schemaApi } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
-
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useRepositoryStore } from '@/stores/repository';
+import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 
 const props = withDefaults(
   defineProps<{ show?: boolean; repository?: Repository }>(),
