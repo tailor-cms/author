@@ -5,7 +5,7 @@
     :class="{ 'selected': isSelected, 'has-artwork': !!thumbnailUrl }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    color="surface-raised"
+    color="surface-container"
     elevation="2"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
@@ -20,7 +20,7 @@
       <div class="card-blur card-blur--3" />
     </div>
     <div class="card-body">
-      <div class="card-header d-flex align-center ma-3 mb-1">
+      <div class="card-header d-flex align-center ma-3 ml-4 mb-2">
         <div
           :aria-checked="isSelected"
           :class="{ 'is-selected': isSelected }"
@@ -58,14 +58,11 @@
         >
           {{ schemaName }}
         </div>
-        <div
-          v-if="repository?.hasAdminAccess"
-          class="glass glass-pill d-flex align-center"
-        >
+        <div v-if="repository?.hasAdminAccess" class="d-flex align-center ga-1">
           <VBtn
             v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
             aria-label="Repository settings"
-            class="repo-info"
+            class="repo-info glass-btn"
             density="comfortable"
             icon="mdi-cog"
             size="small"
@@ -81,7 +78,7 @@
                 v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
                 v-bind="menuProps"
                 aria-label="Repository actions"
-                class="repo-info"
+                class="repo-info glass-btn"
                 density="comfortable"
                 icon="mdi-dots-vertical"
                 size="small"
@@ -103,7 +100,7 @@
           </VMenu>
         </div>
       </div>
-      <VCardTitle class="pt-0 text-break font-weight-medium">
+      <VCardTitle class="text-break font-weight-medium mb-2 py-0">
         {{ repository.name }}
       </VCardTitle>
       <div class="d-flex justify-start align-center px-4 py-2">
@@ -194,9 +191,7 @@ const onAction = (name: CardAction['name']) => {
 const schema = ref(null);
 
 const isSchemaNameTruncated = ref(false);
-const schemaName = computed(
-  () => $schemaService.getSchema(props.repository.schema).name,
-);
+const schemaName = computed(() => $schemaService.getLabel(props.repository));
 
 // Signed URLs are delivered on the list payload (RepositoryFileMeta);
 // prefer the cached thumbnail and fall back to the original file.
@@ -237,7 +232,7 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .repository-card {
   position: relative;
-  height: 12.75rem;
+  height: 13rem;
   overflow: hidden;
   transition:
     border-color 0.2s ease,
@@ -321,23 +316,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
 .card-blur--2 { @include mixins.blur-band(9px, 28%, 52%); }
 .card-blur--3 { @include mixins.blur-band(20px, 12%, 34%); }
 
-.glass {
-  @include mixins.glass;
-}
-
-.glass-pill {
-  border-radius: 999px;
-}
-
-// Pin button
+// Icon buttons layered over the poster (settings cog, actions menu)
 .glass-btn {
   @include mixins.glass;
-
-  &--active {
-    color: rgb(var(--v-theme-tertiary));
-    background: rgba(var(--v-theme-tertiary), 0.15);
-    border-color: rgba(var(--v-theme-tertiary), 0.3);
-  }
 }
 
 // Tag chips + add-tag button rendered by the Tags child component
@@ -346,10 +327,14 @@ onMounted(() => nextTick(detectSchemaTruncation));
   @include mixins.glass;
 }
 
+.glass-tags :deep(.v-chip .v-chip__underlay) {
+  border-radius: 0;
+}
+
 .card-body {
   // Width-aware truncation: clamp to two lines instead of a character cap.
   .v-card-title {
-    max-width: 60%;
+    max-width: 65%;
     line-height: 1;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -376,7 +361,6 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .repository-card.selected {
   outline: 2px solid rgb(var(--v-theme-primary));
-  outline-offset: -2px;
 }
 
 // Left slot cross-fades the published-status dot into the select checkbox on

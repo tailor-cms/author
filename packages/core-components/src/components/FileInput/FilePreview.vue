@@ -8,6 +8,7 @@
     <template #activator="{ props: dialogProps }">
       <VTextField
         v-bind="$attrs"
+        :class="{ 'cursor-pointer': !readonly }"
         :density="density"
         :label="label"
         :max-width="maxWidth"
@@ -15,6 +16,7 @@
         :model-value="fileName"
         :variant="variant"
         readonly
+        @click="!readonly && emit('replace')"
       >
         <template #prepend-inner>
           <VProgressCircular v-if="isLoading" indeterminate size="24" />
@@ -36,19 +38,9 @@
             size="x-small"
             variant="tonal"
             icon
+            @click.stop
           >
             <VIcon icon="mdi-magnify" size="large" />
-          </VBtn>
-          <VBtn
-            v-if="!readonly"
-            aria-label="Replace file"
-            class="mr-1"
-            size="x-small"
-            variant="tonal"
-            icon
-            @click.stop="emit('replace')"
-          >
-            <VIcon icon="mdi-square-edit-outline" size="large" />
           </VBtn>
           <VBtn
             v-if="!readonly"
@@ -117,6 +109,10 @@ const expanded = ref(false);
 </script>
 
 <style lang="scss" scoped>
+.v-text-field.cursor-pointer :deep(input) {
+  cursor: pointer;
+}
+
 .v-overlay {
   transition: all 0.3s ease;
 

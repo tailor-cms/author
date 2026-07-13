@@ -2,16 +2,16 @@ import type { Page } from '@playwright/test';
 
 import { SourceContentDialog } from './SourceContentDialog';
 
-export class LinkContentDialog extends SourceContentDialog {
+export class CopyActivityDialog extends SourceContentDialog {
   constructor(page: Page) {
-    super(page, { title: 'Link existing content', action: /^Link/ });
+    super(page, { title: 'Copy existing', action: /^Copy/ });
   }
 
-  link() {
+  copy() {
     return this.submitSelection();
   }
 
-  selectAndLink(repositoryName: string, activityName: string) {
+  selectAndCopy(repositoryName: string, activityName: string) {
     return this.selectAndSubmit(repositoryName, activityName);
   }
 }
