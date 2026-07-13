@@ -39,7 +39,7 @@
             v-bind="props"
             :img-url="user.imgUrl"
             aria-label="User menu"
-            class="mr-4 ml-3"
+            class="mr-4 ml-2"
             tag="button"
           />
         </template>

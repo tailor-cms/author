@@ -1,34 +1,32 @@
 <template>
-  <template v-if="showRenoir">
-    <VBtn
-      v-bind="$attrs"
-      :class="{ 'is-running': isAgentRunning }"
-      :color="isPanelOpen ? 'tertiary' : undefined"
-      class="renoir-pill mr-3"
-      height="40"
-      rounded="pill"
-      variant="tonal"
-      @click="openAgentPanel"
-    >
-      <span class="renoir-pill-avatar">
-        <LauncherParticles v-if="isAgentRunning" :size="32" />
-        <img
-          :src="renoirImage"
-          alt=""
-          class="renoir-pill-head"
-          draggable="false"
-        />
-      </span>
-      <span class="renoir-pill-label">Renoir</span>
-      <VHotkey
-        class="renoir-pill-kbd"
-        keys="cmd+k"
-        density="compact"
-        variant="contained"
+  <VBtn
+    v-if="showRenoir"
+    v-bind="$attrs"
+    :class="{ 'is-running': isAgentRunning }"
+    :color="isPanelOpen ? 'tertiary' : undefined"
+    class="renoir-pill"
+    height="40"
+    rounded="pill"
+    variant="tonal"
+    @click="openAgentPanel"
+  >
+    <span class="renoir-pill-avatar">
+      <LauncherParticles v-if="isAgentRunning" :size="32" />
+      <img
+        :src="renoirImage"
+        alt=""
+        class="renoir-pill-head"
+        draggable="false"
       />
-    </VBtn>
-    <VDivider class="align-self-center" length="24" opacity="0.2" vertical />
-  </template>
+    </span>
+    <span class="renoir-pill-label">Renoir</span>
+    <VHotkey
+      class="renoir-pill-kbd"
+      keys="cmd+k"
+      density="compact"
+      variant="contained"
+    />
+  </VBtn>
 </template>
 
 <script lang="ts" setup>
